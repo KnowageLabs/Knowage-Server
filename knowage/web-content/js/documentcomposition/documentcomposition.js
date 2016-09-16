@@ -359,7 +359,8 @@ function execCrossNavigation(windowName, label, parameters) {
 													if (tmpOldLabel == sbiLabelPar){
 														tmpOldValue = paramsOldValues[k] ;
 														tmpOldValue = tmpOldValue.substring(tmpOldValue.indexOf("=")+1);
-														if (tmpOldValue != "" && tmpNewValue != ""){
+														//if (tmpOldValue != "" && tmpNewValue != ""){
+														// if (tmpOldValue != "" && tmpNewValue != ""){
 														    if (tmpNewValue == "%") tmpNewValue = "%25";
 														    if (tmpOldValue.indexOf(DEFAULT_OPEN_BLOCK_MARKER + DEFAULT_SEPARATOR + DEFAULT_OPEN_BLOCK_MARKER) != -1){
 														    	tmpNewValue = setMultivalueFormat(tmpNewValue, tmpOldValue);														    
@@ -369,7 +370,7 @@ function execCrossNavigation(windowName, label, parameters) {
 															tmpOldValue = "";
 															tmpNewValue = "";
 															break;
-														}
+														// }
 													}
 												}
 											}
