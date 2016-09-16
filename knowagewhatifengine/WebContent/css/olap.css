@@ -934,3 +934,12 @@ md-option[selected], md-select-menu md-option[selected]{
     width: 80%; 
     height: 60%;
 }
+
+.designer-buttons-dialog-content {  
+    overflow:hidden;
+}
+
+.designer-buttons-dialog-angular-table-height {  
+    height:60%;
+}
+
