@@ -1,4 +1,7 @@
 .kn-svgviewer {
+	.svgMainContainer{
+		height: 100%;
+	}
     .sidenavOpenButton {
         position:absolute;
         top:0px;
@@ -89,6 +92,7 @@
     
     .divFlex {
         display: flex;
+        height: 100%;
     }
     
     .zoomButton {
@@ -117,4 +121,17 @@
         box-shadow:1px 1px 3px 2px; 
         background-color: $tooltipBackgroundColor;
     }
+}
+
+
+/*IE11 FIX */
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+	.kn-svgviewer {
+		.ie11fix {
+			overflow: hidden !important;
+		}
+		md-tabs.md-knowage-theme md-tab-content {
+			overflow: hidden !important;
+		}
+	}
 }
