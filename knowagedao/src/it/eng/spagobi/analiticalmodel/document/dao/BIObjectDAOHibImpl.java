@@ -1704,7 +1704,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadAllBIObjects ()
 	 */
 	@Override
@@ -1856,7 +1856,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadAllBIObjects (java.lang.String)
 	 */
 	@Override
@@ -1900,7 +1900,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadAllBIObjects ()
 	 */
 	@Override
@@ -1934,14 +1934,15 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				hibQuery.setMaxResults(item_count);
 			}
 			List ids = hibQuery.list();
+			if (!ids.isEmpty()) {
+				Criteria mainC = aSession.createCriteria(SbiObjects.class);
+				mainC.add(Restrictions.in("biobjId", ids));
+				mainC.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
-			Criteria mainC = aSession.createCriteria(SbiObjects.class);
-			mainC.add(Restrictions.in("biobjId", ids));
-			mainC.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-
-			List<SbiObjects> lso = mainC.list();
-			for (SbiObjects so : lso) {
-				realResult.add(toBIObject(so, aSession));
+				List<SbiObjects> lso = mainC.list();
+				for (SbiObjects so : lso) {
+					realResult.add(toBIObject(so, aSession));
+				}
 			}
 
 			tx.commit();
@@ -1978,7 +1979,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO# loadAllBIObjectsFromInitialPath(java.lang.String)
 	 */
 	@Override
@@ -2031,7 +2032,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO# loadAllBIObjectsFromInitialPath(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -2083,7 +2084,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO# loadBIObjectForDetail(java.lang.String)
 	 */
 	@Override
