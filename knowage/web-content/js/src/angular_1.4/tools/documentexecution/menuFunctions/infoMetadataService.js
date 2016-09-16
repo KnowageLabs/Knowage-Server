@@ -133,9 +133,9 @@
 				    				metadataDlgCtrl.file[i].fileToSave={};	// fileToUpload instead of uploadedFile
 				    			}
 				    			//When there are saved files make its fileNames, saveDates and fileLabel visible for user
-				    			if(metadataDlgCtrl.file[i].savedFile!=undefined && metadataDlgCtrl.file[i].savedFile!=null && metadataDlgCtrl.file[i].savedFile!='')
+				    			if(metadataDlgCtrl.file[i].value!=undefined && metadataDlgCtrl.file[i].value!=null && metadataDlgCtrl.file[i].value!='')
 				    			{	
-					    			var fileItem=JSON.parse(metadataDlgCtrl.file[i].savedFile);
+					    			var fileItem=JSON.parse(metadataDlgCtrl.file[i].value);
 					    			metadataDlgCtrl.file[i].fileName=fileItem.fileName;
 					    			metadataDlgCtrl.file[i].saveDate=fileItem.saveDate;
 					    			//metadataDlgCtrl.file[i].fileLabel=fileItem.fileLabel;		//Label removed
@@ -166,12 +166,35 @@
 		    				subobjectId: executionInstance.SUBOBJECT_ID, 
 		    				jsonMeta: metadataDlgCtrl.shortText.concat(metadataDlgCtrl.longText).concat(metadataDlgCtrl.file) //added last concat
 		    			};
-		    			sbiModule_restServices.promisePost('1.0/documentexecution', 'saveDocumentMetadata', saveObj)
+		    			var filteredJsonMeta=[];
+		    			var j=0;
+		    			for(var i=0; i<saveObj.jsonMeta.length;i++)
+		    			{
+		    				if(saveObj.jsonMeta[i].value!="" && saveObj.jsonMeta[i].value!=undefined  && saveObj.jsonMeta[i].value!=null)
+		    				{
+		    					filteredJsonMeta[j]=saveObj.jsonMeta[i];
+		    					j++;
+		    				}	
+		    				if(saveObj.jsonMeta[i].fileToSave!="" && saveObj.jsonMeta[i].fileToSave!=undefined  && saveObj.jsonMeta[i].fileToSave!=null && saveObj.jsonMeta[i].fileToSave.fileName!=null && saveObj.jsonMeta[i].fileToSave.fileName!=undefined && saveObj.jsonMeta[i].fileToSave.fileName!="")
+		    				{
+		    					filteredJsonMeta[j]=saveObj.jsonMeta[i];
+		    					j++;
+		    				}	
+		    			}	
+		    			var filteredSaveObj={
+		    				id: executionInstance.OBJECT_ID,
+		    				subobjectId: executionInstance.SUBOBJECT_ID, 
+		    				jsonMeta: filteredJsonMeta
+		    			};
+		    			//sbiModule_restServices.promisePost('1.0/documentexecution', 'saveDocumentMetadata', saveObj)
+	    				console.log("----------------------------------------------->SENDING: ", filteredSaveObj);
+
+
+		    			sbiModule_restServices.promisePost('1.0/documentexecution', 'saveDocumentMetadata', filteredSaveObj)
 		    			.then(function(response){
 		    				//documentExecuteServices.showToast(sbiModule_translate.load("sbi.execution.viewpoints.msg.saved"), 3000);
 		    				documentExecuteServices.showToast("Salvataggio OK", 3);
 		    				metadataDlgCtrl.getDocumentMetadataFunction(); 
-		    				
 		    				
 		    			},function(response){
 		    				documentExecuteServices.showToast(response.data.errors[0].message, 5);
@@ -200,8 +223,8 @@
 			    		
 		    		}
 		    		
-		    		metadataDlgCtrl.download = function(metadataId,savedFile){
-		    			if(savedFile!="" && savedFile!=null && savedFile!=undefined)
+		    		metadataDlgCtrl.download = function(metadataId,value){
+		    			if(value!="" && value!=null && value!=undefined)
 		    			{	
 			    			objId=executionInstance.OBJECT_ID;
 			    			var subobjId="null";

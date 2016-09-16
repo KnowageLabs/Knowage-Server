@@ -64,7 +64,7 @@
 					    <td> Metadata name:</td>
 					    <td> {{fileMeta.name}}</td>
 					    <td> &nbsp; Saved file: </td>
-					    <td> {{fileMeta.savedFile}}	 </td>
+					    <td> {{fileMeta.value}}	 </td>
 					    <td> <md-button class="md-ExtraMini md-raised " ng-click="metadataDlgCtrl.download(fileMeta.id)">Download</md-button></td> 
 					    <td> <file-upload id="id_file_upload-{{$index}}" ng-model="fileMeta.fileToSave" ng-disabled=false></file-upload> </td>
 						<td> <md-button class="md-ExtraMini md-raised " ng-click="metadataDlgCtrl.uploadFile(fileMeta.fileToSave)">Upload</md-button> </td>							 	
@@ -82,7 +82,7 @@
 					    <td>{{fileMeta.saveDate}}</td>
 					    <td><file-upload id="id_file_upload-{{$index}}" ng-model="fileMeta.fileToSave" ng-disabled=false ng-if=<%= canModify %>></file-upload></td>
 						<td><md-button class="md-ExtraMini md-raised " ng-click="metadataDlgCtrl.uploadFile(fileMeta.fileToSave)" ng-if=<%= canModify %>>Upload</md-button></td>		
-						<td><md-button class="md-ExtraMini md-raised " ng-click="metadataDlgCtrl.download(fileMeta.id,fileMeta.savedFile)" ng-if="fileMeta.fileName" >Download</md-button></td>
+						<td><md-button class="md-ExtraMini md-raised " ng-click="metadataDlgCtrl.download(fileMeta.id,fileMeta.value)" ng-if="fileMeta.fileName" >Download</md-button></td>
 						<td><md-button class="md-ExtraMini md-raised " ng-click="metadataDlgCtrl.cleanFile(fileMeta.id)" ng-if=<%= canModify %>>Clean</md-button></td>						 	
 					  </tr>
 				</table> 
@@ -107,14 +107,14 @@
 							<md-button class="md-ExtraMini md-raised " ng-click="metadataDlgCtrl.uploadFile(fileMeta.fileToSave)" ng-if=<%= canModify %>>Upload</md-button>
 						</div>
 						<div flex="10">
-							<md-button class="md-ExtraMini md-raised " ng-click="metadataDlgCtrl.download(fileMeta.id,fileMeta.savedFile)" ng-if="fileMeta.fileName" >Download</md-button>
+							<md-button class="md-ExtraMini md-raised " ng-click="metadataDlgCtrl.download(fileMeta.id,fileMeta.value)" ng-if="fileMeta.fileName" >Download</md-button>
 						</div>
 						<div flex="10">
 							<md-button class="md-ExtraMini md-raised " ng-click="metadataDlgCtrl.cleanFile(fileMeta.id)" ng-if=<%= canModify %>>Clean</md-button>
 						</div>
 					</div>
 				</div>	
-
+					value==savedFile
 				-->
 
 			</expander-box>
