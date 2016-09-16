@@ -15,6 +15,7 @@
 		<md-button class="drill-buttons right" ng-click="changeDrillType('replace') " ng-disabled="isDisabledType('replace')" id = "drill-replace-btn">Replace</md-button>
 	</md-grid-tile>
 </md-grid-list>
+<div ng-hide="olapMode">
 <div class="menu-text" style="padding-bottom:5%" ng-if="DTEnabled">Drill on data</div>
 <md-button 
 		ng-if="DTEnabled"
@@ -79,6 +80,7 @@
     	</md-button>
     </md-grid-tile>
 </md-grid-list>
+</div>
 <olap_designer_toolbar ng-show="olapMode"></olap_designer_toolbar>
 
 </div>

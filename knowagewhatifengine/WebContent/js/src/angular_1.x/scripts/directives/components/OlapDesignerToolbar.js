@@ -47,6 +47,8 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	
 	$scope.cubeList = [];
 	
+	$scope.schemaName = schemaName;
+	
 	$scope.mdxQueryObj = {
 			"mdxQuery" : ""   
 	}
@@ -194,6 +196,8 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	$scope.openCrossNavWizard = function() {
 		
 		$scope.crossNavType = null;
+		
+		console.log($scope.modelConfig);
 		$scope.readCNJson();
 		
 		 $mdDialog
@@ -337,6 +341,18 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	  * Opens dialog with table of buttons to be selected as visible, and checked.
 	  */
 	 $scope.openButtonWizard = function() {
+		 
+		 
+		if ($scope.modelConfig.toolbarVisibleButtons != null) {
+			for (var i = 0; i < $scope.buttons.length; i++) {
+				for(var j = 0; j < $scope.modelConfig.toolbarVisibleButtons.length; j++){
+					if($scope.buttons[i].name == $scope.modelConfig.toolbarVisibleButtons[j]){
+						$scope.buttons[i].visible = true;
+					}
+				}
+			} 
+
+		}
 		 
 		 
 		 $scope.toolbar = $scope.buttons;
@@ -509,11 +525,28 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	  */
 	$scope.saveCN = function(type) {
 		if(type == 'member'){
+			
+			for (var i = 0; i < clickableArray.length; i++) {
+				if ($scope.crossNavfromMemberObj.uniqueName === clickableArray[i].uniqueName) {
+					console.log("same item replacing");
+					clickableArray.splice(i, 1);
+
+				}
+			}
 			clickableArray.push($scope.crossNavfromMemberObj);
 			
 		}else if (type == 'cell') {
+			
+			for (var i = 0; i < parameter.length; i++) {
+				if ($scope.crossNavfromCellObj.name === parameter[i].name) {
+					console.log("same item replacing");
+					parameter.splice(i, 1);
+
+				}
+			}
 			parameter.push($scope.crossNavfromCellObj);
 		}
+		
 		if(type == 'member' && clickableArray.length > 0){
 			$scope.initMDX();
 			if(OlapTemplateService.getMdxQueryTag){
@@ -648,7 +681,7 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	  * Calls service to bind temporary cube object to olap template object.
 	  */
 	 $scope.appendCubeObjectToJsonTemplate = function() {
-		 OlapTemplateService.setCubeTag(schemaName);
+		 OlapTemplateService.setCubeTag($scope.schemaName);
 	 }
 	 
 	 $scope.appendCubeObjectToJsonTemplate();
@@ -667,8 +700,6 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	 $scope.sendOlapJsonTemplate = function() {
 		
 		 $scope.initMDX();
-		 
-		 console.log(OlapTemplateService.getOlapTag());
 		 sbiModule_restServices.alterContextPath("/knowage");
 		 sbiModule_restServices.promisePost("1.0/documents/",sbiModule_docInfo.id+'/saveOlapTemplate', OlapTemplateService.getTempateJson())
 			.then(function(response) {

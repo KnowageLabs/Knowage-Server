@@ -16,6 +16,7 @@
 <script>
 	var JSsbiExecutionID = '<%= sbiExecutionID %>'
 	var mode = '<%= mode %>'
+	var engineName = '<%= engine %>'
 	
 </script>
 </head>

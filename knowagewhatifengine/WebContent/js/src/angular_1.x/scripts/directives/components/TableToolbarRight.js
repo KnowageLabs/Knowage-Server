@@ -123,6 +123,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	}
 
 	$scope.getToolbarButtons = function() {
+		
     	sbiModule_restServices.promiseGet
 		("1.0",'/buttons')
 		.then(function(response) {
@@ -163,6 +164,16 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 				}
 				
 			}
+			  if(engineName == 'knowageolapengine'){
+				for (var i = 0; i < $scope.olapDesignerButtonNames.length; i++) {
+					if($scope.olapDesignerButtonNames[i].name == 'BUTTON_SCENARIO_WIZARD'){
+						$scope.olapDesignerButtonNames.splice(i, 1);
+						
+					}
+				}
+				  
+			  }
+		
 	  }
 	
 	whatIfBtns = function(status){

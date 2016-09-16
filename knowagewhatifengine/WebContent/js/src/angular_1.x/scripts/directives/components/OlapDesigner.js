@@ -131,12 +131,12 @@ $scope.getCube = function(item){
 $scope.saveMDX = function(){
 			
 			prepareTemplate();
-		
+			console.log(engineName);
       	sbiModule_restServices.promisePost("1.0/designer/cubes?SBI_EXECUTION_ID=" + JSsbiExecutionID,"",angular.toJson($scope.template))
     	.then(function(response) {
     		
     		var url = sbiModule_config.contextName + "/restful-services/pages/execute?SBI_EXECUTION_ID="
-    		+ JSsbiExecutionID+"&mode="+mode+"&schemaID="+$scope.selectedSchema.id+"&cubeName="+$scope.selectedCube.name+"&schemaName="+$scope.selectedSchema.name+"&currentContentId="+$scope.selectedSchema.currentContentId;
+    		+ JSsbiExecutionID+"&mode="+mode+"&schemaID="+$scope.selectedSchema.id+"&cubeName="+$scope.selectedCube.name+"&schemaName="+$scope.selectedSchema.name+"&ENGINE="+engineName+"&currentContentId="+$scope.selectedSchema.currentContentId;
    
     		$window.location = url;
 		

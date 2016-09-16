@@ -117,19 +117,20 @@ public class WhatIfDriver extends GenericDriver {
 			return null;
 		}
 		Engine engine = obj.getEngine();
-		String url = engine.getUrl() + "/edit";
+		String url = engine.getUrl() + "";
 		Map parameters = new HashMap();
 
 		String documentId = obj.getId().toString();
 		String documentLabel = obj.getLabel();
+		String engineName = obj.getEngineLabel();
 
 		byte[] template1 = this.getTemplateAsByteArray(biobject);
-		ObjTemplate template = this.getTemplate(biobject);
 		parameters = addArtifactVersionId(template1, parameters, profile, obj.getId(), engine);
 		parameters = addArtifactId(template1, parameters, profile);
 		parameters = addTemplateInformation(template1, parameters);
 		parameters.put("document", documentId);
 		parameters.put("DOCUMENT_LABEL", documentLabel);
+		parameters.put("ENGINE", engineName);
 		parameters.put("mode", "edit");
 		// CREATE EXECUTION ID
 		String sbiExecutionId = null;
@@ -157,13 +158,15 @@ public class WhatIfDriver extends GenericDriver {
 			return null;
 		}
 		Engine engine = obj.getEngine();
-		String url = engine.getUrl() + "/edit";
+		String url = engine.getUrl();
 		HashMap parameters = new HashMap();
 
 		String documentId = obj.getId().toString();
 		String documentLabel = obj.getLabel();
+		String engineName = obj.getEngineLabel();
 		parameters.put("document", documentId);
 		parameters.put("DOCUMENT_LABEL", documentLabel);
+		parameters.put("ENGINE", engineName);
 		parameters.put("mode", "edit");
 		// CREATE EXECUTION ID
 		String sbiExecutionId = null;
@@ -173,7 +176,7 @@ public class WhatIfDriver extends GenericDriver {
 		sbiExecutionId = sbiExecutionId.replaceAll("-", "");
 		parameters.put("SBI_EXECUTION_ID", sbiExecutionId);
 		applySecurity(parameters, profile);
-		EngineURL engineURL = new EngineURL(url, parameters);
+		EngineURL engineURL = new EngineURL(url.replace("/execute", "/edit"), parameters);
 		logger.debug("OUT");
 		return engineURL;
 	}

@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 author:...
 --%>
 
+<%@page import="it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate"%>
 <%@page import= "it.eng.spagobi.engines.whatif.common.WhatIfConstants" %>
 <%@page import= "java.util.Enumeration" %>
 <%@ page language="java"
@@ -54,6 +55,7 @@ author:...
        String spagobiContext = null;
        String documentLabel = null;
        String documentId = null;
+       String engine = null;
        String sbiExecutionID = null;   
        String mode = null;
        String schemaID = null;
@@ -78,7 +80,6 @@ author:...
         	documentId = (String)whatIfEngineInstance.getEnv().get("DOCUMENT_ID" );
 	}
         
-        
        isFromCross = (String)whatIfEngineInstance.getEnv().get( "isFromCross");
        
         if (isFromCross == null) {
@@ -100,8 +101,7 @@ author:...
           mode = request.getParameter("mode");
 	}else{
 		 mode = "full" ;
-	}
-	  
+	} 
 	   if(request.getParameter("schemaID") != null){
 		   schemaID = request.getParameter("schemaID");
 		}
@@ -115,8 +115,10 @@ author:...
 		   currentContentId = request.getParameter("currentContentId");
 		}
 	   
-	   
-	   
+	   if(request.getParameter("ENGINE") != null){
+		
+		  engine = request.getParameter("ENGINE");
+		}
 %>
 
 <%@include file="../../commons/includeMessageResource.jspf"%>

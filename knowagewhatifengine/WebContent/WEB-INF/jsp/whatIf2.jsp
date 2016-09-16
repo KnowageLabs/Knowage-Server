@@ -21,6 +21,7 @@
 	var locker = '<%= whatIfEngineInstance.getModelConfig().getLocker() %>'
 	var status = '<%= whatIfEngineInstance.getModelConfig().getStatus()%>'
 	var mode = '<%= mode %>'
+	var engineName = '<%= engine %>'
 	var schemaID = '<%= schemaID %>'
 	var schemaName = '<%= schemaName %>'
 	var cubeName = '<%= cubeName %>'

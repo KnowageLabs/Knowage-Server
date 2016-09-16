@@ -44,6 +44,7 @@ public class WhatIfEditStartAction extends WhatIfEngineStartAction {
 	private static final String SUCCESS_REQUEST_DISPATCHER_URL_EDIT = "/WEB-INF/jsp/whatIf2.jsp";
 	private static final String FAILURE_REQUEST_DISPATCHER_URL = "/WEB-INF/jsp/errors/startupError.jsp";
 	private String url = "";
+	private boolean whatif;
 
 	@GET
 	@Path("/edit")
@@ -84,8 +85,12 @@ public class WhatIfEditStartAction extends WhatIfEngineStartAction {
 					} else {
 						template = null;
 					}
-
-					whatIfEngineInstance.updateWhatIfEngineInstance(template, false, getEnv());
+					if (getEnv().get("ENGINE").equals("knowageolapengine")) {
+						whatif = false;
+					} else {
+						whatif = true;
+					}
+					whatIfEngineInstance.updateWhatIfEngineInstance(template, whatif, getEnv());
 					logger.debug("Engine instance succesfully updated");
 
 					url = SUCCESS_REQUEST_DISPATCHER_URL_EDIT;

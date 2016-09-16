@@ -17,11 +17,6 @@
  */
 package it.eng.spagobi.engines.whatif.api.page;
 
-
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
-import it.eng.spagobi.utilities.engines.rest.AbstractRestService;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,6 +33,10 @@ import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
+import it.eng.spagobi.utilities.engines.rest.AbstractRestService;
+
 @Path("/pages")
 @ManageAuthorization
 public class PageResource extends AbstractRestService {
@@ -46,30 +45,31 @@ public class PageResource extends AbstractRestService {
 	static private Map<String, String> urls;
 
 	static private Logger logger = Logger.getLogger(PageResource.class);
-	
+
 	@Context
 	protected HttpServletRequest request;
 	@Context
 	protected HttpServletResponse response;
-	
+
 	/**
 	 * TODO Tutte le pagine dell'engine
 	 *
-	 * */
+	 */
 	static {
 		pages = new HashMap<String, JSONObject>();
 		urls = new HashMap<String, String>();
 
 		try {
-			pages.put("execute", new JSONObject("{name: 'execute', description: 'the georeport execution page', parameters: []}"));
+			pages.put("execute", new JSONObject("{name: 'execute', description: 'the Olap execution page', parameters: []}"));
 			urls.put("execute", "/WEB-INF/jsp/whatIf2.jsp");
 
+			pages.put("edit", new JSONObject("{name: 'execute', description: 'the Whatif execution page', parameters: []}"));
+			urls.put("edit", "/WEB-INF/jsp/edit.jsp");
 
 		} catch (JSONException t) {
 			logger.error(t);
 		}
 	}
-
 
 	@GET
 	@Path("/{pagename}")
@@ -89,8 +89,6 @@ public class PageResource extends AbstractRestService {
 			logger.debug("OUT");
 		}
 	}
-	
-
 
 	@Override
 	public HttpServletRequest getServletRequest() {

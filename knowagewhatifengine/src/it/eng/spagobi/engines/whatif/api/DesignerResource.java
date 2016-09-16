@@ -17,17 +17,6 @@
  */
 package it.eng.spagobi.engines.whatif.api;
 
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
-import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
-import it.eng.spagobi.engines.whatif.schema.MondrianSchemaManager;
-import it.eng.spagobi.engines.whatif.template.WhatIfTemplate;
-import it.eng.spagobi.services.proxy.ArtifactServiceProxy;
-import it.eng.spagobi.utilities.engines.EngineConstants;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
-import it.eng.spagobi.writeback4j.mondrian.MondrianDriver;
-import it.eng.spagobi.writeback4j.mondrian.MondrianSchemaRetriver;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +37,17 @@ import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
+import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
+import it.eng.spagobi.engines.whatif.schema.MondrianSchemaManager;
+import it.eng.spagobi.engines.whatif.template.WhatIfTemplate;
+import it.eng.spagobi.services.proxy.ArtifactServiceProxy;
+import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
+import it.eng.spagobi.writeback4j.mondrian.MondrianDriver;
+import it.eng.spagobi.writeback4j.mondrian.MondrianSchemaRetriver;
 
 /**
  * @author spetrovic
@@ -104,7 +104,7 @@ public class DesignerResource extends AbstractWhatIfEngineService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public void saveMdx(String body) throws SpagoBIEngineException, JSONException {
 		logger.debug("IN");
-
+		boolean whatif;
 		JSONObject obj = new JSONObject(body);
 		String currentArtifactId = obj.getString("mondrianSchemaId");
 		String artifactId = obj.getString("id");
@@ -118,6 +118,11 @@ public class DesignerResource extends AbstractWhatIfEngineService {
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		ei.getEnv().put(SpagoBIConstants.SBI_ARTIFACT_VERSION_ID, currentArtifactId);
 		ei.getEnv().put(SpagoBIConstants.SBI_ARTIFACT_ID, artifactId);
+		if (ei.getEnv().get("ENGINE").equals("knowageolapengine")) {
+			whatif = false;
+		} else {
+			whatif = true;
+		}
 		ei.updateWhatIfEngineInstance(template, false, ei.getEnv());
 		logger.debug("OUT");
 	}
