@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -21,7 +21,6 @@ import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Config;
-import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.metadata.SbiConfig;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 
@@ -37,79 +36,88 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
+
 /**
  * Defines the Hibernate implementations for all DAO methods, for a domain.
- * 
+ *
  * @author Monia Spinelli
  */
 public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO {
 
-    static private Logger logger = Logger.getLogger(ConfigDAOHibImpl.class);
-    
-    /* (non-Javadoc)
-     * @see it.eng.spagobi.commons.dao.IUserFunctionalityDAO#loadAllConfigParameters()
-     */
-    public List loadAllConfigParameters() throws Exception{
-    	logger.debug("IN");
-		
+	static private Logger logger = Logger.getLogger(ConfigDAOHibImpl.class);
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see it.eng.spagobi.commons.dao.IUserFunctionalityDAO#loadAllConfigParameters()
+	 */
+	@Override
+	public List loadAllConfigParameters() throws Exception {
+		logger.debug("IN");
+
 		ArrayList toReturn = new ArrayList();
 		Session aSession = null;
 		Transaction tx = null;
-		try{
+		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			
+
 			List roleTypes = new ArrayList();
-			
+
 			Query hibQuery = aSession.createQuery(" from SbiConfig");
 			List hibList = hibQuery.list();
-			Iterator it = hibList.iterator();			
-			while (it.hasNext()) {			
-				SbiConfig hibMap = (SbiConfig) it.next();	
+			Iterator it = hibList.iterator();
+			while (it.hasNext()) {
+				SbiConfig hibMap = (SbiConfig) it.next();
 				if (hibMap != null) {
-					Config biMap = hibMap.toConfig();	
+					Config biMap = hibMap.toConfig();
 					toReturn.add(biMap);
 				}
 			}
 			tx.commit();
-		}catch(HibernateException he){
-			logger.error("HibernateException during query",he);
-			
-			if (tx != null) tx.rollback();	
-	
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);  
-		
-		}finally{
-			if (aSession!=null){
-				if (aSession.isOpen()) aSession.close();
+		} catch (HibernateException he) {
+			logger.error("HibernateException during query", he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
 			}
 			logger.debug("OUT");
 		}
 		return toReturn;
-	
-    }
 
-    /**
+	}
+
+	/**
 	 * Load configuration by id.
-	 * 
-	 * @param id the configuration id
-	 * 
+	 *
+	 * @param id
+	 *            the configuration id
+	 *
 	 * @return the config object
-	 * 
-	 * @throws EMFUserError the EMF user error
-	 * 
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 *
 	 * @see it.eng.spagobi.common.bo.dao.ISbiConfigDAO#loadConfigParametersById(integer)
 	 */
-    public Config loadConfigParametersById(String id) throws Exception {
-    	logger.debug("IN");
-    	Config toReturn = null;
+	@Override
+	public Config loadConfigParametersById(String id) throws Exception {
+		logger.debug("IN");
+		Config toReturn = null;
 		Session tmpSession = null;
 		Transaction tx = null;
 
 		try {
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
-			SbiConfig hibMap = (SbiConfig)tmpSession.load(SbiConfig.class,  id);
+			SbiConfig hibMap = (SbiConfig) tmpSession.load(SbiConfig.class, id);
 			toReturn = hibMap.toConfig();
 			tx.commit();
 
@@ -121,42 +129,47 @@ public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO
 
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
-		} finally {			
-			if (tmpSession!=null){
-				if (tmpSession.isOpen()) tmpSession.close();
+		} finally {
+			if (tmpSession != null) {
+				if (tmpSession.isOpen())
+					tmpSession.close();
 
 			}
 			logger.debug("OUT");
-		}		
+		}
 		return toReturn;
-    }
-    
-    /**
+	}
+
+	/**
 	 * Load configuration by complete label.
-	 * 
-	 * @param label the configuration label
-	 * 
+	 *
+	 * @param label
+	 *            the configuration label
+	 *
 	 * @return the config object
-	 * 
-	 * @throws EMFUserError the EMF user error
-	 * 
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 *
 	 * @see it.eng.spagobi.common.bo.dao.ISbiConfigDAO#loadConfigParametersById(string)
 	 */
-    public Config loadConfigParametersByLabel(String label) throws Exception{
-    	logger.debug("IN");
-    	Config toReturn = null;
+	@Override
+	public Config loadConfigParametersByLabel(String label) throws Exception {
+		logger.debug("IN");
+		Config toReturn = null;
 		Session tmpSession = null;
 		Transaction tx = null;
 		try {
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
-			Criterion labelCriterrion = Expression.eq("label",label);
+			Criterion labelCriterrion = Expression.eq("label", label);
 			Criteria criteria = tmpSession.createCriteria(SbiConfig.class);
-			criteria.add(labelCriterrion);	
-	
+			criteria.add(labelCriterrion);
+
 			SbiConfig hibConfig = (SbiConfig) criteria.uniqueResult();
-			if (hibConfig == null) return null;
-			toReturn = hibConfig.toConfig();				
+			if (hibConfig == null)
+				return null;
+			toReturn = hibConfig.toConfig();
 
 			tx.commit();
 		} catch (HibernateException he) {
@@ -165,42 +178,46 @@ public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (tmpSession!=null){
-				if (tmpSession.isOpen()) tmpSession.close();
+			if (tmpSession != null) {
+				if (tmpSession.isOpen())
+					tmpSession.close();
 			}
 			logger.debug("OUT");
 		}
-		return toReturn;		
-    }
-    
-    /**
+		return toReturn;
+	}
+
+	/**
 	 * Load configuration by a property node.
-	 * 
-	 * @param prop the configuration label
-	 * 
+	 *
+	 * @param prop
+	 *            the configuration label
+	 *
 	 * @return a list with all children of the property node
-	 * 
-	 * @throws EMFUserError the EMF user error
-	 * 
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 *
 	 * @see it.eng.spagobi.common.bo.dao.ISbiConfigDAO#loadConfigParametersByProperties(string)
 	 */
-    public List loadConfigParametersByProperties(String prop) throws Exception{
-    	logger.debug("IN");
-    	
-		ArrayList toReturn = new ArrayList(); 
+	@Override
+	public List loadConfigParametersByProperties(String prop) throws Exception {
+		logger.debug("IN");
+
+		ArrayList toReturn = new ArrayList();
 		List allConfig = loadAllConfigParameters();
-		//filter with the 'prop' parameter
-		Iterator it = allConfig.iterator();			
-		while (it.hasNext()) {			
-			Config tmpConf = (Config) it.next();	
+		// filter with the 'prop' parameter
+		Iterator it = allConfig.iterator();
+		while (it.hasNext()) {
+			Config tmpConf = (Config) it.next();
 			if (tmpConf.isActive() && tmpConf.getLabel().startsWith(prop))
 				toReturn.add(tmpConf);
 		}
-		
+
 		return toReturn;
-    }
-    
-    public SbiConfig fromConfig(Config config){
+	}
+
+	public SbiConfig fromConfig(Config config) {
 		SbiConfig hibConfig = new SbiConfig();
 		hibConfig.setValueCheck(config.getValueCheck());
 		hibConfig.setId(config.getId());
@@ -210,17 +227,20 @@ public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO
 		hibConfig.setCategory(config.getCategory());
 		return hibConfig;
 	}
-	
+
 	/**
 	 * Save config by id.
-	 * 
-	 * @param id the id
-	 * 
+	 *
+	 * @param id
+	 *            the id
+	 *
 	 * @return void
-	 * 
-	 * @throws EMFUserError the EMF user error
-	 * 
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 *
 	 */
+	@Override
 	public void saveConfig(Config config) throws EMFUserError {
 		logger.debug("IN");
 		Session aSession = null;
@@ -229,18 +249,18 @@ public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			
+
 			SbiConfig hibConfig = null;
 			Integer id = config.getId();
-			
-			Criterion domainCriterrion = Expression.eq("valueId",config.getValueTypeId());
+
+			Criterion domainCriterrion = Expression.eq("valueId", config.getValueTypeId());
 			Criteria domainCriteria = aSession.createCriteria(SbiDomains.class);
-			domainCriteria.add(domainCriterrion);	
-			
-			SbiDomains hibDomains = (SbiDomains) domainCriteria.uniqueResult();	
-			
-			if(id!=null){
-				//modification
+			domainCriteria.add(domainCriterrion);
+
+			SbiDomains hibDomains = (SbiDomains) domainCriteria.uniqueResult();
+
+			if (id != null) {
+				// modification
 				logger.debug("Update Config");
 				hibConfig = (SbiConfig) aSession.load(SbiConfig.class, id);
 				updateSbiCommonInfo4Update(hibConfig);
@@ -251,19 +271,18 @@ public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO
 				hibConfig.setIsActive(config.isActive());
 				hibConfig.setSbiDomains(hibDomains);
 				hibConfig.setCategory(config.getCategory());
-			}
-			else{
-				//insertion
+			} else {
+				// insertion
 				logger.debug("Insert new Config");
 				hibConfig = fromConfig(config);
 				updateSbiCommonInfo4Insert(hibConfig);
 				hibConfig.setSbiDomains(hibDomains);
 			}
-			
+
 			Integer newId = (Integer) aSession.save(hibConfig);
-				
+
 			tx.commit();
-			
+
 			config.setId(newId);
 
 		} catch (HibernateException he) {
@@ -284,49 +303,52 @@ public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO
 		logger.debug("OUT");
 	}
 
+	/**
+	 * Delete config by id.
+	 * 
+	 * @param id
+	 *            the id
+	 * 
+	 * @return void
+	 * 
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 * 
+	 */
+	@Override
+	public void delete(Integer idConfig) throws EMFUserError {
+		logger.debug("IN");
+		Session sess = null;
+		Transaction tx = null;
 
+		try {
+			sess = getSession();
+			tx = sess.beginTransaction();
 
-    /**
-     * Delete config by id.
-     * 
-     * @param id the id
-     * 
-     * @return void
-     * 
-     * @throws EMFUserError the EMF user error
-     * 
-     */
-    public void delete(Integer idConfig)  throws EMFUserError {
-    	logger.debug("IN");
-    	Session sess = null;
-    	Transaction tx = null;
+			Criterion aCriterion = Expression.eq("id", idConfig);
+			Criteria criteria = sess.createCriteria(SbiConfig.class);
+			criteria.add(aCriterion);
+			SbiConfig aSbiConfig = (SbiConfig) criteria.uniqueResult();
+			if (aSbiConfig != null)
+				sess.delete(aSbiConfig);
+			tx.commit();
 
-    	try {
-    		sess = getSession();
-    		tx = sess.beginTransaction();
-    		
-    		Criterion aCriterion = Expression.eq("id", idConfig);
-    		Criteria criteria = sess.createCriteria(SbiConfig.class);
-    		criteria.add(aCriterion);
-    		SbiConfig aSbiConfig = (SbiConfig) criteria.uniqueResult();
-    		if (aSbiConfig!=null) sess.delete(aSbiConfig);
-    		tx.commit();
-    		
-    	} catch (HibernateException he) {
-    		logger.error("HibernateException",he);
+		} catch (HibernateException he) {
+			logger.error("HibernateException", he);
 
-    		if (tx != null)
-    			tx.rollback();
+			if (tx != null)
+				tx.rollback();
 
-    		throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
-    	} finally {
-    		if (sess!=null){
-    			if (sess.isOpen()) sess.close();
-    		}
-    	}
-    	SingletonConfig.getInstance().clearCache();
-    	logger.debug("OUT");
-    }
+		} finally {
+			if (sess != null) {
+				if (sess.isOpen())
+					sess.close();
+			}
+		}
+		SingletonConfig.getInstance().clearCache();
+		logger.debug("OUT");
+	}
 
 }

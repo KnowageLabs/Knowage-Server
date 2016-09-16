@@ -6,6 +6,21 @@
     background-color: rgba(240,240,240,1);
     background-image: #fff;
     
+	cockpit-widget{
+		&>li{
+			&>md-card{
+				&>md-card-content{
+					&.fadeOut{
+						&>cockpit-document-widget>iframe{
+							display:none;
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	
     .md-button.md-knowage-theme.md-fab {
         z-index: 1000;
         top: 0;
@@ -337,6 +352,9 @@
     }
 	md-card.md-knowage-theme.associationCard {
          md-card-content {
+			md-toolbar.documentAssociationToolbar{
+				background-color: $fabPrimaryColor !important
+			}
          	md-content{
             	background-color: white;
             	md-list{

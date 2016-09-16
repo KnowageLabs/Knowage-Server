@@ -133,27 +133,29 @@ public class AssociativeLogicManager {
 		for (String v1 : graph.vertexSet()) {
 			// the vertex is the dataset label
 			IDataSet dataSet = dataSetDao.loadDataSetByLabel(v1);
-			labelToDataset.put(v1, dataSet);
-			if (dataSet.isPersisted() && !dataSet.isPersistedHDFS()) {
-				datasetToTableName.put(v1, dataSet.getPersistTableName());
-				datasetToDataSource.put(v1, dataSet.getDataSourceForWriting());
-				realtimeDatasets.remove(v1);
-			} else if (dataSet.isFlatDataset()) {
-				datasetToTableName.put(v1, dataSet.getFlatTableName());
-				datasetToDataSource.put(v1, dataSet.getDataSource());
-				realtimeDatasets.remove(v1);
-			} else if (realtimeDatasets.contains(v1)) {
-				dataSet.loadData();
-				datasetToDataStore.put(v1, dataSet.getDataStore());
-			} else {
-				String signature = dataSetDao.loadDataSetByLabel(v1).getSignature();
-				CacheItem cacheItem = cache.getMetadata().getCacheItem(signature);
-				if (cacheItem != null) {
-					String tableName = cacheItem.getTable();
-					datasetToTableName.put(v1, tableName);
-					datasetToDataSource.put(v1, cacheDataSource);
+			if (dataSet != null) {
+				labelToDataset.put(v1, dataSet);
+				if (dataSet.isPersisted() && !dataSet.isPersistedHDFS()) {
+					datasetToTableName.put(v1, dataSet.getPersistTableName());
+					datasetToDataSource.put(v1, dataSet.getDataSourceForWriting());
+					realtimeDatasets.remove(v1);
+				} else if (dataSet.isFlatDataset()) {
+					datasetToTableName.put(v1, dataSet.getFlatTableName());
+					datasetToDataSource.put(v1, dataSet.getDataSource());
+					realtimeDatasets.remove(v1);
+				} else if (realtimeDatasets.contains(v1)) {
+					dataSet.loadData();
+					datasetToDataStore.put(v1, dataSet.getDataStore());
 				} else {
-					throw new SpagoBIException("Unable to find dataset [" + v1 + "] in cache");
+					String signature = dataSetDao.loadDataSetByLabel(v1).getSignature();
+					CacheItem cacheItem = cache.getMetadata().getCacheItem(signature);
+					if (cacheItem != null) {
+						String tableName = cacheItem.getTable();
+						datasetToTableName.put(v1, tableName);
+						datasetToDataSource.put(v1, cacheDataSource);
+					} else {
+						throw new SpagoBIException("Unable to find dataset [" + v1 + "] in cache");
+					}
 				}
 			}
 		}
