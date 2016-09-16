@@ -37,7 +37,7 @@
 
 	
 	<body class="kn-svgviewer">               	
-			<div ng-app="svgViewerApp">
+			<div ng-app="svgViewerApp" class="svgMainContainer">
 			     <div  class="divFlex" ng-controller="SvgViewerController" ng-scope> 
 			     <md-sidenav layout="column"  ng-class="{'_md-locked-open':sidenavOpened}" id="svgInfoSidenav" md-component-id="svgSideNav" ng-show="<%=propertiesPanelVisible%> && noError" class="md-sidenav-<%= propertiesPanelPosition %>"  >
 			      <section  >
@@ -105,7 +105,7 @@
 				              <i class="fa fa-2x fa-minus" aria-hidden="true"></i>
 				        </md-button>
 				     </div> 
-			         <md-content layout-fill layout="column"> 
+			         <md-content class="ie11fix" layout-fill layout="column"> 
 				         <md-button class="sidenavOpenButton" ng-click="openSideNav()"  ng-show="<%=propertiesPanelVisible%> && noError"  title="Open options panel" ng-style="{'left':sidenavButtonOffset}">
 				              <i class="fa fa-2x fa-bar-chart" aria-hidden="true"></i>
 				        </md-button>					 		
