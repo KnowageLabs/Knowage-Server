@@ -406,7 +406,16 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 			} 
 
 		}
-		 
+		if ($scope.modelConfig.toolbarClickedButtons != null) {
+			for (var i = 0; i < $scope.buttons.length; i++) {
+				for(var j = 0; j < $scope.modelConfig.toolbarClickedButtons.length; j++){
+					if($scope.buttons[i].name == $scope.modelConfig.toolbarClickedButtons[j]){
+						$scope.buttons[i].clicked = true;
+					}
+				}
+			} 
+
+		} 
 		 
 		 $scope.toolbar = $scope.buttons;
 		 $mdDialog
@@ -430,7 +439,7 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 		 sbiModule_messaging.showSuccessMessage('Successfully added buttons to template', 'Success');
 		 console.log(OlapTemplateService.getTempateJson());
 		 console.log(OlapTemplateService.getToolbarButtons());
-		 $scope.closeDialogOlapDesigner()
+		 $scope.closeDialogOlapDesigner();
 	 }
 	 
 	 /**
@@ -447,7 +456,7 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
                                               name:"visible",
                                               hideTooltip:true,
                                               transformer:function(){
-                                                  return " <md-checkbox ng-model='row.visible' ng-click='scopeFunctions.checkVisibility(row)' aria-label='buttonVisible'></md-checkbox>";
+                                                  return " <md-checkbox ng-model='row.visible' aria-label='buttonVisible'></md-checkbox>";
                                               }
                                           },
                                           {
@@ -455,7 +464,7 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
                                               name:"clicked",
                                               hideTooltip:true,
                                               transformer:function(){
-                                                  return " <md-checkbox ng-model='row.clicked' ng-disabled='{{row.clickable==false}}'  ng-click='scopeFunctions.checkVisibility(row)' aria-label='buttonClicked'></md-checkbox>";
+                                                  return " <md-checkbox ng-model='row.clicked' ng-disabled='{{row.clickable==false}}'  aria-label='buttonClicked'></md-checkbox>";
                                               }
                                           }
                                           
