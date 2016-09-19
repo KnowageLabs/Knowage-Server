@@ -53,6 +53,7 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 			"mdxQuery" : ""   
 	}
 	
+	console.log(jsonTemplate);
 	/**
 	 * SCENARIO is the temporary object that will be bind to olapTemplate if the scenario is defined.
 	 */
@@ -155,6 +156,13 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	 * Opens a new dialog for what-if scenario.
 	 */
 	$scope.openScenarioWizard = function(){
+		if(jsonTemplate!=undefined){
+			$scope.scenario = {
+					name: "scenario",
+					editCube : jsonTemplate.olap.scenario.editCube,
+					measures: []
+			};
+		}
 		$mdDialog
 		.show({
 			scope : $scope,
@@ -439,7 +447,7 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
                                               name:"visible",
                                               hideTooltip:true,
                                               transformer:function(){
-                                                  return " <md-checkbox ng-model='row.visible' aria-label='buttonVisible'></md-checkbox>";
+                                                  return " <md-checkbox ng-model='row.visible' ng-click='scopeFunctions.checkVisibility(row)' aria-label='buttonVisible'></md-checkbox>";
                                               }
                                           },
                                           {
@@ -447,12 +455,20 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
                                               name:"clicked",
                                               hideTooltip:true,
                                               transformer:function(){
-                                                  return " <md-checkbox ng-model='row.clicked' ng-disabled='{{row.clickable==false}}' aria-label='buttonClicked'></md-checkbox>";
+                                                  return " <md-checkbox ng-model='row.clicked' ng-disabled='{{row.clickable==false}}'  ng-click='scopeFunctions.checkVisibility(row)' aria-label='buttonClicked'></md-checkbox>";
                                               }
                                           }
                                           
                                           ]
 	 
+
+	 
+	 $scope.tableFunction={
+
+			 	checkVisibility: function(row){
+			 		console.log(row);
+				}
+		};
 	 
 	 /**
 	  * Defining columns property for angular table with id="olapDesignerCrossNavList"
