@@ -55,7 +55,8 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                             sortableColumn:"=?",
                             changeDetector:"@?",
                             fixedItemPerPage:"=?",
-                            itemsPerPage:"=?"
+                            itemsPerPage:"=?",
+                            showExpanderRowCondition:"&?"
                         },
                         compile: function (tElement, tAttrs, transclude) {
                             return {

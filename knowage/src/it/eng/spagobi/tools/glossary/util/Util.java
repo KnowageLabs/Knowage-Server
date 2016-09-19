@@ -79,6 +79,7 @@ public class Util {
 			JSONObject ret = new JSONObject();
 			ret.put("id", par.getId());
 			ret.put("label", par.getLabel());
+			ret.put("required", par.isRequired());
 			ret.put("urlName", par.getParameterUrlName());
 			ret.put("type", par.getParameter().getType());
 			ja.put(ret);

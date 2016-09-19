@@ -73,6 +73,15 @@ $scope.executeSourceDocument = function() {
 			 */
 			+ '&EXEC_FROM=' + sourceDocumentExecProperties.EXEC_FROM; 
 		
+		//add the cockpit parameter inside the cross-Parameter Variable
+		if(sourceDocumentExecProperties.COCKPIT_PARAMETER!=undefined){
+			url+='&CROSS_PARAMETER='+encodeURIComponent(sourceDocumentExecProperties.COCKPIT_PARAMETER)
+			.replace(/'/g,"%27")
+			.replace(/"/g,"%22")
+			.replace(/%3D/g,"=")
+			.replace(/%26/g,"&");
+		}
+		
 		var laodSourceDocToCross=function(){
 			$timeout(function(){
 				if($crossNavigationHelper.crossNavigationSteps.stepControl.insertBread){

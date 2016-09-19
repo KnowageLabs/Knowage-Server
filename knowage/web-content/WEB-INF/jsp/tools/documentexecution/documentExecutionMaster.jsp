@@ -48,7 +48,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				'SBI_EXECUTION_ID' : '',
 				'MENU_PARAMETERS' : 	'<%= aRequestContainer.getServiceRequest().getAttribute("PARAMETERS") %>',
 				'EDIT_MODE': '<%= request.getParameter("EDIT_MODE") != null ? request.getParameter("EDIT_MODE") : aRequestContainer.getServiceRequest().getAttribute("EDIT_MODE")  %>',
-				'EXEC_FROM': '<%=request.getParameter("EXEC_FROM")%>' 
+				'EXEC_FROM': '<%=request.getParameter("EXEC_FROM")%>',
+				'COCKPIT_PARAMETER' : '<%= request.getParameter("COCKPIT_PARAMETER") %>'
 				
 			  	
 		};
