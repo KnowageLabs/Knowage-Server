@@ -252,12 +252,14 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	
 	
 	//Call off function remove comment bellow to get names of clicked buttons
-	//filterClickedButtons(toolbarClickedBtns);
+	filterClickedButtons(toolbarClickedBtns);
 	
 	$scope.executeClicks = function(){
+		$scope.toggleRight();
 		for(var i=0; i< $scope.clickedButtons.length; i++){
 			$scope.btnFunctions($scope.clickedButtons[i]);
 		}
+		$scope.toggleRight();
 	}
 	
 	//Handling clicks on buttons inside filter panel right
@@ -726,7 +728,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 		  }
 		  return false;
 	  }
-	  	  
+	 	  
 	  
 };
 })();

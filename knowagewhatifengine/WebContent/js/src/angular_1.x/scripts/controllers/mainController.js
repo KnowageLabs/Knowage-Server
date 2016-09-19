@@ -171,6 +171,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 			firstLoad = false;
 		}
 		source = null;
+		 $scope.executeClicks();
 	}
 	
 	handleSlicers = function(filters){
