@@ -452,7 +452,7 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
                                               name:"visible",
                                               hideTooltip:true,
                                               transformer:function(){
-                                                  return " <md-checkbox ng-model='row.visible' aria-label='buttonVisible'></md-checkbox>";
+                                                  return " <md-checkbox ng-model='row.visible' ng-change='scopeFunctions.checkVisibility(row)' aria-label='buttonVisible'></md-checkbox>";
                                               }
                                           },
                                           {
@@ -460,7 +460,7 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
                                               name:"clicked",
                                               hideTooltip:true,
                                               transformer:function(){
-                                                  return " <md-checkbox ng-model='row.clicked' ng-disabled='{{row.clickable==false}}'  aria-label='buttonClicked'></md-checkbox>";
+                                                  return " <md-checkbox ng-model='row.clicked' ng-change='scopeFunctions.checkVisibility(row)' ng-disabled='{{row.clickable==false}}'  aria-label='buttonClicked'></md-checkbox>";
                                               }
                                           }
                                           
@@ -471,7 +471,9 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	 $scope.tableFunction={
 
 			 	checkVisibility: function(row){
-			 		console.log(row);
+			 		if(row.clicked == true){
+			 	       row.visible = true;
+			 	      }
 				}
 		};
 	 
