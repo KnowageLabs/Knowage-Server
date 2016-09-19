@@ -75,10 +75,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -832,23 +834,17 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				Iterator it = metadata.iterator();
 				while (it.hasNext()) {
 					ObjMetadata objMetadata = (ObjMetadata) it.next();
-					if (!objMetadata.getDataTypeCode().equals("FILE")) {
-						ObjMetacontent objMetacontent = DAOFactory.getObjMetacontentDAO().loadObjMetacontent(objMetadata.getObjMetaId(), objectId, subObjectId);
-						addTextMetadata(documentMetadataMap, objMetadata.getDataTypeCode(), objMetadata.getName(),
+					ObjMetacontent objMetacontent = DAOFactory.getObjMetacontentDAO().loadObjMetacontent(objMetadata.getObjMetaId(), objectId, subObjectId);
+
+					if (objMetadata.getDataTypeCode().equals(SpagoBIConstants.FILE_METADATA_TYPE_CODE)) {
+						// If FILE, we do not need the data content. Instead, we get its filename which is saved in additionalInfo field
+						addMetadata(documentMetadataMap, objMetadata.getDataTypeCode(), objMetadata.getName(),
+								objMetacontent != null && objMetacontent.getAdditionalInfo() != null ? new String(objMetacontent.getAdditionalInfo()) : "",
+								objMetadata.getObjMetaId());
+					} else {
+						addMetadata(documentMetadataMap, objMetadata.getDataTypeCode(), objMetadata.getName(),
 								objMetacontent != null && objMetacontent.getContent() != null ? new String(objMetacontent.getContent()) : "",
 								objMetadata.getObjMetaId());
-					} else if (objMetadata.getDataTypeCode().equals("FILE")) {
-						ObjMetacontent objMetacontent = DAOFactory.getObjMetacontentDAO().loadObjMetacontent(objMetadata.getObjMetaId(), objectId, subObjectId);
-						addTextFileMetadata(documentMetadataMap, objMetadata.getDataTypeCode(), objMetadata.getName(),
-								objMetacontent != null && objMetacontent.getContent() != null ? new String(objMetacontent.getContent()) : "",
-								objMetadata.getObjMetaId(),
-								objMetacontent != null && objMetacontent.getAdditionalInfo() != null ? objMetacontent.getAdditionalInfo() : ""); // additionalInfo
-																																					// contains
-																																					// file
-																																					// name! and
-																																					// file
-																																					// saved
-																																					// data
 					}
 				}
 			}
@@ -923,11 +919,11 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		try {
 			JSONObject params = RestUtilities.readBodyAsJSONObject(httpRequest);
 			IObjMetacontentDAO dao = DAOFactory.getObjMetacontentDAO();
+
 			dao.setUserProfile(getUserProfile());
 			Integer biobjectId = params.getInt("id");
 			Integer subobjectId = params.has("subobjectId") ? params.getInt("subobjectId") : null;
 			String jsonMeta = params.getString("jsonMeta");
-			byte[] bytes = null;
 
 			DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 			Date date = new Date();
@@ -936,29 +932,15 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			logger.debug("Object id = " + biobjectId);
 			logger.debug("Subobject id = " + subobjectId);
 
-			JSONArray metadata = new JSONArray(jsonMeta);
+			List<ObjMetacontent> previousMetacontents = dao.loadObjOrSubObjMetacontents(biobjectId, subobjectId);
+			Set<Integer> toDeleteMetadataIds = new HashSet<Integer>();
+			JSONArray metadata = getCorrectMetadataToBeSaved(new JSONArray(jsonMeta), previousMetacontents, toDeleteMetadataIds);
 			for (int i = 0; i < metadata.length(); i++) {
 				JSONObject aMetadata = metadata.getJSONObject(i);
 				Integer metadataId = aMetadata.getInt("id");
 				String text = aMetadata.getString("value");
-				boolean isFileMetadata = !aMetadata.isNull("fileToSave");
-				boolean newFileUploaded = false;
-				String fileLabel = "";
 
-				String fileName = null;
-				if (isFileMetadata) {
-					JSONObject fileMetadataObject = aMetadata.getJSONObject("fileToSave");
-					if (!aMetadata.isNull("fileLabel")) {
-						fileLabel = aMetadata.getString("fileLabel");
-					}
-
-					newFileUploaded = !fileMetadataObject.isNull("fileName");
-					if (newFileUploaded) // file to save is uploaded
-					{
-						fileName = fileMetadataObject.getString("fileName");
-					}
-
-				}
+				boolean isFileMetadata = aMetadata.has("fileToSave");
 
 				ObjMetacontent aObjMetacontent = dao.loadObjMetacontent(metadataId, biobjectId, subobjectId);
 				String filePath = SpagoBIUtilities.getResourcePath() + "/" + METADATA_DIR + "/" + getUserProfile().getUserName().toString();
@@ -974,22 +956,15 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					aObjMetacontent.setLastChangeDate(new Date());
 
 					if (isFileMetadata) {
-						if (newFileUploaded) {
-							bytes = getFileByteArray(filePath, fileName);
-							aObjMetacontent.setContent(bytes);
-							JSONObject uploadedFileWithDate = new JSONObject();
-							uploadedFileWithDate.put("fileName", fileName);
-							uploadedFileWithDate.put("saveDate", saveFileDateString);
-							// uploadedFileWithDate.put("fileLabel", fileLabel); //Label removed
-							aObjMetacontent.setAdditionalInfo(uploadedFileWithDate.toString());
-						} else { // metadata file, but file not uploaded yet
-							aObjMetacontent.setContent("".getBytes("UTF-8"));
-							if (aObjMetacontent.getAdditionalInfo() != null) {
-								JSONObject uploadedFileInfo = new JSONObject(aObjMetacontent.getAdditionalInfo());
-								// uploadedFileInfo.put("fileLabel", fileLabel); //Label removed
-								aObjMetacontent.setAdditionalInfo(uploadedFileInfo.toString());
-							}
-						}
+						JSONObject fileMetadataObject = aMetadata.getJSONObject("fileToSave");
+						String fileName = fileMetadataObject.getString("fileName");
+
+						byte[] bytes = getFileByteArray(filePath, fileName);
+						aObjMetacontent.setContent(bytes);
+						JSONObject uploadedFileWithDate = new JSONObject();
+						uploadedFileWithDate.put("fileName", fileName);
+						uploadedFileWithDate.put("saveDate", saveFileDateString);
+						aObjMetacontent.setAdditionalInfo(uploadedFileWithDate.toString());
 					} else {
 						aObjMetacontent.setContent(text.getBytes("UTF-8"));
 					}
@@ -998,22 +973,15 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					logger.debug("ObjMetacontent for metadata id = " + metadataId + ", biobject id = " + biobjectId + ", subobject id = " + subobjectId
 							+ " was found, it will be modified...");
 					if (isFileMetadata) {
-						if (newFileUploaded) {
-							bytes = getFileByteArray(filePath, fileName);
-							aObjMetacontent.setContent(bytes);
-							JSONObject uploadedFileWithDate = new JSONObject();
-							uploadedFileWithDate.put("fileName", fileName);
-							uploadedFileWithDate.put("saveDate", saveFileDateString);
-							// uploadedFileWithDate.put("fileLabel", fileLabel); //Label removed
-							aObjMetacontent.setAdditionalInfo(uploadedFileWithDate.toString());
-						} else { // metadata file, but file not uploaded yet
-							aObjMetacontent.setContent("".getBytes("UTF-8"));
-							if (aObjMetacontent.getAdditionalInfo() != null) {
-								JSONObject uploadedFileInfo = new JSONObject(aObjMetacontent.getAdditionalInfo());
-								// uploadedFileInfo.put("fileLabel", fileLabel); //Label removed
-								aObjMetacontent.setAdditionalInfo(uploadedFileInfo.toString());
-							}
-						}
+						JSONObject fileMetadataObject = aMetadata.getJSONObject("fileToSave");
+						String fileName = fileMetadataObject.getString("fileName");
+
+						byte[] bytes = getFileByteArray(filePath, fileName);
+						aObjMetacontent.setContent(bytes);
+						JSONObject uploadedFileWithDate = new JSONObject();
+						uploadedFileWithDate.put("fileName", fileName);
+						uploadedFileWithDate.put("saveDate", saveFileDateString);
+						aObjMetacontent.setAdditionalInfo(uploadedFileWithDate.toString());
 					} else {
 						aObjMetacontent.setContent(text.getBytes("UTF-8"));
 					}
@@ -1022,6 +990,14 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				}
 
 			}
+
+			// Building a list of metadata that has to be removed.
+			for (ObjMetacontent previousMetacontent : previousMetacontents) {
+				if (toDeleteMetadataIds.contains(previousMetacontent.getObjmetaId())) {
+					dao.eraseObjMetadata(previousMetacontent);
+				}
+			}
+
 			/*
 			 * indexes biobject by modifying document in index
 			 */
@@ -1033,6 +1009,31 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			return Response.ok(new JSONObject("{\"errors\":[{\"message\":\"Exception occurred while saving metadata\"}]}").toString()).build();
 		}
 		return Response.ok().build();
+	}
+
+	private JSONArray getCorrectMetadataToBeSaved(JSONArray metadata, List<ObjMetacontent> previousMetacontents, Set<Integer> toDeleteMetadataIds)
+			throws JSONException {
+		JSONArray toReturn = new JSONArray();
+
+		// Getting IDs list of old metadata
+		for (ObjMetacontent metacontent : previousMetacontents) {
+			toDeleteMetadataIds.add(metacontent.getObjmetaId());
+		}
+
+		for (int i = 0; i < metadata.length(); i++) {
+			JSONObject aMetadata = metadata.getJSONObject(i);
+			Integer metadataId = aMetadata.getInt("id");
+
+			// This comes from the request, so it has not to be deleted
+			toDeleteMetadataIds.remove(metadataId);
+
+			boolean isFileMetadata = aMetadata.has("fileToSave");
+			if (!isFileMetadata || (isFileMetadata && !aMetadata.isNull("fileToSave"))) {
+				// If it is not a FILE metadata, then it's sure it has to be saved and it has not to be deleted
+				toReturn.put(aMetadata);
+			}
+		}
+		return toReturn;
 	}
 
 	/**
@@ -1130,11 +1131,11 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	}
 
 	private void addMetadata(JSONArray generalMetadata, String name, String value) throws JsonMappingException, JsonParseException, JSONException, IOException {
-		addMetadata(generalMetadata, name, value, null, null);
+		addGeneralMetadata(generalMetadata, name, value, null, null);
 	}
 
-	private void addMetadata(JSONArray generalMetadata, String name, String value, Integer id, String type) throws JsonMappingException, JsonParseException,
-			JSONException, IOException {
+	private void addGeneralMetadata(JSONArray generalMetadata, String name, String value, Integer id, String type) throws JsonMappingException,
+			JsonParseException, JSONException, IOException {
 		JSONObject data = new JSONObject();
 		if (id != null) {
 			data.put("id", id);
@@ -1144,39 +1145,14 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		generalMetadata.put(data);
 	}
 
-	private void addTextMetadata(Map<String, JSONArray> metadataMap, String type, String name, String value, Integer id) throws JSONException,
+	private void addMetadata(Map<String, JSONArray> metadataMap, String type, String name, String value, Integer id) throws JSONException,
 			JsonMappingException, JsonParseException, IOException {
 		JSONArray jsonArray = metadataMap.get(type);
 		if (jsonArray == null) {
 			jsonArray = new JSONArray();
 		}
-		// if (type.equals("FILE")) { // Avoid to put file content in response message
-		// value = "File content is present on server but not sent in this message";
-		// }
-		addMetadata(jsonArray, name, value, id, type);
-		metadataMap.put(type, jsonArray);
-	}
 
-	private void addTextFileMetadata(Map<String, JSONArray> metadataMap, String type, String name, String value, Integer id, String metadataFileName)
-			throws JSONException, JsonMappingException, JsonParseException, IOException {
-
-		JSONArray jsonArray = metadataMap.get(type);
-		if (jsonArray == null) {
-			jsonArray = new JSONArray();
-		}
-		if (type.equals("FILE")) { // Avoid to put file content in response message
-			value = "";
-		}
-
-		JSONObject data = new JSONObject();
-		if (id != null) {
-			data.put("id", id);
-		}
-		data.put("name", name);
-		data.put("value", value);
-		data.put("savedFile", metadataFileName); // savedFile instead of uploadedFile!!
-		jsonArray.put(data);
-
+		addGeneralMetadata(jsonArray, name, value, id, type);
 		metadataMap.put(type, jsonArray);
 	}
 
