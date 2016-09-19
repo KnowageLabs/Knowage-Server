@@ -47,6 +47,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
 
@@ -125,6 +126,7 @@ public class WhatIfDriver extends GenericDriver {
 		String engineName = obj.getEngineLabel();
 
 		byte[] template1 = this.getTemplateAsByteArray(biobject);
+		JSONObject jsonTemp = this.getTemplateAsJsonObject(template1);
 		parameters = addArtifactVersionId(template1, parameters, profile, obj.getId(), engine);
 		parameters = addArtifactId(template1, parameters, profile);
 		parameters = addTemplateInformation(template1, parameters);
@@ -132,6 +134,7 @@ public class WhatIfDriver extends GenericDriver {
 		parameters.put("DOCUMENT_LABEL", documentLabel);
 		parameters.put("ENGINE", engineName);
 		parameters.put("mode", "edit");
+		parameters.put("template", jsonTemp);
 		// CREATE EXECUTION ID
 		String sbiExecutionId = null;
 		UUIDGenerator uuidGen = UUIDGenerator.getInstance();

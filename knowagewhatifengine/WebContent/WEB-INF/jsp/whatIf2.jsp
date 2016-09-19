@@ -26,6 +26,7 @@
 	var schemaName = '<%= schemaName %>'
 	var cubeName = '<%= cubeName %>'
 	var currentContentId = '<%= currentContentId %>'
+	var jsonTemplate = '<%= jsonTemplate %>'
 	
 </script>
 </head>

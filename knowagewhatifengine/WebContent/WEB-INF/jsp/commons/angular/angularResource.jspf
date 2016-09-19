@@ -62,6 +62,7 @@ author:...
        String schemaName = null;
        String cubeName = null;
        String currentContentId = null;
+       String jsonTemplate = null;
        ExecutionSession es = new ExecutionSession(request, request.getSession());
        
        
@@ -113,6 +114,9 @@ author:...
 		}
 	   if(request.getParameter("currentContentId") != null){
 		   currentContentId = request.getParameter("currentContentId");
+		}
+	   if(request.getParameter("template") != null){
+		   jsonTemplate = request.getParameter("template");
 		}
 	   
 	   if(request.getParameter("ENGINE") != null){

@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -26,6 +26,7 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ParameterValuesEncoder;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
+import it.eng.spagobi.json.Xml;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 
 import java.util.ArrayList;
@@ -55,7 +56,7 @@ public class AbstractDriver {
 
 	/**
 	 * Applys changes for security reason if necessary
-	 * 
+	 *
 	 * @param pars
 	 *            The map of parameters
 	 * @return The map of parameters to send to the engine
@@ -63,9 +64,13 @@ public class AbstractDriver {
 	protected Map applySecurity(Map pars, IEngUserProfile profile) {
 		logger.debug("IN");
 		/*
-		 * String active =SingletonConfig.getInstance().getConfigValue("SPAGOBI_SSO.ACTIVE"); String userId=(String)profile.getUserUniqueIdentifier(); if
-		 * (active != null && active.equalsIgnoreCase("true") && !((UserProfile)profile).isSchedulerUser(userId)){
-		 * logger.debug("I don't put the UserId information in the URL"); }else { if (((UserProfile) profile).getUserUniqueIdentifier() != null) {
+		 * String active
+		 * =SingletonConfig.getInstance().getConfigValue("SPAGOBI_SSO.ACTIVE");
+		 * String userId=(String)profile.getUserUniqueIdentifier(); if (active
+		 * != null && active.equalsIgnoreCase("true") &&
+		 * !((UserProfile)profile).isSchedulerUser(userId)){
+		 * logger.debug("I don't put the UserId information in the URL"); }else
+		 * { if (((UserProfile) profile).getUserUniqueIdentifier() != null) {
 		 */
 		pars.put(SsoServiceInterface.USER_ID, ((UserProfile) profile).getUserUniqueIdentifier());
 		// }
@@ -77,8 +82,9 @@ public class AbstractDriver {
 	}
 
 	/**
-	 * get the description of the parameter and create a new biparameter to pass at the engine with url parameter_name+DESCRIPTION_SUFFIX
-	 * 
+	 * get the description of the parameter and create a new biparameter to pass
+	 * at the engine with url parameter_name+DESCRIPTION_SUFFIX
+	 *
 	 * @param biobj
 	 * @param pars
 	 * @return
@@ -100,7 +106,8 @@ public class AbstractDriver {
 					biobjPar = (BIObjectParameter) it.next();
 					logger.debug("Manage parameter: " + biobjPar.getParameterUrlName());
 					/*
-					 * value = (String) biobjPar.getParameterValues().get(0); pars.put(biobjPar.getParameterUrlName(), value);
+					 * value = (String) biobjPar.getParameterValues().get(0);
+					 * pars.put(biobjPar.getParameterUrlName(), value);
 					 */
 					description = parValuesEncoder.encodeDescription(biobjPar);
 					if (description != null) {
@@ -119,13 +126,13 @@ public class AbstractDriver {
 
 	/**
 	 * Returns the template elaborated.
-	 * 
+	 *
 	 * @param byte[] the template
 	 * @param profile
 	 *            the profile
-	 * 
+	 *
 	 * @return the byte[] with the modification of the document template
-	 * 
+	 *
 	 * @throws InvalidOperationRequest
 	 *             the invalid operation request
 	 */
@@ -140,7 +147,7 @@ public class AbstractDriver {
 
 	/**
 	 * get template and return it in Source Bean form
-	 * 
+	 *
 	 * @param biObject
 	 * @return
 	 */
@@ -224,7 +231,8 @@ public class AbstractDriver {
 
 			try {
 				String contentStr = new String(contentTemplate);
-				content = new JSONObject(contentStr);
+				String jsonString = Xml.xml2json(contentStr);
+				content = new JSONObject(jsonString);
 			} catch (Exception e) {
 				logger.error("Error while converting the Template bytes into a JSON object: ", e);
 				throw new Exception("Error while converting the Template bytes into a JSON object");
