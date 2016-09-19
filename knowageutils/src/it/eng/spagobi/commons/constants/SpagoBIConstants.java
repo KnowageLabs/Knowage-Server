@@ -50,6 +50,8 @@ public class SpagoBIConstants {
 
 	public static final String RUN_ANYWAY = "RUN_ANYWAY";
 
+	public static final String FILE_METADATA_TYPE_CODE = "FILE";
+
 	/*
 	 * public static final String ACTOR = "ACTOR"; public static final String TESTER_ACTOR = "TESTER_ACTOR"; public static final String USER_ACTOR =
 	 * "USER_ACTOR"; public static final String ADMIN_ACTOR = "ADMIN_ACTOR"; public static final String DEV_ACTOR = "DEV_ACTOR";
