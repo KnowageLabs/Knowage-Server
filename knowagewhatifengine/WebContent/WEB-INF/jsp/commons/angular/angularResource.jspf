@@ -63,6 +63,7 @@ author:...
        String cubeName = null;
        String currentContentId = null;
        String jsonTemplate = null;
+       String editModeCurrentContentId = null;
        ExecutionSession es = new ExecutionSession(request, request.getSession());
        
        
@@ -118,6 +119,10 @@ author:...
 	   if(request.getParameter("template") != null){
 		   jsonTemplate = request.getParameter("template");
 		}
+	   if(request.getParameter("SBI_ARTIFACT_VERSION_ID") != null){
+		   editModeCurrentContentId = request.getParameter("SBI_ARTIFACT_VERSION_ID");
+		}
+	   
 	   
 	   if(request.getParameter("ENGINE") != null){
 		

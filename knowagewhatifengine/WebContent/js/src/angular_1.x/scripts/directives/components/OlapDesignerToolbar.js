@@ -81,6 +81,23 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	 * Loads cubes and opens a new what-if scenario dialog.
 	 */
 	$scope.runScenarioWizard = function(){
+		$scope.getCubes();
+		if(jsonTemplate!="null"){
+			var json = JSON.parse(jsonTemplate);
+			if(json.olap.hasOwnProperty("SCENARIO")){
+				$scope.scenario = {
+						name: "scenario",
+						editCube : json.olap.SCENARIO.editCube,
+						measures : []
+				};
+				$scope.loadAllMeasures($scope.scenario.editCube)
+				for (var i = 0; i < json.olap.SCENARIO.MEASURE.length; i++) {
+					$scope.scenario.measures.push(json.olap.SCENARIO.MEASURE[i].MEASURE);
+				}
+			}
+		}		
+		
+		console.log($scope.scenario)
 		$mdDialog
 		.show({
 			scope : $scope,
@@ -90,8 +107,7 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 			templateUrl : sbiModule_config.contextName + '/html/template/right/edit/scenarioWizard.html',
 			clickOutsideToClose : false,
 			hasBackdrop : false
-		});
-		$scope.getCubes();
+		});		
 	}
 	
 	
@@ -156,13 +172,6 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	 * Opens a new dialog for what-if scenario.
 	 */
 	$scope.openScenarioWizard = function(){
-		if(jsonTemplate!=undefined){
-			$scope.scenario = {
-					name: "scenario",
-					editCube : jsonTemplate.olap.scenario.editCube,
-					measures: []
-			};
-		}
 		$mdDialog
 		.show({
 			scope : $scope,
@@ -194,6 +203,9 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	 */
 	
 	$scope.loadAllMeasures = function (editCube) {
+		if(editModeCurrentContentId!="null"){
+			currentContentId = editModeCurrentContentId;
+		}
 		sbiModule_restServices.promiseGet("1.0/designer/measures/"+currentContentId + "/"+ editCube,"?SBI_EXECUTION_ID=" + JSsbiExecutionID)
 		.then(function(response) {
 			$scope.measuresList = [];
@@ -207,22 +219,6 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');	
 		});	
 	}
-	
-	$scope.getAllMeasures = function(){
-		sbiModule_restServices.promiseGet("1.0/designer/measures/"+currentContentId + "/"+ cubeName,"?SBI_EXECUTION_ID=" + JSsbiExecutionID)
-		.then(function(response) {
-			$scope.measuresList = [];
-			
-			for (var i = 0; i < response.data.length; i++) {
-				var measuresListItem = { name: ""};
-				measuresListItem.name = response.data[i];
-				$scope.measuresList.push(measuresListItem);
-			}
-			$scope.openScenarioWizard();
-		}, function(response) {
-			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');	
-		});	
-	};
 	
 	/**
 	 * Opens a new dialog for crossnav definition.
@@ -414,7 +410,7 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 					}
 				}
 			} 
-
+		 
 		} 
 		 
 		 $scope.toolbar = $scope.buttons;
