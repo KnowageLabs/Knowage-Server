@@ -82,7 +82,24 @@ onload="init(evt);">
 			window.parent.document.dispatchEvent(event);
 		}
 		
+		function p(id) {
+		var element = document.querySelectorAll("[class='on']");
+		if(element.length!=0){
+			element[0].attributes.class.nodeValue = '';
+		}
+		document.getElementById(id).setAttribute("class", "on");
+		
+	}
+	
 		function clickedElementCrossNavigation(idElement){
+			var crossData = JSON.parse(idElement);
+			for (var o in crossData){
+		  		var k = Object.keys(crossData[o]);
+		  		if (k[0] == 'ELEMENT_ID'){
+		  			p(crossData[o]["ELEMENT_ID"]);	  			
+		  			break;
+		  		}
+		  	}
 			//Launch an event to announce that an element was clicked and cross navigation is called
 			var event = new CustomEvent("SVGElementClickedCrossNavigation", { "detail": idElement });
 			window.parent.document.dispatchEvent(event);
