@@ -958,8 +958,13 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					if (isFileMetadata) {
 						JSONObject fileMetadataObject = aMetadata.getJSONObject("fileToSave");
 						String fileName = fileMetadataObject.getString("fileName");
-
-						byte[] bytes = getFileByteArray(filePath, fileName);
+						String completeFilePath = filePath + "/" + fileName;
+						byte[] bytes = getFileByteArray(completeFilePath);
+						File metadataTempFile = new File(completeFilePath);
+						if (metadataTempFile.delete()) {
+							logger.debug("File [" + completeFilePath + "] removed successfully");
+						}
+						;
 						aObjMetacontent.setContent(bytes);
 						JSONObject uploadedFileWithDate = new JSONObject();
 						uploadedFileWithDate.put("fileName", fileName);
@@ -975,8 +980,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					if (isFileMetadata) {
 						JSONObject fileMetadataObject = aMetadata.getJSONObject("fileToSave");
 						String fileName = fileMetadataObject.getString("fileName");
-
-						byte[] bytes = getFileByteArray(filePath, fileName);
+						String completeFilePath = filePath + "/" + fileName;
+						byte[] bytes = getFileByteArray(completeFilePath);
 						aObjMetacontent.setContent(bytes);
 						JSONObject uploadedFileWithDate = new JSONObject();
 						uploadedFileWithDate.put("fileName", fileName);
@@ -1028,7 +1033,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			toDeleteMetadataIds.remove(metadataId);
 
 			boolean isFileMetadata = aMetadata.has("fileToSave");
-			if (!isFileMetadata || (isFileMetadata && !aMetadata.isNull("fileToSave"))) {
+			if (!isFileMetadata || (isFileMetadata && aMetadata.getJSONObject("fileToSave").length() != 0)) {
 				// If it is not a FILE metadata, then it's sure it has to be saved and it has not to be deleted
 				toReturn.put(aMetadata);
 			}
@@ -1077,36 +1082,36 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 	}
 
-	@GET
-	@Path("/{id}/{metadataObjectId}/deletefilemetadata")
-	// (delete a metacontent)
-	public Response cleanFileMetadata(@PathParam("id") Integer objectId, @PathParam("metadataObjectId") Integer metaObjId,
-			@Context HttpServletRequest httpRequest) throws EMFUserError {
-		try {
-			Integer subObjectId = null;
-			IObjMetacontentDAO metacontentDAO = DAOFactory.getObjMetacontentDAO();
-
-			ObjMetacontent metacontent = metacontentDAO.loadObjMetacontent(metaObjId, objectId, subObjectId);
-			JSONObject additionalInfoJSON = new JSONObject(metacontent.getAdditionalInfo());
-			String fileName = additionalInfoJSON.getString("fileName");
-
-			String filePath = SpagoBIUtilities.getResourcePath() + "/" + METADATA_DIR + "/" + getUserProfile().getUserName().toString() + "/" + fileName;
-			metacontentDAO.eraseObjMetadata(metacontent);
-
-			File metadataTempFile = new File(filePath);
-			if (metadataTempFile.exists()) {
-				metadataTempFile.delete();
-			}
-
-			ResponseBuilder response = Response.ok();
-			return response.build();
-
-		} catch (Exception e) {
-			logger.error(httpRequest.getPathInfo(), e);
-			throw new SpagoBIRuntimeException("Error returning file.", e);
-		}
-
-	}
+	// @GET
+	// @Path("/{id}/{metadataObjectId}/deletefilemetadata")
+	// // (delete a metacontent)
+	// public Response cleanFileMetadata(@PathParam("id") Integer objectId, @PathParam("metadataObjectId") Integer metaObjId,
+	// @Context HttpServletRequest httpRequest) throws EMFUserError {
+	// try {
+	// Integer subObjectId = null;
+	// IObjMetacontentDAO metacontentDAO = DAOFactory.getObjMetacontentDAO();
+	//
+	// ObjMetacontent metacontent = metacontentDAO.loadObjMetacontent(metaObjId, objectId, subObjectId);
+	// JSONObject additionalInfoJSON = new JSONObject(metacontent.getAdditionalInfo());
+	// String fileName = additionalInfoJSON.getString("fileName");
+	//
+	// String filePath = SpagoBIUtilities.getResourcePath() + "/" + METADATA_DIR + "/" + getUserProfile().getUserName().toString() + "/" + fileName;
+	// metacontentDAO.eraseObjMetadata(metacontent);
+	//
+	// File metadataTempFile = new File(filePath);
+	// if (metadataTempFile.exists()) {
+	// metadataTempFile.delete();
+	// }
+	//
+	// ResponseBuilder response = Response.ok();
+	// return response.build();
+	//
+	// } catch (Exception e) {
+	// logger.error(httpRequest.getPathInfo(), e);
+	// throw new SpagoBIRuntimeException("Error returning file.", e);
+	// }
+	//
+	// }
 
 	@SuppressWarnings("resource")
 	private byte[] getFileByteArray(String filePath, String fileName) throws IOException {
@@ -1281,6 +1286,26 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			}
 		}
 		return null;
+	}
+
+	@SuppressWarnings("resource")
+	private byte[] getFileByteArray(String filePath) throws IOException {
+		File file = new File(filePath);
+		FileInputStream fis = null;
+		byte[] bFile = null;
+		try {
+			fis = new FileInputStream(file);
+			bFile = new byte[(int) file.length()];
+
+			// convert file into array of bytes
+			fis = new FileInputStream(file);
+			fis.read(bFile);
+			fis.close();
+		} catch (IOException e) {
+			throw new IOException("Error reading " + filePath + " file.", e);
+		}
+		return bFile;
+
 	}
 
 }

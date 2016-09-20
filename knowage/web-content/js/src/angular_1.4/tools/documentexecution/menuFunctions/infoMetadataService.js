@@ -138,6 +138,7 @@
 					    			var fileItem=JSON.parse(metadataDlgCtrl.file[i].value);
 					    			metadataDlgCtrl.file[i].fileName=fileItem.fileName;
 					    			metadataDlgCtrl.file[i].saveDate=fileItem.saveDate;
+				    				metadataDlgCtrl.file[i].fileToSave={};	 
 					    			//metadataDlgCtrl.file[i].fileLabel=fileItem.fileLabel;		//Label removed
 				    			} //else{	metadataDlgCtrl.file[i].fileLabel=""; }				//Label removed
 				    		}	
@@ -175,11 +176,16 @@
 		    					filteredJsonMeta[j]=saveObj.jsonMeta[i];
 		    					j++;
 		    				}	
-		    				if(saveObj.jsonMeta[i].fileToSave!="" && saveObj.jsonMeta[i].fileToSave!=undefined  && saveObj.jsonMeta[i].fileToSave!=null && saveObj.jsonMeta[i].fileToSave.fileName!=null && saveObj.jsonMeta[i].fileToSave.fileName!=undefined && saveObj.jsonMeta[i].fileToSave.fileName!="")
+		    				else if(saveObj.jsonMeta[i].hasOwnProperty("fileToSave"))
 		    				{
-		    					filteredJsonMeta[j]=saveObj.jsonMeta[i];
-		    					j++;
+			    				if(saveObj.jsonMeta[i].fileToSave!="" && saveObj.jsonMeta[i].fileToSave!=undefined  && saveObj.jsonMeta[i].fileToSave!=null && saveObj.jsonMeta[i].fileToSave.fileName!=null && saveObj.jsonMeta[i].fileToSave.fileName!=undefined && saveObj.jsonMeta[i].fileToSave.fileName!="")
+			    				{
+			    					filteredJsonMeta[j]=saveObj.jsonMeta[i];
+			    					j++;
+			    				}	
+
 		    				}	
+
 		    			}	
 		    			var filteredSaveObj={
 		    				id: executionInstance.OBJECT_ID,
@@ -201,26 +207,11 @@
 		    			});
 		    		}
 		    		
-		    		metadataDlgCtrl.cleanFile= function(metadataId){
-		    			//remove file from temp directory (if present) and from db
-		    			
-		    			objId=executionInstance.OBJECT_ID;
-		    			var subobjId="null";
-			    		if(executionInstance.SUBOBJECT_ID){
-			    			subobjId=executionInstance.SUBOBJECT_ID;
-			    		}
-
-			    				    		
-			    		sbiModule_restServices.promiseGet('1.0/documentexecution/'+objId+"/"+metadataId, 'deletefilemetadata').then(function(response){
-		    				//documentExecuteServices.showToast(sbiModule_translate.load("sbi.execution.viewpoints.msg.saved"), 3000);
-		    				documentExecuteServices.showToast("Rimozione effettuata", 3);
-		    				metadataDlgCtrl.getDocumentMetadataFunction(); 
-		    					
-		    			},function(response){
-		    				documentExecuteServices.showToast(response.data.errors[0].message, 5);
-		    			});
-			    		
-			    		
+		    		metadataDlgCtrl.cleanFile= function(metadata){
+		    			metadata.value = "";
+		    			metadata.fileToSave = "{}";
+		    			metadata.fileName="";
+		    			metadata.saveDate="";
 		    		}
 		    		
 		    		metadataDlgCtrl.download = function(metadataId,value){

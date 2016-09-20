@@ -83,7 +83,7 @@
 					    <td><file-upload id="id_file_upload-{{$index}}" ng-model="fileMeta.fileToSave" ng-disabled=false ng-if=<%= canModify %>></file-upload></td>
 						<td><md-button class="md-ExtraMini md-raised " ng-click="metadataDlgCtrl.uploadFile(fileMeta.fileToSave)" ng-if=<%= canModify %>>Upload</md-button></td>		
 						<td><md-button class="md-ExtraMini md-raised " ng-click="metadataDlgCtrl.download(fileMeta.id,fileMeta.value)" ng-if="fileMeta.fileName" >Download</md-button></td>
-						<td><md-button class="md-ExtraMini md-raised " ng-click="metadataDlgCtrl.cleanFile(fileMeta.id)" ng-if=<%= canModify %>>Clean</md-button></td>						 	
+						<td><md-button class="md-ExtraMini md-raised " ng-click="metadataDlgCtrl.cleanFile(fileMeta)" ng-if=<%= canModify %>>Clean</md-button></td>						 	
 					  </tr>
 				</table> 
 				
