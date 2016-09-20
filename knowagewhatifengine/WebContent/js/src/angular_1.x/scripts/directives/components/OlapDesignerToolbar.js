@@ -420,6 +420,26 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 			 }
 		 }
 		 
+		 
+		 if(engineName==="knowageolapengine"){
+			 for (var i = $scope.toolbar.length-1; i >= 0; i--) {
+				 if($scope.toolbar[i].category == 'WHAT_IF'){
+			    	 $scope.toolbar.splice(i, 1); 
+				 }
+			 }
+			 
+		 }
+		 
+		 for (var i = $scope.toolbar.length-1; i >= 0; i--) {
+			 
+		    	 $scope.toolbar[i].displayLabel = sbiModule_translate.load($scope.toolbar[i].name); 
+			 
+		 }
+		 
+		 
+		 
+		 
+		 
 		 $mdDialog
 			.show({
 				scope : $scope,
@@ -450,7 +470,7 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	 $scope.olapDesignerButtonsColumns = [
                                           {
                                               label:"Label",
-                                              name:"name",
+                                              name:"displayLabel",
                                               size:"200px"
                                           },
                                           {
