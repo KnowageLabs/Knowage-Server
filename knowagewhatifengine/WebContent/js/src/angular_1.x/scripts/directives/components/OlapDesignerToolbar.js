@@ -414,6 +414,12 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 		} 
 		 
 		 $scope.toolbar = $scope.buttons;
+		 for (var i = $scope.toolbar.length-1; i >= 0; i--) {
+			 if($scope.toolbar[i].category == 'OLAP_DESIGNER'){
+		    	 $scope.toolbar.splice(i, 1); 
+			 }
+		 }
+		 
 		 $mdDialog
 			.show({
 				scope : $scope,
