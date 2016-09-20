@@ -110,44 +110,7 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 			if(editModeCurrentContentId!="null"){
 				currentContentId = editModeCurrentContentId;
 			}
-			sbiModule_restServices.promiseGet("1.0/designer/measures/"+currentContentId + "/"+ json.olap.SCENARIO.editCube,"?SBI_EXECUTION_ID=" + JSsbiExecutionID)
-			.then(function(response) {
-				$scope.measuresList = [];
-				
-				for (var i = 0; i < response.data.length; i++) {
-					var measuresListItem = { name: ""};
-					measuresListItem.name = response.data[i];
-					$scope.measuresList.push(measuresListItem);
-				}
-				
-				if(json.olap.SCENARIO.MEASURE.constructor === Array) {
-					for (var i = 0; i < json.olap.SCENARIO.MEASURE.length; i++) {
-						var measure = {
-								name : json.olap.SCENARIO.MEASURE[i].MEASURE
-						}
-						for (var j = 0; j < $scope.measuresList.length; j++) {
-							if($scope.measuresList[j].name==measure.name){
-								$scope.scenario.measures.push($scope.measuresList[j]);
-							}
-						}
 						
-					}
-				} else {
-					var measure = {
-							name : json.olap.SCENARIO.MEASURE
-					};
-					for (var j = 0; j < $scope.measuresList.length; j++) {
-						if($scope.measuresList[j].name==measure.name){
-							$scope.scenario.measures.push($scope.measuresList[j]);
-						}
-					}
-				}
-				
-			}, function(response) {
-				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');	
-			});	
-			
-			
 			if(json.olap.hasOwnProperty("SCENARIO")){
 				$scope.scenario = {
 						name: "scenario",
@@ -155,6 +118,43 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 						measures : [],
 						variables : []
 				};
+				
+				sbiModule_restServices.promiseGet("1.0/designer/measures/"+currentContentId + "/"+ $scope.scenario.editCube,"?SBI_EXECUTION_ID=" + JSsbiExecutionID)
+				.then(function(response) {
+					$scope.measuresList = [];
+					
+					for (var i = 0; i < response.data.length; i++) {
+						var measuresListItem = { name: ""};
+						measuresListItem.name = response.data[i];
+						$scope.measuresList.push(measuresListItem);
+					}
+					
+					if(json.olap.SCENARIO.MEASURE.constructor === Array) {
+						for (var i = 0; i < json.olap.SCENARIO.MEASURE.length; i++) {
+							var measure = {
+									name : json.olap.SCENARIO.MEASURE[i].MEASURE
+							}
+							for (var j = 0; j < $scope.measuresList.length; j++) {
+								if($scope.measuresList[j].name==measure.name){
+									$scope.scenario.measures.push($scope.measuresList[j]);
+								}
+							}
+							
+						}
+					} else {
+						var measure = {
+								name : json.olap.SCENARIO.MEASURE
+						};
+						for (var j = 0; j < $scope.measuresList.length; j++) {
+							if($scope.measuresList[j].name==measure.name){
+								$scope.scenario.measures.push($scope.measuresList[j]);
+							}
+						}
+					}
+					
+				}, function(response) {
+					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');	
+				});
 							
 				if(json.olap.SCENARIO.hasOwnProperty("VARIABLE")){
 					if(json.olap.SCENARIO.VARIABLE.constructor === Array){
@@ -168,6 +168,7 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 				}
 			}		
 		}
+		OlapTemplateService.setScenarioTag($scope.scenario);
     });
 	
 	
