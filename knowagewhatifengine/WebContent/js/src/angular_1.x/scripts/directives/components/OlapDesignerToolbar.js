@@ -77,26 +77,105 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	}];
 	
 	$scope.crossNavList = [];
+	
 	/**
-	 * Loads cubes and opens a new what-if scenario dialog.
+	 * Object that holds Nav from member
 	 */
-	$scope.runScenarioWizard = function(){
+	var clickableArray = [];
+	$scope.crossNavfromMemberObj = {
+			"uniqueName" : "",
+			"clickParameter": {
+				"name": "",
+				"value":"{0}"
+			}
+	};
+	
+	var parameter = [];
+	
+	$scope.crossNavfromCellObj = {
+			 "name":"",
+             "dimension":"",
+             "hierarchy":"",
+             "level":""
+	};
+	$scope.cellForShowObj = {
+		"name":""	
+	}
+	
+	angular.element(document).ready(function () {
 		$scope.getCubes();
 		if(jsonTemplate!="null"){
 			var json = JSON.parse(jsonTemplate);
+			
+			if(editModeCurrentContentId!="null"){
+				currentContentId = editModeCurrentContentId;
+			}
+			sbiModule_restServices.promiseGet("1.0/designer/measures/"+currentContentId + "/"+ json.olap.SCENARIO.editCube,"?SBI_EXECUTION_ID=" + JSsbiExecutionID)
+			.then(function(response) {
+				$scope.measuresList = [];
+				
+				for (var i = 0; i < response.data.length; i++) {
+					var measuresListItem = { name: ""};
+					measuresListItem.name = response.data[i];
+					$scope.measuresList.push(measuresListItem);
+				}
+				
+				if(json.olap.SCENARIO.MEASURE.constructor === Array) {
+					for (var i = 0; i < json.olap.SCENARIO.MEASURE.length; i++) {
+						var measure = {
+								name : json.olap.SCENARIO.MEASURE[i].MEASURE
+						}
+						for (var j = 0; j < $scope.measuresList.length; j++) {
+							if($scope.measuresList[j].name==measure.name){
+								$scope.scenario.measures.push($scope.measuresList[j]);
+							}
+						}
+						
+					}
+				} else {
+					var measure = {
+							name : json.olap.SCENARIO.MEASURE
+					};
+					for (var j = 0; j < $scope.measuresList.length; j++) {
+						if($scope.measuresList[j].name==measure.name){
+							$scope.scenario.measures.push($scope.measuresList[j]);
+						}
+					}
+				}
+				
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');	
+			});	
+			
+			
 			if(json.olap.hasOwnProperty("SCENARIO")){
 				$scope.scenario = {
 						name: "scenario",
 						editCube : json.olap.SCENARIO.editCube,
-						measures : []
+						measures : [],
+						variables : []
 				};
-				$scope.loadAllMeasures($scope.scenario.editCube)
-				for (var i = 0; i < json.olap.SCENARIO.MEASURE.length; i++) {
-					$scope.scenario.measures.push(json.olap.SCENARIO.MEASURE[i].MEASURE);
+							
+				if(json.olap.SCENARIO.hasOwnProperty("VARIABLE")){
+					if(json.olap.SCENARIO.VARIABLE.constructor === Array){
+						for (var i = 0; i < json.olap.SCENARIO.VARIABLE.length; i++) {
+							$scope.scenario.variables.push(json.olap.SCENARIO.VARIABLE[i]);
+						}
+					} else {
+						$scope.scenario.variables.push(json.olap.SCENARIO.VARIABLE);
+					}
+					
 				}
-			}
-		}		
-		
+			}		
+		}
+    });
+	
+	
+	/**
+	 * Loads cubes and opens a new what-if scenario dialog.
+	 */
+	$scope.runScenarioWizard = function(){
+
 		console.log($scope.scenario)
 		$mdDialog
 		.show({
@@ -125,27 +204,7 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 		 OlapTemplateService.injectParametersToMdxQueryTag(params);
 	}
 	
-	/**
-	 * Object that holds Nav from member
-	 */
-	var clickableArray = [];
-	$scope.crossNavfromMemberObj = {
-			"uniqueName" : "",
-			"clickParameter": {
-				"name": "",
-				"value":"{0}"
-			}
-	};
-	var parameter = [];
-	$scope.crossNavfromCellObj = {
-			 "name":"",
-             "dimension":"",
-             "hierarchy":"",
-             "level":""
-	};
-	$scope.cellForShowObj = {
-		"name":""	
-	}
+	
 	
 	/**
 	 * Function that check validity of finish button
@@ -215,6 +274,7 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 				measuresListItem.name = response.data[i];
 				$scope.measuresList.push(measuresListItem);
 			}
+			$scope.scenario.measures = [];
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');	
 		});	
@@ -264,30 +324,42 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	 * Binds temporary scenario object to olap template object via service after validation check.
 	 */
 	$scope.saveScenario = function() {
-		if($scope.scenario.hasOwnProperty('variables')){
-			if($scope.scenario.variables.length==0){
-				delete $scope.scenario.variables;
-			}
-		}		
-	    if($scope.scenario.editCube==""&&$scope.scenario.measures.length==0){
-			sbiModule_messaging.showErrorMessage("Selecting a cube and a measure is mandatory. ", 'Validation error');
-			console.log($scope.scenario)
-		}
-	    else if($scope.scenario.editCube==""){
-			sbiModule_messaging.showErrorMessage("You didn't select a cube. Selecting a cube is mandatory. ", 'Validation error');	
-		}
-		else if($scope.scenario.measures.length==0){
-			sbiModule_messaging.showErrorMessage("You didn't select a measure. Selecting a measure is mandatory. ", 'Validation error');	
-		}
-	    else {
-			OlapTemplateService.setScenarioTag($scope.scenario);
-			sbiModule_messaging.showSuccessMessage('Successfully added scenario to template', 'Success');
-			console.log($scope.scenario)
-			console.log($scope.scenario);
-			console.log(OlapTemplateService.getTempateJson());
-			$mdDialog.hide();			
-			console.log(OlapTemplateService.getScenarioObject());
-		}	
+		if($scope.clearData){
+    		OlapTemplateService.deleteScenarioTag();
+    		$scope.clearData = false;
+    		$mdDialog.hide();
+    		sbiModule_messaging.showSuccessMessage('Successfully removed scenario from template', 'Success');
+    	} else {
+    		if($scope.scenario.hasOwnProperty('variables')){
+    			if($scope.scenario.variables.length==0){
+    				delete $scope.scenario.variables;
+    			}
+    		}
+    		for (var i = 0; i < $scope.scenario.measures.length; i++) {
+    			if($scope.scenario.measures[i]==undefined){
+    				delete $scope.scenario.measures[i];
+    			}
+    		}
+    	    if($scope.scenario.editCube==""&&$scope.scenario.measures.length==0){
+    			sbiModule_messaging.showErrorMessage("Selecting a cube and a measure is mandatory. ", 'Validation error');
+    			console.log($scope.scenario)
+    		}
+    	    else if($scope.scenario.editCube==""){
+    			sbiModule_messaging.showErrorMessage("You didn't select a cube. Selecting a cube is mandatory. ", 'Validation error');	
+    		}
+    		else if($scope.scenario.measures.length==0){
+    			sbiModule_messaging.showErrorMessage("You didn't select a measure. Selecting a measure is mandatory. ", 'Validation error');	
+    		}
+    	    else {
+    	    		OlapTemplateService.setScenarioTag($scope.scenario);
+    				sbiModule_messaging.showSuccessMessage('Successfully added scenario to template', 'Success');
+    				console.log($scope.scenario)
+    				console.log($scope.scenario);
+    				console.log(OlapTemplateService.getTempateJson());
+    				$mdDialog.hide();			
+    				console.log(OlapTemplateService.getScenarioObject());
+    		}	
+    	}	
 	}
 	
 	/**
@@ -362,6 +434,7 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 					measures: []
 			};
 		 $scope.measuresList = [];
+		 $scope.clearData = true;
 	 }
 	 
 	 /**
