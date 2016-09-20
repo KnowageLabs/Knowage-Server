@@ -152,23 +152,25 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 						}
 					}
 					
+					if(json.olap.SCENARIO.hasOwnProperty("VARIABLE")){
+						if(json.olap.SCENARIO.VARIABLE.constructor === Array){
+							for (var i = 0; i < json.olap.SCENARIO.VARIABLE.length; i++) {
+								$scope.scenario.variables.push(json.olap.SCENARIO.VARIABLE[i]);
+							}
+						} else {
+							$scope.scenario.variables.push(json.olap.SCENARIO.VARIABLE);
+						}
+						
+					}
+					
+					OlapTemplateService.setScenarioTag($scope.scenario);
+					
 				}, function(response) {
 					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');	
 				});
-							
-				if(json.olap.SCENARIO.hasOwnProperty("VARIABLE")){
-					if(json.olap.SCENARIO.VARIABLE.constructor === Array){
-						for (var i = 0; i < json.olap.SCENARIO.VARIABLE.length; i++) {
-							$scope.scenario.variables.push(json.olap.SCENARIO.VARIABLE[i]);
-						}
-					} else {
-						$scope.scenario.variables.push(json.olap.SCENARIO.VARIABLE);
-					}
-					
-				}
 			}		
 		}
-		OlapTemplateService.setScenarioTag($scope.scenario);
+		
     });
 	
 	
