@@ -314,6 +314,14 @@ public class DataSetResource extends AbstractSpagoBIResource {
 				}
 			}
 
+			List<ProjectionCriteria> summaryRowProjectionCriteria = new ArrayList<ProjectionCriteria>();
+			if (summaryRow != null && !summaryRow.equals("")) {
+				JSONObject summaryRowObject = new JSONObject(summaryRow);
+				JSONArray summaryRowMeasuresObject = summaryRowObject.getJSONArray("measures");
+
+				summaryRowProjectionCriteria = getProjectionCriteria(label, new JSONArray(), summaryRowMeasuresObject);
+			}
+
 			IDataStore dataStore = null;
 
 			if (offset == null || offset.intValue() < 0 || fetchSize == null || fetchSize.intValue() < 0) {
@@ -333,7 +341,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			}
 
 			dataStore = getDatasetManagementAPI().getDataStore(label, offset, fetchSize, isRealtime, getParametersMap(parameters), groupCriteria,
-					filterCriteria, filterCriteriaForMetaModel, projectionCriteria);
+					filterCriteria, filterCriteriaForMetaModel, projectionCriteria, summaryRowProjectionCriteria);
 
 			Map<String, Object> properties = new HashMap<String, Object>();
 			JSONArray fieldOptions = new JSONArray("[{id: 1, options: {measureScaleFactor: 0.5}}]");
@@ -404,14 +412,10 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		for (int i = 0; i < categoriesObject.length(); i++) {
 			JSONObject categoryObject = categoriesObject.getJSONObject(i);
 
-			String columnName;
-
-			// in the Cockpit Engine, table, you can insert many times the same
-			// measure.
-			// To manage this, it's not possibile to use the alias as column
-			// name.
+			// In the Cockpit Engine, table, you can insert many times the same measure.
+			// To manage this, it's not possibile to use the alias as column name.
 			// So in the measure object there is also a "columnName" field
-
+			String columnName;
 			if (!categoryObject.isNull("columnName")) {
 				columnName = categoryObject.getString("columnName");
 			} else {
@@ -420,20 +424,21 @@ public class DataSetResource extends AbstractSpagoBIResource {
 
 			String aliasName = categoryObject.getString("alias");
 
-			ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName, null, aliasName);
+			String orderTypeFinal = (String) categoryObject.opt("orderType");
+			if (orderTypeFinal != null) {
+				orderTypeFinal = orderTypeFinal.toUpperCase();
+			}
+
+			ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName, null, aliasName, orderTypeFinal);
 			projectionCriterias.add(aProjectionCriteria);
 		}
 		for (int i = 0; i < measuresObject.length(); i++) {
 			JSONObject measureObject = measuresObject.getJSONObject(i);
 
+			// In the Cockpit Engine, table, you can insert many times the same measure.
+			// To manage this, it's not possibile to use the alias as column name.
+			// So in the measure object there is also a "columnName" field.
 			String columnName;
-
-			// in the Cockpit Engine, table, you can insert many times the same
-			// measure.
-			// To manage this, it's not possibile to use the alias as column
-			// name.
-			// So in the measure object there is also a "columnName" field
-
 			if (!measureObject.isNull("columnName")) {
 				columnName = measureObject.getString("columnName");
 			} else {
@@ -443,19 +448,17 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			String aliasName = measureObject.getString("alias");
 
 			// https://production.eng.it/jira/browse/KNOWAGE-149
-			String orderTypeFinal = (measureObject.opt("orderType") != null) ? orderTypeFinal = measureObject.opt("orderType").toString().toUpperCase() : null;
+			String orderTypeFinal = (String) measureObject.opt("orderType");
+			if (orderTypeFinal != null) {
+				orderTypeFinal = orderTypeFinal.toUpperCase();
+			}
 
 			IAggregationFunction function = AggregationFunctions.get(measureObject.getString("funct"));
 			if (function != AggregationFunctions.NONE_FUNCTION) {
-				// ProjectionCriteria aProjectionCriteria = new
-				// ProjectionCriteria(dataset, columnName, function.getName(),
-				// columnName);
 				ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName, function.getName(), aliasName, orderTypeFinal);
 				projectionCriterias.add(aProjectionCriteria);
 			} else {
-				// ProjectionCriteria aProjectionCriteria = new
-				// ProjectionCriteria(dataset, columnName, null, columnName);
-				ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName, null, aliasName);
+				ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName, null, aliasName, orderTypeFinal);
 				projectionCriterias.add(aProjectionCriteria);
 			}
 		}

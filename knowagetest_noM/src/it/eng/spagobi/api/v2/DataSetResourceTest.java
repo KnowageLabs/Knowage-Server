@@ -115,29 +115,33 @@ public class DataSetResourceTest extends AbstractV2BasicAuthTestCase {
 		String dataset1Label = "SbiQueryDataSet";
 		String dataset2Label = "SbiFileDataSet";
 		try {
-			String selections = URLEncoder.encode("{\"SbiQueryDataSet.store_type\":[\"Small Grocery\"]}", encoding);
-			String associationGroup = URLEncoder
-					.encode("{\"datasets\":[\"SbiQueryDataSet\",\"SbiFileDataSet\"],\"associations\":[{\"id\":\"A3\",\"description\":\"SbiQueryDataSet.store_id=SbiFileDataSet.store_id\",\"fields\":[{\"column\":\"store_id\",\"store\":\"SbiQueryDataSet\"},{\"column\":\"store_id\",\"store\":\"SbiFileDataSet\"}]}]}",
-							encoding);
-			String realtimeDatasets = URLEncoder.encode("[\"SbiQueryDataSet\",\"SbiFileDataSet\"]", encoding);
+			String selections = "{\"SbiQueryDataSet.store_type\":[\"Small Grocery\"]}";
+			String encodedSelections = URLEncoder.encode(selections, encoding);
 
+			String associationGroup = "{\"datasets\":[\"SbiQueryDataSet\",\"SbiFileDataSet\"],\"associations\":[{\"id\":\"A3\",\"description\":\"SbiQueryDataSet.store_id=SbiFileDataSet.store_id\",\"fields\":[{\"column\":\"store_id\",\"store\":\"SbiQueryDataSet\"},{\"column\":\"store_id\",\"store\":\"SbiFileDataSet\",\"type\":\"dataset\"},{\"column\":\"dummy\",\"store\":\"Doc\",\"type\":\"document\"}]}]}";
+			String encodedAssociationGroup = URLEncoder.encode(associationGroup, encoding);
+
+			String realtimeDatasets = "[\"SbiQueryDataSet\",\"SbiFileDataSet\"]";
+			String encodedRealtimeDatasets = URLEncoder.encode(realtimeDatasets, encoding);
+
+			copyCsvFile();
 			createDatasets(dataset1Label, false);
-			given().contentType(ContentType.JSON).when().get("/datasets/" + dataset1Label + "/data").then().contentType(ContentType.JSON).statusCode(200);
-
 			createDatasets(dataset2Label, false);
-			given().contentType(ContentType.JSON).when().get("/datasets/" + dataset2Label + "/data").then().contentType(ContentType.JSON).statusCode(200);
 
 			// selections + realtime
 			given().urlEncodingEnabled(false)
-					.get("/datasets/loadAssociativeSelections?selections=" + selections + "&associationGroup=" + associationGroup + "&realTime="
-							+ realtimeDatasets).then().contentType(ContentType.JSON).statusCode(200)
+					.get("/datasets/loadAssociativeSelections?selections=" + encodedSelections + "&associationGroup=" + encodedAssociationGroup + "&realTime="
+							+ encodedRealtimeDatasets).then().contentType(ContentType.JSON).statusCode(200)
 					.body("SbiQueryDataSet['store_id']", hasItems("('2')", "('5')", "('14')", "('22')"))
 					.body("SbiFileDataSet['store_id']", hasItems("('2')", "('5')", "('14')", "('22')"));
 
 			// selections
-			given().urlEncodingEnabled(false).get("/datasets/loadAssociativeSelections?selections=" + selections + "&associationGroup=" + associationGroup)
-					.then().contentType(ContentType.JSON).statusCode(200).body("SbiQueryDataSet['store_id']", hasItems("('2')", "('5')", "('14')", "('22')"))
+			given().urlEncodingEnabled(false)
+					.get("/datasets/loadAssociativeSelections?selections=" + encodedSelections + "&associationGroup=" + encodedAssociationGroup).then()
+					.contentType(ContentType.JSON).statusCode(200).body("SbiQueryDataSet['store_id']", hasItems("('2')", "('5')", "('14')", "('22')"))
 					.body("SbiFileDataSet['store_id']", hasItems("('2')", "('5')", "('14')", "('22')"));
+
+			deleteCsvFile();
 		} catch (Exception e) {
 			fail(e.toString());
 		} finally {
@@ -188,6 +192,44 @@ public class DataSetResourceTest extends AbstractV2BasicAuthTestCase {
 	}
 
 	@Test
+	public void getDataStorePost2Test() {
+		String queryDatasetLabel = "SbiQueryDataSet";
+		testDataStorePost2(queryDatasetLabel, false);
+		testDataStorePost2(queryDatasetLabel, true);
+	}
+
+	private void testDataStorePost2(String datasetLabel, boolean isPersisted) {
+		String aggregations = "{\"measures\":[{\"id\":\"store_sqft\",\"columnName\":\"store_sqft\",\"funct\":\"SUM\",\"alias\":\"store_sqft\",\"orderType\":\"\"}],\"categories\":[{\"id\":\"store_name\",\"columnName\":\"store_name\",\"funct\":\"NONE\",\"alias\":\"store_name\",\"orderType\":\"ASC\"}],\"dataset\":\"Store\"}";
+		String summaryRow = "{\"measures\":[{\"id\":\"store_sqft\",\"columnName\":\"store_sqft\",\"funct\":\"SUM\",\"alias\":\"store_sqft\",\"orderType\":\"\"}],\"categories\":[],\"dataset\":\"Store\"}";
+		try {
+			createDatasets(datasetLabel, isPersisted);
+
+			JSONObject jsonAggregationsSummaryRow = new JSONObject();
+			jsonAggregationsSummaryRow.put("aggregations", new JSONObject(aggregations));
+			jsonAggregationsSummaryRow.put("summaryRow", new JSONObject(summaryRow));
+
+			// aggregations + summary row
+			given().contentType(ContentType.JSON).body(jsonAggregationsSummaryRow.toString()).when().post("/datasets/SbiQueryDataSet/data2").then()
+					.contentType(ContentType.JSON).statusCode(200).body("results", equalTo(25)).body("rows", hasSize(26))
+					.body("rows[25].column_2", containsString("571596"));
+
+			// aggregations + summary row + realtime
+			given().contentType(ContentType.JSON).body(jsonAggregationsSummaryRow.toString()).when().post("/datasets/SbiQueryDataSet/data2?realtime=true")
+					.then().contentType(ContentType.JSON).statusCode(200).body("results", equalTo(25)).body("rows", hasSize(26))
+					.body("rows[25].column_2", containsString("571596"));
+
+			// aggregations + summary row + pagination + realtime
+			given().contentType(ContentType.JSON).body(jsonAggregationsSummaryRow.toString()).when()
+					.post("/datasets/SbiQueryDataSet/data2?offset=1&size=3&realtime=true").then().contentType(ContentType.JSON).statusCode(200)
+					.body("results", equalTo(25)).body("rows", hasSize(4)).body("rows[3].column_2", containsString("571596"));
+		} catch (Exception e) {
+			fail(e.toString());
+		} finally {
+			deleteDataset(datasetLabel);
+		}
+	}
+
+	@Test
 	public void SbiFlatDataSetTest() {
 		String datasetLabel = "SbiFlatDataSet";
 		testSbiFlatDataSet(datasetLabel, false);
@@ -219,7 +261,6 @@ public class DataSetResourceTest extends AbstractV2BasicAuthTestCase {
 
 	private void testSbiQueryDataSet(String datasetLabel, boolean isPersisted) {
 		String selections = "{\"" + datasetLabel + "\":{\"store_type,region_id\":[\"('Supermarket','28')\"]}}";
-		String aggregations = "{\"measures\":[{\"id\":\"store_id\",\"columnName\":\"store_id\",\"funct\":\"NONE\",\"alias\":\"store_id\",\"orderType\":\"\"},{\"id\":\"store_sqft\",\"columnName\":\"store_sqft\",\"funct\":\"NONE\",\"alias\":\"store_sqft\",\"orderType\":\"\"},{\"id\":\"store_sqft_100\",\"columnName\":\"\\\"store_sqft\\\" + 100\",\"funct\":\"FORMULA\",\"alias\":\"store_sqft_100\",\"orderType\":\"\"}],\"categories\":[],\"dataset\":\"Store\"}";
 		try {
 			createDatasets(datasetLabel, isPersisted);
 
@@ -373,6 +414,9 @@ public class DataSetResourceTest extends AbstractV2BasicAuthTestCase {
 		// check that the dataset exists
 		given().contentType(ContentType.JSON).when().get("/datasets/" + datasetLabel).then().contentType(ContentType.JSON).statusCode(200)
 				.body("label", anyOf(equalTo(datasetLabel), hasItems(datasetLabel)));
+
+		// force data loading (for cached dataset)
+		given().contentType(ContentType.JSON).when().get("/datasets/" + datasetLabel + "/data").then().contentType(ContentType.JSON).statusCode(200);
 	}
 
 	private String getResourceDir() {

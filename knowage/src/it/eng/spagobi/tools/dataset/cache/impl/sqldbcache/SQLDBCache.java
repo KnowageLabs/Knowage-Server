@@ -20,6 +20,7 @@ package it.eng.spagobi.tools.dataset.cache.impl.sqldbcache;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.cache.CacheException;
@@ -38,7 +39,6 @@ import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
-import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
@@ -46,6 +46,7 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.Helper;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.cache.CacheItem;
+import it.eng.spagobi.utilities.database.AbstractDataBase;
 import it.eng.spagobi.utilities.database.temporarytable.TemporaryTableManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.locks.DistributedLockFactory;
@@ -273,12 +274,18 @@ public class SQLDBCache implements ICache {
 	@Override
 	public IDataStore get(IDataSet dataSet, List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections, int offset,
 			int fetchSize) {
+		return get(dataSet, groups, filters, projections, null, offset, fetchSize);
+	}
+
+	@Override
+	public IDataStore get(IDataSet dataSet, List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections,
+			List<ProjectionCriteria> summaryRowProjectionCriteria, int offset, int fetchSize) {
 		logger.debug("IN");
 
 		IDataStore dataStore = null;
 		try {
 			if (dataSet != null) {
-				dataStore = getInternal(dataSet, groups, filters, projections, offset, fetchSize);
+				dataStore = getInternal(dataSet, groups, filters, projections, summaryRowProjectionCriteria, offset, fetchSize);
 			} else {
 				logger.warn("Input parameter [dataSet] is null");
 			}
@@ -294,8 +301,8 @@ public class SQLDBCache implements ICache {
 		return dataStore;
 	}
 
-	public IDataStore getInternal(IDataSet dataSet, List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections, int offset,
-			int fetchSize) {
+	public IDataStore getInternal(IDataSet dataSet, List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections,
+			List<ProjectionCriteria> summaryRowProjectionCriteria, int offset, int fetchSize) {
 		logger.debug("IN");
 
 		try {
@@ -305,7 +312,7 @@ public class SQLDBCache implements ICache {
 				logger.debug("Not found resultSet with signature [" + resultsetSignature + "] inside the Cache");
 				return null;
 			}
-			return queryStandardCachedDataset(groups, filters, projections, resultsetSignature, offset, fetchSize);
+			return queryStandardCachedDataset(groups, filters, projections, summaryRowProjectionCriteria, resultsetSignature, offset, fetchSize);
 
 		} finally {
 			logger.debug("OUT");
@@ -421,7 +428,7 @@ public class SQLDBCache implements ICache {
 	}
 
 	private IDataStore queryStandardCachedDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections,
-			String resultsetSignature, int offset, int fetchSize) {
+			List<ProjectionCriteria> summaryRowProjections, String resultsetSignature, int offset, int fetchSize) {
 
 		DataStore toReturn = null;
 
@@ -485,7 +492,7 @@ public class SQLDBCache implements ICache {
 									columnName = datasetAlias.get(projection.getDataset()) + " - " + projection.getColumnName();
 								}
 
-								if (aggregateFunction != null && aggregateFunction.equals(AggregationFunctions.FORMULA)) {
+								if (columnName.contains(AbstractDataBase.STANDARD_ALIAS_DELIMITER)) {
 									// this is a calculated field!
 									columnName = AbstractJDBCDataset.substituteStandardWithDatasourceDelimiter(columnName, dataSource);
 								} else {
@@ -498,29 +505,25 @@ public class SQLDBCache implements ICache {
 								 *
 								 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 								 */
+								String aliasName = projection.getAliasName();
+								aliasName = AbstractJDBCDataset.encapsulateColumnName(aliasName, dataSource);
 								if ((aggregateFunction != null) && (!aggregateFunction.isEmpty()) && (columnName != "*")) {
-
-									String aliasName = projection.getAliasName();
-									aliasName = AbstractJDBCDataset.encapsulateColumnName(aliasName, dataSource);
-
 									if (aliasName != null && !aliasName.isEmpty()) {
-										String tmpColumn;
 										// https://production.eng.it/jira/browse/KNOWAGE-149
 										// This variable is used for the order clause
-										if (aggregateFunction.equals(AggregationFunctions.FORMULA)) {
-											tmpColumn = columnName;
-										} else {
-											tmpColumn = aggregateFunction + "(" + columnName + ") ";
-										}
-										String orderType = projection.getOrderType();
+										String tmpColumn = aggregateFunction + "(" + columnName + ") ";
 
+										String orderType = projection.getOrderType();
 										if (orderType != null && !orderType.equals("")) {
-											orderColumns.add(tmpColumn + " " + orderType);
+											if (columnName.contains(AbstractDataBase.STANDARD_ALIAS_DELIMITER)) {
+												orderColumns.add(aliasName + " " + orderType);
+											} else {
+												orderColumns.add(tmpColumn + " " + orderType);
+											}
 										}
 
 										columnName = tmpColumn + " AS " + aliasName;
 									}
-
 								}
 								/**
 								 * Handling of the ordering criteria set for the first category.
@@ -569,6 +572,10 @@ public class SQLDBCache implements ICache {
 									 * Keep the ordering for the first category so it can be appended to the end of the ORDER BY clause when it is needed.
 									 */
 									keepCategoryForOrdering = columnName + " ASC";
+
+									if (aliasName != null && !aliasName.isEmpty() && !aliasName.equals(columnName)) {
+										columnName += " AS " + aliasName;
+									}
 								}
 
 								sqlBuilder.column(columnName);
@@ -710,10 +717,43 @@ public class SQLDBCache implements ICache {
 						}
 
 						String queryText = sqlBuilder.toString();
-
 						logger.debug("Cached dataset access query is equal to [" + queryText + "]");
-
 						IDataStore dataStore = dataSource.executeStatement(queryText, offset, fetchSize);
+
+						if (summaryRowProjections != null && summaryRowProjections.size() > 0) {
+							StringBuilder sb = new StringBuilder();
+							sb.append("SELECT ");
+							String comma = "";
+							for (int i = 0; i < projections.size(); i++) {
+								ProjectionCriteria projection = projections.get(i);
+								String alias = projection.getAliasName();
+								String aggregateFunction = null;
+								for (ProjectionCriteria summaryRowProjection : summaryRowProjections) {
+									String columnName = summaryRowProjection.getColumnName();
+									if (columnName.equals(alias)) {
+										aggregateFunction = summaryRowProjection.getAggregateFunction();
+										break;
+									}
+								}
+								if (aggregateFunction != null) {
+									sb.append(comma);
+									comma = ",";
+									sb.append(aggregateFunction);
+									sb.append("(");
+									sb.append(alias);
+									sb.append(")");
+								}
+							}
+							sb.append(" FROM (");
+							sb.append(queryText);
+							sb.append(") AS T");
+
+							String summaryRowQuery = sb.toString();
+							IDataStore summaryRowDataStore = dataSource.executeStatement(summaryRowQuery, -1, -1);
+							DatasetManagementAPI dmApi = new DatasetManagementAPI();
+							dmApi.appendSummaryRowToPagedDataStore(projections, summaryRowProjections, dataStore, summaryRowDataStore);
+						}
+
 						toReturn = (DataStore) dataStore;
 
 						List<Integer> breakIndexes = (List<Integer>) cacheItem.getProperty("BREAK_INDEXES");

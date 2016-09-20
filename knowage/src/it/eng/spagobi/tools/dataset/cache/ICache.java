@@ -101,6 +101,9 @@ public interface ICache {
 	 */
 	IDataStore get(IDataSet dataSet, List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections, int offset, int fetchSize);
 
+	IDataStore get(IDataSet dataSet, List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections,
+			List<ProjectionCriteria> summaryRowProjections, int offset, int fetchSize);
+
 	// =====================================================================================
 	// LOAD METHODS
 	// =====================================================================================

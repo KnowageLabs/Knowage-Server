@@ -289,12 +289,10 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 			}
 			JSONObject selectionsObject = new JSONObject(selectionsString);
 
-			AssociationGroup associationGroupObject = null;
 			if (associationGroupString == null) {
 				throw new SpagoBIServiceParameterException(this.request.getPathInfo(), "Query parameter [associationGroup] cannot be null");
 			}
-			AssociationGroupJSONSerializer serializer = new AssociationGroupJSONSerializer();
-			associationGroupObject = serializer.deserialize(new JSONObject(associationGroupString));
+			AssociationGroup associationGroup = getAssociationGroup(associationGroupString);
 
 			Set<String> realtimeDatasets = new HashSet<String>();
 			if (realtimeDatasetsString != null && !realtimeDatasetsString.isEmpty()) {
@@ -304,7 +302,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 				}
 			}
 
-			AssociationAnalyzer analyzer = new AssociationAnalyzer(associationGroupObject.getAssociations());
+			AssociationAnalyzer analyzer = new AssociationAnalyzer(associationGroup.getAssociations());
 			analyzer.process();
 			Map<String, Map<String, String>> datasetToAssociationToColumnMap = analyzer.getDatasetToAssociationToColumnMap();
 			Pseudograph<String, LabeledEdge<String>> graph = analyzer.getGraph();
@@ -357,7 +355,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 			manager.setUserProfile(getUserProfile());
 
 			Map<EdgeGroup, Set<String>> egdegroupToValuesMap = manager.process();
-			Map<String, Map<String, Set<String>>> selections = AssociationAnalyzer.getSelections(associationGroupObject, graph, egdegroupToValuesMap);
+			Map<String, Map<String, Set<String>>> selections = AssociationAnalyzer.getSelections(associationGroup, graph, egdegroupToValuesMap);
 
 			for (String d : selectionsMap.keySet()) {
 				if (!selections.containsKey(d)) {
@@ -375,6 +373,32 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+
+	private AssociationGroup getAssociationGroup(String associationGroupString) throws JSONException {
+		JSONObject associationGroupObject = new JSONObject(associationGroupString);
+
+		// remove documents
+		JSONArray associations = associationGroupObject.optJSONArray("associations");
+		if (associations != null) {
+			for (int i = 0; i < associations.length(); i++) {
+				JSONObject association = associations.getJSONObject(i);
+				JSONArray fields = association.optJSONArray("fields");
+				if (fields != null) {
+					for (int j = fields.length() - 1; j >= 0; j--) {
+						JSONObject field = fields.getJSONObject(j);
+						String type = field.optString("type");
+						if ("document".equalsIgnoreCase(type)) {
+							fields.remove(j);
+						}
+					}
+				}
+			}
+		}
+
+		AssociationGroupJSONSerializer serializer = new AssociationGroupJSONSerializer();
+		AssociationGroup associationGroup = serializer.deserialize(associationGroupObject);
+		return associationGroup;
 	}
 
 	@Override
@@ -412,7 +436,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 							String[] valuesArray = currentValues.split(",");
 							StringBuilder sb = new StringBuilder();
 							if (valuesArray.length == 1) {
-								String delim = valuesArray[0].startsWith("'") && valuesArray[0].startsWith("'") ? "" : "'";
+								String delim = valuesArray[0].startsWith("'") ? "" : "'";
 								sb.append(delim);
 								sb.append(valuesArray[0]);
 								sb.append(delim);
@@ -457,11 +481,11 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 	@Path("/{label}/data")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getDataStorePost(@PathParam("label") String label, @QueryParam("parameters") String parameters,
-			@QueryParam("aggregations") String aggregations, String selections, @QueryParam("offset") Integer offset, @QueryParam("size") Integer fetchSize,
-			@QueryParam("realtime") boolean isRealtime) {
+			@QueryParam("aggregations") String aggregations, @QueryParam("summaryRow") String summaryRow, String selections,
+			@QueryParam("offset") Integer offset, @QueryParam("size") Integer fetchSize, @QueryParam("realtime") boolean isRealtime) {
 		logger.debug("IN");
 		try {
-			return getDataStore(label, parameters, selections, aggregations, null, offset, fetchSize, isRealtime);
+			return getDataStore(label, parameters, selections, aggregations, summaryRow, offset, fetchSize, isRealtime);
 		} catch (Exception e) {
 			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
 		} finally {
@@ -480,26 +504,8 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 			String selections = bodyObject.optString("selections", null);
 			String parameters = bodyObject.optString("parameters", null);
 			String aggregations = bodyObject.optString("aggregations", null);
-			return getDataStore(label, parameters, selections, aggregations, null, offset, fetchSize, isRealtime);
-		} catch (Exception e) {
-			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
-		} finally {
-			logger.debug("OUT");
-		}
-	}
-
-	@POST
-	@Path("/{label}/summary-row")
-	@Produces(MediaType.APPLICATION_JSON)
-	public String getSummaryRow(@PathParam("label") String label, String body, @QueryParam("realtime") boolean isRealtime) {
-		logger.debug("IN");
-		try {
-			JSONObject bodyObject = new JSONObject(body);
-			String selections = bodyObject.optString("selections", null);
-			String parameters = bodyObject.optString("parameters", null);
-			String aggregations = bodyObject.optString("aggregations", null);
 			String summaryRow = bodyObject.optString("summaryRow", null);
-			return getDataStore(label, parameters, selections, aggregations, summaryRow, -1, -1, isRealtime);
+			return getDataStore(label, parameters, selections, aggregations, summaryRow, offset, fetchSize, isRealtime);
 		} catch (Exception e) {
 			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
 		} finally {

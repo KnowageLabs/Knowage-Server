@@ -423,9 +423,9 @@ public class DataStore implements IDataStore {
 
 		for (int i = 0; i < fieldCount; i++) {
 			String columnName = this.metaData.getFieldName(i);
-
-			if (columnName.contains(":")) {
-				columnNames[i] = this.metaData.getFieldAlias(i);
+			String alias = this.metaData.getFieldAlias(i);
+			if (columnName.contains(":") || (alias != null && !alias.isEmpty())) {
+				columnNames[i] = alias;
 			} else {
 				columnNames[i] = columnName;
 			}
@@ -437,7 +437,7 @@ public class DataStore implements IDataStore {
 			} else {
 				columnTypes[i] = ColumnType.STRING;
 			}
-			fieldTypes.put(columnName, this.metaData.getFieldMeta(i).getFieldType());
+			fieldTypes.put(columnNames[i], this.metaData.getFieldMeta(i).getFieldType());
 		}
 		for (Object r : this.records) {
 			IRecord record = (IRecord) r;

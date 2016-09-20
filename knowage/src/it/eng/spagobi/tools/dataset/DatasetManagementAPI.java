@@ -43,7 +43,10 @@ import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SelectBuilder;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.work.SQLDBCacheWriteWork;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.common.datastore.Record;
 import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
@@ -58,6 +61,7 @@ import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.Helper;
 import it.eng.spagobi.utilities.cache.CacheItem;
+import it.eng.spagobi.utilities.database.AbstractDataBase;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
 
@@ -361,8 +365,8 @@ public class DatasetManagementAPI {
 	}
 
 	public IDataStore getDataStore(String label, int offset, int fetchSize, boolean isRealtime, Map<String, String> parametersValues,
-			List<GroupCriteria> groupCriteria, List<FilterCriteria> filterCriteria, List<FilterCriteria> filterCriteriaForMetaModel,
-			List<ProjectionCriteria> projectionCriteria) {
+			List<GroupCriteria> groups, List<FilterCriteria> filters, List<FilterCriteria> filterCriteriaForMetaModel, List<ProjectionCriteria> projections,
+			List<ProjectionCriteria> summaryRowProjections) {
 
 		try {
 			IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(label);
@@ -370,11 +374,12 @@ public class DatasetManagementAPI {
 			IDataStore dataStore = null;
 
 			if (dataSet.isPersisted() && !dataSet.isPersistedHDFS()) {
-				dataStore = queryPersistedDataset(groupCriteria, filterCriteria, projectionCriteria, dataSet, offset, fetchSize);
+				dataStore = queryPersistedDataset(groups, filters, projections, summaryRowProjections, dataSet, offset, fetchSize);
 			} else if (dataSet.isFlatDataset()) {
-				dataStore = queryFlatDataset(groupCriteria, filterCriteria, projectionCriteria, dataSet, offset, fetchSize);
+				dataStore = queryFlatDataset(groups, filters, projections, summaryRowProjections, dataSet, offset, fetchSize);
 			} else if (isRealtime) {
-				dataStore = queryRealtimeDataset(parametersValues, groupCriteria, filterCriteriaForMetaModel, projectionCriteria, dataSet, offset, fetchSize);
+				dataStore = queryRealtimeDataset(parametersValues, groups, filterCriteriaForMetaModel, projections, summaryRowProjections, dataSet, offset,
+						fetchSize);
 			} else {
 				dataSet.setParamsMap(parametersValues);
 				List<JSONObject> parameters = getDataSetParameters(label);
@@ -386,14 +391,14 @@ public class DatasetManagementAPI {
 				SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
 				cache.setUserProfile(userProfile);
 
-				IDataStore cachedResultSet = cache.get(dataSet, groupCriteria, filterCriteria, projectionCriteria, offset, fetchSize);
+				IDataStore cachedResultSet = cache.get(dataSet, groups, filters, projections, summaryRowProjections, offset, fetchSize);
 
 				if (cachedResultSet == null) {
 					dataSet.loadData();
 					IDataStore baseDataStore = dataSet.getDataStore();
 					if (baseDataStore.getRecordsCount() > METAMODEL_LIMIT) {
 						cache.put(dataSet, baseDataStore);
-						dataStore = cache.get(dataSet, groupCriteria, filterCriteria, projectionCriteria, offset, fetchSize);
+						dataStore = cache.get(dataSet, groups, filters, projections, summaryRowProjections, offset, fetchSize);
 						if (dataStore == null) {
 							throw new CacheException("An unexpected error occured while executing method");
 						}
@@ -405,9 +410,15 @@ public class DatasetManagementAPI {
 						dataStore = cache.refresh(dataSet, false);
 						// if result was not cached put refresh date as now
 						dataStore.setCacheDate(new Date());
+
 						String tableName = DataStore.DEFAULT_SCHEMA_NAME + "." + DataStore.DEFAULT_TABLE_NAME;
-						String queryText = getQueryText(null, tableName, groupCriteria, filterCriteriaForMetaModel, projectionCriteria, dataSet, -1, -1, true);
-						dataStore = dataStore.aggregateAndFilterRecords(queryText, offset, fetchSize);
+						String pagedQuery = getQueryText(null, tableName, null, null, null, null, dataSet, true);
+						IDataStore pagedDataStore = dataStore.aggregateAndFilterRecords(pagedQuery, offset, fetchSize);
+						String summaryRowQuery = getQueryText(null, tableName, groups, filters, projections, summaryRowProjections, dataSet, true);
+						IDataStore summaryRowDataStore = dataStore.aggregateAndFilterRecords(summaryRowQuery, -1, -1);
+						appendSummaryRowToPagedDataStore(projections, summaryRowProjections, pagedDataStore, summaryRowDataStore);
+
+						dataStore = pagedDataStore;
 					}
 				} else {
 					dataStore = cachedResultSet;
@@ -1218,22 +1229,22 @@ public class DatasetManagementAPI {
 		return statement;
 	}
 
-	private IDataStore queryPersistedDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections, IDataSet dataSet,
-			int offset, int fetchSize) {
+	private IDataStore queryPersistedDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections,
+			List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, int offset, int fetchSize) {
 		IDataSource dataSource = dataSet.getDataSourceForWriting();
 		String tableName = dataSet.getPersistTableName();
-		return queryDataset(dataSource, tableName, groups, filters, projections, dataSet, offset, fetchSize);
+		return queryDataset(dataSource, tableName, groups, filters, projections, summaryRowProjections, dataSet, offset, fetchSize);
 	}
 
-	private IDataStore queryFlatDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections, IDataSet dataSet,
-			int offset, int fetchSize) {
+	private IDataStore queryFlatDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections,
+			List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, int offset, int fetchSize) {
 		IDataSource dataSource = dataSet.getDataSource();
 		String tableName = dataSet.getFlatTableName();
-		return queryDataset(dataSource, tableName, groups, filters, projections, dataSet, offset, fetchSize);
+		return queryDataset(dataSource, tableName, groups, filters, projections, summaryRowProjections, dataSet, offset, fetchSize);
 	}
 
 	private IDataStore queryRealtimeDataset(Map<String, String> parametersValues, List<GroupCriteria> groups, List<FilterCriteria> filters,
-			List<ProjectionCriteria> projections, IDataSet dataSet, int offset, int fetchSize) {
+			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, int offset, int fetchSize) {
 		dataSet.setParamsMap(parametersValues);
 
 		List<JSONObject> parameters = getDataSetParameters(dataSet.getLabel());
@@ -1246,8 +1257,24 @@ public class DatasetManagementAPI {
 		IDataStore dataStore = dataSet.getDataStore();
 		if (dataStore != null && dataStore.getRecordsCount() < METAMODEL_LIMIT) {
 			String tableName = DataStore.DEFAULT_SCHEMA_NAME + "." + DataStore.DEFAULT_TABLE_NAME;
-			dataStore = dataStore.aggregateAndFilterRecords(getQueryText(null, tableName, groups, filters, projections, dataSet, offset, fetchSize, true),
-					offset, fetchSize);
+
+			if (summaryRowProjections != null && summaryRowProjections.size() > 0) {
+				String originalQuery = getQueryText(null, tableName, groups, filters, projections, null, dataSet, true);
+				IDataStore originalDataStore = dataStore.aggregateAndFilterRecords(originalQuery, -1, -1);
+
+				String pagedQuery = getQueryText(null, tableName, null, null, null, null, dataSet, true);
+				IDataStore pagedDataStore = originalDataStore.aggregateAndFilterRecords(pagedQuery, offset, fetchSize);
+
+				String summaryRowQuery = getQueryText(null, tableName, groups, filters, projections, summaryRowProjections, dataSet, true);
+				IDataStore summaryRowDataStore = originalDataStore.aggregateAndFilterRecords(summaryRowQuery, -1, -1);
+
+				appendSummaryRowToPagedDataStore(projections, summaryRowProjections, pagedDataStore, summaryRowDataStore);
+
+				dataStore = pagedDataStore;
+			} else {
+				dataStore = dataStore.aggregateAndFilterRecords(getQueryText(null, tableName, groups, filters, projections, null, dataSet, true), offset,
+						fetchSize);
+			}
 			dataStore.setCacheDate(new Date());
 		} else {
 			throw new SpagoBIRuntimeException("Impossible to return data: the dataStore is [null], or it returns more than [" + METAMODEL_LIMIT
@@ -1257,19 +1284,64 @@ public class DatasetManagementAPI {
 		return dataStore;
 	}
 
+	public void appendSummaryRowToPagedDataStore(List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections,
+			IDataStore pagedDataStore, IDataStore summaryRowDataStore) {
+		// calc a map for summaryRowProjections -> projections
+		Map<Integer, Integer> projectionToSummaryRowProjection = new HashMap<Integer, Integer>();
+		for (int i = 0; i < summaryRowProjections.size(); i++) {
+			ProjectionCriteria summaryRowProjection = summaryRowProjections.get(i);
+			for (int j = 0; j < projections.size(); j++) {
+				ProjectionCriteria projection = projections.get(j);
+				if (summaryRowProjection.getColumnName().equals(projection.getAliasName())) {
+					projectionToSummaryRowProjection.put(j, i);
+					break;
+				}
+			}
+		}
+
+		IMetaData pagedMetaData = pagedDataStore.getMetaData();
+		IMetaData summaryRowMetaData = summaryRowDataStore.getMetaData();
+
+		// append summary row
+		IRecord summaryRowRecord = summaryRowDataStore.getRecordAt(0);
+		Record newRecord = new Record();
+		for (int projectionIndex = 0; projectionIndex < pagedMetaData.getFieldCount(); projectionIndex++) {
+			Field field = new Field(null);
+			if (projectionToSummaryRowProjection.containsKey(projectionIndex)) {
+				Integer summaryRowIndex = projectionToSummaryRowProjection.get(projectionIndex);
+				Object value = summaryRowRecord.getFieldAt(summaryRowIndex).getValue();
+				field.setValue(value);
+			}
+			newRecord.appendField(field);
+		}
+		pagedDataStore.appendRecord(newRecord);
+
+		// copy metadata from summary row
+		for (Integer projectionIndex : projectionToSummaryRowProjection.keySet()) {
+			Integer summaryRowIndex = projectionToSummaryRowProjection.get(projectionIndex);
+			pagedMetaData.getFieldMeta(projectionIndex).setType(summaryRowMetaData.getFieldType(summaryRowIndex));
+		}
+	}
+
 	private IDataStore queryDataset(IDataSource dataSource, String tableName, List<GroupCriteria> groups, List<FilterCriteria> filters,
-			List<ProjectionCriteria> projections, IDataSet dataSet, int offset, int fetchSize) {
+			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, int offset, int fetchSize) {
 		logger.debug("IN");
 
-		String queryText = getQueryText(dataSource, tableName, groups, filters, projections, dataSet, offset, fetchSize, false);
-		IDataStore dataStore = dataSource.executeStatement(queryText, offset, fetchSize);
+		String query = getQueryText(dataSource, tableName, groups, filters, projections, null, dataSet, false);
+		IDataStore pagedDataStore = dataSource.executeStatement(query, offset, fetchSize);
+
+		if (summaryRowProjections != null && summaryRowProjections.size() > 0) {
+			String summaryRowQuery = getQueryText(dataSource, tableName, groups, filters, projections, summaryRowProjections, dataSet, false);
+			IDataStore summaryRowDataStore = dataSource.executeStatement(summaryRowQuery, -1, -1);
+			appendSummaryRowToPagedDataStore(projections, summaryRowProjections, pagedDataStore, summaryRowDataStore);
+		}
 
 		logger.debug("OUT");
-		return dataStore;
+		return pagedDataStore;
 	}
 
 	public String getQueryText(IDataSource dataSource, String tableName, List<GroupCriteria> groups, List<FilterCriteria> filters,
-			List<ProjectionCriteria> projections, IDataSet dataSet, int offset, int fetchSize, boolean isRealtime) {
+			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, boolean isRealtime) {
 		String queryText = null;
 
 		if (tableName == null || tableName.isEmpty() || (!isRealtime && dataSource == null)) {
@@ -1284,26 +1356,60 @@ public class DatasetManagementAPI {
 		IDataStore limitedDataStore = dataSet.getDataStore();
 
 		if (limitedDataStore != null) {
-			Map<String, String> datasetAlias = (Map<String, String>) limitedDataStore.getMetaData().getProperty("DATASET_ALIAS");
+			if (summaryRowProjections == null || summaryRowProjections.size() == 0 || !isRealtime) {
+				Map<String, String> datasetAlias = (Map<String, String>) limitedDataStore.getMetaData().getProperty("DATASET_ALIAS");
 
-			// https://production.eng.it/jira/browse/KNOWAGE-149
-			// This list is used to create the order by clause
-			List<String> orderColumns = new ArrayList<String>();
+				// https://production.eng.it/jira/browse/KNOWAGE-149
+				// This list is used to create the order by clause
+				List<String> orderColumns = new ArrayList<String>();
 
-			SelectBuilder sqlBuilder = new SelectBuilder();
-			sqlBuilder.setWhereOrEnabled(isRealtime);
-			sqlBuilder.from(tableName);
+				SelectBuilder sqlBuilder = new SelectBuilder();
+				sqlBuilder.setWhereOrEnabled(isRealtime);
+				sqlBuilder.from(tableName);
 
-			setColumnsToSelect(dataSource, projections, datasetAlias, sqlBuilder, orderColumns);
-			setWhereConditions(dataSource, filters, datasetAlias, sqlBuilder);
-			setGroupbyConditions(dataSource, groups, datasetAlias, sqlBuilder);
-			setOrderbyConditions(orderColumns, sqlBuilder);
-			// if (isRealtime) {
-			// logger.debug("Setting LIMIT to [" + fetchSize + "] and OFFSET to [" + offset + "] into the SQL query.");
-			// setPagingConditions(fetchSize, offset, sqlBuilder);
-			// }
+				setColumnsToSelect(dataSource, projections, datasetAlias, sqlBuilder, orderColumns);
+				setWhereConditions(dataSource, filters, datasetAlias, sqlBuilder);
+				setGroupbyConditions(dataSource, groups, datasetAlias, sqlBuilder);
+				setOrderbyConditions(orderColumns, sqlBuilder);
 
-			queryText = sqlBuilder.toString();
+				queryText = sqlBuilder.toString();
+			}
+
+			if (summaryRowProjections != null && summaryRowProjections.size() > 0) {
+				StringBuilder sb = new StringBuilder();
+				sb.append("SELECT ");
+				String comma = "";
+				for (int i = 0; i < projections.size(); i++) {
+					ProjectionCriteria projection = projections.get(i);
+					String alias = projection.getAliasName();
+					String aggregateFunction = null;
+					for (ProjectionCriteria summaryRowProjection : summaryRowProjections) {
+						String columnName = summaryRowProjection.getColumnName();
+						if (columnName.equals(alias)) {
+							aggregateFunction = summaryRowProjection.getAggregateFunction();
+							break;
+						}
+					}
+					if (aggregateFunction != null) {
+						sb.append(comma);
+						comma = ",";
+						sb.append(aggregateFunction);
+						sb.append("(");
+						sb.append(alias);
+						sb.append(")");
+					}
+				}
+				sb.append(" FROM ");
+				if (isRealtime) {
+					sb.append(tableName);
+				} else {
+					sb.append("(");
+					sb.append(queryText);
+					sb.append(") AS T");
+				}
+
+				queryText = sb.toString();
+			}
 			logger.debug("Persisted dataset access query is equal to [" + queryText + "]");
 		} else {
 			throw new SpagoBIRuntimeException("Impossible to retrieve datastore to get required metadata.");
@@ -1322,32 +1428,31 @@ public class DatasetManagementAPI {
 					columnName = datasetAlias.get(projection.getDataset()) + " - " + projection.getColumnName();
 				}
 
-				if (aggregateFunction != null && aggregateFunction.equals(AggregationFunctions.FORMULA)) {
+				if (columnName.contains(AbstractDataBase.STANDARD_ALIAS_DELIMITER)) {
 					// this is a calculated field!
 					columnName = AbstractJDBCDataset.substituteStandardWithDatasourceDelimiter(columnName, dataSource);
 				} else {
 					columnName = AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
 				}
 
+				String aliasName = projection.getAliasName();
+				aliasName = AbstractJDBCDataset.encapsulateColumnName(aliasName, dataSource);
 				if ((aggregateFunction != null) && (!aggregateFunction.isEmpty()) && (columnName != "*")) {
-					String aliasName = projection.getAliasName();
-					aliasName = AbstractJDBCDataset.encapsulateColumnName(aliasName, dataSource);
 					if (aliasName != null && !aliasName.isEmpty()) {
-
-						String tmpColumn;
 						// https://production.eng.it/jira/browse/KNOWAGE-149
 						// This variable is used for the order clause
-						if (aggregateFunction.equals(AggregationFunctions.FORMULA)) {
-							tmpColumn = columnName;
-						} else {
-							tmpColumn = aggregateFunction + "(" + columnName + ") ";
-						}
+						String tmpColumn = aggregateFunction + "(" + columnName + ") ";
+
 						String orderType = projection.getOrderType();
 						if (orderType != null && !orderType.equals("")) {
 							orderColumns.add(tmpColumn + " " + orderType);
 						}
 
 						columnName = tmpColumn + " AS " + aliasName;
+					}
+				} else {
+					if (aliasName != null && !aliasName.isEmpty() && !aliasName.equals(columnName)) {
+						columnName += " AS " + aliasName;
 					}
 				}
 				sqlBuilder.column(columnName);
