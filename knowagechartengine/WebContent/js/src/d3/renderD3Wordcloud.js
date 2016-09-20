@@ -549,17 +549,45 @@ function renderWordCloud(chartConf,locale){
 		function draw(words,e) {
 			var randomId= Math.round((Math.random())*10000);
 		
+			/**
+			 * Create an invisible HTML form that will sit on the page where the chart (in this case, the WORDCLOUD) is rendered.
+			 * This form will serve us as a media through which the data and customization for the rendered chart will be sent
+			 * towards the Highcharts exporting service that will take the HTML of the WORDCLOUD chart, render it and take a snapshot 
+			 * that will be sent back towards the client (our browser) in a proper format (PDF or PNG) and downloaded to the local
+			 * machine.
+			 * 
+			 * This way, when the user clicks on the export option for the rendered chart, the JS code ("chartExecutionController.js") 
+			 * that fills the form (that we set here as a blank structure) will eventually submit it towards the Highcharts export 
+			 * service. The result is the exported chart. This code will catch the form by the ID that we set here.
+			 * 
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */
+			d3.select("body")
+				.append("form").attr("id","export-chart-form").style("margin","0px")
+				.append("input").attr("type","hidden").attr("name","options")
+				.append("input").attr("type","hidden").attr("name","content")
+				.append("input").attr("type","hidden").attr("name","type")
+				.append("input").attr("type","hidden").attr("name","width")
+				.append("input").attr("type","hidden").attr("name","constr")
+				.append("input").attr("type","hidden").attr("name","async")
+				.append("input").attr("type","hidden").attr("name","chartHeight")
+				.append("input").attr("type","hidden").attr("name","chartWidth");
+				
+			/**
+			 * The body inside of which the chart will be rendered.
+			 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 */			
 			d3.select("body")		
-			.append("div").attr("id","main"+randomId)
-			.attr("class","d3-container")
-			.style("margin","auto")	// Center chart horizontally (Danilo Ristovski)
-			.style("height",heightNormalized)
-			.style("width",widthNormalized)			
-			.style("font-family", chartConf.chart.style.fontFamily)	
-			.style("font-style", chartConf.chart.style.fontStyle)
-    		.style("font-weight", chartConf.chart.style.fontWeight)
-    		.style("text-decoration", chartConf.chart.style.textDecoration)
-			.style("background-color", chartConf.chart.style.backgroundColor); // danristo
+				.append("div").attr("id","main"+randomId)
+				.attr("class","d3-container")
+				.style("margin","auto")	// Center chart horizontally (Danilo Ristovski)
+				.style("height",heightNormalized)
+				.style("width",widthNormalized)			
+				.style("font-family", chartConf.chart.style.fontFamily)	
+				.style("font-style", chartConf.chart.style.fontStyle)
+	    		.style("font-weight", chartConf.chart.style.fontWeight)
+	    		.style("text-decoration", chartConf.chart.style.textDecoration)
+				.style("background-color", chartConf.chart.style.backgroundColor); // danristo
 			
 			if (chartConf.data[0].length < 1)
 			{

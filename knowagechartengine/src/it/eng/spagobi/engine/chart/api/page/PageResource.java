@@ -74,14 +74,22 @@ public class PageResource extends AbstractChartEngineResource {
 			pages.put("edit", new JSONObject("{name: 'edit', description: 'the chart edit page', parameters: []}"));
 			urls.put("edit", "/WEB-INF/jsp/chart_edit.jsp");
 			pages.put("execute", new JSONObject("{name: 'execute', description: 'the chart execution page', parameters: ['template']}"));
-			urls.put("execute", "/WEB-INF/jsp/chart.jsp");
+
+			/* The old (ExtJS) chart execution page (chart.jsp file) is commented, whilst the new one (AngularJS) is used. (danristo) */
+			// urls.put("execute", "/WEB-INF/jsp/chart.jsp");
+			urls.put("execute", "/WEB-INF/jsp/chartAngular.jsp");
+
 			pages.put("test", new JSONObject("{name: 'test', description: 'the chart test page', parameters: ['template']}"));
 			urls.put("test", "/WEB-INF/jsp/test4.jsp");
 			pages.put("edit_cockpit", new JSONObject("{name: 'edit_cockpit', description: 'the chart edit page from cockpit', parameters: []}"));
 			urls.put("edit_cockpit", "/WEB-INF/jsp/chart_edit.jsp");
 			pages.put("execute_cockpit", new JSONObject(
 					"{name: 'execute_cockpit', description: 'the chart execution page from cockpit', parameters: ['template']}"));
-			urls.put("execute_cockpit", "/WEB-INF/jsp/chart.jsp");
+
+			/* The old (ExtJS) chart execution page (chart.jsp file) is commented, whilst the new one (AngularJS) is used. (danristo) */
+			// urls.put("execute_cockpit", "/WEB-INF/jsp/chart.jsp");
+			urls.put("execute_cockpit", "/WEB-INF/jsp/chartAngular.jsp");
+
 		} catch (JSONException t) {
 			logger.error(t);
 		}
@@ -131,7 +139,7 @@ public class PageResource extends AbstractChartEngineResource {
 				 * The use of the above commented snippet had led to https://production.eng.it/jira/browse/KNOWAGE-678 and
 				 * https://production.eng.it/jira/browse/KNOWAGE-552. The chart engine is stateful, thus the http session is not the place to store and retrive
 				 * the engine instance, otherwise concurrency issues are raised.
-				 * 
+				 *
 				 * @author: Alessandro Portosa (alessandro.portosa@eng.it)
 				 */
 				// getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
@@ -150,7 +158,7 @@ public class PageResource extends AbstractChartEngineResource {
 				 * The use of the above commented snippet had led to https://production.eng.it/jira/browse/KNOWAGE-678 and
 				 * https://production.eng.it/jira/browse/KNOWAGE-552. The chart engine is stateful, thus the http session is not the place to store and retrive
 				 * the engine instance, otherwise concurrency issues are raised.
-				 * 
+				 *
 				 * @author: Alessandro Portosa (alessandro.portosa@eng.it)
 				 */
 				// getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
@@ -287,7 +295,7 @@ public class PageResource extends AbstractChartEngineResource {
 				 * The use of the above commented snippet had led to https://production.eng.it/jira/browse/KNOWAGE-678 and
 				 * https://production.eng.it/jira/browse/KNOWAGE-552. The chart engine is stateful, thus the http session is not the place to store and retrive
 				 * the engine instance, otherwise concurrency issues are raised.
-				 *
+				 * 
 				 * @author: Alessandro Portosa (alessandro.portosa@eng.it)
 				 */
 				// getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
@@ -305,7 +313,7 @@ public class PageResource extends AbstractChartEngineResource {
 				 * The use of the above commented snippet had led to https://production.eng.it/jira/browse/KNOWAGE-678 and
 				 * https://production.eng.it/jira/browse/KNOWAGE-552. The chart engine is stateful, thus the http session is not the place to store and retrive
 				 * the engine instance, otherwise concurrency issues are raised.
-				 *
+				 * 
 				 * @author: Alessandro Portosa (alessandro.portosa@eng.it)
 				 */
 				// getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
@@ -337,7 +345,7 @@ public class PageResource extends AbstractChartEngineResource {
 			 * Setting the encoding type to the response object, so the Cockpit engine when calling the rendering of the chart (chart.jsp) can display the real
 			 * content of the chart template. If this is not set, specific Italian letters, such as ù and à are going to be displayed as black squared question
 			 * marks - they will not be displayed as they are specified by the user.
-			 * 
+			 *
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			response.setContentType("text/html");

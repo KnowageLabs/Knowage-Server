@@ -565,7 +565,7 @@ function renderChordChart(jsonData,locale)
 	{
 		var height = jsonData.chart.height ? Number(jsonData.chart.height) : window.innerHeight;
 	}	
-	
+
 	if (jsonData.chart.widthDimType == "percentage")
 	{
 		var width = jsonData.chart.width ? window.innerWidth*Number(jsonData.chart.width)/100 : window.innerWidth;
@@ -574,6 +574,7 @@ function renderChordChart(jsonData,locale)
 	{
 		var width = jsonData.chart.width ? Number(jsonData.chart.width) : window.innerWidth;
 	}
+
 	
 	var chartDivWidth=width;
 	var chartDivHeight=height;
@@ -616,6 +617,36 @@ function renderChordChart(jsonData,locale)
 	
 	//-- mainPanelTemp.setStyle("overflow-y","hidden"); --
 	
+	/**
+	 * Create an invisible HTML form that will sit on the page where the chart (in this case, the CHORD) is rendered.
+	 * This form will serve us as a media through which the data and customization for the rendered chart will be sent
+	 * towards the Highcharts exporting service that will take the HTML of the CHORD chart, render it and take a snapshot 
+	 * that will be sent back towards the client (our browser) in a proper format (PDF or PNG) and downloaded to the local
+	 * machine.
+	 * 
+	 * This way, when the user clicks on the export option for the rendered chart, the JS code ("chartExecutionController.js") 
+	 * that fills the form (that we set here as a blank structure) will eventually submit it towards the Highcharts export 
+	 * service. The result is the exported chart. This code will catch the form by the ID that we set here.
+	 * 
+	 * (migration from the ExtJS execution to AngularJS)
+	 * 
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	d3.select("body")
+		.append("form").attr("id","export-chart-form").style("margin","0px")
+		.append("input").attr("type","hidden").attr("name","options")
+		.append("input").attr("type","hidden").attr("name","content")
+		.append("input").attr("type","hidden").attr("name","type")
+		.append("input").attr("type","hidden").attr("name","width")
+		.append("input").attr("type","hidden").attr("name","constr")
+		.append("input").attr("type","hidden").attr("name","async")
+		.append("input").attr("type","hidden").attr("name","chartHeight")
+		.append("input").attr("type","hidden").attr("name","chartWidth");
+		
+	/**
+	 * The body inside of which the chart will be rendered.
+	 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */	
 	d3.select("body")
 		.append("div").attr("id","main"+randomId)
 		.attr("class","d3-container")
@@ -629,7 +660,7 @@ function renderChordChart(jsonData,locale)
 		.style("font-weight",jsonData.chart.style.fontWeight)
 		.style("text-decoration",jsonData.chart.style.textDecoration)
 		.style("font-size",jsonData.chart.style.fontSize);
-	
+
 	// Set title
 	d3.select("#main"+randomId).append("div")
 		.style("color",jsonData.title.style.color)
@@ -655,9 +686,9 @@ function renderChordChart(jsonData,locale)
 	d3.select("#main"+randomId).append("div").style("height", emptySplitDivHeight);
 	
 	d3.select("#main"+randomId).append("div").attr("id","chartD3"+randomId);
-	
+		
 	var svg = d3.select("#chartD3"+randomId).append("div")
-	 			.attr("class","chart")	 			
+	 			.attr("class","chart")
 	 			.style("width",width)
 	 			.style("height",chartDivHeight)
 	 			.attr("align","center")

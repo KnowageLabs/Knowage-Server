@@ -1,3 +1,21 @@
+<%--
+Knowage, Open Source Business Intelligence suite
+Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+
+Knowage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+Knowage is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+--%>
+
 <%@ page language="java" contentType="text/html; charset=UTF-8"
  pageEncoding="UTF-8"%>
 
@@ -14,7 +32,12 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/treemap/treemap.js"></script>
 
 <script>
+	
+	// The global JS variable initialized in the main chart execution JSP (chartAngular.jsp) (danristo)
+	var highchartsDrilldownHelper = highchartsDrilldownHelper();
+
 	function initChartLibrary(panelId, drillUpText, decimalPoint, thousandsSep) {
+				
 		Highcharts.setOptions({
 			chart : {
 				renderTo : panelId,
@@ -135,6 +158,7 @@
 	};
 
 	function renderChart(chartConf) {
+		
 		var chartType = chartConf.chart.type.toLowerCase();
 		
 		if (chartType == 'treemap') 
@@ -194,18 +218,44 @@
 			*/
 			if (isNaN(e.category))
 			{
+				
+				// The "this" references to the Highcharts.Chart object. (danristo)
 				var chart = this;
 				chart.showLoading('Loading...');
-				Sbi.chart.viewer.HighchartsDrilldownHelper.drilldown(e.point.name, e.point.series.name);
 				
-				var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager();
-				var parameters = {
+				// TODO: commented by: danristo (EXT -> ANGULAR)
+				//Sbi.chart.viewer.HighchartsDrilldownHelper.drilldown(e.point.name, e.point.series.name);
+				
+				/* console.log("== USAO USPESNO 2 ==");
+				console.log(highchartsDrilldownHelper);
+				console.log(chartExecutionWebServiceManager);
+				console.log(jsonTemplate); */
+				
+				highchartsDrilldownHelper.drilldown(e.point.name, e.point.series.name);
+				
+				// TODO: commented by: danristo (EXT -> ANGULAR)
+				//var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager();
+				/* var parameters = {
 					breadcrumb: Ext.JSON.encode(Sbi.chart.viewer.HighchartsDrilldownHelper.breadcrumb),
 					jsonTemplate: Sbi.chart.viewer.ChartTemplateContainer.jsonTemplate
-				};
-				chartServiceManager.run('drilldownHighchart', parameters, [], function (response) {
-					var series = Ext.JSON.decode(response.responseText, true);
+				}; */
+				
+				var parameters = {
+						breadcrumb: JSON.stringify(highchartsDrilldownHelper.breadcrumb),
+						jsonTemplate: jsonTemplate
+					};
+				
+				// TODO: commented by: danristo (EXT -> ANGULAR)
+				//chartServiceManager.run('drilldownHighchart', parameters, [], function (response) {
+				
+				chartExecutionWebServiceManager.run('drilldownHighchart', parameters, [], function (response) {
 					
+					console.log(response.data);
+					
+					// TODO: commented by: danristo (EXT -> ANGULAR)
+					//var series = JSON.parse(response.responseText, true);
+					
+					var series = response.data;
 		           
 		           if(chart.options.drilledCategories.length==0){
 		        	   chart.options.drilledCategories.push(chart.xAxis[0].axisTitle.textStr);
@@ -263,25 +313,32 @@
        if(chart.drilldownLevels.length==0 && chart.yAxis[0].userOptions.title.custom==false){
     	   chart.yAxis[0].setTitle(yAxisTitle);
        }
-   
-		Sbi.chart.viewer.HighchartsDrilldownHelper.drillup();
+       
+    	// TODO: commented by: danristo (EXT -> ANGULAR)
+		//Sbi.chart.viewer.HighchartsDrilldownHelper.drillup();
+       highchartsDrilldownHelper.drillup();
 	}
 
 	function handleCockpitSelection(e) {
 		
 		if (!e.seriesOptions) {
-// 			debugger;
+
 			var cockpitWidgetManager = window.parent.cockpitPanel.widgetContainer.widgetManager;
 			var cockpitWidgets = cockpitWidgetManager.widgets;
-			var widgetId = Sbi.chart.viewer.ChartTemplateContainer.widgetId;
+			
+			console.log(cockpitWidgets);
+			
+			//var widgetId = Sbi.chart.viewer.ChartTemplateContainer.widgetId;
+			
+			console.log(widgetId);
 			
 			var selections = {};
 // 			selections[e.point.name] = {values: [e.point.series.name]};
 			
 			for(var i = 0; i < cockpitWidgets.getCount(); i++) {
 				var widget = cockpitWidgets.get(i);
-				
-				if(Sbi.isValorized(widget) && widget.wtype === 'chart' && widget.id === widgetId){
+								
+				if(widget && widget.wtype === 'chart' && widget.id === widgetId){
 					
 					var fieldMeta = widget.getFieldMetaByValue(e.point.name);
 					var categoryFieldHeader = fieldMeta!=null?fieldMeta.header: null;
@@ -338,24 +395,73 @@
             	parent.execExternalCrossNavigation(navData,JSON.parse(driverParams),undefined,currentDocumentLabel)
 //             	parent.angular.element(frameElement).scope().navigateTo(navData); 
             }else{
-            	Sbi.chart.viewer.CrossNavigationHelper.navigateTo(
+            	/* Sbi.chart.viewer.CrossNavigationHelper.navigateTo(
     					"HIGHCHART",
     					e.point.crossNavigationDocumentName,
     					e.point.crossNavigationDocumentParams, categoryName,
     					categoryValue, serieName, serieValue, groupingCategoryName,
-    					groupingCategoryValue, null);	
-            }
-            
+    					groupingCategoryValue, null);	 */
+            }            
 			
-
-			var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory
-					.getChartWebServiceManager();
+			// TODO: commented by: danristo (EXT -> ANGULAR)  
+			/* var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory
+					.getChartWebServiceManager(); */
+					
 			chart.hideLoading();
 		}
 	};
 
 	function handleCrossNavigationFrom() {
-		Sbi.chart.viewer.CrossNavigationHelper.navigateBackTo();
+		// TODO: commented by: danristo (EXT -> ANGULAR)
+		//Sbi.chart.viewer.CrossNavigationHelper.navigateBackTo();
 	};
+	
+	/* author danristo (EXT -> ANGULAR) */
+	function highchartsDrilldownHelper() {
+	
+		return {
+			
+			breadcrumb: [],
+			
+			drilldown: function(selectedName, selectedSerie){
+				
+				var drill = {
+						selectedName: selectedName,
+						selectedSerie: selectedSerie
+				};
+				
+				console.info("IN: HighchartsDrilldownHelper (handling the clicking on the value label of the charts item)");
+				
+				/**
+				 * The workaround solution for drilling down when clicking on the value of the chart
+				 * (i.e. on the label that is linked to single bar in the BAR chart or on the label
+				 * that is linked to single point inside the LINE chart), when having multiple layers.
+				 * 
+				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */
+				var i = this.breadcrumb.length;
+				var indicator = null;
+			   
+				while (i--) 
+			    {
+			       if (JSON.stringify(this.breadcrumb[i]) === JSON.stringify(drill)) 
+			       {
+			    	   
+			    	   indicator = true;
+			       }
+			    }
+					
+			    if (indicator != true)
+			    	indicator = false;
+				
+			    if (!indicator)
+				this.breadcrumb.push(drill);
+			},
+			
+			drillup: function(){
+				this.breadcrumb.pop();
+			}
+		}
+	}
 	
 </script>

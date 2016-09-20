@@ -30,15 +30,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/d3/renderD3Sunburst.js"></script> 
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/d3/renderD3Parallel.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/d3/renderD3Chord.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/ext5/sbi/chart/viewer/CrossNavigationHelper.js"></script>
 <script>
 
 	// TODO: check if ext was imported (don't care)
 	
 	// TODO: Ext.create("Sbi.chart.library") (don't care)
 	
-	function initChartLibrary(panelId) {
-		
+	function initChartLibrary(panelId) {		
 		document.getElementById(panelId).setAttribute("style","height:0px");
 	}
 	
@@ -49,8 +47,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		the D3 chart.
 		(danilo.ristovski@mht.net)
 	*/
-	function isChartD3(chartConf)
-	{
+	function isChartD3(chartConf) {
+			
 		var chartType = chartConf.chart.type.toLowerCase();
 		
 		if(chartType == "wordcloud" || chartType == "sunburst" || chartType== "parallel" || chartType == "chord")
@@ -61,6 +59,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		{
 			return false;
 		}
+		
 	}
 	
 	/*
@@ -68,7 +67,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		for series items' data labels charts (tooltips and other displaying aspects).
 		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	*/
-	function renderChart(chartConf,locale){
+	function renderChart(chartConf,locale) {
 		
 		/* 
 			If rerendering the chart, we will need cleaning of the
@@ -79,28 +78,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		*/
 		cleanChart();
 		
-		if(chartConf.chart.type.toLowerCase() == "wordcloud"){
-			
-			renderWordCloud(chartConf,locale);
-			
+		if(chartConf.chart.type.toLowerCase() == "wordcloud") {			
+			renderWordCloud(chartConf,locale);			
 		}
-		else if (chartConf.chart.type.toLowerCase() == "sunburst")
-		{
-			renderSunburst(chartConf,locale);
-			
+		else if (chartConf.chart.type.toLowerCase() == "sunburst") {
+			renderSunburst(chartConf,locale);			
 		}
-		else if (chartConf.chart.type.toLowerCase() == "parallel")
-		{
-			renderParallelChart(chartConf,locale);
-			
+		else if (chartConf.chart.type.toLowerCase() == "parallel") {
+			renderParallelChart(chartConf,locale);			
 		}
-		else if (chartConf.chart.type.toLowerCase() == "chord")
-		{
+		else if (chartConf.chart.type.toLowerCase() == "chord") {
 			renderChordChart(chartConf,locale);
 		}
-		
-		else
-		{
+		else {
 			alert("Chart not defined");
 		}
 	}
@@ -133,7 +123,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	            }
 				else {
 				
-					Sbi.chart.viewer.CrossNavigationHelper.navigateTo(
+					/* Sbi.chart.viewer.CrossNavigationHelper.navigateTo(
 						    "SUNBURST",
 							e.crossNavigationDocumentName, 
 							e.crossNavigationDocumentParams,
@@ -144,7 +134,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							null,
 						    null,
 						    e.stringParameters
-							);
+							); */
 	            }
 			
 			}
@@ -195,7 +185,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             	}
 				else {
 					
-					Sbi.chart.viewer.CrossNavigationHelper.navigateTo(
+					/* Sbi.chart.viewer.CrossNavigationHelper.navigateTo(
 							"D3CHART",
 							e.crossNavigationDocumentName, 
 							e.crossNavigationDocumentParams,
@@ -205,12 +195,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							serieValue,
 							groupingCategoryName,
 							groupingCategoryValue
-							);
+							); */
 	           	 	}
 				
 				}
 			
-				var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager();
+				// commented by: danristo
+				//var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory.getChartWebServiceManager();
 			
 				//chart.hideLoading();
 		}
@@ -218,7 +209,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	};
 	
 	function handleCrossNavigationFrom(){
-		Sbi.chart.viewer.CrossNavigationHelper.navigateBackTo();
+		//Sbi.chart.viewer.CrossNavigationHelper.navigateBackTo();
 	};
 	
 	function handleCockpitSelection(e) {
@@ -226,7 +217,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // 			debugger;
 			var cockpitWidgetManager = window.parent.cockpitPanel.widgetContainer.widgetManager;
 			var cockpitWidgets = cockpitWidgetManager.widgets;
-			var widgetId = Sbi.chart.viewer.ChartTemplateContainer.widgetId;
+			//var widgetId = Sbi.chart.viewer.ChartTemplateContainer.widgetId;
 			
 			var selections = {};
 // 			selections[e.point.name] = {values: [e.point.series.name]};
@@ -234,7 +225,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			for(var i = 0; i < cockpitWidgets.getCount(); i++) {
 				var widget = cockpitWidgets.get(i);
 				
-				if(Sbi.isValorized(widget) && widget.wtype === 'chart' && widget.id === widgetId){
+				if(widget && widget.wtype === 'chart' && widget.id === widgetId){
 					
 // 					var fieldMeta = widget.getFieldMetaByValue(e.categoryValue);
 // 					var categoryFieldHeader = fieldMeta!=null?fieldMeta.header: null;
