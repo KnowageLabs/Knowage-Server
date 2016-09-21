@@ -826,7 +826,7 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 	synchronized private static int reserveIds(Session session, String tableName, int newRowsCount) {
 		String escapedSequenceName = tableName.toUpperCase().replaceAll("'", "''");
 		session.beginTransaction();
-		Integer lastId = (Integer) session.createSQLQuery("SELECT NEXT_VAL FROM hibernate_sequences WHERE SEQUENCE_NAME = '" + escapedSequenceName + "'")
+		Number lastId = (Number) session.createSQLQuery("SELECT NEXT_VAL FROM hibernate_sequences WHERE SEQUENCE_NAME = '" + escapedSequenceName + "'")
 				.uniqueResult();
 		if (lastId == null) {
 			session.createSQLQuery("INSERT INTO hibernate_sequences (SEQUENCE_NAME, NEXT_VAL) VALUES ('" + escapedSequenceName + "', " + newRowsCount + ")")
@@ -838,7 +838,7 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 					.executeUpdate();
 		}
 		session.getTransaction().commit();
-		return lastId;
+		return lastId.intValue();
 	}
 
 	private static ILovDetail getLovDetail(ModalitiesValue lov) {
