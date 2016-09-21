@@ -788,13 +788,26 @@ angular.module('olap_template')
 			}
 			
 			this.deleteParamFromClickables = function(item) {
-				var array = this.getMdxQueryClickables();
-				for (var i = 0; i <array.length; i++) {
-					if(item.name == array[i].name){
-						array.splice(i, 1);
+				
+				if(this.getMdxQueryTag()){
+					
+					var array = this.getMdxQueryClickables();
+					for (var i = 0; i <array.length; i++) {
+						if(item.name == array[i].name){
+							array.splice(i, 1);
+						}
 					}
+					if(array.length > 0){
+						this.setClickableTag(array);
+					}else{
+						this.deleteClickableTag();
+					}
+					
+					
+					
 				}
-				this.setClickableTag(array);
+				
+				
 			}
 			
 			this.deleteParamFromCrossNavigationTag = function(item){
@@ -804,7 +817,16 @@ angular.module('olap_template')
 						array.splice(i, 1);
 					}
 				}
-				this.setCrossNavigationTag(array);
+				
+				if(array.length > 0){
+					console.log("imamo cross")
+					this.setCrossNavigationTag(array);
+				}else{
+					console.log("brisem tag")
+					 this.deleteCrossNavigationTag();
+				}
+				
+	
 			}
 			
 			/*

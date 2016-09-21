@@ -53,7 +53,6 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 			"mdxQuery" : ""   
 	}
 	
-	console.log(jsonTemplate);
 	/**
 	 * SCENARIO is the temporary object that will be bind to olapTemplate if the scenario is defined.
 	 */
@@ -402,7 +401,6 @@ $scope.setAndLoadCN = function(num) {
     	    else {
     	    		OlapTemplateService.setScenarioTag($scope.scenario);
     				sbiModule_messaging.showSuccessMessage('Successfully added scenario to template', 'Success');
-    				console.log($scope.scenario)
     				console.log($scope.scenario);
     				console.log(OlapTemplateService.getTempateJson());
     				$mdDialog.hide();			
@@ -744,14 +742,13 @@ $scope.setAndLoadCN = function(num) {
 		  if($scope.itemForEditing != null && $scope.itemForEditing.type == 'From Member'){
 		   console.log("actually editing");
 		   console.log($scope.itemForEditing);
-		   for (var i = 0; i < clickableArray.length; i++) {
-		    if ($scope.itemForEditing.uniqueName === clickableArray[i].uniqueName) {
+		   for (var i = clickableArray.length - 1; i >= 0; i--) {
+		    if (clickableArray[i].uniqueName == $scope.itemForEditing.uniqueName) {
 		     console.log("same item replacing");
 		     clickableArray.splice(i, 1);
 		    }
 		   } 
 		  } 
-		   
 		   
 		   if(OlapTemplateService.getMdxQueryClickables()!=undefined){
 			   clickableArray = OlapTemplateService.getMdxQueryClickables();
@@ -762,14 +759,13 @@ $scope.setAndLoadCN = function(num) {
 		   if($scope.itemForEditing != null && $scope.itemForEditing.type == 'From Cell'){
 		    console.log("actually editing");
 		    console.log($scope.itemForEditing);
-		    for (var i = 0; i < parameter.length; i++) {
-		     if ($scope.itemForEditing.name === parameter[i].name) {
+		    for (var i = parameter.length - 1; i >= 0; i--) {
+		     if (parameter[i].name == $scope.itemForEditing.name) {
 		      console.log("same item replacing");
 		      parameter.splice(i, 1);
 
 		     }
 		    }
-		    
 		   }
 		  
 		   if(OlapTemplateService.getCrossNavigation()!=undefined){
@@ -932,6 +928,7 @@ $scope.setAndLoadCN = function(num) {
 	 $scope.sendOlapJsonTemplate = function() {
 		
 		 $scope.initMDX();
+		 console.log(OlapTemplateService.getTempateJson());
 		 sbiModule_restServices.alterContextPath("/knowage");
 		 sbiModule_restServices.promisePost("1.0/documents/",sbiModule_docInfo.id+'/saveOlapTemplate', OlapTemplateService.getTempateJson())
 			.then(function(response) {

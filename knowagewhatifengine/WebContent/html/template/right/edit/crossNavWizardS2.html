@@ -21,8 +21,25 @@ For example: suppose you want to create a parameter on dimension="Product" hiera
 							<label>Value</label>
 							<input ng-model="cellForShowObj.name"> 
 							</md-input-container>
+						</div>				
+	<md-button class="md-raised" ng-click="enterSelectModeCN()">
+       Select from table
+    </md-button>				
+						
+	</div>
+	
+	
+	
+	<div layout="row" layout-wrap ng-if="crossNavType == 'cell'">
+						<div flex=100>
+							<md-input-container class="md-block">
+							<label>Parameter Name</label>
+							<input ng-model="crossNavfromCellObj.name"> 
+							</md-input-container>
 						</div>
 	</div>
+	
+		
    
    <div layout="row" layout-wrap ng-if="crossNavType == 'member'">
 						<div flex=100>
@@ -31,18 +48,10 @@ For example: suppose you want to create a parameter on dimension="Product" hiera
 							<input ng-model="crossNavfromMemberObj.uniqueName"> 
 							</md-input-container>
 						</div>
-	</div>
-	
-	<md-button class="md-raised" ng-click="enterSelectModeCN()" style="float: right;">
-       Select from table
-     </md-button>
-   <div layout="row" layout-wrap ng-if="crossNavType == 'cell'">
-						<div flex=100>
-							<md-input-container class="md-block">
-							<label>Parameter Name</label>
-							<input ng-model="crossNavfromCellObj.name"> 
-							</md-input-container>
-						</div>
+						
+					<md-button class="md-raised" ng-click="enterSelectModeCN()" style="float: right;">
+				       Select from table
+				    </md-button>
 	</div>
 	
 	  <div layout="row" layout-wrap ng-if="crossNavType == 'member'">
