@@ -105,7 +105,7 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	
 	angular.element(document).ready(function () {
 		counter = 1;
-		$scope.getCubes();
+		$scope.getAllCubes();
 		if(jsonTemplate!="null"){
 			var json = JSON.parse(jsonTemplate);
 			
@@ -294,7 +294,7 @@ $scope.setAndLoadCN = function(num) {
 	/**
 	 * Loads schema cubes.
 	 */
-	$scope.getCubes = function(){
+	$scope.getAllCubes = function(){
 		sbiModule_restServices.promiseGet("1.0/designer/cubes/"+schemaID,"?SBI_EXECUTION_ID=" + JSsbiExecutionID)
 		.then(function(response) {
 			$scope.cubeList = response.data;

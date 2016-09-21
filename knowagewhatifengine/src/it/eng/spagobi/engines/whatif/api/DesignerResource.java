@@ -67,16 +67,20 @@ public class DesignerResource extends AbstractWhatIfEngineService {
 	public String getAllCubes(@PathParam("id") Integer id) throws SpagoBIEngineException {
 
 		logger.debug("IN");
+		if (id != -1) {
 
-		WhatIfEngineInstance ei = getWhatIfEngineInstance();
-		ArtifactServiceProxy artifactProxy = (ArtifactServiceProxy) ei.getEnv().get(EngineConstants.ENV_ARTIFACT_PROXY);
-		MondrianSchemaManager schemaManager = new MondrianSchemaManager(artifactProxy);
-		reference = schemaManager.getMondrianSchemaURI(id);
-		MondrianDriver driver = new MondrianDriver(reference);
-		retriver = new MondrianSchemaRetriver(driver);
-		JSONArray array = new JSONArray(retriver.getAllCubes());
-		logger.debug("OUT");
-		return array.toString();
+			WhatIfEngineInstance ei = getWhatIfEngineInstance();
+			ArtifactServiceProxy artifactProxy = (ArtifactServiceProxy) ei.getEnv().get(EngineConstants.ENV_ARTIFACT_PROXY);
+			MondrianSchemaManager schemaManager = new MondrianSchemaManager(artifactProxy);
+			reference = schemaManager.getMondrianSchemaURI(id);
+			MondrianDriver driver = new MondrianDriver(reference);
+			retriver = new MondrianSchemaRetriver(driver);
+			JSONArray array = new JSONArray(retriver.getAllCubes());
+			logger.debug("OUT");
+			return array.toString();
+
+		}
+		return "";
 	}
 
 	@GET

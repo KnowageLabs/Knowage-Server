@@ -100,11 +100,15 @@ author:...
 	   sbiExecutionID = request.getParameter("SBI_EXECUTION_ID" );
 	   if(request.getParameter("mode") != null){
           mode = request.getParameter("mode");
+          
+          
 	}else{
 		 mode = "full" ;
 	} 
 	   if(request.getParameter("schemaID") != null){
 		   schemaID = request.getParameter("schemaID");
+		}else{
+			schemaID = "-1";
 		}
 	   if(request.getParameter("cubeName") != null){
 		   cubeName = request.getParameter("cubeName");
