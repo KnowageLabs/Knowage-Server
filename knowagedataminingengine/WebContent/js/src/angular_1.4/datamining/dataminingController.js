@@ -18,9 +18,9 @@
 
 var app = angular.module('dataMiningApp', ['ngMaterial', 'sbiModule']);
 
-app.controller('Controller', ['sbiModule_logger', 'sbiModule_config', 'datamining_template','sbiModule_translate','sbiModule_restServices', '$scope', '$q', '$timeout', '$mdDialog', dataMiningFunction ]);
+app.controller('Controller', ['sbiModule_logger', 'sbiModule_config', 'datamining_template','sbiModule_translate','sbiModule_restServices', '$scope', '$q', '$timeout', '$mdDialog','$sce', dataMiningFunction ]);
 
-function dataMiningFunction (sbiModule_logger, sbiModule_config, datamining_template,sbiModule_translate, sbiModule_restServices, $scope, $q, $timeout,  $mdDialog) {
+function dataMiningFunction (sbiModule_logger, sbiModule_config, datamining_template,sbiModule_translate, sbiModule_restServices, $scope, $q, $timeout,  $mdDialog,$sce) {
 	
 	/*****************************/
 	/** Initialization          **/
@@ -55,6 +55,7 @@ function dataMiningFunction (sbiModule_logger, sbiModule_config, datamining_temp
 	$scope.imgWidth=480;
 	$scope.imgHeight=480;
 	$scope.pendingRequest = 0;
+	$scope.htmlShow="HTMLSHOW";
 	
 	$scope.config.params = {
 			'SBI_EXECUTION_ID' : datamining_template.ajaxBaseParams.SBI_EXECUTION_ID ,
@@ -92,17 +93,11 @@ function dataMiningFunction (sbiModule_logger, sbiModule_config, datamining_temp
 				 .success(function(data){
 					 $scope.results[commandName][output.outputName] = data;
 					 if (data.result){
-						 if ( $scope.results[commandName][output.outputName].outputType == 'image'){
+						 if ( $scope.results[commandName][output.outputName].outputType == 'image')
+						 {
 							 $scope.results[commandName][output.outputName].result = 'data:image/png;base64,' +data.result;
 						 }else{
-							if( $scope.results[commandName][output.outputName].outputType == 'html')
-							{
-								 $scope.results[commandName][output.outputName].result.html = data.result;
-							}
-							else{
-								 $scope.results[commandName][output.outputName].result = data.result;
-							}
-							
+							 	$scope.results[commandName][output.outputName].result = data.result;
 						 }
 					 }else if (data.error){
 						 $scope.results[commandName][output.outputName].error = data.error;
@@ -501,6 +496,10 @@ function dataMiningFunction (sbiModule_logger, sbiModule_config, datamining_temp
 		$scope.visibleCommandVariables = !$scope.visibleCommandVariables ;
 	};
 	
+	
+	$scope.putSafeHtml = function(html){	
+		return $sce.trustAsHtml(html);
+	};
 	
 }
 

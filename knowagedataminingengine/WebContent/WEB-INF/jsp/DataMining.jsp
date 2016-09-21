@@ -276,10 +276,16 @@ author:...
 										
 										
 										<div layout-padding class="div-text" ng-if = "results[cmd.name][out.outputName].outputType == 'html' ">
-										<!--  	<div ng-bind-html="results[cmd.name][out.outputName].html"> -->
-											<div>
-												HTML code2!
-												{{results[cmd.name][out.outputName].html}}
+										  	<div ng-bind-html="putSafeHtml(results[cmd.name][out.outputName].result)">
+											<!--<div >
+												<p>{{results[cmd.name][out.outputName].result}}</p>
+												<iframe srcdoc="{{results[cmd.name][out.outputName].result}}"></iframe>
+												<iframe srcdoc="<html><body>Hello, <b>world</b>.</body></html>"></iframe>
+												
+												<!--  								
+												<iframe srcdoc="{{htmlShow}}"></iframe>
+												{{htmlShow}} P -->
+												
 												
 											</div>
 										</div>

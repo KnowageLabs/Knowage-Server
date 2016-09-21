@@ -224,6 +224,7 @@ public class ROutputExecutor {
 					// delete temp file:
 					boolean success = (new File(htmlFile.asString())).delete();
 					res.setResult(rexp.asString());
+					// res.setResult("<html><body>Hello, <b>world</b>.</body></html>");
 					// comma separated
 
 				} else {
