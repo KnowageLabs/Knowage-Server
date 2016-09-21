@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 author:...
 --%>
 
+<%@page import="org.json.JSONObject"%>
 <%@ page language="java" 
 	     contentType="text/html; charset=UTF-8" 
 	     pageEncoding="UTF-8"%>	
@@ -78,10 +79,19 @@ author:...
     spagobiContext = request.getParameter(SpagoBIConstants.SBI_CONTEXT);
     spagobiSpagoController = request.getParameter(SpagoBIConstants.SBI_SPAGO_CONTROLLER);
     
-    
+    Map analyticalDriversMap=dataMiningEngineInstance.getAnalyticalDrivers();
+    analyticalDriversMap.toString();
+    JSONObject analyticalDriverJSON=new JSONObject(analyticalDriversMap);
+	String analyticalDriverString=analyticalDriverJSON.toString();
 %>
 
+<script type="text/javascript">
+	
+	var analyticalDriverString=<%=analyticalDriverString%>;
 
+</script>
+
+	
 <%-- ---------------------------------------------------------------------- --%>
 <%-- HTML	 																--%>
 <%-- ---------------------------------------------------------------------- --%>
@@ -257,7 +267,7 @@ author:...
 												{{out.outputName}} = {{results[cmd.name][out.outputName].result}}
 											</h3>
 										</div>
-										
+																
 										<div layout-padding class="div-text" ng-if = "results[cmd.name][out.outputName].outputType == 'Dataset'|| results[cmd.name][out.outputName].outputType == 'dataset' || results[cmd.name][out.outputName].outputType == 'spagobi_ds' ">
 											<h3 class="md-subhead">	
 												{{out.outputName}} = SpagoBi dataset saved, visible from Data Set section in Document Browser, with label: &nbsp; {{results[cmd.name][out.outputName].result}}
@@ -265,6 +275,14 @@ author:...
 										</div>
 										
 										
+										<div layout-padding class="div-text" ng-if = "results[cmd.name][out.outputName].outputType == 'html' ">
+										<!--  	<div ng-bind-html="results[cmd.name][out.outputName].html"> -->
+											<div>
+												HTML code2!
+												{{results[cmd.name][out.outputName].html}}
+												
+											</div>
+										</div>
 									</md-content>
 								</div>
 								

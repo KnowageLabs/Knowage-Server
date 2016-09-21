@@ -95,7 +95,14 @@ function dataMiningFunction (sbiModule_logger, sbiModule_config, datamining_temp
 						 if ( $scope.results[commandName][output.outputName].outputType == 'image'){
 							 $scope.results[commandName][output.outputName].result = 'data:image/png;base64,' +data.result;
 						 }else{
-							 $scope.results[commandName][output.outputName].result = data.result;
+							if( $scope.results[commandName][output.outputName].outputType == 'html')
+							{
+								 $scope.results[commandName][output.outputName].result.html = data.result;
+							}
+							else{
+								 $scope.results[commandName][output.outputName].result = data.result;
+							}
+							
 						 }
 					 }else if (data.error){
 						 $scope.results[commandName][output.outputName].error = data.error;
@@ -236,6 +243,22 @@ function dataMiningFunction (sbiModule_logger, sbiModule_config, datamining_temp
 			var cmd = data;
 			for ( var i = 0 ; cmd.variables != null && i < cmd.variables.length && cmd.variables[i].currentVal === undefined ; i++){
 				cmd.variables[i].currentVal =  cmd.variables[i].defaultVal;
+				for (var key in analyticalDriverString) {
+				  if (analyticalDriverString.hasOwnProperty(key)) {
+					  if(cmd.variables[i].name==key)
+					  {
+						  cmd.variables[i].currentVal =  analyticalDriverString[key];
+					  }	  	  
+				  }
+				}	
+				
+//				cmd.variables[i].currentVal =  cmd.variables[i].defaultVal;
+//				var analyticalDriverString2=analyticalDriverString;
+//				for (var key in analyticalDriverString) {
+//					  if (analyticalDriverString.hasOwnProperty(key)) {
+//						  if()
+//					  }
+//					}
 			}
 			var parameters = {};
 			parameters.outputs = cmd.outputs;
