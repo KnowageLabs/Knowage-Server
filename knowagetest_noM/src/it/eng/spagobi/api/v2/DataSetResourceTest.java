@@ -331,6 +331,30 @@ public class DataSetResourceTest extends AbstractV2BasicAuthTestCase {
 	}
 
 	@Test
+	public void SbiScriptDataSetTest() {
+		String datasetLabel = "SbiScriptDataSet";
+		testSbiScriptDataSet(datasetLabel, false);
+		testSbiScriptDataSet(datasetLabel, true);
+	}
+
+	private void testSbiScriptDataSet(String datasetLabel, boolean isPersisted) {
+		String selections = "{\"" + datasetLabel + "\":{\"VALUE\":[\"(200)\"]}}";
+		try {
+			createDatasets(datasetLabel, isPersisted);
+
+			given().contentType(ContentType.JSON).body(selections).when().post("/datasets/" + datasetLabel + "/data").then().contentType(ContentType.JSON)
+					.statusCode(200).body("results", equalTo(1)).body("rows[0].column_1", equalTo("200"));
+
+			given().contentType(ContentType.JSON).body(selections).when().post("/datasets/" + datasetLabel + "/data?offset=0&size=1000&realtime=true").then()
+					.contentType(ContentType.JSON).statusCode(200).body("results", equalTo(1)).body("rows[0].column_1", equalTo("200"));
+		} catch (Exception e) {
+			fail(e.toString());
+		} finally {
+			deleteDataset(datasetLabel);
+		}
+	}
+
+	@Test
 	public void SbiRestDataSetTest() {
 		String datasetLabel = "SbiRESTDataSet";
 		testSbiRestDataSet(datasetLabel, false);

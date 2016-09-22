@@ -5,7 +5,7 @@
 	"active": true,
 	"type": "SbiScriptDataSet",
 	"configuration": {
-		"Script": "returnValue(new Double(200).toString());",
+		"Script": "returnValue(new Integer(200).toString());",
 		"scriptLanguage": "groovy"
 	},
 	"pivotColumnName": null,
