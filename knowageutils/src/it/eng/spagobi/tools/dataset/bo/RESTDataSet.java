@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -42,8 +42,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -81,7 +79,7 @@ public class RESTDataSet extends ConfigurableDataSet {
 
 	/**
 	 * protected for testing purpose
-	 * 
+	 *
 	 * @param resolveParams
 	 */
 	protected void initConf(boolean resolveParams) {
@@ -121,12 +119,12 @@ public class RESTDataSet extends ConfigurableDataSet {
 
 	private void notifyListeners() {
 		DataSetListenerManager manager = DataSetListenerManagerFactory.getManager();
-		String uuid=getUserId();
-		if (uuid==null) {
+		String uuid = getUserId();
+		if (uuid == null) {
 			// temporary dataset
 			return;
 		}
-		
+
 		String label = getLabel();
 		if (label == null) {
 			// temporary dataset
@@ -163,7 +161,7 @@ public class RESTDataSet extends ConfigurableDataSet {
 
 	/**
 	 * for testing
-	 * 
+	 *
 	 * @param ignoreConfigurationOnLoad
 	 */
 	public void setIgnoreConfigurationOnLoad(boolean ignoreConfigurationOnLoad) {
@@ -192,7 +190,7 @@ public class RESTDataSet extends ConfigurableDataSet {
 		}
 
 		String directlyAttributes = getProp(DataSetConstants.REST_JSON_DIRECTLY_ATTRIBUTES, jsonConf, true, false);
-		setDataReader(new JSONPathDataReader(jsonPathItems, jsonPathAttributes, Boolean.parseBoolean(directlyAttributes),this.ngsi));
+		setDataReader(new JSONPathDataReader(jsonPathItems, jsonPathAttributes, Boolean.parseBoolean(directlyAttributes), this.ngsi));
 	}
 
 	private void initDataProxy(JSONObject jsonConf, boolean resolveParams) {
@@ -219,11 +217,11 @@ public class RESTDataSet extends ConfigurableDataSet {
 		Map<String, String> requestHeaders;
 		try {
 			requestHeaders = getRequestHeadersPropMap(DataSetConstants.REST_REQUEST_HEADERS, jsonConf, resolveParams);
-			
-			//add bearer token for OAuth Fiware
-			if ( resolveParams && OAuth2Utils.isOAuth2() && !OAuth2Utils.containsOAuth2(requestHeaders)) {
+
+			// add bearer token for OAuth Fiware
+			if (resolveParams && OAuth2Utils.isOAuth2() && !OAuth2Utils.containsOAuth2(requestHeaders)) {
 				String oAuth2Token = getOAuth2Token();
-				if (oAuth2Token!=null) {
+				if (oAuth2Token != null) {
 					requestHeaders.putAll(OAuth2Utils.getOAuth2Headers(oAuth2Token));
 				}
 			}
@@ -238,7 +236,7 @@ public class RESTDataSet extends ConfigurableDataSet {
 
 		String maxResults = getProp(DataSetConstants.REST_MAX_RESULTS, jsonConf, true, resolveParams);
 
-		setDataProxy(new RESTDataProxy(address, methodEnum, requestBody, requestHeaders, offset, fetchSize, maxResults,isNgsi()));
+		setDataProxy(new RESTDataProxy(address, methodEnum, requestBody, requestHeaders, offset, fetchSize, maxResults, isNgsi()));
 	}
 
 	public String getOAuth2Token() {
@@ -246,7 +244,7 @@ public class RESTDataSet extends ConfigurableDataSet {
 		if (up == null) {
 			return null;
 		}
-		
+
 		String uuid = (String) up.getUserUniqueIdentifier();
 		return uuid;
 	}
@@ -309,7 +307,7 @@ public class RESTDataSet extends ConfigurableDataSet {
 
 	/**
 	 * Case: Return null if it's empty and optional
-	 * 
+	 *
 	 * @param propName
 	 * @param conf
 	 * @param optional
@@ -354,45 +352,25 @@ public class RESTDataSet extends ConfigurableDataSet {
 		}
 	}
 
+	@Override
 	public SpagoBiDataSet toSpagoBiDataSet() {
 		SpagoBiDataSet sbd = super.toSpagoBiDataSet();
 		sbd.setType(DATASET_TYPE);
 		return sbd;
 	}
 
-	@Override
-	public String getSignature() {
-		JSONObject config = getJSONConfig();
-		// it's supposed that it doesn't change with same config derived from same json
-		String res = config.toString();
-		res += toStringUserParameters();
-		res = Helper.md5(res);
-		return res;
-	}
-
-	private String toStringUserParameters() {
-		StringBuilder res = new StringBuilder();
-		for (Entry<String, Object> entry : new TreeMap<String, Object>(userProfileParameters).entrySet()) {
-			res.append(",");
-			res.append(entry.getKey());
-			res.append(":");
-			res.append(entry.getValue());
-		}
-		return res.toString();
-	}
-
 	public boolean isNgsi() {
 		return ngsi;
 	}
-	
+
 	@Override
 	public IDataSource getDataSource() {
 		return null;
 	}
-	
+
 	@Override
 	public void setDataSource(IDataSource dataSource) {
-		throw new IllegalStateException(RESTDataSet.class.getSimpleName()+" doesn't need the dataSource");
+		throw new IllegalStateException(RESTDataSet.class.getSimpleName() + " doesn't need the dataSource");
 	}
 
 	public String getUserId() {
@@ -400,7 +378,7 @@ public class RESTDataSet extends ConfigurableDataSet {
 		if (up == null) {
 			return null;
 		}
-		
+
 		String uuid = (String) up.getUserId();
 		return uuid;
 	}

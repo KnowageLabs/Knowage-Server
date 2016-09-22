@@ -95,9 +95,4 @@ public class JavaClassDataSet extends ConfigurableDataSet {
 	public String getClassName() {
 		return getDataProxy().getClassName();
 	}
-
-	@Override
-	public String getSignature() {
-		return getClassName();
-	}
 }

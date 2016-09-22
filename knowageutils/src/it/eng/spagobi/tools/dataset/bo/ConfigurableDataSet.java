@@ -18,18 +18,23 @@
 package it.eng.spagobi.tools.dataset.bo;
 
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
+import it.eng.spagobi.tenant.Tenant;
+import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
 import it.eng.spagobi.tools.dataset.common.dataproxy.IDataProxy;
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.UnreachableCodeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import org.apache.log4j.Logger;
 
@@ -256,7 +261,20 @@ public abstract class ConfigurableDataSet extends AbstractDataSet {
 
 	@Override
 	public String getSignature() {
-		throw new UnreachableCodeException("getSignature method not implemented in class " + this.getClass().getName() + "!!!!");
+		Tenant tenant = TenantManager.getTenant();
+		if (tenant == null) {
+			throw new SpagoBIRuntimeException("Tenant is not set");
+		}
+
+		StringBuilder sb = new StringBuilder();
+		sb.append(getConfiguration());
+		sb.append("_");
+		sb.append(getParameters());
+		sb.append("_");
+		sb.append(getUserParametersAsString());
+		sb.append("_");
+		sb.append(tenant.getName());
+		return sb.toString();
 	}
 
 	@Override
@@ -267,6 +285,17 @@ public abstract class ConfigurableDataSet extends AbstractDataSet {
 	@Override
 	public IDataSource getDataSource() {
 		throw new UnreachableCodeException("getDataSource method not implemented in class " + this.getClass().getName() + "!!!!");
+	}
+
+	protected String getUserParametersAsString() {
+		StringBuilder res = new StringBuilder();
+		for (Entry<String, Object> entry : new TreeMap<String, Object>(userProfileParameters).entrySet()) {
+			res.append(",");
+			res.append(entry.getKey());
+			res.append(":");
+			res.append(entry.getValue());
+		}
+		return res.toString();
 	}
 
 }

@@ -78,17 +78,19 @@ public class AssociativeLogicManager {
 	private final Map<String, String> selections;
 	private final Set<String> realtimeDatasets;
 	private final Map<String, IDataSet> labelToDataset;
+	private final Map<String, Map<String, String>> datasetParameters;
 
 	private UserProfile userProfile;
 
 	static private Logger logger = Logger.getLogger(AssociativeLogicManager.class);
 
 	public AssociativeLogicManager(Pseudograph<String, LabeledEdge<String>> graph, Map<String, Map<String, String>> datasetToAssociations,
-			Map<String, String> selections, Set<String> realtimeDatasets) {
+			Map<String, String> selections, Set<String> realtimeDatasets, Map<String, Map<String, String>> datasetParameters) {
 		this.graph = graph;
 		this.datasetToAssociations = datasetToAssociations;
 		this.selections = selections;
 		this.realtimeDatasets = realtimeDatasets;
+		this.datasetParameters = datasetParameters;
 
 		this.datasetToTableName = new HashMap<String, String>();
 		this.datasetToDataSource = new HashMap<String, IDataSource>();
@@ -134,7 +136,11 @@ public class AssociativeLogicManager {
 			// the vertex is the dataset label
 			IDataSet dataSet = dataSetDao.loadDataSetByLabel(v1);
 			if (dataSet != null) {
+				Map<String, String> parametersValues = datasetParameters.get(v1);
+				dataSet.setParamsMap(parametersValues);
+
 				labelToDataset.put(v1, dataSet);
+
 				if (dataSet.isPersisted() && !dataSet.isPersistedHDFS()) {
 					datasetToTableName.put(v1, dataSet.getPersistTableName());
 					datasetToDataSource.put(v1, dataSet.getDataSourceForWriting());

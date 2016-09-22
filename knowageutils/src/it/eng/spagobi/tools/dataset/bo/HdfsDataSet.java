@@ -177,12 +177,6 @@ public class HdfsDataSet extends FileDataSet {
 		this.fileType = fileType;
 	}
 
-	@Override
-	public String getSignature() {
-		// return this.getDataProxy().getMD5Checksum();
-		return this.getDataProxy().getFileName();
-	}
-
 	/**
 	 * @return the useTempFile
 	 */

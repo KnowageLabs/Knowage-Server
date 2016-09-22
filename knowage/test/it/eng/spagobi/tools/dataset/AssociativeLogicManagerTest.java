@@ -32,9 +32,12 @@ import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
 import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
+import it.eng.spagobi.utilities.locks.DistributedLockFactory;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -43,6 +46,9 @@ import org.jgrapht.graph.Pseudograph;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import com.hazelcast.config.MulticastConfig;
+import com.hazelcast.config.TcpIpConfig;
 
 public class AssociativeLogicManagerTest {
 
@@ -89,7 +95,8 @@ public class AssociativeLogicManagerTest {
 		try {
 			UtilitiesForTest.setUpMasterConfiguration();
 			UtilitiesDAOForTest.setUpDatabaseTestJNDI();
-			TenantManager.setTenant(new Tenant("SPAGOBI"));
+			TenantManager.setTenant(new Tenant("DEFAULT_TENANT"));
+			setHazelcastDefaultConfig();
 			cache = SpagoBICacheManager.getCache();
 			dataSetDAO = DAOFactory.getDataSetDAO();
 		} catch (Exception e) {
@@ -100,11 +107,34 @@ public class AssociativeLogicManagerTest {
 		loadDataSetInCache(SALES);
 		loadDataSetInCache(PRODUCT);
 		loadDataSetInCache(CUSTOMER);
-		loadDataSetInCache(K);
-		loadDataSetInCache(W);
-		loadDataSetInCache(X);
-		loadDataSetInCache(Y);
-		loadDataSetInCache(Z);
+		// loadDataSetInCache(K);
+		// loadDataSetInCache(W);
+		// loadDataSetInCache(X);
+		// loadDataSetInCache(Y);
+		// loadDataSetInCache(Z);
+	}
+
+	private static void setHazelcastDefaultConfig() {
+		com.hazelcast.config.Config cfg = new com.hazelcast.config.Config();
+
+		cfg.getNetworkConfig().setPort(5701);
+		cfg.getNetworkConfig().setPortAutoIncrement(true);
+		cfg.getNetworkConfig().setPortCount(100);
+		MulticastConfig multicastConfig = new MulticastConfig();
+		multicastConfig.setEnabled(false);
+		cfg.getNetworkConfig().getJoin().setMulticastConfig(multicastConfig);
+
+		TcpIpConfig tcpIpConfig = new TcpIpConfig();
+		tcpIpConfig.setEnabled(true);
+		List<String> members = new ArrayList<String>();
+		members.add("127.0.0.1");
+		tcpIpConfig.setMembers(members);
+		cfg.getNetworkConfig().getJoin().setTcpIpConfig(tcpIpConfig);
+
+		cfg.setProperty("hazelcast.socket.bind.any", "false");
+		cfg.setProperty("hazelcast.logging.type", "log4j");
+
+		DistributedLockFactory.setDefaultConfig(cfg);
 	}
 
 	@Test
@@ -127,8 +157,9 @@ public class AssociativeLogicManagerTest {
 
 		// TODO: Manage real time here!
 		Set<String> realtimeDatasets = new HashSet<String>();
+		Map<String, Map<String, String>> datasetParameters = new HashMap<String, Map<String, String>>();
 
-		AssociativeLogicManager manager = new AssociativeLogicManager(graph, datasetToAssociations, selections, realtimeDatasets);
+		AssociativeLogicManager manager = new AssociativeLogicManager(graph, datasetToAssociations, selections, realtimeDatasets, datasetParameters);
 		Map<EdgeGroup, Set<String>> edgeGroupToValues = null;
 		try {
 			edgeGroupToValues = manager.process();
@@ -181,8 +212,9 @@ public class AssociativeLogicManagerTest {
 
 		// TODO: Manage real time here!
 		Set<String> realtimeDatasets = new HashSet<String>();
+		Map<String, Map<String, String>> datasetParameters = new HashMap<String, Map<String, String>>();
 
-		AssociativeLogicManager manager = new AssociativeLogicManager(graph, datasetToAssociations, selections, realtimeDatasets);
+		AssociativeLogicManager manager = new AssociativeLogicManager(graph, datasetToAssociations, selections, realtimeDatasets, datasetParameters);
 		Map<EdgeGroup, Set<String>> edgeGroupToValues = null;
 		try {
 			edgeGroupToValues = manager.process();
@@ -242,8 +274,9 @@ public class AssociativeLogicManagerTest {
 
 		// TODO: Manage real time here!
 		Set<String> realtimeDatasets = new HashSet<String>();
+		Map<String, Map<String, String>> datasetParameters = new HashMap<String, Map<String, String>>();
 
-		AssociativeLogicManager manager = new AssociativeLogicManager(graph, datasetToAssociations, selections, realtimeDatasets);
+		AssociativeLogicManager manager = new AssociativeLogicManager(graph, datasetToAssociations, selections, realtimeDatasets, datasetParameters);
 		Map<EdgeGroup, Set<String>> edgeGroupToValues = null;
 		try {
 			edgeGroupToValues = manager.process();
@@ -333,8 +366,9 @@ public class AssociativeLogicManagerTest {
 
 		// TODO: Manage real time here!
 		Set<String> realtimeDatasets = new HashSet<String>();
+		Map<String, Map<String, String>> datasetParameters = new HashMap<String, Map<String, String>>();
 
-		AssociativeLogicManager manager = new AssociativeLogicManager(graph, datasetToAssociations, selections, realtimeDatasets);
+		AssociativeLogicManager manager = new AssociativeLogicManager(graph, datasetToAssociations, selections, realtimeDatasets, datasetParameters);
 		Map<EdgeGroup, Set<String>> edgeGroupToValues = null;
 		try {
 			edgeGroupToValues = manager.process();
@@ -358,11 +392,11 @@ public class AssociativeLogicManagerTest {
 		deleteDataSetFromCache(SALES);
 		deleteDataSetFromCache(PRODUCT);
 		deleteDataSetFromCache(CUSTOMER);
-		deleteDataSetFromCache(K);
-		deleteDataSetFromCache(W);
-		deleteDataSetFromCache(X);
-		deleteDataSetFromCache(Y);
-		deleteDataSetFromCache(Z);
+		// deleteDataSetFromCache(K);
+		// deleteDataSetFromCache(W);
+		// deleteDataSetFromCache(X);
+		// deleteDataSetFromCache(Y);
+		// deleteDataSetFromCache(Z);
 	}
 
 	private static void loadDataSetInCache(String dataSetLabel) {

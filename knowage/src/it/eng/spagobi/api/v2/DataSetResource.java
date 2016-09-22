@@ -294,6 +294,26 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 			}
 			AssociationGroup associationGroup = getAssociationGroup(associationGroupString);
 
+			Map<String, Map<String, String>> datasetParameters = new HashMap<String, Map<String, String>>();
+			if (datasetsString != null && !datasetsString.isEmpty()) {
+				JSONObject datasetsObject = new JSONObject(datasetsString);
+				Iterator<String> datasetsIterator = datasetsObject.keys();
+				while (datasetsIterator.hasNext()) {
+					String datasetLabel = datasetsIterator.next();
+
+					Map<String, String> parameters = new HashMap<String, String>();
+					datasetParameters.put(datasetLabel, parameters);
+
+					JSONObject datasetObject = datasetsObject.getJSONObject(datasetLabel);
+					Iterator<String> datasetIterator = datasetObject.keys();
+					while (datasetIterator.hasNext()) {
+						String param = datasetIterator.next();
+						String value = datasetObject.getString(param);
+						parameters.put(param, value);
+					}
+				}
+			}
+
 			Set<String> realtimeDatasets = new HashSet<String>();
 			if (realtimeDatasetsString != null && !realtimeDatasetsString.isEmpty()) {
 				JSONArray jsonArray = new JSONArray(realtimeDatasetsString);
@@ -312,7 +332,6 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 			String value = null;
 
 			// get datasets from selections
-			Set<String> selectedDatasets = new HashSet<String>();
 			Map<String, String> filtersMap = new HashMap<String, String>();
 			Map<String, Map<String, Set<String>>> selectionsMap = new HashMap<String, Map<String, Set<String>>>();
 			Iterator<String> it = selectionsObject.keys();
@@ -326,8 +345,6 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 						column = SqlUtils.unQuote(column);
 
 						if (dataset != null && !dataset.isEmpty() && column != null && !column.isEmpty()) {
-							selectedDatasets.add(dataset);
-
 							value = selectionsObject.getJSONArray(datasetDotColumn).get(0).toString();
 							String filter;
 							if (realtimeDatasets.contains(dataset)) {
@@ -351,7 +368,8 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 				}
 			}
 
-			AssociativeLogicManager manager = new AssociativeLogicManager(graph, datasetToAssociationToColumnMap, filtersMap, realtimeDatasets);
+			AssociativeLogicManager manager = new AssociativeLogicManager(graph, datasetToAssociationToColumnMap, filtersMap, realtimeDatasets,
+					datasetParameters);
 			manager.setUserProfile(getUserProfile());
 
 			Map<EdgeGroup, Set<String>> egdegroupToValuesMap = manager.process();

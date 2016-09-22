@@ -183,36 +183,6 @@ public abstract class AbstractJDBCDataset extends ConfigurableDataSet {
 		return getDataStore();
 	}
 
-	/**
-	 * Returns the signature of the dataset. The signature composed by query signature (i.e. the SQL query where parameters and profile attributes are already
-	 * replaced) plus the datasource signature (i.e. the JNDI url (with eventual schema name) or the JDBC connection string + JDBC user)
-	 *
-	 * @return the signature of the dataset
-	 */
-	@Override
-	public String getSignature() {
-		logger.debug("IN");
-		String toReturn = null;
-
-		// get the query with parameters and profile attributes substituted by their values
-		QuerableBehaviour querableBehaviour = (QuerableBehaviour) this.getBehaviour(QuerableBehaviour.class.getName());
-		String statement = querableBehaviour.getStatement();
-
-		// puts also the data-source signature
-		String datasourceSignature = null;
-		IDataSource dataSource = this.getDataSource();
-		if (dataSource.getJndi() != null && !dataSource.getJndi().trim().equals("")) {
-			String schema = dataSource.checkIsMultiSchema() ? this.getDataProxy().getSchema() : null;
-			datasourceSignature = dataSource.getJndi() + (schema != null ? schema : "");
-		} else {
-			datasourceSignature = dataSource.getUrlConnection() + "_" + dataSource.getUser();
-		}
-
-		toReturn = statement + "_" + datasourceSignature;
-		logger.debug("OUT: returning " + toReturn);
-		return toReturn;
-	}
-
 	@Override
 	public IDataSetTableDescriptor persist(String tableName, IDataSource dataSource) {
 		IDataSource datasetDataSource = getDataSource();
