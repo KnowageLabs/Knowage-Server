@@ -43,22 +43,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<!-- JSP files included -->
 		<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 		
-		<!-- Style files included -->
-<%-- 		<link rel="stylesheet" type="text/css" href="/knowage/themes/glossary/css/generalStyle.css"> --%>
 		<link rel="stylesheet" type="text/css"    href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css">
 		
-		<!-- Javascript files included -->
-<%-- 
-		<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js"></script>
-		<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/catalogues/lovsManagement.js"></script>		 
---%>
 		<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/catalogues/lovsManagement.js"></script>		
+		
+		<!-- Codemirror  -->
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/lib/codemirror.css">
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/theme/eclipse.css">  
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/lib/codemirror.js"></script>  
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/codemirror/ui-codemirror.js"></script> 
+<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/addon/hint/show-hint.css" />
+<script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/addon/hint/show-hint.js"></script>
+<script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/addon/hint/sql-hint.js"></script>
+<script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/mode/javascript/javascript.js"></script>
+<script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/mode/groovy/groovy.js"></script>
+<script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/mode/sql/sql.js"></script>
+<script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/addon/selection/mark-selection.js"></script>
+<script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/addon/display/autorefresh.js"></script>
 		
 		<title>LOVS Management</title>
 		
 	</head>
 	
-	<body class="bodyStyle kn-layerCatalogue" ng-controller="lovsManagementController as LOVSctrl" >
+	<body class="bodyStyle kn-layerCatalogue kn-lovCatalog" ng-controller="lovsManagementController as LOVSctrl" >
 	<angular-list-detail show-detail="showMe">
  		<list label='translate.load("sbi.behavioural.lov.title")' new-function="createLov"> 
 
@@ -83,7 +90,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		</list>
 		
 		<extra-button>
-			  <md-button class="md-flat" ng-click="testLOV()" ng-show="showMe" >{{translate.load("sbi.datasource.testing")}}</md-button>
+			  <md-button class="md-flat" ng-click="testLov()" ng-show="showMe" >{{translate.load("sbi.datasource.testing")}}</md-button>
 		</extra-button>
 		
 		<detail label=' selectedLov.label==undefined? "" : selectedLov.label'  save-function="saveLov"
@@ -172,7 +179,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				   		
 				      </div>
 				    </md-toolbar>
-			<div ng-if="selectedLov.itypeCd == lovItemEnum.SCRIPT">    
+			<div ng-show="selectedLov.itypeCd == lovItemEnum.SCRIPT">    
 				    <div layout="row" layout-wrap>
       				<div flex=100>
 				       <md-input-container class="md-block" > 
@@ -191,13 +198,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				        </md-input-container>
 				   </div>
 			</div>
-			 <md-input-container class="md-block">
+			<md-input-container class="md-block">
 		          <label>{{translate.load("sbi.functionscatalog.script")}}</label>
-		          <textarea ng-model="selectedScriptType.text" md-maxlength="500" rows="12" md-select-on-focus></textarea>
+		          <textarea flex ng-model="selectedScriptType.text" ui-codemirror="{ onLoad : codemirrorLoaded }" ui-codemirror-opts="codemirrorOptions"></textarea>
         	</md-input-container>
 		</div>
 		
-		<div ng-if="selectedLov.itypeCd == lovItemEnum.QUERY">    
+		<div ng-show="selectedLov.itypeCd == lovItemEnum.QUERY">    
 				    <div layout="row" layout-wrap>
       				<div flex=100>
 				       <md-input-container class="md-block" > 
@@ -218,7 +225,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</div>
 			 <md-input-container class="md-block">
 		          <label>{{translate.load("sbi.tools.dataset.qbedatasetswizard.query")}}</label>
-		          <textarea ng-model="selectedQuery.query" md-maxlength="500" rows="12" md-select-on-focus></textarea>
+		          <textarea flex ng-model="selectedQuery.query" ui-codemirror="{ onLoad : codemirrorLoaded }" ui-codemirror-opts="codemirrorOptions"></textarea>
         	</md-input-container>
 		</div>
 		
