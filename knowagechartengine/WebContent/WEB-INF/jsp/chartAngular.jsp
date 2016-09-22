@@ -106,6 +106,20 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	<%-- == BODY ========================================================== --%>
 	<body ng-controller="chartExecutionController" ng-style="'overflow-x: overflowX; overflow-y: overflowY'">
 	
+	<!-- Show the information in the DIV above the rendered chart that the chart is exporting - downloading. (danristo) -->
+  	<div style="background-color: #a9c3db;">
+	  	<div style="align:center; padding: 5px;" ng-show="showDownloadProgress">		
+			<md-icon class="fa fa-download" style="display: inline;"></md-icon>
+			<span style="color: #3b678c">Downloading... </span>	
+	  	</div>
+  	</div>
+   	
+   	<!-- Show the circular loading animation after the chart JSON is received and before it is rendered completely. (danristo) -->
+   	<div ng-show="loadingChart">
+		<md-progress-circular md-mode="indeterminate" class="md-accent" style="position:fixed; top:calc(50% - 37.5px); left:calc(50% - 37.5px); z-index:100;"  md-diameter="75">
+		</md-progress-circular>			
+   	</div>
+   		   	
 	<%-- 
 		If the executed document has a template (the chart that is going to be rendered), continue
 		with the chart execution (the chart rendering).

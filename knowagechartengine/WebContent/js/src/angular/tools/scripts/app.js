@@ -26,4 +26,4 @@
  * case, that is the 'chartEngular.jsp') should take. The only injection for this module is the single controller that is used
  * to manage the chart execution.
  */
-angular.module('chartExecutionManager', ['chartexecution.controller']);
+angular.module('chartExecutionManager', ['ngMaterial','chartexecution.controller']);

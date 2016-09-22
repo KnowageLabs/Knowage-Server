@@ -50,6 +50,11 @@ function chartExecutionFunction($scope,$http,chartExecutionWebServiceManagerFact
 	
 	$scope.heightType = "";
 	$scope.widthType = "";
+	
+	// The indicators if the chart is about to be exported (downloaded) and if chart is about to render after receiving its JSON. (danristo)
+	// These indicators help us informing users about the process that is happening (download/preparing), but only for Highcharts charts.
+	$scope.showDownloadProgress = false;
+	$scope.loadingChart = false;
 
 	/**
 	 * ----------------------------------------------------------------
@@ -194,14 +199,16 @@ function chartExecutionFunction($scope,$http,chartExecutionWebServiceManagerFact
 	var widthDimType = null;
 	var scrollbarWidth = null;
 	
+	// Set (to TRUE) indicator for loading the chart immediately before load starts.
+	$scope.loadingChart = true;
+	
 	// RENDERING THE CHART (START)	
 	chartExecutionWebServiceManagerFactory.run('jsonChartTemplate', parameters, [], function (response) {
 		
+		// Reset (to FALSE) indicator for loading the chart immediately after the load ends (on successful receive of the chart JSON).
+		$scope.loadingChart = false;
+		
 		var chartConf = response.data;
-		
-//		console.log("Chart configuration: ", chartConf);
-		
-//		console.log(JSON.parse(chartConf));
 			
 		var typeChart = chartConf.chart.type.toUpperCase();
 		var isD3Chart = (typeChart == "SUNBURST" || typeChart == "WORDCLOUD" || typeChart == "PARALLEL" || typeChart == "CHORD");
@@ -428,6 +435,9 @@ function chartExecutionFunction($scope,$http,chartExecutionWebServiceManagerFact
 	// RESIZE HANDLER (END)
 
 	exportChart = function(exportType) {
+	
+		// Set (to TRUE) indicator for showing the downloading progress immediately on initialization of exporting. 
+		$scope.showDownloadProgress = true;
 		
 		/**
 		 * 'chartType' - information about the chart type of the document that we are rendering. Useful for 
@@ -556,6 +566,9 @@ function chartExecutionFunction($scope,$http,chartExecutionWebServiceManagerFact
          	
          	form.submit();			
          	
+         	// Reset (to FALSE) indicator for showing the downloading progress immediately after the submitting of the form. 
+         	$scope.showDownloadProgress = false;
+         	
 		}
 		else {
 			
@@ -604,6 +617,10 @@ function chartExecutionFunction($scope,$http,chartExecutionWebServiceManagerFact
 						// The method of submitting the form must be POST, in order not to send data through the URL.
 						form.method = "post";
 						
+						console.log("Chart configuration:",chartConfig);
+						console.log("Chart height:",jsonObjHeight);
+						console.log("Chart width:",jsonObjWidth);
+						
 			         	form.elements[0].value = chartConfig;
 	         			form.elements[1].value = 'options';
 			         	form.elements[2].value = (exportType=='PDF')?'application/pdf':'image/png';
@@ -619,9 +636,14 @@ function chartExecutionFunction($scope,$http,chartExecutionWebServiceManagerFact
 			         	form.target = '_blank'; 
 			         	
 			         	form.submit();
+			         	
+			         	// Reset (to FALSE) indicator for showing the downloading progress immediately after the submitting of the form. 			         	
+			         	$scope.showDownloadProgress = false;
+			         	
 				}
-		
+			
 			);
+			
 			
 		}
 	}
