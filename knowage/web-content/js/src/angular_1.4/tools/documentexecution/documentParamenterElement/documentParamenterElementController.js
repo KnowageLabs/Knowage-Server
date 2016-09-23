@@ -390,8 +390,8 @@
 						paramDialogCtrl.tableColumns = [];
 						for(var i = 0 ; i < paramDialogCtrl.tempParameter.defaultValuesMeta.length; i++) {
 							var columnName = paramDialogCtrl.tempParameter.defaultValuesMeta[i];
-							
-							paramDialogCtrl.tableColumns.push(columnName.toUpperCase());
+							var column = {label: columnName.toUpperCase().replace(/_/g, ' '), name: columnName};
+							paramDialogCtrl.tableColumns.push(column);
 						};
 						// BACKEND FILTERING
 						var objPost = {};
