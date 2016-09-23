@@ -13,7 +13,8 @@ var app = angular.module
 	 	'angular_list',
 	 	'angular_table',	 	
 	 	'sbiModule',
-	 	'angular-list-detail'
+	 	'angular-list-detail',
+	 	'ui.codemirror'
 	 ]
 );
 
@@ -83,6 +84,29 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 			"JAVA_CLASS" : "JAVACLASSLOV",
 			"DATASET" : "DATASET"	
 	};
+	
+	   $scope.cmOption = {
+			   indentWithTabs: true,
+				smartIndent: true,
+				lineWrapping : true,
+				matchBrackets : true,
+				autofocus: true,
+				theme:"eclipse",
+				lineNumbers: true,
+			     onLoad : function(_cm){
+			       
+			       // HACK to have the codemirror instance in the scope...
+			       $scope.modeChanged = function(type){
+			        console.log(type)
+			        if(type=='ECMAScript'){
+			         _cm.setOption("mode", 'text/javascript');
+			     } else {
+			      _cm.setOption("mode", 'text/x-groovy');
+			     }
+			       };
+			     }
+			   };
+
 	
 	/**
 	 * Speed menu for handling the deleting action on one 
@@ -179,9 +203,6 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 		$scope.getScriptTypes();
 		$scope.getDatasources();
 		$scope.getDatasets();
-		
-		
-		
     });
 	
 	$scope.setDirty=function()
@@ -225,7 +246,6 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	 * @author: spetrovic (Stefan.Petrovic@mht.net)
 	 */
 	$scope.changeType = function(item,type) {
-		
 		if(type == lovTypeEnum.MAIN){
 			 switch (item) {
 				case $scope.lovItemEnum.SCRIPT:
@@ -261,10 +281,8 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 					break;
 				}
 			}else if (type == lovTypeEnum.SCRIPT) {
-				
-	
+					
 			}else if (type == lovTypeEnum.QUERY) {
-				
 				
 			}else if (type == lovTypeEnum.DATASET) {
 				
@@ -404,7 +422,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 		if(lovProvider != null){
 			if (lovProvider.hasOwnProperty(lovProviderEnum.SCRIPT)) {
 				
-				$scope.selectedScriptType.language = lovProvider.SCRIPTLOV.LANGUAGE;
+				$scope.selectedScriptType.language = lovProvider.SCRIPTLOV.LANGUAGE;			
 				$scope.selectedScriptType.text = lovProvider.SCRIPTLOV.SCRIPT;
 				
 			}else if(lovProvider.hasOwnProperty(lovProviderEnum.QUERY)){
@@ -523,6 +541,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 		$scope.getAllLovs = function(){ // service that gets list of drivers @GET
 			sbiModule_restServices.promiseGet("2.0", "lovs")
 			.then(function(response) {
+				console.log(response);
 				$scope.listOfLovs = response.data;
 			}, function(response) {
 
@@ -600,6 +619,37 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, sbiModule_translate.load("sbi.generic.toastr.title.error"));
 				
 			});
+		}
+		
+		$scope.testLov = function() {
+			console.log("opening test");
+			$mdDialog
+			.show({
+				scope : $scope,
+				preserveScope : true,
+				parent : angular.element(document.body),
+				controllerAs : 'LOVSctrl',
+				templateUrl : sbiModule_config.contextName +'/js/src/angular_1.4/tools/catalogues/templates/lovTest.html',
+				clickOutsideToClose : false,
+				hasBackdrop : false
+			});
+		}
+		var deleteLovItem = function(item) {
+			
+			sbiModule_restServices
+					.promisePost("2.0/lovs/deleteSmth","", item)
+					.then(
+							function(response) {
+								
+								console.log(response);
+							},
+							function(response) {
+								sbiModule_messaging
+										.showErrorMessage(
+												"An error occured while getting properties for selected member",
+												'Error');
+
+							});
 		}
 		
 		/**

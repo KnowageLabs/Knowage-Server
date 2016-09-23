@@ -55,11 +55,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/addon/hint/show-hint.css" />
 <script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/addon/hint/show-hint.js"></script>
 <script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/addon/hint/sql-hint.js"></script>
+<script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/addon/selection/mark-selection.js"></script>
+<script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/addon/display/autorefresh.js"></script>
 <script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/mode/javascript/javascript.js"></script>
 <script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/mode/groovy/groovy.js"></script>
 <script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/mode/sql/sql.js"></script>
-<script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/addon/selection/mark-selection.js"></script>
-<script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/addon/display/autorefresh.js"></script>
+
 		
 		<title>LOVS Management</title>
 		
@@ -188,7 +189,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				       	name ="scriptLanguageDropdown" 
 				        ng-required = "true"
 				        ng-model="selectedScriptType.language"
-				        ng-change="changeType(selectedScriptType.language,'script')"
+				        ng-change="changeType(selectedScriptType.language,'script');modeChanged(selectedScriptType.language);"
 				        > <md-option 
 				        ng-repeat="l in listOfScriptTypes track by $index" value="{{l.VALUE_CD}}">{{l.VALUE_NM}} </md-option>
 				       </md-select>
@@ -200,7 +201,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</div>
 			<md-input-container class="md-block">
 		          <label>{{translate.load("sbi.functionscatalog.script")}}</label>
-		          <textarea flex ng-model="selectedScriptType.text" ui-codemirror="{ onLoad : codemirrorLoaded }" ui-codemirror-opts="codemirrorOptions"></textarea>
+		          <textarea flex ui-codemirror="cmOption" ng-model="selectedScriptType.text" ></textarea>
         	</md-input-container>
 		</div>
 		
@@ -213,7 +214,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				       	name ="queryDsDropdown" 
 				        ng-required = "true"
 				        ng-model="selectedQuery.datasource"
-				        ng-change="changeType(selectedQuery.datasource,'query')"
+				        ng-change="changeType(selectedQuery.datasource,'query');modeChanged(selectedQuery.datasource);"
 				        > <md-option 
 				        ng-repeat="l in listOfDatasources track by $index" value="{{l.label}}">{{l.label}} </md-option>
 				       </md-select>
@@ -225,7 +226,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</div>
 			 <md-input-container class="md-block">
 		          <label>{{translate.load("sbi.tools.dataset.qbedatasetswizard.query")}}</label>
-		          <textarea flex ng-model="selectedQuery.query" ui-codemirror="{ onLoad : codemirrorLoaded }" ui-codemirror-opts="codemirrorOptions"></textarea>
+		          <textarea flex ui-codemirror="cmOption" ng-model="selectedQuery.query"></textarea>
         	</md-input-container>
 		</div>
 		
