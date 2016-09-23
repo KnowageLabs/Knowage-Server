@@ -124,6 +124,9 @@ public class DataSetResourceTest extends AbstractV2BasicAuthTestCase {
 			String realtimeDatasets = "[\"SbiQueryDataSet\",\"SbiFileDataSet\"]";
 			String encodedRealtimeDatasets = URLEncoder.encode(realtimeDatasets, encoding);
 
+			String datasets = "{\"SbiQueryDataSet\":{\"param1\":\"parameter1\"},\"SbiFileDataSet\":{\"param2\":\"parameter2\"}}";
+			String encodedDatasets = URLEncoder.encode(datasets, encoding);
+
 			copyCsvFile();
 
 			createDatasets(dataset1Label, false);
@@ -133,7 +136,7 @@ public class DataSetResourceTest extends AbstractV2BasicAuthTestCase {
 			String asString = given()
 					.urlEncodingEnabled(false)
 					.get("/datasets/loadAssociativeSelections?selections=" + encodedSelections + "&associationGroup=" + encodedAssociationGroup + "&realTime="
-							+ encodedRealtimeDatasets).then().extract().body().asString();
+							+ encodedRealtimeDatasets + "&datasets=" + encodedDatasets).then().extract().body().asString();
 			given().urlEncodingEnabled(false)
 					.get("/datasets/loadAssociativeSelections?selections=" + encodedSelections + "&associationGroup=" + encodedAssociationGroup + "&realTime="
 							+ encodedRealtimeDatasets).then().contentType(ContentType.JSON).statusCode(200)
