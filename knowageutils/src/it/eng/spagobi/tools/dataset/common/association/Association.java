@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -21,34 +21,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * An association is a collection of fields belonging to different datasets 
- * that refer to the same thing. The association represent a one to one
- * relationship between these datasets. The fields defined in an association
- * can be used to join together the datasets.
- * 
- * NOTE: It's not possible to define an association that use more than one field 
- * per dataset.
- * 
+ * An association is a collection of fields belonging to different datasets that refer to the same thing. The association represent a one to one relationship
+ * between these datasets. The fields defined in an association can be used to join together the datasets.
+ *
+ * NOTE: It's not possible to define an association that use more than one field per dataset.
+ *
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public class Association {
-	
+
 	String id;
 	String description;
 	List<Field> fields;
-	
+
 	public Association(String id, String description) {
 		this.id = id;
 		this.description = description;
 		this.fields = new ArrayList<Field>();
 	}
-	
+
 	public Association(String id, String description, List<Field> fields) {
 		this.id = id;
 		this.description = description;
 		this.fields = fields;
 	}
-		
+
 	public String getId() {
 		return id;
 	}
@@ -68,38 +65,45 @@ public class Association {
 	public List<Field> getFields() {
 		return fields;
 	}
-	
+
 	public Field getField(String dataset) {
-		for(Field field : fields) {
-			if(field.getDataSetLabel().equals(dataset)) return field;
+		for (Field field : fields) {
+			if (field.getDataSetLabel().equals(dataset))
+				return field;
 		}
 		return null;
 	}
-	
+
 	public boolean containsDataset(String dataset) {
 		return getField(dataset) != null;
 	}
-	
+
 	public void addField(Field field) {
 		this.fields.add(field);
 	}
-	
+
 	public void addFields(List<Field> fields) {
 		this.fields.addAll(fields);
 	}
-	
+
 	/**
 	 * A filed have a unique name withing the dataset it belongs to
 	 */
 	public static class Field {
 		String dataSetLabel;
 		String name;
-		
-		public Field(String dataSetLabel, String name) {
+		String type;
+
+		public Field(String dataSetLabel, String name, String type) {
 			setDataSetLabel(dataSetLabel);
 			setFieldName(name);
+			setType(type);
 		}
-		
+
+		public Field(String dataSetLabel, String name) {
+			this(dataSetLabel, name, "");
+		}
+
 		public String getDataSetLabel() {
 			return dataSetLabel;
 		}
@@ -116,13 +120,25 @@ public class Association {
 			this.name = fieldName;
 		}
 
+		public String getType() {
+			return type;
+		}
+
+		public void setType(String type) {
+			if (type == null) {
+				this.type = "";
+			} else {
+				this.type = type;
+			}
+		}
+
 		@Override
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result
-					+ ((dataSetLabel == null) ? 0 : dataSetLabel.hashCode());
+			result = prime * result + ((dataSetLabel == null) ? 0 : dataSetLabel.hashCode());
 			result = prime * result + ((name == null) ? 0 : name.hashCode());
+			result = prime * result + ((type == null) ? 0 : type.hashCode());
 			return result;
 		}
 
@@ -145,9 +161,13 @@ public class Association {
 					return false;
 			} else if (!name.equals(other.name))
 				return false;
+			if (type == null) {
+				if (other.type != null)
+					return false;
+			} else if (!type.equals(other.type))
+				return false;
 			return true;
 		}
 	}
 
-		
 }
