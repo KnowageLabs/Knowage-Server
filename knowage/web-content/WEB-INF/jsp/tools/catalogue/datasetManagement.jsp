@@ -123,19 +123,44 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							</md-card>
 						</md-content>
 						
-						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable">
-							<md-card layout-padding>
+						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" layout-padding style="padding-top:0px;">
+						
+							<!-- TOOLBAR FOR THE CARD THAT HOLDS OLDER DATASET VERSIONS. (danristo) -->
+					     	<md-toolbar class="secondaryToolbar" layout-padding>
+					     	
+					          	<div class="md-toolbar-tools">
+						            
+						            <h2>
+						              <span>{{translate.load('sbi.ds.versionPanel')}}</span>
+						            </h2>
+						            
+					         		<span flex></span>
+						         
+						         	<md-button class="md-icon-button" aria-label="Restore" ng-click="openAttributesFromLOV()" title="{{translate.load('sbi.ds.restore')}}">
+						              <md-icon md-font-icon="fa fa-retweet" class="fa fa-2x"></md-icon>
+						            </md-button>
+						            
+						            <md-button class="md-icon-button" aria-label="Clear all" ng-click="openAttributesFromLOV()" title="{{translate.load('sbi.ds.clearOldVersion')}}">
+						              <md-icon md-font-icon="fa fa-eraser" class="fa fa-2x"></md-icon>
+						            </md-button>
+						         
+					          	</div>
+					          	
+					        </md-toolbar>						         
+						    
+							<md-card layout-padding style="height:300px; margin:0px">
 								<angular-table
-								 flex
-			 					 id="datasetVersionList_id" 
-			 					 ng-model="selectedDataSet.dsVersions"
-								 columns='[
-								         {"label":"Creation User","name":"userIn"},
-								         {"label":"Type","name":"type"},
-								         {"label":"Creation Date", "name":"dateIn"}
-								         ]'
-								show-search-bar=false
-								highlights-selected-item=true>
+									 flex
+				 					 id="datasetVersionList_id" 
+				 					 ng-model="selectedDataSet.dsVersions"
+				 					 style="height:100%;"
+									 columns='[
+									         {"label":"Creation User","name":"userIn"},
+									         {"label":"Type","name":"type"},
+									         {"label":"Creation Date", "name":"dateIn"}
+									         ]'
+									show-search-bar=false
+									highlights-selected-item=true >
 								</angular-table>
 							</md-card>
 						</md-content>
