@@ -128,7 +128,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								<angular-table
 								 flex
 			 					 id="datasetVersionList_id" 
-			 					 ng-model="selectedDataset.dsVersions"
+			 					 ng-model="selectedDataSet.dsVersions"
 								 columns='[
 								         {"label":"Creation User","name":"userIn"},
 								         {"label":"Type","name":"type"},
@@ -136,7 +136,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								         ]'
 								show-search-bar=false
 								highlights-selected-item=true>
-								></angular-table>
+								</angular-table>
 							</md-card>
 						</md-content>
 						
@@ -162,9 +162,32 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						</md-content>
 						
 						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='File'">
+							
 							<md-card layout-padding>
-								FILE
+								
+								<div layout="row" flex=100 layout-align="start center" ng-show="true">
+						                  	
+				                  	<label layout-align="center center">
+				                  		{{translate.load("sbi.ds.wizard.selectFile")}}:
+			                  		</label>
+				                  	
+				                  	<file-upload 	flex ng-model="fileObj" id="datasetFile" 
+				                  					ng-click="fileChange();checkChange();fileObjTakeBackup()" 
+					                  				title="{{translate.load('sbi.workspace.dataset.wizard.browsefile.tooltip')}}">
+		                			</file-upload>
+				                  	
+				                  	<div class="">
+					                    <md-button 	ng-click="uploadFile()" class="md-raised" 
+					                     			
+					                     			title="{{datasetWizStep1UploadButtonTitle()}}">
+			                     			{{translate.load("sbi.workspace.dataset.wizard.upload")}}
+		             					</md-button>
+				                  	</div>
+				                  	
+								</div>
+								
 							</md-card>
+							
 						</md-content>
 						
 						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='Query'">

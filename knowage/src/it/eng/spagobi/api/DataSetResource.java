@@ -107,7 +107,21 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		logger.debug("IN");
 
 		try {
-			List<IDataSet> dataSets = getDatasetManagementAPI().getDataSets();
+
+			// The old implementation. (commented by: danristo)
+			// List<IDataSet> dataSets = getDatasetManagementAPI().getDataSets();
+
+			/**
+			 * The new implementation that, besides other useful information about datasets, provides also an information about old dataset versions for
+			 * particular dataset. This information was missing before.
+			 *
+			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			 * @author Nikola Simovic (nsimovic, nikola.simovic@mht.net)
+			 */
+			IDataSetDAO dsDao = DAOFactory.getDataSetDAO();
+			dsDao.setUserProfile(getUserProfile());
+			List<IDataSet> dataSets = dsDao.loadPagedDatasetList(-1, -1);
+
 			List<IDataSet> toBeReturned = new ArrayList<IDataSet>();
 
 			for (IDataSet dataset : dataSets) {
