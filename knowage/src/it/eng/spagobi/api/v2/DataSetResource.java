@@ -284,16 +284,42 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		logger.debug("IN");
 
 		try {
+			// parse selections
 			if (selectionsString == null || selectionsString.isEmpty()) {
 				throw new SpagoBIServiceParameterException(this.request.getPathInfo(), "Query parameter [selections] cannot be null or empty");
 			}
 			JSONObject selectionsObject = new JSONObject(selectionsString);
 
+			// parse association group
 			if (associationGroupString == null) {
 				throw new SpagoBIServiceParameterException(this.request.getPathInfo(), "Query parameter [associationGroup] cannot be null");
 			}
-			AssociationGroup associationGroup = getAssociationGroup(associationGroupString);
+			JSONObject associationGroupObject = new JSONObject(associationGroupString);
+			AssociationGroupJSONSerializer serializer = new AssociationGroupJSONSerializer();
+			AssociationGroup associationGroup1 = serializer.deserialize(associationGroupObject);
+			AssociationGroup associationGroup = associationGroup1;
 
+			// parse documents
+			Set<String> documents = new HashSet<String>();
+			JSONArray associations = associationGroupObject.optJSONArray("associations");
+			if (associations != null) {
+				for (int associationIndex = 0; associationIndex < associations.length(); associationIndex++) {
+					JSONObject association = associations.getJSONObject(associationIndex);
+					JSONArray fields = association.optJSONArray("fields");
+					if (fields != null) {
+						for (int fieldIndex = fields.length() - 1; fieldIndex >= 0; fieldIndex--) {
+							JSONObject field = fields.getJSONObject(fieldIndex);
+							String type = field.optString("type");
+							if ("document".equalsIgnoreCase(type)) {
+								String store = field.optString("store");
+								documents.add(store);
+							}
+						}
+					}
+				}
+			}
+
+			// parse dataset parameters
 			Map<String, Map<String, String>> datasetParameters = new HashMap<String, Map<String, String>>();
 			if (datasetsString != null && !datasetsString.isEmpty()) {
 				JSONObject datasetsObject = new JSONObject(datasetsString);
@@ -314,6 +340,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 				}
 			}
 
+			// parse realtime datasets
 			Set<String> realtimeDatasets = new HashSet<String>();
 			if (realtimeDatasetsString != null && !realtimeDatasetsString.isEmpty()) {
 				JSONArray jsonArray = new JSONArray(realtimeDatasetsString);
@@ -369,7 +396,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 			}
 
 			AssociativeLogicManager manager = new AssociativeLogicManager(graph, datasetToAssociationToColumnMap, filtersMap, realtimeDatasets,
-					datasetParameters);
+					datasetParameters, documents);
 			manager.setUserProfile(getUserProfile());
 
 			Map<EdgeGroup, Set<String>> egdegroupToValuesMap = manager.process();
@@ -391,32 +418,6 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		} finally {
 			logger.debug("OUT");
 		}
-	}
-
-	private AssociationGroup getAssociationGroup(String associationGroupString) throws JSONException {
-		JSONObject associationGroupObject = new JSONObject(associationGroupString);
-
-		// remove documents
-		JSONArray associations = associationGroupObject.optJSONArray("associations");
-		if (associations != null) {
-			for (int i = 0; i < associations.length(); i++) {
-				JSONObject association = associations.getJSONObject(i);
-				JSONArray fields = association.optJSONArray("fields");
-				if (fields != null) {
-					for (int j = fields.length() - 1; j >= 0; j--) {
-						JSONObject field = fields.getJSONObject(j);
-						String type = field.optString("type");
-						if ("document".equalsIgnoreCase(type)) {
-							fields.remove(j);
-						}
-					}
-				}
-			}
-		}
-
-		AssociationGroupJSONSerializer serializer = new AssociationGroupJSONSerializer();
-		AssociationGroup associationGroup = serializer.deserialize(associationGroupObject);
-		return associationGroup;
 	}
 
 	@Override

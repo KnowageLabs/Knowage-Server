@@ -79,18 +79,20 @@ public class AssociativeLogicManager {
 	private final Set<String> realtimeDatasets;
 	private final Map<String, IDataSet> labelToDataset;
 	private final Map<String, Map<String, String>> datasetParameters;
+	private final Set<String> documents;
 
 	private UserProfile userProfile;
 
 	static private Logger logger = Logger.getLogger(AssociativeLogicManager.class);
 
 	public AssociativeLogicManager(Pseudograph<String, LabeledEdge<String>> graph, Map<String, Map<String, String>> datasetToAssociations,
-			Map<String, String> selections, Set<String> realtimeDatasets, Map<String, Map<String, String>> datasetParameters) {
+			Map<String, String> selections, Set<String> realtimeDatasets, Map<String, Map<String, String>> datasetParameters, Set<String> documents) {
 		this.graph = graph;
 		this.datasetToAssociations = datasetToAssociations;
 		this.selections = selections;
 		this.realtimeDatasets = realtimeDatasets;
 		this.datasetParameters = datasetParameters;
+		this.documents = documents;
 
 		this.datasetToTableName = new HashMap<String, String>();
 		this.datasetToDataSource = new HashMap<String, IDataSource>();
@@ -119,8 +121,10 @@ public class AssociativeLogicManager {
 
 		// (2) user click on widget -> selection!
 		for (String datasetSelected : selections.keySet()) {
-			String filterSelected = selections.get(datasetSelected);
-			calculateDatasets(datasetSelected, null, filterSelected);
+			if (!documents.contains(datasetSelected)) {
+				String filterSelected = selections.get(datasetSelected);
+				calculateDatasets(datasetSelected, null, filterSelected);
+			}
 		}
 
 		return edgeGroupValues;
@@ -133,34 +137,36 @@ public class AssociativeLogicManager {
 		}
 
 		for (String v1 : graph.vertexSet()) {
-			// the vertex is the dataset label
-			IDataSet dataSet = dataSetDao.loadDataSetByLabel(v1);
-			if (dataSet != null) {
-				Map<String, String> parametersValues = datasetParameters.get(v1);
-				dataSet.setParamsMap(parametersValues);
+			if (!documents.contains(v1)) {
+				// the vertex is the dataset label
+				IDataSet dataSet = dataSetDao.loadDataSetByLabel(v1);
+				if (dataSet != null) {
+					Map<String, String> parametersValues = datasetParameters.get(v1);
+					dataSet.setParamsMap(parametersValues);
 
-				labelToDataset.put(v1, dataSet);
+					labelToDataset.put(v1, dataSet);
 
-				if (dataSet.isPersisted() && !dataSet.isPersistedHDFS()) {
-					datasetToTableName.put(v1, dataSet.getPersistTableName());
-					datasetToDataSource.put(v1, dataSet.getDataSourceForWriting());
-					realtimeDatasets.remove(v1);
-				} else if (dataSet.isFlatDataset()) {
-					datasetToTableName.put(v1, dataSet.getFlatTableName());
-					datasetToDataSource.put(v1, dataSet.getDataSource());
-					realtimeDatasets.remove(v1);
-				} else if (realtimeDatasets.contains(v1)) {
-					dataSet.loadData();
-					datasetToDataStore.put(v1, dataSet.getDataStore());
-				} else {
-					String signature = dataSetDao.loadDataSetByLabel(v1).getSignature();
-					CacheItem cacheItem = cache.getMetadata().getCacheItem(signature);
-					if (cacheItem != null) {
-						String tableName = cacheItem.getTable();
-						datasetToTableName.put(v1, tableName);
-						datasetToDataSource.put(v1, cacheDataSource);
+					if (dataSet.isPersisted() && !dataSet.isPersistedHDFS()) {
+						datasetToTableName.put(v1, dataSet.getPersistTableName());
+						datasetToDataSource.put(v1, dataSet.getDataSourceForWriting());
+						realtimeDatasets.remove(v1);
+					} else if (dataSet.isFlatDataset()) {
+						datasetToTableName.put(v1, dataSet.getFlatTableName());
+						datasetToDataSource.put(v1, dataSet.getDataSource());
+						realtimeDatasets.remove(v1);
+					} else if (realtimeDatasets.contains(v1)) {
+						dataSet.loadData();
+						datasetToDataStore.put(v1, dataSet.getDataStore());
 					} else {
-						throw new SpagoBIException("Unable to find dataset [" + v1 + "] in cache");
+						String signature = dataSetDao.loadDataSetByLabel(v1).getSignature();
+						CacheItem cacheItem = cache.getMetadata().getCacheItem(signature);
+						if (cacheItem != null) {
+							String tableName = cacheItem.getTable();
+							datasetToTableName.put(v1, tableName);
+							datasetToDataSource.put(v1, cacheDataSource);
+						} else {
+							throw new SpagoBIException("Unable to find dataset [" + v1 + "] in cache");
+						}
 					}
 				}
 			}
@@ -182,15 +188,17 @@ public class AssociativeLogicManager {
 							EdgeGroup group = new EdgeGroup(edges);
 							datasetToEdgeGroup.get(v1).add(group);
 
-							String tableName = getTableName(v1);
-							// PreparedStatement stmt = getPreparedQuery(dataSource.getConnection(), columnNames, cacheItem.getTable());
-							String query = "SELECT DISTINCT " + getColumnNames(group.getOrderedEdgeNames(), v1) + " FROM " + tableName;
-							Set<String> tuple = getTupleOfValues(v1, query);
+							if (!documents.contains(v1)) {
+								String tableName = getTableName(v1);
+								// PreparedStatement stmt = getPreparedQuery(dataSource.getConnection(), columnNames, cacheItem.getTable());
+								String query = "SELECT DISTINCT " + getColumnNames(group.getOrderedEdgeNames(), v1) + " FROM " + tableName;
+								Set<String> tuple = getTupleOfValues(v1, query);
 
-							if (!edgeGroupValues.containsKey(group)) {
-								edgeGroupValues.put(group, tuple);
-							} else {
-								edgeGroupValues.get(group).retainAll(tuple);
+								if (!edgeGroupValues.containsKey(group)) {
+									edgeGroupValues.put(group, tuple);
+								} else {
+									edgeGroupValues.get(group).retainAll(tuple);
+								}
 							}
 
 							if (!edgeGroupToDataset.containsKey(group)) {
@@ -308,7 +316,7 @@ public class AssociativeLogicManager {
 					edgeGroupValues.put(group, intersection);
 
 					for (String datasetInvolved : edgeGroupToDataset.get(group)) {
-						if (!datasetInvolved.equals(dataset)) {
+						if (!documents.contains(datasetInvolved) && !datasetInvolved.equals(dataset)) {
 							columnNames = getColumnNames(group.getOrderedEdgeNames(), datasetInvolved);
 
 							String whereClauses = null;

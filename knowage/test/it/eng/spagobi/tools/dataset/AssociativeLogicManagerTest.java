@@ -158,8 +158,9 @@ public class AssociativeLogicManagerTest {
 		// TODO: Manage real time here!
 		Set<String> realtimeDatasets = new HashSet<String>();
 		Map<String, Map<String, String>> datasetParameters = new HashMap<String, Map<String, String>>();
+		Set<String> documents = new HashSet<String>();
 
-		AssociativeLogicManager manager = new AssociativeLogicManager(graph, datasetToAssociations, selections, realtimeDatasets, datasetParameters);
+		AssociativeLogicManager manager = new AssociativeLogicManager(graph, datasetToAssociations, selections, realtimeDatasets, datasetParameters, documents);
 		Map<EdgeGroup, Set<String>> edgeGroupToValues = null;
 		try {
 			edgeGroupToValues = manager.process();
@@ -213,8 +214,9 @@ public class AssociativeLogicManagerTest {
 		// TODO: Manage real time here!
 		Set<String> realtimeDatasets = new HashSet<String>();
 		Map<String, Map<String, String>> datasetParameters = new HashMap<String, Map<String, String>>();
+		Set<String> documents = new HashSet<String>();
 
-		AssociativeLogicManager manager = new AssociativeLogicManager(graph, datasetToAssociations, selections, realtimeDatasets, datasetParameters);
+		AssociativeLogicManager manager = new AssociativeLogicManager(graph, datasetToAssociations, selections, realtimeDatasets, datasetParameters, documents);
 		Map<EdgeGroup, Set<String>> edgeGroupToValues = null;
 		try {
 			edgeGroupToValues = manager.process();
@@ -275,8 +277,9 @@ public class AssociativeLogicManagerTest {
 		// TODO: Manage real time here!
 		Set<String> realtimeDatasets = new HashSet<String>();
 		Map<String, Map<String, String>> datasetParameters = new HashMap<String, Map<String, String>>();
+		Set<String> documents = new HashSet<String>();
 
-		AssociativeLogicManager manager = new AssociativeLogicManager(graph, datasetToAssociations, selections, realtimeDatasets, datasetParameters);
+		AssociativeLogicManager manager = new AssociativeLogicManager(graph, datasetToAssociations, selections, realtimeDatasets, datasetParameters, documents);
 		Map<EdgeGroup, Set<String>> edgeGroupToValues = null;
 		try {
 			edgeGroupToValues = manager.process();
@@ -367,8 +370,9 @@ public class AssociativeLogicManagerTest {
 		// TODO: Manage real time here!
 		Set<String> realtimeDatasets = new HashSet<String>();
 		Map<String, Map<String, String>> datasetParameters = new HashMap<String, Map<String, String>>();
+		Set<String> documents = new HashSet<String>();
 
-		AssociativeLogicManager manager = new AssociativeLogicManager(graph, datasetToAssociations, selections, realtimeDatasets, datasetParameters);
+		AssociativeLogicManager manager = new AssociativeLogicManager(graph, datasetToAssociations, selections, realtimeDatasets, datasetParameters, documents);
 		Map<EdgeGroup, Set<String>> edgeGroupToValues = null;
 		try {
 			edgeGroupToValues = manager.process();

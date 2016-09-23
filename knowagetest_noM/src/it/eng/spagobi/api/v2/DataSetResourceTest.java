@@ -118,28 +118,37 @@ public class DataSetResourceTest extends AbstractV2BasicAuthTestCase {
 			String selections = "{\"SbiQueryDataSet.store_type\":[\"Small Grocery\"]}";
 			String encodedSelections = URLEncoder.encode(selections, encoding);
 
-			String associationGroup = "{\"datasets\":[\"SbiQueryDataSet\",\"SbiFileDataSet\"],\"associations\":[{\"id\":\"A3\",\"description\":\"SbiQueryDataSet.store_id=SbiFileDataSet.store_id\",\"fields\":[{\"column\":\"store_id\",\"store\":\"SbiQueryDataSet\"},{\"column\":\"store_id\",\"store\":\"SbiFileDataSet\",\"type\":\"dataset\"},{\"column\":\"dummy\",\"store\":\"Doc\",\"type\":\"document\"}]}]}";
+			String associationGroup = "{\"datasets\":[\"SbiQueryDataSet\",\"SbiFileDataSet\"],\"associations\":[{\"id\":\"A3\",\"description\":\"SbiQueryDataSet.store_id=SbiFileDataSet.store_id\",\"fields\":[{\"column\":\"store_id\",\"store\":\"SbiQueryDataSet\"},{\"column\":\"store_id\",\"store\":\"SbiFileDataSet\",\"type\":\"dataset\"},{\"column\":\"param\",\"store\":\"Doc\",\"type\":\"document\"}]}]}";
 			String encodedAssociationGroup = URLEncoder.encode(associationGroup, encoding);
 
 			String realtimeDatasets = "[\"SbiQueryDataSet\",\"SbiFileDataSet\"]";
 			String encodedRealtimeDatasets = URLEncoder.encode(realtimeDatasets, encoding);
 
 			copyCsvFile();
+
 			createDatasets(dataset1Label, false);
 			createDatasets(dataset2Label, false);
 
 			// selections + realtime
+			String asString = given()
+					.urlEncodingEnabled(false)
+					.get("/datasets/loadAssociativeSelections?selections=" + encodedSelections + "&associationGroup=" + encodedAssociationGroup + "&realTime="
+							+ encodedRealtimeDatasets).then().extract().body().asString();
 			given().urlEncodingEnabled(false)
 					.get("/datasets/loadAssociativeSelections?selections=" + encodedSelections + "&associationGroup=" + encodedAssociationGroup + "&realTime="
 							+ encodedRealtimeDatasets).then().contentType(ContentType.JSON).statusCode(200)
 					.body("SbiQueryDataSet['store_id']", hasItems("('2')", "('5')", "('14')", "('22')"))
-					.body("SbiFileDataSet['store_id']", hasItems("('2')", "('5')", "('14')", "('22')"));
+					.body("SbiQueryDataSet['store_type']", hasItems("('Small Grocery')"))
+					.body("SbiFileDataSet['store_id']", hasItems("('2')", "('5')", "('14')", "('22')"))
+					.body("Doc['param']", hasItems("('2')", "('5')", "('14')", "('22')"));
 
 			// selections
 			given().urlEncodingEnabled(false)
 					.get("/datasets/loadAssociativeSelections?selections=" + encodedSelections + "&associationGroup=" + encodedAssociationGroup).then()
 					.contentType(ContentType.JSON).statusCode(200).body("SbiQueryDataSet['store_id']", hasItems("('2')", "('5')", "('14')", "('22')"))
-					.body("SbiFileDataSet['store_id']", hasItems("('2')", "('5')", "('14')", "('22')"));
+					.body("SbiQueryDataSet['store_type']", hasItems("('Small Grocery')"))
+					.body("SbiFileDataSet['store_id']", hasItems("('2')", "('5')", "('14')", "('22')"))
+					.body("Doc['param']", hasItems("('2')", "('5')", "('14')", "('22')"));
 
 			deleteCsvFile();
 		} catch (Exception e) {
