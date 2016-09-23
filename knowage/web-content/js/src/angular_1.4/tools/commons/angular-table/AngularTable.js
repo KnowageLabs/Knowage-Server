@@ -646,7 +646,18 @@ function TableControllerFunction($scope, $timeout) {
     var firstLoad = true;
     $timeout(function () {
         if ($scope.noPagination != true) {
-            $scope.changeWordItemPP();
+        	if($scope.fixedItemPerPage!=true){
+                $scope.changeWordItemPP();
+        	}else{
+        		 $scope.pageChangedFunction({
+                     searchValue: "",
+                     itemsPerPage: $scope.itemsPerPage,
+                     currentPageNumber: $scope.pagination.currentPageNumber,
+                     columnsSearch: $scope.columnsSearch,
+                     columnOrdering: $scope.column_ordering,
+                     reverseOrdering: $scope.reverse_col_ord
+                 });
+        	}
         }
     }, 0);
 
