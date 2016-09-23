@@ -51,7 +51,8 @@ olapSet.service('olapSharedSettings',function(){
 				filterDialogWidth:'60%',
 				filterDialogHeight:'80%',
 				disableManualEditingCC: false,
-				persistNewVersionTransformations: 1800000
+				persistNewVersionTransformations: 1800000,
+				showDTWarning : true
 		};
 		
 		return {

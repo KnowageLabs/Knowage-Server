@@ -32,7 +32,7 @@
       <span flex></span>
       
       <md-button class="md-raised"  ng-click="clearLevels()">
-				Clear All
+				{{translate.load("sbi.olap.drillTrough.clearAll")}}
 	</md-button>		  
     </div>	
  </md-card>
@@ -75,7 +75,7 @@
 		     
 		     
 				<span flex></span>
-			<md-button class="md-raised" ng-click="closeDialogToolbarRight()">
+			<md-button class="md-raised" ng-click="closeDialog()">
 				Cancel
 			</md-button>
 			<md-button class="md-raised" ng-click="exportDrill(dtData, 'DrillTrough Table', true)">

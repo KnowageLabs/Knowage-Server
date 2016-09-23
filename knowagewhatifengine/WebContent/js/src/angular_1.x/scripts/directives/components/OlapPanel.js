@@ -187,6 +187,8 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 	}
 
 	$scope.enableDisableDrillThrough = function() {
+		
+		
 
 		if ($scope.selectedCell.value == "") {
 			sbiModule_messaging.showErrorMessage("Cell doesnt have value",
@@ -194,6 +196,12 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 		}
 
 		else if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
+			
+			if($scope.showWarningDT){
+				sbiModule_messaging.showWarningMessage("If the drill though is executed on a cell with an haigh level of aggregation, this operation can take long time",
+				'Information');
+			}
+			
 			var toSend = {};
 			toSend.ordinal = $scope.selectedCell.ordinal;
 			if (toSend.ordinal != undefined) {
@@ -749,7 +757,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 		$scope.dtAssociatedLevels = [];
 		$scope.selectedCrossNavigation = null;
 		cleanCC();
-		$mdDialog.cancel();
+		$mdDialog.hide();
 	};
 
 	$scope.showCCWizard = function() {
