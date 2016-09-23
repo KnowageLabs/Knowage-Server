@@ -321,24 +321,26 @@ public class SpagoBICellWrapper implements Cell {
 		this.leafsCount = leafsCount;
 	}
 
+	/**
+	 * See if member2 is ancestor of member1
+	 */
 	private boolean isChildOrEqualTo(Member member1, Member member2) {
 
 		if (member1.equals(member2)) {
 			return true;
 		}
 
-		try {
 
-			for (Iterator iterator = member2.getChildMembers().iterator(); iterator.hasNext();) {
-				Member member = (Member) iterator.next();
-				if (member1.equals(member)) {
-					return true;
-				}
-			}
-		} catch (OlapException e) {
-			throw new SpagoBIEngineRuntimeException("error");
+		if(member1.getLevel().getDepth()<=member2.getDepth())
+			return false;
+		
+		Member aMember=member1.getParentMember();
+		while(aMember.getLevel().getDepth()>=member2.getDepth() && !aMember.equals(member2)){
+			aMember = aMember.getParentMember();
 		}
-		return false;
+		return (aMember.equals(member2));
+
+	
 	}
 
 }
