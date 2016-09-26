@@ -213,6 +213,74 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		return Response.ok().build();
 	}
 
+	/**
+	 * Delete a version for the selected dataset.
+	 *
+	 * @param id
+	 *            The ID of the selected dataset.
+	 * @param versionId
+	 *            The ID of the version of the selected dataset.
+	 * @return Status of the request (OK status).
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	@DELETE
+	@Path("/{id}/version/{versionId}")
+	public Response deleteDatasetVersion(@PathParam("id") String id, @PathParam("versionId") String versionId) {
+
+		IDataSetDAO datasetDao = null;
+
+		try {
+			datasetDao = DAOFactory.getDataSetDAO();
+		} catch (EMFUserError e) {
+			logger.error("Internal error", e);
+			throw new SpagoBIRuntimeException("Internal error", e);
+		}
+
+		IDataSet dataset = datasetDao.loadDataSetById(Integer.parseInt(id));
+
+		boolean deleted = datasetDao.deleteInactiveDataSetVersion(Integer.parseInt(versionId), dataset.getId());
+
+		if (deleted) {
+			logger.debug("Dataset Version deleted");
+		} else {
+			throw new SpagoBIRuntimeException("Dataset version with the ID=[" + versionId + "] could not be deleted");
+		}
+
+		return Response.ok().build();
+	}
+
+	/**
+	 * Delete all versions for the selected dataset.
+	 *
+	 * @param id
+	 *            The ID of the selected dataset.
+	 * @return Status of the request (OK status).
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	@DELETE
+	@Path("/{id}/allversions")
+	public Response deleteDatasetVersion(@PathParam("id") String id) {
+
+		IDataSetDAO datasetDao = null;
+
+		try {
+			datasetDao = DAOFactory.getDataSetDAO();
+		} catch (EMFUserError e) {
+			logger.error("Internal error", e);
+			throw new SpagoBIRuntimeException("Internal error", e);
+		}
+
+		boolean deleted = datasetDao.deleteAllInactiveDataSetVersions(Integer.parseInt(id));
+
+		if (deleted) {
+			logger.debug("All versions for the selected dataset are deleted");
+		} else {
+			throw new SpagoBIRuntimeException("All versions for the selected dataset could not be deleted");
+		}
+
+		return Response.ok().build();
+	}
+
 	@GET
 	@Path("/{label}/fields")
 	@Produces(MediaType.APPLICATION_JSON)

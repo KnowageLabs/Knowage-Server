@@ -30,11 +30,13 @@ function datasetFunction($scope, $log, sbiModule_translate, sbiModule_restServic
 	$scope.translate = sbiModule_translate;
 	
 	$scope.dataSetListColumns = [
-    {"label":$scope.translate.load("sbi.generic.name"),"name":"name"},
-    {"label":$scope.translate.load("sbi.generic.label"),"name":"label"},
-    {"label":$scope.translate.load("sbi.generic.type"), "name":"dsTypeCd"},
-    {"label":$scope.translate.load("sbi.ds.numDocs"), "name":"usedByNDocs"}
+	    {"label":$scope.translate.load("sbi.generic.name"),"name":"name"},
+	    {"label":$scope.translate.load("sbi.generic.label"),"name":"label"},
+	    {"label":$scope.translate.load("sbi.generic.type"), "name":"dsTypeCd"},
+	    {"label":$scope.translate.load("sbi.ds.numDocs"), "name":"usedByNDocs"}
     ];
+	
+	$scope.selectedDatasetVersion = null;
 	
 	/*
 	 * 	service that loads all datasets
@@ -44,12 +46,100 @@ function datasetFunction($scope, $log, sbiModule_translate, sbiModule_restServic
 		sbiModule_restServices.promiseGet("1.0/datasets","")
 		.then(function(response) {
 				$scope.datasetsList = response.data.root;
+//				console.log($scope.selectedDataSet);
+//				if ($scope.selectedDataSet!=null) {
+//					
+//				}
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 		});
 	}
 	
 	$scope.loadAllDatasets();
+	
+	/**
+	 * Speed-menu option for deleting of a dataset version.
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	$scope.deleteVersion = 
+	[ 
+     	{
+	           
+			label: $scope.translate.load("sbi.ds.deleteVersion"),
+	 		icon:'fa fa-trash' ,
+	 		backgroundColor:'transparent',
+	           
+	 		action: function(item) {
+        	   
+	       		sbiModule_restServices.promiseDelete("1.0/datasets", $scope.selectedDataSet.id+"/version/"+item.versNum,"/")
+	   				.then(
+	   						function(response) {
+   
+				   				sbiModule_messaging.showSuccessMessage("The dataset version number " + item.versNum + " is deleted");
+				   				
+				   				for (var j=0; j<=$scope.datasetsList.length; j++) {
+				   					
+				   					if ($scope.datasetsList[j] && $scope.selectedDataSet && $scope.selectedDataSet.id == $scope.datasetsList[j].id) {
+				
+				   						for (var i=0; i<=$scope.selectedDataSet.dsVersions.length; i++) {
+				   							
+				   							if (item.versNum == $scope.selectedDataSet.dsVersions[i].versNum) {
+				   								$scope.datasetsList[j].dsVersions.splice(i,1);
+				   								$scope.selectedDataSet.dsVersions.splice(i,1);
+				   								$scope.selectedDatasetVersion = null;
+				   								break;
+				   							}
+				   								
+				   						}
+				   						
+				   					}
+				   				}
+   				
+   				
+   
+				   			}, function(response) {
+				   				//sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+				   				sbiModule_messaging.showSuccessMessage("The dataset version number " + item.versNum + " is not deleted");
+				   			}
+		   			);
+	        	   
+           }
+     	
+     	}
+	           
+   ];
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	$scope.deleteAllDatasetVersions = function() {
+		
+		sbiModule_restServices.promiseDelete("1.0/datasets", $scope.selectedDataSet.id+"/allversions","/")
+			.then(
+					function(response) {
+					
+		   				sbiModule_messaging.showSuccessMessage("All dataset versions are deleted");
+		   				
+		   				for (var j=0; j<=$scope.datasetsList.length; j++) {
+		   					
+		   					if ($scope.datasetsList[j] && $scope.selectedDataSet && $scope.selectedDataSet.id == $scope.datasetsList[j].id) {	
+		   						$scope.datasetsList[j].dsVersions.splice(0,$scope.selectedDataSet.dsVersions.length);
+								$scope.selectedDataSet.dsVersions.splice(0,$scope.selectedDataSet.dsVersions.length);	   						
+		   					}
+		   				}	
+
+		   			}, 
+		   			
+		   			function(response) {
+		   				//sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+		   				sbiModule_messaging.showSuccessMessage("All dataset versions could not be deleted");
+		   			}
+			);
+		
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	$scope.selectDatasetVersion = function(item,index,a) {			
+		$scope.selectedDatasetVersion = item;
+	}
 	
 	/*
 	 * 	service that loads all data sources
@@ -148,6 +238,7 @@ function datasetFunction($scope, $log, sbiModule_translate, sbiModule_restServic
 	
 	$scope.cancelDataSet = function() {
 		$log.info("cancel");
+		$scope.selectedDataSet = null; // Reset the selection (none dataset item will be selected) (danristo)
 	};
 	
 	$scope.previewDataset = function () {
