@@ -369,7 +369,7 @@
 					+ '<div layout="row" layout-align="center center" class="kpiValue"'
 					+ 		' ng-if="showTargetPercentage && targetValue && targetValue != 0">'
 						+ '<span>{{getTargetPercentage()}}</span>&nbsp;'
-						+ '<h3 ng-show="getTargetPercentage() != "" ">{{translate.load("sbi.kpi.widget.percentage.oftarget")}}</h3>'
+						+ '<h3 ng-show="isVisible()">{{translate.load("sbi.kpi.widget.percentage.oftarget")}}</h3>'
 					+ '</div>'
 				+ '</div>'
 				,
@@ -427,6 +427,9 @@
 			}
 		};
 		
+		$scope.isVisible = function(){
+			return $scope.getTargetPercentage != "";
+		}
 		$scope.createGauge = function(
 				frameId, label, size, min, max, valuePrefixSuffix, labelIsSuffix, thresholdStops, 
 				showValue, showTarget, showThresholds, valuePrecision, fontConf) {
