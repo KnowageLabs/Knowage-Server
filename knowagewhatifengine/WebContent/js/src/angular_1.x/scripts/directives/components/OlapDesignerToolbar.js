@@ -936,9 +936,19 @@ $scope.setAndLoadCN = function(num) {
 				sbiModule_messaging.showSuccessMessage("XML template successfully created", 'Success');
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-			});
-		 
-		 
+			}); 
+	 }
+	 
+	 /**
+	  * Close the wizard
+	  */
+	 $scope.closeOlapTemplate = function() {
+		
+		 var url= sbiModule_config.protocol+"://"+sbiModule_config.host+":"+sbiModule_config.port+sbiModule_config.externalBasePath;
+		 url+= "/servlet/AdapterHTTP?PAGE=DetailBIObjectPage&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=FALSE&MESSAGEDET=DETAIL_SELECT&OBJECT_ID=3";
+				 
+		 window.parent.location.href=url;
+
 	 }
 	 
 	 

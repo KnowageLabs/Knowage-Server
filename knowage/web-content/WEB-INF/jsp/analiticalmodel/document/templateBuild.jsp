@@ -37,8 +37,8 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 -->
 
-
-<%@ include file="/WEB-INF/jsp/commons/portlet_base.jsp"%>
+<%@include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>
+<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 
 <%@page import="org.safehaus.uuid.UUIDGenerator"%>
 <%@page import="org.safehaus.uuid.UUID"%>
@@ -75,8 +75,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 		title = msgBuilder.getMessage("SBIDev.docConf.templateBuild.editTemplateTitle", "messages", request);
 	}
     title += " : " + obj.getName();
-    boolean  isGis = obj.getEngine().getName().contains("Gis");
-    
+
 
    	// try to get from the preferences the height of the area
    	String heightArea = (String) ChannelUtilities.getPreferenceValue(aRequestContainer, "HEIGHT_AREA", "600");
@@ -95,76 +94,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	urlToCall.append("&"+SpagoBIConstants.SBI_LANGUAGE+"="+locale.getLanguage());
 	urlToCall.append("&"+SpagoBIConstants.SBI_COUNTRY+"="+locale.getCountry());
 	
-   	
-   	// build the back link
-   	Map backUrlPars = new HashMap();
-   	backUrlPars.put(SpagoBIConstants.PAGE, "DetailBIObjectPage");
-   	backUrlPars.put(SpagoBIConstants.MESSAGEDET, ObjectsTreeConstants.DETAIL_SELECT);
-   	backUrlPars.put(ObjectsTreeConstants.OBJECT_ID, obj.getId().toString());
-   	backUrlPars.put(LightNavigationManager.LIGHT_NAVIGATOR_BACK_TO, "1");
-    String backUrl = urlBuilder.getUrl(request, backUrlPars);
 
 %>
 
+	<html ng-app>
+		<body style="overflow: hidden">
+			<iframe flex class=" noBorder" width="100%" height="100%" ng-src="<%= StringEscapeUtils.escapeJavaScript(GeneralUtilities.getUrl(urlToCall.toString(), engineurl.getParameters())) %>" name="angularIframe"></iframe>
+		</body>
+	</html>
 
-<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/lib/ext-2.0.1/ux/miframe/miframe-min.js")%>'></script>
-<link rel='stylesheet' type='text/css' href='<%=urlBuilder.getResourceLinkByTheme(request, "css/analiticalmodel/execution/main.css",currTheme)%>'/>
-
-<script>
-Ext.onReady(function(){
+	 
 
 
-    
-    var iframeConf = {
-    		
-    			defaultSrc: '<%= StringEscapeUtils.escapeJavaScript(GeneralUtilities.getUrl(urlToCall.toString(), engineurl.getParameters())) %>'
-    			, autoLoad: true
-    	        , loadMask: true
-    	        , disableMessaging: true
-    	        
-    	        , renderTo: Sbi.user.ismodeweb ? undefined : 'edit_template_<%=requestIdentity%>'  
-    		};
-    
-    if(!<%= isGis %>){
-        var backButton = new Ext.Toolbar.Button({
-        	iconCls: 'icon-back'
-    		, scope: this
-    		, handler : function() {window.location.href = '<%= backUrl %>';}
-        });
 
-        var items = ['->', backButton];
-        
-        var toolbar = new Ext.Toolbar({
-          items: items
-        });
 
-    	
-    	iframeConf.tbar = toolbar;
-    	iframeConf.title = '<%= StringEscapeUtils.escapeJavaScript(title) %>'
-    }
-    
-	var templateEditIFrame = new Ext.ux.ManagedIframePanel(iframeConf);
-
-	if (Sbi.user.ismodeweb) {
-		var viewport = new Ext.Viewport({
-			layout: 'border'
-			, items: [
-			    {
-			       region: 'center',
-			       layout: 'fit',
-			       items: [templateEditIFrame]
-			    }
-			]
-		});
-	}
-		
-});
-</script>
-
-<% if (sbiMode == "PORTLET") { %>
-	<div name="edit_template_<%=requestIdentity%>" id="edit_template_<%=requestIdentity%>" 
-		style="width:100%;height:<%=heightArea+"px;"%>">
-	</div>	
-<% } %>
-
-<%@ include file="/WEB-INF/jsp/commons/footer.jsp"%>
