@@ -369,7 +369,7 @@
 					+ '<div layout="row" layout-align="center center" class="kpiValue"'
 					+ 		' ng-if="showTargetPercentage && targetValue && targetValue != 0">'
 						+ '<span>{{getTargetPercentage()}}</span>&nbsp;'
-						+ '<h3>{{translate.load("sbi.kpi.widget.percentage.oftarget")}}</h3>'
+						+ '<h3 ng-show="getTargetPercentage() != "" ">{{translate.load("sbi.kpi.widget.percentage.oftarget")}}</h3>'
 					+ '</div>'
 				+ '</div>'
 				,
@@ -420,7 +420,9 @@
 		$scope.getTargetPercentage = function() {
 			if($scope.value && $scope.targetValue && $scope.targetValue != 0) {
 				return ($scope.value * 100 / $scope.targetValue).toFixed(1) + "% ";
-			} else {
+			} else if($scope.value == 0){
+				return 0 +"% ";
+			}else {
 				return "";
 			}
 		};
