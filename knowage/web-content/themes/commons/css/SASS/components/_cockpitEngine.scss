@@ -296,6 +296,7 @@
 
         &.placedWidget {
             box-shadow: none;
+			position:relative;
             border-radius: 0;
             border: 1px dashed $bordersColor;
             
