@@ -70,9 +70,14 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree'])
 										treeFolders.push(folders[i]);
 									}
 									else{
-										//search parent folder with hasmap and attach the son
-										if(mapFolder[folders[i][parentId]]){
-											mapFolder[folders[i][parentId]][subfoldersId].push(folders[i]);
+										//search parent folder with hashmap and attach the son
+										var parent = mapFolder[folders[i][parentId]];
+										if(parent){
+											parent[subfoldersId].push(folders[i]);
+											folders[i].$parent = parent;
+											for (var j = 0; folders[i].biObjects !==undefined && j < folders[i].biObjects.length ; j++){
+												folders[i].biObjects[j].$parent = parent;
+											}
 										}
 									}
 									//update linear structure with tree structure
@@ -97,7 +102,6 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree'])
 								folders[i].expanded = folders[i].expanded === undefined ? false : folders[i].expanded;
 								folders[i].type = folders[i].type === undefined ? "folder" : folders[i].type;
 								folders[i].visible = folders[i].visible === undefined ? true : folders[i].visible;
-								folders[i].$parent = parent;
 								
 								if (folders[i][subfoldersId] !== undefined && folders[i][subfoldersId].length > 0){
 									scope.initializeFolders(folders[i][subfoldersId], folders[i]);
@@ -109,7 +113,6 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree'])
 									 folders[i].biObjects[j].type = folders[i].biObjects[j].type == undefined ?  "biObject" : folders[i].biObjects[j].type;
 									 folders[i].biObjects[j].checked = folders[i].biObjects[j].checked == undefined ? false : folders[i].biObjects[j].checked;
 									 folders[i].biObjects[j].visible = folders[i].biObjects[j].visible == undefined ?  true : folders[i].biObjects[j].visible;
-									 folders[i].biObjects[j].$parent = parent;
 								}
 							}
 			    		}
