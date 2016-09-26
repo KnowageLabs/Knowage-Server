@@ -43,6 +43,9 @@
 	.internalFab.md-knowage-theme {
 		top:-10px !important;
 	}
+	.line-container {
+		max-width: 100rem !important;
+	}
 
 	#AssociationFileUploadImport {
 		padding: 0;
@@ -57,4 +60,6 @@
 			align-items: center;
 		}
 	}
+	
+
 }
