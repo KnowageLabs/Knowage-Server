@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -58,7 +58,7 @@ import org.apache.log4j.Logger;
 
 /**
  * @author Zerbetto (davide.zerbetto@eng.it)
- * 
+ *
  *         This filter tries to build the user profile object, using the user identifier
  */
 
@@ -278,12 +278,12 @@ public class ProfileFilter implements Filter {
 	/**
 	 * Finds the user identifier from http request or from SSO system (by the http request in input). Use the SsoServiceInterface for read the userId in all
 	 * cases, if SSO is disabled use FakeSsoService. Check spagobi_sso.xml
-	 * 
+	 *
 	 * @param httpRequest
 	 *            The http request
-	 * 
+	 *
 	 * @return the current user unique identified
-	 * 
+	 *
 	 * @throws Exception
 	 *             in case the SSO is enabled and the user identifier specified on http request is different from the SSO detected one.
 	 */
@@ -293,6 +293,7 @@ public class ProfileFilter implements Filter {
 		try {
 			SsoServiceInterface userProxy = SsoServiceFactory.createProxyService();
 			userId = userProxy.readUserIdentifier(request);
+			request.getSession().setAttribute(SsoServiceInterface.SILENT_LOGIN, Boolean.TRUE);
 		} finally {
 			logger.debug("OUT");
 		}
