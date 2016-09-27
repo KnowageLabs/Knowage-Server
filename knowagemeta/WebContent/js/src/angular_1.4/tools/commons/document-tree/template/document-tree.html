@@ -43,10 +43,10 @@
 </script>
 
 <!-- seeTree is true when the tree is initialized and elaborated -->
-<div ng-show='seeTree == true'>
+<div ng-cloak ng-show='seeTree'>
 	<div class="{{classLayout}}" id ="{{id}}">
 		<!-- create the tree structure -->
-		<div id="tree-container" ui-tree="optionsDragDrop" data-drag-delay="500" data-drag-enabled="{{enableDrag==true}}" data-clone-enabled="{{enableClone==true}}" data-nodrop-enabled="{{noDropEnabled==true}}" default-folder-icon="fa fa-envira">	
+		<div id="tree-container" layout-padding ui-tree="optionsDragDrop" data-drag-delay="500" data-drag-enabled="{{enableDrag==true}}" data-clone-enabled="{{enableClone==true}}" data-nodrop-enabled="{{noDropEnabled==true}}" default-folder-icon="fa fa-envira">	
 			<ol id = "{{id}}-tree-root" ui-tree-nodes ng-model="folders" id="tree-root">
 				<li layout="column"  layout-align="start stretch" ng-repeat="folder in folders" ui-tree-node ng-include="'folders_renderer.html'"
 					ng-class="{ 'highlight': highlight, 'expanded' : expanded}">
@@ -56,7 +56,7 @@
 	</div>
 </div>
  
-<div class='waitingContainer' ng-hide='seeTree == true' layout='column' layout-padding layout-align ='space-around center'>
+<div class='waitingContainer' ng-hide='seeTree' layout='column' layout-padding layout-align ='space-around center'>
 	<md-progress-circular md-mode="indeterminate"></md-progress-circular>
 	<h4>Please wait...</h4>
 </div>
