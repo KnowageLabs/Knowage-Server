@@ -225,7 +225,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 
 				if (properties != null && !properties.isEmpty()) {
 					Map<String, String> attributes1 = new TreeMap<String, String>();
-					attributes1.put("src", "../img/show_props.png");
+					attributes1.put("src", "../../img/show_props.png");
 					attributes1.put("ng-click", "getProps('" + context.getMember().getUniqueName() + "') ;$event.stopPropagation();");
 					startElement("img", attributes1);
 					endElement("img");
