@@ -5,7 +5,18 @@
    </md-toolbar>
    
    <md-dialog-content>
+        <div layout="row">
    		<p class="md-body-1" style="padding:10px">Selecting an edit cube and an editable measure is mandatory.</p>  
+   		<span flex></span>
+   		
+   		     <md-button class="md-icon-button" aria-label="Info" ng-click="showEditCubeInfo()">
+				          <md-icon md-font-icon="fa fa-info-circle" class="fa fa-2x"></md-icon>
+				        </md-button>
+   		</div>
+   		<p class="md-body-1" style="padding:10px" ng-show="showInfo">
+   		 {{translate.load("sbi.olap.designer.editCube.info")}}
+   		</p>
+   		
    		<md-card
    		>
    			<md-input-container  layout="column" flex=100> 

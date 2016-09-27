@@ -101,6 +101,8 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 		"name":""	
 	}
 	
+	$scope.showInfoo= false;
+	
 	var counter = 0;
 	
 	angular.element(document).ready(function () {
@@ -992,6 +994,9 @@ $scope.setAndLoadCN = function(num) {
 			return bindedAttributes;
 		};	
 	
+		$scope.showEditCubeInfo=function(){
+			$scope.showInfo=!$scope.showInfo;
+		}
 	
 };
 
