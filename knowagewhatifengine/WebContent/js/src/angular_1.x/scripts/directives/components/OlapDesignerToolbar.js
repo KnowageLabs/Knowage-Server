@@ -720,7 +720,7 @@ $scope.setAndLoadCN = function(num) {
 
 							onTap : function() {
 								if($scope.crossNavType == 'member'){
-									$scope.crossNavfromMemberObj.uniqueName = $scope.selectedMember.uniqueName;
+									$scope.crossNavfromMemberObj.uniqueName = $scope.selectedMember.level;
 								}else if ($scope.crossNavType == 'cell') {
 									formatCellNavigation();
 								}

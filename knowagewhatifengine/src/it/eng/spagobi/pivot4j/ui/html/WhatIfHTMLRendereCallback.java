@@ -413,7 +413,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 
 					if (d != 0) {
 						context.getMember();
-						attributes.put("src", "../img/arrow-up.png");
+						attributes.put("src", "../../img/arrow-up.png");
 						attributes.put("ng-click",
 								"drillUp(" + axis + " , " + pos + " , " + memb + ",'" + uniqueName + "','" + context.getHierarchy().getUniqueName() + "' )");
 						startElement("img", attributes);
@@ -589,9 +589,9 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 				if (context.getModel().getSortCriteria().equals(SortCriteria.ASC) || context.getModel().getSortCriteria().equals(SortCriteria.BASC)
 						|| context.getModel().getSortCriteria().equals(SortCriteria.TOPCOUNT)) {
 					if (axisToSort == Axis.ROWS.axisOrdinal()) {
-						attributes.put("src", "../img/DESC-rows.png");
+						attributes.put("src", "../../img/DESC-rows.png");
 					} else {
-						attributes.put("src", "../img/DESC-columns.png");
+						attributes.put("src", "../../img/DESC-columns.png");
 					}
 
 					attributes.put("ng-click",
@@ -604,9 +604,9 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 						|| context.getModel().getSortCriteria().equals(SortCriteria.BOTTOMCOUNT)) {
 
 					if (axisToSort == Axis.ROWS.axisOrdinal()) {
-						attributes.put("src", "../img/ASC-rows.png");
+						attributes.put("src", "../../img/ASC-rows.png");
 					} else {
-						attributes.put("src", "../img/ASC-columns.png");
+						attributes.put("src", "../../img/ASC-columns.png");
 					}
 
 					attributes.put("ng-click",
@@ -619,9 +619,9 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 			} else {
 				context.getModel().setSorting(false);
 				if (axisToSort == Axis.ROWS.axisOrdinal()) {
-					attributes.put("src", "../img/noSortRows.png");
+					attributes.put("src", "../../img/noSortRows.png");
 				} else {
-					attributes.put("src", "../img/noSortColumns.png");
+					attributes.put("src", "../../img/noSortColumns.png");
 				}
 
 				attributes.put("ng-click",
