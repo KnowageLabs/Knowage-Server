@@ -49,10 +49,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				'MENU_PARAMETERS' : 	'<%= aRequestContainer.getServiceRequest().getAttribute("PARAMETERS") %>',
 				'EDIT_MODE': '<%= request.getParameter("EDIT_MODE") != null ? request.getParameter("EDIT_MODE") : aRequestContainer.getServiceRequest().getAttribute("EDIT_MODE")  %>',
 				'EXEC_FROM': '<%=request.getParameter("EXEC_FROM")%>',
-				'COCKPIT_PARAMETER' : '<%= request.getParameter("COCKPIT_PARAMETER") %>'
-				
-			  	
+				'COCKPIT_PARAMETER' : '<%= request.getParameter("COCKPIT_PARAMETER") %>',
+
 		};
+		
+		
+		<%
+		if(request.getParameter("SELECTED_ROLE") != null && !request.getParameter("SELECTED_ROLE").equalsIgnoreCase("")) {
+		%>
+			obj.SELECTED_ROLE = '<%=request.getParameter("SELECTED_ROLE") %>';
+		<%
+		}
+		%>
+		
 		return obj;
 	});
 	</script>

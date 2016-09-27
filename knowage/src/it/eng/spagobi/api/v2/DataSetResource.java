@@ -18,6 +18,37 @@
 package it.eng.spagobi.api.v2;
 
 import static it.eng.spagobi.tools.glossary.util.Util.getNumberOrNull;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import org.apache.log4j.Logger;
+import org.jgrapht.graph.Pseudograph;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.mongodb.util.JSON;
+
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -50,36 +81,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceParameterException;
 import it.eng.spagobi.utilities.sql.SqlUtils;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import org.apache.log4j.Logger;
-import org.jgrapht.graph.Pseudograph;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.mongodb.util.JSON;
 
 /**
  * @author Alessandro Daniele (alessandro.daniele@eng.it)
@@ -377,8 +378,8 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 							if (realtimeDatasets.contains(dataset)) {
 								filter = DataStore.DEFAULT_TABLE_NAME + "." + AbstractJDBCDataset.encapsulateColumnName(column, null) + "='" + value + "'";
 							} else {
-								filter = AbstractJDBCDataset.encapsulateColumnName(column, SpagoBICacheConfiguration.getInstance().getCacheDataSource())
-										+ "=('" + value + "')";
+								filter = AbstractJDBCDataset.encapsulateColumnName(column, SpagoBICacheConfiguration.getInstance().getCacheDataSource()) + "=('"
+										+ value + "')";
 							}
 							filtersMap.put(dataset, filter);
 
@@ -512,23 +513,4 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		}
 	}
 
-	@POST
-	@Path("/{label}/data2")
-	@Produces(MediaType.APPLICATION_JSON)
-	public String getDataStorePost2(@PathParam("label") String label, String body, @QueryParam("offset") Integer offset, @QueryParam("size") Integer fetchSize,
-			@QueryParam("realtime") boolean isRealtime) {
-		logger.debug("IN");
-		try {
-			JSONObject bodyObject = new JSONObject(body);
-			String selections = bodyObject.optString("selections", null);
-			String parameters = bodyObject.optString("parameters", null);
-			String aggregations = bodyObject.optString("aggregations", null);
-			String summaryRow = bodyObject.optString("summaryRow", null);
-			return getDataStore(label, parameters, selections, aggregations, summaryRow, offset, fetchSize, isRealtime);
-		} catch (Exception e) {
-			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
-		} finally {
-			logger.debug("OUT");
-		}
-	}
 }

@@ -411,7 +411,6 @@ if(executionRoleNames.size() > 0) {
 			angular.module('documentExecutionModule').factory('execProperties', function() {
 				var selRole= '<%= request.getParameter("SELECTED_ROLE") %>'=='null' ? '' : '<%= request.getParameter("SELECTED_ROLE") %>';
 				var crossParams= <%= request.getParameter("CROSS_PARAMETER") %>==null ? {} : <%= request.getParameter("CROSS_PARAMETER") %>;
-				
 				var obj = {
 					roles: [<%for(Object roleObj : executionRoleNames) out.print("'" + (String)roleObj + "',");%>],
 					executionInstance: {
@@ -433,8 +432,14 @@ if(executionRoleNames.size() > 0) {
 						, 'COCKPIT_SELECTIONS' : '<%=cockpitSelections%>'
 						<%
 						}
-					%>
-						
+						%>
+						<%
+						if(request.getParameter("SELECTED_ROLE") != null && !request.getParameter("SELECTED_ROLE").equalsIgnoreCase("")) {
+						%>
+						, 'SELECTED_ROLE' : '<%=request.getParameter("SELECTED_ROLE") %>'
+						<%
+						}
+						%>
 					},
 					parametersData: {
 						documentParameters: []

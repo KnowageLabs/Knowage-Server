@@ -110,9 +110,24 @@
 
 		$scope.initSelectedRole = function() {
 			console.log("initSelectedRole IN ");  
+			var isRoleSelected =false;
 			if(execProperties.roles && execProperties.roles.length > 0) {
-				 if(execProperties.roles.length==1 || (execProperties.roles.length>1 && !angular.equals(execProperties.selectedRole.name,'')) ) {
-					execProperties.selectedRole.name = execProperties.roles[0];
+				if(!angular.equals(execProperties.selectedRole.name,'')){
+						for(role in execProperties.roles){
+							if(angular.equals(execProperties.selectedRole.name,execProperties.roles[role])){
+								isRoleSelected = true;
+								break;
+							}
+						}
+						if(!isRoleSelected){
+							execProperties.selectedRole.name="";
+
+						}
+				}
+				
+				if(execProperties.roles.length==1 || (execProperties.roles.length>1 && isRoleSelected) ) {
+					 
+					execProperties.selectedRole.name = isRoleSelected ? execProperties.selectedRole.name : execProperties.roles[0];
 					$crossNavigationScope.changeNavigationRole(execProperties.selectedRole);
 					$scope.showSelectRoles = false;					
 					//loads parameters if role is selected
