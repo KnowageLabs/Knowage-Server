@@ -256,9 +256,10 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	 //calling service for getting data sources @GET
 	 $scope.getDataSources = function(){
 		 
-		 sbiModule_restServices.promiseGet("datasources","")
+		 sbiModule_restServices.promiseGet("2.0/datasources","")
 			.then(function(response) {
-				$scope.listOfDatasources = response.data.root;
+				$scope.listOfDatasources=[];
+				$scope.listOfDatasources = response.data;
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 				
@@ -270,6 +271,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 		 
 		 sbiModule_restServices.promiseGet("domains","listValueDescriptionByType","DOMAIN_TYPE=BM_CATEGORY")
 			.then(function(response) {
+				$scope.listOfCategories=[];
 				$scope.listOfCategories = response.data;
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
