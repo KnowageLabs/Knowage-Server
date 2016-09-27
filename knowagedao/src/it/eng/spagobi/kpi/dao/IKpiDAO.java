@@ -125,9 +125,7 @@ public interface IKpiDAO extends ISpagoBIDao {
 	 */
 	public Rule insertRule(Rule rule) throws SpagoBIException;
 
-	public Rule importRule(Rule rule) throws SpagoBIException;
-
-	public Rule importRule(Rule rule, boolean overwriteMode) throws SpagoBIException;
+	public Rule importRule(Rule rule, boolean overwriteMode, Session session) throws SpagoBIException;
 
 	public Rule insertNewVersionRule(Rule rule) throws SpagoBIException;
 
@@ -141,9 +139,15 @@ public interface IKpiDAO extends ISpagoBIDao {
 
 	public Rule loadLastActiveRule(Integer id);
 
+	public Rule loadLastActiveRule(Integer id, Session session);
+
 	public Integer getRuleIdByName(String name);
 
+	public Integer getRuleIdByName(String name, Session session);
+
 	public Integer getRuleIdByName(String name, boolean activeOnly);
+
+	public Integer getRuleIdByName(String name, boolean activeOnly, Session session);
 
 	public Integer createDomainIfNotExists(Domain domain);
 
@@ -200,7 +204,7 @@ public interface IKpiDAO extends ISpagoBIDao {
 	 *            Whether or not an existing KPI should be updated (either directly or by creating a new version)
 	 * @return The KPI
 	 */
-	public Kpi importKpi(final Kpi kpi, boolean overwriteMode);
+	public Kpi importKpi(final Kpi kpi, boolean overwriteMode, Session session);
 
 	/**
 	 * Update an existing kpi
@@ -222,6 +226,8 @@ public interface IKpiDAO extends ISpagoBIDao {
 	 * @return the KPI id, null if not found
 	 */
 	public Integer getKpiIdByName(String name);
+
+	public Integer getKpiIdByName(String name, Session session);
 
 	public List<Alias> listAlias();
 
@@ -251,7 +257,11 @@ public interface IKpiDAO extends ISpagoBIDao {
 
 	public Threshold loadThreshold(Integer id);
 
+	public Threshold loadThreshold(Integer id, Session session);
+
 	public Integer getThresholdIdByName(String name);
+
+	public Integer getThresholdIdByName(String name, Session session);
 
 	/**
 	 * Given a list of measures it retrieves a list of placeholder related to that measures
@@ -280,7 +290,11 @@ public interface IKpiDAO extends ISpagoBIDao {
 
 	public Target loadTargetByName(String name);
 
+	public Target loadTargetByName(String name, Session session);
+
 	public Integer insertTarget(Target target);
+
+	public Integer insertTarget(Target target, Session session);
 
 	public void updateTarget(Target target);
 
@@ -330,6 +344,8 @@ public interface IKpiDAO extends ISpagoBIDao {
 	public List<KpiScheduler> listSchedulerAndFiltersByKpi(Integer kpiId, Integer kpiVersion, boolean showFilters);
 
 	public Kpi loadLastActiveKpi(Integer id);
+
+	public Kpi loadLastActiveKpi(Integer id, Session session);
 
 	public ArrayList<KpiValueExecLog> loadKpiValueExecLog(final Integer id, final Integer number);
 

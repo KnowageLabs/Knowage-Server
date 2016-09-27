@@ -249,21 +249,16 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	}
 
 	@Override
-	public Rule importRule(final Rule rule) {
-		return insertRule(rule, false, true);
-	}
-
-	@Override
-	public Rule importRule(final Rule rule, boolean overwriteMode) {
+	public Rule importRule(final Rule rule, boolean overwriteMode, Session session) {
 		boolean newVersion = overwriteMode && rule.getId() != null && rule.getVersion() != null;
-		return insertRule(rule, newVersion, true);
+		return insertRule(rule, newVersion, true, session);
 	}
 
 	private Rule insertRule(final Rule rule, final boolean newVersion) {
-		return insertRule(rule, newVersion, false);
+		return insertRule(rule, newVersion, false, null);
 	}
 
-	private Rule insertRule(final Rule rule, final boolean newVersion, final boolean importMode) {
+	private Rule insertRule(final Rule rule, final boolean newVersion, final boolean importMode, Session session) {
 		return executeOnTransaction(new IExecuteOnTransaction<Rule>() {
 			@Override
 			public Rule execute(Session session) throws SpagoBIException {
@@ -343,7 +338,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				}
 				return rule;
 			}
-		});
+		}, session);
 	}
 
 	@Override
@@ -504,6 +499,11 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	@Override
 	public Rule loadLastActiveRule(final Integer id) {
+		return loadLastActiveRule(id, null);
+	}
+
+	@Override
+	public Rule loadLastActiveRule(final Integer id, Session session) {
 		SbiKpiRule rule = executeOnTransaction(new IExecuteOnTransaction<SbiKpiRule>() {
 			@Override
 			public SbiKpiRule execute(Session session) throws Exception {
@@ -515,7 +515,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				Hibernate.initialize(rule.getSbiKpiRuleOutputs());
 				return rule;
 			}
-		});
+		}, session);
 		return from(rule);
 	}
 
@@ -588,9 +588,9 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	}
 
 	@Override
-	public Kpi importKpi(final Kpi kpi, boolean overwriteMode) {
+	public Kpi importKpi(final Kpi kpi, boolean overwriteMode, Session session) {
 		boolean newVersion = overwriteMode && kpi.getId() != null && kpi.getVersion() != null;
-		return insertKpi(null, kpi, newVersion);
+		return insertKpi(session, kpi, newVersion);
 	}
 
 	public Kpi insertKpi(Session session, final Kpi kpi, final boolean newVersion) {
@@ -876,6 +876,11 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	@Override
 	public Kpi loadLastActiveKpi(final Integer id) {
+		return loadLastActiveKpi(id, null);
+	}
+
+	@Override
+	public Kpi loadLastActiveKpi(final Integer id, Session session) {
 
 		return executeOnTransaction(new IExecuteOnTransaction<Kpi>() {
 			@Override
@@ -889,7 +894,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 				return kpife;
 			}
-		});
+		}, session);
 
 	}
 
@@ -1076,7 +1081,10 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		sbiKpiThreshold.setName(t.getName());
 		sbiKpiThreshold.setDescription(t.getDescription());
 
-		sbiKpiThreshold.setType(new SbiDomains(t.getTypeId()));
+		if (t.getTypeId() != null) {
+			SbiDomains type = (SbiDomains) session.load(SbiDomains.class, t.getTypeId());
+			sbiKpiThreshold.setType(type);
+		}
 
 		// clearing removed references
 		Iterator<SbiKpiThresholdValue> iterator = sbiKpiThreshold.getSbiKpiThresholdValues().iterator();
@@ -1087,7 +1095,6 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				iterator.remove();
 			}
 		}
-
 		session.save(sbiKpiThreshold);
 
 		for (ThresholdValue tv : t.getThresholdValues()) {
@@ -1222,6 +1229,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				ThresholdValue tv = new ThresholdValue();
 				tv.setColor(sbiValue.getColor());
 				tv.setId(sbiValue.getId());
+
 				if (sbiKpiThreshold.getType().getValueCd().equals("RANGE") || sbiKpiThreshold.getType().getValueCd().equals("MINIMUM")) {
 					tv.setIncludeMin(sbiValue.getIncludeMin() != null && sbiValue.getIncludeMin().charValue() == 'T');
 					tv.setMinValue(sbiValue.getMinValue());
@@ -1376,12 +1384,17 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	@Override
 	public Integer getKpiIdByName(final String name) {
+		return getKpiIdByName(name, null);
+	}
+
+	@Override
+	public Integer getKpiIdByName(final String name, Session session) {
 		List<SbiKpiKpi> lst = list(new ICriterion<SbiKpiKpi>() {
 			@Override
 			public Criteria evaluate(Session session) {
 				return session.createCriteria(SbiKpiKpi.class).add(Restrictions.eq("name", name)).add(Restrictions.eq("active", 'T'));
 			}
-		});
+		}, session);
 		if (lst != null && !lst.isEmpty()) {
 			return lst.get(0).getSbiKpiKpiId().getId();
 		}
@@ -1390,42 +1403,72 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	@Override
 	public Threshold loadThreshold(Integer id) {
-		return from(load(SbiKpiThreshold.class, id), true);
+		return loadThreshold(id, null);
+	}
+
+	@Override
+	public Threshold loadThreshold(final Integer id, Session session) {
+		return executeOnTransaction(new IExecuteOnTransaction<Threshold>() {
+			@Override
+			public Threshold execute(Session session) throws Exception {
+				SbiKpiThreshold sbiThreshold = (SbiKpiThreshold) session.get(SbiKpiThreshold.class, id);
+				if (sbiThreshold == null) {
+					throw new SpagoBIDAOObjectNotExistingException("Threshold id [" + id + "]");
+				}
+				return from(sbiThreshold, true);
+			}
+		}, session);
 	}
 
 	@Override
 	public Integer getThresholdIdByName(final String name) {
+		return getThresholdIdByName(name, null);
+	}
+
+	@Override
+	public Integer getThresholdIdByName(final String name, Session session) {
 		return executeOnTransaction(new IExecuteOnTransaction<Integer>() {
 			@Override
 			public Integer execute(Session session) throws Exception {
 				return (Integer) session.createCriteria(SbiKpiThreshold.class).add(Restrictions.eq("name", name)).setProjection(Property.forName("id"))
 						.setMaxResults(1).uniqueResult();
 			}
-		});
+		}, session);
 	}
 
 	@Override
 	public Integer getRuleIdByName(final String name, boolean activeOnly) {
-		if (activeOnly)
-			return getRuleIdByName(name);
+		return getRuleIdByName(name, activeOnly, null);
+	}
+
+	@Override
+	public Integer getRuleIdByName(final String name, boolean activeOnly, Session session) {
+		if (activeOnly) {
+			return getRuleIdByName(name, session);
+		}
 		return executeOnTransaction(new IExecuteOnTransaction<Integer>() {
 			@Override
 			public Integer execute(Session session) throws Exception {
 				return (Integer) session.createCriteria(SbiKpiRule.class).add(Restrictions.eq("name", name)).setProjection(Property.forName("sbiKpiRuleId.id"))
 						.addOrder(Order.desc("sbiKpiRuleId.version")).setMaxResults(1).uniqueResult();
 			}
-		});
+		}, session);
 	}
 
 	@Override
 	public Integer getRuleIdByName(final String name) {
+		return getRuleIdByName(name, null);
+	}
+
+	@Override
+	public Integer getRuleIdByName(final String name, Session session) {
 		return executeOnTransaction(new IExecuteOnTransaction<Integer>() {
 			@Override
 			public Integer execute(Session session) throws Exception {
 				return (Integer) session.createCriteria(SbiKpiRule.class).add(Restrictions.eq("name", name)).add(Restrictions.eq("active", 'T'))
 						.setProjection(Property.forName("sbiKpiRuleId.id")).setMaxResults(1).uniqueResult();
 			}
-		});
+		}, session);
 	}
 
 	@Override
@@ -1552,6 +1595,11 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	@Override
 	public Target loadTargetByName(final String name) {
+		return loadTargetByName(name, null);
+	}
+
+	@Override
+	public Target loadTargetByName(final String name, Session session) {
 		return executeOnTransaction(new IExecuteOnTransaction<Target>() {
 			@Override
 			public Target execute(Session session) throws Exception {
@@ -1563,7 +1611,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				}
 
 			}
-		});
+		}, session);
 	}
 
 	@Override
@@ -1578,6 +1626,11 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	@Override
 	public Integer insertTarget(final Target target) {
+		return insertTarget(target, null);
+	}
+
+	@Override
+	public Integer insertTarget(final Target target, Session session) {
 		return executeOnTransaction(new IExecuteOnTransaction<Integer>() {
 			@Override
 			public Integer execute(Session session) throws Exception {
@@ -1591,7 +1644,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				}
 				return id;
 			}
-		});
+		}, session);
 	}
 
 	@Override

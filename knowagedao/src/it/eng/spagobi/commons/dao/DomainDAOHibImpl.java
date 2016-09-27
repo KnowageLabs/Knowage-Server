@@ -17,13 +17,6 @@
  */
 package it.eng.spagobi.commons.dao;
 
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.bo.Domain;
-import it.eng.spagobi.commons.metadata.SbiDomains;
-import it.eng.spagobi.commons.metadata.SbiProductType;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -39,6 +32,13 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
+
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.commons.metadata.SbiProductType;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * Defines the Hibernate implementations for all DAO methods, for a domain.
@@ -105,9 +105,8 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 	@Override
 	public List loadListDomainsByType(String domainType) throws EMFUserError {
 		/*
-		 * <STATEMENT name="SELECT_LIST_DOMAINS" query="SELECT T.VALUE_NM AS
-		 * VALUE_NAME, T.VALUE_ID AS VALUE_ID, T.VALUE_CD AS VALUE_CD FROM
-		 * SBI_DOMAINS T WHERE DOMAIN_CD = ? "/>
+		 * <STATEMENT name="SELECT_LIST_DOMAINS" query="SELECT T.VALUE_NM AS VALUE_NAME, T.VALUE_ID AS VALUE_ID, T.VALUE_CD AS VALUE_CD FROM SBI_DOMAINS T WHERE
+		 * DOMAIN_CD = ? "/>
 		 */
 		Session aSession = null;
 		Transaction tx = null;
@@ -172,8 +171,8 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 
 				SbiDomains domain = (SbiDomains) domainIt.next();
 
-				Query hibQueryProd = aSession.createQuery("select opt.sbiProductType from SbiOrganizationProductType opt "
-						+ "where opt.sbiOrganizations.name = :tenant ");
+				Query hibQueryProd = aSession
+						.createQuery("select opt.sbiProductType from SbiOrganizationProductType opt " + "where opt.sbiOrganizations.name = :tenant ");
 				hibQueryProd.setString("tenant", tenant);
 
 				List hibListProd = hibQueryProd.list();
@@ -229,15 +228,13 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 *
-	 * @see it.eng.spagobi.commons.dao.IDomainDAO#loadDomainByCodeAndValue(java.lang.String,
-	 *      java.lang.String)
+	 * @see it.eng.spagobi.commons.dao.IDomainDAO#loadDomainByCodeAndValue(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public Domain loadDomainByCodeAndValue(String codeDomain, String codeValue) throws EMFUserError {
 		/*
-		 * <STATEMENT name="SELECT_DOMAIN_FROM_CODE_VALUE" query="SELECT
-		 * D.VALUE_NM AS VALUE_NAME, D.VALUE_ID AS VALUE_ID, D.VALUE_CD AS
-		 * VALUE_CD FROM SBI_DOMAINS D WHERE DOMAIN_CD = ? AND VALUE_CD = ? "/>
+		 * <STATEMENT name="SELECT_DOMAIN_FROM_CODE_VALUE" query="SELECT D.VALUE_NM AS VALUE_NAME, D.VALUE_ID AS VALUE_ID, D.VALUE_CD AS VALUE_CD FROM
+		 * SBI_DOMAINS D WHERE DOMAIN_CD = ? AND VALUE_CD = ? "/>
 		 */
 		Domain aDomain = null;
 		Session aSession = null;
@@ -246,15 +243,7 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			Criterion aCriterion = Expression.and(Expression.eq("domainCd", codeDomain), Expression.eq("valueCd", codeValue));
-			Criteria criteria = aSession.createCriteria(SbiDomains.class);
-			criteria.add(aCriterion);
-
-			SbiDomains aSbiDomains = (SbiDomains) criteria.uniqueResult();
-			if (aSbiDomains == null)
-				return null;
-
-			aDomain = toDomain(aSbiDomains);
+			aDomain = loadDomainByCodeAndValue(codeDomain, codeValue, aSession);
 
 			tx.commit();
 		} catch (HibernateException he) {
@@ -276,6 +265,32 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 	}
 
 	/**
+	 * Same as loadDomainByCodeAndValue but with (optional) external session
+	 *
+	 * @param codeDomain
+	 * @param codeValue
+	 * @param aSession
+	 * @return
+	 * @throws EMFUserError
+	 */
+	@Override
+	public Domain loadDomainByCodeAndValue(String codeDomain, String codeValue, Session aSession) throws EMFUserError {
+		if (aSession == null) {
+			return loadDomainByCodeAndValue(codeDomain, codeValue);
+		} else {
+			Criterion aCriterion = Expression.and(Expression.eq("domainCd", codeDomain), Expression.eq("valueCd", codeValue));
+			Criteria criteria = aSession.createCriteria(SbiDomains.class);
+			criteria.add(aCriterion);
+
+			SbiDomains aSbiDomains = (SbiDomains) criteria.uniqueResult();
+			if (aSbiDomains == null)
+				return null;
+
+			return toDomain(aSbiDomains);
+		}
+	}
+
+	/**
 	 * Load domain by code and value.
 	 *
 	 * @param codeDomain
@@ -288,15 +303,13 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 *
-	 * @see it.eng.spagobi.commons.dao.IDomainDAO#loadDomainByCodeAndValue(java.lang.String,
-	 *      java.lang.String)
+	 * @see it.eng.spagobi.commons.dao.IDomainDAO#loadDomainByCodeAndValue(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public SbiDomains loadSbiDomainByCodeAndValue(String codeDomain, String codeValue) throws EMFUserError {
 		/*
-		 * <STATEMENT name="SELECT_DOMAIN_FROM_CODE_VALUE" query="SELECT
-		 * D.VALUE_NM AS VALUE_NAME, D.VALUE_ID AS VALUE_ID, D.VALUE_CD AS
-		 * VALUE_CD FROM SBI_DOMAINS D WHERE DOMAIN_CD = ? AND VALUE_CD = ? "/>
+		 * <STATEMENT name="SELECT_DOMAIN_FROM_CODE_VALUE" query="SELECT D.VALUE_NM AS VALUE_NAME, D.VALUE_ID AS VALUE_ID, D.VALUE_CD AS VALUE_CD FROM
+		 * SBI_DOMAINS D WHERE DOMAIN_CD = ? AND VALUE_CD = ? "/>
 		 */
 		SbiDomains aSbiDomains = null;
 		Session aSession = null;
@@ -333,8 +346,7 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 	}
 
 	/**
-	 * From the hibernate domain object at input, gives the corrispondent
-	 * <code>Domain</code> object.
+	 * From the hibernate domain object at input, gives the corrispondent <code>Domain</code> object.
 	 *
 	 * @param hibDomain
 	 *            The hybernate Domain object
@@ -435,8 +447,7 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 	}
 
 	/**
-	 * to the hibernate domain object at input, from the corrispondent
-	 * <code>Domain</code> object.
+	 * to the hibernate domain object at input, from the corrispondent <code>Domain</code> object.
 	 *
 	 * @param Domain
 	 *            object
@@ -478,29 +489,7 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			SbiDomains hibDomains = null;
-			Integer id = domain.getValueId();
-
-			if (id != null) {
-				// modification
-				logger.debug("Update Domain");
-				hibDomains = (SbiDomains) aSession.load(SbiDomains.class, id);
-				updateSbiCommonInfo4Update(hibDomains);
-				hibDomains.setDomainCd(domain.getDomainCode());
-				hibDomains.setDomainNm(domain.getDomainName());
-				hibDomains.setValueCd(domain.getValueCd());
-				hibDomains.setValueDs(domain.getValueDescription());
-				hibDomains.setValueId(domain.getValueId());
-				hibDomains.setValueNm(domain.getValueName());
-			} else {
-				// insertion
-				logger.debug("Insert new Domain");
-				hibDomains = fromDomain(domain);
-				updateSbiCommonInfo4Insert(hibDomains);
-				hibDomains.setValueId(domain.getValueId());
-			}
-
-			Integer newId = (Integer) aSession.save(hibDomains);
+			Integer newId = saveDomain(domain, aSession);
 
 			tx.commit();
 
@@ -522,6 +511,39 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 			logger.debug("OUT");
 		}
 
+	}
+
+	/**
+	 * @param domain
+	 * @param aSession
+	 * @return
+	 */
+	@Override
+	public Integer saveDomain(Domain domain, Session aSession) {
+		SbiDomains hibDomains = null;
+		Integer id = domain.getValueId();
+
+		if (id != null) {
+			// modification
+			logger.debug("Update Domain");
+			hibDomains = (SbiDomains) aSession.load(SbiDomains.class, id);
+			updateSbiCommonInfo4Update(hibDomains);
+			hibDomains.setDomainCd(domain.getDomainCode());
+			hibDomains.setDomainNm(domain.getDomainName());
+			hibDomains.setValueCd(domain.getValueCd());
+			hibDomains.setValueDs(domain.getValueDescription());
+			hibDomains.setValueId(domain.getValueId());
+			hibDomains.setValueNm(domain.getValueName());
+		} else {
+			// insertion
+			logger.debug("Insert new Domain");
+			hibDomains = fromDomain(domain);
+			updateSbiCommonInfo4Insert(hibDomains);
+			hibDomains.setValueId(domain.getValueId());
+		}
+
+		Integer newId = (Integer) aSession.save(hibDomains);
+		return newId;
 	}
 
 	/**

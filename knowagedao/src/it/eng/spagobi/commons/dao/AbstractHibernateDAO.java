@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,21 +11,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.commons.dao;
-
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.metadata.SbiCommonInfo;
-import it.eng.spagobi.commons.metadata.SbiHibernateModel;
-import it.eng.spagobi.commons.utilities.HibernateSessionManager;
-import it.eng.spagobi.tenant.Tenant;
-import it.eng.spagobi.tenant.TenantManager;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -38,9 +28,19 @@ import org.hibernate.Filter;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.metadata.SbiCommonInfo;
+import it.eng.spagobi.commons.metadata.SbiHibernateModel;
+import it.eng.spagobi.commons.utilities.HibernateSessionManager;
+import it.eng.spagobi.tenant.Tenant;
+import it.eng.spagobi.tenant.TenantManager;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
 /**
  * Abstract class that al DAO will have to extend.
- * 
+ *
  * @author Zoppello
  */
 public class AbstractHibernateDAO {
@@ -124,7 +124,7 @@ public class AbstractHibernateDAO {
 
 	/**
 	 * Gets tre current session.
-	 * 
+	 *
 	 * @return The current session object.
 	 */
 	public Session getSession() {
@@ -166,7 +166,7 @@ public class AbstractHibernateDAO {
 
 	/**
 	 * usefull to update some property
-	 * 
+	 *
 	 * @param obj
 	 * @return
 	 */
@@ -187,7 +187,7 @@ public class AbstractHibernateDAO {
 
 	/**
 	 * usefull to update some property
-	 * 
+	 *
 	 * @param obj
 	 * @return
 	 */
@@ -246,7 +246,7 @@ public class AbstractHibernateDAO {
 
 	/**
 	 * Traces the exception information of a throwable input object.
-	 * 
+	 *
 	 * @param t
 	 *            The input throwable object
 	 */
@@ -274,12 +274,11 @@ public class AbstractHibernateDAO {
 
 	/**
 	 * Loads an object of type "clazz" whose id is "id"
-	 * 
+	 *
 	 * @param clazz
 	 * @param id
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	public <T extends SbiHibernateModel> T load(Class<T> clazz, Serializable id) {
 		Session session = null;
 		T toReturn = null;
@@ -296,14 +295,8 @@ public class AbstractHibernateDAO {
 			} catch (Throwable t) {
 				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
 			}
-			Object obj = session.get(clazz, id);
-
-			if (obj != null) {
-				toReturn = (T) obj;
-				session.flush();
-			} else {
-				throw new SpagoBIDOAException("Object not found");
-			}
+			toReturn = load(clazz, id, session);
+			session.flush();
 		} catch (Throwable t) {
 			throw new SpagoBIDOAException("An unexpected error occured while loading dataset whose id is equal to [" + id + "]", t);
 		} finally {
@@ -317,8 +310,27 @@ public class AbstractHibernateDAO {
 	}
 
 	/**
+	 * Loads an object of type "clazz" whose id is "id" using optional external session
+	 *
+	 * @param clazz
+	 * @param id
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public <T extends SbiHibernateModel> T load(Class<T> clazz, Serializable id, Session session) {
+		if (session == null) {
+			return load(clazz, id);
+		}
+		Object obj = session.get(clazz, id);
+		if (obj == null) {
+			throw new SpagoBIDOAException("Object not found");
+		}
+		return (T) obj;
+	}
+
+	/**
 	 * Persists a new object and returns its id
-	 * 
+	 *
 	 * @param obj
 	 * @return objId
 	 */
@@ -361,7 +373,7 @@ public class AbstractHibernateDAO {
 
 	/**
 	 * Updates an existing object
-	 * 
+	 *
 	 * @param obj
 	 */
 	public void update(SbiHibernateModel obj) {
@@ -398,7 +410,7 @@ public class AbstractHibernateDAO {
 
 	/**
 	 * Erases a record from db
-	 * 
+	 *
 	 * @param clazz
 	 * @param id
 	 */
@@ -443,18 +455,31 @@ public class AbstractHibernateDAO {
 		if (clazz == null) {
 			throw new IllegalArgumentException("Input parameter 'clazz' cannot be null");
 		}
-		return list(clazz, null);
+		return internalList(clazz, null);
 	}
 
 	public <T extends SbiHibernateModel> List<T> list(ICriterion<T> criterion) {
 		if (criterion == null) {
 			throw new IllegalArgumentException("Input parameter 'criteria' cannot be null");
 		}
-		return list(null, criterion);
+		return internalList(null, criterion);
 	}
 
-	@SuppressWarnings("unchecked")
-	private <T extends SbiHibernateModel> List<T> list(Class<T> clazz, ICriterion<T> criterion) {
+	public <T extends SbiHibernateModel> List<T> list(Class<T> clazz, Session session) {
+		if (clazz == null) {
+			throw new IllegalArgumentException("Input parameter 'clazz' cannot be null");
+		}
+		return internalList(clazz, null, session);
+	}
+
+	public <T extends SbiHibernateModel> List<T> list(ICriterion<T> criterion, Session session) {
+		if (criterion == null) {
+			throw new IllegalArgumentException("Input parameter 'criteria' cannot be null");
+		}
+		return internalList(null, criterion, session);
+	}
+
+	private <T extends SbiHibernateModel> List<T> internalList(Class<T> clazz, ICriterion<T> criterion) {
 		List<T> ret = null;
 		Session session = null;
 		try {
@@ -464,13 +489,7 @@ public class AbstractHibernateDAO {
 			} catch (Throwable t) {
 				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
 			}
-			Criteria criteria = null;
-			if (criterion == null) {
-				criteria = session.createCriteria(clazz);
-			} else {
-				criteria = criterion.evaluate(session);
-			}
-			ret = criteria.list();
+			ret = internalList(clazz, criterion, session);
 		} catch (Throwable t) {
 			throw new SpagoBIDOAException("An unexpected error occured while fetching objects of type [" + clazz + "] ", t);
 		} finally {
@@ -482,9 +501,20 @@ public class AbstractHibernateDAO {
 		return ret;
 	}
 
+	@SuppressWarnings("unchecked")
+	private <T extends SbiHibernateModel> List<T> internalList(Class<T> clazz, ICriterion<T> criterion, Session session) {
+		Criteria criteria = null;
+		if (criterion == null) {
+			criteria = session.createCriteria(clazz);
+		} else {
+			criteria = criterion.evaluate(session);
+		}
+		return criteria.list();
+	}
+
 	/**
 	 * Executes the passed method inside a single transaction
-	 * 
+	 *
 	 * @param executeOnTransaction
 	 * @return
 	 */
@@ -517,7 +547,7 @@ public class AbstractHibernateDAO {
 
 	/**
 	 * Executes the passed method inside a single transaction
-	 * 
+	 *
 	 * @param executeOnTransaction
 	 * @return
 	 */
