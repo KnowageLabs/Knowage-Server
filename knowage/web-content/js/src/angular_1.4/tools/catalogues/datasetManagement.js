@@ -23,17 +23,18 @@ datasetModule.config(['$mdThemingProvider', function($mdThemingProvider) {
 	$mdThemingProvider.setDefaultTheme('knowage');
 }]);
 
-datasetModule.controller('datasetController', ["$scope","$log", "sbiModule_translate", "sbiModule_restServices", "sbiModule_messaging", datasetFunction]);
+datasetModule.controller('datasetController', ["$scope","$log", "sbiModule_translate", "sbiModule_restServices", "sbiModule_messaging", "$mdDialog", datasetFunction]);
 
-function datasetFunction($scope, $log, sbiModule_translate, sbiModule_restServices, sbiModule_messaging){
+function datasetFunction($scope, $log, sbiModule_translate, sbiModule_restServices, sbiModule_messaging, $mdDialog){
 	
-	$scope.translate = sbiModule_translate;
+	translate = sbiModule_translate;
+	var translate = translate;
 	
 	$scope.dataSetListColumns = [
-	    {"label":$scope.translate.load("sbi.generic.name"),"name":"name"},
-	    {"label":$scope.translate.load("sbi.generic.label"),"name":"label"},
-	    {"label":$scope.translate.load("sbi.generic.type"), "name":"dsTypeCd"},
-	    {"label":$scope.translate.load("sbi.ds.numDocs"), "name":"usedByNDocs"}
+	    {"label":translate.load("sbi.generic.name"),"name":"name"},
+	    {"label":translate.load("sbi.generic.label"),"name":"label"},
+	    {"label":translate.load("sbi.generic.type"), "name":"dsTypeCd"},
+	    {"label":translate.load("sbi.ds.numDocs"), "name":"usedByNDocs"}
     ];
 	
 	$scope.selectedDatasetVersion = null;
@@ -44,100 +45,272 @@ function datasetFunction($scope, $log, sbiModule_translate, sbiModule_restServic
 	 */
 	$scope.loadAllDatasets = function(){
 		sbiModule_restServices.promiseGet("1.0/datasets","")
-		.then(function(response) {
+			.then(function(response) {
 				$scope.datasetsList = response.data.root;
-//				console.log($scope.selectedDataSet);
-//				if ($scope.selectedDataSet!=null) {
-//					
-//				}
-		}, function(response) {
-			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-		});
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+			});
 	}
 	
 	$scope.loadAllDatasets();
 	
 	/**
-	 * Speed-menu option for deleting of a dataset version.
+	 * Speed-menu option configuration for deleting of a dataset.
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
-	$scope.deleteVersion = 
+	$scope.deleteDataset = 
+	[
+	 	{
+	 		label: translate.load("sbi.ds.deletedataset"),
+		 	icon:'fa fa-trash' ,
+		 	backgroundColor:'transparent',
+	   
+		 	action: function(item,event) {
+		 				 		
+		 		var confirm = $mdDialog.confirm()
+	 	          .title(translate.load('sbi.ds.deletedataset'))
+	 	          .targetEvent(event)	 	          
+	 	          .textContent(translate.format(translate.load('sbi.ds.deletedataset.msg'), item.label))
+	 	          .ariaLabel("Delete dataset")
+	 	          .ok(translate.load("sbi.general.yes"))
+	 	          .cancel(translate.load("sbi.general.No"));
+	 			
+	 			$mdDialog
+	 				.show(confirm)
+	 				.then(
+	 						
+	 						function() {
+	 							
+	 							sbiModule_restServices.promiseDelete("1.0/datasets", item.label, "/")
+		 							.then(
+		 									function(response) {
+		 					
+		 						   				sbiModule_messaging.showSuccessMessage(translate.format(translate.load('sbi.ds.deletedataset.success'), item.label));
+		 						   				
+		 						   				// If the dataset that is deleted is selected, deselect it and hence close its details.
+		 						   				if ($scope.selectedDataSet && $scope.selectedDataSet.label == item.label) {
+		 						   					$scope.selectedDataSet = null;			   					
+		 						   				}
+		 						   				
+		 						   				// Find the dataset, that is deleted on the server-side, in the array of all datasets and remove it from the array.
+		 						   				for (var i=0; i<$scope.datasetsList.length; i++) {			   					
+		 						   					if ($scope.datasetsList[i].label == item.label) {
+		 						   						$scope.datasetsList.splice(i,1);
+		 						   					}			   					
+		 						   				}
+		 						
+		 						   			}, 
+		 						   			
+		 						   			function(response) {		 						   			
+		 						   				sbiModule_messaging.showErrorMessage(translate.format(translate.load('sbi.ds.deletedataset.error'), item.label));
+		 						   			}
+		 								);
+	 							
+	 						},
+	 						
+	 						function() {
+	 							
+	 						}
+	 						
+ 						);
+	 			
+		 	} 
+ 		}	 	
+	 ];
+	
+	/**
+	 * Speed-menu option configuration for deleting of a dataset version.
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	$scope.manageVersion = 
 	[ 
-     	{
-	           
-			label: $scope.translate.load("sbi.ds.deleteVersion"),
+	 	// Speed-menu option for deleting a dataset version.
+     	{	           
+			label: translate.load("sbi.ds.deleteVersion"),
 	 		icon:'fa fa-trash' ,
 	 		backgroundColor:'transparent',
 	           
-	 		action: function(item) {
-        	   
-	       		sbiModule_restServices.promiseDelete("1.0/datasets", $scope.selectedDataSet.id+"/version/"+item.versNum,"/")
-	   				.then(
-	   						function(response) {
-   
-				   				sbiModule_messaging.showSuccessMessage("The dataset version number " + item.versNum + " is deleted");
-				   				
-				   				for (var j=0; j<=$scope.datasetsList.length; j++) {
-				   					
-				   					if ($scope.datasetsList[j] && $scope.selectedDataSet && $scope.selectedDataSet.id == $scope.datasetsList[j].id) {
-				
-				   						for (var i=0; i<=$scope.selectedDataSet.dsVersions.length; i++) {
-				   							
-				   							if (item.versNum == $scope.selectedDataSet.dsVersions[i].versNum) {
-				   								$scope.datasetsList[j].dsVersions.splice(i,1);
-				   								$scope.selectedDataSet.dsVersions.splice(i,1);
-				   								$scope.selectedDatasetVersion = null;
-				   								break;
-				   							}
-				   								
-				   						}
-				   						
-				   					}
-				   				}
-   				
-   				
-   
-				   			}, function(response) {
-				   				//sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-				   				sbiModule_messaging.showSuccessMessage("The dataset version number " + item.versNum + " is not deleted");
-				   			}
-		   			);
-	        	   
+	 		action: function(item,event) {
+	 				 			
+	 			var confirm = $mdDialog.confirm()
+	 	          .title(translate.load('sbi.ds.version.delete.title'))
+	 	          .targetEvent(event)	 	          
+	 	          .textContent(translate.format(translate.load('sbi.ds.version.delete.msg'), item.versNum))
+	 	          .ariaLabel("Delete dataset version")
+	 	          .ok(translate.load("sbi.general.yes"))
+	 	          .cancel(translate.load("sbi.general.No"));
+	 			
+	 			$mdDialog
+	 				.show(confirm)
+	 				.then(
+	 						
+	 					function() {
+	 						
+	 						sbiModule_restServices.promiseDelete("1.0/datasets", $scope.selectedDataSet.id+"/version/"+item.versNum,"/")
+		 		   				.then(
+		 		   						function(response) {
+		 		   						
+		 					   				sbiModule_messaging.showSuccessMessage(translate.format(translate.load('sbi.ds.version.delete.success'), item.versNum));
+		 					   				
+		 					   				for (var j=0; j<$scope.datasetsList.length; j++) {
+		 					   					
+		 					   					if ($scope.selectedDataSet.id == $scope.datasetsList[j].id) {
+		 					
+		 					   						for (var i=0; i<$scope.selectedDataSet.dsVersions.length; i++) {
+		 					   							
+		 					   							if (item.versNum == $scope.selectedDataSet.dsVersions[i].versNum) {		 					   								
+		 					   								// Remove the dataset's version from the collection of all datasets (the array in the left angular-table).
+		 					   								$scope.datasetsList[j].dsVersions.splice(i,1);
+		 					   								// Remove the version from the currently selected dataset (the item in the left angular-table).
+		 					   								$scope.selectedDataSet.dsVersions.splice(i,1);//		 					   								
+		 					   								break;
+		 					   								
+		 					   							}
+		 					   								
+		 					   						}
+		 					   						
+		 					   					}
+		 					   				}   				
+		 	   
+		 					   			}, 
+		 					   			
+		 					   			function(response) {		 					   				
+		 					   				sbiModule_messaging.showErrorMessage(translate.format(translate.load('sbi.ds.version.delete.error'), item.versNum));
+		 					   			}
+		 			   			);
+	 						
+	 					},
+	 					
+	 					function() {
+	 					}
+	 				
+	 				);
+	 			
            }
      	
+     	},
+     	
+     	// Speed-menu option for restoring a dataset version.
+     	{
+     		label: translate.load('sbi.ds.restore'),
+     		icon:'fa fa-retweet' ,
+	 		backgroundColor:'transparent',     		
+     		
+     		action: function(item,event) {
+     			
+     			var confirm = $mdDialog.confirm()
+	 	          .title(translate.load('sbi.ds.version.restore.title'))
+	 	          .targetEvent(event)	 	          
+	 	          .textContent(translate.format(translate.load('sbi.ds.version.restore.msg'), item.versNum))
+	 	          .ariaLabel("Restore dataset version")
+	 	          .ok(translate.load("sbi.general.yes"))
+	 	          .cancel(translate.load("sbi.general.No"));
+	 			
+	 			$mdDialog
+	 				.show(confirm)
+	 				.then(	 						
+		 					function() {
+		 						
+		 						sbiModule_restServices.promiseGet("1.0/datasets", $scope.selectedDataSet.id + "/restore", "versionId=" + item.versNum)
+			 		   				.then(
+			 		   						function(response) {
+			 		   						
+			 					   				sbiModule_messaging.showSuccessMessage(translate.format(translate.load('sbi.ds.version.restore.success'), item.versNum));
+			 					   				
+			 					   				for (var i=0; i<$scope.datasetsList.length; i++) {
+			 					   					
+			 					   					if ($scope.selectedDataSet.id == $scope.datasetsList[i].id) {			 					   						
+			 					   						// Remove the dataset's version from the collection of all datasets (the array in the left angular-table).
+	 					   								$scope.datasetsList[i] = response.data[0];
+	 					   								// Remove the version from the currently selected dataset (the item in the left angular-table).
+	 					   								$scope.selectedDataSet = response.data[0];			 					   						
+			 					   					}
+			 					   					
+			 					   				}   				
+			 	   
+			 					   			}, 
+			 					   			
+			 					   			function(response) {
+			 					   				//sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+			 					   				sbiModule_messaging.showErrorMessage(translate.format(translate.load('sbi.ds.version.restore.error'), item.versNum));
+			 					   			}
+			 			   			);
+		 					},
+		 					
+		 					function() {
+		 						
+		 					}		 					
+	 					);
+     			
+     		}
+     	
      	}
-	           
+     	
    ];
 	
 	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	$scope.deleteAllDatasetVersions = function() {
-		
-		sbiModule_restServices.promiseDelete("1.0/datasets", $scope.selectedDataSet.id+"/allversions","/")
-			.then(
-					function(response) {
+				
+		if ($scope.selectedDataSet.dsVersions && Array.isArray($scope.selectedDataSet.dsVersions) && $scope.selectedDataSet.dsVersions.length>0) {
+						
+			var confirm = $mdDialog.confirm()
+	          .title(translate.load('sbi.ds.allversions.delete.title')) 	          
+	          .textContent(translate.load('sbi.ds.allversions.delete.msg'))
+	          .ariaLabel("Delete all dataset versions")
+	          .ok(translate.load("sbi.general.yes"))
+	          .cancel(translate.load("sbi.general.No"));
+			
+			$mdDialog
+				.show(confirm)
+				.then(	 						
+						function() {
+			
+							sbiModule_restServices.promiseDelete("1.0/datasets", $scope.selectedDataSet.id+"/allversions","/")
+								.then(
+										function(response) {
+										
+							   				sbiModule_messaging.showSuccessMessage(translate.load('sbi.ds.allversions.delete.success'));
+							   				
+							   				for (var j=0; j<=$scope.datasetsList.length; j++) {
+							   					
+							   					if ($scope.datasetsList[j] && $scope.selectedDataSet && $scope.selectedDataSet.id == $scope.datasetsList[j].id) {	
+							   						$scope.datasetsList[j].dsVersions.splice(0,$scope.selectedDataSet.dsVersions.length);
+													$scope.selectedDataSet.dsVersions.splice(0,$scope.selectedDataSet.dsVersions.length);	   						
+							   					}
+							   				}	
 					
-		   				sbiModule_messaging.showSuccessMessage("All dataset versions are deleted");
-		   				
-		   				for (var j=0; j<=$scope.datasetsList.length; j++) {
-		   					
-		   					if ($scope.datasetsList[j] && $scope.selectedDataSet && $scope.selectedDataSet.id == $scope.datasetsList[j].id) {	
-		   						$scope.datasetsList[j].dsVersions.splice(0,$scope.selectedDataSet.dsVersions.length);
-								$scope.selectedDataSet.dsVersions.splice(0,$scope.selectedDataSet.dsVersions.length);	   						
-		   					}
-		   				}	
-
-		   			}, 
-		   			
-		   			function(response) {
-		   				//sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-		   				sbiModule_messaging.showSuccessMessage("All dataset versions could not be deleted");
-		   			}
-			);
+							   			}, 
+							   			
+							   			function(response) {							   				
+							   				sbiModule_messaging.showErrorMessage(translate.load('sbi.ds.allversions.delete.error'));
+							   			}
+								);
+						},
+						
+						function() {
+							
+						}
+					);
+			
+		}
+		else {
+			
+			$mdDialog
+				.show(
+						$mdDialog.alert()
+					        .clickOutsideToClose(true)
+					        .title('Dataset has no versions to delete')
+					        .textContent('There are not dataset versions to delete for the selected dataset')
+					        .ariaLabel('Dataset versions do not exist')
+					        .ok('Ok')
+				    );
+			
+		}
 		
 	}
 	
 	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-	$scope.selectDatasetVersion = function(item,index,a) {			
+	$scope.selectDatasetVersion = function(item) {			
 		$scope.selectedDatasetVersion = item;
 	}
 	
@@ -161,7 +334,7 @@ function datasetFunction($scope, $log, sbiModule_translate, sbiModule_restServic
 	 *  scope 																	
 	 */
 	$scope.getDomainTypeScope = function(){	
-		sbiModule_restServices.promiseGet("domains", "listValueDescriptionByType","DOMAIN_TYPE=DS_SCOPE")
+		sbiModule_restServices.promiseGet("domains","listValueDescriptionByType","DOMAIN_TYPE=DS_SCOPE")
 		.then(function(response) {
 			$scope.scopeList = response.data;
 		}, function(response) {
@@ -176,11 +349,11 @@ function datasetFunction($scope, $log, sbiModule_translate, sbiModule_restServic
 	 *  category 																	
 	 */
 	$scope.getDomainTypeCategory = function(){	
-		sbiModule_restServices.promiseGet("domains", "listValueDescriptionByType","DOMAIN_TYPE=CATEGORY_TYPE")
+		sbiModule_restServices.promiseGet("domains","listValueDescriptionByType","DOMAIN_TYPE=CATEGORY_TYPE")
 		.then(function(response) {
 			$scope.categoryList = response.data;
 		}, function(response) {
-			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message,'Error');
 		});
 	}
 	
@@ -244,6 +417,5 @@ function datasetFunction($scope, $log, sbiModule_translate, sbiModule_restServic
 	$scope.previewDataset = function () {
 		console.log("info")
 	}
-	
 	
 };

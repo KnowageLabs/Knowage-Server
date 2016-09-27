@@ -170,6 +170,52 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		return dataset.getLabel();
 	}
 
+	/**
+	 * Acquire required version of the dataset
+	 *
+	 * @param id
+	 *            The ID of the dataset whose version with the versionId ID should be restored.
+	 * @param versionId
+	 *            The ID of the version of the dataset that should be restored and exchanged for the current one (active).
+	 * @return Serialized dataset that is restored as the old version of the dataset.
+	 * @throws JSONException
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	@GET
+	@Path("/{id}/restore")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String restoreCurrentDatasetVersion(@PathParam("id") String datasetId, @QueryParam("versionId") String versionId) throws JSONException {
+
+		logger.debug("IN");
+
+		IDataSetDAO datasetDao = null;
+
+		try {
+			datasetDao = DAOFactory.getDataSetDAO();
+		} catch (EMFUserError e) {
+			logger.error("Internal error", e);
+			throw new SpagoBIRuntimeException("Internal error", e);
+		}
+
+		// Execute restoring of the dataset version (get the required version of the dataset). This will provide changes in the database.
+		datasetDao.restoreOlderDataSetVersion(Integer.parseInt(datasetId), Integer.parseInt(versionId));
+
+		// Load all datasets in order to acquire the actual list of datasets and to return the one that is restored.
+		datasetDao.setUserProfile(getUserProfile());
+		List<IDataSet> dataSets = datasetDao.loadPagedDatasetList(-1, -1);
+
+		IDataSet toBeReturned = null;
+
+		for (IDataSet datasetTemp : dataSets) {
+			if (datasetTemp.getId() == Integer.parseInt(datasetId)) {
+				toBeReturned = datasetTemp;
+			}
+		}
+
+		return serializeDataSet(toBeReturned, null);
+
+	}
+
 	@POST
 	@Path("/{label}/content")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
@@ -225,20 +271,19 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	 */
 	@DELETE
 	@Path("/{id}/version/{versionId}")
-	public Response deleteDatasetVersion(@PathParam("id") String id, @PathParam("versionId") String versionId) {
+	public Response deleteDatasetVersion(@PathParam("id") String datasetId, @PathParam("versionId") String versionId) {
 
 		IDataSetDAO datasetDao = null;
 
 		try {
 			datasetDao = DAOFactory.getDataSetDAO();
+			datasetDao.setUserProfile(getUserProfile());
 		} catch (EMFUserError e) {
 			logger.error("Internal error", e);
 			throw new SpagoBIRuntimeException("Internal error", e);
 		}
 
-		IDataSet dataset = datasetDao.loadDataSetById(Integer.parseInt(id));
-
-		boolean deleted = datasetDao.deleteInactiveDataSetVersion(Integer.parseInt(versionId), dataset.getId());
+		boolean deleted = datasetDao.deleteInactiveDataSetVersion(Integer.parseInt(versionId), Integer.parseInt(datasetId));
 
 		if (deleted) {
 			logger.debug("Dataset Version deleted");
@@ -259,18 +304,19 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	 */
 	@DELETE
 	@Path("/{id}/allversions")
-	public Response deleteDatasetVersion(@PathParam("id") String id) {
+	public Response deleteAllDatasetVersions(@PathParam("id") String datasetId) {
 
 		IDataSetDAO datasetDao = null;
 
 		try {
 			datasetDao = DAOFactory.getDataSetDAO();
+			datasetDao.setUserProfile(getUserProfile());
 		} catch (EMFUserError e) {
 			logger.error("Internal error", e);
 			throw new SpagoBIRuntimeException("Internal error", e);
 		}
 
-		boolean deleted = datasetDao.deleteAllInactiveDataSetVersions(Integer.parseInt(id));
+		boolean deleted = datasetDao.deleteAllInactiveDataSetVersions(Integer.parseInt(datasetId));
 
 		if (deleted) {
 			logger.debug("All versions for the selected dataset are deleted");

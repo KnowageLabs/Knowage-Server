@@ -54,7 +54,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					columns=dataSetListColumns
 					show-search-bar=true highlights-selected-item=true
 					click-function="loadDataSet(item)"
-					selected-item="selectedDataSet" >
+					selected-item="selectedDataSet" 
+					speed-menu-option="deleteDataset" >
 				</angular-table> 
 	        
 	       	</list>
@@ -144,11 +145,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							            </h2>
 							            
 						         		<span flex></span>
-							         							         
-							         	<md-button class="md-icon-button" aria-label="Restore" ng-click="restoreDatasets()" title="{{translate.load('sbi.ds.restore')}}">
-							              <md-icon md-font-icon="fa fa-retweet" class="fa fa-1x"></md-icon>
-							            </md-button>
-							            
+							         											            
 							            <md-button class="md-icon-button" aria-label="Clear all" ng-click="deleteAllDatasetVersions()" title="{{translate.load('sbi.ds.clearOldVersion')}}">
 							              <md-icon md-font-icon="fa fa-eraser" class="fa fa-1x"></md-icon>
 							            </md-button>
@@ -172,7 +169,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										         ]'
 										show-search-bar=false
 										highlights-selected-item=true
-										speed-menu-option="deleteVersion" >
+										speed-menu-option="manageVersion" >
 									</angular-table>
 									
 								</md-card>								
