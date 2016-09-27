@@ -73,6 +73,11 @@
 	height:100%;
 }
 
+/*changed by @aghedin*/
+.top-alignment-auto-height{
+	height:auto;
+}
+
 /*added by @nsimovic*/
 .table-alignment {
      position:absolute;
