@@ -20,11 +20,12 @@
       	
       	<md-card-title>
          	<md-card-title-text>
-	           	<p class=" ellipsis">{{federation.name}}</p>
-	            <md-tooltip md-delay="1500">
+	           	<p class=" ellipsis" ng-if="!showBusinessModels">{{federation.name}}</p>
+	           	<p class=" ellipsis" ng-if="showBusinessModels && federation.description==null">{{federation.name}}</p>
+	            <md-tooltip ng-if="!showBusinessModels" md-delay="1500">
 	             	{{federation.name}}
 	           	</md-tooltip>
-	           	<p class=" ellipsis" style="font-size:12" ng-if="showBusinessModels"><i>{{federation.description}}  &nbsp;</i></p>
+	           	<p class=" ellipsis" ng-if="showBusinessModels"><i>{{federation.description}}</i></p>
        		</md-card-title-text>
        		
    		</md-card-title>
