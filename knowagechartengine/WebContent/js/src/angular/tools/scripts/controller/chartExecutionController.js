@@ -120,6 +120,7 @@ function chartExecutionFunction($scope,$http,chartExecutionWebServiceManagerFact
 //		Sbi.chart.viewer.ChartTemplateContainer.metaData = '<%=metaData%>';
 				
 		parameters = {
+			datasetLabel: datasetLabel,
 			jsonTemplate: jsonTemplate,
 			driverParams: driverParams,
 			jsonData: metaData   // PARAMETRO AGGIUNTIVO -> GESTITO NEL SERVIZIO!
