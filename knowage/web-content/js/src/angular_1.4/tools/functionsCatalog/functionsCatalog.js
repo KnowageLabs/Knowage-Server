@@ -463,7 +463,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		var functionId = $scope.shownFunction.id;
 
 		sbiModule_restServices.get("1.0/functions-catalog",
-				"deleteFunction/" + functionId).success(function(data) {
+				"delete/" + functionId).success(function(data) {
 			$log.info("Catalog Function Deleted!");
 			$log.info("Message returned: ", data);
 			$scope.obtainCatalogFunctionsRESTcall();
