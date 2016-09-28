@@ -22,6 +22,7 @@ import it.eng.knowage.meta.initializer.properties.PhysicalModelPropertiesFromFil
 import it.eng.knowage.meta.model.Model;
 import it.eng.knowage.meta.model.ModelObject;
 import it.eng.knowage.meta.model.ModelProperty;
+import it.eng.knowage.meta.model.business.BusinessIdentifier;
 import it.eng.knowage.meta.model.business.BusinessRelationship;
 import it.eng.knowage.meta.model.physical.PhysicalColumn;
 import it.eng.knowage.meta.model.physical.PhysicalForeignKey;
@@ -183,22 +184,22 @@ public class PhysicalModelInitializer {
 			/*
 			 * model.getPropertyType("connection.name").setDefaultValue(connectionName); logger.debug("PhysicalModel Property: Connection name is [{}]",
 			 * model.getPropertyType("connection.name").getDefaultValue());
-			 *
+			 * 
 			 * model.getPropertyType("connection.driver").setDefaultValue(connectionDriver); logger.debug("PhysicalModel Property: Connection driver is [{}]",
 			 * model.getPropertyType("connection.driver").getDefaultValue());
-			 *
+			 * 
 			 * model.getPropertyType("connection.url").setDefaultValue(connectionUrl); logger.debug("PhysicalModel Property: Connection url is [{}]",
 			 * model.getPropertyType("connection.url").getDefaultValue());
-			 *
+			 * 
 			 * model.getPropertyType("connection.username").setDefaultValue(connectionUsername);
 			 * logger.debug("PhysicalModel Property: Connection username is [{}]", model.getPropertyType("connection.username").getDefaultValue());
-			 *
+			 * 
 			 * model.getPropertyType("connection.password").setDefaultValue(connectionPassword);
 			 * logger.debug("PhysicalModel Property: Connection password is [{}]", model.getPropertyType("connection.password").getDefaultValue());
-			 *
+			 * 
 			 * model.getPropertyType("connection.databasename").setDefaultValue(connectionDatabaseName);
 			 * logger.debug("PhysicalModel Property: Connection databasename is [{}]", model.getPropertyType("connection.databasename").getDefaultValue());
-			 *
+			 * 
 			 * // Quote string identification String quote = dbMeta.getIdentifierQuoteString(); // check if escaping is needed if (quote.equals("\"")) { quote =
 			 * "\\\""; } model.getPropertyType("connection.databasequotestring").setDefaultValue(quote);
 			 * logger.debug("PhysicalModel Property: Connection databasequotestring is [{}]", model.getPropertyType("connection.databasequotestring")
@@ -337,7 +338,7 @@ public class PhysicalModelInitializer {
 			/*
 			 * -------------------------------------------------- resultset's structure -------------------------------------------------- 1. TABLE_CAT String
 			 * => table catalog (may be null) 2. TABLE_SCHEM String => table schema (may be null) 3. TABLE_NAME String => table name
-			 *
+			 * 
 			 * Data Warehouse Management Model 181 4. TABLE_TYPE String => table type. Typical types are �TABLE�, �VIEW�, �SYSTEM TABLE�,�GLOBAL TEMPORARY�,
 			 * �LOCAL TEMPORARY�, �ALIAS�, �SYNONYM�. 5. REMARKS String => explanatory comment on the table 6. TYPE_CAT String => the types catalog (may be
 			 * null) 7. TYPE_SCHEM String => the types schema (may be null) 8. TYPE_NAME String => type name (may be null) 9. SELF_REFERENCING_COL_NAME String
@@ -387,7 +388,7 @@ public class PhysicalModelInitializer {
 			 * at 1) 18. IS_NULLABLE String => �NO� means column definitely does not allow NULL values; �YES� means the column might allow NULL values. An empty
 			 * string means nobody knows. 19. SCOPE_CATLOG String => catalog of table that is the scope of a reference attribute (null if DATA_TYPE isn�t REF)
 			 * 20. SCOPE_SCHEMA String => schema of table that is the scope of a
-			 *
+			 * 
 			 * 182 Chapter 5 reference attribute (null if the DATA_TYPE isn�t REF) 21. SCOPE_TABLE String => table name that is the scope of a reference
 			 * attribute (null if the DATA_TYPE isn�t REF) 22. SOURCE_DATA_TYPE short => source type of a distinct type or user-generated Ref type, SQL type
 			 * from java.sql.Types (null if DATA_TYPE isn�t DISTINCT or user-generated REF)
@@ -732,6 +733,7 @@ public class PhysicalModelInitializer {
 						String columnName = rs.getString("COLUMN_NAME");
 						columnsNamesOnDb.add(columnName);
 					}
+					rs.close();
 					for (PhysicalColumn physicalColumn : physicalColumns) {
 						if (!columnsNamesOnDb.contains(physicalColumn.getName())) {
 							// column not found on database -> removed
@@ -1231,6 +1233,20 @@ public class PhysicalModelInitializer {
 				if (primaryKey.getColumns().isEmpty()) {
 					PhysicalModel physicalModel = originalPhysicalColumn.getTable().getModel();
 					physicalModel.getPrimaryKeys().remove(primaryKey);
+					// remove inverse reference (if any)
+					ModelSingleton modelSingleton = ModelSingleton.getInstance();
+					ECrossReferenceAdapter adapter = modelSingleton.getCrossReferenceAdapter();
+					Collection<Setting> settings = adapter.getInverseReferences(primaryKey, true);
+					for (Setting setting : settings) {
+						EObject eobject = setting.getEObject();
+						if (eobject instanceof BusinessIdentifier) {
+							BusinessIdentifier businessIdentifier = (BusinessIdentifier) eobject;
+							if (businessIdentifier.getPhysicalPrimaryKey().equals(primaryKey)) {
+								// remove reference
+								businessIdentifier.setPhysicalPrimaryKey(null);
+							}
+						}
+					}
 				}
 			}
 		}
@@ -1437,22 +1453,22 @@ public class PhysicalModelInitializer {
 			/*
 			 * model.getPropertyType("connection.name").setDefaultValue(connectionName); logger.debug("PhysicalModel Property: Connection name is [{}]",
 			 * model.getPropertyType("connection.name").getDefaultValue());
-			 *
+			 * 
 			 * model.getPropertyType("connection.driver").setDefaultValue(connectionDriver); logger.debug("PhysicalModel Property: Connection driver is [{}]",
 			 * model.getPropertyType("connection.driver").getDefaultValue());
-			 *
+			 * 
 			 * model.getPropertyType("connection.url").setDefaultValue(connectionUrl); logger.debug("PhysicalModel Property: Connection url is [{}]",
 			 * model.getPropertyType("connection.url").getDefaultValue());
-			 *
+			 * 
 			 * model.getPropertyType("connection.username").setDefaultValue(connectionUsername);
 			 * logger.debug("PhysicalModel Property: Connection username is [{}]", model.getPropertyType("connection.username").getDefaultValue());
-			 *
+			 * 
 			 * model.getPropertyType("connection.password").setDefaultValue(connectionPassword);
 			 * logger.debug("PhysicalModel Property: Connection password is [{}]", model.getPropertyType("connection.password").getDefaultValue());
-			 *
+			 * 
 			 * model.getPropertyType("connection.databasename").setDefaultValue(connectionDatabaseName);
 			 * logger.debug("PhysicalModel Property: Connection databasename is [{}]", model.getPropertyType("connection.databasename").getDefaultValue());
-			 *
+			 * 
 			 * // Quote string identification String quote = dbMeta.getIdentifierQuoteString(); // check if escaping is needed if (quote.equals("\"")) { quote =
 			 * "\\\""; } model.getPropertyType("connection.databasequotestring").setDefaultValue(quote);
 			 * logger.debug("PhysicalModel Property: Connection databasequotestring is [{}]", model.getPropertyType("connection.databasequotestring")
