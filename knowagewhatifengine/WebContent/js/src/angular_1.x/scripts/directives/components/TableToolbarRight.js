@@ -51,7 +51,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	$scope.delimiter = "|";
 	$scope.tableName = "WHATIFOUTPUTTABLE";
 	$scope.outputType = $scope.outputTypes.length > 0 ? $scope.outputTypes[0].value:'';
-	$scope.outputVersion ;
+	$scope.outputVersion= undefined;
 	$scope.saveAsName = "";
 	$scope.saveAsDescription ="";
 	whatifToolbarButtonsVisible=[];
@@ -263,11 +263,9 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 				$scope.clickedButtons.splice(i,1);
 			}
 			$scope.btnFunctions($scope.clickedButtons[i]);
-			
 		}
 		$scope.btnFunctions(temp);
 		$scope.toggleRight();
-		
 	}
 	
 	//Handling clicks on buttons inside filter panel right
@@ -559,6 +557,8 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 					}
 			  },function(response){
 				  sbiModule_messaging.showErrorMessage("An error occured while exporting version", 'Error'); 
+				  $scope.closeDialogToolbarRight();
+				  initDialogs();
 			  });
 		  
 		  

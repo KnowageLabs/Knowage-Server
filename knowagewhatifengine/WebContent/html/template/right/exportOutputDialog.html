@@ -20,7 +20,7 @@
 		
 		<md-button ng-click="exportDialogNext()" 
 				   style="line-height:25px"
-				   ng-disabled="showFile || showTable">
+				   ng-disabled="showFile || showTable || outputVersion == undefined">
 			{{translate.load("sbi.common.next")}}
 		</md-button>
 		<md-button ng-click="exportOutputVersion()" 
