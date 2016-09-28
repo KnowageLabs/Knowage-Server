@@ -162,17 +162,24 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 		$scope.rowsAxisOrdinal = source.rowsAxisOrdinal;
 		$scope.showMdxVar = source.mdxFormatted;
 		$scope.formulasData = source.formulas;
-		$scope.ready = true;
+		$scope.ready = false;
 		
 		$scope.selectedVersion = source.modelConfig.actualVersion;
 		handleSlicers(source.filters);
 		$scope.wiGridNeeded = response.data.modelConfig.whatIfScenario; //arsenije
 		if(firstLoad && $scope.modelConfig != undefined){
-
+			if(mode == 'full'){
+				if($scope.executeClicks()){
+					$scope.ready = true;
+				}
+			}else{
+				$scope.ready = true;
+			}
+			
 			firstLoad = false;
 		}
 		source = null;
-		 $scope.executeClicks();
+		 
 	}
 	
 	handleSlicers = function(filters){
@@ -220,7 +227,6 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 						$scope.ready = true;
 						$scope.isScrolling = false;
 						
-								
 					},
 					function(response) {
 						sbiModule_messaging.showErrorMessage(
@@ -230,7 +236,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 					});
 
 		}
-
+			
 	}
 
 	$scope.startFrom = function(start) {

@@ -256,10 +256,18 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	
 	$scope.executeClicks = function(){
 		$scope.toggleRight();
+		var temp;
 		for(var i=0; i< $scope.clickedButtons.length; i++){
+			if($scope.clickedButtons[i] == 'BUTTON_SORTING'){
+				temp = $scope.clickedButtons[i];
+				$scope.clickedButtons.splice(i,1);
+			}
 			$scope.btnFunctions($scope.clickedButtons[i]);
+			
 		}
+		$scope.btnFunctions(temp);
 		$scope.toggleRight();
+		
 	}
 	
 	//Handling clicks on buttons inside filter panel right
