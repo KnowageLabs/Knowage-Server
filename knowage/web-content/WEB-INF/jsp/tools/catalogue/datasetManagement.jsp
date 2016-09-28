@@ -50,12 +50,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	       
 		       	<angular-table
 			     	flex
-				 	id="datasetList_id" ng-model="datasetsList"
+				 	id="datasetList_id" 
+				 	ng-model="datasetsListTemp"
 					columns=dataSetListColumns
-					show-search-bar=true highlights-selected-item=true
+					show-search-bar=true 
+					highlights-selected-item=true
 					click-function="loadDataSet(item)"
 					selected-item="selectedDataSet" 
-					speed-menu-option="deleteDataset" >
+					speed-menu-option="manageDataset" >
 				</angular-table> 
 	        
 	       	</list>
