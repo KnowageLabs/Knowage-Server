@@ -17,6 +17,25 @@
  */
 package it.eng.spagobi.api.v2;
 
+import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IRoleDAO;
+import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.tools.catalogue.bo.Content;
+import it.eng.spagobi.tools.catalogue.bo.MetaModel;
+import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
+import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
+import it.eng.spagobi.utilities.JSError;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -47,25 +66,6 @@ import org.apache.log4j.Logger;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
-
-import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.bo.Domain;
-import it.eng.spagobi.commons.bo.Role;
-import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IRoleDAO;
-import it.eng.spagobi.commons.utilities.UserUtilities;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.services.rest.annotations.UserConstraint;
-import it.eng.spagobi.tools.catalogue.bo.Content;
-import it.eng.spagobi.tools.catalogue.bo.MetaModel;
-import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
-import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
-import it.eng.spagobi.utilities.JSError;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 @Path("/2.0/businessmodels")
 @ManageAuthorization
@@ -163,23 +163,23 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 		logger.debug("IN");
 
 		List<MetaModel> businessModelList = null;
-		List<MetaModel> businessModelsWithDatamart = new ArrayList<>();
+		List<MetaModel> businessModelsWithDatamart = new ArrayList<MetaModel>();
 		businessModelsDAO.setUserProfile(getUserProfile());
 
 		try {
 			IRoleDAO roleDao = DAOFactory.getRoleDAO();
 			roleDao.setUserProfile(getUserProfile());
 			List<Integer> categories = roleDao.getMetaModelCategoriesForRoles(getUserProfile().getRoles());
-			businessModelList = businessModelsDAO.loadMetaModelByCategories(categories);
-			for (MetaModel bm : businessModelList) {
-				Content content = businessModelsDAO.loadActiveMetaModelContentById(bm.getId());
-				if (content != null) {
-					businessModelsWithDatamart.add(bm);
+			logger.debug("Found the following categories [" + categories + "].");
+			if (categories != null && !categories.isEmpty()) {
+				businessModelList = businessModelsDAO.loadMetaModelByCategories(categories);
+				for (MetaModel bm : businessModelList) {
+					Content content = businessModelsDAO.loadActiveMetaModelContentById(bm.getId());
+					if (content != null) {
+						businessModelsWithDatamart.add(bm);
+					}
 				}
 			}
-
-			return businessModelsWithDatamart;
-
 		} catch (Exception e) {
 			logger.error("An error occurred while getting all business models from databse!", e);
 			throw new SpagoBIRestServiceException("An error occurred while getting all business models from databse!", buildLocaleFromSession(), e);
@@ -188,6 +188,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 			logger.debug("OUT");
 		}
 
+		return businessModelsWithDatamart;
 	}
 
 	/**
@@ -461,8 +462,8 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 			return businessModelsDAO.loadActiveMetaModelContentById(bmId);
 		} catch (Exception e) {
 			logger.error("An error occurred while updating active version of business model with id:" + bmId, e);
-			throw new SpagoBIRestServiceException("An error occurred while updating active version of business model with id:" + bmId, buildLocaleFromSession(),
-					e);
+			throw new SpagoBIRestServiceException("An error occurred while updating active version of business model with id:" + bmId,
+					buildLocaleFromSession(), e);
 
 		} finally {
 			logger.debug("OUT");
