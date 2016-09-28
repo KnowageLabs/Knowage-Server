@@ -413,6 +413,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 			String stringFeed = JsonConverter.objectToJson(selections, Map.class);
 			return stringFeed;
 		} catch (Exception e) {
+			e.printStackTrace();
 			String errorMessage = "An error occurred while getting associative selections";
 			logger.error(errorMessage, e);
 			throw new SpagoBIRestServiceException(errorMessage, buildLocaleFromSession(), e); // FIXME
