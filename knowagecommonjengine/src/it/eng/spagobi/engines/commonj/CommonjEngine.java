@@ -17,50 +17,37 @@
  */
 package it.eng.spagobi.engines.commonj;
 
-
-
-import java.io.File;
-
 import it.eng.spagobi.engines.commonj.runtime.WorksRepository;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 
-public class CommonjEngine  {
-	
-	private static CommonjEngineConfig config;	
-		
-	
+import java.io.File;
+
+public class CommonjEngine {
+
+	private static CommonjEngineConfig config;
+
 	private static WorksRepository worksRepository;
-		
-	
-	static { 
+
+	static {
 		CommonjEngine.config = CommonjEngineConfig.getInstance();
-		
+
 		File rrRootDir = CommonjEngineConfig.getInstance().getWorksRepositoryRootDir();
-		CommonjEngine.setWorksRepository( new WorksRepository(rrRootDir) );		
+		CommonjEngine.setWorksRepository(new WorksRepository(rrRootDir));
 	}
-	
-	
+
 	public static WorksRepository getWorksRepository() throws SpagoBIEngineException {
-		if(worksRepository == null || !worksRepository.getRootDir().exists()) {
-			throw new SpagoBIEngineException("Works-Repository not available",
-					"repository.not.available");
+		if (worksRepository == null || !worksRepository.getRootDir().exists()) {
+			throw new SpagoBIEngineException("Works-Repository not available", "repository.not.available");
 		}
 		return CommonjEngine.worksRepository;
 	}
-
 
 	private static void setWorksRepository(WorksRepository worksRepository) {
 		CommonjEngine.worksRepository = worksRepository;
 	}
 
-
-
 	public static CommonjEngineConfig getConfig() {
 		return CommonjEngine.config;
 	}
 
-	
-	
-	
-	
 }
