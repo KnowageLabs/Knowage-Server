@@ -26,8 +26,8 @@ chartExecutionWebServiceManagerFactory.service
 (
 	'chartExecutionWebServiceManagerFactory', 
 	
-	function($http,sbiModule_messaging,sbiModule_translate,sbiModule_restServices,$filter) {
-		
+	function(sbiModule_messaging,sbiModule_translate,sbiModule_restServices) {
+				
 		var config = {	
 				
 			serviceConfig: {				
@@ -213,6 +213,7 @@ chartExecutionWebServiceManagerFactory.service
 	        			function(response) { 
     	    				console.info("[FAILURE]: The form cannot be submitted because of some failure.");
     	    				sbiModule_messaging.showErrorMessage("Failure!", sbiModule_translate.load('sbi.generic.failure'));
+    	    				failureFunction(response); 
         				}
 		        	);
 	        	

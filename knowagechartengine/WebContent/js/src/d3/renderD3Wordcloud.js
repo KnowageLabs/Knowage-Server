@@ -61,21 +61,18 @@ function renderWordCloud(chartConf,locale){
 	 * 
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
-	if (chartConf.chart.heightDimType == "percentage")
-	{
+
+	if (chartConf.chart.heightDimType == "percentage") {
     	var heightNormalized = chartConf.chart.height ? window.innerHeight*Number(chartConf.chart.height)/100 : window.innerHeight;
 	}
-	else
-	{
+	else {
 		var heightNormalized = chartConf.chart.height ? Number(chartConf.chart.height) : window.innerHeight;
 	}	
 	
-	if (chartConf.chart.widthDimType == "percentage")
-	{
+	if (chartConf.chart.widthDimType == "percentage") {
 		var widthNormalized = chartConf.chart.width ? window.innerWidth*Number(chartConf.chart.width)/100 : window.innerWidth;
 	}
-	else
-	{
+	else {
 		var widthNormalized = chartConf.chart.width ? Number(chartConf.chart.width) : window.innerWidth;
 	}
 	

@@ -104,101 +104,101 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	</head>
 
 	<%-- == BODY ========================================================== --%>
-	<body ng-controller="chartExecutionController" ng-style="'overflow-x: overflowX; overflow-y: overflowY'">
+	<body ng-controller="chartExecutionController" ng-style="bodyStyleConfig">
 	
-	<!-- Show the information in the DIV above the rendered chart that the chart is exporting - downloading. (danristo) -->
-  	<div style="background-color: #a9c3db;">
-	  	<div style="align:center; padding: 5px;" ng-show="showDownloadProgress">		
-			<md-icon class="fa fa-download" style="display: inline;"></md-icon>
-			<span style="color: #3b678c">Downloading... </span>	
+		<!-- Show the information in the DIV above the rendered chart that the chart is exporting - downloading. (danristo) -->
+	  	<div style="background-color: #a9c3db;">
+		  	<div style="align:center; padding: 5px;" ng-show="showDownloadProgress">		
+				<md-icon class="fa fa-download" style="display: inline;"></md-icon>
+				<span style="color: #3b678c">Downloading... </span>	
+		  	</div>
 	  	</div>
-  	</div>
-   	
-   	<!-- Show the circular loading animation after the chart JSON is received and before it is rendered completely. (danristo) -->
-   	<div ng-show="loadingChart">
-		<md-progress-circular md-mode="indeterminate" class="md-accent" style="position:fixed; top:calc(50% - 37.5px); left:calc(50% - 37.5px); z-index:100;"  md-diameter="75">
-		</md-progress-circular>			
-   	</div>
+	   	
+	   	<!-- Show the circular loading animation after the chart JSON is received and before it is rendered completely. (danristo) -->
+	   	<div ng-show="loadingChart">
+			<md-progress-circular md-mode="indeterminate" class="md-accent" style="position:fixed; top:calc(50% - 37.5px); left:calc(50% - 37.5px); z-index:100;"  md-diameter="75">
+			</md-progress-circular>			
+	   	</div>
    		   	
-	<%-- 
-		If the executed document has a template (the chart that is going to be rendered), continue
-		with the chart execution (the chart rendering).
-	--%>
-	<% if (template!=null && !template.equals("") && !template.matches("^\\{\\s*\\}$")) { %>
+		<%-- 
+			If the executed document has a template (the chart that is going to be rendered), continue
+			with the chart execution (the chart rendering).
+		--%>
+		<% if (template!=null && !template.equals("") && !template.matches("^\\{\\s*\\}$")) { %>
+			
+			<%-- == JAVASCRIPT  ===================================================== --%>
+			<script language="javascript" type="text/javascript">		
+				
+				// Initialization of variable that are going to be used by the controller.
+				var thisContextName, locale, driverParams, jsonTemplate, datasetLabel, isCockpit = null,
+				aggregations, selections, associations, widgetId, metaData;
+				
+				/*
+					The locale (language) is used when rendering D3 charts, for formatting localization of the series values
+					that are displayed on charts in various ways (values in tables, values in tooltip etc.).
+					@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				*/
+				locale = '<%=locale%>';	
+				thisContextName = '${pageContext.request.contextPath}';  //'knowagechartengine'
+		 		driverParams = '<%=driverParams%>';
+	 			jsonTemplate = '<%=template%>';
+	 			datasetLabel = '<%=datasetLabel%>';
+	 			isCockpit = <%=isCockpit%>;
+	 			
+				aggregations = '<%=aggregations%>';
+	 			selections = '<%=selections%>';
+	 			associations = '<%=associations%>';
+	 			widgetId = '<%=widgetId%>';
+	 			metaData = '<%=metaData%>';
+	 			 			
+	 			/* 
+	 				Set the exportChart variable to NULL. This variable will be predefined into a function that will serve
+	 				for exporting of a chart to the JPG or PDF format file. This way, by declaring it in the JSP, the web
+	 				page's (window's) iframe with the ID of "documentFrame" will see it (that finction) when attempting to
+	 				export the chart.
+	 			*/
+	 			var exportChart = null;
+	 			
+	 			/*
+	 				The Settings.js structure that will be assigned to this global variable and used whenever the customization
+	 				from this file is needed in the JS code.
+	 				@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 			*/
+	 			var chartEngineSharedSettings = null;
+	 			
+	 			var chartExecutionWebServiceManager = null;
 		
-		<%-- == JAVASCRIPT  ===================================================== --%>
-		<script language="javascript" type="text/javascript">		
+			</script>
 			
-			// Initialization of variable that are going to be used by the controller.
-			var thisContextName, locale, driverParams, jsonTemplate, datasetLabel, isCockpit = null,
-			aggregations, selections, associations, widgetId, metaData;
+			<!-- 
+				The panel inside which the chart will render. Height and width of 100% provide full-size chart stretching. 
+				The ID of the rendering DIV is serving as a target DOM element that the Highcharts charts are going to use
+				for rendering its charts.
+			-->
+			<div id="mainPanel" style="height:100%; width:100%; margin:auto;"></div>		
 			
-			/*
-				The locale (language) is used when rendering D3 charts, for formatting localization of the series values
-				that are displayed on charts in various ways (values in tables, values in tooltip etc.).
-				@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-			*/
-			locale = '<%=locale%>';	
-			thisContextName = '${pageContext.request.contextPath}';  //'knowagechartengine'
-	 		driverParams = '<%=driverParams%>';
- 			jsonTemplate = '<%=template%>';
- 			datasetLabel = '<%=datasetLabel%>';
- 			isCockpit = <%=isCockpit%>;
- 			
-			aggregations = '<%=aggregations%>';
- 			selections = '<%=selections%>';
- 			associations = '<%=associations%>';
- 			widgetId = '<%=widgetId%>';
- 			metaData = '<%=metaData%>';
- 			 			
- 			/* 
- 				Set the exportChart variable to NULL. This variable will be predefined into a function that will serve
- 				for exporting of a chart to the JPG or PDF format file. This way, by declaring it in the JSP, the web
- 				page's (window's) iframe with the ID of "documentFrame" will see it (that finction) when attempting to
- 				export the chart.
- 			*/
- 			var exportChart = null;
- 			
- 			/*
- 				The Settings.js structure that will be assigned to this global variable and used whenever the customization
- 				from this file is needed in the JS code.
- 				@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
- 			*/
- 			var chartEngineSharedSettings = null;
- 			
- 			var chartExecutionWebServiceManager = null;
+			<form id="export-chart-form" class="export-form">
+				<input type="hidden" name="options"/>
+				<input type="hidden" name="content"/>
+				<input type="hidden" name="type"/>
+				<input type="hidden" name="width"/>
+				<input type="hidden" name="constr"/>
+				<input type="hidden" name="async"/>
+				<input type="hidden" name="chartHeight"/>
+				<input type="hidden" name="chartWidth"/>
+			</form>		
 	
-		</script>
-		
-		<!-- 
-			The panel inside which the chart will render. Height and width of 100% provide full-size chart stretching. 
-			The ID of the rendering DIV is serving as a target DOM element that the Highcharts charts are going to use
-			for rendering its charts.
-		-->
-		<div id="mainPanel" style="height:100%; width:100%; margin: auto;"></div>		
-		
-		<form id="export-chart-form" class="export-form">
-			<input type="hidden" name="options"/>
-			<input type="hidden" name="content"/>
-			<input type="hidden" name="type"/>
-			<input type="hidden" name="width"/>
-			<input type="hidden" name="constr"/>
-			<input type="hidden" name="async"/>
-			<input type="hidden" name="chartHeight"/>
-			<input type="hidden" name="chartWidth"/>
-		</form>		
-
-	<%-- 
-		If the executed document does not have a template (the chart that is going to be rendered), display a 
-		proper message. 
-	--%>	
-	<% } else {%>		
-		
-		<div>
-			<p style="padding: 10px 0px 0px 10px;">{{translate.load("sbi.generic.error.notemplate")}}</p>
-		</div>
-		
-	<% }%>
+		<%-- 
+			If the executed document does not have a template (the chart that is going to be rendered), display a 
+			proper message. 
+		--%>	
+		<% } else {%>		
+			
+			<div>
+				<p style="padding: 10px 0px 0px 10px;">{{translate.load("sbi.generic.error.notemplate")}}</p>
+			</div>
+			
+		<% }%>
 	
 	</body>
 	

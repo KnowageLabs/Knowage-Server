@@ -39,7 +39,7 @@ angular
  * @param sbiModule_messaging
  */
 function chartExecutionFunction($scope,$http,chartExecutionWebServiceManagerFactory,sbiModule_translate,sbiModule_messaging,chartEngineSettings) {
-	
+		
 	var chartConfiguration, isChartHeightEmpty, isChartWidthEmpty, localeFormatted = null, wsPrefixPropText = "wsPrefix";
 		
 	// Put the module for message translation on the scope, so it can be accessed from the JSP as well.
@@ -204,156 +204,162 @@ function chartExecutionFunction($scope,$http,chartExecutionWebServiceManagerFact
 	$scope.loadingChart = true;
 	
 	// RENDERING THE CHART (START)	
-	chartExecutionWebServiceManagerFactory.run('jsonChartTemplate', parameters, [], function (response) {
-		
-		// Reset (to FALSE) indicator for loading the chart immediately after the load ends (on successful receive of the chart JSON).
-		$scope.loadingChart = false;
-		
-		var chartConf = response.data;
+	chartExecutionWebServiceManagerFactory.run('jsonChartTemplate', parameters, [], 
 			
-		var typeChart = chartConf.chart.type.toUpperCase();
-		var isD3Chart = (typeChart == "SUNBURST" || typeChart == "WORDCLOUD" || typeChart == "PARALLEL" || typeChart == "CHORD");
+		// SUCCESS RESPONSE
+		function (response) {
 		
-		/* 
-			Set the initial size of the chart if the height and width are not 
-			defined by the user (through the Designer). This is mandatory for
-			rendering the chart. If not specified at all - error will appear.
+			// Reset (to FALSE) indicator for loading the chart immediately after the load ends (on successful receive of the chart JSON).
+			$scope.loadingChart = false;
 			
-			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-		*/
-		var heightChart = chartConf.chart.height;
-		heightDimType = chartConf.chart.heightDimType;
-		
-		var widthChart = chartConf.chart.width;
-		widthDimType = chartConf.chart.widthDimType;				
-		
-		$scope.heightType = heightDimType;
-		$scope.widthType = widthDimType;
-		
-		$scope.overflowX = heightDimType=='percentage' ? 'hidden' : 'auto';
-		$scope.overflowY = widthDimType=='percentage' ? 'hidden' : 'auto';
-		
-		var mainPanelTemp = document.getElementById("mainPanel");
-		
-		mainPanelTemp.style.overflow = "auto";	
-		
-		if (!heightChart) {
-			mainPanelTemp.style.overflowY = "hidden";
-		}
-		else if (heightDimType == "percentage") {
+			var chartConf = response.data;
+				
+			var typeChart = chartConf.chart.type.toUpperCase();
+			var isD3Chart = (typeChart == "SUNBURST" || typeChart == "WORDCLOUD" || typeChart == "PARALLEL" || typeChart == "CHORD");
 			
-			mainPanelTemp.style.height = heightChart+"%";					
-			mainPanelTemp.style.overflowY= "hidden";
+			/* 
+				Set the initial size of the chart if the height and width are not 
+				defined by the user (through the Designer). This is mandatory for
+				rendering the chart. If not specified at all - error will appear.
+				
+				@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			*/
+			var heightChart = chartConf.chart.height;
+			heightDimType = chartConf.chart.heightDimType;
 			
-			if (!isD3Chart) {
-				chartConf.chart.height = undefined;
+			var widthChart = chartConf.chart.width;
+			widthDimType = chartConf.chart.widthDimType;				
+			
+			$scope.heightType = heightDimType;
+			$scope.widthType = widthDimType;
+			
+			$scope.overflowX = heightDimType=='percentage' ? 'hidden' : 'auto';
+			$scope.overflowY = widthDimType=='percentage' ? 'hidden' : 'auto';
+			
+			var mainPanelTemp = document.getElementById("mainPanel");
+			
+			mainPanelTemp.style.overflow = "auto";	
+			
+			if (!heightChart) {
+				mainPanelTemp.style.overflowY = "hidden";
 			}
-			
-		}		
-		
-		if (!widthChart) {
-			mainPanelTemp.style.overflowX = "hidden";
-		}
-		else if (widthDimType == "percentage") {
-			
-			mainPanelTemp.style.width = widthChart+"%";					
-			mainPanelTemp.style.overflowX = "hidden";
-			
-			if (!isD3Chart) {
-				chartConf.chart.width = undefined;
-			}
-			
-		} 										
-		
-		/*
-			If type of the chart is one of those that rely on the D3 library
-			and dimensions of the chart that we are going to render for the
-			first time are not specified (empty), adapt size of the chart to
-			the size of the window (panel) in which it will be rendered. The
-			indicator for empty dimensions for the previous code (on.resize)
-			will be chartConfiguration=null, since we will not enter this 
-			if-statement.
-			
-			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-		*/
-		if (isD3Chart) {	
-			
-			isChartHeightEmpty = false;
-			isChartWidthEmpty = false;
-			
-			if ((heightDimType=="pixels" && (heightChart==undefined || heightChart=="")) ||
-					(widthDimType=="pixels" && (widthChart==undefined || widthChart == ""))) {
+			else if (heightDimType == "percentage") {
 				
-				if (chartConf.chart.height < window.innerHeight)
+				mainPanelTemp.style.height = heightChart+"%";					
+				mainPanelTemp.style.overflowY= "hidden";
 				
-				if (heightDimType=="pixels" && (heightChart==undefined || heightChart=="")) {
-					chartConf.chart.height = window.innerHeight-2;		 							
-					isChartHeightEmpty = true;		 							
-				} 
-				
-				if (widthDimType=="pixels" && (widthChart==undefined || widthChart == "")) {
-					chartConf.chart.width = window.innerWidth;		 							
-					isChartWidthEmpty = true;
+				if (!isD3Chart) {
+					chartConf.chart.height = undefined;
 				}
 				
+			}		
+			
+			if (!widthChart) {
+				mainPanelTemp.style.overflowX = "hidden";
 			}
+			else if (widthDimType == "percentage") {
+				
+				mainPanelTemp.style.width = widthChart+"%";					
+				mainPanelTemp.style.overflowX = "hidden";
+				
+				if (!isD3Chart) {
+					chartConf.chart.width = undefined;
+				}
+				
+			} 										
 			
-//			var scrollbarWidth = null;
-////			console.log(isChartWidthEmpty);
-////			console.log(chartConf.chart.height);
-////			console.log(window.innerHeight);
-////			console.log(widthDimType=="pixels" && chartConf.chart.width >= window.innerWidth ||
-////					widthDimType=="percentage" && chartConf.chart.width*window.innerWidth/100 >= window.innerWidth);
-////
-////			console.log(chartConf.chart.width);
-////			console.log(widthDimType=="percentage" && chartConf.chart.width*window.innerWidth/100 >= window.innerWidth);
-//			
-////			widthDimType=="percentage" ? chartConf.chart.width = 
-////				window.innerWidth*chartConf.chart.width/100 - scrollbarWidth : chartConf.chart.width = window.innerWidth - scrollbarWidth ;
-//			
-//			if ((isChartWidthEmpty==true && 
-//					(heightDimType=="pixels" && chartConf.chart.height > window.innerHeight ||
-//							heightDimType=="percentage" && chartConf.chart.height*window.innerHeight/100 > window.innerHeight)) || 
-//							(chartConf.chart.width >= window.innerWidth)) {
-//				
-////				console.log(document.body);
-////				console.log(document.body.style);
-////				document.body.style = "overflow-x: hidden"
-////					console.log(document.body.style);
-//				
-//				
-//				var scrollDiv = document.createElement("div");
-////				scrollDiv.className = "scrollbar-measure";
-//			scrollDiv.style = "width: 100px; height: 100px;	overflow: scroll; position: absolute; top: -9999px;";
-//			document.body.appendChild(scrollDiv);
-//
-//			// Get the scrollbar width
-//			scrollbarWidth = scrollDiv.offsetWidth - scrollDiv.clientWidth;
-//			console.warn(scrollbarWidth); // Mac:  15
-//
-//			// Delete the DIV 
-//			document.body.removeChild(scrollDiv);
-////				chartConfiguration.chart.width = window.innerWidth - scrollbarWidth;
-//			
-//			console.log(chartConf.chart.width);
-//			}			
-//			
-//			console.log(chartConf);
-			
-			chartConfiguration = chartConf;				
-			renderChart(chartConf,localeFormatted);
-//			sbiModule_messaging.showSuccessMessage("D3 chart is rendered","Success");
-
-		} 
-		else {
-			
-			chartConfiguration = chartConf;	
-			renderChart(chartConf);
-//			sbiModule_messaging.showSuccessMessage("Highcharts chart is rendered","Success");
-			
-		}			
+			/*
+				If type of the chart is one of those that rely on the D3 library
+				and dimensions of the chart that we are going to render for the
+				first time are not specified (empty), adapt size of the chart to
+				the size of the window (panel) in which it will be rendered. The
+				indicator for empty dimensions for the previous code (on.resize)
+				will be chartConfiguration=null, since we will not enter this 
+				if-statement.
+				
+				@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			*/
+			if (isD3Chart) {	
+				
+				isChartHeightEmpty = false;
+				isChartWidthEmpty = false;
+				
+				if ((heightDimType=="pixels" && (heightChart==undefined || heightChart=="")) ||
+						(widthDimType=="pixels" && (widthChart==undefined || widthChart == ""))) {
+					
+					if (chartConf.chart.height < window.innerHeight)
+					
+					if (heightDimType=="pixels" && (heightChart==undefined || heightChart=="")) {
+						chartConf.chart.height = window.innerHeight-2;		 							
+						isChartHeightEmpty = true;		 							
+					} 
+					
+					if (widthDimType=="pixels" && (widthChart==undefined || widthChart == "")) {
+						chartConf.chart.width = window.innerWidth;		 							
+						isChartWidthEmpty = true;
+					}
+					
+				}
+				
+	//			var scrollbarWidth = null;
+	////			console.log(isChartWidthEmpty);
+	////			console.log(chartConf.chart.height);
+	////			console.log(window.innerHeight);
+	////			console.log(widthDimType=="pixels" && chartConf.chart.width >= window.innerWidth ||
+	////					widthDimType=="percentage" && chartConf.chart.width*window.innerWidth/100 >= window.innerWidth);
+	////
+	////			console.log(chartConf.chart.width);
+	////			console.log(widthDimType=="percentage" && chartConf.chart.width*window.innerWidth/100 >= window.innerWidth);
+	//			
+	////			widthDimType=="percentage" ? chartConf.chart.width = 
+	////				window.innerWidth*chartConf.chart.width/100 - scrollbarWidth : chartConf.chart.width = window.innerWidth - scrollbarWidth ;
+	//			
+	//			if ((isChartWidthEmpty==true && 
+	//					(heightDimType=="pixels" && chartConf.chart.height > window.innerHeight ||
+	//							heightDimType=="percentage" && chartConf.chart.height*window.innerHeight/100 > window.innerHeight)) || 
+	//							(chartConf.chart.width >= window.innerWidth)) {
+	//				
+	////				console.log(document.body);
+	////				console.log(document.body.style);
+	////				document.body.style = "overflow-x: hidden"
+	////					console.log(document.body.style);
+	//				
+	//				
+	//				var scrollDiv = document.createElement("div");
+	////				scrollDiv.className = "scrollbar-measure";
+	//			scrollDiv.style = "width: 100px; height: 100px;	overflow: scroll; position: absolute; top: -9999px;";
+	//			document.body.appendChild(scrollDiv);
+	//
+	//			// Get the scrollbar width
+	//			scrollbarWidth = scrollDiv.offsetWidth - scrollDiv.clientWidth;
+	//			console.warn(scrollbarWidth); // Mac:  15
+	//
+	//			// Delete the DIV 
+	//			document.body.removeChild(scrollDiv);
+	////				chartConfiguration.chart.width = window.innerWidth - scrollbarWidth;
+	//			
+	//			console.log(chartConf.chart.width);
+	//			}			
+	//			
+	//			console.log(chartConf);
+				
+				chartConfiguration = chartConf;				
+				renderChart(chartConf,localeFormatted);
+				
+			} 
+			else {				
+				chartConfiguration = chartConf;	
+				renderChart(chartConf);				
+			}			
 		
-	});
+		},
+		
+		// FAILURE RESPONSE
+		function(response) {			
+			// Reset (to FALSE) indicator for loading the chart immediately after the load ends (even on failure response).
+			$scope.loadingChart = false;			
+		}
+	);
 	// RENDERING THE CHART (END)	
 	
 	// RESIZE HANDLER (START)
@@ -628,8 +634,6 @@ function chartExecutionFunction($scope,$http,chartExecutionWebServiceManagerFact
 			         	form.elements[3].value = '600';
 			         	form.elements[4].value = 'Chart';
 			         	form.elements[5].value = 'false';
-			         	form.elements[6].value = jsonObjHeight;
-			         	form.elements[7].value = jsonObjWidth;
 			         	
 			         	// The URL that we are going to hit with the chart data in the JSON form.
 						form.action = protocol + '//'+ hostName + ':' + serverPort + '/' + exporterContextName + '/';

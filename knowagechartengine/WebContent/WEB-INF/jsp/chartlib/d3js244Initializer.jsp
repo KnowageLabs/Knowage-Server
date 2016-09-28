@@ -51,12 +51,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			
 		var chartType = chartConf.chart.type.toLowerCase();
 		
-		if(chartType == "wordcloud" || chartType == "sunburst" || chartType== "parallel" || chartType == "chord")
-		{			
+		if(chartType == "wordcloud" || chartType == "sunburst" || chartType== "parallel" || chartType == "chord") {			
 			return true;			
 		}
-		else
-		{
+		else {
 			return false;
 		}
 		
