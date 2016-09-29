@@ -269,7 +269,7 @@ public abstract class ConfigurableDataSet extends AbstractDataSet {
 		StringBuilder sb = new StringBuilder();
 		sb.append(getConfiguration());
 		sb.append("_");
-		sb.append(getParameters());
+		sb.append(getParamsMap());
 		sb.append("_");
 		sb.append(getUserParametersAsString());
 		sb.append("_");
