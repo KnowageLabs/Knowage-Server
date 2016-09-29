@@ -49,6 +49,7 @@ import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceParameterException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 import it.eng.spagobi.utilities.sql.SqlUtils;
 
 import java.net.URI;
@@ -505,6 +506,27 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		logger.debug("IN");
 		try {
 			return getDataStore(label, parameters, selections, aggregations, summaryRow, offset, fetchSize, isRealtime);
+		} catch (Exception e) {
+			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
+	@POST
+	@Path("/addDatasetInCache")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response addDatasetInCache(@Context HttpServletRequest req) {
+		logger.debug("IN");
+		try {
+			JSONArray requestBodyJSONArray = RestUtilities.readBodyAsJSONArray(req);
+			for (int i = 0; i < requestBodyJSONArray.length(); i++) {
+				JSONObject info = requestBodyJSONArray.getJSONObject(i);
+				getDataStore(info.getString("datasetLabel"), info.getString("parameters"), null, info.getString("aggregation"), null, null, null,
+						info.optBoolean("realtime"));
+
+			}
+			return Response.ok().build();
 		} catch (Exception e) {
 			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
 		} finally {
