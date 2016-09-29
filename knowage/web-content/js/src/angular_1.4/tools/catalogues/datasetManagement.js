@@ -47,10 +47,10 @@ function datasetFunction($scope, $log, sbiModule_config, sbiModule_translate, sb
 	$scope.isSomething = false;
 	
 	$scope.dataSetListColumns = [
-    {"label":$scope.translate.load("sbi.generic.name"),"name":"name"},
-    {"label":$scope.translate.load("sbi.generic.label"),"name":"label"},
-    {"label":$scope.translate.load("sbi.generic.type"), "name":"dsTypeCd"},
-    {"label":$scope.translate.load("sbi.ds.numDocs"), "name":"usedByNDocs"}
+	    {"label":$scope.translate.load("sbi.generic.name"),"name":"name"},
+	    {"label":$scope.translate.load("sbi.generic.label"),"name":"label"},
+	    {"label":$scope.translate.load("sbi.generic.type"), "name":"dsTypeCd"},
+	    {"label":$scope.translate.load("sbi.ds.numDocs"), "name":"usedByNDocs"}
     ];
 	
 	$scope.selectedDatasetVersion = null;
@@ -112,21 +112,75 @@ function datasetFunction($scope, $log, sbiModule_config, sbiModule_translate, sb
 		$scope.dataset.csvEncoding = encodingObj;
 	}
 	
+	/**
+	 * Scope variables (properties) for the REST dataset.
+	 * (danristo)
+	 */
+	
+	/**
+	 * HTTP methods collection needed for the REST dataset Type tab
+	 * (danristo)
+	 */
+	$scope.httpMethods = [ 
+	 	{value:"Get",name:"Get"},
+	 	{value:"Post",name:"Post"},
+	 	{value:"Put",name:"Put"},
+	 	{value:"Delete",name:"Delete"}
+ 	];
+	
+	$scope.requestHeadersTableColumns = [
+	     {
+	    	 name:"name", 
+	    	 label:"Name",
+	    	 hideTooltip:true
+	     },
+	     
+	     {
+	         name:"value",
+	         label:"Value",
+	         hideTooltip:true
+	     }
+     ];
+	
+	$scope.requestHeaderNameValues = [
+		{value:"Accept",name:"Accept"},
+		{value:"Content-Type",name:"Content-Type"}
+	 ];
+	
+	$scope.requestHeaderValueValues =  [
+		{value:"application/json",name:"application/json"},
+		{value:"text/plain",name:"text/plain"}
+	 ];
+	
+	$scope.requestHeaderNameItem = '<md-select ng-model=row.name class="noMargin"><md-option ng-repeat="col in scopeFunctions.requestHeaderNameValues" value="{{col.name}}">{{col.name}}</md-option></md-select>';
+	$scope.requestHeaderValueItem = '<md-select ng-model=row.pname class="noMargin"><md-option ng-repeat="col in scopeFunctions.requestHeaderValueValues" value="{{col.value}}">{{col.value}}</md-option></md-select>',
+	
+	$scope.metaScopeFunctions = {
+		requestHeaderValueValues: $scope.requestHeaderValueValues,
+		requestHeaderNameValues: $scope.requestHeaderNameValues
+	};
+	
+	$scope.restRequestHeaders = [{"name":$scope.requestHeaderNameItem,"value":$scope.requestHeaderValueItem}];
+	
+	$scope.requestHeaderAddItem = function() {
+		$scope.restRequestHeaders.push({"name":$scope.requestHeaderNameItem,"value":$scope.requestHeaderValueItem});
+	}	
+	
 	/*
 	 * 	service that loads all datasets
 	 *   																	
 	 */
 	$scope.loadAllDatasets = function(){
 		sbiModule_restServices.promiseGet("1.0/datasets","")
-		.then(function(response) {
+			.then(function(response) {
 				$scope.datasetsListTemp = response.data.root;
 				$scope.datasetsListPersisted = angular.copy($scope.datasetsListTemp);
-		}, function(response) {
-			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-		});
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+			});
 	}
 	
-	$scope.loadAllDatasets();
+	$scope.loadAllDatasets();	
 	
 	/**
 	 * Speed-menu option configuration for deleting of a dataset.
@@ -213,8 +267,9 @@ function datasetFunction($scope, $log, sbiModule_config, sbiModule_translate, sb
 			 			$mdDialog
 			 				.show(confirm)
 			 				.then(		 						
-			 						function() { 			 							
-			 							$scope.datasetsListTemp.splice($scope.datasetsListTemp.length-1,1);			 					 		
+			 						function() { 	
+			 							
+			 							$scope.datasetsListTemp.splice($scope.datasetsListTemp.length-1,1);		
 			 							
 			 							// If the newly added dataset is selected when deleting it.
 			 							if ($scope.selectedDataSet.label=="..." || $scope.selectedDataSet.label=="") {			 								
@@ -242,20 +297,20 @@ function datasetFunction($scope, $log, sbiModule_config, sbiModule_translate, sb
 			 		
 			 		if ($scope.datasetsListTemp.length < $scope.datasetsListPersisted.length + 1) {
 				 		
-			 		var datasetClone = angular.copy(item);	
-			 		
-			 		datasetClone.label = "...";
-			 		datasetClone.dsVersions = [];
-			 		datasetClone.usedByNDocs = 0;
-			 		$scope.datasetsListTemp.push(datasetClone);
-			 		$scope.selectedDataSet = $scope.datasetsListTemp[$scope.datasetsListTemp.length-1];
+			 			var datasetClone = angular.copy(item);	
+				 		
+				 		datasetClone.label = "...";
+				 		datasetClone.dsVersions = [];
+				 		datasetClone.usedByNDocs = 0;
+				 		$scope.datasetsListTemp.push(datasetClone);
+				 		$scope.selectedDataSet = $scope.datasetsListTemp[$scope.datasetsListTemp.length-1];
 				 		$scope.selectedDataSetInit = $scope.datasetsListTemp[$scope.datasetsListTemp.length-1];
-		 			
-			 	} 
+				 		
+			 		}
 			 		else {
 			 			sbiModule_messaging.showErrorMessage($scope.translate.load('sbi.ds.clone.warning.onlyonenewdataset.msg'));
-		 	}
- 		 	
+			 		}
+		 			
 			 	} 
 		 	}
  		 	
@@ -305,7 +360,7 @@ function datasetFunction($scope, $log, sbiModule_config, sbiModule_translate, sb
 		 					   								// Remove the dataset's version from the collection of all datasets (the array in the left angular-table).
 		 					   								$scope.datasetsListTemp[j].dsVersions.splice(i,1);
 		 					   								// Remove the version from the currently selected dataset (the item in the left angular-table).
-		 					   								$scope.selectedDataSet.dsVersions.splice(i,1);//		 					   								
+		 					   								$scope.selectedDataSet.dsVersions.splice(i,1);//			 					   								
 		 					   								break;
 		 					   								
 		 					   							}
@@ -362,11 +417,12 @@ function datasetFunction($scope, $log, sbiModule_config, sbiModule_translate, sb
 			 					   				
 			 					   				for (var i=0; i<$scope.datasetsListTemp.length; i++) {
 			 					   					
-			 					   					if ($scope.selectedDataSet.id == $scope.datasetsListTemp[i].id) {			 					   						
+			 					   					if ($scope.selectedDataSet.id == $scope.datasetsListTemp[i].id) {			 			
+			 					   						
 			 					   						// Remove the dataset's version from the collection of all datasets (the array in the left angular-table).
 	 					   								$scope.datasetsListTemp[i] = response.data[0];
 	 					   								// Remove the version from the currently selected dataset (the item in the left angular-table).
-	 					   								$scope.selectedDataSet = response.data[0];			 					   						
+	 					   								$scope.selectedDataSet = response.data[0];	
 	 					   								// Needed in order to have a copy of the selected dataset that will not influence the selected dataset in the AT while performing changes on it
 	 					   								$scope.selectedDataSetInit = response.data[0];	
 	 					   								// Call the scope function that is responsible for transformation of configuration data of the File dataset.
@@ -476,12 +532,12 @@ function datasetFunction($scope, $log, sbiModule_config, sbiModule_translate, sb
 		sbiModule_restServices.promiseGet("2.0","datasources")
 			.then(
 					function(response) {
-			$scope.dataSourceList = response.data;
+						$scope.dataSourceList = response.data;
 					}, 
 					
 					function(response) {
-			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-	}
+						sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+					}
 				);
 		
 	}
@@ -493,7 +549,7 @@ function datasetFunction($scope, $log, sbiModule_config, sbiModule_translate, sb
 		sbiModule_restServices.promiseGet("2.0","businessmodels")
 			.then(
 					function(response) {
-						$scope.datamartList = angular.copy(response.data);console.log($scope.datamartList);
+						$scope.datamartList = angular.copy(response.data);
 					}, 
 					
 					function(response) {
@@ -510,7 +566,7 @@ function datasetFunction($scope, $log, sbiModule_config, sbiModule_translate, sb
 	 *  scope 																	
 	 */
 	$scope.getDomainTypeScope = function(){	
-		sbiModule_restServices.promiseGet("domains", "listValueDescriptionByType","DOMAIN_TYPE=DS_SCOPE")
+		sbiModule_restServices.promiseGet("domains","listValueDescriptionByType","DOMAIN_TYPE=DS_SCOPE")
 		.then(function(response) {
 			$scope.scopeList = response.data;
 		}, function(response) {
@@ -525,11 +581,11 @@ function datasetFunction($scope, $log, sbiModule_config, sbiModule_translate, sb
 	 *  category 																	
 	 */
 	$scope.getDomainTypeCategory = function(){	
-		sbiModule_restServices.promiseGet("domains", "listValueDescriptionByType","DOMAIN_TYPE=CATEGORY_TYPE")
+		sbiModule_restServices.promiseGet("domains","listValueDescriptionByType","DOMAIN_TYPE=CATEGORY_TYPE")
 		.then(function(response) {
 			$scope.categoryList = response.data;
 		}, function(response) {
-			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message,'Error');
 		});
 	}
 	
@@ -634,39 +690,39 @@ function datasetFunction($scope, $log, sbiModule_config, sbiModule_translate, sb
 		
 		if ($scope.datasetsListTemp.length < $scope.datasetsListPersisted.length + 1) {
 			
-		var object = {
-				actions: "",
-				catTypeId:"",
-				catTypeVn:"",
-				dataSource:"",
-				dateIn:"",
-				description:"",
-				dsTypeCd:"",
-				dsVersions:"",
-				id:"",
-				isPersisted:"",
-				isPersistedHDFS:"",
-				label:"",
-				meta:"",
-				name:"",
-				owner:"",
-				pars:"",
-				persistTableName:"",
-				pivotIsNumRows:"",
-				query:"",
-				queryScript:"",
-				queryScriptLanguage:"",
-				scopeCd:"",
-				scopeId:"",
-				usedByNDocs:"",
-				userIn:"",
-				versNum:""
-		}
-		
-		$scope.datasetsListTemp.push(object);
-		$scope.selectedDataSet = $scope.datasetsListTemp[$scope.datasetsListTemp.length-1];
+			var object = {
+					actions: "",
+					catTypeId:"",
+					catTypeVn:"",
+					dataSource:"",
+					dateIn:"",
+					description:"",
+					dsTypeCd:"",
+					dsVersions:"",
+					id:"",
+					isPersisted:"",
+					isPersistedHDFS:"",
+					label:"",
+					meta:"",
+					name:"",
+					owner:"",
+					pars:"",
+					persistTableName:"",
+					pivotIsNumRows:"",
+					query:"",
+					queryScript:"",
+					queryScriptLanguage:"",
+					scopeCd:"",
+					scopeId:"",
+					usedByNDocs:"",
+					userIn:"",
+					versNum:""
+			}
+			
+			$scope.datasetsListTemp.push(object);
+			$scope.selectedDataSet = $scope.datasetsListTemp[$scope.datasetsListTemp.length-1];
 			$scope.selectedDataSetInit = $scope.datasetsListTemp[$scope.datasetsListTemp.length-1]; // Reset the selection (none dataset item will be selected) (danristo)
-		
+			
 		}	
 		else {
 			sbiModule_messaging.showErrorMessage($scope.translate.load("sbi.ds.add.warning.onlyonenewdataset.msg"));
@@ -765,7 +821,7 @@ function datasetFunction($scope, $log, sbiModule_config, sbiModule_translate, sb
 			};
 			
 //		}
-					
+		
 		console.info("CHANGE FILE [OUT]");
 		
 	}
@@ -849,12 +905,36 @@ function datasetFunction($scope, $log, sbiModule_config, sbiModule_translate, sb
 		 $mdDialog.hide();
 	 }
 	 
-	 $scope.openQbe = function() {
+	$scope.openQbe = function() {
 		$log.info("OPEN QBE");
 	}
 	
 	$scope.viewQbe = function() {
 		$log.info("VIEW QBE QUERY");
+		$scope.selectedDataSet.qbeJSONQuery = JSON.stringify(JSON.parse($scope.selectedDataSet.qbeJSONQuery),null,2);
+		$mdDialog
+		   .show({
+			    scope : $scope,
+			    preserveScope : true,
+			    parent : angular.element(document.body),
+			    controllerAs : 'datasetController',
+			    templateUrl : sbiModule_config.contextName +'/js/src/angular_1.4/tools/catalogues/templates/qbeQueryView.html',
+			    clickOutsideToClose : false,
+			    hasBackdrop : true
+		   });
+		
 	}
+	
+	 // The ui-codemirror option
+	$scope.cmOptionQbe = {
+	    lineNumbers: true,
+	    mode: "application/json",
+//	    lineWrapping: true,
+//	    scrollbarStyle: null,
+//	    viewportMargin: 50,
+	    theme: "eclipse",
+	    showCursorWhenSelecting: false,
+	    readOnly: true
+	};
 	
 };
