@@ -56,7 +56,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					show-search-bar=true 
 					highlights-selected-item=true
 					click-function="loadDataSet(item)"
-					selected-item="selectedDataSet" 
+					selected-item="selectedDataSetInit" 
 					speed-menu-option="manageDataset" >
 				</angular-table> 
 	        
@@ -81,15 +81,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		      
 			</extra-button>
 	       
+	       <!-- DATASET DETAIL PANEL -->
 	       <detail save-function="saveDataSet" cancel-function="cancelDataSet">
 	       
-	       		<form ng-show="selectedDataSet!=null">
+	       		<form ng-show="selectedDataSet!=null" style="height:100%; overflow-y:hidden">
 	       		
-	       			 <md-tabs md-dynamic-height md-selected="selectedTab" md-border-bottom="">
-						            			
-						 <md-tab label='{{translate.load("sbi.generic.details");}}'>
+	       			 <!-- DATASET DETAIL PANEL TABS -->
+	       			 <md-tabs md-selected="selectedTab" md-border-bottom="" style="min-height:100%">
+						     
+						 <!-- DATASET DETAIL PANEL "DETAIL" TAB -->            			
+						 <md-tab label='{{translate.load("sbi.generic.details");}}' >
 						 
-						 	<md-content flex class="ToolbarBox miniToolbar noBorder mozTable">
+						 	<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" >
 								<md-card layout-padding>
 									<div flex=100>
 										<md-input-container class="md-block">
@@ -180,31 +183,32 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							
 					     </md-tab>
 					     
+					      <!-- DATASET DETAIL PANEL "TYPE" TAB -->  
 					     <md-tab label='{{translate.load("sbi.generic.type");}}'>
 					     
 					     	<md-content flex class="ToolbarBox miniToolbar noBorder mozTable">
 								<md-card layout-padding>
 									<div flex=100>
 								       <md-input-container class="md-block" > 
-								       <label>{{translate.load("sbi.ds.dsTypeCd")}}</label>
-								       <md-select placeholder ="{{translate.load('sbi.ds.dsTypeCd')}}"
-								        ng-required = "true"
-								        ng-model="selectedDataSet.dsTypeCd">   
-								        <md-option 
-								        ng-repeat="l in datasetTypeList" value="{{l.VALUE_CD}}">{{l.VALUE_CD}}
-								        </md-option>
-								       </md-select>  
+									       <label>{{translate.load("sbi.ds.dsTypeCd")}}</label>
+									       <md-select 	placeholder ="{{translate.load('sbi.ds.dsTypeCd')}}"
+									       	 			ng-required = "true"
+									        			ng-model="selectedDataSet.dsTypeCd">   
+									        	<md-option ng-repeat="l in datasetTypeList" value="{{l.VALUE_CD}}">{{l.VALUE_CD}}</md-option>
+									       </md-select>  
 								        </md-input-container>
 								   </div>
 								</md-card>
 							</md-content>
 							
+							<!-- ELEMENTS NEEDED FOR THE "FILE" DATASET TYPE -->
 							<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='File'">
 								
+								<!-- UPLOADING AND CHANGING FILE AS A DATA SOURCE OF THE DATASET -->
 								<md-card layout-padding>
 									
-									<div layout="row" flex=100 layout-align="start center" ng-show="true">
-							                  	
+									<div layout="row" flex=100 layout-align="start center" ng-show="selectedDataSet.fileName=='' || changingFile">
+						                  	
 					                  	<label layout-align="center center">
 					                  		{{translate.load("sbi.ds.wizard.selectFile")}}:
 				                  		</label>
@@ -216,15 +220,137 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					                  	
 					                  	<div class="">
 						                    <md-button 	ng-click="uploadFile()" class="md-raised" 
-						                     			
+						                     			ng-disabled="!fileObj.fileName || (changingFile &&selectedDataSet.fileName==fileObj.fileName)" 
 						                     			title="{{datasetWizStep1UploadButtonTitle()}}">
 				                     			{{translate.load("sbi.workspace.dataset.wizard.upload")}}
 			             					</md-button>
 					                  	</div>
 					                  	
 									</div>
+										
+									<div layout="row" flex=100 ng-if="selectedDataSet.fileName!='' && !changingFile">
+								 		
+								 		<label style="margin-top:14px; margin-bottom:8px">
+								 			{{translate.load("sbi.workspace.dataset.wizard.file.uploaded")}}: <strong>{{selectedDataSet.fileName}}</strong>
+							 			</label>
+							 			
+									 	<span flex></span>
+									  
+									  	<div class="">
+									  	
+										    <md-button 	ng-click="changeUploadedFile()" class="md-raised" 
+										    			title="{{translate.load('sbi.workspace.dataset.wizard.file.change.tooltip')}}">
+					                     			{{translate.load("sbi.workspace.dataset.wizard.file.change")}}
+				             				</md-button>
+			             				
+			           					</div>
+			             				
+									</div>
 									
 								</md-card>
+								
+								<!-- ELEMENTS FOR SETTING THE 'XLS' FILE CONFIGURATION -->
+								<md-card ng-if="selectedDataSet.fileType=='XLS'" layout="column" class="threeCombosThreeNumFields" style="padding:0 16 0 16;">          
+					        
+							        <div layout="row" class="threeCombosLayout">	
+								        
+								        <!-- XLS file is uploaded --> 
+										<div layout="row" flex >
+											
+											<div layout="row" layout-wrap flex=30>
+						                  		<div flex=90 layout-align="center center">
+						                     		<md-input-container class="md-block">
+						                        		<label>{{translate.load("sbi.ds.file.xsl.skiprows")}}</label> 
+						                        		<input 	ng-model="selectedDataSet.skipRows" type="number" 
+						                        				step="1" min="0" value="{{selectedDataSet.skipRows}}">
+							                     	</md-input-container>
+							                  	</div>
+											</div>
+						                 	
+					                		<div layout="row" layout-wrap flex=30>
+						                  		<div flex=90 layout-align="center center">
+						                     		<md-input-container class="md-block">
+						                        		<label>{{translate.load("sbi.ds.file.xsl.limitrows")}}</label> 
+						                        		<input 	ng-model="selectedDataSet.limitRows" type="number" 
+						                        				step="1" min="0" value="{{dataset.limitRows}}">
+							                     	</md-input-container>
+							                  	</div>
+											</div>
+											
+											<div layout="row" layout-wrap flex=30>
+						                  		<div flex=90 layout-align="center center">
+						                     		<md-input-container class="md-block">
+						                        		<label>{{translate.load("sbi.ds.file.xsl.sheetnumber")}}</label> 
+						                        		<input 	ng-model="selectedDataSet.xslSheetNumber" type="number" 
+						                        				step="1" min="1" value="{{selectedDataSet.xslSheetNumber}}">
+							                     	</md-input-container>
+							                  	</div>
+											</div>
+											
+										</div>
+											
+									</div>					
+									
+					       	 	</md-card>
+					       	 	
+					       	 	<!-- ELEMENTS FOR SETTING THE 'CSV' FILE CONFIGURATION -->
+					       	 	<md-card ng-if="selectedDataSet.fileType=='CSV'" layout="column" class="threeCombosThreeNumFields" style="padding:0 16 0 16;">         		
+			         		
+					         		<div layout="row" class="threeCombosLayout">								
+								              
+								        <!-- CSV file is uploaded --> 
+										<div layout="row" flex >
+							                 	
+						                 	<div layout="row" layout-wrap flex=30>
+						                  		<div flex=90 layout-align="center center">
+						                     		<md-input-container class="md-block">
+						                        		<label>{{translate.load("sbi.ds.file.csv.delimiter")}}</label> 
+						                        		<md-select aria-label="aria-label" ng-model="selectedDataSet.csvDelimiter">
+						                           			<md-option 	ng-repeat="csvDelimiterCharacterItem in csvDelimiterCharacterTypes" 
+						                           						ng-click="chooseDelimiterCharacter(csvDelimiterCharacterItem)" 
+						                           						value="{{csvDelimiterCharacterItem.name}}">
+					                          						{{csvDelimiterCharacterItem.name}}
+					                     						</md-option>
+						                        		</md-select>
+							                     	</md-input-container>
+							                  	</div>
+											</div>
+						                 	
+					                		<div layout="row" layout-wrap flex=30>
+						                  		<div flex=90 layout-align="center center">
+						                     		<md-input-container class="md-block">
+						                        		<label>{{translate.load("sbi.ds.file.csv.quote")}}</label> 
+						                        		<md-select aria-label="aria-label" ng-model="selectedDataSet.csvQuote">
+						                           			<md-option 	ng-repeat="csvQuoteCharacterItem in csvQuoteCharacterTypes" 
+						                           						ng-click="chooseQuoteCharacter(csvQuoteCharacterItem)" 
+						                           						value="{{csvQuoteCharacterItem.name}}">
+					                          						{{csvQuoteCharacterItem.name}}
+					                     						</md-option>
+						                        		</md-select>
+							                     	</md-input-container>
+							                  	</div>
+											</div>
+											
+											<div layout="row" layout-wrap flex=30>
+						                  		<div flex=90 layout-align="center center">
+						                     		<md-input-container class="md-block">
+						                        		<label>{{translate.load("sbi.workspace.dataset.wizard.csv.encoding")}}</label> 
+						                        		<md-select aria-label="aria-label" ng-model="selectedDataSet.csvEncoding">
+						                           			<md-option 	ng-repeat="csvEncodingItem in csvEncodingTypes" 
+						                           						ng-click="chooseEncoding(csvEncodingItem)" 
+						                           						value="{{csvEncodingItem.name}}">
+					                          						{{csvEncodingItem.name}}
+					                     						</md-option>
+						                        		</md-select>
+							                     	</md-input-container>
+							                  	</div>
+											</div>
+												
+										</div>					
+																	
+							    	</div>
+								    	
+							    </md-card>					       	 	
 								
 							</md-content>
 							
@@ -261,10 +387,61 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								</md-card>
 							</md-content>
 							
+							<!-- ELEMENTS NEEDED FOR THE "QBE" DATASET TYPE -->
 							<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='Qbe'">
+								
 								<md-card layout-padding>
-									QBE
+									
+									<div flex=100>
+									
+								       <md-input-container class="md-block" > 
+								       
+									       <label>{{translate.load("sbi.ds.dataSource")}}</label>
+									       
+									       <md-select 	placeholder ="{{translate.load('sbi.ds.dataSource')}}"
+									        			ng-model="selectedDataSet.qbeDataSource">   
+										        <md-option ng-repeat="l in dataSourceList" value="{{l.label}}">{{l.label}}</md-option>										        
+									       </md-select>  
+									       
+								        </md-input-container>
+								        
+								  	 </div>
+								  	 
+								  	 <div flex=100>									
+								       <md-input-container class="md-block" > 
+								       								       
+									       <label>{{translate.load("sbi.tools.managedatasets.datamartcombo.label")}}</label>
+									       
+									       <md-select 	placeholder ="{{translate.load('sbi.tools.managedatasets.datamartcombo.label')}}"
+									        			ng-model="selectedDataSet.qbeDatamarts">   
+										        <md-option ng-repeat="l in datamartList" value="{{l.name}}">{{l.name}}</md-option>										        
+									       </md-select>  
+									       
+								        </md-input-container>
+								        
+								  	 </div>
+								  	 
+							  	  	<div flex=100 style="display:flex">
+										
+										<!-- <md-input-container class="md-block" flex=70 style="float:left;">
+									    	<label>{{translate.load("sbi.ds.qbe.query")}}</label> 
+											<input ng-model="selectedDataSet.qbeJSONQuery" readonly="readonly">
+										</md-input-container> -->
+										
+										<md-button flex=20  class="md-raised" ng-click="viewQbe()">
+												{{translate.load("sbi.ds.qbe.query.view.button")}}
+											</md-button> 
+										
+										<!-- <div flex=30 style="float:right"> -->
+											<md-button flex=20  class="md-raised" ng-click="openQbe()">
+												{{translate.load("sbi.ds.qbe.query.open.button")}}
+											</md-button> 
+									<!-- 	</div> -->
+										
+									</div>
+								  	 
 								</md-card>
+								
 							</md-content>
 							
 							<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='Custom'">
@@ -296,39 +473,52 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									REST
 								</md-card>
 							</md-content>
-													
-							<md-content flex class="ToolbarBox miniToolbar noBorder mozTable">
+							
+							<!-- ELEMENTS FOR SETTING THE DATASET PARAMETERS -->					
+							<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-show="selectedDataSet.dsTypeCd.toLowerCase()!='file'">
+								
 								<md-card layout-padding>
+									
 									<div>
+									
 						  				{{translate.load('sbi.scheduler.parameters')}}
-									<i class="fa fa-plus-square" ng-click="addParameters()" aria-hidden="true" ></i>
-									<div ng-repeat="p in selectedDataSet.parameters" layout-gt-sm="row" layout-align="start center">
-										<div layout="row"> 								
-												<md-input-container class="md-block" flex-gt-sm>
-				      							<label>{{translate.load('sbi.generic.name')}}</label>
-				  								<input ng-model="p.name">
-												</md-input-container>
-												
-												<md-input-container class="md-block" flex-gt-sm>
-				      							<label>{{translate.load('sbi.generic.type')}}</label>
-				  								<input ng-model="p.type">
-												</md-input-container>
-												
-												<md-input-container class="md-block" flex-gt-sm>
-				      							<label>{{translate.load('sbi.generic.defaultValue')}}</label>
-				  								<input ng-model="p.defaultValue">
-												</md-input-container>
-										</div> 								
-				 						<div>
-											<i class="fa fa-minus-square" ng-click="removeParameter(i)" aria-hidden="true"></i> 	
-										</div>	      						
+										
+										<i class="fa fa-plus-square" ng-click="addParameters()" aria-hidden="true" ></i>
+										
+										<div ng-repeat="p in selectedDataSet.parameters" layout-gt-sm="row" layout-align="start center">
+											
+											<div layout="row"> 								
+													<md-input-container class="md-block" flex-gt-sm>
+					      							<label>{{translate.load('sbi.generic.name')}}</label>
+					  								<input ng-model="p.name">
+													</md-input-container>
+													
+													<md-input-container class="md-block" flex-gt-sm>
+					      							<label>{{translate.load('sbi.generic.type')}}</label>
+					  								<input ng-model="p.type">
+													</md-input-container>
+													
+													<md-input-container class="md-block" flex-gt-sm>
+					      							<label>{{translate.load('sbi.generic.defaultValue')}}</label>
+					  								<input ng-model="p.defaultValue">
+													</md-input-container>
+											</div> 
+																			
+					 						<div>
+												<i class="fa fa-minus-square" ng-click="removeParameter(i)" aria-hidden="true"></i> 	
+											</div>	
+											      						
+										</div>
+										
 									</div>
-								</div>
+									
 								</md-card>
+								
 							</md-content>
 							
 					     </md-tab>	
 					     
+					      <!-- DATASET DETAIL PANEL "ADVANCED" TAB -->  
 					     <md-tab label='{{translate.load("sbi.ds.advancedTab");}}'>
 							
 							<md-content flex class="ToolbarBox miniToolbar noBorder mozTable">

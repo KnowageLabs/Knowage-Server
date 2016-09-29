@@ -766,13 +766,17 @@ function datasetFunction($scope, $log, sbiModule_config, sbiModule_translate, sb
 			};
 			
 //		}
-			
-//		$scope.fileObj={};
-//		$scope.fileObj.fileName='';
-//		$scope.dataset.fileName='';
 		
 		console.info("CHANGE FILE [OUT]");
 		
+	}
+	
+	$scope.openQbe = function() {
+		$log.info("OPEN QBE");
+	}
+	
+	$scope.viewQbe = function() {
+		$log.info("VIEW QBE QUERY");
 	}
 	
 };
