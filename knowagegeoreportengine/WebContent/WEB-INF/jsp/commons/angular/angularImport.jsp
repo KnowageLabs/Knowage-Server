@@ -50,6 +50,6 @@
 <%-- <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/color-picker/mdColorPicker.js"></script> --%>
 <%-- <link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/color-picker/mdColorPicker.min.css"> --%>
 
-
+    <script type="text/javascript" src="${pageContext.request.contextPath}/js/commons/Settings.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/module/sbiModule.js"></script>
 	<%@include file="/WEB-INF/jsp/commons/angular/sbiModule.jsp"%>

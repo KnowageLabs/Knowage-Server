@@ -1,10 +1,16 @@
 /**
  * @authors Giovanni Luca Ulivo (GiovanniLuca.Ulivo@eng.it)
- * v1.0.1
+ * v1.0.2
  * 
  */
 var scripts = document.getElementsByTagName("script");
 var currentScriptPath = scripts[scripts.length - 1].src;
+
+////load daff.js
+//var script = document.createElement('script');
+//script.type = 'text/javascript';
+//script.src = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1) + 'utils/daff.js';
+//document.getElementsByTagName('head')[0].appendChild(script);
 
 angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagination', 'ng-context-menu', 'ui.tree'])
         .directive('angularTable',
@@ -46,7 +52,11 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                             initialSorting:"=?",
                             initialSortingAsc:"=?",
                             visibleRowFunction:"&",
-                            sortableColumn:"=?"
+                            sortableColumn:"=?",
+                            changeDetector:"@?",
+                            fixedItemPerPage:"=?",
+                            itemsPerPage:"=?",
+                            showExpanderRowCondition:"&?"
                         },
                         compile: function (tElement, tAttrs, transclude) {
                             return {
@@ -64,17 +74,26 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                                         var body = angular.element(table[0].querySelector("tbody"));
                                         body.attr('ui-tree-nodes', "");
                                         body.attr('ng-model', "ngModel");
+                                        
+                                        scope.DandDEnabled=true;
+                                    }else{
+                                    	scope.DandDEnabled=false;
                                     }
+                                   
                                 },
                                 post: function postLink(scope, element, attrs, ctrl, transclud) {
 
                                     //TODO ngModel obbligatorio
+                                	scope.internalTableConfiguration={};
 
-
-                                    var id = "at";
+                                    var id = "";
                                     if (attrs.id) {
                                         id = attrs.id;
+                                    }else{
+                                    	id = "at"+(new Date()).getTime();
+                                    	scope.id=id;
                                     }
+                                    
                                     var template = angular.element(element[0]);
                                     template.addClass(id + "ItemBox");
                                     template.addClass("layout-column");
@@ -89,6 +108,10 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                                     thead.attr('angular-table-head', "");
                                     //create tbody
                                     tbody.attr('angular-table-body', "");
+                                    
+                                    if(scope.DandDEnabled){
+                                    	tbody.attr('no-drag-and-drop', true);
+                                    }
 
                                     scope.initializeColumns = function (noCompile) {
                                         //create the column of the table. If attrs.column is present load only this column, else load all the columns
@@ -98,13 +121,20 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                                             scope.tableColumns.push({label: "--MULTISELECT--", name: "--MULTISELECT--", size: "30px"});
                                             thead.attr('multi-select', true);
                                             tbody.attr('multi-select', true);
+                                            if (!scope.selectedItem) {
+                                                scope.selectedItem = [];
+                                            }
                                         }
 
-                                        if (attrs.dragEnabled && (attrs.dragEnabled == true || attrs.dragEnabled == "true")) {
+                                        if (scope.DandDEnabled) {
                                             scope.tableColumns.push({label: "", name: "--DRAG_AND_DROP--", size: "1px"});
-                                        } else {
-                                            tbody.attr('no-drag-and-drop', true);
+                                        }  
+                                        
+                                        if(scope.internalTableConfiguration.rowDetail==true){
+                                        	scope.tableColumns.push({label: "", name: "--ROW_DETAIL--", size: "30px"});
                                         }
+                                        
+                                        
                                         if (attrs.columnsSearch) {
                                             var colSearch = scope.columnsSearch;
                                             if (Object.prototype.toString.call(colSearch) == "[object String]") {
@@ -133,6 +163,7 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                                                     tmpColData.transformer=col[i].transformer;
                                                     tmpColData.customClass=col[i].customClass;
                                                     tmpColData.hideTooltip=col[i].hideTooltip;
+                                                    tmpColData.style=col[i].style;
                                                 } else {
                                                     //only the col name
                                                     tmpColData.label = col[i];
@@ -166,6 +197,9 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                                             thead.attr('speed-menu-option', true);
                                             tbody.attr('speed-menu-option', true);
                                         }
+                                        //if contextMenu is enabled 
+                                        tbody.attr('menu-option', attrs.menuOption!=undefined);
+                                        
 
                                         if (noCompile != true) {
                                             $compile(thead)(scope);
@@ -174,20 +208,32 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                                     };
 
                                     scope.initializeColumns(true);
-
+                                    
                                     //check for pagination
-                                    if (!attrs.totalItemCount) {
-                                    	tbody.attr('current-page-number', scope.currentPageNumber);
-                                        scope.totalItemCount = undefined;
-                                        var paginBox = angular.element(footerBox[0].querySelector("dir-pagination-controls"));
-                                        paginBox.removeAttr("on-page-change");
-                                        tbody.attr('local-pagination', true);
+                                    var paginBox = angular.element(footerBox[0].querySelector("dir-pagination-controls"));
+                                    if(attrs.noPagination && (attrs.noPagination == true || attrs.noPagination == "true")){
+                                    	tbody.attr('pagination-type', "none");
+                                    	paginBox.remove();
+                                    }else{
+                                    	 if (!attrs.totalItemCount) {
+                                    		 tbody.attr('pagination-type', "local");
+                                    		 tbody.attr('current-page-number', scope.pagination.currentPageNumber);
+                                    		 scope.totalItemCount = undefined;
+                                             paginBox.removeAttr("on-page-change");
+                                    	 }else{
+                                    		 tbody.attr('pagination-type', "backend");
+//                                    		 scope.pagination.totalItemCount=scope.totalItemCount;
+//                                    		 scope.$watch(function(){return scope.totalItemCount;},function(newVal,oldVal){
+//                                    			 if(!angular.equals(newVal,oldVal)){
+//                                    			 scope.pagination.totalItemCount=newVal;
+//                                    			 }
+//                                    		 })
+                                    	 }
                                     }
-                                    if (attrs.noPagination && (attrs.noPagination == true || attrs.noPagination == "true")) {
-                                        scope.itemsPerPage = 99999;
-                                    } else {
-                                        scope.itemsPerPage = 3;
-                                    }
+                                    
+                                    //check for change-detector
+                                    scope.enableChangeDetector=attrs.changeDetector!=undefined;
+                                    
 
                                     $compile(thead)(scope);
                                     $compile(tbody)(scope);
@@ -202,15 +248,6 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                                     if (!attrs.searchFunction) {
                                         scope.localSearch = true;
                                     }
-                                   
-
-                                    if (attrs.multiSelect) {
-                                        if (!attrs.selectedItem) {
-                                            scope.selectedItem = [];
-                                        }
-                                    }
-
-                                    
 									
                                     if(attrs.hasOwnProperty("fullWidth") || (attrs.hasOwnProperty("noPagination") && attrs.noPagination==true)){
 										scope.getPrincipalTableHeadWidth=function(){
@@ -255,21 +292,46 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                         controller: TableBodyControllerFunction,
                         priority: 100,
                         compile: function (tElement, tAttrs, transclude) {
-                            if (tAttrs.localPagination == "true" || tAttrs.localPagination == true) {
-                                angular.element(tElement.children()[0]).removeAttr('total-items');
-                                if (tAttrs.currentPageNumber == null) {
-                                	angular.element(tElement.children()[0]).removeAttr('current-page');
+                        	var tr=tElement.find("tr");
+                        	var td=tElement.find("td");
+                        	if(!angular.equals(tAttrs.menuOption,"true")){
+                        		//remove the contextMenu
+                        		td.removeAttr("data-target");
+                        		td.removeAttr("context-menu");
+                        		angular.element(tElement[0].querySelector(".dropdown_menu_list")).remove()
+                        	}
+                        	
+                            if (tAttrs.noDragAndDrop != "true") {
+                               tr.removeAttr('ui-tree-node');
+                               angular.element(td[0].querySelector("i[ui-tree-handle]")).remove();
+                            }
+                            
+                            //check for pagination
+                            if(angular.equals(tAttrs.paginationType,"none")){
+                            	var repeatAttr=tr.attr("dir-paginate").replace("| itemsPerPage:itemsPerPage","");
+                            	tr.attr("ng-repeat",repeatAttr);
+                                tr.removeAttr("dir-paginate")
+                                tr.removeAttr("total-items")
+                                tr.removeAttr("pagination-id")
+                                tr.removeAttr("current-page")
+                            }else if(angular.equals(tAttrs.paginationType,"local")){
+                            	tr.removeAttr('total-items');
+                            	if (tAttrs.currentPageNumber == null) {
+                            		tr.removeAttr('current-page');
+                            	}
+                            }else if(angular.equals(tAttrs.paginationType,"backend")){
+                            }
+                            
+                            return {
+                                pre: function preLink(scope, element, attrs, ctrl, transclud) {
+                                	if(scope.rowDetailTemplate!=undefined){
+                                		tr.attr("angular-table-row-detail","");
+                                	}
                                 }
+                                    
                             }
-
-                            if (tAttrs.noDragAndDrop == "true") {
-                                angular.element(tElement.children()[0]).removeAttr('ui-tree-node');
-                            }
-
-                        },
-                        link: function (scope, element, attrs, ctrl, transclude) {
-
                         }
+                            
                     };
                 })
         .directive('angularTableFooter',
@@ -310,8 +372,7 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                 }
             };
         })
-        .directive('queueTable',
-                function ($compile) {
+        .directive('queueTable',function ($compile) {
                     return {
                         template: '',
                         replace: true,
@@ -344,6 +405,46 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                         }
                     };
                 })
+          .directive('rowDetail',function ($compile) {
+            return {
+                template: '',
+                replace: true,
+//                transclude: true,
+                compile:function (tElement, tAttrs, transclude) {
+                	var notCompiledContent=tElement.html();
+                	tElement.html("");
+                    return {
+                        pre: function preLink(scope, element, attrs, ctrl, transclud) {
+//                        	debugger
+                        	scope.internalTableConfiguration.rowDetail=true;
+                        	scope.rowDetailTemplate=notCompiledContent;
+                        	angular.element(element.parent())[0].querySelector("#angularTableContentBox").style.overflow="auto";
+                        	scope.initializeColumns(false)
+                        	},
+                        	post: function preLink(scope, element, attrs, ctrl, transclud) {
+                        	}
+                        }
+                    },
+            };
+        })
+        .directive('angularTableRowDetail',function ($compile) {
+        	return {
+        		template: '',
+        		restrict: 'A',
+        		replace: false,
+        		link: function (scope, element, attrs, ctrl, transclude) {
+        			var td=document.createElement("td");
+        			td.innerHTML=scope.rowDetailTemplate;
+        			td.setAttribute("colspan",element.scope().tableColumns.length);
+        			element.after("<tr/>").next().append(td)
+        			element.next().addClass("expanderRowClass");
+        			element.next().attr("ng-if","visible");
+        			$compile(element.next())(element.scope());
+        			
+        		}
+        	};
+        })
+        
         .filter('filterBySpecificColumns', function () {
             return function (items, columnsSearch, searchTerm, localSearch) {
                 if (searchTerm == undefined || searchTerm == "") {
@@ -371,8 +472,7 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                                     break;
                                 }
                             }
-                        }
-                        ;
+                        };
                     } else {
                         if (JSON.stringify(items[item]) != undefined) {
                             if (JSON.stringify(items[item]).toString().toUpperCase().indexOf(searchTerm.toUpperCase()) !== -1) {
@@ -409,8 +509,6 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
 	        			}
 	        		}
 	        	}
-		          
-		          
 		          if(column!=undefined && column.comparatorFunction!=undefined ){
 		        	  var filtered = getfiltered();
 			          filtered.sort(function (a, b) {   
@@ -440,7 +538,10 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
 
 
 function TableControllerFunction($scope, $timeout) {
-    $scope.currentPageNumber = 1;
+	$scope.pagination = {currentPageNumber : 1};
+	if($scope.itemsPerPage==undefined){
+		$scope.itemsPerPage=3;
+	}
     $scope.tmpWordSearch = "";
     $scope.prevSearch = "";
     $scope.localSearch = false;
@@ -450,10 +551,10 @@ function TableControllerFunction($scope, $timeout) {
     $scope.internal_column_ordering;
     $scope.internal_reverse_col_ord = false;
 
-    $scope.getDynamicValue=function(item,row,column){
+    $scope.getDynamicValue=function(item,row,column,index){
     	if(item==null || item==undefined) return ;
     	
-    	return angular.isFunction(item) ? item(row,column) : item;
+    	return angular.isFunction(item) ? item(row,column,index) : item;
     }
     
     $scope.searchItem = function (searchVal) {
@@ -469,7 +570,7 @@ function TableControllerFunction($scope, $timeout) {
                 $scope.searchFunction({
                     searchValue: searchVal,
                     itemsPerPage: $scope.itemsPerPage,
-                    currentPageNumber: $scope.currentPageNumber,
+                    currentPageNumber: $scope.pagination.currentPageNumber,
                     columnsSearch: $scope.columnsSearch,
                     columnOrdering: $scope.column_ordering,
                     reverseOrdering: $scope.reverse_col_ord
@@ -481,38 +582,60 @@ function TableControllerFunction($scope, $timeout) {
 
     // pagination item
     $scope.changeWordItemPP = function () {
-        if (angular.element(document.querySelector('angular-table.' + $scope.id + 'ItemBox'))[0] == undefined) {
-            return;
+
+    	if($scope.box==undefined || $scope.box.$$NG_REMOVED==true){
+    		var box = angular.element(document.querySelector('angular-table.' + $scope.id + 'ItemBox'))[0]
+    		if (box == undefined) {
+    			return;
+    		}
+    		$scope.box=box;
+    	}
+    	
+    	if($scope.tableContainer==undefined || $scope.tableContainer.$$NG_REMOVED==true){
+    		var tableContainer = angular.element(document.querySelector('angular-table.' + $scope.id + 'ItemBox #angularFullTableContentBox'))[0];
+    			$scope.tableContainer=tableContainer;
+    	}
+    	
+    	if($scope.headButton==undefined || $scope.headButton.$$NG_REMOVED==true){
+    		var headButton = angular.element(document.querySelector('angular-table.' + $scope.id + 'ItemBox table.fakeTable thead'))[0];
+    			$scope.headButton=headButton;
+    	}
+    	
+    	if($scope.listItemTemplBox==undefined || $scope.listItemTemplBox.$$NG_REMOVED==true){
+    		var listItemTemplBox = angular.element(document.querySelector('angular-table.' + $scope.id + 'ItemBox table.principalTable tbody tr'))[0];
+    			$scope.listItemTemplBox=listItemTemplBox;
+    	}
+
+    	
+    		$scope.heightQueueTable = 0;
+    	
+	    //	var queueTableFixed = angular.element(document.querySelector('angular-table.' + $scope.id + 'ItemBox #fixedAngularTableContentBox'))[0];
+	    	var queueTable = angular.element(document.querySelector('angular-table.' + $scope.id + 'ItemBox #queueTableContent'))[0];
+	    	
+	    	if(queueTable!=undefined && queueTable.offsetHeight > 0){
+	    		$scope.heightQueueTable = queueTable.offsetHeight;
+	    	}
+    	
+    	var tableContainerHeight = $scope.tableContainer == undefined ? 36 : $scope.tableContainer.offsetHeight;
+        var headButtonHeight = $scope.headButton == undefined ? 0 : $scope.headButton.offsetHeight;
+        var listItemTemplBoxHeight = $scope.listItemTemplBox == undefined ? 36 : $scope.listItemTemplBox.offsetHeight;
+
+        var avaiableHeight=tableContainerHeight - headButtonHeight - $scope.heightQueueTable;
+        if (firstLoad && $scope.noPagination != true) {
+        	avaiableHeight-=30;
         }
 
-        var box = angular.element(document.querySelector('angular-table.' + $scope.id + 'ItemBox'))[0]
-        if (box == undefined) {
-            return;
+        var nit = parseInt(avaiableHeight / listItemTemplBoxHeight);
+
+        if(angular.equals( $scope.itemsPerPage , nit)){
+        	return;
         }
-
-//		var tableAction=angular.element(document.querySelector('angular-table.'+$scope.id+'ItemBox angular-table-actions'))[0];
-//		var footerTab= angular.element(document.querySelector('angular-table.'+$scope.id+'ItemBox angular-table-footer'))[0];
-        var tableContainer = angular.element(document.querySelector('angular-table.' + $scope.id + 'ItemBox #angularFullTableContentBox'))[0];
-        var headButton = angular.element(document.querySelector('angular-table.' + $scope.id + 'ItemBox table.fakeTable thead'))[0];
-        var listItemTemplBox = angular.element(document.querySelector('angular-table.' + $scope.id + 'ItemBox table.principalTable tbody tr'))[0];
-
-//		var boxHeight = box.offsetHeight;
-//		var tableActionHeight=  tableAction==undefined? 0 : tableAction.offsetHeight ;
-//		var footerTabHeigth= footerTab==undefined? 0 : footerTab.offsetHeight ;
-        var headButtonHeight = headButton == undefined ? 0 : headButton.offsetHeight;
-        var listItemTemplBoxHeight = listItemTemplBox == undefined ? 32 : listItemTemplBox.offsetHeight;
-        var tableContainerHeight = tableContainer == undefined ? 32 : tableContainer.offsetHeight;
-
-
-        var nit = parseInt((tableContainerHeight - headButtonHeight) / listItemTemplBoxHeight);
-
-//		var nit = parseInt((boxHeight - tableActionHeight - footerTabHeigth -headButtonHeight) / listItemTemplBoxHeight);
         $scope.itemsPerPage = (nit <= 0 || isNaN(nit)) ? 0 : nit;
         if (firstLoad) {
             $scope.pageChangedFunction({
                 searchValue: "",
                 itemsPerPage: $scope.itemsPerPage,
-                currentPageNumber: $scope.currentPageNumber,
+                currentPageNumber: $scope.pagination.currentPageNumber,
                 columnsSearch: $scope.columnsSearch,
                 columnOrdering: $scope.column_ordering,
                 reverseOrdering: $scope.reverse_col_ord
@@ -523,7 +646,18 @@ function TableControllerFunction($scope, $timeout) {
     var firstLoad = true;
     $timeout(function () {
         if ($scope.noPagination != true) {
-            $scope.changeWordItemPP();
+        	if($scope.fixedItemPerPage!=true){
+                $scope.changeWordItemPP();
+        	}else{
+        		 $scope.pageChangedFunction({
+                     searchValue: "",
+                     itemsPerPage: $scope.itemsPerPage,
+                     currentPageNumber: $scope.pagination.currentPageNumber,
+                     columnsSearch: $scope.columnsSearch,
+                     columnOrdering: $scope.column_ordering,
+                     reverseOrdering: $scope.reverse_col_ord
+                 });
+        	}
         }
     }, 0);
 
@@ -532,15 +666,29 @@ function TableControllerFunction($scope, $timeout) {
     	 var elem = angular.element(document.querySelector('angular-table.' + $scope.id + 'ItemBox'))[0];
          var boxHeight= elem == undefined ? null : elem.offsetHeight;
          var itemNumber= $scope.ngModel==undefined ? 0 : $scope.ngModel.length;
-    	return {items:itemNumber,height:boxHeight};
+         
+         if($scope.enableChangeDetector){
+        	 return {items:itemNumber,height:boxHeight,ngModel:$scope.ngModel};
+         }else{
+        	 return {items:itemNumber,height:boxHeight};
+         }
+         
+//    	return {items:itemNumber,height:boxHeight};
     }, function(newValue,oldValue){
-    	if ($scope.noPagination != true &&( newValue.items != 0 ||  newValue.height != 0)) {
+    	if ($scope.noPagination != true &&( newValue.items != 0 ||  newValue.height != 0) && $scope.fixedItemPerPage!=true) {
 	    	if(newValue!=oldValue){
 	    		$timeout(function(){
 	    			$scope.changeWordItemPP();
 	    			},0) 
 	    	}
     	}
+    	
+    	if($scope.enableChangeDetector && !angular.equals(oldValue.ngModel,newValue.ngModel)){
+    		$scope.changeDetectorFunction(newValue.ngModel,oldValue.ngModel);
+   		 	$timeout(function(){
+   		 		$scope.clearChangeItemStyle();
+   		 	},7000)
+   	}
     },true);
     
     $scope.$watchCollection('columns', function (newValue, oldValue) {
@@ -562,7 +710,7 @@ $scope.loadTheadColumn=function(){
 //        	console.log(principalThDiv[i])
         	angular.element(fakeDiv[i]).css("width",angular.element(principalThDiv[i])[0].offsetWidth+"px");
         }
-        if(tableContentBox[0].offsetWidth!=width){
+        if(tableContentBox[0] && tableContentBox[0].offsetWidth!=width){
         	tableContentBox.css("width",width+"px");
         }
     },0)
@@ -579,11 +727,114 @@ $scope.loadTheadColumn=function(){
 		
 		return isVisible == undefined ? true : isVisible;
 	}
+	
+	 $scope.clearChangeItemStyle=function(){
+		 $scope.getChangedValueStyle=undefined;
+		 $scope.detectorMap=angular.copy(emptyDetectorMap); 
+    }
+	 var emptyDetectorMap={edit:{},add:[]}
+	 $scope.detectorMap=angular.copy(emptyDetectorMap); 
+	 $scope.changeDetectorFunction=function(newVal,oldVal){
+		 if(oldVal==undefined || oldVal.length==0){
+			 return;
+		 }
+		 
+		 var table1 = new daff.TableView(jsonToTable(oldVal));
+		 var table2 = new daff.TableView(jsonToTable(newVal));
+		 var data_diff = [];
+		 var table_diff = new daff.TableView(data_diff);
+		 var alignment = daff.compareTables(table1,table2).align();
+		 var flags = new daff.CompareFlags();
+		 flags.show_unchanged=true
+		 var highlighter = new daff.TableDiff(alignment,flags);
+		 highlighter.hilite(table_diff);
+		 
+		 var decIndex=0;
+		 var columnArray=[];
+		 angular.forEach(data_diff, function(value, index) {
+			 if(!angular.equals(value[0],"@@") && !angular.equals(value[0],"!")){
+				 var currRow=newVal[index-decIndex];
+				 if(angular.equals(value[0],"->")){
+					 //edited row
+//					 $scope.detectorMap.edit.push(currRow);
+					 
+					 for(var i=1;i<value.length;i++){
+						 
+						 if(angular.isString(value[i]) && value[i].split("->").length>1){
+							 $scope.columns[i];
+							 if($scope.detectorMap.edit[columnArray[i]]==undefined){
+								 $scope.detectorMap.edit[columnArray[i]]=[];
+							 }
+							 $scope.detectorMap.edit[columnArray[i]].push(currRow);
+						 }
+					 }
+					 
+					 
+					 $scope.detectorMap.edit.hasOwnProperty()
+				 }else if(angular.equals(value[0],"---")) {
+					 //removed row
+					 decIndex++;
+				 }else if(angular.equals(value[0],"+++")){
+					 //added row
+					 $scope.detectorMap.add.push(currRow);
+				 }
+			 }else{
+
+				 if(angular.equals(value[0],"@@")){
+					 //create column array
+					 for(var i=0;i<value.length;i++){
+						 columnArray.push(value[i]);
+					 }
+				 }
+				 
+				 decIndex++;
+			 }
+		 });
+		 if(!angular.equals($scope.detectorMap,emptyDetectorMap)){
+			 $scope.getChangedValueStyle=function(row,col){
+				 var rind= $scope.detectorMap.edit[col]==undefined ? -1:  $scope.detectorMap.edit[col].indexOf(row);
+				 if(rind!=-1){
+					 return "editCell";
+				 }
+				 var rind= $scope.detectorMap.add.indexOf(row);
+				 if(rind!=-1){
+					 return "addCell";
+				 }
+			 }
+		 }else{
+			 $scope.getChangedValueStyle=undefined;
+		 }
+	 }
+	 
+	 $scope.getChangedValueStyle=undefined;
+	 
+	 function jsonToTable(jsarr){
+		 var toRet=[]
+		 angular.forEach(jsarr, function(arrValue, arrKey) {
+			 var tmpToRet=[];
+			 if(arrKey==0){
+			 //create the first item with column name
+			 var colname=[];
+			 angular.forEach(arrValue, function(colVal, colName) {
+					 this.push(colName)
+				},colname);
+			 this.push(colname);
+			 }
+			 
+			 //create all row
+			 angular.forEach(arrValue, function(objValue, objKey) {
+					 this.push(objValue)
+				},tmpToRet);
+			 this.push(tmpToRet);
+			},toRet);
+		 return toRet;
+		 
+	 }
 }
 
 function TableBodyControllerFunction($scope) {
 	
-    $scope.clickItem = function (row, cell, evt,index) {
+    $scope.clickItem = function (row,columnName, cell, evt,index) {
         if ($scope.multiSelect) {
             $scope.toggleMultiSelect(row, evt);
         } else {
@@ -597,7 +848,8 @@ function TableBodyControllerFunction($scope) {
             row: row,
             column: cell,
             index:index,
-            evt:evt
+            evt:evt,
+            columnName:columnName
         });
     };
 
@@ -695,6 +947,10 @@ function TableBodyControllerFunction($scope) {
             }
         }
     };
+    $scope.showRowDetail=function(ev){
+    	var vis= angular.element(ev.currentTarget.parentElement.parentElement).scope().visible;
+    	angular.element(ev.currentTarget.parentElement.parentElement).scope().visible = (vis!=true);
+    }
 }
 
 function TableHeaderControllerFunction($scope, $timeout) {
@@ -737,9 +993,11 @@ function TableHeaderControllerFunction($scope, $timeout) {
             $scope.internal_column_ordering = $scope.column_ordering;
             $scope.internal_reverse_col_ord = $scope.reverse_col_ord;
         } else {
+        	$scope.pagination.currentPageNumber =1;
             $scope.searchFunction({
                 searchValue: $scope.prevSearch,
                 itemsPerPage: $scope.itemsPerPage,
+                currentPageNumber: $scope.pagination.currentPageNumber,
                 columnsSearch: $scope.columnsSearch,
                 columnOrdering: $scope.column_ordering,
                 reverseOrdering: $scope.reverse_col_ord
@@ -771,7 +1029,7 @@ function TableHeaderControllerFunction($scope, $timeout) {
     		return toReturn;
     	}else{
     		//apply filter
-    		return columnTransformationText(toReturn);
+    		return columnTransformationText(toReturn,row,columnName);
     	}
     }
 }

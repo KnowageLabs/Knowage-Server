@@ -276,3 +276,25 @@ sbiM.service('sbiModule_restServices', function($http, sbiModule_config,sbiModul
 	
 
 });
+
+
+sbiM.directive('restLoading',   ['$http' ,function ($http)
+                              	{
+                              	    return {
+                              	        template:"<div loading layout-fill style='position:fixed;z-index: 500;background:rgba(0,0,0, 0.3);'>"+
+                              	    	"<md-progress-circular  md-mode='indeterminate' style='top:50%;left:50%' ></md-progress-circular></div>",
+                              	        link: function (scope, elm, attrs)
+                              	        {
+                              	            scope.$watch(function () {
+                              	                return $http.pendingRequests.length > 0;
+                              	            }, function (v)
+                              	            {
+                              	                if(v){
+                              	               	 elm.css("display","block");
+                              	                }else{
+                              	               	 elm.css("display","none");
+                              	                }
+                              	            });
+                              	        }
+                              	    };
+                              	}]);

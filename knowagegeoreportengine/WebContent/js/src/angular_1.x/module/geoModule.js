@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */ 
 
-var geoM = angular.module('geoModule', [ 'ngMaterial', 'ngAnimate','angular_table', 'sbiModule', 'color.picker', "expander-box" ]);
+var geoM = angular.module('geoModule', [ 'ngMaterial', 'ngAnimate','angular_table', 'sbiModule', 'color.picker', "expander-box","geo.settings" ]);
 
 geoM.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.theme('knowage')
