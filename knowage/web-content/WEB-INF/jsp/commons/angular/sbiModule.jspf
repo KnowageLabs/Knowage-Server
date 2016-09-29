@@ -244,34 +244,48 @@ sbiM.service('sbiModule_messaging',function(toastr,sbiModule_restServices,$mdToa
 	
 	
 	
-	this.showWarningMessage = function(msg,title){
+	this.showWarningMessage = function(msg,title,hideTimeout){
 // 		toastr.warning(msg,title, {
 // 			  closeButton: true
 // 		});
-	return	$mdToast.show(
-				$mdToast
-				.simple()
-				.content(msg)
-				.position('top')
-				.action('OK')
-				.highlightAction(false)
-				.hideDelay(60000)
-		);
+
+		var timeout = 3000;
+
+		if (hideTimeout && typeof hideTimeout == "number") {
+			timeout = hideTimeout;
+		}
+
+		return	$mdToast.show(
+					$mdToast
+					.simple()
+					.content(msg)
+					.position('top')
+					.action('OK')
+					.highlightAction(false)
+					.hideDelay(timeout)
+				);
 		
 	};
-	this.showInfoMessage = function(msg,title){
+	this.showInfoMessage = function(msg,title,hideTimeout){
 // 		toastr.info(msg,title, {
 // 			  closeButton: true
 // 		});
-	return	$mdToast.show(
-				$mdToast
-				.simple()
-				.content(msg)
-				.position('top')
-				.action('OK')
-				.highlightAction(false)
-				.hideDelay(60000)
-		);
+
+		var timeout = 3000;
+
+		if (hideTimeout && typeof hideTimeout == "number") {
+			timeout = hideTimeout;
+		}
+
+		return	$mdToast.show(
+					$mdToast
+					.simple()
+					.content(msg)
+					.position('top')
+					.action('OK')
+					.highlightAction(false)
+					.hideDelay(timeout)
+				);
 		
 	};
 	
@@ -295,7 +309,7 @@ sbiM.service('sbiModule_messaging',function(toastr,sbiModule_restServices,$mdToa
 					.action('OK')
 					.highlightAction(false)
 					.hideDelay(timeout) // changed by: danristo (previous value: 60000)
-			);
+				);
 		
 	};
 		
