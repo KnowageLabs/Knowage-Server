@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var datasetModule = angular.module('datasetModule', ['ngMaterial','angular-list-detail','sbiModule','angular_table','file_upload']);
+var datasetModule = angular.module('datasetModule', ['ngMaterial','angular-list-detail', 'sbiModule', 'angular_table', 'file_upload', 'ui.codemirror']);
 
 datasetModule.config(['$mdThemingProvider', function($mdThemingProvider) {
 	$mdThemingProvider.theme('knowage')
@@ -24,7 +24,7 @@ datasetModule.config(['$mdThemingProvider', function($mdThemingProvider) {
 }]);
 
 datasetModule
-	.controller('datasetController', ["$scope","$log", "sbiModule_config", "sbiModule_translate", "sbiModule_restServices", "sbiModule_messaging", "$mdDialog", "multipartForm", datasetFunction])
+	.controller('datasetController', ["$scope","$log", "sbiModule_config", "sbiModule_translate", "sbiModule_restServices", "sbiModule_messaging", "$mdDialog", "multipartForm", "$timeout", datasetFunction])
 	.service('multipartForm',['$http',function($http){
 			
 			this.post = function(uploadUrl,data){
@@ -40,16 +40,17 @@ datasetModule
 			}
 			
 		}]);
-
-function datasetFunction($scope, $log, sbiModule_config, sbiModule_translate, sbiModule_restServices, sbiModule_messaging, $mdDialog, multipartForm){
+function datasetFunction($scope, $log, sbiModule_config, sbiModule_translate, sbiModule_restServices, sbiModule_messaging, $mdDialog, multipartForm, $timeout){
 	
 	$scope.translate = sbiModule_translate;
+	$scope.codeMirror = null;
+	$scope.isSomething = false;
 	
 	$scope.dataSetListColumns = [
-	    {"label":$scope.translate.load("sbi.generic.name"),"name":"name"},
-	    {"label":$scope.translate.load("sbi.generic.label"),"name":"label"},
-	    {"label":$scope.translate.load("sbi.generic.type"), "name":"dsTypeCd"},
-	    {"label":$scope.translate.load("sbi.ds.numDocs"), "name":"usedByNDocs"}
+    {"label":$scope.translate.load("sbi.generic.name"),"name":"name"},
+    {"label":$scope.translate.load("sbi.generic.label"),"name":"label"},
+    {"label":$scope.translate.load("sbi.generic.type"), "name":"dsTypeCd"},
+    {"label":$scope.translate.load("sbi.ds.numDocs"), "name":"usedByNDocs"}
     ];
 	
 	$scope.selectedDatasetVersion = null;
@@ -117,15 +118,15 @@ function datasetFunction($scope, $log, sbiModule_config, sbiModule_translate, sb
 	 */
 	$scope.loadAllDatasets = function(){
 		sbiModule_restServices.promiseGet("1.0/datasets","")
-			.then(function(response) {
+		.then(function(response) {
 				$scope.datasetsListTemp = response.data.root;
 				$scope.datasetsListPersisted = angular.copy($scope.datasetsListTemp);
-			}, function(response) {
-				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-			});
+		}, function(response) {
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+		});
 	}
 	
-	$scope.loadAllDatasets();	
+	$scope.loadAllDatasets();
 	
 	/**
 	 * Speed-menu option configuration for deleting of a dataset.
@@ -212,9 +213,8 @@ function datasetFunction($scope, $log, sbiModule_config, sbiModule_translate, sb
 			 			$mdDialog
 			 				.show(confirm)
 			 				.then(		 						
-			 						function() { 	
-			 							
-			 							$scope.datasetsListTemp.splice($scope.datasetsListTemp.length-1,1);		
+			 						function() { 			 							
+			 							$scope.datasetsListTemp.splice($scope.datasetsListTemp.length-1,1);			 					 		
 			 							
 			 							// If the newly added dataset is selected when deleting it.
 			 							if ($scope.selectedDataSet.label=="..." || $scope.selectedDataSet.label=="") {			 								
@@ -242,20 +242,20 @@ function datasetFunction($scope, $log, sbiModule_config, sbiModule_translate, sb
 			 		
 			 		if ($scope.datasetsListTemp.length < $scope.datasetsListPersisted.length + 1) {
 				 		
-			 			var datasetClone = angular.copy(item);	
-				 		
-				 		datasetClone.label = "...";
-				 		datasetClone.dsVersions = [];
-				 		datasetClone.usedByNDocs = 0;
-				 		$scope.datasetsListTemp.push(datasetClone);
-				 		$scope.selectedDataSet = $scope.datasetsListTemp[$scope.datasetsListTemp.length-1];
+			 		var datasetClone = angular.copy(item);	
+			 		
+			 		datasetClone.label = "...";
+			 		datasetClone.dsVersions = [];
+			 		datasetClone.usedByNDocs = 0;
+			 		$scope.datasetsListTemp.push(datasetClone);
+			 		$scope.selectedDataSet = $scope.datasetsListTemp[$scope.datasetsListTemp.length-1];
 				 		$scope.selectedDataSetInit = $scope.datasetsListTemp[$scope.datasetsListTemp.length-1];
-				 		
-			 		}
+		 			
+			 	} 
 			 		else {
 			 			sbiModule_messaging.showErrorMessage($scope.translate.load('sbi.ds.clone.warning.onlyonenewdataset.msg'));
-			 		}
-		 			
+		 	}
+ 		 	
 			 	} 
 		 	}
  		 	
@@ -305,7 +305,7 @@ function datasetFunction($scope, $log, sbiModule_config, sbiModule_translate, sb
 		 					   								// Remove the dataset's version from the collection of all datasets (the array in the left angular-table).
 		 					   								$scope.datasetsListTemp[j].dsVersions.splice(i,1);
 		 					   								// Remove the version from the currently selected dataset (the item in the left angular-table).
-		 					   								$scope.selectedDataSet.dsVersions.splice(i,1);//			 					   								
+		 					   								$scope.selectedDataSet.dsVersions.splice(i,1);//		 					   								
 		 					   								break;
 		 					   								
 		 					   							}
@@ -362,12 +362,11 @@ function datasetFunction($scope, $log, sbiModule_config, sbiModule_translate, sb
 			 					   				
 			 					   				for (var i=0; i<$scope.datasetsListTemp.length; i++) {
 			 					   					
-			 					   					if ($scope.selectedDataSet.id == $scope.datasetsListTemp[i].id) {			 			
-			 					   						
+			 					   					if ($scope.selectedDataSet.id == $scope.datasetsListTemp[i].id) {			 					   						
 			 					   						// Remove the dataset's version from the collection of all datasets (the array in the left angular-table).
 	 					   								$scope.datasetsListTemp[i] = response.data[0];
 	 					   								// Remove the version from the currently selected dataset (the item in the left angular-table).
-	 					   								$scope.selectedDataSet = response.data[0];	
+	 					   								$scope.selectedDataSet = response.data[0];			 					   						
 	 					   								// Needed in order to have a copy of the selected dataset that will not influence the selected dataset in the AT while performing changes on it
 	 					   								$scope.selectedDataSetInit = response.data[0];	
 	 					   								// Call the scope function that is responsible for transformation of configuration data of the File dataset.
@@ -477,12 +476,12 @@ function datasetFunction($scope, $log, sbiModule_config, sbiModule_translate, sb
 		sbiModule_restServices.promiseGet("2.0","datasources")
 			.then(
 					function(response) {
-						$scope.dataSourceList = response.data;
+			$scope.dataSourceList = response.data;
 					}, 
 					
 					function(response) {
-						sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-					}
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+	}
 				);
 		
 	}
@@ -511,7 +510,7 @@ function datasetFunction($scope, $log, sbiModule_config, sbiModule_translate, sb
 	 *  scope 																	
 	 */
 	$scope.getDomainTypeScope = function(){	
-		sbiModule_restServices.promiseGet("domains","listValueDescriptionByType","DOMAIN_TYPE=DS_SCOPE")
+		sbiModule_restServices.promiseGet("domains", "listValueDescriptionByType","DOMAIN_TYPE=DS_SCOPE")
 		.then(function(response) {
 			$scope.scopeList = response.data;
 		}, function(response) {
@@ -526,11 +525,11 @@ function datasetFunction($scope, $log, sbiModule_config, sbiModule_translate, sb
 	 *  category 																	
 	 */
 	$scope.getDomainTypeCategory = function(){	
-		sbiModule_restServices.promiseGet("domains","listValueDescriptionByType","DOMAIN_TYPE=CATEGORY_TYPE")
+		sbiModule_restServices.promiseGet("domains", "listValueDescriptionByType","DOMAIN_TYPE=CATEGORY_TYPE")
 		.then(function(response) {
 			$scope.categoryList = response.data;
 		}, function(response) {
-			sbiModule_messaging.showErrorMessage(response.data.errors[0].message,'Error');
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 		});
 	}
 	
@@ -635,39 +634,39 @@ function datasetFunction($scope, $log, sbiModule_config, sbiModule_translate, sb
 		
 		if ($scope.datasetsListTemp.length < $scope.datasetsListPersisted.length + 1) {
 			
-			var object = {
-					actions: "",
-					catTypeId:"",
-					catTypeVn:"",
-					dataSource:"",
-					dateIn:"",
-					description:"",
-					dsTypeCd:"",
-					dsVersions:"",
-					id:"",
-					isPersisted:"",
-					isPersistedHDFS:"",
-					label:"",
-					meta:"",
-					name:"",
-					owner:"",
-					pars:"",
-					persistTableName:"",
-					pivotIsNumRows:"",
-					query:"",
-					queryScript:"",
-					queryScriptLanguage:"",
-					scopeCd:"",
-					scopeId:"",
-					usedByNDocs:"",
-					userIn:"",
-					versNum:""
-			}
-			
-			$scope.datasetsListTemp.push(object);
-			$scope.selectedDataSet = $scope.datasetsListTemp[$scope.datasetsListTemp.length-1];
+		var object = {
+				actions: "",
+				catTypeId:"",
+				catTypeVn:"",
+				dataSource:"",
+				dateIn:"",
+				description:"",
+				dsTypeCd:"",
+				dsVersions:"",
+				id:"",
+				isPersisted:"",
+				isPersistedHDFS:"",
+				label:"",
+				meta:"",
+				name:"",
+				owner:"",
+				pars:"",
+				persistTableName:"",
+				pivotIsNumRows:"",
+				query:"",
+				queryScript:"",
+				queryScriptLanguage:"",
+				scopeCd:"",
+				scopeId:"",
+				usedByNDocs:"",
+				userIn:"",
+				versNum:""
+		}
+		
+		$scope.datasetsListTemp.push(object);
+		$scope.selectedDataSet = $scope.datasetsListTemp[$scope.datasetsListTemp.length-1];
 			$scope.selectedDataSetInit = $scope.datasetsListTemp[$scope.datasetsListTemp.length-1]; // Reset the selection (none dataset item will be selected) (danristo)
-			
+		
 		}	
 		else {
 			sbiModule_messaging.showErrorMessage($scope.translate.load("sbi.ds.add.warning.onlyonenewdataset.msg"));
@@ -766,12 +765,91 @@ function datasetFunction($scope, $log, sbiModule_config, sbiModule_translate, sb
 			};
 			
 //		}
-		
+					
 		console.info("CHANGE FILE [OUT]");
 		
 	}
 	
-	$scope.openQbe = function() {
+	$scope.codemirrorLoaded = function(_editor){
+		 $scope.codeMirror = _editor;	  
+	 }
+	
+	  // The ui-codemirror option
+	  $scope.cmOption = {
+	    lineNumbers: true,
+	    tabMode: "indent",
+	    onLoad : function(_cm){
+	      
+	      // HACK to have the codemirror instance in the scope...
+	      $scope.modeChanged = function(type){
+	    	  console.log(type)
+	    	  if(type=='ECMAScript'||type=="MongoDB"){
+	    		  _cm.setOption("mode", 'text/javascript');
+	  		} else {
+	  			_cm.setOption("mode", 'text/x-groovy');
+	  		}
+	        console.log(_cm)
+	      };
+	    }
+	  };
+	  	 
+	 $scope.queryScripts = [
+	                        {
+	                         name: 'javascript',
+		 					 mode: 'text/javascript'
+	                        },
+	                        {
+	                         name: 'SQL',
+	                         mode: 'text/x-sql'
+	                        }
+	                       ];
+	
+	 $scope.codemirrorOptions = {
+			   mode : "text/x-sql",
+			   indentWithTabs: true,
+			   smartIndent: true,
+			   lineWrapping : true,
+			   matchBrackets : true,
+			   autofocus: true,
+			   theme:"eclipse",
+			   lineNumbers: true,
+			 };
+	 
+	 
+	 $scope.getScriptTypes = function() {
+			sbiModule_restServices.promiseGet("domains", "listValueDescriptionByType","DOMAIN_TYPE=SCRIPT_TYPE")
+			.then(function(response) {
+				$scope.listOfScriptTypes = response.data;
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, sbiModule_translate.load("sbi.generic.toastr.title.error"));
+				
+			});
+		}
+	 
+	 $scope.getScriptTypes();
+	 
+	 $scope.openEditScriptDialog = function () {
+		   $mdDialog
+		   .show({
+		    scope : $scope,
+		    preserveScope : true,
+		    parent : angular.element(document.body),
+		    controllerAs : 'openEditScriptDialogCtrl',
+		    templateUrl : sbiModule_config.contextName +'/js/src/angular_1.4/tools/catalogues/templates/EditDataSetScript.html',
+		    clickOutsideToClose : false,
+		    hasBackdrop : false
+		   });
+	 }
+	 
+	 $scope.saveScript = function () {
+		 console.log("save")
+	 }
+	
+	 $scope.closeScript = function () {
+		 $mdDialog.hide();
+	 }
+	 
+	 $scope.openQbe = function() {
 		$log.info("OPEN QBE");
 	}
 	
