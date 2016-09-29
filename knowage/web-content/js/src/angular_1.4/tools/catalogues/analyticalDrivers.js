@@ -3,8 +3,8 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.theme('knowage')
     $mdThemingProvider.setDefaultTheme('knowage');
  }]);
-app.controller("AnalyticalDriversController",["sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast","$timeout","sbiModule_messaging",AnalyticalDriversFunction]);
-function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,$timeout,sbiModule_messaging){
+app.controller("AnalyticalDriversController",["sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast","$timeout","sbiModule_messaging","sbiModule_config",AnalyticalDriversFunction]);
+function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,$timeout,sbiModule_messaging,sbiModule_config){
 	
 	//VARIABLES
 	
@@ -25,6 +25,18 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 	$scope.associatedChecks=[]; // temp array that hold selected object checks list
 	$scope.checksList = []; // array that hold checks list
 	$scope.useModeList= []; // array that hold use mode objects list
+	$scope.valueSelectionRadioGroup = [
+	 {label: sbiModule_translate.load("sbi.analytical.drivers.usemode.lovdate"), value: 'lov'},
+	 {label: sbiModule_translate.load("sbi.analytical.drivers.usemode.mapinput"), value: 'map_in'},
+	 {label: sbiModule_translate.load("sbi.analytical.drivers.usemode.manualinput"), value: 'man_in'}
+	                                   
+	                                   ]
+	
+	$scope.searchByName = {label:"Name" ,isSelected:true};
+	$scope.searchByRole = {label:"Role", isSelected:false};
+	               
+	
+	
 	//speed menus for the tables   
 	$scope.adSpeedMenu= [
 		                         {
@@ -71,7 +83,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 			          .ok(sbiModule_translate.load("sbi.general.continue"))
 			          .cancel(sbiModule_translate.load("sbi.general.cancel"));
 			    $mdDialog.show(confirm).then(function() {
-			    	if(item.type != null){
+			    	if(item.type != null ){
 			    		console.log("DELETING DRIVER");
 			    		$scope.deleteDrivers(item);
 			    	}else{
@@ -82,6 +94,125 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 			
 			    });
 			  };
+	
+	// search functionality
+			$scope.searchInput = "";
+			$scope.changeSearchMode = function(){
+				$scope.changeSearchMode = function(item){
+					item.isSelected = !item.isSelected
+					if(item.label == 'Name' && item.isSelected){
+						$scope.searchByRole.isSelected = false;
+					}else if (item.label == 'Role' && item.isSelected) {
+						$scope.searchByName.isSelected = false;
+					}
+				}
+				
+			}
+			var searchCleanAndReload = function() {
+				
+				  angular.copy($scope.useModeList,$scope.useModeListTemp);
+				  $scope.getUseModesById($scope.selectedDriver);
+				  $scope.searchInput = "";
+			};
+			
+			var filterThroughCollection = function(newSearchInput,inputCollection,mode) {
+				/**
+				 * Resulting collection to return.
+				 */
+				var filteredCollection = [];
+				
+				if (inputCollection!=null) {
+				
+					var item = null;
+					var roles = null;
+					
+					for (i=0; i<inputCollection.length; i++) {
+						
+						item = inputCollection[i];
+						roles = inputCollection[i].associatedRoles;
+						
+						/**
+						 * NOTE: If we want to search just according to the starting sequence of the name
+						 * of a document, change this expression to this criteria: ... == 0).
+						 */
+						if(mode == 'name'){
+							if (item['name'].toLowerCase().indexOf(newSearchInput.toLowerCase()) >= 0) {					
+								filteredCollection.push(item);					
+							}
+						}else{
+							
+							for (var j = 0; j < roles.length; j++) {
+								if (roles[j]['name'].toLowerCase().indexOf(newSearchInput.toLowerCase()) >= 0) {					
+									filteredCollection.push(item);					
+								}
+							}
+							
+						}
+						
+						
+					}
+					
+				}
+				
+				/**
+				 * Set the flag for displaying a circular loading animation to true, so it can be shown
+				 * when searching (filtering) is in progress.
+				 */
+				return filteredCollection;		
+			}
+			$scope.setSearchInput = function(newSearchInput) {		
+				
+				
+				/**
+				 * Collection through which we will search for diverse documents.
+				 */
+				
+						
+						if (newSearchInput=="") { 
+				
+							/**
+							 * If the search field is cleared (previously it had some content), unselect potentially selected document
+							 * and close the right-side navigation panel. Do this for all documents, datasets and models in the Workspace 
+							 * (for all available options from the left menu). 
+							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+							 */
+							
+						
+								searchCleanAndReload();
+								
+							
+						
+							
+						}else {
+							var mode = "";
+							if($scope.searchByName.isSelected){
+								mode = "name";
+							}else{
+								mode = "role";
+							}
+							
+							
+							/**
+							 * If the search is started, unselect potentially selected document and close the right-side navigation panel. Do this for all documents,
+							 * datasets and models in the Workspace (for all available options from the left menu). 
+							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+							 */
+							
+							$scope.useModeListTemp = filterThroughCollection(newSearchInput,$scope.useModeListTemp,mode);		
+							
+						}
+						
+						
+				
+				/**
+				 * Set the current search content to the new one. We are doing this on the end of the function, in order to have the
+				 * correct information about the previous search sequence when comparing to the new one (ar the beginning).
+				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */
+				$scope.searchInput = newSearchInput;		
+			}
+			
+			
 	//FUNCTIONS	
 		 
 	angular.element(document).ready(function () { // on page load function
@@ -347,6 +478,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 			}
 		}
 		var saveUseMode= function(){  // this function is called when clicking on save button
+			console.log("testiing")
 			$scope.formatUseMode();
 			if($scope.selectedParUse.hasOwnProperty("useID")){ // if item already exists do update @PUT	
 				sbiModule_restServices.promisePut("2.0/analyticalDrivers/modes",$scope.selectedParUse.useID , $scope.selectedParUse)
@@ -447,8 +579,35 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 			  }
 		 $scope.changeTab(item);
 		 $scope.setParUse();
+		
 	}
 	
+	$scope.openUseModeDetails = function(item){
+		console.log(item);
+		//$scope.disableSelectedRoles();
+		$scope.associatedRoles = item.associatedRoles;
+		$scope.associatedChecks = item.associatedChecks;
+		$scope.selectedParUse.defaultrg= null;
+		$scope.selectedParUse=angular.copy(item);
+		$scope.setParUse();
+		 $mdDialog
+			.show({
+				scope : $scope,
+				preserveScope : true,
+				parent : angular.element(document.body),
+				controllerAs : 'AnalyticalDriversController',
+				templateUrl : sbiModule_config.contextName +'/js/src/angular_1.4/tools/catalogues/templates/useModeDetails.html',
+				clickOutsideToClose : false,
+				hasBackdrop : true
+			});
+	}
+	
+	$scope.closeDialogFromAD = function() {
+		$scope.selectedParUse = {};
+		$mdDialog.cancel();
+		
+		
+	}
 	// this function properly checks radio buttons
 	$scope.setParUse = function () {		
 	if($scope.selectedParUse.defaultFormula == null){
@@ -509,9 +668,30 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 			}
 		return -1;
 	}
-	
-	$scope.disableSelectedRoles = function( item ) {
+	// TODO if needed
+	$scope.disableSelectedRoles = function() {
+		var roles = null;
+		for (var i = 0; i < $scope.rolesList.length; i++) {
+			for (var j = 0; j < $scope.useModeList.length; j++) {
+				roles = $scope.useModeList[j].associatedRoles;
+				for (var k = 0; k < roles.length; k++) {
+					if(roles[k].name == $scope.rolesList[i].name){
+						$scope.rolesList.splice(i,1);
+					}
+				}
+			}
+		}
+	}
+	//this function checks all roles
+	$scope.checkAllRoles = function() {
+		for (var i = 0; i < $scope.rolesList.length; i++) {
+			$scope.associatedRoles.push($scope.rolesList[i]);
+		}
 		
+	}
+	// this function unchecks all roles
+	$scope.uncheckAllRoles = function() {
+		$scope.associatedRoles = [];
 	}
 	
 	// this function is called when clicking on plus button in use mode table
@@ -538,12 +718,24 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 			   $scope.showadMode = true;
 			  }
 		 $scope.selectedTab = 1;
+		 $mdDialog
+			.show({
+				scope : $scope,
+				preserveScope : true,
+				parent : angular.element(document.body),
+				controllerAs : 'AnalyticalDriversController',
+				templateUrl : sbiModule_config.contextName +'/js/src/angular_1.4/tools/catalogues/templates/useModeDetails.html',
+				clickOutsideToClose : false,
+				hasBackdrop : true
+			});
+		 
 	}
 	// service that gets list of use modes for selected driver @GET
 	$scope.getUseModesById = function (item) { 
 		sbiModule_restServices.promiseGet("2.0/analyticalDrivers/"+item.id+"/modes", "")
 		.then(function(response) {
 			$scope.useModeList = response.data;
+			$scope.useModeListTemp = response.data;
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 			
