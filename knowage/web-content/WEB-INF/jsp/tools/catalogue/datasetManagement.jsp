@@ -383,13 +383,43 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						
 						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='Java Class'">
 							<md-card layout-padding>
-								JAVA CLASS
+								<md-input-container class="md-block" flex-gt-sm>
+						           <label>{{translate.load("sbi.ds.jclassName")}}</label>
+						           <input ng-model="">
+						         </md-input-container>
 							</md-card>
 						</md-content>
 						
+						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='Web Service'">
+							<md-card layout-padding>
+								<md-input-container class="md-block" flex-gt-sm>
+						           <label>{{translate.load("sbi.ds.wsAddress")}}</label>
+						           <input ng-model="">
+						         </md-input-container>
+						         <md-input-container class="md-block" flex-gt-sm>
+						           <label>{{sbi.ds.wsOperation")}}</label>
+						           <input ng-model="">
+						         </md-input-container>
+							</md-card>
+						</md-content>
+						
+						<!-- SCRIPT -->
 						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='Script'">
 							<md-card layout-padding>
-								SCRIPT
+							<md-input-container class="md-block" > 
+						       <label>{{translate.load("sbi.functionscatalog.language")}}</label>
+						       <md-select  aria-label="dropdown" placeholder ="{{translate.load('sbi.behavioural.lov.placeholder.script')}}"
+						       	name ="scriptLanguageDropdown" 
+						        ng-model="selectedDataSet.queryScriptLanguage"
+						        ng-change="modeChanged(selectedDataSet.queryScriptLanguage)"
+						        > <md-option 
+						        ng-repeat="l in listOfScriptTypes track by $index" value="{{l.VALUE_CD}}">{{l.VALUE_NM}} </md-option>
+						       </md-select>   
+					        </md-input-container>
+								<md-input-container class="md-block">
+							    	<label>{{translate.load("sbi.ds.query")}}</label>
+									<textarea  ui-codemirror="cmOption" ng-model="selectedDataSet.queryScript" md-select-on-focus></textarea>
+								</md-input-container>
 							</md-card>
 						</md-content>
 						
@@ -448,21 +478,75 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							</md-card>
 						</md-content>
 						
+						<!-- CUSTOM -->
 						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='Custom'">
 							<md-card layout-padding>
-								CUSTOM
+								<md-input-container class="md-block" flex-gt-sm>
+						           <label>{{translate.load("sbi.ds.jclassName")}}</label>
+						           <input ng-model="">
+						         </md-input-container>
 							</md-card>
 						</md-content>
 						
+						<!-- FLAT -->
 						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='Flat'">
 							<md-card layout-padding>
-								FLAT
+								<md-input-container class="md-block" flex-gt-sm>
+						           <label>{{translate.load("sbi.ds.persistTableName")}}</label>
+						           <input ng-model="selectedDataSet.persistTableName">
+						         </md-input-container>
+						          <md-input-container class="md-block" > 
+								       
+									       <label>{{translate.load("sbi.ds.dataSource")}}</label>
+									       
+									       <md-select 	placeholder ="{{translate.load('sbi.ds.dataSource')}}"
+									        			ng-model="selectedDataSet.qbeDataSource">   
+										        <md-option ng-repeat="l in dataSourceList" value="{{l.label}}">{{l.label}}</md-option>										        
+									       </md-select>  
+									       
+								        </md-input-container>
 							</md-card>
 						</md-content>
 						
+						<!-- CKAN -->
 						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='Ckan'">
 							<md-card layout-padding>
-								CKAN
+								<md-input-container class="md-block" flex-gt-sm>
+						           <label>{{translate.load("sbi.ds.ckanFileType")}}</label>
+						           <input ng-model="">
+						         </md-input-container>
+						         <md-input-container class="md-block" flex-gt-sm>
+						           <label>{{translate.load("sbi.ds.ckanCsvDelimiter")}}</label>
+						           <input ng-model="">
+						         </md-input-container>
+						         <md-input-container class="md-block" flex-gt-sm>
+						           <label>{{translate.load("sbi.ds.ckanCsvQuote")}}</label>
+						           <input ng-model="">
+						         </md-input-container>
+						         <md-input-container class="md-block" flex-gt-sm>
+						           <label>{{translate.load("sbi.ds.ckanCsvEncoding")}}</label>
+						           <input ng-model="">
+						         </md-input-container>
+						         <md-input-container class="md-block" flex-gt-sm>
+						           <label>{{translate.load("sbi.ds.ckanSkipRows")}}</label>
+						           <input ng-model="">
+						         </md-input-container>
+						         <md-input-container class="md-block" flex-gt-sm>
+						           <label>{{translate.load("sbi.ds.ckanLimitRows")}}</label>
+						           <input ng-model="">
+						         </md-input-container>
+						         <md-input-container class="md-block" flex-gt-sm>
+						           <label>{{translate.load("sbi.ds.ckanXslSheetNumber")}}</label>
+						           <input ng-model="">
+						         </md-input-container>
+						         <md-input-container class="md-block" flex-gt-sm>
+						           <label>{{translate.load("sbi.ds.ckanId")}}</label>
+						           <input ng-model="">
+						         </md-input-container>
+						         <md-input-container class="md-block" flex-gt-sm>
+						           <label>{{translate.load("sbi.ds.ckanUrl")}}</label>
+						           <input ng-model="">
+						         </md-input-container>
 							</md-card>
 						</md-content>
 						
