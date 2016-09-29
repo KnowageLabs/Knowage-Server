@@ -54,7 +54,6 @@ $scope.executeSourceDocument = function() {
 				    );
 			}
 		}
-		debugger;
 		var url = sbiModule_config.contextName 
 			+ '/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/documentexecution/documentExecutionNg.jsp'
 			+ '&OBJECT_ID=' + sourceDocumentExecProperties.OBJECT_ID
@@ -72,7 +71,6 @@ $scope.executeSourceDocument = function() {
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			+ '&EXEC_FROM=' + sourceDocumentExecProperties.EXEC_FROM; 
-		debugger;
 		if(sourceDocumentExecProperties.SELECTED_ROLE != undefined){
 			url = url+ '&SELECTED_ROLE='  + sourceDocumentExecProperties.SELECTED_ROLE
 
