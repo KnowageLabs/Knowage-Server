@@ -33,7 +33,7 @@ public class ToolbarButtonManager {
 		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_CC", false, false, false, ToolbarButtonCategory.TABLE_FUNCTIONS.toString()));
 		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_HIDE_SPANS", false, false, true, ToolbarButtonCategory.TABLE_FUNCTIONS.toString()));
 		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_SORTING_SETTINGS", false, false, false, ToolbarButtonCategory.TABLE_FUNCTIONS.toString()));
-		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_SORTING", false, false, true, ToolbarButtonCategory.TABLE_FUNCTIONS.toString()));
+		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_SORTING", false, false, false, ToolbarButtonCategory.TABLE_FUNCTIONS.toString()));
 		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_SHOW_PROPERTIES", false, false, true, ToolbarButtonCategory.TABLE_FUNCTIONS.toString()));
 		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_HIDE_EMPTY", false, false, true, ToolbarButtonCategory.TABLE_FUNCTIONS.toString()));
 		listOfToolbarButtons.add(new SbiToolbarButton("BUTTON_SAVE_NEW", false, false, false, ToolbarButtonCategory.WHAT_IF.toString()));
