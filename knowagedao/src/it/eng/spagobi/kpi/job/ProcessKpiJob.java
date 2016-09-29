@@ -809,6 +809,9 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 				if (replaceMode) {
 					session.createSQLQuery(deleteSql).executeUpdate();
 				}
+				
+				logger.debug("PERFORMING INSERT: " + insertSql);
+				
 				session.createSQLQuery(insertSql).setParameter(0, timeRun).executeUpdate();
 				session.getTransaction().commit();
 				// break; // TODO remove after debug
