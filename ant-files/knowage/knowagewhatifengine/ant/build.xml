@@ -323,5 +323,27 @@
 	<target name="makeDist">
 		<antcall target="create.war" />
 	</target>
+	
+	<target name="junit" depends="compile">
+		<junit haltonfailure ="false" printsummary="false">
+			<classpath location="${runtime.lib}/junit.jar" />
+			<classpath location = "../../../knowagewhatifengine/ant-build/knowagewhatifengine/WEB-INF/classes"/>
+			
+			<batchtest fork="no" todir="${test}">
+				
+				<formatter  type="xml" />
+				
+					<fileset dir="${test}">
+						
+						<include name="ProbaTest.java"  />
+						
+					</fileset>
+				
+			</batchtest> 
+
+		</junit>
+		
+
+	</target>
 
 </project>
