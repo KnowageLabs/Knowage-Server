@@ -111,13 +111,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									<div flex=100>
 										<md-input-container class="md-block">
 									    	<label>{{translate.load("sbi.ds.label")}}</label>
-											<input ng-model="selectedDataSet.label">
+											<input ng-model="selectedDataSet.label" ng-required="true">
+											<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.label">
+		       						 			<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+       						 				</div>
 										</md-input-container>
 									</div>
 									<div flex=100>
 										<md-input-container class="md-block">
 									    	<label>{{translate.load("sbi.ds.name")}}</label>
-											<input ng-model="selectedDataSet.name">
+											<input ng-model="selectedDataSet.name" ng-required="true">
+											<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.name">
+		       						 			<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+       						 				</div>
 										</md-input-container>
 									</div>
 									<div flex=100>
@@ -374,230 +380,307 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							
 						</md-content>
 							
-						<!-- QUERY -->
+						<!-- QUERY DATASET -->
 						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='Query'">
 							
 							<md-card layout-padding style="margin-top:0">
 							
 								<div flex=100>
+								
 							       <md-input-container class="md-block" > 
-							       <label>{{translate.load("sbi.ds.dataSource")}}</label>
-							       <md-select placeholder ="{{translate.load('sbi.ds.dataSource')}}"
-							        ng-required = "selectedDataSet.dsTypeCd=='Query'"
-							        ng-model="selectedDataSet.dataSource">   
-							        <md-option 
-							        ng-repeat="l in dataSourceList" value="{{l.label}}">{{l.label}}
-							        </md-option>
-							       </md-select>  
-							       	<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.dataSource">
-		       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
-	       						 	</div>
+							       
+								       	<label>{{translate.load("sbi.ds.dataSource")}}</label>
+								       	
+								       	<md-select placeholder ="{{translate.load('sbi.ds.dataSource')}}"
+								        	ng-required = "selectedDataSet.dsTypeCd=='Query'"
+								        	ng-model="selectedDataSet.dataSource">   
+									        <md-option 
+									        ng-repeat="l in dataSourceList" value="{{l.label}}">{{l.label}}
+									        </md-option>
+								       	</md-select> 
+								        
+								       	<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.dataSource">
+			       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+		       						 	</div>
+		       						 	
 							        </md-input-container>
+							        
 							   	</div>
 							   	
 							   	<md-input-container class="md-block">
-								    	<label>{{translate.load("sbi.ds.query")}}</label>
-									<textarea ng-model="selectedDataSet.query" ui-codemirror="{ onLoad : codemirrorLoaded }" ui-codemirror-opts="codemirrorOptions" rows="8" md-select-on-focus></textarea>
-									</md-input-container>
+							    	
+							    	<label>{{translate.load("sbi.ds.query")}}</label>
+									<textarea ng-required="true" ng-model="selectedDataSet.query" ui-codemirror="{ onLoad : codemirrorLoaded }" ui-codemirror-opts="codemirrorOptions" rows="8" md-select-on-focus></textarea>
+									
+									<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.query">
+       						 			<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+   						 			</div> 
+									
+								</md-input-container>
+								
 								<md-button ng-click="openEditScriptDialog()" class="md-raised md-button md-knowage-theme md-ink-ripple">{{translate.load("sbi.ds.editScript")}}</md-button>
 								
 							</md-card>
 							
 						</md-content>
 							
-						<!-- JAVA CLASS -->
+						<!-- JAVA CLASS DATASET -->
 						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='Java Class'">
 							<md-card layout-padding style="margin-top:0">
 								<md-input-container class="md-block" flex-gt-sm>
-						           <label>{{translate.load("sbi.ds.jclassName")}}</label>
-						           <input ng-model="">
+						           	<label>{{translate.load("sbi.ds.jclassName")}}</label>
+						           	<input ng-model="selectedDataSet.jclassName" ng-required="true">
+						           	<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.jclassName">
+		       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+       						 		</div>
 						         </md-input-container>
 							</md-card>
 						</md-content>
 						
-						<!-- WEB SERVICE -->
+						<!-- WEB SERVICE DATASET -->
 						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='Web Service'">
+							
 							<md-card layout-padding style="margin-top:0">
+								
 								<md-input-container class="md-block" flex-gt-sm>
-						           <label>{{translate.load("sbi.ds.wsAddress")}}</label>
-						           <input ng-model="">
+						           	
+						           	<label>{{translate.load("sbi.ds.wsAddress")}}</label>
+						           	<input ng-model="selectedDataSet.wsAddress" ng-required="true">
+						           	
+						           	<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.wsAddress">
+		       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+	       						 	</div>
+	       						 	
 						         </md-input-container>
+						         
 						         <md-input-container class="md-block" flex-gt-sm>
-						           <label>{{sbi.ds.wsOperation")}}</label>
-						           <input ng-model="">
+						           	
+						           	<label>{{sbi.ds.wsOperation")}}</label>
+						           	<input ng-model="selectedDataSet.wsOperation" ng-required="true">
+						           	
+						           	<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.wsOperation">
+		       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+	       						 	</div>
+	       						 	
 						         </md-input-container>
+						         
 							</md-card>
+							
 						</md-content>
 							
-							<!-- SCRIPT -->
-							<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='Script'">
-								<md-card layout-padding style="margin-top:0">
-							<md-input-container class="md-block" > 
-						       <label>{{translate.load("sbi.functionscatalog.language")}}</label>
-						       <md-select  aria-label="dropdown" placeholder ="{{translate.load('sbi.behavioural.lov.placeholder.script')}}"
-						       	name ="scriptLanguageDropdown" 
-						        ng-model="selectedDataSet.queryScriptLanguage"
-						        ng-change="modeChanged(selectedDataSet.queryScriptLanguage)"
-						        > <md-option 
-						        ng-repeat="l in listOfScriptTypes track by $index" value="{{l.VALUE_CD}}">{{l.VALUE_NM}} </md-option>
-						       </md-select>   
-					        </md-input-container>
+						<!-- SCRIPT DATASET -->
+						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='Script'">
+							
+							<md-card layout-padding style="margin-top:0">
+							
+								<md-input-container class="md-block" > 
+							       
+							      	 <label>{{translate.load("sbi.functionscatalog.language")}}</label>
+							      
+							       	<md-select  aria-label="dropdown" placeholder ="{{translate.load('sbi.behavioural.lov.placeholder.script')}}"
+								       	name ="scriptLanguageDropdown" 
+								        ng-model="selectedDataSet.scriptLanguage"
+								        ng-change="modeChanged(selectedDataSet.queryScriptLanguage)"
+							         	ng-required="true"> 
+							        	
+							        	<md-option ng-repeat="l in listOfScriptTypes track by $index" value="{{l.VALUE_CD}}">
+							       		 	{{l.VALUE_NM}} 
+						       		 	</md-option>
+						       		 	
+							       	</md-select> 
+							       
+							       	<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.scriptLanguage">
+		       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+    						 		</div>
+							         
+						        </md-input-container>
+						        
 								<md-input-container class="md-block">
+								
 							    	<label>{{translate.load("sbi.ds.query")}}</label>
-									<textarea  ui-codemirror="cmOption" ng-model="selectedDataSet.queryScript" md-select-on-focus></textarea>
+									<textarea  	ui-codemirror="cmOption" ng-model="selectedDataSet.script" 
+												md-select-on-focus ng-required="true"></textarea>
+									
+									<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.script">
+		       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+    						 		</div>
+									
 								</md-input-container>
+								
 							</md-card>
-							</md-content>
 							
-							<!-- ELEMENTS NEEDED FOR THE "QBE" DATASET TYPE -->
-							<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='Qbe'">
+						</md-content>
+							
+						<!-- QBE DATASET -->
+						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='Qbe'">
+							
+							<md-card layout-padding style="margin-top:0">
 								
-								<md-card layout-padding style="margin-top:0">
-									
-									<div flex=100>
-									
-								       <md-input-container class="md-block" > 
-								       
-									       <label>{{translate.load("sbi.ds.dataSource")}}</label>
-									       
-									       <md-select 	placeholder ="{{translate.load('sbi.ds.dataSource')}}"
-									        			ng-model="selectedDataSet.qbeDataSource">   
-										        <md-option ng-repeat="l in dataSourceList" value="{{l.label}}">{{l.label}}</md-option>										        
-									       </md-select>  
-									       
-								        </md-input-container>
-								        
-								  	 </div>
-								  	 
-								  	 <div flex=100>									
-								       <md-input-container class="md-block" > 
-								       								       
-									       <label>{{translate.load("sbi.tools.managedatasets.datamartcombo.label")}}</label>
-									       
-									       <md-select 	placeholder ="{{translate.load('sbi.tools.managedatasets.datamartcombo.label')}}"
-									        			ng-model="selectedDataSet.qbeDatamarts">   
-										        <md-option ng-repeat="l in datamartList" value="{{l.name}}">{{l.name}}</md-option>										        
-									       </md-select>  
-									       
-								        </md-input-container>
-								        
-								  	 </div>
-								  	 
-							  	  	<div flex=100 style="padding-left:0; padding-top:0;">
-																				
-										<md-button flex=20 class="md-raised" ng-click="viewQbe()">
-											{{translate.load("sbi.ds.qbe.query.view.button")}}
-										</md-button> 
-										
-										<!-- <div flex=30 style="float:right"> -->
-										<md-button flex=20 class="md-raised" ng-click="openQbe()">
-											{{translate.load("sbi.ds.qbe.query.open.button")}}
-										</md-button> 								
-										
-									</div>
-								  	 
-								</md-card>
+								<div flex=100>
 								
-							</md-content>
-							
-						<!-- CUSTOM -->
-							<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='Custom'">
-								<md-card layout-padding style="margin-top:0">
-								<md-input-container class="md-block" flex-gt-sm>
-						           <label>{{translate.load("sbi.ds.jclassName")}}</label>
-						           <input ng-model="">
-						         </md-input-container>
-								</md-card>
-							</md-content>
-							
-						<!-- FLAT -->
-							<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='Flat'">
-								<md-card layout-padding style="margin-top:0">
-								<md-input-container class="md-block" flex-gt-sm>
-						           <label>{{translate.load("sbi.ds.persistTableName")}}</label>
-						           <input ng-model="selectedDataSet.persistTableName">
-						         </md-input-container>
-						          <md-input-container class="md-block" > 
+							       <md-input-container class="md-block" > 
+							       
+								       	<label>{{translate.load("sbi.ds.dataSource")}}</label>
 								       
-									       <label>{{translate.load("sbi.ds.dataSource")}}</label>
-									       
-									       <md-select 	placeholder ="{{translate.load('sbi.ds.dataSource')}}"
-									        			ng-model="selectedDataSet.qbeDataSource">   
-										        <md-option ng-repeat="l in dataSourceList" value="{{l.label}}">{{l.label}}</md-option>										        
-									       </md-select>  
-									       
-								        </md-input-container>
-								</md-card>
-							</md-content>
+							      	 	<md-select 	placeholder ="{{translate.load('sbi.ds.dataSource')}}"
+								        			ng-model="selectedDataSet.qbeDataSource" ng-required="true">   
+									        <md-option ng-repeat="l in dataSourceList" value="{{l.label}}">{{l.label}}</md-option>										        
+								       	</md-select>  
+								       
+								       	<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.qbeDataSource">
+	       						 			<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+	   						 			</div> 
+								       
+							        </md-input-container>
+							        
+							  	 </div>
+							  	 
+							  	 <div flex=100>									
+							       <md-input-container class="md-block" > 
+							       								       
+								       	<label>{{translate.load("sbi.tools.managedatasets.datamartcombo.label")}}</label>
+								       
+								       	<md-select 	placeholder ="{{translate.load('sbi.tools.managedatasets.datamartcombo.label')}}"
+								        			ng-model="selectedDataSet.qbeDatamarts" ng-required="true">   
+									        <md-option ng-repeat="l in datamartList" value="{{l.name}}">{{l.name}}</md-option>										        
+								       	</md-select>  
+								       
+							      	 	<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.qbeDatamarts">
+	       						 			<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+   						 				</div> 
+								       
+							        </md-input-container>
+							        
+							  	 </div>
+							  	 
+						  	  	<div flex=100 style="padding-left:0; padding-top:0;">
+																			
+									<md-button flex=20 class="md-raised" ng-click="viewQbe()">
+										{{translate.load("sbi.ds.qbe.query.view.button")}}
+									</md-button> 
+									
+									<!-- <div flex=30 style="float:right"> -->
+									<md-button flex=20 class="md-raised" ng-click="openQbe()">
+										{{translate.load("sbi.ds.qbe.query.open.button")}}
+									</md-button> 								
+									
+								</div>
+							  	 
+							</md-card>
 							
-						<!-- CKAN -->
-							<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='Ckan'">
-								<md-card layout-padding style="margin-top:0">
+						</md-content>
+							
+						<!-- CUSTOM DATASET -->
+						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='Custom'">
+							
+							<md-card layout-padding style="margin-top:0">
+								
 								<md-input-container class="md-block" flex-gt-sm>
-						           <label>{{translate.load("sbi.ds.ckanFileType")}}</label>
-						           <input ng-model="a" ng-required = "true">
-						           <div  ng-messages="datasetForm.lbl.$error" ng-show="!a">
-		       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
-	       						 	</div>
+						           	
+						           	<label>{{translate.load("sbi.ds.jclassName")}}</label>
+						           	<input ng-model="selectedDataSet.jclassName" ng-required="true">
+						           
+						           	<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.jclassName">
+	       						 		<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+	    						 	</div>
+	    						 	
 						         </md-input-container>
-						         <md-input-container class="md-block" flex-gt-sm>
-						           <label>{{translate.load("sbi.ds.ckanCsvDelimiter")}}</label>
-						           <input ng-model="b" ng-required = "true">
-						           <div  ng-messages="datasetForm.lbl.$error" ng-show="!b">
-		       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
-	       						 	</div>
-						         </md-input-container>
-						         <md-input-container class="md-block" flex-gt-sm>
-						           <label>{{translate.load("sbi.ds.ckanCsvQuote")}}</label>
-						           <input ng-model="c" ng-required = "true">
-						           <div  ng-messages="datasetForm.lbl.$error" ng-show="!c">
-		       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
-	       						 	</div>
-						         </md-input-container>
-						         <md-input-container class="md-block" flex-gt-sm>
-						           <label>{{translate.load("sbi.ds.ckanCsvEncoding")}}</label>
-						           <input ng-model="d">
-						           <div  ng-messages="datasetForm.lbl.$error" ng-show="!d">
-		       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
-	       						 	</div>
-						         </md-input-container>
-						         <md-input-container class="md-block" flex-gt-sm>
-						           <label>{{translate.load("sbi.ds.ckanSkipRows")}}</label>
-						           <input ng-model="e">
-						           <div  ng-messages="datasetForm.lbl.$error" ng-show="!e">
-		       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
-	       						 	</div>
-						         </md-input-container>
-						         <md-input-container class="md-block" flex-gt-sm>
-						           <label>{{translate.load("sbi.ds.ckanLimitRows")}}</label>
-						           <input ng-model="f">
-						           <div  ng-messages="datasetForm.lbl.$error" ng-show="!f">
-		       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
-	       						 	</div>
-						         </md-input-container>
-						         <md-input-container class="md-block" flex-gt-sm>
-						           <label>{{translate.load("sbi.ds.ckanXslSheetNumber")}}</label>
-						           <input ng-model="g">
-						           <div  ng-messages="datasetForm.lbl.$error" ng-show="!g">
-		       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
-	       						 	</div>
-						         </md-input-container>
-						         <md-input-container class="md-block" flex-gt-sm>
-						           <label>{{translate.load("sbi.ds.ckanId")}}</label>
-						           <input ng-model="h" ng-required = "true">
-						           <div  ng-messages="datasetForm.lbl.$error" ng-show="!h">
-		       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
-	       						 	</div>
-						         </md-input-container>
-						         <md-input-container class="md-block" flex-gt-sm>
-						           <label>{{translate.load("sbi.ds.ckanUrl")}}</label>
-						           <input ng-model="j" ng-required = "true">
-						           <div  ng-messages="datasetForm.lbl.$error" ng-show="!j">
-		       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
-	       						 	</div>
-						         </md-input-container>
-								</md-card>
-							</md-content>
+						         
+							</md-card>
+							
+						</md-content>
+							
+						<!-- FLAT DATASET -->
+						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='Flat'">
+							
+							<md-card layout-padding style="margin-top:0">
+							
+								<md-input-container class="md-block" flex-gt-sm>
+								
+						           	<label>{{translate.load("sbi.ds.persistTableName")}}</label>
+						           	<input ng-model="selectedDataSet.flatTableName" ng-required="true">
+						           	
+						           	<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.flatTableName">
+	       						 		<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+	    						 	</div>
+	    						 	
+					         	</md-input-container>
+					         	
+					          	<md-input-container class="md-block" > 
+							       
+								       	<label>{{translate.load("sbi.ds.dataSource")}}</label>
+								       
+								       	<md-select 	placeholder ="{{translate.load('sbi.ds.dataSource')}}"
+								        			ng-model="selectedDataSet.dataSourceFlat" ng-required="true">   
+									        <md-option ng-repeat="l in dataSourceList" value="{{l.label}}">{{l.label}}</md-option>										        
+								       	</md-select>  
+								       
+									  	<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.dataSourceFlat">
+	       						 			<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+    						 			</div>    
+								       
+						        </md-input-container>
+						        
+							</md-card>
+							
+						</md-content>
+							
+						<!-- CKAN DATASET -->
+						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='Ckan'">
+							<md-card layout-padding style="margin-top:0">
+							<md-input-container class="md-block" flex-gt-sm>
+					           <label>{{translate.load("sbi.ds.ckanFileType")}}</label>
+					           <input ng-model="a" ng-required = "true">
+					           <div  ng-messages="datasetForm.lbl.$error" ng-show="!a">
+	       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+       						 	</div>
+					         </md-input-container>
+					         <md-input-container class="md-block" flex-gt-sm>
+					           <label>{{translate.load("sbi.ds.ckanCsvDelimiter")}}</label>
+					           <input ng-model="b" ng-required = "true">
+					           <div  ng-messages="datasetForm.lbl.$error" ng-show="!b">
+	       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+       						 	</div>
+					         </md-input-container>
+					         <md-input-container class="md-block" flex-gt-sm>
+					           <label>{{translate.load("sbi.ds.ckanCsvQuote")}}</label>
+					           <input ng-model="c" ng-required = "true">
+					           <div  ng-messages="datasetForm.lbl.$error" ng-show="!c">
+	       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+       						 	</div>
+					         </md-input-container>
+					         <md-input-container class="md-block" flex-gt-sm>
+					           <label>{{translate.load("sbi.ds.ckanCsvEncoding")}}</label>
+					           <input ng-model="d">
+					         </md-input-container>
+					         <md-input-container class="md-block" flex-gt-sm>
+					           <label>{{translate.load("sbi.ds.ckanSkipRows")}}</label>
+					           <input ng-model="e">
+					         </md-input-container>
+					         <md-input-container class="md-block" flex-gt-sm>
+					           <label>{{translate.load("sbi.ds.ckanLimitRows")}}</label>
+					           <input ng-model="f">
+					         </md-input-container>
+					         <md-input-container class="md-block" flex-gt-sm>
+					           <label>{{translate.load("sbi.ds.ckanXslSheetNumber")}}</label>
+					           <input ng-model="g">
+					         </md-input-container>
+					         <md-input-container class="md-block" flex-gt-sm>
+					           <label>{{translate.load("sbi.ds.ckanId")}}</label>
+					           <input ng-model="h" ng-required = "true">
+					           <div  ng-messages="datasetForm.lbl.$error" ng-show="!h">
+	       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+       						 	</div>
+					         </md-input-container>
+					         <md-input-container class="md-block" flex-gt-sm>
+					           <label>{{translate.load("sbi.ds.ckanUrl")}}</label>
+					           <input ng-model="j" ng-required = "true">
+					           <div  ng-messages="datasetForm.lbl.$error" ng-show="!j">
+	       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+       						 	</div>
+					         </md-input-container>
+							</md-card>
+						</md-content>
 							
 							<!-- ELEMENTS NEEDED FOR THE "FEDERATED" DATASET TYPE -->
 							<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='Federated'">
@@ -620,7 +703,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								
 							</md-content>
 							
-							<!-- ELEMENTS NEEDED FOR THE "REST" DATASET TYPE -->
+							<!-- REST DATASET TYPE -->
 							<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='REST'">
 								
 								<md-card layout-padding style="margin-top:0">
@@ -642,7 +725,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										</md-input-container>
 									</div>
 									
-									<div flex=100 >
+									<div flex=100>
 								       
 								       <md-input-container class="md-block" > 
 									       
@@ -930,8 +1013,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 														show-search-bar=false
 														scope-functions="paramScopeFunctions"
 														no-pagination=false
-														speed-menu-option="parameterDelete"
-															>
+														speed-menu-option="parameterDelete"	>
 												</angular-table>
 										   
 										</div>
