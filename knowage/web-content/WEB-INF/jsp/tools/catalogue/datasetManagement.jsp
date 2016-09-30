@@ -614,6 +614,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								   </div>
 								   																	
 								</md-card>
+							
+							</md-content>
+								
+							<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='REST'" style="padding:0 8 0 8">
 								
 								<!-- TOOLBAR FOR THE CARD THAT HOLDS ADD REQUEST HEADER BUTTON. (danristo) -->
 						     	<md-toolbar class="secondaryToolbar" layout-padding>
@@ -621,22 +625,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						          	<div class="md-toolbar-tools">
 							            
 							            <h2>
-							              <span>{{translate.load('sbi.ds.versionPanel')}}</span>
+							              <span>Request Headers</span>
 							            </h2>
 							            
 						         		<span flex></span>
 							         											            
-							            <md-button class="md-icon-button" aria-label="Add request header" ng-click="requestHeaderAddItem()" title="ADD">
-							              	<md-icon md-font-icon="fa fa-plus" class="fa fa-1x"></md-icon>
+							            <md-button class="md-icon-button" aria-label="Add request header" ng-click="requestHeaderAddItem()" title="{{translate.load('sbi.generic.add')}}">
+							              	<md-icon md-font-icon="fa fa-plus-circle" class="fa fa-2x"></md-icon>
 							            </md-button>
 							         
 						          	</div>
 						          	
 						        </md-toolbar>						         
 							    
-								<md-card layout-padding style="margin:0px">
+								<md-card layout-padding style="margin:0 0 8 0; padding:0px">
 																   
-								   <div style="background-color: #ECEFF1">
+								   <div>
 								   
 								   		<angular-table
 												id="requestHeadersTable"
@@ -644,19 +648,209 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 												columns="requestHeadersTableColumns"
 												show-search-bar=false
 												scope-functions="metaScopeFunctions"
-												no-pagination=false	>
+												no-pagination=false
+												speed-menu-option="requestHeadersDelete" >
 										</angular-table>
 								   
 								   </div>
 									
-								</md-card>	
+								</md-card>
+								
+							</md-content>	
+							
+								
+							<!-- ELEMENTS NEEDED FOR THE "REST" DATASET TYPE -->
+							<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='REST'" style="padding: 0 8 0 8">
+								
+								<md-card layout-padding style="margin:0 0 8 0">
+								
+									<div flex=100 style="display:flex;">											
+																				
+										<md-input-container class="md-block" style="float:left; width:75%">
+									    	<label>JSON Path Items</label>
+											<input ng-model="selectedDataSet.label">
+										</md-input-container>
+										 
+										<div style="width:25%">
+											<md-button 	style="margin:16px 0 16px 0; float:right;" class="md-icon-button" 
+														aria-label="Add request header" ng-click="showInfoForRestParams('jsonPathItems')" 
+														title="{{translate.load('sbi.ds.help')}}">
+								              	<md-icon md-font-icon="fa fa-info-circle" class="fa fa-2x"></md-icon>
+								            </md-button>
+							            </div>
+										
+									</div>
+									
+									<div flex=100 style="display:flex;">
+										<div flex=50 layout="row" layout-align="start center">
+							           	
+					                  		<label>
+					                  			Use directly JSON Attributes:
+				                  			</label> 
+					                  		
+					                  		
+					                  		<md-input-container class="small counter" style="padding-left:8px;">
+					                     		<md-checkbox 	aria-label="Checkbox 2" 
+						                     					ng-model="_ss_3" ng-checked="" >
+												</md-checkbox>
+					                  		</md-input-container>
+					                  		
+										</div>
+										
+										<div style="width:50%">
+											<md-button 	style="margin:16px 0 16px 0; float:right;" class="md-icon-button" 
+														aria-label="Add request header" ng-click="showInfoForRestParams('directJsonAttributes')" 
+														title="{{translate.load('sbi.ds.help')}}">
+								              	<md-icon md-font-icon="fa fa-info-circle" class="fa fa-2x"></md-icon>
+								            </md-button>
+							            </div>
+							            
+						            </div>
+						            
+						            <div flex=100 style="display:flex;">
+						            
+										<div flex=50 layout="row" layout-align="start center">
+							           	
+					                  		<label>
+					                  			NGSI:
+				                  			</label> 
+					                  		
+					                  		
+					                  		<md-input-container class="small counter" style="padding-left:8px;">
+					                     		<md-checkbox 	aria-label="Checkbox 2" 
+						                     					ng-model="_ssw_" ng-checked="" >
+												</md-checkbox>
+					                  		</md-input-container>
+					                  		
+										</div>
+										
+										<div style="width:50%">
+											<md-button 	style="margin:16px 0 16px 0; float:right;" class="md-icon-button" 
+														aria-label="Add request header" ng-click="showInfoForRestParams('ngsi')" 
+														title="{{translate.load('sbi.ds.help')}}">
+								              	<md-icon md-font-icon="fa fa-info-circle" class="fa fa-2x"></md-icon>
+								            </md-button>
+							            </div>
+							            
+						            </div>
+						            
+						            <div flex=100 style="display:flex;" ng-show="false">
+										<div flex=50 layout="row" layout-align="start center">
+							           	
+					                  		<label>
+					                  			JSON Path Attributes:
+				                  			</label> 
+					                  		
+					                  		
+					                  		<md-input-container class="small counter" style="padding-left:8px;">
+					                     		<md-checkbox 	aria-label="Checkbox 2" 
+						                     					ng-model="_ss_" ng-checked="" >
+												</md-checkbox>
+					                  		</md-input-container>
+					                  		
+										</div>
+										
+										<div style="width:50%">
+											<md-button 	style="margin:16px 0 16px 0; float:right;" class="md-icon-button" 
+														aria-label="Add request header" ng-click="showInfoForRestParams('jsonPathAttributes')" 
+														title="{{translate.load('sbi.ds.help')}}">
+								              	<md-icon md-font-icon="fa fa-info-circle" class="fa fa-2x"></md-icon>
+								            </md-button>
+							            </div>
+							            
+						            </div>
+									
+								</md-card>
+								
+							</md-content>
+							
+							<!-- JSON path attributes grid  -->
+							
+							<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='REST'" style="padding:0 8 0 8">
+								
+								<!-- TOOLBAR FOR THE CARD THAT HOLDS ADD REQUEST HEADER BUTTON. (danristo) -->
+						     	<md-toolbar class="secondaryToolbar" layout-padding>
+						     	
+						          	<div class="md-toolbar-tools">
+							            
+							            <h2>
+							              <span>JSON path attributes</span>
+							            </h2>
+							            
+						         		<span flex></span>
+							         											            
+							            <md-button class="md-icon-button" aria-label="Add JSON path attributes" ng-click="restJsonPathAttributesAddItem()" title="{{translate.load('sbi.generic.add')}}">
+							              	<md-icon md-font-icon="fa fa-plus-circle" class="fa fa-2x"></md-icon>
+							            </md-button>
+							         
+							         	 <md-button class="md-icon-button" aria-label="Help" ng-click="showInfoForRestParams('jsonPathAttributes')" title="{{translate.load('sbi.ds.help')}}">
+							              	<md-icon md-font-icon="fa fa-info-circle" class="fa fa-2x"></md-icon>
+							            </md-button>
+							            
+						          	</div>
+						          	
+						        </md-toolbar>						         
+							    
+								<md-card layout-padding style="margin:0 0 8 0; padding:0px">
+																   
+								   <div>
+								   
+								   		<angular-table
+												id="jsonPathAttrTable"
+												ng-model=restJsonPathAttributes
+												columns="restJsonPathAttributesTableColumns"
+												show-search-bar=false
+												scope-functions="metaScopeFunctionsJsonPathAttr"
+												no-pagination=false
+												speed-menu-option="restJsonPathAttributesDelete" >
+										</angular-table>
+								   
+								   </div>
+									
+								</md-card>
+								
+							</md-content>	
+							
+							<!-- ELEMENTS NEEDED FOR THE "REST" DATASET TYPE -->
+							<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='REST'" style="padding: 0 8 0 8">
+								
+								<md-card layout-padding style="margin:0 0 8 0">
+								
+									<div flex=100>											
+																				
+										<md-input-container class="md-block">
+									    	<label>Offset Param</label>
+											<input ng-model="_oo_1">
+										</md-input-container>
+										
+									</div>
+									
+									<div flex=100>											
+																				
+										<md-input-container class="md-block">
+									    	<label>Fetch size Param</label>
+											<input ng-model="_oo_2">
+										</md-input-container>
+										
+									</div>
+									
+									<div flex=100>											
+																				
+										<md-input-container class="md-block">
+									    	<label>Max Results Param</label>
+											<input ng-model="_oo_3">
+										</md-input-container>
+										
+									</div>
+								
+								</md-card>
 								
 							</md-content>
 							
 							<!-- ELEMENTS FOR SETTING THE DATASET PARAMETERS -->					
-							<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-show="selectedDataSet.dsTypeCd.toLowerCase()!='file'">
+							<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-show="selectedDataSet.dsTypeCd && selectedDataSet.dsTypeCd.toLowerCase()!='file'" style="padding: 0 8 0 8">
 								
-								<md-card layout-padding>
+								<md-card layout-padding style="margin: 0 0 8 0">
 									
 									<div>
 									

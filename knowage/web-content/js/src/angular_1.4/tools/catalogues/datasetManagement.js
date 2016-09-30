@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var datasetModule = angular.module('datasetModule', ['ngMaterial','angular-list-detail', 'sbiModule', 'angular_table', 'file_upload', 'ui.codemirror']);
+var datasetModule = angular.module('datasetModule', ['ngMaterial', 'angular-list-detail', 'sbiModule', 'angular_table', 'file_upload', 'ui.codemirror']);
 
 datasetModule.config(['$mdThemingProvider', function($mdThemingProvider) {
 	$mdThemingProvider.theme('knowage')
@@ -24,7 +24,7 @@ datasetModule.config(['$mdThemingProvider', function($mdThemingProvider) {
 }]);
 
 datasetModule
-	.controller('datasetController', ["$scope","$log", "sbiModule_config", "sbiModule_translate", "sbiModule_restServices", "sbiModule_messaging", "$mdDialog", "multipartForm", "$timeout", datasetFunction])
+	.controller('datasetController', ["$scope", "$log", "$http", "sbiModule_config", "sbiModule_translate", "sbiModule_restServices", "sbiModule_messaging", "$mdDialog", "multipartForm", "$timeout", datasetFunction])
 	.service('multipartForm',['$http',function($http){
 			
 			this.post = function(uploadUrl,data){
@@ -40,7 +40,7 @@ datasetModule
 			}
 			
 		}]);
-function datasetFunction($scope, $log, sbiModule_config, sbiModule_translate, sbiModule_restServices, sbiModule_messaging, $mdDialog, multipartForm, $timeout){
+function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_translate, sbiModule_restServices, sbiModule_messaging, $mdDialog, multipartForm, $timeout){
 	
 	$scope.translate = sbiModule_translate;
 	$scope.codeMirror = null;
@@ -114,6 +114,7 @@ function datasetFunction($scope, $log, sbiModule_config, sbiModule_translate, sb
 	
 	/**
 	 * Scope variables (properties) for the REST dataset.
+	 * REQUEST HEADERS
 	 * (danristo)
 	 */
 	
@@ -160,11 +161,113 @@ function datasetFunction($scope, $log, sbiModule_config, sbiModule_translate, sb
 		requestHeaderNameValues: $scope.requestHeaderNameValues
 	};
 	
-	$scope.restRequestHeaders = [{"name":$scope.requestHeaderNameItem,"value":$scope.requestHeaderValueItem}];
+	// Initial list for REST request headers for a new REST dataset
+	$scope.restRequestHeaders = [];
 	
 	$scope.requestHeaderAddItem = function() {
-		$scope.restRequestHeaders.push({"name":$scope.requestHeaderNameItem,"value":$scope.requestHeaderValueItem});
+		$scope.restRequestHeaders.push({"name":$scope.requestHeaderNameItem,"value":$scope.requestHeaderValueItem,"index":$scope.counterRequestHeaders++});
 	}	
+	
+	// Provide unique IDs for elements in the Request header grid, so we can remove them easily
+	$scope.counterRequestHeaders = 0;
+	
+	$scope.requestHeadersDelete = 
+	[
+	 	//Delete the dataset.
+		{
+			label: $scope.translate.load("sbi.ds.deletedataset"),
+		 	icon:'fa fa-trash' ,
+		 	backgroundColor:'transparent',
+		
+		 	action: function(item) {
+		 		
+		 		for (i=$scope.restRequestHeaders.length-1; i>=0; i--) {
+		 			
+		 			if ($scope.restRequestHeaders[i].index == item.index) {
+		 				$scope.restRequestHeaders.splice(i,1);
+		 				break;
+		 			}
+		 		}
+		 		
+		 		
+	 		}
+					
+	 	}
+	 ];
+	
+	/**
+	 * Scope variables (properties) for the REST dataset.
+	 * JSON PATH ATTRIBUTES
+	 * (danristo)
+	 */
+	$scope.restJsonPathAttributesList = [ 
+ 	 	{value:"string",name:"string"},
+ 	 	{value:"int",name:"int"},
+ 	 	{value:"double",name:"double"},
+ 	 	{value:"date yyyy-MM-dd",name:"date yyyy-MM-dd"},
+ 	 	{value:"timestamp yyyy-MM-dd HH:mm:ss",name:"timestamp yyyy-MM-dd HH:mm:ss"},
+ 	 	{value:"time HH:mm:ss",name:"time HH:mm:ss"},
+ 	 	{value:"boolean",name:"boolean"}
+  	];
+	
+	$scope.restJsonPathAttributesTableColumns = [
+	     {
+	    	 name:"name", 
+	    	 label:"Name",
+	    	 hideTooltip:true
+	     },
+	     
+	     {
+	         name:"jsonPathValue",
+	         label:"JSON path value",
+	         hideTooltip:true
+	     },
+	     
+	     {
+	         name:"typeOrJsonPathValue",
+	         label:"Type or JSON path type",
+	         hideTooltip:true
+	     }
+     ];
+	
+	$scope.restJsonPathAttributes = [];
+	$scope.counterJsonAttributes = 0;
+	
+	$scope.restJsonPathAttributesAddItem = function() {
+		$scope.restJsonPathAttributes.push({"name":$scope.restJsonPathAttributesNameItem,"jsonPathValue":$scope.restJsonPathAttrJsonPathValueItem,"typeOrJsonPathValue": $scope.restJsonPathAttrTypeJsonPathTypeItem, "index":$scope.counterJsonAttributes++});
+	}
+	
+	$scope.restJsonPathAttributesNameItem = '<md-input-container class="md-block" style="margin:0"><input ng-model="_xxx2_"></md-input-container>';
+	$scope.restJsonPathAttrJsonPathValueItem = '<md-input-container class="md-block" style="margin:0"><input ng-model="_xxx1_"></md-input-container>';
+	$scope.restJsonPathAttrTypeJsonPathTypeItem = '<md-select ng-model=row.name_1 class="noMargin"><md-option ng-repeat="col in scopeFunctions.restJsonPathAttributesList" value="{{col.name}}">{{col.name}}</md-option></md-select>';
+	
+	$scope.metaScopeFunctionsJsonPathAttr = {
+			restJsonPathAttributesList: $scope.restJsonPathAttributesList
+	};
+	
+	$scope.restJsonPathAttributesDelete = 
+	[
+	 	//Delete the dataset.
+		{
+			label: $scope.translate.load("sbi.ds.deletedataset"),
+		 	icon:'fa fa-trash' ,
+		 	backgroundColor:'transparent',
+		
+		 	action: function(item) {
+		 		console.log(item);
+		 		for (i=$scope.restJsonPathAttributes.length-1; i>=0; i--) {
+		 			
+		 			if ($scope.restJsonPathAttributes[i].index == item.index) {
+		 				$scope.restJsonPathAttributes.splice(i,1);
+		 				break;
+		 			}
+		 		}
+		 		
+		 		
+	 		}
+					
+	 	}
+	 ];
 	
 	/*
 	 * 	service that loads all datasets
@@ -285,7 +388,7 @@ function datasetFunction($scope, $log, sbiModule_config, sbiModule_translate, sb
 		 			}
 		 		}
 	 			
-		 	} ,
+		 	},
 		 	
 		 	// Clone the dataset.
 		 	{
@@ -910,8 +1013,10 @@ function datasetFunction($scope, $log, sbiModule_config, sbiModule_translate, sb
 	}
 	
 	$scope.viewQbe = function() {
-		$log.info("VIEW QBE QUERY");
+//		$log.info("VIEW QBE QUERY");
+		
 		$scope.selectedDataSet.qbeJSONQuery = JSON.stringify(JSON.parse($scope.selectedDataSet.qbeJSONQuery),null,2);
+		
 		$mdDialog
 		   .show({
 			    scope : $scope,
@@ -936,5 +1041,55 @@ function datasetFunction($scope, $log, sbiModule_config, sbiModule_translate, sb
 	    showCursorWhenSelecting: false,
 	    readOnly: true
 	};
+	
+	$scope.templateContent = "";
+	
+	$scope.showInfoForRestParams = function(item) {
+				
+		switch(item) {
+			case "ngsi":
+				takeTheInfoHtmlContent(sbiModule_config.contextName + "/themes/sbi_default/html/restdataset-ngsi.html");
+				break;
+			case "jsonPathItems":
+				takeTheInfoHtmlContent(sbiModule_config.contextName + "/themes/sbi_default/html/restdataset-jsonpath-items.html");
+				break;
+			case "directJsonAttributes":
+				takeTheInfoHtmlContent(sbiModule_config.contextName + "/themes/sbi_default/html/restdataset-attributes-directly.html");
+				break;
+			case "jsonPathAttributes":
+				takeTheInfoHtmlContent(sbiModule_config.contextName + "/themes/sbi_default/html/restdataset-json-path-attributes.html");
+				break;		
+		}		
+		
+	}
+	
+	var takeTheInfoHtmlContent = function(url) {	
+		
+		$http.get(url)
+			.then
+			(
+					function(response) {
+						
+						$scope.templateContent = response.data;
+						
+						$mdDialog
+						   .show({
+							    scope : $scope,
+							    preserveScope : true,
+							    parent : angular.element(document.body),
+							    controllerAs : 'datasetController',
+							    templateUrl : sbiModule_config.contextName +'/js/src/angular_1.4/tools/catalogues/templates/datasetRestParamsInfo.html',
+							    clickOutsideToClose : false,
+							    hasBackdrop : true
+						   });
+						
+					},
+					
+					function() {
+						alert("ERROR");
+						return null;
+					}
+			);
+	}
 	
 };

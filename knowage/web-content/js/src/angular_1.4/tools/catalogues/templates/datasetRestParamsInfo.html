@@ -1,0 +1,24 @@
+<md-dialog style='width:50%;'>
+      
+   <md-toolbar class="miniheadfederation">
+		<div class="md-toolbar-tools">
+			<h2 class="md-flex">{{translate.load("sbi.ds.help")}}</h2>
+			<span flex=""></span>
+		</div>	
+	</md-toolbar>
+   
+   	<md-dialog-content>   	  
+   		<md-content flex class="ToolbarBox miniToolbar noBorder mozTable">
+			<md-card layout-padding> 
+	 			<div ng-bind-html="templateContent"></div> 		
+ 			</md-card>
+		</md-content>
+   	</md-dialog-content>
+
+ 	<md-dialog-actions layout="row">
+      	<md-button ng-click="closeScript()" class="md-raised">
+       		{{translate.load('sbi.general.close')}}
+     	 </md-button>
+    </md-dialog-actions>
+    
+</md-dialog>
