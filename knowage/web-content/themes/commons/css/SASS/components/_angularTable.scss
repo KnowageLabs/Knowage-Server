@@ -225,7 +225,9 @@ angular-table{
 	}
 	/* pagination */
 	
-	
+	.pagination > li.hiddenPaginationButton{
+		border:none!important;
+	}
 	.pagination > li, .pagination > li > span {
 	        position: relative;
 	        float: left;

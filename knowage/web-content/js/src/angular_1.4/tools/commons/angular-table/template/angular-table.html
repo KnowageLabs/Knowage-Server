@@ -37,30 +37,34 @@
 <angular-table-footer>
 <div  class="box_pagination_list" layout="row" layout-align="end end">
 <!-- 	<dir-pagination-controls max-size="5"  pagination-id='id+"PaginationTable"' on-page-change="pageChangedFunction({searchValue:prevSearch,itemsPerPage:itemsPerPage,currentPageNumber:newPageNumber,columnsSearch:columnsSearch,columnOrdering:column_ordering,reverseOrdering:reverse_col_ord})"></dir-pagination-controls> -->
-	<dir-pagination-controls template-url="paginationTemplate.html" max-size="5"  pagination-id='id+"PaginationTable"' on-page-change="pageChangedFunction({searchValue:prevSearch,itemsPerPage:itemsPerPage,currentPageNumber:newPageNumber,columnsSearch:columnsSearch,columnOrdering:column_ordering,reverseOrdering:reverse_col_ord})"></dir-pagination-controls>
+	<dir-pagination-controls template-url="paginationTemplate.html" max-size="5"  pagination-id='id+"PaginationTable"' on-page-change="pageChangedHandler(prevSearch,itemsPerPage,newPageNumber,columnsSearch,column_ordering,reverse_col_ord,changeFromInput,paginationItem,directivePageChangeFunction)"></dir-pagination-controls>
 </div>
 </angular-table-footer>
 
 <script type="text/ng-template" id="paginationTemplate.html">
-
-<ul class="pagination" ng-if="1 < pages.length">
-    <li ng-if="pagination.last>10" ng-class="{ disabled : (pagination.current == 1 || pagination.current-10<1) }">
-        <a href="" ng-click="setCurrent(pagination.current - 10)"> -10 </a>
+<ul class="pagination"   ng-if="1 == pages.length"><li class="hiddenPaginationButton"></li></ul>
+<ul class="pagination"   ng-if="1 < pages.length" ng-init="tmpVar={tmpCurrPage:1}">
+    <li ng-if="pagination.last>10" ng-class="{ disabled : (pagination.current == 1 || pagination.current-10<1) }" >
+        <a ng-if="!(pagination.current == 1 || pagination.current-10<1)" ng-click="setCurrent(pagination.current - 10);tmpVar.tmpCurrPage=pagination.current - 10"> -10 </a>
+        <a ng-if="(pagination.current == 1 || pagination.current-10<1)"> -10 </a>
     </li>
-    <li ng-if="directionLinks" ng-class="{ disabled : pagination.current == 1 }" class="ng-scope">
-        <a href="" ng-click="setCurrent(pagination.current - 1)" class="ng-binding"> < </a>
+    <li ng-if="directionLinks" ng-class="{ disabled : pagination.current == 1 }" >
+        <a href="" ng-if="pagination.current!=1" ng-click="setCurrent(pagination.current - 1) ;tmpVar.tmpCurrPage=pagination.current-1"> < </a>
+        <a href="" ng-if="pagination.current==1"> < </a>
     </li>
-    <li ng-repeat="pageNumber in pages track by $index" ng-class="{ active : pagination.current == pageNumber, disabled : pageNumber == '...' }">
-        <a ng-if="pageNumber!=pagination.current" href="" ng-click="setCurrent(pageNumber)">{{ pageNumber }}</a>
-      	<input style="width:100%;text-align:center" ng-if="pageNumber==pagination.current" ng-init="tmpCurrPage=pageNumber" ng-model="tmpCurrPage" ng-change="tmpCurrPage=setCurrentFromInput(tmpCurrPage);" type="text" placeholder="page" >
+    <li ng-repeat="pageNumber in pages track by $index" ng-class="{ active : pagination.current == pageNumber, disabled : pageNumber == '...' }" >
+        <a ng-if="pageNumber!=pagination.current" href="" ng-click="setCurrent(pageNumber);tmpVar.tmpCurrPage=pageNumber">{{ pageNumber }}</a>
+      	<input style="width:100%;text-align:center" ng-init="tmpVar.tmpCurrPage=pagination.current" ng-if="pageNumber==pagination.current"  ng-model="tmpVar.tmpCurrPage" ng-change="tmpVar.tmpCurrPage=onPageChange({changeFromInput:tmpVar.tmpCurrPage,paginationItem:pagination,directivePageChangeFunction:setCurrent});" type="text" placeholder="page" >
    
  </li>
 
-    <li ng-if="directionLinks" ng-class="{ disabled : pagination.current == pagination.last }" class="ng-scope">
-        <a href="" ng-click="setCurrent(pagination.current + 1)" class="ng-binding"> > </a>
+    <li ng-if="directionLinks" ng-class="{ disabled : pagination.current == pagination.last }" >
+        <a href="" ng-if="pagination.current != pagination.last " ng-click="setCurrent(pagination.current + 1);tmpVar.tmpCurrPage=pagination.current+1"   > > </a>
+        <a href="" ng-if="pagination.current == pagination.last "> > </a>
     </li>
     <li  ng-if="pagination.last>10" ng-class="{ disabled : (pagination.current == pagination.last || pagination.current +10 > pagination.last)}">
-        <a href="" ng-click="setCurrent(pagination.current + 10)"> +10 </a>
+        <a href="" ng-if="!(pagination.current == pagination.last || pagination.current +10 > pagination.last)" ng-click="setCurrent(pagination.current + 10);tmpVar.tmpCurrPage=pagination.current+10"> +10 </a>
+        <a href="" ng-if="(pagination.current == pagination.last || pagination.current +10 > pagination.last)" > +10 </a>
     </li>
 </ul>
 </script>

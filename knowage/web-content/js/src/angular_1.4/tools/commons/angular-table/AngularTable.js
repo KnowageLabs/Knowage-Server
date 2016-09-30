@@ -56,7 +56,8 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                             changeDetector:"@?",
                             fixedItemPerPage:"=?",
                             itemsPerPage:"=?",
-                            showExpanderRowCondition:"&?"
+                            showExpanderRowCondition:"&?",
+                            disableAutoLoadOnInit:"@?"
                         },
                         compile: function (tElement, tAttrs, transclude) {
                             return {
@@ -338,6 +339,7 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                 function ($compile) {
                     return {
                         template: "<div ng-transclude></div>",
+                        controller: TableFooterControllerFunction,
                         transclude: true,
                         link: function (scope, element, attrs, ctrl, transclude) {
 
@@ -539,6 +541,11 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
 
 function TableControllerFunction($scope, $timeout) {
 	$scope.pagination = {currentPageNumber : 1};
+	if($scope.currentPageNumber!=undefined){
+		$scope.pagination.currentPageNumber=$scope.currentPageNumber;
+		$scope.$watch('pagination.currentPageNumber',function(nv,ov){if(nv!=ov){$scope.currentPageNumber=nv;}})
+		$scope.$watch('currentPageNumber',function(nv,ov){if(nv!=ov){$scope.pagination.currentPageNumber=nv;}})
+	}
 	if($scope.itemsPerPage==undefined){
 		$scope.itemsPerPage=3;
 	}
@@ -621,17 +628,17 @@ function TableControllerFunction($scope, $timeout) {
         var listItemTemplBoxHeight = $scope.listItemTemplBox == undefined ? 36 : $scope.listItemTemplBox.offsetHeight;
 
         var avaiableHeight=tableContainerHeight - headButtonHeight - $scope.heightQueueTable;
-        if (firstLoad && $scope.noPagination != true) {
+        if ($scope.firstLoad && $scope.noPagination != true) {
         	avaiableHeight-=30;
         }
 
         var nit = parseInt(avaiableHeight / listItemTemplBoxHeight);
 
-        if(angular.equals( $scope.itemsPerPage , nit)){
+        if(!$scope.firstLoad && angular.equals( $scope.itemsPerPage , nit)){
         	return;
         }
         $scope.itemsPerPage = (nit <= 0 || isNaN(nit)) ? 0 : nit;
-        if (firstLoad) {
+        if ($scope.firstLoad) {
             $scope.pageChangedFunction({
                 searchValue: "",
                 itemsPerPage: $scope.itemsPerPage,
@@ -640,10 +647,10 @@ function TableControllerFunction($scope, $timeout) {
                 columnOrdering: $scope.column_ordering,
                 reverseOrdering: $scope.reverse_col_ord
             });
-            firstLoad = false;
+            $scope.firstLoad = false;
         }
     };
-    var firstLoad = true;
+    $scope.firstLoad = $scope.disableAutoLoadOnInit!=undefined ? false : true;
     $timeout(function () {
         if ($scope.noPagination != true) {
         	if($scope.fixedItemPerPage!=true){
@@ -1031,5 +1038,42 @@ function TableHeaderControllerFunction($scope, $timeout) {
     		//apply filter
     		return columnTransformationText(toReturn,row,columnName);
     	}
+    }
+}
+function TableFooterControllerFunction($scope, $timeout) {
+	$scope.pageChangedHandler=function(searchValue,itemsPerPage,currentPageNumber,columnsSearch,columnOrdering,reverseOrdering,changeFromInput,paginationItem,directivePageChangeFunction){
+		if(changeFromInput!=undefined){
+			return $scope.setCurrentPageFromInput(changeFromInput,paginationItem,directivePageChangeFunction);
+		}else{
+			 $scope.pageChangedFunction({
+                 searchValue: searchValue,
+                 itemsPerPage: itemsPerPage,
+                 currentPageNumber:currentPageNumber,
+                 columnsSearch: columnsSearch,
+                 columnOrdering: columnOrdering,
+                 reverseOrdering: reverseOrdering
+             });
+		}
+	}
+	
+	
+	$scope.tmpSearchCurrPage;
+	$scope.setCurrentPageFromInput=function(num,paginationItem,functChangePage){
+		debugger
+    	if(angular.equals(num.trim(),"")){
+    		return num
+    	}
+    	
+    	if(isNaN(parseInt(num)) || parseInt(num)>paginationItem.last ){
+    		 return paginationItem.current;
+    	}
+    	$scope.tmpSearchCurrPage=num;
+    	$timeout(function(){
+    		
+    		if($scope.tmpSearchCurrPage==num){
+    			functChangePage(num);
+    		}
+    	},500) 
+    	 return num;
     }
 }
