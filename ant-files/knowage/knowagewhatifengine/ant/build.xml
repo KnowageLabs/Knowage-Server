@@ -324,7 +324,7 @@
 		<antcall target="create.war" />
 	</target>
 	
-	<target name="junit" depends="compile">
+	<target name="junit" >
 		<junit haltonfailure ="false" printsummary="false">
 			<classpath location="${runtime.lib}/junit.jar" />
 			<classpath location = "../../../knowagewhatifengine/ant-build/knowagewhatifengine/WEB-INF/classes"/>
