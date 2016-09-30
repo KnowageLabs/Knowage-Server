@@ -524,39 +524,39 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								<md-card layout-padding>
 								<md-input-container class="md-block" flex-gt-sm>
 						           <label>{{translate.load("sbi.ds.ckanFileType")}}</label>
-						           <input ng-model="">
+						           <input ng-model="a" ng-required = "true">
 						         </md-input-container>
 						         <md-input-container class="md-block" flex-gt-sm>
 						           <label>{{translate.load("sbi.ds.ckanCsvDelimiter")}}</label>
-						           <input ng-model="">
+						           <input ng-model="a" ng-required = "true">
 						         </md-input-container>
 						         <md-input-container class="md-block" flex-gt-sm>
 						           <label>{{translate.load("sbi.ds.ckanCsvQuote")}}</label>
-						           <input ng-model="">
+						           <input ng-model="a" ng-required = "true">
 						         </md-input-container>
 						         <md-input-container class="md-block" flex-gt-sm>
 						           <label>{{translate.load("sbi.ds.ckanCsvEncoding")}}</label>
-						           <input ng-model="">
+						           <input ng-model="a">
 						         </md-input-container>
 						         <md-input-container class="md-block" flex-gt-sm>
 						           <label>{{translate.load("sbi.ds.ckanSkipRows")}}</label>
-						           <input ng-model="">
+						           <input ng-model="a">
 						         </md-input-container>
 						         <md-input-container class="md-block" flex-gt-sm>
 						           <label>{{translate.load("sbi.ds.ckanLimitRows")}}</label>
-						           <input ng-model="">
+						           <input ng-model="a">
 						         </md-input-container>
 						         <md-input-container class="md-block" flex-gt-sm>
 						           <label>{{translate.load("sbi.ds.ckanXslSheetNumber")}}</label>
-						           <input ng-model="">
+						           <input ng-model="a">
 						         </md-input-container>
 						         <md-input-container class="md-block" flex-gt-sm>
 						           <label>{{translate.load("sbi.ds.ckanId")}}</label>
-						           <input ng-model="">
+						           <input ng-model="a" ng-required = "true">
 						         </md-input-container>
 						         <md-input-container class="md-block" flex-gt-sm>
 						           <label>{{translate.load("sbi.ds.ckanUrl")}}</label>
-						           <input ng-model="">
+						           <input ng-model="a" ng-required = "true">
 						         </md-input-container>
 								</md-card>
 							</md-content>
@@ -850,41 +850,44 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							<!-- ELEMENTS FOR SETTING THE DATASET PARAMETERS -->					
 							<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-show="selectedDataSet.dsTypeCd && selectedDataSet.dsTypeCd.toLowerCase()!='file'" style="padding: 0 8 0 8">
 								
-								<md-card layout-padding style="margin: 0 0 8 0">
+								<md-card layout-padding style="margin:0">
+									<md-toolbar class="secondaryToolbar" layout-padding>
 									
-									<div>
-									
-						  				{{translate.load('sbi.scheduler.parameters')}}
-										
-										<i class="fa fa-plus-square" ng-click="addParameters()" aria-hidden="true" ></i>
-										
-										<div ng-repeat="p in selectedDataSet.parameters" layout-gt-sm="row" layout-align="start center">
+										<div class="md-toolbar-tools">
 											
-											<div layout="row"> 								
-													<md-input-container class="md-block" flex-gt-sm>
-					      							<label>{{translate.load('sbi.generic.name')}}</label>
-					  								<input ng-model="p.name">
-													</md-input-container>
-													
-													<md-input-container class="md-block" flex-gt-sm>
-					      							<label>{{translate.load('sbi.generic.type')}}</label>
-					  								<input ng-model="p.type">
-													</md-input-container>
-													
-													<md-input-container class="md-block" flex-gt-sm>
-					      							<label>{{translate.load('sbi.generic.defaultValue')}}</label>
-					  								<input ng-model="p.defaultValue">
-													</md-input-container>
-											</div> 
-																			
-					 						<div>
-												<i class="fa fa-minus-square" ng-click="removeParameter(i)" aria-hidden="true"></i> 	
-											</div>	
-											      						
+											<h2>
+											  <span>{{translate.load('sbi.execution.parametersselection.parameters')}}</span>
+											</h2>
+											
+											<span flex></span>
+																								
+											<md-button class="md-icon-button" aria-label="Clear all" ng-click="parametersAddItem()" title="{{translate.load('sbi.ds.clearOldVersion')}}">
+											  <md-icon md-font-icon="fa fa-plus-circle" class="fa fa-1x"></md-icon>
+											</md-button>
+										 
 										</div>
 										
-									</div>
-									
+									</md-toolbar>						         
+								
+									<md-card layout-padding style="margin:0px">
+																		   
+										   <div>
+										   
+												<angular-table
+														id="datasetParametersTable"
+														ng-model=parameterItems
+														columns="parametersColumns"
+														show-search-bar=false
+														scope-functions="paramScopeFunctions"
+														no-pagination=false
+														speed-menu-option="parameterDelete"
+															>
+												</angular-table>
+										   
+										   </div>
+											
+									</md-card>
+								
 								</md-card>
 								
 							</md-content>

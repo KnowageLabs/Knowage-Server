@@ -269,6 +269,66 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	 	}
 	 ];
 	
+	
+	/*
+	 * Dataset parameters table.
+	 * 
+	 * */
+	$scope.datasetParameterTypes = [
+	                                {name:"String", value:"String"},
+	                                {name:"Number", value:"Number"},
+	                                {name:"Row", value:"Row"},
+	                                {name:"Generic", value: "Generic"}
+	                                ];
+	
+	$scope.paramScopeFunctions = {
+			datasetParameterTypes: $scope.datasetParameterTypes
+	};
+		
+	$scope.paramName =  '<md-input-container class="md-block" style="margin:0"><input ng-model="_xxx2_"></md-input-container>';
+	$scope.paramType = '<md-select ng-model=row.pname class="noMargin"><md-option ng-repeat="col in scopeFunctions.datasetParameterTypes" value="{{col.name}}">{{col.name}}</md-option></md-select>';
+	$scope.paramDefaultValues =  '<md-input-container class="md-block" style="margin:0"><input ng-model="_xxx2_"></md-input-container>';
+	
+
+	$scope.parametersColumns = [
+    {"label":$scope.translate.load("sbi.generic.name"),"name":"name"},
+    {"label":$scope.translate.load("sbi.generic.type"),"name":"type"},
+    {"label":$scope.translate.load("sbi.generic.defaultValue"), "name":"defaultValue"}
+    ];
+	
+	$scope.parameterItems = [];
+	
+	$scope.parametersAddItem = function() {
+		$scope.parameterItems.push({"name":$scope.paramName,"type":$scope.paramType, "defaultValue":$scope.paramDefaultValues,"index":$scope.parametersCounter++});
+	}
+	
+	$scope.parametersCounter = 0;
+	
+	$scope.parameterDelete = 
+		[
+		 	//Delete the parameter.
+			{
+				label: $scope.translate.load("sbi.generic.delete"),
+			 	icon:'fa fa-trash' ,
+			 	backgroundColor:'transparent',
+			
+			 	action: function(item) {
+			 		console.log(item);
+			 		for (i=$scope.parameterItems.length-1; i>=0; i--) {
+			 			
+			 			if ($scope.parameterItems[i].index == item.index) {
+			 				$scope.parameterItems.splice(i,1);
+			 				break;
+			 			}
+			 		}
+			 		
+			 		
+		 		}
+						
+		 	}
+		 ];
+	
+	
 	/*
 	 * 	service that loads all datasets
 	 *   																	
@@ -844,10 +904,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		$scope.selectedDataSet = null;
 	};
 	
-	$scope.previewDataset = function () {
-		console.log("info")
-	}
-	
 	$scope.uploadFile= function(){
 		
     	multipartForm.post(sbiModule_config.contextName +"/restful-services/selfservicedataset/fileupload",$scope.fileObj).success(
@@ -1091,5 +1147,188 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					}
 			);
 	}
+	
+	
+	function DatasetPreviewController($scope,$mdDialog,$http){
+		
+		$scope.closeDatasetPreviewDialog=function(){
+			 $scope.previewDatasetModel=[];
+			 $scope.previewDatasetColumns=[];
+			 $scope.startPreviewIndex=0;
+			 $scope.endPreviewIndex=0;
+			 $scope.totalItemsInPreview=-1;	// modified by: danristo
+			 $scope.datasetInPreview=undefined;
+			 $scope.counter = 0;
+			 $mdDialog.cancel();	 
+	    }	
+	}
+	
+	 $scope.previewDataset = function(){
+	    	$log.info($scope.selectedDataset)
+	    	var dataset = $scope.selectedDataSet;
+	    	console.info("DATASET FOR PREVIEW: ",dataset);
+	    	
+	    	$scope.datasetInPreview=dataset;    	
+	    	$scope.disableBack=true;
+	    	
+	    	/**
+	    	 * Variable that serves as indicator if the dataset metadata exists and if it contains the 'resultNumber' 
+	    	 * property (e.g. Query datasets).
+	    	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	    	 */ 
+	    	var dsRespHasResultNumb = dataset.meta.dataset.length>0 && dataset.meta.dataset[0].pname=="resultNumber";
+	    	
+	    	/**
+	    	 * The paginated dataset preview should contain the 'resultNumber' inside the 'dataset' property. If not, disable the
+	    	 * pagination in the toolbar of the preview dataset dialog.
+	    	 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	    	 */
+	    	if(dataset.meta.dataset.length>0 && dataset.meta.dataset[0].pname=="resultNumber"){
+	    		$scope.totalItemsInPreview=dataset.meta.dataset[0].pvalue;
+	    		$scope.previewPaginationEnabled=true;
+	    	}
+	    	else{
+	    		$scope.previewPaginationEnabled=false;
+	    	}
+	    	
+	    	$scope.getPreviewSet($scope.datasetInPreview);
+	    	
+	    	/**
+	    	 * Execute this if-else block only if there is already an information about the total amount of rows in the dataset metadata.
+	    	 * In other words, it should be executed for the e.g. Query dataset, since it has this property in its meta.
+	    	 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	    	 */
+	    	if (dsRespHasResultNumb) {
+	    		
+	    		if($scope.totalItemsInPreview < $scope.itemsPerPage) {
+	    			$scope.endPreviewIndex = $scope.totalItemsInPreview;
+	    			$scope.disableNext = true;
+	    		}
+	    		else {
+	    		 	$scope.endPreviewIndex = $scope.itemsPerPage;
+	    		 	$scope.disableNext = false;
+	    		}
+	    		
+	    	}
+	    	
+	     	$mdDialog.show({
+				  scope:$scope,
+				  preserveScope: true,
+			      controller: DatasetPreviewController,
+			      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/workspace/templates/datasetPreviewDialogTemplate.html',  
+			      clickOutsideToClose:false,
+			      escapeToClose :false,
+			      //fullscreen: true,
+			      locals:{
+			    	 // previewDatasetModel:$scope.previewDatasetModel,
+			         // previewDatasetColumns:$scope.previewDatasetColumns 
+			      }
+			    });
+	       	
+	    }
+	 
+	    $scope.createColumnsForPreview=function(fields){
+		    
+	    	for(i=1;i<fields.length;i++){
+	    	 var column={};
+	    	 column.label=fields[i].header;
+	    	 column.name=fields[i].name;
+	    	 
+	    	 $scope.previewDatasetColumns.push(column);
+	    	}
+	    	
+	    }
+	       
+	    $scope.getPreviewSet = function(dataset){    
+	    	
+	    	var datasetType = dataset.dsTypeCd.toUpperCase();
+	    	
+	    	/**
+	    	 * If the type of the dataset is File, set these flags so the pagination toolbar on the Preview dataset panel
+	    	 * is hidden and the pagination is performed on the client-side. Other dataset types should have the server-side
+	    	 * pagination (else-branch).
+	    	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	    	 */
+	    	if (datasetType!="FILE") {
+	    		 $scope.paginationDisabled = true;
+	    		 $scope.previewPaginationEnabled = true;
+	    	}
+	    	else {
+	    		$scope.paginationDisabled = false;
+	    		$scope.previewPaginationEnabled = false;
+	    	}
+	    	
+	    	params={};
+	    	params.start = $scope.startPreviewIndex;
+	    	params.limit = $scope.itemsPerPage;
+	    	params.page = 0;
+	    	params.dataSetParameters=null;
+	    	params.sort=null;
+	    	params.valueFilter=null;
+	    	params.columnsFilter=null;
+	    	params.columnsFilterDescription=null;
+	    	params.typeValueFilter=null;
+	    	params.typeFilter=null;
+	    	    	
+	    	config={};
+	    	config.params=params;
+	    	
+	    	sbiModule_restServices.promiseGet("selfservicedataset/values", dataset.label,"",config)
+				.then(function(response) {			
+							
+					var totalItemsInPreviewInit = angular.copy($scope.totalItemsInPreview);
+					
+					/**
+					 * If the responded dataset does not possess a metadata information (total amount of rows in the result)
+					 * take this property if provided.
+					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					 */
+					if (response.data.results) {
+						$scope.totalItemsInPreview = response.data.results;
+					}	
+					
+			    	/**
+			    	 * If the the initial 'totalItemsInPreview' value is -1, that means that this property is not set yet or there is no this property in the response 
+			    	 * (total number of results - rows). This serves just to initialize the indicators used in the if-else block (such as 'endPreviewIndex'), in order 
+			    	 * to initialize the preview of the dataset types that do not have 'resultNumber' property in their 'meta'. This temporary variable should be -1
+			    	 * only on the first call of this function.
+			    	 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			    	 */
+					if(totalItemsInPreviewInit==-1) {
+											
+						if ($scope.totalItemsInPreview < $scope.itemsPerPage) {
+			   		 		$scope.endPreviewIndex = $scope.totalItemsInPreview	
+			   		 		$scope.disableNext = true;
+						}
+						else {
+				   		 	$scope.endPreviewIndex = $scope.itemsPerPage;
+				   		 	$scope.disableNext = false;
+				       	}
+						
+			       	}
+					
+				    angular.copy(response.data.rows,$scope.previewDatasetModel);
+				    
+				    if( $scope.previewDatasetColumns.length==0){
+				    	$scope.createColumnsForPreview(response.data.metaData.fields);				
+				    }		
+				
+				//$scope.startPreviewIndex=$scope.startPreviewIndex=0+20;
+				
+			},
+			
+			function(response){
+							
+				/**
+				 * Handling the error while trying to preview the dataset.
+				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */			
+				// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+				toastr.error(sbiModule_translate.load(response.data.errors[0].message), 
+						sbiModule_translate.load('sbi.generic.error'), $scope.toasterConfig);
+				
+			});
+	    	
+	    }
 	
 };
