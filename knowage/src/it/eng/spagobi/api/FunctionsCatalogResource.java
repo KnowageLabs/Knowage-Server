@@ -301,7 +301,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 				JSONObject inputItemJSON = jsonInputFiles.getJSONObject(i);
 				String fileName = inputItemJSON.getString("fileName");
 				String alias = inputItemJSON.getString("alias");
-				byte[] content = inputItemJSON.getString("content").getBytes();
+				byte[] content = inputItemJSON.getString("base64").getBytes();
 				inputFiles.add(new CatalogFunctionInputFile(fileName, alias, content));
 			}
 
@@ -420,7 +420,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 			for (int i = 0; i < jsonInputFiles.length(); i++) {
 				JSONObject inputItemJSON = jsonInputFiles.getJSONObject(i);
 				String fileName = inputItemJSON.getString("fileName");
-				byte[] content = inputItemJSON.getString("content").getBytes();
+				byte[] content = inputItemJSON.getString("base64").getBytes();
 				String alias = inputItemJSON.getString("alias");
 				inputFiles.add(new CatalogFunctionInputFile(fileName, alias, content));
 			}
@@ -562,7 +562,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 				objToInsert.put("type", "Simple Input");
 				objToInsert.put("fileName", f.getId().getFileName());
 				objToInsert.put("functionId", f.getId().getFunctionId());
-				objToInsert.put("content", f.getContent());
+				objToInsert.put("base64", f.getContent());
 				objToInsert.put("alias", f.getAlias());
 
 				inputFiles.put(objToInsert);
