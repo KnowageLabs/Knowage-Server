@@ -129,13 +129,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									<div flex=100>
 								       <md-input-container class="md-block" > 
 								       <label>{{translate.load("sbi.ds.scope")}}</label>
-								       <md-select placeholder ="{{translate.load('sbi.ds.scope')}}"
-								        ng-required = "true"
-								        ng-model="selectedDataSet.scopeId">   
-								        <md-option 
-								        ng-repeat="l in scopeList" value="{{l.VALUE_ID}}">{{l.VALUE_CD}}
-								        </md-option>
-								       </md-select>  
+									       <md-select placeholder ="{{translate.load('sbi.ds.scope')}}"
+									        ng-required = "true"
+									        ng-model="selectedDataSet.scopeId">   
+									        <md-option 
+									        ng-repeat="l in scopeList" value="{{l.VALUE_ID}}">{{l.VALUE_CD}}
+									        </md-option>
+									       </md-select>  
+									       	<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.scopeId">
+				       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+			       						 	</div>
 								        </md-input-container>
 								   </div>
 								   <div flex=100>
@@ -210,6 +213,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									        			ng-model="selectedDataSet.dsTypeCd">   
 									        	<md-option ng-repeat="l in datasetTypeList" value="{{l.VALUE_CD}}">{{l.VALUE_CD}}</md-option>
 									       </md-select>  
+									       <div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.dsTypeCd">
+				       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+			       						 	</div>
 								        </md-input-container>
 								   </div>
 								</md-card>
@@ -383,6 +389,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							        ng-repeat="l in dataSourceList" value="{{l.label}}">{{l.label}}
 							        </md-option>
 							       </md-select>  
+							       	<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.dataSource">
+		       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+	       						 	</div>
 							        </md-input-container>
 							   	</div>
 							   	
@@ -527,38 +536,65 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								<md-input-container class="md-block" flex-gt-sm>
 						           <label>{{translate.load("sbi.ds.ckanFileType")}}</label>
 						           <input ng-model="a" ng-required = "true">
+						           <div  ng-messages="datasetForm.lbl.$error" ng-show="!a">
+		       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+	       						 	</div>
 						         </md-input-container>
 						         <md-input-container class="md-block" flex-gt-sm>
 						           <label>{{translate.load("sbi.ds.ckanCsvDelimiter")}}</label>
-						           <input ng-model="a" ng-required = "true">
+						           <input ng-model="b" ng-required = "true">
+						           <div  ng-messages="datasetForm.lbl.$error" ng-show="!b">
+		       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+	       						 	</div>
 						         </md-input-container>
 						         <md-input-container class="md-block" flex-gt-sm>
 						           <label>{{translate.load("sbi.ds.ckanCsvQuote")}}</label>
-						           <input ng-model="a" ng-required = "true">
+						           <input ng-model="c" ng-required = "true">
+						           <div  ng-messages="datasetForm.lbl.$error" ng-show="!c">
+		       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+	       						 	</div>
 						         </md-input-container>
 						         <md-input-container class="md-block" flex-gt-sm>
 						           <label>{{translate.load("sbi.ds.ckanCsvEncoding")}}</label>
-						           <input ng-model="a">
+						           <input ng-model="d">
+						           <div  ng-messages="datasetForm.lbl.$error" ng-show="!d">
+		       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+	       						 	</div>
 						         </md-input-container>
 						         <md-input-container class="md-block" flex-gt-sm>
 						           <label>{{translate.load("sbi.ds.ckanSkipRows")}}</label>
-						           <input ng-model="a">
+						           <input ng-model="e">
+						           <div  ng-messages="datasetForm.lbl.$error" ng-show="!e">
+		       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+	       						 	</div>
 						         </md-input-container>
 						         <md-input-container class="md-block" flex-gt-sm>
 						           <label>{{translate.load("sbi.ds.ckanLimitRows")}}</label>
-						           <input ng-model="a">
+						           <input ng-model="f">
+						           <div  ng-messages="datasetForm.lbl.$error" ng-show="!f">
+		       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+	       						 	</div>
 						         </md-input-container>
 						         <md-input-container class="md-block" flex-gt-sm>
 						           <label>{{translate.load("sbi.ds.ckanXslSheetNumber")}}</label>
-						           <input ng-model="a">
+						           <input ng-model="g">
+						           <div  ng-messages="datasetForm.lbl.$error" ng-show="!g">
+		       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+	       						 	</div>
 						         </md-input-container>
 						         <md-input-container class="md-block" flex-gt-sm>
 						           <label>{{translate.load("sbi.ds.ckanId")}}</label>
-						           <input ng-model="a" ng-required = "true">
+						           <input ng-model="h" ng-required = "true">
+						           <div  ng-messages="datasetForm.lbl.$error" ng-show="!h">
+		       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+	       						 	</div>
 						         </md-input-container>
 						         <md-input-container class="md-block" flex-gt-sm>
 						           <label>{{translate.load("sbi.ds.ckanUrl")}}</label>
-						           <input ng-model="a" ng-required = "true">
+						           <input ng-model="j" ng-required = "true">
+						           <div  ng-messages="datasetForm.lbl.$error" ng-show="!j">
+		       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+	       						 	</div>
 						         </md-input-container>
 								</md-card>
 							</md-content>
@@ -593,6 +629,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										<md-input-container class="md-block">
 									    	<label>Address</label>
 											<input ng-model="selectedDataSet.restAddress" ng-required = "true">
+											<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.restAddress">
+				       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+			       						 	</div>
 										</md-input-container>
 									</div>
 									
