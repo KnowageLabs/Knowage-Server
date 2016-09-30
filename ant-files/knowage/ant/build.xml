@@ -741,5 +741,9 @@
    		basedir="../../../">
 		</zip>
 	</target>
+	<target name="JUnit tests">
+	
+		<ant dir="../knowagewhatifengine/ant" target="junit"/>
+	</target>
 
 </project>
