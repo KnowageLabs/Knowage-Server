@@ -440,7 +440,7 @@
 		<antcall target="create.SpagoBISocialAnalysis.war" />
 		<copy file="../../../SpagoBISocialAnalysis/dist/SpagoBISocialAnalysis.war" 
         todir="../../../dist" overwrite="true" />
--->
+-->		<antcall target="JUnit-tests" />
 	</target>
 
 	<!-- NEW: 22/05/2012 -->
@@ -741,7 +741,7 @@
    		basedir="../../../">
 		</zip>
 	</target>
-	<target name="JUnit tests">
+	<target name="JUnit-tests" >
 	
 		<ant dir="../knowagewhatifengine/ant" target="junit"/>
 	</target>
