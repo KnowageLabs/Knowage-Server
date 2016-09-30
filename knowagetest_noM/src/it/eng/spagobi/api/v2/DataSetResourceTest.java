@@ -211,29 +211,66 @@ public class DataSetResourceTest extends AbstractV2BasicAuthTestCase {
 	}
 
 	private void testDataStorePost2(String datasetLabel, boolean isPersisted) {
-		String aggregations = "{\"measures\":[{\"id\":\"store_sqft\",\"columnName\":\"store_sqft\",\"funct\":\"SUM\",\"alias\":\"store_sqft\",\"orderType\":\"\"}],\"categories\":[{\"id\":\"store_name\",\"columnName\":\"store_name\",\"funct\":\"NONE\",\"alias\":\"store_name\",\"orderType\":\"ASC\"}],\"dataset\":\"Store\"}";
-		String summaryRow = "{\"measures\":[{\"id\":\"store_sqft\",\"columnName\":\"store_sqft\",\"funct\":\"SUM\",\"alias\":\"store_sqft\",\"orderType\":\"\"}],\"categories\":[],\"dataset\":\"Store\"}";
+		String storeNameAggregations = "{\"measures\":[{\"id\":\"store_sqft\",\"columnName\":\"store_sqft\",\"funct\":\"SUM\",\"alias\":\"sqft\",\"orderType\":\"\"},{\"id\":\"double_sqft\",\"columnName\":\"\\\"store_sqft\\\"+\\\"store_sqft\\\"+0\",\"funct\":\"SUM\",\"alias\":\"double_sqft\",\"orderType\":\"\"}],\"categories\":[{\"id\":\"store_name\",\"columnName\":\"store_name\",\"funct\":\"NONE\",\"alias\":\"store_name\",\"orderType\":\"ASC\"}],\"dataset\":\"Store\"}";
+		String storeTypeAggregations = storeNameAggregations.replace("store_name", "store_type");
+		String summaryRow = "{\"measures\":[{\"id\":\"sr_sqft\",\"columnName\":\"sqft\",\"funct\":\"SUM\",\"alias\":\"sr_sqft\",\"orderType\":\"\"},{\"id\":\"sr_double_sqft\",\"columnName\":\"double_sqft\",\"funct\":\"SUM\",\"alias\":\"sr_double_sqft\",\"orderType\":\"\"}],\"categories\":[],\"dataset\":\"Store\"}";
 		try {
 			createDatasets(datasetLabel, isPersisted);
 
-			JSONObject jsonAggregationsSummaryRow = new JSONObject();
-			jsonAggregationsSummaryRow.put("aggregations", new JSONObject(aggregations));
-			jsonAggregationsSummaryRow.put("summaryRow", new JSONObject(summaryRow));
-
-			// aggregations + summary row
-			given().contentType(ContentType.JSON).body(jsonAggregationsSummaryRow.toString()).when().post("/datasets/SbiQueryDataSet/data2").then()
+			// store name aggregations + summary row
+			given().contentType(ContentType.JSON).when()
+					.post("/datasets/SbiQueryDataSet/data?aggregations=" + storeNameAggregations + "&summaryRow=" + summaryRow).then()
 					.contentType(ContentType.JSON).statusCode(200).body("results", equalTo(25)).body("rows", hasSize(26))
-					.body("rows[25].column_2", containsString("571596"));
+					.body("rows[25].column_2", containsString("571596")).body("rows[25].column_3", containsString("1143192"));
 
-			// aggregations + summary row + realtime
-			given().contentType(ContentType.JSON).body(jsonAggregationsSummaryRow.toString()).when().post("/datasets/SbiQueryDataSet/data2?realtime=true")
-					.then().contentType(ContentType.JSON).statusCode(200).body("results", equalTo(25)).body("rows", hasSize(26))
-					.body("rows[25].column_2", containsString("571596"));
+			// store name aggregations + summary row + realtime
+			given().contentType(ContentType.JSON).when()
+					.post("/datasets/SbiQueryDataSet/data?aggregations=" + storeNameAggregations + "&summaryRow=" + summaryRow + "&realtime=true").then()
+					.contentType(ContentType.JSON).statusCode(200).body("results", equalTo(25)).body("rows", hasSize(26))
+					.body("rows[25].column_2", containsString("571596")).body("rows[25].column_3", containsString("1143192"));
 
-			// aggregations + summary row + pagination + realtime
-			given().contentType(ContentType.JSON).body(jsonAggregationsSummaryRow.toString()).when()
-					.post("/datasets/SbiQueryDataSet/data2?offset=1&size=3&realtime=true").then().contentType(ContentType.JSON).statusCode(200)
-					.body("results", equalTo(25)).body("rows", hasSize(4)).body("rows[3].column_2", containsString("571596"));
+			// store name aggregations + summary row + pagination + realtime
+			given().contentType(ContentType.JSON)
+					.when()
+					.post("/datasets/SbiQueryDataSet/data?aggregations=" + storeNameAggregations + "&summaryRow=" + summaryRow
+							+ "&offset=1&size=3&realtime=true").then().contentType(ContentType.JSON).statusCode(200).body("results", equalTo(25))
+					.body("rows", hasSize(4)).body("rows[3].column_2", containsString("571596")).body("rows[3].column_3", containsString("1143192"));
+
+			// store type aggregations with SUM + realtime
+			given().contentType(ContentType.JSON).when().post("/datasets/SbiQueryDataSet/data?aggregations=" + storeTypeAggregations + "&realtime=true").then()
+					.contentType(ContentType.JSON).statusCode(200).body("results", equalTo(6)).body("rows", hasSize(6))
+					.body("rows[5].column_1", equalTo("Supermarket")).body("rows[5].column_2", containsString("193480"))
+					.body("rows[5].column_3", containsString("386960"));
+
+			// store type aggregations with AVG + realtime
+			String storeTypeAggregationsWithAvg = storeTypeAggregations.replace("SUM", "AVG");
+			given().contentType(ContentType.JSON).when().post("/datasets/SbiQueryDataSet/data?aggregations=" + storeTypeAggregationsWithAvg + "&realtime=true")
+					.then().contentType(ContentType.JSON).statusCode(200).body("results", equalTo(6)).body("rows", hasSize(6))
+					.body("rows[5].column_1", equalTo("Supermarket")).body("rows[5].column_2", containsString("27640"))
+					.body("rows[5].column_3", containsString("55280"));
+
+			// store type aggregations with MAX + realtime
+			String storeTypeAggregationsWithMax = storeTypeAggregations.replace("SUM", "MAX");
+			given().contentType(ContentType.JSON).when().post("/datasets/SbiQueryDataSet/data?aggregations=" + storeTypeAggregationsWithMax + "&realtime=true")
+					.then().contentType(ContentType.JSON).statusCode(200).body("results", equalTo(6)).body("rows", hasSize(6))
+					.body("rows[5].column_1", equalTo("Supermarket")).body("rows[5].column_2", containsString("39696"))
+					.body("rows[5].column_3", containsString("79392"));
+
+			// store type aggregations with MIN + realtime
+			String storeTypeAggregationsWithMin = storeTypeAggregations.replace("SUM", "MIN");
+			given().contentType(ContentType.JSON).when().post("/datasets/SbiQueryDataSet/data?aggregations=" + storeTypeAggregationsWithMin + "&realtime=true")
+					.then().contentType(ContentType.JSON).statusCode(200).body("results", equalTo(6)).body("rows", hasSize(6))
+					.body("rows[5].column_1", equalTo("Supermarket")).body("rows[5].column_2", containsString("20319"))
+					.body("rows[5].column_3", containsString("40638"));
+
+			// store type aggregations with COUNT + realtime
+			String storeTypeAggregationsWithCount = storeTypeAggregations.replace("SUM", "COUNT");
+			given().contentType(ContentType.JSON).when()
+					.post("/datasets/SbiQueryDataSet/data?aggregations=" + storeTypeAggregationsWithCount + "&realtime=true").then()
+					.contentType(ContentType.JSON).statusCode(200).body("results", equalTo(6)).body("rows", hasSize(6))
+					.body("rows[5].column_1", equalTo("Supermarket")).body("rows[5].column_2", containsString("7"))
+					.body("rows[5].column_3", containsString("7"));
+
 		} catch (Exception e) {
 			fail(e.toString());
 		} finally {

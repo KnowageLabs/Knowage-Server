@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -21,12 +21,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
- * @author Angelo Bernabei
- *         angelo.bernabei@eng.it
+ * @author Angelo Bernabei angelo.bernabei@eng.it
  */
-public class Record implements IRecord,Serializable {
+public class Record implements IRecord, Serializable {
 
 	IDataStore dataStore;
 	List<IField> fields = new ArrayList<IField>();
@@ -35,34 +33,44 @@ public class Record implements IRecord,Serializable {
 		super();
 		this.fields = new ArrayList<IField>();
 	}
-	  
-    public Record(IDataStore dataStore) {
+
+	public Record(IDataStore dataStore) {
 		super();
 		this.fields = new ArrayList<IField>();
 		this.setDataStore(dataStore);
 	}
 
-
+	@Override
 	public IField getFieldAt(int position) {
-		return (IField)fields.get(position);  	
-    }
-	
-	public void appendField(IField field) {    	
-		fields.add(field);	
-    }
-	
-	public void insertField(int fieldIndex, IField field) {    	
-		fields.add(fieldIndex, field);	
-    }
-	
+		return fields.get(position);
+	}
+
+	@Override
+	public void appendField(IField field) {
+		fields.add(field);
+	}
+
+	@Override
+	public void insertField(int fieldIndex, IField field) {
+		fields.add(fieldIndex, field);
+	}
+
+	@Override
+	public IField removeFieldAt(int fieldIndex) {
+		return fields.remove(fieldIndex);
+	}
+
+	@Override
 	public List<IField> getFields() {
 		return this.fields;
 	}
 
+	@Override
 	public void setFields(List<IField> fields) {
 		this.fields = fields;
 	}
 
+	@Override
 	public IDataStore getDataStore() {
 		return dataStore;
 	}
@@ -70,7 +78,8 @@ public class Record implements IRecord,Serializable {
 	public void setDataStore(IDataStore dataStore) {
 		this.dataStore = dataStore;
 	}
-	
+
+	@Override
 	public String toString() {
 		return "" + getFields().toString();
 	}
@@ -99,7 +108,5 @@ public class Record implements IRecord,Serializable {
 			return false;
 		return true;
 	}
-	
-	
 
 }

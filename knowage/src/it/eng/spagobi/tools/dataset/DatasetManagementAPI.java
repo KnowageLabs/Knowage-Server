@@ -45,10 +45,12 @@ import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.work.SQLDBCacheWriteWo
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.datastore.Record;
 import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
@@ -72,6 +74,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -412,11 +415,18 @@ public class DatasetManagementAPI {
 						dataStore.setCacheDate(new Date());
 
 						String tableName = DataStore.DEFAULT_SCHEMA_NAME + "." + DataStore.DEFAULT_TABLE_NAME;
-						String pagedQuery = getQueryText(null, tableName, null, null, null, null, dataSet, true);
+						Map<String, String> datasetAlias = getDatasetAlias(dataSet);
+
+						String pagedQuery = getQueryText(null, tableName, null, null, null, null, dataSet, true, datasetAlias);
 						IDataStore pagedDataStore = dataStore.aggregateAndFilterRecords(pagedQuery, offset, fetchSize);
-						String summaryRowQuery = getQueryText(null, tableName, groups, filters, projections, summaryRowProjections, dataSet, true);
-						IDataStore summaryRowDataStore = dataStore.aggregateAndFilterRecords(summaryRowQuery, -1, -1);
-						appendSummaryRowToPagedDataStore(projections, summaryRowProjections, pagedDataStore, summaryRowDataStore);
+						appendCalculatedColumnsToDataStore(projections, datasetAlias, pagedDataStore);
+
+						if (summaryRowProjections != null && summaryRowProjections.size() > 0) {
+							String summaryRowQuery = getQueryText(null, tableName, groups, filters, projections, summaryRowProjections, dataSet, true,
+									datasetAlias);
+							IDataStore summaryRowDataStore = dataStore.aggregateAndFilterRecords(summaryRowQuery, -1, -1);
+							appendSummaryRowToPagedDataStore(projections, summaryRowProjections, pagedDataStore, summaryRowDataStore);
+						}
 
 						dataStore = pagedDataStore;
 					}
@@ -1106,7 +1116,7 @@ public class DatasetManagementAPI {
 					String synonim = tableSynonimMap.get(table);
 
 					if (i > 0 && table != null) {
-						if (!where.equals("")) {
+						if (!where.isEmpty()) {
 							where += " AND ";
 						}
 						JSONObject previousField = fieldsJSOONArray.getJSONObject(i - 1);
@@ -1257,23 +1267,25 @@ public class DatasetManagementAPI {
 		IDataStore dataStore = dataSet.getDataStore();
 		if (dataStore != null && dataStore.getRecordsCount() < METAMODEL_LIMIT) {
 			String tableName = DataStore.DEFAULT_SCHEMA_NAME + "." + DataStore.DEFAULT_TABLE_NAME;
+			Map<String, String> datasetAlias = getDatasetAlias(dataSet);
+
+			String originalQuery = getQueryText(null, tableName, groups, filters, projections, null, dataSet, true, datasetAlias);
 
 			if (summaryRowProjections != null && summaryRowProjections.size() > 0) {
-				String originalQuery = getQueryText(null, tableName, groups, filters, projections, null, dataSet, true);
 				IDataStore originalDataStore = dataStore.aggregateAndFilterRecords(originalQuery, -1, -1);
+				appendCalculatedColumnsToDataStore(projections, datasetAlias, originalDataStore);
 
-				String pagedQuery = getQueryText(null, tableName, null, null, null, null, dataSet, true);
+				String pagedQuery = getQueryText(null, tableName, null, null, null, null, dataSet, true, datasetAlias);
 				IDataStore pagedDataStore = originalDataStore.aggregateAndFilterRecords(pagedQuery, offset, fetchSize);
 
-				String summaryRowQuery = getQueryText(null, tableName, groups, filters, projections, summaryRowProjections, dataSet, true);
+				String summaryRowQuery = getQueryText(null, tableName, groups, filters, projections, summaryRowProjections, dataSet, true, datasetAlias);
 				IDataStore summaryRowDataStore = originalDataStore.aggregateAndFilterRecords(summaryRowQuery, -1, -1);
 
 				appendSummaryRowToPagedDataStore(projections, summaryRowProjections, pagedDataStore, summaryRowDataStore);
-
 				dataStore = pagedDataStore;
 			} else {
-				dataStore = dataStore.aggregateAndFilterRecords(getQueryText(null, tableName, groups, filters, projections, null, dataSet, true), offset,
-						fetchSize);
+				dataStore = dataStore.aggregateAndFilterRecords(originalQuery, offset, fetchSize);
+				appendCalculatedColumnsToDataStore(projections, datasetAlias, dataStore);
 			}
 			dataStore.setCacheDate(new Date());
 		} else {
@@ -1282,6 +1294,119 @@ public class DatasetManagementAPI {
 		}
 
 		return dataStore;
+	}
+
+	private void appendCalculatedColumnsToDataStore(List<ProjectionCriteria> projections, Map<String, String> datasetAlias, IDataStore pagedDataStore) {
+		if (projections != null) {
+			IMetaData storeMetaData = pagedDataStore.getMetaData();
+
+			Set<String> notCalculatedColumns = new HashSet<String>();
+			Map<String, String> basicColumnMap = new HashMap<String, String>(); // aggregated basic column name -> basic column name
+			Map<String, Integer> fieldIndexMap = new HashMap<String, Integer>(); // basic column name -> field index
+
+			for (ProjectionCriteria projection : projections) {
+				String columnName = projection.getColumnName();
+				if (datasetAlias != null) {
+					columnName = datasetAlias.get(projection.getDataset()) + " - " + columnName;
+				}
+
+				String aggregateFunction = projection.getAggregateFunction();
+
+				if (columnName.contains(AbstractDataBase.STANDARD_ALIAS_DELIMITER)) { // this is a calculated field!
+					for (String basicColumnName : getBasicColumnsFromCalculatedColumn(columnName)) {
+						basicColumnMap.put(aggregateFunction + "(" + basicColumnName + ")", basicColumnName);
+					}
+
+					if (pagedDataStore.getRecordsCount() > 0) {
+						// aggregated basic column name -> field index
+						for (int i = 0; i < storeMetaData.getFieldCount(); i++) {
+							String fieldName = storeMetaData.getFieldName(i);
+							if (basicColumnMap.keySet().contains(fieldName)) {
+								fieldIndexMap.put(basicColumnMap.get(fieldName), i);
+								break;
+							}
+						}
+
+						for (int i = 0; i < pagedDataStore.getRecordsCount(); i++) {
+							IRecord record = pagedDataStore.getRecordAt(i);
+
+							// get basic values
+							boolean isNullValuePresent = false;
+							Map<String, Object> basicValues = new HashMap<String, Object>();
+							for (String basicColumnName : fieldIndexMap.keySet()) {
+								int fieldIndex = fieldIndexMap.get(basicColumnName);
+								IField field = record.getFieldAt(fieldIndex);
+								Object value = field.getValue();
+								isNullValuePresent = isNullValuePresent || value == null;
+								basicValues.put(basicColumnName, value);
+							}
+
+							// evaluate calculated column expression
+							Object calculatedValue = null;
+							if (aggregateFunction.toUpperCase().contains("COUNT")) {
+								long count = -1;
+								for (String basicColumnName : basicValues.keySet()) {
+									count = Math.max(count, (long) basicValues.get(basicColumnName));
+								}
+								calculatedValue = count;
+							} else {
+								if (!isNullValuePresent) {
+									String expression = columnName.replace(AbstractDataBase.STANDARD_ALIAS_DELIMITER, "");
+									for (String basicColumnName : basicValues.keySet()) {
+										Object object = basicValues.get(basicColumnName);
+										expression = expression.replace(basicColumnName, object.toString());
+									}
+									calculatedValue = groovy.util.Eval.me(expression);
+								}
+							}
+							record.appendField(new Field(calculatedValue));
+						}
+
+						// add column metadata
+						IFieldMetaData fieldMetaData = new FieldMetadata();
+						if (aggregateFunction != null && !aggregateFunction.isEmpty()) {
+							fieldMetaData.setName(aggregateFunction + "(" + columnName + ")");
+						} else {
+							fieldMetaData.setName(columnName);
+						}
+						String aliasName = projection.getAliasName();
+						if (aliasName != null && !aliasName.isEmpty()) {
+							fieldMetaData.setAlias(aliasName);
+						}
+						fieldMetaData.setType(java.lang.Double.class);
+						fieldMetaData.setFieldType(FieldType.MEASURE);
+						storeMetaData.addFiedMeta(fieldMetaData);
+					}
+				} else {
+					if (aggregateFunction != null && !aggregateFunction.isEmpty()) {
+						columnName = aggregateFunction + "(" + columnName + ")";
+					}
+					notCalculatedColumns.add(columnName);
+				}
+			}
+
+			basicColumnMap.keySet().removeAll(notCalculatedColumns);
+			if (!basicColumnMap.isEmpty()) {
+				// delete values in additional columns
+				for (int recordIndex = 0; recordIndex < pagedDataStore.getRecordsCount(); recordIndex++) {
+					IRecord record = pagedDataStore.getRecordAt(recordIndex);
+					for (int fieldIndex = storeMetaData.getFieldCount() - 1; fieldIndex >= 0; fieldIndex--) {
+						String fieldName = storeMetaData.getFieldName(fieldIndex);
+						if (basicColumnMap.keySet().contains(fieldName)) {
+							record.removeFieldAt(fieldIndex);
+						}
+					}
+				}
+
+				// delete additional columns metadata
+				for (int fieldIndex = storeMetaData.getFieldCount() - 1; fieldIndex >= 0; fieldIndex--) {
+					IFieldMetaData fieldMetaData = storeMetaData.getFieldMeta(fieldIndex);
+					if (basicColumnMap.keySet().contains(fieldMetaData.getName())) {
+						storeMetaData.deleteFieldMetaDataAt(fieldIndex);
+					}
+				}
+			}
+		}
 	}
 
 	public void appendSummaryRowToPagedDataStore(List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections,
@@ -1327,11 +1452,13 @@ public class DatasetManagementAPI {
 			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, int offset, int fetchSize) {
 		logger.debug("IN");
 
-		String query = getQueryText(dataSource, tableName, groups, filters, projections, null, dataSet, false);
+		Map<String, String> datasetAlias = getDatasetAlias(dataSet);
+
+		String query = getQueryText(dataSource, tableName, groups, filters, projections, null, dataSet, false, datasetAlias);
 		IDataStore pagedDataStore = dataSource.executeStatement(query, offset, fetchSize);
 
 		if (summaryRowProjections != null && summaryRowProjections.size() > 0) {
-			String summaryRowQuery = getQueryText(dataSource, tableName, groups, filters, projections, summaryRowProjections, dataSet, false);
+			String summaryRowQuery = getQueryText(dataSource, tableName, groups, filters, projections, summaryRowProjections, dataSet, false, datasetAlias);
 			IDataStore summaryRowDataStore = dataSource.executeStatement(summaryRowQuery, -1, -1);
 			appendSummaryRowToPagedDataStore(projections, summaryRowProjections, pagedDataStore, summaryRowDataStore);
 		}
@@ -1340,9 +1467,20 @@ public class DatasetManagementAPI {
 		return pagedDataStore;
 	}
 
+	private Map<String, String> getDatasetAlias(IDataSet dataSet) {
+		dataSet.loadData(0, 1, 1);
+		IDataStore limitedDataStore = dataSet.getDataStore();
+		if (limitedDataStore != null) {
+			Map<String, String> datasetAlias = (Map<String, String>) limitedDataStore.getMetaData().getProperty("DATASET_ALIAS");
+			return datasetAlias;
+		} else {
+			throw new SpagoBIRuntimeException("Impossible to retrieve datastore to get required metadata.");
+		}
+	}
+
 	public String getQueryText(IDataSource dataSource, String tableName, List<GroupCriteria> groups, List<FilterCriteria> filters,
-			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, boolean isRealtime) {
-		String queryText = null;
+			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, boolean isRealtime,
+			Map<String, String> datasetAlias) {
 
 		if (tableName == null || tableName.isEmpty() || (!isRealtime && dataSource == null)) {
 			throw new IllegalArgumentException("Found one or more arguments invalid. Tablename [" + tableName + "] and/or dataSource [" + dataSource
@@ -1352,112 +1490,147 @@ public class DatasetManagementAPI {
 		String label = dataSet.getLabel();
 		logger.debug("Build query for persisted dataset [" + label + "] with table name [" + tableName + "]");
 		logger.debug("Loading data from [" + label + "] to gather its metadata...");
-		dataSet.loadData(0, 1, 1);
-		IDataStore limitedDataStore = dataSet.getDataStore();
 
-		if (limitedDataStore != null) {
-			if (summaryRowProjections == null || summaryRowProjections.size() == 0 || !isRealtime) {
-				Map<String, String> datasetAlias = (Map<String, String>) limitedDataStore.getMetaData().getProperty("DATASET_ALIAS");
+		String queryText = null;
+		if (summaryRowProjections == null || summaryRowProjections.size() == 0 || !isRealtime) {
 
-				// https://production.eng.it/jira/browse/KNOWAGE-149
-				// This list is used to create the order by clause
-				List<String> orderColumns = new ArrayList<String>();
+			// https://production.eng.it/jira/browse/KNOWAGE-149
+			// This list is used to create the order by clause
+			List<String> orderColumns = new ArrayList<String>();
 
-				SelectBuilder sqlBuilder = new SelectBuilder();
-				sqlBuilder.setWhereOrEnabled(isRealtime);
-				sqlBuilder.from(tableName);
+			SelectBuilder sqlBuilder = new SelectBuilder();
+			sqlBuilder.setWhereOrEnabled(isRealtime);
+			sqlBuilder.from(tableName);
 
-				setColumnsToSelect(dataSource, projections, datasetAlias, sqlBuilder, orderColumns);
-				setWhereConditions(dataSource, filters, datasetAlias, sqlBuilder);
-				setGroupbyConditions(dataSource, groups, datasetAlias, sqlBuilder);
-				setOrderbyConditions(orderColumns, sqlBuilder);
+			setColumnsToSelect(dataSource, projections, datasetAlias, sqlBuilder, orderColumns, isRealtime);
+			setWhereConditions(dataSource, filters, datasetAlias, sqlBuilder);
+			setGroupbyConditions(dataSource, groups, datasetAlias, sqlBuilder);
+			setOrderbyConditions(orderColumns, sqlBuilder);
 
-				queryText = sqlBuilder.toString();
-			}
-
-			if (summaryRowProjections != null && summaryRowProjections.size() > 0) {
-				StringBuilder sb = new StringBuilder();
-				sb.append("SELECT ");
-				String comma = "";
-				for (int i = 0; i < projections.size(); i++) {
-					ProjectionCriteria projection = projections.get(i);
-					String alias = projection.getAliasName();
-					String aggregateFunction = null;
-					for (ProjectionCriteria summaryRowProjection : summaryRowProjections) {
-						String columnName = summaryRowProjection.getColumnName();
-						if (columnName.equals(alias)) {
-							aggregateFunction = summaryRowProjection.getAggregateFunction();
-							break;
-						}
-					}
-					if (aggregateFunction != null) {
-						sb.append(comma);
-						comma = ",";
-						sb.append(aggregateFunction);
-						sb.append("(");
-						sb.append(alias);
-						sb.append(")");
-					}
-				}
-				sb.append(" FROM ");
-				if (isRealtime) {
-					sb.append(tableName);
-				} else {
-					sb.append("(");
-					sb.append(queryText);
-					sb.append(") AS T");
-				}
-
-				queryText = sb.toString();
-			}
-			logger.debug("Persisted dataset access query is equal to [" + queryText + "]");
-		} else {
-			throw new SpagoBIRuntimeException("Impossible to retrieve datastore to get required metadata.");
+			queryText = sqlBuilder.toString();
 		}
+
+		if (summaryRowProjections != null && summaryRowProjections.size() > 0) {
+			StringBuilder sb = new StringBuilder();
+			sb.append("SELECT ");
+			String comma = "";
+			for (int i = 0; i < projections.size(); i++) {
+				ProjectionCriteria projection = projections.get(i);
+				String alias = projection.getAliasName();
+				String aggregateFunction = null;
+				for (ProjectionCriteria summaryRowProjection : summaryRowProjections) {
+					String columnName = summaryRowProjection.getColumnName();
+					if (columnName.equals(alias)) {
+						aggregateFunction = summaryRowProjection.getAggregateFunction();
+						break;
+					}
+				}
+				if (aggregateFunction != null) {
+					sb.append(comma);
+					comma = ",";
+					sb.append(aggregateFunction);
+					sb.append("(");
+					sb.append(alias);
+					sb.append(")");
+				}
+			}
+			sb.append(" FROM ");
+			if (isRealtime) {
+				sb.append(tableName);
+			} else {
+				sb.append("(");
+				sb.append(queryText);
+				sb.append(") AS T");
+			}
+
+			queryText = sb.toString();
+		}
+		logger.debug("Persisted dataset access query is equal to [" + queryText + "]");
+
 		return queryText;
 	}
 
 	private void setColumnsToSelect(IDataSource dataSource, List<ProjectionCriteria> projections, Map<String, String> datasetAlias, SelectBuilder sqlBuilder,
-			List<String> orderColumns) {
-		if (projections != null) {
-			for (ProjectionCriteria projection : projections) {
-				String aggregateFunction = projection.getAggregateFunction();
+			List<String> orderColumns, boolean isRealtime) {
+		if (orderColumns == null) {
+			throw new SpagoBIRuntimeException("Unable to manage ORDER BY clauses");
+		}
 
+		if (projections != null) {
+			Set<String> notCalculatedColumns = new HashSet<String>();
+			Set<String> aggregatedBasicColumns = new HashSet<String>();
+
+			for (ProjectionCriteria projection : projections) {
 				String columnName = projection.getColumnName();
 				if (datasetAlias != null) {
-					columnName = datasetAlias.get(projection.getDataset()) + " - " + projection.getColumnName();
+					columnName = datasetAlias.get(projection.getDataset()) + " - " + columnName;
 				}
+
+				String aggregateFunction = projection.getAggregateFunction();
+				String aliasName = AbstractJDBCDataset.encapsulateColumnName(projection.getAliasName(), dataSource);
+				boolean hasAlias = aliasName != null && !aliasName.isEmpty();
+				String orderType = projection.getOrderType();
 
 				if (columnName.contains(AbstractDataBase.STANDARD_ALIAS_DELIMITER)) {
 					// this is a calculated field!
-					columnName = AbstractJDBCDataset.substituteStandardWithDatasourceDelimiter(columnName, dataSource);
-				} else {
-					columnName = AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
-				}
-
-				String aliasName = projection.getAliasName();
-				aliasName = AbstractJDBCDataset.encapsulateColumnName(aliasName, dataSource);
-				if ((aggregateFunction != null) && (!aggregateFunction.isEmpty()) && (columnName != "*")) {
-					if (aliasName != null && !aliasName.isEmpty()) {
-						// https://production.eng.it/jira/browse/KNOWAGE-149
-						// This variable is used for the order clause
-						String tmpColumn = aggregateFunction + "(" + columnName + ") ";
-
-						String orderType = projection.getOrderType();
-						if (orderType != null && !orderType.equals("")) {
-							orderColumns.add(tmpColumn + " " + orderType);
+					if (isRealtime) {
+						Set<String> basicColumns = getBasicColumnsFromCalculatedColumn(columnName);
+						for (String basicColumn : basicColumns) {
+							aggregatedBasicColumns.add(aggregateFunction + "(" + basicColumn + ")");
 						}
-
-						columnName = tmpColumn + " AS " + aliasName;
+						break;
+					} else {
+						columnName = AbstractJDBCDataset.substituteStandardWithDatasourceDelimiter(columnName, dataSource);
 					}
 				} else {
-					if (aliasName != null && !aliasName.isEmpty() && !aliasName.equals(columnName)) {
-						columnName += " AS " + aliasName;
+					if (!columnName.equals("*")) {
+						columnName = AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
 					}
 				}
+
+				if (aggregateFunction != null && !aggregateFunction.isEmpty()) {
+					columnName = aggregateFunction + "(" + columnName + ")";
+					if (!hasAlias) {
+						throw new SpagoBIRuntimeException("Projection [" + columnName + "] requires an alias");
+					}
+				}
+				notCalculatedColumns.add(columnName);
+
+				if (orderType != null && !orderType.isEmpty()) {
+					orderColumns.add(columnName + " " + orderType);
+				}
+
+				if (hasAlias) {
+					columnName += " AS " + aliasName;
+				}
+
 				sqlBuilder.column(columnName);
 			}
+
+			aggregatedBasicColumns.removeAll(notCalculatedColumns);
+
+			for (String additionalColumnName : aggregatedBasicColumns) {
+				sqlBuilder.column(additionalColumnName);
+			}
 		}
+	}
+
+	private Set<String> getBasicColumnsFromCalculatedColumn(String columnName) {
+		int delimiterCount = columnName.length() - columnName.replace(AbstractDataBase.STANDARD_ALIAS_DELIMITER, "").length();
+		if (delimiterCount % 2 == 1) {
+			throw new SpagoBIRuntimeException("An unexpected error occured while parsing [" + columnName + "]");
+		}
+
+		Set<String> columnNames = new HashSet<String>();
+		int endIndex = -2;
+		int beginIndex = -1;
+		while ((beginIndex = columnName.indexOf(AbstractDataBase.STANDARD_ALIAS_DELIMITER, endIndex)) > -1) {
+			beginIndex++;
+			endIndex = columnName.indexOf(AbstractDataBase.STANDARD_ALIAS_DELIMITER, beginIndex);
+			columnNames.add(columnName.substring(beginIndex, endIndex));
+			endIndex++;
+		}
+		return columnNames;
 	}
 
 	private void setWhereConditions(IDataSource dataSource, List<FilterCriteria> filters, Map<String, String> datasetAlias, SelectBuilder sqlBuilder) {
