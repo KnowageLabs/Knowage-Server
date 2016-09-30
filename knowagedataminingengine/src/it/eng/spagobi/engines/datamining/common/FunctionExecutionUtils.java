@@ -139,21 +139,22 @@ public class FunctionExecutionUtils {
 			for (int i = 0; i < response.length(); i++) {
 				JSONObject result;
 				result = response.getJSONObject(i);
-				if (!result.has("result") || !result.has("resultType") || !result.has("resultName")) {
+				if (!result.has(DataMiningConstants.RESULT_CONTENT_FIELD) || !result.has(DataMiningConstants.RESULT_TYPE_FIELD)
+						|| !result.has(DataMiningConstants.RESULT_NAME_FIELD)) {
 					return false;
 				}
-				// TODO: add check for FILE
+				if (result.getString(DataMiningConstants.RESULT_TYPE_FIELD).equalsIgnoreCase("File")) {
+					if (!result.getJSONObject(DataMiningConstants.RESULT_CONTENT_FIELD).has("base64")
+							|| !result.getJSONObject(DataMiningConstants.RESULT_CONTENT_FIELD).has("filename")) {
+						return false;
+					}
+				}
 			}
 		} catch (JSONException e) {
 			logger.error("Exception while using JSONArray response [" + response.toString() + "]", e);
 			return false;
 		}
 		return true;
-	}
-
-	public static String getRequestBody(SbiCatalogFunction function) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -246,5 +247,10 @@ public class FunctionExecutionUtils {
 			response.put(o);
 		}
 		return response;
+	}
+
+	public static void adjustBodyContentsForRemoteExecution(String body) {
+		// TODO Auto-generated method stub
+		// TODO Check if there are datasets and serialize them as files....
 	}
 }

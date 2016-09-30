@@ -58,7 +58,7 @@ public class FunctionExecutor {
 		return results;
 	}
 
-	private static JSONArray getRemoteServiceResponse(SbiCatalogFunction function) throws HttpException, IOException, JSONException {
+	private static JSONArray getRemoteServiceResponse(String url, String requestBody) throws HttpException, IOException, JSONException {
 		Map<String, String> requestHeaders = new HashMap<String, String>(2);
 		String[][] headers = new String[][] { { "Accept", "application/json" }, { "Content-Type", "application/json" } };
 		for (String[] header : headers) {
@@ -66,8 +66,7 @@ public class FunctionExecutor {
 				requestHeaders.put(header[0], header[1]);
 			}
 		}
-		String requestBody = FunctionExecutionUtils.getRequestBody(function);
-		Response response = RestUtilities.makeRequest(HttpMethod.Post, function.getUrl(), requestHeaders, requestBody, null);
+		Response response = RestUtilities.makeRequest(HttpMethod.Post, url, requestHeaders, requestBody, null);
 		String responseBody = response.getResponseBody();
 		if (response.getStatusCode() != HttpStatus.SC_OK) {
 			throw new SpagoBIRuntimeException(String.format("The response status is not ok: status=%d, response=%s", response.getStatusCode(), responseBody));
@@ -80,15 +79,11 @@ public class FunctionExecutor {
 		logger.debug("IN");
 		JSONArray serviceResponse = new JSONArray();
 		try {
-			if (body != null && !body.isEmpty()) {
-				logger.debug("Request with user provided data [" + body + "]");
-				FunctionExecutionUtils.substituteWithReplacingValues(function, body);
-			}
-
 			logger.debug("Checking if the function is remotely located...");
 			if (function.isRemote()) {
 				logger.debug("The function is remotely located... Request of execution will be forwarded to [" + function.getUrl() + "]");
-				JSONArray remoteResponse = getRemoteServiceResponse(function);
+				FunctionExecutionUtils.adjustBodyContentsForRemoteExecution(body);
+				JSONArray remoteResponse = getRemoteServiceResponse(function.getUrl(), body);
 				if (remoteResponse != null && FunctionExecutionUtils.isResponseCompliant(function, remoteResponse)) {
 					serviceResponse = remoteResponse;
 				} else {
@@ -96,6 +91,10 @@ public class FunctionExecutor {
 							"The remote service response is not compliant with the expected format. Please contact the remote function supplier.");
 				}
 			} else {
+				if (body != null && !body.isEmpty()) {
+					logger.debug("Request with user provided data [" + body + "]");
+					FunctionExecutionUtils.substituteWithReplacingValues(function, body);
+				}
 				logger.debug("Creating engine instance ...");
 				DataMiningTemplate template = FunctionExecutionUtils.getDataMiningTemplate(function);
 				DataMiningEngineInstance dataMiningEngineInstance = DataMiningEngine.createInstance(template, env);
