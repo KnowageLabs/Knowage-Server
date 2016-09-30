@@ -42,9 +42,12 @@ public class DataMiningConstants {
 
 	public static final String VARIABLES_IN = "variablesIn";
 	public static final String DATASETS_IN = "datasetsIn";
+	public static final String FILES_IN = "filesIn";
 	public static final String DATASETS_OUT = "datasetsOut";
 	public static final String TEXT_OUT = "textOut";
 	public static final String IMAGE_OUT = "imageOut";
-	public static final String FILES_IN = "filesIn";
 
+	public static final String RESULT_TYPE_FIELD = "resultType";
+	public static final String RESULT_NAME_FIELD = "resultName";
+	public static final String RESULT_CONTENT_FIELD = "result";
 }

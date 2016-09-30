@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,16 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.utilities.rest;
+
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.filters.XSSRequestWrapper;
+import it.eng.spagobi.utilities.json.JSONUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -46,18 +51,10 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.httpclient.util.ParameterParser;
 import org.apache.commons.httpclient.util.URIUtil;
-import org.apache.htrace.fasterxml.jackson.databind.jsonFormatVisitors.JsonAnyFormatVisitor;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import com.hazelcast.com.eclipsesource.json.JsonObject;
-
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.filters.XSSRequestWrapper;
-import it.eng.spagobi.utilities.json.JSONUtils;
 
 public class RestUtilities {
 
@@ -87,12 +84,11 @@ public class RestUtilities {
 	}
 
 	/**
-	 * @deprecated 
-	 * This function could give problem with XSS. <br/>
-	 * Inplace of this, please use one of <br/>
-	 * {@link #readBodyAsJSONObject(HttpServletRequest request)} which returns a JSONObject <br/>
-	 * {@link #readBodyAsJSONArray(HttpServletRequest request)} which returns a JSONArray <br/>
-	 * {@link #readBodyXSSUnsafe(HttpServletRequest request)} which returns a String <br/>
+	 * @deprecated This function could give problem with XSS. <br/>
+	 *             Inplace of this, please use one of <br/>
+	 *             {@link #readBodyAsJSONObject(HttpServletRequest request)} which returns a JSONObject <br/>
+	 *             {@link #readBodyAsJSONArray(HttpServletRequest request)} which returns a JSONArray <br/>
+	 *             {@link #readBodyXSSUnsafe(HttpServletRequest request)} which returns a String <br/>
 	 *
 	 */
 	@Deprecated
@@ -103,8 +99,7 @@ public class RestUtilities {
 	/**
 	 * Reads the body of a request and return it as a string<br/>
 	 *
-	 * <b>Warning:</b> this method does not provide protection against 
-	 * XSS attaks. Use it only if you know what you are doing. 
+	 * <b>Warning:</b> this method does not provide protection against XSS attaks. Use it only if you know what you are doing.
 	 *
 	 * @param request
 	 *            the HttpServletRequest request
@@ -136,8 +131,7 @@ public class RestUtilities {
 
 	/**
 	 *
-	 * Reads the body of a request and return it as a JSONObject
-	 * <b>Fiters content against XSS attacks</b>
+	 * Reads the body of a request and return it as a JSONObject <b>Fiters content against XSS attacks</b>
 	 *
 	 * @param request
 	 *            the HttpServletRequest request
@@ -153,14 +147,13 @@ public class RestUtilities {
 		final JSONObject jsonObject = new JSONObject(requestBody);
 
 		stripXSSJsonObject(jsonObject);
-		
+
 		return jsonObject;
 	}
 
 	/**
 	 *
-	 * Reads the body of a request and return it as a JSONOArray
-	 * <b>Fiters content against XSS attacks</b>
+	 * Reads the body of a request and return it as a JSONOArray <b>Fiters content against XSS attacks</b>
 	 *
 	 * @param request
 	 *            the HttpServletRequest request
@@ -174,32 +167,28 @@ public class RestUtilities {
 	}
 
 	private static Object stripXSSJsonObject(Object o) throws JSONException {
-		if(o instanceof JSONObject) {
+		if (o instanceof JSONObject) {
 			JSONObject inJsonObject = (JSONObject) o;
 			final Iterator<String> keys = inJsonObject.keys();
-			while(keys.hasNext()) {
+			while (keys.hasNext()) {
 				final String key = keys.next();
 				final Object object = inJsonObject.get(key);
-				if(object instanceof String) {
-					inJsonObject.put(key, XSSRequestWrapper.stripXSS((String)object));
-				}
-				else if (object instanceof JSONObject) {
-					stripXSSJsonObject((JSONObject)object);
-				}
-				else if (object instanceof JSONArray) {
-					JSONArray ja = (JSONArray)object;
-					for (int i = 0; i < ja.length() ; i++) {
+				if (object instanceof String) {
+					inJsonObject.put(key, XSSRequestWrapper.stripXSS((String) object));
+				} else if (object instanceof JSONObject) {
+					stripXSSJsonObject(object);
+				} else if (object instanceof JSONArray) {
+					JSONArray ja = (JSONArray) object;
+					for (int i = 0; i < ja.length(); i++) {
 						ja.put(i, stripXSSJsonObject(ja.get(i)));
 					}
 				}
 			}
-		}
-		else if(o instanceof JSONObject) {
-			o = XSSRequestWrapper.stripXSS((String)o);
-		}
-		else if (o instanceof JSONArray) {
-			JSONArray ja = (JSONArray)o;
-			for (int i = 0; i < ja.length() ; i++) {
+		} else if (o instanceof JSONObject) {
+			o = XSSRequestWrapper.stripXSS((String) o);
+		} else if (o instanceof JSONArray) {
+			JSONArray ja = (JSONArray) o;
+			for (int i = 0; i < ja.length(); i++) {
 				ja.put(i, stripXSSJsonObject(ja.get(i)));
 			}
 		}
@@ -247,8 +236,8 @@ public class RestUtilities {
 
 	}
 
-	public static Response makeRequest(HttpMethod httpMethod, String address, Map<String, String> requestHeaders, String requestBody)
-			throws HttpException, IOException {
+	public static Response makeRequest(HttpMethod httpMethod, String address, Map<String, String> requestHeaders, String requestBody) throws HttpException,
+			IOException {
 		return makeRequest(httpMethod, address, requestHeaders, requestBody, null);
 	}
 
@@ -256,8 +245,10 @@ public class RestUtilities {
 	public static Response makeRequest(HttpMethod httpMethod, String address, Map<String, String> requestHeaders, String requestBody,
 			List<NameValuePair> queryParams) throws HttpException, IOException {
 		HttpMethodBase method = getMethod(httpMethod, address);
-		for (Entry<String, String> entry : requestHeaders.entrySet()) {
-			method.addRequestHeader(entry.getKey(), entry.getValue());
+		if (requestHeaders != null) {
+			for (Entry<String, String> entry : requestHeaders.entrySet()) {
+				method.addRequestHeader(entry.getKey(), entry.getValue());
+			}
 		}
 		if (queryParams != null) {
 			// add uri query params to provided query params present in query

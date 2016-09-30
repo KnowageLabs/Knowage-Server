@@ -1,8 +1,8 @@
 package it.eng.spagobi.engines.datamining.common;
 
-import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IDomainDAO;
+import it.eng.spagobi.engines.datamining.bo.DataMiningResult;
 import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
 import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
 import it.eng.spagobi.engines.datamining.model.DataMiningDataset;
@@ -11,7 +11,6 @@ import it.eng.spagobi.engines.datamining.model.DataMiningScript;
 import it.eng.spagobi.engines.datamining.model.Output;
 import it.eng.spagobi.engines.datamining.model.Variable;
 import it.eng.spagobi.engines.datamining.template.DataMiningTemplate;
-import it.eng.spagobi.functions.dao.ICatalogFunctionDAO;
 import it.eng.spagobi.functions.metadata.SbiCatalogFunction;
 import it.eng.spagobi.functions.metadata.SbiFunctionInputDataset;
 import it.eng.spagobi.functions.metadata.SbiFunctionInputFile;
@@ -28,214 +27,19 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class FunctionExecutionUtils {
 
 	static protected Logger logger = Logger.getLogger(FunctionExecutionUtils.class);
 
-	public static DataMiningTemplate initializeTemplateByFunctionId(int functionId) {
-		SbiCatalogFunction function = null;
-		ICatalogFunctionDAO fcDAO = null;
-		try {
-			fcDAO = DAOFactory.getCatalogFunctionDAO();
-		} catch (EMFUserError e1) {
-			throw new SpagoBIRuntimeException("Error getting catalog function DAO", e1);
-		}
-		function = fcDAO.getCatalogFunctionById(functionId);
-		DataMiningTemplate template = getDataMiningTemplate(function);
-		return template;
-
-	}
-
-	public static DataMiningTemplate getTemplateWithReplacingValues(int functionId, String body, Map<String, Map<String, String>> functionIOMaps,
-			Map<String, Map<String, String>> filesInMap) {
-		logger.debug("IN");
-		DataMiningTemplate template;
-		try {
-			ICatalogFunctionDAO fcDAO = DAOFactory.getCatalogFunctionDAO();
-			SbiCatalogFunction function = fcDAO.getCatalogFunctionById(functionId);
-			template = getTemplateWithReplacingValuesFromFunction(function, body, functionIOMaps, filesInMap);
-		} catch (EMFUserError e1) {
-			throw new SpagoBIRuntimeException("Error getting catalog function DAO", e1);
-		}
-		logger.debug("OUT");
-		return template;
-
-	}
-
-	private static DataMiningTemplate getTemplateWithReplacingValuesFromFunction(SbiCatalogFunction function, String body,
-			Map<String, Map<String, String>> functionIOMaps, Map<String, Map<String, String>> filesInMap) {
-		// Maps contain values to use instead of function values
-		DataMiningTemplate template = null;
-		try {
-			template = new DataMiningTemplate();
-			template.setLanguage(function.getLanguage());
-
-			Set<SbiFunctionInputDataset> datasets = function.getSbiFunctionInputDatasets();
-			List<DataMiningDataset> dataminingDatasets = new ArrayList<DataMiningDataset>();
-
-			Map<String, String> variablesInMap = functionIOMaps.get(DataMiningConstants.VARIABLES_IN);
-			Map<String, String> datasetsInMap = functionIOMaps.get(DataMiningConstants.DATASETS_IN);
-			Map<String, String> datasetsOutMap = functionIOMaps.get(DataMiningConstants.DATASETS_OUT);
-			Map<String, String> textOutMap = functionIOMaps.get(DataMiningConstants.TEXT_OUT);
-			Map<String, String> imageOutMap = functionIOMaps.get(DataMiningConstants.IMAGE_OUT);
-
-			for (SbiFunctionInputDataset dataset : datasets) {
-				DataMiningDataset d = new DataMiningDataset();
-				IDataSetDAO dsDAO = DAOFactory.getDataSetDAO();
-				int dsId = dataset.getId().getDsId();
-				IDataSet iDataset = dsDAO.loadDataSetById(dsId);// *
-				String labelDemoDS = iDataset.getLabel();
-				if (datasetsInMap.containsKey(labelDemoDS)) // map element format: <demoLabel:replacingLabel>
-				{
-					String datasetHavingReplacingDSlabel = datasetsInMap.get(labelDemoDS);
-					JSONObject dsHavingReplacingDSlabel = new JSONObject(datasetHavingReplacingDSlabel);
-					String replacingDSlabel = dsHavingReplacingDSlabel.getString("label");
-
-					if (replacingDSlabel != null && (!replacingDSlabel.equals(""))) { // if a replacing dataset isn't specified, associate the demo dataset
-						IDataSet ds = dsDAO.loadDataSetByLabel(replacingDSlabel);
-						if (ds != null) // if a replacing dataset isn't specified, associate the demo dataset
-						{
-							iDataset = ds;
-						}
-					}
-				}
-
-				d.setLabel(iDataset.getLabel());
-				d.setSpagobiLabel(iDataset.getLabel()); // Important! used label is spagobiLabel!
-				d.setCanUpload(true);
-				d.setName(iDataset.getName());
-				d.setType("Dataset"); // or DataMiningConstants.DATASET_OUTPUT or DataMiningConstants.SPAGOBI_DS_OUTPUT, the dataminingEngine differences
-										// spagoBI datasets from file datasets created when executing a document
-				JSONObject confObj = new JSONObject(iDataset.getConfiguration());
-
-				if (confObj.has("fileName")) {
-					d.setFileName(confObj.getString("fileName"));
-					d.setOptions("sep='" + confObj.getString("csvDelimiter") + "'");
-					d.setReadType(confObj.getString("fileType").toLowerCase());
-				}
-				dataminingDatasets.add(d);
-			}
-			template.setDatasets(dataminingDatasets);
-
-			// -----------------------------------------------
-
-			Set<SbiFunctionInputFile> files = function.getSbiFunctionInputFiles();
-			List<DataMiningFile> dataminingFiles = new ArrayList<DataMiningFile>();
-
-			for (SbiFunctionInputFile file : files) {
-
-				DataMiningFile f = new DataMiningFile();
-				String fileAlias = file.getAlias();
-				f.setAlias(fileAlias);
-				if (filesInMap.containsKey(fileAlias)) {
-
-					String replacingFileName = filesInMap.get(fileAlias).get("fileName");
-					byte[] replacingBase64 = filesInMap.get(fileAlias).get("base64").getBytes();
-
-					f.setFileName(replacingFileName);
-					f.setContent(replacingBase64);
-					dataminingFiles.add(f);
-				}
-
-			}
-			template.setFiles(dataminingFiles);
-
-			// -----------------------------------------------
-
-			Set<SbiFunctionInputVariable> variables = function.getSbiFunctionInputVariables();
-			Set<SbiFunctionOutput> outputs = function.getSbiFunctionOutputs();
-
-			DataMiningCommand c = new DataMiningCommand();
-			c.setLabel("CatalogCommand");
-			c.setName("CatalogCommand");
-			c.setScriptName("CatalogScript");
-
-			List<Variable> vars = new ArrayList<Variable>();
-			List<Output> outs = new ArrayList<Output>();
-
-			for (SbiFunctionInputVariable v : variables) {
-				Variable var = new Variable();
-				String varName = v.getId().getVarName();
-				var.setName(varName);
-				String varValue = "";
-				if (variablesInMap.containsKey(varName)) // map element format: <demoVarName:replacingVALUE>
-				{
-					String replacingVariableValue = variablesInMap.get(varName);
-					if (!replacingVariableValue.equals("") && replacingVariableValue != null) // if a replacing dataset isn't specified, associate the demo
-																								// dataset
-					{
-						varValue = replacingVariableValue;
-					} else {
-						varValue = v.getVarValue();
-					}
-				} else // variable not present in input map, use demo variable
-				{
-					varValue = v.getVarValue();
-				}
-
-				var.setValue(varValue);
-				vars.add(var);
-			}
-
-			HashMap<String, String> mapImageAndTextOut = new HashMap<String, String>();
-			if (textOutMap != null) {
-				mapImageAndTextOut.putAll(textOutMap);
-			}
-			if (imageOutMap != null) {
-				mapImageAndTextOut.putAll(imageOutMap);
-			}
-
-			for (SbiFunctionOutput o : outputs) {
-				Output out = new Output();
-				String label = o.getId().getLabel();
-				String oldLabel = o.getId().getLabel(); // old label is the value of the dataframe variable containing dataset value in script!!
-				if (datasetsOutMap.containsKey(label)) {
-					String replacingDatasetOutLabel = datasetsOutMap.get(label);
-					if (!replacingDatasetOutLabel.equals("") && replacingDatasetOutLabel != null) {
-						label = replacingDatasetOutLabel;
-					}
-
-				} else if (mapImageAndTextOut.containsKey(label)) {
-					String replacingOutLabel = mapImageAndTextOut.get(label);
-					if (!replacingOutLabel.equals("") && replacingOutLabel != null) {
-						label = replacingOutLabel;
-					}
-				}
-				out.setOuputLabel(label);
-				out.setOutputName(label); // Name=label
-				out.setOutputValue(oldLabel); // added, before it was label --> it's dataset's name in the script
-				IDomainDAO domainsDAO = DAOFactory.getDomainDAO();
-				String type = domainsDAO.loadDomainById(o.getOutType()).getValueName();
-				out.setOutputType(type);
-				out.setOutputMode("auto"); // TODO: ??? can't figure out what auto means...
-				outs.add(out);
-			}
-			c.setVariables(vars);
-			c.setOutputs(outs);
-
-			List<DataMiningCommand> commands = new ArrayList<DataMiningCommand>();
-			commands.add(c);
-			template.setCommands(commands);
-
-			List<DataMiningScript> dataMiningScripts = new ArrayList<DataMiningScript>();
-			String scriptCode = function.getScript();
-			DataMiningScript script = new DataMiningScript();
-			script.setName("CatalogScript");
-			script.setCode(scriptCode);
-			dataMiningScripts.add(script);
-			template.setScripts(dataMiningScripts);
-
-		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Error creating a template to instantiate datamining engine, replacing demo input and outputs with new ones.", e);
-		}
-
-		return template;
-
-	}
-
-	private static DataMiningTemplate getDataMiningTemplate(SbiCatalogFunction function) {
+	@SuppressWarnings("unchecked")
+	public static DataMiningTemplate getDataMiningTemplate(SbiCatalogFunction function) {
 		DataMiningTemplate template = null;
 		IDataSetDAO dsDAO = null;
 		try {
@@ -330,4 +134,117 @@ public class FunctionExecutionUtils {
 		return template;
 	}
 
+	public static boolean isResponseCompliant(SbiCatalogFunction function, JSONArray response) {
+		try {
+			for (int i = 0; i < response.length(); i++) {
+				JSONObject result;
+				result = response.getJSONObject(i);
+				if (!result.has("result") || !result.has("resultType") || !result.has("resultName")) {
+					return false;
+				}
+				// TODO: add check for FILE
+			}
+		} catch (JSONException e) {
+			logger.error("Exception while using JSONArray response [" + response.toString() + "]", e);
+			return false;
+		}
+		return true;
+	}
+
+	public static String getRequestBody(SbiCatalogFunction function) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static void substituteWithReplacingValues(SbiCatalogFunction function, String body) {
+		logger.debug("IN");
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			Map<String, String> variablesInMap = new HashMap<String, String>();
+			Map<String, String> datasetsInMap = new HashMap<String, String>();
+			Map<String, Map<String, String>> filesInMap = new HashMap<String, Map<String, String>>();
+
+			JSONArray replacements = new JSONArray(body);
+			for (int i = 0; i < replacements.length(); i++) {
+				JSONObject object = replacements.getJSONObject(i);
+				JSONObject items = object.getJSONObject("items");
+				String type = object.getString("type");
+				switch (type) {
+				case DataMiningConstants.VARIABLES_IN:
+					variablesInMap = mapper.readValue(items.toString(), new TypeReference<Map<String, String>>() {
+					});
+					break;
+				case DataMiningConstants.DATASETS_IN:
+					datasetsInMap = mapper.readValue(items.toString(), new TypeReference<Map<String, String>>() {
+					});
+					break;
+				case DataMiningConstants.FILES_IN:
+					filesInMap = mapper.readValue(items.toString(), new TypeReference<Map<String, String>>() {
+					});
+					break;
+				}
+			}
+
+			logger.debug("Initializing function with POSTed contents");
+			logger.debug("Initializing dataset input type");
+			IDataSetDAO dsDAO = DAOFactory.getDataSetDAO();
+			Set<SbiFunctionInputDataset> defaultDataSets = function.getSbiFunctionInputDatasets();
+			for (SbiFunctionInputDataset defaultDataSet : defaultDataSets) {
+				int dsIdToBeReplaced = defaultDataSet.getId().getDsId();
+				logger.debug("Getting label for input dataset with Id [" + dsIdToBeReplaced + "]");
+				IDataSet dataSetToBeReplaced = dsDAO.loadDataSetById(dsIdToBeReplaced);
+				if (dataSetToBeReplaced == null) {
+					throw new SpagoBIRuntimeException("Impossible to find a dataset with id [" + dsIdToBeReplaced + "]. Please check if it has been deleted.");
+				}
+				String dsLabel = datasetsInMap.get(dataSetToBeReplaced.getLabel());
+				if (dsLabel != null) {
+					logger.debug("The request has provided a new dataset [" + dsLabel + "] to be used...");
+					IDataSet dataSet = dsDAO.loadDataSetByLabel(dsLabel);
+					if (dataSet == null) {
+						throw new SpagoBIRuntimeException("Impossible to find a dataset with label [" + dsLabel + "]. Please check if it has been deleted.");
+					}
+					defaultDataSet.getId().setDsId(dataSet.getId());
+				}
+			}
+
+			logger.debug("Initializing variable input type");
+			Set<SbiFunctionInputVariable> defaultVariables = function.getSbiFunctionInputVariables();
+			for (SbiFunctionInputVariable defaultVariable : defaultVariables) {
+				String varToBeReplaced = defaultVariable.getId().getVarName();
+				String value = variablesInMap.get(varToBeReplaced);
+				if (value != null) {
+					logger.debug("The request has provided a new value [" + value + "] to be used for variable named [" + varToBeReplaced + "]...");
+					defaultVariable.setVarValue(value);
+				}
+			}
+
+			logger.debug("Initializing file input type");
+			Set<SbiFunctionInputFile> defaultFiles = function.getSbiFunctionInputFiles();
+			for (SbiFunctionInputFile defaultFile : defaultFiles) {
+				String fileToBeReplaced = defaultFile.getAlias();
+				Map<String, String> file = filesInMap.get(fileToBeReplaced);
+				if (file != null) {
+					logger.debug("The request has provided a new file content for [" + fileToBeReplaced + "]...");
+					defaultFile.getId().setFileName(file.get("filename"));
+					defaultFile.setContent(file.get("base64").getBytes());
+				}
+			}
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error while replacing default input with the provided ones.", e);
+		}
+	}
+
+	public static JSONArray buildDataminingResponse(List<DataMiningResult> dataminingExecutionResults) throws JSONException {
+		JSONArray response = new JSONArray();
+		for (DataMiningResult r : dataminingExecutionResults) {
+			boolean isImage = r.getOutputType().equalsIgnoreCase(DataMiningConstants.IMAGE_OUTPUT);
+			JSONObject o = new JSONObject();
+			o.put(DataMiningConstants.RESULT_TYPE_FIELD, r.getOutputType());
+			o.put(DataMiningConstants.RESULT_CONTENT_FIELD, r.getResult());
+			o.put(DataMiningConstants.RESULT_NAME_FIELD, isImage ? r.getPlotName() : r.getVariablename());
+			response.put(o);
+		}
+		return response;
+	}
 }

@@ -179,6 +179,90 @@ public class DomainResource extends AbstractSpagoBIResource {
 		}
 	}
 
+	// @formatter:off
+		/**
+		 * @api {get} /2.0/domains/listByCode/:code Request domain by code
+		 * @apiName GET_getDomainsByCode
+		 * @apiGroup Domain
+		 *
+		 * @apiVersion 0.1.0
+		 *
+		 * @apiDescription
+		 * -- AUTHENTICATION
+		 *
+		 * All the Knowage RESTful services are based on Basic Authentication. Please generate your request in accordance with this
+		 * requirement.
+		 *
+		 *
+		 * -- DESCRIPTION
+		 *
+		 * This service can be called to obtain a list of domains by code. To get the list of function types, please use the code 'FUNCTION_TYPE'.
+		 *
+		 * @apiSuccess {json} functions The list of domain by code.
+		 *
+		 * @apiSuccessExample {json} Response-example:
+			[
+			   {
+			      "valueId":324,
+			      "valueCd":"Text Analysis",
+			      "valueName":"Text Analysis",
+			      "valueDescription":"url(../../knowage/themes/commons/img/functions_catalog_images/text.png)",
+			      "domainCode":"FUNCTION_TYPE",
+			      "domainName":"Make sense of unstructured text",
+			      "translatedValueName":"Text Analysis",
+			      "translatedValueDescription":"url(../../knowage/themes/commons/img/functions_catalog_images/text.png)"
+			   },
+			   {
+			      "valueId":325,
+			      "valueCd":"Machine Learning",
+			      "valueName":"Machine Learning",
+			      "valueDescription":"url(../../knowage/themes/commons/img/functions_catalog_images/degree.png)",
+			      "domainCode":"FUNCTION_TYPE",
+			      "domainName":"Teach your app to teach himself",
+			      "translatedValueName":"Machine Learning",
+			      "translatedValueDescription":"url(../../knowage/themes/commons/img/functions_catalog_images/degree.png)"
+			   },
+			   {
+			      "valueId":326,
+			      "valueCd":"Computer Vision",
+			      "valueName":"Computer Vision",
+			      "valueDescription":"url(../../knowage/themes/commons/img/functions_catalog_images/eye.png)",
+			      "domainCode":"FUNCTION_TYPE",
+			      "domainName":"Identify objects in images",
+			      "translatedValueName":"Computer Vision",
+			      "translatedValueDescription":"url(../../knowage/themes/commons/img/functions_catalog_images/eye.png)"
+			   },
+			   {
+			      "valueId":327,
+			      "valueCd":"Utilities",
+			      "valueName":"Utilities",
+			      "valueDescription":"url(../../knowage/themes/commons/img/functions_catalog_images/memory.png)",
+			      "domainCode":"FUNCTION_TYPE",
+			      "domainName":"Ready to use microservices",
+			      "translatedValueName":"Utilities",
+			      "translatedValueDescription":"url(../../knowage/themes/commons/img/functions_catalog_images/memory.png)"
+			   },
+			   {
+			      "valueId":328,
+			      "valueCd":"All",
+			      "valueName":"All",
+			      "valueDescription":"all.png",
+			      "domainCode":"FUNCTION_TYPE",
+			      "domainName":"All kind of functions",
+			      "translatedValueName":"All",
+			      "translatedValueDescription":"all.png"
+			   }
+			]
+		 * @apiErrorExample {json} Error-Response example:
+			 *    {
+			 *    	"service":"",
+			 *    	"errors":[
+			 *    		{"message":"Here the error message."}
+			 *    	]
+			 *    }
+		*/
+		// @formatter:on
+
 	@GET
 	@Path("/listByCode/{code}")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")

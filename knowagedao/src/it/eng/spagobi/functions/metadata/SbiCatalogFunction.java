@@ -90,7 +90,7 @@ public class SbiCatalogFunction extends SbiHibernateModel {
 		this.remote = remote;
 	}
 
-	public boolean getRemote() {
+	public boolean isRemote() {
 		return remote;
 	}
 
