@@ -440,7 +440,7 @@
 		<antcall target="create.SpagoBISocialAnalysis.war" />
 		<copy file="../../../SpagoBISocialAnalysis/dist/SpagoBISocialAnalysis.war" 
         todir="../../../dist" overwrite="true" />
--->		<antcall target="JUnit-tests" depends="create.knowagewhatifengine.war" />
+-->		<antcall target="JUnit-tests" />
 	</target>
 
 	<!-- NEW: 22/05/2012 -->
