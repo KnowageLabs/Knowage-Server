@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var datasetModule = angular.module('datasetModule', ['ngMaterial', 'angular-list-detail', 'sbiModule', 'angular_table', 'file_upload', 'ui.codemirror']);
+var datasetModule = angular.module('datasetModule', ['ngMaterial', 'angular-list-detail', 'sbiModule', 'angular_table', 'file_upload', 'ui.codemirror','expander-box']);
 
 datasetModule.config(['$mdThemingProvider', function($mdThemingProvider) {
 	$mdThemingProvider.theme('knowage')
@@ -1328,6 +1328,70 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 						sbiModule_translate.load('sbi.generic.error'), $scope.toasterConfig);
 				
 			});
+	    	
+	    }
+	    
+	    $scope.getNextPreviewSet= function(){   	
+	    	
+	    	 if($scope.startPreviewIndex+$scope.itemsPerPage > $scope.totalItemsInPreview){
+	  
+	    		 $scope.startPreviewIndex=$scope.totalItemsInPreview-($scope.totalItemsInPreview%$scope.itemsPerPage);  		
+	    		 $scope.endPreviewIndex=$scope.totalItemsInPreview;
+	    		 $scope.disableNext=true;
+	    		 $scope.disableBack=false;
+	    	 }else if($scope.startPreviewIndex+$scope.itemsPerPage == $scope.totalItemsInPreview){
+	    		 $scope.startPreviewIndex=$scope.totalItemsInPreview-$scope.itemsPerPage;
+	    		 $scope.endPreviewIndex=$scope.totalItemsInPreview;
+	    		 $scope.disableNext=true;
+	    		 $scope.disableBack=false;
+	    	 } else{
+	              $scope.startPreviewIndex= $scope.startPreviewIndex+$scope.itemsPerPage;
+	              $scope.endPreviewIndex=$scope.endPreviewIndex+$scope.itemsPerPage;
+	              
+	              if($scope.endPreviewIndex >= $scope.totalItemsInPreview){
+	            	  if($scope.endPreviewIndex == $scope.totalItemsInPreview){
+	            		  $scope.startPreviewIndex=$scope.totalItemsInPreview-$scope.itemsPerPage;
+	            	  }else{
+	            	  $scope.startPreviewIndex=$scope.totalItemsInPreview-($scope.totalItemsInPreview%$scope.itemsPerPage);
+	            	  }
+	         		 $scope.endPreviewIndex=$scope.totalItemsInPreview;
+	         		 $scope.disableNext=true;
+	         		 $scope.disableBack=false;
+	         	 }else{
+	              
+	              
+	              $scope.disableNext=false;
+	              $scope.disableBack=false;
+	         	 }
+	    	 }   
+	    	 
+	    	 $scope.getPreviewSet($scope.datasetInPreview);
+	        	 
+	    }
+	    
+	    $scope.getBackPreviewSet=function(){
+	    	
+	    	 if($scope.startPreviewIndex-$scope.itemsPerPage < 0){
+	    		 $scope.startPreviewIndex=0; 
+	    		 $scope.endPreviewIndex=$scope.itemsPerPage;
+	    		 $scope.disableBack=true;
+	    		 $scope.disableNext=false;
+	    	 }
+	    	 else{
+	    		 $scope.endPreviewIndex=$scope.startPreviewIndex;
+	             $scope.startPreviewIndex= $scope.startPreviewIndex-$scope.itemsPerPage;
+	             if($scope.startPreviewIndex-$scope.itemsPerPage < 0){
+	            	 $scope.startPreviewIndex=0; 
+	        		 $scope.endPreviewIndex=$scope.itemsPerPage;
+	        		 $scope.disableBack=true;
+	        		 $scope.disableNext=false;
+	             }else{
+	             $scope.disableBack=false;
+	             $scope.disableNext=false;
+	             }
+	    	 }
+	    	
+	    	 $scope.getPreviewSet($scope.datasetInPreview);
 	    	
 	    }
 	
