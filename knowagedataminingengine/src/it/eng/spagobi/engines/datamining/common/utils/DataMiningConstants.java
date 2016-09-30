@@ -30,6 +30,8 @@ public class DataMiningConstants {
 	public static final String IMAGE_OUTPUT = "image";
 	public static final String HTML_OUTPUT = "html";
 	public static final String TEXT_OUTPUT = "text";
+	public static final String FILE_OUTPUT = "file";
+
 	public static final String SCRIPT_OUTPUT = "script";
 	public static final String DATASET = "dataset";
 	public static final String SPAGOBI_DS = "spagobi_ds"; // for legacy with old output type name
@@ -46,6 +48,7 @@ public class DataMiningConstants {
 	public static final String DATASETS_OUT = "datasetsOut";
 	public static final String TEXT_OUT = "textOut";
 	public static final String IMAGE_OUT = "imageOut";
+	public static final String FILE_OUT = "fileOut";
 
 	public static final String RESULT_TYPE_FIELD = "resultType";
 	public static final String RESULT_NAME_FIELD = "resultName";

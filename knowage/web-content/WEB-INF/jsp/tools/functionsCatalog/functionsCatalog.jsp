@@ -177,7 +177,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							flex
 							ng-show=true
 							ng-model="functionsList"
-							columns='[{"label":"Function Name","name":"name"}]' 
+							columns='[{"label":"Function Name","name":"name","owner":"owner"}]'  
 							columns-search='["name","keywords","description"]'
 							show-search-bar=true
 							highlights-selected-item=true
@@ -367,7 +367,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					<md-card>
 						<md-card-content>
 	  					
-	      					<md-input-container class="md-block">
+	      					<md-input-container class="md-block" ng-if='languageHidden'>
 	            				<label>{{translate.load("sbi.functionscatalog.language");}}</label>
 	            				<md-select ng-model="shownFunction.language">
 	              					<md-option ng-repeat="language in languages" value="{{language}}">

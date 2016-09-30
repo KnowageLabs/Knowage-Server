@@ -532,6 +532,9 @@
 	
 	<DOMAIN valueCd="Image" valueNm="Image"
 		domainCd="FUNCTION_OUTPUT" domainNm="Function output type domain" valueDs="Image" />		
+		
+	<DOMAIN valueCd="File" valueNm="File"
+		domainCd="FUNCTION_OUTPUT" domainNm="Function output type domain" valueDs="File" />	
 	
 	<DOMAIN valueCd="Undefined" valueNm="Undefined"
 		domainCd="FUNCTION_OUTPUT" domainNm="Function output type domain" valueDs="Undefined" />

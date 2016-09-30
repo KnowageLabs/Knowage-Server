@@ -762,10 +762,18 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 
 			for (int i = 0; i < jsonInputFiles.length(); i++) {
 				JSONObject inputItemJSON = jsonInputFiles.getJSONObject(i);
+				CatalogFunctionInputFile inputFile = new CatalogFunctionInputFile();
 				String fileName = inputItemJSON.getString("fileName");
-				byte[] content = inputItemJSON.getString("base64").getBytes();
+				inputFile.setFileName(fileName);
+				if (inputItemJSON.has("base64")) {
+					byte[] content = inputItemJSON.getString("base64").getBytes();
+					inputFile.setContent(content);
+				}
 				String alias = inputItemJSON.getString("alias");
-				inputFiles.add(new CatalogFunctionInputFile(fileName, alias, content));
+				inputFile.setAlias(alias);
+				;
+
+				inputFiles.add(inputFile);
 			}
 
 			Map<String, String> outputs = new HashMap<String, String>();

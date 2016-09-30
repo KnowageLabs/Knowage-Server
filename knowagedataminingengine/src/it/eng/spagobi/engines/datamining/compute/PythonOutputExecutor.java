@@ -334,6 +334,12 @@ public class PythonOutputExecutor {
 			logger.debug("Evaluated result");
 
 		}
+		if (out.getOutputType().equalsIgnoreCase(DataMiningConstants.FILE_OUTPUT) && out.getOutputName() != null) {
+			/* Read files out from resource directory and produce output */
+
+			res.setOutputType(out.getOutputType());
+
+		}
 		logger.debug("OUT");
 		return res;
 	}

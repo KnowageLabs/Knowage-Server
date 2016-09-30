@@ -34,7 +34,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 	$scope.tableSelectedFunction = {};
 	$scope.tableSelectedFunction.language = "Python";
 	$scope.languages = [ "Python", "R" ];
-	$scope.outputTypes = [ "Dataset", "Text", "Image" ];
+	$scope.outputTypes = [ "Dataset", "Text", "Image" ,"File"];
 	$scope.inputTypes = [ "Simple Input", "Dataset Input" ];
 	$scope.functionTypesList = [];
 	$scope.simpleInputs = []; // =Input variables
@@ -47,6 +47,8 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 	$scope.searchKeywords=[];
 	$scope.selectedType="All";
 	$scope.missingFields=[];
+	$scope.languageHidden=false;
+
 		
 	
 	$scope.editorConfig = {
@@ -123,7 +125,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		   };
 	}
 	
-	$scope.formatFile=function(body){ //convert file into BASE64 and put content into inputFile.content
+	$scope.formatFile=function(body){ //convert file into BASE64 and put content into inputFile.base64
 		
 		
 		console.log("Format file body ",body);
@@ -142,8 +144,8 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 			if(body.inputFiles[i].file!=undefined)
 			{	
 				var inputFile=body.inputFiles[i];
-				body.inputFiles[i].content=inputFile.file.content;
-				inputFile.file.content="";
+				body.inputFiles[i].base64=inputFile.file.base64;
+				inputFile.file.base64="";
 				newBody.inputFiles.push(body.inputFiles[i]);
 			}
 			
@@ -236,11 +238,14 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		if(localOrRemoteStr=="local")
 		{
 			$scope.shownFunction.url="";
+			$scope.languageHidden=true;
+
 			
 		}	
 		else if(localOrRemoteStr=="remote")
 		{
 			$scope.shownFunction.script="";
+			$scope.languageHidden=false;
 		}
 	}
 	
