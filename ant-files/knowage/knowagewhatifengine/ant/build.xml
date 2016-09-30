@@ -328,7 +328,7 @@
 		<junit haltonfailure ="false" printsummary="true">
 			<classpath location="${runtime.lib}/junit.jar" />
 			<classpath location = "../../../knowagewhatifengine/ant-build/knowagewhatifengine/WEB-INF/classes"/>
-			
+			<formatter type="plain" usefile="false" />
 			<batchtest fork="no" todir="${test}">
 				
 				<formatter  type="xml" />
