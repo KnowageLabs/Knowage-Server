@@ -26,6 +26,7 @@ public class SbiCatalogFunction extends SbiHibernateModel {
 	private Set sbiFunctionInputVariables = new HashSet(0);
 	private Set sbiFunctionOutputs = new HashSet(0);
 	private Set sbiFunctionInputDatasets = new HashSet(0);
+	private Set sbiFunctionInputFiles = new HashSet(0);
 
 	public SbiCatalogFunction() {
 	}
@@ -123,6 +124,14 @@ public class SbiCatalogFunction extends SbiHibernateModel {
 
 	public void setSbiFunctionInputDatasets(Set sbiFunctionInputDatasets) {
 		this.sbiFunctionInputDatasets = sbiFunctionInputDatasets;
+	}
+
+	public Set getSbiFunctionInputFiles() {
+		return sbiFunctionInputFiles;
+	}
+
+	public void setSbiFunctionInputFiles(Set sbiFunctionInputFiles) {
+		this.sbiFunctionInputFiles = sbiFunctionInputFiles;
 	}
 
 	public String getOwner() {

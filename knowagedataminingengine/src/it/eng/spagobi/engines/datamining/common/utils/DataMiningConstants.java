@@ -45,5 +45,6 @@ public class DataMiningConstants {
 	public static final String DATASETS_OUT = "datasetsOut";
 	public static final String TEXT_OUT = "textOut";
 	public static final String IMAGE_OUT = "imageOut";
+	public static final String FILES_IN = "filesIn";
 
 }

@@ -3553,7 +3553,7 @@ ADD COLUMN EVENT_BEFORE_TRIGGER_ACTION INTEGER;
 -- 09.06.2016 Vincenzo Gambino
 ALTER TABLE SBI_PARUSE ADD COLUMN OPTIONS VARCHAR(4000) NULL DEFAULT NULL
 
---10.06.2016 Antonella Giachino: add hierarchy_name, level and member_name in SBI_GEO_MAP
+-- 10.06.2016 Antonella Giachino: add hierarchy_name, level and member_name in SBI_GEO_MAP
 ALTER TABLE  SBI_GEO_MAPS ADD HIERARCHY_NAME VARCHAR(100);
 ALTER TABLE  SBI_GEO_MAPS ADD LEVEL INTEGER;
 ALTER TABLE  SBI_GEO_MAPS ADD MEMBER_NAME VARCHAR(100);
@@ -3641,10 +3641,10 @@ update SBI_ENGINES set MAIN_URL="/knowagewhatifengine/restful-services/olap/star
 update SBI_ENGINES set MAIN_URL="/knowagewhatifengine/restful-services/olap/startwhatif" where label = "knowagewhatifengine";
 
 
---14.09.2016 Alessandro Piovani: add url, remote columns to SBI_CATALOG_FUNCTIONS and make SCRIPT field nullable
+-- 14.09.2016 Alessandro Piovani: add url, remote columns to SBI_CATALOG_FUNCTIONS and make SCRIPT field nullable
 
 ALTER TABLE SBI_CATALOG_FUNCTION ADD COLUMN REMOTE TINYINT(1) DEFAULT 0;
 ALTER TABLE SBI_CATALOG_FUNCTION ADD COLUMN URL VARCHAR(100);
-ALTER TABLE KNOWAGE.SBI_CATALOG_FUNCTION CHANGE COLUMN `SCRIPT` `SCRIPT` TEXT NULL;
+ALTER TABLE SBI_CATALOG_FUNCTION CHANGE COLUMN SCRIPT SCRIPT TEXT NULL;
 
 

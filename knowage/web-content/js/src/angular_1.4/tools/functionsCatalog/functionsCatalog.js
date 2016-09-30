@@ -1,6 +1,6 @@
 var app = angular.module('functionsCatalogControllerModule', [ 'ngMaterial',
 		'angular_list', 'angular_table', 'sbiModule', 'angular_2_col',
-		'file_upload', 'angular-list-detail', 'ngSanitize', 'ui.codemirror',
+		'file_upload_base64', 'angular-list-detail', 'ngSanitize', 'ui.codemirror',
 		'ngWYSIWYG', 'ngSanitize' ]);
 app.config([ '$mdThemingProvider', function($mdThemingProvider) {
 	$mdThemingProvider.theme('knowage')
@@ -39,6 +39,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 	$scope.functionTypesList = [];
 	$scope.simpleInputs = []; // =Input variables
 	$scope.inputDatasets = [];
+	$scope.inputFiles = [];
 	$scope.varIndex = 0;
 	$scope.datasetsIndex = 0;
 	$scope.functionsList = [];
@@ -57,6 +58,8 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		"name" : "",
 		"inputDatasets" : [],
 		"inputVariables" : [],
+		"inputUrls" : [],
+		"inputFiles" : [],
 		"outputItems" : [],
 		"language" : "Python",
 		"script" : "",
@@ -75,6 +78,8 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 			"name" : "",
 			"inputDatasets" : [],
 			"inputVariables" : [],
+			"inputUrls" : [],
+			"inputFiles" : [],
 			"outputItems" : [],
 			"language" : "Python",
 			"script" : "",
@@ -105,8 +110,51 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		$scope.userId = text;
 	}
 
-	// Utility function
+	// Utility functions
 
+	$scope.getBase64=function(file) {
+		   var reader = new FileReader();
+		   reader.readAsDataURL(file);
+		   reader.onload = function () {
+		     console.log("File in Base64: ",reader.result);
+		   };
+		   reader.onerror = function (error) {
+		     console.log('Error: ', error);
+		   };
+	}
+	
+	$scope.formatFile=function(body){ //convert file into BASE64 and put content into inputFile.content
+		
+		
+		console.log("Format file body ",body);
+//		
+//		for(var i=0;i<body.inputFiles.length;i++)
+//		{
+//			var inputFile=body.inputFiles[i];
+//			$scope.getBase64(inputFile.file);
+//		}	
+//		
+		var newBody=angular.copy(body);
+		newBody.inputFiles=[];
+		
+		for(var i=0;i<body.inputFiles.length;i++)
+		{
+			if(body.inputFiles[i].file!=undefined)
+			{	
+				var inputFile=body.inputFiles[i];
+				body.inputFiles[i].content=inputFile.file.content;
+				inputFile.file.content="";
+				newBody.inputFiles.push(body.inputFiles[i]);
+			}
+			
+		}
+		
+		body=newBody;
+		console.log("Format file body ",body);
+
+	}
+	
+	
 	$scope.showTabDialog = function(result, isDemoExecution) {
 		$mdDialog.show({
 			controller : functionCatalogResultsController,
@@ -123,7 +171,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 			},
 			clickOutsideToClose : true
 		});
-	};
+	};	
 
 	$scope.showNewInputDialog = function(data, datasetList, isDemoFunction) {
 		$log.info("userId: " + $scope.userId);
@@ -274,7 +322,9 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 				$log.info("Save operation");
 
 				body = $scope.shownFunction;
-
+				$scope.formatFile(body);
+				
+				
 				$log.info("Shown function to send with POST", body);
 
 				sbiModule_restServices.post("1.0/functions-catalog",
@@ -289,6 +339,8 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 							"name" : "",
 							"inputDatasets" : [],
 							"inputVariables" : [],
+							"inputUrls"	:	[],
+							"inputFiles":	[],
 							"outputItems" : [],
 							"language" : "Python",
 							"script" : "",
@@ -321,8 +373,12 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 				$log.info("Update operation");
 				body = $scope.shownFunction;
 				functionId = $scope.shownFunction.id;
+				$scope.formatFile(body);
+
 				$log.info("Shown function to send with PUT", body);
 
+				
+				
 				sbiModule_restServices.put("1.0/functions-catalog",
 						"update/" + functionId, body).success(
 						function(data) {
@@ -353,7 +409,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 
 	$scope.checkCorrectArguments = function() {
 		// $scope.newFunction={"id":"" ,"name":"","inputDatasets":[] ,
-		// "inputVariables":[] , "outputItems":[], "language":"Python",
+		// "inputVariables":[] ,"inputFiles" : [] ,"outputItems":[], "language":"Python",
 		// "script":"", "description":""};
 		var correctArguments=true;
 		$scope.missingFields=[];
@@ -382,6 +438,21 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 				}	
 			}
 		}
+		
+		for (var i = 0; i < $scope.shownFunction.inputFiles.length; i++) {
+			if ($scope.shownFunction.inputFiles[i].fileName == undefined) {
+				correctArguments=false;
+				var index=i+1;
+
+				if($scope.shownFunction.inputFiles[i].fileName == undefined)
+				{	
+					$scope.missingFields.push("Input file  "+ index +"file name missing");
+				}
+
+			}
+		}
+		
+		
 		for (var i = 0; i < $scope.shownFunction.outputItems.length; i++) {
 			if ($scope.shownFunction.outputItems[i].label == undefined
 					|| $scope.shownFunction.outputItems[i].type == undefined) {
@@ -544,14 +615,25 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		$scope.cleanNewFunction();
 		var inputVariable = {};
 
-		// Mi procuro la lista di label dei dataset da mostrare nel caso il tipo
-		// di inputItem fosse SpagoBI Dataset
-
 		$scope.shownFunction.inputVariables.push(inputVariable);
 		$log.info("Added an input Variable ",
 				$scope.shownFunction.inputVariables);
 		return inputVariable;
 	}
+	
+	
+	$scope.addInputFile = function() {
+		$scope.cleanNewFunction();
+		var inputFile = {};
+
+		$scope.shownFunction.inputFiles.push(inputFile);
+		$log
+				.info("Added an input File ",
+						$scope.shownFunction.inputFiles);
+		return inputFile;
+	}
+	
+	
 
 	$scope.removeInputDataset = function(inputDataset) {
 		var index = $scope.shownFunction.inputDatasets.indexOf(inputDataset);
@@ -566,6 +648,14 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		$log.info("Removed an input Variable ",
 				$scope.shownFunction.inputVariables);
 	}
+	
+	$scope.removeInputFile = function(inputFile) {
+		var index = $scope.shownFunction.inputFiles.indexOf(inputFile);
+		$scope.shownFunction.inputFiles.splice(index, 1);
+		$log.info("Removed an input File ",
+				$scope.shownFunction.inputFile);
+	}
+	
 
 	$scope.addOutputItem = function() {
 		var output = {};
@@ -777,10 +867,12 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		$scope.userId = userId;
 		logger.info("HAVING DATASETS: ", $scope.datasets);
 		$scope.replacingDatasetList = {};
+		$scope.replacingFileList = {};							//ADDED
 		$scope.replacingVariableValues = {};
 		$scope.replacingDatasetOutLabels = {};
 		$scope.replacingTextOutLabels = {};
 		$scope.replacingImageOutLabels = {};
+		$scope.replacingFileList= {};
 		$scope.translate = translate;
 
 		$scope.getDatasetNameByLabel = function(label, datasetList) {
@@ -883,7 +975,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		$scope.executeFunction = function() {
 			var body = [];
 
-			var obj = {}, obj2 = {}, obj3 = {}, obj4 = {}, obj5 = {};
+			var obj = {}, obj2 = {}, obj3 = {}, obj4 = {}, obj5 = {}, obj6 = {};
 			obj.type = "variablesIn";
 			obj.items = $scope.replacingVariableValues;
 			body.push(obj);
@@ -903,7 +995,11 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 			obj5.type = "imageOut";
 			obj5.items = $scope.replacingImageOutLabels;
 			body.push(obj5);
-
+			
+			obj6.type = "filesIn"
+			obj6.items = $scope.replacingFileList;
+			body.push(obj6);
+				
 			logger.info("body: ", body);
 
 			// sbiModule_restServices.alterContextPath("/knowagedataminingengine");

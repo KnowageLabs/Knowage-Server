@@ -6,6 +6,7 @@ import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
 import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
 import it.eng.spagobi.engines.datamining.model.DataMiningDataset;
+import it.eng.spagobi.engines.datamining.model.DataMiningFile;
 import it.eng.spagobi.engines.datamining.model.DataMiningScript;
 import it.eng.spagobi.engines.datamining.model.Output;
 import it.eng.spagobi.engines.datamining.model.Variable;
@@ -13,6 +14,7 @@ import it.eng.spagobi.engines.datamining.template.DataMiningTemplate;
 import it.eng.spagobi.functions.dao.ICatalogFunctionDAO;
 import it.eng.spagobi.functions.metadata.SbiCatalogFunction;
 import it.eng.spagobi.functions.metadata.SbiFunctionInputDataset;
+import it.eng.spagobi.functions.metadata.SbiFunctionInputFile;
 import it.eng.spagobi.functions.metadata.SbiFunctionInputVariable;
 import it.eng.spagobi.functions.metadata.SbiFunctionOutput;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -46,13 +48,14 @@ public class FunctionExecutionUtils {
 
 	}
 
-	public static DataMiningTemplate getTemplateWithReplacingValues(int functionId, String body, Map<String, Map<String, String>> functionIOMaps) {
+	public static DataMiningTemplate getTemplateWithReplacingValues(int functionId, String body, Map<String, Map<String, String>> functionIOMaps,
+			Map<String, Map<String, String>> filesInMap) {
 		logger.debug("IN");
 		DataMiningTemplate template;
 		try {
 			ICatalogFunctionDAO fcDAO = DAOFactory.getCatalogFunctionDAO();
 			SbiCatalogFunction function = fcDAO.getCatalogFunctionById(functionId);
-			template = getTemplateWithReplacingValuesFromFunction(function, body, functionIOMaps);
+			template = getTemplateWithReplacingValuesFromFunction(function, body, functionIOMaps, filesInMap);
 		} catch (EMFUserError e1) {
 			throw new SpagoBIRuntimeException("Error getting catalog function DAO", e1);
 		}
@@ -62,7 +65,7 @@ public class FunctionExecutionUtils {
 	}
 
 	private static DataMiningTemplate getTemplateWithReplacingValuesFromFunction(SbiCatalogFunction function, String body,
-			Map<String, Map<String, String>> functionIOMaps) {
+			Map<String, Map<String, String>> functionIOMaps, Map<String, Map<String, String>> filesInMap) {
 		// Maps contain values to use instead of function values
 		DataMiningTemplate template = null;
 		try {
@@ -116,6 +119,31 @@ public class FunctionExecutionUtils {
 			}
 			template.setDatasets(dataminingDatasets);
 
+			// -----------------------------------------------
+
+			Set<SbiFunctionInputFile> files = function.getSbiFunctionInputFiles();
+			List<DataMiningFile> dataminingFiles = new ArrayList<DataMiningFile>();
+
+			for (SbiFunctionInputFile file : files) {
+
+				DataMiningFile f = new DataMiningFile();
+				String fileAlias = file.getAlias();
+				f.setAlias(fileAlias);
+				if (filesInMap.containsKey(fileAlias)) {
+
+					String replacingFileName = filesInMap.get(fileAlias).get("fileName");
+					byte[] replacingBase64 = filesInMap.get(fileAlias).get("base64").getBytes();
+
+					f.setFileName(replacingFileName);
+					f.setContent(replacingBase64);
+					dataminingFiles.add(f);
+				}
+
+			}
+			template.setFiles(dataminingFiles);
+
+			// -----------------------------------------------
+
 			Set<SbiFunctionInputVariable> variables = function.getSbiFunctionInputVariables();
 			Set<SbiFunctionOutput> outputs = function.getSbiFunctionOutputs();
 
@@ -152,8 +180,12 @@ public class FunctionExecutionUtils {
 			}
 
 			HashMap<String, String> mapImageAndTextOut = new HashMap<String, String>();
-			mapImageAndTextOut.putAll(textOutMap);
-			mapImageAndTextOut.putAll(imageOutMap);
+			if (textOutMap != null) {
+				mapImageAndTextOut.putAll(textOutMap);
+			}
+			if (imageOutMap != null) {
+				mapImageAndTextOut.putAll(imageOutMap);
+			}
 
 			for (SbiFunctionOutput o : outputs) {
 				Output out = new Output();
@@ -214,6 +246,7 @@ public class FunctionExecutionUtils {
 
 			Set<SbiFunctionInputDataset> datasets = function.getSbiFunctionInputDatasets();
 			List<DataMiningDataset> dataminingDatasets = new ArrayList<DataMiningDataset>();
+			List<DataMiningFile> dataminingFiles = new ArrayList<DataMiningFile>();
 
 			for (SbiFunctionInputDataset dataset : datasets) {
 				DataMiningDataset d = new DataMiningDataset();
@@ -239,6 +272,7 @@ public class FunctionExecutionUtils {
 
 			Set<SbiFunctionInputVariable> variables = function.getSbiFunctionInputVariables();
 			Set<SbiFunctionOutput> outputs = function.getSbiFunctionOutputs();
+			Set<SbiFunctionInputFile> files = function.getSbiFunctionInputFiles();
 
 			DataMiningCommand c = new DataMiningCommand();
 			c.setLabel("CatalogCommand");
@@ -254,6 +288,15 @@ public class FunctionExecutionUtils {
 				var.setValue(v.getVarValue());
 				vars.add(var);
 			}
+
+			for (SbiFunctionInputFile f : files) {
+				DataMiningFile file = new DataMiningFile();
+				file.setAlias(f.getAlias());
+				file.setContent(f.getContent());
+				file.setFileName(f.getId().getFileName());
+				dataminingFiles.add(file);
+			}
+
 			for (SbiFunctionOutput o : outputs) {
 				Output out = new Output();
 				out.setOuputLabel(o.getId().getLabel());
@@ -280,6 +323,7 @@ public class FunctionExecutionUtils {
 			script.setCode(scriptCode);
 			dataMiningScripts.add(script);
 			template.setScripts(dataMiningScripts);
+			template.setFiles(dataminingFiles);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

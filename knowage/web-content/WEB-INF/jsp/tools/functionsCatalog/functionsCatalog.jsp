@@ -316,40 +316,84 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						</md-card-content>
 					</md-card>
 					
+									
+					<md-card class="noMdError smallInputs">
+						<md-toolbar class="md-toolbar-tools secondaryToolbar">
+									{{translate.load("sbi.functionscatalog.inputFiles");}}
+									<div flex></div>
+									<md-button class="md-secondary" ng-click="input=addInputFile()" ng-show="(isAdmin || (isDev && shownFunction.owner==ownerUserName))">{{translate.load("sbi.functionscatalog.addinputfile");}}</md-button> 		
+						</md-toolbar>	
+						<md-card-content>
+							<md-list>
+								<md-list-item ng-if="shownFunction.inputFiles.length==0" class="messageItem" layout-align="center center">
+									&emsp;&emsp;{{translate.load("sbi.functionscatalog.noinputfilesrequired");}}
+						 
+								</md-list-item>
+						<!-- 		
+								<md-list-item ng-repeat="u in shownFunction.inputFiles">
+									<md-input-container class="md-block" flex>
+	           							<label>{{translate.load("sbi.functionscatalog.filename");}}</label>
+	       								<input ng-model="u.name" ng-disabled="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))">
+	   								</md-input-container>
+	   								<md-input-container class="md-block" flex>
+	           							<label>{{translate.load("sbi.functionscatalog.filevalue");}}</label>
+	       								<input ng-model="u.value" ng-disabled="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))">
+	   								</md-input-container>
+	  								<md-icon class="md-secondary" md-font-icon="fa fa-trash" ng-click="output=removeInputFile(i)" aria-hidden="true" ng-show="(isAdmin || (isDev && shownFunction.owner==ownerUserName))"></md-icon>
+								</md-list-item>
+						-->
+							  <md-list-item ng-repeat="inputFile in shownFunction.inputFiles" layout="row">
+							  	<md-input-container class="md-block" flex=40>
+	           						<label>{{translate.load("sbi.functionscatalog.filealias");}}</label>
+	       							<input ng-model="inputFile.alias" ng-disabled="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))">
+	   							</md-input-container>
+							  	{{translate.load("sbi.functionscatalog.selectafile");}}
+					  		  	<file-upload-base64 id="id_file_upload-{{$index}}" flex=20 ng-model="inputFile" ng-disabled="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))"></file-upload-base64>												
+							  	<md-icon class="md-secondary" md-font-icon="fa fa-trash" ng-click="output=removeInputFile(i)" aria-hidden="true" ng-show="(isAdmin || (isDev && shownFunction.owner==ownerUserName))"></md-icon>
+							 	<a flex=30 ng-if="inputFile.fileName!=undefined && inputFile.fileName!=null && inputFile.fileName!=''">Loaded {{inputFile.fileName}}</a>
+							  </md-list-item>
+							  
+							</md-list>  
+						</md-card-content>
+					</md-card>
+					
+					
+					
+					
+					
 				</md-tab>
 				
 				<md-tab label='{{translate.load("sbi.functionscatalog.script");}}' ng-if="(isAdmin || (isDev && shownFunction.owner==ownerUserName))">
-				<md-card>
-					<md-card-content>
-  					
-      					<md-input-container class="md-block">
-            				<label>{{translate.load("sbi.functionscatalog.language");}}</label>
-            				<md-select ng-model="shownFunction.language">
-              					<md-option ng-repeat="language in languages" value="{{language}}">
-                					{{language}}
-              					</md-option>
-           					</md-select>
-          				</md-input-container>
-      						
-       					<md-radio-group ng-model="shownFunction.remote" >
-      						<md-radio-button ng-value=false class="md-primary" ng-click="radioButtonRemoteLocalPush('local')" style="outline: none; border: 0; ">{{translate.load("sbi.functionscatalog.local");}}</md-radio-button>
-      						<md-radio-button ng-value=true ng-click="radioButtonRemoteLocalPush('remote')" style="outline: none; border: 0; "> {{translate.load("sbi.functionscatalog.remote");}} </md-radio-button>
-    					</md-radio-group>	
-      						
-  						<md-input-container class="md-block md-input-has-value" ng-if="shownFunction.remote==false">
-          					<label class="customCodeMirrorLabel">{{translate.load("sbi.functionscatalog.script");}}</label>
-          					<textarea flex ui-refresh="true" ng-model="shownFunction.script" ui-codemirror ui-codemirror-opts="editorOptions"></textarea>
-        				</md-input-container>
-									
-						<md-input-container class="md-block" flex ng-if="shownFunction.remote==true">
-	 						<label>{{translate.load("sbi.functionscatalog.url");}}</label>  
-	 						<input ng-model="shownFunction.url" ng-disabled="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))">
-						</md-input-container>			
-									
-									
-        			</md-card-content>
-        			</md-card>	
-  						    					
+					<md-card>
+						<md-card-content>
+	  					
+	      					<md-input-container class="md-block">
+	            				<label>{{translate.load("sbi.functionscatalog.language");}}</label>
+	            				<md-select ng-model="shownFunction.language">
+	              					<md-option ng-repeat="language in languages" value="{{language}}">
+	                					{{language}}
+	              					</md-option>
+	           					</md-select>
+	          				</md-input-container>
+	      						
+	       					<md-radio-group ng-model="shownFunction.remote" >
+	      						<md-radio-button ng-value=false class="md-primary" ng-click="radioButtonRemoteLocalPush('local')" style="outline: none; border: 0; ">{{translate.load("sbi.functionscatalog.local");}}</md-radio-button>
+	      						<md-radio-button ng-value=true ng-click="radioButtonRemoteLocalPush('remote')" style="outline: none; border: 0; "> {{translate.load("sbi.functionscatalog.remote");}} </md-radio-button>
+	    					</md-radio-group>	
+	      						
+	  						<md-input-container class="md-block md-input-has-value" ng-if="shownFunction.remote==false">
+	          					<label class="customCodeMirrorLabel">{{translate.load("sbi.functionscatalog.script");}}</label>
+	          					<textarea flex ui-refresh="true" ng-model="shownFunction.script" ui-codemirror ui-codemirror-opts="editorOptions"></textarea>
+	        				</md-input-container>
+										
+							<md-input-container class="md-block" flex ng-if="shownFunction.remote==true">
+		 						<label>{{translate.load("sbi.functionscatalog.url");}}</label>  
+		 						<input ng-model="shownFunction.url" ng-disabled="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))">
+							</md-input-container>			
+										
+										
+	        			</md-card-content>
+	        		</md-card>			    					
 				</md-tab>
 				<md-tab label='{{translate.load("sbi.functionscatalog.output");}}'>
 					<md-card class="noMdError smallInputs">

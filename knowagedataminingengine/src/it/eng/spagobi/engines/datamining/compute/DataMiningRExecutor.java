@@ -27,10 +27,12 @@ import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
 import it.eng.spagobi.engines.datamining.bo.DataMiningResult;
 import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
 import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
+import it.eng.spagobi.engines.datamining.model.DataMiningFile;
 import it.eng.spagobi.engines.datamining.model.Output;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -57,6 +59,7 @@ public class DataMiningRExecutor implements IDataMiningExecutor {
 	private final RDatasetsExecutor datasetsExecutor;
 	private final ROutputExecutor outputExecutor;
 	private final RScriptExecutor scriptExecutor;
+	private final RFilesExecutor fileExecutor;
 
 	public DataMiningRExecutor(DataMiningEngineInstance dataminingInstance, IEngUserProfile profile) {
 		super();
@@ -64,6 +67,7 @@ public class DataMiningRExecutor implements IDataMiningExecutor {
 		datasetsExecutor = new RDatasetsExecutor(dataminingInstance, profile);
 		outputExecutor = new ROutputExecutor(dataminingInstance, profile);
 		scriptExecutor = new RScriptExecutor(dataminingInstance, profile);
+		fileExecutor = new RFilesExecutor(dataminingInstance, profile);
 	}
 
 	/**
@@ -91,6 +95,7 @@ public class DataMiningRExecutor implements IDataMiningExecutor {
 		datasetsExecutor.setRe(re);
 		outputExecutor.setRe(re);
 		scriptExecutor.setRe(re);
+		fileExecutor.setRe(re);
 
 		logger.debug("created user dir");
 		logger.debug("OUT");
@@ -120,6 +125,7 @@ public class DataMiningRExecutor implements IDataMiningExecutor {
 		datasetsExecutor.setRe(re);
 		outputExecutor.setRe(re);
 		scriptExecutor.setRe(re);
+		fileExecutor.setRe(re);
 
 		logger.debug("OUT");
 	}
@@ -172,9 +178,9 @@ public class DataMiningRExecutor implements IDataMiningExecutor {
 	 *
 	 * @param dataminingInstance
 	 * @param command
-	 *            in atuo mode
+	 *            in auto mode
 	 * @param output
-	 *            in atuo mode
+	 *            in auto mode
 	 * @param userProfile
 	 * @param executionType
 	 * @return DataMiningResult
@@ -196,6 +202,14 @@ public class DataMiningRExecutor implements IDataMiningExecutor {
 		}
 		logger.debug("Loaded datasets");
 
+		// Files input preparation
+		error = fileExecutor.evalFilesNeeded(params);
+		if (error.length() > 0) {
+			result = new DataMiningResult();
+			result.setError(error);
+			return result;
+		}
+
 		// evaluates script code
 		scriptExecutor.evalScript(command, rerun, params);
 		logger.debug("Evaluated script");
@@ -203,6 +217,22 @@ public class DataMiningRExecutor implements IDataMiningExecutor {
 		// create output
 		result = outputExecutor.evalOutput(output, scriptExecutor, documentLabel, (String) profile.getUserId());
 		logger.debug("Got result");
+
+		// Delete files
+		if (fileExecutor.dataminingInstance.getFiles().size() > 0) {
+
+			for (DataMiningFile dmFile : fileExecutor.dataminingInstance.getFiles()) {
+
+				File file = new File(DataMiningUtils.getUserResourcesPath(profile) + dmFile.getFileName());
+				if (file.delete()) {
+					logger.debug(file.getName() + " is deleted!");
+				} else {
+					logger.debug("Delete operation is failed.");
+				}
+			}
+
+		}
+
 		// save result of script computation objects and datasets to
 		// user workspace
 		/*
@@ -230,12 +260,12 @@ public class DataMiningRExecutor implements IDataMiningExecutor {
 	 * setupEnvonment(userProfile); logger.debug("Set up environment"); // datasets preparation datasetsExecutor.updateDataset(ds);
 	 * logger.debug("Loaded datasets"); // save result of script computation objects and datasets to // user workspace saveUserWorkSpace();
 	 * logger.debug("Saved WS"); logger.debug("OUT"); }
-	 * 
-	 * 
+	 *
+	 *
 	 * protected void loadUserWorkSpace() throws IOException {
-	 * 
+	 *
 	 * example usage > save.image(file = 'D:/script/.Rdata', safe = TRUE) > load(file = 'D:/script/.Rdata')
-	 * 
+	 *
 	 * // create user workspace data logger.debug("IN"); re.(parseAndEval"save(list = ls(all = TRUE), file= '" + profile.getUserUniqueIdentifier() +
 	 * ".RData')"); logger.debug("Save all object in "+profile.getUserUniqueIdentifier() + ".RData"); re.(parseAndEval"load(file= '" +
 	 * profile.getUserUniqueIdentifier() + ".RData')"); logger.debug("Loaded "+profile.getUserUniqueIdentifier() + ".RData"); logger.debug("OUT"); }

@@ -99,6 +99,15 @@
             </key>
             <one-to-many class="it.eng.spagobi.functions.metadata.SbiFunctionInputDataset" />
         </set>
+        
+        <set name="sbiFunctionInputFiles" cascade="all" table="SBI_FUNCTION_INPUT_FILE" inverse="true" lazy="false" fetch="join">
+            <key>
+                <column name="FUNCTION_ID" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.functions.metadata.SbiFunctionInputFile" />
+        </set>
+        
+        
         <filter name="tenantFilter" condition="organization=:tenant" />  
  	</class>
  	<filter-def name="tenantFilter">

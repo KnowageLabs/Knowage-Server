@@ -65,20 +65,10 @@ public class FunctionResource extends AbstractDataMiningEngineResource {
 	 *
 	 * @apiSuccess {json} response The list of functions and keywords with the specified type.
 	 *
-	 * @apiSuccessExample {json} Response-example:
-		[
-		   {
-		      "resultType":"Image",
-		      "result":"iVBORw0KGgoAAAANSUhEUgAAAyAA....BiJ1pQ89NBDakQohBASIEIIIYqG1CaKuIkY+OlY6623QmCC",
-		      "resultName":"valuesPlot"
-		   },
-		   {
-		      "resultType":"Text",
-		      "result":"120",
-		      "resultName":"maximimValue"
-		   }
-		]
-	*/
+	 * @apiSuccessExample {json} Response-example: [ { "resultType":"Image",
+	 *                    "result":"iVBORw0KGgoAAAANSUhEUgAAAyAA....BiJ1pQ89NBDakQohBASIEIIIYqG1CaKuIkY+OlY6623QmCC", "resultName":"valuesPlot" }, {
+	 *                    "resultType":"Text", "result":"120", "resultName":"maximimValue" } ]
+	 */
 	// @formatter:on
 
 	@GET
@@ -106,29 +96,19 @@ public class FunctionResource extends AbstractDataMiningEngineResource {
 	}
 
 	// @formatter:off
-		/**
-		 * @api {get} /1.0/function/execute-sample?label=:label Execute function by label with sample data
-		 * @apiName GET_executeSampleCatalogFunctionByLabel
-		 * @apiGroup Functions
-		 *
-		 * @apiParam {String} label Function label.
-		 *
-		 * @apiSuccess {json} response The list of functions and keywords with the specified type.
-		 *
-		 * @apiSuccessExample {json} Response-example:
-			[
-			   {
-			      "resultType":"Image",
-			      "result":"iVBORw0KGgoAAAANSUhEUgAAAyAA....BiJ1pQ89NBDakQohBASIEIIIYqG1CaKuIkY+OlY6623QmCC",
-			      "resultName":"valuesPlot"
-			   },
-			   {
-			      "resultType":"Text",
-			      "result":"120",
-			      "resultName":"maximimValue"
-			   }
-			]
-		*/
+	/**
+	 * @api {get} /1.0/function/execute-sample?label=:label Execute function by label with sample data
+	 * @apiName GET_executeSampleCatalogFunctionByLabel
+	 * @apiGroup Functions
+	 *
+	 * @apiParam {String} label Function label.
+	 *
+	 * @apiSuccess {json} response The list of functions and keywords with the specified type.
+	 *
+	 * @apiSuccessExample {json} Response-example: [ { "resultType":"Image",
+	 *                    "result":"iVBORw0KGgoAAAANSUhEUgAAAyAA....BiJ1pQ89NBDakQohBASIEIIIYqG1CaKuIkY+OlY6623QmCC", "resultName":"valuesPlot" }, {
+	 *                    "resultType":"Text", "result":"120", "resultName":"maximimValue" } ]
+	 */
 	// @formatter:on
 
 	@GET
@@ -158,65 +138,27 @@ public class FunctionResource extends AbstractDataMiningEngineResource {
 	}
 
 	// @formatter:off
-		/**
-		 * @api {POST} /1.0/function/execute/:id Execute function by ID with provided data
-		 * @apiName POST_executeCatalogFunctionById
-		 * @apiGroup Functions
-		 *
-		 * @apiParam {Number} id Function id.
-		 * @apiParam {json} function Function detail.
-		 * @apiParamExample {json} Request-Example:
-		 *
-				[
-				   {
-				      "type":"variablesIn",
-				      "items":{
-				         "a":"3",
-				         "b":"3"
-				      }
-				   },
-				   {
-				      "type":"datasetsIn",
-				      "items":{
-				         "df":"df2"
-				      }
-				   },
-				   {
-				      "type":"datasetsOut",
-				      "items":{
-				         "datasetOut":"datasetOutNEW"
-				      }
-				   },
-				   {
-				      "type":"textOut",
-				      "items":{
-
-				      }
-				   },
-				   {
-				      "type":"imageOut",
-				      "items":{
-
-				      }
-				   }
-				]
-			 *
-			 * @apiSuccess {json} response The results from the execute function.
-			 *
-			 * @apiSuccessExample {json} Response-example:
-				[
-				   {
-				      "resultType":"Image",
-				      "result":"iVBORw0KGgoAAAANSUhEUgAAA...==NSUhEUgtfgf",
-				      "resultName":"res"
-				   },
-				   {
-				      "resultType":"Dataset",
-				      "result":"biadmin_function_catalog_datasetOutNEW",
-				      "resultName":"datasetOut"
-				   }
-				]
-			*/
+	/**
+	 * @api {POST} /1.0/function/execute/:id Execute function by ID with provided data
+	 * @apiName POST_executeCatalogFunctionById
+	 * @apiGroup Functions
+	 *
+	 * @apiParam {Number} id Function id.
+	 * @apiParam {json} function Function detail.
+	 * @apiParamExample {json} Request-Example:
+	 *
+	 *                  [ { "type":"variablesIn", "items":{ "a":"3", "b":"3" } }, { "type":"datasetsIn", "items":{ "df":"df2" } }, { "type":"datasetsOut",
+	 *                  "items":{ "datasetOut":"datasetOutNEW" } }, { "type":"textOut", "items":{
+	 *
+	 *                  } }, { "type":"imageOut", "items":{
+	 *
+	 *                  } } ]
+	 *
+	 * @apiSuccess {json} response The results from the execute function.
+	 *
+	 * @apiSuccessExample {json} Response-example: [ { "resultType":"Image", "result":"iVBORw0KGgoAAAANSUhEUgAAA...==NSUhEUgtfgf", "resultName":"res" }, {
+	 *                    "resultType":"Dataset", "result":"biadmin_function_catalog_datasetOutNEW", "resultName":"datasetOut" } ]
+	 */
 	// @formatter:on
 
 	@POST
@@ -228,7 +170,8 @@ public class FunctionResource extends AbstractDataMiningEngineResource {
 		JSONArray serviceResponse = new JSONArray();
 		try {
 			ObjectMapper mapper = new ObjectMapper();
-			Map<String, Map<String, String>> functionIOMaps = new HashMap<String, Map<String, String>>(functionIOFields.size());
+			Map<String, Map<String, String>> commonIOMaps = new HashMap<String, Map<String, String>>(functionIOFields.size());
+			Map<String, Map<String, String>> filesInMap = new HashMap<String, Map<String, String>>();
 
 			JSONArray replacements = new JSONArray(body);
 			for (int i = 0; i < replacements.length(); i++) {
@@ -238,13 +181,16 @@ public class FunctionResource extends AbstractDataMiningEngineResource {
 				if (functionIOFields.contains(type)) {
 					Map<String, String> map = mapper.readValue(items.toString(), new TypeReference<Map<String, String>>() {
 					});
-					functionIOMaps.put(type, map);
+					commonIOMaps.put(type, map);
+				} else if (type.equals(DataMiningConstants.FILES_IN)) {
+					filesInMap = mapper.readValue(items.toString(), new TypeReference<Map<String, Map<String, String>>>() {
+					});
 				}
 			}
 
 			logger.debug("Creating engine instance ...");
 			// Every map is in the form <OldValue,NewValue>
-			DataMiningTemplate template = FunctionExecutionUtils.getTemplateWithReplacingValues(id, body, functionIOMaps);
+			DataMiningTemplate template = FunctionExecutionUtils.getTemplateWithReplacingValues(id, body, commonIOMaps, filesInMap);
 			DataMiningEngineInstance dataMiningEngineInstance = DataMiningEngine.createInstance(template, getEnv());
 			logger.debug("Engine instance succesfully created");
 
@@ -260,65 +206,27 @@ public class FunctionResource extends AbstractDataMiningEngineResource {
 	}
 
 	// @formatter:off
-			/**
-			 * @api {POST} /1.0/function/execute?label=:label Execute function by label with provided data
-			 * @apiName POST_executeCatalogFunctionByLabel
-			 * @apiGroup Functions
-			 *
-			 * @apiParam {String} label Function label.
-			 * @apiParam {json} function Function detail.
-			 * @apiParamExample {json} Request-Example:
-			 *
-				[
-				   {
-				      "type":"variablesIn",
-				      "items":{
-				         "a":"3",
-				         "b":"3"
-				      }
-				   },
-				   {
-				      "type":"datasetsIn",
-				      "items":{
-				         "df":"df2"
-				      }
-				   },
-				   {
-				      "type":"datasetsOut",
-				      "items":{
-				         "datasetOut":"datasetOutNEW"
-				      }
-				   },
-				   {
-				      "type":"textOut",
-				      "items":{
-
-				      }
-				   },
-				   {
-				      "type":"imageOut",
-				      "items":{
-
-				      }
-				   }
-				]
-			 *
-			 * @apiSuccess {json} response The results from the execute function.
-			 *
-			 * @apiSuccessExample {json} Response-example:
-				[
-				   {
-				      "resultType":"Image",
-				      "result":"iVBORw0KGgoAAAANSUhEUgAAA...==NSUhEUgtfgf",
-				      "resultName":"res"
-				   },
-				   {
-				      "resultType":"Dataset",
-				      "result":"biadmin_function_catalog_datasetOutNEW",
-				      "resultName":"datasetOut"
-				   }
-				]
-			*/
+	/**
+	 * @api {POST} /1.0/function/execute?label=:label Execute function by label with provided data
+	 * @apiName POST_executeCatalogFunctionByLabel
+	 * @apiGroup Functions
+	 *
+	 * @apiParam {String} label Function label.
+	 * @apiParam {json} function Function detail.
+	 * @apiParamExample {json} Request-Example:
+	 *
+	 *                  [ { "type":"variablesIn", "items":{ "a":"3", "b":"3" } }, { "type":"datasetsIn", "items":{ "df":"df2" } }, { "type":"datasetsOut",
+	 *                  "items":{ "datasetOut":"datasetOutNEW" } }, { "type":"textOut", "items":{
+	 *
+	 *                  } }, { "type":"imageOut", "items":{
+	 *
+	 *                  } } ]
+	 *
+	 * @apiSuccess {json} response The results from the execute function.
+	 *
+	 * @apiSuccessExample {json} Response-example: [ { "resultType":"Image", "result":"iVBORw0KGgoAAAANSUhEUgAAA...==NSUhEUgtfgf", "resultName":"res" }, {
+	 *                    "resultType":"Dataset", "result":"biadmin_function_catalog_datasetOutNEW", "resultName":"datasetOut" } ]
+	 */
 	// @formatter:on
 
 	@POST

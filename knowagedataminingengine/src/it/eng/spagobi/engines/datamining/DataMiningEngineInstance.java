@@ -19,6 +19,7 @@ package it.eng.spagobi.engines.datamining;
 
 import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
 import it.eng.spagobi.engines.datamining.model.DataMiningDataset;
+import it.eng.spagobi.engines.datamining.model.DataMiningFile;
 import it.eng.spagobi.engines.datamining.model.DataMiningScript;
 import it.eng.spagobi.engines.datamining.template.DataMiningTemplate;
 import it.eng.spagobi.engines.datamining.template.DataMiningTemplateParser;
@@ -52,6 +53,7 @@ public class DataMiningEngineInstance extends AbstractEngineInstance {
 	private final List<DataMiningCommand> commands;
 	private List<DataMiningDataset> datasets;
 	private final List<DataMiningScript> scripts;
+	private final List<DataMiningFile> files;
 	private String language;
 
 	public static transient Logger logger = Logger.getLogger(DataMiningEngineInstance.class);
@@ -74,6 +76,7 @@ public class DataMiningEngineInstance extends AbstractEngineInstance {
 		commands = template.getCommands();
 		scripts = template.getScripts();
 		language = template.getLanguage();
+		files = template.getFiles();
 
 		logger.debug("OUT");
 	}
@@ -92,6 +95,10 @@ public class DataMiningEngineInstance extends AbstractEngineInstance {
 
 	public List<DataMiningScript> getScripts() {
 		return scripts;
+	}
+
+	public List<DataMiningFile> getFiles() {
+		return files;
 	}
 
 	//

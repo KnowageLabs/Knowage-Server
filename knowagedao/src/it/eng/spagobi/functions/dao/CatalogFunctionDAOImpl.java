@@ -9,6 +9,8 @@ import it.eng.spagobi.commons.dao.SpagoBIDOAException;
 import it.eng.spagobi.functions.metadata.SbiCatalogFunction;
 import it.eng.spagobi.functions.metadata.SbiFunctionInputDataset;
 import it.eng.spagobi.functions.metadata.SbiFunctionInputDatasetId;
+import it.eng.spagobi.functions.metadata.SbiFunctionInputFile;
+import it.eng.spagobi.functions.metadata.SbiFunctionInputFileId;
 import it.eng.spagobi.functions.metadata.SbiFunctionInputVariable;
 import it.eng.spagobi.functions.metadata.SbiFunctionInputVariableId;
 import it.eng.spagobi.functions.metadata.SbiFunctionOutput;
@@ -16,6 +18,7 @@ import it.eng.spagobi.functions.metadata.SbiFunctionOutputId;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.utilities.CatalogFunction;
+import it.eng.spagobi.utilities.CatalogFunctionInputFile;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.util.HashSet;
@@ -56,7 +59,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 
 	@Override
 	public int insertCatalogFunction(CatalogFunction catalogFunction, List<String> inputDatasets, Map<String, String> inputVariables,
-			Map<String, String> outputs) {
+			Map<String, String> outputs, List<CatalogFunctionInputFile> inputFiles) {
 
 		int catalogFunctionId = -1;
 		Session session;
@@ -84,6 +87,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 			hibCatFunction.setSbiFunctionInputVariables(getSbiFunctionInputVariablesSet(inputVariables, hibCatFunction));
 			hibCatFunction.setSbiFunctionOutputs(getSbiFunctionOutputSet(outputs, hibCatFunction));
 			hibCatFunction.setSbiFunctionInputDatasets(getSbiFunctionInputDatasetSet(inputDatasets, hibCatFunction));
+			hibCatFunction.setSbiFunctionInputFiles(getSbiFunctionInputFileSet(inputFiles, hibCatFunction));
 			session.saveOrUpdate(hibCatFunction);
 
 			transaction.commit();
@@ -102,6 +106,28 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 		}
 
 		return catalogFunctionId;
+	}
+
+	private Set getSbiFunctionInputFileSet(List<CatalogFunctionInputFile> inputFiles, SbiCatalogFunction sbiCatalogFunction) {
+
+		Set<SbiFunctionInputFile> inputFileSet = new HashSet<SbiFunctionInputFile>();
+		SbiFunctionInputFile file = null;
+
+		// for (String fileName : inputFiles.keySet()) {
+		// byte[] value = inputFiles.get(fileName);
+		// file = new SbiFunctionInputFile(new SbiFunctionInputFileId(sbiCatalogFunction.getFunctionId(), fileName), sbiCatalogFunction, value);
+		// inputFileSet.add(file);
+		// }
+		for (CatalogFunctionInputFile inputFile : inputFiles) {
+			String fileName = inputFile.getFileName();
+			String alias = inputFile.getAlias();
+			byte[] content = inputFile.getContent();
+			file = new SbiFunctionInputFile(new SbiFunctionInputFileId(sbiCatalogFunction.getFunctionId(), fileName), sbiCatalogFunction, content, alias);
+			inputFileSet.add(file);
+		}
+
+		return inputFileSet;
+
 	}
 
 	private Set<SbiFunctionInputDataset> getSbiFunctionInputDatasetSet(List<String> inputDatasets, SbiCatalogFunction sbiCatalogFunction) {
@@ -228,12 +254,20 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 				SbiFunctionInputVariable vi = (SbiFunctionInputVariable) o;
 				session.delete(vi);
 			}
+
+			for (Object o : hibCatFunction.getSbiFunctionInputFiles()) {
+				SbiFunctionInputFile f = (SbiFunctionInputFile) o;
+				session.delete(f);
+			}
+
 			if (hibCatFunction.getSbiFunctionInputVariables() != null)
 				hibCatFunction.getSbiFunctionInputVariables().clear();
 			if (hibCatFunction.getSbiFunctionOutputs() != null)
 				hibCatFunction.getSbiFunctionOutputs().clear();
 			if (hibCatFunction.getSbiFunctionInputDatasets() != null)
 				hibCatFunction.getSbiFunctionInputDatasets().clear();
+			if (hibCatFunction.getSbiFunctionInputFiles() != null)
+				hibCatFunction.getSbiFunctionInputFiles().clear();
 
 			transaction.commit();
 			session.close();
@@ -249,6 +283,8 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 			hibCatFunction.setSbiFunctionInputVariables(getSbiFunctionInputVariablesSet(updatedCatalogFunction.getInputVariables(), hibCatFunction));
 			hibCatFunction.setSbiFunctionOutputs(getSbiFunctionOutputSet(updatedCatalogFunction.getOutputs(), hibCatFunction));
 			hibCatFunction.setSbiFunctionInputDatasets(getSbiFunctionInputDatasetSet(updatedCatalogFunction.getInputDatasets(), hibCatFunction));
+			hibCatFunction.setSbiFunctionInputFiles(getSbiFunctionInputFileSet(updatedCatalogFunction.getInputFiles(), hibCatFunction));
+
 			hibCatFunction.setLanguage(updatedCatalogFunction.getLanguage());
 			hibCatFunction.setName(updatedCatalogFunction.getName());
 			hibCatFunction.setDescription(updatedCatalogFunction.getDescription());

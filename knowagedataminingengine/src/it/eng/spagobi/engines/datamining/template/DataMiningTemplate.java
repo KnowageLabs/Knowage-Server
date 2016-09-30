@@ -19,6 +19,7 @@ package it.eng.spagobi.engines.datamining.template;
 
 import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
 import it.eng.spagobi.engines.datamining.model.DataMiningDataset;
+import it.eng.spagobi.engines.datamining.model.DataMiningFile;
 import it.eng.spagobi.engines.datamining.model.DataMiningScript;
 
 import java.util.List;
@@ -35,6 +36,8 @@ public class DataMiningTemplate {
 	private List<DataMiningCommand> commands;
 
 	private List<DataMiningDataset> datasets;
+
+	private List<DataMiningFile> files;
 
 	public String getLanguage() {
 		return language;
@@ -76,6 +79,14 @@ public class DataMiningTemplate {
 
 	public void setScripts(List<DataMiningScript> scripts) {
 		this.scripts = scripts;
+	}
+
+	public List<DataMiningFile> getFiles() {
+		return this.files;
+	}
+
+	public void setFiles(List<DataMiningFile> dataminingFiles) {
+		this.files = dataminingFiles;
 	}
 
 	public class Parameter {

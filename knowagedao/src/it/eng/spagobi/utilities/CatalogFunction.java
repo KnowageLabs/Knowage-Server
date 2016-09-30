@@ -21,11 +21,13 @@ public class CatalogFunction {
 	private Map<String, String> inputVariables = new HashMap<String, String>();
 	private List<String> inputDatasets = new ArrayList<String>();
 	private Map<String, String> outputs = new HashMap<String, String>();
+	List<CatalogFunctionInputFile> inputFiles = new ArrayList<CatalogFunctionInputFile>();
 
-	private List<String> keywords = new ArrayList<String>();;
+	private List<String> keywords = new ArrayList<String>();
 
 	public CatalogFunction(int functionId, String name, String description, String language, String script, String owner, String label, String type,
-			Map<String, String> inputVariables, List<String> inputDatasets, Map<String, String> outputs, List<String> keywords, String url, boolean remote) {
+			Map<String, String> inputVariables, List<CatalogFunctionInputFile> inputFiles, List<String> inputDatasets, Map<String, String> outputs,
+			List<String> keywords, String url, boolean remote) {
 		super();
 		this.functionId = functionId;
 		this.name = name;
@@ -37,6 +39,7 @@ public class CatalogFunction {
 		this.type = type;
 		this.inputVariables = inputVariables;
 		this.inputDatasets = inputDatasets;
+		this.inputFiles = inputFiles;
 		this.outputs = outputs;
 		this.keywords = keywords;
 		this.url = url;
@@ -156,6 +159,14 @@ public class CatalogFunction {
 
 	public void setRemote(boolean remote) {
 		this.remote = remote;
+	}
+
+	public List<CatalogFunctionInputFile> getInputFiles() {
+		return inputFiles;
+	}
+
+	public void setInputFiles(List<CatalogFunctionInputFile> inputFiles) {
+		this.inputFiles = inputFiles;
 	}
 
 }

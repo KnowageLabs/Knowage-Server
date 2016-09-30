@@ -27,9 +27,11 @@ import it.eng.spagobi.engines.datamining.bo.DataMiningResult;
 import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
 import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
 import it.eng.spagobi.engines.datamining.model.DataMiningDataset;
+import it.eng.spagobi.engines.datamining.model.DataMiningFile;
 import it.eng.spagobi.engines.datamining.model.Output;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,6 +54,7 @@ public class DataMiningPythonExecutor implements IDataMiningExecutor {
 	private final PythonDatasetsExecutor datasetsExecutor;
 	private final PythonOutputExecutor outputExecutor;
 	private final PythonScriptExecutor scriptExecutor;
+	private final PythonFilesExecutor fileExecutor;
 
 	public DataMiningPythonExecutor(DataMiningEngineInstance dataminingInstance, IEngUserProfile profile) {
 		super();
@@ -59,6 +62,7 @@ public class DataMiningPythonExecutor implements IDataMiningExecutor {
 		datasetsExecutor = new PythonDatasetsExecutor(dataminingInstance, profile);
 		outputExecutor = new PythonOutputExecutor(dataminingInstance, profile);
 		scriptExecutor = new PythonScriptExecutor(dataminingInstance, profile);
+		fileExecutor = new PythonFilesExecutor(dataminingInstance, profile);
 	}
 
 	private void setupEnvonment(IEngUserProfile userProfile) {
@@ -118,6 +122,14 @@ public class DataMiningPythonExecutor implements IDataMiningExecutor {
 		}
 		logger.debug("Loaded datasets");
 
+		// Files input preparation
+		error = fileExecutor.evalFilesNeeded(params);
+		if (error.length() > 0) {
+			result = new DataMiningResult();
+			result.setError(error);
+			return result;
+		}
+
 		// evaluates script code
 		scriptExecutor.evalScript(command, rerun);
 		logger.debug("Evaluated script");
@@ -130,6 +142,21 @@ public class DataMiningPythonExecutor implements IDataMiningExecutor {
 		/*
 		 * saveUserWorkSpace(); logger.debug("Saved user WS");
 		 */
+
+		// Delete files
+		if (fileExecutor.dataminingInstance.getFiles().size() > 0) {
+
+			for (DataMiningFile dmFile : fileExecutor.dataminingInstance.getFiles()) {
+
+				File file = new File(DataMiningUtils.getUserResourcesPath(profile) + dmFile.getFileName());
+				if (file.delete()) {
+					logger.debug(file.getName() + " is deleted!");
+				} else {
+					logger.debug("Delete operation is failed.");
+				}
+			}
+
+		}
 
 		// PyLib.stopPython(); //Per colpa di un errore di JPY non funziona, quando saranno disponibili nuove versioni di JPY non buggate, scommentare questo
 
