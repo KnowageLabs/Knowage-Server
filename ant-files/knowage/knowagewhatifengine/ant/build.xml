@@ -326,9 +326,10 @@
 	
 	<target name="junit" depends="init">
 		<junit haltonfailure ="false" printsummary="true" showoutput="true">
+			<echo>Junit in whatif</echo>
 			<classpath location="${runtime.lib}/junit.jar" />
 			<classpath location = "../../../knowagewhatifengine/ant-build/knowagewhatifengine/WEB-INF/classes"/>
-			<formatter type="plain" usefile="false" />
+			<formatter type="plain" />
 			<batchtest fork="no" todir="${test}">
 				
 				<formatter  type="xml" />
