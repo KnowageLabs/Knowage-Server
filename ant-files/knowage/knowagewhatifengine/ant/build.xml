@@ -331,7 +331,7 @@
 			<classpath location="${runtime.lib}/junit.jar" />
 			<classpath location = "../../../knowagewhatifengine/ant-build/knowagewhatifengine/WEB-INF/classes"/>
 			<test name="proba.ProbaTest.java"></test>
-
+			<formatter  type="xml"/>
 		</junit>
 		
 
