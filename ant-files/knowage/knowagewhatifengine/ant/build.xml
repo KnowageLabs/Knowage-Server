@@ -335,14 +335,14 @@
 		<antcall target="create.war" />
 	</target>
 	
-	<target name="junit" depends="compile.tests">
+	<target name="junit" >
 		<echo>Junit in whatif</echo>
 		<junit haltonfailure ="false" printsummary="true" showoutput="true">
 			
 			<classpath location="${runtime.lib}/junit.jar" />
 			<classpath location = "../../../knowagewhatifengine/ant-build/knowagewhatifengine/WEB-INF/classes"/>
 			<classpath refid="web.classpath" />
-			<test name="proba.ProbaTest.java"></test>
+			<test name="proba.AbstractWhatIfTestCase.java"></test>
 			<formatter  type="xml"/>
 		</junit>
 		
