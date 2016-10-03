@@ -345,7 +345,7 @@
 			<batchtest fork="no" todir="${test}">
 						    <fileset dir="${test}">
 						    	
-						      <include name="ProbaTest.java"/>
+						      <include name="**/ProbaTest.java"/>
 						      <exclude name="**/AllTests.java"/>
 						    </fileset>
 						  </batchtest>
