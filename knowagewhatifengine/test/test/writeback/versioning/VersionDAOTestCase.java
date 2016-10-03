@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+/*
 package test.writeback.versioning;
 
 import java.io.File;
@@ -38,6 +39,7 @@ import test.DbConfigContainer;
  * @author ghedin
  *
  */
+/*
 public class VersionDAOTestCase  extends AbstractWhatIfTestCase {
 
 	public void testGetAllVersions() throws Exception{
@@ -67,4 +69,4 @@ public class VersionDAOTestCase  extends AbstractWhatIfTestCase {
 		return DbConfigContainer.getMySqlTemplate();
 	}
 	
-}
+}*/

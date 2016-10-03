@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+/*
 package integration;
 
 import java.io.File;
@@ -57,11 +58,11 @@ public class CalculatedMemberTestCase extends AbstractWhatIfCalculatedMemberTest
 	 * CubeUtilities.getMember(ei.getPivotModel().getCube(), "[Measures].[Store Sales]"); cm.injectCalculatedIntoMdxQuery("measure name", formula, parentMember,
 	 * Axis.COLUMNS); String actualMdx = ei.getPivotModel().getCurrentMdx(); System.out.println(new String("expected value ") + expectedMdx);
 	 * System.out.println(new String("actual value ") + actualMdx); assertEquals(expectedMdx, actualMdx); }
-	 */
+	 
 
 	@Override
 	public String getCatalogue() {
 		// TODO Auto-generated method stub
 		return null;
 	}
-}
+}*/

@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+/*
 package integration;
 
 import it.eng.spago.base.SourceBean;
@@ -37,7 +38,7 @@ public abstract class AbstractWhatIfCalculatedMemberTestCase extends TestCase {
 		try {
 			catalog = c;
 			template = SourceBean.fromXMLFile(getTemplate());
-			return WhatIfEngine.createInstance(template, getEnv());
+			return WhatIfEngine.createInstance(template, true,getEnv());
 		} catch (SourceBeanException e) {
 			e.printStackTrace();
 			assertFalse(true);
@@ -58,4 +59,4 @@ public abstract class AbstractWhatIfCalculatedMemberTestCase extends TestCase {
 
 	public abstract String getCatalogue();
 
-}
+}*/

@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+/*
 package test.writeback;
 
 import junit.framework.Test;
@@ -31,6 +32,7 @@ import junit.framework.TestSuite;
  * @author ghedin
  * 
  */
+/*
 public class WriteBackTestSuite extends TestCase {
 	static public Test suite() {
 		TestSuite suite = new TestSuite("Db writeback tests");
@@ -43,4 +45,4 @@ public class WriteBackTestSuite extends TestCase {
 
 		return suite;
 	}
-}
+}*/

@@ -1,5 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
+
+
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
  * 
  * Knowage is free software: you can redistribute it and/or modify
@@ -15,6 +17,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+/*
 package test.writeback.tabledescriptor;
 
 import test.DbConfigContainer;
@@ -29,6 +32,7 @@ import test.DbConfigContainer;
  * @author ghedin
  *
  */
+/*
 public class OracleTestCase extends AbstractTableDescriptoTastCase {
 
 	
@@ -41,4 +45,4 @@ public class OracleTestCase extends AbstractTableDescriptoTastCase {
 	}
 
 
-}
+}*/

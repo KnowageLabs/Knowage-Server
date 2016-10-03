@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+/*
 package test.writeback.tabledescriptor;
 
 import test.writeback.TestConstants;
@@ -33,6 +34,7 @@ import junit.framework.TestSuite;
  * @author ghedin
  *
  */
+/*
 public class TableDescriptorTestCaseSuite extends TestCase {
 	static public Test suite() {
 		TestSuite suite = new TestSuite("TableDescriptorTestCaseSuite");
@@ -45,4 +47,4 @@ public class TableDescriptorTestCaseSuite extends TestCase {
 
 		return suite;
 	}
-}
+}*/

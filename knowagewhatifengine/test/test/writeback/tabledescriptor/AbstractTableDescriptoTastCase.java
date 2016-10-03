@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+/*
 package test.writeback.tabledescriptor;
 
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
@@ -38,6 +39,7 @@ import test.AbstractWhatIfTestCase;
  * @author ghedin
  *
  */
+/*
 public abstract class AbstractTableDescriptoTastCase extends AbstractWhatIfTestCase{
 	
 	public static final String tableName = "sales_fact_1998_virtual";
@@ -66,4 +68,4 @@ public abstract class AbstractTableDescriptoTastCase extends AbstractWhatIfTestC
 	}
 	
 	public abstract String getCatalogue();
-}
+}*/

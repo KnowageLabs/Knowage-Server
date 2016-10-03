@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+/*
 package test.parser;
 
 import java.io.File;
@@ -36,6 +37,7 @@ import junit.framework.TestCase;
  * @author Marco Cortella (marco.cortella@eng.it)
  *
  */
+/*
 public class MetalanguageParserTestCase extends AbstractWhatIfTestCase {
 
 	parser parserIstance;
@@ -446,4 +448,4 @@ public class MetalanguageParserTestCase extends AbstractWhatIfTestCase {
 	public String getTemplate(){
 		return DbConfigContainer.getMySqlTemplate();
 	}
-}
+}*/

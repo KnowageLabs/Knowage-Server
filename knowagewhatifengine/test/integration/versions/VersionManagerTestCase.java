@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+/*
 package integration.versions;
 
 import integration.agorithms.AbstractWhatIfInMemoryTestCase;
@@ -43,6 +44,7 @@ import java.util.Random;
  * @author ghedin
  * 
  */
+/*
 public class VersionManagerTestCase extends AbstractWhatIfInMemoryTestCase {
 
 	private static final Integer VERSION = 11001;
@@ -127,4 +129,4 @@ public class VersionManagerTestCase extends AbstractWhatIfInMemoryTestCase {
 
 	}
 
-}
+}*/

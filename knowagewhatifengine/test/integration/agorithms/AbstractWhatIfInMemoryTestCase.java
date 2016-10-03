@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+/*
 package integration.agorithms;
 
 import it.eng.spago.base.SourceBean;
@@ -65,7 +66,7 @@ public abstract class AbstractWhatIfInMemoryTestCase extends TestCase {
 		try {
 			catalog = c;
 			template = SourceBean.fromXMLFile(getTemplate());
-			return WhatIfEngine.createInstance(template, getEnv());
+			return WhatIfEngine.createInstance(template, true,getEnv());
 		} catch (SourceBeanException e) {
 			e.printStackTrace();
 			assertFalse(true);
@@ -140,4 +141,4 @@ public abstract class AbstractWhatIfInMemoryTestCase extends TestCase {
 		return ration;
 	}
 
-}
+}*/

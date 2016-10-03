@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+/*
 package test.writeback.versioning;
 
 import integration.versions.VersionManagerTestCase;
@@ -30,6 +31,7 @@ import test.DbConfigContainer;
  * @author ghedin
  *
  */
+/*
 public class MySQLTestCase extends VersionManagerTestCase {
 
 	
@@ -42,4 +44,4 @@ public class MySQLTestCase extends VersionManagerTestCase {
 	}
 	
 
-}
+}*/

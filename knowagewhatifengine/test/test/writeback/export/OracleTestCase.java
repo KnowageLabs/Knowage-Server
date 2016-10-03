@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+/*
 package test.writeback.export;
 
 import test.DbConfigContainer;
@@ -31,6 +32,7 @@ import test.DbConfigContainer;
  * @author ghedin
  *
  */
+/*
 public class OracleTestCase extends AbstractWhatIfExportResult {
 
 
@@ -46,4 +48,4 @@ public class OracleTestCase extends AbstractWhatIfExportResult {
 
 	
 
-}
+}*/

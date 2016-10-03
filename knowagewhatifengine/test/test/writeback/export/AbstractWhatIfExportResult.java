@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+/*
 package test.writeback.export;
 
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
@@ -44,6 +45,7 @@ import test.AbstractWhatIfTestCase;
  * @author ghedin
  *
  */
+/*
 public abstract class AbstractWhatIfExportResult extends AbstractWhatIfTestCase {
 
 	Connection connection;
@@ -121,4 +123,4 @@ public abstract class AbstractWhatIfExportResult extends AbstractWhatIfTestCase 
 
 	public abstract String getCatalogue();
 
-}
+}*/

@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+/*
 package test.writeback.versioning;
 
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
@@ -42,6 +43,7 @@ import test.AbstractWhatIfTestCase;
  * @author ghedin
  * 
  */
+/*
 public abstract class AbstractVersionManagerTestCase extends AbstractWhatIfTestCase {
 
 	private static final Integer VERSION = 1000;
@@ -113,4 +115,4 @@ public abstract class AbstractVersionManagerTestCase extends AbstractWhatIfTestC
 
 	}
 
-}
+}*/

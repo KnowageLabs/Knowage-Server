@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+/*
 package integration.agorithms;
 
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
@@ -40,4 +41,4 @@ public class DefaultWeightedAllocationAlgorithmTestCase extends AbstractWhatIfIn
 
 	}
 
-}
+}*/
