@@ -342,7 +342,12 @@
 			<classpath location="${runtime.lib}/junit.jar" />
 			<classpath location = "../../../../knowagewhatifengine/ant-build/knowagewhatifengine/WEB-INF/classes"/>
 			<classpath refid="web.classpath" />
-			<test name="ProbaTest.java"></test>
+			<batchtest fork="no" todir="${src}">
+						    <fileset dir="${src}">
+						      <include name="**/*Test*.java"/>
+						      <exclude name="**/AllTests.java"/>
+						    </fileset>
+						  </batchtest>
 			<formatter  type="xml"/>
 		</junit>
 		
