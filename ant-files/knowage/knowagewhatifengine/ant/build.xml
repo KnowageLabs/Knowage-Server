@@ -86,7 +86,7 @@
 	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 	<!--   COPIA DELLE JSP,CSS,...                                                    -->
 	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-	<target name="copy.artifacts" depends="compile,compile.tests">
+	<target name="copy.artifacts" depends="compile">
 		<copy todir="${build}/${webapp_name}">
 			<fileset dir="${web.dir}">
 				<exclude name="**/*.svn" />
