@@ -503,13 +503,17 @@ public class AbstractHibernateDAO {
 
 	@SuppressWarnings("unchecked")
 	private <T extends SbiHibernateModel> List<T> internalList(Class<T> clazz, ICriterion<T> criterion, Session session) {
-		Criteria criteria = null;
-		if (criterion == null) {
-			criteria = session.createCriteria(clazz);
+		if (session == null) {
+			return internalList(clazz, criterion);
 		} else {
-			criteria = criterion.evaluate(session);
+			Criteria criteria = null;
+			if (criterion == null) {
+				criteria = session.createCriteria(clazz);
+			} else {
+				criteria = criterion.evaluate(session);
+			}
+			return criteria.list();
 		}
-		return criteria.list();
 	}
 
 	/**
