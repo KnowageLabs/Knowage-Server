@@ -74,11 +74,19 @@
 			<classpath refid="web.classpath" />
 		</javac>
 	</target>
+	
+	<target name="compile.tests"  description="compile the test">
+			
+			<!-- Compile the java code from ${test} into ${build}/${webapp_name}/WEB-INF/classes -->
+			<javac srcdir="${test}" destdir="${build}/${webapp_name}/WEB-INF/classes" >
+				<classpath refid="web.classpath" />
+			</javac>
+		</target>
 
 	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 	<!--   COPIA DELLE JSP,CSS,...                                                    -->
 	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-	<target name="copy.artifacts" depends="compile">
+	<target name="copy.artifacts" depends="compile,compile.tests">
 		<copy todir="${build}/${webapp_name}">
 			<fileset dir="${web.dir}">
 				<exclude name="**/*.svn" />
@@ -91,6 +99,8 @@
 				<exclude name="**/*.svn" />
 			</fileset>
 		</copy>
+		
+		
 		
 	</target>
 
@@ -325,7 +335,7 @@
 		<antcall target="create.war" />
 	</target>
 	
-	<target name="junit" >
+	<target name="junit" depends="compile.tests">
 		<echo>Junit in whatif</echo>
 		<junit haltonfailure ="false" printsummary="true" showoutput="true">
 			
