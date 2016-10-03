@@ -325,7 +325,7 @@
 		<antcall target="create.war" />
 	</target>
 	
-	<target name="junit" depends="init">
+	<target name="junit" >
 		<echo>Junit in whatif</echo>
 		<junit haltonfailure ="false" printsummary="true" showoutput="true">
 			
