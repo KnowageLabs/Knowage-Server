@@ -338,12 +338,12 @@
 	<target name="junit" depends="compile.tests">
 		<echo>Junit in whatif</echo>
 		<junit haltonfailure ="false" printsummary="true" showoutput="true">
-			<formatter type="xml"/>
+			
 			<classpath location="${runtime.lib}/junit.jar" />
 			<classpath location = "../../../../knowagewhatifengine/ant-build/knowagewhatifengine/WEB-INF/classes"/>
 			<classpath refid="web.classpath" />
-			<batchtest fork="no" todir="${src}">
-						    <fileset dir="${src}">
+			<batchtest fork="no" todir="${test}">
+						    <fileset dir="${test}">
 						    	
 						      <include name="**/*Test*.java"/>
 						      <exclude name="**/AllTests.java"/>
