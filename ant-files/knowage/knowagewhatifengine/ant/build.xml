@@ -344,6 +344,7 @@
 			<classpath refid="web.classpath" />
 			<batchtest fork="no" todir="${src}">
 						    <fileset dir="${src}">
+						    	<formatter type="xml"/>
 						      <include name="**/*Test*.java"/>
 						      <exclude name="**/AllTests.java"/>
 						    </fileset>
