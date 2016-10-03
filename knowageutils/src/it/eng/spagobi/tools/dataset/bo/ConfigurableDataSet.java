@@ -261,6 +261,11 @@ public abstract class ConfigurableDataSet extends AbstractDataSet {
 
 	@Override
 	public String getSignature() {
+		Map paramsMap = getParamsMap();
+		if (paramsMap == null) {
+			paramsMap = new HashMap();
+		}
+
 		Tenant tenant = TenantManager.getTenant();
 		if (tenant == null) {
 			throw new SpagoBIRuntimeException("Tenant is not set");
@@ -269,7 +274,7 @@ public abstract class ConfigurableDataSet extends AbstractDataSet {
 		StringBuilder sb = new StringBuilder();
 		sb.append(getConfiguration());
 		sb.append("_");
-		sb.append(getParamsMap());
+		sb.append(paramsMap);
 		sb.append("_");
 		sb.append(getUserParametersAsString());
 		sb.append("_");
