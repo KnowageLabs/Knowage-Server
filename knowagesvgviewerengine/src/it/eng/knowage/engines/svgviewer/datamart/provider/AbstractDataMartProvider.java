@@ -57,6 +57,9 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 	/** The general info content (optional) */
 	private String selectedMemberInfo;
 
+	/** The placeholder used to filter the dataset (optional) */
+	private String dsPlaceHolder;
+
 	/**
 	 * Instantiates a new abstract dataset provider.
 	 */
@@ -66,7 +69,7 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.AbstractGeoEngineComponent#init(java.lang.Object)
 	 */
 	@Override
@@ -77,7 +80,7 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider#getDataSet()
 	 */
 	@Override
@@ -87,7 +90,7 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider#getDataDetails(java.lang.String)
 	 */
 	@Override
@@ -97,7 +100,7 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider#getHierarchyNames()
 	 */
 	@Override
@@ -110,7 +113,7 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider#getHierarchy(java.lang.String)
 	 */
 	@Override
@@ -123,7 +126,7 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider#getSelectedHierarchy()
 	 */
 	@Override
@@ -136,7 +139,7 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider#getSelectedLevel()
 	 */
 	// @Override
@@ -161,7 +164,7 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider#getSelectedHierarchyName()
 	 */
 	@Override
@@ -171,7 +174,7 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider#setSelectedHierarchyName(java.lang.String)
 	 */
 	@Override
@@ -181,7 +184,7 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider#getSelectedLevelName()
 	 */
 	@Override
@@ -191,7 +194,7 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.dataset.provider.IDatasetProvider#setSelectedLevel(java.lang.String)
 	 */
 	@Override
@@ -250,6 +253,7 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 	/**
 	 * @return the selectedMemberInfo
 	 */
+	@Override
 	public String getSelectedMemberInfo() {
 		return selectedMemberInfo;
 	}
@@ -258,8 +262,24 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 	 * @param selectedMemberInfo
 	 *            the selectedMemberInfo to set
 	 */
+	@Override
 	public void setSelectedMemberInfo(String selectedMemberInfo) {
 		this.selectedMemberInfo = selectedMemberInfo;
+	}
+
+	/**
+	 * @return the dsPlaceHolder
+	 */
+	public String getDsPlaceHolder() {
+		return dsPlaceHolder;
+	}
+
+	/**
+	 * @param dsPlaceHolder
+	 *            the dsPlaceHolder to set
+	 */
+	public void setDsPlaceHolder(String dsPlaceHolder) {
+		this.dsPlaceHolder = dsPlaceHolder;
 	}
 
 }

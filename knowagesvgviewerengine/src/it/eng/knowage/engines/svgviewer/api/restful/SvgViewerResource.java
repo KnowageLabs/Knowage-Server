@@ -37,7 +37,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.io.File;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -182,10 +181,6 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 			dataMartProvider.setSelectedMemberName(getProperty("name", memberSB));
 			dataMartProvider.setSelectedLevel(level);
 			DataMartProviderConfigurator.configure(dataMartProvider, memberSB.toString());
-			List<String> lstTargets = new ArrayList();
-			lstTargets.add(getProperty("name", memberSB));
-			// dataMartProvider.getDataMart().setTargetFeatureName(getProperty("name", memberSB));
-			dataMartProvider.getDataMart().setTargetFeatureName(lstTargets);
 
 			HierarchyMember hierMember = dataMartProvider.getHierarchyMember(dataMartProvider.getSelectedMemberName());
 			hierMember.setHierarchy(hierarchy);
@@ -223,7 +218,6 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 		Map layers;
 		List layerList;
 		Layer layer;
-		Properties attributes;
 		String attributeValue;
 
 		layers = new LinkedHashMap();

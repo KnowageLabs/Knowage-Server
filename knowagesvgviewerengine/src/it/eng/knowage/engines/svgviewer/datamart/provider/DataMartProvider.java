@@ -39,6 +39,7 @@ import it.eng.spagobi.utilities.engines.EngineConstants;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
@@ -75,19 +76,20 @@ public class DataMartProvider extends AbstractDataMartProvider {
 	@Override
 	public DataMart getDataMart() throws SvgViewerEngineRuntimeException {
 
-		DataMart dataMart = null;
+		DataMart dataMart = new DataMart();
 		IDataSet dataSet;
 
 		dataSet = (IDataSet) getEnv().get(EngineConstants.ENV_DATASET);
-		dataSet.setParamsMap(getEnv());
+		Map dataSetPars = getEnv();
+		// adds parent as parameter for substitute placeholder $P{xxx} into dataset. The xxx is the attribute placeholder_dataaset got from the template
+		if (getSelectedParentName() != null && !getSelectedParentName().equals("")) {
+			HierarchyMember activeMember = getHierarchyMember(getSelectedMemberName());
+			if (activeMember.getDsPlaceholder() != null && !activeMember.getDsPlaceholder().equals(""))
+				logger.debug("Added parameter used from dataset [$P{" + activeMember.getDsPlaceholder() + "}] value [" + getSelectedParentName() + "]");
+			dataSetPars.put(activeMember.getDsPlaceholder(), getSelectedParentName());
+		}
 
-		// if (dataSet == null) {
-		// JDBCDataSet jdbcDataSet = new JDBCDataSet();
-		// jdbcDataSet.setQuery(query);
-		// jdbcDataSet.setDataSource(dataSource);
-		// dataSet = jdbcDataSet;
-		// dataSet.setParamsMap(getEnv());
-		// }
+		dataSet.setParamsMap(getEnv());
 
 		if (dataSet.hasBehaviour(QuerableBehaviour.class.getName())) {
 			QuerableBehaviour querableBehaviour = (QuerableBehaviour) dataSet.getBehaviour(QuerableBehaviour.class.getName());
@@ -105,9 +107,7 @@ public class DataMartProvider extends AbstractDataMartProvider {
 
 			IDataStore dataStore = dataSet.getDataStore();
 			IMetaData dataStoreMeta = dataStore.getMetaData();
-			// dataStoreMeta.setIdField(dataStoreMeta.getFieldIndex(getSelectedLevel().getColumnId()));
 
-			dataMart = new DataMart();
 			dataMart.setDataStore(dataStore);
 			try {
 				HierarchyMember activeMember = getHierarchyMember(getSelectedMemberName());
@@ -145,10 +145,6 @@ public class DataMartProvider extends AbstractDataMartProvider {
 				dataStoreMeta.setIdField(dataStoreMeta.getFieldIndex(columnId));
 				String[] measureColumnNames = (String[]) metaData.getMeasureColumnNames().toArray(new String[0]);
 
-				// dataMart.setTargetFeatureName(getSelectedLevel().getFeatureName());
-				// String columnId = getSelectedLevel().getColumnId();
-				// String[] measureColumnNames = (String[]) getMetaData().getMeasureColumnNames().toArray(new String[0]);
-				//
 				Iterator it = dataStore.iterator();
 				while (it.hasNext()) {
 					IRecord record = (IRecord) it.next();
@@ -309,38 +305,6 @@ public class DataMartProvider extends AbstractDataMartProvider {
 	}
 
 	/**
-	 * Gets the dim geo query.
-	 *
-	 * @return the dim geo query
-	 */
-	private String getDimGeoQuery() {
-		String query = "";
-
-		// Hierarchy hierarchy = getSelectedHierarchy();
-		// String baseLevelName = getMetaData().getLevelName(hierarchy.getName());
-		// Hierarchy.Level baseLevel = hierarchy.getLevel(baseLevelName);
-		//
-		// List levels = hierarchy.getSublevels(baseLevel.getName());
-		//
-		// query += "SELECT " + baseLevel.getColumnId();
-		// for (int i = 0; i < levels.size(); i++) {
-		// Hierarchy.Level subLevel;
-		// subLevel = (Hierarchy.Level) levels.get(i);
-		// query += ", " + subLevel.getColumnId();
-		// }
-		// query += " FROM " + hierarchy.getTable();
-		// query += " GROUP BY " + baseLevel.getColumnId();
-		// for (int i = 0; i < levels.size(); i++) {
-		// Hierarchy.Level subLevel;
-		// subLevel = (Hierarchy.Level) levels.get(i);
-		// query += ", " + subLevel.getColumnId();
-		// }
-
-		return query;
-
-	}
-
-	/**
 	 * Gets the executable query.
 	 *
 	 * @return the executable query
@@ -383,65 +347,6 @@ public class DataMartProvider extends AbstractDataMartProvider {
 		return executableQuery;
 	}
 
-	/**
-	 * Gets the filtered query.
-	 *
-	 * @param filterValue
-	 *            the filter value
-	 *
-	 * @return the filtered query
-	 */
-	private String getFilteredQuery(String filterValue) {
-		String aggragateQuery = null;
-		// String query = getExecutableQuery();
-		//
-		// String subQueryAlias = "t" + System.currentTimeMillis();
-		// String normalizedSubQueryAlias = "n" + System.currentTimeMillis();
-		// String dimGeoAlias = "g" + System.currentTimeMillis();
-		//
-		// Hierarchy hierarchy = getSelectedHierarchy();
-		// Hierarchy.Level level = getSelectedLevel();
-		// String baseLevelName = getMetaData().getLevelName(hierarchy.getName());
-		// Hierarchy.Level baseLevel = hierarchy.getLevel(baseLevelName);
-		//
-		// if (hierarchy.getType().equalsIgnoreCase("custom")) {
-		// System.out.println("\nCUSTOM HIERARCHY...\n");
-		// String aggregationColumnName = level.getColumnId();
-		// aggragateQuery = "SELECT * ";
-		// aggragateQuery += " \nFROM ( " + query + ") " + subQueryAlias;
-		// aggragateQuery += " \nWHERE " + subQueryAlias + "." + level.getColumnId();
-		// aggragateQuery += " = '" + filterValue + "'";
-		// } else {
-		// System.out.println("\nDEFAULT HIERARCHY...\n");
-		// String aggregationColumnName = level.getColumnId();
-		// aggragateQuery = "SELECT * ";
-		// String[] kpiColumnNames = (String[]) getMetaData().getMeasureColumnNames().toArray(new String[0]);
-		//
-		// String normalizedSubQuery = query;
-		//
-		// normalizedSubQuery = "SELECT " + normalizedSubQueryAlias + "." + getMetaData().getGeoIdColumnName(hierarchy.getName()) + " AS "
-		// + getMetaData().getGeoIdColumnName(hierarchy.getName());
-		// for (int i = 0; i < kpiColumnNames.length; i++) {
-		// normalizedSubQuery += ", SUM(" + normalizedSubQueryAlias + "." + kpiColumnNames[i] + ") AS " + kpiColumnNames[i];
-		// }
-		// normalizedSubQuery += " \nFROM ( " + query + ") " + normalizedSubQueryAlias;
-		// normalizedSubQuery += " \nGROUP BY " + normalizedSubQueryAlias + "." + getMetaData().getGeoIdColumnName(hierarchy.getName());
-		// System.out.println("\nNormalized query:\n" + normalizedSubQuery);
-		//
-		// aggragateQuery += " \nFROM ( \n" + normalizedSubQuery + "\n ) " + subQueryAlias;
-		// String dimGeoQuery = getDimGeoQuery();
-		// System.out.println("\nDimGeo query:\n" + dimGeoQuery);
-		// aggragateQuery += ", (" + dimGeoQuery + ") " + dimGeoAlias;
-		// aggragateQuery += " \nWHERE " + subQueryAlias + "." + getMetaData().getGeoIdColumnName(hierarchy.getName());
-		// aggragateQuery += " = " + dimGeoAlias + "." + baseLevel.getColumnId();
-		// aggragateQuery += " \nAND  " + dimGeoAlias + "." + level.getColumnId() + " = '" + filterValue + "'";
-		// }
-		//
-		// System.out.println("\nExecutable query:\n" + aggragateQuery);
-
-		return aggragateQuery;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -449,74 +354,7 @@ public class DataMartProvider extends AbstractDataMartProvider {
 	 */
 	@Override
 	public SourceBean getDataDetails(String featureValue) {
-		SourceBean results = null;
-
-		// Hierarchy hierarchy = getSelectedHierarchy();
-		// String baseLevelName = getMetaData().getLevelName(hierarchy.getName());
-		// Hierarchy.Level baseLevel = hierarchy.getLevel(baseLevelName);
-		// String columnid = baseLevel.getColumnId();
-		//
-		// String targetLevelName = getSelectedLevelName();
-		// String filterValue = featureValue;
-		// if (filterValue.trim().startsWith(targetLevelName + "_")) {
-		// filterValue = filterValue.substring(targetLevelName.length() + 1);
-		// }
-		//
-		// String filteredQuery = "";
-		// filteredQuery = getFilteredQuery(filterValue);
-		// int max_rows = 1000;
-		//
-		// Connection connection = null;
-		// try {
-		// JDBCDataSet dataSet = (JDBCDataSet) getEnv().get(EngineConstants.ENV_DATASET);
-		// if (dataSet != null) {
-		// connection = dataSet.getDataSource().getConnection();
-		// } else {
-		// connection = getDataSource().getConnection();
-		// }
-		// Statement statement = connection.createStatement();
-		// statement.execute(filteredQuery);
-		// ResultSet resultSet = statement.getResultSet();
-		//
-		// ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
-		// int columnCount = resultSetMetaData.getColumnCount();
-		//
-		// results = new SourceBean("ROWS");
-		// SourceBean row;
-		// // resultSet.beforeFirst();
-		// int rowno = 0;
-		// while (resultSet.next()) {
-		// if (++rowno > 1000)
-		// break;
-		//
-		// String id = resultSet.getString(resultSet.findColumn(columnid));
-		// if ((id == null) || (id.trim().equals(""))) {
-		// continue;
-		// }
-		//
-		// row = new SourceBean("ROW");
-		//
-		// for (int i = 1; i <= columnCount; i++) {
-		// row.setAttribute(resultSetMetaData.getColumnLabel(i), (resultSet.getString(i) == null) ? "" : resultSet.getString(i));
-		// }
-		// results.setAttribute(row);
-		// }
-		//
-		// } catch (Exception ex) {
-		// ex.printStackTrace();
-		// // throw new EMFUserError(EMFErrorSeverity.ERROR, "error.mapfile.notloaded");
-		// } finally {
-		// if (connection != null) {
-		// try {
-		// connection.close();
-		// } catch (SQLException e) {
-		// e.printStackTrace();
-		// // throw new EMFUserError(EMFErrorSeverity.ERROR, "Impossible to close connection");
-		// }
-		// }
-		// }
-
-		return results;
+		return null;
 	}
 
 	/**

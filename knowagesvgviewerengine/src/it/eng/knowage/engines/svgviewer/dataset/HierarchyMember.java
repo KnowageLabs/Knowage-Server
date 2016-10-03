@@ -33,6 +33,7 @@ public class HierarchyMember {
 	private String hierarchy;
 	private String name;
 	private String dsMeasure;
+	private String dsPlaceholder;
 	private Integer level;
 	private Boolean enableCross;
 
@@ -85,6 +86,21 @@ public class HierarchyMember {
 	 */
 	public void setDsMeasure(String dsMeasure) {
 		this.dsMeasure = dsMeasure;
+	}
+
+	/**
+	 * @return the dsPlaceholder
+	 */
+	public String getDsPlaceholder() {
+		return dsPlaceholder;
+	}
+
+	/**
+	 * @param dsPlaceholder
+	 *            the dsPlaceholder to set
+	 */
+	public void setDsPlaceholder(String dsPlaceholder) {
+		this.dsPlaceholder = dsPlaceholder;
 	}
 
 	/**

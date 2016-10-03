@@ -25,7 +25,6 @@ import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 
 import org.apache.log4j.Logger;
@@ -65,8 +64,6 @@ public class DataMartProviderConfigurator {
 		}
 
 		if (confSB != null) {
-			IDataSource dataSource = null;
-			String query = null;
 			IDataSet dataSet = null;
 
 			// get dataset of active member if present...
@@ -82,32 +79,6 @@ public class DataMartProviderConfigurator {
 				logger.error("Impossible to load dataset with data", e);
 				throw new SvgViewerEngineException("Impossible to load dataset with data", e);
 			}
-
-			// @TODO delete if the dataset will be defined ONLY BY the template
-			// ...otherwise get dataset associated to the document...
-			// dataSet = (IDataSet) datamartProvider.getEnv().get(EngineConstants.ENV_DATASET);
-			// if (dataSet != null) {
-			// datamartProvider.setDs(dataSet);
-			// return;
-			// }
-			//
-			// // ... at last try to get dataset from the template
-			// SourceBean dataSetSB = (SourceBean) confSB.getAttribute(SvgViewerEngineConstants.DATASET_TAG);
-			// if (dataSetSB == null) {
-			// logger.warn("Cannot find dataset configuration settings: tag name " + SvgViewerEngineConstants.DATASET_TAG);
-			// logger.info("Dataset configuration settings must be injected at execution time");
-			// } else {
-			// dataSource = getDataSource(dataSetSB);
-			// query = getQuery(dataSetSB);
-			//
-			// if (datamartProvider.getEnv().get(EngineConstants.ENV_DATASOURCE) != null) {
-			// dataSource = (DataSource) datamartProvider.getEnv().get(EngineConstants.ENV_DATASOURCE);
-			// }
-			//
-			// datamartProvider.setDataSource(dataSource);
-			// datamartProvider.setQuery(query);
-			// }
-
 		}
 	}
 

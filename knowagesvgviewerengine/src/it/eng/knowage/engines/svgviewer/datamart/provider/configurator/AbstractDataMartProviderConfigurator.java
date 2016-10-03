@@ -37,9 +37,6 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
-
 /**
  * The Class AbstractDatasetProviderConfigurator.
  *
@@ -79,23 +76,27 @@ public class AbstractDataMartProviderConfigurator {
 
 			String selectedHierarchyName = null;
 			String selectedMemberName = null;
+			String datasetPlaceholder = null;
 
-			Monitor getSelectedHierarchyNameMonitor = MonitorFactory.start("GeoEngine.AbstractDataMartProviderConfigurator.getSelectedHierarchyName");
+			// Monitor getSelectedHierarchyNameMonitor = MonitorFactory.start("GeoEngine.AbstractDataMartProviderConfigurator.getSelectedHierarchyName");
 			selectedHierarchyName = getSelectedHierarchyName(confSB);
-			getSelectedHierarchyNameMonitor.stop();
-			Monitor getHierarchyMembersMonitor = MonitorFactory.start("GeoEngine.AbstractDataMartProviderConfigurator.getHierarchyMembers");
+			// getSelectedHierarchyNameMonitor.stop();
+			// Monitor getHierarchyMembersMonitor = MonitorFactory.start("GeoEngine.AbstractDataMartProviderConfigurator.getHierarchyMembers");
 			hierarchyMembers = getHierarchyMembers(confSB, abstractDatasetProvider.getEnv());
-			getHierarchyMembersMonitor.stop();
-			Monitor getDefaultMemberNameMonitor = MonitorFactory.start("GeoEngine.AbstractDataMartProviderConfigurator.getDefaultMemberName");
+			// getHierarchyMembersMonitor.stop();
+			// Monitor getDefaultMemberNameMonitor = MonitorFactory.start("GeoEngine.AbstractDataMartProviderConfigurator.getDefaultMemberName");
 			selectedMemberName = getDefaultMemberName(hierarchyMembers);
-			getDefaultMemberNameMonitor.stop();
+			// getDefaultMemberNameMonitor.stop();
 			// Monitor getHierarchyMembersListMonitor = MonitorFactory.start("GeoEngine.AbstractDataMartProviderConfigurator.getHierarchyMembersList");
 			// List membersLst = getHierarchyMembersList(confSB);
 			// getHierarchyMembersListMonitor.stop();
 
+			// datasetPlaceholder = getDataSetPlaceholder(confSB);
+
 			abstractDatasetProvider.setHierarchyMembers(hierarchyMembers);
 			abstractDatasetProvider.setSelectedHierarchyName(selectedHierarchyName);
 			abstractDatasetProvider.setSelectedMemberName(selectedMemberName);
+			abstractDatasetProvider.setDsPlaceHolder(datasetPlaceholder);
 			abstractDatasetProvider.setSelectedLevel("1");
 		}
 	}
@@ -169,6 +170,18 @@ public class AbstractDataMartProviderConfigurator {
 	}
 
 	/**
+	 * Gets the selected level name.
+	 *
+	 * @param confSB
+	 *            the conf sb
+	 *
+	 * @return the selected level name
+	 */
+	// private static String getDataSetPlaceholder(SourceBean confSB) {
+	// return (String) confSB.getAttribute("placeholder_dataset");
+	// }
+
+	/**
 	 * Gets the default (level=1) member of the hierarchy. If it doesn't exist into the template returns the first member found.
 	 *
 	 * @param membersMap
@@ -190,7 +203,7 @@ public class AbstractDataMartProviderConfigurator {
 				break;
 			}
 			idx++;
-			logger.error("Member with level [1]  not found into the template. Returned the first member found [" + key + "]! Check the template.");
+			logger.debug("Member with level [1]  not found into the template. Returned the first member found [" + key + "]! Check the template.");
 		}
 
 		return toReturn;
@@ -306,6 +319,8 @@ public class AbstractDataMartProviderConfigurator {
 					logger.debug("Member [" + i + "] name [" + name + "]");
 					String dsMeasure = getMemberProperty("measure_dataset", memberSB, env);
 					logger.debug("Member [" + i + "] measure_dataset [" + dsMeasure + "]");
+					String dsPlaceholder = getMemberProperty("placeholder_dataset", memberSB, env);
+					logger.debug("Member [" + i + "] placeholder_dataset [" + dsPlaceholder + "]");
 					String level = getMemberProperty("level", memberSB, env);
 					logger.debug("Member [" + i + "] level [" + level + "]");
 					String enableCross = getMemberProperty("enableExternalCross", memberSB, env);
@@ -325,6 +340,7 @@ public class AbstractDataMartProviderConfigurator {
 					member.setHierarchy(hierarchy);
 					member.setName(name);
 					member.setDsMeasure(dsMeasure);
+					member.setDsPlaceholder(dsPlaceholder);
 					member.setLevel(Integer.valueOf(level));
 					member.setEnableCross(new Boolean(enableCross));
 
