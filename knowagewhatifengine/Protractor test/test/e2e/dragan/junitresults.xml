@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites>
+ <testsuite name="angularjs homepage todo list" timestamp="2016-10-04T14:20:09" hostname="localhost" time="3.777" errors="0" tests="1" skipped="0" failures="0">
+  <testcase classname="angularjs homepage todo list" name="should add a todo" time="3.776">
+  </testcase>
+ </testsuite>
+</testsuites>

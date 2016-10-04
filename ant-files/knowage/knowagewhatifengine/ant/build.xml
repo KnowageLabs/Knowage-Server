@@ -352,6 +352,13 @@
 			<formatter  type="xml"/>
 		</junit>
 		
+		<target name="protractor" depends="junit">
+					 <exec executable="${protractor}" > 
+					        <arg line="${conf.js}"/>
+					    </exec>
+					
+				</target>
+		
 
 	</target>
 
