@@ -9,7 +9,8 @@
 		</div>
 		<div layout="row" 	style="bottom: 0; right: 0; position: absolute;">
 		<span flex></span>
-		    <geo-dataset ng-if="!geoModule_template.noDatasetReport"></geo-dataset>
+		<!-- EXCLUDED for branch creation  -->
+<!-- 		    <geo-dataset ng-if="!geoModule_template.noDatasetReport"></geo-dataset> -->
 			<geo-legend id="legend" ng-if="!geoModule_template.noDatasetReport"></geo-legend>
 			<geo-distance-calculator id="calculator"></geo-distance-calculator>
 			<geo-download></geo-download>
