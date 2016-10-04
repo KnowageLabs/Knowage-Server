@@ -9,7 +9,7 @@ exports.config = {
 	  // The require statement must be down here, since jasmine-reporters
 	  // needs jasmine to be in the global and protractor does not guarantee
 	  // this until inside the onPrepare function.
-	  var jasmineReporters = require('jasmine-reporters');
+	  var jasmineReporters = require('/home/spagobi/continuousintegration/software/node_modules/jasmine-reporters');
 	    jasmine.getEnv().addReporter(
 	        new jasmineReporters.JUnitXmlReporter('xmloutput', true, true)
 	    );
