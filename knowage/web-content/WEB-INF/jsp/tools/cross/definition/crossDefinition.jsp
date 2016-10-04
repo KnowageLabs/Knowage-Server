@@ -116,7 +116,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			page-changed-function="changeDocPage(searchValue, itemsPerPage, currentPageNumber , columnsSearch,columnOrdering, reverseOrdering)"
 			search-function="changeDocPage(searchValue, itemsPerPage, 0, columnsSearch, columnOrdering, reverseOrdering)"
 			click-function="clickOnSelectedDoc(item,listId,closeDialog)">
-		</angular-list>
+		</angular-table>
 	</md-content>	 
 	
 	 
