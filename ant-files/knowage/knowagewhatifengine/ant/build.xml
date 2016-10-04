@@ -358,8 +358,9 @@
 	</target>
 	
 	<target name="protractor" depends="junit">
-						 <exec dir="${conf.js}" executable="${protractor} conf.js" >
-						 		
+						 <exec dir="${conf.js}" executable="${protractor} " >
+						 	<arg value="-c"/>
+						 	<arg value="conf.js"/>
 						        
 						    </exec>
 						
