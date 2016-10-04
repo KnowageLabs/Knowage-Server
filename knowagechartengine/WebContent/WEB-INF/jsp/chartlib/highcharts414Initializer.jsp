@@ -320,34 +320,38 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	}
 
 	function handleCockpitSelection(e) {
-		
 		if (!e.seriesOptions) {
-
-			var cockpitWidgetManager = window.parent.cockpitPanel.widgetContainer.widgetManager;
-			var cockpitWidgets = cockpitWidgetManager.widgets;
-			
-			console.log(cockpitWidgets);
-			
-			//var widgetId = Sbi.chart.viewer.ChartTemplateContainer.widgetId;
-			
-			console.log(widgetId);
-			
-			var selections = {};
-// 			selections[e.point.name] = {values: [e.point.series.name]};
-			
-			for(var i = 0; i < cockpitWidgets.getCount(); i++) {
-				var widget = cockpitWidgets.get(i);
-								
-				if(widget && widget.wtype === 'chart' && widget.id === widgetId){
-					
-					var fieldMeta = widget.getFieldMetaByValue(e.point.name);
-					var categoryFieldHeader = fieldMeta!=null?fieldMeta.header: null;
-					
-					selections[categoryFieldHeader] = {values: [e.point.name]};					
-					
-					cockpitWidgetManager.onSelection(widget, selections);
-				}
-			}		
+			if(parent && parent.angular && parent.angular.element){
+				// Cockpit 3 (AngularJS version of ockpit)				
+				parent.angular.element(window.frameElement.parentElement.parentElement).scope().reloadWidgetsByChartEvent(e);
+			}else{
+				// Old ExtJS Cockpit				
+				var cockpitWidgetManager = window.parent.cockpitPanel.widgetContainer.widgetManager;
+				var cockpitWidgets = cockpitWidgetManager.widgets;
+				
+				console.log(cockpitWidgets);
+				
+				//var widgetId = Sbi.chart.viewer.ChartTemplateContainer.widgetId;
+				
+				console.log(widgetId);
+				
+				var selections = {};
+//	 			selections[e.point.name] = {values: [e.point.series.name]};
+				
+				for(var i = 0; i < cockpitWidgets.getCount(); i++) {
+					var widget = cockpitWidgets.get(i);
+									
+					if(widget && widget.wtype === 'chart' && widget.id === widgetId){
+						
+						var fieldMeta = widget.getFieldMetaByValue(e.point.name);
+						var categoryFieldHeader = fieldMeta!=null?fieldMeta.header: null;
+						
+						selections[categoryFieldHeader] = {values: [e.point.name]};					
+						
+						cockpitWidgetManager.onSelection(widget, selections);
+					}
+				}	
+			}
 		}
 	};
 
