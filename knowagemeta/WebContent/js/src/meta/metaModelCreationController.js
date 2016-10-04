@@ -433,13 +433,17 @@ function businessModelAttributeControllerFunction($scope, sbiModule_translate,sb
 
 
 				} else {
-					var isPresentInCalcField=$scope.isPresentInCalculatedColumn($scope.selectedBusinessModel.columns[index],$scope.selectedBusinessModel);
-					if(isPresentInCalcField!=false){
-						sbiModule_restServices.errorHandler("This column is in connection with a calculated field " +isPresentInCalcField,"Unable to remove this column");
-					}else{
-						$scope.deleteBusinessColumn($scope.selectedBusinessModel.columns[index].uniqueName,$scope.selectedBusinessModel);
+					var isPresentInHierarchy = $scope.isPresentInOlapHierarchy($scope.selectedBusinessModel.columns[index],$scope.selectedBusinessModel);
+					if (isPresentInHierarchy != false){
+						sbiModule_restServices.errorHandler("This column is in connection with a hierarchy " +isPresentInHierarchy,"Unable to remove this column");
+					} else {
+						var isPresentInCalcField=$scope.isPresentInCalculatedColumn($scope.selectedBusinessModel.columns[index],$scope.selectedBusinessModel);
+						if(isPresentInCalcField!=false){
+							sbiModule_restServices.errorHandler("This column is in connection with a calculated field " +isPresentInCalcField,"Unable to remove this column");
+						}else{
+							$scope.deleteBusinessColumn($scope.selectedBusinessModel.columns[index].uniqueName,$scope.selectedBusinessModel);
+						}
 					}
-
 				}
 			}
 		}
@@ -456,6 +460,26 @@ function businessModelAttributeControllerFunction($scope, sbiModule_translate,sb
 		return false
 
 	}
+
+	$scope.isPresentInOlapHierarchy=function(businessColumn,businessClass){
+		var olapModels = $scope.meta.olapModels;
+		for (var i=0; i< olapModels.length; i++){
+			var dimensions = olapModels[i].dimensions
+			for (var j=0; j < dimensions.length; j++){
+				var hierarchies = dimensions[j].hierarchies;
+				for (var k=0; k < hierarchies.length; k++){
+					var levels = hierarchies[k].levels;
+					for (var z=0; z < levels.length; z++ ){
+						if (angular.equals(levels[z].column.uniqueName,businessColumn.uniqueName)){
+							return hierarchies[k].name;
+						}
+					}
+				}
+			}
+		}
+		return false;
+	}
+
 	$scope.createBusinessColumnFromPhysicalColumns=function(pc,businessModel){
 		sbiModule_restServices.promisePost("1.0/metaWeb", "createBusinessColumn",metaModelServices.createRequestRest({physicalTableName:pc.$parent.name,physicalColumnName:pc.name,businessModelUniqueName:businessModel.uniqueName}))
 		   .then(function(response){
