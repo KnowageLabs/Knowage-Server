@@ -11,7 +11,10 @@ exports.config = {
 	  // this until inside the onPrepare function.
 	  var jasmineReporters = require('/home/spagobi/continuousintegration/software/node_modules/jasmine-reporters');
 	    jasmine.getEnv().addReporter(
-	        new jasmineReporters.JUnitXmlReporter('xmloutput', true, true)
+	        new jasmineReporters.JUnitXmlReporter({
+	        	consolidateAll: false,
+	            filePrefix: 'Test-'
+	        })
 	    );
 	}
 };
