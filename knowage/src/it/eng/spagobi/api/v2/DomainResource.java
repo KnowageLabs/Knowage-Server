@@ -24,7 +24,6 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
-import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.net.URI;
@@ -58,7 +57,7 @@ public class DomainResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getDomains() {
+	public List<Domain> getDomains() {
 		logger.debug("IN");
 		IDomainDAO domainsDao = null;
 		List<Domain> allObjects = null;
@@ -68,10 +67,8 @@ public class DomainResource extends AbstractSpagoBIResource {
 			domainsDao.setUserProfile(getUserProfile());
 			allObjects = domainsDao.loadListDomains();
 
-			if (allObjects != null) {
-				return JsonConverter.objectToJson(allObjects, allObjects.getClass());
-			} else {
-				return "[]";
+			if (allObjects != null && !allObjects.isEmpty()) {
+				return allObjects;
 			}
 		} catch (Exception e) {
 			logger.error("Error while getting the list of domains", e);
@@ -79,6 +76,8 @@ public class DomainResource extends AbstractSpagoBIResource {
 		} finally {
 			logger.debug("OUT");
 		}
+
+		return new ArrayList<Domain>();
 	}
 
 	@GET
@@ -267,7 +266,7 @@ public class DomainResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/listByCode/{code}")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String getDomainsByCode(@PathParam("code") String code) {
+	public List<Domain> getDomainsByCode(@PathParam("code") String code) {
 		logger.debug("IN");
 		IDomainDAO domainsDao = null;
 		List<Domain> dom;
@@ -282,17 +281,13 @@ public class DomainResource extends AbstractSpagoBIResource {
 		} finally {
 			logger.debug("OUT");
 		}
-		if (dom != null) {
-			return JsonConverter.objectToJson(dom, dom.getClass());
-		} else {
-			return "[]";
-		}
+		return dom;
 	}
 
 	@GET
 	@Path("/rolesCategories")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String getCategoriesOfRoles(@QueryParam("id") int[] ids) {
+	public List<Domain> getCategoriesOfRoles(@QueryParam("id") int[] ids) {
 		logger.debug("IN");
 		IDomainDAO domainsDao = null;
 		List allRolesCategories = new ArrayList<>();
@@ -325,6 +320,6 @@ public class DomainResource extends AbstractSpagoBIResource {
 		} finally {
 			logger.debug("OUT");
 		}
-		return JsonConverter.objectToJson(rolesMetaModelCategories, rolesMetaModelCategories.getClass());
+		return rolesMetaModelCategories;
 	}
 }
