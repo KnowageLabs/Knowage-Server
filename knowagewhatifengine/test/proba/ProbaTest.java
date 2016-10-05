@@ -8,6 +8,6 @@ public class ProbaTest extends TestCase{
 
 	 public void testWillAlwaysFail() {
 		 String str= "Junit is working fine";
-	      assertEquals("Judsdnit is working fine",str);
+	      assertEquals("Junit is working fine",str);
 	    }
 }
