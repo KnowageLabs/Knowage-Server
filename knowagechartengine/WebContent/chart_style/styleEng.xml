@@ -6,7 +6,7 @@
 		
 		<generic>
 			
-			<CHART height="" heightDimType="" width="" widthDimType="" isCockpitEngine="false" orientation="horizontal" style="fontFamily:Arial;fontSize:12px;fontWeight:normal;backgroundColor:#FAFAFA;" styleName="eng">
+			<CHART height="" seriesStacking="false" heightDimType="" width="" widthDimType="" isCockpitEngine="false" orientation="horizontal" style="fontFamily:Arial;fontSize:12px;fontWeight:normal;backgroundColor:#FAFAFA;" styleName="eng">
 	
 				<TITLE style="align:center;fontFamily:Arial;fontSize:20px;fontWeight:bold;color:#002E57;" text="Insert your title"/>
 				

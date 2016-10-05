@@ -547,7 +547,29 @@ Ext.define('Sbi.chart.designer.ChartConfigurationMainContainer', {
 			}
 		});
         	
-    	this.add(showLegend);   
+    	this.add(showLegend);  
+    	
+    	/**
+    	 * The checkbox for stacking of series items. (danristo)
+    	 */
+    	var stackingSeries = Ext.create(
+			
+			{
+				xtype: 'checkboxfield',
+				id: 'seriesStacking',
+				bind : '{configModel.seriesStacking}',
+				hidden: !ChartUtils.isSeriesStackingEnabled(),	// TODO: provide function
+					
+				margin: Sbi.settings.chart.configurationStep.marginOfInnerFieldset,		
+				layout: Sbi.settings.chart.configurationStep.layoutFieldsInMainPanel,
+				
+				labelSeparator: ':',
+				fieldLabel: "Series stacking"
+			}
+			
+		);
+        	
+    	this.add(stackingSeries);  
     	
     	/**
     	 * The checkbox field for showing/hiding the PARALLEL table.

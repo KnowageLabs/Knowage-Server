@@ -642,7 +642,7 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 						serie['groupingFunction'] = serieAsMap.get('serieGroupingFunction') != undefined ? serieAsMap.get('serieGroupingFunction')
 								 : '';
 //					}
-					
+						
 					//console.log("serieAsMap:",serie['groupingFunction']);
 					
 					serie['name'] = serieAsMap.get('axisName') != undefined ? serieAsMap.get('axisName')
@@ -954,6 +954,10 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 			{
 				CHART['borderVisible'] = Sbi.settings.chart.borderVisible;
 			}			
+			
+			// Series stacking option for column chart types			
+			CHART['seriesStacking'] = (chartModel.get('seriesStacking') != undefined) ? 
+					chartModel.get('seriesStacking') : false;
 			
 //			/**
 //			 * New implementation (the Configuration and Advanced editor tabs are 
@@ -1714,6 +1718,15 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 								|| chartType == 'GAUGE'
 									|| chartType == 'CHORD');
 		},
+		
+		// (danristo)
+		isSeriesStackingEnabled : function () {
+			
+			var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
+			
+			return (chartType == 'BAR'
+				|| chartType == 'LINE');
+		},
 
 		isLegendEnabled : function () {
 			var chartType = Sbi.chart.designer.Designer.chartTypeSelector.getChartType();
@@ -2138,6 +2151,8 @@ Ext.define('Sbi.chart.designer.ChartUtils', {
 				font : jsonChartStyle.fontFamily,
 				fontDimension : jsonChartStyle.fontSize,
 				fontWeight : jsonChartStyle.fontWeight,
+				
+				seriesStacking: jsonTemplate.CHART.seriesStacking,
 
 				title : jsonTitleText,
 				titleAlign : jsonTitleStyle.align,

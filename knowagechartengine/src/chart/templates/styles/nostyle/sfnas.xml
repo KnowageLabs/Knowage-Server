@@ -6,7 +6,7 @@
 
 		<generic>
 
-			<CHART height="" heightDimType="" width="" widthDimType="" isCockpitEngine="false" orientation="horizontal" style="fontFamily:;fontSize:;fontWeight:;backgroundColor:transparent;" styleName="sfnas">
+			<CHART height="" heightDimType="" seriesStacking="false" width="" widthDimType="" isCockpitEngine="false" orientation="horizontal" style="fontFamily:;fontSize:;fontWeight:;backgroundColor:transparent;" styleName="sfnas">
 
 				<TITLE style="align:;fontFamily:;fontSize:;fontWeight:;color:;" text=""/>
 

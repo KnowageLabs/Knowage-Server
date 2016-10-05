@@ -655,6 +655,9 @@ Ext.define('Sbi.chart.designer.Designer', {
 					var opacityOnMouseOver = mainConfigurationPanel.getComponent("opacityMouseOver");					
 					var percAbsolSliceValueField = mainConfigurationPanel.getComponent("percAbsolSliceValueCombo");
 					
+					// (danristo)
+					var seriesStacking = mainConfigurationPanel.getComponent("seriesStacking");	
+					
 					/**
 					 * "Show table" checkbox for the PARALLEL chart serves as a indicator of
 					 * whether the PARALLEL table should be shown when rendering the chart.
@@ -736,6 +739,18 @@ Ext.define('Sbi.chart.designer.Designer', {
 						} else {
 							chartLegendCheckBox.show();
 						}
+					}
+					
+					// (danristo)
+					if (seriesStacking!=undefined && seriesStacking!=null) {
+						
+						if (currentChartType == 'BAR' || currentChartType == 'LINE') {
+							seriesStacking.show();
+						}
+						else {
+							seriesStacking.hide();
+						}
+						
 					}
 					
 					/**
@@ -3684,6 +3699,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 									
 									serieAxis: store.axisAlias,
 									serieGroupingFunction: serie.groupingFunction != ''? serie.groupingFunction : 'SUM',
+									seriesStacking: serie.seriesStacking,
 									serieType: serie.type,
 									serieOrderType: serie.orderType,
 									serieColumn: serie.column,
@@ -3723,6 +3739,7 @@ Ext.define('Sbi.chart.designer.Designer', {
 																			
 									serieAxis: store.axisAlias,
 									serieGroupingFunction: serie.groupingFunction != ''? serie.groupingFunction : 'SUM',
+									seriesStacking: serie.seriesStacking,
 									serieType: serie.type,
 									serieOrderType: serie.orderType,
 									serieColumn: serie.column,

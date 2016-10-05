@@ -78,9 +78,7 @@ chartExecutionWebServiceManagerFactory.service
 		}
 		
 		var run = function(serviceName, parameters, urlParams, successFunction, failureFunction) {
-	    	
-//			console.log(serviceName);
-			
+	    					
 			var ws = null;
 	    	
 	    	for (i=0; i<config.webService.length; i++) {
@@ -148,7 +146,7 @@ chartExecutionWebServiceManagerFactory.service
 	        	 * REST service POST call (object that the 'configParams' variables references to).
 	        	 */
 	        	var transformRequest = function(obj) {
-				
+					        		
 					var str = [];
 					
 					for(var p in obj)
@@ -193,6 +191,7 @@ chartExecutionWebServiceManagerFactory.service
     					}
     					else {
     						obj = obj.replace(new RegExp("&#39;",'g'),"\\'");
+//    						console.log(obj);
     						return eval("(" + obj + ")");	
     					}
     					
@@ -212,54 +211,10 @@ chartExecutionWebServiceManagerFactory.service
 		        		
 	        			function(response) { 
     	    				console.info("[FAILURE]: The form cannot be submitted because of some failure.");
-    	    				sbiModule_messaging.showErrorMessage("Failure!", sbiModule_translate.load('sbi.generic.failure'));
+    	    				sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.chart.rendering.failure"), sbiModule_translate.load('sbi.generic.failure'));
     	    				failureFunction(response); 
         				}
 		        	);
-	        	
-//	            $http
-//	    		(
-//	    			{
-//	    				method: ws.webServiceConfig.method,
-//	    				url: serviceUrl + ws.webServiceConfig.service,
-//	    				data: parameters,
-//	    				
-//	    				headers: {
-//		                    'Content-Type': config.serviceConfig.contentType
-//		                },
-//	    				
-//	    				transformRequest: function(obj) {
-//	    					
-//	    					var str = [];
-//	    					
-//	    					for(var p in obj)
-//	    						str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-//	    					
-//	    					return str.join("&");
-//	    					
-//	    				},
-//	    				
-//	    				transformResponse: function(obj) {	     					
-//	    					// From chart.jsp
-//	    					obj = obj.replace(new RegExp("&#39;",'g'),"\\'");	    					
-//	    					return eval("(" + obj + ")");	    					
-//	    				},
-//	    			}
-//	    		)
-//	    		.then
-//	    		(
-//	    			function successCallback(response) {
-//	    				successFunction(response);
-//	    			}, 
-//	    				
-//	    			function errorCallback(response) {
-//	    			// called asynchronously if an error occurs
-//	    			// or server returns response with an error status.
-//	    				console.info("[FAILURE]: The form cannot be submitted because of some failure.");
-//	    				console.log(response);
-//	    				sbiModule_messaging.showErrorMessage("Failure!", sbiModule_translate.load('sbi.generic.failure'));
-//	    			}
-//	    		);
 	            
 	        } else {
 //	            Ext.log({level: 'error'}, 'Sbi.chart.rest.WebServiceRegistry ' + serviceName + ' not registered!');	// TODO: Handle this line!!!

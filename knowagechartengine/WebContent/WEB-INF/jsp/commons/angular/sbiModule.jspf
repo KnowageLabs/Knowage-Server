@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 
-	var sbiM = angular.module('sbiModule',["toastr"]);
+	var sbiM = angular.module('sbiModule',["toastr",'ngSanitize']);
 	
 	sbiM.factory('sbiModule_config',function(){
 		return {
@@ -94,32 +94,86 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	                              	}]);
 	
 	
-	sbiM.service('sbiModule_messaging',function(toastr){
+	sbiM.service('sbiModule_messaging',function(sbiModule_restServices,$mdToast){
+		
 		this.showErrorMessage = function(msg,title){
-			
-			toastr.error(msg,title, {
-				  closeButton: true
-			});
-		};
-		this.showWarningMessage = function(msg,title){
-			
-			toastr.warning(msg,title, {
-				  closeButton: true
-			});
-		};
-		this.showInfoMessage = function(msg,title){
-			
-			toastr.info(msg,title, {
-				  closeButton: true
-			});
-		};
-		this.showSuccessMessage = function(msg,title){
-			
-			toastr.success(msg,title, {
-				  closeButton: true
-				});
+//	 		toastr.error(msg,title, {
+//	 			  closeButton: true
+//	 		});
+			sbiModule_restServices.errorHandler(msg,title);
 		};
 		
+		
+		
+		this.showWarningMessage = function(msg,title,hideTimeout){
+//	 		toastr.warning(msg,title, {
+//	 			  closeButton: true
+//	 		});
+
+			var timeout = 3000;
+
+			if (hideTimeout && typeof hideTimeout == "number") {
+				timeout = hideTimeout;
+			}
+
+			return	$mdToast.show(
+						$mdToast
+						.simple()
+						.content(msg)
+						.position('top')
+						.action('OK')
+						.highlightAction(false)
+						.hideDelay(timeout)
+					);
+			
+		};
+		this.showInfoMessage = function(msg,title,hideTimeout){
+//	 		toastr.info(msg,title, {
+//	 			  closeButton: true
+//	 		});
+
+			var timeout = 3000;
+
+			if (hideTimeout && typeof hideTimeout == "number") {
+				timeout = hideTimeout;
+			}
+
+			return	$mdToast.show(
+						$mdToast
+						.simple()
+						.content(msg)
+						.position('top')
+						.action('OK')
+						.highlightAction(false)
+						.hideDelay(timeout)
+					);
+			
+		};
+		
+		// hideTimeout - configurable timeout for hiding of the mdToast. (added by: danristo)
+		this.showSuccessMessage = function(msg,title,hideTimeout){
+//	 		toastr.success(msg,title, {
+//	 			  closeButton: true
+//	 			});
+			
+			var timeout = 3000;
+
+			if (hideTimeout && typeof hideTimeout == "number") {
+				timeout = hideTimeout;
+			}
+
+			return	$mdToast.show(
+						$mdToast
+						.simple()
+						.content(msg)
+						.position('top')
+						.action('OK')
+						.highlightAction(false)
+						.hideDelay(timeout) // changed by: danristo (previous value: 60000)
+					);
+			
+		};
+			
 	});
 	
 	sbiM.service('sbiModule_translate', function() {
@@ -133,7 +187,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		};
 	});
 	
-	sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_config,sbiModule_logger) {
+	sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_config,sbiModule_logger,sbiModule_translate,$mdPanel) {
 		
 		var alteredContextPath=null;
 	
@@ -312,6 +366,67 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	
 			return deferred.promise;
 		};
+		
+		this.errorHandler=function(text,title){
+			var deferred = $q.defer();
+			var titleFin= title ? sbiModule_translate.load(title) : "";
+			var textFin=text;
+			
+			if(angular.isObject(text)){
+				if(text.hasOwnProperty("errors") || text.hasOwnProperty("warnings")){
+					var messages = text.errors || text.warnings;
+					textFin="";
+					for(var i=0;i<messages.length;i++){
+						textFin+=sbiModule_translate.load(messages[i].message)+" <br> ";
+					}
+				}else{
+					textFin=sbiModule_translate.load(JSON.stringify(text));
+				}
+			}else{
+				textFin=sbiModule_translate.load(text);
+			}
+			
+			
+			  var config = {
+					    attachTo: angular.element(document.body),
+					    locals :{title:titleFin,text:textFin},
+					    controller: function($scope,mdPanelRef,sbiModule_translate,title,text){
+					    	$scope.title=title;
+					    	$scope.text=text;
+					    	$scope.ok=sbiModule_translate.load("sbi.general.ok");
+					    	
+					    	$scope.closeDialog=function(){
+					    		mdPanelRef.close();
+					    	}
+					    },
+					    disableParentScroll: true,
+					    template: '<md-card>'+
+					    	 		'<md-card-title style="   min-width: 300px; max-height: 400px;max-width: 600px; overflow: auto;">'+
+				          			'	<md-card-title-text>'+
+				            		'		<span class="md-headline">{{title}}</span>'+
+				            		'		<span class="md-subhead"  ng-bind-html="text"> </span>'+
+				          			'	</md-card-title-text>'+
+				          			'</md-card-title>'+
+				          			'<md-card-actions layout="row" layout-align="end center">'+
+				                   	 '<md-button ng-click="closeDialog()">{{ok}}</md-button>'+
+				                  '</md-card-actions>'+
+				          		'</md-card>',
+					    hasBackdrop: true,
+					    position: $mdPanel.newPanelPosition().absolute().center(),
+					    trapFocus: true,
+					    zIndex: 150,
+					    clickOutsideToClose: true,
+					    escapeToClose: true,
+					    focusOnOpen: true,
+					    onRemoving :function(){
+					      deferred.resolve();
+					    }
+					  };
+			  
+			$mdPanel.open(config);
+			return deferred.promise;
+			
+		}
 		
 	  });
 

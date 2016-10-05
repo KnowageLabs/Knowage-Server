@@ -249,9 +249,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				//chartServiceManager.run('drilldownHighchart', parameters, [], function (response) {
 				
 				chartExecutionWebServiceManager.run('drilldownHighchart', parameters, [], function (response) {
-					
-					console.log(response.data);
-					
+										
 					// TODO: commented by: danristo (EXT -> ANGULAR)
 					//var series = JSON.parse(response.responseText, true);
 					
@@ -283,7 +281,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		            chart.drillUpButton.textSetter(backText);
 		          
 					chart.hideLoading();
-				});
+				}, 
+				
+				// Failure function that handles failures when drilldown does not perform well - some server-side problem (danristo)
+				function() {/*chart.hideLoading();*/});
 			}
 		}
 	};
