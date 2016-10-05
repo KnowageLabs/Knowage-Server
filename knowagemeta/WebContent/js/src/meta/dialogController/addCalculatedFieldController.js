@@ -1,7 +1,7 @@
 function addCalculatedFieldController($scope, $mdDialog,sbiModule_translate,sbiModule_restServices, selectedBusinessModel,metaModelServices,editMode,currentCF){
 	$scope.translate=sbiModule_translate;
 	$scope.selectedBusinessModel=selectedBusinessModel;
-	$scope.type=[{label:sbiModule_translate.load("sbi.lookup.asString"),name:"String"},{label:sbiModule_translate.load("sbi.lookup.asNumber"),name:"Number"}]
+	$scope.type=[{label:sbiModule_translate.load("sbi.lookup.asString"),name:"STRING"},{label:sbiModule_translate.load("sbi.lookup.asNumber"),name:"NUMBER"}]
 
 	$scope.calcField={expression:"",dataType:$scope.type[0].name};
 	if(editMode){
