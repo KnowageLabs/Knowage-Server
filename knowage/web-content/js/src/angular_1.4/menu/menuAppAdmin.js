@@ -29,7 +29,7 @@ myApp.controller('menuCtrl', ['$scope','$mdDialog',
 	}
 ]);
 
-myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModule_messaging', 'sbiModule_translate', 'sbiModule_download', function($window,$http, $mdDialog, $mdToast, sbiModule_messaging, sbiModule_translate, sbiModule_download) {
+myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModule_messaging', 'sbiModule_translate', 'sbiModule_download', '$filter', function($window,$http, $mdDialog, $mdToast, sbiModule_messaging, sbiModule_translate, sbiModule_download, $filter) {
     return {
 
         restrict: 'E',
@@ -208,6 +208,7 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 	        	        scope.translate = $scope.translate;
 						scope.messaging = $scope.messaging;
 						scope.download = $scope.download;
+						scope.dialog = $mdDialog;
 	        	        
 	        	        var restLicense = {
 	        	        		base : scope.config.contextName + '/restful-services/1.0/license',
@@ -236,6 +237,8 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 	        	        					if (response.data.errors){
 	        	        						scope.messaging.showErrorMessage(response.data.errors[0].message,scope.translate.load('sbi.generic.error'));
 	        	        					}else{
+	        	        						// add the new license to the list
+	        	        						$scope.licenseData.push(response.data);
 	        	        						scope.file = undefined;
 	        	        						scope.messaging.showInfoMessage(scope.translate.load('sbi.generic.resultMsg'),scope.translate.load('sbi.generic.info'));
 	        	        					}
@@ -288,6 +291,43 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
         	        					}
         	        			});
 	        	        }
+	        	        
+	        	        
+	        	        
+	        	        scope.deleteFile = function(license){
+	        	        	
+	        	        	
+	        	        	var urlToCall = restLicense.base + '/delete' + '/' + license.product;
+	        	        	$http
+	        	        		.get(urlToCall)
+	        	        		.then(
+        	        				function(response,status,headers,config){
+        	        					if (response.data.errors){
+        	        						scope.messaging.showErrorMessage(response.data.errors[0].message,scope.translate.load('sbi.generic.error'));
+        	        					}else{
+        	        						if(response.data.deleted == true){
+        	        							var productD = response.data.product; 
+        	        							var obj = $filter('filter')($scope.licenseData, {product: productD}, true)[0];
+
+        	        							var index = $scope.licenseData.indexOf(obj);
+        	        							$scope.licenseData.splice(index, 1);  
+        	        							scope.file = undefined;
+            	        						scope.messaging.showInfoMessage(scope.translate.load('sbi.generic.resultMsg'),scope.translate.load('sbi.generic.info'));
+        	        						}
+        	        						else {
+        	        							scope.messaging.showErrorMessage(response.data.errors[0].message,scope.translate.load('sbi.generic.error'));
+        	        						}
+        	        					}
+        	        				},
+        	        				function(response,status,headers,config){
+        	        					if (response.data.errors){
+        	        						scope.messaging.showErrorMessage(response.data.errors[0].message,scope.translate.load('sbi.generic.error'));
+        	        					}else{
+        	        						scope.messaging.showErrorMessage(scope.translate.load('sbi.generic.genericError'),scope.translate.load('sbi.generic.error'));
+        	        					}
+        	        			});
+	        	        }
+	        	        
 	        	        scope.closeDialog = function() {
 	        	          $mdDialog.hide();
 	        	        }
