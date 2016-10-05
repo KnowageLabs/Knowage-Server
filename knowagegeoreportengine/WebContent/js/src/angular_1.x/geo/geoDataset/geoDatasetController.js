@@ -35,15 +35,27 @@ angular.module('geoModule')
 	}
 })
 
-function geoDatasetControllerFunction($scope,geoModule_template,sbiModule_restServices,sbiModule_config,$mdDialog,sbiModule_translate, geoSharedSettings){
+function geoDatasetControllerFunction($scope,geoModule_template,sbiModule_restServices,sbiModule_config,$mdDialog,sbiModule_translate, geoSharedSettings,geoModule_dataset){
 	$scope.translate= sbiModule_translate;
 	$scope.datasetRows=[];
 	$scope.datasetColumns=[];
 	
 	$scope.showDataset=function(){
-		console.log(geoSharedSettings.getSettings());
 		
-		$scope.loadDatasetRows();
+		$scope.getDatasetColumns(geoModule_dataset.metaData.fields);
+		$scope.datasetRows=geoModule_dataset.rows;
+		
+		$mdDialog.show({
+			  scope:$scope,
+			  preserveScope: true,
+		      controller: DatasetPreviewController,
+		      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.x/geo/geoDataset/templates/datasetPreviewTemplate.html',  
+		      clickOutsideToClose:false,
+		      escapeToClose :false,
+		    });
+		
+		
+		
 		
      }
 	

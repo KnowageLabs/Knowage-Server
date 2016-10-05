@@ -31,7 +31,7 @@ angular.module('geoModule')
 })
 
 var downlf;
-function geoDownloadControllerFunction($scope,$map,$mdDialog, $mdToast,geo_interaction,sbiModule_translate,geoModule_layerServices){
+function geoDownloadControllerFunction($scope,$map,$mdDialog, $mdToast,geo_interaction,sbiModule_translate,geoModule_layerServices,sbiModule_config,geoModule_dataset, geoModule_template){
 	$scope.showCircular=false;
 	downlf=function(){
 		$scope.showOverlay();
@@ -81,8 +81,11 @@ function geoDownloadControllerFunction($scope,$map,$mdDialog, $mdToast,geo_inter
 		});
 
 	}
-
+    
+	
+	
 	$scope.downloadLayer = function(){
+		
 		$scope.showCircular=true;
 		var bool = false;
 		var raster;
@@ -185,7 +188,7 @@ function geoDownloadControllerFunction($scope,$map,$mdDialog, $mdToast,geo_inter
 						$scope.showAction(sbiModule_translate.load("gisengine.downloadlayer.error"));
 
 					}
-					var doc = new jsPDF('landscape', undefined, format);
+					var doc = new jsPDF('landscape',undefined, format);
 
 
 					doc.addImage(data, 'JPEG', 0, 0, dim[0], dim[1]);
@@ -195,18 +198,38 @@ function geoDownloadControllerFunction($scope,$map,$mdDialog, $mdToast,geo_inter
 						doc.setFontSize(16);
 						var msg = sbiModule_translate.load("gisengine.downloadlayer.removetms");
 						doc.text(0,dim[1]-10,msg +":  "+ name);
-						doc.setTextColor("black");
+						// table is not visible in adobe if this is set
+						//doc.setTextColor("black"); 
 					}
-
-					doc.save('map.pdf');
-					map.setSize(size);
-					map.getView().fit(extent, size);
-					map.renderSync();
-					source.un('tileloadstart', tileLoadStart);
-					source.un('tileloadend', tileLoadEnd, canvas);
-					source.un('tileloaderror', tileLoadEnd, canvas);
-					$scope.showCircular=false;
-
+					 var datasetLabel = sbiModule_config.docDatasetLabel;
+					 if(datasetLabel!= ''){
+					 var dsAsHtml= prepareDataAsHtmlString();
+					 
+						 doc.addPage();
+                            
+                         // doc.setFont('courier', 'normal');  
+						 doc.setFontSize(10);
+                        
+		   					doc.fromHTML(
+		   					        dsAsHtml,
+		   							0, // x coord
+		   							0, // y coord
+		   							{});
+                            
+		   					
+					
+					
+   					
+					 }
+							doc.save('map.pdf');
+							map.setSize(size);
+							map.getView().fit(extent, size);
+							map.renderSync();
+							source.un('tileloadstart', tileLoadStart);
+							source.un('tileloadend', tileLoadEnd, canvas);
+							source.un('tileloaderror', tileLoadEnd, canvas);
+							$scope.showCircular=false;
+					 
 				}, 10000);
 			}
 		};
@@ -219,7 +242,7 @@ function geoDownloadControllerFunction($scope,$map,$mdDialog, $mdToast,geo_inter
 
 		map.setSize([width, height]);
 		map.getView().fit(extent, map.getSize());
-
+          
 		map.renderSync();
 		$scope.close();
 
@@ -245,5 +268,58 @@ function geoDownloadControllerFunction($scope,$map,$mdDialog, $mdToast,geo_inter
 			}
 		});
 	};
-
+	
+	function prepareDataAsHtmlString(){
+		getNeededColumns= function(fields){
+			var columnNames= geoModule_template.datasetJoinColumns.split(",");
+			for(i=0;i<geoModule_template.indicators.length;i++){
+				columnNames.push(geoModule_template.indicators[i].name);
+			}
+           var columnsNeeded= [];
+           for(i=1;i<fields.length;i++){
+		       if(columnNames.indexOf(fields[i].header)>-1)	{
+		    	   columnsNeeded.push(fields[i]);
+		       }
+		   }
+			return columnsNeeded;
+		}
+		
+		createHeader = function (fields){
+			 var tableHeader='<tr>';
+			 for(i=0;i<fields.length;i++){
+		    	 tableHeader += '<th> '+fields[i].header+' </th>';
+		    	}
+			 tableHeader+='</tr>';
+			 
+			 return tableHeader;
+		 }
+		
+		 createRows = function (columns, rows){
+			 var rowsHtml='';
+			 for(i=0; i<rows.length;i++){
+				 rowsHtml=rowsHtml+'<tr>';
+				 for(j=0;j<columns.length;j++){
+					 var cell= rows[i][columns[j].name];
+					 rowsHtml+='<td> '+cell+' </td>'
+				 }
+				 
+				 rowsHtml=rowsHtml+'</tr>';
+			 }
+			 
+			 return rowsHtml;
+		 }
+		 var htmlString='';
+		 var columnsNeeded=getNeededColumns(geoModule_dataset.metaData.fields);
+		
+		 htmlString= htmlString+ '<div><table>';
+	        htmlString= htmlString + createHeader(columnsNeeded);
+	        htmlString= htmlString + createRows(columnsNeeded,geoModule_dataset.rows);
+	        htmlString= htmlString + '</table></div>';
+			
+		return htmlString;
+	}
+    
+	
+	
+	
 }
