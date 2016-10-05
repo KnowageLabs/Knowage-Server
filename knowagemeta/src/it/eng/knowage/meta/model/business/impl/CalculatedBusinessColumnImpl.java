@@ -72,7 +72,7 @@ public class CalculatedBusinessColumnImpl extends BusinessColumnImpl implements 
 
 		// retrieve columns objects from string v
 		String[] splittedExpr = expression
-				.split("(\\+|\\-|\\*|\\(|\\)|\\||\\/|GG_between_dates|MM_between_dates|AA_between_dates|GG_up_today|MM_up_today|AA_up_today)");
+				.split("(\\+|\\-|\\*|\\(|\\)|\\|\\||\\/|GG_between_dates|MM_between_dates|AA_between_dates|GG_up_today|MM_up_today|AA_up_today)");
 		for (String operand : splittedExpr) {
 			operand = operand.trim();
 
