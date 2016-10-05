@@ -277,41 +277,51 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 	
 	this.loadAssociativeSelection = function(defer,ass){
 		
-	//	ws.checkIfDatasetAreLoaded();
-		console.log("in: loadAssociativeSelection",(new Date()).getTime());
 		if(ass==undefined){
 			defer.reject();
 			return;
 		}
-		var associationsEncoded=encodeURIComponent(JSON.stringify(ass))
-		.replace(/'/g,"%27")
-		.replace(/"/g,"%22");
-		var selection = encodeURIComponent(JSON.stringify(ws.getSelection(ass.datasets)))
-		.replace(/'/g,"%27")
-		.replace(/"/g,"%22");
-		var datasets = encodeURIComponent(JSON.stringify(ws.getParameterFromDataset(ass.datasets)))
-		.replace(/'/g,"%27")
-		.replace(/"/g,"%22");
-		var realTimeDs=encodeURIComponent(JSON.stringify(cockpitModule_realtimeServices.getRealTimeDatasetFromList(ass.datasets)))
-		.replace(/'/g,"%27")
-		.replace(/"/g,"%22");
 		
-		var param = "?associationGroup="+associationsEncoded+"&selections="+selection+"&datasets="+datasets+"&realtime="+realTimeDs;
-
-		sbiModule_restServices.restToRootProject();
-		sbiModule_restServices.promiseGet("2.0/datasets","loadAssociativeSelections"+param)
-		.then(function(response){
-			var index = ws.currentSelectionContainsAss(response.data);
-			if(index==-1){
-				cockpitModule_widgetSelectionUtils.responseCurrentSelection.push(response.data);
-			}else{
-				cockpitModule_widgetSelectionUtils.responseCurrentSelection[index] = response.data;
-			}
-			defer.resolve(response.data);
-		},function(response){
-			sbiModule_restServices.errorHandler(response.data,"");
-			defer.reject();
-		})
+		var dsSel=ws.getSelection(ass.datasets);
+		if(Object.keys(dsSel).length>0){
+			var selection = encodeURIComponent(JSON.stringify(dsSel))
+			.replace(/'/g,"%27")
+			.replace(/"/g,"%22");
+			var associationsEncoded=encodeURIComponent(JSON.stringify(ass))
+			.replace(/'/g,"%27")
+			.replace(/"/g,"%22");
+			var datasets = encodeURIComponent(JSON.stringify(ws.getParameterFromDataset(ass.datasets)))
+			.replace(/'/g,"%27")
+			.replace(/"/g,"%22");
+			var realTimeDs=encodeURIComponent(JSON.stringify(cockpitModule_realtimeServices.getRealTimeDatasetFromList(ass.datasets)))
+			.replace(/'/g,"%27")
+			.replace(/"/g,"%22");
+			
+			var param = "?associationGroup="+associationsEncoded+"&selections="+selection+"&datasets="+datasets+"&realtime="+realTimeDs;
+			
+			sbiModule_restServices.restToRootProject();
+			sbiModule_restServices.promiseGet("2.0/datasets","loadAssociativeSelections"+param)
+			.then(function(response){
+				var index = ws.currentSelectionContainsAss(response.data);
+				if(index==-1){
+					cockpitModule_widgetSelectionUtils.responseCurrentSelection.push(response.data);
+				}else{
+					cockpitModule_widgetSelectionUtils.responseCurrentSelection[index] = response.data;
+				}
+				defer.resolve(response.data);
+			},function(response){
+				sbiModule_restServices.errorHandler(response.data,"");
+				defer.reject();
+			})
+		}else{
+			var objDS={};
+			angular.forEach(ass.datasets,function(item){
+				this[item]={};
+			},objDS)
+			angular.copy([],cockpitModule_widgetSelectionUtils.responseCurrentSelection);
+			defer.resolve(objDS);
+		}
+		
 		
 	}
 	

@@ -301,9 +301,9 @@
     }
 
     @-moz-document url-prefix() {
-        md-card-title {
+        /*md-card-title {
             width: 100%;
-        }
+        }*/
     }
 
     /* CUSTOM CARDS */
@@ -551,6 +551,9 @@
 	}
 	
 	md-card#cockpitDataConfig{
+		&>md-card-content>md-content>md-tabs>md-tabs-content-wrapper>md-tab-content>div>md-content>md-card{
+			min-height:300px;
+		}
 		angular-table#cockpit-dataset,angular-table#cockpit-document{
 			.datasetParameterDetail,.analiticalParameterDetail{
 				background-color: #eceff1;

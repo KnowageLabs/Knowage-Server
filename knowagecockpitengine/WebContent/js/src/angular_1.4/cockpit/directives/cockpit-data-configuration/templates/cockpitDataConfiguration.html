@@ -32,7 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 			<md-tab label="{{translate.load('sbi.cockpit.source')}}">
 		        <md-content  layout-fill layout="column" layout-gt-md="row">
-		         		<md-card  class="flexCard" flex ng-controller="datasetManagerController">
+		         		<md-card  class="flexCard" layout="column" flex ng-controller="datasetManagerController">
 							<md-card-content flex layout="column" >
 							<md-toolbar style="background-color: transparent!important;   color: black!important;">
 								  <div class="md-toolbar-tools" >
@@ -58,7 +58,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										</queue-table>
 										<row-detail>
 										
-											<md-card   class="flexCard datasetParameterDetail" >
+											<md-card  layout="column" class="flexCard datasetParameterDetail" >
 												<md-card-content flex layout="column" >
 													<md-toolbar>
 													  <div class="md-toolbar-tools">
@@ -83,7 +83,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							</md-card-content>
 						</md-card>
 		         		
-		         		<md-card  class="flexCard" flex ng-controller="documentManagerController">
+		         		<md-card  class="flexCard" flex  layout="column" ng-controller="documentManagerController">
 							<md-card-content flex layout="column" >
 								<md-toolbar style="background-color: transparent!important;   color: black!important;">
 								  <div class="md-toolbar-tools" >
@@ -110,7 +110,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										<row-detail>
 										
 											<md-card   class="flexCard analiticalParameterDetail" >
-												<md-card-content flex layout="column" >
+												<md-card-content layout="column" flex layout="column" >
 													<md-toolbar>
 													  <div class="md-toolbar-tools">
 													    <h2>{{scopeFunctions.translate.load("sbi.cockpit.mainpanel.btn.parameters")}}</h2>
@@ -156,7 +156,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										ng-click="toggleAssociation(avDataset.label,meta.name,'dataset')" ng-class="{'selectedRow':jsonCurrentAss[avDataset.label]==('dataset'+meta.name)}">
 											<span layout="row" flex>
 												<p flex=70 class="metaname">{{meta.name}}</p>
-												<p flex class="metatype">({{meta.type | metatype}})</p>
+												<p class="metatype">({{meta.type | metatype}})</p>
 											</span>
 											<md-divider ng-if="!$last"></md-divider>
 										</md-list-item>

@@ -44,9 +44,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		</md-card-title>
 		
 		<div class="widgetActionButton"  >
-			<md-button class="md-icon-button draggableToolbar dragCursor" ng-if="(cockpitModule_properties.EDIT_MODE && !widExp)" aria-label="ded">
-				<md-icon md-font-icon="fa fa-bars" ></md-icon>
-			</md-button>
+			<md-icon md-font-icon="fa fa-bars draggableToolbar dragCursor" ng-if="(cockpitModule_properties.EDIT_MODE && !widExp)" style="padding: 5px 0px 0px 10px;"></md-icon>
 			<md-button class="md-icon-button "  aria-label="expand" ng-click="expandWidget();widExp=!widExp;$event.stopPropagation();" ng-init="widExp=false">
 				<md-icon md-font-icon="fa" ng-class="{'fa-compress':widExp ,' fa-expand':!widExp }"></md-icon>
 			</md-button>

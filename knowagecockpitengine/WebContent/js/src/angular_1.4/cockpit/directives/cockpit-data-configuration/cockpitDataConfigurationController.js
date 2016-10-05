@@ -394,17 +394,17 @@ function cockpitDataConfigurationController($scope,$rootScope,sbiModule_translat
 		    	  			cockpitModule_documentServices.setAvaiableDocument($scope.tmpAvaiableDocument);
 		    	  		} 
 
-		    	  		//remove from list of datasetParameterChanged the dataset present in aggregation
-		    	  		angular.forEach($scope.tmpAggregations,function(aggr){
-		    	  			angular.forEach(aggr.datasets,function(ds){
-			    	  			delete datasetParameterChanged[ds];
-			    	  			delete documentParameterChanged[ds];
-			    	  		})
-		    	  		})
-		    		  
 		    	  		angular.copy($scope.tmpAssociations,cockpitModule_template.configuration.associations);
 		    		  
 		    		  if(!angular.equals($scope.tmpAggregations,cockpitModule_template.configuration.aggregations)){
+		    			  //remove from list of datasetParameterChanged the dataset present in aggregation
+		    			  angular.forEach($scope.tmpAggregations,function(aggr){
+		    				  angular.forEach(aggr.datasets,function(ds){
+		    					  delete datasetParameterChanged[ds];
+		    					  delete documentParameterChanged[ds];
+		    				  })
+		    			  })
+		    			  
 		    			  var haveSel=false;
 		    			  for(var i=0;i<cockpitModule_template.configuration.aggregations.length;i++){
 		    				  if(Object.keys(cockpitModule_template.configuration.aggregations[i].selection).length>0){

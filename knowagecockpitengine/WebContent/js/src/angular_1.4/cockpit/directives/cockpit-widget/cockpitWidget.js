@@ -97,6 +97,8 @@ angular.module('cockpitModule')
         			ele.bind('mouseleave', mouseLeave )
         			ele.addClass(scope.$eval(attrs.widgetXPosition)<=1 ? 'rightPosition': 'leftPosition')
         			$timeout(function(){
+        				ele.removeClass('rightPosition');
+						ele.removeClass('leftPosition');
         				ele.addClass(scope.$eval(attrs.widgetXPosition)<=1 ? 'rightPosition': 'leftPosition')
         			},1000);
         			
