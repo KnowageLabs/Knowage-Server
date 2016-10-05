@@ -158,7 +158,7 @@ public class AssociativeLogicManager {
 						dataSet.loadData();
 						datasetToDataStore.put(v1, dataSet.getDataStore());
 					} else {
-						String signature = dataSetDao.loadDataSetByLabel(v1).getSignature();
+						String signature = dataSet.getSignature();
 						CacheItem cacheItem = cache.getMetadata().getCacheItem(signature);
 						if (cacheItem != null) {
 							String tableName = cacheItem.getTable();
