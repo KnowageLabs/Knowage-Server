@@ -1022,7 +1022,13 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		// Perform saving when the dataset is selected (POST or PUT, i.e. creating a new or updating the existing dataset)
 		if ($scope.selectedDataSet) {
 			$log.info("save");
-			// TODO: reset the $scope.datasetsListPersisted value as well
+			sbiModule_restServices.promisePost('1.0/datasets','', angular.toJson($scope.selectedDataSet))
+			.then(function(response) {
+				console.log("[POST]: SUCCESS!");
+				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+			});
 		}	
 		else {
 			// TODO: translate
