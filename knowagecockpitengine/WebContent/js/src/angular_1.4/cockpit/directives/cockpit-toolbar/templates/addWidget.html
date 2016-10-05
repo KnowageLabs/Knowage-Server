@@ -1,0 +1,31 @@
+
+<md-dialog class="widgetSelection" md-dynamic-height>
+	<div class="searchWidgetList" layout="row" layout-align="center center">
+		<input type="text" class="searchWidget" flex="50" layout-margin placeholder="search widget" ng-model="searchWidgetText.name"/>
+	</div>
+	<md-dialog-content layout="column" layout-align="start center">
+	
+	<div class="gridWidgetList" layout="row" layout-align="start start" layout-margin layout-wrap>
+		<md-card class="widget hvr-bounce-to-left" ng-class="[customCockpitClasses]" ng-repeat="widget in widgetType | filter:searchWidgetText" layout="column" flex="30" >
+			<md-card-title>
+				<md-card-title-text>
+				<span class="md-headline">{{widget.name}}</span>
+				</md-card-title-text>
+			</md-card-title>
+			<md-card-content style="background-image:url(/knowage/themes/sbi_default/img/cockpit/{{widget.img}})">
+
+				<p class="widgetDescription">{{widget.description}}</p>
+				
+			</md-card-content>
+			<md-card-actions  layout="row" layout-align="start center">
+				<div class="custom-chips">
+      				<md-chip ng-repeat="tag in widget.tags">{{tag}}</md-chip>
+      			</div>
+      			<div flex></div>
+				<md-button class="widgetAddButton" ng-click="addWidget(widget.type)" layout-align="center center">ADD</md-button>
+			</md-card-actions>
+		</md-card>
+	</div>
+	</md-dialog-content>
+</md-dialog>
+

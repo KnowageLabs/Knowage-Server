@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+
+Name: KnowageXXXEngine.war
+Implementation-Title: KnowageXXXEngine
+Implementation-Version: 1.0
+

@@ -1,0 +1,34 @@
+<md-card   class="flexCard customTableWidgetConfiguration " >
+	<md-card-content flex layout="column" class="noPadding">
+		<md-toolbar>
+		  <div class="md-toolbar-tools">
+		    <h2>{{translate.format(translate.load('sbi.cockpit.widget.configuration'),translate.load('sbi.cockpit.widget.document'))}}</h2>
+		    <span flex></span>
+		  </div>
+		</md-toolbar>
+		  <md-content flex layout="column">
+		  
+		       
+			<md-tabs flex md-border-bottom>
+				<md-tab label="Custom">
+					<md-content class="md-padding">
+						<document-selector flex ng-model=localModel.document.docId></document-selector>
+				    </md-content>
+		        </md-tab>
+		        <md-tab label="{{translate.load('sbi.cockpit.style')}}">
+		       		<cockpit-style-configurator widget ng-model="localModel.style"></cockpit-style-configurator>
+	       		</md-tab>
+		       
+			
+		    	</md-tabs>
+		  </md-content>
+    </md-card-content>
+     <md-card-actions layout="row" layout-align="end center">
+      <md-button ng-click="cancelConfiguration()" >
+          {{translate.load('sbi.generic.cancel')}}
+      </md-button>
+      <md-button ng-click="saveConfiguration()"  >
+          {{translate.load('sbi.generic.save')}}
+      </md-button>
+    </md-card-actions>
+</md-card>

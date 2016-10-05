@@ -1,0 +1,44 @@
+<!-- 
+Knowage, Open Source Business Intelligence suite
+Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+
+Knowage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+Knowage is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<md-toolbar class="miniToolbar">
+	<div class="md-toolbar-tools" layout-align="start center">
+		<h2> {{cockpitModule_template.configuration.info.name}}</h2>
+		<md-button aria-label="label" class="md-icon-button" ng-click="openGeneralConfigurationDialog()" ng-if="cockpitModule_properties.EDIT_MODE">
+			<md-icon md-font-icon="fa fa-cog"></md-icon>
+		</md-button>
+		<md-button aria-label="data" class="md-icon-button" ng-click="openDataConfigurationDialog()" ng-if="cockpitModule_properties.EDIT_MODE">
+			<md-icon md-font-icon="fa fa-database"></md-icon>
+		</md-button>
+		<md-button aria-label="data" class="md-icon-button" ng-click="cleanCache()" title = "Clean cache">
+			<md-icon md-font-icon="fa fa-recycle"></md-icon>
+		</md-button>
+		<md-button aria-label="data" class="md-icon-button" ng-click="openSelections()" title = "Selections">
+			<md-icon md-font-icon="fa fa-check-square-o"></md-icon>
+		</md-button>
+		 
+		<span flex></span>
+	</div>
+<!-- 	to-do remove style -->
+	<md-button ng-if="cockpitModule_properties.EDIT_MODE" style="right: 70px;" aria-label="add" class="md-fab toolbarFab" ng-click="saveCockpit()">
+		<md-icon md-font-icon="fa fa-save" ></md-icon>
+	</md-button>
+	<md-button ng-if="cockpitModule_properties.EDIT_MODE" aria-label="add" class="md-fab toolbarFab" ng-click="addWidget()">
+		<md-icon md-font-icon="fa fa-plus" ></md-icon>
+	</md-button>
+</md-toolbar>

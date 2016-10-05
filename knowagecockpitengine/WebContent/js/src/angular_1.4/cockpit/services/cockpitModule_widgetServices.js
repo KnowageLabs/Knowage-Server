@@ -1,0 +1,177 @@
+/*
+Knowage, Open Source Business Intelligence suite
+Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+
+Knowage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+Knowage is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/**
+ * @authors Giovanni Luca Ulivo (GiovanniLuca.Ulivo@eng.it)
+ * v0.0.1
+ * 
+ */
+
+
+var wf={};
+var addWidgetFunctionality=function(type,config){
+	wf[type]=config;
+};
+
+//to add a widget type in the cockpitModule_widgetConfigurator , 
+//call the function addWidgetFunctionality grom the js of the widget directive
+angular.module("cockpitModule").factory("cockpitModule_widgetConfigurator",function(){
+	var wc={};
+	return wc;
+
+});
+
+
+
+angular.module("cockpitModule").service("cockpitModule_widgetServices",function($rootScope,cockpitModule_widgetConfigurator,cockpitModule_template,$mdDialog,sbiModule_translate,$timeout,$q,cockpitModule_datasetServices,sbiModule_restServices,cockpitModule_properties,cockpitModule_widgetSelection,cockpitModule_templateServices){
+
+	var wi=this;
+	
+
+	var widgetInit=0;
+	var widgetCount=cockpitModule_templateServices.getNumberOfWidgets();
+	var widIni= $rootScope.$on("WIDGET_INITIALIZED",function(){
+		//enter inside this if when all widgets (length-1 call) are initialized
+		//and when all ds in association are in cache (1 call).
+		widgetInit++;
+		if(widgetCount+1==widgetInit){
+			//remove the interceptor
+			widIni();
+			$rootScope.$broadcast('ALL_WIDGET_INITIALIZED');
+			cockpitModule_properties.all_widget_initialized=true;
+		} 
+	});
+
+	
+	
+	addWidgetFunctionality=function(type,config){
+		cockpitModule_widgetConfigurator[type]=config;
+	};
+	for(var key in wf){
+		addWidgetFunctionality(key,wf[key]);
+	}
+
+	this.items=[];
+
+
+	this.getWidgets=function(sheetIndex){
+		return cockpitModule_template.sheets[sheetIndex].widgets;
+	};
+
+	this.addWidget=function(sheetIndex,item){
+		cockpitModule_template.sheets[sheetIndex].widgets.push(item)
+	};
+	this.loadDatasetRecords = function(ngModel, page, itemPerPage,columnOrdering, reverseOrdering){
+		if(ngModel.dataset!=undefined && ngModel.dataset.dsId!=undefined){
+			return cockpitModule_datasetServices.loadDatasetRecordsById(ngModel.dataset.dsId,page,itemPerPage,columnOrdering, reverseOrdering, ngModel);
+		}
+		return null ;
+	}
+	this.deleteWidget=function(sheetIndex,widget,nomessage){
+		if(nomessage == true){
+			cockpitModule_template.sheets[sheetIndex].widgets.splice(cockpitModule_template.sheets[sheetIndex].widgets.indexOf(widget),1);
+
+		}else{
+			var confirm = $mdDialog.confirm()
+			.title(sbiModule_translate.load("sbi.cockpit.widget.delete.title"))
+			.textContent(sbiModule_translate.load("sbi.cockpit.widget.delete.content"))
+			.ariaLabel('delete widget')
+			.ok(sbiModule_translate.load("sbi.ds.wizard.confirm"))
+			.cancel(sbiModule_translate.load("sbi.ds.wizard.cancel"));
+			$mdDialog.show(confirm).then(function() {
+				cockpitModule_template.sheets[sheetIndex].widgets.splice(cockpitModule_template.sheets[sheetIndex].widgets.indexOf(widget),1);
+			});
+		}
+		
+
+	};
+
+	this.initWidget=function(element,config){
+		console.log("in: initWidget", config,(new Date()).getTime());
+		element.addClass('fadeOut');
+		element.removeClass('fadeIn');
+
+		try{
+			var width = angular.element(element)[0].parentElement.offsetWidth;
+			var height = angular.element(element)[0].parentElement.offsetHeight;
+				if(config.dataset!=undefined && cockpitModule_widgetSelection.haveSelection() && cockpitModule_properties.all_widget_initialized!=true){
+					console.log("skip: initWidget", config,(new Date()).getTime());
+					var itemPerPage = undefined;
+					var page = undefined;
+					if(config.content != undefined && config.content.fixedRow == true){
+						page = 0;
+						itemPerPage = config.content.maxRowsNumber-1;
+					}
+					cockpitModule_datasetServices.loadDatasetRecordsById(config.dataset.dsId,page,itemPerPage,undefined, undefined, config)
+					.then(function(){
+					$rootScope.$broadcast("WIDGET_INITIALIZED");
+					},function(){});
+				}else{
+					console.log("do: initWidget", config,(new Date()).getTime());
+					$rootScope.$broadcast("WIDGET_EVENT"+config.id,"INIT",{element:element,width:width,height:height});
+					$rootScope.$broadcast("WIDGET_INITIALIZED");
+
+				}
+
+		}catch(err){
+			console.error("The init function of "+config.type+" widget is not configured",err)
+
+		}
+		$timeout(function() {
+			element.addClass('fadeIn');
+			element.removeClass('fadeOut');
+		}, 400);
+	};
+
+	this.refreshWidget=function(element,config,nature,option){
+		var page = option==undefined ? undefined : option.page;
+		var itemPerPage = option==undefined ? undefined : option.itemPerPage;
+		var columnOrdering = option==undefined ? undefined : option.columnOrdering;
+		var reverseOrdering = option==undefined ? undefined : option.reverseOrdering;
+		
+		var width = angular.element(element)[0].parentElement.offsetWidth;
+		var height = angular.element(element)[0].parentElement.offsetHeight;
+			var dsRecords = this.loadDatasetRecords(config,page, itemPerPage,columnOrdering, reverseOrdering);
+			if(dsRecords == null){
+				$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:undefined,nature:nature});
+			}else{
+				$rootScope.$broadcast("WIDGET_EVENT"+config.id,"WIDGET_SPINNER",{show:true});
+				dsRecords.then(function(data){
+					$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:data,nature:nature});
+					$rootScope.$broadcast("WIDGET_EVENT"+config.id,"WIDGET_SPINNER",{show:false});
+				}, function(){
+					$rootScope.$broadcast("WIDGET_EVENT"+config.id,"WIDGET_SPINNER",{show:false});
+					console.log("Error retry data");
+				});
+			}
+	};
+
+	this.updateGlobalWidgetStyle=function(){
+		console.log("updateGlobalWidgetStyle");
+		var widgetList=document.getElementsByTagName("cockpit-widget");
+		angular.forEach(widgetList, function(value, key) {
+			angular.element(value).isolateScope().refreshWidgetStyle();
+		});
+	}
+
+	
+	
+	
+	
+});
+

@@ -1,0 +1,16 @@
+ 
+<angular-table flex   
+	ng-model=itemList
+	columns=tableColumns
+	scope-functions = tableFunction
+	full-width=true
+	search-function="changeDocPage(searchValue, itemsPerPage, currentPageNumber , columnsSearch,columnOrdering, reverseOrdering)"
+	page-changed-function="changeDocPage(searchValue, itemsPerPage, currentPageNumber , columnsSearch,columnOrdering, reverseOrdering)"
+	click-function = "selectRow(row,column,listId,index,evt,columnName)"
+	total-item-count = totalCount
+	fixed-item-per-page ="ngModel.content.fixedRow"
+	items-per-page=ngModel.content.maxRowsNumber
+>
+
+</angular-table>
+<!-- 	change-detector="id" -->

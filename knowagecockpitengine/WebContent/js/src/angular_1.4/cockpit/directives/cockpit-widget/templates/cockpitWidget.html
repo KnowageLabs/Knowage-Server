@@ -1,0 +1,66 @@
+<!-- 
+Knowage, Open Source Business Intelligence suite
+Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+
+Knowage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+Knowage is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<li gridster-item="ngModel" ng-cloak  ng-class="{'topPosition' : widExp || gridsterItem.gridster.isMobile}"
+	action-button-position-handler   widget-x-position=ngModel.col  action-button-class-container="widgetActionButton">
+  	
+  	<div ng-show="widgetSpinner" layout-fill style='position:absolute;z-index: 500;background:rgba(0,0,0, 0.3);'>
+       <md-progress-circular  md-mode='indeterminate' style='top:50%;left:50%;margin-left:-25px;' ></md-progress-circular>
+    </div>
+  	
+	<md-card class="placedWidget flexCard" ng-style="borderShadowStyle" ng-class="{'shadowedBox': extendedStyle.shadows, 'noTitle':(!extendedStyle.titles && !widExp)}" layout="column" layout-fill>
+		<md-card-title>
+			<md-toolbar>
+				<div class="md-toolbar-tools draggableToolbar" ng-class="{'dragCursor': (cockpitModule_properties.EDIT_MODE && !widExp)}" layout="row">
+					<span ng-click="editWidgetName(); "   class="md-headline editWidgetNameSpan " ng-style="titleStyle" ng-show="editingWidgetName!=true">{{ngModel.content.name | parameter_fill}}</span>
+					<div layout="row"  flex class="editWidgetNameInput" ng-show="editingWidgetName==true">
+						<md-input-container flex md-no-float class="md-block noMargin">
+				          <input ng-model="tmpWidgetContent.name" placeholder="Widget name">
+				        </md-input-container>
+				        <md-button class="md-icon-button saveEditText"  aria-label="edit"   ng-click="applyEditName()">
+							<md-icon md-font-icon="fa fa-check"  ></md-icon>
+						</md-button>
+						 <md-button class="md-icon-button cancelEditText"  aria-label="edit"  ng-click="cancelEditName()">
+							<md-icon md-font-icon="fa fa-times"  ></md-icon>
+						</md-button>
+					</div>
+				</div>
+			</md-toolbar>
+		</md-card-title>
+		
+		<div class="widgetActionButton"  >
+			<md-button class="md-icon-button draggableToolbar dragCursor" ng-if="(cockpitModule_properties.EDIT_MODE && !widExp)" aria-label="ded">
+				<md-icon md-font-icon="fa fa-bars" ></md-icon>
+			</md-button>
+			<md-button class="md-icon-button "  aria-label="expand" ng-click="expandWidget();widExp=!widExp;$event.stopPropagation();" ng-init="widExp=false">
+				<md-icon md-font-icon="fa" ng-class="{'fa-compress':widExp ,' fa-expand':!widExp }"></md-icon>
+			</md-button>
+			<md-button class="md-icon-button " aria-label="edit" ng-if="cockpitModule_properties.EDIT_MODE" ng-click="doEditWidget();$event.stopPropagation();">
+				<md-icon md-font-icon="fa fa-pencil-square-o"></md-icon>
+			</md-button>
+			<md-button class="md-icon-button " aria-label="delete" ng-if="cockpitModule_properties.EDIT_MODE" ng-click="deleteWidget();$event.stopPropagation();">
+				<md-icon md-font-icon="fa fa-trash"></md-icon>
+			</md-button>
+			
+		</div>
+		<md-card-content flex="" layout="column" class="noPadding" id="{{ngModel.id}}" >
+		</md-card-content>
+	</md-card>
+	
+	
+</li>
