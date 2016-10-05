@@ -58,6 +58,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	
 	<body ng-controller="datasetController" class="bodyStyle kn-rolesManagement">
 	
+		<!-- 
+			The progress circular animation will be shown whenever the REST calls are in progress (before the getting of the response).
+			@commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+		-->					
+		<div loading ng-show="showEl" style="position:fixed; z-index:500; height:100%; width:100%; background-color:black; opacity:0.5;">
+		 	<md-progress-circular md-mode="indeterminate" md-diameter="75%" style="position:fixed; top:calc(50% - 37.5px); left:calc(50% - 37.5px);"></md-progress-circular>		 
+		</div>			
+	
 		<angular-list-detail>
 	       
 	       	<list label="translate.load('sbi.roles.datasets')"  new-function="createNewDataSet">
@@ -78,8 +86,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	       
       		<extra-button>
       		
-				<md-fab-speed-dial md-open="false" md-direction="left"
-	                         ng-class="'md-scale'">
+				<!-- <md-fab-speed-dial md-open="false" md-direction="left"
+	                         ng-class="'md-scale'" >
 			        
 			        <md-fab-trigger>
 			          	<md-button aria-label="menu" class="md-fab md-raised md-mini md-warn">
@@ -91,7 +99,49 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			            <md-icon md-font-icon="fa fa-eye" ng-click="previewDataset()"></md-icon>			            
 			        </md-fab-actions>
 			        
-	      		</md-fab-speed-dial>
+	      		</md-fab-speed-dial>  -->
+	      		
+	      		<!-- ADDITIONAL BUTTONS -->
+	      		<div style="float:left;">
+	      			
+	      			<!-- FIELDS METADATA BUTTON -->
+	      			<md-button aria-label="menu" class="md-fab md-raised md-mini md-warn" 
+	      					ng-show="selectedDataSet" title="Fields metadata">
+		            	<!-- <md-icon md-font-icon="fa fa-plus" class="fa fa-2x"></md-icon> -->
+		            	FM
+		          	</md-button>
+		          	
+		          	<!-- LINK DATASET BUTTON (visible only in Advanced tab) -->
+		          	<md-button aria-label="menu" class="md-fab md-raised md-mini md-warn" 
+		          			ng-show="selectedDataSet && selectedTab==2" title="Link dataset">
+		            	LD
+		          	</md-button>
+		          	
+		          	<!-- SAVE WITHOUT METADATA BUTTON -->
+		          	<md-button aria-label="menu" class="md-fab md-raised md-mini md-warn" 
+		          			ng-show="selectedDataSet" title="Save without metadata">
+		            	SWM
+		          	</md-button>
+		          	
+		          	<!-- AVAILABLE PROFILE ATTRIBUTES BUTTON (visible only in Type tab) -->
+		          	<md-button aria-label="menu" class="md-fab md-raised md-mini md-warn" 
+		          			ng-show="selectedDataSet && selectedTab==1" title="Available profile attributes">
+		            	APA
+		          	</md-button> 		          	            
+		          	
+		          	<!-- HELP BUTTON -->
+		          	<md-button aria-label="menu" class="md-fab md-raised md-mini md-warn" 
+		          			ng-show="selectedDataSet" title="Help">
+		            	H
+		          	</md-button>
+		          	
+	      		</div> 
+	      		
+	      		<!-- PREVIEW BUTTON -->
+	      		<md-button aria-label="Preview dataset" ng-click="previewDataset()" 
+	      				ng-show="selectedDataSet" style="float:right; margin-top:2px">
+	              	{{translate.load('sbi.ds.test')}}
+	            </md-button>
 		      
 			</extra-button>
 	       
@@ -104,7 +154,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	       			 <md-tabs md-selected="selectedTab" md-border-bottom="" style="min-height:100%">
 						     
 						 <!-- DATASET DETAIL PANEL "DETAIL" TAB -->            			
-						 <md-tab label='{{translate.load("sbi.generic.details");}}' >
+						 <md-tab label='{{translate.load("sbi.generic.details");}}' ng-click="changeSelectedTab(0)">
 						 
 						 	<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" >
 								<md-card layout-padding>
@@ -175,7 +225,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						         		<span flex></span>
 							         											            
 							            <md-button class="md-icon-button" aria-label="Clear all" ng-click="deleteAllDatasetVersions()" title="{{translate.load('sbi.ds.clearOldVersion')}}">
-							              <md-icon md-font-icon="fa fa-eraser" class="fa fa-1x"></md-icon>
+							              <md-icon md-font-icon="fa fa-eraser" class="fa fa-2x"></md-icon>
 							            </md-button>
 							         
 						          	</div>
@@ -207,7 +257,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					     </md-tab>
 					     
 					      <!-- DATASET DETAIL PANEL "TYPE" TAB -->  
-					     <md-tab label='{{translate.load("sbi.generic.type");}}'>
+					     <md-tab label='{{translate.load("sbi.generic.type");}}' ng-click="changeSelectedTab(1)">
 					     
 					     	<md-content flex class="ToolbarBox miniToolbar noBorder mozTable">
 								<md-card layout-padding>
@@ -584,17 +634,54 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	       						 		<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 	    						 	</div>
 	    						 	
-						         </md-input-container>    
-						              
+						         </md-input-container>
+						         
 							</md-card>
 							
-							<md-card>
+							<md-card style="max-height:100%">
 							
-								<expander-box id="layersList" color="white"  expanded="true" title="translate.load('sbi.ds.customData')">
-									 <md-whiteframe class="md-whiteframe-4dp layout-padding " flex layout layout-margin  > 
-									
-									   </md-whiteframe>       
-								 </expander-box>
+								<expander-box id="layersList" color="white"  expanded="true" title="translate.load('sbi.ds.customData')" layout-column>
+							 		
+							 		<md-content layout-column>
+							 			
+							 			<!-- TOOLBAR FOR THE CARD THAT HOLDS ADD REQUEST HEADER BUTTON -->
+								     	<md-toolbar class="secondaryToolbar" layout-padding>
+								     	
+								          	<div class="md-toolbar-tools">
+									            									            
+								         		<span flex></span>
+									         											            
+									            <md-button class="md-icon-button" aria-label="Add custom attributes" 
+									            		ng-click="addCustomAttributes()" title="Add custom attributes">
+									              	<md-icon md-font-icon="fa fa-plus-circle" class="fa fa-2x"></md-icon>
+									            </md-button>
+									            
+									            <md-button class="md-icon-button" aria-label="Delete all custom attributes" 
+															ng-click="deleteAllCustomAttributes()" title="Delete all custom attributes">
+									              <md-icon md-font-icon="fa fa-times" class="fa fa-2x"></md-icon>
+									            </md-button>
+									         
+								          	</div>
+								          	
+								        </md-toolbar>						         
+									    
+										<md-card layout-padding style="margin:0 0 8 0; padding:0">																		   
+										   <div>										   
+										   		<angular-table
+														id="customAttributes"
+														ng-model=customAttributes
+														columns="customAttributesTableColumns"
+														show-search-bar=false
+														scope-functions="customAttrScopeFunctions"
+														no-pagination=false
+														speed-menu-option="customAttributesDelete" >
+												</angular-table>										   
+										   </div>											
+										</md-card>
+						   	      	
+						   	      	</md-content>
+						   	      	
+							 	</expander-box>
 							
 							</md-card>
 							
@@ -692,366 +779,590 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							</md-card>
 						</md-content>
 							
-							<!-- ELEMENTS NEEDED FOR THE "FEDERATED" DATASET TYPE -->
-							<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='Federated'">
-								
-								<md-card layout-padding style="margin-top:0">
-								
-									<div flex=100 style="padding-left:0;">
-																				
-										<md-button flex=20 class="md-raised" ng-click="viewQbe()">
-											{{translate.load("sbi.ds.qbe.query.view.button")}}
-										</md-button> 
-										
-										<md-button flex=20 class="md-raised" ng-click="openQbe()">
-											{{translate.load("sbi.ds.qbe.query.open.button")}}
-										</md-button> 
-										
-									</div>
-									
-								</md-card>
-								
-							</md-content>
+						<!-- FEDERATED DATASET -->
+						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='Federated'">
 							
-							<!-- REST DATASET TYPE -->
-							<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='REST'">
+							<md-card layout-padding style="margin-top:0">
+							
+								<div flex=100 style="padding-left:0;">
+																			
+									<md-button flex=20 class="md-raised" ng-click="viewQbe()">
+										{{translate.load("sbi.ds.qbe.query.view.button")}}
+									</md-button> 
+									
+									<md-button flex=20 class="md-raised" ng-click="openQbe()">
+										{{translate.load("sbi.ds.qbe.query.open.button")}}
+									</md-button> 
+									
+								</div>
 								
-								<md-card layout-padding style="margin-top:0">
-									
-									<div flex=100>
-										<md-input-container class="md-block">
-									    	<label>Address</label>
-											<input ng-model="selectedDataSet.restAddress" ng-required = "true">
-											<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.restAddress">
-				       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
-			       						 	</div>
-										</md-input-container>
-									</div>
-									
-									<div flex=100>
-										<md-input-container class="md-block">
-											<label>Request body</label>
-									    	<textarea ng-model="selectedDataSet.restRequestBody" md-maxlength="150" rows="3" md-select-on-focus></textarea>
-										</md-input-container>
-									</div>
-									
-									<div flex=100>
+							</md-card>
+							
+						</md-content>
+							
+						<!-- REST DATASET (1) -->
+						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='REST'">
+							
+							<md-card layout-padding style="margin-top:0">
+								
+								<div flex=100>
+									<md-input-container class="md-block">
+								    	<label>Address</label>
+										<input ng-model="selectedDataSet.restAddress" ng-required = "true">
+										<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.restAddress">
+			       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+		       						 	</div>
+									</md-input-container>
+								</div>
+								
+								<div flex=100>
+									<md-input-container class="md-block">
+										<label>Request body</label>
+								    	<textarea ng-model="selectedDataSet.restRequestBody" md-maxlength="150" rows="3" md-select-on-focus></textarea>
+									</md-input-container>
+								</div>
+								
+								<div flex=100>
+							       
+							       <md-input-container class="md-block" > 
 								       
-								       <md-input-container class="md-block" > 
-									       
-									       	<label>HTTP methods</label>
-									       	
-									       	<md-select 	placeholder ="HTTP methods" ng-required = "true"
-									        			ng-model="selectedDataSet.restHttpMethod">   
-										        <md-option ng-repeat="l in httpMethods" value="{{l.value}}">
-										        	{{l.name}}
-										        </md-option>
-									       	</md-select>  
-											
-											<div  ng-messages="datasetForm.lbl.$error" ng-show="selectedDataSet.restHttpMethod==null">
-				       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
-			       						 	</div>
-			       						 									        
-		       						 	</md-input-container>
-			       						 
-								   </div>
-								   																	
-								</md-card>
-							
-							</md-content>
-								
-							<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='REST'" style="padding:0 8 0 8">
-								
-								<!-- TOOLBAR FOR THE CARD THAT HOLDS ADD REQUEST HEADER BUTTON. (danristo) -->
-						     	<md-toolbar class="secondaryToolbar" layout-padding>
-						     	
-						          	<div class="md-toolbar-tools">
-							            
-							            <h2>
-							              <span>Request Headers</span>
-							            </h2>
-							            
-						         		<span flex></span>
-							         											            
-							            <md-button class="md-icon-button" aria-label="Add request header" ng-click="requestHeaderAddItem()" title="{{translate.load('sbi.generic.add')}}">
-							              	<md-icon md-font-icon="fa fa-plus-circle" class="fa fa-2x"></md-icon>
-							            </md-button>
-							         
-						          	</div>
-						          	
-						        </md-toolbar>						         
-							    
-								<md-card layout-padding style="margin:0 0 8 0; padding:0px">
-																   
-								   <div>
-								   
-								   		<angular-table
-												id="requestHeadersTable"
-												ng-model=restRequestHeaders
-												columns="requestHeadersTableColumns"
-												show-search-bar=false
-												scope-functions="metaScopeFunctions"
-												no-pagination=false
-												speed-menu-option="requestHeadersDelete" >
-										</angular-table>
-								   
-								   </div>
-									
-								</md-card>
-								
-							</md-content>	
-							
-								
-							<!-- ELEMENTS NEEDED FOR THE "REST" DATASET TYPE -->
-							<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='REST'" style="padding: 0 8 0 8">
-								
-								<md-card layout-padding style="margin:0 0 8 0">
-								
-									<div flex=100 style="display:flex;">											
-																				
-										<md-input-container class="md-block" style="float:left; width:75%">
-									    	<label>JSON Path Items</label>
-											<input ng-model="selectedDataSet.label">
-										</md-input-container>
-										 
-										<div style="width:25%">
-											<md-button 	style="margin:16px 0 16px 0; float:right;" class="md-icon-button" 
-														aria-label="Add request header" ng-click="showInfoForRestParams('jsonPathItems')" 
-														title="{{translate.load('sbi.ds.help')}}">
-								              	<md-icon md-font-icon="fa fa-info-circle" class="fa fa-2x"></md-icon>
-								            </md-button>
-							            </div>
+								       	<label>HTTP methods</label>
+								       	
+								       	<md-select 	placeholder ="HTTP methods" ng-required = "true"
+								        			ng-model="selectedDataSet.restHttpMethod">   
+									        <md-option ng-repeat="l in httpMethods" value="{{l.value}}">
+									        	{{l.name}}
+									        </md-option>
+								       	</md-select>  
 										
-									</div>
-									
-									<div flex=100 style="display:flex;">
-										<div flex=50 layout="row" layout-align="start center">
-							           	
-					                  		<label>
-					                  			Use directly JSON Attributes:
-				                  			</label> 
-					                  		
-					                  		
-					                  		<md-input-container class="small counter" style="padding-left:8px;">
-					                     		<md-checkbox 	aria-label="Checkbox 2" 
-						                     					ng-model="_ss_3" ng-checked="" >
-												</md-checkbox>
-					                  		</md-input-container>
-					                  		
-										</div>
-										
-										<div style="width:50%">
-											<md-button 	style="margin:16px 0 16px 0; float:right;" class="md-icon-button" 
-														aria-label="Add request header" ng-click="showInfoForRestParams('directJsonAttributes')" 
-														title="{{translate.load('sbi.ds.help')}}">
-								              	<md-icon md-font-icon="fa fa-info-circle" class="fa fa-2x"></md-icon>
-								            </md-button>
-							            </div>
-							            
-						            </div>
+										<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.restHttpMethod">
+			       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+		       						 	</div>
+		       						 	
+		       						 	<!-- <md-autocomplete
+									          ng-disabled="false"
+									          md-no-cache="true"
+									          md-selected-item=""
+									          md-search-text-change="asd()"
+									          md-search-text="aaa"
+									          md-selected-item-change="ert()"
+									          md-items="item in selectedDataSet.owner"
+									          md-item-text="da"
+									          md-min-length="0"
+									          placeholder="Pick an Angular repository"
+									          md-menu-class="autocomplete-custom-template">
+									        
+									      </md-autocomplete> -->
+									      
+									      <md-autocomplete 
+									          ng-disabled="false" 
+									          md-selected-item="" 
+									          md-search-text="searchText" 
+									          md-items="item in querySearchCategory(searchText)"
+									          md-item-text="item.dsTypeCd" 
+									         >
+									        <md-item-template>
+									          <span md-highlight-text="searchText">{{item.dsTypeCd}}</span>
+									        </md-item-template> 
+									      </md-autocomplete>
+		       						 									        
+	       						 	</md-input-container>
+		       						 
+							   </div>
+							   																	
+							</md-card>
+						
+						</md-content>
+							
+						<!-- REST DATASET (2) -->	
+						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='REST'" style="padding:0 8 0 8">
+							
+							<!-- TOOLBAR FOR THE CARD THAT HOLDS ADD REQUEST HEADER BUTTON -->
+					     	<md-toolbar class="secondaryToolbar" layout-padding>
+					     	
+					          	<div class="md-toolbar-tools">
 						            
-						            <div flex=100 style="display:flex;">
+						            <h2>
+						              <span>Request Headers</span>
+						            </h2>
 						            
-										<div flex=50 layout="row" layout-align="start center">
-							           	
-					                  		<label>
-					                  			NGSI:
-				                  			</label> 
-					                  		
-					                  		
-					                  		<md-input-container class="small counter" style="padding-left:8px;">
-					                     		<md-checkbox 	aria-label="Checkbox 2" 
-						                     					ng-model="_ssw_" ng-checked="" >
-												</md-checkbox>
-					                  		</md-input-container>
-					                  		
-										</div>
-										
-										<div style="width:50%">
-											<md-button 	style="margin:16px 0 16px 0; float:right;" class="md-icon-button" 
-														aria-label="Add request header" ng-click="showInfoForRestParams('ngsi')" 
-														title="{{translate.load('sbi.ds.help')}}">
-								              	<md-icon md-font-icon="fa fa-info-circle" class="fa fa-2x"></md-icon>
-								            </md-button>
-							            </div>
-							            
-						            </div>
+					         		<span flex></span>
+						         											            
+						            <md-button class="md-icon-button" aria-label="Add request header" ng-click="requestHeaderAddItem()" title="{{translate.load('sbi.generic.add')}}">
+						              	<md-icon md-font-icon="fa fa-plus-circle" class="fa fa-2x"></md-icon>
+						            </md-button>
 						            
-						            <div flex=100 style="display:flex;" ng-show="false">
-										<div flex=50 layout="row" layout-align="start center">
-							           	
-					                  		<label>
-					                  			JSON Path Attributes:
-				                  			</label> 
-					                  		
-					                  		
-					                  		<md-input-container class="small counter" style="padding-left:8px;">
-					                     		<md-checkbox 	aria-label="Checkbox 2" 
-						                     					ng-model="_ss_" ng-checked="" >
-												</md-checkbox>
-					                  		</md-input-container>
-					                  		
-										</div>
-										
-										<div style="width:50%">
-											<md-button 	style="margin:16px 0 16px 0; float:right;" class="md-icon-button" 
-														aria-label="Add request header" ng-click="showInfoForRestParams('jsonPathAttributes')" 
-														title="{{translate.load('sbi.ds.help')}}">
-								              	<md-icon md-font-icon="fa fa-info-circle" class="fa fa-2x"></md-icon>
-								            </md-button>
-							            </div>
-							            
-						            </div>
-									
-								</md-card>
+						            <md-button class="md-icon-button" aria-label="Clear all request headers" 
+												ng-click="deleteAllRESTRequestHeaders()" title="Clear all request headers">
+						              <md-icon md-font-icon="fa fa-times" class="fa fa-2x"></md-icon>
+						            </md-button>
+						         
+					          	</div>
+					          	
+					        </md-toolbar>						         
+						    
+							<md-card layout-padding style="margin:0 0 8 0; padding:0">
+															   
+							   <div>
+							   
+							   		<angular-table
+											id="requestHeadersTable"
+											ng-model=restRequestHeaders
+											columns="requestHeadersTableColumns"
+											show-search-bar=false
+											scope-functions="metaScopeFunctions"
+											no-pagination=false
+											speed-menu-option="requestHeadersDelete" >
+									</angular-table>
+							   
+							   </div>
 								
-							</md-content>
+							</md-card>
 							
-							<!-- JSON path attributes grid  -->
+						</md-content>	
 							
-							<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='REST'" style="padding:0 8 0 8">
 								
-								<!-- TOOLBAR FOR THE CARD THAT HOLDS ADD REQUEST HEADER BUTTON. (danristo) -->
-						     	<md-toolbar class="secondaryToolbar" layout-padding>
-						     	
-						          	<div class="md-toolbar-tools">
-							            
-							            <h2>
-							              <span>JSON path attributes</span>
-							            </h2>
-							            
-						         		<span flex></span>
-							         											            
-							            <md-button class="md-icon-button" aria-label="Add JSON path attributes" ng-click="restJsonPathAttributesAddItem()" title="{{translate.load('sbi.generic.add')}}">
-							              	<md-icon md-font-icon="fa fa-plus-circle" class="fa fa-2x"></md-icon>
-							            </md-button>
-							         
-							         	 <md-button class="md-icon-button" aria-label="Help" ng-click="showInfoForRestParams('jsonPathAttributes')" title="{{translate.load('sbi.ds.help')}}">
+						<!-- REST DATASET (3) -->
+						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='REST'" style="padding: 0 8 0 8">
+							
+							<md-card layout-padding style="margin:0 0 8 0">
+							
+								<div flex=100 style="display:flex;">											
+																			
+									<md-input-container class="md-block" style="float:left; width:75%">
+								    	<label>JSON Path Items</label>
+										<input ng-model="selectedDataSet.restJsonPathItems">
+									</md-input-container>
+									 
+									<div style="width:25%">
+										<md-button 	style="margin:16px 0 16px 0; float:right;" class="md-icon-button" 
+													aria-label="Add request header" ng-click="showInfoForRestParams('jsonPathItems')" 
+													title="{{translate.load('sbi.ds.help')}}">
 							              	<md-icon md-font-icon="fa fa-info-circle" class="fa fa-2x"></md-icon>
 							            </md-button>
-							            
-						          	</div>
-						          	
-						        </md-toolbar>						         
-							    
-								<md-card layout-padding style="margin:0 0 8 0; padding:0px">
-																   
-								   <div>
-								   
-								   		<angular-table
-												id="jsonPathAttrTable"
-												ng-model=restJsonPathAttributes
-												columns="restJsonPathAttributesTableColumns"
-												show-search-bar=false
-												scope-functions="metaScopeFunctionsJsonPathAttr"
-												no-pagination=false
-												speed-menu-option="restJsonPathAttributesDelete" >
-										</angular-table>
-								   
-								   </div>
+						            </div>
 									
-								</md-card>
+								</div>
 								
-							</md-content>	
+								<div flex=100 style="display:flex;">
+									<div flex=50 layout="row" layout-align="start center">
+						           	
+				                  		<label>
+				                  			Use directly JSON Attributes:
+			                  			</label> 
+				                  		
+				                  		
+				                  		<md-input-container class="small counter" style="padding-left:8px;">
+				                     		<md-checkbox 	aria-label="Checkbox 2" 
+					                     					ng-model="selectedDataSet.restDirectlyJSONAttributes" ng-checked="" >
+											</md-checkbox>
+				                  		</md-input-container>
+				                  		
+									</div>
+									
+									<div style="width:50%">
+										<md-button 	style="margin:16px 0 16px 0; float:right;" class="md-icon-button" 
+													aria-label="Add request header" ng-click="showInfoForRestParams('directJsonAttributes')" 
+													title="{{translate.load('sbi.ds.help')}}">
+							              	<md-icon md-font-icon="fa fa-info-circle" class="fa fa-2x"></md-icon>
+							            </md-button>
+						            </div>
+						            
+					            </div>
+					            
+					            <div flex=100 style="display:flex;">
+					            
+									<div flex=50 layout="row" layout-align="start center">
+						           	
+				                  		<label>
+				                  			NGSI:
+			                  			</label> 
+				                  		
+				                  		
+				                  		<md-input-container class="small counter" style="padding-left:8px;">
+				                     		<md-checkbox 	aria-label="Checkbox 2" 
+					                     					ng-model="selectedDataSet.restNGSI" ng-checked="" >
+											</md-checkbox>
+				                  		</md-input-container>
+				                  		
+									</div>
+									
+									<div style="width:50%">
+										<md-button 	style="margin:16px 0 16px 0; float:right;" class="md-icon-button" 
+													aria-label="Add request header" ng-click="showInfoForRestParams('ngsi')" 
+													title="{{translate.load('sbi.ds.help')}}">
+							              	<md-icon md-font-icon="fa fa-info-circle" class="fa fa-2x"></md-icon>
+							            </md-button>
+						            </div>
+						            
+					            </div>
+					            
+					            <div flex=100 style="display:flex;" ng-show="false">
+									<div flex=50 layout="row" layout-align="start center">
+						           	
+				                  		<label>
+				                  			JSON Path Attributes:
+			                  			</label> 
+				                  		
+				                  		
+				                  		<md-input-container class="small counter" style="padding-left:8px;">
+				                     		<md-checkbox 	aria-label="Checkbox 2" 
+					                     					ng-model="_ss_" ng-checked="" >
+											</md-checkbox>
+				                  		</md-input-container>
+				                  		
+									</div>
+									
+									<div style="width:50%">
+										<md-button 	style="margin:16px 0 16px 0; float:right;" class="md-icon-button" 
+													aria-label="Add request header" ng-click="showInfoForRestParams('jsonPathAttributes')" 
+													title="{{translate.load('sbi.ds.help')}}">
+							              	<md-icon md-font-icon="fa fa-info-circle" class="fa fa-2x"></md-icon>
+							            </md-button>
+						            </div>
+						            
+					            </div>
+								
+							</md-card>
 							
-							<!-- ELEMENTS NEEDED FOR THE "REST" DATASET TYPE -->
-							<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='REST'" style="padding: 0 8 0 8">
-								
-								<md-card layout-padding style="margin:0 0 8 0">
-								
-									<div flex=100>											
-																				
-										<md-input-container class="md-block">
-									    	<label>Offset Param</label>
-											<input ng-model="_oo_1">
-										</md-input-container>
-										
-									</div>
-									
-									<div flex=100>											
-																				
-										<md-input-container class="md-block">
-									    	<label>Fetch size Param</label>
-											<input ng-model="_oo_2">
-										</md-input-container>
-										
-									</div>
-									
-									<div flex=100>											
-																				
-										<md-input-container class="md-block">
-									    	<label>Max Results Param</label>
-											<input ng-model="_oo_3">
-										</md-input-container>
-										
-									</div>
-								
-								</md-card>
-								
-							</md-content>
+						</md-content>
 							
-							<!-- ELEMENTS FOR SETTING THE DATASET PARAMETERS -->					
-							<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-show="selectedDataSet.dsTypeCd && selectedDataSet.dsTypeCd.toLowerCase()!='file'" style="padding: 0 8 0 8">
+						<!-- REST DATASET (4) -->
+						<!-- JSON path attributes grid  -->
+						
+						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='REST'" style="padding:0 8 0 8">
+							
+							<!-- TOOLBAR FOR THE CARD THAT HOLDS ADD REQUEST HEADER BUTTON. (danristo) -->
+					     	<md-toolbar class="secondaryToolbar" layout-padding>
+					     	
+					          	<div class="md-toolbar-tools">
+						            
+						            <h2>
+						              <span>JSON path attributes</span>
+						            </h2>
+						            
+					         		<span flex></span>
+						         											            
+						            <md-button class="md-icon-button" aria-label="Add JSON path attributes" ng-click="restJsonPathAttributesAddItem()" title="{{translate.load('sbi.generic.add')}}">
+						              	<md-icon md-font-icon="fa fa-plus-circle" class="fa fa-2x"></md-icon>
+						            </md-button>
+						         
+						         	<md-button class="md-icon-button" aria-label="Clear all JSON path attributes" 
+												ng-click="deleteAllRESTJsonPathAttributes()" title="Clear all JSON path attributes">
+						              <md-icon md-font-icon="fa fa-ban" class="fa fa-2x"></md-icon>
+						            </md-button>
+						         
+						         	 <md-button class="md-icon-button" aria-label="Help" ng-click="showInfoForRestParams('jsonPathAttributes')" title="{{translate.load('sbi.ds.help')}}">
+						              	<md-icon md-font-icon="fa fa-info-circle" class="fa fa-2x"></md-icon>
+						            </md-button>
+						            
+					          	</div>
+					          	
+					        </md-toolbar>						         
+						    
+							<md-card layout-padding style="margin:0 0 8 0; padding:0px">
+															   
+							   <div>
+							   
+							   		<angular-table
+											id="jsonPathAttrTable"
+											ng-model=restJsonPathAttributes
+											columns="restJsonPathAttributesTableColumns"
+											show-search-bar=false
+											scope-functions="metaScopeFunctionsJsonPathAttr"
+											no-pagination=false
+											speed-menu-option="restJsonPathAttributesDelete" >
+									</angular-table>
+							   
+							   </div>
 								
-								<md-card layout-padding style="margin:0">
-									<md-toolbar class="secondaryToolbar" layout-padding>
-									
-										<div class="md-toolbar-tools">
-									
-											<h2>
-											  <span>{{translate.load('sbi.execution.parametersselection.parameters')}}</span>
-											</h2>
-										
-											<span flex></span>
-										
-											<md-button class="md-icon-button" aria-label="Clear all" ng-click="parametersAddItem()" title="{{translate.load('sbi.ds.clearOldVersion')}}">
-											  <md-icon md-font-icon="fa fa-plus-circle" class="fa fa-1x"></md-icon>
-											</md-button>
-											
-										</div>
-													
-									</md-toolbar>						         
-													
-									<md-card layout-padding style="margin:0px">
+							</md-card>
+							
+						</md-content>	
+						
+						<!-- REST DATASET (5) -->
+						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='REST'" style="padding: 0 8 0 8">
+							
+							<md-card layout-padding style="margin:0 0 8 0">
+							
+								<div flex=100>											
 																			
-					 						<div>
-											      						
-												<angular-table
-														id="datasetParametersTable"
-														ng-model=parameterItems
-														columns="parametersColumns"
-														show-search-bar=false
-														scope-functions="paramScopeFunctions"
-														no-pagination=false
-														speed-menu-option="parameterDelete"	>
-												</angular-table>
-										   
-										</div>
+									<md-input-container class="md-block">
+								    	<label>Offset Param</label>
+										<input ng-model="selectedDataSet.restOffset">
+									</md-input-container>
+									
+								</div>
+								
+								<div flex=100>											
+																			
+									<md-input-container class="md-block">
+								    	<label>Fetch size Param</label>
+										<input ng-model="selectedDataSet.restFetchSize">
+									</md-input-container>
+									
+								</div>
+								
+								<div flex=100>											
+																			
+									<md-input-container class="md-block">
+								    	<label>Max Results Param</label>
+										<input ng-model="selectedDataSet.restMaxResults">
+									</md-input-container>
+									
+								</div>
+							
+							</md-card>
+							
+						</md-content>
+							
+						<!-- DATASET PARAMETERS -->					
+						<md-content ng-show="selectedDataSet.dsTypeCd && selectedDataSet.dsTypeCd.toLowerCase()!='file' && selectedDataSet.dsTypeCd.toLowerCase()!='flat'" 
+									style="padding: 0 8 0 8" flex class="ToolbarBox miniToolbar noBorder mozTable">
+							
+							<md-card layout-padding style="margin:0">
+								
+								<md-toolbar class="secondaryToolbar" layout-padding>
+								
+									<div class="md-toolbar-tools">
+								
+										<h2>
+										  <span>{{translate.load('sbi.execution.parametersselection.parameters')}}</span>
+										</h2>
+									
+										<span flex></span>
+									
+										<md-button class="md-icon-button" aria-label="Add new dataset parameter" ng-click="parametersAddItem()" 
+												title="{{translate.load('sbi.ds.parameters.add.tooltip')}}">
+										  <md-icon md-font-icon="fa fa-plus-circle" class="fa fa-2x"></md-icon>
+										</md-button>
 										
-									</md-card>
+										<md-button class="md-icon-button" aria-label="Clear all parameters" 
+												ng-click="deleteAllParameters()" title="Clear all parameters">
+							              <md-icon md-font-icon="fa fa-minus-circle" class="fa fa-2x"></md-icon>
+							            </md-button>
+										
+									</div>
+												
+								</md-toolbar>						         
+												
+								<md-card layout-padding style="margin:0px">
+																		
+				 						<div>
+										      						
+											<angular-table
+													id="datasetParametersTable"
+													ng-model=parameterItems
+													columns="parametersColumns"
+													show-search-bar=false
+													scope-functions="paramScopeFunctions"
+													no-pagination=false
+													speed-menu-option="parameterDelete"	>
+											</angular-table>
+									   
+									</div>
 									
 								</md-card>
 								
-							</md-content>
+							</md-card>
 							
-					     </md-tab>	
+						</md-content>
+							
+				     </md-tab>	
 					     
-					      <!-- DATASET DETAIL PANEL "ADVANCED" TAB -->  
-					     <md-tab label='{{translate.load("sbi.ds.advancedTab");}}'>
+				      <!-- DATASET DETAIL PANEL "ADVANCED" TAB -->  
+				     <md-tab label='{{translate.load("sbi.ds.advancedTab");}}' ng-click="changeSelectedTab(2)">
+						
+						<!-- OLD TRANSFORMATION TAB -->
+						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable">
 							
-							<md-content flex class="ToolbarBox miniToolbar noBorder mozTable">
-								<md-card layout-padding>
+							<md-card layout-padding>
 								
-								</md-card>
-							</md-content>
-							
-							<md-content flex class="ToolbarBox miniToolbar noBorder mozTable">
-								<md-card layout-padding>
+								<div flex=100 style="display:flex;">
 								
-								</md-card>
-							</md-content>
+									<div flex=50 layout="row" layout-align="start center">
+						           	
+				                  		<label>
+				                  			{{translate.load('sbi.ds.trasfTypeCd')}}: {{transformationDataset.VALUE_CD}}
+			                  			</label> 
+				                  		
+				                  		
+				                  		<md-input-container class="small counter" style="padding-left:8px;">
+				                     		<md-checkbox 	aria-label="Checkbox 2" 
+					                     					ng-model="transformDatasetState" ng-checked="" >
+											</md-checkbox>
+				                  		</md-input-container>
+				                  		
+									</div>
+									
+								</div>
+								
+								<div ng-show="transformDatasetState">
+								
+									<div flex=100>
+										<md-input-container class="md-block">
+									    	<label>{{translate.load("sbi.ds.pivotColName")}}</label>
+											<input ng-model="selectedDataSet.pivotColName" ng-required="true">
+											<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.pivotColName">
+		       						 			<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+	   						 				</div>
+										</md-input-container>
+									</div>
+									
+									<div flex=100>
+										<md-input-container class="md-block">
+									    	<label>{{translate.load("sbi.ds.pivotColValue")}}</label>
+											<input ng-model="selectedDataSet.pivotColValue" ng-required="true">
+											<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.pivotColValue">
+		       						 			<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+	   						 				</div>
+										</md-input-container>
+									</div>
+									
+									<div flex=100>
+										<md-input-container class="md-block">
+									    	<label>{{translate.load("sbi.ds.pivotRowName")}}</label>
+											<input ng-model="selectedDataSet.pivotRowName" ng-required="true">
+											<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.pivotRowName">
+		       						 			<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+	   						 				</div>
+										</md-input-container>
+									</div>
+									
+									<div flex=100 style="display:flex;" >
+										
+										<div flex=50 layout="row" layout-align="start center">
+							           	
+					                  		<label>
+					                  			{{translate.load('sbi.ds.pivotIsNumRows')}}: 
+				                  			</label> 
+					                  		
+					                  		
+					                  		<md-input-container class="small counter" style="padding-left:8px;">
+					                     		<md-checkbox 	aria-label="Checkbox 2" 
+						                     					ng-model="selectedDataSet.pivotIsNumRows" ng-checked="" >
+												</md-checkbox>
+					                  		</md-input-container>
+					                  		
+										</div>
+										
+									</div>
+								
+								</div>
+						
+							</md-card>
 							
-					     </md-tab>						
+						</md-content>
+						
+						<!-- OLD ADVANCED TAB (Persist) -->
+						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable">
+							
+							<md-card layout-padding>
+							
+								<div flex=100 style="display:flex;">
+								
+									<div flex=50 layout="row" layout-align="start center">
+						           	
+				                  		<label>
+				                  			{{translate.load('sbi.ds.isPersisted')}}: 
+			                  			</label> 
+				                  		
+				                  		
+				                  		<md-input-container class="small counter" style="padding-left:8px;">
+				                     		<md-checkbox 	aria-label="Checkbox 2" 
+					                     					ng-model="selectedDataSet.isPersisted" ng-checked="" >
+											</md-checkbox>
+				                  		</md-input-container>
+				                  		
+									</div>
+									
+								</div>
+								
+								<div ng-show="selectedDataSet.isPersisted">
+								
+									<div flex=100 style="display:flex;">
+								
+										<div flex=50 layout="row" layout-align="start center">
+							           	
+					                  		<label>
+					                  			{{translate.load('sbi.ds.hdfs')}}: 
+				                  			</label> 
+					                  		
+					                  		
+					                  		<md-input-container class="small counter" style="padding-left:8px;">
+					                     		<md-checkbox 	aria-label="Checkbox 2" 
+						                     					ng-model="selectedDataSet.isPersistedHDFS" ng-checked="" >
+												</md-checkbox>
+					                  		</md-input-container>
+					                  		
+										</div>
+										
+									</div>
+									
+									<div flex=100>
+										<md-input-container class="md-block">
+									    	<label>{{translate.load("sbi.ds.persistTableName")}}</label>
+											<input ng-model="selectedDataSet.persistTableName" ng-required="true">
+											<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.persistTableName">
+		       						 			<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+	   						 				</div>
+										</md-input-container>
+									</div>
+									
+									<!-- <div flex=100 style="display:flex;" >
+										
+										<div flex=50 layout="row" layout-align="start center">
+							           	
+					                  		<label>
+					                  			{{translate.load('sbi.ds.pivotIsNumRows')}}: 
+				                  			</label> 
+					                  		
+					                  		
+					                  		<md-input-container class="small counter" style="padding-left:8px;">
+					                     		<md-checkbox 	aria-label="Checkbox 2" 
+						                     					ng-model="selectedDataSet.pivotIsNumRows" ng-checked="" >
+												</md-checkbox>
+					                  		</md-input-container>
+					                  		
+										</div>
+										
+									</div> -->
+								
+								</div>
+							
+							</md-card>
+							
+						</md-content>
+						
+						<!-- OLD ADVANCED TAB (Scheduling) -->
+						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable">
+							
+							<md-card layout-padding>
+							
+								<div flex=100 style="display:flex;">
+								
+									<div flex=50 layout="row" layout-align="start center">
+						           	
+				                  		<label>
+				                  			{{translate.load('sbi.ds.isPersisted')}}: 
+			                  			</label> 
+				                  		
+				                  		
+				                  		<md-input-container class="small counter" style="padding-left:8px;">
+				                     		<md-checkbox 	aria-label="Checkbox 2" 
+					                     					ng-model="selectedDataSet.isPersisted" ng-checked="" >
+											</md-checkbox>
+				                  		</md-input-container>
+				                  		
+									</div>
+									
+								</div>
+							
+							</md-card>
+							
+						</md-content>
+						
+				     </md-tab>						
 						
 					</md-tabs>
 	       		
