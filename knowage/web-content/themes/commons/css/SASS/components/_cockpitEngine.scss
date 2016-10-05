@@ -122,6 +122,24 @@
    		width: 90%;
    		height: 90%;
    		margin: 2% 5%;
+		&.textWidget{
+			wysiwyg-edit{
+				.tinyeditor {
+					height: 100%;
+					padding: 0;
+					border: 0;
+					.sizer{
+						height: calc( 100% - 34px);
+						.resizer{
+							display:none;
+						}
+					}
+					.tinyeditor-footer{
+						display:none;
+					}
+				}
+			}
+		}
 		&.pivotTableWidget{
 			.pivotTableDesigner{
 				padding:0px;
@@ -544,9 +562,7 @@
 					}
 					&>div{
 						padding:0px 10px;
-						md-input-container{
-							padding:0px 5px;
-						}
+						
 					}
 					
 				}
