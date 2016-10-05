@@ -61,6 +61,7 @@ import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.tools.scheduler.bo.Trigger;
 import it.eng.spagobi.utilities.Helper;
 import it.eng.spagobi.utilities.cache.CacheItem;
 import it.eng.spagobi.utilities.database.AbstractDataBase;
@@ -378,11 +379,14 @@ public class DatasetManagementAPI {
 
 			if (dataSet.isPersisted() && !dataSet.isPersistedHDFS()) {
 				dataStore = queryPersistedDataset(groups, filters, projections, summaryRowProjections, dataSet, offset, fetchSize);
+				dataStore.setCacheDate(getPersistedDate(dataSet));
 			} else if (dataSet.isFlatDataset()) {
 				dataStore = queryFlatDataset(groups, filters, projections, summaryRowProjections, dataSet, offset, fetchSize);
+				dataStore.setCacheDate(new Date());
 			} else if (isRealtime) {
 				dataStore = queryRealtimeDataset(parametersValues, groups, filterCriteriaForMetaModel, projections, summaryRowProjections, dataSet, offset,
 						fetchSize);
+				dataStore.setCacheDate(new Date());
 			} else {
 				dataSet.setParamsMap(parametersValues);
 				List<JSONObject> parameters = getDataSetParameters(label);
@@ -399,6 +403,7 @@ public class DatasetManagementAPI {
 				if (cachedResultSet == null) {
 					dataSet.loadData();
 					IDataStore baseDataStore = dataSet.getDataStore();
+
 					if (baseDataStore.getRecordsCount() > METAMODEL_LIMIT) {
 						cache.put(dataSet, baseDataStore);
 						dataStore = cache.get(dataSet, groups, filters, projections, summaryRowProjections, offset, fetchSize);
@@ -411,8 +416,6 @@ public class DatasetManagementAPI {
 						// TODO: here we actually already have the datastore,
 						// therefore we could optimize this step by avoiding to get the dataStore again...
 						dataStore = cache.refresh(dataSet, false);
-						// if result was not cached put refresh date as now
-						dataStore.setCacheDate(new Date());
 
 						String tableName = DataStore.DEFAULT_SCHEMA_NAME + "." + DataStore.DEFAULT_TABLE_NAME;
 						Map<String, String> datasetAlias = getDatasetAlias(dataSet);
@@ -430,6 +433,9 @@ public class DatasetManagementAPI {
 
 						dataStore = pagedDataStore;
 					}
+
+					// if result was not cached put refresh date as now
+					dataStore.setCacheDate(new Date());
 				} else {
 					dataStore = cachedResultSet;
 					addLastCacheDate(cache, dataStore, dataSet);
@@ -450,6 +456,28 @@ public class DatasetManagementAPI {
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+
+	private Date getPersistedDate(IDataSet dataSet) {
+		Date toReturn = null;
+		String triggerGroupName = "DEFAULT";
+		String triggerName = "persist_" + dataSet.getName();
+		try {
+			// try to get the schedule trigger
+			Trigger trigger = DAOFactory.getSchedulerDAO().loadTrigger(triggerGroupName, triggerName);
+			Date previousFireTime = null;
+			if (trigger != null) { // dataset is scheduled
+				previousFireTime = trigger.getPreviousFireTime();
+			}
+			if (previousFireTime != null) {
+				toReturn = previousFireTime;
+			} else { // dataset is not scheduled or no previous fire time available
+				toReturn = dataSet.getDateIn();
+			}
+		} catch (EMFUserError e) {
+			logger.error("Unable to load trigger with name [" + triggerName + "] from group [" + triggerGroupName + "]", e);
+		}
+		return toReturn;
 	}
 
 	protected void pageDataStoreRecords(DataStore dataStore, int offset, int fetchSize) {

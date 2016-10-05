@@ -28,7 +28,6 @@ import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.math.BigInteger;
 import java.sql.Timestamp;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
@@ -223,25 +222,17 @@ public class JSONDataWriter implements IDataWriter {
 		int resultNumber;
 		Object propertyRawValue;
 
-		Assert.assertNotNull(dataStore, "Object to be serialized connot be null");
+		Assert.assertNotNull(dataStore, "Object to be serialized cannot be null");
 
 		metadata = (JSONObject) write(dataStore.getMetaData());
 
 		try {
 			result = new JSONObject();
 
-			if (dataStore.getCacheDate() != null) {
-				// String date = CACHE_TIMESTAMP_FORMATTER.format(dataStore.getCacheDate());
-
-				if (getLocale() == null)
-					setLocale(Locale.ENGLISH);
-
-				DateFormat df = DateFormat.getDateInstance(DateFormat.LONG, getLocale());
-				String date = df.format(dataStore.getCacheDate());
-				String time = CACHE_TIMEONLY_FORMATTER.format(dataStore.getCacheDate());
-				String dateFull = date + " " + time;
-				metadata.put("cacheDate", dateFull);
-
+			Date cacheDate = dataStore.getCacheDate();
+			if (cacheDate != null) {
+				String date = CACHE_TIMESTAMP_FORMATTER.format(cacheDate);
+				metadata.put("cacheDate", date);
 			}
 
 			result.put(METADATA, metadata);

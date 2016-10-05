@@ -177,6 +177,8 @@ public class QuartzNativeObjectsConverter {
 		// spagobiTrigger.setCalendarName( quartzTrigger.getCalendarName() );
 		Assert.assertTrue(quartzTrigger.getCalendarName() == null, "quartz trigger calendar name is not null: " + quartzTrigger.getCalendarName());
 
+		spagobiTrigger.setNextFireTime(quartzTrigger.getNextFireTime());
+		spagobiTrigger.setPreviousFireTime(quartzTrigger.getPreviousFireTime());
 		spagobiTrigger.setStartTime(quartzTrigger.getStartTime());
 		spagobiTrigger.setEndTime(quartzTrigger.getEndTime());
 
