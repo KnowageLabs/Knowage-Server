@@ -170,8 +170,24 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 			for(var i=0;i<assDs.length;i++){
 				var dsIndex=tmpSplittedDSInCache.indexOf(assDs[i]);
 				if(dsIndex==-1){
-					sbiModule_messaging.showWarningMessage(sbiModule_translate.load("sbi.cockpit.wait.loading.association.group"));
+					//check if is document
+					var found=false;
+					for(var x=0;x<assoc.associations.length;x++){
+						 for(var y=0;y<assoc.associations[x].fields.length;y++){
+							if(angular.equals(assoc.associations[x].fields[y].store,assDs[i]) && angular.equals(assoc.associations[x].fields[y].type,"document")){
+								found=true;
+								break;
+							}
+						}
+						if(found){
+							break;
+						}
+					}
+					if(!found){
+						sbiModule_messaging.showWarningMessage(sbiModule_translate.load("sbi.cockpit.wait.loading.association.group"));
 					return 
+					}
+					
 				}
 				tmpSplittedDSInCache.splice(dsIndex,1);
 			}

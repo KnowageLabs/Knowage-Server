@@ -113,7 +113,7 @@ angular.module("cockpitModule").service("cockpitModule_generalServices",function
 		var oldDsInCache= angular.copy(cockpitModule_properties.DS_IN_CACHE);
 		
 		sbiModule_restServices.restToRootProject();
-		sbiModule_restServices.promiseDelete("1.0/cache",cockpitModule_properties.DS_IN_CACHE.join(",")+"/cleanCache")
+		sbiModule_restServices.promiseDelete("1.0/cache",encodeURIComponent(cockpitModule_properties.DS_IN_CACHE.join(","))+"/cleanCache")
 		.then(function(response){
 			//ok
 			var dsNotInCache = cockpitModule_templateServices.getDatasetAssociatedNotUsedByWidget();

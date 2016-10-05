@@ -201,7 +201,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		sbiModule_restServices.restToRootProject();
 
 
-		sbiModule_restServices.promisePost("2.0/datasets",dataset.label+"/data"+params,cockpitModule_widgetSelection.getCurrentSelections(dataset.label))
+		sbiModule_restServices.promisePost("2.0/datasets",encodeURIComponent(dataset.label)+"/data"+params,cockpitModule_widgetSelection.getCurrentSelections(dataset.label))
 		.then(function(response){
 			if(cockpitModule_properties.DS_IN_CACHE.indexOf(dataset.label)==-1){
 				cockpitModule_properties.DS_IN_CACHE.push(dataset.label);
@@ -303,7 +303,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 							$scope.$destroy();
 							
 						}else{
-							if($scope.tmpCurrentAvaiableDataset.parameters.length>0){
+							if($scope.tmpCurrentAvaiableDataset.parameters!=null && $scope.tmpCurrentAvaiableDataset.parameters.length>0){
 								//fill the parameter
 								 
 								 $mdDialog.show({
