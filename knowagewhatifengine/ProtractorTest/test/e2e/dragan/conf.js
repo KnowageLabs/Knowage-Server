@@ -17,5 +17,5 @@ exports.config = {
 	        })
 	    );
 	},
-	  getPageTimeout : 100000 //in millis, i.e., 100 secs
+	  getPageTimeout : 5000 
 };
