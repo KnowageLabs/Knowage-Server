@@ -366,11 +366,11 @@
 						
 	</target>
 	<target name="startWebdriver" depends="junit">
-		<exec  executable="${webdriver_manager}" >
-								 	<arg value="-c"/>
-								 	<arg value="start"/>
+		<exec  executable="/bin/sh">
+			<arg value="-c"/>
+			<arg value="${webdriver_manager} start"/>
 								        
-								    </exec>
+		</exec>
 	</target>
 	
 	<target name="stopWebdriver" depends="protractor">
