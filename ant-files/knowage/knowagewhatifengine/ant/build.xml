@@ -357,13 +357,24 @@
 
 	</target>
 	
-	<target name="protractor" depends="junit">
+	<target name="protractor" depends="startWebdriver">
 						 <exec dir="${conf.js}" executable="/bin/sh" >
 						 	<arg value="-c"/>
 						 	<arg value="${protractor} conf.js"/>
 						        
 						    </exec>
 						
-					</target>
+	</target>
+	<target name="startWebdriver" depends="junit">
+		<exec  executable="${webdriver_manager}" >
+								 	<arg value="-c"/>
+								 	<arg value="start"/>
+								        
+								    </exec>
+	</target>
+	
+	<target name="stopWebdriver" depends="protractor">
+		<get src="http://localhost:4444/selenium-server/driver/?cmd=shutDownSeleniumServer"/>
+		</target>
 
 </project>
