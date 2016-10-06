@@ -743,7 +743,7 @@
 	</target>
 	<target name="JUnit-tests" >
 	
-		<ant dir="../knowagewhatifengine/ant" target="protractor"/>
+		<ant dir="../knowagewhatifengine/ant" target="junit"/>
 	</target>
 
 </project>
