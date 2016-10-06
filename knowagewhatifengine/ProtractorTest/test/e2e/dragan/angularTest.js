@@ -1,6 +1,10 @@
 
 
 describe('angularjs homepage todo list', function() {
+	
+	beforeEach(function(){
+	    browser.driver.manage().window().setSize(1124, 850);
+	});
   it('should add a todo', function() {
     browser.get('https://angularjs.org');
 
