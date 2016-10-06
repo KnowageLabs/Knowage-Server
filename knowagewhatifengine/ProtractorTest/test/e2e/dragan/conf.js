@@ -16,5 +16,6 @@ exports.config = {
 	            filePrefix: 'Test-'
 	        })
 	    );
-	}
+	},
+	  getPageTimeout : 100000 //in millis, i.e., 100 secs
 };
