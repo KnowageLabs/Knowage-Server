@@ -24,6 +24,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.net.URI;
@@ -51,33 +52,25 @@ import org.apache.log4j.Logger;
 @ManageAuthorization
 public class DomainResource extends AbstractSpagoBIResource {
 
-	// logger component-
+	// logger component
 	private static Logger logger = Logger.getLogger(DomainResource.class);
 
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Domain> getDomains() {
+	public String getDomains() {
 		logger.debug("IN");
-		IDomainDAO domainsDao = null;
-		List<Domain> allObjects = null;
-
 		try {
-			domainsDao = DAOFactory.getDomainDAO();
+			IDomainDAO domainsDao = DAOFactory.getDomainDAO();
 			domainsDao.setUserProfile(getUserProfile());
-			allObjects = domainsDao.loadListDomains();
-
-			if (allObjects != null && !allObjects.isEmpty()) {
-				return allObjects;
-			}
+			List<Domain> allObjects = domainsDao.loadListDomains();
+			return JsonConverter.objectToJson(allObjects, allObjects.getClass());
 		} catch (Exception e) {
 			logger.error("Error while getting the list of domains", e);
 			throw new SpagoBIRuntimeException("Error while getting the list of domains", e);
 		} finally {
 			logger.debug("OUT");
 		}
-
-		return new ArrayList<Domain>();
 	}
 
 	@GET
@@ -266,28 +259,25 @@ public class DomainResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/listByCode/{code}")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public List<Domain> getDomainsByCode(@PathParam("code") String code) {
+	public String getDomainsByCode(@PathParam("code") String code) {
 		logger.debug("IN");
-		IDomainDAO domainsDao = null;
-		List<Domain> dom;
-
 		try {
-			domainsDao = DAOFactory.getDomainDAO();
+			IDomainDAO domainsDao = DAOFactory.getDomainDAO();
 			domainsDao.setUserProfile(getUserProfile());
-			dom = domainsDao.loadListDomainsByType(code);
+			List<Domain> dom = domainsDao.loadListDomainsByType(code);
+			return JsonConverter.objectToJson(dom, dom.getClass());
 		} catch (Exception e) {
 			logger.error("Error while getting domain " + code, e);
 			throw new SpagoBIRuntimeException("Error while getting domain " + code, e);
 		} finally {
 			logger.debug("OUT");
 		}
-		return dom;
 	}
 
 	@GET
 	@Path("/rolesCategories")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public List<Domain> getCategoriesOfRoles(@QueryParam("id") int[] ids) {
+	public String getCategoriesOfRoles(@QueryParam("id") int[] ids) {
 		logger.debug("IN");
 		IDomainDAO domainsDao = null;
 		List allRolesCategories = new ArrayList<>();
@@ -320,6 +310,6 @@ public class DomainResource extends AbstractSpagoBIResource {
 		} finally {
 			logger.debug("OUT");
 		}
-		return rolesMetaModelCategories;
+		return JsonConverter.objectToJson(rolesMetaModelCategories, rolesMetaModelCategories.getClass());
 	}
 }

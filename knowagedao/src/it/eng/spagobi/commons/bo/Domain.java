@@ -160,40 +160,26 @@ public class Domain implements Serializable {
 	}
 
 	public String getTranslatedValueName(Locale locale) {
-		String toReturn = new String(valueName);
-		MessageBuilder msgBuild = new MessageBuilder();
-		toReturn = msgBuild.getMessage(toReturn, locale);
-		return toReturn;
-
+		if (valueName != null) {
+			return new MessageBuilder().getMessage(valueName, locale);
+		} else {
+			return "";
+		}
 	}
 
 	public String getTranslatedValueDescription(Locale locale) {
-		String toReturn = new String(valueDescription);
-		MessageBuilder msgBuild = new MessageBuilder();
-		toReturn = msgBuild.getMessage(toReturn, locale);
-		return toReturn;
-	}
-
-	public void setTranslatedValueName(String vn) {
-		// Do nothing
-	}
-
-	public void setTranslatedValueDescription(String vn) {
-		// Do nothing
+		if (valueDescription != null) {
+			return new MessageBuilder().getMessage(valueDescription, locale);
+		} else {
+			return "";
+		}
 	}
 
 	public String getTranslatedValueName() {
-		String toReturn = new String(valueName);
-		MessageBuilder msgBuild = new MessageBuilder();
-		toReturn = msgBuild.getMessage(toReturn);
-		return toReturn;
-
+		return getTranslatedValueName(null);
 	}
 
 	public String getTranslatedValueDescription() {
-		String toReturn = new String(valueDescription);
-		MessageBuilder msgBuild = new MessageBuilder();
-		toReturn = msgBuild.getMessage(toReturn);
-		return toReturn;
+		return getTranslatedValueDescription(null);
 	}
 }
