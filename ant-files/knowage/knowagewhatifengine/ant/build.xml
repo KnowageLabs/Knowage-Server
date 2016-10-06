@@ -358,12 +358,12 @@
 	</target>
 	
 		<target name="protractor" depends="junit">
-			<parallel>
+			<sequential>
 				<exec dir="${conf.js}" executable="/bin/sh" >
 					<arg value ="-c"/>
 					<arg value ="${webdriver_manager} start "/>					 	
 				</exec>
-				<sequential>
+				
 					<sleep seconds="30"/>
 									<exec dir="${conf.js}" executable="/bin/sh" >
 															<arg value ="-c"/>
@@ -376,7 +376,7 @@
 				
 				</sequential>
 				
-			</parallel>
+			
 						
 	</target>
 	
