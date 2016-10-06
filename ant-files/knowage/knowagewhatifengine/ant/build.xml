@@ -357,7 +357,7 @@
 
 	</target>
 	
-	<target name="protractor" depends="junit">
+	<!--	<target name="protractor" depends="junit">
 						 <exec dir="." executable="/bin/sh" >
 						 	<arg value="-c"/>
 						 	<arg value="protratcor.sh"/>
@@ -365,7 +365,7 @@
 						    </exec>
 						
 	</target>
-<!--	<target name="startWebdriver" depends="junit">
+	<target name="startWebdriver" depends="junit">
 		<exec  executable="/bin/sh">
 			<arg value="-c"/>
 			<arg value="${webdriver_manager} start "/>
