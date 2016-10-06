@@ -61,17 +61,17 @@ if(UserUtilities.haveRoleAndAuthorization(userProfile, null, new String[]{SpagoB
 			<md-tabs md-dynamic-height md-border-bottom>
 				<md-tab label="MASTER" ng-if="<%=canSeeMasterHier%>==true">
 					<md-content layout-padding>
-						<ng-include src="'${pageContext.request.contextPath}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/hierarchieseditor/hierMaster.html'"></ng-include>
+						<ng-include src="'${pageContext.request.contextPath}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/hierarchieseditor/hierMaster.jsp'"></ng-include>
 					</md-content> 
 				</md-tab>		      
 				<md-tab label="TECHNICAL" md-on-select ="loadTechnical()" ng-if="<%=canSeeTechnicalHier%>==true">
 					<md-content layout-padding ng-if="technicalLoaded">
-						<ng-include src="'${pageContext.request.contextPath}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/hierarchieseditor/hierTechnical.html'"></ng-include>
+						<ng-include src="'${pageContext.request.contextPath}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/hierarchieseditor/hierTechnical.jsp'"></ng-include>
 					</md-content>
 				</md-tab>
 				<md-tab label="BACKUP"  md-on-select ="loadBackup()" ng-if="<%=canSeeTechnicalHier%>==true">
 					<md-content layout-padding ng-if="backupLoaded">
-						<ng-include src="'${pageContext.request.contextPath}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/hierarchieseditor/hierBackup.html'"></ng-include>
+						<ng-include src="'${pageContext.request.contextPath}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/hierarchieseditor/hierBackup.jsp'"></ng-include>
 					</md-content>
 				</md-tab>
 			</md-tabs>
