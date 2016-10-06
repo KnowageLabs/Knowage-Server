@@ -420,14 +420,17 @@ public class DatasetManagementAPI {
 						String tableName = DataStore.DEFAULT_SCHEMA_NAME + "." + DataStore.DEFAULT_TABLE_NAME;
 						Map<String, String> datasetAlias = getDatasetAlias(dataSet);
 
+						String originalQuery = getQueryText(null, tableName, groups, filterCriteriaForMetaModel, projections, null, dataSet, true, datasetAlias);
+						IDataStore originalDataStore = dataStore.aggregateAndFilterRecords(originalQuery, -1, -1);
+
 						String pagedQuery = getQueryText(null, tableName, null, null, null, null, dataSet, true, datasetAlias);
-						IDataStore pagedDataStore = dataStore.aggregateAndFilterRecords(pagedQuery, offset, fetchSize);
+						IDataStore pagedDataStore = originalDataStore.aggregateAndFilterRecords(pagedQuery, offset, fetchSize);
 						appendCalculatedColumnsToDataStore(projections, datasetAlias, pagedDataStore);
 
 						if (summaryRowProjections != null && summaryRowProjections.size() > 0) {
 							String summaryRowQuery = getQueryText(null, tableName, groups, filters, projections, summaryRowProjections, dataSet, true,
 									datasetAlias);
-							IDataStore summaryRowDataStore = dataStore.aggregateAndFilterRecords(summaryRowQuery, -1, -1);
+							IDataStore summaryRowDataStore = originalDataStore.aggregateAndFilterRecords(summaryRowQuery, -1, -1);
 							appendSummaryRowToPagedDataStore(projections, summaryRowProjections, pagedDataStore, summaryRowDataStore);
 						}
 
