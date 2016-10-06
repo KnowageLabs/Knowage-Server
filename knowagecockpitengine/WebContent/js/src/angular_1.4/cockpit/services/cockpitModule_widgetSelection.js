@@ -167,9 +167,14 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 			var assDs=assoc.datasets
 			var originalDSInCache=angular.copy(cockpitModule_properties.DS_IN_CACHE);
 			var tmpSplittedDSInCache=angular.copy(cockpitModule_properties.DS_IN_CACHE);
+			var naDSW= cockpitModule_templateServices.getDatasetAssociatedNotUsedByWidget();
 			for(var i=0;i<assDs.length;i++){
 				var dsIndex=tmpSplittedDSInCache.indexOf(assDs[i]);
 				if(dsIndex==-1){
+					//check if is not used by widget
+					if(!found && naDSW.indexOf(assDs[i])!=-1){
+						break;
+					}
 					//check if is document
 					var found=false;
 					for(var x=0;x<assoc.associations.length;x++){

@@ -92,6 +92,12 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 				)
 	}
 	
+	$scope.clickFunction=function(columnName,columnValue){
+		 
+		$scope.doSelection(columnName,columnValue);
+	}
+
+	
 	$scope.addPivotTableStyle=function(){
 		if($scope.ngModel.content.style!=undefined){
 			var totalsItem;

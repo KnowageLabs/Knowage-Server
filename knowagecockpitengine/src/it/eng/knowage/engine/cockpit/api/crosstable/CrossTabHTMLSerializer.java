@@ -172,6 +172,8 @@ public class CrossTabHTMLSerializer {
 						text = aNode.getDescription();
 					}
 
+					aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "clickFunction('" + crossTab.getCrosstabDefinition().getRows().get(i).getAlias() + "','" + text
+							+ "')");
 					aColumn.setCharacters(text);
 					int rowSpan = aNode.getLeafsNumber();
 					if (rowSpan > 1) {
@@ -233,6 +235,12 @@ public class CrossTabHTMLSerializer {
 						aColumn.setAttribute(addSortArrow(aRow, text, direction));
 					} else {
 						aColumn.setCharacters(text);
+						boolean parentIsLevel = !((i) % 2 == 0 || (i) == levels);
+						if (parentIsLevel) {
+							aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "clickFunction('" + crossTab.getColumnsRoot().getLevel(i).get(0).getValue() + "','" + text
+									+ "')");
+						}
+
 					}
 
 					int colSpan = aNode.getLeafsNumber();

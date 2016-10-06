@@ -483,7 +483,9 @@
 	.selectedImage{
 		background-color:#a9c3db;
 	}
-	
+	.noClickCursor{
+		cursor: default;
+	}
 	.selectdemoSelectHeader.md-knowage-theme {
         .demo-select-header {
             .demo-header-searchbox {
@@ -494,7 +496,7 @@
             }
         }
     }
-	
+	 
 	cockpit-static-pivot-table-widget{
 		@extend angular-table;
 		overflow:auto;

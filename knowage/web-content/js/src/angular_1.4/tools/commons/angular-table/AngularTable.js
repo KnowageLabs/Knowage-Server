@@ -163,6 +163,7 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                                                     tmpColData.comparatorColumn=col[i].comparatorColumn;
                                                     tmpColData.transformer=col[i].transformer;
                                                     tmpColData.customClass=col[i].customClass;
+                                                    tmpColData.customRecordsClass=col[i].customRecordsClass;
                                                     tmpColData.hideTooltip=col[i].hideTooltip;
                                                     tmpColData.style=col[i].style;
                                                 } else {
