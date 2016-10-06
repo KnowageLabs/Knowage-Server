@@ -358,21 +358,25 @@
 	</target>
 	
 		<target name="protractor" depends="junit">
-						 <exec dir="${conf.js}" executable="/bin/sh" >
-						 	<arg value ="-c"/>
-						 	<arg value ="${webdriver_manager} start "/>
-						 	
-						 	
-						    </exec>
-			<exec dir="${conf.js}" executable="/bin/sh" >
-						<arg value ="-c"/>
-						<arg value ="${protractor} conf.js "/>
+			<parallel>
+				<exec dir="${conf.js}" executable="/bin/sh" >
+					<arg value ="-c"/>
+					<arg value ="${webdriver_manager} start "/>					 	
 				</exec>
-			
-			<exec dir="${conf.js}" executable="/bin/sh" >
-				<arg value ="-c"/>
-				<arg value ="curl http://localhost:4444/selenium-server/driver/?cmd=shutDownSeleniumServer"/> 
-			</exec>
+				<sequential>
+					<sleep seconds="30"/>
+									<exec dir="${conf.js}" executable="/bin/sh" >
+															<arg value ="-c"/>
+															<arg value ="${protractor} conf.js "/>
+									</exec>
+									<exec dir="${conf.js}" executable="/bin/sh" >
+													<arg value ="-c"/>
+													<arg value ="curl http://localhost:4444/selenium-server/driver/?cmd=shutDownSeleniumServer"/> 
+									</exec>
+				
+				</sequential>
+				
+			</parallel>
 						
 	</target>
 	
