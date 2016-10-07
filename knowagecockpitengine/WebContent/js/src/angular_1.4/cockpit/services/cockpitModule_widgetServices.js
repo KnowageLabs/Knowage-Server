@@ -68,6 +68,14 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 
 	this.items=[];
 
+	this.getAllWidgets=function(){
+		var ret = [];
+		var numSheets = cockpitModule_template.sheets.length;
+		for(var sheet = 0; sheet < numSheets; sheet++){
+			ret.push.apply(ret, this.getWidgets(sheet));
+		}
+		return ret;
+	}
 
 	this.getWidgets=function(sheetIndex){
 		return cockpitModule_template.sheets[sheetIndex].widgets;
@@ -125,7 +133,6 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 					console.log("do: initWidget", config,(new Date()).getTime());
 					$rootScope.$broadcast("WIDGET_EVENT"+config.id,"INIT",{element:element,width:width,height:height});
 					$rootScope.$broadcast("WIDGET_INITIALIZED");
-
 				}
 
 		}catch(err){

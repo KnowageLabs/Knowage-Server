@@ -262,7 +262,13 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 				$scope.hideWidgetSpinner();
 			}
 			break;
-			
+		case "EXPORT_CSV" :
+			if($scope.exportCsv != undefined){
+				$scope.exportCsv(config);
+			}else{
+				config.def.resolve();
+			}
+			break;
 		default: console.error("event "+eventType+" not found")
 		}
 	})

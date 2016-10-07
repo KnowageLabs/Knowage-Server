@@ -348,6 +348,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			
 		}
 		
+		$scope.exportCsv=function(obj){
+			var deferred = obj.def;
+			var csv = '';
+			var metas = this.ngModel.content.columnSelectedOfDataset;
+			for(var k = 0; k < metas.length; k++){
+				csv += metas[k].aliasToShow + ';';
+			}
+			csv += '\n';
+			var datasetId = this.ngModel.dataset.dsId;
+			var model = {content: {columnSelectedOfDataset: this.ngModel.content.columnSelectedOfDataset}};
+			cockpitModule_datasetServices.loadDatasetRecordsById(datasetId, undefined, undefined, undefined, undefined, model).then(function(allDatasetRecords){
+				obj.csvData = {};
+				var allRows = $scope.getRows($scope.columnToshowinIndex, allDatasetRecords);
+				var rows = allDatasetRecords.rows;
+				allDatasetRecords = null;
+				var numRecs = rows.length;
+				for(var recIndex = 0; recIndex < numRecs; recIndex++){
+					for(var col = 0; col < $scope.columnToshowinIndex.length; col++){
+						csv += rows[recIndex][$scope.columnToshowinIndex[col]] + ';' 
+					}
+					csv += '\n';
+				}
+				obj.csvData = csv;
+				deferred.resolve(obj);
+			},function(error){
+				deferred.reject(error);
+			});
+		}
+		
 		$scope.editWidget=function(index){
 			var finishEdit=$q.defer();
 			var config = {

@@ -31,39 +31,16 @@ angular.module('cockpitModule')
  * */
 .directive('postIframe',function(){
 	var i = 0;
-	/*var loadChartEditor = function(scope){
-		console.log(new Date().getTime()+" - loadChartEditor");
-		var doc = document.getElementById(scope.iframeId).contentWindow.document;
-		doc.open();
-		var form = angular.element(document.getElementById(scope.formId));
-		console.log("action="+form.action);
-		doc.write(form.wrap(doc.createElement('div')).parent().html());
-		doc.close();
-		form = doc.getElementById(scope.formId);
-		form.submit();
-	};*/
 	return {
 		restrict: 'E',
-//		scope: {
-//			formParameters: '=formParameters',
-//			formAction: '=formAction',
-//			iframeName: '=generatedName',
-//			formId: '=generatedId'
-//		},
 	    templateUrl: baseScriptPath+ '/directives/cockpit-widget/widget/chartWidget/templates/postIframe.html',
 	    link: function(scope, elem, attrs) {
-	    	var genId = i++;//new Date().getTime();
+	    	var genId = i++;
 	    	scope.iframeName = attrs.id + "_frameName" + genId;
 	    	scope.formId = attrs.id + "_formId" + genId;
 	    	scope.iframeId = attrs.iframeId ? attrs.iframeId : (attrs.id + "_iframeId" + genId);
 	    	scope.iframeClass = attrs.class;
-//	    	elem.ready(function(){
-//	    		loadChartEditor(scope);
-//    			scope.$watch("formParameters",function(newValue,oldValue) {
-//    				loadChartEditor(scope);
-//    			});
-//	    	});
-//	    	scope.test_=function(){document.getElementById(scope.formId).submit();}
+	    	scope.iframeStyle = "height:;min-height:"
 	    },
 	    controller: function($scope, $element){
 	    	$scope.updateAction = function(actionUrl){
@@ -72,32 +49,31 @@ angular.module('cockpitModule')
 	    	$scope.updateParameters = function(parameters){
 	    		$scope.formParameters = parameters;
 	    	};
-	    	$scope.updateContent = function(actionUrl, parameters){
-	    		if(actionUrl){
-	    			$scope.updateAction(actionUrl);
+	    	$scope.updateContent = function(actionUrl, parameters, nature, width, height){
+	    		var iframe = $element.find('iframe')[0];
+	    		if(height != undefined){
+	    			iframe.style="height:"+height+"px;min-height:"+height+"px";
 	    		}
-	    		if(parameters){
-	    			$scope.updateParameters(parameters);
+	    		if(nature != 'refresh'){
+	    			if(actionUrl){
+	    				$scope.updateAction(actionUrl);
+	    			}
+	    			if(parameters){
+	    				$scope.updateParameters(parameters);
+	    			}
+	    			var formId = $element[0].id + "_formId";
+	    			var formAction = $scope.actionUrl;
+	    			var form = angular.element('<form id="'+formId+'" action="'+formAction+'" method="POST" style="display:none;"></form>');
+	    			for(var x=0;x<$scope.formParameters.length;x++){
+	    				var param = $scope.formParameters[x];
+	    				form.append('<input type="hidden" name="' + param.name + '" value=\'' + JSON.stringify(param.value) + '\'>');
+	    			}
+	    			var doc = iframe.contentWindow.document;
+	    			doc.open();
+	    			doc.write(form.wrap(doc.createElement('div')).parent().html());
+	    			doc.close();
+	    			doc.getElementById(formId).submit();
 	    		}
-//	    		console.log($element.formId + " - loadChartEditor");
-//	    		var form = $element.find('form');
-//	    		var formId = form[0].id;
-//	    		console.log("action=" + form[0].action);
-//	    		var innerForm = doc.getElementById(formId);
-//	    		innerForm.submit();
-	    		var formId = $element[0].id + "_formId";
-	    		var formAction = $scope.actionUrl;
-	    		var form = angular.element('<form id="'+formId+'" action="'+formAction+'" method="POST" style="display:none"></form>');
-	    		for(var x=0;x<$scope.formParameters.length;x++){
-	    			var param = $scope.formParameters[x];
-	    			form.append('<input type="hidden" name="' + param.name + '" value=\'' + JSON.stringify(param.value) + '\'>');
-	    		}
-	    		var doc = $element.find('iframe')[0].contentWindow.document;
-	    		doc.open();
-	    		doc.write(form.wrap(doc.createElement('div')).parent().html());
-	    		doc.close();
-	    		doc.getElementById(formId).submit();
-//	    		form[0].submit();
 	    	};
 	    }
 	};
@@ -117,10 +93,6 @@ angular.module('cockpitModule')
                     	//init the widget
                     	element.ready(function () {
                     		scope.initWidget();
-//                    		scope.formIframe=angular.element(directive);
-//                    		var x = angular.element('<post-iframe id="chartExecution" class="layout-fill" ng-if="ngModel.content.datasetLabel"></post-iframe>');
-//                    		element.append(x);
-//                    		$compile(x)(scope);
                     	});
                     }
                 };
@@ -154,9 +126,6 @@ angular.module('cockpitModule')
 			widgetData.jsonData = newData;
 		}
 		ret.formParameters = [{name: 'widgetData', value: {"widgetData": widgetData} }];
-//		postIframe.updateAction(formAction);
-//		postIframe.updateParameters(formParameters);
-//		postIframe.updateContent();
 		return ret;
 	};
 	return {
@@ -172,18 +141,15 @@ angular.module('cockpitModule')
 function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelection,cockpitModule_datasetServices,cockpitModule_widgetConfigurator,$q,$mdPanel,sbiModule_restServices,$httpParamSerializerJQLike,sbiModule_config,buildParametersForExecution,$mdToast){
 	$scope.property={style:{}};
 	$scope.selectedTab = {'tab' : 0};
-//	$scope.postIframe = element.find('post-iframe').scope();
 	$scope.init=function(element,width,height){
-//		$scope.ngModel.dataset = {dsId: $scope.localModel.datasetId, dsLabel: $scope.localModel.datasetLabel};
-		$scope.refreshWidget();
+		$scope.refreshWidget(undefined,'init');
 	};
 	
 	$scope.refresh=function(element,width,height,data,nature){
 		var widgetData = angular.copy($scope.ngModel.content);
-//		angular.extend($scope,buildParametersForExecution.execute(widgetData,data));
 		$scope.postIframe = element.find('post-iframe').scope();
 		var execPar = buildParametersForExecution.execute(widgetData,data);
-		$scope.postIframe.updateContent(execPar.formAction, execPar.formParameters);
+		$scope.postIframe.updateContent(execPar.formAction, execPar.formParameters,nature,width,height);
 	};
 	
 	$scope.editWidget=function(index){
@@ -263,7 +229,7 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 				    	  var widgetData = angular.extend({"datasetLabel":$scope.localModel.datasetLabel||''},$scope.localModel);
 				    	  var execPar = buildParametersForExecution.edit(widgetData);
 				    	  angular.element(document.getElementById("chartConfigurationIframe")).scope()
-				  		  .updateContent(execPar.formAction, execPar.formParameters);
+				  		  .updateContent(execPar.formAction, execPar.formParameters, 'init');
 			    	  }
 			    	  $scope.showAction = function(text) {
 			  			var toast = $mdToast.simple()
@@ -400,6 +366,6 @@ function setAggregationsOnChartEngine(wconf){
 }
 
 //this function register the widget in the cockpitModule_widgetConfigurator factory
-addWidgetFunctionality("chart",{});
+addWidgetFunctionality("chart",{'initialDimension':{'width':20, 'height':20}});
 
 })();

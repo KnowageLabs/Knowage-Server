@@ -34,8 +34,8 @@ cockpitApp.config(['$mdThemingProvider', function($mdThemingProvider) {
  
 
 
-cockpitApp.controller("cockpitMasterController",['$scope','cockpitModule_widgetServices','cockpitModule_template','cockpitModule_datasetServices','cockpitModule_realtimeServices','cockpitModule_properties','cockpitModule_templateServices','$rootScope',cockpitMasterControllerFunction]);
-function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,cockpitModule_template,cockpitModule_datasetServices,cockpitModule_realtimeServices,cockpitModule_properties,cockpitModule_templateServices,$rootScope){
+cockpitApp.controller("cockpitMasterController",['$scope','cockpitModule_widgetServices','cockpitModule_template','cockpitModule_datasetServices','cockpitModule_realtimeServices','cockpitModule_properties','cockpitModule_templateServices','$rootScope','$q',cockpitMasterControllerFunction]);
+function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,cockpitModule_template,cockpitModule_datasetServices,cockpitModule_realtimeServices,cockpitModule_properties,cockpitModule_templateServices,$rootScope,$q){
 	$scope.cockpitModule_widgetServices=cockpitModule_widgetServices;
 	$scope.cockpitModule_template=cockpitModule_template;
 	//load the dataset list
@@ -58,6 +58,43 @@ function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,coc
 	});
 	if(!cockpitModule_properties.EDIT_MODE){
 		cockpitModule_realtimeServices.init();
+	}
+	
+	$scope.exportCsv=function(deferred){
+		var finalCsvDataObj = {};
+		var csvDataCount = 0;
+		var allWidgets = cockpitModule_widgetServices.getAllWidgets();
+		var widgets = []
+		for (w in allWidgets){
+			var obj = allWidgets[w];
+			if(obj && obj.dataset && obj.dataset.dsId != undefined){
+				widgets.push(obj);
+			}
+		}
+		allWidgets = null;
+		var successCount = 0;
+		for (w in widgets){
+			var def=$q.defer();
+	    	$rootScope.$broadcast("WIDGET_EVENT"+widgets[w].id,"EXPORT_CSV",{def:def,csvDataCount:csvDataCount});
+	    	def.promise.then(function(data){
+	    		if(data != undefined){
+	    			finalCsvDataObj[data.csvDataCount] = btoa(data.csvData);
+	    		}
+	    		successCount++;
+	    		if(successCount == widgets.length){
+	    			var finalCsvData = '';
+	    			for(c in finalCsvDataObj){
+	    				finalCsvData += finalCsvDataObj[c] + ',';
+	    			}
+	    			deferred.resolve(finalCsvData);
+	    		}
+	    	},function(error){
+	    		console.error('Error exporting data for widget');
+	    		deferred.reject(error);
+	    	});
+	    	csvDataCount++;
+	    }
+		return deferred.promise;
 	}
 }
 
