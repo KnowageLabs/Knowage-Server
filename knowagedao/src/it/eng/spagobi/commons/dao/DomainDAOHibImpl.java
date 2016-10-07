@@ -17,6 +17,13 @@
  */
 package it.eng.spagobi.commons.dao;
 
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.commons.metadata.SbiProductType;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -32,13 +39,6 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
-
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.bo.Domain;
-import it.eng.spagobi.commons.metadata.SbiDomains;
-import it.eng.spagobi.commons.metadata.SbiProductType;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * Defines the Hibernate implementations for all DAO methods, for a domain.
@@ -67,7 +67,8 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 
 			while (it.hasNext()) {
 				// realResult.add(toDomain((SbiDomains) it.next()));
-				realResult.add(it.next());
+				Integer categoryId = Integer.getInteger(it.next().toString());
+				realResult.add(categoryId);
 			}
 			tx.commit();
 		} catch (HibernateException he) {
@@ -171,8 +172,8 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 
 				SbiDomains domain = (SbiDomains) domainIt.next();
 
-				Query hibQueryProd = aSession
-						.createQuery("select opt.sbiProductType from SbiOrganizationProductType opt " + "where opt.sbiOrganizations.name = :tenant ");
+				Query hibQueryProd = aSession.createQuery("select opt.sbiProductType from SbiOrganizationProductType opt "
+						+ "where opt.sbiOrganizations.name = :tenant ");
 				hibQueryProd.setString("tenant", tenant);
 
 				List hibListProd = hibQueryProd.list();
@@ -413,7 +414,7 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.commons.dao.IDomainDAO#loadListDomains()
 	 */
 	@Override
