@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -566,9 +567,10 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 		List<WhereField> whereFields = query.getWhereFields();
 
 		// verifico la presenza di un filtro in line
-		Set<String> inlineFilterFieldTypes = new HashSet();
+		Set<String> inlineFilterFieldTypes = new HashSet<>();
 		boolean hasInlineFilters = populateInlineFilterFieldTypes(selectFields, inlineFilterFieldTypes);
 		if (hasInlineFilters) {
+			boolean perfomancesTuningPossible = true;
 
 			// recupero l'id della dimensione tempo
 			String temporalDimensionId = getTimeId(temporalDimension);
@@ -622,7 +624,7 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 			// visualizzati solo i dati relativi al periodo corrente.
 			Map<String, String> currentPeriodValuyesByType = addMissingCurrentPeriodWhereClauses(query,
 					temporalDimension, selectFields, whereFields, inlineFilterFieldTypes, temporalDimensionId,
-					hierarchyFullColumnMap, hierarchyColumnMap);
+					hierarchyFullColumnMap, hierarchyColumnMap, relativeYear);
 
 			// recupero tutti i campi temporali presenti nella query
 			Set<String> temporalFieldTypesInSelect = getTemporalFieldsInSelect(query.getSelectFields(false), hierarchyFullColumnMap);
@@ -645,7 +647,7 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 			query.setRelativeYearIndex(relativeYearIndex);
 			query.setAllYearsOnDWH(allYearsOnDWHString);
 
-			Map<String, List<String>> distinctPeriods = new HashMap<>();
+			Map<String, List<String>> distinctPeriods = new LinkedHashMap<>();
 			for (String temporalFieldColumn : temporalFieldTypesInSelect) {
 				distinctPeriods.put(temporalFieldColumn,
 						loadDistinctPeriods(temporalDimension, temporalDimensionId, temporalFieldColumn));
@@ -661,8 +663,10 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 			removeRelativeYearFromWhereFields(whereFields, yearsInWhere, hierarchyFullColumnMap.get("YEAR"), relativeYear);
 			
 			// aggiungo i filtri per le performance
-			addYearsFilterForPerformances(query, selectFields, whereFields, hierarchyFullColumnMap, relativeYear,
-					yearsInWhere, allYearsOnDWHString, relativeYearIndex, distinctPeriods, currentPeriodValuyesByType);
+			if(perfomancesTuningPossible) {
+				addYearsFilterForPerformances(query, selectFields, whereFields, hierarchyFullColumnMap, relativeYear,
+						yearsInWhere, allYearsOnDWHString, relativeYearIndex, distinctPeriods, currentPeriodValuyesByType);
+			}
 
 		}
 	}
@@ -722,10 +726,13 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 					for (WhereField wField : whereFields) {
 						if (wField.getLeftOperand().values != null && wField.getLeftOperand().values.length > 0
 								&& hierarchyFullColumnMap.get("YEAR").equals(wField.getLeftOperand().values[0])
-								&& "EQUALS TO".equals(wField.getOperator()) && wField.getRightOperand().values != null
-								&& wField.getRightOperand().values.length > 0) {
+								&& ("EQUALS TO".equals(wField.getOperator()) || ("IN".equals(wField.getOperator()))) &&  wField.getRightOperand().values != null
+								&&  wField.getRightOperand().values.length > 0) {
 	
-							yearsToBeAddedToWhereClause.add(wField.getRightOperand().values[0] + "");
+							for (String value :  wField.getRightOperand().values) {
+								yearsToBeAddedToWhereClause.add(value);
+							}
+							
 							Operand right = new Operand(
 									yearsToBeAddedToWhereClause.toArray(new String[yearsToBeAddedToWhereClause.size()]),
 									"YEAR", "Static Content", new String[] {""}, new String[] {""}, "");
@@ -797,13 +804,55 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 	private Map<String, String> addMissingCurrentPeriodWhereClauses(Query query, IModelEntity temporalDimension,
 			List<ISelectField> selectFields, List<WhereField> whereFields, Set<String> inlineFilterFieldTypes,
 			String temporalDimensionId, Map<String, String> hierarchyFullColumnMap,
-			Map<String, String> hierarchyColumnMap) {
+			Map<String, String> hierarchyColumnMap, String relativeYear) {
 
 		Map<String, String> currentPeriodValuesByType = new HashMap<>();
 
 		Set<String> temporalFieldTypesInSelect = new HashSet<>();
 		Set<String> temporalFieldTypesInWhere = new HashSet<>();
 
+		Map<String, int[]> lastOperatorRanges = new HashMap<>();
+		for (ISelectField sfield : selectFields) {
+			if (sfield.isSimpleField()) {
+				SimpleSelectField ssField = (SimpleSelectField) sfield;
+				String temporalOperand = ssField.getTemporalOperand();
+				int temporalOperandParameter = -1*Integer.parseInt(ssField.getTemporalOperandParameter() != null ? ssField.getTemporalOperandParameter() : "0");
+				if (temporalOperand != null) {
+					switch (temporalOperand) {
+					case TEMPORAL_OPERAND_LAST_QUARTER:
+					case TEMPORAL_OPERAND_QTD:
+						int[] opRangeQuarter = {0,0};
+						if(lastOperatorRanges.containsKey("QUARTER")) {
+							opRangeQuarter = lastOperatorRanges.get("QUARTER");
+						}
+						if(temporalOperandParameter <= 0 && temporalOperandParameter < opRangeQuarter[0]) {
+							opRangeQuarter[0] = temporalOperandParameter;
+						}
+						if(temporalOperandParameter >= 0 && temporalOperandParameter > opRangeQuarter[1]) {
+							opRangeQuarter[1] = temporalOperandParameter;
+						}
+						lastOperatorRanges.put("QUARTER", opRangeQuarter);
+						break;
+					case TEMPORAL_OPERAND_LAST_MONTH:
+					case TEMPORAL_OPERAND_MTD:
+						int[] opRangeMonth = {0,0};
+						if(lastOperatorRanges.containsKey("MONTH")) {
+							opRangeMonth = lastOperatorRanges.get("MONTH");
+						}
+						if(temporalOperandParameter <= 0 && temporalOperandParameter < opRangeMonth[0]) {
+							opRangeMonth[0] = temporalOperandParameter;
+						}
+						if(temporalOperandParameter >= 0 && temporalOperandParameter > opRangeMonth[1]) {
+							opRangeMonth[1] = temporalOperandParameter;
+						}
+						lastOperatorRanges.put("MONTH", opRangeMonth);
+						break;
+					default:
+					}
+				}
+			}
+		}
+		
 		LOOP_1: for (String levelType : inlineFilterFieldTypes) {
 			String levelColumn = hierarchyFullColumnMap.get(levelType);
 			if (!temporalFieldTypesInSelect.contains(levelType)) {
@@ -860,11 +909,54 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 				if ((currentPeriod != null)) {
 					currentPeriodValue = currentPeriod.getPeriod() + "";
 				}
-				Operand right = new Operand(new String[] { currentPeriodValue }, levelType, "Static Content", new String[] {""}, new String[] {""}, "");
-				query.addWhereField("current_" + levelType, "current_" + levelType, false, left, "EQUALS TO", right,
+				
+				String[] currentPeriodValues = new String[] {  currentPeriodValue };
+				
+				int[] opRange = lastOperatorRanges.get(levelType);
+				if(opRange != null) {
+				
+					LinkedList<LinkedHashMap<String,String>> allMonthOrQuarterPeriods = new LinkedList<>();
+					LinkedList<TemporalRecord> allPeriodsInDwh = loadAllPeriodsStartingDate(temporalDimension, temporalDimensionId, hierarchyColumnMap.get(levelType));
+					LinkedList<TemporalRecord> allYearsOnDWH = loadAllPeriodsStartingDate(temporalDimension, temporalDimensionId, hierarchyColumnMap.get("YEAR"));
+					for (TemporalRecord  yearRecord : allYearsOnDWH) {
+						for (TemporalRecord monthOrQuarterRecord : allPeriodsInDwh) {
+							LinkedHashMap<String, String> record = new LinkedHashMap<>();
+							record.put("YEAR", yearRecord.getPeriod().toString());
+							record.put(levelType, monthOrQuarterRecord.getPeriod().toString());
+							allMonthOrQuarterPeriods.add(record);
+						}
+					}
+					LinkedHashMap<String, String> currentRecord = new LinkedHashMap<>();
+					currentRecord.put("YEAR", relativeYear);
+					currentRecord.put(levelType, currentPeriodValue);
+					
+					int currentPeriodIndex = allMonthOrQuarterPeriods.indexOf(currentRecord);
+					
+	
+					int start = currentPeriodIndex + opRange[0];
+					if (start < 0)
+						start = 0;
+					if (start > allMonthOrQuarterPeriods.size() - 1)
+						start = allMonthOrQuarterPeriods.size() - 1;
+					int end = currentPeriodIndex + opRange[1];
+					if (end < 0)
+						end = 0;
+					if (end > allMonthOrQuarterPeriods.size()-1)end =  allMonthOrQuarterPeriods.size()-1;
+					
+					Set<String> currentPeriodValuesSet = new LinkedHashSet<>();
+					for (int i = start; i <= end ; i++ ) {
+						currentPeriodValuesSet.add(allMonthOrQuarterPeriods.get(i).get(levelType));
+					}
+					
+					currentPeriodValues = currentPeriodValuesSet.toArray(new String[0]);
+				}
+				
+				
+				Operand right = new Operand(currentPeriodValues, levelType, "Static Content", new String[] {""}, new String[] {""}, "");
+				query.addWhereField("current_" + levelType, "current_" + levelType, false, left, "IN", right,
 						"AND");
 				query.updateWhereClauseStructure();
-
+					
 				currentPeriodValuesByType.put(levelColumn, currentPeriodValue);
 			}
 		}

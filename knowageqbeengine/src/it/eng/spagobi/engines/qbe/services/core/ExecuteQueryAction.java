@@ -57,6 +57,7 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -135,7 +136,6 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 				limit = getAttributeAsInteger(LIMIT);
 			}
 
-			logger.debug("Parameter [" + LIMIT + "] is equals to [" + limit + "]");
 
 			Assert.assertNotNull(getEngineInstance(), "It's not possible to execute " + this.getActionName()
 					+ " service before having properly created an instance of EngineInstance class");
@@ -151,9 +151,19 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 			// promptable filters values may come with request (read-only user modality)
 			updatePromptableFiltersValue(query, this);
 
-			dataStore = executeQuery(start, limit);
-			dataStore = handleTimeAggregations(dataStore, start, limit);
+			Map<String, Map<String, String>> inlineFilteredSelectFields = query.getInlineFilteredSelectFields();
 
+			boolean thereAreInlineTemporalFilters = inlineFilteredSelectFields != null && inlineFilteredSelectFields.size() > 0;
+			if(thereAreInlineTemporalFilters) {
+				limit = 0;
+			}
+			
+			logger.debug("Parameter [" + LIMIT + "] is equals to [" + limit + "]");
+			dataStore = executeQuery(start, limit);
+			if(thereAreInlineTemporalFilters) {
+				dataStore = handleTimeAggregations(dataStore);
+			}
+			
 			resultNumber = (Integer) dataStore.getMetaData().getProperty("resultNumber");
 
 			logger.debug("Total records: " + resultNumber);
@@ -188,11 +198,16 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 
 
 
-	private IDataStore handleTimeAggregations(IDataStore fullDatastore, Integer start, Integer limit) {
+	private IDataStore handleTimeAggregations(IDataStore fullDatastore) {
+		
+		boolean debug = true;
+		if(debug) {
+			System.out.println("fullDatastore: ");
+			sysoDatastore(fullDatastore);
+		}
 		
 		Query query = this.getQuery();
 		Map<String, Map<String, String>> inlineFilteredSelectFields = query.getInlineFilteredSelectFields();
-		
 		if(inlineFilteredSelectFields != null && inlineFilteredSelectFields.size() > 0) {
 			IDataStore finalDatastore = null;
 			
@@ -206,8 +221,8 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 			Set<String> temporalFieldTypesInQuery = query.getTemporalFieldTypesInQuery();
 			Map<String, List<String>> distinctPeriods = query.getDistinctPeriods();
 			
-			// per comodità riorganizzo i periodi per type
-			Map<String, List<String>> distinctPeriodsByType = new HashMap<>();
+			// riorganizzo i periodi per type
+			Map<String, List<String>> distinctPeriodsByType = new LinkedHashMap<>();
 			for (String type : hierarchyFullColumnMap.keySet()) {
 				distinctPeriodsByType.put(type, distinctPeriods.get( hierarchyFullColumnMap.get(type)));	
 			}
@@ -229,19 +244,23 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 			}
 			
 			// eseguo la query per avere il numero di righe finale
-			finalDatastore = executeQuery(start, limit);
+			finalDatastore = executeQuery(0, 0);
+			
+
+			if(debug) {
+				System.out.println("finalDatastore: ");
+				sysoDatastore(finalDatastore);
+			}
 			
 			// aggrego!
 			for (Iterator finalIterator = finalDatastore.iterator(); finalIterator.hasNext();) {
 				Record finalRecord = (Record) finalIterator.next();
 
 				Map<String, String> rowPeriodValuesByType = new HashMap<>();
-				for (String type : temporalFieldTypesInQuery) {
-					for (int fieldIndex = 0; fieldIndex < finalDatastore.getMetaData().getFieldCount(); fieldIndex++) {
-						String fieldName = finalDatastore.getMetaData().getFieldName(fieldIndex);
-						if(fieldName != null && query.getTemporalFieldTypesInQuery().contains(fieldName)){
-							rowPeriodValuesByType.put(fieldName, finalRecord.getFieldAt(fieldIndex).getValue().toString()); 
-						}
+				for (int fieldIndex = 0; fieldIndex < finalDatastore.getMetaData().getFieldCount(); fieldIndex++) {
+					String fieldName = finalDatastore.getMetaData().getFieldName(fieldIndex);
+					if(fieldName != null && temporalFieldTypesInQuery.contains(fieldName)){
+						rowPeriodValuesByType.put(fieldName, finalRecord.getFieldAt(fieldIndex).getValue().toString()); 
 					}
 				}
 				
@@ -250,6 +269,7 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 				// come coppie alias/valore
 				Map<String, String> currentRecordId = getRecordAggregatedId(finalRecord, finalDatastore, query);
 				
+				Map<String, String> periodSetToCurrent = setCurrentIfNotPresent(query, hierarchyFullColumnMap, distinctPeriodsByType, currentRecordId);
 				
 				
 				
@@ -257,9 +277,14 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 				Map<String, Integer> rowPeriodsNumbered = new HashMap<>();
 				for (String type : rowPeriodValuesByType.keySet()) {
 					String currentPeriodValue = rowPeriodValuesByType.get(type);
+					
+					if(periodSetToCurrent.get(type) != null) {
+						currentPeriodValue = periodSetToCurrent.get(type);
+					}
+					
 					List<String> distinctPeriodsForThisType = distinctPeriods.get(type);
 					int currentValueIndexForThisType = -1;
-					for(int i = 0; i< distinctPeriodsForThisType.size(); i++) {
+					for(int i = 0; distinctPeriodsForThisType != null && i< distinctPeriodsForThisType.size(); i++) {
 						String period = distinctPeriodsForThisType.get(i);
 						if(period.equals(currentPeriodValue)) {
 							currentValueIndexForThisType = i;
@@ -355,13 +380,18 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 							}
 							
 							Integer rowPeriodNumber = rowPeriodsNumbered.get(hierarchyFullColumnMap.get(periodType));
+							rowPeriodNumber = rowPeriodNumber > 0 ? rowPeriodNumber : 0;
 							Integer otherPeriodNumber = rowPeriodNumber - temporalOperandParameter;
+							
+							
+							/*
 							if(otherPeriodNumber < rowPeriodNumber) {
 								otherPeriodNumber = otherPeriodNumber + 1;
 							}
 							else {
 								otherPeriodNumber = otherPeriodNumber - 1;
 							}
+							*/
 							
 							List<String> periods = distinctPeriodsByType.get(periodType);
 							int periodsCount = periods.size();
@@ -396,8 +426,8 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 							}
 							else {
 								// se operatore period to date, aggrego fino allo stesso 'tempo' nel periodo di riferimento
-								lastRecordId.put(hierarchyFullColumnMap.get(periodType), periods.get(periodOtherIndex));
-								lastRecordId.put(hierarchyFullColumnMap.get("YEAR"), allYearsOnDWH.get(yearOtherIndex));
+								lastRecordId.put(hierarchyFullColumnMap.get(periodType), rowPeriodValuesByType.get(hierarchyFullColumnMap.get(periodType)));
+								lastRecordId.put(hierarchyFullColumnMap.get("YEAR"), allYearsOnDWH.get(relativeYearIndex));
 							}
 							break;
 						}
@@ -421,10 +451,22 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 							if(parallelYearIndex >= 0 && allYearsOnDWH.size() > parallelYearIndex ) {
 								String parallelYear =  allYearsOnDWH.get(parallelYearIndex);
 								firstRecordId.put(hierarchyFullColumnMap.get("YEAR"), parallelYear);
-								lastRecordId.put(hierarchyFullColumnMap.get("YEAR"), allYearsOnDWH.get(relativeYearIndex));
+							}
+							else if(parallelYearIndex < 0) {
+								firstRecordId.put(hierarchyFullColumnMap.get("YEAR"), allYearsOnDWH.getFirst());
 							}
 							else {
-								firstRecordId.put(hierarchyFullColumnMap.get("YEAR"), null);
+								firstRecordId.put(hierarchyFullColumnMap.get("YEAR"), allYearsOnDWH.getLast());
+							}
+							
+							if(relativeYearIndex >= 0 && allYearsOnDWH.size() > relativeYearIndex ) {
+								lastRecordId.put(hierarchyFullColumnMap.get("YEAR"), allYearsOnDWH.get(relativeYearIndex));
+							}
+							else if(relativeYearIndex < 0) {
+								firstRecordId.put(hierarchyFullColumnMap.get("YEAR"), allYearsOnDWH.getFirst());
+							}
+							else {
+								firstRecordId.put(hierarchyFullColumnMap.get("YEAR"), allYearsOnDWH.getLast());
 							}
 							
 							break;
@@ -450,28 +492,45 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 						}
 						
 						
+						setCurrentIfNotPresent(query, hierarchyFullColumnMap, distinctPeriodsByType, firstRecordId);
+						setCurrentIfNotPresent(query, hierarchyFullColumnMap, distinctPeriodsByType, lastRecordId);
+						
+						int firstRecordIndex = calculateRecordIndex(hierarchyFullColumnMap, distinctPeriodsByType, firstRecordId);
+						int lastRecordIndex = calculateRecordIndex(hierarchyFullColumnMap, distinctPeriodsByType, lastRecordId);
+						
+						boolean swapped = false;
+						if(firstRecordIndex > lastRecordIndex) {
+							int swap = lastRecordIndex;
+							lastRecordIndex = firstRecordIndex;
+							firstRecordIndex = swap;
+						}
+						if(debug) {
+							System.out.println( fieldAlias +" FIRST: "+firstRecordIndex + " -> LAST: " + lastRecordIndex + (swapped?" (Reading the future: swapped first and last!)":""));
+						}
+
+						
 						/** A QUESTO PUNTO AGGREGO E CALCOLO IL VALORE */
 						if(firstRecordId.get(hierarchyFullColumnMap.get("YEAR")) != null) {
 							double finalValue = 0D;
-							boolean firstRecordFound = false;
+							boolean aValueFound = false;
 							/** INQUESTO CICLO DEVO UTILIZZARE I CAMPI FIRST E LAST */
 							for (Iterator fullIterator = fullDatastore.iterator(); fullIterator.hasNext();) {
 								Record record = (Record) fullIterator.next();
 								Map<String, String> recordId = getRecordFullId(record, finalDatastore, query);
-								if(recordId.equals(firstRecordId)) {
-									firstRecordFound = true;
-								}
 								
-								if(firstRecordFound) {
+								int recordIndex = calculateRecordIndex(hierarchyFullColumnMap, distinctPeriodsByType, recordId);
+								
+								
+								if(firstRecordIndex <= recordIndex && recordIndex <= lastRecordIndex) {
+									if(debug) {
+										System.out.println("recordIndex: " + recordIndex);
+									}
+									aValueFound = true;
 									finalValue += Double.parseDouble(record.getFieldAt(fieldIndex).getValue().toString());
-								}
-								
-								if(recordId.equals(lastRecordId)) {
 									finalRecord.getFieldAt(fieldIndex).setValue(finalValue);
-									break;
 								}
 							}
-							if(!firstRecordFound) {
+							if(!aValueFound) {
 								finalRecord.getFieldAt(fieldIndex).setValue(0D);
 							}
 						}
@@ -486,7 +545,9 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 					}
 				}
 				
-				System.out.println(rowLog);
+				if(debug) {
+					System.out.println(rowLog);
+				}
 				
 			}
 			
@@ -498,6 +559,59 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 		}
 		
 		
+	}
+
+
+
+	public Map<String,String> setCurrentIfNotPresent(Query query, Map<String, String> hierarchyFullColumnMap,
+			Map<String, List<String>> distinctPeriodsByType, Map<String, String> currentRecordId) {
+		Map<String,String> periodSetToCurrent = new HashMap<>();
+		Set<String> periodElements = distinctPeriodsByType.keySet();
+		for (String period : periodElements) {
+			List<String> periods = distinctPeriodsByType.get(period);
+			if(periods != null){
+				String periodUniqueIdentifier = hierarchyFullColumnMap.get(period);
+				String currentRecordPeriod = currentRecordId.get(periodUniqueIdentifier);
+				if(currentRecordPeriod != null) {
+					int periodIndex = periods.indexOf(currentRecordPeriod);
+					if(periodIndex < 0) {
+						currentRecordId.put(periodUniqueIdentifier, query.getCurrentPeriodValuyesByType().get(periodUniqueIdentifier));
+						periodSetToCurrent.put(periodUniqueIdentifier, query.getCurrentPeriodValuyesByType().get(periodUniqueIdentifier));
+					}
+				}
+			}
+		}
+		return periodSetToCurrent;
+	}
+
+
+
+	public int calculateRecordIndex(Map<String, String> hierarchyFullColumnMap,
+			Map<String, List<String>> distinctPeriodsByType, Map<String, String> recordId)
+					throws NumberFormatException {
+		String recordCode = "";
+		Set<String> periodElements = distinctPeriodsByType.keySet();
+		for (String period : periodElements) {
+			List<String> periods = distinctPeriodsByType.get(period);
+			if(periods != null){
+				int periodIndex = periods.indexOf(recordId.get(hierarchyFullColumnMap.get(period)));
+				recordCode += new DecimalFormat("000").format(periodIndex+1);
+			}
+		}
+		int recordIndex = new Integer(recordCode.indexOf('-') < 0 ? recordCode : "0");
+		return recordIndex;
+	}
+
+
+
+	public void sysoDatastore(IDataStore ds) throws RuntimeException {
+		try {
+		JSONDataWriter dataSetWriter = new JSONDataWriter();
+		JSONObject dataSetJSON = (JSONObject) dataSetWriter.write(ds);
+			System.out.println(dataSetJSON.getJSONArray("rows").toString());
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private Map<String, String> getRecordAggregatedId(Record finalRecord, IDataStore finalDatastore, Query query) {
@@ -511,7 +625,7 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 	}
 	
 	private Map<String, String> getRecordId(Record finalRecord, IDataStore finalDatastore, Query query, Set<String> idAliases) {
-		Map<String, String> recordId = new HashMap<>();
+		Map<String, String> recordId = new LinkedHashMap<>();
 		for (int fieldIndex = 0; fieldIndex < finalDatastore.getMetaData().getFieldCount(); fieldIndex++) {
 			String fieldName = finalDatastore.getMetaData().getFieldName(fieldIndex);
 			if(fieldName != null && idAliases.contains(fieldName)){
