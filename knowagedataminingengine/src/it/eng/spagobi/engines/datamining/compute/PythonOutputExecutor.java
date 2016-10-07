@@ -23,6 +23,7 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
 import it.eng.spagobi.engines.datamining.bo.DataMiningResult;
 import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
@@ -42,15 +43,9 @@ import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
-import javax.imageio.ImageIO;
-
-import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.jpy.PyLib;
 import org.jpy.PyModule;
@@ -61,7 +56,6 @@ public class PythonOutputExecutor {
 	static private Logger logger = Logger.getLogger(PythonOutputExecutor.class);
 
 	private static final String OUTPUT_PLOT_EXTENSION = "png";
-	private static final String OUTPUT_PLOT_IMG = "png";
 	private static String STORE_TO_HDFS = SpagoBIConstants.CONFIG_STORE_TO_HDFS;
 
 	DataMiningEngineInstance dataminingInstance;
@@ -147,9 +141,6 @@ public class PythonOutputExecutor {
 			// function recalling a function inside the main script (auto)
 			// to produce an image result
 			if (function == null) {
-				// codeToExec = "temporaryPlotVariableToPrintOnFile=" + out.getOuputLabel() + "\n" + "temporaryPlotVariableToPrintOnFile.savefig('" + plotName
-				// + "." + OUTPUT_PLOT_EXTENSION + "')\n" + "temporaryPlotVariableToPrintOnFile.gcf().clear()\n"
-				// + "temporaryPlotVariableToPrintOnFile.gcf().clear()\n" + "temporaryPlotVariableToPrintOnFile.gcf().clear()\n";
 				codeToExec = out.getOuputLabel() + ".savefig('" + plotName + "." + OUTPUT_PLOT_EXTENSION + "')\n" + out.getOuputLabel() + ".gcf().clear()\n"
 						+ out.getOuputLabel() + ".gcf().clear()\n";
 
@@ -163,12 +154,8 @@ public class PythonOutputExecutor {
 					return res;
 				}
 
-			} else if (function != null) {
+			} else {
 				if (outVal == null || outVal.equals("")) {
-					// codeToExec = "temporaryPlotVariableToPrintOnFile=" + function + "\n" + "temporaryPlotVariableToPrintOnFile.savefig('" + plotName + "."
-					// + OUTPUT_PLOT_EXTENSION + "')\n" + "temporaryPlotVariableToPrintOnFile.gcf().clear()\n"
-					// + "temporaryPlotVariableToPrintOnFile.gcf().clear()\n" + "temporaryPlotVariableToPrintOnFile.gcf().clear()\n";
-					// ;
 					codeToExec = function + ".savefig('" + plotName + "." + OUTPUT_PLOT_EXTENSION + "')\n" + function + ".gcf().clear()\n";
 					resPythonExecution = PyLib.execScript(codeToExec);
 					if (resPythonExecution < 0) {
@@ -192,12 +179,14 @@ public class PythonOutputExecutor {
 			}
 			logger.debug("Evaluated dev.off()");
 			res.setOutputType(out.getOutputType());
-			String resImg = getPlotImageAsBase64(out.getOutputName());
+
+			String path = DataMiningUtils.getUserResourcesPath(profile) + DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX + plotName + "."
+					+ OUTPUT_PLOT_EXTENSION;
+			String resImg = SpagoBIUtilities.getImageAsBase64(path, OUTPUT_PLOT_EXTENSION);
 			res.setPlotName(plotName);
 			if (resImg != null && !resImg.equals("")) {
 				res.setResult(resImg);
-				scriptExecutor.deleteTemporarySourceScript(DataMiningUtils.getUserResourcesPath(profile) + DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX
-						+ plotName + "." + OUTPUT_PLOT_EXTENSION);
+				scriptExecutor.deleteTemporarySourceScript(path);
 				logger.debug("Deleted temp image");
 			}
 
@@ -223,7 +212,6 @@ public class PythonOutputExecutor {
 					res.setOutputType(out.getOutputType());
 					res.setResult("" + pythonResult);
 				} else {
-					// res.setVariablename(outVal);// could be multiple value
 					String noArgFunctionExecuted = function + "(" + outVal + ")";
 					res.setVariablename(noArgFunctionExecuted);
 					codeToExec = outVal + "=" + function + "(" + outVal + ")" + "\n" + outVal + "=str(" + outVal + ")";
@@ -289,7 +277,6 @@ public class PythonOutputExecutor {
 
 					pythonResult = PyModule.getMain().getAttribute(outVal).getStringValue();
 				} else {
-					// res.setVariablename(outVal);// could be multiple value
 					String noArgFunctionExecuted = function + "(" + outVal + ")";
 					res.setVariablename(noArgFunctionExecuted);
 					creationResult = createAndPersistDatasetProductByFunction(profile, outVal, out, noArgFunctionExecuted, userId, documentLabel);
@@ -300,9 +287,6 @@ public class PythonOutputExecutor {
 						throw new SpagoBIEngineRuntimeException("Python engine error \n" + "Technical details:\n" + "PythonOutputExecutor.java:\n"
 								+ creationResult.getPythonExecutionCodeWithError() + "EXECUTION FAILED\n" + "See log file for other details\n");
 					}
-
-					// PyLib.execScript(outVal + "=" + function + "(" + outVal + ")");
-					// PyLib.execScript(outVal + "=" + outVal + ".to_json()\n"); // to get output as a String
 					pythonResult = PyModule.getMain().getAttribute(outVal).getStringValue();
 				}
 
@@ -328,8 +312,6 @@ public class PythonOutputExecutor {
 			}
 
 			res.setOutputType("Dataset"); // or DataMiningConstants.DATASET
-			// res.setResult("" + pythonResult); //return Json
-			// res.setResult("SpagoBi dataset saved, visible from Data Set section in Document Browser, with label :" + creationResult.getDatasetlabel());
 			res.setResult(creationResult.getDatasetlabel()); // returns only the label
 			logger.debug("Evaluated result");
 
@@ -342,61 +324,6 @@ public class PythonOutputExecutor {
 		}
 		logger.debug("OUT");
 		return res;
-	}
-
-	private String getPlotFilePath(String plotName) throws IOException {
-		logger.debug("IN");
-		String path = null;
-		if (plotName != null && !plotName.equals("")) {
-			String filePath = DataMiningUtils.getUserResourcesPath(profile).replaceAll("\\\\", "/");
-			path = OUTPUT_PLOT_IMG + "(\"" + filePath + DataMiningConstants.DATA_MINING_TEMP_FOR_SCRIPT + plotName + "." + OUTPUT_PLOT_EXTENSION + "\") ";
-		}
-		logger.debug("OUT");
-		return path;
-	}
-
-	public String getPlotImageAsBase64(String plotName) throws IOException {
-		logger.debug("IN");
-		String fileImg = DataMiningUtils.getUserResourcesPath(profile) + DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX + plotName + "."
-				+ OUTPUT_PLOT_EXTENSION;
-		logger.warn(fileImg);
-		BufferedImage img = null;
-		String imgstr = null;
-
-		try {
-			File imgFromPlot = new File(fileImg);
-			if (!imgFromPlot.exists()) {
-				logger.warn("Image not produced!");
-				return imgstr;
-			}
-			img = ImageIO.read(imgFromPlot);
-			imgstr = encodeToString(img, OUTPUT_PLOT_EXTENSION);
-		} catch (IOException ioe) {
-			throw ioe;
-		}
-		logger.debug("OUT");
-		return imgstr;
-
-	}
-
-	private static String encodeToString(BufferedImage image, String type) {
-		logger.debug("IN");
-		String imageString = null;
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-
-		try {
-			ImageIO.write(image, type, bos);
-			byte[] imageBytes = bos.toByteArray();
-
-			Base64 encoder = new Base64();
-			imageString = encoder.encodeBase64String(imageBytes);
-
-			bos.close();
-		} catch (IOException e) {
-			logger.error(e);
-		}
-		logger.debug("OUT");
-		return imageString;
 	}
 
 	private static CreateDatasetResult createAndPersistDataset(IEngUserProfile profile, String outVal, Output out, String userId, String documentLabel)
@@ -515,7 +442,6 @@ public class PythonOutputExecutor {
 		String codeToExec = null;
 		int resPythonExecution = 1;
 		CreateDatasetResult creationResult = new CreateDatasetResult();
-		DataMiningResult res = new DataMiningResult();
 
 		IConfigDAO configsDAO = DAOFactory.getSbiConfigDAO();
 		Config conf = configsDAO.loadConfigParametersByLabel(STORE_TO_HDFS);
@@ -528,17 +454,12 @@ public class PythonOutputExecutor {
 			dataSet = new FileDataSet();
 		}
 
-		String path = getDatasetsDirectoryPath(); // E.G. C:\Users\piovani\apache-tomcat-7.0.67-Trunk\resources\DEFAULT_TENANT\dataset\files
-		String resPath = DAOConfig.getResourcePath(); // E.G. C:\Users\piovani\apache-tomcat-7.0.67-Trunk\resources\DEFAULT_TENANT\
+		String path = getDatasetsDirectoryPath();
+		String resPath = DAOConfig.getResourcePath();
 		dataSet.setResourcePath(resPath);
 
 		String spagoBiDatasetname = userId + "_" + documentLabel + "_" + out.getOuputLabel();
 		JSONObject configurationObj = new JSONObject();
-		// configurationObj.put("fileType", "CSV");
-		// configurationObj.put("csvDelimiter", ",");
-		// configurationObj.put("csvQuote", "'"); // Alternativa "\""
-		// configurationObj.put("fileName", spagoBiDatasetname + ".csv");
-		// configurationObj.put("encoding", "UTF-8");
 
 		configurationObj.put(DataSetConstants.FILE_TYPE, "CSV");
 		configurationObj.put(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER, ",");
@@ -566,8 +487,6 @@ public class PythonOutputExecutor {
 		dataSet.setFileName(spagoBiDatasetname + ".csv");
 		dataSet.setFileType("CSV");
 		dataSet.setDsType(DataSetConstants.DS_FILE);
-
-		String label = out.getOuputLabel();
 		dataSet.setLabel(spagoBiDatasetname);
 		dataSet.setName(spagoBiDatasetname);
 		dataSet.setDescription("Dataset created from execution of document " + documentLabel + " by user " + userId);

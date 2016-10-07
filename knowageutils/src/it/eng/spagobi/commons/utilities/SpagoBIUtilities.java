@@ -27,6 +27,8 @@ import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,10 +40,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.validator.GenericValidator;
 import org.apache.log4j.Logger;
 
@@ -670,4 +674,35 @@ public class SpagoBIUtilities {
 		return resourcePath;
 	}
 
+	public static String getImageAsBase64(String path, String type) throws IOException {
+		logger.debug("IN");
+		logger.debug("The image file path is [" + path + "]");
+		File fileImage = new File(path);
+		if (!fileImage.exists()) {
+			throw new SpagoBIRuntimeException("The path [" + path + " does not point to any image.");
+		}
+		BufferedImage image = ImageIO.read(fileImage);
+		logger.debug("The image will be base64 encoded using image type [" + type + "]");
+		String encodedImage = encodeBase64ToString(image, type);
+		logger.debug("OUT");
+		return encodedImage;
+	}
+
+	public static String encodeBase64ToString(BufferedImage image, String type) throws IOException {
+		logger.debug("IN");
+		ByteArrayOutputStream bos = null;
+		String encodedImage = null;
+		try {
+			bos = new ByteArrayOutputStream();
+			ImageIO.write(image, type, bos);
+			byte[] imageBytes = bos.toByteArray();
+			encodedImage = Base64.encodeBase64String(imageBytes);
+		} finally {
+			if (bos != null) {
+				bos.close();
+			}
+		}
+		logger.debug("OUT");
+		return encodedImage;
+	}
 }

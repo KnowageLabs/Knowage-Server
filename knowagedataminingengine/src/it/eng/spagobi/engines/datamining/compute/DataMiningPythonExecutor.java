@@ -18,18 +18,13 @@
 package it.eng.spagobi.engines.datamining.compute;
 
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
 import it.eng.spagobi.engines.datamining.bo.DataMiningResult;
 import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
 import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
-import it.eng.spagobi.engines.datamining.model.DataMiningDataset;
 import it.eng.spagobi.engines.datamining.model.DataMiningFile;
 import it.eng.spagobi.engines.datamining.model.Output;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,9 +42,6 @@ import org.rosuda.REngine.REngineException;
 public class DataMiningPythonExecutor implements IDataMiningExecutor {
 	static private Logger logger = Logger.getLogger(DataMiningPythonExecutor.class);
 
-	// private REngine re;
-	private IEngUserProfile profile;
-
 	// private final PythonCommandsExecutor commandsExecutor;
 	private final PythonDatasetsExecutor datasetsExecutor;
 	private final PythonOutputExecutor outputExecutor;
@@ -65,14 +57,6 @@ public class DataMiningPythonExecutor implements IDataMiningExecutor {
 		fileExecutor = new PythonFilesExecutor(dataminingInstance, profile);
 	}
 
-	private void setupEnvonment(IEngUserProfile userProfile) {
-		logger.debug("IN");
-		profile = userProfile;
-
-		logger.debug("created user dir");
-		logger.debug("OUT");
-	}
-
 	private void setupEnvonmentForExternal() throws IOException, REngineException, REXPMismatchException, NamingException {
 		logger.debug("IN");
 
@@ -81,33 +65,17 @@ public class DataMiningPythonExecutor implements IDataMiningExecutor {
 			PyLib.startPython();
 		}
 		PyLib.execScript("import os\n" + "os.chdir(r'" + str + "')\n");
-		// System.out
-		// .println("executed Python code:" + "import os\n" + "os.chdir(r'" + str + "')\n" + "from DataMiningPythonExecutor.setupEnvironmentForExternal");
 
 		logger.debug("Set working directory");
 		logger.debug("OUT");
 	}
 
-	private static String getSpagoBIConfigurationProperty(String propertyName) {
-		try {
-			String propertyValue = null;
-			IConfigDAO configDao = DAOFactory.getSbiConfigDAO();
-			Config cacheSpaceCleanableConfig = configDao.loadConfigParametersByLabel(propertyName);
-			if ((cacheSpaceCleanableConfig != null) && (cacheSpaceCleanableConfig.isActive())) {
-				propertyValue = cacheSpaceCleanableConfig.getValueCheck();
-			}
-			return propertyValue;
-		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("An unexpected exception occured while loading spagobi property [" + propertyName + "]", t);
-		}
-	}
-
+	@Override
 	public DataMiningResult execute(HashMap params, DataMiningCommand command, Output output, IEngUserProfile userProfile, Boolean rerun, String documentLabel)
 			throws Exception {
 		logger.debug("IN");
 		List<DataMiningResult> results = new ArrayList<DataMiningResult>();
 		DataMiningResult result = null;
-		setupEnvonment(userProfile);
 		logger.debug("Set up environment");
 
 		PyLib.startPython();
@@ -137,11 +105,6 @@ public class DataMiningPythonExecutor implements IDataMiningExecutor {
 		UserProfile profile = (UserProfile) userProfile;
 		result = outputExecutor.evalOutput(output, scriptExecutor, documentLabel, (String) profile.getUserId());
 		logger.debug("Got result");
-		// save result of script computation objects and datasets to
-		// user workspace
-		/*
-		 * saveUserWorkSpace(); logger.debug("Saved user WS");
-		 */
 
 		// Delete files
 		if (fileExecutor.dataminingInstance.getFiles().size() > 0) {
@@ -165,44 +128,4 @@ public class DataMiningPythonExecutor implements IDataMiningExecutor {
 		logger.debug("OUT");
 		return result;
 	}
-
-	// public void externalExecution(String fileName, IEngUserProfile userProfile, HashMap paramsFilled) throws Exception { // never called
-	// logger.debug("IN");
-	// List<DataMiningResult> results = new ArrayList<DataMiningResult>();
-	//
-	// setupEnvonmentForExternal();
-	// logger.debug("Set up environment");
-	// // evaluates script code
-	// scriptExecutor.evalExternalScript(fileName, paramsFilled);
-	// logger.debug("Executed script");
-	// logger.debug("OUT");
-	//
-	// }
-
-	public void updateDatasetInWorkspace(DataMiningDataset ds, IEngUserProfile userProfile) throws IOException {
-		logger.debug("IN");
-		setupEnvonment(userProfile);
-		logger.debug("Set up environment"); // datasets preparation datasetsExecutor.updateDataset(ds);
-		logger.debug("Loaded datasets"); // save result of script computation objects and datasets to // user workspace saveUserWorkSpace();
-		logger.debug("Saved WS");
-		logger.debug("OUT");
-	}
-
-	protected void loadUserWorkSpace() throws IOException { // Never used
-
-		// example usage > save.image(file = 'D:/script/.Rdata', safe = TRUE) > load(file = 'D:/script/.Rdata')
-
-		// create user workspace data
-		logger.debug("IN");
-		// re.(parseAndEval"save(list = ls(all = TRUE), file= '" + profile.getUserUniqueIdentifier() + ".RData')");
-		// logger.debug("Save all object in " + profile.getUserUniqueIdentifier() + ".RData");
-		// re.(parseAndEval"load(file= '" + profile.getUserUniqueIdentifier() + ".RData')");
-		logger.debug("Loaded " + profile.getUserUniqueIdentifier() + ".RData");
-		logger.debug("OUT");
-	}
-	/*
-	 * protected void saveUserWorkSpace() throws IOException { logger.debug("IN"); re.(parseAndEval"save(list = ls(all = TRUE), file= '" +
-	 * profile.getUserUniqueIdentifier() + ".RData')"); logger.debug("OUT"); }
-	 */
-
 }

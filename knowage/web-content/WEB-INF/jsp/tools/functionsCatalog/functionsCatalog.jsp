@@ -187,18 +187,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							no-pagination=true					
 					>						
 					</angular-table>
-		    	
-			
-		
 			</md-content>
-		
-
-
-			
-
-		
-    	
-    	 
     	</list>
     	
     	
@@ -366,8 +355,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<md-tab label='{{translate.load("sbi.functionscatalog.script");}}' ng-if="(isAdmin || (isDev && shownFunction.owner==ownerUserName))">
 					<md-card>
 						<md-card-content>
-	  					
-	      					<md-input-container class="md-block" ng-if='languageHidden'>
+	  					 	<md-radio-group ng-model="shownFunction.remote" >
+	      						<md-radio-button ng-value=false class="md-primary" ng-click="radioButtonRemoteLocalPush('local')" style="outline: none; border: 0; ">{{translate.load("sbi.functionscatalog.local");}}</md-radio-button>
+	      						<md-radio-button ng-value=true ng-click="radioButtonRemoteLocalPush('remote')" style="outline: none; border: 0; "> {{translate.load("sbi.functionscatalog.remote");}} </md-radio-button>
+	    					</md-radio-group>	
+	    					
+	    					<md-input-container class="md-block" ng-if='languageHidden'>
 	            				<label>{{translate.load("sbi.functionscatalog.language");}}</label>
 	            				<md-select ng-model="shownFunction.language">
 	              					<md-option ng-repeat="language in languages" value="{{language}}">
@@ -375,11 +368,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	              					</md-option>
 	           					</md-select>
 	          				</md-input-container>
-	      						
-	       					<md-radio-group ng-model="shownFunction.remote" >
-	      						<md-radio-button ng-value=false class="md-primary" ng-click="radioButtonRemoteLocalPush('local')" style="outline: none; border: 0; ">{{translate.load("sbi.functionscatalog.local");}}</md-radio-button>
-	      						<md-radio-button ng-value=true ng-click="radioButtonRemoteLocalPush('remote')" style="outline: none; border: 0; "> {{translate.load("sbi.functionscatalog.remote");}} </md-radio-button>
-	    					</md-radio-group>	
 	      						
 	  						<md-input-container class="md-block md-input-has-value" ng-if="shownFunction.remote==false">
 	          					<label class="customCodeMirrorLabel">{{translate.load("sbi.functionscatalog.script");}}</label>

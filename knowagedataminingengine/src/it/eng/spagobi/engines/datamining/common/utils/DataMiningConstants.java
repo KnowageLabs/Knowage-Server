@@ -53,4 +53,7 @@ public class DataMiningConstants {
 	public static final String RESULT_TYPE_FIELD = "resultType";
 	public static final String RESULT_NAME_FIELD = "resultName";
 	public static final String RESULT_CONTENT_FIELD = "result";
+
+	public static final String IMAGE_DEMO_LENA = "lena.jpg";
+	public static final String IMAGE_DEMO_LENA_FACEDETECT = "lena_facedetect.jpg";
 }

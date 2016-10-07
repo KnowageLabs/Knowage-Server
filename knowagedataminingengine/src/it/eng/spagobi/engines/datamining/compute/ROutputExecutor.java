@@ -20,6 +20,7 @@ package it.eng.spagobi.engines.datamining.compute;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.dao.DAOConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
 import it.eng.spagobi.engines.datamining.bo.DataMiningResult;
 import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
@@ -140,12 +141,13 @@ public class ROutputExecutor {
 				} else {
 					logger.debug("Evaluated dev.off()");
 					res.setOutputType(out.getOutputType());
-					String resImg = getPlotImageAsBase64(out.getOutputName());
+					String path = DataMiningUtils.getUserResourcesPath(profile) + DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX + plotName + "."
+							+ OUTPUT_PLOT_EXTENSION;
+					String resImg = SpagoBIUtilities.getImageAsBase64(path, OUTPUT_PLOT_EXTENSION);
 					res.setPlotName(plotName);
 					if (resImg != null && !resImg.equals("")) {
 						res.setResult(resImg);
-						scriptExecutor.deleteTemporarySourceScript(DataMiningUtils.getUserResourcesPath(profile)
-								+ DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX + plotName + "." + OUTPUT_PLOT_EXTENSION);
+						scriptExecutor.deleteTemporarySourceScript(path);
 						logger.debug("Deleted temp image");
 					}
 				}
