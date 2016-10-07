@@ -196,7 +196,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						<md-card-content>
 				
 		          				<span class="md-headline ng-binding" flex="">{{useMode.name}}</span>
-                                <span class="md-subhead ng-binding smallGrey" flex="">{{useMode.description}}</span>
+                          		<span style="display: block;" class="md-caption ng-binding" flex="" ng-repeat="role in useMode.associatedRoles | orderBy : 'name'"  ng-show="$index<3">{{role.name}}</span>
+                                
 						</md-card-content>
 					
 		     </md-card>
