@@ -1,0 +1,13 @@
+/*******************************************************************************************************
+ * Model Structure
+ ********************************************************************************************************/
+  
+.icon-domain-delete {
+	 background-image:url(../../img/domain/erase.png) !important;
+}
+.icon-domain-add {
+	 background-image:url(../../img/domain/attach.png) !important;
+}
+.icon-domain-filter {
+	 background-image:url(../../img/domain/filter.gif) !important;
+}
