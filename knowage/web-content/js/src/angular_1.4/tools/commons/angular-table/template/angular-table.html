@@ -89,22 +89,35 @@
 	pagination-id='id+"PaginationTable"' total-items='totalItemCount' current-page='pagination.currentPageNumber'
 	ng-class="{'selectedRowItem': (highlightsSelectedItem==true && isSelected(row) )}"  class="animate-repeat-tablerow"
  	ng-if="isVisibleRowFunction(row)">
-	<td ng-repeat="column in tableColumns"  ng-click="clickItem(row,column.name,getColumnValue(row,column.name),$event,$parent.$index)" ng-dblclick="startEdit(row,column,getColumnValue(row,column.name),$event)" context-menu  data-target='{{id}}TableContextMenu-{{$parent.$index}}-{{$index}}' class="{{column.customRecordsClass}}" ng-class="{ 'highlight': highlight, 'expanded' : expanded,'tableDragBar':column.name=='--DRAG_AND_DROP--'}" ng-style="getDynamicValue(column.style,row,column,$parent.$index)">
-		<span ng-class="getChangedValueStyle(row,column.name)" ng-if="column.name!='--MULTISELECT--' && column.name!='--SPEEDMENU--' && column.name!='--DRAG_AND_DROP--' && column.name!='--ROW_DETAIL--'"  dynamichtml="getColumnValue(row,column.name,column.transformer)"   ng-show="!allowEdit || (allowEdit && !row.editing) || (allowEdit && row.editing && !column.editable)">
-			<md-tooltip ng-if="column.hideTooltip!=true" md-delay="1000" md-direction="bottom">{{getColumnValue(row,column.name,column.transformer)}}</md-tooltip>
+	<td  ng-repeat="column in tableColumns" ng-switch="column.static==true? '--STATIC--' : column.name" ng-click="clickItem(row,column.name,getColumnValue(row,column.name),$event,$parent.$index)" ng-dblclick="startEdit(row,column,getColumnValue(row,column.name),$event)" context-menu  data-target='{{id}}TableContextMenu-{{$parent.$index}}-{{$index}}' class="{{column.customRecordsClass}} " 
+		ng-class="{ 'highlight': highlight, 'expanded' : expanded,'tableDragBar':column.name=='--DRAG_AND_DROP--'}" ng-style="getDynamicValue(column.style,row,column,$parent.$index)" >
+		
+		<span ng-switch-when="--STATIC--" ng-bind="row[column.name]" >
+			<md-tooltip ng-if="column.hideTooltip!=true" md-delay="1000" md-direction="bottom" ng-bind="row[column.name]"></md-tooltip>
 		</span>
-		<input ng-if="column.name!='--MULTISELECT--' && column.name!='--SPEEDMENU--' && column.name!='--DRAG_AND_DROP--' && column.name!='--ROW_DETAIL--'" ng-show="allowEdit && row.editing && column.editable" ng-model="row[column.name]" ng-blur="doneEdit(row,column,getColumnValue(row,column.name),$event)" autofocus />
+
+		<span ng-switch-default ng-switch="allowEdit==true && row.editing==true && column.editable==true" > 
+	 		<!--dynamic cell (default)-->
+			<span  ng-switch-when="false" ng-if="column.static!=true" ng-class="getChangedValueStyle(row,column.name)"  dynamichtml="getColumnValue(row,column.name,column.transformer)"   >
+				<md-tooltip ng-if="column.hideTooltip!=true" md-delay="1000" md-direction="bottom">{{getColumnValue(row,column.name,column.transformer)}}</md-tooltip>
+			</span>
+	 		<!--static cell-->
+			<span  ng-switch-when="false"  ng-if="column.static==true" ng-class="getChangedValueStyle(row,column.name)"  ng-bind="row[column.name]"   >
+				<md-tooltip ng-if="column.hideTooltip!=true" md-delay="1000" md-direction="bottom">{{row[column.name]}}</md-tooltip>
+			</span>
 		
-		<md-button ng-init="exp=false" class="md-icon-button rowExpanderButton" ng-if="column.name=='--ROW_DETAIL--' && (showExpanderRowCondition==undefined || showExpanderRowCondition({row:row}))" aria-label="expander row" ng-click="$event.stopPropagation();showRowDetail($event);exp=!exp;">
+			<input   ng-switch-when="true"   ng-model="row[column.name]" ng-blur="doneEdit(row,column,getColumnValue(row,column.name),$event)" autofocus />
+		</span>
+
+		<md-button ng-init="exp=false" class="md-icon-button rowExpanderButton" ng-if="column.name=='--ROW_DETAIL--' && (showExpanderRowCondition==undefined || showExpanderRowCondition({row:row}))" aria-label="expander row" ng-click="$event.stopPropagation();showRowDetail($event);exp=!exp;" >
         	<md-icon md-font-icon="fa " ng-class="{'fa-chevron-up': exp,'fa-chevron-down':!exp}"></md-icon>
-      	</md-button>
+      	</md-button>	
 
-
-		<i ng-if="column.name=='--DRAG_AND_DROP--'" ui-tree-handle class="fa fa-bars "></i>
-
-		<md-checkbox ng-if="column.name=='--MULTISELECT--'" ng-checked="isSelected(row)" ng-click="clickItem(row,column.name,getColumnValue(row,column.name),$event)" aria-label="selected item checked"> </md-checkbox>
+		<i ng-switch-when="--DRAG_AND_DROP--" ui-tree-handle class="fa fa-bars "></i>
+			
+		<md-checkbox ng-if="column.name=='--MULTISELECT--'"  ng-checked="isSelected(row)" ng-click="clickItem(row,column.name,getColumnValue(row,column.name),$event)" aria-label="selected item checked"> </md-checkbox>
 		
-		<span layout="row" ng-if="column.name=='--SPEEDMENU--' && speedMenuOption.length<=3">
+		<span layout="row" ng-switch-when="--SPEEDMENU--" ng-if="speedMenuOption.length<=3">
 			<md-button ng-if="getDynamicValue(menuItem.visible,row,column)!=false" 
 				ng-repeat="menuItem in speedMenuOption" 
 			 	ng-click='$event.stopPropagation();menuItem.action(row,$event);'
@@ -115,7 +128,7 @@
  	      	</md-button>
 		</span>
 
-		<md-menu  ng-if="column.name=='--SPEEDMENU--' &&  speedMenuOption.length>3 ">
+		<md-menu ng-switch-when="--SPEEDMENU--" ng-if="speedMenuOption.length>3 ">
       		<md-button aria-label="row interactions menu" class="md-icon-button" ng-click="$event.stopPropagation();$mdOpenMenu($event)">
       			<md-icon md-menu-origin md-font-icon="fa fa-ellipsis-v"></md-icon>
       		</md-button>
@@ -125,9 +138,9 @@
 		   				<md-icon  ng-if="menuItem.icon!=undefined" action-color="{{getDynamicValue(menuItem.color,row,column)}}" ng-class="getDynamicValue(menuItem.icon,row,column)" aria-label="{{getDynamicValue(menuItem.label,row,column)}}" md-menu-align-target></md-icon>
 		    			<span ng-if="menuItem.label!=undefined">{{getDynamicValue(menuItem.label,row,column)}}</span> 
           			</md-button>
-        </md-menu-item>
-      </md-menu-content>
-    </md-menu>
+       		 	</md-menu-item>
+      		</md-menu-content>
+   		</md-menu>
 
 		<div class="dropdown_menu_list " style="z-index: 999; " id='{{id}}TableContextMenu-{{$parent.$index}}-{{$index}}' )>
 			<md-list class="dropdown-menu bottomBorder" role="menu" ng-if="menuOption.length!=0 && menuOption!=undefined && column.name!='--MULTISELECT--' && column.name!='--SPEEDMENU--'"> 
@@ -146,5 +159,10 @@
 <!-- </div> -->
 
 
-
+<!-- 	<td ng-repeat="column in tableColumns"  ng-style="getDynamicValue(column.style,row,column,$parent.$index)"> -->
+<!-- 		<span ng-class="getChangedValueStyle(row,column.name)" ng-if="column.name!='--MULTISELECT--' && column.name!='--SPEEDMENU--' && column.name!='--DRAG_AND_DROP--' && column.name!='--ROW_DETAIL--'"  dynamichtml="getColumnValue(row,column.name,column.transformer)"   ng-show="!allowEdit || (allowEdit && !row.editing) || (allowEdit && row.editing && !column.editable)"> -->
+<!-- 			<md-tooltip ng-if="column.hideTooltip!=true" md-delay="1000" md-direction="bottom">{{getColumnValue(row,column.name,column.transformer)}}</md-tooltip> -->
+<!-- 		</span> -->
+		
+<!-- 	</td> -->
 

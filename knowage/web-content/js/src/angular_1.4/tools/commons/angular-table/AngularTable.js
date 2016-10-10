@@ -2,7 +2,7 @@
  * @authors Giovanni Luca Ulivo (GiovanniLuca.Ulivo@eng.it)
  * v1.0.2
  * 
- */
+ */ 
 var scripts = document.getElementsByTagName("script");
 var currentScriptPath = scripts[scripts.length - 1].src;
 
@@ -60,8 +60,11 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                             disableAutoLoadOnInit:"@?"
                         },
                         compile: function (tElement, tAttrs, transclude) {
+                        	
                             return {
                                 pre: function preLink(scope, element, attrs, ctrl, transclud) {
+                                	scope.tableItem=element;
+                                	
                                     if (attrs.dragEnabled && (attrs.dragEnabled == true || attrs.dragEnabled == "true")) {
                                         var table = angular.element(element[0].querySelector("table.principalTable"))
                                         table.attr('ui-tree', "dragDropOptions");
@@ -94,16 +97,16 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                                     	id = "at"+(new Date()).getTime();
                                     	scope.id=id;
                                     }
-                                    
-                                    var template = angular.element(element[0]);
-                                    template.addClass(id + "ItemBox");
-                                    template.addClass("layout-column");
 
 
-                                    var table = angular.element(template[0].querySelector("table.principalTable"));
+                                    scope.tableItem.addClass(id + "ItemBox");
+                                    scope.tableItem.addClass("layout-column");
+
+
+                                    var table = angular.element(scope.tableItem[0].querySelector("table.principalTable"));
                                     var thead = angular.element(table[0].querySelector("thead"));
                                     var tbody = angular.element(table[0].querySelector("tbody"));
-                                    var footerBox = angular.element(template[0].querySelector("angular-table-footer"));
+                                    var footerBox = angular.element(scope.tableItem[0].querySelector("angular-table-footer"));
 
                                     //create the head
                                     thead.attr('angular-table-head', "");
@@ -166,6 +169,7 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                                                     tmpColData.customRecordsClass=col[i].customRecordsClass;
                                                     tmpColData.hideTooltip=col[i].hideTooltip;
                                                     tmpColData.style=col[i].style;
+                                                    tmpColData.static=col[i].static;
                                                 } else {
                                                     //only the col name
                                                     tmpColData.label = col[i];
@@ -242,8 +246,8 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
 
                                     //add search tab
                                     if (!attrs.showSearchBar || attrs.showSearchBar == false || attrs.showSearchBar == "false") {
-//                                        angular.element(template[0].querySelector(".tableSearchBar")).css("display", "none");
-                                    	  angular.element(template[0].querySelector("angular-table-actions")).css("display", "none");
+//                                        angular.element(scope.tableItem[0].querySelector(".tableSearchBar")).css("display", "none");
+                                    	  angular.element(scope.tableItem[0].querySelector("angular-table-actions")).css("display", "none");
                                     }
 
                                     
@@ -252,17 +256,13 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                                     }
 									
                                     if(attrs.hasOwnProperty("fullWidth") || (attrs.hasOwnProperty("noPagination") && attrs.noPagination==true)){
-										scope.getPrincipalTableHeadWidth=function(){
-											var elem = angular.element(document.querySelector('angular-table.' + scope.id + 'ItemBox #angularTableContentBox .principalTable thead'))[0];
-										 	  return elem == undefined ? null : elem.offsetWidth;
-										}
                                     	  
 										scope.$watch(function(){return scope.getPrincipalTableHeadWidth()}
                                     		  , function (newValue, oldValue) {
 	                                        	if(newValue!=oldValue){
-	                                        		scope.loadTheadColumn();
+	                                        		scope.loadTheadColumn(newValue);
 	                                        	}
-											}, true);
+											});
                                     }
 
                                     transclude(scope, function (clone, scope) {
@@ -368,7 +368,7 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                 restrict: 'A',
                 replace: true,
                 link: function (scope, ele, attrs) {
-                    scope.$watch(attrs.dynamichtml, function (html) {
+                    scope.$watch(attrs.dynamichtml, function (html) { 
                         ele.html(html);
                         $compile(ele.contents())(scope);
                     });
@@ -392,14 +392,14 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
 
                             //enable watch to block on the bottom the foot row if scroll is enabled
                             scope.$watch(function () {
-                                var elem = angular.element(document.querySelector('angular-table.' + scope.id + 'ItemBox #angularTableContentBox'))[0];
+                                var elem = angular.element(scope.tableItem[0].querySelector('#angularTableContentBox'))[0];
                                 return elem == undefined ? undefined : {scroll: elem.scrollHeight, heigth: elem.offsetHeight};
                             }, function (newValue, oldValue) {
                                 if (newValue != oldValue) { 
                                     if (newValue.scroll > newValue.heigth) {
-                                        angular.element(document.querySelector('angular-table.' + scope.id + 'ItemBox')).addClass("absoluteTfoot");
+                                    	scope.tableItem.addClass("absoluteTfoot");
                                     } else {
-                                        angular.element(document.querySelector('angular-table.' + scope.id + 'ItemBox')).removeClass("absoluteTfoot")
+                                    	scope.tableItem.removeClass("absoluteTfoot")
 
                                     }
                                 }
@@ -421,7 +421,7 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
 //                        	debugger
                         	scope.internalTableConfiguration.rowDetail=true;
                         	scope.rowDetailTemplate=notCompiledContent;
-                        	angular.element(element.parent())[0].querySelector("#angularTableContentBox").style.overflow="auto";
+                        	scope.tableItem[0].querySelector("#angularTableContentBox").style.overflow="auto";
                         	scope.initializeColumns(false)
                         	},
                         	post: function preLink(scope, element, attrs, ctrl, transclud) {
@@ -558,8 +558,8 @@ function TableControllerFunction($scope, $timeout) {
     $scope.reverse_col_ord = false;
     $scope.internal_column_ordering;
     $scope.internal_reverse_col_ord = false;
-
-    $scope.getDynamicValue=function(item,row,column,index){
+ 
+    $scope.getDynamicValue=function(item,row,column,index,nature){ 
     	if(item==null || item==undefined) return ;
     	
     	return angular.isFunction(item) ? item(row,column,index) : item;
@@ -592,7 +592,8 @@ function TableControllerFunction($scope, $timeout) {
     $scope.changeWordItemPP = function () {
 
     	if($scope.box==undefined || $scope.box.$$NG_REMOVED==true){
-    		var box = angular.element(document.querySelector('angular-table.' + $scope.id + 'ItemBox'))[0]
+    		var box = $scope.tableItem[0];
+//    		var box = angular.element(document.querySelector('angular-table.' + $scope.id + 'ItemBox'))[0]
     		if (box == undefined) {
     			return;
     		}
@@ -600,35 +601,35 @@ function TableControllerFunction($scope, $timeout) {
     	}
     	
     	if($scope.tableContainer==undefined || $scope.tableContainer.$$NG_REMOVED==true){
-    		var tableContainer = angular.element(document.querySelector('angular-table.' + $scope.id + 'ItemBox #angularFullTableContentBox'))[0];
+    		var tableContainer = angular.element($scope.tableItem[0].querySelector('#angularFullTableContentBox'))[0];
+//    		var tableContainer = angular.element(document.querySelector('angular-table.' + $scope.id + 'ItemBox #angularFullTableContentBox'))[0];
     			$scope.tableContainer=tableContainer;
     	}
     	
     	if($scope.headButton==undefined || $scope.headButton.$$NG_REMOVED==true){
+    		var headButton = angular.element($scope.tableItem[0].querySelector('table.fakeTable thead'))[0];
     		var headButton = angular.element(document.querySelector('angular-table.' + $scope.id + 'ItemBox table.fakeTable thead'))[0];
     			$scope.headButton=headButton;
     	}
     	
     	if($scope.listItemTemplBox==undefined || $scope.listItemTemplBox.$$NG_REMOVED==true){
-    		var listItemTemplBox = angular.element(document.querySelector('angular-table.' + $scope.id + 'ItemBox table.principalTable tbody tr'))[0];
+    		var listItemTemplBox = angular.element($scope.tableItem[0].querySelector(' table.principalTable tbody tr'))[0];
     			$scope.listItemTemplBox=listItemTemplBox;
     	}
 
-    	
-    		$scope.heightQueueTable = 0;
-    	
-	    //	var queueTableFixed = angular.element(document.querySelector('angular-table.' + $scope.id + 'ItemBox #fixedAngularTableContentBox'))[0];
-	    	var queueTable = angular.element(document.querySelector('angular-table.' + $scope.id + 'ItemBox #queueTableContent'))[0];
-	    	
-	    	if(queueTable!=undefined && queueTable.offsetHeight > 0){
-	    		$scope.heightQueueTable = queueTable.offsetHeight;
-	    	}
-    	
+    	if($scope.queueTable==undefined || $scope.queueTable.$$NG_REMOVED==true){
+    		var queueTable = angular.element($scope.tableItem[0].querySelector(' #queueTableContent'))[0];
+    			$scope.queueTable=queueTable;
+    	}
+    		 
     	var tableContainerHeight = $scope.tableContainer == undefined ? 36 : $scope.tableContainer.offsetHeight;
         var headButtonHeight = $scope.headButton == undefined ? 0 : $scope.headButton.offsetHeight;
         var listItemTemplBoxHeight = $scope.listItemTemplBox == undefined ? 36 : $scope.listItemTemplBox.offsetHeight;
-
-        var avaiableHeight=tableContainerHeight - headButtonHeight - $scope.heightQueueTable;
+        var heightQueueTable = $scope.queueTable.offsetHeight>0? $scope.queueTable.offsetHeight:0;;
+        
+        var scrollHeight=($scope.tableContainer.scrollWidth>$scope.tableContainer.offsetWidth) ? 20:0;
+        
+        var avaiableHeight=tableContainerHeight - headButtonHeight - heightQueueTable-scrollHeight;
         if ($scope.firstLoad && $scope.noPagination != true) {
         	avaiableHeight-=30;
         }
@@ -651,6 +652,7 @@ function TableControllerFunction($scope, $timeout) {
             $scope.firstLoad = false;
         }
     };
+
     $scope.firstLoad = $scope.disableAutoLoadOnInit!=undefined ? false : true;
     $timeout(function () {
         if ($scope.noPagination != true) {
@@ -671,17 +673,7 @@ function TableControllerFunction($scope, $timeout) {
 
   
     $scope.$watch(function(){
-    	 var elem = angular.element(document.querySelector('angular-table.' + $scope.id + 'ItemBox'))[0];
-         var boxHeight= elem == undefined ? null : elem.offsetHeight;
-         var itemNumber= $scope.ngModel==undefined ? 0 : $scope.ngModel.length;
-         
-         if($scope.enableChangeDetector){
-        	 return {items:itemNumber,height:boxHeight,ngModel:$scope.ngModel};
-         }else{
-        	 return {items:itemNumber,height:boxHeight};
-         }
-         
-//    	return {items:itemNumber,height:boxHeight};
+         return $scope.enableChangeDetector ?  {items:($scope.ngModel==undefined ? 0 : $scope.ngModel.length),height:($scope.tableItem[0] == undefined ? null : $scope.tableItem[0].offsetHeight),ngModel:$scope.ngModel} : {items:($scope.ngModel==undefined ? 0 : $scope.ngModel.length),height:($scope.tableItem[0] == undefined ? null : $scope.tableItem[0].offsetHeight)};
     }, function(newValue,oldValue){
     	if ($scope.noPagination != true &&( newValue.items != 0 ||  newValue.height != 0) && $scope.fixedItemPerPage!=true) {
 	    	if(newValue!=oldValue){
@@ -705,26 +697,37 @@ function TableControllerFunction($scope, $timeout) {
         }
     });
     
-    
-   
-$scope.loadTheadColumn=function(){
- 
-    $timeout(function(){
-    	var width=$scope.getPrincipalTableHeadWidth();
-    	var tableContentBox=angular.element(document.querySelectorAll('angular-table.' + $scope.id + 'ItemBox #angularTableContentBox'));
-    	var fakeDiv = angular.element(document.querySelectorAll('angular-table.' + $scope.id + 'ItemBox .faketable th>div'));
-        var principalThDiv = angular.element(document.querySelectorAll('angular-table.' + $scope.id + 'ItemBox .principalTable th>div'));
-        for(var i=0;i<principalThDiv.length;i++){
-//        	console.log(principalThDiv[i])
-        	angular.element(fakeDiv[i]).css("width",angular.element(principalThDiv[i])[0].offsetWidth+"px");
-        }
-        if(tableContentBox[0] && tableContentBox[0].offsetWidth!=width){
-        	tableContentBox.css("width",width+"px");
-        }
-    },0)
-    
 
-}
+    
+    var ptThead;
+	$scope.getPrincipalTableHeadWidth=function(){
+		if(ptThead==undefined){
+			ptThead = angular.element($scope.tableItem[0].querySelector('#angularTableContentBox .principalTable thead'))[0];
+		}
+	 	  return ptThead == undefined ? null : ptThead.offsetWidth;
+	}
+	
+	var lastTheadVal=0; 
+	$scope.loadTheadColumn=function(width){
+		lastTheadVal=width;
+	    $timeout(function(){
+	    	if(angular.equals(lastTheadVal,width)){
+	//    		var width=$scope.getPrincipalTableHeadWidth();
+	    		var tableContentBox=angular.element($scope.tableItem[0].querySelector('#angularTableContentBox'));
+	    		var fakeDiv = angular.element($scope.tableItem[0].querySelector('.faketable th>div'));
+	    		var principalThDiv = angular.element($scope.tableItem[0].querySelector('.principalTable th>div'));
+	    		for(var i=0;i<principalThDiv.length;i++){
+	//        	console.log(principalThDiv[i])
+	    			angular.element(fakeDiv[i]).css("width",angular.element(principalThDiv[i])[0].offsetWidth+"px");
+	    		}
+	    		if(tableContentBox[0] && tableContentBox[0].offsetWidth!=width){
+	    			tableContentBox.css("width",width+"px");
+	    		}
+	    	}
+	    },0)
+	    
+	
+	}
  
 	$scope.isVisibleRowFunction=function(row){
 		
@@ -965,8 +968,8 @@ function TableHeaderControllerFunction($scope, $timeout) {
     $scope.multiSelectVal = false;
     $scope.selectAll = function () {
         $scope.multiSelectVal = !$scope.multiSelectVal;
-        var template = angular.element(document.querySelector("angular-table." + $scope.id + "ItemBox"));
-        var table = angular.element(template[0].querySelector("table.principalTable"));
+//        var template = angular.element(document.querySelector("angular-table." + $scope.id + "ItemBox"));
+        var table = angular.element($scope.tableItem[0].querySelector("table.principalTable"));
         var tbody = angular.element(table[0].querySelector("tbody"));
         var rows = tbody[0].children;
 
@@ -1011,10 +1014,12 @@ function TableHeaderControllerFunction($scope, $timeout) {
                 reverseOrdering: $scope.reverse_col_ord
             });
         }
-    };
-    
-    $scope.getColumnValue=function(row,columnName,columnTransformationText){
-    	
+        
+        if($scope.loadTheadColumn!=undefined){
+        	$scope.loadTheadColumn($scope.getPrincipalTableHeadWidth());
+        }
+    }; 
+    $scope.getColumnValue=function(row,columnName,columnTransformationText){ 
     	var splname=columnName.split(".");
     	var toReturn="";
     	if(splname.length>1){
@@ -1060,7 +1065,7 @@ function TableFooterControllerFunction($scope, $timeout) {
 	
 	$scope.tmpSearchCurrPage;
 	$scope.setCurrentPageFromInput=function(num,paginationItem,functChangePage){
-		debugger
+		
     	if(angular.equals(num.trim(),"")){
     		return num
     	}
