@@ -3,7 +3,8 @@ angular.module('cockpitModule').controller("documentManagerController",["$scope"
 angular.module('cockpitModule').controller("associationGroupController",["$scope","sbiModule_translate","cockpitModule_realtimeServices", associationGroupController]);
 
 function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitModule_datasetServices,cockpitModule_widgetSelection,$mdDialog,cockpitModule_template,cockpitModule_analyticalDrivers){
-	 $scope.datasetTableActions=[
+	console.log("entrato: datasetManagerController")	 
+	$scope.datasetTableActions=[
 	                             {
 					    			label : 'delete',
 					    			 icon:'fa fa-trash' ,  
@@ -115,11 +116,13 @@ function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitMod
 										},
 	                                    {
 	                                    	label:"Label",
-	                                    	name:"label"
+	                                    	name:"label",
+	                                    	static:true
 	                                    },
 	                                    {
 	                                    	label:"Name",
-	                                    	name:"name"
+	                                    	name:"name",
+	                                    	static:true
 	                                    },
 	                                    {
 	                                    	label:"Use Cache",
@@ -176,12 +179,13 @@ function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitMod
 
 				  $mdPanel.open(config);
 	 }
-	
+	 console.log("uscito: datasetManagerController")	
 	
 }
 
 function documentManagerController($scope,sbiModule_translate,$mdPanel,cockpitModule_documentServices,cockpitModule_widgetSelection,$mdDialog,cockpitModule_analyticalDrivers ){
-	 $scope.documentTableActions=[
+	console.log("entrato: documentManagerController")	
+	$scope.documentTableActions=[
 	                             {
 					    			label : 'delete',
 					    			 icon:'fa fa-trash' ,  
@@ -246,11 +250,13 @@ function documentManagerController($scope,sbiModule_translate,$mdPanel,cockpitMo
 	 $scope.cockpitDocumentTableColumns=[
 	                                    {
 	                                    	label:"Label",
-	                                    	name:"DOCUMENT_LABEL"
+	                                    	name:"DOCUMENT_LABEL",
+	                                    	static:true
 	                                    },
 	                                    {
 	                                    	label:"Name",
-	                                    	name:"DOCUMENT_NAME"
+	                                    	name:"DOCUMENT_NAME",
+	                                    	static:true
 	                                    }
 	                                    ]
 	 
@@ -288,10 +294,11 @@ function documentManagerController($scope,sbiModule_translate,$mdPanel,cockpitMo
 
 				  $mdPanel.open(config);
 	 }
-	
+		console.log("uscito: documentManagerController")	
 }
 
 function associationGroupController($scope,sbiModule_translate,cockpitModule_realtimeServices){
+	console.log("entrato: associationGroupController")	
 	$scope.realtimeServices=cockpitModule_realtimeServices;
 	$scope.rtData=[];
 	$scope.$on("refreshFrequencyRTData",function(){
@@ -301,10 +308,12 @@ function associationGroupController($scope,sbiModule_translate,cockpitModule_rea
 		},$scope.rtData)
 		
 	})
+	console.log("uscito: associationGroupController")	
 }
 
 function cockpitDataConfigurationController($scope,$rootScope,sbiModule_translate,cockpitModule_template,cockpitModule_datasetServices,sbiModule_restServices,$mdPanel,$mdDialog,mdPanelRef,cockpitModule_widgetSelection,cockpitModule_documentServices,cockpitModule_widgetServices,cockpitModule_widgetSelectionUtils,cockpitModule_widgetSelection,cockpitModule_templateServices,cockpitModule_properties,$rootScope){
-		    	 $scope.translate=sbiModule_translate;
+	console.log("entrato: cockpitDataConfigurationController")	    
+	$scope.translate=sbiModule_translate;
 		    	 $scope.baseScriptPath=baseScriptPath;
 		    	 $scope.cockpitModule_template=cockpitModule_template;
 		    	 $scope.datasetList=cockpitModule_datasetServices.getDatasetList();
@@ -500,5 +509,6 @@ function cockpitDataConfigurationController($scope,$rootScope,sbiModule_translat
 		    	$scope.refreshFrequencyRTData=function(){
 		    		$scope.$broadcast("refreshFrequencyRTData")
 		    	}
-		      };
+	console.log("uscito: cockpitDataConfigurationController")	 
+};
 

@@ -89,7 +89,7 @@ angular.module("cockpitModule").factory("cockpitModule_properties",function(){
 
 <title>Cockpit engine</title>
 </head>
-<body class="kn-cockpit" ng-controller="cockpitMasterController" layout="column">
+<body class="kn-cockpit " ng-class="{'disableanimation':sbiModule_device.browser.name!='chrome'}" md-no-ink ng-controller="cockpitMasterController" layout="column">
 
 	<cockpit-toolbar config="configurator"></cockpit-toolbar>
 	<cockpit-sheet flex ng-if="datasetLoaded"></cockpit-sheet>

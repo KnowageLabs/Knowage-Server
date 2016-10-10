@@ -202,6 +202,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					var obj = {};
 					obj.label= $scope.ngModel.content.columnSelectedOfDataset[i]['aliasToShow'];
 					obj.name = $scope.ngModel.content.columnSelectedOfDataset[i]['alias'];
+					obj.static=true;
 					if($scope.ngModel.content.columnSelectedOfDataset[i].isCalculated){
 						obj.customRecordsClass="noClickCursor";
 					}

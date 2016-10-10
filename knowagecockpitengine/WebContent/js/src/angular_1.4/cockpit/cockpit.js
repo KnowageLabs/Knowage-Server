@@ -34,10 +34,11 @@ cockpitApp.config(['$mdThemingProvider', function($mdThemingProvider) {
  
 
 
-cockpitApp.controller("cockpitMasterController",['$scope','cockpitModule_widgetServices','cockpitModule_template','cockpitModule_datasetServices','cockpitModule_realtimeServices','cockpitModule_properties','cockpitModule_templateServices','$rootScope','$q',cockpitMasterControllerFunction]);
-function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,cockpitModule_template,cockpitModule_datasetServices,cockpitModule_realtimeServices,cockpitModule_properties,cockpitModule_templateServices,$rootScope,$q){
+cockpitApp.controller("cockpitMasterController",['$scope','cockpitModule_widgetServices','cockpitModule_template','cockpitModule_datasetServices','cockpitModule_realtimeServices','cockpitModule_properties','cockpitModule_templateServices','$rootScope','$q','sbiModule_device',cockpitMasterControllerFunction]);
+function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,cockpitModule_template,cockpitModule_datasetServices,cockpitModule_realtimeServices,cockpitModule_properties,cockpitModule_templateServices,$rootScope,$q,sbiModule_device){
 	$scope.cockpitModule_widgetServices=cockpitModule_widgetServices;
 	$scope.cockpitModule_template=cockpitModule_template;
+	$scope.sbiModule_device=sbiModule_device;
 	//load the dataset list
 	$scope.datasetLoaded=false;
 	cockpitModule_datasetServices.loadDatasetList().then(function(){
