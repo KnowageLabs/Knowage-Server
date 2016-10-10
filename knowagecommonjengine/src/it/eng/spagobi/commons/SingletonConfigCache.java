@@ -17,12 +17,7 @@
  */
 package it.eng.spagobi.commons;
 
-import it.eng.spagobi.commons.bo.Config;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IConfigDAO;
-
 import java.util.HashMap;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -40,22 +35,22 @@ public class SingletonConfigCache implements ISingletonConfigCache {
 	public SingletonConfigCache() {
 		logger.debug("IN");
 
-		IConfigDAO dao = null;
-		try {
-			dao = DAOFactory.getSbiConfigDAO();
-			List<Config> allConfig = dao.loadAllConfigParameters();
-			if (allConfig.size() == 0)
-				logger.error("The table sbi_config is EMPTY");
-			for (Config config : allConfig) {
-				cache.put(config.getLabel(), config.getValueCheck());
-				logger.info("Add: " + config.getLabel() + " / " + config.getValueCheck());
-			}
-		} catch (Exception e) {
-			logger.error("Impossible to load configuration for full kpi engine", e);
-			e.printStackTrace();
-		} finally {
-			logger.debug("OUT");
-		}
+		// IConfigDAO dao = null;
+		// try {
+		// dao = DAOFactory.getSbiConfigDAO();
+		// List<Config> allConfig = dao.loadAllConfigParameters();
+		// if (allConfig.size() == 0)
+		// logger.error("The table sbi_config is EMPTY");
+		// for (Config config : allConfig) {
+		// cache.put(config.getLabel(), config.getValueCheck());
+		// logger.info("Add: " + config.getLabel() + " / " + config.getValueCheck());
+		// }
+		// } catch (Exception e) {
+		// logger.error("Impossible to load configuration for full kpi engine", e);
+		// e.printStackTrace();
+		// } finally {
+		// logger.debug("OUT");
+		// }
 	}
 
 	public String get(String key) {
