@@ -43,6 +43,7 @@ angular.module('cockpitModule')
 	    	scope.iframeStyle = "height:;min-height:"
 	    },
 	    controller: function($scope, $element){
+	    	$scope.widgetSpinner = false;
 	    	$scope.updateAction = function(actionUrl){
 	    		$scope.actionUrl = actionUrl;
 	    	};
@@ -50,10 +51,8 @@ angular.module('cockpitModule')
 	    		$scope.formParameters = parameters;
 	    	};
 	    	$scope.updateContent = function(actionUrl, parameters, nature, width, height){
+	    		//$scope.widgetSpinner = true;
 	    		var iframe = $element.find('iframe')[0];
-	    		if(height != undefined){
-	    			iframe.style="height:"+height+"px;min-height:"+height+"px";
-	    		}
 	    		if(nature != 'refresh'){
 	    			if(actionUrl){
 	    				$scope.updateAction(actionUrl);
@@ -73,6 +72,12 @@ angular.module('cockpitModule')
 	    			doc.write(form.wrap(doc.createElement('div')).parent().html());
 	    			doc.close();
 	    			doc.getElementById(formId).submit();
+	    			angular.element(iframe).on('load', function() {
+	    				$scope.widgetSpinner = false;
+    				});
+	    		}
+	    		if(height != undefined){
+	    			iframe.style="height:"+height+"px;min-height:"+height+"px";
 	    		}
 	    	};
 	    }
@@ -170,7 +175,7 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 			    				  delete $scope.localModel.chartTemplate;
 			    				  delete $scope.localModel.columnSelectedOfDataset;
 			    				  $scope.confChecked = 0;
-			    				  $scope.showChartConfiguration();
+			    				  //$scope.showChartConfiguration();
 			    			  }
 			    			  $scope.localModel.datasetLabel = ds.label;
 			    		  }
