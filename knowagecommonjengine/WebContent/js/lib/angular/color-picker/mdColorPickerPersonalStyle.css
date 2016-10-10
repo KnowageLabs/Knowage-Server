@@ -1,0 +1,39 @@
+.md-color-picker-container .md-color-picker-tabs md-tabs:not(.md-no-tab-content):not(.md-dynamic-height) {
+    min-height: 248px;
+}
+
+.md-color-picker-sliders>div{
+	width: 100%;
+}
+
+.md-color-picker-container .md-color-picker-history button {
+    position: absolute;
+    right: 0px;
+    bottom: 0px;
+}
+
+
+/* for angularja-color-picker */
+.color-picker-swatch-left{
+	display: block;
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    top: 5px;
+}
+
+.color-picker-input{
+	padding-left: 24px!important;
+}
+
+.color-picker-panel{
+	position: relative !important;
+}
+
+.colorInputContainer{
+	min-height: 34px;
+}
+md-input-container.colorInputContainer .md-errors-spacer {
+	display: none;
+	
+}
