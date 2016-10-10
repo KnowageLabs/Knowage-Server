@@ -145,6 +145,8 @@ Ext.extend(Sbi.commons.ExecutionPanel, Ext.Panel, {
     var parJSON=Ext.urlDecode(this.parameters);
     //alert(parJSON.toSource());
     
+    var mio = this.services['getStartService'];
+    
     	var params = {
         'DOCUMENT_ID' : this.document_id
     	};
