@@ -1,0 +1,37 @@
+function generateDatamartOptionsController(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog,
+		$mdToast,multipartForm,sbiModule_download,sbiModule_messaging,sbiModule_config,sbiModule_user,sbiModule_messaging,selectedBusinessModel,userId,catalogName,schemaName){
+	
+	//controller variables
+	$scope.translate=sbiModule_translate;
+	$scope.selectedBusinessModel=selectedBusinessModel;
+	$scope.modelName=selectedBusinessModel.name;
+	$scope.schemaName = schemaName;
+	$scope.catalogName = catalogName;
+	$scope.isGeneratedForRegistry = false;
+	
+	//build the datamart
+	$scope.buildDatamart = function(){
+
+		sbiModule_restServices.alterContextPath(sbiModule_config.contextMetaName);
+		sbiModule_restServices.promiseGet("1.0/metaWeb", "buildModel/"+$scope.selectedBusinessModel.id+"?user_id="+sbiModule_user.userId+"&model="+$scope.modelName+"&schema="+$scope.schemaName+"&catalog="+$scope.catalogName+"&registry="+$scope.isGeneratedForRegistry)
+		.then(
+				function(response) {
+					//ok case
+					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'check');
+					$scope.getVersions($scope.selectedBusinessModel.id);
+				},
+				function(response) {
+					//errors case
+					sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.catalogues.generation.error"));
+					$scope.getVersions($scope.selectedBusinessModel.id);
+				}
+		);
+
+	}
+	
+	//cancel action
+	$scope.cancel = function(){
+		$mdDialog.cancel();
+	};
+
+}

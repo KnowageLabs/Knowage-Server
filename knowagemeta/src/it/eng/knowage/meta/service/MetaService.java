@@ -130,7 +130,7 @@ public class MetaService extends AbstractSpagoBIResource {
 
 	/**
 	 * Gets a json like this {datasourceId: 'xxx', physicalModels: ['name1', 'name2', ...], businessModels: ['name1', 'name2', ...]}
-	 * 
+	 *
 	 * @param dsId
 	 * @return
 	 */
@@ -525,12 +525,53 @@ public class MetaService extends AbstractSpagoBIResource {
 	}
 
 	@GET
+	@Path("/modelInfos/{modelid}")
+	public Response getModelInformations(@PathParam("modelid") Integer modelid, @Context HttpServletRequest req) {
+		IMetaModelsDAO dao = DAOFactory.getMetaModelsDAO();
+		MetaModel metaModel = dao.loadMetaModelById(modelid);
+		Model model = getModelWeb(metaModel.getName());
+
+		PhysicalModel physicalModel = model.getPhysicalModels().get(0);
+		String schemaName = physicalModel.getSchema();
+		String catalogName = physicalModel.getCatalog();
+
+		JSONObject jsonData = new JSONObject();
+		try {
+			jsonData.put("schema", schemaName);
+			jsonData.put("catalogName", catalogName);
+
+		} catch (JSONException e) {
+			logger.error(e);
+			throw new SpagoBIServiceException(req.getPathInfo(), e);
+		}
+		return Response.ok(jsonData.toString()).build();
+
+	}
+
+	@GET
 	@Path("/buildModel/{modelid}")
 	public Response buildModel(@PathParam("modelid") Integer modelid, @Context HttpServletRequest req) {
 		IMetaModelsDAO dao = DAOFactory.getMetaModelsDAO();
 		MetaModel metaModel = dao.loadMetaModelById(modelid);
 		Model model = getModelWeb(metaModel.getName());
 		// meta model version (content)
+		String modelName = req.getParameter("model");
+		String schemaName = req.getParameter("schema");
+		String catalogName = req.getParameter("catalog");
+		String isForRegistry = req.getParameter("registry");
+
+		BusinessModel businessModel = model.getBusinessModels().get(0);
+
+		// set specified model name
+		setModelName(businessModel, modelName);
+
+		// set specified schema name for generation
+		setSchemaName(businessModel, schemaName);
+
+		// set specified catalog name for generation
+		setCatalogName(businessModel, catalogName);
+
+		boolean isUpdatable = Boolean.parseBoolean(isForRegistry);
 
 		JpaMappingJarGenerator jpaMappingJarGenerator = new JpaMappingJarGenerator();
 
@@ -548,7 +589,7 @@ public class MetaService extends AbstractSpagoBIResource {
 			java.nio.file.Path outDir = Files.createTempDirectory("model_");
 
 			try {
-				jpaMappingJarGenerator.generate(model.getBusinessModels().get(0), outDir.toString(), false, new File(libDir), content.getFileModel());
+				jpaMappingJarGenerator.generate(businessModel, outDir.toString(), isUpdatable, new File(libDir), content.getFileModel());
 			} catch (GenerationException e) {
 				logger.error(e);
 				errors.addErrorKey("metaWeb.generation.generic.error");
@@ -894,6 +935,27 @@ public class MetaService extends AbstractSpagoBIResource {
 		return Response.ok(patch.toString()).build();
 	}
 
+	private void setModelName(BusinessModel businessModel, String modelName) {
+		if ((modelName != null) && (modelName.length() > 0)) {
+			businessModel.setName(modelName);
+		}
+	}
+
+	private void setSchemaName(BusinessModel businessModel, String schemaName) {
+		if ((schemaName != null) && (schemaName.length() > 0)) {
+			PhysicalModel physicalModel = businessModel.getPhysicalModel();
+			physicalModel.setSchema(schemaName);
+		}
+
+	}
+
+	private void setCatalogName(BusinessModel businessModel, String catalogName) {
+		if ((catalogName != null) && (catalogName.length() > 0)) {
+			PhysicalModel physicalModel = businessModel.getPhysicalModel();
+			physicalModel.setCatalog(catalogName);
+		}
+	}
+
 	private void applyBusinessModel(JsonNode newBM, Model model) {
 		String name = newBM.get("name").textValue();
 		String description = newBM.get("description").textValue();
@@ -1138,7 +1200,7 @@ public class MetaService extends AbstractSpagoBIResource {
 	 * {businessModels:[tables:[...]],businessModels:[businessTables:[...]]} Furthermore jsonDiff is zero-based numbering but jxpath is 1-based numbering
 	 * Another difference is that jsonDiff's notation used to select a property of a nth element of a collection is "parent/n/property" but jxpath does same
 	 * selection in this way "parent[n]/property"
-	 * 
+	 *
 	 * @param path
 	 * @return path cleaned
 	 */

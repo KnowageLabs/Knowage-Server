@@ -701,6 +701,46 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 			 //sbiModule_restServices.alterContextPath("/knowage");
 		 }
 		 
+		 /**
+		  * Generate Datamart Options Dialog
+		  */
+		 
+		 $scope.openGenerateDatamartDialog = function() {
+			 sbiModule_restServices.alterContextPath(sbiModule_config.contextMetaName);
+				sbiModule_restServices.promiseGet("1.0/metaWeb", "modelInfos/"+$scope.selectedBusinessModel.id+"?user_id="+sbiModule_user.userId)
+				.then(
+						function(response) {							
+							//parse the response to get schema and catalog
+							var catalogName = "";
+							var schemaName  = "";
+							if (response.data != undefined){
+								if (response.data.catalogName != undefined && response.data.catalogName != null){
+									catalogName = response.data.catalogName;
+								}
+								if (response.data.schemaName != undefined && response.data.schemaName != null){
+									schemaName = response.data.schemaName;
+								}
+							}
+							
+							$mdDialog.show({
+								controller: generateDatamartOptionsController,					
+								preserveScope: true,
+								locals: {selectedBusinessModel:$scope.selectedBusinessModel,userId:sbiModule_user.userId,catalogName:catalogName,schemaName:schemaName},
+								templateUrl:sbiModule_config.contextName + '/js/src/angular_1.4/tools/catalogues/templates/generateDatamartOptions.html',
+								clickOutsideToClose:false,
+								escapeToClose :false,
+								fullscreen: true 
+							});
+						},
+						function(response) {
+							//errors case
+							sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.catalogues.generation.infomation.error"));
+						}
+				);
+			 
+
+		 }
+		 
 		 $scope.createBusinessModels=function(){
 	 
 			var dsId;

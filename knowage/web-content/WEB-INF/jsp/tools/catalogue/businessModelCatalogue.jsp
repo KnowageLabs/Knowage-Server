@@ -49,6 +49,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <%-- <script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/catalogues/businessModelCatalogue.js"></script> --%>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/catalogues/businessModelCatalogue.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/catalogues/generateDatamartOptionsController.js"></script>
+
+
 
 		<!-- Retrieveing datasets used in creating a federation definition, as well as the whole relationships column -->
 		<%
@@ -146,8 +149,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       				<md-button ng-if="metaWebFunctionality" class="md-raised" aria-label="Profile" ng-click="createBusinessModels()" ng-disabled="selectedBusinessModel.dataSourceLabel==undefined">
 						{{translate.load("sbi.bm.metaweb")}}
 					</md-button>
-					
-					<md-button ng-if="metaWebFunctionality && togenerate" class="md-raised" aria-label="Profile" ng-click="buildBusinessModels()" ng-disabled="selectedBusinessModel.dataSourceLabel==undefined">
+					<md-button ng-if="metaWebFunctionality && togenerate" class="md-raised" aria-label="Profile" ng-click="openGenerateDatamartDialog()" ng-disabled="selectedBusinessModel.dataSourceLabel==undefined">
 						{{translate.load("sbi.bm.generate")}}
 					</md-button>
 					
