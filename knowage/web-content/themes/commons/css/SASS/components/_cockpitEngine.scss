@@ -22,6 +22,9 @@
 						&>cockpit-document-widget>iframe{
 							display:none;
 						}
+						&>cockpit-chart-widget iframe{
+							display:none;
+						}
 					}
 				}
 			}
