@@ -347,7 +347,6 @@
 			
 			<classpath location="${runtime.lib}/junit.jar" />
 			<classpath location = "../../../../knowagewhatifengine/ant-build/knowagewhatifengine/WEB-INF/classes"/>
-			<classpath refid="web.classpath" />
 			
 			<batchtest fork="no" todir="${test}">
 				<fileset dir="${test}">
@@ -369,7 +368,7 @@
 			
 		<exec dir="${conf.js}" executable="/bin/sh" >
 			<arg value ="-c"/>
-			<arg value ="${protractor} conf.js "/>
+			<arg value ="${protractor} conf.js"/>
 		</exec>
 													
 	</target>
