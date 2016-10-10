@@ -335,49 +335,43 @@
 		<antcall target="create.war" />
 	</target>
 	
-	<target name="junit" depends="compile.tests">
-		<echo>Junit in whatif</echo>
+	<target name="test" depends="compile.tests">
+		<antcall target="test.junit" />
+		<antcall target="test.protractor"/>
+	
+	</target>
+	
+	<target name="test.junit" >
+		
 		<junit haltonfailure ="false" printsummary="true" showoutput="true">
 			
 			<classpath location="${runtime.lib}/junit.jar" />
 			<classpath location = "../../../../knowagewhatifengine/ant-build/knowagewhatifengine/WEB-INF/classes"/>
 			<classpath refid="web.classpath" />
+			
 			<batchtest fork="no" todir="${test}">
-						    <fileset dir="${test}">
+				<fileset dir="${test}">
 						    	
-						      <include name="**/ProbaTest.java"/>
-						      <exclude name="**/AllTests.java"/>
-						    </fileset>
-						  </batchtest>
+					<include name="**/ProbaTest.java"/>
+					<exclude name="**/AllTests.java"/>
+					
+				</fileset>
+				
+			</batchtest>
+			
 			<formatter  type="xml"/>
+			
 		</junit>
 		
-		
-		
-
 	</target>
 	
-		<target name="protractor" depends="junit">
-			<parallel>
-				<exec dir="${conf.js}" executable="/bin/sh" >
-					<arg value ="-c"/>
-					<arg value ="${webdriver_manager} start "/>					 	
-				</exec>
-				<sequential>
-					<sleep seconds="30"/>
-									<exec dir="${conf.js}" executable="/bin/sh" >
-															<arg value ="-c"/>
-															<arg value ="${protractor} conf.js "/>
-									</exec>
-									<exec dir="${conf.js}" executable="/bin/sh" >
-													<arg value ="-c"/>
-													<arg value ="curl http://localhost:4444/selenium-server/driver/?cmd=shutDownSeleniumServer"/> 
-									</exec>
-				
-				</sequential>
-				
-			</parallel>
-						
+	<target name="test.protractor" >
+			
+		<exec dir="${conf.js}" executable="/bin/sh" >
+			<arg value ="-c"/>
+			<arg value ="${protractor} conf.js "/>
+		</exec>
+													
 	</target>
 	
 	
