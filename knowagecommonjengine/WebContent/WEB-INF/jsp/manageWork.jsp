@@ -8,22 +8,21 @@ If a copy of the MPL was not distributed with this file, You can obtain one at h
 author: Andrea Gioia (andrea.gioia@eng.it)
 --%>
 
-<%@ page language="java" 
-	     contentType="text/html; charset=UTF-8" 
-	     pageEncoding="UTF-8"%>	
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA IMPORTS															--%>
 <%-- ---------------------------------------------------------------------- --%>
+
+
+
 <%@page import="it.eng.spago.configuration.*"%>
 <%@page import="it.eng.spago.base.*"%>
 <%@page import="it.eng.spagobi.utilities.engines.EngineConstants"%>
-<%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
-<%@page import="it.eng.spago.security.IEngUserProfile"%>
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
 <%@page import="it.eng.spagobi.engines.commonj.*"%>
-<%@page import="java.util.Locale"%>
 <%@page import="java.util.Map"%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.Iterator"%>
@@ -32,14 +31,8 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 <%-- JAVA CODE 																--%>
 <%-- ---------------------------------------------------------------------- --%>
 <%
-	UserProfile profile;
-	Locale locale;
-	String isFromCross;
-	boolean isPowerUser;
-	Integer resultLimit;
-	boolean isMaxResultLimitBlocking;
-	boolean isQueryValidationEnabled;
-	boolean isQueryValidationBlocking;
+	
+
 	String spagobiServerHost;
 	String spagobiContext;
 	String spagobiSpagoController;
@@ -52,8 +45,6 @@ author: Andrea Gioia (andrea.gioia@eng.it)
     spagobiContext = request.getParameter(SpagoBIConstants.SBI_CONTEXT);
     spagobiSpagoController = request.getParameter(SpagoBIConstants.SBI_SPAGO_CONTROLLER);
     docId = request.getParameter("document");
-
-        
     
 	Map parsMap=request.getParameterMap();
 	Map<String,String> paramsMapToSend = new HashMap<String, String>();
@@ -134,68 +125,52 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 <%@page import="it.eng.spagobi.engines.commonj.services.StartWorkAction"%>
 <%@page import="it.eng.spagobi.utilities.engines.AuditServiceProxy"%>
 <%@page import="it.eng.spagobi.services.proxy.EventServiceProxy"%>
-<%@page import="java.util.HashMap"%><html>
-	
-	<head>
-		<%@include file="commons/includeExtJS.jspf" %>
-	    <%@include file="commons/includeSrcJS.jspf" %>
-	</head>
-	
-	<body>
-	
-    	<script type="text/javascript">  
-	     
-	     var generalPanel=null;
-	        
-	        Ext.onReady(function(){
-	        	Ext.QuickTips.init();   
-	        	
-	        	Sbi.config = {};
-	        	
-	        	var url = {
-			    	host: '<%= request.getServerName()%>'
-			    	, port: '<%= request.getServerPort()%>'
-			    	, contextPath: '<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?
-			    	   				  request.getContextPath().substring(1):
-			    	   				  request.getContextPath()%>'
-			    	    
-		    	};
-		
-			    Sbi.config.serviceRegistry = new Sbi.commons.ServiceRegistry({
-			    	baseUrl: url
-			    });
-	        	//alert('prima');
-	        	generalPanel= new Sbi.commons.ExecutionPanel({document_id:<%=docId%>, parameters:'<%=parametersString%>'});
-	        	//alert('dopo');
-	        	//generalPanel.monitorStatus();
-		        
-		        var viewport = new Ext.Viewport({
-	           		items: [generalPanel]
-	           	});  
-			        
-	           //	setTimeout("timer()", 5000);
-	           	timer();
-	           	
-	      	});
-	      	
-	      	var val;
-	     function timer(){
-			//alert(generalPanel);	
-			generalPanel.statusProcess(<%=docId%>);
-			
-			if(generalPanel.status==2 || generalPanel.status==4)
-			{
-			}
-			else{
-			setTimeout("timer()", 3000);	
-			}
-	}
-	
-		
-	      	
-	      	
-	    </script>
-	
-	</body>
+<%@page import="java.util.HashMap"%>
+
+<html>
+
+<head>
+<%@include file="/WEB-INF/jsp/commons/angular/angularResource.jsp"%>
+<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
+<link rel="stylesheet" type="text/css"
+	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css">
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/js/src/angular_1.x/job/jobManagement.js">
+	</script>
+
+</head>
+
+<body ng-cloack ng-app="jobManagementModule">
+    
+	<div ng-controller="JobController as jobCtrl" layout="row"
+		ng-init="jobCtrl.initValues('<%=docId%>', '<%=parametersString%>');">
+
+
+     <div flex="20" layout-align="center" layout-fill>  
+        <md-button ng-click="jobCtrl.startJob()" class="md-raised"
+            ng-show="jobCtrl.currentStatus==='notstarted'"> 
+                {{translate.load("sbi.commonj.start")}}
+        </md-button>
+        <md-button ng-click="jobCtrl.stopJob()" class="md-raised"
+            ng-show="jobCtrl.currentStatus==='started'"> 
+                        {{translate.load("sbi.commonj.stop")}}
+            </md-button>
+        <md-button ng-click="" class="md-no-focus" ng-disabled="true"
+            ng-show="jobCtrl.currentStatus==='completed' || jobCtrl.currentStatus==='rejected'"> 
+            </md-button>            
+      </div>
+
+
+     <div>
+		<angular-table flex id='jobTableId' ng-model='jobCtrl.jobList'
+			columns='jobColumnNames'
+			> </angular-table>
+     </div>
+      
+	</div>
+
+
+
+</body>
 
 </html>
