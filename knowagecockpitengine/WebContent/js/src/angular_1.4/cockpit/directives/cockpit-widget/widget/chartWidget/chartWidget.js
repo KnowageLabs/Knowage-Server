@@ -40,10 +40,8 @@ angular.module('cockpitModule')
 	    	scope.formId = attrs.id + "_formId" + genId;
 	    	scope.iframeId = attrs.iframeId ? attrs.iframeId : (attrs.id + "_iframeId" + genId);
 	    	scope.iframeClass = attrs.class;
-	    	scope.iframeStyle = "height:;min-height:"
 	    },
 	    controller: function($scope, $element){
-	    	$scope.widgetSpinner = false;
 	    	$scope.updateAction = function(actionUrl){
 	    		$scope.actionUrl = actionUrl;
 	    	};
@@ -51,7 +49,6 @@ angular.module('cockpitModule')
 	    		$scope.formParameters = parameters;
 	    	};
 	    	$scope.updateContent = function(actionUrl, parameters, nature, width, height){
-	    		//$scope.widgetSpinner = true;
 	    		var iframe = $element.find('iframe')[0];
 	    		if(nature != 'refresh'){
 	    			if(actionUrl){
@@ -72,9 +69,6 @@ angular.module('cockpitModule')
 	    			doc.write(form.wrap(doc.createElement('div')).parent().html());
 	    			doc.close();
 	    			doc.getElementById(formId).submit();
-	    			angular.element(iframe).on('load', function() {
-	    				$scope.widgetSpinner = false;
-    				});
 	    		}
 	    		if(height != undefined){
 	    			iframe.style="height:"+height+"px;min-height:"+height+"px";
@@ -248,7 +242,7 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 			  				if ( response == 'ok' ) {
 			  				}
 			  			});
-			  		}
+			  		  }
 			      },
 				disableParentScroll: true,
 				templateUrl: baseScriptPath+ '/directives/cockpit-widget/widget/chartWidget/templates/chartWidgetEditPropertyTemplate.html',
@@ -266,42 +260,9 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 	}
 
 	$scope.reloadWidgetsByChartEvent = function(event){
-		var fieldValue = event.point.name;
-		// Retrieving fieldMeta
-		/*
-		var fieldMeta;
-		var isWidgetUpdateable = this.wgeneric.incomingeventsenabled;
-		var aggregationCategories = (this.wconf.aggregations && this.wconf.aggregations.categories)?
-				this.wconf.aggregations.categories : [];
-		
-		if(!isWidgetUpdateable && aggregationCategories.length > 0) {
-			fieldMeta = {};
-			fieldMeta['header'] = aggregationCategories[0].columnName;
-			fieldMeta = toReturn;
-		} else {
-			var store = this.getStore();
-			var records = store.getRange();
-			var column;
-			outerloop: for(var i = 0; i < records.length; i++) {
-				var tmpData = records[i].getData();
-				for (var key in tmpData) {
-					if (tmpData[key] == fieldValue) {
-						column = key;
-						break outerloop;
-					}
-				}
-			}
-			fieldMeta = this.getFieldMetaByName(column);
-		}*/
-		
-		//TODO check this
+		var columnValue = event.point.name;
 		var columnName = $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY.name
-		
-		var dataset = {label: $scope.ngModel.content.datasetLabel};
-		cockpitModule_widgetSelection.getAssociativeSelections(fieldValue, columnName, null, dataset).then(function(response) {
-			cockpitModule_widgetSelection.refreshAllAssociatedWidget(false,response);
-		}, function(error) {
-		});
+		$scope.doSelection(columnName,columnValue);
 	}
 };
 function setAggregationsOnChartEngine(wconf){
