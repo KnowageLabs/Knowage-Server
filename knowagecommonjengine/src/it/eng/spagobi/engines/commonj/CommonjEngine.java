@@ -18,6 +18,7 @@
 package it.eng.spagobi.engines.commonj;
 
 import it.eng.spagobi.engines.commonj.runtime.WorksRepository;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 
 import java.io.File;
@@ -40,6 +41,10 @@ public class CommonjEngine {
 			throw new SpagoBIEngineException("Works-Repository not available", "repository.not.available");
 		}
 		return CommonjEngine.worksRepository;
+	}
+
+	public IDataSet getDataSet() {
+		return null;
 	}
 
 	private static void setWorksRepository(WorksRepository worksRepository) {

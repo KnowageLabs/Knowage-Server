@@ -18,9 +18,12 @@
 package it.eng.spagobi.engines.commonj.services;
 
 import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.commonj.runtime.CommonjWorkContainer;
 import it.eng.spagobi.engines.commonj.utils.GeneralUtils;
 import it.eng.spagobi.engines.commonj.utils.ProcessesStatusContainer;
+import it.eng.spagobi.tenant.Tenant;
+import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.utilities.engines.AbstractEngineAction;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.service.JSONFailure;
@@ -53,6 +56,19 @@ public class StatusWorkAction extends AbstractEngineAction {
 	public void service(SourceBean request, SourceBean response) {
 		logger.debug("IN");
 
+		HttpSession session = getHttpSession();
+
+		UserProfile profile = (UserProfile) session.getAttribute("ENG_USER_PROFILE");
+		if (profile != null) {
+			String tenantId = profile.getOrganization();
+			logger.debug("Retrieved tenantId from user profile object : [" + tenantId + "]");
+			// putting tenant id on thread local
+			if (tenantId != null) {
+				Tenant tenant = new Tenant(tenantId);
+				TenantManager.setTenant(tenant);
+			}
+		}
+
 		JSONObject info = null;
 		Object pidO = request.getAttribute("PROCESS_ID");
 		String pid = "";
@@ -74,7 +90,6 @@ public class StatusWorkAction extends AbstractEngineAction {
 		}
 
 		super.service(request, response);
-		HttpSession session = getHttpSession();
 
 		// Get document id, must find
 		// String document_id=null;

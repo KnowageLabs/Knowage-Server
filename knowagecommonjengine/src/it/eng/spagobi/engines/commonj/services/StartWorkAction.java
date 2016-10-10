@@ -21,6 +21,7 @@ package it.eng.spagobi.engines.commonj.services;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spago.base.SourceBeanException;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.commonj.CommonjEngine;
 import it.eng.spagobi.engines.commonj.runtime.CommonjWork;
 import it.eng.spagobi.engines.commonj.runtime.CommonjWorkContainer;
@@ -31,6 +32,8 @@ import it.eng.spagobi.engines.commonj.utils.GeneralUtils;
 import it.eng.spagobi.engines.commonj.utils.ProcessesStatusContainer;
 import it.eng.spagobi.services.content.bo.Content;
 import it.eng.spagobi.services.proxy.ContentServiceProxy;
+import it.eng.spagobi.tenant.Tenant;
+import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.utilities.ParametersDecoder;
 import it.eng.spagobi.utilities.engines.AbstractEngineAction;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
@@ -85,6 +88,17 @@ public class StartWorkAction extends AbstractEngineAction {
 		super.service(request, response);
 		HttpSession session = getHttpSession();
 		HttpServletRequest httpRequest = getHttpRequest();
+
+		UserProfile profile = (UserProfile) session.getAttribute("ENG_USER_PROFILE");
+		if (profile != null) {
+			String tenantId = profile.getOrganization();
+			logger.debug("Retrieved tenantId from user profile object : [" + tenantId + "]");
+			// putting tenant id on thread local
+			if (tenantId != null) {
+				Tenant tenant = new Tenant(tenantId);
+				TenantManager.setTenant(tenant);
+			}
+		}
 
 		// USER_ID
 		Object userIdO = request.getAttribute("USER_ID");
