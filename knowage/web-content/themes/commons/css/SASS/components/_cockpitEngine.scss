@@ -1,4 +1,6 @@
 
+
+
 .kn-cockpit {
     margin: 0;
     padding: 0;
@@ -299,13 +301,7 @@
     .dragCursor {
         cursor: move;
     }
-
-    @-moz-document url-prefix() {
-        /*md-card-title {
-            width: 100%;
-        }*/
-    }
-
+ 
     /* CUSTOM CARDS */
 
 
@@ -575,6 +571,263 @@
 		}
 	}
 	
+	//material version issue 
+.md-panel._md-panel-backdrop.md-default-theme, .md-panel._md-panel-backdrop {
+    background-color: rgba(33,33,33,1.0);
+}
+
+
+
+&.disableanimation{
+		/*
+	 ******************************************
+	 ******************************************
+	   Disable animations
+	 ******************************************
+	 ******************************************
+	*/
+
+	/** disable transitions and animations for tab-contents**/
+	md-tab-content.md-right:not(.md-active) {
+		animation: none;
+		-webkit-animation: none;
+	}
+
+	md-tab-content.md-left:not(.md-active) {
+		animation: none;
+		-webkit-animation: none;
+	}
+
+	md-tab-content.md-left:not(.md-active) * {
+		transition: none !important;
+		transition-duration: 0ms !important;
+		transition-delay: 0ms !important;
+	}
+
+	md-tab-content.md-right:not(.md-active) * {
+		transition: none !important;
+		transition-duration: 0ms !important;
+		transition-delay: 0ms !important;
+	}
+
+	.md-tab {
+		transition: none !important;
+		transition-duration: 0ms !important;
+		transition-delay: 0ms !important;
+	}
+
+	/**disable slider animation for thumbs **/
+	md-slider .md-focus-thumb {
+		transition: none !important;
+		transition-duration: 0ms !important;
+		transition-delay: 0ms !important;
+		animation: none !important;
+		-webkit-animation: none !important;
+	}
+	md-slider ._md-thumb{
+		 transition: none !important;
+		transition-duration: 0ms !important;
+		transition-delay: 0ms !important;
+	}
+	md-option{
+		transition: none !important;
+		transition-duration: 0ms !important;
+		transition-delay: 0ms !important;
+	}
+	/*Disable transition for opening menu.*/
+
+	/**disable on dialogs**/
+	md-dialog._md-transition-out {
+		transition: none !important;
+		transition-duration: 0ms !important;
+		transition-delay: 0ms !important;
+	}
+
+	md-dialog._md-transition-in {
+		transition: none !important;
+		transition-duration: 0ms !important;
+		transition-delay: 0ms !important;
+	}
+
+	/**Disable on ripple buttons**/
+	.md-ripple.md-ripple-placed {
+		transition: none !important;
+		transition-duration: 0ms !important;
+		transition-delay: 0ms !important;
+	}
+
+	.md-ripple-container, .md-ripple-placed {
+		transition: none !important;
+		transition-duration: 0ms !important;
+		transition-delay: 0ms !important;
+	}
+
+	/**Disable checkbox **/
+	md-checkbox ._md-icon {
+		transition: none !important;
+		transition-duration: 0ms !important;
+		transition-delay: 0ms !important;
+	}
+
+	md-tabs-wrapper md-next-button, md-tabs-wrapper md-prev-button {
+		 transition: none !important;
+		transition-duration: 0ms !important;
+		transition-delay: 0ms !important;
+	}
+
+	md-pagination-wrapper {
+		transition: none !important;
+		transition-duration: 0ms !important;
+		transition-delay: 0ms !important;
+	}
+
+	._md-subheader-wrapper:not(.md-sticky-no-effect) {
+		transition: none !important;
+		transition-duration: 0ms !important;
+		transition-delay: 0ms !important;
+	}
+
+	._md-sticky-clone[sticky-state=active]:not(.md-sticky-no-effect) ._md-subheader-inner {
+		-webkit-animation: none !important;
+		animation: none !important;
+	}
+
+	/**Disable on all other buttons**/
+	.md-button {
+		transition: none !important;
+		transition-duration: 0ms !important;
+		transition-delay: 0ms !important;
+	}
+
+	/**Disable fading labels**/
+	md-input-container label {
+		transition: none !important;
+		transition-duration: 0ms !important;
+		transition-delay: 0ms !important;
+	}
+
+	/** Disable slider animations**/
+	md-slider ._md-thumb-container, ._md-focus-ring, ._md-track-fill, ._md-thumb {
+		transition: none !important;
+		transition-duration: 0ms !important;
+		transition-delay: 0ms !important;
+	}
+
+	md-input-container .md-char-counter, md-input-container .md-input-message-animation {
+		transition: none !important;
+	}
+
+	/*  Disable dropdown animations*/
+
+	md-select-menu {
+		transition: none !important;
+		transition-duration: 0ms !important;
+		transition-delay: 0ms !important;
+	}
+
+	md-select-menu md-content {
+		transition: none !important;
+		transition-duration: 0ms !important;
+		transition-delay: 0ms !important;
+	}
+
+	._md-select-menu-container._md-leave {
+		transition: none !important;
+		transition-duration: 0ms !important;
+		transition-delay: 0ms !important;
+	}
+
+	md-tab-content {
+		-webkit-transition: none !important;
+		-moz-transition: none !important;
+		-ms-transition: none !important;
+		-o-transition: none !important;
+		transition: none !important;
+	}
+
+	md-ink-bar.md-right {
+		-webkit-transition: none !important;
+		-moz-transition: none !important;
+		-ms-transition: none !important;
+		-o-transition: none !important;
+		transition: none !important;
+	}
+
+	md-ink-bar.md-left {
+		-webkit-transition: none !important;
+		-moz-transition: none !important;
+		-ms-transition: none !important;
+		-o-transition: none !important;
+		transition: none !important;
+	}
+
+	md-tab-content.md-right {
+		-webkit-transition: none !important;
+		-moz-transition: none !important;
+		-ms-transition: none !important;
+		-o-transition: none !important;
+		transition: none !important;
+	}
+
+	md-tab-content.md-left {
+		-webkit-transition: none !important;
+		-moz-transition: none !important;
+		-ms-transition: none !important;
+		-o-transition: none !important;
+		transition: none !important;
+	}
+
+	/*
+	 ******************************************
+	 ******************************************
+	   Disable box shadows
+	 ******************************************
+	 ******************************************
+	*/
+
+	
+
+	md-dialog {
+		border: 1px solid rgba(0, 0, 0, .14) !important;
+		box-shadow: none !important;
+		-webkit-box-shadow: none !important;
+		-moz-box-shadow: none !important;
+	}
+
+	md-select-menu {
+		border: 1px solid rgba(0, 0, 0, .14) !important;
+		box-shadow: none !important;
+		-webkit-box-shadow: none !important;
+		-moz-box-shadow: none !important;
+	}
+
+	.md-button.md-raised {
+		border: 1px solid rgba(0, 0, 0, .14) !important;
+		box-shadow: none !important;
+		-webkit-box-shadow: none !important;
+		-moz-box-shadow: none !important;
+	}
+
+	md-toast .md-toast-content {
+		/**no border needed here**/
+		box-shadow: none !important;
+		-webkit-box-shadow: none !important;
+		-moz-box-shadow: none !important;
+	}
+}
+//firefox style
+@-moz-document url-prefix() {
+ 
+        /*md-card-title {
+            width: 100%;
+        }*/
+    }
+	
+//IE style
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+	 
+}
+
 }
 
 /* WIDGET DIALOG */
@@ -668,7 +921,4 @@
 
 }
 
-//material version issue 
-.md-panel._md-panel-backdrop.md-default-theme, .md-panel._md-panel-backdrop {
-    background-color: rgba(33,33,33,1.0);
-}
+
