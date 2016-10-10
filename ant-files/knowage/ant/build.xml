@@ -743,7 +743,7 @@
 	</target>
 	<target name="test.all" >
 	
-		<ant dir="../knowagewhatifengine/ant" target="protractor"/>
+		<ant dir="../knowagewhatifengine/ant" target="test"/>
 	</target>
 
 </project>
