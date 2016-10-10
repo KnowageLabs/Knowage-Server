@@ -684,23 +684,6 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 		 }
 
 		 
-		 $scope.buildBusinessModels=function(){
-//			 sbiModule_restServices.alterContextPath("/knowagemeta");
-			 sbiModule_restServices.alterContextPath(sbiModule_config.contextMetaName);
-			 sbiModule_restServices.promiseGet("1.0/metaWeb", "buildModel/"+$scope.selectedBusinessModel.id+"?user_id="+sbiModule_user.userId)
-						.then(
-								function(response) {
-									sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'check');
-									$scope.getVersions($scope.selectedBusinessModel.id);
-								},
-								function(response) {
-									sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.catalogues.generation.error"));
-									$scope.getVersions($scope.selectedBusinessModel.id);
-								});
-
-			 //sbiModule_restServices.alterContextPath("/knowage");
-		 }
-		 
 		 /**
 		  * Generate Datamart Options Dialog
 		  */
@@ -725,7 +708,7 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 							$mdDialog.show({
 								controller: generateDatamartOptionsController,					
 								preserveScope: true,
-								locals: {selectedBusinessModel:$scope.selectedBusinessModel,userId:sbiModule_user.userId,catalogName:catalogName,schemaName:schemaName},
+								locals: {selectedBusinessModel:$scope.selectedBusinessModel,userId:sbiModule_user.userId,catalogName:catalogName,schemaName:schemaName,parentController:$scope},
 								templateUrl:sbiModule_config.contextName + '/js/src/angular_1.4/tools/catalogues/templates/generateDatamartOptions.html',
 								clickOutsideToClose:false,
 								escapeToClose :false,
@@ -745,8 +728,8 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 	 
 			var dsId;
 			 for(var i=0;i<$scope.listOfDatasources.length;i++){
-				 if(angular.equals($scope.listOfDatasources[i].DATASOURCE_LABEL, $scope.selectedBusinessModel.dataSourceLabel)){
-					 dsId=$scope.listOfDatasources[i].DATASOURCE_ID;
+				 if(angular.equals($scope.listOfDatasources[i].label, $scope.selectedBusinessModel.dataSourceLabel)){
+					 dsId=$scope.listOfDatasources[i].dsId;
 					 break;
 				 }
 			 }
