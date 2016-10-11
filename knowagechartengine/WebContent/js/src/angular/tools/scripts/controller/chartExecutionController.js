@@ -55,6 +55,8 @@ function chartExecutionFunction($scope,$http,chartExecutionWebServiceManagerFact
 	// These indicators help us informing users about the process that is happening (download/preparing), but only for Highcharts charts.
 	$scope.showDownloadProgress = false;
 	$scope.loadingChart = false;
+	
+	$scope.isLibChartJs = isLibChartJs;
 
 	/**
 	 * ----------------------------------------------------------------
@@ -213,7 +215,7 @@ function chartExecutionFunction($scope,$http,chartExecutionWebServiceManagerFact
 			$scope.loadingChart = false;
 			
 			var chartConf = response.data;
-				
+			
 			var typeChart = chartConf.chart.type.toUpperCase();
 			var isD3Chart = (typeChart == "SUNBURST" || typeChart == "WORDCLOUD" || typeChart == "PARALLEL" || typeChart == "CHORD");
 			

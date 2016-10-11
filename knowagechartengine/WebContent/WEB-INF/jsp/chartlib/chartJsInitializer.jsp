@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 	function initChartLibrary(panelId, drillUpText, decimalPoint, thousandsSep) {
-		var mainPanel = Ext.getCmp(panelId);
+		/* var mainPanel = Ext.getCmp(panelId);
 
 		var chartPanelTitleOrNoData = Ext.create('Ext.form.Panel', {
 			id : 'chartPanelTitleOrNoData',
@@ -49,19 +49,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				tag : 'canvas'
 			}
 		});
-		mainPanel.add(chartPanelCanvas);
+		mainPanel.add(chartPanelCanvas); */
 	};
 
 	function renderChart(chartConf) {
-		var chartPanelTitleOrNoData = Ext.getCmp('chartPanelTitleOrNoData');
-		var chartPanelSubtitle = Ext.getCmp('chartPanelSubtitle');
+		/* var chartPanelTitleOrNoData = Ext.getCmp('chartPanelTitleOrNoData');
+		var chartPanelSubtitle = Ext.getCmp('chartPanelSubtitle');		
+		var chartPanelCanvas = Ext.getCmp('chartPanelCanvas'); */
 		
-		var chartPanelCanvas = Ext.getCmp('chartPanelCanvas');
-		var mainPanel = chartPanelCanvas.ownerCt;
-		var mainPanelRegion = mainPanel.getViewRegion();
+		// NEW
+		/* var chartPanelTitleOrNoData = document.getElementById('chartPanelTitleOrNoData');
+		var chartPanelSubtitle = document.getElementById('chartPanelSubtitle');	 */
+		
+		var chartPanelCanvas = document.getElementById('chartPanelCanvas');		
+		var mainPanelRegion = document.getElementById('mainPanel');
+		
+		/* var mainPanelRegion = mainPanel.getViewRegion(); */
 
 		// No data to represent
-		if ((chartConf.data.labels && chartConf.data.labels.length == 0)
+		/* if ((chartConf.data.labels && chartConf.data.labels.length == 0)
 				|| (chartConf.data.datasets && chartConf.data.datasets.length == 0)) {
 
 			if (chartConf.chart.emptyMessage && chartConf.chart.emptyMessage.style
@@ -91,15 +97,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				chartPanelTitleOrNoData.add(emptyMessageContainer);
 			}
 			
-		} else { //The are data to represent
-
-			// title management
+		} else { //The are data to represent */
+			
+			/* // title management
 			if (chartConf.chart.title && chartConf.chart.title.style
 					&& chartConf.chart.title.text != '') {
 				chartPanelTitleOrNoData.setLayout({
 					align : chartConf.chart.title.style.align
 				});
-
+				console.log("KKK");
 				var titleContainerStyle = {
 					padding : '5 20 5 20'
 				};
@@ -124,7 +130,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			// subtitle management
 			if (chartConf.chart.subtitle && chartConf.chart.subtitle.style
 					&& chartConf.chart.subtitle.text != '') {
-				
+				console.log("LLL");
 				chartPanelSubtitle.setLayout({
 					align : chartConf.chart.subtitle.style.align
 				});
@@ -148,13 +154,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				});
 
 				chartPanelSubtitle.add(subtitleContainer);
-			}
+			} */
 
 			var chartType = chartConf.chart.type.toLowerCase();
-
+			
 			// Sets the dimensions
-			var canvasHeight = mainPanel.getHeight();
-			var canvasWidth = mainPanel.getWidth();
+			/* var canvasHeight = mainPanel.getHeight();
+			var canvasWidth = mainPanel.getWidth(); */
+						
+			/* var canvasHeight = mainPanelRegion.clientHeight;
+			var canvasWidth = mainPanelRegion.clientWidth;
 
 			if (chartConf && chartConf.chart && chartConf.chart.height) {
 				canvasHeight = chartConf.chart.height;
@@ -162,12 +171,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if (chartConf && chartConf.chart && chartConf.chart.width) {
 				canvasWidth = chartConf.chart.width;
 			}
-
+			console.log(chartConf.chart.width);
+			console.log(canvasWidth);
 			canvasHeight = canvasHeight	- 
-				(chartPanelTitleOrNoData.getHeight() + chartPanelSubtitle.getHeight());
+				(chartPanelTitleOrNoData.clientHeight + chartPanelSubtitle.clientHeight);
 
-			chartPanelCanvas.setHeight(canvasHeight);
-			chartPanelCanvas.setWidth(canvasWidth);
+			console.log("HHH4");
+			console.log(canvasWidth);
+			
+			chartPanelCanvas.height = canvasHeight;
+			
+			chartPanelCanvas.width = canvasWidth; */
 
 			// Gets the context of the canvas element we want to select
 			var ctx = document.getElementById("chartPanelCanvas").getContext("2d");
@@ -176,9 +190,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if (chartConf.chart.backgroundColor
 					&& chartConf.chart.backgroundColor != '') {
 				
-				mainPanel.setStyle('backgroundColor', chartConf.chart.backgroundColor);
+				//mainPanel.setStyle('backgroundColor', chartConf.chart.backgroundColor);
+				mainPanelRegion.style.backgroundColor = chartConf.chart.backgroundColor;
 			}
 
+			console.log(chartConf.options);
+			console.log("ctx:",ctx);
+			
+			
+			console.log("after:",ctx.canvas);
+			
 			var myNewChart;
 			if (chartType == 'line') {
 				myNewChart = new Chart(ctx).Line(chartConf.data, chartConf.options);
@@ -188,6 +209,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				myNewChart = new Chart(ctx).Bar(chartConf.data, chartConf.options);
 			}
 
+			console.log("myNewChart",myNewChart);
+			
 			if (chartConf && chartConf.chart && chartConf.chart.showLegend) {
 				var chartPanelLegeng = Ext.create('Ext.panel.Panel', {
 					id : 'chartPanelLegeng',
@@ -220,17 +243,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 			myNewChart.draw();
 			
-			var mainPanelIsScrollable = 
-				(chartPanelCanvas.getWidth() > mainPanelRegion.right 
-					|| (
-							chartPanelCanvas.getHeight() 
+			/* var mainPanelIsScrollable = 
+				(chartPanelCanvas.clientWidth > mainPanelRegion.right 
+					|| (chartPanelCanvas.clientHeight 
+							+ chartPanelTitleOrNoData.clientHeight
+							+ chartPanelSubtitle.clientHeight) 
+								> mainPanelRegion.bottom
+							 chartPanelCanvas.getHeight() 
 							+ chartPanelTitleOrNoData.getHeight() 
 							+ chartPanelSubtitle.getHeight()) 
-								> mainPanelRegion.bottom);
+								> mainPanelRegion.bottom 
+								);
 				
-				mainPanel.setScrollable( mainPanelIsScrollable );
+				mainPanel.setScrollable( mainPanelIsScrollable ); */
 				
-		}
+		//}
 	};
 
 	function handleDrilldown(e) {

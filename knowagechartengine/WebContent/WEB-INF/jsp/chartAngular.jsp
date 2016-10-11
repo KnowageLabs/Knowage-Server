@@ -75,6 +75,8 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			var currentDocumentName = '<%=docName%>'; <%-- name of the document --%>
 			var currentDocumentLabel = '<%=docLabel%>'; <%-- label of the document --%>
 			
+			var isLibChartJs = '<%=isLibChartJS%>';
+						
 		</script>
 		
 		<% if (template != null && !template.equals("") && !template.matches("^\\{\\s*\\}$")) { %>
@@ -175,7 +177,27 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 				The ID of the rendering DIV is serving as a target DOM element that the Highcharts charts are going to use
 				for rendering its charts.
 			-->
-			<div id="mainPanel" style="height:100%; width:100%; margin:auto;"></div>		
+			<div id="mainPanel" style="height:100%; width:100%; margin:auto;" ng-if=!isLibChartJs></div>		
+			
+			<div id="mainPanel" style="height:80%; width:80%; margin:auto; display:table" ng-if=isLibChartJs>
+				
+				<div id="chartPanelTitleOrNoData" style="height:0">
+					
+				</div>
+				
+				<div id="chartPanelSubtitle" style="height:0">
+					
+				</div>
+				
+				<!-- <div id="chartPanelCanvas">
+					chartPanelCanvas
+				</div>	 -->
+				
+				<div>
+					<canvas id="chartPanelCanvas" width="" height="" align="center"></canvas>
+				</div>
+						
+			</div>
 			
 			<form id="export-chart-form" class="export-form">
 				<input type="hidden" name="options"/>

@@ -46,8 +46,6 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 <%@page import="java.util.Iterator"%>
 <%@page import="com.fasterxml.jackson.databind.ObjectMapper"%>
 <%@page import="org.json.JSONObject"%>
-<%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
-<%@page import="it.eng.spagobi.utilities.themes.ThemesManager"%>
 
 <%
 	ChartEngineInstance engineInstance;
@@ -83,6 +81,8 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	String widgetId = "";
 	String metaData = "";
 	
+	boolean isLibChartJS = ChartEngineConfig.getChartLibConf().get("bar").getLibIniName().equals("chartJsInitializer.jsp");
+	
 	ExecutionSession es = new ExecutionSession(request,request.getSession());
 	
 	/*
@@ -91,7 +91,6 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		@commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	*/
 	engineInstance = (ChartEngineInstance) es.getAttributeFromSession(EngineConstants.ENGINE_INSTANCE);
-	System.out.println(engineInstance);
 	
 	/*The use of the above commented snippet had led to https://production.eng.it/jira/browse/KNOWAGE-678 and 
 	* https://production.eng.it/jira/browse/KNOWAGE-552. The chart engine is stateful, thus the http session
@@ -107,7 +106,7 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		@commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	*/
 	env = engineInstance.getEnv();
-
+	
 	/*
 		Information about the profile of the user, organized in a map, where properties, such as userId=biadmin, userName, userAttributes 
 		(sub-properties such as TENANT_ID=DEFAULT_TENANT, country=US, language=en, etc.), organization=DEFAULT_TENANT, etc.
@@ -142,7 +141,7 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		selections = env.get("SELECTIONS")!=null ? (String)env.get("SELECTIONS") : "";
 		associations = env.get("ASSOCIATIONS")!=null ? (String)env.get("ASSOCIATIONS") : "";
 		metaData = env.get("METADATA")!=null ? (String)env.get("METADATA") : "";
-		widgetId = env.get("WIDGETID")!=null ? (String)env.get("WIDGETID") : "";		
+		widgetId = env.get("WIDGETID")!=null ? (String)env.get("WIDGETID") : "";
 		
 	} 
 	else {		
