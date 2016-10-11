@@ -71,8 +71,8 @@ if(importAngularMaterialForExport == null) {
 <%
 } else if(("true").equalsIgnoreCase(importAngularMaterialForExport)) {
 %>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/angular-material_0.10.0/angular-material.min.css">
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-material_0.10.0/angular-material.js"></script>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/angular-material_1.1.0/angular-material.min.css">
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-material_1.1.0/angular-material.min.js"></script>
 <%
 }
 %>
