@@ -71,7 +71,123 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	
 	$scope.fileObj={};
 	$scope.selectedTab = 0;	// Initially, the first tab is selected.
+	
+	$scope.showSaveAndCancelButtons = false;
 		
+	$scope.schedulingMonths = function(item) {
+		
+		switch(item) {
+			case 1: $scope.schedulingMonthsMap = $scope.translate.load("sbi.ds.persist.cron.month.january"); break;
+			case 2: $scope.schedulingMonthsMap = $scope.translate.load("sbi.ds.persist.cron.month.february"); break;
+			case 3: $scope.schedulingMonthsMap = $scope.translate.load("sbi.ds.persist.cron.month.march"); break;
+			case 4: $scope.schedulingMonthsMap = $scope.translate.load("sbi.ds.persist.cron.month.april"); break;
+			case 5: $scope.schedulingMonthsMap = $scope.translate.load("sbi.ds.persist.cron.month.may"); break;
+			case 6: $scope.schedulingMonthsMap = $scope.translate.load("sbi.ds.persist.cron.month.june"); break;
+			case 7: $scope.schedulingMonthsMap = $scope.translate.load("sbi.ds.persist.cron.month.july"); break;
+			case 8: $scope.schedulingMonthsMap = $scope.translate.load("sbi.ds.persist.cron.month.august"); break;			
+			case 9: $scope.schedulingMonthsMap = $scope.translate.load("sbi.ds.persist.cron.month.september"); break;
+			case 10: $scope.schedulingMonthsMap = $scope.translate.load("sbi.ds.persist.cron.month.october"); break;
+			case 11: $scope.schedulingMonthsMap = $scope.translate.load("sbi.ds.persist.cron.month.november"); break;
+			case 12: $scope.schedulingMonthsMap = $scope.translate.load("sbi.ds.persist.cron.month.december"); break;
+		}
+		
+	}
+	
+	// Setting for minutes for Scheduling
+	$scope.minutes = new Array(60);
+	
+	// TODO: 
+	$scope.minutesClearSelections = function() {
+		console.log("Clear minutes (TODO)");
+		$scope.minutesSelected = [];
+	}
+	
+	// Setting for hours for Scheduling
+	$scope.hours = new Array(24);
+	
+	// TODO: 
+	$scope.hoursClearSelections = function() {
+		console.log("Clear hours (TODO)");
+		$scope.hoursSelected = [];
+	}
+	
+	$scope.days = new Array();
+	
+	// Setting for hours for Scheduling
+	var populateDays = function() {		
+		
+		for (i=1; i<=31; i++) {
+			$scope.days.push(i);
+		}
+		
+	}
+		
+	populateDays();
+		
+	// TODO: 
+	$scope.daysClearSelections = function() {
+		console.log("Clear days (TODO)");
+		$scope.daysSelected = [];
+	}
+	
+	// Setting for month for Scheduling
+	$scope.months = new Array();
+	
+	var populateMonths = function() {
+		
+		$scope.months.push($scope.translate.load("sbi.ds.persist.cron.month.january")); 
+		$scope.months.push($scope.translate.load("sbi.ds.persist.cron.month.february")); 
+		$scope.months.push($scope.translate.load("sbi.ds.persist.cron.month.march")); 
+		$scope.months.push($scope.translate.load("sbi.ds.persist.cron.month.april")); 
+		$scope.months.push($scope.translate.load("sbi.ds.persist.cron.month.may")); 
+		$scope.months.push($scope.translate.load("sbi.ds.persist.cron.month.june")); 
+		$scope.months.push($scope.translate.load("sbi.ds.persist.cron.month.july")); 
+		$scope.months.push($scope.translate.load("sbi.ds.persist.cron.month.august")); 			
+		$scope.months.push($scope.translate.load("sbi.ds.persist.cron.month.september")); 
+		$scope.months.push($scope.translate.load("sbi.ds.persist.cron.month.october"));
+		$scope.months.push($scope.translate.load("sbi.ds.persist.cron.month.november"));
+		$scope.months.push($scope.translate.load("sbi.ds.persist.cron.month.december"));
+		
+	}
+	
+	populateMonths();
+	
+	// TODO: 
+	$scope.monthsClearSelections = function() {
+		console.log("Clear months (TODO)");
+		$scope.monthsSelected = [];
+	}	
+	
+	// Setting for month for Scheduling
+	$scope.weekdays = new Array();
+	
+	var populateWeekdays = function() {
+		
+		$scope.weekdays.push($scope.translate.load("sbi.ds.persist.cron.weekday.monday")); 
+		$scope.weekdays.push($scope.translate.load("sbi.ds.persist.cron.weekday.tuesday")); 
+		$scope.weekdays.push($scope.translate.load("sbi.ds.persist.cron.weekday.wednesday")); 
+		$scope.weekdays.push($scope.translate.load("sbi.ds.persist.cron.weekday.thursday")); 
+		$scope.weekdays.push($scope.translate.load("sbi.ds.persist.cron.weekday.friday")); 
+		$scope.weekdays.push($scope.translate.load("sbi.ds.persist.cron.weekday.saturday")); 
+		$scope.weekdays.push($scope.translate.load("sbi.ds.persist.cron.weekday.sunday")); 
+		
+	}
+	
+	populateWeekdays();
+	
+	// TODO: 
+	$scope.weekdaysClearSelections = function() {
+		console.log("Clear weekdays (TODO)");
+		$scope.weekdaysSelected = [];
+	}	
+	
+	// CKAN DATASET CONFIG
+	$scope.ckanFileType = 
+	[ 
+	 	{value:"xls",name:"XLS"},
+	 	{value:"csv",name:"CSV"}
+ 	];
+	
 	/**
 	 * Static (fixed) values for three comboboxes that appear when the CSV file is uploaded.
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
@@ -167,10 +283,13 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		{value:"text/plain",name:"text/plain"}
 	 ];
 
-	$scope.requestHeaderNameItem = '<md-select ng-model=scopeFunctions.aaa class="noMargin"><md-option ng-repeat="col in scopeFunctions.requestHeaderNameValues" value="{{col.name}}">{{col.name}}</md-option></md-select>';
-	$scope.requestHeaderValueItem = '<md-select ng-model=scopeFunctions.bbb class="noMargin"><md-option ng-repeat="col in scopeFunctions.requestHeaderValueValues" value="{{col.value}}">{{col.value}}</md-option></md-select>',
+//	$scope.requestHeaderNameItem = '<md-select ng-model=scopeFunctions.value class="noMargin"><md-option ng-repeat="col in scopeFunctions.requestHeaderNameValues" value="{{col.name}}">{{col.name}}</md-option></md-select>';
+//	$scope.requestHeaderValueItem = '<md-select ng-model=scopeFunctions.name class="noMargin"><md-option ng-repeat="col in scopeFunctions.requestHeaderValueValues" value="{{col.value}}">{{col.value}}</md-option></md-select>';
 	
-	$scope.querySearchCategory=function(query){
+	$scope.requestHeaderNameItem = '<md-input-container class="md-block" style="margin:0"><input ng-model="scopeFunctions.value"></md-input-container>';
+	$scope.requestHeaderValueItem = '<md-input-container class="md-block" style="margin:0"><input ng-model="scopeFunctions.name"></md-input-container>';
+	
+	$scope.querySearchCategory = function(query) {
 		  
 	      return [{dsTypeCd:"1"},{dsTypeCd:"2"},{dsTypeCd:"3"},{dsTypeCd:"4"}];
 	}
@@ -178,8 +297,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	$scope.metaScopeFunctions = {
 		requestHeaderValueValues: $scope.requestHeaderValueValues,
 		requestHeaderNameValues: $scope.requestHeaderNameValues,
-		aaa: "Accepta",
-		bbb: "application/json"
+		value: "aaa",
+		name: "bbb",
 	};
 	
 	// Initial list for REST request headers for a new REST dataset
@@ -196,7 +315,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	[
 	 	//Delete the dataset.
 		{
-			label: $scope.translate.load("sbi.ds.deletedataset"),
+			label: $scope.translate.load("sbi.generic.delete"),
 		 	icon:'fa fa-trash' ,
 		 	backgroundColor:'transparent',
 		
@@ -270,7 +389,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	[
 	 	//Delete the dataset.
 		{
-			label: $scope.translate.load("sbi.ds.deletedataset"),
+			label: $scope.translate.load("sbi.generic.delete"),
 		 	icon:'fa fa-trash' ,
 		 	backgroundColor:'transparent',
 		
@@ -312,9 +431,9 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	
 
 	$scope.parametersColumns = [
-        {"label":$scope.translate.load("sbi.generic.name"),"name":"name"},
-        {"label":$scope.translate.load("sbi.generic.type"),"name":"type"},
-        {"label":$scope.translate.load("sbi.generic.defaultValue"), "name":"defaultValue"}
+        {"label":$scope.translate.load("sbi.generic.name"), "name":"name", "hideTooltip":true},
+        {"label":$scope.translate.load("sbi.generic.type"), "name":"type", "hideTooltip":true},
+        {"label":$scope.translate.load("sbi.generic.defaultValue"), "name":"defaultValue", "hideTooltip":true}
     ];
 	
 	$scope.parameterItems = [];
@@ -432,7 +551,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	[
 	 	// Delete the dataset.
 	 	{
-	 		label: $scope.translate.load("sbi.ds.deletedataset"),
+	 		label: $scope.translate.load("sbi.generic.delete"),
 		 	icon:'fa fa-trash' ,
 		 	backgroundColor:'transparent',
 	   
@@ -469,6 +588,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			 						   				for (var i=0; i<$scope.datasetsListTemp.length; i++) {			   					
 			 						   					if ($scope.datasetsListTemp[i].label == item.label) {
 			 						   						$scope.datasetsListTemp.splice(i,1);
+			 						   						$scope.showSaveAndCancelButtons = false;
 			 						   						break;
 			 						   					}			   					
 			 						   				}
@@ -517,6 +637,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			 							if ($scope.selectedDataSet.label=="..." || $scope.selectedDataSet.label=="") {			 								
 				 							$scope.selectedDataSetInit = null; // Reset the selection (none dataset item will be selected) (danristo)
 				 							$scope.selectedDataSet = null;
+				 							$scope.showSaveAndCancelButtons = false;
 			 							}		
 			 							
 			 						}, 
@@ -548,9 +669,22 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				 		$scope.selectedDataSet = $scope.datasetsListTemp[$scope.datasetsListTemp.length-1];
 				 		$scope.selectedDataSetInit = $scope.datasetsListTemp[$scope.datasetsListTemp.length-1];
 				 		
+				 		$scope.showSaveAndCancelButtons = true;
+				 		
 			 		}
 			 		else {
-			 			sbiModule_messaging.showErrorMessage($scope.translate.load('sbi.ds.clone.warning.onlyonenewdataset.msg'));
+//			 			sbiModule_messaging.showErrorMessage($scope.translate.load('sbi.ds.clone.warning.onlyonenewdataset.msg'));
+			 			
+			 			$mdDialog
+						.show(
+								$mdDialog.alert()
+							        .clickOutsideToClose(true)
+							        .title('Cannot add new dataset')
+							        .textContent($scope.translate.load('sbi.ds.clone.warning.onlyonenewdataset.msg'))
+							        .ariaLabel('Cannot add new dataset')
+							        .ok('Ok')
+						    );
+			 			
 			 		}
 		 			
 			 	} 
@@ -566,7 +700,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	[ 
 	 	// Speed-menu option for deleting a dataset version.
      	{	           
-			label: $scope.translate.load("sbi.ds.deleteVersion"),
+     		label: $scope.translate.load("sbi.generic.delete"),
 	 		icon:'fa fa-trash' ,
 	 		backgroundColor:'transparent',
 	           
@@ -891,10 +1025,11 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	 }
 	
 	$scope.loadDataSet = function(item) {
-//		$log.info(item);
-		console.log(item);
+		$log.info(item);
+		
 		$scope.selectedDataSetInit = angular.copy(item);
 		$scope.selectedDataSet = angular.copy(item);
+		$scope.showSaveAndCancelButtons = true;
 		
 		// Call the scope function that is responsible for transformation of configuration data of the File dataset.
 		($scope.selectedDataSet.dsTypeCd.toLowerCase()=="file") ? $scope.refactorFileDatasetConfig(item) : null;
@@ -913,6 +1048,9 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		console.log($scope.selectedDataSet);
 		$scope.restRequestHeaders = [];
 		console.log($scope.metaScopeFunctions);
+		
+		console.log($scope.restRequestHeaders);
+		
 		$scope.restRequestHeaders.push({"name":$scope.requestHeaderNameItem,"value":$scope.requestHeaderValueItem,"index":$scope.counterRequestHeaders++});
 		
 		for (var i in $scope.restRequestHeaders) {
@@ -1009,15 +1147,27 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			$scope.datasetsListTemp.push(object);
 			$scope.selectedDataSet = $scope.datasetsListTemp[$scope.datasetsListTemp.length-1];
 			$scope.selectedDataSetInit = $scope.datasetsListTemp[$scope.datasetsListTemp.length-1]; // Reset the selection (none dataset item will be selected) (danristo)
+			$scope.showSaveAndCancelButtons = true;
 			
 		}	
 		else {
-			sbiModule_messaging.showErrorMessage($scope.translate.load("sbi.ds.add.warning.onlyonenewdataset.msg"));
+//			sbiModule_messaging.showErrorMessage($scope.translate.load("sbi.ds.add.warning.onlyonenewdataset.msg"));
+			
+			$mdDialog
+			.show(
+					$mdDialog.alert()
+				        .clickOutsideToClose(true)
+				        .title('Cannot add new dataset')
+				        .textContent($scope.translate.load('sbi.ds.add.warning.onlyonenewdataset.msg'))
+				        .ariaLabel('Cannot add new dataset')
+				        .ok('Ok')
+			    );
+			
 		}
 		
 	};
 	
-	$scope.saveDataSet = function() {
+	$scope.saveDataset = function() {
 				
 		// Perform saving when the dataset is selected (POST or PUT, i.e. creating a new or updating the existing dataset)
 		if ($scope.selectedDataSet) {
@@ -1037,10 +1187,11 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		
 	};
 	
-	$scope.cancelDataSet = function() {
+	$scope.closeDatasetDetails = function() {
 //		$log.info("cancel");
 		$scope.selectedDataSetInit = null; // Reset the selection (none dataset item will be selected) (danristo)
 		$scope.selectedDataSet = null;
+		$scope.showSaveAndCancelButtons = false;
 	};
 	
 	$scope.uploadFile= function(){
@@ -1205,16 +1356,41 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	 
 	$scope.openQbe = function() {
 		
+		console.log($scope.selectedDataSet.qbeDataSource);
+		console.log($scope.selectedDataSet.qbeDatamarts);
+		
 		if ($scope.selectedDataSet.qbeDataSource && $scope.selectedDataSet.qbeDatamarts) {
 			$log.info("OPEN QBE");
 		}
 		else {
 			// TODO: translate
 			if (!$scope.selectedDataSet.qbeDataSource) {
-				sbiModule_messaging.showErrorMessage("The datasource must be selected before opening the QBE");
+//				sbiModule_messaging.showErrorMessage("The datasource must be selected before opening the QBE");
+				
+				$mdDialog
+					.show(
+							$mdDialog.alert()
+						        .clickOutsideToClose(true)
+						        .title('Cannot open QBE')
+						        .textContent("The datasource must be selected before opening the QBE")
+						        .ariaLabel('Cannot open QBE')
+						        .ok('Ok')
+					    );
+				
 			}
 			else if (!$scope.selectedDataSet.qbeDatamarts) {
-				sbiModule_messaging.showErrorMessage("The datamart must be selected before opening the QBE");
+//				sbiModule_messaging.showErrorMessage("The datamart must be selected before opening the QBE");
+				
+				$mdDialog
+					.show(
+							$mdDialog.alert()
+						        .clickOutsideToClose(true)
+						        .title('Cannot open QBE')
+						        .textContent("The datamart must be selected before opening the QBE")
+						        .ariaLabel('Cannot open QBE')
+						        .ok('Ok')
+					    );
+				
 			}
 		}
 		
@@ -1242,7 +1418,18 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		}
 		else {
 			// TODO: translate
-			sbiModule_messaging.showErrorMessage("The dataset should be saved before viewing the QBE query");
+//			sbiModule_messaging.showErrorMessage("The dataset should be saved before viewing the QBE query");
+			
+			$mdDialog
+				.show(
+						$mdDialog.alert()
+					        .clickOutsideToClose(true)
+					        .title('Cannot open QBE query')
+					        .textContent("The dataset should be saved before viewing the QBE query")
+					        .ariaLabel('Cannot open QBE query')
+					        .ok('Ok')
+				    );
+			
 		}
 		
 	}
@@ -1316,6 +1503,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	 */
 	
 	function DatasetPreviewController($scope,$mdDialog,$http) {
+		
+//		$scope.paginationDisabled = false;
 		
 		$scope.closeDatasetPreviewDialog=function(){
 			 $scope.previewDatasetModel=[];
@@ -1400,14 +1589,10 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			      }
 			    });
 	    	
-    	}
-		// TODO: This branch can probably be removed since the Preview is not shown when dataset is not selected. (danristo)
-		else if(!$scope.selectedDataSet) {
-			sbiModule_messaging.showErrorMessage($scope.translate.load('sbi.ds.preview.dataset.notselected'));
-		}	
-		else if(!$scope.selectedDataSet.meta) {
-			sbiModule_messaging.showErrorMessage("The dataset is not saved. Please, save the dataset before a preview");
-		}
+    	}	
+//		else if(!$scope.selectedDataSet.meta) {
+//			sbiModule_messaging.showErrorMessage("The dataset is not saved. Please, save the dataset before a preview");
+//		}
 	       	
     }
 	 
@@ -1433,14 +1618,17 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     	 * pagination (else-branch).
     	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
     	 */
-    	if (datasetType!="FILE") {
-    		 $scope.paginationDisabled = true;
-    		 $scope.previewPaginationEnabled = true;
-    	}
-    	else {
-    		$scope.paginationDisabled = false;
-    		$scope.previewPaginationEnabled = false;
-    	}
+//    	if (datasetType!="FILE") {
+//    		 $scope.paginationDisabled = true;
+//    		 $scope.previewPaginationEnabled = true;
+//    	}
+//    	else {
+//    		$scope.paginationDisabled = false;
+//    		$scope.previewPaginationEnabled = false;
+//    	}
+    	
+    	$scope.paginationDisabled = true;
+		$scope.previewPaginationEnabled = true;
     	
     	params={};
     	params.start = $scope.startPreviewIndex;
@@ -1463,7 +1651,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			.then(function(response) {			
 						
 				var totalItemsInPreviewInit = angular.copy($scope.totalItemsInPreview);
-				
+				console.log(response);
 				/**
 				 * If the responded dataset does not possess a metadata information (total amount of rows in the result)
 				 * take this property if provided.
@@ -1513,6 +1701,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     	console.log($scope.startPreviewIndex);
     	console.log($scope.itemsPerPage);
     	console.log($scope.totalItemsInPreview);
+    	console.log($scope.previewDatasetModel);
     	 if($scope.startPreviewIndex+$scope.itemsPerPage > $scope.totalItemsInPreview){
   
     		 $scope.startPreviewIndex=$scope.totalItemsInPreview-($scope.totalItemsInPreview%$scope.itemsPerPage);  		

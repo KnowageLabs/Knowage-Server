@@ -108,31 +108,36 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	      			<md-button aria-label="menu" class="md-fab md-raised md-mini md-warn" 
 	      					ng-show="selectedDataSet" title="Fields metadata">
 		            	<!-- <md-icon md-font-icon="fa fa-plus" class="fa fa-2x"></md-icon> -->
-		            	FM
+		            	<!-- FM -->
+		            	<md-icon md-font-icon="fa fa-magic" class="fa fa-2x"></md-icon>
 		          	</md-button>
 		          	
 		          	<!-- LINK DATASET BUTTON (visible only in Advanced tab) -->
 		          	<md-button aria-label="menu" class="md-fab md-raised md-mini md-warn" 
 		          			ng-show="selectedDataSet && selectedTab==2" title="Link dataset">
-		            	LD
+		            	<!-- LD -->
+		            	<md-icon md-font-icon="fa fa-link" class="fa fa-2x"></md-icon>		            	
 		          	</md-button>
 		          	
 		          	<!-- SAVE WITHOUT METADATA BUTTON -->
 		          	<md-button aria-label="menu" class="md-fab md-raised md-mini md-warn" 
 		          			ng-show="selectedDataSet" title="Save without metadata">
-		            	SWM
+		            	<!-- SWM -->
+		            	<md-icon md-font-icon="fa fa-hourglass-start" class="fa fa-2x"></md-icon>
 		          	</md-button>
 		          	
 		          	<!-- AVAILABLE PROFILE ATTRIBUTES BUTTON (visible only in Type tab) -->
 		          	<md-button aria-label="menu" class="md-fab md-raised md-mini md-warn" 
 		          			ng-show="selectedDataSet && selectedTab==1" title="Available profile attributes">
-		            	APA
+		            	<!-- APA -->
+	            		<md-icon md-font-icon="fa fa-user" class="fa fa-2x"></md-icon>		            	
 		          	</md-button> 		          	            
 		          	
 		          	<!-- HELP BUTTON -->
 		          	<md-button aria-label="menu" class="md-fab md-raised md-mini md-warn" 
 		          			ng-show="selectedDataSet" title="Help">
-		            	H
+		            	<!-- H -->
+	            		<md-icon md-font-icon="fa fa-question-circle" class="fa fa-2x"></md-icon>			            	
 		          	</md-button>
 		          	
 	      		</div> 
@@ -146,7 +151,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</extra-button>
 	       
 	       <!-- DATASET DETAIL PANEL -->
-	       <detail save-function="saveDataSet" cancel-function="cancelDataSet">
+	       <detail 	save-function="saveDataset" cancel-function="closeDatasetDetails" 
+	       			show-save-button="showSaveAndCancelButtons" show-cancel-button="showSaveAndCancelButtons">
 	       
 	       		<form name=datasetForm ng-show="selectedDataSet!=null" style="height:100%; overflow-y:hidden">
 	       		
@@ -184,15 +190,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									</div>
 									<div flex=100>
 								       <md-input-container class="md-block" > 
-								       <label>{{translate.load("sbi.ds.scope")}}</label>
-									       <md-select placeholder ="{{translate.load('sbi.ds.scope')}}"
-									        ng-required = "true"
-									        ng-model="selectedDataSet.scopeId">   
-									        <md-option 
-									        ng-repeat="l in scopeList" value="{{l.VALUE_ID}}">{{l.VALUE_CD}}
-									        </md-option>
-									       </md-select>  
-									       	<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.scopeId">
+								       		<label>{{translate.load("sbi.ds.scope")}}</label>
+									       	<md-select placeholder ="{{translate.load('sbi.ds.scope')}}"
+									        	ng-required = "true"
+									        	ng-model="selectedDataSet.scopeId">   
+									        	<md-option ng-repeat="l in scopeList" value="{{l.VALUE_ID}}">{{l.VALUE_CD}}
+									        	</md-option>
+									       	</md-select>  
+								       		<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.scopeId">
 				       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 			       						 	</div>
 								        </md-input-container>
@@ -724,14 +729,159 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							
 						<!-- CKAN DATASET -->
 						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='Ckan'">
-							<md-card layout-padding style="margin-top:0">
-							<md-input-container class="md-block" flex-gt-sm>
+						
+							<!-- ELEMENTS FOR SETTING THE 'XLS' FILE CONFIGURATION -->
+							<md-card layout="column" class="threeCombosThreeNumFields" layout-padding>  
+							
+								<!-- PICK CKAN FILE DATASET TYPE -->
+								<div style="display:flex; padding:8 8 0 8;">
+								
+							       	<md-input-container class="md-block" style="width:100%"> 
+								       	
+								       	<label>File type</label>
+								       	
+								       	<md-select 	placeholder ="Choose the file type"
+									       	 			ng-required = "true"
+									        			ng-model="selectedDataSet.ckanFileType">   
+								        	<md-option ng-repeat="l in ckanFileType" value="{{l.name}}">{{l.name}}</md-option>
+								       	</md-select>  
+								       	
+								       	<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.ckanFileType">
+			       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+		       						 	</div>
+		       						 	
+						        	</md-input-container>
+							   	</div>        
+				        
+				        		<!-- TODO: criteria for the XLS configuration -->
+				        		<div ng-if="selectedDataSet.ckanFileType=='XLS'" style="padding:0 8 0 8;">
+				        		
+				        			<div layout="row" class="threeCombosLayout">	
+							        
+								        <!-- XLS file is uploaded --> 
+										<div layout="row" flex >
+											
+											<div layout="row" layout-wrap flex=30>
+						                  		<div flex=90 layout-align="center center">
+						                     		<md-input-container class="md-block" style="margin:0">
+						                        		<label>{{translate.load("sbi.ds.file.xsl.skiprows")}}</label> 
+						                        		<input 	ng-model="selectedDataSet.skipRows" type="number" 
+						                        				step="1" min="0" value="{{selectedDataSet.skipRows}}">
+							                     	</md-input-container>
+							                  	</div>
+											</div>
+						                 	
+					                		<div layout="row" layout-wrap flex=30>
+						                  		<div flex=90 layout-align="center center">
+						                     		<md-input-container class="md-block" style="margin:0">
+						                        		<label>{{translate.load("sbi.ds.file.xsl.limitrows")}}</label> 
+						                        		<input 	ng-model="selectedDataSet.limitRows" type="number" 
+						                        				step="1" min="0" value="{{dataset.limitRows}}">
+							                     	</md-input-container>
+							                  	</div>
+											</div>
+											
+											<div layout="row" layout-wrap flex=30>
+						                  		<div flex=90 layout-align="center center">
+						                     		<md-input-container class="md-block" style="margin:0">
+						                        		<label>{{translate.load("sbi.ds.file.xsl.sheetnumber")}}</label> 
+						                        		<input 	ng-model="selectedDataSet.xslSheetNumber" type="number" 
+						                        				step="1" min="1" value="{{selectedDataSet.xslSheetNumber}}">
+							                     	</md-input-container>
+							                  	</div>
+											</div>
+											
+										</div>
+											
+									</div>	
+				        		
+				        		</div>
+						        				      		
+		         				<!-- TODO: criteria for the XLS configuration -->
+				        		<div ng-if="selectedDataSet.ckanFileType=='CSV'" style="padding:0 8 0 8;">
+		         					
+		         					<div layout="row" class="threeCombosLayout">								
+							              
+								        <!-- CSV file is uploaded --> 
+										<div layout="row" flex >
+							                 	
+						                 	<div layout="row" layout-wrap flex=30>
+						                  		<div flex=90 layout-align="center center">
+						                     		<md-input-container class="md-block" style="margin:0">
+						                        		<label>{{translate.load("sbi.ds.file.csv.delimiter")}}</label> 
+						                        		<md-select aria-label="aria-label" ng-model="selectedDataSet.csvDelimiter">
+						                           			<md-option 	ng-repeat="csvDelimiterCharacterItem in csvDelimiterCharacterTypes" 
+						                           						ng-click="chooseDelimiterCharacter(csvDelimiterCharacterItem)" 
+						                           						value="{{csvDelimiterCharacterItem.name}}">
+					                          						{{csvDelimiterCharacterItem.name}}
+					                     						</md-option>
+						                        		</md-select>
+							                     	</md-input-container>
+							                  	</div>
+											</div>
+						                 	
+					                		<div layout="row" layout-wrap flex=30>
+						                  		<div flex=90 layout-align="center center">
+						                     		<md-input-container class="md-block" style="margin:0">
+						                        		<label>{{translate.load("sbi.ds.file.csv.quote")}}</label> 
+						                        		<md-select aria-label="aria-label" ng-model="selectedDataSet.csvQuote">
+						                           			<md-option 	ng-repeat="csvQuoteCharacterItem in csvQuoteCharacterTypes" 
+						                           						ng-click="chooseQuoteCharacter(csvQuoteCharacterItem)" 
+						                           						value="{{csvQuoteCharacterItem.name}}">
+					                          						{{csvQuoteCharacterItem.name}}
+					                     						</md-option>
+						                        		</md-select>
+							                     	</md-input-container>
+							                  	</div>
+											</div>
+											
+											<div layout="row" layout-wrap flex=30>
+						                  		<div flex=90 layout-align="center center">
+						                     		<md-input-container class="md-block" style="margin:0">
+						                        		<label>{{translate.load("sbi.workspace.dataset.wizard.csv.encoding")}}</label> 
+						                        		<md-select aria-label="aria-label" ng-model="selectedDataSet.csvEncoding">
+						                           			<md-option 	ng-repeat="csvEncodingItem in csvEncodingTypes" 
+						                           						ng-click="chooseEncoding(csvEncodingItem)" 
+						                           						value="{{csvEncodingItem.name}}">
+					                          						{{csvEncodingItem.name}}
+					                     						</md-option>
+						                        		</md-select>
+							                     	</md-input-container>
+							                  	</div>
+											</div>
+												
+										</div>					
+																	
+							    	</div>
+		         				
+		         				</div>
+		         									         	
+					         	<div flex=100 layout-padding ng-if="selectedDataSet.ckanFileType">
+					         	
+										<md-input-container class="md-block" style="margin-bottom:8">
+										
+								    		<label>{{translate.load("sbi.ds.ckanUrl")}}</label>
+						           	
+								           	<input ng-model="selectedDataSet.ckanUrl" ng-required = "true">
+								           	
+								           	<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.ckanUrl">
+				       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+			       						 	</div>
+			       						 	
+										</md-input-container>
+										
+								</div>
+				         		
+						    </md-card>
+						
+							<!--<md-card layout-padding style="margin-top:0">
+							 <md-input-container class="md-block" flex-gt-sm>
 					           <label>{{translate.load("sbi.ds.ckanFileType")}}</label>
 					           <input ng-model="selectedDataSet.ckanFileType" ng-required = "true">
 					           <div  ng-messages="datasetForm.lbl.$error" ng-show="!a">
 	       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
        						 	</div>
-					         </md-input-container>
+					         </md-input-container> 
 					         <md-input-container class="md-block" flex-gt-sm>
 					           <label>{{translate.load("sbi.ds.ckanCsvDelimiter")}}</label>
 					           <input ng-model="selectedDataSet.ckanCsvDelimiter" ng-required = "true">
@@ -776,7 +926,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
        						 	</div>
 					         </md-input-container>
-							</md-card>
+							</md-card>-->
 						</md-content>
 							
 						<!-- FEDERATED DATASET -->
@@ -854,9 +1004,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									        
 									      </md-autocomplete> -->
 									      
-									      <md-autocomplete 
+									      <!-- <md-autocomplete 
 									          ng-disabled="false" 
-									          md-selected-item="" 
+									          md-selected-item="item.dsTypeCd" 
 									          md-search-text="searchText" 
 									          md-items="item in querySearchCategory(searchText)"
 									          md-item-text="item.dsTypeCd" 
@@ -864,7 +1014,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									        <md-item-template>
 									          <span md-highlight-text="searchText">{{item.dsTypeCd}}</span>
 									        </md-item-template> 
-									      </md-autocomplete>
+									      </md-autocomplete> -->									
 		       						 									        
 	       						 	</md-input-container>
 		       						 
@@ -908,11 +1058,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							   		<angular-table
 											id="requestHeadersTable"
 											ng-model=restRequestHeaders
-											columns="requestHeadersTableColumns"
+											columns=requestHeadersTableColumns
 											show-search-bar=false
-											scope-functions="metaScopeFunctions"
+											scope-functions=metaScopeFunctions
 											no-pagination=false
-											speed-menu-option="requestHeadersDelete" >
+											speed-menu-option=requestHeadersDelete >
 									</angular-table>
 							   
 							   </div>
@@ -1148,18 +1298,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 												
 								<md-card layout-padding style="margin:0px">
 																		
-				 						<div>
-										      						
-											<angular-table
-													id="datasetParametersTable"
-													ng-model=parameterItems
-													columns="parametersColumns"
-													show-search-bar=false
-													scope-functions="paramScopeFunctions"
-													no-pagination=false
-													speed-menu-option="parameterDelete"	>
-											</angular-table>
-									   
+			 						<div>
+									      						
+										<angular-table
+												id="datasetParametersTable"
+												ng-model=parameterItems
+												columns="parametersColumns"
+												show-search-bar=false
+												scope-functions="paramScopeFunctions"
+												no-pagination=false
+												speed-menu-option="parameterDelete">
+										</angular-table>
+								   
 									</div>
 									
 								</md-card>
@@ -1183,7 +1333,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									<div flex=50 layout="row" layout-align="start center">
 						           	
 				                  		<label>
-				                  			{{translate.load('sbi.ds.trasfTypeCd')}}: {{transformationDataset.VALUE_CD}}
+				                  			{{translate.load('sbi.ds.trasfTypeCd')}}: <strong>{{transformationDataset.VALUE_CD}}</strong>
 			                  			</label> 
 				                  		
 				                  		
@@ -1257,7 +1407,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						<!-- OLD ADVANCED TAB (Persist) -->
 						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable">
 							
-							<md-card layout-padding>
+							<md-card layout-padding style="margin-top:0">
 							
 								<div flex=100 style="display:flex;">
 								
@@ -1269,7 +1419,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				                  		
 				                  		
 				                  		<md-input-container class="small counter" style="padding-left:8px;">
-				                     		<md-checkbox 	aria-label="Checkbox 2" 
+				                     		<md-checkbox 	aria-label="Persisted" 
 					                     					ng-model="selectedDataSet.isPersisted" ng-checked="" >
 											</md-checkbox>
 				                  		</md-input-container>
@@ -1282,7 +1432,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								
 									<div flex=100 style="display:flex;">
 								
-										<div flex=50 layout="row" layout-align="start center">
+										<div layout-align="start center">
 							           	
 					                  		<label>
 					                  			{{translate.load('sbi.ds.hdfs')}}: 
@@ -1290,7 +1440,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					                  		
 					                  		
 					                  		<md-input-container class="small counter" style="padding-left:8px;">
-					                     		<md-checkbox 	aria-label="Checkbox 2" 
+					                     		<md-checkbox 	aria-label="HDFS Persisted" 
 						                     					ng-model="selectedDataSet.isPersistedHDFS" ng-checked="" >
 												</md-checkbox>
 					                  		</md-input-container>
@@ -1335,25 +1485,615 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						</md-content>
 						
 						<!-- OLD ADVANCED TAB (Scheduling) -->
-						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable">
+						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" style="margin:0 8 0 8">
 							
-							<md-card layout-padding>
+							<md-toolbar class="secondaryToolbar" layout-padding>
+						     	
+						          	<div class="md-toolbar-tools">
+							            
+							            <h2>
+							              <span>{{translate.load('sbi.ds.persist.cron.scheduling.title')}}</span>
+							            </h2>
+							            
+						         		<span flex></span>
+							         
+						          	</div>
+						          	
+					        </md-toolbar>
+						         
+							<md-card layout-padding style="margin:0; display:inline-table; width:100%">
 							
-								<div flex=100 style="display:flex;">
+								<div flex=100>
 								
-									<div flex=50 layout="row" layout-align="start center">
+									<div layout-align="start center">
 						           	
 				                  		<label>
-				                  			{{translate.load('sbi.ds.isPersisted')}}: 
+				                  			{{translate.load('sbi.ds.isScheduled')}}: 
 			                  			</label> 
 				                  		
 				                  		
 				                  		<md-input-container class="small counter" style="padding-left:8px;">
-				                     		<md-checkbox 	aria-label="Checkbox 2" 
-					                     					ng-model="selectedDataSet.isPersisted" ng-checked="" >
+				                     		<md-checkbox 	aria-label="Scheduling" 
+					                     					ng-model="selectedDataSet.isScheduled" ng-checked="" >
 											</md-checkbox>
 				                  		</md-input-container>
 				                  		
+									</div>
+									
+									<!-- Show all Scheduling options if the Scheduling is checked -->
+									<div ng-if="selectedDataSet.isScheduled">
+									
+										<!-- CALENDAR (DATE PICKER) -->
+										<div flex=100 style="display:flex;padding-bottom:8;margin-bottom:8">
+											
+											<div style="float:left" flex=50>
+												<label>{{translate.load('sbi.ds.persist.cron.startdate')}}:</label>
+												
+												<md-datepicker ng-model="myDate1" md-placeholder="Enter date"
+		            											md-min-date="minDate" md-max-date="maxDate">
+												</md-datepicker>
+											</div>
+											
+											<div style="float:right" flex=50>
+												<label>{{translate.load('sbi.ds.persist.cron.enddate')}}:</label>
+												
+												<md-datepicker ng-model="myDate2" md-placeholder="Enter date"
+		            											md-min-date="minDate" md-max-date="maxDate">
+												</md-datepicker>
+											</div>
+											
+										</div>
+										
+										<!-- MINUTE -->
+										<!-- <div flex=100 style="display:flex; background-color:#eceff1;"> -->
+										<md-whiteframe class="md-whiteframe-5dp" style="display:flex; padding:8; margin-top:8">
+											
+											<div flex=100 layout="row" style="display:flex">
+											
+												<div flex=20 style="align-items:center; display:flex">
+													<label style="margin: 4 0 4 0; color:#A9A9A9">
+														{{translate.load('sbi.ds.persist.cron.minute')}}s:
+													</label>												
+												</div>
+												
+												<!-- VERTICAL ALIGNMENT INSIDE THE DIV: align-items:center; display:flex -->
+												<div flex=40 style="align-items:center; display:flex">
+													
+													<label style="margin: 4 0 4 0; color:#A9A9A9" ng-if=!uuu>
+														<strong>{{translate.load('sbi.ds.persist.cron.everyminute')}}</strong>
+													</label>
+													
+													<md-select placeholder ="Select minute(s)"
+											        	ng-required = "true" ng-if=uuu multiple=true
+											        	ng-model="minutesSelected" style="margin:0; width:80%" title="{{minutesSelected}}">   
+											        	<md-option ng-repeat="l in minutes track by $index" value="{{$index}}">
+											        		{{$index}}
+											        	</md-option>
+										       		</md-select> 
+														
+												</div>
+												
+												<div flex=40>
+													
+													<div layout="row" layout-align="start center">
+							           	
+							           					<div flex=50>
+								                  			<md-input-container class="small counter" style="margin:8;">
+								                     			<md-checkbox 	aria-label="Checkbox 2" 
+									                     					ng-model="uuu" ng-checked="" >
+																</md-checkbox>
+								                  			</md-input-container>
+								                  			
+								                  			<label>
+								                  				{{translate.load('sbi.general.custom')}}
+							                  				</label> 	
+						                  				</div>
+						                  				
+						                  				<div flex=50 ng-if=uuu>					                  				
+						                  					<md-button aria-label="menu" class="md-raised md-mini" ng-click="minutesClearSelections()" 
+											      					ng-show="selectedDataSet" title="Fields metadata" style="margin-top:0; margin-bottom:0;">
+												            	{{translate.load('sbi.ds.persist.cron.scheduling.multipleselect.clearall')}} 
+												          	</md-button>				                  				
+						                  				</div>
+						                  							                  		
+													</div>
+													
+												</div>
+											
+											</div>
+											
+											<!-- <div style="float:left;display:flex" flex=30 layout="column">
+												
+												<label style="margin: 4 0 4 0; color:#A9A9A9">{{translate.load('sbi.ds.persist.cron.minute')}}s:<b>{{uuu ? '' : ' Every minute'}}</b></label>
+												
+												<md-radio-group ng-model="data.group1">
+	
+											      <md-radio-button value="aaa" class="md-primary" style="margin:8 0 4 0;">{{translate.load('sbi.ds.persist.cron.everyminute')}}</md-radio-button>
+											      <md-radio-button value="!aaa">{{translate.load('sbi.ds.persist.cron.choose')}}</md-radio-button>
+											
+											    </md-radio-group>
+											    
+											    <div flex=50 layout="row" layout-align="start center">
+							           	
+						                  			<md-input-container class="small counter" style="margin:8;">
+						                     			<md-checkbox 	aria-label="Checkbox 2" 
+							                     					ng-model="uuu" ng-checked="" >
+														</md-checkbox>
+						                  			</md-input-container>
+						                  			
+						                  			<label>
+						                  				Custom
+					                  				</label> 
+					                  		
+												</div>
+											    
+											</div>
+											
+											<div style="float:right; display:flex" flex=70 layout-row ng-if="uuu">
+												
+	      										<md-slider-container style="width:100%">
+	      																				      	
+											      	<md-slider flex ng-model="color.green" min="0" max="59" aria-label="green" id="green-slider" md-discrete>
+											      	</md-slider>
+											      	
+											      	<md-input-container style="margin-left:16; margin-right:8">
+											        	<input flex type="number" ng-model="color.green" aria-label="green" aria-controls="green-slider">
+											      	</md-input-container>
+											      	
+											    </md-slider-container>
+											    
+											    <md-select placeholder ="{{translate.load('sbi.ds.scope')}}"
+										        	ng-required = "true"
+										        	ng-model="selectedDataSet.scopeId">   
+										        	<md-option ng-repeat="l in scopeList" value="{{l.VALUE_ID}}">{{l.VALUE_CD}}
+										        	</md-option>
+										       	</md-select> 
+												
+											</div> -->
+										
+										</md-whiteframe>	
+										<!-- </div> -->
+										
+										<!-- HOUR -->
+										<!-- <div flex=100 style="display:flex; background-color:#eceff1; margin-top:8px"> -->
+										<md-whiteframe class="md-whiteframe-5dp" style="display:flex; padding:8; margin-top:8">
+										
+											<div flex=100 layout="row" style="display:flex">
+											
+												<div flex=20 style="align-items:center; display:flex">
+													<label style="margin: 4 0 4 0; color:#A9A9A9">
+														{{translate.load('sbi.ds.persist.cron.hour')}}s:
+													</label>												
+												</div>
+												
+												<!-- VERTICAL ALIGNMENT INSIDE THE DIV: align-items:center; display:flex -->
+												<div flex=40 style="align-items:center; display:flex">
+													
+													<label style="margin: 4 0 4 0; color:#A9A9A9" ng-if=!qqq>
+														<strong>{{translate.load('sbi.ds.persist.cron.everyhour')}}</strong>
+													</label>
+													
+													<md-select placeholder ="Select hours(s)"
+											        	ng-required = "true" ng-if=qqq multiple=true
+											        	ng-model="hoursSelected" style="margin:0; width:80%" title="{{hoursSelected}}">   
+											        	<md-option ng-repeat="l in hours track by $index" value="{{$index}}">
+											        		{{$index}}
+											        	</md-option>
+										       		</md-select> 
+														
+												</div>
+												
+												<div flex=40>
+													
+													<div layout="row" layout-align="start center">
+							           	
+							           					<div flex=50>
+								                  			<md-input-container class="small counter" style="margin:8;">
+								                     			<md-checkbox 	aria-label="Checkbox 2" 
+									                     					ng-model="qqq" ng-checked="" >
+																</md-checkbox>
+								                  			</md-input-container>
+								                  			
+								                  			<label>
+								                  				{{translate.load('sbi.general.custom')}}
+							                  				</label> 	
+						                  				</div>
+						                  				
+						                  				<div flex=50 ng-if=qqq>					                  				
+						                  					<md-button aria-label="menu" class="md-raised md-mini" ng-click="hoursClearSelections()" 
+											      					ng-show="selectedDataSet" title="Fields metadata" style="margin-top:0; margin-bottom:0;">
+												            	{{translate.load('sbi.ds.persist.cron.scheduling.multipleselect.clearall')}} 
+												          	</md-button>				                  				
+						                  				</div>
+						                  							                  		
+													</div>
+													
+												</div>
+											
+											</div>
+										
+											<!-- <div style="float:left;display:flex" flex=30 layout="column">
+												
+												<label style="margin: 4 0 4 0; color:#A9A9A9">{{translate.load('sbi.ds.persist.cron.hour')}}s:<b>{{qqq ? '' : ' Every hour'}}</b></label>
+												
+												<md-radio-group ng-model="data.group1">
+	
+											      <md-radio-button value="aaa" class="md-primary" style="margin:8 0 4 0;">{{translate.load('sbi.ds.persist.cron.everyminute')}}</md-radio-button>
+											      <md-radio-button value="!aaa">{{translate.load('sbi.ds.persist.cron.choose')}}</md-radio-button>
+											
+											    </md-radio-group>
+											    
+											    <div flex=50 layout="row" layout-align="start center">						           				                  		
+						                  		
+						                  			<md-input-container class="small counter" style="margin:8">
+						                     			<md-checkbox 	aria-label="Checkbox 2" 
+							                     					ng-model="qqq" ng-checked="" >
+														</md-checkbox>
+						                  			</md-input-container>
+						                  			
+						                  			<label>
+						                  				Custom
+					                  				</label> 
+					                  		
+												</div>
+											    
+											</div>
+											
+											<div style="float:right; display:flex" flex=70 layout-row ng-if="qqq">
+												
+	      										<md-slider-container style="width:100%">
+	      																				      	
+											      	<md-slider flex ng-model="color.green" min="0" max="23" aria-label="green" id="green-slider" md-discrete>
+											      	</md-slider>
+											      	
+											      	<md-input-container style="margin-left:16; margin-right:8">
+											        	<input flex type="number" ng-model="color.green" aria-label="green" aria-controls="green-slider">
+											      	</md-input-container>
+											      	
+											    </md-slider-container>
+												
+											</div> -->
+										
+										</md-whiteframe>	
+										<!-- </div> -->
+										
+										<!-- DAY -->
+										<!-- <div flex=100 style="display:flex; background-color:#eceff1; margin-top:8px"> -->
+										<md-whiteframe class="md-whiteframe-5dp" style="display:flex; padding:8; margin-top:8">
+											
+											<div flex=100 layout="row" style="display:flex">
+											
+												<div flex=20 style="align-items:center; display:flex">
+													<label style="margin: 4 0 4 0; color:#A9A9A9">
+														{{translate.load('sbi.ds.persist.cron.day')}}s:
+													</label>												
+												</div>
+												
+												<!-- VERTICAL ALIGNMENT INSIDE THE DIV: align-items:center; display:flex -->
+												<div flex=40 style="align-items:center; display:flex">
+													
+													<label style="margin: 4 0 4 0; color:#A9A9A9" ng-if=!www>
+														<strong>{{translate.load('sbi.ds.persist.cron.everyday')}}</strong>
+													</label>
+													
+													<md-select placeholder ="Select day(s)"
+											        	ng-required = "true" ng-if=www multiple=true
+											        	ng-model="daysSelected" style="margin:0; width:80%" title="{{daysSelected}}">   
+											        	<md-option ng-repeat="l in days" value="{{l}}">
+											        		{{l}}
+											        	</md-option>
+										       		</md-select> 
+														
+												</div>
+												
+												<div flex=40>
+													
+													<div layout="row" layout-align="start center">
+							           	
+							           					<div flex=50>
+								                  			<md-input-container class="small counter" style="margin:8;">
+								                     			<md-checkbox 	aria-label="Checkbox 2" 
+									                     					ng-model="www" ng-checked="" >
+																</md-checkbox>
+								                  			</md-input-container>
+								                  			
+								                  			<label>
+								                  				{{translate.load('sbi.general.custom')}}
+							                  				</label> 	
+						                  				</div>
+						                  				
+						                  				<div flex=50 ng-if=www>					                  				
+						                  					<md-button aria-label="menu" class="md-raised md-mini" ng-click="daysClearSelections()" 
+											      					ng-show="selectedDataSet" title="Fields metadata" style="margin-top:0; margin-bottom:0;">
+												            	{{translate.load('sbi.ds.persist.cron.scheduling.multipleselect.clearall')}} 
+												          	</md-button>				                  				
+						                  				</div>
+						                  							                  		
+													</div>
+													
+												</div>
+											
+											</div>
+											
+											<!-- <div style="float:left;display:flex" flex=30 layout="column">
+												
+												<label style="margin: 4 0 4 0; color:#A9A9A9">{{translate.load('sbi.ds.persist.cron.day')}}s:<b>{{www ? '' : ' Every day'}}</b></label>
+												
+												<md-radio-group ng-model="data.group1">
+	
+											      <md-radio-button value="aaa" class="md-primary" style="margin:8 0 4 0;">{{translate.load('sbi.ds.persist.cron.everyminute')}}</md-radio-button>
+											      <md-radio-button value="!aaa">{{translate.load('sbi.ds.persist.cron.choose')}}</md-radio-button>
+											
+											    </md-radio-group>
+											    
+											    <div flex=50 layout="row" layout-align="start center">
+							           					                  		
+						                  			<md-input-container class="small counter" style="margin:8;">
+						                     			<md-checkbox 	aria-label="Checkbox 2" 
+							                     					ng-model="www" ng-checked="" >
+														</md-checkbox>
+						                  			</md-input-container>
+						                  			
+						                  			<label>
+						                  				Custom
+					                  				</label> 
+					                  		
+												</div>
+											    
+											</div>
+											
+											<div style="float:right; display:flex" flex=70 layout-row ng-if="www">
+												
+	      										<md-slider-container style="width:100%">
+	      																				      	
+											      	<md-slider flex ng-model="color.green" min="1" max="31" aria-label="green" id="green-slider" md-discrete>
+											      	</md-slider>
+											      	
+											      	<md-input-container style="margin-left:16; margin-right:8">
+											        	<input flex type="number" ng-model="color.green" aria-label="green" aria-controls="green-slider">
+											      	</md-input-container>
+											      	
+											    </md-slider-container>
+												
+											</div> -->
+										
+										</md-whiteframe>	
+										<!-- </div> -->
+										
+										<!-- MONTH -->
+										<!-- <div flex=100 style="display:flex; background-color:#eceff1; margin-top:8px"> -->
+										<md-whiteframe class="md-whiteframe-5dp" style="display:flex; padding:8; margin-top:8">
+											
+											<div flex=100 layout="row" style="display:flex">
+											
+												<div flex=20 style="align-items:center; display:flex">
+													<label style="margin: 4 0 4 0; color:#A9A9A9">
+														{{translate.load('sbi.ds.persist.cron.month')}}s:
+													</label>												
+												</div>
+												
+												<!-- VERTICAL ALIGNMENT INSIDE THE DIV: align-items:center; display:flex -->
+												<div flex=40 style="align-items:center; display:flex">
+													
+													<label style="margin: 4 0 4 0; color:#A9A9A9" ng-if=!eee>
+														<strong>{{translate.load('sbi.ds.persist.cron.everymonth')}}</strong>
+													</label>
+													
+													<md-select placeholder ="Select month(s)"
+											        	ng-required = "true" ng-if=eee multiple=true
+											        	ng-model="monthsSelected" style="margin:0; width:80%" title="monthsSelected">   
+											        	<md-option ng-repeat="l in months" value="{{l}}">
+											        		{{l}}
+											        	</md-option>
+										       		</md-select> 
+														
+												</div>
+												
+												<div flex=40>
+													
+													<div layout="row" layout-align="start center">
+							           	
+							           					<div flex=50>
+								                  			<md-input-container class="small counter" style="margin:8;">
+								                     			<md-checkbox 	aria-label="Checkbox 2" 
+									                     					ng-model="eee" ng-checked="" >
+																</md-checkbox>
+								                  			</md-input-container>
+								                  			
+								                  			<label>
+								                  				{{translate.load('sbi.general.custom')}}
+							                  				</label> 	
+						                  				</div>
+						                  				
+						                  				<div flex=50 ng-if=eee>					                  				
+						                  					<md-button aria-label="menu" class="md-raised md-mini" ng-click="monthsClearSelections()" 
+											      					ng-show="selectedDataSet" title="Fields metadata" style="margin-top:0; margin-bottom:0;">
+												            	{{translate.load('sbi.ds.persist.cron.scheduling.multipleselect.clearall')}} 
+												          	</md-button>				                  				
+						                  				</div>
+						                  							                  		
+													</div>
+													
+												</div>
+											
+											</div>
+											
+											<!-- <div style="float:left;display:flex" flex=30 layout="column">
+												
+												<label style="margin: 4 0 4 0; color:#A9A9A9">{{translate.load('sbi.ds.persist.cron.month')}}s:<b>{{eee ? '' : ' Every month'}}</b></label>
+												
+												<md-radio-group ng-model="data.group1">
+	
+											      <md-radio-button value="aaa" class="md-primary" style="margin:8 0 4 0;">{{translate.load('sbi.ds.persist.cron.everyminute')}}</md-radio-button>
+											      <md-radio-button value="!aaa">{{translate.load('sbi.ds.persist.cron.choose')}}</md-radio-button>
+											
+											    </md-radio-group>
+											    
+											    <div flex=50 layout="row" layout-align="start center">						           						                  		
+						                  		
+						                  			<md-input-container class="small counter" style="margin:8;">
+						                     			<md-checkbox 	aria-label="Checkbox 2" 
+							                     					ng-model="eee" ng-checked="" >
+														</md-checkbox>
+						                  			</md-input-container>
+						                  			
+						                  			<label>
+						                  				Custom
+					                  				</label> 
+					                  		
+												</div>
+											    
+											</div>
+											
+											<div style="float:right; display:flex" flex=70 layout-row ng-if="eee">
+												
+												<div flex=100>
+	      										
+		      										<md-slider-container style="width:100%">
+		      																				      	
+												      	<md-slider 	flex=80 ng-model="ttt" min="1" max="12" 
+												      				aria-label="green" id="green-slider" md-discrete 
+												      				ng-change="schedulingMonths(ttt)">
+												      	</md-slider>
+												      	
+												      	<md-input-container flex=20 style="max-width:100%; margin-left:16; margin-right:8">
+												        	<input 	type="text" ng-model="schedulingMonthsMap" aria-label="green" 
+												        			aria-controls="green-slider" readonly="readonly"
+												        			style="text-align:center">
+												      	</md-input-container>
+												      	
+												    </md-slider-container>
+											    
+											    </div>
+												
+											</div> -->
+										
+										</md-whiteframe>	
+										<!-- </div> -->
+										
+										<!-- WEEKDAY -->
+										<!-- <div flex=100 style="display:flex; background-color:#eceff1; margin-top:8px"> -->
+										<md-whiteframe class="md-whiteframe-5dp" style="display:flex; padding:8; margin-top:8">
+																					
+											<div flex=100 layout="row" style="display:flex">
+											
+												<div flex=20 style="align-items:center; display:flex">
+													<label style="margin: 4 0 4 0; color:#A9A9A9">
+														{{translate.load('sbi.ds.persist.cron.weekday')}}s:
+													</label>												
+												</div>
+												
+												<!-- VERTICAL ALIGNMENT INSIDE THE DIV: align-items:center; display:flex -->
+												<div flex=40 style="align-items:center; display:flex">
+													
+													<label style="margin: 4 0 4 0; color:#A9A9A9" ng-if=!rrr>
+														<strong>{{translate.load('sbi.ds.persist.cron.everyweekday')}}</strong>
+													</label>
+													
+													<md-select placeholder ="Select weekday(s)"
+											        	ng-required = "true" ng-if=rrr multiple=true
+											        	ng-model="weekdaysSelected" style="margin:0; width:80%" title="{{weekdaysSelected}}">   
+											        	<md-option ng-repeat="l in weekdays" value="{{l}}">
+											        		{{l}}
+											        	</md-option>
+										       		</md-select> 
+														
+												</div>
+												
+												<div flex=40>
+													
+													<div layout="row" layout-align="start center">
+							           	
+							           					<div flex=50>
+								                  			<md-input-container class="small counter" style="margin:8;">
+								                     			<md-checkbox 	aria-label="Checkbox 2" 
+									                     					ng-model="rrr" ng-checked="" >
+																</md-checkbox>
+								                  			</md-input-container>
+								                  			
+								                  			<label>
+								                  				{{translate.load('sbi.general.custom')}}
+							                  				</label> 	
+						                  				</div>
+						                  				
+						                  				<div flex=50 ng-if=rrr>					                  				
+						                  					<md-button aria-label="menu" class="md-raised md-mini" ng-click="weekdaysClearSelections()" 
+											      					ng-show="selectedDataSet" title="Fields metadata" style="margin-top:0; margin-bottom:0;">
+												            	{{translate.load('sbi.ds.persist.cron.scheduling.multipleselect.clearall')}} 
+												          	</md-button>				                  				
+						                  				</div>
+						                  							                  		
+													</div>
+													
+												</div>
+											
+											</div>
+											
+											<!-- <div style="float:left;display:flex" flex=30 layout="column">
+												
+												<label style="margin: 4 0 4 0; color:#A9A9A9">{{translate.load('sbi.ds.persist.cron.weekday')}}s:<b>{{rrr ? '' : ' Every weekday'}}</b></label>
+												
+												<md-radio-group ng-model="data.group1">
+	
+											      <md-radio-button value="aaa" class="md-primary" style="margin:8 0 4 0;">{{translate.load('sbi.ds.persist.cron.everyminute')}}</md-radio-button>
+											      <md-radio-button value="!aaa">{{translate.load('sbi.ds.persist.cron.choose')}}</md-radio-button>
+											
+											    </md-radio-group>
+											    
+											    <div flex=50 layout="row" layout-align="start center">
+							           						                  		
+						                  			<md-input-container class="small counter" style="margin:8;">
+						                     			<md-checkbox 	aria-label="Checkbox 2" 
+							                     					ng-model="rrr" ng-checked="" >
+														</md-checkbox>
+						                  			</md-input-container>
+					                  		
+					                  				<label>
+						                  				Custom
+					                  				</label> 
+					                  		
+												</div>
+											    
+											</div>
+											
+											<div style="float:right; display:flex" flex=70 layout-row ng-if="rrr">
+												
+	      										<md-slider-container style="width:100%">
+	      																				      	
+											      	<md-slider flex ng-model="color.green" min="1" max="7" aria-label="green" id="green-slider" md-discrete>
+											      	</md-slider>
+											      	
+											      	<md-input-container style="margin-left:16; margin-right:8">
+											        	<input 	flex type="text" ng-model="color.green" aria-label="green" 
+											        			aria-controls="green-slider" readonly="readonly"
+											        			style="text-align:center">
+											      	</md-input-container>
+											      	
+											    </md-slider-container>
+												
+											</div> -->
+										
+										</md-whiteframe>	
+										<!-- </div> -->
+										
+										<div flex=100 style="margin-top:8px; display:flex">
+											
+											<md-input-container class="md-block">										
+										    	<label>{{translate.load("sbi.ds.persist.cron.schedulingline")}}</label>											
+												<input ng-model="bla1" readonly="readonly">       						 				
+											</md-input-container>
+											
+										</div>
+										
+										<div flex=100 style="display:flex">
+											
+											<md-input-container class="md-block">
+										    	<label>{{translate.load("sbi.ds.persist.cron.nextfire")}}</label>
+												<input ng-model="bla2" readonly="readonly">
+											</md-input-container>
+											
+										</div>
+									
 									</div>
 									
 								</div>
