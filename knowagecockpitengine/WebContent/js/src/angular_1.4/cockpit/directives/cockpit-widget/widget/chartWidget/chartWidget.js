@@ -159,8 +159,8 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 					  $scope.translate=sbiModule_translate;
 					  $scope.localModel = angular.copy(model.content);
 					  $scope.datasetChecked = $scope.localModel.datasetId != undefined ? 1 : 0;
-					  $scope.confChecked = 0;
 			    	  $scope.changeDatasetFunction=function(dsId){
+			    		  $scope.confChecked = 0;
 			    		  var ds = cockpitModule_datasetServices.getDatasetById(dsId);
 			    		  if(ds){
 			    			  if(ds.id.dsId != $scope.localModel.datasetId && ds.id.dsLabel != $scope.localModel.datasetLabel){
@@ -169,7 +169,6 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 			    				  delete $scope.localModel.chartTemplate;
 			    				  delete $scope.localModel.columnSelectedOfDataset;
 			    				  $scope.confChecked = 0;
-			    				  //$scope.showChartConfiguration();
 			    			  }
 			    			  $scope.localModel.datasetLabel = ds.label;
 			    		  }
@@ -186,7 +185,6 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 			    				  $scope.confChecked = 1;
 			    			  }else{
 			    				  $scope.confChecked = 0;
-			    				// TODO show error
 			    				  $scope.showAction(error);
 			    			  }
 			    			  return error;
@@ -212,7 +210,7 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 			    					  
 			    					  mdPanelRef.close();
 			    					  $scope.$destroy();
-			    					  doRefresh();
+			    					  doRefresh(undefined,'init');
 			    					  finishEdit.resolve();
 			    				  }
 			    			  }
@@ -222,7 +220,6 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 			    		  mdPanelRef.close();
 			    		  $scope.$destroy();
 			    		  finishEdit.reject();
-
 			    	  }
 			    	  $scope.showChartConfiguration=function(){
 				    	  var widgetData = angular.extend({"datasetLabel":$scope.localModel.datasetLabel||''},$scope.localModel);
