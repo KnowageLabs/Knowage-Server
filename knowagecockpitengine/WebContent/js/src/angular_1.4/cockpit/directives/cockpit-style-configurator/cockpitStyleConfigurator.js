@@ -88,8 +88,9 @@ angular.module('cockpitModule').directive('cockpitStyleCustomWidgetConfigurator'
 	   }
 });
 
-function cockpitStyleConfiguratorControllerFunction($scope,sbiModule_translate,cockpitModule_template){
+function cockpitStyleConfiguratorControllerFunction($scope,sbiModule_translate,cockpitModule_template,cockpitModule_generalOptions){
 	$scope.translate=sbiModule_translate;
+	$scope.cockpitModule_generalOptions=cockpitModule_generalOptions;
 	$scope.angular=angular;
 	$scope.cockpitStyle={};
 	angular.copy(cockpitModule_template.configuration.style,$scope.cockpitStyle);
@@ -133,69 +134,38 @@ function cockpitStyleConfiguratorControllerFunction($scope,sbiModule_translate,c
 	                    ];
 	$scope.bordersWidth=[
 		                    {
-		                    	label:"1px",
-		                    	value:"1px"
+		                    	label:"1em",
+		                    	value:"1em"
 		                    },
 		                    {
-		                    	label:"2px",
-		                    	value:"2px"
+		                    	label:"2em",
+		                    	value:"2em"
 		                    },
 		                    {
-		                    	label:"3px",
-		                    	value:"3px"
+		                    	label:"3em",
+		                    	value:"3em"
 		                    },
 		                    {
-		                    	label:"4px",
-		                    	value:"4px"
+		                    	label:"4em",
+		                    	value:"4em"
 		                    },
 	                    ];
-	$scope.titleFontSize=[
-		                    {
-		                    	label:'SM',
-		                    	value:'8px'
-		                    },
-		                    {
-		                    	label:'MD',
-		                    	value:'12px'
-		                    },
-		                    {
-		                    	label:'LG',
-		                    	value:'16px'
-		                    },
-		                    {
-		                    	label:'XL',
-		                    	value:'20px'
-		                    },
-	                    ];
-	$scope.titleFontWeight=[
-	                    {
-	                    	label:sbiModule_translate.load("sbi.cockpit.style.titles.thin"),
-	                    	value:'200'
-	                    },
-	                    {
-	                    	label:sbiModule_translate.load("sbi.cockpit.style.titles.regular"),
-	                    	value:'regular'
-	                    },
-	                    {
-	                    	label:sbiModule_translate.load("sbi.cockpit.style.titles.bold"),
-	                    	value:'bold'
-	                    }
-	                    ];
+
 	$scope.boxShadow=[
 		                    {
-		                    	label:'1px',
+		                    	label:sbiModule_translate.load("sbi.cockpit.style.small"),
 		                    	value:'0px 1px 1px #ccc'
 		                    },
 		                    {
-		                    	label:'2px',
+		                    	label:sbiModule_translate.load("sbi.cockpit.style.medium"),
 		                    	value:'0px 2px 3px #ccc'
 		                    },
 		                    {
-		                    	label:'4px',
+		                    	label:sbiModule_translate.load("sbi.cockpit.style.large"),
 		                    	value:'0px 4px 5px #ccc'
 		                    },
 		                    {
-		                    	label:'8px',
+		                    	label:sbiModule_translate.load("sbi.cockpit.style.extralarge"),
 		                    	value:'0px 8px 19px #ccc'
 		                    },
 	                    ];

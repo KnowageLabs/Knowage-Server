@@ -109,8 +109,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 
 	};
 
-	this.initWidget=function(element,config){
-		console.log("in: initWidget", config,(new Date()).getTime());
+	this.initWidget=function(element,config,options){
 		element.addClass('fadeOut');
 		element.removeClass('fadeIn');
 
@@ -118,19 +117,11 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 			var width = angular.element(element)[0].parentElement.offsetWidth;
 			var height = angular.element(element)[0].parentElement.offsetHeight;
 				if(config.dataset!=undefined && cockpitModule_widgetSelection.haveSelection() && cockpitModule_properties.all_widget_initialized!=true){
-					console.log("skip: initWidget", config,(new Date()).getTime());
-					var itemPerPage = undefined;
-					var page = undefined;
-					if(config.content != undefined && config.content.fixedRow == true){
-						page = 0;
-						itemPerPage = config.content.maxRowsNumber-1;
-					}
-					cockpitModule_datasetServices.loadDatasetRecordsById(config.dataset.dsId,page,itemPerPage,undefined, undefined, config)
+					cockpitModule_datasetServices.loadDatasetRecordsById(config.dataset.dsId,options.page,options.itemPerPage,options.columnOrdering, options.reverseOrdering, config)
 					.then(function(){
 					$rootScope.$broadcast("WIDGET_INITIALIZED");
 					},function(){});
 				}else{
-					console.log("do: initWidget", config,(new Date()).getTime());
 					$rootScope.$broadcast("WIDGET_EVENT"+config.id,"INIT",{element:element,width:width,height:height});
 					$rootScope.$broadcast("WIDGET_INITIALIZED");
 				}
@@ -145,22 +136,18 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 		}, 400);
 	};
 
-	this.refreshWidget=function(element,config,nature,option){
-		var page = option==undefined ? undefined : option.page;
-		var itemPerPage = option==undefined ? undefined : option.itemPerPage;
-		var columnOrdering = option==undefined ? undefined : option.columnOrdering;
-		var reverseOrdering = option==undefined ? undefined : option.reverseOrdering;
-		
+	this.refreshWidget=function(element,config,nature,options){
+		 
 		var width = angular.element(element)[0].parentElement.offsetWidth;
 		var height = angular.element(element)[0].parentElement.offsetHeight;
-			var dsRecords = this.loadDatasetRecords(config,page, itemPerPage,columnOrdering, reverseOrdering);
+			var dsRecords = this.loadDatasetRecords(config,options.page, options.itemPerPage,options.columnOrdering, options.reverseOrdering);
 			if(dsRecords == null){
 				$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:undefined,nature:nature});
 			}else{
 				$rootScope.$broadcast("WIDGET_EVENT"+config.id,"WIDGET_SPINNER",{show:true});
 				dsRecords.then(function(data){
-					$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:data,nature:nature});
 					$rootScope.$broadcast("WIDGET_EVENT"+config.id,"WIDGET_SPINNER",{show:false});
+					$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:data,nature:nature});
 				}, function(){
 					$rootScope.$broadcast("WIDGET_EVENT"+config.id,"WIDGET_SPINNER",{show:false});
 					console.log("Error retry data");

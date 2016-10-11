@@ -7,55 +7,55 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 								 },
 								 {
 									 label:"6",
-									 value:'6px'
+									 value:'6em'
 								 },
 								 {
 									 label:"8",
-									 value:'8px'
+									 value:'8em'
 								 },
 								 {
 									 label:"10",
-									 value:'10px'
+									 value:'10em'
 								 },
 								 {
 									 label:"12",
-									 value:'12px'
+									 value:'12em'
 								 },
 								 {
 									 label:"14",
-									 value:'14px'
+									 value:'14em'
 								 },
 								 {
 									 label:"16",
-									 value:'16px'
+									 value:'16em'
 								 },
 								 {
 									 label:"18",
-									 value:'18px'
+									 value:'18em'
 								 },
 								 {
 									 label:"22",
-									 value:'22px'
+									 value:'22em'
 								 },
 								 {
 									 label:"24",
-									 value:'24px'
+									 value:'24em'
 								 },
 								 {
 									 label:"28",
-									 value:'px'
+									 value:'28em'
 								 },
 								 {
-									 label:"28",
-									 value:'px'
+									 label:"30",
+									 value:'30em'
 								 },
 								 {
 									 label:"32",
-									 value:'32px'
+									 value:'32em'
 								 },
 								 {
 									 label:"36",
-									 value:'36px'
+									 value:'36em'
 								 },
 		                  	
 						 	],

@@ -50,6 +50,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	function cockpitTableWidgetControllerFunction($scope,cockpitModule_widgetConfigurator,$mdDialog,$timeout,$mdPanel,$q,cockpitModule_datasetServices, $mdToast, sbiModule_translate,sbiModule_restServices,cockpitModule_widgetServices,cockpitModule_widgetSelection){
 		$scope.selectedTab = {'tab' : 0};
+		$scope.widgetIsInit=false;
 		$scope.totalCount = 0;
 		$scope.translate = sbiModule_translate;
 		$scope.summaryRow = {};
@@ -133,34 +134,38 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		};
 
 
-
+		$scope.lastChangePageConf={};
 		$scope.changeDocPage = function(searchValue, itemsPerPage, currentPageNumber , columnsSearch,columnOrdering, reverseOrdering){
-			if($scope.gridsterItem.hasClass("gridster-item-resizing")){
+			if($scope.gridsterItem.hasClass("gridster-item-resizing") || !$scope.widgetIsInit ){
 				return
 			}
-			currentPageNumber--;
-			var numberOfElement = angular.copy(itemsPerPage);
-			if(searchValue==undefined || searchValue.trim().lenght==0 ){
-				searchValue='';
-			}
-			if($scope.ngModel.style.showSummary == true){
-				numberOfElement--;
-			}
-			if($scope.ngModel.content.maxRowsNumber !=undefined){
-				numberOfElement = angular.copy($scope.ngModel.content.maxRowsNumber)
-				if($scope.ngModel.style.showSummary == true){
-					numberOfElement--;
+			var time=(new Date()).getTime();
+			$scope.lastChangePageConf=time;
+			$timeout(function(){
+				if(angular.equals(time,	$scope.lastChangePageConf)){
+					currentPageNumber--;
+					var numberOfElement = angular.copy(itemsPerPage);
+					if(searchValue==undefined || searchValue.trim().lenght==0 ){
+						searchValue='';
+					}
+					if($scope.ngModel.style.showSummary == true){
+						numberOfElement--;
+					}
+					if($scope.ngModel.content.maxRowsNumber !=undefined){
+						numberOfElement = angular.copy($scope.ngModel.content.maxRowsNumber)
+						if($scope.ngModel.style.showSummary == true){
+							numberOfElement--;
+						}
+						var options = {page:currentPageNumber, itemPerPage:numberOfElement, columnOrdering:columnOrdering,reverseOrdering:reverseOrdering };
+						$scope.refreshWidget(options);
+
+					}else{
+						var options = {page:currentPageNumber, itemPerPage:numberOfElement, columnOrdering:columnOrdering,reverseOrdering:reverseOrdering };
+						$scope.refreshWidget(options);
+					}
 				}
-				var options = {page:currentPageNumber, itemPerPage:numberOfElement, columnOrdering:columnOrdering,reverseOrdering:reverseOrdering };
-				$scope.refreshWidget(options);
-
-			}else{
-				var options = {page:currentPageNumber, itemPerPage:numberOfElement, columnOrdering:columnOrdering,reverseOrdering:reverseOrdering };
-				$scope.refreshWidget(options);
-			}
-
-
-
+			},500);
+			 
 		};
 		$scope.isMobile = {
 			    Android: function() {
@@ -190,7 +195,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return true;
 		}
 		
-		$scope.refresh=function(element,width,height, datasetRecords){
+		$scope.refresh=function(element,width,height, datasetRecords,nature){
+			if(angular.equals(nature,'fullExpand')){
+				return
+			}
 			$scope.columnsToShow = [];
 			$scope.datasetRecords = {};
 			$scope.columnToshowinIndex = [];
@@ -329,22 +337,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 				$scope.refreshWidget(options);
 			}else{
-//				var options = {page:page, itemPerPage:itemPerPage, columnOrdering:undefined,reverseOrdering:undefined };
-//
-//				$scope.refreshWidget(options);
+				$scope.refreshWidget(options);
 			}
-
+			$scope.widgetIsInit=true;
 		}
 		$scope.getOptions =function(){
 			var obj = {};
-			if($scope.ngModel.content.fixedRow == true && $scope.ngModel.content.maxRowsNumber != undefined){
+//			if($scope.ngModel.content.fixedRow == true && $scope.ngModel.content.maxRowsNumber != undefined){
 				
-				obj["page"] =1;
+				obj["page"] =0;
 				obj["itemPerPage"] = $scope.ngModel.content.maxRowsNumber ;
 				if($scope.ngModel.style.showSummary == true){
 					obj["itemPerPage"]--;
 				}
-			}
+//			}
 			return obj;
 			
 		}

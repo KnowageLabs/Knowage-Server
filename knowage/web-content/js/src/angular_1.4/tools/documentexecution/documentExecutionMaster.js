@@ -84,6 +84,9 @@ $scope.executeSourceDocument = function() {
 			.replace(/%3D/g,"=")
 			.replace(/%26/g,"&");
 		}
+		if(sourceDocumentExecProperties.IS_FROM_DOCUMENT_WIDGET!=undefined){
+			url+="&IS_FROM_DOCUMENT_WIDGET="+sourceDocumentExecProperties.IS_FROM_DOCUMENT_WIDGET;
+		}
 		
 		var laodSourceDocToCross=function(){
 			$timeout(function(){

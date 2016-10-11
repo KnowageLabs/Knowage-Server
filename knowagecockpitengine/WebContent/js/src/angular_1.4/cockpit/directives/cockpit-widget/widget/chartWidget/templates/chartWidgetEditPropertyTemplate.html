@@ -15,6 +15,9 @@
 		     	</md-tab>
 		     	
 		     	<md-tab label="{{translate.load('sbi.cockpit.widgets.chartengine.chartEngineDesigner.title')}}" md-on-select="showChartConfiguration()" md-on-deselect="checkConfiguration()">
+		     	 	<div ng-show="confSpinner" layout-fill style='position:absolute;z-index: 500;background:rgba(0,0,0, 0.3);'>
+       					<md-progress-circular  md-mode='indeterminate' style='top:50%;left:50%;margin-left:-25px;' ></md-progress-circular>
+    				</div>
 		     	 	<post-iframe iframe-id="chartConfigurationIframe" id="chartConfiguration" class="layout-fill" ng-if="localModel.datasetId" ></post-iframe>
 		     	 	<p ng-if="!localModel.datasetId" >{{translate.load('sbi.cockpit.table.missingdataset')}}</p>
 			    </md-tab>

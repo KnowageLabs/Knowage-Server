@@ -458,11 +458,7 @@ if(executionRoleNames.size() > 0) {
  					returnFromDataDepenViewpoint : {status : false},
  					initResetFunctionLovDependency : {status : false},
  					returnFromLovDepenViewpoint : {status : false}
-				<%
-				if(isFromDocumentWidget != null && "true".equalsIgnoreCase(isFromDocumentWidget)) {
-					out.print(", isFromDocumentWidget: true ");
-				}
-				%>
+				
 				};
 				return obj;
 			});

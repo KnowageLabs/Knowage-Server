@@ -50,6 +50,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				'EDIT_MODE': '<%= request.getParameter("EDIT_MODE") != null ? request.getParameter("EDIT_MODE") : aRequestContainer.getServiceRequest().getAttribute("EDIT_MODE")  %>',
 				'EXEC_FROM': '<%=request.getParameter("EXEC_FROM")%>',
 				'COCKPIT_PARAMETER' : '<%= request.getParameter("COCKPIT_PARAMETER") %>',
+				'IS_FROM_DOCUMENT_WIDGET' : '<%= request.getParameter("IS_FROM_DOCUMENT_WIDGET") %>',
 
 		};
 		

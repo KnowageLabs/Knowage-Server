@@ -244,7 +244,10 @@
     }
 
     .gridster {
-        background: url("../../sbi_default/img/grid.png") repeat 0 0 transparent;
+		&.cockpitEditMode{
+			background: url("../../sbi_default/img/grid.png") repeat 0 0 transparent;
+		}
+        
         margin: 10px;
 		min-height: calc(100% - 20px);
 
@@ -321,7 +324,9 @@
             box-shadow: none;
 			position:relative;
             border-radius: 0;
-            border: 1px dashed $bordersColor;
+			&.editWidgetMode{
+				border: 1px dashed $bordersColor;
+			}
             
             md-card-title{
            	 flex: inherit;

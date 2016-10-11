@@ -44,13 +44,13 @@
 			<md-input-container class="md-block" flex>
 				<label>{{translate.load("sbi.cockpit.style.titles.font.size")}}</label>
 				<md-select ng-model="ngModel.title['font-size']" ng-disabled="!ngModel.titles">
-					<md-option ng-repeat="fs in titleFontSize" ng-value="fs.value">{{fs.label}}</md-option>
+					<md-option ng-repeat="fs in cockpitModule_generalOptions.fontSizeDimension" ng-value="fs.value">{{fs.value}}</md-option>
 				</md-select>
 			</md-input-container>
 			<md-input-container class="md-block" flex>
 				<label>{{translate.load("sbi.cockpit.style.titles.font.weight")}}</label>
 				<md-select ng-model="ngModel.title['font-weight']" ng-disabled="!ngModel.titles">
-					<md-option ng-repeat="fw in titleFontWeight" ng-value="fw.value">{{fw.label}}</md-option>
+					<md-option ng-repeat="fw in cockpitModule_generalOptions.fontWeight" ng-value="fw.value">{{fw.label}}</md-option>
 				</md-select>
 			</md-input-container>
 		</md-card-content>

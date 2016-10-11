@@ -63,8 +63,9 @@ angular.module('cockpitModule').directive('cockpitGrid',function($compile,cockpi
 	   }
 });
 
-function cockpitGridControllerFunction($scope,cockpitModule_gridsterOptions,cockpitModule_widgetServices){
+function cockpitGridControllerFunction($scope,cockpitModule_gridsterOptions,cockpitModule_widgetServices,cockpitModule_properties){
 	$scope.cockpitModule_gridsterOptions=cockpitModule_gridsterOptions;
+	$scope.cockpitModule_properties=cockpitModule_properties;
 };
 
 })();

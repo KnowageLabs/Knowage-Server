@@ -113,10 +113,10 @@
 		                            	 size:"100px",
 		                            	 transformer:function(item){
 		                            		 var template = "<div layout=\"row\"> " 
-		                            			 +"<md-button ng-click=\"scopeFunctions.moveUp($event,$parent.$parent.$index)\" ng-disabled=\"$parent.$parent.$index==0\" class=\"md-icon-button h20 \" aria-label=\"up\">" 
+		                            			 +"<md-button ng-click=\"scopeFunctions.moveUp($event,$parent.$parent.$parent.$parent.$parent.$index)\" ng-disabled=\"$parent.$parent.$parent.$parent.$parent.$index==0\" class=\"md-icon-button h20 \" aria-label=\"up\">" 
 		                            			 +"  <md-icon md-font-icon=\"fa fa-arrow-up\"></md-icon>" 
 		                            			 +" </md-button>" 
-		                            			 +" <md-button ng-click=\"scopeFunctions.moveDown($event,$parent.$parent.$index)\" ng-disabled=\"$parent.$parent.$last\" class=\"md-icon-button h20\" aria-label=\"down\">" 
+		                            			 +" <md-button ng-click=\"scopeFunctions.moveDown($event,$parent.$parent.$parent.$parent.$parent.$index)\" ng-disabled=\"$parent.$parent.$parent.$parent.$parent.$last\" class=\"md-icon-button h20\" aria-label=\"down\">" 
 		                            			 +" <md-icon md-font-icon=\"fa fa-arrow-down\"></md-icon>" 
 		                            			 +"</md-button>" 
 		                            			 +"</div>";

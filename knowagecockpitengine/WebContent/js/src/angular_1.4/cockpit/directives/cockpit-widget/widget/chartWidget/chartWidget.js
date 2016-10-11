@@ -51,6 +51,7 @@ angular.module('cockpitModule')
 	    	$scope.updateContent = function(actionUrl, parameters, nature, width, height){
 	    		var iframe = $element.find('iframe')[0];
 	    		if(nature != 'refresh'){
+	    			
 	    			if(actionUrl){
 	    				$scope.updateAction(actionUrl);
 	    			}
@@ -69,11 +70,14 @@ angular.module('cockpitModule')
 	    			doc.write(form.wrap(doc.createElement('div')).parent().html());
 	    			doc.close();
 	    			doc.getElementById(formId).submit();
+	    			$scope.showWidgetSpinner();
 	    		}
 	    		if(height != undefined){
 	    			iframe.style="height:"+height+"px;min-height:"+height+"px";
 	    		}
 	    	};
+	    	
+	    	
 	    }
 	};
 })
@@ -149,6 +153,7 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 		$scope.postIframe = element.find('post-iframe').scope();
 		var execPar = buildParametersForExecution.execute(widgetData,data);
 		$scope.postIframe.updateContent(execPar.formAction, execPar.formParameters,nature,width,height);
+		
 	};
 	
 	$scope.editWidget=function(index){
@@ -157,6 +162,7 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 				attachTo:  angular.element(document.body),
 				controller: function($scope,sbiModule_translate,model,mdPanelRef,doRefresh){
 					  $scope.translate=sbiModule_translate;
+					  $scope.confSpinner=false;
 					  $scope.localModel = angular.copy(model.content);
 					  $scope.datasetChecked = $scope.localModel.datasetId != undefined ? 1 : 0;
 			    	  $scope.changeDatasetFunction=function(dsId){
@@ -240,6 +246,22 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 			  				}
 			  			});
 			  		  }
+			    	  $scope.showWidgetSpinner=function(){
+			    		  $scope.confSpinner=true;
+			    	  }
+			    	  $scope.hideWidgetSpinner=function(){
+			    		  $scope.confSpinner=false;
+			    		  $scope.safeApply();
+			    	  }
+			    	  $scope.finishLoadingIframe=function(){
+			    		  $scope.hideWidgetSpinner();
+			    		  $scope.safeApply();
+			    	  }
+			    	  $scope.safeApply=function(){
+			    			if ($scope.$root.$$phase != '$apply' && $scope.$root.$$phase !='$digest') {
+			    				$scope.$apply();
+			    			}
+			    		}
 			      },
 				disableParentScroll: true,
 				templateUrl: baseScriptPath+ '/directives/cockpit-widget/widget/chartWidget/templates/chartWidgetEditPropertyTemplate.html',
@@ -260,6 +282,10 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 		var columnValue = event.point.name;
 		var columnName = $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY.name
 		$scope.doSelection(columnName,columnValue);
+	}
+	
+	$scope.finishLoadingIframe=function(){
+			$scope.hideWidgetSpinner();
 	}
 };
 function setAggregationsOnChartEngine(wconf){

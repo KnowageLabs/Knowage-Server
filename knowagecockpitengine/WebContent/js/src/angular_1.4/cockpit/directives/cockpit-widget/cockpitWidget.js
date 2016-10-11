@@ -163,19 +163,22 @@ angular.module('cockpitModule')
                     			scope.ngModel.isNew = undefined;
                     			if(initOnFinish){
                     				scope.doEditWidget(initOnFinish).then(function(){
-                    					cockpitModule_widgetServices.initWidget(angular.element(directive),scope.ngModel);
+                    					var options =scope.getOptions == undefined? {} :  scope.getOptions();
+                    					cockpitModule_widgetServices.initWidget(angular.element(directive),scope.ngModel,options);
                     				},function(){
                     					scope.deleteWidget(true);
                     				})
                     			}else{
-                					cockpitModule_widgetServices.initWidget(angular.element(directive),scope.ngModel);
+                    				var options =scope.getOptions == undefined? {} :  scope.getOptions();
+                					cockpitModule_widgetServices.initWidget(angular.element(directive),scope.ngModel,options);
                     			}
                     				
                     			
                     				
                     		};
                     		scope.refreshWidget=function(options,nature){
-                    			cockpitModule_widgetServices.refreshWidget(angular.element(directive),scope.ngModel,nature==undefined? 'refresh' : nature, options);
+                    			var finOptions=options==undefined? (scope.getOptions == undefined? {} :  scope.getOptions()) : options;
+                    			cockpitModule_widgetServices.refreshWidget(angular.element(directive),scope.ngModel,nature==undefined? 'refresh' : nature, finOptions);
                     		};
                     	}                    	
                     	
@@ -213,14 +216,13 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 			}
 			break;
 		case "PARAMETER_CHANGE":
-			var option =$scope.getOptions == undefined? {} :  $scope.getOptions($scope.ngModel);
 			var ds=$scope.getDataset();
 			if(ds!=undefined && config.dsList.hasOwnProperty(ds.label)){
-				$scope.refreshWidget(option,"parameter_change");
+				$scope.refreshWidget(undefined,"parameter_change");
 			}
 			var doc=$scope.getDocument();
 			if(doc!=undefined && config.docList.hasOwnProperty(doc.DOCUMENT_LABEL)){
-				$scope.refreshWidget(option,"parameter_change");
+				$scope.refreshWidget(undefined,"parameter_change");
 			}
 			break;
 		default: console.error("event "+eventType+" not found")
@@ -251,9 +253,8 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 			break;
 		case "RESIZE" :
 			//cockpitModule_widgetServices.refreshWidget($scope.subCockpitWidget,$scope.ngModel,'resize',{});
-			var option =$scope.getOptions == undefined? {} :  $scope.getOptions($scope.ngModel);
 
-			$scope.refreshWidget(option);
+			$scope.refreshWidget();
 			break; 
 		case "WIDGET_SPINNER" :
 			if(config.show){
@@ -290,7 +291,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 					$scope.initWidget();
 				}else{
 					if(associativeSelection==undefined || associativeSelection.hasOwnProperty(dataset.label)){
-						var option =$scope.getOptions == undefined? {} :  $scope.getOptions($scope.ngModel);
+						var option =$scope.getOptions == undefined? {} :  $scope.getOptions();
 						cockpitModule_widgetServices.refreshWidget($scope.subCockpitWidget,$scope.ngModel,'selections',option);
 //						$scope.refreshWidget();
 					}
@@ -302,7 +303,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 			}else{
 				if(associativeSelection==undefined || associativeSelection.hasOwnProperty(document.DOCUMENT_LABEL)){
 //					$scope.refreshWidget();
-					var option =$scope.getOptions == undefined? {} :  $scope.getOptions($scope.ngModel);
+					var option =$scope.getOptions == undefined? {} :  $scope.getOptions();
 					cockpitModule_widgetServices.refreshWidget($scope.subCockpitWidget,$scope.ngModel,'selections',option);
 				}
 			}
@@ -461,6 +462,8 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 		}
 		cockpitModule_gridsterOptions.draggable.enabled=cockpitModule_properties.EDIT_MODE && cockpitModule_properties.WIDGET_EXPANDED[cockpitModule_properties.CURRENT_SHEET]!=true;
 		cockpitModule_gridsterOptions.resizable.enabled=cockpitModule_properties.EDIT_MODE && cockpitModule_properties.WIDGET_EXPANDED[cockpitModule_properties.CURRENT_SHEET]!=true;
+		
+		$scope.refreshWidget(undefined,'fullExpand');
 	}
 };
 
