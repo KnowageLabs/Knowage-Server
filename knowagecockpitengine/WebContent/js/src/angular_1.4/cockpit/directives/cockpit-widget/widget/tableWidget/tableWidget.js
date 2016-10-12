@@ -304,42 +304,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			});
 		} 
 		$scope.init=function(element,width,height){
-			var itemPerPage = undefined;
-			var page = undefined;
-			if($scope.ngModel.content != undefined && $scope.ngModel.content.fixedRow == true){
-				page = 0;
-				itemPerPage = $scope.ngModel.content.maxRowsNumber-1;
-			}
-			if($scope.ngModel.dataset!=undefined && $scope.ngModel.dataset.dsId != undefined && ($scope.ngModel.content.columnSelectedOfDataset== undefined ||  $scope.ngModel.content.columnSelectedOfDataset.length ==0)){
-				
-				var itemPerPage = undefined;
-				var page = undefined;
-				if($scope.ngModel.content != undefined && $scope.ngModel.content.fixedRow == true){
-					page = 0;
-					itemPerPage = $scope.ngModel.content.maxRowsNumber-1;
-				}
-				$scope.localDataset = {};
-				angular.copy(cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId), page,itemPerPage ,undefined,undefined,$scope.localDataset);
-				$scope.ngModel.content.columnSelectedOfDataset = [];
-				$scope.ngModel.content.name = $scope.localDataset.name;
-				for(var i=0;i<$scope.localDataset.metadata.fieldsMeta.length;i++){
-
-					var obj = $scope.localDataset.metadata.fieldsMeta[i];
-					obj.aggregationSelected = 'SUM';
-					obj["funcSummary"] = "SUM";
-					obj.typeSelected = obj.type;
-					obj.label = obj.alias;
-					obj.aliasToShow = obj.alias;
-					$scope.ngModel.content.columnSelectedOfDataset.push(obj);
-
-				}
-				var options = {page:page, itemPerPage:itemPerPage, columnOrdering:undefined,reverseOrdering:undefined };
-
-				$scope.refreshWidget(options);
-			}else{
-				$scope.refreshWidget(options);
-			}
-			$scope.widgetIsInit=true;
+			$scope.refreshWidget();
+			$timeout(function(){
+				$scope.widgetIsInit=true;
+			},500);
+			
 		}
 		$scope.getOptions =function(){
 			var obj = {};
