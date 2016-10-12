@@ -57,6 +57,29 @@
 		width: $chart.width,
 	#end
 	
+	#*
+		Dimension type (pixels or percentage) parameter for height of the chart
+		is provided.     		
+		NOTE: The same goes for the width of the chart (parameter 'widthDimType').    				
+		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	*#
+ 	#if($chart.heightDimType)
+   	 	heightDimType: '$chart.heightDimType',
+   	 	
+   	 	#if ($chart.height!='')
+   	 	$datasettransformer.print($chart.height)
+   	 		heightInPerc: $chart.height,
+   	 	#end
+    #end
+	
+	#if($chart.widthDimType)
+    	widthDimType: '$chart.widthDimType',
+    	
+    	#if ($chart.width!='')
+   	 		widthInPerc: $chart.width,
+   	 	#end
+    #end
+	
 	#set($showLegend = false)
 	#if($chart.LEGEND.show != '')
 		#set($showLegend = $chart.LEGEND.show)
@@ -261,8 +284,10 @@
 		    #set($scaleFontSize = "12")
 	    #end
 	    
+	   	## This creates problem with the position of the chart (without this it is stretched - what we need)!
+	   	## @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	    // Number - Scale label font size in pixels
-	    scaleFontSize: "$scaleFontSize" ,
+	    ##scaleFontSize: "$scaleFontSize", 
 	
 	    #set($scaleFontStyle = false)
 	    #set($scaleFontStyle = $genericStyle.fontWeight)
@@ -282,11 +307,15 @@
 	    // String - Scale label font colour
 	    scaleFontColor: "$scaleFontColor",
 	
+	    ## Before, this value was set to TRUE, but in that case, the width is making problems
+	    ## @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	    // Boolean - whether or not the chart should be responsive and resize when the browser does.
-	    responsive: true,
+	    responsive: false,
 	
+		## Before, this value was set to TRUE, but in that case, the height is making problems
+		## @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	    // Boolean - whether to maintain the starting aspect ratio or not when responsive, if set to false, will take up entire container
-	    maintainAspectRatio: true,
+	    maintainAspectRatio: false,	    
 	
 	    // Boolean - Determines whether to draw tooltips on the canvas or not
 	    showTooltips: true,

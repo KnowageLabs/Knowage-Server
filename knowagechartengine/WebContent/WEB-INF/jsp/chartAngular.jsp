@@ -169,7 +169,7 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 			var chartEngineSharedSettings = null;
 	 			
 	 			var chartExecutionWebServiceManager = null;
-		
+	 					
 			</script>
 			
 			<!-- 
@@ -179,7 +179,7 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			-->
 			<div id="mainPanel" style="height:100%; width:100%; margin:auto;" ng-if=!isLibChartJs></div>		
 			
-			<div id="mainPanel" style="height:80%; width:80%; margin:auto; display:table" ng-if=isLibChartJs>
+			<div id="mainPanel" style="margin:auto;" ng-if=isLibChartJs>
 				
 				<div id="chartPanelTitleOrNoData" style="height:0">
 					
@@ -194,10 +194,11 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 				</div>	 -->
 				
 				<div>
-					<canvas id="chartPanelCanvas" width="" height="" align="center"></canvas>
+					<canvas id="chartPanelCanvas"></canvas>
 				</div>
 						
 			</div>
+			
 			
 			<form id="export-chart-form" class="export-form">
 				<input type="hidden" name="options"/>

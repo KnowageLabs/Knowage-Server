@@ -25,49 +25,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 	function initChartLibrary(panelId, drillUpText, decimalPoint, thousandsSep) {
-		/* var mainPanel = Ext.getCmp(panelId);
-
-		var chartPanelTitleOrNoData = Ext.create('Ext.form.Panel', {
-			id : 'chartPanelTitleOrNoData',
-			layout : 'vbox',
-			bodyStyle : 'background:transparent;',
-			border : false
-		});
-		mainPanel.add(chartPanelTitleOrNoData);
-
-		var chartPanelSubtitle = Ext.create('Ext.panel.Panel', {
-			id : 'chartPanelSubtitle',
-			layout : 'vbox',
-			bodyStyle : 'background:transparent;',
-			border : false
-		});
-		mainPanel.add(chartPanelSubtitle);
-
-		var chartPanelCanvas = Ext.create('Ext.Component', {
-			id : 'chartPanelCanvas',
-			autoEl : {
-				tag : 'canvas'
-			}
-		});
-		mainPanel.add(chartPanelCanvas); */
+		
 	};
 
 	function renderChart(chartConf) {
-		/* var chartPanelTitleOrNoData = Ext.getCmp('chartPanelTitleOrNoData');
-		var chartPanelSubtitle = Ext.getCmp('chartPanelSubtitle');		
-		var chartPanelCanvas = Ext.getCmp('chartPanelCanvas'); */
 		
 		// NEW
-		/* var chartPanelTitleOrNoData = document.getElementById('chartPanelTitleOrNoData');
-		var chartPanelSubtitle = document.getElementById('chartPanelSubtitle');	 */
-		
+		var chartPanelTitleOrNoData = document.getElementById('chartPanelTitleOrNoData');
+		var chartPanelSubtitle = document.getElementById('chartPanelSubtitle');		
 		var chartPanelCanvas = document.getElementById('chartPanelCanvas');		
+		
 		var mainPanelRegion = document.getElementById('mainPanel');
 		
 		/* var mainPanelRegion = mainPanel.getViewRegion(); */
 
 		// No data to represent
-		/* if ((chartConf.data.labels && chartConf.data.labels.length == 0)
+		if ((chartConf.data.labels && chartConf.data.labels.length == 0)
 				|| (chartConf.data.datasets && chartConf.data.datasets.length == 0)) {
 
 			if (chartConf.chart.emptyMessage && chartConf.chart.emptyMessage.style
@@ -99,13 +72,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			
 		} else { //The are data to represent */
 			
-			/* // title management
+			// title management
 			if (chartConf.chart.title && chartConf.chart.title.style
 					&& chartConf.chart.title.text != '') {
-				chartPanelTitleOrNoData.setLayout({
+				/* chartPanelTitleOrNoData.setLayout({
 					align : chartConf.chart.title.style.align
-				});
-				console.log("KKK");
+				}); */
 				var titleContainerStyle = {
 					padding : '5 20 5 20'
 				};
@@ -115,22 +87,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					var titleStyleName = titleStyleKeys[i];
 
 					if (titleStyleName.toLowerCase() != 'align') {
-						titleContainerStyle[titleStyleName] = chartConf.chart.title.style[titleStyleName];
+						chartPanelTitleOrNoData.style[titleStyleName] = chartConf.chart.title.style[titleStyleName];
 					}
+					else {
+						chartPanelTitleOrNoData.style["text-align"] = chartConf.chart.title.style[titleStyleName];
+					}
+					
 				}
 
-				var titleContainer = Ext.create('Ext.form.Label', {
+				//chartPanelTitleOrNoData.innerHTML = "UUU";
+								
+				/* var titleContainer = Ext.create('Ext.form.Label', {
 					text : chartConf.chart.title.text,
 					style : titleContainerStyle
 				});
 
-				chartPanelTitleOrNoData.add(titleContainer);
+				chartPanelTitleOrNoData.add(titleContainer); */
 			}
 
 			// subtitle management
 			if (chartConf.chart.subtitle && chartConf.chart.subtitle.style
 					&& chartConf.chart.subtitle.text != '') {
-				console.log("LLL");
+				
 				chartPanelSubtitle.setLayout({
 					align : chartConf.chart.subtitle.style.align
 				});
@@ -154,63 +132,91 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				});
 
 				chartPanelSubtitle.add(subtitleContainer);
-			} */
+			} 
 
 			var chartType = chartConf.chart.type.toLowerCase();
 			
-			// Sets the dimensions
-			/* var canvasHeight = mainPanel.getHeight();
-			var canvasWidth = mainPanel.getWidth(); */
-						
-			/* var canvasHeight = mainPanelRegion.clientHeight;
-			var canvasWidth = mainPanelRegion.clientWidth;
-
-			if (chartConf && chartConf.chart && chartConf.chart.height) {
-				canvasHeight = chartConf.chart.height;
-			}
-			if (chartConf && chartConf.chart && chartConf.chart.width) {
-				canvasWidth = chartConf.chart.width;
-			}
-			console.log(chartConf.chart.width);
-			console.log(canvasWidth);
-			canvasHeight = canvasHeight	- 
-				(chartPanelTitleOrNoData.clientHeight + chartPanelSubtitle.clientHeight);
-
-			console.log("HHH4");
-			console.log(canvasWidth);
-			
-			chartPanelCanvas.height = canvasHeight;
-			
-			chartPanelCanvas.width = canvasWidth; */
-
 			// Gets the context of the canvas element we want to select
 			var ctx = document.getElementById("chartPanelCanvas").getContext("2d");
-
+			
+			// Destroy the ChartJS instance (the one that is placed inside the canvas HTML element) before reseting the chart (when resizing)
+			window.myNewChart ? window.myNewChart.destroy() : null;
+			
+			if (!chartConf.chart.height && !chartConf.chart.heightInPerc) {
+				
+				ctx.canvas.height = window.innerHeight-1;
+				mainPanelRegion.style.height = window.innerHeight-1;
+				
+				if (window.myNewChart) { 
+					window.myNewChart.chart.canvas.height=window.innerHeight-1;
+				}
+			}
+			else {
+				
+				if (chartConf.chart.heightDimType=="pixels") {
+					ctx.canvas.height = chartConf.chart.height;
+					mainPanelRegion.style.height = chartConf.chart.height;
+				}
+				// percentage
+				else {
+					ctx.canvas.height = chartConf.chart.heightInPerc/100 * window.innerHeight - 1;
+					mainPanelRegion.style.height = chartConf.chart.heightInPerc/100 * window.innerHeight - 1;
+					
+					if (window.myNewChart) { 
+						window.myNewChart.chart.canvas.height=chartConf.chart.heightInPerc/100 * window.innerHeight - 1;
+					}
+				}
+			}
+			
+			if (!chartConf.chart.width && !chartConf.chart.widthInPerc) {	
+				
+				ctx.canvas.width = window.innerWidth-1;
+				mainPanelRegion.style.width = window.innerWidth-1;	
+				
+				if (window.myNewChart) { 
+					window.myNewChart.chart.canvas.width=window.innerWidth-1;
+				}
+			}
+			else {
+				
+				if (chartConf.chart.widthDimType=="pixels") {
+					ctx.canvas.width = chartConf.chart.width;
+					mainPanelRegion.style.width = chartConf.chart.width;
+				}
+				// percentage
+				else {
+					ctx.canvas.width = chartConf.chart.widthInPerc/100 * window.innerWidth-1;
+					mainPanelRegion.style.width = chartConf.chart.widthInPerc/100 * window.innerWidth-1;
+					
+					if (window.myNewChart) { 
+						window.myNewChart.chart.canvas.width=chartConf.chart.widthInPerc/100 * window.innerWidth-1;
+					}
+				}
+			}
+			
+			// For responsive and scaleFontSize that are set as in the beginning (this is changed or commented in the VM however) 
+			//ctx.canvas.height = (window.innerHeight+1)/5.1;			
+			
 			//Sets the background color
 			if (chartConf.chart.backgroundColor
-					&& chartConf.chart.backgroundColor != '') {
-				
-				//mainPanel.setStyle('backgroundColor', chartConf.chart.backgroundColor);
+					&& chartConf.chart.backgroundColor != '') {				
 				mainPanelRegion.style.backgroundColor = chartConf.chart.backgroundColor;
 			}
-
-			console.log(chartConf.options);
-			console.log("ctx:",ctx);
-			
-			
-			console.log("after:",ctx.canvas);
-			
-			var myNewChart;
-			if (chartType == 'line') {
-				myNewChart = new Chart(ctx).Line(chartConf.data, chartConf.options);
+				
+			/* 
+				window.myNewChart - the global variable that will contain the rendered chart configuration 
+				(needed for reseting (destroying) the canvas content - the chart itself when resizing).
+				@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			*/			
+		 	if (chartType == 'line') {
+				 window.myNewChart = new Chart(ctx).Line(chartConf.data, chartConf.options);
 			} else if (chartType == 'pie') {
-				myNewChart = new Chart(ctx).Pie(chartConf.data, chartConf.options);
+				window.myNewChart = new Chart(ctx).Pie(chartConf.data, chartConf.options);
 			} else { // bar
-				myNewChart = new Chart(ctx).Bar(chartConf.data, chartConf.options);
+				window.myNewChart = new Chart(ctx).Bar(chartConf.data, chartConf.options);
 			}
-
-			console.log("myNewChart",myNewChart);
 			
+			// TODO: SETTING FOR THE LEGEND
 			if (chartConf && chartConf.chart && chartConf.chart.showLegend) {
 				var chartPanelLegeng = Ext.create('Ext.panel.Panel', {
 					id : 'chartPanelLegeng',
@@ -241,7 +247,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				chartPanelLegeng.setPosition(chartPanelLegengX,	chartPanelLegengY, true);
 			}
 
-			myNewChart.draw();
+			//myNewChart.draw();
 			
 			/* var mainPanelIsScrollable = 
 				(chartPanelCanvas.clientWidth > mainPanelRegion.right 
@@ -257,7 +263,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				
 				mainPanel.setScrollable( mainPanelIsScrollable ); */
 				
-		//}
+		}
 	};
 
 	function handleDrilldown(e) {

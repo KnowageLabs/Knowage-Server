@@ -204,7 +204,7 @@ function chartExecutionFunction($scope,$http,chartExecutionWebServiceManagerFact
 	
 	// Set (to TRUE) indicator for loading the chart immediately before load starts.
 	$scope.loadingChart = true;
-	
+		
 	// RENDERING THE CHART (START)	
 	chartExecutionWebServiceManagerFactory.run('jsonChartTemplate', parameters, [], 
 			
@@ -385,8 +385,9 @@ function chartExecutionFunction($scope,$http,chartExecutionWebServiceManagerFact
 				uses D3 as a library for rendering.
 			*/
 			var isD3Chart = (chartType == "SUNBURST" || chartType == "WORDCLOUD" || chartType == "PARALLEL" || chartType == "CHORD");
-					 					
-			if (isD3Chart) {
+			
+			// Provide resizing handling for the ChartJS charts as for the D3 charts - re-render the chart.	(danristo)			
+			if (isD3Chart || isLibChartJs) {
 				/* 
 					Set new values for the height and the width of the chart (the DIV
 					that contains the chart), as a consequence of a resizing the window
@@ -541,8 +542,6 @@ function chartExecutionFunction($scope,$http,chartExecutionWebServiceManagerFact
 			exportWebApp: true,
 			driverParams: driverParams
 		};	
-				
-//		console.log("parameters:",parameters);
 		
 		if (isD3Chart) {
 			/*
@@ -580,11 +579,11 @@ function chartExecutionFunction($scope,$http,chartExecutionWebServiceManagerFact
          	
 		}
 		else {
-			
+		
 			chartExecutionWebServiceManagerFactory.run('jsonChartTemplate', parameters, [], 
 					
 				function (response) {
-	
+				
 						/*
 							WORKAROUND: Replacing in other way - from the ASCII code for the single quote character to the "escaped" single quote combination in order 
 							to enable a proper (adequate) the exporting of the chart. This way we will decode the former single quote in the chart template that was
