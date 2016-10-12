@@ -2,12 +2,14 @@
 	var documentExecutionModule = angular.module('documentExecutionModule');
 	
 	documentExecutionModule.service('docExecute_exportService', function(sbiModule_translate,sbiModule_config,
-			execProperties,sbiModule_user,$http,sbiModule_dateServices, documentExecuteServices, sbiModule_download) {
+			execProperties,sbiModule_user,$http,sbiModule_dateServices, documentExecuteServices, sbiModule_download, $q, $rootScope) {
 		
 		var dee = this;
-		
+		dee.exporting = false;
+		dee.isExporting = function(){
+			return dee.exporting;
+		}
 		dee.getExportationUrl = function(format,paramsExportType,actionPath){
-			console.log('sbiModule_config.contextName ' , sbiModule_config);
 			// https://production.eng.it/jira/browse/KNOWAGE-1443
 			// actionPath has no '/' at the beginning
 			var urlService = sbiModule_config.host + '/' + actionPath+'?';
@@ -99,6 +101,29 @@
 		};
 			
 		dee.exportCockpitTo = function(exportType, mimeType){
+			dee.exporting = true;
+			
+			dee.buildRequestConf(exportType, mimeType).then(function(requestConf){
+				$http(requestConf)
+				.then(function successCallback(response) {
+					sbiModule_download.getBlob(
+							response.data,
+							execProperties.executionInstance.OBJECT_LABEL,
+							mimeType,
+							exportType);
+					dee.exporting = false;
+				}, function errorCallback(response) {
+					dee.exporting = false;
+					sbiModule_messaging.showErrorMessage(response.errors[0].message, 'Error');
+				});			
+			},function(e){
+				console.error(e);
+				sbiModule_messaging.showErrorMessage(e, 'Error');
+			});
+		};	
+		
+		dee.buildRequestConf = function(exportType, mimeType){
+			var deferred = $q.defer();
 			var data = {};
 			var hostArr = sbiModule_config.host.split(":");
 			data.username = sbiModule_user.userId;
@@ -114,15 +139,6 @@
 			
 			// getting cockpit selections
 			var documentFrame = document.getElementById("documentFrame"); // document iframe reference
-			
-			var csvData = null;
-			if(exportType.toLowerCase() != 'pdf') {
-				csvData = dee.getCockpitCsvData(documentFrame);
-				
-				if(csvData != null) {
-					data.csvData = csvData;
-				}
-			}
 			
 			var cockpitSelectionsContainer = null;
 			if(documentFrame.contentWindow && documentFrame.contentWindow.document) {
@@ -180,18 +196,21 @@
 					return blob;
 				};
 			}
-			
-			$http(requestConf)
-			.then(function successCallback(response) {
-				sbiModule_download.getBlob(
-						response.data,
-						execProperties.executionInstance.OBJECT_LABEL,
-						mimeType,
-						exportType);
-				
-			}, function errorCallback(response) {});			
-		};	
-			
+			if(exportType.toLowerCase() == 'xls' || exportType.toLowerCase() == 'xlsx') {
+				dee.getCockpitCsvData(documentFrame).then(function(csvData){
+					if(csvData != null) {
+						data.csvData = csvData;
+					}
+					deferred.resolve(requestConf);
+				},function(e){
+					deferred.reject(e);
+				});
+			}else{
+				deferred.resolve(requestConf);
+			}
+			return deferred.promise;
+		};
+		
 		dee.exportationHandlers = {	
 			'CHART': [
 				 {'description' : sbiModule_translate.load('sbi.execution.PdfExport') , 'iconClass': 'fa fa-file-pdf-o', 'func': function(){dee.exportDocumentChart('PDF')} }
@@ -247,66 +266,27 @@
 		};
 		
 		dee.getCockpitCsvData = function(documentFrame) {
-			if ((documentFrame 
-					&& documentFrame.contentWindow 
-					&& documentFrame.contentWindow.Ext
-					&& documentFrame.contentWindow.Ext.data
-					&& documentFrame.contentWindow.Ext.data.StoreManager)
-					&&(
-							documentFrame.contentWindow.cockpitPanel
-							&& documentFrame.contentWindow.cockpitPanel.widgetContainer
-							&& documentFrame.contentWindow.cockpitPanel.widgetContainer.getWidgetManager
-							)){
+			var deferred=$q.defer();
+			if (documentFrame 
+				&& documentFrame.contentWindow 
+				&& documentFrame.contentWindow.angular){
 				
 				// copied and adapted from "/knowage/web-content/js/src/ext/sbi/execution/toolbar/ExportersMenu.js"
-				var csvData = [];
-				var csvDataCount = 0;
-			    var cockpitPanel = documentFrame.contentWindow.cockpitPanel;
-			    var storeManager = documentFrame.contentWindow.Ext.data.StoreManager;
-			    
-			    var widgetManager = documentFrame.contentWindow.cockpitPanel.widgetContainer.getWidgetManager();
-			    
-//			    var sheets = cockpitPanel.config.lastSavedAnalysisState.widgetsConf;
-//			    for (var i = 0; i < sheets.length; i++){
-//			    	var widgets = sheets[i].sheetConf.widgets;
-			    	var widgets = widgetManager.getWidgets();
-			    	for (var j = 0; j < widgets.length; j++){
-			    		var widget = widgets[j];
-			    		if(widget.wtype == 'table'){
-//			    			var store = storeManager.lookup(widget.storeId);
-			    			var store = widget.getStore();
-			    			
-			    			var metas = Object.keys(store.fieldsMeta);
-			    			var metaIndex = [];
-			    			csvData[csvDataCount] = '';
-			    			for(var k = 0; k < metas.length; k++){
-			    				var meta = store.fieldsMeta[metas[k]];
-			    				csvData[csvDataCount] += meta.header + ';'
-			    				metaIndex[k] = meta.dataIndex;
-			    			}
-			    			csvData[csvDataCount] += '\n';
-			    			
-			    			var allRecords = store.snapshot || store.data;
-			    			for(var k = 0; k < allRecords.items.length; k++){
-			    				for(var w = 0; w < metaIndex.length; w++){
-			    					csvData[csvDataCount] += allRecords.items[k].raw[metaIndex[w]]+';';
-			    				}
-			    				csvData[csvDataCount] += '\n';
-			    			}
-			    			csvData[csvDataCount] = btoa(csvData[csvDataCount]);
-			    			csvDataCount++;
-			    		}
-			    	}
-//			    }
-			    
-			    if(csvData){
-			    	csvData = btoa(csvData);
-			    }
-			    
-			    return csvData;
+				// S.Lupo 06/oct/2016 - modified to work with angular cockpit 
+				var def=$q.defer();
+				documentFrame.contentWindow.angular.element(document).find('iframe').contents().find('body').scope().exportCsv(def)
+				.then(function(csvData){
+					if(csvData){
+				    	csvData = btoa(csvData);
+				    }
+				    deferred.resolve(csvData);
+				},function(e){
+					deferred.reject(e);
+				});
 			} else {
-				return null;
+				deferred.resolve(null);
 			}
+			return deferred.promise;
 		};
 	});
 })();
