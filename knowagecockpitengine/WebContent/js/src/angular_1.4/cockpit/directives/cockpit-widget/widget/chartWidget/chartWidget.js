@@ -213,11 +213,12 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 			    				  return false;
 			    			  }
 			    		  }
-			    		  if(!$scope.confChecked){
+			    		  if(!$scope.confChecked || $scope.datasetChanged){
 		    				  // Warning: Please configure chart
 		    				  showAction($scope.translate.load('sbi.cockpit.widgets.chartengine.conf.missing'));
+		    				  return false;
 		    			  }
-			    		  return $scope.confChecked;
+			    		  return true;
 			    	  }
 			    	  var saveConfiguration=function(){
 			    		  if($scope.localModel.datasetId == undefined){
