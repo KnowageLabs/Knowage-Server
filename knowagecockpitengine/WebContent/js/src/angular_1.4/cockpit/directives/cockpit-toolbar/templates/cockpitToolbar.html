@@ -31,7 +31,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<md-button aria-label="data" class="md-icon-button" ng-click="openSelections()" title = "Selections">
 			<md-icon md-font-icon="fa fa-check-square-o"></md-icon>
 		</md-button>
-		 
+		
+	<!-- 		close button if is new cockpit -->
+		<md-button ng-if="isFromNewCockpit" aria-label="data" class="md-icon-button" ng-click="closeNewCockpit()" title = "close">
+			<md-icon md-font-icon="fa fa-times"></md-icon>
+		</md-button> 
 		<span flex></span>
 	</div>
 <!-- 	to-do remove style -->

@@ -136,4 +136,11 @@ angular.module("cockpitModule").service("cockpitModule_generalServices",function
 		//reset the variable
 		angular.copy([],cockpitModule_properties.DS_IN_CACHE);
 	}
+	
+	this.closeNewCockpit=function(){
+		window.parent.angular.element(window.frameElement).scope().closeConfirm(true,true);
+	}
+	this.isFromNewCockpit=function(){
+		return (window.parent.angular.element(window.frameElement).scope()!=undefined && window.parent.angular.element(window.frameElement).scope().closeConfirm!=undefined);
+	}
 });

@@ -49,7 +49,8 @@ angular.module('cockpitModule').directive('cockpitGrid',function($compile,cockpi
                     				for(var i=0;i<gridster.currentScope.sheet.widgets.length;i++){
                     					var widEle=document.getElementById(gridster.currentScope.sheet.widgets[i].id);
                     					if(widEle!=undefined && widEle.firstElementChild!=undefined){
-                    						cockpitModule_widgetServices.refreshWidget(angular.element(widEle.firstElementChild),gridster.currentScope.sheet.widgets[i],'gridster-resized');
+                    						var options =angular.element(widEle).scope().getOptions == undefined? {} :  angular.element(widEle).scope().getOptions();
+                    						cockpitModule_widgetServices.refreshWidget(angular.element(widEle.firstElementChild),gridster.currentScope.sheet.widgets[i],'gridster-resized',options);
                     					}
                     					
                     				}

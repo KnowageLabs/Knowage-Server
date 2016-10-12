@@ -22,14 +22,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  */
 (function() {
-var scripts = document.getElementsByTagName("script");
-var currentScriptPath = scripts[scripts.length - 1].src;
-currentScriptPath=currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/'));
-currentScriptPath=currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/'));
+
 angular.module('cockpitModule')
 .directive('cockpitToolbar',function(){
 	   return{
-		   templateUrl: currentScriptPath+ '/cockpit-toolbar/templates/cockpitToolbar.html',
+		   templateUrl: baseScriptPath+ '/directives/cockpit-toolbar/templates/cockpitToolbar.html',
 		   controller: cockpitToolbarControllerFunction,
 		   scope: {
 			   config: '='
@@ -92,7 +89,7 @@ function cockpitToolbarControllerFunction($scope,cockpitModule_widgetServices,co
 	
 	$scope.openSelections = function(){
 		$mdDialog.show({
-		      templateUrl: currentScriptPath+ '/cockpit-toolbar/templates/selectionsList.html',
+		      templateUrl: baseScriptPath+ '/directives/cockpit-toolbar/templates/selectionsList.html',
 		      parent: angular.element(document.body),
 		      clickOutsideToClose:true,
 		      escapeToClose :true,
@@ -105,7 +102,7 @@ function cockpitToolbarControllerFunction($scope,cockpitModule_widgetServices,co
 	
 	$scope.addWidget=function(){
 		$mdDialog.show({
-		      templateUrl: currentScriptPath+ '/cockpit-toolbar/templates/addWidget.html',
+		      templateUrl: baseScriptPath+ '/directives/cockpit-toolbar/templates/addWidget.html',
 		      parent: angular.element(document.body),
 		      clickOutsideToClose:true,
 		      escapeToClose :true,
@@ -191,6 +188,10 @@ function cockpitToolbarControllerFunction($scope,cockpitModule_widgetServices,co
 		    })
 	};
 	
+	$scope.closeNewCockpit=function(){
+		cockpitModule_generalServices.closeNewCockpit();
+	}
+	$scope.isFromNewCockpit= cockpitModule_generalServices.isFromNewCockpit();
 	
 //	$scope.toggleEditMode=function(){
 //		cockpitModule_gridsterOptions.draggable.enabled=cockpitModule_properties.EDIT_MODE;

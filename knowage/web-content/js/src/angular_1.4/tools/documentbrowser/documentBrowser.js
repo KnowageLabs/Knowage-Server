@@ -429,7 +429,7 @@ function DialogNewDocumentController($scope,$mdDialog,$mdBottomSheet,sbiModule_c
 
 	 if(typeDocument=="cockpit"){
 			$scope.iframeUrl= sbiModule_config.engineUrls.cockpitServiceUrl +  '&SBI_ENVIRONMENT=DOCBROWSER&IS_TECHNICAL_USER=' + sbiModule_user.isTechnicalUser + "&documentMode=EDIT";
-		}
+	 }
 	
 	$scope.closeDialogFromExt=function(reloadFolder){
 		if(reloadFolder){
