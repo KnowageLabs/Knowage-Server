@@ -84,7 +84,7 @@ $scope.executeSourceDocument = function() {
 			.replace(/%3D/g,"=")
 			.replace(/%26/g,"&");
 		}
-		if(sourceDocumentExecProperties.IS_FROM_DOCUMENT_WIDGET!=undefined){
+		if(sourceDocumentExecProperties.IS_FROM_DOCUMENT_WIDGET && sourceDocumentExecProperties.IS_FROM_DOCUMENT_WIDGET!='null'){
 			url+="&IS_FROM_DOCUMENT_WIDGET="+sourceDocumentExecProperties.IS_FROM_DOCUMENT_WIDGET;
 		}
 		
