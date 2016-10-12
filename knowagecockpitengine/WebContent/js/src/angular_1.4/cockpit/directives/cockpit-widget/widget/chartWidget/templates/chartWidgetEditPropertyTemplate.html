@@ -11,10 +11,10 @@
 			<md-tabs flex md-border-bottom md-selected='selectedTab.tab'>
 		  
 		  		<md-tab label="{{translate.load('sbi.cockpit.dataset')}}">
-		   			<dataset-selector ng-model="localModel.datasetId" on-change="changeDatasetFunction(dsId)"></dataset-selector>  	
+		   			<dataset-selector ng-model="localModel.datasetId" on-change="handleEvent('datasetChanged',dsId)"></dataset-selector>  	
 		     	</md-tab>
 		     	
-		     	<md-tab label="{{translate.load('sbi.cockpit.widgets.chartengine.chartEngineDesigner.title')}}" md-on-select="showChartConfiguration()" md-on-deselect="checkConfiguration()">
+		     	<md-tab label="{{translate.load('sbi.cockpit.widgets.chartengine.chartEngineDesigner.title')}}" md-on-select="handleEvent('openConfiguration')" md-on-deselect="handleEvent('closeConfiguration')">
 		     	 	<div ng-show="confSpinner" layout-fill style='position:absolute;z-index: 500;background:rgba(0,0,0, 0.3);'>
        					<md-progress-circular  md-mode='indeterminate' style='top:50%;left:50%;margin-left:-25px;' ></md-progress-circular>
     				</div>
@@ -33,7 +33,7 @@
       <md-button ng-click="cancelConfiguration()" >
          {{translate.load('sbi.generic.cancel')}}
       </md-button>
-      <md-button ng-click="saveConfiguration()"  >
+      <md-button ng-click="handleEvent('save')"  >
          {{translate.load('sbi.generic.save')}}
       </md-button>
     </md-card-actions>

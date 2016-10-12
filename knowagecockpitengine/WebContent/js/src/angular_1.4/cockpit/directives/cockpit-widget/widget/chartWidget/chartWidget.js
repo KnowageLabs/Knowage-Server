@@ -39,7 +39,6 @@ angular.module('cockpitModule')
 	    	scope.iframeName = attrs.id + "_frameName" + genId;
 	    	scope.formId = attrs.id + "_formId" + genId;
 	    	scope.iframeId = attrs.iframeId ? attrs.iframeId : (attrs.id + "_iframeId" + genId);
-	    	 
 	    },
 	    controller: function($scope, $element){
 	    	$scope.updateAction = function(actionUrl){
@@ -72,9 +71,6 @@ angular.module('cockpitModule')
 	    			doc.getElementById(formId).submit();
 	    			$scope.showWidgetSpinner();
 	    		}
-//	    		if(height != undefined){
-//	    			iframe.style="height:"+height+"px;min-height:"+height+"px";
-//	    		}
 	    	};
 	    	
 	    	
@@ -163,11 +159,34 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 				controller: function($scope,sbiModule_translate,model,mdPanelRef,doRefresh){
 					  $scope.translate=sbiModule_translate;
 					  $scope.confSpinner=false;
+					  $scope.somethingChanged=false;
 					  $scope.localStyle=angular.copy(model.style);
 					  $scope.localModel = angular.copy(model.content);
-					  $scope.datasetChecked = $scope.localModel.datasetId != undefined ? 1 : 0;
-			    	  $scope.changeDatasetFunction=function(dsId){
-			    		  $scope.confChecked = 0;
+					  $scope.handleEvent=function(event, arg1){
+						  if(event=='init'){
+							  if($scope.localModel.datasetId != undefined){
+								  $scope.datasetChanged = true;
+								  $scope.confChecked = true;
+							  }
+						  }else if(event=='closeConfiguration'){
+							  checkConfiguration();
+						  }else if(event=='save'){
+							  saveConfiguration();
+						  }else if(event=='datasetChanged'){
+							  $scope.somethingChanged = true;
+							  changeDatasetFunction(arg1);
+							  $scope.datasetChanged = true;
+							  $scope.confChecked = false;
+						  }else if(event=='openConfiguration'){
+							  $scope.somethingChanged = true;
+							  $scope.confChecked = false;
+							  if($scope.datasetChanged){
+								  showChartConfiguration();
+								  $scope.datasetChanged = false;
+							  }
+						  }
+					  }
+			    	  var changeDatasetFunction=function(dsId){
 			    		  var ds = cockpitModule_datasetServices.getDatasetById(dsId);
 			    		  if(ds){
 			    			  if(ds.id.dsId != $scope.localModel.datasetId && ds.id.dsLabel != $scope.localModel.datasetLabel){
@@ -175,40 +194,38 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 			    				  delete $scope.localModel.aggregations;
 			    				  delete $scope.localModel.chartTemplate;
 			    				  delete $scope.localModel.columnSelectedOfDataset;
-			    				  $scope.confChecked = 0;
 			    			  }
 			    			  $scope.localModel.datasetLabel = ds.label;
 			    		  }
-			    		  $scope.datasetChecked = 1;
 			    	  }
-			    	  $scope.checkConfiguration=function(){
+			    	  var checkConfiguration=function(){
 			    		  var extWindow = document.getElementById("chartConfigurationIframe").contentWindow;
 			    		  if(extWindow.Sbi!=undefined){
 			    			  var designer = extWindow.Sbi.chart.designer.Designer;
 			    			  var error = designer.validateTemplate(true);
+			    			  $scope.confChecked = true;
 			    			  if(error==false){
 				    			  $scope.localModel.chartTemplate = designer.exportAsJson(true);
 			    				  setAggregationsOnChartEngine($scope.localModel);
-			    				  $scope.confChecked = 1;
+			    				  return true;
 			    			  }else{
-			    				  $scope.confChecked = 0;
-			    				  $scope.showAction(error);
+			    				  showAction(error);
+			    				  return false;
 			    			  }
-			    			  return error;
 			    		  }
-			    		  return false;
+			    		  if(!$scope.confChecked){
+		    				  // Warning: Please configure chart
+		    				  showAction($scope.translate.load('sbi.cockpit.widgets.chartengine.conf.missing'));
+		    			  }
+			    		  return $scope.confChecked;
 			    	  }
-			    	  $scope.saveConfiguration=function(){
-			    		  if($scope.datasetChecked == 0){
+			    	  var saveConfiguration=function(){
+			    		  if($scope.localModel.datasetId == undefined){
 			    			  // Warning: Please select a dataset
-			    			  $scope.showAction($scope.translate.load('sbi.cockpit.table.missingdataset'));
+			    			  showAction($scope.translate.load('sbi.cockpit.table.missingdataset'));
 			    		  }else{
-			    			  if($scope.checkConfiguration() == false){
-			    				  if($scope.confChecked == 0){
-			    					  // Warning: Please configure chart
-			    					  $scope.showAction($scope.translate.load('sbi.cockpit.widgets.chartengine.conf.missing'));
-			    				  }else{
-			    					  
+			    			  if(checkConfiguration()){
+			    				  if($scope.somethingChanged){
 			    					  $scope.localModel.wtype = "chart";
 			    					  $scope.localModel.designer = "Chart Engine Designer";
 			    					  
@@ -218,13 +235,12 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 			    					  }
 			    					  angular.copy($scope.localStyle, model.style);
 			    					  model.dataset = {dsId: $scope.localModel.datasetId, dsLabel: $scope.localModel.datasetLabel};
-			    					  
-			    					  mdPanelRef.close();
-			    					  $scope.$destroy();
-			    					  doRefresh(undefined,'init');
-			    					  finishEdit.resolve();
 			    				  }
-			    			  }
+			    				  mdPanelRef.close();
+			    				  $scope.$destroy();
+			    				  doRefresh(undefined,'init');
+			    				  finishEdit.resolve();
+		    				  }
 			    		  }
 			    	  }
 			    	  $scope.cancelConfiguration=function(){
@@ -232,13 +248,13 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 			    		  $scope.$destroy();
 			    		  finishEdit.reject();
 			    	  }
-			    	  $scope.showChartConfiguration=function(){
+			    	  var showChartConfiguration=function(){
 				    	  var widgetData = angular.extend({"datasetLabel":$scope.localModel.datasetLabel||''},$scope.localModel);
 				    	  var execPar = buildParametersForExecution.edit(widgetData);
 				    	  angular.element(document.getElementById("chartConfigurationIframe")).scope()
 				  		  .updateContent(execPar.formAction, execPar.formParameters, 'init');
 			    	  }
-			    	  $scope.showAction = function(text) {
+			    	  var showAction = function(text) {
 			  			var toast = $mdToast.simple()
 			  			.content(text)
 			  			.action('OK')
@@ -256,17 +272,18 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 			    	  }
 			    	  $scope.hideWidgetSpinner=function(){
 			    		  $scope.confSpinner=false;
-			    		  $scope.safeApply();
+			    		  safeApply();
 			    	  }
 			    	  $scope.finishLoadingIframe=function(){
 			    		  $scope.hideWidgetSpinner();
-			    		  $scope.safeApply();
+			    		  safeApply();
 			    	  }
-			    	  $scope.safeApply=function(){
-			    			if ($scope.$root.$$phase != '$apply' && $scope.$root.$$phase !='$digest') {
-			    				$scope.$apply();
-			    			}
-			    		}
+			    	  var safeApply=function(){
+		    			  if ($scope.$root.$$phase != '$apply' && $scope.$root.$$phase !='$digest') {
+		    				  $scope.$apply();
+		    			  }
+		    		  }
+			    	  $scope.handleEvent('init');
 			      },
 				disableParentScroll: true,
 				templateUrl: baseScriptPath+ '/directives/cockpit-widget/widget/chartWidget/templates/chartWidgetEditPropertyTemplate.html',
