@@ -817,8 +817,9 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		   
 	   }
 	   
-	   
+	   if($scope.olapMode){
 	   $scope.loadAnalyticalDrivers();
+	   }
 	   
 	   $scope.loadProfileAttributes= function (){
 		   
@@ -844,7 +845,8 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		   
 	   }
 	   
+	   if($scope.olapMode){
 	   $scope.loadProfileAttributes();
-	
+	   }
 };
 })();
