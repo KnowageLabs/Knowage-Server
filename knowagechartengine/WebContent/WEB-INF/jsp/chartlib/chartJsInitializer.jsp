@@ -83,6 +83,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				};
 
 				var titleStyleKeys = Object.keys(chartConf.chart.title.style);
+				
 				for (var i = 0; i < titleStyleKeys.length; i++) {
 					var titleStyleName = titleStyleKeys[i];
 

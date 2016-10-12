@@ -176,25 +176,28 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 				The panel inside which the chart will render. Height and width of 100% provide full-size chart stretching. 
 				The ID of the rendering DIV is serving as a target DOM element that the Highcharts charts are going to use
 				for rendering its charts.
-			-->
-			<div id="mainPanel" style="height:100%; width:100%; margin:auto;" ng-if=!isLibChartJs></div>		
+			-->	
 			
-			<div id="mainPanel" style="margin:auto;" ng-if=isLibChartJs>
+			<div id="mainPanel" style="height:100%; width:100%; margin:auto;">				
 				
-				<div id="chartPanelTitleOrNoData" style="height:0">
+				<div ng-if=isLibChartJs>
+				
+					<div id="chartPanelTitleOrNoData" style="">
+						
+					</div>
 					
-				</div>
-				
-				<div id="chartPanelSubtitle" style="height:0">
+					<div id="chartPanelSubtitle" style="height:0">
+						
+					</div>
 					
-				</div>
-				
-				<!-- <div id="chartPanelCanvas">
-					chartPanelCanvas
-				</div>	 -->
-				
-				<div>
-					<canvas id="chartPanelCanvas"></canvas>
+					<!-- <div id="chartPanelCanvas">
+						chartPanelCanvas
+					</div>	 -->
+					
+					<div>
+						<canvas id="chartPanelCanvas"></canvas>
+					</div>
+					
 				</div>
 						
 			</div>

@@ -81,8 +81,6 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	String widgetId = "";
 	String metaData = "";
 	
-	boolean isLibChartJS = ChartEngineConfig.getChartLibConf().get("bar").getLibIniName().equals("chartJsInitializer.jsp");
-	
 	ExecutionSession es = new ExecutionSession(request,request.getSession());
 	
 	/*
@@ -131,7 +129,21 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		will be replaced with the "escaped" single quote character combination (in order not to have "L&#39;Italia").
 		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	*/
-	template = template.replaceAll("'","&#39;");
+	template = template.replaceAll("'","&#39;");	
+	
+	/*
+		Extracting the chart type from the template in order to investigate if the document should be rendered as the chart of ChartJS library
+		or not. For ChartJS charts we need a little bit settings in the client-side logic, as well as in the interface. Namely, inside the HTML
+		and the main DIV in which the chart usually renders, we need to set the CANVAS HTML element in which the ChartJS chart will render (its
+		container).
+		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	*/
+	String templateSubstrFromType = template.substring(template.indexOf("\"type\":"),template.length()-1);
+	int indexOfSeparator = templateSubstrFromType.indexOf(",");
+	String chartType = templateSubstrFromType.substring("\"type\":".length()+1,indexOfSeparator-1); // + and -1 to avoid quotes in the chart type name
+	
+	// Set the indicator value so both the interface and the logic could "know" of we are dealing with the ChartJS chart types. (danristo)
+	boolean isLibChartJS = ChartEngineConfig.getChartLibConf().get(chartType.toLowerCase()).getLibIniName().equals("chartJsInitializer.jsp");
 	
 	if(env.get("EXECUTE_COCKPIT") != null) {
 		
