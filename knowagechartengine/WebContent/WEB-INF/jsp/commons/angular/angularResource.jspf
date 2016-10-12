@@ -138,13 +138,20 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		container).
 		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	*/
-	String templateSubstrFromType = template.substring(template.indexOf("\"type\":"),template.length()-1);
-	int indexOfSeparator = templateSubstrFromType.indexOf(",");
-	String chartType = templateSubstrFromType.substring("\"type\":".length()+1,indexOfSeparator-1); // + and -1 to avoid quotes in the chart type name
 	
-	// Set the indicator value so both the interface and the logic could "know" of we are dealing with the ChartJS chart types. (danristo)
-	boolean isLibChartJS = ChartEngineConfig.getChartLibConf().get(chartType.toLowerCase()).getLibIniName().equals("chartJsInitializer.jsp");
+	boolean isLibChartJS = true;
 	
+	if (!template.equals("{}")) {
+		
+		String templateSubstrFromType = template.substring(template.indexOf("\"type\":"),template.length()-1);
+		int indexOfSeparator = templateSubstrFromType.indexOf(",");
+		String chartType = templateSubstrFromType.substring("\"type\":".length()+1,indexOfSeparator-1); // + and -1 to avoid quotes in the chart type name
+		
+		// Set the indicator value so both the interface and the logic could "know" of we are dealing with the ChartJS chart types. (danristo)
+		isLibChartJS = ChartEngineConfig.getChartLibConf().get(chartType.toLowerCase()).getLibIniName().equals("chartJsInitializer.jsp");
+		
+	}	
+		
 	if(env.get("EXECUTE_COCKPIT") != null) {
 		
 		isCockpit = true;

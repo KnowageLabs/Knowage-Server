@@ -75,6 +75,7 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			var currentDocumentName = '<%=docName%>'; <%-- name of the document --%>
 			var currentDocumentLabel = '<%=docLabel%>'; <%-- label of the document --%>
 			
+			// Global variable that serves as an indicator if the chart type of the rendered document is ChartJS. (danristo)			
 			var isLibChartJs = '<%=isLibChartJS%>';
 						
 		</script>
@@ -182,17 +183,9 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 				
 				<div ng-if=isLibChartJs>
 				
-					<div id="chartPanelTitleOrNoData" style="">
-						
-					</div>
+					<div id="chartPanelTitleOrNoData"></div>
 					
-					<div id="chartPanelSubtitle" style="height:0">
-						
-					</div>
-					
-					<!-- <div id="chartPanelCanvas">
-						chartPanelCanvas
-					</div>	 -->
+					<div id="chartPanelSubtitle"></div>
 					
 					<div>
 						<canvas id="chartPanelCanvas"></canvas>

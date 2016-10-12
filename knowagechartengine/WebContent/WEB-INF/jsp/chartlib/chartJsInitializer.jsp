@@ -35,56 +35,57 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		var chartPanelSubtitle = document.getElementById('chartPanelSubtitle');		
 		var chartPanelCanvas = document.getElementById('chartPanelCanvas');		
 		
-		var mainPanelRegion = document.getElementById('mainPanel');
-		
-		/* var mainPanelRegion = mainPanel.getViewRegion(); */
+		var mainPanelRegion = document.getElementById('mainPanel');		
 
-		// No data to represent
+		// No data to represent				
 		if ((chartConf.data.labels && chartConf.data.labels.length == 0)
 				|| (chartConf.data.datasets && chartConf.data.datasets.length == 0)) {
 
 			if (chartConf.chart.emptyMessage && chartConf.chart.emptyMessage.style
 					&& chartConf.chart.emptyMessage.text != '') {
-				chartPanelTitleOrNoData.setLayout({
-					align : chartConf.chart.emptyMessage.style.align
-				});
+				
+					var emptyMessageContainerStyle = {
+						padding : '5 20 5 20'
+					};
 
-				var emptyMessageContainerStyle = {
-					padding : '5 20 5 20'
-				};
+					var emptyMessageStyleKeys = Object.keys(chartConf.chart.emptyMessage.style);
+					
+					chartPanelTitleOrNoData.style["padding"] = emptyMessageContainerStyle.padding;
+					
+					for (var i = 0; i < emptyMessageStyleKeys.length; i++) {
+						
+						var emptyMessageStyleName = emptyMessageStyleKeys[i];
 
-				var emptyMessageStyleKeys = Object.keys(chartConf.chart.emptyMessage.style);
-				for (var i = 0; i < emptyMessageStyleKeys.length; i++) {
-					var emptyMessageStyleName = emptyMessageStyleKeys[i];
-
-					if (emptyMessageStyleName.toLowerCase() != 'align') {
-						emptyMessageContainerStyle[emptyMessageStyleName] = chartConf.chart.emptyMessage.style[emptyMessageStyleName];
+						if (emptyMessageStyleName.toLowerCase() != 'align') {
+							chartPanelTitleOrNoData.style[emptyMessageStyleName] = chartConf.chart.emptyMessage.style[emptyMessageStyleName];
+						}
+						else {
+							chartPanelTitleOrNoData.style["text-align"] = chartConf.chart.emptyMessage.style[emptyMessageStyleName];
+						}
+						
 					}
-				}
 
-				var emptyMessageContainer = Ext.create('Ext.form.Label', {
-					text : chartConf.chart.emptyMessage.text,
-					style : emptyMessageContainerStyle
-				});
-
-				chartPanelTitleOrNoData.add(emptyMessageContainer);
+					chartPanelTitleOrNoData.innerHTML = chartConf.chart.emptyMessage.text;
+					
 			}
 			
-		} else { //The are data to represent */
+		} 		
+		//The are data to represent 
+		else { 
 			
-			// title management
-			if (chartConf.chart.title && chartConf.chart.title.style
-					&& chartConf.chart.title.text != '') {
-				/* chartPanelTitleOrNoData.setLayout({
-					align : chartConf.chart.title.style.align
-				}); */
+			// TITLE management
+			if (chartConf.chart.title && chartConf.chart.title.style && chartConf.chart.title.text != '') {
+			
 				var titleContainerStyle = {
 					padding : '5 20 5 20'
 				};
 
 				var titleStyleKeys = Object.keys(chartConf.chart.title.style);
 				
+				chartPanelTitleOrNoData.style["padding"] = titleContainerStyle.padding;
+				
 				for (var i = 0; i < titleStyleKeys.length; i++) {
+					
 					var titleStyleName = titleStyleKeys[i];
 
 					if (titleStyleName.toLowerCase() != 'align') {
@@ -96,43 +97,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					
 				}
 
-				//chartPanelTitleOrNoData.innerHTML = "UUU";
-								
-				/* var titleContainer = Ext.create('Ext.form.Label', {
-					text : chartConf.chart.title.text,
-					style : titleContainerStyle
-				});
-
-				chartPanelTitleOrNoData.add(titleContainer); */
+				chartPanelTitleOrNoData.innerHTML = chartConf.chart.title.text;
+				
 			}
 
-			// subtitle management
-			if (chartConf.chart.subtitle && chartConf.chart.subtitle.style
-					&& chartConf.chart.subtitle.text != '') {
-				
-				chartPanelSubtitle.setLayout({
-					align : chartConf.chart.subtitle.style.align
-				});
-
+			// SUBTITLE management
+			if (chartConf.chart.subtitle && chartConf.chart.subtitle.style && chartConf.chart.subtitle.text != '') {
+			
 				var subtitleContainerStyle = {
 					padding : '5 20 5 20'
 				};
 
 				var subtitleStyleKeys = Object.keys(chartConf.chart.subtitle.style);
+				
+				chartPanelSubtitle.style["padding"] = subtitleContainerStyle.padding;
+				
 				for (var i = 0; i < subtitleStyleKeys.length; i++) {
+					
 					var subtitleStyleName = subtitleStyleKeys[i];
-
+					
 					if (subtitleStyleName.toLowerCase() != 'align') {
-						subtitleContainerStyle[subtitleStyleName] = chartConf.chart.subtitle.style[subtitleStyleName];
+						chartPanelSubtitle.style[subtitleStyleName] = chartConf.chart.subtitle.style[subtitleStyleName];
 					}
+					else {
+						chartPanelSubtitle.style["text-align"] = chartConf.chart.subtitle.style[subtitleStyleName];
+					}
+					
 				}
 
-				var subtitleContainer = Ext.create('Ext.form.Label', {
-					text : chartConf.chart.subtitle.text,
-					style : subtitleContainerStyle
-				});
-
-				chartPanelSubtitle.add(subtitleContainer);
+				chartPanelSubtitle.innerHTML = chartConf.chart.subtitle.text;
 			} 
 
 			var chartType = chartConf.chart.type.toLowerCase();
@@ -143,28 +136,41 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			// Destroy the ChartJS instance (the one that is placed inside the canvas HTML element) before reseting the chart (when resizing)
 			window.myNewChart ? window.myNewChart.destroy() : null;
 			
+			/* 
+				Collect heights of Title and Subtitle of the chart (they should be substracted from the overall height wished by user in 
+				order to determine the height of the canvas within which the ChartJS chart will render). 
+				@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+			*/
+			var titleDivHeight = document.getElementById("chartPanelTitleOrNoData").clientHeight;
+			var subtitleDivHeight = document.getElementById("chartPanelSubtitle").clientHeight;
+						
+			var totalTitleSubtitleHeight = 0;
+			
+			totalTitleSubtitleHeight += titleDivHeight ?  titleDivHeight : 0;
+			totalTitleSubtitleHeight += subtitleDivHeight ?  subtitleDivHeight : 0;			
+			
 			if (!chartConf.chart.height && !chartConf.chart.heightInPerc) {
 				
-				ctx.canvas.height = window.innerHeight-1;
+				ctx.canvas.height = window.innerHeight-1-totalTitleSubtitleHeight;
 				mainPanelRegion.style.height = window.innerHeight-1;
 				
 				if (window.myNewChart) { 
-					window.myNewChart.chart.canvas.height=window.innerHeight-1;
+					window.myNewChart.chart.canvas.height = window.innerHeight-1-totalTitleSubtitleHeight;
 				}
 			}
 			else {
 				
 				if (chartConf.chart.heightDimType=="pixels") {
-					ctx.canvas.height = chartConf.chart.height;
+					ctx.canvas.height = chartConf.chart.height - totalTitleSubtitleHeight;
 					mainPanelRegion.style.height = chartConf.chart.height;
 				}
 				// percentage
 				else {
-					ctx.canvas.height = chartConf.chart.heightInPerc/100 * window.innerHeight - 1;
+					ctx.canvas.height = chartConf.chart.heightInPerc/100 * window.innerHeight - 1 - totalTitleSubtitleHeight;
 					mainPanelRegion.style.height = chartConf.chart.heightInPerc/100 * window.innerHeight - 1;
 					
 					if (window.myNewChart) { 
-						window.myNewChart.chart.canvas.height=chartConf.chart.heightInPerc/100 * window.innerHeight - 1;
+						window.myNewChart.chart.canvas.height = chartConf.chart.heightInPerc/100 * window.innerHeight - 1 - totalTitleSubtitleHeight;
 					}
 				}
 			}
