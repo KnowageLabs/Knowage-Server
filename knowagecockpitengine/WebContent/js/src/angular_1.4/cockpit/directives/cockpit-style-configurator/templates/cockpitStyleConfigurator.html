@@ -1,4 +1,4 @@
-<md-content class="md-padding noPadding" layout="column" layout-fill>
+<md-content class="md-padding noPadding" layout="column" layout-fill ng-clock>
 	<md-card>
 		<md-card-title>
 			<md-card-title-text layout="row">
@@ -7,7 +7,7 @@
 			</md-card-title-text>
 		</md-card-title>
 		<md-card-content layout="row" layout-align="space-around center">
-			<md-checkbox ng-model="ngModel.borders" flex >
+			<md-checkbox ng-model="ngModel.borders" flex ng-change=toggleBorderVisibility()>
 				{{translate.load("sbi.cockpit.style.borders.show")}}
 			</md-checkbox>
 			<md-input-container class="md-block" flex >
@@ -22,10 +22,16 @@
 					<md-option ng-repeat="bwidth in bordersWidth" ng-value="bwidth.value">{{bwidth.label}}</md-option>
 				</md-select>	
 			</md-input-container>
-			<md-input-container class="md-block" flex>
-				<label>{{translate.load("sbi.cockpit.style.borders.color")}}</label>
-				<input ng-model="ngModel.border['border-color']" ng-disabled="!ngModel.borders">
-			</md-input-container>
+<!-- 			<md-input-container class="md-block" flex> -->
+<!-- 				<label>{{translate.load("sbi.cockpit.style.borders.color")}}</label> -->
+<!-- 				<input ng-model="ngModel.border['border-color']" ng-disabled="!ngModel.borders"> -->
+<!-- 			</md-input-container> -->
+			
+			<md-input-container flex class="md-block"> 
+				<label>{{translate.load('sbi.cockpit.style.borders.color')}}</label>
+				<color-picker  options="borderColorOptions" ng-model="ngModel.border['border-color']"></color-picker>
+			</md-input-container> 
+			
 		</md-card-content>
 	</md-card>
 

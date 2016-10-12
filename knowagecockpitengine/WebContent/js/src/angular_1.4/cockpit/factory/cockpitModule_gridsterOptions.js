@@ -33,11 +33,15 @@ angular.module('cockpitModule').factory('cockpitModule_gridsterOptions',function
 			enabled : cockpitModule_properties.EDIT_MODE, // whether dragging items is supported
 			handle : '.draggableToolbar', // optional selector for resize handle
 			start : function(event, $element, widget) {
-			}, // optional callback fired when drag is started,
+				$element.find("md-card-content").addClass('fadeOut');
+				$element.find("md-card-content").removeClass('fadeIn');
+			},  
 			drag : function(event, $element, widget) {
 			}, // optional callback fired when item is moved,
 			stop : function(event, $element, widget) {
-			} // optional callback fired when item is finished dragging
+				$element.find("md-card-content").addClass('fadeIn');
+				$element.find("md-card-content").removeClass('fadeOut');
+			}  
 		}
 	};
 });

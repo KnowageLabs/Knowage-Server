@@ -714,8 +714,8 @@ function TableControllerFunction($scope, $timeout) {
 	    	if(angular.equals(lastTheadVal,width)){
 	//    		var width=$scope.getPrincipalTableHeadWidth();
 	    		var tableContentBox=angular.element($scope.tableItem[0].querySelector('#angularTableContentBox'));
-	    		var fakeDiv = angular.element($scope.tableItem[0].querySelector('.faketable th>div'));
-	    		var principalThDiv = angular.element($scope.tableItem[0].querySelector('.principalTable th>div'));
+	    		var fakeDiv = angular.element($scope.tableItem[0].querySelectorAll('.faketable th>div'));
+	    		var principalThDiv = angular.element($scope.tableItem[0].querySelectorAll('.principalTable th>div'));
 	    		for(var i=0;i<principalThDiv.length;i++){
 	//        	console.log(principalThDiv[i])
 	    			angular.element(fakeDiv[i]).css("width",angular.element(principalThDiv[i])[0].offsetWidth+"px");

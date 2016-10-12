@@ -39,7 +39,7 @@ angular.module('cockpitModule')
 	    	scope.iframeName = attrs.id + "_frameName" + genId;
 	    	scope.formId = attrs.id + "_formId" + genId;
 	    	scope.iframeId = attrs.iframeId ? attrs.iframeId : (attrs.id + "_iframeId" + genId);
-	    	scope.iframeClass = attrs.class;
+	    	 
 	    },
 	    controller: function($scope, $element){
 	    	$scope.updateAction = function(actionUrl){
@@ -72,9 +72,9 @@ angular.module('cockpitModule')
 	    			doc.getElementById(formId).submit();
 	    			$scope.showWidgetSpinner();
 	    		}
-	    		if(height != undefined){
-	    			iframe.style="height:"+height+"px;min-height:"+height+"px";
-	    		}
+//	    		if(height != undefined){
+//	    			iframe.style="height:"+height+"px;min-height:"+height+"px";
+//	    		}
 	    	};
 	    	
 	    	
@@ -163,6 +163,7 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 				controller: function($scope,sbiModule_translate,model,mdPanelRef,doRefresh){
 					  $scope.translate=sbiModule_translate;
 					  $scope.confSpinner=false;
+					  $scope.localStyle=angular.copy(model.style);
 					  $scope.localModel = angular.copy(model.content);
 					  $scope.datasetChecked = $scope.localModel.datasetId != undefined ? 1 : 0;
 			    	  $scope.changeDatasetFunction=function(dsId){
@@ -212,6 +213,10 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 			    					  $scope.localModel.designer = "Chart Engine Designer";
 			    					  
 			    					  angular.copy($scope.localModel, model.content);
+			    					  if(model.style==undefined){
+			    						  model.style={};
+			    					  }
+			    					  angular.copy($scope.localStyle, model.style);
 			    					  model.dataset = {dsId: $scope.localModel.datasetId, dsLabel: $scope.localModel.datasetLabel};
 			    					  
 			    					  mdPanelRef.close();

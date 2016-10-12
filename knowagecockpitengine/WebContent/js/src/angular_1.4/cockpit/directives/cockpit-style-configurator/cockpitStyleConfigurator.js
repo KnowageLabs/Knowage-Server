@@ -49,6 +49,8 @@ angular.module('cockpitModule').directive('cockpitStyleConfigurator',function($c
                     	}else{
                     		scope.isWidget=false;
                     	}
+                    	
+                    	scope.borderColorOptions.disabled=!scope.ngModel.borders;
                     
                     	 transclude(scope, function (clone, scope) {
                              angular.element(element[0].querySelector("md-content")).prepend(clone);
@@ -113,8 +115,11 @@ function cockpitStyleConfiguratorControllerFunction($scope,sbiModule_translate,c
 		angular.copy($scope.cockpitStyle.shadow,$scope.ngModel.shadow);
 	}
 	
+	$scope.borderColorOptions={format:'rgb',disabled:false};
 	
-	
+	$scope.toggleBorderVisibility=function(){
+		$scope.borderColorOptions.disabled=!$scope.ngModel.borders
+	}
 	$scope.bordersSize=[
 		                    {
 		                    	label:sbiModule_translate.load("sbi.cockpit.style.borders.solid"),
@@ -134,20 +139,20 @@ function cockpitStyleConfiguratorControllerFunction($scope,sbiModule_translate,c
 	                    ];
 	$scope.bordersWidth=[
 		                    {
-		                    	label:"1em",
+		                    	label:sbiModule_translate.load("sbi.cockpit.style.small"),
+		                    	value:"0.1em"
+		                    },
+		                    {
+		                    	label:sbiModule_translate.load("sbi.cockpit.style.medium"),
+		                    	value:"0.3em"
+		                    },
+		                    {
+		                    	label:sbiModule_translate.load("sbi.cockpit.style.large"),
+		                    	value:"0.7em"
+		                    },
+		                    {
+		                    	label:sbiModule_translate.load("sbi.cockpit.style.extralarge"),
 		                    	value:"1em"
-		                    },
-		                    {
-		                    	label:"2em",
-		                    	value:"2em"
-		                    },
-		                    {
-		                    	label:"3em",
-		                    	value:"3em"
-		                    },
-		                    {
-		                    	label:"4em",
-		                    	value:"4em"
 		                    },
 	                    ];
 
