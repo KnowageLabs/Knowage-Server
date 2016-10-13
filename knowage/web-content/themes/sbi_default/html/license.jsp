@@ -1,4 +1,4 @@
-<%@page import="it.eng.spagobi.tools.license.LicenseManager"%>
+<%@page import="it.eng.knowage.tools.servermanager.utils.LicenseManager"%>
 <%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
 <%@page import="it.eng.spago.security.IEngUserProfile"%>
 <%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>

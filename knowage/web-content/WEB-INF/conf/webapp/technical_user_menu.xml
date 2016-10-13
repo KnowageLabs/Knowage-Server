@@ -144,10 +144,6 @@
 			url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/cross/definition/crossDefinition.jsp" />
 			<ITEM	title="#menu.Alert" functionality="AlertManagement" 
 			url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/alert/alertDefinition.jsp" />
-			<ITEM   title="#menu.license" functionality="LicenseManagement"
-                    url="showLicenseDialog" linkType="dialog"
-                    />   
-		
 		</ITEM>
 		
 		<ITEM	code="server_settings" 
@@ -313,6 +309,11 @@
 	                functionality="MetaModelsCatalogueManagement"
 	                url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/etlMetadataExtraction.jsp?LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
 	                iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/metamodels16.png" />
+            <ITEM   title="#menu.license"
+                    functionality="LicenseManagement"
+                    url="showLicenseDialog" 
+                    linkType="dialog"
+                    />    
 						
 	  	</ITEM>	 
 	  		
