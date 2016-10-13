@@ -18,6 +18,7 @@
 
 package it.eng.spagobi.writeback4j.sql;
 
+
 import it.eng.spagobi.engines.whatif.common.WhatIfConstants;
 import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
@@ -37,6 +38,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import org.apache.axis.utils.ByteArrayOutputStream;
 import org.apache.log4j.Logger;
@@ -71,7 +74,7 @@ public class AnalysisExporter extends AbstractSqlSchemaManager {
 	 * @return
 	 * @throws Exception
 	 */
-	public byte[] exportCSV(Connection connection, Integer version, String fieldSeparator, String lineSeparator) throws Exception {
+	public byte[] exportCSV(Connection connection, Integer version, String fieldSeparator, String lineSeparator, String fileName) throws Exception {
 
 		byte[] toReturn = null;
 
@@ -108,11 +111,27 @@ public class AnalysisExporter extends AbstractSqlSchemaManager {
 				}
 
 			}
-
 			out.flush();
-
-			logger.debug("Finished to navigate the result set");
 			toReturn = fos.toByteArray();
+			
+			logger.debug("Finished to navigate the result set");
+			logger.debug("Start Creating zip");
+			
+			
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			ZipOutputStream zos = new ZipOutputStream(baos);
+			ZipEntry entry = new ZipEntry(fileName);
+			entry.setSize(toReturn.length);
+			zos.putNextEntry(entry);
+			zos.write(toReturn);
+			zos.closeEntry();
+			zos.close();
+			
+			toReturn = baos.toByteArray();
+			
+			logger.debug("zip created");
+
+			
 			logger.debug("OUT");
 		} catch (Exception e) {
 			out.close();

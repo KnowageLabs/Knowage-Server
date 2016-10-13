@@ -33,12 +33,14 @@ import org.pivot4j.PivotModel;
 
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.writeback4j.sql.AnalysisExporter;
 
 @Path("/1.0/analysis")
+@ManageAuthorization
 public class AnalysisResource extends AbstractWhatIfEngineService {
 
 	public static transient Logger logger = Logger.getLogger(AnalysisResource.class);
@@ -54,7 +56,8 @@ public class AnalysisResource extends AbstractWhatIfEngineService {
 		byte[] csv = null;
 		Connection connection;
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
-
+		String fileName = EXPORT_FILE_NAME + "-" + (new Date()).toLocaleString() + ".csv";
+		
 		PivotModel model = ei.getPivotModel();
 
 		logger.debug("Exporting in CSV..");
@@ -68,8 +71,9 @@ public class AnalysisResource extends AbstractWhatIfEngineService {
 			throw new SpagoBIRuntimeException("Error opening connection to datasource " + dataSource.getLabel(), e);
 		}
 		try {
+			
 			AnalysisExporter esporter = new AnalysisExporter(model, ei.getWriteBackManager().getRetriver());
-			csv = esporter.exportCSV(connection, version, fieldDelimiter, CSV_ROWS_SEPARATOR);
+			csv = esporter.exportCSV(connection, version, fieldDelimiter, CSV_ROWS_SEPARATOR, fileName);
 		} catch (Exception e) {
 			logger.debug("Error exporting the output tbale in csv", e);
 			throw new SpagoBIEngineRestServiceRuntimeException("sbi.olap.writeback.export.out.error", getLocale(), e);
@@ -84,7 +88,10 @@ public class AnalysisResource extends AbstractWhatIfEngineService {
 			logger.debug("Closed the connection used to export the output table");
 		}
 
-		String fileName = EXPORT_FILE_NAME + "-" + (new Date()).toLocaleString() + ".csv";
+
+		
+		fileName = EXPORT_FILE_NAME + "-" + (new Date()).toLocaleString() + ".zip";
+		
 
 		return Response.ok(csv, MediaType.APPLICATION_OCTET_STREAM).header("content-disposition", "attachment; filename = " + fileName).build();
 
