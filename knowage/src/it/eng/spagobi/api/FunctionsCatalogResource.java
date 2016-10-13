@@ -771,7 +771,6 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 				}
 				String alias = inputItemJSON.getString("alias");
 				inputFile.setAlias(alias);
-				;
 
 				inputFiles.add(inputFile);
 			}
@@ -803,11 +802,18 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 			if (url != null) {
 				itemToInsert.setUrl(url);
 			}
-
 			itemToInsert.setRemote(remote);
+			itemToInsert.setInputFiles(inputFiles);
 
 			catalogFunctionDAO = DAOFactory.getCatalogFunctionDAO();
 			catalogFunctionDAO.setUserProfile(getUserProfile());
+
+			SbiCatalogFunction oldFunction = catalogFunctionDAO.getCatalogFunctionById(id);
+			if (oldFunction == null) {
+				throw new SpagoBIRuntimeException("no old function in db with Id:" + id);
+			}
+			updateCatalogFunctionFiles(itemToInsert, oldFunction);
+
 			catalogFunctionDAO.updateCatalogFunction(itemToInsert, id);
 
 			response.put("Response", "OK");
@@ -816,6 +822,45 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 			throw new SpagoBIServiceException("Error while update catalog function " + id, e);
 		}
 		return response.toString();
+	}
+
+	private void updateCatalogFunctionFiles(CatalogFunction itemToInsert, SbiCatalogFunction oldFunction) {
+
+		List<CatalogFunctionInputFile> inputFiles = itemToInsert.getInputFiles();
+		boolean findInOldFiles = false;
+		List<CatalogFunctionInputFile> tempFileList = new ArrayList<CatalogFunctionInputFile>();
+
+		for (CatalogFunctionInputFile inputFile : inputFiles) // scorro i nuovi files
+		{
+			CatalogFunctionInputFile tempFile = new CatalogFunctionInputFile();
+			for (Object o : oldFunction.getSbiFunctionInputFiles()) // scorro i vecchi file
+			{
+				SbiFunctionInputFile oldFile = (SbiFunctionInputFile) o;
+				// .. c'è un file con lo stesso filename di un oldFile
+				if (oldFile.getId().getFileName().equals(inputFile.getFileName())) {
+					findInOldFiles = true;
+					tempFile.setFileName(inputFile.getFileName());
+					// se c'è un content nel file da salvare lo metto nel file di appoggio, altrimenti metto quello del vecchio file
+					if (inputFile.getContent() != null) {
+						tempFile.setContent(inputFile.getContent());
+					} else {
+						tempFile.setContent(oldFile.getContent());
+					}
+					// metto l'alias del nuovo file nel file di appoggio
+					tempFile.setAlias(inputFile.getAlias());
+				}
+			}
+			if (findInOldFiles == false) {
+				tempFile = inputFile;
+			}
+			findInOldFiles = false;
+
+			tempFileList.add(tempFile);
+
+		}
+
+		itemToInsert.setInputFiles(tempFileList);
+
 	}
 
 	// @formatter:off

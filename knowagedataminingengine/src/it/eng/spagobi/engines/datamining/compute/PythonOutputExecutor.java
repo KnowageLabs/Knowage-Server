@@ -45,7 +45,10 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.File;
 import java.util.List;
+import java.util.Random;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.jpy.PyLib;
 import org.jpy.PyModule;
@@ -319,8 +322,74 @@ public class PythonOutputExecutor {
 		if (out.getOutputType().equalsIgnoreCase(DataMiningConstants.FILE_OUTPUT) && out.getOutputName() != null) {
 			/* Read files out from resource directory and produce output */
 
-			res.setOutputType(out.getOutputType());
+			String strDir = DataMiningUtils.getUserResourcesPath(profile) + DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX;
+			File tempDir = new File(strDir);
 
+			// if the directory does not exist, create it
+			if (!tempDir.exists()) {
+				logger.debug("creating directory: " + strDir);
+				boolean result = false;
+
+				try {
+					tempDir.mkdirs();
+					result = true;
+				} catch (SecurityException se) {
+					// handle it
+				}
+				if (result) {
+					logger.debug(strDir + " created");
+				}
+			}
+
+			codeToExec = "import os\n" + "os.chdir(r'" + strDir + "')\n";
+			resPythonExecution = PyLib.execScript(codeToExec);
+			if (resPythonExecution < 0) {
+				logger.error("Python engine error \n" + "Technical details:\n" + "PythonOutputExecutor.java:\n" + codeToExec + "EXECUTION FAILED\n"
+						+ "See log file for other details\n");
+				throw new SpagoBIEngineRuntimeException("Python engine error \n" + "Technical details:\n" + "PythonOutputExecutor.java:\n" + codeToExec
+						+ "EXECUTION FAILED\n" + "See log file for other details\n");
+			}
+
+			String variableName = null;
+			if (out.getOuputLabel().indexOf(".") > 0) {
+				variableName = out.getOuputLabel().substring(0, out.getOuputLabel().lastIndexOf("."));
+			} else {
+				variableName = out.getOuputLabel();
+			}
+
+			String fileName = out.getOuputLabel();
+			Random randomGenerator = new Random();
+			int randomInt = randomGenerator.nextInt();
+			if (randomInt < 0) {
+				randomInt = randomInt * (-1);
+			}
+			String fileVar = "fileVarName" + randomInt;
+
+			codeToExec = fileVar + "=  open('" + fileName + "', 'w')\n";
+			PyLib.execScript(codeToExec);
+
+			codeToExec = fileVar + ".write(str(" + variableName + "))\n" + fileVar + ".close()\n";
+			resPythonExecution = PyLib.execScript(codeToExec);
+
+			if (resPythonExecution < 0) {
+				logger.error("Python engine error \n" + "Technical details:\n" + "PythonOutputExecutor.java:\n" + codeToExec + "EXECUTION FAILED\n"
+						+ "See log file for other details\n");
+				throw new SpagoBIEngineRuntimeException("Python engine error \n" + "Technical details:\n" + "PythonOutputExecutor.java:\n" + codeToExec
+						+ "EXECUTION FAILED\n" + "See log file for other details\n");
+			}
+
+			logger.debug("Output file name " + fileName);
+
+			String writtenFile = tempDir + "/" + fileName;
+			String base64ContentString = Base64.encodeBase64String(FileUtils.readFileToByteArray(new File(writtenFile)));
+
+			JSONObject result = new JSONObject();
+			result.put("filename", fileName);
+			result.put("base64", base64ContentString);
+
+			res.setOutputType(out.getOutputType());
+			res.setResult(result.toString());
+			res.setVariablename(variableName);
 		}
 		logger.debug("OUT");
 		return res;

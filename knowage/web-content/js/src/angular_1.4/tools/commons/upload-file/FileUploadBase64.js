@@ -72,7 +72,8 @@ function FileUploadControllerFunction($scope,$timeout,$mdDialog,sbiModule_transl
 				    }
 					
 					$scope.ngModel.file = element.files[0];
-					$scope.ngModel.file.base64 = reader.result;
+					//$scope.ngModel.file.base64 = reader.result;
+					$scope.ngModel.base64 = reader.result;
 					$scope.fileName = element.files[0] !== undefined ? element.files[0].name : '';
 					$scope.ngModel.fileName = element.files[0] !== undefined ? element.files[0].name : '';
 					$scope.$apply();  

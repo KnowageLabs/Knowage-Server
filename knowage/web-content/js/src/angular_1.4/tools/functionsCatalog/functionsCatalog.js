@@ -148,6 +148,9 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 	}
 	
 	
+
+	
+	
 	$scope.showTabDialog = function(result, isDemoExecution) {
 		$mdDialog.show({
 			controller : functionCatalogResultsController,
@@ -312,7 +315,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 				$log.info("Save operation");
 
 				body = $scope.shownFunction;
-				$scope.formatFile(body);
+				//$scope.formatFile(body);
 				$log.info("Shown function to send with POST", body);
 				
 				sbiModule_restServices.post("1.0/functions-catalog",
@@ -357,7 +360,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 				$log.info("Update operation");
 				body = $scope.shownFunction;
 				functionId = $scope.shownFunction.id;
-				$scope.formatFile(body);
+				//$scope.formatFile(body);
 
 				$log.info("Shown function to send with PUT", body);
 
@@ -530,6 +533,13 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 				function(results) {
 					$log.info("Execution o function " + functionId
 							+ " started, result:", results);
+					for(var i=0;i<results.length;i++)
+					{	
+						if(results[i].resultType=="file" || results[i].resultType=="File")
+						{
+							results[i].result=JSON.parse(results[i].result);
+						}
+					}	
 					var isDemo = true;
 					$scope.showTabDialog(results, isDemo);
 
@@ -716,6 +726,21 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		}
 
 		logger.info("received results: ", results);
+		$scope.download=function(filename,base64)
+		{
+				  var element = document.createElement('a');
+				  element.setAttribute('href', 'data:application/octet-stream;base64,' +base64);
+				  
+				  element.setAttribute('download', filename);
+
+				  element.style.display = 'none';
+				  document.body.appendChild(element);
+
+				  element.click();
+
+				  document.body.removeChild(element);		
+		}
+		
 		$scope.numTab = results.length;
 		$scope.results = results;
 		$scope.translate = translate;
@@ -935,6 +960,16 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 						$log.info("Catalog Function executed with post data!!");
 						$log.info("Execution result ", executionResult);
 
+						
+						for(var i=0;i<executionResult.length;i++)
+						{	
+							if(executionResult[i].resultType=="file" || executionResult[i].resultType=="File")
+							{
+								executionResult[i].result=JSON.parse(executionResult[i].result);
+							}
+						}	
+						
+						
 						$mdDialog.hide(executionResult);
 					});
 

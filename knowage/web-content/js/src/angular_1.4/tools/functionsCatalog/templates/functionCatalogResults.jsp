@@ -60,6 +60,18 @@
         				<img alt="{{res.resultName}}" ng-src="{{res.imageString}}"/>
         				<!--  <img src="data:image/jpeg;base64,a4$da46dgfdjtar8fevjt2..." alt="">-->        				
         			</div>
+        			
+        			<div ng-if="res.resultType.toLowerCase()=='file'">
+        				
+          					Received file: {{res.result.filename}}
+          					<md-button ng-click="download(res.result.filename,res.result.base64)"> 
+          						Download
+		        			</md-button>
+        				
+        			</div>
+        			
+        			
+        			
       			</md-tab>
    	 		</md-tabs>    	
 			<div ng-if='error!=""'>
