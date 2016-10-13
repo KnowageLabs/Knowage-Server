@@ -175,6 +175,14 @@ public class Domain implements Serializable {
 		}
 	}
 
+	public void setTranslatedValueName(String vn) {
+		// Do nothing
+	}
+
+	public void setTranslatedValueDescription(String vn) {
+		// Do nothing
+	}
+
 	public String getTranslatedValueName() {
 		return getTranslatedValueName(null);
 	}
