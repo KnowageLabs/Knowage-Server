@@ -741,9 +741,9 @@
    		basedir="../../../">
 		</zip>
 	</target>
-	<target name="test.all.Junit" depends="create.all">
+	<target name="test.all.unitTests" depends="create.all">
 	
-		<ant dir="../knowagewhatifengine/ant" target="knowagewhatif.JunitTests"/>
+		<ant dir="../knowagewhatifengine/ant" target="knowagewhatif.unitTests"/>
 	</target>
 	<target name="test.all.Protractor" depends="create.all">
 		

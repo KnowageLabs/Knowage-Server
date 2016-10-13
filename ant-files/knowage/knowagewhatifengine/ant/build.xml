@@ -335,9 +335,9 @@
 		<antcall target="create.war" />
 	</target>
 	
-	<target name="test" depends="compile.tests">
+	<target name="knowagewhatif.unitTests" depends="compile.tests">
 		<antcall target="test.junit" />
-		<antcall target="test.protractor"/>
+		<!--<antcall target="test.protractor"/>-->
 	
 	</target>
 	
