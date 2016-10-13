@@ -440,7 +440,7 @@
 		<antcall target="create.SpagoBISocialAnalysis.war" />
 		<copy file="../../../SpagoBISocialAnalysis/dist/SpagoBISocialAnalysis.war" 
         todir="../../../dist" overwrite="true" />
--->		<antcall target="test.all" />
+-->		
 	</target>
 
 	<!-- NEW: 22/05/2012 -->
@@ -741,9 +741,12 @@
    		basedir="../../../">
 		</zip>
 	</target>
-	<target name="test.all" >
+	<target name="test.all.Junit" depends="create.all">
 	
-		<ant dir="../knowagewhatifengine/ant" target="test"/>
+		<ant dir="../knowagewhatifengine/ant" target="knowagewhatif.JunitTests"/>
 	</target>
-
+	<target name="test.all.Protractor" depends="create.all">
+		
+			<ant dir="../knowagewhatifengine/ant" target="knowagewhatif.Protractor"/>
+		</target>
 </project>
