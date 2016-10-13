@@ -26,10 +26,10 @@ angular.module('cockpitModule')
 
 /*
  * This directive acts like an Ext.form.FormPanel
- * Create an IFrame with an URL called by posting parameters
+ * Creates an IFrame with an URL called by posting parameters
  * 
  * */
-.directive('postIframe',function(){
+.directive('postIframe',function(sbiModule_restServices){
 	var i = 0;
 	return {
 		restrict: 'E',
@@ -39,38 +39,51 @@ angular.module('cockpitModule')
 	    	scope.iframeName = attrs.id + "_frameName" + genId;
 	    	scope.formId = attrs.id + "_formId" + genId;
 	    	scope.iframeId = attrs.iframeId ? attrs.iframeId : (attrs.id + "_iframeId" + genId);
+	    	scope.iframeContent = '';
 	    },
-	    controller: function($scope, $element){
+	    controller: function($scope, $element, $http, sbiModule_restServices, $httpParamSerializerJQLike){
+	    	$scope.iframeContent = '';
 	    	$scope.updateAction = function(actionUrl){
 	    		$scope.actionUrl = actionUrl;
 	    	};
 	    	$scope.updateParameters = function(parameters){
 	    		$scope.formParameters = parameters;
 	    	};
-	    	$scope.updateContent = function(actionUrl, parameters, nature, width, height){
+	    	var loadPageIntoIframe = function(actionUrl, parameters){
 	    		var iframe = $element.find('iframe')[0];
-	    		if(nature != 'refresh'){
 	    			
-	    			if(actionUrl){
-	    				$scope.updateAction(actionUrl);
-	    			}
-	    			if(parameters){
-	    				$scope.updateParameters(parameters);
-	    			}
-	    			var formId = $element[0].id + "_formId";
-	    			var formAction = $scope.actionUrl;
-	    			var form = angular.element('<form id="'+formId+'" action="'+formAction+'" method="POST" style="display:none;"></form>');
-	    			for(var x=0;x<$scope.formParameters.length;x++){
-	    				var param = $scope.formParameters[x];
-	    				form.append('<input type="hidden" name="' + param.name + '" value=\'' + JSON.stringify(param.value) + '\'>');
-	    			}
-	    			var doc = iframe.contentWindow.document;
-	    			doc.open();
-	    			doc.write(form.wrap(doc.createElement('div')).parent().html());
-	    			doc.close();
-	    			doc.getElementById(formId).submit();
-	    			$scope.showWidgetSpinner();
+    			if(actionUrl){
+    				$scope.updateAction(actionUrl);
+    			}
+    			if(parameters){
+    				$scope.updateParameters(parameters);
+    			}
+    			var formId = $element[0].id + "_formId";
+    			var formAction = $scope.actionUrl;
+    			console.log('formAction='+formAction);
+    			var form = angular.element('<form id="'+formId+'" action="'+formAction+'" method="POST" style="display:none;"></form>');
+    			for(var x=0;x<$scope.formParameters.length;x++){
+    				var param = $scope.formParameters[x];
+    				form.append('<input type="hidden" name="' + param.name + '" value=\'' + JSON.stringify(param.value) + '\'>');
+    			}
+    			var doc = iframe.contentWindow.document;
+    			doc.open();
+    			doc.write(form.wrap(doc.createElement('div')).parent().html());
+    			doc.close();
+    			doc.getElementById(formId).submit();
+    			$scope.showWidgetSpinner();
+	    	}
+	    	$scope.updateContent = function(actionUrl, parameters, nature, width, height){
+	    		if(nature != 'refresh'){
+	    			// Check if service is on line
+	    			// When dealing with CAS, first call will force web app to do login and can give some error
+		    		$http.get(actionUrl.testUrl).then(function(){
+		    			loadPageIntoIframe(actionUrl.url, parameters);
+		    		},function(){
+		    			showAction("Service error");
+		    		});
 	    		}
+	    		
 	    	};
 	    	
 	    	
@@ -100,13 +113,15 @@ angular.module('cockpitModule')
 })
 .factory('buildParametersForExecution',function(sbiModule_user, sbiModule_config){
 	var formAction = function(service){
-		return '/' + sbiModule_config.chartEngineContextName 
+		return {url: '/' + sbiModule_config.chartEngineContextName
 		+ "/api/1.0/pages/" + service
 		+ "?SBICONTEXT=" + sbiModule_config.externalBasePath
 		+ "&SBI_HOST=localhost"
 		+ "&SBI_LANGUAGE=" + sbiModule_config.curr_language
 		+ "&SBI_COUNTRY=" + sbiModule_config.curr_country
-		+ "&user_id=" + sbiModule_user.userId;
+		+ "&user_id=" + sbiModule_user.userId
+		,testUrl: '/' + sbiModule_config.chartEngineContextName
+		+ "/api/1.0/pages/executeTest"};
 	}
 	var formEditAction =  formAction('edit_cockpit');
 	var formExecAction =  formAction('execute_cockpit');
@@ -308,7 +323,7 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 	}
 	
 	$scope.finishLoadingIframe=function(){
-			$scope.hideWidgetSpinner();
+		$scope.hideWidgetSpinner();
 	}
 };
 function setAggregationsOnChartEngine(wconf){
@@ -324,12 +339,10 @@ function setAggregationsOnChartEngine(wconf){
 			for(var i = 0; i < chartSeries.length; i++){
 				
 				var obj = {};
-//				obj['id'] = chartSeries[i].name;
 				obj['name'] = chartSeries[i].column;
 				obj['aggregationSelected'] = chartSeries[i].groupingFunction ? chartSeries[i].groupingFunction : 'SUM';
 				obj['alias'] = obj.name + '_' + obj.aggregationSelected;
 				obj['aliasToShow'] = obj.name;
-//				obj['orderType'] = chartSeries[i].orderType;
 				obj['fieldType'] = "MEASURE";
 				aggregations.push(obj);					
 			}
@@ -344,30 +357,18 @@ function setAggregationsOnChartEngine(wconf){
 				for(var i = 0; i < chartCategory.length; i++){
 					
 					var obj = {};
-//					obj['id'] = chartCategory[i].name;
 					obj['name'] = chartCategory[i].column;
 					obj['alias'] = chartCategory[i].name;
 					obj['aliasToShow'] = category.alias;
-//					obj['orderColumn'] = chartCategory[i].orderColumn;
-//					obj['orderType'] = chartCategory[i].orderType;
 					obj['fieldType'] = "ATTRIBUTE";
 					aggregations.push(obj);
 				}
 			} else {
 				var obj = {};
-//				obj['id'] = chartCategory.name;
 				obj['name'] = chartCategory.column;
 				obj['alias'] = chartCategory.name;
 				obj['aliasToShow'] = chartCategory.alias;
 				obj['fieldType'] = "ATTRIBUTE";
-				
-				/**
-				 * Set the category's ordering column and its ordering type, if they
-				 * are set for the first category of the chart document.
-				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-				 */
-//				obj['orderColumn'] = chartCategory.orderColumn;
-//				obj['orderType'] = chartCategory.orderType;
 				
 				aggregations.push(obj);
 			};
