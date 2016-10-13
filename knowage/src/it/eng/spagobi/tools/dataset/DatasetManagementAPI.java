@@ -1733,6 +1733,7 @@ public class DatasetManagementAPI {
 
 	private void setGroupbyConditions(IDataSource dataSource, List<GroupCriteria> groups, Map<String, String> datasetAlias, SelectBuilder sqlBuilder) {
 		if (groups != null) {
+			Set<String> groupColumnNames = new HashSet<String>();
 			for (GroupCriteria group : groups) {
 				String aggregateFunction = group.getAggregateFunction();
 
@@ -1744,7 +1745,11 @@ public class DatasetManagementAPI {
 				if ((aggregateFunction != null) && (!aggregateFunction.isEmpty()) && (columnName != "*")) {
 					columnName = aggregateFunction + "(" + columnName + ")";
 				}
-				sqlBuilder.groupBy(columnName);
+				groupColumnNames.add(columnName);
+			}
+
+			for (String groupColumnName : groupColumnNames) {
+				sqlBuilder.groupBy(groupColumnName);
 			}
 		}
 	}
