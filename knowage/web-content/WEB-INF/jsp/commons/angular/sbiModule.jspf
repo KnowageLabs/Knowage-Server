@@ -401,7 +401,7 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, 
 	
 	var genericErrorHandling = function(data, status, headers, config, deferred) {
 		if(data.status==401){
-			console("request unauthorized");
+			console.log("request unauthorized");
 			redirectToLoginUrl();
 		}else{
 			deferred.reject(data, status, headers, config);	
@@ -425,7 +425,9 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, 
     				parentWindow = currentWindow.parent;
     			}
     		}
-    	} catch (err) {}
+    	} catch (err) {
+    		console.log(err);
+    	}
     	
     	if (!sessionExpiredSpagoBIJSFound) {
     		window.location = loginUrl;
