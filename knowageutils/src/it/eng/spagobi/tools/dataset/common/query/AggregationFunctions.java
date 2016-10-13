@@ -25,25 +25,12 @@ public class AggregationFunctions {
 	private static Map<String, IAggregationFunction> aggregationFunctions;
 
 	public static String NONE = "NONE";
-	public static String FORMULA = "FORMULA";
 	public static String SUM = "SUM";
 	public static String AVG = "AVG";
 	public static String MAX = "MAX";
 	public static String MIN = "MIN";
 	public static String COUNT = "COUNT";
 	public static String COUNT_DISTINCT = "COUNT_DISTINCT";
-
-	public static IAggregationFunction FORMULA_FUNCTION = new IAggregationFunction() {
-		@Override
-		public String getName() {
-			return FORMULA;
-		}
-
-		@Override
-		public String apply(String fieldName) {
-			return fieldName;
-		}
-	};
 
 	public static IAggregationFunction NONE_FUNCTION = new IAggregationFunction() {
 		@Override
@@ -132,7 +119,6 @@ public class AggregationFunctions {
 	static {
 		aggregationFunctions = new HashMap<String, IAggregationFunction>();
 		aggregationFunctions.put(NONE, NONE_FUNCTION);
-		aggregationFunctions.put(FORMULA, FORMULA_FUNCTION);
 		aggregationFunctions.put(SUM, SUM_FUNCTION);
 		aggregationFunctions.put(AVG, AVG_FUNCTION);
 		aggregationFunctions.put(MAX, MAX_FUNCTION);
