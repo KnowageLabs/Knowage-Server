@@ -62,10 +62,12 @@ import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
 import it.eng.spagobi.engines.whatif.model.ModelConfig;
 import it.eng.spagobi.engines.whatif.model.ResultSetConverter;
 import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
 @Path("/1.0/member")
+@ManageAuthorization
 public class MemberResource extends AbstractWhatIfEngineService {
 
 	private SpagoBIPivotModel model;

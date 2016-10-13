@@ -48,11 +48,13 @@ import it.eng.spagobi.engines.whatif.dimension.SbiDimension;
 import it.eng.spagobi.engines.whatif.hierarchy.SbiHierarchy;
 import it.eng.spagobi.engines.whatif.model.ModelConfig;
 import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
 @Path("/1.0/calculatedmembers")
+@ManageAuthorization
 public class CalculatedMembersResource extends AbstractWhatIfEngineService {
 	public static transient Logger logger = Logger.getLogger(CalculatedMembersResource.class);
 	public static final String DIVISION_SIGN = new String("spagobi.operator.division");

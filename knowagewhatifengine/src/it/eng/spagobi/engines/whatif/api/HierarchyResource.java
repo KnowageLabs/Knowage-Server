@@ -52,6 +52,7 @@ import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
 import it.eng.spagobi.engines.whatif.member.SbiMember;
 import it.eng.spagobi.engines.whatif.version.SbiVersion;
 import it.eng.spagobi.engines.whatif.version.VersionDAO;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
@@ -59,6 +60,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
 @Path("/1.0/hierarchy")
+@ManageAuthorization
 public class HierarchyResource extends AbstractWhatIfEngineService {
 
 	private static final String NODE_PARM = "node";

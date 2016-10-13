@@ -38,9 +38,11 @@ import it.eng.spagobi.engines.whatif.axis.AxisDimensionManager;
 import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
 import it.eng.spagobi.engines.whatif.model.ModelConfig;
 import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
 @Path("/1.0/axis")
+@ManageAuthorization
 public class AxisResource extends AbstractWhatIfEngineService {
 
 	public static transient Logger logger = Logger.getLogger(AxisResource.class);

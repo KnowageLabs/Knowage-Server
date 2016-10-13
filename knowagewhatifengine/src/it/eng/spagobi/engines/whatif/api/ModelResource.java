@@ -89,6 +89,7 @@ import it.eng.spagobi.engines.whatif.model.transform.algorithm.IAllocationAlgori
 import it.eng.spagobi.engines.whatif.parser.Lexer;
 import it.eng.spagobi.engines.whatif.parser.parser;
 import it.eng.spagobi.engines.whatif.version.VersionManager;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
@@ -99,6 +100,7 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 import it.eng.spagobi.writeback4j.mondrian.CacheManager;
 
 @Path("/1.0/model")
+@ManageAuthorization
 public class ModelResource extends AbstractWhatIfEngineService {
 
 	public static transient Logger logger = Logger.getLogger(ModelResource.class);

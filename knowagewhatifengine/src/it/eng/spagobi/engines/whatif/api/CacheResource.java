@@ -19,6 +19,7 @@ package it.eng.spagobi.engines.whatif.api;
 
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.writeback4j.mondrian.CacheManager;
 
 import javax.servlet.http.HttpServletRequest;
@@ -32,6 +33,7 @@ import org.olap4j.OlapDataSource;
 import org.pivot4j.PivotModel;
 
 @Path("1.0/cache")
+@ManageAuthorization
 public class CacheResource extends AbstractWhatIfEngineService {
 
 	public static transient Logger logger = Logger.getLogger(CacheResource.class);

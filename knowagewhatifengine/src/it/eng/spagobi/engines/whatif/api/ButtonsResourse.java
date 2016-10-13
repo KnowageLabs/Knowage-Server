@@ -20,6 +20,7 @@ package it.eng.spagobi.engines.whatif.api;
 import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
 import it.eng.spagobi.engines.whatif.toolbarbuttons.SbiToolbarButton;
 import it.eng.spagobi.engines.whatif.toolbarbuttons.ToolbarButtonManager;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 
 import java.util.List;
 
@@ -31,6 +32,7 @@ import javax.ws.rs.core.MediaType;
 import org.apache.log4j.Logger;
 
 @Path("/1.0/buttons")
+@ManageAuthorization
 public class ButtonsResourse extends AbstractWhatIfEngineService {
 
 	public static transient Logger logger = Logger.getLogger(ButtonsResourse.class);

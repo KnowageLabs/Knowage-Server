@@ -24,6 +24,7 @@ import it.eng.spagobi.engines.whatif.WhatIfEngine;
 import it.eng.spagobi.engines.whatif.WhatIfEngineAnalysisState;
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.template.WhatIfTemplateParseException;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.ParametersDecoder;
 import it.eng.spagobi.utilities.engines.EngineConstants;
@@ -50,6 +51,7 @@ import org.apache.log4j.Logger;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 
 @Path("/olap/startwhatif")
+@ManageAuthorization
 public class WhatIfEngineStartAction extends AbstractEngineStartRestService {
 
 	// INPUT PARAMETERS

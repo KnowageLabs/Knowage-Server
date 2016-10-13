@@ -143,7 +143,7 @@ sbiM.service('sbiModule_translate', function() {
 	};
 });
 
-sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_config,sbiModule_logger) {
+sbiM.service('sbiModule_restServices', function($http, $q, $timeout, sbiModule_config,sbiModule_logger,sbiModule_messaging,sbiModule_translate) {
 	
 	var alteredContextPath=null;
 
@@ -207,9 +207,46 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_config,sbiM
 	*/
 	
 	var genericErrorHandling = function(data, status, headers, config, deferred) {
-
-  		deferred.reject(data, status, headers, config);
+		if(data.status==401){
+			console.log("request unauthorized");
+			sbiModule_messaging.showErrorMessage("",sbiModule_translate.load('sbi.generic.sessionexp'));
+			$timeout(function() {
+				redirectToLoginUrl();
+		    }, 3000);
+			
+			
+		}else{
+			deferred.reject(data, status, headers, config);	
+		}
+			
+		  		
 	};
+	
+	var redirectToLoginUrl = function() {
+    	var sessionExpiredSpagoBIJSFound = false;
+    	var loginUrl = sbiModule_config.externalBasePath;
+    	try {
+    		var currentWindow = window;
+    		var parentWindow = parent;
+    		while (parentWindow != currentWindow) {
+    			if (parentWindow.sessionExpiredSpagoBIJS) {
+    				parentWindow.location = loginUrl;
+    				sessionExpiredSpagoBIJSFound = true;
+    				break;
+    			} else {
+    				currentWindow = parentWindow;
+    				parentWindow = currentWindow.parent;
+    			}
+    		}
+    	} catch (err) {
+    		console.log(err);
+    	}
+    	
+    	if (!sessionExpiredSpagoBIJSFound) {
+    		window.location = loginUrl;
+    	}
+    };
+	
 	
 	var handleResponse = function(data, status, headers, config, deferred) {
 		console.log(data);

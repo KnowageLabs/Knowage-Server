@@ -19,6 +19,7 @@
 package it.eng.spagobi.engines.whatif.api;
 
 import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineAnalysisMetadata;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
@@ -36,6 +37,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 @Path("/1.0/subobject")
+@ManageAuthorization
 public class SubObjectResource extends AbstractWhatIfEngineService {
 
 	public static transient Logger logger = Logger.getLogger(AnalysisResource.class);

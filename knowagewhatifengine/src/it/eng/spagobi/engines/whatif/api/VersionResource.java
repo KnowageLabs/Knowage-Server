@@ -22,6 +22,7 @@ import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
 import it.eng.spagobi.engines.whatif.serializer.SerializationException;
 import it.eng.spagobi.engines.whatif.version.SbiVersion;
 import it.eng.spagobi.engines.whatif.version.VersionManager;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
 
 import java.util.List;
@@ -38,6 +39,7 @@ import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
 @Path("/1.0/version")
+@ManageAuthorization
 public class VersionResource extends AbstractWhatIfEngineService {
 
 	public static transient Logger logger = Logger.getLogger(VersionResource.class);

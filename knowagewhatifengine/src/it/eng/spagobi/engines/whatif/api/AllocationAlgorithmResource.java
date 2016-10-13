@@ -21,6 +21,7 @@ import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
 import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithmDefinition;
 import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithmSingleton;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
 
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ import javax.ws.rs.Produces;
 import org.apache.log4j.Logger;
 
 @Path("/1.0/allocationalgorithm")
+@ManageAuthorization
 public class AllocationAlgorithmResource extends AbstractWhatIfEngineService {
 
 	public static transient Logger logger = Logger.getLogger(AllocationAlgorithmResource.class);

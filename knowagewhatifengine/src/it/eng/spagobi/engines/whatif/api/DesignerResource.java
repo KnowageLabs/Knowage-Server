@@ -44,6 +44,7 @@ import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
 import it.eng.spagobi.engines.whatif.schema.MondrianSchemaManager;
 import it.eng.spagobi.engines.whatif.template.WhatIfTemplate;
 import it.eng.spagobi.services.proxy.ArtifactServiceProxy;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.writeback4j.mondrian.MondrianDriver;
@@ -54,6 +55,7 @@ import it.eng.spagobi.writeback4j.mondrian.MondrianSchemaRetriver;
  *
  */
 @Path("/1.0/designer")
+@ManageAuthorization
 public class DesignerResource extends AbstractWhatIfEngineService {
 
 	public static transient Logger logger = Logger.getLogger(DesignerResource.class);

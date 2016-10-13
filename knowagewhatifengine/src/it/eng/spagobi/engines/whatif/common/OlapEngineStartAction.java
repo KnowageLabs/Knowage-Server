@@ -18,6 +18,8 @@
 
 package it.eng.spagobi.engines.whatif.common;
 
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -25,6 +27,7 @@ import javax.ws.rs.Produces;
 import org.apache.log4j.Logger;
 
 @Path("/olap/startolap")
+@ManageAuthorization
 public class OlapEngineStartAction extends WhatIfEngineStartAction {
 
 	public static transient Logger logger = Logger.getLogger(OlapEngineStartAction.class);

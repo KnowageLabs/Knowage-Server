@@ -25,6 +25,7 @@ import it.eng.spagobi.engines.whatif.crossnavigation.SpagoBICrossNavigationConfi
 import it.eng.spagobi.engines.whatif.model.SpagoBICellSetWrapper;
 import it.eng.spagobi.engines.whatif.model.SpagoBICellWrapper;
 import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
 
 import javax.ws.rs.GET;
@@ -37,6 +38,7 @@ import org.apache.log4j.Logger;
 import org.pivot4j.PivotModel;
 
 @Path("/1.0/crossnavigation")
+@ManageAuthorization
 public class CrossNavigationResource extends AbstractWhatIfEngineService {
 	public static transient Logger logger = Logger.getLogger(CrossNavigationResource.class);
 

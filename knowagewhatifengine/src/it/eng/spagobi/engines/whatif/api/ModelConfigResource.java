@@ -22,6 +22,7 @@ import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
 import it.eng.spagobi.engines.whatif.model.ModelConfig;
 import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
 import it.eng.spagobi.engines.whatif.serializer.SerializationException;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
@@ -35,6 +36,7 @@ import javax.ws.rs.Produces;
 import org.apache.log4j.Logger;
 
 @Path("/1.0/modelconfig")
+@ManageAuthorization
 public class ModelConfigResource extends AbstractWhatIfEngineService {
 
 	public static transient Logger logger = Logger.getLogger(ModelConfigResource.class);
