@@ -193,11 +193,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								       		<label>{{translate.load("sbi.ds.scope")}}</label>
 									       	<md-select placeholder ="{{translate.load('sbi.ds.scope')}}"
 									        	ng-required = "true"
-									        	ng-model="selectedDataSet.scopeId">   
-									        	<md-option ng-repeat="l in scopeList" value="{{l.VALUE_ID}}">{{l.VALUE_CD}}
+									        	ng-model="selectedDataSet.scopeCd">   
+									        	<md-option ng-repeat="l in scopeList"  value="{{l.VALUE_CD}}">{{l.VALUE_CD}}
 									        	</md-option>
 									       	</md-select>  
-								       		<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.scopeId">
+								       		<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.scopeCd">
 				       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 			       						 	</div>
 								        </md-input-container>
@@ -206,9 +206,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								       <md-input-container class="md-block" > 
 								       <label>{{translate.load("sbi.generic.category")}}</label>
 								       <md-select placeholder ="{{translate.load('sbi.generic.category')}}"
-								        ng-model="selectedDataSet.catTypeId">   
+								        ng-model="selectedDataSet.catTypeVn">   
 								        <md-option 
-								        ng-repeat="l in categoryList" value="{{l.VALUE_ID}}">{{l.VALUE_CD}}
+								        ng-repeat="l in categoryList" value="{{l.VALUE_CD}}">{{l.VALUE_CD}}
 								        </md-option>
 								       </md-select>  
 								        </md-input-container>

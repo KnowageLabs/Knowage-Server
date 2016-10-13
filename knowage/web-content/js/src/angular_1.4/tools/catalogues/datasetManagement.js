@@ -71,7 +71,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	
 	$scope.fileObj={};
 	$scope.selectedTab = 0;	// Initially, the first tab is selected.
-	
+	$scope.tempScope = {};
 	$scope.showSaveAndCancelButtons = false;
 		
 	$scope.schedulingMonths = function(item) {
@@ -1782,5 +1782,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     $scope.deleteAllRESTJsonPathAttributes = function() {
     	$log.info("CLEAR ALL JSON PATH ATTRIBUTES FOR THE SELECTED DATASET");
     }
+
 	
 };
