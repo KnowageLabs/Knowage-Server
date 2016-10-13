@@ -30,12 +30,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	function renderChart(chartConf) {
 		
-		// NEW
+		// Catch the Title (or Empty message), Subtitle, the Canvas (the rendered chart container) and the Main panel from the DOM. (danristo)
+		var mainPanelRegion = document.getElementById('mainPanel');	
 		var chartPanelTitleOrNoData = document.getElementById('chartPanelTitleOrNoData');
 		var chartPanelSubtitle = document.getElementById('chartPanelSubtitle');		
-		var chartPanelCanvas = document.getElementById('chartPanelCanvas');		
-		
-		var mainPanelRegion = document.getElementById('mainPanel');		
+		var chartPanelCanvas = document.getElementById('chartPanelCanvas');					
 
 		// No data to represent				
 		if ((chartConf.data.labels && chartConf.data.labels.length == 0)
@@ -209,7 +208,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					&& chartConf.chart.backgroundColor != '') {				
 				mainPanelRegion.style.backgroundColor = chartConf.chart.backgroundColor;
 			}
-				
+			
 			/* 
 				window.myNewChart - the global variable that will contain the rendered chart configuration 
 				(needed for reseting (destroying) the canvas content - the chart itself when resizing).
@@ -221,7 +220,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				window.myNewChart = new Chart(ctx).Pie(chartConf.data, chartConf.options);
 			} else { // bar
 				window.myNewChart = new Chart(ctx).Bar(chartConf.data, chartConf.options);
-			}
+			}			
 			
 			// TODO: SETTING FOR THE LEGEND
 			if (chartConf && chartConf.chart && chartConf.chart.showLegend) {
@@ -272,96 +271,5 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				
 		}
 	};
-
-	function handleDrilldown(e) {
-
-	};
-
-	function handleDrillup() {
-		Sbi.chart.viewer.HighchartsDrilldownHelper.drillup();
-	}
-
-	function handleCockpitSelection(e) {
-		if (!e.seriesOptions) {
-			var cockpitWidgetManager = window.parent.cockpitPanel.widgetContainer.widgetManager;
-			var cockpitWidgets = cockpitWidgetManager.widgets;
-			var widgetId = Sbi.chart.viewer.ChartTemplateContainer.widgetId;
-
-			var selections = {};
-
-			for (var i = 0; i < cockpitWidgets.getCount(); i++) {
-				var widget = cockpitWidgets.get(i);
-
-				if (Sbi.isValorized(widget) && widget.wtype === 'chart'
-						&& widget.id === widgetId) {
-
-					var fieldMeta = widget.getFieldMetaByValue(e.point.name);
-					var categoryFieldHeader = fieldMeta != null ? fieldMeta.header
-							: null;
-
-					selections[categoryFieldHeader] = {
-						values : [ e.point.name ]
-					};
-
-					cockpitWidgetManager.onSelection(widget, selections);
-				}
-			}
-		}
-	};
-
-	function handleCrossNavigationTo(e) {
-		if (!e.seriesOptions) {
-			var chart = this;
-
-			var categoryName = e.point.name;
-			var categoryValue = null;
-
-			if (e.point.hasOwnProperty('value')) {
-				categoryValue = e.point.value;
-			}
-			var serieName = e.point.series.name;
-			var serieValue = null;
-			if (e.point.series.hasOwnProperty('value')) {
-				serieValue = e.point.series.value;
-			}
-
-			var groupingCategoryName = null;
-			var groupingCategoryValue = null;
-
-			if (e.point.hasOwnProperty('group')) {
-				groupingCategoryName = e.point.group.name;
-				groupingCategoryValue = e.point.group.value;
-			}
-
-			if(parent.execExternalCrossNavigation){
-	            	var navData={
-	            			chartType:	"CHARTJS",
-	            			documentName:e.point.crossNavigationDocumentName,
-	            			documentParameters:e.point.crossNavigationDocumentParams,
-	            			CATEGORY_NAME :categoryName,
-	            			CATEGORY_VALUE :categoryValue,
-	            			SERIE_NAME :serieName,
-	            			SERIE_VALUE :serieValue,
-	            			groupingCategoryName:groupingCategoryName,
-	            			groupingCategoryValue:groupingCategoryValue,
-	            			stringParameters:null
-	            	};
-//	             	window.parent.angular.element(window.frameElement).scope().$parent.crossNavigationHelper.navigateTo(navData); 
-	            	parent.execExternalCrossNavigation(navData,{},undefined,currentDocumentLabel); 
-	            }else{
-				Sbi.chart.viewer.CrossNavigationHelper.navigateTo(
-					e.point.crossNavigationDocumentName,
-					e.point.crossNavigationDocumentParams, categoryName,
-					categoryValue, serieName, serieValue, groupingCategoryName,
-					groupingCategoryValue);
-	            }
-			var chartServiceManager = Sbi.chart.rest.WebServiceManagerFactory
-					.getChartWebServiceManager();
-			chart.hideLoading();
-		}
-	};
-
-	function handleCrossNavigationFrom() {
-		Sbi.chart.viewer.CrossNavigationHelper.navigateBackTo();
-	};
+	
 </script>
