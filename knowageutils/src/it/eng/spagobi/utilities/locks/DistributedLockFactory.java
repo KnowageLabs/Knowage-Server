@@ -44,7 +44,7 @@ public class DistributedLockFactory {
 		return hz.getMap(mapName);
 	}
 
-	public static HazelcastInstance getHazelcastInstance(String instanceName) {
+	public static synchronized HazelcastInstance getHazelcastInstance(String instanceName) {
 		logger.debug("Getting Hazelcast instance with name [" + instanceName + "]");
 		HazelcastInstance hz = Hazelcast.getHazelcastInstanceByName(instanceName);
 		if (hz == null) {
