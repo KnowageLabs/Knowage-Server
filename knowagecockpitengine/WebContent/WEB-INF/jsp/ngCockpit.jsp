@@ -58,6 +58,9 @@ angular.module("cockpitModule").factory("cockpitModule_template",function(sbiMod
 	if(template.configuration.aggregations==undefined){
 		template.configuration.aggregations=[];
 	}
+	if(template.configuration.filters==undefined){
+		template.configuration.filters={};
+	}
 	
 	return template;
 });

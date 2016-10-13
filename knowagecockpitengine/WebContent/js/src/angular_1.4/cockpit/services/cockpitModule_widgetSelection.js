@@ -12,6 +12,16 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 		}
 		return {};
 	}
+	this.getCurrentFilters = function(datasetLabel){
+		var toRet={};
+		if(cockpitModule_template.configuration.filters[datasetLabel]!=undefined && Object.keys(cockpitModule_template.configuration.filters[datasetLabel]).length>0){
+			toRet[datasetLabel]={};
+			for(col in cockpitModule_template.configuration.filters[datasetLabel]){
+				toRet[datasetLabel][col]=["('"+cockpitModule_template.configuration.filters[datasetLabel][col]+"')"]
+			}
+		}
+		return toRet;
+	}
 	this.getAggregation = function(ngModel,dataset,columnOrdering, reverseOrdering){
 		var measures = [];
 		var categories = [];
@@ -64,13 +74,13 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 		sbiModule_restServices.promisePost("1.0/associations","", payload)
 		.then(function(response){
 			if(tmpObj!=undefined){
-				ws.updateAggregation(response.data,tmpObj.tmpAggregations,tmpObj.currentDsList);
+				ws.updateAggregation(response.data,tmpObj.tmpAggregations,tmpObj.currentDsList,false);
 				angular.copy(response.data,tmpObj.tmpAggregations);
 			}else{
 				angular.copy(response.data,cockpitModule_widgetSelectionUtils.associations);
-				ws.updateAggregation(response.data,cockpitModule_template.configuration.aggregations,cockpitModule_template.configuration.datasets);
+				var someDel= ws.updateAggregation(response.data,cockpitModule_template.configuration.aggregations,cockpitModule_template.configuration.datasets,true);
 				angular.copy(response.data,cockpitModule_template.configuration.aggregations);
-				if(reloadSelection){
+				if(reloadSelection || (!reloadSelection && someDel)){
 					cockpitModule_widgetSelectionUtils.responseCurrentSelection = [];
 					ws.refreshAllAssociations();
 					
@@ -82,13 +92,29 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 		})
 	}
 	
-	this.updateAggregation=function(newAggr,oldAggr,dsList){
-		
+	this.removeDatasetFromFilters=function(dsList){
+		var someDelete=false;
+		angular.forEach(dsList,function(ds){
+			if(cockpitModule_template.configuration.filters.hasOwnProperty(ds)){
+				someDelete=true;
+				delete cockpitModule_template.configuration.filters[ds];
+			}
+		})
+		//return true if some filters are deleted
+		return someDelete;
+	}
+	this.updateAggregation=function(newAggr,oldAggr,dsList,updateFilters){
+		var someDelete=false;
 		
 		angular.forEach(newAggr,function(newItem){
 			//remove the associations item of respose
 			delete newItem.associations;
-			
+			if(updateFilters){
+				var dl=ws.removeDatasetFromFilters(newItem.datasets);
+				if(dl){
+					someDelete=true;
+				}
+			}
 			//get the old value
 			for(var i=0;i<oldAggr.length;i++){
 				if(ws.arrayContainsAll(oldAggr[i].datasets,newItem.datasets)){
@@ -123,6 +149,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 			}
 			
 		})
+		return someDelete;
 	}
 	
 	this.arrayContainsAll=function(arr1,arr2){
@@ -156,7 +183,11 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 		return false;
 	}
 	
-	this.getAssociations(this.haveSelection());
+	this.haveFilters=function(){
+		return Object.keys(cockpitModule_template.configuration.filters).length>0;
+	}
+	
+	this.getAssociations((this.haveSelection() || this.haveFilters()));
 	
 	this.getAssociativeSelections = function(column,columnName,datasetLabel){
 		var defer = $q.defer();
@@ -198,6 +229,8 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 			}
 			//remove the dataset from the DS_IN_CACHE variable
 			angular.copy(tmpSplittedDSInCache,cockpitModule_properties.DS_IN_CACHE);
+		}else{
+			return "noAssoc";
 		}
 		
 		
@@ -228,8 +261,11 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 
 	}
 	
+	this.refreshAllWidgetWhithSameDataset=function(itemLabel){
+		$rootScope.$broadcast('WIDGET_EVENT','UPDATE_FROM_DATASET_FILTER',{label:itemLabel});
+	}
+	
 	this.refreshAllAssociatedWidget = function(isInit,data){
-		console.log("refreshAllAssociatedWidget",(new Date()).getTime());
 		$rootScope.$broadcast('WIDGET_EVENT','UPDATE_FROM_SELECTION',{isInit:isInit,data:data});
 	}
 	

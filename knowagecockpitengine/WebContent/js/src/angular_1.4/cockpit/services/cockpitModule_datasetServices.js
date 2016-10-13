@@ -185,7 +185,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		.replace(/"/g,"%22");
 		params =  "?aggregations=" +aggr+"&parameters="+par;
 		if(page !=undefined && itemPerPage !=undefined){
-			params=params+"&offset="+page+"&size="+itemPerPage;
+			params=params+"&offset="+(page*itemPerPage)+"&size="+itemPerPage;
 		}
 
 		if(ngModel.style !=undefined && ngModel.style.showSummary ==true){
@@ -198,10 +198,13 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		if(dataset.useCache==false){
 			params+="&realtime=true";
 		}
+		
+		var dataToSend=cockpitModule_widgetSelection.getCurrentSelections(dataset.label);
+		if(Object.keys(dataToSend).length==0){
+			dataToSend=cockpitModule_widgetSelection.getCurrentFilters(dataset.label);
+		}
 		sbiModule_restServices.restToRootProject();
-
-
-		sbiModule_restServices.promisePost("2.0/datasets",encodeURIComponent(dataset.label)+"/data"+params,cockpitModule_widgetSelection.getCurrentSelections(dataset.label))
+		sbiModule_restServices.promisePost("2.0/datasets",encodeURIComponent(dataset.label)+"/data"+params,dataToSend)
 		.then(function(response){
 			if(cockpitModule_properties.DS_IN_CACHE.indexOf(dataset.label)==-1){
 				cockpitModule_properties.DS_IN_CACHE.push(dataset.label);

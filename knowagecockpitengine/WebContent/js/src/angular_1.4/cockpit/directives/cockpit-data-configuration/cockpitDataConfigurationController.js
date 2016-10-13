@@ -3,7 +3,6 @@ angular.module('cockpitModule').controller("documentManagerController",["$scope"
 angular.module('cockpitModule').controller("associationGroupController",["$scope","sbiModule_translate","cockpitModule_realtimeServices", associationGroupController]);
 
 function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitModule_datasetServices,cockpitModule_widgetSelection,$mdDialog,cockpitModule_template,cockpitModule_analyticalDrivers){
-	console.log("entrato: datasetManagerController")	 
 	$scope.datasetTableActions=[
 	                             {
 					    			label : 'delete',
@@ -70,7 +69,6 @@ function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitMod
 					    							        .ok(sbiModule_translate.load('sbi.generic.ok'))
 					    							        );
 					    					}
-					    					console.log(listDatasetUsed)
 					    			 }
 	                             }
 	                            ];
@@ -179,12 +177,10 @@ function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitMod
 
 				  $mdPanel.open(config);
 	 }
-	 console.log("uscito: datasetManagerController")	
 	
 }
 
 function documentManagerController($scope,sbiModule_translate,$mdPanel,cockpitModule_documentServices,cockpitModule_widgetSelection,$mdDialog,cockpitModule_analyticalDrivers ){
-	console.log("entrato: documentManagerController")	
 	$scope.documentTableActions=[
 	                             {
 					    			label : 'delete',
@@ -294,11 +290,9 @@ function documentManagerController($scope,sbiModule_translate,$mdPanel,cockpitMo
 
 				  $mdPanel.open(config);
 	 }
-		console.log("uscito: documentManagerController")	
 }
 
 function associationGroupController($scope,sbiModule_translate,cockpitModule_realtimeServices){
-	console.log("entrato: associationGroupController")	
 	$scope.realtimeServices=cockpitModule_realtimeServices;
 	$scope.rtData=[];
 	$scope.$on("refreshFrequencyRTData",function(){
@@ -308,11 +302,9 @@ function associationGroupController($scope,sbiModule_translate,cockpitModule_rea
 		},$scope.rtData)
 		
 	})
-	console.log("uscito: associationGroupController")	
 }
 
 function cockpitDataConfigurationController($scope,$rootScope,sbiModule_translate,cockpitModule_template,cockpitModule_datasetServices,sbiModule_restServices,$mdPanel,$mdDialog,mdPanelRef,cockpitModule_widgetSelection,cockpitModule_documentServices,cockpitModule_widgetServices,cockpitModule_widgetSelectionUtils,cockpitModule_widgetSelection,cockpitModule_templateServices,cockpitModule_properties,$rootScope){
-	console.log("entrato: cockpitDataConfigurationController")	    
 	$scope.translate=sbiModule_translate;
 		    	 $scope.baseScriptPath=baseScriptPath;
 		    	 $scope.cockpitModule_template=cockpitModule_template;
@@ -509,6 +501,5 @@ function cockpitDataConfigurationController($scope,$rootScope,sbiModule_translat
 		    	$scope.refreshFrequencyRTData=function(){
 		    		$scope.$broadcast("refreshFrequencyRTData")
 		    	}
-	console.log("uscito: cockpitDataConfigurationController")	 
 };
 

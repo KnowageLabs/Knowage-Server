@@ -62,7 +62,7 @@ angular.module('cockpitModule')
         		    	}
         				lastShowActionButtonValue= (new Date).getTime();;
         				handleActionButtonVisibility(true)
-        			}
+        			};
         			var mouseLeave=function(ev){
         				if(angular.isObject(scope.gridster.movingItem)){
         		    		return
@@ -79,7 +79,7 @@ angular.module('cockpitModule')
     							ele.css("z-index","3");
     						}
     					},500)
-        			}
+        			};
         			
         			var handleActionButtonVisibility=function(show){
         				if(!angular.equals(show,showActionButton)){
@@ -205,6 +205,9 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 		case "UPDATE_FROM_SELECTION"  :
 			$scope.updateFromSelection(config.isInit,config.data);
 			break;
+		case "UPDATE_FROM_DATASET_FILTER"  :
+			$scope.updateFromDatasetFilter(config.label);
+			break;
 		case "UPDATE_FROM_CLEAN_CACHE":
 			
 			$scope.refreshWidget();
@@ -305,11 +308,21 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 //					$scope.refreshWidget();
 					var option =$scope.getOptions == undefined? {} :  $scope.getOptions();
 					cockpitModule_widgetServices.refreshWidget($scope.subCockpitWidget,$scope.ngModel,'selections',option);
+					//to-do testare se funziona con la chiamata sotto
+//					$scope.refreshWidget(undefined,'selections');
 				}
 			}
 		}
 		
 		
+	}
+	
+	$scope.updateFromDatasetFilter=function(label){
+		var dataset= $scope.getDataset();
+		if(dataset != undefined && angular.equals(label,dataset.label)){
+			$scope.refreshWidget(undefined,'filters');
+			
+		}
 	}
 	
 	$scope.safeApply=function(){
@@ -325,13 +338,20 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 	 
 	$scope.doSelection = function(columnName,columnValue){
 		//check if all associated data
-		var sel=cockpitModule_widgetSelection.getAssociativeSelections(columnValue,columnName,$scope.getDataset().label);
-		if(sel!=undefined){
+		var dsLabel=$scope.getDataset().label;
+		var sel=cockpitModule_widgetSelection.getAssociativeSelections(columnValue,columnName,dsLabel);
+		if(sel!=undefined && !angular.equals("noAssoc",sel)){
 			sel.then(function(response) {
 				cockpitModule_widgetSelection.refreshAllAssociatedWidget(false,response);
 			}, function(error) {
 				console.log(error)
 			});
+		}else if(angular.equals("noAssoc",sel)){
+			if(!cockpitModule_template.configuration.filters.hasOwnProperty(dsLabel)){
+				cockpitModule_template.configuration.filters[dsLabel]={};
+			}
+			cockpitModule_template.configuration.filters[dsLabel][columnName]=columnValue;
+			cockpitModule_widgetSelection.refreshAllWidgetWhithSameDataset(dsLabel);
 		}
 	}
 	$scope.doEditWidget=function(initOnFinish){
@@ -464,7 +484,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 		cockpitModule_gridsterOptions.resizable.enabled=cockpitModule_properties.EDIT_MODE && cockpitModule_properties.WIDGET_EXPANDED[cockpitModule_properties.CURRENT_SHEET]!=true;
 		
 		$scope.refreshWidget(undefined,'fullExpand');
-	}
+	};
 };
 
 })();

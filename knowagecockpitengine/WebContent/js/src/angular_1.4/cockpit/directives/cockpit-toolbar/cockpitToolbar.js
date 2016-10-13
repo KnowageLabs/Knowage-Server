@@ -63,6 +63,9 @@ function cockpitToolbarControllerFunction($scope,cockpitModule_widgetServices,co
 				break;
 			}
 		}
+		if(Object.keys(cockpitModule_template.configuration.filters).length>0){
+			haveSel=true;
+		}
 		if(haveSel){
 			var confirm = $mdDialog.confirm()
 			.title(sbiModule_translate.load('sbi.cockpit.widgets.save.keepselections'))
@@ -76,6 +79,7 @@ function cockpitToolbarControllerFunction($scope,cockpitModule_widgetServices,co
 				for(var i=0;i<cockpitModule_template.configuration.aggregations.length;i++){
 					cockpitModule_template.configuration.aggregations[i].selection = {};
 				}
+				cockpitModule_template.configuration.filters={};
 				cockpitModule_generalServices.saveCockpit();
 			});
 		}else{
@@ -206,6 +210,9 @@ function cockpitSelectionControllerFunction($scope,cockpitModule_template,cockpi
 	$scope.translate = sbiModule_translate;
 	$scope.tmpSelection = [];
 	angular.copy(cockpitModule_template.configuration.aggregations,$scope.tmpSelection);
+	$scope.tmpFilters = {};
+	angular.copy(cockpitModule_template.configuration.filters,$scope.tmpFilters);
+	
 	if($scope.tmpSelection.length >0){
 		for(var i=0;i<$scope.tmpSelection.length;i++){
 			var selection = $scope.tmpSelection[i].selection;
@@ -214,13 +221,27 @@ function cockpitSelectionControllerFunction($scope,cockpitModule_template,cockpi
 				var obj = {
 						ds : string[0],
 						columnName : string[1],
-						value : selection[key]
+						value : selection[key],
+						aggregated:true
 				};
 				$scope.selection.push(obj);
 			}
 		}
 	}
+	
 
+	for(var ds in $scope.tmpFilters){
+		for(var col in $scope.tmpFilters[ds]){
+			var tmpObj={
+					ds :ds,
+					columnName : col,
+					value : $scope.tmpFilters[ds][col],
+					aggregated:false
+			}
+			$scope.selection.push(tmpObj);
+		}
+	}
+	
 	$scope.columnTableSelection =[
 	                              {
 	                            	  label:"Dataset",
@@ -250,17 +271,26 @@ function cockpitSelectionControllerFunction($scope,cockpitModule_template,cockpi
 	                                    	icon:'fa fa-trash' ,   
 	                                    	action : function(item,event) {	
 	                                    		
+	                                    		if(item.aggregated){
 	                                    			var key = item.ds + "." + item.columnName;
-
+	                                    			
 	                                    			for(var i=0;i<$scope.tmpSelection.length;i++){
 	                                    				if($scope.tmpSelection[i].datasets.indexOf(item.ds) !=-1){
 	                                    					var selection  = $scope.tmpSelection[i].selection;
 	                                    					delete selection[key];
 	                                    				}
 	                                    			}
-
+	                                    			
 	                                    			var index=$scope.selection.indexOf(item);
 	                                    			$scope.selection.splice(index,1);
+	                                    		}else{
+	                                    			delete $scope.tmpFilters[item.ds][item.columnName];
+	                                    			if(Object.keys($scope.tmpFilters[item.ds]).length==0){
+	                                    				delete $scope.tmpFilters[item.ds];
+	                                    			}
+	                                    			var index=$scope.selection.indexOf(item);
+	                                    			$scope.selection.splice(index,1);
+	                                    		}
 
 	                                    		
 	                                    	}
@@ -271,8 +301,8 @@ function cockpitSelectionControllerFunction($scope,cockpitModule_template,cockpi
 		angular.copy([],$scope.selection);
 		for(var i=0;i<$scope.tmpSelection.length;i++){
 			$scope.tmpSelection[i].selection = {};
-
 		}
+		angular.copy({},$scope.tmpFilters);
 
 	}
 	
@@ -281,10 +311,17 @@ function cockpitSelectionControllerFunction($scope,cockpitModule_template,cockpi
 	}
 	
 	$scope.saveConfiguration = function(){
+		var reload=false;
 		  if(!angular.equals($scope.tmpSelection,cockpitModule_template.configuration.aggregations )){
 	  		  angular.copy($scope.tmpSelection,cockpitModule_template.configuration.aggregations);
+	  		 reload=true;
+		  }
+		  if(!angular.equals($scope.tmpFilters,cockpitModule_template.configuration.filters )){
+			  angular.copy($scope.tmpFilters,cockpitModule_template.configuration.filters);
+			  reload=true;
+		  }
+		  if(reload){
 			  cockpitModule_widgetSelection.getAssociations(true);
-	  		 
 		  }
 		$mdDialog.cancel();
 	}
