@@ -206,7 +206,8 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 				List<SbiKpiRuleOutput> allRuleOutputs = session.createCriteria(SbiKpiRuleOutput.class).createAlias("sbiKpiRule", "sbiKpiRule")
 						.createAlias("sbiKpiRule.sbiKpiRuleOutputs", "sbiKpiRule_sbiKpiRuleOutputs")
-						.createAlias("sbiKpiRule_sbiKpiRuleOutputs.sbiKpiAlias", "parent_sbiKpiAlias").add(Restrictions.eq("sbiKpiRule.active", 'T'))
+						.createAlias("sbiKpiRule_sbiKpiRuleOutputs.sbiKpiAlias", "parent_sbiKpiAlias").
+						add(Restrictions.eq("sbiKpiRule.active", 'T'))
 						.add(new InExpressionIgnoringCase("parent_sbiKpiAlias.name", measures)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
 				Map<SbiKpiRuleId, List<Cardinality>> cardinalityMap = new HashMap<>();
 
@@ -229,7 +230,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				for (String measure : measures) {
 					boolean found = false;
 					for (Cardinality c : cardinality) {
-						if (measure.equals(c.getMeasureName())) {
+						if (measure.equalsIgnoreCase(c.getMeasureName())) {
 							cardinalityOrdered.add(c);
 							found = true;
 						}
