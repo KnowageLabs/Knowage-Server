@@ -18,7 +18,6 @@
 package it.eng.spagobi.kpi.bo;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 public class ThresholdValue implements Serializable {
 
@@ -36,9 +35,9 @@ public class ThresholdValue implements Serializable {
 	private Integer severityId;
 	private String severityCd;
 
-	private BigDecimal minValue;
+	private Double minValue;
 	private boolean includeMin;
-	private BigDecimal maxValue;
+	private Double maxValue;
 	private boolean includeMax;
 
 	public ThresholdValue() {
@@ -134,7 +133,7 @@ public class ThresholdValue implements Serializable {
 	/**
 	 * @return the minValue
 	 */
-	public BigDecimal getMinValue() {
+	public Double getMinValue() {
 		return minValue;
 	}
 
@@ -142,7 +141,7 @@ public class ThresholdValue implements Serializable {
 	 * @param minValue
 	 *            the minValue to set
 	 */
-	public void setMinValue(BigDecimal minValue) {
+	public void setMinValue(Double minValue) {
 		this.minValue = minValue;
 	}
 
@@ -164,7 +163,7 @@ public class ThresholdValue implements Serializable {
 	/**
 	 * @return the maxValue
 	 */
-	public BigDecimal getMaxValue() {
+	public Double getMaxValue() {
 		return maxValue;
 	}
 
@@ -172,7 +171,7 @@ public class ThresholdValue implements Serializable {
 	 * @param maxValue
 	 *            the maxValue to set
 	 */
-	public void setMaxValue(BigDecimal maxValue) {
+	public void setMaxValue(Double maxValue) {
 		this.maxValue = maxValue;
 	}
 

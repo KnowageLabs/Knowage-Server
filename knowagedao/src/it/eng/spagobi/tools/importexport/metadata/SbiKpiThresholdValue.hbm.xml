@@ -15,9 +15,9 @@
         <property name="position" column="POSITION" type="int" length="11"/>
         <property name="label" column="LABEL" type="string" length="40"/>
 
-        <property name="minValue" column="MIN_VALUE" type="big_decimal" precision="22" scale="0"/>
+        <property name="minValue" column="MIN_VALUE" type="double" />
         <property name="includeMin" column="INCLUDE_MIN" type="character" />
-        <property name="maxValue" column="MAX_VALUE" type="big_decimal" precision="22" scale="0"/>
+        <property name="maxValue" column="MAX_VALUE" type="double" />
         <property name="includeMax" column="INCLUDE_MAX" type="character" />
         <property name="color" column="COLOR" type="string" length="20" />
         
