@@ -26,5 +26,6 @@ public class SpagoBIDataSetException extends SpagoBIDOAException {
 
 	public SpagoBIDataSetException(String message) {
 		super(message);
+
 	}
 }
