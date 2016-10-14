@@ -303,7 +303,7 @@ public class DatasetManagementAPI {
 		SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
 		cache.setUserProfile(userProfile);
 		IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(label);
-		cache.refresh(dataSet, true, forceRefresh);
+		cache.refresh(dataSet, null, true, forceRefresh);
 
 		String signature = dataSet.getSignature();
 		logger.debug("Retrieve table name for signature " + signature);
@@ -413,9 +413,7 @@ public class DatasetManagementAPI {
 						adjustMetadata((DataStore) dataStore, dataSet, null);
 						dataSet.decode(dataStore);
 					} else {
-						// TODO: here we actually already have the datastore,
-						// therefore we could optimize this step by avoiding to get the dataStore again...
-						dataStore = cache.refresh(dataSet, false);
+						dataStore = cache.refresh(dataSet, baseDataStore, false);
 
 						String tableName = DataStore.DEFAULT_SCHEMA_NAME + "." + DataStore.DEFAULT_TABLE_NAME;
 						Map<String, String> datasetAlias = getDatasetAlias(dataSet);
@@ -423,14 +421,14 @@ public class DatasetManagementAPI {
 						String originalQuery = getQueryText(null, tableName, groups, filterCriteriaForMetaModel, projections, null, dataSet, true, datasetAlias);
 						IDataStore originalDataStore = dataStore.aggregateAndFilterRecords(originalQuery, -1, -1);
 
-						String pagedQuery = getQueryText(null, tableName, null, null, null, null, dataSet, true, datasetAlias);
-						IDataStore pagedDataStore = originalDataStore.aggregateAndFilterRecords(pagedQuery, offset, fetchSize);
+						IDataStore pagedDataStore = originalDataStore.paginateRecords(offset, fetchSize);
 						appendCalculatedColumnsToDataStore(projections, datasetAlias, pagedDataStore);
 
 						if (summaryRowProjections != null && summaryRowProjections.size() > 0) {
 							String summaryRowQuery = getQueryText(null, tableName, groups, filters, projections, summaryRowProjections, dataSet, true,
 									datasetAlias);
 							IDataStore summaryRowDataStore = originalDataStore.aggregateAndFilterRecords(summaryRowQuery, -1, -1);
+
 							appendSummaryRowToPagedDataStore(projections, summaryRowProjections, pagedDataStore, summaryRowDataStore);
 						}
 
@@ -1304,15 +1302,15 @@ public class DatasetManagementAPI {
 
 			if (summaryRowProjections != null && summaryRowProjections.size() > 0) {
 				IDataStore originalDataStore = dataStore.aggregateAndFilterRecords(originalQuery, -1, -1);
-				appendCalculatedColumnsToDataStore(projections, datasetAlias, originalDataStore);
 
 				String pagedQuery = getQueryText(null, tableName, null, null, null, null, dataSet, true, datasetAlias);
 				IDataStore pagedDataStore = originalDataStore.aggregateAndFilterRecords(pagedQuery, offset, fetchSize);
+				appendCalculatedColumnsToDataStore(projections, datasetAlias, pagedDataStore);
 
 				String summaryRowQuery = getQueryText(null, tableName, groups, filters, projections, summaryRowProjections, dataSet, true, datasetAlias);
 				IDataStore summaryRowDataStore = originalDataStore.aggregateAndFilterRecords(summaryRowQuery, -1, -1);
-
 				appendSummaryRowToPagedDataStore(projections, summaryRowProjections, pagedDataStore, summaryRowDataStore);
+
 				dataStore = pagedDataStore;
 			} else {
 				dataStore = dataStore.aggregateAndFilterRecords(originalQuery, offset, fetchSize);
@@ -1533,9 +1531,11 @@ public class DatasetManagementAPI {
 			sqlBuilder.setWhereOrEnabled(isRealtime);
 			sqlBuilder.from(tableName);
 
-			setColumnsToSelect(dataSource, projections, datasetAlias, sqlBuilder, orderColumns, isRealtime);
+			Map<String, String> columnNameWithColonToAliasName = new HashMap<String, String>();
+
+			setColumnsToSelect(dataSource, projections, datasetAlias, sqlBuilder, orderColumns, isRealtime, columnNameWithColonToAliasName);
 			setWhereConditions(dataSource, filters, datasetAlias, sqlBuilder);
-			setGroupbyConditions(dataSource, groups, datasetAlias, sqlBuilder);
+			setGroupbyConditions(dataSource, groups, datasetAlias, sqlBuilder, columnNameWithColonToAliasName);
 			setOrderbyConditions(orderColumns, sqlBuilder);
 
 			queryText = sqlBuilder.toString();
@@ -1582,7 +1582,7 @@ public class DatasetManagementAPI {
 	}
 
 	private void setColumnsToSelect(IDataSource dataSource, List<ProjectionCriteria> projections, Map<String, String> datasetAlias, SelectBuilder sqlBuilder,
-			List<String> orderColumns, boolean isRealtime) {
+			List<String> orderColumns, boolean isRealtime, Map<String, String> columnNameWithColonToAliasName) {
 		if (orderColumns == null) {
 			throw new SpagoBIRuntimeException("Unable to manage ORDER BY clauses");
 		}
@@ -1593,14 +1593,22 @@ public class DatasetManagementAPI {
 
 			for (ProjectionCriteria projection : projections) {
 				String columnName = projection.getColumnName();
+				String aggregateFunction = projection.getAggregateFunction();
+				String aliasName = projection.getAliasName();
+				boolean hasAlias = aliasName != null && !aliasName.isEmpty();
+				aliasName = AbstractJDBCDataset.encapsulateColumnName(aliasName, dataSource);
+				String orderType = projection.getOrderType();
+
+				if (columnName.contains(":") && hasAlias) {
+					columnNameWithColonToAliasName.put(columnName, aliasName);
+					columnName = aliasName;
+				} else {
+					throw new SpagoBIRuntimeException("Projection [" + columnName + "] requires an alias");
+				}
+
 				if (datasetAlias != null) {
 					columnName = datasetAlias.get(projection.getDataset()) + " - " + columnName;
 				}
-
-				String aggregateFunction = projection.getAggregateFunction();
-				String aliasName = AbstractJDBCDataset.encapsulateColumnName(projection.getAliasName(), dataSource);
-				boolean hasAlias = aliasName != null && !aliasName.isEmpty();
-				String orderType = projection.getOrderType();
 
 				if (columnName.contains(AbstractDataBase.STANDARD_ALIAS_DELIMITER)) {
 					// this is a calculated field!
@@ -1731,13 +1739,18 @@ public class DatasetManagementAPI {
 		}
 	}
 
-	private void setGroupbyConditions(IDataSource dataSource, List<GroupCriteria> groups, Map<String, String> datasetAlias, SelectBuilder sqlBuilder) {
+	private void setGroupbyConditions(IDataSource dataSource, List<GroupCriteria> groups, Map<String, String> datasetAlias, SelectBuilder sqlBuilder,
+			Map<String, String> columnNameWithColonToAliasName) {
 		if (groups != null) {
 			Set<String> groupColumnNames = new HashSet<String>();
 			for (GroupCriteria group : groups) {
+				String columnName = group.getColumnName();
 				String aggregateFunction = group.getAggregateFunction();
 
-				String columnName = group.getColumnName();
+				if (columnName.contains(":")) {
+					columnName = columnNameWithColonToAliasName.get(columnName);
+				}
+
 				if (datasetAlias != null) {
 					columnName = datasetAlias.get(group.getDataset()) + " - " + group.getColumnName();
 				}

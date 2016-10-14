@@ -91,4 +91,6 @@ public interface IDataStore {
 
 	void setCacheDate(Date cacheDate);
 
+	IDataStore paginateRecords(int offset, int fetchSize);
+
 }

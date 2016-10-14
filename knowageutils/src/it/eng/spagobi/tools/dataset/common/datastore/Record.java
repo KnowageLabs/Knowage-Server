@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * @author Angelo Bernabei angelo.bernabei@eng.it
  */
-public class Record implements IRecord, Serializable {
+public class Record implements IRecord, Serializable, Cloneable {
 
 	IDataStore dataStore;
 	List<IField> fields = new ArrayList<IField>();
@@ -107,6 +107,16 @@ public class Record implements IRecord, Serializable {
 		} else if (!fields.equals(other.fields))
 			return false;
 		return true;
+	}
+
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		Record clone = new Record();
+		clone.setDataStore(dataStore);
+		for (IField field : fields) {
+			clone.appendField(((Field) field).clone());
+		}
+		return clone;
 	}
 
 }

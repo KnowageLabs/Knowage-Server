@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,28 +11,23 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.tools.dataset.common.datastore;
 
-
-
 /**
- * @author Angelo Bernabei
- *         angelo.bernabei@eng.it
+ * @author Angelo Bernabei angelo.bernabei@eng.it
  */
-public class Field implements IField {
+public class Field implements IField, Cloneable {
 	Object value = null;
 	Object description = null;
-	
-	
 
 	public Field() {
 		super();
 	}
-	
+
 	/**
 	 * @param value
 	 */
@@ -40,6 +35,7 @@ public class Field implements IField {
 		super();
 		this.value = value;
 	}
+
 	/**
 	 * @param value
 	 * @param description
@@ -49,15 +45,23 @@ public class Field implements IField {
 		this.value = value;
 		this.description = description;
 	}
+
+	@Override
 	public Object getValue() {
 		return value;
 	}
+
+	@Override
 	public void setValue(Object value) {
 		this.value = value;
 	}
+
+	@Override
 	public Object getDescription() {
 		return description;
 	}
+
+	@Override
 	public void setDescription(Object description) {
 		this.description = description;
 	}
@@ -66,8 +70,7 @@ public class Field implements IField {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((description == null) ? 0 : description.hashCode());
+		result = prime * result + ((description == null) ? 0 : description.hashCode());
 		result = prime * result + ((value == null) ? 0 : value.hashCode());
 		return result;
 	}
@@ -94,9 +97,9 @@ public class Field implements IField {
 		return true;
 	}
 
-
-
-
-	
+	@Override
+	public Field clone() throws CloneNotSupportedException {
+		return (Field) super.clone();
+	}
 
 }

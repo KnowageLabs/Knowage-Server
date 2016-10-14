@@ -593,4 +593,36 @@ public class DataStore implements IDataStore {
 		return record;
 	}
 
+	@Override
+	public IDataStore paginateRecords(int offset, int fetchSize) {
+		IDataStore dataStore = new DataStore();
+		IMetaData dataStoreMetaData = dataStore.getMetaData();
+
+		for (int fieldIndex = 0; fieldIndex < metaData.getFieldCount(); fieldIndex++) {
+			FieldMetadata fieldMetadata = (FieldMetadata) metaData.getFieldMeta(fieldIndex);
+			try {
+				dataStoreMetaData.addFiedMeta(fieldMetadata.clone());
+			} catch (CloneNotSupportedException e) {
+				logger.error("Unable to clone FieldMetadata", e);
+			}
+		}
+
+		int resultCount = (int) getRecordsCount();
+		dataStoreMetaData.setProperty("resultNumber", resultCount);
+
+		boolean isPaginationValid = offset > -1 && fetchSize > -1;
+		int startIndex = isPaginationValid ? offset : 0;
+		int endIndex = isPaginationValid ? Math.min(offset + fetchSize, resultCount) : resultCount;
+
+		for (int i = startIndex; i < endIndex; i++) {
+			Record record = (Record) getRecordAt(i);
+			try {
+				dataStore.appendRecord((IRecord) record.clone());
+			} catch (CloneNotSupportedException e) {
+				logger.error("Unable to clone Record", e);
+			}
+		}
+
+		return dataStore;
+	}
 }

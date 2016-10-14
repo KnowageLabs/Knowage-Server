@@ -126,6 +126,8 @@ public interface ICache {
 	 */
 	IDataStore refresh(IDataSet dataSet, boolean wait);
 
+	IDataStore refresh(IDataSet dataSet, IDataStore dataStore, boolean wait);
+
 	/**
 	 * if the dataset is not contained in the cache, refresh the dataset and save the result dataStore in cache
 	 *

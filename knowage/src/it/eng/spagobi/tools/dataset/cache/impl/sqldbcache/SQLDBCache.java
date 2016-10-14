@@ -491,11 +491,15 @@ public class SQLDBCache implements ICache {
 
 								String columnName = projection.getColumnName();
 								String aliasName = projection.getAliasName();
+								boolean hasAlias = aliasName != null && !aliasName.isEmpty();
+								aliasName = AbstractJDBCDataset.encapsulateColumnName(aliasName, dataSource);
 								String aggregateFunction = projection.getAggregateFunction();
 
-								if (columnName.contains(":")) {
+								if (columnName.contains(":") && hasAlias) {
 									columnNameWithColonToAliasName.put(columnName, aliasName);
 									columnName = aliasName;
+								} else {
+									throw new SpagoBIRuntimeException("Projection [" + columnName + "] requires an alias");
 								}
 
 								if (datasetAlias != null) {
@@ -509,7 +513,6 @@ public class SQLDBCache implements ICache {
 									columnName = AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
 								}
 
-								aliasName = AbstractJDBCDataset.encapsulateColumnName(aliasName, dataSource);
 								/**
 								 * Aggregation function is possible only for series, hence this is the part for handling them and their ordering criteria for
 								 * the final query.
@@ -517,7 +520,7 @@ public class SQLDBCache implements ICache {
 								 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 								 */
 								if ((aggregateFunction != null) && (!aggregateFunction.isEmpty()) && (columnName != "*")) {
-									if (aliasName != null && !aliasName.isEmpty()) {
+									if (hasAlias) {
 										// https://production.eng.it/jira/browse/KNOWAGE-149
 										// This variable is used for the order clause
 										String tmpColumn = aggregateFunction + "(" + columnName + ")";
@@ -582,7 +585,7 @@ public class SQLDBCache implements ICache {
 									 */
 									keepCategoryForOrdering = columnName + " ASC";
 
-									if (aliasName != null && !aliasName.isEmpty() && !aliasName.equals(columnName)) {
+									if (hasAlias && !aliasName.equals(columnName)) {
 										columnName += " AS " + aliasName;
 									}
 								}
@@ -690,12 +693,12 @@ public class SQLDBCache implements ICache {
 								String aggregateFunction = group.getAggregateFunction();
 								Map<String, String> datasetAlias = (Map<String, String>) cacheItem.getProperty("DATASET_ALIAS");
 
-								if (datasetAlias != null) {
-									columnName = datasetAlias.get(group.getDataset()) + " - " + group.getColumnName();
-								}
-
 								if (columnName.contains(":")) {
 									columnName = columnNameWithColonToAliasName.get(columnName);
+								}
+
+								if (datasetAlias != null) {
+									columnName = datasetAlias.get(group.getDataset()) + " - " + group.getColumnName();
 								}
 
 								columnName = AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
@@ -910,15 +913,20 @@ public class SQLDBCache implements ICache {
 	 */
 	@Override
 	public IDataStore refresh(IDataSet dataSet, boolean wait) {
-		return refresh(dataSet, wait, false);
+		return refresh(dataSet, null, wait, false);
 	}
 
-	public IDataStore refresh(IDataSet dataSet, boolean wait, boolean force) {
+	@Override
+	public IDataStore refresh(IDataSet dataSet, IDataStore dataStore, boolean wait) {
+		return refresh(dataSet, dataStore, wait, false);
+	}
 
-		IDataStore dataStore = null;
+	public IDataStore refresh(IDataSet dataSet, IDataStore dataStore, boolean wait, boolean force) {
 		try {
-			dataSet.loadData();
-			dataStore = dataSet.getDataStore();
+			if (dataStore == null) {
+				dataSet.loadData();
+				dataStore = dataSet.getDataStore();
+			}
 
 			if (wait == true) {
 				this.put(dataSet, dataStore, force);
