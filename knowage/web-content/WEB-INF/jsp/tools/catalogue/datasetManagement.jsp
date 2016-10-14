@@ -192,7 +192,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								       <md-input-container class="md-block" > 
 								       		<label>{{translate.load("sbi.ds.scope")}}</label>
 									       	<md-select placeholder ="{{translate.load('sbi.ds.scope')}}"
-									        	ng-required = "true"
+									        	ng-required = "true" ng-change="changeDatasetScope()"
 									        	ng-model="selectedDataSet.scopeCd">   
 									        	<md-option ng-repeat="l in scopeList"  value="{{l.VALUE_CD}}">{{l.VALUE_CD}}
 									        	</md-option>
@@ -206,11 +206,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								       <md-input-container class="md-block" > 
 								       <label>{{translate.load("sbi.generic.category")}}</label>
 								       <md-select placeholder ="{{translate.load('sbi.generic.category')}}"
-								        ng-model="selectedDataSet.catTypeVn">   
+								        	ng-required="isCategoryRequired" ng-model="selectedDataSet.catTypeVn">   
 								        <md-option 
-								        ng-repeat="l in categoryList" value="{{l.VALUE_CD}}">{{l.VALUE_CD}}
+								        	ng-repeat="l in categoryList" value="{{l.VALUE_CD}}">{{l.VALUE_CD}}
 								        </md-option>
 								       </md-select>  
+								       
+								       	<div  ng-messages="datasetForm.lbl.$error" ng-show="isCategoryRequired">
+			       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+		       						 	</div>
+								       
 								        </md-input-container>
 								   </div>
 								</md-card>
@@ -649,7 +654,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							 		
 							 		<md-content layout-column>
 							 			
-							 			<!-- TOOLBAR FOR THE CARD THAT HOLDS ADD REQUEST HEADER BUTTON -->
+							 			<!-- TOOLBAR FOR THE CARD THAT HOLDS CUSTOM ATTRIBUTES -->
 								     	<md-toolbar class="secondaryToolbar" layout-padding>
 								     	
 								          	<div class="md-toolbar-tools">
@@ -669,19 +674,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								          	</div>
 								          	
 								        </md-toolbar>						         
-									    
-										<md-card layout-padding style="margin:0 0 8 0; padding:0">																		   
-										   <div>										   
-										   		<angular-table
-														id="customAttributes"
-														ng-model=customAttributes
-														columns="customAttributesTableColumns"
-														show-search-bar=false
-														scope-functions="customAttrScopeFunctions"
-														no-pagination=false
-														speed-menu-option="customAttributesDelete" >
-												</angular-table>										   
-										   </div>											
+									    										
+										<md-card layout-padding style="height:300px; margin:0 0 8 0">
+											
+											<angular-table
+													id="customAttributes"
+													flex
+													style="height:100%;padding:8px"
+													ng-model=customAttributes
+													columns="customAttributesTableColumns"
+													show-search-bar=false
+													scope-functions="customAttrScopeFunctions"
+													no-pagination=false
+													speed-menu-option="customAttributesDelete" >
+											</angular-table>
+											   									
 										</md-card>
 						   	      	
 						   	      	</md-content>
@@ -1044,29 +1051,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						            
 						            <md-button class="md-icon-button" aria-label="Clear all request headers" 
 												ng-click="deleteAllRESTRequestHeaders()" title="Clear all request headers">
-						              <md-icon md-font-icon="fa fa-times" class="fa fa-2x"></md-icon>
+						              <md-icon md-font-icon="fa fa-eraser" class="fa fa-2x"></md-icon>
 						            </md-button>
 						         
 					          	</div>
 					          	
 					        </md-toolbar>						         
-						    
-							<md-card layout-padding style="margin:0 0 8 0; padding:0">
-															   
-							   <div>
-							   
-							   		<angular-table
-											id="requestHeadersTable"
-											ng-model=restRequestHeaders
-											columns=requestHeadersTableColumns
-											show-search-bar=false
-											scope-functions=metaScopeFunctions
-											no-pagination=false
-											speed-menu-option=requestHeadersDelete >
-									</angular-table>
-							   
-							   </div>
-								
+						    							
+							<md-card layout-padding style="height:300px; margin:0 0 8 0">
+																		
+								<angular-table
+										id="requestHeadersTable"
+										flex
+										style="height:100%;padding:8px"
+										ng-model=restRequestHeaders
+										columns=requestHeadersTableColumns
+										show-search-bar=false
+										scope-functions=metaScopeFunctions
+										no-pagination=false
+										speed-menu-option=requestHeadersDelete >
+								</angular-table>
+								   									
 							</md-card>
 							
 						</md-content>	
@@ -1199,7 +1204,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						         
 						         	<md-button class="md-icon-button" aria-label="Clear all JSON path attributes" 
 												ng-click="deleteAllRESTJsonPathAttributes()" title="Clear all JSON path attributes">
-						              <md-icon md-font-icon="fa fa-ban" class="fa fa-2x"></md-icon>
+						              <md-icon md-font-icon="fa fa-eraser" class="fa fa-2x"></md-icon>
 						            </md-button>
 						         
 						         	 <md-button class="md-icon-button" aria-label="Help" ng-click="showInfoForRestParams('jsonPathAttributes')" title="{{translate.load('sbi.ds.help')}}">
@@ -1209,23 +1214,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					          	</div>
 					          	
 					        </md-toolbar>						         
-						    
-							<md-card layout-padding style="margin:0 0 8 0; padding:0px">
-															   
-							   <div>
-							   
-							   		<angular-table
-											id="jsonPathAttrTable"
-											ng-model=restJsonPathAttributes
-											columns="restJsonPathAttributesTableColumns"
-											show-search-bar=false
-											scope-functions="metaScopeFunctionsJsonPathAttr"
-											no-pagination=false
-											speed-menu-option="restJsonPathAttributesDelete" >
-									</angular-table>
-							   
-							   </div>
-								
+						    							
+							<md-card layout-padding style="height:300px; margin:0 0 8 0">
+																					
+								<angular-table
+										id="jsonPathAttrTable"
+										flex
+										style="height:100%;padding:8px"
+										ng-model=restJsonPathAttributes											
+										columns="restJsonPathAttributesTableColumns"
+										show-search-bar=false
+										scope-functions="metaScopeFunctionsJsonPathAttr"
+										no-pagination=false
+										speed-menu-option="restJsonPathAttributesDelete" >
+								</angular-table>
+								   									
 							</md-card>
 							
 						</md-content>	
@@ -1268,10 +1271,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							
 						<!-- DATASET PARAMETERS -->					
 						<md-content ng-show="selectedDataSet.dsTypeCd && selectedDataSet.dsTypeCd.toLowerCase()!='file' && selectedDataSet.dsTypeCd.toLowerCase()!='flat'" 
-									style="padding: 0 8 0 8" flex class="ToolbarBox miniToolbar noBorder mozTable">
-							
-							<md-card layout-padding style="margin:0">
-								
+									style="padding: 0 8 8 8" flex class="ToolbarBox miniToolbar noBorder mozTable">
+															
 								<md-toolbar class="secondaryToolbar" layout-padding>
 								
 									<div class="md-toolbar-tools">
@@ -1289,32 +1290,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										
 										<md-button class="md-icon-button" aria-label="Clear all parameters" 
 												ng-click="deleteAllParameters()" title="Clear all parameters">
-							              <md-icon md-font-icon="fa fa-minus-circle" class="fa fa-2x"></md-icon>
+							              <md-icon md-font-icon="fa fa-eraser" class="fa fa-2x"></md-icon>
 							            </md-button>
 										
 									</div>
 												
 								</md-toolbar>						         
 												
-								<md-card layout-padding style="margin:0px">
-																		
-			 						<div>
-									      						
-										<angular-table
-												id="datasetParametersTable"
-												ng-model=parameterItems
-												columns="parametersColumns"
-												show-search-bar=false
-												scope-functions="paramScopeFunctions"
-												no-pagination=false
-												speed-menu-option="parameterDelete">
-										</angular-table>
-								   
-									</div>
-									
+								<md-card layout-padding style="height:300px; margin:0px">
+																				      						
+									<angular-table
+											id="datasetParametersTable"
+											flex
+											style="height:100%;padding:8px"
+											ng-model=parameterItems
+											columns=parametersColumns
+											show-search-bar=false
+											scope-functions=paramScopeFunctions
+											no-pagination=false
+											speed-menu-option="parameterDelete">
+									</angular-table>
+								   									
 								</md-card>
-								
-							</md-card>
 							
 						</md-content>
 							

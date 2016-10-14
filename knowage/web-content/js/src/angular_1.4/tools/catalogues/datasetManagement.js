@@ -263,15 +263,23 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	     {
 	    	 name:"name", 
 	    	 label:"Name",
-	    	 hideTooltip:true
+	    	 hideTooltip:true,
+	    	 
+	    	 transformer: function() {
+	    		 return '<md-input-container class="md-block" style="margin:0"><input ng-model="row.name"></md-input-container>';
+	    	 }
 	     },
 	     
 	     {
 	         name:"value",
 	         label:"Value",
-	         hideTooltip:true
+	         hideTooltip:true,
+	         
+	         transformer: function() {
+	    		 return '<md-input-container class="md-block" style="margin:0"><input ng-model="row.value"></md-input-container>';
+	    	 }	         
 	     }
-     ];
+     ];	
 	
 	$scope.requestHeaderNameValues = [
 		{value:"Accept",name:"Accept"},
@@ -282,30 +290,32 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		{value:"application/json",name:"application/json"},
 		{value:"text/plain",name:"text/plain"}
 	 ];
-
-//	$scope.requestHeaderNameItem = '<md-select ng-model=scopeFunctions.value class="noMargin"><md-option ng-repeat="col in scopeFunctions.requestHeaderNameValues" value="{{col.name}}">{{col.name}}</md-option></md-select>';
-//	$scope.requestHeaderValueItem = '<md-select ng-model=scopeFunctions.name class="noMargin"><md-option ng-repeat="col in scopeFunctions.requestHeaderValueValues" value="{{col.value}}">{{col.value}}</md-option></md-select>';
 	
-	$scope.requestHeaderNameItem = '<md-input-container class="md-block" style="margin:0"><input ng-model="scopeFunctions.value"></md-input-container>';
-	$scope.requestHeaderValueItem = '<md-input-container class="md-block" style="margin:0"><input ng-model="scopeFunctions.name"></md-input-container>';
-	
-	$scope.querySearchCategory = function(query) {
-		  
-	      return [{dsTypeCd:"1"},{dsTypeCd:"2"},{dsTypeCd:"3"},{dsTypeCd:"4"}];
+	$scope.changeDatasetScope = function() {
+		
+		/**
+		 * If the dataset scope is changed and the new value is ENTERPRISE or TECHNICAL, while the dataset category
+		 * is not yet picked, we need to set the indicator that will serve to inform user about the necessity to pick
+		 * the category for one of those two dataset scopes.
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+		if (($scope.selectedDataSet.scopeCd.toUpperCase()=="ENTERPRISE" 
+				|| $scope.selectedDataSet.scopeCd.toUpperCase()=="TECHNICAL") 
+					&& (!$scope.selectedDataSet.catTypeVn 
+							|| $scope.selectedDataSet.catTypeVn=="")) {
+			$scope.isCategoryRequired = true;
+		}
+		else {
+			$scope.isCategoryRequired = false;
+		}
+		
 	}
-	
-	$scope.metaScopeFunctions = {
-		requestHeaderValueValues: $scope.requestHeaderValueValues,
-		requestHeaderNameValues: $scope.requestHeaderNameValues,
-		value: "aaa",
-		name: "bbb",
-	};
 	
 	// Initial list for REST request headers for a new REST dataset
 	$scope.restRequestHeaders = [];
 	
 	$scope.requestHeaderAddItem = function() {
-		$scope.restRequestHeaders.push({"name":$scope.requestHeaderNameItem,"value":$scope.requestHeaderValueItem,"index":$scope.counterRequestHeaders++});
+		$scope.restRequestHeaders.push({"name":"","value":"","index":$scope.counterRequestHeaders++});
 	}	
 	
 	// Provide unique IDs for elements in the Request header grid, so we can remove them easily
@@ -313,7 +323,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	
 	$scope.requestHeadersDelete = 
 	[
-	 	//Delete the dataset.
 		{
 			label: $scope.translate.load("sbi.generic.delete"),
 		 	icon:'fa fa-trash' ,
@@ -321,14 +330,34 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		
 		 	action: function(item) {
 		 		
-		 		for (i=$scope.restRequestHeaders.length-1; i>=0; i--) {
-		 			
-		 			if ($scope.restRequestHeaders[i].index == item.index) {
-		 				$scope.restRequestHeaders.splice(i,1);
-		 				break;
-		 			}
-		 		}
+		 		console.log(item);
 		 		
+		 		// TODO: translate
+		 		var confirm = $mdDialog.confirm()
+	 	          .title("Delete of REST dataset request header")
+	 	          .targetEvent(event)	 	          
+	 	          .textContent("Are you sure you want to delete request header")
+	 	          .ariaLabel("Delete of REST dataset request header")
+	 	          .ok($scope.translate.load("sbi.general.yes"))
+	 	          .cancel($scope.translate.load("sbi.general.No"));
+		 		
+		 		$mdDialog
+	 				.show(confirm)
+	 				.then(
+	 						
+	 						function() {
+	 							
+				 	        	for (i=0; i<$scope.restRequestHeaders.length; i++) {
+						 							 	        		
+						 			if ($scope.restRequestHeaders[i].index == item.index) {
+						 				$scope.restRequestHeaders.splice(i,1);
+						 				break;
+						 			}
+						 			
+						 		}
+				 	        	
+					 		}
+						);	
 		 		
 	 		}
 					
@@ -354,19 +383,31 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	     {
 	    	 name:"name", 
 	    	 label:"Name",
-	    	 hideTooltip:true
+	    	 hideTooltip:true,
+	    	 
+	    	 transformer: function() {
+	    		 return '<md-input-container class="md-block" style="margin:0"><input ng-model="row.name"></md-input-container>';
+	    	 }
 	     },
 	     
 	     {
 	         name:"jsonPathValue",
 	         label:"JSON path value",
-	         hideTooltip:true
+	         hideTooltip:true,
+	         
+	         transformer: function() {
+	    		 return '<md-input-container class="md-block" style="margin:0"><input ng-model="row.jsonPathValue"></md-input-container>';
+	    	 }
 	     },
 	     
 	     {
 	         name:"typeOrJsonPathValue",
 	         label:"Type or JSON path type",
-	         hideTooltip:true
+	         hideTooltip:true,
+	         
+	         transformer: function() {
+	    		 return '<md-input-container class="md-block" style="margin:0"><input ng-model="row.jsonPathType"></md-input-container>';
+	    	 }
 	     }
      ];
 	
@@ -374,20 +415,12 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	$scope.counterJsonAttributes = 0;
 	
 	$scope.restJsonPathAttributesAddItem = function() {
-		$scope.restJsonPathAttributes.push({"name":$scope.restJsonPathAttributesNameItem,"jsonPathValue":$scope.restJsonPathAttrJsonPathValueItem,"typeOrJsonPathValue": $scope.restJsonPathAttrTypeJsonPathTypeItem, "index":$scope.counterJsonAttributes++});
+		$scope.restJsonPathAttributes.push({"name":"","jsonPathValue":"","typeOrJsonPathValue":"", "index":$scope.counterJsonAttributes++});
 	}
-	
-	$scope.restJsonPathAttributesNameItem = '<md-input-container class="md-block" style="margin:0"><input ng-model="_xxx2_"></md-input-container>';
-	$scope.restJsonPathAttrJsonPathValueItem = '<md-input-container class="md-block" style="margin:0"><input ng-model="_xxx1_"></md-input-container>';
-	$scope.restJsonPathAttrTypeJsonPathTypeItem = '<md-select ng-model=row.name_1 class="noMargin"><md-option ng-repeat="col in scopeFunctions.restJsonPathAttributesList" value="{{col.name}}">{{col.name}}</md-option></md-select>';
-	
-	$scope.metaScopeFunctionsJsonPathAttr = {
-			restJsonPathAttributesList: $scope.restJsonPathAttributesList
-	};
-	
+		
 	$scope.restJsonPathAttributesDelete = 
 	[
-	 	//Delete the dataset.
+	 	//Delete the REST request JSON path attribute
 		{
 			label: $scope.translate.load("sbi.generic.delete"),
 		 	icon:'fa fa-trash' ,
@@ -395,14 +428,32 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		
 		 	action: function(item) {
 		 		console.log(item);
-		 		for (i=$scope.restJsonPathAttributes.length-1; i>=0; i--) {
-		 			
-		 			if ($scope.restJsonPathAttributes[i].index == item.index) {
-		 				$scope.restJsonPathAttributes.splice(i,1);
-		 				break;
-		 			}
-		 		}
 		 		
+		 		// TODO: translate
+		 		var confirm = $mdDialog.confirm()
+	 	          .title("Delete of REST JSON path attribute")
+	 	          .targetEvent(event)	 	          
+	 	          .textContent("Are you sure you want to delete JSON path attribute")
+	 	          .ariaLabel("Delete of REST JSON path attribute")
+	 	          .ok($scope.translate.load("sbi.general.yes"))
+	 	          .cancel($scope.translate.load("sbi.general.No"));
+		 		
+		 		$mdDialog
+	 				.show(confirm)
+	 				.then(
+	 						
+	 						function() {
+	 							
+	 							for (i=$scope.restJsonPathAttributes.length-1; i>=0; i--) {
+	 					 			
+	 					 			if ($scope.restJsonPathAttributes[i].index == item.index) {
+	 					 				$scope.restJsonPathAttributes.splice(i,1);
+	 					 				break;
+	 					 			}
+	 					 		}
+				 	        	
+					 		}
+						);
 		 		
 	 		}
 					
@@ -415,11 +466,27 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	 * 
 	 * */
 	$scope.datasetParameterTypes = [
-	                                {name:"String", value:"String"},
-	                                {name:"Number", value:"Number"},
-	                                {name:"Row", value:"Row"},
-	                                {name:"Generic", value: "Generic"}
-	                                ];
+        {
+        	name:"String", 
+        	value:"String"
+		},
+		
+        {
+			name:"Number", 
+			value:"Number"
+		},
+        
+        {
+			name:"Raw", 
+			value:"Raw"
+		},
+        
+        {
+			name:"Generic", 
+			value: "Generic"
+		}
+        
+    ];
 	
 	$scope.paramScopeFunctions = {
 			datasetParameterTypes: $scope.datasetParameterTypes
@@ -428,18 +495,43 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	$scope.paramName =  '<md-input-container class="md-block" style="margin:0"><input ng-model="_xxx2_"></md-input-container>';
 	$scope.paramType = '<md-select ng-model=row.pname class="noMargin"><md-option ng-repeat="col in scopeFunctions.datasetParameterTypes" value="{{col.name}}">{{col.name}}</md-option></md-select>';
 	$scope.paramDefaultValues =  '<md-input-container class="md-block" style="margin:0"><input ng-model="_xxx2_"></md-input-container>';
-	
 
 	$scope.parametersColumns = [
-        {"label":$scope.translate.load("sbi.generic.name"), "name":"name", "hideTooltip":true},
-        {"label":$scope.translate.load("sbi.generic.type"), "name":"type", "hideTooltip":true},
-        {"label":$scope.translate.load("sbi.generic.defaultValue"), "name":"defaultValue", "hideTooltip":true}
+        {
+        	"label":$scope.translate.load("sbi.generic.name"), 
+        	"name":"name", 
+        	hideTooltip:true,
+        	
+        	transformer: function() {
+        		return '<md-input-container class="md-block" style="margin:0"><input ng-model="row.name"></md-input-container>';
+        	}
+    	},
+        
+    	{
+    		"label":$scope.translate.load("sbi.generic.type"), 
+    		"name":"type", 
+    		hideTooltip:true,
+        	
+        	transformer: function() {
+        		return '<md-select ng-model=row.type class="noMargin"><md-option ng-repeat="col in scopeFunctions.datasetParameterTypes" value="{{col.name}}">{{col.name}}</md-option></md-select>';;
+        	}
+		},
+        
+    	{
+			"label":$scope.translate.load("sbi.generic.defaultValue"), 
+			"name":"defaultValue", 
+			hideTooltip:true,
+        	
+        	transformer: function() {
+        		return '<md-input-container class="md-block" style="margin:0"><input ng-model="row.defaultValue"></md-input-container>';
+        	}
+		}
     ];
 	
 	$scope.parameterItems = [];
 	
 	$scope.parametersAddItem = function() {
-		$scope.parameterItems.push({"name":$scope.paramName,"type":$scope.paramType, "defaultValue":$scope.paramDefaultValues,"index":$scope.parametersCounter++});
+		$scope.parameterItems.push({"name":"","type":"", "defaultValue":"","index":$scope.parametersCounter++});
 	}
 	
 	$scope.parametersCounter = 0;
@@ -453,23 +545,56 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		 	backgroundColor:'transparent',
 		
 		 	action: function(item) {
-//		 		console.log(item);
-		 		for (i=$scope.parameterItems.length-1; i>=0; i--) {
-		 			
-		 			if ($scope.parameterItems[i].index == item.index) {
-		 				$scope.parameterItems.splice(i,1);
-		 				break;
-		 			}
-		 		}
-		 		
-		 		
+
+			 	// TODO: translate
+		    	var confirm = $mdDialog.confirm()
+			         .title("Delete dataset parameter")
+			         .targetEvent(event)	 	          
+			         .textContent("Are you sure you want to delete the dataset parameter?")
+			         .ariaLabel("Delete dataset parameter")
+			         .ok($scope.translate.load("sbi.general.yes"))
+			         .cancel($scope.translate.load("sbi.general.No"));
+				
+				$mdDialog
+					.show(confirm)
+					.then(					
+							function() {
+								
+								for (i=0; i<$scope.parameterItems.length; i++) {
+						 			
+						 			if ($scope.parameterItems[i].index == item.index) {
+						 				$scope.parameterItems.splice(i,1);
+						 				break;
+						 			}
+						 		}	
+								
+					 		}
+						);	
+		 				 		
 	 		}
 					
 	 	}
 	 ];
 	
-	$scope.deleteAllParameters = function() {
-		$scope.parameterItems = [];
+	$scope.deleteAllParameters = function() {		
+		
+		// TODO: translate
+    	var confirm = $mdDialog.confirm()
+	         .title("Clear all dataset parameters")
+	         .targetEvent(event)	 	          
+	         .textContent("Are you sure you want to delete all dataset parameters")
+	         .ariaLabel("Clear all dataset parameters")
+	         .ok($scope.translate.load("sbi.general.yes"))
+	         .cancel($scope.translate.load("sbi.general.No"));
+		
+		$mdDialog
+			.show(confirm)
+			.then(					
+					function() {
+						$scope.parameterItems = [];	 	        	
+			 		}
+				);	
+		
 	}
 	
 	/**
@@ -1031,10 +1156,63 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		$scope.selectedDataSet = angular.copy(item);
 		$scope.showSaveAndCancelButtons = true;
 		
+		if ($scope.selectedDataSet.dsTypeCd.toLowerCase()=="rest") {
+			
+			// Cast the REST NGSI (transform from the String)
+			$scope.selectedDataSet.restNGSI = JSON.parse($scope.selectedDataSet.restNGSI);
+			
+			// Cast the REST directly JSON attributes (transform from the String)
+			$scope.selectedDataSet.restDirectlyJSONAttributes = JSON.parse($scope.selectedDataSet.restDirectlyJSONAttributes);
+			
+			// REST REQUEST HEADERS
+			var restRequestHeadersTemp = [];
+			//var counter = 0;
+			
+			for (var key in JSON.parse($scope.selectedDataSet.restRequestHeaders)) {
+				
+				var restRequestHeaderTemp = {};			
+				
+				  if (JSON.parse($scope.selectedDataSet.restRequestHeaders).hasOwnProperty(key)) {				  
+					  restRequestHeaderTemp["name"] = key;
+					  restRequestHeaderTemp["value"] = JSON.parse($scope.selectedDataSet.restRequestHeaders)[key];
+					  restRequestHeaderTemp["index"] = $scope.counterRequestHeaders;			    	
+				  }
+				  
+				  $scope.counterRequestHeaders++;
+				  restRequestHeadersTemp.push(restRequestHeaderTemp);
+				  
+			}
+			
+			$scope.restRequestHeaders = restRequestHeadersTemp;
+			
+			// REST JSON PATH
+			var restJsonPathAttributesTemp = [];	
+			
+			var restJsonPathAttributes = JSON.parse($scope.selectedDataSet.restJsonPathAttributes);
+			var restJsonPathAttributesLength = JSON.parse($scope.selectedDataSet.restJsonPathAttributes).length;
+			
+			for (j=0; j<restJsonPathAttributesLength; j++) {
+				
+				var restJsonPathAttributeTemp = {};
+				
+				restJsonPathAttributeTemp["name"] = restJsonPathAttributes[j]["name"];
+				restJsonPathAttributeTemp["jsonPathValue"] = restJsonPathAttributes[j]["jsonPathValue"];
+				restJsonPathAttributeTemp["jsonPathType"] = restJsonPathAttributes[j]["jsonPathType"];
+				restJsonPathAttributeTemp["index"] = $scope.counterJsonAttributes++;
+				
+				restJsonPathAttributesTemp.push(restJsonPathAttributeTemp);
+				  
+			}
+			
+			$scope.restJsonPathAttributes = restJsonPathAttributesTemp;
+			
+		}		
+		
+		$scope.parameterItems = $scope.selectedDataSet.pars;
+		
 		// Call the scope function that is responsible for transformation of configuration data of the File dataset.
 		($scope.selectedDataSet.dsTypeCd.toLowerCase()=="file") ? $scope.refactorFileDatasetConfig(item) : null;
-		($scope.selectedDataSet.dsTypeCd.toLowerCase()=="rest") ? $scope.deparseRESTDataset() : null;
-		
+				
 		if ($scope.selectedDataSet.trasfTypeCd) {
 			$scope.transformDatasetState = $scope.selectedDataSet.trasfTypeCd==$scope.transformationDataset.VALUE_CD;
 		}
@@ -1043,26 +1221,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		}
 		
 	};
-	
-	$scope.deparseRESTDataset = function() {
-		console.log($scope.selectedDataSet);
-		$scope.restRequestHeaders = [];
-		console.log($scope.metaScopeFunctions);
-		
-		console.log($scope.restRequestHeaders);
-		
-		$scope.restRequestHeaders.push({"name":$scope.requestHeaderNameItem,"value":$scope.requestHeaderValueItem,"index":$scope.counterRequestHeaders++});
-		
-		for (var i in $scope.restRequestHeaders) {
-			for (prop in $scope.restRequestHeaders[i]) {
-				console.log(prop);
-				console.log($scope.restRequestHeaders[i][prop]);
-				$scope.metaScopeFunctions.name = prop;
-				$scope.metaScopeFunctions.value = $scope.restRequestHeaders[i][prop];
-			}
-				
-		}
-	}
 	
 	$scope.refactorFileDatasetConfig = function(item) {
 					
@@ -1168,7 +1326,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	};
 	
 	$scope.saveDataset = function() {
-				
+				console.log($scope.selectedDataSet);
 		// Perform saving when the dataset is selected (POST or PUT, i.e. creating a new or updating the existing dataset)
 		if ($scope.selectedDataSet) {
 			$log.info("save");
@@ -1776,11 +1934,45 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     }
     
     $scope.deleteAllRESTRequestHeaders = function() {
-    	$log.info("CLEAR ALL REST REQUEST HEADERS FOR THE SELECTED DATASET");
+       	
+    	// TODO: translate
+    	var confirm = $mdDialog.confirm()
+	         .title("Clear all REST dataset request headers")
+	         .targetEvent(event)	 	          
+	         .textContent("Are you sure you want to delete all request headers")
+	         .ariaLabel("Clear all REST dataset request headers")
+	         .ok($scope.translate.load("sbi.general.yes"))
+	         .cancel($scope.translate.load("sbi.general.No"));
+		
+		$mdDialog
+			.show(confirm)
+			.then(					
+					function() {
+						$scope.restRequestHeaders = [];		 	        	
+			 		}
+				);	
+    	    	
     }
     
     $scope.deleteAllRESTJsonPathAttributes = function() {
-    	$log.info("CLEAR ALL JSON PATH ATTRIBUTES FOR THE SELECTED DATASET");
+    	
+    	// TODO: translate
+    	var confirm = $mdDialog.confirm()
+	         .title("Clear all REST JSON path attributes")
+	         .targetEvent(event)	 	          
+	         .textContent("Are you sure you want to delete all JSON path attributes")
+	         .ariaLabel("Clear all REST JSON path attributes")
+	         .ok($scope.translate.load("sbi.general.yes"))
+	         .cancel($scope.translate.load("sbi.general.No"));
+		
+		$mdDialog
+			.show(confirm)
+			.then(					
+					function() {
+						$scope.restJsonPathAttributes = [];		 	        	
+			 		}
+				);	
+    	
     }
 
 	
