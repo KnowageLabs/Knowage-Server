@@ -70,6 +70,7 @@ import org.apache.log4j.Logger;
 import com.hazelcast.core.IMap;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
+
 import commonj.work.Work;
 import commonj.work.WorkItem;
 
@@ -428,6 +429,7 @@ public class SQLDBCache implements ICache {
 		return inLineViewSQL;
 	}
 
+	@SuppressWarnings("unchecked")
 	private IDataStore queryStandardCachedDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections,
 			List<ProjectionCriteria> summaryRowProjections, String resultsetSignature, int offset, int fetchSize) {
 

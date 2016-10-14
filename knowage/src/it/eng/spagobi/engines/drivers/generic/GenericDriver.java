@@ -39,6 +39,7 @@ import it.eng.spagobi.engines.drivers.DefaultOutputParameter;
 import it.eng.spagobi.engines.drivers.EngineURL;
 import it.eng.spagobi.engines.drivers.IEngineDriver;
 import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -73,39 +74,39 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 
 	/**
 	 * Returns a map of parameters which will be send in the request to the engine application.
-	 * 
+	 *
 	 * @param profile
 	 *            Profile of the user
 	 * @param roleName
 	 *            the name of the execution role
 	 * @param biobject
 	 *            the biobject
-	 * 
+	 *
 	 * @return Map The map of the execution call parameters
 	 */
 	@Override
 	public Map getParameterMap(Object biobject, IEngUserProfile profile, String roleName) {
 		logger.debug("IN");
-
 		Map map = new Hashtable();
 		try {
 			BIObject biobj = (BIObject) biobject;
 			map = getMap(biobj, profile);
 			// This parameter is not required
 			// map.put("query", "#");
-		} catch (ClassCastException cce) {
-			logger.error("The parameter is not a BIObject type", cce);
+			map.put(PARAM_NEW_SESSION, "TRUE");
+			map = applySecurity(map, profile);
+			map = applyLocale(map);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException(e);
 		}
-		map.put(PARAM_NEW_SESSION, "TRUE");
-		map = applySecurity(map, profile);
-		map = applyLocale(map);
+
 		logger.debug("OUT");
 		return map;
 	}
 
 	/**
 	 * Returns a map of parameters which will be send in the request to the engine application.
-	 * 
+	 *
 	 * @param subObject
 	 *            SubObject to execute
 	 * @param profile
@@ -114,7 +115,7 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 	 *            the name of the execution role
 	 * @param object
 	 *            the object
-	 * 
+	 *
 	 * @return Map The map of the execution call parameters
 	 */
 	@Override
@@ -158,7 +159,7 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 
 	/**
 	 * Starting from a BIObject extracts from it the map of the paramaeters for the execution call
-	 * 
+	 *
 	 * @param biobj
 	 *            BIObject to execute
 	 * @return Map The map of the execution call parameters
@@ -184,12 +185,12 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 			}
 
 			if (objtemplate == null) {
-				throw new Exception("Template null");
+				throw new SpagoBIRuntimeException("Template is [null]");
 			}
 
 			template = DAOFactory.getBinContentDAO().getBinContent(objtemplate.getBinId());
 			if (template == null) {
-				throw new Exception("Content of the Active template null");
+				throw new SpagoBIRuntimeException("Content of the active template is [null]");
 			}
 
 			documentId = biobj.getId().toString();
@@ -231,7 +232,7 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 			pars = addBIParameterDescriptions(biobj, pars);
 
 		} catch (Exception e) {
-			logger.error("Error while recovering execution parameter map: \n" + e);
+			throw new SpagoBIRuntimeException("Error while recovering execution parameter map: \n" + e);
 		}
 
 		logger.debug("OUT");
@@ -241,7 +242,7 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 
 	/**
 	 * Add into the parameters map the BIObject's BIParameter names and values
-	 * 
+	 *
 	 * @param biobj
 	 *            BIOBject to execute
 	 * @param pars
@@ -281,14 +282,14 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 
 	/**
 	 * Function not implemented. Thid method should not be called
-	 * 
+	 *
 	 * @param biobject
 	 *            The BIOBject to edit
 	 * @param profile
 	 *            the profile
-	 * 
+	 *
 	 * @return the edits the document template build url
-	 * 
+	 *
 	 * @throws InvalidOperationRequest
 	 *             the invalid operation request
 	 */
@@ -300,14 +301,14 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 
 	/**
 	 * Function not implemented. Thid method should not be called
-	 * 
+	 *
 	 * @param biobject
 	 *            The BIOBject to edit
 	 * @param profile
 	 *            the profile
-	 * 
+	 *
 	 * @return the new document template build url
-	 * 
+	 *
 	 * @throws InvalidOperationRequest
 	 *             the invalid operation request
 	 */
