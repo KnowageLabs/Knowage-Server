@@ -14,7 +14,8 @@ var app = angular.module
 	 	'angular_table',	 	
 	 	'sbiModule',
 	 	'angular-list-detail',
-	 	'ui.codemirror'
+	 	'ui.codemirror',
+	 	'ui.tree'
 	 ]
 );
 
@@ -39,7 +40,7 @@ app.controller
 	 ]
 );
 
-function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,sbiModule_messaging,sbiModule_config)
+function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,sbiModule_messaging,sbiModule_config,$timeout)
 {
 	/**
 	 * =====================
@@ -48,8 +49,10 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	 */
 	$scope.showMe = false;
 	$scope.dirtyForm = false; // flag to check for modification
+	$scope.enableTest = false;
 	$scope.translate = sbiModule_translate;
 	$scope.listOfLovs = [];
+	$scope.previewLovModel = []
 	$scope.listOfInputTypes = [];
 	$scope.listOfScriptTypes = [];
 	$scope.listOfDatasources = [];
@@ -84,8 +87,92 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 			"JAVA_CLASS" : "JAVACLASSLOV",
 			"DATASET" : "DATASET"	
 	};
+	$scope.paginationObj ={
+		"paginationStart" : 0,
+		"paginationLimit" : 20,	
+		"paginationEnd" : 20
+	};
+	$scope.paramsList = [];
+	$scope.paramObj = {
+		
+		"paramName":'',
+		"paramValue":''
+	};
+	$scope.userAttributes = [];
+	$scope.testLovColumns = [
+	   {
+		   label:"Name",
+           name:"name",
+           size: "200px",
+           hideTooltip:true,                   
+       },
+       {
+		   label:"Value",
+           name:"",
+           hideTooltip:true,
+           transformer:function(){
+               return " <md-checkbox ng-checked=scopeFunctions.getItem(row,'value') aria-label='buttonValue'></md-checkbox>";
+           }                                    
+       },
+       {
+		   label:"Description",
+           name:"",
+           hideTooltip:true,
+           transformer:function(){
+               return " <md-checkbox ng-checked=scopeFunctions.getItem(row,'description') aria-label='buttonDescription'></md-checkbox>";
+           }                                    
+       },
+       {
+		   label:"Visible",
+           name:"",
+           hideTooltip:true,
+           transformer:function(){
+               return " <md-checkbox ng-checked=scopeFunctions.getItem(row,'visible') aria-label='buttonVisible'></md-checkbox>";
+           }                                    
+       }                     
+	    ]
+	$scope.testLovTreeRightColumns = [
+	                  	   {
+	                  		   label:"Field",
+	                             name:"name",
+	                             size: "200px",
+	                             hideTooltip:true,                   
+	                         },
+	                         
+	                         {
+	                  		   label:"Value",
+	                             name:"value",
+	                             hideTooltip:true,
+	                                        
+	                         },
+	                         {
+	                  		   label:"Description",
+	                             name:"description",
+	                             hideTooltip:true,
+	                                                      
+	                         }                     
+	                  	    ]
 	
-	   $scope.cmOption = {
+	
+	$scope.TreeListType = [
+	  
+	   {
+		   "name": "Simple",
+		   "value" : "simple"
+	   },
+	   {
+		   "name": "Tree",
+		   "value" : "tree"
+	   },
+	   {
+		   "name": "Tree selectable inner nodes",
+		   "value" : "treeinner"
+	   }
+	                       
+	                       ]
+	
+	
+	$scope.cmOption = {
 			   indentWithTabs: true,
 				smartIndent: true,
 				lineWrapping : true,
@@ -107,6 +194,21 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 			     }
 			   };
 
+	
+	/**
+	 * Function that parse  xml LovProvider property of the object
+	 * to json so it can be seen in interface.
+	 * x2js library is used. https://github.com/abdmob/x2js
+	 * @author: spetrovic (Stefan.Petrovic@mht.net)
+	 */
+	var parseLovProvider = function(item) {
+		var x2js = new X2JS(); 
+        var json = x2js.xml_str2json(item.lovProvider); 
+        return json; 
+		
+	}
+	
+	
 	
 	/**
 	 * Speed menu for handling the deleting action on one 
@@ -203,6 +305,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 		$scope.getScriptTypes();
 		$scope.getDatasources();
 		$scope.getDatasets();
+		$scope.getUserAttributes();
     });
 	
 	$scope.setDirty=function()
@@ -225,6 +328,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 				$scope.selectedLov = {};
 				$scope.listForFixLov = [];
 				$scope.showMe = true;
+				$scope.enableTest = false;
 			    $scope.label = "";
 			           
 			   },function(){
@@ -237,6 +341,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 			  $scope.selectedLov = {};
 			  $scope.showMe = true;
 			  $scope.listForFixLov = [];
+			  $scope.enableTest = false;
 			  
 			  }
 	}
@@ -291,6 +396,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 		}
 	
 	var cleanSelections = function() {
+		$scope.enableTest = false;
 		$scope.selectedScriptType={};
 		$scope.selectedQuery = {};
 		$scope.selectedFIXLov = {};
@@ -312,8 +418,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, sbiModule_translate.load("sbi.generic.toastr.title.error"));
 			
-		});	
-		
+		});
 		$mdDialog
 		.show({
 			scope : $scope,
@@ -325,6 +430,19 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 			hasBackdrop : false
 		});
 	}
+	
+	$scope.getUserAttributes = function() {
+		
+		sbiModule_restServices.promiseGet("2.0/users/attributes", '')
+		.then(function(response) {
+			$scope.userAttributes = response.data;
+			console.log($scope.userAttributes);
+		}, function(response) {
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, sbiModule_translate.load("sbi.generic.toastr.title.error"));
+			
+		});
+	}
+	
 	/**
 	 * Function opens dialog with information
 	 * about selection
@@ -348,6 +466,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 			
 	}
 	$scope.closeDialogFromLOV = function() {
+		$scope.previewLovModel = [];
 		$mdDialog.cancel();
 	}
 	/**
@@ -416,6 +535,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	 */
 	$scope.itemOnClick = function(item)
 	{	
+		$scope.enableTest = false;
 		$scope.changeType(item.itypeCd);
 		var lovProvider = parseLovProvider(item);
 		console.log(lovProvider);
@@ -622,7 +742,10 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 		}
 		
 		$scope.testLov = function() {
-			console.log("opening test");
+			
+			
+			 $scope.buildTestTable();
+			
 			$mdDialog
 			.show({
 				scope : $scope,
@@ -634,6 +757,25 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 				hasBackdrop : false
 			});
 		}
+		 $scope.tableFunction = {
+		 
+			 getItem : function(row,column){
+				 if(column == 'description' && row.name == $scope.treeListTypeModel['DESCRIPTION-COLUMN']){
+					 return true;
+				 }
+				 if(column == 'value' && row.name == $scope.treeListTypeModel['VALUE-COLUMN']){
+					 return true;
+				 }
+				 if(column == 'visible'){
+					 for (var i = 0; i < $scope.formatedVisebleValues.length; i++) {
+						if($scope.formatedVisebleValues[i] == row.name){
+							return true;
+						}
+					}
+				 }
+			 }
+		 }
+		
 		var deleteLovItem = function(item) {
 			
 			sbiModule_restServices
@@ -652,18 +794,281 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 							});
 		}
 		
-		/**
-		 * Function that parse  xml LovProvider property of the object
-		 * to json so it can be seen in interface.
-		 * x2js library is used. https://github.com/abdmob/x2js
-		 * @author: spetrovic (Stefan.Petrovic@mht.net)
-		 */
-		var parseLovProvider = function(item) {
+		
+		var formatForSaving = function(item){
+			console.log(item.itypeCd);
+			var tempObj = {}
+			var property = item.itypeCd;
+			tempObj.property = {
+			"DESCRIPTION-COLUMN" : "",
+			"INVISIBLE-COLUMNS" : "",
+			"LOVTYPE" : "",
+			"TREE-LEVELS-COLUMNS" : "",
+			"VALUE-COLUMN" : "",
+			"VISIBLE-COLUMNS" : ""
+			};
+			switch (item.itypeCd) {
+			case lovProviderEnum.QUERY:
+				tempObj.property.CONNECTION = $scope.selectedQuery.datasource;
+				tempObj.property.STMT = $scope.selectedQuery.query;
+				
+			break;
+			case lovProviderEnum.SCRIPT:
+				tempObj.property.LANGUAGE = $scope.selectedScriptType.language;
+				tempObj.property.SCRIPT =  $scope.selectedScriptType.text;
+			break;
+			case lovProviderEnum.FIX_LOV:
+				//tempObj.item.itypeCd
+				//tempObj.item.itypeCd
+			break;
+			case lovProviderEnum.JAVA_CLASS:
+				tempObj.property.JAVA_CLASS_NAME = $scope.selectedJavaClass.name;
+			break;
+			case lovProviderEnum.DATASET:
+				tempObj.property.ID = $scope.selectedDataset.id;
+				tempObj.property.LABEL =  $scope.selectedDataset.label;	
+			break;
+			}
 			var x2js = new X2JS(); 
-            var json = x2js.xml_str2json(item.lovProvider); 
-            return json; 
-			
+			var xmlAsStr = x2js.json2xml_str(tempObj); 
+			$scope.selectedLov.lovProvider = xmlAsStr;
 		}
 		
+		$scope.formatColumns = function(array) {
+			var arr = [];
+			var size = array.length;
+			for (var i = 0; i < size; i++) {
+				var obj = {};
+				obj.label = array[i].name;
+				obj.name = array[i].name;
+				if(size <=10){
+				obj.size = "60px"	
+				}
+				arr.push(obj);
+			}
+			return arr;
+		}
+		
+	
+		$scope.openPreviewDialog = function() {
+			
+			$scope.paginationObj.paginationStart = 0;
+			$scope.paginationObj.paginationLimit = 20;
+			$scope.paginationObj.paginationEnd = 20;
+			
+			if(!$scope.selectedLov.hasOwnProperty('lovProvider')){
+				formatForSaving($scope.selectedLov);
+				console.log($scope.selectedLov);
+			}
+			$scope.checkForParams($scope.selectedLov);
+			if($scope.paramFlag){
+				$mdDialog
+				.show({
+					scope : $scope,
+					preserveScope : true,
+					parent : angular.element(document.body),
+					controllerAs : 'LOVSctrl',
+					templateUrl : sbiModule_config.contextName +'/js/src/angular_1.4/tools/catalogues/templates/lovParams.html',
+					clickOutsideToClose : false,
+					hasBackdrop : false
+				});
+				
+			}else{
+				$scope.previewLov();
+			}
+		}
+		
+		$scope.previewLov = function() {
+			var toSend ={};
+			toSend.data = $scope.selectedLov;
+			toSend.pagination = $scope.paginationObj;
+			console.log(toSend);
+			
+			$scope.previewLovModel = [];
+			
+			sbiModule_restServices
+					.promisePost("2.0", "lovs/preview",toSend)
+					.then(
+							function(response) {
+							$scope.tableModelForTest = response.data.metaData.fields;
+							$scope.previewLovColumns = $scope.formatColumns(response.data.metaData.fields);
+							$scope.previewLovModel = response.data.root;
+							$scope.paginationObj.size = response.data.results;
+							
+							
+							$mdDialog
+							.show({
+								scope : $scope,
+								preserveScope : true,
+								parent : angular.element(document.body),
+								controllerAs : 'LOVSctrl',
+								templateUrl : sbiModule_config.contextName +'/js/src/angular_1.4/tools/catalogues/templates/lovPreview.html',
+								clickOutsideToClose : false,
+								hasBackdrop : false
+							});
+							
+							},
+							function(response) {
+								sbiModule_messaging
+										.showErrorMessage(
+												"An error occured while getting properties for selected member",
+												'Error');
+
+							});
+			
+			$scope.enableTest = true;
+		}
+		
+		$scope.getNextPreviewSet = function() {
+			console.log("page up");
+			$scope.paginationObj.paginationStart = $scope.paginationObj.paginationStart + $scope.paginationObj.paginationLimit;
+			
+			$scope.paginationObj.paginationEnd = $scope.paginationObj.paginationStart+$scope.paginationObj.paginationLimit;
+			if($scope.paginationObj.paginationEnd > $scope.paginationObj.size){
+				$scope.paginationObj.paginationEnd = $scope.paginationObj.size;
+			}
+			$scope.previewLov();
+		}
+		$scope.getBackPreviewSet = function() {
+			console.log("page down");
+			var temp = $scope.paginationObj.paginationStart;
+			$scope.paginationObj.paginationStart = $scope.paginationObj.paginationStart - $scope.paginationObj.paginationLimit;
+			$scope.paginationObj.paginationEnd = temp ;
+			
+			$scope.previewLov();
+		}
+		
+		$scope.checkArrows = function(type) {
+			if($scope.paginationObj.paginationStart == 0 && type == 'back'){
+				return true;
+			}
+			if($scope.previewLovModel.length != 20 && type == 'next'){
+				return true;
+			}
+		}
+		
+	 $scope.buildTestTable = function() {
+		 if($scope.selectedLov != null){
+			 $scope.treeListTypeModel = {};
+			 var propName = $scope.selectedLov.itypeCd;
+			 var prop = lovProviderEnum[propName];
+			 var provider = parseLovProvider($scope.selectedLov);
+			 $scope.treeListTypeModel = provider[prop];
+			 console.log($scope.treeListTypeModel);
+			 $scope.formatedVisebleValues = $scope.treeListTypeModel['VISIBLE-COLUMNS'].split(",");
+		 }
+		 $scope.testLovModel = $scope.tableModelForTest;
+		 
+		 
+	 }
+	
+		
+		$scope.checkForParams = function(item) {
+			var lovProvider = parseLovProvider(item);
+			$scope.paramFlag = false;
+			
+			
+			if (lovProvider.hasOwnProperty(lovProviderEnum.SCRIPT)) {
+				var script = lovProvider.SCRIPTLOV.SCRIPT; 
+				if(script.match(/{(.*)}/)){
+					$scope.paramObj.paramName = script.match(/{(.*)}/).pop();
+					var check = false;
+					for (var i = 0; i < $scope.userAttributes.length; i++) {
+						if($scope.paramObj.paramName == $scope.userAttributes[i].Name ){
+							console.log("param " +$scope.paramObj.paramName+ " found in user attributes");
+							check = true;
+							break;
+						}
+					}
+					if(!check){
+						console.log("opening dialog");
+						$scope.paramFlag = true;
+					}
+					
+				}else{
+					console.log("No params in script");
+					$scope.paramFlag = false;
+				}
+				
+			}else if(lovProvider.hasOwnProperty(lovProviderEnum.QUERY)){
+				var query = lovProvider.QUERY.STMT;
+				if(query.match(/{(.*)}/)){
+					$scope.paramObj.paramName = query.match(/{(.*)}/).pop();
+					var check = false;
+					for (var i = 0; i < $scope.userAttributes.length; i++) {
+						if($scope.paramObj.paramName == $scope.userAttributes[i].Name ){
+							console.log("param " +$scope.paramObj.paramName+ " found in user attributes");
+							check = true;
+							break;
+						}
+					}
+					if(!check){
+						console.log("opening dialog");
+						$scope.paramFlag = true;
+					}
+					
+					
+				}else{
+					console.log("No params in query");
+					$scope.paramFlag = false;
+				}
+				
+			}else if (lovProvider.hasOwnProperty(lovProviderEnum.FIX_LOV)) {
+				
+				if(lovProvider.FIXLISTLOV.ROWS.ROW && Array === lovProvider.FIXLISTLOV.ROWS.ROW.constructor){
+					var fixLovArray = [];
+					fixLovArray = lovProvider.FIXLISTLOV.ROWS.ROW;
+					for (var i = 0; i < fixLovArray.length; i++) {
+						var one = fixLovArray[i]._VALUE;
+						if(one.match(/{(.*)}/)){
+							$scope.paramObj = {};
+							$scope.paramObj.paramName = one.match(/{(.*)}/).pop();
+							$scope.paramsList.push($scope.paramObj);
+							
+						}
+					}
+					for (var i = 0; i < $scope.userAttributes.length; i++) {
+						for (var j = 0; j < $scope.paramsList.length; j++) {
+							if($scope.paramsList[j].paramName == $scope.userAttributes[i].Name){
+								$scope.paramsList.splice(j,1);
+								
+							}
+						}
+					}
+					if($scope.paramsList.length > 0){
+						$scope.paramFlag = true;
+						console.log("opening dialog");
+					}else{
+						$scope.paramFlag = false;
+						console.log("No params in query");	
+					}
+				}else{
+					var row = lovProvider.FIXLISTLOV.ROWS.ROW;
+					if(row._VALUE.match(/{(.*)}/)){
+						$scope.paramObj.paramName = row._VALUE.match(/{(.*)}/).pop();
+						var check = false;
+						for (var i = 0; i < $scope.userAttributes.length; i++) {
+							if($scope.paramObj.paramName == $scope.userAttributes[i].Name ){
+								console.log("param " +$scope.paramObj.paramName+ " found in user attributes");
+								check = true;
+								break;
+							}
+						}
+						if(!check){
+							console.log("opening dialog");
+							$scope.paramFlag = true;
+						}
+						
+						
+					}else{
+						console.log("No params in query");
+						$scope.paramFlag = false;
+					}
+					
+				}
+				
+			}
+				
+		}
 
 };

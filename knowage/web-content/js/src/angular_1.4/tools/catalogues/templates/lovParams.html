@@ -1,0 +1,49 @@
+<md-dialog style='width:40%;'>
+
+
+<md-toolbar class="primaryToolbar">
+      <div class="md-toolbar-tools">
+        <h2>
+          <span>{{translate.load("sbi.behavioural.lov.params.title");}}</span>
+        </h2>
+      </div>
+</md-toolbar>
+
+<md-dialog-content>
+ <p class="md-body-1" style="padding: 5px;">{{translate.load("sbi.behavioural.lov.params.text");}}</p>    
+ 
+ <div ng-if = "paramsList.length > 0" style="padding: 5px;">
+  <div layout="row" layout-wrap ng-repeat="param in paramsList">
+						<div flex=100>
+							<md-input-container class="md-block">
+							<label>{{param.paramName}}</label>
+							<input ng-model="param.paramValue"> 
+							</md-input-container>
+						</div>
+					</div>    
+   </div>
+   <div ng-if = "paramsList.length == 0" style="padding: 5px;">
+  <div layout="row" layout-wrap>
+						<div flex=100>
+							<md-input-container class="md-block">
+							<label>{{paramObj.paramName}}</label>
+							<input ng-model="paramObj.paramValue"> 
+							</md-input-container>
+						</div>
+					</div>    
+   </div>
+</md-dialog-content>
+	
+		<md-dialog-actions layout="row" style="margin-top:25px;">
+		
+			<md-button class="md-raised" ng-click="previewLov()">
+				{{translate.load("sbi.ds.test");}}
+			</md-button>
+			<md-button class="md-raised" ng-click="closeDialogFromLOV()">
+				{{translate.load("sbi.generic.cancel");}}
+			</md-button>
+			
+		</md-dialog-actions>
+	
+	
+</md-dialog>

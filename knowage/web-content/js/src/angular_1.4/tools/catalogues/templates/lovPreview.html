@@ -1,0 +1,40 @@
+<md-dialog class="flex2" style="height:100%; width:100%; max-height:100%; max-width:100%" ng-cloak>
+
+
+<md-toolbar class="documentBrowserToolbar secondaryToolbar" >
+			<div class="md-toolbar-tools" layout="row" layout-align="center center">
+			   <md-button class="md-fab md-mini" aria-label="backPagination" ng-disabled="checkArrows('back')" ng-click="getBackPreviewSet()">
+         <md-icon class="fa fa-angle-double-left"></md-icon>
+       </md-button>
+       <span flex></span>
+       <div>{{paginationObj.paginationStart+1 +'&nbsp-&nbsp'+ paginationObj.paginationEnd + '&nbsp/&nbsp'+paginationObj.size}} </div>
+       <span flex></span>
+            <md-button class="md-fab md-mini" aria-label="forwardPagination" ng-disabled="checkArrows('next')" ng-click="getNextPreviewSet()">
+         <md-icon class="fa fa-angle-double-right"></md-icon>
+       </md-button>
+   </div>
+   </md-toolbar>
+
+<md-dialog-content class="mdDialogSize">
+      	<div class="md-dialog-content" layout="column" style="height:90%">
+		<angular-table 
+					id='previewLovTable'
+		            flex
+		            style="position:absolute;"
+		            ng-model="previewLovModel"
+					columns="previewLovColumns" 
+					no-pagination=true
+					show-search-bar=false
+					full-width>
+		</angular-table>	
+	 </div>
+</md-dialog-content>
+	
+		<md-dialog-actions layout="row">
+			<md-button class="md-raised" ng-click="closeDialogFromLOV()">
+				{{translate.load("sbi.generic.cancel");}}
+			</md-button>
+		</md-dialog-actions>
+	
+	
+</md-dialog>

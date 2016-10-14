@@ -91,8 +91,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		</list>
 		
 		<extra-button>
-			  <md-button class="md-flat" ng-click="testLov()" ng-show="showMe" >{{translate.load("sbi.datasource.testing")}}</md-button>
+			  <md-button class="md-flat" ng-click="openPreviewDialog()" ng-show="showMe" >{{translate.load("sbi.ds.test")}}</md-button>
 		</extra-button>
+		
+		<extra-button>
+			  <md-button class="md-flat" ng-click="testLov()" ng-show="showMe" ng-disabled="!enableTest" >{{translate.load("sbi.datasource.testing")}}</md-button>
+		</extra-button>
+		
 		
 		<detail label=' selectedLov.label==undefined? "" : selectedLov.label'  save-function="saveLov"
 		cancel-function="cancel"

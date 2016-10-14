@@ -527,6 +527,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 			console.log("SAVING USEMODE");
 			console.log($scope.selectedParUse);
 			saveUseMode();
+			$scope.closeDialogFromAD();
 		}
 		
 	}
