@@ -32,7 +32,6 @@
 		
 		<div layout="row" flex = 100 style="height: 90%;">
 					
-					<!-- Avaliable tables -->
 					<div flex = 30 class="datasetBox" style="height: 90%;">
 					  <md-card >	
 						<md-toolbar class="miniheadfedsmall"  >
@@ -45,11 +44,11 @@
 						<md-content  layout-padding>
 							<angular-list
 							layout-fill 
-							id="availableTables_id" 
+							id="availableFields_id" 
 							ng-model="testLovModel" 
 							item-name="name"
 							show-search-bar=true
-							click-function="moveToSelected(item)"
+							click-function="moveToTree(item)"
 							>					
 							</angular-list>
 						</md-content>
@@ -69,10 +68,12 @@
 						<angular-table 
 							id='testLovTable_tree'
 				            flex
-				            ng-model=""
+				            ng-model="testLovTreeModel"
 							columns="testLovTreeRightColumns" 
 							no-pagination=true
-							show-search-bar=false>
+							show-search-bar=false
+							allow-edit = true
+							>
 						</angular-table>
 						</md-content>
 						</md-card>

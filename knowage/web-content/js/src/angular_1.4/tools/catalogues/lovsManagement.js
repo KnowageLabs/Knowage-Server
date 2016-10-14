@@ -53,6 +53,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	$scope.translate = sbiModule_translate;
 	$scope.listOfLovs = [];
 	$scope.previewLovModel = []
+	$scope.testLovTreeModel = [];
 	$scope.listOfInputTypes = [];
 	$scope.listOfScriptTypes = [];
 	$scope.listOfDatasources = [];
@@ -133,8 +134,8 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	    ]
 	$scope.testLovTreeRightColumns = [
 	                  	   {
-	                  		   label:"Field",
-	                             name:"name",
+	                  		   label:"Level",
+	                             name:"level",
 	                             size: "200px",
 	                             hideTooltip:true,                   
 	                         },
@@ -143,13 +144,13 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	                  		   label:"Value",
 	                             name:"value",
 	                             hideTooltip:true,
-	                                        
+	                             editable:true           
 	                         },
 	                         {
 	                  		   label:"Description",
 	                             name:"description",
 	                             hideTooltip:true,
-	                                                      
+	                             editable:true                         
 	                         }                     
 	                  	    ]
 	
@@ -947,6 +948,14 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 			}
 		}
 		
+	$scope.moveToTree = function(item) {
+		var defObj = {};
+		defObj.level = item.name;
+		defObj.value = item.name;
+		defObj.description = item.name;
+		$scope.testLovTreeModel.push(defObj);
+	}
+		
 	 $scope.buildTestTable = function() {
 		 if($scope.selectedLov != null){
 			 $scope.treeListTypeModel = {};
@@ -955,7 +964,19 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 			 var provider = parseLovProvider($scope.selectedLov);
 			 $scope.treeListTypeModel = provider[prop];
 			 console.log($scope.treeListTypeModel);
-			 $scope.formatedVisebleValues = $scope.treeListTypeModel['VISIBLE-COLUMNS'].split(",");
+			 $scope.formatedVisibleValues = $scope.treeListTypeModel['VISIBLE-COLUMNS'].split(",");
+			 $scope.formatedInvisibleValues = $scope.treeListTypeModel['INVISIBLE-COLUMNS'].split(",");
+			 $scope.formatedDescriptionValues = $scope.treeListTypeModel['DESCRIPTION-COLUMNS'].split(",");
+			 $scope.formatedValues = $scope.treeListTypeModel['VALUE-COLUMNS'].split(",");
+			 if($scope.treeListTypeModel.LOVTYPE != 'simple'){
+				for (var i = 0; i < $scope.formatedValues.length; i++) {
+					var defObj = {};
+					defObj.level = $scope.formatedValues[i];
+					defObj.value = $scope.formatedValues[i];
+					defObj.description = $scope.formatedValues[i];
+					$scope.testLovTreeModel.push(defObj);
+				} 
+			 }
 		 }
 		 $scope.testLovModel = $scope.tableModelForTest;
 		 
