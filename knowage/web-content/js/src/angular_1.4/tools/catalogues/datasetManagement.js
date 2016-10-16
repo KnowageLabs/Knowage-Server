@@ -1282,7 +1282,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					description:"",
 					dsTypeCd:"",
 					dsVersions:"",
-					id:"",
 					isPersisted:"",
 					isPersistedHDFS:"",
 					label:"",

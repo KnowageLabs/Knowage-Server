@@ -86,6 +86,8 @@ import it.eng.spagobi.tools.scheduler.utils.SchedulerUtilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.json.JSONUtils;
+import it.eng.spagobi.utilities.service.AbstractBaseHttpAction;
+import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.io.File;
 import java.io.IOException;
@@ -118,16 +120,16 @@ public class ManageDataSetsForREST {
 
 	protected IEngUserProfile profile;
 
-	public void jsonReciever(String jsonString, IDataSetDAO dsDao, Locale locale, UserProfile userProfile, HttpServletRequest req) throws JSONException {
+	public String jsonReciever(String jsonString, IDataSetDAO dsDao, Locale locale, UserProfile userProfile, HttpServletRequest req) throws JSONException {
 		logger.debug("IN");
 		JSONObject json = new JSONObject(jsonString);
-		datasetInsert(json, dsDao, locale, userProfile, req);
 		logger.debug("OUT");
+		return datasetInsert(json, dsDao, locale, userProfile, req);
 	}
 
-	protected void datasetInsert(JSONObject json, IDataSetDAO dsDao, Locale locale, UserProfile userProfile, HttpServletRequest req) throws JSONException {
+	protected String datasetInsert(JSONObject json, IDataSetDAO dsDao, Locale locale, UserProfile userProfile, HttpServletRequest req) throws JSONException {
 		IDataSet ds = getGuiGenericDatasetToInsert(json, userProfile);
-		datasetInsert(ds, dsDao, locale, userProfile, json, req);
+		return datasetInsert(ds, dsDao, locale, userProfile, json, req);
 	}
 
 	protected IDataSet getGuiGenericDatasetToInsert(JSONObject json, UserProfile userProfile) throws JSONException {
@@ -272,8 +274,8 @@ public class ManageDataSetsForREST {
 								// metadata if dataset is in use
 								// 2* String previousId =
 								// getAttributeAsString(DataSetConstants.ID);
-								String previousId = json.getString("id");
-								if (previousId != null) {
+								String previousId = json.optString("id");
+								if (previousId != null && !previousId.equals("")) {
 									Integer previousIdInteger = Integer.valueOf(previousId);
 									if (previousIdInteger != 0) {
 
@@ -327,7 +329,7 @@ public class ManageDataSetsForREST {
 								logger.debug("Loading existing dataset...");
 								// 3* String id =
 								// getAttributeAsString(DataSetConstants.ID);
-								String id = json.getString("id");
+								String id = json.optString("id");
 								if (id != null && !id.equals("") && !id.equals("0")) {
 									IDataSet existingDataSet = null;
 
@@ -1363,7 +1365,7 @@ public class ManageDataSetsForREST {
 		}
 	}
 
-	protected void datasetInsert(IDataSet ds, IDataSetDAO dsDao, Locale locale, UserProfile userProfile, JSONObject json, HttpServletRequest req)
+	protected String datasetInsert(IDataSet ds, IDataSetDAO dsDao, Locale locale, UserProfile userProfile, JSONObject json, HttpServletRequest req)
 			throws JSONException {
 		JSONObject attributesResponseSuccessJSON = new JSONObject();
 		HashMap<String, String> logParam = new HashMap();
@@ -1372,7 +1374,7 @@ public class ManageDataSetsForREST {
 			logParam.put("NAME", ds.getName());
 			logParam.put("LABEL", ds.getLabel());
 			logParam.put("TYPE", ds.getDsType());
-			String id = json.getString(DataSetConstants.ID);
+			String id = json.optString(DataSetConstants.ID);
 			try {
 				if (id != null && !id.equals("") && !id.equals("0")) {
 					ds.setId(Integer.valueOf(id));
@@ -1416,8 +1418,8 @@ public class ManageDataSetsForREST {
 
 				AuditLogUtilities.updateAudit(req, profile, operation, logParam, "OK");
 				// *** fix this
-				// writeBackToClient(new
-				// JSONSuccess(attributesResponseSuccessJSON));
+			   //writeBackToClient(new JSONSuccess(attributesResponseSuccessJSON));
+			   return attributesResponseSuccessJSON.toString();
 			} catch (SpagoBIServiceException es) {
 				try {
 					AuditLogUtilities.updateAudit(req, profile, "DATA_SET.ADD", logParam, "KO");
@@ -1579,4 +1581,5 @@ public class ManageDataSetsForREST {
 		}
 		logger.debug("OUT");
 	}
+
 }

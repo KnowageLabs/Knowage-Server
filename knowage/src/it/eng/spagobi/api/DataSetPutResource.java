@@ -54,7 +54,7 @@ public class DataSetPutResource extends AbstractSpagoBIResource {
 	@POST
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response persistDataSets(@Context HttpServletRequest req) throws IOException, JSONException {
+	public String persistDataSets(@Context HttpServletRequest req) throws IOException, JSONException {
 		IDataSetDAO dsDao;
 		try {
 			dsDao = DAOFactory.getDataSetDAO();
@@ -66,8 +66,9 @@ public class DataSetPutResource extends AbstractSpagoBIResource {
 		}
 		JSONObject json = RestUtilities.readBodyAsJSONObject(req);
 		ManageDataSetsForREST mdsfr = new ManageDataSetsForREST();
-		mdsfr.jsonReciever(json.toString(), dsDao, null, getUserProfile(), req);
-		return Response.ok().status(200).build();
+		String toReturnString = mdsfr.jsonReciever(json.toString(), dsDao, null, getUserProfile(), req);
+		//SONObject toReturn = new JSONObject(toReturnString);
+		return toReturnString;
 	}
 
 }
