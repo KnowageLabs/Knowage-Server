@@ -86,8 +86,6 @@ import it.eng.spagobi.tools.scheduler.utils.SchedulerUtilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.json.JSONUtils;
-import it.eng.spagobi.utilities.service.AbstractBaseHttpAction;
-import it.eng.spagobi.utilities.service.JSONSuccess;
 
 import java.io.File;
 import java.io.IOException;
@@ -378,7 +376,7 @@ public class ManageDataSetsForREST {
 
 		} catch (Exception e) {
 			logger.error("Erro while updating dataset metadata, cannot save the dataset", e);
-			throw new SpagoBIDataSetException("Error while updating dataset metadata, cannot save the dataset");
+			throw new SpagoBIDataSetException(e.getMessage());
 
 		}
 		return ds;
@@ -432,7 +430,7 @@ public class ManageDataSetsForREST {
 		if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_FILE)) {
 			boolean storeToHDFS = Boolean.valueOf(json.optString("isPersistedHDFS")).booleanValue();
 
-			String dsId = json.getString(DataSetConstants.DS_ID);
+			String dsId = json.optString(DataSetConstants.DS_ID);
 			String dsLabel = json.getString(DataSetConstants.LABEL);
 			String fileType = json.getString(DataSetConstants.FILE_TYPE);
 
@@ -1418,8 +1416,9 @@ public class ManageDataSetsForREST {
 
 				AuditLogUtilities.updateAudit(req, profile, operation, logParam, "OK");
 				// *** fix this
-			   //writeBackToClient(new JSONSuccess(attributesResponseSuccessJSON));
-			   return attributesResponseSuccessJSON.toString();
+				// writeBackToClient(new
+				// JSONSuccess(attributesResponseSuccessJSON));
+				return attributesResponseSuccessJSON.toString();
 			} catch (SpagoBIServiceException es) {
 				try {
 					AuditLogUtilities.updateAudit(req, profile, "DATA_SET.ADD", logParam, "KO");
