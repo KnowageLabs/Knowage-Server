@@ -102,12 +102,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			        
 	      		</md-fab-speed-dial>  -->
 	      		
-	      		<!-- ADDITIONAL BUTTONS -->
+	      			<!-- ADDITIONAL BUTTONS -->
 	      		<div style="float:left;">
 	      			
 	      			<!-- FIELDS METADATA BUTTON -->
 	      			<md-button aria-label="menu" class="md-fab md-raised md-mini md-warn" 
-	      					ng-show="selectedDataSet" title="Fields metadata">
+	      					ng-show="selectedDataSet" title="Fields metadata" ng-click="openFieldsMetadata()">
 		            	<!-- <md-icon md-font-icon="fa fa-plus" class="fa fa-2x"></md-icon> -->
 		            	<!-- FM -->
 		            	<md-icon md-font-icon="fa fa-magic" class="fa fa-2x"></md-icon>
@@ -115,28 +115,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		          	
 		          	<!-- LINK DATASET BUTTON (visible only in Advanced tab) -->
 		          	<md-button aria-label="menu" class="md-fab md-raised md-mini md-warn" 
-		          			ng-show="selectedDataSet && selectedTab==2" title="Link dataset">
+		          			ng-show="selectedDataSet && selectedTab==2" title="Link dataset" ng-click="openLinkDataset()">
 		            	<!-- LD -->
 		            	<md-icon md-font-icon="fa fa-link" class="fa fa-2x"></md-icon>		            	
 		          	</md-button>
 		          	
 		          	<!-- SAVE WITHOUT METADATA BUTTON -->
 		          	<md-button aria-label="menu" class="md-fab md-raised md-mini md-warn" 
-		          			ng-show="selectedDataSet" title="Save without metadata">
+		          			ng-show="selectedDataSet" title="Save without metadata" ng-click="saveWithoutMetadata()">
 		            	<!-- SWM -->
 		            	<md-icon md-font-icon="fa fa-hourglass-start" class="fa fa-2x"></md-icon>
 		          	</md-button>
 		          	
 		          	<!-- AVAILABLE PROFILE ATTRIBUTES BUTTON (visible only in Type tab) -->
 		          	<md-button aria-label="menu" class="md-fab md-raised md-mini md-warn" 
-		          			ng-show="selectedDataSet && selectedTab==1" title="Available profile attributes">
+		          			ng-show="selectedDataSet && selectedTab==1" title="Available profile attributes" ng-click="openAvaliableProfileAttributes()">
 		            	<!-- APA -->
 	            		<md-icon md-font-icon="fa fa-user" class="fa fa-2x"></md-icon>		            	
 		          	</md-button> 		          	            
 		          	
 		          	<!-- HELP BUTTON -->
 		          	<md-button aria-label="menu" class="md-fab md-raised md-mini md-warn" 
-		          			ng-show="selectedDataSet" title="Help">
+		          			ng-show="selectedDataSet" title="Help" ng-click="openHelp()">
 		            	<!-- H -->
 	            		<md-icon md-font-icon="fa fa-question-circle" class="fa fa-2x"></md-icon>			            	
 		          	</md-button>
