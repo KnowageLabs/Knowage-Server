@@ -187,13 +187,17 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		$scope.weekdaysSelected = [];
 	}	
 	
-	// 
+	// Flag that indicates if the Dataset form is dirty (changed)
+	$scope.dirtyForm = false;
+	
+	// Functions for setting the indicator 
 	$scope.setFormDirty = function() {
 		console.log("set dirty");
 		$scope.dirtyForm = true;
 	}
 	
-	$scope.setFormClean = function() {
+	// Functions for resetting the indicator 
+	$scope.setFormNotDirty = function() {
 		$scope.dirtyForm = false;
 	}
 	
@@ -917,7 +921,11 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
  		datasetClone.label = "...";
  		datasetClone.dsVersions = [];
  		datasetClone.usedByNDocs = 0;
- 		datasetClone.xslSheetNumber = Number(datasetClone.xslSheetNumber);
+ 		
+ 		// Convert string values for these two properties when clining, since the Angular will not let us map them otherwise
+ 		datasetClone.xslSheetNumber ? datasetClone.xslSheetNumber = Number(datasetClone.xslSheetNumber) : null;
+ 		datasetClone.skipRows ? datasetClone.skipRows = Number(datasetClone.skipRows) : null;
+ 		
  		$scope.datasetsListTemp.push(datasetClone);
  		$scope.selectedDataSet = angular.copy($scope.datasetsListTemp[$scope.datasetsListTemp.length-1]);
  		$scope.selectedDataSetInit = angular.copy($scope.datasetsListTemp[$scope.datasetsListTemp.length-1]);
@@ -1038,6 +1046,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			 					   					
 			 					   					if ($scope.selectedDataSet.id == $scope.datasetsListTemp[i].id) {			 			
 			 					   						
+			 					   						($scope.selectedDataSet.dsTypeCd.toLowerCase()=="file") ? $scope.refactorFileDatasetConfig(response.data[0]) : null;
+			 					   						
 			 					   						// Remove the dataset's version from the collection of all datasets (the array in the left angular-table).
 	 					   								$scope.datasetsListTemp[i] = response.data[0];
 	 					   								// Remove the version from the currently selected dataset (the item in the left angular-table).
@@ -1045,7 +1055,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	 					   								// Needed in order to have a copy of the selected dataset that will not influence the selected dataset in the AT while performing changes on it
 	 					   								$scope.selectedDataSetInit = response.data[0];	
 	 					   								// Call the scope function that is responsible for transformation of configuration data of the File dataset.
-	 					   								($scope.selectedDataSet.dsTypeCd.toLowerCase()=="file") ? $scope.refactorFileDatasetConfig(response.data[0]) : null;
+	 					   								
 	 					   								
 	 					   								break;
 	 					   								
@@ -1273,14 +1283,54 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	
 	 // SELECT DATASET
 	 $scope.loadDataSet = function(item,index) {
-		 console.log("A5");
-		 console.log($scope.selectedDataSet);
-		 console.log($scope.selectedDSIndex);
-		 console.log(index);
-//		console.log($scope.selectedDSIndex!=index);
-		if ($scope.selectedDSIndex!=index) {
+//		 console.log("A8");
+//		 console.log(item);
+//		 console.log($scope.dirtyForm);
+//		 console.log($scope.selectedDataSet);
+//		 console.log($scope.selectedDatasetIndexAT);
+//		 console.log(index);
+
+		 // DS not yet selected
+		 if (!$scope.selectedDataSet) {
+			 $scope.setFormNotDirty();
+			 selectDataset(item,index);
+		 }
+		 // Moving from selected new DS to existing DS
+		 else if (!$scope.selectedDataSet.id) {
+//			 console.log($scope.datasetsListTemp);
+			 
+			 if ($scope.selectedDataSet.id!=item.id && $scope.dirtyForm) {
+				// TODO: translate
+					var confirm = $mdDialog.confirm()
+					        .title($scope.translate.load("sbi.catalogues.generic.modify"))
+					        .targetEvent(event)	 	          
+					        .textContent($scope.translate.load("sbi.catalogues.generic.modify.msg"))
+					        .ariaLabel("Losing the changed and not saved data")
+					        .ok($scope.translate.load("sbi.general.yes"))
+					        .cancel($scope.translate.load("sbi.general.No"));
 			
-			if ($scope.dirtyForm==true && item.id) {
+					$mdDialog
+						.show(confirm)
+						.then(					
+								function() {
+										
+									$scope.datasetsListTemp.splice($scope.datasetsListTemp.length-1,1);
+									$scope.selectedDataSet = item;
+									$scope.setFormNotDirty();
+						 		},
+						 		
+						 		function() {					 			
+						 			$scope.selectedDataSetInit = $scope.datasetsListTemp[$scope.datasetsListTemp.length-1];
+						 		}
+							);
+			 }
+			
+		 }
+		 // Moving from an existing DS to another one
+//		 else if ($scope.selectedDataSet && $scope.selectedDataSet.id!=item.id) {
+		 else if ($scope.selectedDataSet.id!=item.id) {
+		
+			if ($scope.dirtyForm==true) {
 			
 				// TODO: translate
 				var confirm = $mdDialog.confirm()
@@ -1295,43 +1345,48 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					.show(confirm)
 					.then(					
 							function() {
-								$scope.setFormClean();
+								$scope.setFormNotDirty();
 								selectDataset(item);
 					 		},
 					 		
 					 		function() {
-					 			
+					 			console.log($scope.selectedDataSet.id);
+					 			console.log($scope.selectedDatasetIndexAT);
+					 			console.log($scope.datasetsListPersisted[$scope.selectedDatasetIndexAT]);
 					 			if ($scope.selectedDataSet.id) {
-					 				$scope.selectedDataSetInit = $scope.datasetsListPersisted[$scope.selectedDSIndex];
+					 				$scope.selectedDataSetInit = $scope.datasetsListPersisted[$scope.selectedDatasetIndexAT];
 					 			}
-					 			else {
-					 				$scope.selectedDataSetInit = $scope.datasetsListTemp[$scope.datasetsListTemp.length-1];
-					 			}
+//					 			else {
+//					 				$scope.selectedDataSetInit = $scope.datasetsListTemp[$scope.datasetsListTemp.length-1];
+//					 			}
 					 			
 					 		}
 						);
 				
 			}
 			else {
-				selectDataset(item);
-				$scope.selectedDSIndex = index;			
+				selectDataset(item,index);
+				//$scope.selectedDSIndex = index;			
 			}
 		}
-		else {			
-			
-			if ($scope.dirtyForm==false || item.id) {
-				selectDataset(item);
-				$scope.selectedDSIndex = index;
-			}
-		}
+		
+//		}
+//		else {			
+//			
+//			if ($scope.dirtyForm==false || item.id) {
+//				selectDataset(item);
+//				$scope.selectedDSIndex = index;
+//			}
+//		}
 	};
 	
-	var selectDataset = function(item) {
+	var selectDataset = function(item,index) {
 		
 		$log.info(item);
 		
 		$scope.selectedDataSetInit = angular.copy(item);
 		$scope.selectedDataSet = angular.copy(item);
+		$scope.selectedDatasetIndexAT = index; // The index of the last (current) selected item in the DS AT
 		$scope.showSaveAndCancelButtons = true;
 		
 		// DATASET PARAMETERS
@@ -1430,8 +1485,9 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		$scope.selectedDataSet.csvEncoding = item!=undefined ? item.csvEncoding : $scope.csvEncodingDefault; 
 		$scope.selectedDataSet.csvDelimiter = item!=undefined ? item.csvDelimiter : $scope.csvDelimiterDefault; 
 		$scope.selectedDataSet.csvQuote = item!=undefined ? item.csvQuote : $scope.csvQuoteDefault; 
-		
+
 		$scope.selectedDataSet.skipRows = item!=undefined ? Number(item.skipRows) : Number($scope.skipRowsDefault);
+		$scope.selectedDataSet.limitRows = item!=undefined ? Number(item.limitRows) : Number($scope.limitRowsDefault);
 		
 		/**
 		 * Handle the limitRows property value deserialization (special case: it can be of a value NULL).
@@ -1618,7 +1674,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					$scope.loadAllDatasets();
 					$scope.selectedDataSet = null;
 					
-					$scope.setFormClean();
+					$scope.setFormNotDirty();
 					
 				}, function(response) {
 					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
