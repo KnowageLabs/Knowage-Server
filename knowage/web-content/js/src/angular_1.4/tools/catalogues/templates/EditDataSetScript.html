@@ -14,11 +14,12 @@
 				<md-input-container class="md-block" > 
 			       <label>{{translate.load("sbi.functionscatalog.language")}}</label>
 			       <md-select  aria-label="dropdown" placeholder ="{{translate.load('sbi.behavioural.lov.placeholder.script')}}"
-			       	name ="scriptLanguageDropdown" 
-			        ng-model="selectedDataSet.queryScriptLanguage"
-			        ng-change="modeChanged(selectedDataSet.queryScriptLanguage)"
-			        > <md-option 
-			        ng-repeat="l in listOfScriptTypes track by $index" value="{{l.VALUE_CD}}">{{l.VALUE_NM}} </md-option>
+			       		name ="scriptLanguageDropdown" 
+			        	ng-model="selectedDataSet.queryScriptLanguage"
+			        	ng-change="modeChanged(selectedDataSet.queryScriptLanguage); setFormDirty()">
+				        <md-option ng-repeat="l in listOfScriptTypes track by $index" value="{{l.VALUE_CD}}">
+				        	{{l.VALUE_NM}} 
+			        	</md-option>
 			       </md-select>   
 		        </md-input-container>		
 		   </md-card>  
@@ -30,7 +31,8 @@
 					<md-card layout-padding>
 						<md-input-container class="md-block">
 					    	<label>{{translate.load("sbi.ds.query")}}</label>
-							<textarea  ui-codemirror="cmOption" ng-model="selectedDataSet.queryScript" md-select-on-focus></textarea>
+							<textarea  	ui-codemirror="cmOption" ng-model="selectedDataSet.queryScript" 
+										md-select-on-focus ng-change="setFormDirty()"></textarea>
 						</md-input-container>
 					</md-card>
 				</md-content>
@@ -40,7 +42,9 @@
 					<md-card layout-padding>
 						<md-input-container class="md-block">
 					    	<label>{{translate.load("sbi.ds.query")}}</label>
-							<textarea ng-model="selectedDataSet.query" ui-codemirror="{ onLoad : codemirrorLoaded }" ui-codemirror-opts="codemirrorOptions" rows="8" md-select-on-focus></textarea>
+							<textarea 	ng-model="selectedDataSet.query" ui-codemirror="{ onLoad : codemirrorLoaded }" 
+										ui-codemirror-opts="codemirrorOptions" rows="8" md-select-on-focus
+										ng-change="setFormDirty()"></textarea>
 						</md-input-container>
 					</md-card>
 				</md-content>

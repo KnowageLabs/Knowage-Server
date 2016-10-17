@@ -77,7 +77,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					columns=dataSetListColumns
 					show-search-bar=true 
 					highlights-selected-item=true
-					click-function="loadDataSet(item)"
+					click-function="loadDataSet(item,index)"
 					selected-item="selectedDataSetInit" 
 					speed-menu-option="manageDataset"
 					current-page-number=datasetTableLastPage >
@@ -164,38 +164,44 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						 <md-tab label='{{translate.load("sbi.generic.details");}}' ng-click="changeSelectedTab(0)">
 						 
 						 	<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" >
+								
 								<md-card layout-padding>
+									
 									<div flex=100>
 										<md-input-container class="md-block">
 									    	<label>{{translate.load("sbi.ds.label")}}</label>
-											<input ng-model="selectedDataSet.label" ng-required="true">
+											<input ng-model="selectedDataSet.label" ng-required="true" ng-change="setFormDirty()">
 											<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.label">
 		       						 			<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
        						 				</div>
 										</md-input-container>
 									</div>
+									
 									<div flex=100>
 										<md-input-container class="md-block">
 									    	<label>{{translate.load("sbi.ds.name")}}</label>
-											<input ng-model="selectedDataSet.name" ng-required="true">
+											<input ng-model="selectedDataSet.name" ng-required="true" ng-change="setFormDirty()">
 											<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.name">
 		       						 			<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
        						 				</div>
 										</md-input-container>
 									</div>
+									
 									<div flex=100>
 										<md-input-container class="md-block">
 									    	<label>{{translate.load("sbi.ds.description")}}</label>
-											<textarea ng-model="selectedDataSet.description" md-maxlength="150" rows="3" md-select-on-focus></textarea>
+											<textarea 	ng-model="selectedDataSet.description" md-maxlength="150" rows="3" 
+														md-select-on-focus ng-change="setFormDirty()"></textarea>
 										</md-input-container>
 									</div>
+									
 									<div flex=100>
 								       <md-input-container class="md-block" > 
 								       		<label>{{translate.load("sbi.ds.scope")}}</label>
 									       	<md-select placeholder ="{{translate.load('sbi.ds.scope')}}"
-									        	ng-required = "true" ng-change="changeDatasetScope()"
+									        	ng-required = "true" ng-change="changeDatasetScope(); setFormDirty()"
 									        	ng-model="selectedDataSet.scopeCd">   
-									        	<md-option ng-repeat="l in scopeList"  value="{{l.VALUE_CD}}">{{l.VALUE_CD}}
+									        	<md-option ng-repeat="l in scopeList" value="{{l.VALUE_CD}}">{{l.VALUE_CD}}
 									        	</md-option>
 									       	</md-select>  
 								       		<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.scopeCd">
@@ -203,11 +209,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			       						 	</div>
 								        </md-input-container>
 								   </div>
+								  
 								   <div flex=100>
 								       <md-input-container class="md-block" > 
 								       <label>{{translate.load("sbi.generic.category")}}</label>
-								       <md-select placeholder ="{{translate.load('sbi.generic.category')}}"
-								        	ng-required="isCategoryRequired" ng-model="selectedDataSet.catTypeVn">   
+								       <md-select 	placeholder ="{{translate.load('sbi.generic.category')}}"
+								        			ng-required="isCategoryRequired" ng-model="selectedDataSet.catTypeVn"
+								        	 		ng-change="setFormDirty()">   
 								        <md-option 
 								        	ng-repeat="l in categoryList" value="{{l.VALUE_CD}}">{{l.VALUE_CD}}
 								        </md-option>
@@ -222,6 +230,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								</md-card>
 							</md-content>
 							
+							<!-- DATASET VERSIONS -->
 							<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" layout-padding style="padding-top:0px;">
 							
 								<!-- TOOLBAR FOR THE CARD THAT HOLDS OLDER DATASET VERSIONS. (danristo) -->
@@ -277,7 +286,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									       <label>{{translate.load("sbi.ds.dsTypeCd")}}</label>
 									       <md-select 	placeholder ="{{translate.load('sbi.ds.dsTypeCd')}}"
 									       	 			ng-required = "true"
-									        			ng-model="selectedDataSet.dsTypeCd">   
+									        			ng-model="selectedDataSet.dsTypeCd"
+									        			ng-change="setFormDirty()">   
 									        	<md-option ng-repeat="l in datasetTypeList" value="{{l.VALUE_CD}}">{{l.VALUE_CD}}</md-option>
 									       </md-select>  
 									       <div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.dsTypeCd">
@@ -349,7 +359,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					                     		<md-input-container class="md-block">
 					                        		<label>{{translate.load("sbi.ds.file.xsl.skiprows")}}</label> 
 					                        		<input 	ng-model="selectedDataSet.skipRows" type="number" 
-					                        				step="1" min="0" value="{{selectedDataSet.skipRows}}">
+					                        				step="1" min="0" value="{{selectedDataSet.skipRows}}"
+					                        				ng-change="setFormDirty()">
 						                     	</md-input-container>
 						                  	</div>
 										</div>
@@ -359,7 +370,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					                     		<md-input-container class="md-block">
 					                        		<label>{{translate.load("sbi.ds.file.xsl.limitrows")}}</label> 
 					                        		<input 	ng-model="selectedDataSet.limitRows" type="number" 
-					                        				step="1" min="0" value="{{dataset.limitRows}}">
+					                        				step="1" min="0" value="{{dataset.limitRows}}"
+					                        				ng-change="setFormDirty()">
 						                     	</md-input-container>
 						                  	</div>
 										</div>
@@ -369,7 +381,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					                     		<md-input-container class="md-block">
 					                        		<label>{{translate.load("sbi.ds.file.xsl.sheetnumber")}}</label> 
 					                        		<input 	ng-model="selectedDataSet.xslSheetNumber" type="number" 
-					                        				step="1" min="1" value="{{selectedDataSet.xslSheetNumber}}">
+					                        				step="1" min="1" value="{{selectedDataSet.xslSheetNumber}}"
+					                        				ng-change="setFormDirty()">
 						                     	</md-input-container>
 						                  	</div>
 										</div>
@@ -394,12 +407,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					                        		
 					                        		<label>{{translate.load("sbi.ds.file.csv.delimiter")}}</label> 
 					                        		
-					                        		<md-select aria-label="aria-label" ng-model="selectedDataSet.csvDelimiter" ng-required=true>
+					                        		<md-select 	aria-label="aria-label" ng-model="selectedDataSet.csvDelimiter" ng-required=true
+					                        					ng-change="setFormDirty()">
 					                           			<md-option 	ng-repeat="csvDelimiterCharacterItem in csvDelimiterCharacterTypes" 
 					                           						ng-click="chooseDelimiterCharacter(csvDelimiterCharacterItem)" 
 					                           						value="{{csvDelimiterCharacterItem.name}}">
-				                          						{{csvDelimiterCharacterItem.name}}
-				                     						</md-option>
+			                          						{{csvDelimiterCharacterItem.name}}
+			                     						</md-option>
 					                        		</md-select>
 					                        		
 					                        		<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.csvDelimiter">
@@ -411,17 +425,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										</div>
 					                 	
 				                		<div layout="row" layout-wrap flex=30>
+					                  		
 					                  		<div flex=90 layout-align="center center">
+					                     		
 					                     		<md-input-container class="md-block">
 					                        		
 					                        		<label>{{translate.load("sbi.ds.file.csv.quote")}}</label> 
 					                        		
-					                        		<md-select aria-label="aria-label" ng-model="selectedDataSet.csvQuote" ng-required=true>
+					                        		<md-select 	aria-label="aria-label" ng-model="selectedDataSet.csvQuote" ng-required=true
+					                        					ng-change="setFormDirty()">
 					                           			<md-option 	ng-repeat="csvQuoteCharacterItem in csvQuoteCharacterTypes" 
 					                           						ng-click="chooseQuoteCharacter(csvQuoteCharacterItem)" 
 					                           						value="{{csvQuoteCharacterItem.name}}">
-				                          						{{csvQuoteCharacterItem.name}}
-				                     						</md-option>
+			                          						{{csvQuoteCharacterItem.name}}
+			                     						</md-option>
 					                        		</md-select>
 					                        		
 					                        		<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.csvQuote">
@@ -429,7 +446,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					       						 	</div>
 					                        		
 						                     	</md-input-container>
+						                     	
 						                  	</div>
+						                  	
 										</div>
 										
 										<div layout="row" layout-wrap flex=30>
@@ -438,12 +457,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					                        		
 					                        		<label>{{translate.load("sbi.workspace.dataset.wizard.csv.encoding")}}</label> 
 					                        		
-					                        		<md-select aria-label="aria-label" ng-model="selectedDataSet.csvEncoding" ng-required=true>
+					                        		<md-select 	aria-label="aria-label" ng-model="selectedDataSet.csvEncoding" ng-required=true 
+					                        					ng-change="setFormDirty()">
 					                           			<md-option 	ng-repeat="csvEncodingItem in csvEncodingTypes" 
 					                           						ng-click="chooseEncoding(csvEncodingItem)" 
 					                           						value="{{csvEncodingItem.name}}">
-				                          						{{csvEncodingItem.name}}
-				                     						</md-option>
+			                          						{{csvEncodingItem.name}}
+			                     						</md-option>
 					                        		</md-select>
 					                        		
 					                        		<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.csvEncoding">
@@ -475,9 +495,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								       	
 								       	<md-select placeholder ="{{translate.load('sbi.ds.dataSource')}}"
 								        	ng-required = "selectedDataSet.dsTypeCd=='Query'"
-								        	ng-model="selectedDataSet.dataSource">   
-									        <md-option 
-									        ng-repeat="l in dataSourceList" value="{{l.label}}">{{l.label}}
+								        	ng-model="selectedDataSet.dataSource" ng-change="setFormDirty()">   
+									        <md-option ng-repeat="l in dataSourceList" value="{{l.label}}">
+									        	{{l.label}}
 									        </md-option>
 								       	</md-select> 
 								        
@@ -492,7 +512,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							   	<md-input-container class="md-block">
 							    	
 							    	<label>{{translate.load("sbi.ds.query")}}</label>
-									<textarea ng-required="true" ng-model="selectedDataSet.query" ui-codemirror="{ onLoad : codemirrorLoaded }" ui-codemirror-opts="codemirrorOptions" rows="8" md-select-on-focus></textarea>
+									<textarea 	ng-required="true" ng-model="selectedDataSet.query" ui-codemirror="{ onLoad : codemirrorLoaded }" 
+												ui-codemirror-opts="codemirrorOptions" rows="8" md-select-on-focus
+											 	ng-change="setFormDirty()">
+								 	</textarea>
 									
 									<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.query">
        						 			<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
@@ -511,7 +534,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							<md-card layout-padding style="margin-top:0">
 								<md-input-container class="md-block" flex-gt-sm>
 						           	<label>{{translate.load("sbi.ds.jclassName")}}</label>
-						           	<input ng-model="selectedDataSet.jclassName" ng-required="true">
+						           	<input ng-model="selectedDataSet.jclassName" ng-required="true" ng-change="setFormDirty()">
 						           	<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.jclassName">
 		       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
        						 		</div>
@@ -527,7 +550,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								<md-input-container class="md-block" flex-gt-sm>
 						           	
 						           	<label>{{translate.load("sbi.ds.wsAddress")}}</label>
-						           	<input ng-model="selectedDataSet.wsAddress" ng-required="true">
+						           	<input ng-model="selectedDataSet.wsAddress" ng-required="true" ng-change="setFormDirty()">
 						           	
 						           	<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.wsAddress">
 		       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
@@ -538,7 +561,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						         <md-input-container class="md-block" flex-gt-sm>
 						           	
 						           	<label>{{sbi.ds.wsOperation")}}</label>
-						           	<input ng-model="selectedDataSet.wsOperation" ng-required="true">
+						           	<input ng-model="selectedDataSet.wsOperation" ng-required="true" ng-change="setFormDirty()">
 						           	
 						           	<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.wsOperation">
 		       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
@@ -557,13 +580,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							
 								<md-input-container class="md-block" > 
 							       
-							      	 <label>{{translate.load("sbi.functionscatalog.language")}}</label>
+						      	 	<label>{{translate.load("sbi.functionscatalog.language")}}</label>
 							      
-							       	<md-select  aria-label="dropdown" placeholder ="{{translate.load('sbi.behavioural.lov.placeholder.script')}}"
-								       	name ="scriptLanguageDropdown" 
-								        ng-model="selectedDataSet.scriptLanguage"
-								        ng-change="modeChanged(selectedDataSet.queryScriptLanguage)"
-							         	ng-required="true"> 
+					       			<md-select  aria-label="dropdown" placeholder ="{{translate.load('sbi.behavioural.lov.placeholder.script')}}"
+										       	name ="scriptLanguageDropdown" 
+										        ng-model="selectedDataSet.scriptLanguage"
+										        ng-change="modeChanged(selectedDataSet.queryScriptLanguage); setFormDirty()" 
+									         	ng-required="true"> 
 							        	
 							        	<md-option ng-repeat="l in listOfScriptTypes track by $index" value="{{l.VALUE_CD}}">
 							       		 	{{l.VALUE_NM}} 
@@ -579,9 +602,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						        
 								<md-input-container class="md-block">
 								
-							    	<label>{{translate.load("sbi.ds.query")}}</label>
+							    	<label>{{translate.load("sbi.ds.script")}}</label>
 									<textarea  	ui-codemirror="cmOption" ng-model="selectedDataSet.script" 
-												md-select-on-focus ng-required="true"></textarea>
+												md-select-on-focus ng-required="true" ng-change="setFormDirty()"></textarea>
 									
 									<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.script">
 		       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
@@ -605,7 +628,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								       	<label>{{translate.load("sbi.ds.dataSource")}}</label>
 								       
 							      	 	<md-select 	placeholder ="{{translate.load('sbi.ds.dataSource')}}"
-								        			ng-model="selectedDataSet.qbeDataSource" ng-required="true">   
+								        			ng-model="selectedDataSet.qbeDataSource" ng-required="true"
+								        			ng-change="setFormDirty()">   
 									        <md-option ng-repeat="l in dataSourceList" value="{{l.label}}">{{l.label}}</md-option>										        
 								       	</md-select>  
 								       
@@ -623,7 +647,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								       	<label>{{translate.load("sbi.tools.managedatasets.datamartcombo.label")}}</label>
 								       
 								       	<md-select 	placeholder ="{{translate.load('sbi.tools.managedatasets.datamartcombo.label')}}"
-								        			ng-model="selectedDataSet.qbeDatamarts" ng-required="true">   
+								        			ng-model="selectedDataSet.qbeDatamarts" ng-required="true" ng-change="setFormDirty()">   
 									        <md-option ng-repeat="l in datamartList" value="{{l.name}}">{{l.name}}</md-option>										        
 								       	</md-select>  
 								       
@@ -660,7 +684,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								<md-input-container class="md-block" flex-gt-sm>
 						           	
 						           	<label>{{translate.load("sbi.ds.jclassName")}}</label>
-						           	<input ng-model="selectedDataSet.jclassName" ng-required="true">
+						           	<input ng-model="selectedDataSet.jclassName" ng-required="true" ng-change="setFormDirty()">
 						           
 						           	<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.jclassName">
 	       						 		<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
@@ -729,7 +753,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								<md-input-container class="md-block" flex-gt-sm>
 								
 						           	<label>{{translate.load("sbi.ds.persistTableName")}}</label>
-						           	<input ng-model="selectedDataSet.flatTableName" ng-required="true">
+						           	<input ng-model="selectedDataSet.flatTableName" ng-required="true" ng-change="setFormDirty()">
 						           	
 						           	<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.flatTableName">
 	       						 		<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
@@ -742,7 +766,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								       	<label>{{translate.load("sbi.ds.dataSource")}}</label>
 								       
 								       	<md-select 	placeholder ="{{translate.load('sbi.ds.dataSource')}}"
-								        			ng-model="selectedDataSet.dataSourceFlat" ng-required="true">   
+								        			ng-model="selectedDataSet.dataSourceFlat" ng-required="true"
+								        			ng-change="setFormDirty()">   
 									        <md-option ng-repeat="l in dataSourceList" value="{{l.label}}">{{l.label}}</md-option>										        
 								       	</md-select>  
 								       
@@ -770,8 +795,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								       	<label>File type</label>
 								       	
 								       	<md-select 	placeholder ="Choose the file type"
-									       	 			ng-required = "true"
-									        			ng-model="selectedDataSet.ckanFileType">   
+								       	 			ng-required = "true" ng-change="setFormDirty()"
+								        			ng-model="selectedDataSet.ckanFileType">   
 								        	<md-option ng-repeat="l in ckanFileType" value="{{l.name}}">{{l.name}}</md-option>
 								       	</md-select>  
 								       	
@@ -795,7 +820,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						                     		<md-input-container class="md-block" style="margin:0">
 						                        		<label>{{translate.load("sbi.ds.file.xsl.skiprows")}}</label> 
 						                        		<input 	ng-model="selectedDataSet.ckanSkipRows" type="number" 
-						                        				step="1" min="0" value="{{selectedDataSet.ckanSkipRows}}">
+						                        				step="1" min="0" value="{{selectedDataSet.ckanSkipRows}}"
+						                        				ng-change="setFormDirty()">
 							                     	</md-input-container>
 							                  	</div>
 											</div>
@@ -805,7 +831,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						                     		<md-input-container class="md-block" style="margin:0">
 						                        		<label>{{translate.load("sbi.ds.file.xsl.limitrows")}}</label> 
 						                        		<input 	ng-model="selectedDataSet.ckanLimitRows" type="number" 
-						                        				step="1" min="0" value="{{selectedDataSet.ckanLimitRows}}">
+						                        				step="1" min="0" value="{{selectedDataSet.ckanLimitRows}}"
+						                        				ng-change="setFormDirty()">
 							                     	</md-input-container>
 							                  	</div>
 											</div>
@@ -815,7 +842,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						                     		<md-input-container class="md-block" style="margin:0">
 						                        		<label>{{translate.load("sbi.ds.file.xsl.sheetnumber")}}</label> 
 						                        		<input 	ng-model="selectedDataSet.ckanXslSheetNumber" type="number" 
-						                        				step="1" min="1" value="{{selectedDataSet.ckanXslSheetNumber}}">
+						                        				step="1" min="1" value="{{selectedDataSet.ckanXslSheetNumber}}"
+						                        				ng-change="setFormDirty()">
 							                     	</md-input-container>
 							                  	</div>
 											</div>
@@ -840,7 +868,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						                        		
 						                        		<label>{{translate.load("sbi.ds.file.csv.delimiter")}}</label> 
 						                        		
-						                        		<md-select aria-label="aria-label" ng-model="selectedDataSet.ckanCsvDelimiter" ng-required=true>
+						                        		<md-select 	aria-label="aria-label" ng-model="selectedDataSet.ckanCsvDelimiter" 
+						                        					ng-required=true ng-change="setFormDirty()">
 						                           			<md-option 	ng-repeat="csvDelimiterCharacterItem in csvDelimiterCharacterTypes" 						                           						
 						                           						ng-click="chooseDelimiterCharacter(csvDelimiterCharacterItem)" 
 						                           						value="{{csvDelimiterCharacterItem.name}}">
@@ -862,7 +891,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						                        		
 						                        		<label>{{translate.load("sbi.ds.file.csv.quote")}}</label> 
 						                        		
-						                        		<md-select aria-label="aria-label" ng-model="selectedDataSet.ckanCsvQuote" ng-required=true>
+						                        		<md-select 	aria-label="aria-label" ng-model="selectedDataSet.ckanCsvQuote" 
+						                        					ng-required=true ng-change="setFormDirty()">
 						                           			<md-option 	ng-repeat="csvQuoteCharacterItem in csvQuoteCharacterTypes" 
 						                           						ng-click="chooseQuoteCharacter(csvQuoteCharacterItem)" 
 						                           						value="{{csvQuoteCharacterItem.name}}">
@@ -884,7 +914,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						                        		
 						                        		<label>{{translate.load("sbi.workspace.dataset.wizard.csv.encoding")}}</label> 
 						                        		
-						                        		<md-select aria-label="aria-label" ng-model="selectedDataSet.ckanCsvEncoding" ng-required=true>
+						                        		<md-select 	aria-label="aria-label" ng-model="selectedDataSet.ckanCsvEncoding" 
+						                        					ng-required=true ng-change="setFormDirty()">
 						                           			<md-option 	ng-repeat="csvEncodingItem in csvEncodingTypes" 
 						                           						ng-click="chooseEncoding(csvEncodingItem)" 
 						                           						value="{{csvEncodingItem.name}}">
@@ -912,7 +943,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										
 								    		<label>{{translate.load("sbi.ds.ckanUrl")}}</label>
 						           	
-								           	<input ng-model="selectedDataSet.ckanUrl" ng-required = "true">
+								           	<input ng-model="selectedDataSet.ckanUrl" ng-required = "true" ng-change="setFormDirty()">
 								           	
 								           	<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.ckanUrl">
 				       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
@@ -1008,8 +1039,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								<div flex=100>
 									<md-input-container class="md-block">
 								    	<label>Address</label>
-										<input ng-model="selectedDataSet.restAddress" ng-required = "true">
-										<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.restAddress">
+										<input ng-model="selectedDataSet.restAddress" ng-required = "true" ng-change="setFormDirty()">
+										<div ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.restAddress">
 			       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 		       						 	</div>
 									</md-input-container>
@@ -1018,7 +1049,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								<div flex=100>
 									<md-input-container class="md-block">
 										<label>Request body</label>
-								    	<textarea ng-model="selectedDataSet.restRequestBody" md-maxlength="150" rows="3" md-select-on-focus></textarea>
+								    	<textarea 	ng-model="selectedDataSet.restRequestBody" md-maxlength="150" rows="3" 
+								    				md-select-on-focus ng-change="setFormDirty()"></textarea>
 									</md-input-container>
 								</div>
 								
@@ -1029,7 +1061,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								       	<label>HTTP methods</label>
 								       	
 								       	<md-select 	placeholder ="HTTP methods" ng-required = "true"
-								        			ng-model="selectedDataSet.restHttpMethod">   
+								        			ng-model="selectedDataSet.restHttpMethod"
+								        			ng-change="setFormDirty()">   
 									        <md-option ng-repeat="l in httpMethods" value="{{l.value}}">
 									        	{{l.name}}
 									        </md-option>
@@ -1088,13 +1121,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						            
 					         		<span flex></span>
 						         											            
-						            <md-button class="md-icon-button" aria-label="Add request header" ng-click="requestHeaderAddItem()" title="{{translate.load('sbi.generic.add')}}">
+						            <md-button 	class="md-icon-button" aria-label="Add request header" 
+						            			ng-click="requestHeaderAddItem(); setFormDirty();" 
+						            			title="{{translate.load('sbi.generic.add')}}">
 						              	<md-icon md-font-icon="fa fa-plus-circle" class="fa fa-2x"></md-icon>
 						            </md-button>
 						            
 						            <md-button class="md-icon-button" aria-label="Clear all request headers" 
 												ng-click="deleteAllRESTRequestHeaders()" title="Clear all request headers">
-						              <md-icon md-font-icon="fa fa-eraser" class="fa fa-2x"></md-icon>
+						              	<md-icon md-font-icon="fa fa-eraser" class="fa fa-2x"></md-icon>
 						            </md-button>
 						         
 					          	</div>
@@ -1110,7 +1145,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										ng-model=restRequestHeaders
 										columns=requestHeadersTableColumns
 										show-search-bar=false
-										scope-functions=metaScopeFunctions
+										scope-functions=requestHeadersScopeFunctions
 										no-pagination=false
 										speed-menu-option=requestHeadersDelete
 										current-page-number=restDsRequestHeaderTableLastPage >
@@ -1130,7 +1165,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 																			
 									<md-input-container class="md-block" style="float:left; width:75%">
 								    	<label>JSON Path Items</label>
-										<input ng-model="selectedDataSet.restJsonPathItems">
+										<input ng-model="selectedDataSet.restJsonPathItems" ng-change="setFormDirty()">
 									</md-input-container>
 									 
 									<div style="width:25%">
@@ -1153,7 +1188,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				                  		
 				                  		<md-input-container class="small counter" style="padding-left:8px;">
 				                     		<md-checkbox 	aria-label="Checkbox 2" 
-					                     					ng-model="selectedDataSet.restDirectlyJSONAttributes" ng-checked="" >
+					                     					ng-model="selectedDataSet.restDirectlyJSONAttributes" ng-checked="" 
+					                     					ng-change="setFormDirty()">
 											</md-checkbox>
 				                  		</md-input-container>
 				                  		
@@ -1180,7 +1216,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				                  		
 				                  		<md-input-container class="small counter" style="padding-left:8px;">
 				                     		<md-checkbox 	aria-label="Checkbox 2" 
-					                     					ng-model="selectedDataSet.restNGSI" ng-checked="" >
+					                     					ng-model="selectedDataSet.restNGSI" ng-checked="" 
+					                     					ng-change="setFormDirty()">
 											</md-checkbox>
 				                  		</md-input-container>
 				                  		
@@ -1206,7 +1243,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				                  		
 				                  		<md-input-container class="small counter" style="padding-left:8px;">
 				                     		<md-checkbox 	aria-label="Checkbox 2" 
-					                     					ng-model="_ss_" ng-checked="" >
+					                     					ng-model="_ss_" ng-checked="" 
+					                     					ng-change="setFormDirty()">
 											</md-checkbox>
 				                  		</md-input-container>
 				                  		
@@ -1242,7 +1280,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						            
 					         		<span flex></span>
 						         											            
-						            <md-button class="md-icon-button" aria-label="Add JSON path attributes" ng-click="restJsonPathAttributesAddItem()" title="{{translate.load('sbi.generic.add')}}">
+						            <md-button 	class="md-icon-button" aria-label="Add JSON path attributes" 
+						            			ng-click="restJsonPathAttributesAddItem(); setFormDirty();" title="{{translate.load('sbi.generic.add')}}">
 						              	<md-icon md-font-icon="fa fa-plus-circle" class="fa fa-2x"></md-icon>
 						            </md-button>
 						         
@@ -1268,7 +1307,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										ng-model=restJsonPathAttributes											
 										columns="restJsonPathAttributesTableColumns"
 										show-search-bar=false
-										scope-functions="metaScopeFunctionsJsonPathAttr"
+										scope-functions="jsonPathAttrScopeFunctions"
 										no-pagination=false
 										speed-menu-option="restJsonPathAttributesDelete"
 										current-page-number=restDsJsonPathAttribTableLastPage >
@@ -1287,7 +1326,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 																			
 									<md-input-container class="md-block">
 								    	<label>Offset Param</label>
-										<input ng-model="selectedDataSet.restOffset">
+										<input ng-model="selectedDataSet.restOffset" ng-change="setFormDirty()" type="number">
 									</md-input-container>
 									
 								</div>
@@ -1296,7 +1335,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 																			
 									<md-input-container class="md-block">
 								    	<label>Fetch size Param</label>
-										<input ng-model="selectedDataSet.restFetchSize">
+										<input ng-model="selectedDataSet.restFetchSize" ng-change="setFormDirty()" type="number">
 									</md-input-container>
 									
 								</div>
@@ -1305,7 +1344,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 																			
 									<md-input-container class="md-block">
 								    	<label>Max Results Param</label>
-										<input ng-model="selectedDataSet.restMaxResults">
+										<input ng-model="selectedDataSet.restMaxResults" ng-change="setFormDirty()" type="number">
 									</md-input-container>
 									
 								</div>
@@ -1328,13 +1367,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									
 										<span flex></span>
 									
-										<md-button class="md-icon-button" aria-label="Add new dataset parameter" ng-click="parametersAddItem()" 
+										<md-button class="md-icon-button" aria-label="Add new dataset parameter" ng-click="parametersAddItem(); setFormDirty()" 
 												title="{{translate.load('sbi.ds.parameters.add.tooltip')}}">
 										  <md-icon md-font-icon="fa fa-plus-circle" class="fa fa-2x"></md-icon>
 										</md-button>
 										
 										<md-button class="md-icon-button" aria-label="Clear all parameters" 
-												ng-click="deleteAllParameters()" title="Clear all parameters">
+												ng-click="deleteAllParameters();" title="Clear all parameters">
 							              <md-icon md-font-icon="fa fa-eraser" class="fa fa-2x"></md-icon>
 							            </md-button>
 										
@@ -1382,7 +1421,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				                  		
 				                  		<md-input-container class="small counter" style="padding-left:8px;">
 				                     		<md-checkbox 	aria-label="Checkbox 2" 
-					                     					ng-model="transformDatasetState" ng-checked="" >
+					                     					ng-model="transformDatasetState" ng-checked="" 
+					                     					ng-change="setFormDirty()">
 											</md-checkbox>
 				                  		</md-input-container>
 				                  		
@@ -1395,7 +1435,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									<div flex=100>
 										<md-input-container class="md-block">
 									    	<label>{{translate.load("sbi.ds.pivotColName")}}</label>
-											<input ng-model="selectedDataSet.pivotColName" ng-required="true">
+											<input ng-model="selectedDataSet.pivotColName" ng-required="true" ng-change="setFormDirty()">
 											<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.pivotColName">
 		       						 			<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 	   						 				</div>
@@ -1405,7 +1445,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									<div flex=100>
 										<md-input-container class="md-block">
 									    	<label>{{translate.load("sbi.ds.pivotColValue")}}</label>
-											<input ng-model="selectedDataSet.pivotColValue" ng-required="true">
+											<input ng-model="selectedDataSet.pivotColValue" ng-required="true" ng-change="setFormDirty()">
 											<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.pivotColValue">
 		       						 			<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 	   						 				</div>
@@ -1415,7 +1455,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									<div flex=100>
 										<md-input-container class="md-block">
 									    	<label>{{translate.load("sbi.ds.pivotRowName")}}</label>
-											<input ng-model="selectedDataSet.pivotRowName" ng-required="true">
+											<input ng-model="selectedDataSet.pivotRowName" ng-required="true" ng-change="setFormDirty()">
 											<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.pivotRowName">
 		       						 			<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 	   						 				</div>
@@ -1433,7 +1473,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					                  		
 					                  		<md-input-container class="small counter" style="padding-left:8px;">
 					                     		<md-checkbox 	aria-label="Checkbox 2" 
-						                     					ng-model="selectedDataSet.pivotIsNumRows" ng-checked="" >
+						                     					ng-model="selectedDataSet.pivotIsNumRows" ng-checked="" 
+						                     					ng-change="setFormDirty()">
 												</md-checkbox>
 					                  		</md-input-container>
 					                  		
@@ -1463,7 +1504,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				                  		
 				                  		<md-input-container class="small counter" style="padding-left:8px;">
 				                     		<md-checkbox 	aria-label="Persisted" 
-					                     					ng-model="selectedDataSet.isPersisted" ng-checked="" >
+					                     					ng-model="selectedDataSet.isPersisted" ng-checked="" 
+					                     					ng-change="setFormDirty()">
 											</md-checkbox>
 				                  		</md-input-container>
 				                  		
@@ -1484,7 +1526,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					                  		
 					                  		<md-input-container class="small counter" style="padding-left:8px;">
 					                     		<md-checkbox 	aria-label="HDFS Persisted" 
-						                     					ng-model="selectedDataSet.isPersistedHDFS" ng-checked="" >
+						                     					ng-model="selectedDataSet.isPersistedHDFS" ng-checked="" 
+						                     					ng-change="setFormDirty()">
 												</md-checkbox>
 					                  		</md-input-container>
 					                  		
@@ -1495,7 +1538,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									<div flex=100>
 										<md-input-container class="md-block">
 									    	<label>{{translate.load("sbi.ds.persistTableName")}}</label>
-											<input ng-model="selectedDataSet.persistTableName" ng-required="true">
+											<input ng-model="selectedDataSet.persistTableName" ng-required="true" ng-change="setFormDirty()">
 											<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.persistTableName">
 		       						 			<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 	   						 				</div>
@@ -1557,7 +1600,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				                  		
 				                  		<md-input-container class="small counter" style="padding-left:8px;">
 				                     		<md-checkbox 	aria-label="Scheduling" 
-					                     					ng-model="selectedDataSet.isScheduled" ng-checked="" >
+					                     					ng-model="selectedDataSet.isScheduled" ng-checked="" 
+					                     					ng-change="setFormDirty()">
 											</md-checkbox>
 				                  		</md-input-container>
 				                  		
@@ -1573,7 +1617,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 												<label>{{translate.load('sbi.ds.persist.cron.startdate')}}:</label>
 												
 												<md-datepicker ng-model="selectedDataSet.startDate" md-placeholder="Enter date"
-		            											md-min-date="minDate" md-max-date="maxDate">
+		            											md-min-date="minDate" md-max-date="maxDate" ng-change="setFormDirty()">
 												</md-datepicker>
 											</div>
 											
@@ -1581,7 +1625,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 												<label>{{translate.load('sbi.ds.persist.cron.enddate')}}:</label>
 												
 												<md-datepicker ng-model="selectedDataSet.endDate" md-placeholder="Enter date"
-		            											md-min-date="minDate" md-max-date="maxDate">
+		            											md-min-date="minDate" md-max-date="maxDate" ng-change="setFormDirty()">
 												</md-datepicker>
 											</div>
 											
@@ -1608,7 +1652,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 													
 													<md-select placeholder ="Select minute(s)"
 											        	ng-required = "true" ng-if=uuu multiple=true
-											        	ng-model="minutesSelected" style="margin:0; width:80%" title="{{minutesSelected}}">   
+											        	ng-model="minutesSelected" style="margin:0; width:80%" title="{{minutesSelected}}"
+											        	ng-change="setFormDirty()">   
 											        	<md-option ng-repeat="l in minutes track by $index" value="{{$index}}">
 											        		{{$index}}
 											        	</md-option>
@@ -1623,7 +1668,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							           					<div flex=50>
 								                  			<md-input-container class="small counter" style="margin:8;">
 								                     			<md-checkbox 	aria-label="Checkbox 2" 
-									                     					ng-model="uuu" ng-checked="" >
+									                     						ng-model="uuu" ng-checked="" 
+									                     						ng-change="setFormDirty()">
 																</md-checkbox>
 								                  			</md-input-container>
 								                  			
@@ -1718,7 +1764,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 													
 													<md-select placeholder ="Select hours(s)"
 											        	ng-required = "true" ng-if=qqq multiple=true
-											        	ng-model="hoursSelected" style="margin:0; width:80%" title="{{hoursSelected}}">   
+											        	ng-model="hoursSelected" style="margin:0; width:80%" title="{{hoursSelected}}"
+											        	ng-change="setFormDirty()">   
 											        	<md-option ng-repeat="l in hours track by $index" value="{{$index}}">
 											        		{{$index}}
 											        	</md-option>
@@ -1733,7 +1780,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							           					<div flex=50>
 								                  			<md-input-container class="small counter" style="margin:8;">
 								                     			<md-checkbox 	aria-label="Checkbox 2" 
-									                     					ng-model="qqq" ng-checked="" >
+										                     					ng-model="qqq" ng-checked="" 
+										                     					ng-change="setFormDirty()">
 																</md-checkbox>
 								                  			</md-input-container>
 								                  			
@@ -1821,7 +1869,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 													
 													<md-select placeholder ="Select day(s)"
 											        	ng-required = "true" ng-if=www multiple=true
-											        	ng-model="daysSelected" style="margin:0; width:80%" title="{{daysSelected}}">   
+											        	ng-model="daysSelected" style="margin:0; width:80%" title="{{daysSelected}}"
+											        	ng-change="setFormDirty()">   
 											        	<md-option ng-repeat="l in days" value="{{l}}">
 											        		{{l}}
 											        	</md-option>
@@ -1836,7 +1885,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							           					<div flex=50>
 								                  			<md-input-container class="small counter" style="margin:8;">
 								                     			<md-checkbox 	aria-label="Checkbox 2" 
-									                     					ng-model="www" ng-checked="" >
+									                     						ng-model="www" ng-checked="" 
+									                     						ng-change="setFormDirty()">
 																</md-checkbox>
 								                  			</md-input-container>
 								                  			
@@ -1924,7 +1974,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 													
 													<md-select placeholder ="Select month(s)"
 											        	ng-required = "true" ng-if=eee multiple=true
-											        	ng-model="monthsSelected" style="margin:0; width:80%" title="monthsSelected">   
+											        	ng-model="monthsSelected" style="margin:0; width:80%" title="monthsSelected"
+											        	ng-change="setFormDirty()">   
 											        	<md-option ng-repeat="l in months" value="{{l}}">
 											        		{{l}}
 											        	</md-option>
@@ -1939,7 +1990,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							           					<div flex=50>
 								                  			<md-input-container class="small counter" style="margin:8;">
 								                     			<md-checkbox 	aria-label="Checkbox 2" 
-									                     					ng-model="eee" ng-checked="" >
+										                     					ng-model="eee" ng-checked="" 
+										                     					ng-change="setFormDirty()">
 																</md-checkbox>
 								                  			</md-input-container>
 								                  			
@@ -2035,7 +2087,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 													
 													<md-select placeholder ="Select weekday(s)"
 											        	ng-required = "true" ng-if=rrr multiple=true
-											        	ng-model="weekdaysSelected" style="margin:0; width:80%" title="{{weekdaysSelected}}">   
+											        	ng-model="weekdaysSelected" style="margin:0; width:80%" title="{{weekdaysSelected}}"
+											        	ng-change="setFormDirty()">   
 											        	<md-option ng-repeat="l in weekdays" value="{{l}}">
 											        		{{l}}
 											        	</md-option>
@@ -2050,7 +2103,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							           					<div flex=50>
 								                  			<md-input-container class="small counter" style="margin:8;">
 								                     			<md-checkbox 	aria-label="Checkbox 2" 
-									                     					ng-model="rrr" ng-checked="" >
+										                     					ng-model="rrr" ng-checked="" 
+										                     					ng-change="setFormDirty()">
 																</md-checkbox>
 								                  			</md-input-container>
 								                  			
@@ -2123,7 +2177,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 											
 											<md-input-container class="md-block">										
 										    	<label>{{translate.load("sbi.ds.persist.cron.schedulingline")}}</label>											
-												<input ng-model="bla1" readonly="readonly">       						 				
+												<input ng-model="bla1" readonly="readonly" ng-change="setFormDirty()">       						 				
 											</md-input-container>
 											
 										</div>
@@ -2132,7 +2186,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 											
 											<md-input-container class="md-block">
 										    	<label>{{translate.load("sbi.ds.persist.cron.nextfire")}}</label>
-												<input ng-model="bla2" readonly="readonly">
+												<input ng-model="bla2" readonly="readonly" ng-change="setFormDirty()">
 											</md-input-container>
 											
 										</div>
