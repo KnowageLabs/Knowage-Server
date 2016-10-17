@@ -1,0 +1,39 @@
+<md-dialog style='width:50%;'>
+      
+   <md-toolbar class="miniheadfederation">
+		<div class="md-toolbar-tools">
+			<h2 class="md-flex">{{translate.load("sbi.ds.help")}}</h2>
+			<span flex=""></span>
+		</div>	
+	</md-toolbar>
+   
+   <md-dialog-content>
+   
+	   In a datasets the user can insert parameters or profile attributes, single or multi value.
+		The correct syntax to insert a parameter is $P{parameter_name}.
+		The correct syntax to insert a profile attribute is ${attribute_name}.
+		Remember that for any parameter added to your dataset, you need to add this parameter in the parameters table.
+		SCRIPTS: Every script must be written using Groovy or Javascript languages. 
+		
+		The script must return an XML string containing a list of values with the syntax shown below. 
+		<ROWS>
+		  <ROW value="value1" ... />
+		  <ROW value="value2" ... />
+		  ...
+		</ROWS>
+		SpagoBI already fournishes some Groovy and Javascript functions that return the value of a profile attribute:
+		returnValue('${attribute_name}'): Returns the unique value of the profile attribute with name: attribute_name 
+		Example: returnValue("${single_value_attribute}")
+		getListFromMultiValueProfileAttribute('${attribute_name}'): Returns the list of values of a multi value profile attribute.
+		Example: getListFromMultiValueProfileAttribute("${multi_value_attribute}")
+		getMultiValueProfileAttribute('${attribute_name}', 'prefix', 'newSplitter', 'suffix') : Returns list of values of a multi value profile attribute, preceded by a prefix, separated by the new splitter and followed by a suffix 
+		Example: getMultiValueProfileAttribute('${multi_value_attribute}', "in (" , "," , ")" )
+   		
+   </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+      <md-button ng-click="closeScript()" class="md-raised" style="margin-right:20px;" >
+       {{translate.load("sbi.federationdefinition.template.button.close")}}
+      </md-button>
+    </md-dialog-actions>
+</md-dialog>

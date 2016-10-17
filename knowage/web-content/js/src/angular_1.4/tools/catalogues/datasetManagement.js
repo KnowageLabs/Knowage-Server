@@ -1630,6 +1630,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	 }
 	 
 	 $scope.saveScript = function () {
+		 $mdDialog.hide();
 		 console.log("save")
 	 }
 	
@@ -2175,6 +2176,62 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	    }
 	    return array;
 	}
-
+    
+    $scope.saveWithoutMetadata = function () {
+    	$scope.selectedDataSet.isFromSaveNoMetadata = true;
+    	$scope.saveDataset();
+    }
+    
+    $scope.openHelp = function () {
+    	$mdDialog
+		   .show({
+		    scope : $scope,
+		    preserveScope : true,
+		    parent : angular.element(document.body),
+		    controllerAs : 'openHelpDataset',
+		    templateUrl : sbiModule_config.contextName +'/js/src/angular_1.4/tools/catalogues/templates/helpDataSet.html',
+		    clickOutsideToClose : false,
+		    hasBackdrop : false
+		   });
+    }
+    
+    $scope.openFieldsMetadata = function () {
+    	$mdDialog
+		   .show({
+		    scope : $scope,
+		    preserveScope : true,
+		    parent : angular.element(document.body),
+		    controllerAs : 'openFieldsMetadata',
+		    templateUrl : sbiModule_config.contextName +'/js/src/angular_1.4/tools/catalogues/templates/fieldsMetadata.html',
+		    clickOutsideToClose : false,
+		    hasBackdrop : false
+		   });
+    }
+    
+    $scope.openAvaliableProfileAttributes = function () {
+    	$mdDialog
+		   .show({
+		    scope : $scope,
+		    preserveScope : true,
+		    parent : angular.element(document.body),
+		    controllerAs : 'openFieldsMetadata',
+		    templateUrl : sbiModule_config.contextName +'/js/src/angular_1.4/tools/catalogues/templates/avaliableProfileAttributes.html',
+		    clickOutsideToClose : false,
+		    hasBackdrop : false
+		   });
+    }
+    
+    $scope.openLinkDataset = function () {
+    	$mdDialog
+		   .show({
+		    scope : $scope,
+		    preserveScope : true,
+		    parent : angular.element(document.body),
+		    controllerAs : 'openFieldsMetadata',
+		    templateUrl : sbiModule_config.contextName +'/js/src/angular_1.4/tools/catalogues/templates/linkDataSet.html',
+		    clickOutsideToClose : false,
+		    hasBackdrop : false
+		   });
+    }
 	
 };
