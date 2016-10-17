@@ -181,7 +181,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	$scope.expandTreeAsync = function(item){
 		
 		if($scope.bindMode){
-			sbiModule_messaging.showWarningMessage("attribute is binded", "Tree is disabled");
+			sbiModule_messaging.showWarningMessage(sbiModule_translate.load('sbi.olap.attributeBinding.warning'), 'Warning');
 		}else{
 		$scope.getHierarchyMembersAsynchronus(filterFather,$scope.activeaxis,item.uniqueName,item.id);	
 		}
@@ -225,7 +225,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 					$scope.topStart = 0;
 				}
 			}, function(response) {
-				sbiModule_messaging.showErrorMessage("An error occured while placing member on axis", 'Error');
+				sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.memberAxis.error'), 'Error');
 				
 			});	
 	}
@@ -246,7 +246,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 				checkIfExists(response.data);
 				$scope.searchSucessText = $scope.searchText.toLowerCase();
 		}, function(response) {
-			sbiModule_messaging.showErrorMessage("An error occured during search for filter", 'Error');
+			sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.filterSearch.error'), 'Error');
 		});
 	};
 	
@@ -292,7 +292,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			  }
 			  
 		}, function(response) {
-			sbiModule_messaging.showErrorMessage("An error occured while getting hierarchy members", 'Error');	
+			sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.hierarchyGet.error'), 'Error');
 		});	
 	}
 	
@@ -374,7 +374,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 				$scope.filterSelected[$scope.filterAxisPosition].caption = item.name;
 				$scope.filterSelected[$scope.filterAxisPosition].uniqueName = item.uniqueName;
 			   }else{
-				   sbiModule_messaging.showWarningMessage("attribute is binded", "Selecting is disabled");
+				   sbiModule_messaging.showWarningMessage(sbiModule_translate.load('sbi.olap.attributeBindingSelection.warning'), 'Warning');
 			   }
 		   }
 		
@@ -499,7 +499,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 				  $scope.selectedVersion=response.data.modelConfig.actualVersion;
 				  $scope.filterSelected[$scope.filterAxisPosition].visible = true;//ex:$scope.filterAxisPosition
 			}, function(response) {
-				sbiModule_messaging.showErrorMessage("An error occured", 'Error');
+				sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.generic.error'), 'Error');
 			});	
 		}
 	};
@@ -516,7 +516,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			 visibleSelected = [];			
 			 $scope.handleResponse(response);
 		}, function(response) {
-			sbiModule_messaging.showErrorMessage("An error occured while placing member on axis", 'Error');
+			sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.memberAxis.error'), 'Error');
 			
 		});
 	};
@@ -552,9 +552,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 							$scope.handleResponse(response);
 						},
 						function(response) {
-							sbiModule_messaging.showErrorMessage(
-									"An error occured while movin hierarchy",
-									'Error');
+							sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.hierarchyMove.error'), 'Error');
 						});
 	};
 	
@@ -573,7 +571,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	
 	$scope.hideAsyncTree = function(item){
 		if($scope.bindMode){
-			sbiModule_messaging.showWarningMessage("attribute is binded", "Tree is disabled");
+			sbiModule_messaging.showWarningMessage(sbiModule_translate.load('sbi.olap.attributeBinding.warning'), 'Warning');
 		}else{
 		item.collapsed = false;
 		}
@@ -683,7 +681,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			
 	$scope.openFilters = function(ev) {
 		$mdDialog.show($mdDialog.alert().clickOutsideToClose(true).title(
-				"Here goes filtering").ok("ok").targetEvent(ev));
+				sbiModule_translate.load('sbi.olap.filtering.info')).ok("ok").targetEvent(ev));
 	};
 
 	/**
@@ -743,7 +741,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			axisSizeSetup();
 			
 		}, function(response) {
-			sbiModule_messaging.showErrorMessage("An error occured while sending MDX query", 'Error');
+			sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.sendMDX.error'), 'Error');
 			
 		});	
 	};
@@ -810,7 +808,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 							    
 							},
 							function(response) {
-								sbiModule_messaging.showErrorMessage("An error occured while loading analytical drivers", 'Error');
+								sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.ad.error'), 'Error');
 							});
 		   
 		   
@@ -840,7 +838,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 							    
 							},
 							function(response) {
-								sbiModule_messaging.showErrorMessage("An error occured while loading profile attributes", 'Error');
+								sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.profileAttributes.error'), 'Error');
 							});
 		   
 	   }

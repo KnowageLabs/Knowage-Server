@@ -69,9 +69,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 
 				},
 				function(response) {
-					sbiModule_messaging.showErrorMessage(
-							"An error occured by drill down functionality",
-							'Error');
+					sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.drillDown.error'), 'Error');
 
 				});
 	}
@@ -95,9 +93,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 					
 				},
 				function(response) {
-					sbiModule_messaging.showErrorMessage(
-							"An error occured by drill up functionality",
-							'Error');
+					sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.drillUp.error'), 'Error');
 
 				});
 	}
@@ -117,9 +113,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 					//$scope.scrollTo(row,column);
 				},
 				function(response) {
-					sbiModule_messaging.showErrorMessage(
-							"An error occured during swap axis functionality",
-							'Error');
+					sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.swapAxis.error'), 'Error');
 
 				});
 	}
@@ -128,7 +122,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 		
 		
 		if($scope.selectedVersion == null){
-			sbiModule_messaging.showErrorMessage("You must slice on Version first",'Error');
+			sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.versionSlice.error'), 'Error');
 					
 		}else{
 			var encoded = encodeURI("1.0/model/exceledit?SBI_EXECUTION_ID="+ JSsbiExecutionID);
@@ -153,8 +147,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 
 				},
 				function(response) {
-					sbiModule_messaging.showErrorMessage(
-							"Error getting DrillThrough Levels ", 'Error');
+					sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.dtLevels.error'), 'Error');
 
 				});
 	}
@@ -174,7 +167,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 		}
 
 		else {
-			sbiModule_messaging.showErrorMessage("Checking not done", 'Error');
+			sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.dtLevelsChecking.error'), 'Error');
 		}
 			
 		for (var i = 0; i < tempArr.length; i++) {
@@ -191,15 +184,13 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 		
 
 		if ($scope.selectedCell.value == "") {
-			sbiModule_messaging.showErrorMessage("Cell doesnt have value",
-					'Error');
+			sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.emptyCell.error'), 'Error');
 		}
 
 		else if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
 			
 			if($scope.showWarningDT){
-				sbiModule_messaging.showWarningMessage("If the drill though is executed on a cell with an haigh level of aggregation, this operation can take long time",
-				'Information');
+				sbiModule_messaging.showWarningMessage(sbiModule_translate.load('sbi.olap.dt.warning'), 'Warning');
 			}
 			
 			var toSend = {};
@@ -228,12 +219,10 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 
 								},
 								function(response) {
-									sbiModule_messaging.showErrorMessage(
-											"Error in DrillThrough", 'Error');
+									sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.dt.error'), 'Error');
 								});
 			} else {
-				sbiModule_messaging.showErrorMessage(
-						"Please select cell for DrillThrough", 'Error');
+				sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.selectCell.error'), 'Error');
 			}
 		} else {
 
@@ -373,9 +362,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 						},
 						function(response) {
 							sbiModule_messaging
-									.showErrorMessage(
-											"An error occured while getting properties for selected member",
-											'Error');
+									.showErrorMessage(sbiModule_translate.load('sbi.olap.properties.error'), 'Error');
 
 						});
 	}
@@ -480,7 +467,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 			return;
 		}
 		if ($scope.selectedVersion == null){
-			sbiModule_messaging.showErrorMessage("You must slice on Version first",'Error');
+			sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.versionSlice.error'), 'Error');
 			return;
 			
 		}
@@ -531,7 +518,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 			$scope.showEditCell(cell, id, originalValue);
 			
 		}else{
-			sbiModule_messaging.showErrorMessage("Measure "+measureName+" is not editable",'Error');
+			sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.measureEditable.error'), 'Error');
 		}
 
 		
@@ -713,7 +700,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 						+ JSsbiExecutionID, "", st).then(function(response) {
 			$scope.handleResponse(response);
 		}, function(response) {
-			sbiModule_messaging.showErrorMessage("error", 'Error');
+			sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.generic.error'), 'Error');
 
 		});
 	}
@@ -800,11 +787,11 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 					try {
 						eval(response.data);
 					} catch (e) {
-						sbiModule_messaging.showErrorMessage("error", 'Error');
+						sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.generic.error'), 'Error');
 					}
 
 				}, function(response) {
-					sbiModule_messaging.showErrorMessage("error", 'Error');
+					sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.generic.error'), 'Error');
 				});
 	}
 
@@ -1025,14 +1012,12 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 					$scope.cookieArray.push(namedMember);
 					$localStorage.recents = $scope.cookieArray;
 					cleanCC();
-					sbiModule_messaging.showSuccessMessage("Member is saved",
-							'Success');
+					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.olap.memberSave.success'), 'Success');
 
 				},
 				function(response) {
 					cleanCC();
-					sbiModule_messaging.showErrorMessage(
-							"Error adding Calculated Field", 'Error');
+					sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.cc.error'), 'Error');
 
 				});
 
@@ -1055,7 +1040,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 		$scope.cookieArray.push(namedSet);
 		$localStorage.recents = $scope.cookieArray;
 		cleanCC();
-		sbiModule_messaging.showSuccessMessage("Set is saved", 'Success');
+		sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.olap.setSave.success'), 'Success');
 
 	}
 
@@ -1124,7 +1109,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 			$scope.deleteCC(item.name);
 			$scope.selectedMDXFunction = {};
 			sbiModule_messaging
-					.showSuccessMessage("Item is deleted", 'Success');
+					.showSuccessMessage(sbiModule_translate.load('sbi.common.delete.success'), 'Success');
 		} else {
 			console.log("cant delete name is null");
 		}
@@ -1144,8 +1129,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 					$scope.handleResponse(response);
 				},
 				function(response) {
-					sbiModule_messaging.showErrorMessage(
-							"Error deleting Calculated Field", 'Error');
+					sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.common.delete.error'), 'Error');
 
 				});
 	};

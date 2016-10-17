@@ -229,9 +229,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 						
 					},
 					function(response) {
-						sbiModule_messaging.showErrorMessage(
-								"An error occured while sending model config",
-								'Error');
+						sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.modelConfig.error'), 'Error');		
 						$scope.ready = true;
 					});
 
@@ -251,7 +249,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 				$scope.ready = true;
 				$scope.handleResponse(response);
 			}, function(response) {
-				sbiModule_messaging.showErrorMessage("error", 'Error');
+				sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.generic.error'), 'Error');
 
 			});
 		}
@@ -283,8 +281,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 					$scope.outputVersions = response.data;
 				},
 				function(response) {
-					sbiModule_messaging.showErrorMessage("An error occured ",
-							'Error');
+					sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.generic.error'), 'Error');
 				});
 	};
 	

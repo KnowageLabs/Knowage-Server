@@ -391,18 +391,18 @@ $scope.setAndLoadCN = function(num) {
     			}
     		}
     	    if($scope.scenario.editCube==""&&$scope.scenario.measures.length==0){
-    			sbiModule_messaging.showErrorMessage("Selecting a cube and a measure is mandatory. ", 'Validation error');
+    			sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.designer.cubeValidation.error'), 'Error');
     			console.log($scope.scenario)
     		}
     	    else if($scope.scenario.editCube==""){
-    			sbiModule_messaging.showErrorMessage("You didn't select a cube. Selecting a cube is mandatory. ", 'Validation error');	
+    			sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.designer.cubeValidation2.error'), 'Error');
     		}
     		else if($scope.scenario.measures.length==0){
-    			sbiModule_messaging.showErrorMessage("You didn't select a measure. Selecting a measure is mandatory. ", 'Validation error');	
+    			sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.designer.cubeValidation3.error'), 'Error');
     		}
     	    else {
     	    		OlapTemplateService.setScenarioTag($scope.scenario);
-    				sbiModule_messaging.showSuccessMessage('Successfully added scenario to template', 'Success');
+    				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.olap.designer.templateAdd'), 'Success');
     				console.log($scope.scenario);
     				console.log(OlapTemplateService.getTempateJson());
     				$mdDialog.hide();			
@@ -580,7 +580,7 @@ $scope.setAndLoadCN = function(num) {
 	 $scope.saveTemplateButtons = function() {
 		 console.log($scope.toolbar);
 		 OlapTemplateService.setToolbarTag($scope.toolbar);
-		 sbiModule_messaging.showSuccessMessage('Successfully added buttons to template', 'Success');
+		 sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.olap.designer.buttonAdd'), 'Success');
 		 console.log(OlapTemplateService.getTempateJson());
 		 console.log(OlapTemplateService.getToolbarButtons());
 		 $scope.closeDialogOlapDesigner();
@@ -666,12 +666,12 @@ $scope.setAndLoadCN = function(num) {
 	  */
 	 $scope.confirmDelete = function(item,ev) {
 		    var confirm = $mdDialog.confirm()
-		          .title("Confirm Delete")
-		          .content("Are you sure that you want to delete this item?")
+		          .title(sbiModule_translate.load('sbi.common.confirmDelete'))
+		          .content(sbiModule_translate.load('sbi.common.confirmDelete.content'))
 		          .ariaLabel("confirm_delete")
 		          .targetEvent(ev)
-		          .ok("Continue")
-		          .cancel("Cancel");
+		          .ok(sbiModule_translate.load('sbi.common.continue'))
+		          .cancel(sbiModule_translate.load('sbi.common.cancel'));
 		    $mdDialog.show(confirm).then(function() {
 		    	$scope.deleteCNItem(item);
 		    }, function() {
@@ -782,7 +782,7 @@ $scope.setAndLoadCN = function(num) {
 		    var success = OlapTemplateService.setClickableTag(clickableArray);
 		    if(success){
 
-		     sbiModule_messaging.showSuccessMessage('Successfully added cross navigation to template', 'Success');
+		     sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.olap.designer.cnAdd'), 'Success');
 		     $scope.crossNavfromMemberObj = {
 		       "uniqueName" : "",
 		       "clickParameter": {
@@ -798,7 +798,7 @@ $scope.setAndLoadCN = function(num) {
 		   var success = OlapTemplateService.setCrossNavigationTag(parameter);
 		   if(success){
 
-		    sbiModule_messaging.showSuccessMessage('Successfully saved', 'Success');
+		    sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.olap.designer.cnSave'), 'Success');
 		    $scope.crossNavfromCellObj = {
 		       "name":"",
 		                "dimension":"",
@@ -935,7 +935,7 @@ $scope.setAndLoadCN = function(num) {
 		 sbiModule_restServices.promisePost("1.0/documents/",sbiModule_docInfo.id+'/saveOlapTemplate', OlapTemplateService.getTempateJson())
 			.then(function(response) {
 				console.log("[POST]: SUCCESS!");
-				sbiModule_messaging.showSuccessMessage("XML template successfully created", 'Success');
+				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.olap.designer.templateSave'),'Success');
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 			}); 

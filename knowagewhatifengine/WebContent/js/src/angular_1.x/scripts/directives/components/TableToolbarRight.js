@@ -131,7 +131,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 			$scope.classiffyToolbarButtons();
 			filterXMLResult(toolbarVisibleBtns);
 		 }, function(response) {
-			sbiModule_messaging.showErrorMessage("error", 'Error');
+			sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.generic.error'), 'Error');
 		});
     }
 	
@@ -380,7 +380,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 			$scope.modelConfig.showCompactProperties = !$scope.modelConfig.showCompactProperties;
 			$scope.sendModelConfig($scope.modelConfig);	
 		}else{
-			sbiModule_messaging.showErrorMessage("Table Properties are on..");
+			sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.tableProperties.error'), 'Error');
 		}
 	}
 	
@@ -407,7 +407,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 			$scope.handleResponse(response);
 			$scope.crossNavigationEnabled = !$scope.crossNavigationEnabled;
 		 }, function(response) {
-			sbiModule_messaging.showErrorMessage("error", 'Error');
+			sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.generic.error'), 'Error');
 		});
     }
 	 
@@ -420,7 +420,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 				changeIcon("BUTTON_SORTING");
 				
 			}, function(response) {
-				sbiModule_messaging.showErrorMessage("An error occured while sorting", 'Error');
+				sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.sorting.error'), 'Error');
 				
 			});	
 		  }
@@ -442,7 +442,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 			.then(function(response) {
 				$scope.handleResponse(response);
 			}, function(response) {
-				sbiModule_messaging.showErrorMessage("An error occured while sorting", 'Error');
+				sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.sorting.error'), 'Error');
 				
 			});	
 		  }
@@ -488,7 +488,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 				whatIfBtns(response.data.status);
 				checkLock(response.data.status);
 		  },function(response){
-			  sbiModule_messaging.showErrorMessage("An error occurred while locking", 'Error'); 
+			  sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.workflow.error'), 'Error'); 
 		  });
 		 
 	  };
@@ -515,7 +515,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 			.then(function(response) {
 						$scope.handleResponse(response);
 		  },function(response){
-			  sbiModule_messaging.showErrorMessage("An error occured while refreshing", 'Error'); 
+			  sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.refresh.error'), 'Error'); 
 		  });
 	  };
 	  
@@ -526,7 +526,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 			.then(function(response) {
 						$scope.handleResponse(response);
 		  },function(response){
-			  sbiModule_messaging.showErrorMessage("An error occured while refreshing", 'Error'); 
+			  sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.refresh.error'), 'Error');
 		  });
 	  };
 	  
@@ -536,7 +536,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 			.then(function(response) {
 						$scope.handleResponse(response);
 		  },function(response){
-			  sbiModule_messaging.showErrorMessage("An error occured while refreshing", 'Error'); 
+			  sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.refresh.error'), 'Error');
 		  });
 	  };
 	  
@@ -556,7 +556,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 						sbiModule_download.getPlain(response.data, name,"text/csv","csv")
 					}
 			  },function(response){
-				  sbiModule_messaging.showErrorMessage("An error occured while exporting version", 'Error'); 
+				  sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.versionExport.error'), 'Error');
 				  $scope.closeDialogToolbarRight();
 				  initDialogs();
 			  });
@@ -642,9 +642,9 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 			.then(function(response) {
 				$scope.handleResponse(response);
 				$mdDialog.hide();
-				sbiModule_messaging.showInfoMessage("New version saved", 'Info');
+				sbiModule_messaging.showInfoMessage(sbiModule_translate.load('sbi.olap.versionSave.info'), 'Info');
 		  },function(response){
-			  sbiModule_messaging.showErrorMessage("An error occurred while saving new version", 'Error'); 
+			  sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.versionSave.error'), 'Error');
 		  });
 	  }
 	  
@@ -682,16 +682,16 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 			  
 				 sbiModule_restServices.promisePost("1.0",path)
 					.then(function(response) {
-						sbiModule_messaging.showSuccessMessage("Versions successfully deleted", 'Success');
+						sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.olap.versionDelete.success'), 'Success');
 						$scope.getVersions();
 						$scope.closeDialogToolbarRight();
 					}, function(response) {
-						sbiModule_messaging.showErrorMessage("An error occured while deleting versions", 'Error');
+						sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.versionDelete.error'), 'Error');
 						
 					});  
 		  }
 		  else{
-			  sbiModule_messaging.showWarningMessage("You can not delete actual version please try again", 'Warning');
+			  sbiModule_messaging.showWarningMessage(sbiModule_translate.load('sbi.olap.versionDeleteActual.warning'), 'Warning');
 		  }
 	  }
 	  
@@ -707,7 +707,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 				}
 				algsLoaded = true;
 			}, function(response) {
-				sbiModule_messaging.showErrorMessage("An error occured while loading alghorithms", 'Error');
+				sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.algorithmsLoad.error'), 'Error');
 				
 			});
 	  }
@@ -717,9 +717,9 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 		  sbiModule_restServices.promisePost("1.0",path)
 			.then(function(response) {
 				
-				sbiModule_messaging.showSuccessMessage("Algorithm sucessfully updated", 'Success');
+				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.olap.algorithmsSave.success'), 'Success');
 			}, function(response) {
-				sbiModule_messaging.showErrorMessage("An error occured while setting alghorithm", 'Error');
+				sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.algorithmsSave.error'), 'Error');
 				
 			});
 	  }

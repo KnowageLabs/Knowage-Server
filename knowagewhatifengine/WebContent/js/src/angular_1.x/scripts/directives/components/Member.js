@@ -151,7 +151,7 @@ angular.module('member_directive',['sbiModule'])
 	    			
 	    			
 	    		}, function(response) {
-	    			sbiModule_messaging.showErrorMessage("An error occured while getting properties for selected member", 'Error');
+	    			sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.propertiesGet.error'), 'Error');
 	    			
 	    		});
 	        	
