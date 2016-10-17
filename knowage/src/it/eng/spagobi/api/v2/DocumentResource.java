@@ -465,6 +465,12 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 		if (objLabelNotIn != null) {
 			restritions.add(new CriteriaParameter("label", objLabelNotIn.split(","), Match.NOT_IN));
 		}
+
+		// hide if user is not admin or devel and visible is false
+		if (!profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)
+				&& !profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV)) {
+			restritions.add(new CriteriaParameter("visible", true, Match.EQ));
+		}
 		try {
 			documentsDao = DAOFactory.getBIObjectDAO();
 
@@ -566,6 +572,11 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 						if (!biobjIds.contains(biobjId)) {
 							BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectForDetail(Integer.valueOf(biobjId));
 							if (obj != null) {
+								// hide if user is not admin or devel and visible is false
+								if (!obj.isVisible() && !profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)
+										&& !profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV)) {
+									continue;
+								}
 								if (ObjectsAccessVerifier.canSee(obj, profile)) {
 									objects.add(obj);
 									biobjIds.add(biobjId);
@@ -620,6 +631,11 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 
 			for (BIObject obj : allObjects) {
 				try {
+					// hide if user is not admin or devel and visible is false
+					if (!obj.isVisible() && !profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)
+							&& !profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV)) {
+						continue;
+					}
 					if (ObjectsAccessVerifier.canSee(obj, profile) && (!isTypeFilterValid || obj.getBiObjectTypeCode().equals(type))
 							&& (!isFolderFilterValid || obj.getFunctionalities().contains(functionalityId)))
 						objects.add(obj);
@@ -669,8 +685,14 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 
 			for (BIObject obj : allObjects) {
 				try {
-					if (ObjectsAccessVerifier.canSee(obj, profile))
+					// hide if user is not admin or devel and visible is false
+					if (!obj.isVisible() && !profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)
+							&& !profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV)) {
+						continue;
+					}
+					if (ObjectsAccessVerifier.canSee(obj, profile)) {
 						objects.add(obj);
+					}
 				} catch (EMFInternalError e) {
 				}
 			}
