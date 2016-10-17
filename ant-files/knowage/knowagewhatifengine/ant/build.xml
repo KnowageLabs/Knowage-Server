@@ -357,9 +357,9 @@
 			<batchtest  todir="${test}">
 				<fileset dir="${test}">
 						    	
-					<include name="**/ProbaTest.java"/>
-					<exclude name="**/AllTests.java"/>
-					
+					<include name="**/*Test.java"/>
+					<exclude name="**/integration*/*.java"/>
+					<exclude name="**/test*/*.java"/>
 				</fileset>
 				
 			</batchtest>
