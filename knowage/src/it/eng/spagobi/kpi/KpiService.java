@@ -963,7 +963,7 @@ public class KpiService {
 
 	@POST
 	@Path("/editKpiValue")
-	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT, SpagoBIConstants.MANAGE_KPI_VALUE })
 	public void editKpiValue(@Context HttpServletRequest req) throws EMFUserError {
 		logger.debug("editKpiValue IN");
 		Response out;
