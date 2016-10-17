@@ -374,7 +374,7 @@
 			
 		<exec dir="${conf.js.dir}" executable="/bin/sh" >
 			<arg value ="-c"/>
-			<arg value ="${protractor.dir} protractor conf.js"/>
+			<arg value ="${protractor.dir}/protractor conf.js"/>
 		</exec>
 													
 	</target>
