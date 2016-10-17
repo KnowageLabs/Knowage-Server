@@ -745,8 +745,8 @@
 	
 		<ant dir="../knowagewhatifengine/ant" target="knowagewhatif.unitTests"/>
 	</target>
-	<target name="test.all.Protractor" depends="create.all">
+	<target name="test.all.e2eTests" depends="test.all.unitTests">
 		
-			<ant dir="../knowagewhatifengine/ant" target="knowagewhatif.Protractor"/>
+			<ant dir="../knowagewhatifengine/ant" target="knowagewhatif.e2eTests"/>
 		</target>
 </project>

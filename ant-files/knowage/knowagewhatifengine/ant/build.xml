@@ -337,9 +337,15 @@
 	
 	<target name="knowagewhatif.unitTests" depends="compile.tests">
 		<antcall target="test.junit" />
-		<!--<antcall target="test.protractor"/>-->
+		
 	
 	</target>
+	
+	<target name="knowagewhatif.e2eTests" depends="knowagewhatif.unitTests">
+			<antcall target="test.protractor" />
+			
+		
+		</target>
 	
 	<target name="test.junit" >
 		
@@ -351,7 +357,7 @@
 			<batchtest  todir="${test}">
 				<fileset dir="${test}">
 						    	
-					<include name="**/*Test*.java"/>
+					<include name="**/ProbaTest.java"/>
 					<exclude name="**/AllTests.java"/>
 					
 				</fileset>
