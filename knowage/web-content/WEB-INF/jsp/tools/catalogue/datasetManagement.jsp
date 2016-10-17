@@ -102,7 +102,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			        
 	      		</md-fab-speed-dial>  -->
 	      		
-	      			<!-- ADDITIONAL BUTTONS -->
+	      		<!-- ADDITIONAL BUTTONS -->
 	      		<div style="float:left;">
 	      			
 	      			<!-- FIELDS METADATA BUTTON -->
@@ -304,7 +304,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							<!-- UPLOADING AND CHANGING FILE AS A DATA SOURCE OF THE DATASET -->
 							<md-card layout-padding  style="margin-top:0">
 								
-								<div layout="row" flex=100 layout-align="start center" ng-show="selectedDataSet.fileName=='' || changingFile">
+								<div layout="row" flex=100 layout-align="start center" ng-show="!selectedDataSet.fileName || selectedDataSet.fileName=='' || changingFile">
 					                  	
 				                  	<label layout-align="center center">
 				                  		{{translate.load("sbi.ds.wizard.selectFile")}}:
@@ -324,8 +324,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				                  	</div>
 				                  	
 								</div>
-									
-								<div layout="row" flex=100 ng-if="selectedDataSet.fileName!='' && !changingFile">
+								
+								<div layout="row" flex=100 ng-if="selectedDataSet.fileName && selectedDataSet.fileName!='' && !changingFile">
 							 		
 							 		<label style="margin-top:14px; margin-bottom:8px">
 							 			{{translate.load("sbi.workspace.dataset.wizard.file.uploaded")}}: <strong>{{selectedDataSet.fileName}}</strong>
