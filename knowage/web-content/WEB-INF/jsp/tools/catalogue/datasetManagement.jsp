@@ -79,7 +79,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					highlights-selected-item=true
 					click-function="loadDataSet(item)"
 					selected-item="selectedDataSetInit" 
-					speed-menu-option="manageDataset" >
+					speed-menu-option="manageDataset"
+					current-page-number=datasetTableLastPage >
 				</angular-table> 
 	        
 	       	</list>
@@ -212,7 +213,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								        </md-option>
 								       </md-select>  
 								       
-								       	<div  ng-messages="datasetForm.lbl.$error" ng-show="isCategoryRequired">
+								       	<div  ng-messages="datasetForm.lbl.$error" ng-show="isCategoryRequired && !selectedDataSet.catTypeVn">
 			       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 		       						 	</div>
 								       
@@ -287,7 +288,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								</md-card>
 							</md-content>
 							
-						<!-- ELEMENTS NEEDED FOR THE "FILE" DATASET TYPE -->
+						<!-- ELEMENTS NEEDED FOR THE FILE DATASET TYPE -->
 						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='File'">
 							
 							<!-- UPLOADING AND CHANGING FILE AS A DATA SOURCE OF THE DATASET -->
@@ -390,14 +391,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					                 	<div layout="row" layout-wrap flex=30>
 					                  		<div flex=90 layout-align="center center">
 					                     		<md-input-container class="md-block">
+					                        		
 					                        		<label>{{translate.load("sbi.ds.file.csv.delimiter")}}</label> 
-					                        		<md-select aria-label="aria-label" ng-model="selectedDataSet.csvDelimiter">
+					                        		
+					                        		<md-select aria-label="aria-label" ng-model="selectedDataSet.csvDelimiter" ng-required=true>
 					                           			<md-option 	ng-repeat="csvDelimiterCharacterItem in csvDelimiterCharacterTypes" 
 					                           						ng-click="chooseDelimiterCharacter(csvDelimiterCharacterItem)" 
 					                           						value="{{csvDelimiterCharacterItem.name}}">
 				                          						{{csvDelimiterCharacterItem.name}}
 				                     						</md-option>
 					                        		</md-select>
+					                        		
+					                        		<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.csvDelimiter">
+						       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+					       						 	</div>
+					       						 	
 						                     	</md-input-container>
 						                  	</div>
 										</div>
@@ -405,14 +413,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				                		<div layout="row" layout-wrap flex=30>
 					                  		<div flex=90 layout-align="center center">
 					                     		<md-input-container class="md-block">
+					                        		
 					                        		<label>{{translate.load("sbi.ds.file.csv.quote")}}</label> 
-					                        		<md-select aria-label="aria-label" ng-model="selectedDataSet.csvQuote">
+					                        		
+					                        		<md-select aria-label="aria-label" ng-model="selectedDataSet.csvQuote" ng-required=true>
 					                           			<md-option 	ng-repeat="csvQuoteCharacterItem in csvQuoteCharacterTypes" 
 					                           						ng-click="chooseQuoteCharacter(csvQuoteCharacterItem)" 
 					                           						value="{{csvQuoteCharacterItem.name}}">
 				                          						{{csvQuoteCharacterItem.name}}
 				                     						</md-option>
 					                        		</md-select>
+					                        		
+					                        		<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.csvQuote">
+						       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+					       						 	</div>
+					                        		
 						                     	</md-input-container>
 						                  	</div>
 										</div>
@@ -420,14 +435,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										<div layout="row" layout-wrap flex=30>
 					                  		<div flex=90 layout-align="center center">
 					                     		<md-input-container class="md-block">
+					                        		
 					                        		<label>{{translate.load("sbi.workspace.dataset.wizard.csv.encoding")}}</label> 
-					                        		<md-select aria-label="aria-label" ng-model="selectedDataSet.csvEncoding">
+					                        		
+					                        		<md-select aria-label="aria-label" ng-model="selectedDataSet.csvEncoding" ng-required=true>
 					                           			<md-option 	ng-repeat="csvEncodingItem in csvEncodingTypes" 
 					                           						ng-click="chooseEncoding(csvEncodingItem)" 
 					                           						value="{{csvEncodingItem.name}}">
 				                          						{{csvEncodingItem.name}}
 				                     						</md-option>
 					                        		</md-select>
+					                        		
+					                        		<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.csvEncoding">
+						       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+					       						 	</div>
+					                        		
 						                     	</md-input-container>
 						                  	</div>
 										</div>
@@ -668,7 +690,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									            
 									            <md-button class="md-icon-button" aria-label="Delete all custom attributes" 
 															ng-click="deleteAllCustomAttributes()" title="Delete all custom attributes">
-									              <md-icon md-font-icon="fa fa-times" class="fa fa-2x"></md-icon>
+									              <md-icon md-font-icon="fa fa-eraser" class="fa fa-2x"></md-icon>
 									            </md-button>
 									         
 								          	</div>
@@ -772,8 +794,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						                  		<div flex=90 layout-align="center center">
 						                     		<md-input-container class="md-block" style="margin:0">
 						                        		<label>{{translate.load("sbi.ds.file.xsl.skiprows")}}</label> 
-						                        		<input 	ng-model="selectedDataSet.skipRows" type="number" 
-						                        				step="1" min="0" value="{{selectedDataSet.skipRows}}">
+						                        		<input 	ng-model="selectedDataSet.ckanSkipRows" type="number" 
+						                        				step="1" min="0" value="{{selectedDataSet.ckanSkipRows}}">
 							                     	</md-input-container>
 							                  	</div>
 											</div>
@@ -782,8 +804,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						                  		<div flex=90 layout-align="center center">
 						                     		<md-input-container class="md-block" style="margin:0">
 						                        		<label>{{translate.load("sbi.ds.file.xsl.limitrows")}}</label> 
-						                        		<input 	ng-model="selectedDataSet.limitRows" type="number" 
-						                        				step="1" min="0" value="{{dataset.limitRows}}">
+						                        		<input 	ng-model="selectedDataSet.ckanLimitRows" type="number" 
+						                        				step="1" min="0" value="{{selectedDataSet.ckanLimitRows}}">
 							                     	</md-input-container>
 							                  	</div>
 											</div>
@@ -792,8 +814,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						                  		<div flex=90 layout-align="center center">
 						                     		<md-input-container class="md-block" style="margin:0">
 						                        		<label>{{translate.load("sbi.ds.file.xsl.sheetnumber")}}</label> 
-						                        		<input 	ng-model="selectedDataSet.xslSheetNumber" type="number" 
-						                        				step="1" min="1" value="{{selectedDataSet.xslSheetNumber}}">
+						                        		<input 	ng-model="selectedDataSet.ckanXslSheetNumber" type="number" 
+						                        				step="1" min="1" value="{{selectedDataSet.ckanXslSheetNumber}}">
 							                     	</md-input-container>
 							                  	</div>
 											</div>
@@ -815,14 +837,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						                 	<div layout="row" layout-wrap flex=30>
 						                  		<div flex=90 layout-align="center center">
 						                     		<md-input-container class="md-block" style="margin:0">
+						                        		
 						                        		<label>{{translate.load("sbi.ds.file.csv.delimiter")}}</label> 
-						                        		<md-select aria-label="aria-label" ng-model="selectedDataSet.csvDelimiter">
-						                           			<md-option 	ng-repeat="csvDelimiterCharacterItem in csvDelimiterCharacterTypes" 
+						                        		
+						                        		<md-select aria-label="aria-label" ng-model="selectedDataSet.ckanCsvDelimiter" ng-required=true>
+						                           			<md-option 	ng-repeat="csvDelimiterCharacterItem in csvDelimiterCharacterTypes" 						                           						
 						                           						ng-click="chooseDelimiterCharacter(csvDelimiterCharacterItem)" 
 						                           						value="{{csvDelimiterCharacterItem.name}}">
 					                          						{{csvDelimiterCharacterItem.name}}
-					                     						</md-option>
+				                     						</md-option>
 						                        		</md-select>
+						                        		
+						                        		<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.ckanCsvDelimiter">
+							       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+						       						 	</div>
+										                        		
 							                     	</md-input-container>
 							                  	</div>
 											</div>
@@ -830,14 +859,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					                		<div layout="row" layout-wrap flex=30>
 						                  		<div flex=90 layout-align="center center">
 						                     		<md-input-container class="md-block" style="margin:0">
+						                        		
 						                        		<label>{{translate.load("sbi.ds.file.csv.quote")}}</label> 
-						                        		<md-select aria-label="aria-label" ng-model="selectedDataSet.csvQuote">
+						                        		
+						                        		<md-select aria-label="aria-label" ng-model="selectedDataSet.ckanCsvQuote" ng-required=true>
 						                           			<md-option 	ng-repeat="csvQuoteCharacterItem in csvQuoteCharacterTypes" 
 						                           						ng-click="chooseQuoteCharacter(csvQuoteCharacterItem)" 
 						                           						value="{{csvQuoteCharacterItem.name}}">
 					                          						{{csvQuoteCharacterItem.name}}
 					                     						</md-option>
 						                        		</md-select>
+						                        		
+						                        		<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.ckanCsvQuote">
+							       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+						       						 	</div>
+						                        		
 							                     	</md-input-container>
 							                  	</div>
 											</div>
@@ -845,14 +881,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 											<div layout="row" layout-wrap flex=30>
 						                  		<div flex=90 layout-align="center center">
 						                     		<md-input-container class="md-block" style="margin:0">
+						                        		
 						                        		<label>{{translate.load("sbi.workspace.dataset.wizard.csv.encoding")}}</label> 
-						                        		<md-select aria-label="aria-label" ng-model="selectedDataSet.csvEncoding">
+						                        		
+						                        		<md-select aria-label="aria-label" ng-model="selectedDataSet.ckanCsvEncoding" ng-required=true>
 						                           			<md-option 	ng-repeat="csvEncodingItem in csvEncodingTypes" 
 						                           						ng-click="chooseEncoding(csvEncodingItem)" 
 						                           						value="{{csvEncodingItem.name}}">
 					                          						{{csvEncodingItem.name}}
 					                     						</md-option>
 						                        		</md-select>
+						                        		
+						                        		<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.ckanCsvEncoding">
+							       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+						       						 	</div>
+						                        		
 							                     	</md-input-container>
 							                  	</div>
 											</div>
@@ -1069,7 +1112,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										show-search-bar=false
 										scope-functions=metaScopeFunctions
 										no-pagination=false
-										speed-menu-option=requestHeadersDelete >
+										speed-menu-option=requestHeadersDelete
+										current-page-number=restDsRequestHeaderTableLastPage >
 								</angular-table>
 								   									
 							</md-card>
@@ -1226,7 +1270,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										show-search-bar=false
 										scope-functions="metaScopeFunctionsJsonPathAttr"
 										no-pagination=false
-										speed-menu-option="restJsonPathAttributesDelete" >
+										speed-menu-option="restJsonPathAttributesDelete"
+										current-page-number=restDsJsonPathAttribTableLastPage >
 								</angular-table>
 								   									
 							</md-card>
@@ -1308,7 +1353,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 											show-search-bar=false
 											scope-functions=paramScopeFunctions
 											no-pagination=false
-											speed-menu-option="parameterDelete">
+											speed-menu-option="parameterDelete"
+											current-page-number=parametersTableLastPage >
 									</angular-table>
 								   									
 								</md-card>
@@ -1526,7 +1572,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 											<div style="float:left" flex=50>
 												<label>{{translate.load('sbi.ds.persist.cron.startdate')}}:</label>
 												
-												<md-datepicker ng-model="myDate1" md-placeholder="Enter date"
+												<md-datepicker ng-model="selectedDataSet.startDate" md-placeholder="Enter date"
 		            											md-min-date="minDate" md-max-date="maxDate">
 												</md-datepicker>
 											</div>
@@ -1534,7 +1580,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 											<div style="float:right" flex=50>
 												<label>{{translate.load('sbi.ds.persist.cron.enddate')}}:</label>
 												
-												<md-datepicker ng-model="myDate2" md-placeholder="Enter date"
+												<md-datepicker ng-model="selectedDataSet.endDate" md-placeholder="Enter date"
 		            											md-min-date="minDate" md-max-date="maxDate">
 												</md-datepicker>
 											</div>

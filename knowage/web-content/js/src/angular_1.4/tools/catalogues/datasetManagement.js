@@ -69,6 +69,13 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	$scope.datasetsListTemp = [];
 	$scope.datasetsListPersisted = [];
 	
+	// Initialization of scope variables that will show their AT the value of the number of its last page (when adding new items)
+	$scope.datasetTableLastPage = 1;
+	$scope.parametersTableLastPage = 1;
+	$scope.restDsRequestHeaderTableLastPage = 1;
+	$scope.restDsJsonPathAttribTableLastPage = 1;
+	$scope.aaauuu = true;
+	
 	$scope.fileObj={};
 	$scope.selectedTab = 0;	// Initially, the first tab is selected.
 	$scope.tempScope = {};
@@ -231,15 +238,15 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
 	 */
 	$scope.chooseDelimiterCharacter = function(delimiterCharacterObj) {
-		$scope.dataset.csvDelimiter = delimiterCharacterObj;
+		$scope.selectedDataSet.csvDelimiter = delimiterCharacterObj;
 	}
 	
 	$scope.chooseQuoteCharacter = function(quoteCharacterObj) {
-		$scope.dataset.csvQuote = quoteCharacterObj;
+		$scope.selectedDataSet.csvQuote = quoteCharacterObj;
 	}
 	
 	$scope.chooseEncoding = function(encodingObj) {
-		$scope.dataset.csvEncoding = encodingObj;
+		$scope.selectedDataSet.csvEncoding = encodingObj;
 	}
 	
 	/**
@@ -315,7 +322,25 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	$scope.restRequestHeaders = [];
 	
 	$scope.requestHeaderAddItem = function() {
+		
 		$scope.restRequestHeaders.push({"name":"","value":"","index":$scope.counterRequestHeaders++});
+		
+		$timeout(			
+				function() { 
+					var page = $scope.tableLastPage("requestHeadersTable");	
+					console.log(page);
+					console.log($scope.restDsRequestHeaderTableLastPage);
+					// If the page that is returned is less than the current one, that means that we are already on that page, so keep it (danristo)
+					//console.log(page<$scope.restDsRequestHeaderTableLastPage);
+					$scope.restDsRequestHeaderTableLastPage = (page<=$scope.restDsRequestHeaderTableLastPage)
+						? $scope.restDsRequestHeaderTableLastPage : page; 
+					
+					//console.log($scope.restDsRequestHeaderTableLastPage);
+				}, 
+				
+				300
+			);
+		
 	}	
 	
 	// Provide unique IDs for elements in the Request header grid, so we can remove them easily
@@ -415,10 +440,22 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	$scope.counterJsonAttributes = 0;
 	
 	$scope.restJsonPathAttributesAddItem = function() {
+		
 		$scope.restJsonPathAttributes.push({"name":"","jsonPathValue":"","typeOrJsonPathValue":"", "index":$scope.counterJsonAttributes++});
+		
+		$timeout(			
+				function() { 
+					var page = $scope.tableLastPage("jsonPathAttrTable");						
+					// If the page that is returned is less than the current one, that means that we are already on that page, so keep it (danristo)
+					$scope.restDsJsonPathAttribTableLastPage = page<$scope.restDsJsonPathAttribTableLastPage ? $scope.restDsJsonPathAttribTableLastPage : page; 
+				}, 
+				
+				300
+			);
+		
 	}
 		
-		$scope.restJsonPathAttributesDelete = 
+	$scope.restJsonPathAttributesDelete = 
 	[
 	 	//Delete the REST request JSON path attribute
 		{
@@ -444,7 +481,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	 						
 	 						function() {
 	 							
-	 							for (i=$scope.restJsonPathAttributes.length-1; i>=0; i--) {
+	 							for (i=0; i<$scope.restJsonPathAttributes.length; i++) {
 	 					 			
 	 					 			if ($scope.restJsonPathAttributes[i].index == item.index) {
 	 					 				$scope.restJsonPathAttributes.splice(i,1);
@@ -489,14 +526,11 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     ];
 	
 	$scope.paramScopeFunctions = {
-			datasetParameterTypes: $scope.datasetParameterTypes
+		datasetParameterTypes: $scope.datasetParameterTypes
 	};
-		
-	$scope.paramName =  '<md-input-container class="md-block" style="margin:0"><input ng-model="_xxx2_"></md-input-container>';
-	$scope.paramType = '<md-select ng-model=row.pname class="noMargin"><md-option ng-repeat="col in scopeFunctions.datasetParameterTypes" value="{{col.name}}">{{col.name}}</md-option></md-select>';
-	$scope.paramDefaultValues =  '<md-input-container class="md-block" style="margin:0"><input ng-model="_xxx2_"></md-input-container>';
 
 	$scope.parametersColumns = [
+	                            
         {
         	"label":$scope.translate.load("sbi.generic.name"), 
         	"name":"name", 
@@ -513,7 +547,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     		hideTooltip:true,
         	
         	transformer: function() {
-        		return '<md-select ng-model=row.type class="noMargin"><md-option ng-repeat="col in scopeFunctions.datasetParameterTypes" value="{{col.name}}">{{col.name}}</md-option></md-select>';;
+        		return '<md-select ng-model=row.type class="noMargin"><md-option ng-repeat="col in scopeFunctions.datasetParameterTypes" value="{{col.name}}">{{col.name}}</md-option></md-select>';
         	}
 		},
         
@@ -526,15 +560,27 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
         		return '<md-input-container class="md-block" style="margin:0"><input ng-model="row.defaultValue"></md-input-container>';
         	}
 		}
+		
     ];
 	
 	$scope.parameterItems = [];
+	$scope.parametersCounter = 0;
 	
 	$scope.parametersAddItem = function() {
+		
 		$scope.parameterItems.push({"name":"","type":"", "defaultValue":"","index":$scope.parametersCounter++});
+		
+		$timeout(			
+					function() { 
+						var page = $scope.tableLastPage("datasetParametersTable");						
+						// If the page that is returned is less than the current one, that means that we are already on that page, so keep it (danristo)
+						$scope.parametersTableLastPage = page<$scope.parametersTableLastPage ? $scope.parametersTableLastPage : page; 
+					}, 
+					
+					300
+				);
+		
 	}
-	
-	$scope.parametersCounter = 0;
 	
 	$scope.parameterDelete = 
 	[
@@ -605,8 +651,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	// Customization of the table columns (headers). The label is visible, whilst the name serves for binding.
 	$scope.customAttributesTableColumns = 
 	[
-	 	{label:"Name",name:"name"},
-	 	{label:"Value",name:"value"},
+	 	{label:"Name",name:"name",hideTooltip:true},
+	 	{label:"Value",name:"value",hideTooltip:true},
 	 ];
 	
 	$scope.customAttrScopeFunctions = {
@@ -681,8 +727,9 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		 	backgroundColor:'transparent',
 	   
 		 	action: function(item,event) {
-		 				 		
-		 		if (item.label!="..." && item.label!="") {
+		 		console.log(item.id);
+		 		// Deleting an existing (persisted) dataset 
+		 		if (item.id && item.id != "") {
 		 			
 		 			var confirm = $mdDialog.confirm()
 		 	          .title($scope.translate.load('sbi.ds.deletedataset'))
@@ -741,6 +788,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		 						
 	 						);
 			 		}
+		 			// Deleting an unsaved (unpersisted) dataset (the new one or the cloned one)
 		 			else {
 		 						 				
 		 				var confirm = $mdDialog.confirm()
@@ -758,12 +806,9 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			 							
 			 							$scope.datasetsListTemp.splice($scope.datasetsListTemp.length-1,1);		
 			 							
-			 							// If the newly added dataset is selected when deleting it.
-			 							if ($scope.selectedDataSet.label=="..." || $scope.selectedDataSet.label=="") {			 								
-				 							$scope.selectedDataSetInit = null; // Reset the selection (none dataset item will be selected) (danristo)
-				 							$scope.selectedDataSet = null;
-				 							$scope.showSaveAndCancelButtons = false;
-			 							}		
+			 							$scope.selectedDataSetInit = null; // Reset the selection (none dataset item will be selected) (danristo)
+			 							$scope.selectedDataSet = null;
+			 							$scope.showSaveAndCancelButtons = false;	
 			 							
 			 						}, 
 			 						
@@ -787,14 +832,26 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				 		
 			 			var datasetClone = angular.copy(item);	
 				 		
+			 			datasetClone.id = "";
 				 		datasetClone.label = "...";
 				 		datasetClone.dsVersions = [];
 				 		datasetClone.usedByNDocs = 0;
+				 		datasetClone.xslSheetNumber = Number(datasetClone.xslSheetNumber);
 				 		$scope.datasetsListTemp.push(datasetClone);
-				 		$scope.selectedDataSet = $scope.datasetsListTemp[$scope.datasetsListTemp.length-1];
-				 		$scope.selectedDataSetInit = $scope.datasetsListTemp[$scope.datasetsListTemp.length-1];
+				 		$scope.selectedDataSet = angular.copy($scope.datasetsListTemp[$scope.datasetsListTemp.length-1]);
+				 		$scope.selectedDataSetInit = angular.copy($scope.datasetsListTemp[$scope.datasetsListTemp.length-1]);
 				 		
 				 		$scope.showSaveAndCancelButtons = true;
+				 		
+				 		$timeout(
+				 					function() {
+				 						var page = $scope.tableLastPage("datasetList_id");
+				 						// If the page that is returned is less than the current one, that means that we are already on that page, so keep it (danristo)
+										$scope.datasetTableLastPage = page<$scope.datasetTableLastPage ? $scope.datasetTableLastPage : page; 
+				 					},
+				 					
+				 					300
+				 				);
 				 		
 			 		}
 			 		else {
@@ -1131,13 +1188,15 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	  * Adds variable map(name,value) object to scenario property array variable.
 	  */
 	 $scope.addParameters = function(){ 
-			var param={};
-			if($scope.selectedDataSet.parameters==undefined){
-				$scope.selectedDataSet.parameters = [];
-			}
-			$scope.selectedDataSet.parameters.push(param);
-			console.log($scope.selectedDataSet.parameters);
-			return param;
+		var param={};
+		
+		if($scope.selectedDataSet.parameters==undefined){
+			$scope.selectedDataSet.parameters = [];
+		}
+		
+		$scope.selectedDataSet.parameters.push(param);
+		console.log($scope.selectedDataSet.parameters);
+		return param;
 	 }
 	 
 	 /**
@@ -1155,6 +1214,27 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		$scope.selectedDataSetInit = angular.copy(item);
 		$scope.selectedDataSet = angular.copy(item);
 		$scope.showSaveAndCancelButtons = true;
+		
+		// DATASET PARAMETERS
+		var parameterItemsTemp = [];			
+		
+		var parameterItems = $scope.selectedDataSet.pars;
+		var parameterItemsLength = parameterItems.length;
+		
+		for (j=0; j<parameterItemsLength; j++) {
+			
+			var parameterItemTemp = {};
+			
+			parameterItemTemp["name"] = parameterItems[j]["name"];
+			parameterItemTemp["type"] = parameterItems[j]["type"];
+			parameterItemTemp["defaultValue"] = parameterItems[j]["defaultValue"];
+			parameterItemTemp["index"] = $scope.parametersCounter++;
+			
+			parameterItemsTemp.push(parameterItemTemp);
+			  
+		}
+		
+		$scope.parameterItems = parameterItemsTemp;
 		
 		if ($scope.selectedDataSet.dsTypeCd.toLowerCase()=="rest") {
 			
@@ -1189,7 +1269,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			var restJsonPathAttributesTemp = [];	
 			
 			var restJsonPathAttributes = JSON.parse($scope.selectedDataSet.restJsonPathAttributes);
-			var restJsonPathAttributesLength = JSON.parse($scope.selectedDataSet.restJsonPathAttributes).length;
+			var restJsonPathAttributesLength = restJsonPathAttributes.length;
 			
 			for (j=0; j<restJsonPathAttributesLength; j++) {
 				
@@ -1207,9 +1287,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			$scope.restJsonPathAttributes = restJsonPathAttributesTemp;
 			
 		}		
-		
-		$scope.parameterItems = $scope.selectedDataSet.pars;
-		
+				
 		// Call the scope function that is responsible for transformation of configuration data of the File dataset.
 		($scope.selectedDataSet.dsTypeCd.toLowerCase()=="file") ? $scope.refactorFileDatasetConfig(item) : null;
 				
@@ -1268,8 +1346,29 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		
 	}
 	
+	/** 
+	 * The function that will check for the current last AT page, so it can set this one to active one when new items are 
+	 * added to the AT witht the "tableId" ID.
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	$scope.tableLastPage = function(tableId) {
+				
+		var datasetTable = document.getElementById(tableId);		
+		var listOfPages = datasetTable.getElementsByTagName("dir-pagination-controls")[0].innerText;
+		listOfPages = listOfPages.replace(/\s/g, "");
+//		console.log(listOfPages);
+//		console.log(listOfPages.charAt(listOfPages.indexOf(">")-1));
+		// If the AT is empty, set the current page on the table's first one
+		if (listOfPages!="") {
+			return parseInt(listOfPages.charAt(listOfPages.indexOf(">")-1));
+		}
+		else {
+			return 1;
+		}
+
+	}
+	
 	$scope.createNewDataSet = function() {
-//		$log.info("create");
 		
 		if ($scope.datasetsListTemp.length < $scope.datasetsListPersisted.length + 1) {
 			
@@ -1302,9 +1401,14 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			}
 			
 			$scope.datasetsListTemp.push(object);
-			$scope.selectedDataSet = $scope.datasetsListTemp[$scope.datasetsListTemp.length-1];
-			$scope.selectedDataSetInit = $scope.datasetsListTemp[$scope.datasetsListTemp.length-1]; // Reset the selection (none dataset item will be selected) (danristo)
+			$scope.selectedDataSet = angular.copy($scope.datasetsListTemp[$scope.datasetsListTemp.length-1]);
+			$scope.selectedDataSetInit = angular.copy($scope.datasetsListTemp[$scope.datasetsListTemp.length-1]); // Reset the selection (none dataset item will be selected) (danristo)
 			$scope.showSaveAndCancelButtons = true;
+			
+			// Give a little time for the AT to render after the insertion of a new table element (new dataset) (danristo)
+			// We do not need to check if the current page is the one that is return by a function, since we cannot add more than one empty dataset
+			$timeout(function() { var page = $scope.tableLastPage("datasetList_id"); $scope.datasetTableLastPage = (page<=$scope.datasetTableLastPage)
+			? $scope.datasetTableLastPage : page;  }, 100);
 			
 		}	
 		else {
@@ -1325,18 +1429,39 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	};
 	
 	$scope.saveDataset = function() {
+		
 		$scope.selectedDataSet.recalculateMetadata = true;
-		$scope.manageDatasetFieldMetadata($scope.selectedDataSet.meta)
-		// Perform saving when the dataset is selected (POST or PUT, i.e. creating a new or updating the existing dataset)
+		$scope.manageDatasetFieldMetadata($scope.selectedDataSet.meta);
+		
+		// Collect parameters 
+		// TODO: maybe to remove the "index" property, if it makes trouble (it is excessive anyway)
+		$scope.selectedDataSet.pars = $scope.parameterItems;
+		
+		// ADVANCED tab
+		// For transforming
+		console.log($scope.transformDatasetState);
+		console.log($scope.transformationDataset.VALUE_CD);
+		console.log($scope.transformationDataset);
+		$scope.transformDatasetState==true ? $scope.selectedDataSet.trasfTypeCd=$scope.transformationDataset.VALUE_CD : null;
+		console.log($scope.selectedDataSet);
 		if ($scope.selectedDataSet) {
+			
 			$log.info("save");
+			
 			sbiModule_restServices.promisePost('1.0/datasets','', angular.toJson($scope.selectedDataSet))
-			.then(function(response) {
-				console.log("[POST]: SUCCESS!");
-				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
-			}, function(response) {
-				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-			});
+				.then(function(response) {
+					
+					console.log("[POST]: SUCCESS!");					
+					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');					
+					
+					// RELOAD ALL THE DATASETS AFTER SAVE OPERATION
+					$scope.loadAllDatasets();
+					$scope.selectedDataSet = null;
+					
+				}, function(response) {
+					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+				});
+			
 		}	
 		else {
 			// TODO: translate
@@ -1344,7 +1469,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		}
 		
 	};
-		
+	
 	$scope.closeDatasetDetails = function() {
 //		$log.info("cancel");
 		$scope.selectedDataSetInit = null; // Reset the selection (none dataset item will be selected) (danristo)
@@ -1514,43 +1639,47 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	 
 	$scope.openQbe = function() {
 		
-		console.log($scope.selectedDataSet.qbeDataSource);
-		console.log($scope.selectedDataSet.qbeDatamarts);
-		
-		if ($scope.selectedDataSet.qbeDataSource && $scope.selectedDataSet.qbeDatamarts) {
-			$log.info("OPEN QBE");
+		if ($scope.selectedDataSet.dsTypeCd.toUpperCase() == "QBE") {
+			
+			if ($scope.selectedDataSet.qbeDataSource && $scope.selectedDataSet.qbeDatamarts) {
+				$log.info("OPEN QBE FOR QBE DATASET");
+			}
+			else {
+				// TODO: translate
+				if (!$scope.selectedDataSet.qbeDataSource) {
+//					sbiModule_messaging.showErrorMessage("The datasource must be selected before opening the QBE");
+					
+					$mdDialog
+						.show(
+								$mdDialog.alert()
+							        .clickOutsideToClose(true)
+							        .title('Cannot open QBE')
+							        .textContent("The datasource must be selected before opening the QBE")
+							        .ariaLabel('Cannot open QBE')
+							        .ok('Ok')
+						    );
+					
+				}
+				else if (!$scope.selectedDataSet.qbeDatamarts) {
+//					sbiModule_messaging.showErrorMessage("The datamart must be selected before opening the QBE");
+					
+					$mdDialog
+						.show(
+								$mdDialog.alert()
+							        .clickOutsideToClose(true)
+							        .title('Cannot open QBE')
+							        .textContent("The datamart must be selected before opening the QBE")
+							        .ariaLabel('Cannot open QBE')
+							        .ok('Ok')
+						    );
+					
+				}
+			}
+			
 		}
 		else {
-			// TODO: translate
-			if (!$scope.selectedDataSet.qbeDataSource) {
-//				sbiModule_messaging.showErrorMessage("The datasource must be selected before opening the QBE");
-				
-				$mdDialog
-					.show(
-							$mdDialog.alert()
-						        .clickOutsideToClose(true)
-						        .title('Cannot open QBE')
-						        .textContent("The datasource must be selected before opening the QBE")
-						        .ariaLabel('Cannot open QBE')
-						        .ok('Ok')
-					    );
-				
-			}
-			else if (!$scope.selectedDataSet.qbeDatamarts) {
-//				sbiModule_messaging.showErrorMessage("The datamart must be selected before opening the QBE");
-				
-				$mdDialog
-					.show(
-							$mdDialog.alert()
-						        .clickOutsideToClose(true)
-						        .title('Cannot open QBE')
-						        .textContent("The datamart must be selected before opening the QBE")
-						        .ariaLabel('Cannot open QBE')
-						        .ok('Ok')
-					    );
-				
-			}
-		}
+			$log.info("OPEN QBE FOR FEDERATED DATASET");
+		}		
 		
 	}
 	
@@ -1948,7 +2077,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			.show(confirm)
 			.then(					
 					function() {
-						$scope.restRequestHeaders = [];		 	        	
+						$scope.restRequestHeaders = [];	
+						$scope.restDsRequestHeaderTableLastPage = 1;
 			 		}
 				);	
     	    	
@@ -1974,7 +2104,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				);	
     	
     }
-    
+
     $scope.manageDatasetFieldMetadata =  function(fieldsColumns){
   		if(fieldsColumns){
   			//Temporary workaround because fieldsColumns is now an object with a new structure after changing DataSetJSONSerializer
