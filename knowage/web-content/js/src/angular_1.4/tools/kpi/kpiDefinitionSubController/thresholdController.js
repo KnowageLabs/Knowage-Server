@@ -74,7 +74,17 @@ function kpiDefinitionThresholdControllerFunction($scope,sbiModule_translate,sbi
 	                        	label:"  ",
 	                        	name:"move",
 	                        	size:"70px",
-	                        	hideTooltip:true
+	                        	hideTooltip:true,
+	                        	transformer:function(){
+	                        		return "<div layout=\"row\"> " 
+	                				+"<md-button ng-click=\"scopeFunctions.moveUp($event,$parent.$parent.$parent.$parent.$parent.$index)\" class=\"md-icon-button h20 \" aria-label=\"up\">" 
+	                				+"  <md-icon md-font-icon=\"fa fa-arrow-up\"></md-icon>" 
+	                				+" </md-button>" 
+	                				+" <md-button ng-click=\"scopeFunctions.moveDown($event,$parent.$parent.$parent.$parent.$parent.$index)\" class=\"md-icon-button h20\" aria-label=\"down\">" 
+	                				+" <md-icon md-font-icon=\"fa fa-arrow-down\"></md-icon>" 
+	                				+"</md-button>" 
+	                				+"</div>";
+	                        	}
 	                        },
 	                        {
 	                        	label:sbiModule_translate.load("sbi.thresholds.position"),
@@ -83,41 +93,67 @@ function kpiDefinitionThresholdControllerFunction($scope,sbiModule_translate,sbi
 	                        },
 	                        {
 	                        	label:sbiModule_translate.load("sbi.browser.searchpanel.attributes.label"),
-	                        	name:"inputLable",
-	                        	hideTooltip:true
+	                        	name:"label",
+	                        	hideTooltip:true,
+                        		transformer:function(){
+	                        		return ' <input  class="tableInput" ng-model="row.label"  ></input>'
+	                        	}
 	                        },
 	                        {
 	                        	label:sbiModule_translate.load("sbi.thresholds.min"),
 	                        	name:"includeNumericInputMin",
 	                        	size: "60px",
-	                        	hideTooltip:true
+	                        	hideTooltip:true,
+                        		transformer:function(){
+	                        		return ' <input type="number" class="tableInput" ng-model="row.minValue" step="0,1"  ></input>'
+	                        	}
 	                        },
 	                        {
 	                        	label:sbiModule_translate.load("sbi.thresholds.includemin"),
 	                        	name:"includeMinCheck",
-	                        	hideTooltip:true
+	                        	hideTooltip:true,
+                        		transformer:function(){
+	                        		return "<md-checkbox ng-model='row.includeMin'  aria-label='Checkbox'></md-checkbox>"
+	                        	}
 	                        },
 	                        {
 	                        	label:sbiModule_translate.load("sbi.thresholds.max"),
 	                        	name:"includeNumericInputMax",
 	                        	size: "60px",
-	                        	hideTooltip:true
+	                        	hideTooltip:true,
+                        		transformer:function(){
+	                        		return  '<input type="number" class="tableInput" ng-model="row.maxValue" step="0,1"  ></input>'
+	                        	}
 	                        },
 	                        {
 	                        	label:sbiModule_translate.load("sbi.thresholds.includemax"),
 	                        	name:"includeMaxCheck",
-	                        	hideTooltip:true
+	                        	hideTooltip:true,
+                        		transformer:function(){
+	                        		return '<md-checkbox ng-model="row.includeMax"  aria-label="Checkbox"></md-checkbox>';
+	                        	}
 	                        },
 	                        {
 	                        	label:sbiModule_translate.load("sbi.thresholds.severity"),
 	                        	name:"comboSeverity",
-	                        	hideTooltip:true
+	                        	hideTooltip:true,
+                        		transformer:function(){
+	                        		return ' <md-select ng-model="row.severityId" class="noMargin">'
+	                				+'<md-option value=""></md-option>'
+	                				+'<md-option ng-repeat="sev in scopeFunctions.severityType" value="{{sev.valueId}}">'
+	                				+'	{{sev.translatedValueName}}'
+	                				+' </md-option>'
+	                				+'</md-select>';
+	                        	}
 	                        },
 	                        {
 	                        	label:sbiModule_translate.load("sbi.thresholds.color"),
 	                        	name:"selectColor",
 	                        	size:"90px",
-	                        	hideTooltip:true
+	                        	hideTooltip:true,
+                        		transformer:function(){
+	                        		return '<color-picker class="tableColorPiker"  color-picker-alpha="true" color-picker-swatch="true" color-picker-format="\'hex\'" ng-model="row.color"></color-picker>';
+	                        	}
 	                        },
 	                        
 	                        ];

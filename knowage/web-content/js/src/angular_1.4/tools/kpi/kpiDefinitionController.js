@@ -284,14 +284,14 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 
 	$scope.convertThresholdToCorrectObject=function(kpi){
 		for(var i=0;i<kpi.threshold.thresholdValues.length;i++){
-			delete kpi.threshold.thresholdValues[i].move;
-			delete kpi.threshold.thresholdValues[i].inputLable;
-			delete kpi.threshold.thresholdValues[i].includeNumericInputMin;
-			delete kpi.threshold.thresholdValues[i].includeNumericInputMax;
-			delete kpi.threshold.thresholdValues[i].includeMinCheck;
-			delete kpi.threshold.thresholdValues[i].includeMaxCheck;
-			delete kpi.threshold.thresholdValues[i].selectColor;
-			delete kpi.threshold.thresholdValues[i].comboSeverity;
+//			delete kpi.threshold.thresholdValues[i].move;
+//			delete kpi.threshold.thresholdValues[i].inputLable;
+//			delete kpi.threshold.thresholdValues[i].includeNumericInputMin;
+//			delete kpi.threshold.thresholdValues[i].includeNumericInputMax;
+//			delete kpi.threshold.thresholdValues[i].includeMinCheck;
+//			delete kpi.threshold.thresholdValues[i].includeMaxCheck;
+//			delete kpi.threshold.thresholdValues[i].selectColor;
+//			delete kpi.threshold.thresholdValues[i].comboSeverity;
 			if(kpi.threshold.thresholdValues[i].position != i+1){
 				kpi.threshold.thresholdValues[i].position = i+1;
 			}
@@ -507,28 +507,28 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 	//methods Threshold
 	$scope.loadThreshold=function(){
 
-		for(var i=0;i<$scope.kpi.threshold.thresholdValues.length;i++){
-			$scope.kpi.threshold.thresholdValues[i].move="<div layout=\"row\"> " 
-				+"<md-button ng-click=\"scopeFunctions.moveUp($event,$parent.$parent.$parent.$parent.$parent.$index)\" class=\"md-icon-button h20 \" aria-label=\"up\">" 
-				+"  <md-icon md-font-icon=\"fa fa-arrow-up\"></md-icon>" 
-				+" </md-button>" 
-				+" <md-button ng-click=\"scopeFunctions.moveDown($event,$parent.$parent.$parent.$parent.$parent.$index)\" class=\"md-icon-button h20\" aria-label=\"down\">" 
-				+" <md-icon md-font-icon=\"fa fa-arrow-down\"></md-icon>" 
-				+"</md-button>" 
-				+"</div>";
-			$scope.kpi.threshold.thresholdValues[i].inputLable=' <input  class="tableInput" ng-model="row.label"  ></input>'
-				$scope.kpi.threshold.thresholdValues[i].includeNumericInputMin=' <input type="number" class="tableInput" ng-model="row.minValue" step="0,1"  ></input>'
-					$scope.kpi.threshold.thresholdValues[i].includeNumericInputMax=' <input type="number" class="tableInput" ng-model="row.maxValue" step="0,1"  ></input>'
-						$scope.kpi.threshold.thresholdValues[i].includeMinCheck="<md-checkbox ng-model='row.includeMin'  aria-label='Checkbox'></md-checkbox>";
-			$scope.kpi.threshold.thresholdValues[i].includeMaxCheck='<md-checkbox ng-model="row.includeMax"  aria-label="Checkbox"></md-checkbox>';
-			$scope.kpi.threshold.thresholdValues[i].selectColor='<color-picker class="tableColorPiker"  color-picker-alpha="true" color-picker-swatch="true" color-picker-format="\'hex\'" ng-model="row.color"></color-picker>';
-			$scope.kpi.threshold.thresholdValues[i].comboSeverity=' <md-select ng-model="row.severityId" class="noMargin">'
-				+'<md-option value=""></md-option>'
-				+'<md-option ng-repeat="sev in scopeFunctions.severityType" value="{{sev.valueId}}">'
-				+'	{{sev.translatedValueName}}'
-				+' </md-option>'
-				+'</md-select>';
-		}
+//		for(var i=0;i<$scope.kpi.threshold.thresholdValues.length;i++){
+//			$scope.kpi.threshold.thresholdValues[i].move="<div layout=\"row\"> " 
+//				+"<md-button ng-click=\"scopeFunctions.moveUp($event,$parent.$parent.$parent.$parent.$parent.$index)\" class=\"md-icon-button h20 \" aria-label=\"up\">" 
+//				+"  <md-icon md-font-icon=\"fa fa-arrow-up\"></md-icon>" 
+//				+" </md-button>" 
+//				+" <md-button ng-click=\"scopeFunctions.moveDown($event,$parent.$parent.$parent.$parent.$parent.$index)\" class=\"md-icon-button h20\" aria-label=\"down\">" 
+//				+" <md-icon md-font-icon=\"fa fa-arrow-down\"></md-icon>" 
+//				+"</md-button>" 
+//				+"</div>";
+//			$scope.kpi.threshold.thresholdValues[i].inputLable=' <input  class="tableInput" ng-model="row.label"  ></input>'
+//				$scope.kpi.threshold.thresholdValues[i].includeNumericInputMin=' <input type="number" class="tableInput" ng-model="row.minValue" step="0,1"  ></input>'
+//					$scope.kpi.threshold.thresholdValues[i].includeNumericInputMax=' <input type="number" class="tableInput" ng-model="row.maxValue" step="0,1"  ></input>'
+//						$scope.kpi.threshold.thresholdValues[i].includeMinCheck="<md-checkbox ng-model='row.includeMin'  aria-label='Checkbox'></md-checkbox>";
+//			$scope.kpi.threshold.thresholdValues[i].includeMaxCheck='<md-checkbox ng-model="row.includeMax"  aria-label="Checkbox"></md-checkbox>';
+//			$scope.kpi.threshold.thresholdValues[i].selectColor='<color-picker class="tableColorPiker"  color-picker-alpha="true" color-picker-swatch="true" color-picker-format="\'hex\'" ng-model="row.color"></color-picker>';
+//			$scope.kpi.threshold.thresholdValues[i].comboSeverity=' <md-select ng-model="row.severityId" class="noMargin">'
+//				+'<md-option value=""></md-option>'
+//				+'<md-option ng-repeat="sev in scopeFunctions.severityType" value="{{sev.valueId}}">'
+//				+'	{{sev.translatedValueName}}'
+//				+' </md-option>'
+//				+'</md-select>';
+//		}
 
 		$scope.checkIfIsUsedByAnotherKpi();
 	};
