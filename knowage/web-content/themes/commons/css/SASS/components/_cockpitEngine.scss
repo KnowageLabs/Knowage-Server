@@ -244,8 +244,11 @@
     }
 
     .gridster {
+		&.gridster-mobile{
+			width: calc(100% - 20px);
+		}
 		&.cockpitEditMode{
-			background: url("../../sbi_default/img/grid.png") repeat 0 0 transparent;
+			//background: url("../../sbi_default/img/grid.png") repeat 0 0 transparent;
 		}
         
         margin: 10px;
