@@ -255,7 +255,7 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 
 		}
 		//update placeholder
-		if(Object.keys(tmpKpiToSave.placeholder)==0){
+		if(tmpKpiToSave.placeholder==null || tmpKpiToSave.placeholder==undefined || Object.keys(tmpKpiToSave.placeholder)==0){
 			tmpKpiToSave.placeholder='';
 		}
 		else if(angular.isObject(tmpKpiToSave.placeholder) && !$scope.formulaModified.value){
