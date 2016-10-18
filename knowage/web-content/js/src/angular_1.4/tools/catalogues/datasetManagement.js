@@ -1301,28 +1301,30 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 //			 if ($scope.selectedDataSet.id!=item.id && $scope.dirtyForm) {
 			 if ($scope.dirtyForm) {
 				// TODO: translate
-					var confirm = $mdDialog.confirm()
-					        .title($scope.translate.load("sbi.catalogues.generic.modify"))
-					        .targetEvent(event)	 	          
-					        .textContent($scope.translate.load("sbi.catalogues.generic.modify.msg"))
-					        .ariaLabel("Losing the changed and not saved data")
-					        .ok($scope.translate.load("sbi.general.yes"))
-					        .cancel($scope.translate.load("sbi.general.No"));
-			
-					$mdDialog
-						.show(confirm)
-						.then(					
-								function() {
-										
-									$scope.datasetsListTemp.splice($scope.datasetsListTemp.length-1,1);
-									$scope.selectedDataSet = item;
-									$scope.setFormNotDirty();
-						 		},
-						 		
-						 		function() {					 			
-						 			$scope.selectedDataSetInit = $scope.datasetsListTemp[$scope.datasetsListTemp.length-1];
-						 		}
-							);
+				var confirm = $mdDialog.confirm()
+				        .title($scope.translate.load("sbi.catalogues.generic.modify"))
+				        .targetEvent(event)	 	          
+				        .textContent($scope.translate.load("sbi.catalogues.generic.modify.msg"))
+				        .ariaLabel("Losing the changed and not saved data")
+				        .ok($scope.translate.load("sbi.general.yes"))
+				        .cancel($scope.translate.load("sbi.general.No"));
+		
+				$mdDialog
+					.show(confirm)
+					.then(					
+							function() {
+									
+								$scope.datasetsListTemp.splice($scope.datasetsListTemp.length-1,1);
+								$scope.selectedDataSet = item;
+								$scope.setFormNotDirty();
+					 		},
+					 		
+					 		function() {					 			
+					 			$scope.selectedDataSetInit = $scope.datasetsListTemp[$scope.datasetsListTemp.length-1];
+					 			// Move to the AT page where the new DS has been created (since we decided not to move to the previously clicked dataset).
+					 			$timeout(function() { $scope.datasetTableLastPage = $scope.tableLastPage("datasetList_id") }, 100);
+					 		}
+						);
 			 }
 			 else {
 				 $scope.setFormNotDirty();
