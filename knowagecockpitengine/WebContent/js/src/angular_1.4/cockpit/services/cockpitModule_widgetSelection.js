@@ -287,11 +287,9 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 	this.refreshAllAssociations = function(){
 		console.log("in: refreshAllAssociation",(new Date()).getTime());
 		if(cockpitModule_properties.all_widget_initialized==true){
-			console.log("do: refreshAllAssociation",(new Date()).getTime());
 			ws.execRefreshAllAssociations(false);
 		}else{
 			var AWI=$rootScope.$on('ALL_WIDGET_INITIALIZED',function(){
-				console.log("do: refreshAllAssociation",(new Date()).getTime());
 				ws.execRefreshAllAssociations(true);
 				AWI();
 			});

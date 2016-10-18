@@ -28,12 +28,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<md-content flex layout="column">
 	
 	
-		<md-tabs  flex md-border-bottom >
+		<md-tabs  flex md-border-bottom layout-column>
 		
 			<md-tab  label="{{translate.load('sbi.cockpit.source')}}">
 		        <md-content  layout-fill layout="column" layout-gt-md="row">
-		         		<md-card  class="flexCard" layout="column" flex ng-controller="datasetManagerController">
-							<md-card-content flex layout="column" >
+		         		<md-card  class="flexCard" style="position:relative" layout="column" flex ng-controller="datasetManagerController"  >
+			         		<div ng-show="displayDatasetCard!=true;" layout-fill style='position:absolute;z-index: 500;background:rgba(0,0,0, 0.3);'>
+						       <md-progress-circular  md-mode='indeterminate' style='top:50%;left:50%;margin-left:-25px;' ></md-progress-circular>
+						    </div>
+							<md-card-content flex layout="column" ng-if="displayDatasetCard==true;">
 							<md-toolbar style="background-color: transparent!important;   color: black!important;">
 								  <div class="md-toolbar-tools" >
 								    <h2>{{translate.load("sbi.cockpit.datasets")}}</h2>
@@ -83,8 +86,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							</md-card-content>
 						</md-card>
 		         		
-		         		<md-card  class="flexCard" flex  layout="column" ng-controller="documentManagerController">
-							<md-card-content flex layout="column" >
+		         		<md-card  class="flexCard" style="position:relative" flex  layout="column" ng-controller="documentManagerController"  >
+		         		<div ng-show="displayDocumentCard!=true;" layout-fill style='position:absolute;z-index: 500;background:rgba(0,0,0, 0.3);'>
+					       <md-progress-circular  md-mode='indeterminate' style='top:50%;left:50%;margin-left:-25px;' ></md-progress-circular>
+					    </div>
+    
+							<md-card-content flex layout="column" ng-if="displayDocumentCard==true;" >
 								<md-toolbar style="background-color: transparent!important;   color: black!important;">
 								  <div class="md-toolbar-tools" >
 								    <h2>{{translate.load("Documents")}}</h2>
@@ -140,7 +147,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		 	</md-tab>
      		<md-tab label="Associations" >
 		        <md-content  layout-fill layout="row" ng-controller="dataAssociationController"> 
-		          <div layout="column" layout-fill>
+		          <div layout="column" layout-fill ng-if="displayAssociationsContent==true">
 		          	<div flex="50" layout="row" style="overflow: auto;">
 <!-- 		          	Dataset card -->
 						<md-card class=" associationCard flexCard"  ng-repeat="avDataset in tmpAvaiableDataset" layout="column"> 

@@ -170,6 +170,7 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                                                     tmpColData.hideTooltip=col[i].hideTooltip;
                                                     tmpColData.style=col[i].style;
                                                     tmpColData.static=col[i].static;
+                                                    tmpColData.template=col[i].template;
                                                 } else {
                                                     //only the col name
                                                     tmpColData.label = col[i];
@@ -374,6 +375,16 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                     });
                 }
             };
+        })
+        .directive('buildTemplate', function ($compile) {
+        	return {
+        		restrict: 'A',
+        		replace: true,
+        		link: function (scope, ele, attrs) {
+        			ele.html(scope.$eval(attrs.buildTemplate));
+    				$compile(ele.contents())(scope);
+        		}
+        	};
         })
         .directive('queueTable',function ($compile) {
                     return {

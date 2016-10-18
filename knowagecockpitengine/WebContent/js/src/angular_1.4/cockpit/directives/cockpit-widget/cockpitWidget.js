@@ -188,9 +188,10 @@ angular.module('cockpitModule')
 	   }
 });
 
-function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetServices,cockpitModule_properties,cockpitModule_template,cockpitModule_analyticalDrivers,cockpitModule_datasetServices,sbiModule_restServices,$q,cockpitModule_documentServices,cockpitModule_widgetSelection,$timeout,cockpitModule_gridsterOptions){
+function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetServices,cockpitModule_properties,cockpitModule_template,cockpitModule_analyticalDrivers,cockpitModule_datasetServices,sbiModule_restServices,$q,cockpitModule_documentServices,cockpitModule_widgetSelection,$timeout,cockpitModule_gridsterOptions,sbiModule_translate){
 	$scope.cockpitModule_properties=cockpitModule_properties;
 	$scope.cockpitModule_template=cockpitModule_template;
+	$scope.translate=sbiModule_translate;
 	$scope.tmpWidgetContent={};
 	$scope.editingWidgetName=false;
 	$scope.extendedStyle={}; // the merge of the widget style and the cockpit style
@@ -287,6 +288,10 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 	}
 	
 	$scope.updateFromSelection = function(isInit,associativeSelection){
+		if($scope.ngModel.updateble==false){
+			console.log("widget is not updateble")
+			return;
+		}
 		var dataset= $scope.getDataset();
 		var document= $scope.getDocument();
 		if(dataset != undefined && cockpitModule_widgetSelection.getCurrentSelections(dataset.label)!=undefined){
@@ -318,6 +323,10 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 	}
 	
 	$scope.updateFromDatasetFilter=function(label){
+		if($scope.ngModel.updateble==false){
+			console.log("widget is not updateble")
+			return;
+		}
 		var dataset= $scope.getDataset();
 		if(dataset != undefined && angular.equals(label,dataset.label)){
 			$scope.refreshWidget(undefined,'filters');
@@ -337,6 +346,10 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 	
 	 
 	$scope.doSelection = function(columnName,columnValue){
+		if($scope.ngModel.cliccable==false){
+			console.log("widget is not cliccable")
+			return;
+		}
 		//check if all associated data
 		var dsLabel=$scope.getDataset().label;
 		var sel=cockpitModule_widgetSelection.getAssociativeSelections(columnValue,columnName,dsLabel);

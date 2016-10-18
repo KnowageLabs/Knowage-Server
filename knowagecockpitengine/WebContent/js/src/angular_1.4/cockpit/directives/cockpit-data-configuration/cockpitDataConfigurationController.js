@@ -1,8 +1,11 @@
-angular.module('cockpitModule').controller("datasetManagerController",["$scope","sbiModule_translate","$mdPanel","cockpitModule_datasetServices","cockpitModule_widgetSelection","$mdDialog","cockpitModule_template","cockpitModule_analyticalDrivers",datasetManagerController]);
-angular.module('cockpitModule').controller("documentManagerController",["$scope","sbiModule_translate","$mdPanel","cockpitModule_documentServices","cockpitModule_widgetSelection","$mdDialog","cockpitModule_analyticalDrivers",documentManagerController]);
+angular.module('cockpitModule').controller("datasetManagerController",["$scope","sbiModule_translate","$mdPanel","cockpitModule_datasetServices","cockpitModule_widgetSelection","$mdDialog","cockpitModule_template","cockpitModule_analyticalDrivers","$timeout",datasetManagerController]);
+angular.module('cockpitModule').controller("documentManagerController",["$scope","sbiModule_translate","$mdPanel","cockpitModule_documentServices","cockpitModule_widgetSelection","$mdDialog","cockpitModule_analyticalDrivers","$timeout",documentManagerController]);
 angular.module('cockpitModule').controller("associationGroupController",["$scope","sbiModule_translate","cockpitModule_realtimeServices", associationGroupController]);
 
-function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitModule_datasetServices,cockpitModule_widgetSelection,$mdDialog,cockpitModule_template,cockpitModule_analyticalDrivers){
+function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitModule_datasetServices,cockpitModule_widgetSelection,$mdDialog,cockpitModule_template,cockpitModule_analyticalDrivers,$timeout){
+	$scope.displayDatasetCard=false;
+	$timeout(function(){$scope.displayDatasetCard=true;},0);
+	
 	$scope.datasetTableActions=[
 	                             {
 					    			label : 'delete',
@@ -125,20 +128,20 @@ function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitMod
 	                                    {
 	                                    	label:"Use Cache",
 	                                    	name:"usacache",
-	                                    	hideTooltip:true,
-	                                    	transformer:function(){
-	                                    		return " <md-checkbox ng-init='row.useCache=row.useCache==undefined? true : row.useCache' ng-model='row.useCache' aria-label='usaCache'></md-checkbox>";
-	                                    	}
+	                                    	template: "<md-checkbox ng-init='row.useCache=row.useCache==undefined? true : row.useCache' ng-model='row.useCache' aria-label='usaCache'></md-checkbox>",
+											static:true
+//	                                    	hideTooltip:true,
+//	                                    	transformer:function(){
+//	                                    		return " <md-checkbox ng-init='row.useCache=row.useCache==undefined? true : row.useCache' ng-model='row.useCache' aria-label='usaCache'></md-checkbox>";
+//	                                    	}
 	                                    },
 	                                    {
 	                                    	label:"Frequency (minutes)",
 	                                    	name:"freq",
-	                                    	hideTooltip:true,
-	                                    	transformer:function(){
-	                                    		return"<md-input-container style='margin:0' ng-show='row.useCache!=true' md-no-float class='md-block'>"+
-	                                            "	<input type='number' ng-init='row.frequency=row.frequency==undefined? 5 : row.frequency' ng-model='row.frequency' placeholder='Frequency'>"+
-	                                            "</md-input-container>";
-	                                    	}
+	                                    	static:true,
+	                                    	template:"<md-input-container style='margin:0' ng-show='row.useCache!=true' md-no-float class='md-block'>"+
+                                            		"<input type='number' ng-init='row.frequency=row.frequency==undefined? 5 : row.frequency' ng-model='row.frequency' placeholder='Frequency'>"+
+                                            		"</md-input-container>"
 	                                    },
 	                                    
 	                                    ]
@@ -180,7 +183,10 @@ function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitMod
 	
 }
 
-function documentManagerController($scope,sbiModule_translate,$mdPanel,cockpitModule_documentServices,cockpitModule_widgetSelection,$mdDialog,cockpitModule_analyticalDrivers ){
+function documentManagerController($scope,sbiModule_translate,$mdPanel,cockpitModule_documentServices,cockpitModule_widgetSelection,$mdDialog,cockpitModule_analyticalDrivers,$timeout ){
+	$scope.displayDocumentCard=false;
+	$timeout(function(){$scope.displayDocumentCard=true;},0);
+	
 	$scope.documentTableActions=[
 	                             {
 					    			label : 'delete',

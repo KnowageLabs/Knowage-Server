@@ -1,4 +1,4 @@
-angular.module("cockpitModule").controller("dataAssociationController",['$scope','cockpitModule_template','cockpitModule_datasetServices','$mdDialog','sbiModule_translate','$q','sbiModule_messaging','cockpitModule_documentServices',dataAssociationControllerFunction]);
+angular.module("cockpitModule").controller("dataAssociationController",['$scope','cockpitModule_template','cockpitModule_datasetServices','$mdDialog','sbiModule_translate','$q','sbiModule_messaging','cockpitModule_documentServices','$timeout',dataAssociationControllerFunction]);
 
 angular.module("cockpitModule").filter('metatype', function() {
 	return function(data) {
@@ -13,8 +13,10 @@ angular.module("cockpitModule").filter('parametertype', function() {
 	}
 })
 
-function dataAssociationControllerFunction($scope,cockpitModule_template,cockpitModule_datasetServices,$mdDialog,sbiModule_translate,$q,sbiModule_messaging,cockpitModule_documentServices){
-	 var emptyAss={description:"",fields:[]}; 
+function dataAssociationControllerFunction($scope,cockpitModule_template,cockpitModule_datasetServices,$mdDialog,sbiModule_translate,$q,sbiModule_messaging,cockpitModule_documentServices,$timeout){
+	$scope.displayAssociationsContent=false;
+	$timeout(function(){$scope.displayAssociationsContent=true;},0); 
+	var emptyAss={description:"",fields:[]}; 
 	$scope.utils.currentAss=angular.copy(emptyAss);
 	$scope.jsonCurrentAss={};	//this is used to have direct response of data
 	$scope.tmpEditCurrAss={};
