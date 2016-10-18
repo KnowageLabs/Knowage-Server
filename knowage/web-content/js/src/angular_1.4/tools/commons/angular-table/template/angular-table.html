@@ -90,11 +90,12 @@
 	ng-class="{'selectedRowItem': (highlightsSelectedItem==true && isSelected(row) )}"  class="animate-repeat-tablerow"
  	ng-if="isVisibleRowFunction(row)">
 	<td  ng-repeat="column in tableColumns" ng-switch="column.static==true? '--STATIC--' : column.name" ng-click="clickItem(row,column.name,getColumnValue(row,column.name),$event,$parent.$index)" ng-dblclick="startEdit(row,column,getColumnValue(row,column.name),$event)" context-menu  data-target='{{id}}TableContextMenu-{{$parent.$index}}-{{$index}}' class="{{column.customRecordsClass}} " 
-		ng-class="{ 'highlight': highlight, 'expanded' : expanded,'tableDragBar':column.name=='--DRAG_AND_DROP--'}" ng-style="getDynamicValue(column.style,row,column,$parent.$index)" >
+		ng-class="{ 'highlight': highlight, 'expanded' : expanded,'tableDragBar':column.name=='--DRAG_AND_DROP--'}" ng-style="column.style==undefined ? '' :  getDynamicValue(column.style,row,column,$parent.$index)" >
 		
-		<span ng-switch-when="--STATIC--" ng-bind="row[column.name]" >
+		<span ng-switch-when="--STATIC--" ng-if="column.template==undefined" ng-bind="row[column.name]" >
 			<md-tooltip ng-if="column.hideTooltip!=true" md-delay="1000" md-direction="bottom" ng-bind="row[column.name]"></md-tooltip>
 		</span>
+		<span ng-switch-when="--STATIC--" ng-if="column.template!=undefined" build-template="column.template" ></span>
 
 		<span ng-switch-default ng-switch="allowEdit==true && row.editing==true && column.editable==true" > 
 	 		<!--dynamic cell (default)-->

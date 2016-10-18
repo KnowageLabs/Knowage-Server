@@ -47,7 +47,7 @@ angular.module('cockpitModule')
 	   }
 });
 
-function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_widgetConfigurator,$q,$mdPanel,sbiModule_restServices,$compile,cockpitModule_generalOptions,$mdDialog){
+function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_widgetConfigurator,$q,$mdPanel,sbiModule_restServices,$compile,cockpitModule_generalOptions,$mdDialog,sbiModule_device){
 	
 	$scope.init=function(element,width,height){
 		$scope.refreshWidget();
@@ -202,12 +202,14 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 		var finishEdit=$q.defer();
 		var config = {
 				attachTo:  angular.element(document.body),
-				controller: function($scope,finishEdit,sbiModule_translate,model,mdPanelRef,cockpitModule_datasetServices,cockpitModule_generalOptions,$mdDialog,$mdToast){
+				controller: function($scope,finishEdit,sbiModule_translate,model,mdPanelRef,cockpitModule_datasetServices,cockpitModule_generalOptions,$mdDialog,$mdToast,sbiModule_device){
 			    	  $scope.translate=sbiModule_translate;
+			    	  $scope.sbiModule_device=sbiModule_device;
 			    	  $scope.localModel={};
 			    	  $scope.currentDataset={};
 			    	  $scope.originalCurrentDataset={};
 			    	  $scope.dragUtils={dragObjectType:undefined};
+			    	  $scope.tabsUtils={selectedIndex:0};
 			    	  $scope.colorPickerProperty={placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb'}
 			    	  $scope.cockpitModule_generalOptions=cockpitModule_generalOptions;
 			    	  angular.copy(model,$scope.localModel);
@@ -444,6 +446,6 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 
 
 //this function register the widget in the cockpitModule_widgetConfigurator factory
-addWidgetFunctionality("static-pivot-table",{'initialDimension':{'width':20, 'height':20}});
+addWidgetFunctionality("static-pivot-table",{'initialDimension':{'width':20, 'height':20},'updateble':true,'cliccable':true});
 
 })();

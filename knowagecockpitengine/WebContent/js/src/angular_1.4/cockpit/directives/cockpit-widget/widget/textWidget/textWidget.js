@@ -160,6 +160,6 @@ function cockpitTextWidgetControllerFunction($scope,cockpitModule_widgetConfigur
 
 
 //this function register the widget in the cockpitModule_widgetConfigurator factory
-addWidgetFunctionality("text",{});
+addWidgetFunctionality("text",{'updateble':false,'cliccable':false});
 
 })();

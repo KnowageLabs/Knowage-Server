@@ -1,4 +1,4 @@
-<md-card   class="flexCard customTableWidgetConfiguration pivotTableWidget" >
+<md-card   class="flexCard customTableWidgetConfiguration pivotTableWidget" ng-clock>
 	<md-card-content flex layout="column" class="noPadding">
 		<md-toolbar>
 		  <div class="md-toolbar-tools">
@@ -8,15 +8,14 @@
 		</md-toolbar>
 		<md-content flex layout="column">
 		   
-		  <md-tabs flex md-border-bottom>
+		  <md-tabs flex md-border-bottom md-selected="tabsUtils.selectedIndex">
 		  
 		  <md-tab label="{{translate.load('sbi.cockpit.dataset')}}">
-		  	<div layout="column" layout-fill>
-		  
+		  	<div layout="column" layout-fill ng-clock ng-if="tabsUtils.selectedIndex==0">
 		      	
 			   <dataset-selector ng-model=localModel.dataset.dsId on-change="changeDatasetFunction(dsId)"></dataset-selector>  
 			   
-			   <md-card layout="column" flex class="flexCard">	
+			   <md-card ng-if="localModel.dataset.dsId!=undefined" layout="column" flex class="flexCard">	
 			     	<md-card-content flex layout="row" class="pivotTableDesigner" >
 			     	
 			     		<div layout="column" class="measureAttributeTab">
@@ -26,7 +25,7 @@
 			      						<h2 flex>{{translate.load("sbi.cockpit.pivot.measures")}}</h2>
 		      						</div>
 		      					</md-toolbar>
-		      					<md-content flex layout="column" ng-class="{'dropZone': (dragUtils.dragObjectType=='MEASURE-PT' )  }">
+		      					<md-content flex layout="column" ng-class="{'dropZone': (sbiModule_device.browser.name=='chrome' && dragUtils.dragObjectType=='MEASURE-PT' )  }">
 		      						<md-list flex dnd-list="currentDataset.metadata.fieldsMeta"  dnd-allowed-types="['MEASURE-PT']" dnd-drop="dropCallback(event, index,currentDataset.metadata.fieldsMeta, item, external, type, 'MEASURE')">
 		      							<md-list-item ng-repeat="item in currentDataset.metadata.fieldsMeta"
 		      							ng-if="item.fieldType=='MEASURE'"
@@ -51,7 +50,7 @@
 			      						<h2 flex>{{translate.load("sbi.cockpit.pivot.attributes")}}</h2>
 		      						</div>
 		      					</md-toolbar>
-		      					<md-content flex layout="column"ng-class="{'dropZone': ( dragUtils.dragObjectType=='COLUMNS' || dragUtils.dragObjectType=='ROWS')  }">
+		      					<md-content flex layout="column"ng-class="{'dropZone': (sbiModule_device.browser.name=='chrome' &&  (dragUtils.dragObjectType=='COLUMNS' || dragUtils.dragObjectType=='ROWS'))  }">
 		      						<md-list flex dnd-list="currentDataset.metadata.fieldsMeta" dnd-allowed-types="['COLUMNS','ROWS']" dnd-drop="dropCallback(event, index,currentDataset.metadata.fieldsMeta, item, external, type, 'ATTRIBUTE')">
 		      							<md-list-item ng-repeat="item in currentDataset.metadata.fieldsMeta" 
 		      							ng-if="item.fieldType=='ATTRIBUTE'"
@@ -80,7 +79,7 @@
 				      						<h2 flex>{{translate.load("sbi.cockpit.pivot.columns")}}</h2>
 			      						</div>
 			      					</md-toolbar>
-			      					<md-content flex layout="column" ng-class="{'dropZone': (dragUtils.dragObjectType=='ATTRIBUTE' || dragUtils.dragObjectType=='COLUMNS' || dragUtils.dragObjectType=='ROWS')  }" >
+			      					<md-content flex layout="column" ng-class="{'dropZone': sbiModule_device.browser.name=='chrome' &&  (dragUtils.dragObjectType=='ATTRIBUTE' || dragUtils.dragObjectType=='COLUMNS' || dragUtils.dragObjectType=='ROWS')  }" >
 			      						<md-list flex dnd-list="localModel.content.crosstabDefinition.columns"  dnd-allowed-types="['ATTRIBUTE','ROWS','COLUMNS']"dnd-drop="dropCallback(event, index,localModel.content.crosstabDefinition.columns, item, external, type, 'COLUMNS')">
 			      							<md-list-item  class="noright" ng-repeat="item in localModel.content.crosstabDefinition.columns"
 			      							dnd-draggable="item"
@@ -107,7 +106,7 @@
 				      						<h2 flex>{{translate.load("sbi.cockpit.pivot.rows")}}</h2>
 			      						</div>
 			      					</md-toolbar>
-			      					<md-content flex layout="column" ng-class="{'dropZone': (dragUtils.dragObjectType=='ATTRIBUTE' || dragUtils.dragObjectType=='COLUMNS' || dragUtils.dragObjectType=='ROWS')  }">
+			      					<md-content flex layout="column" ng-class="{'dropZone': sbiModule_device.browser.name=='chrome' &&  (dragUtils.dragObjectType=='ATTRIBUTE' || dragUtils.dragObjectType=='COLUMNS' || dragUtils.dragObjectType=='ROWS')  }">
 			      						<md-list flex dnd-list="localModel.content.crosstabDefinition.rows"  dnd-allowed-types="['ATTRIBUTE','COLUMNS','ROWS']" dnd-drop="dropCallback(event, index,localModel.content.crosstabDefinition.rows, item, external, type, 'ROWS')">
 			      							<md-list-item  class="noright" ng-repeat="item in localModel.content.crosstabDefinition.rows"
 			      							dnd-draggable="item"
@@ -132,7 +131,7 @@
 				      						<h2 flex>{{translate.load("sbi.cockpit.pivot.measures")}}</h2>
 			      						</div>
 			      					</md-toolbar>
-			      					<md-content flex layout="column" ng-class="{'dropZone': (dragUtils.dragObjectType=='MEASURE' ||dragUtils.dragObjectType=='MEASURE-PT')  }">
+			      					<md-content flex layout="column" ng-class="{'dropZone': sbiModule_device.browser.name=='chrome' &&  (dragUtils.dragObjectType=='MEASURE' ||dragUtils.dragObjectType=='MEASURE-PT')  }">
 			      						<md-list flex dnd-list="localModel.content.crosstabDefinition.measures"  dnd-allowed-types="['MEASURE','MEASURE-PT']"  dnd-drop="dropCallback(event, index,localModel.content.crosstabDefinition.measures, item, external, type, 'MEASURE-PT')">
 			      							<md-list-item  class="noright" ng-repeat="item in localModel.content.crosstabDefinition.measures"
 			      							dnd-draggable="item"
@@ -164,7 +163,7 @@
 		  
 		  	<md-tab label="{{translate.load('sbi.cockpit.pivot.config')}}">
 		  	
-		  		<md-card>
+		  		<md-card ng-if="tabsUtils.selectedIndex==1">
 					<md-card-title>
 						<md-card-title-text layout="row">
 							<span flex class="md-headline">{{translate.load("sbi.cockpit.pivot.general")}}</span>
@@ -196,7 +195,7 @@
 					</md-card-content>
 				</md-card>
 				
-				<md-card>
+				<md-card ng-if="tabsUtils.selectedIndex==1">
 					<md-card-title>
 						<md-card-title-text layout="row">
 							<span flex class="md-headline">{{translate.load("sbi.crosstab.crosstabdetailswizard.onrows")}}</span>
@@ -212,7 +211,7 @@
 					</md-card-content>
 				</md-card>
 				
-				<md-card>
+				<md-card ng-if="tabsUtils.selectedIndex==1">
 					<md-card-title>
 						<md-card-title-text layout="row">
 							<span flex class="md-headline">{{translate.load("sbi.crosstab.crosstabdetailswizard.oncolumns")}}</span>
@@ -233,7 +232,7 @@
 		  
 		    <md-tab label="{{translate.load('sbi.cockpit.style')}}">
 	        	
-		     	<cockpit-style-configurator widget ng-model="localModel.style">
+		     	<cockpit-style-configurator widget ng-model="localModel.style" ng-if="tabsUtils.selectedIndex==2">
 		     	
 		     		<cockpit-style-custom-widget-configurator label="translate.load('sbi.cockpit.designer.fontConf.crosstabFontGeneralOpts')" layout="column">
 		     			<div layout=row >

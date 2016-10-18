@@ -208,7 +208,7 @@ function EditWidgetController($scope,finishEdit,sbiModule_translate,$mdToast,sbi
 };
 
 //this function register the widget in the cockpitModule_widgetConfigurator factory
-addWidgetFunctionality("image",{});
+addWidgetFunctionality("image",{'updateble':false,'cliccable':false});
 
 
 })();

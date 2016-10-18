@@ -272,8 +272,9 @@
 			 
 			
 			&.leftPosition .widgetActionButton{
-					border-right:0px;
-					left: -52px;
+					border-right:0px !important;
+				    box-shadow: none!important;
+					left: -54px;
 					-ms-flex-direction: column;
 					flex-direction: column;
 					box-sizing: border-box;
@@ -281,8 +282,9 @@
 					display: flex;
 				}
 			&.rightPosition .widgetActionButton{
-				border-left:0px;
-				right: -52px;
+				border-left:0px !important;
+				box-shadow: none!important;
+				right: -54px;
 				-ms-flex-direction: column;
 				flex-direction: column;
 				box-sizing: border-box;
@@ -290,7 +292,9 @@
 				display: flex;
 			}
 			&.topPosition .widgetActionButton{
-				border: 0px;
+				border-left: 0px !important;
+				border-bottom: 0px !important;
+				box-shadow: none!important;
 				right: 0px;
 				left: inherit;
 				-ms-flex-direction: row;
@@ -343,7 +347,7 @@
 			.widgetActionButton{
 				position:absolute;
 				background-color: white;
-				top: 0;
+				top: -2px;
 				border: 1px solid lightgrey;
 				
 			}    	

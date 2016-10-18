@@ -140,6 +140,8 @@ angular.module('cockpitModule')
                     	//init the widget
                     	element.ready(function () {
                     		var objType=cockpitModule_widgetConfigurator[scope.ngModel.type.toLowerCase()];
+                    		scope.updateble=objType.updateble==undefined? true : objType.updateble;
+                    		scope.cliccable=objType.cliccable==undefined? true : objType.cliccable;
                     		if(objType!=undefined){
                     			var directive = document.createElement("cockpit-"+scope.ngModel.type.toLowerCase()+"-widget" );
                     			var content=element[0].querySelector("md-card-content");
