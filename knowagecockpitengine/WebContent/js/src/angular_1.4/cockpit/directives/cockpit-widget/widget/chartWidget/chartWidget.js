@@ -44,14 +44,13 @@ angular.module('cockpitModule')
 	    controller: function($scope, $element, $http, sbiModule_restServices, $httpParamSerializerJQLike){
 	    	$scope.iframeContent = '';
 	    	$scope.updateAction = function(actionUrl){
-	    		$scope.actionUrl = actionUrl;
+	    		$scope.actionUrl = actionUrl + "&SBI_EXECUTION_ID=" + (new Date().getTime() + '_' + (i++));
 	    	};
 	    	$scope.updateParameters = function(parameters){
 	    		$scope.formParameters = parameters;
 	    	};
 	    	var loadPageIntoIframe = function(actionUrl, parameters){
 	    		var iframe = $element.find('iframe')[0];
-	    			
     			if(actionUrl){
     				$scope.updateAction(actionUrl);
     			}
@@ -60,7 +59,6 @@ angular.module('cockpitModule')
     			}
     			var formId = $element[0].id + "_formId";
     			var formAction = $scope.actionUrl;
-    			console.log('formAction='+formAction);
     			var form = angular.element('<form id="'+formId+'" action="'+formAction+'" method="POST" style="display:none;"></form>');
     			for(var x=0;x<$scope.formParameters.length;x++){
     				var param = $scope.formParameters[x];

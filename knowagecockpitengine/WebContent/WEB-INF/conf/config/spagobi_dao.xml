@@ -60,6 +60,8 @@
 		<DAO name="AlarmDAO" implementation="it.eng.spagobi.kpi.alarm.dao.SbiAlarmDAOHibImpl" />
 		<DAO name="AlarmContactDAO" implementation="it.eng.spagobi.kpi.alarm.dao.SbiAlarmContactDAOHibImpl" />
 
+		<DAO name="CrossNavigationDAO" implementation="it.eng.spagobi.tools.crossnavigation.dao.CrossNavigationDAOImpl" />
+
 		<DAO name="ModelDAO" implementation="it.eng.spagobi.kpi.model.dao.ModelDAOImpl" />
 		<DAO name="ModelInstanceDAO" implementation="it.eng.spagobi.kpi.model.dao.ModelInstanceDAOImpl" />
 		<DAO name="PeriodicityDAO" implementation="it.eng.spagobi.kpi.config.dao.PeriodicityDAOImpl" />

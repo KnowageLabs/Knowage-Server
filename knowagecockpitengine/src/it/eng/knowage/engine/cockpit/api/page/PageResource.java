@@ -17,13 +17,6 @@
  */
 package it.eng.knowage.engine.cockpit.api.page;
 
-import it.eng.knowage.engine.cockpit.CockpitEngine;
-import it.eng.knowage.engine.cockpit.CockpitEngineInstance;
-import it.eng.knowage.engine.cockpit.api.AbstractCockpitEngineResource;
-import it.eng.spagobi.utilities.engines.EngineConstants;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -44,6 +37,13 @@ import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import it.eng.knowage.engine.cockpit.CockpitEngine;
+import it.eng.knowage.engine.cockpit.CockpitEngineInstance;
+import it.eng.knowage.engine.cockpit.api.AbstractCockpitEngineResource;
+import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @authors Andrea Gioia (andrea.gioia@eng.it)
@@ -105,6 +105,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 			if ("execute".equals(pageName)) {
 				engineInstance = CockpitEngine.createInstance(getIOManager().getTemplateAsString(), getIOManager().getEnv());
 				getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
+				//getExecutionSession().setAttributeInSession(EngineConstants.ENGINE_INSTANCE, engineInstance);
 				dispatchUrl = "/WEB-INF/jsp/ngCockpit.jsp";
 			} else if ("edit".equals(pageName)) {
 				JSONObject template = null;
@@ -113,6 +114,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 				engineInstance = CockpitEngine.createInstance(template.toString(), // servletIOManager.getTemplateAsString(),
 						getIOManager().getEnv());
 				getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
+				//getExecutionSession().setAttributeInSession(EngineConstants.ENGINE_INSTANCE, engineInstance);
 				dispatchUrl = "/WEB-INF/jsp/ngCockpit.jsp";
 			} else if ("test".equals(pageName)) {
 				dispatchUrl = "/WEB-INF/jsp/test4.jsp";

@@ -358,7 +358,9 @@ public class PageResource extends AbstractChartEngineResource {
 			}
 
 		} catch (Exception e) {
-			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(), e);
+			// This causes a java.util.ConcurrentModificationException under cockpit
+			// throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(), e);
+			throw new SpagoBIRuntimeException(e);
 		} finally {
 			logger.debug("OUT");
 		}
