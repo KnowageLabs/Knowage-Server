@@ -6,10 +6,10 @@ angular.module('crossOutPars', ['angular_table','ng-context-menu','ngMaterial','
     $mdThemingProvider.theme('knowage')
     $mdThemingProvider.setDefaultTheme('knowage');
 }])
-.controller('outputParametersController',['$scope','sbiModule_restServices','sbiModule_translate','$mdDialog','$mdToast','$location',outputParametersControllerFunction]);
+.controller('outputParametersController',['$scope','sbiModule_restServices','sbiModule_translate','$mdDialog','$mdToast','$location','$timeout',outputParametersControllerFunction]);
 		
 		
-		function outputParametersControllerFunction($scope, sbiModule_restServices, sbiModule_translate, $mdDialog, $mdToast, $location){
+		function outputParametersControllerFunction($scope, sbiModule_restServices, sbiModule_translate, $mdDialog, $mdToast, $location,$timeout){
 			var ctr = this;
 			var s = $scope;
 			s.translate = sbiModule_translate;
@@ -77,7 +77,8 @@ angular.module('crossOutPars', ['angular_table','ng-context-menu','ngMaterial','
 			};
 			
 			ctr.cancelFunc = function(){
-				newRecord();
+				window.history.back();
+				//newRecord();
 			};
 			ctr.loadSelected = function(item){
 				ctr.detail = angular.copy(item);
@@ -112,7 +113,6 @@ angular.module('crossOutPars', ['angular_table','ng-context-menu','ngMaterial','
 					}
 				);
 			};
-			
 			
 			$scope.showActionOK = function(msg) {
 				var delay = 3000;

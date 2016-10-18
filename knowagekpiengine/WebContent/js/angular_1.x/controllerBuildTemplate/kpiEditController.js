@@ -24,7 +24,7 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 	$scope.kpiList = [];
 	$scope.scorecardSelected =[];
 	$scope.allScorecard = [];
-
+	
 	$scope.tableFunction={
 			
 			translate:sbiModule_translate,
@@ -105,6 +105,10 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 	$scope.removeScorecard = function(){
 		$scope.scorecardSelected =[];
 	};
+	
+	$scope.closeTemplate = function(){
+		window.history.back();
+	}
 	
 	$scope.saveTemplate = function(){
 		var obj = $scope.createJSONFromInfo();

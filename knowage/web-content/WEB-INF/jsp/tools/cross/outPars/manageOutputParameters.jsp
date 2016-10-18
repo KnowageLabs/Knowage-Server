@@ -48,11 +48,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <% if(canSee ){ 
 	String objectId = request.getParameter(ObjectsTreeConstants.OBJECT_ID);
-	Map backUrlPars = new HashMap();
+	/*Map backUrlPars = new HashMap();
 	backUrlPars.put("PAGE", "detailBIObjectPage");
 	backUrlPars.put(LightNavigationManager.LIGHT_NAVIGATOR_BACK_TO,"0");
 	backUrlPars.put("MESSAGEDET", "DETAIL_SELECT");
-	String backUrl = urlBuilder.getUrl(request, backUrlPars);
+	String backUrl = urlBuilder.getUrl(request, backUrlPars);*/
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html >
@@ -90,12 +90,6 @@ var objectId = <%=objectId%>;
 				<i class="fa fa-spinner fa-pulse fa-4x"></i> 
 			</div>
 		</list>
-		
-		<extra-button>
-			  <a href='<%=backUrl%>'>
-				<md-icon md-font-icon="fa fa-arrow-left" ></md-icon>
-			</a>	
-		</extra-button>
 		
         <detail label="ctrl.detail.title || ''" save-function="ctrl.saveFunc" cancel-function="ctrl.cancelFunc"> <!-- assuming that $scope.selectedItem stores the selected item on teh controller  -->
 			<form name="tsForm" novalidate >			

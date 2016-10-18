@@ -30,7 +30,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <title>{{translate.load("sbi.kpidocumentdesigner.tempbuild")}}</title>
 
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
-
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/angular_1.x/kpi-dinamic-list/KpiDinamicList.js"></script>
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/angular_1.x/controllerBuildTemplate/kpiEditController.js"></script>
@@ -47,7 +46,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	</div>
 	<span flex></span>
 	<md-button class="md-primary" ng-click="saveTemplate()">{{translate.load("sbi.general.save")}}</md-button>
-	<!-- <md-button class="md-primary" >{{translate.load("sbi.general.close")}}</md-button> -->
+	<md-button class="md-primary" ng-click="closeTemplate()">{{translate.load("sbi.general.close")}}</md-button>
 </md-toolbar>
 <md-whiteframe class="md-whiteframe-2dp relative" layout-fill layout-margin flex  >
 	<md-radio-group layout="row" ng-model="typeChart">
