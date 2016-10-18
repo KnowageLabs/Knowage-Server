@@ -350,7 +350,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					// If the page that is returned is less than the current one, that means that we are already on that page, so keep it (danristo)
 					//console.log(page<$scope.restDsRequestHeaderTableLastPage);
 					$scope.restDsRequestHeaderTableLastPage = (page<=$scope.restDsRequestHeaderTableLastPage)
-						? $scope.restDsRequestHeaderTableLastPage : page; 
+						? $scope.restDsRequestHeaderTableLastPage : page;
 					
 					//console.log($scope.restDsRequestHeaderTableLastPage);
 				}, 
@@ -677,22 +677,39 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	// Customization of the table columns (headers). The label is visible, whilst the name serves for binding.
 	$scope.customAttributesTableColumns = 
 	[
-	 	{label:"Name",name:"name",hideTooltip:true},
-	 	{label:"Value",name:"value",hideTooltip:true},
+	 	{
+	 		label:"Name",
+	 		name:"name",
+	 		hideTooltip:true,
+	 		
+	 		transformer: function() {
+	 			return '<md-input-container class="md-block" style="margin:0"><input ng-model="row.name"></md-input-container>';
+	 		}
+ 		},
+ 		
+	 	{
+ 			label:"Value",
+ 			name:"value",
+ 			hideTooltip:true,
+ 			
+ 			transformer: function() {
+ 				return '<md-input-container class="md-block" style="margin:0"><input ng-model="row.value"></md-input-container>';
+ 			}
+		},
 	 ];
 	
 	$scope.customAttrScopeFunctions = {
 		dataset: $scope.selectedDataSet
 	};
 	
-	$scope.customAttributesNameItem = '<md-input-container class="md-block" style="margin:0"><input ng-model="_xxx2_"></md-input-container>';
-	$scope.customAttributesValueItem = '<md-input-container class="md-block" style="margin:0"><input ng-model="_xxx4_"></md-input-container>';
+//	$scope.customAttributesNameItem = '<md-input-container class="md-block" style="margin:0"><input ng-model="_xxx2_"></md-input-container>';
+//	$scope.customAttributesValueItem = '<md-input-container class="md-block" style="margin:0"><input ng-model="_xxx4_"></md-input-container>';
 	
 	$scope.customAttributesCounter = 0;
 	
     $scope.addCustomAttributes = function() {
 //    	$log.info("ADDING THE CUSTOM ATTRIBUTES");    	
-    	$scope.customAttributes.push({"name":$scope.customAttributesNameItem,"value":$scope.customAttributesValueItem,"index":$scope.customAttributesCounter++});
+    	$scope.customAttributes.push({"name":"","value":"","index":$scope.customAttributesCounter++});
     	
     }
     
@@ -707,7 +724,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		
 		 	action: function(item) {
 		 		
-		 		for (i=$scope.customAttributes.length-1; i>=0; i--) {		 			
+		 		for (i=0; i<$scope.customAttributes.length; i++) {		 			
 		 			if ($scope.customAttributes[i].index == item.index) {
 		 				$scope.customAttributes.splice(i,1);
 		 				break;
@@ -1480,7 +1497,35 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			
 			$scope.restJsonPathAttributes = restJsonPathAttributesTemp;
 			
-		}		
+		}
+		else if($scope.selectedDataSet.dsTypeCd.toLowerCase()=="custom") {
+			
+			// REST REQUEST HEADERS
+			var customAttributesTemp = [];
+		
+			if ($scope.selectedDataSet.Custom) {
+				
+				for (var key in $scope.selectedDataSet.Custom) {
+					
+					var customAttributeTemp = {};			
+					
+					  if ($scope.selectedDataSet.Custom.hasOwnProperty(key)) {				  
+						  customAttributeTemp["name"] = key;
+						  customAttributeTemp["value"] = $scope.selectedDataSet.Custom[key];
+						  customAttributeTemp["index"] = $scope.customAttributesCounter;			    	
+					  }
+					  
+					  $scope.customAttributesCounter++;
+					  customAttributesTemp.push(customAttributeTemp);
+					  
+				}
+				
+			}
+			
+			$scope.customAttributes = customAttributesTemp;
+			
+		}
+		
 				
 		// Call the scope function that is responsible for transformation of configuration data of the File dataset.
 		($scope.selectedDataSet.dsTypeCd.toLowerCase()=="file") ? $scope.refactorFileDatasetConfig(item) : null;
@@ -1666,6 +1711,39 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	}
 	
 	$scope.saveDataset = function() {
+		
+//		console.log($scope.selectedDataSet);
+		
+		if ($scope.selectedDataSet.dsTypeCd.toLowerCase()=="rest") {			
+			
+			//----------------------
+			// REQUEST HEADERS
+			//----------------------
+			var restRequestHeadersTemp = {};
+			
+			for (i=0; i<$scope.restRequestHeaders.length; i++) {
+				restRequestHeadersTemp[$scope.restRequestHeaders[i]["name"]] = $scope.restRequestHeaders[i]["value"];			
+			}
+			
+			$scope.selectedDataSet.restJsonPathAttributes = angular.copy(JSON.stringify(restRequestHeadersTemp));	
+			
+			//----------------------
+			// JSON PATH ATTRIBUTES
+			//----------------------
+			var restJsonPathAttributesTemp = {};						
+			$scope.selectedDataSet.restJsonPathAttributes = angular.copy(JSON.stringify($scope.restJsonPathAttributes));
+			
+		}
+		else if ($scope.selectedDataSet.dsTypeCd.toLowerCase()=="custom") {
+			
+			var customAttributesTemp = {};
+			
+			for (i=0; i<$scope.customAttributes.length; i++) {
+				customAttributesTemp[$scope.customAttributes[i]["name"]] = $scope.customAttributes[i]["value"];			
+			}
+			
+			$scope.selectedDataSet.customData = angular.copy(JSON.stringify(customAttributesTemp));
+		}
 		
 		$scope.selectedDataSet.recalculateMetadata = true;
 		$scope.manageDatasetFieldMetadata($scope.selectedDataSet.meta);
