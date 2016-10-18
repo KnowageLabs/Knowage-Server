@@ -534,8 +534,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							<md-card layout-padding style="margin-top:0">
 								<md-input-container class="md-block" flex-gt-sm>
 						           	<label>{{translate.load("sbi.ds.jclassName")}}</label>
-						           	<input ng-model="selectedDataSet.jclassName" ng-required="true" ng-change="setFormDirty()">
-						           	<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.jclassName">
+						           	<input ng-model="selectedDataSet.jClassName" ng-required="true" ng-change="setFormDirty()">
+						           	<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.jClassName">
 		       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
        						 		</div>
 						         </md-input-container>

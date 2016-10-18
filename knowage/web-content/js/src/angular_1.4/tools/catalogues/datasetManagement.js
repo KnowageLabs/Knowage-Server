@@ -1297,9 +1297,9 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		 }
 		 // Moving from selected new DS to existing DS
 		 else if (!$scope.selectedDataSet.id) {
-//			 console.log($scope.datasetsListTemp);
 			 
-			 if ($scope.selectedDataSet.id!=item.id && $scope.dirtyForm) {
+//			 if ($scope.selectedDataSet.id!=item.id && $scope.dirtyForm) {
+			 if ($scope.dirtyForm) {
 				// TODO: translate
 					var confirm = $mdDialog.confirm()
 					        .title($scope.translate.load("sbi.catalogues.generic.modify"))
@@ -1324,12 +1324,16 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 						 		}
 							);
 			 }
+			 else {
+				 $scope.setFormNotDirty();
+				 selectDataset(item);
+			 }
 			
 		 }
 		 // Moving from an existing DS to another one
 //		 else if ($scope.selectedDataSet && $scope.selectedDataSet.id!=item.id) {
 		 else if ($scope.selectedDataSet.id!=item.id) {
-		
+			
 			if ($scope.dirtyForm==true) {
 			
 				// TODO: translate
