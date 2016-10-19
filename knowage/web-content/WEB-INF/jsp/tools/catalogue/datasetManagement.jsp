@@ -935,6 +935,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		         									         	
 					         	<div flex=100 layout-padding ng-if="selectedDataSet.ckanFileType">
 					         	
+					         			<md-input-container class="md-block" style="margin-bottom:8">
+										
+								    		<label>{{translate.load("sbi.ds.ckanId")}}</label>
+						           	
+								           	<input ng-model="selectedDataSet.ckanId" ng-required = "true" ng-change="setFormDirty()">
+								           	
+								           	<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.ckanId">
+				       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+			       						 	</div>
+			       						 	
+										</md-input-container>
+					         	
 										<md-input-container class="md-block" style="margin-bottom:8">
 										
 								    		<label>{{translate.load("sbi.ds.ckanUrl")}}</label>

@@ -1271,14 +1271,12 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	 *  dataset types 																	
 	 */
 	$scope.getDomainTypeDataset = function(){	
-		
 		sbiModule_restServices.promiseGet("domains", "listValueDescriptionByType","DOMAIN_TYPE=DATA_SET_TYPE")
-			.then(function(response) {
+		.then(function(response) {
 				$scope.datasetTypeList = angular.copy(response.data);
-			}, function(response) {
-				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-			});
-		
+		}, function(response) {
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+		});
 	}
 	
 	$scope.getDomainTypeDataset();
@@ -1366,7 +1364,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 						.then(					
 								function() {
 										
-									$scope.datasetsListTemp.splice($scope.datasetsListTemp.length-1,1);											
+									$scope.datasetsListTemp.splice($scope.datasetsListTemp.length-1,1);									
 									selectDataset(item,index);
 									$scope.setFormNotDirty();
 						 		},
@@ -1431,11 +1429,10 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			}
 			else {
 				//console.log("d1");
-				selectDataset(item,index);	
+				selectDataset(item,index);		
 				$scope.setFormNotDirty();
 			}
 		}
-		
 		
 	};
 	
@@ -1561,7 +1558,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	}
 	
 	$scope.refactorFileDatasetConfig = function(item) {
-						
+					
 		$scope.selectedDataSet.fileType = item!=undefined ? item.fileType : "";
 		$scope.selectedDataSet.fileName = item!=undefined ? item.fileName : "";
 		$scope.selectedDataSetInitialFileName = $scope.selectedDataSet.fileName;
@@ -1571,7 +1568,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		$scope.selectedDataSet.csvEncoding = item!=undefined ? item.csvEncoding : $scope.csvEncodingDefault; 
 		$scope.selectedDataSet.csvDelimiter = item!=undefined ? item.csvDelimiter : $scope.csvDelimiterDefault; 
 		$scope.selectedDataSet.csvQuote = item!=undefined ? item.csvQuote : $scope.csvQuoteDefault; 
-		
+
 		/**
 		 * Handle the limitRows property value deserialization (special case: it can be of a value NULL).
 		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
@@ -1588,7 +1585,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		else {			
 			$scope.selectedDataSet.limitRows = $scope.limitRowsDefault;			
 		}
-				
+
 		$scope.selectedDataSet.catTypeVn = item!=undefined ? item.catTypeVn : "";
 		
 		if (item!=undefined) {
@@ -1603,7 +1600,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			$scope.selectedDataSet.skipRows = null;
 			$scope.selectedDataSet.limitRows  = null;
 		}
-		
+				
 		
 		$scope.selectedDataSet.id = item!=undefined ? item.id : "";
 		$scope.selectedDataSet.label = item!=undefined ? item.label : "";
@@ -1640,7 +1637,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	}
 	
 	$scope.createNewDataSet = function() {
-				
+		
 //		if ($scope.datasetsListTemp.length < $scope.datasetsListPersisted.length + 1) {
 		
 		// There is a new (not saved) DS that is already dirty
@@ -1648,7 +1645,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 //		var blankDSNotDirty = !$scope.dirtyForm && $scope.datasetsListTemp.length == $scope.datasetsListPersisted.length + 1;
 
 		if ($scope.datasetsListTemp.length == $scope.datasetsListPersisted.length + 1) {
-		
+
 			if ($scope.dirtyForm) {
 				
 				var confirm = $mdDialog.confirm()
@@ -1670,15 +1667,16 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					 		},
 					 		
 					 		function() {
-					 			console.log("keep changes");					 			
+					 			
+					 			console.log("keep changes");
 					 		}
 						);
 				
 			}
-			else {		
+			else {			
 				$scope.setFormNotDirty();
 				$scope.datasetsListTemp = angular.copy($scope.datasetsListPersisted);
-				makeNewDataset();		
+				makeNewDataset();			
 			}
 			
 		}
@@ -1709,7 +1707,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	var makeNewDataset = function() {
 					
 			var object = {
-					actions: "",
 					catTypeId:"",
 					catTypeVn:"",
 					dataSource:"",
@@ -1826,35 +1823,35 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				.then(
 						function(response) {
 										
-							sbiModule_restServices.promiseGet('1.0/datasets/dataset/id',response.data.id)
-								.then(
-										function(responseDS) {
+					sbiModule_restServices.promiseGet('1.0/datasets/dataset/id',response.data.id)
+						.then(
+								function(responseDS) {
 											$log.info("SUCCESS"); 
-											var savedDataset = responseDS.data[0];									
-											$scope.selectedDataSet = angular.copy(savedDataset);
-											$scope.datasetsListTemp[indexOfExistingDSInAT] = angular.copy($scope.selectedDataSet);
+									var savedDataset = responseDS.data[0];									
+									$scope.selectedDataSet = angular.copy(savedDataset);
+									$scope.datasetsListTemp[indexOfExistingDSInAT] = angular.copy($scope.selectedDataSet);
 											$scope.datasetsListPersisted = angular.copy($scope.datasetsListTemp);
-											$scope.selectedDataSetInit = angular.copy($scope.selectedDataSet);
-										},
-										
+									$scope.selectedDataSetInit = angular.copy($scope.selectedDataSet);
+								},
+								
 										function(responseDS) {
 											$log.warn("ERROR");
-										}
-									);
-												
-							console.log("[POST]: SUCCESS!");					
-							sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');					
-							
-							// RELOAD ALL THE DATASETS AFTER SAVE OPERATION
-		//					$scope.loadAllDatasets();
-							//$scope.selectedDataSet = null;
-							
-							$scope.setFormNotDirty();
-							
+								}
+							);
+										
+					console.log("[POST]: SUCCESS!");					
+					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');					
+					
+					// RELOAD ALL THE DATASETS AFTER SAVE OPERATION
+//					$scope.loadAllDatasets();
+					//$scope.selectedDataSet = null;
+					
+					$scope.setFormNotDirty();
+					
 						}, 
 						
 						function(response) {
-							sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 						}
 					);
 			
@@ -1898,7 +1895,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 						$scope.file={};
 						$scope.selectedDataSet.fileType = data.fileType;
 						$scope.selectedDataSet.fileName = data.fileName;
-												
+						
 						/**
 						 * When user re-uploads a file, we should reset all fields that we have on the bottom panel of the Step 1, for both file types 
 						 * (CSV and XLS), so the user can start from the scratch when defining new/modifying existing file dataset. 
@@ -2594,7 +2591,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 //		   });
 //    }
     
-    $scope.openHelp = function() {	
+    $scope.openHelp = function () {
 		    	
     	// The HTML page for the Help dialog on the Type tab of the Dataset catalog
     	if ($scope.selectedTab==1) {
@@ -2612,23 +2609,23 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 						
 						$scope.templateContent = response.data;
 						
-						$mdDialog
-						   .show({
-							    scope : $scope,
-							    preserveScope : true,
-							    parent : angular.element(document.body),
+    	$mdDialog
+		   .show({
+		    scope : $scope,
+		    preserveScope : true,
+		    parent : angular.element(document.body),
 							    controllerAs : 'datasetController',
-							    templateUrl : sbiModule_config.contextName + '/js/src/angular_1.4/tools/catalogues/templates/helpDataSet.html',
-							    clickOutsideToClose : false,
+		    templateUrl : sbiModule_config.contextName +'/js/src/angular_1.4/tools/catalogues/templates/helpDataSet.html',
+		    clickOutsideToClose : false,
 							    hasBackdrop : true
-						   });
+		   });
 						
 					},
 					
 					function() {
 						alert("ERROR");
 						return null;
-					}
+    }
 			);
 	}
     
@@ -2670,7 +2667,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		    hasBackdrop : false
 		   });
     }
-    
+	
     $scope.resetWhenChangeDSType = function(dsType) {
     	
     	if (dsType.toLowerCase()=="file") {

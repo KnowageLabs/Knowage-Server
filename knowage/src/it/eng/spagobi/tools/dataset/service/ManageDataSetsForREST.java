@@ -442,7 +442,7 @@ public class ManageDataSetsForREST {
 			String xslSheetNumber = json.optString(DataSetConstants.XSL_FILE_SHEET_NUMBER);
 
 			Boolean newFileUploaded = false;
-			if (json.getString("fileUploaded") != null) {
+			if (json.optString("fileUploaded") != null) {
 				newFileUploaded = Boolean.valueOf(json.optString("fileUploaded"));
 			}
 
@@ -601,7 +601,7 @@ public class ManageDataSetsForREST {
 
 		if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_CKAN)) {
 
-			String dsId = json.getString(DataSetConstants.DS_ID);
+			String dsId = json.optString(DataSetConstants.DS_ID);
 			String dsLabel = json.getString(DataSetConstants.LABEL);
 			String fileType = json.getString(DataSetConstants.CKAN_FILE_TYPE);
 
@@ -621,7 +621,7 @@ public class ManageDataSetsForREST {
 			String ckanEncodig = json.optString(DataSetConstants.CKAN_CSV_FILE_ENCODING);
 
 			Boolean newFileUploaded = false;
-			if (json.getString("fileUploaded") != null) {
+			if (json.optString("fileUploaded") != null) {
 				newFileUploaded = Boolean.valueOf(json.optString("fileUploaded"));
 			}
 
@@ -745,7 +745,7 @@ public class ManageDataSetsForREST {
 
 		if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_SCRIPT)) {
 			dataSet = new ScriptDataSet();
-			String script = json.optString(DataSetConstants.SCRIPT);
+			String script = json.optString("script");
 			String scriptLanguage = json.optString(DataSetConstants.SCRIPT_LANGUAGE);
 			jsonDsConfig.put(DataSetConstants.SCRIPT, script);
 			jsonDsConfig.put(DataSetConstants.SCRIPT_LANGUAGE, scriptLanguage);
@@ -884,12 +884,12 @@ public class ManageDataSetsForREST {
 	 * getSessionContainer().setAttribute("trasfTypesList", trasfTypesList);
 	 * List sbiAttrs = DAOFactory.getSbiAttributeDAO().loadSbiAttributes();
 	 * getSessionContainer().setAttribute("sbiAttrsList", sbiAttrs);
-	 *
+	 * 
 	 * List scopeCdList =
 	 * DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants
 	 * .DS_SCOPE); getSessionContainer().setAttribute("scopeCdList",
 	 * scopeCdList);
-	 *
+	 * 
 	 * String filePath = SpagoBIUtilities.getResourcePath(); filePath +=
 	 * File.separator + "dataset" + File.separator + "files"; File dir = new
 	 * File(filePath); String[] fileNames = dir.list();
@@ -1287,13 +1287,13 @@ public class ManageDataSetsForREST {
 
 	private RESTDataSet manageRESTDataSet(boolean savingDataset, JSONObject config, JSONObject json) throws JSONException {
 		for (String sa : DataSetConstants.REST_STRING_ATTRIBUTES) {
-			config.put(sa, json.getString(sa));
+			config.put(sa, json.optString(sa));
 		}
 		for (String ja : DataSetConstants.REST_JSON_OBJECT_ATTRIBUTES) {
-			config.put(ja, json.getJSONObject(ja));
+			config.put(ja, json.optJSONObject(ja));
 		}
 		for (String ja : DataSetConstants.REST_JSON_ARRAY_ATTRIBUTES) {
-			config.put(ja, json.getJSONObject(ja));
+			config.put(ja, json.optJSONObject(ja));
 		}
 		RESTDataSet res = new RESTDataSet(config);
 		return res;

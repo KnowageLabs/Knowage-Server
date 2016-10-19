@@ -75,7 +75,7 @@ public class DataSetJSONSerializer implements Serializer {
 	private static final String WS_OPERATION = "wsOperation";
 	private static final String SCRIPT = "script";
 	private static final String SCRIPT_LANGUAGE = "scriptLanguage";
-	private static final String JCLASS_NAME = "jclassName";
+	private static final String JCLASS_NAME = "jClassName";
 
 	private static final String QBE_DATA_SOURCE = "qbeDataSource";
 	private static final String QBE_DATAMARTS = "qbeDatamarts";
@@ -515,7 +515,7 @@ public class DataSetJSONSerializer implements Serializer {
 							fieldTypeJSONObject.put("pname", "fieldType");
 							fieldTypeJSONObject.put("pvalue", fieldType);
 							columnsJSONArray.put(fieldTypeJSONObject);
-							
+
 							String fieldAlias = (String) row.getAttribute("alias");
 							JSONObject fieldAliasJSONObject = new JSONObject();
 							fieldAliasJSONObject.put("column", columnName);
