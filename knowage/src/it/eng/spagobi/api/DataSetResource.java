@@ -724,6 +724,33 @@ public class DataSetResource extends AbstractSpagoBIResource {
 
 		return toReturn;
 	}
+	
+	@GET
+	@Path("/federated")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String getMyFederatedDataSets(@QueryParam("typeDoc") String typeDoc, @QueryParam("callback") String callback) {
+		logger.debug("IN");
+
+		try {
+
+			IDataSetDAO dsDao = DAOFactory.getDataSetDAO();
+			dsDao.setUserProfile(getUserProfile());
+			List<IDataSet> dataSets = getDatasetManagementAPI().getMyFederatedDataSets();
+
+			List<IDataSet> toBeReturned = new ArrayList<IDataSet>();
+
+			for (IDataSet dataset : dataSets) {
+				if (DataSetUtilities.isExecutableByUser(dataset, getUserProfile()))
+					toBeReturned.add(dataset);
+			}
+
+			return serializeDataSets(toBeReturned, typeDoc);
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+		} finally {
+			logger.debug("OUT");
+		}
+	} 
 
 	@GET
 	@Path("/enterprise")

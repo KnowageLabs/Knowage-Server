@@ -66,7 +66,9 @@ public interface IDataSetDAO extends ISpagoBIDao {
 	public List<IDataSet> loadCkanDataSets(UserProfile user);
 
 	public List<IDataSet> loadMyDataDataSets(UserProfile owner);
-
+	
+	public List<IDataSet> loadMyDataFederatedDataSets(UserProfile owner);
+	
 	public List<IDataSet> loadDataSets(String owner, Boolean includeOwned, Boolean includePublic, String scope, String type, Set<Domain> categoryList,
 			String implementation, Boolean showDerivedDatasets);
 

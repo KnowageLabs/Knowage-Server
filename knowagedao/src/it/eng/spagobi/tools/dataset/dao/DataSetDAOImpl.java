@@ -276,21 +276,27 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	@Override
 	public List<IDataSet> loadMyDataDataSets(UserProfile userProfile) {
 		List<IDataSet> results = new ArrayList<IDataSet>();
-
-		// "from SbiDataSet h where h.active = ? and ( "+
-		// " ((h.owner = ? ) or ( h.publicDS = true and h.scope.valueCd ='USER' AND h.owner !=?)) "+
-		// " OR "+
-		// " (h.scope.valueCd ='ENTERPRISE') "+
-		// " OR "+
-		// " ( h.publicDS = true and h.scope.valueCd ='USER' AND h.owner != ?) "+
-		// ")"
-
 		List<IDataSet> owened = loadDataSetsOwnedByUser(userProfile, true);
 		results.addAll(owened);
 		List<IDataSet> shared = loadDatasetsSharedWithUser(userProfile, true);
 		results.addAll(shared);
 		List<IDataSet> enterprise = loadEnterpriseDataSets(userProfile);
 		results.addAll(enterprise);
+
+		return results;
+	}
+	
+	@Override
+	public List<IDataSet> loadMyDataFederatedDataSets(UserProfile userProfile) {
+		List<IDataSet> results = new ArrayList<IDataSet>();
+		List<IDataSet> mydatasets = loadMyDataDataSets(userProfile);
+		for (Iterator iterator = mydatasets.iterator(); iterator.hasNext();) {
+			IDataSet iDataSet = (IDataSet) iterator.next();
+			FederationDefinition fd = iDataSet.getDatasetFederation();
+			if(fd!=null){
+				results.add(iDataSet);
+			}
+		}
 
 		return results;
 	}

@@ -784,6 +784,23 @@ public class DatasetManagementAPI {
 		}
 	}
 
+	public List<IDataSet> getMyFederatedDataSets() {
+		try {
+
+			List<IDataSet> dataSets = getDataSetDAO().loadMyDataFederatedDataSets(getUserProfile());
+
+			// for (IDataSet dataSet : dataSets) {
+			// checkQbeDataset(dataSet);
+			// }
+			return dataSets;
+		} catch (Throwable t) {
+			throw new RuntimeException("An unexpected error occured while executing method", t);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+	
+		
 	public Integer creatDataSet(IDataSet dataSet) {
 		logger.debug("IN");
 		Integer toReturn = null;
