@@ -233,7 +233,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	$scope.searchFilter = function(){		
 		hlght = true;
 		var toSend = {
-			'hierarchy':h,
+			'hierarchy':filterFather,
 			'axis': $scope.activeaxis,
 			'name': $scope.searchText,
 			'showS':$scope.showSiblings
@@ -283,7 +283,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 				  expandAsyncTree($scope.data,response.data, id);
 					
 				  for(var j = 0; j< visibleSelectedTracker.length;j++){
-					if(visibleSelectedTracker[j].id == h && visibleSelectedTracker[j].selected.length > 0)
+					if(visibleSelectedTracker[j].id == h  && visibleSelectedTracker[j].selected.length > 0)
 						shouldSearchVisible= false;
 					}
 			  }				  
