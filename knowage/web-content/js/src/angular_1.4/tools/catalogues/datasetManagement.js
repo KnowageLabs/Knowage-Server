@@ -802,6 +802,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			 						   				// Find the dataset, that is deleted on the server-side, in the array of all datasets and remove it from the array.
 			 						   				for (var i=0; i<$scope.datasetsListTemp.length; i++) {			   					
 			 						   					if ($scope.datasetsListTemp[i].label == item.label) {
+//			 						   						console.log($scope.dirtyForm);
+//			 						   						console.log($scope.selectedDataSet.label == item.label);
 			 						   						$scope.datasetsListTemp.splice(i,1);
 			 						   						$scope.showSaveAndCancelButtons = false;
 			 						   						break;
@@ -952,6 +954,9 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
  		
  		$timeout(
  					function() {
+// 						console.log(page);
+// 						console.log($scope.datasetTableLastPage);
+// 						console.log(page<$scope.datasetTableLastPage);
  						var page = $scope.tableLastPage("datasetList_id");
  						// If the page that is returned is less than the current one, that means that we are already on that page, so keep it (danristo)
 						$scope.datasetTableLastPage = page<$scope.datasetTableLastPage ? $scope.datasetTableLastPage : page; 
@@ -1524,7 +1529,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	}
 	
 	$scope.refactorFileDatasetConfig = function(item) {
-					
+						
 		$scope.selectedDataSet.fileType = item!=undefined ? item.fileType : "";
 		$scope.selectedDataSet.fileName = item!=undefined ? item.fileName : "";
 		$scope.selectedDataSetInitialFileName = $scope.selectedDataSet.fileName;
@@ -1567,7 +1572,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		$scope.selectedDataSet.meta = item!=undefined ? item.meta : [];
 		
 		$scope.selectedDataSet.fileUploaded = false;
-		
+				
 	}
 	
 	/** 
@@ -1593,7 +1598,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	}
 	
 	$scope.createNewDataSet = function() {
-		
+				
 		if ($scope.datasetsListTemp.length < $scope.datasetsListPersisted.length + 1) {
 
 			if ($scope.dirtyForm) {
@@ -1728,6 +1733,9 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			
 			$scope.selectedDataSet.customData = angular.copy(JSON.stringify(customAttributesTemp));
 		}
+		else if($scope.selectedDataSet.dsTypeCd.toLowerCase()=="file") {
+			$scope.selectedDataSet.fileUploaded = !$scope.selectedDataSet.fileUploaded ? false : true;
+		}
 		
 		$scope.selectedDataSet.recalculateMetadata = true;
 		$scope.manageDatasetFieldMetadata($scope.selectedDataSet.meta);
@@ -1765,37 +1773,40 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			}
 			
 			sbiModule_restServices.promisePost('1.0/datasets','', angular.toJson($scope.selectedDataSet))
-				.then(function(response) {
+				.then(
+						function(response) {
 										
-					sbiModule_restServices.promiseGet('1.0/datasets/dataset/id',response.data.id)
-						.then(
-								function(responseDS) {
-									console.log("SUCCESS"); 
-									var savedDataset = responseDS.data[0];									
-									$scope.selectedDataSet = angular.copy(savedDataset);
-//									console.log($scope.datasetsListTemp);
-//									console.log(savedDataset)
-									$scope.datasetsListTemp[indexOfExistingDSInAT] = angular.copy($scope.selectedDataSet);
-									$scope.selectedDataSetInit = angular.copy($scope.selectedDataSet);
-								},
-								
-								function(response2) {
-									console.log("ERROR");
-								}
-							);
+							sbiModule_restServices.promiseGet('1.0/datasets/dataset/id',response.data.id)
+								.then(
+										function(responseDS) {
+											$log.info("SUCCESS"); 
+											var savedDataset = responseDS.data[0];									
+											$scope.selectedDataSet = angular.copy(savedDataset);
+											$scope.datasetsListTemp[indexOfExistingDSInAT] = angular.copy($scope.selectedDataSet);
+											$scope.datasetsListPersisted = angular.copy($scope.datasetsListTemp);
+											$scope.selectedDataSetInit = angular.copy($scope.selectedDataSet);
+										},
 										
-					console.log("[POST]: SUCCESS!");					
-					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');					
-					
-					// RELOAD ALL THE DATASETS AFTER SAVE OPERATION
-//					$scope.loadAllDatasets();
-					//$scope.selectedDataSet = null;
-					
-					$scope.setFormNotDirty();
-					
-				}, function(response) {
-					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-				});
+										function(responseDS) {
+											$log.warn("ERROR");
+										}
+									);
+												
+							console.log("[POST]: SUCCESS!");					
+							sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');					
+							
+							// RELOAD ALL THE DATASETS AFTER SAVE OPERATION
+		//					$scope.loadAllDatasets();
+							//$scope.selectedDataSet = null;
+							
+							$scope.setFormNotDirty();
+							
+						}, 
+						
+						function(response) {
+							sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+						}
+					);
 			
 		}	
 		else {
@@ -1836,7 +1847,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 						$scope.file={};
 						$scope.selectedDataSet.fileType = data.fileType;
 						$scope.selectedDataSet.fileName = data.fileName;
-						
+												
 						/**
 						 * When user re-uploads a file, we should reset all fields that we have on the bottom panel of the Step 1, for both file types 
 						 * (CSV and XLS), so the user can start from the scratch when defining new/modifying existing file dataset. 
@@ -1845,9 +1856,9 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 						$scope.selectedDataSet.csvEncoding = $scope.csvEncodingDefault;
 						$scope.selectedDataSet.csvDelimiter = $scope.csvDelimiterDefault;
 						$scope.selectedDataSet.csvQuote = $scope.csvQuoteDefault;
-						$scope.selectedDataSet.skipRows = $scope.skipRowsDefault;
-						$scope.selectedDataSet.limitRows = $scope.limitRowsDefault;
-						$scope.selectedDataSet.xslSheetNumber = $scope.xslSheetNumberDefault;
+						$scope.selectedDataSet.skipRows = $scope.skipRowsDefault ? $scope.skipRowsDefault : null;
+						$scope.selectedDataSet.limitRows = $scope.limitRowsDefault ? $scope.limitRowsDefault : null;
+						$scope.selectedDataSet.xslSheetNumber = $scope.xslSheetNumberDefault ? $scope.limitRowsDefault : null;
 						
 						/**
 						 * Whenever we upload a file, keep the track of its name, in order to indicate when the new one is browsed but not uploaded.
@@ -2569,6 +2580,22 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		    clickOutsideToClose : false,
 		    hasBackdrop : false
 		   });
+    }
+    
+    $scope.resetWhenChangeDSType = function(dsType) {
+    	
+    	if (dsType.toLowerCase()=="file") {
+    		
+    		for (var key in $scope.fileObj) {
+        		
+        		if ($scope.fileObj.hasOwnProperty(key)) {				  
+        			$scope.fileObj[key] = "";		    	
+        		}	
+        		
+    		}
+    		
+    	}
+    	
     }
 	
 };

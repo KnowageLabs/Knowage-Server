@@ -171,6 +171,32 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	}
 
 	/**
+	 * Return the entire dataset according to its ID.
+	 * 
+	 * @param id
+	 * @return
+	 * @throws JSONException
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 */
+	@GET
+	@Path("/dataset/id/{id}")
+	@Produces(MediaType.TEXT_HTML)
+	public String getDataSetById(@PathParam("id") String id) throws JSONException {
+		logger.debug("IN");
+
+		IDataSetDAO datasetDao = null;
+		try {
+			datasetDao = DAOFactory.getDataSetDAO();
+		} catch (EMFUserError e) {
+			logger.error("Internal error", e);
+			throw new SpagoBIRuntimeException("Internal error", e);
+		}
+		IDataSet dataset = datasetDao.loadDataSetById(new Integer(id));
+
+		return serializeDataSet(dataset, null);
+	}
+
+	/**
 	 * Acquire required version of the dataset
 	 *
 	 * @param id

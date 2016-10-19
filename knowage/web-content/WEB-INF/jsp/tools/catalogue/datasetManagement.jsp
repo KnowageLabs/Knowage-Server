@@ -283,11 +283,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								<md-card layout-padding>
 									<div flex=100>
 								       <md-input-container class="md-block" > 
-									       <label>{{translate.load("sbi.ds.dsTypeCd")}}</label>
+									       <label>{{translate.load("sbi.ds.dsTypeCd")}}</label>									     
 									       <md-select 	placeholder ="{{translate.load('sbi.ds.dsTypeCd')}}"
 									       	 			ng-required = "true"
 									        			ng-model="selectedDataSet.dsTypeCd"
-									        			ng-change="setFormDirty()">   
+									        			ng-change="resetWhenChangeDSType(selectedDataSet.dsTypeCd); setFormDirty()">   
 									        	<md-option ng-repeat="l in datasetTypeList" value="{{l.VALUE_CD}}">{{l.VALUE_CD}}</md-option>
 									       </md-select>  
 									       <div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.dsTypeCd">
@@ -317,7 +317,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				                  	
 				                  	<div class="">
 					                    <md-button 	ng-click="uploadFile()" class="md-raised" 
-					                     			ng-disabled="!fileObj.fileName || (changingFile &&selectedDataSet.fileName==fileObj.fileName)" 
+					                     			ng-disabled="!fileObj.fileName || (changingFile && selectedDataSet.fileName==fileObj.fileName)" 
 					                     			title="{{datasetWizStep1UploadButtonTitle()}}">
 			                     			{{translate.load("sbi.workspace.dataset.wizard.upload")}}
 		             					</md-button>
@@ -457,7 +457,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					                        		
 					                        		<label>{{translate.load("sbi.workspace.dataset.wizard.csv.encoding")}}</label> 
 					                        		
-					                        		<md-select 	aria-label="aria-label" ng-model="selectedDataSet.csvEncoding" ng-required=true 
+					                        		<md-select 	aria-label="aria-label" ng-model="selectedDataSet.csvEncoding"
 					                        					ng-change="setFormDirty()">
 					                           			<md-option 	ng-repeat="csvEncodingItem in csvEncodingTypes" 
 					                           						ng-click="chooseEncoding(csvEncodingItem)" 
@@ -465,10 +465,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			                          						{{csvEncodingItem.name}}
 			                     						</md-option>
 					                        		</md-select>
-					                        		
-					                        		<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.csvEncoding">
-						       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
-					       						 	</div>
 					                        		
 						                     	</md-input-container>
 						                  	</div>
@@ -915,17 +911,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						                        		<label>{{translate.load("sbi.workspace.dataset.wizard.csv.encoding")}}</label> 
 						                        		
 						                        		<md-select 	aria-label="aria-label" ng-model="selectedDataSet.ckanCsvEncoding" 
-						                        					ng-required=true ng-change="setFormDirty()">
+						                        					ng-change="setFormDirty()">
 						                           			<md-option 	ng-repeat="csvEncodingItem in csvEncodingTypes" 
 						                           						ng-click="chooseEncoding(csvEncodingItem)" 
 						                           						value="{{csvEncodingItem.name}}">
 					                          						{{csvEncodingItem.name}}
 					                     						</md-option>
 						                        		</md-select>
-						                        		
-						                        		<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.ckanCsvEncoding">
-							       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
-						       						 	</div>
 						                        		
 							                     	</md-input-container>
 							                  	</div>
