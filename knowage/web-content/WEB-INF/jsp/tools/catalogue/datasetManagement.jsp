@@ -153,7 +153,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	       
 	       <!-- DATASET DETAIL PANEL -->
 	       <detail 	save-function="saveDataset" cancel-function="closeDatasetDetails" 
-	       			show-save-button="showSaveAndCancelButtons" show-cancel-button="showSaveAndCancelButtons">
+	       			show-save-button="showSaveAndCancelButtons" show-cancel-button="showSaveAndCancelButtons" disable-save-button="!datasetForm.$valid">
 	       
 	       		<form name=datasetForm ng-show="selectedDataSet!=null" style="height:100%; overflow-y:hidden">
 	       		
@@ -407,7 +407,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					                        		
 					                        		<label>{{translate.load("sbi.ds.file.csv.delimiter")}}</label> 
 					                        		
-					                        		<md-select 	aria-label="aria-label" ng-model="selectedDataSet.csvDelimiter" ng-required=true
+					                        		<md-select 	aria-label="aria-label" ng-model="selectedDataSet.csvDelimiter" ng-required="selectedDataSet.dsTypeCd=='File'"
 					                        					ng-change="setFormDirty()">
 					                           			<md-option 	ng-repeat="csvDelimiterCharacterItem in csvDelimiterCharacterTypes" 
 					                           						ng-click="chooseDelimiterCharacter(csvDelimiterCharacterItem)" 
@@ -416,7 +416,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			                     						</md-option>
 					                        		</md-select>
 					                        		
-					                        		<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.csvDelimiter">
+					                        		<div  ng-messages="datasetForm.lbl.$error" ng-show="selectedDataSet.dsTypeCd=='File' && !selectedDataSet.csvDelimiter">
 						       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 					       						 	</div>
 					       						 	
@@ -432,7 +432,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					                        		
 					                        		<label>{{translate.load("sbi.ds.file.csv.quote")}}</label> 
 					                        		
-					                        		<md-select 	aria-label="aria-label" ng-model="selectedDataSet.csvQuote" ng-required=true
+					                        		<md-select 	aria-label="aria-label" ng-model="selectedDataSet.csvQuote" ng-required="selectedDataSet.dsTypeCd=='File'"
 					                        					ng-change="setFormDirty()">
 					                           			<md-option 	ng-repeat="csvQuoteCharacterItem in csvQuoteCharacterTypes" 
 					                           						ng-click="chooseQuoteCharacter(csvQuoteCharacterItem)" 
@@ -441,7 +441,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			                     						</md-option>
 					                        		</md-select>
 					                        		
-					                        		<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.csvQuote">
+					                        		<div  ng-messages="datasetForm.lbl.$error" ng-show="selectedDataSet.dsTypeCd=='File' && !selectedDataSet.csvQuote">
 						       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 					       						 	</div>
 					                        		
@@ -497,7 +497,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									        </md-option>
 								       	</md-select> 
 								        
-								       	<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.dataSource">
+								       	<div  ng-messages="datasetForm.lbl.$error" ng-show="selectedDataSet.dsTypeCd=='Query' && !selectedDataSet.dataSource">
 			       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 		       						 	</div>
 		       						 	
@@ -508,12 +508,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							   	<md-input-container class="md-block">
 							    	
 							    	<label>{{translate.load("sbi.ds.query")}}</label>
-									<textarea 	ng-required="true" ng-model="selectedDataSet.query" ui-codemirror="{ onLoad : codemirrorLoaded }" 
+									<textarea 	ng-required="selectedDataSet.dsTypeCd=='Query'" ng-model="selectedDataSet.query" ui-codemirror="{ onLoad : codemirrorLoaded }" 
 												ui-codemirror-opts="codemirrorOptions" rows="8" md-select-on-focus
 											 	ng-change="setFormDirty()">
 								 	</textarea>
 									
-									<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.query">
+									<div  ng-messages="datasetForm.lbl.$error" ng-show="selectedDataSet.dsTypeCd=='Query' && !selectedDataSet.query">
        						 			<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
    						 			</div> 
 									
@@ -530,8 +530,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							<md-card layout-padding style="margin-top:0">
 								<md-input-container class="md-block" flex-gt-sm>
 						           	<label>{{translate.load("sbi.ds.jclassName")}}</label>
-						           	<input ng-model="selectedDataSet.jClassName" ng-required="true" ng-change="setFormDirty()">
-						           	<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.jClassName">
+						           	<input ng-model="selectedDataSet.jClassName" ng-required="selectedDataSet.dsTypeCd=='Java Class'" ng-change="setFormDirty()">
+						           	<div  ng-messages="datasetForm.lbl.$error" ng-show="selectedDataSet.dsTypeCd=='Java Class' && !selectedDataSet.jClassName">
 		       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
        						 		</div>
 						         </md-input-container>
@@ -539,7 +539,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						</md-content>
 						
 						<!-- WEB SERVICE DATASET -->
-						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='Web Service'">
+						<!-- <md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='Web Service'">
 							
 							<md-card layout-padding style="margin-top:0">
 								
@@ -567,7 +567,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						         
 							</md-card>
 							
-						</md-content>
+						</md-content> -->
 							
 						<!-- SCRIPT DATASET -->
 						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='Script'">
@@ -582,7 +582,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										       	name ="scriptLanguageDropdown" 
 										        ng-model="selectedDataSet.scriptLanguage"
 										        ng-change="modeChanged(selectedDataSet.queryScriptLanguage); setFormDirty()" 
-									         	ng-required="true"> 
+									         	ng-required="selectedDataSet.dsTypeCd=='Script'"> 
 							        	
 							        	<md-option ng-repeat="l in listOfScriptTypes track by $index" value="{{l.VALUE_CD}}">
 							       		 	{{l.VALUE_NM}} 
@@ -590,7 +590,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						       		 	
 							       	</md-select> 
 							       
-							       	<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.scriptLanguage">
+							       	<div  ng-messages="datasetForm.lbl.$error" ng-show="selectedDataSet.dsTypeCd=='Script' && !selectedDataSet.scriptLanguage">
 		       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
     						 		</div>
 							         
@@ -600,9 +600,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								
 							    	<label>{{translate.load("sbi.ds.script")}}</label>
 									<textarea  	ui-codemirror="cmOption" ng-model="selectedDataSet.script" 
-												md-select-on-focus ng-required="true" ng-change="setFormDirty()"></textarea>
+												md-select-on-focus ng-required="selectedDataSet.dsTypeCd=='Script'" ng-change="setFormDirty()"></textarea>
 									
-									<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.script">
+									<div  ng-messages="datasetForm.lbl.$error" ng-show="selectedDataSet.dsTypeCd=='Script' && !selectedDataSet.script">
 		       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
     						 		</div>
 									
@@ -624,12 +624,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								       	<label>{{translate.load("sbi.ds.dataSource")}}</label>
 								       
 							      	 	<md-select 	placeholder ="{{translate.load('sbi.ds.dataSource')}}"
-								        			ng-model="selectedDataSet.qbeDataSource" ng-required="true"
+								        			ng-model="selectedDataSet.qbeDataSource" ng-required="selectedDataSet.dsTypeCd=='Qbe'"
 								        			ng-change="setFormDirty()">   
 									        <md-option ng-repeat="l in dataSourceList" value="{{l.label}}">{{l.label}}</md-option>										        
 								       	</md-select>  
 								       
-								       	<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.qbeDataSource">
+								       	<div  ng-messages="datasetForm.lbl.$error" ng-show="selectedDataSet.dsTypeCd=='Qbe' && !selectedDataSet.qbeDataSource">
 	       						 			<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 	   						 			</div> 
 								       
@@ -643,11 +643,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								       	<label>{{translate.load("sbi.tools.managedatasets.datamartcombo.label")}}</label>
 								       
 								       	<md-select 	placeholder ="{{translate.load('sbi.tools.managedatasets.datamartcombo.label')}}"
-								        			ng-model="selectedDataSet.qbeDatamarts" ng-required="true" ng-change="setFormDirty()">   
+								        			ng-model="selectedDataSet.qbeDatamarts" ng-required="selectedDataSet.dsTypeCd=='Qbe'" ng-change="setFormDirty()">   
 									        <md-option ng-repeat="l in datamartList" value="{{l.name}}">{{l.name}}</md-option>										        
 								       	</md-select>  
 								       
-							      	 	<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.qbeDatamarts">
+							      	 	<div  ng-messages="datasetForm.lbl.$error" ng-show="selectedDataSet.dsTypeCd=='Qbe' && !selectedDataSet.qbeDatamarts">
 	       						 			<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
    						 				</div> 
 								       
@@ -680,9 +680,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								<md-input-container class="md-block" flex-gt-sm>
 						           	
 						           	<label>{{translate.load("sbi.ds.jclassName")}}</label>
-						           	<input ng-model="selectedDataSet.jclassName" ng-required="true" ng-change="setFormDirty()">
+						           	<input ng-model="selectedDataSet.jclassName" ng-required="selectedDataSet.dsTypeCd=='Custom'" ng-change="setFormDirty()">
 						           
-						           	<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.jclassName">
+						           	<div  ng-messages="datasetForm.lbl.$error" ng-show="selectedDataSet.dsTypeCd=='Custom' && !selectedDataSet.jclassName">
 	       						 		<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 	    						 	</div>
 	    						 	
@@ -749,9 +749,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								<md-input-container class="md-block" flex-gt-sm>
 								
 						           	<label>{{translate.load("sbi.ds.persistTableName")}}</label>
-						           	<input ng-model="selectedDataSet.flatTableName" ng-required="true" ng-change="setFormDirty()">
+						           	<input ng-model="selectedDataSet.flatTableName" ng-required="selectedDataSet.dsTypeCd=='Flat'" ng-change="setFormDirty()">
 						           	
-						           	<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.flatTableName">
+						           	<div  ng-messages="datasetForm.lbl.$error" ng-show="selectedDataSet.dsTypeCd=='Flat' && !selectedDataSet.flatTableName">
 	       						 		<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 	    						 	</div>
 	    						 	
@@ -762,12 +762,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								       	<label>{{translate.load("sbi.ds.dataSource")}}</label>
 								       
 								       	<md-select 	placeholder ="{{translate.load('sbi.ds.dataSource')}}"
-								        			ng-model="selectedDataSet.dataSourceFlat" ng-required="true"
+								        			ng-model="selectedDataSet.dataSourceFlat" ng-required="selectedDataSet.dsTypeCd=='Flat'"
 								        			ng-change="setFormDirty()">   
 									        <md-option ng-repeat="l in dataSourceList" value="{{l.label}}">{{l.label}}</md-option>										        
 								       	</md-select>  
 								       
-									  	<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.dataSourceFlat">
+									  	<div  ng-messages="datasetForm.lbl.$error" ng-show="selectedDataSet.dsTypeCd=='Flat' && !selectedDataSet.dataSourceFlat">
 	       						 			<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
     						 			</div>    
 								       
@@ -791,12 +791,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								       	<label>File type</label>
 								       	
 								       	<md-select 	placeholder ="Choose the file type"
-								       	 			ng-required = "true" ng-change="setFormDirty()"
+								       	 			ng-required = "selectedDataSet.dsTypeCd=='Ckan'" ng-change="setFormDirty()"
 								        			ng-model="selectedDataSet.ckanFileType">   
 								        	<md-option ng-repeat="l in ckanFileType" value="{{l.name}}">{{l.name}}</md-option>
 								       	</md-select>  
 								       	
-								       	<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.ckanFileType">
+								       	<div  ng-messages="datasetForm.lbl.$error" ng-show="selectedDataSet.dsTypeCd=='Ckan' && !selectedDataSet.ckanFileType">
 			       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 		       						 	</div>
 		       						 	
@@ -865,7 +865,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						                        		<label>{{translate.load("sbi.ds.file.csv.delimiter")}}</label> 
 						                        		
 						                        		<md-select 	aria-label="aria-label" ng-model="selectedDataSet.ckanCsvDelimiter" 
-						                        					ng-required=true ng-change="setFormDirty()">
+						                        					ng-required="selectedDataSet.dsTypeCd=='Ckan'" ng-change="setFormDirty()">
 						                           			<md-option 	ng-repeat="csvDelimiterCharacterItem in csvDelimiterCharacterTypes" 						                           						
 						                           						ng-click="chooseDelimiterCharacter(csvDelimiterCharacterItem)" 
 						                           						value="{{csvDelimiterCharacterItem.name}}">
@@ -873,7 +873,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				                     						</md-option>
 						                        		</md-select>
 						                        		
-						                        		<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.ckanCsvDelimiter">
+						                        		<div  ng-messages="datasetForm.lbl.$error" ng-show="selectedDataSet.dsTypeCd=='Ckan' && !selectedDataSet.ckanCsvDelimiter">
 							       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 						       						 	</div>
 										                        		
@@ -888,7 +888,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						                        		<label>{{translate.load("sbi.ds.file.csv.quote")}}</label> 
 						                        		
 						                        		<md-select 	aria-label="aria-label" ng-model="selectedDataSet.ckanCsvQuote" 
-						                        					ng-required=true ng-change="setFormDirty()">
+						                        					ng-required="selectedDataSet.dsTypeCd=='Ckan'" ng-change="setFormDirty()">
 						                           			<md-option 	ng-repeat="csvQuoteCharacterItem in csvQuoteCharacterTypes" 
 						                           						ng-click="chooseQuoteCharacter(csvQuoteCharacterItem)" 
 						                           						value="{{csvQuoteCharacterItem.name}}">
@@ -896,7 +896,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					                     						</md-option>
 						                        		</md-select>
 						                        		
-						                        		<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.ckanCsvQuote">
+						                        		<div  ng-messages="datasetForm.lbl.$error" ng-show="selectedDataSet.dsTypeCd=='Ckan' && !selectedDataSet.ckanCsvQuote">
 							       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 						       						 	</div>
 						                        		
@@ -935,9 +935,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										
 								    		<label>{{translate.load("sbi.ds.ckanUrl")}}</label>
 						           	
-								           	<input ng-model="selectedDataSet.ckanUrl" ng-required = "true" ng-change="setFormDirty()">
+								           	<input ng-model="selectedDataSet.ckanUrl" ng-required = "selectedDataSet.dsTypeCd=='Ckan'" ng-change="setFormDirty()">
 								           	
-								           	<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.ckanUrl">
+								           	<div  ng-messages="datasetForm.lbl.$error" ng-show="selectedDataSet.dsTypeCd=='Ckan' && !selectedDataSet.ckanUrl">
 				       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 			       						 	</div>
 			       						 	
@@ -1031,8 +1031,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								<div flex=100>
 									<md-input-container class="md-block">
 								    	<label>Address</label>
-										<input ng-model="selectedDataSet.restAddress" ng-required = "true" ng-change="setFormDirty()">
-										<div ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.restAddress">
+										<input ng-model="selectedDataSet.restAddress" ng-required = "selectedDataSet.dsTypeCd=='REST'" ng-change="setFormDirty()">
+										<div ng-messages="datasetForm.lbl.$error" ng-show="selectedDataSet.dsTypeCd=='REST' && !selectedDataSet.restAddress">
 			       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 		       						 	</div>
 									</md-input-container>
@@ -1052,7 +1052,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								       
 								       	<label>HTTP methods</label>
 								       	
-								       	<md-select 	placeholder ="HTTP methods" ng-required = "true"
+								       	<md-select 	placeholder ="HTTP methods" ng-required = "selectedDataSet.dsTypeCd=='REST'"
 								        			ng-model="selectedDataSet.restHttpMethod"
 								        			ng-change="setFormDirty()">   
 									        <md-option ng-repeat="l in httpMethods" value="{{l.value}}">
@@ -1060,7 +1060,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									        </md-option>
 								       	</md-select>  
 										
-										<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.restHttpMethod">
+										<div  ng-messages="datasetForm.lbl.$error" ng-show="selectedDataSet.dsTypeCd=='REST' && !selectedDataSet.restHttpMethod">
 			       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 		       						 	</div>
 		       						 	
@@ -1407,9 +1407,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									<div flex=50 layout="row" layout-align="start center">
 						           	
 				                  		<label>
-				                  			{{translate.load('sbi.ds.trasfTypeCd')}}: <strong>{{transformationDataset.VALUE_CD}}</strong>
+				                  			{{translate.load('sbi.ds.trasfTypeCd')}}: <strong>{{transformationDataset.VALUE_CD}}</strong>	
 			                  			</label> 
-				                  		
+				                  
 				                  		
 				                  		<md-input-container class="small counter" style="padding-left:8px;">
 				                     		<md-checkbox 	aria-label="Checkbox 2" 
@@ -1427,7 +1427,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									<div flex=100>
 										<md-input-container class="md-block">
 									    	<label>{{translate.load("sbi.ds.pivotColName")}}</label>
-											<input ng-model="selectedDataSet.pivotColName" ng-required="true" ng-change="setFormDirty()">
+											<input ng-model="selectedDataSet.pivotColName" ng-required="transformDatasetState" ng-change="setFormDirty()">
 											<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.pivotColName">
 		       						 			<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 	   						 				</div>
@@ -1437,7 +1437,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									<div flex=100>
 										<md-input-container class="md-block">
 									    	<label>{{translate.load("sbi.ds.pivotColValue")}}</label>
-											<input ng-model="selectedDataSet.pivotColValue" ng-required="true" ng-change="setFormDirty()">
+											<input ng-model="selectedDataSet.pivotColValue" ng-required="transformDatasetState" ng-change="setFormDirty()">
 											<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.pivotColValue">
 		       						 			<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 	   						 				</div>
@@ -1447,7 +1447,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									<div flex=100>
 										<md-input-container class="md-block">
 									    	<label>{{translate.load("sbi.ds.pivotRowName")}}</label>
-											<input ng-model="selectedDataSet.pivotRowName" ng-required="true" ng-change="setFormDirty()">
+											<input ng-model="selectedDataSet.pivotRowName" ng-required="transformDatasetState" ng-change="setFormDirty()">
 											<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.pivotRowName">
 		       						 			<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 	   						 				</div>
@@ -1530,7 +1530,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									<div flex=100>
 										<md-input-container class="md-block">
 									    	<label>{{translate.load("sbi.ds.persistTableName")}}</label>
-											<input ng-model="selectedDataSet.persistTableName" ng-required="true" ng-change="setFormDirty()">
+											<input ng-model="selectedDataSet.persistTableName" ng-required="selectedDataSet.isPersisted" ng-change="setFormDirty()">
 											<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.persistTableName">
 		       						 			<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 	   						 				</div>
@@ -1643,7 +1643,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 													</label>
 													
 													<md-select placeholder ="Select minute(s)"
-											        	ng-required = "true" ng-if=uuu multiple=true
+											        	ng-required = "selectedDataSet.isScheduled" ng-if=uuu multiple=true
 											        	ng-model="minutesSelected" style="margin:0; width:80%" title="{{minutesSelected}}"
 											        	ng-change="setFormDirty()">   
 											        	<md-option ng-repeat="l in minutes track by $index" value="{{$index}}">
@@ -1755,7 +1755,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 													</label>
 													
 													<md-select placeholder ="Select hours(s)"
-											        	ng-required = "true" ng-if=qqq multiple=true
+											        	ng-required = "selectedDataSet.isScheduled" ng-if=qqq multiple=true
 											        	ng-model="hoursSelected" style="margin:0; width:80%" title="{{hoursSelected}}"
 											        	ng-change="setFormDirty()">   
 											        	<md-option ng-repeat="l in hours track by $index" value="{{$index}}">
@@ -1860,7 +1860,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 													</label>
 													
 													<md-select placeholder ="Select day(s)"
-											        	ng-required = "true" ng-if=www multiple=true
+											        	ng-required = "selectedDataSet.isScheduled" ng-if=www multiple=true
 											        	ng-model="daysSelected" style="margin:0; width:80%" title="{{daysSelected}}"
 											        	ng-change="setFormDirty()">   
 											        	<md-option ng-repeat="l in days" value="{{l}}">
@@ -1965,7 +1965,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 													</label>
 													
 													<md-select placeholder ="Select month(s)"
-											        	ng-required = "true" ng-if=eee multiple=true
+											        	ng-required = "selectedDataSet.isScheduled" ng-if=eee multiple=true
 											        	ng-model="monthsSelected" style="margin:0; width:80%" title="monthsSelected"
 											        	ng-change="setFormDirty()">   
 											        	<md-option ng-repeat="l in months" value="{{l}}">
@@ -2078,7 +2078,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 													</label>
 													
 													<md-select placeholder ="Select weekday(s)"
-											        	ng-required = "true" ng-if=rrr multiple=true
+											        	ng-required = "selectedDataSet.isScheduled" ng-if=rrr multiple=true
 											        	ng-model="weekdaysSelected" style="margin:0; width:80%" title="{{weekdaysSelected}}"
 											        	ng-change="setFormDirty()">   
 											        	<md-option ng-repeat="l in weekdays" value="{{l}}">
