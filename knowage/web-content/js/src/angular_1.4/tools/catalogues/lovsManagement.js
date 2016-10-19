@@ -36,6 +36,7 @@ app.controller
 	 	"$mdToast",
 	 	"sbiModule_messaging",
 	 	"sbiModule_config",
+	 	"$timeout",
 	 	lovsManagementFunction
 	 ]
 );
@@ -112,7 +113,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
            name:"",
            hideTooltip:true,
            transformer:function(){
-               return " <md-checkbox ng-checked=scopeFunctions.getItem(row,'value') aria-label='buttonValue'></md-checkbox>";
+               return " <md-checkbox ng-checked=scopeFunctions.getItem(row,'value') ng-click = scopeFunctions.setItem(row,'value')  aria-label='buttonValue'></md-checkbox>";
            }                                    
        },
        {
@@ -120,7 +121,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
            name:"",
            hideTooltip:true,
            transformer:function(){
-               return " <md-checkbox ng-checked=scopeFunctions.getItem(row,'description') aria-label='buttonDescription'></md-checkbox>";
+               return " <md-checkbox ng-checked=scopeFunctions.getItem(row,'description') ng-click = scopeFunctions.setItem(row,'description') aria-label='buttonDescription'></md-checkbox>";
            }                                    
        },
        {
@@ -128,7 +129,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
            name:"",
            hideTooltip:true,
            transformer:function(){
-               return " <md-checkbox ng-checked=scopeFunctions.getItem(row,'visible') aria-label='buttonVisible'></md-checkbox>";
+               return " <md-checkbox ng-checked=scopeFunctions.getItem(row,'visible') ng-click = scopeFunctions.setItem(row,'visible') aria-label='buttonVisible'></md-checkbox>";
            }                                    
        }                     
 	    ]
@@ -172,7 +173,8 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	                       
 	                       ]
 	
-	
+	$scope.formatedVisibleValues = [];
+	$scope.formatedInvisibleValues = [];
 	$scope.cmOption = {
 			   indentWithTabs: true,
 				smartIndent: true,
@@ -352,6 +354,13 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	 * @author: spetrovic (Stefan.Petrovic@mht.net)
 	 */
 	$scope.changeType = function(item,type) {
+		
+		for (var i = 0; i < $scope.listOfInputTypes.length; i++) {
+			if($scope.listOfInputTypes[i].VALUE_CD == item){
+				$scope.selectedLov.itypeId = ""+$scope.listOfInputTypes[i].VALUE_ID;
+			}
+		}
+		
 		if(type == lovTypeEnum.MAIN){
 			 switch (item) {
 				case $scope.lovItemEnum.SCRIPT:
@@ -476,10 +485,51 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	 * LOV into the DB will be run. 	 * 
 	 * @author: danristo (danilo.ristovski@mht.net)
 	 */
-	$scope.saveLov = function()
-	{
-		console.log("-- function saveLov() --");
+	$scope.saveLov = function(){  // this function is called when clicking on save button
+		
+		formatForSave();
+		console.log($scope.selectedLov);
+		
+if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update PUT
+			
+			sbiModule_restServices.promisePut("2.0/lovs","",$scope.selectedLov)
+			.then(function(response) {
+				$scope.listOfLovs = [];
+				$timeout(function(){								
+					$scope.getAllLovs();
+				}, 1000);
+				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
+				$scope.selectedLov={};
+				$scope.showme=false;
+				$scope.dirtyForm=false;
+				closeDialogFromLOV();
+				
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+				
+			});	
+			
+		}else{
+		
+		sbiModule_restServices.promisePost("2.0/lovs","",$scope.selectedLov)
+		.then(function(response) {
+			$scope.listOfLovs = [];
+			$timeout(function(){								
+				$scope.getAllLovs();
+			}, 1000);
+			sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
+			$scope.selectedLov={};
+			$scope.showme=false;
+			$scope.dirtyForm=false;
+			closeDialogFromLOV();
+			
+		}, function(response) {
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+			
+		});			
+		}
 	}
+	
 	
 	/**
 	 * When clicking on Cancel button in the header of the right panel, 
@@ -539,7 +589,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 		$scope.enableTest = false;
 		$scope.changeType(item.itypeCd);
 		var lovProvider = parseLovProvider(item);
-		console.log(lovProvider);
+		console.log(item);
 		if(lovProvider != null){
 			if (lovProvider.hasOwnProperty(lovProviderEnum.SCRIPT)) {
 				
@@ -768,13 +818,29 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 					 return true;
 				 }
 				 if(column == 'visible'){
-					 for (var i = 0; i < $scope.formatedVisebleValues.length; i++) {
-						if($scope.formatedVisebleValues[i] == row.name){
-							return true;
-						}
-					}
+					 
+						 for (var i = 0; i < $scope.formatedVisibleValues.length; i++) {
+								if($scope.formatedVisibleValues[i] == row.name){
+									return true;
+								}
+							}
 				 }
-			 }
+			 },
+		 	
+		 	setItem :  function(row,column){
+		 		 if(column == 'description'){
+		 			$scope.treeListTypeModel['DESCRIPTION-COLUMN'] = row.name;
+				 }	
+		 		 if(column == 'value'){
+			 			$scope.treeListTypeModel['VALUE-COLUMN'] = row.name;
+		 		 }
+		 		 if(column == 'visible'){
+		 			 	
+		 			$scope.formatedVisibleValues.push(row.name);
+		 			 	
+		 			 	
+		 		 }
+		 	}
 		 }
 		
 		var deleteLovItem = function(item) {
@@ -783,8 +849,15 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 					.promisePost("2.0/lovs/deleteSmth","", item)
 					.then(
 							function(response) {
-								
-								console.log(response);
+								$scope.listOfLovs = [];
+								$timeout(function(){								
+									$scope.getAllLovs();
+								}, 1000);
+								sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
+								$scope.selectedLov={};
+								$scope.showme=false;
+								$scope.dirtyForm=false;
+
 							},
 							function(response) {
 								sbiModule_messaging
@@ -796,43 +869,78 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 		}
 		
 		
-		var formatForSaving = function(item){
-			console.log(item.itypeCd);
+		var formatForTest = function(item,state){
+			
 			var tempObj = {}
 			var property = item.itypeCd;
-			tempObj.property = {
-			"DESCRIPTION-COLUMN" : "",
-			"INVISIBLE-COLUMNS" : "",
-			"LOVTYPE" : "",
-			"TREE-LEVELS-COLUMNS" : "",
-			"VALUE-COLUMN" : "",
-			"VISIBLE-COLUMNS" : ""
-			};
+			
+			if(state == 'new'){
+				
+				tempObj[property] = {
+						"DESCRIPTION-COLUMN" : "",
+						"INVISIBLE-COLUMNS" : "",
+						"LOVTYPE" : "",
+						"TREE-LEVELS-COLUMNS" : "",
+						"VALUE-COLUMN" : "",
+						"VISIBLE-COLUMNS" : ""
+						};
+				
+			}else{
+				
+				var lovProvider = parseLovProvider($scope.selectedLov);
+			    tempObj = lovProvider;
+			}
+			
 			switch (item.itypeCd) {
 			case lovProviderEnum.QUERY:
-				tempObj.property.CONNECTION = $scope.selectedQuery.datasource;
-				tempObj.property.STMT = $scope.selectedQuery.query;
+				tempObj[property].CONNECTION = $scope.selectedQuery.datasource;
+				tempObj[property].STMT = $scope.selectedQuery.query;
 				
 			break;
 			case lovProviderEnum.SCRIPT:
-				tempObj.property.LANGUAGE = $scope.selectedScriptType.language;
-				tempObj.property.SCRIPT =  $scope.selectedScriptType.text;
+				tempObj[property].LANGUAGE = $scope.selectedScriptType.language;
+				tempObj[property].SCRIPT =  $scope.selectedScriptType.text;
 			break;
 			case lovProviderEnum.FIX_LOV:
-				//tempObj.item.itypeCd
-				//tempObj.item.itypeCd
+				if($scope.listForFixLov.length > 0){
+				tempObj[property].FIXLISTLOV.ROWS.ROW = $scope.listForFixLov;
+				}
 			break;
 			case lovProviderEnum.JAVA_CLASS:
-				tempObj.property.JAVA_CLASS_NAME = $scope.selectedJavaClass.name;
+				tempObj[property].JAVA_CLASS_NAME = $scope.selectedJavaClass.name;
 			break;
 			case lovProviderEnum.DATASET:
-				tempObj.property.ID = $scope.selectedDataset.id;
-				tempObj.property.LABEL =  $scope.selectedDataset.label;	
+				tempObj[property].ID = $scope.selectedDataset.id;
+				tempObj[property].LABEL =  $scope.selectedDataset.label;	
 			break;
 			}
 			var x2js = new X2JS(); 
 			var xmlAsStr = x2js.json2xml_str(tempObj); 
 			$scope.selectedLov.lovProvider = xmlAsStr;
+		}
+		
+		var formatForSave = function() {
+			
+			var result = {}
+			var lovProvider = parseLovProvider($scope.selectedLov);
+			var property = $scope.selectedLov.itypeCd;
+			var tempObj = lovProvider[property];
+			tempObj['DESCRIPTION-COLUMN'] = $scope.treeListTypeModel['DESCRIPTION-COLUMN'];
+			tempObj['VALUE-COLUMN'] = $scope.treeListTypeModel['VALUE-COLUMN'];
+			tempObj['VISIBLE-COLUMNS'] = $scope.formatedVisibleValues.join();
+			  for (var i = 0; i < $scope.testLovModel.length; i++) {
+			    if ($scope.formatedVisibleValues.indexOf($scope.testLovModel[i].name) === -1) {
+			    	$scope.formatedInvisibleValues.push($scope.testLovModel[i].name);
+			    }
+			  }
+			tempObj['INVISIBLE-COLUMNS'] = $scope.formatedInvisibleValues.join();
+			tempObj.LOVTYPE = $scope.treeListTypeModel.LOVTYPE;
+			
+			result[property] = tempObj
+			var x2js = new X2JS();
+			var xmlAsStr = x2js.json2xml_str(result); 
+			$scope.selectedLov.lovProvider = xmlAsStr;
+		
 		}
 		
 		$scope.formatColumns = function(array) {
@@ -853,13 +961,16 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	
 		$scope.openPreviewDialog = function() {
 			
+			console.log($scope.selectedLov);
 			$scope.paginationObj.paginationStart = 0;
 			$scope.paginationObj.paginationLimit = 20;
 			$scope.paginationObj.paginationEnd = 20;
-			
 			if(!$scope.selectedLov.hasOwnProperty('lovProvider')){
-				formatForSaving($scope.selectedLov);
-				console.log($scope.selectedLov);
+				
+				formatForTest($scope.selectedLov,'new');
+			}else{
+				formatForTest($scope.selectedLov,'edit');
+				console.log("editing")
 			}
 			$scope.checkForParams($scope.selectedLov);
 			if($scope.paramFlag){
@@ -964,11 +1075,19 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 			 var provider = parseLovProvider($scope.selectedLov);
 			 $scope.treeListTypeModel = provider[prop];
 			 console.log($scope.treeListTypeModel);
-			 $scope.formatedVisibleValues = $scope.treeListTypeModel['VISIBLE-COLUMNS'].split(",");
-			 $scope.formatedInvisibleValues = $scope.treeListTypeModel['INVISIBLE-COLUMNS'].split(",");
-			 $scope.formatedDescriptionValues = $scope.treeListTypeModel['DESCRIPTION-COLUMNS'].split(",");
-			 $scope.formatedValues = $scope.treeListTypeModel['VALUE-COLUMNS'].split(",");
-			 if($scope.treeListTypeModel.LOVTYPE != 'simple'){
+			 if($scope.selectedLov.id != undefined){
+				 console.log("we have existing one")
+				 $scope.formatedVisibleValues = $scope.treeListTypeModel['VISIBLE-COLUMNS'].split(",");
+				 $scope.formatedInvisibleValues = $scope.treeListTypeModel['INVISIBLE-COLUMNS'].split(",");
+				 $scope.formatedDescriptionValues = $scope.treeListTypeModel['DESCRIPTION-COLUMN'].split(",");
+				 $scope.formatedValues = $scope.treeListTypeModel['VALUE-COLUMN'].split(",");
+				 
+			 }else{
+				 console.log("we have new one")
+				 $scope.treeListTypeModel.LOVTYPE = 'simple';
+			 }
+			 if($scope.treeListTypeModel.LOVTYPE != 'simple' && $scope.treeListTypeModel.LOVTYPE != ''){
+				 $scope.formatedTreeValues = $scope.treeListTypeModel['TREE-LEVELS-COLUMNS'].split(",");
 				for (var i = 0; i < $scope.formatedValues.length; i++) {
 					var defObj = {};
 					defObj.level = $scope.formatedValues[i];

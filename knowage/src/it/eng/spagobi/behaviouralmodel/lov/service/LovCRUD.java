@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -66,7 +65,6 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
-import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -251,24 +249,22 @@ public class LovCRUD extends AbstractSpagoBIResource {
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.LOVS_MANAGEMENT })
-	public String post(@Valid ModalitiesValue modValue) {
+	public Response post(@javax.ws.rs.core.Context HttpServletRequest req) {
 		IModalitiesValueDAO modalitiesValueDAO;
 		try {
 
-			// JSONObject requestBodyJSON =
-			// RestUtilities.readBodyAsJSONObject(servletRequest);
+			JSONObject requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
 			modalitiesValueDAO = DAOFactory.getModalitiesValueDAO();
 			modalitiesValueDAO.setUserProfile(getUserProfile());
-			// ModalitiesValue modVal =
-			// recoverModalitiesValueDetails(requestBodyJSON);
-			modalitiesValueDAO.insertModalitiesValue(modValue);
+			ModalitiesValue modVal = toModality(requestBodyJSON);
+			modalitiesValueDAO.insertModalitiesValue(modVal);
 
 			logger.debug("OUT: Posting the LOV - done successfully");
 
-			int newID = modalitiesValueDAO.loadModalitiesValueByLabel(modValue.getLabel()).getId();
+			// int newID =
+			// modalitiesValueDAO.loadModalitiesValueByLabel(modValue.getLabel()).getId();
 
-			// return Response.ok().build();
-			return Integer.toString(newID);
+			return Response.ok().build();
 
 		} catch (Exception exception) {
 
@@ -280,31 +276,27 @@ public class LovCRUD extends AbstractSpagoBIResource {
 
 	@POST
 	@Path("/deleteSmth")
-	// @Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.LOVS_MANAGEMENT })
-	public void remove(@Context HttpServletRequest servletRequest) {
+	public Response remove(@javax.ws.rs.core.Context HttpServletRequest req) {
+
+		IModalitiesValueDAO modalitiesValueDAO;
 
 		try {
 
-			JSONObject requestJSONObject = RestUtilities.readBodyAsJSONObject(servletRequest);
-			ModalitiesValue modVal = recoverModalitiesValueDetails(requestJSONObject);
-			IModalitiesValueDAO modalitiesDAO = DAOFactory.getModalitiesValueDAO();
-			modalitiesDAO.setUserProfile(getUserProfile());
-			modalitiesDAO.eraseModalitiesValue(modVal);
+			JSONObject requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
+			modalitiesValueDAO = DAOFactory.getModalitiesValueDAO();
+			modalitiesValueDAO.setUserProfile(getUserProfile());
+			ModalitiesValue modVal = toModality(requestBodyJSON);
+			modalitiesValueDAO.eraseModalitiesValue(modVal);
 
 			logger.debug("OUT: Posting the LOV - done successfully");
 
-			// int newID =
-			// modalitiesDAO.loadModalitiesValueByLabel(modVal.getLabel()).getId();
-
-			// return Response.ok().build();
-			// System.out.println(modalitiesDAO.loadAllModalitiesValue().toString());
-			// return modalitiesDAO.loadAllModalitiesValue().toString();
+			return Response.ok().build();
 
 		} catch (Exception exception) {
 
-			logger.error("Error while posting LOV", exception);
-			throw new SpagoBIServiceException("Error while posting LOV", exception);
+			logger.error("Error while deleting LOV", exception);
+			throw new SpagoBIServiceException("Error while deleting LOV", exception);
 
 		}
 	}
@@ -312,27 +304,20 @@ public class LovCRUD extends AbstractSpagoBIResource {
 	@PUT
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.LOVS_MANAGEMENT })
-	public String put(@Context HttpServletRequest servletRequest) {
+	public Response put(@javax.ws.rs.core.Context HttpServletRequest req) {
 
 		logger.debug("IN");
-
+		IModalitiesValueDAO modalitiesValueDAO;
 		try {
 
-			JSONObject requestBodyJSON = RestUtilities.readBodyAsJSONObject(servletRequest);
-			IModalitiesValueDAO modalitiesDAO = DAOFactory.getModalitiesValueDAO();
-			modalitiesDAO.setUserProfile(getUserProfile());
-			// ModalitiesValue modVal =
-			// recoverModalitiesValueDetails(requestBodyJSON);
-			ModalitiesValue modVal = (ModalitiesValue) JsonConverter.jsonToObject(requestBodyJSON.toString(), ModalitiesValue.class);
-			modalitiesDAO.modifyModalitiesValue(modVal);
+			JSONObject requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
+			modalitiesValueDAO = DAOFactory.getModalitiesValueDAO();
+			modalitiesValueDAO.setUserProfile(getUserProfile());
+			ModalitiesValue modVal = toModality(requestBodyJSON);
+			modalitiesValueDAO.modifyModalitiesValue(modVal);
 			logger.debug("OUT: Putting the LOV - done successfully");
 
-			int newID = modalitiesDAO.loadModalitiesValueByLabel(modVal.getLabel()).getId();
-
-			// return Response.ok().build();
-			return Integer.toString(newID);
-
-			// return Response.status(200).build();
+			return Response.ok().build();
 
 		} catch (Exception exception) {
 
@@ -425,6 +410,70 @@ public class LovCRUD extends AbstractSpagoBIResource {
 	// return modalitiesValuesJSON;
 	//
 	// }
+
+	private ModalitiesValue toModality(JSONObject requestBodyJSON) throws EMFUserError, SerializationException, SourceBeanException {
+
+		logger.debug("IN");
+
+		ModalitiesValue lovToReturn = new ModalitiesValue();
+
+		Integer id = -1;
+		if (requestBodyJSON.opt("id") != null) {
+
+			if (requestBodyJSON.opt("id").getClass() == Integer.class) {
+				id = (Integer) requestBodyJSON.opt("id");
+			} else {
+				id = new Integer((String) requestBodyJSON.opt("id"));
+
+			}
+		}
+
+		String lovName = (String) requestBodyJSON.opt("name");
+		String lovDecription = (String) requestBodyJSON.opt("description");
+		String lovLabel = (String) requestBodyJSON.opt("label");
+		String lovSelType = (String) requestBodyJSON.opt("SELECTION_TYPE");
+		if (lovSelType == null) {
+			lovSelType = "";
+		}
+
+		String lovProvider = (String) requestBodyJSON.opt("lovProvider");
+		String lovInputTypeCD = (String) requestBodyJSON.opt("itypeCd");
+
+		String lovInputTypeID = (String) requestBodyJSON.opt("itypeId");
+
+		Integer dataSetID = -1;
+
+		Assert.assertNotNull(lovName, "LOV name cannot be null");
+		Assert.assertNotNull(lovDecription, "LOV description cannot be null");
+		Assert.assertNotNull(lovProvider, "LOV provider cannot be null");
+		Assert.assertNotNull(lovInputTypeCD, "LOV input type cannot be null");
+		Assert.assertNotNull(lovInputTypeID, "LOV input type ID cannot be null");
+		Assert.assertNotNull(lovLabel, "LOV label cannot be null");
+		Assert.assertNotNull(lovSelType, "LOV selection type cannot be null");
+
+		if (lovInputTypeCD.equalsIgnoreCase("DATASET")) {
+
+			DatasetDetail dataSetDetail = (DatasetDetail) LovDetailFactory.getLovFromXML(lovProvider);
+			dataSetID = Integer.parseInt(dataSetDetail.getDatasetId());
+
+			logger.debug(dataSetDetail.getDatasetId());
+		}
+
+		lovToReturn.setId(id);
+		lovToReturn.setName(lovName);
+		lovToReturn.setDescription(lovDecription);
+		lovToReturn.setLovProvider(lovProvider);
+		lovToReturn.setITypeCd(lovInputTypeCD);
+		lovToReturn.setITypeId(lovInputTypeID);
+		lovToReturn.setLabel(lovLabel);
+		lovToReturn.setSelectionType(lovSelType);
+		lovToReturn.setDatasetID(dataSetID);
+
+		logger.debug("OUT: Recovering data of the LOV from JSON object - done successfully");
+
+		return lovToReturn;
+
+	}
 
 	private ModalitiesValue recoverModalitiesValueDetails(JSONObject requestBodyJSON) throws EMFUserError, SerializationException, SourceBeanException {
 
