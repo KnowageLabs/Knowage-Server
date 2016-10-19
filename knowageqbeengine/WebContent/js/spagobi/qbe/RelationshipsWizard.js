@@ -111,6 +111,7 @@ Ext.extend(Sbi.qbe.RelationshipsWizard, Ext.Panel, {
     		, data : []
     	});
     	this.detailStore.on('load', this.setRecordsPath, this);
+    	this.detailStore.loadData(this.getOptions());
     }
     
     ,
@@ -124,8 +125,13 @@ Ext.extend(Sbi.qbe.RelationshipsWizard, Ext.Panel, {
     
     ,
     getRecordPath : function (aRecord) {
-    	var toReturn = '';
     	var nodes = aRecord.get('nodes');
+    	return this.getRecordPathFromNode(nodes);
+    }
+    
+    ,
+    getRecordPathFromNode : function (nodes) {
+    	var toReturn = '';
     	var lastTarget = null; // this is useful because the relations are undirected, therefore I have to understand the target of a node
     	for (var i = 0; i < nodes.length; i++) {
     		var node = nodes[i];
@@ -236,7 +242,7 @@ Ext.extend(Sbi.qbe.RelationshipsWizard, Ext.Panel, {
      * Filters the store of the detail panel:
      * remove from the view all the paths with entities not contained in the entities involved by the query 
      */
-    , filterPathWithOtherEntities: function(button,event,keepFilterActive){
+    , filterPathWithOtherEntities: function(button,event,keepFilterActive,entity){
     	var entities = this.getMainStroreEntities();
     	if(!keepFilterActive){
     		//toggle the filter activation
@@ -263,6 +269,27 @@ Ext.extend(Sbi.qbe.RelationshipsWizard, Ext.Panel, {
     	                        	 scope: this
     	                         }
     	                         ]);
+    	if(entity){
+        	this.detailStore.filter([
+        	                         {
+        	                        	 fn   : function(aRecord) {
+        	                        		 var nodes = aRecord.get('nodes');
+        	                        		 for (var i = 0; i < nodes.length; i++) {
+        	                        			 var node = nodes[i];
+        	                        			 var source = node.sourceName;
+        	                        			 var target = node.targetName;
+        	                        			 if(entity==source || entity==target){
+        	                        				 return true;
+        	                        			 }
+        	                        		 }
+        	                        		 return false;
+
+        	                        	 },
+        	                        	 scope: this
+        	                         }
+        	                         ]);
+    	}
+
 
 
     }
@@ -281,10 +308,10 @@ Ext.extend(Sbi.qbe.RelationshipsWizard, Ext.Panel, {
 
     ,
     mainGridOnRowclickHandler : function ( theGrid, rowIndex, e ) {
-    	var choises = this.getOptionsByIndex(rowIndex);
-    	this.detailStore.loadData(choises);
+    	var entity = this.getOptionsByIndex(rowIndex).id;
     	//apply active filters on the choices in the detail panel 
-    	this.filterPathWithOtherEntities(null,null,true);
+    	var record = this.mainStore.getAt(rowIndex);
+    	this.filterPathWithOtherEntities(null,null,true,record.data.entity);
     }
     
     ,
@@ -292,6 +319,29 @@ Ext.extend(Sbi.qbe.RelationshipsWizard, Ext.Panel, {
     	var record = this.mainStore.getAt(rowIndex);
     	var choises = record.data.choices;
     	return choises;
+    }
+    
+    ,
+    getOptions : function () {
+    	
+    	var allChoices = new Array();
+    	
+    	for(var i=0; i<this.ambiguousFields.length; i++){
+    		var record = this.ambiguousFields[i];
+        	var choises = record.choices;
+        	for(var j=0; j<choises.length;j++){
+        		for(var k=0; k<allChoices.length;k++){
+            		if(this.getRecordPathFromNode(allChoices[k].nodes) == this.getRecordPathFromNode(choises[j].nodes)){
+            			break;
+            		}
+            	}
+        		if(k==allChoices.length){
+        			allChoices.push(choises[j]);
+        		}
+        	}
+    	}
+    	
+    	return allChoices;
     }
     
     ,
@@ -335,32 +385,6 @@ Ext.extend(Sbi.qbe.RelationshipsWizard, Ext.Panel, {
     	return toReturn;
     }
     
-    /*
-    ,
-    removeCurrentActive : function () {
-    	var activeIndex = this.detailStore.find( 'active', true );
-    	if (activeIndex > -1) {
-    		var activeRecord = this.detailStore.getAt(activeIndex);
-    		activeRecord.set('active', false);
-    	}
-    }
-    */
-    
-    /*
-	,
-	getUserChoiceForField : function (theFieldRecord) {
-		var toReturn = [];
-		var choices = theFieldRecord.data.choices;
-		var length = choices.length, element = null;
-		for ( var i = 0; i < length; i++) {
-			element = choices[i];
-			if (element.active) {
-				toReturn.push(element);
-			}
-		}
-		return toReturn;
-	}
-	*/
 	
 	,
 	getCellTooltip: function (value, cell, record) {
@@ -399,25 +423,10 @@ Ext.extend(Sbi.qbe.RelationshipsWizard, Ext.Panel, {
 	 	return value;
 	}
 	
-	/*
-	,
-	removeNonActiveOptions : function (aFieldData) {
-		var newArray = [];
-		var oldArray = aFieldData['choices'];
-		for (var i = 0; i < oldArray.length; i++) {
-			var option = oldArray[i];
-			if (option.active) {
-				delete option.active;
-				newArray.push(option);
-			}
-		}
-		aFieldData['choices'] = newArray;
-	}
-	*/
-	
+
 	,
 	applyToEntityHandler : function () {
-		this.storeChangesInMainStore(true);
+		this.filterPathWithOtherEntities(null,null,true);
 	}
 	
 	// public methods
@@ -426,14 +435,18 @@ Ext.extend(Sbi.qbe.RelationshipsWizard, Ext.Panel, {
     	var toReturn = [];
     	this.mainStore.each(function (aRecord) {
     		var clone = Ext.apply({}, aRecord.data);
-    		//the store contains only a field for each entity
-    		for(var i=0; i<this.ambiguousFields.length; i++){
-    			var field = this.ambiguousFields[i];
-    			if(field.entity == clone.entity){
-    				field.choices = clone.choices;
-    				toReturn.push(field);
+    		clone.choices = new Array();
+    		for(var i=0; i<this.detailStore.data.items.length; i++){
+    			var field = this.detailStore.data.items[i].data;
+    			var nodes = field.nodes;
+    			for(var j=0; j<nodes.length;j++){
+    				var aNode = nodes[j];
+    				if(clone.entity == aNode.sourceName || clone.entity == aNode.targetName){
+    					clone.choices.push(field);
+    				}
     			}
     		}
+    		toReturn.push(clone);
     	}, this);
     	return toReturn;
 	}
