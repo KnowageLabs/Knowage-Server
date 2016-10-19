@@ -1273,7 +1273,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	$scope.getDomainTypeDataset = function(){	
 		sbiModule_restServices.promiseGet("domains", "listValueDescriptionByType","DOMAIN_TYPE=DATA_SET_TYPE")
 		.then(function(response) {
-			$scope.datasetTypeList = response.data;
+			$scope.datasetTypeList = angular.copy(response.data);
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 		});

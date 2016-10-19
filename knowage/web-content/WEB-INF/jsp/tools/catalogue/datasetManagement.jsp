@@ -288,7 +288,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									       	 			ng-required = "true"
 									        			ng-model="selectedDataSet.dsTypeCd"
 									        			ng-change="resetWhenChangeDSType(selectedDataSet.dsTypeCd); setFormDirty()">   
-									        	<md-option ng-repeat="l in datasetTypeList" value="{{l.VALUE_CD}}">{{l.VALUE_CD}}</md-option>
+									        	<md-option ng-repeat="l in datasetTypeList | filter: { VALUE_CD: '!Custom' }" value="{{l.VALUE_CD}}">{{l.VALUE_CD}}</md-option>
 									       </md-select>  
 									       <div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.dsTypeCd">
 				       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
@@ -673,7 +673,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						</md-content>
 							
 						<!-- CUSTOM DATASET -->
-						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='Custom'">
+						<!-- <md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='Custom'">
 							
 							<md-card layout-padding style="margin-top:0">
 								
@@ -696,7 +696,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							 		
 							 		<md-content layout-column>
 							 			
-							 			<!-- TOOLBAR FOR THE CARD THAT HOLDS CUSTOM ATTRIBUTES -->
+							 			TOOLBAR FOR THE CARD THAT HOLDS CUSTOM ATTRIBUTES
 								     	<md-toolbar class="secondaryToolbar" layout-padding>
 								     	
 								          	<div class="md-toolbar-tools">
@@ -739,7 +739,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							
 							</md-card>
 							
-						</md-content>
+						</md-content> -->
 							
 						<!-- FLAT DATASET -->
 						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='Flat'">
