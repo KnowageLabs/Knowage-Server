@@ -770,7 +770,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		 	backgroundColor:'transparent',
 	   
 		 	action: function(item,event) {
-		 		console.log(item.id);
+		 		
 		 		// Deleting an existing (persisted) dataset 
 		 		if (item.id && item.id != "") {
 		 			
@@ -872,61 +872,77 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			 	backgroundColor:'transparent',
 		   
 			 	action: function(item,event) {
-			 		
-			 		if ($scope.datasetsListTemp.length < $scope.datasetsListPersisted.length + 1) {	
-			 			
-			 			if ($scope.dirtyForm) {
-			 				
-			 				var confirm = $mdDialog.confirm()
-							        .title($scope.translate.load("sbi.catalogues.generic.modify"))
-							        .targetEvent(event)	 	          
-							        .textContent($scope.translate.load("sbi.catalogues.generic.modify.msg"))
-							        .ariaLabel("Losing the changed and not saved data")
-							        .ok($scope.translate.load("sbi.general.yes"))
-							        .cancel($scope.translate.load("sbi.general.No"));
+	
+					if (item.id) {
+						
+						if ($scope.datasetsListTemp.length==$scope.datasetsListPersisted.length+1) {
 							
-							$mdDialog
-								.show(confirm)
-								.then(					
-										function() {
-											$scope.setFormNotDirty();
-											cloningDataset(item);
-								 		},
-								 		
-								 		function() {
-								 			
-								 			console.log("keep changes");
-								 			
-			//					 			if ($scope.selectedDataSet.id) {
-			//					 				$scope.selectedDataSetInit = $scope.datasetsListPersisted[$scope.selectedDSIndex];
-			//					 			}
-			//					 			else {
-			//					 				$scope.selectedDataSetInit = $scope.datasetsListTemp[$scope.datasetsListTemp.length-1];
-			//					 			}
-								 			
-								 		}
-									);
-			 				
-			 			}
-			 			else {
-			 				cloningDataset(item);
-			 			}
-				 		
-			 		}
-			 		else {
-//			 			sbiModule_messaging.showErrorMessage($scope.translate.load('sbi.ds.clone.warning.onlyonenewdataset.msg'));
-			 			
-			 			$mdDialog
-						.show(
-								$mdDialog.alert()
-							        .clickOutsideToClose(true)
-							        .title('Cannot add new dataset')
-							        .textContent($scope.translate.load('sbi.ds.clone.warning.onlyonenewdataset.msg'))
-							        .ariaLabel('Cannot add new dataset')
-							        .ok('Ok')
-						    );
-			 			
-			 		}
+							if ($scope.dirtyForm) {
+					 				
+					 				var confirm = $mdDialog.confirm()
+									        .title($scope.translate.load("sbi.catalogues.generic.modify"))
+									        .targetEvent(event)	 	          
+									        .textContent($scope.translate.load("sbi.catalogues.generic.modify.msg"))
+									        .ariaLabel("Losing the changed and not saved data")
+									        .ok($scope.translate.load("sbi.general.yes"))
+									        .cancel($scope.translate.load("sbi.general.No"));
+									
+									$mdDialog
+										.show(confirm)
+										.then(					
+												function() {
+													$scope.setFormNotDirty();
+													$scope.datasetsListTemp = angular.copy($scope.datasetsListPersisted);
+													cloningDataset(item);
+//													console.log("prosao clone 3");
+										 		},
+										 		
+										 		function() {
+										 			
+										 			console.log("keep changes");
+										 			
+					//					 			if ($scope.selectedDataSet.id) {
+					//					 				$scope.selectedDataSetInit = $scope.datasetsListPersisted[$scope.selectedDSIndex];
+					//					 			}
+					//					 			else {
+					//					 				$scope.selectedDataSetInit = $scope.datasetsListTemp[$scope.datasetsListTemp.length-1];
+					//					 			}
+										 			
+										 		}
+											);
+					 				
+					 			}
+					 			else {
+					 				$scope.setFormNotDirty();
+					 				$scope.datasetsListTemp = angular.copy($scope.datasetsListPersisted);
+					 				cloningDataset(item);	
+					 			}
+						 		
+					 		}
+							
+						else {
+							$scope.setFormNotDirty();
+							$scope.datasetsListTemp = angular.copy($scope.datasetsListPersisted);
+							cloningDataset(item);
+						}
+						
+					}
+					
+
+//					if ($scope.datasetsListTemp.length == $scope.datasetsListPersisted.length + 1) {
+////			 			sbiModule_messaging.showErrorMessage($scope.translate.load('sbi.ds.clone.warning.onlyonenewdataset.msg'));
+//			 			
+//			 			$mdDialog
+//						.show(
+//								$mdDialog.alert()
+//							        .clickOutsideToClose(true)
+//							        .title('Cannot clone a new dataset')
+//							        .textContent("You cannot clone dataset that is not saved yet. Please, save before cloning it")
+//							        .ariaLabel('Cannot clone a new dataset')
+//							        .ok('Ok')
+//						    );
+//			 			
+//			 		}
 		 			
 			 	} 
 		 	}
@@ -949,6 +965,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
  		$scope.datasetsListTemp.push(datasetClone);
  		$scope.selectedDataSet = angular.copy($scope.datasetsListTemp[$scope.datasetsListTemp.length-1]);
  		$scope.selectedDataSetInit = angular.copy($scope.datasetsListTemp[$scope.datasetsListTemp.length-1]);
+ 		
+ 		$scope.setFormNotDirty();
  		
  		$scope.showSaveAndCancelButtons = true;
  		
@@ -1310,16 +1328,18 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 //		 console.log(item);
 //		 console.log($scope.dirtyForm);
 //		 console.log($scope.selectedDataSet);
-
+		 //$scope.selectedDataSet ? console.log("id: ",$scope.selectedDataSet.id) : console.log("UNDEFINED");
 		 // DS not yet selected
 		 if (!$scope.selectedDataSet) {
-//			 console.log("a1");
+			 //console.log("a2");
 			 $scope.setFormNotDirty();
 			 selectDataset(item,index);
 		 }
 		 // Moving from selected new DS to existing DS
 		 else if (!$scope.selectedDataSet.id) {
-//			 console.log("b1");
+			 //console.log("b2");
+			 //console.log(item.id);
+			 //console.log($scope.dirtyForm);
 //			 if ($scope.selectedDataSet.id!=item.id && $scope.dirtyForm) {
 			 // If we move to the already existing DS and not clicking on the new DS again
 			 if (item.id) {
@@ -1339,9 +1359,9 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 						.then(					
 								function() {
 										
-									$scope.datasetsListTemp.splice($scope.datasetsListTemp.length-1,1);									
-									$scope.setFormNotDirty();
+									$scope.datasetsListTemp.splice($scope.datasetsListTemp.length-1,1);											
 									selectDataset(item,index);
+									$scope.setFormNotDirty();
 						 		},
 						 		
 						 		function() {		
@@ -1353,8 +1373,9 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 							);
 				 }
 				 else {
-					 $scope.setFormNotDirty();
+					
 					 selectDataset(item,index);
+					 $scope.setFormNotDirty();
 				 }
 				 
 			 }			 
@@ -1363,8 +1384,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		 // Moving from an existing DS to another one
 //		 else if ($scope.selectedDataSet && $scope.selectedDataSet.id!=item.id) {
 		 else if ($scope.selectedDataSet.id!=item.id) {
-//			 console.log("c3");
-			if ($scope.dirtyForm==true) {
+			 //console.log("c4");
+			if ($scope.dirtyForm) {
 			
 				// TODO: translate
 				var confirm = $mdDialog.confirm()
@@ -1379,9 +1400,10 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					.show(confirm)
 					.then(					
 							function() {
-								$scope.setFormNotDirty();
-								console.log($scope.selectedDataSet);
+								
+								//console.log($scope.selectedDataSet);
 								selectDataset(item,index);
+								$scope.setFormNotDirty();
 					 		},
 					 		
 					 		function() {
@@ -1401,9 +1423,12 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				
 			}
 			else {
-				selectDataset(item,index);		
+				//console.log("d1");
+				selectDataset(item,index);	
+				$scope.setFormNotDirty();
 			}
 		}
+		
 		
 	};
 	
@@ -1539,9 +1564,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		$scope.selectedDataSet.csvEncoding = item!=undefined ? item.csvEncoding : $scope.csvEncodingDefault; 
 		$scope.selectedDataSet.csvDelimiter = item!=undefined ? item.csvDelimiter : $scope.csvDelimiterDefault; 
 		$scope.selectedDataSet.csvQuote = item!=undefined ? item.csvQuote : $scope.csvQuoteDefault; 
-
-		$scope.selectedDataSet.skipRows = item!=undefined ? Number(item.skipRows) : Number($scope.skipRowsDefault);
-		$scope.selectedDataSet.limitRows = item!=undefined ? Number(item.limitRows) : Number($scope.limitRowsDefault);
 		
 		/**
 		 * Handle the limitRows property value deserialization (special case: it can be of a value NULL).
@@ -1559,11 +1581,22 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		else {			
 			$scope.selectedDataSet.limitRows = $scope.limitRowsDefault;			
 		}
-
-		$scope.selectedDataSet.xslSheetNumber = item!=undefined ? Number(item.xslSheetNumber) : Number($scope.xslSheetNumberDefault);
 				
 		$scope.selectedDataSet.catTypeVn = item!=undefined ? item.catTypeVn : "";
-		$scope.selectedDataSet.catTypeId = item!=undefined ? Number(item.catTypeId) : null;
+		
+		if (item!=undefined) {
+			$scope.selectedDataSet.catTypeId =  Number(item.catTypeId);	
+			$scope.selectedDataSet.xslSheetNumber = Number($scope.xslSheetNumberDefault);
+			$scope.selectedDataSet.skipRows = Number(item.skipRows);
+			$scope.selectedDataSet.limitRows  = Number($scope.limitRowsDefault);	
+		}
+		else {
+			$scope.selectedDataSet.catTypeId = null;
+			$scope.selectedDataSet.xslSheetNumber = null;
+			$scope.selectedDataSet.skipRows = null;
+			$scope.selectedDataSet.limitRows  = null;
+		}
+		
 		
 		$scope.selectedDataSet.id = item!=undefined ? item.id : "";
 		$scope.selectedDataSet.label = item!=undefined ? item.label : "";
@@ -1572,6 +1605,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		$scope.selectedDataSet.meta = item!=undefined ? item.meta : [];
 		
 		$scope.selectedDataSet.fileUploaded = false;
+		
+		$scope.setFormNotDirty();
 				
 	}
 	
@@ -1599,8 +1634,14 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	
 	$scope.createNewDataSet = function() {
 				
-		if ($scope.datasetsListTemp.length < $scope.datasetsListPersisted.length + 1) {
+//		if ($scope.datasetsListTemp.length < $scope.datasetsListPersisted.length + 1) {
+		
+		// There is a new (not saved) DS that is already dirty
+//		var blankDSDirty = $scope.dirtyForm && ;
+//		var blankDSNotDirty = !$scope.dirtyForm && $scope.datasetsListTemp.length == $scope.datasetsListPersisted.length + 1;
 
+		if ($scope.datasetsListTemp.length == $scope.datasetsListPersisted.length + 1) {
+		
 			if ($scope.dirtyForm) {
 				
 				var confirm = $mdDialog.confirm()
@@ -1616,43 +1657,45 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					.then(					
 							function() {
 								$scope.setFormNotDirty();
+								//console.log("menjano 3");
+								$scope.datasetsListTemp = angular.copy($scope.datasetsListPersisted);
 								makeNewDataset();
 					 		},
 					 		
 					 		function() {
-					 			
-					 			console.log("keep changes");
-					 			
-//					 			if ($scope.selectedDataSet.id) {
-//					 				$scope.selectedDataSetInit = $scope.datasetsListPersisted[$scope.selectedDSIndex];
-//					 			}
-//					 			else {
-//					 				$scope.selectedDataSetInit = $scope.datasetsListTemp[$scope.datasetsListTemp.length-1];
-//					 			}
-					 			
+					 			console.log("keep changes");					 			
 					 		}
 						);
 				
 			}
-			else {			
-				makeNewDataset();			
+			else {		
+				$scope.setFormNotDirty();
+				$scope.datasetsListTemp = angular.copy($scope.datasetsListPersisted);
+				makeNewDataset();		
 			}
 			
 		}
+		// There is already a new or cloned DS that is not changed, so just replace it
 		else {
-//			sbiModule_messaging.showErrorMessage($scope.translate.load("sbi.ds.add.warning.onlyonenewdataset.msg"));
-			
-			$mdDialog
-			.show(
-					$mdDialog.alert()
-				        .clickOutsideToClose(true)
-				        .title('Cannot add new dataset')
-				        .textContent($scope.translate.load('sbi.ds.add.warning.onlyonenewdataset.msg'))
-				        .ariaLabel('Cannot add new dataset')
-				        .ok('Ok')
-			    );
-			
+			$scope.setFormNotDirty();
+			makeNewDataset();	
 		}
+			
+//		}
+//		else {
+////			sbiModule_messaging.showErrorMessage($scope.translate.load("sbi.ds.add.warning.onlyonenewdataset.msg"));
+//			
+//			$mdDialog
+//			.show(
+//					$mdDialog.alert()
+//				        .clickOutsideToClose(true)
+//				        .title('Cannot add new dataset')
+//				        .textContent($scope.translate.load('sbi.ds.add.warning.onlyonenewdataset.msg'))
+//				        .ariaLabel('Cannot add new dataset')
+//				        .ok('Ok')
+//			    );
+//			
+//		}
 		
 	};
 	
