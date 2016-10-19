@@ -2592,8 +2592,15 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 //    }
     
     $scope.openHelp = function() {	
-		
-    	var url = sbiModule_config.contextName + "/themes/sbi_default/html/dsPersistenceHelp.html";
+		    	
+    	// The HTML page for the Help dialog on the Type tab of the Dataset catalog
+    	if ($scope.selectedTab==1) {
+    		var url = sbiModule_config.contextName + "/themes/sbi_default/html/dsrules.html";
+    	}
+    	// The HTML page for the Help dialog on the Advanced tab of the Dataset catalog
+    	else {
+    		var url = sbiModule_config.contextName + "/themes/sbi_default/html/dsPersistenceHelp.html";
+    	}
     	
 		$http.get(url)
 			.then

@@ -136,7 +136,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		          	
 		          	<!-- HELP BUTTON -->
 		          	<md-button aria-label="menu" class="md-fab md-raised md-mini md-warn" 
-		          			ng-show="selectedDataSet" title="Help" ng-click="openHelp()">
+		          			ng-show="selectedTab>0" title="Help" ng-click="openHelp()">
 		            	<!-- H -->
 	            		<md-icon md-font-icon="fa fa-question-circle" class="fa fa-2x"></md-icon>			            	
 		          	</md-button>
