@@ -85,7 +85,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<queue-table>
 			<div layout="row"> 
 				<span flex></span>
-				<md-button ng-click="scopeFunctions.loadListLayers()">{{scopeFunctions.translate.load('gisengine.designer.layer.add')}}</md-button>
+				<md-button ng-click="scopeFunctions.loadListLayers()">{{scopeFunctions.translate.load('gisengine.designer.layer.change')}}</md-button>
 			</div>
 		</queue-table> 
 		</angular-table>	
