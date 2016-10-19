@@ -149,9 +149,7 @@ public class NetworkBuilder {
 			}else{
 				dest.setProperty(destVal, columnValue);
 			}
-		} else {
-			logger.error("Can not find column "+columnName+" in the dataset");
-		}
+		} 
 	}
 	
 }
