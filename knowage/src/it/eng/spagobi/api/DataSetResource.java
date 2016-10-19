@@ -109,18 +109,45 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		try {
 
 			// The old implementation. (commented by: danristo)
-			// List<IDataSet> dataSets = getDatasetManagementAPI().getDataSets();
+			List<IDataSet> dataSets = getDatasetManagementAPI().getDataSets();
+			List<IDataSet> toBeReturned = new ArrayList<IDataSet>();
 
-			/**
-			 * The new implementation that, besides other useful information about datasets, provides also an information about old dataset versions for
-			 * particular dataset. This information was missing before.
-			 *
-			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-			 * @author Nikola Simovic (nsimovic, nikola.simovic@mht.net)
-			 */
+			for (IDataSet dataset : dataSets) {
+				if (DataSetUtilities.isExecutableByUser(dataset, getUserProfile()))
+					toBeReturned.add(dataset);
+			}
+
+			return serializeDataSets(toBeReturned, typeDoc);
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
+	/**
+	 * The new implementation that, besides other useful information about datasets, provides also an information about old dataset versions for particular
+	 * dataset. This information was missing before.
+	 *
+	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 * @author Nikola Simovic (nsimovic, nikola.simovic@mht.net)
+	 */
+	@GET
+	@Path("/pagopt/")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String getDataSetsPaginationOption(@QueryParam("typeDoc") String typeDoc, @QueryParam("callback") String callback,
+			@QueryParam("offset") Integer offsetInput, @QueryParam("fetchSize") Integer fetchSizeInput) {
+
+		logger.debug("IN");
+
+		try {
+
+			int offset = (offsetInput == null) ? -1 : offsetInput;
+			int fetchSize = (fetchSizeInput == null) ? -1 : fetchSizeInput;
+
 			IDataSetDAO dsDao = DAOFactory.getDataSetDAO();
 			dsDao.setUserProfile(getUserProfile());
-			List<IDataSet> dataSets = dsDao.loadPagedDatasetList(-1, -1);
+			List<IDataSet> dataSets = dsDao.loadPagedDatasetList(offset, fetchSize);
 
 			List<IDataSet> toBeReturned = new ArrayList<IDataSet>();
 
@@ -130,6 +157,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			}
 
 			return serializeDataSets(toBeReturned, typeDoc);
+
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
 		} finally {
@@ -172,7 +200,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 
 	/**
 	 * Return the entire dataset according to its ID.
-	 * 
+	 *
 	 * @param id
 	 * @return
 	 * @throws JSONException
@@ -724,7 +752,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 
 		return toReturn;
 	}
-	
+
 	@GET
 	@Path("/federated")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
@@ -750,7 +778,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		} finally {
 			logger.debug("OUT");
 		}
-	} 
+	}
 
 	@GET
 	@Path("/enterprise")

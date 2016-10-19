@@ -746,13 +746,18 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	 *   																	
 	 */
 	$scope.loadAllDatasets = function(){
-		sbiModule_restServices.promiseGet("1.0/datasets","")
+		
+		// If you want to use server-side pagination of the Dataset list, use this commented line. (danristo)
+//		sbiModule_restServices.promiseGet("1.0/datasets","pagopt","offset=0&fetchSize=5",null)
+		
+		sbiModule_restServices.promiseGet("1.0/datasets","pagopt")
 			.then(function(response) {
 				$scope.datasetsListTemp = angular.copy(response.data.root);
 				$scope.datasetsListPersisted = angular.copy($scope.datasetsListTemp);
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 			});
+		
 	}
 	
 	$scope.loadAllDatasets();	
@@ -2573,18 +2578,49 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     	$scope.saveDataset();
     }
     
-    $scope.openHelp = function () {
-    	$mdDialog
-		   .show({
-		    scope : $scope,
-		    preserveScope : true,
-		    parent : angular.element(document.body),
-		    controllerAs : 'openHelpDataset',
-		    templateUrl : sbiModule_config.contextName +'/js/src/angular_1.4/tools/catalogues/templates/helpDataSet.html',
-		    clickOutsideToClose : false,
-		    hasBackdrop : false
-		   });
-    }
+//    $scope.openHelp = function () {
+//    	$mdDialog
+//		   .show({
+//		    scope : $scope,
+//		    preserveScope : true,
+//		    parent : angular.element(document.body),
+//		    controllerAs : 'openHelpDataset',
+//		    templateUrl : sbiModule_config.contextName +'/js/src/angular_1.4/tools/catalogues/templates/helpDataSet.html',
+//		    clickOutsideToClose : false,
+//		    hasBackdrop : false
+//		   });
+//    }
+    
+    $scope.openHelp = function() {	
+		
+    	var url = sbiModule_config.contextName + "/themes/sbi_default/html/dsPersistenceHelp.html";
+    	
+		$http.get(url)
+			.then
+			(
+					function(response) {
+						
+						$scope.templateContent = response.data;
+						
+						$mdDialog
+						   .show({
+							    scope : $scope,
+							    preserveScope : true,
+							    parent : angular.element(document.body),
+							    controllerAs : 'datasetController',
+							    templateUrl : sbiModule_config.contextName + '/js/src/angular_1.4/tools/catalogues/templates/helpDataSet.html',
+							    clickOutsideToClose : false,
+							    hasBackdrop : true
+						   });
+						
+					},
+					
+					function() {
+						alert("ERROR");
+						return null;
+					}
+			);
+	}
     
     $scope.openFieldsMetadata = function () {
     	$mdDialog
