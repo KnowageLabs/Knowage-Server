@@ -136,7 +136,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		          	
 		          	<!-- HELP BUTTON -->
 		          	<md-button aria-label="menu" class="md-fab md-raised md-mini md-warn" 
-		          			ng-show="selectedTab>0" title="Help" ng-click="openHelp()">
+		          			ng-show="selectedTab && selectedTab>0" title="Help" ng-click="openHelp()">
 		            	<!-- H -->
 	            		<md-icon md-font-icon="fa fa-question-circle" class="fa fa-2x"></md-icon>			            	
 		          	</md-button>
@@ -298,7 +298,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								</md-card>
 							</md-content>
 							
-						<!-- ELEMENTS NEEDED FOR THE FILE DATASET TYPE -->
+						<!-- FILE DATASET -->
 						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='File'">
 							
 							<!-- UPLOADING AND CHANGING FILE AS A DATA SOURCE OF THE DATASET -->
@@ -306,17 +306,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								
 								<div layout="row" flex=100 layout-align="start center" ng-show="!selectedDataSet.fileName || selectedDataSet.fileName=='' || changingFile">
 					                  	
-				                  	<label layout-align="center center">
+					                <input type="hidden" ng-model="selectedDataSet.fileName" ng-required="true">
+					                  	
+				                  	<label layout-align="center center" ng-required=true>
 				                  		{{translate.load("sbi.ds.wizard.selectFile")}}:
 			                  		</label>
+				                  
 				                  	
-				                  	<file-upload 	flex ng-model="fileObj" id="datasetFile" 
+				                  
+				                  	<file-upload 	flex ng-model="fileObj" id="datasetFile"  ng-required=true
 				                  					ng-click="fileChange();checkChange();fileObjTakeBackup()" 
 					                  				title="{{translate.load('sbi.workspace.dataset.wizard.browsefile.tooltip')}}">
 		                			</file-upload>
 				                  	
 				                  	<div class="">
-					                    <md-button 	ng-click="uploadFile()" class="md-raised" 
+					                    <md-button 	ng-click="uploadFile();setFormDirty();" class="md-raised" 
 					                     			ng-disabled="!fileObj.fileName || (changingFile && selectedDataSet.fileName==fileObj.fileName)" 
 					                     			title="{{datasetWizStep1UploadButtonTitle()}}">
 			                     			{{translate.load("sbi.workspace.dataset.wizard.upload")}}

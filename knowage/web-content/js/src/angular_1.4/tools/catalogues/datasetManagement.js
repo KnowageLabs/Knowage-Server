@@ -1265,18 +1265,20 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	}
 	
 	$scope.getDomainTypeCategory();
-	
+		
 	/*
 	 * 	@GET service that gets domain types for
 	 *  dataset types 																	
 	 */
 	$scope.getDomainTypeDataset = function(){	
+		
 		sbiModule_restServices.promiseGet("domains", "listValueDescriptionByType","DOMAIN_TYPE=DATA_SET_TYPE")
-		.then(function(response) {
-			$scope.datasetTypeList = angular.copy(response.data);
-		}, function(response) {
-			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-		});
+			.then(function(response) {
+				$scope.datasetTypeList = angular.copy(response.data);
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+			});
+		
 	}
 	
 	$scope.getDomainTypeDataset();
@@ -1869,6 +1871,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		$scope.selectedDataSetInit = null; // Reset the selection (none dataset item will be selected) (danristo)
 		$scope.selectedDataSet = null;
 		$scope.showSaveAndCancelButtons = false;
+		$scope.selectedTab = null;
 	};
 	
 	$scope.uploadFile= function(){
