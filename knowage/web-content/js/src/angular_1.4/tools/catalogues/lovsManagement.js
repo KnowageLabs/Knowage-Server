@@ -1077,17 +1077,24 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 			 console.log($scope.treeListTypeModel);
 			 if($scope.selectedLov.id != undefined){
 				 console.log("we have existing one")
+				 console.log($scope.treeListTypeModel);
 				 $scope.formatedVisibleValues = $scope.treeListTypeModel['VISIBLE-COLUMNS'].split(",");
 				 $scope.formatedInvisibleValues = $scope.treeListTypeModel['INVISIBLE-COLUMNS'].split(",");
-				 $scope.formatedDescriptionValues = $scope.treeListTypeModel['DESCRIPTION-COLUMN'].split(",");
-				 $scope.formatedValues = $scope.treeListTypeModel['VALUE-COLUMN'].split(",");
+				 if($scope.treeListTypeModel.LOVTYPE == 'simple'){
+					 $scope.formatedValues = $scope.treeListTypeModel['VALUE-COLUMN'].split(",");
+					 $scope.formatedDescriptionValues = $scope.treeListTypeModel['DESCRIPTION-COLUMN'].split(",");
+				 }else{
+					 $scope.formatedValues = $scope.treeListTypeModel['VALUE-COLUMNS'].split(","); 
+					 $scope.formatedDescriptionValues = $scope.treeListTypeModel['DESCRIPTION-COLUMNS'].split(",");
+				 }
+				 
 				 
 			 }else{
 				 console.log("we have new one")
 				 $scope.treeListTypeModel.LOVTYPE = 'simple';
 			 }
 			 if($scope.treeListTypeModel.LOVTYPE != 'simple' && $scope.treeListTypeModel.LOVTYPE != ''){
-				 $scope.formatedTreeValues = $scope.treeListTypeModel['TREE-LEVELS-COLUMNS'].split(",");
+				 //$scope.formatedTreeValues = $scope.treeListTypeModel['TREE-LEVELS-COLUMNS'].split(",");
 				for (var i = 0; i < $scope.formatedValues.length; i++) {
 					var defObj = {};
 					defObj.level = $scope.formatedValues[i];
