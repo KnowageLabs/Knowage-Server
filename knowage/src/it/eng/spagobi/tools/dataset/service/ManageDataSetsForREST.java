@@ -1290,10 +1290,10 @@ public class ManageDataSetsForREST {
 			config.put(sa, json.optString(sa));
 		}
 		for (String ja : DataSetConstants.REST_JSON_OBJECT_ATTRIBUTES) {
-			config.put(ja, json.optJSONObject(ja));
+			config.put(ja, new JSONObject(json.getString(ja)));
 		}
 		for (String ja : DataSetConstants.REST_JSON_ARRAY_ATTRIBUTES) {
-			config.put(ja, json.optJSONObject(ja));
+			config.put(ja, new JSONArray(json.getString(ja)));
 		}
 		RESTDataSet res = new RESTDataSet(config);
 		return res;

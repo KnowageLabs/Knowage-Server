@@ -1845,7 +1845,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			$timeout(function() { var page = $scope.tableLastPage("datasetList_id"); $scope.datasetTableLastPage = (page<=$scope.datasetTableLastPage)
 			? $scope.datasetTableLastPage : page;  }, 100);
 			
-			$scope.isCategoryRequired = false;
 				
 	}
 	
@@ -1935,7 +1934,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 											$scope.datasetsListTemp[indexOfExistingDSInAT] = angular.copy($scope.selectedDataSet);
 											$scope.datasetsListPersisted = angular.copy($scope.datasetsListTemp);
 											$scope.selectedDataSetInit = angular.copy($scope.selectedDataSet);
-											$scope.isCategoryRequired = false;
 										},
 										
 										function(responseDS) {
