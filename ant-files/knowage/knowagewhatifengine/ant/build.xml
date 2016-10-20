@@ -145,115 +145,19 @@
 	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
 	<target name="production" depends="create-production">
-		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/includeSbiWhatIfJS.jspf">
-			<replacetoken><![CDATA[<!-- START-PRODUCTION]]></replacetoken>
-			<replacevalue><![CDATA[<!-- START-PRODUCTION -->]]></replacevalue>
-		</replace>
-		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/includeSbiWhatIfJS.jspf">
-			<replacetoken><![CDATA[END-PRODUCTION -->]]></replacetoken>
-			<replacevalue><![CDATA[<!-- END-PRODUCTION -->]]></replacevalue>
-		</replace>
 
-		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/includeSbiWhatIfJS.jspf">
-			<replacetoken><![CDATA[<!-- START-DEBUG -->]]></replacetoken>
-			<replacevalue><![CDATA[<!-- START-DEBUG]]></replacevalue>
-		</replace>
-		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/includeSbiWhatIfJS.jspf">
-			<replacetoken><![CDATA[<!-- END-DEBUG -->]]></replacetoken>
-			<replacevalue><![CDATA[END-DEBUG -->]]></replacevalue>
-		</replace>
 	</target>
 
 	<target name="delete-debug">
-		<delete file="${build}/${webapp_name}/js/spagobi/whatif-all-${project.version}.js" />
-		<delete file="${build}/${webapp_name}/js/spagobi/whatif-all-debug.js" />
+
 	</target>
 
 	<target name="create-debug" depends="delete-debug">
-		<concat destfile="${build}/${webapp_name}/js/spagobi/whatif-all-debug.js" append="true">
-			<filelist dir="${build}/${webapp_name}/js">
-		
-
-
-				<file name='./spagobi/service/ServiceRegistry.js' />
-				<file name='./spagobi/service/RestService.js' />
-
-				<file name='./spagobi/commons/Format.js' />
-				<file name='./spagobi/commons/Utils.js' />
-				<file name='./spagobi/commons/Log.js' />
-
-				<file name='./spagobi/widgets/Help.js'/>
-
-				<file name='./spagobi/exception/ExceptionHandler.js' />
-
-				<file name='./spagobi/olap/model/DimensionModel.js' />
-				<file name='./spagobi/olap/model/HierarchyModel.js' />
-				<file name='./spagobi/olap/model/MemberModel.js' />
-				<file name='./spagobi/olap/model/PivotModel.js' />
-				<file name='./spagobi/olap/model/VersionModel.js' />
-				<file name='./spagobi/olap/model/AllocationAlgorithmModel.js' />
-
-				<file name='./spagobi/olap/options/OlapOptionsChart.js' />
-
-				<file name='./spagobi/olap/options/OlapOptionsTable.js' />
-				<file name='./spagobi/olap/options/OlapOptionsToolbar.js' />
-				<file name='./spagobi/olap/options/OlapOptionsContainer.js' />
-				<file name='./spagobi/olap/options/OlapOptions.js' />
-
-				<file name='./spagobi/olap/toolbar/OlapToolbar.js' />
-				<file name='./spagobi/olap/toolbar/VersionManagerWindow.js' />
-				<file name='./spagobi/olap/toolbar/ExportWizardWindow.js' />
-				<file name='./spagobi/olap/toolbar/SaveAsWindow.js' />
-				<file name='./spagobi/olap/toolbar/EditMdxWindow.js' />
-				<file name='./spagobi/olap/toolbar/CalculatedMembersWindow.js' />
-
-				<file name='./spagobi/olap/execution/table/OlapExecutionFilterTree.js' />
-				<file name='./spagobi/olap/execution/table/OlapExecutionDimension.js' />
-				<file name='./spagobi/olap/execution/table/OlapExecutionAxisDimension.js' />
-				<file name='./spagobi/olap/execution/table/OlapExecutionFilter.js' />
-				<file name='./spagobi/olap/execution/table/OlapExecutionColumn.js' />
-				<file name='./spagobi/olap/execution/table/OlapExecutionRow.js' />
-				<file name='./spagobi/olap/execution/table/OlapExecutionDimensions.js' />
-				<file name='./spagobi/olap/execution/table/OlapExecutionColumns.js' />
-				<file name='./spagobi/olap/execution/table/OlapExecutionFilters.js' />
-				<file name='./spagobi/olap/execution/table/OlapExecutionRows.js' />
-				<file name='./spagobi/olap/execution/table/OlapExecutionTable.js' />
-				<file name='./spagobi/olap/execution/table/OlapExecutionPivot.js' />
-				<file name='./spagobi/olap/execution/chart/OlapExecutionChart.js' />
-				<file name='./spagobi/olap/execution/OlapExecutionPanel.js' />
-
-				<file name='./spagobi/olap/tools/OlapViewCubeSelector.js' />
-				<file name='./spagobi/olap/tools/OlapViewMeasuresSelector.js' />
-				<file name='./spagobi/olap/tools/OlapViewDimensionsSelector.js' />
-				<file name='./spagobi/olap/tools/OlapViewDefinitionTools.js' />
-
-
-				<file name='./spagobi/olap/calculatedmembers/CalculatedMembersWizard.js' />
-				<file name='./spagobi/olap/calculatedmembers/CalculatedOperationPanel.js' />
-				<file name='./spagobi/olap/calculatedmembers/CalculatedMembersLeftSide.js' />
-				<file name='./spagobi/olap/calculatedmembers/CalculatedMembersRightSide.js' />
-				<file name='./spagobi/olap/calculatedmembers/CalculatedDataPanel.js' />
-				<file name='./spagobi/olap/calculatedmembers/CalculatedOperatorsPanel.js' />
-				<file name='./spagobi/olap/calculatedmembers/CalculatedAggregatorsPanel.js' />
-				<file name='./spagobi/olap/calculatedmembers/CalculatedDimensionsPanel.js' />
-				<file name='./spagobi/olap/calculatedmembers/CalculatedMembersFunctionsPanel.js' />
-				<file name='./spagobi/olap/calculatedmembers/CalculatedSetFunctionsPanel.js' />
-
-				<file name='./spagobi/olap/control/Controller.js' />
-				<file name='./spagobi/olap/control/EventManager.js' />
-
-				<file name='./spagobi/olap/OlapPanel.js' />
-
-
-			</filelist>
-
-		</concat>
+	
 	</target>
 
 	<target name="create-production" depends="create-debug">
-		<java jar="./yuicompressor-2.4.2.jar" fork="true">
-			<arg line="-o ${build}/${webapp_name}/js/spagobi/whatif-all-${project.version}.js ${build}/${webapp_name}/js/spagobi/whatif-all-debug.js" />
-		</java>
+
 	</target>
 
 
