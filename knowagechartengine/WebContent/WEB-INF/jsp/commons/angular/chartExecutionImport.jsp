@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	the execution of charts. 
 -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular/tools/scripts/app.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular/tools/scripts/directives/data-preview-table/dataPreviewTable.js"></script>
 
 <!-- 
 	Controller (the logic) that handles the execution of the chart.

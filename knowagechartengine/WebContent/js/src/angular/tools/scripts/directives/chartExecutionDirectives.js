@@ -20,4 +20,4 @@
  * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
  */
 
-angular.module('chartexecution.directives', []);
+angular.module('chartexecution.directives', ["chart_table"]);

@@ -77,7 +77,8 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			
 			// Global variable that serves as an indicator if the chart type of the rendered document is ChartJS. (danristo)			
 			var isLibChartJs = '<%=isLibChartJS%>';
-						
+			//global variable that indicates that table accessable for screen reader should be visible or not
+			var includeChartTable= false; 
 		</script>
 		
 		<% if (template != null && !template.equals("") && !template.matches("^\\{\\s*\\}$")) { %>
@@ -108,7 +109,7 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 
 	<%-- == BODY ========================================================== --%>
 	<body ng-controller="chartExecutionController" ng-style="bodyStyleConfig">
-	
+	    
 		<!-- Show the information in the DIV above the rendered chart that the chart is exporting - downloading. (danristo) -->
 	  	<div style="background-color: #a9c3db;">
 		  	<div style="align:center; padding: 5px;" ng-show="showDownloadProgress">		
@@ -178,7 +179,9 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 				The ID of the rendering DIV is serving as a target DOM element that the Highcharts charts are going to use
 				for rendering its charts.
 			-->	
-			
+				<div>
+			</div>
+		
 			<div id="mainPanel" style="height:100%; width:100%; margin:auto;">				
 				
 				<div ng-if=isLibChartJs>
@@ -192,9 +195,9 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 					</div>
 					
 				</div>
-						
+			   			
 			</div>
-			
+			<chart-table ng-if="isLibChartJs && includeChartTable" ng-model="chartTableData.data.datasets" categories="chartTableData.data.labels"></chart-table>
 			
 			<form id="export-chart-form" class="export-form">
 				<input type="hidden" name="options"/>

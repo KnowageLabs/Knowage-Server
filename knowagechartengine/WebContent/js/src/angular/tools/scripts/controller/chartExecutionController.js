@@ -27,9 +27,9 @@
  * controller is injecting the $scope object and the $http service.
  */
 angular
-	.module('chartexecution.controller', ['chartexecution.configuration','chartexecution.webservicemanagerfactory','chartengine.settings'])
+	.module('chartexecution.controller', ['chartexecution.directives','chartexecution.configuration','chartexecution.webservicemanagerfactory','chartengine.settings'])
 	.controller('chartExecutionController', ["$scope","$http","chartExecutionWebServiceManagerFactory","sbiModule_translate","sbiModule_messaging","chartEngineSettings",chartExecutionFunction]);
-
+        
 /**
  * The function that represents the controller logic.
  * @param $scope
@@ -57,7 +57,10 @@ function chartExecutionFunction($scope,$http,chartExecutionWebServiceManagerFact
 	$scope.loadingChart = false;
 	
 	$scope.isLibChartJs = isLibChartJs;
-
+	$scope.includeChartTable= includeChartTable;
+	
+    $scope.chartTableData;
+    
 	/**
 	 * ----------------------------------------------------------------
 	 * The code used for parsing locale to the expected value. [START]
@@ -351,6 +354,14 @@ function chartExecutionFunction($scope,$http,chartExecutionWebServiceManagerFact
 			} 
 			else {				
 				chartConfiguration = chartConf;	
+				if(chartConf.chart.type==="pie"){
+					//console.log(chartConf);
+					//console.log("template",jsonTemplate);
+					$scope.chartTableData=transoformChartTableData(chartConf);
+
+				}else{
+				$scope.chartTableData= angular.copy(chartConf);
+				}
 				renderChart(chartConf);				
 			}			
 		
@@ -652,6 +663,24 @@ function chartExecutionFunction($scope,$http,chartExecutionWebServiceManagerFact
 			
 			
 		}
+	}
+	
+	function transoformChartTableData(chartConf){
+		var tableData={};
+		tableData.data={};
+		tableData.data.labels=[];
+		tableData.data.datasets=[];
+		var temp= {};
+		temp.label='serie';
+		temp.data=[];
+		for (var i = 0; i < chartConf.data.length; i++) {
+			tableData.data.labels.push(chartConf.data[i].label);
+			temp.data.push(chartConf.data[i].value);
+			
+		}
+		tableData.data.datasets.push(temp);
+		
+		return tableData;
 	}
 	
 }
