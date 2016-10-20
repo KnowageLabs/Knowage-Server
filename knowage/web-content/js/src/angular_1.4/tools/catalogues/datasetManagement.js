@@ -1664,7 +1664,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		}
 
 		// Prepare the dataset metadata
-		$scope.fieldsMetadata = exctractFieldsMetadata($scope.selectedDataSet.meta.columns);
+		//$scope.fieldsMetadata = exctractFieldsMetadata($scope.selectedDataSet.meta.columns);
 		
 	}
 	
@@ -1818,7 +1818,19 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					usedByNDocs:"",
 					userIn:"",
 					versNum:"",
-					trasfTypeCd: ""
+					trasfTypeCd: "",
+					restAddress: "",
+					restDirectlyJSONAttributes: "",
+					restFetchSize: "",
+					restHttpMethod: "",
+					restJsonPathAttributes: "",
+					restJsonPathItems: "",
+					restMaxResults: "",
+					restNGSI: "",
+					restOffset: "",
+					restRequestBody: "",
+					restRequestHeaders: ""
+					
 			}
 			
 			$scope.datasetsListTemp.push(object);
@@ -1851,7 +1863,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				restRequestHeadersTemp[$scope.restRequestHeaders[i]["name"]] = $scope.restRequestHeaders[i]["value"];			
 			}
 			
-			$scope.selectedDataSet.restJsonPathAttributes = angular.copy(JSON.stringify(restRequestHeadersTemp));	
+			$scope.selectedDataSet.restRequestHeaders = angular.copy(JSON.stringify(restRequestHeadersTemp));	
 			
 			//----------------------
 			// JSON PATH ATTRIBUTES
@@ -2727,17 +2739,34 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     
     $scope.openFieldsMetadata = function () {
     	
-    	$scope.fieldsMetadata = exctractFieldsMetadata($scope.selectedDataSet.meta.columns);
+    	if ($scope.selectedDataSet.id) {
+    		
+    		$scope.fieldsMetadata = exctractFieldsMetadata($scope.selectedDataSet.meta.columns);
+        	
+        	$mdDialog
+    		   .show({
+    		    scope : $scope,
+    		    preserveScope : true,
+    		    parent : angular.element(document.body),
+    		    templateUrl : sbiModule_config.contextName +'/js/src/angular_1.4/tools/catalogues/templates/fieldsMetadata.html',
+    		    clickOutsideToClose : false,
+    		    hasBackdrop : false
+    		   });
+        	
+    	}
+    	else {
     	
-    	$mdDialog
-		   .show({
-		    scope : $scope,
-		    preserveScope : true,
-		    parent : angular.element(document.body),
-		    templateUrl : sbiModule_config.contextName +'/js/src/angular_1.4/tools/catalogues/templates/fieldsMetadata.html',
-		    clickOutsideToClose : false,
-		    hasBackdrop : false
-		   });
+    		$mdDialog.show(
+				$mdDialog.alert()
+			        .clickOutsideToClose(true)
+			        .title('Cannot open fields metadata for not saved dataset')
+			        .textContent("You cannot open fields metadata for the dataset that is not saved")
+			        .ariaLabel('Cannot open fields metadata for not saved dataset')
+			        .ok('Ok')
+			);
+    		
+    	}
+    	
     }
     
     $scope.openAvaliableProfileAttributes = function () {
@@ -2780,6 +2809,12 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     		}
     		
     	}
+    	else if (dsType.toLowerCase()=="rest") {
+    		$scope.restRequestHeaders = [];
+    		$scope.restJsonPathAttributes = [];
+    	}
+    	
+    	$scope.parameterItems = [];
     	
     }
 	

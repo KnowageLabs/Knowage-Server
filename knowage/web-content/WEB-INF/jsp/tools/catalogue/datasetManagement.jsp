@@ -136,7 +136,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		          	
 		          	<!-- HELP BUTTON -->
 		          	<md-button aria-label="menu" class="md-fab md-raised md-mini md-warn" 
-		          			ng-show="selectedTab && selectedTab>0" title="Help" ng-click="openHelp()">
+		          			ng-show="selectedDataSet!=null && selectedTab && selectedTab>0" title="Help" ng-click="openHelp()">
 		            	<!-- H -->
 	            		<md-icon md-font-icon="fa fa-question-circle" class="fa fa-2x"></md-icon>			            	
 		          	</md-button>
@@ -153,7 +153,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	       
 	       <!-- DATASET DETAIL PANEL -->
 	       <detail 	save-function="saveDataset" cancel-function="closeDatasetDetails" 
-	       			show-save-button="showSaveAndCancelButtons" show-cancel-button="showSaveAndCancelButtons" disable-save-button="!datasetForm.$valid">
+	       			show-save-button="showSaveAndCancelButtons" show-cancel-button="showSaveAndCancelButtons" 
+	       			disable-save-button="!datasetForm.$valid">
 	       
 	       		<form name=datasetForm ng-show="selectedDataSet!=null" style="height:100%; overflow-y:hidden">
 	       		
@@ -260,10 +261,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					 					 ng-model="selectedDataSet.dsVersions"
 					 					 style="height:100%;"
 					 					 click-function="selectDatasetVersion(item,index,a)"
+					 					 no-pagination=false
 										 columns='[
-										         {"label":"Creation User","name":"userIn"},
-										         {"label":"Type","name":"type"},
-										         {"label":"Creation Date", "name":"dateIn"}
+											         {"label":"Creation User","name":"userIn"},
+											         {"label":"Type","name":"type"},
+											         {"label":"Creation Date", "name":"dateIn"}
 										         ]'
 										show-search-bar=false
 										highlights-selected-item=true
