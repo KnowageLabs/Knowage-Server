@@ -366,6 +366,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 				cockpitModule_template.configuration.filters[dsLabel]={};
 			}
 			cockpitModule_template.configuration.filters[dsLabel][columnName]=columnValue;
+			cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS=true;
 			cockpitModule_widgetSelection.refreshAllWidgetWhithSameDataset(dsLabel);
 		}
 	}

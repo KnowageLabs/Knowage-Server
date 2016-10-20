@@ -205,7 +205,7 @@ function cockpitToolbarControllerFunction($scope,cockpitModule_widgetServices,co
 
 
 
-function cockpitSelectionControllerFunction($scope,cockpitModule_template,cockpitModule_datasetServices,$mdDialog,sbiModule_translate,$q,sbiModule_messaging,cockpitModule_documentServices,cockpitModule_widgetSelection){
+function cockpitSelectionControllerFunction($scope,cockpitModule_template,cockpitModule_datasetServices,$mdDialog,sbiModule_translate,$q,sbiModule_messaging,cockpitModule_documentServices,cockpitModule_widgetSelection,cockpitModule_properties){
 	$scope.selection = [];
 	$scope.translate = sbiModule_translate;
 	$scope.tmpSelection = [];
@@ -323,6 +323,19 @@ function cockpitSelectionControllerFunction($scope,cockpitModule_template,cockpi
 		  if(reload){
 			  cockpitModule_widgetSelection.getAssociations(true);
 		  }
+		  
+		  var hs=false;
+		  for(var i=0;i<$scope.tmpSelection.length;i++){
+				if(Object.keys($scope.tmpSelection[i].selection).length>0){
+					hs= true;
+					break;
+				}
+			}
+		  
+		  if(hs==false && Object.keys($scope.tmpFilters).length==0 ){
+			  cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS=false;
+		  }
+		  
 		$mdDialog.cancel();
 	}
 

@@ -29,9 +29,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<md-icon md-font-icon="fa fa-recycle"></md-icon>
 		</md-button>
 		<md-button aria-label="data" class="md-icon-button" ng-click="openSelections()" title = "Selections">
-			<md-icon md-font-icon="fa fa-check-square-o"></md-icon>
+			<md-icon md-font-icon="fa fa-check-square-o" ng-style="{color: cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS==true? 'lawngreen':''}"></md-icon>
 		</md-button>
-		
 	<!-- 		close button if is new cockpit -->
 		<md-button ng-if="isFromNewCockpit" aria-label="data" class="md-icon-button" ng-click="closeNewCockpit()" title = "close">
 			<md-icon md-font-icon="fa fa-times"></md-icon>

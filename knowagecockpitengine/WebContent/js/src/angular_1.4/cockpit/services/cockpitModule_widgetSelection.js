@@ -187,7 +187,8 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 		return Object.keys(cockpitModule_template.configuration.filters).length>0;
 	}
 	
-	this.getAssociations((this.haveSelection() || this.haveFilters()));
+	cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS=(this.haveSelection() || this.haveFilters());
+	this.getAssociations(cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS);
 	
 	this.getAssociativeSelections = function(column,columnName,datasetLabel){
 		var defer = $q.defer();
@@ -363,6 +364,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				}else{
 					cockpitModule_widgetSelectionUtils.responseCurrentSelection[index] = response.data;
 				}
+				cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS=true;
 				defer.resolve(response.data);
 			},function(response){
 				sbiModule_restServices.errorHandler(response.data,"");

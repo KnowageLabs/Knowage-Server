@@ -79,7 +79,8 @@ angular.module("cockpitModule").factory("cockpitModule_properties",function(){
 		DOCUMENT_DESCRIPTION:"<%=  docDescription%>",
 		WIDGET_EXPANDED:{},
 		SELECTED_ROLE:"<%= 	executionRole %>",
-		DS_IN_CACHE:[]
+		DS_IN_CACHE:[],
+		HAVE_SELECTIONS_OR_FILTERS:false
 	}
 });
 
