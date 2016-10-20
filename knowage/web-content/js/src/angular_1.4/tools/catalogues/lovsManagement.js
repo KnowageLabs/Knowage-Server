@@ -229,6 +229,18 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
                          }
                         ];
 	
+	$scope.treeSpeedMenu= [
+	                                 {
+	                                    label:sbiModule_translate.load("sbi.generic.delete"),
+	                                    icon:'fa fa-trash-o fa-lg',
+	                                    color:'#153E7E',
+	                                    action:function(item,event){
+	                                        
+	                                    	deleteTreeLevel(item);
+	                                    }
+	                                 }
+	                                ];
+	
 	$scope.fixLovSpeedMenu= [
 	                                 {
 	                                    label:sbiModule_translate.load("sbi.generic.delete"),
@@ -266,6 +278,8 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 		                                    }
 		                             }
 	                                ];
+	
+	
 	
 	$scope.confirm = $mdDialog
     .confirm()
@@ -361,6 +375,8 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 			}
 		}
 		
+		formatForTest($scope.selectedLov,'new');
+		
 		if(type == lovTypeEnum.MAIN){
 			 switch (item) {
 				case $scope.lovItemEnum.SCRIPT:
@@ -403,6 +419,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 				
 				
 			}
+		
 		}
 	
 	var cleanSelections = function() {
@@ -704,6 +721,11 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 		var index = $scope.listForFixLov.indexOf(item);		
 		$scope.listForFixLov.splice(index, 1);
 	}
+	
+	var deleteTreeLevel = function(item){
+		var index = $scope.testLovTreeModel.indexOf(item);		
+		$scope.testLovTreeModel.splice(index, 1);
+	}
 	/**
 	 * Call all necessary services when getting all LOV items (all items
 	 * in the LOV catalog for our page).
@@ -853,26 +875,22 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 								$timeout(function(){								
 									$scope.getAllLovs();
 								}, 1000);
-								sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
+								sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.deleted"), 'Success!');
 								$scope.selectedLov={};
 								$scope.showme=false;
 								$scope.dirtyForm=false;
 
 							},
 							function(response) {
-								sbiModule_messaging
-										.showErrorMessage(
-												"An error occured while getting properties for selected member",
-												'Error');
-
+								sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 							});
 		}
 		
 		
 		var formatForTest = function(item,state){
-			
 			var tempObj = {}
-			var property = item.itypeCd;
+			var propName = item.itypeCd;
+			var property = lovProviderEnum[propName];
 			
 			if(state == 'new'){
 				
@@ -891,7 +909,7 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 			    tempObj = lovProvider;
 			}
 			
-			switch (item.itypeCd) {
+			switch (property) {
 			case lovProviderEnum.QUERY:
 				tempObj[property].CONNECTION = $scope.selectedQuery.datasource;
 				tempObj[property].STMT = $scope.selectedQuery.query;
@@ -917,6 +935,7 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 			var x2js = new X2JS(); 
 			var xmlAsStr = x2js.json2xml_str(tempObj); 
 			$scope.selectedLov.lovProvider = xmlAsStr;
+			console.log($scope.selectedLov.lovProvider)
 		}
 		
 		var formatForSave = function() {
@@ -925,21 +944,44 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 			var lovProvider = parseLovProvider($scope.selectedLov);
 			var property = $scope.selectedLov.itypeCd;
 			var tempObj = lovProvider[property];
-			tempObj['DESCRIPTION-COLUMN'] = $scope.treeListTypeModel['DESCRIPTION-COLUMN'];
-			tempObj['VALUE-COLUMN'] = $scope.treeListTypeModel['VALUE-COLUMN'];
-			tempObj['VISIBLE-COLUMNS'] = $scope.formatedVisibleValues.join();
-			  for (var i = 0; i < $scope.testLovModel.length; i++) {
-			    if ($scope.formatedVisibleValues.indexOf($scope.testLovModel[i].name) === -1) {
-			    	$scope.formatedInvisibleValues.push($scope.testLovModel[i].name);
-			    }
-			  }
-			tempObj['INVISIBLE-COLUMNS'] = $scope.formatedInvisibleValues.join();
+			
+			if($scope.treeListTypeModel.LOVTYPE == 'simple'){
+				
+				tempObj['DESCRIPTION-COLUMN'] = $scope.treeListTypeModel['DESCRIPTION-COLUMN'];
+				tempObj['VALUE-COLUMN'] = $scope.treeListTypeModel['VALUE-COLUMN'];
+				tempObj['VISIBLE-COLUMNS'] = $scope.formatedVisibleValues.join();
+				  for (var i = 0; i < $scope.testLovModel.length; i++) {
+				    if ($scope.formatedVisibleValues.indexOf($scope.testLovModel[i].name) === -1) {
+				    	$scope.formatedInvisibleValues.push($scope.testLovModel[i].name);
+				    }
+				  }
+				tempObj['INVISIBLE-COLUMNS'] = $scope.formatedInvisibleValues.join();
+				
+				
+			}else{
+				console.log($scope.testLovTreeModel);
+				for (var i = 0; i < $scope.testLovModel.length; i++) {
+				$scope.formatedInvisibleValues.push($scope.testLovModel[i].name);
+				  }
+				tempObj['INVISIBLE-COLUMNS'] = $scope.formatedInvisibleValues.join();
+				for (var i = 0; i < $scope.testLovTreeModel.length; i++) {
+					$scope.formatedDescriptionColumns.push($scope.testLovTreeModel[i].description);
+				}
+				tempObj['DESCRIPTION-COLUMNS'] = $scope.formatedDescriptionColumns.join();
+				for (var i = 0; i < $scope.testLovTreeModel.length; i++) {
+					$scope.formatedValueColumns.push($scope.testLovTreeModel[i].value);
+				}
+				tempObj['VALUE-COLUMNS'] = $scope.formatedValueColumnss.join();
+			}
+			
+			
 			tempObj.LOVTYPE = $scope.treeListTypeModel.LOVTYPE;
 			
 			result[property] = tempObj
 			var x2js = new X2JS();
 			var xmlAsStr = x2js.json2xml_str(result); 
 			$scope.selectedLov.lovProvider = xmlAsStr;
+			console.log($scope.selectedLov.lovProvider);
 		
 		}
 		
@@ -961,7 +1003,6 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 	
 		$scope.openPreviewDialog = function() {
 			
-			console.log($scope.selectedLov);
 			$scope.paginationObj.paginationStart = 0;
 			$scope.paginationObj.paginationLimit = 20;
 			$scope.paginationObj.paginationEnd = 20;
