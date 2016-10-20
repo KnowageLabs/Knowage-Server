@@ -177,7 +177,7 @@
 				        
 				        <div layout="row" layout-margin>
 							<span >{{translate.load("sbi.crosstab.crosstabdetailswizard.measureson")}}</span>
-							<md-radio-group flex layout="row" ng-model="localModel.content.crosstabDefinition.config.measureson" ng-init="localModel.content.crosstabDefinition.config.measureson= localModel.content.crosstabDefinition.config.measureson==undefined ? 'columns' : localModel.content.crosstabDefinition.config.measureson ">
+							<md-radio-group flex layout="row" ng-model="localModel.content.crosstabDefinition.config.measureson" >
 								<md-radio-button value="columns" class="md-primary">{{translate.load("sbi.cockpit.pivot.columns")}}</md-radio-button>
 								<md-radio-button value="rows" class="md-primary"> {{translate.load("sbi.cockpit.pivot.rows")}} </md-radio-button>
 							</md-radio-group>
@@ -185,7 +185,7 @@
 						
 						<div layout="row" layout-margin>
 							<span >{{translate.load("sbi.crosstab.crosstabdetailswizard.percenton")}}</span>
-							<md-radio-group flex layout="row" ng-model="localModel.content.crosstabDefinition.config.percenton" ng-init="localModel.content.crosstabDefinition.config.percenton=localModel.content.crosstabDefinition.config.percenton==undefined ? 'no' : localModel.content.crosstabDefinition.config.percenton ">
+							<md-radio-group flex layout="row" ng-model="localModel.content.crosstabDefinition.config.percenton" >
 								<md-radio-button value="column" class="md-primary">{{translate.load("sbi.cockpit.pivot.columns")}}</md-radio-button>
 								<md-radio-button value="row" class="md-primary"> {{translate.load("sbi.cockpit.pivot.rows")}} </md-radio-button>
 								<md-radio-button value="no" class="md-primary"> {{translate.load("sbi.crosstab.crosstabdetailswizard.nopercent")}} </md-radio-button>
