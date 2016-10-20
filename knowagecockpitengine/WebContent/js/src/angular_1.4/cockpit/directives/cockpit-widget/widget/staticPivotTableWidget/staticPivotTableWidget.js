@@ -60,6 +60,7 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 		if(angular.equals(nature,'resize') || angular.equals(nature,'gridster-resized')){
 			return;
 		}
+		$scope.showWidgetSpinner();
 		
 		var dataToSend={
 				 config: {
@@ -77,6 +78,7 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 			dataToSend.crosstabDefinition.rows==undefined||dataToSend.crosstabDefinition.rows.length==0 ||
 			dataToSend.crosstabDefinition.columns==undefined||dataToSend.crosstabDefinition.columns.length==0 ){
 			console.log("crossTab non configured")
+			$scope.hideWidgetSpinner();
 			return;
 		}
 		
@@ -85,9 +87,11 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 					$scope.subCockpitWidget.html(response.data.htmlTable);
 					$compile(angular.element($scope.subCockpitWidget).contents())($scope)
 					$scope.addPivotTableStyle();
+					$scope.hideWidgetSpinner();
 				},
 				function(response){
 					sbiModule_restServices.errorHandler(response.data,"Pivot Table Error")
+					$scope.hideWidgetSpinner();
 					}
 				)
 	}
@@ -229,6 +233,16 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 			    	  if($scope.localModel.content.crosstabDefinition.columns==undefined){
 			    		  $scope.localModel.content.crosstabDefinition.columns=[];
 			    	  }
+			    	  if($scope.localModel.content.crosstabDefinition.config==undefined){
+			    		  $scope.localModel.content.crosstabDefinition.config={};
+			    	  }
+			    	  if($scope.localModel.content.crosstabDefinition.config.measureson==undefined){
+			    		  $scope.localModel.content.crosstabDefinition.config.measureson="columns";
+			    	  }
+			    	  if($scope.localModel.content.crosstabDefinition.config.percenton==undefined){
+			    		  $scope.localModel.content.crosstabDefinition.config.percenton="no";
+			    	  }
+			    	  
 			    	  
 			    	  $scope.changeDatasetFunction=function(dsId,noReset){
 			    		  $scope.currentDataset= cockpitModule_datasetServices.getDatasetById( dsId);
