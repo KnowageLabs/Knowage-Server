@@ -80,7 +80,9 @@ angular.module("cockpitModule").factory("cockpitModule_properties",function(){
 		WIDGET_EXPANDED:{},
 		SELECTED_ROLE:"<%= 	executionRole %>",
 		DS_IN_CACHE:[],
-		HAVE_SELECTIONS_OR_FILTERS:false
+		HAVE_SELECTIONS_OR_FILTERS:false,
+		STARTING_SELECTIONS:[],
+		STARTING_FILTERS:[],
 	}
 });
 

@@ -104,7 +104,7 @@ function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitMod
 											hideTooltip:true,
 											transformer:function(val,row){
 												for(par in val){
-													if(val[par].value==undefined || val[par].value.trim()==""){
+													if(val[par].value==undefined || (!angular.isNumber(val[par].value) && val[par].value.trim()=="")){
 														return 	'<span>'+
 																'<md-tooltip md-direction="top">'+sbiModule_translate.load("sbi.cockpit.parameter.fill")+'</md-tooltip>'+
 												        		'<md-icon style="color:red"  md-font-icon="fa fa-times-circle"></md-icon>'+

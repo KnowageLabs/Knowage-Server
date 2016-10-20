@@ -11,6 +11,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		sbiModule_restServices.promiseGet("2.0/datasets","listDataset")
 		.then(function(response){
 			angular.copy(response.data.item,ds.datasetList);
+			ds.chceckForDSChange();
 			def.resolve();
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,"");
@@ -19,6 +20,17 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		return def.promise;
 	};
 
+	this.chceckForDSChange=function(){
+		angular.forEach(cockpitModule_template.configuration.datasets,function(item){
+			var orDs=ds.getDatasetById(item.dsId);
+			if(!angular.equals(orDs.label,item.dsLabel)){
+				item.dsLabel=orDs.label;
+			}
+			if(!angular.equals(orDs.name,item.name)){
+				item.name=orDs.name;
+			}
+		})
+	}
 	this.getDatasetList=function(){
 		return angular.copy(ds.datasetList);
 	}

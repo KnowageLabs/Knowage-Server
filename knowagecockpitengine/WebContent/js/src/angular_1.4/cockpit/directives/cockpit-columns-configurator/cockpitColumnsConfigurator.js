@@ -179,7 +179,7 @@
 		                            	 "name":" ",
 		                            	 transformer:function(row,column,index){
 
-		                            		 var temp = '<md-button class="md-icon-button" ng-style="row.style" ng-click="scopeFunctions.draw(row,column,index)">'
+		                            		 var temp = '<md-button class="md-icon-button" style="background:{{row.style.background}}" ng-click="scopeFunctions.draw(row,column,index)">'
 		                            			 +'<md-icon style="color:{{row.style.color}}" md-font-icon="fa fa-paint-brush" aria-label="Paintbruh"></md-icon>'
 		                            			 +'</md-button>'
 

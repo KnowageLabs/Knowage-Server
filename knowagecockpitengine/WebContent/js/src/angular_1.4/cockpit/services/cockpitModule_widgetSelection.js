@@ -188,6 +188,36 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 	}
 	
 	cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS=(this.haveSelection() || this.haveFilters());
+	if(cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS){
+		//save the actual selection for associated dataset
+		angular.forEach(cockpitModule_template.configuration.aggregations,function(aggr){
+			angular.forEach(aggr.selection,function(selVal,selKey){
+				var selSplit = selKey.split(".");
+					cockpitModule_properties.STARTING_SELECTIONS.push({
+						ds : selSplit[0],
+						columnName : selSplit[1],
+						value : selVal,
+						aggregated:true
+				});
+				
+			})
+		});
+		
+		//save the actual filters of dataset
+		angular.forEach(cockpitModule_template.configuration.filters,function(dsVal,dsLab){
+			angular.forEach(dsVal,function(colVal,colLab){
+				cockpitModule_properties.STARTING_FILTERS.push({
+					ds : dsLab,
+					columnName : colLab,
+					value : colVal,
+					aggregated:false
+			});
+			})
+		});
+		
+	
+	}
+	
 	this.getAssociations(cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS);
 	
 	this.getAssociativeSelections = function(column,columnName,datasetLabel){
@@ -262,8 +292,8 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 
 	}
 	
-	this.refreshAllWidgetWhithSameDataset=function(itemLabel){
-		$rootScope.$broadcast('WIDGET_EVENT','UPDATE_FROM_DATASET_FILTER',{label:itemLabel});
+	this.refreshAllWidgetWhithSameDataset=function(dsLabel){
+		$rootScope.$broadcast('WIDGET_EVENT','UPDATE_FROM_DATASET_FILTER',{label:dsLabel});
 	}
 	
 	this.refreshAllAssociatedWidget = function(isInit,data){

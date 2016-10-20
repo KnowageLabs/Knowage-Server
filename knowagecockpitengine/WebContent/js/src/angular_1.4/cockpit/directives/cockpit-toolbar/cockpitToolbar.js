@@ -213,6 +213,27 @@ function cockpitSelectionControllerFunction($scope,cockpitModule_template,cockpi
 	$scope.tmpFilters = {};
 	angular.copy(cockpitModule_template.configuration.filters,$scope.tmpFilters);
 	
+	$scope.filterForInitialSelection=function(obj){
+		if(!cockpitModule_properties.EDIT_MODE){
+			for(var i=0;i<cockpitModule_properties.STARTING_SELECTIONS.length;i++){
+				if(angular.equals(cockpitModule_properties.STARTING_SELECTIONS[i],obj)){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	$scope.filterForInitialFilter=function(obj){
+		if(!cockpitModule_properties.EDIT_MODE){
+			for(var i=0;i<cockpitModule_properties.STARTING_FILTERS.length;i++){
+				if(angular.equals(cockpitModule_properties.STARTING_FILTERS[i],obj)){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
 	if($scope.tmpSelection.length >0){
 		for(var i=0;i<$scope.tmpSelection.length;i++){
 			var selection = $scope.tmpSelection[i].selection;
@@ -224,7 +245,9 @@ function cockpitSelectionControllerFunction($scope,cockpitModule_template,cockpi
 						value : selection[key],
 						aggregated:true
 				};
-				$scope.selection.push(obj);
+				if(!$scope.filterForInitialSelection(obj)){
+					$scope.selection.push(obj);
+				}
 			}
 		}
 	}
@@ -238,7 +261,10 @@ function cockpitSelectionControllerFunction($scope,cockpitModule_template,cockpi
 					value : $scope.tmpFilters[ds][col],
 					aggregated:false
 			}
-			$scope.selection.push(tmpObj);
+			 
+			if(!$scope.filterForInitialFilter(tmpObj)){
+				$scope.selection.push(tmpObj);
+			}
 		}
 	}
 	
@@ -270,40 +296,40 @@ function cockpitSelectionControllerFunction($scope,cockpitModule_template,cockpi
 	                                    {
 	                                    	icon:'fa fa-trash' ,   
 	                                    	action : function(item,event) {	
-	                                    		
-	                                    		if(item.aggregated){
-	                                    			var key = item.ds + "." + item.columnName;
-	                                    			
-	                                    			for(var i=0;i<$scope.tmpSelection.length;i++){
-	                                    				if($scope.tmpSelection[i].datasets.indexOf(item.ds) !=-1){
-	                                    					var selection  = $scope.tmpSelection[i].selection;
-	                                    					delete selection[key];
-	                                    				}
-	                                    			}
-	                                    			
-	                                    			var index=$scope.selection.indexOf(item);
-	                                    			$scope.selection.splice(index,1);
-	                                    		}else{
-	                                    			delete $scope.tmpFilters[item.ds][item.columnName];
-	                                    			if(Object.keys($scope.tmpFilters[item.ds]).length==0){
-	                                    				delete $scope.tmpFilters[item.ds];
-	                                    			}
-	                                    			var index=$scope.selection.indexOf(item);
-	                                    			$scope.selection.splice(index,1);
-	                                    		}
-
+	                                    		$scope.deleteSelection(item);
 	                                    		
 	                                    	}
 	                                    } 
 	                                    ];
+	
+	$scope.deleteSelection=function(item){
+		if(item.aggregated){
+			var key = item.ds + "." + item.columnName;
+			
+			for(var i=0;i<$scope.tmpSelection.length;i++){
+				if($scope.tmpSelection[i].datasets.indexOf(item.ds) !=-1){
+					var selection  = $scope.tmpSelection[i].selection;
+					delete selection[key];
+				}
+			}
+			
+			var index=$scope.selection.indexOf(item);
+			$scope.selection.splice(index,1);
+		}else{
+			delete $scope.tmpFilters[item.ds][item.columnName];
+			if(Object.keys($scope.tmpFilters[item.ds]).length==0){
+				delete $scope.tmpFilters[item.ds];
+			}
+			var index=$scope.selection.indexOf(item);
+			$scope.selection.splice(index,1);
+		}
+
+	}
 
 	$scope.clearAllSelection = function(){
-		angular.copy([],$scope.selection);
-		for(var i=0;i<$scope.tmpSelection.length;i++){
-			$scope.tmpSelection[i].selection = {};
+		while($scope.selection.length!=0){
+			$scope.deleteSelection($scope.selection[0]);
 		}
-		angular.copy({},$scope.tmpFilters);
-
 	}
 	
 	$scope.cancelConfiguration=function(){
@@ -311,17 +337,25 @@ function cockpitSelectionControllerFunction($scope,cockpitModule_template,cockpi
 	}
 	
 	$scope.saveConfiguration = function(){
-		var reload=false;
+		var reloadAss=false;
+		var reloadFilt=[];
 		  if(!angular.equals($scope.tmpSelection,cockpitModule_template.configuration.aggregations )){
 	  		  angular.copy($scope.tmpSelection,cockpitModule_template.configuration.aggregations);
-	  		 reload=true;
+	  		 reloadAss=true;
 		  }
 		  if(!angular.equals($scope.tmpFilters,cockpitModule_template.configuration.filters )){
+			  angular.forEach(cockpitModule_template.configuration.filters,function(val,dsLabel){
+				  if($scope.tmpFilters[dsLabel]==undefined || !angular.equals($scope.tmpFilters[dsLabel],val)){
+					  reloadFilt.push(dsLabel)
+				  }
+			  })
 			  angular.copy($scope.tmpFilters,cockpitModule_template.configuration.filters);
-			  reload=true;
 		  }
-		  if(reload){
+		  if(reloadAss){
 			  cockpitModule_widgetSelection.getAssociations(true);
+		  }
+		  if(!reloadAss && reloadFilt.length!=0){
+			  cockpitModule_widgetSelection.refreshAllWidgetWhithSameDataset(reloadFilt);
 		  }
 		  
 		  var hs=false;

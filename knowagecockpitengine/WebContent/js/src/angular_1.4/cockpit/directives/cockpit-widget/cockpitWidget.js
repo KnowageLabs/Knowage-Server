@@ -330,7 +330,13 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 			return;
 		}
 		var dataset= $scope.getDataset();
-		if(dataset != undefined && angular.equals(label,dataset.label)){
+		if(dataset != undefined && 
+			(
+				(angular.isArray(label) && label.indexOf(dataset.label)!=-1)
+				||
+				(angular.isString(label) && angular.equals(label,dataset.label))
+			)
+		){
 			$scope.refreshWidget(undefined,'filters');
 			
 		}
