@@ -79,6 +79,69 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	$scope.selectedTab = 0;	// Initially, the first tab is selected.
 	$scope.tempScope = {};
 	$scope.showSaveAndCancelButtons = false;
+	
+	// Flag that indicates if the Dataset form is dirty (changed)
+	$scope.dirtyForm = false;
+	
+	// Functions for setting the indicator 
+	$scope.setFormDirty = function() {
+		console.log("set dirty");
+		$scope.dirtyForm = true;
+	}
+	
+	// Functions for resetting the indicator 
+	$scope.setFormNotDirty = function() {
+		$scope.dirtyForm = false;
+	}
+	
+	// =================================
+	// Fields metadata AT data (START)
+	// =================================
+	
+	$scope.fieldsMetadataTypes = [
+	
+      {
+    	  name: "ATTRIBUTE",
+    	  value: "ATTRIBUTE"
+      },
+      
+      {
+    	  name: "MEASURE",
+    	  value: "MEASURE"    	  
+      }
+	                              
+    ];
+	
+	$scope.fieldsMetadataScopeFunctions = {
+		fieldsMetadataTypes: $scope.fieldsMetadataTypes,
+		setFormDirty: $scope.setFormDirty
+	};
+	
+	$scope.fieldsMetadataColumns = [
+		{
+			label:"Field name",
+			name:"column",
+			hideTooltip: true,
+			
+			transformer: function() {
+				return '<md-input-container class="md-block" style="margin:0"><input readonly ng-model="row.column"></md-input-container>';
+			}
+		},
+		{
+			label:"Field metadata",
+			name:"fieldType",
+			hideTooltip: true,
+			
+			transformer: function() {
+				return '<md-select ng-model=row.fieldType class="noMargin" ng-change="scopeFunctions.setFormDirty()"><md-option ng-repeat="col in scopeFunctions.fieldsMetadataTypes" value="{{col.name}}">{{col.name}}</md-option></md-select>';
+			}
+		}
+	];	
+	
+	// =================================
+	// Fields metadata AT data (END)
+	// =================================
+	
 		
 	$scope.schedulingMonths = function(item) {
 		
@@ -186,20 +249,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		console.log("Clear weekdays (TODO)");
 		$scope.weekdaysSelected = [];
 	}	
-	
-	// Flag that indicates if the Dataset form is dirty (changed)
-	$scope.dirtyForm = false;
-	
-	// Functions for setting the indicator 
-	$scope.setFormDirty = function() {
-		console.log("set dirty");
-		$scope.dirtyForm = true;
-	}
-	
-	// Functions for resetting the indicator 
-	$scope.setFormNotDirty = function() {
-		$scope.dirtyForm = false;
-	}
 	
 	// CKAN DATASET CONFIG
 	$scope.ckanFileType = 
@@ -1318,6 +1367,47 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		
 	}
 	
+	var exctractFieldsMetadata = function(metadata) {
+				
+		var fieldsMetadata = new Array();
+		var jsonTemp = {};
+		$scope.datasetMetaWithFieldsMetaIndexes = new Array();
+		
+		for (i=0; i<metadata.length; i++) {
+			
+			jsonTemp = {};
+			
+			if (metadata[i].pname=="fieldType") {
+				jsonTemp["column"] = metadata[i].column;
+				jsonTemp["fieldType"] = metadata[i].pvalue;
+				$scope.datasetMetaWithFieldsMetaIndexes.push(i);
+				fieldsMetadata.push(jsonTemp);
+			}
+			
+		}
+		
+		return fieldsMetadata;
+		
+	}
+	
+	$scope.saveFieldsMetadata = function() {
+						 
+		console.log($scope.fieldsMetadata);
+		
+		var datasetFieldsMetadata = $scope.selectedDataSet.meta.columns;
+		
+		console.log(datasetFieldsMetadata);
+		console.log($scope.datasetMetaWithFieldsMetaIndexes);
+		
+		for (i=0; i<$scope.fieldsMetadata.length; i++) {
+			var index = $scope.datasetMetaWithFieldsMetaIndexes[i];
+			$scope.selectedDataSet.meta.columns[index].pvalue = $scope.fieldsMetadata[i].fieldType;
+		}
+		
+		console.log("posle: ",$scope.selectedDataSet.meta.columns);
+			
+	}
+	
 	 /**
 	  * Adds variable map(name,value) object to scenario property array variable.
 	  */
@@ -1532,7 +1622,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			}
 			
 			$scope.restJsonPathAttributes = restJsonPathAttributesTemp;
-			
+						
 		}
 		else if($scope.selectedDataSet.dsTypeCd.toLowerCase()=="custom") {
 			
@@ -1572,6 +1662,9 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		else {
 			$scope.transformDatasetState = false;
 		}
+
+		// Prepare the dataset metadata
+		$scope.fieldsMetadata = exctractFieldsMetadata($scope.selectedDataSet.meta.columns);
 		
 	}
 	
@@ -1656,12 +1749,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	
 	$scope.createNewDataSet = function() {
 				
-//		if ($scope.datasetsListTemp.length < $scope.datasetsListPersisted.length + 1) {
-		
-		// There is a new (not saved) DS that is already dirty
-//		var blankDSDirty = $scope.dirtyForm && ;
-//		var blankDSNotDirty = !$scope.dirtyForm && $scope.datasetsListTemp.length == $scope.datasetsListPersisted.length + 1;
-
 		if ($scope.datasetsListTemp.length == $scope.datasetsListPersisted.length + 1) {
 		
 			if ($scope.dirtyForm) {
@@ -1679,7 +1766,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					.then(					
 							function() {
 								$scope.setFormNotDirty();
-								//console.log("menjano 3");
 								$scope.datasetsListTemp = angular.copy($scope.datasetsListPersisted);
 								makeNewDataset();
 					 		},
@@ -1702,22 +1788,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			$scope.setFormNotDirty();
 			makeNewDataset();	
 		}
-			
-//		}
-//		else {
-////			sbiModule_messaging.showErrorMessage($scope.translate.load("sbi.ds.add.warning.onlyonenewdataset.msg"));
-//			
-//			$mdDialog
-//			.show(
-//					$mdDialog.alert()
-//				        .clickOutsideToClose(true)
-//				        .title('Cannot add new dataset')
-//				        .textContent($scope.translate.load('sbi.ds.add.warning.onlyonenewdataset.msg'))
-//				        .ariaLabel('Cannot add new dataset')
-//				        .ok('Ok')
-//			    );
-//			
-//		}
 		
 	};
 	
@@ -1747,13 +1817,16 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					scopeId:"",
 					usedByNDocs:"",
 					userIn:"",
-					versNum:""
+					versNum:"",
+					trasfTypeCd: ""
 			}
 			
 			$scope.datasetsListTemp.push(object);
 			$scope.selectedDataSet = angular.copy($scope.datasetsListTemp[$scope.datasetsListTemp.length-1]);
 			$scope.selectedDataSetInit = angular.copy($scope.datasetsListTemp[$scope.datasetsListTemp.length-1]); // Reset the selection (none dataset item will be selected) (danristo)
 			$scope.showSaveAndCancelButtons = true;
+			
+			$scope.transformDatasetState = false;
 			
 			// Give a little time for the AT to render after the insertion of a new table element (new dataset) (danristo)
 			// We do not need to check if the current page is the one that is return by a function, since we cannot add more than one empty dataset
@@ -2045,8 +2118,14 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		 console.log("save")
 	 }
 	
-	 $scope.closeScript = function () {
+	 $scope.closeScript = function (fromWhere) {
+		 
+		 if (fromWhere=="fieldsMetadata") {
+			 $scope.setFormNotDirty();
+		 }
+		 
 		 $mdDialog.hide();
+		 
 	 }
 	 
 	$scope.openQbe = function() {
@@ -2647,12 +2726,14 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	}
     
     $scope.openFieldsMetadata = function () {
+    	
+    	$scope.fieldsMetadata = exctractFieldsMetadata($scope.selectedDataSet.meta.columns);
+    	
     	$mdDialog
 		   .show({
 		    scope : $scope,
 		    preserveScope : true,
 		    parent : angular.element(document.body),
-		    controllerAs : 'openFieldsMetadata',
 		    templateUrl : sbiModule_config.contextName +'/js/src/angular_1.4/tools/catalogues/templates/fieldsMetadata.html',
 		    clickOutsideToClose : false,
 		    hasBackdrop : false
@@ -2668,7 +2749,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		    scope : $scope,
 		    preserveScope : true,
 		    parent : angular.element(document.body),
-		    controllerAs : 'openFieldsMetadata',
 		    templateUrl : sbiModule_config.contextName +'/js/src/angular_1.4/tools/catalogues/templates/avaliableProfileAttributes.html',
 		    clickOutsideToClose : false,
 		    hasBackdrop : false
@@ -2681,7 +2761,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		    scope : $scope,
 		    preserveScope : true,
 		    parent : angular.element(document.body),
-		    controllerAs : 'openFieldsMetadata',
 		    templateUrl : sbiModule_config.contextName +'/js/src/angular_1.4/tools/catalogues/templates/linkDataSet.html',
 		    clickOutsideToClose : false,
 		    hasBackdrop : false
