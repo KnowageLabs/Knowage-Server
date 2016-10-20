@@ -430,7 +430,7 @@ public class ManageDataSetsForREST {
 		if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_FILE)) {
 			boolean storeToHDFS = Boolean.valueOf(json.optString("isPersistedHDFS")).booleanValue();
 
-			String dsId = json.optString(DataSetConstants.DS_ID);
+			String dsId = json.optString(DataSetConstants.ID);
 			String dsLabel = json.getString(DataSetConstants.LABEL);
 			String fileType = json.getString(DataSetConstants.FILE_TYPE);
 
@@ -506,7 +506,7 @@ public class ManageDataSetsForREST {
 
 				JSONObject configuration;
 				try {
-					Integer id_ds = json.getInt(DataSetConstants.DS_ID);
+					Integer id_ds = json.getInt(DataSetConstants.ID);
 					configuration = new JSONObject(DAOFactory.getDataSetDAO().loadDataSetById(id_ds).getConfiguration());
 					String realName = configuration.getString("fileName");
 					if (dsLabel != null && !realName.equals(dsLabel)) {
