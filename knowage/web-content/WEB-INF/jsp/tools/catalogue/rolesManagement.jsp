@@ -483,7 +483,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		    </md-card>		
 			</md-content> </md-tab>
 			<md-tab
-				label='{{translate.load("sbi.roles.datasets");}}' ng-if="selectedRole.roleTypeCD == undefined || (selectedRole.roleTypeCD != 'ADMIN')"> 
+				label='{{translate.load("sbi.roles.datasets");}}'> 
 				<md-content
 				flex  
 				class="ToolbarBox miniToolbar noBorder mozTable">
