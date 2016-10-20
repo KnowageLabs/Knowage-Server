@@ -285,8 +285,9 @@ public class ExtJsQbeTreeBuilder {
 		Iterator<IModelField> normalFieldIterator = normalFields.iterator();
 		while (normalFieldIterator.hasNext()) {
 			IModelField field = normalFieldIterator.next();
+			Boolean isARelation = (Boolean)field.getProperties().get("relation");
 			JSONObject jsObject = getFieldNode(entity, field);
-			if (jsObject != null) {
+			if (jsObject != null && (isARelation==null || !isARelation)) {
 				children.put(jsObject);
 			}
 		}

@@ -78,6 +78,7 @@ public abstract class AbstractModelStructureBuilder implements IModelStructureBu
 					field.getProperties().put("visible", "true");
 					field.getProperties().put("position", "" + Integer.MAX_VALUE);
 					field.getProperties().put("type", "attribute");
+					field.getProperties().put("relation", true);
 					String columnName = sourceEntity.getPropertyAsString(relationship.getName());
 					if (columnName == null) {
 						columnName = generatedFieldName;
@@ -96,6 +97,7 @@ public abstract class AbstractModelStructureBuilder implements IModelStructureBu
 					field.getProperties().put("visible", "true");
 					field.getProperties().put("position", "" + Integer.MAX_VALUE);
 					field.getProperties().put("type", "attribute");
+					field.getProperties().put("relation", true);
 					String columnName = sourceEntity.getPropertyAsString(relationship.getName());
 					if (columnName == null) {
 						columnName = generatedFieldName;
