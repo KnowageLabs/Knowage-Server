@@ -75,8 +75,8 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 		
 		if( dataToSend.crosstabDefinition==undefined || 
 			dataToSend.crosstabDefinition.measures==undefined||dataToSend.crosstabDefinition.measures.length==0 ||
-			dataToSend.crosstabDefinition.rows==undefined||dataToSend.crosstabDefinition.rows.length==0 ||
-			dataToSend.crosstabDefinition.columns==undefined||dataToSend.crosstabDefinition.columns.length==0 ){
+			((dataToSend.crosstabDefinition.rows==undefined||dataToSend.crosstabDefinition.rows.length==0) &&
+			(dataToSend.crosstabDefinition.columns==undefined||dataToSend.crosstabDefinition.columns.length==0)) ){
 			console.log("crossTab non configured")
 			$scope.hideWidgetSpinner();
 			return;
@@ -346,8 +346,8 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 			    			return;
 			    		  }
 			    		  if($scope.localModel.content.crosstabDefinition.measures.length == 0 ||
-			    			$scope.localModel.content.crosstabDefinition.rows.length == 0 ||
-			    			$scope.localModel.content.crosstabDefinition.columns.length ==0
+			    			($scope.localModel.content.crosstabDefinition.rows.length == 0 &&
+			    			$scope.localModel.content.crosstabDefinition.columns.length ==0)
 			    		  ){
 			    			  $scope.showAction($scope.translate.load('sbi.cockpit.widgets.staticpivot.missingfield'));
 			    			  return;
