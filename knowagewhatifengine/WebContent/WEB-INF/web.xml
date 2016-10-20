@@ -2,7 +2,7 @@
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:web="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" id="knowagewhatifengine" version="2.4">
   <display-name>WhatIf</display-name>
   <description>
-		SpagoBI - What-If engine
+		 What-If engine
 	</description>
 	
   <filter>
@@ -215,7 +215,7 @@
   
   
   <session-config>
-    <session-timeout>1</session-timeout>
+    <session-timeout>30</session-timeout>
   </session-config>
   
   <welcome-file-list>
