@@ -92,6 +92,15 @@ angular-table{
 		width: auto!important;
 	}
 	
+	.tableWidget {
+		.fakeTable {
+			width: 100% !important;
+		}
+		#angularTableContentBox {
+			width: 100% !important;
+		}
+	}
+	
 	/* Fine Tabella con molte colonne */
 	
 	
