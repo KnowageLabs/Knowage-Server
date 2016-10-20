@@ -9,13 +9,30 @@
    
    <md-dialog-content>
    
-	
+   		<md-content flex class="ToolbarBox miniToolbar noBorder mozTable">
+			<md-card layout-padding> 
+	 			<angular-table
+		 			flex
+				 	id="profileAttributesId" 
+				 	ng-model="profileAttributes"
+				 	style="height:60%;"
+				 	no-pagination=false
+					columns='[
+					         {"label":"Name","name":"attributeName"},
+					         {"label":"Description","name":"attributeDescription"}
+					         ]'
+					show-search-bar=false
+					highlights-selected-item=true >
+				</angular-table>		
+ 			</md-card>
+		</md-content>	
    		
    </md-dialog-content>
 
     <md-dialog-actions layout="row">
-      <md-button ng-click="closeScript()" class="md-raised" style="margin-right:20px;" >
-       {{translate.load("sbi.federationdefinition.template.button.close")}}
-      </md-button>
+      	<md-button ng-click="closeScript()" class="md-raised" style="margin-right:20px;" >
+       		{{translate.load("sbi.federationdefinition.template.button.close")}}
+      	</md-button>
     </md-dialog-actions>
+    
 </md-dialog>
