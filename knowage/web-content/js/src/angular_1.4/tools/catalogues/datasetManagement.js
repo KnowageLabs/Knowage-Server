@@ -109,6 +109,11 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		
 	}
 	
+	// Manage the Dataset type combobox items
+	$scope.filterDatasetTypes = function (item) { 
+	    return item.VALUE_CD!='Custom' && item.VALUE_CD!='Federated'; 
+	};
+	
 	// Flag that indicates if the Dataset form is dirty (changed)
 	$scope.dirtyForm = false;
 	
@@ -727,23 +732,39 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	
 	$scope.deleteAllParameters = function() {		
 		
-		// TODO: translate
-    	var confirm = $mdDialog.confirm()
-	         .title("Clear all dataset parameters")
-	         .targetEvent(event)	 	          
-	         .textContent("Are you sure you want to delete all dataset parameters")
-	         .ariaLabel("Clear all dataset parameters")
-	         .ok($scope.translate.load("sbi.general.yes"))
-	         .cancel($scope.translate.load("sbi.general.No"));
-		
-		$mdDialog
-			.show(confirm)
-			.then(					
-					function() {
-						$scope.setFormDirty();
-						$scope.parameterItems = [];	 	        	
-			 		}
-				);	
+		if ($scope.parameterItems.length>0)
+		{
+			// TODO: translate
+	    	var confirm = $mdDialog.confirm()
+		         .title("Clear all dataset parameters")
+		         .targetEvent(event)	 	          
+		         .textContent("Are you sure you want to delete all dataset parameters")
+		         .ariaLabel("Clear all dataset parameters")
+		         .ok($scope.translate.load("sbi.general.yes"))
+		         .cancel($scope.translate.load("sbi.general.No"));
+			
+			$mdDialog
+				.show(confirm)
+				.then(					
+						function() {
+							$scope.setFormDirty();
+							$scope.parameterItems = [];	 	        	
+				 		}
+					);	
+		}
+		else {
+			
+			$mdDialog
+			.show(
+					$mdDialog.alert()
+				        .clickOutsideToClose(true)
+				        .title('Dataset has no parameters to delete')
+				        .textContent('There are not parameters to delete for the selected dataset')
+				        .ariaLabel('Dataset has no parameters to delete')
+				        .ok('Ok')
+			    );
+			
+		}
 		
 	}
 	
@@ -2704,46 +2725,80 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     
     $scope.deleteAllRESTRequestHeaders = function() {
        	
-    	// TODO: translate
-    	var confirm = $mdDialog.confirm()
-	         .title("Clear all REST dataset request headers")
-	         .targetEvent(event)	 	          
-	         .textContent("Are you sure you want to delete all request headers")
-	         .ariaLabel("Clear all REST dataset request headers")
-	         .ok($scope.translate.load("sbi.general.yes"))
-	         .cancel($scope.translate.load("sbi.general.No"));
-		
-		$mdDialog
-			.show(confirm)
-			.then(					
-					function() {
-						$scope.setFormDirty();
-						$scope.restRequestHeaders = [];	
-						$scope.restDsRequestHeaderTableLastPage = 1;
-			 		}
-				);	
+    	if ($scope.restRequestHeaders.length>0) {
+    		
+    		// TODO: translate
+        	var confirm = $mdDialog.confirm()
+    	         .title("Clear all REST request headers")
+    	         .targetEvent(event)	 	          
+    	         .textContent("Are you sure you want to delete all REST request headers")
+    	         .ariaLabel("Clear all REST request headers")
+    	         .ok($scope.translate.load("sbi.general.yes"))
+    	         .cancel($scope.translate.load("sbi.general.No"));
+    		
+    		$mdDialog
+    			.show(confirm)
+    			.then(					
+    					function() {
+    						$scope.setFormDirty();
+    						$scope.restRequestHeaders = [];	
+    						$scope.restDsRequestHeaderTableLastPage = 1;
+    			 		}
+    				);
+    		
+    	}
+    	else {
+    		
+    		$mdDialog
+			.show(
+					$mdDialog.alert()
+				        .clickOutsideToClose(true)
+				        .title('Dataset has no REST request headers to delete')
+				        .textContent('There are not REST request headers to delete for the selected dataset')
+				        .ariaLabel('Dataset has no REST request headers to delete')
+				        .ok('Ok')
+			    );
+    		
+    	}
     	    	
     }
     
     $scope.deleteAllRESTJsonPathAttributes = function() {
     	
-    	// TODO: translate
-    	var confirm = $mdDialog.confirm()
-	         .title("Clear all REST JSON path attributes")
-	         .targetEvent(event)	 	          
-	         .textContent("Are you sure you want to delete all JSON path attributes")
-	         .ariaLabel("Clear all REST JSON path attributes")
-	         .ok($scope.translate.load("sbi.general.yes"))
-	         .cancel($scope.translate.load("sbi.general.No"));
-		
-		$mdDialog
-			.show(confirm)
-			.then(					
-					function() {
-						$scope.setFormDirty();
-						$scope.restJsonPathAttributes = [];		 	        	
-			 		}
-				);	
+    	if ($scope.restJsonPathAttributes.length>0) {
+    		
+    		// TODO: translate
+        	var confirm = $mdDialog.confirm()
+    	         .title("Clear all REST JSON path attributes")
+    	         .targetEvent(event)	 	          
+    	         .textContent("Are you sure you want to delete all JSON path attributes")
+    	         .ariaLabel("Clear all REST JSON path attributes")
+    	         .ok($scope.translate.load("sbi.general.yes"))
+    	         .cancel($scope.translate.load("sbi.general.No"));
+    		
+    		$mdDialog
+    			.show(confirm)
+    			.then(					
+    					function() {
+    						$scope.setFormDirty();
+    						$scope.restJsonPathAttributes = [];		 	        	
+    			 		}
+    				);	
+    		
+    	}
+    	else {
+    		
+    		$mdDialog
+				.show(
+						$mdDialog.alert()
+					        .clickOutsideToClose(true)
+					        .title('Dataset has no REST JSON path attributes to delete')
+					        .textContent('There are not REST JSON path attributes to delete for the selected dataset')
+					        .ariaLabel('Dataset has no REST JSON path attributes to delete')
+					        .ok('Ok')
+				    );
+    		
+    	}
     	
     }
 

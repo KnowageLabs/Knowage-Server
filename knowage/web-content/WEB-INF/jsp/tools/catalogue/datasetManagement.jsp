@@ -287,22 +287,32 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					     <md-tab label='{{translate.load("sbi.generic.type");}}' ng-click="changeSelectedTab(1)">
 					     
 					     	<md-content flex class="ToolbarBox miniToolbar noBorder mozTable">
+								
 								<md-card layout-padding>
-									<div flex=100>
-								       <md-input-container class="md-block" > 
+									
+									<div flex=100 ng-if="selectedDataSet.dsTypeCd!='Federated'">
+								       
+								       <md-input-container class="md-block"> 
 									       <label>{{translate.load("sbi.ds.dsTypeCd")}}</label>									     
 									       <md-select 	placeholder ="{{translate.load('sbi.ds.dsTypeCd')}}"
-									       	 			ng-required = "true"
+									       	 			ng-required="true" 
 									        			ng-model="selectedDataSet.dsTypeCd"
-									        			ng-change="resetWhenChangeDSType(selectedDataSet.dsTypeCd); setFormDirty()">   
-									        	<md-option ng-repeat="l in datasetTypeList | filter: { VALUE_CD: '!Custom' }" value="{{l.VALUE_CD}}">{{l.VALUE_CD}}</md-option>
+									        			ng-change="resetWhenChangeDSType(selectedDataSet.dsTypeCd);setFormDirty()">   
+									        	<md-option ng-repeat="l in datasetTypeList | filter: filterDatasetTypes" value="{{l.VALUE_CD}}">{{l.VALUE_CD}}</md-option>
 									       </md-select>  
 									       <div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.dsTypeCd">
 				       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 			       						 	</div>
 								        </md-input-container>
+								        
 								   </div>
+								   
+							   		<div ng-if="selectedDataSet.dsTypeCd=='Federated'">
+						        		<label>{{translate.load("sbi.ds.dsTypeCd")}}</label>: <strong>Federated</strong>
+				        			</div>
+								   
 								</md-card>
+								
 							</md-content>
 							
 						<!-- FILE DATASET -->
@@ -414,14 +424,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						                 	
 					                 	<div layout="row" layout-wrap flex=30>
 					                  		<div flex=90 layout-align="center center">
-					                     		<md-input-container class="md-block">
+					                     		 <md-input-container class="md-block">
 					                        		
 					                        		<label>{{translate.load("sbi.ds.file.csv.delimiter")}}</label> 
 					                        		
-					                        		<md-select 	aria-label="aria-label" ng-model="selectedDataSet.csvDelimiter" ng-required="selectedDataSet.dsTypeCd=='File'"
+					                        		<md-select 	ng-model="selectedDataSet.csvDelimiter" 
+					                        					ng-required="selectedDataSet.dsTypeCd=='File'"
 					                        					ng-change="setFormDirty()">
 					                           			<md-option 	ng-repeat="csvDelimiterCharacterItem in csvDelimiterCharacterTypes" 
-					                           						ng-click="chooseDelimiterCharacter(csvDelimiterCharacterItem)" 
 					                           						value="{{csvDelimiterCharacterItem.name}}">
 			                          						{{csvDelimiterCharacterItem.name}}
 			                     						</md-option>
@@ -432,7 +442,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					       						 	</div>
 					       						 	
 						                     	</md-input-container>
+						                     	
 						                  	</div>
+						                  	
 										</div>
 					                 	
 				                		<div layout="row" layout-wrap flex=30>
@@ -446,7 +458,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					                        		<md-select 	aria-label="aria-label" ng-model="selectedDataSet.csvQuote" ng-required="selectedDataSet.dsTypeCd=='File'"
 					                        					ng-change="setFormDirty()">
 					                           			<md-option 	ng-repeat="csvQuoteCharacterItem in csvQuoteCharacterTypes" 
-					                           						ng-click="chooseQuoteCharacter(csvQuoteCharacterItem)" 
 					                           						value="{{csvQuoteCharacterItem.name}}">
 			                          						{{csvQuoteCharacterItem.name}}
 			                     						</md-option>
@@ -471,7 +482,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					                        		<md-select 	aria-label="aria-label" ng-model="selectedDataSet.csvEncoding"
 					                        					ng-change="setFormDirty()">
 					                           			<md-option 	ng-repeat="csvEncodingItem in csvEncodingTypes" 
-					                           						ng-click="chooseEncoding(csvEncodingItem)" 
 					                           						value="{{csvEncodingItem.name}}">
 			                          						{{csvEncodingItem.name}}
 			                     						</md-option>
@@ -877,8 +887,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						                        		
 						                        		<md-select 	aria-label="aria-label" ng-model="selectedDataSet.ckanCsvDelimiter" 
 						                        					ng-required="selectedDataSet.dsTypeCd=='Ckan'" ng-change="setFormDirty()">
-						                           			<md-option 	ng-repeat="csvDelimiterCharacterItem in csvDelimiterCharacterTypes" 						                           						
-						                           						ng-click="chooseDelimiterCharacter(csvDelimiterCharacterItem)" 
+						                           			<md-option 	ng-repeat="csvDelimiterCharacterItem in csvDelimiterCharacterTypes" 
 						                           						value="{{csvDelimiterCharacterItem.name}}">
 					                          						{{csvDelimiterCharacterItem.name}}
 				                     						</md-option>
@@ -901,7 +910,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						                        		<md-select 	aria-label="aria-label" ng-model="selectedDataSet.ckanCsvQuote" 
 						                        					ng-required="selectedDataSet.dsTypeCd=='Ckan'" ng-change="setFormDirty()">
 						                           			<md-option 	ng-repeat="csvQuoteCharacterItem in csvQuoteCharacterTypes" 
-						                           						ng-click="chooseQuoteCharacter(csvQuoteCharacterItem)" 
 						                           						value="{{csvQuoteCharacterItem.name}}">
 					                          						{{csvQuoteCharacterItem.name}}
 					                     						</md-option>
@@ -924,7 +932,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						                        		<md-select 	aria-label="aria-label" ng-model="selectedDataSet.ckanCsvEncoding" 
 						                        					ng-change="setFormDirty()">
 						                           			<md-option 	ng-repeat="csvEncodingItem in csvEncodingTypes" 
-						                           						ng-click="chooseEncoding(csvEncodingItem)" 
 						                           						value="{{csvEncodingItem.name}}">
 					                          						{{csvEncodingItem.name}}
 					                     						</md-option>
@@ -1241,33 +1248,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									<div style="width:50%">
 										<md-button 	style="margin:16px 0 16px 0; float:right;" class="md-icon-button" 
 													aria-label="Add request header" ng-click="showInfoForRestParams('ngsi')" 
-													title="{{translate.load('sbi.ds.help')}}">
-							              	<md-icon md-font-icon="fa fa-info-circle" class="fa fa-2x"></md-icon>
-							            </md-button>
-						            </div>
-						            
-					            </div>
-					            
-					            <div flex=100 style="display:flex;" ng-show="false">
-									<div flex=50 layout="row" layout-align="start center">
-						           	
-				                  		<label>
-				                  			JSON Path Attributes:
-			                  			</label> 
-				                  		
-				                  		
-				                  		<md-input-container class="small counter" style="padding-left:8px;">
-				                     		<md-checkbox 	aria-label="Checkbox 2" 
-					                     					ng-model="_ss_" ng-checked="" 
-					                     					ng-change="setFormDirty()">
-											</md-checkbox>
-				                  		</md-input-container>
-				                  		
-									</div>
-									
-									<div style="width:50%">
-										<md-button 	style="margin:16px 0 16px 0; float:right;" class="md-icon-button" 
-													aria-label="Add request header" ng-click="showInfoForRestParams('jsonPathAttributes')" 
 													title="{{translate.load('sbi.ds.help')}}">
 							              	<md-icon md-font-icon="fa fa-info-circle" class="fa fa-2x"></md-icon>
 							            </md-button>

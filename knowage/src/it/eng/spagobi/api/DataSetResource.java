@@ -213,15 +213,34 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		logger.debug("IN");
 
 		IDataSetDAO datasetDao = null;
+
 		try {
 			datasetDao = DAOFactory.getDataSetDAO();
 		} catch (EMFUserError e) {
 			logger.error("Internal error", e);
 			throw new SpagoBIRuntimeException("Internal error", e);
 		}
-		IDataSet dataset = datasetDao.loadDataSetById(new Integer(id));
 
-		return serializeDataSet(dataset, null);
+		/**
+		 * When retrieving the dataset that is previously saved, call the method that retrieves all the available datasets since they contain also information
+		 * about all dataset versions for them. Go through all the collection and find the one that we need (according to its ID).
+		 * 
+		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+		 */
+
+		IDataSet datasetToReturn = null;
+
+		datasetDao.setUserProfile(getUserProfile());
+		List<IDataSet> dataSets = datasetDao.loadPagedDatasetList(-1, -1);
+
+		for (IDataSet datasetTemp : dataSets) {
+			if (datasetTemp.getId() == Integer.parseInt(id)) {
+				datasetToReturn = datasetTemp;
+				break;
+			}
+		}
+
+		return serializeDataSet(datasetToReturn, null);
 	}
 
 	/**
