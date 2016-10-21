@@ -117,6 +117,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			SbiDataSet dsActiveDetail = (SbiDataSet) hibQuery.uniqueResult();
 			if (dsActiveDetail != null) {
 				toReturn = DataSetFactory.toDataSet(dsActiveDetail, this.getUserProfile());
+			} else {
+				logger.debug("Impossible to load dataset with id [" + id + "].");
 			}
 			transaction.commit();
 
@@ -143,6 +145,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		hibQuery.setBoolean(0, true);
 		hibQuery.setInteger(1, id);
 		SbiDataSet dsActiveDetail = (SbiDataSet) hibQuery.uniqueResult();
+		if (dsActiveDetail == null) {
+			logger.debug("Impossible to load dataset with id [" + id + "].");
+		}
 
 		logger.debug("OUT");
 		return dsActiveDetail;
@@ -177,9 +182,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			hibQuery.setString(1, label);
 			SbiDataSet sbiDataSet = (SbiDataSet) hibQuery.uniqueResult();
 			if (sbiDataSet != null) {
-				// GuiDataSetDetail detail = DataSetFactory.toGuiDataSet(sbiDataSet);
-				// toReturn = DataSetFactory.toGuiDataSet(sbiDataSet);
 				toReturn = DataSetFactory.toDataSet(sbiDataSet, this.getUserProfile());
+			} else {
+				logger.debug("Impossible to load dataset with label [" + label + "].");
 			}
 
 			transaction.commit();
@@ -285,7 +290,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 		return results;
 	}
-	
+
 	@Override
 	public List<IDataSet> loadMyDataFederatedDataSets(UserProfile userProfile) {
 		List<IDataSet> results = new ArrayList<IDataSet>();
@@ -293,7 +298,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		for (Iterator iterator = mydatasets.iterator(); iterator.hasNext();) {
 			IDataSet iDataSet = (IDataSet) iterator.next();
 			FederationDefinition fd = iDataSet.getDatasetFederation();
-			if(fd!=null){
+			if (fd != null) {
 				results.add(iDataSet);
 			}
 		}
