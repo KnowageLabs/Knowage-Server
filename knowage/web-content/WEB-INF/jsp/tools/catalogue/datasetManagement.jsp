@@ -49,6 +49,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/mode/sql/sql.js"></script>
 		<script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/addon/selection/mark-selection.js"></script>
 		<script src="${pageContext.request.contextPath}/js/lib/angular/codemirror/CodeMirror-master/addon/display/autorefresh.js"></script>
+		
+		<!-- CRON for Dataset Scheduling -->
+		<script src="${pageContext.request.contextPath}/js/lib/prettyCron/prettycron.js"></script>
+		<script src="${pageContext.request.contextPath}/js/lib/prettyCron/later.js"></script> 	
+		<script src="${pageContext.request.contextPath}/js/lib/prettyCron/moment-with-locales.js"></script>
 
 		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 		
@@ -56,7 +61,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 	</head>
 	
-	<body ng-controller="datasetController" class="bodyStyle kn-rolesManagement">
+	<body ng-controller="datasetController" class="bodyStyle kn-rolesManagement" style="overflow-y:hidden;">
 	
 		<!-- 
 			The progress circular animation will be shown whenever the REST calls are in progress (before the getting of the response).
@@ -1554,25 +1559,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	   						 				</div>
 										</md-input-container>
 									</div>
-									
-									<!-- <div flex=100 style="display:flex;" >
-										
-										<div flex=50 layout="row" layout-align="start center">
-							           	
-					                  		<label>
-					                  			{{translate.load('sbi.ds.pivotIsNumRows')}}: 
-				                  			</label> 
-					                  		
-					                  		
-					                  		<md-input-container class="small counter" style="padding-left:8px;">
-					                     		<md-checkbox 	aria-label="Checkbox 2" 
-						                     					ng-model="selectedDataSet.pivotIsNumRows" ng-checked="" >
-												</md-checkbox>
-					                  		</md-input-container>
-					                  		
-										</div>
-										
-									</div> -->
 								
 								</div>
 							
@@ -1581,7 +1567,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						</md-content>
 						
 						<!-- OLD ADVANCED TAB (Scheduling) -->
-						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" style="margin:0 8 0 8">
+						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" style="margin:0 8 0 8" ng-if="selectedDataSet.isPersisted">
 							
 							<md-toolbar class="secondaryToolbar" layout-padding>
 						     	
@@ -1624,18 +1610,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										<div flex=100 style="display:flex;padding-bottom:8;margin-bottom:8">
 											
 											<div style="float:left" flex=50>
-												<label>{{translate.load('sbi.ds.persist.cron.startdate')}}:</label>
-												
+												<label>{{translate.load('sbi.ds.persist.cron.startdate')}}:</label>												
 												<md-datepicker ng-model="selectedDataSet.startDate" md-placeholder="Enter date"
-		            											md-min-date="minDate" md-max-date="maxDate" ng-change="setFormDirty()">
+		            											md-min-date="minStartDate" md-max-date="maxStartDate" 
+		            											ng-change="setFormDirty();checkPickedStartDate();"
+		            											md-open-on-focus>
 												</md-datepicker>
 											</div>
 											
 											<div style="float:right" flex=50>
-												<label>{{translate.load('sbi.ds.persist.cron.enddate')}}:</label>
-												
+												<label>{{translate.load('sbi.ds.persist.cron.enddate')}}:</label>												
 												<md-datepicker ng-model="selectedDataSet.endDate" md-placeholder="Enter date"
-		            											md-min-date="minDate" md-max-date="maxDate" ng-change="setFormDirty()">
+		            											md-min-date="minEndDate" md-max-date="maxEndDate" 
+		            											ng-change="setFormDirty();checkPickedEndDate();"
+		            											md-open-on-focus>
 												</md-datepicker>
 											</div>
 											
@@ -1656,13 +1644,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 												<!-- VERTICAL ALIGNMENT INSIDE THE DIV: align-items:center; display:flex -->
 												<div flex=40 style="align-items:center; display:flex">
 													
-													<label style="margin: 4 0 4 0; color:#A9A9A9" ng-if=!uuu>
+													<label style="margin: 4 0 4 0; color:#A9A9A9" ng-if="!scheduling.minutesCustom">
 														<strong>{{translate.load('sbi.ds.persist.cron.everyminute')}}</strong>
 													</label>
 													
 													<md-select placeholder ="Select minute(s)"
-											        	ng-required = "selectedDataSet.isScheduled" ng-if=uuu multiple=true
-											        	ng-model="minutesSelected" style="margin:0; width:80%" title="{{minutesSelected}}"
+											        	ng-required="selectedDataSet.isScheduled" ng-if="scheduling.minutesCustom" multiple=true
+											        	ng-model="scheduling.minutesSelected" style="margin:0; width:80%" title="{{scheduling.minutesSelected}}"
 											        	ng-change="setFormDirty()">   
 											        	<md-option ng-repeat="l in minutes track by $index" value="{{$index}}">
 											        		{{$index}}
@@ -1676,9 +1664,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 													<div layout="row" layout-align="start center">
 							           	
 							           					<div flex=50>
-								                  			<md-input-container class="small counter" style="margin:8;">
-								                     			<md-checkbox 	aria-label="Checkbox 2" 
-									                     						ng-model="uuu" ng-checked="" 
+							           						{{minutesCustom}}
+							           					
+								                  			<md-input-container class="small counter" style="margin:8;" >
+								                     			<md-checkbox 	aria-label="Checkbox 2" ng-model="scheduling.minutesCustom"								                     						
 									                     						ng-change="setFormDirty()">
 																</md-checkbox>
 								                  			</md-input-container>
@@ -1688,7 +1677,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							                  				</label> 	
 						                  				</div>
 						                  				
-						                  				<div flex=50 ng-if=uuu>					                  				
+						                  				<div flex=50 ng-if=scheduling.minutesCustom>					                  				
 						                  					<md-button aria-label="menu" class="md-raised md-mini" ng-click="minutesClearSelections()" 
 											      					ng-show="selectedDataSet" title="Fields metadata" style="margin-top:0; margin-bottom:0;">
 												            	{{translate.load('sbi.ds.persist.cron.scheduling.multipleselect.clearall')}} 
@@ -1700,55 +1689,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 												</div>
 											
 											</div>
-											
-											<!-- <div style="float:left;display:flex" flex=30 layout="column">
-												
-												<label style="margin: 4 0 4 0; color:#A9A9A9">{{translate.load('sbi.ds.persist.cron.minute')}}s:<b>{{uuu ? '' : ' Every minute'}}</b></label>
-												
-												<md-radio-group ng-model="data.group1">
-	
-											      <md-radio-button value="aaa" class="md-primary" style="margin:8 0 4 0;">{{translate.load('sbi.ds.persist.cron.everyminute')}}</md-radio-button>
-											      <md-radio-button value="!aaa">{{translate.load('sbi.ds.persist.cron.choose')}}</md-radio-button>
-											
-											    </md-radio-group>
-											    
-											    <div flex=50 layout="row" layout-align="start center">
-							           	
-						                  			<md-input-container class="small counter" style="margin:8;">
-						                     			<md-checkbox 	aria-label="Checkbox 2" 
-							                     					ng-model="uuu" ng-checked="" >
-														</md-checkbox>
-						                  			</md-input-container>
-						                  			
-						                  			<label>
-						                  				Custom
-					                  				</label> 
-					                  		
-												</div>
-											    
-											</div>
-											
-											<div style="float:right; display:flex" flex=70 layout-row ng-if="uuu">
-												
-	      										<md-slider-container style="width:100%">
-	      																				      	
-											      	<md-slider flex ng-model="color.green" min="0" max="59" aria-label="green" id="green-slider" md-discrete>
-											      	</md-slider>
-											      	
-											      	<md-input-container style="margin-left:16; margin-right:8">
-											        	<input flex type="number" ng-model="color.green" aria-label="green" aria-controls="green-slider">
-											      	</md-input-container>
-											      	
-											    </md-slider-container>
-											    
-											    <md-select placeholder ="{{translate.load('sbi.ds.scope')}}"
-										        	ng-required = "true"
-										        	ng-model="selectedDataSet.scopeId">   
-										        	<md-option ng-repeat="l in scopeList" value="{{l.VALUE_ID}}">{{l.VALUE_CD}}
-										        	</md-option>
-										       	</md-select> 
-												
-											</div> -->
 										
 										</md-whiteframe>	
 										<!-- </div> -->
@@ -1768,13 +1708,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 												<!-- VERTICAL ALIGNMENT INSIDE THE DIV: align-items:center; display:flex -->
 												<div flex=40 style="align-items:center; display:flex">
 													
-													<label style="margin: 4 0 4 0; color:#A9A9A9" ng-if=!qqq>
+													<label style="margin: 4 0 4 0; color:#A9A9A9" ng-if=!scheduling.hoursCustom>
 														<strong>{{translate.load('sbi.ds.persist.cron.everyhour')}}</strong>
 													</label>
 													
 													<md-select placeholder ="Select hours(s)"
-											        	ng-required = "selectedDataSet.isScheduled" ng-if=qqq multiple=true
-											        	ng-model="hoursSelected" style="margin:0; width:80%" title="{{hoursSelected}}"
+											        	ng-required = "selectedDataSet.isScheduled" ng-if=scheduling.hoursCustom multiple=true
+											        	ng-model="scheduling.hoursSelected" style="margin:0; width:80%" title="{{scheduling.hoursSelected}}"
 											        	ng-change="setFormDirty()">   
 											        	<md-option ng-repeat="l in hours track by $index" value="{{$index}}">
 											        		{{$index}}
@@ -1790,7 +1730,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							           					<div flex=50>
 								                  			<md-input-container class="small counter" style="margin:8;">
 								                     			<md-checkbox 	aria-label="Checkbox 2" 
-										                     					ng-model="qqq" ng-checked="" 
+										                     					ng-model="scheduling.hoursCustom" ng-checked="" 
 										                     					ng-change="setFormDirty()">
 																</md-checkbox>
 								                  			</md-input-container>
@@ -1800,7 +1740,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							                  				</label> 	
 						                  				</div>
 						                  				
-						                  				<div flex=50 ng-if=qqq>					                  				
+						                  				<div flex=50 ng-if=scheduling.hoursCustom>					                  				
 						                  					<md-button aria-label="menu" class="md-raised md-mini" ng-click="hoursClearSelections()" 
 											      					ng-show="selectedDataSet" title="Fields metadata" style="margin-top:0; margin-bottom:0;">
 												            	{{translate.load('sbi.ds.persist.cron.scheduling.multipleselect.clearall')}} 
@@ -1812,48 +1752,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 												</div>
 											
 											</div>
-										
-											<!-- <div style="float:left;display:flex" flex=30 layout="column">
-												
-												<label style="margin: 4 0 4 0; color:#A9A9A9">{{translate.load('sbi.ds.persist.cron.hour')}}s:<b>{{qqq ? '' : ' Every hour'}}</b></label>
-												
-												<md-radio-group ng-model="data.group1">
-	
-											      <md-radio-button value="aaa" class="md-primary" style="margin:8 0 4 0;">{{translate.load('sbi.ds.persist.cron.everyminute')}}</md-radio-button>
-											      <md-radio-button value="!aaa">{{translate.load('sbi.ds.persist.cron.choose')}}</md-radio-button>
-											
-											    </md-radio-group>
-											    
-											    <div flex=50 layout="row" layout-align="start center">						           				                  		
-						                  		
-						                  			<md-input-container class="small counter" style="margin:8">
-						                     			<md-checkbox 	aria-label="Checkbox 2" 
-							                     					ng-model="qqq" ng-checked="" >
-														</md-checkbox>
-						                  			</md-input-container>
-						                  			
-						                  			<label>
-						                  				Custom
-					                  				</label> 
-					                  		
-												</div>
-											    
-											</div>
-											
-											<div style="float:right; display:flex" flex=70 layout-row ng-if="qqq">
-												
-	      										<md-slider-container style="width:100%">
-	      																				      	
-											      	<md-slider flex ng-model="color.green" min="0" max="23" aria-label="green" id="green-slider" md-discrete>
-											      	</md-slider>
-											      	
-											      	<md-input-container style="margin-left:16; margin-right:8">
-											        	<input flex type="number" ng-model="color.green" aria-label="green" aria-controls="green-slider">
-											      	</md-input-container>
-											      	
-											    </md-slider-container>
-												
-											</div> -->
 										
 										</md-whiteframe>	
 										<!-- </div> -->
@@ -1873,13 +1771,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 												<!-- VERTICAL ALIGNMENT INSIDE THE DIV: align-items:center; display:flex -->
 												<div flex=40 style="align-items:center; display:flex">
 													
-													<label style="margin: 4 0 4 0; color:#A9A9A9" ng-if=!www>
+													<label style="margin: 4 0 4 0; color:#A9A9A9" ng-if=!scheduling.daysCustom>
 														<strong>{{translate.load('sbi.ds.persist.cron.everyday')}}</strong>
 													</label>
 													
 													<md-select placeholder ="Select day(s)"
-											        	ng-required = "selectedDataSet.isScheduled" ng-if=www multiple=true
-											        	ng-model="daysSelected" style="margin:0; width:80%" title="{{daysSelected}}"
+											        	ng-required = "selectedDataSet.isScheduled" ng-if=scheduling.daysCustom multiple=true
+											        	ng-model="scheduling.daysSelected" style="margin:0; width:80%" title="{{scheduling.daysSelected}}"
 											        	ng-change="setFormDirty()">   
 											        	<md-option ng-repeat="l in days" value="{{l}}">
 											        		{{l}}
@@ -1895,7 +1793,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							           					<div flex=50>
 								                  			<md-input-container class="small counter" style="margin:8;">
 								                     			<md-checkbox 	aria-label="Checkbox 2" 
-									                     						ng-model="www" ng-checked="" 
+									                     						ng-model="scheduling.daysCustom" ng-checked="" 
 									                     						ng-change="setFormDirty()">
 																</md-checkbox>
 								                  			</md-input-container>
@@ -1905,7 +1803,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							                  				</label> 	
 						                  				</div>
 						                  				
-						                  				<div flex=50 ng-if=www>					                  				
+						                  				<div flex=50 ng-if=scheduling.daysCustom>					                  				
 						                  					<md-button aria-label="menu" class="md-raised md-mini" ng-click="daysClearSelections()" 
 											      					ng-show="selectedDataSet" title="Fields metadata" style="margin-top:0; margin-bottom:0;">
 												            	{{translate.load('sbi.ds.persist.cron.scheduling.multipleselect.clearall')}} 
@@ -1917,48 +1815,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 												</div>
 											
 											</div>
-											
-											<!-- <div style="float:left;display:flex" flex=30 layout="column">
-												
-												<label style="margin: 4 0 4 0; color:#A9A9A9">{{translate.load('sbi.ds.persist.cron.day')}}s:<b>{{www ? '' : ' Every day'}}</b></label>
-												
-												<md-radio-group ng-model="data.group1">
-	
-											      <md-radio-button value="aaa" class="md-primary" style="margin:8 0 4 0;">{{translate.load('sbi.ds.persist.cron.everyminute')}}</md-radio-button>
-											      <md-radio-button value="!aaa">{{translate.load('sbi.ds.persist.cron.choose')}}</md-radio-button>
-											
-											    </md-radio-group>
-											    
-											    <div flex=50 layout="row" layout-align="start center">
-							           					                  		
-						                  			<md-input-container class="small counter" style="margin:8;">
-						                     			<md-checkbox 	aria-label="Checkbox 2" 
-							                     					ng-model="www" ng-checked="" >
-														</md-checkbox>
-						                  			</md-input-container>
-						                  			
-						                  			<label>
-						                  				Custom
-					                  				</label> 
-					                  		
-												</div>
-											    
-											</div>
-											
-											<div style="float:right; display:flex" flex=70 layout-row ng-if="www">
-												
-	      										<md-slider-container style="width:100%">
-	      																				      	
-											      	<md-slider flex ng-model="color.green" min="1" max="31" aria-label="green" id="green-slider" md-discrete>
-											      	</md-slider>
-											      	
-											      	<md-input-container style="margin-left:16; margin-right:8">
-											        	<input flex type="number" ng-model="color.green" aria-label="green" aria-controls="green-slider">
-											      	</md-input-container>
-											      	
-											    </md-slider-container>
-												
-											</div> -->
 										
 										</md-whiteframe>	
 										<!-- </div> -->
@@ -1978,16 +1834,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 												<!-- VERTICAL ALIGNMENT INSIDE THE DIV: align-items:center; display:flex -->
 												<div flex=40 style="align-items:center; display:flex">
 													
-													<label style="margin: 4 0 4 0; color:#A9A9A9" ng-if=!eee>
+													<label style="margin: 4 0 4 0; color:#A9A9A9" ng-if=!scheduling.monthsCustom>
 														<strong>{{translate.load('sbi.ds.persist.cron.everymonth')}}</strong>
 													</label>
 													
 													<md-select placeholder ="Select month(s)"
-											        	ng-required = "selectedDataSet.isScheduled" ng-if=eee multiple=true
-											        	ng-model="monthsSelected" style="margin:0; width:80%" title="monthsSelected"
+											        	ng-required = "selectedDataSet.isScheduled" ng-if=scheduling.monthsCustom multiple=true
+											        	ng-model="scheduling.monthsSelected" style="margin:0; width:80%" title="{{scheduling.monthsSelected}}"
 											        	ng-change="setFormDirty()">   
-											        	<md-option ng-repeat="l in months" value="{{l}}">
-											        		{{l}}
+											        	<md-option ng-repeat="l in months" value="{{l.value}}">
+											        		{{l.name}}
 											        	</md-option>
 										       		</md-select> 
 														
@@ -2000,7 +1856,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							           					<div flex=50>
 								                  			<md-input-container class="small counter" style="margin:8;">
 								                     			<md-checkbox 	aria-label="Checkbox 2" 
-										                     					ng-model="eee" ng-checked="" 
+										                     					ng-model="scheduling.monthsCustom" ng-checked="" 
 										                     					ng-change="setFormDirty()">
 																</md-checkbox>
 								                  			</md-input-container>
@@ -2010,7 +1866,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							                  				</label> 	
 						                  				</div>
 						                  				
-						                  				<div flex=50 ng-if=eee>					                  				
+						                  				<div flex=50 ng-if=scheduling.monthsCustom>					                  				
 						                  					<md-button aria-label="menu" class="md-raised md-mini" ng-click="monthsClearSelections()" 
 											      					ng-show="selectedDataSet" title="Fields metadata" style="margin-top:0; margin-bottom:0;">
 												            	{{translate.load('sbi.ds.persist.cron.scheduling.multipleselect.clearall')}} 
@@ -2021,64 +1877,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 													
 												</div>
 											
-											</div>
+											</div>											
 											
-											<!-- <div style="float:left;display:flex" flex=30 layout="column">
-												
-												<label style="margin: 4 0 4 0; color:#A9A9A9">{{translate.load('sbi.ds.persist.cron.month')}}s:<b>{{eee ? '' : ' Every month'}}</b></label>
-												
-												<md-radio-group ng-model="data.group1">
-	
-											      <md-radio-button value="aaa" class="md-primary" style="margin:8 0 4 0;">{{translate.load('sbi.ds.persist.cron.everyminute')}}</md-radio-button>
-											      <md-radio-button value="!aaa">{{translate.load('sbi.ds.persist.cron.choose')}}</md-radio-button>
-											
-											    </md-radio-group>
-											    
-											    <div flex=50 layout="row" layout-align="start center">						           						                  		
-						                  		
-						                  			<md-input-container class="small counter" style="margin:8;">
-						                     			<md-checkbox 	aria-label="Checkbox 2" 
-							                     					ng-model="eee" ng-checked="" >
-														</md-checkbox>
-						                  			</md-input-container>
-						                  			
-						                  			<label>
-						                  				Custom
-					                  				</label> 
-					                  		
-												</div>
-											    
-											</div>
-											
-											<div style="float:right; display:flex" flex=70 layout-row ng-if="eee">
-												
-												<div flex=100>
-	      										
-		      										<md-slider-container style="width:100%">
-		      																				      	
-												      	<md-slider 	flex=80 ng-model="ttt" min="1" max="12" 
-												      				aria-label="green" id="green-slider" md-discrete 
-												      				ng-change="schedulingMonths(ttt)">
-												      	</md-slider>
-												      	
-												      	<md-input-container flex=20 style="max-width:100%; margin-left:16; margin-right:8">
-												        	<input 	type="text" ng-model="schedulingMonthsMap" aria-label="green" 
-												        			aria-controls="green-slider" readonly="readonly"
-												        			style="text-align:center">
-												      	</md-input-container>
-												      	
-												    </md-slider-container>
-											    
-											    </div>
-												
-											</div> -->
-										
 										</md-whiteframe>	
 										<!-- </div> -->
 										
 										<!-- WEEKDAY -->
 										<!-- <div flex=100 style="display:flex; background-color:#eceff1; margin-top:8px"> -->
-										<md-whiteframe class="md-whiteframe-5dp" style="display:flex; padding:8; margin-top:8">
+										<md-whiteframe class="md-whiteframe-5dp" style="display:flex; padding:8; margin-top:8; margin-bottom:8;">
 																					
 											<div flex=100 layout="row" style="display:flex">
 											
@@ -2091,16 +1897,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 												<!-- VERTICAL ALIGNMENT INSIDE THE DIV: align-items:center; display:flex -->
 												<div flex=40 style="align-items:center; display:flex">
 													
-													<label style="margin: 4 0 4 0; color:#A9A9A9" ng-if=!rrr>
+													<label style="margin: 4 0 4 0; color:#A9A9A9" ng-if=!scheduling.weekdaysCustom>
 														<strong>{{translate.load('sbi.ds.persist.cron.everyweekday')}}</strong>
 													</label>
 													
 													<md-select placeholder ="Select weekday(s)"
-											        	ng-required = "selectedDataSet.isScheduled" ng-if=rrr multiple=true
-											        	ng-model="weekdaysSelected" style="margin:0; width:80%" title="{{weekdaysSelected}}"
+											        	ng-required = "selectedDataSet.isScheduled" ng-if=scheduling.weekdaysCustom multiple=true
+											        	ng-model="scheduling.weekdaysSelected" style="margin:0; width:80%" title="{{scheduling.weekdaysSelected}}"
 											        	ng-change="setFormDirty()">   
-											        	<md-option ng-repeat="l in weekdays" value="{{l}}">
-											        		{{l}}
+											        	<md-option ng-repeat="l in weekdays" value="{{l.value}}">
+											        		{{l.name}}
 											        	</md-option>
 										       		</md-select> 
 														
@@ -2113,7 +1919,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							           					<div flex=50>
 								                  			<md-input-container class="small counter" style="margin:8;">
 								                     			<md-checkbox 	aria-label="Checkbox 2" 
-										                     					ng-model="rrr" ng-checked="" 
+										                     					ng-model="scheduling.weekdaysCustom" ng-checked="" 
 										                     					ng-change="setFormDirty()">
 																</md-checkbox>
 								                  			</md-input-container>
@@ -2123,7 +1929,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							                  				</label> 	
 						                  				</div>
 						                  				
-						                  				<div flex=50 ng-if=rrr>					                  				
+						                  				<div flex=50 ng-if=scheduling.weekdaysCustom>					                  				
 						                  					<md-button aria-label="menu" class="md-raised md-mini" ng-click="weekdaysClearSelections()" 
 											      					ng-show="selectedDataSet" title="Fields metadata" style="margin-top:0; margin-bottom:0;">
 												            	{{translate.load('sbi.ds.persist.cron.scheduling.multipleselect.clearall')}} 
@@ -2135,68 +1941,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 												</div>
 											
 											</div>
-											
-											<!-- <div style="float:left;display:flex" flex=30 layout="column">
-												
-												<label style="margin: 4 0 4 0; color:#A9A9A9">{{translate.load('sbi.ds.persist.cron.weekday')}}s:<b>{{rrr ? '' : ' Every weekday'}}</b></label>
-												
-												<md-radio-group ng-model="data.group1">
-	
-											      <md-radio-button value="aaa" class="md-primary" style="margin:8 0 4 0;">{{translate.load('sbi.ds.persist.cron.everyminute')}}</md-radio-button>
-											      <md-radio-button value="!aaa">{{translate.load('sbi.ds.persist.cron.choose')}}</md-radio-button>
-											
-											    </md-radio-group>
-											    
-											    <div flex=50 layout="row" layout-align="start center">
-							           						                  		
-						                  			<md-input-container class="small counter" style="margin:8;">
-						                     			<md-checkbox 	aria-label="Checkbox 2" 
-							                     					ng-model="rrr" ng-checked="" >
-														</md-checkbox>
-						                  			</md-input-container>
-					                  		
-					                  				<label>
-						                  				Custom
-					                  				</label> 
-					                  		
-												</div>
-											    
-											</div>
-											
-											<div style="float:right; display:flex" flex=70 layout-row ng-if="rrr">
-												
-	      										<md-slider-container style="width:100%">
-	      																				      	
-											      	<md-slider flex ng-model="color.green" min="1" max="7" aria-label="green" id="green-slider" md-discrete>
-											      	</md-slider>
-											      	
-											      	<md-input-container style="margin-left:16; margin-right:8">
-											        	<input 	flex type="text" ng-model="color.green" aria-label="green" 
-											        			aria-controls="green-slider" readonly="readonly"
-											        			style="text-align:center">
-											      	</md-input-container>
-											      	
-											    </md-slider-container>
-												
-											</div> -->
 										
 										</md-whiteframe>	
 										<!-- </div> -->
 										
 										<div flex=100 style="margin-top:8px; display:flex">
 											
-											<md-input-container class="md-block">										
-										    	<label>{{translate.load("sbi.ds.persist.cron.schedulingline")}}</label>											
-												<input ng-model="bla1" readonly="readonly" ng-change="setFormDirty()">       						 				
-											</md-input-container>
+											<md-input-container class="md-block" flex-gt-sm>								
+									           	<label>{{translate.load("sbi.ds.persist.cron.schedulingline")}}</label>											
+												<input ng-model="scheduling.cronDescriptionDate" readonly="readonly">				    						 	
+								         	</md-input-container>
 											
 										</div>
 										
 										<div flex=100 style="display:flex">
 											
-											<md-input-container class="md-block">
+											<md-input-container class="md-block" flex-gt-sm>
 										    	<label>{{translate.load("sbi.ds.persist.cron.nextfire")}}</label>
-												<input ng-model="bla2" readonly="readonly" ng-change="setFormDirty()">
+												<input ng-model="scheduling.cronDescriptionTime" readonly="readonly">
 											</md-input-container>
 											
 										</div>

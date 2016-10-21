@@ -80,6 +80,35 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	$scope.tempScope = {};
 	$scope.showSaveAndCancelButtons = false;
 	
+	$scope.scheduling = {};
+	 
+	// The current date for data pickers for Scheduling
+	var currentDate = new Date();
+
+	$scope.minStartDate = new Date(
+		currentDate.getFullYear(),
+		currentDate.getMonth(),
+		currentDate.getDate()
+	);
+	
+	$scope.minEndDate = $scope.minStartDate;
+	
+	$scope.checkPickedEndDate = function() {
+		
+		if (new Date($scope.selectedDataSet.endDate) < new Date($scope.selectedDataSet.startDate)) {
+			$scope.selectedDataSet.startDate = null;
+		}
+		
+	}
+	
+	$scope.checkPickedStartDate = function() {
+		
+		if (new Date($scope.selectedDataSet.startDate) > new Date($scope.selectedDataSet.endDate)) {
+			$scope.selectedDataSet.endDate = null;
+		}
+		
+	}
+	
 	// Flag that indicates if the Dataset form is dirty (changed)
 	$scope.dirtyForm = false;
 	
@@ -203,19 +232,19 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	$scope.months = new Array();
 	
 	var populateMonths = function() {
-		
-		$scope.months.push($scope.translate.load("sbi.ds.persist.cron.month.january")); 
-		$scope.months.push($scope.translate.load("sbi.ds.persist.cron.month.february")); 
-		$scope.months.push($scope.translate.load("sbi.ds.persist.cron.month.march")); 
-		$scope.months.push($scope.translate.load("sbi.ds.persist.cron.month.april")); 
-		$scope.months.push($scope.translate.load("sbi.ds.persist.cron.month.may")); 
-		$scope.months.push($scope.translate.load("sbi.ds.persist.cron.month.june")); 
-		$scope.months.push($scope.translate.load("sbi.ds.persist.cron.month.july")); 
-		$scope.months.push($scope.translate.load("sbi.ds.persist.cron.month.august")); 			
-		$scope.months.push($scope.translate.load("sbi.ds.persist.cron.month.september")); 
-		$scope.months.push($scope.translate.load("sbi.ds.persist.cron.month.october"));
-		$scope.months.push($scope.translate.load("sbi.ds.persist.cron.month.november"));
-		$scope.months.push($scope.translate.load("sbi.ds.persist.cron.month.december"));
+				
+		$scope.months.push({name: $scope.translate.load("sbi.ds.persist.cron.month.january"), 	value: 1}); 
+		$scope.months.push({name: $scope.translate.load("sbi.ds.persist.cron.month.february"), 	value: 2}); 
+		$scope.months.push({name: $scope.translate.load("sbi.ds.persist.cron.month.march"), 	value: 3}); 
+		$scope.months.push({name: $scope.translate.load("sbi.ds.persist.cron.month.april"), 	value: 4}); 
+		$scope.months.push({name: $scope.translate.load("sbi.ds.persist.cron.month.may"), 		value: 5}); 
+		$scope.months.push({name: $scope.translate.load("sbi.ds.persist.cron.month.june"), 		value: 6}); 
+		$scope.months.push({name: $scope.translate.load("sbi.ds.persist.cron.month.july"), 		value: 7}); 
+		$scope.months.push({name: $scope.translate.load("sbi.ds.persist.cron.month.august"), 	value: 8}); 
+		$scope.months.push({name: $scope.translate.load("sbi.ds.persist.cron.month.september"), value: 9}); 
+		$scope.months.push({name: $scope.translate.load("sbi.ds.persist.cron.month.october"), 	value: 10}); 
+		$scope.months.push({name: $scope.translate.load("sbi.ds.persist.cron.month.november"), 	value: 11}); 
+		$scope.months.push({name: $scope.translate.load("sbi.ds.persist.cron.month.december"), 	value: 12}); 		
 		
 	}
 	
@@ -232,13 +261,13 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	
 	var populateWeekdays = function() {
 		
-		$scope.weekdays.push($scope.translate.load("sbi.ds.persist.cron.weekday.monday")); 
-		$scope.weekdays.push($scope.translate.load("sbi.ds.persist.cron.weekday.tuesday")); 
-		$scope.weekdays.push($scope.translate.load("sbi.ds.persist.cron.weekday.wednesday")); 
-		$scope.weekdays.push($scope.translate.load("sbi.ds.persist.cron.weekday.thursday")); 
-		$scope.weekdays.push($scope.translate.load("sbi.ds.persist.cron.weekday.friday")); 
-		$scope.weekdays.push($scope.translate.load("sbi.ds.persist.cron.weekday.saturday")); 
-		$scope.weekdays.push($scope.translate.load("sbi.ds.persist.cron.weekday.sunday")); 
+		$scope.weekdays.push({name: $scope.translate.load("sbi.ds.persist.cron.weekday.monday"), 	value: 1}); 
+		$scope.weekdays.push({name: $scope.translate.load("sbi.ds.persist.cron.weekday.tuesday"), 	value: 2}); 
+		$scope.weekdays.push({name: $scope.translate.load("sbi.ds.persist.cron.weekday.wednesday"), value: 3}); 
+		$scope.weekdays.push({name: $scope.translate.load("sbi.ds.persist.cron.weekday.thursday"), 	value: 4}); 
+		$scope.weekdays.push({name: $scope.translate.load("sbi.ds.persist.cron.weekday.friday"), 	value: 5}); 
+		$scope.weekdays.push({name: $scope.translate.load("sbi.ds.persist.cron.weekday.saturday"), 	value: 6}); 
+		$scope.weekdays.push({name: $scope.translate.load("sbi.ds.persist.cron.weekday.sunday"), 	value: 7}); 
 		
 	}
 	
@@ -1663,8 +1692,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			$scope.transformDatasetState = false;
 		}
 
-		// Prepare the dataset metadata
-		//$scope.fieldsMetadata = exctractFieldsMetadata($scope.selectedDataSet.meta.columns);
+		$scope.showSaveAndCancelButtons = true;
 		
 	}
 	
@@ -1845,12 +1873,20 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			$timeout(function() { var page = $scope.tableLastPage("datasetList_id"); $scope.datasetTableLastPage = (page<=$scope.datasetTableLastPage)
 			? $scope.datasetTableLastPage : page;  }, 100);
 			
+			$scope.isCategoryRequired = false;
 				
 	}
 	
 	$scope.saveDataset = function() {
-		
-//		console.log($scope.selectedDataSet);
+						
+		// Transformation refactoring (if the transformation is not checked, clean all the data that bind to the model for this option)
+		if ($scope.transformDatasetState==false) {
+			$scope.selectedDataSet.trasfTypeCd ? $scope.selectedDataSet.trasfTypeCd="" : null;
+			$scope.selectedDataSet.pivotColName ? $scope.selectedDataSet.pivotColName="" : null;
+			$scope.selectedDataSet.pivotColValue ? $scope.selectedDataSet.pivotColValue="" : null;
+			$scope.selectedDataSet.pivotIsNumRows ? $scope.selectedDataSet.pivotIsNumRows="" : null;
+			$scope.selectedDataSet.pivotRowName ? $scope.selectedDataSet.pivotRowName="" : null;
+		}
 		
 		if ($scope.selectedDataSet.dsTypeCd.toLowerCase()=="rest") {			
 			
@@ -1885,6 +1921,109 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		else if($scope.selectedDataSet.dsTypeCd.toLowerCase()=="file") {
 			$scope.selectedDataSet.fileUploaded = !$scope.selectedDataSet.fileUploaded ? false : true;
 		}
+	
+		// Scheduling refactoring
+		if ($scope.selectedDataSet.isScheduled) {
+//			$scope.selectedDataSet.schedulingCronLine = "* 2 * * ?";
+			
+			var finalCronString = "";
+			
+			var secondsForCron = 0;
+			var minutesForCron = "";
+			var hoursForCron = "";
+			var daysForCron = "";
+			var monthsForCron = "";
+			var weekdaysForCron = "";
+	
+			if ($scope.scheduling.minutesCustom) {
+				for (i=0; i<$scope.scheduling.minutesSelected.length; i++) {
+					minutesForCron += "" + $scope.scheduling.minutesSelected[i];
+					
+					if (i<$scope.scheduling.minutesSelected.length-1) {
+						minutesForCron += ",";
+					}
+				}
+			}
+			else {
+				minutesForCron = "*";
+			}
+			
+			if ($scope.scheduling.hoursCustom) {
+				for (i=0; i<$scope.scheduling.hoursSelected.length; i++) {
+					hoursForCron += "" + $scope.scheduling.hoursSelected[i];
+					
+					if (i<$scope.scheduling.hoursSelected.length-1) {
+						hoursForCron += ",";
+					}
+				}
+			}
+			else {
+				hoursForCron = "*";
+			}
+			
+			if ($scope.scheduling.daysCustom) {
+				for (i=0; i<$scope.scheduling.daysSelected.length; i++) {
+					daysForCron += "" + $scope.scheduling.daysSelected[i];
+					
+					if (i<$scope.scheduling.daysSelected.length-1) {
+						daysForCron += ",";
+					}
+				}
+			}
+			else {
+				daysForCron = "*";
+			}
+			
+			if ($scope.scheduling.monthsCustom) {
+				for (i=0; i<$scope.scheduling.monthsSelected.length; i++) {
+					monthsForCron += "" + $scope.scheduling.monthsSelected[i];
+					
+					if (i<$scope.scheduling.monthsSelected.length-1) {
+						monthsForCron += ",";
+					}
+				}
+			}
+			else {
+				monthsForCron = "*";
+			}
+			
+			if ($scope.scheduling.weekdaysCustom) {
+				for (i=0; i<$scope.scheduling.weekdaysSelected.length; i++) {
+					weekdaysForCron += "" + $scope.scheduling.weekdaysSelected[i];
+					
+					if (i<$scope.scheduling.weekdaysSelected.length-1) {
+						weekdaysForCron += ",";
+					}
+				}
+			}
+			else {
+				weekdaysForCron = "*";
+			}
+			
+			if (daysForCron == '*' && weekdaysForCron != '*') {
+				daysForCron = '?';
+			} else {
+				weekdaysForCron = '?';
+			}
+			
+			finalCronString = minutesForCron + " " + hoursForCron +  
+								" " + daysForCron + " " + monthsForCron +  " " + weekdaysForCron;
+			
+//			console.log("mintes:",minutesForCron);
+//			console.log("hours:",hoursForCron);
+//			console.log("days:",daysForCron);
+//			console.log("moths:",monthsForCron);
+//			console.log("weekdays:",weekdaysForCron);
+			
+			console.log(finalCronString);
+			$scope.selectedDataSet.schedulingCronLine = secondsForCron + " " + finalCronString;
+			
+			$scope.scheduling.cronDescriptionDate = prettyCron.toString(finalCronString);
+			$scope.scheduling.cronDescriptionTime = prettyCron.getNext(finalCronString);
+			
+		
+			
+		}
 		
 		$scope.selectedDataSet.recalculateMetadata = true;
 		$scope.manageDatasetFieldMetadata($scope.selectedDataSet.meta);
@@ -1895,11 +2034,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		
 		// ADVANCED tab
 		// For transforming
-		console.log($scope.transformDatasetState);
-		console.log($scope.transformationDataset.VALUE_CD);
-		console.log($scope.transformationDataset);
 		$scope.transformDatasetState==true ? $scope.selectedDataSet.trasfTypeCd=$scope.transformationDataset.VALUE_CD : null;
-		console.log($scope.selectedDataSet);
+		
 		if ($scope.selectedDataSet) {
 			
 			$log.info("save");
@@ -1934,6 +2070,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 											$scope.datasetsListTemp[indexOfExistingDSInAT] = angular.copy($scope.selectedDataSet);
 											$scope.datasetsListPersisted = angular.copy($scope.datasetsListTemp);
 											$scope.selectedDataSetInit = angular.copy($scope.selectedDataSet);
+											$scope.isCategoryRequired = false;
 										},
 										
 										function(responseDS) {
@@ -2784,16 +2921,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		   });
     }
     
-    $scope.openLinkDataset = function () {
-    	$mdDialog
-		   .show({
-		    scope : $scope,
-		    preserveScope : true,
-		    parent : angular.element(document.body),
-		    templateUrl : sbiModule_config.contextName +'/js/src/angular_1.4/tools/catalogues/templates/linkDataSet.html',
-		    clickOutsideToClose : false,
-		    hasBackdrop : false
-		   });
+    $scope.openLinkDataset = function () {    	
+    	document.location.href = sbiModule_config.contextName + "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/dataset/linkDataset.jsp&id="+$scope.selectedDataSet.id+"&label="+$scope.selectedDataSet.label; 	
     }
     
     $scope.resetWhenChangeDSType = function(dsType) {
