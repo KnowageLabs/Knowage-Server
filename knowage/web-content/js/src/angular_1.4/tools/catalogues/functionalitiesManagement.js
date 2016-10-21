@@ -54,7 +54,6 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 	$scope.cancel = function() { // on cancel button
 		$scope.selectedFolder ={};
 		$scope.showme = false;
-		$scope.showadMode = false;
 		$scope.dirtyForm=false;
 		
 	}
@@ -77,13 +76,12 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 	    			 parentId : $scope.selectedFolder.parentId
 	    			 
 	    	 }
+	    	 console.log($scope.fake);
 	    		sbiModule_restServices.promisePut("2.0/functionalities",$scope.fake.id, $scope.fake)
 				.then(function(response) {
 					$scope.folders_copy = $scope.getFolders(); 
 					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
-					
-					//$scope.showme=false;
-					//$scope.showadMode = false;
+					$scope.showme=false;
 					$scope.dirtyForm=false;	
 					
 				}, function(response) {
@@ -96,8 +94,8 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 			sbiModule_restServices.promisePost('2.0/functionalities','',$scope.selectedFolder)
 			.then(function(response) {
 				$scope.folders_copy = $scope.getFolders(); 
-
-		        $scope.dirtyForm=false;
+				$scope.showme=false;
+				$scope.dirtyForm=false;	
 				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
 				
 			}, function(response) {
@@ -273,11 +271,12 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 
 				if ($scope.selectedFolder.createRoles[j].name != row.name && $scope.selectedFolder.createRoles.indexOf(row) == -1) {
 					$scope.selectedFolder.createRoles.push(row);
-					
-					break;
 				}
+				
 			}
 		}
+		$scope.selectedFolder.createRoles = $scope.remove($scope.selectedFolder.createRoles,"id");
+		console.log($scope.selectedFolder.createRoles);
 		if ($scope.selectedFolder.execRoles.length == 0 ) {
 			$scope.selectedFolder.execRoles.push(row);
 		} else {
@@ -285,31 +284,46 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 
 				if ($scope.selectedFolder.execRoles[j].name != row.name && $scope.selectedFolder.execRoles.indexOf(row) == -1) {
 					$scope.selectedFolder.execRoles.push(row);
-					break;
 				}
 			}
 		}
+		$scope.selectedFolder.execRoles = $scope.remove($scope.selectedFolder.execRoles,"id");
 		if ($scope.selectedFolder.devRoles.length == 0) {
 			$scope.selectedFolder.devRoles.push(row);
 		} else {
 			for (var n = 0; n < $scope.selectedFolder.devRoles.length; n++) {
 				if ($scope.selectedFolder.devRoles[n].name != row.name && $scope.selectedFolder.devRoles.indexOf(row) == -1) {
 					$scope.selectedFolder.devRoles.push(row);
-					break;
 				}
 			}
 		}
+		$scope.selectedFolder.devRoles = $scope.remove($scope.selectedFolder.devRoles,"id");
 		if ($scope.selectedFolder.testRoles.length == 0) {
 			$scope.selectedFolder.testRoles.push(row);
 		} else {
 			for (var s = 0; s < $scope.selectedFolder.testRoles.length; s++) {
 				if ($scope.selectedFolder.testRoles[s].name != row.name && $scope.selectedFolder.testRoles.indexOf(row) == -1) {
 					$scope.selectedFolder.testRoles.push(row);
-					break;
 				}
 			}
 		}
+		$scope.selectedFolder.testRoles = $scope.remove($scope.selectedFolder.testRoles, "id");
 		
+	}
+	
+	$scope.remove = function (arr, prop){
+		var new_arr = [];
+	    var lookup  = {};
+	    
+	    for (var i in arr) {
+	        lookup[arr[i][prop]] = arr[i];
+	    }
+	
+	    for (i in lookup) {
+	        new_arr.push(lookup[i]);
+	    }
+	
+	    return new_arr;
 	}
 	$scope.unCheckAllRolesInRow = function(row) {
 		for (var j = 0; j < $scope.selectedFolder.createRoles.length ; j++) {
@@ -343,7 +357,9 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 				function(response) {
 					$scope.getFolders();
 					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.deleted"), 'Success!');
-					
+					$scope.selectedFolder = {};
+					$scope.showme=false;
+					$scope.dirtyForm=false;	;
 				},
 				function(response) {
 					sbiModule_messaging.showErrorMessage(sbiModule_translate.load(response.data.errors[0].message), 'Error');
@@ -368,15 +384,18 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 				});
 	}
 	$scope.canBeMovedDown = function (item){
-		for (var i=0; i < $scope.folders_copy.length-1; i++){
-			var f = $scope.folders_copy[i+1];
-			if(item.parentId==f.parentId && item.prog < f.prog){
-				return true;
+		if($scope.folders_copy!= undefined){
+			for (var i=0; i < $scope.folders_copy.length-1; i++){
+				var f = $scope.folders_copy[i+1];
+				if(item.parentId==f.parentId && item.prog < f.prog){
+					return true;
+				}
+				
+				
 			}
-			
-			
+			return false;
 		}
-		return false;
+		
 	}
 	$scope.canBeDeleted = function (item){
 		if(item.parentId==null && item.codType=="LOW_FUNCT") return false
@@ -406,6 +425,10 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 
 
 	$scope.loadFolder = function(item) {  
+		for(var i=0; i<$scope.folders.length; i++){
+			$scope.folders[i].expanded=true;	 
+				
+		}
 		if ($scope.dirtyForm) {
 			$mdDialog.show($scope.confirm).then(function() {
 				$scope.showme = true;

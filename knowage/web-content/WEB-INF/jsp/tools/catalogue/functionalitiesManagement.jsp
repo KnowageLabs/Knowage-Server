@@ -47,7 +47,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <body class="bodyStyle" ng-controller="FunctionalitiesManagementController as ctrl">
 
 	<angular-list-detail show-detail="showme"> 
-	<list  label='translate.load("sbi.folders.list")' new-function="createFolder" show-new-button="showPlusButton">
+	<list  label='translate.load("sbi.folders.list")' new-function="createFolder" show-new-button="showPlusButton"
+	style="max-width:30%">
 		<md-content> 
 			<document-tree ng-model="folders"
 				highlights-selected-item="true" create-tree="true"
@@ -59,9 +60,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	</list> 
 	<detail label=' selectedFolder.code==undefined? "" : selectedFolder.code'  save-function="save" cancel-function="cancel"
 		show-save-button="showme" show-cancel-button="showme"
-		disable-save-button="!attributeForm.$valid">
+		disable-save-button="!attributeForm.$valid"  >
 		<div layout-fill class="containerDiv">
-			<form name="attributeForm" layout-fill
+			<form name="attributeForm" 
 				ng-submit="attributeForm.$valid && save()" class="detailBody ">
 	
 			 <md-card layout-padding ng-cloak  >

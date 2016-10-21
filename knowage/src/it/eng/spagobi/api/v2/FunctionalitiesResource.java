@@ -62,13 +62,13 @@ import org.json.JSONObject;
 public class FunctionalitiesResource extends AbstractSpagoBIResource {
 	private final String charset = "; charset=UTF-8";
 
-	
 	/**
-	 * Getting list of all functionalities. Arrays of Roles that belong to one functionality are 
-	 * implemented to be like: One Role only with id and name
+	 * Getting list of all functionalities. Arrays of Roles that belong to one
+	 * functionality are implemented to be like: One Role only with id and name
+	 * 
 	 * @author Radmila Selakovic (rselakov, radmila.selakovic@mht.net
 	 */
-	
+
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
@@ -240,12 +240,12 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 		return result;
 	}
 
-	
 	/**
 	 * Service that moves functionality up
+	 * 
 	 * @author Radmila Selakovic (rselakov, radmila.selakovic@mht.net
 	 */
-	
+
 	@GET
 	@Path("moveUp/{id}")
 	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONALITIES_MANAGEMENT })
@@ -263,13 +263,13 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 		}
 
 	}
-	
-	
+
 	/**
 	 * Service that moves functionality down
+	 * 
 	 * @author Radmila Selakovic (rselakov, radmila.selakovic@mht.net
 	 */
-	
+
 	@GET
 	@Path("moveDown/{id}")
 	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONALITIES_MANAGEMENT })
@@ -288,12 +288,12 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 
 	}
 
-	
 	/**
 	 * Service that creates new functionality
+	 * 
 	 * @author Radmila Selakovic (rselakov, radmila.selakovic@mht.net
 	 */
-	
+
 	@POST
 	@Path("/")
 	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONALITIES_MANAGEMENT })
@@ -319,12 +319,12 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 
 	}
 
-	
 	/**
 	 * Service that updates functionality
+	 * 
 	 * @author Radmila Selakovic (rselakov, radmila.selakovic@mht.net
 	 */
-	
+
 	@PUT
 	@Path("/{id}")
 	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONALITIES_MANAGEMENT })
@@ -399,12 +399,12 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 		}
 	}
 
-	
 	/**
 	 * Service that deletes functionality
+	 * 
 	 * @author Radmila Selakovic (rselakov, radmila.selakovic@mht.net
 	 */
-	
+
 	@DELETE
 	@Path("/{id}")
 	public Response deleteFunctionality(@PathParam("id") Integer id) {
@@ -420,6 +420,7 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 
 			return Response.ok().build();
 		} catch (Exception e) {
+			e.printStackTrace();
 			String errorString = "sbi.folder.delete.error";
 			logger.error(errorString, e);
 			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
