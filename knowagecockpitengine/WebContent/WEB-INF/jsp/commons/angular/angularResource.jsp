@@ -84,7 +84,7 @@
 		String analyticalDriversParams = new JSONObject(driverParamsMap).toString().replaceAll("'", "\\\\'");
 		
 		List<String> outputParametersList  = engineInstance.getOutputParameters();
-	    String outputParameters = "";  
+	    String outputParameters = "{}";  
 	    if(outputParametersList != null){
 		if(outputParametersList.size()>0){
 			Map outParMap = new HashMap<String, Boolean>();
