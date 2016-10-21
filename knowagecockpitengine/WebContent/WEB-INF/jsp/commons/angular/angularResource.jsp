@@ -85,6 +85,7 @@
 		
 		List<String> outputParametersList  = engineInstance.getOutputParameters();
 	    String outputParameters = "";  
+	    if(outputParametersList != null){
 		if(outputParametersList.size()>0){
 			Map outParMap = new HashMap<String, Boolean>();
 			for(int i = 0; i<outputParametersList.size(); i++){
@@ -93,6 +94,7 @@
 			}
 		    outputParameters= new JSONObject(outParMap).toString().replaceAll("'", "\\\\'");
 	        }
+	    }
 		
 			
 		
