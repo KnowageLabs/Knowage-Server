@@ -58,6 +58,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		if($scope.ngModel.style==undefined){
 			$scope.ngModel.style={};
 		};
+		if($scope.ngModel.cross==undefined){
+			$scope.ngModel.cross={};
+		};
+
 		
 		
 		$scope.tableFunction={

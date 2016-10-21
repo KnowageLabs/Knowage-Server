@@ -79,10 +79,11 @@ angular.module("cockpitModule").factory("cockpitModule_properties",function(){
 		DOCUMENT_DESCRIPTION:"<%=  docDescription%>",
 		WIDGET_EXPANDED:{},
 		SELECTED_ROLE:"<%= 	executionRole %>",
+		OUTPUT_PARAMETERS: <%=outputParameters%>,
 		DS_IN_CACHE:[],
 		HAVE_SELECTIONS_OR_FILTERS:false,
 		STARTING_SELECTIONS:[],
-		STARTING_FILTERS:[],
+		STARTING_FILTERS:[]
 	}
 });
 

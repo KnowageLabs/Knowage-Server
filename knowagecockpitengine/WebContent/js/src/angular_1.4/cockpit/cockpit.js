@@ -34,8 +34,8 @@ cockpitApp.config(['$mdThemingProvider', function($mdThemingProvider) {
  
 
 
-cockpitApp.controller("cockpitMasterController",['$scope','cockpitModule_widgetServices','cockpitModule_template','cockpitModule_datasetServices','cockpitModule_realtimeServices','cockpitModule_properties','cockpitModule_templateServices','$rootScope','$q','sbiModule_device',cockpitMasterControllerFunction]);
-function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,cockpitModule_template,cockpitModule_datasetServices,cockpitModule_realtimeServices,cockpitModule_properties,cockpitModule_templateServices,$rootScope,$q,sbiModule_device){
+cockpitApp.controller("cockpitMasterController",['$scope','cockpitModule_widgetServices','cockpitModule_template','cockpitModule_datasetServices','cockpitModule_crossServices','cockpitModule_realtimeServices','cockpitModule_properties','cockpitModule_templateServices','$rootScope','$q','sbiModule_device',cockpitMasterControllerFunction]);
+function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,cockpitModule_template,cockpitModule_datasetServices,cockpitModule_crossServices,cockpitModule_realtimeServices,cockpitModule_properties,cockpitModule_templateServices,$rootScope,$q,sbiModule_device){
 	$scope.cockpitModule_widgetServices=cockpitModule_widgetServices;
 	$scope.cockpitModule_template=cockpitModule_template;
 	$scope.sbiModule_device=sbiModule_device;
@@ -57,6 +57,13 @@ function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,coc
 	},function(){
 		console.error("error when load dataset list")
 	});
+	
+	cockpitModule_crossServices.loadCrossNavigationByDocument(cockpitModule_properties.DOCUMENT_LABEL).then(
+		function(){},
+		function(){
+		console.error("error when load cross list")
+	});
+	
 	if(!cockpitModule_properties.EDIT_MODE){
 		cockpitModule_realtimeServices.init();
 	}

@@ -31,11 +31,13 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
 import org.json.JSONException;
@@ -55,7 +57,8 @@ public class CockpitEngineInstance extends AbstractEngineInstance {
 	private final String[] lstEnvVariables = { "SBI_EXECUTION_ID", "SBICONTEXT", "SBI_COUNTRY", "SBI_LANGUAGE", "SBI_SPAGO_CONTROLLER", "SBI_EXECUTION_ROLE",
 			"SBI_HOST", COUNTRY, LANGUAGE, "user_id", "DOCUMENT_ID", "DOCUMENT_LABEL", "DOCUMENT_NAME", "DOCUMENT_IS_PUBLIC", "DOCUMENT_COMMUNITIES",
 			"DOCUMENT_DESCRIPTION", "SPAGOBI_AUDIT_ID", "DOCUMENT_USER", "DOCUMENT_IS_VISIBLE", "DOCUMENT_AUTHOR", "DOCUMENT_FUNCTIONALITIES",
-			"DOCUMENT_VERSION", "IS_FOR_EXPORT", "COCKPIT_SELECTIONS","EDIT_MODE","IS_TECHNICAL_USER","SBI_ENVIRONMENT","documentMode","timereloadurl"};
+			"DOCUMENT_VERSION", "IS_FOR_EXPORT", "COCKPIT_SELECTIONS", "EDIT_MODE", "IS_TECHNICAL_USER", "SBI_ENVIRONMENT", "documentMode", "timereloadurl",
+			"DOCUMENT_OUTPUT_PARAMETERS" };
 
 	public CockpitEngineInstance(String template, Map env) {
 		super(env);
@@ -134,6 +137,21 @@ public class CockpitEngineInstance extends AbstractEngineInstance {
 
 	public String isTechnicalUser() {
 		return (String) this.getEnv().get(EngineConstants.ENV_IS_TECHNICAL_USER);
+	}
+
+	public List<String> getOutputParameters() {
+		List<String> outParslist = new ArrayList<String>();
+
+		String outPars = (String) this.getEnv().get(EngineConstants.DOCUMENT_OUTPUT_PARAMETERS);
+		if (!outPars.equals("")) {
+			StringTokenizer st = new StringTokenizer(outPars, ",", false);
+			String parameterToken = null;
+			while (st.hasMoreTokens()) {
+				parameterToken = st.nextToken();
+				outParslist.add(parameterToken);
+			}
+		}
+		return outParslist;
 	}
 
 	public String[] getDocumentCommunities() {

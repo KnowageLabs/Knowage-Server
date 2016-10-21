@@ -105,6 +105,10 @@
 			        </cockpit-style-custom-widget-configurator>
 	        	</cockpit-style-configurator>
 	      </md-tab>
+	      <md-tab  label="{{translate.load('sbi.cockpit.widget.table.cross')}}">
+                <cockpit-cross-configurator  ng-if="selectedTab.tab ==2" widget ng-cloak ng-model="model.cross">
+           </md-tab>
+	      
       </md-tabs>
       </md-content>
     </md-card-content>

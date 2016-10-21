@@ -190,7 +190,7 @@ angular.module('cockpitModule')
 	   }
 });
 
-function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetServices,cockpitModule_properties,cockpitModule_template,cockpitModule_analyticalDrivers,cockpitModule_datasetServices,sbiModule_restServices,$q,cockpitModule_documentServices,cockpitModule_widgetSelection,$timeout,cockpitModule_gridsterOptions,sbiModule_translate){
+function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetServices,cockpitModule_properties,cockpitModule_template,cockpitModule_analyticalDrivers,cockpitModule_datasetServices,sbiModule_restServices,$q,cockpitModule_documentServices,cockpitModule_crossServices,cockpitModule_widgetSelection,$timeout,cockpitModule_gridsterOptions,sbiModule_translate){
 	$scope.cockpitModule_properties=cockpitModule_properties;
 	$scope.cockpitModule_template=cockpitModule_template;
 	$scope.translate=sbiModule_translate;
@@ -358,6 +358,32 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 			console.log("widget is not cliccable")
 			return;
 		}
+		
+		// check if cross navigation was enable don this widget
+		var model = $scope.ngModel;
+		if(model.cross != undefined  && model.cross.cross != undefined 
+				&& model.cross.cross.enable === true
+				&& model.cross.cross.column != undefined
+				&& model.cross.cross.outputParameter != undefined
+				){
+			
+			// check if column clicked is the one for cross navigation
+			if(model.cross.cross.column === columnName){
+				var outputParameter = {};
+				outputParameter[model.cross.cross.outputParameter] = columnValue;
+				
+				// if destination document is specified don't ask
+				if(model.cross.cross.crossName != undefined){
+					parent.execExternalCrossNavigation(outputParameter,{},model.cross.cross.crossName);
+					return;
+				}
+				else{
+					parent.execExternalCrossNavigation(outputParameter,{});
+					return;
+				}
+			}
+		}
+
 		//check if all associated data
 		var dsLabel=$scope.getDataset().label;
 		var sel=cockpitModule_widgetSelection.getAssociativeSelections(columnValue,columnName,dsLabel);
