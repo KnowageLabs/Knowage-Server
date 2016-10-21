@@ -66,11 +66,13 @@ public class SelfServiceDatasetAction {
 	public static final String OUTPUT_PARAMETER_QBE_EDIT_FROM_DATA_SET_SERVICE_URL = "qbeFromDataSetServiceUrl";
 	public static final String OUTPUT_PARAMETER_QBE_EDIT_DATASET_SERVICE_URL = "qbeEditDatasetServiceUrl";
 	public static final String OUTPUT_PARAMETER_QBE_EDIT_FROM_FEDERATION_SERVICE_URL = "qbeEditFederationServiceUrl";
+	public static final String OUTPUT_PARAMETER_QBE_EDIT_FEDERATED_DATA_SET_SERVICE_URL = "qbeEditFederatedDataSetServiceUrl";
 
 	public static final String QBE_EDIT_FROM_BM_ACTION = "QBE_ENGINE_START_ACTION_FROM_BM";
 	public static final String QBE_EDIT_FROM_FEDERATION_ACTION = "QBE_ENGINE_FROM_FEDERATION_START_ACTION";
 	public static final String QBE_EDIT_FROM_DATA_SET_ACTION = "QBE_ENGINE_FROM_DATASET_START_ACTION";
 	public static final String QBE_EDIT_DATA_SET_ACTION = "QBE_ENGINE_EDIT_DATASET_START_ACTION";
+	public static final String BUILD_FEDERATED_DATASET_START_ACTION = "BUILD_FEDERATED_DATASET_START_ACTION";
 
 	public static final String OUTPUT_PARAMETER_GEOREPORT_EDIT_SERVICE_URL = "georeportServiceUrl";
 	public static final String OUTPUT_PARAMETER_COCKPIT_EDIT_SERVICE_URL = "cockpitServiceUrl";
@@ -103,6 +105,7 @@ public class SelfServiceDatasetAction {
 
 			String qbeEditFromBMActionUrl = buildQbeEditFromBMServiceUrl(executionId, locale, profile);
 			String qbeEditFromFederationActionUrl = buildQbeEditFromFederationServiceUrl(executionId, locale, profile);
+			String qbeEditFederatedDataSetServiceBaseParametersMap = buildQbeEditFederatedDataSetServiceUrl(executionId, locale, profile);
 			String qbeEditFromDataSetActionUrl = buildQbeEditFromDataSetServiceUrl(executionId, locale, profile);
 			String qbeEditDataSetActionUrl = buildQbeEditDataSetServiceUrl(executionId, locale, profile);
 			String geoereportEditActionUrl = buildGeoreportEditServiceUrl(executionId, profile, locale);
@@ -121,6 +124,7 @@ public class SelfServiceDatasetAction {
 
 				parameters.put(OUTPUT_PARAMETER_EXECUTION_ID, executionId);
 				parameters.put(OUTPUT_PARAMETER_QBE_EDIT_FROM_FEDERATION_SERVICE_URL, qbeEditFromFederationActionUrl);
+				parameters.put(OUTPUT_PARAMETER_QBE_EDIT_FEDERATED_DATA_SET_SERVICE_URL, qbeEditFederatedDataSetServiceBaseParametersMap);
 				parameters.put(OUTPUT_PARAMETER_QBE_EDIT_FROM_BM_SERVICE_URL, qbeEditFromBMActionUrl);
 				parameters.put(OUTPUT_PARAMETER_QBE_EDIT_FROM_DATA_SET_SERVICE_URL, qbeEditFromDataSetActionUrl);
 				parameters.put(OUTPUT_PARAMETER_QBE_EDIT_DATASET_SERVICE_URL, qbeEditDataSetActionUrl);
@@ -250,6 +254,44 @@ public class SelfServiceDatasetAction {
 		}
 		if (datasource != null) {
 			parametersMap.put(EngineConstants.DEFAULT_DATASOURCE_FOR_WRITING_LABEL, datasource.getLabel());
+		} else {
+			logger.debug("There is no default datasource for writing");
+		}
+
+		try {
+			qbeEngine = ExecuteAdHocUtility.getQbeEngine();
+		} catch (SpagoBIRuntimeException r) {
+			// the qbe engine is not found
+			logger.info("Engine not found. Error: ", r);
+		}
+
+		if (qbeEngine != null) {
+			LogMF.debug(logger, "Engine label is equal to [{0}]", qbeEngine.getLabel());
+
+			// create the qbe Edit Service's URL
+			qbeEditActionUrl = GeneralUtilities.getUrl(qbeEngine.getUrl(), parametersMap);
+			LogMF.debug(logger, "Qbe edit service invocation url is equal to [{}]", qbeEditActionUrl);
+		}
+		return qbeEditActionUrl;
+	}
+
+	// QBE from dataset
+	protected String buildQbeEditFederatedDataSetServiceUrl(String executionId, Locale locale, UserProfile profile) {
+		Engine qbeEngine = null;
+		String qbeEditActionUrl = null;
+		String label = null;
+		Map<String, String> parametersMap = buildQbeEditFederatedDataSetServiceBaseParametersMap(locale, profile);
+		parametersMap.put("SBI_EXECUTION_ID", executionId);
+
+		ICache cache = SpagoBICacheManager.getCache();
+		if (cache instanceof SQLDBCache) {
+			logger.debug("The cache is a SQL cache so we have the datasource");
+			label = ((SQLDBCache) cache).getDataSource().getLabel();
+			logger.debug("The datasource is " + label);
+		}
+
+		if (label != null) {
+			parametersMap.put(EngineConstants.ENV_DATASOURCE_FOR_CACHE, label);
 		} else {
 			logger.debug("There is no default datasource for writing");
 		}
@@ -411,6 +453,12 @@ public class SelfServiceDatasetAction {
 	protected Map<String, String> buildQbeEditDataSetServiceBaseParametersMap(Locale locale, UserProfile profile) {
 		Map<String, String> parametersMap = buildServiceBaseParametersMap(locale, profile);
 		parametersMap.put("ACTION_NAME", QBE_EDIT_DATA_SET_ACTION);
+		return parametersMap;
+	}
+
+	protected Map<String, String> buildQbeEditFederatedDataSetServiceBaseParametersMap(Locale locale, UserProfile profile) {
+		Map<String, String> parametersMap = buildServiceBaseParametersMap(locale, profile);
+		parametersMap.put("ACTION_NAME", BUILD_FEDERATED_DATASET_START_ACTION);
 		return parametersMap;
 	}
 

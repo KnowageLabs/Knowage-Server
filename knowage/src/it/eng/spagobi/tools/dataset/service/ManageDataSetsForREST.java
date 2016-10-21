@@ -42,6 +42,7 @@ import it.eng.spagobi.commons.serializer.DataSetJSONSerializer;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.hdfs.Hdfs;
 import it.eng.spagobi.hdfs.HdfsUtilities;
@@ -55,6 +56,7 @@ import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.FlatDataSet;
 import it.eng.spagobi.tools.dataset.bo.HdfsDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
 import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
 import it.eng.spagobi.tools.dataset.bo.MongoDataSet;
@@ -64,8 +66,10 @@ import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.bo.WebServiceDataSet;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
+import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.transformer.PivotDataSetTransformer;
@@ -117,6 +121,17 @@ public class ManageDataSetsForREST {
 	public static Logger auditlogger = Logger.getLogger("dataset.audit");
 
 	protected IEngUserProfile profile;
+
+	public String jsonPreviewReciever(String jsonString, UserProfile userProfile) {
+		JSONObject json = null;
+		try {
+			json = new JSONObject(jsonString);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return datatsetTest(json, userProfile);
+	}
 
 	public String jsonReciever(String jsonString, IDataSetDAO dsDao, Locale locale, UserProfile userProfile, HttpServletRequest req) throws JSONException {
 		logger.debug("IN");
@@ -809,7 +824,7 @@ public class ManageDataSetsForREST {
 				qbeDataSet.setDataSource(dataSource);
 			}
 
-			String sourceDatasetLabel = json.getString(DataSetConstants.SOURCE_DS_LABEL);
+			String sourceDatasetLabel = json.optString(DataSetConstants.SOURCE_DS_LABEL);
 			IDataSet sourceDataset = null;
 			if (sourceDatasetLabel != null && !sourceDatasetLabel.trim().equals("")) {
 				try {
@@ -884,12 +899,12 @@ public class ManageDataSetsForREST {
 	 * getSessionContainer().setAttribute("trasfTypesList", trasfTypesList);
 	 * List sbiAttrs = DAOFactory.getSbiAttributeDAO().loadSbiAttributes();
 	 * getSessionContainer().setAttribute("sbiAttrsList", sbiAttrs);
-	 * 
+	 *
 	 * List scopeCdList =
 	 * DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants
 	 * .DS_SCOPE); getSessionContainer().setAttribute("scopeCdList",
 	 * scopeCdList);
-	 * 
+	 *
 	 * String filePath = SpagoBIUtilities.getResourcePath(); filePath +=
 	 * File.separator + "dataset" + File.separator + "files"; File dir = new
 	 * File(filePath); String[] fileNames = dir.list();
@@ -1579,6 +1594,141 @@ public class ManageDataSetsForREST {
 			}
 		}
 		logger.debug("OUT");
+	}
+
+	private String datatsetTest(JSONObject json, UserProfile userProfile) {
+		try {
+			JSONObject dataSetJSON = getDataSetResultsAsJSON(json, userProfile);
+			if (dataSetJSON != null) {
+				// writeBackToClient(new JSONSuccess(dataSetJSON));
+				return dataSetJSON.toString();
+			} else {
+				throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.testError");
+			}
+		} catch (Throwable t) {
+			if (t instanceof SpagoBIServiceException) {
+				throw (SpagoBIServiceException) t;
+			}
+			throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.testError", t);
+		}
+	}
+
+	private JSONObject getDataSetResultsAsJSON(JSONObject json, UserProfile userProfile) throws EMFUserError, JSONException {
+
+		JSONObject dataSetJSON = null;
+		JSONArray parsJSON = json.optJSONArray(DataSetConstants.PARS);
+		String transformerTypeCode = json.optString(DataSetConstants.TRASFORMER_TYPE_CD);
+
+		IDataSet dataSet = getDataSet(json, userProfile);
+		if (dataSet == null) {
+			throw new SpagoBIRuntimeException("Impossible to retrieve dataset from request");
+		}
+
+		if (StringUtilities.isNotEmpty(transformerTypeCode)) {
+			dataSet = setTransformer(dataSet, transformerTypeCode, json);
+		}
+		HashMap<String, String> parametersMap = new HashMap<String, String>();
+		if (parsJSON != null) {
+			parametersMap = getDataSetParametersAsMap(false, json);
+		}
+		IEngUserProfile profile = userProfile;
+
+		dataSetJSON = getDatasetTestResultList(dataSet, parametersMap, profile, json);
+
+		return dataSetJSON;
+	}
+
+	public JSONObject getDatasetTestResultList(IDataSet dataSet, HashMap<String, String> parametersFilled, IEngUserProfile profile, JSONObject json) {
+
+		JSONObject dataSetJSON;
+
+		logger.debug("IN");
+
+		dataSetJSON = null;
+		try {
+			Integer start = -1;
+			try {
+				start = json.optInt(DataSetConstants.START);
+			} catch (NullPointerException e) {
+				logger.info("start option undefined");
+			}
+			Integer limit = -1;
+			try {
+				limit = json.optInt(DataSetConstants.LIMIT);
+			} catch (NullPointerException e) {
+				logger.info("limit option undefined");
+			}
+
+			dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes(profile));
+			dataSet.setParamsMap(parametersFilled);
+			// checkQbeDataset(dataSet);
+			checkFileDataset(dataSet);
+			IDataStore dataStore = null;
+			try {
+				if (dataSet.getTransformerId() != null) {
+					dataStore = dataSet.test();
+				} else {
+					dataStore = dataSet.test(start, limit, GeneralUtilities.getDatasetMaxResults());
+				}
+				if (dataStore == null) {
+					throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to read resultset");
+				}
+			} catch (Throwable t) {
+				Throwable rootException = t;
+				while (rootException.getCause() != null) {
+					rootException = rootException.getCause();
+				}
+				String rootErrorMsg = rootException.getMessage() != null ? rootException.getMessage() : rootException.getClass().getName();
+				if (dataSet instanceof JDBCDataSet) {
+					JDBCDataSet jdbcDataSet = (JDBCDataSet) dataSet;
+					if (jdbcDataSet.getQueryScript() != null) {
+						QuerableBehaviour querableBehaviour = (QuerableBehaviour) jdbcDataSet.getBehaviour(QuerableBehaviour.class.getName());
+						String statement = querableBehaviour.getStatement();
+						rootErrorMsg += "\nQuery statement: [" + statement + "]";
+					}
+				}
+
+				throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occured while executing dataset: " + rootErrorMsg, t);
+			}
+
+			try {
+				JSONDataWriter dataSetWriter = new JSONDataWriter();
+				dataSetJSON = (JSONObject) dataSetWriter.write(dataStore);
+				if (dataSetJSON == null) {
+					throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to read serialized resultset");
+				}
+			} catch (Exception t) {
+				throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occured while serializing resultset", t);
+			}
+		} catch (Throwable t) {
+			if (t instanceof SpagoBIServiceException) {
+				throw (SpagoBIServiceException) t;
+			}
+			throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occured while getting dataset results", t);
+		} finally {
+			logger.debug("OUT");
+		}
+
+		return dataSetJSON;
+	}
+
+	private IDataSet getDataSet(JSONObject json, UserProfile userProfile) {
+		IDataSet dataSet = null;
+		try {
+			String datasetTypeCode = json.optString(DataSetConstants.DS_TYPE_CD);
+
+			String datasetTypeName = getDatasetTypeName(datasetTypeCode, userProfile);
+			if (datasetTypeName == null) {
+				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to resolve dataset type whose code is equal to [" + datasetTypeCode + "]");
+			}
+			dataSet = getDataSet(datasetTypeName, false, json, userProfile);
+		} catch (Throwable t) {
+			if (t instanceof SpagoBIServiceException) {
+				throw (SpagoBIServiceException) t;
+			}
+			throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occured while retriving dataset from request", t);
+		}
+		return dataSet;
 	}
 
 }

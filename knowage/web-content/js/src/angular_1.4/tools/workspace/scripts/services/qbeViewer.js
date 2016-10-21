@@ -51,6 +51,8 @@ angular
 				
 				$mdDialog.hide();
 				
+				$scope.selectedDataSet.qbeJSONQuery = document.getElementById("documentViewerIframe").contentWindow.qbe.getQueriesCatalogue();
+				
 				if ($scope.datasetSavedFromQbe==true) {
 					
 					console.info("[RELOAD]: Reload all necessary datasets (its different categories)");

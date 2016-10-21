@@ -133,6 +133,9 @@ if(importAngularMaterialForExport == null) {
 <link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/color-picker/angularjs-color-picker.min.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/color-picker/mdColorPickerPersonalStyle.css">
 
+<!-- qbe viewer -->
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/workspace/scripts/services/qbeViewer.js"></script>
+
 <!-- xml2js -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/catalogues/lovsDependencies/jquery-2.1.3.min.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/catalogues/lovsDependencies/xml2json.js"></script>

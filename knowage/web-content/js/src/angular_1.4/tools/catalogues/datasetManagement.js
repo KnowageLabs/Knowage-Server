@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var datasetModule = angular.module('datasetModule', ['ngMaterial', 'angular-list-detail', 'sbiModule', 'angular_table', 'file_upload', 'ui.codemirror','expander-box']);
+var datasetModule = angular.module('datasetModule', ['ngMaterial', 'angular-list-detail', 'sbiModule', 'angular_table', 'file_upload', 'ui.codemirror','expander-box', 'qbe_viewer']);
 
 datasetModule.config(['$mdThemingProvider', function($mdThemingProvider) {
 	$mdThemingProvider.theme('knowage')
@@ -24,7 +24,7 @@ datasetModule.config(['$mdThemingProvider', function($mdThemingProvider) {
 }]);
 
 datasetModule
-	.controller('datasetController', ["$scope", "$log", "$http", "sbiModule_config", "sbiModule_translate", "sbiModule_restServices", "sbiModule_messaging", "$mdDialog", "multipartForm", "$timeout", datasetFunction])
+	.controller('datasetController', ["$scope", "$log", "$http", "sbiModule_config", "sbiModule_translate", "sbiModule_restServices", "sbiModule_messaging", "$mdDialog", "multipartForm", "$timeout", "$qbeViewer", datasetFunction])
 	.service('multipartForm',['$http',function($http){
 			
 			this.post = function(uploadUrl,data){
@@ -42,7 +42,7 @@ datasetModule
 		}]);
 
 
-function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_translate, sbiModule_restServices, sbiModule_messaging, $mdDialog, multipartForm, $timeout){
+function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_translate, sbiModule_restServices, sbiModule_messaging, $mdDialog, multipartForm, $timeout, $qbeViewer){
 	
 	$scope.translate = sbiModule_translate;
 	$scope.codeMirror = null;
@@ -237,7 +237,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	$scope.months = new Array();
 	
 	var populateMonths = function() {
-				
+		
 		$scope.months.push({name: $scope.translate.load("sbi.ds.persist.cron.month.january"), 	value: 1}); 
 		$scope.months.push({name: $scope.translate.load("sbi.ds.persist.cron.month.february"), 	value: 2}); 
 		$scope.months.push({name: $scope.translate.load("sbi.ds.persist.cron.month.march"), 	value: 3}); 
@@ -734,26 +734,26 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		
 		if ($scope.parameterItems.length>0)
 		{
-			// TODO: translate
-	    	var confirm = $mdDialog.confirm()
-		         .title("Clear all dataset parameters")
-		         .targetEvent(event)	 	          
-		         .textContent("Are you sure you want to delete all dataset parameters")
-		         .ariaLabel("Clear all dataset parameters")
-		         .ok($scope.translate.load("sbi.general.yes"))
-		         .cancel($scope.translate.load("sbi.general.No"));
-			
-			$mdDialog
-				.show(confirm)
-				.then(					
-						function() {
-							$scope.setFormDirty();
-							$scope.parameterItems = [];	 	        	
-				 		}
-					);	
+		// TODO: translate
+    	var confirm = $mdDialog.confirm()
+	         .title("Clear all dataset parameters")
+	         .targetEvent(event)	 	          
+	         .textContent("Are you sure you want to delete all dataset parameters")
+	         .ariaLabel("Clear all dataset parameters")
+	         .ok($scope.translate.load("sbi.general.yes"))
+	         .cancel($scope.translate.load("sbi.general.No"));
+		
+		$mdDialog
+			.show(confirm)
+			.then(					
+					function() {
+						$scope.setFormDirty();
+						$scope.parameterItems = [];	 	        	
+			 		}
+				);	
 		}
 		else {
-			
+		
 			$mdDialog
 			.show(
 					$mdDialog.alert()
@@ -1899,7 +1899,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	}
 	
 	$scope.saveDataset = function() {
-						
+		
 		// Transformation refactoring (if the transformation is not checked, clean all the data that bind to the model for this option)
 		if ($scope.transformDatasetState==false) {
 			$scope.selectedDataSet.trasfTypeCd ? $scope.selectedDataSet.trasfTypeCd="" : null;
@@ -1942,7 +1942,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		else if($scope.selectedDataSet.dsTypeCd.toLowerCase()=="file") {
 			$scope.selectedDataSet.fileUploaded = !$scope.selectedDataSet.fileUploaded ? false : true;
 		}
-	
+		
 		// Scheduling refactoring
 		if ($scope.selectedDataSet.isScheduled) {
 //			$scope.selectedDataSet.schedulingCronLine = "* 2 * * ?";
@@ -2350,7 +2350,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		// If the Federated dataset is saved before (already existing).
 		if ($scope.selectedDataSet.qbeJSONQuery) {
 			
-			$scope.selectedDataSet.qbeJSONQuery = JSON.stringify(JSON.parse($scope.selectedDataSet.qbeJSONQuery),null,2);
+			$scope.selectedDataSet.qbeJSONQuery = JSON.stringify($scope.selectedDataSet.qbeJSONQuery,null,2);
 			
 			$mdDialog
 			   .show({
@@ -2727,28 +2727,28 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
        	
     	if ($scope.restRequestHeaders.length>0) {
     		
-    		// TODO: translate
-        	var confirm = $mdDialog.confirm()
+    	// TODO: translate
+    	var confirm = $mdDialog.confirm()
     	         .title("Clear all REST request headers")
-    	         .targetEvent(event)	 	          
+	         .targetEvent(event)	 	          
     	         .textContent("Are you sure you want to delete all REST request headers")
     	         .ariaLabel("Clear all REST request headers")
-    	         .ok($scope.translate.load("sbi.general.yes"))
-    	         .cancel($scope.translate.load("sbi.general.No"));
-    		
-    		$mdDialog
-    			.show(confirm)
-    			.then(					
-    					function() {
-    						$scope.setFormDirty();
-    						$scope.restRequestHeaders = [];	
-    						$scope.restDsRequestHeaderTableLastPage = 1;
-    			 		}
-    				);
-    		
-    	}
+	         .ok($scope.translate.load("sbi.general.yes"))
+	         .cancel($scope.translate.load("sbi.general.No"));
+		
+		$mdDialog
+			.show(confirm)
+			.then(					
+					function() {
+						$scope.setFormDirty();
+						$scope.restRequestHeaders = [];	
+						$scope.restDsRequestHeaderTableLastPage = 1;
+			 		}
+				);	
+    	    	
+    }
     	else {
-    		
+    
     		$mdDialog
 			.show(
 					$mdDialog.alert()
@@ -2767,25 +2767,25 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     	
     	if ($scope.restJsonPathAttributes.length>0) {
     		
-    		// TODO: translate
-        	var confirm = $mdDialog.confirm()
-    	         .title("Clear all REST JSON path attributes")
-    	         .targetEvent(event)	 	          
-    	         .textContent("Are you sure you want to delete all JSON path attributes")
-    	         .ariaLabel("Clear all REST JSON path attributes")
-    	         .ok($scope.translate.load("sbi.general.yes"))
-    	         .cancel($scope.translate.load("sbi.general.No"));
-    		
-    		$mdDialog
-    			.show(confirm)
-    			.then(					
-    					function() {
-    						$scope.setFormDirty();
-    						$scope.restJsonPathAttributes = [];		 	        	
-    			 		}
-    				);	
-    		
-    	}
+    	// TODO: translate
+    	var confirm = $mdDialog.confirm()
+	         .title("Clear all REST JSON path attributes")
+	         .targetEvent(event)	 	          
+	         .textContent("Are you sure you want to delete all JSON path attributes")
+	         .ariaLabel("Clear all REST JSON path attributes")
+	         .ok($scope.translate.load("sbi.general.yes"))
+	         .cancel($scope.translate.load("sbi.general.No"));
+		
+		$mdDialog
+			.show(confirm)
+			.then(					
+					function() {
+						$scope.setFormDirty();
+						$scope.restJsonPathAttributes = [];		 	        	
+			 		}
+				);	
+    	
+    }
     	else {
     		
     		$mdDialog
@@ -2976,7 +2976,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		   });
     }
     
-    $scope.openLinkDataset = function () {    	
+    $scope.openLinkDataset = function () {
     	document.location.href = sbiModule_config.contextName + "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/dataset/linkDataset.jsp&id="+$scope.selectedDataSet.id+"&label="+$scope.selectedDataSet.label; 	
     }
     
@@ -3000,6 +3000,27 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     	
     	$scope.parameterItems = [];
     	
+    }
+    
+	$scope.showQbeDataset= function(dataset){
+		var url = null;
+	    if(dataset.dsTypeCd=='Federated'){
+	    	url = datasetParameters.qbeEditFederatedDataSetServiceUrl
+	        +'&FEDERATION_ID='+dataset.federationId;
+	    } else {
+	    	var modelName= dataset.qbeDatamarts;
+			var dataSource=dataset.qbeDataSource;
+		    url = datasetParameters.qbeFromBMServiceUrl
+			        +'&MODEL_NAME='+modelName
+			        +'&DATA_SOURCE_LABEL='+ dataSource
+			        + (isTechnicalUser != undefined ? '&isTechnicalUser=' + isTechnicalUser : '');
+	    }
+		
+		       
+		// $window.location.href=url;
+		
+		$qbeViewer.openQbeInterface($scope,url);
+		
     }
 	
 };

@@ -37,7 +37,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
 import org.json.JSONException;
@@ -67,7 +66,19 @@ public class DataSetPutResource extends AbstractSpagoBIResource {
 		JSONObject json = RestUtilities.readBodyAsJSONObject(req);
 		ManageDataSetsForREST mdsfr = new ManageDataSetsForREST();
 		String toReturnString = mdsfr.jsonReciever(json.toString(), dsDao, null, getUserProfile(), req);
-		//SONObject toReturn = new JSONObject(toReturnString);
+		// SONObject toReturn = new JSONObject(toReturnString);
+		return toReturnString;
+	}
+
+	@POST
+	@Path("/preview")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String previewDataSet(@Context HttpServletRequest req) throws IOException, JSONException {
+
+		JSONObject json = RestUtilities.readBodyAsJSONObject(req);
+		ManageDataSetsForREST mdsfr = new ManageDataSetsForREST();
+		String toReturnString = mdsfr.jsonPreviewReciever(json.toString(), getUserProfile());
+		// SONObject toReturn = new JSONObject(toReturnString);
 		return toReturnString;
 	}
 
