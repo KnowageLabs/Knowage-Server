@@ -169,10 +169,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 		$scope.wiGridNeeded = response.data.modelConfig.whatIfScenario; //arsenije
 		if(firstLoad && $scope.modelConfig != undefined){
 			if(mode == 'full'){
-				if($scope.executeClicks()){
-					$scope.ready = true;
-				}
-			}else{
+				$scope.executeClicks();
 				$scope.ready = true;
 			}
 			
@@ -208,13 +205,14 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 	}
 	
 	$scope.sendModelConfig = function(modelConfig) {
+		console.log("Sending model config" + " "+ modelConfig);
 		$scope.tableSubsets.length = 0;
 		var sentStartRow = $scope.modelConfig.startRow;
 		if ($scope.ready) {
 			$scope.ready = false;
-			sbiModule_restServices.promisePost(
-					"1.0/modelconfig?SBI_EXECUTION_ID=" + JSsbiExecutionID, "",
+			sbiModule_restServices.promisePost("1.0/modelconfig?SBI_EXECUTION_ID=" + JSsbiExecutionID, "",
 					modelConfig).then(
+					
 					function(response) {
 						
 						$scope.table = $sce.trustAsHtml(response.data.table);

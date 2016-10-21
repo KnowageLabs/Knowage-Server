@@ -264,7 +264,10 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 			}
 			$scope.btnFunctions($scope.clickedButtons[i]);
 		}
-		$scope.btnFunctions(temp);
+		if(temp != null && $scope.ready){
+		
+			$scope.sortDisable();
+		}
 		$scope.toggleRight();
 	}
 	
@@ -322,6 +325,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 				$scope.enableDisableSorting();
 				//changeIcon(name);
 				sendModelConfig = false;
+				
 				break;
 			case "BUTTON_EDITABLE_EXCEL_EXPORT":
 				$scope.exportDynamic();
@@ -366,8 +370,10 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 				console.log("something else clicked");
 		}
 		
-		if(sendModelConfig)
+		if(sendModelConfig){
 			$scope.sendModelConfig($scope.modelConfig);
+		}
+			
 	}
 
 	$scope.enableDisableSorting = function(){
