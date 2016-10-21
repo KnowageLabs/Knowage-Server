@@ -1263,6 +1263,9 @@ public class DataSetResource extends AbstractSpagoBIResource {
 				IDataSetDAO dataSetDao = DAOFactory.getDataSetDAO();
 				dataSetDao.setUserProfile(getUserProfile());
 				IDataSet dataSet = dataSetDao.loadDataSetByLabel(label);
+				if (dataSet == null) {
+					throw new SpagoBIRuntimeException("Impossibile to load dataSet with label [" + label + "]");
+				}
 				SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
 				String tableName = null;
 				if (dataSet.isPersisted() && dataSet.getDataSourceForWriting().getDsId() == cache.getDataSource().getDsId()) {
