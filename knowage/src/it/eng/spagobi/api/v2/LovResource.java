@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.spagobi.behaviouralmodel.lov.service;
+package it.eng.spagobi.api.v2;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,6 +60,7 @@ import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
 import it.eng.spagobi.behaviouralmodel.lov.bo.QueryDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ScriptDetail;
 import it.eng.spagobi.behaviouralmodel.lov.dao.IModalitiesValueDAO;
+import it.eng.spagobi.behaviouralmodel.lov.service.GridMetadataContainer;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializationException;
@@ -76,9 +77,9 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 
 @Path("/2.0/lovs")
 @ManageAuthorization
-public class LovCRUD extends AbstractSpagoBIResource {
+public class LovResource extends AbstractSpagoBIResource {
 
-	static private Logger logger = Logger.getLogger(LovCRUD.class);
+	static private Logger logger = Logger.getLogger(LovResource.class);
 
 	@SuppressWarnings("unchecked")
 	@GET

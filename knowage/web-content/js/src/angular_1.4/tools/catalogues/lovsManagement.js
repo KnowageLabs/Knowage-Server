@@ -369,13 +369,6 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	 */
 	$scope.changeType = function(item,type) {
 		
-		for (var i = 0; i < $scope.listOfInputTypes.length; i++) {
-			if($scope.listOfInputTypes[i].VALUE_CD == item){
-				$scope.selectedLov.itypeId = ""+$scope.listOfInputTypes[i].VALUE_ID;
-			}
-		}
-		
-		formatForTest($scope.selectedLov,'new');
 		
 		if(type == lovTypeEnum.MAIN){
 			 switch (item) {
@@ -411,6 +404,15 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 				default:
 					break;
 				}
+			 
+			 
+			 for (var i = 0; i < $scope.listOfInputTypes.length; i++) {
+					if($scope.listOfInputTypes[i].VALUE_CD == item){
+						$scope.selectedLov.itypeId = ""+$scope.listOfInputTypes[i].VALUE_ID;
+					}
+				}
+			 formatForTest($scope.selectedLov,'new');
+			 
 			}else if (type == lovTypeEnum.SCRIPT) {
 					
 			}else if (type == lovTypeEnum.QUERY) {
@@ -907,6 +909,7 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 				
 				var lovProvider = parseLovProvider($scope.selectedLov);
 			    tempObj = lovProvider;
+			    console.log(tempObj);
 			}
 			
 			switch (property) {
@@ -920,8 +923,9 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 				tempObj[property].SCRIPT =  $scope.selectedScriptType.text;
 			break;
 			case lovProviderEnum.FIX_LOV:
-				if($scope.listForFixLov.length > 0){
-				tempObj[property].FIXLISTLOV.ROWS.ROW = $scope.listForFixLov;
+				if($scope.listForFixLov != null && $scope.listForFixLov.length > 0){
+				
+				tempObj[property].ROWS.ROW = $scope.listForFixLov;
 				}
 			break;
 			case lovProviderEnum.JAVA_CLASS:
