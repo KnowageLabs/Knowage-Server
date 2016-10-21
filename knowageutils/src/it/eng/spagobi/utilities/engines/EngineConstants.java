@@ -19,7 +19,6 @@ package it.eng.spagobi.utilities.engines;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- *
  */
 public class EngineConstants {
 
@@ -88,5 +87,7 @@ public class EngineConstants {
 	public static final String DEFAULT_CHART_STYLES = "DEFAULT_CHART_STYLES";
 
 	public static final String PERSISTER_PROXY = "PERSISTER_PROXY";
+
+	public static final String DOCUMENT_OUTPUT_PARAMETERS = "DOCUMENT_OUTPUT_PARAMETERS";
 
 }
