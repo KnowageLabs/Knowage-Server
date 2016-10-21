@@ -47,7 +47,7 @@ angular.module('cockpitModule')
 	   };
 });
 
-function cockpitDocumentWidgetControllerFunction($scope,cockpitModule_widgetConfigurator,$q,$mdPanel,sbiModule_config,cockpitModule_properties,cockpitModule_utilstServices){
+function cockpitDocumentWidgetControllerFunction($scope,cockpitModule_widgetConfigurator,$q,$mdPanel,sbiModule_config,cockpitModule_properties,cockpitModule_utilstServices,cockpitModule_widgetSelection){
 	var currentDocId; 
 	 
 	$scope.finishLoadingIframe=function(){
@@ -57,7 +57,7 @@ function cockpitDocumentWidgetControllerFunction($scope,cockpitModule_widgetConf
 		$scope.refreshWidget();
 	};
 	
-	$scope.refresh=function(element,width,height,data,nature,associativeSelection){
+	$scope.refresh=function(element,width,height,data,nature){
 		if(angular.equals(nature,'resize') || angular.equals(nature,'gridster-resized')){
 			return;
 		}
@@ -77,9 +77,10 @@ function cockpitDocumentWidgetControllerFunction($scope,cockpitModule_widgetConf
 			angular.forEach(doc.objParameter,function(param){
 				this[param.urlName]=cockpitModule_utilstServices.getParameterValue(param.value);
 			},docPa)
-			if(associativeSelection!=undefined && associativeSelection.hasOwnProperty(doc.DOCUMENT_LABEL)){
-				for(var parName in associativeSelection[doc.DOCUMENT_LABEL]){
-					var parV=associativeSelection[doc.DOCUMENT_LABEL][parName];
+			var assSel=cockpitModule_widgetSelection.getCurrentSelections(doc.DOCUMENT_LABEL)
+			if(assSel!=undefined && assSel.hasOwnProperty(doc.DOCUMENT_LABEL)){
+				for(var parName in assSel[doc.DOCUMENT_LABEL]){
+					var parV=assSel[doc.DOCUMENT_LABEL][parName];
 					if(parV!=undefined){
 						var finalP=[];
 						angular.forEach(parV,function(item){

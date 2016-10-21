@@ -1,4 +1,4 @@
-angular.module("cockpitModule").service("cockpitModule_datasetServices",function(sbiModule_translate,sbiModule_restServices,cockpitModule_template, $q, $mdPanel,cockpitModule_widgetSelection,cockpitModule_properties,cockpitModule_utilstServices, $rootScope){
+angular.module("cockpitModule").service("cockpitModule_datasetServices",function(sbiModule_translate,sbiModule_restServices,cockpitModule_template, $q, $mdPanel,cockpitModule_widgetSelection,cockpitModule_properties,cockpitModule_utilstServices, $rootScope,sbiModule_messaging){
 	var ds=this;
 
 	this.datasetList=[];
@@ -11,8 +11,9 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		sbiModule_restServices.promiseGet("2.0/datasets","listDataset")
 		.then(function(response){
 			angular.copy(response.data.item,ds.datasetList);
-			ds.chceckForDSChange();
-			def.resolve();
+			ds.checkForDSChange();
+			cockpitModule_widgetSelection.getAssociations(cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS,undefined,def);
+//			def.resolve();
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,"");
 			def.reject();
@@ -20,16 +21,97 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		return def.promise;
 	};
 
-	this.chceckForDSChange=function(){
+	this.checkForDSChange=function(){
+		var changed=[];
 		angular.forEach(cockpitModule_template.configuration.datasets,function(item){
-			var orDs=ds.getDatasetById(item.dsId);
-			if(!angular.equals(orDs.label,item.dsLabel)){
-				item.dsLabel=orDs.label;
+			var actualDs=ds.getDatasetById(item.dsId);
+			//check if label change
+			if(!angular.equals(actualDs.label,item.dsLabel)){
+				var oldlab=angular.copy(item.dsLabel);
+				//update the label of dataset
+				this.push("DATASET LABEL: "+item.dsLabel+" -> "+actualDs.label)
+				item.dsLabel=actualDs.label;
+				
+				//update the dataset label in the associations
+				for(var i=0;i<cockpitModule_template.configuration.associations.length;i++){
+					var ass=cockpitModule_template.configuration.associations[i];
+					if(ass.description.search("="+oldlab+"\.")!=-1){
+						ass.description=ass.description.replace("="+oldlab+"\.", "="+item.dsLabel+".");
+						for(var f=0;f<ass.fields.length;f++){
+							if(angular.equals(ass.fields[f].store,oldlab)){
+								ass.fields[f].store=item.dsLabel;
+								break;
+							}
+						}
+					}
+				}
+				
+				//update the dataset in the filters
+				if(cockpitModule_template.configuration.filters.hasOwnProperty(oldlab)){
+					cockpitModule_template.configuration.filters[item.dsLabel]=cockpitModule_template.configuration.filters[oldlab];
+					delete cockpitModule_template.configuration.filters[oldlab];
+				}
+				
+				//update the dataset label in the aggregations
+				for(var i=0;i<cockpitModule_template.configuration.aggregations.length;i++){
+					var aggr=cockpitModule_template.configuration.aggregations[i];
+					//check if this aggregations have this ds
+					var ind=aggr.datasets.indexOf(oldlab);
+					if(ind!=-1){
+						//alter the label in dstasets variable
+						aggr.datasets[ind]=item.dsLabel;
+						//alter the label in selections
+						var alteration={add:{},remove:[]}
+						angular.forEach(aggr.selection,function(selVal,selInd){
+							if(selInd.startsWith(oldlab)){
+								this.add[item.dsLabel+"."+selInd.split(".")[1]]=selVal;
+								this.remove.push(selInd);
+							}
+						},alteration)
+						
+						angular.forEach(alteration.add,function(val,ind){
+							this[ind]=val;
+						},aggr.selection)
+						
+						angular.forEach(alteration.remove,function(val){
+							delete this[val];
+						},aggr.selection)
+					}
+				}
 			}
-			if(!angular.equals(orDs.name,item.name)){
-				item.name=orDs.name;
+
+			//check if name change
+			if(!angular.equals(actualDs.name,item.name)){
+				//update the name of dataset
+				this.push("DATASET NAME: "+item.name+" -> "+actualDs.name)
+				item.name=actualDs.name;
 			}
-		})
+			
+			//check if parameter change
+			var parChange=false;
+			if(actualDs.parameters!=undefined && item.parameters!=undefined){
+				
+				if((actualDs.parameters==undefined && item.parameters!=undefined) || (actualDs.parameters!=undefined && item.parameters==undefined)){
+					parChange=true;
+				}else if(actualDs.parameters.length != Object.keys(item.parameters).length){
+					parChange=true;
+				}else{
+					for(var p=0;p<actualDs.parameters.length;p++){
+						if(!item.parameters.hasOwnProperty(actualDs.parameters[p].name)){
+							parChange=true;
+							break;
+						}
+					}
+				}
+			}
+			if(parChange){
+				this.push("<b>!! The parameter of "+item.dsLabel+" dataset are changed. The cockpit may not work !!</b>")
+			}
+			
+		},changed)
+		if(changed.length>0){
+			sbiModule_messaging.showErrorMessage(changed.join("<br>"),"Dataset information change")
+		}
 	}
 	this.getDatasetList=function(){
 		return angular.copy(ds.datasetList);
