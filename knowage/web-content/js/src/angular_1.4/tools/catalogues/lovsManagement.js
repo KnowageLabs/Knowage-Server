@@ -611,8 +611,12 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 		console.log(item);
 		if(lovProvider != null){
 			if (lovProvider.hasOwnProperty(lovProviderEnum.SCRIPT)) {
-				
-				$scope.selectedScriptType.language = lovProvider.SCRIPTLOV.LANGUAGE;			
+				if(lovProvider.SCRIPTLOV.LANGUAGE != null){
+					$scope.selectedScriptType.language = lovProvider.SCRIPTLOV.LANGUAGE;		
+				}else{
+					$scope.selectedScriptType.language = 'groovy';
+				}
+							
 				$scope.selectedScriptType.text = lovProvider.SCRIPTLOV.SCRIPT;
 				
 			}else if(lovProvider.hasOwnProperty(lovProviderEnum.QUERY)){
