@@ -23,6 +23,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
+import it.eng.spagobi.analiticalmodel.document.bo.OutputParameter;
 import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
@@ -69,6 +70,7 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 	public static final String DOCUMENT_COMMUNITIES = "DOCUMENT_COMMUNITIES";
 	public static final String DOCUMENT_FUNCTIONALITIES = "DOCUMENT_FUNCTIONALITIES";
 	public static final String IS_TECHNICAL_USER = "IS_TECHNICAL_USER";
+	public static final String DOCUMENT_OUTPUT_PARAMETERS = "DOCUMENT_OUTPUT_PARAMETERS";
 
 	static private Logger logger = Logger.getLogger(GenericDriver.class);
 
@@ -81,8 +83,6 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 	 *            the name of the execution role
 	 * @param biobject
 	 *            the biobject
-	 *
-	 * @return Map The map of the execution call parameters
 	 */
 	@Override
 	public Map getParameterMap(Object biobject, IEngUserProfile profile, String roleName) {
@@ -106,7 +106,7 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 
 	/**
 	 * Returns a map of parameters which will be send in the request to the engine application.
-	 *
+	 * 
 	 * @param subObject
 	 *            SubObject to execute
 	 * @param profile
@@ -115,8 +115,6 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 	 *            the name of the execution role
 	 * @param object
 	 *            the object
-	 *
-	 * @return Map The map of the execution call parameters
 	 */
 	@Override
 	public Map getParameterMap(Object object, Object subObject, IEngUserProfile profile, String roleName) {
@@ -159,7 +157,7 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 
 	/**
 	 * Starting from a BIObject extracts from it the map of the paramaeters for the execution call
-	 *
+	 * 
 	 * @param biobj
 	 *            BIObject to execute
 	 * @return Map The map of the execution call parameters
@@ -230,6 +228,7 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 
 			pars = addBIParameters(biobj, pars);
 			pars = addBIParameterDescriptions(biobj, pars);
+			pars = addOutputParameters(biobj, pars);
 
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Error while recovering execution parameter map: \n" + e);
@@ -242,7 +241,7 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 
 	/**
 	 * Add into the parameters map the BIObject's BIParameter names and values
-	 *
+	 * 
 	 * @param biobj
 	 *            BIOBject to execute
 	 * @param pars
@@ -281,15 +280,56 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 	}
 
 	/**
+	 * Add into the map the BIObject's outputparameters names
+	 * 
+	 * @param biobj
+	 *            BIOBject to execute
+	 * @param pars
+	 *            Map of the parameters for the execution call
+	 * @return Map The map of the execution call parameters
+	 */
+	private Map addOutputParameters(BIObject biobj, Map pars) {
+		logger.debug("IN");
+
+		if (biobj == null) {
+			logger.warn("BIObject parameter null");
+			return pars;
+		}
+
+		String outputParametersString = "";
+
+		List<OutputParameter> outputParameters = biobj.getOutputParameters();
+
+		if (outputParameters != null) {
+			int i = 0;
+			for (Iterator iterator = outputParameters.iterator(); iterator.hasNext();) {
+				OutputParameter outputParameter = (OutputParameter) iterator.next();
+
+				String parName = outputParameter.getName();
+
+				if (i == 0) {
+					outputParametersString = parName;
+				} else {
+					outputParametersString += "," + parName;
+				}
+				i++;
+			}
+			if (!outputParametersString.equals("")) {
+				pars.put(DOCUMENT_OUTPUT_PARAMETERS, outputParametersString);
+				logger.debug("Output parameters String " + outputParametersString);
+			}
+		}
+		logger.debug("OUT");
+		return pars;
+	}
+
+	/**
 	 * Function not implemented. Thid method should not be called
-	 *
+	 * 
 	 * @param biobject
 	 *            The BIOBject to edit
 	 * @param profile
 	 *            the profile
-	 *
-	 * @return the edits the document template build url
-	 *
 	 * @throws InvalidOperationRequest
 	 *             the invalid operation request
 	 */
@@ -301,14 +341,11 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 
 	/**
 	 * Function not implemented. Thid method should not be called
-	 *
+	 * 
 	 * @param biobject
 	 *            The BIOBject to edit
 	 * @param profile
 	 *            the profile
-	 *
-	 * @return the new document template build url
-	 *
 	 * @throws InvalidOperationRequest
 	 *             the invalid operation request
 	 */
