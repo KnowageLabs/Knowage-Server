@@ -143,7 +143,7 @@ public class CockpitEngineInstance extends AbstractEngineInstance {
 		List<String> outParslist = new ArrayList<String>();
 
 		String outPars = (String) this.getEnv().get(EngineConstants.DOCUMENT_OUTPUT_PARAMETERS);
-		if (!outPars.equals("")) {
+		if (outPars != null && !outPars.equals("")) {
 			StringTokenizer st = new StringTokenizer(outPars, ",", false);
 			String parameterToken = null;
 			while (st.hasMoreTokens()) {
@@ -214,7 +214,7 @@ public class CockpitEngineInstance extends AbstractEngineInstance {
 	}
 
 	private boolean isAnalyticalDriver(String parName) {
-		if(parName.endsWith("_description")){
+		if (parName.endsWith("_description")) {
 			return false;
 		}
 		for (int i = 0; i < lstEnvVariables.length; i++) {
