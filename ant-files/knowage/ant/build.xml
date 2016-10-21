@@ -748,5 +748,6 @@
 	<target name="test.all.e2eTests" depends="test.all.unitTests">
 		
 			<ant dir="../knowagewhatifengine/ant" target="knowagewhatif.e2eTests"/>
+		<ant dir="../knowage/ant" target="knowage.e2eTests"/>
 		</target>
 </project>

@@ -7,26 +7,27 @@ exports.config = {
 
   // Capabilities to be passed to the webdriver instance.
   capabilities: {
-    'browserName': 'chrome'
-  },
+	    'browserName': 'phantomjs',
+	    'phantomjs.binary.path': '/home/spagobi/continuousintegration/software/node_modules/phantomjs-prebuilt/bin/phantomjs'
+	  },
 
-  onPrepare: function() {
-    browser.driver.manage().window().maximize();
- },
-
-  baseUrl: 'http://localhost:8080',
+	  onPrepare: function() {
+		  // The require statement must be down here, since jasmine-reporters
+		  // needs jasmine to be in the global and protractor does not guarantee
+		  // this until inside the onPrepare function.
+		  var jasmineReporters = require('/home/spagobi/continuousintegration/software/node_modules/jasmine-reporters');
+		    jasmine.getEnv().addReporter(
+		        new jasmineReporters.JUnitXmlReporter({
+		        	consolidateAll: false,
+		            filePrefix: 'Test-'
+		        })
+		    );
+		},
 
   framework: 'jasmine',
 
   // Spec patterns are relative to the current working directly when
   // protractor is called.
-  specs: ['test/e2e/*.js'],
+  specs: ['test/e2e/*Test*.js'],
 
-  // Options to be passed to Jasmine-node.
-  jasmineNodeOpts: {
-    showColors: true,
-    defaultTimeoutInterval: 50000,
-    isVerbose : true,
-    includeStackTrace : true
-  }
 };

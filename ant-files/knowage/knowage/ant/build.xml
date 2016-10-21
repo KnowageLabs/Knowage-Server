@@ -171,6 +171,14 @@
 			<arg value="info" />
 		</exec>
 	</target>
+	
+	<target name="compile.tests"  description="compile the test">
+				
+				<!-- Compile the java code from ${test} into ${build}/${webapp_name}/WEB-INF/classes -->
+				<javac srcdir="${test}" destdir="${build}/${webapp_name}/WEB-INF/classes" >
+					<classpath refid="web.classpath" />
+				</javac>
+	</target>
 
 	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 	<!--   COPIA DELLE JSP,CSS,...                                                    -->
@@ -901,6 +909,33 @@
 
 	<target name="makeDist">
 		<antcall target="create.war" />
+	</target>
+	
+	<target name="knowage.unitTests" depends="compile.tests">
+		<antcall target="test.junit" />
+		
+	
+	</target>
+	
+	<target name="knowage.e2eTests" depends="knowage.unitTests">
+			<antcall target="test.protractor" />
+			
+		
+		</target>
+	
+	<target name="test.junit" >
+		
+		
+		
+	</target>
+	
+	<target name="test.protractor" >
+			
+		<exec dir="${conf.js.dir}" executable="/bin/sh" >
+			<arg value ="-c"/>
+			<arg value ="${protractor.dir}/protractor conf.js"/>
+		</exec>
+													
 	</target>
 
 
