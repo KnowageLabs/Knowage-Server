@@ -77,10 +77,10 @@ function kpiDefinitionThresholdControllerFunction($scope,sbiModule_translate,sbi
 	                        	hideTooltip:true,
 	                        	transformer:function(){
 	                        		return "<div layout=\"row\"> " 
-	                				+"<md-button ng-click=\"scopeFunctions.moveUp($event,$parent.$parent.$parent.$parent.$parent.$index)\" class=\"md-icon-button h20 \" aria-label=\"up\">" 
+	                				+"<md-button ng-click=\"scopeFunctions.moveUp($event,$parent.$parent.$parent.$index)\" class=\"md-icon-button h20 \" aria-label=\"up\">" 
 	                				+"  <md-icon md-font-icon=\"fa fa-arrow-up\"></md-icon>" 
 	                				+" </md-button>" 
-	                				+" <md-button ng-click=\"scopeFunctions.moveDown($event,$parent.$parent.$parent.$parent.$parent.$index)\" class=\"md-icon-button h20\" aria-label=\"down\">" 
+	                				+" <md-button ng-click=\"scopeFunctions.moveDown($event,$parent.$parent.$parent.$index)\" class=\"md-icon-button h20\" aria-label=\"down\">" 
 	                				+" <md-icon md-font-icon=\"fa fa-arrow-down\"></md-icon>" 
 	                				+"</md-button>" 
 	                				+"</div>";
