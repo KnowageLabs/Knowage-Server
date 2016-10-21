@@ -51,6 +51,9 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 @Path("/2.0/roles")
 @ManageAuthorization
 public class RolesResource extends AbstractSpagoBIResource {
@@ -336,5 +339,50 @@ public class RolesResource extends AbstractSpagoBIResource {
 		role.setAbleToDeleteKpiComm(bo.isAbleToDeleteKpiComm());
 
 		return role;
+	}
+
+	/**
+	 * Service for getting list of Roles only with id and name of role
+	 * 
+	 * @author Radmila Selakovic (rselakov, radmila.selakovic@mht.net
+	 */
+
+	@GET
+	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT, SpagoBIConstants.FINAL_USERS_MANAGEMENT })
+	@Path("/short")
+	@Produces(MediaType.APPLICATION_JSON + charset)
+	public Response getRolesSimeple() {
+		IRoleDAO rolesDao = null;
+		List<Role> filteredList = null;
+
+		try {
+			List<Role> fullList = null;
+
+			rolesDao = DAOFactory.getRoleDAO();
+			rolesDao.setUserProfile(getUserProfile());
+			fullList = rolesDao.loadAllRoles();
+
+			IEngUserProfile profile = this.getUserProfile();
+			if (profile.isAbleToExecuteAction(SpagoBIConstants.PROFILE_MANAGEMENT)) {
+				filteredList = fullList;
+			} else {
+				filteredList = this.filterRolesListForFinalUser(fullList);
+			}
+
+			JSONArray filteredListArray = new JSONArray();
+			for (int i = 0; i < filteredList.size(); i++) {
+				Role aRole = filteredList.get(i);
+				JSONObject aRoleJson = new JSONObject();
+				aRoleJson.put("id", aRole.getId());
+				aRoleJson.put("name", aRole.getName());
+				filteredListArray.put(aRoleJson);
+			}
+
+			return Response.ok(filteredListArray.toString()).build();
+		} catch (Exception e) {
+			String errorString = "sbi.folder.roles.load.error";
+			logger.error(errorString, e);
+			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
+		}
 	}
 }
