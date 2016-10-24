@@ -551,21 +551,29 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 		  $scope.showOVDescription = true;
 		  var value = $scope.outputType == "csv"? $scope.delimiter : $scope.tableName;
 		  
+		 
+		  
+		  if($scope.outputType == "csv"){
+			  var link = '/restful-services/1.0/analysis/'+$scope.outputType+'/'+$scope.outputVersion+'/'+value+'?SBI_EXECUTION_ID='+ JSsbiExecutionID;
+			  sbiModule_download.getLink(link);
+			 
+		  }else{
 			  sbiModule_restServices.promiseGet
 				("1.0",'/analysis/'+$scope.outputType+'/'+$scope.outputVersion+'/'+value+'?SBI_EXECUTION_ID='+ JSsbiExecutionID)
 				.then(function(response) {
 					var name = documentDownloadName();
 					sbiModule_messaging.showInfoMessage(sucessMsg, 'Info');
-					$scope.closeDialogToolbarRight();
-					initDialogs();
-					if($scope.outputType == "csv"){
-						sbiModule_download.getPlain(response.data, name,"text/csv","csv")
-					}
+					
+					
 			  },function(response){
 				  sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.versionExport.error'), 'Error');
-				  $scope.closeDialogToolbarRight();
-				  initDialogs();
+				  
 			  });
+			  
+		  }
+		  $scope.closeDialogToolbarRight();
+		  initDialogs();
+		  
 		  
 		  
 	  };
