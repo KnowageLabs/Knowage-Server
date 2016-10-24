@@ -17,28 +17,6 @@
  */
 package it.eng.spagobi.tools.dataset;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.naming.NamingException;
-
-import org.apache.log4j.LogMF;
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import commonj.work.Work;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
@@ -89,6 +67,29 @@ import it.eng.spagobi.utilities.cache.CacheItem;
 import it.eng.spagobi.utilities.database.AbstractDataBase;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.naming.NamingException;
+
+import org.apache.log4j.LogMF;
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import commonj.work.Work;
 
 /**
  * DataLayer facade class. It manage the access to SpagoBI's datasets. It is built on top of the dao. It manages all complex operations that involve more than a
@@ -417,8 +418,7 @@ public class DatasetManagementAPI {
 						String tableName = DataStore.DEFAULT_SCHEMA_NAME + "." + DataStore.DEFAULT_TABLE_NAME;
 						Map<String, String> datasetAlias = getDatasetAlias(dataSet);
 
-						String originalQuery = getQueryText(null, tableName, groups, filterCriteriaForMetaModel, projections, null, dataSet, true,
-								datasetAlias);
+						String originalQuery = getQueryText(null, tableName, groups, filterCriteriaForMetaModel, projections, null, dataSet, true, datasetAlias);
 						IDataStore originalDataStore = dataStore.aggregateAndFilterRecords(originalQuery, -1, -1);
 
 						IDataStore pagedDataStore = originalDataStore.paginateRecords(offset, fetchSize);
@@ -799,8 +799,7 @@ public class DatasetManagementAPI {
 			logger.debug("OUT");
 		}
 	}
-	
-		
+
 	public Integer creatDataSet(IDataSet dataSet) {
 		logger.debug("IN");
 		Integer toReturn = null;
@@ -1529,8 +1528,8 @@ public class DatasetManagementAPI {
 			Map<String, String> datasetAlias) {
 
 		if (tableName == null || tableName.isEmpty() || (!isRealtime && dataSource == null)) {
-			throw new IllegalArgumentException(
-					"Found one or more arguments invalid. Tablename [" + tableName + "] and/or dataSource [" + dataSource + "] are null or empty.");
+			throw new IllegalArgumentException("Found one or more arguments invalid. Tablename [" + tableName + "] and/or dataSource [" + dataSource
+					+ "] are null or empty.");
 		}
 
 		String label = dataSet.getLabel();
@@ -1613,15 +1612,15 @@ public class DatasetManagementAPI {
 				String aggregateFunction = projection.getAggregateFunction();
 				String aliasName = projection.getAliasName();
 				boolean hasAlias = aliasName != null && !aliasName.isEmpty();
-				aliasName = AbstractJDBCDataset.encapsulateColumnName(aliasName, dataSource);
 				String orderType = projection.getOrderType();
 
-				if (columnName.contains(":") && hasAlias) {
-					columnNameWithColonToAliasName.put(columnName, aliasName);
-					columnName = aliasName;
-				} else {
-					// TODO throw error only if we are dealing with a QBE dataset
-					// throw new SpagoBIRuntimeException("Projection [" + columnName + "] requires an alias");
+				if (columnName.contains(":")) {
+					if (hasAlias) {
+						columnNameWithColonToAliasName.put(columnName, aliasName);
+						columnName = aliasName;
+					} else {
+						throw new SpagoBIRuntimeException("Projection [" + columnName + "] requires an alias");
+					}
 				}
 
 				if (datasetAlias != null) {
@@ -1645,6 +1644,7 @@ public class DatasetManagementAPI {
 					}
 				}
 
+				aliasName = AbstractJDBCDataset.encapsulateColumnName(aliasName, dataSource);
 				if (aggregateFunction != null && !aggregateFunction.isEmpty()) {
 					columnName = aggregateFunction + "(" + columnName + ")";
 					if (!hasAlias) {

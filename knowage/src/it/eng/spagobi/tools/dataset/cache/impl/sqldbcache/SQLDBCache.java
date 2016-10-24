@@ -17,27 +17,6 @@
  */
 package it.eng.spagobi.tools.dataset.cache.impl.sqldbcache;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import org.apache.log4j.Logger;
-
-import com.hazelcast.core.IMap;
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
-
-import commonj.work.Work;
-import commonj.work.WorkItem;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -72,6 +51,27 @@ import it.eng.spagobi.utilities.database.temporarytable.TemporaryTableManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.locks.DistributedLockFactory;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.log4j.Logger;
+
+import com.hazelcast.core.IMap;
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+import commonj.work.Work;
+import commonj.work.WorkItem;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
@@ -491,15 +491,15 @@ public class SQLDBCache implements ICache {
 								String columnName = projection.getColumnName();
 								String aliasName = projection.getAliasName();
 								boolean hasAlias = aliasName != null && !aliasName.isEmpty();
-								aliasName = AbstractJDBCDataset.encapsulateColumnName(aliasName, dataSource);
 								String aggregateFunction = projection.getAggregateFunction();
 
-								if (columnName.contains(":") && hasAlias) {
-									columnNameWithColonToAliasName.put(columnName, aliasName);
-									columnName = aliasName;
-								} else {
-									// TODO throw error only if we are dealing with a QBE dataset
-									// throw new SpagoBIRuntimeException("Projection [" + columnName + "] requires an alias");
+								if (columnName.contains(":")) {
+									if (hasAlias) {
+										columnNameWithColonToAliasName.put(columnName, aliasName);
+										columnName = aliasName;
+									} else {
+										throw new SpagoBIRuntimeException("Projection [" + columnName + "] requires an alias");
+									}
 								}
 
 								if (datasetAlias != null) {
@@ -519,6 +519,7 @@ public class SQLDBCache implements ICache {
 								 *
 								 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 								 */
+								aliasName = AbstractJDBCDataset.encapsulateColumnName(aliasName, dataSource);
 								if ((aggregateFunction != null) && (!aggregateFunction.isEmpty()) && (columnName != "*")) {
 									if (hasAlias) {
 										// https://production.eng.it/jira/browse/KNOWAGE-149
