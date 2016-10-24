@@ -600,38 +600,39 @@ public class VersionedDataSet implements IDataSet {
 	}
 
 	@Override
+	// (danristo)
 	public String getStartDateField() {
-		// TODO Auto-generated method stub
-		return null;
+		return wrappedDataset.getStartDateField();
 	}
 
 	@Override
+	// (danristo)
 	public void setStartDateField(String startDateField) {
-		// TODO Auto-generated method stub
-
+		wrappedDataset.setStartDateField(startDateField);
 	}
 
 	@Override
+	// (danristo)
 	public String getEndDateField() {
-		// TODO Auto-generated method stub
-		return null;
+		return wrappedDataset.getEndDateField();
 	}
 
 	@Override
+	// (danristo)
 	public void setEndDateField(String endDateField) {
-		// TODO Auto-generated method stub
-
+		wrappedDataset.setEndDateField(endDateField);
 	}
 
 	@Override
+	// (danristo)
 	public String getSchedulingCronLine() {
-		// TODO Auto-generated method stub
-		return null;
+		return wrappedDataset.getSchedulingCronLine();
 	}
 
 	@Override
+	// (danristo)
 	public void setSchedulingCronLine(String schedulingCronLine) {
-		// TODO Auto-generated method stub
+		wrappedDataset.setSchedulingCronLine(schedulingCronLine);
 
 	}
 

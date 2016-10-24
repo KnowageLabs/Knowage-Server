@@ -26,6 +26,7 @@ import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.deserializer.DeserializerFactory;
+import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.container.ObjectUtils;
@@ -57,12 +58,15 @@ import it.eng.spagobi.tools.dataset.exceptions.DatasetInUseException;
 import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
+import it.eng.spagobi.tools.scheduler.bo.Trigger;
+import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceParameterException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -152,6 +156,54 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			List<IDataSet> toBeReturned = new ArrayList<IDataSet>();
 
 			for (IDataSet dataset : dataSets) {
+
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+				ISchedulerDAO schedulerDAO;
+
+				try {
+					schedulerDAO = DAOFactory.getSchedulerDAO();
+				} catch (Throwable t) {
+					throw new SpagoBIRuntimeException("Impossible to load scheduler DAO", t);
+				}
+
+				if (dataset.isPersisted()) {
+
+					List<Trigger> triggers = schedulerDAO.loadTriggers("PersistDatasetExecutions", dataset.getLabel());
+
+					if (triggers.isEmpty()) {
+						// itemJSON.put("isScheduled", false);
+						dataset.setScheduled(false);
+					} else {
+
+						// Dataset scheduling is mono-trigger
+						Trigger trigger = triggers.get(0);
+
+						if (!trigger.isRunImmediately()) {
+
+							// itemJSON.put("isScheduled", true);
+							dataset.setScheduled(true);
+
+							if (trigger.getStartTime() != null) {
+								dataset.setStartDateField(sdf.format(trigger.getStartTime()));
+							} else {
+								// itemJSON.put("startDate", "");
+								dataset.setStartDateField("");
+							}
+
+							if (trigger.getEndTime() != null) {
+								// itemJSON.put("endDate", sdf.format(trigger.getEndTime()));
+								dataset.setEndDateField(sdf.format(trigger.getEndTime()));
+							} else {
+								// itemJSON.put("endDate", "");
+								dataset.setEndDateField("");
+							}
+
+							// itemJSON.put("schedulingCronLine", trigger.getChronExpression().getExpression());
+							dataset.setSchedulingCronLine(trigger.getChronExpression().getExpression());
+						}
+					}
+				}
+
 				if (DataSetUtilities.isExecutableByUser(dataset, getUserProfile()))
 					toBeReturned.add(dataset);
 			}
@@ -205,11 +257,12 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	 * @return
 	 * @throws JSONException
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 * @throws SerializationException
 	 */
 	@GET
 	@Path("/dataset/id/{id}")
 	@Produces(MediaType.TEXT_HTML)
-	public String getDataSetById(@PathParam("id") String id) throws JSONException {
+	public String getDataSetById(@PathParam("id") String id) throws JSONException, SerializationException {
 		logger.debug("IN");
 
 		IDataSetDAO datasetDao = null;
@@ -224,7 +277,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		/**
 		 * When retrieving the dataset that is previously saved, call the method that retrieves all the available datasets since they contain also information
 		 * about all dataset versions for them. Go through all the collection and find the one that we need (according to its ID).
-		 * 
+		 *
 		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
 
@@ -234,8 +287,58 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		List<IDataSet> dataSets = datasetDao.loadPagedDatasetList(-1, -1);
 
 		for (IDataSet datasetTemp : dataSets) {
+
 			if (datasetTemp.getId() == Integer.parseInt(id)) {
+
 				datasetToReturn = datasetTemp;
+
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+				ISchedulerDAO schedulerDAO;
+
+				try {
+					schedulerDAO = DAOFactory.getSchedulerDAO();
+				} catch (Throwable t) {
+					throw new SpagoBIRuntimeException("Impossible to load scheduler DAO", t);
+				}
+
+				if (datasetToReturn.isPersisted()) {
+
+					List<Trigger> triggers = schedulerDAO.loadTriggers("PersistDatasetExecutions", datasetToReturn.getLabel());
+
+					if (triggers.isEmpty()) {
+						// itemJSON.put("isScheduled", false);
+						datasetToReturn.setScheduled(false);
+					} else {
+
+						// Dataset scheduling is mono-trigger
+						Trigger trigger = triggers.get(0);
+
+						if (!trigger.isRunImmediately()) {
+
+							// itemJSON.put("isScheduled", true);
+							datasetToReturn.setScheduled(true);
+
+							if (trigger.getStartTime() != null) {
+								datasetToReturn.setStartDateField(sdf.format(trigger.getStartTime()));
+							} else {
+								// itemJSON.put("startDate", "");
+								datasetToReturn.setStartDateField("");
+							}
+
+							if (trigger.getEndTime() != null) {
+								// itemJSON.put("endDate", sdf.format(trigger.getEndTime()));
+								datasetToReturn.setEndDateField(sdf.format(trigger.getEndTime()));
+							} else {
+								// itemJSON.put("endDate", "");
+								datasetToReturn.setEndDateField("");
+							}
+
+							// itemJSON.put("schedulingCronLine", trigger.getChronExpression().getExpression());
+							datasetToReturn.setSchedulingCronLine(trigger.getChronExpression().getExpression());
+						}
+					}
+				}
+
 				break;
 			}
 		}

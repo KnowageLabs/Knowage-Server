@@ -45,7 +45,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		<script type="text/javascript"
 			src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/catalogues/datasetManagement.js"></script>
-			
+		
 		<script language="javascript" type="text/javascript">		   
 		   var datasetParameters=<%=selfServiceParameters%>;
 		   var isAdmin =<%=isAdmin%>;
@@ -165,7 +165,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	      		</div> 
 	      		
 	      		<!-- PREVIEW BUTTON -->
-	      		<md-button aria-label="Preview dataset" ng-click="previewDataset()" 
+	      		<md-button aria-label="Preview dataset" ng-click="preparePreviewDataset()" 
 	      				ng-show="selectedDataSet" style="float:right; margin-top:2px">
 	              	{{translate.load('sbi.ds.test')}}
 	            </md-button>
@@ -284,9 +284,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					 					 click-function="selectDatasetVersion(item,index,a)"
 					 					 no-pagination=false
 										 columns='[
-										         {"label":"Creation User","name":"userIn"},
-										         {"label":"Type","name":"type"},
-										         {"label":"Creation Date", "name":"dateIn"}
+											         {"label":"Creation User","name":"userIn"},
+											         {"label":"Type","name":"type"},
+											         {"label":"Creation Date", "name":"dateIn"}
 										         ]'
 										show-search-bar=false
 										highlights-selected-item=true
@@ -303,16 +303,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					     <md-tab label='{{translate.load("sbi.generic.type");}}' ng-click="changeSelectedTab(1)">
 					     
 					     	<md-content flex class="ToolbarBox miniToolbar noBorder mozTable">
+								
 								<md-card layout-padding>
 									
 									<div flex=100 ng-if="selectedDataSet.dsTypeCd!='Federated'">
 								       
-								       <md-input-container class="md-block" > 
+								       <md-input-container class="md-block"> 
 									       <label>{{translate.load("sbi.ds.dsTypeCd")}}</label>									     
 									       <md-select 	placeholder ="{{translate.load('sbi.ds.dsTypeCd')}}"
-									       	 			ng-required = "true"
+									       	 			ng-required="true" 
 									        			ng-model="selectedDataSet.dsTypeCd"
-									        			ng-change="resetWhenChangeDSType(selectedDataSet.dsTypeCd); setFormDirty()">   
+									        			ng-change="resetWhenChangeDSType(selectedDataSet.dsTypeCd);setFormDirty()">   
 									        	<md-option ng-repeat="l in datasetTypeList | filter: filterDatasetTypes" value="{{l.VALUE_CD}}">{{l.VALUE_CD}}</md-option>
 									       </md-select>  
 									       <div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.dsTypeCd">
@@ -324,8 +325,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								   
 							   		<div ng-if="selectedDataSet.dsTypeCd=='Federated'">
 						        		<label>{{translate.load("sbi.ds.dsTypeCd")}}</label>: <strong>Federated</strong>
-								   </div>
+				        			</div>
+								   
 								</md-card>
+								
 							</md-content>
 							
 						<!-- FILE DATASET -->
@@ -437,7 +440,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						                 	
 					                 	<div layout="row" layout-wrap flex=30>
 					                  		<div flex=90 layout-align="center center">
-					                     		<md-input-container class="md-block">
+					                     		 <md-input-container class="md-block">
 					                        		
 					                        		<label>{{translate.load("sbi.ds.file.csv.delimiter")}}</label> 
 					                        		
@@ -455,7 +458,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					       						 	</div>
 					       						 	
 						                     	</md-input-container>
+						                     	
 						                  	</div>
+						                  	
 										</div>
 					                 	
 				                		<div layout="row" layout-wrap flex=30>
@@ -898,7 +903,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						                        		
 						                        		<md-select 	aria-label="aria-label" ng-model="selectedDataSet.ckanCsvDelimiter" 
 						                        					ng-required="selectedDataSet.dsTypeCd=='Ckan'" ng-change="setFormDirty()">
-						                           			<md-option 	ng-repeat="csvDelimiterCharacterItem in csvDelimiterCharacterTypes" 						                           						
+						                           			<md-option 	ng-repeat="csvDelimiterCharacterItem in csvDelimiterCharacterTypes" 
 						                           						value="{{csvDelimiterCharacterItem.name}}">
 					                          						{{csvDelimiterCharacterItem.name}}
 				                     						</md-option>
@@ -1265,7 +1270,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						            </div>
 						            
 					            </div>
-					            
+								
 							</md-card>
 							
 						</md-content>
@@ -1550,7 +1555,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	   						 				</div>
 										</md-input-container>
 									</div>
-									
+								
 								</div>
 							
 							</md-card>
@@ -1601,22 +1606,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										<div flex=100 style="display:flex;padding-bottom:8;margin-bottom:8">
 											
 											<div style="float:left" flex=50>
-												<label>{{translate.load('sbi.ds.persist.cron.startdate')}}:</label>
-												
+												<label>{{translate.load('sbi.ds.persist.cron.startdate')}}:</label>												
 												<md-datepicker ng-model="selectedDataSet.startDate" md-placeholder="Enter date"
 		            											md-min-date="minStartDate" md-max-date="maxStartDate" 
 		            											ng-change="setFormDirty();checkPickedStartDate();"
-		            											md-open-on-focus>
+		            											md-open-on-focus ng-required=false>
 												</md-datepicker>
 											</div>
 											
 											<div style="float:right" flex=50>
-												<label>{{translate.load('sbi.ds.persist.cron.enddate')}}:</label>
-												
+												<label>{{translate.load('sbi.ds.persist.cron.enddate')}}:</label>												
 												<md-datepicker ng-model="selectedDataSet.endDate" md-placeholder="Enter date"
 		            											md-min-date="minEndDate" md-max-date="maxEndDate" 
 		            											ng-change="setFormDirty();checkPickedEndDate();"
-		            											md-open-on-focus>
+		            											md-open-on-focus ng-required=false>
 												</md-datepicker>
 											</div>
 											
@@ -1659,7 +1662,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							           					<div flex=50>
 							           						{{minutesCustom}}
 							           					
-								                  			<md-input-container class="small counter" style="margin:8;">
+								                  			<md-input-container class="small counter" style="margin:8;" >
 								                     			<md-checkbox 	aria-label="Checkbox 2" ng-model="scheduling.minutesCustom"								                     						
 									                     						ng-change="setFormDirty()">
 																</md-checkbox>
@@ -1682,7 +1685,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 												</div>
 											
 											</div>
-											
+										
 										</md-whiteframe>	
 										<!-- </div> -->
 										
@@ -1808,7 +1811,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 												</div>
 											
 											</div>
-											
+										
 										</md-whiteframe>	
 										<!-- </div> -->
 										
@@ -1870,7 +1873,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 													
 												</div>
 											
-											</div>
+											</div>											
 											
 										</md-whiteframe>	
 										<!-- </div> -->
@@ -1934,16 +1937,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 												</div>
 											
 											</div>
-											
+										
 										</md-whiteframe>	
 										<!-- </div> -->
 										
 										<div flex=100 style="margin-top:8px; display:flex">
 											
 											<md-input-container class="md-block" flex-gt-sm>								
-										    	<label>{{translate.load("sbi.ds.persist.cron.schedulingline")}}</label>											
+									           	<label>{{translate.load("sbi.ds.persist.cron.schedulingline")}}</label>											
 												<input ng-model="scheduling.cronDescriptionDate" readonly="readonly">				    						 	
-											</md-input-container>
+								         	</md-input-container>
 											
 										</div>
 										

@@ -881,37 +881,20 @@ public class ManageDataSetsForREST {
 	}
 
 	/*
-	 * private void setUsefulItemsInSession(IDataSetDAO dsDao, Locale locale) {
-	 * try { List dsTypesList =
-	 * DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants
-	 * .DATA_SET_TYPE); filterDataSetType(dsTypesList); List catTypesList =
-	 * getCategories(); getSessionContainer().setAttribute("catTypesList",
-	 * catTypesList); List dataSourceList =
-	 * DAOFactory.getDataSourceDAO().loadAllDataSources();
-	 * getSessionContainer().setAttribute("dataSourceList", dataSourceList);
-	 * List scriptLanguageList =
-	 * DAOFactory.getDomainDAO().loadListDomainsByType(
-	 * DataSetConstants.SCRIPT_TYPE);
-	 * getSessionContainer().setAttribute("scriptLanguageList",
-	 * scriptLanguageList); List trasfTypesList =
-	 * DAOFactory.getDomainDAO().loadListDomainsByType
-	 * (DataSetConstants.TRANSFORMER_TYPE);
-	 * getSessionContainer().setAttribute("trasfTypesList", trasfTypesList);
-	 * List sbiAttrs = DAOFactory.getSbiAttributeDAO().loadSbiAttributes();
-	 * getSessionContainer().setAttribute("sbiAttrsList", sbiAttrs);
-	 * 
-	 * List scopeCdList =
-	 * DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants
-	 * .DS_SCOPE); getSessionContainer().setAttribute("scopeCdList",
+	 * private void setUsefulItemsInSession(IDataSetDAO dsDao, Locale locale) { try { List dsTypesList =
+	 * DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants .DATA_SET_TYPE); filterDataSetType(dsTypesList); List catTypesList = getCategories();
+	 * getSessionContainer().setAttribute("catTypesList", catTypesList); List dataSourceList = DAOFactory.getDataSourceDAO().loadAllDataSources();
+	 * getSessionContainer().setAttribute("dataSourceList", dataSourceList); List scriptLanguageList = DAOFactory.getDomainDAO().loadListDomainsByType(
+	 * DataSetConstants.SCRIPT_TYPE); getSessionContainer().setAttribute("scriptLanguageList", scriptLanguageList); List trasfTypesList =
+	 * DAOFactory.getDomainDAO().loadListDomainsByType (DataSetConstants.TRANSFORMER_TYPE); getSessionContainer().setAttribute("trasfTypesList",
+	 * trasfTypesList); List sbiAttrs = DAOFactory.getSbiAttributeDAO().loadSbiAttributes(); getSessionContainer().setAttribute("sbiAttrsList", sbiAttrs);
+	 *
+	 * List scopeCdList = DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants .DS_SCOPE); getSessionContainer().setAttribute("scopeCdList",
 	 * scopeCdList);
-	 * 
-	 * String filePath = SpagoBIUtilities.getResourcePath(); filePath +=
-	 * File.separator + "dataset" + File.separator + "files"; File dir = new
-	 * File(filePath); String[] fileNames = dir.list();
-	 * getSessionContainer().setAttribute("fileNames", fileNames); } catch
-	 * (EMFUserError | EMFInternalError e) { logger.error(e.getMessage(), e);
-	 * throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.dsTypesRetrieve",
-	 * e); } }
+	 *
+	 * String filePath = SpagoBIUtilities.getResourcePath(); filePath += File.separator + "dataset" + File.separator + "files"; File dir = new File(filePath);
+	 * String[] fileNames = dir.list(); getSessionContainer().setAttribute("fileNames", fileNames); } catch (EMFUserError | EMFInternalError e) {
+	 * logger.error(e.getMessage(), e); throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.dsTypesRetrieve", e); } }
 	 */
 
 	public List getCategories(UserProfile userProfile) {
@@ -1219,10 +1202,8 @@ public class ManageDataSetsForREST {
 
 		if (hdfs.exists(filePath)) {
 			/*
-			 * This method copies the contents of the specified source file to
-			 * the specified destination file. The directory holding the
-			 * destination file is created if it does not exist. If the
-			 * destination file exists, then this method will overwrite it.
+			 * This method copies the contents of the specified source file to the specified destination file. The directory holding the destination file is
+			 * created if it does not exist. If the destination file exists, then this method will overwrite it.
 			 */
 			String newDatasetPath = fileNewPath + newFileName + "." + fileType.toLowerCase();
 			hdfs.mkdirsParent(newDatasetPath);
@@ -1240,10 +1221,8 @@ public class ManageDataSetsForREST {
 		File newDatasetFile = new File(fileNewPath + newFileName + "." + fileType.toLowerCase());
 		if (originalDatasetFile.exists()) {
 			/*
-			 * This method copies the contents of the specified source file to
-			 * the specified destination file. The directory holding the
-			 * destination file is created if it does not exist. If the
-			 * destination file exists, then this method will overwrite it.
+			 * This method copies the contents of the specified source file to the specified destination file. The directory holding the destination file is
+			 * created if it does not exist. If the destination file exists, then this method will overwrite it.
 			 */
 			try {
 				FileUtils.copyFile(originalDatasetFile, newDatasetFile);
@@ -1424,7 +1403,7 @@ public class ManageDataSetsForREST {
 				// handle insert of persistence and scheduling
 				if (!isFromSaveNoMetadata) {
 					auditlogger.info("[Start persisting metadata for dataset with id " + ds.getId() + "]");
-					insertPersistenceAndScheduling(ds, logParam, json, req);
+					insertPersistenceAndScheduling(ds, logParam, json, userProfile, req);
 					auditlogger.info("Metadata saved for dataset with id " + ds.getId() + "]");
 					auditlogger.info("[End persisting metadata for dataset with id " + ds.getId() + "]");
 				}
@@ -1518,7 +1497,8 @@ public class ManageDataSetsForREST {
 		logger.debug("OUT");
 	}
 
-	public void insertPersistenceAndScheduling(IDataSet ds, HashMap<String, String> logParam, JSONObject json, HttpServletRequest req) throws Exception {
+	public void insertPersistenceAndScheduling(IDataSet ds, HashMap<String, String> logParam, JSONObject json, UserProfile userProfile, HttpServletRequest req)
+			throws Exception {
 		logger.debug("IN");
 		if (ds.isPersisted()) {
 			// Manage persistence of dataset if required. On modify it
@@ -1535,7 +1515,10 @@ public class ManageDataSetsForREST {
 			auditlogger.info("PERSIST TABLE NAME FOR DATASET WITH ID " + ds.getId() + " : " + ds.getPersistTableName());
 			auditlogger.info("-------------");
 			IDataSetDAO iDatasetDao = DAOFactory.getDataSetDAO();
+
+			profile = userProfile;
 			iDatasetDao.setUserProfile(profile);
+
 			IDataSet dataset = iDatasetDao.loadDataSetByLabel(ds.getLabel());
 			// checkQbeDataset(((VersionedDataSet)
 			// dataset).getWrappedDataset());
@@ -1563,7 +1546,7 @@ public class ManageDataSetsForREST {
 
 			logger.debug("Persistence ended succesfully!");
 			if (ds.isScheduled()) {
-				DatasetPersistenceUtilsForRest dspu = new DatasetPersistenceUtilsForRest(profile, null, SERVICE_NAME, ds);
+				DatasetPersistenceUtilsForRest dspu = new DatasetPersistenceUtilsForRest(profile, req, SERVICE_NAME, ds);
 				String jobName = dspu.saveDatasetJob(ds, logParam);
 				if (jobName != null) {
 					dspu.saveTriggerForDatasetJob(jobName, json);
