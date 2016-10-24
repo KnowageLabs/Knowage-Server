@@ -234,13 +234,17 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 	];
 	$scope.tableFunction = {
 		isChecked : function(row, criteria) {
-
+			
 			if ($scope.selectedFolder[criteria] != undefined) {
 				for (var j = 0; j < $scope.selectedFolder[criteria].length; j++) {
 					if ($scope.selectedFolder[criteria][j].name == row.name) {
 						return true;
 					}
+					
 				}
+			}
+			if ($scope.selectedFolder.parentId===1){
+				return true
 			}
 		},
 
@@ -448,6 +452,7 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 			$scope.folders[i].expanded=true;	 
 				
 		}
+		console.log(item);
 		if ($scope.dirtyForm) {
 			$mdDialog.show($scope.confirm).then(function() {
 				$scope.showme = true;
