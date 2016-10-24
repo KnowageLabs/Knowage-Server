@@ -1900,6 +1900,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	
 	$scope.saveDataset = function() {
 		
+		console.log($scope.selectedDataSet);
+		
 		// Transformation refactoring (if the transformation is not checked, clean all the data that bind to the model for this option)
 		if ($scope.transformDatasetState==false) {
 			$scope.selectedDataSet.trasfTypeCd ? $scope.selectedDataSet.trasfTypeCd="" : null;
@@ -2350,7 +2352,11 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		// If the Federated dataset is saved before (already existing).
 		if ($scope.selectedDataSet.qbeJSONQuery) {
 			
-			$scope.selectedDataSet.qbeJSONQuery = JSON.stringify($scope.selectedDataSet.qbeJSONQuery,null,2);
+			if(typeof $scope.selectedDataSet.qbeJSONQuery === 'string'){
+				$scope.selectedDataSet.qbeJSONQuery = JSON.stringify(JSON.parse($scope.selectedDataSet.qbeJSONQuery),null,2);
+			} else {
+				$scope.selectedDataSet.qbeJSONQuery = JSON.stringify($scope.selectedDataSet.qbeJSONQuery,null,2);
+			}
 			
 			$mdDialog
 			   .show({
@@ -3018,7 +3024,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		
 		       
 		// $window.location.href=url;
-		
+		$scope.isFromDataSetCatalogue = true;
 		$qbeViewer.openQbeInterface($scope,url);
 		
     }

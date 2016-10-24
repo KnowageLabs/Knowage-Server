@@ -39,11 +39,28 @@ angular
 						locals:{url:url}				
 					}
 				) 
-				.then(function() {});
+				.then(function() {
+				});
 		
 		};
 		
-		function openQbeInterfaceController($scope,url) {
+		function openQbeInterfaceController($scope,url,$timeout) {
+						
+			if(typeof $scope.selectedDataSet.qbeJSONQuery === 'string'){
+				$scope.selectedDataSet.qbeJSONQuery = JSON.parse($scope.selectedDataSet.qbeJSONQuery);
+			}
+						
+		    angular.element(window.document.body).ready(function () {
+		    	var timeoutTime = 8000;
+		    	if($scope.selectedDataSet.dsTypeCd.toUpperCase()=='QBE'){
+		    		timeoutTime = 3000;
+		    	}
+				if($scope.selectedDataSet.qbeJSONQuery!=undefined){
+					$timeout(function(){
+						document.getElementById("documentViewerIframe").contentWindow.qbe.setQueriesCatalogue($scope.selectedDataSet.qbeJSONQuery);
+					}, timeoutTime);
+				}
+            });
 
 			$scope.documentViewerUrl = url;
 			
@@ -51,24 +68,27 @@ angular
 				
 				$mdDialog.hide();
 				
-				$scope.selectedDataSet.qbeJSONQuery = document.getElementById("documentViewerIframe").contentWindow.qbe.getQueriesCatalogue();
-				
-				if ($scope.datasetSavedFromQbe==true) {
+				if($scope.isFromDataSetCatalogue) {
+					$scope.selectedDataSet.qbeJSONQuery = document.getElementById("documentViewerIframe").contentWindow.qbe.getQueriesCatalogue();
 					
-					console.info("[RELOAD]: Reload all necessary datasets (its different categories)");
-					
-					$scope.currentOptionMainMenu=="datasets" ? $scope.reloadMyDataFn() : $scope.reloadMyData = true;
-					
-					if($scope.currentOptionMainMenu=="models"){
+				} else {
+					if ($scope.datasetSavedFromQbe==true) {
 						
-						if ($scope.currentModelsTab=="federations") {
-							// If the suboption of the Data option is Federations.
-							$scope.getFederatedDatasets();
+						console.info("[RELOAD]: Reload all necessary datasets (its different categories)");
+						
+						$scope.currentOptionMainMenu=="datasets" ? $scope.reloadMyDataFn() : $scope.reloadMyData = true;
+						
+						if($scope.currentOptionMainMenu=="models"){
+							
+							if ($scope.currentModelsTab=="federations") {
+								// If the suboption of the Data option is Federations.
+								$scope.getFederatedDatasets();
+							}
+							
 						}
 						
+						$scope.datasetSavedFromQbe = false;
 					}
-					
-					$scope.datasetSavedFromQbe = false;
 				}	
 			}
 			

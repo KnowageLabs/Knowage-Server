@@ -843,7 +843,7 @@ public class ManageDataSetsForREST {
 
 		if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_FEDERATED)) {
 
-			Integer id = json.getInt(DataSetConstants.DS_ID);
+			Integer id = json.getInt(DataSetConstants.ID);
 			if (id == null) {
 				logger.error("The federated dataset id is null");
 			}
@@ -899,12 +899,12 @@ public class ManageDataSetsForREST {
 	 * getSessionContainer().setAttribute("trasfTypesList", trasfTypesList);
 	 * List sbiAttrs = DAOFactory.getSbiAttributeDAO().loadSbiAttributes();
 	 * getSessionContainer().setAttribute("sbiAttrsList", sbiAttrs);
-	 *
+	 * 
 	 * List scopeCdList =
 	 * DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants
 	 * .DS_SCOPE); getSessionContainer().setAttribute("scopeCdList",
 	 * scopeCdList);
-	 *
+	 * 
 	 * String filePath = SpagoBIUtilities.getResourcePath(); filePath +=
 	 * File.separator + "dataset" + File.separator + "files"; File dir = new
 	 * File(filePath); String[] fileNames = dir.list();
