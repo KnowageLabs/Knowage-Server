@@ -134,7 +134,7 @@ function execExternalCrossNavigation(outputParameters, inputParameter, targetCro
 	var thisM = this;
 	
 	if (sourceLabel == null){
-		alert("Label of the source document doesn't defined! Contact the System Administrator.");
+		alert("Label of the source document is not defined! Contact the System Administrator.");
 		return;
 	}
 
