@@ -81,8 +81,9 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 				.then(function(response) {
 					$scope.folders_copy = $scope.getFolders(); 
 					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
-					$scope.showme=false;
-					$scope.dirtyForm=false;	
+					$scope.selectedFolder ={};
+					$scope.showme = false;
+					$scope.dirtyForm=false;
 					
 				}, function(response) {
 					sbiModule_messaging.showErrorMessage(sbiModule_translate.load(response.data.errors[0].message), 'Error');
@@ -109,7 +110,8 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 			sbiModule_restServices.promisePost('2.0/functionalities','',$scope.fake)
 			.then(function(response) {
 				$scope.folders_copy = $scope.getFolders(); 
-				$scope.showme=false;
+				$scope.selectedFolder ={};
+				$scope.showme = false;
 				$scope.dirtyForm=false;	
 				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
 				
@@ -207,6 +209,7 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 				
 			},
 			showItem : function (item){
+				console.log(item.prog== 1);
 				return !(item.prog== 1);
 			}
 		}, 
