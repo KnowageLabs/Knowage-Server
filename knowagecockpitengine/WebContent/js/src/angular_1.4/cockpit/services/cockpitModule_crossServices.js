@@ -6,7 +6,7 @@ angular.module("cockpitModule").service("cockpitModule_crossServices",
 	this.loadCrossNavigationByDocument=function(docLabel){
 		var def=$q.defer();
 		sbiModule_restServices.restToRootProject();
-		sbiModule_restServices.promiseGet("1.0/crossNavigation",docLabel+"/loadCrossNavigationByDocument", docLabel)
+		sbiModule_restServices.promiseGet("1.0/crossNavigation",docLabel+"/loadCrossNavigationByDocument")
 		.then(function(response){
 			angular.copy(response.data,cross.crossList);
 			def.resolve();
