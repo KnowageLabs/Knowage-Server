@@ -46,7 +46,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				};
 			}
 		}
+	})
+	.directive('mdProgressLinearCustom', function() {
+		return {
+			restrict: 'E',
+			scope: {
+				color: '@',
+				value: '@'
+				
+			},
+			template: '<div class="md-container" style="background-color:grey">' +
+		      '<div class="md-dashed"></div>' +
+		     // '<div class="md-bar md-bar1" ng-style="linearStyle"></div>' +
+		      '<div class="md-bar md-bar1" ng-style="linearStyle"></div>'+
+		      '</div>',
+			link: function(scope) {
+				scope.perc=scope.value+'%';
+				scope.bgColor=scope.color;
+				if(scope.perc>100){ scope.perc=100;}
+				else if(scope.perc<0){ scope.perc=0;}
+				scope.linearStyle={ 'background-color': scope.bgColor , 'width': scope.perc};
+				
+			}
+		}
 	});
+	
 
 	function cockpitTableWidgetControllerFunction($scope,cockpitModule_widgetConfigurator,$mdDialog,$timeout,$mdPanel,$q,cockpitModule_datasetServices, $mdToast, sbiModule_translate,sbiModule_restServices,cockpitModule_widgetServices,cockpitModule_widgetSelection){
 		$scope.selectedTab = {'tab' : 0};
@@ -208,13 +232,185 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.columnToshowinIndex = [];
 			$scope.tableFunction.widgetStyle=$scope.ngModel.style;
 			$scope.datasetRecods = datasetRecords;
+			var calculateScaleValue=function(minVal, maxVal, val)
+			{
+				if(maxVal!=minVal)
+				{	
+					return ((val-minVal)/(maxVal-minVal))*100;
+				}
+				else
+				{
+					return 0;
+				}
+			}
+			
+			$scope.rgbToHex=function(rgbColor)
+			{
+				var a = rgbColor.split("(")[1].split(")")[0];
+				a = a.split(",");
+				var b = a.map(function(x){             //For each array element
+				    x = parseInt(x).toString(16);      //Convert to a base16 string
+				    return (x.length==1) ? "0"+x : x;  //Add zero if we get only one character
+				})
+				b = "0x"+b.join("");
+				return b;
+			}
+
+			
+			
+			
+			
+			
 			if($scope.ngModel.content.columnSelectedOfDataset!=undefined){
 				$scope.datasetRecords  =datasetRecords;
-				for(var i=0;i<$scope.ngModel.content.columnSelectedOfDataset.length;i++){
+				for(var i=0;i<$scope.ngModel.content.columnSelectedOfDataset.length;i++)
+				{
 					var obj = {};
+					
 					obj.label= $scope.ngModel.content.columnSelectedOfDataset[i]['aliasToShow'];
 					obj.name = $scope.ngModel.content.columnSelectedOfDataset[i]['alias'];
-					obj.static=true;
+
+					
+					if(angular.equals($scope.ngModel.content.columnSelectedOfDataset[i].fieldType,"MEASURE")){						
+						this.test=i;
+						obj.transformer=function(value,currentRow,columnName)
+						{
+								obj;
+								var currentColumn;
+								for(var j=0;j<$scope.ngModel.content.columnSelectedOfDataset.length;j++)
+								{
+									if($scope.ngModel.content.columnSelectedOfDataset[j].name==columnName)
+									{						
+										currentColumn=angular.copy($scope.ngModel.content.columnSelectedOfDataset[j]);
+										break;
+									}	
+									
+									
+								}	
+								
+								var htm="<div layout='row' layout-align='start center'>";
+							
+								if(currentColumn.visType=='Text')
+								{										
+									htm="<div>"+value+"</div>"	
+								}	
+								
+								if(currentColumn.hasOwnProperty("minValue") && currentColumn.hasOwnProperty("maxValue")) // 	MinValue and MaxValue are present only if you have to display a chart
+								{	
+	
+									var minValue=currentColumn.minValue;
+									var maxValue=currentColumn.maxValue;
+									
+									barValue=calculateScaleValue(minValue,maxValue,value);
+									
+									
+									if(currentColumn.visType=='Chart')
+									{	
+
+//										if(barValue>100 || barValue<0)
+//										{
+//											htm=htm+"<div> Out of range </div> &nbsp;";
+//										}
+//										else
+//										{	
+//											htm=htm+"<md-progress-linear flex style='width:"+currentColumn.chartLength +"px "+" color:"+currentColumn.chartColor +"' md-mode='determinate' value="+barValue+"></md-progress-linear>"
+//
+//										}	
+										htm=htm+" <md-progress-linear-custom flex  style='width:"+currentColumn.chartLength +"px' value="+barValue+" color=\""+  currentColumn.chartColor +"\"> </md-progress-linear-custom>"
+									}	
+									else if(currentColumn.visType=='Text & Chart')
+									{
+
+										if(barValue>100 || barValue<0)
+										{
+											htm=htm+"<div flex> Out of range </div> &nbsp;";
+										}
+										else
+										{
+//											var htm="<div>"+value+"</div>"+"<md-progress-linear md-mode='determinate' value="+barValue+"></md-progress-linear>"
+											////htm=htm+" <div flex>"+value+"</div> &nbsp; <md-progress-linear flex style='width:"+currentColumn.chartLength +"px"+" color:"+currentColumn.chartColor +"' md-mode='determinate' value="+barValue+" alt="+value+" title="+value+">  </md-progress-linear>"
+											//htm=htm+" <div>"+value+" &nbsp <md-progress-linear-custom flex  style='width:"+currentColumn.chartLength +"px' value="+barValue+" color='red'> </md-progress-linear-custom>"
+											htm=htm+"<div>"+value+"</div> &nbsp;  <md-progress-linear-custom flex  style='width:"+currentColumn.chartLength +"px' value="+barValue+" color=\""+  currentColumn.chartColor +"\"> </md-progress-linear-custom>"
+
+										}	
+									}	 
+									else if(currentColumn.visType=='Chart & Text')
+									{
+										if(barValue>100 || barValue<0)
+										{
+											htm=htm+"<div> Out of range </div> &nbsp;";
+										}
+										else
+										{
+											//htm=htm+"<md-progress-linear flex style='width:"+currentColumn.chartLength+"px"+" color:"+currentColumn.chartColor +"' md-mode='determinate' value="+barValue+"></md-progress-linear> &nbsp;"+"<div>"+value+"</div>"
+											htm=htm+"<md-progress-linear-custom flex  style='width:"+currentColumn.chartLength +"px' value="+barValue+" color=\""+  currentColumn.chartColor +"\"> </md-progress-linear-custom> &nbsp; <div>"+value+"</div>"
+											
+										}	
+									}							
+
+								}
+								for(var i=0; i<currentColumn.scopeFunc.condition.length;i++) // display only the first alert found (condition respected)
+								{
+									var colInfo=currentColumn.scopeFunc.condition[i];
+									if(colInfo.condition!="none")
+									{
+										if(colInfo.condition=='<')
+										{	
+											if(parseFloat(value)<colInfo.value)
+											{	
+												htm=htm+"&nbsp; <md-icon  style='color:red'  md-font-icon='"+currentColumn.scopeFunc.condition[i].icon+"'> </md-icon>";
+											}
+											else 
+											{
+												//htm=htm+"&nbsp; <div style='height:\"24px\"; width:\"24px\";'> </div>";
+												htm=htm+"&nbsp; <md-icon md-font-icon='fa fa-fw'></md-icon>";
+											}	
+										}
+										else if(colInfo.condition=='>')
+										{	
+											if(parseFloat(value)>colInfo.value)
+											{	
+												htm=htm+"&nbsp; <md-icon  style='color:red'  md-font-icon='"+currentColumn.scopeFunc.condition[i].icon+"'> </md-icon>";
+											}
+											else 
+											{
+												//htm=htm+"&nbsp; <div style='height:\"24px\"; width:\"24px\";'> </div>";
+												htm=htm+"&nbsp; <md-icon md-font-icon='fa fa-fw'></md-icon>";
+											}	
+										}
+										else if(colInfo.condition=='=')
+										{
+											if(parseFloat(value)==colInfo.value)
+											{	
+												htm=htm+"&nbsp; <md-icon  style='color:red'  md-font-icon='"+currentColumn.scopeFunc.condition[i].icon+"'> </md-icon>";
+											}
+											else 
+											{
+												//htm=htm+"&nbsp; <div style='height:\"24px\"; width:\"24px\";'> </div>";
+												htm=htm+"&nbsp; <md-icon md-font-icon='fa fa-fw'></md-icon>";
+											}	
+										}
+
+											
+
+										break;
+									}	
+								}	
+								
+								
+								return htm+"</div>";									
+
+						}
+					}else{
+						obj.static=true;
+					}
+					
+					
+					
+					
+					
+					
+					
 					if($scope.ngModel.content.columnSelectedOfDataset[i].isCalculated){
 						obj.customRecordsClass="noClickCursor";
 					}
@@ -390,6 +586,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.getMetadata = getMetadata;
 		$scope.model = {};
 		angular.copy(originalModel,$scope.model);
+		console.log("originalModel:", originalModel);
 		
 		$scope.colorPickerProperty={format:'rgb', placeholder:sbiModule_translate.load('sbi.cockpit.color.select')};
 		$scope.colorPickerPropertyEvenOddRows = {placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb',disabled:!$scope.model.style.showAlternateRows};

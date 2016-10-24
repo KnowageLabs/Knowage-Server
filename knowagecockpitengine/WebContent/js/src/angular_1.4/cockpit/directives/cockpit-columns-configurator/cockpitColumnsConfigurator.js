@@ -225,8 +225,11 @@
 						locals:{model:$scope.model, selectedColumn : $scope.selectedColumn},
 						controller: cockpitStyleColumnFunction
 
-					}).then(function(answer) {
+					}).then(function(answer) { 			
+						console.log("Selected column:", $scope.selectedColumn);
+
 					}, function() {
+						console.log("Selected column:", $scope.selectedColumn);
 					});
 
 				},
@@ -375,19 +378,91 @@ function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,model,s
 	$scope.selectedColumn = angular.copy(selectedColumn);
 	$scope.fontWeight = ['normal','bold','bolder','lighter','number','initial','inherit'];
 	$scope.colorPickerProperty={placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb'}
+	$scope.visTypes=['Chart','Text','Chart & Text', 'Text & Chart'];
+	if($scope.selectedColumn.visType==undefined)
+	{
+		$scope.selectedColumn.visType="Text";
+	}	
+	if($scope.selectedColumn.minValue==undefined||$scope.selectedColumn.minValue===''||$scope.selectedColumn.maxValue==undefined||$scope.selectedColumn.maxValue==='')
+	{
+		$scope.selectedColumn.minValue=0;
+		$scope.selectedColumn.maxValue=100;
+	}	
+	if($scope.selectedColumn.chartColor==undefined||$scope.selectedColumn.chartColor==='')
+	{	
+		$scope.selectedColumn.chartColor="rgb(19, 30, 137)";
+	}
+	if($scope.selectedColumn.chartLength==undefined||$scope.selectedColumn.chartLength==='')
+	{
+		$scope.selectedColumn.chartLength=200;
+	}
 
+                        
+	$scope.conditions=['>','<','=','none'];
+	if($scope.selectedColumn.scopeFunc==undefined)
+	{	
+		$scope.selectedColumn.scopeFunc={conditions:$scope.conditions, condition:[{condition:'none'},{condition:'none'},{condition:'none'}]};  
+	}
+		
+	var conditionString0="	<md-input-container class='md-block'> 	<md-select ng-model='scopeFunctions.condition[0].condition'>	<md-option ng-repeat='cond in scopeFunctions.conditions' value='{{cond}}'>{{cond}}</md-option>	</md-select> </md-input-container>"
+	var conditionString1="	<md-input-container class='md-block'> 	<md-select ng-model='scopeFunctions.condition[1].condition'>	<md-option ng-repeat='cond in scopeFunctions.conditions' value='{{cond}}'>{{cond}}</md-option>	</md-select> </md-input-container>"
+	var conditionString2="	<md-input-container class='md-block'> 	<md-select ng-model='scopeFunctions.condition[2].condition'>	<md-option ng-repeat='cond in scopeFunctions.conditions' value='{{cond}}'>{{cond}}</md-option>	</md-select> </md-input-container>"
+
+	var valueString0="<md-input-container class='md-block' ng-if='scopeFunctions.condition[0].condition!=undefined && scopeFunctions.condition[0].condition!=\"none\"' flex>	<input class='input_class'  ng-model='scopeFunctions.condition[0].value' type='number' required> </md-input-container>";	
+	var valueString1="<md-input-container class='md-block' ng-if='scopeFunctions.condition[1].condition!=undefined && scopeFunctions.condition[1].condition!=\"none\"' flex>	<input class='input_class'  ng-model='scopeFunctions.condition[1].value' type='number' required> </md-input-container>";	
+	var valueString2="<md-input-container class='md-block' ng-if='scopeFunctions.condition[2].condition!=undefined && scopeFunctions.condition[2].condition!=\"none\"' flex>	<input class='input_class'  ng-model='scopeFunctions.condition[2].value' type='number' required> </md-input-container>";	
+
+		
+	$scope.thresholdsList=[{priority:0, icon:"<md-icon style='color:red'  md-font-icon='fa fa-exclamation-circle' ng-init='scopeFunctions.condition[0].icon=\"fa fa-exclamation-circle\"'></md-icon>",condition:conditionString0, value:valueString0},{priority:1 , icon:"<md-icon style='color:red'  md-font-icon='fa fa-times-circle' ng-init='scopeFunctions.condition[1].icon=\"fa fa-times-circle\"'></md-icon>",condition:conditionString1, value:valueString1},{priority:2 , icon:"<md-icon style='color:yellow'  md-font-icon='fa fa-exclamation-triangle' ng-init='scopeFunctions.condition[2].icon=\"fa fa-exclamation-triangle\"'></md-icon>",condition:conditionString2, value:valueString2}];
+	
+	$scope.tableColumns=[{label:"Icon",name:"icon", hideTooltip:true},{label:"Condition",name:"condition", hideTooltip:true},{label:"Value",name:"value", hideTooltip:true}];
+
+	//$scope.selectedColumn.conditions=$scope.scopeFunc.condition;
+	
+	
 
 	$scope.cleanStyleColumn = function(){
 		$scope.selectedColumn.style = undefined;
 	}
 	$scope.saveColumnStyleConfiguration = function(){
 		angular.copy($scope.selectedColumn,selectedColumn)
+
 		$mdDialog.cancel();
 	}
 
 	$scope.cancelcolumnStyleConfiguration = function(){
 		$mdDialog.cancel();
 	}
+	
+	
+	$scope.checkIfDisable = function(){
+		
+		if($scope.selectedColumn.selectThreshold==true)
+		{	
+			if($scope.selectedColumn.threshold==undefined||$scope.selectedColumn.threshold=="")
+			{
+				return true;
+			}				
+		}	
+		
+		if($scope.selectedColumn.maxValue==undefined || $scope.selectedColumn.minValue==undefined || $scope.selectedColumn.maxValue==="" || $scope.selectedColumn.minValue==="")
+		{
+			return true;
+		}
+		
+		for(var i=0;i<$scope.selectedColumn.scopeFunc.condition.length;i++)
+		{
+			if($scope.selectedColumn.scopeFunc.condition[i].condition!=undefined && $scope.selectedColumn.scopeFunc.condition[i].condition!="none")
+			{
+				if($scope.selectedColumn.scopeFunc.condition[i].value==="" || $scope.selectedColumn.scopeFunc.condition[i].value==undefined)
+				{
+					return true;
+				}	
+			}	
+		}
+		return false;
+	}
+	
 }
 function controllerCockpitSummaryInfo($scope,sbiModule_translate,$mdDialog,items,model,getMetadata,actualItem,cockpitModule_datasetServices,$mdToast,cockpitModule_generalOptions){
 	$scope.translate=sbiModule_translate;
