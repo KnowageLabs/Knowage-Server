@@ -31,9 +31,13 @@ import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.FilterCriteria;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.Operand;
+import it.eng.spagobi.tools.dataset.common.association.Association;
+import it.eng.spagobi.tools.dataset.common.association.Association.Field;
 import it.eng.spagobi.tools.dataset.common.association.AssociationGroup;
 import it.eng.spagobi.tools.dataset.common.association.AssociationGroupJSONSerializer;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.dao.ISbiDataSetDAO;
@@ -46,6 +50,7 @@ import it.eng.spagobi.tools.dataset.persist.IPersistedManager;
 import it.eng.spagobi.tools.dataset.persist.PersistedHDFSManager;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceParameterException;
@@ -297,8 +302,9 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 			}
 			JSONObject associationGroupObject = new JSONObject(associationGroupString);
 			AssociationGroupJSONSerializer serializer = new AssociationGroupJSONSerializer();
-			AssociationGroup associationGroup1 = serializer.deserialize(associationGroupObject);
-			AssociationGroup associationGroup = associationGroup1;
+			AssociationGroup associationGroup = serializer.deserialize(associationGroupObject);
+
+			fixAssociationGroup(associationGroup);
 
 			// parse documents
 			Set<String> documents = new HashSet<String>();
@@ -358,6 +364,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 			String selectedDataset = null;
 			String selectedColumn = null;
 			String value = null;
+			IDataSource cacheDataSource = SpagoBICacheConfiguration.getInstance().getCacheDataSource();
 
 			// get datasets from selections
 			Map<String, String> filtersMap = new HashMap<String, String>();
@@ -378,8 +385,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 							if (realtimeDatasets.contains(dataset)) {
 								filter = DataStore.DEFAULT_TABLE_NAME + "." + AbstractJDBCDataset.encapsulateColumnName(column, null) + "='" + value + "'";
 							} else {
-								filter = AbstractJDBCDataset.encapsulateColumnName(column, SpagoBICacheConfiguration.getInstance().getCacheDataSource())
-										+ "=('" + value + "')";
+								filter = AbstractJDBCDataset.encapsulateColumnName(column, cacheDataSource) + "=('" + value + "')";
 							}
 							filtersMap.put(dataset, filter);
 
@@ -419,6 +425,45 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 			throw new SpagoBIRestServiceException(errorMessage, buildLocaleFromSession(), e); // FIXME
 		} finally {
 			logger.debug("OUT");
+		}
+	}
+
+	private void fixAssociationGroup(AssociationGroup associationGroup) {
+		IDataSetDAO dataSetDAO;
+		try {
+			dataSetDAO = DAOFactory.getDataSetDAO();
+		} catch (EMFUserError e) {
+			throw new SpagoBIRuntimeException("Unable to load DataSet DAO", e);
+		}
+
+		Map<String, IMetaData> dataSetLabelToMedaData = new HashMap<String, IMetaData>();
+		for (Association association : associationGroup.getAssociations()) {
+			if (association.getDescription().contains(".")) {
+				for (Field field : association.getFields()) {
+					String fieldName = field.getFieldName();
+					if (fieldName.contains(":")) {
+						String dataSetLabel = field.getDataSetLabel();
+
+						IMetaData metadata = null;
+						if (dataSetLabelToMedaData.containsKey(dataSetLabel)) {
+							metadata = dataSetLabelToMedaData.get(dataSetLabel);
+						} else {
+							metadata = dataSetDAO.loadDataSetByLabel(dataSetLabel).getMetadata();
+							dataSetLabelToMedaData.put(dataSetLabel, metadata);
+						}
+
+						for (int i = 0; i < metadata.getFieldCount(); i++) {
+							IFieldMetaData fieldMeta = metadata.getFieldMeta(i);
+							String alias = fieldMeta.getAlias();
+							if (fieldMeta.getName().equals(fieldName)) {
+								association.setDescription(association.getDescription().replace(dataSetLabel + "." + fieldName, dataSetLabel + "." + alias));
+								field.setFieldName(alias);
+								break;
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 
