@@ -90,8 +90,23 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 				
 		}else{
 		// post create new item
-			$scope.selectedFolder.path=$scope.path+"/"+$scope.selectedFolder.name ;
-			sbiModule_restServices.promisePost('2.0/functionalities','',$scope.selectedFolder)
+			 $scope.fake = {
+	    			 codeType : $scope.selectedFolder.codType,
+	    			 code : $scope.selectedFolder.code,
+	    			 createRoles : $scope.selectedFolder.createRoles,
+	    			 testRoles : $scope.selectedFolder.testRoles ,
+	    			 execRoles : $scope.selectedFolder.execRoles,
+	    			 devRoles :  $scope.selectedFolder.devRoles,
+	    			 description :  $scope.selectedFolder.description,
+	    			 name :  $scope.selectedFolder.name,
+	    			 path :  $scope.path+"/"+$scope.selectedFolder.name,
+	    			 parentId : $scope.selectedFolder.parentId
+	    			 
+	    	 }
+	    	 console.log($scope.fake);
+	    		sbiModule_restServices.p
+			console.log($scope.selectedFolder);
+			sbiModule_restServices.promisePost('2.0/functionalities','',$scope.fake)
 			.then(function(response) {
 				$scope.folders_copy = $scope.getFolders(); 
 				$scope.showme=false;
@@ -118,15 +133,19 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 		$scope.parentID = $scope.selectedFolder.id;
 		$scope.codType = $scope.selectedFolder.codType;
 		$scope.path = $scope.selectedFolder.path;
-		$scope.selectedFolder = {};
+
+		
+
+		$scope.selectedFolder.code = "";
+		$scope.selectedFolder.description= "";
+		$scope.selectedFolder.name= "";
+
+		delete $scope.selectedFolder.id ;
+
+		delete $scope.selectedFolder.prog ;
 
 		$scope.selectedFolder.parentId= $scope.parentID;
 		$scope.selectedFolder.codType=$scope.codType ;
-		
-		$scope.selectedFolder.testRoles = [];
-		$scope.selectedFolder.devRoles = [];
-		$scope.selectedFolder.execRoles = [];
-		$scope.selectedFolder.createRoles = [];
 		$scope.showme = true;
 	}
 	$scope.columnsArray = [

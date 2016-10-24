@@ -17,7 +17,6 @@
  */
 package it.eng.spagobi.api.v2;
 
-import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
@@ -36,7 +35,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -65,7 +63,7 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 	/**
 	 * Getting list of all functionalities. Arrays of Roles that belong to one
 	 * functionality are implemented to be like: One Role only with id and name
-	 * 
+	 *
 	 * @author Radmila Selakovic (rselakov, radmila.selakovic@mht.net
 	 */
 
@@ -242,7 +240,7 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 
 	/**
 	 * Service that moves functionality up
-	 * 
+	 *
 	 * @author Radmila Selakovic (rselakov, radmila.selakovic@mht.net
 	 */
 
@@ -266,7 +264,7 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 
 	/**
 	 * Service that moves functionality down
-	 * 
+	 *
 	 * @author Radmila Selakovic (rselakov, radmila.selakovic@mht.net
 	 */
 
@@ -290,7 +288,7 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 
 	/**
 	 * Service that creates new functionality
-	 * 
+	 *
 	 * @author Radmila Selakovic (rselakov, radmila.selakovic@mht.net
 	 */
 
@@ -298,30 +296,80 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 	@Path("/")
 	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONALITIES_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response insertLowFunctionality(@Valid LowFunctionality lowFunct) {
+	public Response insertLowFunctionality(@javax.ws.rs.core.Context HttpServletRequest req) {
 
 		ILowFunctionalityDAO objDao = null;
-		LowFunctionality lowFunctionality = lowFunct;
 
+		IRoleDAO roleDao = null;
 		try {
+			JSONObject paramsObj = RestUtilities.readBodyAsJSONObject(req);
+			JSONArray devRoles = paramsObj.getJSONArray("devRoles");
+			JSONArray testRoles = paramsObj.getJSONArray("testRoles");
+			JSONArray execRoles = paramsObj.getJSONArray("execRoles");
+			JSONArray creatRoles = paramsObj.getJSONArray("createRoles");
+			roleDao = DAOFactory.getRoleDAO();
+			ArrayList<Role> devRolesArrayList = new ArrayList<Role>();
+			ArrayList<Role> testRolesArrayList = new ArrayList<Role>();
+			ArrayList<Role> execRolesArrayList = new ArrayList<Role>();
+			ArrayList<Role> creatRolesArrayList = new ArrayList<Role>();
+			Role[] devRolesArray = new Role[devRoles.length()];
+			for (int i = 0; i < devRoles.length(); i++) {
+				int roleID = devRoles.getJSONObject(i).getInt("id");
+				Role r = roleDao.loadByID(roleID);
+				devRolesArrayList.add(r);
 
+			}
+			Role[] testRolesArray = new Role[testRoles.length()];
+			for (int i = 0; i < testRoles.length(); i++) {
+				int roleID = testRoles.getJSONObject(i).getInt("id");
+				Role r = roleDao.loadByID(roleID);
+				testRolesArrayList.add(r);
+
+			}
+			Role[] execRolesArray = new Role[execRoles.length()];
+			for (int i = 0; i < execRoles.length(); i++) {
+				int roleID = execRoles.getJSONObject(i).getInt("id");
+				Role r = roleDao.loadByID(roleID);
+				execRolesArrayList.add(r);
+
+			}
+			Role[] creatRolesArray = new Role[creatRoles.length()];
+			for (int i = 0; i < creatRoles.length(); i++) {
+				int roleID = creatRoles.getJSONObject(i).getInt("id");
+				Role r = roleDao.loadByID(roleID);
+				creatRolesArrayList.add(r);
+
+			}
 			objDao = DAOFactory.getLowFunctionalityDAO();
+
 			objDao.setUserProfile(getUserProfile());
+			LowFunctionality lowFunctionality = new LowFunctionality();
+
+			lowFunctionality.setCode(paramsObj.getString("code"));
+			lowFunctionality.setCodType(paramsObj.getString("codeType"));
+			lowFunctionality.setCreateRoles(creatRolesArrayList.toArray(creatRolesArray));
+			lowFunctionality.setTestRoles(testRolesArrayList.toArray(testRolesArray));
+			lowFunctionality.setExecRoles(execRolesArrayList.toArray(execRolesArray));
+			lowFunctionality.setDevRoles(devRolesArrayList.toArray(devRolesArray));
+			lowFunctionality.setDescription(paramsObj.getString("code"));
+			lowFunctionality.setName(paramsObj.getString("name"));
+			lowFunctionality.setPath(paramsObj.getString("path"));
+			lowFunctionality.setParentId(paramsObj.getInt("parentId"));
+
 			objDao.insertLowFunctionality(lowFunctionality, getUserProfile());
 			return Response.ok().build();
-		} catch (EMFUserError e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			String errorString = "sbi.folder.save.error";
 			logger.error(errorString, e);
 			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
-
 		}
 
 	}
 
 	/**
 	 * Service that updates functionality
-	 * 
+	 *
 	 * @author Radmila Selakovic (rselakov, radmila.selakovic@mht.net
 	 */
 
@@ -401,7 +449,7 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 
 	/**
 	 * Service that deletes functionality
-	 * 
+	 *
 	 * @author Radmila Selakovic (rselakov, radmila.selakovic@mht.net
 	 */
 
