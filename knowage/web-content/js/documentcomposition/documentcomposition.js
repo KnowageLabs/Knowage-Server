@@ -413,16 +413,32 @@ function sendUrl(nameIframe, url, msg){
 	if (msg !== null && msg !== undefined && msg.typeCross === 'EXTERNAL'){
 		//EXTERNAL cross management
 		var params =  url.substring(url.indexOf("?")+1);
-		if (params.substring(0,1) === '&') params = params.substring(1);
-		msg.parameters = params;
+		if (params.substring(0,1) === '&') params = params.substring(1);		
 		msg.target = 'self';
-        sendMessage(msg, 'crossnavigation');
+		RE = new RegExp("%", "ig");
+		params = params.replace(RE, "%25");					
+		msg.parameters = params;
+		//msg.parameters = getUrlVars(params);
+		//msg.parameters = params.slice(params.indexOf('?') + 1).split('&');
+       // sendMessage(msg, 'crossnavigation'); //senddMessage dosen't exist anymore, substituited by old execCrossNavigation
+		parent.execCrossNavigation(this.name, msg.label, msg.parameters,null,null,msg.target);
 	}else{
 		//INTERNAL cross management
 		Ext.get(nameIframe).setSrc(url);
 	}
 	return;	
 } 
+
+function getUrlVars(url) {
+    var hash;
+    var myJson = {};
+    var hashes = url.slice(url.indexOf('?') + 1).split('&');
+    for (var i = 0; i < hashes.length; i++) {
+        hash = hashes[i].split('=');
+        myJson[hash[0]] = hash[1];
+    }
+    return myJson;
+}
 
 function pause(interval)
 {

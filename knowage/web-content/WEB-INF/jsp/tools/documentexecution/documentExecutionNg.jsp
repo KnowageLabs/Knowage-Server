@@ -48,11 +48,13 @@ String cockpitSelections = null;
 String executedFrom = null;
 
 try{
-	profile = (IEngUserProfile)permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-	
-	obj = (BIObject) aServiceResponse.getAttribute(SpagoBIConstants.OBJECT);
+	profile = (IEngUserProfile)permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);	
+		
 	objId = (String)(request.getParameter(SpagoBIConstants.OBJECT_ID));
-	objLabel = request.getParameter(SpagoBIConstants.OBJECT_LABEL) != null ? ((String)request.getParameter(SpagoBIConstants.OBJECT_LABEL)) : obj.getLabel();
+	objLabel = (String)(request.getParameter(SpagoBIConstants.OBJECT_LABEL));
+	//For default gets the object document through the DAO by the label found into the request:
+	IBIObjectDAO biObjectDAO = DAOFactory.getBIObjectDAO();
+	obj = biObjectDAO.loadBIObjectByLabel(objLabel);
 	
 	/*
 		This request parameter is sent from the controller of the document execution application (documentViewer.js) and it
@@ -75,7 +77,7 @@ try{
 	
 	cockpitSelections = (String)(request.getParameter(SpagoBIConstants.COCKPIT_SELECTIONS));
 	
-	if(obj == null 
+	/*if(obj == null 
 			&& (
 					(isForExport != null 
 						&& ("true").equalsIgnoreCase(isForExport))
@@ -87,7 +89,7 @@ try{
 		IBIObjectDAO biObjectDAO = DAOFactory.getBIObjectDAO();
 		
 		obj = biObjectDAO.loadBIObjectByLabel(objLabel);
-	}
+	}*/
 
 	executingEngine = obj.getEngine();
 	engineName = executingEngine.getName();
@@ -97,7 +99,7 @@ try{
 		Integer objIdInt = new Integer(objId);
 		executionRoleNames = ObjectsAccessVerifier.getCorrectRolesForExecution(objIdInt, profile);
 	} else {
-		executionRoleNames = ObjectsAccessVerifier.getCorrectRolesForExecution(obj.getLabel(), profile);
+		executionRoleNames = ObjectsAccessVerifier.getCorrectRolesForExecution(obj.getLabel(), profile);		
 	}
 	
 }catch (Exception e) {
