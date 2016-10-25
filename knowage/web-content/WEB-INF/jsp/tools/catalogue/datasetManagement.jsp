@@ -1647,8 +1647,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 													<md-select placeholder ="Select minute(s)"
 											        	ng-required="selectedDataSet.isScheduled" ng-if="scheduling.minutesCustom" multiple=true
 											        	ng-model="scheduling.minutesSelected" style="margin:0; width:80%" title="{{scheduling.minutesSelected}}"
-											        	ng-change="setFormDirty()">   
-											        	<md-option ng-repeat="l in minutes track by $index" value="{{$index}}">
+											        	>   
+											        	<md-option ng-repeat="l in minutes track by $index" value="{{$index}}" ng-mousedown="setFormDirty()">
 											        		{{$index}}
 											        	</md-option>
 										       		</md-select> 
@@ -1664,7 +1664,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							           					
 								                  			<md-input-container class="small counter" style="margin:8;" >
 								                     			<md-checkbox 	aria-label="Checkbox 2" ng-model="scheduling.minutesCustom"								                     						
-									                     						ng-change="setFormDirty()">
+									                     						ng-mousedown="setFormDirty()">
 																</md-checkbox>
 								                  			</md-input-container>
 								                  			
@@ -1674,8 +1674,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						                  				</div>
 						                  				
 						                  				<div flex=50 ng-if=scheduling.minutesCustom>					                  				
-						                  					<md-button aria-label="menu" class="md-raised md-mini" ng-click="minutesClearSelections()" 
-											      					ng-show="selectedDataSet" title="Fields metadata" style="margin-top:0; margin-bottom:0;">
+						                  					<md-button aria-label="menu" class="md-raised md-mini" ng-click="minutesClearSelections();setFormDirty()" 
+											      					ng-mousedown="setFormDirty()" title="Fields metadata" style="margin-top:0; margin-bottom:0;">
 												            	{{translate.load('sbi.ds.persist.cron.scheduling.multipleselect.clearall')}} 
 												          	</md-button>				                  				
 						                  				</div>
@@ -1710,9 +1710,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 													
 													<md-select placeholder ="Select hours(s)"
 											        	ng-required = "selectedDataSet.isScheduled" ng-if=scheduling.hoursCustom multiple=true
-											        	ng-model="scheduling.hoursSelected" style="margin:0; width:80%" title="{{scheduling.hoursSelected}}"
-											        	ng-change="setFormDirty()">   
-											        	<md-option ng-repeat="l in hours track by $index" value="{{$index}}">
+											        	ng-model="scheduling.hoursSelected" style="margin:0; width:80%" title="{{scheduling.hoursSelected}}">   
+											        	<md-option ng-repeat="l in hours track by $index" value="{{$index}}" ng-mousedown="setFormDirty()">
 											        		{{$index}}
 											        	</md-option>
 										       		</md-select> 
@@ -1727,7 +1726,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								                  			<md-input-container class="small counter" style="margin:8;">
 								                     			<md-checkbox 	aria-label="Checkbox 2" 
 										                     					ng-model="scheduling.hoursCustom" ng-checked="" 
-										                     					ng-change="setFormDirty()">
+										                     					ng-mousedown="setFormDirty()">
 																</md-checkbox>
 								                  			</md-input-container>
 								                  			
@@ -1737,7 +1736,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						                  				</div>
 						                  				
 						                  				<div flex=50 ng-if=scheduling.hoursCustom>					                  				
-						                  					<md-button aria-label="menu" class="md-raised md-mini" ng-click="hoursClearSelections()" 
+						                  					<md-button aria-label="menu" class="md-raised md-mini" ng-click="hoursClearSelections();setFormDirty()" 
 											      					ng-show="selectedDataSet" title="Fields metadata" style="margin-top:0; margin-bottom:0;">
 												            	{{translate.load('sbi.ds.persist.cron.scheduling.multipleselect.clearall')}} 
 												          	</md-button>				                  				
@@ -1773,9 +1772,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 													
 													<md-select placeholder ="Select day(s)"
 											        	ng-required = "selectedDataSet.isScheduled" ng-if=scheduling.daysCustom multiple=true
-											        	ng-model="scheduling.daysSelected" style="margin:0; width:80%" title="{{scheduling.daysSelected}}"
-											        	ng-change="setFormDirty()">   
-											        	<md-option ng-repeat="l in days" value="{{l}}">
+											        	ng-model="scheduling.daysSelected" style="margin:0; width:80%" title="{{scheduling.daysSelected}}">   
+											        	<md-option ng-repeat="l in days" value="{{l}}" ng-mousedown="setFormDirty()">
 											        		{{l}}
 											        	</md-option>
 										       		</md-select> 
@@ -1790,7 +1788,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								                  			<md-input-container class="small counter" style="margin:8;">
 								                     			<md-checkbox 	aria-label="Checkbox 2" 
 									                     						ng-model="scheduling.daysCustom" ng-checked="" 
-									                     						ng-change="setFormDirty()">
+									                     						ng-mousedown="setFormDirty()">
 																</md-checkbox>
 								                  			</md-input-container>
 								                  			
@@ -1800,7 +1798,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						                  				</div>
 						                  				
 						                  				<div flex=50 ng-if=scheduling.daysCustom>					                  				
-						                  					<md-button aria-label="menu" class="md-raised md-mini" ng-click="daysClearSelections()" 
+						                  					<md-button aria-label="menu" class="md-raised md-mini" ng-click="daysClearSelections();setFormDirty()" 
 											      					ng-show="selectedDataSet" title="Fields metadata" style="margin-top:0; margin-bottom:0;">
 												            	{{translate.load('sbi.ds.persist.cron.scheduling.multipleselect.clearall')}} 
 												          	</md-button>				                  				
@@ -1836,9 +1834,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 													
 													<md-select placeholder ="Select month(s)"
 											        	ng-required = "selectedDataSet.isScheduled" ng-if=scheduling.monthsCustom multiple=true
-											        	ng-model="scheduling.monthsSelected" style="margin:0; width:80%" title="{{scheduling.monthsSelected}}"
-											        	ng-change="setFormDirty()">   
-											        	<md-option ng-repeat="l in months" value="{{l.value}}">
+											        	ng-model="scheduling.monthsSelected" style="margin:0; width:80%" title="{{scheduling.monthsSelected}}">   
+											        	<md-option ng-repeat="l in months" value="{{l.value}}" ng-mousedown="setFormDirty()">
 											        		{{l.name}}
 											        	</md-option>
 										       		</md-select> 
@@ -1853,7 +1850,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								                  			<md-input-container class="small counter" style="margin:8;">
 								                     			<md-checkbox 	aria-label="Checkbox 2" 
 										                     					ng-model="scheduling.monthsCustom" ng-checked="" 
-										                     					ng-change="setFormDirty()">
+										                     					ng-mousedown="setFormDirty()">
 																</md-checkbox>
 								                  			</md-input-container>
 								                  			
@@ -1863,7 +1860,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						                  				</div>
 						                  				
 						                  				<div flex=50 ng-if=scheduling.monthsCustom>					                  				
-						                  					<md-button aria-label="menu" class="md-raised md-mini" ng-click="monthsClearSelections()" 
+						                  					<md-button aria-label="menu" class="md-raised md-mini" ng-click="monthsClearSelections();setFormDirty()" 
 											      					ng-show="selectedDataSet" title="Fields metadata" style="margin-top:0; margin-bottom:0;">
 												            	{{translate.load('sbi.ds.persist.cron.scheduling.multipleselect.clearall')}} 
 												          	</md-button>				                  				
@@ -1899,9 +1896,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 													
 													<md-select placeholder ="Select weekday(s)"
 											        	ng-required = "selectedDataSet.isScheduled" ng-if=scheduling.weekdaysCustom multiple=true
-											        	ng-model="scheduling.weekdaysSelected" style="margin:0; width:80%" title="{{scheduling.weekdaysSelected}}"
-											        	ng-change="setFormDirty()">   
-											        	<md-option ng-repeat="l in weekdays" value="{{l.value}}">
+											        	ng-model="scheduling.weekdaysSelected" style="margin:0; width:80%" title="{{scheduling.weekdaysSelected}}">   
+											        	<md-option ng-repeat="l in weekdays" value="{{l.value}}" ng-mousedown="setFormDirty()">
 											        		{{l.name}}
 											        	</md-option>
 										       		</md-select> 
@@ -1916,7 +1912,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								                  			<md-input-container class="small counter" style="margin:8;">
 								                     			<md-checkbox 	aria-label="Checkbox 2" 
 										                     					ng-model="scheduling.weekdaysCustom" ng-checked="" 
-										                     					ng-change="setFormDirty()">
+										                     					ng-mousedown="setFormDirty()">
 																</md-checkbox>
 								                  			</md-input-container>
 								                  			
@@ -1926,7 +1922,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						                  				</div>
 						                  				
 						                  				<div flex=50 ng-if=scheduling.weekdaysCustom>					                  				
-						                  					<md-button aria-label="menu" class="md-raised md-mini" ng-click="weekdaysClearSelections()" 
+						                  					<md-button aria-label="menu" class="md-raised md-mini" ng-click="weekdaysClearSelections();setFormDirty()" 
 											      					ng-show="selectedDataSet" title="Fields metadata" style="margin-top:0; margin-bottom:0;">
 												            	{{translate.load('sbi.ds.persist.cron.scheduling.multipleselect.clearall')}} 
 												          	</md-button>				                  				
