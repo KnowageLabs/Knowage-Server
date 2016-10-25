@@ -9,14 +9,18 @@
 					<span>{{translate.load('sbi.kpi.scorecard.perspective.list')}}</span>
 				</h2>
 				<span flex></span>
-				<md-button class="ng-scope" ng-click="addPerspective()" aria-label="Aggiungi Prospettiva">
+				<md-button class="ng-scope" ng-click="addPerspective()" aria-label="Add perspective">
 					{{translate.load('sbi.kpi.scorecard.perspective.add')}}
 				</md-button>
 			</div>
 		</md-toolbar>
 		<div layout="row" layout-wrap  ng-cloak >
+		
+			<kpi-color-indicator perspectives="currentScorecard.perspectives" definition="true" criterion="criterionTypeList"></kpi-color-indicator>
+		
+		
 			
-			<md-card class="md-whiteframe-2dp scorecardPrespectiveCard" layout="column" ng-repeat="perspective in currentScorecard.perspectives">
+			<!--  md-card class="md-whiteframe-2dp scorecardPrespectiveCard" layout="column" ng-repeat="perspective in currentScorecard.perspectives">
 				<md-toolbar>
 					<div class="md-toolbar-tools" layout-fill layout="row">
 						<kpi-semaphore-indicator indicator-color="perspective.status"></kpi-semaphore-indicator>
@@ -51,7 +55,7 @@
 		    			<kpi-semaphore-indicator flex ng-repeat="groupedKpi in perspective.groupedKpis" indicator-color="groupedKpi.status" indicator-value="groupedKpi.count"></kpi-semaphore-indicator>
 
 		    	</md-card-content>
-			</md-card> 
+			</md-card--> 
 			
 		</div>
 		</md-content>

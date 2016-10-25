@@ -38,6 +38,50 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 
+
+
+<%-- ---------------------------------------------------------------------- --%>
+<%-- INFUSION	SLIDING PANEL												--%>
+<%-- ---------------------------------------------------------------------- --%>
+
+<script type="text/javascript">
+
+<%
+
+	String tocTemplate = urlBuilder.getResourceLink(request, "/js/lib/infusion/src/components/tableOfContents/html/TableOfContents.html");
+	String templatePrefix = urlBuilder.getResourceLink(request, "/js/lib/infusion/src/framework/preferences/html");
+	String messagePrefix  = urlBuilder.getResourceLink(request, "/js/lib/infusion/src/framework/preferences/messages");
+	
+%>
+
+// FLUID BOOTSTRAP
+document.addEventListener("DOMContentLoaded", function(event) { 
+	fluid.uiOptions.prefsEditor(".flc-prefsEditor-separatedPanel", {
+        tocTemplate: "<%=tocTemplate%>",
+        terms: {
+            templatePrefix: "<%=templatePrefix%>",
+            messagePrefix: "<%=messagePrefix%>"
+        }
+    });
+});
+
+   
+    </script>
+
+<style>
+
+.fl-prefsEditor-separatedPanel .fl-panelBar .fl-prefsEditor-buttons {
+	float: left !important;
+}
+
+</style>
+
+
+
+
+
+
+
 <!-- Styles -->
 <!-- <link rel="stylesheet" type="text/css"	href="/knowage/themes/glossary/css/generalStyle.css"> -->
 
@@ -76,7 +120,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Business Model Catalogue</title>
 </head>
-<body  class="bodyStyle businessModelCatalog" ng-controller="businessModelCatalogueController as ctrl">
+<body  class="bodyStyle businessModelCatalog" ng-controller="businessModelCatalogueController as ctrl" ng-cloak>
+
+<div class="flc-prefsEditor-separatedPanel fl-prefsEditor-separatedPanel"  style="position: fixed; top: 0; z-index: 99999; width: 100%" >
+    <!-- This is the div that will contain the Preference Editor component -->
+    <div class="flc-slidingPanel-panel flc-prefsEditor-iframe"></div>
+    <!-- This div is for the sliding panel that shows and hides the Preference Editor controls -->
+    <div class="fl-panelBar">
+        <span class="fl-prefsEditor-buttons">
+            <button id="reset" class="flc-prefsEditor-reset fl-prefsEditor-reset"><span class="fl-icon-undo"></span> Reset</button>
+            <button id="show-hide" class="flc-slidingPanel-toggleButton fl-prefsEditor-showHide"> Show/Hide</button>
+        </span>
+    </div>
+</div>
+
 <rest-loading></rest-loading>
 	<angular-list-detail show-detail="showMe">
 		<list label='translate.load("sbi.tools.catalogue.metaModelsCatalogue")' new-function="createBusinessModel"> 
@@ -270,5 +327,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	      </form>
 		</detail>
 	</angular-list-detail>
+	<%-- ---------------------------------------------------------------------- --%>
+<%-- INFUSION																--%>
+<%-- ---------------------------------------------------------------------- --%>
+
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/js/lib/infusion/src/lib/normalize/css/normalize.css" />
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/js/lib/infusion/src/framework/core/css/fluid.css" />
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/js/lib/infusion/src/framework/preferences/css/Enactors.css" />
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/js/lib/infusion/src/framework/preferences/css/PrefsEditor.css" />
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/js/lib/infusion/src/framework/preferences/css/SeparatedPanelPrefsEditor.css" />
+
+<script type="text/javascript"          src="${pageContext.request.contextPath}/js/lib/infusion/infusion-all.js"></script>
+	
 </body>
 </html>

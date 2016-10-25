@@ -1,4 +1,4 @@
-var scorecardApp = angular.module('scorecardManager', [ 'ngMaterial',  'angular_table' ,'angular_list','sbiModule', 'angular-list-detail','bread_crumb','kpi_semaphore_indicator']);
+var scorecardApp = angular.module('scorecardManager', [ 'ngMaterial',  'angular_table' ,'angular_list','sbiModule', 'angular-list-detail','kpi_semaphore_indicator','kpi_color_indicator']);
 scorecardApp.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.theme('knowage')
     $mdThemingProvider.setDefaultTheme('knowage');
@@ -62,8 +62,6 @@ $scope.scorecardColumnsList=[
 	
 	$scope.newScorecardFunction=function(){
 		angular.copy($scope.emptyScorecard,$scope.currentScorecard);
-		$scope.steps.stepControl.resetBreadCrumb();
-		$scope.steps.stepControl.insertBread({name: sbiModule_translate.load('sbi.kpi.scorecard.scorecard.definition.name')});
 		$angularListDetail.goToDetail();
 		if ($scope.editProperty.scorecard.index)
 			angular.copy({},$scope.editProperty.scorecard);
@@ -87,8 +85,6 @@ $scope.scorecardColumnsList=[
 			
 			angular.copy($scope.parseScorecardForFrontend(response.data),$scope.currentScorecard); 
 			angular.extend($scope.editProperty.scorecard,{editedItem:angular.extend({},$scope.currentScorecard),index:index});
-			$scope.steps.stepControl.resetBreadCrumb();
-			$scope.steps.stepControl.insertBread({name: sbiModule_translate.load('sbi.kpi.scorecard.scorecard.definition.name')});
 			$angularListDetail.goToDetail();
 			},function(response){
 				sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.kpi.scorecard.load.error"));
@@ -187,7 +183,6 @@ function scorecardDetailControllerFunction($scope,sbiModule_translate,sbiModule_
 			.cancel(sbiModule_translate.load("sbi.general.No"));
 			  $mdDialog.show(confirm).then(function() {
 				  $angularListDetail.goToList();
-				  $scope.steps.stepControl.resetBreadCrumb();
 				  angular.copy({},$scope.currentScorecard);
 				  angular.copy({},$scope.editProperty.scorecard);
 				  
@@ -266,6 +261,7 @@ function scorecardDetailControllerFunction($scope,sbiModule_translate,sbiModule_
 	
 	
 	$scope.parseScorecardForBackend=function(scorecard){
+		debugger;
 		 var tmpScorecard={};
 		 angular.copy(scorecard,tmpScorecard);
 		for(var i=0;i<tmpScorecard.perspectives.length;i++){

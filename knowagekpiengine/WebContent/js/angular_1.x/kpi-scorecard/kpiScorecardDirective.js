@@ -4,7 +4,7 @@ var scripts = document.getElementsByTagName("script");
 var currentScriptPath = scripts[scripts.length - 1].src;
 currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
 
-var kpiScorecardApp = angular.module('kpiScorecardModule', ['ngMaterial','expander-box','sbiModule']);
+var kpiScorecardApp = angular.module('kpiScorecardModule', ['ngMaterial','expander-box','sbiModule','kpi_color_indicator']);
 kpiScorecardApp.directive("kpiScorecard",function(){
 		return {
 			//restrict: 'E',

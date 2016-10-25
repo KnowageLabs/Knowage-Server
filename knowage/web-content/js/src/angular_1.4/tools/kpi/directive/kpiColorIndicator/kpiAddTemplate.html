@@ -1,0 +1,31 @@
+<md-dialog aria-label="Select Function"  ng-cloak >
+
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h1>{{translate.load('sbi.kpi.addkpiassociation')}}</h1>
+      </div>
+	
+    </md-toolbar>
+    <md-dialog-content style="height:80%;">
+		<angular-table layout-fill
+		id='targetListTable' ng-model=kpiAllList
+		columns='[{"label":"Status","name":"kpiSemaphore","size":"60px"}, {"label":"KPI Name","name":"name"},{"label":"Category","name":"category.translatedValueName"},{"label":"Date","name":"datacreation"},{"label":"Author","name":"author"}]'
+		columns-search='["name"]' show-search-bar=true
+		multi-select = true selected-item=kpiSelected comparison-column="'id'"
+		scope-functions = tableFunction 
+		> </angular-table>
+		
+        </md-dialog-content>
+
+        <md-dialog-actions layout-align="end center" layout="row">
+		<md-button class="md-primary" ng-click="saveKpiToTarget()">
+          	Save
+        </md-button>
+		<md-button class="md-primary" ng-click="close()">
+			Close    
+        </md-button>
+		</md-dialog-actions>
+		
+   	 
+  
+</md-dialog>

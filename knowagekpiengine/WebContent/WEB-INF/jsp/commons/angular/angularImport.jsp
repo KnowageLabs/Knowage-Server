@@ -22,7 +22,9 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-1.5.0/angular-messages.min.js"></script>
 
 <!-- angular-material-->
+<link rel="stylesheet" type="text/css" href="<%= GeneralUtilities.getSpagoBiContext() %>/themes/commons/css/customStyle.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/angular-material_0.10.0/angular-material.min.css">
+
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-material_0.10.0/angular-material.js"></script>
 
 

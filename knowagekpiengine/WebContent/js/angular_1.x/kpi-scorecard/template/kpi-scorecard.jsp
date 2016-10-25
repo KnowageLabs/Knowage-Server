@@ -1,8 +1,7 @@
-<md-content layout="column" class=" md-whiteframe-3dp" flex>
 
-<div layout="column" layout-padding layout-wrap ng-cloak>
-
-	<expander-box id="Info" color="white" expanded="true" toolbar-class="ternaryToolbar" title="perspective.name" locals="localsScope" layout-margin layout="column" 
+<div layout-padding class="kn-scorecard-visualization" ng-cloak>
+<kpi-color-indicator perspectives="scorecardTarget.scorecard.perspectives" definition="false" ></kpi-color-indicator>
+	<!--  expander-box id="Info" color="white" expanded="true" toolbar-class="ternaryToolbar" title="perspective.name" locals="localsScope" layout-margin layout="column" 
 	class="md-whiteframe-2dp scorecardPrespectiveCard" ng-repeat="perspective in scorecardTarget.scorecard.perspectives" >
 	<custom-toolbar layout="row">
 		<kpi-semaphore-indicator flex indicator-color="perspective.status"></kpi-semaphore-indicator>
@@ -49,10 +48,9 @@
 		</div>
 		</md-content> 
 	</md-whiteframe>
-</expander-box>
+</expander-box-->
 
 </div>
-</md-content>
 
 
 

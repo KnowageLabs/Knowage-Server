@@ -92,7 +92,7 @@ angular-table{
 		width: auto!important;
 	}
 	
-	.tableWidget {
+	&.tableWidget {
 		.fakeTable {
 			width: 100% !important;
 		}
@@ -222,6 +222,9 @@ angular-table{
 	}
 	
 	.principalTable tr td:first-child>span {
+	    margin-left: $standardPadding;
+	}
+	.principalTable tr td:first-child > md-checkbox {
 	    margin-left: $standardPadding;
 	}
 	
@@ -419,8 +422,6 @@ angular-table{
 	.editCell{
 		color:orange;
 	}
-	
-	
 }
 
 /* IE11 fix */

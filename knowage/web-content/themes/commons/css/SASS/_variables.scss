@@ -35,14 +35,14 @@ $tooltipBackgroundColor: #fcefbd;
 
 
 /* FONTS & ICONS */
-$baseFontSize: 14px;
-$headerFontWeight: 	600;
-$tabFontWeight: 	400;
-$fabIconSize: 		18px;
-$smallFontSize:		12px;
-$headerFontSize: 	16px;
-$tableFontSize: 	16px;
-$standardLineHeight: 32px;
+$baseFontSize: 			14px;
+$headerFontWeight: 		600;
+$tabFontWeight: 		400;
+$fabIconSize: 			18px;
+$smallFontSize:			12px;
+$headerFontSize: 		16px;
+$tableFontSize: 		16px;
+$standardLineHeight: 	32px;
 
 /* PADDINGS */
 $standardPadding: 	10px;
@@ -57,11 +57,24 @@ $angularTableTRHeight: 36px;
 $standardLeftPadding: 1.5rem;
 $standardMarginTop: .5rem;
 
-/* DIMENSIONS in EM 
-$toolbarHeight: 2em;
-$inputHeight: 2em;
-$browseButtonLineHeight : 4em;
-$angularTableTRHeight: 2em;*/
+/* DIMENSIONS in REM 
+$toolbarHeight: 			2.5rem;
+$inputHeight: 				2rem;
+$browseButtonLineHeight : 	4rem;
+$angularTableTRHeight: 		2rem;
+$baseFontSize: 				.8rem;
+$fabIconSize: 				1.3rem;
+$smallFontSize:				.6rem;
+$headerFontSize: 			1rem;
+$tableFontSize: 			1rem;
+$standardLineHeight: 		2rem;
+*/
 
 /* WORKSPACE */
 $progCirculWorkspaceDiam: 75;
+
+/* KPI */
+$kpiGreyColor: 	#9E9E9E;
+$kpiRedColor: 	#F44336;
+$kpiGreenColor:	#4CAF50;
+$kpiYellowColor:#FFEB3B;

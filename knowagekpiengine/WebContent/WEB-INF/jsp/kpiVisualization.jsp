@@ -154,8 +154,7 @@ author:
 
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/js/lib/nvd3/1.8.2-dev/nv.d3.css">
-<link rel="stylesheet"
-	href="${pageContext.request.contextPath}/themes/sbi_default/css/commons/css/customStyle.css">
+
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/js/angular_1.x/kpi-widget/css/kpiWidgetStyle.css">
 <!-- Scripts -->
@@ -288,6 +287,9 @@ author:
 
 	<script type="text/javascript"
 		src="${pageContext.request.contextPath}/js/angular_1.x/kpi-scorecard/template/kpiSemaphoreIndicator/kpiSemaphoreIndicator.js">
+	</script>
+	<script type="text/javascript"
+		src="${pageContext.request.contextPath}/js/angular_1.x/kpi-scorecard/template/kpiColorIndicator/kpiColorIndicator.js">
 	</script>
 	<script type="text/javascript"
 		src="${pageContext.request.contextPath}/js/angular_1.x/kpi-scorecard/kpiScorecardDirective.js"></script>

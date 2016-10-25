@@ -119,6 +119,13 @@ md-toolbar.md-knowage-theme .md-toolbar-tools .md-button:not[disabled] {
         }
 }
 
+.md-button.md-knowage-theme:not([disabled]){
+  &:hover {
+    background-color: lighten($baseColor,10%);
+  }
+}
+
+
 // Input fields
 
 md-input-container.md-knowage-theme .md-errors-spacer {
@@ -626,6 +633,18 @@ md-menu-content._md-menu-bar-menu.md-dense md-menu-item.md-indent>md-icon {
   md-input-container {
     margin: 10px 0 !important;
   }
+}
+.miniContentPadding {
+  padding:4px;
+}
+
+.inputRename {
+  cursor: pointer;
+}
+
+/* Expander box directive custom classes */
+expander-box md-toolbar {
+    cursor: pointer;
 }
 
 /* IE11 fix */
