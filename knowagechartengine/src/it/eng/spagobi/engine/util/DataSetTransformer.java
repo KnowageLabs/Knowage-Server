@@ -75,12 +75,13 @@ public class DataSetTransformer {
 			}
 
 			if (serie != null) {
-				
+
 				record.put(serie.toString(), row.get(serieRawColumn).toString());
-				
-				// Added for the purposes of the cross-navigation execution. (author: danristo)
-				record.put("seriesItemName", serie.toString()); 
-				
+
+				// Added for the purposes of the cross-navigation execution.
+				// (author: danristo)
+				record.put("seriesItemName", serie.toString());
+
 			}
 
 			result.put(new Integer(i), record);
@@ -117,6 +118,8 @@ public class DataSetTransformer {
 
 						value++;
 
+					} else {
+						value = value + Double.parseDouble(result.get(i).get(serie).toString());
 					}
 					valueMap.put(categoryName, value);
 					res.put(name, valueMap);
@@ -174,7 +177,8 @@ public class DataSetTransformer {
 			jo.put("categoryName", categoryNames);
 			jo.put("value", value);
 
-			// Added for the purposes of the cross-navigation execution. (author: danristo)
+			// Added for the purposes of the cross-navigation execution.
+			// (author: danristo)
 			jo.put("seriesItemName", serie.toString());
 			fr.put(jo);
 
@@ -184,17 +188,23 @@ public class DataSetTransformer {
 	}
 
 	/**
-	 * Method that serves for preparing the data that JS code will use for rendering the CHORD chart
+	 * Method that serves for preparing the data that JS code will use for
+	 * rendering the CHORD chart
 	 *
 	 * @param dataRows
-	 *            List of objects that represent the result of the query based on the result of the dataset linked to the chart (document) and on the query
-	 *            formed upon the XML of the document (VALUES tag, particularly CATEGORY and SERIE subtags)
+	 *            List of objects that represent the result of the query based
+	 *            on the result of the dataset linked to the chart (document)
+	 *            and on the query formed upon the XML of the document (VALUES
+	 *            tag, particularly CATEGORY and SERIE subtags)
 	 * @param columnsNeeded
-	 *            Categories (columns of the resulting table) that are needed by the request formulated through the XML tag CATEGORY
+	 *            Categories (columns of the resulting table) that are needed by
+	 *            the request formulated through the XML tag CATEGORY
 	 * @param serie
-	 *            Column of the resulting table that is specified as the SERIE column through the XML tag SERIE
+	 *            Column of the resulting table that is specified as the SERIE
+	 *            column through the XML tag SERIE
 	 * @param dataColumnsMapper
-	 *            Mapping between the name of the columns (categories and serie) and their ordinal (raw value: column_1, column_2, ...)
+	 *            Mapping between the name of the columns (categories and serie)
+	 *            and their ordinal (raw value: column_1, column_2, ...)
 	 * @throws JSONException
 	 *
 	 * @author Danilo Ristovski (danilo.ristovski@mht.net)
@@ -208,7 +218,8 @@ public class DataSetTransformer {
 		String aggregationType = groupingFunction.toString();
 
 		/**
-		 * List of raw names of the columns (their ordinal) that are specified as categories (in order defined by the XML template).
+		 * List of raw names of the columns (their ordinal) that are specified
+		 * as categories (in order defined by the XML template).
 		 */
 		ArrayList<String> categoriesColumnNames = new ArrayList<String>();
 
@@ -224,16 +235,21 @@ public class DataSetTransformer {
 																	// column_2
 
 		/**
-		 * Take all columns of the future perfect matrix (same values in the same order both in rows and columns of the matrix). These are the target items
-		 * (items towards which source items (rows of the matrix) are going. This variable serves as a container of all columns and rows at the same time (since
-		 * the matrix must be perfect - all items in its rows and columns must be the same and in the same order).
+		 * Take all columns of the future perfect matrix (same values in the
+		 * same order both in rows and columns of the matrix). These are the
+		 * target items (items towards which source items (rows of the matrix)
+		 * are going. This variable serves as a container of all columns and
+		 * rows at the same time (since the matrix must be perfect - all items
+		 * in its rows and columns must be the same and in the same order).
 		 */
 		ArrayList<String> allColumns = new ArrayList<String>();
 
 		for (int i = 0; i < dataRows.size(); i++) {
 
 			/**
-			 * Take each record from the 'dataRows' parameter, i.e. each record from the dataset and put it inside the local (temporary) 'records' variable.
+			 * Take each record from the 'dataRows' parameter, i.e. each record
+			 * from the dataset and put it inside the local (temporary)
+			 * 'records' variable.
 			 */
 			Map<String, Object> record = (Map<String, Object>) dataRows.get(i);
 
@@ -244,15 +260,22 @@ public class DataSetTransformer {
 		}
 
 		/**
-		 * All columns (and rows) are now arranged in the ascending order so we can have (i,i) mapping between columns and rows inside the matrix with the same
-		 * name (as said here: https://github.com/mbostock/d3/wiki/Chord-Layout, under "# chord.matrix([matrix])" header of the text).
+		 * All columns (and rows) are now arranged in the ascending order so we
+		 * can have (i,i) mapping between columns and rows inside the matrix
+		 * with the same name (as said here:
+		 * https://github.com/mbostock/d3/wiki/Chord-Layout, under
+		 * "# chord.matrix([matrix])" header of the text).
 		 */
 		Collections.sort(allColumns);
 
 		/**
-		 * Create an unordered map of maps that will only contain data about pairs of row and columns available in existing data obtained when executing the not
-		 * pivoted dataset. Later we are going to create a matrix in the form of the JSON object, so we will extend the second dimension of this structure (add
-		 * columns for which rows we do not have corresponding data and fill it with value of zero - form a complete matrix).
+		 * Create an unordered map of maps that will only contain data about
+		 * pairs of row and columns available in existing data obtained when
+		 * executing the not pivoted dataset. Later we are going to create a
+		 * matrix in the form of the JSON object, so we will extend the second
+		 * dimension of this structure (add columns for which rows we do not
+		 * have corresponding data and fill it with value of zero - form a
+		 * complete matrix).
 		 */
 
 		Map<String, HashMap<String, Float>> availableDataMapOfMaps = new HashMap<String, HashMap<String, Float>>();
@@ -260,22 +283,26 @@ public class DataSetTransformer {
 		for (int i = 0; i < dataRows.size(); i++) {
 
 			/**
-			 * Current record (row) from the map of maps of available data (primitive (not pivoted) dataset).
+			 * Current record (row) from the map of maps of available data
+			 * (primitive (not pivoted) dataset).
 			 */
 			Map<String, Object> record = (Map<String, Object>) dataRows.get(i);
 
 			/**
-			 * Value (name) of the current record's row from the map of maps. Current row of the matrix.
+			 * Value (name) of the current record's row from the map of maps.
+			 * Current row of the matrix.
 			 */
 			String currentRow = (String) record.get(rawColumnNameRow);
 
 			/**
-			 * Value (name) of the current record's column from the map of maps. Current column of the matrix.
+			 * Value (name) of the current record's column from the map of maps.
+			 * Current column of the matrix.
 			 */
 			String currentColumn = (String) record.get(rawColumnNameColumn);
 
 			/**
-			 * Put a new map for the row that is not contained by the map of maps.
+			 * Put a new map for the row that is not contained by the map of
+			 * maps.
 			 */
 			if (!availableDataMapOfMaps.containsKey(currentRow)) {
 
@@ -284,10 +311,13 @@ public class DataSetTransformer {
 				if (record.get(columnsMapper.get(serie + "_" + aggregationType)).getClass().toString().equals("class java.lang.Integer")) {
 
 					/**
-					 * Serie value for the current row and column (their intersection - value inside the intersection of the future matrix's current row and
-					 * current column (values in variables of an appropriate name in this code.
+					 * Serie value for the current row and column (their
+					 * intersection - value inside the intersection of the
+					 * future matrix's current row and current column (values in
+					 * variables of an appropriate name in this code.
 					 *
-					 * NOTE: The same goes for other variables of the same name ('serieValueForXOfRowAndColumn') in the code afterwards.
+					 * NOTE: The same goes for other variables of the same name
+					 * ('serieValueForXOfRowAndColumn') in the code afterwards.
 					 */
 					Integer serieValueForXOfRowAndColumn = (int) record.get(columnsMapper.get(serie + "_" + aggregationType));
 					submapWithNewColumn.put(currentColumn, Float.parseFloat(Integer.toString(serieValueForXOfRowAndColumn)));
@@ -319,36 +349,43 @@ public class DataSetTransformer {
 		}
 
 		/**
-		 * The final JSON object (it will be sent towards the client - rendering part).
+		 * The final JSON object (it will be sent towards the client - rendering
+		 * part).
 		 */
 		JSONObject finalJsonResult = new JSONObject();
 
 		/**
-		 * JSON object for collecting the data (labels with their values and JSON array) for meta data ('root' label and 'fields' JSON array) connected to the
-		 * final data obtained from the dataset.
+		 * JSON object for collecting the data (labels with their values and
+		 * JSON array) for meta data ('root' label and 'fields' JSON array)
+		 * connected to the final data obtained from the dataset.
 		 */
 		JSONObject jsonObjectMetadata = new JSONObject();
 
 		/**
-		 * 'root' label tells us what is the name of the label inside the final JSON that contains the data (values for rendering the chart)
+		 * 'root' label tells us what is the name of the label inside the final
+		 * JSON that contains the data (values for rendering the chart)
 		 */
 		jsonObjectMetadata.put("root", "rows");
 
 		/**
-		 * JSON array under the 'fields' label of the 'metaData' label that will contain information about all columns of the matrix that we need to create so
-		 * to deliver it to the rendering (client) side. It will contain information about all columns (name and their ordinal value) in alphabetically
-		 * ascending order.
+		 * JSON array under the 'fields' label of the 'metaData' label that will
+		 * contain information about all columns of the matrix that we need to
+		 * create so to deliver it to the rendering (client) side. It will
+		 * contain information about all columns (name and their ordinal value)
+		 * in alphabetically ascending order.
 		 */
 		JSONArray jsonArrayMetadataFields = new JSONArray();
 
 		/**
-		 * Ordinal value of the columns that are arranged in ascending order inside the 'allColumns'.
+		 * Ordinal value of the columns that are arranged in ascending order
+		 * inside the 'allColumns'.
 		 */
 		int columnCounter = 1;
 
 		/**
-		 * Populate the 'jsonArrayMetadataFields' array with the fields and the data that will contain necessary data (name, data index and header) about the
-		 * all the columns arranged in ascending order.
+		 * Populate the 'jsonArrayMetadataFields' array with the fields and the
+		 * data that will contain necessary data (name, data index and header)
+		 * about the all the columns arranged in ascending order.
 		 */
 		for (int i = 0; i < allColumns.size(); i++) {
 
@@ -366,26 +403,34 @@ public class DataSetTransformer {
 		}
 
 		/**
-		 * Join this JSON array under the 'fields' label of the 'metaData' label of the final JSON object. It serves as an informer of which fields are we
-		 * expecting when data comes from the server-side and which rows and columns is the CHORD matrix going to possess.
+		 * Join this JSON array under the 'fields' label of the 'metaData' label
+		 * of the final JSON object. It serves as an informer of which fields
+		 * are we expecting when data comes from the server-side and which rows
+		 * and columns is the CHORD matrix going to possess.
 		 */
 		jsonObjectMetadata.put("fields", jsonArrayMetadataFields);
 
 		/**
-		 * Set the 'metaData' label of the final JSON object and link to it necessary data.
+		 * Set the 'metaData' label of the final JSON object and link to it
+		 * necessary data.
 		 */
 		finalJsonResult.put("metaData", jsonObjectMetadata);
 
 		/**
-		 * Label that contains the information about the total number of rows/column if the matrix that we are now going to create through the form of JSON
-		 * object.
+		 * Label that contains the information about the total number of
+		 * rows/column if the matrix that we are now going to create through the
+		 * form of JSON object.
 		 */
 		finalJsonResult.put("results", availableDataMapOfMaps.size());
 
 		/**
-		 * JSON array that will contain JSON objects that are representing all rows with data about values of their intersection with the appropriate column
-		 * pair and that are arranged in ascending order. This way we are extending dimension of current data, so we are going to have all (row,column) pairs
-		 * with their dedicated appropriate values (as said here: https://github.com/mbostock/d3/wiki/Chord-Layout, under this header:
+		 * JSON array that will contain JSON objects that are representing all
+		 * rows with data about values of their intersection with the
+		 * appropriate column pair and that are arranged in ascending order.
+		 * This way we are extending dimension of current data, so we are going
+		 * to have all (row,column) pairs with their dedicated appropriate
+		 * values (as said here:
+		 * https://github.com/mbostock/d3/wiki/Chord-Layout, under this header:
 		 * "# chord.matrix([matrix])").
 		 */
 		JSONArray jsonArrayResultsRows = new JSONArray();
@@ -396,22 +441,29 @@ public class DataSetTransformer {
 		for (int i = 0; i < allColumns.size(); i++) {
 
 			/**
-			 * For every new row create a JSON object that will contain values of intersection with all existing columns (previously arranged in alphabetically
-			 * ascending order) of future matrix (in form of the final JSON object). This JSON object will be inserted into the JSON array of numerical results
-			 * ('rows' label of the final JSON object). These data are going to be used by the client (JS, particularly D3) code that will render the CHORD
-			 * chart.
+			 * For every new row create a JSON object that will contain values
+			 * of intersection with all existing columns (previously arranged in
+			 * alphabetically ascending order) of future matrix (in form of the
+			 * final JSON object). This JSON object will be inserted into the
+			 * JSON array of numerical results ('rows' label of the final JSON
+			 * object). These data are going to be used by the client (JS,
+			 * particularly D3) code that will render the CHORD chart.
 			 */
 			JSONObject jsonObjectRowWithAllItsColumns = new JSONObject();
 
 			/**
-			 * As zeroth column (label) set the name of the row to which we are going to link data (values) of the intersection of it with the particular
-			 * column.
+			 * As zeroth column (label) set the name of the row to which we are
+			 * going to link data (values) of the intersection of it with the
+			 * particular column.
 			 */
 			jsonObjectRowWithAllItsColumns.put("column_0", allColumns.get(i));
 
 			/**
-			 * With this two-step for-loop we will have appropriate matrix - the (row,column) pairs will be in the form in which i-th row with some name will be
-			 * of the same name as the i-th column (names of rows and columns on the main diagonal of the matrix will be the same). (as specified here:
+			 * With this two-step for-loop we will have appropriate matrix - the
+			 * (row,column) pairs will be in the form in which i-th row with
+			 * some name will be of the same name as the i-th column (names of
+			 * rows and columns on the main diagonal of the matrix will be the
+			 * same). (as specified here:
 			 * https://github.com/mbostock/d3/wiki/Chord-Layout)
 			 */
 			for (int j = 0; j < allColumns.size(); j++) {
@@ -435,8 +487,9 @@ public class DataSetTransformer {
 		}
 
 		/**
-		 * Set the JSON array of all rows of the matrix (and their intersected values with all the columns) into the final JSON object and link it to the 'rows'
-		 * label.
+		 * Set the JSON array of all rows of the matrix (and their intersected
+		 * values with all the columns) into the final JSON object and link it
+		 * to the 'rows' label.
 		 */
 		finalJsonResult.put("rows", jsonArrayResultsRows);
 
@@ -453,7 +506,8 @@ public class DataSetTransformer {
 		Map<String, Object> columns = (Map<String, Object>) columnsNeeded;
 
 		/**
-		 * In this array list we will put raw names (column_1, column_2 etc) of necessary columns
+		 * In this array list we will put raw names (column_1, column_2 etc) of
+		 * necessary columns
 		 */
 		ArrayList<String> listColumns = new ArrayList<String>();
 
@@ -465,7 +519,8 @@ public class DataSetTransformer {
 		Object serieRawColumn = mapper.get(serie.toString() + "_" + groupingFunction.toString()).toString();
 
 		/**
-		 * Take raw names (column_1, column_2, etc) of all of the columns that we need for creating a sequence.
+		 * Take raw names (column_1, column_2, etc) of all of the columns that
+		 * we need for creating a sequence.
 		 */
 		for (int i = 0; i < columns.size(); i++) {
 			Object z = columns.get(i);
@@ -474,7 +529,8 @@ public class DataSetTransformer {
 		}
 
 		/*
-		 * Pass through all records in order to get values of just those columns that we need for sequence.
+		 * Pass through all records in order to get values of just those columns
+		 * that we need for sequence.
 		 */
 		for (int i = 0; i < dataRows.size(); i++) {
 			Map<String, Object> row = (Map<String, Object>) dataRows.get(i);
@@ -656,9 +712,12 @@ public class DataSetTransformer {
 
 	/**
 	 * @param serieScaleFactor
-	 *            The scaling factor of the current series item can be empty (no scaling - pure (original) value) or "k" (kilo), "M" (mega), "G" (giga), "T"
-	 *            (tera), "P" (peta), "E" (exa). That means we will scale our values according to this factor and display these abbreviations (number suffix)
-	 *            along with the scaled number.
+	 *            The scaling factor of the current series item can be empty (no
+	 *            scaling - pure (original) value) or "k" (kilo), "M" (mega),
+	 *            "G" (giga), "T" (tera), "P" (peta), "E" (exa). That means we
+	 *            will scale our values according to this factor and display
+	 *            these abbreviations (number suffix) along with the scaled
+	 *            number.
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
 	public JSONArray getSeriesForParallelChart(Object serieNeeded, Object groupingFunction, Object seriePrefix, Object seriePostfix, Object seriePrecision,
@@ -693,7 +752,8 @@ public class DataSetTransformer {
 					jo.put("precision", new Integer(precision.get(i)));
 				}
 
-				// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) [JIRA 1060 and 1061]
+				// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				// [JIRA 1060 and 1061]
 				jo.put("scaleFactor", scaleFactor.get(i));
 
 				ja.put(jo);
@@ -711,10 +771,14 @@ public class DataSetTransformer {
 		JSONArray ja = new JSONArray();
 
 		/**
-		 * If we receive colors from the velocity model of the PARALLEL chart with the ArrayList structure, then we are dealing with the single color that is
-		 * going to be presented on the chart (as color of chart lines). That single color can be result of the situation in which user (1) did not specify any
-		 * color in the Designer or (2) he specified single color (just one). In case (1) VM is sets a single default color value for lines on the chart,
-		 * otherwise it takes the single one that user provided on the Designer.
+		 * If we receive colors from the velocity model of the PARALLEL chart
+		 * with the ArrayList structure, then we are dealing with the single
+		 * color that is going to be presented on the chart (as color of chart
+		 * lines). That single color can be result of the situation in which
+		 * user (1) did not specify any color in the Designer or (2) he
+		 * specified single color (just one). In case (1) VM is sets a single
+		 * default color value for lines on the chart, otherwise it takes the
+		 * single one that user provided on the Designer.
 		 *
 		 * @author: danristo (danilo.ristovski@mht.net)
 		 */
@@ -732,8 +796,10 @@ public class DataSetTransformer {
 		}
 
 		/**
-		 * If we receive colors from the velocity model of the PARALLEL chart with the LinkedHashMap structure, then we are dealing with the collection of
-		 * colors that are going to be presented on the chart (as colors of chart lines).
+		 * If we receive colors from the velocity model of the PARALLEL chart
+		 * with the LinkedHashMap structure, then we are dealing with the
+		 * collection of colors that are going to be presented on the chart (as
+		 * colors of chart lines).
 		 *
 		 * @commentedBy: danristo (danilo.ristovski@mht.net)
 		 */
@@ -860,10 +926,13 @@ public class DataSetTransformer {
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 
 		/**
-		 * ------------------------------------------------------------------------------------------ KNOWAGE-778
-		 * ("COCKPIT-Chart: heatmap hangs in loading when the selections return no data")
-		 * ------------------------------------------------------------------------------------------ If there is no data in the "firstresult" (if it is an
-		 * empty map), return the false boolean value to the VM. The first category (that does not exist) is definitely not of type DATE.
+		 * --------------------------------------------------------------------
+		 * ---------------------- KNOWAGE-778 (
+		 * "COCKPIT-Chart: heatmap hangs in loading when the selections return no data"
+		 * ) ------------------------------------------------------------------
+		 * ------------------------ If there is no data in the "firstresult" (if
+		 * it is an empty map), return the false boolean value to the VM. The
+		 * first category (that does not exist) is definitely not of type DATE.
 		 *
 		 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
