@@ -57,12 +57,14 @@ function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,coc
 	},function(){
 		console.error("error when load dataset list")
 	});
-	
+
+	if(cockpitModule_properties.DOCUMENT_LABEL != undefined && cockpitModule_properties.DOCUMENT_LABEL != ''){
 	cockpitModule_crossServices.loadCrossNavigationByDocument(cockpitModule_properties.DOCUMENT_LABEL).then(
-		function(){},
-		function(){
-		console.error("error when load cross list")
-	});
+			function(){},
+			function(){
+				console.error("error when load cross list")
+			});
+}
 	
 	if(!cockpitModule_properties.EDIT_MODE){
 		cockpitModule_realtimeServices.init();

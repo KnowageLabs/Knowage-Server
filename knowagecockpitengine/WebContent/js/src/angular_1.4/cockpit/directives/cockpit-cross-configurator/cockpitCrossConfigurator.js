@@ -102,7 +102,7 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 		angular.copy(cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId), $scope.localDataset);
 	} else{
 		$scope.model.dataset= {};
-		angular.copy([], $scope.model.dataset.metadata.fieldsMeta); 
+		//angular.copy([], $scope.model.dataset.metadata.fieldsMeta); 
 	}
 	
 	angular.copy(cockpitModule_template.configuration.cross,$scope.cockpitCross);
