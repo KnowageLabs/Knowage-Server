@@ -29,7 +29,7 @@
 angular
 	.module('chartexecution.controller', ['chartexecution.directives','chartexecution.configuration','chartexecution.webservicemanagerfactory','chartengine.settings'])
 	.controller('chartExecutionController', ["$scope","$http","chartExecutionWebServiceManagerFactory","sbiModule_translate","sbiModule_messaging","chartEngineSettings",chartExecutionFunction]);
-        
+
 /**
  * The function that represents the controller logic.
  * @param $scope
@@ -60,7 +60,7 @@ function chartExecutionFunction($scope,$http,chartExecutionWebServiceManagerFact
 	$scope.includeChartTable= includeChartTable;
 	
     $scope.chartTableData;
-    
+
 	/**
 	 * ----------------------------------------------------------------
 	 * The code used for parsing locale to the expected value. [START]
@@ -353,15 +353,20 @@ function chartExecutionFunction($scope,$http,chartExecutionWebServiceManagerFact
 				
 			} 
 			else {				
-				chartConfiguration = chartConf;	
-				if(chartConf.chart.type==="pie"){
-					//console.log(chartConf);
-					//console.log("template",jsonTemplate);
-					$scope.chartTableData=transoformChartTableData(chartConf);
-
-				}else{
-				$scope.chartTableData= angular.copy(chartConf);
+				
+				chartConfiguration = chartConf;
+				
+				if($scope.isLibChartJs) {
+					if(chartConf.chart.type==="pie"){
+						//console.log(chartConf);
+						//console.log("template",jsonTemplate);
+						$scope.chartTableData=transoformChartTableData(chartConf);
+	
+					}else{
+					$scope.chartTableData= angular.copy(chartConf);
+					}
 				}
+				
 				renderChart(chartConf);				
 			}			
 		
