@@ -106,19 +106,21 @@ public class DataMiningPythonExecutor implements IDataMiningExecutor {
 		result = outputExecutor.evalOutput(output, scriptExecutor, documentLabel, (String) profile.getUserId());
 		logger.debug("Got result");
 
-		// Delete files
-		if (fileExecutor.dataminingInstance.getFiles().size() > 0) {
+		// Delete files if presents
+		if (fileExecutor.dataminingInstance.getFiles() != null) {
+			if (fileExecutor.dataminingInstance.getFiles().size() > 0) {
 
-			for (DataMiningFile dmFile : fileExecutor.dataminingInstance.getFiles()) {
+				for (DataMiningFile dmFile : fileExecutor.dataminingInstance.getFiles()) {
 
-				File file = new File(DataMiningUtils.getUserResourcesPath(profile) + dmFile.getFileName());
-				if (file.delete()) {
-					logger.debug(file.getName() + " is deleted!");
-				} else {
-					logger.debug("Delete operation is failed.");
+					File file = new File(DataMiningUtils.getUserResourcesPath(profile) + dmFile.getFileName());
+					if (file.delete()) {
+						logger.debug(file.getName() + " is deleted!");
+					} else {
+						logger.debug("Delete operation is failed.");
+					}
 				}
-			}
 
+			}
 		}
 
 		// PyLib.stopPython(); //Per colpa di un errore di JPY non funziona, quando saranno disponibili nuove versioni di JPY non buggate, scommentare questo

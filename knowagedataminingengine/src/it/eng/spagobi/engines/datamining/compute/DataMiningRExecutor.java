@@ -186,6 +186,7 @@ public class DataMiningRExecutor implements IDataMiningExecutor {
 	 * @return DataMiningResult
 	 * @throws Exception
 	 */
+	@Override
 	public DataMiningResult execute(HashMap params, DataMiningCommand command, Output output, IEngUserProfile userProfile, Boolean rerun, String documentLabel)
 			throws Exception {
 		logger.debug("IN");
@@ -218,21 +219,22 @@ public class DataMiningRExecutor implements IDataMiningExecutor {
 		result = outputExecutor.evalOutput(output, scriptExecutor, documentLabel, (String) profile.getUserId());
 		logger.debug("Got result");
 
-		// Delete files
-		if (fileExecutor.dataminingInstance.getFiles().size() > 0) {
+		// Delete files if presents
+		if (fileExecutor.dataminingInstance.getFiles() != null) {
+			if (fileExecutor.dataminingInstance.getFiles().size() > 0) {
 
-			for (DataMiningFile dmFile : fileExecutor.dataminingInstance.getFiles()) {
+				for (DataMiningFile dmFile : fileExecutor.dataminingInstance.getFiles()) {
 
-				File file = new File(DataMiningUtils.getUserResourcesPath(profile) + dmFile.getFileName());
-				if (file.delete()) {
-					logger.debug(file.getName() + " is deleted!");
-				} else {
-					logger.debug("Delete operation is failed.");
+					File file = new File(DataMiningUtils.getUserResourcesPath(profile) + dmFile.getFileName());
+					if (file.delete()) {
+						logger.debug(file.getName() + " is deleted!");
+					} else {
+						logger.debug("Delete operation is failed.");
+					}
 				}
+
 			}
-
 		}
-
 		// save result of script computation objects and datasets to
 		// user workspace
 		/*
@@ -260,12 +262,12 @@ public class DataMiningRExecutor implements IDataMiningExecutor {
 	 * setupEnvonment(userProfile); logger.debug("Set up environment"); // datasets preparation datasetsExecutor.updateDataset(ds);
 	 * logger.debug("Loaded datasets"); // save result of script computation objects and datasets to // user workspace saveUserWorkSpace();
 	 * logger.debug("Saved WS"); logger.debug("OUT"); }
-	 *
-	 *
+	 * 
+	 * 
 	 * protected void loadUserWorkSpace() throws IOException {
-	 *
+	 * 
 	 * example usage > save.image(file = 'D:/script/.Rdata', safe = TRUE) > load(file = 'D:/script/.Rdata')
-	 *
+	 * 
 	 * // create user workspace data logger.debug("IN"); re.(parseAndEval"save(list = ls(all = TRUE), file= '" + profile.getUserUniqueIdentifier() +
 	 * ".RData')"); logger.debug("Save all object in "+profile.getUserUniqueIdentifier() + ".RData"); re.(parseAndEval"load(file= '" +
 	 * profile.getUserUniqueIdentifier() + ".RData')"); logger.debug("Loaded "+profile.getUserUniqueIdentifier() + ".RData"); logger.debug("OUT"); }
