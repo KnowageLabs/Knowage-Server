@@ -46,20 +46,21 @@ angular
 		
 		function openQbeInterfaceController($scope,url,$timeout) {
 						
-			if(typeof $scope.selectedDataSet.qbeJSONQuery === 'string'){
-				$scope.selectedDataSet.qbeJSONQuery = JSON.parse($scope.selectedDataSet.qbeJSONQuery);
-			}
-						
 		    angular.element(window.document.body).ready(function () {
-		    	var timeoutTime = 8000;
-		    	if($scope.selectedDataSet.dsTypeCd.toUpperCase()=='QBE'){
-		    		timeoutTime = 3000;
+		    	if($scope.isFromDataSetCatalogue) {
+			    	if(typeof $scope.selectedDataSet.qbeJSONQuery === 'string'){
+						$scope.selectedDataSet.qbeJSONQuery = JSON.parse($scope.selectedDataSet.qbeJSONQuery);
+					}
+			    	var timeoutTime = 8000;
+			    	if($scope.selectedDataSet.dsTypeCd.toUpperCase()=='QBE'){
+			    		timeoutTime = 3000;
+			    	}
+					if($scope.selectedDataSet.qbeJSONQuery!=undefined){
+						$timeout(function(){
+							document.getElementById("documentViewerIframe").contentWindow.qbe.setQueriesCatalogue($scope.selectedDataSet.qbeJSONQuery);
+						}, timeoutTime);
+					}
 		    	}
-				if($scope.selectedDataSet.qbeJSONQuery!=undefined){
-					$timeout(function(){
-						document.getElementById("documentViewerIframe").contentWindow.qbe.setQueriesCatalogue($scope.selectedDataSet.qbeJSONQuery);
-					}, timeoutTime);
-				}
             });
 
 			$scope.documentViewerUrl = url;
