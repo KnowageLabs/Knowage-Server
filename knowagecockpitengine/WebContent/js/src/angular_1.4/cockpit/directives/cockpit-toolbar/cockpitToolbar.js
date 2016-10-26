@@ -148,34 +148,34 @@ function cockpitToolbarControllerFunction($scope,cockpitModule_widgetServices,co
 		    	        			type : "text"
 		    	        		},{	
 		    	        			name:"Image",
-		    	        			description: "lorem ipsum dolor sit amet, lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet",
+		    	        			description: "Custom static or dynamic web/uploaded image.",
 		    	        			tags : ["image"],
 		    	        			img : "2.png",
 		    	        			type : "image"
 		    	        		},{	
 		    	        			name:"Chart",
-		    	        			description: "lorem ipsum dolor sit amet, lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet",
+		    	        			description: "Custom chart with binding to datasources data. Pie chart, bar chart and scatter chart available.",
 		    	        			tags : ["chart"],
-		    	        			img : "3.png",
+		    	        			img : "4.png",
 		    	        			type : "chart"
 		    	        		},{	
 		    	        			name:"Table",
-		    	        			description: "lorem ipsum dolor sit amet, lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet",
-		    	        			tags : ["table","rows","columns"],
-		    	        			img : "4.png",
+		    	        			description: "Standard table with datasource binding.",
+		    	        			tags : ["table"],
+		    	        			img : "5.png",
 		    	        			type : "table"
 		    	        		},{	
 							    	name:"Static Pivot Table",
-							    	description: "lorem ipsum dolor sit amet, lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet",
-							    	tags : ["table","rows","columns","pivot","cross"],
-							    	img : "4.png",
+							    	description: "Pivot or cross table with datasource binding.",
+							    	tags : ["table","pivot","cross"],
+							    	img : "6.png",
 							    	type : "static-pivot-table"
 							      }
 							      ,{	
 							    	  name:"Document",
-							    	  description: "lorem ipsum dolor sit amet, lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet",
-							    	  tags : ["document"],
-							    	  img : "4.png",
+							    	  description: "Custom document upload as databind or datasource.",
+							    	  tags : ["document","datasource"],
+							    	  img : "7.png",
 							    	  type : "document"
 							      }
 		    	        	];
