@@ -36,15 +36,24 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				var obj = {};
 				obj["id"] = col.alias;
 				obj["alias"] = col.alias;
-				obj["orderType"] = "";
+				
 				if(col.isCalculated == true){
 					obj["columnName"] = col.formula;
 				}else{
 					obj["columnName"] = col.name;
 				}
+				
+				obj["orderType"] = "";
 				if(columnOrdering !=undefined){
 					if(columnOrdering.name == col.name){
 						obj["orderType"] = reverseOrdering==true ? 'ASC' : 'DESC';
+					}
+				}
+				var category = ngModel.content.chartTemplate.CHART.VALUES.CATEGORY;
+				if(category){
+					if(category.column == col.name){
+						obj["orderType"] = category.orderType;
+						obj["orderColumn"] = category.orderColumn;
 					}
 				}
 			

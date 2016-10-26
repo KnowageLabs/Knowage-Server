@@ -716,9 +716,9 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		for (int i = 0; i < categoriesObject.length(); i++) {
 			JSONObject categoryObject = categoriesObject.getJSONObject(i);
 
-			// In the Cockpit Engine, table, you can insert many times the same measure.
+			// In the Cockpit Engine, table, you can insert many times the same category.
 			// To manage this, it's not possibile to use the alias as column name.
-			// So in the measure object there is also a "columnName" field
+			// So in the category object there is also a "columnName" field
 			String columnName;
 			if (!categoryObject.isNull("columnName")) {
 				columnName = categoryObject.getString("columnName");
@@ -733,7 +733,9 @@ public class DataSetResource extends AbstractSpagoBIResource {
 				orderTypeFinal = orderTypeFinal.toUpperCase();
 			}
 
-			ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName, null, aliasName, orderTypeFinal);
+			String orderColumnFinal = (String) categoryObject.opt("orderColumn");
+
+			ProjectionCriteria aProjectionCriteria = new ProjectionCriteria(dataset, columnName, null, aliasName, orderTypeFinal, orderColumnFinal);
 			projectionCriterias.add(aProjectionCriteria);
 		}
 		for (int i = 0; i < measuresObject.length(); i++) {
