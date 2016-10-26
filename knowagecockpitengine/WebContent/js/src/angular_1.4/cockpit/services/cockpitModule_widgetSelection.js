@@ -49,11 +49,14 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 						obj["orderType"] = reverseOrdering==true ? 'ASC' : 'DESC';
 					}
 				}
-				var category = ngModel.content.chartTemplate.CHART.VALUES.CATEGORY;
-				if(category){
-					if(category.column == col.name){
-						obj["orderType"] = category.orderType;
-						obj["orderColumn"] = category.orderColumn;
+				
+				if(ngModel.content.chartTemplate && ngModel.content.chartTemplate.CHART){
+					var category = ngModel.content.chartTemplate.CHART.VALUES.CATEGORY;
+					if(category){
+						if(category.column == col.name){
+							obj["orderType"] = category.orderType;
+							obj["orderColumn"] = category.orderColumn;
+						}
 					}
 				}
 			
