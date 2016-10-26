@@ -162,7 +162,6 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 		$scope.rowsAxisOrdinal = source.rowsAxisOrdinal;
 		$scope.showMdxVar = source.mdxFormatted;
 		$scope.formulasData = source.formulas;
-		console.log($scope.ready)
 		$scope.ready = false;
 		
 		$scope.selectedVersion = source.modelConfig.actualVersion;
@@ -172,14 +171,12 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 			if(mode == 'full'){
 				$scope.executeClicks();
 				$scope.ready = true;
-				console.log($scope.ready)
 			}
 			
 			firstLoad = false;
 		}
 		source = null;
 		$scope.ready = true;
-		console.log($scope.ready) 
 	}
 	
 	handleSlicers = function(filters){
