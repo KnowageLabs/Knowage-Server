@@ -356,7 +356,7 @@ function chartExecutionFunction($scope,$http,chartExecutionWebServiceManagerFact
 				
 				chartConfiguration = chartConf;
 				
-				if($scope.isLibChartJs) {
+				if($scope.isLibChartJs && includeChartTable) {
 					if(chartConf.chart.type==="pie"){
 						//console.log(chartConf);
 						//console.log("template",jsonTemplate);
