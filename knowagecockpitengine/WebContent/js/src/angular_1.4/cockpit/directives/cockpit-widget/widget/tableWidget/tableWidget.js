@@ -454,10 +454,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									obj[values.metaData.fields[k].header] = parseFloat(obj[values.metaData.fields[k].header]).toPrecision(style.precision);
 								}
 								if(style!=undefined && style.prefix !=undefined){
-									obj[values.metaData.fields[k].header] = style.prefix +obj[values.metaData.fields[k].header];
+									obj[values.metaData.fields[k].header] = style.prefix + ' ' + obj[values.metaData.fields[k].header];
 								}
 								if(style!=undefined && style.suffix !=undefined){
-									obj[values.metaData.fields[k].header] = obj[values.metaData.fields[k].header] + style.suffix;
+									obj[values.metaData.fields[k].header] = obj[values.metaData.fields[k].header] + ' ' + style.suffix;
 								}
 							}
 						}
