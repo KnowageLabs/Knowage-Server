@@ -357,7 +357,7 @@ function setAggregationsOnChartEngine(wconf){
 					var obj = {};
 					obj['name'] = chartCategory[i].column;
 					obj['alias'] = chartCategory[i].name;
-					obj['aliasToShow'] = category.alias;
+					obj['aliasToShow'] = obj['alias'];
 					obj['fieldType'] = "ATTRIBUTE";
 					aggregations.push(obj);
 				}
