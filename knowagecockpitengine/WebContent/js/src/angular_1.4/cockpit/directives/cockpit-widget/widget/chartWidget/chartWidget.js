@@ -316,7 +316,13 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 
 	$scope.reloadWidgetsByChartEvent = function(event){
 		var columnValue = event.point.name;
-		var columnName = $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY.name
+		
+		var category = $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY;
+		var columnName = category.name
+		if(Object.prototype.toString.call(category) === Object.prototype.toString.call([])){
+			columnName = category[0].name;
+		}
+		
 		$scope.doSelection(columnName,columnValue);
 	}
 	
