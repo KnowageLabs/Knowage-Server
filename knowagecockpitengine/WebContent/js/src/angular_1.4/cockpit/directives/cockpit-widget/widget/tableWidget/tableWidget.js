@@ -453,7 +453,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 								
 								if(style!=undefined && style.precision != undefined){
-									obj[values.metaData.fields[k].header] = parseFloat(obj[values.metaData.fields[k].header]).toPrecision(style.precision);
+									
+									// define eclosure
+									Math.round = (function() {
+										var originalRound = Math.round;
+										return function(number, precision) {
+											precision = Math.abs(parseInt(precision)) || 0;
+											var multiplier = Math.pow(10, precision);
+											return (originalRound(number * multiplier) / multiplier);
+										};
+									})();
+
+									var header = obj[values.metaData.fields[k].header];
+									var float = parseFloat(header);
+									var toDo = Math.round(float, style.precision); 
+									obj[values.metaData.fields[k].header] = toDo;
 								}
 								if(style!=undefined && style.prefix !=undefined){
 									obj[values.metaData.fields[k].header] = style.prefix + ' ' + obj[values.metaData.fields[k].header];
