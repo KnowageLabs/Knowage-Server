@@ -109,6 +109,7 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 		counter = 1;
 		$scope.getAllCubes();
 		if(jsonTemplate!="null"){
+			console.log(jsonTemplate);
 			var json = JSON.parse(jsonTemplate);
 			
 			if(editModeCurrentContentId!="null"){
@@ -182,7 +183,6 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	 * Loads cubes and opens a new what-if scenario dialog.
 	 */
 	$scope.runScenarioWizard = function(){
-
 		console.log($scope.scenario)
 		$mdDialog
 		.show({
@@ -947,8 +947,7 @@ $scope.setAndLoadCN = function(num) {
 	 $scope.closeOlapTemplate = function() {
 		
 		 var url= sbiModule_config.protocol+"://"+sbiModule_config.host+":"+sbiModule_config.port+sbiModule_config.externalBasePath;
-		 url+= "/servlet/AdapterHTTP?PAGE=DetailBIObjectPage&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=FALSE&MESSAGEDET=DETAIL_SELECT&OBJECT_ID=3";
-				 
+		 url+= "/servlet/AdapterHTTP?PAGE=DetailBIObjectPage&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=FALSE&MESSAGEDET=DETAIL_SELECT&OBJECT_ID="+sbiModule_docInfo.id;
 		 window.parent.location.href=url;
 
 	 }

@@ -204,16 +204,17 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 		if (!isEmptyNonPropertyCell(context)) {
 			if (context.getCellType() == CellTypes.VALUE && context.getCell() != null) {
 
+				int positionId = getOrdinalNoSubset(context.getCell().getOrdinal());
+				String ordinal = String.valueOf(positionId);
+
 				if (context.getRenderer().getEnableDrillThrough()) {
 
-					// Map<String, String> attributes = new TreeMap<String,
-					// String>();
-					// attributes.put("src", "../img/ico_search.gif");
-					// attributes.put("id", "drillt");
-					// attributes.put("ng-click", "drillThrough(" + ordinal +
-					// ")");
-					// startElement("img", attributes);
-					// endElement("img");
+					Map<String, String> attributes = new TreeMap<String, String>();
+					attributes.put("src", "../../img/ico_search.gif");
+					attributes.put("id", "drillt");
+					attributes.put("ng-click", "drillThrough(" + ordinal + ")");
+					startElement("img", attributes);
+					endElement("img");
 				}
 			}
 

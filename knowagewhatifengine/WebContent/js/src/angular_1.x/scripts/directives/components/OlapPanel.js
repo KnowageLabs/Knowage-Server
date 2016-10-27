@@ -179,25 +179,30 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 		$scope.dtAssociatedLevels = [];
 	}
 
-	$scope.enableDisableDrillThrough = function() {
+	$scope.enableDisableDrillThrough = function(){
+		$scope.modelConfig.enableDrillThrough = !$scope.modelConfig.enableDrillThrough;
+		$scope.sendModelConfig($scope.modelConfig);
+	}
+	
+	$scope.drillThrough = function(ordinal){
 		
-		
-
-		if ($scope.selectedCell.value == "") {
-			sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.emptyCell.error'), 'Error');
-		}
-
-		else if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
+if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
+	
+	
+	console.log(ordinal)
+	$scope.usedOrdinal = "";
+	$scope.usedOrdinal = ordinal;
+	console.log($scope.usedOrdinal)
+	
+	console.log("from table");
 			
 			if($scope.showWarningDT){
 				sbiModule_messaging.showWarningMessage(sbiModule_translate.load('sbi.olap.dt.warning'), 'Warning');
 			}
 			
 			var toSend = {};
-			toSend.ordinal = $scope.selectedCell.ordinal;
+			toSend.ordinal = ordinal;
 			if (toSend.ordinal != undefined) {
-
-				console.log(toSend);
 
 				var encoded = encodeURI('/member/drilltrough?SBI_EXECUTION_ID='
 						+ JSsbiExecutionID);
@@ -225,9 +230,12 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 				sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.selectCell.error'), 'Error');
 			}
 		} else {
-
+			
+			
+			console.log("from dialog");
+			console.log($scope.usedOrdinal)
 			var toSend = {};
-			toSend.ordinal = $scope.selectedCell.ordinal;
+			toSend.ordinal = $scope.usedOrdinal;
 			toSend.levels = angular.toJson($scope.dtAssociatedLevels);
 			toSend.max = $scope.dtMaxRows;
 			var encoded = encodeURI('/member/drilltrough/full?SBI_EXECUTION_ID='
@@ -252,6 +260,8 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 					});
 
 		}
+		
+		
 	}
 
 	$scope.exportDrill = function(JSONData, ReportTitle, ShowLabel) {
@@ -739,9 +749,16 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 				});
 	};
 	$scope.closeDialog = function(ev) {
-
+		
+		
 		$scope.dtData = [];
 		$scope.dtAssociatedLevels = [];
+		$scope.formateddtColumns = [];
+		$scope.dtTree = [];
+		var elem = document.getElementById("dtData_id");
+		if(elem != undefined){
+			elem.remove();
+		}
 		$scope.selectedCrossNavigation = null;
 		cleanCC();
 		$mdDialog.hide();

@@ -77,6 +77,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 
 	$scope.filterCardList = [];
 	$scope.filterSelected = [];
+	$scope.usedOrdinal = "";
 	$scope.dtData = [];
 	$scope.dtTree = [];
 	$scope.dtMaxRows = 0;
