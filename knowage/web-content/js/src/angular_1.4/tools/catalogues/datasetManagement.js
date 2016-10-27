@@ -2784,7 +2784,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		hideTooltip:true,
        	
        	transformer: function() {
-       		return '<md-input-container class="md-block" style="margin:0"><input ng-model="row.value"></md-input-container>';
+       		return '<md-input-container class="md-block" style="margin:0"><input placeholder="If not set, parameter will have default value." ng-model="row.value"></md-input-container>';
        	}
 	}
 	
