@@ -27,6 +27,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.log4j.Logger;
 import org.pivot4j.PivotModel;
@@ -50,10 +51,12 @@ public class AnalysisResource extends AbstractWhatIfEngineService {
 
 	@GET
 	@Path("/csv/{version}/{fieldDelimiter}")
-	@Produces(MediaType.APPLICATION_OCTET_STREAM)
+	@Produces("application/zip")
 	public Response exportEditTableCSV(@PathParam("version") int version, @PathParam("fieldDelimiter") String fieldDelimiter) {
 
 		byte[] csv = null;
+		//String text = "dragan";
+		//csv = text.getBytes();
 		Connection connection;
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		String fileName = EXPORT_FILE_NAME + "-" + (new Date()).toLocaleString() + ".csv";
@@ -87,13 +90,16 @@ public class AnalysisResource extends AbstractWhatIfEngineService {
 			}
 			logger.debug("Closed the connection used to export the output table");
 		}
-
-
-		
 		fileName = EXPORT_FILE_NAME + "-" + (new Date()).toLocaleString() + ".zip";
+		ResponseBuilder response = Response.ok(csv);
+		response.header("Content-Disposition", "attachment; filename=" + fileName);
+		response.header("Content-Transfer-Encoding", "binary");
+		
+		
+		return response.build();
 		
 
-		return Response.ok(csv, MediaType.APPLICATION_OCTET_STREAM).header("content-disposition", "attachment; filename = " + fileName).build();
+		//return Response.ok(csv, MediaType.APPLICATION_OCTET_STREAM).header("content-disposition", "attachment; filename = " + fileName).build();
 
 	}
 
