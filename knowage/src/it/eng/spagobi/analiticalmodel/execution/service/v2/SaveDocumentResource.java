@@ -186,19 +186,37 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		IBIObjectDAO biObjectDao = DAOFactory.getBIObjectDAO();
 		String documentLabel = documentJSON.getString("label");
 		BIObject document = biObjectDao.loadBIObjectByLabel(documentLabel);
+
 		JSONArray filteredFoldersJSON = new JSONArray();
 		if (request.optJSONArray("folders") == null || request.optJSONArray("folders").length() == 0) {
+
+			// if no folders are specified in request keep previious ones if present, else put on user home
+			logger.debug("no folders specified in request, search for previous ones.");
+			ILowFunctionalityDAO functionalitiesDAO = DAOFactory.getLowFunctionalityDAO();
 			IEngUserProfile profile = getUserProfile();
 			// add personal folder for default
-			LowFunctionality userFunc = null;
-			try {
-				ILowFunctionalityDAO functionalitiesDAO = DAOFactory.getLowFunctionalityDAO();
-				userFunc = functionalitiesDAO.loadLowFunctionalityByPath("/" + profile.getUserUniqueIdentifier(), false);
-			} catch (Exception e) {
-				logger.error("Error on insertion of the document.. Impossible to get the id of the personal folder ", e);
-				throw new SpagoBIRuntimeException("Error on insertion of the document.. Impossible to get the id of the personal folder ", e);
+
+			List<Integer> functionalities = document.getFunctionalities();
+			if (functionalities != null && functionalities.size() > 0) {
+				logger.debug("Document was already present in " + functionalities.size() + " folders, keep those ones");
+				LowFunctionality lowFunc = null;
+				for (int i = 0; i < functionalities.size(); i++) {
+					Integer id = functionalities.get(i);
+					lowFunc = functionalitiesDAO.loadLowFunctionalityByID(functionalities.get(i), false);
+					filteredFoldersJSON.put(lowFunc.getId());
+				}
+			} else {
+				logger.debug("as default case put document in user home folder");
+				LowFunctionality userFunc = null;
+				try {
+					userFunc = functionalitiesDAO.loadLowFunctionalityByPath("/" + profile.getUserUniqueIdentifier(), false);
+				} catch (Exception e) {
+					logger.error("Error on insertion of the document.. Impossible to get the id of the personal folder ", e);
+					throw new SpagoBIRuntimeException("Error on insertion of the document.. Impossible to get the id of the personal folder ", e);
+				}
+				filteredFoldersJSON.put(userFunc.getId());
 			}
-			filteredFoldersJSON.put(userFunc.getId());
+
 		} else {
 			filteredFoldersJSON = filterFolders(request.optJSONArray("folders"));
 		}
