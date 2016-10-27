@@ -140,7 +140,7 @@ function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitMod
 	                                    	name:"freq",
 	                                    	static:true,
 	                                    	template:"<md-input-container style='margin:0' ng-show='row.useCache!=true' md-no-float class='md-block'>"+
-                                            		"<input type='number' ng-init='row.frequency=row.frequency==undefined? 5 : row.frequency' ng-model='row.frequency' placeholder='Frequency'>"+
+                                            		"<input type='number' ng-init='row.frequency=row.frequency==undefined? 5 : row.frequency' min='1' ng-model='row.frequency' placeholder='Frequency'>"+
                                             		"</md-input-container>"
 	                                    },
 	                                    
@@ -367,7 +367,7 @@ function cockpitDataConfigurationController($scope,$rootScope,sbiModule_translat
 		    	  			angular.forEach($scope.tmpAvaiableDataset,function(newDs){
 		    	  				for(var i=0;i<oldDs.length;i++){
 		    	  					if(oldDs[i].id.dsId==newDs.id.dsId){
-		    	  						if(!angular.equals(oldDs[i].parameters,newDs.parameters)){
+		    	  						if(!angular.equals(oldDs[i].parameters,newDs.parameters) || oldDs[i].frequency!=newDs.frequency || oldDs[i].useCache!=newDs.useCache){
 		    	  							datasetParameterChanged[newDs.label]=newDs.id.dsId;
 		    	  							datasetParChange=true;
 		    	  						}
