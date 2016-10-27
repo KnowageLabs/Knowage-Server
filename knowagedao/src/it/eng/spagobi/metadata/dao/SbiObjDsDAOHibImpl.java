@@ -42,7 +42,6 @@ import org.hibernate.Transaction;
 
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
- * 
  */
 public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjDsDAO {
 
@@ -446,6 +445,7 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 			Engine engineObj = biObj.getEngine();
 
 			if (engineObj.getLabel().toLowerCase().contains("cockpit")) {
+				deleteObjDsbyObjId(biObj.getId());
 				insertRelationFromCockpit(biObj);
 			} else if (engineObj.getLabel().toLowerCase().contains("svgviewer")) {
 				insertRelationFromSVG(biObj);
@@ -550,9 +550,7 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 	 * 
 	 * @param engineLabel
 	 *            : the engine label
-	 * 
 	 * @return true if the engine use standard dataset (1:1), false otherwise
-	 * 
 	 */
 	private boolean useUniqueDataset(String engineLabel) {
 		boolean toReturn = true;
