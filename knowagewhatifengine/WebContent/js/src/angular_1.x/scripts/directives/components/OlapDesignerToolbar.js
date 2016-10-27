@@ -297,7 +297,7 @@ $scope.setAndLoadCN = function(num) {
 	 * Loads schema cubes.
 	 */
 	$scope.getAllCubes = function(){
-		sbiModule_restServices.promiseGet("1.0/designer/cubes/"+schemaID,"?SBI_EXECUTION_ID=" + JSsbiExecutionID)
+		sbiModule_restServices.promiseGet("1.0/designer/cubes/"+currentContentId,"?SBI_EXECUTION_ID=" + JSsbiExecutionID)
 		.then(function(response) {
 			$scope.cubeList = response.data;
 			//$scope.showCubes = true;
