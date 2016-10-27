@@ -165,7 +165,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	      		</div> 
 	      		
 	      		<!-- PREVIEW BUTTON -->
-	      		<md-button aria-label="Preview dataset" ng-click="preparePreviewDataset()" 
+	      		<md-button aria-label="Preview dataset" ng-click="checkIfDataSetHasParameters()" 
 	      				ng-show="selectedDataSet" style="float:right; margin-top:2px">
 	              	{{translate.load('sbi.ds.test')}}
 	            </md-button>

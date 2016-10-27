@@ -2754,8 +2754,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	
 	function DatasetPreviewController($scope,$mdDialog,$http) {
 		
-//		$scope.paginationDisabled = false;
-		
 		$scope.closeDatasetPreviewDialog=function(){
 			 $scope.previewDatasetModel=[];
 			 $scope.previewDatasetColumns=[];
@@ -2764,129 +2762,84 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			 $scope.totalItemsInPreview=-1;	// modified by: danristo
 			 $scope.datasetInPreview=undefined;
 			 $scope.counter = 0;
+			 $scope.selectedDataSet.start = 0;
 			 $mdDialog.cancel();	 
 	    }	
 	}
 	
-	$scope.preparePreviewDataset = function() {
-		console.log("-0-");
-		if (!$scope.selectedDataSet.id) {
-			alert("NOVI 3");
-			sbiModule_restServices.promisePost('1.0/datasets','preview', angular.toJson($scope.selectedDataSet))
-				.then(
-					function(response) {
-//						alert("SUCCESS");
-						console.log(response.data);
-						$scope.newDatasetMeta = response.data;
-						$scope.previewDataset();
-					},
-					function(response) {
-						alert("ERROR");
-					}
-				);
-		}
-		else {
-			$scope.previewDataset();
+	$scope.parametersPreviewColumns = [
+	   	                            
+       {
+       	"label":$scope.translate.load("sbi.generic.name"), 
+       	"name":"name", 
+       	hideTooltip:true,
+       	transformer: function() {
+       		return '<md-input-container class="md-block" style="margin:0"><input ng-model="row.name"></md-input-container>';
+       	}
+   	},
+       
+   	{
+		"label":$scope.translate.load("sbi.generic.value"), 
+		"name":"defaultValue", 
+		hideTooltip:true,
+       	
+       	transformer: function() {
+       		return '<md-input-container class="md-block" style="margin:0"><input ng-model="row.value"></md-input-container>';
+       	}
+	}
+	
+   ];
+
+	$scope.checkIfDataSetHasParameters = function () {
+		$scope.selectedDataSet.pars = $scope.parameterItems;
+		var hasParameters = $scope.selectedDataSet.pars != undefined && $scope.selectedDataSet.pars.length>0
+		if(hasParameters){
+			$scope.parameterPreviewItems = $scope.parameterItems;
+			for (var i = 0; i < $scope.parameterPreviewItems.length; i++) {
+				$scope.parameterPreviewItems[i].value = "";
+			}
+			$mdDialog
+			.show
+			(	
+				{   
+					scope:$scope,
+					preserveScope: true,
+					templateUrl: sbiModule_config.contextName + '/js/src/angular_1.4/tools/catalogues/templates/checkDatasetParamsBeforePreviewDialog.html'	
+				}
+			) 
+		} else {
+			//if the data set has no parameters continue to preview execution
+			$scope.continueToRestExecutionOfPreview();
 		}
 		
 	}
 	
-	$scope.previewDataset = function() {
-		
-		$scope.previewDatasetColumns=[];
-    			console.log("-1-");
-		// If the dataset is selected, show the preview.
-		if ($scope.selectedDataSet && $scope.selectedDataSet.id && $scope.selectedDataSet.meta) {
-	    	
-	    	var dataset = $scope.selectedDataSet;
-//	    	$log.info("DATASET FOR PREVIEW: ",dataset);
-	    	
-	    	$scope.datasetInPreview=dataset;    	
-	    	$scope.disableBack=true;
-	    	
-	    	/**
-	    	 * Variable that serves as indicator if the dataset metadata exists and if it contains the 'resultNumber' 
-	    	 * property (e.g. Query datasets).
-	    	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-	    	 */ 
-	    	var dsRespHasResultNumb = dataset.meta.dataset.length>0 && dataset.meta.dataset[0].pname=="resultNumber";
-	    		    	
-	    	/**
-	    	 * The paginated dataset preview should contain the 'resultNumber' inside the 'dataset' property. If not, disable the
-	    	 * pagination in the toolbar of the preview dataset dialog.
-	    	 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-	    	 */
-	    	if(dataset.meta.dataset.length>0 && dataset.meta.dataset[0].pname=="resultNumber"){
-	    		$scope.totalItemsInPreview=dataset.meta.dataset[0].pvalue;
-	    		$scope.previewPaginationEnabled=true;
-	    	}
-	    	else{
-	    		$scope.previewPaginationEnabled=false;
-	    	}
-	    	
-	    	console.log($scope.datasetInPreview);
-	    	console.log($scope.totalItemsInPreview);
-	    	console.log($scope.previewPaginationEnabled);
-	    	
-	    	$scope.getPreviewSet($scope.datasetInPreview);
-	    	
-	    	/**
-	    	 * Execute this if-else block only if there is already an information about the total amount of rows in the dataset metadata.
-	    	 * In other words, it should be executed for the e.g. Query dataset, since it has this property in its meta.
-	    	 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-	    	 */
-	    	if (dsRespHasResultNumb) {
-	    		
-	    		if($scope.totalItemsInPreview < $scope.itemsPerPage) {
-	    			$scope.endPreviewIndex = $scope.totalItemsInPreview;
-	    			$scope.disableNext = true;
-	    		}
-	    		else {
-	    		 	$scope.endPreviewIndex = $scope.itemsPerPage;
-	    		 	$scope.disableNext = false;
-	    		}
-	    		
-	    	}
-	    	
-	    	$mdDialog.show({
-				  scope:$scope,
-				  preserveScope: true,
-			      controller: DatasetPreviewController,
-			      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/workspace/templates/datasetPreviewDialogTemplate.html',  
-			      clickOutsideToClose:false,
-			      escapeToClose :false,
-			      //fullscreen: true,
-			      locals:{
-			    	 // previewDatasetModel:$scope.previewDatasetModel,
-			         // previewDatasetColumns:$scope.previewDatasetColumns 
-			      }
-			    });
-	    	
-    	}	
-		else {
-			$scope.getPreviewSet(null);
-			
-			$mdDialog.show({
-				  scope:$scope,
-				  preserveScope: true,
-			      controller: DatasetPreviewController,
-			      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/workspace/templates/datasetPreviewDialogTemplate.html',  
-			      clickOutsideToClose:false,
-			      escapeToClose :false,
-			      //fullscreen: true,
-			      locals:{
-			    	 // previewDatasetModel:$scope.previewDatasetModel,
-			         // previewDatasetColumns:$scope.previewDatasetColumns 
-			      }
-			    });
-		}
-		
-		
-//		else if(!$scope.selectedDataSet.meta) {
-//			sbiModule_messaging.showErrorMessage("The dataset is not saved. Please, save the dataset before a preview");
-//		}
-	       	
-    }
+	$scope.applyValueOfParameterAndContinuePreviewExecution = function () {
+		//apply entered values for parameters
+		$scope.selectedDataSet.pars = $scope.parameterPreviewItems;
+		//continue to preview execution
+		$scope.continueToRestExecutionOfPreview();
+	}
+	
+	$scope.continueToRestExecutionOfPreview = function() {
+		sbiModule_restServices.promisePost('1.0/datasets','preview', angular.toJson($scope.selectedDataSet))
+			.then(
+				function(response) {
+					$scope.getPreviewSet(response.data);
+					$mdDialog.show({
+						  scope:$scope,
+						  preserveScope: true,
+					      controller: DatasetPreviewController,
+					      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/workspace/templates/datasetPreviewDialogTemplate.html',  
+					      clickOutsideToClose:false,
+					      escapeToClose :false
+					    });
+				},
+				function(response) {
+					$scope.translate.load(response.data.errors.messages)
+				}
+			);
+	}
 	 
     $scope.createColumnsForPreview=function(fields){
     	console.log("-2-");
@@ -2900,137 +2853,33 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     	
     }
        
-    $scope.getPreviewSet = function(dataset){    
-    	console.log("-3-");
-    	//var datasetType = dataset.dsTypeCd.toUpperCase();
-//    	console.log(datasetType);
-    	/**
-    	 * If the type of the dataset is File, set these flags so the pagination toolbar on the Preview dataset panel
-    	 * is hidden and the pagination is performed on the client-side. Other dataset types should have the server-side
-    	 * pagination (else-branch).
-    	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-    	 */
-//    	if (datasetType!="FILE") {
-//    		 $scope.paginationDisabled = true;
-//    		 $scope.previewPaginationEnabled = true;
-//    	}
-//    	else {
-//    		$scope.paginationDisabled = false;
-//    		$scope.previewPaginationEnabled = false;
-//    	}
-    	
+    $scope.getPreviewSet = function(data){
+    	if(data!=null){
+    		$scope.newDatasetMeta = data;
+    	}
     	$scope.paginationDisabled = true;
 		$scope.previewPaginationEnabled = true;
-    	
-    	params={};
-    	params.start = $scope.startPreviewIndex;
-    	params.limit = $scope.itemsPerPage;
-    	params.page = 0;
-    	params.dataSetParameters=null;
-    	params.sort=null;
-    	params.valueFilter=null;
-    	params.columnsFilter=null;
-    	params.columnsFilterDescription=null;
-    	params.typeValueFilter=null;
-    	params.typeFilter=null;
-    	    	
-    	config={};
-    	config.params=params;
-    	
-    	console.log(params);
-    	
-    	if (dataset==null) {
-    		console.log($scope.newDatasetMeta);
-    		
-    		var totalItemsInPreviewInit = angular.copy($scope.totalItemsInPreview);
-    		$scope.totalItemsInPreview = $scope.newDatasetMeta.results;
-    		
-    		if(totalItemsInPreviewInit==-1) {
-				
-				if ($scope.totalItemsInPreview < $scope.itemsPerPage) {
-	   		 		$scope.endPreviewIndex = $scope.totalItemsInPreview	
-	   		 		$scope.disableNext = true;
-				}
-				else {
-		   		 	$scope.endPreviewIndex = $scope.itemsPerPage;
-		   		 	$scope.disableNext = false;
-		       	}
-				
+		var totalItemsInPreviewInit = angular.copy($scope.totalItemsInPreview);
+		$scope.totalItemsInPreview = $scope.newDatasetMeta.results;
+		if(totalItemsInPreviewInit==-1) {
+			if ($scope.totalItemsInPreview < $scope.itemsPerPage) {
+   		 		$scope.endPreviewIndex = $scope.totalItemsInPreview	
+   		 		$scope.disableNext = true;
+			}
+			else {
+	   		 	$scope.endPreviewIndex = $scope.itemsPerPage;
+	   		 	$scope.disableNext = false;
 	       	}
 			
-		    angular.copy($scope.newDatasetMeta.rows,$scope.previewDatasetModel);
-		   
-		    console.log($scope.newDatasetMeta.rows);
-		    
-		    if( !$scope.previewDatasetColumns || $scope.previewDatasetColumns.length==0){
-		    	$scope.createColumnsForPreview($scope.newDatasetMeta.metaData.fields);				
-		    }		
-    		
-    	}
-    	else {
-    		
-    		sbiModule_restServices.promiseGet("selfservicedataset/values",dataset.label,"",config)
-			.then(function(response) {			
-						
-				var totalItemsInPreviewInit = angular.copy($scope.totalItemsInPreview);
-				console.log(response);
-				/**
-				 * If the responded dataset does not possess a metadata information (total amount of rows in the result)
-				 * take this property if provided.
-				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-				 */
-				if (response.data.results) {
-					$scope.totalItemsInPreview = response.data.results;
-				}	
-				
-		    	/**
-		    	 * If the the initial 'totalItemsInPreview' value is -1, that means that this property is not set yet or there is no this property in the response 
-		    	 * (total number of results - rows). This serves just to initialize the indicators used in the if-else block (such as 'endPreviewIndex'), in order 
-		    	 * to initialize the preview of the dataset types that do not have 'resultNumber' property in their 'meta'. This temporary variable should be -1
-		    	 * only on the first call of this function.
-		    	 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-		    	 */
-				if(totalItemsInPreviewInit==-1) {
-										
-					if ($scope.totalItemsInPreview < $scope.itemsPerPage) {
-		   		 		$scope.endPreviewIndex = $scope.totalItemsInPreview	
-		   		 		$scope.disableNext = true;
-					}
-					else {
-			   		 	$scope.endPreviewIndex = $scope.itemsPerPage;
-			   		 	$scope.disableNext = false;
-			       	}
-					
-		       	}
-				
-			    angular.copy(response.data.rows,$scope.previewDatasetModel);
-			   
-			    console.log(response.data.rows);
-			    
-			    if( !$scope.previewDatasetColumns || $scope.previewDatasetColumns.length==0){
-			    	$scope.createColumnsForPreview(response.data.metaData.fields);				
-			    }		
-			
-			//$scope.startPreviewIndex=$scope.startPreviewIndex=0+20;
-			
-		},
-		
-		function(response){	console.log("ERROR");		
-			sbiModule_messaging.showErrorMessage(sbiModule_translate.load(response.data.errors[0].message));			
-		});
-    		
-    	}
-    	
-    	
+       	}
+	    angular.copy($scope.newDatasetMeta.rows,$scope.previewDatasetModel);
+	    if( !$scope.previewDatasetColumns || $scope.previewDatasetColumns.length==0){
+	    	$scope.createColumnsForPreview($scope.newDatasetMeta.metaData.fields);				
+	    }		
     }
     
-    $scope.getNextPreviewSet = function(){   	
-    	console.log($scope.startPreviewIndex);
-    	console.log($scope.itemsPerPage);
-    	console.log($scope.totalItemsInPreview);
-    	console.log($scope.previewDatasetModel);
+    $scope.getNextPreviewSet = function(){ 
     	 if($scope.startPreviewIndex+$scope.itemsPerPage > $scope.totalItemsInPreview){
-  
     		 $scope.startPreviewIndex=$scope.totalItemsInPreview-($scope.totalItemsInPreview%$scope.itemsPerPage);  		
     		 $scope.endPreviewIndex=$scope.totalItemsInPreview;
     		 $scope.disableNext=true;
@@ -3054,15 +2903,23 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
          		 $scope.disableNext=true;
          		 $scope.disableBack=false;
          	 }else{
-              
-              
               $scope.disableNext=false;
               $scope.disableBack=false;
          	 }
     	 }   
-    	 
-    	 $scope.getPreviewSet($scope.datasetInPreview);
-        	 
+    	 $scope.selectedDataSet.start = $scope.startPreviewIndex;
+     	 $scope.selectedDataSet.limit = $scope.itemsPerPage;
+     	 sbiModule_restServices.promisePost('1.0/datasets','preview', angular.toJson($scope.selectedDataSet))
+		 .then(
+			function(response) {
+				console.log(response.data);
+				$scope.newDatasetMeta = response.data;
+				$scope.getPreviewSet(null);
+			},
+			function(response) {
+				$scope.translate.load(response.data.errors.messages)
+			}
+		 );        	 
     }
     
     $scope.getBackPreviewSet=function(){
@@ -3086,8 +2943,19 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
              $scope.disableNext=false;
              }
     	 }
-    	
-    	 $scope.getPreviewSet($scope.datasetInPreview);
+    	 $scope.selectedDataSet.start = $scope.startPreviewIndex;
+     	 $scope.selectedDataSet.limit = $scope.itemsPerPage;
+     	 sbiModule_restServices.promisePost('1.0/datasets','preview', angular.toJson($scope.selectedDataSet))
+		 .then(
+			function(response) {
+				console.log(response.data);
+				$scope.newDatasetMeta = response.data;
+				$scope.getPreviewSet(null);
+			},
+			function(response) {
+				$scope.translate.load(response.data.errors.messages)
+			}
+		 );  
     	
     }
     

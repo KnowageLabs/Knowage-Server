@@ -1650,17 +1650,14 @@ public class ManageDataSetsForREST {
 
 		dataSetJSON = null;
 		try {
-			Integer start = -1;
-			try {
-				start = json.optInt(DataSetConstants.START);
-			} catch (NullPointerException e) {
-				logger.info("start option undefined");
+			Integer start = json.optInt(DataSetConstants.START);
+			Integer limit = json.optInt(DataSetConstants.LIMIT);
+
+			if (start == null) {
+				start = DataSetConstants.START_DEFAULT;
 			}
-			Integer limit = -1;
-			try {
-				limit = json.optInt(DataSetConstants.LIMIT);
-			} catch (NullPointerException e) {
-				logger.info("limit option undefined");
+			if (limit == null || limit == 0) {
+				limit = DataSetConstants.LIMIT_DEFAULT;
 			}
 
 			dataSet.setUserProfileAttributes(UserProfileUtils.getProfileAttributes(profile));
