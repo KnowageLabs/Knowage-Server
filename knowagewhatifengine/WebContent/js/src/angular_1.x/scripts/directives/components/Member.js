@@ -27,104 +27,119 @@ angular.module('member_directive',['sbiModule'])
 	            for(var i =0;i< scope.members.length;i++){
 	            	if(scope.members[i].position===attrs.position&&scope.members[i].uniqueName===attrs.uniquename){
 	            		
-	            		$element.addClass('pivot-table-selected');
+	            		mark();
 	            		break;
 	            	}
 	            	
 	            }
 	            
 	            $element.bind('$destroy', function () {
-	                
-	        	 	
-		        	 
+
 		        	 $element.detach();
-			        
-			          
-		        	
-		               
+ 
 		            });
 	            
-	            var onClick = function($event,toaster){
+	            var selectMember = function(){
 	            	
-	            	
-	            	if(scope.olapMode){
-	            		var className = $element[0].className;
-	            		
-	            		if( className == 'pivot-table-selected'){
-	            			$element[0].className = 'pivot-table th';
-	            		}else {
-	            			$element[0].className = 'pivot-table-selected';
-						}
-	            		
-	            		$event.preventDefault()
-		        	 	$event.stopPropagation();
-		        		 	scope.selectedMember.uniqueName = attrs.uniquename;
-				            scope.selectedMember.level = attrs.level;
-				            scope.selectedMember.dimension = attrs.dimensionuniquename;
-				            scope.selectedMember.parentMember = attrs.parentmember;
-				            scope.selectedMember.axisOrdinal = attrs.axisordinal;
-				            scope.selectedMember.hierarchyUniqueName = attrs.hierarchyuniquename;
-				            scope.selectedMember.position = attrs.position;
-				           
+	            	if(isSameHierarchy()){
+	            		copyAttributesToSelectedMember();
+			            addMember(scope.selectedMember);
+			            mark();
 	            	}
 	            	
+	            }
+	            
+	            var deselectMember = function(){
+	            	removeMember();
+	            	clearMark();
+	            }
+	            
+	            var toggleMemberSelection = function(){
+	            	if(!isMemberSelected()){
+	            		selectMember();
+	            	}else{
+	            		deselectMember();
+	            	}
+	            }
+	            
+	            
+	            
+	            var isMeasure = function(){
+	            	
+	            	return attrs.hierarchyUniqueName==='[Measures]';
+	            }
+	            
+	            var isSameHierarchy = function(){
+	            	if(!isMembersEmpty()){
+	            		return scope.members[0].hierarchyUniqueName == attrs.hierarchyuniquename;
+	            	}
+	            		return true;
+	            	
+	            }
+	            var copyAttributesToSelectedMember = function(){
+	            	scope.selectedMember.uniqueName = attrs.uniquename;
+		            scope.selectedMember.level = attrs.level;
+		            scope.selectedMember.dimension = attrs.dimensionuniquename;
+		            scope.selectedMember.parentMember = attrs.parentmember;
+		            scope.selectedMember.axisOrdinal = attrs.axisordinal;
+		            scope.selectedMember.hierarchyUniqueName = attrs.hierarchyuniquename;
+		            scope.selectedMember.position = attrs.position;
+	            }
+	            
+	            var addMember = function(selectedMember){
+	            	scope.members.push(angular.copy(selectedMember))
+	            }
+	            
+	            var removeMember = function(){
+	            	for(var i =0;i< scope.members.length;i++){
+		            	if(scope.members[i].position===attrs.position){
+		            		
+		            		scope.members.splice(i,1);
+		            		
+		            	}
+		            	
+		            }
+	            }
+	            
+	            var isMemberSelected = function(){
+	            	for(var i =0;i< scope.members.length;i++){
+		            	if(scope.members[i].position===attrs.position){
+		            		return true;
+		            	}	
+		            }
+	            	return false;
+	            }
+	            
+	            var isMembersEmpty = function(){
+	            	return scope.members.length===0;
+	            }
+	            
+	           
+	            
+	            
+	            
+	            
+	            
+	            var onClick = function($event){
+	            	
+	            
+	            	$event.preventDefault()
+            		$event.stopPropagation();
+	            	
 	            	if(scope.selectedAgument){
-	            		
 
-	        	 	$event.preventDefault()
-	        	 	$event.stopPropagation();
-	        		 	scope.selectedMember.uniqueName = attrs.uniquename;
-			            scope.selectedMember.level = attrs.level;
-			            scope.selectedMember.dimension = attrs.dimensionuniquename;
-			            scope.selectedMember.parentMember = attrs.parentmember;
-			            scope.selectedMember.axisOrdinal = attrs.axisordinal;
-			            scope.selectedMember.hierarchyUniqueName = attrs.hierarchyuniquename;
-			            scope.selectedMember.position = attrs.position;
-			            var contains = false;
-			            for(var i =0;i< scope.members.length;i++){
-			            	if(scope.members[i].position===scope.selectedMember.position){
-			            		contains = true;
-			            		scope.members.splice(i,1);
-			            		$element[0].className = 'pivot-table th';
-			            		break;
-			            	}
-			            	
-			            }
-			            
 			            if(scope.selectedAgument.expected_value==='Measure_Expression'){
-			            	if(!contains){
-				            	if(scope.members.length>0&&scope.selectedMember.hierarchyUniqueName==='[Measures]'
-				            			){
-				            		scope.members.push(angular.copy(scope.selectedMember));
-					            	$element[0].className = 'pivot-table-selected';
-				            	}else if(scope.members.length===0&&scope.selectedMember.hierarchyUniqueName==='[Measures]'){
-				            		scope.members.push(angular.copy(scope.selectedMember));
-					            	$element[0].className = 'pivot-table-selected';
-				            	}
-				            	
-				            	
+			            		
+				            if(isMeasure()){
+				            	toggleMemberSelection();
 				            }
-			            }/*else if(scope.selectedAgument.expected_value==='Member_Expression'){
-			            	scope.members = [];
-			            	scope.members.push(angular.copy(scope.selectedMember));
-			            	$element[0].className = 'pivot-table-selected';*/
+				            
 			            }else{
-			            	if(!contains){
-				            	if(scope.members.length>0&&scope.selectedMember.hierarchyUniqueName===scope.members[0].hierarchyUniqueName
-				            			){
-				            		scope.members.push(angular.copy(scope.selectedMember));
-					            	$element[0].className = 'pivot-table-selected';
-				            	}else if(scope.members.length===0){
-				            		scope.members.push(angular.copy(scope.selectedMember));
-					            	$element[0].className = 'pivot-table-selected';
-				            	}
-				            	
-				            	
-				            }
+			            	toggleMemberSelection();
 			            }
-			            
-			            
-			           
+			                 
+	            }else if(scope.olapMode){
+	            	toggleMemberSelection();
 	            }    
 			         
 	        		
@@ -157,10 +172,17 @@ angular.module('member_directive',['sbiModule'])
 	        	
 	        }
 	            
-	            
+	            }      
 	           
 	         $element.bind('click', onClick);
 	        
+	         var mark = function(){
+	            	$element[0].className = 'pivot-table-selected';
+	            }
+	            
+	         var clearMark = function(){
+	            	$element[0].className = 'pivot-table th';
+	            }
 	         
 	        }
 	    };
