@@ -87,6 +87,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		};
 
 		
+		Object.prototype.getKeyByValue = function( value ) {
+		    for( var prop in this ) {
+		        if( this.hasOwnProperty( prop ) ) {
+		             if( this[ prop ] === value )
+		                 return prop;
+		        }
+		    }
+		}
+		
+		
 		
 		$scope.tableFunction={
 				widgetStyle:$scope.ngModel.style,			
@@ -192,7 +202,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						$scope.refreshWidget(options);
 					}
 				}
-			},500);
+			},1000);
 			 
 		};
 		$scope.isMobile = {
@@ -290,7 +300,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								
 								var htm="<div layout='row' layout-align='start center'>";
 							
-								if(currentColumn.visType=='Text')
+								if(currentColumn.visType=='Text' || !currentColumn.hasOwnProperty("visType"))
 								{										
 									htm="<div>"+value+"</div>"	
 								}	
@@ -359,19 +369,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 											{	
 												if(parseFloat(value)<colInfo.value)
 												{	
-													htm=htm+"&nbsp; <md-icon  style='color:red'  md-font-icon='"+currentColumn.scopeFunc.condition[i].icon+"'> </md-icon>";
+													htm=htm+"&nbsp; <md-icon  style='color:"+ currentColumn.scopeFunc.condition[i].iconColor +"'  md-font-icon='"+currentColumn.scopeFunc.condition[i].icon+"'> </md-icon>";
 												}
 												else 
 												{
 													//htm=htm+"&nbsp; <div style='height:\"24px\"; width:\"24px\";'> </div>";
-													htm=htm+"&nbsp; <md-icon md-font-icon='fa fa-fw'></md-icon>";
+													htm=htm+"&nbsp; <md-icon md-font-icon='fa fa-fw'></md-icon>"; //blank icon
 												}	
 											}
 											else if(colInfo.condition=='>')
 											{	
 												if(parseFloat(value)>colInfo.value)
 												{	
-													htm=htm+"&nbsp; <md-icon  style='color:red'  md-font-icon='"+currentColumn.scopeFunc.condition[i].icon+"'> </md-icon>";
+													htm=htm+"&nbsp; <md-icon  style='color:"+ currentColumn.scopeFunc.condition[i].iconColor +"'  md-font-icon='"+currentColumn.scopeFunc.condition[i].icon+"'> </md-icon>";
 												}
 												else 
 												{
@@ -383,7 +393,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 											{
 												if(parseFloat(value)==colInfo.value)
 												{	
-													htm=htm+"&nbsp; <md-icon  style='color:red'  md-font-icon='"+currentColumn.scopeFunc.condition[i].icon+"'> </md-icon>";
+													htm=htm+"&nbsp; <md-icon  style='color:"+ currentColumn.scopeFunc.condition[i].iconColor +"'  md-font-icon='"+currentColumn.scopeFunc.condition[i].icon+"'> </md-icon>";
 												}
 												else 
 												{
@@ -395,11 +405,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 												
 	
 											break;
-										}	
-									}
-								}
+										}
+									}	
+								}	
 								
-								
+								//document.getElementsByClassName("angularTableContentBox").style("width","100%");
 								return htm+"</div>";									
 
 						}
@@ -448,7 +458,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					for(var j=0;j<indexList.length;j++){
 						for(var k=1;k<values.metaData.fields.length;k++){
 							if(indexList[j] == values.metaData.fields[k].dataIndex ){
-								var style = $scope.ngModel.content.columnSelectedOfDataset[k-1].style;
+								var key=indexList.getKeyByValue(indexList[j]);
+								var style = $scope.ngModel.content.columnSelectedOfDataset[key].style;
+								//var style = $scope.ngModel.content.columnSelectedOfDataset[k-1].style;
+								//var prefixedField=$scope.ngModel.content.columnSelectedOfDataset[k-1].name;//ADDED
 								obj[values.metaData.fields[k].header] = values.rows[i][indexList[j]];
 
 								
@@ -470,7 +483,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									obj[values.metaData.fields[k].header] = toDo;
 								}
 								if(style!=undefined && style.prefix !=undefined){
-									obj[values.metaData.fields[k].header] = style.prefix + ' ' + obj[values.metaData.fields[k].header];
+									obj[values.metaData.fields[k].header] = style.prefix +obj[values.metaData.fields[k].header];
+									//obj[prefixedField] = style.prefix +obj[values.metaData.fields[k].header];
 								}
 								if(style!=undefined && style.suffix !=undefined){
 									obj[values.metaData.fields[k].header] = obj[values.metaData.fields[k].header] + ' ' + style.suffix;

@@ -732,7 +732,7 @@ function TableControllerFunction($scope, $timeout) {
 	    			angular.element(fakeDiv[i]).css("width",angular.element(principalThDiv[i])[0].offsetWidth+"px");
 	    		}
 	    		if(tableContentBox[0] && tableContentBox[0].offsetWidth!=width){
-	    			tableContentBox.css("width",width+"px");
+	    			//tableContentBox.css("width",width+"px");
 	    		}
 	    	}
 	    },0)

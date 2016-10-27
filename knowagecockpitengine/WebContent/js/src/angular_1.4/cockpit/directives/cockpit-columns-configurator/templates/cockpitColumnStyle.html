@@ -77,13 +77,9 @@
 			          				<label>Color threshold</label>
 									<input class="input_class" type="number" ng-model="selectedColumn.colorThreshold" required> 
 			        	   </md-input-container> 
-							
-						   <div  flex>
-						   		<md-input-container class="md-block"> 
-									<label>Background threshold color</label>
-									<color-picker  options="colorPickerProperty" ng-model="selectedColumn.style.backgroundTresholdColor "></color-picker>
-								</md-input-container>
-						   </div>
+			        	   
+			        	   
+						   
 						   
 					       					       
 					       <angular-table layout-fill
@@ -97,6 +93,19 @@
 										scope-functions="selectedColumn.scopeFunc"	
 							>						
 							</angular-table>
+							
+						<!-- 	<angular-table layout-fill
+					    				id="cellColorThresholdsTable" 
+										flex
+										ng-show=true
+										ng-model="cellColorThresholdsList"
+										highlights-selected-item=true
+										no-pagination=true
+										columns="cellColorTableColumns"		
+										scope-functions="selectedColumn.scopeFunc"	
+							>						
+							</angular-table> -->
+							
 					  </div> 
 					       
 				
