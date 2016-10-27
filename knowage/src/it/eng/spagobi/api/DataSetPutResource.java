@@ -23,7 +23,6 @@
 package it.eng.spagobi.api;
 
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.SpagoBIDataSetException;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.service.ManageDataSetsForREST;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
@@ -58,15 +57,12 @@ public class DataSetPutResource extends AbstractSpagoBIResource {
 		try {
 			dsDao = DAOFactory.getDataSetDAO();
 			dsDao.setUserProfile(getUserProfile());
-		} catch (SpagoBIDataSetException dse) {
-			throw new SpagoBIRestServiceException(getLocale(), dse);
 		} catch (Exception e) {
 			throw new SpagoBIRestServiceException(getLocale(), e);
 		}
 		JSONObject json = RestUtilities.readBodyAsJSONObject(req);
 		ManageDataSetsForREST mdsfr = new ManageDataSetsForREST();
 		String toReturnString = mdsfr.jsonReciever(json.toString(), dsDao, null, getUserProfile(), req);
-		// SONObject toReturn = new JSONObject(toReturnString);
 		return toReturnString;
 	}
 
@@ -74,11 +70,9 @@ public class DataSetPutResource extends AbstractSpagoBIResource {
 	@Path("/preview")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String previewDataSet(@Context HttpServletRequest req) throws IOException, JSONException {
-
 		JSONObject json = RestUtilities.readBodyAsJSONObject(req);
 		ManageDataSetsForREST mdsfr = new ManageDataSetsForREST();
 		String toReturnString = mdsfr.jsonPreviewReciever(json.toString(), getUserProfile());
-		// SONObject toReturn = new JSONObject(toReturnString);
 		return toReturnString;
 	}
 
