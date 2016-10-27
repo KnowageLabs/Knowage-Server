@@ -87,15 +87,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		};
 
 		
-		Object.prototype.getKeyByValue = function( value ) {
-		    for( var prop in this ) {
-		        if( this.hasOwnProperty( prop ) ) {
-		             if( this[ prop ] === value )
+//		Object.prototype.getKeyByValue = function( value ) {
+//		    for( var prop in this ) {
+//		        if( this.hasOwnProperty( prop ) ) {
+//		             if( this[ prop ] === value )
+//		                 return prop;
+//		        }
+//		    }
+//		}
+		$scope.getKeyByValue = function( obj,value ) {
+		    for( var prop in obj ) {
+		        if( obj.hasOwnProperty( prop ) ) {
+		             if( obj[ prop ] === value )
 		                 return prop;
 		        }
 		    }
 		}
-		
 		
 		
 		$scope.tableFunction={
@@ -458,7 +465,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					for(var j=0;j<indexList.length;j++){
 						for(var k=1;k<values.metaData.fields.length;k++){
 							if(indexList[j] == values.metaData.fields[k].dataIndex ){
-								var key=indexList.getKeyByValue(indexList[j]);
+								var key=$scope.getKeyByValue(indexList,indexList[j]);
 								var style = $scope.ngModel.content.columnSelectedOfDataset[key].style;
 								//var style = $scope.ngModel.content.columnSelectedOfDataset[k-1].style;
 								//var prefixedField=$scope.ngModel.content.columnSelectedOfDataset[k-1].name;//ADDED

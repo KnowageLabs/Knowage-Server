@@ -26,7 +26,7 @@
 				       <div ng-if="selectedColumn.fieldType=='MEASURE'">
 				       		
 				       		<md-input-container>
-		          				<label>Visualization Type</label>
+		          				<label>{{translate.load('sbi.cockpit.table.visualizationtype')}}</label>
 		          					<md-select ng-model="selectedColumn.visType">
 		            					<md-option ng-repeat="vType in visTypes" value="{{vType}}">
 		              						{{vType}}
@@ -36,22 +36,22 @@
 				     
 					       <div ng-if="selectedColumn.visType=='Chart'|| selectedColumn.visType=='Chart & Text' || selectedColumn.visType== 'Text & Chart' ">
 					       		<md-input-container flex class="md-block" class="small counter">
-									<label>Min value</label>
+									<label>{{translate.load('sbi.cockpit.table.minvalue')}}</label>
 									<input class="input_class" type="number" ng-model="selectedColumn.minValue" required> 
 								</md-input-container>	
 								
 								<md-input-container flex class="md-block" class="small counter">
-									<label>Max value</label>
+									<label>{{translate.load('sbi.cockpit.table.maxvalue')}}</label>
 									<input class="input_class" type="number" ng-model="selectedColumn.maxValue" required> 
 								</md-input-container>
 								
 								<md-input-container flex class="md-block" class="small counter">
-									<label>Chart length</label>
+									<label>{{translate.load('sbi.cockpit.table.chartlength')}}</label>
 									<input class="input_class" type="number" ng-model="selectedColumn.chartLength" required> 
 								</md-input-container>
 								
 								<md-input-container flex class="md-block" class="small counter">
-									<label>Chart color</label> 
+									<label>{{translate.load('sbi.cockpit.table.chartcolor')}}</label> 
 									<color-picker  options="colorPickerProperty" ng-model="selectedColumn.chartColor "></color-picker>
 								</md-input-container>
 								
@@ -74,7 +74,7 @@
 							
 							
 						   <md-input-container>
-			          				<label>Color threshold</label>
+			          				<label>{{translate.load('sbi.cockpit.table.colorthreshold')}}</label>
 									<input class="input_class" type="number" ng-model="selectedColumn.colorThreshold" required> 
 			        	   </md-input-container> 
 			        	   
