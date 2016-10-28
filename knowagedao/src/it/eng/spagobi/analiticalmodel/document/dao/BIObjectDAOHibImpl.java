@@ -591,6 +591,16 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			// hibBIObject.getSbiOutputParameters().addAll(loadDriverSpecificOutputParameters(hibBIObject));
 			// }
 
+			// If the document previously had the output parameters, remove them in order to refresh them. (danristo)
+			if (!hibBIObject.getSbiOutputParameters().isEmpty() || hibBIObject.getSbiOutputParameters() != null) {
+				// delete SbiOutputParameters
+				if (hibBIObject.getSbiOutputParameters() != null && !hibBIObject.getSbiOutputParameters().isEmpty()) {
+					hibBIObject.getSbiOutputParameters().clear();
+					DAOFactory.getOutputParameterDAO().removeParametersByBiobjId(hibBIObject.getBiobjId(), aSession);
+					aSession.flush();
+				}
+			}
+
 			// If there are no output parameters persisted already for this document, create new ones for it. (danristo)
 			if (hibBIObject.getSbiOutputParameters() == null || hibBIObject.getSbiOutputParameters().isEmpty()) {
 
@@ -895,6 +905,8 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			if (!specificChartTypes.equals("")) {
 
 				hibBIObject.getSbiOutputParameters().clear();
+				DAOFactory.getOutputParameterDAO().removeParametersByBiobjId(hibBIObject.getBiobjId(), aSession);
+				aSession.flush();
 
 				List<SbiOutputParameter> op = loadDriverSpecificOutputParameters(hibBIObject, specificChartTypes);
 

@@ -485,10 +485,21 @@ public class ChartDriver extends GenericDriver {
 		ret.add(dopGroupingName);
 		ret.add(dopGroupingValue);
 
-		if (specificChartType.toUpperCase().equals("WORDCLOUD") || specificChartType.toUpperCase().equals("CHORD")) {
+		// REMOVE THE 'CATEGORY' OUTPUT PARAMETERS
+		if (specificChartType.toUpperCase().equals("GAUGE")) {
+			ret.remove(dopCategoryName);
+			ret.remove(dopCategoryValue);
+		}
+
+		// REMOVE THE 'GROUPING' OUTPUT PARAMETERS
+		if (specificChartType.toUpperCase().equals("WORDCLOUD") || specificChartType.toUpperCase().equals("CHORD")
+				|| specificChartType.toUpperCase().equals("GAUGE")) {
 			ret.remove(dopGroupingName);
 			ret.remove(dopGroupingValue);
-		} else if (specificChartType.toUpperCase().equals("PARALLEL")) {
+		}
+
+		// REMOVE THE 'SERIES' OUTPUT PARAMETERS
+		if (specificChartType.toUpperCase().equals("PARALLEL")) {
 			ret.remove(dopSerieName);
 			ret.remove(dopSerieValue);
 		}

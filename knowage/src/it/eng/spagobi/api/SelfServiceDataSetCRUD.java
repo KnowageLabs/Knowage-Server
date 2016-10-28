@@ -935,7 +935,17 @@ public class SelfServiceDataSetCRUD {
 			boolean limitPreviewCheck = false;
 			if (limitPreview.equalsIgnoreCase("true")) {
 				limitPreviewCheck = true;
+			} else {
+				/**
+				 * If the limit preview is not checked by the user in the File dataset wizard in the Workspace (Step 1), take the maximum dataset results size
+				 * that is provided by the application as the limit. This way we will use "all" the dataset records that are available in the dataset, unless
+				 * the size of dataset records exceeds the size of this parameter.
+				 *
+				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */
+				limit = GeneralUtilities.getDatasetMaxResults();
 			}
+
 			if (limitPreviewCheck && (previewRowsConfig != null) && (previewRowsConfig.isActive())) {
 				// use a preview limit
 				String previewRowsConfigValue = previewRowsConfig.getValueCheck();
@@ -1760,7 +1770,7 @@ public class SelfServiceDataSetCRUD {
 																		// or
 																		// not
 			}
-			dataSet.loadData(start, limit, GeneralUtilities.getDatasetMaxResults());
+			dataSet.loadData(start, GeneralUtilities.getDatasetMaxResults(), GeneralUtilities.getDatasetMaxResults());
 			IDataStore dataStore = dataSet.getDataStore();
 			DatasetMetadataParser dsp = new DatasetMetadataParser();
 

@@ -494,35 +494,27 @@ public class DocumentResource extends AbstractSpagoBIResource {
 		ArrayList<String> categoriesNames = new ArrayList<String>();
 
 		/**
-		 * 'allSpecificChartTypes': Array of all chart types that need some
-		 * default (generic) output parameters to be removed from the list of
-		 * final output parameters for the document of that chart type. For
-		 * example, the WORDCLOUD chart type does not need a GROUPING_NAME and
-		 * GROUPING_VALUE output parameters, so these two will be removed from
-		 * the predefined (standard) list of output parameters (it will have
-		 * only SERIE_NAME, SERIE_VALUE, CATEGORY_NAME, CATEGORY_VALUE
-		 * parameters).
+		 * 'allSpecificChartTypes': Array of all chart types that need some default (generic) output parameters to be removed from the list of final output
+		 * parameters for the document of that chart type. For example, the WORDCLOUD chart type does not need a GROUPING_NAME and GROUPING_VALUE output
+		 * parameters, so these two will be removed from the predefined (standard) list of output parameters (it will have only SERIE_NAME, SERIE_VALUE,
+		 * CATEGORY_NAME, CATEGORY_VALUE parameters).
 		 *
-		 * 'specificChartType': If the type of the chart document that is saved
-		 * is one of those in the following list, we will record it and manage
-		 * further functions accordingly.
+		 * 'specificChartType': If the type of the chart document that is saved is one of those in the following list, we will record it and manage further
+		 * functions accordingly.
 		 *
 		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
-		String[] allSpecificChartTypes = { "PARALLEL", "WORDCLOUD", "CHORD" };
+		String[] allSpecificChartTypes = { "PARALLEL", "WORDCLOUD", "CHORD", "GAUGE" };
 		List specificChartTypes = Arrays.asList(allSpecificChartTypes);
 		String specificChartType = "";
 
 		/**
 		 * Two exclusive scenarios:
 		 *
-		 * (1) Prepare categories that the SUNBURST chart document has in order
-		 * to provide custom-made category output parameters for the
-		 * cross-navigation.
+		 * (1) Prepare categories that the SUNBURST chart document has in order to provide custom-made category output parameters for the cross-navigation.
 		 *
-		 * (2) Get the type of the chart document that is about to be saved in
-		 * order to manage its output parameters if its type is one of those
-		 * listed in the 'specificChartTypes'.
+		 * (2) Get the type of the chart document that is about to be saved in order to manage its output parameters if its type is one of those listed in the
+		 * 'specificChartTypes'.
 		 *
 		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
