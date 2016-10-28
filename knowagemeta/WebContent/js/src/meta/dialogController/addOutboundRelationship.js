@@ -1,25 +1,25 @@
 angular.module('metaManager').controller('businessModelOutboundController', [ '$scope','sbiModule_translate', 'sbiModule_restServices', 'parametersBuilder','$timeout','$mdDialog','sbiModule_config','metaModelServices',businessModelOutboundControllerFunction ]);
 function businessModelOutboundControllerFunction($scope, sbiModule_translate,sbiModule_restServices, parametersBuilder,$timeout,$mdDialog,sbiModule_config,metaModelServices){
 	$scope.isOutbound = function(item) {
-		return !angular.equals(item.sourceTableName,$scope.selectedBusinessModel.uniqueName);
+		return angular.equals(item.sourceTableName,$scope.selectedBusinessModel.uniqueName);
 	}
 
 	$scope.outboundColumns = [{label:sbiModule_translate.load("sbi.generic.name"),name:'name'},
-		                      {label:sbiModule_translate.load("sbi.meta.source.table"),name:'destinationTableName'},
-		                      {label:sbiModule_translate.load("sbi.meta.source.columns"),name:'destinationColumns',transformer:function(data){
-		                    	  var retD = [];
-		                    	  data.forEach(function(entry) {
-		                    		    retD.push(entry.name);
-		                    		  }, this);
-		                    	  return retD.join(", ")
-		                      }},
-		                      {label:sbiModule_translate.load("sbi.meta.target.table"),name:'sourceTableName'},
-		                      {label:sbiModule_translate.load("sbi.meta.target.columns"),name:'sourceColumns',transformer:function(data){
+		                      {label:sbiModule_translate.load("sbi.meta.source.table"),name:'sourceTableName'},
+		                      {label:sbiModule_translate.load("sbi.meta.source.columns"),name:'sourceColumns',transformer:function(data){
 		                    	  var ret = [];
 		                    	  data.forEach(function(entry) {
 		                    		    ret.push(entry.name);
 		                    		  }, this);
 		                    	  return ret.join(", ")
+		                      }},
+		                      {label:sbiModule_translate.load("sbi.meta.target.table"),name:'destinationTableName'},
+		                      {label:sbiModule_translate.load("sbi.meta.target.columns"),name:'destinationColumns',transformer:function(data){
+		                    	  var retD = [];
+		                    	  data.forEach(function(entry) {
+		                    		    retD.push(entry.name);
+		                    		  }, this);
+		                    	  return retD.join(", ")
 		                      }}
 		                      ];
 
