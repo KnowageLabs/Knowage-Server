@@ -40,7 +40,7 @@
 			</md-input-container> 
 			<md-input-container flex='50' class="md-block" ng-if="p.criterion.valueCd!=='MAJORITY'" > 
 				<label>{{translate.load('sbi.kpi.scorecard.priority.kpi')}}</label> 
-				<md-select ng-model="p.options.criterionPriority" ng-disabled="!definition" ng-model-options="{trackBy: '$value.name'}" multiple=true> 
+				<md-select ng-model="p.options.criterionPriority" title="p.options.criterionPriority" ng-disabled="!definition" ng-model-options="{trackBy: '$value.name'}" multiple=true> 
 					<md-option	ng-repeat="tar in p.targets" ng-value="{{tar}}">	{{tar.name}} </md-option> 
 				</md-select> 
 			</md-input-container>
@@ -78,6 +78,21 @@
             <md-icon md-font-icon="fa fa-plus"></md-icon>
         </md-button>
       </md-toolbar>
+      <div layout="row" layout-padding>
+      <md-input-container class="md-block" flex> 
+				<label>{{translate.load('sbi.kpi.scorecard.perspective.criterion')}}</label> 
+				<md-select ng-model="perspectives[cp].targets[ct].criterion" ng-disabled="!definition" ng-model-options="{trackBy: '$value.translatedValueName'}">
+					<md-option ng-repeat="crit in criterion" ng-value="crit" >{{crit.translatedValueName}}</md-option>
+				</md-select>
+			
+			</md-input-container> 
+			<md-input-container flex class="md-block" ng-if="perspectives[cp].targets[ct].criterion.valueCd!=='MAJORITY'" > 
+				<label>{{translate.load('sbi.kpi.scorecard.priority.kpi')}}</label> 
+				<md-select ng-model="perspectives[cp].targets[ct].options.criterionPriority" title="perspectives[cp].targets[ct].options.criterionPriority" ng-disabled="!definition" ng-model-options="{trackBy: '$value.name'}" multiple=true> 
+					<md-option	ng-repeat="kpi in perspectives[cp].targets[ct].kpis" ng-value="{{kpi}}">	{{kpi.name}} </md-option> 
+				</md-select> 
+			</md-input-container>
+			</div>
         <md-list class="noPadding">
         	<md-subheader class="md-no-sticky">Kpi List</md-subheader>
         	<md-list-item class="singleKpiColorValue" ng-repeat="kpi in perspectives[cp].targets[ct].kpis">
