@@ -296,18 +296,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								var currentColumn;
 								for(var j=0;j<$scope.ngModel.content.columnSelectedOfDataset.length;j++)
 								{
-									if($scope.ngModel.content.columnSelectedOfDataset[j].name==columnName)
+									var column = $scope.ngModel.content.columnSelectedOfDataset[j];
+									if(column.name==columnName || column.alias==columnName)
 									{						
-										currentColumn=angular.copy($scope.ngModel.content.columnSelectedOfDataset[j]);
+										currentColumn=angular.copy(column);
 										break;
 									}	
-									
-									
 								}	
 								
 								var htm="<div layout='row' layout-align='start center'>";
 							
-								if(currentColumn.visType=='Text' || !currentColumn.hasOwnProperty("visType"))
+								if(!currentColumn.hasOwnProperty("visType") || currentColumn.visType=='Text')
 								{										
 									htm="<div>"+value+"</div>"	
 								}	
