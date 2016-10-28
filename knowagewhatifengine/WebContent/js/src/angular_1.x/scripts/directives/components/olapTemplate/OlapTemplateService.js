@@ -42,6 +42,7 @@ angular.module('olap_template')
 			 * Final Template object Json
 			 */
 			this.getTempateJson = function(){
+				
 				if(this.getTemplateObject()){
 					return angular.toJson(this.getTemplateObject());
 				}
@@ -79,6 +80,7 @@ angular.module('olap_template')
 				if(this.getTemplateObject()){
 					
 						this.getTemplateObject().olap = olap;
+						this.setJsonTemplateTag();
 				
 				}else{
 					console.log("template is undefined!!!");
@@ -142,7 +144,7 @@ angular.module('olap_template')
 					return false;
 				}
 				//console.log(cubeName.startsWith('a'));
-				
+				this.setJsonTemplateTag();
 				return true;
 			}
 			
@@ -239,6 +241,7 @@ angular.module('olap_template')
 					console.log("Olap object is undefined!!!");
 					return false;
 				}
+				this.setJsonTemplateTag();
 				return true;
 			}
 			
@@ -307,6 +310,7 @@ angular.module('olap_template')
 					return false;
 				}
 				
+				this.setJsonTemplateTag();
 				return true;
 			}
 			
@@ -365,6 +369,7 @@ angular.module('olap_template')
 								}
 								
 							}
+							this.setJsonTemplateTag();
 							return true;
 						}	
 							
@@ -456,6 +461,7 @@ angular.module('olap_template')
 					 }
 					 if(MDXMondrianQuery&&MDXMondrianQuery!==""){
 						 this.getMDXMondrianQueryTag().XML_TAG_TEXT_CONTENT = MDXMondrianQuery;
+						 this.setJsonTemplateTag();
 						 return true;
 					 }else{
 						 console.log("mdxMondrianQuery is empty!!!");
@@ -633,7 +639,7 @@ angular.module('olap_template')
 								 
 							 }
 						 }
-						 
+						 this.setJsonTemplateTag();
 						 return true;
 						 
 					 }else{
@@ -763,6 +769,7 @@ angular.module('olap_template')
 								 return false;
 							 }
 						 }
+						 this.setJsonTemplateTag();
 						 return true;
 					 }else{
 						 console.log("Bad format of crossNavigation!!!Mandatory crossNavigation is array of parameters ");
@@ -913,6 +920,7 @@ angular.module('olap_template')
 							return false;
 						}
 					}
+					this.setJsonTemplateTag();
 					return true;
 				}else{
 					console.log("Bad format of toolbarButtons!!!Mandatory toolbarButtons is array of buttons ");
@@ -927,6 +935,50 @@ angular.module('olap_template')
 			this.deleteToolbarTag = function(){
 				if(this.getOlapTag()){
 					 delete this.getOlapTag().TOOLBAR;
+				}else{
+					console.log("Olap object is undefined!!!");
+				}
+			}
+			
+			/*
+			 * Getting JSONTEMPLATE tag
+			 */
+			this.getJsonTemplateTag = function(){
+				
+				if(this.getOlapTag()){	
+					return this.getOlapTag().JSONTEMPLATE;
+				}else{
+					console.log("Olap object is undefined!!!");
+				}
+			}
+			
+			/*
+			 * Setting JSONTEMPLATE tag
+			 */
+			this.setJsonTemplateTag = function(){
+				if(this.getOlapTag()){
+					
+					this.deleteJsonTemplateTag();
+					var templateObject = angular.copy(this.getTemplateObject());
+					this.getOlapTag().JSONTEMPLATE = {};
+					this.getJsonTemplateTag().XML_TAG_TEXT_CONTENT = JSON.stringify(templateObject);
+					
+					return true;
+ 
+				}else{
+					console.log("Olap object is undefined!!!");
+				} 
+				
+				return false;
+				
+			}
+			
+			/*
+			 * Deleting JSONTEMPLATE tag
+			 */
+			this.deleteJsonTemplateTag = function(){
+				if(this.getOlapTag()){
+					 delete this.getOlapTag().JSONTEMPLATE;
 				}else{
 					console.log("Olap object is undefined!!!");
 				}
