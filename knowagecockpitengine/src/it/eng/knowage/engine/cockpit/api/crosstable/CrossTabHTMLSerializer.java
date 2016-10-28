@@ -172,7 +172,7 @@ public class CrossTabHTMLSerializer {
 						text = aNode.getDescription();
 					}
 
-					aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "clickFunction('" + crossTab.getCrosstabDefinition().getRows().get(i).getAlias() + "','" + text
+					aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "clickFunction('" + crossTab.getCrosstabDefinition().getRows().get(i).getEntityId() + "','" + text
 							+ "')");
 					aColumn.setCharacters(text);
 					int rowSpan = aNode.getLeafsNumber();
