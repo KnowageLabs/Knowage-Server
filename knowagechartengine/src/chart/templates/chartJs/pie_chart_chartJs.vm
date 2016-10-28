@@ -87,7 +87,6 @@
 	   	 	heightDimType: '$chart.heightDimType',
 	   	 	
 	   	 	#if ($chart.height!='')
-	   	 	$datasettransformer.print($chart.height)
 	   	 		heightInPerc: $chart.height,
 	   	 	#end
 	    #end

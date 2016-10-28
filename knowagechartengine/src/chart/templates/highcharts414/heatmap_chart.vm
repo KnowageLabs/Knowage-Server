@@ -48,16 +48,13 @@
 #set($firstCategory='')
 
 #set($isFirstDate=$datasettransformer.isFirstCategoryDate($firstresult,$columnsNeeded[0]))
-##$datasettransformer.print($isFirstDate)
 
 #if($isFirstDate==true)
 #set($firstCategory = $datasettransformer.getDateResult($firstresult,$columnsNeeded[0]))
 #else
-##$datasettransformer.print("ELSE")
-##$datasettransformer.print($firstresult)
-##$datasettransformer.print($columnsNeeded[0])
+
 #set($firstCategory = $datasettransformer.getStoreResult($firstresult,$columnsNeeded[0]))
-##$datasettransformer.print($firstCategory)
+
 #end
 
 ##set($dateresult = $datasettransformer.getDateResult($firstresult,$columnsNeeded[0]))
@@ -65,9 +62,6 @@
 #set($storeresult = $datasettransformer.getStoreResult($firstresult,$columnsNeeded[1]))
 
 #set($result = $datasettransformer.getResult($firstresult, $serie, $columnsNeeded,$isFirstDate))
-
-##$datasettransformer.print("RESULTS:")
-##$datasettransformer.print($result)
 
 #set($axisList = $chart.AXES_LIST.AXIS)
 
