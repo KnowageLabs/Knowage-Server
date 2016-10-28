@@ -24,7 +24,7 @@ datasetModule.config(['$mdThemingProvider', function($mdThemingProvider) {
 }]);
 
 datasetModule
-	.controller('datasetController', ["$scope", "$log", "$http", "sbiModule_config", "sbiModule_translate", "sbiModule_restServices", "sbiModule_messaging", "$mdDialog", "multipartForm", "$timeout", "$qbeViewer", datasetFunction])
+	.controller('datasetController', ["$scope", "$log", "$http", "sbiModule_config", "sbiModule_translate", "sbiModule_restServices", "sbiModule_messaging", "sbiModule_user","$mdDialog", "multipartForm", "$timeout", "$qbeViewer", datasetFunction])
 	.service('multipartForm',['$http',function($http){
 			
 			this.post = function(uploadUrl,data){
@@ -42,7 +42,7 @@ datasetModule
 		}]);
 
 
-function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_translate, sbiModule_restServices, sbiModule_messaging, $mdDialog, multipartForm, $timeout, $qbeViewer){
+function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_translate, sbiModule_restServices, sbiModule_messaging, sbiModule_user, $mdDialog, multipartForm, $timeout, $qbeViewer){
 	
 	$scope.translate = sbiModule_translate;
 	$scope.codeMirror = null;
@@ -3249,25 +3249,24 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     	
     }
 	
-	$scope.showQbeDataset= function(dataset){
-		var url = null;
-	    if(dataset.dsTypeCd=='Federated'){
-	    	url = datasetParameters.qbeEditFederatedDataSetServiceUrl
-	        +'&FEDERATION_ID='+dataset.federationId;
-	    } else {
-	    	var modelName= dataset.qbeDatamarts;
-			var dataSource=dataset.qbeDataSource;
-		    url = datasetParameters.qbeFromBMServiceUrl
-			        +'&MODEL_NAME='+modelName
-			        +'&DATA_SOURCE_LABEL='+ dataSource
-			        + (isTechnicalUser != undefined ? '&isTechnicalUser=' + isTechnicalUser : '');
-	    }
-		
-		       
-		// $window.location.href=url;
-		$scope.isFromDataSetCatalogue = true;
-		$qbeViewer.openQbeInterface($scope,url);
-		
-    }
+    $scope.showQbeDataset= function(dataset){
+    	  var url = null;
+    	     if(dataset.dsTypeCd=='Federated'){
+    	      url = datasetParameters.qbeEditFederatedDataSetServiceUrl
+    	         +'&FEDERATION_ID='+dataset.federationId;
+    	     } else {
+    	      var modelName= dataset.qbeDatamarts;
+    	   var dataSource=dataset.qbeDataSource;
+    	      url = datasetParameters.buildQbeDataSetServiceUrl
+    	           +'&DATAMART_NAME='+modelName
+    	           +'&DATASOURCE_LABEL='+ dataSource;
+    	     }
+    	  
+    	  //url = "http://localhost:8080/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=BUILD_QBE_DATASET_START_ACTION&user_id=biadmin&NEW_SESSION=TRUE&SBI_LANGUAGE=en&SBI_COUNTRY=US&DATASOURCE_LABEL=foodmart&DATAMART_NAME=foodmart";      
+    	  // $window.location.href=url;
+    	  $scope.isFromDataSetCatalogue = true;
+    	  $qbeViewer.openQbeInterface($scope,url);
+    	  
+    	    }
 	
 };

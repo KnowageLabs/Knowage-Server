@@ -26,6 +26,10 @@ angular
 	.service('$qbeViewer', function($mdDialog,sbiModule_config,sbiModule_restServices) { 
 	 		
 		this.openQbeInterface = function($scope,url) {
+			if(typeof  globalQbeJson != 'undefined'){
+				globalQbeJson = $scope.selectedDataSet.qbeJSONQuery;
+			}
+			
 			$mdDialog
 				.show
 				(	
@@ -40,13 +44,14 @@ angular
 					}
 				) 
 				.then(function() {
+					
 				});
 		
 		};
 		
 		function openQbeInterfaceController($scope,url,$timeout) {
-						
-		    angular.element(window.document.body).ready(function () {
+		
+		   /* angular.element(window.document.body).ready(function () {
 		    	if($scope.isFromDataSetCatalogue) {
 			    	if(typeof $scope.selectedDataSet.qbeJSONQuery === 'string'){
 						$scope.selectedDataSet.qbeJSONQuery = JSON.parse($scope.selectedDataSet.qbeJSONQuery);
@@ -61,7 +66,7 @@ angular
 						}, timeoutTime);
 					}
 		    	}
-            });
+            });*/
 
 			$scope.documentViewerUrl = url;
 			

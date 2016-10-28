@@ -67,12 +67,14 @@ public class SelfServiceDatasetAction {
 	public static final String OUTPUT_PARAMETER_QBE_EDIT_DATASET_SERVICE_URL = "qbeEditDatasetServiceUrl";
 	public static final String OUTPUT_PARAMETER_QBE_EDIT_FROM_FEDERATION_SERVICE_URL = "qbeEditFederationServiceUrl";
 	public static final String OUTPUT_PARAMETER_QBE_EDIT_FEDERATED_DATA_SET_SERVICE_URL = "qbeEditFederatedDataSetServiceUrl";
+	public static final String OUTPUT_PARAMETER_BUILD_QBE_DATASET_START_ACTION = "buildQbeDataSetServiceUrl";
 
 	public static final String QBE_EDIT_FROM_BM_ACTION = "QBE_ENGINE_START_ACTION_FROM_BM";
 	public static final String QBE_EDIT_FROM_FEDERATION_ACTION = "QBE_ENGINE_FROM_FEDERATION_START_ACTION";
 	public static final String QBE_EDIT_FROM_DATA_SET_ACTION = "QBE_ENGINE_FROM_DATASET_START_ACTION";
 	public static final String QBE_EDIT_DATA_SET_ACTION = "QBE_ENGINE_EDIT_DATASET_START_ACTION";
 	public static final String BUILD_FEDERATED_DATASET_START_ACTION = "BUILD_FEDERATED_DATASET_START_ACTION";
+	public static final String BUILD_QBE_DATASET_START_ACTION = "BUILD_QBE_DATASET_START_ACTION";
 
 	public static final String OUTPUT_PARAMETER_GEOREPORT_EDIT_SERVICE_URL = "georeportServiceUrl";
 	public static final String OUTPUT_PARAMETER_COCKPIT_EDIT_SERVICE_URL = "cockpitServiceUrl";
@@ -108,6 +110,7 @@ public class SelfServiceDatasetAction {
 			String qbeEditFederatedDataSetServiceBaseParametersMap = buildQbeEditFederatedDataSetServiceUrl(executionId, locale, profile);
 			String qbeEditFromDataSetActionUrl = buildQbeEditFromDataSetServiceUrl(executionId, locale, profile);
 			String qbeEditDataSetActionUrl = buildQbeEditDataSetServiceUrl(executionId, locale, profile);
+			String buildQbeDataSetStartActionUrl = buildQbeDatasetStartServiceUrl(executionId, locale, profile);
 			String geoereportEditActionUrl = buildGeoreportEditServiceUrl(executionId, profile, locale);
 			String cockpitEditActionUrl = buildCockpitEditServiceUrl(executionId, locale, profile);
 			String userCanPersist = userCanPersist(profile);
@@ -130,6 +133,7 @@ public class SelfServiceDatasetAction {
 				parameters.put(OUTPUT_PARAMETER_QBE_EDIT_DATASET_SERVICE_URL, qbeEditDataSetActionUrl);
 				parameters.put(OUTPUT_PARAMETER_GEOREPORT_EDIT_SERVICE_URL, geoereportEditActionUrl);
 				parameters.put(OUTPUT_PARAMETER_COCKPIT_EDIT_SERVICE_URL, cockpitEditActionUrl);
+				parameters.put(OUTPUT_PARAMETER_BUILD_QBE_DATASET_START_ACTION, buildQbeDataSetStartActionUrl);
 				parameters.put(USER_CAN_PERSIST, userCanPersist);
 				parameters.put(TABLE_NAME_PREFIX, tableNamePrefix);
 				parameters.put(IS_SMARTFILTER_ENABLED, isSmartFilterEnabled);
@@ -432,6 +436,30 @@ public class SelfServiceDatasetAction {
 		return qbeEditActionUrl;
 	}
 
+	protected String buildQbeDatasetStartServiceUrl(String executionId, Locale locale, UserProfile profile) {
+		Engine qbeEngine = null;
+		String qbeEditActionUrl = null;
+
+		Map<String, String> parametersMap = buildQbeDataSetStartActionServiceBaseParametersMap(locale, profile);
+		parametersMap.put("SBI_EXECUTION_ID", executionId);
+
+		try {
+			qbeEngine = ExecuteAdHocUtility.getQbeEngine();
+		} catch (SpagoBIRuntimeException r) {
+			// the qbe engine is not found
+			logger.info("Engine not found. Error: ", r);
+		}
+
+		if (qbeEngine != null) {
+			LogMF.debug(logger, "Engine label is equal to [{0}]", qbeEngine.getLabel());
+
+			// create the qbe Edit Service's URL
+			qbeEditActionUrl = GeneralUtilities.getUrl(qbeEngine.getUrl(), parametersMap);
+			LogMF.debug(logger, "Qbe edit service invocation url is equal to [{}]", qbeEditActionUrl);
+		}
+		return qbeEditActionUrl;
+	}
+
 	protected Map<String, String> buildQbeEditFromBMServiceBaseParametersMap(Locale locale, UserProfile profile) {
 		Map<String, String> parametersMap = buildServiceBaseParametersMap(locale, profile);
 		parametersMap.put("ACTION_NAME", QBE_EDIT_FROM_BM_ACTION);
@@ -459,6 +487,12 @@ public class SelfServiceDatasetAction {
 	protected Map<String, String> buildQbeEditFederatedDataSetServiceBaseParametersMap(Locale locale, UserProfile profile) {
 		Map<String, String> parametersMap = buildServiceBaseParametersMap(locale, profile);
 		parametersMap.put("ACTION_NAME", BUILD_FEDERATED_DATASET_START_ACTION);
+		return parametersMap;
+	}
+
+	protected Map<String, String> buildQbeDataSetStartActionServiceBaseParametersMap(Locale locale, UserProfile profile) {
+		Map<String, String> parametersMap = buildServiceBaseParametersMap(locale, profile);
+		parametersMap.put("ACTION_NAME", BUILD_QBE_DATASET_START_ACTION);
 		return parametersMap;
 	}
 

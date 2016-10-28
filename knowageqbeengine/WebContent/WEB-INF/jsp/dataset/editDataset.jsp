@@ -213,7 +213,7 @@ author: Davide Zerbetto (davide.zerbetto@eng.it)
 	           		qbe.queryEditorPanel.havingGridPanel.dropTarget = new Sbi.qbe.HavingGridDropTarget(qbe.queryEditorPanel.havingGridPanel);
 
 	         	<%}%>
-	         	
+	         	qbe.setQueriesCatalogue(JSON.parse(parent.globalQbeJson));
 	      	});
 	        
             var receiveHandler = function(message) {
