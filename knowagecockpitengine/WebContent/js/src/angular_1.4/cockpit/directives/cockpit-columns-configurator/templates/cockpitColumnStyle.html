@@ -10,22 +10,24 @@
 			      </md-button>
 		  </md-toolbar>
 		      <div layout-margin layout="column" flex class="relative"> 
-		    	 <div flex>
-		       	<md-input-container class="md-block" class="small counter">
-					<label>{{translate.load('sbi.cockpit.table.maxwidth')}}</label>
-					<input class="input_class" type="number" ng-model="selectedColumn.style.maxWidth"> 
-				</md-input-container>
-		       </div>	
+		       	
 				<div flex>
-					  <md-switch ng-model="selectedColumn.style.hideonMobile" aria-label="Hide Mobile">
+				<div layout="row">
+					<md-input-container class="md-block" class="small counter" flex>
+						<label>{{translate.load('sbi.cockpit.table.maxwidth')}}</label>
+						<input class="input_class" type="number" ng-model="selectedColumn.style.maxWidth"> 
+					</md-input-container>
+					  <md-switch ng-model="selectedColumn.style.hideonMobile" aria-label="Hide Mobile" flex>
 					 {{translate.load('sbi.cockpit.table.hide')}}
 					  </md-switch>
+					  </div>
 		       
-				<!-- added by alepiova -->
+				<!-- added by alepiova & revised by davverna -->
 				       
 				       <div ng-if="selectedColumn.fieldType=='MEASURE'">
 				       		
-				       		<md-input-container>
+				       		<div layout="row">
+				       		<md-input-container md-class="md-block" flex>
 		          				<label>{{translate.load('sbi.cockpit.table.visualizationtype')}}</label>
 		          					<md-select ng-model="selectedColumn.visType">
 		            					<md-option ng-repeat="vType in visTypes" value="{{vType}}">
@@ -55,36 +57,25 @@
 									<color-picker  options="colorPickerProperty" ng-model="selectedColumn.chartColor "></color-picker>
 								</md-input-container>
 								
-					       </div>
-					       
-			        	      
-					       <!-- <md-input-container>
-						       <md-checkbox ng-model="selectedColumn.selectThreshold">
-								  Threshold
-							   </md-checkbox>
-						   </md-input-container>
-							   
-	   			       	   <md-input-container ng-if="selectedColumn.selectThreshold">
-			          				<label>Threshold</label>
-									<input class="input_class" type="number" ng-model="selectedColumn.threshold" required> 
-			        	   </md-input-container> -->
+					       </div>			
 							
-						   
-						    
-							
-							
-						   <md-input-container>
+						   <md-input-container class="md-block" flex>
 			          				<label>{{translate.load('sbi.cockpit.table.colorthreshold')}}</label>
 									<input class="input_class" type="number" ng-model="selectedColumn.colorThreshold" required> 
 			        	   </md-input-container> 
-			        	   
-			        	   
-						   
-						   
-					       					       
-					       <angular-table layout-fill
+			        	   </div>
+		       
+		       			<md-card>
+			       			<md-toolbar class="ternaryToolbar ">
+						      <div class="md-toolbar-tools">
+						        <h2>
+						          <span>Treshold</span>
+						        </h2>
+					        </div>
+					       </md-toolbar>
+		       				<md-card-content>
+					       <angular-table flex
 					    				id="thresholdsTable" 
-										flex
 										ng-show=true
 										ng-model="thresholdsList"
 										highlights-selected-item=true
@@ -93,29 +84,23 @@
 										scope-functions="selectedColumn.scopeFunc"	
 							>						
 							</angular-table>
-							
-						<!-- 	<angular-table layout-fill
-					    				id="cellColorThresholdsTable" 
-										flex
-										ng-show=true
-										ng-model="cellColorThresholdsList"
-										highlights-selected-item=true
-										no-pagination=true
-										columns="cellColorTableColumns"		
-										scope-functions="selectedColumn.scopeFunc"	
-							>						
-							</angular-table> -->
+							</md-card-content>
+							</md-card>
 							
 					  </div> 
-					       
-				
-				       
-				       
-				       
-				       
+					        
 			   <!-- ----------------- -->
 		       
+		       <md-card>
+				<md-toolbar class="ternaryToolbar ">
+			      <div class="md-toolbar-tools">
+			        <h2>
+			          <span>Style</span>
+			        </h2>
+		        </div>
+		       </md-toolbar>
 		       
+		       <md-card-content>
 		       <div flex layout="row" ng-if="selectedColumn.fieldType == 'MEASURE'">
 					<md-input-container flex class="md-block" class="small counter">
 						<label> {{translate.load('sbi.cockpit.style.prefix')}}</label>
@@ -157,6 +142,8 @@
 							<input class="input_class" ng-model=selectedColumn.style.fontSize type="number"/>
 					</md-input-container>
 				</div>
+				</md-card-content>
+				</md-card>
 		      </div>
     		</div>
     </md-dialog-content>
