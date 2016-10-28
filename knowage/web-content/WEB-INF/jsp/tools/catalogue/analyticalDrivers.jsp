@@ -41,7 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Analytical Drivers Management</title>
 </head>
-<body class="bodyStyle kn-functionsCatalog analyticalDriver" ng-controller="AnalyticalDriversController as ctrl" >
+<body class="bodyStyle kn-analyticalDriver analyticalDriver" ng-controller="AnalyticalDriversController as ctrl" >
 	<angular-list-detail show-detail="showme">
  		<list label='translate.load("sbi.analytical.drivers.title")' new-function="createDrivers"> 
 
