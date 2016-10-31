@@ -53,7 +53,7 @@ angular.module('olap_template')
 			 * Setter for Template object
 			 */
 			this.setTemplateObject = function(templateObject){
-				this.templateObject = templateObject;
+				this.template = templateObject;
 			}
 			
 			
@@ -542,13 +542,15 @@ angular.module('olap_template')
 			 */
 			
 			this.getScenarioObject = function(){
-				var scenarioObj = {};
+				var scenarioObj;
 				
 				if(this.getScenarioTag()){
+					scenarioObj = {};
 					scenarioObj.name = this.getScenarioTag().name;
 					scenarioObj.editCube = this.getScenarioTag().editCube;
+					scenarioObj.measures = [];
 					if(this.getScenarioTag().MEASURE){
-						scenarioObj.measures = [];
+						
 						for(var i = 0;i<this.getScenarioTag().MEASURE.length;i++){
 							var temp = {};
 							temp.name = this.getScenarioTag().MEASURE[i].XML_TAG_TEXT_CONTENT;

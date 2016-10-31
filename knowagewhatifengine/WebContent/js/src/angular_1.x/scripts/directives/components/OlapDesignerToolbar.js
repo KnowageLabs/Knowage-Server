@@ -107,83 +107,42 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	
 	angular.element(document).ready(function () {
 		counter = 1;
-		$scope.getAllCubes();
-		if(jsonTemplate!="null"){
-			console.log(jsonTemplate);
-			var json = JSON.parse(jsonTemplate);
+		var json = JSON.parse(jsonTemplate);
+		
+		if(json != null){
+			
+			OlapTemplateService.setTemplateObject(json);
 			
 			if(editModeCurrentContentId!="null"){
 				currentContentId = editModeCurrentContentId;
 			}
-						
-			if(json.olap.hasOwnProperty("SCENARIO")){
-				$scope.scenario = {
-						name: "scenario",
-						editCube : json.olap.SCENARIO.editCube,
-						measures : [],
-						variables : []
-				};
-				
-				sbiModule_restServices.promiseGet("1.0/designer/measures/"+currentContentId + "/"+ $scope.scenario.editCube,"?SBI_EXECUTION_ID=" + JSsbiExecutionID)
-				.then(function(response) {
-					$scope.measuresList = [];
-					
-					for (var i = 0; i < response.data.length; i++) {
-						var measuresListItem = { name: ""};
-						measuresListItem.name = response.data[i];
-						$scope.measuresList.push(measuresListItem);
-					}
-					
-					if(json.olap.SCENARIO.MEASURE.constructor === Array) {
-						for (var i = 0; i < json.olap.SCENARIO.MEASURE.length; i++) {
-							var measure = {
-									name : json.olap.SCENARIO.MEASURE[i].MEASURE
-							}
-							for (var j = 0; j < $scope.measuresList.length; j++) {
-								if($scope.measuresList[j].name==measure.name){
-									$scope.scenario.measures.push($scope.measuresList[j]);
-								}
-							}
-							
-						}
-					} else {
-						var measure = {
-								name : json.olap.SCENARIO.MEASURE
-						};
-						for (var j = 0; j < $scope.measuresList.length; j++) {
-							if($scope.measuresList[j].name==measure.name){
-								$scope.scenario.measures.push($scope.measuresList[j]);
-							}
-						}
-					}
-					
-					if(json.olap.SCENARIO.hasOwnProperty("VARIABLE")){
-						if(json.olap.SCENARIO.VARIABLE.constructor === Array){
-							for (var i = 0; i < json.olap.SCENARIO.VARIABLE.length; i++) {
-								$scope.scenario.variables.push(json.olap.SCENARIO.VARIABLE[i]);
-							}
-						} else {
-							$scope.scenario.variables.push(json.olap.SCENARIO.VARIABLE);
-						}
-						
-					}
-					
-					OlapTemplateService.setScenarioTag($scope.scenario);
-					
-				}, function(response) {
-					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');	
-				});
-			}		
+			
+			
+		}else{
+			console.log("No TEMPLATE");
 		}
 		
     });
+	
 	
 	
 	/**
 	 * Loads cubes and opens a new what-if scenario dialog.
 	 */
 	$scope.runScenarioWizard = function(){
-		console.log($scope.scenario)
+		if(OlapTemplateService.getScenarioObject() != undefined){
+			$scope.scenario = OlapTemplateService.getScenarioObject();
+			$scope.loadAllMeasures($scope.scenario.editCube);
+		}else{
+			$scope.scenario = {
+					name: "scenario",
+					editCube : "",
+					measures: []
+			};		
+		}
+		
+		$scope.getAllCubes();
+		
 		$mdDialog
 		.show({
 			scope : $scope,
@@ -277,21 +236,6 @@ $scope.setAndLoadCN = function(num) {
 		$scope.crossNavfromCellObj.hierarchy = $scope.selectedMember.hierarchyUniqueName;
 		$scope.crossNavfromCellObj.level = $scope.selectedMember.level;
 	}
-	/**
-	 * Opens a new dialog for what-if scenario.
-	 */
-	$scope.openScenarioWizard = function(){
-		$mdDialog
-		.show({
-			scope : $scope,
-			preserveScope : true,
-			parent : angular.element(document.body),
-			controllerAs : 'olapDesignerCtrl',
-			templateUrl : sbiModule_config.contextName + '/html/template/right/edit/scenarioWizard.html',
-			clickOutsideToClose : false,
-			hasBackdrop : false
-		});
-	}
 	
 	/**
 	 * Loads schema cubes.
@@ -300,8 +244,6 @@ $scope.setAndLoadCN = function(num) {
 		sbiModule_restServices.promiseGet("1.0/designer/cubes/"+currentContentId,"?SBI_EXECUTION_ID=" + JSsbiExecutionID)
 		.then(function(response) {
 			$scope.cubeList = response.data;
-			//$scope.showCubes = true;
-			//$scope.getAllMeasures();
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');	
 		});		
@@ -318,13 +260,12 @@ $scope.setAndLoadCN = function(num) {
 		sbiModule_restServices.promiseGet("1.0/designer/measures/"+currentContentId + "/"+ editCube,"?SBI_EXECUTION_ID=" + JSsbiExecutionID)
 		.then(function(response) {
 			$scope.measuresList = [];
-			
 			for (var i = 0; i < response.data.length; i++) {
 				var measuresListItem = { name: ""};
 				measuresListItem.name = response.data[i];
 				$scope.measuresList.push(measuresListItem);
 			}
-			$scope.scenario.measures = [];
+		//$scope.scenario.measures = [];
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');	
 		});	
@@ -337,7 +278,6 @@ $scope.setAndLoadCN = function(num) {
 		
 		$scope.crossNavType = null;
 		
-		console.log($scope.modelConfig);
 		$scope.readCNJson();
 		
 		 $mdDialog
@@ -415,13 +355,22 @@ $scope.setAndLoadCN = function(num) {
 	 * Changes the state of the selected checkbox item. [editable measures]
 	 */
 	$scope.toggle = function (item) {
-	   var idx = $scope.scenario.measures.indexOf(item);
-	   if (idx > -1) {
-		   $scope.scenario.measures.splice(idx, 1);
-	   }
-	   else {
-	    $scope.scenario.measures.push(item);
-	   }
+	  
+	   if($scope.scenario.measures){
+			 
+		   
+		   
+			 for (var i = 0; i < $scope.scenario.measures.length; i++) {
+					if(item.name == $scope.scenario.measures[i].name){
+						$scope.scenario.measures.splice(i, 1);
+						return;
+					}
+				} 
+			 $scope.scenario.measures.push(item);
+			 
+		 }
+	   
+	   
 	 };
 	 
 	 /**
@@ -429,7 +378,17 @@ $scope.setAndLoadCN = function(num) {
 	  * If this expression evaluates as truthy, the 'md-checked' css class is added to the checkbox and it will appear checked.[editable measures]
 	  */
 	 $scope.exists = function (item) {
-	   return $scope.scenario.measures.indexOf(item) > -1;
+		 if($scope.scenario.measures){
+			 
+			 for (var i = 0; i < $scope.scenario.measures.length; i++) {
+					if(item.name == $scope.scenario.measures[i].name){
+						return true;
+					}
+				} 
+				return false;
+			 
+		 }
+		
 	 };
 
 	 /**
@@ -474,6 +433,8 @@ $scope.setAndLoadCN = function(num) {
 	 $scope.closeDialogOlapDesigner = function() {
 		 $mdDialog.hide();
 		 $scope.showCNType = false;
+		 $scope.toolbar = [];
+		
 	 }
 	 
 	 $scope.clearScenario = function () {
@@ -513,29 +474,12 @@ $scope.setAndLoadCN = function(num) {
 	  */
 	 $scope.openButtonWizard = function() {
 		 
+		 if(OlapTemplateService.getToolbarButtons().length>0){
+			 $scope.buttons = OlapTemplateService.getToolbarButtons();
+		 }
 		 
-		if ($scope.modelConfig.toolbarVisibleButtons != null) {
-			for (var i = 0; i < $scope.buttons.length; i++) {
-				for(var j = 0; j < $scope.modelConfig.toolbarVisibleButtons.length; j++){
-					if($scope.buttons[i].name == $scope.modelConfig.toolbarVisibleButtons[j]){
-						$scope.buttons[i].visible = true;
-					}
-				}
-			} 
-
-		}
-		if ($scope.modelConfig.toolbarClickedButtons != null) {
-			for (var i = 0; i < $scope.buttons.length; i++) {
-				for(var j = 0; j < $scope.modelConfig.toolbarClickedButtons.length; j++){
-					if($scope.buttons[i].name == $scope.modelConfig.toolbarClickedButtons[j]){
-						$scope.buttons[i].clicked = true;
-					}
-				}
-			} 
-		 
-		} 
-		 
-		 $scope.toolbar = $scope.buttons;
+		  
+		 $scope.toolbar = angular.copy($scope.buttons);
 		 for (var i = $scope.toolbar.length-1; i >= 0; i--) {
 			 if($scope.toolbar[i].category == 'OLAP_DESIGNER'){
 		    	 $scope.toolbar.splice(i, 1); 
@@ -581,8 +525,6 @@ $scope.setAndLoadCN = function(num) {
 		 console.log($scope.toolbar);
 		 OlapTemplateService.setToolbarTag($scope.toolbar);
 		 sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.olap.designer.buttonAdd'), 'Success');
-		 console.log(OlapTemplateService.getTempateJson());
-		 console.log(OlapTemplateService.getToolbarButtons());
 		 $scope.closeDialogOlapDesigner();
 	 }
 	 
@@ -839,7 +781,7 @@ $scope.setAndLoadCN = function(num) {
 			console.log("Cross Navigation tag is empty")
 		}
 		
-		if( OlapTemplateService.getMdxQueryTag() != undefined){
+		if( OlapTemplateService.getMdxQueryClickables() != undefined){
 			tempMemberCN = OlapTemplateService.getMdxQueryClickables();
 			for (var i = 0; i < tempMemberCN.length; i++) {
 				tempMemberCN[i].type ="From Member";

@@ -17,6 +17,21 @@
  */
 package it.eng.spagobi.engines.drivers;
 
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.apache.log4j.Logger;
+import org.json.JSONObject;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
@@ -29,15 +44,6 @@ import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
 import it.eng.spagobi.json.Xml;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.json.JSONObject;
-
 /**
  * @author Angelo Bernabei angelo.bernabei@eng.it
  */
@@ -48,8 +54,8 @@ public class AbstractDriver {
 	static Logger logger = Logger.getLogger(AbstractDriver.class);
 
 	/**
-     *
-     */
+	 *
+	 */
 	public AbstractDriver() {
 		super();
 	}
@@ -68,9 +74,9 @@ public class AbstractDriver {
 		 * =SingletonConfig.getInstance().getConfigValue("SPAGOBI_SSO.ACTIVE");
 		 * String userId=(String)profile.getUserUniqueIdentifier(); if (active
 		 * != null && active.equalsIgnoreCase("true") &&
-		 * !((UserProfile)profile).isSchedulerUser(userId)){
-		 * logger.debug("I don't put the UserId information in the URL"); }else
-		 * { if (((UserProfile) profile).getUserUniqueIdentifier() != null) {
+		 * !((UserProfile)profile).isSchedulerUser(userId)){ logger.debug(
+		 * "I don't put the UserId information in the URL"); }else { if
+		 * (((UserProfile) profile).getUserUniqueIdentifier() != null) {
 		 */
 		pars.put(SsoServiceInterface.USER_ID, ((UserProfile) profile).getUserUniqueIdentifier());
 		// }
@@ -127,7 +133,8 @@ public class AbstractDriver {
 	/**
 	 * Returns the template elaborated.
 	 *
-	 * @param byte[] the template
+	 * @param byte[]
+	 *            the template
 	 * @param profile
 	 *            the profile
 	 *
@@ -233,6 +240,42 @@ public class AbstractDriver {
 				String contentStr = new String(contentTemplate);
 				String jsonString = Xml.xml2json(contentStr);
 				content = new JSONObject(jsonString);
+			} catch (Exception e) {
+				logger.error("Error while converting the Template bytes into a JSON object: ", e);
+				throw new Exception("Error while converting the Template bytes into a JSON object");
+			}
+
+		} catch (Exception e) {
+			logger.error("Error while recovering document template: \n" + e);
+		}
+
+		logger.debug("OUT");
+		return content;
+	}
+
+	public JSONObject getJsonFromTemplate(byte[] contentTemplate) {
+		logger.debug("IN");
+
+		JSONObject content = null;
+
+		try {
+
+			if (contentTemplate == null) {
+				throw new Exception("Content of the Active template is null");
+			}
+
+			try {
+				String contentStr = new String(contentTemplate);
+				DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+				InputSource src = new InputSource();
+				src.setCharacterStream(new StringReader(contentStr));
+
+				Document doc = builder.parse(src);
+				if (doc.getElementsByTagName("JSONTEMPLATE").item(0) != null) {
+					String jsonString = doc.getElementsByTagName("JSONTEMPLATE").item(0).getTextContent();
+					content = new JSONObject(jsonString);
+				}
+
 			} catch (Exception e) {
 				logger.error("Error while converting the Template bytes into a JSON object: ", e);
 				throw new Exception("Error while converting the Template bytes into a JSON object");

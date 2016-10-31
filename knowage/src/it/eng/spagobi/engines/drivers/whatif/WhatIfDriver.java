@@ -126,7 +126,7 @@ public class WhatIfDriver extends GenericDriver {
 		String engineName = obj.getEngineLabel();
 
 		byte[] template1 = this.getTemplateAsByteArray(biobject);
-		JSONObject jsonTemp = this.getTemplateAsJsonObject(template1);
+		JSONObject json = this.getJsonFromTemplate(template1);
 		parameters = addArtifactVersionId(template1, parameters, profile, obj.getId(), engine);
 		parameters = addArtifactId(template1, parameters, profile);
 		parameters = addTemplateInformation(template1, parameters);
@@ -134,7 +134,7 @@ public class WhatIfDriver extends GenericDriver {
 		parameters.put("DOCUMENT_LABEL", documentLabel);
 		parameters.put("ENGINE", engineName);
 		parameters.put("mode", "edit");
-		parameters.put("template", jsonTemp);
+		parameters.put("template", json);
 		// CREATE EXECUTION ID
 		String sbiExecutionId = null;
 		UUIDGenerator uuidGen = UUIDGenerator.getInstance();
@@ -179,7 +179,7 @@ public class WhatIfDriver extends GenericDriver {
 		sbiExecutionId = sbiExecutionId.replaceAll("-", "");
 		parameters.put("SBI_EXECUTION_ID", sbiExecutionId);
 		applySecurity(parameters, profile);
-		EngineURL engineURL = new EngineURL(url.replace("/execute", "/edit"), parameters);
+		EngineURL engineURL = new EngineURL(url, parameters);
 		logger.debug("OUT");
 		return engineURL;
 	}
