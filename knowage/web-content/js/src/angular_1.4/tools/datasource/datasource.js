@@ -104,16 +104,8 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 			var errorU = "Error updating the datasource!"
 
 			//MODIFY DATA SOURCE
-			$scope.checkReadOnly();
-
-			 else if ($scope.selectedDataSource.jndi != "" ) {
-				$scope.selectedDataSource.urlConnection = "";
-				$scope.selectedDataSource.user = "";
-				$scope.selectedDataSource.pwd ="";
-				$scope.selectedDataSource.driver="";
-				
-			}
-			
+				$scope.checkReadOnly();
+							
 				sbiModule_restServices.promisePut('2.0/datasources','',angular.toJson($scope.selectedDataSource))
 				.then(function(response) {
 					console.log("[PUT]: SUCCESS!");
