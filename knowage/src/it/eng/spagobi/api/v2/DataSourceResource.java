@@ -92,7 +92,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 		} catch (Exception exception) {
 
 			logger.error("Error while getting the list of DS", exception);
-			throw new SpagoBIRestServiceException("sbi.tools.dataset.preview.params.error", buildLocaleFromSession(), exception);
+			throw new SpagoBIRestServiceException("Error while getting the list of DS", buildLocaleFromSession(), exception);
 
 		} finally {
 
@@ -119,8 +119,8 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 
 		} catch (Exception e) {
 
-			logger.error("Error while loading a single data set", e);
-			throw new SpagoBIRestServiceException("sbi.tools.dataset.preview.params.error", buildLocaleFromSession(), e);
+			logger.error("Error while loading a single data source", e);
+			throw new SpagoBIRestServiceException("Error while loading a single data source", buildLocaleFromSession(), e);
 
 		} finally {
 
@@ -151,7 +151,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 		} catch (Exception exception) {
 
 			logger.error("Error while posting DS", exception);
-			throw new SpagoBIRestServiceException("sbi.tools.dataset.preview.params.error", buildLocaleFromSession(), exception);
+			throw new SpagoBIRestServiceException("Error while posting DS", buildLocaleFromSession(), exception);
 
 		} finally {
 
@@ -186,8 +186,8 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 
 		} catch (Exception e) {
 
-			logger.error("Error while updating url of the new resource", e);
-			throw new SpagoBIRestServiceException("sbi.tools.dataset.preview.params.error", buildLocaleFromSession(), e);
+			logger.error("Error while updating data source", e);
+			throw new SpagoBIRestServiceException("Error while updating data source", buildLocaleFromSession(), e);
 
 		} finally {
 
@@ -215,8 +215,8 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 
 		} catch (Exception e) {
 
-			logger.error("Error while updating url of the new resource", e);
-			throw new SpagoBIRestServiceException("sbi.tools.dataset.preview.params.error", buildLocaleFromSession(), e);
+			logger.error("Error while deleting data source", e);
+			throw new SpagoBIRestServiceException("Error while deleting data source", buildLocaleFromSession(), e);
 
 		} finally {
 
@@ -247,8 +247,8 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 
 		} catch (Exception e) {
 
-			logger.error("Error while deleting url of the new resource", e);
-			throw new SpagoBIRestServiceException("sbi.tools.dataset.preview.params.error", buildLocaleFromSession(), e);
+			logger.error("Error while deleting multiple data sources", e);
+			throw new SpagoBIRestServiceException("Error while deleting multiple data sources", buildLocaleFromSession(), e);
 
 		} finally {
 
@@ -276,8 +276,8 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 
 		} catch (Exception e) {
 
-			logger.error("Error while loading a single data set", e);
-			throw new SpagoBIRestServiceException("sbi.tools.dataset.preview.params.error", buildLocaleFromSession(), e);
+			logger.error("Error while getting structure of data source by id", e);
+			throw new SpagoBIRestServiceException("Error while getting structure of data source by id", buildLocaleFromSession(), e);
 
 		} finally {
 
@@ -306,7 +306,9 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 			ResultSet rs = null;
 			try {
 				if (conn.getMetaData().getDatabaseProductName().toLowerCase().contains("oracle")) {
-					// String q = "SELECT TABLE_NAME, COLUMN_NAME, DATA_TYPE FROM ALL_TAB_COLUMNS WHERE OWNER = '" + userName + "'";
+					// String q =
+					// "SELECT TABLE_NAME, COLUMN_NAME, DATA_TYPE FROM ALL_TAB_COLUMNS WHERE OWNER = '"
+					// + userName + "'";
 					String q = "SELECT TABLE_NAME, COLUMN_NAME, DATA_TYPE FROM USER_TAB_COLUMNS";
 					Statement stmt = conn.createStatement();
 					rs = stmt.executeQuery(q);
