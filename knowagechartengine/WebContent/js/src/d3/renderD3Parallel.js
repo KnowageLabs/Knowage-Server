@@ -217,17 +217,39 @@ function renderParallelChart(data,locale){
 			.append("input").attr("type","hidden").attr("name","async")
 			.append("input").attr("type","hidden").attr("name","chartHeight")
 			.append("input").attr("type","hidden").attr("name","chartWidth");
-			
+		
+		/**
+	     * Correction for width and height if the other one is fixed and bigger than the window dimension value. 
+	     * E.g. if the height of the chart is higher than the height of the window height, the width needs to 
+	     * be corrected, since the vertical scrollbar appears. Without this correction, the chart will be cut
+	     * and not entirely presented, and the horizontal scrollbar will be present as well (and it should not
+	     * be, since the width should just expand as much as the window is wide).
+	     * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	     */
+	    var widthCorrection = 0, heightCorrection = 0, overflowXHidden = "auto", overflowYHidden = "auto";
+	    
+	    if (!data.chart.isCockpit && heightNormalized > window.innerHeight && widthNormalized==window.innerWidth) {
+	    	widthCorrection = 16;
+	    	overflowXHidden = "hidden";
+	    }
+	    
+	    if (!data.chart.isCockpit && widthNormalized > window.innerWidth && heightNormalized==window.innerHeight) {
+	    	heightCorrection = 16;
+	    	overflowYHidden = "hidden";
+	    }
+		
 		/**
 		 * The body inside of which the chart will be rendered.
 		 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */		
 		d3.select("body")
+			.style("overflow-x",overflowXHidden)
+			.style("overflow-y",overflowYHidden)
 			.append("div").attr("id","main"+randomId)
-			.attr("classs","d3-container")
+			.attr("class","d3-container")
 			.style("margin","auto")	// Center chart horizontally (Danilo Ristovski)
-			.style("height",heightNormalized)
-			.style("width",widthNormalized)
+			.style("height",heightNormalized-heightCorrection)
+			.style("width",widthNormalized-widthCorrection)
 			.style("background-color",data.chart.style.backgroundColor)
 			.style("font-family", data.chart.style.fontFamily)
 			.style("font-size",  data.chart.style.fontSize)
@@ -283,20 +305,20 @@ function renderParallelChart(data,locale){
 		 * @author Ana Tomic
 		 */
 		d3.select("#main"+randomId).append("div").attr("id","clearButton"+randomId).style("padding-left",m[3]).style("padding-top",10).append("button").style("border-radius","5px").style("background-color","").text("Clear selections").on("click", function(){return clearSelection();});
-		d3.select("#main"+randomId).append("div").attr("id","chart"+randomId).style("width",widthNormalized).style("height",chartDivHeight);
+		d3.select("#main"+randomId).append("div").attr("id","chart"+randomId).style("width",widthNormalized-widthCorrection).style("height",chartDivHeight);
 			
 		var axesDivHeight = heightNormalized - (Number(removePixelsFromFontSize(data.title.style.fontSize))+Number(removePixelsFromFontSize(data.subtitle.style.fontSize)))*1.4 - tableHeight - buttonHeight-10;
 		
 		var svg = d3.select("#chart"+randomId)
 			.append("div").attr("class","d3chartclass")
 				.style("float","left")
-				.style("width",widthNormalized-legendWidth)
+				.style("width",widthNormalized-legendWidth-widthCorrection)
 				// "...-180" for table height plus pagination height (150+30)
 				// "...-20" for bottom padding of the pagination  
 				.style("height", chartDivHeight)
 				.append("svg:svg")
 			//.style("font-size",18)
-				.style("width", widthNormalized-legendWidth)
+				.style("width", widthNormalized-legendWidth-widthCorrection)
 				// "...-180" for table height plus pagination height (150+30)
 				// "...-20" for bottom padding of the pagination  
 				.style("height", chartDivHeight)
@@ -508,8 +530,8 @@ function renderParallelChart(data,locale){
 							 * Call the function that enables positioning of the 
 							 * tooltip according to its dimensions.
 							 */			
-							var chartHeight = Number(heightNormalized);
-							var chartWidth = Number(widthNormalized);
+							var chartHeight = Number(heightNormalized-heightCorrection);
+							var chartWidth = Number(widthNormalized-widthCorrection);
 							
 							positionTheTooltip(chartHeight,chartWidth,ttText);	
 							
@@ -533,8 +555,8 @@ function renderParallelChart(data,locale){
 					 * Call the function that enables positioning of the 
 					 * tooltip according to its dimensions.
 					 */			
-					var chartHeight = Number(heightNormalized);
-					var chartWidth = Number(widthNormalized);
+					var chartHeight = Number(heightNormalized-heightCorrection);
+					var chartWidth = Number(widthNormalized-widthCorrection);
 					
 					positionTheTooltip(chartHeight,chartWidth,ttText);	
 				}
@@ -734,14 +756,14 @@ function renderParallelChart(data,locale){
 	
 		var tableDiv = d3.select("#main"+randomId)
 							.append("div").attr("id","tableDiv")
-							.style("width",widthNormalized)						
+							.style("width",widthNormalized-widthCorrection)						
 							.style("padding-bottom",10)
 							.style("padding-top",30);
 		
 		var table = tableDiv.append("div").attr("id","tDiv"+randomId).attr("align","center")
-		                .attr("width", widthNormalized)
+		                .attr("width", widthNormalized-widthCorrection)
 		                .append("table")
-						.style("width", widthNormalized)
+						.style("width", widthNormalized-widthCorrection)
 						
 						/**
 						 * The next style parameter setting allow us to reset font stylization provided 
@@ -835,7 +857,7 @@ function renderParallelChart(data,locale){
 		      .style("border","1px solid black")
 		      .attr("border-collapse","collapse")
 		     .append("tr")
-		     .style("width", widthNormalized-legendWidth)
+		     .style("width", widthNormalized-legendWidth-widthCorrection)
 		     .style("height","30px")
 		     .selectAll("th")
 		     .data(tableColumns).enter()
@@ -848,7 +870,7 @@ function renderParallelChart(data,locale){
 		.data(currentTableData)
 		     .enter()
 		     .append("tr")
-		     .style("width", widthNormalized-legendWidth)
+		     .style("width", widthNormalized-legendWidth-widthCorrection)
 		     .style("background-color",function(d,i){
 		    	 if(i%2==1)return "lightgray";
 		     })

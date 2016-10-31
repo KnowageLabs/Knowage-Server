@@ -76,10 +76,30 @@ function renderWordCloud(chartConf,locale){
 		var widthNormalized = chartConf.chart.width ? Number(chartConf.chart.width) : window.innerWidth;
 	}
 	
+	/**
+     * Correction for width and height if the other one is fixed and bigger than the window dimension value. 
+     * E.g. if the height of the chart is higher than the height of the window height, the width needs to 
+     * be corrected, since the vertical scrollbar appears. Without this correction, the chart will be cut
+     * and not entirely presented, and the horizontal scrollbar will be present as well (and it should not
+     * be, since the width should just expand as much as the window is wide).
+     * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+     */
+    var widthCorrection = 0, heightCorrection = 0, overflowXHidden = "auto", overflowYHidden = "auto";
+    
+    if (!chartConf.chart.isCockpit && heightNormalized > window.innerHeight && widthNormalized==window.innerWidth) {
+    	widthCorrection = 16;
+    	overflowXHidden = "hidden";
+    }
+    
+    if (!chartConf.chart.isCockpit && widthNormalized > window.innerWidth && heightNormalized==window.innerHeight) {
+    	heightCorrection = 16;
+    	overflowYHidden = "hidden";
+    }
+	
 		(function() {
                
 			function cloud() {
-				var size = [widthNormalized, heightNormalized-(Number(removePixelsFromFontSize(chartConf.title.style.fontSize))
+				var size = [widthNormalized-widthCorrection, heightNormalized-(Number(removePixelsFromFontSize(chartConf.title.style.fontSize))
 						+Number(removePixelsFromFontSize(chartConf.subtitle.style.fontSize)))*1.6],
 				text = cloudText,
 				font = cloudFont,
@@ -517,7 +537,7 @@ function renderWordCloud(chartConf,locale){
         
 		var wordFontSize= d3.scale.linear().domain([minValue,maxic]).range([minfontsize,maxfontsize]);
 		
-		var layout=d3.layout.cloud().size([widthNormalized, heightNormalized-(Number(removePixelsFromFontSize(chartConf.title.style.fontSize))
+		var layout=d3.layout.cloud().size([widthNormalized-widthCorrection, heightNormalized-(Number(removePixelsFromFontSize(chartConf.title.style.fontSize))
 				+Number(removePixelsFromFontSize(chartConf.subtitle.style.fontSize)))*1.6])
 		.words(chartConf.data[0].map(function(d) {
 			 wordSize= wordFontSize(d.value);
@@ -569,17 +589,20 @@ function renderWordCloud(chartConf,locale){
 				.append("input").attr("type","hidden").attr("name","async")
 				.append("input").attr("type","hidden").attr("name","chartHeight")
 				.append("input").attr("type","hidden").attr("name","chartWidth");
-				
+
+			
 			/**
 			 * The body inside of which the chart will be rendered.
 			 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */			
 			d3.select("body")		
+				.style("overflow-x",overflowXHidden)
+				.style("overflow-y",overflowYHidden)
 				.append("div").attr("id","main"+randomId)
 				.attr("class","d3-container")
 				.style("margin","auto")	// Center chart horizontally (Danilo Ristovski)
 				.style("height",heightNormalized)
-				.style("width",widthNormalized)			
+				.style("width",widthNormalized-widthCorrection)			
 				.style("font-family", chartConf.chart.style.fontFamily)	
 				.style("font-style", chartConf.chart.style.fontStyle)
 	    		.style("font-weight", chartConf.chart.style.fontWeight)
@@ -698,7 +721,7 @@ function renderWordCloud(chartConf,locale){
 		var bacground=d3.select("#main"+randomId)
 			.append("div").attr("id","chart"+randomId).attr("class","d3chartclass")
 			.append("svg")
-            .attr("width", widthNormalized)
+            .attr("width", widthNormalized-widthCorrection)
 			.attr("height", heightNormalized-(Number(removePixelsFromFontSize(chartConf.title.style.fontSize))
 					+Number(removePixelsFromFontSize(chartConf.subtitle.style.fontSize)))*1.6);
          
@@ -901,7 +924,7 @@ function renderWordCloud(chartConf,locale){
 				 * tooltip according to its dimensions.
 				 */			
 				var chartHeight = Number(heightNormalized);
-				var chartWidth = Number(widthNormalized);
+				var chartWidth = Number(widthNormalized-widthCorrection);
 				
 				positionTheTooltip(chartHeight,chartWidth,ttText);							
 				

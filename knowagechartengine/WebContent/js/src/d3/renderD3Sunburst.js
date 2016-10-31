@@ -139,8 +139,28 @@ function renderSunburst(jsonObject,locale)
 //		    width = document.getElementById("chart").getBoundingClientRect().width;
 //		    d3.select("#container").attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 //		};	
-	
-	var radius = Math.min(width,height)/2;	
+	    
+    /**
+     * Correction for width and height if the other one is fixed and bigger than the window dimension value. 
+     * E.g. if the height of the chart is higher than the height of the window height, the width needs to 
+     * be corrected, since the vertical scrollbar appears. Without this correction, the chart will be cut
+     * and not entirely presented, and the horizontal scrollbar will be present as well (and it should not
+     * be, since the width should just expand as much as the window is wide).
+     * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+     */
+    var widthCorrection = 0, heightCorrection = 0, overflowXHidden = "auto", overflowYHidden = "auto";
+    
+    if (!jsonObject.chart.isCockpit && heightNormalized > window.innerHeight && width==window.innerWidth) {
+    	widthCorrection = 16;
+    	overflowXHidden = "hidden";
+    }
+    
+    if (!jsonObject.chart.isCockpit && width > window.innerWidth && heightNormalized==window.innerHeight) {
+    	heightCorrection = 16;
+    	overflowYHidden = "hidden";
+    }
+    
+	var radius = Math.min(width-widthCorrection,height-heightCorrection)/2;	
 	
 	var chartOrientation = (width > height) ? "horizontal" : "vertical";		
 	
@@ -208,11 +228,13 @@ function renderSunburst(jsonObject,locale)
 	 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
 	d3.select("body")
+		.style("overflow-x",overflowXHidden)
+		.style("overflow-y",overflowYHidden)
 		.append("div").attr("id","main"+ randomId)
 		.attr("class","d3-container")
 		.style("margin","auto")	// Center chart horizontally (Danilo Ristovski)
-		.style("height", heightNormalized)
-		.style("width", width)
+		.style("height", heightNormalized-heightCorrection)
+		.style("width", width-widthCorrection)
 		.style("font-family", jsonObject.chart.style.fontFamily)
 		.style("font-size", jsonObject.chart.style.fontSize)
 		.style("font-style",jsonObject.chart.style.fontStyle)
@@ -287,7 +309,7 @@ function renderSunburst(jsonObject,locale)
     		d3.select("#main"+randomId).append("div").style("height",topPadding);
 		}
 	    
-	    d3.select("#main"+randomId).append("div").attr("id","chart"+randomId).attr("class","d3chartclass");	        
+	    d3.select("#main"+randomId).append("div").attr("id","chart"+randomId).attr("class","d3chartclass");
     	
     	if (jsonObject.toolbar.style.position=="bottom")
 		{   
@@ -328,11 +350,11 @@ function renderSunburst(jsonObject,locale)
 	 * element that will represent it. SVG window will be with previously
 	 * defined dimensions ("width" and "height"). */		
 	var vis = d3.select("#chart"+randomId).append("svg:svg")
-	    .attr("width", width)
-	    .attr("height", height)
+	    .attr("width", width-widthCorrection)
+	    .attr("height", height-heightCorrection)
 	    .append("svg:g")
 	    .attr("id", "container"+randomId)
-	    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");	
+	    .attr("transform", "translate(" + (width-widthCorrection) / 2 + "," + (height-heightCorrection) / 2 + ")");	
 	
 	var partition = d3.layout.partition()
 	    .size([2 * Math.PI, radius * radius])

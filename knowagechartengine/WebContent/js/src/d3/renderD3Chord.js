@@ -575,6 +575,28 @@ function renderChordChart(jsonData,locale)
 		var width = jsonData.chart.width ? Number(jsonData.chart.width) : window.innerWidth;
 	}
 
+	/**
+     * Correction for width and height if the other one is fixed and bigger than the window dimension value. 
+     * E.g. if the height of the chart is higher than the height of the window height, the width needs to 
+     * be corrected, since the vertical scrollbar appears. Without this correction, the chart will be cut
+     * and not entirely presented, and the horizontal scrollbar will be present as well (and it should not
+     * be, since the width should just expand as much as the window is wide).
+     * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+     */
+    var widthCorrection = 0, heightCorrection = 0, overflowXHidden = "auto", overflowYHidden = "auto";
+    
+    if (!jsonData.chart.isCockpit && height > window.innerHeight && width==window.innerWidth) {
+    	widthCorrection = 16;
+    	overflowXHidden = "hidden";
+    }
+    
+    if (!jsonData.chart.isCockpit && width > window.innerWidth && height==window.innerHeight) {
+    	heightCorrection = 16;
+    	overflowYHidden = "hidden";
+    }
+    
+    width -= widthCorrection;
+    height -= heightCorrection;
 	
 	var chartDivWidth=width;
 	var chartDivHeight=height;
@@ -648,6 +670,8 @@ function renderChordChart(jsonData,locale)
 	 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */	
 	d3.select("body")
+		.style("overflow-x",overflowXHidden)
+		.style("overflow-y",overflowYHidden)
 		.append("div").attr("id","main"+randomId)
 		.attr("class","d3-container")
 		.attr("class","d3chartclass")
