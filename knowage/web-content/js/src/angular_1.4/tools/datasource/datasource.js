@@ -104,11 +104,8 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 			var errorU = "Error updating the datasource!"
 
 			//MODIFY DATA SOURCE
-				$scope.checkReadOnly();
-				
-			 if($scope.selectedDataSource.urlConnection != ""){
-				$scope.selectedDataSource.jndi = "";
-			}
+			$scope.checkReadOnly();
+
 			 else if ($scope.selectedDataSource.jndi != "" ) {
 				$scope.selectedDataSource.urlConnection = "";
 				$scope.selectedDataSource.user = "";
