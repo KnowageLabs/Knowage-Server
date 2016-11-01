@@ -129,8 +129,8 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 			Query hibQuery = null;
 
-			hibQuery = tmpSession.createQuery(
-					"select ds.sbiDataSource from SbiOrganizationDatasource ds where ds.sbiOrganizations.name = :tenantName and ds.sbiDataSource.label = :dsLabel");
+			hibQuery = tmpSession
+					.createQuery("select ds.sbiDataSource from SbiOrganizationDatasource ds where ds.sbiOrganizations.name = :tenantName and ds.sbiDataSource.label = :dsLabel");
 			hibQuery.setString("tenantName", getTenant());
 			hibQuery.setString("dsLabel", label);
 
@@ -370,6 +370,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 						while (it.hasNext()) {
 							SbiLov lov = (SbiLov) it.next();
 							String prov = lov.getLovProvider();
+							logger.error(prov);
 							SourceBean sb = SourceBean.fromXMLString(prov);
 							SourceBean conn = (SourceBean) sb.getAttribute("CONNECTION");
 							String conne = conn.getCharacters();
@@ -641,7 +642,8 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 	}
 
 	/**
-	 * From the hibernate DataSource at input, gives the corrispondent <code>DataSource</code> object.
+	 * From the hibernate DataSource at input, gives the corrispondent
+	 * <code>DataSource</code> object.
 	 *
 	 * @param hibDataSource
 	 *            The hybernate data source
