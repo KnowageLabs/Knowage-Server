@@ -265,7 +265,7 @@ $scope.setAndLoadCN = function(num) {
 				measuresListItem.name = response.data[i];
 				$scope.measuresList.push(measuresListItem);
 			}
-		//$scope.scenario.measures = [];
+		
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');	
 		});	
@@ -434,6 +434,8 @@ $scope.setAndLoadCN = function(num) {
 		 $mdDialog.hide();
 		 $scope.showCNType = false;
 		 $scope.toolbar = [];
+		 $scope.scenario.measures = [];
+		 
 		
 	 }
 	 
@@ -886,8 +888,11 @@ $scope.setAndLoadCN = function(num) {
 	 /**
 	  * Close the wizard
 	  */
-	 $scope.closeOlapTemplate = function() {
-		
+	 $scope.closeOlapTemplate = function(){
+	 
+	 	if(sbiModule_config.externalBasePath == 'null'){
+	 		sbiModule_config.externalBasePath = '/knowage';
+	 	}
 		 var url= sbiModule_config.protocol+"://"+sbiModule_config.host+":"+sbiModule_config.port+sbiModule_config.externalBasePath;
 		 url+= "/servlet/AdapterHTTP?PAGE=DetailBIObjectPage&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=FALSE&MESSAGEDET=DETAIL_SELECT&OBJECT_ID="+sbiModule_docInfo.id;
 		 window.parent.location.href=url;
