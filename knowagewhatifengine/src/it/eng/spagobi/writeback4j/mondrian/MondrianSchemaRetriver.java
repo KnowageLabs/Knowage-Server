@@ -87,13 +87,14 @@ public class MondrianSchemaRetriver implements ISchemaRetriver {
 
 		logger.debug("Getting the cube for edit. The name of the cube is " + editCubeName);
 		MondrianDef.Cube[] cubes = schema.cubes;
-
 		for (int i = 0; i < cubes.length; i++) {
 			MondrianDef.Cube aCube = cubes[i];
 			if (aCube.name.equals(editCubeName)) {
 				editCube = aCube;
 			}
 		}
+		
+		
 		logger.debug("Cube for writing correctly loaded");
 	}
 
@@ -132,6 +133,18 @@ public class MondrianSchemaRetriver implements ISchemaRetriver {
 		for (int i = 0; i < virtualCubes.length; i++) {
 			cubesList.add(virtualCubes[i].name);
 		}
+		return cubesList;
+	}
+	
+	public List<String> getCubes() {
+		List<String> cubesList = new ArrayList<String>();
+		MondrianDef.Cube[] cubes = schema.cubes;
+		MondrianDef.VirtualCube[] virtualCubes = schema.virtualCubes;
+		for (int i = 0; i < cubes.length; i++) {
+			cubesList.add(cubes[i].name);
+
+		}
+		
 		return cubesList;
 	}
 

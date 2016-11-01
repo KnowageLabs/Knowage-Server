@@ -64,7 +64,7 @@ public class DesignerResource extends AbstractWhatIfEngineService {
 	private static final String SUCCESS_REQUEST_DISPATCHER_URL = "/WEB-INF/jsp/whatIf2.jsp";
 
 	@GET
-	@Path("/cubes/{id}")
+	@Path("/allcubes/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getAllCubes(@PathParam("id") Integer id) throws SpagoBIEngineException {
 
@@ -78,6 +78,28 @@ public class DesignerResource extends AbstractWhatIfEngineService {
 			MondrianDriver driver = new MondrianDriver(reference);
 			retriver = new MondrianSchemaRetriver(driver);
 			JSONArray array = new JSONArray(retriver.getAllCubes());
+			logger.debug("OUT");
+			return array.toString();
+
+		}
+		return "";
+	}
+	
+	@GET
+	@Path("/cubes/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getCubes(@PathParam("id") Integer id) throws SpagoBIEngineException {
+
+		logger.debug("IN");
+		if (id != -1) {
+
+			WhatIfEngineInstance ei = getWhatIfEngineInstance();
+			ArtifactServiceProxy artifactProxy = (ArtifactServiceProxy) ei.getEnv().get(EngineConstants.ENV_ARTIFACT_PROXY);
+			MondrianSchemaManager schemaManager = new MondrianSchemaManager(artifactProxy);
+			reference = schemaManager.getMondrianSchemaURI(id);
+			MondrianDriver driver = new MondrianDriver(reference);
+			retriver = new MondrianSchemaRetriver(driver);
+			JSONArray array = new JSONArray(retriver.getCubes());
 			logger.debug("OUT");
 			return array.toString();
 
