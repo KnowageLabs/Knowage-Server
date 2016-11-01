@@ -370,7 +370,6 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 						while (it.hasNext()) {
 							SbiLov lov = (SbiLov) it.next();
 							String prov = lov.getLovProvider();
-							logger.error(prov);
 							SourceBean sb = SourceBean.fromXMLString(prov);
 							SourceBean conn = (SourceBean) sb.getAttribute("CONNECTION");
 							String conne = conn.getCharacters();
