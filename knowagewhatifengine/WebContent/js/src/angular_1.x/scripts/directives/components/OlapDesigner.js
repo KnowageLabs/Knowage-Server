@@ -94,7 +94,7 @@ function olapDesignerController($scope, $timeout, $window, $mdDialog, $http, $sc
 	
 $scope.getCube = function(item){
 		$scope.selectedSchema = item;
-		sbiModule_restServices.promiseGet("1.0/designer/cubes/"+$scope.selectedSchema.currentContentId,"?SBI_EXECUTION_ID=" + JSsbiExecutionID)
+		sbiModule_restServices.promiseGet("1.0/designer/allcubes/"+$scope.selectedSchema.currentContentId,"?SBI_EXECUTION_ID=" + JSsbiExecutionID)
 		.then(function(response) {
 			$scope.cubeList = response.data;
 			$scope.showCubes = true;
