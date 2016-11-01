@@ -23,7 +23,8 @@ angular.module('drill_up_command_directive',[])
 	        link: function (scope, element, attrs) {
 	            
 	          var onClick = function($event){
-	        	  $event.stopPropagation();
+	        	  $event.preventDefault()
+          		$event.stopPropagation();
 	        	  scope.drillUp(attrs.axis,attrs.memberordinal,attrs.position,attrs.uniquename,attrs.positionuniquename);
 	          }
 	          
