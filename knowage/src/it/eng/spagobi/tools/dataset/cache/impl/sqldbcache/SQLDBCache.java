@@ -57,7 +57,6 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -475,7 +474,6 @@ public class SQLDBCache implements ICache {
 						 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 						 */
 						String orderColumn = "";
-						String appendColumnForCategories = "";
 						ArrayList<String> arrayCategoriesForOrdering = new ArrayList<String>();
 						String keepCategoryForOrdering = "";
 						boolean columnAndCategoryAreTheSame = false;
@@ -525,26 +523,20 @@ public class SQLDBCache implements ICache {
 									if (hasAlias) {
 										// https://production.eng.it/jira/browse/KNOWAGE-149
 										// This variable is used for the order clause
-										String tmpColumn = aggregateFunction + "(" + columnName + ")";
-
 										String orderType = projection.getOrderType();
 										if (orderType != null && !orderType.isEmpty()) {
-											if (hasAlias) {
-												orderColumns.add(aliasName + " " + orderType);
-											} else {
-												orderColumns.add(tmpColumn + " " + orderType);
-											}
+											orderColumns.add(aliasName + " " + orderType);
 										}
-
-										columnName = tmpColumn + " AS " + aliasName;
+										columnName = aggregateFunction + "(" + columnName + ")" + " AS " + aliasName;
+									} else {
+										throw new SpagoBIRuntimeException("Projection [" + columnName + "] requires an alias");
 									}
-								}
-								/**
-								 * Handling of the ordering criteria set for the first category.
-								 *
-								 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-								 */
-								else {
+								} else {
+									/**
+									 * Handling of the ordering criteria set for the first category.
+									 *
+									 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+									 */
 									String orderType = projection.getOrderType();
 									// If the order type is not defined for current item, consider it as it is of an empty value (empty string).
 									if (orderType == null) {
@@ -566,15 +558,17 @@ public class SQLDBCache implements ICache {
 										if (orderColumn.equals(columnName)) {
 											columnAndCategoryAreTheSame = true;
 
-											if (orderType.isEmpty())
+											if (orderType.isEmpty()) {
 												arrayCategoriesForOrdering.add(columnName + " ASC");
-											else
+											} else {
 												arrayCategoriesForOrdering.add(columnName + " " + orderType);
+											}
 										} else {
-											if (orderType.isEmpty())
+											if (orderType.isEmpty()) {
 												arrayCategoriesForOrdering.add(orderColumn + " ASC");
-											else
+											} else {
 												arrayCategoriesForOrdering.add(orderColumn + " " + orderType);
+											}
 
 											sqlBuilder.column(orderColumn);
 										}
@@ -606,8 +600,9 @@ public class SQLDBCache implements ICache {
 								 *
 								 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 								 */
-								if (!columnAndCategoryAreTheSame && !keepCategoryForOrdering.isEmpty())
+								if (!columnAndCategoryAreTheSame && !keepCategoryForOrdering.isEmpty()) {
 									arrayCategoriesForOrdering.add(keepCategoryForOrdering);
+								}
 
 								/**
 								 * Append ordering by categories (columns, attributes) at the end of the array of table columns through which the ordering of
@@ -688,7 +683,8 @@ public class SQLDBCache implements ICache {
 
 						// GROUP BY conditions
 						if (groups != null) {
-							Set<String> groupColumnNames = new HashSet<String>();
+							List<String> groupColumnNames = new ArrayList<String>();
+
 							for (GroupCriteria group : groups) {
 								String columnName = group.getColumnName();
 								String aggregateFunction = group.getAggregateFunction();
@@ -706,20 +702,6 @@ public class SQLDBCache implements ICache {
 
 								if ((aggregateFunction != null) && (!aggregateFunction.isEmpty()) && (columnName != "*")) {
 									columnName = aggregateFunction + "(" + columnName + ")";
-								}
-								/**
-								 * If there is an ordering columns set to the first category and if the one is not the same value as the category, append its
-								 * name to the GROUP BY clause, just before the first category name.
-								 *
-								 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-								 */
-								else {
-									/**
-									 * The last expression serves for skipping the duplication of the same column in the GROUP BY clause.
-									 */
-									if (orderColumn != null && !orderColumn.isEmpty() && !orderColumn.equals(columnName)) {
-										groupColumnNames.add(orderColumn);
-									}
 								}
 
 								groupColumnNames.add(columnName);
@@ -1017,12 +999,12 @@ public class SQLDBCache implements ICache {
 						} else {
 							throw new CacheException("Store is to big to be persisted in cache." + " Store estimated dimension is [" + requiredMemory + "]"
 									+ " while cache available space is [" + getMetadata().getAvailableMemory() + "]."
-									+ " Incrase cache size or execute the dataset disabling cache.");
+									+ " Increase cache size or execute the dataset disabling cache.");
 						}
 					} else {
 						throw new CacheException("Store is to big to be persisted in cache." + " Store estimated dimension is [" + requiredMemory + "]"
 								+ " while the maximum dimension allowed is [" + maxUsableMemory + "]."
-								+ " Incrase cache size or execute the dataset disabling cache.");
+								+ " Increase cache size or execute the dataset disabling cache.");
 					}
 				} catch (Throwable t) {
 					if (t instanceof CacheException)

@@ -264,7 +264,7 @@ public class DatasetManagementAPI {
 					String namePar = sbRow.getAttribute(NAME) != null ? sbRow.getAttribute(NAME).toString() : null;
 					String typePar = sbRow.getAttribute(TYPE) != null ? sbRow.getAttribute(TYPE).toString() : null;
 
-					if (typePar.startsWith("class")) {
+					if (typePar != null && typePar.startsWith("class")) {
 						typePar = typePar.substring(6);
 					}
 					JSONObject paramMetaDataJSON = new JSONObject();
@@ -1603,6 +1603,11 @@ public class DatasetManagementAPI {
 			throw new SpagoBIRuntimeException("Unable to manage ORDER BY clauses");
 		}
 
+		ArrayList<String> arrayCategoriesForOrdering = new ArrayList<String>();
+		String keepCategoryForOrdering = "";
+		boolean columnAndCategoryAreTheSame = false;
+		boolean isOrderColumnPresent = false;
+
 		if (projections != null) {
 			Set<String> notCalculatedColumns = new HashSet<String>();
 			Set<String> aggregatedBasicColumns = new HashSet<String>();
@@ -1645,23 +1650,99 @@ public class DatasetManagementAPI {
 				}
 
 				aliasName = AbstractJDBCDataset.encapsulateColumnName(aliasName, dataSource);
-				if (aggregateFunction != null && !aggregateFunction.isEmpty()) {
+				if (aggregateFunction != null && !aggregateFunction.isEmpty() && columnName != "*") {
 					columnName = aggregateFunction + "(" + columnName + ")";
-					if (!hasAlias) {
+					if (hasAlias) {
+						if (orderType != null && !orderType.isEmpty()) {
+							orderColumns.add(aliasName + " " + orderType);
+						}
+					} else {
 						throw new SpagoBIRuntimeException("Projection [" + columnName + "] requires an alias");
 					}
-				}
-				notCalculatedColumns.add(columnName);
+				} else {
+					/**
+					 * Handling of the ordering criteria set for the first category.
+					 *
+					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+					 */
+					// If the order type is not defined for current item, consider it as it is of an empty value (empty string).
+					if (orderType == null) {
+						orderType = "";
+					}
 
-				if (orderType != null && !orderType.isEmpty()) {
-					orderColumns.add(columnName + " " + orderType);
+					String orderColumn = projection.getOrderColumn();
+					/**
+					 * If the order column is defined and is not an empty string the column (attribute) through which the first category should be ordered is
+					 * set.
+					 */
+					if (orderColumn != null && !orderColumn.isEmpty()) {
+						isOrderColumnPresent = true;
+						orderColumn = AbstractJDBCDataset.encapsulateColumnName(orderColumn, dataSource);
+
+						/**
+						 * If the ordering column is the same as the category for which is set.
+						 */
+						if (orderColumn.equals(columnName)) {
+							columnAndCategoryAreTheSame = true;
+
+							if (orderType.isEmpty()) {
+								arrayCategoriesForOrdering.add(columnName + " ASC");
+							} else {
+								arrayCategoriesForOrdering.add(columnName + " " + orderType);
+							}
+						} else {
+							if (orderType.isEmpty()) {
+								arrayCategoriesForOrdering.add(orderColumn + " ASC");
+							} else {
+								arrayCategoriesForOrdering.add(orderColumn + " " + orderType);
+							}
+
+							sqlBuilder.column(orderColumn);
+						}
+					} else {
+						if (!orderType.isEmpty()) {
+							orderColumns.add(columnName + " " + orderType);
+						}
+					}
+
+					/**
+					 * Keep the ordering for the first category so it can be appended to the end of the ORDER BY clause when it is needed.
+					 */
+					if (keepCategoryForOrdering.isEmpty()) {
+						keepCategoryForOrdering = columnName + " ASC";
+					}
 				}
+
+				notCalculatedColumns.add(columnName);
 
 				if (hasAlias) {
 					columnName += " AS " + aliasName;
 				}
 
 				sqlBuilder.column(columnName);
+			}
+
+			if (isOrderColumnPresent) {
+				/**
+				 * Only in the case when the category name and the name of the column through which it should be ordered are not the same, append the part for
+				 * ordering that category to the end of the ORDER BY clause.
+				 *
+				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */
+				if (!columnAndCategoryAreTheSame && !keepCategoryForOrdering.isEmpty()) {
+					arrayCategoriesForOrdering.add(keepCategoryForOrdering);
+				}
+
+				/**
+				 * Append ordering by categories (columns, attributes) at the end of the array of table columns through which the ordering of particular
+				 * ordering type should be performed. This is the way in which the query is constructed inside the Chart Engine, so we will keep the same
+				 * approach.
+				 *
+				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+				 */
+				for (int i = 0; i < arrayCategoriesForOrdering.size(); i++) {
+					orderColumns.add(arrayCategoriesForOrdering.get(i));
+				}
 			}
 
 			aggregatedBasicColumns.removeAll(notCalculatedColumns);
@@ -1760,7 +1841,8 @@ public class DatasetManagementAPI {
 	private void setGroupbyConditions(IDataSource dataSource, List<GroupCriteria> groups, Map<String, String> datasetAlias, SelectBuilder sqlBuilder,
 			Map<String, String> columnNameWithColonToAliasName) {
 		if (groups != null) {
-			Set<String> groupColumnNames = new HashSet<String>();
+			List<String> groupColumnNames = new ArrayList<String>();
+
 			for (GroupCriteria group : groups) {
 				String columnName = group.getColumnName();
 				String aggregateFunction = group.getAggregateFunction();
@@ -1772,10 +1854,13 @@ public class DatasetManagementAPI {
 				if (datasetAlias != null) {
 					columnName = datasetAlias.get(group.getDataset()) + " - " + group.getColumnName();
 				}
+
 				columnName = AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
+
 				if ((aggregateFunction != null) && (!aggregateFunction.isEmpty()) && (columnName != "*")) {
 					columnName = aggregateFunction + "(" + columnName + ")";
 				}
+
 				groupColumnNames.add(columnName);
 			}
 
