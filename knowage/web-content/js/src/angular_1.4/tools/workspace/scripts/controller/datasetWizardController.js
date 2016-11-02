@@ -685,7 +685,6 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 	
 	$scope.closeDatasetCreateDialog = function() {
 		
-		$mdDialog.cancel();
 		$scope.datasetWizardView=1;
 		
 		/**
@@ -716,6 +715,8 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 //		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
 //		 */
 //		$scope.step2ValidationFirstTime = true;
+		
+		$mdDialog.cancel();
 	}
 	
 	loadDatasetValues = function(a,b) {

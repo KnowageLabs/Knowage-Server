@@ -187,7 +187,7 @@ function workspaceFunction($scope, $http, $mdDialog, $timeout, $mdSidenav, $docu
 		$scope.dataset.fileName = dataset!=undefined ? dataset.fileName : "";
 		$scope.datasetInitialFileName = $scope.dataset.fileName;
 		
-		$scope.limitPreviewChecked = false;
+		$scope.limitPreviewChecked = true;
 		
 		$scope.dataset.csvEncoding = dataset!=undefined ? dataset.csvEncoding : $scope.csvEncodingDefault; 
 		$scope.dataset.csvDelimiter = dataset!=undefined ? dataset.csvDelimiter : $scope.csvDelimiterDefault; 
