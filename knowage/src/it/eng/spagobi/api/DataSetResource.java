@@ -604,7 +604,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 				JSONArray measuresObject = aggregationsObject.getJSONArray("measures");
 
 				projectionCriteria = getProjectionCriteria(label, categoriesObject, measuresObject);
-				groupCriteria = getGroupCriteria(label, categoriesObject);
+				groupCriteria = getGroupCriteria(label, categoriesObject, measuresObject);
 			}
 
 			List<FilterCriteria> filterCriteria = new ArrayList<FilterCriteria>();
@@ -771,28 +771,38 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		return projectionCriterias;
 	}
 
-	protected List<GroupCriteria> getGroupCriteria(String dataset, JSONArray categoriesObject) throws JSONException {
+	protected List<GroupCriteria> getGroupCriteria(String dataset, JSONArray categoriesObject, JSONArray measuresObject) throws JSONException {
 		List<GroupCriteria> groupCriterias = new ArrayList<GroupCriteria>();
 
-		for (int i = 0; i < categoriesObject.length(); i++) {
-			JSONObject categoryObject = categoriesObject.getJSONObject(i);
-
-			String columnName;
-
-			// in the Cockpit Engine, table, you can insert many times the same
-			// measure.
-			// To manage this, it's not possibile to use the alias as column
-			// name.
-			// So in the measure object there is also a "columnName" field
-
-			if (!categoryObject.isNull("columnName")) {
-				columnName = categoryObject.getString("columnName");
-			} else {
-				columnName = categoryObject.getString("alias");
+		boolean isAggregationPresentOnMeasures = false;
+		for (int i = 0; i < measuresObject.length(); i++) {
+			JSONObject measureObject = measuresObject.getJSONObject(i);
+			String aggregationFunction = measureObject.optString("funct");
+			if (aggregationFunction != null && !aggregationFunction.isEmpty() && !aggregationFunction.toUpperCase().equals("NONE")) {
+				isAggregationPresentOnMeasures = true;
+				break;
 			}
+		}
 
-			GroupCriteria groupCriteria = new GroupCriteria(dataset, columnName, null);
-			groupCriterias.add(groupCriteria);
+		if (isAggregationPresentOnMeasures) {
+			for (int i = 0; i < categoriesObject.length(); i++) {
+				JSONObject categoryObject = categoriesObject.getJSONObject(i);
+
+				String columnName;
+
+				// In the table of Cockpit Engine you can insert many times the same measure.
+				// To manage this, it's not possibile to use the alias as column name.
+				// So in the measure object there is also a "columnName" field.
+
+				if (!categoryObject.isNull("columnName")) {
+					columnName = categoryObject.getString("columnName");
+				} else {
+					columnName = categoryObject.getString("alias");
+				}
+
+				GroupCriteria groupCriteria = new GroupCriteria(dataset, columnName, null);
+				groupCriterias.add(groupCriteria);
+			}
 		}
 
 		return groupCriterias;
