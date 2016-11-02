@@ -269,7 +269,8 @@ angular.module('scrolly_directive',[])
 	        		var isReadyToResize = false;
 	        		var table = new Table("pivot-table");
 	        		var bounds = new Bounds(container,new Margin(0,0,SCROLL_WIDTH,SCROLL_WIDTH));
-	        		var resizeBounds = new Bounds(container,new Margin(0,0,SCROLL_WIDTH+ROW_HEIGHT,SCROLL_WIDTH+COLUMNS_WIDTH));
+	        		var resizeRowsBounds = new Bounds(container,new Margin(0,0,SCROLL_WIDTH+ROW_HEIGHT,SCROLL_WIDTH));
+	        		var resizeColumnBounds = new Bounds(container,new Margin(0,0,SCROLL_WIDTH,SCROLL_WIDTH+COLUMNS_WIDTH));
 	        		var newRowsColumnsSet = {};
 	        		
 	        		
@@ -280,16 +281,21 @@ angular.module('scrolly_directive',[])
 		        			newRowsColumnsSet = getInBoundsTableRowsColumsSet(table,bounds);
 		        			
 		        			
-		        		}else if(!resizeBounds.isOutOfBounds(table.getHtmlTable())&&scope.modelConfig.columnCount>scope.modelConfig.columnSet){
-		        			
-		        			newRowsColumnsSet.columnsSet = 50;
-		        			
-		        			
-		        		}else if(!resizeBounds.isOutOfBounds(table.getHtmlTable())&&scope.modelConfig.rowCount>scope.modelConfig.rowsSet){
+		        		}
+	        			if(!resizeRowsBounds.isOutOfBounds(table.getHtmlTable())&&scope.modelConfig.rowCount>scope.modelConfig.rowsSet){
 		        			
 		        			newRowsColumnsSet.rowsSet = 50;
 		        			
 		        		}
+	        			if(!resizeColumnBounds.isOutOfBounds(table.getHtmlTable())&&scope.modelConfig.columnCount>scope.modelConfig.columnSet){
+		        			
+		        			newRowsColumnsSet.columnsSet = 50;
+		        			
+		        			
+		        		}
+	        			
+	        			
+	        			
 	        		}
 	        		
 	        		
@@ -304,6 +310,8 @@ angular.module('scrolly_directive',[])
 	           
 	        	scope.interval = $interval(
 	        			function(){
+	        				scope.tableHeight = container.offsetHeight;
+	        	            scope.tableWeight = container.offsetWidth;
 	        				scope.clearTableCellSelection(new Table("pivot-table").getHtmlTableBodyDataElements());
 	        				scope.scroll();
 	        				if(scope.ready){
