@@ -17,8 +17,6 @@
  */
 package it.eng.spagobi.tools.datasource.dao;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.behaviouralmodel.lov.metadata.SbiLov;
@@ -30,6 +28,7 @@ import it.eng.spagobi.commons.metadata.SbiOrganizationDatasource;
 import it.eng.spagobi.commons.metadata.SbiOrganizationDatasourceId;
 import it.eng.spagobi.commons.metadata.SbiTenant;
 import it.eng.spagobi.container.ObjectUtils;
+import it.eng.spagobi.json.Xml;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
@@ -42,6 +41,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -50,6 +53,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -370,16 +374,66 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 						while (it.hasNext()) {
 							SbiLov lov = (SbiLov) it.next();
 							String prov = lov.getLovProvider();
-							SourceBean sb = SourceBean.fromXMLString(prov);
-							SourceBean conn = (SourceBean) sb.getAttribute("CONNECTION");
-							String conne = conn.getCharacters();
+							// SourceBean sb = SourceBean.fromXMLString(prov);
+							// SourceBean conn = (SourceBean)
+							// sb.getAttribute("CONNECTION");
+							// String conne = conn.getCharacters();
+
+							String statementString;
+							String conne = null;
+							String queryString = null;
+							String statement = null;
+							int cutStartIndex = prov.indexOf("<STMT>");
+							cutStartIndex = cutStartIndex + 6;
+							int cutEndIndex = prov.indexOf("</STMT>");
+							statement = prov.substring(cutStartIndex, cutEndIndex);
+
+							statement = StringEscapeUtils.escapeXml(statement);
+							int cutStart = prov.indexOf("<STMT>");
+							cutStart = cutStart + 6;
+
+							int cutEnd = prov.indexOf("</STMT>");
+							String firstPart = prov.substring(0, cutStart);
+							String secondPart = prov.substring(cutEnd, prov.length());
+							prov = firstPart + statement + secondPart;
+							try {
+								statementString = Xml.xml2json(prov);
+								JSONObject queryObject = new JSONObject(statementString);
+								queryString = queryObject.getString("QUERY");
+								JSONObject connectionObject = new JSONObject(queryString);
+								conne = connectionObject.getString("CONNECTION");
+							} catch (TransformerFactoryConfigurationError e) {
+								logger.error("", e);
+								e.printStackTrace();
+							} catch (TransformerException e) {
+								logger.error("", e);
+								e.printStackTrace();
+							} catch (JSONException e) {
+								logger.error("", e);
+								e.printStackTrace();
+							}
+
 							if (conne.equals(hibDataSource.getLabel())) {
-								int cutStart = prov.indexOf("<CONNECTION>");
-								cutStart = cutStart + 12;
-								int cutEnd = prov.indexOf("</CONNECTION>");
-								String firstPart = prov.substring(0, cutStart);
-								String secondPart = prov.substring(cutEnd, prov.length());
-								prov = firstPart + aDataSource.getLabel() + secondPart;
+								int cutStart1 = prov.indexOf("<CONNECTION>");
+								cutStart1 = cutStart1 + 12;
+								int cutEnd1 = prov.indexOf("</CONNECTION>");
+								String firstPart1 = prov.substring(0, cutStart1);
+								String secondPart1 = prov.substring(cutEnd1, prov.length());
+								prov = firstPart1 + aDataSource.getLabel() + secondPart1;
+
+								int cutStartIndex2 = prov.indexOf("<STMT>");
+								cutStartIndex2 = cutStartIndex2 + 6;
+								int cutEndIndex2 = prov.indexOf("</STMT>");
+								statement = prov.substring(cutStartIndex2, cutEndIndex2);
+
+								statement = StringEscapeUtils.unescapeXml(statement);
+								int cutStart2 = prov.indexOf("<STMT>");
+								cutStart2 = cutStart2 + 6;
+								int cutEnd2 = prov.indexOf("</STMT>");
+								String firstPart2 = prov.substring(0, cutStart2);
+								String secondPart2 = prov.substring(cutEnd2, prov.length());
+								prov = firstPart2 + statement + secondPart2;
+
 								lov.setLovProvider(prov);
 								aSession.update(lov);
 							}
@@ -463,13 +517,6 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
-		} catch (SourceBeanException e) {
-			logger.error("Error while modifing the data source with id " + ((aDataSource == null) ? "" : String.valueOf(aDataSource.getDsId())), e);
-
-			if (tx != null)
-				tx.rollback();
-
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
 			if (aSession != null) {
 				if (aSession.isOpen())
