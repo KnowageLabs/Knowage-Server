@@ -17,6 +17,18 @@
  */
 package it.eng.knowage.engine.kpi.api;
 
+import it.eng.knowage.engine.kpi.KpiEngineInstance;
+import it.eng.knowage.engine.util.KpiEngineDataUtil;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.kpi.bo.KpiValue;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
+import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -38,17 +50,6 @@ import org.json.JSONObject;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import it.eng.knowage.engine.kpi.KpiEngineInstance;
-import it.eng.knowage.engine.util.KpiEngineDataUtil;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.kpi.bo.KpiValue;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
-import it.eng.spagobi.utilities.engines.EngineConstants;
-import it.eng.spagobi.utilities.rest.RestUtilities;
-
 @Path("/1.0/jsonKpiTemplate")
 @ManageAuthorization
 public class JsonKpiTemplateService extends AbstractFullKpiEngineResource {
@@ -66,10 +67,9 @@ public class JsonKpiTemplateService extends AbstractFullKpiEngineResource {
 	@Path("/readKpiTemplate")
 	@SuppressWarnings("rawtypes")
 	public String getJSONKpiTemplate(@Context HttpServletRequest req, @Context HttpServletResponse servletResponse) {
-		JSONArray array = new JSONArray();
-		try {
-			String result = "";
 
+		JSONObject toReturn;
+		try {
 			KpiEngineInstance engineInstance = getEngineInstance();
 
 			@SuppressWarnings("unchecked")
@@ -85,24 +85,19 @@ public class JsonKpiTemplateService extends AbstractFullKpiEngineResource {
 
 			Calendar startDate = Calendar.getInstance();
 
-			// LOading Scorecard or Target
+			// Loading Scorecard or Target
 			Map<String, String> attributesValues = buildAttributeValuesMap(jsonTemplate, startDate);
 
-			result = KpiEngineDataUtil.loadJsonData(jsonTemplate, attributesValues);
+			String result = KpiEngineDataUtil.loadJsonData(jsonTemplate, attributesValues);
 			if (result == null) {
 				return null;
 			}
 			JSONArray resultarray = new JSONArray(result);
+			JSONArray array = new JSONArray();
 			if (jsonTemplate.getJSONObject("chart").getString("type").equals("kpi")) {
 				JSONObject objTemp = new JSONObject();
 				List<KpiValue> kpiValues;
 
-				// if (jsonTemplate.getJSONObject("chart").getJSONObject("data").get("kpi") instanceof JSONObject) {
-				// objTemp = jsonTemplate.getJSONObject("chart").getJSONObject("data").getJSONObject("kpi");
-				// kpiValues = DAOFactory.getKpiDAO().findKpiValues(objTemp.getInt("id"), null, startDate.getTime(), new Date(), attributesValues);
-				// String result2 = new ObjectMapper().writeValueAsString(kpiValues);
-				// array.put(result2);
-				// } else {
 				kpiValues = new ArrayList<>();
 				for (int i = 0; i < resultarray.length(); i++) {
 					objTemp = resultarray.getJSONObject(i).getJSONObject("kpi");
@@ -111,23 +106,15 @@ public class JsonKpiTemplateService extends AbstractFullKpiEngineResource {
 					array.put(result2);
 				}
 			}
-			// }
 
-			JSONObject objectResult = new JSONObject();
-			objectResult.put("loadKpiValue", array.toString());
-			objectResult.put("info", result);
-			return objectResult.toString();
+			toReturn = new JSONObject();
+			toReturn.put("loadKpiValue", array.toString());
+			toReturn.put("info", result);
+			return toReturn.toString();
 
-		} catch (JSONException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (EMFUserError e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (JSONException | IOException | EMFUserError ex) {
+			throw new SpagoBIRuntimeException("Error while read KPI template", ex);
 		}
-		return "";
 	}
 
 	Map<String, String> buildAttributeValuesMap(JSONObject jsonTemplate, Calendar startDate) throws JSONException {
