@@ -67,15 +67,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		<div ng-controller="linkDatasetCTRL" layout-fill class="contentdemoBasicUsage">		
 		  <div class ="md-container" >
-			<md-toolbar class="miniheadfederation" >
-				<div class="md-toolbar-tools">
-				
-				<h2 class="md-flex" >Table Link for <%= datasetLabel  %> </h2>
-				
-				</div>
-				
-				
-			</md-toolbar>
+			
 	
 						
 	
@@ -141,11 +133,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				
 				<div>
 				
-				<div>
-				<md-button class="md-raised buttonLeft" aria-label="btn_cancel"
-						ng-click="goBack()">Cancel
-				</md-button> 
-				</div>
 				<div>
 				<md-button class="md-raised buttonRight" aria-label="btn_save"
 						ng-click="saveRelation(<%= datasetID %>)" ng-disabled="checkSave()">Save

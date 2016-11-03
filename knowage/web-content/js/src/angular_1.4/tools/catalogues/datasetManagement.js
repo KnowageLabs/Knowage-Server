@@ -3223,8 +3223,25 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		   });
     }
     
-    $scope.openLinkDataset = function () {    	
-    	document.location.href = sbiModule_config.contextName + "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/dataset/linkDataset.jsp&id="+$scope.selectedDataSet.id+"&label="+$scope.selectedDataSet.label; 	
+    $scope.openLinkDataset = function () {
+   	 $mdDialog.show({
+		  scope:$scope,
+		  preserveScope: true,
+	      controller: DialogLinkDataSetController,
+	      templateUrl: sbiModule_config.contextName +"/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/dataset/LinkDatasetIFrame.jsp",  
+	      clickOutsideToClose:true,
+	      escapeToClose :true,
+	      fullscreen: true
+	    })
+    	//document.location.href = sbiModule_config.contextName + "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/dataset/linkDataset.jsp&id="+$scope.selectedDataSet.id+"&label="+$scope.selectedDataSet.label; 	
+    }
+    
+    function DialogLinkDataSetController($scope,$mdDialog,sbiModule_config){
+    	$scope.iframeUrl = sbiModule_config.contextName + "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/dataset/linkDataset.jsp&id="+$scope.selectedDataSet.id+"&label="+$scope.selectedDataSet.label; 
+		$scope.cancelDialog = function() {
+					
+			$mdDialog.cancel();				
+		}
     }
     
     $scope.resetWhenChangeDSType = function(dsType) {
