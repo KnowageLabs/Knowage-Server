@@ -240,6 +240,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return true;
 		}
 		
+		
+		
+		$scope.freeValueFromPrefixAndSuffix=function(value,currentColumn)
+		{
+			
+			if(currentColumn.hasOwnProperty("style"))
+			{	
+				if(currentColumn.style.hasOwnProperty("suffix"))
+				{
+					value=value.replace(" "+currentColumn.style.suffix, "");
+				}	
+				if(currentColumn.style.hasOwnProperty("prefix"))
+				{
+					value=value.replace(currentColumn.style.prefix+" ", "");
+				}	
+			}
+			return parseFloat(value);
+		}
+		
+		
+		
 		$scope.refresh=function(element,width,height, datasetRecords,nature){
 			if(angular.equals(nature,'fullExpand')){
 				return
@@ -304,8 +325,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									}	
 								}	
 								
+								var prefix="";
+								var suffix="";
+								var valueWithoutPrefixAndSuffix=$scope.freeValueFromPrefixAndSuffix(value,currentColumn);
+								
 								var htm="<div layout='row' layout-align='start center'>";
 							
+								
+								
 								if(!currentColumn.hasOwnProperty("visType") || currentColumn.visType=='Text')
 								{										
 									htm="<div>"+value+"</div>"	
@@ -317,8 +344,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									var minValue=currentColumn.minValue;
 									var maxValue=currentColumn.maxValue;
 									
-									barValue=calculateScaleValue(minValue,maxValue,value);
-									
+									//barValue=calculateScaleValue(minValue,maxValue,value);
+									barValue=calculateScaleValue(minValue,maxValue,valueWithoutPrefixAndSuffix);
 									
 									if(currentColumn.visType=='Chart')
 									{	
@@ -447,6 +474,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 				$scope.itemList=$scope.getRows($scope.columnToshowinIndex,$scope.datasetRecords);
 				$scope.tableColumns=$scope.columnsToShow;
+				for(var i=0;i<$scope.tableColumns.length;i++)
+				{
+					$scope.tableColumns[i].hideTooltip=true
+				}
+				
 				if(datasetRecords !=undefined){
 					$scope.totalCount = datasetRecords.results;
 				}
