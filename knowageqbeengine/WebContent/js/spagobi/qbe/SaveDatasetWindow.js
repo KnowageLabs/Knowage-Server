@@ -57,6 +57,7 @@ Ext.extend(Sbi.qbe.SaveDatasetWindow, Ext.Window, {
 	
 	datasetForm : null
 	, queries : null
+	, queryCataloguePanel : null
 	, services: null
 	, persistPanel : null
 	, metadataPanel : null
@@ -361,6 +362,21 @@ Ext.extend(Sbi.qbe.SaveDatasetWindow, Ext.Window, {
 		this.persistPanel.setSchedulingCronLine();
 		
 		var params = this.getInfoToBeSentToServer();
+		
+		
+		var currentQuery = this.queryCataloguePanel.getSelectedQuery();
+		var ambiguousFields = [];
+		var ambiguousRoles = [];
+		if (currentQuery) {
+			ambiguousFields = this.queryCataloguePanel.getStoredAmbiguousFields();
+			ambiguousRoles = this.queryCataloguePanel.getStoredRoles();
+		}
+		params.catalogue = Ext.util.JSON.encode(this.queries.catalogue.queries) ;
+		params.currentQueryId = (currentQuery) ? currentQuery.id : '' ;
+		params.ambiguousFieldsPaths = Ext.util.JSON.encode(ambiguousFields) ;
+		params.ambiguousRoles = Ext.util.JSON.encode(ambiguousRoles) ;
+		
+		
 		Ext.MessageBox.wait(LN('sbi.generic.wait'));
 		Ext.Ajax.request({
 	        url : this.services['saveDatasetService']

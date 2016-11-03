@@ -74,6 +74,7 @@ import org.jgrapht.Graph;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.mortbay.log.Log;
 
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -201,10 +202,8 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 	private IDataStore handleTimeAggregations(IDataStore fullDatastore) {
 		
 		boolean debug = true;
-		if(debug) {
-			System.out.println("fullDatastore: ");
-			sysoDatastore(fullDatastore);
-		}
+		logger.debug("fullDatastore: ");
+		sysoDatastore(fullDatastore);
 		
 		Query query = this.getQuery();
 		Map<String, Map<String, String>> inlineFilteredSelectFields = query.getInlineFilteredSelectFields();
@@ -247,10 +246,8 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 			finalDatastore = executeQuery(0, 0);
 			
 
-			if(debug) {
-				System.out.println("finalDatastore: ");
-				sysoDatastore(finalDatastore);
-			}
+			logger.debug("finalDatastore: ");
+			sysoDatastore(finalDatastore);
 			
 			// aggrego!
 			for (Iterator finalIterator = finalDatastore.iterator(); finalIterator.hasNext();) {
@@ -270,8 +267,6 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 				Map<String, String> currentRecordId = getRecordAggregatedId(finalRecord, finalDatastore, query);
 				
 				Map<String, String> periodSetToCurrent = setCurrentIfNotPresent(query, hierarchyFullColumnMap, distinctPeriodsByType, currentRecordId);
-				
-				
 				
 				// Creo una mappa per tipo in cui tutti gli elementi sono numerati es i mesi da 0 a 11, i quarter da 0 a 3...
 				Map<String, Integer> rowPeriodsNumbered = new HashMap<>();
@@ -504,9 +499,7 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 							lastRecordIndex = firstRecordIndex;
 							firstRecordIndex = swap;
 						}
-						if(debug) {
-							System.out.println( fieldAlias +" FIRST: "+firstRecordIndex + " -> LAST: " + lastRecordIndex + (swapped?" (Reading the future: swapped first and last!)":""));
-						}
+						logger.debug( fieldAlias +" FIRST: "+firstRecordIndex + " -> LAST: " + lastRecordIndex + (swapped?" (Reading the future: swapped first and last!)":""));
 
 						
 						/** A QUESTO PUNTO AGGREGO E CALCOLO IL VALORE */
@@ -522,9 +515,7 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 								
 								
 								if(firstRecordIndex <= recordIndex && recordIndex <= lastRecordIndex) {
-									if(debug) {
-										System.out.println("recordIndex: " + recordIndex);
-									}
+									logger.debug("recordIndex: " + recordIndex);
 									aValueFound = true;
 									finalValue += Double.parseDouble(record.getFieldAt(fieldIndex).getValue().toString());
 									finalRecord.getFieldAt(fieldIndex).setValue(finalValue);
@@ -545,9 +536,7 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 					}
 				}
 				
-				if(debug) {
-					System.out.println(rowLog);
-				}
+				logger.debug(rowLog);
 				
 			}
 			
@@ -608,7 +597,7 @@ public class ExecuteQueryAction extends AbstractQbeEngineAction {
 		try {
 		JSONDataWriter dataSetWriter = new JSONDataWriter();
 		JSONObject dataSetJSON = (JSONObject) dataSetWriter.write(ds);
-			System.out.println(dataSetJSON.getJSONArray("rows").toString());
+			logger.debug(dataSetJSON.getJSONArray("rows").toString());
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

@@ -62,7 +62,6 @@ import it.eng.qbe.query.ExpressionNode;
 import it.eng.qbe.query.IQueryField;
 import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.query.Query;
-import it.eng.qbe.query.QueryMeta;
 import it.eng.qbe.query.QueryValidator;
 import it.eng.qbe.query.SimpleSelectField;
 import it.eng.qbe.query.WhereField;
@@ -133,7 +132,9 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 
 	/** Logger component. */
 	public static transient Logger logger = Logger.getLogger(SetCatalogueAction.class);
-
+	
+	protected boolean handleTimeFilter = true;
+	
 	@Override
 	public void service(SourceBean request, SourceBean response) {
 
@@ -213,7 +214,9 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 			// attributes
 			IModelAccessModality accessModality = this.getEngineInstance().getDataSource().getModelAccessModality();
 
-			handleTimeFilters(query);
+			if(handleTimeFilter) {
+				handleTimeFilters(query);
+			}
 
 			Query filteredQuery = accessModality.getFilteredStatement(query, this.getDataSource(),
 					userProfile.getUserAttributes());
@@ -222,7 +225,7 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 			Set<ModelFieldPaths> ambiguousFields = new HashSet<ModelFieldPaths>();
 			Map<IModelField, Set<IQueryField>> modelFieldsMap = filteredQuery.getQueryFields(getDataSource());
 			Set<IModelField> modelFields = modelFieldsMap.keySet();
-			Set<IModelEntity> modelEntities = filteredQuery.getQueryEntities(modelFields);
+			Set<IModelEntity> modelEntities = Query.getQueryEntities(modelFields);
 
 			Map<String, Object> pathFiltersMap = new HashMap<String, Object>();
 			pathFiltersMap.put(CubeFilter.PROPERTY_MODEL_STRUCTURE, getDataSource().getModelStructure());
@@ -283,6 +286,7 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 
 			// serialize the ambiguous fields
 			ObjectMapper mapper = new ObjectMapper();
+			@SuppressWarnings("deprecation")
 			SimpleModule simpleModule = new SimpleModule("SimpleModule", new Version(1, 0, 0, null));
 			simpleModule.addSerializer(Relationship.class, new RelationJSONSerializer(getDataSource(), getLocale()));
 			simpleModule.addSerializer(ModelObjectI18n.class,
@@ -312,35 +316,32 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 			}
 
 			if (!isDierctlyExecutable) {
-				isDierctlyExecutable = serialized == null || serialized.equals("") || serialized.equals("[]");// no
-																												// ambiguos
-																												// fields
-																												// found
-																												// so
-																												// the
-																												// query
-																												// is
-																												// executable;
+				isDierctlyExecutable = serialized == null || serialized.equals("") || serialized.equals("[]");
+				// no ambiguos fields found so the query is executable;
 			}
 
 			List<String> queryErrors = QueryValidator.validate(query, getDataSource());
 			String serializedQueryErrors = mapper.writeValueAsString(queryErrors);
 
 			// String queryString = buildQueryString(getDataSource(), query);
-
-			JSONObject toReturn = new JSONObject();
-			toReturn.put(AMBIGUOUS_FIELDS_PATHS, serialized);
-			toReturn.put(AMBIGUOUS_ROLES, serializedRoles);
-			toReturn.put(EXECUTE_DIRECTLY, isDierctlyExecutable);
-			toReturn.put(AMBIGUOUS_WARING, ambiguousWarinig);
-			toReturn.put(CATALOGUE_ERRORS, serializedQueryErrors);
-			// toReturn.put(QUERY_STRING, queryString);
-
-			try {
-				writeBackToClient(toReturn.toString());
-			} catch (IOException e) {
-				String message = "Impossible to write back the responce to the client";
-				throw new SpagoBIEngineServiceException(getActionName(), message, e);
+			if(handleTimeFilter) {
+				JSONObject toReturn = new JSONObject();
+				toReturn.put(AMBIGUOUS_FIELDS_PATHS, serialized);
+				toReturn.put(AMBIGUOUS_ROLES, serializedRoles);
+				toReturn.put(EXECUTE_DIRECTLY, isDierctlyExecutable);
+				toReturn.put(AMBIGUOUS_WARING, ambiguousWarinig);
+				toReturn.put(CATALOGUE_ERRORS, serializedQueryErrors);
+				// toReturn.put(QUERY_STRING, queryString);
+	
+				try {
+					writeBackToClient(toReturn.toString());
+				} catch (IOException e) {
+					String message = "Impossible to write back the responce to the client";
+					throw new SpagoBIEngineServiceException(getActionName(), message, e);
+				}
+			}
+			else {
+				this.getEngineInstance().setActiveQuery(query);
 			}
 
 		} catch (Throwable t) {
@@ -356,7 +357,7 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 	}
 
 	private void handleTimeFilters(Query query) {
-		// DD: RECUPERO LA DIMENSIONE TEMPORALE
+		// DD: retrieve time dimension
 		IModelEntity temporalDimension = getTemporalDimension(getDataSource());
 		IModelEntity timeDimension = getTimeDimension(getDataSource());
 
@@ -389,22 +390,17 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 
 						String temporalDimensionId = getTimeId(temporalDimension);
 
-						// DD: RECUPERO IL PERIODO CORRENTE
-						// TemporalRecord currentPeriodRecord =
-						// getCurrentPeriod(temporalDimension, "time_id",
-						// "quarter", "the_year");
+						// DD: retrieve current period
 						TemporalRecord currentPeriod = getCurrentPeriod(temporalDimension, temporalDimensionId,
 								temporalLevelColumn, null, defaultHierarchy.getAncestors(temporalLevelColumn));
-								// DD: RECUPERO L'INDICE DEL PERIODO CORRENTE
+						// DD: retrieve current period index
 
-						// CURRENT
 						if ("Current".equals(rValues[0])) {
 							lValues[0] = temporalDimension.getType() + ":" + temporalLevelColumn;
 							rValues[0] = currentPeriod.getPeriod().toString();
 						} else if (whereField.getOperator().equals("LAST")) {
 
-							// DD: RECUPERO TUTTI I RECORD INIZIALI DEGLI
-							// INTERVALLI DI INTERESSE
+							// DD: retrieving all periods start time records
 							LinkedList<TemporalRecord> allPeriodsStartingDate = loadAllPeriodsStartingDate(
 									temporalDimension, temporalDimensionId, temporalLevelColumn,
 									defaultHierarchy.getAncestors(temporalLevelColumn));
@@ -565,39 +561,38 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 
 		List<ISelectField> selectFields = query.getSelectFields(false);
 		List<WhereField> whereFields = query.getWhereFields();
+		
+		// verifing if there's an inline filter
+		if (hasInlineFilters(selectFields)) {
 
-		// verifico la presenza di un filtro in line
-		Set<String> inlineFilterFieldTypes = new HashSet<>();
-		boolean hasInlineFilters = populateInlineFilterFieldTypes(selectFields, inlineFilterFieldTypes);
-		if (hasInlineFilters) {
-			boolean perfomancesTuningPossible = true;
-
-			// recupero l'id della dimensione tempo
-			String temporalDimensionId = getTimeId(temporalDimension);
-
-			// aggiungo alla query il time_id
-			addTimeIdToQuery(query, temporalDimension, temporalDimensionId);
-
-			// Recupero i livelli della gerarchia
+			// Retrieving all hierarchy levels
 			List<HierarchyLevel> levels = hierarchy.getLevels();
 
-			// Recupero le colonne della gerarchia (mi serviranno per vedere se
-			// sono tutte incluse nella select e nella group by)
+			// Retrieving all hierarchy columns (used to check if those are all included in the group by clause)
 			Map<String, String> hierarchyFullColumnMap = new LinkedHashMap<>();
 			Map<String, String> hierarchyColumnMap = new LinkedHashMap<>();
 			for (HierarchyLevel level : levels) {
 				hierarchyColumnMap.put(level.getType(), level.getColumn());
 				hierarchyFullColumnMap.put(level.getType(), extractColumnName(temporalDimension, level.getColumn()));
 			}
+			
+			// retrieving all the temporal fields coming from temporal inline filters
+			Set<String> inlineFilterFieldTypes = extractInlineFilterFieldTypes(selectFields, hierarchyFullColumnMap);
+			
+			// retrieving time_id
+			String temporalDimensionId = getTimeId(temporalDimension);
 
-			// anno di riferimento
+			// adding  time_id to query
+			addTimeIdToQuery(query, temporalDimension, temporalDimensionId);
+
+			// relative year
 			String relativeYear = (new GregorianCalendar().get(Calendar.YEAR)) + "";
 			Set<String> yearsInWhere = extractYearsFromWhereFields(whereFields, hierarchyFullColumnMap.get("YEAR"));
 			if (yearsInWhere.size() > 0) {
 				relativeYear = yearsInWhere.iterator().next();
 			}
 
-			// recupero tutti gli anni presenti nella base dati
+			// retrieving all year on DWH
 			LinkedList<TemporalRecord> allYearsOnDWH = loadAllPeriodsStartingDate(temporalDimension,
 					temporalDimensionId, hierarchyColumnMap.get("YEAR"));
 			LinkedList<String> allYearsOnDWHString = new LinkedList<>();
@@ -605,7 +600,7 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 				allYearsOnDWHString.add(temporalRecord.getPeriod().toString());
 			}
 
-			// recupero l'indice dell'anno di riferimento nella lista precedente
+			// retrieving relative year index on allYearsOnDWH list
 			int relativeYearIndex = -1;
 			for (int i = 0; i < allYearsOnDWHString.size(); i++) {
 				if (allYearsOnDWHString.get(i).equals(relativeYear)) {
@@ -619,27 +614,24 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 
 			addSumFunctionToAllMeasureInSelect(selectFields);
 
-			// se una funzione temporale richiama un attributo temporale non
-			// previsto nella where e non presente nella select, verranno
-			// visualizzati solo i dati relativi al periodo corrente.
 			Map<String, String> currentPeriodValuyesByType = addMissingCurrentPeriodWhereClauses(query,
 					temporalDimension, selectFields, whereFields, inlineFilterFieldTypes, temporalDimensionId,
 					hierarchyFullColumnMap, hierarchyColumnMap, relativeYear);
 
-			// recupero tutti i campi temporali presenti nella query
+			// retrieving all temporal fields used in query
 			Set<String> temporalFieldTypesInSelect = getTemporalFieldsInSelect(query.getSelectFields(false), hierarchyFullColumnMap);
 
-			// definisco quali campi andranno ricalcolati
+			// defining wich fields will be calculated after query execution
 			Map<String, Map<String, String>> inlineFilteredSelectFields = updateInlineFilteredSelectFieldsAliases(
 					selectFields);
 
-			// se anno non in select, lo aggiungo
+			// adding yera as select field if not present
 			if (!temporalFieldTypesInSelect.contains(hierarchyFullColumnMap.get("YEAR"))) {
 				addYearToQuery(query, temporalDimension, hierarchyFullColumnMap);
 				aliasesToBeRemovedAfterExecution.add(hierarchyFullColumnMap.get("YEAR"));
 			}
 
-			// dico alla query che dovra eseguire una postExecutionAnalysis
+			// preparing data for query post-processing
 			query.setInlineFilteredSelectFields(inlineFilteredSelectFields);
 			query.setAliasesToBeRemovedAfterExecution(aliasesToBeRemovedAfterExecution);
 			query.setTemporalFieldTypesInSelect(temporalFieldTypesInSelect);
@@ -662,19 +654,48 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 			// relativeYear will be added later on where clause only if needed
 			removeRelativeYearFromWhereFields(whereFields, yearsInWhere, hierarchyFullColumnMap.get("YEAR"), relativeYear);
 			
-			// aggiungo i filtri per le performance
-			if(perfomancesTuningPossible) {
-				addYearsFilterForPerformances(query, selectFields, whereFields, hierarchyFullColumnMap, relativeYear,
-						yearsInWhere, allYearsOnDWHString, relativeYearIndex, distinctPeriods, currentPeriodValuyesByType);
+			// when period to date will result in a single record, temporal where clauses are used to calculate the relative period, not for filtering 
+			if(containsPeriodToDate(selectFields) && !isMultiLineResult(selectFields, hierarchyFullColumnMap)) {
+				removeCurrentPeriodFromWhereFields(whereFields, hierarchyFullColumnMap);
 			}
-
+			
+			addYearsFilterForPerformances(query, selectFields, whereFields, hierarchyFullColumnMap, relativeYear,
+					yearsInWhere, allYearsOnDWHString, relativeYearIndex, distinctPeriods, currentPeriodValuyesByType);
 		}
+	}
+
+	private boolean removeCurrentPeriodFromWhereFields(List<WhereField> whereFields,
+			Map<String, String> hierarchyFullColumnMap) {
+
+		List<WhereField> whereFieldsToBeRemoved = new ArrayList<>();
+		
+		LOOP_4:
+		for (String levelType : hierarchyFullColumnMap.keySet()) {
+			if(!"YEAR".equals(levelType)) {
+				String levelColumn = hierarchyFullColumnMap.get(levelType);
+				
+				for (WhereField wField : whereFields) {
+					if (wField.getLeftOperand().values != null && wField.getLeftOperand().values.length > 0
+							&& levelColumn.equals(wField.getLeftOperand().values[0]) && ("EQUALS TO".equals(wField.getOperator()) || ("IN".equals(wField.getOperator())))
+							&& wField.getRightOperand().values != null && wField.getRightOperand().values.length > 0) {
+						
+						whereFieldsToBeRemoved.add(wField);
+						break;
+					}
+				}
+			}
+		}
+		
+		if(whereFieldsToBeRemoved.size() > 0) {
+			whereFields.removeAll(whereFieldsToBeRemoved);
+		}
+		return whereFieldsToBeRemoved.size() > 0;
 	}
 
 	private void removeRelativeYearFromWhereFields(List<WhereField> whereFields, Set<String> yearsInWhere, String yearColumn, String relativeYear) {
 		for (WhereField wField : whereFields) {
 			if (wField.getLeftOperand().values != null && wField.getLeftOperand().values.length > 0
-					&& yearColumn.equals(wField.getLeftOperand().values[0]) && "EQUALS TO".equals(wField.getOperator())
+					&& yearColumn.equals(wField.getLeftOperand().values[0]) && ("EQUALS TO".equals(wField.getOperator()) || ("IN".equals(wField.getOperator())))
 					&& wField.getRightOperand().values != null && wField.getRightOperand().values.length > 0
 					&& relativeYear.equals(wField.getRightOperand().values[0] + "")) {
 				
@@ -811,6 +832,8 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 		Set<String> temporalFieldTypesInSelect = new HashSet<>();
 		Set<String> temporalFieldTypesInWhere = new HashSet<>();
 
+		boolean hasPeriodToDate = false;
+		
 		Map<String, int[]> lastOperatorRanges = new HashMap<>();
 		for (ISelectField sfield : selectFields) {
 			if (sfield.isSimpleField()) {
@@ -819,8 +842,13 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 				int temporalOperandParameter = -1*Integer.parseInt(ssField.getTemporalOperandParameter() != null ? ssField.getTemporalOperandParameter() : "0");
 				if (temporalOperand != null) {
 					switch (temporalOperand) {
-					case TEMPORAL_OPERAND_LAST_QUARTER:
+					
+					case TEMPORAL_OPERAND_YTD:
+						hasPeriodToDate=true;
+						break;
 					case TEMPORAL_OPERAND_QTD:
+						hasPeriodToDate=true;
+					case TEMPORAL_OPERAND_LAST_QUARTER:
 						int[] opRangeQuarter = {0,0};
 						if(lastOperatorRanges.containsKey("QUARTER")) {
 							opRangeQuarter = lastOperatorRanges.get("QUARTER");
@@ -833,8 +861,9 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 						}
 						lastOperatorRanges.put("QUARTER", opRangeQuarter);
 						break;
-					case TEMPORAL_OPERAND_LAST_MONTH:
 					case TEMPORAL_OPERAND_MTD:
+						hasPeriodToDate=true;
+					case TEMPORAL_OPERAND_LAST_MONTH:
 						int[] opRangeMonth = {0,0};
 						if(lastOperatorRanges.containsKey("MONTH")) {
 							opRangeMonth = lastOperatorRanges.get("MONTH");
@@ -857,7 +886,7 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 			String levelColumn = hierarchyFullColumnMap.get(levelType);
 			if (!temporalFieldTypesInSelect.contains(levelType)) {
 
-				// lo cerco nelle select
+				// seraching on selct fields
 				for (ISelectField sfield : selectFields) {
 					if (sfield.isSimpleField()) {
 						SimpleSelectField ssField = (SimpleSelectField) sfield;
@@ -879,7 +908,7 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 			}
 
 			if (!temporalFieldTypesInWhere.contains(levelType)) {
-				// lo cerco nelle where
+				// serching on filters
 				for (WhereField wField : whereFields) {
 					if (wField.getLeftOperand().values != null && wField.getLeftOperand().values.length > 0
 							&& levelColumn.equals(wField.getLeftOperand().values[0])
@@ -899,7 +928,7 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 		temporalFieldTypesInSelectOrWhere.addAll(temporalFieldTypesInWhere);
 
 		for (String levelType : inlineFilterFieldTypes) {
-			if (!temporalFieldTypesInSelectOrWhere.contains(levelType)) {
+			if (!temporalFieldTypesInSelectOrWhere.contains(levelType) ) {
 				String levelColumn = hierarchyFullColumnMap.get(levelType);
 				Operand left = new Operand(new String[] { levelColumn }, levelColumn, "Field Content", new String[] {""}, new String[] {""}, "");
 
@@ -951,11 +980,14 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 					currentPeriodValues = currentPeriodValuesSet.toArray(new String[0]);
 				}
 				
+				// Period to date aggregates only with 'daily granularity'
+				 if(levelType.equals("YEAR") || !hasPeriodToDate) {
 				
-				Operand right = new Operand(currentPeriodValues, levelType, "Static Content", new String[] {""}, new String[] {""}, "");
-				query.addWhereField("current_" + levelType, "current_" + levelType, false, left, "IN", right,
-						"AND");
-				query.updateWhereClauseStructure();
+					Operand right = new Operand(currentPeriodValues, levelType, "Static Content", new String[] {""}, new String[] {""}, "");
+					query.addWhereField("current_" + levelType, "current_" + levelType, false, left, "IN", right,
+							"AND");
+					query.updateWhereClauseStructure();
+				 }
 					
 				currentPeriodValuesByType.put(levelColumn, currentPeriodValue);
 			}
@@ -1076,13 +1108,10 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 			Map<String, String> currentPeriodValuesByType) {
 		Set<String> yearsToBeAddedToWhereClause = new HashSet<>();
 
-		// per comodit� riorganizzo i periodi per type
 		Map<String, List<String>> distinctPeriodsByType = new HashMap<>();
 		for (String type : hierarchyFullColumnMap.keySet()) {
 			distinctPeriodsByType.put(type, distinctPeriods.get(hierarchyFullColumnMap.get(type)));
 		}
-		// Creo una mappa per tipo in cui tutti gli elementi sono numerati es i
-		// mesi da 1 a 12, i quarter da 1 a 4
 		Map<String, Integer> currentPeriodsNumbered = new HashMap<>();
 		for (String type : currentPeriodValuesByType.keySet()) {
 			String currentPeriodValue = currentPeriodValuesByType.get(type);
@@ -1113,7 +1142,6 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 					boolean lastPeriod = false;
 					switch (temporalOperand) {
 
-					// PERIOD_TO_DATE
 					case TEMPORAL_OPERAND_QTD:
 						if (periodType == null) {
 							periodType = "QUARTER";
@@ -1196,7 +1224,6 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 						}
 						break;
 
-					// PARALLEL_PERIOD AND YTD
 					case TEMPORAL_OPERAND_YTD:
 					case TEMPORAL_OPERAND_PARALLEL_YEAR:
 						int parallelYearIndex = relativeYearIndex - n;
@@ -1214,26 +1241,47 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 		return yearsToBeAddedToWhereClause;
 	}
 
-	private boolean populateInlineFilterFieldTypes(List<ISelectField> selectFields,
-			Set<String> inlineFilterFieldTypes) {
+	private Set<String> extractInlineFilterFieldTypes(List<ISelectField> selectFields, Map<String, String> hierarchyFullColumnMap) {
+		
+		boolean multipleLineResult = isMultiLineResult(selectFields, hierarchyFullColumnMap);
+		
+		return harvestInlineFilterType(selectFields, !multipleLineResult);
+	}
+
+	private boolean isMultiLineResult(List<ISelectField> selectFields, Map<String, String> hierarchyFullColumnMap) {
+		boolean multipleLineResult = false;
+		for (ISelectField sfield : selectFields) {
+			if(sfield instanceof SimpleSelectField) {
+				String sfieldUniqueName = ((SimpleSelectField)sfield).getUniqueName();
+				if(hierarchyFullColumnMap.values().contains(sfieldUniqueName)) {
+					multipleLineResult = true;
+					break;
+				}
+			}
+		}
+		return multipleLineResult;
+	}
+
+	private boolean hasInlineFilters(List<ISelectField> selectFields) {
+		return harvestInlineFilterType(selectFields, false).size() > 0;
+	}
+	
+	private Set<String> harvestInlineFilterType(List<ISelectField> selectFields, boolean singleLineResult) {
+		Set<String> inlineFilterFieldTypes = new HashSet<>();
 		for (ISelectField sfield : selectFields) {
 			if (sfield.isSimpleField()) {
 				SimpleSelectField ssField = (SimpleSelectField) sfield;
 				String temporalOperand = ssField.getTemporalOperand();
-
-				/*
-				 * Parallel_YEAR: viene effettuata l'aggregazione come definito
-				 * LAST_PERIOD: viene effettuata l'aggregazione come definito,
-				 * aggiungo il PERIOD nella groupby PERIOD_TO_DATE: viene
-				 * effettuata l'aggregazione come definito, aggiungo il PERIOD
-				 * nella groupby
-				 */
 
 				if (temporalOperand != null) {
 					switch (temporalOperand) {
 
 					// YEAR
 					case TEMPORAL_OPERAND_YTD:
+						if(singleLineResult) {
+							inlineFilterFieldTypes.add("MONTH");
+							inlineFilterFieldTypes.add("DAY");
+						}
 					case TEMPORAL_OPERAND_LAST_YEAR:
 					case TEMPORAL_OPERAND_PARALLEL_YEAR:
 						inlineFilterFieldTypes.add("YEAR");
@@ -1241,18 +1289,28 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 
 					// QUARTER
 					case TEMPORAL_OPERAND_QTD:
+						if(singleLineResult) {
+							inlineFilterFieldTypes.add("MONTH");
+							inlineFilterFieldTypes.add("DAY");
+						}
 					case TEMPORAL_OPERAND_LAST_QUARTER:
 						inlineFilterFieldTypes.add("QUARTER");
 						break;
 
 					// MONTH
 					case TEMPORAL_OPERAND_MTD:
+						if(singleLineResult) {
+							inlineFilterFieldTypes.add("DAY");
+						}
 					case TEMPORAL_OPERAND_LAST_MONTH:
 						inlineFilterFieldTypes.add("MONTH");
 						break;
 
 					// WEEK
 					case TEMPORAL_OPERAND_WTD:
+						if(singleLineResult) {
+							inlineFilterFieldTypes.add("DAY");
+						}
 					case TEMPORAL_OPERAND_LAST_WEEK:
 						inlineFilterFieldTypes.add("WEEK");
 						break;
@@ -1264,13 +1322,34 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 
 			}
 		}
-		return inlineFilterFieldTypes.size() > 0;
+		return inlineFilterFieldTypes;
+	}
+	
+	private boolean containsPeriodToDate(List<ISelectField> selectFields) {
+		for (ISelectField sfield : selectFields) {
+			if (sfield.isSimpleField()) {
+				SimpleSelectField ssField = (SimpleSelectField) sfield;
+				String temporalOperand = ssField.getTemporalOperand();
+				if (temporalOperand != null) {
+					switch (temporalOperand) {
+					case TEMPORAL_OPERAND_YTD:
+					case TEMPORAL_OPERAND_QTD:
+					case TEMPORAL_OPERAND_MTD:
+					case TEMPORAL_OPERAND_WTD:
+						return true;
+
+					default:
+						break;
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	private Set<String> extractYearsFromWhereFields(List<WhereField> whereFields, String yearColumn) {
 		Set<String> yearsInWhere = new HashSet<>();
 
-		// cerco anni nella where
 		for (WhereField wField : whereFields) {
 			if (wField.getLeftOperand().values != null && wField.getLeftOperand().values.length > 0
 					&& yearColumn.equals(wField.getLeftOperand().values[0]) && "EQUALS TO".equals(wField.getOperator())
@@ -1285,39 +1364,6 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 	private String extractColumnName(IModelEntity temporalDimension, String column) {
 		return temporalDimension.getType() + ":" + column;
 	}
-
-	private String getParallelYear(LinkedList<TemporalRecord> allYears, String currentYear, int offset) {
-		if (offset == 0)
-			return currentYear;
-
-		int currentYearIndex = 0;
-		for (TemporalRecord y : allYears) {
-			if (y.getPeriod().toString().equals(currentYear)) {
-				break;
-			}
-			currentYearIndex++;
-		}
-		int parallelYearIndex = currentYearIndex - offset;
-		if (parallelYearIndex >= 0 && parallelYearIndex < allYears.size()) {
-			return allYears.get(parallelYearIndex).getPeriod().toString();
-		}
-		return "-1";
-	}
-
-	// private String getActualPeriodValueBounded(Date actualTime, IModelEntity
-	// temporalDimension, Hierarchy defaultHierarchy, String
-	// temporalDimensionId,
-	// String temporalFieldType, String fieldUniqueName) {
-	//
-	// String temporalLevel = temporalFieldType;//
-	// defaultHierarchy.getLevelByType(temporalFieldType);
-	//
-	// TemporalRecord value = getCurrentPeriod(temporalDimension,
-	// defaultHierarchy, temporalLevel, temporalDimensionId, actualTime);
-	// IModelField field =
-	// getDataSource().getModelStructure().getField(fieldUniqueName);
-	// return getValueBounded(value.getPeriod().toString(), field.getType());
-	// }
 
 	private IModelEntity getTemporalDimension(IDataSource dataSource) {
 		IModelEntity temporalDimension = null;
@@ -1350,18 +1396,6 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 		}
 		return timeDimension;
 	}
-
-	// private TemporalRecord getCurrentPeriod(IModelEntity temporalDimension,
-	// Hierarchy defaultHierarchy, String temporalLevel, String
-	// temporalDimensionId,
-	// Date actualTime) {
-	// String temporalLevelColumn;
-	// temporalLevelColumn = defaultHierarchy.getLevelByType(temporalLevel);
-	// TemporalRecord currentPeriod = getCurrentPeriod(temporalDimension,
-	// temporalDimensionId, temporalLevelColumn, actualTime,
-	// defaultHierarchy.getAncestors(temporalLevelColumn));
-	// return currentPeriod;
-	// }
 
 	private TemporalRecord getCurrentPeriod(IModelEntity temporalDimension, String idField, String periodField,
 			Date actualTime, String... parentPeriodFields) {
@@ -1740,13 +1774,6 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 		return query;
 	}
 
-	private QueryMeta deserializeMeta(JSONObject metaJSON) throws JSONException {
-		QueryMeta meta = new QueryMeta();
-		meta.setId(metaJSON.getString("id"));
-		meta.setName(metaJSON.getString("name"));
-		return null;
-	}
-
 	private Query deserializeQuery(JSONObject queryJSON) throws SerializationException, JSONException {
 		// queryJSON.put("expression", queryJSON.get("filterExpression"));
 		return SerializerFactory.getDeserializer("application/json").deserializeQuery(queryJSON.toString(),
@@ -1756,6 +1783,7 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 	public static List<ModelFieldPaths> deserializeList(String serialized, Collection<Relationship> relationShips,
 			IModelStructure modelStructure, Query query) throws SerializationException {
 		ObjectMapper mapper = new ObjectMapper();
+		@SuppressWarnings("deprecation")
 		SimpleModule simpleModule = new SimpleModule("SimpleModule", new Version(1, 0, 0, null));
 		simpleModule.addDeserializer(ModelFieldPaths.class,
 				new ModelFieldPathsJSONDeserializer(relationShips, modelStructure, query));
@@ -1770,9 +1798,7 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 	}
 
 	/*
-	 * TODO metodo copiato da: AbstractStatementFilteringClause
-	 *
-	 * STANDARDIZZARE
+	 * TODO method copied from AbstractStatementFilteringClause TO BE GENERALIZED
 	 *
 	 */
 	public String getValueBounded(String operandValueToBound, String operandType) {
@@ -1801,9 +1827,7 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 	}
 
 	/*
-	 * TODO metodo copiato da: AbstractStatementClause
-	 *
-	 * STANDARDIZZARE
+	 * TODO method copied from AbstractStatementFilteringClause TO BE GENERALIZED
 	 *
 	 */
 	protected String parseDate(String date) {
@@ -1864,7 +1888,7 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 				}
 			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_SQLSERVER)) {
 				if (toReturn.startsWith("'") && toReturn.endsWith("'")) {
-					toReturn = toReturn;
+					toReturn = ""+toReturn+"";
 				} else {
 					toReturn = "'" + toReturn + "'";
 				}
@@ -1960,7 +1984,7 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 				}
 			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_SQLSERVER)) {
 				if (toReturn.startsWith("'") && toReturn.endsWith("'")) {
-					toReturn = toReturn;
+					toReturn = ""+toReturn+"";
 				} else {
 					toReturn = "'" + toReturn + "'";
 				}

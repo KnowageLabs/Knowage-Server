@@ -537,7 +537,8 @@ openSaveDataSetWizard: function(fromMyAnalysis) {
 	}
 	
 	if(!empty){
-		var saveDatasetWindow = new Sbi.qbe.SaveDatasetWindow( { queries : queries } );
+		var saveDatasetWindow = new Sbi.qbe.SaveDatasetWindow( 
+				{ queries : queries, queryCataloguePanel: this.queryEditorPanel.queryCataloguePanel  } );
 		
 		saveDatasetWindow.on('save', function(theWindow, formState) { 
 			theWindow.close(); 

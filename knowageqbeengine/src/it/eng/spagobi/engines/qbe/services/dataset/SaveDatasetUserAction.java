@@ -30,6 +30,7 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
+import it.eng.spagobi.engines.qbe.services.core.catalogue.SetCatalogueAction;
 import it.eng.spagobi.services.proxy.DataSetServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.FlatDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -72,7 +73,7 @@ import com.jamonapi.MonitorFactory;
  *         This action is intended for final users; it saves a new dataset.
  *
  */
-public class SaveDatasetUserAction extends AbstractQbeEngineAction {
+public class SaveDatasetUserAction extends SetCatalogueAction {
 
 	private static final long serialVersionUID = 4801143200134017772L;
 
@@ -106,10 +107,11 @@ public class SaveDatasetUserAction extends AbstractQbeEngineAction {
 
 			totalTimeMonitor = MonitorFactory.start("QbeEngine.saveDatasetUserAction.totalTime");
 
+			super.handleTimeFilter = false;
 			super.service(request, response);
 
 			Assert.assertNotNull(getEngineInstance(), "It's not possible to execute " + this.getActionName()
-					+ " service before having properly created an instance of EngineInstance class");
+			+ " service before having properly created an instance of EngineInstance class");
 
 			validateLabel();
 			validateInput();

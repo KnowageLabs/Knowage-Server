@@ -123,7 +123,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<md-input-container class="md-block"> 
 					<label>{{translate.load("sbi.ds.catType")}}</label>
 				   <md-select  aria-label="aria-label" required name="cat" ng-model="selectedBusinessModel.category" >
-				    <md-option  ng-repeat="c in listOfCategories" value="{{c.VALUE_ID}}">{{c.VALUE_NM}} </md-option>
+				    <md-option  ng-repeat="c in listOfCategories track by $index" value="{{c.VALUE_ID}}">{{c.VALUE_NM}} </md-option>
+				    <md-option value="{{null}}"></md-option>
 				   </md-select> 
 				</md-input-container>
 				
