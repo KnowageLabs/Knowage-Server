@@ -23,6 +23,7 @@ import it.eng.spagobi.behaviouralmodel.lov.metadata.SbiLov;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.SpagoBIDOAException;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiOrganizationDatasource;
 import it.eng.spagobi.commons.metadata.SbiOrganizationDatasourceId;
@@ -374,65 +375,38 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 						while (it.hasNext()) {
 							SbiLov lov = (SbiLov) it.next();
 							String prov = lov.getLovProvider();
-							// SourceBean sb = SourceBean.fromXMLString(prov);
-							// SourceBean conn = (SourceBean)
-							// sb.getAttribute("CONNECTION");
-							// String conne = conn.getCharacters();
-
-							String statementString;
 							String conne = null;
-							String queryString = null;
-							String statement = null;
-							int cutStartIndex = prov.indexOf("<STMT>");
-							cutStartIndex = cutStartIndex + 6;
-							int cutEndIndex = prov.indexOf("</STMT>");
-							statement = prov.substring(cutStartIndex, cutEndIndex);
 
-							statement = StringEscapeUtils.escapeXml(statement);
-							int cutStart = prov.indexOf("<STMT>");
-							cutStart = cutStart + 6;
+							prov = escapeXML(prov, true);
 
-							int cutEnd = prov.indexOf("</STMT>");
-							String firstPart = prov.substring(0, cutStart);
-							String secondPart = prov.substring(cutEnd, prov.length());
-							prov = firstPart + statement + secondPart;
 							try {
+								String statementString;
+								String queryString = null;
 								statementString = Xml.xml2json(prov);
 								JSONObject queryObject = new JSONObject(statementString);
 								queryString = queryObject.getString("QUERY");
 								JSONObject connectionObject = new JSONObject(queryString);
 								conne = connectionObject.getString("CONNECTION");
 							} catch (TransformerFactoryConfigurationError e) {
-								logger.error("", e);
-								e.printStackTrace();
+								logger.error("Problem with configuration of Transformer Factories during xml2json", e);
+								throw new SpagoBIDOAException(e);
 							} catch (TransformerException e) {
-								logger.error("", e);
-								e.printStackTrace();
+								logger.error("Error during xml to json transformation of provider from lov with id: " + lov.getLovId(), e);
+								throw new SpagoBIDOAException(e);
 							} catch (JSONException e) {
-								logger.error("", e);
-								e.printStackTrace();
+								logger.error("Error occured during json object creation from json string", e);
+								throw new SpagoBIDOAException(e);
 							}
 
 							if (conne.equals(hibDataSource.getLabel())) {
-								int cutStart1 = prov.indexOf("<CONNECTION>");
-								cutStart1 = cutStart1 + 12;
-								int cutEnd1 = prov.indexOf("</CONNECTION>");
-								String firstPart1 = prov.substring(0, cutStart1);
-								String secondPart1 = prov.substring(cutEnd1, prov.length());
-								prov = firstPart1 + aDataSource.getLabel() + secondPart1;
+								int cutStart = prov.indexOf("<CONNECTION>");
+								cutStart = cutStart + 12;
+								int cutEnd = prov.indexOf("</CONNECTION>");
+								String firstPart = prov.substring(0, cutStart);
+								String secondPart = prov.substring(cutEnd, prov.length());
+								prov = firstPart + aDataSource.getLabel() + secondPart;
 
-								int cutStartIndex2 = prov.indexOf("<STMT>");
-								cutStartIndex2 = cutStartIndex2 + 6;
-								int cutEndIndex2 = prov.indexOf("</STMT>");
-								statement = prov.substring(cutStartIndex2, cutEndIndex2);
-
-								statement = StringEscapeUtils.unescapeXml(statement);
-								int cutStart2 = prov.indexOf("<STMT>");
-								cutStart2 = cutStart2 + 6;
-								int cutEnd2 = prov.indexOf("</STMT>");
-								String firstPart2 = prov.substring(0, cutStart2);
-								String secondPart2 = prov.substring(cutEnd2, prov.length());
-								prov = firstPart2 + statement + secondPart2;
+								prov = escapeXML(prov, false);
 
 								lov.setLovProvider(prov);
 								aSession.update(lov);
@@ -815,6 +789,28 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			}
 		}
 
+	}
+
+	private String escapeXML(String prov, boolean escape) {
+		String statement = null;
+		int cutStartIndex = prov.indexOf("<STMT>");
+		cutStartIndex = cutStartIndex + 6;
+		int cutEndIndex = prov.indexOf("</STMT>");
+		statement = prov.substring(cutStartIndex, cutEndIndex);
+
+		if (escape) {
+			statement = StringEscapeUtils.escapeXml(statement);
+		} else {
+			statement = StringEscapeUtils.unescapeXml(statement);
+		}
+
+		int cutStart = prov.indexOf("<STMT>");
+		cutStart = cutStart + 6;
+		int cutEnd = prov.indexOf("</STMT>");
+		String firstPart = prov.substring(0, cutStart);
+		String secondPart = prov.substring(cutEnd, prov.length());
+		prov = firstPart + statement + secondPart;
+		return prov;
 	}
 
 	// /**
