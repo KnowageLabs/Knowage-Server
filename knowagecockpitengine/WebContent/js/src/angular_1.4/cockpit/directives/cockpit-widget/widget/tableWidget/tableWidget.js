@@ -306,7 +306,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					var obj = {};
 					
 					obj.label= $scope.ngModel.content.columnSelectedOfDataset[i]['aliasToShow'];
-					obj.name = $scope.ngModel.content.columnSelectedOfDataset[i]['alias'];
+					obj.name = $scope.ngModel.content.columnSelectedOfDataset[i]['aliasToShow'];
 
 					
 					if(angular.equals($scope.ngModel.content.columnSelectedOfDataset[i].fieldType,"MEASURE")){						
@@ -318,7 +318,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								for(var j=0;j<$scope.ngModel.content.columnSelectedOfDataset.length;j++)
 								{
 									var column = $scope.ngModel.content.columnSelectedOfDataset[j];
-									if(column.name==columnName || column.alias==columnName)
+									if(column.name==columnName || column.alias==columnName || column.aliasToShow==columnName)
 									{						
 										currentColumn=angular.copy(column);
 										break;
@@ -465,7 +465,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					}
 					if($scope.datasetRecords != undefined){
 						for(var j=1;j<$scope.datasetRecords.metaData.fields.length;j++){
-							if($scope.datasetRecords.metaData.fields[j].header == $scope.ngModel.content.columnSelectedOfDataset[i]['alias']){
+							if($scope.datasetRecords.metaData.fields[j].header == $scope.ngModel.content.columnSelectedOfDataset[i]['aliasToShow']){
 								$scope.columnToshowinIndex.push($scope.datasetRecords.metaData.fields[j].dataIndex);
 							}
 						}
