@@ -482,14 +482,13 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		IDataSet dataSet = dsDAO.loadDataSetByLabel(datasetLabel);
 
 		if (selectionsObject.has(datasetLabel)) {
-			boolean onlyEmptySelections = true;
+			boolean isAnEmptySelection = false;
 			JSONObject datasetSelectionObject = selectionsObject.getJSONObject(datasetLabel);
 			Iterator<String> it = datasetSelectionObject.keys();
-			while (it.hasNext()) {
+			while (!isAnEmptySelection && it.hasNext()) {
 				String columns = it.next();
 				JSONArray values = datasetSelectionObject.getJSONArray(columns);
 				if (values.length() > 0) {
-					onlyEmptySelections = false;
 					if (isRealtime && !dataSet.isFlatDataset() && !(dataSet.isPersisted() && !dataSet.isPersistedHDFS())) {
 						String defaultTableNameDot = DataStore.DEFAULT_TABLE_NAME + ".";
 						String[] columnsArray = columns.split(",");
@@ -530,12 +529,15 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 						FilterCriteria filterCriteria = new FilterCriteria(leftOperand, "IN", rightOperand);
 						filterCriterias.add(filterCriteria);
 					}
+				} else {
+					isAnEmptySelection = true;
 				}
 			}
-			if (onlyEmptySelections) {
+			if (isAnEmptySelection) {
 				Operand leftOperand = new Operand("0");
 				Operand rightOperand = new Operand("1");
 				FilterCriteria filterCriteria = new FilterCriteria(leftOperand, "=", rightOperand);
+				filterCriterias.clear();
 				filterCriterias.add(filterCriteria);
 			}
 		}
