@@ -196,9 +196,8 @@ $scope.saveRelation = function(dsId){
 	$scope.forDeletion = [];
 	$scope.forAdding = [];
 	
-	$timeout(function() {
-		$scope.goBack();
-    }, 2000);
+    $scope.goBack();
+
 	
 	
 	
@@ -213,7 +212,7 @@ $scope.saveRelation = function(dsId){
 
 $scope.goBack = function(){
 	//document.location.href = sbiModule_config.contextName + "/servlet/AdapterHTTP?ACTION_NAME=MANAGE_DATASETS_ACTION&amp;LIGHT_NAVIGATOR_DISABLED=TRUE";
-	history.go(-1);
+	//history.go(-1);
 	$scope.forDeletion = [];
 	$scope.forAdding = [];
 }
