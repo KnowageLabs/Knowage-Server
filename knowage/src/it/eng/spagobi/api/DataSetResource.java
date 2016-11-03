@@ -644,8 +644,8 @@ public class DataSetResource extends AbstractSpagoBIResource {
 				throw new SpagoBIRuntimeException("The value of SPAGOBI.API.DATASET.MAX_ROWS_NUMBER config must be set as a valid integer", nfe);
 			}
 
-			dataStore = getDatasetManagementAPI().getDataStore(label, offset, fetchSize, isRealtime, getParametersMap(parameters), groupCriteria,
-					filterCriteria, filterCriteriaForMetaModel, projectionCriteria, summaryRowProjectionCriteria);
+			dataStore = getDatasetManagementAPI().getDataStore(label, offset, fetchSize, isRealtime, DataSetUtilities.getParametersMap(parameters),
+					groupCriteria, filterCriteria, filterCriteriaForMetaModel, projectionCriteria, summaryRowProjectionCriteria);
 
 			Map<String, Object> properties = new HashMap<String, Object>();
 			JSONArray fieldOptions = new JSONArray("[{id: 1, options: {measureScaleFactor: 0.5}}]");
@@ -847,41 +847,11 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			while (datasetLabels.hasNext()) {
 				String datasetLabel = datasetLabels.next();
 				JSONObject datasetFilters = parametersJSON.getJSONObject(datasetLabel);
-				Map<String, String> filtersMap = getParametersMap(datasetFilters);
+				Map<String, String> filtersMap = DataSetUtilities.getParametersMap(datasetFilters);
 				toReturn.put(datasetLabel, filtersMap);
 			}
 		} catch (Throwable t) {
 			throw new SpagoBIRuntimeException("An unexpected exception occured while loading spagobi filters [" + parameters + "]", t);
-		}
-
-		return toReturn;
-	}
-
-	protected static Map<String, String> getParametersMap(String filters) {
-		Map<String, String> toReturn = null;
-
-		if (filters != null) {
-			filters = JSONUtils.escapeJsonString(filters);
-			JSONObject jsonFilters = ObjectUtils.toJSONObject(filters);
-			toReturn = getParametersMap(jsonFilters);
-		} else {
-			toReturn = new HashMap<String, String>();
-		}
-		return toReturn;
-	}
-
-	private static Map<String, String> getParametersMap(JSONObject jsonFilters) {
-		Map<String, String> toReturn = new HashMap<String, String>();
-
-		Iterator<String> keys = jsonFilters.keys();
-		try {
-			while (keys.hasNext()) {
-				String key = keys.next();
-				String value = jsonFilters.getString(key);
-				toReturn.put(key, value);
-			}
-		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("An unexpected exception occured while loading spagobi filters [" + jsonFilters + "]", t);
 		}
 
 		return toReturn;

@@ -553,7 +553,6 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		try {
 			return getDataStore(label, parameters, selections, aggregations, summaryRow, offset, fetchSize, isRealtime);
 		} catch (Exception e) {
-			e.printStackTrace();
 			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
 		} finally {
 			logger.debug("OUT");

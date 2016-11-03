@@ -19,6 +19,7 @@ package it.eng.spagobi.tools.dataset.utils;
 
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.proxy.DataSetServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.DataSetParameterItem;
 import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
@@ -26,14 +27,17 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.utilities.Helper;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.json.JSONUtils;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 /**
  * TODO : move it in it.eng.spagobi.tools.dataset and rename to DataSetProfiler (or similar)
@@ -254,5 +258,35 @@ public class DataSetUtilities {
 
 	public static void setDisableDefaultParams(boolean disableDefaultParams) {
 		DataSetUtilities.disableDefaultParams = disableDefaultParams;
+	}
+
+	public static Map<String, String> getParametersMap(String parameters) {
+		Map<String, String> toReturn = null;
+
+		if (parameters != null) {
+			parameters = JSONUtils.escapeJsonString(parameters);
+			JSONObject jsonParameters = ObjectUtils.toJSONObject(parameters);
+			toReturn = getParametersMap(jsonParameters);
+		} else {
+			toReturn = new HashMap<String, String>();
+		}
+		return toReturn;
+	}
+
+	public static Map<String, String> getParametersMap(JSONObject jsonParameters) {
+		Map<String, String> toReturn = new HashMap<String, String>();
+
+		Iterator<String> keys = jsonParameters.keys();
+		try {
+			while (keys.hasNext()) {
+				String key = keys.next();
+				String value = jsonParameters.getString(key);
+				toReturn.put(key, value);
+			}
+		} catch (Throwable t) {
+			throw new SpagoBIRuntimeException("An unexpected exception occured while loading parameters [" + jsonParameters + "]", t);
+		}
+
+		return toReturn;
 	}
 }

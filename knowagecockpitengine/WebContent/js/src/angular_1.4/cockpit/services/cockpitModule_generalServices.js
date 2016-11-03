@@ -109,11 +109,14 @@ angular.module("cockpitModule").service("cockpitModule_generalServices",function
 	
 
 	this.cleanCache = function(){
-		//var listDataset = cockpitModule_datasetServices.getLabelDatasetsUsed();
-		var oldDsInCache= angular.copy(cockpitModule_properties.DS_IN_CACHE);
-		
+		var requestBody = {};
+		var datasets = cockpitModule_template.configuration.datasets;
+		for (i = 0; i < datasets.length; i++) {
+			var dataset = datasets[i];
+    		requestBody[dataset.dsLabel] = dataset.parameters;
+		}
 		sbiModule_restServices.restToRootProject();
-		sbiModule_restServices.promiseDelete("1.0/cache",encodeURIComponent(cockpitModule_properties.DS_IN_CACHE.join(","))+"/cleanCache")
+		sbiModule_restServices.promisePost("1.0/cache","clean-datasets", angular.toJson(requestBody))
 		.then(function(response){
 			//ok
 			var dsNotInCache = cockpitModule_templateServices.getDatasetAssociatedNotUsedByWidget();
@@ -130,7 +133,6 @@ angular.module("cockpitModule").service("cockpitModule_generalServices",function
 				},
 				function(response){
 					sbiModule_restServices.errorHandler(response.data,"Error*")
-					angular.copy(oldDsInCache,cockpitModule_properties.DS_IN_CACHE);
 				});
 				
 		//reset the variable

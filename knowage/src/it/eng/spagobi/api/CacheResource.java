@@ -19,13 +19,15 @@ package it.eng.spagobi.api;
 
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
-import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.ICacheMetadata;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
+import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.utilities.cache.CacheItem;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -33,15 +35,13 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import java.net.URI;
 import java.util.Iterator;
 import java.util.List;
-import java.util.StringTokenizer;
-import java.util.Vector;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -116,45 +116,6 @@ public class CacheResource extends AbstractSpagoBIResource {
 		}
 	}
 
-	/**
-	 * datasetLabels is a string containing all dataset labels divided by ','
-	 *
-	 * @param datasetLabelsPar
-	 */
-
-	@DELETE
-	@Path("/{datasetLabels}/cleanCache")
-	public void deleteCacheByDatasetLabels(@PathParam("datasetLabels") String datasetLabelsPar) {
-		logger.debug("IN");
-
-		logger.debug("clean cache for dataset with labels " + datasetLabelsPar);
-
-		UserProfile profile = this.getIOManager().getUserProfile();
-
-		StringTokenizer st = new StringTokenizer(datasetLabelsPar, ",");
-
-		Vector<String> datasetLabels = new Vector<String>();
-		while (st.hasMoreElements()) {
-			datasetLabels.add(st.nextElement().toString());
-		}
-
-		for (Iterator iterator = datasetLabels.iterator(); iterator.hasNext();) {
-			String label = (String) iterator.next();
-			try {
-				IDataSet dataSet = (new DatasetManagementAPI(profile)).getDataSet(label);
-				ICache cache = SpagoBICacheManager.getCache();
-				logger.debug("Delete from cache dataset references with signature " + dataSet.getSignature());
-				cache.delete(dataSet.getSignature());
-			} catch (Throwable t) {
-				throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occurred while cleaning cache for dataset with label "
-						+ label, t);
-			}
-		}
-		logger.debug("OUT");
-		return;
-	}
-
-	// DeleteByName
 	@PUT
 	@Path("/deleteItems")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -181,6 +142,37 @@ public class CacheResource extends AbstractSpagoBIResource {
 					"An unexpected error occurred while deleting an item from cache (deleteItem REST service)", e);
 		}
 
+	}
+
+	@POST
+	@Path("/clean-datasets")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response deleteDatasets(String body) {
+		logger.debug("IN");
+
+		try {
+			IDataSetDAO dataSetDAO = DAOFactory.getDataSetDAO();
+			dataSetDAO.setUserProfile(getUserProfile());
+
+			JSONObject jsonObject = new JSONObject(body);
+			Iterator<String> it = jsonObject.keys();
+			while (it.hasNext()) {
+				String label = it.next();
+				logger.debug("Dataset with label [" + label + "] must be deleted from cache.");
+				IDataSet dataSet = dataSetDAO.loadDataSetByLabel(label);
+				JSONObject params = jsonObject.getJSONObject(label);
+				logger.debug("Dataset with label [" + label + "] has the following parameters [" + params + "].");
+				dataSet.setParamsMap(DataSetUtilities.getParametersMap(params));
+				ICache cache = SpagoBICacheManager.getCache();
+				if (cache.delete(dataSet)) {
+					logger.debug("Dataset with label [" + label + "] found in cache and deleted.");
+				}
+			}
+		} catch (Exception e) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occurred while deleting datasets from cache (deleteItem REST service)", e);
+		}
+		return Response.ok().build();
 	}
 
 	@PUT
