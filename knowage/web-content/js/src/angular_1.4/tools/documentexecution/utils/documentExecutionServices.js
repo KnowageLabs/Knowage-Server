@@ -119,7 +119,7 @@
 								//dateToSubmit = sbiModule_dateServices.formatDate(parameter.parameterValue, t.parseDateTemp(sbiModule_config.serverDateFormat));
 								var dateToSubmitFilter = $filter('date')(parameter.parameterValue, sbiModule_config.serverDateFormat);
 								if( Object.prototype.toString.call( dateToSubmitFilter ) === '[object Array]' ) {
-									dateToSubmit = dateToSubmitFilter[0].value;
+									dateToSubmit = dateToSubmitFilter[0];
 								}else{
 									dateToSubmit = dateToSubmitFilter;
 								}
