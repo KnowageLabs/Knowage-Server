@@ -201,6 +201,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						if($scope.ngModel.style.showSummary == true){
 							numberOfElement--;
 						}
+						$scope.columnOrdering = columnOrdering;
+						$scope.reverseOrdering = reverseOrdering;
 						var options = {page:currentPageNumber, itemPerPage:numberOfElement, columnOrdering:columnOrdering,reverseOrdering:reverseOrdering };
 						$scope.refreshWidget(options);
 
@@ -585,6 +587,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				obj["itemPerPage"] = $scope.ngModel.content.maxRowsNumber ;
 				if($scope.ngModel.style.showSummary == true){
 					obj["itemPerPage"]--;
+				}
+				if($scope.columnOrdering){
+					obj["columnOrdering"] = $scope.columnOrdering;
+				}
+				if($scope.reverseOrdering){
+					obj["reverseOrdering"] = $scope.reverseOrdering;
 				}
 //			}
 			return obj;
