@@ -197,7 +197,11 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 		List<SbiVersion> versions = new ArrayList<SbiVersion>();
 		boolean isVersionDimension = hierarchy.getDimension().getUniqueName().equals(WhatIfConstants.VERSION_DIMENSION_UNIQUENAME);
 		if (isVersionDimension) {
-			versions = getVersions();
+			try {
+				versions = getVersions();
+			} catch (NullPointerException e) {
+				logger.error(e);
+			}
 		}
 
 		for (int i = 0; i < list.size(); i++) {
