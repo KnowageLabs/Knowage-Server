@@ -190,9 +190,13 @@ public class MondrianSchemaRetriver implements ISchemaRetriver {
 			if (oldCube.name.equals(cubeName)) {
 
 				logger.debug("IN: loading the measure form the cube");
-				if (oldCube.measures[0].visible == null || oldCube.measures[0].visible == true) {
-					toReturn = oldCube.measures[0].name;
+				for(int j = 0;j < oldCube.measures.length;j++){
+					if (oldCube.measures[j].visible == null || oldCube.measures[j].visible == true) {
+						toReturn = oldCube.measures[j].name;
+						break;
+					}
 				}
+				
 
 			}
 		}
@@ -201,16 +205,20 @@ public class MondrianSchemaRetriver implements ISchemaRetriver {
 			if (oldCube.name.equals(cubeName)) {
 
 				logger.debug("IN: loading the measure form the virtual cube");
-				if (oldCube.measures[0].visible == null || oldCube.measures[0].visible == true) {
-					if (oldCube.measures[0].name.startsWith("[")) {
-						toReturn = oldCube.measures[0].name;
-						int indexOfFirstLeftBracket = toReturn.lastIndexOf("[");
-						int indexOfFirstRightBracket = toReturn.lastIndexOf("]");
-						toReturn = toReturn.substring(indexOfFirstLeftBracket, indexOfFirstRightBracket + 1);
-						toReturn = toReturn.substring(1, toReturn.length() - 1);
-					}
+				for(int k = 0;k < oldCube.measures.length;k++){
+					if (oldCube.measures[k].visible == null || oldCube.measures[k].visible == true) {
+						if (oldCube.measures[0].name.startsWith("[")) {
+							toReturn = oldCube.measures[k].name;
+							int indexOfFirstLeftBracket = toReturn.lastIndexOf("[");
+							int indexOfFirstRightBracket = toReturn.lastIndexOf("]");
+							toReturn = toReturn.substring(indexOfFirstLeftBracket, indexOfFirstRightBracket + 1);
+							toReturn = toReturn.substring(1, toReturn.length() - 1);
+							break;
+						}
 
+					}
 				}
+				
 			}
 		}
 		logger.debug("OUT");
