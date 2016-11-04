@@ -602,7 +602,8 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 					List<IField> fields = aRecord.getFields();
 
 					IField field = aRecord.getFieldAt(dataStoreMeta.getIdFieldIndex());
-					String id = (String) field.getValue();
+					// String id = (String) field.getValue();
+					String id = String.valueOf(field.getValue());
 
 					// 5. add LABELS
 					String centroideId = "centroidi_" + id;
