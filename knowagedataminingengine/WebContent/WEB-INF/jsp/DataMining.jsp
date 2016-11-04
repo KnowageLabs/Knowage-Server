@@ -124,11 +124,11 @@ author:...
 			</md-input-container>
 			<md-button layout="column" class="md-fab md-raised" ng-click="toogleVariableForm(cmd)" ng-if = "cmd.variables !== null && cmd.variables !== 'null' && cmd.variables !== undefined && cmd.variables.length > 0">
 				<md-tooltip md-direction="bottom" ng-if="!variableForm">
-				    Set Command Variables
+				    {{translate.load("sbi.datamining.setcommandvariables");}} 
 				</md-tooltip>
 				<md-icon ng-show="!variableForm" class="fa fa-cogs center-ico"></md-icon>
 					<md-tooltip md-direction="bottom" ng-if="variableForm">
-					    Return Output Page
+				    	{{translate.load("sbi.datamining.returnoutputpage");}} 
 					</md-tooltip>
 				<md-icon ng-show="variableForm" class="fa fa-undo center-ico"></md-icon>	
 			</md-button>
@@ -144,7 +144,7 @@ author:...
 				<div class = "border-container" >
 					<md-toolbar class="md-blue minihead element-border">
 					    <div class="md-toolbar-tools">
-					 		Update variables of command '<b>{{cmd.label}}</b>' 
+					 		{{translate.load("sbi.datamining.updatevariablesofcommand");}} '<b>{{cmd.label}}</b>' 
 					 	</div>
 					 </md-toolbar>
 				 	<div ng-repeat = "variable in cmd.variables">
@@ -156,10 +156,10 @@ author:...
 								 	<input type='text' ng-model="variable.currentVal" aria-label = "variable value"/>
 							 </md-input-container>
 						 	<md-button class="md-button md-raised md-ExtraMini" arial-label="Update" ng-click="setVariable(cmd, undefined, variable, 'set', 'command')" ng-disabled="variable.currentVal.length <= 0">
-			 				 	Set
+			 				 	{{translate.load("sbi.datamining.set");}}
 							</md-button>
 							<md-button class="md-button md-raised md-ExtraMini" arial-label="Reset" ng-click="setVariable(cmd, undefined, variable, 'reset','command')" ng-disabled="variable.currentVal == variable.defaultVal">
-			 				 	Reset
+			 				 	{{translate.load("sbi.datamining.reset");}}
 							</md-button>
 						 </md-content>
 					</div>
@@ -176,7 +176,7 @@ author:...
 				<div ng-if="dataset" layout="row" layout-align="start center">
 					<div ng-if="visibilityRerunButton">
 						<md-button class="md-button md-raised md-ExtraMini md-larger" aria-label="Rerun Script" ng-click="rerunScript(cmd)">
-							 Run Script
+							{{translate.load("sbi.datamining.runscript");}}
 						</md-button>
 					</div>
 					<!-- Simulate button and link the click event with the input type='file' -->
@@ -190,7 +190,7 @@ author:...
 					<md-button class="md-fab md-raised" ng-disabled="!fileName || fileName.length == 0" arial-label="Upload File" ng-click="uploadFile(cmd,dataset)">
 						<md-icon class="fa fa-upload center-ico"></md-icon>
 						<md-tooltip md-direction="bottom">
-	         					Upload File
+	         				{{translate.load("sbi.datamining.uploadfile");}}
 	       				</md-tooltip>
 					</md-button>
 				</div>
@@ -204,7 +204,7 @@ author:...
 								<md-content class="no-margin-top" layout = 'row' layout-wrap>
 									<div ng-if = "out.variables !== 'null' && out.variables !== undefined && out.variables.length > 0">
 										<md-button class="md-button md-raised md-ExtraMini md-larger" ng-click = "toogleOuputVariables()" arial-label = "button output variable" >
-											<span style="font-size: 65%;">Outputs Variables</span>
+											<span style="font-size: 65%;">{{translate.load("sbi.datamining.outputvariables")}} </span>
 										</md-button>
 									</div>
 								</md-content>
@@ -212,7 +212,7 @@ author:...
 								<div class = "border-container little-margin-bottom" ng-if = "visibleOuputVariables && out.variables !== undefined && out.variables.length > 0" >
 									<md-toolbar class="md-blue minihead element-border">
 									    <div class="md-toolbar-tools">
-									 		Update variables of output '<b>{{out.ouputLabel}}</b>'
+									 		{{translate.load("sbi.datamining.updatevariablesofoutput")}} '<b>{{out.ouputLabel}}</b>'
 									 	</div>
 									 </md-toolbar>
 									 <div ng-repeat = "variable in out.variables">
@@ -222,10 +222,10 @@ author:...
 											 	<input type='text' ng-model="variable.currentVal" aria-label = "variable value"/>
 											 </md-input-container>
 										 	<md-button class="md-button md-raised md-ExtraMini" arial-label="Update" ng-click="setVariable(cmd, out, variable, 'set','output')" ng-disabled="variable.currentVal.length <= 0">
-							 				 Set
+							 				 	{{translate.load("sbi.datamining.set");}}
 											</md-button>
 											<md-button class="md-button md-raised md-ExtraMini" arial-label="Reset" ng-click="setVariable(cmd, out, variable, 'reset','output')" ng-disabled="variable.currentVal == variable.defaultVal">
-							 				 Reset
+							 				 	{{translate.load("sbi.datamining.reset");}}
 											</md-button>
 										 </md-content>
 									 </div>
@@ -233,15 +233,15 @@ author:...
 								<div class = "border-container">
 									<md-toolbar class="minihead element-border" ng-class="{'error-toolbar' : results[cmd.name][out.outputName].error}">
 										    <div class="md-toolbar-tools">
-										 		<span ng-if="!results[cmd.name][out.outputName].error">Results</span>
-										 		<span ng-if="results[cmd.name][out.outputName].error">Error</span> 
+										 		<span ng-if="!results[cmd.name][out.outputName].error">{{translate.load("sbi.datamining.results");}}</span>
+										 		<span ng-if="results[cmd.name][out.outputName].error">{{translate.load("sbi.datamining.errors");}}</span> 
 										 	</div>
 								 	</md-toolbar>
 								 	<md-content layout-margin layout-align="stretch center">
 								 		<div ng-if="results[cmd.name][out.outputName].error">
 								 			{{results[cmd.name][out.outputName].error}}
 								 		</div>
-										<div class="div-image" ng-if = "results[cmd.name][out.outputName].outputType == 'image' ">
+										<div class="div-image" ng-if = "results[cmd.name][out.outputName].outputType == 'image' || results[cmd.name][out.outputName].outputType == 'Image' ">
 											<div layout="row" layout-align="center center">
 												<md-input-container>
 													 <label>{{translate.load("sbi.datamining.img.width");}} (px)</label>
@@ -254,13 +254,9 @@ author:...
 												</md-input-container>
 											</div>
 											<div layout="row" layout-align="center center" ng-if="results[cmd.name][out.outputName].result != null && results[cmd.name][out.outputName].result.length > 0">
-												<img ng-style="{'width':imgWidth+'px','height':imgHeight+'px'}"  alt="Result for '{{results[cmd.name][out.outputName].plotName}}'" src="{{results[cmd.name][out.outputName].result}}" />
+												<img ng-style="{'width':imgWidth+'px','height':imgHeight+'px'}"  alt="Result for '{{results[cmd.name][out.outputName].plotName}}'" src="{{results[cmd.name][out.outputName].outputType == 'image' ? results[cmd.name][out.outputName].result: null}}" />
 												<br>
 											</div>
-											<!-- 
-											<div ng-bind-html="results[cmd.name][out.outputName].html">
-											</div>
-											-->
 										</div>
 										<div layout-padding class="div-text" ng-if = "results[cmd.name][out.outputName].outputType == 'text' ">
 											<h3 class="md-subhead">	
@@ -270,7 +266,7 @@ author:...
 																
 										<div layout-padding class="div-text" ng-if = "results[cmd.name][out.outputName].outputType == 'Dataset'|| results[cmd.name][out.outputName].outputType == 'dataset' || results[cmd.name][out.outputName].outputType == 'spagobi_ds' ">
 											<h3 class="md-subhead">	
-												{{out.outputName}} = SpagoBi dataset saved, visible from Data Set section in Document Browser, with label: &nbsp; {{results[cmd.name][out.outputName].result}}
+												{{out.outputName}} = {{translate.load("sbi.datamining.spagobidatasetsaved")}} &nbsp; {{results[cmd.name][out.outputName].result}}
 											</h3>
 										</div>
 										

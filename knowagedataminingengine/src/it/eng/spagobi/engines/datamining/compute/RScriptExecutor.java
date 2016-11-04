@@ -70,7 +70,7 @@ public class RScriptExecutor {
 		logger.debug("IN");
 
 		if (re == null) {
-			logger.debug("No R instance found");
+			logger.error("No R instance found");
 			return;
 		}
 		// checks whether executed before
@@ -86,15 +86,24 @@ public class RScriptExecutor {
 			// loading libraries, preprocessing, functions definition in main
 			// "auto"
 			// script
+			logger.info("creating temporary script...");
+
 			String ret = createTemporarySourceScript(scriptToExecute);
-			logger.debug("created temporary script");
+			logger.info("created temporary script");
+
+			logger.info("executing temporary script...");
 			REXP rexp = re.parseAndEval("source(\"" + ret + "\")");
+			logger.info("temporary script execution completed");
+
 			logger.debug("detects action to execute from command --> used to call functions");
 			// detects action to execute from command --> used to call functions
 			String action = command.getAction();
 			if (action != null) {
+				logger.info("evaluating action..");
+				System.out.println("evaluating action..");
 				re.parseAndEval(action);
-				logger.debug("evaluated action");
+				System.out.println("evaluated action");
+				logger.info("evaluated action");
 			}
 
 			command.setExecuted(true);
