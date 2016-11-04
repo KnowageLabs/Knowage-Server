@@ -199,7 +199,7 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 		if (isVersionDimension) {
 			try {
 				versions = getVersions();
-			} catch (NullPointerException e) {
+			} catch (Throwable e) {
 				logger.error(e);
 			}
 		}
