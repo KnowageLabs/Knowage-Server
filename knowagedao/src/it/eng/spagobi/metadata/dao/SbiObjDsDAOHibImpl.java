@@ -47,7 +47,7 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 
 	private final String[] enginesNoChecked = { "birt", "cockpit", "console", "composit", "kpi", "svgviewer" };
 
-	static private Logger logger = Logger.getLogger(SbiDsBcDAOHibImpl.class);
+	static private Logger logger = Logger.getLogger(SbiObjDsDAOHibImpl.class);
 
 	@Override
 	public List<SbiMetaObjDs> loadObjByDsId(Integer dsId) throws EMFUserError {
@@ -228,7 +228,7 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 	/**
 	 * Store the relation between the BI document and its dataset into the SBI_META_OBJ_DS (Only objects with UNIQUE relation 1 to 1 with the dataset: NO
 	 * COCKPIT, CONSOLE, DOCUMENT COMPOSITION, ... )
-	 * 
+	 *
 	 * @param biObj
 	 *            the document object
 	 */
@@ -248,7 +248,7 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 
 				if (dsId == null) {
 					// if the dataset isn't chosen don't insert the relation...
-					logger.error("Dataset is not setted for the document with id [" + objId + "]. Relation with document impossible to save.");
+					logger.debug("Dataset is not setted for the document with id [" + objId + "]. Relation with document impossible to save.");
 					// ... and delete relations if they are present (for old save action)
 					logger.debug("Removing old relations with the object...");
 					List<SbiMetaObjDs> lstRels = DAOFactory.getSbiObjDsDAO().loadDsByObjId(objId);
@@ -301,7 +301,7 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 
 	/**
 	 * Store the relation between the BI document and its dataset into the SBI_META_OBJ_DS
-	 * 
+	 *
 	 * @param biObj
 	 *            the document object
 	 */
@@ -355,7 +355,7 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 
 	/**
 	 * Store the relation between the BI document and its dataset into the SBI_META_OBJ_DS
-	 * 
+	 *
 	 * @param biObj
 	 *            the document object
 	 */
@@ -433,7 +433,7 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 	/**
 	 * Store the relation between the BI document and its dataset into the SBI_META_OBJ_DS (Only objects with UNIQUE relation 1 to 1 with the dataset: NO
 	 * COCKPIT, CONSOLE, DOCUMENT COMPOSITION, ... )
-	 * 
+	 *
 	 * @param biObj
 	 *            the document object
 	 */
@@ -547,7 +547,7 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 
 	/**
 	 * Returns true if the engine uses standard dataset management (1:1 with the document)
-	 * 
+	 *
 	 * @param engineLabel
 	 *            : the engine label
 	 * @return true if the engine use standard dataset (1:1), false otherwise
