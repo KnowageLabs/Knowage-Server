@@ -47,7 +47,7 @@ import com.jamonapi.MonitorFactory;
 public class VersionDAO {
 
 	private final WhatIfEngineInstance instance;
-	private final String editCubeTableName;
+	private  String editCubeTableName;
 	private final IDbSchemaDescriptor descriptor;
 
 	public static transient Logger logger = Logger.getLogger(VersionDAO.class);
@@ -55,11 +55,18 @@ public class VersionDAO {
 	public VersionDAO(WhatIfEngineInstance instance) {
 		this.instance = instance;
 
-		editCubeTableName = instance.getWriteBackManager().getRetriver().getEditCubeTableName();
-		logger.debug("Edit table name is: " + editCubeTableName);
+		
 
 		// defining the table descriptor
 		descriptor = new JdbcTableDescriptor();
+	}
+	
+	public String getEditCubeName(){
+		if(editCubeTableName==null){
+			editCubeTableName = instance.getWriteBackManager().getRetriver().getEditCubeTableName();
+			logger.debug("Edit table name is: " + editCubeTableName);
+		}
+		return editCubeTableName;
 	}
 
 	public Integer getLastVersion(Connection connection) throws SpagoBIEngineException, NumberFormatException {
@@ -148,7 +155,7 @@ public class VersionDAO {
 
 		String columnsListString = "";
 		String columnsListStringVersionWritten = "";
-
+		String editCubeTableName = getEditCubeName();
 		for (Iterator<String> iterator = descriptor.getColumnNames(editCubeTableName, instance.getDataSource()).iterator(); iterator.hasNext();) {
 			String s = iterator.next();
 
@@ -197,7 +204,7 @@ public class VersionDAO {
 	public void deleteVersions(Connection connection, String versionIds) throws Exception {
 		logger.debug("IN");
 		logger.debug("Deleting the versions " + versionIds + " from the cube");
-		
+		String editCubeTableName = getEditCubeName();
 		Monitor deleteSQL = MonitorFactory.start("WhatIfEngine/it.eng.spagobi.engines.whatif.WhatIfEngineInstance.VersionDAO.deleteVersion.deleteMethodDAO.all");
 		String sqlQuery = "delete from " + editCubeTableName + " where " + getVersionColumnName() + " in (" + versionIds + ")";
 
