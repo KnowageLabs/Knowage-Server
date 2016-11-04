@@ -320,7 +320,7 @@ public class AssociativeLogicManager {
 							columnNames = getColumnNames(group.getOrderedEdgeNames(), datasetInvolved);
 
 							String whereClauses = null;
-							if (realtimeDatasets.contains(dataset)) {
+							if (realtimeDatasets.contains(datasetInvolved)) {
 								StringBuilder sb = new StringBuilder();
 								String[] columnsArray = columnNames.split(",");
 								for (String values : intersection) {
