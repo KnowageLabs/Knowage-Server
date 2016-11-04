@@ -1654,7 +1654,7 @@ public class DatasetManagementAPI {
 					columnName = aggregateFunction + "(" + columnName + ")";
 					if (hasAlias) {
 						if (orderType != null && !orderType.isEmpty()) {
-							orderColumns.add(aliasName + " " + orderType);
+							orderColumns.add(columnName + " " + orderType);
 						}
 					} else {
 						throw new SpagoBIRuntimeException("Projection [" + columnName + "] requires an alias");
