@@ -517,8 +517,9 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 			// carica il tenant tramite ID
 			// verifica che il nome sia uguale altrimenti eccezione
 			SbiTenant tenant = loadTenantById(aTenant.getId());
-			if (!tenant.getName().equalsIgnoreCase(aTenant.getName()))
-				new SpagoBIRuntimeException("It's not allowed to modify the name of an existing Tenant.");
+			if (!tenant.getName().equalsIgnoreCase(aTenant.getName())) {
+				throw new SpagoBIRuntimeException("It's not allowed to modify the name of an existing Tenant.");
+			}
 
 			updateSbiCommonInfo4Update(aTenant);
 			aSession.update(aTenant);
