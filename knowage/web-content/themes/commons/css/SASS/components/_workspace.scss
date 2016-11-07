@@ -155,11 +155,12 @@
 		padding-top: 7px;
 	}
 	
+	.md-button.md-knowage-theme:not([disabled]):not(.selectedLeftMenuSubitem):not(.notSelectedLeftMenuSubitem):hover {
+        background-color:rgba($ternaryColor,0.2);
+    }
+	
 	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
 	.selectedLeftMenuItem, .selectedLeftMenuSubitem{
-		._md-list-item-inner {
-			z-index: 2;
-		}
 		background-color: lighten($secondaryColor,10%);
 		button {
 			background-color: transparent;
@@ -167,7 +168,8 @@
 				background-color: transparent !important;
 			}
 		}
-	}	
+	}
+	
 	
 	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	.addNewDocumentButton {
