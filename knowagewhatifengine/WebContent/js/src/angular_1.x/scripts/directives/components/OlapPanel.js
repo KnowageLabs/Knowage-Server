@@ -494,16 +494,17 @@ if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
 				    return this.indexOf(searchString, position) === position;
 				  };
 				}
-			
+			var originalValue = "";
+			originalValue = (cell[0].childNodes[0].data).trim();
 			if ($scope.lastEditedFormula && $scope.lastEditedCell
 					&& id.startsWith($scope.lastEditedCell)) {
 				unformattedValue = $scope.lastEditedFormula;
 				$scope.cellValue = $scope.lastEditedFormula
 			} else {
 				var type = "float";
-				var originalValue = "";
+				
 
-				originalValue = (cell[0].childNodes[0].data).trim();
+				
 				if (originalValue == '') { // in case the cell was empty, we type 0
 					unformattedValue = 0;
 				} else {
@@ -575,6 +576,12 @@ if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
 		console.log("writeBackCell");
 		var type = "float";
 		if(value!==""){
+			
+			if($scope.isItStartWithOperator(value)){
+				$scope.originalValue=$scope.originalValue.replace(/,/g , "");
+				value =$scope.originalValue+value;
+			}
+			
 			if (startValue) {
 				startValue = parseFloat(startValue);// Sbi.whatif.commons.Format.cleanFormattedNumber(startValue,
 													// Sbi.locale.formats[type]);
@@ -713,6 +720,11 @@ if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
 			sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.generic.error'), 'Error');
 
 		});
+	}
+	
+	$scope.isItStartWithOperator = function(value){
+		var firstChar = value.charAt(0);
+		return firstChar === '+'||firstChar === '-'||firstChar === '*'||firstChar === '/';
 	}
 	/******************************************************************************/
 
