@@ -157,6 +157,9 @@
 	
 	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
 	.selectedLeftMenuItem, .selectedLeftMenuSubitem{
+		._md-list-item-inner {
+			z-index: 2;
+		}
 		background-color: lighten($secondaryColor,10%);
 		button {
 			background-color: transparent;
@@ -164,8 +167,7 @@
 				background-color: transparent !important;
 			}
 		}
-	}
-	
+	}	
 	
 	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	.addNewDocumentButton {
