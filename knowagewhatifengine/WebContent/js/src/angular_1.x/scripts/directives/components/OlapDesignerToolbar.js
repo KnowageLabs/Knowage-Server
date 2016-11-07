@@ -475,13 +475,29 @@ $scope.setAndLoadCN = function(num) {
 	  * Opens dialog with table of buttons to be selected as visible, and checked.
 	  */
 	 $scope.openButtonWizard = function() {
-		 
+		 $scope.toolbar = angular.copy($scope.buttons);
 		 if(OlapTemplateService.getToolbarButtons().length>0){
-			 $scope.buttons = OlapTemplateService.getToolbarButtons();
-		 }
+			
+			 for(var i =0;i<$scope.toolbar.length;i++){
+				 
+				 for(var j =0;j<OlapTemplateService.getToolbarButtons().length;j++){
+					 if(OlapTemplateService.getToolbarButtons()[j].name === $scope.toolbar[i].name){
+						 
+						 $scope.toolbar[i].clicked = OlapTemplateService.getToolbarButtons()[j].clicked;
+						 $scope.toolbar[i].visible = OlapTemplateService.getToolbarButtons()[j].visible;
+						 
+					 }
+				 }
+				 
+				 
+			 }
+		 
+			 
+		 }	 
+		 
 		 
 		  
-		 $scope.toolbar = angular.copy($scope.buttons);
+		 //
 		 for (var i = $scope.toolbar.length-1; i >= 0; i--) {
 			 if($scope.toolbar[i].category == 'OLAP_DESIGNER'){
 		    	 $scope.toolbar.splice(i, 1); 
