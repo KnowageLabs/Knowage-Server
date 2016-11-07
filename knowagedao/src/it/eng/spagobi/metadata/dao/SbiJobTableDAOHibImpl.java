@@ -42,7 +42,7 @@ import org.hibernate.Transaction;
  */
 public class SbiJobTableDAOHibImpl extends AbstractHibernateDAO implements ISbiJobTableDAO {
 
-	static private Logger logger = Logger.getLogger(SbiDsBcDAOHibImpl.class);
+	static private Logger logger = Logger.getLogger(SbiJobTableDAOHibImpl.class);
 
 	@Override
 	public List<SbiMetaJob> loadJobsByTableId(Integer tableId) throws EMFUserError {
