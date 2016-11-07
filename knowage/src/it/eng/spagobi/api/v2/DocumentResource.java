@@ -469,7 +469,7 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 		// hide if user is not admin or devel and visible is false
 		if (!profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)
 				&& !profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV)) {
-			restritions.add(new CriteriaParameter("visible", true, Match.EQ));
+			restritions.add(new CriteriaParameter("visible", Short.valueOf("1"), Match.EQ));
 		}
 		try {
 			documentsDao = DAOFactory.getBIObjectDAO();
