@@ -82,7 +82,7 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 			return;
 		}
 		
-		sbiModule_restServices.promisePost("1.0/crosstab","?crosstabDefinition="+encodeURIComponent(JSON.stringify(dataToSend.crosstabDefinition))+"&datasetLabel=SQL_CUSTOMER_LIST_E").then(
+		sbiModule_restServices.promisePost("1.0/crosstab","update",dataToSend).then(
 				function(response){
 					$scope.subCockpitWidget.html(response.data.htmlTable);
 					$compile(angular.element($scope.subCockpitWidget).contents())($scope)
