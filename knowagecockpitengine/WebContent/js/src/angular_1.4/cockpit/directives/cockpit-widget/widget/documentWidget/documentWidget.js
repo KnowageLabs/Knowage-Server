@@ -58,7 +58,7 @@ function cockpitDocumentWidgetControllerFunction($scope,cockpitModule_widgetConf
 	};
 	
 	$scope.refresh=function(element,width,height,data,nature){
-		if(angular.equals(nature,'resize') || angular.equals(nature,'gridster-resized')){
+		if(nature == 'resize' || nature == 'gridster-resized' || nature == 'fullExpand'){
 			return;
 		}
 		var doc= $scope.getDocument();

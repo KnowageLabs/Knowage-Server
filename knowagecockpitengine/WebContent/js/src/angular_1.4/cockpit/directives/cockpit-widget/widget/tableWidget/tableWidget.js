@@ -264,8 +264,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		
 		$scope.refresh=function(element,width,height, datasetRecords,nature){
-			if(angular.equals(nature,'fullExpand')){
-				return
+			if(nature == 'resize' || nature == 'gridster-resized' || nature == 'fullExpand'){
+				return;
 			}
 			$scope.columnsToShow = [];
 			$scope.datasetRecords = {};

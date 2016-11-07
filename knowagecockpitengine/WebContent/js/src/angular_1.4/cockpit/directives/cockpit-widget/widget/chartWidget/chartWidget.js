@@ -72,16 +72,17 @@ angular.module('cockpitModule')
     			$scope.showWidgetSpinner();
 	    	}
 	    	$scope.updateContent = function(actionUrl, parameters, nature, width, height){
-	    		if(nature != 'refresh'){
-	    			// Check if service is on line
-	    			// When dealing with CAS, first call will force web app to do login and can give some error
-		    		$http.get(actionUrl.testUrl).then(function(){
-		    			loadPageIntoIframe(actionUrl.url, parameters);
-		    		},function(){
-		    			showAction("Service error");
-		    		});
-	    		}
-	    		
+	    		if(nature == 'resize' || nature == 'gridster-resized' || nature == 'fullExpand'){
+					return;
+				}
+				
+				// Check if service is on line
+				// When dealing with CAS, first call will force web app to do login and can give some error
+				$http.get(actionUrl.testUrl).then(function(){
+					loadPageIntoIframe(actionUrl.url, parameters);
+				},function(){
+					showAction("Service error");
+				});
 	    	};
 	    	
 	    	

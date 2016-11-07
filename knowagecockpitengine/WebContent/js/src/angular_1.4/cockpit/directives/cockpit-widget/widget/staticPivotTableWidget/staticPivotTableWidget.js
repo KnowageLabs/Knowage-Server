@@ -57,7 +57,7 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 			return;
 		}
 		
-		if(angular.equals(nature,'resize') || angular.equals(nature,'gridster-resized')){
+		if(nature == 'resize' || nature == 'gridster-resized' || nature == 'fullExpand'){
 			return;
 		}
 		$scope.showWidgetSpinner();
@@ -82,7 +82,7 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 			return;
 		}
 		
-		sbiModule_restServices.promisePost("1.0/crosstab","update",dataToSend).then(
+		sbiModule_restServices.promisePost("1.0/crosstab","?crosstabDefinition="+encodeURIComponent(JSON.stringify(dataToSend.crosstabDefinition))+"&datasetLabel=SQL_CUSTOMER_LIST_E").then(
 				function(response){
 					$scope.subCockpitWidget.html(response.data.htmlTable);
 					$compile(angular.element($scope.subCockpitWidget).contents())($scope)

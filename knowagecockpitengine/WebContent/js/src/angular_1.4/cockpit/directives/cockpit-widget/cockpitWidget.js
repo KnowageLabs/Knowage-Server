@@ -258,9 +258,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 			}
 			break;
 		case "RESIZE" :
-			//cockpitModule_widgetServices.refreshWidget($scope.subCockpitWidget,$scope.ngModel,'resize',{});
-
-			$scope.refreshWidget();
+			$scope.refreshWidget(undefined, 'resize');
 			break; 
 		case "WIDGET_SPINNER" :
 			if(config.show){
