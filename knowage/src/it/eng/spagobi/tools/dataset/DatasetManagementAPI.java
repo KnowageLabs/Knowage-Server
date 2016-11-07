@@ -1745,6 +1745,10 @@ public class DatasetManagementAPI {
 				}
 			}
 
+			if (isRealtime && orderColumns.isEmpty()) {
+				orderColumns.add(keepCategoryForOrdering);
+			}
+
 			aggregatedBasicColumns.removeAll(notCalculatedColumns);
 
 			for (String additionalColumnName : aggregatedBasicColumns) {
