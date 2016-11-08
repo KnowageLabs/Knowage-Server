@@ -25,3 +25,5 @@ ALTER TABLE SBI_META_DS_BC
 	
 update SBI_ENGINES set MAIN_URL='/knowagewhatifengine/restful-services/olap/startolap' where LABEL = 'knowageolapengine';
 update SBI_ENGINES set MAIN_URL='/knowagewhatifengine/restful-services/olap/startwhatif' where LABEL = 'knowagewhatifengine';
+
+ALTER TABLE SBI_OUTPUT_PARAMETER ADD COLUMN IS_USER_DEFINED BIT NULL DEFAULT 0;
