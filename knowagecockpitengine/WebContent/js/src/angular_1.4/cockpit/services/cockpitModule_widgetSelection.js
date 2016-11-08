@@ -34,7 +34,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				var col = columns[i];
 				var obj = {};
 				obj["id"] = col.alias;
-				obj["alias"] = ngModel.type == "table" ? col.aliasToShow : col.alias;
+				obj["alias"] = (ngModel.type == "table" ? col.aliasToShow : col.alias);
 				
 				if(col.isCalculated == true){
 					obj["columnName"] = col.formula;
@@ -44,7 +44,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				
 				obj["orderType"] = "";
 				if(columnOrdering !=undefined){
-					if(columnOrdering.name == col.name){
+					if(columnOrdering.name == (ngModel.type == "table" ? col.aliasToShow : col.name)){
 						obj["orderType"] = reverseOrdering==true ? 'ASC' : 'DESC';
 					}
 				}
