@@ -365,8 +365,17 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 				&& model.cross.cross.outputParameter != undefined
 				){
 			
-			// check if column clicked is the one for cross navigation
-			if(model.cross.cross.column === columnName){
+			// check if column clicked is the one for cross navigation, must look at alias not name
+			var nameToCheckForCross =  columnName;
+			// check if it has been renamed by an alias
+			for(var colIndex in model.content.columnSelectedOfDataset){
+				var col = model.content.columnSelectedOfDataset[colIndex];
+				if(col.aliasToShow != undefined && col.aliasToShow == columnName){
+					nameToCheckForCross = col.name;
+				}
+			}
+			
+			if(model.cross.cross.column === nameToCheckForCross){
 				var outputParameter = {};
 				outputParameter[model.cross.cross.outputParameter] = columnValue;
 				
