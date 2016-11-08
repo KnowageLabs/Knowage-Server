@@ -1532,7 +1532,7 @@ public class CrossTab {
 
 		double sum = 0;
 		for (int y = 0; y < dataMatrix[0].length; y++) {
-			if (celltypeOfRows.get(y).equals(type)) {
+			if (y < celltypeOfRows.size() && celltypeOfRows.get(y).equals(type)) {
 				String value = dataMatrix[row][y];
 				if (!value.equals(DATA_MATRIX_NA)) {
 					sum = sum + new Double(value);
