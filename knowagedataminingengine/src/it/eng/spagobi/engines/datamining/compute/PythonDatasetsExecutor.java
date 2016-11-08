@@ -95,7 +95,7 @@ public class PythonDatasetsExecutor {
 					}
 					String datasetFileName = ds.getFileName();
 
-					codeToExec = ds.getName() + " = pandas.read_" + "csv('" + datasetFileName + "', " + ds.getOptions() + ")\n";
+					codeToExec = ds.getSpagobiLabel() + " = pandas.read_" + "csv('" + datasetFileName + "', " + ds.getOptions() + ")\n";
 					resPythonExecution = PyLib.execScript(codeToExec);
 
 					if (resPythonExecution < 0) {

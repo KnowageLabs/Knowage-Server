@@ -196,9 +196,10 @@ public class DataMiningUtils {
 			String row = "";
 			for (int i = 0; i < dataStore.getMetaData().getFieldCount(); i++) {
 				IField field = record.getFieldAt(i);
-
-				if (field.getValue() != null) {
-					row += field.getValue().toString() + DataMiningConstants.CSV_SEPARATOR;
+				String value = String.valueOf(field.getValue());
+				if (!value.equals("null")) {
+					value = value.replaceAll(DataMiningConstants.CSV_SEPARATOR, "");
+					row += value + DataMiningConstants.CSV_SEPARATOR;
 				} else {
 					row += "" + DataMiningConstants.CSV_SEPARATOR;
 				}

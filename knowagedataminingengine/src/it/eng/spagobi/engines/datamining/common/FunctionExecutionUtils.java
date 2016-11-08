@@ -239,6 +239,9 @@ public class FunctionExecutionUtils {
 	public static JSONArray buildDataminingResponse(List<DataMiningResult> dataminingExecutionResults) throws JSONException {
 		JSONArray response = new JSONArray();
 		for (DataMiningResult r : dataminingExecutionResults) {
+			if (r.getOutputType() == null) {
+				throw new SpagoBIRuntimeException("DataMining execution error:" + r.getError());
+			}
 			boolean isImage = r.getOutputType().equalsIgnoreCase(DataMiningConstants.IMAGE_OUTPUT);
 			JSONObject o = new JSONObject();
 			o.put(DataMiningConstants.RESULT_TYPE_FIELD, r.getOutputType());

@@ -21,6 +21,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
 import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
 import it.eng.spagobi.engines.datamining.model.DataMiningDataset;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.File;
 import java.io.IOException;
@@ -98,20 +99,16 @@ public class RDatasetsExecutor {
 						// use it!
 						logger.debug("dataset " + ds.getName() + " already loaded in user workspace!");
 					}
-				} else if (ds.getType().equalsIgnoreCase(DataMiningConstants.DATASET)
-						|| ds.getType().equalsIgnoreCase(DataMiningConstants.SPAGOBI_DS)) {
+				} else if (ds.getType().equalsIgnoreCase(DataMiningConstants.DATASET) || ds.getType().equalsIgnoreCase(DataMiningConstants.SPAGOBI_DS)) {
 					logger.debug("Dataset");
 					// dataset content could change independently from
-					// the engine, so it must be recalculated every time
-					try {
 
-						String csvToEval = DataMiningUtils.getFileFromSpagoBIDataset(paramsFilled, ds, profile);
-						String stringToEval = ds.getName() + "<-read.csv(\"" + csvToEval + "\",header = TRUE, sep = \",\");";
-						re.parseAndEval(stringToEval);
+					String csvToEval = DataMiningUtils.getFileFromSpagoBIDataset(paramsFilled, ds, profile);
+					String stringToEval = ds.getSpagobiLabel() + "<-read.csv(\"" + csvToEval + "\",header = TRUE, sep = \",\");";
 
-					} catch (IOException e) {
-						logger.error(e.getMessage());
-						throw e;
+					REXP resultRead = re.parseAndEval(stringToEval);
+					if (resultRead.inherits("try-error")) {
+						throw new SpagoBIRuntimeException("Impossibile to write the dataset with command: " + stringToEval + ". " + resultRead.asString());
 					}
 
 				}
