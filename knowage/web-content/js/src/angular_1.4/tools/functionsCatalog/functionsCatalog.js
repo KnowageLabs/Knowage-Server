@@ -150,7 +150,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 	
 
 	
-	
+	 
 	$scope.showTabDialog = function(result, isDemoExecution) {
 		$mdDialog.show({
 			controller : functionCatalogResultsController,

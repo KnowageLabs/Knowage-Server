@@ -213,7 +213,7 @@ md-select-menu.md-knowage-theme md-option[selected]:focus {
 // Tabs
 md-tabs.md-knowage-theme .md-tab.md-active, md-tabs.md-knowage-theme .md-tab.md-active md-icon, md-tabs.md-knowage-theme .md-tab.md-focused, md-tabs.md-knowage-theme .md-tab.md-focused md-icon {
     color: $baseColor;
-    font-weight: $tabFontWeight;
+    font-weight: 300!important; 
 }
 
 md-tabs.md-knowage-theme md-ink-bar {

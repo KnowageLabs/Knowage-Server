@@ -224,20 +224,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
            					</md-select>
       					</md-input-container>
       					
-
+      					</br>
+        				
+        				<md-input-container class="md-block">
+        					<label class="customColorLabel">{{translate.load("sbi.functionscatalog.keywords");}}</label>   					
+							<md-chips ng-model="shownFunction.keywords" readonly="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))" ></md-chips>
+						</md-input-container>
 						
           				<label class="customLabel">{{translate.load("sbi.functionscatalog.description");}}</label>
 	          			<wysiwyg-edit ng-if="(isAdmin || (isDev && shownFunction.owner==ownerUserName))" content="shownFunction.description"  layout-fill config="editorConfig"></wysiwyg-edit>
 	          			<div ng-if="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))" ng-bind-html=shownFunction.description></div> 
 			
-        				
-        				<md-input-container class="md-block" style="margin-bottom:100px;">
-        					<label class="customColorLabel">{{translate.load("sbi.functionscatalog.keywords");}}</label>   					
-							<md-chips ng-model="shownFunction.keywords" readonly="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))" ></md-chips>
-						</md-input-container>
-						
- 
-        				
 					</md-card>
 				</md-tab>
        		
@@ -360,7 +357,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	      						<md-radio-button ng-value=true ng-click="radioButtonRemoteLocalPush('remote')" style="outline: none; border: 0; "> {{translate.load("sbi.functionscatalog.remote");}} </md-radio-button>
 	    					</md-radio-group>	
 	    					
-	    					<md-input-container class="md-block" ng-if='languageHidden'>
+	    					<md-input-container class="md-block" ng-if='languageHidden && shownFunction.remote==false'>
 	            				<label>{{translate.load("sbi.functionscatalog.language");}}</label>
 	            				<md-select ng-model="shownFunction.language">
 	              					<md-option ng-repeat="language in languages" value="{{language}}">
