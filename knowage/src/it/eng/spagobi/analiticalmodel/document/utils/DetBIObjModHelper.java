@@ -17,18 +17,6 @@
  */
 package it.eng.spagobi.analiticalmodel.document.utils;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.StringTokenizer;
-import java.util.Vector;
-
-import org.apache.commons.fileupload.FileItem;
-import org.apache.log4j.Logger;
-
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.ResponseContainer;
 import it.eng.spago.base.SessionContainer;
@@ -39,6 +27,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spago.validation.EMFValidationError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
+import it.eng.spagobi.analiticalmodel.document.bo.OutputParameter;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.service.DetailBIObjectModule;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
@@ -65,6 +54,18 @@ import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.utilities.file.FileUtils;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.StringTokenizer;
+import java.util.Vector;
+
+import org.apache.commons.fileupload.FileItem;
+import org.apache.log4j.Logger;
 
 public class DetBIObjModHelper {
 	static private Logger logger = Logger.getLogger(DetBIObjModHelper.class);
@@ -99,12 +100,10 @@ public class DetBIObjModHelper {
 
 	/**
 	 * Recover bi object details.
-	 *
+	 * 
 	 * @param mod
 	 *            the mod
-	 *
 	 * @return the bI object
-	 *
 	 * @throws Exception
 	 *             the exception
 	 */
@@ -203,7 +202,7 @@ public class DetBIObjModHelper {
 		}
 
 		logger.debug("If engine requires datasource and datasource is not defined throw error");
-//		if (engine != null && engine.getUseDataSource() && !engine.getLabel().equals("knowagegisengine")) {
+		// if (engine != null && engine.getUseDataSource() && !engine.getLabel().equals("knowagegisengine")) {
 		if (engine != null && engine.getUseDataSource() && !engine.getLabel().equals(SpagoBIConstants.GIS_ENGINE_LABEL)) {
 			if (ds == null) {
 				logger.error("Engine " + engine.getLabel() + " do requires datasource but it is nodt defined");
@@ -274,6 +273,10 @@ public class DetBIObjModHelper {
 				}
 			}
 		}
+
+		// if there are output parameters linked to document keep them in order to mantain
+		List<OutputParameter> outputParameters = DAOFactory.getOutputParameterDAO().getOutputParametersByObjId(id);
+
 		// CHECK IF THE LABEL IS ALREADY ASSIGNED TO AN EXISTING OBJECT
 		BIObject aBIObject = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(label);
 		if (aBIObject != null && !aBIObject.getId().equals(id)) {
@@ -304,6 +307,7 @@ public class DetBIObjModHelper {
 		obj.setRefreshSeconds(refreshSeconds);
 		obj.setParametersRegion(parametersRegion);
 		obj.setLockedByUser(lockedByUser);
+		obj.setOutputParameters(outputParameters);
 
 		obj.setPreviewFile((previewFileName == null && aBIObject != null && aBIObject.getPreviewFile() != null) ? aBIObject.getPreviewFile() : previewFileName);
 		// RETURN OBJECT
@@ -314,7 +318,6 @@ public class DetBIObjModHelper {
 	 * Recover bi obj template details.
 	 *
 	 * @return the obj template
-	 *
 	 * @throws Exception
 	 *             the exception
 	 */
@@ -362,7 +365,6 @@ public class DetBIObjModHelper {
 	 *
 	 * @param biobjIdInt
 	 *            the biobj id int
-	 *
 	 * @return the bI object parameter
 	 */
 	public BIObjectParameter recoverBIObjectParameterDetails(Integer biobjIdInt) {
@@ -475,7 +477,6 @@ public class DetBIObjModHelper {
 	 *
 	 * @param biObjPar
 	 *            the bi obj par
-	 *
 	 * @return the bI object parameter
 	 */
 	public static BIObjectParameter clone(BIObjectParameter biObjPar) {
@@ -505,7 +506,6 @@ public class DetBIObjModHelper {
 	 *
 	 * @param obj
 	 *            the obj
-	 *
 	 * @return the bI object
 	 */
 	public static BIObject clone(BIObject obj) {
@@ -539,9 +539,7 @@ public class DetBIObjModHelper {
 	 *
 	 * @param objId
 	 *            the obj id
-	 *
 	 * @return the bI object parameter
-	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -572,7 +570,6 @@ public class DetBIObjModHelper {
 	 *
 	 * @param objParIdObj
 	 *            the obj par id obj
-	 *
 	 * @return the int
 	 */
 	public static int findBIObjParId(Object objParIdObj) {

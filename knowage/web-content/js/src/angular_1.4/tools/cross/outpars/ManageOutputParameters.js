@@ -102,6 +102,7 @@ angular.module('crossOutPars', ['angular_table','ng-context-menu','ngMaterial','
 					}
 					delete ctr.detail.formatObj;
 				}
+				ctr.detail.isUserDefined = true;
 				sbiModule_restServices.promisePost('2.0/documents/saveOutParam', "", ctr.detail).then(
 					function(response){
 						$scope.showActionOK("sbi.crossnavigation.save.ok");
