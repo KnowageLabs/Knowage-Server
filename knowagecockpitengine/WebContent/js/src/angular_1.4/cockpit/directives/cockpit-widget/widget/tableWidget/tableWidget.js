@@ -679,6 +679,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.showAction($scope.translate.load('sbi.cockpit.table.erroraggregation'));
 				return;
 			}
+			if(!$scope.checkAliases()){
+				$scope.showAction($scope.translate.load('sbi.cockpit.table.erroraliases'));
+				return;
+			}
 			angular.copy($scope.model,originalModel);
 			mdPanelRef.close();
 			mdPanelRef.destroy();
@@ -711,6 +715,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if(noneAggr!=0){
 				if(noneAggr != measures){
 					return false;
+				}
+			}
+			return true;
+		}
+		$scope.checkAliases = function(){
+			var columns = $scope.model.content.columnSelectedOfDataset;
+			for(var i = 0; i < columns.length - 1; i++){
+				for(var j = i + 1; j < columns.length; j++){
+					if(columns[i].aliasToShow == columns[j].aliasToShow){
+						return false;
+					}
 				}
 			}
 			return true;
