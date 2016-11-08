@@ -28,7 +28,6 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 		var ds = dataset.label;
 		
 		var columns = ngModel==undefined ? undefined : ngModel.content.columnSelectedOfDataset;
-		
 		if(columns != undefined){
 			//create aggregation
 			for(var i=0;i<columns.length;i++){
@@ -69,6 +68,65 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				}
 			}
 		}
+		
+		var crosstabDef = ngModel==undefined ? undefined : ngModel.content.crosstabDefinition;
+		if(crosstabDef != undefined){
+			// create aggregations from columns
+			for(var i=0;i<crosstabDef.columns.length;i++){
+				var col = crosstabDef.columns[i];
+				var obj = {};
+				obj["id"] = col.id;
+				obj["alias"] = col.alias;
+				obj["columnName"] = col.id;
+
+				obj["orderType"] = "";
+				if(columnOrdering !=undefined){
+					if(columnOrdering.name == col.name){
+						obj["orderType"] = reverseOrdering==true ? 'ASC' : 'DESC';
+					}
+				}
+				
+				categories.push(obj);
+			}
+			
+			// create aggregations from rows
+			for(var i=0;i<crosstabDef.rows.length;i++){
+				var row = crosstabDef.rows[i];
+				var obj = {};
+				obj["id"] = row.id;
+				obj["alias"] = row.alias;
+				obj["columnName"] = row.id;
+
+				obj["orderType"] = "";
+				if(columnOrdering !=undefined){
+					if(columnOrdering.name == row.name){
+						obj["orderType"] = reverseOrdering==true ? 'ASC' : 'DESC';
+					}
+				}
+				
+				categories.push(obj);
+			}
+			
+			// create aggregations from measures
+			for(var i=0;i<crosstabDef.measures.length;i++){
+				var measure = crosstabDef.measures[i];
+				var obj = {};
+				obj["id"] = measure.id;
+				obj["alias"] = measure.alias;
+				obj["columnName"] = measure.id;
+				obj["funct"] = measure.funct;
+
+				obj["orderType"] = "";
+				if(columnOrdering !=undefined){
+					if(columnOrdering.name == measure.name){
+						obj["orderType"] = reverseOrdering==true ? 'ASC' : 'DESC';
+					}
+				}
+				
+				measures.push(obj);
+			}
+		}
+		
 		var result = {};
 		result["measures"] = measures;
 		result["categories"] = categories;
