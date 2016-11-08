@@ -293,8 +293,10 @@ public class CrossTabHTMLSerializer {
 					String percentOn = crossTab.getCrosstabDefinition().getConfig().optString("percenton");
 					if ("row".equals(percentOn) || "column".equals(percentOn)) {
 						Double percent = calculatePercent(value, i, j, percentOn, crossTab);
-						String percentStr = measureFormatter.formatPercent(percent, this.locale);
-						actualText += " (" + percentStr + "%)";
+						if (!percent.equals(Double.NaN) && !percent.equals(Double.POSITIVE_INFINITY) && !percent.equals(Double.NEGATIVE_INFINITY)) {
+							String percentStr = measureFormatter.formatPercent(percent, this.locale);
+							actualText += " (" + percentStr + "%)";
+						}
 					}
 
 					aColumn.setAttribute(CLASS_ATTRIBUTE, cellType.getValue());
