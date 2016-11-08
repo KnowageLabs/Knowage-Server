@@ -69,6 +69,8 @@ public class OutputParameterDAOImpl extends AbstractHibernateDAO implements IOut
 		}
 		outp.setFormatCode(op.getFormatCode());
 		outp.setFormatValue(op.getFormatValue());
+		outp.setIsUserDefined(op.getIsUserDefined());
+
 		return outp;
 	}
 
@@ -84,6 +86,8 @@ public class OutputParameterDAOImpl extends AbstractHibernateDAO implements IOut
 		sop.setLabel(outputParameter.getName());
 		sop.setBiobjId(outputParameter.getBiObjectId());
 		sop.setParameterTypeId(outputParameter.getType().getValueId());
+		sop.setIsUserDefined(outputParameter.getIsUserDefined());
+
 		if (outputParameter.getType() != null && outputParameter.getType().getValueCd().equals("DATE")) {
 			sop.setFormatCode(outputParameter.getFormatCode());
 			sop.setFormatValue(outputParameter.getFormatValue());
@@ -182,6 +186,24 @@ public class OutputParameterDAOImpl extends AbstractHibernateDAO implements IOut
 	public void removeParametersByBiobjId(Integer biobjId, Session session) throws EMFUserError {
 		List<Integer> ids = session.createCriteria(SbiOutputParameter.class).add(Restrictions.eq("biobjId", biobjId)).setProjection(Property.forName("id"))
 				.list();
+		for (Integer id : ids) {
+			removeParameter(id, session);
+		}
+	}
+
+	@Override
+	public void removeUserDefinedParametersByBiobjId(Integer biobjId, Session session) throws EMFUserError {
+		List<Integer> ids = session.createCriteria(SbiOutputParameter.class).add(Restrictions.eq("biobjId", biobjId))
+				.add(Restrictions.eq("isUserDefined", true)).setProjection(Property.forName("id")).list();
+		for (Integer id : ids) {
+			removeParameter(id, session);
+		}
+	}
+
+	@Override
+	public void removeSystemDefinedParametersByBiobjId(Integer biobjId, Session session) throws EMFUserError {
+		List<Integer> ids = session.createCriteria(SbiOutputParameter.class).add(Restrictions.eq("biobjId", biobjId))
+				.add(Restrictions.eq("isUserDefined", false)).setProjection(Property.forName("id")).list();
 		for (Integer id : ids) {
 			removeParameter(id, session);
 		}

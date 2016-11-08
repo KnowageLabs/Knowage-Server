@@ -35,6 +35,7 @@ public class SbiOutputParameter extends SbiHibernateModel {
 	private String formatValue;
 	private SbiObjects sbiObject;
 	private SbiDomains parameterType;
+	private Boolean isUserDefined;
 
 	/**
 	 * @return the id
@@ -154,6 +155,14 @@ public class SbiOutputParameter extends SbiHibernateModel {
 	 */
 	public void setFormatValue(String formatValue) {
 		this.formatValue = formatValue;
+	}
+
+	public Boolean getIsUserDefined() {
+		return isUserDefined;
+	}
+
+	public void setIsUserDefined(Boolean isUserDefined) {
+		this.isUserDefined = isUserDefined;
 	}
 
 }

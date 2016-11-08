@@ -46,8 +46,11 @@ public interface IOutputParameterDAO extends ISpagoBIDao {
 
 	public void removeParametersByBiobjId(Integer biobjId, Session session) throws EMFUserError;
 
+	public void removeUserDefinedParametersByBiobjId(Integer biobjId, Session session) throws EMFUserError;
+
+	public void removeSystemDefinedParametersByBiobjId(Integer biobjId, Session session) throws EMFUserError;
+
 	/**
-	 * 
 	 * @param list
 	 *            of OutputParameter
 	 */

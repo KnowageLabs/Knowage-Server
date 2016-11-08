@@ -36,6 +36,7 @@ public class OutputParameter implements Serializable {
 	private Integer biObjectId;
 	private String formatCode;
 	private String formatValue;
+	private Boolean isUserDefined;
 
 	/**
 	 * @return the id
@@ -125,6 +126,14 @@ public class OutputParameter implements Serializable {
 	 */
 	public void setType(Domain type) {
 		this.type = type;
+	}
+
+	public Boolean getIsUserDefined() {
+		return isUserDefined;
+	}
+
+	public void setIsUserDefined(Boolean isUserDefined) {
+		this.isUserDefined = isUserDefined;
 	}
 
 }

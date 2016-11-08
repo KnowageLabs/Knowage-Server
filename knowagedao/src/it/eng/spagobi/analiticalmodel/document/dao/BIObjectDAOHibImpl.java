@@ -133,7 +133,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * Load bi object for execution by id and role.
-	 *
+	 * 
 	 * @param id
 	 *            the id
 	 * @param role
@@ -212,7 +212,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * Load bi object by id.
-	 *
+	 * 
 	 * @param biObjectID
 	 *            the bi object id
 	 * @return the BI object
@@ -253,7 +253,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * Load bi object for detail.
-	 *
+	 * 
 	 * @param id
 	 *            the id
 	 * @return the BI object
@@ -300,7 +300,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * Load bi object by label.
-	 *
+	 * 
 	 * @param label
 	 *            the label
 	 * @return the BI object
@@ -345,7 +345,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * Load bi object for tree.
-	 *
+	 * 
 	 * @param id
 	 *            the id
 	 * @return the BI object
@@ -394,7 +394,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * Modify bi object.
-	 *
+	 * 
 	 * @param obj
 	 *            the obj
 	 * @throws EMFUserError
@@ -408,7 +408,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * Modify bi object.
-	 *
+	 * 
 	 * @param obj
 	 *            the obj
 	 * @param loadParsDC
@@ -424,7 +424,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * Modify bi object.
-	 *
+	 * 
 	 * @param obj
 	 *            the obj
 	 * @param objTemp
@@ -440,7 +440,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * Modify bi object (specially provided for custom-made output category parameters for the SUNBURST chart).
-	 *
+	 * 
 	 * @param obj
 	 *            the obj
 	 * @param objTemp
@@ -456,10 +456,8 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	}
 
 	/**
-	 * Modify bi object (for special chart types, that need exclusion of some of default output parameters).
-	 *
-	 * Example: WORDCLOUD, PARALLEL and CHORD chart types.
-	 *
+	 * Modify bi object (for special chart types, that need exclusion of some of default output parameters). Example: WORDCLOUD, PARALLEL and CHORD chart types.
+	 * 
 	 * @param obj
 	 *            the obj
 	 * @param objTemp
@@ -476,7 +474,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * Modify bi object.
-	 *
+	 * 
 	 * @param obj
 	 *            the obj
 	 * @param objTemp
@@ -495,7 +493,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * Updates the biobject data into database.
-	 *
+	 * 
 	 * @param biObject
 	 *            The BI Object as input
 	 * @param objTemp
@@ -591,28 +589,38 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			// hibBIObject.getSbiOutputParameters().addAll(loadDriverSpecificOutputParameters(hibBIObject));
 			// }
 
-			// If the document previously had the output parameters, remove them in order to refresh them. (danristo)
+			// If the document previously had the output parameters, remove not user defined one them in order to refresh them. (danristo)
 			if (!hibBIObject.getSbiOutputParameters().isEmpty() || hibBIObject.getSbiOutputParameters() != null) {
 				// delete SbiOutputParameters
 				if (hibBIObject.getSbiOutputParameters() != null && !hibBIObject.getSbiOutputParameters().isEmpty()) {
-					hibBIObject.getSbiOutputParameters().clear();
-					DAOFactory.getOutputParameterDAO().removeParametersByBiobjId(hibBIObject.getBiobjId(), aSession);
+
+					// delete only system parameters
+					Set<SbiOutputParameter> cleanedOutPars = new HashSet<SbiOutputParameter>();
+					for (Iterator iterator = hibBIObject.getSbiOutputParameters().iterator(); iterator.hasNext();) {
+						SbiOutputParameter sbiOutPar = (SbiOutputParameter) iterator.next();
+						if (sbiOutPar.getIsUserDefined() == true) {
+							cleanedOutPars.add(sbiOutPar);
+						}
+					}
+					hibBIObject.setSbiOutputParameters(cleanedOutPars);
+					// hibBIObject.getSbiOutputParameters().clear();
+					DAOFactory.getOutputParameterDAO().removeSystemDefinedParametersByBiobjId(hibBIObject.getBiobjId(), aSession);
 					aSession.flush();
 				}
 			}
 
 			// If there are no output parameters persisted already for this document, create new ones for it. (danristo)
-			if (hibBIObject.getSbiOutputParameters() == null || hibBIObject.getSbiOutputParameters().isEmpty()) {
+			// if (hibBIObject.getSbiOutputParameters() == null || hibBIObject.getSbiOutputParameters().isEmpty()) {
 
-				List<SbiOutputParameter> op = loadDriverSpecificOutputParameters(hibBIObject);
+			List<SbiOutputParameter> op = loadDriverSpecificOutputParameters(hibBIObject);
 
-				for (Iterator iterator = op.iterator(); iterator.hasNext();) {
-					SbiOutputParameter sbiOutputParameter = (SbiOutputParameter) iterator.next();
-					aSession.save(sbiOutputParameter);
-				}
-
-				hibBIObject.getSbiOutputParameters().addAll(op);
+			for (Iterator iterator = op.iterator(); iterator.hasNext();) {
+				SbiOutputParameter sbiOutputParameter = (SbiOutputParameter) iterator.next();
+				aSession.save(sbiOutputParameter);
 			}
+
+			hibBIObject.getSbiOutputParameters().addAll(op);
+			// }
 
 			tx.commit();
 
@@ -658,7 +666,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * Updates the biobject data into database (specially provided for custom-made output category parameters for the SUNBURST chart).
-	 *
+	 * 
 	 * @param biObject
 	 *            The BI Object as input
 	 * @param objTemp
@@ -811,10 +819,9 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	}
 
 	/**
-	 * Updates the biobject data into database (for special chart types, that need exclusion of some of default output parameters).
-	 *
-	 * Example: WORDCLOUD, PARALLEL and CHORD chart types.
-	 *
+	 * Updates the biobject data into database (for special chart types, that need exclusion of some of default output parameters). Example: WORDCLOUD, PARALLEL
+	 * and CHORD chart types.
+	 * 
 	 * @param biObject
 	 *            The BI Object as input
 	 * @param objTemp
@@ -964,7 +971,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	/**
 	 * Implements the query to insert a BIObject and its template. All information needed is stored into the input <code>BIObject</code> and
 	 * <code>ObjTemplate</code> objects.
-	 *
+	 * 
 	 * @param obj
 	 *            The object containing all insert information
 	 * @param objTemp
@@ -979,7 +986,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * Implements the query to insert a BIObject. All information needed is stored into the input <code>BIObject</code> object.
-	 *
+	 * 
 	 * @param obj
 	 *            The object containing all insert information
 	 * @throws EMFUserError
@@ -992,7 +999,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * Implements the query to insert a BIObject. All information needed is stored into the input <code>BIObject</code> object.
-	 *
+	 * 
 	 * @param obj
 	 *            The object containing all insert information
 	 * @param loadParsDC
@@ -1007,7 +1014,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * Implements the query to insert a BIObject. All information needed is stored into the input <code>BIObject</code> object.
-	 *
+	 * 
 	 * @param obj
 	 *            The object containing all insert information
 	 * @param loadParsDC
@@ -1168,7 +1175,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * Erase bi object.
-	 *
+	 * 
 	 * @param obj
 	 *            the obj
 	 * @param idFunct
@@ -1348,7 +1355,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * Gets the correct roles for execution.
-	 *
+	 * 
 	 * @param id
 	 *            the id
 	 * @param profile
@@ -1374,7 +1381,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * Gets the correct roles for execution.
-	 *
+	 * 
 	 * @param id
 	 *            the id
 	 * @return the correct roles for execution
@@ -1399,7 +1406,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * Gets a list of correct role according to the report at input, identified by its id
-	 *
+	 * 
 	 * @param id
 	 *            The Integer representing report's id
 	 * @param roles
@@ -1545,7 +1552,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * From the Hibernate BI object at input, gives the corrispondent BI object.
-	 *
+	 * 
 	 * @param hibBIObject
 	 *            The Hibernate BI object
 	 * @return the corrispondent output <code>BIObject</code>
@@ -1708,7 +1715,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * From the hibernate BI object parameter at input, gives the corrispondent <code>BIObjectParameter</code> object.
-	 *
+	 * 
 	 * @param hiObjPar
 	 *            The hybernate BI object parameter
 	 * @return The corrispondent <code>BIObjectParameter</code>
@@ -1747,7 +1754,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadAllBIObjects ()
 	 */
 	@Override
@@ -1900,7 +1907,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadAllBIObjects (java.lang.String)
 	 */
 	@Override
@@ -1944,7 +1951,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#loadAllBIObjects ()
 	 */
 	@Override
@@ -2007,7 +2014,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * Gets the biparameters associated with to a biobject.
-	 *
+	 * 
 	 * @param aBIObject
 	 *            BIObject the biobject to analize
 	 * @return List, list of the biparameters associated with the biobject
@@ -2023,7 +2030,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO# loadAllBIObjectsFromInitialPath(java.lang.String)
 	 */
 	@Override
@@ -2076,7 +2083,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO# loadAllBIObjectsFromInitialPath(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -2128,7 +2135,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO# loadBIObjectForDetail(java.lang.String)
 	 */
 	@Override
@@ -2170,7 +2177,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * Called only for document composition (update object modality). Puts parameters into the document composition getting these from document's children.
-	 *
+	 * 
 	 * @param aSession
 	 *            the hibernate session
 	 * @param biObject
@@ -2293,7 +2300,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * Called only for document composition (insert object modality). Puts parameters into the document composition getting these from document's children.
-	 *
+	 * 
 	 * @param biobjectId
 	 *            the document composition biobject id
 	 * @throws EMFUserError
@@ -2467,7 +2474,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * Loads visible objects of the user roles
-	 *
+	 * 
 	 * @param folderID
 	 * @param profile
 	 *            the profile of the user
@@ -2583,7 +2590,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * Search objects with the features specified
-	 *
+	 * 
 	 * @param valueFilter
 	 *            the value of the filter for the research
 	 * @param typeFilter
@@ -3014,7 +3021,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	/**
 	 * Specially provided method for custom-made output category parameters for the SUNBURST chart.
-	 *
+	 * 
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
 	private List<SbiOutputParameter> loadDriverSpecificOutputParameters(SbiObjects sbiObject, List categories) {
@@ -3039,10 +3046,8 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	}
 
 	/**
-	 * Method used for special chart types, that need exclusion of some of default output parameters.
-	 *
-	 * Example: WORDCLOUD, PARALLEL and CHORD chart types.
-	 *
+	 * Method used for special chart types, that need exclusion of some of default output parameters. Example: WORDCLOUD, PARALLEL and CHORD chart types.
+	 * 
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
 	private List<SbiOutputParameter> loadDriverSpecificOutputParameters(SbiObjects sbiObject, String specificChartType) {
