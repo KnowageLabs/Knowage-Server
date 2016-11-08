@@ -155,6 +155,9 @@ public class CrossTabHTMLSerializer {
 			}
 
 			int levels = crossTab.getRowsRoot().getDistanceFromLeaves();
+			if (crossTab.isMeasureOnRow()) {
+				levels--;
+			}
 			for (int i = 0; i < levels; i++) {
 				List<Node> levelNodes = crossTab.getRowsRoot().getLevel(i + 1);
 				int counter = 0;
@@ -259,9 +262,25 @@ public class CrossTabHTMLSerializer {
 		SourceBean table = new SourceBean(TABLE_TAG);
 		String[][] data = crossTab.getDataMatrix();
 
+		List<SourceBean> measureHeaders = new ArrayList<SourceBean>();
+		if (crossTab.isMeasureOnRow()) {
+			for (MeasureInfo measureInfo : crossTab.getMeasures()) {
+				SourceBean aMeasureHeader = new SourceBean(COLUMN_TAG);
+				aMeasureHeader.setAttribute(CLASS_ATTRIBUTE, MEMBER_CLASS);
+				aMeasureHeader.setCharacters(measureInfo.getName());
+				measureHeaders.add(aMeasureHeader);
+			}
+		}
+
 		MeasureFormatter measureFormatter = new MeasureFormatter(crossTab);
+		int measureHeaderSize = measureHeaders.size();
 		for (int i = 0; i < data.length; i++) {
 			SourceBean aRow = new SourceBean(ROW_TAG);
+
+			if (crossTab.isMeasureOnRow()) {
+				aRow.setAttribute(measureHeaders.get(i % measureHeaderSize));
+			}
+
 			String[] values = data[i];
 			for (int j = 0; j < values.length; j++) {
 				String text = values[j];
