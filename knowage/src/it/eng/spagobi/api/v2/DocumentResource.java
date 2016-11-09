@@ -167,6 +167,20 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 
 	@SuppressWarnings("unchecked")
 	@GET
+	@Path("docName/{id}")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String getDocByDocumentId(@PathParam("id") Integer id) {
+		try {
+			BIObject biObj = DAOFactory.getBIObjectDAO().loadBIObjectById(id);
+			return JsonConverter.objectToJson(biObj, biObj.getClass()); //
+		} catch (EMFUserError e) {
+			logger.error("Error while try to retrieve document by document id [" + id + "]", e);
+			throw new SpagoBIRuntimeException("Error while try to retrieve document by document id [" + id + "]", e);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@GET
 	@Path("/{id}/roles")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getRolesByDocumentId(@PathParam("id") Integer id) {
@@ -383,7 +397,8 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 						content.getContent().writeTo(outputStream);
 						byteContent = outputStream.toByteArray();
 					} catch (NonExecutableDocumentException e) {
-						// Don't do anything: maybe another role of the user gives him permission to execute the document
+						// Don't do anything: maybe another role of the user
+						// gives him permission to execute the document
 					}
 				}
 
@@ -441,7 +456,8 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 
 		String UserFilter = profile.getIsSuperadmin() ? null : profile.getUserId().toString();
 
-		// in glossary, the user with admin role and specific authorization can see all document of the organization
+		// in glossary, the user with admin role and specific authorization can
+		// see all document of the organization
 		if (scope != null && scope.compareTo("GLOSSARY") == 0) {
 			if (UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ADMIN_ROLE_TYPE, new String[] { SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL })) {
 				UserFilter = null;
@@ -451,9 +467,12 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 		List<CriteriaParameter> restritions = new ArrayList<CriteriaParameter>();
 
 		// filter document if is USER profile
-		// Commented out: this kind of logic has to be handled by the "ObjectsAccessVerifier.canSee" utility method (ATHENA-138/SBI-532/SBI-533)
+		// Commented out: this kind of logic has to be handled by the
+		// "ObjectsAccessVerifier.canSee" utility method
+		// (ATHENA-138/SBI-532/SBI-533)
 		/*
-		 * if (UserFilter != null) { restritions.add(new CriteriaParameter("creationUser", UserFilter, Match.EQ)); }
+		 * if (UserFilter != null) { restritions.add(new
+		 * CriteriaParameter("creationUser", UserFilter, Match.EQ)); }
 		 */
 
 		if (excludeType != null) {
@@ -572,7 +591,8 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 						if (!biobjIds.contains(biobjId)) {
 							BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectForDetail(Integer.valueOf(biobjId));
 							if (obj != null) {
-								// hide if user is not admin or devel and visible is false
+								// hide if user is not admin or devel and
+								// visible is false
 								if (!obj.isVisible() && !profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)
 										&& !profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV)) {
 									continue;
@@ -677,7 +697,9 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 			objects = new ArrayList<BIObject>();
 			// for (BIObject obj : allObjects) {
 			// try {
-			// if (ObjectsAccessVerifier.canSee(obj, profile) && (!isFolderFilterValid || obj.getFunctionalities().contains(functionalityId)))
+			// if (ObjectsAccessVerifier.canSee(obj, profile) &&
+			// (!isFolderFilterValid ||
+			// obj.getFunctionalities().contains(functionalityId)))
 			// objects.add(obj);
 			// } catch (EMFInternalError e) {
 			// }
