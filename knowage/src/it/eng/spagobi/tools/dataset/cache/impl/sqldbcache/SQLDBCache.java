@@ -39,6 +39,8 @@ import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
+import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
+import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
@@ -491,6 +493,7 @@ public class SQLDBCache implements ICache {
 								String aliasName = projection.getAliasName();
 								boolean hasAlias = aliasName != null && !aliasName.isEmpty();
 								String aggregateFunction = projection.getAggregateFunction();
+								IAggregationFunction aggregationFunction = AggregationFunctions.get(aggregateFunction);
 
 								if (columnName.contains(":")) {
 									if (hasAlias) {
@@ -519,8 +522,8 @@ public class SQLDBCache implements ICache {
 								 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 								 */
 								aliasName = AbstractJDBCDataset.encapsulateColumnName(aliasName, dataSource);
-								if ((aggregateFunction != null) && (!aggregateFunction.isEmpty()) && (columnName != "*")) {
-									columnName = aggregateFunction + "(" + columnName + ")";
+								if ((aggregationFunction != null) && (columnName != "*")) {
+									columnName = aggregationFunction.apply(columnName);
 									if (hasAlias) {
 										// https://production.eng.it/jira/browse/KNOWAGE-149
 										// This variable is used for the order clause

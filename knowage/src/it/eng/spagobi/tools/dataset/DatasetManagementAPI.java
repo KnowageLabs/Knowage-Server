@@ -1688,6 +1688,7 @@ public class DatasetManagementAPI {
 			for (ProjectionCriteria projection : projections) {
 				String columnName = projection.getColumnName();
 				String aggregateFunction = projection.getAggregateFunction();
+				IAggregationFunction aggregationFunction = AggregationFunctions.get(aggregateFunction);
 				String aliasName = projection.getAliasName();
 				boolean hasAlias = aliasName != null && !aliasName.isEmpty();
 				String orderType = projection.getOrderType().toUpperCase();
@@ -1708,9 +1709,12 @@ public class DatasetManagementAPI {
 				if (columnName.contains(AbstractDataBase.STANDARD_ALIAS_DELIMITER)) {
 					// this is a calculated field!
 					if (isRealtime) {
+						if (aggregationFunction == null) {
+							throw new SpagoBIRuntimeException("Projection [" + columnName + "] requires an aggregation function");
+						}
 						Set<String> basicColumns = getBasicColumnsFromCalculatedColumn(columnName);
 						for (String basicColumn : basicColumns) {
-							aggregatedBasicColumns.add(aggregateFunction + "(" + basicColumn + ")");
+							aggregatedBasicColumns.add(aggregationFunction.apply(basicColumn));
 						}
 					} else {
 						columnName = AbstractJDBCDataset.substituteStandardWithDatasourceDelimiter(columnName, dataSource);
@@ -1723,7 +1727,7 @@ public class DatasetManagementAPI {
 
 				aliasName = AbstractJDBCDataset.encapsulateColumnName(aliasName, dataSource);
 				if (aggregateFunction != null && !aggregateFunction.isEmpty() && columnName != "*") {
-					columnName = aggregateFunction + "(" + columnName + ")";
+					columnName = aggregationFunction.apply(columnName);
 					if (hasAlias) {
 						if (orderType != null && !orderType.isEmpty()) {
 							orderColumns.add(columnName + " " + orderType);
