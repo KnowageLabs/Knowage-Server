@@ -48,7 +48,7 @@
 								</md-input-container>
 								
 								<md-input-container flex class="md-block" class="small counter">
-									<label>{{translate.load('sbi.cockpit.table.chartlength')}}</label>
+									<label>{{translate.load('sbi.cockpit.table.chartlength')}}(px)</label>
 									<input class="input_class" type="number" ng-model="selectedColumn.chartLength" required> 
 								</md-input-container>
 								
@@ -59,33 +59,59 @@
 								
 					       </div>			
 							
-						   <md-input-container class="md-block" flex>
-			          				<label>{{translate.load('sbi.cockpit.table.colorthreshold')}}</label>
-									<input class="input_class" type="number" ng-model="selectedColumn.colorThreshold" required> 
-			        	   </md-input-container> 
-			        	   </div>
+  
+			        	</div>
 		       
 		       			<md-card>
 			       			<md-toolbar class="ternaryToolbar ">
 						      <div class="md-toolbar-tools">
 						        <h2>
-						          <span>Treshold</span>
+						          <span>{{translate.load('sbi.cockpit.table.threshold')}}</span>
 						        </h2>
-					        </div>
+					          </div>
 					       </md-toolbar>
-		       				<md-card-content>
-					       <angular-table flex
-					    				id="thresholdsTable" 
-										ng-show=true
-										ng-model="thresholdsList"
-										highlights-selected-item=true
-										no-pagination=true
-										columns="tableColumns"		
-										scope-functions="selectedColumn.scopeFunc"	
-							>						
-							</angular-table>
+		       				<md-card-content layout-row>
+						       <angular-table flex
+						    				id="thresholdsTable" 
+											ng-show=true
+											ng-model="thresholdsList"
+											highlights-selected-item=true
+											no-pagination=true
+											columns="tableColumns"		
+											scope-functions="selectedColumn.scopeFunc"	
+								>						
+								</angular-table>
+								
+								<div flex>
+								{{translate.load('sbi.cockpit.table.backgroundthresholds')}}
+									<div ng-repeat="i in [0, 1, 2]"  layout="row">
+											
+											<md-input-container flex class="md-block" flex="33%"> 
+												<label>{{translate.load('sbi.cockpit.table.condition')}}</label>
+												<md-select aria-label="aria-label" ng-model="selectedColumn.colorThresholdOptions.condition[i]">
+													<md-option ng-repeat="c in conditions" value="{{c}}">{{c}}</md-option>
+												</md-select>
+											</md-input-container>
+											
+											<md-input-container flex class="md-block"  ng-if="selectedColumn.colorThresholdOptions.condition[i]!='none'" class="small counter">
+												<label>{{translate.load('sbi.cockpit.table.threshold')}}</label>
+												<input class="input_class" type="number" ng-model="selectedColumn.colorThresholdOptions.conditionValue[i]" required> 
+											</md-input-container>
+											
+											<md-input-container flex class="md-block" ng-if="selectedColumn.colorThresholdOptions.condition[i]!='none'"> 
+												<label>{{translate.load('sbi.cockpit.table.backgroundcolor')}}</label>
+												<color-picker options="colorPickerProperty" ng-model="selectedColumn.colorThresholdOptions.color[i]"></color-picker>
+											</md-input-container>
+
+
+									</div>
+								
+								</div>
+							
+							
+							
 							</md-card-content>
-							</md-card>
+						</md-card>
 							
 					  </div> 
 					        

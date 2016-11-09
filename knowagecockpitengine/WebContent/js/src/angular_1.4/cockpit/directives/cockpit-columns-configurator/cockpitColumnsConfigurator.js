@@ -379,6 +379,18 @@ function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,model,s
 	$scope.fontWeight = ['normal','bold','bolder','lighter','number','initial','inherit'];
 	$scope.colorPickerProperty={placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb'}
 	$scope.visTypes=['Chart','Text','Chart & Text', 'Text & Chart'];
+	
+	if(!$scope.selectedColumn.hasOwnProperty('colorThresholdOptions'))
+	{	
+		$scope.selectedColumn.colorThresholdOptions={};
+		$scope.selectedColumn.colorThresholdOptions.condition=[];
+		for(var i=0;i<3;i++)
+		{
+			$scope.selectedColumn.colorThresholdOptions.condition[i]="none";
+		}
+	}	
+	
+	
 	if($scope.selectedColumn.visType==undefined)
 	{
 		$scope.selectedColumn.visType="Text";

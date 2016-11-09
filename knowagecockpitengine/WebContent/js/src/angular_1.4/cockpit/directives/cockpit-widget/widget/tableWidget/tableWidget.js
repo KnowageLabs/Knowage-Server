@@ -65,7 +65,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				scope.bgColor=scope.color;
 				if(scope.perc>100){ scope.perc=100;}
 				else if(scope.perc<0){ scope.perc=0;}
-				scope.linearStyle={ 'background-color': scope.bgColor , 'width': scope.perc};
+				scope.linearStyle={ 'background-color': scope.bgColor , 'width': scope.perc, 'height':'5px'};
 				
 			}
 		}
@@ -331,10 +331,40 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								var suffix="";
 								var valueWithoutPrefixAndSuffix=$scope.freeValueFromPrefixAndSuffix(value,currentColumn);
 								
-								var htm="<div layout='row' layout-align='start center'>";
-							
+								var htm="<div layout='row' layout-align='start center'>"; //default
+
 								
+								//find the highest index with != none condition 
+								if(currentColumn.hasOwnProperty('colorThresholdOptions'))
+								{
+									for(var i=0; i<currentColumn.colorThresholdOptions.condition.length;i++) // display only the first alert found (condition respected)
+									{	
+										if(currentColumn.colorThresholdOptions.condition[i]!="none")
+										{
+											
+											if(currentColumn.colorThresholdOptions.condition[i]=="<" && value<currentColumn.colorThresholdOptions.conditionValue[i])
+											{
+												htm="<div layout='row' style='background-color:"+currentColumn.colorThresholdOptions.color[i] +"' layout-align='start center'>";
+												break;
+											}
+											else if(currentColumn.colorThresholdOptions.condition[i]==">" && value>currentColumn.colorThresholdOptions.conditionValue[i])
+											{
+												htm="<div layout='row' style='background-color:"+currentColumn.colorThresholdOptions.color[i] +"' layout-align='start center'>";
+												break;
+											}
+											else if(currentColumn.colorThresholdOptions.condition[i]=="=" && value==currentColumn.colorThresholdOptions.conditionValue[i])
+											{
+												htm="<div layout='row' style='background-color:"+currentColumn.colorThresholdOptions.color[i] +"' layout-align='start center'>";
+												break;
+											}
+											
+										}	
+
+									}						
+								}	
 								
+
+												
 								if(!currentColumn.hasOwnProperty("visType") || currentColumn.visType=='Text')
 								{										
 									htm="<div>"+value+"</div>"	
@@ -346,21 +376,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									var minValue=currentColumn.minValue;
 									var maxValue=currentColumn.maxValue;
 									
-									//barValue=calculateScaleValue(minValue,maxValue,value);
 									barValue=calculateScaleValue(minValue,maxValue,valueWithoutPrefixAndSuffix);
 									
 									if(currentColumn.visType=='Chart')
 									{	
 
-//										if(barValue>100 || barValue<0)
-//										{
-//											htm=htm+"<div> Out of range </div> &nbsp;";
-//										}
-//										else
-//										{	
-//											htm=htm+"<md-progress-linear flex style='width:"+currentColumn.chartLength +"px "+" color:"+currentColumn.chartColor +"' md-mode='determinate' value="+barValue+"></md-progress-linear>"
-//
-//										}	
+
 										htm=htm+" <md-progress-linear-custom flex  style='width:"+currentColumn.chartLength +"px' value="+barValue+" color=\""+  currentColumn.chartColor +"\"> </md-progress-linear-custom>"
 									}	
 									else if(currentColumn.visType=='Text & Chart')
@@ -372,9 +393,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										}
 										else
 										{
-//											var htm="<div>"+value+"</div>"+"<md-progress-linear md-mode='determinate' value="+barValue+"></md-progress-linear>"
-											////htm=htm+" <div flex>"+value+"</div> &nbsp; <md-progress-linear flex style='width:"+currentColumn.chartLength +"px"+" color:"+currentColumn.chartColor +"' md-mode='determinate' value="+barValue+" alt="+value+" title="+value+">  </md-progress-linear>"
-											//htm=htm+" <div>"+value+" &nbsp <md-progress-linear-custom flex  style='width:"+currentColumn.chartLength +"px' value="+barValue+" color='red'> </md-progress-linear-custom>"
+
 											htm=htm+"<div>"+value+"</div> &nbsp;  <md-progress-linear-custom flex  style='width:"+currentColumn.chartLength +"px' value="+barValue+" color=\""+  currentColumn.chartColor +"\"> </md-progress-linear-custom>"
 
 										}	
@@ -387,7 +406,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										}
 										else
 										{
-											//htm=htm+"<md-progress-linear flex style='width:"+currentColumn.chartLength+"px"+" color:"+currentColumn.chartColor +"' md-mode='determinate' value="+barValue+"></md-progress-linear> &nbsp;"+"<div>"+value+"</div>"
 											htm=htm+"<md-progress-linear-custom flex  style='width:"+currentColumn.chartLength +"px' value="+barValue+" color=\""+  currentColumn.chartColor +"\"> </md-progress-linear-custom> &nbsp; <div>"+value+"</div>"
 											
 										}	
@@ -408,7 +426,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 												}
 												else 
 												{
-													//htm=htm+"&nbsp; <div style='height:\"24px\"; width:\"24px\";'> </div>";
 													htm=htm+"&nbsp; <md-icon md-font-icon='fa fa-fw'></md-icon>"; //blank icon
 												}	
 											}
@@ -420,7 +437,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 												}
 												else 
 												{
-													//htm=htm+"&nbsp; <div style='height:\"24px\"; width:\"24px\";'> </div>";
 													htm=htm+"&nbsp; <md-icon md-font-icon='fa fa-fw'></md-icon>";
 												}	
 											}
@@ -444,7 +460,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									}	
 								}	
 								
-								//document.getElementsByClassName("angularTableContentBox").style("width","100%");
 								return htm+"</div>";									
 
 						}
