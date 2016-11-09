@@ -1,5 +1,7 @@
 package it.eng.spagobi.engines.datamining.common;
 
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.engines.datamining.bo.DataMiningResult;
@@ -253,7 +255,53 @@ public class FunctionExecutionUtils {
 	}
 
 	public static void adjustBodyContentsForRemoteExecution(String body) {
-		// TODO Auto-generated method stub
 		// TODO Check if there are datasets and serialize them as files....
+	}
+
+	public static String getBodyRequestForRemoteExecution(SbiCatalogFunction function, UserProfile userProfile) throws JSONException, EMFUserError {
+		JSONArray body = new JSONArray();
+
+		JSONObject datasetsIn = new JSONObject();
+		datasetsIn.put("type", DataMiningConstants.DATASETS_IN);
+		JSONObject items = new JSONObject();
+		Set<SbiFunctionInputDataset> datasets = function.getSbiFunctionInputDatasets();
+		for (SbiFunctionInputDataset dataset : datasets) {
+			IDataSetDAO dataSetDAO = DAOFactory.getDataSetDAO();
+			dataSetDAO.setUserProfile(userProfile);
+			IDataSet ds = dataSetDAO.loadDataSetById(dataset.getId().getDsId());
+			if (ds == null) {
+				throw new SpagoBIRuntimeException("Impossible to find dataset with id [" + dataset.getId().getDsId() + "].");
+			}
+			String label = ds.getLabel();
+			items.put(label, label);
+		}
+		datasetsIn.put("items", items);
+
+		JSONObject variablesIn = new JSONObject();
+		variablesIn.put("type", DataMiningConstants.VARIABLES_IN);
+		items = new JSONObject();
+		Set<SbiFunctionInputVariable> variables = function.getSbiFunctionInputVariables();
+		for (SbiFunctionInputVariable variable : variables) {
+			items.put(variable.getId().getVarName(), variable.getVarValue());
+		}
+		variablesIn.put("items", items);
+
+		JSONObject filesIn = new JSONObject();
+		filesIn.put("type", DataMiningConstants.FILES_IN);
+		items = new JSONObject();
+		Set<SbiFunctionInputFile> files = function.getSbiFunctionInputFiles();
+		for (SbiFunctionInputFile file : files) {
+			JSONObject jsonFile = new JSONObject();
+			jsonFile.put("filename", file.getId().getFileName());
+			jsonFile.put("base64", new String(file.getContent()));
+			items.put(file.getAlias(), jsonFile);
+		}
+		filesIn.put("items", items);
+
+		body.put(datasetsIn);
+		body.put(variablesIn);
+		body.put(filesIn);
+
+		return body.toString();
 	}
 }

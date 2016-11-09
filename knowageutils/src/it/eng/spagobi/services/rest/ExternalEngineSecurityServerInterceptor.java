@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -28,6 +28,7 @@ import java.lang.reflect.Method;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
 
+import org.apache.axis.encoding.Base64;
 import org.apache.log4j.Logger;
 import org.jboss.resteasy.core.Headers;
 import org.jboss.resteasy.core.ServerResponse;
@@ -55,7 +56,27 @@ public class ExternalEngineSecurityServerInterceptor extends AbstractSecuritySer
 
 	@Override
 	protected UserProfile authenticateUser() {
-		return null;
+		UserProfile profile = null;
+
+		logger.trace("IN");
+
+		try {
+			String auto = servletRequest.getHeader("Authorization");
+			int position = auto.indexOf("Direct");
+			if (position > -1 && position < 5) {// Direct stay at the beginning of the header
+				String encodedUser = auto.replaceFirst("Direct ", "");
+				byte[] decodedBytes = Base64.decode(encodedUser);
+				String userId = new String(decodedBytes, "UTF-8");
+				SecurityServiceProxy proxy = new SecurityServiceProxy(userId, servletRequest.getSession());
+				profile = (UserProfile) proxy.getUserProfile();
+			}
+		} catch (Throwable t) {
+			logger.trace("Problem during authentication, returning null", t);
+		} finally {
+			logger.trace("OUT");
+		}
+
+		return profile;
 	}
 
 	@Override
@@ -105,6 +126,7 @@ public class ExternalEngineSecurityServerInterceptor extends AbstractSecuritySer
 		}
 	}
 
+	@Override
 	public boolean accept(Class arg0, Method arg1) {
 		// TODO Auto-generated method stub
 		return true;

@@ -11,6 +11,7 @@ import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
 import it.eng.spagobi.engines.datamining.model.Output;
 import it.eng.spagobi.engines.datamining.template.DataMiningTemplate;
 import it.eng.spagobi.functions.metadata.SbiCatalogFunction;
+import it.eng.spagobi.security.hmacfilter.HMACSecurityException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 import it.eng.spagobi.utilities.rest.RestUtilities.HttpMethod;
@@ -58,7 +59,7 @@ public class FunctionExecutor {
 		return results;
 	}
 
-	private static JSONArray getRemoteServiceResponse(String url, String requestBody) throws HttpException, IOException, JSONException {
+	private static JSONArray getRemoteServiceResponse(String url, String requestBody) throws HttpException, IOException, JSONException, HMACSecurityException {
 		Map<String, String> requestHeaders = new HashMap<String, String>(2);
 		String[][] headers = new String[][] { { "Accept", "application/json" }, { "Content-Type", "application/json" } };
 		for (String[] header : headers) {
@@ -82,6 +83,10 @@ public class FunctionExecutor {
 			logger.debug("Checking if the function is remotely located...");
 			if (function.isRemote()) {
 				logger.debug("The function is remotely located... Request of execution will be forwarded to [" + function.getUrl() + "]");
+				if (body == null || body.isEmpty()) {
+					logger.debug("Remote request without user data. Building body by using sample data...");
+					body = FunctionExecutionUtils.getBodyRequestForRemoteExecution(function, userProfile);
+				}
 				FunctionExecutionUtils.adjustBodyContentsForRemoteExecution(body);
 				JSONArray remoteResponse = getRemoteServiceResponse(function.getUrl(), body);
 				if (remoteResponse != null && FunctionExecutionUtils.isResponseCompliant(function, remoteResponse)) {
@@ -104,7 +109,6 @@ public class FunctionExecutor {
 				serviceResponse = FunctionExecutionUtils.buildDataminingResponse(dataminingExecutionResults);
 			}
 		} catch (Exception e) {
-			logger.error("Error starting the Data Mining engine or getting datamining engine execution results!", e);
 			throw new SpagoBIRuntimeException("Error starting the Data Mining engine or getting datamining engine execution results!", e);
 		} finally {
 			logger.debug("OUT");

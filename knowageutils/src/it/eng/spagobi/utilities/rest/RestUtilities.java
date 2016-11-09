@@ -17,6 +17,9 @@
  */
 package it.eng.spagobi.utilities.rest;
 
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.security.hmacfilter.HMACFilterAuthenticationProvider;
+import it.eng.spagobi.security.hmacfilter.HMACSecurityException;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.filters.XSSRequestWrapper;
@@ -31,6 +34,7 @@ import java.net.ProxySelector;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -58,7 +62,7 @@ import org.json.JSONObject;
 
 public class RestUtilities {
 
-	private final static Logger log = Logger.getLogger(RestUtilities.class);
+	private final static Logger logger = Logger.getLogger(RestUtilities.class);
 	private static final String DEFAULT_CHARSET = "UTF-8";
 	public static final String CONTENT_TYPE = "Content-Type";
 
@@ -237,13 +241,18 @@ public class RestUtilities {
 	}
 
 	public static Response makeRequest(HttpMethod httpMethod, String address, Map<String, String> requestHeaders, String requestBody) throws HttpException,
-			IOException {
+			IOException, HMACSecurityException {
 		return makeRequest(httpMethod, address, requestHeaders, requestBody, null);
+	}
+
+	public static Response makeRequest(HttpMethod httpMethod, String address, Map<String, String> requestHeaders, String requestBody,
+			List<NameValuePair> queryParams) throws HttpException, IOException, HMACSecurityException {
+		return makeRequest(httpMethod, address, requestHeaders, requestBody, null, false);
 	}
 
 	@SuppressWarnings("deprecation")
 	public static Response makeRequest(HttpMethod httpMethod, String address, Map<String, String> requestHeaders, String requestBody,
-			List<NameValuePair> queryParams) throws HttpException, IOException {
+			List<NameValuePair> queryParams, boolean authenticate) throws HttpException, IOException, HMACSecurityException {
 		HttpMethodBase method = getMethod(httpMethod, address);
 		if (requestHeaders != null) {
 			for (Entry<String, String> entry : requestHeaders.entrySet()) {
@@ -261,6 +270,17 @@ public class RestUtilities {
 			EntityEnclosingMethod eem = (EntityEnclosingMethod) method;
 			// charset of request currently not used
 			eem.setRequestBody(requestBody);
+		}
+
+		if (authenticate) {
+			String hmacKey = SpagoBIUtilities.getHmacKey();
+			if (hmacKey != null && !hmacKey.isEmpty()) {
+				logger.debug("HMAC key found with value [" + hmacKey + "]. Requests will be authenticated.");
+				HMACFilterAuthenticationProvider authenticationProvider = new HMACFilterAuthenticationProvider(hmacKey);
+				authenticationProvider.provideAuthentication(method, requestBody);
+			} else {
+				throw new SpagoBIRuntimeException("The request need to be authenticated, but hmacKey wasn't found.");
+			}
 		}
 
 		try {
@@ -285,7 +305,7 @@ public class RestUtilities {
 		try {
 			proxyHost = System.getProperty("http.proxyHost");
 		} catch (SecurityException e) {
-			log.warn("Proxy can't be retrieved from java configuration", e);
+			logger.warn("Proxy can't be retrieved from java configuration", e);
 		}
 		if (proxyHost == null) {
 			return;
@@ -342,6 +362,17 @@ public class RestUtilities {
 	public static void setProxy(String address, int port) {
 		setProxyAddress(address);
 		setProxyPort(port);
+	}
+
+	public static Map<String, String> toHeaders(HttpServletRequest request) {
+		Map<String, String> headers = new HashMap<>();
+		Enumeration<String> headerEnumerator = request.getHeaderNames();
+		if (headerEnumerator.hasMoreElements()) {
+			String key = headerEnumerator.nextElement();
+			String value = request.getHeader(key);
+			headers.put(key, value);
+		}
+		return headers;
 	}
 
 }

@@ -34,5 +34,7 @@
 	<DataSetServiceProxy_URL>/services/DataSetService</DataSetServiceProxy_URL>	
 	<ArtifactServiceProxy_URL>/services/ArtifactService</ArtifactServiceProxy_URL>
 	
+	<HMAC_JNDI_LOOKUP>java:/comp/env/hmacKey</HMAC_JNDI_LOOKUP>
+	
 	
 </ENGINE-CONFIGURATION>

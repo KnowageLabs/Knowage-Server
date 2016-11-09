@@ -26,15 +26,15 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-@Path("/1.0/function")
+@Path("/1.0/functions-catalog")
 @ManageAuthorization
-public class FunctionResource extends AbstractDataMiningEngineResource {
+public class FunctionExecutionResource extends AbstractDataMiningEngineResource {
 
-	public static transient Logger logger = Logger.getLogger(FunctionResource.class);
+	public static transient Logger logger = Logger.getLogger(FunctionExecutionResource.class);
 
 	// @formatter:off
 	/**
-	 * @api {get} /1.0/function/execute-sample/:id Execute function by ID with sample data
+	 * @api {get} /1.0/functions-catalog/execute-sample/:id Execute function by ID with sample data
 	 * @apiName GET_executeSampleCatalogFunctionById
 	 * @apiGroup Functions
 	 *
@@ -139,7 +139,7 @@ public class FunctionResource extends AbstractDataMiningEngineResource {
 
 	// @formatter:off
 		/**
-		 * @api {get} /1.0/function/execute-sample?label=:label Execute function by label with sample data
+		 * @api {get} /1.0/functions-catalog/execute-sample?label=:label Execute function by label with sample data
 		 * @apiName GET_executeSampleCatalogFunctionByLabel
 		 * @apiGroup Functions
 		 *
@@ -155,7 +155,7 @@ public class FunctionResource extends AbstractDataMiningEngineResource {
 		 * This service can be used to execute a function (local or remote) specifying its label.
 		 * The label is usually known, but can be obtained by querying the function catalog through its GUI or APIs.
 		 *
-		 * Please refer to the service GET /1.0/function/execute-sample/:id to get more information about the usage.
+		 * Please refer to the service GET /1.0/functions-catalog/execute-sample/:id to get more information about the usage.
 		 *
 		 * @apiParam {String} label Function label.
 		 *
@@ -212,7 +212,7 @@ public class FunctionResource extends AbstractDataMiningEngineResource {
 
 	// @formatter:off
 		/**
-		 * @api {POST} /1.0/function/execute/:id Execute function by ID with provided data
+		 * @api {POST} /1.0/functions-catalog/execute/:id Execute function by ID with provided data
 		 * @apiName POST_executeCatalogFunctionById
 		 * @apiGroup Functions
 		 *
@@ -334,7 +334,7 @@ public class FunctionResource extends AbstractDataMiningEngineResource {
 
 	// @formatter:off
 			/**
-			 * @api {POST} /1.0/function/execute?label=:label Execute function by label with provided data
+			 * @api {POST} /1.0/functions-catalog/execute?label=:label Execute function by label with provided data
 			 * @apiName POST_executeCatalogFunctionByLabel
 			 * @apiGroup Functions
 			 *
@@ -350,7 +350,7 @@ public class FunctionResource extends AbstractDataMiningEngineResource {
 			 * This service can be used to execute a function (local or remote) specifying its label and providing specific data.
 			 * The label is usually known, but can be obtained by querying the function catalog through its GUI or APIs.
 			 *
-			 * Please refer to the service GET /1.0/function/execute/:id to get more information about the usage.
+			 * Please refer to the service GET /1.0/functions-catalog/execute/:id to get more information about the usage.
 			 *
 			 * @apiParam {String} label Function label.
 			 * @apiParam {json} function Function detail.

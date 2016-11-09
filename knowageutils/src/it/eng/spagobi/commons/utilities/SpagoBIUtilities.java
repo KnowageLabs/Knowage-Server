@@ -23,6 +23,8 @@ import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.security.hmacfilter.HMACUtils;
+import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -672,6 +674,16 @@ public class SpagoBIUtilities {
 		String path = configSingleton.getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
 		String resourcePath = SpagoBIUtilities.readJndiResource(path);
 		return resourcePath;
+	}
+
+	public static String getHmacKey() {
+		String resourceHmac = EnginConf.getInstance().getHmacKey();
+		if (resourceHmac == null || resourceHmac.isEmpty()) {
+			SingletonConfig configSingleton = SingletonConfig.getInstance();
+			String hmac = configSingleton.getConfigValue(HMACUtils.HMAC_JNDI_LOOKUP);
+			resourceHmac = SpagoBIUtilities.readJndiResource(hmac);
+		}
+		return resourceHmac;
 	}
 
 	public static String getImageAsBase64(String path, String type) throws IOException {

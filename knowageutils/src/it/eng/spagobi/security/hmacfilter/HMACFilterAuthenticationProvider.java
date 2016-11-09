@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -25,17 +25,21 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.core.MultivaluedMap;
 
+import org.apache.commons.httpclient.Header;
+import org.apache.commons.httpclient.HttpMethodBase;
 import org.jboss.resteasy.client.ClientRequest;
 
 /**
  * Provide client HMAC authentication for {@link HMACFilter}.
- * 
+ *
  * @author fabrizio
- * 
+ *
  */
 public class HMACFilterAuthenticationProvider {
 
@@ -56,7 +60,7 @@ public class HMACFilterAuthenticationProvider {
 
 	/**
 	 * For REST Easy {@link ClientRequest}
-	 * 
+	 *
 	 * @param req
 	 * @throws HMACSecurityException
 	 */
@@ -76,8 +80,33 @@ public class HMACFilterAuthenticationProvider {
 		req.header(HMACUtils.HMAC_SIGNATURE_HEADER, signature);
 	}
 
+	/**
+	 *
+	 * @param method
+	 * @throws HMACSecurityException
+	 */
+	public void provideAuthentication(HttpMethodBase method, String body) throws HMACSecurityException {
+
+		String token = validator.generateToken();
+		Assert.assertNotNull(token, "token");
+		String signature;
+		try {
+			signature = getSignature(method, body, token);
+		} catch (Exception e) {
+			throw new HMACSecurityException("Problems while signing the request", e);
+		}
+
+		method.addRequestHeader(HMACUtils.HMAC_TOKEN_HEADER, token);
+		method.addRequestHeader(HMACUtils.HMAC_SIGNATURE_HEADER, signature);
+	}
+
 	private String getSignature(ClientRequest req, String token) throws IOException, Exception {
-		String res = HMACUtils.sign(getBody(req),getQueryPath(req),  getParamsString(req), getHeaders(req), token, key);
+		String res = HMACUtils.sign(getBody(req), getQueryPath(req), getParamsString(req), getHeaders(req), token, key);
+		return res;
+	}
+
+	private String getSignature(HttpMethodBase method, String body, String token) throws IOException, Exception {
+		String res = HMACUtils.sign(body, getQueryPath(method), getParamsString(method), getHeaders(method), token, key);
 		return res;
 	}
 
@@ -128,5 +157,32 @@ public class HMACFilterAuthenticationProvider {
 		String uri = req.getUri();
 		URL url = new URL(uri);
 		return url.getPath();
+	}
+
+	private static String getHeaders(HttpMethodBase method) {
+		Header[] headersArray = method.getRequestHeaders();
+		Map<String, String> headers = new HashMap<>(headersArray.length);
+		for (int i = 0; i < headersArray.length; i++) { // only 1 value admitted for each header
+			headers.put(headersArray[i].getName(), headersArray[i].getValue());
+		}
+
+		StringBuilder res = new StringBuilder();
+		for (String name : HMACUtils.HEADERS_SIGNED) {
+			String value = headers.get(name); // only 1 value admitted
+			if (value != null) {
+				res.append(name);
+				res.append(value);
+			}
+		}
+		return res.toString();
+	}
+
+	private static String getParamsString(HttpMethodBase method) throws Exception {
+		String queryString = method.getQueryString();
+		return queryString != null ? queryString : "";
+	}
+
+	private static String getQueryPath(HttpMethodBase method) throws Exception {
+		return method.getPath();
 	}
 }

@@ -30,6 +30,7 @@ import it.eng.spagobi.services.proxy.DataSourceServiceProxy;
 import it.eng.spagobi.services.proxy.MetamodelServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.ParametersDecoder;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.AbstractEngineAction;
@@ -188,7 +189,8 @@ public abstract class AbstractEngineRestService extends AbstractRestService {
 	}
 
 	public UserProfile getUserProfile() {
-		return (UserProfile) getAttributeFromHttpSession(IEngUserProfile.ENG_USER_PROFILE);
+		UserProfile profile = (UserProfile) getAttributeFromHttpSession(IEngUserProfile.ENG_USER_PROFILE);
+		return profile != null ? profile : UserProfileManager.getProfile();
 	}
 
 	public String getUserId() {

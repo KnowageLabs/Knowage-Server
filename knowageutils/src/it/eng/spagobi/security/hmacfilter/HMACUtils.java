@@ -27,12 +27,13 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author Salvo Lupo
- * 
+ *
  */
 public class HMACUtils {
 
@@ -106,7 +107,7 @@ public class HMACUtils {
 
 	/**
 	 * http://example.com:80/docs/books/tutorial/index.html?name=networking -> /docs/books/tutorial/index.html
-	 * 
+	 *
 	 * @param req
 	 * @return
 	 */
@@ -118,6 +119,19 @@ public class HMACUtils {
 		StringBuilder res = new StringBuilder();
 		for (String header : HEADERS_SIGNED) {
 			String value = req.getHeader(header);
+			if (value == null) {
+				continue;
+			}
+			res.append(header);
+			res.append(value);
+		}
+		return res.toString();
+	}
+
+	public static String getHeadersString(Map<String, String> headers) {
+		StringBuilder res = new StringBuilder();
+		for (String header : HEADERS_SIGNED) {
+			String value = headers.get(header);
 			if (value == null) {
 				continue;
 			}
@@ -139,4 +153,5 @@ public class HMACUtils {
 	public static String getUniqueToken(HttpServletRequest req) {
 		return req.getHeader(HMAC_TOKEN_HEADER);
 	}
+
 }

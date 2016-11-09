@@ -523,13 +523,13 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 	};
 
 	$scope.applyDemoItem = function(item, event) {
-		sbiModule_restServices
-				.alterContextPath("/"+sbiModule_config.dataMiningContextName);
+		//sbiModule_restServices
+		//		.alterContextPath("/"+sbiModule_config.dataMiningContextName);
 		var functionId = item.id;
 
 		$log.info("userId ", $scope.userId);
-		sbiModule_restServices.get("1.0/function/execute-sample",
-				functionId + "/?user_id=" + $scope.userId).success(
+		sbiModule_restServices.get("1.0/functions-catalog/execute-sample",
+				functionId).success(
 				function(results) {
 					$log.info("Execution o function " + functionId
 							+ " started, result:", results);
@@ -952,10 +952,10 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 				
 			logger.info("body: ", body);
 
-			sbiModule_restServices
-					.alterContextPath("/"+sbiModule_config.dataMiningContextName);
-			sbiModule_restServices.post("1.0/function/execute",
-					$scope.functionId + "/?user_id=" + $scope.userId, body)
+			//sbiModule_restServices
+			//		.alterContextPath("/"+sbiModule_config.dataMiningContextName);
+			sbiModule_restServices.post("1.0/functions-catalog/execute",
+					$scope.functionId, body)
 					.success(function(executionResult) {
 						$log.info("Catalog Function executed with post data!!");
 						$log.info("Execution result ", executionResult);
