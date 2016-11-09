@@ -297,9 +297,9 @@ public class DataStore implements IDataStore {
 	}
 
 	@Override
-	public void sortRecords(int fieldIndex, Comparator filedComparator) {
+	public void sortRecords(int fieldIndex, Comparator fieldComparator) {
 		final int fIndex = fieldIndex;
-		final Comparator fComaparator = filedComparator;
+		final Comparator fComparator = fieldComparator;
 		sortRecords(new Comparator() {
 			@Override
 			public int compare(Object o1, Object o2) {
@@ -307,7 +307,7 @@ public class DataStore implements IDataStore {
 				IRecord record2 = (IRecord) o2;
 				IField field1 = record1.getFieldAt(fIndex);
 				IField field2 = record2.getFieldAt(fIndex);
-				return fComaparator.compare(field1, field2);
+				return fComparator.compare(field1, field2);
 			}
 		});
 	}
