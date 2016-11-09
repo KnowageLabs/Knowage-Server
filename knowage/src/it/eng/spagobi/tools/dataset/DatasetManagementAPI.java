@@ -65,6 +65,7 @@ import it.eng.spagobi.tools.scheduler.bo.Trigger;
 import it.eng.spagobi.utilities.Helper;
 import it.eng.spagobi.utilities.cache.CacheItem;
 import it.eng.spagobi.utilities.database.AbstractDataBase;
+import it.eng.spagobi.utilities.database.temporarytable.TemporaryTableManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
 
@@ -73,6 +74,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -417,16 +419,26 @@ public class DatasetManagementAPI {
 
 						String tableName = DataStore.DEFAULT_SCHEMA_NAME + "." + DataStore.DEFAULT_TABLE_NAME;
 						Map<String, String> datasetAlias = getDatasetAlias(dataSet);
+						List<String> orderColumns = new ArrayList<String>();
 
-						String originalQuery = getQueryText(null, tableName, groups, filterCriteriaForMetaModel, projections, null, dataSet, true, datasetAlias);
+						String originalQuery = getQueryText(null, tableName, groups, filterCriteriaForMetaModel, projections, null, dataSet, true,
+								datasetAlias, orderColumns);
+						boolean hasSortingOnCalculatedColumns = checkSortingOnCalculatedColumns(orderColumns);
+
 						IDataStore originalDataStore = dataStore.aggregateAndFilterRecords(originalQuery, -1, -1);
+						if (hasSortingOnCalculatedColumns) {
+							appendCalculatedColumnsToDataStore(projections, datasetAlias, originalDataStore);
+							sortColumnsOnDataStore(orderColumns, originalDataStore);
+						}
 
 						IDataStore pagedDataStore = originalDataStore.paginateRecords(offset, fetchSize);
-						appendCalculatedColumnsToDataStore(projections, datasetAlias, pagedDataStore);
+						if (!hasSortingOnCalculatedColumns) {
+							appendCalculatedColumnsToDataStore(projections, datasetAlias, pagedDataStore);
+						}
 
 						if (summaryRowProjections != null && summaryRowProjections.size() > 0) {
 							String summaryRowQuery = getQueryText(null, tableName, groups, filters, projections, summaryRowProjections, dataSet, true,
-									datasetAlias);
+									datasetAlias, null);
 							IDataStore summaryRowDataStore = originalDataStore.aggregateAndFilterRecords(summaryRowQuery, -1, -1);
 
 							appendSummaryRowToPagedDataStore(projections, summaryRowProjections, pagedDataStore, summaryRowDataStore);
@@ -1313,25 +1325,29 @@ public class DatasetManagementAPI {
 		if (dataStore != null && dataStore.getRecordsCount() < METAMODEL_LIMIT) {
 			String tableName = DataStore.DEFAULT_SCHEMA_NAME + "." + DataStore.DEFAULT_TABLE_NAME;
 			Map<String, String> datasetAlias = getDatasetAlias(dataSet);
+			List<String> orderColumns = new ArrayList<String>();
 
-			String originalQuery = getQueryText(null, tableName, groups, filters, projections, null, dataSet, true, datasetAlias);
+			String originalQuery = getQueryText(null, tableName, groups, filters, projections, null, dataSet, true, datasetAlias, orderColumns);
+			boolean hasSortingOnCalculatedColumns = checkSortingOnCalculatedColumns(orderColumns);
+
+			IDataStore originalDataStore = dataStore.aggregateAndFilterRecords(originalQuery, -1, -1);
+			if (hasSortingOnCalculatedColumns) {
+				appendCalculatedColumnsToDataStore(projections, datasetAlias, originalDataStore);
+				sortColumnsOnDataStore(orderColumns, originalDataStore);
+			}
+
+			IDataStore pagedDataStore = originalDataStore.paginateRecords(offset, fetchSize);
+			if (!hasSortingOnCalculatedColumns) {
+				appendCalculatedColumnsToDataStore(projections, datasetAlias, pagedDataStore);
+			}
 
 			if (summaryRowProjections != null && summaryRowProjections.size() > 0) {
-				IDataStore originalDataStore = dataStore.aggregateAndFilterRecords(originalQuery, -1, -1);
-
-				String pagedQuery = getQueryText(null, tableName, null, null, null, null, dataSet, true, datasetAlias);
-				IDataStore pagedDataStore = originalDataStore.aggregateAndFilterRecords(pagedQuery, offset, fetchSize);
-				appendCalculatedColumnsToDataStore(projections, datasetAlias, pagedDataStore);
-
-				String summaryRowQuery = getQueryText(null, tableName, groups, filters, projections, summaryRowProjections, dataSet, true, datasetAlias);
+				String summaryRowQuery = getQueryText(null, tableName, groups, filters, projections, summaryRowProjections, dataSet, true, datasetAlias, null);
 				IDataStore summaryRowDataStore = originalDataStore.aggregateAndFilterRecords(summaryRowQuery, -1, -1);
 				appendSummaryRowToPagedDataStore(projections, summaryRowProjections, pagedDataStore, summaryRowDataStore);
-
-				dataStore = pagedDataStore;
-			} else {
-				dataStore = dataStore.aggregateAndFilterRecords(originalQuery, offset, fetchSize);
-				appendCalculatedColumnsToDataStore(projections, datasetAlias, dataStore);
 			}
+
+			dataStore = pagedDataStore;
 			dataStore.setCacheDate(new Date());
 		} else {
 			throw new SpagoBIRuntimeException("Impossible to return data: the dataStore is [null], or it returns more than [" + METAMODEL_LIMIT
@@ -1454,6 +1470,61 @@ public class DatasetManagementAPI {
 		}
 	}
 
+	private boolean checkSortingOnCalculatedColumns(List<String> orderColumns) {
+		for (String orderColumn : orderColumns) {
+			if (orderColumn.contains(AbstractDataBase.STANDARD_ALIAS_DELIMITER)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private void sortColumnsOnDataStore(List<String> orderColumns, IDataStore dataStore) {
+		for (int i = orderColumns.size() - 1; i >= 0; i--) {
+			String orderColumn = orderColumns.get(i);
+			String columnName = orderColumn.substring(0, orderColumn.lastIndexOf(' '));
+			final boolean isAscending = orderColumn.endsWith(" ASC");
+
+			int fieldIndex;
+			IMetaData metaData = dataStore.getMetaData();
+			for (fieldIndex = 0; fieldIndex < metaData.getFieldCount(); fieldIndex++) {
+				if (metaData.getFieldMeta(fieldIndex).getName().equals(columnName)) {
+					break;
+				}
+			}
+
+			Comparator<IField> comparator = new Comparator<IField>() {
+				@Override
+				public int compare(IField field1, IField field2) {
+					Comparable<Object> value1 = (Comparable<Object>) field1.getValue();
+					Comparable<Object> value2 = (Comparable<Object>) field2.getValue();
+
+					if (value1 == null && value2 == null) {
+						return 0;
+					}
+					if (isAscending) {
+						if (value1 == null) {
+							return -1;
+						} else if (value2 == null) {
+							return 1;
+						} else {
+							return value1.compareTo(value2);
+						}
+					} else {
+						if (value2 == null) {
+							return -1;
+						} else if (value1 == null) {
+							return 1;
+						} else {
+							return value2.compareTo(value1);
+						}
+					}
+				}
+			};
+			dataStore.sortRecords(fieldIndex, comparator);
+		}
+	}
+
 	public void appendSummaryRowToPagedDataStore(List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections,
 			IDataStore pagedDataStore, IDataStore summaryRowDataStore) {
 		// calc a map for summaryRowProjections -> projections
@@ -1499,11 +1570,12 @@ public class DatasetManagementAPI {
 
 		Map<String, String> datasetAlias = getDatasetAlias(dataSet);
 
-		String query = getQueryText(dataSource, tableName, groups, filters, projections, null, dataSet, false, datasetAlias);
+		String query = getQueryText(dataSource, tableName, groups, filters, projections, null, dataSet, false, datasetAlias, null);
 		IDataStore pagedDataStore = dataSource.executeStatement(query, offset, fetchSize);
 
 		if (summaryRowProjections != null && summaryRowProjections.size() > 0) {
-			String summaryRowQuery = getQueryText(dataSource, tableName, groups, filters, projections, summaryRowProjections, dataSet, false, datasetAlias);
+			String summaryRowQuery = getQueryText(dataSource, tableName, groups, filters, projections, summaryRowProjections, dataSet, false, datasetAlias,
+					null);
 			IDataStore summaryRowDataStore = dataSource.executeStatement(summaryRowQuery, -1, -1);
 			appendSummaryRowToPagedDataStore(projections, summaryRowProjections, pagedDataStore, summaryRowDataStore);
 		}
@@ -1525,7 +1597,7 @@ public class DatasetManagementAPI {
 
 	public String getQueryText(IDataSource dataSource, String tableName, List<GroupCriteria> groups, List<FilterCriteria> filters,
 			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, boolean isRealtime,
-			Map<String, String> datasetAlias) {
+			Map<String, String> datasetAlias, List<String> outputOrderColumns) {
 
 		if (tableName == null || tableName.isEmpty() || (!isRealtime && dataSource == null)) {
 			throw new IllegalArgumentException("Found one or more arguments invalid. Tablename [" + tableName + "] and/or dataSource [" + dataSource
@@ -1536,13 +1608,9 @@ public class DatasetManagementAPI {
 		logger.debug("Build query for persisted dataset [" + label + "] with table name [" + tableName + "]");
 		logger.debug("Loading data from [" + label + "] to gather its metadata...");
 
+		List<String> orderColumns = new ArrayList<String>();
 		String queryText = null;
 		if (summaryRowProjections == null || summaryRowProjections.size() == 0 || !isRealtime) {
-
-			// https://production.eng.it/jira/browse/KNOWAGE-149
-			// This list is used to create the order by clause
-			List<String> orderColumns = new ArrayList<String>();
-
 			SelectBuilder sqlBuilder = new SelectBuilder();
 			sqlBuilder.setWhereOrEnabled(isRealtime);
 			sqlBuilder.from(tableName);
@@ -1552,7 +1620,7 @@ public class DatasetManagementAPI {
 			setColumnsToSelect(dataSource, projections, datasetAlias, sqlBuilder, orderColumns, isRealtime, columnNameWithColonToAliasName);
 			setWhereConditions(dataSource, filters, datasetAlias, sqlBuilder);
 			setGroupbyConditions(dataSource, groups, datasetAlias, sqlBuilder, columnNameWithColonToAliasName);
-			setOrderbyConditions(orderColumns, sqlBuilder);
+			setOrderbyConditions(dataSource, orderColumns, sqlBuilder);
 
 			queryText = sqlBuilder.toString();
 		}
@@ -1594,6 +1662,11 @@ public class DatasetManagementAPI {
 		}
 		logger.debug("Persisted dataset access query is equal to [" + queryText + "]");
 
+		if (outputOrderColumns != null) {
+			outputOrderColumns.clear();
+			outputOrderColumns.addAll(orderColumns);
+		}
+
 		return queryText;
 	}
 
@@ -1617,7 +1690,7 @@ public class DatasetManagementAPI {
 				String aggregateFunction = projection.getAggregateFunction();
 				String aliasName = projection.getAliasName();
 				boolean hasAlias = aliasName != null && !aliasName.isEmpty();
-				String orderType = projection.getOrderType();
+				String orderType = projection.getOrderType().toUpperCase();
 
 				if (columnName.contains(":")) {
 					if (hasAlias) {
@@ -1639,7 +1712,6 @@ public class DatasetManagementAPI {
 						for (String basicColumn : basicColumns) {
 							aggregatedBasicColumns.add(aggregateFunction + "(" + basicColumn + ")");
 						}
-						break;
 					} else {
 						columnName = AbstractJDBCDataset.substituteStandardWithDatasourceDelimiter(columnName, dataSource);
 					}
@@ -1713,13 +1785,13 @@ public class DatasetManagementAPI {
 					}
 				}
 
-				notCalculatedColumns.add(columnName);
-
-				if (hasAlias) {
-					columnName += " AS " + aliasName;
+				if (!columnName.contains(AbstractDataBase.STANDARD_ALIAS_DELIMITER)) {
+					notCalculatedColumns.add(columnName);
+					if (hasAlias) {
+						columnName += " AS " + aliasName;
+					}
+					sqlBuilder.column(columnName);
 				}
-
-				sqlBuilder.column(columnName);
 			}
 
 			if (isOrderColumnPresent) {
@@ -1874,11 +1946,13 @@ public class DatasetManagementAPI {
 		}
 	}
 
-	private void setOrderbyConditions(List<String> orderColumns, SelectBuilder sqlBuilder) {
+	private void setOrderbyConditions(IDataSource dataSource, List<String> orderColumns, SelectBuilder sqlBuilder) {
 		// ORDER BY conditions
 		// https://production.eng.it/jira/browse/KNOWAGE-149
 		for (String orderColumn : orderColumns) {
-			sqlBuilder.orderBy(orderColumn);
+			if (!orderColumn.contains(TemporaryTableManager.getAliasDelimiter(dataSource))) {
+				sqlBuilder.orderBy(orderColumn);
+			}
 		}
 	}
 
