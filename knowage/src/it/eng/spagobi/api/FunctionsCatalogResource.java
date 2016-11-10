@@ -1054,7 +1054,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 
 	// @formatter:off
 		/**
-		 * @api {get} /1.0/function/execute-sample/:id Execute function by ID with sample data
+		 * @api {get} /1.0/function/execute/sample/:id Execute function by ID with sample data
 		 * @apiName GET_executeSampleCatalogFunctionById
 		 * @apiGroup Functions
 		 *
@@ -1132,7 +1132,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 		// @formatter:on
 
 	@GET
-	@Path("/execute-sample/{id}")
+	@Path("/execute/sample/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_USAGE })
 	public String executeSampleCatalogFunctionById(@PathParam("id") int id) {
@@ -1153,7 +1153,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 
 	// @formatter:off
 			/**
-			 * @api {get} /1.0/function/execute-sample?label=:label Execute function by label with sample data
+			 * @api {get} /1.0/function/execute/sample?label=:label Execute function by label with sample data
 			 * @apiName GET_executeSampleCatalogFunctionByLabel
 			 * @apiGroup Functions
 			 *
@@ -1169,7 +1169,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 			 * This service can be used to execute a function (local or remote) specifying its label.
 			 * The label is usually known, but can be obtained by querying the function catalog through its GUI or APIs.
 			 *
-			 * Please refer to the service GET /1.0/function/execute-sample/:id to get more information about the usage.
+			 * Please refer to the service GET /1.0/function/execute/sample/:id to get more information about the usage.
 			 *
 			 * @apiParam {String} label Function label.
 			 *
@@ -1199,7 +1199,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 		// @formatter:on
 
 	@GET
-	@Path("/execute-sample")
+	@Path("/execute/sample")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_USAGE })
 	public String executeSampleCatalogFunctionByLabel(@QueryParam("label") String label) {
@@ -1220,7 +1220,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 
 	// @formatter:off
 			/**
-			 * @api {POST} /1.0/function/execute/:id Execute function by ID with provided data
+			 * @api {POST} /1.0/function/execute/new/:id Execute function by ID with provided data
 			 * @apiName POST_executeCatalogFunctionById
 			 * @apiGroup Functions
 			 *
@@ -1315,7 +1315,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 		// @formatter:on
 
 	@POST
-	@Path("/execute/{id}")
+	@Path("/execute/new/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_USAGE })
 	public String executeCatalogFunctionById(String body, @PathParam("id") int id) {
@@ -1336,7 +1336,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 
 	// @formatter:off
 				/**
-				 * @api {POST} /1.0/function/execute?label=:label Execute function by label with provided data
+				 * @api {POST} /1.0/function/execute/new?label=:label Execute function by label with provided data
 				 * @apiName POST_executeCatalogFunctionByLabel
 				 * @apiGroup Functions
 				 *
@@ -1352,7 +1352,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 				 * This service can be used to execute a function (local or remote) specifying its label and providing specific data.
 				 * The label is usually known, but can be obtained by querying the function catalog through its GUI or APIs.
 				 *
-				 * Please refer to the service GET /1.0/function/execute/:id to get more information about the usage.
+				 * Please refer to the service GET /1.0/function/execute/new/:id to get more information about the usage.
 				 *
 				 * @apiParam {String} label Function label.
 				 * @apiParam {json} function Function detail.
@@ -1400,10 +1400,10 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 		// @formatter:on
 
 	@POST
-	@Path("/execute")
+	@Path("/execute/new")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_USAGE })
-	public String executeCatalogFunctionByLabel(String body, @PathParam("label") String label) {
+	public String executeCatalogFunctionByLabel(String body, @QueryParam("label") String label) {
 		logger.debug("IN");
 		logger.debug("Received request for executing function with label [" + label + "]");
 		Response response;

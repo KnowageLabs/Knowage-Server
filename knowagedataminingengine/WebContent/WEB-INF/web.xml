@@ -28,7 +28,7 @@
 		</filter-class>
 	</filter>
 	
-		<filter>
+	<!-- <filter>
 		<filter-name>HMACFilter</filter-name>
 		<filter-class>it.eng.spagobi.security.hmacfilter.HMACFilter</filter-class>
 		<description>HMAC Filter for authentication. HMAC key is configured in  server.xml and available to all engines thanks to main context.xml</description>
@@ -40,7 +40,7 @@
 		<url-pattern>/restful-services/1.0/functions-catalog/execute</url-pattern>
 		<url-pattern>/restful-services/1.0/functions-catalog/execute-sample/*</url-pattern>
 		<url-pattern>/restful-services/1.0/functions-catalog/execute/*</url-pattern>
-	</filter-mapping>
+	</filter-mapping>-->
 
 <!-- START-CAS 
   <filter>
@@ -137,15 +137,15 @@
  
 	<filter-mapping>
 		<filter-name>EncodingFilter</filter-name>
-		<url-pattern>/restful-services/*</url-pattern>
+		<url-pattern>/restful-services/publish/*</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>EngineCheckSessionFilter</filter-name>
-		<url-pattern>/restful-services/*</url-pattern>
+		<url-pattern>/restful-services/publish/*</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>SpagoBIAccessFilter</filter-name>
-		<url-pattern>/restful-services/*</url-pattern>
+		<url-pattern>/restful-services/publish/*</url-pattern>
 	</filter-mapping>
 	
 	<filter-mapping>
