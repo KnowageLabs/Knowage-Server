@@ -101,17 +101,20 @@
 
   <filter-mapping>
     <filter-name>CAS Authentication Filter</filter-name>
-    <url-pattern>/restful-services/publish/*</url-pattern>
+    <url-pattern>/restful-services/start</url-pattern>
+    <url-pattern>/restful-services/startTest</url-pattern>
   </filter-mapping> 
 
    <filter-mapping>
     <filter-name>CAS Validation Filter</filter-name>
-    <url-pattern>/restful-services/publish/*</url-pattern>
+    <url-pattern>/restful-services/start</url-pattern>
+    <url-pattern>/restful-services/startTest</url-pattern>
   </filter-mapping> 
 
    <filter-mapping>
     <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
-    <url-pattern>/restful-services/publish/*</url-pattern>
+    <url-pattern>/restful-services/start</url-pattern>
+    <url-pattern>/restful-services/startTest</url-pattern>
   </filter-mapping> 
 
   <filter-mapping>
@@ -137,15 +140,18 @@
  
 	<filter-mapping>
 		<filter-name>EncodingFilter</filter-name>
-		<url-pattern>/restful-services/publish/*</url-pattern>
+		<url-pattern>/restful-services/start</url-pattern>
+    <url-pattern>/restful-services/startTest</url-pattern>>
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>EngineCheckSessionFilter</filter-name>
-		<url-pattern>/restful-services/publish/*</url-pattern>
+		<url-pattern>/restful-services/start</url-pattern>
+    <url-pattern>/restful-services/startTest</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>SpagoBIAccessFilter</filter-name>
-		<url-pattern>/restful-services/publish/*</url-pattern>
+		<url-pattern>/restful-services/start</url-pattern>
+    <url-pattern>/restful-services/startTest</url-pattern>
 	</filter-mapping>
 	
 	<filter-mapping>

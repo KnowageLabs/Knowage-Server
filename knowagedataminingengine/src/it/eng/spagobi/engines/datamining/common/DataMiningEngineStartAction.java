@@ -20,6 +20,7 @@ package it.eng.spagobi.engines.datamining.common;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.datamining.DataMiningEngine;
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
@@ -39,6 +40,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 @Path("/")
+@ManageAuthorization
 public class DataMiningEngineStartAction extends AbstractDataMiningEngineResource {
 
 	// http://localhost:8080/SpagoBIDataMiningEngine/restful-services/start
