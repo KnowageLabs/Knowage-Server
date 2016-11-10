@@ -523,12 +523,11 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 	};
 
 	$scope.applyDemoItem = function(item, event) {
-		//sbiModule_restServices
-		//		.alterContextPath("/"+sbiModule_config.dataMiningContextName);
+
 		var functionId = item.id;
 
 		$log.info("userId ", $scope.userId);
-		sbiModule_restServices.get("1.0/functions-catalog/execute-sample",
+		sbiModule_restServices.get("1.0/functions-catalog/execute/sample",
 				functionId).success(
 				function(results) {
 					$log.info("Execution o function " + functionId
@@ -544,8 +543,6 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 					$scope.showTabDialog(results, isDemo);
 
 				});
-		sbiModule_restServices.alterContextPath(sbiModule_config.contextName);
-
 	};
 
 	$scope.applyItem = function(item, event) {
@@ -925,36 +922,22 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		$scope.executeFunction = function() {
 			var body = [];
 
-			var obj = {}, obj2 = {}, obj3 = {}, obj4 = {}, obj5 = {}, obj6 = {};
-			obj.type = "variablesIn";
-			obj.items = $scope.replacingVariableValues;
-			body.push(obj);
+			var variablesIn = {}, datasetsIn = {}, filesIn = {};
+			variablesIn.type = "variablesIn";
+			variablesIn.items = $scope.replacingVariableValues;
+			body.push(variablesIn);
 
-			obj2.type = "datasetsIn";
-			obj2.items = $scope.replacingDatasetList;
-			body.push(obj2);
-
-			obj3.type = "datasetsOut";
-			obj3.items = $scope.replacingDatasetOutLabels;
-			body.push(obj3);
-
-			obj4.type = "textOut";
-			obj4.items = $scope.replacingTextOutLabels;
-			body.push(obj4);
-
-			obj5.type = "imageOut";
-			obj5.items = $scope.replacingImageOutLabels;
-			body.push(obj5);
+			datasetsIn.type = "datasetsIn";
+			datasetsIn.items = $scope.replacingDatasetList;
+			body.push(datasetsIn);
 			
-			obj6.type = "filesIn"
-			obj6.items = $scope.replacingFileList;
-			body.push(obj6);
+			filesIn.type = "filesIn"
+			filesIn.items = $scope.replacingFileList;
+			body.push(filesIn);
 				
 			logger.info("body: ", body);
 
-			//sbiModule_restServices
-			//		.alterContextPath("/"+sbiModule_config.dataMiningContextName);
-			sbiModule_restServices.post("1.0/functions-catalog/execute",
+			sbiModule_restServices.post("1.0/functions-catalog/execute/new",
 					$scope.functionId, body)
 					.success(function(executionResult) {
 						$log.info("Catalog Function executed with post data!!");
