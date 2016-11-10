@@ -81,24 +81,31 @@ public class ExternalEngineSecurityServerInterceptor extends AbstractSecuritySer
 
 	@Override
 	protected boolean isUserAuthenticatedInSpagoBI() {
-
+		logger.debug("IN");
 		boolean authenticated = true;
 
-		IEngUserProfile engProfile = getUserProfileFromSession();
+		try {
+			IEngUserProfile engProfile = getUserProfileFromSession();
 
-		if (engProfile != null) {
-			logger.debug("User is authenticated and his profile is already stored in session");
-		} else {
-			engProfile = this.getUserProfileFromUserId();
-		}
+			if (engProfile != null) {
+				logger.debug("User is authenticated and his profile is already stored in session");
+			} else {
+				// TODO THIS NEED TO BE FIXED -> THIS METHOD SHOULD ONLY VERIFY IF THE USER IS IN SESSION, NOT TRYING TO AUTHENTICATE IT
+				engProfile = this.getUserProfileFromUserId();
+			}
 
-		if (engProfile != null) {
-			logger.debug("User is authenticated but his profile is not already stored in session");
-		} else {
-			logger.debug("User is not authenticated");
+			if (engProfile != null) {
+				logger.debug("User is authenticated but his profile is not already stored in session");
+			} else {
+				logger.debug("User is not authenticated");
+				authenticated = false;
+			}
+		} catch (Exception e) {
+			logger.debug("Error while attempt to find user profile in session or authenticate user. Returning [false]", e);
 			authenticated = false;
 		}
 
+		logger.debug("OUT");
 		return authenticated;
 	}
 
