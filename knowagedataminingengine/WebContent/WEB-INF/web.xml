@@ -101,17 +101,17 @@
 
   <filter-mapping>
     <filter-name>CAS Authentication Filter</filter-name>
-    <url-pattern>/restful-services/*</url-pattern>
+    <url-pattern>/restful-services/publish/*</url-pattern>
   </filter-mapping> 
 
    <filter-mapping>
     <filter-name>CAS Validation Filter</filter-name>
-    <url-pattern>/restful-services/*</url-pattern>
+    <url-pattern>/restful-services/publish/*</url-pattern>
   </filter-mapping> 
 
    <filter-mapping>
     <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
-    <url-pattern>/restful-services/*</url-pattern>
+    <url-pattern>/restful-services/publish/*</url-pattern>
   </filter-mapping> 
 
   <filter-mapping>
