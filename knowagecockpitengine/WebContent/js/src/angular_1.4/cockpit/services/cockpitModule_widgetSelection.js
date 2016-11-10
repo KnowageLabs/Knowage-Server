@@ -1,4 +1,4 @@
-angular.module("cockpitModule").service("cockpitModule_widgetSelection",function(sbiModule_translate,sbiModule_restServices,cockpitModule_template, $q, $mdPanel,$rootScope,cockpitModule_properties,cockpitModule_widgetSelectionUtils,cockpitModule_templateServices,cockpitModule_realtimeServices,sbiModule_messaging){
+angular.module("cockpitModule").service("cockpitModule_widgetSelection",function(sbiModule_translate,sbiModule_restServices,cockpitModule_template,$q,$mdPanel,$rootScope,cockpitModule_properties,cockpitModule_widgetSelectionUtils,cockpitModule_templateServices,cockpitModule_realtimeServices,sbiModule_messaging,cockpitModule_utilstServices){
 	var ws=this;
 
 	this.getSelectionLoadAssociative = function(){
@@ -426,9 +426,12 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 	this.getParameterFromDataset=function(dsList){
 		var toret={};
 		for(var i=0;i<cockpitModule_template.configuration.datasets.length;i++){
-			if(dsList.indexOf(cockpitModule_template.configuration.datasets[i].dsLabel)!=-1){
-				toret[cockpitModule_template.configuration.datasets[i].dsLabel]=cockpitModule_template.configuration.datasets[i].parameters
-			}
+			var dsLabel = cockpitModule_template.configuration.datasets[i].dsLabel;
+			var params={};
+			angular.forEach(cockpitModule_template.configuration.datasets[i].parameters,function(item,key){
+				this[key]=cockpitModule_utilstServices.getParameterValue(item);
+				},params);
+			toret[dsLabel] = params;
 		}
 		return toret;
 	}
