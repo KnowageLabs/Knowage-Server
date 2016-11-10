@@ -46,6 +46,7 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 <%@page import="java.util.Iterator"%>
 <%@page import="com.fasterxml.jackson.databind.ObjectMapper"%>
 <%@page import="org.json.JSONObject"%>
+<%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
 
 <%
 	ChartEngineInstance engineInstance;
