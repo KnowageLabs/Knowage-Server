@@ -19,10 +19,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <md-toolbar class="miniToolbar">
 	<div class="md-toolbar-tools" layout-align="start center">
 		<h2> {{cockpitModule_template.configuration.info.name}}</h2>
-		<md-button aria-label="label" class="md-icon-button" ng-click="openGeneralConfigurationDialog()" ng-if="cockpitModule_properties.EDIT_MODE">
+		<md-button aria-label="label" class="md-icon-button" ng-click="openGeneralConfigurationDialog()" ng-if="cockpitModule_properties.EDIT_MODE"  title = "General configuration">
 			<md-icon md-font-icon="fa fa-cog"></md-icon>
 		</md-button>
-		<md-button aria-label="data" class="md-icon-button" ng-click="openDataConfigurationDialog()" ng-if="cockpitModule_properties.EDIT_MODE">
+		<md-button aria-label="data" class="md-icon-button" ng-click="openDataConfigurationDialog()" ng-if="cockpitModule_properties.EDIT_MODE"  title = "Data configuration">
 			<md-icon md-font-icon="fa fa-database"></md-icon>
 		</md-button>
 		<md-button aria-label="data" class="md-icon-button" ng-click="cleanCache()" title = "Clean cache">

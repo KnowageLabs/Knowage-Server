@@ -387,28 +387,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									else if(currentColumn.visType=='Text & Chart')
 									{
 
-										if(barValue>100 || barValue<0)
-										{
-											htm=htm+"<div flex> Out of range </div> &nbsp;";
-										}
-										else
-										{
+
 
 											htm=htm+"<div>"+value+"</div> &nbsp;  <md-progress-linear-custom flex  style='width:"+currentColumn.chartLength +"px' value="+barValue+" color=\""+  currentColumn.chartColor +"\"> </md-progress-linear-custom>"
 
-										}	
+	
 									}	 
 									else if(currentColumn.visType=='Chart & Text')
 									{
-										if(barValue>100 || barValue<0)
-										{
-											htm=htm+"<div> Out of range </div> &nbsp;";
-										}
-										else
-										{
+
 											htm=htm+"<md-progress-linear-custom flex  style='width:"+currentColumn.chartLength +"px' value="+barValue+" color=\""+  currentColumn.chartColor +"\"> </md-progress-linear-custom> &nbsp; <div>"+value+"</div>"
 											
-										}	
+
 									}							
 
 								}
