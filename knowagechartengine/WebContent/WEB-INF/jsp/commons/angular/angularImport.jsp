@@ -27,15 +27,15 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 <link rel="stylesheet" href="${pageContext.request.contextPath}/themes/sbi_default/fonts/font-awesome-4.4.0/css/font-awesome.min.css">
 
 <!-- angular reference-->
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/bower_components/angular/angular.js"></script>
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/angular/angular_1.4/angular.js"></script>
 
 <!-- angular-material-->
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/bower_components/angular-material_1.0.9/angular-material.min.js"></script>
-<link rel="stylesheet" type="text/css" href="<%= GeneralUtilities.getSpagoBiContext() %>/js/bower_components/angular-material_1.0.9/angular-material.css">
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/bower_components/angular-animate/angular-animate.min.js"></script>
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/bower_components/angular-aria/angular-aria.min.js"></script>
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/bower_components/angular-sanitize/angular-sanitize.min.js"></script>
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/bower_components/angular-messages/angular-messages.min.js"></script>
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/angular/angular-material_1.1.0/angular-material.min.js"></script>
+<link rel="stylesheet" type="text/css" href="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/angular/angular-material_1.1.0/angular-material.min.css">
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/angular/angular_1.4/angular-animate.min.js"></script>
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/angular/angular_1.4/angular-aria.min.js"></script>
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/angular/angular_1.4/angular-sanitize.min.js"></script>
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/angular/angular_1.4/angular-messages.min.js"></script>
 
 
 
