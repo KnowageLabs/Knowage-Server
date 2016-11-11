@@ -177,8 +177,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							flex
 							ng-show=true
 							ng-model="functionsList"
-							columns='[{"label":"Function Name","name":"name","owner":"owner"}]'  
-							columns-search='["name","keywords","description"]'
+							columns='[{"label":"Function Name","name":"name"},{"label":"Owner","name":"owner"}]'  
+							columns-search='["name","keywords","description","owner"]'
 							show-search-bar=true
 							highlights-selected-item=true
 							speed-menu-option="acSpeedMenu"

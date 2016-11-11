@@ -746,7 +746,10 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 			String owner = (String) getUserProfile().getUserUniqueIdentifier();
 			String label = jsonObj.getString("label");
 			String type = jsonObj.getString("type");
-			String url = jsonObj.getString("url");
+			String url = "";
+			if (jsonObj.has("url")) {
+				url = jsonObj.getString("url");
+			}
 			boolean remote = jsonObj.getBoolean("remote");
 
 			JSONArray jsonInputDatasets = jsonObj.getJSONArray("inputDatasets");
