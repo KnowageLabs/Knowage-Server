@@ -26,6 +26,7 @@ import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
 import it.eng.spagobi.engines.datamining.model.DataMiningDataset;
 import it.eng.spagobi.engines.datamining.model.DataMiningScript;
 import it.eng.spagobi.engines.datamining.model.Output;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 import java.io.File;
@@ -54,6 +55,7 @@ import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 
 @Path("/1.0/dataset")
+@ManageAuthorization
 public class DatasetResource extends AbstractDataMiningEngineResource {
 
 	public static transient Logger logger = Logger.getLogger(DatasetResource.class);
@@ -133,8 +135,8 @@ public class DatasetResource extends AbstractDataMiningEngineResource {
 					setCommandExecutable(dataMiningEngineInstance);
 					/*
 					 * try { //executor.updateDatasetInWorkspace(ds, getUserProfile());
-					 * 
-					 * 
+					 *
+					 *
 					 * } catch (IOException e) { throw new SpagoBIEngineRuntimeException("Error updating file dataset", e); }
 					 */
 				}

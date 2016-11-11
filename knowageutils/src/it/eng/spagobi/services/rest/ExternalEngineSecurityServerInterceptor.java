@@ -62,13 +62,15 @@ public class ExternalEngineSecurityServerInterceptor extends AbstractSecuritySer
 
 		try {
 			String auto = servletRequest.getHeader("Authorization");
-			int position = auto.indexOf("Direct");
-			if (position > -1 && position < 5) {// Direct stay at the beginning of the header
-				String encodedUser = auto.replaceFirst("Direct ", "");
-				byte[] decodedBytes = Base64.decode(encodedUser);
-				String userId = new String(decodedBytes, "UTF-8");
-				SecurityServiceProxy proxy = new SecurityServiceProxy(userId, servletRequest.getSession());
-				profile = (UserProfile) proxy.getUserProfile();
+			if (auto != null) {
+				int position = auto.indexOf("Direct");
+				if (position > -1 && position < 5) {// Direct stay at the beginning of the header
+					String encodedUser = auto.replaceFirst("Direct ", "");
+					byte[] decodedBytes = Base64.decode(encodedUser);
+					String userId = new String(decodedBytes, "UTF-8");
+					SecurityServiceProxy proxy = new SecurityServiceProxy(userId, servletRequest.getSession());
+					profile = (UserProfile) proxy.getUserProfile();
+				}
 			}
 		} catch (Throwable t) {
 			logger.trace("Problem during authentication, returning null", t);

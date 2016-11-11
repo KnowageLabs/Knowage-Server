@@ -24,6 +24,7 @@ import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
 import it.eng.spagobi.engines.datamining.model.Output;
 import it.eng.spagobi.engines.datamining.model.Variable;
 import it.eng.spagobi.engines.datamining.serializer.SerializationException;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 import java.util.Iterator;
@@ -41,6 +42,7 @@ import javax.ws.rs.core.Context;
 import org.apache.log4j.Logger;
 
 @Path("/1.0/command")
+@ManageAuthorization
 public class CommandsResource extends AbstractDataMiningEngineResource {
 	public static transient Logger logger = Logger.getLogger(CommandsResource.class);
 

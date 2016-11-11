@@ -141,7 +141,7 @@
 	<filter-mapping>
 		<filter-name>EncodingFilter</filter-name>
 		<url-pattern>/restful-services/start</url-pattern>
-    <url-pattern>/restful-services/startTest</url-pattern>>
+    <url-pattern>/restful-services/startTest</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>EngineCheckSessionFilter</filter-name>

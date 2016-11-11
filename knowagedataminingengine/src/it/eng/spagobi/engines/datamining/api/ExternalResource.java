@@ -21,6 +21,7 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
 import it.eng.spagobi.engines.datamining.common.AbstractDataMiningEngineResource;
 import it.eng.spagobi.engines.datamining.compute.DataMiningRExecutor;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -38,6 +39,7 @@ import javax.ws.rs.core.Context;
 import org.apache.log4j.Logger;
 
 @Path("/1.0/execute")
+@ManageAuthorization
 public class ExternalResource extends AbstractDataMiningEngineResource {
 	public static transient Logger logger = Logger.getLogger(ExternalResource.class);
 
