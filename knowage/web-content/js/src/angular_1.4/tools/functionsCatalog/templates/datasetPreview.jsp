@@ -15,16 +15,20 @@
 		</div>
 	
 	
-		<angular-table 
-					id="tablePreview"
-					flex
-					columns="headers"
-					ng-show=true
-					ng-model="dataset.rows" 
-					highlights-selected-item=true				
-			>						
-		</angular-table>		
-		
+		<div ng-if = "dataset.rows != undefined && dataset.rows.length > 0 && dataset.metaData.fields.length>7">
+							{{translate.load("sbi.workspace.dataset.datasetpreview.toomanycols")}}
+		</div>
+	
+		<div ng-if = "dataset.metaData.fields.length<=7">
+			<angular-table 	id="tablePreview"
+						flex
+						columns="headers"
+						ng-show=true
+						ng-model="dataset.rows" 
+						highlights-selected-item=true				
+				>						
+			</angular-table>		
+		</div>
 
 	
 	</md-dialog-content>

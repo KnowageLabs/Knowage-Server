@@ -336,7 +336,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							  	{{translate.load("sbi.functionscatalog.selectafile");}}
 					  		  	<file-upload-base64 id="id_file_upload-{{$index}}" flex=20 ng-model="inputFile" ng-disabled="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))"></file-upload-base64>												
 							  	<md-icon class="md-secondary" md-font-icon="fa fa-trash" ng-click="output=removeInputFile(i)" aria-hidden="true" ng-show="(isAdmin || (isDev && shownFunction.owner==ownerUserName))"></md-icon>
-							 	<a flex=30 ng-if="inputFile.fileName!=undefined && inputFile.fileName!=null && inputFile.fileName!=''">Loaded {{inputFile.fileName}}</a>
+							 	<a flex=30 ng-if="inputFile.filename!=undefined && inputFile.filename!=null && inputFile.filename!=''">Loaded {{inputFile.filename}}</a>
 							  </md-list-item>
 							  
 							</md-list>  

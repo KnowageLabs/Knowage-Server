@@ -29,8 +29,8 @@
 					
 						<div ng-repeat="input in demoData.inputFiles"> 
 								<div>
-									{{translate.load("sbi.functionscatalog.newinputsdialog.demofilename")}}&nbsp;{{input.name}}
-		      						<md-input-container class="md-block" flex-gt-sm>
+									<!--  {{translate.load("sbi.functionscatalog.newinputsdialog.demofilename")}}&nbsp;{{input.name}} -->
+		      						<div class="md-block" flex-gt-sm>
 		            					<label>{{translate.load("sbi.functionscatalog.newinputsdialog.replacingfilename")}}</label>
 
 										<file-upload-base64 id="id_file_upload-{{$index}}"  ng-model="replacingFileList[input.alias]"></file-upload-base64>												
@@ -38,7 +38,7 @@
 
 
 
-		          					</md-input-container>
+		          					</div>
 								</div>	
 						</div>
 

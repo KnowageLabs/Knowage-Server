@@ -418,7 +418,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		}
 		
 		for (var i = 0; i < $scope.shownFunction.inputFiles.length; i++) {
-			if ($scope.shownFunction.inputFiles[i].fileName == undefined) {
+			if ($scope.shownFunction.inputFiles[i].filename == undefined) {
 				correctArguments=false;
 				var index=i+1;
 
@@ -936,7 +936,14 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 			body.push(filesIn);
 				
 			logger.info("body: ", body);
-
+			
+			
+//			for (var key in body[2].items) {
+//				  if (body[2].items.hasOwnProperty(key)) {
+//					  delete body[2].items[key].file;
+//				  }
+//			}
+			
 			sbiModule_restServices.post("1.0/functions-catalog/execute/new",
 					$scope.functionId, body)
 					.success(function(executionResult) {

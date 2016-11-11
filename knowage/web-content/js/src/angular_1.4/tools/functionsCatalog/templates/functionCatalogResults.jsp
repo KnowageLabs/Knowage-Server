@@ -40,10 +40,10 @@
           				{{translate.load("sbi.functionscatalog.executionresult.spagobidatasetsaved")}}&nbsp;{{res.result}}
           				
       				 
-       					<div ng-if="truncate">
+       					<div ng-if="truncate && dataset.metaData.fields.length<7">
 						{{translate.load("sbi.functionscatalog.executionresult.firstrowspreview")}}
 						</div>
-						<div ng-if = "dataset.rows != undefined && dataset.rows.length > 0">
+						<div ng-if = "dataset.rows != undefined && dataset.rows.length > 0 && dataset.metaData.fields.length<7">
 							<angular-table 
 										id="tablePreview"
 										flex
@@ -53,6 +53,10 @@
 										highlights-selected-item=true				
 								>						
 							</angular-table>		
+						</div>
+						
+						<div ng-if = "dataset.rows != undefined && dataset.rows.length > 0 && dataset.metaData.fields.length>7">
+							Too many columns to have a preview		
 						</div>
 
         			 </div>
