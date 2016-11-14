@@ -16,4 +16,4 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-angular.module('common-directives', ['sbiModule']);
+angular.module('common-directives', ['sbiModule', 'angular_table', 'angular_list']);
