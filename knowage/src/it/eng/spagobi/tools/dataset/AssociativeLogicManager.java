@@ -23,9 +23,11 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
+import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
@@ -35,6 +37,7 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.cache.CacheItem;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.sql.SqlUtils;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -152,6 +155,13 @@ public class AssociativeLogicManager {
 						realtimeDatasets.remove(v1);
 					} else if (dataSet.isFlatDataset()) {
 						datasetToTableName.put(v1, dataSet.getFlatTableName());
+						datasetToDataSource.put(v1, dataSet.getDataSource());
+						realtimeDatasets.remove(v1);
+					} else if (realtimeDatasets.contains(v1) && dataSet instanceof JDBCDataSet
+							&& !SqlUtils.isBigDataDialect(dataSet.getDataSource().getHibDialectName())) {
+						QuerableBehaviour querableBehaviour = (QuerableBehaviour) dataSet.getBehaviour(QuerableBehaviour.class.getName());
+						String tableName = "(" + querableBehaviour.getStatement() + ") T";
+						datasetToTableName.put(v1, tableName);
 						datasetToDataSource.put(v1, dataSet.getDataSource());
 						realtimeDatasets.remove(v1);
 					} else if (realtimeDatasets.contains(v1)) {

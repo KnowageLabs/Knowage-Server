@@ -33,15 +33,18 @@ import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.cache.CacheException;
+import it.eng.spagobi.tools.dataset.cache.FilterCriteria;
+import it.eng.spagobi.tools.dataset.cache.GroupCriteria;
 import it.eng.spagobi.tools.dataset.cache.ICache;
+import it.eng.spagobi.tools.dataset.cache.InLineViewBuilder;
+import it.eng.spagobi.tools.dataset.cache.ProjectionCriteria;
+import it.eng.spagobi.tools.dataset.cache.SelectBuilder;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
-import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.FilterCriteria;
-import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.GroupCriteria;
-import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.ProjectionCriteria;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
-import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SelectBuilder;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.work.SQLDBCacheWriteWork;
+import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -67,6 +70,7 @@ import it.eng.spagobi.utilities.cache.CacheItem;
 import it.eng.spagobi.utilities.database.AbstractDataBase;
 import it.eng.spagobi.utilities.database.temporarytable.TemporaryTableManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.sql.SqlUtils;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
 
 import java.sql.Connection;
@@ -89,6 +93,7 @@ import javax.naming.NamingException;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import commonj.work.Work;
@@ -321,28 +326,6 @@ public class DatasetManagementAPI {
 		return tableName;
 	}
 
-	// private void checkQbeDataset(IDataSet dataSet) {
-	//
-	// IDataSet ds = null;
-	// if (dataSet instanceof VersionedDataSet) {
-	// VersionedDataSet versionedDataSet = (VersionedDataSet) dataSet;
-	// ds = versionedDataSet.getWrappedDataset();
-	// } else {
-	// ds = dataSet;
-	// }
-	//
-	// if (ds instanceof QbeDataSet) {
-	// SpagoBICoreDatamartRetriever retriever = new
-	// SpagoBICoreDatamartRetriever();
-	// Map parameters = ds.getParamsMap();
-	// if (parameters == null) {
-	// parameters = new HashMap();
-	// ds.setParamsMap(parameters);
-	// }
-	// ds.getParamsMap().put(SpagoBIConstants.DATAMART_RETRIEVER, retriever);
-	// }
-	// }
-
 	/**
 	 * insert into data store last cache date if present
 	 *
@@ -375,8 +358,8 @@ public class DatasetManagementAPI {
 			List<ProjectionCriteria> summaryRowProjections) {
 
 		try {
-			IDataSet dataSet = this.getDataSetDAO().loadDataSetByLabel(label);
-			// checkQbeDataset(dataSet);
+			IDataSet dataSet = getDataSetDAO().loadDataSetByLabel(label);
+			setDataSetParameters(dataSet, parametersValues);
 			IDataStore dataStore = null;
 
 			if (dataSet.isPersisted() && !dataSet.isPersistedHDFS()) {
@@ -385,18 +368,13 @@ public class DatasetManagementAPI {
 			} else if (dataSet.isFlatDataset()) {
 				dataStore = queryFlatDataset(groups, filters, projections, summaryRowProjections, dataSet, offset, fetchSize);
 				dataStore.setCacheDate(new Date());
+			} else if (isRealtime && dataSet instanceof JDBCDataSet && !SqlUtils.isBigDataDialect(dataSet.getDataSource().getHibDialectName())) {
+				dataStore = queryJDBCDataset(groups, filters, projections, summaryRowProjections, dataSet, offset, fetchSize);
+				dataStore.setCacheDate(new Date());
 			} else if (isRealtime) {
-				dataStore = queryRealtimeDataset(parametersValues, groups, filterCriteriaForMetaModel, projections, summaryRowProjections, dataSet, offset,
-						fetchSize);
+				dataStore = queryRealtimeDataset(groups, filterCriteriaForMetaModel, projections, summaryRowProjections, dataSet, offset, fetchSize);
 				dataStore.setCacheDate(new Date());
 			} else {
-				dataSet.setParamsMap(parametersValues);
-				List<JSONObject> parameters = getDataSetParameters(label);
-				if (parameters.size() > parametersValues.size()) {
-					String parameterNotValorizedStr = getParametersNotValorized(parameters, parametersValues);
-					throw new ParametersNotValorizedException("The following parameters have no value [" + parameterNotValorizedStr + "]");
-				}
-
 				SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
 				cache.setUserProfile(userProfile);
 
@@ -1297,29 +1275,32 @@ public class DatasetManagementAPI {
 	}
 
 	private IDataStore queryPersistedDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections,
-			List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, int offset, int fetchSize) {
+			List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, int offset, int fetchSize) throws InstantiationException, IllegalAccessException {
 		IDataSource dataSource = dataSet.getDataSourceForWriting();
 		String tableName = dataSet.getPersistTableName();
-		return queryDataset(dataSource, tableName, groups, filters, projections, summaryRowProjections, dataSet, offset, fetchSize);
+		return queryDataset(new SelectBuilder(), dataSource, tableName, groups, filters, projections, summaryRowProjections, dataSet, offset, fetchSize);
 	}
 
 	private IDataStore queryFlatDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections,
-			List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, int offset, int fetchSize) {
+			List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, int offset, int fetchSize) throws InstantiationException, IllegalAccessException {
 		IDataSource dataSource = dataSet.getDataSource();
 		String tableName = dataSet.getFlatTableName();
-		return queryDataset(dataSource, tableName, groups, filters, projections, summaryRowProjections, dataSet, offset, fetchSize);
+		return queryDataset(new SelectBuilder(), dataSource, tableName, groups, filters, projections, summaryRowProjections, dataSet, offset, fetchSize);
 	}
 
-	private IDataStore queryRealtimeDataset(Map<String, String> parametersValues, List<GroupCriteria> groups, List<FilterCriteria> filters,
-			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, int offset, int fetchSize) {
-		dataSet.setParamsMap(parametersValues);
+	private IDataStore queryJDBCDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections,
+			List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, int offset, int fetchSize) throws JSONException, Exception,
+			IllegalAccessException {
+		IDataSource dataSource = dataSet.getDataSource();
+		QuerableBehaviour querableBehaviour = (QuerableBehaviour) dataSet.getBehaviour(QuerableBehaviour.class.getName());
+		String tableName = querableBehaviour.getStatement();
+		InLineViewBuilder sqlBuilder = new InLineViewBuilder();
+		sqlBuilder.setInLineViewAlias("T");
+		return queryDataset(sqlBuilder, dataSource, tableName, groups, filters, projections, summaryRowProjections, dataSet, offset, fetchSize);
+	}
 
-		List<JSONObject> parameters = getDataSetParameters(dataSet.getLabel());
-		if (parameters.size() > parametersValues.size()) {
-			String parameterNotValorizedStr = getParametersNotValorized(parameters, parametersValues);
-			throw new ParametersNotValorizedException("The following parameters have no value [" + parameterNotValorizedStr + "]");
-		}
-
+	private IDataStore queryRealtimeDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections,
+			List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, int offset, int fetchSize) {
 		dataSet.loadData();
 		IDataStore dataStore = dataSet.getDataStore();
 		if (dataStore != null && dataStore.getRecordsCount() < METAMODEL_LIMIT) {
@@ -1564,18 +1545,19 @@ public class DatasetManagementAPI {
 		}
 	}
 
-	private IDataStore queryDataset(IDataSource dataSource, String tableName, List<GroupCriteria> groups, List<FilterCriteria> filters,
-			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, int offset, int fetchSize) {
+	private IDataStore queryDataset(SelectBuilder sqlBuilder, IDataSource dataSource, String tableName, List<GroupCriteria> groups,
+			List<FilterCriteria> filters, List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, int offset,
+			int fetchSize) throws InstantiationException, IllegalAccessException {
 		logger.debug("IN");
 
 		Map<String, String> datasetAlias = getDatasetAlias(dataSet);
 
-		String query = getQueryText(dataSource, tableName, groups, filters, projections, null, dataSet, false, datasetAlias, null);
+		String query = getQueryText(sqlBuilder, dataSource, tableName, groups, filters, projections, null, dataSet, false, datasetAlias, null);
 		IDataStore pagedDataStore = dataSource.executeStatement(query, offset, fetchSize);
 
 		if (summaryRowProjections != null && summaryRowProjections.size() > 0) {
-			String summaryRowQuery = getQueryText(dataSource, tableName, groups, filters, projections, summaryRowProjections, dataSet, false, datasetAlias,
-					null);
+			String summaryRowQuery = getQueryText(sqlBuilder.getClass().newInstance(), dataSource, tableName, groups, filters, projections,
+					summaryRowProjections, dataSet, false, datasetAlias, null);
 			IDataStore summaryRowDataStore = dataSource.executeStatement(summaryRowQuery, -1, -1);
 			appendSummaryRowToPagedDataStore(projections, summaryRowProjections, pagedDataStore, summaryRowDataStore);
 		}
@@ -1598,6 +1580,13 @@ public class DatasetManagementAPI {
 	public String getQueryText(IDataSource dataSource, String tableName, List<GroupCriteria> groups, List<FilterCriteria> filters,
 			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, boolean isRealtime,
 			Map<String, String> datasetAlias, List<String> outputOrderColumns) {
+		return getQueryText(new SelectBuilder(), dataSource, tableName, groups, filters, projections, summaryRowProjections, dataSet, isRealtime, datasetAlias,
+				outputOrderColumns);
+	}
+
+	public String getQueryText(SelectBuilder sqlBuilder, IDataSource dataSource, String tableName, List<GroupCriteria> groups, List<FilterCriteria> filters,
+			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, boolean isRealtime,
+			Map<String, String> datasetAlias, List<String> outputOrderColumns) {
 
 		if (tableName == null || tableName.isEmpty() || (!isRealtime && dataSource == null)) {
 			throw new IllegalArgumentException("Found one or more arguments invalid. Tablename [" + tableName + "] and/or dataSource [" + dataSource
@@ -1611,7 +1600,6 @@ public class DatasetManagementAPI {
 		List<String> orderColumns = new ArrayList<String>();
 		String queryText = null;
 		if (summaryRowProjections == null || summaryRowProjections.size() == 0 || !isRealtime) {
-			SelectBuilder sqlBuilder = new SelectBuilder();
 			sqlBuilder.setWhereOrEnabled(isRealtime);
 			sqlBuilder.from(tableName);
 
@@ -2017,5 +2005,14 @@ public class DatasetManagementAPI {
 			}
 		}
 		return dataSets;
+	}
+
+	private void setDataSetParameters(IDataSet dataSet, Map<String, String> parametersValues) {
+		dataSet.setParamsMap(parametersValues);
+		List<JSONObject> parameters = getDataSetParameters(dataSet.getLabel());
+		if (parameters.size() > parametersValues.size()) {
+			String parameterNotValorizedStr = getParametersNotValorized(parameters, parametersValues);
+			throw new ParametersNotValorizedException("The following parameters have no value [" + parameterNotValorizedStr + "]");
+		}
 	}
 }

@@ -476,7 +476,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 		if (isAbleTo(SpagoBIConstants.CALENDAR, funcs)) {
 			JSONObject calendar = new JSONObject();
-			calendar.put(ICON_CLS, "font_download");
+			calendar.put(ICON_CLS, "event");
 			calendar.put(TOOLTIP, messageBuilder.getMessage("menu.calendar", locale));
 			calendar.put(ICON_ALIGN, "top");
 			calendar.put(SCALE, "large");

@@ -651,7 +651,7 @@ public class PersistedTableManager implements IPersistedManager {
 	 * @param prefix
 	 *            an optional prefix to use for the generated table name
 	 */
-	public String generateRandomTableName(String prefix) {
+	public static String generateRandomTableName(String prefix) {
 		UUIDGenerator uuidGen = UUIDGenerator.getInstance();
 		UUID uuidObj = uuidGen.generateTimeBasedUUID();
 		String generatedId = uuidObj.toString();
@@ -676,7 +676,7 @@ public class PersistedTableManager implements IPersistedManager {
 		return generatedId;
 	}
 
-	private String randomAlphabetString(int len) {
+	private static String randomAlphabetString(int len) {
 		Random random = new Random();
 
 		StringBuilder sb = new StringBuilder(len);

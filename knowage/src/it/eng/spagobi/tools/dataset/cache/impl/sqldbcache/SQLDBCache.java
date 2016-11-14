@@ -24,11 +24,15 @@ import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.cache.CacheException;
+import it.eng.spagobi.tools.dataset.cache.FilterCriteria;
+import it.eng.spagobi.tools.dataset.cache.GroupCriteria;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.ICacheActivity;
 import it.eng.spagobi.tools.dataset.cache.ICacheEvent;
 import it.eng.spagobi.tools.dataset.cache.ICacheListener;
 import it.eng.spagobi.tools.dataset.cache.ICacheTrigger;
+import it.eng.spagobi.tools.dataset.cache.ProjectionCriteria;
+import it.eng.spagobi.tools.dataset.cache.SelectBuilder;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.work.SQLDBCacheWriteWork;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
@@ -71,6 +75,7 @@ import org.apache.log4j.Logger;
 import com.hazelcast.core.IMap;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
+
 import commonj.work.Work;
 import commonj.work.WorkItem;
 

@@ -90,7 +90,7 @@ public class JDBCStandardDataReader extends AbstractDataReader {
 				fieldMeta = new FieldMetadata();
 				fieldName = rs.getMetaData().getColumnLabel(columnIndex);
 				fieldType = rs.getMetaData().getColumnClassName(columnIndex);
-				// logger.debug("Field [" + columnIndex + "] name is equal to [" + fieldName + "]. TYPE= "+fieldType);
+				logger.debug("Field [" + columnIndex + "] name is equal to [" + fieldName + "]. TYPE= " + fieldType);
 				fieldMeta.setName(fieldName);
 				if (fieldType != null) {
 					// Patch for hsql.. TODO
@@ -113,9 +113,8 @@ public class JDBCStandardDataReader extends AbstractDataReader {
 			if (getOffset() > 0) {
 				logger.debug("Offset is equal to [" + getOffset() + "]");
 
-				/*
-				 * The following invokation causes an error on Oracle: java.sql.SQLException: Nessuna riga corrente: relative rs.relative(getOffset());
-				 */
+				// The following invokation causes an error on Oracle:
+				// java.sql.SQLException: Nessuna riga corrente: relative rs.relative(getOffset());
 
 				rs.first();
 				rs.relative(getOffset() - 1);
@@ -146,7 +145,6 @@ public class JDBCStandardDataReader extends AbstractDataReader {
 				}
 				dataStore.appendRecord(record);
 				recCount++;
-				// logger.debug("[" + recCount + "] - Records [" + rs.getRow() + "] succesfully readed");
 			}
 			logger.debug("Readed [" + recCount + "] records");
 			logger.debug("Data readed successfully");
@@ -175,14 +173,6 @@ public class JDBCStandardDataReader extends AbstractDataReader {
 
 		logger.debug("resultset type [" + rs.getType() + "] (" + (rs.getType() == ResultSet.TYPE_FORWARD_ONLY) + ")");
 		if (rs.getType() == ResultSet.TYPE_FORWARD_ONLY) {
-			// while (!rs.isLast()) {
-			// rs.next(); // INFINITE LOOP ON MYSQL!!!!!
-			// }
-
-			// while (rs.next()) {
-			// // IT DOES NOT WORK SINCE, WHEN EXECUTING rs.next() ON LAST ROW,
-			// // THEN rs.getRow() RETURNS 0, SINCE THE ROW IN NOT VALID
-			// }
 
 			int recordsCount = 0;
 			if (recCount < maxRecToParse) {
@@ -195,7 +185,6 @@ public class JDBCStandardDataReader extends AbstractDataReader {
 					// do nothing, just scroll result set
 				}
 			}
-
 			toReturn = recordsCount;
 		} else {
 			rs.last();
@@ -206,5 +195,4 @@ public class JDBCStandardDataReader extends AbstractDataReader {
 		logger.debug("OUT " + toReturn);
 		return toReturn;
 	}
-
 }

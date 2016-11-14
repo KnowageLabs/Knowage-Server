@@ -18,9 +18,6 @@
 package it.eng.spagobi.tools.dataset.cache;
 
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.FilterCriteria;
-import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.GroupCriteria;
-import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.ProjectionCriteria;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 
 import java.util.List;
