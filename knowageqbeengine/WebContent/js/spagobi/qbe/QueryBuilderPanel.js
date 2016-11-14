@@ -454,7 +454,7 @@ Ext.extend(Sbi.qbe.QueryBuilderPanel, Ext.Panel, {
 		}, {
 			id:'save',
 			qtip: LN('save'),
-			hidden: (!this.enableTreeToolbar || !this.enableTreeTbSaveBtn),
+			hidden: (!this.enableTreeToolbar || !this.enableTreeTbSaveBtn || Sbi.config.isFromFederation),
 			handler: function(event, toolEl, panel){
 				Ext.Ajax.request({
 					url:  this.services['saveTree'],

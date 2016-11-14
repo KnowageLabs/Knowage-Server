@@ -961,7 +961,7 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 		},
 		scope: this,
 //		failure: Sbi.exception.ExceptionHandler.handleFailure,	
-//		params: params
+		params: params
 	}); 
 
 
@@ -1054,92 +1054,78 @@ Ext.extend(Sbi.qbe.DataMartStructurePanel, Ext.Panel, {
 }
 
 , initMenu: function() {
-
-	var commonFunctions=[
-	                     // ACID operations on nodes
-	                     '-',{
-	                    	 text:LN('sbi.generic.helpOnLine'),
-	                    	 iconCls:'helpOnLine',
-	                    	 handler:  function() {
-	                    		 var itemHOL="DATAMART="+this.title+"&BUSINESS_CLASS="+this.ctxNode.attributes.text;
-	                    		 parent.parent.execShowHelpOnLine(itemHOL);
-	                    	 },
-	                    	 scope: this,
-	                    	 hidden: (this.ctxNode.attributes.attributes.linkedToWords!=true || !Sbi.user.isAbleTo("Glossary"))
-	                     },{
-	                    	 text:LN('sbi.generic.selectCalendar'),
-	                    	 iconCls:'calendar',
-	                    	 handler:  function() {
-	                    		 this.fireEvent('selectCalendar', this.getCalendarNode(this.ctxNode));
-	                    	 },
-	                    	 scope: this,
-	                    	 hidden: this.ctxNode.attributes.iconCls!="temporal_dimension" || this.getCalendarNode(this.ctxNode)==null
-	                     }];
-
-	var cc=[
-	        {
-	        	text:LN('sbi.qbe.calculatedFields.add'),
-	        	iconCls:'add',
-	        	handler:function(){
-	        		this.showInLineCalculatedFieldWizard(this.ctxNode);	         	 	
-	        	},
-	        	scope: this
-	        },{
-	        	text:LN('sbi.qbe.calculatedFields.edit'),
-	        	iconCls:'edit',
-	        	handler:function(){
-	        		this.editCalculatedField(this.ctxNode);
-	        	},
-	        	scope: this
-	        },{
-	        	text: LN('sbi.qbe.menu.bands.add'),
-	        	iconCls:'slot',
-	        	handler:function(){
-	        		this.addSlot(this.ctxNode);	
-	        	},
-	        	scope: this
-	        },{
-	        	text: LN('sbi.qbe.menu.bands.edit'),
-	        	iconCls:'slot',
-	        	handler:function(){
-	        		this.editSlot(this.ctxNode);	
-	        	},
-	        	scope: this
-	        },{
-	        	text:LN('sbi.qbe.calculatedFields.remove'),
-	        	iconCls:'remove',
-	        	handler:  function() {
-	        		this.ctxNode.ui.removeClass('x-node-ctx');
-	        		this.removeCalculatedField(this.ctxNode);
-	        		this.ctxNode = null;
-	        	},
-	        	scope: this
-	        }];
-
-
-	var time =[{
-		text:LN('sbi.qbe.hierarchies.setdefault'),
-		iconCls:'hierarchy',
-		handler:function(){
-			this.setHierarchyDefault(this.ctxNode);	         	 	
-		},
-		scope: this,
-		hidden: (this.ctxNode.attributes.attributes.type 
-				!= Sbi.constants.qbe.NODE_TYPE_HIERARCHY_FIELD
-				|| this.ctxNode.attributes.attributes.isdefault)
-	}];
-
-	var menuItems;
-	if(Sbi.config.isFromFederation){
-		menuItems = commonFunctions.concat(time);
-	}else{
-		menuItems = commonFunctions.concat(cc).concat(time);
-	}
+	
 	this.menu = new Ext.menu.Menu({
 		id:'feeds-ctx',
-		items: menuItems
+		items: [
+		        // ACID operations on nodes
+		        '-',{
+		        	text:LN('sbi.generic.helpOnLine'),
+		        	iconCls:'helpOnLine',
+		        	handler:  function() {
+		        		var itemHOL="DATAMART="+this.title+"&BUSINESS_CLASS="+this.ctxNode.attributes.text;
+		        		parent.parent.execShowHelpOnLine(itemHOL);
+		        	},
+		        	scope: this,
+		        	hidden: (this.ctxNode.attributes.attributes.linkedToWords!=true || !Sbi.user.isAbleTo("Glossary"))
+		        },{
+		        	text:LN('sbi.generic.selectCalendar'),
+		        	iconCls:'calendar',
+		        	handler:  function() {
+		        		this.fireEvent('selectCalendar', this.getCalendarNode(this.ctxNode));
+		        	},
+		        	scope: this,
+		        	hidden: this.ctxNode.attributes.iconCls!="temporal_dimension" || this.getCalendarNode(this.ctxNode)==null
+		        },{
+		        	text:LN('sbi.qbe.calculatedFields.add'),
+		        	iconCls:'add',
+		        	handler:function(){
+		        		this.showInLineCalculatedFieldWizard(this.ctxNode);	         	 	
+		        	},
+		        	scope: this
+		        },{
+		        	text:LN('sbi.qbe.calculatedFields.edit'),
+		        	iconCls:'edit',
+		        	handler:function(){
+		        		this.editCalculatedField(this.ctxNode);
+		        	},
+		        	scope: this
+		        },{
+		        	text: LN('sbi.qbe.menu.bands.add'),
+		        	iconCls:'slot',
+		        	handler:function(){
+		        		this.addSlot(this.ctxNode);	
+		        	},
+		        	scope: this
+		        },{
+		        	text: LN('sbi.qbe.menu.bands.edit'),
+		        	iconCls:'slot',
+		        	handler:function(){
+		        		this.editSlot(this.ctxNode);	
+		        	},
+		        	scope: this
+		        },{
+		        	text:LN('sbi.qbe.calculatedFields.remove'),
+		        	iconCls:'remove',
+		        	handler:  function() {
+		        		this.ctxNode.ui.removeClass('x-node-ctx');
+		        		this.removeCalculatedField(this.ctxNode);
+		        		this.ctxNode = null;
+		        	},
+		        	scope: this
+		        },{
+		        	text:LN('sbi.qbe.hierarchies.setdefault'),
+		        	iconCls:'hierarchy',
+		        	handler:function(){
+		        		this.setHierarchyDefault(this.ctxNode);	         	 	
+		        	},
+		        	scope: this,
+		        	hidden: (this.ctxNode.attributes.attributes.type 
+		        			!= Sbi.constants.qbe.NODE_TYPE_HIERARCHY_FIELD
+		        			|| this.ctxNode.attributes.attributes.isdefault)
+		        }]
 	});
-
+	
 	for(var i = 0; i < this.actions.length; i++) {
 
 		var item = new Ext.menu.Item({
