@@ -22,9 +22,7 @@
 
 var chartExecutionWebServiceManagerFactory = angular.module('chartexecution.webservicemanagerfactory',[]);
 
-chartExecutionWebServiceManagerFactory.service
-(
-	'chartExecutionWebServiceManagerFactory', 
+chartExecutionWebServiceManagerFactory.service(	'chartExecutionWebServiceManagerFactory',
 	
 	function(sbiModule_messaging,sbiModule_translate,sbiModule_restServices) {
 				

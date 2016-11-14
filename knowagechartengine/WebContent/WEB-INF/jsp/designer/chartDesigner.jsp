@@ -26,36 +26,57 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 
-<head>
+	<head>
+	
+		<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
+		<%@include file="/WEB-INF/jsp/designer/chartImport.jsp"%>
+	
+		<link rel="stylesheet" type="text/css" href="<%=GeneralUtilities.getSpagoBiContext()%>/themes/commons/css/customStyle.css">
+		<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular/designer/chartDesigner.js"></script>
+	
+		<script>
+		
+			var sbiExecutionId = <%=request.getParameter("SBI_EXECUTION_ID")!=null? "'"+request.getParameter("SBI_EXECUTION_ID")+"'" : "null"%>;
+			var userId = '<%=userId%>';
+			var hostName = '<%=request.getServerName()%>';
+			var serverPort = '<%=request.getServerPort()%>';
+			var docLabel = '<%= docLabel %>';			
+			var jsonTemplate = JSON.parse('<%=template.replaceAll("&#39;","\\\\'")%>');
+			var datasetLabel  = '<%=datasetLabel%>'; 
+			
+			var chartLibNamesConfig = <%=ChartEngineUtil.getChartLibNamesConfig()%>;
+ 			
+ 			var isCockpit = <%=isCockpit%>;
+ 			
+			var thisContextName			= '${pageContext.request.contextPath}';  <%-- knowagechartengine --%>
+			thisContextName = thisContextName.replace('/','');
+			var mainContextName 		= '<%=contextName.replaceAll("/", "")%>';  <%-- knowage --%>
+			var exporterContextName 	= 'highcharts-export-web';
+			
+		
+		</script>
+	
+	</head>
 
-<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
-<%@include file="/WEB-INF/jsp/designer/chartImport.jsp"%>
-
-<link rel="stylesheet" type="text/css"
-	href="<%=GeneralUtilities.getSpagoBiContext()%>/themes/commons/css/customStyle.css">
-<script type="text/javascript"
-	src="${pageContext.request.contextPath}/js/src/angular/designer/chartDesigner.js"></script>
-
-</head>
-
-<body class="bodyStyle" ng-app="chartDesignerManager">
-
-	<md-toolbar>
-	<div class="md-toolbar-tools">
-		<h2 flex><%=docLabel%></h2>
-		<span class="extraButtonContainer"></span>
-		<md-button aria-label="save">PREVIEW</md-button>
-		<md-button aria-label="save">SAVE</md-button>
-		<md-button aria-label="cancel">BACK</md-button>
-	</div>
-	</md-toolbar>
-
-	<md-tabs md-selected="selectedTab" style="min-height:calc(100% - 40px);"> 
-		<md-tab	label='chart' chart-tab> </md-tab> 
-		<md-tab label='structure'> </md-tab> 
-		<md-tab	label='configuration'> </md-tab>
-		<md-tab label='advanced'> </md-tab> 
-	</md-tabs>
-
-</body>
+	<body class="bodyStyle" ng-app="chartDesignerManager">
+	
+		<md-toolbar>
+			<div class="md-toolbar-tools">
+				<h2 flex><%=docLabel%></h2>
+				<span class="extraButtonContainer"></span>
+				<md-button aria-label="Preview" ng-click="previewChart()">PREVIEW</md-button>
+				<md-button aria-label="Save" ng-click="saveChartTemplate()">SAVE</md-button>
+				<md-button aria-label="Back" ng-click="goBackFromDesigner()">BACK</md-button>
+			</div>
+		</md-toolbar>
+	
+		<md-tabs md-selected="selectedTab" style="min-height:calc(100% - 40px);"> 
+			<md-tab	label='chart' chart-tab> </md-tab> 
+			<md-tab label='structure'> </md-tab> 
+			<md-tab	label='configuration'> </md-tab>
+			<md-tab label='advanced'> </md-tab> 
+		</md-tabs>
+	
+	</body>
+	
 </html>
