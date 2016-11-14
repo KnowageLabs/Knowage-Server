@@ -16,18 +16,4 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-angular.module('chart-tab', [])
-.directive('chartTab', function(sbiModule_config) {
-	return {
-		restrict: 'AE',
-		templateUrl: function(){
-		      return sbiModule_config.contextName + '/js/src/angular/designer/directives/custom_directives/chart-tab/chart-tab.html' 
-	      },   
-		controller: chartTabControllerFunction
-	}
-		
-});
-
-function chartTabControllerFunction($scope,sbiModule_translate){
-	$scope.datasetLabel = datasetLabel;
-}
+angular.module('chart-designer-service', []);
