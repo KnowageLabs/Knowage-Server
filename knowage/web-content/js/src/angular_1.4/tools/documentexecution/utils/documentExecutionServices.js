@@ -509,7 +509,10 @@
 				for(var i = 0; i < execProperties.parametersData.documentParameters.length; i++){
 					var parameter = execProperties.parametersData.documentParameters[i];
 
-					if(!params[parameter.urlName]) {
+					// in case the parameter value is missing or it is "[]", we reset the parameter.
+					// TODO improve this: the "[]" is a string while it should be an actual empty array!!! fix this in combination with decodeRequestStringToJson
+					// choosing a more convenient encoding/decoding
+					if(!params[parameter.urlName] || params[parameter.urlName] == "[]") {
 						documentExecuteServices.resetParameter(parameter);
 					} else {
 						//console.log('parametro ' , parameter);
