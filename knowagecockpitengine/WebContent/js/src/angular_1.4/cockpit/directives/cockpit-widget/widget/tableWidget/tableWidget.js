@@ -134,13 +134,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 		
 		$scope.selectRow=function(row,column,listId,index,evt,columnName){
+			
 			for(var i=0;i<$scope.ngModel.content.columnSelectedOfDataset.length;i++){
 				if(angular.equals($scope.ngModel.content.columnSelectedOfDataset[i].alias,columnName)){
-					if($scope.ngModel.content.columnSelectedOfDataset[i].isCalculated){
+					if($scope.ngModel.content.columnSelectedOfDataset[i].fieldType=="MEASURE")
+					{
 						return;
-					}else{
-						break;
 					}
+					else
+					{
+						if(angular.equals($scope.ngModel.content.columnSelectedOfDataset[i].alias,columnName)){
+							if($scope.ngModel.content.columnSelectedOfDataset[i].isCalculated){
+								return;
+							}else{
+								break;
+							}
+						}
+					}	
 				}
 			}
 			$scope.doSelection(columnName,column);

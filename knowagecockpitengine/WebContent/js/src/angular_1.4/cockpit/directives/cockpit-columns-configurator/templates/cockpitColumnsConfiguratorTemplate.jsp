@@ -16,13 +16,27 @@
 	<md-card >	
 		<md-card-title>
               <md-card-title-text layout="row">
+              		
                     <span flex class="md-headline">{{translate.load('sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.tablecolumns')}}</span>
                     <span flex></span>
+
                     <md-button flex="10" class="md-icon-button" ng-click="openListColumn()">{{translate.load('sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.addcolumn')}} </md-button>
                     <md-button flex="20" class="md-icon-button" ng-click="addNewCalculatedField()">{{translate.load('sbi.cockpit.widgets.table.calculatedFields.add')}}</md-button>
                      
               </md-card-title-text>
         </md-card-title>
+        <div layout-padding ng-if="model.content.columnSelectedOfDataset.length>0 && !showCircularcolumns.value">           
+	        <md-input-container class="md-block" layout-padding>
+		       			<label>{{translate.load("sbi.cockpit.widgets.table.modalselectioncolumn");}}</label>
+		          		<md-select ng-model="model.content.modalselectioncolumn">
+		          			<md-option md-option-empty ng-value=""></md-option>
+		           			<!-- <md-option ng-repeat="modalcolumn in modalcolumns" ng-value="modalcolumn"> -->
+		           			<md-option ng-repeat="modalcolumn in model.content.columnSelectedOfDataset" ng-value="modalcolumn.aliasToShow">
+		                			{{modalcolumn.aliasToShow}}
+		           			</md-option>
+		       			</md-select>
+		    </md-input-container>		    
+		</div>    
      	<md-card-content layout="row" layout-align="space-around center">
      		<div layout="row" ng-if="showCircularcolumns.value" layout-sm="column" layout-align="space-around">
       			<md-progress-circular md-mode="indeterminate"></md-progress-circular>

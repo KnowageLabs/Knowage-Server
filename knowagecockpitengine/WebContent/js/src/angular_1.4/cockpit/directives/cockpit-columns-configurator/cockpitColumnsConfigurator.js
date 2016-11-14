@@ -20,7 +20,18 @@
 	function cockpitColumnsConfiguratorControllerFunction($scope,$mdDialog,cockpitModule_datasetServices,$mdToast,cockpitModule_widgetConfigurator,sbiModule_restServices,sbiModule_translate,sbiModule_config,$mdSidenav,$q,cockpitModule_generalOptions){
 		$scope.translate=sbiModule_translate;
 		$scope.availableDatasets=cockpitModule_datasetServices.getAvaiableDatasets();
+		$scope.modalcolumns=[];
+		//$scope.fakeColumn={"aliasToShow":""};
+		//$scope.modalcolumns.push($scope.fakeColumn);
+		//$scope.moodalselectedcol=$scope.model.content.modalselectioncolumn;
 
+		if($scope.model.content.columnSelectedOfDataset!=undefined)
+		{	
+			for(var i=0;i<$scope.model.content.columnSelectedOfDataset.length;i++)
+			{
+				$scope.modalcolumns.push($scope.model.content.columnSelectedOfDataset[i]);
+			}
+		}	
 		$scope.selectedColumn;
 		$scope.lastId = -1;
 		if($scope.model.dataset == undefined){
@@ -516,6 +527,7 @@ function controllerCockpitCalculatedFieldController($scope,sbiModule_translate,$
 	$scope.localDataset = {};
 	$scope.formula = "";
 	$scope.formulaElement = [];
+
 	if($scope.model.dataset!=undefined && $scope.model.dataset.dsId != undefined){
 		//load all measures
 		angular.copy(cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId), $scope.localDataset); 
