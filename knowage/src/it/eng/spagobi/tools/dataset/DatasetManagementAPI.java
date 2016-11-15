@@ -384,7 +384,7 @@ public class DatasetManagementAPI {
 					dataSet.loadData();
 					IDataStore baseDataStore = dataSet.getDataStore();
 
-					if (baseDataStore.getRecordsCount() > METAMODEL_LIMIT) {
+					if (baseDataStore.getRecordsCount() > METAMODEL_LIMIT || haveCountDistinct(projections) || haveCountDistinct(summaryRowProjections)) {
 						cache.put(dataSet, baseDataStore);
 						dataStore = cache.get(dataSet, groups, filters, projections, summaryRowProjections, offset, fetchSize);
 						if (dataStore == null) {
@@ -447,6 +447,15 @@ public class DatasetManagementAPI {
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+
+	private boolean haveCountDistinct(List<ProjectionCriteria> projections) {
+		for (ProjectionCriteria projection : projections) {
+			if (AggregationFunctions.COUNT_DISTINCT.equals(projection.getAggregateFunction())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private Date getPersistedDate(IDataSet dataSet) {
