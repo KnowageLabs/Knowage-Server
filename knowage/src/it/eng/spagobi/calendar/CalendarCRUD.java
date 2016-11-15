@@ -18,6 +18,20 @@
 
 package it.eng.spagobi.calendar;
 
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.calendar.utils.CalendarUtilities;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.services.serialization.JsonConverter;
+import it.eng.spagobi.tools.calendar.dao.ICalendarDAO;
+import it.eng.spagobi.tools.calendar.metadata.Calendar;
+import it.eng.spagobi.tools.calendar.metadata.CalendarAttributeDomain;
+import it.eng.spagobi.tools.calendar.metadata.CalendarConfiguration;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -37,20 +51,6 @@ import org.hibernate.SessionFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.calendar.utils.CalendarUtilities;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.ISpagoBIDao;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.services.serialization.JsonConverter;
-import it.eng.spagobi.tools.calendar.dao.ICalendarDAO;
-import it.eng.spagobi.tools.calendar.metadata.Calendar;
-import it.eng.spagobi.tools.calendar.metadata.CalendarAttributeDomain;
-import it.eng.spagobi.tools.calendar.metadata.CalendarConfiguration;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import it.eng.spagobi.utilities.rest.RestUtilities;
 
 @ManageAuthorization
 @Path("/calendar")
@@ -142,8 +142,7 @@ public class CalendarCRUD {
 			List<CalendarAttributeDomain> domains = dao.loadCalendarDomains(session);
 
 			return Response.ok(JsonConverter.objectToJson(domains, domains.getClass())).build();
-		} catch (EMFUserError e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) {
 			logger.error("getDomains error ", e);
 			throw new SpagoBIServiceException(req.getPathInfo(), e);
 		} finally {
