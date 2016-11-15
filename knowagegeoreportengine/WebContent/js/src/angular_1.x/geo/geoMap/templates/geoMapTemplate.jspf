@@ -9,17 +9,17 @@
 		</div>
 		<div layout="row" 	style="bottom: 0; right: 0; position: absolute;">
 		<span flex></span>
-		<!-- EXCLUDED for branch creation  -->
-<!-- 		    <geo-dataset ng-if="!geoModule_template.noDatasetReport"></geo-dataset> -->
-			<geo-legend id="legend" ng-if="!geoModule_template.noDatasetReport"></geo-legend>
-			<geo-distance-calculator id="calculator"></geo-distance-calculator>
-			<geo-download></geo-download>
+		
+		    <geo-dataset ng-if="!geoModule_template.noDatasetReport"></geo-dataset>
+			<geo-legend id="legend" ng-if="!geoModule_template.noDatasetReport" ng-show="visibility.showLegendButton" ></geo-legend>
+			<geo-distance-calculator id="calculator" ng-show="visibility.showDistanceCalculator"></geo-distance-calculator>
+			<geo-download ng-show="visibility.showDownloadButton"></geo-download>
 			<geo-save ng-show="showSaveButton==true"></geo-save>
 			
 		</div>
 	</div>
 
-	<geo-rigth-menu id="menu"></geo-rigth-menu>
+	<geo-rigth-menu id="menu" ng-show="visibility.showRightConfigMenu"></geo-rigth-menu>
 	
 	<geo-cross-nav-multiselect></geo-cross-nav-multiselect>
 

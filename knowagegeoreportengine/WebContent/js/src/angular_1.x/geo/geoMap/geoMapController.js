@@ -37,6 +37,9 @@ angular.module('geoModule')
 
  
 function geoMapControllerFunction($scope,geoModule_reportUtils,geoModule_layerServices,geoModule_template){
+	
+	console.log(geoModule_template);
+	
 	$scope.geoModule_template=geoModule_template;
 	if(!geoModule_template.noDatasetReport){
 		geoModule_reportUtils.getTargetDataset();
@@ -47,4 +50,6 @@ function geoMapControllerFunction($scope,geoModule_reportUtils,geoModule_layerSe
 	$scope.closePopup=function(){
 		geoModule_layerServices.removeSelectPopup();
 	}
+	
+	$scope.visibility = geoModule_template.visibilityControls;
 }

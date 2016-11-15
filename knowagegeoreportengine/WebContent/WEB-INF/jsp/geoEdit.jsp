@@ -202,7 +202,41 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		</angular-table>	
 	</md-whiteframe>
 	</expander-box>
-	
+	<!-- GEO CONFIC VISIBILITY SETTINGS -->
+	<expander-box id="visibilitySettings" aria-label="menu configuration" color="white" expanded="false" title="translate.load('gisengine.designer.menuConfiguration')">
+ 	<md-whiteframe class="md-whiteframe-4dp layout-padding " flex layout layout-margin > 
+ 	      <div layout="column" flex>
+ 	      
+ 	      <md-checkbox ng-model="visibility.showRightConfigMenu" aria-label="show right menu" >
+            {{translate.load('gisengine.designer.showRigtMenu')}}
+          </md-checkbox> 
+          	<md-input-container> 
+            <md-checkbox ng-model="visibility.showLegendButton" aria-label="show legend button">
+            {{translate.load('gisengine.designer.showLegendButton')}}
+          </md-checkbox> 
+            <md-checkbox ng-model="visibility.showDistanceCalculator" aria-label="show distance calculator">
+            {{translate.load('gisengine.designer.showDistanceCalculator')}}
+          </md-checkbox> 
+          
+           
+            <md-checkbox ng-model="visibility.showDownloadButton" aria-label="show download button">
+            {{translate.load('gisengine.designer.showDownloadButton')}}
+          </md-checkbox> 
+              <md-checkbox ng-model="visibility.showSelectMode" ng-disabled="!visibility.showRightConfigMenu" aria-label="show select mode configuration">
+            {{translate.load('gisengine.designer.showSelectMode')}}
+          </md-checkbox> 
+             <md-checkbox ng-model="visibility.showLayer" ng-disabled="!visibility.showRightConfigMenu" aria-label="show layer selection">
+            {{translate.load('gisengine.designer.showLayer')}}
+          </md-checkbox> 
+             <md-checkbox ng-model="visibility.showBaseLayer" ng-disabled="!visibility.showRightConfigMenu" aria-label="show base layer selection">
+            {{translate.load('gisengine.designer.showBaseLayer')}}
+          </md-checkbox> 
+          <md-checkbox ng-model="visibility.showMapConfig" ng-disabled="!visibility.showRightConfigMenu" aria-label="show map style configuration panel">
+            {{translate.load('gisengine.designer.showMapConfig')}}
+          </md-checkbox> 
+          </div>
+ 	</md-whiteframe>
+ 	</expander-box>
  </md-whiteframe>
 </body>
 </html>

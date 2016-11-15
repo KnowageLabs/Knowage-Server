@@ -57,6 +57,8 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 	$scope.selectMisure="kilometers";
 	$scope.geoModule_driverParameters=geoModule_driverParameters;
 	
+	$scope.visibility= geoModule_template.visibilityControls; 
+	
 	$scope.selectModeTypeList = [
 	                             {label:sbiModule_translate.load("gisengine.rigthMapMenu.selectModeType.identify"), type:"identify"},
 	                             {label:sbiModule_translate.load("gisengine.rigthMapMenu.selectModeType.cross"), type:"cross"}
@@ -420,13 +422,13 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 		$scope.layerCatalogueList=[];
 		$scope.selectedLayerList=[];
 		$scope.columnList=[
-		                   {label:sbiModule_translate.load("gisengine.geoLayer.catalogue.tableColumn.label"),name:"layerLabel"},
+		                   {label:sbiModule_translate.load("gisengine.geoLayer.catalogue.tableColumn.label"),name:"name"},
 		                   {label:sbiModule_translate.load("gisengine.geoLayer.catalogue.tableColumn.type"),name:"type",size:"100px"},
 		                   {label:sbiModule_translate.load("gisengine.geoLayer.catalogue.tableColumn.layerUrl"),name:"layerURL"},
 		                   {label:sbiModule_translate.load("gisengine.geoLayer.catalogue.tableColumn.baseLayer"),name:"baseLayer",size:"100px"}
 		                   ];
 		
-		$scope.columnSearch=["layerLabel","type","baseLayer"];
+		$scope.columnSearch=["name","type","baseLayer"];
 		
 		$scope.loadSelectedLayerList=function(){
 			for(cat in $scope.layers){

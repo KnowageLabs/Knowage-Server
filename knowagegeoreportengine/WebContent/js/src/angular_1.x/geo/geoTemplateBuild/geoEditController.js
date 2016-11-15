@@ -68,7 +68,19 @@
 		//dataaset filters
 		$scope.datasetFilters=[];
 		$scope.attributeFields=[];
-       
+        
+		//geo visibility controls
+		$scope.visibility={
+				showRightConfigMenu:true,
+				showLegendButton:true,
+				showDistanceCalculator:true,
+				showDownloadButton:true,
+				showSelectMode: true,
+				showLayer: true,
+				showBaseLayer: true,
+				showMapConfig:true	
+		};
+		
 		// if there is no template at all
 		$scope.editDisabled = $scope.template.targetLayerConf == undefined; 
 		
@@ -686,7 +698,21 @@
 					}
 				
 			}
-
+			template.visibilityControls= $scope.visibility;
+			
+//			template.visibilityControls= {
+//					showRightConfigMenu:$scope.showRightConfigMenu,
+//					showLegendButton:$scope.showLegendButton,
+//					showDistanceCalculator:$scope.showDistanceCalculator,
+//					showDownloadButton:$scope.showDownloadButton,
+//					showSelectMode:$scope.showSelectMode,
+//					showLayer:$scope.showLayer,
+//					showBaseLayer:$scope.showBaseLayer,
+//					showMapConfig:$scope.showMapConfig
+//			};
+			console.log(template.visibilityControls);
+           // template.visibilityControls= visibilityControls;
+            
 			return template;
 		}
 		
@@ -701,6 +727,10 @@
 			if(!$scope.tecnicalUser){
 			initializeLayerFilters();
 			}
+			if($scope.template.visibilityControls){
+			$scope.visibility= $scope.template.visibilityControls;
+			}
+			
 			}
 
 		function initializeSelectedLayer(){

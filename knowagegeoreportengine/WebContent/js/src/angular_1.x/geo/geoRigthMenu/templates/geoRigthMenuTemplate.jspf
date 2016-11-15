@@ -30,7 +30,7 @@
 						<geo-layers id="layer"></geo-layers>
 					</md-tab-body>
 				</md-tab>
-				<md-tab id="CONFIG" ng-if="template.noDatasetReport!=true"> 
+				<md-tab id="CONFIG" ng-if="template.noDatasetReport!=true && visibility.showMapConfig"> 
 					<md-tab-label>{{translate.load("gisengine.rigthMenu.tabs.config")}}</md-tab-label> 
 					<md-tab-body>
 						<geo-config id="config"></geo-config>

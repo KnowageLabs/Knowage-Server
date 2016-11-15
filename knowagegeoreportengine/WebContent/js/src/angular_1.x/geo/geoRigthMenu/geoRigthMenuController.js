@@ -46,6 +46,6 @@ function geoRigthMenuControllerFunction($scope,$timeout,$map,sbiModule_translate
 		}, 1200);
 	};
 	
-	
+	$scope.visibility= geoModule_template.visibilityControls;
 	
 };
