@@ -76,7 +76,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<structure-tab></structure-tab>
 			 </md-tab> 
 			<md-tab	label='{{translate.load("sbi.chartengine.designer.tab.configuration");}}' configuration-tab> </md-tab>
-			<md-tab label='{{translate.load("sbi.chartengine.designer.tab.advanced");}}'> </md-tab> 
+			<md-tab label='{{translate.load("sbi.chartengine.designer.tab.advanced");}}' advanced-tab> </md-tab> 
 		</md-tabs>
 	
 	</body>

@@ -16,4 +16,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-angular.module('advanced-tab', []);
+angular.module('advanced-tab', [])
+.directive('advancedTab', function(sbiModule_config) {
+	return {
+		restrict: 'AE',
+		templateUrl: function(){
+		      return sbiModule_config.contextName + '/js/src/angular/designer/directives/custom_directives/advanced-tab/advanced-tab.html' 
+	      },   
+		controller: advancedTabControllerFunction
+	}
+		
+});
+
+function advancedTabControllerFunction($scope,sbiModule_translate){
+ console.log("in advanced tab");
+ $scope.translate = sbiModule_translate;
+ 
+}

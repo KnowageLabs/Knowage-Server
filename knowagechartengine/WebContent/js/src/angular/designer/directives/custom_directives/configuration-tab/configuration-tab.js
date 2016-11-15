@@ -24,12 +24,12 @@ angular.module('configuration-tab', [])
 		templateUrl: function(){
 		      return sbiModule_config.contextName + '/js/src/angular/designer/directives/custom_directives/configuration-tab/configuration-tab.html' 
 	      },   
-		controller: configurationtTabControllerFunction
+		controller: configurationTabControllerFunction
 	}
 		
 });
 
-function configurationtTabControllerFunction($scope,sbiModule_translate){
+function configurationTabControllerFunction($scope,sbiModule_translate){
  console.log("in configuration tab");
  $scope.translate = sbiModule_translate;
  
