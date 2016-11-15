@@ -58,7 +58,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	
 	</head>
 
-	<body class="bodyStyle" ng-app="chartDesignerManager">
+	<body class="bodyStyle" ng-app="chartDesignerManager" layout="column">
 	
 		<md-toolbar>
 			<div class="md-toolbar-tools">
@@ -70,7 +70,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</div>
 		</md-toolbar>
 	
-		<md-tabs md-selected="selectedTab" style="min-height:calc(100% - 40px);"> 
+		<md-tabs md-selected="selectedTab" flex> 
 			<md-tab	label='chart' chart-tab> </md-tab> 
 			<md-tab label='structure'> </md-tab> 
 			<md-tab	label='configuration'> </md-tab>
