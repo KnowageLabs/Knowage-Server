@@ -31,5 +31,6 @@ angular.module('configuration-tab', [])
 
 function configurationtTabControllerFunction($scope,sbiModule_translate){
  console.log("in configuration tab");
+ $scope.translate = sbiModule_translate;
  
 }

@@ -16,11 +16,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-angular.module('chartDesignerManager', ['chart-directives'])
+var app =angular.module('chartDesignerManager', ['chart-directives'])
 
-.config(['$mdThemingProvider', function($mdThemingProvider) {
-
+app.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.theme('knowage')
-
-$mdThemingProvider.setDefaultTheme('knowage');
+    $mdThemingProvider.setDefaultTheme('knowage');
 }]);
+app.controller("ChartDesignerController", ["sbiModule_translate","$scope", ChartDesignerFunction]);
+
+function ChartDesignerFunction(sbiModule_translate,$scope) {
+	$scope.translate = sbiModule_translate;
+	
+	
+}

@@ -51,7 +51,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var thisContextName			= '${pageContext.request.contextPath}';  <%-- knowagechartengine --%>
 			thisContextName = thisContextName.replace('/','');
 			var mainContextName 		= '<%=contextName.replaceAll("/", "")%>';  <%-- knowage --%>
-			var exporterContextName 	= 'highcharts-export-web';			
+			var exporterContextName 	= 'highcharts-export-web';
+			
 		
 		</script>
 	
@@ -63,17 +64,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<div class="md-toolbar-tools">
 				<h2 flex><%=docLabel%></h2>
 				<span class="extraButtonContainer"></span>
-				<md-button aria-label="Preview" ng-click="previewChart()">PREVIEW</md-button>
-				<md-button aria-label="Save" ng-click="saveChartTemplate()">SAVE</md-button>
-				<md-button aria-label="Back" ng-click="goBackFromDesigner()">BACK</md-button>
+				<md-button aria-label="Preview" ng-click="previewChart()">{{translate.load("sbi.chartengine.designer.general.preview")}}</md-button>
+				<md-button aria-label="Save" ng-click="saveChartTemplate()">{{translate.load("sbi.chartengine.designer.general.save")}}</md-button>
+				<md-button aria-label="Back" ng-click="goBackFromDesigner()">{{translate.load("sbi.chartengine.designer.general.back")}}</md-button>
 			</div>
 		</md-toolbar>
 	
 		<md-tabs md-selected="selectedTab" flex> 
-			<md-tab	label='Chart' chart-tab> </md-tab> 
-			<md-tab label='Structure'><structure-tab></structure-tab></md-tab> 
-			<md-tab	label='Configuration'configuration-tab> </md-tab>
-			<md-tab label='Advanced'> </md-tab> 
+			<md-tab	label='{{translate.load("sbi.chartengine.designer.tab.chart");}}' chart-tab> </md-tab> 
+			<md-tab label='{{translate.load("sbi.chartengine.designer.tab.structure");}}' >
+			<structure-tab></structure-tab>
+			 </md-tab> 
+			<md-tab	label='{{translate.load("sbi.chartengine.designer.tab.configuration");}}' configuration-tab> </md-tab>
+			<md-tab label='{{translate.load("sbi.chartengine.designer.tab.advanced");}}'> </md-tab> 
 		</md-tabs>
 	
 	</body>
