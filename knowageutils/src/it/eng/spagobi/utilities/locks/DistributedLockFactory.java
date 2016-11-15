@@ -35,7 +35,7 @@ import com.hazelcast.core.IMap;
 public class DistributedLockFactory {
 
 	private static Logger logger = Logger.getLogger(DistributedLockFactory.class);
-	private static Config defaultConfig = null;
+	private static volatile Config defaultConfig = null;
 
 	@SuppressWarnings("rawtypes")
 	public static IMap getDistributedMap(String instanceName, String mapName) {
