@@ -25,7 +25,8 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
 app.controller("ChartDesignerController", ["sbiModule_translate","$scope", ChartDesignerFunction]);
 
 function ChartDesignerFunction(sbiModule_translate,$scope) {
-	$scope.translate = sbiModule_translate;
 	
+	$scope.translate = sbiModule_translate;
+	$scope.previewButtonEnabled = false;
 	
 }

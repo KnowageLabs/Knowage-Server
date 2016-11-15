@@ -16,19 +16,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-angular.module('structure-tab', [])
-	.directive('structureTab', function(sbiModule_config) {
-		return {
-			restrict: 'AE',
-			templateUrl: function(){
-			      return sbiModule_config.contextName + '/js/src/angular/designer/directives/custom_directives/structure-tab/structure-tab.html' 
-		      },   
-			controller: structureTabControllerFunction
-		}
-			
-	});
+angular.module('chartstructure-tab', [])
+.directive('chartstructureTab', function(sbiModule_config) {
+	return {
+		restrict: 'AE',
+		templateUrl: function(){
+		      return sbiModule_config.contextName + '/js/src/angular/designer/directives/custom_directives/structure-tab/chartstructure-tab.html' 
+	      },   
+		controller: structureTabControllerFunction
+	}
+		
+});
 
 function structureTabControllerFunction($scope,sbiModule_translate){
-	
+ console.log("in structure tab");
+ $scope.translate = sbiModule_translate;
+ 
 }

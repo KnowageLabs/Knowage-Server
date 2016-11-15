@@ -16,4 +16,4 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-angular.module('custom-directives', ['chart-tab','structure-tab','configuration-tab', 'advanced-tab', 'preview']);
+angular.module('custom-directives', ['chart-tab', 'chartstructure-tab', 'configuration-tab', 'advanced-tab', 'preview']);
