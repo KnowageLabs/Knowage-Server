@@ -70,7 +70,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		</md-toolbar>
 		
 		<md-tabs md-selected="selectedTab" flex> 
-			<md-tab chart-tab label='{{translate.load("sbi.chartengine.designer.tab.chart");}}'> </md-tab> 
+			<md-tab label='{{translate.load("sbi.chartengine.designer.tab.chart");}}'><chart-tab></chart-tab> </md-tab> 
 			<md-tab label='{{translate.load("sbi.chartengine.designer.tab.structure");}}'><chartstructure-tab></chartstructure-tab></md-tab> 
 			<md-tab	configuration-tab label='{{translate.load("sbi.chartengine.designer.tab.configuration");}}'> </md-tab>
 			<md-tab advanced-tab label='{{translate.load("sbi.chartengine.designer.tab.advanced");}}'> </md-tab> 

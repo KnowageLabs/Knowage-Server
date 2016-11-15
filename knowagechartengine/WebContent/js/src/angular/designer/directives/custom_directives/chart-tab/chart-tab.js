@@ -20,6 +20,7 @@ angular.module('chart-tab', [])
 .directive('chartTab', function(sbiModule_config) {
 	return {
 		restrict: 'AE',
+		replace: true,
 		templateUrl: function(){
 		      return sbiModule_config.contextName + '/js/src/angular/designer/directives/custom_directives/chart-tab/chart-tab.html' 
 	      },   
@@ -29,9 +30,9 @@ angular.module('chart-tab', [])
 });
 
 function chartTabControllerFunction($scope,sbiModule_translate, sbiModule_restServices){
-	
+	$scope.translate = sbiModule_translate;
 	$scope.datasetLabel = datasetLabel;
-	
+
 	sbiModule_restServices.promiseGet("../api/1.0/pages/types", "")
 	.then(function(response) {
 		$scope.chartTypes = response.data.types;

@@ -41,7 +41,7 @@ function ChartDesignerFunction(sbiModule_translate,$scope) {
 	}
 	
 	$scope.chartTemplate = jsonTemplate;
-	
+	console.log(jsonTemplate)
 	// Needed for the preview of the chart (calling the Highcharts exporter
 	$scope.exporterContextName = exporterContextName;
 	

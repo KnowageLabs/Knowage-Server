@@ -3,19 +3,19 @@
 		<md-whiteframe class="md-whiteframe-4dp" layout layout-align="center center" flex=80 style="height:80%;">
 			<div flex=60 layout-fill>
 				<md-content layout-padding>
-				
+
 					<md-input-container  class="md-block whiteframe-element-padding">
-						<label>Style</label>
-						<md-select  ng-model="chartStyles" >
-							<md-option ng-repeat="d in chartStyles" value="{{d.VALUE_ID}}">{{d.VALUE_DS}} 
+						<label>{{translate.load("sbi.chartengine.designer.styleforparameters")}}</label>	
+						<md-select  ng-model="chartTemplate.CHART.styleName">
+							<md-option ng-repeat="c in chartStyles">{{c.STYLE.name}} 
 							</md-option>
 						</md-select>
 					</md-input-container>
-					
+									
 					<md-input-container  class="md-block whiteframe-element-padding">
-						<label>Chart type</label>
-						<md-select  ng-model="chartTypes" >
-							<md-option ng-repeat="d in chartTypes" value="{{d.VALUE_ID}}">{{d.VALUE_DS}} 
+						<label>{{translate.load("sbi.chartengine.designer.chartTypePicker")}}</label>	
+						<md-select  ng-model="chartTemplate.CHART.type">
+							<md-option ng-repeat="c in chartTypes">{{c | uppercase}} 
 							</md-option>
 						</md-select>
 					</md-input-container>
