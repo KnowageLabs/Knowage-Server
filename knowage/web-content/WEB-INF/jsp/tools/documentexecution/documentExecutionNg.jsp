@@ -187,7 +187,7 @@ if(executionRoleNames.size() > 0) {
 	%>
 			<md-toolbar class="documentExecutionToolbar" flex="nogrow">
 	            <div class="md-toolbar-tools" layout="row" layout-align="center center">
-	                <i class="fa fa-file-text-o fa-2x"></i>
+	                <i class="fa fa-file-text-o"></i>
 	                <span>&nbsp;&nbsp;</span>
 	                <h2 class="md-flex" ng-hide="::crossNavigationScope.isNavigationInProgress()">
 	                	{{::translate.load("sbi.generic.document")}}: {{executionInstance.OBJECT_NAME}}
