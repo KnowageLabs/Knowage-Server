@@ -193,9 +193,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								<md-content flex layout>
 									<md-list class="md-dense" flex>
 										<md-list-item class="md-long-text" ng-repeat=" param in avDocument.objParameter" 
-										ng-click="toggleAssociation(avDocument.DOCUMENT_LABEL,param.urlName,'document')" ng-class="{'selectedRow':jsonCurrentAss[avDocument.DOCUMENT_LABEL]==('document'+param.urlName)}">
+										ng-click="toggleAssociation(avDocument.DOCUMENT_LABEL,'$P{'+param.urlName+'}','document')" ng-class="{'selectedRow':jsonCurrentAss[avDocument.DOCUMENT_LABEL]==('document'+'$P{'+param.urlName+'}')}">
 											<span layout="row" flex>
-												<p flex class="metaname">{{param.urlName}}</p>
+												<p flex class="metaname">$P{<span ng-bind="param.urlName"></span>}</p>
 												<p class="metatype">({{param.type | parametertype}})</p>
 											</span>
 											<md-divider ng-if="!$last"></md-divider>

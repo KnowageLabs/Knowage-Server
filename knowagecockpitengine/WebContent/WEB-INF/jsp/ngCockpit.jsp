@@ -62,6 +62,19 @@ angular.module("cockpitModule").factory("cockpitModule_template",function(sbiMod
 		template.configuration.filters={};
 	}
 	
+	// back compatibility with old document parameters
+	for(var i=0; i<template.configuration.associations.length; i++){
+		var association = template.configuration.associations[i];
+		for(var j=0; j<association.fields.length; j++){
+			var field = association.fields[j];
+			if(field.type=="document"
+					&& !field.column.startsWith("$P{")
+					&& !field.column.endsWith("}")){
+				association.description = association.description.replace(field.store+"."+field.column,field.store+"."+"$P{" + field.column + "}");
+				field.column = "$P{" + field.column + "}";
+			}
+		}
+	}
 	return template;
 });
 

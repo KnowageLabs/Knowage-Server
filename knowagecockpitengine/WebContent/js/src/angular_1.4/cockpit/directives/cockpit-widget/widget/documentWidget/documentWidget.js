@@ -86,7 +86,7 @@ function cockpitDocumentWidgetControllerFunction($scope,cockpitModule_widgetConf
 						angular.forEach(parV,function(item){
 							this.push(item.substring(2,item.length-2))
 						},finalP)
-						docPa[parName]=finalP.join(",");
+						docPa[parName.substring(3,parName.length-1)]=finalP.join(",");
 					}
 						
 				}
