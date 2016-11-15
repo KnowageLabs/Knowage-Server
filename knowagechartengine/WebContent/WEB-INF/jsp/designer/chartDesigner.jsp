@@ -51,8 +51,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var thisContextName			= '${pageContext.request.contextPath}';  <%-- knowagechartengine --%>
 			thisContextName = thisContextName.replace('/','');
 			var mainContextName 		= '<%=contextName.replaceAll("/", "")%>';  <%-- knowage --%>
-			var exporterContextName 	= 'highcharts-export-web';
-			
+			var exporterContextName 	= 'highcharts-export-web';			
 		
 		</script>
 	
@@ -71,10 +70,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		</md-toolbar>
 	
 		<md-tabs md-selected="selectedTab" flex> 
-			<md-tab	label='chart' chart-tab> </md-tab> 
-			<md-tab label='structure'> </md-tab> 
-			<md-tab	label='configuration' configuration-tab> </md-tab>
-			<md-tab label='advanced'> </md-tab> 
+			<md-tab	label='Chart' chart-tab> </md-tab> 
+			<md-tab label='Structure'><structure-tab></structure-tab></md-tab> 
+			<md-tab	label='Configuration'configuration-tab> </md-tab>
+			<md-tab label='Advanced'> </md-tab> 
 		</md-tabs>
 	
 	</body>
