@@ -16,4 +16,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-angular.module('configuration-tab', []);
+
+angular.module('configuration-tab', [])
+.directive('configurationTab', function(sbiModule_config) {
+	return {
+		restrict: 'AE',
+		templateUrl: function(){
+		      return sbiModule_config.contextName + '/js/src/angular/designer/directives/custom_directives/configuration-tab/configuration-tab.html' 
+	      },   
+		controller: configurationtTabControllerFunction
+	}
+		
+});
+
+function configurationtTabControllerFunction($scope,sbiModule_translate){
+ console.log("in configuration tab");
+ 
+}

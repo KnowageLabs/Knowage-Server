@@ -73,7 +73,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<md-tabs md-selected="selectedTab" flex> 
 			<md-tab	label='chart' chart-tab> </md-tab> 
 			<md-tab label='structure'> </md-tab> 
-			<md-tab	label='configuration'> </md-tab>
+			<md-tab	label='configuration' configuration-tab> </md-tab>
 			<md-tab label='advanced'> </md-tab> 
 		</md-tabs>
 	
