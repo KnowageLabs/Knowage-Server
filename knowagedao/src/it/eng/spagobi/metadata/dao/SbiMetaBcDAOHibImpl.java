@@ -20,7 +20,7 @@ package it.eng.spagobi.metadata.dao;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.SpagoBIDOAException;
+import it.eng.spagobi.commons.dao.SpagoBIDAOException;
 import it.eng.spagobi.metadata.metadata.SbiMetaBc;
 import it.eng.spagobi.metadata.metadata.SbiMetaBcAttribute;
 import it.eng.spagobi.metadata.metadata.SbiMetaSource;
@@ -668,7 +668,7 @@ public class SbiMetaBcDAOHibImpl extends AbstractHibernateDAO implements ISbiMet
 				criteria.add(aCriterion);
 				metaModel = (SbiMetaModel) criteria.uniqueResult();
 				if (metaModel == null) {
-					throw new SpagoBIDOAException("The sbiMetaModel with id= " + aMetaBc.getSbiMetaModel().getId() + " does not exist");
+					throw new SpagoBIDAOException("The sbiMetaModel with id= " + aMetaBc.getSbiMetaModel().getId() + " does not exist");
 				}
 				hibMeta.setSbiMetaModel(metaModel);
 			}
@@ -715,7 +715,7 @@ public class SbiMetaBcDAOHibImpl extends AbstractHibernateDAO implements ISbiMet
 				criteria.add(aCriterion);
 				metaModel = (SbiMetaModel) criteria.uniqueResult();
 				if (metaModel == null) {
-					throw new SpagoBIDOAException("The sbiMetaModel with id= " + aMetaBc.getSbiMetaModel().getId() + " does not exist");
+					throw new SpagoBIDAOException("The sbiMetaModel with id= " + aMetaBc.getSbiMetaModel().getId() + " does not exist");
 				}
 				hibMeta.setSbiMetaModel(metaModel);
 			}

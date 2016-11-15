@@ -20,7 +20,7 @@ package it.eng.spagobi.metadata.dao;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.SpagoBIDOAException;
+import it.eng.spagobi.commons.dao.SpagoBIDAOException;
 import it.eng.spagobi.metadata.metadata.SbiMetaBc;
 import it.eng.spagobi.metadata.metadata.SbiMetaBcAttribute;
 import it.eng.spagobi.metadata.metadata.SbiMetaTable;
@@ -491,7 +491,7 @@ public class SbiMetaBcAttributeDAOHibImpl extends AbstractHibernateDAO implement
 				criteria.add(aCriterion);
 				metaBc = (SbiMetaBc) criteria.uniqueResult();
 				if (metaBc == null) {
-					throw new SpagoBIDOAException("The sbiMetaBc with id= " + aMetaBcAttribute.getSbiMetaBc().getBcId() + " does not exist");
+					throw new SpagoBIDAOException("The sbiMetaBc with id= " + aMetaBcAttribute.getSbiMetaBc().getBcId() + " does not exist");
 				}
 				hibMeta.setSbiMetaBc(metaBc);
 			}
@@ -503,7 +503,7 @@ public class SbiMetaBcAttributeDAOHibImpl extends AbstractHibernateDAO implement
 				criteria.add(aCriterion);
 				metaTableColumn = (SbiMetaTableColumn) criteria.uniqueResult();
 				if (metaTableColumn == null) {
-					throw new SpagoBIDOAException("The SbiMetaTableColumn with id= " + aMetaBcAttribute.getSbiMetaTableColumn().getColumnId()
+					throw new SpagoBIDAOException("The SbiMetaTableColumn with id= " + aMetaBcAttribute.getSbiMetaTableColumn().getColumnId()
 							+ " does not exist");
 				}
 				hibMeta.setSbiMetaTableColumn(metaTableColumn);
@@ -553,7 +553,7 @@ public class SbiMetaBcAttributeDAOHibImpl extends AbstractHibernateDAO implement
 				criteria.add(aCriterion);
 				metaBc = (SbiMetaBc) criteria.uniqueResult();
 				if (metaBc == null) {
-					throw new SpagoBIDOAException("The sbiMetaBc with id= " + aMetaBcAttribute.getSbiMetaBc().getBcId() + " does not exist");
+					throw new SpagoBIDAOException("The sbiMetaBc with id= " + aMetaBcAttribute.getSbiMetaBc().getBcId() + " does not exist");
 				}
 				hibMeta.setSbiMetaBc(metaBc);
 			}
@@ -565,7 +565,7 @@ public class SbiMetaBcAttributeDAOHibImpl extends AbstractHibernateDAO implement
 				criteria.add(aCriterion);
 				metaTableColumn = (SbiMetaTableColumn) criteria.uniqueResult();
 				if (metaTableColumn == null) {
-					throw new SpagoBIDOAException("The SbiMetaTableColumn with id= " + aMetaBcAttribute.getSbiMetaTableColumn().getColumnId()
+					throw new SpagoBIDAOException("The SbiMetaTableColumn with id= " + aMetaBcAttribute.getSbiMetaTableColumn().getColumnId()
 							+ " does not exist");
 				}
 				hibMeta.setSbiMetaTableColumn(metaTableColumn);

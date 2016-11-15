@@ -24,7 +24,7 @@ import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.ICriterion;
-import it.eng.spagobi.commons.dao.SpagoBIDOAException;
+import it.eng.spagobi.commons.dao.SpagoBIDAOException;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.tools.crossnavigation.dao.ICrossNavigationDAO;
 import it.eng.spagobi.tools.crossnavigation.metadata.SbiCrossNavigation;
@@ -161,7 +161,7 @@ public class OutputParameterDAOImpl extends AbstractHibernateDAO implements IOut
 		try {
 			SbiOutputParameter sop = load(SbiOutputParameter.class, id);
 			return from(sop);
-		} catch (SpagoBIDOAException e) {
+		} catch (SpagoBIDAOException e) {
 			return null;
 		}
 	}

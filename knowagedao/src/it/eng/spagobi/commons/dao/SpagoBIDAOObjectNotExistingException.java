@@ -22,7 +22,7 @@ package it.eng.spagobi.commons.dao;
  *
  */
 
-public class SpagoBIDAOObjectNotExistingException extends SpagoBIDOAException {
+public class SpagoBIDAOObjectNotExistingException extends SpagoBIDAOException {
 
 	private static final long serialVersionUID = 1L;
 

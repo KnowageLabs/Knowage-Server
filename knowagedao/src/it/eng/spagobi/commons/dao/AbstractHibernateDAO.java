@@ -293,12 +293,12 @@ public class AbstractHibernateDAO {
 				session = getSession();
 				Assert.assertNotNull(session, "session cannot be null");
 			} catch (Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 			}
 			toReturn = load(clazz, id, session);
 			session.flush();
 		} catch (Throwable t) {
-			throw new SpagoBIDOAException("An unexpected error occured while loading dataset whose id is equal to [" + id + "]", t);
+			throw new SpagoBIDAOException("An unexpected error occured while loading dataset whose id is equal to [" + id + "]", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -323,7 +323,7 @@ public class AbstractHibernateDAO {
 		}
 		Object obj = session.get(clazz, id);
 		if (obj == null) {
-			throw new SpagoBIDOAException("Object not found");
+			throw new SpagoBIDAOException("Object not found");
 		}
 		return (T) obj;
 	}
@@ -350,7 +350,7 @@ public class AbstractHibernateDAO {
 				tx = session.beginTransaction();
 				Assert.assertNotNull(tx, "transaction cannot be null");
 			} catch (Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 			}
 			updateSbiCommonInfo4Insert(obj);
 
@@ -360,7 +360,7 @@ public class AbstractHibernateDAO {
 			if (tx != null) {
 				tx.rollback();
 			}
-			throw new SpagoBIDOAException("Error saving a new object of type [" + obj.getClass() + "] ", t);
+			throw new SpagoBIDAOException("Error saving a new object of type [" + obj.getClass() + "] ", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -391,7 +391,7 @@ public class AbstractHibernateDAO {
 				tx = session.beginTransaction();
 				Assert.assertNotNull(tx, "transaction cannot be null");
 			} catch (Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 			}
 			updateSbiCommonInfo4Update(obj);
 			session.update(obj);
@@ -399,7 +399,7 @@ public class AbstractHibernateDAO {
 		} catch (Throwable t) {
 			if (tx != null)
 				tx.rollback();
-			throw new SpagoBIDOAException("Error updating an object of type [" + obj.getClass() + "] ", t);
+			throw new SpagoBIDAOException("Error updating an object of type [" + obj.getClass() + "] ", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -429,12 +429,12 @@ public class AbstractHibernateDAO {
 				tx = session.beginTransaction();
 				Assert.assertNotNull(tx, "transaction cannot be null");
 			} catch (Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 			}
 
 			Object obj = session.get(clazz, id);
 			if (obj == null) {
-				throw new SpagoBIDOAException("Object of type [" + clazz + "] whose id is equal to [" + id + "] was not found");
+				throw new SpagoBIDAOException("Object of type [" + clazz + "] whose id is equal to [" + id + "] was not found");
 			}
 			session.delete(obj);
 			tx.commit();
@@ -442,7 +442,7 @@ public class AbstractHibernateDAO {
 		} catch (Throwable t) {
 			if (tx != null)
 				tx.rollback();
-			throw new SpagoBIDOAException("An unexpected error occured while deleting object of type [" + clazz + "] whose id is equal to [" + id + "]", t);
+			throw new SpagoBIDAOException("An unexpected error occured while deleting object of type [" + clazz + "] whose id is equal to [" + id + "]", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -487,11 +487,11 @@ public class AbstractHibernateDAO {
 				session = getSession();
 				Assert.assertNotNull(session, "session cannot be null");
 			} catch (Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 			}
 			ret = internalList(clazz, criterion, session);
 		} catch (Throwable t) {
-			throw new SpagoBIDOAException("An unexpected error occured while fetching objects of type [" + clazz + "] ", t);
+			throw new SpagoBIDAOException("An unexpected error occured while fetching objects of type [" + clazz + "] ", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -539,7 +539,7 @@ public class AbstractHibernateDAO {
 			if (tx != null) {
 				tx.rollback();
 			}
-			throw new SpagoBIDOAException("Error executing on transaction ", t);
+			throw new SpagoBIDAOException("Error executing on transaction ", t);
 		} finally {
 			if (session != null) {
 				session.close();
@@ -564,7 +564,7 @@ public class AbstractHibernateDAO {
 			try {
 				returnObj = executeOnTransaction.execute(session);
 			} catch (Throwable t) {
-				throw new SpagoBIDOAException("Error executing on transaction ", t);
+				throw new SpagoBIDAOException("Error executing on transaction ", t);
 			}
 		}
 		return returnObj;

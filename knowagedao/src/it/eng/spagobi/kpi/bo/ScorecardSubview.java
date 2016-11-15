@@ -2,7 +2,6 @@ package it.eng.spagobi.kpi.bo;
 
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.kpi.bo.ScorecardStatus.STATUS;
-import it.eng.spagobi.services.serialization.JsonConverter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,10 +16,7 @@ public class ScorecardSubview {
 	private Integer id;
 	private String name;
 	private Domain criterion;
-	private String options;
-
-	@JsonIgnore
-	private ScorecardOption scorecardOption;
+	private ScorecardOption options;
 
 	private STATUS status;
 	@JsonIgnore
@@ -85,7 +81,7 @@ public class ScorecardSubview {
 	/**
 	 * @return the options
 	 */
-	public String getOptions() {
+	public ScorecardOption getOptions() {
 		return options;
 	}
 
@@ -93,9 +89,8 @@ public class ScorecardSubview {
 	 * @param options
 	 *            the options to set
 	 */
-	public void setOptions(String options) {
+	public void setOptions(ScorecardOption options) {
 		this.options = options;
-		this.scorecardOption = options != null ? (ScorecardOption) JsonConverter.jsonToObject(options, ScorecardOption.class) : null;
 	}
 
 	/**
@@ -111,21 +106,6 @@ public class ScorecardSubview {
 	 */
 	public void setStatus(STATUS status) {
 		this.status = status;
-	}
-
-	/**
-	 * @return the scorecardOption
-	 */
-	public ScorecardOption getScorecardOption() {
-		return scorecardOption;
-	}
-
-	/**
-	 * @param scorecardOption
-	 *            the scorecardOption to set
-	 */
-	public void setScorecardOption(ScorecardOption scorecardOption) {
-		this.scorecardOption = scorecardOption;
 	}
 
 	/**

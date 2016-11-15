@@ -21,7 +21,7 @@ package it.eng.spagobi.federateddataset.dao;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.SpagoBIDOAException;
+import it.eng.spagobi.commons.dao.SpagoBIDAOException;
 import it.eng.spagobi.federateddataset.metadata.SbiDataSetFederation;
 import it.eng.spagobi.federateddataset.metadata.SbiFederationDefinition;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -86,7 +86,7 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("An unexpected error occured while saving model [" + dataset + "]", t);
+			throw new SpagoBIDAOException("An unexpected error occured while saving model [" + dataset + "]", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -106,7 +106,7 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 			Assert.assertNotNull(transaction, "transaction cannot be null");
 
 		} catch (Throwable t) {
-			throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+			throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 		}
 
 		if (!duplicated) {
@@ -331,7 +331,7 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("Error while counting the federations associated with the data set with id " + dsId, t);
+			throw new SpagoBIDAOException("Error while counting the federations associated with the data set with id " + dsId, t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();

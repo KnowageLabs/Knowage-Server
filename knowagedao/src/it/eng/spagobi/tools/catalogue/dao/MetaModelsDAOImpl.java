@@ -32,7 +32,7 @@ import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Restrictions;
 
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.SpagoBIDOAException;
+import it.eng.spagobi.commons.dao.SpagoBIDAOException;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.tools.catalogue.bo.Content;
 import it.eng.spagobi.tools.catalogue.bo.MetaModel;
@@ -66,7 +66,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch (Exception e) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", e);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", e);
 			}
 
 			SbiMetaModel hibModel = (SbiMetaModel) session.load(SbiMetaModel.class, id);
@@ -80,7 +80,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("An unexpected error occured while loading model with id [" + id + "]", e);
+			throw new SpagoBIDAOException("An unexpected error occured while loading model with id [" + id + "]", e);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -110,7 +110,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch (Exception e) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", e);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", e);
 			}
 			Query query = null;
 			query = session.createQuery(" from SbiMetaModel m where m.name = ?");
@@ -127,7 +127,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("An unexpected error occured while loading model with name [" + name + "]", e);
+			throw new SpagoBIDAOException("An unexpected error occured while loading model with name [" + name + "]", e);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -157,7 +157,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch (Exception e) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", e);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", e);
 			}
 
 			String queryString = "from SbiMetaModel m where m.category in (";
@@ -185,7 +185,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("An unexpected error occured while loading model with categories [" + categories + "]", e);
+			throw new SpagoBIDAOException("An unexpected error occured while loading model with categories [" + categories + "]", e);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -220,7 +220,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch (Exception e) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", e);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", e);
 			}
 
 			String queryString = " from SbiMetaModel m where " + filter;
@@ -254,7 +254,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("An unexpected error occured while loading model with filter [" + filter + "]", e);
+			throw new SpagoBIDAOException("An unexpected error occured while loading model with filter [" + filter + "]", e);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -281,7 +281,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch (Exception e) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", e);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", e);
 			}
 
 			Query query = session.createQuery(" from SbiMetaModel");
@@ -298,7 +298,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("An unexpected error occured while loading models' list", e);
+			throw new SpagoBIDAOException("An unexpected error occured while loading models' list", e);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -330,7 +330,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch (Exception e) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", e);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", e);
 			}
 
 			SbiMetaModel hibModel = (SbiMetaModel) session.load(SbiMetaModel.class, model.getId());
@@ -359,7 +359,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("An unexpected error occured while saving model [" + model + "]", e);
+			throw new SpagoBIDAOException("An unexpected error occured while saving model [" + model + "]", e);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -389,7 +389,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 
 			} catch (Exception e) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", e);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", e);
 			}
 
 			SbiMetaModel hibModel = new SbiMetaModel();
@@ -421,7 +421,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("An unexpected error occured while saving model [" + model + "]", e);
+			throw new SpagoBIDAOException("An unexpected error occured while saving model [" + model + "]", e);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -450,7 +450,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch (Exception e) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", e);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", e);
 			}
 
 			SbiMetaModel hibModel = (SbiMetaModel) session.load(SbiMetaModel.class, modelId);
@@ -466,7 +466,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("An unexpected error occured while deleting model with id [" + modelId + "]", e);
+			throw new SpagoBIDAOException("An unexpected error occured while deleting model with id [" + modelId + "]", e);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -519,7 +519,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch (Exception e) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", e);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", e);
 			}
 
 			// set to not active the current active template
@@ -568,7 +568,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("An unexpected error occured while saving model content [" + content + "]", e);
+			throw new SpagoBIDAOException("An unexpected error occured while saving model content [" + content + "]", e);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -601,7 +601,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch (Exception e) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", e);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", e);
 			}
 
 			// set to not active the current active template
@@ -651,7 +651,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("An unexpected error occured while saving model content [" + content + "]", e);
+			throw new SpagoBIDAOException("An unexpected error occured while saving model content [" + content + "]", e);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -680,7 +680,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch (Exception e) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", e);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", e);
 			}
 
 			SbiMetaModelContent hibContent = (SbiMetaModelContent) session.load(SbiMetaModelContent.class, contentId);
@@ -707,7 +707,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("An unexpected error occured while deleting content with id [" + contentId + "]", e);
+			throw new SpagoBIDAOException("An unexpected error occured while deleting content with id [" + contentId + "]", e);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -737,7 +737,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch (Exception e) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", e);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", e);
 			}
 
 			SbiMetaModelContent hibContent = (SbiMetaModelContent) session.load(SbiMetaModelContent.class, contendId);
@@ -751,7 +751,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("An unexpected error occured while loading content with id [" + contendId + "]", e);
+			throw new SpagoBIDAOException("An unexpected error occured while loading content with id [" + contendId + "]", e);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -781,7 +781,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch (Exception e) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", e);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", e);
 			}
 
 			Query query = session.createQuery(" from SbiMetaModelContent mmc where mmc.model.id = ? and mmc.active = true ");
@@ -799,7 +799,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("An unexpected error occured while loading active content for model with id [" + modelId + "]", e);
+			throw new SpagoBIDAOException("An unexpected error occured while loading active content for model with id [" + modelId + "]", e);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -829,7 +829,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch (Exception e) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", e);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", e);
 			}
 
 			Query query = session.createQuery(" from SbiMetaModelContent mmc where mmc.model.name = ? and mmc.active = true ");
@@ -847,7 +847,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("An unexpected error occured while loading active content for model with id [" + modelName + "]", e);
+			throw new SpagoBIDAOException("An unexpected error occured while loading active content for model with id [" + modelName + "]", e);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -889,7 +889,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch (Exception e) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", e);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", e);
 			}
 
 			Query query = session.createQuery(" from SbiMetaModelContent mmc where mmc.model.id = ? order by mmc.prog desc");
@@ -907,7 +907,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("An unexpected error occured while loading active content for model with id [" + modelId + "]", e);
+			throw new SpagoBIDAOException("An unexpected error occured while loading active content for model with id [" + modelId + "]", e);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -984,7 +984,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch (Exception e) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", e);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", e);
 			}
 
 			// set to not active the current active template
@@ -1009,7 +1009,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("An unexpected error occured while saving active content [" + contentId + "] for model [" + modelId + "]", e);
+			throw new SpagoBIDAOException("An unexpected error occured while saving active content [" + contentId + "] for model [" + modelId + "]", e);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -1041,7 +1041,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch (Exception e) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", e);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", e);
 			}
 
 			// set to "not active" the current active model
@@ -1074,7 +1074,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("An unexpected error occured while locking for user[" + userId + "] the metamodel [" + metaModelId + "]", e);
+			throw new SpagoBIDAOException("An unexpected error occured while locking for user[" + userId + "] the metamodel [" + metaModelId + "]", e);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -1110,7 +1110,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch (Exception e) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", e);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", e);
 			}
 
 			// check if current user has the lock
@@ -1118,7 +1118,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 
 			if (hibMetaModel == null) {
 				logger.error("Could not find metamodel for id " + hibMetaModel);
-				throw new SpagoBIDOAException("Could not find metamodel for id " + hibMetaModel);
+				throw new SpagoBIDAOException("Could not find metamodel for id " + hibMetaModel);
 			}
 
 			logger.debug("MetaModel loaded");
@@ -1151,7 +1151,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("An unexpected error occured while unlocking for user[" + userId + "] the metamodel [" + metaModelId + "]", e);
+			throw new SpagoBIDAOException("An unexpected error occured while unlocking for user[" + userId + "] the metamodel [" + metaModelId + "]", e);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -1181,7 +1181,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch (Exception e) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", e);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", e);
 			}
 
 			Query query = session.createQuery(" from SbiMetaModelContent mmc where mmc.model.name = ? and mmc.active = true ");
@@ -1197,7 +1197,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("An unexpected error occured while loading active content for model with id [" + modelName + "]", e);
+			throw new SpagoBIDAOException("An unexpected error occured while loading active content for model with id [" + modelName + "]", e);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -1227,7 +1227,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch (Exception e) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", e);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", e);
 			}
 
 			Query query = session.createQuery(" from SbiMetaModelContent mmc where mmc.model.id = ? and mmc.fileModel is not null order by mmc.prog desc");
@@ -1242,7 +1242,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("An unexpected error occured while loading active content for model with id [" + modelId + "]", e);
+			throw new SpagoBIDAOException("An unexpected error occured while loading active content for model with id [" + modelId + "]", e);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();

@@ -19,7 +19,7 @@ package it.eng.spagobi.tools.catalogue.dao;
 
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.SpagoBIDAOObjectNotExistingException;
-import it.eng.spagobi.commons.dao.SpagoBIDOAException;
+import it.eng.spagobi.commons.dao.SpagoBIDAOException;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.tools.catalogue.bo.Artifact;
 import it.eng.spagobi.tools.catalogue.bo.Content;
@@ -62,7 +62,7 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch (Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 			}
 
 			SbiArtifact hibArtifact = (SbiArtifact) session.load(SbiArtifact.class, id);
@@ -76,7 +76,7 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 			throw new SpagoBIDAOObjectNotExistingException("There is no Atrifact with id " + id);
 		} catch (Exception e) {
 
-			throw new SpagoBIDOAException("An unexpected error occured while loading artifact with id [" + id + "]", e);
+			throw new SpagoBIDAOException("An unexpected error occured while loading artifact with id [" + id + "]", e);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -109,7 +109,7 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch (Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 			}
 
 			Query query = session.createQuery(" from SbiArtifact m where m.name = ? and m.type = ?");
@@ -126,7 +126,7 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("An unexpected error occured while loading artifact with name [" + name + "] and type [" + type + "]", t);
+			throw new SpagoBIDAOException("An unexpected error occured while loading artifact with name [" + name + "] and type [" + type + "]", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -157,7 +157,7 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch (Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 			}
 
 			Query query = session.createQuery(" from SbiArtifact a where a.type = ?");
@@ -175,7 +175,7 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("An unexpected error occured while loading artifacts' list", t);
+			throw new SpagoBIDAOException("An unexpected error occured while loading artifacts' list", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -207,7 +207,7 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch (Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 			}
 
 			SbiArtifact hibArtifact = (SbiArtifact) session.load(SbiArtifact.class, artifact.getId());
@@ -227,7 +227,7 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("An unexpected error occured while saving artifact [" + artifact + "]", t);
+			throw new SpagoBIDAOException("An unexpected error occured while saving artifact [" + artifact + "]", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -256,7 +256,7 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch (Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 			}
 
 			SbiArtifact hibArtifact = new SbiArtifact();
@@ -276,7 +276,7 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("An unexpected error occured while saving artifact [" + artifact + "]", t);
+			throw new SpagoBIDAOException("An unexpected error occured while saving artifact [" + artifact + "]", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -305,7 +305,7 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch (Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 			}
 
 			SbiArtifact hibArtifact = (SbiArtifact) session.load(SbiArtifact.class, artifactId);
@@ -321,7 +321,7 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("An unexpected error occured while deleting artifact with id [" + artifactId + "]", t);
+			throw new SpagoBIDAOException("An unexpected error occured while deleting artifact with id [" + artifactId + "]", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -376,7 +376,7 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch (Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 			}
 
 			// set to not active the current active template
@@ -425,7 +425,7 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("An unexpected error occured while saving artifact content [" + content + "]", t);
+			throw new SpagoBIDAOException("An unexpected error occured while saving artifact content [" + content + "]", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -454,7 +454,7 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch (Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 			}
 
 			SbiArtifactContent hibContent = (SbiArtifactContent) session.load(SbiArtifactContent.class, contentId);
@@ -481,7 +481,7 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("An unexpected error occured while deleting content with id [" + contentId + "]", t);
+			throw new SpagoBIDAOException("An unexpected error occured while deleting content with id [" + contentId + "]", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -511,7 +511,7 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch (Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 			}
 
 			SbiArtifactContent hibContent = (SbiArtifactContent) session.load(SbiArtifactContent.class, contendId);
@@ -524,7 +524,7 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 			throw new SpagoBIDAOObjectNotExistingException("There is no content with id " + contendId);
 		} catch (Exception e) {
 
-			throw new SpagoBIDOAException("An unexpected error occured while loading content with id [" + contendId + "]", e);
+			throw new SpagoBIDAOException("An unexpected error occured while loading content with id [" + contendId + "]", e);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -554,7 +554,7 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch (Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 			}
 
 			Query query = session.createQuery(" from SbiArtifactContent mmc where mmc.artifact.id = ? and mmc.active = true ");
@@ -570,7 +570,7 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("An unexpected error occured while loading active content for artifact with id [" + artifactId + "]", t);
+			throw new SpagoBIDAOException("An unexpected error occured while loading active content for artifact with id [" + artifactId + "]", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -600,7 +600,7 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch (Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 			}
 
 			Query query = session.createQuery(" from SbiArtifactContent mmc where mmc.artifact.id = ? order by mmc.prog desc");
@@ -618,7 +618,7 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("An unexpected error occured while loading active content for artifact with id [" + artifactId + "]", t);
+			throw new SpagoBIDAOException("An unexpected error occured while loading active content for artifact with id [" + artifactId + "]", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -669,7 +669,7 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch (Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 			}
 
 			// set to not active the current active template
@@ -694,7 +694,7 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("An unexpected error occured while saving active content [" + contentId + "] for artifact [" + artifactId + "]", t);
+			throw new SpagoBIDAOException("An unexpected error occured while saving active content [" + contentId + "] for artifact [" + artifactId + "]", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -728,7 +728,7 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch (Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 			}
 
 			// set to not active the current active template
@@ -761,7 +761,7 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("An unexpected error occured while locking for user[" + userId + "] the artifact [" + artifactId + "]", t);
+			throw new SpagoBIDAOException("An unexpected error occured while locking for user[" + userId + "] the artifact [" + artifactId + "]", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -798,7 +798,7 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch (Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 			}
 
 			// check if current user has the lock
@@ -806,7 +806,7 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 
 			if (hibArtifact == null) {
 				logger.error("Could not find artifact for id " + artifactId);
-				throw new SpagoBIDOAException("Could not find artifact for id " + artifactId);
+				throw new SpagoBIDAOException("Could not find artifact for id " + artifactId);
 			}
 
 			logger.debug("Artifact loaded");
@@ -839,7 +839,7 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("An unexpected error occured while unlocking for user[" + userId + "] the artifact [" + artifactId + "]", t);
+			throw new SpagoBIDAOException("An unexpected error occured while unlocking for user[" + userId + "] the artifact [" + artifactId + "]", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -860,7 +860,7 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 
 		Artifact art = loadArtifactById(artifactId);
 		if (art == null) {
-			throw new SpagoBIDOAException("Artifact with id [" + artifactId + "] could not be loaded");
+			throw new SpagoBIDAOException("Artifact with id [" + artifactId + "] could not be loaded");
 		} else {
 			Boolean locked = art.getModelLocked();
 			String locker = art.getModelLocker();
@@ -901,17 +901,17 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch (Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 			}
 
 			SbiArtifactContent hibContent = (SbiArtifactContent) session.load(SbiArtifactContent.class, contendId);
 			logger.debug("Content loaded");
 
 			if (hibContent == null) {
-				throw new SpagoBIDOAException("Content with id " + contendId + " not retrieved");
+				throw new SpagoBIDAOException("Content with id " + contendId + " not retrieved");
 			}
 			if (hibContent.getArtifact() == null) {
-				throw new SpagoBIDOAException("Content with id " + contendId + " retrieved but without artifact associated");
+				throw new SpagoBIDAOException("Content with id " + contendId + " retrieved but without artifact associated");
 			}
 
 			SbiArtifact sbiArtifact = hibContent.getArtifact();
@@ -923,7 +923,7 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 			throw new SpagoBIDAOObjectNotExistingException("There is no Atrifact with id " + contendId);
 		} catch (Exception e) {
 
-			throw new SpagoBIDOAException("An unexpected error occured while loading artifact with id [" + contendId + "]", e);
+			throw new SpagoBIDAOException("An unexpected error occured while loading artifact with id [" + contendId + "]", e);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();

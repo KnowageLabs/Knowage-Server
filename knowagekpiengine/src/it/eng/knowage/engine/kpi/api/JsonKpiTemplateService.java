@@ -30,7 +30,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -47,8 +46,6 @@ import javax.ws.rs.core.Context;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Path("/1.0/jsonKpiTemplate")
 @ManageAuthorization
@@ -88,28 +85,23 @@ public class JsonKpiTemplateService extends AbstractFullKpiEngineResource {
 			// Loading Scorecard or Target
 			Map<String, String> attributesValues = buildAttributeValuesMap(jsonTemplate, startDate);
 
-			String result = KpiEngineDataUtil.loadJsonData(jsonTemplate, attributesValues);
-			if (result == null) {
+			JSONArray resultArray = KpiEngineDataUtil.loadJsonData(jsonTemplate, attributesValues);
+			if (resultArray == null) {
 				return null;
 			}
-			JSONArray resultarray = new JSONArray(result);
 			JSONArray array = new JSONArray();
 			if (jsonTemplate.getJSONObject("chart").getString("type").equals("kpi")) {
-				JSONObject objTemp = new JSONObject();
-				List<KpiValue> kpiValues;
-
-				kpiValues = new ArrayList<>();
-				for (int i = 0; i < resultarray.length(); i++) {
-					objTemp = resultarray.getJSONObject(i).getJSONObject("kpi");
-					kpiValues = DAOFactory.getKpiDAO().findKpiValues(objTemp.getInt("id"), null, startDate.getTime(), new Date(), attributesValues);
-					String result2 = new ObjectMapper().writeValueAsString(kpiValues);
-					array.put(result2);
+				for (int i = 0; i < resultArray.length(); i++) {
+					JSONObject objTemp = resultArray.getJSONObject(i).getJSONObject("kpi");
+					List<KpiValue> kpiValues = DAOFactory.getKpiDAO().findKpiValues(objTemp.getInt("id"), null, startDate.getTime(), new Date(),
+							attributesValues);
+					array.put(new JSONArray(kpiValues));
 				}
 			}
 
 			toReturn = new JSONObject();
-			toReturn.put("loadKpiValue", array.toString());
-			toReturn.put("info", result);
+			toReturn.put("loadKpiValue", array);
+			toReturn.put("info", resultArray);
 			return toReturn.toString();
 
 		} catch (JSONException | IOException | EMFUserError ex) {

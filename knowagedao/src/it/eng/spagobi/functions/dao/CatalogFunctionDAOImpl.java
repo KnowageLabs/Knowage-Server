@@ -5,7 +5,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.SpagoBIDOAException;
+import it.eng.spagobi.commons.dao.SpagoBIDAOException;
 import it.eng.spagobi.functions.metadata.SbiCatalogFunction;
 import it.eng.spagobi.functions.metadata.SbiFunctionInputDataset;
 import it.eng.spagobi.functions.metadata.SbiFunctionInputDatasetId;
@@ -47,7 +47,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 			Query hibQuery = session.createQuery("from SbiCatalogFunction");
 			sbiCatalogFunctions = hibQuery.list();
 		} catch (Throwable t) {
-			throw new SpagoBIDOAException("An error occured while reading Catalog Functions from DB", t);
+			throw new SpagoBIDAOException("An error occured while reading Catalog Functions from DB", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -76,7 +76,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch (Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 			}
 			SbiCatalogFunction hibMap = toSbiFunctionCatalog(catalogFunction);
 			updateSbiCommonInfo4Insert(hibMap);
@@ -97,7 +97,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 				transaction.rollback();
 			}
 
-			throw new SpagoBIDOAException("An unexpected error occured while inserting catalog function", t);
+			throw new SpagoBIDAOException("An unexpected error occured while inserting catalog function", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -144,7 +144,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 			try {
 				dataSetDAO = DAOFactory.getDataSetDAO();
 			} catch (EMFUserError e) {
-				throw new SpagoBIDOAException("An error occured while getting the dataset DAO", e);
+				throw new SpagoBIDAOException("An error occured while getting the dataset DAO", e);
 			}
 			dataSetDAO.setUserProfile(profile);
 
@@ -189,7 +189,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 				var = new SbiFunctionOutput(new SbiFunctionOutputId(sbiCatalogFunction.getFunctionId(), varLabel), sbiCatalogFunction, outTypeSbiDomainId);
 				outputVariablesSet.add(var);
 			} catch (EMFUserError e) {
-				throw new SpagoBIDOAException("An error occured while getting domain by code [FUNCTION_OUTPUT] and value [" + outType + "]", e);
+				throw new SpagoBIDAOException("An error occured while getting domain by code [FUNCTION_OUTPUT] and value [" + outType + "]", e);
 			}
 
 		}
@@ -235,7 +235,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch (Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 			}
 
 			SbiCatalogFunction hibCatFunction = (SbiCatalogFunction) session.get(SbiCatalogFunction.class, id);
@@ -278,7 +278,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch (Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 			}
 			hibCatFunction.setSbiFunctionInputVariables(getSbiFunctionInputVariablesSet(updatedCatalogFunction.getInputVariables(), hibCatFunction));
 			hibCatFunction.setSbiFunctionOutputs(getSbiFunctionOutputSet(updatedCatalogFunction.getOutputs(), hibCatFunction));
@@ -305,7 +305,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 				transaction.rollback();
 			}
 
-			throw new SpagoBIDOAException("An unexpected error occured while updating catalog function", t);
+			throw new SpagoBIDAOException("An unexpected error occured while updating catalog function", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -343,7 +343,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 				transaction.rollback();
 			}
 
-			throw new SpagoBIDOAException("An unexpected error occured while updating catalog function", t);
+			throw new SpagoBIDAOException("An unexpected error occured while updating catalog function", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -375,7 +375,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("An error occured while reading Catalog Functions from DB", t);
+			throw new SpagoBIDAOException("An error occured while reading Catalog Functions from DB", t);
 
 		} finally {
 			if (session != null && session.isOpen()) {
@@ -414,7 +414,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("An error occured while reading Catalog Functions from DB", t);
+			throw new SpagoBIDAOException("An error occured while reading Catalog Functions from DB", t);
 
 		} finally {
 			if (session != null && session.isOpen()) {

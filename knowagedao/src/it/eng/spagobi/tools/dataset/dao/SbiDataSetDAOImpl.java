@@ -20,7 +20,7 @@ package it.eng.spagobi.tools.dataset.dao;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.SpagoBIDOAException;
+import it.eng.spagobi.commons.dao.SpagoBIDAOException;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.utilities.assertion.Assert;
 
@@ -60,7 +60,7 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch (Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 			}
 			Query hibQuery = session.createQuery("from SbiDataSet h where h.active = ? and h.label = ? ");
 			hibQuery.setBoolean(0, true);
@@ -74,7 +74,7 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("An unexpected error occured while loading dataset whose label is equal to [" + label + "]", t);
+			throw new SpagoBIDAOException("An unexpected error occured while loading dataset whose label is equal to [" + label + "]", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -181,7 +181,7 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 
 			return executeQuery(query, session);
 		} catch (Throwable t) {
-			throw new SpagoBIDOAException("An unexpected error occured while loading dataset whose owner is equal to [" + owner + "]", t);
+			throw new SpagoBIDAOException("An unexpected error occured while loading dataset whose owner is equal to [" + owner + "]", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -206,7 +206,7 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("An unexpected error occured while loading dataset", t);
+			throw new SpagoBIDAOException("An unexpected error occured while loading dataset", t);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -221,7 +221,7 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 			transaction = session.beginTransaction();
 			Assert.assertNotNull(transaction, "transaction cannot be null");
 		} catch (Throwable t) {
-			throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+			throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 		}
 
 		return transaction;

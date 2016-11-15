@@ -19,7 +19,7 @@ package it.eng.spagobi.metadata.dao;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
-import it.eng.spagobi.commons.dao.SpagoBIDOAException;
+import it.eng.spagobi.commons.dao.SpagoBIDAOException;
 import it.eng.spagobi.metadata.metadata.SbiMetaSource;
 import it.eng.spagobi.metadata.metadata.SbiMetaTable;
 
@@ -33,13 +33,13 @@ import org.hibernate.Session;
  */
 public interface ISbiMetaSourceDAO extends ISpagoBIDao {
 
-	public SbiMetaSource loadSourceByID(Integer id) throws SpagoBIDOAException;
+	public SbiMetaSource loadSourceByID(Integer id) throws SpagoBIDAOException;
 
 	public SbiMetaSource loadSourceByName(String name) throws EMFUserError;
 
 	public SbiMetaSource loadSourceByNameAndType(String name, String type) throws EMFUserError;
 
-	public void modifySource(SbiMetaSource aMetaSource) throws SpagoBIDOAException;
+	public void modifySource(SbiMetaSource aMetaSource) throws SpagoBIDAOException;
 
 	public Integer insertSource(SbiMetaSource aMetaSource) throws EMFUserError;
 

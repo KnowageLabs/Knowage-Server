@@ -20,7 +20,7 @@ package it.eng.spagobi.metadata.dao;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.SpagoBIDOAException;
+import it.eng.spagobi.commons.dao.SpagoBIDAOException;
 import it.eng.spagobi.metadata.metadata.SbiMetaSource;
 import it.eng.spagobi.metadata.metadata.SbiMetaTable;
 import it.eng.spagobi.metadata.metadata.SbiMetaTableColumn;
@@ -422,7 +422,7 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				criteria.add(aCriterion);
 				metaSource = (SbiMetaSource) criteria.uniqueResult();
 				if (metaSource == null) {
-					throw new SpagoBIDOAException("The Domain with value_id= " + aMetaTable.getSbiMetaSource().getSourceId() + " does not exist");
+					throw new SpagoBIDAOException("The Domain with value_id= " + aMetaTable.getSbiMetaSource().getSourceId() + " does not exist");
 				}
 				hibMeta.setSbiMetaSource(metaSource);
 			}
@@ -482,7 +482,7 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				criteria.add(aCriterion);
 				metaSource = (SbiMetaSource) criteria.uniqueResult();
 				if (metaSource == null) {
-					throw new SpagoBIDOAException("The Domain with value_id= " + aMetaTable.getSbiMetaSource().getSourceId() + " does not exist");
+					throw new SpagoBIDAOException("The Domain with value_id= " + aMetaTable.getSbiMetaSource().getSourceId() + " does not exist");
 				}
 				hibMeta.setSbiMetaSource(metaSource);
 			}
@@ -751,7 +751,7 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				criteria.add(aCriterion);
 				metaSource = (SbiMetaSource) criteria.uniqueResult();
 				if (metaSource == null) {
-					throw new SpagoBIDOAException("The Domain with value_id= " + aMetaTable.getSbiMetaSource().getSourceId() + " does not exist");
+					throw new SpagoBIDAOException("The Domain with value_id= " + aMetaTable.getSbiMetaSource().getSourceId() + " does not exist");
 				}
 				hibMeta.setSbiMetaSource(metaSource);
 			}
@@ -785,7 +785,7 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				criteria.add(aCriterion);
 				metaSource = (SbiMetaSource) criteria.uniqueResult();
 				if (metaSource == null) {
-					throw new SpagoBIDOAException("The Domain with value_id= " + aMetaTable.getSbiMetaSource().getSourceId() + " does not exist");
+					throw new SpagoBIDAOException("The Domain with value_id= " + aMetaTable.getSbiMetaSource().getSourceId() + " does not exist");
 				}
 				hibMeta.setSbiMetaSource(metaSource);
 			}

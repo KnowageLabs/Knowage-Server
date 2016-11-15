@@ -20,7 +20,7 @@ package it.eng.spagobi.metadata.dao;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.SpagoBIDOAException;
+import it.eng.spagobi.commons.dao.SpagoBIDAOException;
 import it.eng.spagobi.metadata.metadata.SbiMetaSource;
 import it.eng.spagobi.metadata.metadata.SbiMetaTable;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -65,7 +65,7 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaSourceDAOHibImpl#loadSourceByID(integer)
 	 */
 	@Override
-	public SbiMetaSource loadSourceByID(Integer id) throws SpagoBIDOAException {
+	public SbiMetaSource loadSourceByID(Integer id) throws SpagoBIDAOException {
 		logger.debug("IN");
 
 		SbiMetaSource toReturn = null;
@@ -93,7 +93,7 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 			if (tx != null)
 				tx.rollback();
 
-			throw new SpagoBIDOAException("There is no sbiMetaSource with sourceId " + id);
+			throw new SpagoBIDAOException("There is no sbiMetaSource with sourceId " + id);
 
 		} catch (HibernateException he) {
 			logException(he);
@@ -101,7 +101,7 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 			if (tx != null)
 				tx.rollback();
 
-			throw new SpagoBIDOAException(he.getMessage());
+			throw new SpagoBIDAOException(he.getMessage());
 
 		} finally {
 			if (tmpSession != null) {
@@ -275,7 +275,7 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaSourceDAOHibImpl#modifySource(SbiMetaSource)
 	 */
 	@Override
-	public void modifySource(SbiMetaSource aMetaSource) throws SpagoBIDOAException {
+	public void modifySource(SbiMetaSource aMetaSource) throws SpagoBIDAOException {
 		logger.debug("IN");
 
 		Session tmpSession = null;
@@ -304,7 +304,7 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 			if (tx != null)
 				tx.rollback();
 
-			throw new SpagoBIDOAException(he.getMessage());
+			throw new SpagoBIDAOException(he.getMessage());
 
 		} finally {
 			if (tmpSession != null) {
@@ -423,14 +423,14 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 				session = getSession();
 				Assert.assertNotNull(session, "session cannot be null");
 			} catch (Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 			}
 			
 			toReturn = loadMetaTables(session, sourceId);
 
 		} catch (Throwable t) {
 			logException(t);
-			throw new SpagoBIDOAException("An unexpected error occured while loading meta tables of meta source with sourceId [" + sourceId + "]", t);
+			throw new SpagoBIDAOException("An unexpected error occured while loading meta tables of meta source with sourceId [" + sourceId + "]", t);
 		} finally {
 			monitorGeneral.stop();
 			if (session != null && session.isOpen()) {
@@ -467,7 +467,7 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 		} catch (Throwable t) {
 			logException(t);
 
-			throw new SpagoBIDOAException("An unexpected error occured while loading meta tables of meta source with sourceId [" + sourceId + "]", t);
+			throw new SpagoBIDAOException("An unexpected error occured while loading meta tables of meta source with sourceId [" + sourceId + "]", t);
 		} finally {
 			monitorGeneral.stop();
 			LogMF.debug(logger, "OUT: returning [{0}]", toReturn);

@@ -4,7 +4,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IExecuteOnTransaction;
-import it.eng.spagobi.commons.dao.SpagoBIDOAException;
+import it.eng.spagobi.commons.dao.SpagoBIDAOException;
 import it.eng.spagobi.tools.alert.bo.Alert;
 import it.eng.spagobi.tools.alert.bo.AlertAction;
 import it.eng.spagobi.tools.alert.bo.AlertListener;
@@ -89,7 +89,7 @@ public class AlertDAOImpl extends AbstractHibernateDAO implements IAlertDAO {
 			schedulerDAO.createOrUpdateJobAndTrigger(name, Class.forName(alert.getAlertListener().getClassName()), ALERT_JOB_GROUP, ALERT_JOB_GROUP,
 					alert.getFrequency(), parameters);
 		} catch (EMFUserError | ClassNotFoundException e) {
-			throw new SpagoBIDOAException(e);
+			throw new SpagoBIDAOException(e);
 		}
 		return id;
 	}
@@ -117,7 +117,7 @@ public class AlertDAOImpl extends AbstractHibernateDAO implements IAlertDAO {
 			schedulerDAO.createOrUpdateJobAndTrigger(name, Class.forName(alert.getAlertListener().getClassName()), ALERT_JOB_GROUP, ALERT_JOB_GROUP,
 					alert.getFrequency(), parameters);
 		} catch (EMFUserError | ClassNotFoundException e) {
-			throw new SpagoBIDOAException(e);
+			throw new SpagoBIDAOException(e);
 		}
 	}
 
@@ -147,7 +147,7 @@ public class AlertDAOImpl extends AbstractHibernateDAO implements IAlertDAO {
 				}
 			});
 		} catch (EMFUserError e) {
-			throw new SpagoBIDOAException(e);
+			throw new SpagoBIDAOException(e);
 		}
 	}
 
@@ -163,7 +163,7 @@ public class AlertDAOImpl extends AbstractHibernateDAO implements IAlertDAO {
 		try {
 			schedulerDao = DAOFactory.getSchedulerDAO();
 		} catch (EMFUserError e) {
-			throw new SpagoBIDOAException(e);
+			throw new SpagoBIDAOException(e);
 		}
 		if (checkStatus) {
 			String name = "" + sbiAlert.getId();
@@ -193,7 +193,7 @@ public class AlertDAOImpl extends AbstractHibernateDAO implements IAlertDAO {
 					alert.getFrequency().setCron(tr.getChronExpression() != null ? tr.getChronExpression().getExpression().replace("'", "\"") : null);
 				}
 			} catch (Throwable e) {
-				throw new SpagoBIDOAException(e);
+				throw new SpagoBIDAOException(e);
 			}
 		}
 		return alert;
@@ -212,7 +212,7 @@ public class AlertDAOImpl extends AbstractHibernateDAO implements IAlertDAO {
 			ISchedulerDAO schedulerDAO = DAOFactory.getSchedulerDAO();
 			schedulerDAO.deleteJob("" + id, ALERT_JOB_GROUP);
 		} catch (EMFUserError e) {
-			throw new SpagoBIDOAException(e);
+			throw new SpagoBIDAOException(e);
 		}
 		delete(SbiAlert.class, id);
 	}

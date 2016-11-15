@@ -21,7 +21,7 @@ import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.ICriterion;
 import it.eng.spagobi.commons.dao.IExecuteOnTransaction;
-import it.eng.spagobi.commons.dao.SpagoBIDOAException;
+import it.eng.spagobi.commons.dao.SpagoBIDAOException;
 import it.eng.spagobi.metadata.metadata.SbiMetaBc;
 import it.eng.spagobi.metadata.metadata.SbiMetaTable;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
@@ -906,7 +906,7 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 				tx = session.beginTransaction();
 				Assert.assertNotNull(tx, "transaction cannot be null");
 			} catch (Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 			}
 
 			Query q = session.createQuery("delete from SbiGlReferences where refWord.wordId=:id");
@@ -917,7 +917,7 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 		} catch (Throwable t) {
 			if (tx != null)
 				tx.rollback();
-			throw new SpagoBIDOAException("An unexpected error occured while deleting word references where word id is equal to [" + id + "]", t);
+			throw new SpagoBIDAOException("An unexpected error occured while deleting word references where word id is equal to [" + id + "]", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();

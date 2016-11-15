@@ -19,7 +19,7 @@ package it.eng.spagobi.images.dao;
 
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.IExecuteOnTransaction;
-import it.eng.spagobi.commons.dao.SpagoBIDOAException;
+import it.eng.spagobi.commons.dao.SpagoBIDAOException;
 import it.eng.spagobi.images.dao.criterion.GetImagesByName;
 import it.eng.spagobi.images.dao.criterion.SearchImages;
 import it.eng.spagobi.images.dao.util.ImageUtil;
@@ -87,7 +87,7 @@ public class ImagesDAOImpl extends AbstractHibernateDAO implements IImagesDAO {
 					contentIco = session.getLobHelper().createBlob(contentIcoBytes.toByteArray());
 					contentIcoBytes.close();
 				} catch (IOException e) {
-					throw new SpagoBIDOAException("Error while resizing image for preview field", e);
+					throw new SpagoBIDAOException("Error while resizing image for preview field", e);
 				}
 				SbiImages sbiImage = new SbiImages();
 				sbiImage.setName(filename);

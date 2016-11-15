@@ -114,7 +114,7 @@
 					$scope.loadKpiValue();
 
 				} else { //scorecard
-					$scope.documentData.scorecard = JSON.parse(response.data.info)[0].scorecard;
+					$scope.documentData.scorecard = response.data.info[0].scorecard;
 					$scope.showKpiLoader = false;
 				}
 			},

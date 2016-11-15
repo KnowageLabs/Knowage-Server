@@ -27,7 +27,7 @@ import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IExecuteOnTransaction;
-import it.eng.spagobi.commons.dao.SpagoBIDOAException;
+import it.eng.spagobi.commons.dao.SpagoBIDAOException;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.crossnavigation.bo.NavigationDetail;
 import it.eng.spagobi.tools.crossnavigation.bo.SimpleNavigation;
@@ -121,7 +121,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 			@Override
 			public Boolean execute(Session session) throws JSONException {
 				if (nd.getSimpleNavigation().getId() != null) {
-					throw new SpagoBIDOAException("Write error: record not valid");
+					throw new SpagoBIDAOException("Write error: record not valid");
 				}
 				SbiCrossNavigation cn = new SbiCrossNavigation();
 				cn.setName(nd.getSimpleNavigation().getName());
@@ -150,7 +150,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 			public Boolean execute(Session session) throws JSONException {
 				SbiCrossNavigation cn = (SbiCrossNavigation) session.get(SbiCrossNavigation.class, nd.getSimpleNavigation().getId());
 				if (cn == null) {
-					throw new SpagoBIDOAException("Write error: record not found");
+					throw new SpagoBIDAOException("Write error: record not found");
 				}
 				cn.setName(nd.getSimpleNavigation().getName());
 				if (cn.getSbiCrossNavigationPars() != null) {
@@ -182,7 +182,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 			public NavigationDetail execute(Session session) throws JSONException {
 				SbiCrossNavigation cn = (SbiCrossNavigation) session.get(SbiCrossNavigation.class, id);
 				if (cn == null) {
-					throw new SpagoBIDOAException("Object of type SbiCrossNavigation with id[" + id + "] not found");
+					throw new SpagoBIDAOException("Object of type SbiCrossNavigation with id[" + id + "] not found");
 				}
 				NavigationDetail nd = new NavigationDetail();
 				if (cn.getSbiCrossNavigationPars() != null && !cn.getSbiCrossNavigationPars().isEmpty()) {

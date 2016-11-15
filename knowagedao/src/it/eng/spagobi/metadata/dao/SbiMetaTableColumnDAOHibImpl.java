@@ -20,7 +20,7 @@ package it.eng.spagobi.metadata.dao;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.SpagoBIDOAException;
+import it.eng.spagobi.commons.dao.SpagoBIDAOException;
 import it.eng.spagobi.metadata.metadata.SbiMetaSource;
 import it.eng.spagobi.metadata.metadata.SbiMetaTable;
 import it.eng.spagobi.metadata.metadata.SbiMetaTableColumn;
@@ -488,7 +488,7 @@ public class SbiMetaTableColumnDAOHibImpl extends AbstractHibernateDAO implement
 				criteria.add(aCriterion);
 				metaTable = (SbiMetaTable) criteria.uniqueResult();
 				if (metaTable == null) {
-					throw new SpagoBIDOAException("The SbiMetaTable with id= " + aMetaTableColumn.getSbiMetaTable().getTableId() + " does not exist");
+					throw new SpagoBIDAOException("The SbiMetaTable with id= " + aMetaTableColumn.getSbiMetaTable().getTableId() + " does not exist");
 				}
 				hibMeta.setSbiMetaTable(metaTable);
 			}
@@ -523,7 +523,7 @@ public class SbiMetaTableColumnDAOHibImpl extends AbstractHibernateDAO implement
 				criteria.add(aCriterion);
 				metaTable = (SbiMetaTable) criteria.uniqueResult();
 				if (metaTable == null) {
-					throw new SpagoBIDOAException("The SbiMetaTable with id= " + aMetaTableColumn.getSbiMetaTable().getTableId() + " does not exist");
+					throw new SpagoBIDAOException("The SbiMetaTable with id= " + aMetaTableColumn.getSbiMetaTable().getTableId() + " does not exist");
 				}
 				hibMeta.setSbiMetaTable(metaTable);
 			}

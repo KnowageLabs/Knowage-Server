@@ -23,7 +23,7 @@ import it.eng.spagobi.behaviouralmodel.lov.metadata.SbiLov;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.SpagoBIDOAException;
+import it.eng.spagobi.commons.dao.SpagoBIDAOException;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiOrganizationDatasource;
 import it.eng.spagobi.commons.metadata.SbiOrganizationDatasourceId;
@@ -389,13 +389,13 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 								conne = connectionObject.getString("CONNECTION");
 							} catch (TransformerFactoryConfigurationError e) {
 								logger.error("Problem with configuration of Transformer Factories during xml2json", e);
-								throw new SpagoBIDOAException(e);
+								throw new SpagoBIDAOException(e);
 							} catch (TransformerException e) {
 								logger.error("Error during xml to json transformation of provider from lov with id: " + lov.getLovId(), e);
-								throw new SpagoBIDOAException(e);
+								throw new SpagoBIDAOException(e);
 							} catch (JSONException e) {
 								logger.error("Error occured during json object creation from json string", e);
-								throw new SpagoBIDOAException(e);
+								throw new SpagoBIDAOException(e);
 							}
 
 							if (conne.equals(hibDataSource.getLabel())) {

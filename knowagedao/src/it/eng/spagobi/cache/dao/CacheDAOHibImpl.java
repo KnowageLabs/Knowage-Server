@@ -20,7 +20,7 @@ package it.eng.spagobi.cache.dao;
 
 import it.eng.spagobi.cache.metadata.SbiCacheItem;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.SpagoBIDOAException;
+import it.eng.spagobi.commons.dao.SpagoBIDAOException;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.cache.CacheItem;
 
@@ -76,7 +76,7 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("An unexpected error occured while loading all cache items", t);
+			throw new SpagoBIDAOException("An unexpected error occured while loading all cache items", t);
 
 		} finally {
 			if (session != null && session.isOpen()) {
@@ -109,7 +109,7 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch (Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 			}
 
 			Query hibQuery = session.createQuery("from SbiCacheItem h where h.tableName = ?");
@@ -125,7 +125,7 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("An unexpected error occured while loading cache item whose table name is equal to [" + tableName + "]", t);
+			throw new SpagoBIDAOException("An unexpected error occured while loading cache item whose table name is equal to [" + tableName + "]", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -158,7 +158,7 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch (Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 			}
 
 			Query hibQuery = session.createQuery("from SbiCacheItem h where h.signature = ?");
@@ -174,7 +174,7 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("An unexpected error occured while loading cache item whose signature is equal to [" + signature + "]", t);
+			throw new SpagoBIDAOException("An unexpected error occured while loading cache item whose signature is equal to [" + signature + "]", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -207,7 +207,7 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch (Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 			}
 			SbiCacheItem hibMap = toSbiCacheItem(cacheItem);
 			updateSbiCommonInfo4Insert(hibMap);
@@ -220,7 +220,7 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 				transaction.rollback();
 			}
 
-			throw new SpagoBIDOAException("An unexpected error occured while inserting cache item", t);
+			throw new SpagoBIDAOException("An unexpected error occured while inserting cache item", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -247,7 +247,7 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch (Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 			}
 
 			SbiCacheItem hibMap = toSbiCacheItem(cacheItem);
@@ -261,7 +261,7 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 				transaction.rollback();
 			}
 
-			throw new SpagoBIDOAException("An unexpected error occured while update cache item", t);
+			throw new SpagoBIDAOException("An unexpected error occured while update cache item", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -297,7 +297,7 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch (Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 			}
 
 			Query hibernateQuery = session.createQuery("from SbiCacheItem h where h.tableName = ? ");
@@ -317,7 +317,7 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 			}
 			String msg = (t.getMessage() != null) ? t.getMessage() : "An unexpected error occured while deleting cache item " + "whose tableName is equal to ["
 					+ tableName + "]";
-			throw new SpagoBIDOAException(msg, t);
+			throw new SpagoBIDAOException(msg, t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -347,7 +347,7 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch (Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 			}
 
 			Query hibernateQuery = session.createQuery("from SbiCacheItem h where h.signature = ? ");
@@ -367,7 +367,7 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 			}
 			String msg = (t.getMessage() != null) ? t.getMessage() : "An unexpected error occured while deleting cache item " + "whose signature is equal to ["
 					+ signature + "]";
-			throw new SpagoBIDOAException(msg, t);
+			throw new SpagoBIDAOException(msg, t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -397,7 +397,7 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 				transaction = session.beginTransaction();
 				Assert.assertNotNull(transaction, "transaction cannot be null");
 			} catch (Throwable t) {
-				throw new SpagoBIDOAException("An error occured while creating the new transaction", t);
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 			}
 
 			Query hibernateQuery = session.createQuery("from SbiCacheItem");
@@ -419,7 +419,7 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 				transaction.rollback();
 			}
 			String msg = (t.getMessage() != null) ? t.getMessage() : "An unexpected error occured while deleting all cache items ";
-			throw new SpagoBIDOAException(msg, t);
+			throw new SpagoBIDAOException(msg, t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -436,7 +436,7 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 			ObjectMapper mapper = new ObjectMapper();
 			properties = mapper.writeValueAsString(cacheItem.getProperties());
 		} catch (Throwable t) {
-			throw new SpagoBIDOAException("An error occured while creating a SbiCacheItem from CacheItem:", t);
+			throw new SpagoBIDAOException("An error occured while creating a SbiCacheItem from CacheItem:", t);
 		}
 		SbiCacheItem hibCacheItem = new SbiCacheItem();
 		hibCacheItem.setTableName(cacheItem.getTable());
@@ -461,7 +461,7 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 			};
 			properties = mapper.readValue(hibCacheItem.getProperties(), typeRef);
 		} catch (Throwable t) {
-			throw new SpagoBIDOAException("An error occured while creating a CacheItem from SbiCacheItem:", t);
+			throw new SpagoBIDAOException("An error occured while creating a CacheItem from SbiCacheItem:", t);
 		}
 		CacheItem cacheItem = new CacheItem();
 		cacheItem.setSignature(hibCacheItem.getSignature());

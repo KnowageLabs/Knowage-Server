@@ -23,7 +23,7 @@ import it.eng.spagobi.analiticalmodel.document.dao.BIObjectDAOHibImpl;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.SpagoBIDOAException;
+import it.eng.spagobi.commons.dao.SpagoBIDAOException;
 import it.eng.spagobi.tools.dataset.bo.BIObjDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiObjDataSet;
@@ -167,7 +167,7 @@ public class BIObjDataSetDAOHibImpl extends AbstractHibernateDAO implements IBIO
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("Error while getting datasets associated with object" + biObjId, t);
+			throw new SpagoBIDAOException("Error while getting datasets associated with object" + biObjId, t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -288,7 +288,7 @@ public class BIObjDataSetDAOHibImpl extends AbstractHibernateDAO implements IBIO
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("Error while deleting the objDataset associated with object" + biObjId, t);
+			throw new SpagoBIDAOException("Error while deleting the objDataset associated with object" + biObjId, t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -351,7 +351,7 @@ public class BIObjDataSetDAOHibImpl extends AbstractHibernateDAO implements IBIO
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			throw new SpagoBIDOAException("Error while getting the objects associated with the data set with id " + datasetId, t);
+			throw new SpagoBIDAOException("Error while getting the objects associated with the data set with id " + datasetId, t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();

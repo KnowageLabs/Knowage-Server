@@ -23,20 +23,20 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
-public class SpagoBIDOAException extends SpagoBIRuntimeException {
+public class SpagoBIDAOException extends SpagoBIRuntimeException {
 
 	private static final long serialVersionUID = 1L;
 	
-	public SpagoBIDOAException(String message) {
+	public SpagoBIDAOException(String message) {
 		super(message);
 	}
 	
-	public SpagoBIDOAException(Throwable ex) {
+	public SpagoBIDAOException(Throwable ex) {
 		super(ex);
 	}
 
 	
-	public SpagoBIDOAException(String message, Throwable ex) {
+	public SpagoBIDAOException(String message, Throwable ex) {
 		super(message, ex);
 	}
 }
