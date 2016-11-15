@@ -24,6 +24,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -183,7 +184,13 @@ public class FunctionExecutionUtils {
 					});
 					break;
 				case DataMiningConstants.FILES_IN:
-					filesInMap = mapper.readValue(items.toString(), new TypeReference<Map<String, String>>() {
+					// {"f":{"file":{},"base64":"data:;base64,CBZb3UgbWF5IG9idGFpbiBhIGNvcHkgb2YgdGhlIExpY2Vuc2UgYXQKIwojICAgICBodHRwOi8vd3d3LmFwYWNoZS5vcmcvbGljZW5zZXMvTElDRU5TRS0yLjAKIwojIFVubGVzcyByZXF1aXJlZCBieSBhcHBsaWNhYmxlIGxhdyBvciBhZ3JlZWQgdG8gaW4gd3JpdGluZywgc29mdHdhcmUKIyBkaXN0cmlidXRlZCB1bmRlciB0aGUgTGljZW5zZSBpcyBkaXN0cmlidXRlZCBvbiBhbiAiQVMgSVMiIEJBU0lTLAojIFdJVEhPVVQgV0FSUkFOVElFUyBPUiBDT05ESVRJT05TIE9GIEFOWSBLSU5ELCBlaXRoZXIgZXhwcmVzcyBvciBpbXBsaWVkLgojIFNlZSB0aGUgTGljZW5zZSBmb3IgdGhlIHNwZWNpZmljIGxhbmd1YWdlIGdvdmVybmluZyBwZXJtaXNzaW9ucyBhbmQKIyBsaW1pdGF0aW9ucyB1bmRlciB0aGUgTGljZW5zZS4KCiMgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KIyBTY3JpcHQgdG8gZGlnZXN0IHBhc3N3b3JkIHVzaW5nIHRoZSBhbGdvcml0aG0gc3BlY2lmaWVkCiMgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KCiMgQmV0dGVyIE9TLzQwMCBkZXRlY3Rpb246IHNlZSBCdWd6aWxsYSAzMTEzMgpvczQwMD1mYWxzZQpjYXNlICJgdW5hbWVgIiBpbgpPUzQwMCopIG9zNDAwPXRydWU7Owplc2FjCgojIHJlc29sdmUgbGlua3MgLSAkMCBtYXkgYmUgYSBzb2Z0bGluawpQUkc9IiQwIgoKd2hpbGUgWyAtaCAiJFBSRyIgXSA7IGRvCiAgbHM9YGxzIC1sZCAiJFBSRyJgCiAgbGluaz1gZXhwciAiJGxzIiA6ICcuKi0+IFwoLipcKSQnYAogIGlmIGV4cHIgIiRsaW5rIiA6ICcvLionID4gL2Rldi9udWxsOyB0aGVuCiAgICBQUkc9IiRsaW5rIgogIGVsc2UKICAgIFBSRz1gZGlybmFtZSAiJFBSRyJgLyIkbGluayIKICBmaQpkb25lCgpQUkdESVI9YGRpcm5hbWUgIiRQUkciYApFWEVDVVRBQkxFPXRvb2wtd3JhcHBlci5zaAoKIyBDaGVjayB0aGF0IHRhcmdldCBleGVjdXRhYmxlIGV4aXN0cwppZiAkb3M0MDA7IHRoZW4KICAjIC14IHdpbGwgT25seSB3b3JrIG9uIHRoZSBvczQwMCBpZiB0aGUgZmlsZXMgYXJlOgogICMgMS4gb3duZWQgYnkgdGhlIHVzZXIKICAjIDIuIG93bmVkIGJ5IHRoZSBQUklNQVJZIGdyb3VwIG9mIHRoZSB1c2VyCiAgIyB0aGlzIHdpbGwgbm90IHdvcmsgaWYgdGhlIHVzZXIgYmVsb25ncyBpbiBzZWNvbmRhcnkgZ3JvdXBzCiAgZXZhbAplbHNlCiAgaWYgWyAhIC14ICIkUFJHRElSIi8iJEVYRUNVVEFCTEUiIF07IHRoZW4KICAgIGVjaG8gIkNhbm5vdCBmaW5kICRQUkdESVIvJEVYRUNVVEFCTEUiCiAgICBlY2hvICJUaGUgZmlsZSBpcyBhYnNlbnQgb3IgZG9lcyBub3QgaGF2ZSBleGVjdXRlIHBlcm1pc3Npb24iCiAgICBlY2hvICJUaGlzIGZpbGUgaXMgbmVlZGVkIHRvIHJ1biB0aGlzIHByb2dyYW0iCiAgICBleGl0IDEKICBmaQpmaQoKZXhlYyAiJFBSR0RJUiIvIiRFWEVDVVRBQkxFIiAtc2VydmVyIG9yZy5hcGFjaGUuY2F0YWxpbmEucmVhbG0uUmVhbG1CYXNlICIkQCIK","fileName":"digest.sh"}}
+					Iterator<String> iter=items.keys();
+					while (iter.hasNext()) {
+						String key = iter.next();
+						items.getJSONObject(key).remove("file");
+					}
+					filesInMap = mapper.readValue(items.toString(), new TypeReference<Map<String, Map<String, String>>>() {
 					});
 					break;
 				}
