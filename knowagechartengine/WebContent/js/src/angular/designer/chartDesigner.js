@@ -22,11 +22,27 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.theme('knowage')
     $mdThemingProvider.setDefaultTheme('knowage');
 }]);
+
 app.controller("ChartDesignerController", ["sbiModule_translate","$scope", ChartDesignerFunction]);
 
 function ChartDesignerFunction(sbiModule_translate,$scope) {
 	
 	$scope.translate = sbiModule_translate;
 	$scope.previewButtonEnabled = false;
+	
+	$scope.saveChartTemplate = function() {
+		$scope.showStructureDetails = true;
+		$scope.structurePreviewFlex = 25;
+	}
+	
+	$scope.goBackFromDesigner = function() {
+		$scope.showStructureDetails = false;
+		$scope.structurePreviewFlex = 50;
+	}
+	
+	$scope.chartTemplate = jsonTemplate;
+	
+	// Needed for the preview of the chart (calling the Highcharts exporter
+	$scope.exporterContextName = exporterContextName;
 	
 }

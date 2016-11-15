@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+<html ng-app="chartDesignerManager">
 
 	<head>
 	
@@ -52,13 +52,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			thisContextName = thisContextName.replace('/','');
 			var mainContextName 		= '<%=contextName.replaceAll("/", "")%>';  <%-- knowage --%>
 			var exporterContextName 	= 'highcharts-export-web';
-			
 		
 		</script>
 	
 	</head>
 
-	<body class="bodyStyle" ng-app="chartDesignerManager" layout="column">
+	<body class="bodyStyle" layout="column" ng-controller="ChartDesignerController">
 	
 		<md-toolbar>
 			<div class="md-toolbar-tools">
@@ -69,12 +68,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<md-button aria-label="Back" ng-click="goBackFromDesigner()">{{translate.load("sbi.chartengine.designer.general.back")}}</md-button>
 			</div>
 		</md-toolbar>
-	
+		
 		<md-tabs md-selected="selectedTab" flex> 
-			<md-tab	label='{{translate.load("sbi.chartengine.designer.tab.chart");}}' chart-tab> </md-tab> 
-			<md-tab label='{{translate.load("sbi.chartengine.designer.tab.structure");}}' chartstructure-tab> </md-tab> 
-			<md-tab	label='{{translate.load("sbi.chartengine.designer.tab.configuration");}}' configuration-tab> </md-tab>
-			<md-tab label='{{translate.load("sbi.chartengine.designer.tab.advanced");}}' advanced-tab> </md-tab> 
+			<md-tab chart-tab label='{{translate.load("sbi.chartengine.designer.tab.chart");}}'> </md-tab> 
+			<md-tab label='{{translate.load("sbi.chartengine.designer.tab.structure");}}'><chartstructure-tab></chartstructure-tab></md-tab> 
+			<md-tab	configuration-tab label='{{translate.load("sbi.chartengine.designer.tab.configuration");}}'> </md-tab>
+			<md-tab advanced-tab label='{{translate.load("sbi.chartengine.designer.tab.advanced");}}'> </md-tab> 
 		</md-tabs>
 	
 	</body>

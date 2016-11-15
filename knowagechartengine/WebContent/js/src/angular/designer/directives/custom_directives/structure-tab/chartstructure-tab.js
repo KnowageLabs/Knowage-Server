@@ -17,19 +17,48 @@
  */
 
 angular.module('chartstructure-tab', [])
-.directive('chartstructureTab', function(sbiModule_config) {
-	return {
-		restrict: 'AE',
-		templateUrl: function(){
-		      return sbiModule_config.contextName + '/js/src/angular/designer/directives/custom_directives/structure-tab/chartstructure-tab.html' 
-	      },   
-		controller: structureTabControllerFunction
-	}
-		
-});
+	.directive('chartstructureTab', function(sbiModule_config) {
+		return {
+			restrict: 'AE',
+			replace: true,
+			templateUrl: function(){
+			      return sbiModule_config.contextName + '/js/src/angular/designer/directives/custom_directives/structure-tab/chartstructure-tab.html' 
+		      },   
+			controller: structureTabControllerFunction
+		}	
+	});
 
 function structureTabControllerFunction($scope,sbiModule_translate){
- console.log("in structure tab");
- $scope.translate = sbiModule_translate;
- 
+
+	$scope.translate = sbiModule_translate;
+	$scope.showStructureDetails = false;
+	$scope.structurePreviewFlex = 50;
+	
+	$scope.changeStructureDetailsFlex = function() {
+		$scope.structurePreviewFlex = 25;
+	}
+	
+	$scope.people = [
+	                 { name: 'Janet Perkins',  newMessage: true },
+	                 { name: 'Mary Johnson',  newMessage: false },
+	                 { name: 'Peter Carlsson', newMessage: false },
+	                 { name: 'Janet Perkins',  newMessage: true },
+	                 { name: 'Mary Johnson',  newMessage: false },
+	                 { name: 'Peter Carlsson', newMessage: false },
+	                 { name: 'Janet Perkins',  newMessage: true },
+	                 { name: 'Mary Johnson',  newMessage: false },
+	                 { name: 'Peter Carlsson', newMessage: false },
+	                 { name: 'Janet Perkins',  newMessage: true },
+	                 { name: 'Mary Johnson',  newMessage: false },
+	                 { name: 'Peter Carlsson', newMessage: false }
+	               ];
+	
+	$scope.moveAttributeToCategories = function(item) {
+		console.log(item);
+	}
+	 
+	$scope.moveMeasureToSeries = function(item) {
+		console.log(item);
+	}
+	
 }

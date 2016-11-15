@@ -16,4 +16,4 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-angular.module('third-party', ['ngMaterial']);
+angular.module('third-party', ['ngMaterial','expander-box']);

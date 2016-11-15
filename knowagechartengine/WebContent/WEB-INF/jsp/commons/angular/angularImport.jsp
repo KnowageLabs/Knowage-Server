@@ -37,13 +37,12 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/angular/angular_1.4/angular-sanitize.min.js"></script>
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/angular/angular_1.4/angular-messages.min.js"></script>
 
-
-
-
-
 <!-- toastr -->
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/sbi_default/css/angular-toastr.css">
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular/commons/angular-toastr.tpls.js"></script>
+
+<!-- expanderBox -->
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/angular/expander-box/expanderBox.js"></script>
 
 <!-- 
 	Specifying all Angular services that we are eventually going to use (inject into the controller that is created for the 
