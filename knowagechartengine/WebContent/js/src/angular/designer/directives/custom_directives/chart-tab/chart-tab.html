@@ -6,16 +6,16 @@
 				
 					<md-input-container  class="md-block whiteframe-element-padding">
 						<label>Style</label>
-						<md-select  ng-model="selectedDataSource.dialectId" >
-							<md-option ng-repeat="d in dialects" value="{{d.VALUE_ID}}">{{d.VALUE_DS}} 
+						<md-select  ng-model="chartStyles" >
+							<md-option ng-repeat="d in chartStyles" value="{{d.VALUE_ID}}">{{d.VALUE_DS}} 
 							</md-option>
 						</md-select>
 					</md-input-container>
 					
 					<md-input-container  class="md-block whiteframe-element-padding">
 						<label>Chart type</label>
-						<md-select  ng-model="selectedDataSource.dialectId" >
-							<md-option ng-repeat="d in dialects" value="{{d.VALUE_ID}}">{{d.VALUE_DS}} 
+						<md-select  ng-model="chartTypes" >
+							<md-option ng-repeat="d in chartTypes" value="{{d.VALUE_ID}}">{{d.VALUE_DS}} 
 							</md-option>
 						</md-select>
 					</md-input-container>

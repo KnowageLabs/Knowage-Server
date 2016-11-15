@@ -28,6 +28,29 @@ angular.module('chart-tab', [])
 		
 });
 
-function chartTabControllerFunction($scope,sbiModule_translate){
+function chartTabControllerFunction($scope,sbiModule_translate, sbiModule_restServices){
+	
 	$scope.datasetLabel = datasetLabel;
+	
+	sbiModule_restServices.promiseGet("../api/1.0/pages/types", "")
+	.then(function(response) {
+		$scope.chartTypes = response.data.types;
+	}, function(response) {
+		sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+	});
+	
+	sbiModule_restServices.promiseGet("../api/style", "")
+	.then(function(response) {
+		$scope.chartStyles = response.data;
+	}, function(response) {
+		sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+	});
+	
+	sbiModule_restServices.promiseGet("../api/1.0/jsonChartTemplate/fieldsMetadata", "")
+	.then(function(response) {
+		$scope.fieldsMetadata = response.data;
+	}, function(response) {
+		sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+	});
+	
 }

@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var app =angular.module('chartDesignerManager', ['chart-directives'])
+var app =angular.module('chartDesignerManager', ['chart-directives','ChartDesignerService'])
 
 app.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.theme('knowage')

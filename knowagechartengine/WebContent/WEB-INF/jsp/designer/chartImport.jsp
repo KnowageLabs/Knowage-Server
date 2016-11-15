@@ -10,3 +10,5 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular/designer/directives/third_party/thirdPartyDirectives.js"></script>
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular/designer/directives/chartDirectives.js"></script>
+
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular/designer/services/chartDesignerServices.js"></script>
