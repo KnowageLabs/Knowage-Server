@@ -299,7 +299,6 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 	@Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON })
 	public Response uploadFile(@MultipartForm MultipartFormDataInput input, @PathParam("bmId") int bmId) {
 
-		// System.out.println();
 		Content content = new Content();
 		byte[] bytes = null;
 
@@ -307,13 +306,9 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 
 		Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
 		for (String key : uploadForm.keySet()) {
-
 			List<InputPart> inputParts = uploadForm.get(key);
-
 			for (InputPart inputPart : inputParts) {
-
 				try {
-
 					MultivaluedMap<String, String> header = inputPart.getHeaders();
 					if (getFileName(header) != null) {
 						content.setFileName(getFileName(header));
@@ -331,7 +326,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 					}
 
 				} catch (IOException e) {
-					e.printStackTrace();
+					throw new SpagoBIRuntimeException("Impossible to upload business model file", e);
 				}
 
 			}

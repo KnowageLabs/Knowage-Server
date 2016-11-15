@@ -17,7 +17,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.SpagoBIDOAException;
+import it.eng.spagobi.commons.dao.SpagoBIDAOException;
 import it.eng.spagobi.metadata.dao.ISbiMetaSourceDAO;
 import it.eng.spagobi.metadata.dao.ISbiMetaTableDAO;
 import it.eng.spagobi.metadata.metadata.SbiMetaSource;
@@ -151,7 +151,7 @@ public class MetaSourceResource extends AbstractSpagoBIResource {
 			temp = sbiMetaSourceDAO.loadSourceByID(sourceId);
 			sbiMetaSourceDAO.modifySource(sbiMetaSource);
 			temp = sbiMetaSourceDAO.loadSourceByID(sourceId);
-		} catch (SpagoBIDOAException e) {
+		} catch (SpagoBIDAOException e) {
 			throw new SpagoBIServiceException(SERVICE_NAME, e.getMessage());
 		} catch (Exception e) {
 			throw new SpagoBIServiceException(SERVICE_NAME, e.getLocalizedMessage());
