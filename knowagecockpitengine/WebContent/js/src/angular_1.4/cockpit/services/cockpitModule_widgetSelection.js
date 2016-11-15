@@ -298,9 +298,31 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 	this.getAssociativeSelections = function(column,columnName,datasetLabel){
 		var defer = $q.defer();
 		
-		//check if all associated widget alre loaded
+		//check if all associated widget are loaded
 		var assoc=ws.getDatasetAssociation(datasetLabel);
 		if(assoc!=undefined){
+			
+			//check if dataset is associated via not parameters only
+			var isColumnPresent = false;
+			for(var i=0; i<assoc.associations.length; i++){
+				var association = assoc.associations[i];
+				for(var j=0; j<association.fields.length; j++){
+					var field = association.fields[j];
+					if(field.store == datasetLabel){
+						if(!field.column.startsWith("$P{") && !field.column.endsWith("}")){
+							isColumnPresent = true;
+							break;
+						}
+					}
+					if(isColumnPresent){
+						break;
+					}
+				}
+			}
+			if(!isColumnPresent){
+				return "noAssoc";
+			}
+			
 			var assDs=assoc.datasets
 			var originalDSInCache=angular.copy(cockpitModule_properties.DS_IN_CACHE);
 			var tmpSplittedDSInCache=angular.copy(cockpitModule_properties.DS_IN_CACHE);

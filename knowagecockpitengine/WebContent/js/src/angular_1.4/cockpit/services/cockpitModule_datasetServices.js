@@ -257,6 +257,23 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				},param)
 			}
 		}
+		
+		var datasetLabel=ds.getDatasetById(dsId).label;		
+		var selections=cockpitModule_widgetSelection.getCurrentSelections(datasetLabel);
+		if(selections!=undefined && selections.hasOwnProperty(datasetLabel)){
+			for(var parName in selections[datasetLabel]){
+				if(parName.startsWith("$P{") && parName.endsWith("}")){
+					var parValue=selections[datasetLabel][parName];
+					if(parValue!=undefined){
+						var finalP=[];
+						angular.forEach(parValue,function(item){
+							this.push(item.substring(2,item.length-2))
+						},finalP)
+						param[parName.substring(3,parName.length-1)]=finalP.join(",");
+					}
+				}
+			}
+		}
 		return param;
 	}
 
@@ -297,8 +314,23 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		if(Object.keys(dataToSend).length==0){
 			dataToSend=cockpitModule_widgetSelection.getCurrentFilters(dataset.label);
 		}
+		
+		var dataToSendWithoutParams = {};
+		angular.copy(dataToSend,dataToSendWithoutParams);
+		angular.forEach(dataToSendWithoutParams, function(item){
+			var paramsToDelete = [];
+			for (var property in item) {
+			    if (item.hasOwnProperty(property) && property.startsWith("$P{") && property.endsWith("}")) {
+			    	paramsToDelete.push(property);
+			    }
+			}
+			angular.forEach(paramsToDelete, function(prop){
+				delete item[prop];
+			});
+		});
+		
 		sbiModule_restServices.restToRootProject();
-		sbiModule_restServices.promisePost("2.0/datasets",encodeURIComponent(dataset.label)+"/data"+params,dataToSend)
+		sbiModule_restServices.promisePost("2.0/datasets",encodeURIComponent(dataset.label)+"/data"+params,dataToSendWithoutParams)
 		.then(function(response){
 			if(cockpitModule_properties.DS_IN_CACHE.indexOf(dataset.label)==-1){
 				cockpitModule_properties.DS_IN_CACHE.push(dataset.label);

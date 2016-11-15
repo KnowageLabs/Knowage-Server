@@ -159,7 +159,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								</md-toolbar>
 								<md-content flex layout>
 									<md-list class="md-dense" flex>
-										<md-list-item class="md-long-text" ng-repeat=" meta in avDataset.metadata.fieldsMeta" 
+										<md-list-item class="md-long-text" ng-repeat="meta in avDataset.metadata.fieldsMeta" 
 										ng-click="toggleAssociation(avDataset.label,meta.name,'dataset')" ng-class="{'selectedRow':jsonCurrentAss[avDataset.label]==('dataset'+meta.name)}">
 											<span layout="row" flex>
 												<p flex=70 class="metaname" >{{meta.alias}}</p>
@@ -169,10 +169,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 											<md-divider ng-if="!$last"></md-divider>
 										</md-list-item>
 										<md-divider></md-divider>
+										<md-list-item class="md-long-text" ng-repeat="param in avDataset.parameters" 
+										ng-click="toggleAssociation(avDataset.label,'$P{'+param.name+'}','dataset')" ng-class="{'selectedRow':jsonCurrentAss[avDataset.label]==('dataset'+'$P{'+param.name+'}')}">
+											<span layout="row" flex>
+												<p flex=70 class="metaname" >$P{<span ng-bind="param.name"></span>}</p>
+												<p class="metatype">({{param.type | metatype}})</p>
+											</span>
+											<md-divider ng-if="!$last"></md-divider>
+										</md-list-item>
+										<md-divider></md-divider>
 									</md-list>
-									
 								</md-content>
-								
 							</md-card-content>
 						</md-card>
 <!-- 						Document card -->
@@ -195,9 +202,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										</md-list-item>
 										<md-divider></md-divider>
 									</md-list>
-									
 								</md-content>
-								
 							</md-card-content>
 						</md-card>
 		          	</div>

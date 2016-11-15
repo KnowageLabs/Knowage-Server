@@ -300,10 +300,11 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 			if (associationGroupString == null) {
 				throw new SpagoBIServiceParameterException(this.request.getPathInfo(), "Query parameter [associationGroup] cannot be null");
 			}
-			JSONObject associationGroupObject = new JSONObject(associationGroupString);
-			AssociationGroupJSONSerializer serializer = new AssociationGroupJSONSerializer();
-			AssociationGroup associationGroup = serializer.deserialize(associationGroupObject);
 
+			AssociationGroupJSONSerializer serializer = new AssociationGroupJSONSerializer();
+
+			JSONObject associationGroupObject = new JSONObject(associationGroupString);
+			AssociationGroup associationGroup = serializer.deserialize(associationGroupObject);
 			fixAssociationGroup(associationGroup);
 
 			// parse documents
@@ -325,6 +326,27 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 					}
 				}
 			}
+
+			JSONObject associationGroupObjectWithoutParams = new JSONObject(associationGroupString);
+			JSONArray associationsWithoutParams = associationGroupObjectWithoutParams.optJSONArray("associations");
+			if (associationsWithoutParams != null) {
+				for (int associationIndex = 0; associationIndex < associationsWithoutParams.length(); associationIndex++) {
+					JSONObject association = associationsWithoutParams.getJSONObject(associationIndex);
+					JSONArray fields = association.optJSONArray("fields");
+					if (fields != null) {
+						for (int fieldIndex = fields.length() - 1; fieldIndex >= 0; fieldIndex--) {
+							JSONObject field = fields.getJSONObject(fieldIndex);
+							String column = field.getString("column");
+							String type = field.optString("type");
+							if ("document".equalsIgnoreCase(type) || column.startsWith("$P{") && column.endsWith("}")) {
+								fields.remove(fieldIndex);
+							}
+						}
+					}
+				}
+			}
+			AssociationGroup associationGroupWithoutParams = serializer.deserialize(associationGroupObjectWithoutParams);
+			fixAssociationGroup(associationGroupWithoutParams);
 
 			// parse dataset parameters
 			Map<String, Map<String, String>> datasetParameters = new HashMap<String, Map<String, String>>();
@@ -356,9 +378,12 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 				}
 			}
 
+			AssociationAnalyzer analyzerWithoutParams = new AssociationAnalyzer(associationGroupWithoutParams.getAssociations());
+			analyzerWithoutParams.process();
+			Map<String, Map<String, String>> datasetToAssociationToColumnMap = analyzerWithoutParams.getDatasetToAssociationToColumnMap();
+
 			AssociationAnalyzer analyzer = new AssociationAnalyzer(associationGroup.getAssociations());
 			analyzer.process();
-			Map<String, Map<String, String>> datasetToAssociationToColumnMap = analyzer.getDatasetToAssociationToColumnMap();
 			Pseudograph<String, LabeledEdge<String>> graph = analyzer.getGraph();
 
 			String selectedDataset = null;
@@ -405,8 +430,8 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 			AssociativeLogicManager manager = new AssociativeLogicManager(graph, datasetToAssociationToColumnMap, filtersMap, realtimeDatasets,
 					datasetParameters, documents);
 			manager.setUserProfile(getUserProfile());
-
 			Map<EdgeGroup, Set<String>> egdegroupToValuesMap = manager.process();
+
 			Map<String, Map<String, Set<String>>> selections = AssociationAnalyzer.getSelections(associationGroup, graph, egdegroupToValuesMap);
 
 			for (String d : selectionsMap.keySet()) {

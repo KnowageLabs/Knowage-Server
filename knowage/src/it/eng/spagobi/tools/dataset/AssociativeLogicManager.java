@@ -201,13 +201,16 @@ public class AssociativeLogicManager {
 							if (!documents.contains(v1)) {
 								String tableName = getTableName(v1);
 								// PreparedStatement stmt = getPreparedQuery(dataSource.getConnection(), columnNames, cacheItem.getTable());
-								String query = "SELECT DISTINCT " + getColumnNames(group.getOrderedEdgeNames(), v1) + " FROM " + tableName;
-								Set<String> tuple = getTupleOfValues(v1, query);
+								String columnNames = getColumnNames(group.getOrderedEdgeNames(), v1);
+								if (!columnNames.isEmpty()) {
+									String query = "SELECT DISTINCT " + columnNames + " FROM " + tableName;
+									Set<String> tuple = getTupleOfValues(v1, query);
 
-								if (!edgeGroupValues.containsKey(group)) {
-									edgeGroupValues.put(group, tuple);
-								} else {
-									edgeGroupValues.get(group).retainAll(tuple);
+									if (!edgeGroupValues.containsKey(group)) {
+										edgeGroupValues.put(group, tuple);
+									} else {
+										edgeGroupValues.get(group).retainAll(tuple);
+									}
 								}
 							}
 
@@ -296,12 +299,17 @@ public class AssociativeLogicManager {
 		List<String> columnNames = new ArrayList<String>();
 		IDataSource dataSource = getDataSource(datasetName);
 		for (String associationName : associationNames) {
-			if (realtimeDatasets.contains(datasetName)) {
-				String columnName = datasetToAssociations.get(datasetName).get(associationName);
-				columnNames.add(DataStore.DEFAULT_TABLE_NAME + "." + AbstractJDBCDataset.encapsulateColumnName(columnName, null));
-			} else {
-				String columnName = AbstractJDBCDataset.encapsulateColumnName(datasetToAssociations.get(datasetName).get(associationName), dataSource);
-				columnNames.add(columnName);
+			Map<String, String> associationToColumns = datasetToAssociations.get(datasetName);
+			if (associationToColumns != null) {
+				String columnName = associationToColumns.get(associationName);
+				if (columnName != null) {
+					if (realtimeDatasets.contains(datasetName)) {
+						columnName = DataStore.DEFAULT_TABLE_NAME + "." + AbstractJDBCDataset.encapsulateColumnName(columnName, null);
+					} else {
+						columnName = AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
+					}
+					columnNames.add(columnName);
+				}
 			}
 		}
 		return StringUtils.join(columnNames.iterator(), ",");
@@ -315,67 +323,70 @@ public class AssociativeLogicManager {
 		// iterate over all the associations
 		for (EdgeGroup group : groups) {
 			String columnNames = getColumnNames(group.getOrderedEdgeNames(), dataset);
-			String query = "SELECT DISTINCT " + columnNames + " FROM " + tableName + " WHERE " + filter;
+			if (columnNames.length() > 0) {
+				String query = "SELECT DISTINCT " + columnNames + " FROM " + tableName + " WHERE " + filter;
 
-			Set<String> distinctValues = getTupleOfValues(dataset, query);
+				Set<String> distinctValues = getTupleOfValues(dataset, query);
 
-			Set<String> baseSet = edgeGroupValues.get(group);
-			Set<String> intersection = new HashSet<String>(CollectionUtils.intersection(baseSet, distinctValues));
-			if (!intersection.equals(baseSet)) {
-				if (intersection.size() > 0) {
-					edgeGroupValues.put(group, intersection);
+				Set<String> baseSet = edgeGroupValues.get(group);
+				Set<String> intersection = new HashSet<String>(CollectionUtils.intersection(baseSet, distinctValues));
+				if (!intersection.equals(baseSet)) {
+					if (intersection.size() > 0) {
+						edgeGroupValues.put(group, intersection);
 
-					for (String datasetInvolved : edgeGroupToDataset.get(group)) {
-						if (!documents.contains(datasetInvolved) && !datasetInvolved.equals(dataset)) {
-							columnNames = getColumnNames(group.getOrderedEdgeNames(), datasetInvolved);
-
-							String whereClauses = null;
-							if (realtimeDatasets.contains(datasetInvolved)) {
-								StringBuilder sb = new StringBuilder();
-								String[] columnsArray = columnNames.split(",");
-								for (String values : intersection) {
-									String[] valuesArray = values.substring(1, values.length() - 1).split(",");
-									if (sb.length() > 0) {
-										sb.append(" OR ");
-									}
-									if (valuesArray.length > 1) {
-										sb.append("(");
-									}
-									for (int j = 0; j < valuesArray.length; j++) {
-										if (j > 0) {
-											sb.append(" AND ");
+						for (String datasetInvolved : edgeGroupToDataset.get(group)) {
+							if (!documents.contains(datasetInvolved) && !datasetInvolved.equals(dataset)) {
+								columnNames = getColumnNames(group.getOrderedEdgeNames(), datasetInvolved);
+								if (columnNames.length() > 0) {
+									String whereClauses = null;
+									if (realtimeDatasets.contains(datasetInvolved)) {
+										StringBuilder sb = new StringBuilder();
+										String[] columnsArray = columnNames.split(",");
+										for (String values : intersection) {
+											String[] valuesArray = values.substring(1, values.length() - 1).split(",");
+											if (sb.length() > 0) {
+												sb.append(" OR ");
+											}
+											if (valuesArray.length > 1) {
+												sb.append("(");
+											}
+											for (int j = 0; j < valuesArray.length; j++) {
+												if (j > 0) {
+													sb.append(" AND ");
+												}
+												sb.append(AbstractJDBCDataset.encapsulateColumnName(columnsArray[j], null));
+												sb.append("=");
+												sb.append(valuesArray[j]);
+											}
+											if (valuesArray.length > 1) {
+												sb.append(")");
+											}
 										}
-										sb.append(AbstractJDBCDataset.encapsulateColumnName(columnsArray[j], null));
-										sb.append("=");
-										sb.append(valuesArray[j]);
+										whereClauses = sb.toString();
+									} else {
+										String inClauseColumns;
+										String inClauseValues;
+										if (intersection.size() > IN_CLAUSE_LIMIT) {
+											inClauseColumns = "1," + columnNames;
+											inClauseValues = getUnlimitedInClauseValues(intersection);
+										} else {
+											inClauseColumns = columnNames;
+											inClauseValues = StringUtils.join(intersection.iterator(), ",");
+										}
+										whereClauses = "(" + inClauseColumns + ") IN (" + inClauseValues + ")";
 									}
-									if (valuesArray.length > 1) {
-										sb.append(")");
-									}
+									// it will skip the current dataset, from which the filter is fired
+									calculateDatasets(datasetInvolved, group, whereClauses);
 								}
-								whereClauses = sb.toString();
-							} else {
-								String inClauseColumns;
-								String inClauseValues;
-								if (intersection.size() > IN_CLAUSE_LIMIT) {
-									inClauseColumns = "1," + columnNames;
-									inClauseValues = getUnlimitedInClauseValues(intersection);
-								} else {
-									inClauseColumns = columnNames;
-									inClauseValues = StringUtils.join(intersection.iterator(), ",");
-								}
-								whereClauses = "(" + inClauseColumns + ") IN (" + inClauseValues + ")";
 							}
-							// it will skip the current dataset, from which the filter is fired
-							calculateDatasets(datasetInvolved, group, whereClauses);
 						}
+					} else {
+						Set<String> emptySet = new HashSet<String>();
+						for (EdgeGroup edgeGroup : edgeGroupValues.keySet()) {
+							edgeGroupValues.put(edgeGroup, emptySet);
+						}
+						return;
 					}
-				} else {
-					Set<String> emptySet = new HashSet<String>();
-					for (EdgeGroup edgeGroup : edgeGroupValues.keySet()) {
-						edgeGroupValues.put(edgeGroup, emptySet);
-					}
-					return;
 				}
 			}
 		}
