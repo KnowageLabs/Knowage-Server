@@ -11,7 +11,8 @@
 							</md-option>
 						</md-select>
 					</md-input-container>
-									
+						
+					<!-- 		
 					<md-input-container  class="md-block whiteframe-element-padding">
 						<label>{{translate.load("sbi.chartengine.designer.chartTypePicker")}}</label>	
 						<md-select  ng-model="chartTemplate.CHART.type">
@@ -19,16 +20,32 @@
 							</md-option>
 						</md-select>
 					</md-input-container>
-					
+					 -->	
+		
 					<md-input-container  class="md-block whiteframe-element-padding">
 					 <label>Dataset in use</label>
 						<input ng-model="datasetLabel" ng-readonly="true">
 					</md-input-container>
 					
+
+					<md-grid-list style="margin-top:16px;"md-cols-gt-md="6" md-cols-md="4" md-cols-sm="2" md-gutter="16px" md-row-height="100px">
+					    <md-grid-tile ng-repeat="chart in chartTypes" style="background-color:#3b678c;" ng-class="{'md-whiteframe-15dp' : selectedChartType==chart }" ng-click="selectChartType(chart)">
+					    	<p style="color:white">{{chart}}</p>
+					    </md-grid-tile>
+					 </md-grid-list>
+					 
 				</md-content>
 			</div>
 			<md-divider class="vertical-divider"></md-divider>
-			<div flex=40 layout-fill></div>
+			<div flex=40 layout="row" layout-fill>
+				<md-card style="background-color:#3b678c" flex>
+					<md-card-header>
+					    <md-card-header-text>
+					      <span style="color:white" class="md-title">{{selectedChartType}} preview picture</span>
+					    </md-card-header-text>
+					 </md-card-header>
+				</md-card>
+			</div>
   		</md-whiteframe>
 	</div>
 </md-tab-content>

@@ -36,6 +36,12 @@ function chartTabControllerFunction($scope,sbiModule_translate,sbiModule_restSer
 	sbiModule_restServices.promiseGet("../api/1.0/pages/types", "")
 	.then(function(response) {
 		$scope.chartTypes = response.data.types;
+		for (var i = 0; i < $scope.chartTypes.length; i++) {
+			if($scope.chartTypes[i].toUpperCase()==$scope.chartTemplate.type.toUpperCase()){
+				$scope.selectedChartType = $scope.chartTypes[i];
+			}
+		}		
+		
 	}, function(response) {
 		
 		var message = "";
@@ -69,37 +75,8 @@ function chartTabControllerFunction($scope,sbiModule_translate,sbiModule_restSer
 		
 	});
 	
-	sbiModule_restServices.promiseGet("../api/1.0/jsonChartTemplate/fieldsMetadata", "")
-	.then(function(response) {
+	$scope.selectChartType = function(chart) {
+		$scope.selectedChartType = chart;
+	}
 		
-		$scope.fieldsMetadata = response.data;
-		
-		var results = $scope.fieldsMetadata.results;
-		
-		for(var i=0; i<results.length; i++) {
-			
-			if (results[i].nature=="measure") {
-				$scope.allMeasures.push(results[i]);
-			}
-			else {
-				$scope.allAttributes.push(results[i]);
-			}
-			
-		}
-		
-	}, function(response) {
-		
-		var message = "";
-		
-		if (response.status==500) {
-			message = response.statusText;
-		}
-		else {
-			message = response.data.errors[0].message;
-		}
-		
-		sbiModule_messaging.showErrorMessage(message, 'Error');
-		
-	});
-	
 }

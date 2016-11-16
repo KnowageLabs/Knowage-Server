@@ -29,6 +29,7 @@ function ChartDesignerFunction(sbiModule_translate,$scope) {
 	
 	$scope.translate = sbiModule_translate;
 	$scope.previewButtonEnabled = false;
+	$scope.selectedChartType = "";
 	
 	$scope.saveChartTemplate = function() {
 		$scope.showStructureDetails = true;
@@ -36,8 +37,7 @@ function ChartDesignerFunction(sbiModule_translate,$scope) {
 	}
 	
 	$scope.goBackFromDesigner = function() {
-		$scope.showStructureDetails = false;
-		$scope.structurePreviewFlex = 50;
+		parent.location.href = mainContextName+'/servlet/AdapterHTTP?PAGE=DetailBIObjectPage&MESSAGEDET=DETAIL_SELECT&OBJECT_ID=9&LIGHT_NAVIGATOR_BACK_TO=1';
 	}
 	
 	$scope.chartTemplate = jsonTemplate;
@@ -46,8 +46,5 @@ function ChartDesignerFunction(sbiModule_translate,$scope) {
 	
 	// Needed for the preview of the chart (calling the Highcharts exporter
 	$scope.exporterContextName = exporterContextName;
-	
-	$scope.allMeasures = [];
-	$scope.allAttributes = [];
 	
 }
