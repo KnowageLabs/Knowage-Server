@@ -29,7 +29,7 @@ angular.module('advanced-tab', [])
 });
 
 function advancedTabControllerFunction($scope,sbiModule_translate){
- console.log("in advanced tab");
+
  $scope.translate = sbiModule_translate;
  
 }

@@ -2,7 +2,10 @@
 	
 	<div layout="row" md-content layout-padding flex>
 	
-		<div layout="column" flex=25 style="padding:0 8 0 0">  
+		<!-- 
+			MEASURES AND ATTRIBUTES CONTAINERS
+		 -->
+		<div layout="column" flex=20 style="padding:0 8 0 0">  
 		
 			<md-toolbar class="secondaryToolbar">
 				<div class="md-toolbar-tools">
@@ -47,7 +50,10 @@
 		
 		</div>
 		
-		<div layout="column" flex=25 style="padding:0 8 0 0">  
+		<!-- 
+			CATEGORIES AND SERIES CONTAINERS
+		 -->
+		<div layout="column" flex=30 style="padding:0 8 0 0">  
 		
 			<md-toolbar class="secondaryToolbar">
 				<div class="md-toolbar-tools">
@@ -58,14 +64,40 @@
 				</div>		      
 			</md-toolbar>
 			
-			<md-whiteframe flex class="md-whiteframe-4dp whiteframe-element">
-			
+			<md-whiteframe flex class="md-whiteframe-4dp whiteframe-element">			
 				
-			
+				<!-- CATEGORIES CONTAINER -->
+				<md-card ng-if="categoriesExist">
+				
+					<md-toolbar>
+					
+						<div class="md-toolbar-tools">
+							<h2>
+								<span>{{translate.load("sbi.chartengine.designer.structureTab.categoriesseries.categories.title")}}</span>
+							</h2>
+							<span flex></span>				   		
+						</div>	
+					
+					</md-toolbar>
+				
+					<md-list flex>
+										
+						<md-list-item ng-repeat="category in categoriesContainer" class="noright">
+						    <span><b>{{category}}</b></span>
+						    AAA
+					  	</md-list-item>
+					  	
+				  	</md-list>	
+				  	
+			  	</md-card>
+			  			
 			</md-whiteframe>
 			
 		</div>
 		
+		<!-- 
+			DETAILS
+		 -->
 		<div hide-md ng-show="showStructureDetails" layout="column" flex=25 style="padding:0 8 0 0">  
 			
 			<md-toolbar class="secondaryToolbar">
@@ -86,6 +118,9 @@
 			
 		</div>
 		
+		<!-- 
+			PREVIEW OF THE CHART
+		 -->
 		<div hide-md layout="column" flex="{{structurePreviewFlex}}" style="padding:0"> 
 		
 			<md-toolbar class="secondaryToolbar">

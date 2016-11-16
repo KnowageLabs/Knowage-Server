@@ -37,14 +37,25 @@ function ChartDesignerFunction(sbiModule_translate,$scope) {
 	}
 	
 	$scope.goBackFromDesigner = function() {
+		$scope.showStructureDetails = false;
+		$scope.structurePreviewFlex = 50;
 		parent.location.href = mainContextName+'/servlet/AdapterHTTP?PAGE=DetailBIObjectPage&MESSAGEDET=DETAIL_SELECT&OBJECT_ID=9&LIGHT_NAVIGATOR_BACK_TO=1';
 	}
 	
-	$scope.chartTemplate = jsonTemplate;
+	// The chart template (beneath the CHART tag, i.e. property)
+	$scope.chartTemplate = jsonTemplate.CHART;
 	
 	console.log("chart template: ",jsonTemplate);
 	
 	// Needed for the preview of the chart (calling the Highcharts exporter
 	$scope.exporterContextName = exporterContextName;
+	
+	$scope.allMeasures = [];
+	$scope.allAttributes = [];
+	
+	$scope.categoriesExist = false;
+	
+	$scope.categoriesContainer = [];
+	$scope.seriesContainer = [];
 	
 }

@@ -16,6 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+ */
+
 angular.module('chartstructure-tab', [])
 	.directive('chartstructureTab', function(sbiModule_config) {
 		return {
@@ -33,32 +37,47 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 	$scope.translate = sbiModule_translate;
 	$scope.showStructureDetails = false;
 	$scope.structurePreviewFlex = 50;
-	
+		
+	// Get all metadata of the chart's dataset (all measures and attributes)
 	sbiModule_restServices.promiseGet("../api/1.0/jsonChartTemplate/fieldsMetadata", "")
-	.then(function(response) {
-		$scope.fieldsMetadata = response.data;
-	}, function(response) {
-		sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-	});
+		.then(function(response) {
+			
+			$scope.fieldsMetadata = response.data;
+			
+			var results = $scope.fieldsMetadata.results;
+			
+			for(var i=0; i<results.length; i++) {
+				
+				if (results[i].nature=="measure") {
+					$scope.allMeasures.push(results[i]);
+				}
+				else {
+					$scope.allAttributes.push(results[i]);
+				}
+				
+			}
+			
+			$scope.checkCategories();
+			$scope.checkSeries();
+			
+		}, function(response) {
+			
+			var message = "";
+			
+			if (response.status==500) {
+				message = response.statusText;
+			}
+			else {
+				message = response.data.errors[0].message;
+			}
+			
+			sbiModule_messaging.showErrorMessage(message, 'Error');
+			
+		});
 	
 	$scope.changeStructureDetailsFlex = function() {
 		$scope.structurePreviewFlex = 25;
 	}
-	
-	$scope.people = [
-	                 { name: 'Janet Perkins',  newMessage: true },
-	                 { name: 'Mary Johnson',  newMessage: false },
-	                 { name: 'Peter Carlsson', newMessage: false },
-	                 { name: 'Janet Perkins',  newMessage: true },
-	                 { name: 'Mary Johnson',  newMessage: false },
-	                 { name: 'Peter Carlsson', newMessage: false },
-	                 { name: 'Janet Perkins',  newMessage: true },
-	                 { name: 'Mary Johnson',  newMessage: false },
-	                 { name: 'Peter Carlsson', newMessage: false },
-	                 { name: 'Janet Perkins',  newMessage: true },
-	                 { name: 'Mary Johnson',  newMessage: false },
-	                 { name: 'Peter Carlsson', newMessage: false }
-	               ];
 	
 	$scope.moveAttributeToCategories = function(item) {
 		console.log(item);
@@ -68,6 +87,52 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 		console.log(item);
 	}
 	
-	console.log($scope.fieldsMetadata);
+//	console.log($scope.fieldsMetadata);
+	
+	$scope.checkCategories = function() {		
+		
+		$scope.categoriesExist = $scope.chartTemplate.VALUES.CATEGORY ? true : false;
+		
+		if ($scope.categoriesExist) {
+			
+			var categoryTag = $scope.chartTemplate.VALUES.CATEGORY;
+			console.log(categoryTag.length);
+			// If the CATEGORY tag contains an array (e.g. this goes for the SUNBURST chart type)
+			if (categoryTag.length) {
+				
+				for (i=0; i<categoryTag.length; i++) {
+					$scope.categoriesContainer.push(categoryTag[i].column);
+				}
+				
+			}
+			// If all (if there are more than one) categories are under the single tag (column and groupby properties (attributes))
+			else {
+				
+				$scope.categoriesContainer.push(categoryTag.column);
+				
+				console.log("categoryTag:",categoryTag);
+				
+				if (categoryTag.groupby.indexOf(",") > -1) {
+					var groupBySplit = categoryTag.groupby.split(",");
+					
+					for (i=0; i<groupBySplit.length; i++) {
+						$scope.categoriesContainer.push(groupBySplit[i]);
+					}
+					
+				}
+				else {
+					categoryTag.groupby ? $scope.categoriesContainer.push(categoryTag.groupby) : null;
+				}
+				
+				console.log("categoriesContainer:",$scope.categoriesContainer);
+			}
+			
+		}
+				
+	}
+	
+	$scope.checkSeries = function() {
+		
+	}
 	
 }
