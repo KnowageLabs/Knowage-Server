@@ -20,6 +20,7 @@ angular.module('advanced-tab', [])
 .directive('advancedTab', function(sbiModule_config) {
 	return {
 		restrict: 'AE',
+		replace:true,
 		templateUrl: function(){
 		      return sbiModule_config.contextName + '/js/src/angular/designer/directives/custom_directives/advanced-tab/advanced-tab.html' 
 	      },   
@@ -30,6 +31,7 @@ angular.module('advanced-tab', [])
 
 function advancedTabControllerFunction($scope,sbiModule_translate){
 
+	
  $scope.translate = sbiModule_translate;
  
 }

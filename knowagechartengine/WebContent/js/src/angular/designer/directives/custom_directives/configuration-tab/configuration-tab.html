@@ -1,45 +1,73 @@
 <md-tab-content class="knowage-grey-color" layout="column">
 <div layout="row" md-content layout-padding flex>
-<md-whiteframe class="md-whiteframe-4dp whiteframe-element" flex=40>
-	<md-toolbar class="secondaryToolbar">
-		<div class="md-toolbar-tools">
-			<h2>
-				<span>{{translate.load("sbi.chartengine.designer.configurationTab.title")}}</span>
-			</h2>
-			<span flex></span>				   		
-		</div>		      
-	</md-toolbar>
+	<div layout="column" flex=40 style="padding:0 8 0 0">  
+		
+			<md-toolbar class="secondaryToolbar">
+				<div class="md-toolbar-tools">
+					<h2>
+						<span>{{translate.load("sbi.chartengine.designer.configurationTab.title")}}</span>
+					</h2>
+					<span flex></span>				   		
+				</div>		      
+			</md-toolbar>
+			
+			<md-whiteframe flex class="md-whiteframe-4dp whiteframe-element" style="overflow:auto">
+			
+			<div class="configurationContainer" layout="row" layout-wrap>
+			
+				<div class="configurationButton" flex="25"  ng-repeat="button in configurationForDisplay">
+					<md-icon md-font-icon="fa fa-picture-o" class="fa fa-2x"></md-icon>
+					<label>{{button.name}}</label>
+				</div>
+	
+			</div>
+				
+			
+			</md-whiteframe>
+			
+		</div>
+
+	<div layout="column" flex=30 style="padding:0 8 0 0">  
+		
+			<md-toolbar class="secondaryToolbar">
+				<div class="md-toolbar-tools">
+					<h2>
+						<span>{{translate.load("sbi.chartengine.designer.tabs.details.title")}}</span>
+					</h2>
+					<span flex></span>				   		
+				</div>		      
+			</md-toolbar>
+			
+			<md-whiteframe flex class="md-whiteframe-4dp whiteframe-element" style="overflow:auto">
+			
+				
+			
+			</md-whiteframe>
+			
+		</div>
+	<div layout="column" flex=30 style="padding:0 8 0 0">  
+		
+			<md-toolbar class="secondaryToolbar">
+				<div class="md-toolbar-tools">
+					<h2>
+						<span>{{translate.load("sbi.chartengine.designer.tabs.preview.title")}}</span>
+					</h2>
+					<span flex></span>				   		
+				</div>		      
+			</md-toolbar>
+			
+			<md-whiteframe flex class="md-whiteframe-4dp whiteframe-element">
+			
+				
+			
+			</md-whiteframe>
+			
+		</div>	
+	
 
 
 
-</md-whiteframe>
-<md-whiteframe class="md-whiteframe-4dp whiteframe-element whiteframe-element-center-margin-left whiteframe-element-center-margin-right" flex=30>
-	<md-toolbar class="secondaryToolbar">
-		<div class="md-toolbar-tools">
-			<h2>
-				<span>{{translate.load("sbi.chartengine.designer.tabs.details.title")}}</span>
-			</h2>
-			<span flex></span>				   		
-		</div>		      
-	</md-toolbar>
 
-
-</md-whiteframe>
-
-<md-whiteframe class="md-whiteframe-4dp whiteframe-element" flex=30>
-	<md-toolbar class="secondaryToolbar">
-		<div class="md-toolbar-tools">
-			<h2>
-				<span>{{translate.load("sbi.chartengine.designer.tabs.preview.title")}}</span>
-			</h2>
-			<span flex></span>				   		
-		</div>		      
-	</md-toolbar>
-
-
-
-
-</md-whiteframe>
 
 </div>
 </md-tab-content>
