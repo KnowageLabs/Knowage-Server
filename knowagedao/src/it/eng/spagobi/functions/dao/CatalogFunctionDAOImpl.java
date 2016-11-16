@@ -21,6 +21,7 @@ import it.eng.spagobi.utilities.CatalogFunction;
 import it.eng.spagobi.utilities.CatalogFunctionInputFile;
 import it.eng.spagobi.utilities.assertion.Assert;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -88,7 +89,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 			hibCatFunction.setSbiFunctionOutputs(getSbiFunctionOutputSet(outputs, hibCatFunction));
 			hibCatFunction.setSbiFunctionInputDatasets(getSbiFunctionInputDatasetSet(inputDatasets, hibCatFunction));
 			hibCatFunction.setSbiFunctionInputFiles(getSbiFunctionInputFileSet(inputFiles, hibCatFunction));
-			session.saveOrUpdate(hibCatFunction);
+			session.save(hibCatFunction);
 
 			transaction.commit();
 
@@ -239,51 +240,135 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 			}
 
 			SbiCatalogFunction hibCatFunction = (SbiCatalogFunction) session.get(SbiCatalogFunction.class, id);
-			hibCatFunction.getSbiFunctionInputDatasets().clear();
-			for (Object o : hibCatFunction.getSbiFunctionInputDatasets()) {
-				SbiFunctionInputDataset di = (SbiFunctionInputDataset) o;
-				session.delete(di);
-			}
-			for (Object o : hibCatFunction.getSbiFunctionOutputs()) {
-				SbiFunctionOutput out = (SbiFunctionOutput) o;
-				session.delete(out);
-			}
-			hibCatFunction.setSbiFunctionOutputs(null);
 
+			// ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+			// delete outs not reinserted and update outputs that are already presents
+			List<SbiFunctionOutput> outToRemove = new ArrayList<SbiFunctionOutput>();
+			for (Object o : hibCatFunction.getSbiFunctionOutputs()) {
+				SbiFunctionOutput oi = (SbiFunctionOutput) o;
+				boolean delete = true;
+				if (updatedCatalogFunction.getOutputs().keySet().contains(oi.getId().getLabel())) {
+					delete = false;
+
+					Domain domain = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("FUNCTION_OUTPUT",
+							updatedCatalogFunction.getOutputs().get(oi.getId().getLabel()));
+					Integer outTypeSbiDomainId = domain.getValueId();
+
+					oi.setOutType(outTypeSbiDomainId);
+					updatedCatalogFunction.getOutputs().remove(oi.getId().getLabel());
+				}
+
+				if (delete) {
+					outToRemove.add(oi);
+				}
+			}
+
+			for (SbiFunctionOutput otr : outToRemove) {
+				SbiFunctionOutput outToRem = (SbiFunctionOutput) session.get(SbiFunctionOutput.class, otr.getId());
+				hibCatFunction.getSbiFunctionOutputs().remove(outToRem);
+				session.delete(outToRem);
+				session.flush();
+			}
+
+			// insert outs that are not presents
+			Set<SbiFunctionOutput> hibOutSet = hibCatFunction.getSbiFunctionOutputs();
+			for (String outLabel : updatedCatalogFunction.getOutputs().keySet()) {
+				// String outType = updatedCatalogFunction.getOutputs().get(outLabel);
+				Domain domain = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("FUNCTION_OUTPUT", updatedCatalogFunction.getOutputs().get(outLabel));
+				Integer outTypeSbiDomainId = domain.getValueId();
+
+				hibOutSet.add(new SbiFunctionOutput(new SbiFunctionOutputId(hibCatFunction.getFunctionId(), outLabel), hibCatFunction, outTypeSbiDomainId));
+			}
+			// -------------------------------------------------------------------------------------------------------------------------------------------------------------------
+			// delete vars not reinserted and update variables that are already presents (and delete them from updateVariablesList in updatedCatalogFunction)
+			List<SbiFunctionInputVariable> varToRemove = new ArrayList<SbiFunctionInputVariable>();
 			for (Object o : hibCatFunction.getSbiFunctionInputVariables()) {
 				SbiFunctionInputVariable vi = (SbiFunctionInputVariable) o;
-				session.delete(vi);
+				boolean delete = true;
+				if (updatedCatalogFunction.getInputVariables().keySet().contains(vi.getId().getVarName())) {
+					delete = false;
+					vi.setVarValue(updatedCatalogFunction.getInputVariables().get(vi.getId().getVarName()));
+					updatedCatalogFunction.getInputVariables().remove(vi.getId().getVarName());
+				}
+
+				if (delete) {
+					varToRemove.add(vi);
+				}
+			}
+			for (SbiFunctionInputVariable remVar : varToRemove) {
+				SbiFunctionInputVariable varToRem = (SbiFunctionInputVariable) session.get(SbiFunctionInputVariable.class, remVar.getId());
+				hibCatFunction.getSbiFunctionInputVariables().remove(varToRem);
+				session.delete(varToRem);
+				session.flush();
 			}
 
+			// insert vars that are not presents
+			Set<SbiFunctionInputVariable> hibVarsSet = hibCatFunction.getSbiFunctionInputVariables();
+			for (String varName : updatedCatalogFunction.getInputVariables().keySet()) {
+				String varValue = updatedCatalogFunction.getInputVariables().get(varName);
+				hibVarsSet.add(new SbiFunctionInputVariable(new SbiFunctionInputVariableId(hibCatFunction.getFunctionId(), varName), hibCatFunction, varValue));
+			}
+
+			// -------------------------------------------------------------------------------------------------------------------------------------------------------------------
+			// delete files not reinserted and update files that are already presents (and delete them from updateFilesList in updatedCatalogFunction)
+			List<SbiFunctionInputFile> filesToRemove = new ArrayList<SbiFunctionInputFile>();
 			for (Object o : hibCatFunction.getSbiFunctionInputFiles()) {
-				SbiFunctionInputFile f = (SbiFunctionInputFile) o;
-				session.delete(f);
+				SbiFunctionInputFile fi = (SbiFunctionInputFile) o;
+				boolean delete = true;
+				if (updatedFunctionContainsFile(updatedCatalogFunction.getInputFiles(), fi.getId().getFileName())) {
+					delete = false;
+					fi.setContent(getBytesFromFileName(fi.getId().getFileName(), updatedCatalogFunction.getInputFiles()));
+					removeFileWithName(fi.getId().getFileName(), updatedCatalogFunction.getInputFiles());
+				}
+				if (delete) {
+					filesToRemove.add(fi);
+				}
 			}
 
-			if (hibCatFunction.getSbiFunctionInputVariables() != null)
-				hibCatFunction.getSbiFunctionInputVariables().clear();
-			if (hibCatFunction.getSbiFunctionOutputs() != null)
-				hibCatFunction.getSbiFunctionOutputs().clear();
-			if (hibCatFunction.getSbiFunctionInputDatasets() != null)
-				hibCatFunction.getSbiFunctionInputDatasets().clear();
-			if (hibCatFunction.getSbiFunctionInputFiles() != null)
-				hibCatFunction.getSbiFunctionInputFiles().clear();
-
-			transaction.commit();
-			session.close();
-
-			try {
-				session = getSession();
-				Assert.assertNotNull(session, "session cannot be null");
-				transaction = session.beginTransaction();
-				Assert.assertNotNull(transaction, "transaction cannot be null");
-			} catch (Throwable t) {
-				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
+			for (SbiFunctionInputFile remFile : filesToRemove) {
+				SbiFunctionInputFile fileToRem = (SbiFunctionInputFile) session.get(SbiFunctionInputFile.class, remFile.getId());
+				hibCatFunction.getSbiFunctionInputFiles().remove(fileToRem);
+				session.delete(fileToRem);
+				session.flush();
 			}
-			hibCatFunction.setSbiFunctionInputVariables(getSbiFunctionInputVariablesSet(updatedCatalogFunction.getInputVariables(), hibCatFunction));
-			hibCatFunction.setSbiFunctionOutputs(getSbiFunctionOutputSet(updatedCatalogFunction.getOutputs(), hibCatFunction));
-			hibCatFunction.setSbiFunctionInputDatasets(getSbiFunctionInputDatasetSet(updatedCatalogFunction.getInputDatasets(), hibCatFunction));
-			hibCatFunction.setSbiFunctionInputFiles(getSbiFunctionInputFileSet(updatedCatalogFunction.getInputFiles(), hibCatFunction));
+
+			// insert files that are not presents
+			Set<SbiFunctionInputFile> hibFilesSet = hibCatFunction.getSbiFunctionInputFiles();
+			for (CatalogFunctionInputFile file : updatedCatalogFunction.getInputFiles()) {
+				byte[] fileContent = file.getContent();
+				hibFilesSet.add(new SbiFunctionInputFile(new SbiFunctionInputFileId(hibCatFunction.getFunctionId(), file.getFileName()), hibCatFunction,
+						fileContent, file.getAlias()));
+			}
+			// --------------------------------------------------------------------------------------------------------------------------------
+			// delete dataset not reinserted and update datasets that are already presents (and delete them from updatedatasetsList in updatedCatalogFunction)
+			List<SbiFunctionInputDataset> dsToRemove = new ArrayList<SbiFunctionInputDataset>();
+			for (Object o : hibCatFunction.getSbiFunctionInputDatasets()) {
+				SbiFunctionInputDataset di = (SbiFunctionInputDataset) o;
+				boolean delete = true;
+				if (updatedFunctionContainsDatasets(updatedCatalogFunction.getInputDatasets(), di.getId().getDsId())) {
+					delete = false;
+					IDataSet datasetHib = DAOFactory.getDataSetDAO().loadDataSetById(di.getId().getDsId());
+					updatedCatalogFunction.getInputDatasets().remove(datasetHib.getLabel());
+				}
+
+				if (delete) {
+					dsToRemove.add(di);
+				}
+			}
+
+			for (SbiFunctionInputDataset remDs : dsToRemove) {
+				SbiFunctionInputDataset dsToRem = (SbiFunctionInputDataset) session.get(SbiFunctionInputDataset.class, remDs.getId());
+				hibCatFunction.getSbiFunctionInputDatasets().remove(dsToRem);
+				session.delete(dsToRem);
+				session.flush();
+			}
+
+			// insert datasets that are not presents
+			Set<SbiFunctionInputDataset> hibDatasetSet = hibCatFunction.getSbiFunctionInputDatasets();
+			for (String dsLabel : updatedCatalogFunction.getInputDatasets()) {
+				IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetByLabel(dsLabel);
+				hibDatasetSet.add(new SbiFunctionInputDataset(new SbiFunctionInputDatasetId(hibCatFunction.getFunctionId(), dataset.getId())));
+			}
 
 			hibCatFunction.setLanguage(updatedCatalogFunction.getLanguage());
 			hibCatFunction.setName(updatedCatalogFunction.getName());
@@ -297,7 +382,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 			hibCatFunction.setRemote(updatedCatalogFunction.getRemote());
 
 			updateSbiCommonInfo4Update(hibCatFunction);
-			session.saveOrUpdate(hibCatFunction);
+			session.update(hibCatFunction);
 			transaction.commit();
 
 		} catch (Throwable t) {
@@ -315,6 +400,57 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 
 		return id;
 
+	}
+
+	private boolean updatedFunctionContainsDatasets(List<String> inputDatasets, int dsId) throws Exception {
+		IDataSetDAO dataSetDAO = DAOFactory.getDataSetDAO();
+		for (String dsLab : inputDatasets) {
+			IDataSet dataset = dataSetDAO.loadDataSetById(dsId);
+			if (dataset.getLabel().equals(dsLab)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private void removeFileWithName(String fileName, List<CatalogFunctionInputFile> inputFiles) {
+		CatalogFunctionInputFile fileToRemove = new CatalogFunctionInputFile();
+		for (CatalogFunctionInputFile file : inputFiles) {
+			if (file.getFileName().equals(fileName)) {
+				fileToRemove = file;
+			}
+		}
+		inputFiles.remove(fileToRemove);
+	}
+
+	private byte[] getBytesFromFileName(String fileName, List<CatalogFunctionInputFile> inputFiles) {
+		for (CatalogFunctionInputFile file : inputFiles) {
+			if (file.getFileName().equals(fileName)) {
+				return file.getContent();
+			}
+		}
+		return new byte[0];
+
+	}
+
+	private boolean updatedFunctionContainsFile(List<CatalogFunctionInputFile> inputFiles, String fileName) {
+
+		for (CatalogFunctionInputFile file : inputFiles) {
+			if (file.getFileName().equals(fileName)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean hibCatFunctionContainsVar(Set<SbiFunctionInputVariable> hibVarsSet, String updatedKey, Map<String, String> updatedInputVariables) {
+		for (SbiFunctionInputVariable hibVar : hibVarsSet) {
+			String hibVarName = hibVar.getId().getVarName();
+			if (updatedInputVariables.containsKey(hibVarName)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
