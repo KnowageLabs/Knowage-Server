@@ -320,36 +320,57 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 				
 				sbiModule_restServices.post("1.0/functions-catalog",
 						"insert", body).success(function(data) {
-					$log.info("Catalog Function Added!");
-					$log.info("Function added to db with id: ", data);
-					$scope.obtainCatalogFunctionsRESTcall();
-
-					$scope.cleanNewFunction = function() {
-						$scope.newFunction = {
-							"id" : "",
-							"name" : "",
-							"inputDatasets" : [],
-							"inputVariables" : [],
-							"inputUrls"	:	[],
-							"inputFiles":	[],
-							"outputItems" : [],
-							"language" : "Python",
-							"script" : "",
-							"description" : "",
-							"owner" : $scope.ownerUserName,
-							"keywords" : [],
-							"label" : "",
-							"remote" : false,
-							"url"		:""
-						};
+							
+					if(data.errors!=undefined)
+					{	
+						var errorToDisplay="";
+						for(var i=0;i<data.errors.length;i++)
+						{
+							errorToDisplay=errorToDisplay+" , "+data.errors[i].message;
+						}
+						if(errorToDisplay.length>=3)
+						{	
+							errorToDisplay=errorToDisplay.substring(3); 
+						}
+						$mdDialog.show($mdDialog.alert().parent(
+									angular.element(document.querySelector('#popupContainer'))).clickOutsideToClose(true).title(
+										errorToDisplay)
+								.ariaLabel('Alert Dialog Demo').ok('OK'));
 					}
-					$scope.shownFunction = $scope.newFunction;
-					
-					$mdDialog.show($mdDialog.alert().parent(
-							angular.element(document.querySelector('#popupContainer')))
-							.clickOutsideToClose(true).title(
-									'Save operation successfull.')
-							.ariaLabel('Alert Dialog Demo').ok('OK')); 
+					else
+					{		
+	
+						$log.info("Catalog Function Added!");
+						$log.info("Function added to db with id: ", data);
+						$scope.obtainCatalogFunctionsRESTcall();
+	
+						$scope.cleanNewFunction = function() {
+							$scope.newFunction = {
+								"id" : "",
+								"name" : "",
+								"inputDatasets" : [],
+								"inputVariables" : [],
+								"inputUrls"	:	[],
+								"inputFiles":	[],
+								"outputItems" : [],
+								"language" : "Python",
+								"script" : "",
+								"description" : "",
+								"owner" : $scope.ownerUserName,
+								"keywords" : [],
+								"label" : "",
+								"remote" : false,
+								"url"		:""
+							};
+						}
+						$scope.shownFunction = $scope.newFunction;
+						
+						$mdDialog.show($mdDialog.alert().parent(
+								angular.element(document.querySelector('#popupContainer')))
+								.clickOutsideToClose(true).title(
+										'Save operation successfull.')
+								.ariaLabel('Alert Dialog Demo').ok('OK')); 
+					}
 				}).error(function(data) { 
 						$mdDialog.show($mdDialog.alert().parent(
 						angular.element(document.querySelector('#popupContainer')))
@@ -370,12 +391,31 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 							$log.info("Catalog Function Updated!");
 							$log.info("Message returned: ", data);
 							$scope.obtainCatalogFunctionsRESTcall();
-						
-							$mdDialog.show($mdDialog.alert().parent(
-									angular.element(document.querySelector('#popupContainer')))
-									.clickOutsideToClose(true).title(
-											'Save operation successfull!!')
-									.ariaLabel('Alert Dialog Demo').ok('OK'));
+							if(data.errors!=undefined)
+							{	
+								var errorToDisplay="";
+								for(var i=0;i<data.errors.length;i++)
+								{
+									errorToDisplay=errorToDisplay+" , "+data.errors[i].message;
+								}
+								if(errorToDisplay.length>=3)
+								{	
+									errorToDisplay=errorToDisplay.substring(3); 
+								}
+								$mdDialog.show($mdDialog.alert().parent(
+
+										angular.element(document.querySelector('#popupContainer'))).clickOutsideToClose(true).title(
+												errorToDisplay)
+										.ariaLabel('Alert Dialog Demo').ok('OK'));
+							}
+							else
+							{
+								$mdDialog.show($mdDialog.alert().parent(
+										angular.element(document.querySelector('#popupContainer')))
+										.clickOutsideToClose(true).title(
+												'Save operation successfull!!')
+										.ariaLabel('Alert Dialog Demo').ok('OK'));
+							}	
 						}).error(function(data) { 
 							$mdDialog.show($mdDialog.alert().parent(
 									angular.element(document.querySelector('#popupContainer')))
