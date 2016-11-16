@@ -6,7 +6,17 @@ angular.module("cockpitModule").service("cockpitModule_utilstServices",function(
 			var adVal=angular.copy(textVal);
 			if(angular.isString(adVal)){
 				angular.forEach(cockpitModule_analyticalDrivers,function(val,item){
-					var reg = new RegExp('\\$P\\{('+item+')\\}','g')
+					var valRegExp = new RegExp('\\{;\\{(.*)\\}(.*)\\}');
+					if(angular.isString(val) && valRegExp.test(val)){
+						var matches = val.match(valRegExp);
+						var elements = matches[1].split(";");
+						var strings = [];
+						angular.forEach(elements,function(value){
+							this.push("'" + value + "'");
+						},strings);
+						val = strings.join(",");
+					}
+					var reg = new RegExp('\\$P\\{('+item+')\\}','g');
 					adVal=adVal.replace(reg, val);
 				})
 				var reg2 = new RegExp('\\$P\\{[^\\}]*\\}','g');
