@@ -43,7 +43,7 @@ function ChartDesignerFunction(sbiModule_translate,$scope) {
 	}
 	
 	// The chart template (beneath the CHART tag, i.e. property)
-	$scope.chartTemplate = jsonTemplate.CHART;
+	$scope.chartTemplate = jsonTemplate ? jsonTemplate.CHART : null;
 	
 	console.log("chart template: ",jsonTemplate);
 	

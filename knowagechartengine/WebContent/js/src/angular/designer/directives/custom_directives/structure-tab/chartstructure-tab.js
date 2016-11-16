@@ -91,44 +91,48 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 	
 	$scope.checkCategories = function() {		
 		
-		$scope.categoriesExist = $scope.chartTemplate.VALUES.CATEGORY ? true : false;
-		
-		if ($scope.categoriesExist) {
+		if ($scope.chartTemplate) {
 			
-			var categoryTag = $scope.chartTemplate.VALUES.CATEGORY;
-			console.log(categoryTag.length);
-			// If the CATEGORY tag contains an array (e.g. this goes for the SUNBURST chart type)
-			if (categoryTag.length) {
+			$scope.categoriesExist = $scope.chartTemplate.VALUES.CATEGORY ? true : false;
+			
+			if ($scope.categoriesExist) {
 				
-				for (i=0; i<categoryTag.length; i++) {
-					$scope.categoriesContainer.push(categoryTag[i].column);
-				}
-				
-			}
-			// If all (if there are more than one) categories are under the single tag (column and groupby properties (attributes))
-			else {
-				
-				$scope.categoriesContainer.push(categoryTag.column);
-				
-				console.log("categoryTag:",categoryTag);
-				
-				if (categoryTag.groupby.indexOf(",") > -1) {
-					var groupBySplit = categoryTag.groupby.split(",");
+				var categoryTag = $scope.chartTemplate.VALUES.CATEGORY;
+				console.log(categoryTag.length);
+				// If the CATEGORY tag contains an array (e.g. this goes for the SUNBURST chart type)
+				if (categoryTag.length) {
 					
-					for (i=0; i<groupBySplit.length; i++) {
-						$scope.categoriesContainer.push(groupBySplit[i]);
+					for (i=0; i<categoryTag.length; i++) {
+						$scope.categoriesContainer.push(categoryTag[i].column);
 					}
 					
 				}
+				// If all (if there are more than one) categories are under the single tag (column and groupby properties (attributes))
 				else {
-					categoryTag.groupby ? $scope.categoriesContainer.push(categoryTag.groupby) : null;
+					
+					$scope.categoriesContainer.push(categoryTag.column);
+					
+					console.log("categoryTag:",categoryTag);
+					
+					if (categoryTag.groupby.indexOf(",") > -1) {
+						var groupBySplit = categoryTag.groupby.split(",");
+						
+						for (i=0; i<groupBySplit.length; i++) {
+							$scope.categoriesContainer.push(groupBySplit[i]);
+						}
+						
+					}
+					else {
+						categoryTag.groupby ? $scope.categoriesContainer.push(categoryTag.groupby) : null;
+					}
+					
+					console.log("categoriesContainer:",$scope.categoriesContainer);
 				}
 				
-				console.log("categoriesContainer:",$scope.categoriesContainer);
 			}
 			
 		}
-				
+		
 	}
 	
 	$scope.checkSeries = function() {

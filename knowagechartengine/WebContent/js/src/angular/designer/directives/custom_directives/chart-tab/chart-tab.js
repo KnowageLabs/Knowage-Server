@@ -37,9 +37,16 @@ function chartTabControllerFunction($scope,sbiModule_translate,sbiModule_restSer
 	.then(function(response) {
 		$scope.chartTypes = response.data.types;
 		for (var i = 0; i < $scope.chartTypes.length; i++) {
-			if($scope.chartTypes[i].toUpperCase()==$scope.chartTemplate.type.toUpperCase()){
-				$scope.selectedChartType = $scope.chartTypes[i];
+			
+			if ($scope.chartTemplate) {
+				if($scope.chartTypes[i].toUpperCase()==$scope.chartTemplate.type.toUpperCase()){
+					$scope.selectedChartType = $scope.chartTypes[i];
+				}
 			}
+			else {
+				$scope.selectedChartType = null;
+			}
+			
 		}		
 		
 	}, function(response) {
