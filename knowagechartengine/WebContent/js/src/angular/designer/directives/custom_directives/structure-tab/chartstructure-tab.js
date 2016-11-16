@@ -28,7 +28,7 @@ angular.module('chartstructure-tab', [])
 		}	
 	});
 
-function structureTabControllerFunction($scope,sbiModule_translate){
+function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_restServices ){
 
 	$scope.translate = sbiModule_translate;
 	$scope.showStructureDetails = false;
