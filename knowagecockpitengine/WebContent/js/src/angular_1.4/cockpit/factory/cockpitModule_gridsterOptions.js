@@ -1,12 +1,12 @@
 angular.module('cockpitModule').factory('cockpitModule_gridsterOptions',function($timeout,cockpitModule_widgetServices,cockpitModule_properties,$rootScope){
 	return{
-		columns : 150,
+		columns : 50,
 		margins: [0, 0],
 		pushing : false,
 		floating : false,
 		swapping : false,
 		colWidth: 'auto',//old 30
-		rowHeight: 10,
+		rowHeight: 30,
 		width : 'auto',
 		sparse: false,// "true" can increase performance of dragging and resizing for big grid (e.g. 20x50)
 		mobileBreakPoint : 600,
