@@ -29,7 +29,7 @@ angular.module('chart-tab', [])
 		
 });
 
-function chartTabControllerFunction($scope,sbiModule_translate, sbiModule_restServices){
+function chartTabControllerFunction($scope,sbiModule_translate,sbiModule_restServices,sbiModule_messaging){
 	$scope.translate = sbiModule_translate;
 	$scope.datasetLabel = datasetLabel;
 
@@ -37,21 +37,69 @@ function chartTabControllerFunction($scope,sbiModule_translate, sbiModule_restSe
 	.then(function(response) {
 		$scope.chartTypes = response.data.types;
 	}, function(response) {
-		sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+		
+		var message = "";
+		
+		if (response.status==500) {
+			message = response.statusText;
+		}
+		else {
+			message = response.data.errors[0].message;
+		}
+		
+		sbiModule_messaging.showErrorMessage(message, 'Error');
+		
 	});
 	
 	sbiModule_restServices.promiseGet("../api/style", "")
 	.then(function(response) {
 		$scope.chartStyles = response.data;
 	}, function(response) {
-		sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+		
+		var message = "";
+		
+		if (response.status==500) {
+			message = response.statusText;
+		}
+		else {
+			message = response.data.errors[0].message;
+		}
+		
+		sbiModule_messaging.showErrorMessage(message, 'Error');
+		
 	});
 	
 	sbiModule_restServices.promiseGet("../api/1.0/jsonChartTemplate/fieldsMetadata", "")
 	.then(function(response) {
+		
 		$scope.fieldsMetadata = response.data;
+		
+		var results = $scope.fieldsMetadata.results;
+		
+		for(var i=0; i<results.length; i++) {
+			
+			if (results[i].nature=="measure") {
+				$scope.allMeasures.push(results[i]);
+			}
+			else {
+				$scope.allAttributes.push(results[i]);
+			}
+			
+		}
+		
 	}, function(response) {
-		sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+		
+		var message = "";
+		
+		if (response.status==500) {
+			message = response.statusText;
+		}
+		else {
+			message = response.data.errors[0].message;
+		}
+		
+		sbiModule_messaging.showErrorMessage(message, 'Error');
+		
 	});
 	
 }

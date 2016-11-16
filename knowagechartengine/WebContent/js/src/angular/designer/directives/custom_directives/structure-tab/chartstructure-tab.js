@@ -68,4 +68,6 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 		console.log(item);
 	}
 	
+	console.log($scope.fieldsMetadata);
+	
 }

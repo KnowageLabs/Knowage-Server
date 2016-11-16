@@ -2,7 +2,7 @@
 	
 	<div layout="row" md-content layout-padding flex>
 	
-		<md-whiteframe class="md-whiteframe-4dp whiteframe-element" flex=25 style="overflow:auto">
+		<div layout="column" flex=25 style="padding:0 8 0 0">  
 		
 			<md-toolbar class="secondaryToolbar">
 				<div class="md-toolbar-tools">
@@ -12,36 +12,42 @@
 					<span flex></span>				   		
 				</div>		      
 			</md-toolbar>
-		
-			<md-content>
 			
-				<md-card>
-				
-					<expander-box expanded="true" title="TREW" id="datasetJoinBox" color="white"> 
-						<md-list flex>
-						<md-list-item ng-repeat="person in people" ng-click="moveAttributeToCategories(person)" class="noright">
-						   <span ><b>{{person.name }}</b></span>
-					  	</md-list-item>
-					  	</md-list>
-				  	</expander-box>
-					  
-				</md-card>
-				
-				<md-card>
-				
-					<md-subheader class="md-no-sticky">{{translate.load('sbi.chartengine.designer.structureTab.attributemeasures.attributes.title')}}</md-subheader>
-				
-					<md-list-item ng-repeat="person in people" ng-click="moveMeasureToSeries(person)" class="noright">
-					    <p>{{ person.name }}</p>
-				  	</md-list-item>
-					  
-				</md-card>
-				
-			</md-content>	
+			<md-whiteframe flex class="md-whiteframe-4dp whiteframe-element" style="overflow:auto">
 		
-		</md-whiteframe>
+				<md-content flex>
+				
+					<md-card>
+					
+						<expander-box color="white" expanded="true" title="translate.load('sbi.chartengine.designer.structureTab.attributemeasures.attributes.title')">
+							<md-list flex>
+								<md-list-item ng-repeat="attribute in allAttributes" ng-click="moveAttributeToCategories(attribute)" class="noright">
+								   <span><b>{{attribute.id}}</b></span>
+							  	</md-list-item>
+						  	</md-list>
+					  	</expander-box>
+						  
+					</md-card>
+					
+					<md-card>
+					
+						<expander-box color="white" expanded="true" title="translate.load('sbi.chartengine.designer.structureTab.attributemeasures.measures.title')">
+							<md-list flex>
+								<md-list-item ng-repeat="measure in allMeasures" ng-click="moveMeasureToSeries(measure)" class="noright">
+								    <span ><b>{{measure.id}}</b></span>
+							  	</md-list-item>
+						  	</md-list>
+					  	</expander-box>
+					  	
+					</md-card>
+					
+				</md-content>	
 		
-		<md-whiteframe class="md-whiteframe-4dp whiteframe-element whiteframe-element-center-margin-left whiteframe-element-center-margin-right" flex=25>
+			</md-whiteframe>
+		
+		</div>
+		
+		<div layout="column" flex=25 style="padding:0 8 0 0">  
 		
 			<md-toolbar class="secondaryToolbar">
 				<div class="md-toolbar-tools">
@@ -51,12 +57,17 @@
 					<span flex></span>				   		
 				</div>		      
 			</md-toolbar>
+			
+			<md-whiteframe flex class="md-whiteframe-4dp whiteframe-element">
+			
+				
+			
+			</md-whiteframe>
+			
+		</div>
 		
-		</md-whiteframe>
-		
-		<!-- hide-md: Hide if the width of the screen is lower than 1280px -->
-		<md-whiteframe hide-md ng-show="showStructureDetails" class="md-whiteframe-4dp whiteframe-element whiteframe-element-center-margin-right" flex=25>
-		
+		<div hide-md ng-show="showStructureDetails" layout="column" flex=25 style="padding:0 8 0 0">  
+			
 			<md-toolbar class="secondaryToolbar">
 				<div class="md-toolbar-tools">
 					<h2>
@@ -65,10 +76,17 @@
 					<span flex></span>				   		
 				</div>		      
 			</md-toolbar>
+			
+			<!-- hide-md: Hide if the width of the screen is lower than 1280px -->
+			<md-whiteframe flex class="md-whiteframe-4dp whiteframe-element">
+			
+				
+			
+			</md-whiteframe>
+			
+		</div>
 		
-		</md-whiteframe>
-		
-		<md-whiteframe hide-md class="md-whiteframe-4dp whiteframe-element" flex="{{structurePreviewFlex}}">
+		<div hide-md layout="column" flex="{{structurePreviewFlex}}" style="padding:0"> 
 		
 			<md-toolbar class="secondaryToolbar">
 				<div class="md-toolbar-tools">
@@ -79,7 +97,13 @@
 				</div>		      
 			</md-toolbar>
 		
-		</md-whiteframe>
+			<md-whiteframe flex class="md-whiteframe-4dp whiteframe-element">
+			
+				
+			
+			</md-whiteframe>
+			
+		</div>
 	
 	</div>
 	
