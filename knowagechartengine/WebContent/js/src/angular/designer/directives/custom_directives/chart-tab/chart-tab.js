@@ -32,6 +32,51 @@ angular.module('chart-tab', [])
 function chartTabControllerFunction($scope,sbiModule_translate,sbiModule_restServices,sbiModule_messaging){
 	$scope.translate = sbiModule_translate;
 	$scope.datasetLabel = datasetLabel;
+	var setConfigurationButtons = function(type) {
+		
+		switch (type) {
+		case 'parallel':
+			$scope.configurationForDisplay = $scope.parallelChartConfiguration;
+			break;
+		case 'sunburst':
+			$scope.configurationForDisplay = $scope.sunburstChartConfiguration;
+			break;
+		case 'scatter':
+			$scope.configurationForDisplay = $scope.scatterChartConfiguration;
+			break;
+		case 'treemap':
+			$scope.configurationForDisplay = $scope.treemapChartConfiguration;
+			break;
+		case 'wordcloud':
+			$scope.configurationForDisplay = $scope.wordcloudChartConfiguration;
+			break;
+		case 'gauge':
+			$scope.configurationForDisplay = $scope.gaugeChartConfiguration;
+			break;
+		case 'line':
+			$scope.configurationForDisplay = $scope.lineChartConfiguration;
+			break;
+		case 'heatmap':
+			$scope.configurationForDisplay = $scope.heatmapChartConfiguration;
+			break;
+		case 'radar':
+			$scope.configurationForDisplay = $scope.radarChartConfiguration;
+			break;
+		case 'bar':
+			$scope.configurationForDisplay = $scope.barChartConfiguration;
+			break;
+		case 'pie':
+			$scope.configurationForDisplay = $scope.pieChartConfiguration;
+			break;
+		case 'chord':
+			$scope.configurationForDisplay = $scope.chordChartConfiguration;
+			break;	
+		default:
+			break;
+		}
+		
+}
+		
 
 	sbiModule_restServices.promiseGet("../api/1.0/pages/types", "")
 	.then(function(response) {
@@ -41,6 +86,8 @@ function chartTabControllerFunction($scope,sbiModule_translate,sbiModule_restSer
 			if ($scope.chartTemplate) {
 				if($scope.chartTypes[i].toUpperCase()==$scope.chartTemplate.type.toUpperCase()){
 					$scope.selectedChartType = $scope.chartTypes[i];
+					setConfigurationButtons($scope.selectedChartType);
+					
 				}
 			}
 			else {
@@ -82,49 +129,12 @@ function chartTabControllerFunction($scope,sbiModule_translate,sbiModule_restSer
 		
 	});
 	
+
+	
 	$scope.selectChartType = function(chart) {
 		$scope.selectedChartType = chart;
-		console.log($scope.selectedChartType);
-		switch ($scope.selectedChartType) {
-		case 'parallel':
-			$scope.configurationForDisplay = $scope.parallelChartConfiguration;
-			break;
-		case 'sunburst':
-			$scope.configurationForDisplay = $scope.sunburstChartConfiguration;
-			break;
-		case 'scatter':
-			$scope.configurationForDisplay = $scope.scatterChartConfiguration;
-			break;
-		case 'treemap':
-			$scope.configurationForDisplay = $scope.treemapChartConfiguration;
-			break;
-		case 'wordcloud':
-			$scope.configurationForDisplay = $scope.wordcloudChartConfiguration;
-			break;
-		case 'gauge':
-			$scope.configurationForDisplay = $scope.gaugeChartConfiguration;
-			break;
-		case 'line':
-			$scope.configurationForDisplay = $scope.lineChartConfiguration;
-			break;
-		case 'heatmap':
-			$scope.configurationForDisplay = $scope.heatmapChartConfiguration;
-			break;
-		case 'radar':
-			$scope.configurationForDisplay = $scope.radarChartConfiguration;
-			break;
-		case 'bar':
-			$scope.configurationForDisplay = $scope.barChartConfiguration;
-			break;
-		case 'pie':
-			$scope.configurationForDisplay = $scope.pieChartConfiguration;
-			break;
-		case 'chord':
-			$scope.configurationForDisplay = $scope.chordChartConfiguration;
-			break;	
-		default:
-			break;
-		}
+		setConfigurationButtons($scope.selectedChartType);
+		
 	}
 		
 }
