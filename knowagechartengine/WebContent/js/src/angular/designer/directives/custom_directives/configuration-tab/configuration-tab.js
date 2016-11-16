@@ -128,5 +128,8 @@ function configurationTabControllerFunction(sbiModule_translate,$scope){
                                    {name:"Limit",imgPath:""},
                                    {name:"Axis lines",imgPath:""},
                                                                 ]
+ $scope.openConfigurationDetails = function(button) {
+	
+}
  
 }
