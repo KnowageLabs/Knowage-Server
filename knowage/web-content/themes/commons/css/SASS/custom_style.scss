@@ -122,7 +122,9 @@ md-toolbar.md-knowage-theme .md-toolbar-tools .md-button:not[disabled] {
 
 .md-button.md-knowage-theme:not([disabled]){
   &:hover {
-    background-color: lighten($baseColor,10%);
+    //background-color: lighten($baseColor,10%);
+    background-color: rgba($ternaryColor,20%);
+
   }
 }
 
