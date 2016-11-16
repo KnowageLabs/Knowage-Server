@@ -34,6 +34,13 @@ function structureTabControllerFunction($scope,sbiModule_translate){
 	$scope.showStructureDetails = false;
 	$scope.structurePreviewFlex = 50;
 	
+	sbiModule_restServices.promiseGet("../api/1.0/jsonChartTemplate/fieldsMetadata", "")
+	.then(function(response) {
+		$scope.fieldsMetadata = response.data;
+	}, function(response) {
+		sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+	});
+	
 	$scope.changeStructureDetailsFlex = function() {
 		$scope.structurePreviewFlex = 25;
 	}
