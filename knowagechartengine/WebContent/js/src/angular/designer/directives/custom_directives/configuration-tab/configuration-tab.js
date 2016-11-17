@@ -34,6 +34,7 @@ function configurationTabControllerFunction(sbiModule_translate,$scope){
 
  $scope.translate = sbiModule_translate;
  $scope.configurationForDisplay = [];
+ $scope.selectedConfigurationButton = "";
  $scope.barChartConfiguration = [
                                  {name:"Generic",imgPath:""},
                                  {name:"Title and subtitle",imgPath:""},
@@ -66,7 +67,7 @@ function configurationTabControllerFunction(sbiModule_translate,$scope){
                                  {name:"Legend title",imgPath:""},
                                  {name:"Legend items",imgPath:""},                                
                                                               ]
- $scope.scaterChartConfiguration = [
+ $scope.scatterChartConfiguration = [
                                  {name:"Generic",imgPath:""},
                                  {name:"Title and subtitle",imgPath:""},
                                  {name:"No data message",imgPath:""},
@@ -128,8 +129,66 @@ function configurationTabControllerFunction(sbiModule_translate,$scope){
                                    {name:"Limit",imgPath:""},
                                    {name:"Axis lines",imgPath:""},
                                                                 ]
- $scope.openConfigurationDetails = function(button) {
+ $scope.dimensionMeasureType = [
+  {name:"px",value:"pixels"},
+  {name:"%",value:"percentage"}                          
+                             ]
+ $scope.orientationType = [
+  {name:"Vertical",value:"vertical"},
+  {name:"Horizontal",value:"horizontal"}                          
+                               ]
+ $scope.fontObj = {
+	fontFamily:"",
+	fontSize:"",
+	fontWeight:"",
+	fontStyle:"",
+	textDecoration:"",
+	backgroundColor:"",
 	
+ };
+ $scope.fontFamilyOptions = [
+                       	{name:"Arial",value:"Arial"},
+                       	{name:"Times New Roman",value:"Times New Roman"},
+                       	{name:"Tahoma",value:"Tahoma"},
+                       	{name:"Verdana",value:"Verdana"},
+                       	{name:"Impact",value:"Impact"},
+                       	{name:"Calibri",value:"Calibri"},
+                       	{name:"Cambria",value:"Cambria"},
+                       	{name:"Georgia",value:"Georgia"},
+                       	{name:"Gungsuh",value:"Gungsuh"},
+                                                  ]
+ 
+ $scope.fontSizeOptions = [
+	{name:"8px",value:"8px"},
+	{name:"9px",value:"9px"},
+	{name:"10px",value:"10px"},
+	{name:"11px",value:"11px"},
+	{name:"12px",value:"12px"},
+	{name:"14px",value:"14px"},
+	{name:"16px",value:"16px"},
+	{name:"18px",value:"18px"},
+	{name:"20px",value:"20px"},
+	{name:"22px",value:"22px"},
+	{name:"24px",value:"24px"},
+	{name:"26px",value:"26px"},
+	{name:"28px",value:"28px"},
+	{name:"36px",value:"36px"},
+	{name:"48px",value:"48px"},
+	{name:"72px",value:"72px"},
+                           ]
+ 
+ $scope.fontStyleOptions = [	
+                            	{name:"No style",value:""},
+                            	{name:"Bold",value:"bold"},
+                            	{name:"Normal",value:"normal"},
+                            	{name:"Italic",value:"italic"},
+                            	{name:"Underline",value:"underline"},
+                            	                        ]
+ 
+ $scope.openConfigurationDetails = function(button) {
+	 
+	 $scope.selectedConfigurationButton = button;
 }
+ 
  
 }

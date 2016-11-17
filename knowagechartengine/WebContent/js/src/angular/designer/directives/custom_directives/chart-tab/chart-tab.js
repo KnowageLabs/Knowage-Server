@@ -76,7 +76,25 @@ function chartTabControllerFunction($scope,sbiModule_translate,sbiModule_restSer
 		}
 		
 }
-		
+	var setFontProps = function(style) {
+		var res = style.split(";");
+		res.pop();
+		var formated = [];
+		for (var i = 0; i < res.length; i++) {
+			var obj = {};
+			var temp = res[i].split(":")
+			obj.name = temp[0];
+			obj.value = temp[1];
+			formated.push(obj);
+			
+			
+		}
+		for (var i = 0; i < formated.length; i++) {
+			if($scope.fontObj.hasOwnProperty(formated[i].name)){
+				$scope.fontObj[formated[i].name] = formated[i].value;
+			}
+		}
+	}	
 
 	sbiModule_restServices.promiseGet("../api/1.0/pages/types", "")
 	.then(function(response) {
@@ -84,9 +102,13 @@ function chartTabControllerFunction($scope,sbiModule_translate,sbiModule_restSer
 		for (var i = 0; i < $scope.chartTypes.length; i++) {
 			
 			if ($scope.chartTemplate) {
+				
+				
 				if($scope.chartTypes[i].toUpperCase()==$scope.chartTemplate.type.toUpperCase()){
 					$scope.selectedChartType = $scope.chartTypes[i];
 					setConfigurationButtons($scope.selectedChartType);
+					$scope.selectedConfigurationButton = "";
+					setFontProps($scope.chartTemplate.style);
 					
 				}
 			}
@@ -134,6 +156,7 @@ function chartTabControllerFunction($scope,sbiModule_translate,sbiModule_restSer
 	$scope.selectChartType = function(chart) {
 		$scope.selectedChartType = chart;
 		setConfigurationButtons($scope.selectedChartType);
+		$scope.selectedConfigurationButton = "";
 		
 	}
 		
