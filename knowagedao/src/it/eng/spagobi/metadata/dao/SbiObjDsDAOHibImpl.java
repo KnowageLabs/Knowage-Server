@@ -424,8 +424,9 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 				logger.debug("The document doesn't use any dataset! ");
 			}
 		} catch (Exception e) {
-			logger.error("An error occured while inserting relation between SVG document and its datasets. Error:  " + e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+			logger.error("An error occured while inserting relation between SVG document and its datasets. Please check the document template and the existance of the datasets referenced. Error:  "
+					+ e);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 20001);
 		}
 		logger.debug("OUT");
 	}
@@ -453,8 +454,8 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 				insertUniqueRelationFromObj(biObj);
 			}
 		} catch (Exception e) {
-			logger.error("An error occured while storing relation between dataset and docuemnt. Error: " + e);
-			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+			logger.debug("An error occured while storing relation between dataset and document. Error: " + e);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 20001);
 		}
 		logger.debug("OUT");
 	}
