@@ -1,5 +1,13 @@
 package it.eng.spagobi.tools.calendar.dao;
 
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.tools.calendar.metadata.Calendar;
+import it.eng.spagobi.tools.calendar.metadata.CalendarAttribute;
+import it.eng.spagobi.tools.calendar.metadata.CalendarAttributeDomain;
+import it.eng.spagobi.tools.calendar.metadata.CalendarConfiguration;
+import it.eng.spagobi.tools.calendar.metadata.TimeByDay;
+
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -13,14 +21,6 @@ import org.hibernate.criterion.Restrictions;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.tools.calendar.metadata.Calendar;
-import it.eng.spagobi.tools.calendar.metadata.CalendarAttribute;
-import it.eng.spagobi.tools.calendar.metadata.CalendarAttributeDomain;
-import it.eng.spagobi.tools.calendar.metadata.CalendarConfiguration;
-import it.eng.spagobi.tools.calendar.metadata.TimeByDay;
 
 public class CalendarDAOImpl implements ICalendarDAO {
 
@@ -55,18 +55,20 @@ public class CalendarDAOImpl implements ICalendarDAO {
 		TimeByDay time = loadCalendarConfigurationByDate(c1, session);
 
 		Transaction tx2 = session.beginTransaction();
-		Integer timeId = time.getTimeId();
 		while (c1.before(c2) || c1.equals(c2)) {
-			CalendarConfiguration calConf = new CalendarConfiguration();
+			Date date = c1.getTime();
+			int year = date.getYear() + 1900;
+			int month = date.getMonth() + 1;
+			int day = date.getDate();
+			Integer timeId = new Integer(year * 10000 + month * 100 + day);
 
+			CalendarConfiguration calConf = new CalendarConfiguration();
 			calConf.setTimeId(timeId);
 			calConf.setCalendarId(cal.getCalendarId());
-
 			calConf.setRecStatus("A");
 			session.save(calConf);
-			timeId += 1;
-			c1.add(java.util.Calendar.DAY_OF_MONTH, 1);
 
+			c1.add(java.util.Calendar.DAY_OF_MONTH, 1);
 		}
 		tx2.commit();
 		List daysGenerated = loadCalendarDays(cal.getCalendarId(), session);
@@ -132,8 +134,8 @@ public class CalendarDAOImpl implements ICalendarDAO {
 						String value = object.optJSONArray("listOfAttributes").getString(j);
 						CalendarAttributeDomain domain = loadDomainbyDescr(session, value);
 						CalendarAttribute attribute = (CalendarAttribute) session.createCriteria(CalendarAttribute.class)
-								.add(Restrictions.eq("domainId", domain.getDomainId())).add(Restrictions.eq("calendarId", cal.getCalendarId())).setMaxResults(1)
-								.uniqueResult();
+								.add(Restrictions.eq("domainId", domain.getDomainId())).add(Restrictions.eq("calendarId", cal.getCalendarId()))
+								.setMaxResults(1).uniqueResult();
 						if (attribute == null) {
 							attribute = new CalendarAttribute();
 							attribute.setCalendar(cal);
@@ -177,8 +179,8 @@ public class CalendarDAOImpl implements ICalendarDAO {
 	}
 
 	private CalendarAttribute loadCalendarAttributebyCalId(Integer calId, Session session) {
-		return (CalendarAttribute) session.createCriteria(CalendarAttribute.class).add(Restrictions.eq("calendarId", calId)).add(Restrictions.eq("domainId", 0))
-				.uniqueResult();
+		return (CalendarAttribute) session.createCriteria(CalendarAttribute.class).add(Restrictions.eq("calendarId", calId))
+				.add(Restrictions.eq("domainId", 0)).uniqueResult();
 	}
 
 	@Override
