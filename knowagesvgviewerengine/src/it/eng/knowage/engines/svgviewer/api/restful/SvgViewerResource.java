@@ -32,6 +32,8 @@ import it.eng.knowage.engines.svgviewer.map.renderer.Measure;
 import it.eng.knowage.engines.svgviewer.map.renderer.configurator.InteractiveMapRendererConfigurator;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
@@ -49,6 +51,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
+
+import org.json.JSONObject;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
@@ -180,6 +184,7 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 			dataMartProvider.setSelectedParentName(parent);
 			dataMartProvider.setSelectedMemberName(getProperty("name", memberSB));
 			dataMartProvider.setSelectedLevel(level);
+
 			DataMartProviderConfigurator.configure(dataMartProvider, memberSB.toString());
 
 			HierarchyMember hierMember = dataMartProvider.getHierarchyMember(dataMartProvider.getSelectedMemberName());
@@ -211,6 +216,50 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 			logger.debug("OUT");
 		}
 
+	}
+
+	/**
+	 * Retrieve the customized configuration from the document template
+	 *
+	 * @param req
+	 * @return
+	 */
+	@Path("/getCustomizedConfiguration")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public Response getCustomizedConfiguration(@QueryParam("level") String level) {
+		logger.debug("IN");
+		try {
+			SvgViewerEngineInstance engineInstance = getEngineInstance();
+			DataMartProvider dataMartProvider = (DataMartProvider) engineInstance.getDataMartProvider();
+
+			// force level 1 if the parameter isn't valorized
+			if (level == null)
+				level = "1";
+
+			HierarchyMember hierMember = dataMartProvider.getHierarchyMember(dataMartProvider.getSelectedMemberName());
+			JSONObject customizedConfigurationJSON = hierMember.getCustomizationSettings();
+
+			SourceBean memberSB = getActiveMemberSB(level);
+			if (memberSB == null) {
+				logger.error("Template dosen't contains configuration about level [" + level + "].");
+				throw new SpagoBIServiceException("getCustomizedConfiguration", "Template dosen't contains configuration about level [" + level + "].");
+			}
+
+			IDataSet dataset = dataMartProvider.getDs();
+			JSONDataWriter writer = new JSONDataWriter();
+			JSONObject datasetJSON = (JSONObject) writer.write(dataset.getDataStore());
+			customizedConfigurationJSON.put("data", datasetJSON);
+
+			ResponseBuilder response = Response.ok(customizedConfigurationJSON.toString());
+			return response.build();
+
+		} catch (Exception e) {
+			logger.error("Error while getting customization response", e);
+			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(), e);
+		} finally {
+			logger.debug("OUT");
+		}
 	}
 
 	/** Utility methods ******************************************************************************************************/

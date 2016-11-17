@@ -22,6 +22,8 @@ import it.eng.knowage.engines.svgviewer.map.renderer.Measure;
 
 import java.util.Map;
 
+import org.json.JSONObject;
+
 /**
  * The Class HierarchyMember.
  *
@@ -36,10 +38,12 @@ public class HierarchyMember {
 	private String dsPlaceholder;
 	private Integer level;
 	private Boolean enableCross;
+	private Boolean isCustomized;
 
 	private DataSetMetaData dsMetaData;
 	private Map<String, Layer> layers;
 	private Map<String, Measure> measures;
+	private JSONObject customizationSettings;
 
 	private boolean isActive;
 
@@ -191,6 +195,36 @@ public class HierarchyMember {
 	 */
 	public void setEnableCross(Boolean enableCross) {
 		this.enableCross = enableCross;
+	}
+
+	/**
+	 * @return the isCustomized
+	 */
+	public Boolean getIsCustomized() {
+		return isCustomized;
+	}
+
+	/**
+	 * @param isCustomized
+	 *            the isCustomized to set
+	 */
+	public void setIsCustomized(Boolean isCustomized) {
+		this.isCustomized = isCustomized;
+	}
+
+	/**
+	 * @return the customizationSettings
+	 */
+	public JSONObject getCustomizationSettings() {
+		return customizationSettings;
+	}
+
+	/**
+	 * @param customizationSettings
+	 *            the customizationSettings to set
+	 */
+	public void setCustomizationSettings(JSONObject customizationSettings) {
+		this.customizationSettings = customizationSettings;
 	}
 
 }

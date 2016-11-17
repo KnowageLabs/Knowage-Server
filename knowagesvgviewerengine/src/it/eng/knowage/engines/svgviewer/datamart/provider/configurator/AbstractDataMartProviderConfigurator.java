@@ -28,6 +28,7 @@ import it.eng.knowage.engines.svgviewer.dataset.provider.Link;
 import it.eng.knowage.engines.svgviewer.map.renderer.configurator.AbstractMapRendererConfigurator;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
+import it.eng.spagobi.json.Xml;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.util.HashMap;
@@ -36,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 /**
  * The Class AbstractDatasetProviderConfigurator.
@@ -326,6 +328,9 @@ public class AbstractDataMartProviderConfigurator {
 					String enableCross = getMemberProperty("enableExternalCross", memberSB, env);
 					enableCross = (enableCross == null) ? "false" : enableCross;
 					logger.debug("Member [" + i + "] enableExternalCross [" + enableCross + "]");
+					String isCustomized = getMemberProperty("isCustomizedSVG", memberSB, env);
+					isCustomized = (isCustomized == null) ? "false" : isCustomized;
+					logger.debug("Member [" + i + "] isCustomizedSVG [" + isCustomized + "]");
 
 					Assert.assertNotNull(name, "Attribute [" + SvgViewerEngineConstants.MEMBER_NAME + "] of tag [" + SvgViewerEngineConstants.MEMBER_NAME
 							+ "] cannot be null");
@@ -343,12 +348,13 @@ public class AbstractDataMartProviderConfigurator {
 					member.setDsPlaceholder(dsPlaceholder);
 					member.setLevel(Integer.valueOf(level));
 					member.setEnableCross(new Boolean(enableCross));
+					member.setIsCustomized(new Boolean(isCustomized));
 
 					// get metadata informations
 					DataSetMetaData dsMetadata = getMetaData(memberSB);
 					member.setDsMetaData(dsMetadata);
 
-					// get leyers informations
+					// get layers informations
 					SourceBean layersSB = (SourceBean) memberSB.getAttribute("LAYERS");
 					Map layers = AbstractMapRendererConfigurator.getLayers(layersSB);
 					member.setLayers(layers);
@@ -362,11 +368,24 @@ public class AbstractDataMartProviderConfigurator {
 
 					// get measures (kpi) configurations
 					SourceBean measuresSB = (SourceBean) memberSB.getAttribute("MEASURES");
-					Assert.assertNotNull(measuresSB, "Tag [MEASURES] cannot be null");
+					// Assert.assertNotNull(measuresSB, "Tag [MEASURES] cannot be null");
+					if (measuresSB != null) {
+						Map measures = AbstractMapRendererConfigurator.getMeasures(measuresSB);
+						member.setMeasures(measures);
+					}
 
-					Map measures = AbstractMapRendererConfigurator.getMeasures(measuresSB);
-					member.setMeasures(measures);
-
+					if (member.getIsCustomized()) {
+						// get customizations (ie. external charts...)
+						SourceBean customizationSB = (SourceBean) memberSB.getAttribute("CUSTOMIZE_SETTINGS");
+						if (customizationSB != null) {
+							JSONObject customizationJSON = new JSONObject(Xml.xml2json(customizationSB.toXML()));
+							member.setCustomizationSettings(customizationJSON);
+						} else {
+							logger.debug("Member with name ["
+									+ name
+									+ "] is configurated as a customized SVG but the customization settings aren't defined. Please check the template. Customizations will not applied!");
+						}
+					}
 					logger.debug("Member  [" + i + "] parsed succesfully");
 					toReturn.put(name, member);
 				} catch (Throwable t) {

@@ -166,7 +166,7 @@ public class PageResource extends AbstractSvgViewerEngineResource {
 		// Add extra Environment variables specific for this engine
 		env.put(SvgViewerEngineConstants.ENV_MAPCATALOGUE_SERVICE_PROXY, mapCatalogueServiceProxy);
 
-		env.put(SvgViewerEngineConstants.ENV_STD_HIERARCHY, standardHierarchy);
+		// env.put(SvgViewerEngineConstants.ENV_STD_HIERARCHY, standardHierarchy);
 
 		env.put(SvgViewerEngineConstants.ENV_CONTEXT_URL, getContextUrl());
 
@@ -193,29 +193,5 @@ public class PageResource extends AbstractSvgViewerEngineResource {
 
 		return contextUrl;
 	}
-
-	// executeTest is substituted from the servelet Test like all External Engines (creates a new session for the engine)
-	// @GET
-	// @Path("/executeTest")
-	// @Produces(MediaType.APPLICATION_JSON)
-	// // @UserConstraint(functionalities = { "publicFunctionality" })
-	// public String testAction(@Context HttpServletResponse response) {
-	//
-	// logger.debug("IN");
-	//
-	// try {
-	// JSONObject obj = new JSONObject();
-	// try {
-	// obj.put("result", "ok");
-	// } catch (JSONException e) {
-	// logger.error("Error building the success string");
-	// throw new SpagoBIRuntimeException("Error building the success string");
-	// }
-	// String successString = obj.toString();
-	// return successString;
-	// } finally {
-	// logger.debug("OUT");
-	// }
-	// }
 
 }
