@@ -25,13 +25,11 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.transformer.IDataStoreTransformer;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -51,21 +49,26 @@ public class AddLinkFieldsTransformer implements IDataStoreTransformer {
 		this.env = env;
 	}
 
+	// @Override
+	// public void transform(IDataStore dataStore) {
+	// List fieldsMeta = dataStore.getMetaData().findFieldMeta("ROLE", "MEASURE");
+	// logger.debug("found " + fieldsMeta.size() + " measure column in dataset");
+	// for (int i = 0; i < fieldsMeta.size(); i++) {
+	//
+	// IFieldMetaData fieldMeta = (IFieldMetaData) fieldsMeta.get(i);
+	// String measureFiledName = fieldMeta.getName();
+	//
+	// String linkFiledName = measureFiledName + "_LINK";
+	// // Link link = level.getLink(measureFiledName);
+	// Link link = null;
+	// addLinkField(linkFiledName, link, dataStore);
+	// }
+	//
+	// }
+
 	@Override
 	public void transform(IDataStore dataStore) {
-		List fieldsMeta = dataStore.getMetaData().findFieldMeta("ROLE", "MEASURE");
-		logger.debug("found " + fieldsMeta.size() + " measure column in dataset");
-		for (int i = 0; i < fieldsMeta.size(); i++) {
-
-			IFieldMetaData fieldMeta = (IFieldMetaData) fieldsMeta.get(i);
-			String measureFiledName = fieldMeta.getName();
-
-			String linkFiledName = measureFiledName + "_LINK";
-			// Link link = level.getLink(measureFiledName);
-			Link link = null;
-			addLinkField(linkFiledName, link, dataStore);
-		}
-
+		// do nothing
 	}
 
 	public void addLinkField(String fieldName, Link link, IDataStore dataStore) {

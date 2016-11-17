@@ -32,7 +32,6 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.tools.dataset.common.transformer.IDataStoreTransformer;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 
@@ -292,9 +291,8 @@ public class DataMartProvider extends AbstractDataMartProvider {
 					}
 
 				}
-
-				IDataStoreTransformer dddLinkFieldTransformer = new AddLinkFieldsTransformer(measureColumnNames, getSelectedLevel(), this.getEnv());
-				dddLinkFieldTransformer.transform(dataStore);
+				// IDataStoreTransformer dddLinkFieldTransformer = new AddLinkFieldsTransformer(measureColumnNames, getSelectedLevel(), this.getEnv());
+				// dddLinkFieldTransformer.transform(dataStore);
 			} catch (Exception e) {
 				logger.error(e.getMessage());
 				throw new SvgViewerEngineRuntimeException("Impossible to get DataMart. ", e);

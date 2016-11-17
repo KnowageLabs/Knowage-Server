@@ -247,9 +247,13 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 			}
 
 			IDataSet dataset = dataMartProvider.getDs();
-			JSONDataWriter writer = new JSONDataWriter();
-			JSONObject datasetJSON = (JSONObject) writer.write(dataset.getDataStore());
-			customizedConfigurationJSON.put("data", datasetJSON);
+			if (dataset != null) {
+				JSONDataWriter writer = new JSONDataWriter();
+				JSONObject datasetJSON = (JSONObject) writer.write(dataset.getDataStore());
+				customizedConfigurationJSON.put("data", datasetJSON);
+			} else {
+				logger.debug("Dataset is null, no data values returned.");
+			}
 
 			ResponseBuilder response = Response.ok(customizedConfigurationJSON.toString());
 			return response.build();
