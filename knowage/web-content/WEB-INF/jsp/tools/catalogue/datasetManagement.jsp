@@ -76,7 +76,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<title>Dataset Catalogue</title>
 		
 		<script>
-			var globalQbeJson = "niki";
+			var globalQbeJson = "";
 		</script> 
 		
 	</head>
