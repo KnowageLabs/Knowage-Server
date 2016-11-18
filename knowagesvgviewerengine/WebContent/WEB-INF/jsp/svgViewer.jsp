@@ -31,12 +31,16 @@
 		<%@include file="/WEB-INF/jsp/commons/angular/svgViewerImport.jsp"%>
 	
 		<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/svgviewer/svgViewerController.js"></script>
+		<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/svgviewer/directives/dynamicSvg.js"></script>
 	
 		<title>SVG Viewer</title>
+	<style>.graph{position:absolute;width: 300px;}
+		.graph canvas{position: absolute; bottom:0;}</style>
 	</head>
 
 	
-	<body class="kn-svgviewer">               	
+	<body class="kn-svgviewer">    
+	          	
 			<div ng-app="svgViewerApp" class="svgMainContainer">
 			     <div  class="divFlex" ng-controller="SvgViewerController" ng-scope> 
 			     <md-sidenav layout="column"  ng-class="{'_md-locked-open':sidenavOpened}" id="svgInfoSidenav" md-component-id="svgSideNav" ng-show="<%=propertiesPanelVisible%> && noError" class="md-sidenav-<%= propertiesPanelPosition %>"  >
@@ -114,6 +118,9 @@
 							    src='${pageContext.request.contextPath}/api/1.0/svgviewer/drawMap'  
 								width='100%'; height='100%'; frameborder="0" > 
 							</iframe>  
+							<c:if test="isCustomizedSVG">
+								<dynamic-svg></dynamic-svg> 
+							</c:if>
 					    </div> 
 			         </md-content>
 			    </div>
