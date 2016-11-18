@@ -78,12 +78,27 @@ angular.module('cockpitModule')
 				
 				// Check if service is on line
 				// When dealing with CAS, first call will force web app to do login and can give some error
-				$http.get(actionUrl.testUrl).then(function(){
-					loadPageIntoIframe(actionUrl.url, parameters);
-				},function(){
-					showAction("Service error");
-				});
-	    	};
+				
+				/*
+					author Radmila Selakovic (radmila.selakovic@mht.net)
+					Checking is it case of first rendreing or updating chart
+					If it is updating chart, method that will be called is
+					updateData that is implemented in highcharts414Initializer.jsp		
+				 */
+				
+				if(nature=="refresh" && parameters[0].value.widgetData.chartTemplate.CHART.type!="HEATMAP" && parameters[0].value.widgetData.chartTemplate.CHART.type!="TREEMAP"){
+	    			var iframe = $element.find('iframe')[0];
+		    		var wind = iframe.contentWindow;
+		    		wind.updateData(parameters[0].value.widgetData.jsonData.rows);
+	    		} 
+	    		else{
+	    			$http.get(actionUrl.testUrl).then(function(){
+	    				loadPageIntoIframe(actionUrl.url, parameters);
+	    			},function(){
+	    				showAction("Service error");
+	    			});
+	    		}
+			};
 	    	
 	    	
 	    }
