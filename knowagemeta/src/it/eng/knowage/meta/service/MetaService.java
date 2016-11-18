@@ -201,6 +201,7 @@ public class MetaService extends AbstractSpagoBIResource {
 			serializer.serialize(model, filee);
 
 			IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
+			businessModelsDAO.setUserProfile((IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE));
 			Content content = new Content();
 			byte[] bytes = filee.toByteArray();
 			content.setFileName(modelName + ".sbimodel");
@@ -528,8 +529,10 @@ public class MetaService extends AbstractSpagoBIResource {
 	@Path("/modelInfos/{modelid}")
 	public Response getModelInformations(@PathParam("modelid") Integer modelid, @Context HttpServletRequest req) {
 		IMetaModelsDAO dao = DAOFactory.getMetaModelsDAO();
+		dao.setUserProfile((IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE));
+
 		MetaModel metaModel = dao.loadMetaModelById(modelid);
-		Model model = getModelWeb(metaModel.getName());
+		Model model = getModelWeb(metaModel.getName(), req);
 
 		PhysicalModel physicalModel = model.getPhysicalModels().get(0);
 		String schemaName = physicalModel.getSchema();
@@ -552,8 +555,9 @@ public class MetaService extends AbstractSpagoBIResource {
 	@Path("/buildModel/{modelid}")
 	public Response buildModel(@PathParam("modelid") Integer modelid, @Context HttpServletRequest req) {
 		IMetaModelsDAO dao = DAOFactory.getMetaModelsDAO();
+		dao.setUserProfile((IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE));
 		MetaModel metaModel = dao.loadMetaModelById(modelid);
-		Model model = getModelWeb(metaModel.getName());
+		Model model = getModelWeb(metaModel.getName(), req);
 		// meta model version (content)
 		String modelName = req.getParameter("model");
 		String schemaName = req.getParameter("schema");
@@ -983,8 +987,9 @@ public class MetaService extends AbstractSpagoBIResource {
 		}
 	}
 
-	private Model getModelWeb(String modelName) {
+	private Model getModelWeb(String modelName, HttpServletRequest req) {
 		IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
+		businessModelsDAO.setUserProfile((IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE));
 		Content metaModelContent = businessModelsDAO.loadActiveMetaModelWebContentByName(modelName);
 		ByteArrayInputStream bis = new ByteArrayInputStream(metaModelContent.getFileModel());
 		EmfXmiSerializer serializer = new EmfXmiSerializer();
