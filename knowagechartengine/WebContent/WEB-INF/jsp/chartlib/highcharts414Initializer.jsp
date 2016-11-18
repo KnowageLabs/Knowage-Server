@@ -195,11 +195,41 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			); */
 		    
 			
-			
-			
-			new Highcharts.Chart(chartConf);
+			chart =  new Highcharts.Chart(chartConf);
+			return chart;
+ 
 		}
 	};
+  
+	/*
+		author Radmila Selakovic (radmila.selakovic@mht.net)
+	
+		Method for updating chart		
+ 	*/
+    function updateData(data) {
+ 		var counterSeries = 0;
+	    var counter = chart.options.chart.type=="gauge" ? 1 : 2;
+	    var finish = false;
+    
+   		while(!finish) {
+			if(data[0]["column_"+counter]) {
+				counter++;
+				counterSeries++;
+			}
+			else {
+				finish = true;
+			}
+		}
+   	 	for(var j=0;j<data.length;j++) {
+        	for(var i=0;i<counterSeries;i++){ 
+        		if(chart.options.chart.type=="gauge"){
+        			chart.series[i].data[j].update(parseFloat(data[j]["column_"+(i+1)]));
+        		}else{
+			  	chart.series[i].data[j].update(parseFloat(data[j]["column_"+(i+2)]));
+				}
+        	}
+    	}  
+    }
 
 	function handleDrilldown(e) {
 		
