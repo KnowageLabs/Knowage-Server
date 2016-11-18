@@ -16,17 +16,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-angular.module('string-type', [])
-.directive('stringToType', function(){
+angular.module('string-int', [])
+.directive('stringToInt', function(){
+	console.log("aaaaaaaaaa");
 	 return {
-		    require: 'ngModel',
-		    link: function(scope, element, attrs, ngModel) {
-		      ngModel.$parsers.push(function(value) {
-		        return '' + value;
-		      });
-		      ngModel.$formatters.push(function(value) {
-		        return parseFloat(value);
-		      });
-		    }
-		  };
-		});
+	        restrict: 'A',
+	        require: 'ngModel',
+	        link: function(scope, element, attrs, ngModel) {
+	            ngModel.$parsers.unshift(function(value) {
+	                return parseInt(value, 10);
+	            });
+	        }
+	    };
+	});
