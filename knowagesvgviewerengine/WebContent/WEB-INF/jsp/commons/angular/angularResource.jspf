@@ -49,6 +49,7 @@
 	boolean visibleDataSet;
 	String propertiesPanelPosition;
 	String propertiesPanelVisible;
+	boolean isCustomizedSVG;
 	
 	engineInstance = (SvgViewerEngineInstance)request.getSession().getAttribute(EngineConstants.ENGINE_INSTANCE);
 	env = engineInstance.getEnv();
@@ -72,6 +73,7 @@
 	docCommunity = (docCommunities == null || docCommunities.length == 0) ? "": docCommunities[0];
 	docFunctionalities= (engineInstance.getDocumentFunctionalities()==null)?new ArrayList():engineInstance.getDocumentFunctionalities();
 	visibleDataSet = (engineInstance.isVisibleDataSet());
+	isCustomizedSVG = (engineInstance.getIsCustomizedSVG());
 	
 	includes = engineInstance.getIncludes();
 	propertiesPanelPosition = (engineInstance.getPropertiesPanelPosition()==null)?"":engineInstance.getPropertiesPanelPosition();

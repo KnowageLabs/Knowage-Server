@@ -73,9 +73,13 @@ public class SvgViewerEngineInstance extends AbstractEngineInstance {
 	/** The map renderer. */
 	IMapRenderer mapRenderer;
 
-	/** The position of the properties Panel **/
+	/** The properties of the Panel **/
 	String propertiesPanelPosition = "left";
 	String propertiesPanelVisibile = "true";
+	String propertiesPanelVisibileMeasures = "true";
+	String propertiesPanelVisibileLayers = "true";
+
+	boolean isCustomizedSVG = false;
 
 	/** Logger component. */
 	public static transient Logger logger = Logger.getLogger(SvgViewerEngineInstance.class);
@@ -103,7 +107,8 @@ public class SvgViewerEngineInstance extends AbstractEngineInstance {
 			setMapRenderer(SvgViewerEngineComponentFactory.buildMapRenderer(template, env));
 			setMapRendererMonitor.stop();
 			propertiesPanelPosition = initPropertiesPanelPosition(template);
-			propertiesPanelVisibile = initPropertiesPanelVisible(template);
+			initPropertiesPanelVisible(template);
+			setIsCustomizedSVG(dataMartProvider.getHierarchyMember(dataMartProvider.getSelectedMemberName()).getIsCustomized());
 			logger.info("MapProvider class: " + getMapProvider().getClass().getName());
 			logger.info("DatasetProvider class: " + getDataMartProvider().getClass().getName());
 			logger.info("MapRenderer class: " + getMapRenderer().getClass().getName());
@@ -340,26 +345,66 @@ public class SvgViewerEngineInstance extends AbstractEngineInstance {
 		this.propertiesPanelVisibile = propertiesPanelVisible;
 	}
 
-	public String initPropertiesPanelVisible(SourceBean template) throws SvgViewerEngineException {
+	public String getPropertiesPanelVisibleMeasures() {
+		return propertiesPanelVisibileMeasures;
+	}
+
+	public void setPropertiesPanelVisibleMeasures(String propertiesPanelVisibleMeasures) {
+		this.propertiesPanelVisibileMeasures = propertiesPanelVisibleMeasures;
+	}
+
+	public String getPropertiesPanelVisibleLayers() {
+		return propertiesPanelVisibileLayers;
+	}
+
+	public void setPropertiesPanelVisibleLayers(String propertiesPanelVisibleLayers) {
+		this.propertiesPanelVisibileLayers = propertiesPanelVisibleLayers;
+	}
+
+	public void initPropertiesPanelVisible(SourceBean template) throws SvgViewerEngineException {
 		SourceBean confSB = null;
-		String visible = "true";
 
 		logger.debug("IN");
 		confSB = (SourceBean) template.getAttribute("PANEL_PROPERTIES");
 		if (confSB == null) {
 			logger.warn("Cannot find Panel properties configuration settings: tag name " + "PANEL_PROPERTIES");
 		} else {
-			visible = (String) confSB.getAttribute("VISIBLE");
-			if (visible == null) {
-				visible = "true";
+			propertiesPanelVisibile = (String) confSB.getAttribute("VISIBLE");
+			if (propertiesPanelVisibile == null) {
+				setPropertiesPanelVisible("true");
 				logger.warn("Cannot find Panel properties visible attribute: " + "VISIBLE");
-				logger.warn("The default implementation will use: [" + visible + "]");
+				logger.warn("The default implementation will use: [" + propertiesPanelVisibile + "]");
+			} else {
+				setPropertiesPanelVisibleLayers(propertiesPanelVisibile);
+			}
+			propertiesPanelVisibileMeasures = (String) confSB.getAttribute("visibleMeasures");
+			if (propertiesPanelVisibileMeasures == null) {
+				setPropertiesPanelVisibleMeasures("true");
+				logger.warn("Cannot find Panel properties visibleMeasures attribute: " + "visibleMeasures");
+				logger.warn("The default implementation will use: [" + propertiesPanelVisibileMeasures + "]");
+			} else {
+				setPropertiesPanelVisibleMeasures(propertiesPanelVisibileMeasures);
+			}
+			propertiesPanelVisibileLayers = (String) confSB.getAttribute("visibleLayers");
+			if (propertiesPanelVisibileLayers == null) {
+				setPropertiesPanelVisibleLayers("true");
+				logger.warn("Cannot find Panel properties visibleLayers attribute: " + "visibleLayers");
+				logger.warn("The default implementation will use: [" + propertiesPanelVisibileLayers + "]");
+			} else {
+				setPropertiesPanelVisibleLayers(propertiesPanelVisibileLayers);
 			}
 		}
 
-		logger.debug("IN");
+		logger.debug("OUT");
 
-		return visible;
+	}
+
+	public boolean getIsCustomizedSVG() {
+		return this.isCustomizedSVG;
+	}
+
+	public void setIsCustomizedSVG(boolean isCustomizedSVG) {
+		this.isCustomizedSVG = isCustomizedSVG;
 	}
 
 	// -- unimplemented methods ------------------------------------------------------------
