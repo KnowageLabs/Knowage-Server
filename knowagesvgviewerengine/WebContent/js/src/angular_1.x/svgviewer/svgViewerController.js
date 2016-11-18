@@ -156,7 +156,9 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 		  	if (!mouseOverElement.tooltipText || mouseOverElement.tooltipText == "null"){
 			  	var svgwin = $scope.getSVG('svgContainer');
 			  	var svgInfos = svgwin.myMapApp;
-			  	tooltipText = "<b>"+ svgInfos.curDescription +": </b>" +  domEl.getAttribute("attrib:"+svgInfos.curKpi);
+			  	if (svgInfos.curDescription){
+			  		tooltipText = "<b>"+ svgInfos.curDescription +": </b>" +  domEl.getAttribute("attrib:"+svgInfos.curKpi);
+			  	}
 		  	}else{
 		  		tooltipText = mouseOverElement.tooltipText;
 		  	}	  	
@@ -307,7 +309,7 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
   $scope.getInfoText = function(){
 	  var svgwin = $scope.getSVG('svgContainer');
       $scope.infoText =  $sce.trustAsHtml(svgwin.getInfoText());
-      $scope.showInfo =  ($scope.infoText != undefined  && $scope.infoText != null && $scope.infoText != "")
+      $scope.showInfo =  ($scope.infoText != undefined  && $scope.infoText != null && $scope.infoText != "");
   }
   
   /**

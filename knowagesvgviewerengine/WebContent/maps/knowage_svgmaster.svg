@@ -138,7 +138,7 @@ onload="init(evt);">
 		var execCrossFnScope = null;
 
 		//force highlight on mouse over
-		sbi.geo.conf.gui_settings.highlightOnMouseOver = true;
+		if (sbi.geo.conf.gui_settings) sbi.geo.conf.gui_settings.highlightOnMouseOver = true;
 	
 		var isShowTableModalityActive = true;
 			
@@ -154,13 +154,13 @@ onload="init(evt);">
 			suspendProcess = document.documentElement.suspendRedraw(30000);
 		}
 		  			
-	
-	    for(i = 0; i < sbi.geo.conf.measures.length; i++) {	
-	        var measure = sbi.geo.conf.measures[i];						
-	        ThresholdsFactory.getThresholds( measure );
-			ColourRangesFactory.getColourRanges( measure );
-		}
-	
+		if (sbi.geo.conf.measures){
+		    for(i = 0; i < sbi.geo.conf.measures.length; i++) {	
+		        var measure = sbi.geo.conf.measures[i];						
+		        ThresholdsFactory.getThresholds( measure );
+				ColourRangesFactory.getColourRanges( measure );
+			}
+		}	
 			
 		initMainMap();			
 		initWindows();
@@ -187,16 +187,16 @@ onload="init(evt);">
       	var target_layer = sbi.geo.conf.layers[ sbi.geo.conf.target_layer_index ];
 	  	myMapApp.targetLayer = document.getElementById( target_layer.name );
 			
-			
-      	if(myMapApp.Windows["thematic"]){ 
-        	myMapApp.Windows["thematic"].addThemes();
-      	} else {
-	     	if (sbi.geo.conf.measures && sbi.geo.conf.measures.length > 0){
-		      	var index = sbi.geo.conf.selected_measure_index >=0 ? sbi.geo.conf.selected_measure_index: 0;
-		        setKpi(sbi.geo.conf.measures[index].name,sbi.geo.conf.measures[index].name,sbi.geo.conf.measures[index].name);
-		   }
-	    }
-		
+		if (sbi.geo.conf.measures){
+	      	if(myMapApp.Windows["thematic"]){ 
+	        	myMapApp.Windows["thematic"].addThemes();
+	      	} else {
+		     	if (sbi.geo.conf.measures && sbi.geo.conf.measures.length > 0){
+			      	var index = sbi.geo.conf.selected_measure_index >=0 ? sbi.geo.conf.selected_measure_index: 0;
+			        setKpi(sbi.geo.conf.measures[index].name,sbi.geo.conf.measures[index].name,sbi.geo.conf.measures[index].name);
+			   }
+		    }
+		}		
 			
 		loadProjectSpecific();
 			
@@ -211,8 +211,10 @@ onload="init(evt);">
 			
 		
 		function initWindows() {
-		
-		  var guiSettings = sbi.geo.conf.gui_settings;
+		  //if (!sbi.geo.conf.gui_settings) return;
+		  
+		  var guiSettings = sbi.geo.conf.gui_settings || {};
+
 		  var windows = guiSettings.windows;
 		  var windowConf;
 		
@@ -222,7 +224,7 @@ onload="init(evt);">
 			windowConf = Utils.find(windows, 'name', 'navigation');
 			windowConf = Utils.apply({visible:false}, windowConf || {}, guiSettings.windowDefaults || {});
 			if(windowConf && windowConf.visible) {
-        myMapApp.Windows["navWindow"] = new NavigationWindow( windowConf );
+       		myMapApp.Windows["navWindow"] = new NavigationWindow( windowConf );
       } 
       
       windowConf = Utils.find(windows, 'name', 'measures');
@@ -305,21 +307,22 @@ onload="init(evt);">
       dataset.names = new Array();
       dataset.values = new Array();
       dataset.colours = new Array();
-          
-      for(i = 0; i < sbi.geo.conf.measures.length; i++) {
-          dataset.names[i] = sbi.geo.conf.measures[i].name;
-          dataset.values[i] = node.getAttributeNS(attribNS, sbi.geo.conf.measures[i].name);
-          dataset.colours[i] = sbi.geo.conf.measures[i].colour;
-                       
-          if(sbi.geo.conf.gui_settings.normalizeChartValues === true) {
-              var n =  sbi.geo.conf.measures[i].ordered_values[ sbi.geo.conf.measures[i].ordered_values.length - 1 ];
-              if(dataset.values[i]) {
-        	       dataset.values[i] = 100 * (dataset.values[i]/n);
-              }
-          }
-      }
-      
-      return dataset;
+         
+      if (sbi.geo.conf.measures){
+	      for(i = 0; i < sbi.geo.conf.measures.length; i++) {
+	          dataset.names[i] = sbi.geo.conf.measures[i].name;
+	          dataset.values[i] = node.getAttributeNS(attribNS, sbi.geo.conf.measures[i].name);
+	          dataset.colours[i] = sbi.geo.conf.measures[i].colour;
+	                       
+	          if(sbi.geo.conf.gui_settings.normalizeChartValues === true) {
+	              var n =  sbi.geo.conf.measures[i].ordered_values[ sbi.geo.conf.measures[i].ordered_values.length - 1 ];
+	              if(dataset.values[i]) {
+	        	       dataset.values[i] = 100 * (dataset.values[i]/n);
+	              }
+	          }
+	      }
+	}      
+    return dataset;
     }
 		
 	
@@ -657,7 +660,7 @@ onload="init(evt);">
 
     function showData(evt){
       
-      
+      if (!sbi.geo.conf.measures) return;
       
       
       

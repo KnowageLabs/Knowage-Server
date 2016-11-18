@@ -152,11 +152,12 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 		Monitor mergeAndDecorateMapTotalTimeMonitor = null;
 
 		// load datamart
+		HierarchyMember activeMember = null;
 		try {
 			loadDataMartTotalTimeMonitor = MonitorFactory.start("GeoEngine.drawMapAction.renderMap.loadDatamart");
 			dataMart = datamartProvider.getDataMart();
 			// load active members' layers and measures
-			HierarchyMember activeMember = datamartProvider.getHierarchyMember(datamartProvider.getSelectedMemberName());
+			activeMember = datamartProvider.getHierarchyMember(datamartProvider.getSelectedMemberName());
 			setLayers(activeMember.getLayers());
 			setMeasures(activeMember.getMeasures());
 			setSelectedMeasureName(activeMember.getMeasures());
@@ -210,27 +211,40 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 
 			JSONObject conf = new JSONObject();
 
-			JSONArray measures;
 			try {
-				measures = getMeasuresConfigurationScript(dataMart);
-				String selectedMeasureName = getSelectedMeasureName();
-				logger.debug("Selected measure [" + selectedMeasureName + "]");
-				Assert.assertTrue(selectedMeasureName != null, "default_kpi attribute cannot be null. Please add it to MEASURES tag in your template file");
+				if (!activeMember.getIsCustomized()) {
+					JSONArray measures;
+					measures = getMeasuresConfigurationScript(dataMart);
+					String selectedMeasureName = getSelectedMeasureName();
+					logger.debug("Selected measure [" + selectedMeasureName + "]");
+					Assert.assertTrue(selectedMeasureName != null, "default_kpi attribute cannot be null. Please add it to MEASURES tag in your template file");
 
-				int selectedMeasureIndexIndex = -1;
-				for (int i = 0; i < measures.length(); i++) {
-					JSONObject measure = (JSONObject) measures.get(i);
-					logger.debug("Comparing selected measure [" + selectedMeasureName + "] with measure [" + (String) measure.get("name") + "]");
-					String nm = (String) measure.get("name");
-					if (selectedMeasureName.equalsIgnoreCase(nm)) {
-						logger.debug("Selected measure [" + selectedMeasureName + "] is equal to measure [" + (String) measure.get("name") + "]");
-						selectedMeasureIndexIndex = i;
-						break;
+					int selectedMeasureIndexIndex = -1;
+					for (int i = 0; i < measures.length(); i++) {
+						JSONObject measure = (JSONObject) measures.get(i);
+						logger.debug("Comparing selected measure [" + selectedMeasureName + "] with measure [" + (String) measure.get("name") + "]");
+						String nm = (String) measure.get("name");
+						if (selectedMeasureName.equalsIgnoreCase(nm)) {
+							logger.debug("Selected measure [" + selectedMeasureName + "] is equal to measure [" + (String) measure.get("name") + "]");
+							selectedMeasureIndexIndex = i;
+							break;
+						}
 					}
+					logger.debug("Selected measure index [" + selectedMeasureIndexIndex + "]");
+					conf.put("selected_measure_index", selectedMeasureIndexIndex);
+					conf.put("measures", measures);
+
+					String infoText = datamartProvider.getSelectedMemberInfo();
+					if (measures.length() == 0) {
+						conf.put("info_text", "No data found");
+					} else {
+						conf.put("info_text", infoText);
+					}
+				} else {
+					// for customized svg manage only info section
+					String infoText = datamartProvider.getSelectedMemberInfo();
+					conf.put("info_text", infoText);
 				}
-				logger.debug("Selected measure index [" + selectedMeasureIndexIndex + "]");
-				conf.put("selected_measure_index", selectedMeasureIndexIndex);
-				conf.put("measures", measures);
 
 				JSONArray layers = getLayersConfigurationScript(targetMap);
 				// String targetLayer = datamartProvider.getSelectedLevel().getFeatureName();
@@ -248,12 +262,6 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 				conf.put("target_layer_index", targetLayerIndex);
 				conf.put("layers", layers);
 
-				String infoText = datamartProvider.getSelectedMemberInfo();
-				if (measures.length() == 0) {
-					conf.put("info_text", "No data found");
-				} else {
-					conf.put("info_text", infoText);
-				}
 				JSONObject guiSettings = getGUIConfigurationScript();
 				guiSettings.put("includeChartLayer", getLayer("grafici") != null);
 				guiSettings.put("includeValuesLayer", getLayer("valori") != null);
