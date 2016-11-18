@@ -715,7 +715,7 @@ onload="init(evt);">
                 }
                              
                 if(myMapApp.Windows["legend"])myMapApp.Windows["legend"].setTitleText(myMapApp.curKpi + ": " + Utils.numberToString(targetValue,2));
-               	if (curLegendRect != null && myMapApp.Windows["legend"] && !myMapApp.Windows["legend"].closed) {
+               	if (curLegendRect != undefined && curLegendRect != null && myMapApp.Windows["legend"] && !myMapApp.Windows["legend"].closed) {
                    curLegendRect.setAttributeNS(null, "stroke-width",2);
                    curLegendRect.setAttributeNS(null, "stroke","black");
                	}
@@ -743,7 +743,7 @@ onload="init(evt);">
                 windowConf = Utils.find(sbi.geo.conf.gui_settings.windows, 'name', 'legend');
                 myMapApp.Windows["legend"].setTitleText(windowConf.title || "Legend");
                }
-               if (curLegendRect != null && myMapApp.Windows["legend"] && !myMapApp.Windows["legend"].closed) {
+               if (curLegendRect != undefined && curLegendRect != null && myMapApp.Windows["legend"] && !myMapApp.Windows["legend"].closed) {
                    curLegendRect.setAttributeNS(null, "stroke-width",1);
                    curLegendRect.setAttributeNS(null, "stroke","dimgray");
                }
