@@ -238,6 +238,10 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 				level = "1";
 
 			HierarchyMember hierMember = dataMartProvider.getHierarchyMember(dataMartProvider.getSelectedMemberName());
+			if (!hierMember.getIsCustomized()) {
+				logger.debug("The member is configurated to use customizedSVG but confogiration tag [CUSTOMIZE_SETTINGS] isn't found into the template, please check it!");
+				return null;
+			}
 			JSONObject customizedConfigurationJSON = hierMember.getCustomizationSettings();
 
 			SourceBean memberSB = getActiveMemberSB(level);
@@ -251,6 +255,11 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 				JSONDataWriter writer = new JSONDataWriter();
 				JSONObject datasetJSON = (JSONObject) writer.write(dataset.getDataStore());
 				customizedConfigurationJSON.put("data", datasetJSON);
+
+				// add measures metadata informations
+				// DataSetMetaData meauresMap = hierMember.getDsMetaData();
+				// JSONObject meauresJSON = (JSONObject) writer.write(meauresMap.getColumn());
+				// customizedConfigurationJSON.put("MEASURES",meauresJSON);
 			} else {
 				logger.debug("Dataset is null, no data values returned.");
 			}

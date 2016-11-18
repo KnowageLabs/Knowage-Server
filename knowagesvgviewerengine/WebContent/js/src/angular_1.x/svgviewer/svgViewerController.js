@@ -84,6 +84,8 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 	  $scope.getLayers();
 	  $scope.getLegendColors();	  
 	  $scope.getInfoText();
+	  //per poste
+//	  $scope.getCustomInfo();
 	  
 	  $scope.noError = true;
 	});

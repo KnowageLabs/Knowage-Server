@@ -41,6 +41,18 @@ public class DataSetMetaData {
 	}
 
 	/**
+	 * Gets the column.
+	 *
+	 * @return the column
+	 */
+	public Map getColumns() {
+		if (columns != null) {
+			return columns;
+		}
+		return null;
+	}
+
+	/**
 	 * Gets the column names.
 	 *
 	 * @return the column names

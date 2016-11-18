@@ -54,12 +54,12 @@
 						    <div ng-class="{dataContent:true, activeContent:expandedInfo}"  ng-show="showInfo" ng-bind-html="infoText">
 						    </div>
 						    
-						    <md-toolbar ng-init="expandedMeasure = false" layout="row" ng-click="expandedMeasure = !expandedMeasure">
+						    <md-toolbar ng-init="expandedMeasure = false" layout="row" ng-click="expandedMeasure = !expandedMeasure" ng-show="<%=propertiesPanelVisibleMeasures%>">
 					        	<div class="md-toolbar-tools"> 
 						           		<span layout-padding>Measures </span>
 						        </div>	    
 						    </md-toolbar>
-						    <div ng-class="{dataContent:true, activeContent:expandedMeasure}">
+						    <div ng-class="{dataContent:true, activeContent:expandedMeasure}"  ng-show="<%=propertiesPanelVisibleMeasures%>" >
 						    	<md-radio-group ng-model="measureValue" layout-padding layout="column" layout-align="center start">
 								      <md-radio-button  class="noPadding" ng-repeat="(key,prop) in measures track by $index" ng-value="prop.columnId"  ng-click="changeSelectedMeasure(prop.columnId,prop.description)">
 								      	{{prop.description}}                 
@@ -67,28 +67,28 @@
 								</md-radio-group>		
 						    </div>
 					
-						    <md-toolbar ng-init="expandedLayer = false" layout="row" ng-click="expandedLayer = !expandedLayer">
+						    <md-toolbar ng-init="expandedLayer = false" layout="row" ng-click="expandedLayer = !expandedLayer" ng-show="<%=propertiesPanelVisibleLayers%>">
 					        	<div class="md-toolbar-tools"> 
 						           		<span layout-padding>Layers </span>
 						        </div>	    
 						    </md-toolbar>
-						    <div ng-class="{dataContent:true, activeContent:expandedLayer}" layout="row" layout-wrap >
+						    <div ng-class="{dataContent:true, activeContent:expandedLayer}" layout="row" layout-wrap  ng-show="<%=propertiesPanelVisibleLayers%>">
 						    	<md-checkbox class="noPadding" flex="100" ng-model="prop.selected"  ng-repeat="(key,prop) in layers track by $index" ng-click="changeSelectedLayer(prop.name,!prop.selected)">
 						      		{{prop.description}}                 
 						        </md-checkbox>     	
 						    </div>
 						    
-						    <md-toolbar ng-init="expandedLegend = false" layout="row" ng-click="expandedLegend = !expandedLegend">
+						    <md-toolbar ng-init="expandedLegend = false" layout="row" ng-click="expandedLegend = !expandedLegend" ng-show="<%=propertiesPanelVisibleMeasures%>">
 					        	<div class="md-toolbar-tools"> 
 						           		<span layout-padding>Legend </span>
 						        </div>	    
 						    </md-toolbar>
-						    <div ng-class="{dataContent:true, activeContent:expandedLegend}" layout="row" layout-wrap ng-show="showLabel">
+						    <div ng-class="{dataContent:true, activeContent:expandedLegend}" layout="row" layout-wrap ng-show="showLabel && <%=propertiesPanelVisibleMeasures%>" >
 						    	  <md-card ng-repeat="color in legend.colors track by $index" ng-style="{'background-color':color}" layout-padding">
 							     	 [{{legend.labels[$index]}}] 
 							     </md-card>   	
 						    </div>
-						    <div ng-class="{dataContent:true, activeContent:expandedLegend}" layout="row" layout-wrap ng-show="!showLabel">
+						    <div ng-class="{dataContent:true, activeContent:expandedLegend}" layout="row" layout-wrap ng-show="!showLabel && <%=propertiesPanelVisibleMeasures%>" >
 						    	  <md-card ng-repeat="color in legend.colors track by $index" ng-style="{'background-color':color}" layout-padding">
 							     	 [{{legend.tresholds[$index] | number:2}} - {{legend.tresholds[$index+1] | number:2}}] 
 							     </md-card>   	
