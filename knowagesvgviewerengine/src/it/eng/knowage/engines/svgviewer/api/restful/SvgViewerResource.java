@@ -22,6 +22,7 @@ import it.eng.knowage.engines.svgviewer.SvgViewerEngineInstance;
 import it.eng.knowage.engines.svgviewer.api.AbstractSvgViewerEngineResource;
 import it.eng.knowage.engines.svgviewer.datamart.provider.DataMartProvider;
 import it.eng.knowage.engines.svgviewer.datamart.provider.configurator.DataMartProviderConfigurator;
+import it.eng.knowage.engines.svgviewer.dataset.DataSetMetaData;
 import it.eng.knowage.engines.svgviewer.dataset.HierarchyMember;
 import it.eng.knowage.engines.svgviewer.interceptor.RestExceptionMapper;
 import it.eng.knowage.engines.svgviewer.map.provider.SOMapProvider;
@@ -39,6 +40,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -257,9 +259,18 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 				customizedConfigurationJSON.put("data", datasetJSON);
 
 				// add measures metadata informations
-				// DataSetMetaData meauresMap = hierMember.getDsMetaData();
-				// JSONObject meauresJSON = (JSONObject) writer.write(meauresMap.getColumn());
-				// customizedConfigurationJSON.put("MEASURES",meauresJSON);
+				DataSetMetaData meauresMap = hierMember.getDsMetaData();
+				Map columns = meauresMap.getColumns();
+				JSONObject meauresJSON = new JSONObject();
+				Iterator iter = columns.keySet().iterator();
+				while (iter.hasNext()) {
+					String key = (String) iter.next();
+					Object value = columns.get(key);
+					if (key != null && value != null && !meauresJSON.has(key))
+						meauresJSON.put(key, value);
+				}
+
+				customizedConfigurationJSON.put("COLUMNS", meauresJSON);
 			} else {
 				logger.debug("Dataset is null, no data values returned.");
 			}

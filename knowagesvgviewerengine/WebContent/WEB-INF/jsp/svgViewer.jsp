@@ -46,7 +46,7 @@
 			     <md-sidenav layout="column"  ng-class="{'_md-locked-open':sidenavOpened}" id="svgInfoSidenav" md-component-id="svgSideNav" ng-show="<%=propertiesPanelVisible%> && noError" class="md-sidenav-<%= propertiesPanelPosition %>"  >
 			      <section  >
 				     <div class="md-accordion" layout="column">
-				     		<md-toolbar ng-init="expandedInfo = false"  ng-show="showInfo" layout="row" ng-click="expandedInfo = !expandedInfo">
+				     		<md-toolbar ng-init="expandedInfo = true"  ng-show="showInfo" layout="row" ng-click="expandedInfo = !expandedInfo">
 					        	<div class="md-toolbar-tools"> 
 						           		<span layout-padding>Info </span>
 						        </div>	    
@@ -118,9 +118,9 @@
 							    src='${pageContext.request.contextPath}/api/1.0/svgviewer/drawMap'  
 								width='100%'; height='100%'; frameborder="0" > 
 							</iframe>  
-							<c:if test="isCustomizedSVG">
+							<% if (isCustomizedSVG) {%>
 								<dynamic-svg></dynamic-svg> 
-							</c:if>
+							<% } %>
 					    </div> 
 			         </md-content>
 			    </div>
