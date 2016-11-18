@@ -10,9 +10,11 @@ angular.module("cockpitModule").service("cockpitModule_utilstServices",function(
 					if(angular.isString(val) && valRegExp.test(val)){
 						var matches = val.match(valRegExp);
 						var elements = matches[1].split(";");
+						var type = matches[2];
+						var delimiter = (type == "STRING") ? "'" : ""; 
 						var strings = [];
 						angular.forEach(elements,function(value){
-							this.push("'" + value + "'");
+							this.push(delimiter + value + delimiter);
 						},strings);
 						val = strings.join(",");
 					}
