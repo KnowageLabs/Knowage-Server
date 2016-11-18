@@ -54,6 +54,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -254,6 +255,7 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 
 			IDataSet dataset = dataMartProvider.getDs();
 			if (dataset != null) {
+				String elementID = null;
 				JSONDataWriter writer = new JSONDataWriter();
 				JSONObject datasetJSON = (JSONObject) writer.write(dataset.getDataStore());
 				customizedConfigurationJSON.put("data", datasetJSON);
@@ -265,12 +267,48 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 				Iterator iter = columns.keySet().iterator();
 				while (iter.hasNext()) {
 					String key = (String) iter.next();
-					Object value = columns.get(key);
-					if (key != null && value != null && !meauresJSON.has(key))
-						meauresJSON.put(key, value);
+					Properties values = (Properties) columns.get(key);
+					// get elementId reference
+					String type = values.getProperty("type");
+					if (type.equalsIgnoreCase("geoid")) {
+						elementID = key;
+					}
+					if (key != null && values != null && !meauresJSON.has(key))
+						meauresJSON.put(key, values);
 				}
-
 				customizedConfigurationJSON.put("COLUMNS", meauresJSON);
+
+				// add cross url definition for elementID
+				JSONArray crossUrlJSON = new JSONArray();
+				JSONArray rows = (JSONArray) datasetJSON.get("rows");
+				for (int i = 0; i < rows.length(); i++) {
+					JSONObject crossJSON = new JSONObject();
+					JSONObject row = rows.getJSONObject(i);
+					String url = "javascript:clickedElementCrossNavigation('";
+					JSONArray urlValues = new JSONArray();
+					JSONArray rowNames = row.names();
+					for (int r = 0; r < rowNames.length(); r++) {
+						String name = (String) rowNames.get(r);
+						// get real field name
+						JSONArray fields = (JSONArray) ((JSONObject) datasetJSON.get("metaData")).get("fields");
+						String fieldName = getFieldName(fields, name);
+						String fieldValue = String.valueOf(row.get(name));
+
+						if (fieldName.equals(""))
+							continue;
+
+						if (fieldName.equalsIgnoreCase(elementID)) {
+							crossJSON.put("elementId", fieldValue);
+						}
+						JSONObject newValue = new JSONObject();
+						newValue.put(fieldName, fieldValue);
+						urlValues.put(newValue);
+					}
+					url += urlValues.toString() + "') ";
+					crossJSON.put("url", url);
+					crossUrlJSON.put(crossJSON);
+				}
+				customizedConfigurationJSON.put("crossUrl", crossUrlJSON);
 			} else {
 				logger.debug("Dataset is null, no data values returned.");
 			}
@@ -287,6 +325,26 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 	}
 
 	/** Utility methods ******************************************************************************************************/
+
+	private String getFieldName(JSONArray fields, String metaName) {
+		String toReturn = "";
+		try {
+			for (int f = 0; f < fields.length(); f++) {
+				Object objField = fields.get(f);
+				if (objField instanceof JSONObject) {
+					JSONObject field = (JSONObject) fields.get(f);
+					if (((String) field.get("name")).equalsIgnoreCase(metaName)) {
+						toReturn = field.getString("header");
+						break;
+					}
+				}
+			}
+		} catch (Exception ex) {
+			logger.error("An error occured while loading field name ");
+		}
+		return toReturn;
+	}
+
 	private static Map getLayers(SourceBean layersConfigurationSB) {
 		Map layers;
 		List layerList;
