@@ -118,8 +118,9 @@
 							    src='${pageContext.request.contextPath}/api/1.0/svgviewer/drawMap'  
 								width='100%'; height='100%'; frameborder="0" > 
 							</iframe>  
+								<div id="dynamic-svg"></div> 
 							<% if (isCustomizedSVG) {%>
-								<dynamic-svg></dynamic-svg> 
+								<div id="dynamic-svg"></div> 
 							<% } %>
 					    </div> 
 			         </md-content>

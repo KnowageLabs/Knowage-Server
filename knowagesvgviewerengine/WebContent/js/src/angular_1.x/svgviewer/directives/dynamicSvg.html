@@ -1,5 +1,5 @@
-<div id='chartsContainer' ng-cloak>
-	<div class='graph' ng-repeat="canvas in response.rows track by $index" ng-style="style[$index]"> 
+<div id='chartsContainer' ng-cloak>{{style}}
+	<div class='graph' ng-repeat="canvas in res.data.rows track by $index" ng-style="style[$index]"> 
 		<canvas id='canvas_{{canvas.column_1}}'>
 		</canvas>
 	</div>
