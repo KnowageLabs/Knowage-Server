@@ -141,8 +141,6 @@ function configurationTabControllerFunction(sbiModule_translate,$scope){
 	fontFamily:"",
 	fontSize:"",
 	fontWeight:"",
-	fontStyle:"",
-	textDecoration:"",
 	backgroundColor:"",
 	
  };
@@ -192,3 +190,4 @@ function configurationTabControllerFunction(sbiModule_translate,$scope){
  
  
 }
+

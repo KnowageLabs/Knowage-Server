@@ -109,12 +109,23 @@
 				
         			<md-input-container  class="md-block" flex>
         				<label>Font style:</label>	
-						<md-select  ng-model="fontObj.fontStyle">
+						<md-select  ng-model="fontObj.fontWeight">
 							<md-option ng-repeat="option in fontStyleOptions" value="{{option.value}}">{{option.name}}</md-option>	
 						</md-select>
 					</md-input-container>
         			
 				</div>
+				
+				<div layout="row" flex layout-margin > 
+				
+        			 <md-input-container class="md-block colorInputContainer" flex>
+    				<label>Background color:</label>
+      				<color-picker color-picker-swatch="true"  color-picker-format="'rgb'" ng-model="fontObj.backgroundColor"></color-picker>
+      				</md-input-container>
+        			
+				</div>
+				
+				
 				
 				</md-content>
 			</div>	

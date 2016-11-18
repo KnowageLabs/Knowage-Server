@@ -44,6 +44,13 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 <!-- expanderBox -->
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/angular/expander-box/expanderBox.js"></script>
 
+<!-- colorpicker -->
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/angular/color-picker/tinycolor-min.js"></script>
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/angular/color-picker/tinygradient.min.js"></script>
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/angular/color-picker/angularjs-color-picker.js"></script>
+<link rel="stylesheet" href="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/angular/color-picker/angularjs-color-picker.min.css">
+<link rel="stylesheet" href="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/angular/color-picker/mdColorPickerPersonalStyle.css">
+
 <!-- 
 	Specifying all Angular services that we are eventually going to use (inject into the controller that is created for the 
 	execution of the ChartEngine). For example, services such as sbiModule_translate, sbiModule_messaging

@@ -16,4 +16,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-angular.module('third-party', ['ngMaterial','expander-box', 'color.picker']);
+angular.module('string-type', [])
+.directive('stringToType', function(){
+	 return {
+		    require: 'ngModel',
+		    link: function(scope, element, attrs, ngModel) {
+		      ngModel.$parsers.push(function(value) {
+		        return '' + value;
+		      });
+		      ngModel.$formatters.push(function(value) {
+		        return parseFloat(value);
+		      });
+		    }
+		  };
+		});
