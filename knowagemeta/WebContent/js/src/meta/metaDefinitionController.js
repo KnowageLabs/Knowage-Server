@@ -93,11 +93,11 @@ app.service("metaModelServices",function(sbiModule_jsonServices){
 	}
 })
 
-app.controller('metaDefinitionController', [ '$scope', 'sbiModule_translate','sbiModule_restServices','sbiModule_config','dialogScope','metaModelServices','$interval','$angularListDetail','$mdDialog', metaDefinitionControllerFunction ]);
+app.controller('metaDefinitionController', [ '$scope', 'sbiModule_translate','sbiModule_restServices','sbiModule_config','dialogScope','metaModelServices','$interval','$angularListDetail','$mdDialog','$window', metaDefinitionControllerFunction ]);
 
 
 
-function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_restServices,sbiModule_config,dialogScope,metaModelServices,$interval,$angularListDetail,$mdDialog) {
+function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_restServices,sbiModule_config,dialogScope,metaModelServices,$interval,$angularListDetail,$mdDialog,$window) {
 	$scope.translate = sbiModule_translate;
 	$scope.physicalModelTreeInterceptor = {};
 	$scope.businessModelTreeInterceptor = {};
@@ -142,6 +142,8 @@ function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_
 		$angularListDetail.goToDetail();
 		$scope.loadSbiModel(translatedModel);
 	}
+	$window.parent.document.getElementById('loadMask').style.display='none';
+
 
 	$scope.saveModel=function(){
 		var dataToSend={};

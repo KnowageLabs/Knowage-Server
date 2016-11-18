@@ -742,10 +742,14 @@ function businessModelCatalogueFunction(sbiModule_translate, sbiModule_restServi
 						$scope.closeMetaWeb=function(){
 							$mdDialog.hide();
 						}
+						
+		   
 					},
 					template:   '<md-dialog aria-label="Open meta"  style="width: 100%;  height: 100%;max-width: 100%;  max-height: 100%;" ng-cloak>'+
 								'<md-dialog-content flex layout="column" class="metaContent" >'+
-								'<iframe layout-fill class=" noBorder" ng-src="{{metaUrl}}" name="metaIframe"></iframe>'+ 
+								'<iframe layout-fill id="metaWebEditor" class=" noBorder" ng-src="{{metaUrl}}" name="metaIframe"  ></iframe>'+ 
+								'<div loading id="loadMask" layout-fill style="position:fixed;z-index: 500;background:rgba(0,0,0, 0.3);">'+
+								'<md-progress-circular  md-mode="indeterminate" style="top:50%;left:50%" ></md-progress-circular></div>'+
 								'</md-dialog-content> '+
 								'</md-dialog>',  
 					clickOutsideToClose:true,
@@ -809,3 +813,4 @@ app.service('multipartForm',['$http',function($http){
 		}
 		
 	}]);
+
