@@ -41,91 +41,26 @@
 			</md-toolbar>
 			
 			<md-whiteframe flex class="md-whiteframe-4dp whiteframe-element" style="overflow:auto">	
-			<div id="generic" ng-show="selectedConfigurationButton == 'Generic'">
+			<div id="generic" ng-show="selectedConfigurationButton == translate.load('sbi.chartengine.designer.tab.configuration.generic')">
 				<md-content flex layout="column">
 				
-				<div layout="row" flex layout-margin> 
-					<md-input-container class="md-block" flex=80>
-        				<label>Height:</label>
-        				<input type="number" step="any" name="height" ng-model="chartTemplate.height" min="0"/>
-        			</md-input-container>
-        			
-        			<md-input-container  class="md-block" flex=20 >	
-						<md-select  ng-model="chartTemplate.heightDimType">
-							<md-option ng-repeat="option in dimensionMeasureType" value="{{option.value}}">{{option.name}}</md-option>	
-						</md-select>
-					</md-input-container>
-        			
-				</div>
+				<div ng-include src="templateUrls.genericDetailsURL"></div>
 				
-				<div layout="row" flex layout-margin> 
-					<md-input-container class="md-block" flex=80>
-        				<label>Width:</label>
-        				<input type="number" step="any" name="width" ng-model="chartTemplate.width" min="0"/>
-        			</md-input-container>
-        			
-        			<md-input-container  class="md-block" flex=20 >	
-						<md-select  ng-model="chartTemplate.widthDimType">
-							<md-option ng-repeat="option in dimensionMeasureType" value="{{option.value}}">{{option.name}}</md-option>	
-						</md-select>
-					</md-input-container>
-        			
-				</div>
+				</md-content>
+			</div>
+			
+			<div id="titleandsubtitle" ng-show="selectedConfigurationButton == translate.load('sbi.chartengine.designer.tab.configuration.titlesubtitle')">
+				<md-content flex layout="column">
 				
-				<div layout="row" flex layout-margin ng-show="selectedChartType == 'bar' || selectedChartType == 'line'"> 
+				<div ng-include src="templateUrls.titleSubtitleDetailsURL"></div>
 				
-        			<md-input-container  class="md-block" flex>
-        				<label>Orientation:</label>	
-						<md-select  ng-model="chartTemplate.orientation">
-							<md-option ng-repeat="option in orientationType" value="{{option.value}}">{{option.name}}</md-option>	
-						</md-select>
-					</md-input-container>
-        			
-				</div>
+				</md-content>
+			</div>
+			
+			<div id="nodata" ng-show="selectedConfigurationButton == translate.load('sbi.chartengine.designer.tab.configuration.nodata')">
+				<md-content flex layout="column">
 				
-				<div layout="row" flex layout-margin> 
-				
-        			<md-input-container  class="md-block" flex>
-        				<label>Font family:</label>	
-						<md-select  ng-model="fontObj.fontFamily">
-							<md-option ng-repeat="option in fontFamilyOptions" value="{{option.value}}">{{option.name}}</md-option>	
-						</md-select>
-					</md-input-container>
-        			
-				</div>
-				
-				<div layout="row" flex layout-margin > 
-				
-        			<md-input-container  class="md-block" flex>
-        				<label>Font size:</label>	
-						<md-select  ng-model="fontObj.fontSize">
-							<md-option ng-repeat="option in fontSizeOptions" value="{{option.value}}">{{option.name}}</md-option>	
-						</md-select>
-					</md-input-container>
-        			
-				</div>
-				
-				<div layout="row" flex layout-margin > 
-				
-        			<md-input-container  class="md-block" flex>
-        				<label>Font style:</label>	
-						<md-select  ng-model="fontObj.fontWeight">
-							<md-option ng-repeat="option in fontStyleOptions" value="{{option.value}}">{{option.name}}</md-option>	
-						</md-select>
-					</md-input-container>
-        			
-				</div>
-				
-				<div layout="row" flex layout-margin > 
-				
-        			 <md-input-container class="md-block colorInputContainer" flex>
-    				<label>Background color:</label>
-      				<color-picker color-picker-swatch="true"  color-picker-format="'rgb'" ng-model="fontObj.backgroundColor"></color-picker>
-      				</md-input-container>
-        			
-				</div>
-				
-				
+				<div ng-include src="templateUrls.noDataDetailsURL"></div>
 				
 				</md-content>
 			</div>	

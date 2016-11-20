@@ -24,6 +24,7 @@ public class EngineConstants {
 
 	public static final String AUDIT_ID = "SPAGOBI_AUDIT_ID";
 	public static final String DOCUMENT_ID = "document";
+	public static final String DOCUMENT_LABEL = "label";
 
 	public static final String NEW_COCKPIT = "NEW_COCKPIT";
 	public static final String ENGINE_INSTANCE = "ENGINE_INSTANCE";
@@ -74,7 +75,8 @@ public class EngineConstants {
 	public static final String SMART_FILTER_TAG = "SMART_FILTER";
 
 	public static final String ENGINE_DATASOURCE = "ENGINE_DATASOURCE";
-	// public static final String ENGINE_DATASOURCE_LABEL = "ENGINE_DATASOURCE_LABEL";
+	// public static final String ENGINE_DATASOURCE_LABEL =
+	// "ENGINE_DATASOURCE_LABEL";
 	// public static final String ENGINE_DATASOURCE_ID = "ENGINE_DATASOURCE_ID";
 
 	public static final String DEFAULT_DATASOURCE_FOR_WRITING_LABEL = "DEFAULT_DATASOURCE_FOR_WRITING_LABEL";

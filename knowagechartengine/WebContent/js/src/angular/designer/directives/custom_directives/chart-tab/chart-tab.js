@@ -29,47 +29,47 @@ angular.module('chart-tab', [])
 		
 });
 
-function chartTabControllerFunction($scope,sbiModule_translate,sbiModule_restServices,sbiModule_messaging){
+function chartTabControllerFunction($scope,sbiModule_translate,sbiModule_restServices,sbiModule_messaging,ChartDesignerData){
 	$scope.translate = sbiModule_translate;
 	$scope.datasetLabel = datasetLabel;
 	var setConfigurationButtons = function(type) {
 		
 		switch (type) {
 		case 'parallel':
-			$scope.configurationForDisplay = $scope.parallelChartConfiguration;
+			$scope.configurationForDisplay = ChartDesignerData.getChartConfigurationOptions(type);
 			break;
 		case 'sunburst':
-			$scope.configurationForDisplay = $scope.sunburstChartConfiguration;
+			$scope.configurationForDisplay = ChartDesignerData.getChartConfigurationOptions(type);
 			break;
 		case 'scatter':
-			$scope.configurationForDisplay = $scope.scatterChartConfiguration;
+			$scope.configurationForDisplay = ChartDesignerData.getChartConfigurationOptions(type);
 			break;
 		case 'treemap':
-			$scope.configurationForDisplay = $scope.treemapChartConfiguration;
+			$scope.configurationForDisplay = ChartDesignerData.getChartConfigurationOptions(type);
 			break;
 		case 'wordcloud':
-			$scope.configurationForDisplay = $scope.wordcloudChartConfiguration;
+			$scope.configurationForDisplay = ChartDesignerData.getChartConfigurationOptions(type);
 			break;
 		case 'gauge':
-			$scope.configurationForDisplay = $scope.gaugeChartConfiguration;
+			$scope.configurationForDisplay = ChartDesignerData.getChartConfigurationOptions(type);
 			break;
 		case 'line':
-			$scope.configurationForDisplay = $scope.lineChartConfiguration;
+			$scope.configurationForDisplay = ChartDesignerData.getChartConfigurationOptions(type);
 			break;
 		case 'heatmap':
-			$scope.configurationForDisplay = $scope.heatmapChartConfiguration;
+			$scope.configurationForDisplay = ChartDesignerData.getChartConfigurationOptions(type);
 			break;
 		case 'radar':
-			$scope.configurationForDisplay = $scope.radarChartConfiguration;
+			$scope.configurationForDisplay = ChartDesignerData.getChartConfigurationOptions(type);
 			break;
 		case 'bar':
-			$scope.configurationForDisplay = $scope.barChartConfiguration;
+			$scope.configurationForDisplay = ChartDesignerData.getChartConfigurationOptions(type);
 			break;
 		case 'pie':
-			$scope.configurationForDisplay = $scope.pieChartConfiguration;
+			$scope.configurationForDisplay = ChartDesignerData.getChartConfigurationOptions(type);
 			break;
 		case 'chord':
-			$scope.configurationForDisplay = $scope.chordChartConfiguration;
+			$scope.configurationForDisplay = ChartDesignerData.getChartConfigurationOptions(type);
 			break;	
 		default:
 			break;

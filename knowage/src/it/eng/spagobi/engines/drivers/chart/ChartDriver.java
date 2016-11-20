@@ -17,6 +17,20 @@
  */
 package it.eng.spagobi.engines.drivers.chart;
 
+import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.StringTokenizer;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.apache.log4j.Logger;
+import org.w3c.dom.Document;
+
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
@@ -38,20 +52,6 @@ import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
 import it.eng.spagobi.engines.drivers.generic.GenericDriver;
 import it.eng.spagobi.utilities.assertion.Assert;
 
-import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.StringTokenizer;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.apache.log4j.Logger;
-import org.w3c.dom.Document;
-
 /**
  * Driver Implementation (IEngineDriver Interface) for Chart External Engine.
  */
@@ -61,7 +61,8 @@ public class ChartDriver extends GenericDriver {
 	private Locale locale;
 
 	/**
-	 * Returns a map of parameters which will be send in the request to the engine application.
+	 * Returns a map of parameters which will be send in the request to the
+	 * engine application.
 	 *
 	 * @param profile
 	 *            Profile of the user
@@ -91,7 +92,8 @@ public class ChartDriver extends GenericDriver {
 	}
 
 	/**
-	 * Returns a map of parameters which will be send in the request to the engine application.
+	 * Returns a map of parameters which will be send in the request to the
+	 * engine application.
 	 *
 	 * @param analyticalDocumentSubObject
 	 *            SubObject to execute
@@ -137,7 +139,9 @@ public class ChartDriver extends GenericDriver {
 		String url = engine.getUrl();
 		HashMap parameters = new HashMap();
 		String documentId = obj.getId().toString();
+		String documentLabel = obj.getLabel();
 		parameters.put("document", documentId);
+		parameters.put("label", documentLabel);
 		applySecurity(parameters, profile);
 		EngineURL engineURL = new EngineURL(url.replace("/execute", "/edit"), parameters);
 		logger.debug("OUT");
@@ -171,7 +175,9 @@ public class ChartDriver extends GenericDriver {
 		String url = engine.getUrl();
 		HashMap parameters = new HashMap();
 		String documentId = obj.getId().toString();
+		String documentLabel = obj.getLabel();
 		parameters.put("document", documentId);
+		parameters.put("label", documentLabel);
 		applySecurity(parameters, profile);
 		EngineURL engineURL = new EngineURL(url.replace("/execute", "/edit"), parameters);
 		logger.debug("OUT");
@@ -198,15 +204,18 @@ public class ChartDriver extends GenericDriver {
 
 		try {
 			Assert.assertNotNull(parameters, "Input [parameters] cannot be null");
-			// at the moment the initial aztion_name is fixed for extJS... in the future it will be set
+			// at the moment the initial aztion_name is fixed for extJS... in
+			// the future it will be set
 			// by the template content (firstTag EXTCHART,...)
 			// if("D3CHART".equalsIgnoreCase(family))
 			// {
-			// parameters.put(PARAM_SERVICE_NAME, "CHART_ENGINE_D3_START_ACTION");
+			// parameters.put(PARAM_SERVICE_NAME,
+			// "CHART_ENGINE_D3_START_ACTION");
 			// }
 			// else
 			// {
-			// parameters.put(PARAM_SERVICE_NAME, "CHART_ENGINE_EXTJS_START_ACTION");
+			// parameters.put(PARAM_SERVICE_NAME,
+			// "CHART_ENGINE_EXTJS_START_ACTION");
 			// }
 			parameters.put(PARAM_SERVICE_NAME, "CHART_ENGINE_START_ACTION");
 
@@ -439,7 +448,8 @@ public class ChartDriver extends GenericDriver {
 	}
 
 	/**
-	 * Custom method provided for the preparation of the output parameters for the SUNBURST chart type.
+	 * Custom method provided for the preparation of the output parameters for
+	 * the SUNBURST chart type.
 	 *
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
@@ -461,8 +471,10 @@ public class ChartDriver extends GenericDriver {
 	}
 
 	/**
-	 * When the type of the chart document is one of those that should have these default output parameters (listed below), but some of those are not needed (in
-	 * special cases, for types such as WORDCLOUD, PARALLEL and CHORD), remove them from the list of available output parameters.
+	 * When the type of the chart document is one of those that should have
+	 * these default output parameters (listed below), but some of those are not
+	 * needed (in special cases, for types such as WORDCLOUD, PARALLEL and
+	 * CHORD), remove them from the list of available output parameters.
 	 *
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */

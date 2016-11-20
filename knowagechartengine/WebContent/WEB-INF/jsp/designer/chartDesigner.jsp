@@ -40,7 +40,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var userId = '<%=userId%>';
 			var hostName = '<%=request.getServerName()%>';
 			var serverPort = '<%=request.getServerPort()%>';
-			var docLabel = '<%= docLabel %>';			
+			var docLabel = '<%= docLabel %>';
+			var docId = '<%= docId %>';
 			var jsonTemplate = JSON.parse('<%=template.replaceAll("&#39;","\\\\'")%>');
 			var datasetLabel  = '<%=datasetLabel%>'; 
 			

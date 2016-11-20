@@ -1,0 +1,113 @@
+<div layout="row" flex layout-margin>
+	<md-input-container class="md-block" flex=80>
+	<label>{{translate.load("sbi.chartengine.designer.tab.configuration.height")}}</label>
+	<input type="number" step="any" name="height"
+		ng-model="chartTemplate.height" min="0" /> </md-input-container>
+
+	<md-input-container class="md-block" flex=20> <md-select
+		ng-model="chartTemplate.heightDimType"> <md-option
+		ng-repeat="option in dimensionMeasureType" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+</div>
+
+<div layout="row" flex layout-margin>
+	<md-input-container class="md-block" flex=80>
+	 <label>{{translate.load("sbi.chartengine.designer.tab.configuration.width")}}</label>
+	<input type="number" step="any" name="width"
+		ng-model="chartTemplate.width" min="0" /> </md-input-container>
+
+	<md-input-container class="md-block" flex=20> <md-select
+		ng-model="chartTemplate.widthDimType"> <md-option
+		ng-repeat="option in dimensionMeasureType" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+</div>
+
+<div layout="row" flex layout-margin
+	ng-show="selectedChartType == 'bar' || selectedChartType == 'line'">
+
+	<md-input-container class="md-block" flex>
+	 <label>{{translate.load("sbi.chartengine.designer.tab.configuration.orientation")}}</label>
+	<md-select ng-model="chartTemplate.orientation"> <md-option
+		ng-repeat="option in orientationType" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+</div>
+
+<div layout="row" flex layout-margin>
+
+	<md-input-container class="md-block" flex>
+	 <label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontfamily")}}</label>
+		 <md-select ng-model="fontObj.fontFamily"> <md-option
+		ng-repeat="option in fontFamilyOptions" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+</div>
+
+<div layout="row" flex layout-margin>
+
+	<md-input-container class="md-block" flex> 
+	<label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontsize")}}</label>
+		 <md-select ng-model="fontObj.fontSize"> <md-option
+		ng-repeat="option in fontSizeOptions" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+</div>
+
+<div layout="row" flex layout-margin>
+
+	<md-input-container class="md-block" flex>
+	 <label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontstyle")}}</label>
+		 <md-select ng-model="fontObj.fontWeight"> <md-option
+		ng-repeat="option in fontStyleOptions" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+</div>
+
+<div layout="row" flex layout-margin>
+
+	<md-input-container class="md-block colorInputContainer" flex>
+	<label>{{translate.load("sbi.chartengine.designer.tab.configuration.bgcolor")}}</label>
+	 <color-picker
+		color-picker-swatch="true" color-picker-format="'rgb'"
+		ng-model="fontObj.backgroundColor"></color-picker> </md-input-container>
+
+</div>
+
+<div layout="row" flex layout-margin
+	ng-show="selectedChartType == 'bar' || selectedChartType == 'line'">
+
+	<label>{{translate.load("sbi.chartengine.designer.tab.configuration.seriesstacking")}}</label>
+	<md-input-container class="small counter"> <md-checkbox
+		ng-model="chartTemplate.seriesStacking" aria-label="Series stacking"></md-checkbox>
+	</md-input-container>
+</div>
+
+<div layout="row" flex layout-margin
+	ng-show="selectedChartType == 'parallel'">
+
+	<label>{{translate.load("sbi.chartengine.designer.tab.configuration.showtable")}}</label>
+	<md-input-container class="small counter"> <md-checkbox
+		ng-model="chartTemplate.seriesStacking" aria-label="Show table"></md-checkbox>
+	</md-input-container>
+</div>
+
+<div layout="row" flex layout-margin
+	ng-show="selectedChartType == 'sunburst'">
+	<md-input-container class="md-block" flex> 
+	<label>{{translate.load("sbi.chartengine.designer.tab.configuration.opacitymouseover")}}</label>
+		 <input type="number" step="any" name="width"
+		ng-model="chartTemplate.width" min="0" /> </md-input-container>
+</div>
+
+<div layout="row" flex layout-margin
+	ng-show="selectedChartType == 'sunburst'">
+
+	<md-input-container class="md-block" flex> 
+	<label>{{translate.load("sbi.chartengine.designer.tab.configuration.breadcrumbvalue")}}</label>
+		 <md-select ng-model="fontObj.fontWeight">
+	<md-option ng-repeat="option in tooltipBreadcrumbValueType"
+		value="{{option.value}}">{{option.name}}</md-option> </md-select> </md-input-container>
+
+</div>
