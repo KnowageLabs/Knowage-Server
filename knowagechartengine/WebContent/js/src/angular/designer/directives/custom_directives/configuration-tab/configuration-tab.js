@@ -40,7 +40,20 @@ function configurationTabControllerFunction(sbiModule_translate,$scope,sbiModule
 			fontSize:"",
 			fontWeight:"",
 			backgroundColor:"",
-			
+		 };
+ $scope.titleFontObj = {
+			fontFamily:"",
+			fontSize:"",
+			fontWeight:"",
+			color:"",
+			align:""
+		 };
+ $scope.subtitleFontObj = {
+		 	fontFamily:"",
+			fontSize:"",
+			fontWeight:"",
+			color:"",
+			align:""
 		 };
  
  $scope.templateUrls = ChartDesignerData.getTemplateURLs();
@@ -50,6 +63,7 @@ function configurationTabControllerFunction(sbiModule_translate,$scope,sbiModule
  $scope.fontFamilyOptions = ChartDesignerData.getFontFamilyOptions();
  $scope.fontSizeOptions = ChartDesignerData.getFontSizeOptions();
  $scope.fontStyleOptions = ChartDesignerData.getFontStyleOptions();
+ $scope.fontAlignOptions = ChartDesignerData.getAlignTypeOptions();
  $scope.tooltipBreadcrumbValueType = ChartDesignerData.getTooltipBreadcrumbValueTypeOptions();
  
  

@@ -58,6 +58,15 @@ angular.module('ChartDesignerService', [])
 		return data;
 	};
 	
+	this.getAlignTypeOptions = function(){
+		var data = [
+			  {name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.textalignment.left"),value:"left"},
+			  {name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.textalignment.center"),value:"center"},
+			  {name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.textalignment.right"),value:"right"},
+			                               ]                          
+		return data;
+	};
+	
 	this.getFontFamilyOptions = function(){
 		var data = [
            	{name:"Arial",value:"Arial"},
