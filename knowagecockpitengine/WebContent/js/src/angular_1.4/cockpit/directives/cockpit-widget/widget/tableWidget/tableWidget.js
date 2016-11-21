@@ -374,7 +374,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 												
 								if(!currentColumn.hasOwnProperty("visType") || currentColumn.visType=='Text')
 								{										
-									htm="<div>"+value+"</div>"	
+									htm=htm+"<div>"+value+"</div>"	
 								}	
 								
 								if(currentColumn.hasOwnProperty("minValue") && currentColumn.hasOwnProperty("maxValue")) // 	MinValue and MaxValue are present only if you have to display a chart
@@ -389,7 +389,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									{	
 
 
-										htm=htm+" <md-progress-linear-custom flex  style='width:"+currentColumn.chartLength +"px' value="+barValue+" color=\""+  currentColumn.chartColor +"\"> </md-progress-linear-custom>"
+										htm=htm+" <div>&nbsp;</div><md-progress-linear-custom flex  style='width:"+currentColumn.chartLength +"px' value="+barValue+" color=\""+  currentColumn.chartColor +"\"> </md-progress-linear-custom>"
 									}	
 									else if(currentColumn.visType=='Text & Chart')
 									{
@@ -412,6 +412,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								if(currentColumn.scopeFunc && currentColumn.scopeFunc.condition){
 									for(var i=0; i<currentColumn.scopeFunc.condition.length;i++) // display only the first alert found (condition respected)
 									{
+										var lastIter=false;
+										if(i==currentColumn.scopeFunc.condition.length-1){lastIter=true;}
+										
 										var colInfo=currentColumn.scopeFunc.condition[i];
 										if(colInfo.condition!="none")
 										{
@@ -421,7 +424,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 												{	
 													htm=htm+"&nbsp; <md-icon  style='color:"+ currentColumn.scopeFunc.condition[i].iconColor +"'  md-font-icon='"+currentColumn.scopeFunc.condition[i].icon+"'> </md-icon>";
 												}
-												else 
+												else if(lastIter)
 												{
 													htm=htm+"&nbsp; <md-icon md-font-icon='fa fa-fw'></md-icon>"; //blank icon
 												}	
@@ -432,7 +435,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 												{	
 													htm=htm+"&nbsp; <md-icon  style='color:"+ currentColumn.scopeFunc.condition[i].iconColor +"'  md-font-icon='"+currentColumn.scopeFunc.condition[i].icon+"'> </md-icon>";
 												}
-												else 
+												else if(lastIter)
 												{
 													htm=htm+"&nbsp; <md-icon md-font-icon='fa fa-fw'></md-icon>";
 												}	
@@ -443,16 +446,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 												{	
 													htm=htm+"&nbsp; <md-icon  style='color:"+ currentColumn.scopeFunc.condition[i].iconColor +"'  md-font-icon='"+currentColumn.scopeFunc.condition[i].icon+"'> </md-icon>";
 												}
-												else 
+												else if(lastIter)
 												{
 													//htm=htm+"&nbsp; <div style='height:\"24px\"; width:\"24px\";'> </div>";
 													htm=htm+"&nbsp; <md-icon md-font-icon='fa fa-fw'></md-icon>";
 												}	
 											}
 	
-												
+												 
 	
-											break;
+											//break;
 										}
 									}	
 								}	
