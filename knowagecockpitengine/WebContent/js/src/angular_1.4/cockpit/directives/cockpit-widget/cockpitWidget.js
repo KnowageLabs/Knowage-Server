@@ -218,7 +218,14 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 		case "UPDATE_FROM_REALTIME":
 			var ds=$scope.getDataset();
 			if(ds!=undefined && config.dsList.indexOf(ds.label)!=-1){
-				$scope.refreshWidget();
+				/*
+					author: rselakov, Radmila Selakovic,
+					radmila.selakovic@mht.net
+					checking type of widget because of removing load spinner
+					in case of updating charts
+				*/
+			
+				$scope.refreshWidget($scope.ngModel.type);
 			}
 			break;
 		case "PARAMETER_CHANGE":
