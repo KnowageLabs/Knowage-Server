@@ -598,6 +598,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		try {
 			List<ProjectionCriteria> projectionCriteria = new ArrayList<ProjectionCriteria>();
 			List<GroupCriteria> groupCriteria = new ArrayList<GroupCriteria>();
+			Map<String, String> columnAliasToName = new HashMap<String, String>();
 			if (aggregations != null && !aggregations.equals("")) {
 				JSONObject aggregationsObject = new JSONObject(aggregations);
 				JSONArray categoriesObject = aggregationsObject.getJSONArray("categories");
@@ -605,6 +606,9 @@ public class DataSetResource extends AbstractSpagoBIResource {
 
 				projectionCriteria = getProjectionCriteria(label, categoriesObject, measuresObject);
 				groupCriteria = getGroupCriteria(label, categoriesObject, measuresObject);
+
+				loadColumnAliasToName(categoriesObject, columnAliasToName);
+				loadColumnAliasToName(measuresObject, columnAliasToName);
 			}
 
 			List<FilterCriteria> filterCriteria = new ArrayList<FilterCriteria>();
@@ -613,8 +617,8 @@ public class DataSetResource extends AbstractSpagoBIResource {
 				JSONObject selectionsObject = new JSONObject(selections);
 				// in same case object is empty '{}'
 				if (selectionsObject.names() != null) {
-					filterCriteria = getFilterCriteria(label, selectionsObject, false);
-					filterCriteriaForMetaModel = getFilterCriteria(label, selectionsObject, true);
+					filterCriteria = getFilterCriteria(label, selectionsObject, false, columnAliasToName);
+					filterCriteriaForMetaModel = getFilterCriteria(label, selectionsObject, true, columnAliasToName);
 				}
 			}
 
@@ -662,6 +666,17 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
 		} finally {
 			logger.debug("OUT");
+		}
+	}
+
+	protected void loadColumnAliasToName(JSONArray jsonArray, Map<String, String> columnAliasToName) throws JSONException {
+		for (int i = 0; i < jsonArray.length(); i++) {
+			JSONObject category = jsonArray.getJSONObject(i);
+			String alias = category.optString("alias");
+			String columnName = category.optString("columnName");
+			if (alias != null && !alias.isEmpty() && columnName != null && !columnName.isEmpty()) {
+				columnAliasToName.put(alias, columnName);
+			}
 		}
 	}
 
@@ -808,7 +823,8 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		return groupCriterias;
 	}
 
-	protected List<FilterCriteria> getFilterCriteria(String dataset, JSONObject selectionsObject, boolean isRealtime) throws JSONException {
+	protected List<FilterCriteria> getFilterCriteria(String dataset, JSONObject selectionsObject, boolean isRealtime, Map<String, String> columnAliasToName)
+			throws JSONException {
 		List<FilterCriteria> filterCriterias = new ArrayList<FilterCriteria>();
 
 		JSONObject datasetSelectionObject = selectionsObject.getJSONObject(dataset);

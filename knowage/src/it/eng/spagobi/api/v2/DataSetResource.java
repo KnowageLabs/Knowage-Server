@@ -493,7 +493,8 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 	}
 
 	@Override
-	protected List<FilterCriteria> getFilterCriteria(String datasetLabel, JSONObject selectionsObject, boolean isRealtime) throws JSONException {
+	protected List<FilterCriteria> getFilterCriteria(String datasetLabel, JSONObject selectionsObject, boolean isRealtime, Map<String, String> columnAliasToName)
+			throws JSONException {
 		List<FilterCriteria> filterCriterias = new ArrayList<FilterCriteria>();
 
 		IDataSetDAO dsDAO;
@@ -513,10 +514,11 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 			while (!isAnEmptySelection && it.hasNext()) {
 				String columns = it.next();
 				JSONArray values = datasetSelectionObject.getJSONArray(columns);
+				String columnNames = replaceColumnAliasesWithNames(columns, columnAliasToName);
 				if (values.length() > 0) {
 					if (isRealtime && !dataSet.isFlatDataset() && !(dataSet.isPersisted() && !dataSet.isPersistedHDFS())) {
 						String defaultTableNameDot = DataStore.DEFAULT_TABLE_NAME + ".";
-						String[] columnsArray = columns.split(",");
+						String[] columnsArray = columnNames.split(",");
 						Operand leftOperand = new Operand(defaultTableNameDot + AbstractJDBCDataset.encapsulateColumnName(columnsArray[0], null));
 						for (int i = 0; i < values.length(); i++) {
 							String currentValues = values.getString(i);
@@ -549,7 +551,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 						for (int i = 0; i < values.length(); i++) {
 							valuesList.add(values.getString(i));
 						}
-						Operand leftOperand = new Operand(columns);
+						Operand leftOperand = new Operand(columnNames);
 						Operand rightOperand = new Operand(valuesList);
 						FilterCriteria filterCriteria = new FilterCriteria(leftOperand, "IN", rightOperand);
 						filterCriterias.add(filterCriteria);
@@ -568,6 +570,15 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		}
 
 		return filterCriterias;
+	}
+
+	private String replaceColumnAliasesWithNames(String columns, Map<String, String> columnAliasToName) {
+		if (columnAliasToName != null) {
+			for (String alias : columnAliasToName.keySet()) {
+				columns = columns.replace(alias, columnAliasToName.get(alias));
+			}
+		}
+		return columns;
 	}
 
 	@POST

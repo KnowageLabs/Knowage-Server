@@ -203,6 +203,9 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 			if(newItem.selection==undefined){
 				newItem.selection={};
 			}
+			if(newItem.originalSelection==undefined){
+				newItem.originalSelection={};
+			}
 			if(newItem.frequency==undefined){
 				var minFreq={value:-1};
 				angular.forEach(newItem.datasets,function(ds){
@@ -295,7 +298,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 	
 	
 	
-	this.getAssociativeSelections = function(column,columnName,datasetLabel){
+	this.getAssociativeSelections = function(column,columnName,datasetLabel,originalColumnName){
 		var defer = $q.defer();
 		
 		//check if all associated widget are loaded
@@ -367,10 +370,11 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 		}
 		
 		
-		var key = datasetLabel+"."+columnName
+		var key = datasetLabel+"."+columnName;
+		var originalKey = datasetLabel+"."+originalColumnName;
 		var array = [];
 		array.push(column);
-		ws.addValueToSelection(key , array, datasetLabel);
+		ws.addValueToSelection(key , array, datasetLabel, originalKey);
 		this.loadAssociativeSelection(defer,ws.getDatasetAssociation(datasetLabel));
 		defer.promise.then(function(){
 			
@@ -384,11 +388,11 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 
 	}
 	
-	this.addValueToSelection = function(key, value, dsLabel){
+	this.addValueToSelection = function(key, value, dsLabel,originalKey){
 		for(var i=0;i<cockpitModule_template.configuration.aggregations.length ; i++){
 			if(cockpitModule_template.configuration.aggregations[i].datasets.indexOf(dsLabel)!=-1){
 				cockpitModule_template.configuration.aggregations[i].selection[key] = value;
-
+				cockpitModule_template.configuration.aggregations[i].originalSelection[originalKey] = value;
 			}
 		}
 
@@ -473,7 +477,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 			return;
 		}
 		
-		var dsSel=ws.getSelection(ass.datasets);
+		var dsSel=ws.getOriginalSelection(ass.datasets);
 		if(Object.keys(dsSel).length>0){
 			var selection = encodeURIComponent(JSON.stringify(dsSel))
 			.replace(/'/g,"%27")
@@ -525,6 +529,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 		}
 		return -1;
 	}
+	
 	this.getSelectionByDsLabel =function(label){
 		for(var j=0;j<cockpitModule_widgetSelectionUtils.associations.length;j++){
 			if(cockpitModule_widgetSelectionUtils.associations[j].datasets.indexOf(label) != -1){
@@ -533,10 +538,20 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 		}
 		return {};
 	}
+	
 	this.getSelection = function(associations){
 		for(var i = 0;i<cockpitModule_template.configuration.aggregations.length;i++){
 			if(angular.equals(cockpitModule_template.configuration.aggregations[i].datasets, associations)){
 				return cockpitModule_template.configuration.aggregations[i].selection;
+			}
+		}
+		return {};
+	}
+	
+	this.getOriginalSelection = function(associations){
+		for(var i = 0;i<cockpitModule_template.configuration.aggregations.length;i++){
+			if(angular.equals(cockpitModule_template.configuration.aggregations[i].datasets, associations)){
+				return cockpitModule_template.configuration.aggregations[i].originalSelection;
 			}
 		}
 		return {};

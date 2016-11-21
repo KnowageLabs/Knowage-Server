@@ -405,7 +405,15 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 		}	
 		//check if all associated data
 		var dsLabel=$scope.getDataset().label;
-		var sel=cockpitModule_widgetSelection.getAssociativeSelections(columnValue,columnName,dsLabel);
+		
+		var originalColumnName;
+        for(var i=0; i<$scope.ngModel.content.columnSelectedOfDataset.length; i++){
+        	if($scope.ngModel.content.columnSelectedOfDataset[i].aliasToShow == columnName){
+        		originalColumnName = $scope.ngModel.content.columnSelectedOfDataset[i].alias;
+        	}
+        }
+		
+		var sel=cockpitModule_widgetSelection.getAssociativeSelections(columnValue,columnName,dsLabel,originalColumnName);
 		if(sel!=undefined){
 			if(!angular.equals("noAssoc",sel)){
 				sel.then(function(response) {
