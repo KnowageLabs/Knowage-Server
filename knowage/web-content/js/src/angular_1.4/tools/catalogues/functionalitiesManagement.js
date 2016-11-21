@@ -226,8 +226,8 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 		{
 			label :  sbiModule_translate.load("sbi.folder.delete"),
 			icon : 'fa fa-trash',
-			action : function(item, event) {
-				$scope.deleteFunct(item.id);
+			action : function(item, parent, event) {
+				$scope.confirmDelete(item,event);
 			},
 			showItem : function (item){
 				
@@ -449,7 +449,22 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 					sbiModule_translate.load("sbi.general.continue")).cancel(
 					sbiModule_translate.load("sbi.general.cancel"));
 
-
+	
+	$scope.confirmDelete = function(item,ev) {
+		var confirm = $mdDialog.confirm()
+			.title(sbiModule_translate.load("sbi.catalogues.toast.confirm.title"))
+			.content(sbiModule_translate.load("sbi.catalogues.toast.confirm.content"))
+			.ariaLabel("confirm_delete")
+			.targetEvent(ev)
+			.ok(sbiModule_translate.load("sbi.general.continue"))
+			.cancel(sbiModule_translate.load("sbi.general.cancel"));
+		$mdDialog.show(confirm).then(function() {
+			$scope.deleteFunct(item.id);
+	    }, function() {
+	
+	    });
+	};
+	  
 	$scope.loadFolder = function(item) {  
 		for(var i=0; i<$scope.folders.length; i++){
 			$scope.folders[i].expanded=true;	 

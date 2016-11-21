@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.api.v2;
 
+import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
@@ -467,6 +468,10 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 			iLowFunctionalityDAO.eraseLowFunctionality(lowFunctionality, getUserProfile());
 
 			return Response.ok().build();
+		} catch (EMFUserError eMFUserError) {
+			String errorString = eMFUserError.getDescription();
+			logger.error(errorString, eMFUserError);
+			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), eMFUserError);
 		} catch (Exception e) {
 			e.printStackTrace();
 			String errorString = "sbi.folder.delete.error";
