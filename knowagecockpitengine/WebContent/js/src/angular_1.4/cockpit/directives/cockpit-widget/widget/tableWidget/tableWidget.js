@@ -134,36 +134,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 		
 		$scope.selectRow=function(row,column,listId,index,evt,columnName){
-			
 			for(var i=0;i<$scope.ngModel.content.columnSelectedOfDataset.length;i++){
-				
 				if($scope.ngModel.content.modalselectioncolumn!=undefined)
 				{
-
-
-							if($scope.ngModel.content.columnSelectedOfDataset[i].aliasToShow==$scope.ngModel.content.modalselectioncolumn)
-							{
-								var columnChoosenAlias=$scope.ngModel.content.columnSelectedOfDataset[i].alias;
-								var newValue=row[columnChoosenAlias]
-							}
-					
+					if($scope.ngModel.content.columnSelectedOfDataset[i].aliasToShow==$scope.ngModel.content.modalselectioncolumn)
+					{
+						var newValue=row[$scope.ngModel.content.modalselectioncolumn]
+					}
 				}	
 				
 				if(angular.equals($scope.ngModel.content.columnSelectedOfDataset[i].aliasToShow,columnName)){
-					if($scope.ngModel.content.columnSelectedOfDataset[i].fieldType=="MEASURE")
-					{
+					if($scope.ngModel.content.columnSelectedOfDataset[i].fieldType=="MEASURE"
+							|| $scope.ngModel.content.columnSelectedOfDataset[i].isCalculated){
 						return;
-					}
-					else
-					{
-							if($scope.ngModel.content.columnSelectedOfDataset[i].isCalculated){
-								return;
-							}
 					}	
 				}
 			}
-
-
 			$scope.doSelection(columnName,column,$scope.ngModel.content.modalselectioncolumn,newValue);
 		}
 		
