@@ -389,7 +389,7 @@ function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,model,s
 	$scope.selectedColumn = angular.copy(selectedColumn);
 	$scope.fontWeight = ['normal','bold','bolder','lighter','number','initial','inherit'];
 	$scope.colorPickerProperty={placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb'}
-	$scope.visTypes=['Chart','Text','Chart & Text', 'Text & Chart'];
+	$scope.visTypes=['Chart','Text','Chart & Text', 'Text & Chart','Icon only'];
 	
 	if(!$scope.selectedColumn.hasOwnProperty('colorThresholdOptions'))
 	{	
