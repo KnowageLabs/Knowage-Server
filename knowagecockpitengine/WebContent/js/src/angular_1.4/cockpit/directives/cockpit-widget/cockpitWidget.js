@@ -295,11 +295,14 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 	}
 	
 	$scope.updateFromSelection = function(isInit,associativeSelection){
+		var dataset= $scope.getDataset();
 		if($scope.ngModel.updateble==false){
+			if(dataset && $scope.cockpitModule_properties.DS_IN_CACHE.indexOf(dataset.label)==-1){
+				$scope.cockpitModule_properties.DS_IN_CACHE.push(dataset.label);
+			}
 			console.log("widget is not updateble")
 			return;
 		}
-		var dataset= $scope.getDataset();
 		var document= $scope.getDocument();
 		if(dataset != undefined && cockpitModule_widgetSelection.getCurrentSelections(dataset.label)!=undefined){
 				if(isInit){
@@ -330,11 +333,14 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 	}
 	
 	$scope.updateFromDatasetFilter=function(label){
+		var dataset= $scope.getDataset();
 		if($scope.ngModel.updateble==false){
+			if(dataset && $scope.cockpitModule_properties.DS_IN_CACHE.indexOf(dataset.label)==-1){
+				$scope.cockpitModule_properties.DS_IN_CACHE.push(dataset.label);
+			}
 			console.log("widget is not updateble")
 			return;
 		}
-		var dataset= $scope.getDataset();
 		if(dataset != undefined && 
 			(
 				(angular.isArray(label) && label.indexOf(dataset.label)!=-1)
