@@ -121,6 +121,53 @@
         box-shadow:1px 1px 3px 2px; 
         background-color: $tooltipBackgroundColor;
     }
+
+    /*dynamicSvg classes */
+    .graph {
+    	position:absolute;
+    	width: 300px;
+    	cursor:pointer;
+    	border-radius:10px;
+    	&:hover {
+    		background-color:rgba(240,240,240,.2);
+    	}
+    	canvas {
+    		position: absolute;
+    		bottom: 8px;
+    	}
+    }
+    #graphLegend {
+    	box-shadow: 0px 3px 5px #ccc;
+    	border:1px solid #ccc; 
+    	position: absolute;
+    	top: 0;
+    	right: 0; 
+    	background-color:rgba(240,240,255,.8);
+    	margin:20px;
+    	 width: 200px; 
+    	min-height: 50px; 
+    	display: flex;
+    	flex-direction:column;
+    	.graphLabel{
+    		padding: 5px;
+    		font-family: sans-serif;
+    		font-size: 12px;
+    		font-weight: 600;
+    		display: flex;
+		    flex-direction: row;
+		    justify-content: space-between;
+		    align-items: center;
+		    .graphSpan {
+		    	text-transform:uppercase;
+		    }
+			.graphColor{
+				width:50px; 
+				height:10px;    
+				border: 1px solid white;
+    			border-radius: 20px;
+    		}
+		}
+    }	
 }
 
 

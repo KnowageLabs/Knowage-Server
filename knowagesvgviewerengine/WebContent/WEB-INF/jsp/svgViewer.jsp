@@ -34,8 +34,6 @@
 		<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/svgviewer/directives/dynamicSvg.js"></script>
 	
 		<title>SVG Viewer</title>
-	<style>.graph{position:absolute;width: 300px;}
-		.graph canvas{position: absolute; bottom:0;}</style>
 	</head>
 
 	
@@ -119,8 +117,10 @@
 								width='100%'; height='100%'; frameborder="0" > 
 							</iframe>  
 								<div id="dynamic-svg"></div> 
+								<div id="graphLegend"></div>
 							<% if (isCustomizedSVG) {%>
 								<div id="dynamic-svg"></div> 
+								
 							<% } %>
 					    </div> 
 			         </md-content>

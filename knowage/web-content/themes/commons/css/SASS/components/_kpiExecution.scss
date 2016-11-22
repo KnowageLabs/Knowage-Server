@@ -1,5 +1,29 @@
 .kn-kpiExecution {
 	background-color: $detailBackground;
+	.kpiColorValue, .singleKpiColorValue{
+		.kpiColorBox {
+			margin: 0 4px;
+			width: 24px;
+			height: 24px;
+			.fa {
+				color: white;
+				text-align: center;
+			}
+			&.greyKpi {
+				color: red;
+				background-color: $kpiGreyColor;
+			}
+			&.redKpi {
+				background-color: $kpiRedColor;
+			}
+			&.greenKpi {
+				background-color: $kpiGreenColor;
+			}
+			&.yellowKpi {
+				background-color: $kpiYellowColor;
+			}
+		}
+	}
 	md-card {
 		.md-headline {
 			margin-left: 8px;
