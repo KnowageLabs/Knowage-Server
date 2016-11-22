@@ -410,6 +410,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 								}
 								if(currentColumn.scopeFunc && currentColumn.scopeFunc.condition){
+									var alreadyPutIcon=false;
 									for(var i=0; i<currentColumn.scopeFunc.condition.length;i++) // display only the first alert found (condition respected)
 									{
 										var lastIter=false;
@@ -420,36 +421,52 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										{
 											if(colInfo.condition=='<')
 											{	
-												if(parseFloat(value)<colInfo.value)
+												if(!alreadyPutIcon)
 												{	
-													htm=htm+"&nbsp; <md-icon  style='color:"+ currentColumn.scopeFunc.condition[i].iconColor +"'  md-font-icon='"+currentColumn.scopeFunc.condition[i].icon+"'> </md-icon>";
-												}
-												else if(lastIter)
-												{
-													htm=htm+"&nbsp; <md-icon md-font-icon='fa fa-fw'></md-icon>"; //blank icon
+													if(parseFloat(value)<colInfo.value)
+													{	
+														htm=htm+"&nbsp; <md-icon  style='color:"+ currentColumn.scopeFunc.condition[i].iconColor +"'  md-font-icon='"+currentColumn.scopeFunc.condition[i].icon+"'> </md-icon>";
+														alreadyPutIcon=true;
+													}
+													else if(lastIter)
+													{
+														htm=htm+"&nbsp; <md-icon md-font-icon='fa fa-fw'></md-icon>"; //blank icon
+													}	
 												}	
 											}
 											else if(colInfo.condition=='>')
 											{	
-												if(parseFloat(value)>colInfo.value)
+												if(!alreadyPutIcon)
 												{	
-													htm=htm+"&nbsp; <md-icon  style='color:"+ currentColumn.scopeFunc.condition[i].iconColor +"'  md-font-icon='"+currentColumn.scopeFunc.condition[i].icon+"'> </md-icon>";
-												}
-												else if(lastIter)
-												{
-													htm=htm+"&nbsp; <md-icon md-font-icon='fa fa-fw'></md-icon>";
+
+													if(parseFloat(value)>colInfo.value)
+													{	
+														htm=htm+"&nbsp; <md-icon  style='color:"+ currentColumn.scopeFunc.condition[i].iconColor +"'  md-font-icon='"+currentColumn.scopeFunc.condition[i].icon+"'> </md-icon>";
+														alreadyPutIcon=true;
+
+													}
+													else if(lastIter)
+													{
+														htm=htm+"&nbsp; <md-icon md-font-icon='fa fa-fw'></md-icon>";
+													}	
 												}	
 											}
 											else if(colInfo.condition=='=')
 											{
-												if(parseFloat(value)==colInfo.value)
+												if(!alreadyPutIcon)
 												{	
-													htm=htm+"&nbsp; <md-icon  style='color:"+ currentColumn.scopeFunc.condition[i].iconColor +"'  md-font-icon='"+currentColumn.scopeFunc.condition[i].icon+"'> </md-icon>";
-												}
-												else if(lastIter)
-												{
-													//htm=htm+"&nbsp; <div style='height:\"24px\"; width:\"24px\";'> </div>";
-													htm=htm+"&nbsp; <md-icon md-font-icon='fa fa-fw'></md-icon>";
+
+													if(parseFloat(value)==colInfo.value)
+													{	
+														htm=htm+"&nbsp; <md-icon  style='color:"+ currentColumn.scopeFunc.condition[i].iconColor +"'  md-font-icon='"+currentColumn.scopeFunc.condition[i].icon+"'> </md-icon>";
+														alreadyPutIcon=true;
+
+													}
+													else if(lastIter)
+													{
+														//htm=htm+"&nbsp; <div style='height:\"24px\"; width:\"24px\";'> </div>";
+														htm=htm+"&nbsp; <md-icon md-font-icon='fa fa-fw'></md-icon>";
+													}	
 												}	
 											}
 	
