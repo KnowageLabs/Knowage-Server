@@ -86,7 +86,11 @@ function configurationTabControllerFunction(sbiModule_translate,$scope,sbiModule
 		 order:"",
 		 value:""
  }
- 
+ $scope.colorPickerOptions = {
+		 format:'rgb',
+		 swatch: true,
+		 swatchPos: 'right'
+ }
  $scope.presetColors = Object.keys($mdColorPalette);
  $scope.colors = $scope.chartTemplate.COLORPALETTE.COLOR;
  
