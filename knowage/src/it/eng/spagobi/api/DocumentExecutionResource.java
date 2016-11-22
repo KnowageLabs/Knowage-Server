@@ -81,6 +81,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -403,9 +404,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 	/**
 	 * @return { filterStatus: [{ title: 'Provincia', urlName: 'provincia', type: 'list', lista:[[k,v],[k,v], [k,v]] }, { title: 'Comune', urlName: 'comune',
-	 *         type: 'list', lista:[], dependsOn: 'provincia' }, { title: 'Free Search', type: 'manual', urlName: 'freesearch' }],
-	 *
-	 *         errors: [ 'role missing', 'operation not allowed' ] }
+	 *         type: 'list', lista:[], dependsOn: 'provincia' }, { title: 'Free Search', type: 'manual', urlName: 'freesearch' }], errors: [ 'role missing',
+	 *         'operation not allowed' ] }
 	 * @throws EMFUserError
 	 * @throws JSONException
 	 * @throws IOException
@@ -423,7 +423,26 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
 		String label = requestVal.getString("label");
 		String role = requestVal.getString("role");
-		JSONObject jsonParameters = requestVal.getJSONObject("parameters");
+		JSONObject jsonCrossParameters = requestVal.getJSONObject("parameters");
+
+		Map<String, JSONObject> sessionParametesMap = new HashMap<String, JSONObject>();
+
+		try {
+			Object jsonSessionParametersObject = requestVal.get("sessionParameters");
+			JSONObject sessionParametersJSON = new JSONObject(jsonSessionParametersObject.toString());
+
+			Iterator<String> it = sessionParametersJSON.keys();
+			while (it.hasNext()) {
+				String key = it.next();
+				JSONObject parJson = sessionParametersJSON.getJSONObject(key);
+				sessionParametesMap.put(key, parJson);
+				// String parName = parJson.getString("name");
+				// String parValue = parJson.getString("value");
+				// sessionParametesMap.put(parName, parValue);
+			}
+		} catch (Exception e) {
+			logger.error("Error converting session parameters to JSON: ", e);
+		}
 
 		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
 
@@ -454,13 +473,37 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			parameterAsMap.put("visible", ((objParameter.isVisible())));
 			parameterAsMap.put("mandatory", ((objParameter.isMandatory())));
 			parameterAsMap.put("multivalue", objParameter.isMultivalue());
+			parameterAsMap.put("driverLabel", objParameter.getPar().getLabel());
+			parameterAsMap.put("driverUseLabel", objParameter.getAnalyticalDriverExecModality().getLabel());
 
 			parameterAsMap
 					.put("allowInternalNodeSelection", objParameter.getPar().getModalityValue().getLovProvider().contains("<LOVTYPE>treeinner</LOVTYPE>"));
 
-			if (jsonParameters.has(objParameter.getId())) {
-				documentUrlManager.refreshParameterForFilters(objParameter.getAnalyticalDocumentParameter(), jsonParameters);
+			// check for cross Parameter Value
+			if (jsonCrossParameters.has(objParameter.getId())) {
+				documentUrlManager.refreshParameterForFilters(objParameter.getAnalyticalDocumentParameter(), jsonCrossParameters);
 				parameterAsMap.put("parameterValue", objParameter.getAnalyticalDocumentParameter().getParameterValues());
+			}
+
+			// check for session parameter
+			boolean sessionParameterValuePresent = false;
+			String sessionParameterValue = null;
+			String sessionParameterDescription = null;
+			JSONObject sessionValue = sessionParametesMap.get(objParameter.getPar().getLabel() + "_"
+					+ objParameter.getAnalyticalDriverExecModality().getLabel());
+			if (sessionValue != null) {
+				if (sessionValue.optString("value") != null) {
+
+					String value = sessionValue.optString("value");
+					String description = sessionValue.optString("description");
+
+					sessionParameterValue = value;
+					sessionParameterDescription = description;
+
+					parameterAsMap.put("parameterValue", value);
+
+					sessionParameterValuePresent = true;
+				}
 			}
 
 			boolean showParameterLov = true;
@@ -570,11 +613,22 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			parameterAsMap.put("visualDependencies", objParameter.getVisualDependencies());
 			parameterAsMap.put("lovDependencies", (objParameter.getLovDependencies() != null) ? objParameter.getLovDependencies() : new ArrayList<>());
 
-			// load DEFAULT VALUE if present and if the parameter value is empty
-			if (objParameter.getDefaultValues() != null && objParameter.getDefaultValues().size() > 0) {
+			// load DEFAULT VALUE if present and if the parameter value is empty both because there is no cross and because there is no session parameter
+			if ((objParameter.getDefaultValues() != null && objParameter.getDefaultValues().size() > 0) || sessionParameterValuePresent) {
 				DefaultValuesList valueList = null;
-				if (jsonParameters.isNull(objParameter.getId())) {
-					valueList = buildDefaultValueList(objParameter, permanentSession);
+				if (jsonCrossParameters.isNull(objParameter.getId())) {
+
+					if (sessionParameterValuePresent) {
+					
+						logger.debug("Session parameter case");
+						valueList = buildParameterSessionValueList(sessionParameterValue, sessionParameterDescription, objParameter); // sostituisci i valori in
+
+					} else {
+						
+						logger.debug("Default value case");
+						valueList = buildDefaultValueList(objParameter, permanentSession);
+					}
+
 					if (valueList != null) {
 						parameterAsMap.put("parameterValue", valueList);
 					}
@@ -1226,6 +1280,102 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			return objParameter.getDefaultValues();
 		}
 
+	}
+
+	private DefaultValuesList buildParameterSessionValueList(String sessionParameterValue, String sessionParameterDescription, DocumentParameters objParameter) {
+
+		logger.debug("IN");
+
+		DefaultValuesList valueList = new DefaultValuesList();
+
+		SimpleDateFormat serverDateFormat = new SimpleDateFormat(SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"));
+
+		if (objParameter.getParType() != null && objParameter.getParType().equals("DATE")) {
+			String valueDate = sessionParameterValue;
+
+			String[] date = valueDate.split("#");
+			SimpleDateFormat format = new SimpleDateFormat(date[1]);
+			DefaultValue valueDef = new DefaultValue();
+			try {
+				Date d = format.parse(date[0]);
+				String dateServerFormat = serverDateFormat.format(d);
+				valueDef.setValue(dateServerFormat);
+				valueDef.setDescription(sessionParameterDescription);
+				valueList.add(valueDef);
+				return valueList;
+			} catch (ParseException e) {
+				logger.error("Error while building defalt Value List Date Type ", e);
+				return null;
+			}
+		} else if (objParameter.getParType() != null && objParameter.getParType().equals("DATE_RANGE")) {
+			// String valueDate = objParameter.getDefaultValues().get(0).getValue().toString();
+			String valueDate = sessionParameterValue;
+			String[] date = valueDate.split("#");
+			SimpleDateFormat format = new SimpleDateFormat(date[1]);
+			DefaultValue valueDef = new DefaultValue();
+			try {
+
+				String dateRange = date[0];
+				String[] dateRangeArr = dateRange.split("_");
+				String range = dateRangeArr[dateRangeArr.length - 1];
+				dateRange = dateRange.replace("_" + range, "");
+				Date d = format.parse(dateRange);
+				String dateServerFormat = serverDateFormat.format(d);
+				valueDef.setValue(dateServerFormat + "_" + range);
+				valueDef.setDescription(sessionParameterDescription);
+				valueList.add(valueDef);
+				return valueList;
+			} catch (ParseException e) {
+				logger.error("Error while building defalt Value List Date Type ", e);
+				return null;
+			}
+		}
+
+		else if (objParameter.isMultivalue()) {
+			logger.debug("Multivalue case");
+			try {
+				// split sessionValue
+				JSONArray valuesArray = new JSONArray(sessionParameterValue);
+				StringTokenizer st = new StringTokenizer(sessionParameterDescription, ";", false);
+
+				ArrayList<String> values = new ArrayList<String>();
+				ArrayList<String> descriptions = new ArrayList<String>();
+
+				int i = 0;
+				while (st.hasMoreTokens()) {
+					String parDescription = st.nextToken();
+					descriptions.add(i, parDescription);
+					i++;
+				}
+
+				for (int j = 0; j < valuesArray.length(); j++) {
+					String value = (String) valuesArray.get(j);
+					values.add(value);
+				}
+
+				for (int z = 0; z < values.size(); z++) {
+					String parValue = values.get(z);
+					String parDescription = descriptions.get(z);
+					DefaultValue valueDef = new DefaultValue();
+					valueDef.setValue(parValue);
+					valueDef.setDescription(parDescription);
+					valueList.add(valueDef);
+				}
+
+			} catch (Exception e) {
+				logger.error("Error in converting multivalue session values", e);
+			}
+
+		} else {
+			logger.debug("NOT - multivalue case");
+			DefaultValue valueDef = new DefaultValue();
+			valueDef.setValue(sessionParameterValue);
+			valueDef.setDescription(sessionParameterDescription);
+			valueList.add(valueDef);
+		}
+
+		logger.debug("OUT");
+		return valueList;
 	}
 
 	private String convertDate(String dateFrom, String dateTo, String dateStr) {

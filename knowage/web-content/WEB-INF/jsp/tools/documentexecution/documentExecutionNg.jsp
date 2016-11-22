@@ -47,6 +47,8 @@ String cockpitSelections = null;
 // author: danristo
 String executedFrom = null;
 
+boolean isFromCross = false;
+
 try{
 	profile = (IEngUserProfile)permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);	
 		
@@ -76,6 +78,13 @@ try{
 	}
 	
 	cockpitSelections = (String)(request.getParameter(SpagoBIConstants.COCKPIT_SELECTIONS));
+	
+
+	Object crossParameters = request.getParameter("CROSS_PARAMETER");
+	if(crossParameters != null && crossParameters != "" && !crossParameters.toString().equalsIgnoreCase("null")){
+		isFromCross = true;
+	}
+	
 	
 	/*if(obj == null 
 			&& (
@@ -126,6 +135,13 @@ if(executionRoleNames.size() > 0) {
 %>
 	<head>
 		<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
+		
+		  <%-- ---------------------------------------------------------------------- --%>
+<%-- INCLUDE Persist JS                                                     --%>
+<%-- ---------------------------------------------------------------------- --%>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/persist-0.1.0/persist.js"></script>
+    
+		
 		<!-- Styles -->
 		<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css"> 
 		<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/commons/component-tree/componentTree.js")%>"></script>
@@ -421,7 +437,7 @@ if(executionRoleNames.size() > 0) {
 						'EDIT_MODE' : '<%= request.getParameter("EDIT_MODE") %>',
 						'OBJECT_NAME' : '<%= obj.getName() %>',
 						'OBJECT_TYPE_CODE' : '',
-						'isFromCross' : false,
+						'isFromCross' : <%=isFromCross%>,
 						'isPossibleToComeBackToRolePage' : false,
 						'SBI_EXECUTION_ID' : '',
 						'CROSS_PARAMETER' : crossParams,

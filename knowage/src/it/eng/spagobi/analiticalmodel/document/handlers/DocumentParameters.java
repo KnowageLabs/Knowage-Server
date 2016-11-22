@@ -429,6 +429,14 @@ public class DocumentParameters {
 		this.analyticalDriver = par;
 	}
 
+	public ParameterUse getAnalyticalDriverExecModality() {
+		return analyticalDriverExecModality;
+	}
+
+	public void setAnalyticalDriverExecModality(ParameterUse modality) {
+		this.analyticalDriverExecModality = modality;
+	}
+
 	public String getParType() {
 		return parType;
 	}

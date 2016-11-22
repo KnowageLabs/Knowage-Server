@@ -29,7 +29,7 @@ myApp.controller('menuCtrl', ['$scope','$mdDialog',
 	}
 ]);
 
-myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModule_messaging', 'sbiModule_translate', 'sbiModule_download', '$filter', function($window,$http, $mdDialog, $mdToast, sbiModule_messaging, sbiModule_translate, sbiModule_download, $filter) {
+myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModule_messaging', 'sbiModule_translate', 'sbiModule_download', '$filter', 'sbiModule_config', function($window,$http, $mdDialog, $mdToast, sbiModule_messaging, sbiModule_translate, sbiModule_download, $filter, sbiModule_config) {
     return {
 
         restrict: 'E',
@@ -395,6 +395,26 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 			}
 			
 			
+			$scope.resetSessionObjects = function() {
+				try {
+					var STORE_NAME = sbiModule_config.sessionParametersStoreName;
+					var PARAMETER_STATE_OBJECT_KEY = sbiModule_config.sessionParametersStateKey; 
+					
+					var store = new Persist.Store(STORE_NAME, {
+						swf_path: sbiModule_config.contextName + '/js/lib/persist-0.1.0/persist.swf'
+						});
+
+					//if (sbiModule_config.isStatePersistenceEnabled) {
+						store.set(PARAMETER_STATE_OBJECT_KEY, angular.toJson({}));
+					//}
+					
+				} catch (err) {
+					console.error("Error in deleting parameters data from session");
+				}
+			}
+			
+			
+			
 			$scope.menuCall = function menuCall(url,type){
 				if (type == 'execDirectUrl'){
 					//custom fix to launch datasets in a new page. Please change after angular version is on
@@ -409,13 +429,19 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 				} else if (type == 'roleSelection'){
 					$scope.roleSelection();
 				} else if (type =="execUrl"){
-					$scope.execUrl(url)
+					
+					// if it s logout clean parameters cached in session
+					if(url.indexOf("LOGOUT_ACTION") !== -1){   
+						$scope.resetSessionObjects();
+					}
+					
+					$scope.execUrl(url);
 				} else if (type == "externalUrl"){
 					$scope.externalUrl(url)
 				} else if (type == "info"){
 					$scope.info();
 				} else if (type == "callExternalApp"){
-					$scope.callExternalApp(url)
+					$scope.callExternalApp(url);
 				} else if (type == "goHome"){
 					$scope.goHome(url);
 				} else if (type == "languageSelection"){

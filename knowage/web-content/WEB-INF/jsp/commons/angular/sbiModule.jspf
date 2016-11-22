@@ -1,5 +1,7 @@
 
 
+<%@page import="it.eng.spagobi.commons.SingletonConfig"%>
+<%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
 <script>
 var sbiM=angular.module('sbiModule',["toastr","ngSanitize"]);
 
@@ -37,6 +39,12 @@ sbiM.factory('sbiModule_config',function(){
 		clientServerTimestampFormat: '<%= GeneralUtilities.getServerTimestampFormatExtJs() %>',   // the timestamp format to be used when communicating with server
 		engineUrls:<%= aServiceResponse.getAttribute("engineUrls") %>,
 		serverDateFormat: '<%= GeneralUtilities.getServerDateFormat() %>',
+		sessionParametersStoreName: '<%= SpagoBIConstants.SESSION_PARAMETERS_STORE_NAME %>',
+        sessionParametersStateKey: '<%= SpagoBIConstants.SESSION_PARAMETER_STATE_OBJECT_KEY %>',
+        isStatePersistenceEnabled: <%= SingletonConfig.getInstance().getConfigValue("SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled")  %>,
+        
+                
+        
 		<%-- <%if(parametersStatePersistenceEnabled != null) {%> --%>
 		<%-- isParametersStatePersistenceEnabled: <%= Boolean.valueOf(parametersStatePersistenceEnabled) %>, --%>
 		<%-- <%}%> --%>

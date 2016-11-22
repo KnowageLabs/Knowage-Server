@@ -17,7 +17,7 @@
  */
 
 
-var myApp = angular.module('menuApp', ['ngMaterial','ngAria']);
+var myApp = angular.module('menuApp', ['ngMaterial','ngAria', 'sbiModule']);
 
 
 myApp.controller('menuCtrl', ['$scope','$mdDialog',
@@ -34,7 +34,9 @@ myApp.controller('menuCtrl', ['$scope','$mdDialog',
     }]);
 
 
-myApp.directive('menuAside', ['$http','$mdDialog', function($http,$mdDialog) {
+myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config'
+                              			, function($http,$mdDialog,sbiModule_config
+                              					) {
     return {
         restrict: 'E',
         templateUrl: Sbi.config.contextName+"/js/src/angular_1.4/menu/templates/menuBar.html",
@@ -198,12 +200,38 @@ myApp.directive('menuAside', ['$http','$mdDialog', function($http,$mdDialog) {
 			}
 			
 			
+			$scope.resetSessionObjects = function() {
+				try {
+					var STORE_NAME = sbiModule_config.sessionParametersStoreName;
+					var PARAMETER_STATE_OBJECT_KEY = sbiModule_config.sessionParametersStateKey; 
+
+					
+					//if (sbiModule_config.isStatePersistenceEnabled) {
+					
+						var store = new Persist.Store(STORE_NAME, {
+							swf_path: sbiModule_config.contextName + '/js/lib/persist-0.1.0/persist.swf'
+							});
+						
+						store.set(PARAMETER_STATE_OBJECT_KEY, angular.toJson({}));
+					//}
+					
+				} catch (err) {
+					//console.error("Error in deleting parameters data from session");
+				}
+			}
+			
 			$scope.menuCall = function menuCall(url,type){
 				if (type == 'execDirectUrl'){
 					$scope.redirectIframe(url);
 				} else if (type == 'roleSelection'){
 					$scope.roleSelection();
 				} else if (type =="execUrl"){
+					
+					// if it s logout clean parameters cached in session
+					if(url.indexOf("LOGOUT_ACTION") !== -1){   
+						$scope.resetSessionObjects();
+					}
+					
 					$scope.execUrl(url)
 				} else if (type == "externalUrl"){
 					$scope.externalUrl(url)

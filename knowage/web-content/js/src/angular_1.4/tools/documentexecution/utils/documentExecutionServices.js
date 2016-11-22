@@ -320,10 +320,145 @@
 			};
 	});
 
+	
+	
+	documentExecutionModule.service('docExecute_sessionParameterService', function(sbiModule_config, execProperties) {
+		this.STORE_NAME = sbiModule_config.sessionParametersStoreName;
+		this.PARAMETER_STATE_OBJECT_KEY = sbiModule_config.sessionParametersStateKey; 
+		
+		
+		this.store = new Persist.Store(this.STORE_NAME, {
+			swf_path: sbiModule_config.contextName + '/js/lib/persist-0.1.0/persist.swf'
+			});
+
+		
+		this.getParametersState = function(callback){
+			this.store.get(this.PARAMETER_STATE_OBJECT_KEY, callback);
+		}
+
+		
+		/**
+		 * internal utility method that returns the key that will be used in order to store the parameter state.
+		 * The key is composed by the following information retrieved by the parameter that stands behind the input field:
+		 * - label of the parameter
+		 * - id of the parameter use mode (in order to avoid that parameters with the same labels but different modalities conflict)
+		 */
+		this.getParameterStorageKey =  function(parDetail) {
+			var parameterStorageKey = parDetail.driverLabel + '_' + parDetail.driverUseLabel;
+			return parameterStorageKey;
+		}
+		
+		
+		/**
+		 * clears a stored parameter
+		 * The input par is parName
+		 */
+		this.clear =  function(parName) {
+			try {
+				if (sbiModule_config.isStatePersistenceEnabled == true && execProperties.executionInstance.isFromCross == false) {
+					this.store.get(this.PARAMETER_STATE_OBJECT_KEY, function(ok, value) {
+						if (ok) {
+							var storedParameters = angular.fromJson(value);
+							if (storedParameters !== undefined && storedParameters !== null) {
+								var key = this.getParameterStorageKey(parName);
+								delete storedParameters[key];
+							}
+							this.store.set(this.PARAMETER_STATE_OBJECT_KEY, angular.toJson(storedParameters));
+						}
+					});
+				}
+			}
+				catch (err) {
+					console.error('Error in clearing session parameter for parameter '+parName);
+				}		
+		}
+		
+			this.saveParameters = function(parameters, parametersDetail) {
+				if (sbiModule_config.isStatePersistenceEnabled == true && execProperties.executionInstance.isFromCross == false) {
+
+					// create a copy 
+					var copyParameters = {} 
+					for(var parName in parameters){
+						var parValue = parameters[parName]; 
+						copyParameters[parName] = parValue;
+					}
+
+
+					for(var parName in parameters) {
+						if(!parName.endsWith("_field_visible_description")){
+							// if(!field.isTransient)
+							var parValue = parameters[parName]; 
+							if(parametersDetail[parName].type == 'DATE'){
+								var parDateFormat = sbiModule_config.serverDateFormat;
+								parValue+=('#'+parDateFormat);
+							}
+							else if(parametersDetail[parName].type == 'DATE_RANGE'){
+								var parDateFormat = sbiModule_config.serverDateFormat;
+								parValue+=('#'+parDateFormat);
+							}
+							var parValueDescription = copyParameters[parName+"_field_visible_description"]; 
+							this.saveParameterState(parName, parValue, parValueDescription, parametersDetail[parName]);	
+
+
+							//}
+						}
+					}
+				}		
+			};
+			
+	this.saveParameterState = function(parName, parValue, parValueDescription, parDetail) {
+		try {
+			var thisContext = this; 
+			if (sbiModule_config.isStatePersistenceEnabled == true && execProperties.executionInstance.isFromCross == false) {
+			this.store.get(thisContext.PARAMETER_STATE_OBJECT_KEY, function(ok, value) {
+				if (ok) {
+					var storedParameters = null;
+					if (value === undefined || value === null) {
+						storedParameters = {};
+					} else {
+						storedParameters = angular.fromJson(value);
+
+					}
+
+					if (parValue === undefined || parValue === null || parValue === '' || parValue.length === 0) {
+
+						thisContext.clear(parName);
+
+					} else {
+						var parameterStateObject = {};
+						parameterStateObject.value = parValue;
+						parameterStateObject.description = parValueDescription;
+						parameterStateObject.name = parName;
+
+						var keyy = thisContext.getParameterStorageKey(parDetail);
+						storedParameters[keyy] = parameterStateObject;
+						var json = angular.toJson(storedParameters);
+						thisContext.store.set(thisContext.PARAMETER_STATE_OBJECT_KEY, json);
+					}
+				}
+
+			});
+			}	
+		}  catch (err) {
+		console.error('Error in saving parameter in session for parameter '+parName);
+	}
+};
+		
+	});
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	documentExecutionModule.service('docExecute_urlViewPointService', function(execProperties,
 			sbiModule_restServices, $mdDialog, sbiModule_translate,sbiModule_config,docExecute_exportService
 			,$mdSidenav,docExecute_paramRolePanelService,documentExecuteServices,documentExecuteFactories,$q,$filter,$timeout
-			,docExecute_dependencyService,sbiModule_messaging, $http,sbiModule_dateServices,$mdToast ) {
+			,docExecute_dependencyService,sbiModule_messaging, $http,sbiModule_dateServices,$mdToast,docExecute_sessionParameterService ) {
 		
 		var serviceScope = this;	
 		serviceScope.showOlapMenu = false;
@@ -350,6 +485,17 @@
 					dataPost.COCKPIT_SELECTIONS = execProperties.executionInstance.COCKPIT_SELECTIONS;
 				}
 			}
+			
+			// map par urlName with analytical driver details
+			var parametersDetail = {};
+			for(var parIndex in execProperties.parametersData.documentParameters){
+				var parContent = execProperties.parametersData.documentParameters[parIndex]; 
+				parametersDetail[parContent.urlName] = parContent;
+			}
+			
+			// memorize parameters in session
+			docExecute_sessionParameterService.saveParameters(dataPost.parameters, parametersDetail);
+			
 			
 			sbiModule_restServices.alterContextPath( sbiModule_config.contextName);
 			sbiModule_restServices.promisePost("1.0/documentexecution", 'url', dataPost)
@@ -650,44 +796,96 @@
 		
 		
 		
-	
+
 		serviceScope.getParametersForExecution = function(role, buildCorrelation,crossParameters) {
-			var params = {
-					label:execProperties.executionInstance.OBJECT_LABEL,
-					role:role,
-					parameters:crossParameters
-			};
-			sbiModule_restServices.promisePost("1.0/documentexecution", "filters", params)
-			.then(function(response, status, headers, config) {
-				console.log('getParametersForExecution response OK -> ', response);
-				//check if document has parameters 
-				if(response && response.data.filterStatus && response.data.filterStatus.length>0) {					
+	
 
-					//build documentParameters
-					angular.copy(response.data.filterStatus, execProperties.parametersData.documentParameters);
+			docExecute_sessionParameterService.getParametersState(
+					function(ok, val, scope){
+						if(ok === true){
 
-					//correlation
-					buildCorrelation(execProperties.parametersData.documentParameters);
+							var params = {
+									label:execProperties.executionInstance.OBJECT_LABEL,
+									role:role,
+									parameters:crossParameters,
+									sessionParameters:val
+							};
 
-					//setting default value				
-					serviceScope.buildObjForFillParameterPanel(response.data.filterStatus);
-					// Enable visualcorrelation
-					execProperties.initResetFunctionVisualDependency.status=true;
-					execProperties.initResetFunctionDataDependency.status=true;
-					execProperties.initResetFunctionLovDependency.status=true;
 
-					execProperties.isParameterRolePanelDisabled.status = docExecute_paramRolePanelService.checkParameterRolePanelDisabled();
-				}else{
-//					execProperties.showParametersPanel.status = false;
-//					$mdSidenav('parametersPanelSideNav').close();
-					docExecute_paramRolePanelService.toggleParametersPanel(false);
+							sbiModule_restServices.promisePost("1.0/documentexecution", "filters", params)
+							.then(function(response, status, headers, config) {
+								console.log('getParametersForExecution response OK -> ', response);
+								//check if document has parameters 
+								if(response && response.data.filterStatus && response.data.filterStatus.length>0) {					
 
-				} 
+									//build documentParameters
+									angular.copy(response.data.filterStatus, execProperties.parametersData.documentParameters);
 
-			},function(response, status, headers, config) {
-				sbiModule_restServices.errorHandler(response.data,"error while attempt to load filters")   
-			}); 
+									//correlation
+									buildCorrelation(execProperties.parametersData.documentParameters);
+
+									//setting default value				
+									serviceScope.buildObjForFillParameterPanel(response.data.filterStatus);
+									// Enable visualcorrelation
+									execProperties.initResetFunctionVisualDependency.status=true;
+									execProperties.initResetFunctionDataDependency.status=true;
+									execProperties.initResetFunctionLovDependency.status=true;
+
+									execProperties.isParameterRolePanelDisabled.status = docExecute_paramRolePanelService.checkParameterRolePanelDisabled();
+								}else{
+//									execProperties.showParametersPanel.status = false;
+//									$mdSidenav('parametersPanelSideNav').close();
+									docExecute_paramRolePanelService.toggleParametersPanel(false);
+
+								} 
+
+							},function(response, status, headers, config) {
+								sbiModule_restServices.errorHandler(response.data,"error while attempt to load filters")   
+							}); 
+						}
+					}
+			);
 		};
+		
+		
+	
+//		serviceScope.getParametersForExecution = function(role, buildCorrelation,crossParameters) {
+//			var params = {
+//					label:execProperties.executionInstance.OBJECT_LABEL,
+//					role:role,
+//					parameters:crossParameters
+//			};
+//			sbiModule_restServices.promisePost("1.0/documentexecution", "filters", params)
+//			.then(function(response, status, headers, config) {
+//				console.log('getParametersForExecution response OK -> ', response);
+//				//check if document has parameters 
+//				if(response && response.data.filterStatus && response.data.filterStatus.length>0) {					
+//
+//					//build documentParameters
+//					angular.copy(response.data.filterStatus, execProperties.parametersData.documentParameters);
+//
+//					//correlation
+//					buildCorrelation(execProperties.parametersData.documentParameters);
+//
+//					//setting default value				
+//					serviceScope.buildObjForFillParameterPanel(response.data.filterStatus);
+//					// Enable visualcorrelation
+//					execProperties.initResetFunctionVisualDependency.status=true;
+//					execProperties.initResetFunctionDataDependency.status=true;
+//					execProperties.initResetFunctionLovDependency.status=true;
+//
+//					execProperties.isParameterRolePanelDisabled.status = docExecute_paramRolePanelService.checkParameterRolePanelDisabled();
+//				}else{
+////					execProperties.showParametersPanel.status = false;
+////					$mdSidenav('parametersPanelSideNav').close();
+//					docExecute_paramRolePanelService.toggleParametersPanel(false);
+//
+//				} 
+//
+//			},function(response, status, headers, config) {
+//				sbiModule_restServices.errorHandler(response.data,"error while attempt to load filters")   
+//			}); 
+//		};
 		
 		serviceScope.buildObjForFillParameterPanel = function(filterStatus){
 			var fillObj = {};

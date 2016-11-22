@@ -30,6 +30,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/BreadCrumb.js"></script>
 	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/glossary/css/bread-crumb.css">
 	
+	<%-- ---------------------------------------------------------------------- --%>
+<%-- INCLUDE Persist JS                                                     --%>
+<%-- ---------------------------------------------------------------------- --%>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/persist-0.1.0/persist.js"></script>
+	
 	<!-- cross navigation -->
 	<script type="text/javascript"  src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/commons/cross-navigation/crossNavigationDirective.js")%>"></script>
 	<script type="text/javascript"  src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/documentExecutionMaster.js")%>"></script>
