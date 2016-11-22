@@ -21,8 +21,11 @@ function createChart() {
         .done(function(response) {
         	serviceResponse = response.data;
             
-            for(var i=2;i<response.data.metaData.fields.length;i++){
-                labels.push(response.data.metaData.fields[i].header);
+            for(var i=0;i<response.COLUMNS.length;i++){
+            	debugger;
+            	if(response.COLUMNS[i].type == "measure"){
+            		labels.push(response.COLUMNS[i].column_id);
+            	}
             }
             
             for(var j in response.CUSTOMIZE_SETTINGS.CHART.BACKGROUND){
