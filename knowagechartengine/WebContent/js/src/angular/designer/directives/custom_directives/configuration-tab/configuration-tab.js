@@ -79,24 +79,91 @@ function configurationTabControllerFunction(sbiModule_translate,$scope,sbiModule
 	borderWidth:"",
 	backgroundColor:""	 
  }
- 
+ $scope.selectedColor = "#3b678c";
  $scope.colorObj = {
 		 gradient:"",
 		 name:"",
 		 order:"",
 		 value:""
  }
- $scope.colorPickerOptions = {
-		 format:'rgb',
-		 swatch: true,
-		 swatchPos: 'right'
- }
+ $scope.colors = [];
  $scope.presetColors = Object.keys($mdColorPalette);
- $scope.colors = $scope.chartTemplate.COLORPALETTE.COLOR;
+ if($scope.chartTemplate != null && $scope.chartTemplate.COLORPALETTE.COLOR.length > 0){
+	 $scope.colors = $scope.chartTemplate.COLORPALETTE.COLOR;
+ }
+ 
+ 
  
  $scope.addColor = function(color) {
-	var hex= $mdColorUtil.rgbaToHex($mdColors.getThemeColor(color));
-	console.log(hex)
+	 var value ="";
+	 var name = "";
+	 var order = $scope.colors.length +1;
+	if(!color.startsWith("#")){
+		value= $mdColorUtil.rgbaToHex($mdColors.getThemeColor(color)).toLowerCase();
+		name = value.substring(1);
+	}else{
+		value = color.toLowerCase();
+		name = value.substring(1);
+	}
+	$scope.colorObj.name = name;
+	$scope.colorObj.value = value;
+	$scope.colorObj.order = order.toString();
+	$scope.colors.push($scope.colorObj);
+	$scope.colorObj = {
+			 gradient:"",
+			 name:"",
+			 order:"",
+			 value:""
+	 }
+}
+ 
+ $scope.moveColorUp = function(item) {
+	 	var index = $scope.colors.indexOf(item);
+		var nextIndex = index-1;
+		var temp = $scope.colors[index];
+		$scope.colors[index] = $scope.colors[nextIndex];
+		$scope.colors[index].order = (index+1).toString();
+		$scope.colors[nextIndex] = temp;
+		$scope.colors[nextIndex].order = index.toString();
+		
+}
+ $scope.moveColorDown = function(item) {
+	 	var index = $scope.colors.indexOf(item);
+		var nextIndex = index+1;
+		var temp = $scope.colors[index];
+		$scope.colors[index] = $scope.colors[nextIndex];
+		$scope.colors[index].order = (index+1).toString();
+		$scope.colors[nextIndex] = temp;
+		$scope.colors[nextIndex].order = (nextIndex+1).toString();
+ }
+ $scope.deleteColor = function(item) {
+	 var index = $scope.colors.indexOf(item);
+	 var nextIndex = index+1;
+	 if(index == $scope.colors.length-1){
+		$scope.colors.splice(index, 1);
+	 }else{
+		 $scope.colors.splice(index, 1);
+		 for (var i = 0; i < $scope.colors.length; i++) {
+			 $scope.colors[i].order = (i+1).toString();
+		}
+	 }
+ }
+ $scope.checkColor = function(color) {
+
+	 var rgb = parseInt(color, 16);   // convert rrggbb to decimal
+	 var r = (rgb >> 16) & 0xff;  // extract red
+	 var g = (rgb >>  8) & 0xff;  // extract green
+	 var b = (rgb >>  0) & 0xff;  // extract blue
+
+	 var luma = 0.2126 * r + 0.7152 * g + 0.0722 * b; // per ITU-R BT.709
+
+	 
+	 if (luma < 100) {
+	     return true;
+	 }else{
+		 return false;
+	 } 
+	 
 }
  
  $scope.templateUrls = ChartDesignerData.getTemplateURLs();
