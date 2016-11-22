@@ -220,12 +220,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				finish = true;
 			}
 		}
+   		for(var j=0;j<chart.series.length;j++) {
+   			chart.series[j].setData([]);
+    	} 
    	 	for(var j=0;j<data.length;j++) {
         	for(var i=0;i<counterSeries;i++){ 
         		if(chart.options.chart.type=="gauge"){
-        			chart.series[i].data[j].update(parseFloat(data[j]["column_"+(i+1)]));
+        			chart.series[i].addPoint([data[j]["column_"+1], parseFloat(data[j]["column_"+(i+1)])], true, false);
         		}else{
-			  	chart.series[i].data[j].update(parseFloat(data[j]["column_"+(i+2)]));
+        			chart.series[i].addPoint([data[j]["column_"+1], parseFloat(data[j]["column_"+(i+2)])], true, false);
+			
 				}
         	}
     	}  
