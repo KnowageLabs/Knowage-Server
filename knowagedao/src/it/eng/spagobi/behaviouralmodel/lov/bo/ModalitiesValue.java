@@ -288,4 +288,17 @@ public class ModalitiesValue implements Serializable {
 	public void setDataset(SbiDataSet dataset) {
 		this.dataset = dataset;
 	}
+	
+	  @Override
+	  public boolean equals(Object v) {
+	        boolean retVal = false;
+
+	        if (v instanceof ModalitiesValue){
+	        	ModalitiesValue ptr = (ModalitiesValue) v;
+	            retVal = ptr.id.longValue() == this.id;
+	        }
+
+	     return retVal;
+	  }
+	
 }

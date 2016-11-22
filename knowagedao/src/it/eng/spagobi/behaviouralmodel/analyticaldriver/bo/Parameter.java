@@ -374,5 +374,17 @@ public class Parameter implements Serializable {
 	public void setSelectedLayerProp(String selectedLayerProp) {
 		this.selectedLayerProp = selectedLayerProp;
 	}
+	
+	@Override
+	  public boolean equals(Object v) {
+	        boolean retVal = false;
+
+	        if (v instanceof Parameter){
+	        	Parameter ptr = (Parameter) v;
+	            retVal = ptr.id.longValue() == this.id;
+	        }
+
+	     return retVal;
+	  }
 
 }

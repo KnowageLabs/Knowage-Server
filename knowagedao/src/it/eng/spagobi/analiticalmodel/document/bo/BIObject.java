@@ -21,6 +21,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO;
 import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IDomainDAO;
@@ -884,5 +885,15 @@ public class BIObject implements Serializable, Cloneable {
 	public void setStateCodeStr(String stateCodeStr) {
 		this.stateCodeStr = stateCodeStr;
 	}
+	 @Override
+	  public boolean equals(Object v) {
+	        boolean retVal = false;
 
+	        if (v instanceof BIObject){
+	        	BIObject ptr = (BIObject) v;
+	            retVal = ptr.id.longValue() == this.id;
+	        }
+
+	     return retVal;
+	  }
 }
