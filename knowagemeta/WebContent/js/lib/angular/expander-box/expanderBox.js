@@ -61,11 +61,6 @@ angular.module('expander-box', [ 'ngMaterial'])
 				scope.expanded=false;
 			}
 
-
-
-
-			element.addClass("md-whiteframe-2dp");
-
 		}
 	}})
 
