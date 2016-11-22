@@ -277,7 +277,7 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 				// add measures metadata informations
 				DataSetMetaData meauresMap = hierMember.getDsMetaData();
 				Map columns = meauresMap.getColumns();
-				JSONObject meauresJSON = new JSONObject();
+				JSONArray meauresJSON = new JSONArray();
 				Iterator iter = columns.keySet().iterator();
 				while (iter.hasNext()) {
 					String key = (String) iter.next();
@@ -287,8 +287,8 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 					if (type.equalsIgnoreCase("geoid")) {
 						elementID = key;
 					}
-					if (key != null && values != null && !meauresJSON.has(key))
-						meauresJSON.put(key, values);
+					// if (key != null && values != null && !meauresJSON.has(key))
+					meauresJSON.put(values);
 				}
 				customizedConfigurationJSON.put("COLUMNS", meauresJSON);
 
