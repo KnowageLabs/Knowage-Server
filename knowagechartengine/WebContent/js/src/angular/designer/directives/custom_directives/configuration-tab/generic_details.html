@@ -89,7 +89,7 @@
 
 	<label>{{translate.load("sbi.chartengine.designer.tab.configuration.showtable")}}</label>
 	<md-input-container class="small counter"> <md-checkbox
-		ng-model="chartTemplate.seriesStacking" aria-label="Show table"></md-checkbox>
+		ng-model="chartTemplate.showTableParallel" aria-label="Show table"></md-checkbox>
 	</md-input-container>
 </div>
 
@@ -98,7 +98,7 @@
 	<md-input-container class="md-block" flex> 
 	<label>{{translate.load("sbi.chartengine.designer.tab.configuration.opacitymouseover")}}</label>
 		 <input type="number" step="any" name="width"
-		ng-model="chartTemplate.width" min="0" /> </md-input-container>
+		ng-model="chartTemplate.opacMouseOver" min="0" /> </md-input-container>
 </div>
 
 <div layout="row" flex layout-margin
@@ -106,7 +106,7 @@
 
 	<md-input-container class="md-block" flex> 
 	<label>{{translate.load("sbi.chartengine.designer.tab.configuration.breadcrumbvalue")}}</label>
-		 <md-select ng-model="fontObj.fontWeight">
+		 <md-select ng-model="chartTemplate.percAbsolSliceValue">
 	<md-option ng-repeat="option in tooltipBreadcrumbValueType"
 		value="{{option.value}}">{{option.name}}</md-option> </md-select> </md-input-container>
 

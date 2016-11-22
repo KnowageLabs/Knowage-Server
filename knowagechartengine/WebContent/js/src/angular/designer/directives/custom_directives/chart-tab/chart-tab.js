@@ -76,7 +76,7 @@ function chartTabControllerFunction($scope,sbiModule_translate,sbiModule_restSer
 		}
 		
 }
-	var setFontProps = function(style,obj) {
+	var setFontProps = function(style,type) {
 		var res = style.split(";");
 		res.pop();
 		var formated = [];
@@ -86,29 +86,49 @@ function chartTabControllerFunction($scope,sbiModule_translate,sbiModule_restSer
 			obj.name = temp[0];
 			obj.value = temp[1];
 			formated.push(obj);
-			
-			
 		}
-		if(obj == 'chart'){
+		if(type == 'chart'){
 		for (var i = 0; i < formated.length; i++) {
 			if($scope.fontObj.hasOwnProperty(formated[i].name)){
 				$scope.fontObj[formated[i].name] = formated[i].value;
 			}
 		}
 		}
-		if(obj == 'title'){
+		if(type == 'title'){
 			for (var i = 0; i < formated.length; i++) {
 				if($scope.titleFontObj.hasOwnProperty(formated[i].name)){
 					$scope.titleFontObj[formated[i].name] = formated[i].value;
 				}
 			}
 			}
-		if(obj == 'subtitle'){
+		if(type == 'subtitle'){
 			for (var i = 0; i < formated.length; i++) {
 				if($scope.subtitleFontObj.hasOwnProperty(formated[i].name)){
 					$scope.subtitleFontObj[formated[i].name] = formated[i].value;
 				}
 			}
+			}
+		if(type == 'nodata'){
+			for (var i = 0; i < formated.length; i++) {
+				if($scope.nodataFontObj.hasOwnProperty(formated[i].name)){
+					$scope.nodataFontObj[formated[i].name] = formated[i].value;
+				}
+			}
+			}
+		if(type == 'legendtitle'){
+			for (var i = 0; i < formated.length; i++) {
+				if($scope.legendObj.title.hasOwnProperty(formated[i].name)){
+					$scope.legendObj.title[formated[i].name] = formated[i].value;
+				}
+			}
+			}
+		if(type == 'legend'){
+			for (var i = 0; i < formated.length; i++) {
+				if($scope.legendObj.hasOwnProperty(formated[i].name)){
+					$scope.legendObj[formated[i].name] = formated[i].value;
+				}
+			}
+			$scope.legendObj.borderWidth = parseInt($scope.legendObj.borderWidth);
 			}
 	}	
 
@@ -127,6 +147,9 @@ function chartTabControllerFunction($scope,sbiModule_translate,sbiModule_restSer
 					setFontProps($scope.chartTemplate.style,'chart');
 					setFontProps($scope.chartTemplate.TITLE.style,'title');
 					setFontProps($scope.chartTemplate.SUBTITLE.style,'subtitle');
+					setFontProps($scope.chartTemplate.EMPTYMESSAGE.style,'nodata');
+					setFontProps($scope.chartTemplate.LEGEND.TITLE.style,'legendtitle');
+					setFontProps($scope.chartTemplate.LEGEND.style,'legend');
 				}
 			}
 			else {

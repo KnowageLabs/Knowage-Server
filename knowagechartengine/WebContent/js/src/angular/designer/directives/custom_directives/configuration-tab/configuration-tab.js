@@ -30,7 +30,7 @@ angular.module('configuration-tab', [])
 		
 });
 
-function configurationTabControllerFunction(sbiModule_translate,$scope,sbiModule_config,ChartDesignerData){
+function configurationTabControllerFunction(sbiModule_translate,$scope,sbiModule_config,ChartDesignerData,$mdColorPalette,$mdColors, $mdColorUtil){
 
  $scope.translate = sbiModule_translate;
  $scope.configurationForDisplay = [];
@@ -56,6 +56,45 @@ function configurationTabControllerFunction(sbiModule_translate,$scope,sbiModule
 			align:""
 		 };
  
+ $scope.nodataFontObj = {
+		 	fontFamily:"",
+			fontSize:"",
+			fontWeight:"",
+			color:"",
+			align:""
+		 };
+ $scope.legendObj ={
+	title:{
+		fontFamily:"",
+		fontSize:"",
+		fontWeight:"",
+		color:"",
+		align:""
+	},
+	fontFamily:"",
+	fontSize:"",
+	fontWeight:"",
+	color:"",
+	align:"",
+	borderWidth:"",
+	backgroundColor:""	 
+ }
+ 
+ $scope.colorObj = {
+		 gradient:"",
+		 name:"",
+		 order:"",
+		 value:""
+ }
+ 
+ $scope.presetColors = Object.keys($mdColorPalette);
+ $scope.colors = $scope.chartTemplate.COLORPALETTE.COLOR;
+ 
+ $scope.addColor = function(color) {
+	var hex= $mdColorUtil.rgbaToHex($mdColors.getThemeColor(color));
+	console.log(hex)
+}
+ 
  $scope.templateUrls = ChartDesignerData.getTemplateURLs();
  
  $scope.dimensionMeasureType = ChartDesignerData.getDimensionMeasureTypeOptions();
@@ -65,6 +104,7 @@ function configurationTabControllerFunction(sbiModule_translate,$scope,sbiModule
  $scope.fontStyleOptions = ChartDesignerData.getFontStyleOptions();
  $scope.fontAlignOptions = ChartDesignerData.getAlignTypeOptions();
  $scope.tooltipBreadcrumbValueType = ChartDesignerData.getTooltipBreadcrumbValueTypeOptions();
+ $scope.positionType = ChartDesignerData.getPositionTypeOptions();
  
  
  $scope.openConfigurationDetails = function(button) {

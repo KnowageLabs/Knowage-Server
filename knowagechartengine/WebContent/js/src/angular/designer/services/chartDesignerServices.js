@@ -67,6 +67,16 @@ angular.module('ChartDesignerService', [])
 		return data;
 	};
 	
+	this.getPositionTypeOptions = function(){
+		var data = [
+		      {name:sbiModule_translate.load("sbi.cockpit.widgets.piechartwidgetdesigner.form.legend.position.top"),value:"top"},
+		      {name:sbiModule_translate.load("sbi.cockpit.widgets.piechartwidgetdesigner.form.legend.position.bottom"),value:"bottom"},
+			  {name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.textalignment.left"),value:"left"},
+			  {name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.textalignment.right"),value:"right"},
+			                               ]                          
+		return data;
+	};
+	
 	this.getFontFamilyOptions = function(){
 		var data = [
            	{name:"Arial",value:"Arial"},
@@ -205,8 +215,10 @@ angular.module('ChartDesignerService', [])
 		var data = {
 				genericDetailsURL:	sbiModule_config.contextName + '/js/src/angular/designer/directives/custom_directives/configuration-tab/generic_details.html',
 				titleSubtitleDetailsURL: sbiModule_config.contextName + '/js/src/angular/designer/directives/custom_directives/configuration-tab/title_and_subtitle.html',
-				noDataDetailsURL: sbiModule_config.contextName + '/js/src/angular/designer/directives/custom_directives/configuration-tab/nodata.html'
-					 
+				noDataDetailsURL: sbiModule_config.contextName + '/js/src/angular/designer/directives/custom_directives/configuration-tab/nodata.html',
+				legendTitleURL: sbiModule_config.contextName + '/js/src/angular/designer/directives/custom_directives/configuration-tab/legend_title.html',
+				legendItemsURL: sbiModule_config.contextName + '/js/src/angular/designer/directives/custom_directives/configuration-tab/legend_items.html',
+				colorPaletteURL: sbiModule_config.contextName + '/js/src/angular/designer/directives/custom_directives/configuration-tab/color_palette.html'
 			 };                   
 		return data;
 	};

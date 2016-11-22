@@ -1,25 +1,25 @@
 <div layout="row" flex layout-margin>
+
+	<label>{{translate.load("sbi.worksheet.designer.barchartdesignerpanel.form.showlegend.title")}}</label>
+	<md-input-container class="small counter"> <md-checkbox
+		ng-model="chartTemplate.LEGEND.show" aria-label="Show legend"></md-checkbox>
+	</md-input-container>
+</div>
+
+<div ng-show="chartTemplate.LEGEND.show">
+
+<div layout="row" flex layout-margin>
 	<md-input-container class="md-block" flex>
-		<label>{{translate.load("sbi.chartengine.configuration.nodata")}}</label>
-		<input name="no_data_text" ng-model="chartTemplate.EMPTYMESSAGE.text"> 
+		<label>{{translate.load("sbi.chartengine.configuration.parallel.legend.title.popupTitle")}}</label>
+		<input name="no_data_text" ng-model="chartTemplate.LEGEND.TITLE.text"> 
 	</md-input-container>
 </div>
 
 <div layout="row" flex layout-margin>
 
 	<md-input-container class="md-block" flex>
-	 <label>{{translate.load("sbi.chartengine.designer.tab.configuration.textalignment")}}</label>
-		 <md-select ng-model="nodataFontObj.align"> <md-option
-		ng-repeat="option in fontAlignOptions" value="{{option.value}}">{{option.name}}</md-option>
-	</md-select> </md-input-container>
-
-</div>
-
-<div layout="row" flex layout-margin>
-
-	<md-input-container class="md-block" flex>
 	 <label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontfamily")}}</label>
-		 <md-select ng-model="nodataFontObj.fontFamily"> <md-option
+		 <md-select ng-model="legendObj.title.fontFamily"> <md-option
 		ng-repeat="option in fontFamilyOptions" value="{{option.value}}">{{option.name}}</md-option>
 	</md-select> </md-input-container>
 
@@ -29,7 +29,7 @@
 
 	<md-input-container class="md-block" flex> 
 	<label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontsize")}}</label>
-		 <md-select ng-model="nodataFontObj.fontSize"> <md-option
+		 <md-select ng-model="legendObj.title.fontSize"> <md-option
 		ng-repeat="option in fontSizeOptions" value="{{option.value}}">{{option.name}}</md-option>
 	</md-select> </md-input-container>
 
@@ -39,7 +39,7 @@
 
 	<md-input-container class="md-block" flex>
 	 <label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontstyle")}}</label>
-		 <md-select ng-model="nodataFontObj.fontWeight"> <md-option
+		 <md-select ng-model="legendObj.title.fontWeight"> <md-option
 		ng-repeat="option in fontStyleOptions" value="{{option.value}}">{{option.name}}</md-option>
 	</md-select> </md-input-container>
 
@@ -51,6 +51,8 @@
 	<label>{{translate.load("sbi.chartengine.designer.tooltip.color")}}</label>
 	 <color-picker
 		color-picker-swatch="true" color-picker-format="'rgb'"
-		ng-model="nodataFontObj.color"></color-picker> </md-input-container>
+		ng-model="legendObj.title.color"></color-picker> </md-input-container>
+
+</div>
 
 </div>

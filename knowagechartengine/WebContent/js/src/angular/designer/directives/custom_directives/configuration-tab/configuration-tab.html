@@ -1,6 +1,6 @@
 <md-tab-content class="knowage-grey-color" layout="column">
 <div layout="row" md-content layout-padding flex>
-	<div layout="column" flex=40 style="padding:0 8 0 0">  
+	<div layout="column" flex=30 style="padding:0 8 0 0">  
 		
 			<md-toolbar class="secondaryToolbar">
 				<div class="md-toolbar-tools">
@@ -63,13 +63,37 @@
 				<div ng-include src="templateUrls.noDataDetailsURL"></div>
 				
 				</md-content>
-			</div>	
+			</div>
+			
+			<div id="legentitle" ng-show="selectedConfigurationButton == translate.load('sbi.chartengine.designer.tab.configuration.legendtitle')">
+				<md-content flex layout="column">
+				
+				<div ng-include src="templateUrls.legendTitleURL"></div>
+				
+				</md-content>
+			</div>
+			
+			<div id="legenditems" ng-show="selectedConfigurationButton == translate.load('sbi.chartengine.designer.tab.configuration.legenditems')">
+				<md-content flex layout="column">
+				
+				<div ng-include src="templateUrls.legendItemsURL"></div>
+				
+				</md-content>
+			</div>
+			
+			<div id="colorpalette" ng-show="selectedConfigurationButton == translate.load('sbi.chartengine.designer.tab.configuration.palette')">
+				<md-content flex layout="column">
+				
+				<div ng-include src="templateUrls.colorPaletteURL"></div>
+				
+				</md-content>
+			</div>						
 				
 			
 			</md-whiteframe>
 			
 		</div>
-	<div layout="column" flex=30 style="padding:0 8 0 0">  
+	<div layout="column" flex=40 style="padding:0 8 0 0">  
 		
 			<md-toolbar class="secondaryToolbar">
 				<div class="md-toolbar-tools">

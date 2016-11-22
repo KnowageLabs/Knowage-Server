@@ -1,7 +1,7 @@
 <md-tab-content class="knowage-grey-color">
 	<div layout="row" layout-align="center center" class="chart-tab-margin-top">
 		<md-whiteframe class="md-whiteframe-4dp" layout layout-align="center center" flex=80 style="height:80%;">
-			<div flex=60 layout-fill>
+			<div flex=40 layout-fill style="overflow:auto">
 				<md-content layout-padding>
 
 					<md-input-container  class="md-block whiteframe-element-padding">
@@ -28,7 +28,7 @@
 					</md-input-container>
 					
 
-					<md-grid-list style="margin-top:16px;"md-cols-gt-md="6" md-cols-md="4" md-cols-sm="2" md-gutter="16px" md-row-height="100px">
+					<md-grid-list style="margin-top:16px;"md-cols-gt-md="4" md-cols-md="2" md-cols-sm="2" md-gutter="16px" md-row-height="1:1">
 					    <md-grid-tile ng-repeat="chart in chartTypes" style="background-color:#3b678c;" ng-class="{'md-whiteframe-15dp' : selectedChartType==chart }" ng-click="selectChartType(chart)">
 					    	<p style="color:white">{{chart}}</p>
 					    </md-grid-tile>
@@ -37,7 +37,7 @@
 				</md-content>
 			</div>
 			<md-divider class="vertical-divider"></md-divider>
-			<div flex=40 layout="row" layout-fill>
+			<div flex=60 layout="row" layout-fill>
 				<md-card style="background-color:#3b678c" flex>
 					<md-card-header>
 					    <md-card-header-text>

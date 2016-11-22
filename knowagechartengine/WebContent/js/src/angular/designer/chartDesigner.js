@@ -59,8 +59,18 @@ function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config) {
 		    if(template.CHART[key] === 'true' || template.CHART[key] === 'false'){
 		    	
 		    	template.CHART[key] = JSON.parse(template.CHART[key])
-		    	
+		    }
+		});
 		
+		Object.keys(template.CHART.LEGEND).forEach(function (key) {
+			
+			
+		    if( template.CHART.LEGEND[key] != ''   && !isNaN(template.CHART.LEGEND[key])){
+		    	template.CHART.LEGEND[key] = parseInt(template.CHART.LEGEND[key]);
+		    }
+		    if(template.CHART.LEGEND[key] === 'true' || template.CHART.LEGEND[key] === 'false'){
+		    	
+		    	template.CHART.LEGEND[key] = JSON.parse(template.CHART.LEGEND[key])
 		    }
 		});
 			return template.CHART;
