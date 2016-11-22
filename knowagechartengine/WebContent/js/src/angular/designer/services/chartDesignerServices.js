@@ -103,6 +103,18 @@ angular.module('ChartDesignerService', [])
 		return data;
 	};
 	
+	this.getCssStyles = function(template){
+		var data = [
+           	{array:template.style,type:"chart"},
+           	{array:template.TITLE.style,type:"title"},
+           	{array:template.SUBTITLE.style,type:"subtitle"},
+           	{array:template.EMPTYMESSAGE.style,type:"nodata"},
+           	{array:template.LEGEND.TITLE.style,type:"legendtitle"},
+           	{array:template.LEGEND.style,type:"legend"},
+           	                          ]                        
+		return data;
+	};
+	
 	this.getTooltipBreadcrumbValueTypeOptions = function(){
 		var data = [	
 		 	{name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.absolute"),value:"absolute"},

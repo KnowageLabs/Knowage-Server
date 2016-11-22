@@ -79,7 +79,7 @@ function configurationTabControllerFunction(sbiModule_translate,$scope,sbiModule
 	borderWidth:"",
 	backgroundColor:""	 
  }
- $scope.selectedColor = "#3b678c";
+ $scope.selectedColor = "#FFFFFF";
  $scope.colorObj = {
 		 gradient:"",
 		 name:"",
@@ -122,9 +122,11 @@ function configurationTabControllerFunction(sbiModule_translate,$scope,sbiModule
 		var nextIndex = index-1;
 		var temp = $scope.colors[index];
 		$scope.colors[index] = $scope.colors[nextIndex];
-		$scope.colors[index].order = (index+1).toString();
 		$scope.colors[nextIndex] = temp;
-		$scope.colors[nextIndex].order = index.toString();
+		for (var i = 0; i < $scope.colors.length; i++) {
+			 $scope.colors[i].order = (i+1).toString();
+		}
+		
 		
 }
  $scope.moveColorDown = function(item) {
@@ -132,9 +134,11 @@ function configurationTabControllerFunction(sbiModule_translate,$scope,sbiModule
 		var nextIndex = index+1;
 		var temp = $scope.colors[index];
 		$scope.colors[index] = $scope.colors[nextIndex];
-		$scope.colors[index].order = (index+1).toString();
 		$scope.colors[nextIndex] = temp;
-		$scope.colors[nextIndex].order = (nextIndex+1).toString();
+		for (var i = 0; i < $scope.colors.length; i++) {
+			 $scope.colors[i].order = (i+1).toString();
+		}
+
  }
  $scope.deleteColor = function(item) {
 	 var index = $scope.colors.indexOf(item);
@@ -157,7 +161,6 @@ function configurationTabControllerFunction(sbiModule_translate,$scope,sbiModule
 
 	 var luma = 0.2126 * r + 0.7152 * g + 0.0722 * b; // per ITU-R BT.709
 
-	 
 	 if (luma < 100) {
 	     return true;
 	 }else{

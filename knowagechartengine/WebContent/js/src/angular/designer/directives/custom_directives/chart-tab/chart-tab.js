@@ -76,60 +76,68 @@ function chartTabControllerFunction($scope,sbiModule_translate,sbiModule_restSer
 		}
 		
 }
-	var setFontProps = function(style,type) {
-		var res = style.split(";");
-		res.pop();
-		var formated = [];
-		for (var i = 0; i < res.length; i++) {
-			var obj = {};
-			var temp = res[i].split(":")
-			obj.name = temp[0];
-			obj.value = temp[1];
-			formated.push(obj);
+	var setFontProps = function(array) {
+		
+		console.log(array);
+		var style="";
+		var type="";
+		for (var i = 0; i < array.length; i++) {
+			style = array[i].array;
+			type =	array[i].type;
+			var res = style.split(";");
+			res.pop();
+			var formated = [];
+			for (var j = 0; j < res.length; j++) {
+				var obj = {};
+				var temp = res[j].split(":")
+				obj.name = temp[0];
+				obj.value = temp[1];
+				formated.push(obj);
+			}	
+			if(type == 'chart'){
+				for (var k = 0; k < formated.length; k++) {
+					if($scope.fontObj.hasOwnProperty(formated[k].name)){
+						$scope.fontObj[formated[k].name] = formated[k].value;
+					}
+				}
+				}
+				if(type == 'title'){
+					for (var k = 0; k < formated.length; k++) {
+						if($scope.titleFontObj.hasOwnProperty(formated[k].name)){
+							$scope.titleFontObj[formated[k].name] = formated[k].value;
+						}
+					}
+					}
+				if(type == 'subtitle'){
+					for (var k = 0; k < formated.length; k++) {
+						if($scope.subtitleFontObj.hasOwnProperty(formated[k].name)){
+							$scope.subtitleFontObj[formated[k].name] = formated[k].value;
+						}
+					}
+					}
+				if(type == 'nodata'){
+					for (var k = 0; k < formated.length; k++) {
+						if($scope.nodataFontObj.hasOwnProperty(formated[k].name)){
+							$scope.nodataFontObj[formated[k].name] = formated[k].value;
+						}
+					}
+					}
+				if(type == 'legendtitle'){
+					for (var k = 0; k < formated.length; k++) {
+						if($scope.legendObj.title.hasOwnProperty(formated[k].name)){
+							$scope.legendObj.title[formated[k].name] = formated[k].value;
+						}
+					}
+					}
+				if(type == 'legend'){
+					for (var k = 0; k < formated.length; k++) {
+						if($scope.legendObj.hasOwnProperty(formated[k].name)){
+							$scope.legendObj[formated[k].name] = formated[k].value;
+						}
+					}
+					$scope.legendObj.borderWidth = parseInt($scope.legendObj.borderWidth);
+					}
 		}
-		if(type == 'chart'){
-		for (var i = 0; i < formated.length; i++) {
-			if($scope.fontObj.hasOwnProperty(formated[i].name)){
-				$scope.fontObj[formated[i].name] = formated[i].value;
-			}
-		}
-		}
-		if(type == 'title'){
-			for (var i = 0; i < formated.length; i++) {
-				if($scope.titleFontObj.hasOwnProperty(formated[i].name)){
-					$scope.titleFontObj[formated[i].name] = formated[i].value;
-				}
-			}
-			}
-		if(type == 'subtitle'){
-			for (var i = 0; i < formated.length; i++) {
-				if($scope.subtitleFontObj.hasOwnProperty(formated[i].name)){
-					$scope.subtitleFontObj[formated[i].name] = formated[i].value;
-				}
-			}
-			}
-		if(type == 'nodata'){
-			for (var i = 0; i < formated.length; i++) {
-				if($scope.nodataFontObj.hasOwnProperty(formated[i].name)){
-					$scope.nodataFontObj[formated[i].name] = formated[i].value;
-				}
-			}
-			}
-		if(type == 'legendtitle'){
-			for (var i = 0; i < formated.length; i++) {
-				if($scope.legendObj.title.hasOwnProperty(formated[i].name)){
-					$scope.legendObj.title[formated[i].name] = formated[i].value;
-				}
-			}
-			}
-		if(type == 'legend'){
-			for (var i = 0; i < formated.length; i++) {
-				if($scope.legendObj.hasOwnProperty(formated[i].name)){
-					$scope.legendObj[formated[i].name] = formated[i].value;
-				}
-			}
-			$scope.legendObj.borderWidth = parseInt($scope.legendObj.borderWidth);
-			}
 	}	
 
 	sbiModule_restServices.promiseGet("../api/1.0/pages/types", "")
@@ -139,24 +147,23 @@ function chartTabControllerFunction($scope,sbiModule_translate,sbiModule_restSer
 			
 			if ($scope.chartTemplate) {
 				
-				
 				if($scope.chartTypes[i].toUpperCase()==$scope.chartTemplate.type.toUpperCase()){
 					$scope.selectedChartType = $scope.chartTypes[i];
 					setConfigurationButtons($scope.selectedChartType);
-					$scope.selectedConfigurationButton = "";
-					setFontProps($scope.chartTemplate.style,'chart');
-					setFontProps($scope.chartTemplate.TITLE.style,'title');
-					setFontProps($scope.chartTemplate.SUBTITLE.style,'subtitle');
-					setFontProps($scope.chartTemplate.EMPTYMESSAGE.style,'nodata');
-					setFontProps($scope.chartTemplate.LEGEND.TITLE.style,'legendtitle');
-					setFontProps($scope.chartTemplate.LEGEND.style,'legend');
-				}
+				}	
 			}
 			else {
 				$scope.selectedChartType = null;
 			}
 			
 		}		
+		
+		if ($scope.chartTemplate) {
+		var cssArray = ChartDesignerData.getCssStyles($scope.chartTemplate);
+		$scope.selectedConfigurationButton = "";
+		setFontProps(cssArray);
+		
+		}
 		
 	}, function(response) {
 		
