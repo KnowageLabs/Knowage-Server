@@ -35,7 +35,7 @@ angular.module('chartstructure-tab', [])
 function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_restServices ){
 
 	$scope.translate = sbiModule_translate;
-	$scope.showStructureDetails = false;
+	$scope.structureDetailsShown = false;
 	$scope.structurePreviewFlex = 50;
 	
 	$scope.categoriesContainer = [];
@@ -81,6 +81,18 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 			sbiModule_messaging.showErrorMessage(message, 'Error');
 			
 		});
+	
+	/**
+	 * Show/hide the Structure Details panel.
+	 */
+	
+	$scope.showStructureDetails = function() {
+		$scope.structureDetailsShown = true;
+	}
+	
+	$scope.hideStructureDetails = function() {
+		$scope.structureDetailsShown = false;
+	}
 	
 	$scope.changeStructureDetailsFlex = function() {
 		$scope.structurePreviewFlex = 25;

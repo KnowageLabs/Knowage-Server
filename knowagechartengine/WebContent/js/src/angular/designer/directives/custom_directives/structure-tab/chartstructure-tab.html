@@ -192,12 +192,13 @@
 						<div class="md-toolbar-tools">
 							
 							<!-- Add additional criteria for ng-if: only for the main SERIES container (instead of 'false') -->
-						    <md-button ng-if="seriesContainerAddAndRemoveIncludeTypes.indexOf(selectedChartType.toLowerCase())>=0 && true" class="md-icon-button" ng-click="" style="margin-left:2; margin-right:2;">
+						    <md-button 	ng-if="seriesContainerAddAndRemoveIncludeTypes.indexOf(selectedChartType.toLowerCase())>=0 && seriesContainer.name=='Y'" 
+						    			class="md-icon-button" ng-click="" style="margin-left:2; margin-right:2;">
 								<md-icon aria-label="Add new series container" class="fa fa-plus" style="display:inline"></md-icon>						
 							</md-button>
 							
 							<!-- Add additional criteria for ng-if: only for the additional SERIES container (instead of 'false') -->
-							<md-button ng-if="seriesContainerAddAndRemoveIncludeTypes.indexOf(selectedChartType.toLowerCase())>=0 && false" class="md-icon-button" ng-click="" style="margin-left:2; margin-right:2;">
+							<md-button ng-if="seriesContainerAddAndRemoveIncludeTypes.indexOf(selectedChartType.toLowerCase())>=0 && seriesContainer.name!='Y'" class="md-icon-button" ng-click="" style="margin-left:2; margin-right:2;">
 								<md-icon aria-label="Remove the series container" class="fa fa-times" style="display:inline"></md-icon>						
 							</md-button>
 							
@@ -242,7 +243,8 @@
 							<!-- Menu for generic axis customization: axis configuration, title configuration, major grid, minor grid -->
 							<md-menu ng-hide="seriesContainerConfigDropDownExcludeTypes.indexOf(selectedChartType.toLowerCase())>=0">
 							      
-						      	<md-button 	aria-label="Open generic axis configurations' list" class="md-icon-button" ng-click="openMenu($mdOpenMenu, $event)"
+						      	<md-button 	aria-label="Open generic axis configurations' list" class="md-icon-button" 
+						      				ng-click="openMenu($mdOpenMenu, $event);"
 						      				style="margin-left:2; margin-right:2;">
 						        	<md-icon md-menu-origin class="fa fa-angle-down" style="display:inline"></md-icon>
 						      	</md-button>
@@ -250,28 +252,28 @@
 						      	<md-menu-content width="4">
 							      
 					        		<md-menu-item>
-					          			<md-button ng-click="">
+					          			<md-button ng-click="showStructureDetails();">
 					 						<md-icon class="fa fa-pencil-square-o" style="display:inline"></md-icon>
 						            		<span>Axis configuration</span>
 						          		</md-button>
 					        		</md-menu-item>
 						        
 						        	<md-menu-item ng-if="seriesAxisTitleExcludeTypes.indexOf(selectedChartType.toLowerCase())<0">
-						          		<md-button ng-click="">
+						          		<md-button ng-click="showStructureDetails();">
 						            		<md-icon class="fa fa-text-width" style="display:inline"></md-icon>
 						            		<span>Axis' title configuration</span>
 						          		</md-button>
 						        	</md-menu-item>	
 						        	
 						        	<md-menu-item ng-if="seriesAxisMajorMinorGirdExcludeTypes.indexOf(selectedChartType.toLowerCase())<0">
-						          		<md-button ng-click="">
+						          		<md-button ng-click="showStructureDetails();">
 						          			<md-icon class="fa fa-th-large" style="display:inline"></md-icon>
 						            		<span>Major grid configuration</span>
 						          		</md-button>
 						        	</md-menu-item>	
 						        	
 						        	<md-menu-item ng-if="seriesAxisMajorMinorGirdExcludeTypes.indexOf(selectedChartType.toLowerCase())<0">
-						          		<md-button ng-click="">
+						          		<md-button ng-click="showStructureDetails();">
 						            		<md-icon class="fa fa-th" style="display:inline"></md-icon>
 						            		<span>Minor grid configuration</span>
 						          		</md-button>
@@ -287,7 +289,8 @@
 						     -->
 							<md-menu ng-if="selectedChartType.toLowerCase()=='gauge'">
 							      
-						      	<md-button 	aria-label="Open generic axis configurations' list" class="md-icon-button" ng-click="openMenu($mdOpenMenu, $event)"
+						      	<md-button 	aria-label="Open generic axis configurations' list" class="md-icon-button" 
+						      				ng-click="openMenu($mdOpenMenu, $event); showStructureDetails();"
 						      				style="margin-left:2; margin-right:2;">
 						        	<md-icon md-menu-origin class="fa fa-angle-double-down" style="display:inline"></md-icon>
 						      	</md-button>
@@ -295,35 +298,35 @@
 						      	<md-menu-content width="4">
 							      
 					        		<md-menu-item>
-					          			<md-button ng-click="">
+					          			<md-button ng-click="showStructureDetails();">
 					 						<md-icon class="fa fa-plus-square" style="display:inline"></md-icon>
 						            		<span>{{translate.load('sbi.chartengine.axisstylepopup.additionalParams.title')}}</span>
 						          		</md-button>
 					        		</md-menu-item>
 						        
 						        	<md-menu-item>
-						          		<md-button ng-click="">
+						          		<md-button ng-click="showStructureDetails();">
 						            		<md-icon class="fa fa-list-ul" style="display:inline"></md-icon>
 						            		<span>{{translate.load('sbi.chartengine.axisstylepopup.mainTickParams.title')}}</span>
 						          		</md-button>
 						        	</md-menu-item>	
 						        	
 						        	<md-menu-item>
-						          		<md-button ng-click="">
+						          		<md-button ng-click="showStructureDetails();">
 						          			<md-icon class="fa fa-list" style="display:inline"></md-icon>
 						            		<span>{{translate.load('sbi.chartengine.axisstylepopup.minorTickParams.title')}}</span>
 						          		</md-button>
 						        	</md-menu-item>	
 						        	
 						        	<md-menu-item>
-						          		<md-button ng-click="">
+						          		<md-button ng-click="showStructureDetails();">
 						            		<md-icon class="fa fa-font" style="display:inline"></md-icon>
 						            		<span>{{translate.load('sbi.chartengine.axisstylepopup.labelParams.title')}}</span>
 						          		</md-button>
 						        	</md-menu-item>	
 						        	
 						        	<md-menu-item>
-						          		<md-button ng-click="">
+						          		<md-button ng-click="showStructureDetails();">
 						            		<md-icon class="fa fa-tachometer" style="display:inline"></md-icon>
 						            		<span>{{translate.load('sbi.chartengine.axisstylepopup.plotbandParams.title')}}</span>
 						          		</md-button>
@@ -354,12 +357,12 @@
    	 							<md-icon aria-label="Move series item down" class="fa fa-arrow-down" style="display:inline"></md-icon>
  	 						</md-button>
 						    
-						    <md-button class="md-icon-button" ng-click="" style="margin-left:0; margin-right:0; padding-left:0; padding-right:0;">
+						    <md-button class="md-icon-button" ng-click="showStructureDetails();" style="margin-left:0; margin-right:0; padding-left:0; padding-right:0;">
 						    	<!-- alternative: fa-paint-brush -->
 						   		<md-icon aria-label="Series item configuration" class="fa fa-pencil-square-o" style="display:inline"></md-icon>
 					   		</md-button>
 					   		
-					   		<md-button class="md-icon-button" ng-click="" style="margin-left:0; margin-right:0; padding-left:0; padding-right:0;">
+					   		<md-button class="md-icon-button" ng-click="showStructureDetails();" style="margin-left:0; margin-right:0; padding-left:0; padding-right:0;">
 					   			<!-- alternative: fa-comment-o -->
 						   		<md-icon aria-label="Series item tooltip configuration" class="fa fa-commenting" style="display:inline"></md-icon>
 					   		</md-button>
@@ -388,15 +391,25 @@
 		<!-- 
 			DETAILS
 		 -->
-		<div hide-md ng-show="showStructureDetails" layout="column" flex=25 style="padding:0 8 0 0">  
+		<div hide-md ng-show="structureDetailsShown" layout="column" flex=25 style="padding:0 8 0 0">  
 			
 			<md-toolbar class="secondaryToolbar">
+			
 				<div class="md-toolbar-tools">
+					
 					<h2>
 						<span>{{translate.load("sbi.chartengine.designer.tabs.details.title")}}</span>
 					</h2>
-					<span flex></span>				   		
-				</div>		      
+					
+					<span flex></span>	
+					
+					<!-- Add additional criteria for ng-if: only for the additional SERIES container (instead of 'false') -->
+					<md-button class="md-icon-button" ng-click="hideStructureDetails()" style="margin-left:2; margin-right:2;">
+						<md-icon aria-label="Close Structure details panel" class="fa fa-times" style="display:inline"></md-icon>						
+					</md-button>
+							   		
+				</div>	
+					      
 			</md-toolbar>
 			
 			<!-- hide-md: Hide if the width of the screen is lower than 1280px -->
