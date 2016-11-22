@@ -580,6 +580,8 @@ if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
 			if($scope.isItStartWithOperator(value)){
 				$scope.originalValue=$scope.originalValue.replace(/,/g , "");
 				value =$scope.originalValue+value;
+			}else if($scope.isItStarsWithEqual(value)){
+				value = value.slice(1);
 			}
 			
 			if (startValue) {
@@ -723,8 +725,15 @@ if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
 	}
 	
 	$scope.isItStartWithOperator = function(value){
+		value = value.toString();
 		var firstChar = value.charAt(0);
 		return firstChar === '+'||firstChar === '-'||firstChar === '*'||firstChar === '/';
+	}
+	
+	$scope.isItStarsWithEqual = function(value){
+		value = value.toString();
+		var firstChar = value.charAt(0);
+		return firstChar === '='
 	}
 	/******************************************************************************/
 

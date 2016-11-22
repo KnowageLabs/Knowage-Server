@@ -213,7 +213,11 @@
 				
 					localOlapTemplateService.setCubeTag("Sales");
 					var cubeTag = localOlapTemplateService.getCubeTag();
-				
+					
+					var jsonTemplateTagValue = localOlapTemplateService.getJsonTemplateTag().XML_TAG_TEXT_CONTENT;
+					localOlapTemplateService.deleteJsonTemplateTag();
+					expect(localOlapTemplateService.getTemplateObject()).toEqual(jsonTemplateTagValue);
+					
 					expect(localOlapTemplateService.getCubeReference()).toEqual('Sales');
 				});
 			
@@ -232,6 +236,10 @@
 				it('should set and return true',function(){
 				
 					var success = localOlapTemplateService.setMdxQueryTag(validMdxQueryObj);
+					
+					var jsonTemplateTagValue = localOlapTemplateService.getJsonTemplateTag().XML_TAG_TEXT_CONTENT;
+					localOlapTemplateService.deleteJsonTemplateTag();
+					expect(localOlapTemplateService.getTemplateObject()).toEqual(jsonTemplateTagValue);
 					expect(localOlapTemplateService.getMdxQueryTag()).toBeDefined();
 					expect(success).toBe(true);
 					
@@ -255,7 +263,10 @@
 						localOlapTemplateService.setMdxQueryTag(validMdxQueryObj);
 						success = localOlapTemplateService.injectParametersToMdxQueryTag(anaDrParams);
 						params = localOlapTemplateService.getAnaliticalDriverParams();
-					
+						var jsonTemplateTagValue = localOlapTemplateService.getJsonTemplateTag().XML_TAG_TEXT_CONTENT;
+						localOlapTemplateService.deleteJsonTemplateTag();
+						
+					expect(localOlapTemplateService.getTemplateObject()).toEqual(jsonTemplateTagValue);
 					expect(success).toEqual(true);
 					expect(params.length).toEqual(1);
 					expect(params[0].as).toEqual('twoUrl');
@@ -292,6 +303,10 @@
 					
 						localOlapTemplateService.setMdxQueryTag(validMdxQueryObj);
 						var success = localOlapTemplateService.setClickableTag(validClickables);
+						var jsonTemplateTagValue = localOlapTemplateService.getJsonTemplateTag().XML_TAG_TEXT_CONTENT;
+						localOlapTemplateService.deleteJsonTemplateTag();
+						
+						expect(localOlapTemplateService.getTemplateObject()).toEqual(jsonTemplateTagValue);
 						expect(success).toBe(true);
 					})
 				
@@ -339,6 +354,10 @@
 						it('should be set and return true',function(){
 
 							var success = localOlapTemplateService.setScenarioTag(validScenario);
+							var jsonTemplateTagValue = localOlapTemplateService.getJsonTemplateTag().XML_TAG_TEXT_CONTENT;
+							localOlapTemplateService.deleteJsonTemplateTag();
+							
+							expect(localOlapTemplateService.getTemplateObject()).toEqual(jsonTemplateTagValue);
 							expect(localOlapTemplateService.getScenarioTag()).toBeDefined();
 							expect(success).toBe(true);
 						})
@@ -376,6 +395,10 @@
 							it('should set only one measure and return true:no property name ',function(){
 
 								var success = localOlapTemplateService.setScenarioTag(scenarioEmptyMeasures);
+								var jsonTemplateTagValue = localOlapTemplateService.getJsonTemplateTag().XML_TAG_TEXT_CONTENT;
+								localOlapTemplateService.deleteJsonTemplateTag();
+								
+								expect(localOlapTemplateService.getTemplateObject()).toEqual(jsonTemplateTagValue);
 								expect(localOlapTemplateService.getScenarioTag()).not.toBeDefined();
 								expect(success).toBe(false);
 							})
@@ -398,6 +421,30 @@
 						
 						
 					})
-		
+					
+				describe('JSONTEMPLATE property', function () {
+					
+					it('should set and return true',function(){
+
+						var success = localOlapTemplateService.setJsonTemplateTag();
+						
+						
+						
+						expect(localOlapTemplateService.getJsonTemplateTag()).toBeDefined();
+						expect(success).toBe(true);
+						
+					})
+					
+					it('should set and be equal to template without JSONTEMPLATE tag',function(){
+						
+						localOlapTemplateService.setJsonTemplateTag();
+						var jsonTemplateTagValue = localOlapTemplateService.getJsonTemplateTag().XML_TAG_TEXT_CONTENT;
+						localOlapTemplateService.deleteJsonTemplateTag();
+						expect(localOlapTemplateService.getTemplateObject()).toEqual(jsonTemplateTagValue);
+					})
+						
+					
+					
+				})
 
 		});

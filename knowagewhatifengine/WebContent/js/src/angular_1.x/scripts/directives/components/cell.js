@@ -33,8 +33,11 @@ angular.module('cell_directive',[])
 	            var ondbClick = function(){
 	            	if(scope.modelConfig.whatIfScenario){
 	            		scope.makeEditable(cell.id,cell.measurename);
+	            		
 	            	}
 	            }
+	            
+	           
 	            
 	            
 	            
@@ -48,6 +51,8 @@ angular.module('cell_directive',[])
 	            	}
 	
 	            }
+	            
+	           
 	           
 	         element.bind('click', onClick);
 	         
