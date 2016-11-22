@@ -27,9 +27,14 @@
 <%@page import="java.util.Iterator"%>
 <%@page import="com.fasterxml.jackson.databind.ObjectMapper"%>
 <%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
-<%@page import="it.eng.spagobi.commons.utilities.UserUtilities" %>
+<%@page import="it.eng.spagobi.commons.utilities.UserUtilities"%>
 <%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
 <%@page import="org.json.JSONObject"%>
+<%@page import="it.eng.spagobi.commons.dao.DAOFactory"%>
+<%@page import="it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO"%>
+<%@page import="it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO"%>
+<%@page import="it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter"%>
+<%@page import="it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter"%>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>
@@ -67,42 +72,51 @@
 		userUniqueIdentifier=(String)profile.getUserUniqueIdentifier();
 		userName=(String)((UserProfile)profile).getUserName();
 		userRoles = (ArrayList)profile.getRoles();
-		defaultRole = ((UserProfile)profile).getDefaultRole();		
-		
+		defaultRole = ((UserProfile)profile).getDefaultRole();
 	}
 	
-	 Map analyticalDrivers  = engineInstance.getAnalyticalDrivers();
-	    Map driverParamsMap = new HashMap();
-		for(Object key : engineInstance.getAnalyticalDrivers().keySet()){
-			if(key instanceof String){
-				String value = request.getParameter((String)key);
-				if(value!=null){
-					driverParamsMap.put(key, value);
+	Map analyticalDrivers  = engineInstance.getAnalyticalDrivers();
+    Map driverParamsMap = new HashMap();
+	for(Object key : engineInstance.getAnalyticalDrivers().keySet()){
+		if(key instanceof String){
+			String value = request.getParameter((String)key);
+			if(value!=null){
+				driverParamsMap.put(key, value);
+			}
+		}
+	}
+	
+	try {
+		IBIObjectParameterDAO objectParameterDAO = DAOFactory.getBIObjectParameterDAO();
+		IParameterDAO parameterDao = DAOFactory.getParameterDAO();
+		
+		List<BIObjectParameter> bIObjectParameters = objectParameterDAO.loadBIObjectParametersById(docId);
+		for(BIObjectParameter bIObjectParameter : bIObjectParameters){
+			if(bIObjectParameter.getVisible().compareTo(1) == 0){
+				Parameter parameter = parameterDao.loadForDetailByParameterID(bIObjectParameter.getParID());
+				String parameterName = parameter.getName();
+				if(!driverParamsMap.containsKey(parameterName)){
+					driverParamsMap.put(parameterName, "");
 				}
 			}
 		}
-		String analyticalDriversParams = new JSONObject(driverParamsMap).toString().replaceAll("'", "\\\\'");
-		
-		List<String> outputParametersList  = engineInstance.getOutputParameters();
-	    String outputParameters = "{}";  
-	    if(outputParametersList != null){
-		if(outputParametersList.size()>0){
-			Map outParMap = new HashMap<String, Boolean>();
-			for(int i = 0; i<outputParametersList.size(); i++){
-				String par = outputParametersList.get(i);
-				outParMap.put(par, true);
-			}
-		    outputParameters= new JSONObject(outParMap).toString().replaceAll("'", "\\\\'");
-	        }
-	    }
-		
-			
-		
-%>
-
-
+	} catch (Exception e) {
+	}
 	
-
-
+	String analyticalDriversParams = new JSONObject(driverParamsMap).toString().replaceAll("'", "\\\\'");
+	
+	List<String> outputParametersList  = engineInstance.getOutputParameters();
+    String outputParameters = "{}";  
+    if(outputParametersList != null){
+	if(outputParametersList.size()>0){
+		Map outParMap = new HashMap<String, Boolean>();
+		for(int i = 0; i<outputParametersList.size(); i++){
+			String par = outputParametersList.get(i);
+			outParMap.put(par, true);
+		}
+	    outputParameters= new JSONObject(outParMap).toString().replaceAll("'", "\\\\'");
+        }
+    }
+%>
 
 <%@include file="/WEB-INF/jsp/commons/includeMessageResource.jspf"%>
