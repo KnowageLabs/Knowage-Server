@@ -384,7 +384,8 @@ public class DatasetManagementAPI {
 					dataSet.loadData();
 					IDataStore baseDataStore = dataSet.getDataStore();
 
-					if (baseDataStore.getRecordsCount() > METAMODEL_LIMIT || haveCountDistinct(projections) || haveCountDistinct(summaryRowProjections)) {
+					// if (baseDataStore.getRecordsCount() > METAMODEL_LIMIT || haveCountDistinct(projections) || haveCountDistinct(summaryRowProjections)) {
+					if (true) { // don't use Apache MetaModel anymore here, too many side effects (COUNT DISTINCT aggregation, unusual sorting of rows)
 						cache.put(dataSet, baseDataStore);
 						dataStore = cache.get(dataSet, groups, filters, projections, summaryRowProjections, offset, fetchSize);
 						if (dataStore == null) {
