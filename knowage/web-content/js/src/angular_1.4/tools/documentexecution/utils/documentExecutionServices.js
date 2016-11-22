@@ -727,7 +727,9 @@
 									parameter.parameterValue= new Date(parseInt(dateRange)); 
 								}else{
 									//FROM VIEWPOINT
-									parameter.parameterValue= new Date(dateRange); 
+
+									parameter.parameterValue= sbiModule_dateServices.getDateFromFormat(dateRange, sbiModule_config.serverDateFormat);
+
 								}
 								if(typeof parameter.datarange ==='undefined'){
 									parameter.datarange = {};
