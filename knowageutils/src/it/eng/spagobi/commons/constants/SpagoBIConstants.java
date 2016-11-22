@@ -570,4 +570,8 @@ public class SpagoBIConstants {
 	public static final String DATE_RANGE_OPTIONS_KEY = "options";
 	public static final String PREDEFINED_GROOVY_SCRIPT_FILE_NAME = "predefinedGroovyScript.groovy";
 
+	// Session Parameters
+	public static final String SESSION_PARAMETERS_STORE_NAME = "sessionParameterService";
+	public static final String SESSION_PARAMETER_STATE_OBJECT_KEY = "parameterStateKey";
+
 }
