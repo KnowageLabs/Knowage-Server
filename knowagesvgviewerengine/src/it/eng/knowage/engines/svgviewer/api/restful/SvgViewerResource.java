@@ -34,7 +34,9 @@ import it.eng.knowage.engines.svgviewer.map.renderer.configurator.InteractiveMap
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
+import it.eng.spagobi.tools.dataset.exceptions.DataSetNotLoadedYetException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
@@ -257,7 +259,19 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 			if (dataset != null) {
 				String elementID = null;
 				JSONDataWriter writer = new JSONDataWriter();
-				JSONObject datasetJSON = (JSONObject) writer.write(dataset.getDataStore());
+				IDataStore ds2 = dataset.test();
+				IDataStore dataStore = null;
+				try {
+					dataStore = dataset.getDataStore();
+				} catch (DataSetNotLoadedYetException e) {
+					dataset.loadData();
+					dataStore = dataset.getDataStore();
+				}
+				if (dataStore == null) {
+					logger.error("DataStore getted from dataset is null!");
+					throw new SpagoBIServiceException("getCustomizedConfiguration", "DataStore getted from dataset is null.");
+				}
+				JSONObject datasetJSON = (JSONObject) writer.write(dataStore);
 				customizedConfigurationJSON.put("data", datasetJSON);
 
 				// add measures metadata informations

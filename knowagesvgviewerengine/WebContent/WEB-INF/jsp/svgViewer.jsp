@@ -108,23 +108,23 @@
 					              <i class="fa fa-2x fa-minus" aria-hidden="true"></i>
 					        </md-button>
 					     </div> 
-				         <md-content class="ie11fix" layout-fill layout="column"> 
-					         <md-button class="sidenavOpenButton" ng-click="openSideNav()"  ng-show="<%=propertiesPanelVisible%> && noError"  title="Open options panel" ng-style="{'left':sidenavButtonOffset}">
-					              <i class="fa fa-2x fa-bar-chart" aria-hidden="true"></i>
-					        </md-button>					 		
-	   					   <div id="container" layout-fill>   		             
-								<iframe id="svgContainer" 
-								    src='${pageContext.request.contextPath}/api/1.0/svgviewer/drawMap'  
-									width='100%'; height='100%'; frameborder="0" > 
-								</iframe>  				
-								<% if (isCustomizedSVG) {%>
-									<div id="dynamic-svg"></div> 
-									<div id="graphLegend"></div>
-								<% } %>
-						    </div> 
-				         </md-content>
-				    	</div>
-				    <% } %>
+					   <% } %>
+			         <md-content class="ie11fix" layout-fill layout="column"> 
+				         <md-button class="sidenavOpenButton" ng-click="openSideNav()"  ng-show="<%=propertiesPanelVisible%> && noError"  title="Open options panel" ng-style="{'left':sidenavButtonOffset}">
+				              <i class="fa fa-2x fa-bar-chart" aria-hidden="true"></i>
+				        </md-button>					 		
+   					   <div id="container" layout-fill>   		             
+							<iframe id="svgContainer" 
+							    src='${pageContext.request.contextPath}/api/1.0/svgviewer/drawMap'  
+								width='100%'; height='100%'; frameborder="0" > 
+							</iframe>  			
+							<% if (isCustomizedSVG) {%>
+								<div id="dynamic-svg"></div> 
+								<div id="graphLegend"></div>
+							<% } %>
+					    </div> 
+			         </md-content>
+			    </div>
 			</div>          
 			<div id="svgTooltip" ></div>
 	</body>
