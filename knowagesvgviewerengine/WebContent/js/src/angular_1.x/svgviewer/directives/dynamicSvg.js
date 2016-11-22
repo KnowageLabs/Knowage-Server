@@ -2,18 +2,10 @@ window.onload = function() {
     createChart();
 }
 
-function clickedElementCrossNavigation(idElement){
-	var crossData = JSON.parse(idElement);
-	for (var o in crossData){
-  		var k = Object.keys(crossData[o]);
-  		if (k[0] == 'ELEMENT_ID'){
-  			p(crossData[o]["ELEMENT_ID"]);	  			
-  			break;
-  		}
-  	}
-	//Launch an event to announce that an element was clicked and cross navigation is called
-	var event = new CustomEvent("SVGElementClickedCrossNavigation", { "detail": idElement });
-	window.parent.document.dispatchEvent(event);
+function doClickOnSvg(id){
+	var svg 	= document.getElementById("svgContainer");
+    var elem 	= svg.contentDocument.getElementById(id);
+	elem.onclick.apply(elem);
 }
 
 function createChart() {
@@ -39,7 +31,7 @@ function createChart() {
             initializeLegend();
             for(var k in response.data.rows){
                 var data = [response.data.rows[k]['column_2'],response.data.rows[k]['column_3'],response.data.rows[k]['column_4']];
-                initializeChart(response.CUSTOMIZE_SETTINGS,data,response.data.rows[k]['column_1'],response.crossUrl[k].url);
+                initializeChart(response.CUSTOMIZE_SETTINGS,data,response.data.rows[k]['column_1']);
             }
         })
         .fail(function(error) {
@@ -82,7 +74,7 @@ function createChart() {
    
 
 
-    function initializeChart(config,data,chartId,func) {
+    function initializeChart(config,data,chartId) {
 
         var svg = document.getElementById("svgContainer");
         var centroide = svg.contentDocument.getElementById(chartId);
@@ -91,7 +83,7 @@ function createChart() {
         function setChartToPosition(position){
             var div = document.createElement("div");
             div.className = "graph";
-            div.setAttribute("onclick",func);
+            div.setAttribute("onclick","doClickOnSvg('"+chartId+"')");
             var canvas = document.createElement("canvas");
             canvas.id = chartId;
             div.appendChild(canvas); 

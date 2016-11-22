@@ -93,13 +93,13 @@ onload="init(evt);">
 	
 		function clickedElementCrossNavigation(idElement){
 			var crossData = JSON.parse(idElement);
-			for (var o in crossData){
+		/*	for (var o in crossData){
 		  		var k = Object.keys(crossData[o]);
 		  		if (k[0] == 'ELEMENT_ID'){
 		  			p(crossData[o]["ELEMENT_ID"]);	  			
 		  			break;
 		  		}
-		  	}
+		  	} */
 			//Launch an event to announce that an element was clicked and cross navigation is called
 			var event = new CustomEvent("SVGElementClickedCrossNavigation", { "detail": idElement });
 			window.parent.document.dispatchEvent(event);

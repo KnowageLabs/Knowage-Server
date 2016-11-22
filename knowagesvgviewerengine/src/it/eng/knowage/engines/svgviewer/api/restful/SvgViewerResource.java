@@ -278,37 +278,40 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 				}
 				customizedConfigurationJSON.put("COLUMNS", meauresJSON);
 
-				// add cross url definition for elementID
-				JSONArray crossUrlJSON = new JSONArray();
-				JSONArray rows = (JSONArray) datasetJSON.get("rows");
-				for (int i = 0; i < rows.length(); i++) {
-					JSONObject crossJSON = new JSONObject();
-					JSONObject row = rows.getJSONObject(i);
-					String url = "javascript:clickedElementCrossNavigation('";
-					JSONArray urlValues = new JSONArray();
-					JSONArray rowNames = row.names();
-					for (int r = 0; r < rowNames.length(); r++) {
-						String name = (String) rowNames.get(r);
-						// get real field name
-						JSONArray fields = (JSONArray) ((JSONObject) datasetJSON.get("metaData")).get("fields");
-						String fieldName = getFieldName(fields, name);
-						String fieldValue = String.valueOf(row.get(name));
-
-						if (fieldName.equals(""))
-							continue;
-
-						if (fieldName.equalsIgnoreCase(elementID)) {
-							crossJSON.put("elementId", fieldValue);
-						}
-						JSONObject newValue = new JSONObject();
-						newValue.put(fieldName, fieldValue);
-						urlValues.put(newValue);
-					}
-					url += urlValues.toString() + "') ";
-					crossJSON.put("url", url);
-					crossUrlJSON.put(crossJSON);
-				}
-				customizedConfigurationJSON.put("crossUrl", crossUrlJSON);
+				// // add cross url definition for elementID
+				// JSONArray crossUrlJSON = new JSONArray();
+				// JSONArray rows = (JSONArray) datasetJSON.get("rows");
+				// for (int i = 0; i < rows.length(); i++) {
+				// JSONObject crossJSON = new JSONObject();
+				// JSONObject row = rows.getJSONObject(i);
+				// String url = "javascript:window.parent.clickedElementCrossNavigation('";
+				// JSONArray urlValues = new JSONArray();
+				// JSONArray rowNames = row.names();
+				// for (int r = 0; r < rowNames.length(); r++) {
+				// String name = (String) rowNames.get(r);
+				// // get real field name
+				// JSONArray fields = (JSONArray) ((JSONObject) datasetJSON.get("metaData")).get("fields");
+				// String fieldName = getFieldName(fields, name);
+				// String fieldValue = String.valueOf(row.get(name));
+				//
+				// if (fieldName.equals(""))
+				// continue;
+				// // add the ELEMENT_ID as specific information
+				// if (fieldName.equalsIgnoreCase(elementID)) {
+				// crossJSON.put("elementId", fieldValue);
+				// JSONObject newValue = new JSONObject();
+				// newValue.put("ELEMENT_ID", fieldValue);
+				// urlValues.put(newValue);
+				// }
+				// JSONObject newValue = new JSONObject();
+				// newValue.put(fieldName, fieldValue);
+				// urlValues.put(newValue);
+				// }
+				// url += urlValues.toString() + "') ";
+				// crossJSON.put("url", url);
+				// crossUrlJSON.put(crossJSON);
+				// }
+				// customizedConfigurationJSON.put("crossUrl", crossUrlJSON);
 			} else {
 				logger.debug("Dataset is null, no data values returned.");
 			}

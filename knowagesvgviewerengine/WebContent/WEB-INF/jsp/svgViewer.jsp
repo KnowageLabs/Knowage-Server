@@ -99,32 +99,32 @@
 			        <md-button class="backButton" ng-click="goToPreviousLevel()"  ng-show="noError && showBackButton"  title="Go back to previous level">
 			              <i class="fa fa-2x fa-arrow-circle-left" aria-hidden="true"></i>
 			        </md-button>
-			        <div layout="column" class="zoomButton"  >
-			        	<md-button class="zoomIn" ng-click="zoom('zoomIn', $event)" ng-show="noError" ng-disabled="numZoom>=4" title="Zoom In">
-				              <i class="fa fa-2x fa-plus" aria-hidden="true"></i>
-				        </md-button> 
-				        <md-button class="zoomOut" ng-click="zoom('zoomOut', $event)" ng-show="noError" ng-disabled="numZoom<1" title="Zoom Out">
-				              <i class="fa fa-2x fa-minus" aria-hidden="true"></i>
-				        </md-button>
-				     </div> 
-			         <md-content class="ie11fix" layout-fill layout="column"> 
-				         <md-button class="sidenavOpenButton" ng-click="openSideNav()"  ng-show="<%=propertiesPanelVisible%> && noError"  title="Open options panel" ng-style="{'left':sidenavButtonOffset}">
-				              <i class="fa fa-2x fa-bar-chart" aria-hidden="true"></i>
-				        </md-button>					 		
-   					   <div id="container" layout-fill>   		             
-							<iframe id="svgContainer" 
-							    src='${pageContext.request.contextPath}/api/1.0/svgviewer/drawMap'  
-								width='100%'; height='100%'; frameborder="0" > 
-							</iframe>  
-								<div id="dynamic-svg"></div> 
-								<div id="graphLegend"></div>
-							<% if (isCustomizedSVG) {%>
-								<div id="dynamic-svg"></div> 
-								
-							<% } %>
-					    </div> 
-			         </md-content>
-			    </div>
+			        <% if (!isCustomizedSVG) {%>
+				        <div layout="column" class="zoomButton"  >
+				        	<md-button class="zoomIn" ng-click="zoom('zoomIn', $event)" ng-show="noError" ng-disabled="numZoom>=4" title="Zoom In">
+					              <i class="fa fa-2x fa-plus" aria-hidden="true"></i>
+					        </md-button> 
+					        <md-button class="zoomOut" ng-click="zoom('zoomOut', $event)" ng-show="noError" ng-disabled="numZoom<1" title="Zoom Out">
+					              <i class="fa fa-2x fa-minus" aria-hidden="true"></i>
+					        </md-button>
+					     </div> 
+				         <md-content class="ie11fix" layout-fill layout="column"> 
+					         <md-button class="sidenavOpenButton" ng-click="openSideNav()"  ng-show="<%=propertiesPanelVisible%> && noError"  title="Open options panel" ng-style="{'left':sidenavButtonOffset}">
+					              <i class="fa fa-2x fa-bar-chart" aria-hidden="true"></i>
+					        </md-button>					 		
+	   					   <div id="container" layout-fill>   		             
+								<iframe id="svgContainer" 
+								    src='${pageContext.request.contextPath}/api/1.0/svgviewer/drawMap'  
+									width='100%'; height='100%'; frameborder="0" > 
+								</iframe>  				
+								<% if (isCustomizedSVG) {%>
+									<div id="dynamic-svg"></div> 
+									<div id="graphLegend"></div>
+								<% } %>
+						    </div> 
+				         </md-content>
+				    	</div>
+				    <% } %>
 			</div>          
 			<div id="svgTooltip" ></div>
 	</body>
