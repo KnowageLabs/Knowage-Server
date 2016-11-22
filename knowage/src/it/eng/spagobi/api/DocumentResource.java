@@ -23,6 +23,13 @@ import it.eng.spagobi.analiticalmodel.document.AnalyticalModelDocumentManagement
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
+import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
+import it.eng.spagobi.behaviouralmodel.lov.dao.IModalitiesValueDAO;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.JSONTemplateUtilities;
@@ -360,6 +367,84 @@ public class DocumentResource extends AbstractSpagoBIResource {
 			JSONObject resultsJSON = new JSONObject();
 			resultsJSON.put("results", paramsJSON);
 			return resultsJSON.toString();
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+	
+	@GET
+	@Path("/{label}/analyticalDrivers")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public Response getDocumentAD(@PathParam("label") String label) {
+		logger.debug("IN");
+		IParameterDAO driversDao = null;
+		List<Parameter> aDriversToSend = new ArrayList<>();
+
+		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
+		try {
+			driversDao = DAOFactory.getParameterDAO();
+			driversDao.setUserProfile(getUserProfile());
+			
+			List<BIObjectParameter> parameters = documentManager.getDocument(label).getBiObjectParameters();
+			for(int i=0;i<parameters.size();i++){
+				Parameter driver = driversDao.loadForDetailByParameterID(parameters.get(i).getParameter().getId());
+				if(!aDriversToSend.contains(driver)){
+					aDriversToSend.add(driver);
+				}
+				
+			}
+			return Response.ok(aDriversToSend).build();
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+	
+	@GET
+	@Path("/{label}/lovs")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public Response getDocumentLovs(@PathParam("label") String label) {
+		logger.debug("IN");
+		
+		IParameterUseDAO useModesDao = null;
+		IModalitiesValueDAO modalitiesValueDAO = null;
+		
+		List<ParameterUse> modes = null;
+		List<ModalitiesValue> modalitiesValuesToSend = new ArrayList<ModalitiesValue>();
+
+		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
+		try {
+			
+			useModesDao = DAOFactory.getParameterUseDAO();				
+			modalitiesValueDAO = DAOFactory.getModalitiesValueDAO();
+			
+			useModesDao.setUserProfile(getUserProfile());
+			modalitiesValueDAO.setUserProfile(getUserProfile());
+			
+			
+			List<BIObjectParameter> parameters = documentManager.getDocument(label).getBiObjectParameters();
+			for(int i=0;i<parameters.size();i++){
+				
+				Integer AnalyticalDriverId = parameters.get(i).getParameter().getId();
+				
+					modes = useModesDao.loadParametersUseByParId(AnalyticalDriverId);
+				
+				for(int j=0;j<modes.size();j++){
+					Integer lovId = modes.get(j).getIdLov();
+					if(lovId!=null){
+						ModalitiesValue modalitiesValue = modalitiesValueDAO.loadModalitiesValueByID(lovId);
+						if(!modalitiesValuesToSend.contains(modalitiesValue)){
+							modalitiesValuesToSend.add(modalitiesValue);
+						}
+					}
+					
+				}
+				
+			}
+			return Response.ok(modalitiesValuesToSend).build();
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
 		} finally {

@@ -37,21 +37,29 @@ import javax.ws.rs.core.Response;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
 import it.eng.spagobi.behaviouralmodel.check.bo.Check;
 import it.eng.spagobi.behaviouralmodel.check.dao.ICheckDAO;
+import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
+import it.eng.spagobi.behaviouralmodel.lov.dao.IModalitiesValueDAO;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.RoleBO;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
 import it.eng.spagobi.mapcatalogue.dao.ISbiGeoLayersDAO;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -164,7 +172,97 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 		}
 
 	}
+	
+	@GET
+	@UserConstraint(functionalities = { SpagoBIConstants.PARAMETER_MANAGEMENT })
+	@Path("/{id}/lovs")
+	@Produces(MediaType.APPLICATION_JSON + charset)
+	public Response getLovsForDriver(@PathParam("id") Integer id) {
+		
+		
+		IModalitiesValueDAO modalitiesValueDAO = null;
+		IParameterUseDAO useModesDao = null;
+		
+		List<ParameterUse> modes = null;
+		List<ModalitiesValue> modalitiesValuesToSend = new ArrayList<ModalitiesValue>();
 
+
+			try {
+				
+				
+				useModesDao = DAOFactory.getParameterUseDAO();				
+				modalitiesValueDAO = DAOFactory.getModalitiesValueDAO();
+				
+				useModesDao.setUserProfile(getUserProfile());
+				modalitiesValueDAO.setUserProfile(getUserProfile());
+				
+				
+				modes = useModesDao.loadParametersUseByParId(id);
+				
+				for(int i=0;i<modes.size();i++){
+					Integer lovId = modes.get(i).getIdLov();
+					if(lovId!=null){
+						ModalitiesValue modalitiesValue = modalitiesValueDAO.loadModalitiesValueByID(lovId);
+						if(!modalitiesValuesToSend.contains(modalitiesValue)){
+							modalitiesValuesToSend.add(modalitiesValue);
+						}
+					}
+					
+				}
+				
+				
+			
+			return Response.ok(modalitiesValuesToSend).build();
+		} catch (Exception e) {
+			logger.error("Error with loading resource", e);
+			throw new SpagoBIRestServiceException("Error with loading resource", buildLocaleFromSession(), e);
+		}
+			
+			
+
+	}
+	@GET
+	@UserConstraint(functionalities = { SpagoBIConstants.PARAMETER_MANAGEMENT })
+	@Path("/{id}/documents")
+	@Produces(MediaType.APPLICATION_JSON + charset)
+	public Response getDocumentsById(@PathParam("id") Integer id) {
+		
+
+		logger.debug("IN");
+		IBIObjectDAO documentsDao = null;
+		List<BIObject> allObjects = null;
+		List<BIObject> objects = null;
+
+		try {
+			documentsDao = DAOFactory.getBIObjectDAO();
+			allObjects = documentsDao.loadAllBIObjects();
+
+			UserProfile profile = getUserProfile();
+			objects = new ArrayList<BIObject>();
+
+			
+				for (BIObject obj : allObjects) {
+					if (ObjectsAccessVerifier.canSee(obj, profile)){
+						List<BIObjectParameter> parameters = obj.getBiObjectParameters();
+						for(int i =0;i<parameters.size();i++){
+							if(parameters.get(i).getParameter().getId().equals(id)&&!objects.contains(obj)){
+								objects.add(obj);
+							}
+						}
+						
+					}
+						
+				}
+			
+			String toBeReturned = JsonConverter.objectToJson(objects, objects.getClass());
+
+			return Response.ok(toBeReturned).build();
+		} catch (Exception e) {
+			logger.error("Error with loading resource", e);
+			throw new SpagoBIRestServiceException("Error with loading resource", buildLocaleFromSession(), e);
+		}
+
+	}
 	@POST
 	@Path("/")
 	@UserConstraint(functionalities = { SpagoBIConstants.PARAMETER_MANAGEMENT })
