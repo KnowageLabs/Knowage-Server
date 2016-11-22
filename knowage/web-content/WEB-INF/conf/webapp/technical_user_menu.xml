@@ -76,6 +76,10 @@
 					functionality="ConstraintView"
 					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=LISTMODALITIESCHECKSPAGE&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/checks16.png" />
+					<ITEM	title="#menu.BehaviouralModelLineage"
+					functionality="ConstraintView"
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/behaviouralModelLineage.jsp?LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+					 />
 		</ITEM>
 		<ITEM	code="catalogs" 
 				title="#menu.Catalogs"
