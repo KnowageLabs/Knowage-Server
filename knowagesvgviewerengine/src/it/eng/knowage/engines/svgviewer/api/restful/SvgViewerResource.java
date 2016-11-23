@@ -272,25 +272,41 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 					throw new SpagoBIServiceException("getCustomizedConfiguration", "DataStore getted from dataset is null.");
 				}
 				JSONObject datasetJSON = (JSONObject) writer.write(dataStore);
+				// add logicType to the fields
+
+				JSONObject metaDataJSON = (JSONObject) datasetJSON.get("metaData");
+				JSONArray fieldsJSON = metaDataJSON.getJSONArray("fields");
+				for (int i = 0; i < fieldsJSON.length(); i++) {
+					Object field = fieldsJSON.get(i);
+					if (field instanceof JSONObject) {
+						JSONObject fieldJSON = (JSONObject) fieldsJSON.get(i);
+						String header = fieldJSON.getString("header");
+						DataSetMetaData meauresMap = hierMember.getDsMetaData();
+						String logicalType = getLogicalType(meauresMap, header);
+						fieldJSON.put("logicalType", logicalType);
+					} else
+						continue;
+				}
+
 				customizedConfigurationJSON.put("data", datasetJSON);
 
-				// add measures metadata informations
-				DataSetMetaData meauresMap = hierMember.getDsMetaData();
-				Map columns = meauresMap.getColumns();
-				JSONArray meauresJSON = new JSONArray();
-				Iterator iter = columns.keySet().iterator();
-				while (iter.hasNext()) {
-					String key = (String) iter.next();
-					Properties values = (Properties) columns.get(key);
-					// get elementId reference
-					String type = values.getProperty("type");
-					if (type.equalsIgnoreCase("geoid")) {
-						elementID = key;
-					}
-					// if (key != null && values != null && !meauresJSON.has(key))
-					meauresJSON.put(values);
-				}
-				customizedConfigurationJSON.put("COLUMNS", meauresJSON);
+				// // add measures metadata informations
+				// DataSetMetaData meauresMap = hierMember.getDsMetaData();
+				// Map columns = meauresMap.getColumns();
+				// JSONArray meauresJSON = new JSONArray();
+				// Iterator iter = columns.keySet().iterator();
+				// while (iter.hasNext()) {
+				// String key = (String) iter.next();
+				// Properties values = (Properties) columns.get(key);
+				// // get elementId reference
+				// String type = values.getProperty("type");
+				// if (type.equalsIgnoreCase("geoid")) {
+				// elementID = key;
+				// }
+				// // if (key != null && values != null && !meauresJSON.has(key))
+				// meauresJSON.put(values);
+				// }
+				// customizedConfigurationJSON.put("COLUMNS", meauresJSON);
 
 				// // add cross url definition for elementID
 				// JSONArray crossUrlJSON = new JSONArray();
@@ -342,6 +358,27 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 	}
 
 	/** Utility methods ******************************************************************************************************/
+
+	private String getLogicalType(DataSetMetaData measuresMap, String header) {
+		String toReturn = "";
+		try {
+			Map columns = measuresMap.getColumns();
+			JSONArray meauresJSON = new JSONArray();
+			Iterator iter = columns.keySet().iterator();
+			while (iter.hasNext()) {
+				String key = (String) iter.next();
+				Properties values = (Properties) columns.get(key);
+				String columnId = values.getProperty("column_id");
+				if (columnId.equalsIgnoreCase(header)) {
+					toReturn = values.getProperty("type");
+					break;
+				}
+			}
+		} catch (Exception ex) {
+			logger.error("An error occured while loading field name ");
+		}
+		return toReturn;
+	}
 
 	private String getFieldName(JSONArray fields, String metaName) {
 		String toReturn = "";
