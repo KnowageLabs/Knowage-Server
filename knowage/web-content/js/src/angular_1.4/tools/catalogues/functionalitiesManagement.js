@@ -50,7 +50,7 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 	$scope.selectedFolder = {};
 	$scope.roles = [];
 	$scope.dirtyForm = false;
-	
+	$scope.parent = {};
 	$scope.cancel = function() { // on cancel button
 		$scope.selectedFolder ={};
 		$scope.showme = false;
@@ -76,7 +76,6 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 	    			 parentId : $scope.selectedFolder.parentId
 	    			 
 	    	 }
-	    	 console.log($scope.fake);
 	    		sbiModule_restServices.promisePut("2.0/functionalities",$scope.fake.id, $scope.fake)
 				.then(function(response) {
 					$scope.folders_copy = $scope.getFolders(); 
@@ -104,9 +103,6 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 	    			 parentId : $scope.selectedFolder.parentId
 	    			 
 	    	 }
-	    	 console.log($scope.fake);
-	    		sbiModule_restServices.p
-			console.log($scope.selectedFolder);
 			sbiModule_restServices.promisePost('2.0/functionalities','',$scope.fake)
 			.then(function(response) {
 				$scope.folders_copy = $scope.getFolders(); 
@@ -164,7 +160,7 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 				"size" : "50px",
 				hideTooltip : true,
 				transformer : function() {
-					return " <md-checkbox  ng-checked=scopeFunctions.isChecked(row,'devRoles')   ng-click=scopeFunctions.checkRole(row,'devRoles') aria-label='' ></md-checkbox>";
+					return " <md-checkbox  ng-checked=scopeFunctions.isChecked(row,'devRoles')    ng-click=scopeFunctions.checkRole(row,'devRoles')  ng-disabled=!scopeFunctions.isDisabled(row,'devRoles')   aria-label='' ></md-checkbox>";
 				}
 			},
 			{
@@ -173,7 +169,7 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 				"size" : "50px",
 				hideTooltip : true,
 				transformer : function() {
-					return " <md-checkbox  ng-checked=scopeFunctions.isChecked(row,'testRoles')  ng-click=scopeFunctions.checkRole(row,'testRoles')  aria-label='' ></md-checkbox>";
+					return " <md-checkbox  ng-checked=scopeFunctions.isChecked(row,'testRoles')  ng-click=scopeFunctions.checkRole(row,'testRoles')  ng-disabled=!scopeFunctions.isDisabled(row,'testRoles')   aria-label='' ></md-checkbox>";
 				}
 			},
 			{
@@ -183,7 +179,7 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 				"size" : "50px",
 				hideTooltip : true,
 				transformer : function() {
-					return " <md-checkbox  ng-checked=scopeFunctions.isChecked(row,'execRoles') ng-click=scopeFunctions.checkRole(row,'execRoles')  aria-label='' ></md-checkbox>";
+					return " <md-checkbox  ng-checked=scopeFunctions.isChecked(row,'execRoles')  ng-click=scopeFunctions.checkRole(row,'execRoles')  ng-disabled=!scopeFunctions.isDisabled(row,'execRoles')  aria-label='' ></md-checkbox>";
 				}
 			},
 			{
@@ -193,7 +189,7 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 				"size" : "50px",
 				hideTooltip : true,
 				transformer : function() {
-					return " <md-checkbox ng-checked=scopeFunctions.isChecked(row,'createRoles')  ng-click=scopeFunctions.checkRole(row,'createRoles') aria-label=''></md-checkbox>";
+					return " <md-checkbox ng-checked=scopeFunctions.isChecked(row,'createRoles')  ng-click=scopeFunctions.checkRole(row,'createRoles')  ng-disabled=!scopeFunctions.isDisabled(row,'createRoles')  aria-label=''></md-checkbox>";
 				}
 			}
 
@@ -209,7 +205,6 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 				
 			},
 			showItem : function (item){
-				console.log(item.prog== 1);
 				return !(item.prog== 1);
 			}
 		}, 
@@ -246,11 +241,30 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 					
 				}
 			}
-			if ($scope.selectedFolder.parentId===1){
-				return true
-			}
+			
 		},
-
+		
+		/*
+			method that disable choosing role that parent does not have
+		*/
+		isDisabled : function(row, criteria) {
+			console.log($scope.parent!=undefined )
+			if($scope.parent!=undefined ){
+				if($scope.parent.parentId){
+					if ($scope.parent[criteria] != undefined ) {
+						for (var j = 0; j < $scope.parent[criteria].length; j++) {
+							if ($scope.parent[criteria][j].name == row.name) {
+								return true;
+							}
+							
+						}
+					} 
+				}
+				else return true;
+				
+			}  
+			
+		},
 		checkRole : function(item, criteria) {
 			if ($scope.selectedFolder[criteria] == null) {
 				$scope.selectedFolder[criteria] = [];
@@ -302,7 +316,6 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 			}
 		}
 		$scope.selectedFolder.createRoles = $scope.remove($scope.selectedFolder.createRoles,"id");
-		console.log($scope.selectedFolder.createRoles);
 		if ($scope.selectedFolder.execRoles.length == 0 ) {
 			$scope.selectedFolder.execRoles.push(row);
 		} else {
@@ -409,6 +422,18 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 					sbiModule_messaging.showErrorMessage(sbiModule_translate.load(response.data.errors[0].message), 'Error');
 				});
 	}
+	
+	$scope.getParent = function (id){
+		sbiModule_restServices.promiseGet("2.0/functionalities/getParent", id).then(
+				function(response) {
+					$scope.parent = angular.copy(response.data);
+					console.log(angular.copy(response.data));
+				},
+				function(response) {
+					sbiModule_messaging.showErrorMessage(sbiModule_translate.load(response.data.errors[0].message), 'Error');
+				});
+	}
+	
 	$scope.canBeMovedDown = function (item){
 		if($scope.folders_copy!= undefined){
 			for (var i=0; i < $scope.folders_copy.length-1; i++){
@@ -423,13 +448,13 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 		}
 		
 	}
+	
 	$scope.canBeDeleted = function (item){
 		if(item.parentId==null && item.codType=="LOW_FUNCT") return false
 		else return true;
 	}
 	
-
-		$scope.indexInList = function(item, list) {
+	$scope.indexInList = function(item, list) {
 
 		for (var i = 0; i < list.length; i++) {
 			var object = list[i];
@@ -466,17 +491,20 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 	};
 	  
 	$scope.loadFolder = function(item) {  
+		
 		for(var i=0; i<$scope.folders.length; i++){
 			$scope.folders[i].expanded=true;	 
 				
 		}
-		console.log(item);
 		if ($scope.dirtyForm) {
 			$mdDialog.show($scope.confirm).then(function() {
+				$scope.selectedFolder = angular.copy(item); 
+				if(item.parentId!=null  ){
+					$scope.getParent(item.parentId);
+				}
 				$scope.showme = true;
 				$scope.showPlusButton = true;
 				$scope.dirtyForm = false;
-				$scope.selectedFolder = angular.copy(item); 
 			}, function() {
 				$scope.showme = true;
 			});
@@ -484,10 +512,16 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 		} else {
 			if (angular.copy(item).parentId !== null) {
 				$scope.selectedFolder = angular.copy(item);
+				if(item.parentId!=null){
+					$scope.getParent(item.parentId);
+				}
 				$scope.showme = true;
 				$scope.showPlusButton = true; 
 			} else {
 				$scope.selectedFolder = angular.copy(item);
+				if(item.parentId!=null){
+					$scope.getParent(item.parentId);
+				}
 				$scope.showme = false;
 				$scope.showPlusButton = true; 
 

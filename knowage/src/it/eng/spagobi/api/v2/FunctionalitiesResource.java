@@ -262,6 +262,31 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 		}
 
 	}
+	
+	/**
+	 * Service that get parent folder of selected folder
+	 *
+	 * @author Radmila Selakovic (rselakov, radmila.selakovic@mht.net
+	 */
+
+
+	@GET
+	@Path("getParent/{id}")
+	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONALITIES_MANAGEMENT })
+	@Produces(MediaType.APPLICATION_JSON + charset)
+	public Response getParent(@PathParam("id") Integer id) {
+
+		try {
+			LowFunctionality l = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByID(id, false);
+			return Response.ok(l).build();
+
+		} catch (Exception e) {
+			String errorString = "sbi.folder.load.folder.moveUp";
+			logger.error(errorString, e);
+			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
+		}
+
+	}
 
 	/**
 	 * Service that moves functionality down
