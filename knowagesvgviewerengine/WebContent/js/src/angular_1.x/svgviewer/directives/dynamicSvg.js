@@ -20,12 +20,13 @@ function createChart() {
         })
         .done(function(response) {
         	serviceResponse = response.data;
-            
-            for(var i=3;i<response.data.metaData.fields.length;i++){
-            	//debugger;
-            	//if(response.COLUMNS[i].type == "measure"){
+        	
+            for(var i=0;i<response.data.metaData.fields.length;i++){
+
+            	if(response.data.metaData.fields[i].logicalType && response.data.metaData.fields[i].logicalType == "measure"){
             		labels.push(response.data.metaData.fields[i].header);
-            	//}
+            	}
+           
             }
             
             for(var j in response.CUSTOMIZE_SETTINGS.CHART.BACKGROUND){
@@ -33,8 +34,10 @@ function createChart() {
             }
             initializeLegend();
             for(var k in response.data.rows){
+            	if(response.data.rows)
                 var data = [response.data.rows[k]['column_3'],response.data.rows[k]['column_4'],response.data.rows[k]['column_5']];
-                initializeChart(response.CUSTOMIZE_SETTINGS,data,response.data.rows[k]['column_1']);
+            	var perc = [response.data.rows[k]['column_7'],response.data.rows[k]['column_8'],response.data.rows[k]['column_9']]
+                initializeChart(response.CUSTOMIZE_SETTINGS,data,response.data.rows[k]['column_1'],perc);
             }
         })
         .fail(function(error) {
@@ -47,7 +50,7 @@ function createChart() {
     	for(k in serviceResponse.rows){
     		var svg 		= document.getElementById("svgContainer");
             var centroide 	= svg.contentDocument.getElementById(serviceResponse.rows[k]['column_1']);
-            var position 	= centroide.getBoundingClientRect(); ;
+            var position 	= centroide.getBoundingClientRect(); 
             var canvas 		= document.getElementById(serviceResponse.rows[k]['column_1']);
             canvas.parentElement.style.top = position.top;
             canvas.parentElement.style.left = position.left;
@@ -77,7 +80,7 @@ function createChart() {
    
 
 
-    function initializeChart(config,data,chartId) {
+    function initializeChart(config,data,chartId,perc) {
 
         var svg = document.getElementById("svgContainer");
         var centroide = svg.contentDocument.getElementById(chartId);
@@ -88,8 +91,27 @@ function createChart() {
             div.className = "graph";
             div.setAttribute("onclick","doClickOnSvg('"+chartId+"')");
             var canvas = document.createElement("canvas");
+            var percLegend = document.createElement("div");
+            percLegend.className = "percLegend";
+            for (var k in perc){
+        		var label = document.createElement("div");
+        		var span = document.createElement("div");
+        		var color = document.createElement("div");
+        		label.className = "graphLabel";
+        		span.className 	= "graphSpan";
+        		color.className = "graphColor";
+        		span.innerHTML 	= perc[k]+"%";
+        		color.style.backgroundColor = backgrounds[k];
+        		label.appendChild(span);
+        		label.appendChild(color);
+        		percLegend.appendChild(label);
+            }
+            
+            
+            
             canvas.id = chartId;
             div.appendChild(canvas); 
+            div.appendChild(percLegend);
             canvas.parentElement.style.top = position.top;
             canvas.parentElement.style.left = position.left;
             canvas.parentElement.style.width = position.width;
@@ -102,6 +124,7 @@ function createChart() {
         var ctx = document.getElementById(chartId).getContext("2d");
 
         //DESCRITTORE GRAFICO A TORTA
+        debugger;
         var myChart = new Chart(ctx, {
             type: config.CHART.type,
             data: {
@@ -112,13 +135,13 @@ function createChart() {
                 }]
             },
             options: {
-            	 elements: {
-            		    arc: {
-            		      borderWidth: 0
-            		    }
-            		  },
             	legend : {
-            		display : false
+            		display: false
+            	},
+            	elements: {
+            		arc: {
+            			borderWidth: 0
+            		}
             	}
             }
         });

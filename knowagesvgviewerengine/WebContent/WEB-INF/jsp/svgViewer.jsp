@@ -41,7 +41,8 @@
 	          	
 			<div ng-app="svgViewerApp" class="svgMainContainer">
 			     <div  class="divFlex" ng-controller="SvgViewerController" ng-scope> 
-			     <md-sidenav layout="column"  ng-class="{'_md-locked-open':sidenavOpened}" id="svgInfoSidenav" md-component-id="svgSideNav" ng-show="<%=propertiesPanelVisible%> && noError" class="md-sidenav-<%= propertiesPanelPosition %>"  >
+			     <!--  md-sidenav layout="column"  ng-class="{'_md-locked-open':sidenavOpened}" id="svgInfoSidenav" md-component-id="svgSideNav" ng-show="<%=propertiesPanelVisible%> && noError" class="md-sidenav-<%= propertiesPanelPosition %>"  -->
+			      <md-sidenav layout="column" id="svgInfoSidenav" md-component-id="svgSideNav" ng-show="<%=propertiesPanelVisible%> && noError" class="md-sidenav-<%= propertiesPanelPosition %>"  >
 			      <section  >
 				     <div class="md-accordion" layout="column">
 				     		<md-toolbar ng-init="expandedInfo = true"  ng-show="showInfo" layout="row" ng-click="expandedInfo = !expandedInfo">

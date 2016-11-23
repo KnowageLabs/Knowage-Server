@@ -22,9 +22,9 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
 	    $mdThemingProvider.setDefaultTheme('knowage');
 	}]);
 
-app.controller('SvgViewerController', ['$scope','sbiModule_restServices','$mdSidenav','sbiModule_logger','$window','sbiModule_config','$rootScope','$sce',SvgViewerControllerFunction] );
+app.controller('SvgViewerController', ['$scope','sbiModule_restServices','$mdSidenav','sbiModule_logger','$window','sbiModule_config','$rootScope','$sce','$timeout',SvgViewerControllerFunction] );
 		
-function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,sbiModule_logger,$window,sbiModule_config,$rootScope,$sce)	{
+function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,sbiModule_logger,$window,sbiModule_config,$rootScope,$sce,$timeout)	{
 
   //$scope.isSidenavOpen 	= false;
   $scope.showBackButton 		= false;
@@ -47,8 +47,10 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
   $noError = false;
     
   $scope.openSideNav = function() {
-    //$mdSidenav('svgSideNav').toggle();
-	  $scope.sidenavOpened = !$scope.sidenavOpened;
+    $mdSidenav('svgSideNav').toggle();
+	  debugger;
+	 // $scope.sidenavOpened = !$scope.sidenavOpened;
+	 // $timeout(window.dispatchEvent(new Event('resize')), 1000);
 
   };
   
