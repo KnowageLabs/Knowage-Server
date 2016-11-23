@@ -364,7 +364,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 	}
 	
 	 
-	$scope.doSelection = function(columnName,columnValue,modalColumn,modalValue){
+	$scope.doSelection = function(columnName,columnValue,modalColumn,modalValue,row){
 		if($scope.ngModel.cliccable==false){
 			console.log("widget is not cliccable")
 			return;
@@ -378,17 +378,43 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 				&& model.cross.cross.outputParameter != undefined
 				){
 			
-			// check if column clicked is the one for cross navigation, must look at alias not name
+			// enter cross navigation mode
+			var doCross = false;
+			
 			var nameToCheckForCross =  columnName;
-			// check if it has been renamed by an alias
+			
+			// check if selected column has been renamed by an alias, in tat case take the real name
 			for(var colIndex in model.content.columnSelectedOfDataset){
 				var col = model.content.columnSelectedOfDataset[colIndex];
 				if(col.aliasToShow != undefined && col.aliasToShow == columnName){
 					nameToCheckForCross = col.name;
 				}
 			}
-			
-			if(model.cross.cross.column === nameToCheckForCross){
+						
+			if(model.cross.cross.allRow == true){
+				// case all columns are enabled for cross, get value for cross column (or alias if present)
+				var crossColumnOrAlias = model.cross.cross.column;
+					
+					for(var colIndex in model.content.columnSelectedOfDataset){
+						var col = model.content.columnSelectedOfDataset[colIndex];
+						if(col.aliasToShow != undefined && col.name == model.cross.cross.column){
+							crossColumnOrAlias = col.aliasToShow;
+						}
+					}
+					doCross = true;
+					// get value to pass to cross navigation
+					columnValue = row[crossColumnOrAlias];
+
+			}
+			else{
+				// case a specific column is enabled for cross
+				// check if column clicked is the one for cross navigation
+				if(model.cross.cross.column === nameToCheckForCross){
+					doCross = true;
+				}
+			}
+
+			if(doCross === true){
 				var outputParameter = {};
 				outputParameter[model.cross.cross.outputParameter] = columnValue;
 				

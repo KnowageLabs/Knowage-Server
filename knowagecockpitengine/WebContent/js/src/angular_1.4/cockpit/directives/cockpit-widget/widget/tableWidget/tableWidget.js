@@ -150,7 +150,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					}	
 				}
 			}
-			$scope.doSelection(columnName,column,$scope.ngModel.content.modalselectioncolumn,newValue);
+			$scope.doSelection(columnName,column,$scope.ngModel.content.modalselectioncolumn,newValue,row);
 		}
 		
 		$scope.calculatedRow = function(row,column,alias){

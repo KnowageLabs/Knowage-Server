@@ -12,6 +12,10 @@
             <md-checkbox ng-model="ngModel.cross.enable" flex ng-change=toggleBorderVisibility()>
                 {{translate.load("sbi.cockpit.cross.check")}}
             </md-checkbox>
+            
+           <md-checkbox ng-model="ngModel.cross.allRow" flex ng-change=toggleBorderVisibility()>
+                {{translate.load("sbi.cockpit.cross.allRow")}}
+            </md-checkbox>
 
            <md-input-container class="md-block" flex>
                 <label>{{translate.load("sbi.cockpit.cross.column")}}</label>
