@@ -153,7 +153,8 @@ function chartTabControllerFunction($scope,sbiModule_translate,sbiModule_restSer
 				}	
 			}
 			else {
-				$scope.selectedChartType = null;
+				$scope.selectedChartType = 'bar';
+				setConfigurationButtons($scope.selectedChartType);
 			}
 			
 		}		
