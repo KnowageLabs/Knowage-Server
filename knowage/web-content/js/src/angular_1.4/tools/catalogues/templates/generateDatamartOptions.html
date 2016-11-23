@@ -6,7 +6,13 @@
     </md-toolbar>
 	<form name="generateDatamartOptionsForm" layout="column" flex>
     <md-dialog-content flex layout="column" layout-margin >
-	    <br>
+    	<p>
+    		{{translate.load('sbi.bm.generate.hint')}}
+    	</p>
+	    <md-input-container>
+          <md-switch ng-model="showAdvancedOptions">{{translate.load('sbi.bm.generate.showAdvancedOptions')}}</md-switch>
+        </md-input-container>
+	    <div ng-show="showAdvancedOptions">
 		    <md-input-container class="md-icon-float md-block">
 		      <label>{{translate.load('sbi.bm.generate.modelName')}}</label>
 		      <input ng-model="modelName" type="text">
@@ -28,7 +34,7 @@
 	            {{translate.load('sbi.bm.generate.forRegistry')}}
 	          </md-checkbox>	    
 		    </div>
-
+		</div>
 	 	
  	       
 	</md-dialog-content>

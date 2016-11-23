@@ -8,6 +8,7 @@ function generateDatamartOptionsController(sbiModule_translate, sbiModule_restSe
 	$scope.schemaName = schemaName;
 	$scope.catalogName = catalogName;
 	$scope.isGeneratedForRegistry = false;
+	$scope.showAdvancedOptions = false;
 	
 	//build the datamart
 	$scope.buildDatamart = function(){
