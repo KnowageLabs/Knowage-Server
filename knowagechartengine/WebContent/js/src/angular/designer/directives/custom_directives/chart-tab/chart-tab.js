@@ -184,6 +184,8 @@ function chartTabControllerFunction($scope,sbiModule_translate,sbiModule_restSer
 	sbiModule_restServices.promiseGet("../api/style", "")
 	.then(function(response) {
 		$scope.chartStyles = response.data;
+		getDefaultStyleForEmpty();
+		
 	}, function(response) {
 		
 		var message = "";
@@ -199,8 +201,30 @@ function chartTabControllerFunction($scope,sbiModule_translate,sbiModule_restSer
 		
 	});
 	
-
-	
+	var getDefaultStyleForEmpty = function() {
+		$scope.styleTemplate = "";
+		for (var i = 0; i < $scope.chartStyles.length; i++) {
+			if($scope.chartStyles[i].STYLE.isDefault == 'true'){
+				$scope.styleTemplate = $scope.chartStyles[i].STYLE.TEMPLATE;
+				if($scope.chartTemplate == null){
+					$scope.chartTemplate = $scope.styleTemplate.generic.CHART;
+					console.log($scope.chartTemplate)
+				}
+				
+			}else{
+				if($scope.chartStyles[i].STYLE.name == 'sfnas'){
+					$scope.styleTemplate = $scope.chartStyles[i].STYLE.TEMPLATE;
+					if($scope.chartTemplate == null){
+						$scope.chartTemplate = $scope.styleTemplate.generic.CHART;
+						console.log($scope.chartTemplate);
+					}
+				}
+			}
+		}
+	}
+	$scope.filterStyles = function(item) {
+		return item.STYLE.name != 'sfnas'
+	}
 	$scope.selectChartType = function(chart) {
 		$scope.selectedChartType = chart;
 		setConfigurationButtons($scope.selectedChartType);

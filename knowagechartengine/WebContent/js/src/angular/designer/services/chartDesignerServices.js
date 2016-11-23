@@ -67,6 +67,15 @@ angular.module('ChartDesignerService', [])
 		return data;
 	};
 	
+	this.getVerticalAlignTypeOptions = function(){
+		var data = [
+				{name:sbiModule_translate.load("sbi.cockpit.widgets.piechartwidgetdesigner.form.legend.position.top"),value:"top"},
+				{name:sbiModule_translate.load("sbi.chartengine.configuration.alignment.m"),value:"middle"},
+				{name:sbiModule_translate.load("sbi.cockpit.widgets.piechartwidgetdesigner.form.legend.position.bottom"),value:"bottom"},
+			                               ]                          
+		return data;
+	};
+	
 	this.getPositionTypeOptions = function(){
 		var data = [
 		      {name:sbiModule_translate.load("sbi.cockpit.widgets.piechartwidgetdesigner.form.legend.position.top"),value:"top"},
@@ -230,7 +239,9 @@ angular.module('ChartDesignerService', [])
 				noDataDetailsURL: sbiModule_config.contextName + '/js/src/angular/designer/directives/custom_directives/configuration-tab/nodata.html',
 				legendTitleURL: sbiModule_config.contextName + '/js/src/angular/designer/directives/custom_directives/configuration-tab/legend_title.html',
 				legendItemsURL: sbiModule_config.contextName + '/js/src/angular/designer/directives/custom_directives/configuration-tab/legend_items.html',
-				colorPaletteURL: sbiModule_config.contextName + '/js/src/angular/designer/directives/custom_directives/configuration-tab/color_palette.html'
+				colorPaletteURL: sbiModule_config.contextName + '/js/src/angular/designer/directives/custom_directives/configuration-tab/color_palette.html',
+				paneURL: sbiModule_config.contextName + '/js/src/angular/designer/directives/custom_directives/configuration-tab/pane.html',
+				ticksURL: sbiModule_config.contextName + '/js/src/angular/designer/directives/custom_directives/configuration-tab/ticks.html'
 			 };                   
 		return data;
 	};

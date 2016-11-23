@@ -57,18 +57,31 @@ function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config) {
 		    	template.CHART[key] = JSON.parse(template.CHART[key])
 		    }
 		});
+		if(template.CHART.LEGEND != null){
+			
+			Object.keys(template.CHART.LEGEND).forEach(function (key) {
+				
+				
+			    if( template.CHART.LEGEND[key] != ''   && !isNaN(template.CHART.LEGEND[key])){
+			    	template.CHART.LEGEND[key] = parseInt(template.CHART.LEGEND[key]);
+			    }
+			    if(template.CHART.LEGEND[key] === 'true' || template.CHART.LEGEND[key] === 'false'){
+			    	
+			    	template.CHART.LEGEND[key] = JSON.parse(template.CHART.LEGEND[key])
+			    }
+			});	
+		}
+		if(template.CHART.PANE != null){
+			
+			Object.keys(template.CHART.PANE).forEach(function (key) {
+				
+				
+			    if( template.CHART.PANE[key] != ''   && !isNaN(template.CHART.PANE[key])){
+			    	template.CHART.PANE[key] = parseInt(template.CHART.PANE[key]);
+			    }
+			});	
+		}
 		
-		Object.keys(template.CHART.LEGEND).forEach(function (key) {
-			
-			
-		    if( template.CHART.LEGEND[key] != ''   && !isNaN(template.CHART.LEGEND[key])){
-		    	template.CHART.LEGEND[key] = parseInt(template.CHART.LEGEND[key]);
-		    }
-		    if(template.CHART.LEGEND[key] === 'true' || template.CHART.LEGEND[key] === 'false'){
-		    	
-		    	template.CHART.LEGEND[key] = JSON.parse(template.CHART.LEGEND[key])
-		    }
-		});
 		
 		var allSeriesItems = template.CHART.VALUES.SERIE;
 		

@@ -87,6 +87,22 @@
 				<div ng-include src="templateUrls.colorPaletteURL"></div>
 				
 				</md-content>
+			</div>
+			
+			<div id="pane" ng-show="selectedConfigurationButton == translate.load('sbi.chartengine.configuration.gauge.panelTitle')">
+				<md-content flex layout="column">
+				
+				<div ng-include src="templateUrls.paneURL"></div>
+				
+				</md-content>
+			</div>
+			
+			<div id="pane" ng-show="selectedConfigurationButton == translate.load('sbi.chartengine.configuration.scatter.ticksandlabels')">
+				<md-content flex layout="column">
+				
+				<div ng-include src="templateUrls.ticksURL"></div>
+				
+				</md-content>
 			</div>						
 				
 			

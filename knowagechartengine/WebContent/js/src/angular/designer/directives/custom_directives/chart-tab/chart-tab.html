@@ -7,7 +7,7 @@
 					<md-input-container  class="md-block whiteframe-element-padding">
 						<label>{{translate.load("sbi.chartengine.designer.styleforparameters")}}</label>	
 						<md-select  ng-model="chartTemplate.styleName">
-							<md-option ng-repeat="c in chartStyles">{{c.STYLE.name}} 
+							<md-option ng-repeat="c in chartStyles | filter: filterStyles">{{c.STYLE.name}} 
 							</md-option>
 						</md-select>
 					</md-input-container>

@@ -179,11 +179,16 @@ function configurationTabControllerFunction(sbiModule_translate,$scope,sbiModule
  $scope.fontAlignOptions = ChartDesignerData.getAlignTypeOptions();
  $scope.tooltipBreadcrumbValueType = ChartDesignerData.getTooltipBreadcrumbValueTypeOptions();
  $scope.positionType = ChartDesignerData.getPositionTypeOptions();
+ $scope.verticalAlignType = ChartDesignerData.getVerticalAlignTypeOptions();
  
  
  $scope.openConfigurationDetails = function(button) {
-	 console.log(button);
 	 $scope.selectedConfigurationButton = button;
+	 $scope.disableLegendCheckbox = false;
+	 if($scope.selectedChartType == 'heatmap' || $scope.selectedChartType == 'parallel'){
+		 $scope.chartTemplate.LEGEND.show = true;
+		 $scope.disableLegendCheckbox = true;
+	 }
 }
  
  
