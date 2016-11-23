@@ -28,7 +28,7 @@
 				</div>
 				<div ng-if="steps.current==1" layout-padding>
 					<div layout="row" >
-						<md-input-container class="md-block" flex>
+						<md-input-container class="md-block margin-right10" flex>
 							<label>{{translate.load("sbi.meta.business.relationship.source.table")}}</label>
 							<md-select ng-model="sourceTable" ng-model-options="{trackBy: '$value.name'}" >
 								<md-option ng-repeat="colu in tmpBnssView.physicalModels"  ng-value="colu"  >

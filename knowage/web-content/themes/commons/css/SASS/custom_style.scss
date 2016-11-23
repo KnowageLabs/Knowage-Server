@@ -4,6 +4,7 @@
   'mixins',
   'fonts',
   'components/alerts',
+  'components/associatorDirective',
   'components/layerCatalogue',
   'components/navbar',
   'components/federatedDataset',
@@ -42,9 +43,13 @@
 }
 
 .no-padding {
-    padding: 0;
+  padding: 0;
 }
 
+.margin-right10 {
+  margin-right: 10px;
+}
+  
 .hidden{
 	display:none !important
 }

@@ -1,4 +1,4 @@
-<div layout="row" id="assDirApp">
+<div layout="row" id="assDirApp" class="kn-associatorDirective" layout-align="center start">
 	<div layout="column" flex class="parametersList">
 		<md-toolbar class="secondaryToolbar md-knowage-theme">
 		<div class="md-toolbar-tools ">
@@ -15,7 +15,7 @@
 			</md-list-item>
 		</md-list>
 	</div>
-	<div layout="column" flex class="parametersList">
+	<div layout="column" flex class="parametersList" >
 		<md-toolbar class="secondaryToolbar md-knowage-theme">
 		<div class="md-toolbar-tools ">
 			<h1>{{targetColumnLabel}}</h1>
@@ -43,64 +43,5 @@
 </div>
 </div>
 <style>
-.associator-parameter {
-	background-color: #C4DCF3;
-	color: rgba(255, 255, 255, 0.87);
-	font-size: 15px;
-	padding: 5px 16px 0 16px !important;
-	font-weight: 400;
-	min-height: 33px !important
-}
-.associator-parameter.highlight-selected-parameter {
-	background-color: #a9c3db;
-}
-.associator-parameter.link {
-	color: black;
-	background-color: #E6E6E6;
-}
-.associator-parameter .fa-link {
-	color: #3F51B5;
-}
-.loadingSpinner {
-	text-align: center;
-	vertical-align: middle;
-	width: 100%;
-	height: 100%;
-}
-.openDocIcon {
-	margin-top: 6px;
-	color: white;
-}
 
-.parametersList>div {
-	padding: 3px;
-}
-.parametersList li {
-	border: 0;
-	padding: 2px;
-	border: 0 !important;
-}
-button.md-raised {
-	margin-top: 22px;
-}
-.parametersList>md-list {
-	border: 1px solid #a9c3db;
-}
-.parametersList>md-list md-list-item.over {
-	background-color: rgba(128, 128, 128, 0.32);
-	border: 1px dashed;
-}
-.parametersList>md-list md-list-item.errorClass {
-	background-color: rgba(255, 0, 0, 0.29);
-	border: 1px dashed red;
-}
-.parametersList>md-list md-list-item.multyValue>.md-button>._md-list-item-inner
-	{
-	height: 100% !important;
-}
-.truncate {
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
 </style>
