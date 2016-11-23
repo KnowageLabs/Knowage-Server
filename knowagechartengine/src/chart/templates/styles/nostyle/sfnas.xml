@@ -48,6 +48,10 @@
 						<TOOLTIP backgroundColor="" borderWidth="" borderRadius=""
 						style="color:;fontFamily:;fontWeight:;fontSize:;align:;"/>
 					</SERIE>
+					<CATEGORY 	column=""
+					            groupby=""
+					            groupbyNames="" name=""
+					            orderColumn="" orderType="" stacked="" stackedType=""/>
 				</VALUES>
 
 			</CHART>
