@@ -32,13 +32,9 @@ function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config) {
 	$scope.selectedChartType = "";
 	
 	$scope.saveChartTemplate = function() {
-		$scope.showStructureDetails = true;
-		$scope.structurePreviewFlex = 25;
 	}
 	
 	$scope.goBackFromDesigner = function() {
-		$scope.showStructureDetails = false;
-		$scope.structurePreviewFlex = 50;
 		 var url= sbiModule_config.protocol+"://"+sbiModule_config.host+":"+sbiModule_config.port+sbiModule_config.externalBasePath;
 		 url+= "/servlet/AdapterHTTP?PAGE=DetailBIObjectPage&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=FALSE&MESSAGEDET=DETAIL_SELECT&OBJECT_ID="+docId;
 		 window.parent.location.href=url;
@@ -73,6 +69,51 @@ function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config) {
 		    	template.CHART.LEGEND[key] = JSON.parse(template.CHART.LEGEND[key])
 		    }
 		});
+		
+		var allSeriesItems = template.CHART.VALUES.SERIE;
+		
+		for (i=0; i<allSeriesItems.length; i++) {
+			
+			Object.keys(template.CHART.VALUES.SERIE[i]).forEach(function (key) {				
+				
+				// SERIES CONFIGURATION
+				if( template.CHART.VALUES.SERIE[i][key] != ''   && !isNaN(template.CHART.VALUES.SERIE[i][key])){
+			    	template.CHART.VALUES.SERIE[i][key] = parseInt(template.CHART.VALUES.SERIE[i][key]);
+			    }
+			    if(template.CHART.VALUES.SERIE[i][key] === 'true' || template.CHART.VALUES.SERIE[i][key] === 'false'){			    	
+			    	template.CHART.VALUES.SERIE[i][key] = JSON.parse(template.CHART.VALUES.SERIE[i][key])
+			    }
+			    
+			    // SERIES TOOLTIP
+			    if( template.CHART.VALUES.SERIE[i].TOOLTIP[key] != ''   && !isNaN(template.CHART.VALUES.SERIE[i].TOOLTIP[key])){
+			    	template.CHART.VALUES.SERIE[i].TOOLTIP[key] = parseInt(template.CHART.VALUES.SERIE[i].TOOLTIP[key]);
+			    }
+			    if(template.CHART.VALUES.SERIE[i].TOOLTIP[key] === 'true' || template.CHART.VALUES.SERIE[i].TOOLTIP[key] === 'false'){			    	
+			    	template.CHART.VALUES.SERIE[i].TOOLTIP[key] = JSON.parse(template.CHART.VALUES.SERIE[i].TOOLTIP[key])
+			    }
+			    
+			});
+			
+		}
+		
+		var allAxes = template.CHART.AXES_LIST.AXIS;
+		
+		for (i=0; i<allAxes.length; i++) {
+			
+			Object.keys(allAxes[i]).forEach(function (key) {				
+				
+				// AXIS CONFIGURATION
+				if( allAxes[i][key] != '' && !isNaN(allAxes[i][key])){
+					allAxes[i][key] = parseInt(allAxes[i][key]);
+			    }
+			    if(allAxes[i][key] === 'true' || allAxes[i][key] === 'false'){			    	
+			    	allAxes[i][key] = JSON.parse(allAxes[i][key])
+			    }			    
+			    
+			});
+			
+		}	
+		
 			return template.CHART;
 		}else{
 			return null;
