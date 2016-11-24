@@ -23,6 +23,7 @@ import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.metadata.SbiBinContents;
 import it.eng.spagobi.mapcatalogue.bo.GeoMap;
 import it.eng.spagobi.mapcatalogue.metadata.SbiGeoMaps;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -183,11 +184,18 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 
 			if (hibMap == null) {
 				logger.error("SVG with hierarchyName [" + hierarchy + "] and memberName[" + member + "] and level [" + level + "] non found in catalogue. ");
-				return null;
+				throw new SpagoBIRuntimeException("SVG with hierarchyName [" + hierarchy + "] and memberName[" + member + "] and level [" + level
+						+ "] non found in catalogue.");
 			}
 			biMap = hibMap.toGeoMap();
 
 			tx.commit();
+		} catch (org.hibernate.NonUniqueResultException nhe) {
+			logException(nhe);
+			if (tx != null)
+				tx.rollback();
+			throw new SpagoBIRuntimeException("There are more than one SVG loaded with Hierarchy [" + hierarchy + "] - Member [" + member + "] - Level ["
+					+ level + "]. Please verify the univocity of the hierarchy keys of the SVG documents!", nhe);
 		} catch (HibernateException he) {
 			logException(he);
 			if (tx != null)
