@@ -160,6 +160,7 @@
 		<url-pattern>/restful-services/1.0/datasets/list/persist</url-pattern>
 		<url-pattern>/restful-services/federateddataset/federation</url-pattern>
 		<url-pattern>/restful-services/federateddataset/insertNoDup</url-pattern>
+		<url-pattern>/restful-services/1.0/documents/saveChartTemplate</url-pattern>
 	</filter-mapping>
 	<!-- HMAC filter ends -->
 
