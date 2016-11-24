@@ -259,6 +259,16 @@ a.md-button.md-knowage-theme.md-primary.md-raised, .md-button.md-knowage-theme.m
     background-color: lighten($baseColor,10%);
 }
 
+.md-button.md-knowage-theme:not([disabled]):hover {
+  color:$baseColor;
+  background-color: transparentize($secondaryColor, 0.5);
+}
+
+.md-button.md-knowage-theme.md-focused:not([disabled]) {
+  color:$baseColor;
+  background-color: transparentize($secondaryColor, 0.5);
+}
+
 //Raised Button
 .md-button.md-knowage-theme.md-raised {
     color: $baseColor;
