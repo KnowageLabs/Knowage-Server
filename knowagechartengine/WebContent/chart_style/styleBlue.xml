@@ -13,8 +13,11 @@
 				<SUBTITLE style="align:center;color:#006699;fontFamily:Verdana;fontWeight:italic;fontSize:14px;" text=""/>
 				
 				<EMPTYMESSAGE style="align:left;color:#FF0000;fontFamily:Verdana;fontWeight:bold;fontSize:18px;" text=""/>
-				
-				<LEGEND floating='' layout="" position="top" show='false' style= "align:center;fontFamily:Verdana;fontSize:12px;fontWeight:normal;;borderWidth:1;color:#006699;backgroundColor:transparent;" x='' y= ''/>
+							
+				<LEGEND layout="" position="top" show="false"
+					style="align:center;fontFamily:Verdana;fontSize:12px;fontWeight:normal;;borderWidth:1;color:#006699;backgroundColor:transparent;">
+					<TITLE style="align:;color:;fontFamily:;fontWeight:;fontSize:;" text=""/>
+				</LEGEND>
 				
 				<COLORPALETTE>
 					<COLOR id='1' order='1' name="7cb5ec" value="#7cb5ec"/>

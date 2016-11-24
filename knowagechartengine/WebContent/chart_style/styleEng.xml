@@ -13,8 +13,11 @@
 				<SUBTITLE style="align:center;color:#C80752;fontFamily:Arial;fontWeight:normal;fontSize:18px;" text="Insert your subtitle"/>
 				
 				<EMPTYMESSAGE style="align:left;color:#FF0000;fontFamily:Arial;fontWeight:bold;fontSize:18px;" text="Insert your empty message (when data for chart does not exist)"/>
-				
-				<LEGEND floating='false'  layout="" position="top" show= 'false' style= "align:;fontFamily:Arial;fontSize:14px;fontWeight:normal;;borderWidth:1;color:#C80752;backgroundColor:#E1E1E1;" x='0' y= '0'/>
+					
+				<LEGEND layout="" position="top" show="false"
+					style="align:;fontFamily:Arial;fontSize:14px;fontWeight:normal;;borderWidth:1;color:#C80752;backgroundColor:#E1E1E1;">
+					<TITLE style="align:;color:;fontFamily:;fontWeight:;fontSize:;" text=""/>
+				</LEGEND>
 	
 				<COLORPALETTE>
 					<COLOR id='1' order='1' name="7cb5ec" value="#7cb5ec"/>
