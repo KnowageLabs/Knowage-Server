@@ -21,6 +21,7 @@ function createChart() {
         .done(function(response) {
         	serviceResponse = response.data;
         	
+        	
             for(var i=0;i<response.data.metaData.fields.length;i++){
 
             	if(response.data.metaData.fields[i].logicalType && response.data.metaData.fields[i].logicalType == "measure"){
@@ -28,10 +29,22 @@ function createChart() {
             	}
            
             }
-            
-            for(var j in response.CUSTOMIZE_SETTINGS.CHART.BACKGROUND){
-            	backgrounds.push(response.CUSTOMIZE_SETTINGS.CHART.BACKGROUND[j].background_color);
+            if(response.CUSTOMIZE_SETTINGS.CHART.BACKGROUND){
+            	for(var j=0; j<labels.length; j++){
+            		if(response.CUSTOMIZE_SETTINGS.CHART.BACKGROUND[j]){
+            			backgrounds.push(response.CUSTOMIZE_SETTINGS.CHART.BACKGROUND[j].background_color);
+            		}else{
+            			backgrounds.push('#'+Math.floor(Math.random()*16777215).toString(16));
+            		}
+            		
+            	}
+        	}
+            else{
+            	for(var b in labels){
+            		backgrounds.push('#'+Math.floor(Math.random()*16777215).toString(16));
+            	}
             }
+            
             initializeLegend();
             for(var k in response.data.rows){
             	if(response.data.rows)
@@ -134,15 +147,15 @@ function createChart() {
                     backgroundColor: backgrounds
                 }]
             },
-            options: {
+            options: {//config.CHART.OPTIONS//{
             	legend : {
             		display: false
-            	},
+            	}/*,
             	elements: {
             		arc: {
             			borderWidth: 0
             		}
-            	}
+            	}*/
             }
         });
 

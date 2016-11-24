@@ -46,12 +46,12 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
   $scope.drillPathStack = [];
   $noError = false;
     
-  $scope.openSideNav = function() {
-    $mdSidenav('svgSideNav').toggle();
-	  debugger;
-	 // $scope.sidenavOpened = !$scope.sidenavOpened;
-	 // $timeout(window.dispatchEvent(new Event('resize')), 1000);
-
+  $scope.openSideNav = function(customized) {
+	  	if(customized){
+	  		$mdSidenav('svgSideNav').toggle();
+	  	}else{
+	  		$scope.sidenavOpened = !$scope.sidenavOpened;
+	  	}
   };
   
   //Goes back to the previous level

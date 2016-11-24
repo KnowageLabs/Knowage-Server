@@ -146,9 +146,10 @@
 	    	flex-direction:column;
 	    	.graphLabel{
 	    		padding: 5px;
+	    		padding-right: 10px;
 	    		font-family: sans-serif;
 	    		font-size: 12px;
-	    		color: $lightTextColor;
+	    		color: #0042be;
 	    		font-weight: 600;
 	    		display: flex;
 			    flex-direction: row;
@@ -156,6 +157,7 @@
 			    align-items: center;
 			    .graphSpan {
 			    	text-transform:uppercase;
+			    	padding-right: 10px;
 			    	text-align: right;
 			    }
 				.graphColor{
@@ -199,6 +201,27 @@
     		}
 		}
     }	
+    #svgInfoSidenav {
+    	md-list {
+    		md-list-item {
+			    min-height: 36px;
+    			height: 36px;
+    			border-bottom: 1px solid #ccc;
+    			p {
+    				text-align: left;
+    				font-size: .9em;
+    				padding-left: 20px;
+    			}
+    			.md-secondary {
+    				text-align: right !important;
+    				padding-left: 0;
+    				font-size: .8em !important;
+    				color: #999;
+    				padding-right: 20px;
+    			}
+    		}
+    	}
+    }
 }
 
 
