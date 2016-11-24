@@ -245,4 +245,176 @@ angular.module('ChartDesignerService', [])
 			 };                   
 		return data;
 	};
+})
+/**
+ * Service for the Structure tab 
+ */
+.service("StructureTabService", function(sbiModule_restServices,sbiModule_messaging,sbiModule_translate,sbiModule_config){
+	
+	var translate = sbiModule_translate;
+	
+	this.getSeriesItemTypes = function() {
+		
+		var seriesItemTypes = 
+		[
+		 	{name: translate.load('sbi.chartengine.designer.charttype.notype'), value:''},
+		 	{name: translate.load('sbi.chartengine.designer.charttype.bar'), value:'bar'},
+		 	{name: translate.load('sbi.chartengine.designer.charttype.line'), value:'line'},
+		 	{name: translate.load('sbi.chartengine.designer.charttype.area'), value:'area'},
+		];
+		
+		return seriesItemTypes;
+		
+	}
+    
+    // Data for the Series item ordering types combobox
+	this.getSeriesItemOrderingTypes = function() {
+		
+		var seriesItemOrderingTypes = 
+		[
+		 	{name: translate.load('sbi.chartengine.designer.seriesorder.none'), value:''},
+	        {name: translate.load('sbi.chartengine.designer.seriesorder.asc'), value:'asc'}, 
+	        {name: translate.load('sbi.chartengine.designer.seriesorder.desc'), value:'desc'}
+		];
+		
+		return seriesItemOrderingTypes;
+		
+	}
+	
+	this.getScaleFactorsFixed = function() {
+		
+		var scaleFactorsFixed = 
+		[
+	       	{name: "No selection", value: "empty"},
+	       	{name: "k (thousands)", value: "k"},
+	       	{name: "M (millions)", value: "M"}
+        ];
+		
+		return scaleFactorsFixed;
+		
+	}
+	
+	// Returns templates for specific details for series items on the Structure tab
+	this.getSeriesItemsConfDetailsTemplateURL = function(detailsForOption) {
+		
+		var templatesURLs = "";
+		
+		switch(detailsForOption) {
+			case "seriesItemConfig": templatesURLs = sbiModule_config.contextName + 
+										"/js/src/angular/designer/directives/custom_directives/structure-tab/series_item_config_details.html"; break;
+			case "seriesItemTooltip": templatesURLs = sbiModule_config.contextName + 
+										"/js/src/angular/designer/directives/custom_directives/structure-tab/series_item_tooltip_details.html"; break;
+			case "axisConfiguration": templatesURLs = sbiModule_config.contextName + 
+										"/js/src/angular/designer/directives/custom_directives/structure-tab/axis_configuration_details.html"; break;										
+			case "axisTitleConfiguration": templatesURLs = sbiModule_config.contextName + 
+										"/js/src/angular/designer/directives/custom_directives/structure-tab/axis_title_details.html"; break;
+			case "axisMajorGridConfiguration": templatesURLs = sbiModule_config.contextName + 
+										"/js/src/angular/designer/directives/custom_directives/structure-tab/axis_majorgrid_details.html"; break;
+			case "axisMinorGridConfiguration": templatesURLs = sbiModule_config.contextName + 
+										"/js/src/angular/designer/directives/custom_directives/structure-tab/axis_minorgrid_details.html"; break;
+		};
+		
+		return templatesURLs;
+		
+	}
+	
+	// Get the name of the Details panel on the Structure tab according to the options that is picked
+	this.getStructureTabDetailsName = function(detailsForOption) {
+		
+		var detailsNameToReturn = "";
+		
+		switch(detailsForOption) {
+			case "seriesItemConfig": detailsNameToReturn = translate.load("sbi.chartengine.designer.structureTab.seriesdetails.toolbar.title"); break;
+			case "seriesItemTooltip": detailsNameToReturn = translate.load("sbi.chartengine.designer.structureTab.seriestooltipdetails.toolbar.title"); break;
+			case "axisConfiguration": detailsNameToReturn = translate.load("sbi.chartengine.designer.structureTab.axis.configuration.toolbar.title"); break;
+			case "axisTitleConfiguration": detailsNameToReturn = translate.load("sbi.chartengine.designer.structureTab.axis.title.toolbar.title"); break;
+			case "axisMajorGridConfiguration": detailsNameToReturn = translate.load("sbi.chartengine.designer.structureTab.axis.majorgrid.toolbar.title"); break;
+			case "axisMinorGridConfiguration": detailsNameToReturn = translate.load("sbi.chartengine.designer.structureTab.axis.minorgrid.toolbar.title"); break;
+		}
+		
+		return detailsNameToReturn;
+		
+	}
+	
+	// The skeleton for the JS object that will hold the information about the values of properties of the series item TOOLTIP style
+	this.getSeriesTooltipStyle = function() {
+		
+		var seriesTooltipStyle = {
+			 	fontFamily:"",
+				fontSize:"",
+				fontWeight:"",
+				color:"",
+				align:""
+			 };
+				
+		return seriesTooltipStyle;
+		
+	}
+	
+	// The types of aggregation for series items
+	this.getSeriesItemAggregationTypes = function() {
+		 
+		var seriesItemAggregationTypes = 
+		[
+			{name:'AVG',value:'AVG'},
+			{name:'COUNT',value:'COUNT'},
+			{name:'MAX',value:'MAX'},
+			{name:'MIN',value:'MIN'},
+			{name:'SUM',value:'SUM'}
+		];
+		 
+		return seriesItemAggregationTypes;
+		 
+	}
+	
+	// The skeleton for the JS object that will hold the information about the values of properties of the axis configuration style
+	this.getAxisConfigurationStyle = function() {
+		
+		var axisConfigurationStyle = {
+				rotate:"",
+			 	fontFamily:"",
+				fontSize:"",
+				fontWeight:"",
+				color:"",
+				align:""
+			 };
+				
+		return axisConfigurationStyle;
+		
+	}
+	
+	// The skeleton for the JS object that will hold the information about the values of properties of the axis TITLE configuration style
+	this.getAxisTitleConfigurationStyle = function() {
+		
+		var axisTitleConfigurationStyle = {
+			 	fontFamily:"",
+				fontSize:"",
+				fontWeight:"",
+				color:"",
+				align:""
+			 };
+				
+		return axisTitleConfigurationStyle;
+		
+	}
+	
+	// The skeleton for the JS object that will hold the information about the values of properties of the axis MAJORGRID/MINORGRID configuration style
+	this.getAxisMinorGridConfigurationStyle = function() {
+		
+		var axisMajorMinorGridConfigurationStyle = {
+			 	typeline:"",
+				color:""
+			 };
+				
+		return axisMajorMinorGridConfigurationStyle;
+		
+	}
+	
+	// The skeleton for the JS object that will hold the information about the values of properties of the axis MAJORGRID/MINORGRID configuration style
+	this.getAxisMajorGridConfigurationStyle = function() {
+		
+		return this.getAxisMinorGridConfigurationStyle();
+		
+	}
+	
 });	

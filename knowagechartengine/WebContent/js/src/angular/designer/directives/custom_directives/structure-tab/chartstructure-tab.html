@@ -20,6 +20,7 @@
 		
 				<md-content flex>
 				
+					<!-- ATTRIBUTES -->
 					<md-card>
 					
 						<expander-box color="white" expanded="true" title="translate.load('sbi.chartengine.designer.structureTab.attributemeasures.attributes.title')">
@@ -32,14 +33,48 @@
 						  
 					</md-card>
 					
+					<!-- MEASURES -->
 					<md-card>
 					
 						<expander-box color="white" expanded="true" title="translate.load('sbi.chartengine.designer.structureTab.attributemeasures.measures.title')">
-							<md-list flex style="padding-top:0; padding-bottom:0">
+							
+							<md-list flex style="padding-top:0; padding-bottom:0" ng-if="numberOfSeriesContainers<=1">
 								<md-list-item ng-repeat="measure in allMeasures" ng-click="moveMeasureToSeries(measure)" class="noright">
 								    <span ><b>{{measure.id}}</b></span>
 							  	</md-list-item>
 						  	</md-list>
+						  	
+						  	<md-list flex style="padding-top:0; padding-bottom:0" ng-if="numberOfSeriesContainers>1">
+								
+								<md-list-item ng-repeat="measure in allMeasures">
+								   
+								    <span class="noright"><b>{{measure.id}}</b></span>
+								     
+								    <md-menu style="padding:0px;">
+							      
+								      	<md-button 	aria-label="Help categories container" class="md-icon-button" 
+								      				ng-click="openMenu($mdOpenMenu, $event);"
+								      				style="margin-left:2; margin-right:2;" >
+								      	</md-button>
+								      	
+								      	<md-menu-content>
+									      
+									      	<span class="noright" style="margin:2 8 6 8"><b>Move to series container:</b></span>
+									      	
+									      	<md-menu-item ng-repeat="seriesContainer in seriesContainers" ng-click="moveMeasureToSeries(measure,seriesContainer)">
+							          			<md-button ng-click="">
+								            		<span>{{seriesContainer.name}}</span>
+								          		</md-button>
+							        		</md-menu-item>
+							        		
+						        		</md-menu-content>
+						        		
+							      	</md-menu>
+							      	
+							  	</md-list-item>
+							  	
+						  	</md-list>						  	
+						  	
 					  	</expander-box>
 					  	
 					</md-card>
@@ -64,7 +99,7 @@
 				</div>		      
 			</md-toolbar>
 			
-			<md-whiteframe flex class="md-whiteframe-4dp whiteframe-element">			
+			<md-whiteframe flex class="md-whiteframe-4dp whiteframe-element" style="overflow:auto">			
 				
 				<!-- CATEGORIES CONTAINER -->
 				<md-card ng-if="categoriesExist">
@@ -185,20 +220,42 @@
 			  	</md-card>
 			  	
 			  	<!-- SERIES CONTAINER -->			  	
-				<md-card ng-cloak ng-repeat="seriesContainer in seriesContainers">
+				<md-card ng-cloak ng-repeat="seriesContainer in seriesContainers track by $index">
 				
 					<md-toolbar>
 					
 						<div class="md-toolbar-tools">
 							
 							<!-- Add additional criteria for ng-if: only for the main SERIES container (instead of 'false') -->
-						    <md-button 	ng-if="seriesContainerAddAndRemoveIncludeTypes.indexOf(selectedChartType.toLowerCase())>=0 && seriesContainer.name=='Y'" 
-						    			class="md-icon-button" ng-click="" style="margin-left:2; margin-right:2;">
+						    <md-button 	ng-if="!showMaxNmbSerAxesExceeded && seriesContainerAddAndRemoveIncludeTypes.indexOf(selectedChartType.toLowerCase())>=0 && seriesContainer.name=='Y'" 
+						    			class="md-icon-button" ng-click="addSeriesContainer(seriesContainer)" style="margin-left:2; margin-right:2;">
 								<md-icon aria-label="Add new series container" class="fa fa-plus" style="display:inline"></md-icon>						
 							</md-button>
 							
+							<md-menu ng-if="showMaxNmbSerAxesExceeded && seriesContainerAddAndRemoveIncludeTypes.indexOf(selectedChartType.toLowerCase())>=0 && seriesContainer.name=='Y'">
+							      
+						      	<md-button 	aria-label="Prevent adding a Series container - warning" class="md-icon-button" 
+						      				ng-click="openMenu($mdOpenMenu, $event);"
+						      				style="margin-left:2; margin-right:2;">
+						        	<md-icon md-menu-origin class="fa fa-plus" style="display:inline"></md-icon>
+						      	</md-button>
+						      	
+						      	<md-menu-content>
+							      
+					        		<md-menu-item>
+					          			<!-- If the maximum number of series containers is empty, show info. -->		
+									  	<span 	ng-bind-html="translate.load('sbi.chartengine.structure.yAxisPanel.plusButton.maximumNumberOfAxisExceeded')"
+							  		 			style="color:#bfbfbf">
+					  		 			</span>
+					        		</md-menu-item>
+								        						        
+							      </md-menu-content>
+							      
+						    </md-menu>
+							
 							<!-- Add additional criteria for ng-if: only for the additional SERIES container (instead of 'false') -->
-							<md-button ng-if="seriesContainerAddAndRemoveIncludeTypes.indexOf(selectedChartType.toLowerCase())>=0 && seriesContainer.name!='Y'" class="md-icon-button" ng-click="" style="margin-left:2; margin-right:2;">
+							<md-button 	ng-if="seriesContainerAddAndRemoveIncludeTypes.indexOf(selectedChartType.toLowerCase())>=0 && seriesContainer.name!='Y'" 
+										class="md-icon-button" ng-click="removeSeriesContainer(seriesContainer)" style="margin-left:2; margin-right:2;">
 								<md-icon aria-label="Remove the series container" class="fa fa-times" style="display:inline"></md-icon>						
 							</md-button>
 							
@@ -208,7 +265,7 @@
 							
 							<span flex></span>	
 							
-							<md-button class="md-icon-button" ng-click="seriesRemoveAll()" style="margin-left:2; margin-right:2;">
+							<md-button class="md-icon-button" ng-click="seriesRemoveAll(seriesContainer)" style="margin-left:2; margin-right:2;">
 								<md-icon aria-label="Remove all series" class="fa fa-eraser" style="display:inline"></md-icon>						
 							</md-button>
 							
@@ -250,30 +307,30 @@
 						      	</md-button>
 						      	
 						      	<md-menu-content width="4">
-							      
+							    
 					        		<md-menu-item>
-					          			<md-button ng-click="showStructureDetails();">
+					          			<md-button ng-click="showStructureDetails('axisConfiguration');prepareSeriesContainerConfiguration(seriesContainer.name);">
 					 						<md-icon class="fa fa-pencil-square-o" style="display:inline"></md-icon>
 						            		<span>Axis configuration</span>
 						          		</md-button>
 					        		</md-menu-item>
 						        
 						        	<md-menu-item ng-if="seriesAxisTitleExcludeTypes.indexOf(selectedChartType.toLowerCase())<0">
-						          		<md-button ng-click="showStructureDetails();">
+						          		<md-button ng-click="showStructureDetails('axisTitleConfiguration');prepareSeriesContainerConfiguration(seriesContainer.name);">
 						            		<md-icon class="fa fa-text-width" style="display:inline"></md-icon>
 						            		<span>Axis' title configuration</span>
 						          		</md-button>
 						        	</md-menu-item>	
 						        	
 						        	<md-menu-item ng-if="seriesAxisMajorMinorGirdExcludeTypes.indexOf(selectedChartType.toLowerCase())<0">
-						          		<md-button ng-click="showStructureDetails();">
+						          		<md-button ng-click="showStructureDetails('axisMajorGridConfiguration');prepareSeriesContainerConfiguration(seriesContainer.name);">
 						          			<md-icon class="fa fa-th-large" style="display:inline"></md-icon>
 						            		<span>Major grid configuration</span>
 						          		</md-button>
 						        	</md-menu-item>	
 						        	
 						        	<md-menu-item ng-if="seriesAxisMajorMinorGirdExcludeTypes.indexOf(selectedChartType.toLowerCase())<0">
-						          		<md-button ng-click="showStructureDetails();">
+						          		<md-button ng-click="showStructureDetails('axisMinorGridConfiguration');prepareSeriesContainerConfiguration(seriesContainer.name);">
 						            		<md-icon class="fa fa-th" style="display:inline"></md-icon>
 						            		<span>Minor grid configuration</span>
 						          		</md-button>
@@ -290,7 +347,7 @@
 							<md-menu ng-if="selectedChartType.toLowerCase()=='gauge'">
 							      
 						      	<md-button 	aria-label="Open generic axis configurations' list" class="md-icon-button" 
-						      				ng-click="openMenu($mdOpenMenu, $event); showStructureDetails();"
+						      				ng-click="openMenu($mdOpenMenu, $event);"
 						      				style="margin-left:2; margin-right:2;">
 						        	<md-icon md-menu-origin class="fa fa-angle-double-down" style="display:inline"></md-icon>
 						      	</md-button>
@@ -340,6 +397,7 @@
 					
 					</md-toolbar>
 				
+					<!-- SERIES ITEMS -->
 					<md-list flex>
 								
 						<!-- If the series container has at least one series item inside of it. -->		
@@ -348,33 +406,35 @@
 						    <span><b>{{seriesItem}}</b></span>
 						    
 						    <span flex></span>
-						    
-						   	<md-button class="md-icon-button" ng-show="$index>0" ng-click="seriesItemMoveUp(seriesItem)" style="margin-left:0; margin-right:0; padding-left:0; padding-right:0;">
+						 
+						   	<md-button class="md-icon-button" ng-show="$index>0" ng-click="seriesItemMoveUp(seriesItem,seriesContainer)" style="margin-left:0; margin-right:0; padding-left:0; padding-right:0;">
 						   		<md-icon aria-label="Move series item up" class="fa fa-arrow-up" style="display:inline"></md-icon>
 					   		</md-button>
 					   		
-   	 						<md-button class="md-icon-button" ng-show="$index<seriesContainer.length-1" ng-click="seriesItemMoveDown(seriesItem)" style="margin-left:0; margin-right:0; padding-left:0; padding-right:0;">
+   	 						<md-button 	class="md-icon-button" ng-show="$index<seriesContainer.series.length-1" ng-click="seriesItemMoveDown(seriesItem,seriesContainer)" 
+   	 									style="margin-left:0; margin-right:0; padding-left:0; padding-right:0;">
    	 							<md-icon aria-label="Move series item down" class="fa fa-arrow-down" style="display:inline"></md-icon>
  	 						</md-button>
 						    
-						    <md-button class="md-icon-button" ng-click="showStructureDetails();" style="margin-left:0; margin-right:0; padding-left:0; padding-right:0;">
+						    <md-button 	class="md-icon-button" ng-click="showStructureDetails('seriesItemConfig');prepareSeriesItemConfiguration(seriesItem);" 
+						    			style="margin-left:0; margin-right:0; padding-left:0; padding-right:0;">
 						    	<!-- alternative: fa-paint-brush -->
 						   		<md-icon aria-label="Series item configuration" class="fa fa-pencil-square-o" style="display:inline"></md-icon>
 					   		</md-button>
 					   		
-					   		<md-button class="md-icon-button" ng-click="showStructureDetails();" style="margin-left:0; margin-right:0; padding-left:0; padding-right:0;">
+					   		<md-button class="md-icon-button" ng-click="showStructureDetails('seriesItemTooltip');prepareSeriesItemConfiguration(seriesItem);" style="margin-left:0; margin-right:0; padding-left:0; padding-right:0;">
 					   			<!-- alternative: fa-comment-o -->
 						   		<md-icon aria-label="Series item tooltip configuration" class="fa fa-commenting" style="display:inline"></md-icon>
 					   		</md-button>
    	 						
-   	 						<md-button class="md-icon-button" ng-click="seriesItemRemove($index)" style="margin-left:0; margin-right:0; padding-left:0; padding-right:0;">
+   	 						<md-button class="md-icon-button" ng-click="seriesItemRemove(seriesItem,seriesContainer.name)" style="margin-left:0; margin-right:0; padding-left:0; padding-right:0;">
    	 							<md-icon aria-label="Delete series item" class="fa fa-trash-o" style="display:inline"></md-icon>
  	 						</md-button>
    	 						
 					  	</md-list-item>
 					  	
 					  	<!-- If the series container is empty - no series data. -->		
-					  	<md-list-item ng-if="seriesContainer.length==0" class="noright" style="padding:0 8 0 16">
+					  	<md-list-item ng-if="seriesContainer.series.length==0" class="noright" style="padding:0 8 0 16">
 				  		 	<span 	ng-bind-html="translate.load('sbi.chartengine.designer.emptytext.dragdropmeasures.' + selectedChartType.toLowerCase())"
 				  		 			style="color:#bfbfbf">
 		  		 			</span>
@@ -391,14 +451,16 @@
 		<!-- 
 			DETAILS
 		 -->
-		<div hide-md ng-show="structureDetailsShown" layout="column" flex=25 style="padding:0 8 0 0">  
+		 <!-- TODO: Uncomment this line and remove the one below, which is  just for development process -->
+		<!-- <div hide-md ng-show="structureDetailsShown" layout="column" flex=25 style="padding:0 8 0 0">   -->
+		<div ng-show="structureDetailsShown" layout="column" flex=25 style="padding:0 8 0 0">  
 			
 			<md-toolbar class="secondaryToolbar">
 			
 				<div class="md-toolbar-tools">
 					
 					<h2>
-						<span>{{translate.load("sbi.chartengine.designer.tabs.details.title")}}</span>
+						<span>{{structureTabDetailsName}}</span>
 					</h2>
 					
 					<span flex></span>	
@@ -413,10 +475,12 @@
 			</md-toolbar>
 			
 			<!-- hide-md: Hide if the width of the screen is lower than 1280px -->
-			<md-whiteframe flex class="md-whiteframe-4dp whiteframe-element">
-			
-				
-			
+			<md-whiteframe flex class="md-whiteframe-4dp whiteframe-element" style="overflow:auto">		
+				<div ng-show="true">
+					<md-content flex>					
+						<div ng-include src="structureTabDetailsTemplateURL"></div>					
+					</md-content>
+				</div>			
 			</md-whiteframe>
 			
 		</div>
@@ -424,8 +488,9 @@
 		<!-- 
 			PREVIEW OF THE CHART
 		 -->
-		<div hide-md layout="column" flex="{{structurePreviewFlex}}" style="padding:0"> 
-		
+		 <!-- TODO: Uncomment this line and remove the one below, which is  just for development process -->
+		<!-- <div hide-md layout="column" flex={{structurePreviewFlex}} style="padding:0">  -->
+		<div layout="column" flex={{structurePreviewFlex}} style="padding:0"> 
 			<md-toolbar class="secondaryToolbar">
 				<div class="md-toolbar-tools">
 					<h2>

@@ -43,7 +43,7 @@ function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config) {
 	// The chart template (beneath the CHART tag, i.e. property)
 	
 	var parseTemplateforBinding = function(template) {
-		console.log(template)
+
 		if( Object.keys(template).length != 0){
 			
 		Object.keys(template.CHART).forEach(function (key) {
@@ -58,18 +58,18 @@ function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config) {
 		    }
 		});
 		if(template.CHART.LEGEND != null){
+		
+		Object.keys(template.CHART.LEGEND).forEach(function (key) {
 			
-			Object.keys(template.CHART.LEGEND).forEach(function (key) {
-				
-				
-			    if( template.CHART.LEGEND[key] != ''   && !isNaN(template.CHART.LEGEND[key])){
-			    	template.CHART.LEGEND[key] = parseInt(template.CHART.LEGEND[key]);
-			    }
-			    if(template.CHART.LEGEND[key] === 'true' || template.CHART.LEGEND[key] === 'false'){
-			    	
-			    	template.CHART.LEGEND[key] = JSON.parse(template.CHART.LEGEND[key])
-			    }
-			});	
+			
+		    if( template.CHART.LEGEND[key] != ''   && !isNaN(template.CHART.LEGEND[key])){
+		    	template.CHART.LEGEND[key] = parseInt(template.CHART.LEGEND[key]);
+		    }
+		    if(template.CHART.LEGEND[key] === 'true' || template.CHART.LEGEND[key] === 'false'){
+		    	
+		    	template.CHART.LEGEND[key] = JSON.parse(template.CHART.LEGEND[key])
+		    }
+		});
 		}
 		if(template.CHART.PANE != null){
 			

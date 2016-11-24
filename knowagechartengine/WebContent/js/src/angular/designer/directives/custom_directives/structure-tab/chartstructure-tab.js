@@ -32,7 +32,7 @@ angular.module('chartstructure-tab', [])
 		}	
 	});
 
-function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_restServices ){
+function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_restServices,StructureTabService,ChartDesignerData){
 
 	$scope.translate = sbiModule_translate;
 	$scope.structureDetailsShown = false;
@@ -41,9 +41,14 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 	$scope.categoriesContainer = [];
 	$scope.seriesContainers = [];
 	
-	$scope.numberOfSeriesContainers = 1;
+	$scope.numberOfSeriesContainers = 0;
 	$scope.maxNumberOfSeriesContainers = 4;
 	$scope.seriesContainersAliases = [];
+	
+	$scope.detailsForSeriesItem = {color: ""};
+	
+	// Indicator whether we should show the message that the maximum number of Series containers is exceeded
+	$scope.showMaxNmbSerAxesExceeded = false;
 		
 	// Get all metadata of the chart's dataset (all measures and attributes)
 	sbiModule_restServices.promiseGet("../api/1.0/jsonChartTemplate/fieldsMetadata", "")
@@ -56,7 +61,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 			for(var i=0; i<results.length; i++) {
 				
 				if (results[i].nature=="measure") {
-					$scope.allMeasures.push(results[i]);
+					$scope.allMeasures.push(results[i]);					
 				}
 				else {
 					$scope.allAttributes.push(results[i]);
@@ -86,34 +91,45 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 	 * Show/hide the Structure Details panel.
 	 */
 	
-	$scope.showStructureDetails = function() {
+	$scope.showStructureDetails = function(detailsForOption) {
+		$scope.structureTabDetailsName = StructureTabService.getStructureTabDetailsName(detailsForOption);
+		$scope.structureTabDetailsTemplateURL = StructureTabService.getSeriesItemsConfDetailsTemplateURL(detailsForOption);
+		$scope.structurePreviewFlex = 25;
 		$scope.structureDetailsShown = true;
 	}
 	
 	$scope.hideStructureDetails = function() {
+		$scope.structurePreviewFlex = 50;
 		$scope.structureDetailsShown = false;
 	}
 	
-	$scope.changeStructureDetailsFlex = function() {
-		$scope.structurePreviewFlex = 25;
-	}
-	
 	// Called when the user clicks on the attribute in its container, so the attribute can be used as a category in the chart.
-	$scope.moveAttributeToCategories = function(item) {
-		
+	$scope.moveAttributeToCategories = function(item) {		
 		if ($scope.categoriesContainer.indexOf(item.id)<0) {
 			$scope.categoriesContainer.push(item.id)
-		}
-		
+		}		
 	}
 	 
 	// Called when the user clicks on the measure in its container, so the measure can be used as a series item in the chart.
-	$scope.moveMeasureToSeries = function(item) {
-				
-		if ($scope.seriesContainer.indexOf(item.id)<0) {
-			$scope.seriesContainer.push(item.id)
-		}
+	$scope.moveMeasureToSeries = function(item,seriesContainer) {	
 		
+		// If we send an information about the particular Series container (happens when there are more more than 1 container)
+		if (seriesContainer) {
+			for (i=0; i<$scope.seriesContainers.length; i++) {				
+				if ($scope.seriesContainers[i].name == seriesContainer.name) {
+					if ($scope.seriesContainers[i].series.indexOf(item.id)<0) {
+						$scope.seriesContainers[i].series.push(item.id);
+					}
+				}				
+			}
+		}
+		// If we want to move measure into the only series container that we have
+		else {
+			if ($scope.seriesContainers[0].series.indexOf(item.id)<0) {
+				$scope.seriesContainers[0].series.push(item.id);
+			}
+		}
+				
 	}	
 	
 	$scope.prepareSeriesContainersAliases = function() {
@@ -124,21 +140,26 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 			var chartType = $scope.selectedChartType.toLowerCase();
 			var typesWithMultipleSeriesContainersEnabled = $scope.seriesContainerAddAndRemoveIncludeTypes;
 			var allChartAxes = $scope.chartTemplate.AXES_LIST.AXIS;
-			
-			var counterOfSeriesContainers = 0;
-			
-			if (typesWithMultipleSeriesContainersEnabled.indexOf(chartType)>=0 && allChartAxes.length>2) {
-								
-				for (i=0; i<allChartAxes.length; i++) {
-					
+									
+			// If the chart type is not GAUGE (in other words); if there is only one axis (only Series container)
+			if (allChartAxes.length) {								
+				for (i=0; i<allChartAxes.length; i++) {					
 					if (allChartAxes[i].type.toLowerCase()=="serie") {
 						$scope.seriesContainers.push({"name":allChartAxes[i].alias,"series":[]});
-					}
-					
-				}
-				
+						$scope.numberOfSeriesContainers++;
+					}					
+				}				
+			}
+			else {
+				$scope.numberOfSeriesContainers++;
+				$scope.seriesContainers.push({"name":allChartAxes.alias,"series":[]});
 			}
 			
+		}
+		else {
+			$scope.numberOfSeriesContainers++;
+			$scope.seriesContainers.push({"name":"Y","series":[]});
+			//console.log($scope.seriesContainers);
 		}
 		
 	}
@@ -147,20 +168,63 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 		
 		$scope.prepareSeriesContainersAliases();
 		
-		var allSeries = $scope.chartTemplate.VALUES.SERIE;
-				
-		for (i=0; i<$scope.seriesContainers.length; i++) {
+		if ($scope.chartTemplate) {
+			
+			var allSeries = $scope.chartTemplate.VALUES.SERIE;
+			
+			for (i=0; i<$scope.seriesContainers.length; i++) {
 						
-			for (j=0; j<allSeries.length; j++) {
-				
-				if ($scope.seriesContainers[i].name==allSeries[j].axis) {
-					$scope.seriesContainers[i].series.push(allSeries[j].column);
+				if (allSeries.length) {
+					for (j=0; j<allSeries.length; j++) {
+						
+						if ($scope.seriesContainers[i].name==allSeries[j].axis) {
+							$scope.seriesContainers[i].series.push(allSeries[j].column);
+						}
+						
+					}
+				}
+				else {
+					$scope.seriesContainers[i].series.push(allSeries.column);
 				}
 				
 			}
+		}		
+		
+//		console.log($scope.seriesContainers);
+		
+	}
+	
+	// When user clicks on the button for editing the Series item configuration
+	$scope.prepareSeriesItemConfiguration = function(item) {
+				
+		$scope.detailsForSeriesItem = null;
+		$scope.detailsForSeriesTooltip = null;
+		
+		var allSeries = $scope.chartTemplate.VALUES.SERIE;
+				
+		for (i=0; i<allSeries.length; i++) {
+			if (allSeries[i].column == item) {
+				$scope.detailsForSeriesItem = allSeries[i];
+				$scope.detailsForSeriesTooltip = $scope.seriesTooltipStyles[i];
+				return;
+			}
 		}
 		
-		console.log($scope.seriesContainers);
+	}
+	
+	$scope.prepareSeriesContainerConfiguration = function(seriesContainerAlias) {
+		
+		var allAxes = $scope.chartTemplate.AXES_LIST.AXIS;
+		
+		for (i=0; i<allAxes.length; i++) {
+			if (allAxes[i].alias == seriesContainerAlias) {
+				$scope.detailsForSeriesContainer = allAxes[i];
+				console.log($scope.detailsForSeriesContainer);
+				console.log($scope.axisConfigurationStyle);
+				return;
+			}
+		}
+		
 	}
 	
 	/**
@@ -211,6 +275,11 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 			}
 			
 		}
+		else {
+//			if ($scope.selectedChartType.toLowerCase()!="gauge") {
+				$scope.categoriesExist = true;
+//			}
+		}
 		
 	}
 	
@@ -220,12 +289,10 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 	 */
 	$scope.checkSeries = function() {
 			
+		$scope.checkSeriesForContainers();
+		
 		// If the chart is already defined (it is NOT the new one - not yet persisted)
 		if ($scope.chartTemplate) {
-			
-			//$scope.numberOfSeriesContainers = $scope.checkNumberOfSeriesContainers();
-			
-			$scope.checkSeriesForContainers();
 			
 			// All series available inside the chart (series of the chart template). We will use this to populate the series container.
 			var series = [];
@@ -275,31 +342,111 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 	 * Operations for series inside the Series container: move up, move down and delete item.
 	 */
 	
-	$scope.seriesItemMoveUp = function(item) {
-		var index = $scope.seriesContainer.indexOf(item);
-		var nextIndex = index-1;
-		var temp = $scope.seriesContainer[index];
-		$scope.seriesContainer[index] = $scope.seriesContainer[nextIndex];
-		$scope.seriesContainer[nextIndex] = temp;
+	$scope.seriesItemMoveUp = function(item,seriesContainer) {		
+		for (i=0; i<$scope.seriesContainers.length; i++) {		
+			if ($scope.seriesContainers[i].name == seriesContainer.name) {				
+				var index = $scope.seriesContainers[i].series.indexOf(item);
+				var nextIndex = index-1;
+				var temp = $scope.seriesContainers[i].series[index];
+				$scope.seriesContainers[i].series[index] = $scope.seriesContainers[i].series[nextIndex];
+				$scope.seriesContainers[i].series[nextIndex] = temp;	
+				return;
+			}			
+		}		
 	}
 	
-	$scope.seriesItemMoveDown = function(item) {
-		var index = $scope.seriesContainer.indexOf(item);
-		var nextIndex = index+1;
-		var temp = $scope.seriesContainer[index];
-		$scope.seriesContainer[index] = $scope.seriesContainer[nextIndex];
-		$scope.seriesContainer[nextIndex] = temp;
+	$scope.seriesItemMoveDown = function(item,seriesContainer) {
+		for (i=0; i<$scope.seriesContainers.length; i++) {		
+			if ($scope.seriesContainers[i].name == seriesContainer.name) {				
+				var index = $scope.seriesContainers[i].series.indexOf(item);
+				var nextIndex = index+1;
+				var temp = $scope.seriesContainers[i].series[index];
+				$scope.seriesContainers[i].series[index] = $scope.seriesContainers[i].series[nextIndex];
+				$scope.seriesContainers[i].series[nextIndex] = temp;	
+				return;
+			}			
+		}
 	}
 	
-	$scope.seriesItemRemove = function(indexOfItem) {
-		$scope.seriesContainer.splice(indexOfItem,1);
+	$scope.seriesItemRemove = function(seriesItem,seriesContainerName) {
+				
+		// Go through all Series containers in order to focus on the one from which we want to remove a series item.
+		for (i=0; i<$scope.seriesContainers.length; i++) {
+			
+			if ($scope.seriesContainers[i].name == seriesContainerName) {
+				
+				// Go through all it's series items in order to eliminate the one that is aimed to be removed.
+				for (j=0; j<$scope.seriesContainers[i].series.length; j++) {
+					
+					if ($scope.seriesContainers[i].series[j] == seriesItem) {
+						$scope.seriesContainers[i].series.splice(j,1);
+						return;
+					}
+					
+				}
+				
+			}
+			
+		}
+		
 	}
 	
-	$scope.seriesRemoveAll = function() {
-		$scope.seriesContainer = [];
+	$scope.seriesRemoveAll = function(seriesContainer) {
+		
+		// Go through all Series containers in order to focus on the one from which we want to remove a series item.
+		for (i=0; i<$scope.seriesContainers.length; i++) {			
+			if ($scope.seriesContainers[i].name == seriesContainer.name) {				
+				$scope.seriesContainers[i].series = [];	
+				break;
+			}			
+		}
+		
 	}
 	
-	// Function that enables the drop-down menu functionality
+	$scope.addSeriesContainer = function() {
+		
+		// Number of Series containers
+		var nmbOfSerConts = $scope.seriesContainers.length;
+		
+		if (nmbOfSerConts < $scope.maxNumberOfSeriesContainers) {
+			
+			var lastSerContName = $scope.seriesContainers[nmbOfSerConts-1].name;
+			var newSerContName = "Axis_";	// The prefix of the name of the new Series container that will be added to Designer
+			
+			if (lastSerContName!="Y") {
+				var splitLastSerContName = lastSerContName.split("_");
+				newSerContName += (Number(splitLastSerContName[1])+1);
+			}
+			else {
+				newSerContName += "1";
+			}
+			
+			$scope.seriesContainers.push({name:newSerContName, series:[]});
+			
+			// If we reach the maximum number of Series containers and we still click on plus to add a new one, set the indicator that should show the info.
+			$scope.showMaxNmbSerAxesExceeded = $scope.seriesContainers.length==$scope.maxNumberOfSeriesContainers ? true : false;
+			
+			$scope.numberOfSeriesContainers++;
+			
+		}
+		
+	}
+	
+	$scope.removeSeriesContainer = function(seriesContainer) {
+		
+		// Go through all Series containers in order to focus on the one from which we want to remove a series item.
+		for (i=0; i<$scope.seriesContainers.length; i++) {			
+			if ($scope.seriesContainers[i].name == seriesContainer.name) {				
+				$scope.seriesContainers.splice(i,1);
+				$scope.showMaxNmbSerAxesExceeded = false;
+				$scope.numberOfSeriesContainers--;
+				break;
+			}			
+		}
+		
+	}
+	
+	// Function that enables the drop-down menu functionality 
 	$scope.openMenu = function($mdOpenMenu, ev) {
 	      originatorEv = ev;
 	      $mdOpenMenu(ev);
@@ -327,4 +474,36 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
     $scope.categoriesOrderColumnExcludeTypes = ["parallel","chord"];    
     $scope.categoriesConfigExcludeTypes = ["pie","sunburst"];    
     $scope.categoriesTitleConfigExcludeTypes = ["parallel","pie","sunburst","chord"];
+    
+    $scope.seriesItemTypes = StructureTabService.getSeriesItemTypes();
+    $scope.seriesItemOrderingTypes = StructureTabService.getSeriesItemOrderingTypes();
+    $scope.scaleFactorsFixed = StructureTabService.getScaleFactorsFixed();
+    
+    // seriesTooltipStyles - an array that will hold deparsed 'style' data for the TOOLTIP of all series items.
+    $scope.seriesTooltipStyles = [];
+    $scope.seriesTooltipStyle = StructureTabService.getSeriesTooltipStyle();
+        
+    $scope.textAlignment = ChartDesignerData.getAlignTypeOptions();
+    $scope.fontFamily = ChartDesignerData.getFontFamilyOptions();
+    $scope.fontStyle = ChartDesignerData.getFontStyleOptions();
+    $scope.fontSize = ChartDesignerData.getFontSizeOptions();
+    
+    $scope.seriesItemAggregationTypes = StructureTabService.getSeriesItemAggregationTypes();
+    
+    // axisConfigurationStyles - an array that will hold deparsed 'style' data for the AXIS of all series items.
+    $scope.axisConfigurationStyles = [];
+    $scope.axisConfigurationStyle = StructureTabService.getAxisConfigurationStyle();
+    
+    // axisTitleConfigurationStyles - an array that will hold deparsed 'style' data for the AXIS->TITLE of all series items.
+    $scope.axisTitleConfigurationStyles = [];
+    $scope.axisTitleConfigurationStyle = StructureTabService.getAxisTitleConfigurationStyle();
+    
+    // axisMinorGridConfigurationStyles - an array that will hold deparsed 'style' data for the AXIS->MAJORGRID of all series items.
+    $scope.axisMinorGridConfigurationStyles = [];
+    $scope.axisMinorGridConfigurationStyle = StructureTabService.getAxisMinorGridConfigurationStyle();  
+    
+    // axisMajorGridConfigurationStyles - an array that will hold deparsed 'style' data for the AXIS->MINORGRID of all series items.
+    $scope.axisMajorGridConfigurationStyles = [];
+    $scope.axisMajorGridConfigurationStyle = StructureTabService.getAxisMajorGridConfigurationStyle();  
+    
 }

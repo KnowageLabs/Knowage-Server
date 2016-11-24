@@ -32,6 +32,7 @@ angular.module('chart-tab', [])
 function chartTabControllerFunction($scope,sbiModule_translate,sbiModule_restServices,sbiModule_messaging,ChartDesignerData){
 	$scope.translate = sbiModule_translate;
 	$scope.datasetLabel = datasetLabel;
+	
 	var setConfigurationButtons = function(type) {
 		
 		switch (type) {
@@ -139,6 +140,110 @@ function chartTabControllerFunction($scope,sbiModule_translate,sbiModule_restSer
 					}
 		}
 	}	
+	
+	// The function that will deparse the 'style' property of the SERIE and AXIS tags/subtags
+	var deparseStyleForSeriesAndAxes = function(style,type,id) {
+		
+		var res = style.split(";");
+		res.pop();
+		var formated = [];
+		
+		for (var i = 0; i < res.length; i++) {
+			var obj = {};
+			var temp = res[i].split(":")
+			obj.name = temp[0];
+			obj.value = temp[1];
+			formated.push(obj);
+		}
+		
+		// Deparse the 'style' property of the series item TOOLTIP configuration
+		if (type=="seriestooltip") {	
+			
+			// Adding the ID of the series, since we will need to extract the data for the series item when saving (for recognizing).
+			$scope.seriesTooltipStyle._id = id;
+			
+			for (var i = 0; i < formated.length; i++) {
+				if($scope.seriesTooltipStyle.hasOwnProperty(formated[i].name)){
+					$scope.seriesTooltipStyle[formated[i].name] = formated[i].value;
+				}
+			}	
+			
+			var seriesTooltipStyle = angular.copy($scope.seriesTooltipStyle);			
+			$scope.seriesTooltipStyles.push(seriesTooltipStyle);
+			
+		}
+		
+		// Deparse the 'style' property of the AXIS configuration
+		if (type=="axisconfig") {	
+			
+			$scope.axisConfigurationStyle._id = id;
+			
+			for (var i = 0; i < formated.length; i++) {
+				if($scope.axisConfigurationStyle.hasOwnProperty(formated[i].name)){
+					$scope.axisConfigurationStyle[formated[i].name] = formated[i].value;
+				}
+			}	
+			
+			var axisConfigurationStyle = angular.copy($scope.axisConfigurationStyle);			
+			$scope.axisConfigurationStyles.push(axisConfigurationStyle);
+			
+		}
+		
+		// Deparse the 'style' property of the axis AXIS->TITLE configuration
+		if (type=="axistitle") {	
+			
+			$scope.axisTitleConfigurationStyle._id = id;
+			
+			for (var i = 0; i < formated.length; i++) {
+				if($scope.axisTitleConfigurationStyle.hasOwnProperty(formated[i].name)){
+					$scope.axisTitleConfigurationStyle[formated[i].name] = formated[i].value;
+				}
+			}
+			
+			var axisTitleConfigurationStyle = angular.copy($scope.axisTitleConfigurationStyle);			
+			$scope.axisTitleConfigurationStyles.push(axisTitleConfigurationStyle);
+			
+		}
+		
+		// Deparse the 'style' property of the axis AXIS->MAJORGRID configuration
+		if (type=="axisminorgrid") {	
+			
+			$scope.axisMinorGridConfigurationStyle._id = id;
+			
+			for (var i = 0; i < formated.length; i++) {
+				if($scope.axisMinorGridConfigurationStyle.hasOwnProperty(formated[i].name)){
+					$scope.axisMinorGridConfigurationStyle[formated[i].name] = formated[i].value;
+				}
+			}	
+			
+			var axisMinorGridConfigurationStyle = angular.copy($scope.axisMinorGridConfigurationStyle);			
+			$scope.axisMinorGridConfigurationStyles.push(axisMinorGridConfigurationStyle);
+			
+		}
+		
+		// Deparse the 'style' property of the axis AXIS->MAJORGRID configuration
+		if (type=="axismajorgrid") {	
+			
+			$scope.axisMajorGridConfigurationStyle._id = id;
+			
+			for (var i = 0; i < formated.length; i++) {
+				if($scope.axisMajorGridConfigurationStyle.hasOwnProperty(formated[i].name)){
+					$scope.axisMajorGridConfigurationStyle[formated[i].name] = formated[i].value;
+				}
+			}	
+			
+			var axisMajorGridConfigurationStyle = angular.copy($scope.axisMajorGridConfigurationStyle);			
+			$scope.axisMajorGridConfigurationStyles.push(axisMajorGridConfigurationStyle);
+			
+		}
+		
+		console.log("ser tooltip:",$scope.seriesTooltipStyles);
+		console.log("ax conf:",$scope.axisConfigurationStyles);
+		console.log("ax title:",$scope.axisTitleConfigurationStyles);
+		console.log("ax major:",$scope.axisMajorGridConfigurationStyles);
+		console.log("ax minor:",$scope.axisMinorGridConfigurationStyles);		
+		
+	}	
 
 	sbiModule_restServices.promiseGet("../api/1.0/pages/types", "")
 	.then(function(response) {
@@ -147,24 +252,44 @@ function chartTabControllerFunction($scope,sbiModule_translate,sbiModule_restSer
 			
 			if ($scope.chartTemplate) {
 				
+				
 				if($scope.chartTypes[i].toUpperCase()==$scope.chartTemplate.type.toUpperCase()){
 					$scope.selectedChartType = $scope.chartTypes[i];
-					setConfigurationButtons($scope.selectedChartType);
-				}	
+					setConfigurationButtons($scope.selectedChartType);					
+				}
 			}
 			else {
 				$scope.selectedChartType = 'bar';
 				setConfigurationButtons($scope.selectedChartType);
 			}
 			
-		}		
-		
-		if ($scope.chartTemplate) {
-		var cssArray = ChartDesignerData.getCssStyles($scope.chartTemplate);
-		$scope.selectedConfigurationButton = "";
-		setFontProps(cssArray);
-		
 		}
+			
+			if ($scope.chartTemplate) {
+				var cssArray = ChartDesignerData.getCssStyles($scope.chartTemplate);
+				$scope.selectedConfigurationButton = "";
+				setFontProps(cssArray);		
+				
+				// Deparse the content of the 'style' property for SERIES tag
+				
+				var allSeries = $scope.chartTemplate.VALUES.SERIE;
+				
+				for (j=0; j<allSeries.length; j++) {
+					deparseStyleForSeriesAndAxes(allSeries[j].TOOLTIP.style,'seriestooltip',allSeries[j].column);
+				}
+				
+				// Deparse the content of the 'style' property for AXIS tag
+				
+				var allAxes = $scope.chartTemplate.AXES_LIST.AXIS;
+				
+				for (j=0; j<allAxes.length; j++) {
+					deparseStyleForSeriesAndAxes(allAxes[j].style,'axisconfig',allAxes[j].alias);
+					deparseStyleForSeriesAndAxes(allAxes[j].TITLE.style,'axistitle',allAxes[j].alias);
+					allAxes[j].MINORGRID ? deparseStyleForSeriesAndAxes(allAxes[j].MINORGRID.style,'axisminorgrid',allAxes[j].alias) : null;
+					allAxes[j].MAJORGRID ? deparseStyleForSeriesAndAxes(allAxes[j].MAJORGRID.style,'axismajorgrid',allAxes[j].alias) : null;
+				}
+				
+			}		
 		
 	}, function(response) {
 		
@@ -210,7 +335,7 @@ function chartTabControllerFunction($scope,sbiModule_translate,sbiModule_restSer
 					$scope.chartTemplate = $scope.styleTemplate.generic.CHART;
 					console.log($scope.chartTemplate)
 				}
-				
+
 			}else{
 				if($scope.chartStyles[i].STYLE.name == 'sfnas'){
 					$scope.styleTemplate = $scope.chartStyles[i].STYLE.TEMPLATE;
@@ -228,8 +353,7 @@ function chartTabControllerFunction($scope,sbiModule_translate,sbiModule_restSer
 	$scope.selectChartType = function(chart) {
 		$scope.selectedChartType = chart;
 		setConfigurationButtons($scope.selectedChartType);
-		$scope.selectedConfigurationButton = "";
-		
+		$scope.selectedConfigurationButton = "";		
 	}
 		
 }
