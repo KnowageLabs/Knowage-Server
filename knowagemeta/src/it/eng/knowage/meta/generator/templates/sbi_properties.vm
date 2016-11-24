@@ -34,8 +34,8 @@ ${jpaColumn.uniqueName}.position = $velocityCount
 
 # $jpaView.name ----------------------------------------------------
 
-${jpaView.uniqueName}.visible = $jpaView.getAttribute("structural.visible")
-${jpaView.uniqueName}.type = $jpaView.getAttribute("structural.tabletype")
+${jpaView.uniqueName}.visible = true
+${jpaView.uniqueName}.type = generic
 
 # view columns (positions)
 #foreach ($jpaColumn in $jpaView.getColumns())
