@@ -19,7 +19,7 @@
 	      						<md-input-container class="md-block" flex-gt-sm>
 	            					<label>{{translate.load("sbi.functionscatalog.newinputsdialog.replacingdatasetname")}}</label>
 	            					<md-select ng-model="replacingDatasetList[input.label]">
-	              						<md-option ng-repeat="replacingDataset in datasets.item" value="{{replacingDataset}}" > 
+	              						<md-option ng-repeat="replacingDataset in datasets.item" value="{{replacingDataset.label}}" > 
 	                							{{replacingDataset.name}}
 	              						</md-option>
 	           						</md-select>
