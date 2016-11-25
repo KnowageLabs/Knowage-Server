@@ -19,14 +19,32 @@ package it.eng.spagobi.behaviouralmodel.lov.dao;
 
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.bo.OutputParameter;
+import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjFunc;
+import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar;
+import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParameters;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuse;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
 import it.eng.spagobi.behaviouralmodel.lov.metadata.SbiLov;
+import it.eng.spagobi.commons.bo.Config;
+import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.engines.config.dao.EngineDAOHibImpl;
+import it.eng.spagobi.tools.crossnavigation.metadata.SbiOutputParameter;
+import it.eng.spagobi.tools.dataset.bo.BIObjDataSet;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -294,7 +312,84 @@ public class LovDAOHibImpl extends AbstractHibernateDAO implements IModalitiesVa
 	}
 	return realResult;
     }
+    public List<ModalitiesValue> loadModalitiesValueByParamaterId(Integer idParameter) throws EMFUserError{
+    	logger.debug("IN");
+    	Session aSession = null;
+    	Transaction tx = null;
+    	List realResult = new ArrayList();
+    	try {
+    	    aSession = getSession();
+    	    tx = aSession.beginTransaction();
+    	    Query hibQuery = aSession.createQuery("select distinct  lov from   SbiParameters as param "
+    	    										+ "inner join param.sbiParuses as paruses "
+    	    										+ "inner join paruses.sbiLov as lov "
+    	    										+ "where  param.parId = " + idParameter
+													);;
+    	    List hibList = hibQuery.list();
+    	    tx.commit();
 
+    	    Iterator it = hibList.iterator();
+    	    while (it.hasNext()) {
+    		realResult.add(toModalityValue((SbiLov) it.next()));
+    	    }
+    	} catch (HibernateException he) {
+    	    logger.error("HibernateException", he);
+
+    	    if (tx != null)
+    		tx.rollback();
+
+    	    throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+    	} finally {
+    	    if (aSession != null) {
+    		if (aSession.isOpen())
+    		    aSession.close();
+    	    }
+    	    logger.debug("IN");
+    	}
+    	return realResult;
+    }
+    
+    public List<ModalitiesValue> loadModalitiesValueByBIObjectLabel(String label) throws EMFUserError{
+    	logger.debug("IN");
+    	Session aSession = null;
+    	Transaction tx = null;
+    	List realResult = new ArrayList();
+    	try {
+    	    aSession = getSession();
+    	    tx = aSession.beginTransaction();
+    	    Query hibQuery = aSession.createQuery("select distinct lov from   SbiObjects as obj "
+													+ "inner join obj.sbiObjPars as objPars "
+													+ "inner join objPars.sbiParameter as param "
+													+ "inner join param.sbiParuses as paruses "
+													+ "inner join paruses.sbiLov as lov "
+													+ "where  obj.label = '" + label + "'"
+					);
+    	    List hibList = hibQuery.list();
+
+    	    tx.commit();
+
+    	    Iterator it = hibList.iterator();
+    	    while (it.hasNext()) {
+    		realResult.add(toModalityValue((SbiLov) it.next()));
+    	    }
+    	} catch (HibernateException he) {
+    	    logger.error("HibernateException", he);
+
+    	    if (tx != null)
+    		tx.rollback();
+
+    	    throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+    	} finally {
+    	    if (aSession != null) {
+    		if (aSession.isOpen())
+    		    aSession.close();
+    	    }
+    	    logger.debug("IN");
+    	}
+    	return realResult;
+    }
     /**
      * Load all modalities value order by code.
      * 
@@ -393,7 +488,10 @@ public class LovDAOHibImpl extends AbstractHibernateDAO implements IModalitiesVa
 	return result;
 
     }
-
+    
+    
+    
+    
     /**
      * From the hibernate LOV at input, gives the corrispondent
      * <code>ModalitiesValue</code> object.
@@ -417,4 +515,8 @@ public class LovDAOHibImpl extends AbstractHibernateDAO implements IModalitiesVa
 	logger.debug("OUT");
 	return modVal;
     }
+    
+   
+    
+   
 }

@@ -114,4 +114,10 @@ public interface IParameterDAO extends ISpagoBIDao{
 	 * @throws EMFUserError If an Exception occurred
 	 */
 	public void eraseParameter(Parameter aParameter) throws EMFUserError;
+
+
+	public List<Parameter> loadParametersByLovId(Integer lovId)throws EMFUserError;
+
+
+	public List<Parameter> loadParametersByBIObjectLabel(String label) throws EMFUserError;
 }

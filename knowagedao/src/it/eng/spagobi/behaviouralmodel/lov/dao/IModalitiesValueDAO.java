@@ -18,6 +18,10 @@
 package it.eng.spagobi.behaviouralmodel.lov.dao;
 
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuse;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 
@@ -129,4 +133,13 @@ public interface IModalitiesValueDAO extends ISpagoBIDao{
 	 * @throws EMFUserError If an Exception occurred
 	 */
 	public boolean hasParameters (String idLov) throws EMFUserError;
+
+
+	public List<ModalitiesValue> loadModalitiesValueByParamaterId(Integer idParameter) throws EMFUserError;
+
+
+	public List<ModalitiesValue> loadModalitiesValueByBIObjectLabel(String label) throws EMFUserError;
+
+
+	
 }

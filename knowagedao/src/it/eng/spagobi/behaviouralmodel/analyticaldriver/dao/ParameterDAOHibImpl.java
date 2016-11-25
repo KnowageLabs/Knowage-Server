@@ -282,6 +282,82 @@ public class ParameterDAOHibImpl extends AbstractHibernateDAO implements IParame
 		}
 		return realResult;
 	}
+	
+	public List<Parameter> loadParametersByLovId(Integer lovId) throws EMFUserError{
+		Session aSession = null;
+		Transaction tx = null;
+		List realResult = new ArrayList();
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			Query hibQuery = aSession.createQuery(("select distinct params from   SbiParameters as params "
+												+ "inner join params.sbiParuses as paruses "
+												+ "inner join paruses.sbiLov as lov "
+												+ "where  lov.lovId = " + lovId
+					));
+			List hibList = hibQuery.list();
+
+			Iterator it = hibList.iterator();
+
+			while (it.hasNext()) {
+				realResult.add(toParameter((SbiParameters) it.next()));
+			}
+			tx.commit();
+		} catch (HibernateException he) {
+			logException(he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+		return realResult;
+	}
+	
+	public List<Parameter> loadParametersByBIObjectLabel(String label) throws EMFUserError{
+		Session aSession = null;
+		Transaction tx = null;
+		List realResult = new ArrayList();
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			Query hibQuery = aSession.createQuery("select distinct params from   SbiParameters as params "
+												+ "inner join params.sbiObjPars as objpars "
+												+ "inner join objpars.sbiObject as obj "
+												+ "where  obj.label = '" + label+"'"
+												);
+			List hibList = hibQuery.list();
+
+			Iterator it = hibList.iterator();
+
+			while (it.hasNext()) {
+				realResult.add(toParameter((SbiParameters) it.next()));
+			}
+			tx.commit();
+		} catch (HibernateException he) {
+			logException(he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+		return realResult;
+	}
 
 	/**
 	 * Modify parameter.

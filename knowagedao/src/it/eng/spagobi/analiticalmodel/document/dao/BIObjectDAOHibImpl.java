@@ -2587,6 +2587,92 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 		logger.debug("OUT");
 		return realResult;
 	}
+	
+	 public  List<BIObject> loadBIObjectsByLovId(Integer idLov) throws EMFUserError{
+	    	
+	    	logger.debug("IN");
+	    	Session aSession = null;
+	    	Transaction tx = null;
+	    	List realResult = new ArrayList();
+	    	try {
+	    	    aSession = getSession();
+	    	    tx = aSession.beginTransaction();
+	    	    Query hibQuery = aSession.createQuery("select distinct obj from   SbiObjects as obj "
+	    	    									+ "inner join obj.sbiObjPars as objPars "
+	    	    									+ "inner join objPars.sbiParameter as param "
+	    	    									+ "inner join param.sbiParuses as paruses "
+	    	    									+ "inner join paruses.sbiLov as lov "
+	    	    									+ "where  lov.lovId = " + idLov
+	    	    									);
+
+	    	    									
+	    	    List hibList = hibQuery.list();
+
+	    	    Iterator it = hibList.iterator();
+	    	    while (it.hasNext()) {
+	    		realResult.add(toBIObject((SbiObjects) it.next(),aSession));
+	    	    }
+	    	    tx.commit();
+	    	} catch (HibernateException he) {
+	    	    logger.error("HibernateException", he);
+
+	    	    if (tx != null)
+	    		tx.rollback();
+
+	    	    throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+	    	} finally {
+	    	    if (aSession != null) {
+	    		if (aSession.isOpen())
+	    		    aSession.close();
+	    	    }
+	    	    logger.debug("OUT");
+	    	}
+	    	return realResult;
+
+	    	
+	    	
+	    }
+	 
+	 public  List<BIObject> loadBIObjectsByParamterId(Integer idParameter) throws EMFUserError {
+		 logger.debug("IN");
+	    	Session aSession = null;
+	    	Transaction tx = null;
+	    	List realResult = new ArrayList();
+	    	try {
+	    	    aSession = getSession();
+	    	    tx = aSession.beginTransaction();
+	    	    Query hibQuery = aSession.createQuery("select distinct obj from   SbiObjects as obj "
+	    	    									+ "inner join obj.sbiObjPars as objPars "
+	    	    									+ "inner join objPars.sbiParameter as param "
+	    	    									+ "where  param.parId = " + idParameter
+	    	    									);
+
+	    	    									
+	    	    List hibList = hibQuery.list();
+
+	    	    Iterator it = hibList.iterator();
+	    	    while (it.hasNext()) {
+	    		realResult.add(toBIObject((SbiObjects) it.next(),aSession));
+	    	    }
+	    	    tx.commit();
+	    	} catch (HibernateException he) {
+	    	    logger.error("HibernateException", he);
+
+	    	    if (tx != null)
+	    		tx.rollback();
+
+	    	    throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+	    	} finally {
+	    	    if (aSession != null) {
+	    		if (aSession.isOpen())
+	    		    aSession.close();
+	    	    }
+	    	    logger.debug("OUT");
+	    	}
+	    	return realResult;
+	 }
 
 	/**
 	 * Search objects with the features specified
