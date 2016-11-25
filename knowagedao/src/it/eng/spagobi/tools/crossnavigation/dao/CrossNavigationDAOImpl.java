@@ -35,6 +35,7 @@ import it.eng.spagobi.tools.crossnavigation.bo.SimpleParameter;
 import it.eng.spagobi.tools.crossnavigation.metadata.SbiCrossNavigation;
 import it.eng.spagobi.tools.crossnavigation.metadata.SbiCrossNavigationPar;
 import it.eng.spagobi.tools.crossnavigation.metadata.SbiOutputParameter;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -310,96 +311,96 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 		return executeOnTransaction(new IExecuteOnTransaction<JSONArray>() {
 			@Override
 			public JSONArray execute(Session session) throws JSONException, EMFUserError {
-				Map<Integer, crossNavigationParameters> documentIOParams = new HashMap<Integer, crossNavigationParameters>();
-
-				List<Integer> inputId = new ArrayList<>();
-				List<Integer> outputId = new ArrayList<>();
-
 				BIObject document = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(label);
 				if (document == null) {
-					throw new RuntimeException("Impossible to get document [" + label + "] from SpagoBI Server");
+					throw new RuntimeException("Impossible to get document with label [" + label + "]");
 				}
 
 				// load Input Parameter
-				List objParams = document.getBiObjectParameters();
-				for (Iterator iterator = objParams.iterator(); iterator.hasNext();) {
-					JSONObject paramJSON = new JSONObject();
-					BIObjectParameter param = (BIObjectParameter) iterator.next();
-					// paramJSON.put("label", param.getLabel());
-					// paramJSON.put("url", param.getParameterUrlName());
-					// inputParametersList.put(paramJSON);
-					inputId.add(param.getId());
-					crossNavigationParameters cpn = new crossNavigationParameters(param.getParameterUrlName(), param.getParameter().getType());
-					cpn.setIsInput(true);
-					documentIOParams.put(param.getId(), cpn);
+				Map<Integer, crossNavigationParameters> documentInputParams = new HashMap<Integer, crossNavigationParameters>();
+				List docParams = document.getBiObjectParameters();
+				for (Iterator iterator = docParams.iterator(); iterator.hasNext();) {
+					BIObjectParameter docParam = (BIObjectParameter) iterator.next();
+					crossNavigationParameters cnParams = new crossNavigationParameters(docParam.getParameterUrlName(), docParam.getParameter().getType());
+					cnParams.setIsInput(true);
+					documentInputParams.put(docParam.getId(), cnParams);
 				}
 
 				// Load Output Parameter
-
-				List<OutputParameter> lst = document.getOutputParameters();
-				for (OutputParameter upitem : lst) {
-					// inputParametersList.put(JsonConverter.objectToJson(upitem, upitem.getClass()));
-					outputId.add(upitem.getId());
-					crossNavigationParameters cpn = new crossNavigationParameters(upitem.getName(), upitem.getType(), upitem.getFormatValue());
-					cpn.setIsInput(false);
-					documentIOParams.put(upitem.getId(), cpn);
+				Map<Integer, crossNavigationParameters> documentOutputParams = new HashMap<Integer, crossNavigationParameters>();
+				List<OutputParameter> outParams = document.getOutputParameters();
+				for (OutputParameter outParam : outParams) {
+					crossNavigationParameters cnParams = new crossNavigationParameters(outParam.getName(), outParam.getType(), outParam.getFormatValue());
+					cnParams.setIsInput(false);
+					documentOutputParams.put(outParam.getId(), cnParams);
 				}
 
-				// if (!inputId.isEmpty() || !outputId.isEmpty()) {
-				// load cross navigation item
-				Disjunction disj = Restrictions.disjunction();
-				if (!inputId.isEmpty()) {
-					disj.add(Restrictions.conjunction().add(Restrictions.eq("fromType", 1)).add(Restrictions.in("fromKeyId", inputId)));
+				// load cross navigation parameters
+				Disjunction disjunction = Restrictions.disjunction();
+				if (!documentInputParams.isEmpty()) {
+					disjunction.add(Restrictions.conjunction().add(Restrictions.eq("fromType", 1))
+							.add(Restrictions.in("fromKeyId", documentInputParams.keySet())));
 				}
-				if (!outputId.isEmpty()) {
-					disj.add(Restrictions.conjunction().add(Restrictions.eq("fromType", 0)).add(Restrictions.in("fromKeyId", outputId)));
+				if (!documentOutputParams.isEmpty()) {
+					disjunction.add(Restrictions.conjunction().add(Restrictions.eq("fromType", 0))
+							.add(Restrictions.in("fromKeyId", documentOutputParams.keySet())));
 				}
-				disj.add(Restrictions.conjunction().add(Restrictions.eq("fromType", 2)).add(Restrictions.eq("fromKeyId", document.getId())));
+				disjunction.add(Restrictions.conjunction().add(Restrictions.eq("fromType", 2)).add(Restrictions.eq("fromKeyId", document.getId())));
+				Criteria crit = session.createCriteria(SbiCrossNavigationPar.class).add(disjunction);
+				List<SbiCrossNavigationPar> cnParams = crit.list();
 
-				Criteria crit = session.createCriteria(SbiCrossNavigationPar.class).add(disj);
+				Map<Integer, JSONObject> mapDocIdToJsonDoc = new HashMap<Integer, JSONObject>();
+				for (SbiCrossNavigationPar cnParam : cnParams) {
+					// from cross navigation item get the document whith input params like cross navigation toKeyId value in input params
+					SbiObjects obj = cnParam.getToKey().getSbiObject();
+					Integer docId = obj.getBiobjId();
 
-				List<SbiCrossNavigationPar> scn = crit.list();
+					if (!mapDocIdToJsonDoc.containsKey(docId)) {
+						BIObject biObject = DAOFactory.getBIObjectDAO().toBIObject(obj, session);
 
-				// from cross navigation item get the document whith input params like cross navigation toKeyId value in imput params
-				Map<Integer, JSONObject> mappa = new HashMap<Integer, JSONObject>();
-				for (SbiCrossNavigationPar cnItem : scn) {
-					SbiObjects obj = cnItem.getToKey().getSbiObject();
-					if (!mappa.containsKey(obj.getBiobjId())) {
-						JSONObject tmpJO = new JSONObject();
-						BIObject bio = DAOFactory.getBIObjectDAO().toBIObject(obj, session);
-						tmpJO.put("document", new JSONObject(JsonConverter.objectToJson(bio, bio.getClass())));
-						tmpJO.put("documentId", obj.getBiobjId());
-						tmpJO.put("crossName", cnItem.getSbiCrossNavigation().getName());
-						tmpJO.put("crossId", cnItem.getSbiCrossNavigation().getId());
-						tmpJO.put("navigationParams", new JSONObject());
+						JSONObject jsonDoc = new JSONObject();
+						jsonDoc.put("document", new JSONObject(JsonConverter.objectToJson(biObject, biObject.getClass())));
+						jsonDoc.put("documentId", docId);
+						jsonDoc.put("crossName", cnParam.getSbiCrossNavigation().getName());
+						jsonDoc.put("crossId", cnParam.getSbiCrossNavigation().getId());
+						jsonDoc.put("navigationParams", new JSONObject());
 
-						mappa.put(obj.getBiobjId(), tmpJO);
+						mapDocIdToJsonDoc.put(docId, jsonDoc);
+					}
+					JSONObject jsonDoc = mapDocIdToJsonDoc.get(docId);
+
+					JSONObject jsonNavParam = new JSONObject();
+
+					Integer fromKeyId = cnParam.getFromKeyId();
+					int type = cnParam.getFromType().intValue();
+					switch (type) {
+					case 0:
+						jsonNavParam.put("value",
+								new JSONObject(JsonConverter.objectToJson(documentOutputParams.get(fromKeyId), crossNavigationParameters.class)));
+						jsonNavParam.put("fixed", false);
+						break;
+					case 1:
+						jsonNavParam.put("value",
+								new JSONObject(JsonConverter.objectToJson(documentInputParams.get(fromKeyId), crossNavigationParameters.class)));
+						jsonNavParam.put("fixed", false);
+						break;
+					case 2:
+						jsonNavParam.put("value", cnParam.getFixedValue());
+						jsonNavParam.put("fixed", true);
+						break;
+					default:
+						throw new SpagoBIRuntimeException("Unsupported cross navigation type [" + type + "]");
 					}
 
-					JSONObject jo = mappa.get(obj.getBiobjId());
-					JSONObject fromItem = new JSONObject();
-
-					if (documentIOParams.get(cnItem.getFromKeyId()) == null) {
-						fromItem.put("value", cnItem.getFixedValue());
-						fromItem.put("fixed", true);
-					} else {
-						fromItem.put("value",
-								new JSONObject(JsonConverter.objectToJson(documentIOParams.get(cnItem.getFromKeyId()), crossNavigationParameters.class)));
-						fromItem.put("fixed", false);
-					}
-
-					jo.getJSONObject("navigationParams").put(cnItem.getToKey().getParurlNm(), fromItem);
-
+					jsonDoc.getJSONObject("navigationParams").put(cnParam.getToKey().getParurlNm(), jsonNavParam);
 				}
 
-				Iterator it = mappa.entrySet().iterator();
+				Iterator it = mapDocIdToJsonDoc.entrySet().iterator();
 				JSONArray ret = new JSONArray();
 				while (it.hasNext()) {
 					Map.Entry pair = (Map.Entry) it.next();
 					ret.put(pair.getValue());
 				}
-
-				// }
 				return ret;
 			}
 		});
