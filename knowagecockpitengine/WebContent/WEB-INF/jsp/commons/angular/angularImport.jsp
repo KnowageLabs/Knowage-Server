@@ -84,7 +84,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/js/lib/angular/ngWYSIWYG/editor.min.css">
 
 <!-- 		angular-drag-and-drop-lists -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-drag-and-drop-lists/angular-drag-and-drop-lists.js"></script>	
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-drag-and-drop-lists/angular-drag-and-drop-lists.js"></script>
+
+<link rel="stylesheet" type="text/css" href="<%= GeneralUtilities.getSpagoBiContext() %>/themes/commons/css/customStyle.css">	
 
 <%@include file="/WEB-INF/jsp/commons/angular/sbiModule.jspf"%>
 	
