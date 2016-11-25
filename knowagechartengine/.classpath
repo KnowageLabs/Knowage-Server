@@ -11,7 +11,6 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src" path="/knowagedao"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/knowageutils"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/knowageutilsjson"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/qbecore"/>
