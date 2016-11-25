@@ -167,6 +167,15 @@
 		    },
 		    #end
 	    #end
+	    
+	    ## NOTE (TOOLTIP PROBLEM)
+	    #*events: {
+        load: function() {
+          chart = this;
+          this.myTooltip = new Highcharts.Tooltip(this, this.options.tooltip);
+          //this.tooltip.label.element.remove();
+        }
+      }*#
     },
     
     #*
@@ -1117,6 +1126,10 @@
     ],
     
     tooltip: {
+    
+    	## NOTE (TOOLTIP PROBLEM): disable the tooltip in order to provide possibility to hide the tooltip after set amount of time after hover 
+		## enabled:false,
+		
         useHTML: true,
         backgroundColor: null,
         borderWidth: 2,
@@ -1367,6 +1380,44 @@
     },
     
     plotOptions: {
+        
+        ## NOTE (TOOLTIP PROBLEM) the tooltip must be disabled previously (on line 1129 here) in order to provide effect of hidding the tooltip after some time 
+        ## Also, uncomment this block of code, since it implements the logic for this operation.
+        #* series: {
+        
+	        point: {
+	        
+	          events: {
+	          
+	            mouseOver: function(e) {
+	            
+	              var i = this.x;
+	              
+	              points = [];
+	              
+	              Highcharts.each(this.series.chart.series, function(s) {
+	                Highcharts.each(s.data, function(p) {
+	                  if (p.x === i) {
+	                    points.push(p)
+	                  }
+	                })
+	              });
+	              
+	              myTooltip = chart.myTooltip;
+	              
+	              setTimeout(function() {
+	                myTooltip.refresh(chart.series[0].points[i])
+	              }, 0)
+	              
+	              // Hides the 
+	              setTimeout(function() {
+	                myTooltip.hide()
+	              }, 1000)
+	
+	            }
+	          }
+	        }
+      	},*#
         
        line: {
         
