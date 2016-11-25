@@ -138,7 +138,7 @@ function chartTabControllerFunction($scope,sbiModule_translate,sbiModule_restSer
 					}
 					$scope.legendObj.borderWidth = parseInt($scope.legendObj.borderWidth);
 					}
-				
+					
 				if(type == 'limitparallel'){
 					for (var k = 0; k < formated.length; k++) {
 						if($scope.limitParallelObj.hasOwnProperty(formated[k].name)){
@@ -156,9 +156,9 @@ function chartTabControllerFunction($scope,sbiModule_translate,sbiModule_restSer
 					}
 					$scope.axesListlObj.axisColNamePadd = parseInt($scope.axesListlObj.axisColNamePadd);
 					$scope.axesListlObj.brushWidth = parseInt($scope.axesListlObj.brushWidth);
-					}
+					}					
 		}
-	}
+	}	
 	
 	// The function that will deparse the 'style' property of the SERIE and AXIS tags/subtags
 	var deparseStyleForSeriesAndAxes = function(style,type,id) {
@@ -186,6 +186,8 @@ function chartTabControllerFunction($scope,sbiModule_translate,sbiModule_restSer
 					$scope.seriesTooltipStyle[formated[i].name] = formated[i].value;
 				}
 			}	
+			
+			console.log("AAAAAA");
 			
 			var seriesTooltipStyle = angular.copy($scope.seriesTooltipStyle);			
 			$scope.seriesTooltipStyles.push(seriesTooltipStyle);
@@ -293,9 +295,15 @@ function chartTabControllerFunction($scope,sbiModule_translate,sbiModule_restSer
 				// Deparse the content of the 'style' property for SERIES tag
 				
 				var allSeries = $scope.chartTemplate.VALUES.SERIE;
+				console.log("JHJHJHJH",allSeries);
 				
-				for (j=0; j<allSeries.length; j++) {
-					deparseStyleForSeriesAndAxes(allSeries[j].TOOLTIP.style,'seriestooltip',allSeries[j].column);
+				if (allSeries.length) {
+					for (j=0; j<allSeries.length; j++) {
+						deparseStyleForSeriesAndAxes(allSeries[j].TOOLTIP.style,'seriestooltip',allSeries[j].column);
+					}
+				}
+				else {
+					deparseStyleForSeriesAndAxes(allSeries.TOOLTIP.style,'seriestooltip',allSeries[j].column);
 				}
 				
 				// Deparse the content of the 'style' property for AXIS tag

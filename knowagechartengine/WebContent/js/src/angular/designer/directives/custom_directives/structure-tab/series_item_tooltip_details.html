@@ -36,7 +36,7 @@
 <!-- Series tooltip text font family -->
 <div layout="row" flex layout-margin>
 	<md-input-container class="md-block" flex> 
-		<label>{{translate.load('sbi.chartengine.designer.scalefactor.label')}}</label>
+		<label>{{translate.load('sbi.chartengine.configuration.font')}}</label>
 		<md-select ng-model="detailsForSeriesTooltip.fontFamily"> 
 			<md-option ng-repeat="option in fontFamily" value="{{option.value}}">{{option.name}}</md-option>
 		</md-select> 
@@ -46,7 +46,7 @@
 <!-- Series tooltip text font style -->
 <div layout="row" flex layout-margin>
 	<md-input-container class="md-block" flex> 
-		<label>{{translate.load('sbi.chartengine.designer.scalefactor.label')}}</label>
+		<label>{{translate.load('sbi.chartengine.configuration.fontweight')}}</label>
 		<md-select ng-model="detailsForSeriesTooltip.fontWeight"> 
 			<md-option ng-repeat="option in fontStyle" value="{{option.value}}">{{option.name}}</md-option>
 		</md-select> 
@@ -56,7 +56,7 @@
 <!-- Series tooltip text font size -->
 <div layout="row" flex layout-margin>
 	<md-input-container class="md-block" flex> 
-		<label>{{translate.load('sbi.chartengine.designer.scalefactor.label')}}</label>
+		<label>{{translate.load('sbi.chartengine.configuration.fontsize')}}</label>
 		<md-select ng-model="detailsForSeriesTooltip.fontSize"> 
 			<md-option ng-repeat="option in fontSize" value="{{option.value}}">{{option.name}}</md-option>
 		</md-select> 

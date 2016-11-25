@@ -212,15 +212,28 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 		
 	}
 	
-	$scope.prepareSeriesContainerConfiguration = function(seriesContainerAlias) {
+	$scope.prepareSeriesContainerConfiguration = function(seriesContainerAlias,option) {
 		
 		var allAxes = $scope.chartTemplate.AXES_LIST.AXIS;
+		console.log(allAxes);
 		
 		for (i=0; i<allAxes.length; i++) {
+			
 			if (allAxes[i].alias == seriesContainerAlias) {
+				
 				$scope.detailsForSeriesContainer = allAxes[i];
-				console.log($scope.detailsForSeriesContainer);
-				console.log($scope.axisConfigurationStyle);
+				
+				// Objects that hold the JSON form for styles for all axis configurations for the target axis
+				$scope.detailsAxisConfigurationStyle = $scope.axisConfigurationStyles[i];
+				$scope.detailsAxisTitleConfigurationStyle = $scope.axisTitleConfigurationStyles[i];
+				$scope.detailsAxisMajorGridConfigurationStyle = $scope.axisMajorGridConfigurationStyles[i];
+				$scope.detailsAxisMinorGridConfigurationStyle = $scope.axisMinorGridConfigurationStyles[i];
+				
+//				console.log($scope.detailsForSeriesContainer);
+				console.log($scope.detailsAxisConfigurationStyle);
+				console.log($scope.detailsAxisTitleConfigurationStyle);
+				console.log($scope.detailsAxisMajorGridConfigurationStyle);
+				console.log($scope.detailsAxisMinorGridConfigurationStyle);
 				return;
 			}
 		}
@@ -500,10 +513,10 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
     
     // axisMinorGridConfigurationStyles - an array that will hold deparsed 'style' data for the AXIS->MAJORGRID of all series items.
     $scope.axisMinorGridConfigurationStyles = [];
-    $scope.axisMinorGridConfigurationStyle = StructureTabService.getAxisMinorGridConfigurationStyle();  
+    $scope.axisMinorGridConfigurationStyle = StructureTabService.getAxisMinorGridConfigurationStyle();
     
     // axisMajorGridConfigurationStyles - an array that will hold deparsed 'style' data for the AXIS->MINORGRID of all series items.
     $scope.axisMajorGridConfigurationStyles = [];
-    $scope.axisMajorGridConfigurationStyle = StructureTabService.getAxisMajorGridConfigurationStyle();  
+    $scope.axisMajorGridConfigurationStyle = StructureTabService.getAxisMajorGridConfigurationStyle();
     
 }
