@@ -1951,8 +1951,9 @@ public class DatasetManagementAPI {
 	private void setOrderbyConditions(IDataSource dataSource, List<String> orderColumns, SelectBuilder sqlBuilder) {
 		// ORDER BY conditions
 		// https://production.eng.it/jira/browse/KNOWAGE-149
+		String aliasDelimiter = TemporaryTableManager.getAliasDelimiter(dataSource);
 		for (String orderColumn : orderColumns) {
-			if (!orderColumn.contains(TemporaryTableManager.getAliasDelimiter(dataSource))) {
+			if (aliasDelimiter.isEmpty() || !orderColumn.contains(aliasDelimiter)) {
 				sqlBuilder.orderBy(orderColumn);
 			}
 		}
