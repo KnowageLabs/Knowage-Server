@@ -113,7 +113,7 @@ function createChart() {
         		label.className = "graphLabel";
         		span.className 	= "graphSpan";
         		color.className = "graphColor";
-        		span.innerHTML 	= perc[k]+"%";
+        		span.innerHTML 	= parseFloat(perc[k]).toFixed(2)+"%";
         		color.style.backgroundColor = backgrounds[k];
         		label.appendChild(span);
         		label.appendChild(color);

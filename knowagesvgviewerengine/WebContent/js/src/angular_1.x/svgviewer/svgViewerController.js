@@ -44,12 +44,14 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
   
   //stack that contains the drill path elements
   $scope.drillPathStack = [];
-  $noError = false;
+  $scope.noError = false;
     
   $scope.openSideNav = function(customized) {
 	  	if(customized){
+	  		debugger;
 	  		$mdSidenav('svgSideNav').toggle();
 	  	}else{
+	  		debugger;
 	  		$scope.sidenavOpened = !$scope.sidenavOpened;
 	  	}
   };

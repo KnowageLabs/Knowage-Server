@@ -41,7 +41,7 @@
 	          	
 			<div ng-app="svgViewerApp" class="svgMainContainer">
 			     <div  class="divFlex" ng-controller="SvgViewerController" ng-scope> 
-			     <% if (isCustomizedSVG) {%><md-sidenav layout="column"  id="svgInfoSidenav" md-component-id="svgSideNav" ng-show="<%=propertiesPanelVisible%> && noError" class="md-sidenav-<%= propertiesPanelPosition %>"  ><% }else{ %>
+			     <% if (isCustomizedSVG) {%><md-sidenav layout="column"  id="svgInfoSidenav" md-component-id="svgSideNav" ng-show="<%=propertiesPanelVisible%>" class="md-sidenav-<%= propertiesPanelPosition %>"  ><% }else{ %>
 			      <md-sidenav layout="column" ng-class="{'_md-locked-open':sidenavOpened}" id="svgInfoSidenav" md-component-id="svgSideNav" ng-show="<%=propertiesPanelVisible%> && noError" class="md-sidenav-<%= propertiesPanelPosition %>"  ><% } %>
 			      <section  >
 				     <div class="md-accordion" layout="column">
@@ -111,7 +111,7 @@
 					     </div> 
 					   <% } %>
 			         <md-content class="ie11fix" layout-fill layout="column"> 
-				         <md-button class="sidenavOpenButton" ng-click="openSideNav(<%=!isCustomizedSVG %>)"  ng-show="<%=propertiesPanelVisible%> && noError"  title="Open options panel" ng-style="{'left':sidenavButtonOffset}">
+				         <md-button class="sidenavOpenButton" ng-click="openSideNav(<%=isCustomizedSVG %>)"  ng-show="<%=propertiesPanelVisible%> && noError"  title="Open options panel" ng-style="{'left':sidenavButtonOffset}">
 				              <i class="fa fa-2x fa-bar-chart" aria-hidden="true"></i>
 				        </md-button>					 		
    					   <div id="container" layout-fill>   		             
