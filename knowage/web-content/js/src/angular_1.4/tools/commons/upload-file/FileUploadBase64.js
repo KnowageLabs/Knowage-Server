@@ -3,7 +3,7 @@
  * 
  */
 var scripts = document.getElementsByTagName("script")
-var currentScriptPathFileUpload = scripts[scripts.length-1].src;
+var currentScriptPathFileUploadBase64 = scripts[scripts.length-1].src;
 
 var defaultFileMaxSize = 10 * 1024 * 1024; // 10 MB
 
@@ -11,7 +11,7 @@ angular.module('file_upload_base64', [ 'ngMaterial', 'sbiModule'])
 .directive('fileUploadBase64',
 		function($compile) {
 	return {
-		templateUrl: currentScriptPathFileUpload.substring(0, currentScriptPathFileUpload.lastIndexOf('/') + 1) + 'template/file-upload-base64.html',
+		templateUrl: currentScriptPathFileUploadBase64.substring(0, currentScriptPathFileUploadBase64.lastIndexOf('/') + 1) + 'template/file-upload-base64.html',
 		transclude : true,
 		replace : false,
 			scope: {
@@ -21,7 +21,7 @@ angular.module('file_upload_base64', [ 'ngMaterial', 'sbiModule'])
 				, ngDisabled : '=?'
 				, fileMaxSize : '=?'
 			},
-	    controller: FileUploadControllerFunction,
+	    controller: FileUploadBase64ControllerFunction,
 	    controllerAs: 'ctrl',
 	    link: function(scope, element, attrs, ctrl, transclude) {
 	    	
@@ -42,7 +42,7 @@ angular.module('file_upload_base64', [ 'ngMaterial', 'sbiModule'])
 });
 
 
-function FileUploadControllerFunction($scope,$timeout,$mdDialog,sbiModule_translate){
+function FileUploadBase64ControllerFunction($scope,$timeout,$mdDialog,sbiModule_translate){
 	$scope.setFile = function (element){
 
 		
