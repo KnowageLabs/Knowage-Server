@@ -50,12 +50,14 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
+import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuse;
 import it.eng.spagobi.behaviouralmodel.lov.bo.DatasetDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.FixedListDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.IJavaClassLov;
@@ -171,12 +173,15 @@ public class LovResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response loadDriversByLovId(@PathParam("id") Integer lovId) {
 		
-		List<Parameter> driversToSend = new ArrayList<Parameter>();
-		try{
-			
-		driversToSend = getDriversByLovId(lovId);
-			
-			return Response.ok(driversToSend).build();
+		IParameterDAO driversDao = null;
+		List<Parameter> fullList = null;
+
+		try {
+
+			driversDao = DAOFactory.getParameterDAO();
+			driversDao.setUserProfile(getUserProfile());
+			fullList = driversDao.loadParametersByLovId(lovId);
+			return Response.ok(fullList).build();
 		} catch (Exception e) {
 			logger.error("Error with loading resource", e);
 			throw new SpagoBIRestServiceException("Error with loading resource", buildLocaleFromSession(), e);
@@ -189,42 +194,17 @@ public class LovResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getDocumetsByLovId(@PathParam("id") Integer lovId) {
 		
-		logger.debug("IN");
 		IBIObjectDAO documentsDao = null;
-		List<BIObject> allObjects = null;
-		List<BIObject> objects = null;
-
-		try {
+		List<BIObject> documents = null;
+		logger.debug("IN");
+		
+		
+		try{
 			documentsDao = DAOFactory.getBIObjectDAO();
-			allObjects = documentsDao.loadAllBIObjects();
-
-			UserProfile profile = getUserProfile();
-			objects = new ArrayList<BIObject>();
-
-			
-				for (BIObject obj : allObjects) {
-					if (ObjectsAccessVerifier.canSee(obj, profile)){
-						List<BIObjectParameter> parameters = obj.getBiObjectParameters();
-						for(int i =0;i<parameters.size();i++){
-							List<Parameter> parametersByLov = getDriversByLovId(lovId);
-							for(int j = 0;j<parametersByLov.size();j++){
-								if(parameters.get(i).getParameter().getId().equals(parametersByLov.get(j).getId())&&!objects.contains(obj)){
-									objects.add(obj);
-							}
-							
-							}
-						}
-						
-					}
-						
-				}
-			
-			String toBeReturned = JsonConverter.objectToJson(objects, objects.getClass());
+			documentsDao.setUserProfile(getUserProfile());
+			documents = documentsDao.loadBIObjectsByLovId(lovId);
 		
-		
-		
-		
-			return Response.ok(toBeReturned).build();
+			return Response.ok(documents).build();
 		} catch (Exception e) {
 			logger.error("Error with loading resource", e);
 			throw new SpagoBIRestServiceException("Error with loading resource", buildLocaleFromSession(), e);

@@ -177,42 +177,24 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 	@UserConstraint(functionalities = { SpagoBIConstants.PARAMETER_MANAGEMENT })
 	@Path("/{id}/lovs")
 	@Produces(MediaType.APPLICATION_JSON + charset)
-	public Response getLovsForDriver(@PathParam("id") Integer id) {
+	public Response getLovsForDriver(@PathParam("id") Integer idParameter) {
 		
 		
+
+		logger.debug("IN");
+
+		List<ModalitiesValue> modalitiesValues = null;
 		IModalitiesValueDAO modalitiesValueDAO = null;
-		IParameterUseDAO useModesDao = null;
-		
-		List<ParameterUse> modes = null;
-		List<ModalitiesValue> modalitiesValuesToSend = new ArrayList<ModalitiesValue>();
 
+		try {
 
-			try {
-				
-				
-				useModesDao = DAOFactory.getParameterUseDAO();				
-				modalitiesValueDAO = DAOFactory.getModalitiesValueDAO();
-				
-				useModesDao.setUserProfile(getUserProfile());
-				modalitiesValueDAO.setUserProfile(getUserProfile());
-				
-				
-				modes = useModesDao.loadParametersUseByParId(id);
-				
-				for(int i=0;i<modes.size();i++){
-					Integer lovId = modes.get(i).getIdLov();
-					if(lovId!=null){
-						ModalitiesValue modalitiesValue = modalitiesValueDAO.loadModalitiesValueByID(lovId);
-						if(!modalitiesValuesToSend.contains(modalitiesValue)){
-							modalitiesValuesToSend.add(modalitiesValue);
-						}
-					}
-					
-				}
+			modalitiesValueDAO = DAOFactory.getModalitiesValueDAO();
+			modalitiesValueDAO.setUserProfile(getUserProfile());
+			modalitiesValues = modalitiesValueDAO.loadModalitiesValueByParamaterId(idParameter);
 				
 				
 			
-			return Response.ok(modalitiesValuesToSend).build();
+			return Response.ok(modalitiesValues).build();
 		} catch (Exception e) {
 			logger.error("Error with loading resource", e);
 			throw new SpagoBIRestServiceException("Error with loading resource", buildLocaleFromSession(), e);
@@ -225,38 +207,20 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 	@UserConstraint(functionalities = { SpagoBIConstants.PARAMETER_MANAGEMENT })
 	@Path("/{id}/documents")
 	@Produces(MediaType.APPLICATION_JSON + charset)
-	public Response getDocumentsById(@PathParam("id") Integer id) {
+	public Response getDocumentsById(@PathParam("id") Integer idParameter) {
 		
 
-		logger.debug("IN");
 		IBIObjectDAO documentsDao = null;
-		List<BIObject> allObjects = null;
-		List<BIObject> objects = null;
-
-		try {
+		List<BIObject> documents = null;
+		logger.debug("IN");
+		
+		
+		try{
 			documentsDao = DAOFactory.getBIObjectDAO();
-			allObjects = documentsDao.loadAllBIObjects();
-
-			UserProfile profile = getUserProfile();
-			objects = new ArrayList<BIObject>();
-
-			
-				for (BIObject obj : allObjects) {
-					if (ObjectsAccessVerifier.canSee(obj, profile)){
-						List<BIObjectParameter> parameters = obj.getBiObjectParameters();
-						for(int i =0;i<parameters.size();i++){
-							if(parameters.get(i).getParameter().getId().equals(id)&&!objects.contains(obj)){
-								objects.add(obj);
-							}
-						}
-						
-					}
-						
-				}
-			
-			String toBeReturned = JsonConverter.objectToJson(objects, objects.getClass());
-
-			return Response.ok(toBeReturned).build();
+			documentsDao.setUserProfile(getUserProfile());
+			documents = documentsDao.loadBIObjectsByParamterId(idParameter);
+		
+			return Response.ok(documents).build();
 		} catch (Exception e) {
 			logger.error("Error with loading resource", e);
 			throw new SpagoBIRestServiceException("Error with loading resource", buildLocaleFromSession(), e);
