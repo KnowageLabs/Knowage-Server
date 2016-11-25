@@ -138,8 +138,27 @@ function chartTabControllerFunction($scope,sbiModule_translate,sbiModule_restSer
 					}
 					$scope.legendObj.borderWidth = parseInt($scope.legendObj.borderWidth);
 					}
+				
+				if(type == 'limitparallel'){
+					for (var k = 0; k < formated.length; k++) {
+						if($scope.limitParallelObj.hasOwnProperty(formated[k].name)){
+							$scope.limitParallelObj[formated[k].name] = formated[k].value;
+						}
+					}
+					$scope.limitParallelObj.maxNumberOfLines = parseInt($scope.limitParallelObj.maxNumberOfLines);
+			
+					}
+				if(type == 'axeslist'){
+					for (var k = 0; k < formated.length; k++) {
+						if($scope.axesListlObj.hasOwnProperty(formated[k].name)){
+							$scope.axesListlObj[formated[k].name] = formated[k].value;
+						}
+					}
+					$scope.axesListlObj.axisColNamePadd = parseInt($scope.axesListlObj.axisColNamePadd);
+					$scope.axesListlObj.brushWidth = parseInt($scope.axesListlObj.brushWidth);
+					}
 		}
-	}	
+	}
 	
 	// The function that will deparse the 'style' property of the SERIE and AXIS tags/subtags
 	var deparseStyleForSeriesAndAxes = function(style,type,id) {
@@ -184,7 +203,8 @@ function chartTabControllerFunction($scope,sbiModule_translate,sbiModule_restSer
 				}
 			}	
 			
-			var axisConfigurationStyle = angular.copy($scope.axisConfigurationStyle);			
+			var axisConfigurationStyle = angular.copy($scope.axisConfigurationStyle);
+			axisConfigurationStyle.rotate = axisConfigurationStyle.rotate!="" ? parseInt(axisConfigurationStyle.rotate) : 0; // convert a string value for rotation into a number (numeric value)
 			$scope.axisConfigurationStyles.push(axisConfigurationStyle);
 			
 		}
@@ -339,6 +359,7 @@ function chartTabControllerFunction($scope,sbiModule_translate,sbiModule_restSer
 			}else{
 				if($scope.chartStyles[i].STYLE.name == 'sfnas'){
 					$scope.styleTemplate = $scope.chartStyles[i].STYLE.TEMPLATE;
+					console.log($scope.styleTemplate);
 					if($scope.chartTemplate == null){
 						$scope.chartTemplate = $scope.styleTemplate.generic.CHART;
 						console.log($scope.chartTemplate);

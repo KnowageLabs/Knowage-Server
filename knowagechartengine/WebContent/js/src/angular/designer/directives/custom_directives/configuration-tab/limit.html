@@ -1,0 +1,34 @@
+<div layout="row" flex layout-margin>
+
+	<md-input-container class="md-block" flex> 
+	<label>{{translate.load("sbi.chartengine.configuration.parallel.limit.serieFilterColumn")}}</label>
+		 <md-select ng-model="limitParallelObj.serieFilterColumn"> <md-option
+		ng-repeat="option in seriesForParallel" value="{{option.name}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+</div>
+
+<div layout="row" flex layout-margin>
+	<md-input-container class="md-block" flex> 
+	<label>{{translate.load("sbi.chartengine.configuration.parallel.limit.maxNumberOfLines")}}</label>
+		 <input type="number" step="any" name="max_number_records"
+		ng-model="limitParallelObj.maxNumberOfLines" min="5" /> </md-input-container>
+</div>
+
+<div layout="row" flex layout-margin>
+
+	<md-input-container class="md-block" flex> 
+	<label>{{translate.load("sbi.chartengine.configuration.parallel.limit.orderTopMinBottomMax")}}</label>
+		 <md-select ng-model="limitParallelObj.orderTopMinBottomMax"> <md-option
+		ng-repeat="option in orderParallelOptions" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+</div>
+
+<div layout="row" flex layout-margin>
+
+	<label>{{translate.load("sbi.chartengine.configuration.parallel.groupByCategory")}}</label>
+	<md-input-container class="small counter"> <md-checkbox
+		ng-model="chartTemplate.LIMIT.groupByCategory" aria-label="groupByCategory"></md-checkbox>
+	</md-input-container>
+</div>

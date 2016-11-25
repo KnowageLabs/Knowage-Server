@@ -65,6 +65,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<div class="md-toolbar-tools">
 				<h2 flex><%=docLabel%></h2>
 				<span class="extraButtonContainer"></span>
+				<md-button aria-label="Preview" ng-click="testChart()">TEST</md-button>
 				<md-button aria-label="Preview" ng-click="previewChart()" ng-if="previewButtonEnabled">{{translate.load("sbi.chartengine.designer.general.preview")}}</md-button>
 				<md-button aria-label="Save" ng-click="saveChartTemplate()">{{translate.load("sbi.chartengine.designer.general.save")}}</md-button>
 				<md-button aria-label="Back" ng-click="goBackFromDesigner()">{{translate.load("sbi.chartengine.designer.general.back")}}</md-button>

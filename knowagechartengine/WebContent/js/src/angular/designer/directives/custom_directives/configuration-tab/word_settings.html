@@ -1,0 +1,72 @@
+<div layout="row" flex layout-margin>
+	<md-input-container class="md-block" flex> 
+	<label>{{translate.load("sbi.chartengine.configuration.wordcloud.maxWords")}}</label>
+		 <input type="number" step="any" name="num_of_words"
+		ng-model="chartTemplate.maxWords" min="10" /> </md-input-container>
+</div>
+
+<div layout="row" flex layout-margin>
+
+	<label>{{translate.load("sbi.chartengine.configuration.wordcloud.preventOverlap")}}</label>
+	<md-input-container class="small counter"> <md-checkbox
+		ng-model="chartTemplate.preventOverlap" aria-label="prevent_overlaping"></md-checkbox>
+	</md-input-container>
+</div>
+
+
+
+<div layout="row" flex layout-margin>
+
+	<md-input-container class="md-block" flex>
+	 <label>{{translate.load("sbi.chartengine.configuration.wordcloud.wordLayout")}}</label>
+		 <md-select ng-model="chartTemplate.wordLayout"> <md-option
+		ng-repeat="option in wordLayoutOptions" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+</div>
+
+<div ng-show="chartTemplate.wordLayout == 'custom'">
+
+<div layout="row" flex layout-margin>
+	<md-input-container class="md-block" flex> 
+	<label>{{translate.load("sbi.chartengine.configuration.wordcloud.maxAngle")}}</label>
+		 <input type="number" step="any" name="max_angle_size"
+		ng-model="chartTemplate.maxAngle" min="0" /> 
+		
+		<div  ng-messages="attributeForm.lbl.$error" ng-show="chartTemplate.maxAngle == 0">
+				        <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+				      </div>
+		
+		</md-input-container>
+</div>
+
+<div layout="row" flex layout-margin>
+	<md-input-container class="md-block" flex> 
+	<label>{{translate.load("sbi.chartengine.configuration.wordcloud.maxAngle")}}</label>
+		 <input type="number" step="any" name="min_angle_size"
+		ng-model="chartTemplate.minAngle" min="0" /> </md-input-container>
+</div>
+
+</div>
+
+
+<div layout="row" flex layout-margin>
+	<md-input-container class="md-block" flex> 
+	<label>{{translate.load("sbi.chartengine.configuration.wordcloud.maxFontSize")}}</label>
+		 <input type="number" step="any" name="max_font_size"
+		ng-model="chartTemplate.maxFontSize" min="10" /> </md-input-container>
+</div>
+
+<div layout="row" flex layout-margin>
+	<md-input-container class="md-block" flex> 
+	<label>{{translate.load("sbi.chartengine.configuration.wordcloud.minFontSize")}}</label>
+		 <input type="number" step="any" name="min_font_size"
+		ng-model="chartTemplate.minFontSize" min="5" /> </md-input-container>
+</div>
+
+<div layout="row" flex layout-margin>
+	<md-input-container class="md-block" flex> 
+	<label>{{translate.load("sbi.chartengine.configuration.wordcloud.wordPadding")}}</label>
+		 <input type="number" step="any" name="word_padding"
+		ng-model="chartTemplate.wordPadding" min="2" /> </md-input-container>
+</div>

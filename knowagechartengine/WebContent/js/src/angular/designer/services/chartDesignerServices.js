@@ -76,6 +76,25 @@ angular.module('ChartDesignerService', [])
 		return data;
 	};
 	
+	this.getParallelOrderOptions = function(){
+		var data = [
+				{name:sbiModule_translate.load("sbi.cockpit.widgets.piechartwidgetdesigner.form.legend.position.top"),value:"top"},
+				{name:sbiModule_translate.load("sbi.cockpit.widgets.piechartwidgetdesigner.form.legend.position.bottom"),value:"bottom"},
+			                               ]                          
+		return data;
+	};
+	
+	this.getWordLayoutOptions = function(){
+		var data = [
+		            
+				{name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.horizontal"),value:"horizontal"},		            
+				{name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.vertical"),value:"vertical"},
+				{name:sbiModule_translate.load("sbi.chartengine.configuration.wordcloud.wordLayout.horizontalAndVerticaal"),value:"horizontalAndVertical"},
+				{name:sbiModule_translate.load("sbi.chartengine.configuration.wordcloud.wordLayout.randomAngle"),value:"custom"},
+			                               ]                          
+		return data;
+	};
+	
 	this.getPositionTypeOptions = function(){
 		var data = [
 		      {name:sbiModule_translate.load("sbi.cockpit.widgets.piechartwidgetdesigner.form.legend.position.top"),value:"top"},
@@ -113,14 +132,18 @@ angular.module('ChartDesignerService', [])
 	};
 	
 	this.getCssStyles = function(template){
+		
+		 
 		var data = [
            	{array:template.style,type:"chart"},
            	{array:template.TITLE.style,type:"title"},
            	{array:template.SUBTITLE.style,type:"subtitle"},
            	{array:template.EMPTYMESSAGE.style,type:"nodata"},
-           	{array:template.LEGEND.TITLE.style,type:"legendtitle"},
-           	{array:template.LEGEND.style,type:"legend"},
-           	                          ]                        
+           	{array:template.LEGEND.TITLE.style,type:"legendtitle"},	
+           	                          ]
+		template.LEGEND.style? data.push({array:template.LEGEND.style,type:"legend"}): null;
+		template.LIMIT && template.LIMIT.style? data.push({array:template.LIMIT.style,type:"limitparallel"}): null;
+		template.AXES_LIST.style? data.push({array:template.AXES_LIST.style,type:"axeslist"}): null;
 		return data;
 	};
 	
@@ -241,7 +264,13 @@ angular.module('ChartDesignerService', [])
 				legendItemsURL: sbiModule_config.contextName + '/js/src/angular/designer/directives/custom_directives/configuration-tab/legend_items.html',
 				colorPaletteURL: sbiModule_config.contextName + '/js/src/angular/designer/directives/custom_directives/configuration-tab/color_palette.html',
 				paneURL: sbiModule_config.contextName + '/js/src/angular/designer/directives/custom_directives/configuration-tab/pane.html',
-				ticksURL: sbiModule_config.contextName + '/js/src/angular/designer/directives/custom_directives/configuration-tab/ticks.html'
+				ticksURL: sbiModule_config.contextName + '/js/src/angular/designer/directives/custom_directives/configuration-tab/ticks.html',
+				wordSettingsURL: sbiModule_config.contextName + '/js/src/angular/designer/directives/custom_directives/configuration-tab/word_settings.html',
+				limitURL: sbiModule_config.contextName + '/js/src/angular/designer/directives/custom_directives/configuration-tab/limit.html',
+				axisLinesURL: sbiModule_config.contextName + '/js/src/angular/designer/directives/custom_directives/configuration-tab/axis_lines.html',
+				tooltipURL: sbiModule_config.contextName + '/js/src/angular/designer/directives/custom_directives/configuration-tab/tooltip.html',
+				sequenceURL: sbiModule_config.contextName + '/js/src/angular/designer/directives/custom_directives/configuration-tab/sequence.html',
+				explanationURL: sbiModule_config.contextName + '/js/src/angular/designer/directives/custom_directives/configuration-tab/explanation.html',
 			 };                   
 		return data;
 	};

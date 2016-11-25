@@ -169,6 +169,19 @@ function configurationTabControllerFunction(sbiModule_translate,$scope,sbiModule
 	 
 }
  
+ $scope.limitParallelObj = {
+		 maxNumberOfLines:"",
+		 serieFilterColumn:"",
+		 orderTopMinBottomMax:"",
+ }
+ 
+ $scope.axesListlObj = {
+		 axisColNamePadd:"",
+		 brushWidth:"",
+		 axisColor:"",
+		 brushColor:"",
+ }
+ 
  $scope.templateUrls = ChartDesignerData.getTemplateURLs();
  
  $scope.dimensionMeasureType = ChartDesignerData.getDimensionMeasureTypeOptions();
@@ -180,15 +193,41 @@ function configurationTabControllerFunction(sbiModule_translate,$scope,sbiModule
  $scope.tooltipBreadcrumbValueType = ChartDesignerData.getTooltipBreadcrumbValueTypeOptions();
  $scope.positionType = ChartDesignerData.getPositionTypeOptions();
  $scope.verticalAlignType = ChartDesignerData.getVerticalAlignTypeOptions();
+ $scope.wordLayoutOptions=ChartDesignerData.getWordLayoutOptions();
+ $scope.orderParallelOptions=ChartDesignerData.getParallelOrderOptions();
  
  
  $scope.openConfigurationDetails = function(button) {
 	 $scope.selectedConfigurationButton = button;
 	 $scope.disableLegendCheckbox = false;
-	 if($scope.selectedChartType == 'heatmap' || $scope.selectedChartType == 'parallel'){
+	 if($scope.selectedChartType == 'heatmap'){
 		 $scope.chartTemplate.LEGEND.show = true;
 		 $scope.disableLegendCheckbox = true;
 	 }
+	 if($scope.selectedChartType == 'scatter'){
+		 $scope.axisList = $scope.chartTemplate.AXES_LIST.AXIS;
+		 $scope.scaterAxis ={};
+		 for (var i = 0; i < $scope.axisList.length; i++) {
+			if ($scope.axisList[i].type == 'Category') {
+				$scope.scaterAxis.endOnTick = $scope.axisList[i].endOnTick;
+				$scope.scaterAxis.startOnTick = $scope.axisList[i].startOnTick;
+				$scope.scaterAxis.showLastLabel = $scope.axisList[i].showLastLabel;
+				
+			}
+		}
+	 }
+	 if($scope.selectedChartType == 'parallel'){
+		 $scope.chartTemplate.LEGEND.show = true;
+		 $scope.disableLegendCheckbox = true;
+		 console.log($scope.seriesContainers)
+		 if($scope.seriesContainers.length >0){
+			 $scope.seriesForParallel = $scope.seriesContainers[0].series;
+		 }else{
+			 $scope.seriesForParallel = [];
+		 }
+		 
+	 }
+	 
 }
  
  

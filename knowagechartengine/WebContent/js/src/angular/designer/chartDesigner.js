@@ -104,27 +104,39 @@ function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config, sbiM
 			});	
 		}
 		
+		if(template.CHART.LIMIT != null){
+			
+			Object.keys(template.CHART.LIMIT).forEach(function (key) {
+				
+				if(template.CHART.LIMIT[key] === 'true' || template.CHART.LIMIT[key] === 'false'){
+			    	
+					template.CHART.LIMIT[key] = JSON.parse(template.CHART.LIMIT[key])
+			    }
+			
+			});	
+		}
+		
 		
 		var allSeriesItems = template.CHART.VALUES.SERIE;
 		
 		for (i=0; i<allSeriesItems.length; i++) {
 			
-			Object.keys(template.CHART.VALUES.SERIE[i]).forEach(function (key) {				
+			Object.keys(allSeriesItems[i]).forEach(function (key) {				
 				
 				// SERIES CONFIGURATION
-				if( template.CHART.VALUES.SERIE[i][key] != ''   && !isNaN(template.CHART.VALUES.SERIE[i][key])){
-			    	template.CHART.VALUES.SERIE[i][key] = parseInt(template.CHART.VALUES.SERIE[i][key]);
+				if( allSeriesItems[i][key] != ''   && !isNaN(allSeriesItems[i][key])){
+					allSeriesItems[i][key] = parseInt(allSeriesItems[i][key]);
 			    }
-			    if(template.CHART.VALUES.SERIE[i][key] === 'true' || template.CHART.VALUES.SERIE[i][key] === 'false'){			    	
-			    	template.CHART.VALUES.SERIE[i][key] = JSON.parse(template.CHART.VALUES.SERIE[i][key])
+			    if(allSeriesItems[i][key] === 'true' || allSeriesItems[i][key] === 'false'){			    	
+			    	allSeriesItems[i][key] = JSON.parse(allSeriesItems[i][key])
 			    }
 			    
 			    // SERIES TOOLTIP
-			    if( template.CHART.VALUES.SERIE[i].TOOLTIP[key] != ''   && !isNaN(template.CHART.VALUES.SERIE[i].TOOLTIP[key])){
-			    	template.CHART.VALUES.SERIE[i].TOOLTIP[key] = parseInt(template.CHART.VALUES.SERIE[i].TOOLTIP[key]);
+			    if( allSeriesItems[i].TOOLTIP[key] != ''   && !isNaN(allSeriesItems[i].TOOLTIP[key])){
+			    	allSeriesItems[i].TOOLTIP[key] = parseInt(allSeriesItems[i].TOOLTIP[key]);
 			    }
-			    if(template.CHART.VALUES.SERIE[i].TOOLTIP[key] === 'true' || template.CHART.VALUES.SERIE[i].TOOLTIP[key] === 'false'){			    	
-			    	template.CHART.VALUES.SERIE[i].TOOLTIP[key] = JSON.parse(template.CHART.VALUES.SERIE[i].TOOLTIP[key])
+			    if(allSeriesItems[i].TOOLTIP[key] === 'true' || allSeriesItems[i].TOOLTIP[key] === 'false'){			    	
+			    	allSeriesItems[i].TOOLTIP[key] = JSON.parse(allSeriesItems[i].TOOLTIP[key])
 			    }
 			    
 			});
@@ -147,7 +159,22 @@ function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config, sbiM
 			    
 			});
 			
-		}	
+		}
+		
+		if(template.CHART.AXES_LIST != null){
+			
+			Object.keys(template.CHART.AXES_LIST).forEach(function (key) {
+				
+				
+			    if( template.CHART.AXES_LIST[key] != ''   && !isNaN(template.CHART.AXES_LIST[key])){
+			    	template.CHART.AXES_LIST[key] = parseInt(template.CHART.AXES_LIST[key]);
+			    }
+			    if(template.CHART.AXES_LIST[key] === 'true' || template.CHART.AXES_LIST[key] === 'false'){
+			    	
+			    	template.CHART.AXES_LIST[key] = JSON.parse(template.CHART.AXES_LIST[key])
+			    }
+			});	
+		}
 		
 			return template.CHART;
 		}else{
@@ -169,5 +196,16 @@ function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config, sbiM
 	
 	$scope.categoriesContainer = [];
 	$scope.seriesContainer = [];
+	
+	$scope.testChart = function() {
+		// add $scope.scaterAxis back to template
+		// reformat styles
+		console.log($scope.chartTemplate);
+		$scope.chartTemplate.isCockpitEngine = isCockpit; // TODO add on save
+		$scope.chartTemplate.type = $scope.selectedChartType.toUpperCase();
+		$scope.chartTemplate.COLORPALETTE.COLOR = $scope.colors;
+		console.log($scope.styleTemplate);
+		console.log($scope.chartTemplate);
+	}
 	
 }
