@@ -259,7 +259,6 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 			if (dataset != null) {
 				String elementID = null;
 				JSONDataWriter writer = new JSONDataWriter();
-				IDataStore ds2 = dataset.test();
 				IDataStore dataStore = null;
 				try {
 					dataStore = dataset.getDataStore();
