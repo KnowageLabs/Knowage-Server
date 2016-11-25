@@ -447,7 +447,7 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, 
 			textFin=sbiModule_translate.load(text);
 		}
 		
-		var alert = $mdDialog.confirm()
+		var alert = $mdDialog.alert()
 		.title(titleFin)
 		.htmlContent(textFin)
 		.ariaLabel('error') 
