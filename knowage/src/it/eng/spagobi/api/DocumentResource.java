@@ -379,23 +379,16 @@ public class DocumentResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response getDocumentAD(@PathParam("label") String label) {
 		logger.debug("IN");
+		
 		IParameterDAO driversDao = null;
-		List<Parameter> aDriversToSend = new ArrayList<>();
+		List<Parameter> fullList = null;
 
-		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
 		try {
+
 			driversDao = DAOFactory.getParameterDAO();
 			driversDao.setUserProfile(getUserProfile());
-			
-			List<BIObjectParameter> parameters = documentManager.getDocument(label).getBiObjectParameters();
-			for(int i=0;i<parameters.size();i++){
-				Parameter driver = driversDao.loadForDetailByParameterID(parameters.get(i).getParameter().getId());
-				if(!aDriversToSend.contains(driver)){
-					aDriversToSend.add(driver);
-				}
-				
-			}
-			return Response.ok(aDriversToSend).build();
+			fullList = driversDao.loadParametersByBIObjectLabel(label);
+			return Response.ok(fullList).build();
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
 		} finally {
@@ -409,42 +402,19 @@ public class DocumentResource extends AbstractSpagoBIResource {
 	public Response getDocumentLovs(@PathParam("label") String label) {
 		logger.debug("IN");
 		
-		IParameterUseDAO useModesDao = null;
-		IModalitiesValueDAO modalitiesValueDAO = null;
-		
-		List<ParameterUse> modes = null;
-		List<ModalitiesValue> modalitiesValuesToSend = new ArrayList<ModalitiesValue>();
 
-		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
+		List<ModalitiesValue> modalitiesValues = null;
+		IModalitiesValueDAO modalitiesValueDAO = null;
+
 		try {
-			
-			useModesDao = DAOFactory.getParameterUseDAO();				
+
 			modalitiesValueDAO = DAOFactory.getModalitiesValueDAO();
-			
-			useModesDao.setUserProfile(getUserProfile());
 			modalitiesValueDAO.setUserProfile(getUserProfile());
+			modalitiesValues = modalitiesValueDAO.loadModalitiesValueByBIObjectLabel(label);
+				
+				
 			
-			
-			List<BIObjectParameter> parameters = documentManager.getDocument(label).getBiObjectParameters();
-			for(int i=0;i<parameters.size();i++){
-				
-				Integer AnalyticalDriverId = parameters.get(i).getParameter().getId();
-				
-					modes = useModesDao.loadParametersUseByParId(AnalyticalDriverId);
-				
-				for(int j=0;j<modes.size();j++){
-					Integer lovId = modes.get(j).getIdLov();
-					if(lovId!=null){
-						ModalitiesValue modalitiesValue = modalitiesValueDAO.loadModalitiesValueByID(lovId);
-						if(!modalitiesValuesToSend.contains(modalitiesValue)){
-							modalitiesValuesToSend.add(modalitiesValue);
-						}
-					}
-					
-				}
-				
-			}
-			return Response.ok(modalitiesValuesToSend).build();
+			return Response.ok(modalitiesValues).build();
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
 		} finally {
