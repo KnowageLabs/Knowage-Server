@@ -23,15 +23,37 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.setDefaultTheme('knowage');
 }]);
 
-app.controller("ChartDesignerController", ["sbiModule_translate","$scope","sbiModule_config", ChartDesignerFunction]);
+app.controller("ChartDesignerController", ["sbiModule_translate","$scope","sbiModule_config", "sbiModule_restServices", ChartDesignerFunction]);
 
-function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config) {
+function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config, sbiModule_restServices ) {
 	
 	$scope.translate = sbiModule_translate;
 	$scope.previewButtonEnabled = false;
 	$scope.selectedChartType = "";
 	
 	$scope.saveChartTemplate = function() {
+		console.log("lll")
+		console.log(template)
+		if($scope.chartTemplate.hasOwnProperty("COLORPALETTE")){
+			var color = $scope.chartTemplate.COLORPALETTE.COLOR;
+			for (var i = 0; i < color.length; i++) {
+				if(color[i].hasOwnProperty("$$hashKey")){
+					delete color[i].$$hashKey;
+				}
+			}
+		}
+		
+		var temp = {"CHART":$scope.chartTemplate}
+		sbiModule_restServices.promisePost('../api/1.0/template/save','', 'jsonTemplate='+angular.toJson(temp)+'&docLabel='+docLabel+'&userId='+userId, {
+			transformRequest:angular.identity,
+			headers:{'Content-Type': ' application/x-www-form-urlencoded'}
+		})
+		.then(function(response) {
+			console.log("[POST]: SUCCESS!");
+			
+		}, function(response) {
+			
+		});
 	}
 	
 	$scope.goBackFromDesigner = function() {
@@ -132,7 +154,8 @@ function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config) {
 			return null;
 		}
 	}
-	$scope.chartTemplate = parseTemplateforBinding(jsonTemplate);
+
+	$scope.chartTemplate = parseTemplateforBinding(angular.fromJson(template));
 	console.log("chart template: ",$scope.chartTemplate);
 	
 	

@@ -42,14 +42,16 @@ public class ChartResources {
 	
 	@POST
 	@Path("/save")
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_XML)
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	public void saveTemplate(@FormParam("jsonTemplate") String jsonTemplate, @FormParam("docLabel") String docLabel, @FormParam("userId") String userId,
+	public String saveTemplate(@FormParam("jsonTemplate") String jsonTemplate, @FormParam("docLabel") String docLabel, @FormParam("userId") String userId,
 			@Context HttpServletResponse servletResponse) {
+		String xml;
 		try {
 			JSONObject json = new JSONObject(jsonTemplate);
 			ChartTemplateClient ctc = new ChartTemplateClient();
-			ctc.saveTemplate(json, docLabel, userId);
+			xml = ctc.saveTemplate(json, docLabel, userId);
+			return xml;
 		} catch (JSONException e) {
 			logger.error("Error while reading JSON of the chart template.", e);
 			throw new SpagoBIServiceException("Error while reading JSON of the chart template", e);

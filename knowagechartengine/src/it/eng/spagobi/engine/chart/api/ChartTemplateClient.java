@@ -42,7 +42,7 @@ public class ChartTemplateClient extends SimpleRestClient{
 	
 	static protected Logger logger = Logger.getLogger(ChartTemplateClient.class);
 
-	public JSONObject saveTemplate(JSONObject jsonTemplate, String docLabel, String userId) throws Exception {
+	public String saveTemplate(JSONObject jsonTemplate, String docLabel, String userId) throws Exception {
 
 		logger.debug("IN");
 
@@ -55,12 +55,10 @@ public class ChartTemplateClient extends SimpleRestClient{
 		ClientResponse resp = executePostService(parameters, serviceUrl, userId, null, null);
 		
 		String respString = (String)resp.getEntity(String.class);
-		
-		JSONObject ja = new JSONObject(respString);
-		
+				
 		logger.debug("OUT");
 		
-		return ja;
+		return respString;
 	}
 
 }
