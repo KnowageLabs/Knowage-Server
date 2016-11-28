@@ -24,6 +24,7 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.kpi.bo.KpiValue;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -95,7 +96,8 @@ public class JsonKpiTemplateService extends AbstractFullKpiEngineResource {
 					JSONObject objTemp = resultArray.getJSONObject(i).getJSONObject("kpi");
 					List<KpiValue> kpiValues = DAOFactory.getKpiDAO().findKpiValues(objTemp.getInt("id"), null, startDate.getTime(), new Date(),
 							attributesValues);
-					array.put(new JSONArray(kpiValues));
+					String kpiValueJson = JsonConverter.objectToJson(kpiValues, kpiValues.getClass());
+					array.put(new JSONArray(kpiValueJson));
 				}
 			}
 
