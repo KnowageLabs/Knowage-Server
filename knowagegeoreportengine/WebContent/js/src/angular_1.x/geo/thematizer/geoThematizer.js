@@ -575,29 +575,65 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 	
 	  
 	this.loadCqlFilter=function(data,withDataset){
-		 
-		var tlProp=data.properties;
-		var filter=[];
-		
-		if(!withDataset){
-			for( var key in geoModule_template.selectedAnalyticalFilter){
-				if(tlProp.indexOf(key)!=-1){
-					if( geoModule_template.selectedAnalyticalFilter[key].length>0  ){
-						var fcql=[];
-						for(var i=0;i< geoModule_template.selectedAnalyticalFilter[key].length ; i++){
-							 fcql.push("'"+geoModule_template.selectedAnalyticalFilter[key][i]+"'");
-						} 
-						filter.push(key+" in ("+fcql.join(" , ")+")")
-					}else{
-						filter.push(key+" in ('') ");
-					}
-				}
-			}
-		}
-		
-		
-		return filter.join(" AND ");
-	}
+
+        var tlProp=data.properties;
+        var filter=[];
+
+        if(!withDataset){
+
+            var araayOfParametersName= new Array();
+            var sortedAraayOfParametersName= new Array();
+
+
+          
+
+            for( var key in geoModule_template.selectedAnalyticalFilter){
+                araayOfParametersName.push(key);
+            }
+
+           
+            for( var i=0 ;
+i<geoModule_template.analitycalFilter.length; i++){
+                var aanalitycalFilter = geoModule_template.analitycalFilter[i];
+                var found = false;
+                for( var j=0 ; j<araayOfParametersName.length; j++){ if(araayOfParametersName[j]==aanalitycalFilter){
+sortedAraayOfParametersName.push(aanalitycalFilter);
+                        found = true;
+                        break;
+                    }
+                }
+            }
+
+            //now sortedAraayOfParametersName = [b,a]
+
+            //we are adding c
+            for( var j=0 ; j<araayOfParametersName.length; j++){ if(sortedAraayOfParametersName.indexOf(araayOfParametersName[j])<0){
+sortedAraayOfParametersName.push(araayOfParametersName[j]);
+                }
+            }
+            //now sortedAraayOfParametersName = [b,a,c]
+
+            for( var i=0; i<sortedAraayOfParametersName.length; i++){
+                var key = sortedAraayOfParametersName[i];
+                if(tlProp.indexOf(key)!=-1){
+                    if(
+geoModule_template.selectedAnalyticalFilter[key].length>0  ){
+                        var fcql=[];
+                        for(var i=0;i< geoModule_template.selectedAnalyticalFilter[key].length ; i++){
+ fcql.push("'"+geoModule_template.selectedAnalyticalFilter[key][i]+"'");
+                        }
+                        filter.push(key+" in ("+fcql.join(" , ")+")")
+                    }else{
+                        filter.push(key+" in ('') ");
+                    }
+                }
+            }
+        }
+
+
+        return filter.join(" AND ");
+    }
+
 	
 	this.OGC_propertyIsEqualTo=function(docSld,name,value){
 		var propertyIsEqualTo= docSld.createElement("ogc:PropertyIsEqualTo");
