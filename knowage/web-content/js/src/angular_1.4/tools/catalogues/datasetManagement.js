@@ -119,7 +119,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	
 	// Functions for setting the indicator 
 	$scope.setFormDirty = function() {
-		console.log("set dirty");
+//		console.log("set dirty");
 		$scope.dirtyForm = true;
 	}
 	
@@ -2835,14 +2835,15 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					      escapeToClose :false
 					    });
 				},
-				function(response) {
-					$scope.translate.load(response.data.errors.messages)
+				function(response) {				
+					// Since the repsonse contains the error that is related to the Query syntax and/or content, close the parameters dialog
+					$mdDialog.cancel();	
+					sbiModule_messaging.showErrorMessage($scope.translate.load(response.data.errors[0].message), 'Error');
 				}
 			);
 	}
 	 
     $scope.createColumnsForPreview=function(fields){
-    	console.log("-2-");
     	for(i=1;i<fields.length;i++){
     	 var column={};
     	 column.label=fields[i].header;
