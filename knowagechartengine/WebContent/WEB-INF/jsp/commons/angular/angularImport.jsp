@@ -19,9 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%-- 
 author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 --%>
-<%
-	String spagoBiContext = request.getParameter(SpagoBIConstants.SBI_HOST)+"/"+request.getParameter(SpagoBIConstants.SBI_CONTEXT);
-%>
 
 <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
 <meta name="viewport" content="width=device-width">
@@ -30,29 +27,29 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 <link rel="stylesheet" href="${pageContext.request.contextPath}/themes/sbi_default/fonts/font-awesome-4.4.0/css/font-awesome.min.css">
 
 <!-- angular reference-->
-<script type="text/javascript" src="<%= spagoBiContext %>/js/lib/angular/angular_1.4/angular.js"></script>
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/angular/angular_1.4/angular.js"></script>
 
 <!-- angular-material-->
-<script type="text/javascript" src="<%= spagoBiContext %>/js/lib/angular/angular-material_1.1.0/angular-material.min.js"></script>
-<link rel="stylesheet" type="text/css" href="<%= spagoBiContext %>/js/lib/angular/angular-material_1.1.0/angular-material.min.css">
-<script type="text/javascript" src="<%= spagoBiContext %>/js/lib/angular/angular_1.4/angular-animate.min.js"></script>
-<script type="text/javascript" src="<%= spagoBiContext %>/js/lib/angular/angular_1.4/angular-aria.min.js"></script>
-<script type="text/javascript" src="<%= spagoBiContext %>/js/lib/angular/angular_1.4/angular-sanitize.min.js"></script>
-<script type="text/javascript" src="<%= spagoBiContext %>/js/lib/angular/angular_1.4/angular-messages.min.js"></script>
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/angular/angular-material_1.1.0/angular-material.min.js"></script>
+<link rel="stylesheet" type="text/css" href="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/angular/angular-material_1.1.0/angular-material.min.css">
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/angular/angular_1.4/angular-animate.min.js"></script>
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/angular/angular_1.4/angular-aria.min.js"></script>
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/angular/angular_1.4/angular-sanitize.min.js"></script>
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/angular/angular_1.4/angular-messages.min.js"></script>
 
 <!-- toastr -->
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/sbi_default/css/angular-toastr.css">
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular/commons/angular-toastr.tpls.js"></script>
 
 <!-- expanderBox -->
-<script type="text/javascript" src="<%= spagoBiContext %>/js/lib/angular/expander-box/expanderBox.js"></script>
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/angular/expander-box/expanderBox.js"></script>
 
 <!-- colorpicker -->
-<script type="text/javascript" src="<%= spagoBiContext %>/js/lib/angular/color-picker/tinycolor-min.js"></script>
-<script type="text/javascript" src="<%= spagoBiContext %>/js/lib/angular/color-picker/tinygradient.min.js"></script>
-<script type="text/javascript" src="<%= spagoBiContext %>/js/lib/angular/color-picker/angularjs-color-picker.js"></script>
-<link rel="stylesheet" href="<%= spagoBiContext %>/js/lib/angular/color-picker/angularjs-color-picker.min.css">
-<link rel="stylesheet" href="<%= spagoBiContext %>/js/lib/angular/color-picker/mdColorPickerPersonalStyle.css">
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/angular/color-picker/tinycolor-min.js"></script>
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/angular/color-picker/tinygradient.min.js"></script>
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/angular/color-picker/angularjs-color-picker.js"></script>
+<link rel="stylesheet" href="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/angular/color-picker/angularjs-color-picker.min.css">
+<link rel="stylesheet" href="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/angular/color-picker/mdColorPickerPersonalStyle.css">
 
 <!-- 
 	Specifying all Angular services that we are eventually going to use (inject into the controller that is created for the 
