@@ -14,5 +14,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/knowageutils"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/knowageutilsjson"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/qbecore"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/knowagedao"/>
 	<classpathentry kind="output" path="WebContent/WEB-INF/classes"/>
 </classpath>
