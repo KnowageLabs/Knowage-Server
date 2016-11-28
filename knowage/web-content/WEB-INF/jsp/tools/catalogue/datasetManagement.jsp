@@ -1437,7 +1437,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				                  		<md-input-container class="small counter" style="padding-left:8px;">
 				                     		<md-checkbox 	aria-label="Checkbox 2" 
 					                     					ng-model="transformDatasetState" ng-checked="" 
-					                     					ng-change="setFormDirty()">
+					                     					ng-change="setFormDirty();transformationCheck()">
 											</md-checkbox>
 				                  		</md-input-container>
 				                  		
@@ -1445,7 +1445,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									
 								</div>
 								
-								<div ng-show="transformDatasetState">
+								<div ng-if="transformDatasetState">
 								
 									<div flex=100>
 										<md-input-container class="md-block">

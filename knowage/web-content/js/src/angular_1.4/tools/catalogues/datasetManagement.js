@@ -2822,6 +2822,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	}
 	
 	$scope.continueToRestExecutionOfPreview = function() {
+	
 		sbiModule_restServices.promisePost('1.0/datasets','preview', angular.toJson($scope.selectedDataSet))
 			.then(
 				function(response) {
@@ -3286,5 +3287,9 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     	  $qbeViewer.openQbeInterface($scope,url);
     	  
     	    }
+    
+    $scope.transformationCheck = function() {
+    	$scope.selectedDataSet.trasfTypeCd = !$scope.transformDatasetState ? "" : $scope.transformationDataset.VALUE_CD;
+    }
 	
 };
