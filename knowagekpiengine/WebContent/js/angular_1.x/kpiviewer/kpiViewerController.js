@@ -36,13 +36,13 @@
 		$scope.loadKpiValue = function(){
 			if($scope.documentData.template.chart.data.kpi != undefined){
 
-					var array =JSON.parse($scope.loadKpiValues);
+					var array = $scope.loadKpiValues;
 					
 					for(var j = 0; j < $scope.kpiItems.length; j++){
 						var kpiItem = $scope.kpiItems[j];
 							
 						for(var i = 0; i < array.length; i++){
-							var kpiArray = JSON.parse(array[i])
+							var kpiArray = array[i];
 							
 							if(kpiArray.length > 0 && kpiArray[kpiArray.length-1].kpiId == kpiItem.id ){
 								if(kpiArray[kpiArray.length-1].manualValue!=undefined)
@@ -77,7 +77,7 @@
 				$scope.loadKpiValues = response.data.loadKpiValue;
 				if(chart.type == "kpi") {
 					if(response.data.info!=undefined){
-					if(Array.isArray(JSON.parse(response.data.info))) {
+					if(Array.isArray(response.data.info)) {
 						var templateKpi = $scope.documentData.template.chart.data.kpi;
 						if(!Array.isArray(templateKpi)) {
 							var array = [templateKpi];
@@ -87,8 +87,8 @@
 						var templateOptions = $scope.documentData.template.chart.options;
 						var templateStyle = $scope.documentData.template.chart.style;
 
-						for(var i = 0; i < JSON.parse(response.data.info).length; i++) {
-							var responseItem = JSON.parse(response.data.info)[i];
+						for(var i = 0; i < response.data.info.length; i++) {
+							var responseItem = response.data.info[i];
 
 							var responseItemKpi = responseItem.kpi;
 
