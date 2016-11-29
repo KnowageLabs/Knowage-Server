@@ -92,12 +92,12 @@ function outboundModelPageControllerFunction($scope,$mdDialog, sbiModule_transla
 	$scope.createOutbound = function(){
 		$scope.dataSend.sourceColumns = [];
 		$scope.dataSend.destinationColumns = [];
-		$scope.dataSend.sourceTableName = $scope.rightElement.uniqueName;
-		$scope.dataSend.destinationTableName = $scope.selectedBusinessModel.uniqueName;
+		$scope.dataSend.sourceTableName = $scope.selectedBusinessModel.uniqueName;
+		$scope.dataSend.destinationTableName =  $scope.rightElement.uniqueName;
 		$scope.simpleRight.forEach(function(entry) {
 			if (entry.links.length > 0){
-				$scope.dataSend.sourceColumns.push(entry.uname);
-				$scope.dataSend.destinationColumns.push(entry.links[0].uname);
+				$scope.dataSend.sourceColumns.push(entry.links[0].uname);
+				$scope.dataSend.destinationColumns.push(entry.uname);
 			}
 
 		});
