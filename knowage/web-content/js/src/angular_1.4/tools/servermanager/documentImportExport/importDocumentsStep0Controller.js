@@ -58,8 +58,8 @@ function importStep0FuncController(sbiModule_download,sbiModule_device,$scope, $
 	$scope.isInvalidImportStep0Form=function(){
 		if( importExportDocumentModule_importConf.fileImport.file === undefined 
 				|| importExportDocumentModule_importConf.fileImport === undefined
-				|| importExportDocumentModule_importConf.fileImport.filename === undefined
-				|| importExportDocumentModule_importConf.fileImport.filename.length == 0) return true;
+				|| importExportDocumentModule_importConf.fileImport.fileName === undefined
+				|| importExportDocumentModule_importConf.fileImport.fileName.length == 0) return true;
 		if(importExportDocumentModule_importConf.associations!="noAssociations"){
 			if(importExportDocumentModule_importConf.fileAssociation==""){
 				return true;
