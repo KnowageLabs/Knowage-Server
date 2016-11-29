@@ -9,10 +9,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 	$scope.log = sbiModule_logger;
 	$scope.hierarchiesType = [ 'MASTER', 'TECHNICAL' ];
 	$scope.hierTreeCache = {};
-	$scope.keys = { 
-		'subfolders' : 'children',
-		'iconDocument' : 'fa fa-leaf'
-	};
+	$scope.keys = {'subfolders' : 'children', 'iconDocument' : 'fa fa-leaf'};
 	$scope.orderByFields = [ 'name', 'id' ];
 	$scope.doBackup = true;
 	$scope.showLoading = false;
@@ -502,7 +499,7 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 			node.aliasName = type == "root" ? "HIER_NM" : dimName+"_NM_LEV";
 		}
 		//create a fake node in children in case the new node is 'node' or 'root', so not 'leaf'
-		node.children = type == "leaf" ? [] : [ angular.copy($scope.fakeNode) ];
+		node.children = type == "leaf" ? undefined : [ angular.copy($scope.fakeNode) ];
 		node.expanded = false;
 		node.visible = true;
 		node.type = "folder";
