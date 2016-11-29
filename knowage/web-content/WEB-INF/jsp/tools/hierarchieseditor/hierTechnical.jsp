@@ -11,7 +11,9 @@
 			</md-toolbar>
 			
 			<md-content id='hierarchiesSrc' layout-padding layout='column' layout-align='space-around stretch'>
-				<md-datepicker ng-model="dateSrc" ng-change="getTree('src')"></md-datepicker>
+				<md-content layout='row' layout-xs='column' layout-padding layout-align='start start'>
+					<md-datepicker ng-model="dateSrc" ng-change="getTree('src')"></md-datepicker>
+				</md-content>
 				<md-content id='hierarchiesSrcSelection' layout='row' layout-wrap layout-align='space-around center' layout-sm='column' layout-align-sm='space-around stretch' style='width:96%'>
 					<md-input-container flex flex-sm='90'>
 			        	<label>{{translate.load("sbi.hierarchies.dimensions");}}</label>
@@ -32,7 +34,7 @@
 			        	</md-select>
 					</md-input-container>
 				</md-content>
-				<md-content layout='row' layout-align='start start'>
+				<md-content layout-align='start start'>
 					<md-icon ng-if="!seeFilterSrc" class="fa fa-filter" ng-click="toogleSeeFilter('src')"></md-icon>
 					<md-icon ng-if="seeFilterSrc" class="fa fa-times" ng-click="toogleSeeFilter('src')"></md-icon>
 				</md-content>
@@ -116,7 +118,7 @@
 			        	</md-select>
 					</md-input-container>
 				</md-content>
-				<md-content layout='row' layout-align='start start'>
+				<md-content  layout-align='start start'>
 					<md-icon ng-if="!seeFilterTarget" class="fa fa-filter" ng-click="toogleSeeFilter('target')"></md-icon>
 					<md-icon ng-if="seeFilterTarget" class="fa fa-times" ng-click="toogleSeeFilter('target')"></md-icon>
 				</md-content>

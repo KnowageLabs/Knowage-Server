@@ -19,7 +19,7 @@
 			        	</md-select>
 					</md-input-container>
 				</md-content>
-		      	<md-content layout='row' layout-align='start start'>
+		      	<md-content  layout-align='start start'>
 					<md-icon ng-if="!seeFilterDim" class="fa fa-filter" ng-click="toggleSeeFilter('dim')"></md-icon>
 					<md-icon ng-if="seeFilterDim" class="fa fa-times" ng-click="toggleSeeFilter('dim')"></md-icon>
 				</md-content>
@@ -119,7 +119,7 @@
 			        	</md-select>
 					</md-input-container>
 				</md-content>
-				<md-content layout='row' layout-align='start start'>
+				<md-content layout-align='start start'>
 					<md-icon ng-if="!seeFilterTree" class="fa fa-filter" ng-click="toggleSeeFilter('tree')"></md-icon>
 					<md-icon ng-if="seeFilterTree" class="fa fa-times" ng-click="toggleSeeFilter('tree')"></md-icon>
 				</md-content>
