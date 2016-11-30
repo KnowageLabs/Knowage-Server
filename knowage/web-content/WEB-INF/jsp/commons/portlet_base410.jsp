@@ -65,7 +65,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.ArrayList"%>
-
+<%@page import="it.eng.spagobi.commons.bo.AccessibilityPreferences" %>
 
 
 <%-- ---------------------------------------------------------------------- --%>
@@ -172,8 +172,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	String userId="";
 	String userName="";
 	String defaultRole="";
-	List userRoles = new ArrayList();;
-	
+	List userRoles = new ArrayList();
+	 AccessibilityPreferences ap = null;
+	 
+	 boolean enableUIO = false;
+	 boolean enableRobobraille = false;
+	 boolean enableVoice = false;
+	 boolean enableGraphSonification = false;
+	 
 	//if (userProfile!=null) userId=(String)userProfile.getUserUniqueIdentifier();
 	if (userProfile!=null){
 		userId=(String)((UserProfile)userProfile).getUserId();
@@ -182,6 +188,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		userRoles = (ArrayList)userProfile.getRoles();
 		defaultRole = ((UserProfile)userProfile).getDefaultRole();		
 		
+	    ap =  UserUtilities.readAccessibilityPreferencesByUser((UserProfile)userProfile);
+	    
+	    if(ap != null){
+	    	 enableUIO = ap.isEnableUio();
+	    	 enableRobobraille = ap.isEnableRobobraille();
+	    	 enableVoice = ap.isEnableVoice();
+	    	 enableGraphSonification = ap.isEnableGraphSonification(); 	
+	    }
 	}
 	
 	// Set Theme
@@ -409,6 +423,12 @@ String extTheme=ThemesManager.getTheExtTheme(currTheme);
 
 	<script>
 	document.onselectstart = function() { return true; }
+	
+	 var enableUIO = <%=enableUIO%>;
+	 var enableRobobraille = <%=enableRobobraille%>;
+	 var enableVoice =<%=enableVoice%>;
+	 var enableGraphSonification = <%=enableGraphSonification%>;
+	
 </script>
 
 <%-- ---------------------------------------------------------------------- --%>

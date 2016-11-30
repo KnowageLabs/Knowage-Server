@@ -107,7 +107,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 	private static final String HREF_MANAGE_TENANT = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/multitenant/multitenantManagementAngular.jsp";
 	private static final String HREF_MANAGE_UDP = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/udp/manageUdpAngular.jsp";
 
-	// private static final String HREF_USERS = "/servlet/AdapterHTTP?ACTION_NAME=MANAGE_USER_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
+	// private static final String HREF_USERS =
+	// "/servlet/AdapterHTTP?ACTION_NAME=MANAGE_USER_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
 	private static final String HREF_USERS = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/usersManagement.jsp";
 
 	private static final String HREF_MANAGE_LOVS = "/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/lovsManagement.jsp";
@@ -246,7 +247,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 							/**
 							 * The URL for the Workspace web page.
 							 *
-							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+							 * @author Danilo Ristovski (danristo,
+							 *         danilo.ristovski@mht.net)
 							 */
 							if (menuElem.getCode() != null && menuElem.getCode().equals("workspace")) {
 
@@ -259,15 +261,26 @@ public class MenuListJSONSerializerForREST implements Serializer {
 							/**
 							 * Commented by Danilo Ristovski (danristo)
 							 */
-							// if (menuElem.getCode() != null && menuElem.getCode().equals("my_data_admin")) {
+							// if (menuElem.getCode() != null &&
+							// menuElem.getCode().equals("my_data_admin")) {
 							// // admins and devs can see ONLY models tab,
 							// // while tester can see datasets and models
-							// if (UserUtilities.isTechDsManager(this.getUserProfile())) {
-							// temp.put(HREF, "javascript:javascript:execDirectUrl('" + contextName + HREF_MYDATA_ADMIN + "', '" + text + "')");
-							// temp.put(FIRST_URL, contextName + HREF_MYDATA_ADMIN);
+							// if
+							// (UserUtilities.isTechDsManager(this.getUserProfile()))
+							// {
+							// temp.put(HREF,
+							// "javascript:javascript:execDirectUrl('" +
+							// contextName + HREF_MYDATA_ADMIN + "', '" + text +
+							// "')");
+							// temp.put(FIRST_URL, contextName +
+							// HREF_MYDATA_ADMIN);
 							// temp.put(LINK_TYPE, "execDirectUrl");
-							// } else if (UserUtilities.isTester(this.getUserProfile())) {
-							// temp.put(HREF, "javascript:javascript:execDirectUrl('" + contextName + HREF_MYDATA + "', '" + text + "')");
+							// } else if
+							// (UserUtilities.isTester(this.getUserProfile())) {
+							// temp.put(HREF,
+							// "javascript:javascript:execDirectUrl('" +
+							// contextName + HREF_MYDATA + "', '" + text +
+							// "')");
 							// temp.put(LINK_TYPE, "execDirectUrl");
 							// temp.put(FIRST_URL, contextName + HREF_MYDATA);
 							// }
@@ -348,7 +361,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		 * Commented by Danilo Ristovski (danristo)
 		 */
 		// if (isAbleTo(SpagoBIConstants.CREATE_DOCUMENT, funcs)) {
-		// JSONObject createDoc = createMenuItem("create", HREF_PENCIL, messageBuilder.getMessage("menu.MyAnalysis", locale), true, null);
+		// JSONObject createDoc = createMenuItem("create", HREF_PENCIL,
+		// messageBuilder.getMessage("menu.MyAnalysis", locale), true, null);
 		// tempMenuList.put(createDoc);
 		// }
 
@@ -356,7 +370,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		 * Commented by Danilo Ristovski (danristo)
 		 */
 		// if (isAbleTo(SpagoBIConstants.SEE_MY_DATA, funcs)) {
-		// JSONObject myData = createMenuItem("web", HREF_MYDATA, messageBuilder.getMessage("menu.MyData", locale), true, null);
+		// JSONObject myData = createMenuItem("web", HREF_MYDATA,
+		// messageBuilder.getMessage("menu.MyData", locale), true, null);
 		// tempMenuList.put(myData);
 		// }
 
@@ -390,8 +405,10 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			socialAnalysis.put(LINK_TYPE, "execDirectUrl");
 
 			/*
-			 * } else { socialAnalysis.put(HREF, "javascript:execDirectUrl('" + HREF_SOCIAL_ANALYSIS + "?" + SpagoBIConstants.SBI_LANGUAGE + "=" +
-			 * locale.getLanguage() + "&" + SpagoBIConstants.SBI_COUNTRY + "=" + locale.getCountry() + "');"); }
+			 * } else { socialAnalysis.put(HREF, "javascript:execDirectUrl('" +
+			 * HREF_SOCIAL_ANALYSIS + "?" + SpagoBIConstants.SBI_LANGUAGE + "="
+			 * + locale.getLanguage() + "&" + SpagoBIConstants.SBI_COUNTRY + "="
+			 * + locale.getCountry() + "');"); }
 			 */
 			tempMenuList.put(socialAnalysis);
 		}
@@ -638,7 +655,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			license.put(SCALE, "large");
 			license.put(TARGET, "_self");
 			license.put(HREF, "javascript:license()");
-			// license.put(FIRST_URL, contextName + HREF_IMPEXP_CATALOG); //License open a dialog, no need for url!
+			// license.put(FIRST_URL, contextName + HREF_IMPEXP_CATALOG);
+			// //License open a dialog, no need for url!
 			license.put(LINK_TYPE, "license");
 			tempMenuList.put(license);
 
@@ -681,6 +699,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 				menuItem.put(LINK_TYPE, "roleSelection");
 			} else if (label != null && label.equals(LANG)) {
 				menuItem.put(LINK_TYPE, "languageSelection");
+			} else if (label != null && label.equals("ACCESS")) {
+				menuItem.put(LINK_TYPE, "accessibilitySettings");
 			} else if (label != null && label.equals(HELP)) {
 				menuItem.put(HREF, "http://wiki.spagobi.org/xwiki/bin/view/Main/");
 				menuItem.put(FIRST_URL, "http://wiki.spagobi.org/xwiki/bin/view/Main/");
@@ -706,6 +726,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 		JSONObject lang = createMenuItem("flag", "", messageBuilder.getMessage("menu.Languages", locale), false, "LANG");
 
+		JSONObject accessibility = createMenuItem("settings", "", "Preferences", false, "ACCESS");
+
 		JSONObject roles = createMenuItem("assignment_ind", "", messageBuilder.getMessage("menu.RoleSelection", locale), false, "ROLE");
 
 		JSONObject info = createMenuItem("info", "", messageBuilder.getMessage("menu.info", locale), false, "INFO");
@@ -716,6 +738,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		tempMenuList.put(roles);
 
 		tempMenuList.put(lang);
+
+		tempMenuList.put(accessibility);
 
 		// tempMenuList.put(help);
 
@@ -782,8 +806,10 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			}
 		}
 		/*
-		 * Cannot set a static ID as a random number!!!! See https://www.spagoworld.org/jira/browse/SPAGOBI-1268 See
-		 * https://www.spagoworld.org/jira/browse/SPAGOBI-1269 The following line was the cause of the above issues!!
+		 * Cannot set a static ID as a random number!!!! See
+		 * https://www.spagoworld.org/jira/browse/SPAGOBI-1268 See
+		 * https://www.spagoworld.org/jira/browse/SPAGOBI-1269 The following
+		 * line was the cause of the above issues!!
 		 */
 		// temp2.put(ID, new Double(Math.random()).toString());
 
@@ -841,8 +867,10 @@ public class MenuListJSONSerializerForREST implements Serializer {
 					url = url + "?" + SsoServiceInterface.USER_ID + "=" + userProfile.getUserUniqueIdentifier().toString() + "&"
 							+ SpagoBIConstants.SBI_LANGUAGE + "=" + locale.getLanguage() + "&" + SpagoBIConstants.SBI_COUNTRY + "=" + locale.getCountry() + "'";
 					/*
-					 * } else { url = url + "?" + SpagoBIConstants.SBI_LANGUAGE + "=" + locale.getLanguage() + "&" + SpagoBIConstants.SBI_COUNTRY + "=" +
-					 * locale.getCountry() + "'"; }
+					 * } else { url = url + "?" + SpagoBIConstants.SBI_LANGUAGE
+					 * + "=" + locale.getLanguage() + "&" +
+					 * SpagoBIConstants.SBI_COUNTRY + "=" + locale.getCountry()
+					 * + "'"; }
 					 */
 				}
 				temp2.put(SRC, src);

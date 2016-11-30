@@ -20,11 +20,13 @@ package it.eng.spagobi.commons.utilities;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.UserFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
 import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.bo.AccessibilityPreferences;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
@@ -37,6 +39,7 @@ import it.eng.spagobi.commons.metadata.SbiTenant;
 import it.eng.spagobi.dao.exception.DAORuntimeException;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.config.dao.IEngineDAO;
+import it.eng.spagobi.profiling.bean.SbiAccessibilityPreferences;
 import it.eng.spagobi.services.common.SsoServiceFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
@@ -166,6 +169,7 @@ public class UserUtilities {
 				return null;
 			checkTenant(user);
 			user.setFunctions(readFunctionality(user));
+
 			UserProfile profile = new UserProfile(user);
 			// putting locale language and country on user attributes:
 			if (profile != null) {
@@ -396,14 +400,18 @@ public class UserUtilities {
 	}
 
 	/**
-	 * Load the user personal folder as a LowFunctionality object. If the personal folder exists, it is returned; if it does not exist and create is false, null
-	 * is returned, otherwise the personal folder is created and then returned.
+	 * Load the user personal folder as a LowFunctionality object. If the
+	 * personal folder exists, it is returned; if it does not exist and create
+	 * is false, null is returned, otherwise the personal folder is created and
+	 * then returned.
 	 *
 	 * @param userProfile
 	 *            UserProfile the user profile object
 	 * @param createIfNotExisting
-	 *            Boolean that specifies if the personal folder must be created if it doesn't exist
-	 * @return the personal folder as a LowFunctionality object, or null in case the personal folder does not exist and create is false
+	 *            Boolean that specifies if the personal folder must be created
+	 *            if it doesn't exist
+	 * @return the personal folder as a LowFunctionality object, or null in case
+	 *         the personal folder does not exist and create is false
 	 */
 	public static LowFunctionality loadUserFunctionalityRoot(UserProfile userProfile, boolean createIfNotExisting) {
 		Assert.assertNotNull(userProfile, "User profile in input is null");
@@ -885,7 +893,7 @@ public class UserUtilities {
 
 	/*
 	 * Method copied from SecurityServiceSupplierFactory for DAO refactoring
-	 *
+	 * 
 	 * is this method in the right place?
 	 */
 
@@ -920,8 +928,10 @@ public class UserUtilities {
 	}
 
 	/**
-	 * Clones the input profile object. We don't implement the SpagoBIUserProfile.clone method because SpagoBIUserProfile is created by Axis tools, and
-	 * therefore, when generating the class we may lost that method.
+	 * Clones the input profile object. We don't implement the
+	 * SpagoBIUserProfile.clone method because SpagoBIUserProfile is created by
+	 * Axis tools, and therefore, when generating the class we may lost that
+	 * method.
 	 *
 	 * @param profile
 	 *            The input SpagoBIUserProfile object
@@ -985,6 +995,33 @@ public class UserUtilities {
 			logger.error("Impossible to get role dataset categories for user [" + profile + "]", e);
 			throw new SpagoBIRuntimeException("Impossible to get role dataset categories for user [" + profile + "]", e);
 		}
+	}
+
+	public static AccessibilityPreferences readAccessibilityPreferencesByUser(IEngUserProfile user) {
+		AccessibilityPreferences preferences = null;
+		String userId = (String) user.getUserUniqueIdentifier();
+
+		try {
+			it.eng.spagobi.profiling.dao.ISbiAccessibilityPreferencesDAO dao = DAOFactory.getSiAccessibilityPreferencesDAO();
+			SbiAccessibilityPreferences ap = dao.readUserAccessibilityPreferences(userId);
+			if (ap != null) {
+				preferences = new AccessibilityPreferences();
+				preferences.setId(ap.getId());
+				preferences.setUser((String) user.getUserUniqueIdentifier());
+				preferences.setEnableUio(ap.isEnableUio());
+				preferences.setEnableRobobraille(ap.isEnableRobobraille());
+				preferences.setEnableGraphSonification(ap.isEnableGraphSonification());
+				preferences.setEnableVoice(ap.isEnableVoice());
+				preferences.setPreferences(ap.getPreferences());
+			}
+		} catch (EMFUserError e) {
+			logger.error("Impossible to get preferences for user [" + user + "]", e);
+			// e.printStackTrace();
+		}
+		// dao.setTenant(organization);
+
+		return preferences;
+
 	}
 
 }

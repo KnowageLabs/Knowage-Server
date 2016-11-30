@@ -29,7 +29,7 @@ myApp.controller('menuCtrl', ['$scope','$mdDialog',
 	}
 ]);
 
-myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModule_messaging', 'sbiModule_translate', 'sbiModule_download', '$filter', 'sbiModule_config', function($window,$http, $mdDialog, $mdToast, sbiModule_messaging, sbiModule_translate, sbiModule_download, $filter, sbiModule_config) {
+myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModule_messaging', 'sbiModule_translate', 'sbiModule_download', '$filter','sbiModule_restServices', 'sbiModule_config', function($window,$http, $mdDialog, $mdToast, sbiModule_messaging, sbiModule_translate, sbiModule_download, $filter, sbiModule_restServices, sbiModule_config) {
     return {
 
         restrict: 'E',
@@ -394,6 +394,64 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 				return languageUrl;
 			}
 			
+			$scope.accessibilitySettings = function (){
+				
+				console.log("IN ACCESSIBILITY SETTINGS");
+				$scope.toggleMenu();
+				$scope.showAccessibilityDialog();
+			}
+			
+			$scope.showAccessibilityDialog= function(){
+			      var parentEl = angular.element(document.body);
+       	       $mdDialog.show({
+       	         parent: parentEl,
+       	         templateUrl: Sbi.config.contextName+"/js/src/angular_1.4/menu/templates/accessibilityDialogTemplate.html",
+       	         locals: {
+       	          
+       	         }
+       	         ,controller: AccessibilityDialogController
+       	      });
+       	       
+       	      function AccessibilityDialogController(scope, $mdDialog) {
+       	    	scope.enableUIO= enableUIO;
+       	    	scope.enableRobobraille= enableRobobraille;
+       	    	scope.enableVoice= enableVoice;
+       	    	scope.enableGraphSonification= enableGraphSonification;
+       	    	
+       	        scope.saveAccessibilityPreferences = function(){
+       	        	console.log("IN SAVE");
+       	        	var preferencesObj={
+       	        		id:null,
+       	        		user:null,
+       	        		enableUio:scope.enableUIO,
+       	        		enableRobobraille: scope.enableRobobraille,
+       	        		enableVoice: scope.enableVoice,
+       	        		enableGraphSonification:scope.enableGraphSonification,
+       	        		preferences:null
+       	        	};
+       				sbiModule_restServices.promisePost('2.0/preferences','',preferencesObj)
+       				.then(function(response) {
+       			         console.log(response);
+       			      sbiModule_messaging.showSuccessMessage("preferences saved successuly", 'Success');
+       			        enableUIO=scope.enableUIO;
+             	        enableRobobraille= scope.enableRobobraille;
+             	    	enableVoice= scope.enableVoice;
+             	    	enableGraphSonification= scope.enableGraphSonification;
+       			        
+             	    	sbiModule_messaging.showSuccessMessage("Preferences saved successfuly", 'Successs');
+       				}, function(response) {
+       					sbiModule_messaging.showErrorMessage(response, 'Error');
+       					
+       				});	
+       	        	
+       	        }
+       	        scope.closeDialog = function() {
+       	          $mdDialog.hide();
+       	        }
+       	        scope.menuCall=$scope.menuCall;
+       	      }
+				
+			}
 			
 			$scope.resetSessionObjects = function() {
 				try {
@@ -446,6 +504,8 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 					$scope.goHome(url);
 				} else if (type == "languageSelection"){
 					$scope.languageSelection();
+				} else if (type == "accessibilitySettings"){
+					$scope.accessibilitySettings();
 				}
 			}
         }

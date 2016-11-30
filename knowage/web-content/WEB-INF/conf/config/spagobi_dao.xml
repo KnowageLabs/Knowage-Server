@@ -91,7 +91,7 @@
 		<DAO name="UdpDAO" implementation="it.eng.spagobi.tools.udp.dao.UdpDAOHibImpl" />
 		<DAO name="UdpDAOValue" implementation="it.eng.spagobi.tools.udp.dao.UdpValueDAOHibImpl" />
 	  	<DAO name="ImagesDAO" implementation="it.eng.spagobi.images.dao.ImagesDAOImpl"/>
-	  	
+	  	<DAO name="SbiAccessibilityPreferencesDAO" implementation="it.eng.spagobi.profiling.dao.SbiAccessibilityPreferencesDAOHibImpl"/>
 
 		<DAO name="I18NMessagesDAO" implementation="it.eng.spagobi.i18n.dao.I18NMessagesDAOHibImpl" />
 		<DAO name="ProgressThreadDAO"

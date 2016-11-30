@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   JSONObject selfServiceParameters=new JSONObject(parameters);
   boolean isAdmin = UserUtilities.isAdministrator(userProfile);
   boolean isTechnicalUser =  UserUtilities.isTechnicalUser(userProfile);
+ 
 %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -43,6 +44,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<!-- Styles -->
 		<link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css"> 
 		
+	
 		<script language="javascript" type="text/javascript">		   
 		   /* 
 	   			Take the information if we are coming from the interface for a creation of a Cockpit document.
@@ -57,7 +59,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	</head>
 	
 	<body ng-controller="workspaceController" class="workspace kn-workspace" id="workspaceWebPageBody"> 
-		
+	 <%if(includeInfusion){ %> 
+            <%@include file="/WEB-INF/jsp/commons/infusion/infusionTemplate.html"%>
+      
+     <%} %>	
 		<% if (parameters.containsKey("error")==false) {%>	
 		
 			<!-- 

@@ -21,7 +21,7 @@
 <%@page import="java.util.List"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="it.eng.spagobi.utilities.themes.ThemesManager"%>
-
+<%@page import="it.eng.spagobi.commons.bo.AccessibilityPreferences" %>
 
 <%
 	RequestContainer aRequestContainer = null;
@@ -117,7 +117,24 @@
 		importFileMaxSizeMB = new Integer(maxSizeStr);
 	}
 	
+	 AccessibilityPreferences ap =  UserUtilities.readAccessibilityPreferencesByUser((UserProfile)userProfile);
+	  
+	  boolean includeInfusion;
+	  if(ap != null){
+	      includeInfusion=ap.isEnableUio();
+	  }else{
+		  includeInfusion=false;
+	  }
+	
 %>
+<%-- ---------------------------------------------------------------------- --%>
+<%-- INFUSION																--%>
+<%-- ---------------------------------------------------------------------- --%>
+
+	 <%if(includeInfusion){ %> 
+       <%@include file="/WEB-INF/jsp/commons/infusion/infusionImport.jsp"%>
+      
+     <%} %>	
 
 
 <%@include file="/WEB-INF/jsp/commons/includeMessageResource.jspf"%>
