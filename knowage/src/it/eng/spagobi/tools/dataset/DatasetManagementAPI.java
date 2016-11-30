@@ -34,6 +34,7 @@ import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
+import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.cache.CacheException;
 import it.eng.spagobi.tools.dataset.cache.FilterCriteria;
 import it.eng.spagobi.tools.dataset.cache.GroupCriteria;
@@ -368,7 +369,7 @@ public class DatasetManagementAPI {
 			} else if (dataSet.isFlatDataset()) {
 				dataStore = queryFlatDataset(groups, filters, projections, summaryRowProjections, dataSet, offset, fetchSize);
 				dataStore.setCacheDate(new Date());
-			} else if (isRealtime && dataSet instanceof JDBCDataSet && !SqlUtils.isBigDataDialect(dataSet.getDataSource().getHibDialectName())) {
+			} else if (isRealtime && isJDBCDataSet(dataSet) && !SqlUtils.isBigDataDialect(dataSet.getDataSource().getHibDialectName())) {
 				dataStore = queryJDBCDataset(groups, filters, projections, summaryRowProjections, dataSet, offset, fetchSize);
 				dataStore.setCacheDate(new Date());
 			} else if (isRealtime) {
@@ -2025,5 +2026,16 @@ public class DatasetManagementAPI {
 			String parameterNotValorizedStr = getParametersNotValorized(parameters, parametersValues);
 			throw new ParametersNotValorizedException("The following parameters have no value [" + parameterNotValorizedStr + "]");
 		}
+	}
+
+	public static boolean isJDBCDataSet(IDataSet dataSet) {
+		if (dataSet instanceof JDBCDataSet) {
+			return true;
+		} else if (dataSet instanceof VersionedDataSet && ((VersionedDataSet) dataSet).getWrappedDataset() instanceof JDBCDataSet) {
+			return true;
+		} else {
+			return false;
+		}
+
 	}
 }
