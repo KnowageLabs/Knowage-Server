@@ -62,7 +62,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 	$scope.exportedDataset =[];
 	$scope.download = sbiModule_download;
 	$scope.flagUser = false;
-	$scope.flagCategory = false;
+	//$scope.flagCategory = false;
 	$scope.typeSaveMenu="Missing";
 	$scope.filterDate;
 	
@@ -249,19 +249,21 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 			fd.append('exportedArchive', $scope.importFile.file);
 			sbiModule_restServices.promisePost("1.0/serverManager/importExport/catalog", 'import', fd, {transformRequest: angular.identity,headers: {'Content-Type': undefined}})
 			.then(function(response, status, headers, config) {
-					$scope.datasetSelected = [];
-					//	$scope.flagUser = data.flagUsers;
-					$scope.flagCategory = response.data.flagDomain;
-					if($scope.flagCategory){
-						$scope.exportedDataset = response.data.exportedDataset;
-						//opendataset
-						$scope.showDatasetImported = true;
-					}else{
-						if(!$scope.flagCategory){
-							//$scope.showAction(sbiModule_translate.load("sbi.importexportcatalog.missingcategory"));
-							sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.importexportcatalog.missingcategory"),"");
-						}
-					}
+				$scope.datasetSelected = [];
+				//	$scope.flagUser = data.flagUsers;
+				//$scope.flagCategory = response.data.flagDomain;
+//				if($scope.flagCategory){
+				
+				$scope.exportedDataset = response.data.exportedDataset;
+				//opendataset
+				$scope.showDatasetImported = true;
+//				
+//				}else{
+//				if(!$scope.flagCategory){
+//				//$scope.showAction(sbiModule_translate.load("sbi.importexportcatalog.missingcategory"));
+//				sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.importexportcatalog.missingcategory"),"");
+//				}
+//				}
 
 			}, function(response, status, headers, config) {
 				sbiModule_restServices.errorHandler(response.data,"");
