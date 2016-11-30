@@ -42,10 +42,10 @@
 		<md-content flex>
 			<md-list ng-hide="isParameterPanelDisabled()" layout="row">
 				<md-list-item ng-repeat="parameter in documentParameters"
-						layout="row" aria-label="" class="md-3-line">
+						layout="row" aria-label="" class="md-3-line" ng-show="parameter.visible">
 
 					<document-paramenter-element parameter="parameter" 
-							layout="row" flex layout-align="start" ng-show="parameter.visible"/>
+							layout="row" flex layout-align="start" />
 					
 				</md-list-item>
 			</md-list>
