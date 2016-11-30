@@ -429,7 +429,6 @@ public class DocumentParameters {
 			}
 		}
 
-		// perché fa sta roba con chiavi cablate nel codice?????
 		itemAsMap.put("value", item.get("value"));
 		itemAsMap.put("label", item.has("label") ? item.get("label") : item.get("value"));
 		if (item.has("id")) {
