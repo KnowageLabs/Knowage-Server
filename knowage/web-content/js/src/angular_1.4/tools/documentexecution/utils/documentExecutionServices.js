@@ -834,10 +834,21 @@
 									execProperties.initResetFunctionLovDependency.status=true;
 
 									execProperties.isParameterRolePanelDisabled.status = docExecute_paramRolePanelService.checkParameterRolePanelDisabled();
-								}else{
+														
+									if (response.data.isReadyForExecution === true) {
+										serviceScope.executionProcesRestV1(execProperties.selectedRole.name, 
+												 documentExecuteServices.buildStringParameters(execProperties.parametersData.documentParameters));			
+									} else {
+										serviceScope.frameLoaded = true; // this hides loading mask
+										docExecute_paramRolePanelService.toggleParametersPanel(true);
+									}
+									
+								} else {
 //									execProperties.showParametersPanel.status = false;
 //									$mdSidenav('parametersPanelSideNav').close();
 									docExecute_paramRolePanelService.toggleParametersPanel(false);
+									serviceScope.executionProcesRestV1(execProperties.selectedRole.name, 
+											documentExecuteServices.buildStringParameters(execProperties.parametersData.documentParameters));	
 
 								} 
 

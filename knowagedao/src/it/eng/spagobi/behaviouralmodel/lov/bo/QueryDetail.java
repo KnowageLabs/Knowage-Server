@@ -360,14 +360,14 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 		return getLovResult(profile, dependencies, bIObjectParameters, locale, false);
 	}
 
-	public String getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, List<BIObjectParameter> BIObjectParameters, Locale locale,
+	public String getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, List<BIObjectParameter> documentParameters, Locale locale,
 			boolean getAllColumns) throws Exception {
 		logger.debug("IN");
-		Map<String, String> parameters = getParametersNameToValueMap(BIObjectParameters);
-		String statement = getWrappedStatement(dependencies, BIObjectParameters);
+		Map<String, String> parameters = getParametersNameToValueMap(documentParameters);
+		String statement = getWrappedStatement(dependencies, documentParameters);
 		statement = StringUtilities.substituteProfileAttributesInString(statement, profile);
 		if (parameters != null && !parameters.isEmpty()) {
-			Map<String, String> types = getParametersNameToTypeMap(BIObjectParameters);
+			Map<String, String> types = getParametersNameToTypeMap(documentParameters);
 			statement = StringUtilities.substituteParametersInString(statement, parameters, types, false);
 		}
 		logger.info("User [" + ((UserProfile) profile).getUserId() + "] is executing sql: " + statement);

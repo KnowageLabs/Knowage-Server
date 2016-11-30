@@ -6,6 +6,7 @@
 package it.eng.spagobi.behaviouralmodel.lov.bo;
 
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.behaviouralmodel.lov.exceptions.MissingLOVDependencyException;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -86,18 +87,18 @@ public abstract class AbstractLOV implements ILovDetail {
 							parameters.put(objParam.getParameter().getLabel(), parameterValue);
 						} else {
 							logger.error("The parameter with name [" + objParam.getParameter().getLabel() + "] is null");
-							throw new SpagoBIRuntimeException("Impossible to retrieve all the parameters value for the LOV.");
+							throw new MissingLOVDependencyException("Impossible to retrieve all the parameters value for the LOV.");
 						}
 					}
 				}
 				if (numberOfParametersFound != parameterNames.size()) {
 					logger.error("The LOV needs " + parameterNames.size()
 							+ ", but the parameters from the document execution do not match all the LOV parameters.");
-					throw new SpagoBIRuntimeException("Impossible to retrieve all the parameters value for the LOV.");
+					throw new MissingLOVDependencyException("Impossible to retrieve all the parameters value for the LOV.");
 				}
 			} else {
 				logger.error("The LOV needs " + parameterNames.size() + ", but the set of parameter from the document execution is null or empty.");
-				throw new SpagoBIRuntimeException("Impossible to retrieve all the parameters value for the LOV.");
+				throw new MissingLOVDependencyException("Impossible to retrieve all the parameters value for the LOV.");
 			}
 		}
 		return parameters;

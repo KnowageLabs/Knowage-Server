@@ -404,7 +404,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 	/**
 	 * @return { filterStatus: [{ title: 'Provincia', urlName: 'provincia', type: 'list', lista:[[k,v],[k,v], [k,v]] }, { title: 'Comune', urlName: 'comune',
-	 *         type: 'list', lista:[], dependsOn: 'provincia' }, { title: 'Free Search', type: 'manual', urlName: 'freesearch' }], errors: [ 'role missing',
+	 *         type: 'list', lista:[], dependsOn: 'provincia' }, { title: 'Free Search', type: 'manual', urlName: 'freesearch' }], isReadyForExecution: true, errors: [ 'role missing',
 	 *         'operation not allowed' ] }
 	 * @throws EMFUserError
 	 * @throws JSONException
@@ -425,24 +425,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		String role = requestVal.getString("role");
 		JSONObject jsonCrossParameters = requestVal.getJSONObject("parameters");
 
-		Map<String, JSONObject> sessionParametesMap = new HashMap<String, JSONObject>();
-
-		try {
-			Object jsonSessionParametersObject = requestVal.get("sessionParameters");
-			JSONObject sessionParametersJSON = new JSONObject(jsonSessionParametersObject.toString());
-
-			Iterator<String> it = sessionParametersJSON.keys();
-			while (it.hasNext()) {
-				String key = it.next();
-				JSONObject parJson = sessionParametersJSON.getJSONObject(key);
-				sessionParametesMap.put(key, parJson);
-				// String parName = parJson.getString("name");
-				// String parValue = parJson.getString("value");
-				// sessionParametesMap.put(parName, parValue);
-			}
-		} catch (Exception e) {
-			logger.error("Error converting session parameters to JSON: ", e);
-		}
+		Map<String, JSONObject> sessionParametersMap = getSessionParameters(requestVal);
 
 		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
 
@@ -451,7 +434,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		BIObject biObject = dao.loadBIObjectForExecutionByLabelAndRole(label, role);
 
 		Locale locale = GeneralUtilities.getCurrentLocale(aRequestContainer);
-		DocumentUrlManager documentUrlManager = new DocumentUrlManager(this.getUserProfile(), locale);
+
+		applyRequestParameters(biObject, jsonCrossParameters, sessionParametersMap, role, locale);
 
 		ArrayList<HashMap<String, Object>> parametersArrayList = new ArrayList<>();
 
@@ -479,83 +463,37 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			parameterAsMap
 					.put("allowInternalNodeSelection", objParameter.getPar().getModalityValue().getLovProvider().contains("<LOVTYPE>treeinner</LOVTYPE>"));
 
-			// check for cross Parameter Value
-			if (jsonCrossParameters.has(objParameter.getId())) {
-				documentUrlManager.refreshParameterForFilters(objParameter.getAnalyticalDocumentParameter(), jsonCrossParameters);
+			if (objParameter.getAnalyticalDocumentParameter().getParameterValues() != null) {
 				parameterAsMap.put("parameterValue", objParameter.getAnalyticalDocumentParameter().getParameterValues());
-			}
-
-			// check for session parameter
-			boolean sessionParameterValuePresent = false;
-			String sessionParameterValue = null;
-			String sessionParameterDescription = null;
-			JSONObject sessionValue = sessionParametesMap.get(objParameter.getPar().getLabel() + "_"
-					+ objParameter.getAnalyticalDriverExecModality().getLabel());
-			if (sessionValue != null) {
-				if (sessionValue.optString("value") != null) {
-
-					String value = sessionValue.optString("value");
-					String description = sessionValue.optString("description");
-
-					sessionParameterValue = value;
-					sessionParameterDescription = description;
-
-					parameterAsMap.put("parameterValue", value);
-
-					sessionParameterValuePresent = true;
-				}
 			}
 
 			boolean showParameterLov = true;
 
 			// Parameters NO TREE
 			if ("lov".equalsIgnoreCase(parameterUse.getValueSelection())
-					&& !objParameter.getSelectionType().equalsIgnoreCase(DocumentExecutionUtils.SELECTION_TYPE_TREE)
-					&& (objParameter.getLovDependencies() == null || objParameter.getLovDependencies().size() == 0)) {
+					&& !objParameter.getSelectionType().equalsIgnoreCase(DocumentExecutionUtils.SELECTION_TYPE_TREE)) {
 
-				HashMap<String, Object> defaultValuesData = DocumentExecutionUtils.getLovDefaultValues(role, biObject,
-						objParameter.getAnalyticalDocumentParameter(), req);
-
-				ArrayList<HashMap<String, Object>> defaultValues = (ArrayList<HashMap<String, Object>>) defaultValuesData
-						.get(DocumentExecutionUtils.DEFAULT_VALUES);
-
-				List defaultValuesMetadata = (List) defaultValuesData.get(DocumentExecutionUtils.DEFAULT_VALUES_METADATA);
+				ArrayList<HashMap<String, Object>> admissibleValues = objParameter.getAdmissibleValues();
 
 				if (!objParameter.getSelectionType().equalsIgnoreCase(DocumentExecutionUtils.SELECTION_TYPE_LOOKUP)) {
-					parameterAsMap.put("defaultValues", defaultValues);
+					parameterAsMap.put("defaultValues", admissibleValues);
 				} else {
 					parameterAsMap.put("defaultValues", new ArrayList<>());
 				}
-				parameterAsMap.put("defaultValuesMeta", defaultValuesMetadata);
-				parameterAsMap.put(DocumentExecutionUtils.VALUE_COLUMN_NAME_METADATA, defaultValuesData.get(DocumentExecutionUtils.VALUE_COLUMN_NAME_METADATA));
-				parameterAsMap.put(DocumentExecutionUtils.DESCRIPTION_COLUMN_NAME_METADATA,
-						defaultValuesData.get(DocumentExecutionUtils.DESCRIPTION_COLUMN_NAME_METADATA));
+				parameterAsMap.put("defaultValuesMeta", objParameter.getLovColumnsNames());
+				parameterAsMap.put(DocumentExecutionUtils.VALUE_COLUMN_NAME_METADATA, objParameter.getLovValueColumnName());
+				parameterAsMap.put(DocumentExecutionUtils.DESCRIPTION_COLUMN_NAME_METADATA, objParameter.getLovDescriptionColumnName());
 
 				// hide the parameter if is mandatory and have one value in lov (no error parameter)
-				if (defaultValues != null && defaultValues.size() == 1 && objParameter.isMandatory() && !defaultValues.get(0).containsKey("error")) {
+				if (admissibleValues != null && admissibleValues.size() == 1 && objParameter.isMandatory() && !admissibleValues.get(0).containsKey("error")) {
 					showParameterLov = false;
 				}
 				// if parameterValue is not null and is array, check if all element are present in lov
-				Object o = parameterAsMap.get("parameterValue");
-				if (o != null) {
-					if (o instanceof List) {
-						List<String> valList = (ArrayList) o;
-						for (int k = 0; k < valList.size(); k++) {
-							String itemVal = valList.get(k);
-							boolean found = false;
-							for (HashMap<String, Object> parHashVal : defaultValues) {
-								if (parHashVal.containsKey("value") && parHashVal.get("value").equals(itemVal)) {
-									found = true;
-									break;
-								}
-							}
-							if (!found) {
-								valList.remove(k);
-								k--;
-							}
-						}
-					}
+				Object values = parameterAsMap.get("parameterValue");
+				if (values != null && admissibleValues != null) {
+					checkIfValuesAreAdmissible(values, admissibleValues);
 				}
+
 			}
 
 			// DATE RANGE DEFAULT VALUE
@@ -572,7 +510,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			// convert the parameterValue from array of string in array of object
 			DefaultValuesList parameterValueList = new DefaultValuesList();
 			Object o = parameterAsMap.get("parameterValue");
-			if (o != null) {
+			if (o != null && !(o instanceof DefaultValuesList)) {
 				if (o instanceof List) {
 					// CROSS NAV : INPUT PARAM PARAMETER TARGET DOC IS STRING
 					if (o.toString().startsWith("[") && o.toString().endsWith("]") && parameterUse.getValueSelection().equals("man_in")) {
@@ -613,28 +551,6 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			parameterAsMap.put("visualDependencies", objParameter.getVisualDependencies());
 			parameterAsMap.put("lovDependencies", (objParameter.getLovDependencies() != null) ? objParameter.getLovDependencies() : new ArrayList<>());
 
-			// load DEFAULT VALUE if present and if the parameter value is empty both because there is no cross and because there is no session parameter
-			if ((objParameter.getDefaultValues() != null && objParameter.getDefaultValues().size() > 0) || sessionParameterValuePresent) {
-				DefaultValuesList valueList = null;
-				if (jsonCrossParameters.isNull(objParameter.getId())) {
-
-					if (sessionParameterValuePresent) {
-					
-						logger.debug("Session parameter case");
-						valueList = buildParameterSessionValueList(sessionParameterValue, sessionParameterDescription, objParameter); // sostituisci i valori in
-
-					} else {
-						
-						logger.debug("Default value case");
-						valueList = buildDefaultValueList(objParameter, permanentSession);
-					}
-
-					if (valueList != null) {
-						parameterAsMap.put("parameterValue", valueList);
-					}
-				}
-			}
-
 			if (showParameterLov) {
 				parametersArrayList.add(parameterAsMap);
 			}
@@ -645,8 +561,99 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			resultAsMap.put("filterStatus", new ArrayList<>());
 		}
 
+		resultAsMap.put("isReadyForExecution", isReadyForExecution(parameters));
+
 		logger.debug("OUT");
 		return Response.ok(resultAsMap).build();
+	}
+
+	private void checkIfValuesAreAdmissible(Object values, ArrayList<HashMap<String, Object>> admissibleValues) {
+		if (values instanceof List) {
+			List valuesList = (List) values;
+			for (int k = 0; k < valuesList.size(); k++) {
+				Object item = valuesList.get(k);
+				Object toCompare = null;
+				if (item instanceof DefaultValue) {
+					toCompare = ((DefaultValue) item).getValue();
+				} else if (item instanceof String) {
+					toCompare = item;
+				} else {
+					throw new SpagoBIRuntimeException("Value type [" + item.getClass() + "] not admissible");
+				}
+				boolean found = false;
+				for (HashMap<String, Object> parHashVal : admissibleValues) {
+					if (parHashVal.containsKey("value") && parHashVal.get("value").equals(toCompare)) {
+						found = true;
+						break;
+					}
+				}
+				if (!found) {
+					valuesList.remove(k);
+					k--;
+				}
+			}
+		}
+	}
+
+	private Map<String, JSONObject> getSessionParameters(JSONObject requestVal) {
+
+		Map<String, JSONObject> sessionParametersMap = new HashMap<String, JSONObject>();
+
+		try {
+			Object jsonSessionParametersObject = requestVal.get("sessionParameters");
+			JSONObject sessionParametersJSON = new JSONObject(jsonSessionParametersObject.toString());
+
+			Iterator<String> it = sessionParametersJSON.keys();
+			while (it.hasNext()) {
+				String key = it.next();
+				JSONObject parJson = sessionParametersJSON.getJSONObject(key);
+				sessionParametersMap.put(key, parJson);
+			}
+		} catch (Exception e) {
+			logger.error("Error converting session parameters to JSON: ", e);
+		}
+
+		return sessionParametersMap;
+	}
+
+	private boolean isReadyForExecution(List<DocumentParameters> parameters) {
+		for (DocumentParameters parameter : parameters) {
+			List values = parameter.getAnalyticalDocumentParameter().getParameterValues();
+			// if parameter is mandatory and has no value, execution cannot start automatically
+			if (parameter.isMandatory() && (values == null || values.isEmpty())) {
+				logger.debug("Parameter [] is mandatory but has no values. Execution cannot start automatically");
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private void applyRequestParameters(BIObject biObject, JSONObject crossNavigationParametesMap, Map<String, JSONObject> sessionParametersMap, String role,
+			Locale locale) {
+		DocumentUrlManager documentUrlManager = new DocumentUrlManager(this.getUserProfile(), locale);
+		List<BIObjectParameter> parameters = biObject.getBiObjectParameters();
+		for (BIObjectParameter parameter : parameters) {
+			if (crossNavigationParametesMap.has(parameter.getParameterUrlName())) {
+				logger.debug("Found value from request for parmaeter [" + parameter.getParameterUrlName() + "]");
+				documentUrlManager.refreshParameterForFilters(parameter, crossNavigationParametesMap);
+				continue;
+			}
+
+			ParameterUse parameterUse;
+			try {
+				parameterUse = DAOFactory.getParameterUseDAO().loadByParameterIdandRole(parameter.getParID(), role);
+			} catch (EMFUserError e) {
+				throw new SpagoBIRuntimeException(e);
+			}
+
+			JSONObject sessionValue = sessionParametersMap.get(parameter.getParameter().getLabel() + "_" + parameterUse.getLabel());
+			if (sessionValue != null && sessionValue.optString("value") != null) {
+
+				DefaultValuesList valueList = buildParameterSessionValueList(sessionValue.optString("value"), sessionValue.optString("description"), parameter);
+				parameter.setParameterValues(valueList);
+
+			}
+		}
 	}
 
 	private ArrayList<HashMap<String, Object>> manageDataRange(BIObject biObject, String executionRole, String biparameterId) throws EMFUserError,
@@ -1232,57 +1239,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		return role;
 	}
 
-	private DefaultValuesList buildDefaultValueList(DocumentParameters objParameter, SessionContainer permanentSession) {
-		SimpleDateFormat serverDateFormat = new SimpleDateFormat(SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"));
-
-		if (objParameter.getParType() != null && objParameter.getParType().equals("DATE")) {
-			String valueDate = objParameter.getDefaultValues().get(0).getValue().toString();
-			String[] date = valueDate.split("#");
-			SimpleDateFormat format = new SimpleDateFormat(date[1]);
-			DefaultValuesList valueList = new DefaultValuesList();
-			DefaultValue valueDef = new DefaultValue();
-			try {
-				Date d = format.parse(date[0]);
-				String dateServerFormat = serverDateFormat.format(d);
-				valueDef.setValue(dateServerFormat);
-				valueDef.setDescription(objParameter.getDefaultValues().get(0).getDescription());
-				valueList.add(valueDef);
-				return valueList;
-			} catch (ParseException e) {
-				logger.error("Error while building defalt Value List Date Type ", e);
-				return null;
-			}
-		} else if (objParameter.getParType() != null && objParameter.getParType().equals("DATE_RANGE")) {
-			String valueDate = objParameter.getDefaultValues().get(0).getValue().toString();
-			String[] date = valueDate.split("#");
-			SimpleDateFormat format = new SimpleDateFormat(date[1]);
-			DefaultValuesList valueList = new DefaultValuesList();
-			DefaultValue valueDef = new DefaultValue();
-			try {
-
-				String dateRange = date[0];
-				String[] dateRangeArr = dateRange.split("_");
-				String range = dateRangeArr[dateRangeArr.length - 1];
-				dateRange = dateRange.replace("_" + range, "");
-				Date d = format.parse(dateRange);
-				String dateServerFormat = serverDateFormat.format(d);
-				valueDef.setValue(dateServerFormat + "_" + range);
-				valueDef.setDescription(objParameter.getDefaultValues().get(0).getDescription());
-				valueList.add(valueDef);
-				return valueList;
-			} catch (ParseException e) {
-				logger.error("Error while building defalt Value List Date Type ", e);
-				return null;
-			}
-		}
-
-		else {
-			return objParameter.getDefaultValues();
-		}
-
-	}
-
-	private DefaultValuesList buildParameterSessionValueList(String sessionParameterValue, String sessionParameterDescription, DocumentParameters objParameter) {
+	private DefaultValuesList buildParameterSessionValueList(String sessionParameterValue, String sessionParameterDescription, BIObjectParameter objParameter) {
 
 		logger.debug("IN");
 
@@ -1290,7 +1247,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 		SimpleDateFormat serverDateFormat = new SimpleDateFormat(SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"));
 
-		if (objParameter.getParType() != null && objParameter.getParType().equals("DATE")) {
+		if (objParameter.getParameter().getType().equals("DATE")) {
 			String valueDate = sessionParameterValue;
 
 			String[] date = valueDate.split("#");
@@ -1307,7 +1264,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				logger.error("Error while building defalt Value List Date Type ", e);
 				return null;
 			}
-		} else if (objParameter.getParType() != null && objParameter.getParType().equals("DATE_RANGE")) {
+		} else if (objParameter.getParameter().getType().equals("DATE_RANGE")) {
 			// String valueDate = objParameter.getDefaultValues().get(0).getValue().toString();
 			String valueDate = sessionParameterValue;
 			String[] date = valueDate.split("#");

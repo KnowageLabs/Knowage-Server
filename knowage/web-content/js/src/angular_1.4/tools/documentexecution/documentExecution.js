@@ -137,7 +137,8 @@
 					docExecute_paramRolePanelService.toggleParametersPanel(true);
 				}
 				docExecute_urlViewPointService.frameLoaded=false;
-				docExecute_urlViewPointService.executionProcesRestV1(execProperties.selectedRole.name,docExecute_urlViewPointService.buildParameterForFirstExecution(execProperties.executionInstance.CROSS_PARAMETER,execProperties.executionInstance.MENU_PARAMETER));
+				// TODO controllare a cosa serve
+				//docExecute_urlViewPointService.executionProcesRestV1(execProperties.selectedRole.name,docExecute_urlViewPointService.buildParameterForFirstExecution(execProperties.executionInstance.CROSS_PARAMETER,execProperties.executionInstance.MENU_PARAMETER));
 				$scope.firstExecutionProcessRestV1=false;
 				 
 			}
@@ -162,15 +163,14 @@
 		 * BUILD CORRELATION
 		 * Callback function from service getParameter for visual dependencies
 		 */
-		$scope.buildCorrelation = function(parameters){			
+		$scope.buildCorrelation = function(parameters){
 			docExecute_dependencyService.buildVisualCorrelationMap(parameters);
 			docExecute_dependencyService.buildDataDependenciesMap(parameters);
 			docExecute_dependencyService.buildLovCorrelationMap(parameters);
 			//INIT VISUAL CORRELATION PARAMS
 			for(var i=0; i<parameters.length; i++){
 				docExecute_dependencyService.visualCorrelationWatch(parameters[i]);
-				docExecute_dependencyService.lovCorrelationWatch(parameters[i]);
-				
+				//docExecute_dependencyService.lovCorrelationWatch(parameters[i]);
 			}
 		};
 				

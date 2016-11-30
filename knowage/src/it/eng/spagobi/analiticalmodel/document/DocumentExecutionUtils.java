@@ -75,25 +75,14 @@ public class DocumentExecutionUtils {
 		return lovProvDet;
 	}
 
-	public static List<DocumentParameters> getParameters(BIObject obj, String executionRole, Locale locale, String modality) {
+	public static List<DocumentParameters> getParameters(BIObject document, String executionRole, Locale locale, String modality) {
 		List<DocumentParameters> parametersForExecution = new ArrayList<DocumentParameters>();
-		BIObject document = new BIObject();
-		try {
-			document = DAOFactory.getBIObjectDAO().loadBIObjectForExecutionByIdAndRole(obj.getId(), executionRole);
-		} catch (EMFUserError e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		List<BIObjectParameter> parameters = document.getBiObjectParameters();
 		if (parameters != null && parameters.size() > 0) {
 			Iterator<BIObjectParameter> it = parameters.iterator();
 			while (it.hasNext()) {
 				BIObjectParameter parameter = it.next();
-				// try {
 				parametersForExecution.add(new DocumentParameters(parameter, executionRole, locale, document));
-				// } catch (Exception e) {
-				// System.out.println("catch parameter ...no add !!! ");
-				// }
 			}
 		}
 		return parametersForExecution;

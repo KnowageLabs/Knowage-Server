@@ -3,7 +3,9 @@ package it.eng.spagobi.analiticalmodel.document.handlers;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.document.DocumentExecutionUtils;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValue;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesList;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesRetriever;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
@@ -16,17 +18,24 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParviewDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
+import it.eng.spagobi.behaviouralmodel.lov.bo.DependenciesPostProcessingLov;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.LovDetailFactory;
 import it.eng.spagobi.behaviouralmodel.lov.bo.LovResultHandler;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
+import it.eng.spagobi.behaviouralmodel.lov.exceptions.MissingLOVDependencyException;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -35,6 +44,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class DocumentParameters {
 	private static Logger logger = Logger.getLogger(DocumentParameters.class);
@@ -73,6 +85,10 @@ public class DocumentParameters {
 	Integer colspan;
 	Integer thickPerc;
 
+	String lovValueColumnName;
+	String lovDescriptionColumnName;
+	List<String> lovColumnsNames;
+
 	int valuesCount;
 	// used to comunicate to the client the unique
 	// valid value in case valuesCount = 1
@@ -82,6 +98,7 @@ public class DocumentParameters {
 	List<Integer> objParameterIds;
 
 	DefaultValuesList defaultValues;
+	ArrayList<HashMap<String, Object>> admissibleValues;
 
 	// dependencies (dataDep & visualDep &lovDep)
 	Map<String, List<ParameterDependency>> dependencies;
@@ -112,7 +129,7 @@ public class DocumentParameters {
 		initDAO();
 		initAttributes();
 		initDependencies();
-		loadValues();
+		loadAdmissibleValues();
 		loadDefaultValues();
 		objParameterIds = new ArrayList<Integer>();
 	}
@@ -309,39 +326,219 @@ public class DocumentParameters {
 		}
 	}
 
-	public void loadValues() {
-		// if ("COMBOBOX".equalsIgnoreCase(selectionType) || "LIST".equalsIgnoreCase(selectionType) || "SLIDER".equalsIgnoreCase(selectionType)
-		// || "TREE".equalsIgnoreCase(selectionType)) { // load values only if it is not a lookup
+	public void loadAdmissibleValues() {
 
-		if (!hasParameterInsideLOV()
-				&& ("COMBOBOX".equalsIgnoreCase(selectionType) || "LIST".equalsIgnoreCase(selectionType) || "SLIDER".equalsIgnoreCase(selectionType) || "TREE"
-						.equalsIgnoreCase(selectionType))) { // load values only if it is not a lookup
+		try {
 
-			List lovs = getLOV();
-			setValuesCount(lovs == null ? 0 : lovs.size());
-			if (getValuesCount() == 1) {
-				SourceBean lovSB = (SourceBean) lovs.get(0);
-				value = getValueFromLov(lovSB);
+			DocumentUrlManager dum = new DocumentUrlManager(UserProfileManager.getProfile(), locale);
+
+			Integer paruseId = analyticalDriverExecModality.getUseID();
+			ParameterUse parameterUse = DAOFactory.getParameterUseDAO().loadByUseID(paruseId);
+			// get admissible values metadata (i.e. LOV metadata, in case AD has LOV)
+			if ("lov".equalsIgnoreCase(parameterUse.getValueSelection())) {
+				// get LOV metadata
+				ILovDetail lovProvDet = dum.getLovDetail(analyticalDocumentParameter);
+				lovColumnsNames = lovProvDet.getVisibleColumnNames();
+				lovDescriptionColumnName = lovProvDet.getDescriptionColumnName();
+				lovValueColumnName = lovProvDet.getValueColumnName();
 			}
-		} else {
-			setValuesCount(-1); // it means that we don't know the lov size
+
+			// load values only if it is not a lookup
+			if ("COMBOBOX".equalsIgnoreCase(selectionType) || "LIST".equalsIgnoreCase(selectionType) || "SLIDER".equalsIgnoreCase(selectionType)
+					|| "TREE".equalsIgnoreCase(selectionType)) {
+				List rows;
+				try {
+					rows = executeLOV();
+				} catch (MissingLOVDependencyException e) {
+					logger.debug("Could not get LOV values because of a missing LOV dependency", e);
+					setValuesCount(-1); // it means that we don't know the lov size
+					return;
+				}
+
+				rows = applyPostProcessingDependencies(rows);
+
+				setValuesCount(rows == null ? 0 : rows.size());
+
+				admissibleValues = new ArrayList<HashMap<String, Object>>();
+
+				if (getValuesCount() == 1 && this.isMandatory()) {
+					SourceBean lovSB = (SourceBean) rows.get(0);
+					value = getValueFromLov(lovSB);
+					analyticalDocumentParameter.setParameterValues(new ArrayList<>(Arrays.asList(value)));
+				}
+
+				JSONObject valuesJSON = DocumentExecutionUtils.buildJSONForLOV(dum.getLovDetail(analyticalDocumentParameter), rows,
+						DocumentExecutionUtils.MODE_SIMPLE);
+				JSONArray valuesJSONArray = valuesJSON.getJSONArray("root");
+
+				for (int i = 0; i < valuesJSONArray.length(); i++) {
+					JSONObject item = valuesJSONArray.getJSONObject(i);
+					if (item.length() > 0) {
+
+						HashMap<String, Object> itemAsMap = fromJSONtoMap(item);
+
+						// CHECH VALID DEFAULT PARAM
+						ArrayList<HashMap<String, Object>> defaultErrorValues = new ArrayList<HashMap<String, Object>>();
+						boolean defaultParameterAlreadyExist = false;
+						if (analyticalDocumentParameter.getParameter() != null && analyticalDocumentParameter.getParameter().getModalityValue() != null
+								&& analyticalDocumentParameter.getParameter().getModalityValue().getSelectionType() != null
+								&& !analyticalDocumentParameter.getParameter().getModalityValue().getSelectionType().equals("LOOKUP")) {
+
+							for (HashMap<String, Object> defVal : admissibleValues) {
+								if (defVal.get("value").equals(item.get("value")) && !item.isNull("label")) {
+									if (defVal.get("label").equals(item.get("label")) && defVal.get("description").equals(item.get("description"))) {
+										defaultParameterAlreadyExist = true;
+										break;
+									} else {
+										HashMap<String, Object> itemErrorMap = new HashMap<String, Object>();
+										itemErrorMap.put("error", true);
+										itemErrorMap.put("value", defVal.get("value"));
+										itemErrorMap.put("labelAlreadyExist", defVal.get("label"));
+										itemErrorMap.put("labelSameValue", item.get("label"));
+										defaultErrorValues.add(itemErrorMap);
+										// return defaultErrorValues;
+										admissibleValues = defaultErrorValues;
+									}
+								}
+							}
+						}
+
+						if (!defaultParameterAlreadyExist) {
+							admissibleValues.add(itemAsMap);
+						}
+					}
+				}
+
+			} else {
+				setValuesCount(-1); // it means that we don't know the lov size
+			}
+
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException(e);
 		}
+	}
+
+	private HashMap<String, Object> fromJSONtoMap(JSONObject item) throws JSONException {
+		HashMap<String, Object> itemAsMap = new HashMap<String, Object>();
+
+		for (int j = 0; j < lovColumnsNames.size(); j++) {
+			String key = lovColumnsNames.get(j).toUpperCase();
+
+			if (item.has(key)) {
+				itemAsMap.put(key, item.get(key));
+			}
+		}
+
+		// perché fa sta roba con chiavi cablate nel codice?????
+		itemAsMap.put("value", item.get("value"));
+		itemAsMap.put("label", item.has("label") ? item.get("label") : item.get("value"));
+		if (item.has("id")) {
+			itemAsMap.put("id", item.get("id"));
+		}
+		if (item.has("leaf")) {
+			itemAsMap.put("leaf", item.get("leaf"));
+		}
+		itemAsMap.put("description", item.get("description"));
+		itemAsMap.put("isEnabled", true);
+
+		return itemAsMap;
+	}
+
+	private List applyPostProcessingDependencies(List rows) {
+		Map selectedParameterValues = getSelectedParameterValuesAsMap();
+		IEngUserProfile profile = UserProfileManager.getProfile();
+		DocumentUrlManager dum = new DocumentUrlManager(profile, this.locale);
+		List<ObjParuse> biParameterExecDependencies = dum.getDependencies(analyticalDocumentParameter, this.executionRole);
+		ILovDetail lovProvDet = dum.getLovDetail(analyticalDocumentParameter);
+		if (lovProvDet instanceof DependenciesPostProcessingLov && selectedParameterValues != null && biParameterExecDependencies != null
+				&& biParameterExecDependencies.size() > 0) {
+			rows = ((DependenciesPostProcessingLov) lovProvDet).processDependencies(rows, selectedParameterValues, biParameterExecDependencies);
+		}
+		return rows;
+	}
+
+	private Map getSelectedParameterValuesAsMap() {
+		Map toReturn = new HashMap();
+		List<BIObjectParameter> parameters = this.object.getBiObjectParameters();
+		for (BIObjectParameter parameter : parameters) {
+			toReturn.put(parameter.getParameterUrlName(), parameter.getParameterValues());
+		}
+		return toReturn;
 	}
 
 	public void loadDefaultValues() {
 		logger.debug("IN");
 		try {
 			DefaultValuesRetriever retriever = new DefaultValuesRetriever();
-			// IEngUserProfile profile = getUserProfile();
 			IEngUserProfile profile = UserProfileManager.getProfile();
 			defaultValues = retriever.getDefaultValuesDum(analyticalDocumentParameter, this.object, profile, this.locale, this.executionRole);
+
+			if (defaultValues.size() > 0
+					&& (analyticalDocumentParameter.getParameterValues() == null || analyticalDocumentParameter.getParameterValues().isEmpty())) {
+				// if parameter has no values set, but it has default values, those values are considered as values
+				DefaultValuesList valueList = buildDefaultValueList();
+				if (valueList != null) {
+					analyticalDocumentParameter.setParameterValues(valueList);
+				}
+			}
+
 		} catch (Exception e) {
 			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to get parameter's default values", e);
 		}
 		logger.debug("OUT");
 	}
 
-	private List getLOV() {
+	private DefaultValuesList buildDefaultValueList() {
+		SimpleDateFormat serverDateFormat = new SimpleDateFormat(SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"));
+
+		if (this.getParType() != null && this.getParType().equals("DATE")) {
+			String valueDate = this.getDefaultValues().get(0).getValue().toString();
+			String[] date = valueDate.split("#");
+			SimpleDateFormat format = new SimpleDateFormat(date[1]);
+			DefaultValuesList valueList = new DefaultValuesList();
+			DefaultValue valueDef = new DefaultValue();
+			try {
+				Date d = format.parse(date[0]);
+				String dateServerFormat = serverDateFormat.format(d);
+				valueDef.setValue(dateServerFormat);
+				valueDef.setDescription(this.getDefaultValues().get(0).getDescription());
+				valueList.add(valueDef);
+				return valueList;
+			} catch (ParseException e) {
+				logger.error("Error while building defalt Value List Date Type ", e);
+				return null;
+			}
+		} else if (this.getParType() != null && this.getParType().equals("DATE_RANGE")) {
+			String valueDate = this.getDefaultValues().get(0).getValue().toString();
+			String[] date = valueDate.split("#");
+			SimpleDateFormat format = new SimpleDateFormat(date[1]);
+			DefaultValuesList valueList = new DefaultValuesList();
+			DefaultValue valueDef = new DefaultValue();
+			try {
+
+				String dateRange = date[0];
+				String[] dateRangeArr = dateRange.split("_");
+				String range = dateRangeArr[dateRangeArr.length - 1];
+				dateRange = dateRange.replace("_" + range, "");
+				Date d = format.parse(dateRange);
+				String dateServerFormat = serverDateFormat.format(d);
+				valueDef.setValue(dateServerFormat + "_" + range);
+				valueDef.setDescription(this.getDefaultValues().get(0).getDescription());
+				valueList.add(valueDef);
+				return valueList;
+			} catch (ParseException e) {
+				logger.error("Error while building defalt Value List Date Type ", e);
+				return null;
+			}
+		}
+
+		else {
+			return this.getDefaultValues();
+		}
+
+	}
+
+	private List executeLOV() {
 		List rows = null;
 		String lovResult = null;
 		try {
@@ -357,6 +554,8 @@ public class DocumentParameters {
 			// get all the rows of the result
 			LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
 			rows = lovResultHandler.getRows();
+		} catch (MissingLOVDependencyException e) {
+			throw e;
 		} catch (Exception e) {
 			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to get parameter's values", e);
 		}
@@ -619,6 +818,38 @@ public class DocumentParameters {
 
 	public void setAnalyticalDocumentParameter(BIObjectParameter analyticalDocumentParameter) {
 		this.analyticalDocumentParameter = analyticalDocumentParameter;
+	}
+
+	public String getLovValueColumnName() {
+		return lovValueColumnName;
+	}
+
+	public void setLovValueColumnName(String lovValueColumnName) {
+		this.lovValueColumnName = lovValueColumnName;
+	}
+
+	public String getLovDescriptionColumnName() {
+		return lovDescriptionColumnName;
+	}
+
+	public void setLovDescriptionColumnName(String lovDescriptionColumnName) {
+		this.lovDescriptionColumnName = lovDescriptionColumnName;
+	}
+
+	public List<String> getLovColumnsNames() {
+		return lovColumnsNames;
+	}
+
+	public void setLovColumnsNames(List<String> lovColumnsNames) {
+		this.lovColumnsNames = lovColumnsNames;
+	}
+
+	public ArrayList<HashMap<String, Object>> getAdmissibleValues() {
+		return admissibleValues;
+	}
+
+	public void setAdmissibleValues(ArrayList<HashMap<String, Object>> admissibleValues) {
+		this.admissibleValues = admissibleValues;
 	}
 
 }
