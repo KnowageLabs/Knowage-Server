@@ -71,6 +71,7 @@ import it.eng.spagobi.utilities.cache.CacheItem;
 import it.eng.spagobi.utilities.database.AbstractDataBase;
 import it.eng.spagobi.utilities.database.temporarytable.TemporaryTableManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.groovy.GroovySandbox;
 import it.eng.spagobi.utilities.sql.SqlUtils;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
 
@@ -1409,7 +1410,7 @@ public class DatasetManagementAPI {
 										Object object = basicValues.get(basicColumnName);
 										expression = expression.replace(basicColumnName, object.toString());
 									}
-									calculatedValue = groovy.util.Eval.me(expression);
+									calculatedValue = new GroovySandbox().evaluate(expression);
 								}
 							}
 							record.appendField(new Field(calculatedValue));
