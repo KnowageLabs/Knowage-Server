@@ -131,7 +131,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </head>
 
 <body  ng-controller="functionsCatalogController" class="bodyStyle kn-functionsCatalog" ng-cloak ng-init="userId='<%=getUserId.toString()%>'; isAdmin=<%=adminView%>; ownerUserName='<%=userNameOwner.toString()%>'; isDev=<%=devView%>; isUser=<%=userView%>">  <!-- only one between isAdmin, isDev, isUser is true (see java code)-->
-	
+	<%if(includeInfusion){ %> 
+            <%@include file="/WEB-INF/jsp/commons/infusion/infusionTemplate.html"%> 
+<%} %>
 	<angular-list-detail full-screen=true layout="column">
 		
 		<% 

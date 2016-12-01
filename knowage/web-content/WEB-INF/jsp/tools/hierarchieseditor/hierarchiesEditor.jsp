@@ -56,6 +56,9 @@ if(UserUtilities.haveRoleAndAuthorization(userProfile, null, new String[]{SpagoB
 </head>
 
 <body class="hierBodyStyle">
+<%if(includeInfusion){ %> 
+            <%@include file="/WEB-INF/jsp/commons/infusion/infusionTemplate.html"%> 
+<%} %>	
 	<div ng-cloak ng-controller="hierCtrl">
 		<md-content>
 			<md-tabs md-dynamic-height md-border-bottom>

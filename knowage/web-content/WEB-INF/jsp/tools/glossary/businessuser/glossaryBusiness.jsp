@@ -53,7 +53,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 <body class="bodyStyle kn-glossary-definition">
-
+<%if(includeInfusion){ %> 
+            <%@include file="/WEB-INF/jsp/commons/infusion/infusionTemplate.html"%> 
+<%} %>
 	<div ng-controller="Controller as ctrl" class="h100">
 
 

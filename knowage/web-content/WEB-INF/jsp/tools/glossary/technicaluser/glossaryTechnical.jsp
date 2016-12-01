@@ -65,6 +65,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </head>
 
 <body class="kn-glossary-execution">
+<%if(includeInfusion){ %> 
+            <%@include file="/WEB-INF/jsp/commons/infusion/infusionTemplate.html"%> 
+<%} %>
 	<div ng-controller="Controller_tec as global" layout-fill>
 		<md-content class="glossaryTec"> 
 			<md-tabs md-border-bottom>

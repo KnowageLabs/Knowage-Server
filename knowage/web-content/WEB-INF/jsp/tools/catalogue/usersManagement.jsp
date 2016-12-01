@@ -49,6 +49,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </head>
 <body class="bodyStyle kn-usersManagement"
 	ng-controller="UsersManagementController as ctrl">
+	<%if(includeInfusion){ %> 
+            <%@include file="/WEB-INF/jsp/commons/infusion/infusionTemplate.html"%>
+      
+     <%} %>	
    <angular-list-detail show-detail="showme">
 	<list label='translate.load("sbi.users.usersList")' new-function="createUser"> 
 

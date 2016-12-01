@@ -53,7 +53,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 <body class="bodyStyle">
+
 <rest-loading></rest-loading>
+<%if(includeInfusion){ %> 
+            <%@include file="/WEB-INF/jsp/commons/infusion/infusionTemplate.html"%> 
+<%} %>
 	<angular-list-detail ng-controller="Controller"
 		 full-screen=true>
 	<list label='translate.load("sbi.calendar")' <%= canSee? "new-function='newCalendar'":"" %>> 

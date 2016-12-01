@@ -54,7 +54,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </head>
 
 <body class="bodyStyle kn-cross-navigation-definition" ng-app="crossDefinition" id="ng-app">
-
+<%if(includeInfusion){ %> 
+            <%@include file="/WEB-INF/jsp/commons/infusion/infusionTemplate.html"%> 
+<%} %>
 <script type="text/ng-template" id="nodes_renderer1.html">
 <md-toolbar class="ternaryToolbar tree-node tree-node-content crossnavigation-parameter " ui-tree-handle layout="row">
     <div>
