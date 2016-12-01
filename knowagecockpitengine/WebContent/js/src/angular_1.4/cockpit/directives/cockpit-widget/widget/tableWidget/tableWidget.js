@@ -369,6 +369,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 												htm="<div layout='row' style='background-color:"+currentColumn.colorThresholdOptions.color[i] +"' layout-align='start center'>";
 												break;
 											}
+											else if(currentColumn.colorThresholdOptions.condition[i]==">=" && value>=currentColumn.colorThresholdOptions.conditionValue[i])
+											{
+												htm="<div layout='row' style='background-color:"+currentColumn.colorThresholdOptions.color[i] +"' layout-align='start center'>";
+												break;
+											}
+											else if(currentColumn.colorThresholdOptions.condition[i]=="<=" && value<=currentColumn.colorThresholdOptions.conditionValue[i])
+											{
+												htm="<div layout='row' style='background-color:"+currentColumn.colorThresholdOptions.color[i] +"' layout-align='start center'>";
+												break;
+											}
+											else if(currentColumn.colorThresholdOptions.condition[i]=="!=" && value!=currentColumn.colorThresholdOptions.conditionValue[i])
+											{
+												htm="<div layout='row' style='background-color:"+currentColumn.colorThresholdOptions.color[i] +"' layout-align='start center'>";
+												break;
+											}
+											
+											
 											
 										}	
 
@@ -466,6 +483,58 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 												{	
 
 													if(parseFloat(value)==colInfo.value)
+													{	
+														htm=htm+"&nbsp; <md-icon  style='color:"+ currentColumn.scopeFunc.condition[i].iconColor +"'  md-font-icon='"+currentColumn.scopeFunc.condition[i].icon+"'> </md-icon>";
+														alreadyPutIcon=true;
+
+													}
+													else if(lastIter)
+													{
+														//htm=htm+"&nbsp; <div style='height:\"24px\"; width:\"24px\";'> </div>";
+														htm=htm+"&nbsp; <md-icon md-font-icon='fa fa-fw'></md-icon>";
+													}	
+												}	
+											}
+											else if(colInfo.condition=='>=')
+											{	
+												if(!alreadyPutIcon)
+												{	
+
+													if(parseFloat(value)>=colInfo.value)
+													{	
+														htm=htm+"&nbsp; <md-icon  style='color:"+ currentColumn.scopeFunc.condition[i].iconColor +"'  md-font-icon='"+currentColumn.scopeFunc.condition[i].icon+"'> </md-icon>";
+														alreadyPutIcon=true;
+
+													}
+													else if(lastIter)
+													{
+														htm=htm+"&nbsp; <md-icon md-font-icon='fa fa-fw'></md-icon>";
+													}	
+												}	
+											}
+											else if(colInfo.condition=='<=')
+											{	
+												if(!alreadyPutIcon)
+												{	
+
+													if(parseFloat(value)<=colInfo.value)
+													{	
+														htm=htm+"&nbsp; <md-icon  style='color:"+ currentColumn.scopeFunc.condition[i].iconColor +"'  md-font-icon='"+currentColumn.scopeFunc.condition[i].icon+"'> </md-icon>";
+														alreadyPutIcon=true;
+
+													}
+													else if(lastIter)
+													{
+														htm=htm+"&nbsp; <md-icon md-font-icon='fa fa-fw'></md-icon>";
+													}	
+												}	
+											}
+											else if(colInfo.condition=='!=')
+											{
+												if(!alreadyPutIcon)
+												{	
+
+													if(parseFloat(value)!=colInfo.value)
 													{	
 														htm=htm+"&nbsp; <md-icon  style='color:"+ currentColumn.scopeFunc.condition[i].iconColor +"'  md-font-icon='"+currentColumn.scopeFunc.condition[i].icon+"'> </md-icon>";
 														alreadyPutIcon=true;
