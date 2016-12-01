@@ -18,7 +18,6 @@
 
 package it.eng.knowage.engine.cockpit.api.crosstable;
 
-import groovy.util.Eval;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
@@ -28,6 +27,7 @@ import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.groovy.GroovySandbox;
 
 import java.math.BigInteger;
 import java.sql.Timestamp;
@@ -1372,7 +1372,7 @@ public class CrossTab {
 			}
 		}
 		operation = operation + op.get(i);
-		String evalued = (Eval.me(operation)).toString();
+		String evalued = (new GroovySandbox().evaluate(operation)).toString();
 		return evalued;
 	}
 

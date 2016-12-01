@@ -17,9 +17,9 @@
  */
 package it.eng.spagobi.tools.scheduler;
 
-import groovy.lang.GroovyShell;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
+import it.eng.spagobi.utilities.groovy.GroovySandbox;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -28,28 +28,33 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 public class Formula {
-	
-	static private Logger logger = Logger.getLogger(Formula.class);	
-	
+
+	static private Logger logger = Logger.getLogger(Formula.class);
+
 	private String name;
 	private String description;
 	private String groovyCode;
-	
+
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
+
 	public String getDescription() {
 		return description;
 	}
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
 	public String getGroovyCode() {
 		return groovyCode;
 	}
+
 	public void setGrovyCode(String groovyCode) {
 		this.groovyCode = groovyCode;
 	}
@@ -57,11 +62,14 @@ public class Formula {
 	public Formula(SourceBean configuration) throws Exception {
 		logger.debug("IN");
 		this.name = (String) configuration.getAttribute("name");
-		if (name == null || name.trim().equals("")) throw new Exception("Formula name not found!");
+		if (name == null || name.trim().equals(""))
+			throw new Exception("Formula name not found!");
 		this.description = (String) configuration.getAttribute("description");
-		if (description == null || description.trim().equals("")) throw new Exception("Formula description not found!");
+		if (description == null || description.trim().equals(""))
+			throw new Exception("Formula description not found!");
 		this.groovyCode = configuration.getCharacters();
-		if (groovyCode == null || groovyCode.trim().equals("")) throw new Exception("Formula groovy code not found!");
+		if (groovyCode == null || groovyCode.trim().equals(""))
+			throw new Exception("Formula groovy code not found!");
 		logger.debug("OUT");
 	}
 
@@ -76,8 +84,7 @@ public class Formula {
 			throw new Exception("Groovy code not found");
 		}
 		logger.debug("Executing groovy code: \n" + groovyCode);
-		GroovyShell shell = new GroovyShell();
-		Object value = shell.evaluate(groovyCode);
+		Object value = new GroovySandbox().evaluate(groovyCode);
 		String toReturn = null;
 		if (value != null) {
 			toReturn = value.toString();
@@ -85,7 +92,7 @@ public class Formula {
 		logger.debug("OUT: returning " + toReturn);
 		return toReturn;
 	}
-	
+
 	/**
 	 * Returns a List with all the available formulas: they are configured in WEB-INF/conf/tools/scheduler/formulas.xml.
 	 * In case no formulas are found, an empty ArrayList is returned.
@@ -118,7 +125,7 @@ public class Formula {
 		logger.debug("OUT");
 		return toReturn;
 	}
-	
+
 	/**
 	 * Returns the formula corresponding to the specified name.
 	 * If this formula does not exists, null is returned.
@@ -147,5 +154,5 @@ public class Formula {
 		logger.debug("OUT");
 		return toReturn;
 	}
-	
+
 }

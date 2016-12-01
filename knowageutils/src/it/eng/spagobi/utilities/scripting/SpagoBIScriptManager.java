@@ -18,6 +18,7 @@
 package it.eng.spagobi.utilities.scripting;
 
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.groovy.GroovySandbox;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -37,6 +38,7 @@ import javax.script.ScriptEngineManager;
 import javax.script.SimpleBindings;
 import javax.script.SimpleScriptContext;
 
+import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 
 public class SpagoBIScriptManager {
@@ -59,13 +61,6 @@ public class SpagoBIScriptManager {
 
 		results = null;
 		try {
-			ScriptEngine scriptEngine = getScriptEngine(language);
-
-			if (scriptEngine == null) {
-				throw new RuntimeException("No engine available to execute scripts of type [" + language + "]");
-			} else {
-				logger.debug("Found engine [" + scriptEngine.NAME + "]");
-			}
 
 			if (imports != null) {
 				StringBuffer importsBuffer = new StringBuffer();
@@ -80,6 +75,18 @@ public class SpagoBIScriptManager {
 
 				}
 				script = importsBuffer.toString() + script;
+			}
+
+			if (isGroovy(language)) {
+				return evaluateGroovy(script, bindings);
+			}
+
+			ScriptEngine scriptEngine = getScriptEngine(language);
+
+			if (scriptEngine == null) {
+				throw new RuntimeException("No engine available to execute scripts of type [" + language + "]");
+			} else {
+				logger.debug("Found engine [" + scriptEngine.NAME + "]");
 			}
 
 			ScriptContext scriptContext = new SimpleScriptContext();
@@ -97,6 +104,18 @@ public class SpagoBIScriptManager {
 		}
 
 		return results;
+	}
+
+	private static Object evaluateGroovy(String script, Map<String, Object> bindings) throws IOException {
+		logger.debug("Initializating Groovy Sandbox...");
+		GroovySandbox gs = new GroovySandbox();
+		gs.setBindings(bindings);
+		LogMF.debug(logger, "Evaluating script:\n{0}", script);
+		return gs.evaluate(script);
+	}
+
+	private static boolean isGroovy(String language) {
+		return "groovy".equalsIgnoreCase(language);
 	}
 
 	public boolean isEngineSupported(String name) {
