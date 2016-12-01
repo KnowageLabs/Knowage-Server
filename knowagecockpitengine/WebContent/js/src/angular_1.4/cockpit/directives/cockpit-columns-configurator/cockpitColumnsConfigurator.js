@@ -421,7 +421,7 @@ function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,model,s
 	}
 
                         
-	$scope.conditions=['>','<','=','none','>=','<=','!='];
+	$scope.conditions=['none','>','<','=','>=','<=','!='];
 	if($scope.selectedColumn.scopeFunc==undefined)
 	{	
 		$scope.selectedColumn.scopeFunc={conditions:$scope.conditions, condition:[{condition:'none'},{condition:'none'},{condition:'none'},{condition:'none'}]};  
