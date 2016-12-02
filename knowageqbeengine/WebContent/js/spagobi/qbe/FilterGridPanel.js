@@ -1256,8 +1256,8 @@ Ext.extend(Sbi.qbe.FilterGridPanel, Ext.Panel, {
 	}
 	
 	, showTemporalBtn: function(){
-		for(item in this.toolbar.items.items){
-			if(this.toolbar.items.items[item].id=='addTemporal'){
+		for(var iii=0;iii<this.toolbar.items.items;iii++){
+			if(this.toolbar.items.items[iii] && this.toolbar.items.items[iii].id=='addTemporal'){
 				this.toolbar.items.items[item].show();
 			}
 		}
