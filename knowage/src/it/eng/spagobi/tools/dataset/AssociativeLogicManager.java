@@ -23,7 +23,6 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
@@ -157,7 +156,7 @@ public class AssociativeLogicManager {
 						datasetToTableName.put(v1, dataSet.getFlatTableName());
 						datasetToDataSource.put(v1, dataSet.getDataSource());
 						realtimeDatasets.remove(v1);
-					} else if (realtimeDatasets.contains(v1) && dataSet instanceof JDBCDataSet
+					} else if (realtimeDatasets.contains(v1) && DatasetManagementAPI.isJDBCDataSet(dataSet)
 							&& !SqlUtils.isBigDataDialect(dataSet.getDataSource().getHibDialectName())) {
 						QuerableBehaviour querableBehaviour = (QuerableBehaviour) dataSet.getBehaviour(QuerableBehaviour.class.getName());
 						String tableName = "(" + querableBehaviour.getStatement() + ") T";
@@ -234,6 +233,7 @@ public class AssociativeLogicManager {
 		if (realtimeDatasets.contains(dataSet)) {
 			IDataStore dataStore = datasetToDataStore.get(dataSet);
 			if (dataStore != null) {
+				logger.debug("Executing query with MetaModel: " + query);
 				org.apache.metamodel.data.DataSet rs = dataStore.getMetaModelResultSet(query);
 				tuple = getTupleOfValues(rs);
 			} else {
@@ -245,6 +245,7 @@ public class AssociativeLogicManager {
 			Statement stmt = null;
 			ResultSet rs = null;
 			try {
+				logger.debug("Executing query: " + query);
 				connection = getDataSource(dataSet).getConnection();
 				stmt = connection.createStatement();
 				rs = stmt.executeQuery(query);

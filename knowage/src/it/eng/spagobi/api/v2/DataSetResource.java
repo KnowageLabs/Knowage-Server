@@ -25,6 +25,7 @@ import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.dataset.AssociativeLogicManager;
+import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
@@ -132,13 +133,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 	public String getNotDerivedDataSets(String typeDoc, String callback) {
 		logger.debug("IN");
 
-		IDataSetDAO dsDAO;
-		try {
-			dsDAO = DAOFactory.getDataSetDAO();
-		} catch (EMFUserError e) {
-			logger.error("Error while looking for datasets", e);
-			throw new SpagoBIRuntimeException("Error while looking for datasets", e);
-		}
+		IDataSetDAO dsDAO = getDataSetDAO();
 
 		List<IDataSet> toBeReturned = dsDAO.loadNotDerivedDataSets(getUserProfile());
 
@@ -157,6 +152,17 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		} catch (SerializationException e) {
 			throw new SpagoBIRestServiceException(getLocale(), e);
 		}
+	}
+
+	private IDataSetDAO getDataSetDAO() {
+		IDataSetDAO dsDAO;
+		try {
+			dsDAO = DAOFactory.getDataSetDAO();
+		} catch (EMFUserError e) {
+			logger.error("Error while looking for datasets", e);
+			throw new SpagoBIRuntimeException("Error while looking for datasets", e);
+		}
+		return dsDAO;
 	}
 
 	@Override
@@ -400,24 +406,26 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 				if (datasetDotColumn.indexOf(".") >= 0) {
 					String[] tmpDatasetAndColumn = datasetDotColumn.split("\\.");
 					if (tmpDatasetAndColumn.length == 2) {
-						String dataset = tmpDatasetAndColumn[0];
+						String datasetLabel = tmpDatasetAndColumn[0];
 						String column = tmpDatasetAndColumn[1];
 						column = SqlUtils.unQuote(column);
 
-						if (dataset != null && !dataset.isEmpty() && column != null && !column.isEmpty()) {
+						if (datasetLabel != null && !datasetLabel.isEmpty() && column != null && !column.isEmpty()) {
 							value = selectionsObject.getJSONArray(datasetDotColumn).get(0).toString();
+							IDataSet dataset = getDataSetDAO().loadDataSetByLabel(datasetLabel);
 							String filter;
-							if (realtimeDatasets.contains(dataset)) {
+							if (realtimeDatasets.contains(datasetLabel)
+									&& (!DatasetManagementAPI.isJDBCDataSet(dataset) || SqlUtils.isBigDataDialect(dataset.getDataSource().getHibDialectName()))) {
 								filter = DataStore.DEFAULT_TABLE_NAME + "." + AbstractJDBCDataset.encapsulateColumnName(column, null) + "='" + value + "'";
 							} else {
 								filter = AbstractJDBCDataset.encapsulateColumnName(column, cacheDataSource) + "=('" + value + "')";
 							}
-							filtersMap.put(dataset, filter);
+							filtersMap.put(datasetLabel, filter);
 
-							if (!selectionsMap.containsKey(dataset)) {
-								selectionsMap.put(dataset, new HashMap<String, Set<String>>());
+							if (!selectionsMap.containsKey(datasetLabel)) {
+								selectionsMap.put(datasetLabel, new HashMap<String, Set<String>>());
 							}
-							Map<String, Set<String>> selection = selectionsMap.get(dataset);
+							Map<String, Set<String>> selection = selectionsMap.get(datasetLabel);
 							if (!selection.containsKey(column)) {
 								selection.put(column, new HashSet<String>());
 							}
@@ -497,13 +505,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 			throws JSONException {
 		List<FilterCriteria> filterCriterias = new ArrayList<FilterCriteria>();
 
-		IDataSetDAO dsDAO;
-		try {
-			dsDAO = DAOFactory.getDataSetDAO();
-		} catch (EMFUserError e) {
-			logger.error("Error while looking for datasets", e);
-			throw new SpagoBIRuntimeException("Error while looking for datasets", e);
-		}
+		IDataSetDAO dsDAO = getDataSetDAO();
 
 		IDataSet dataSet = dsDAO.loadDataSetByLabel(datasetLabel);
 

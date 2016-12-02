@@ -1687,6 +1687,7 @@ public class DatasetManagementAPI {
 
 			for (ProjectionCriteria projection : projections) {
 				String columnName = projection.getColumnName();
+				boolean isCalculatedColumn = columnName.contains(AbstractDataBase.STANDARD_ALIAS_DELIMITER);
 				String aggregateFunction = projection.getAggregateFunction();
 				IAggregationFunction aggregationFunction = AggregationFunctions.get(aggregateFunction);
 				String aliasName = projection.getAliasName();
@@ -1706,7 +1707,7 @@ public class DatasetManagementAPI {
 					columnName = datasetAlias.get(projection.getDataset()) + " - " + columnName;
 				}
 
-				if (columnName.contains(AbstractDataBase.STANDARD_ALIAS_DELIMITER)) {
+				if (isCalculatedColumn) {
 					// this is a calculated field!
 					if (isRealtime) {
 						if (aggregationFunction == null) {
@@ -1789,7 +1790,7 @@ public class DatasetManagementAPI {
 					}
 				}
 
-				if (!columnName.contains(AbstractDataBase.STANDARD_ALIAS_DELIMITER)) {
+				if (!isCalculatedColumn) {
 					notCalculatedColumns.add(columnName);
 					if (hasAlias) {
 						columnName += " AS " + aliasName;
