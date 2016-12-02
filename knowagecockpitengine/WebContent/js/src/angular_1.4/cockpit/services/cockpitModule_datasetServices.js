@@ -316,18 +316,20 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		}
 		
 		var dataToSendWithoutParams = {};
-		angular.copy(dataToSend,dataToSendWithoutParams);
-		angular.forEach(dataToSendWithoutParams, function(item){
-			var paramsToDelete = [];
-			for (var property in item) {
-			    if (item.hasOwnProperty(property) && property.startsWith("$P{") && property.endsWith("}")) {
-			    	paramsToDelete.push(property);
-			    }
-			}
-			angular.forEach(paramsToDelete, function(prop){
-				delete item[prop];
+		if(dataset.useCache == true || ngModel.updateble == true){
+			angular.copy(dataToSend,dataToSendWithoutParams);
+			angular.forEach(dataToSendWithoutParams, function(item){
+				var paramsToDelete = [];
+				for (var property in item) {
+				    if (item.hasOwnProperty(property) && property.startsWith("$P{") && property.endsWith("}")) {
+				    	paramsToDelete.push(property);
+				    }
+				}
+				angular.forEach(paramsToDelete, function(prop){
+					delete item[prop];
+				});
 			});
-		});
+		}
 		
 		sbiModule_restServices.restToRootProject();
 		sbiModule_restServices.promisePost("2.0/datasets",encodeURIComponent(dataset.label)+"/data"+params,dataToSendWithoutParams)
