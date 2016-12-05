@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,13 +11,15 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.utilities;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -29,7 +31,7 @@ import org.apache.log4j.Logger;
 
 /**
  * The Class StringUtils.
- * 
+ *
  * @author Andrea Gioia
  */
 public class StringUtils {
@@ -72,16 +74,16 @@ public class StringUtils {
 
 	/**
 	 * Replace parameters.
-	 * 
+	 *
 	 * @param filterCondition
 	 *            the filter condition
 	 * @param parameterTypeIdentifier
 	 *            the parameter type identifier
 	 * @param parameters
 	 *            the parameters
-	 * 
+	 *
 	 * @return the string
-	 * 
+	 *
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
@@ -104,16 +106,16 @@ public class StringUtils {
 
 	/**
 	 * Replace parameters.
-	 * 
+	 *
 	 * @param filterCondition
 	 *            the filter condition
 	 * @param parameterTypeIdentifier
 	 *            the parameter type identifier
 	 * @param parameters
 	 *            the parameters
-	 * 
+	 *
 	 * @return the string
-	 * 
+	 *
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
@@ -138,14 +140,14 @@ public class StringUtils {
 
 	/**
 	 * Gets the parameters.
-	 * 
+	 *
 	 * @param str
 	 *            the str
 	 * @param parameterTypeIdentifier
 	 *            the parameter type identifier
-	 * 
+	 *
 	 * @return the parameters
-	 * 
+	 *
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
@@ -168,7 +170,7 @@ public class StringUtils {
 
 	/**
 	 * Escapes the input string as a HQL static operand. At the time being, it replaces "'" with "''"
-	 * 
+	 *
 	 * @param parameter
 	 *            the parameter to be escaped
 	 * @return the escaped String
@@ -183,7 +185,7 @@ public class StringUtils {
 
 	/**
 	 * Joins the input string array into a unique string using the specified separator
-	 * 
+	 *
 	 * @param strings
 	 *            The strings to be joined
 	 * @param separator
@@ -201,7 +203,7 @@ public class StringUtils {
 
 	/**
 	 * Joins the input collection of string into a unique string using the specified separator
-	 * 
+	 *
 	 * @param strings
 	 *            The collection to be joined
 	 * @param separator
@@ -221,10 +223,10 @@ public class StringUtils {
 
 	/**
 	 * escape all the occurences of '. As escape char use ' so all the ' in the original string will be replaced with ''
-	 * 
+	 *
 	 * @param the
 	 *            string that must be escaped
-	 * 
+	 *
 	 * @return the escaped string
 	 */
 	public static String escapeQuotes(String str) {
@@ -233,14 +235,14 @@ public class StringUtils {
 
 	/**
 	 * escape all the occurences of c. As escape char use escapeChar so all the c in the original string will be replaced with escapeChar + c
-	 * 
+	 *
 	 * @param str
 	 *            the string that must be escaped
 	 * @param c
 	 *            the char to escape
 	 * @param escapeChar
 	 *            the char that will be use to escape
-	 * 
+	 *
 	 * @return the escaped string
 	 */
 	public static String escape(String str, char c, char escapeChar) {
@@ -259,7 +261,7 @@ public class StringUtils {
 
 	/**
 	 * Escapes the characters for the html code: ' --> &#39;
-	 * 
+	 *
 	 * @param str
 	 * @return
 	 */
@@ -269,8 +271,36 @@ public class StringUtils {
 	}
 
 	/**
+	 * Convert Map<String, String> to String (URL format)
+	 *
+	 * @param str
+	 * @return
+	 */
+	public static String mapToString(Map<String, String> map) {
+		StringBuilder stringBuilder = new StringBuilder();
+
+		for (String key : map.keySet()) {
+			if (stringBuilder.length() > 0) {
+				stringBuilder.append("&");
+			}
+			String value = map.get(key);
+			try {
+				if (value instanceof String && value != null) {
+					stringBuilder.append((key != null ? URLEncoder.encode(key, "UTF-8") : ""));
+					stringBuilder.append("=");
+					stringBuilder.append(value != null ? URLEncoder.encode(value, "UTF-8") : "");
+				}
+			} catch (UnsupportedEncodingException e) {
+				throw new RuntimeException("This method requires UTF-8 encoding support", e);
+			}
+		}
+
+		return stringBuilder.toString();
+	}
+
+	/**
 	 * The main method.
-	 * 
+	 *
 	 * @param args
 	 *            the arguments
 	 */

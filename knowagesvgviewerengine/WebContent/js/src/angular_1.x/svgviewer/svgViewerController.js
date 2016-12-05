@@ -4,7 +4,7 @@
  * 
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
+ * the Free Software Foundation, either version 3 of tohe License, or
  * (at your option) any later version.
  *
  * Knowage is distributed in the hope that it will be useful,
@@ -31,6 +31,8 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
   //initialize for the first level
   $scope.currentLevel 			= 1;
   $scope.currentMember 			= null;
+  $scope.document				= null;
+  $scope.env					= null;
   //optional
   $scope.currentParent 			= null;
   $scope.svgWidth 				= null;
@@ -48,10 +50,8 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
     
   $scope.openSideNav = function(customized) {
 	  	if(customized){
-	  		debugger;
 	  		$mdSidenav('svgSideNav').toggle();
 	  	}else{
-	  		debugger;
 	  		$scope.sidenavOpened = !$scope.sidenavOpened;
 	  	}
   };
@@ -63,12 +63,13 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 	  var pathElement = $scope.drillPathStack.pop();
 	  $scope.currentMember = pathElement.member;
 	  $scope.currentParent = pathElement.parent;
-
+	  $scope.document = pathElement.document;
+	  $scope.env = pathElement.env;
 	  
 	  if (pathElement.level == 1){
-		  document.getElementById('svgContainer').src = sbiModule_config.contextName+"/api/1.0/svgviewer/drillMap?level="+pathElement.level;
+		  document.getElementById('svgContainer').src = sbiModule_config.contextName+"/api/1.0/svgviewer/drillMap?document="+pathElement.document+"&level="+pathElement.level+pathElement.env;
 	  } else {
-		  var urlToCall = sbiModule_config.contextName+"/api/1.0/svgviewer/drillMap?member="+pathElement.member+"&level="+pathElement.level;
+		  var urlToCall = sbiModule_config.contextName+"/api/1.0/svgviewer/drillMap?document="+pathElement.document+"&member="+pathElement.member+"&level="+pathElement.level+pathElement.env;
 		  if (pathElement.parent != undefined && pathElement.parent != null){
 			  urlToCall = urlToCall + "&parent=" + pathElement.parent;
 		  }
@@ -88,8 +89,6 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 	  $scope.getLayers();
 	  $scope.getLegendColors();	  
 	  $scope.getInfoText();
-	  //per poste
-//	  $scope.getCustomInfo();
 	  
 	  $scope.noError = true;
 	});
@@ -97,11 +96,17 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
   //Listener called when an element on the svg is clicked
   $window.document.addEventListener("SVGElementClicked", function(e) {
 	  $scope.resetElements();
+	  
+//	  var driversParameter = getDriverParameters();
+		
 	  //update drill path with stack
 	  var pathElement = new Object();
 	  pathElement.level = $scope.currentLevel;
 	  pathElement.member = $scope.currentMember;
 	  pathElement.parent = $scope.currentParent;
+	  pathElement.document = $scope.document || e.detail.document;
+//	  pathElement.env = e.detail.env;
+	  pathElement.env = $scope.env || e.detail.env;
 	  $scope.drillPathStack.push(pathElement);
 	  
 	  //alert("Clicked element with id "+e.detail);  
@@ -110,16 +115,15 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 	  //check if the member name is specified in the dataset configuration o directly from the svg id
 	  if (e.detail.memberName != undefined && e.detail.memberName != null){
 		  $scope.currentMember = e.detail.memberName;
-//		  $scope.currentParent = e.detail.idElement;
-//		  document.getElementById('svgContainer').src = sbiModule_config.contextName+"/api/1.0/svgviewer/drillMap?member="+e.detail.memberName+"&level="+$scope.currentLevel+"&parent="+e.detail.idElement;
+		  $scope.currentDocument = e.detail.document;
 	  } else {
 		  //get svg element's id 
 		  $scope.currentMember = e.detail.idElement;
-//		  $scope.currentParent = e.detail.idElement; // null;
-//		  document.getElementById('svgContainer').src = sbiModule_config.contextName+"/api/1.0/svgviewer/drillMap?member="+e.detail.idElement+"&level="+$scope.currentLevel;
 	  }
 	  $scope.currentParent = e.detail.idElement;
-	  document.getElementById('svgContainer').src = sbiModule_config.contextName+"/api/1.0/svgviewer/drillMap?member="+$scope.currentMember+"&level="+$scope.currentLevel+"&parent="+$scope.currentParent;
+	  $scope.document = e.detail.document;
+	  $scope.env = e.detail.env;
+	  document.getElementById('svgContainer').src = sbiModule_config.contextName+"/api/1.0/svgviewer/drillMap?member="+$scope.currentMember+"&level="+$scope.currentLevel+"&parent="+$scope.currentParent+"&document="+$scope.document+$scope.env;
 	  
 	  
 	  if  ($scope.currentLevel > 1){

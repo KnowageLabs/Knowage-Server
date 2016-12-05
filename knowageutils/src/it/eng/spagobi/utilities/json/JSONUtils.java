@@ -177,6 +177,42 @@ public class JSONUtils {
 	}
 
 	/**
+	 * Transform a map into a jsonObject
+	 *
+	 * @param map
+	 * @return
+	 * @throws JSONException
+	 */
+	public static JSONObject getJsonFromMap(Map<String, Object> map) throws JSONException {
+		JSONObject jsonData = new JSONObject();
+		for (String key : map.keySet()) {
+			Object value = map.get(key);
+			if (value != null && value instanceof Map<?, ?>) {
+				value = getJsonFromMap((Map<String, Object>) value);
+			}
+			jsonData.put(key, value);
+		}
+		return jsonData;
+	}
+
+	public static String getQueryString(JSONObject json) throws JSONException {
+		StringBuilder sb = new StringBuilder();
+		Iterator<String> keys = json.keys();
+		while (keys.hasNext()) {
+			String key = keys.next();
+			Object value = json.get(key);
+			if (value != null && value instanceof String) {
+				sb.append(key);
+				sb.append("=");
+				sb.append(json.get(key));
+				sb.append("&"); // To allow for another argument.
+			}
+		}
+
+		return sb.toString();
+	}
+
+	/**
 	 * Check if a JSONObject is empty
 	 *
 	 * @param a

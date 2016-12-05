@@ -73,11 +73,14 @@ onload="init(evt);">
 		  window.CustomEvent = CustomEvent;
 		})();
 		
-		function clickedElement(idElement, memberName){
+		function clickedElement(env, idDocument, idElement, memberName){
 			//Launch an event to announce that an element was clicked
+			//debugger;
 			var eventDetail = new Object();
 			eventDetail.idElement = idElement;
 			eventDetail.memberName = memberName;
+			eventDetail.document = idDocument;
+			eventDetail.env = env;
 			var event = new CustomEvent("SVGElementClicked", { "detail": eventDetail });
 			window.parent.document.dispatchEvent(event);
 		}

@@ -20,11 +20,13 @@ package it.eng.knowage.engines.svgviewer.datamart.provider.configurator;
 import it.eng.knowage.engines.svgviewer.SvgViewerEngineConstants;
 import it.eng.knowage.engines.svgviewer.SvgViewerEngineException;
 import it.eng.knowage.engines.svgviewer.datamart.provider.DataMartProvider;
+import it.eng.knowage.engines.svgviewer.dataset.HierarchyMember;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 
 import org.apache.log4j.Logger;
@@ -67,7 +69,9 @@ public class DataMartProviderConfigurator {
 			IDataSet dataSet = null;
 
 			// get dataset of active member if present...
-			String labelDsData = datamartProvider.getHierarchyMember(datamartProvider.getSelectedMemberName()).getDsMeasure();
+			HierarchyMember hierMember = datamartProvider.getHierarchyMember(datamartProvider.getSelectedMemberName());
+			Assert.assertNotNull(hierMember, "Hierarchy Member [" + datamartProvider.getSelectedMemberName() + "] cannot be null");
+			String labelDsData = hierMember.getDsMeasure();
 			try {
 				dataSet = DAOFactory.getDataSetDAO().loadDataSetByLabel(labelDsData);
 				if (dataSet != null) {

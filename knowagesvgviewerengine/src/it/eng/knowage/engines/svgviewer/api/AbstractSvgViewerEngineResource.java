@@ -86,9 +86,13 @@ public class AbstractSvgViewerEngineResource extends AbstractRestService {
 		//
 	}
 
+	public void setEngineInstance(SvgViewerEngineInstance engineInstance) {
+		getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
+	}
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.utilities.engines.rest.AbstractRestService#getServletRequest ()
 	 */
 	@Override

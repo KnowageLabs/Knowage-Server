@@ -31,6 +31,7 @@ import it.eng.knowage.engines.svgviewer.map.utils.SVGMapSaver;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
@@ -39,6 +40,7 @@ import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.json.JSONUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -1491,10 +1493,28 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 			featureElement.setAttribute("style", "cursor:pointer");
 		}
 
+		// get document_id
+		String documentId = (String) this.getEnv().get("DOCUMENT_ID");
+
+		JSONObject jsonOEnv = new JSONObject();
+		String strEnv = "";
+		try {
+			jsonOEnv = JSONUtils.getJsonFromMap(this.getEnv());
+			jsonOEnv.remove("ENV_USER_PROFILE"); // clean profile info for correct url
+			jsonOEnv.remove("level");
+			strEnv = "&" + JSONUtils.getQueryString(jsonOEnv);
+			strEnv = SpagoBIUtilities.encode(strEnv.substring(0, strEnv.length() - 1));
+		} catch (JSONException je) {
+			logger.error("An error occured while convert map [env] to json object: " + je);
+		}
+		// String strEnv = StringUtils.mapToString(this.getEnv());
+
 		if (drillId == null) {
-			featureElement.setAttribute("onclick", "javascript:clickedElement('" + elementId + "')");
+			// featureElement.setAttribute("onclick", "javascript:clickedElement('" + documentId + "','" + elementId + "')");
+			featureElement.setAttribute("onclick", "javascript:clickedElement('" + strEnv + "','" + documentId + "','" + elementId + "')");
 		} else {
-			featureElement.setAttribute("onclick", "javascript:clickedElement('" + elementId + "','" + drillId + "')");
+			// featureElement.setAttribute("onclick", "javascript:clickedElement('" + documentId + "','" + elementId + "','" + drillId + "')");
+			featureElement.setAttribute("onclick", "javascript:clickedElement('" + strEnv + "','" + documentId + "','" + elementId + "','" + drillId + "')");
 		}
 
 		logger.debug("OUT");

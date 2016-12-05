@@ -31,8 +31,9 @@
 		<%@include file="/WEB-INF/jsp/commons/angular/svgViewerImport.jsp"%>
 	
 		<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/svgviewer/svgViewerController.js"></script>
-		<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/svgviewer/directives/dynamicSvg.js"></script>
-	
+		<% if (isCustomizedSVG) {%>
+			<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/svgviewer/directives/dynamicSvg.js"></script>
+		<% } %>
 		<title>SVG Viewer</title>
 	</head>
 
@@ -40,8 +41,8 @@
 	<body class="kn-svgviewer">    
 	          	
 			<div ng-app="svgViewerApp" class="svgMainContainer">
-			     <div  class="divFlex" ng-controller="SvgViewerController" ng-scope> 
-			     <% if (isCustomizedSVG) {%><md-sidenav layout="column"  id="svgInfoSidenav" md-component-id="svgSideNav" ng-show="<%=propertiesPanelVisible%>" class="md-sidenav-<%= propertiesPanelPosition %>"  ><% }else{ %>
+			     <div  class="divFlex" ng-controller="SvgViewerController" ng-scope>  
+			     <% if (isCustomizedSVG) {%><md-sidenav layout="column"  id="svgInfoSidenav" md-component-id="svgSideNav" ng-show="<%=propertiesPanelVisible%> && noError" class="md-sidenav-<%= propertiesPanelPosition %>"  ><% }else{ %>
 			      <md-sidenav layout="column" ng-class="{'_md-locked-open':sidenavOpened}" id="svgInfoSidenav" md-component-id="svgSideNav" ng-show="<%=propertiesPanelVisible%> && noError" class="md-sidenav-<%= propertiesPanelPosition %>"  ><% } %>
 			      <section  >
 				     <div class="md-accordion" layout="column">

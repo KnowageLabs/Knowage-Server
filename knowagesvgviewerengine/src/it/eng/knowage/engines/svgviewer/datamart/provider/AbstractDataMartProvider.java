@@ -25,7 +25,6 @@ import it.eng.knowage.engines.svgviewer.dataset.DataMart;
 import it.eng.knowage.engines.svgviewer.dataset.HierarchyMember;
 import it.eng.knowage.engines.svgviewer.dataset.provider.Hierarchy;
 import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.util.Map;
 import java.util.Set;
@@ -227,9 +226,7 @@ public class AbstractDataMartProvider extends AbstractSvgViewerEngineComponent i
 	 */
 	@Override
 	public HierarchyMember getHierarchyMember(String name) {
-		HierarchyMember toReturn = this.hierarchyMembers.get(name);
-		Assert.assertNotNull(toReturn, "Hierarchy Member [" + name + "] cannot be null");
-		return toReturn;
+		return hierarchyMembers.get(name);
 	}
 
 	@Override

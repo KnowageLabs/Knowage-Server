@@ -17,6 +17,7 @@
  */
 package it.eng.knowage.engines.svgviewer.api.restful;
 
+import it.eng.knowage.engines.svgviewer.SvgViewerEngine;
 import it.eng.knowage.engines.svgviewer.SvgViewerEngineConstants;
 import it.eng.knowage.engines.svgviewer.SvgViewerEngineInstance;
 import it.eng.knowage.engines.svgviewer.api.AbstractSvgViewerEngineResource;
@@ -32,11 +33,14 @@ import it.eng.knowage.engines.svgviewer.map.renderer.Layer;
 import it.eng.knowage.engines.svgviewer.map.renderer.Measure;
 import it.eng.knowage.engines.svgviewer.map.renderer.configurator.InteractiveMapRendererConfigurator;
 import it.eng.spago.base.SourceBean;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.exceptions.DataSetNotLoadedYetException;
+import it.eng.spagobi.utilities.callbacks.mapcatalogue.MapCatalogueAccessUtils;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
@@ -156,13 +160,27 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 	@Path("/drillMap")
 	@GET
 	@Produces(SvgViewerEngineConstants.SVG_MIME_TYPE + "; charset=UTF-8")
-	// @Produces({ MediaType.APPLICATION_SVG_XML, MediaType.APPLICATION_JSON })
-	public Response drillMap(@QueryParam("level") String level, @QueryParam("member") String member, @QueryParam("parent") String parent) {
+	public Response drillMap(@QueryParam("document") String documentId, @QueryParam("level") String level, @QueryParam("member") String member,
+			@QueryParam("parent") String parent) {
 		logger.debug("IN");
 		try {
-
 			// 0. Define internal objects
 			SvgViewerEngineInstance engineInstance = getEngineInstance();
+			String documentIdEnv = (String) this.getEnv().get("DOCUMENT_ID");
+			if (!documentId.equals(documentIdEnv)) {
+				// update engineInstance if the template is changed for external cross navigation vs other SVG documents
+				SourceBean savedTemplate = getIOManager().getTemplateAsSourceBean();
+				engineInstance.setTemplate(savedTemplate);
+				Map newEnv = getIOManager().getEnv();
+				UserProfile userProfile = (UserProfile) getIOManager().getParameterFromSession(IEngUserProfile.ENG_USER_PROFILE);
+				String userUniqueIdentifier = (String) userProfile.getUserUniqueIdentifier();
+				MapCatalogueAccessUtils mapCatalogueServiceProxy = new MapCatalogueAccessUtils(getHttpSession(), userUniqueIdentifier);
+				newEnv.put(SvgViewerEngineConstants.ENV_MAPCATALOGUE_SERVICE_PROXY, mapCatalogueServiceProxy);
+				engineInstance.setEnv(newEnv);
+				engineInstance = SvgViewerEngine.createInstance(savedTemplate, newEnv);
+				// this.getEnv().put("DOCUMENT_ID", documentId);
+				setEngineInstance(engineInstance);
+			}
 			DataMartProvider dataMartProvider = (DataMartProvider) engineInstance.getDataMartProvider();
 			SOMapProvider mapProvider = (SOMapProvider) engineInstance.getMapProvider();
 			InteractiveMapRenderer mapRenderer = (InteractiveMapRenderer) engineInstance.getMapRenderer();
@@ -177,7 +195,7 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 			// 2. updated key informations
 			if (level.equals("1") && member == null) {
 				// name = mapProvider.getDefaultMapName();
-				member = getProperty("name", memberSB);
+				member = getProperty("name", memberSB, this.getEnv());
 			} else if (member == null) {
 				logger.error("Name map of level [" + level + "] not found in request.");
 				throw new SpagoBIServiceException("DrillMap", "Name map of level [" + level + "] not found in request.");
@@ -187,7 +205,7 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 			// 3. update internal objects (datamartProvider and mapProvider)
 			dataMartProvider.setSelectedMemberInfo(null);
 			dataMartProvider.setSelectedParentName(parent);
-			dataMartProvider.setSelectedMemberName(getProperty("name", memberSB));
+			dataMartProvider.setSelectedMemberName(getProperty("name", memberSB, this.getEnv()));
 			dataMartProvider.setSelectedLevel(level);
 
 			DataMartProviderConfigurator.configure(dataMartProvider, memberSB.toString());
@@ -202,7 +220,7 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 			InteractiveMapRendererConfigurator.configure(mapRenderer, memberSB.toString());
 
 			// 4. return the new SVG
-			File maptmpfile = getEngineInstance().renderMap("dsvg");
+			File maptmpfile = engineInstance.renderMap("dsvg");
 			byte[] data = Files.readAllBytes(maptmpfile.toPath());
 
 			ResponseBuilder response = Response.ok(data);
@@ -544,8 +562,18 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 		return actualLevel;
 	}
 
-	private String getProperty(String key, SourceBean memberSB) {
-		return (String) memberSB.getAttribute(key);
+	private static String getProperty(String key, SourceBean memberSB, Map env) {
+		String toReturn = null;
+		toReturn = (String) memberSB.getAttribute(key);
+		// replace the member name with analytical driver value if it's required
+		if (toReturn != null && toReturn.indexOf("$P{") >= 0) {
+			int startPos = toReturn.indexOf("$P{") + 3;
+			int endPos = toReturn.indexOf("}", startPos);
+			String placeholder = toReturn.substring(startPos, endPos);
+			toReturn = (String) env.get(placeholder);
+			logger.debug("Member name value getted from analytical driver [" + placeholder + "] is [" + toReturn + "]");
+		}
+		return toReturn;
 	}
 
 }
