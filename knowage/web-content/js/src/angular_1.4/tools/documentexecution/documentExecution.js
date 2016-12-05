@@ -500,7 +500,7 @@
 
 //from executed document, call this function to exec old cross navigation method
 var execCrossNavigation=function(frameid, doclabel, params, subobjid, title, target){
-	var jsonEncodedParams=params?JSON.parse('{"' + decodeURI(params).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"').replace(/\s/g,'') + '"}'):{};
+	var jsonEncodedParams=params?JSON.parse('{"' + decodeURI(params).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}'):{};
 	angular.element(frameElement).scope().$parent.internalNavigateTo(jsonEncodedParams,doclabel);
 };
 
