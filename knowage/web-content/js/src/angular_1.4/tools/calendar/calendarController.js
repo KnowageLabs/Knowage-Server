@@ -15,32 +15,80 @@ function controllerCalendar(sbiModule_download,sbiModule_config,sbiModule_transl
 		$angularListDetail,$timeout,sbiModule_dateServices,sbiModule_messaging) {
 	$scope.translate = sbiModule_translate;
 	$scope.calendarList = [];
-	$scope.selectCalendar= {};
+	$scope.selectCalendar= {realDateGenerated:[],splittedCalendar:[]};
 	$scope.showCircularGenera = false;
-	$scope.selectCalendar.realDateGenerated = [];
 	$scope.calendarActions=[];
 	$scope.listType = [];
 	$scope.tablePage = 1;
+	$scope.tableUtils={totalCount:0,itemsPerPage:30};
 	$scope.disableGenera = false;
 	$scope.generating = false;
 	$scope.columns = [
 	                  {
 	                	  "label":"Date",
 	                	  "name":"date",
+	                	  "static":true,
 	                	  "comparatorFunction" : function(a, b){
-
 	                			var aValue = a.timeByDay.timeDate;
 	                			var bValue = b.timeByDay.timeDate;
-
 	                			return (aValue - bValue);
 	                		}
 	                  },
-	                  {"label":"Day","name":"day"},
-	                  {"label":"Holiday","name":"checkFestivity"},
-	                  {"label":"Public Holiday","name":"nationalFest"},
-	                  {"label":"Attributes","name":"selectEvent"}
+                  	{
+	                	  
+	                	"label":"Day",
+	                	"name":"day",
+	                	"static":true
+	                },
+	                {
+	                	"label":"Holiday",
+	                	"name":"checkFestivityBoolean",
+	                	"static":true,
+	                	"template":'<div layout="row" layout-wrap>'
+	        						+'<div>'
+        							+'<md-checkbox aria-label="BaseLayer" ng-checked="row.checkFestivityBoolean" ng-click="scopeFunctions.checkFestivity(row)"></md-checkbox>'
+        							+'</div></div>'
+	                },
+	                {
+	                	"label":"Public Holiday",
+	                	"name":"checkNationalBoolean",
+	                	"static":true,
+	                	"template":'<div layout="row" layout-wrap>'
+	        						+'<div>'
+        							+'<md-checkbox aria-label="BaseLayer" ng-checked="row.checkNationalBoolean" ng-click="scopeFunctions.checkNational(row)"></md-checkbox>'
+    								+'</div></div>'
+	                },
+	                {
+	                	"label":"Attributes",
+	                	"name":"checkEvent",
+	                	"static":true,
+	                	"template":'<md-select multiple="true"  aria-label="BaseLayer" md-on-close="scopeFunctions.loadEvent(row)" ng-model="row.checkEvent" class="noMargin">'
+	        						+'<md-option value=""></md-option>'
+        							+'<md-option ng-repeat="val in scopeFunctions.listType" value={{val.attributeDomainDescr}}>'
+        							+'{{val.attributeDomainDescr}}'
+        							+' </md-option>'
+        							+'</md-select>'
+	                }
 	   
 	                  ];
+//	$scope.columns = [
+//	                  {
+//	                	  "label":"Date",
+//	                	  "name":"date",
+//	                	  "comparatorFunction" : function(a, b){
+//	                		  
+//	                		  var aValue = a.timeByDay.timeDate;
+//	                		  var bValue = b.timeByDay.timeDate;
+//	                		  
+//	                		  return (aValue - bValue);
+//	                	  }
+//	                  },
+//	                  {"label":"Day","name":"day"},
+//	                  {"label":"Holiday","name":"checkFestivity"},
+//	                  {"label":"Public Holiday","name":"nationalFest"},
+//	                  {"label":"Attributes","name":"selectEvent"}
+//	                  
+//	                  ];
 	
 
 	$scope.tableFunction={
@@ -188,12 +236,13 @@ function controllerCalendar(sbiModule_download,sbiModule_config,sbiModule_transl
 		.then(function(response){ 
 			
 			$scope.selectCalendar.realDateGenerated = response.data;
+			$scope.tableUtils.totalCount=$scope.selectCalendar.realDateGenerated.length;
 			$scope.showCircularGenera = false;
 			if($scope.selectCalendar.realDateGenerated.length==0){
 				$scope.disableGenera = false;
 			}else{
 				$scope.disableGenera = true;
-				$scope.parseRealInfo(response.data);
+				$scope.parseRealInfo();
 			}
 
 
@@ -206,6 +255,7 @@ function controllerCalendar(sbiModule_download,sbiModule_config,sbiModule_transl
 		$scope.selectCalendar= {};
 		$scope.showCircularGenera = false;
 		$scope.selectCalendar.realDateGenerated = [];
+		$scope.selectCalendar.splittedCalendar=[];
 		$angularListDetail.goToDetail();
 	}
 
@@ -241,7 +291,8 @@ function controllerCalendar(sbiModule_download,sbiModule_config,sbiModule_transl
 					sbiModule_restServices.promiseGet("calendar",$scope.selectCalendar.calendarId+"/getInfoCalendarById")
 					.then(function(response){ 
 						$scope.selectCalendar.realDateGenerated = response.data;
-						$scope.parseRealInfo(response.data);
+						$scope.tableUtils.totalCount=$scope.selectCalendar.realDateGenerated.length;
+						$scope.parseRealInfo();
 						$scope.showCircularGenera = false;
 						$scope.generating = false;
 					},function(response){
@@ -261,54 +312,76 @@ function controllerCalendar(sbiModule_download,sbiModule_config,sbiModule_transl
 		return dat;
 	}
 
-	$scope.parseRealInfo = function(response){
-
-		for(var i=0;i<$scope.selectCalendar.realDateGenerated.length;i++){
+	$scope.parseRealInfo = function(){
+		var tmpSplitData=[];
+		var initIndex=$scope.tableUtils.currentPageNumber*$scope.tableUtils.itemsPerPage;
+		var finalIndex=initIndex+$scope.tableUtils.itemsPerPage;
+		 
+		if(finalIndex>$scope.tableUtils.totalCount){
+			finalIndex=$scope.tableUtils.totalCount;
+		}
+		
+		
+		for(var i=initIndex;i<finalIndex;i++){
 			//$scope.selectCalendar.realDateGenerated[i]["date"]=  response[i].timeByDay.dayDesc;
+			var tmpD=angular.copy($scope.selectCalendar.realDateGenerated[i]);
 			if(sbiModule_config.dateFormat=="MM/dd/yyyy"){
-				$scope.selectCalendar.realDateGenerated[i]["date"] = response[i].timeByDay.monthOfYear + "/"+ response[i].timeByDay.dayOfMonth + "/" + response[i].timeByDay.yearId;
+				tmpD["date"] = tmpD.timeByDay.monthOfYear + "/"+ tmpD.timeByDay.dayOfMonth + "/" + tmpD.timeByDay.yearId;
 
 			}else{
-				$scope.selectCalendar.realDateGenerated[i]["date"] = response[i].timeByDay.dayOfMonth + "/"+ response[i].timeByDay.monthOfYear+ "/" + response[i].timeByDay.yearId;
+				tmpD["date"] = tmpD.timeByDay.dayOfMonth + "/"+ tmpD.timeByDay.monthOfYear+ "/" + tmpD.timeByDay.yearId;
 
 			}
-			$scope.selectCalendar.realDateGenerated[i]["day"] = response[i].timeByDay.dayName;
-			$scope.selectCalendar.realDateGenerated[i]["checkFestivity"] = '<div layout="row" layout-wrap>'
-				+'<div>'
-				+'<md-checkbox aria-label="BaseLayer" ng-checked="row.checkFestivityBoolean" ng-click="scopeFunctions.checkFestivity(row)"></md-checkbox>'
-				+'</div></div>';
-			$scope.selectCalendar.realDateGenerated[i]["nationalFest"] = '<div layout="row" layout-wrap>'
-				+'<div>'
-				+'<md-checkbox aria-label="BaseLayer" ng-checked="row.checkNationalBoolean" ng-click="scopeFunctions.checkNational(row)"></md-checkbox>'
-				+'</div></div>';
-			$scope.selectCalendar.realDateGenerated[i]["selectEvent"] = '<md-select multiple="true"  aria-label="BaseLayer" md-on-close="scopeFunctions.loadEvent(row)" ng-model="row.checkEvent" class="noMargin">'
-				+'<md-option value=""></md-option>'
-				+'<md-option ng-repeat="val in scopeFunctions.listType" value={{val.attributeDomainDescr}}>'
-				+'{{val.attributeDomainDescr}}'
-				+' </md-option>'
-				+'</md-select>';
-			if( response[i].isHoliday==1){
-				$scope.selectCalendar.realDateGenerated[i]["checkFestivityBoolean"] = true;
+			tmpD["day"] = tmpD.timeByDay.dayName;
+			if( tmpD.isHoliday==1){
+				tmpD["checkFestivityBoolean"] = true;
 			}
-			if(response[i].pubHoliday=="true"){
-				$scope.selectCalendar.realDateGenerated[i]["checkNationalBoolean"] = true;
+			if(tmpD.pubHoliday=="true"){
+				tmpD["checkNationalBoolean"] = true;
 			}
-			if(response[i].listOfAttributes!=null){
-				var array = response[i].listOfAttributes;
-				$scope.selectCalendar.realDateGenerated[i]["checkEvent"] = [];
-				$scope.selectCalendar.realDateGenerated[i]["listOfAttributes"] = [];
+			if(tmpD.listOfAttributes!=null){
+				var array = tmpD.listOfAttributes;
+				tmpD["checkEvent"] = [];
+				tmpD["listOfAttributes"] = [];
 				for(var k=0;k<array.length;k++){
 					if(array[k].calendarAttributeDomain!=null){
 						
-						$scope.selectCalendar.realDateGenerated[i]["listOfAttributes"].push(array[k].calendarAttributeDomain.attributeDomainDescr);
-						$scope.selectCalendar.realDateGenerated[i]["checkEvent"].push(array[k].calendarAttributeDomain.attributeDomainDescr);
+						tmpD["listOfAttributes"].push(array[k].calendarAttributeDomain.attributeDomainDescr);
+						tmpD["checkEvent"].push(array[k].calendarAttributeDomain.attributeDomainDescr);
 					}
 					
 				}
 				
 			}
 
+//			$scope.selectCalendar.realDateGenerated[i]["checkFestivity"] = '<div layout="row" layout-wrap>'
+//				+'<div>'
+//				+'<md-checkbox aria-label="BaseLayer" ng-checked="row.checkFestivityBoolean" ng-click="scopeFunctions.checkFestivity(row)"></md-checkbox>'
+//				+'</div></div>';
+//			$scope.selectCalendar.realDateGenerated[i]["nationalFest"] = '<div layout="row" layout-wrap>'
+//				+'<div>'
+//				+'<md-checkbox aria-label="BaseLayer" ng-checked="row.checkNationalBoolean" ng-click="scopeFunctions.checkNational(row)"></md-checkbox>'
+//				+'</div></div>';
+//			$scope.selectCalendar.realDateGenerated[i]["selectEvent"] = '<md-select multiple="true"  aria-label="BaseLayer" md-on-close="scopeFunctions.loadEvent(row)" ng-model="row.checkEvent" class="noMargin">'
+//				+'<md-option value=""></md-option>'
+//				+'<md-option ng-repeat="val in scopeFunctions.listType" value={{val.attributeDomainDescr}}>'
+//				+'{{val.attributeDomainDescr}}'
+//				+' </md-option>'
+//				+'</md-select>';
+			
+			tmpSplitData.push(tmpD);
 		}
+		if($scope.selectCalendar.splittedCalendar==undefined){
+			$scope.selectCalendar.splittedCalendar=[];
+		}
+		angular.copy(tmpSplitData,$scope.selectCalendar.splittedCalendar);
+	
+	}
+	
+	$scope.changeCalendarPage=function(itemsPerPage,currentPageNumber){
+		$scope.tableUtils.itemsPerPage=itemsPerPage==0? 30:itemsPerPage;
+		$scope.tableUtils.currentPageNumber=currentPageNumber-1;
+		$scope.parseRealInfo();
 	}
 
 	$scope.loadDomainEvents = function(){
@@ -388,31 +461,31 @@ function controllerCalendar(sbiModule_download,sbiModule_config,sbiModule_transl
 
 		return -1;
 	};
-	$scope.getDates= function(startDate, stopDate) {
-		var dateArray = new Array();
-		var currentDate = startDate;
-		while (currentDate <= stopDate) {
-			var obj = {"date": sbiModule_dateServices.formatDate(currentDate), "day": weekday[currentDate.getDay()],
-					"checkFestivity": '<div layout="row" layout-wrap>'
-						+'<div>'
-						+'<md-checkbox aria-label="" ng-checked="row.checkFestivityBoolean" ng-click="scopeFunctions.checkFestivity(row)"></md-checkbox>'
-						+'</div></div>', 
-						"nationalFest": '<div layout="row" layout-wrap>'
-							+'<div>'
-							+'<md-checkbox aria-label="" ng-checked="row.checkNationalBoolean" ng-click="scopeFunctions.checkNational(row)"></md-checkbox>'
-							+'</div></div>', 
-							"selectEvent":'<md-select md-on-close="scopeFunctions.loadEvent(row)" ng-model="row.checkEvent" class="noMargin">'
-								+'<md-option value=""></md-option>'
-								+'<md-option ng-repeat="val in scopeFunctions.listType" value={{val.attributeDomainDescr}}>'
-								+'{{val.attributeDomainDescr}}'
-								+' </md-option>'
-								+'</md-select>'
-			};
-			dateArray.push(obj)
-			currentDate = currentDate.addDays(1);
-		}
-		return dateArray;
-	}
+//	$scope.getDates= function(startDate, stopDate) {
+//		var dateArray = new Array();
+//		var currentDate = startDate;
+//		while (currentDate <= stopDate) {
+//			var obj = {"date": sbiModule_dateServices.formatDate(currentDate), "day": weekday[currentDate.getDay()],
+//					"checkFestivity": '<div layout="row" layout-wrap>'
+//						+'<div>'
+//						+'<md-checkbox aria-label="" ng-checked="row.checkFestivityBoolean" ng-click="scopeFunctions.checkFestivity(row)"></md-checkbox>'
+//						+'</div></div>', 
+//						"nationalFest": '<div layout="row" layout-wrap>'
+//							+'<div>'
+//							+'<md-checkbox aria-label="" ng-checked="row.checkNationalBoolean" ng-click="scopeFunctions.checkNational(row)"></md-checkbox>'
+//							+'</div></div>', 
+//							"selectEvent":'<md-select md-on-close="scopeFunctions.loadEvent(row)" ng-model="row.checkEvent" class="noMargin">'
+//								+'<md-option value=""></md-option>'
+//								+'<md-option ng-repeat="val in scopeFunctions.listType" value={{val.attributeDomainDescr}}>'
+//								+'{{val.attributeDomainDescr}}'
+//								+' </md-option>'
+//								+'</md-select>'
+//			};
+//			dateArray.push(obj)
+//			currentDate = currentDate.addDays(1);
+//		}
+//		return dateArray;
+//	}
 
 	$scope.checkFestivityFunc = function(item){
 		if(item.checkFestivityBoolean){

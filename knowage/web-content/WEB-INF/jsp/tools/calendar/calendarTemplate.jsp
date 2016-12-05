@@ -53,11 +53,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 <body class="bodyStyle">
-
 <rest-loading></rest-loading>
-<%if(includeInfusion){ %> 
-            <%@include file="/WEB-INF/jsp/commons/infusion/infusionTemplate.html"%> 
-<%} %>
 	<angular-list-detail ng-controller="Controller"
 		 full-screen=true>
 	<list label='translate.load("sbi.calendar")' <%= canSee? "new-function='newCalendar'":"" %>> 
@@ -71,30 +67,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	</list> 
 	<detail label='selectCalendar.calendar==undefined? "New Calendar*" : selectCalendar.calendar' cancel-function="cancel" <%= canSee? "save-function='saveCalendar'":"" %>>
 		<!-- if is a new calendar to add -->
-		<md-whiteframe class="md-whiteframe-4dp layout-padding" layout-margin>
-				<div>
-						<div>
+		<md-whiteframe class="md-whiteframe-4dp layout-padding" layout-margin layout="column" layout-gt-sm="row">
+				<div layout="row" flex>
+						<div flex>
 							<md-input-container class="small counter" class="small counter">
 							<label>{{translate.load("sbi.behavioural.lov.details.name")}}</label>
 							<input class="input_class DisableColor" ng-model="selectCalendar.calendar" required 
 								maxlength="100" ng-maxlength="100" md-maxlength="100" ng-disabled="selectCalendar.calendarId!=undefined"> </md-input-container>
 						</div>
-						<div>
+						<div flex>
 							<md-input-container class="small counter" class="small counter">
 							<label>{{translate.load("sbi.udp.type")}}</label>
 							<input class="input_class DisableColor" ng-model="selectCalendar.calType" 
 								maxlength="30" ng-maxlength="30" md-maxlength="30"   ng-disabled="selectCalendar.calendarId!=undefined"> </md-input-container>
 						</div>
-						<div>
-							<label>{{translate.load("sbi.target.startvalidity")}}</label>
-							<md-datepicker ng-model="selectCalendar.calStartDay" name="Select Data"
-								 md-placeholder={{translate.load("sbi.target.selectdate");}}   ng-disabled="selectCalendar.calendarId!=undefined"></md-datepicker>
-							<label>{{translate.load("sbi.target.endvalidity")}}</label>
-							<md-datepicker ng-model="selectCalendar.calEndDay" name="Select Data"
-								 md-placeholder={{translate.load("sbi.target.selectdate");}}  ng-disabled="selectCalendar.calendarId!=undefined"></md-datepicker>
-						</div>
 				</div>
-				<div layout="row"> 
+				<div layout="row" flex>
+					<label style="margin-top: 10px;">{{translate.load("sbi.target.startvalidity")}}</label>
+					<md-datepicker ng-model="selectCalendar.calStartDay" name="Select Data"
+						 md-placeholder={{translate.load("sbi.target.selectdate");}}   ng-disabled="selectCalendar.calendarId!=undefined"></md-datepicker>
+					<label style="margin-top: 10px;">{{translate.load("sbi.target.endvalidity")}}</label>
+					<md-datepicker ng-model="selectCalendar.calEndDay" name="Select Data"
+						 md-placeholder={{translate.load("sbi.target.selectdate");}}  ng-disabled="selectCalendar.calendarId!=undefined"></md-datepicker>
+				</div>
+				<div layout="row" flex> 
 					<span flex></span>
 					<!-- <div layout="row" layout-sm="column" id="preview" layout-align="space-around" ng-show="showCircularGenera">
 				     	<md-progress-circular md-mode="indeterminate" ></md-progress-circular>
@@ -107,14 +103,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<!-- <div layout="row" layout-sm="column" id="preview" layout-align="space-around" ng-show="generating" layout-fill>
 			     	<md-progress-circular md-mode="indeterminate" ></md-progress-circular>
 			 	</div> -->
-				<md-whiteframe ng-show="selectCalendar.realDateGenerated.length>0"  class="md-whiteframe-4dp layout-padding" layout-margin layout="column">
-				<angular-table  ng-show="selectCalendar.realDateGenerated.length>0" 
-					id='dayslist' ng-model=selectCalendar.realDateGenerated
+				<md-whiteframe ng-show="selectCalendar.realDateGenerated.length>0"  class="md-whiteframe-4dp layout-padding" layout-margin layout="column" flex>
+				<angular-table flex  
+					id='dayslist' ng-model=selectCalendar.splittedCalendar
 					columns=columns
-					no-pagination=false
-					highlights-selected-item=true click-function=""
+					highlights-selected-item=true  
 					scope-functions=tableFunction <%= canSee? "speed-menu-option=measureMenuOption ":"" %>
-					current-page-number = "tablePage" initial-sorting="'date'"> </angular-table>
+					total-item-count = tableUtils.totalCount
+					page-changed-function="changeCalendarPage(itemsPerPage, currentPageNumber)"
+					
+					initial-sorting="'date'"> </angular-table>
+					
+					
 					
 				</md-whiteframe>
 				
