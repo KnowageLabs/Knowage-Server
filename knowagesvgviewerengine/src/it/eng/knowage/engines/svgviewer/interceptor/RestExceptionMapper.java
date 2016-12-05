@@ -53,7 +53,7 @@ public class RestExceptionMapper implements ExceptionMapper<RuntimeException> {
 	public Response toResponse(RuntimeException e) {
 		logger.debug("RestExceptionMapper:toResponse IN");
 		String localizedMessage = e.getLocalizedMessage();
-		String errorMessage = e.getCause().toString();
+		String errorMessage = (e.getCause() != null) ? e.getCause().toString() : "";
 		String errorService = "";
 
 		// logs the error

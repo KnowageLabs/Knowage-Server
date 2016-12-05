@@ -285,11 +285,13 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 				localeJSON.put("decimalSeparator", new Character(dfs.getDecimalSeparator()).toString());
 				localeJSON.put("groupingSeparator", new Character(dfs.getGroupingSeparator()).toString());
 				conf.put("locale", localeJSON);
-			} catch (JSONException e1) {
+			} catch (SvgViewerEngineRuntimeException e1) {
+				throw e1;
+			} catch (Exception e2) {
 				SvgViewerEngineRuntimeException svgException;
-				logger.error("Impossible to create sbi.geo.conf", e1);
+				logger.error("Impossible to create sbi.geo.conf", e2);
 				String description = "Impossible to create sbi.geo.conf";
-				svgException = new SvgViewerEngineRuntimeException("Impossible to create sbi.geo.conf", e1);
+				svgException = new SvgViewerEngineRuntimeException("Impossible to create sbi.geo.conf", e2);
 				svgException.setDescription(description);
 				throw svgException;
 			}
@@ -1729,7 +1731,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	 * @return the measures configuration script
 	 * @throws JSONException
 	 */
-	public JSONArray getMeasuresConfigurationScript(DataMart datamart) throws JSONException {
+	public JSONArray getMeasuresConfigurationScript(DataMart datamart) throws Exception {
 
 		JSONArray measures;
 
@@ -1751,10 +1753,16 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 		}
 
 		for (int i = 0; i < measureNames.length; i++) {
+
 			JSONObject measure = new JSONObject();
+			Measure localMeasure = getMeasure(measureNames[i]);
+			if (localMeasure == null) {
+				logger.error("Configuration for kpi [" + measureNames[i] + "] doesn't found. Please, check the template!");
+				throw new SvgViewerEngineRuntimeException("Configuration for kpi [" + measureNames[i] + "] doesn't found. Please, check the template!");
+			}
 			measure.put("name", measureNames[i]);
-			measure.put("description", getMeasure(measureNames[i]).getDescription());
-			measure.put("colour", getMeasure(measureNames[i]).getColour());
+			measure.put("description", localMeasure.getDescription());
+			measure.put("colour", localMeasure.getColour());
 
 			JSONArray orderedValues = new JSONArray();
 			dataStore.sortRecords(dataStoreMeta.getFieldIndex(measureNames[i]));

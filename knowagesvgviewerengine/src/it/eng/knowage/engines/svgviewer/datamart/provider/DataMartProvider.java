@@ -43,6 +43,9 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 /**
  * This class wrap an object of type IDataSet
  *
@@ -97,7 +100,9 @@ public class DataMartProvider extends AbstractDataMartProvider {
 
 			try {
 				logger.warn("trying to load data...");
+				Monitor loadDataMonitor = MonitorFactory.start("GeoEngine.DataMartProvider.getDataMart.loadData");
 				dataSet.loadData();
+				loadDataMonitor.stop();
 				logger.warn("success!!");
 			} catch (Throwable e) {
 				logger.error("failure!!", e);
@@ -347,7 +352,7 @@ public class DataMartProvider extends AbstractDataMartProvider {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.engines.geo.dataset.provider.AbstractDatasetProvider#getDataDetails(java.lang.String)
 	 */
 	@Override
