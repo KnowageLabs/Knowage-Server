@@ -316,7 +316,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					
 					obj.label= $scope.ngModel.content.columnSelectedOfDataset[i]['aliasToShow'];
 					obj.name = $scope.ngModel.content.columnSelectedOfDataset[i]['aliasToShow'];
-					debugger;
 					if(typeof($scope.ngModel.content.columnSelectedOfDataset[i].style) != "undefined" && $scope.ngModel.content.columnSelectedOfDataset[i].style['size']){
 						obj.size = $scope.ngModel.content.columnSelectedOfDataset[i].style['size'];
 					}
