@@ -150,7 +150,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 					checking type of widget because of removing load spinner
 					in case of updating charts
 				*/
-				if (options!="chart")
+				if (options.type && options.type!="chart")
 					$rootScope.$broadcast("WIDGET_EVENT"+config.id,"WIDGET_SPINNER",{show:true});
 				
 				dsRecords.then(function(data){

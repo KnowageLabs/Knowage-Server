@@ -196,6 +196,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$timeout(function(){
 				if(angular.equals(time,	$scope.lastChangePageConf)){
 					currentPageNumber--;
+					$scope.ngModel.content.currentPageNumber = currentPageNumber;
+					
 					var numberOfElement = angular.copy(itemsPerPage);
 					if(searchValue==undefined || searchValue.trim().lenght==0 ){
 						searchValue='';
@@ -692,8 +694,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var obj = {};
 //			if($scope.ngModel.content.fixedRow == true && $scope.ngModel.content.maxRowsNumber != undefined){
 				
-				obj["page"] =0;
-				obj["itemPerPage"] = $scope.ngModel.content.maxRowsNumber ;
+				obj["page"] = $scope.ngModel.content.currentPageNumber ? $scope.ngModel.content.currentPageNumber : 0;
+				obj["itemPerPage"] = $scope.ngModel.content.maxRowsNumber;
 				if($scope.ngModel.style.showSummary == true){
 					obj["itemPerPage"]--;
 				}
@@ -703,6 +705,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				if($scope.reverseOrdering){
 					obj["reverseOrdering"] = $scope.reverseOrdering;
 				}
+				obj["type"] = $scope.ngModel.type;
 //			}
 			return obj;
 			

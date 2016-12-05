@@ -224,8 +224,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 					checking type of widget because of removing load spinner
 					in case of updating charts
 				*/
-			
-				$scope.refreshWidget($scope.ngModel.type);
+				$scope.refreshWidget();
 			}
 			break;
 		case "PARAMETER_CHANGE":
