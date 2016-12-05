@@ -186,7 +186,12 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 			  	var wLeftPanel =  0 + parseInt(domLeftPanel.offsetWidth);		
 			  	left = left + wLeftPanel; 
 			  	 
-		  		domTooltip.style.left = left + (viewportOffset.width/2); //$scope.cursorX; 
+			  	if(viewportOffset.left + viewportOffset.width + 200 >= window.innerWidth){
+			  		domTooltip.style.left = left - (viewportOffset.width/2); //$scope.cursorX;
+			  	}else{
+			  		domTooltip.style.left = left + (viewportOffset.width/2); //$scope.cursorX; 
+			  	}
+		  		
 //		  		domTooltip.style.top = top+(viewportOffset.height/3); //$scope.cursorY; 		  		
 		  		domTooltip.innerHTML = tooltipText;
 		  		domTooltip.style.display = "block";
