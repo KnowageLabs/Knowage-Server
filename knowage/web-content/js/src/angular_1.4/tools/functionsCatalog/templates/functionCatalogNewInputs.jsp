@@ -1,4 +1,4 @@
-<md-dialog aria-label='{{translate.load("sbi.functionscatalog.newinputsdialog.demoexecutionresult")}}' style="margin:auto;     max-width: 100%;
+<md-dialog aria-label='{{translate.load("sbi.functionscatalog.newinputsdialog.demoexecutionresult")}}' style="max-width: 100%;
     max-height: 100%;
     width: 80%;
     height: 80%;
