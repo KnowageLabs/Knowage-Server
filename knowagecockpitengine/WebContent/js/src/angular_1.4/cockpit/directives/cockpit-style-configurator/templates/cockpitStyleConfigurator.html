@@ -81,4 +81,53 @@
 			</md-input-container>
 		</md-card-content>
 	</md-card>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<md-card>
+		<md-card-title>
+			<md-card-title-text layout="row">
+				<span flex class="md-headline">{{translate.load("sbi.cockpit.style.backgroundcolor")}}</span>
+				<md-icon md-font-icon="fa fa-eraser" ng-if="isWidget && (ngModel.borders!=cockpitStyle.borders || !angular.equals(ngModel.border,cockpitStyle.border))" ng-click="resetBordersStyle()"></md-icon>
+			</md-card-title-text>
+		</md-card-title>
+		<md-card-content layout="row" layout-align="space-around center">
+			
+			<md-input-container flex class="md-block"> 
+				<label>{{translate.load('sbi.cockpit.style.backgroundcolor')}}</label> 
+				<color-picker options="{format:'rgb'}" ng-model="ngModel.backgroundColor"></color-picker>
+			</md-input-container> 
+			
+		</md-card-content>
+	</md-card>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 </md-content>

@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript">
 angular.module("cockpitModule").factory("cockpitModule_template",function(sbiModule_translate){
 	var template = <%=  template%>
+	debugger;
 	
 	if(template.sheets==undefined){
 		template.sheets=[{label:sbiModule_translate.load("sbi.cockpit.new.sheet"),widgets:[]}];
@@ -61,7 +62,9 @@ angular.module("cockpitModule").factory("cockpitModule_template",function(sbiMod
 	if(template.configuration.filters==undefined){
 		template.configuration.filters={};
 	}
+
 	
+	console.log("template:"+template);
 	// back compatibility with old document parameters
 	for(var i=0; i<template.configuration.associations.length; i++){
 		var association = template.configuration.associations[i];
@@ -108,8 +111,8 @@ angular.module("cockpitModule").factory("cockpitModule_properties",function(){
 <link rel="stylesheet" type="text/css" href="<%= GeneralUtilities.getSpagoBiContext() %>/themes/commons/css/customStyle.css">
 
 <title>Cockpit engine</title>
-</head>
-<body class="kn-cockpit " ng-class="{'disableanimation':sbiModule_device.browser.name!='chrome'}" md-no-ink ng-controller="cockpitMasterController" layout="column">
+</head> 
+<body class="kn-cockpit " ng-class="{'disableanimation':sbiModule_device.browser.name!='chrome'}" md-no-ink ng-controller="cockpitMasterController" layout="column" ng-style={'background-color':cockpitModule_template.configuration.style.backgroundColor}>
 
 	<cockpit-toolbar config="configurator"></cockpit-toolbar>
 	<cockpit-sheet flex ng-if="datasetLoaded"></cockpit-sheet>
