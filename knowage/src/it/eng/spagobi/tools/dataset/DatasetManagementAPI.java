@@ -92,6 +92,7 @@ import java.util.Set;
 
 import javax.naming.NamingException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -1727,7 +1728,7 @@ public class DatasetManagementAPI {
 				}
 
 				aliasName = AbstractJDBCDataset.encapsulateColumnName(aliasName, dataSource);
-				if (aggregateFunction != null && !aggregateFunction.isEmpty() && columnName != "*") {
+				if (aggregationFunction != null && !aggregationFunction.equals(AggregationFunctions.NONE_FUNCTION) && columnName != "*") {
 					columnName = aggregationFunction.apply(columnName);
 					if (hasAlias) {
 						if (orderType != null && !orderType.isEmpty()) {
@@ -1756,37 +1757,32 @@ public class DatasetManagementAPI {
 						isOrderColumnPresent = true;
 						orderColumn = AbstractJDBCDataset.encapsulateColumnName(orderColumn, dataSource);
 
+						if (orderType.isEmpty()) {
+							arrayCategoriesForOrdering.add(orderColumn + " ASC");
+						} else {
+							arrayCategoriesForOrdering.add(orderColumn + " " + orderType);
+						}
+
 						/**
 						 * If the ordering column is the same as the category for which is set.
 						 */
 						if (orderColumn.equals(columnName)) {
 							columnAndCategoryAreTheSame = true;
-
-							if (orderType.isEmpty()) {
-								arrayCategoriesForOrdering.add(columnName + " ASC");
-							} else {
-								arrayCategoriesForOrdering.add(columnName + " " + orderType);
-							}
 						} else {
-							if (orderType.isEmpty()) {
-								arrayCategoriesForOrdering.add(orderColumn + " ASC");
-							} else {
-								arrayCategoriesForOrdering.add(orderColumn + " " + orderType);
-							}
-
 							sqlBuilder.column(orderColumn);
+							sqlBuilder.groupBy(orderColumn);
 						}
 					} else {
 						if (!orderType.isEmpty()) {
 							orderColumns.add(columnName + " " + orderType);
+						} else {
+							/**
+							 * Keep the ordering for the first category so it can be appended to the end of the ORDER BY clause when it is needed.
+							 */
+							if (keepCategoryForOrdering.isEmpty()) {
+								keepCategoryForOrdering = columnName + " ASC";
+							}
 						}
-					}
-
-					/**
-					 * Keep the ordering for the first category so it can be appended to the end of the ORDER BY clause when it is needed.
-					 */
-					if (keepCategoryForOrdering.isEmpty()) {
-						keepCategoryForOrdering = columnName + " ASC";
 					}
 				}
 
@@ -1822,7 +1818,7 @@ public class DatasetManagementAPI {
 				}
 			}
 
-			if (isRealtime && orderColumns.isEmpty()) {
+			if (isRealtime && orderColumns.isEmpty() && !keepCategoryForOrdering.isEmpty()) {
 				orderColumns.add(keepCategoryForOrdering);
 			}
 
@@ -1956,7 +1952,8 @@ public class DatasetManagementAPI {
 		// https://production.eng.it/jira/browse/KNOWAGE-149
 		String aliasDelimiter = TemporaryTableManager.getAliasDelimiter(dataSource);
 		for (String orderColumn : orderColumns) {
-			if (aliasDelimiter.isEmpty() || !orderColumn.contains(aliasDelimiter)) {
+			int count = StringUtils.countMatches(orderColumn, aliasDelimiter);
+			if (aliasDelimiter.isEmpty() || count <= 2) {
 				sqlBuilder.orderBy(orderColumn);
 			}
 		}
