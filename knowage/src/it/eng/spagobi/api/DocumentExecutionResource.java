@@ -621,7 +621,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			List values = parameter.getAnalyticalDocumentParameter().getParameterValues();
 			// if parameter is mandatory and has no value, execution cannot start automatically
 			if (parameter.isMandatory() && (values == null || values.isEmpty())) {
-				logger.debug("Parameter [] is mandatory but has no values. Execution cannot start automatically");
+				logger.debug("Parameter [" + parameter.getId() + "] is mandatory but has no values. Execution cannot start automatically");
 				return false;
 			}
 		}
