@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		</md-toolbar>
 		<md-content flex layout="column">
 			<md-tabs   flex md-border-bottom>
-			 	<md-tab label="Informations">
+			 	<md-tab label="General settings">
 					<md-content class="md-padding" layout="column"  layout-fill>
 				    	 <md-card>
 				           <md-card-content>
@@ -38,14 +38,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				             <label>Description</label>
 				             <textarea ng-model="clonedDocumentProperty.DOCUMENT_DESCRIPTION" md-maxlength="150" md-select-on-focus></textarea>
 				           </md-input-container>
+				           
+				           
+				           
+			        	   <md-input-container flex class="md-block"> 
+			        		  <label>Sheets background color</label>
+							  <color-picker  options="{format:'rgb'}" ng-model="clonedTemplate.style.sheetsBackgroundColor"></color-picker>
+							  <!--<color-picker  options="{format:'rgb'}" ng-model="clonedDocumentProperty.sheetsBackground"></color-picker> -->
+						   </md-input-container> 
+			        	
+			                      
+				           
 				           </md-card-content>
 				         </md-card>
 				        
 			        </md-content>
 			 	</md-tab>
 			 	
-			 	<md-tab label="Style">
+			 	<md-tab label="Widgets style">
 			        <cockpit-style-configurator  layout-fill ng-model="clonedTemplate.style"></cockpit-style-configurator>
+
 			 	</md-tab>
 			 	
 			 

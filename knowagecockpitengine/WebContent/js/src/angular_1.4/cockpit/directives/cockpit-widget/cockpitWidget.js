@@ -551,6 +551,13 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 		if($scope.extendedStyle.titles!=undefined && $scope.extendedStyle.titles==true){
 			angular.merge($scope.titleStyle,$scope.extendedStyle.title);
 		}
+		
+		//update widgets background color
+		if($scope.extendedStyle.backgroundColor!=undefined) {
+			var tempBackGround={'background-color': $scope.extendedStyle.backgroundColor};
+			angular.merge($scope.borderShadowStyle,tempBackGround);
+		}
+		
 	}
 	
 	$scope.getDataset = function(){
