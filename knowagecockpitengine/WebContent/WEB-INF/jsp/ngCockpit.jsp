@@ -116,10 +116,10 @@ angular.module("cockpitModule").factory("cockpitModule_properties",function(){
 
 <title>Cockpit engine</title>
 </head> 
-	<body class="kn-cockpit " ng-class="{'disableanimation':sbiModule_device.browser.name!='chrome'}" md-no-ink ng-controller="cockpitMasterController" layout="column" ng-style={'background-color':cockpitModule_template.configuration.style.sheetsBackgroundColor}>
 
+		<body class="kn-cockpit " ng-class="{'disableanimation':sbiModule_device.browser.name!='chrome'}" md-no-ink ng-controller="cockpitMasterController" layout="column" style="background:url({{imageBackgroundUrl}}); background-color:{{cockpitModule_template.configuration.style.sheetsBackgroundColor}}; background-size:contain; background-repeat: no-repeat; background-position: center;" >
+	
 	<cockpit-toolbar config="configurator"></cockpit-toolbar>
-	{{cockpitModule_background}}
 	<cockpit-sheet flex ng-if="datasetLoaded"></cockpit-sheet>
 </body>
 </html>

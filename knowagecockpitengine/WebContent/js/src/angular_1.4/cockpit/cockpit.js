@@ -37,6 +37,7 @@ cockpitApp.config(['$mdThemingProvider', function($mdThemingProvider) {
 cockpitApp.controller("cockpitMasterController",['$scope','cockpitModule_widgetServices','cockpitModule_template','cockpitModule_datasetServices','cockpitModule_crossServices','cockpitModule_realtimeServices','cockpitModule_properties','cockpitModule_templateServices','$rootScope','$q','sbiModule_device',cockpitMasterControllerFunction]);
 function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,cockpitModule_template,cockpitModule_datasetServices,cockpitModule_crossServices,cockpitModule_realtimeServices,cockpitModule_properties,cockpitModule_templateServices,$rootScope,$q,sbiModule_device){
 	$scope.cockpitModule_widgetServices=cockpitModule_widgetServices;
+	$scope.imageBackgroundUrl=cockpitModule_template.configuration.style.imageBackgroundUrl;
 	$scope.cockpitModule_template=cockpitModule_template;
 	
 	$scope.sbiModule_device=sbiModule_device;
