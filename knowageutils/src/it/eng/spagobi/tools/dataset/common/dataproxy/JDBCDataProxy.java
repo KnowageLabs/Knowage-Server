@@ -196,8 +196,7 @@ public class JDBCDataProxy extends AbstractDataProxy {
 		// if db is SQL server the query nees to be modified in case it contains ORDER BY clause
 
 		String dialect = dataSource.getHibDialectName();
-		logger.debug("Dialect " + dialect);
-		logger.debug("Statement is " + statement);
+		logger.debug("Dialect is " + dialect);
 
 		if (dialect.toUpperCase().contains("SQLSERVER") && statement.toUpperCase().contains("ORDER BY")) {
 			logger.debug("we are in SQL SERVER and ORDER BY case");
