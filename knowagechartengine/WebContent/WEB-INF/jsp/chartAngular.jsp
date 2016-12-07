@@ -109,7 +109,44 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 
 	<%-- == BODY ========================================================== --%>
 	<body ng-controller="chartExecutionController" ng-style="bodyStyleConfig">
-	    
+	      
+	      <script type="text/javascript">
+
+   
+	     
+    $(document).ready(function () {
+       var uio = fluid.uiOptions.prefsEditor(".flc-prefsEditor-separatedPanel", {
+            tocTemplate: "${pageContext.request.contextPath}/js/lib/infusion/src/components/tableOfContents/html/TableOfContents.html",
+            terms: {
+                templatePrefix: "${pageContext.request.contextPath}/js/lib/infusion/src/framework/preferences/html",
+                messagePrefix: "${pageContext.request.contextPath}/js/lib/infusion/src/framework/preferences/messages"
+            }
+            
+        });
+         
+      
+    });
+    
+    
+    
+    </script>
+   
+	<div ng-show=false>
+	<div class="flc-prefsEditor-separatedPanel fl-prefsEditor-separatedPanel">
+    <!-- This is the div that will contain the Preference Editor component -->
+    <div class="flc-slidingPanel-panel flc-prefsEditor-iframe"></div>
+    <!-- This div is for the sliding panel that shows and hides the Preference Editor controls -->
+    <div class="fl-panelBar">
+        <span class="fl-prefsEditor-buttons">
+            <button id="reset" class="flc-prefsEditor-reset fl-prefsEditor-reset"><span class="fl-icon-undo"></span> Reset</button>
+            <button id="show-hide" class="flc-slidingPanel-toggleButton fl-prefsEditor-showHide"> Show/Hide</button>
+        </span>
+    </div>
+</div>
+   
+<div class="flc-toc-tocContainer"> </div>
+</div>
+
 		<!-- Show the information in the DIV above the rendered chart that the chart is exporting - downloading. (danristo) -->
 	  	<div style="background-color: #a9c3db;">
 		  	<div style="align:center; padding: 5px;" ng-show="showDownloadProgress">		

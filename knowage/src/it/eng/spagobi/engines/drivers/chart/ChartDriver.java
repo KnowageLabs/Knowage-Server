@@ -17,6 +17,29 @@
  */
 package it.eng.spagobi.engines.drivers.chart;
 
+import it.eng.spago.base.RequestContainer;
+import it.eng.spago.base.SessionContainer;
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.base.SourceBeanAttribute;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
+import it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO;
+import it.eng.spagobi.commons.bo.AccessibilityPreferences;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
+import it.eng.spagobi.engines.config.bo.Engine;
+import it.eng.spagobi.engines.drivers.DefaultOutputParameter;
+import it.eng.spagobi.engines.drivers.DefaultOutputParameter.TYPE;
+import it.eng.spagobi.engines.drivers.EngineURL;
+import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
+import it.eng.spagobi.engines.drivers.generic.GenericDriver;
+import it.eng.spagobi.utilities.assertion.Assert;
+
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,27 +53,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
-
-import it.eng.spago.base.RequestContainer;
-import it.eng.spago.base.SessionContainer;
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanAttribute;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
-import it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.GeneralUtilities;
-import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
-import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
-import it.eng.spagobi.engines.config.bo.Engine;
-import it.eng.spagobi.engines.drivers.DefaultOutputParameter;
-import it.eng.spagobi.engines.drivers.DefaultOutputParameter.TYPE;
-import it.eng.spagobi.engines.drivers.EngineURL;
-import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
-import it.eng.spagobi.engines.drivers.generic.GenericDriver;
-import it.eng.spagobi.utilities.assertion.Assert;
 
 /**
  * Driver Implementation (IEngineDriver Interface) for Chart External Engine.
@@ -84,6 +86,12 @@ public class ChartDriver extends GenericDriver {
 			if (analyticalDocument instanceof BIObject)
 				biObject = (BIObject) analyticalDocument;
 			parameters = super.getParameterMap(analyticalDocument, profile, roleName);
+			AccessibilityPreferences ap = UserUtilities.readAccessibilityPreferencesByUser(profile);
+			if (ap != null) {
+				parameters.put("ENABLE_UIO", ap.isEnableUio());
+			} else {
+				parameters.put("ENABLE_UIO", false);
+			}
 			parameters = applyService(parameters, biObject);
 		} finally {
 			logger.debug("OUT");

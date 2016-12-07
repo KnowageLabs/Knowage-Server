@@ -45,10 +45,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </head>
 
 <body   ng-app="documentBrowserModule" id="ng-app" class="kn-documentBrowser" ng-controller="documentBrowserNavigationController">
+    <div ng-show="runningDocuments.length==0">
     <%if(includeInfusion){ %> 
             <%@include file="/WEB-INF/jsp/commons/infusion/infusionTemplate.html"%>
       
      <%} %>	
+     </div>
 	<md-tabs layout-fill md-autoselect class="documentNavigationToolbar secondaryToolbar" md-selected="documentNavigationToolbarSelectedIndex">
 	<md-tab >
 	 <md-tab-label><md-icon class="documentBrowserIcon" md-font-icon="fa  fa-folder-open-o " ></md-icon></md-tab-label>
