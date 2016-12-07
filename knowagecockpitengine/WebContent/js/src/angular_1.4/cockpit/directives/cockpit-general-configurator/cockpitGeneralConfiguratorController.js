@@ -1,4 +1,4 @@
-function cockpitGeneralConfigurationController($scope,sbiModule_translate,cockpitModule_template,sbiModule_restServices,cockpitModule_properties,mdPanelRef){
+function cockpitGeneralConfigurationController($scope,$rootScope,sbiModule_translate,cockpitModule_template,sbiModule_restServices,cockpitModule_properties,mdPanelRef){
   $scope.translate=sbiModule_translate;
    
   //clone template to reset it if user cancel the dialog
@@ -8,6 +8,9 @@ function cockpitGeneralConfigurationController($scope,sbiModule_translate,cockpi
 	  angular.copy(cockpitModule_properties,$scope.clonedDocumentProperty);
 
 	  $scope.saveConfiguration=function(){
+		  
+		  $rootScope.cockpitBackgroundColor = $scope.clonedTemplate.style.backgroundColor;
+		  debugger;
 		  angular.copy($scope.clonedTemplate,cockpitModule_template.configuration);
 		  angular.copy($scope.clonedDocumentProperty,cockpitModule_properties);
 

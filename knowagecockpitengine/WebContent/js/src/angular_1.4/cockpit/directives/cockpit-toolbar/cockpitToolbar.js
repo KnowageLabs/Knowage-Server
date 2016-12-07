@@ -54,6 +54,11 @@ function cockpitToolbarControllerFunction($scope,cockpitModule_widgetServices,co
 		cockpitModule_generalServices.openDataConfiguration();
 	}
 	
+	$scope.fabSpeed = {
+			isOpen : false
+	}
+	
+	
 	
 	$scope.saveCockpit=function(){
 		var haveSel=false;

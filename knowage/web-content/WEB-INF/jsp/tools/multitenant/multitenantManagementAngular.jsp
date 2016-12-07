@@ -67,21 +67,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							</md-tab-label>
 							<md-tab-body>
 								<md-card>
-									<md-content layout="row" layout-align="center center">
-										<md-input-container flex="90">
+									<md-card-content >
+										<div layout="row" layout-align="center center">
+										<md-input-container flex>
 										 	<label>{{translate.load("sbi.generic.name")}}</label>
 										 	<input type="text" ng-model="tenant.MULTITENANT_NAME" md-maxlength="200" required ng-disabled = "tenant.MULTITENANT_ID">
 									 	</md-input-container>
-									 </md-content>
-									 <md-content layout="row" layout-align="start center">
-									 	<md-content flex="5"></md-content>
+									 	</div>
+									 	<div layout="row" layout-align="start center">
 										<md-input-container flex="50">
 										 	<label>{{translate.load("sbi.multitenant.theme")}}</label>
 										 	<md-select ng-model="tenant.MULTITENANT_THEME" required>
 												<md-option ng-value="theme.VALUE_CHECK" ng-repeat="theme in themes">{{ theme.VALUE_CHECK }}</md-option>
 										 	</md-select>
 										 </md-input-container>
-									 </md-content>
+									 </div>
+									 </md-card-content>
+									 
 								 </md-card>
 					 		</md-tab-body>
 						 </md-tab>
@@ -90,7 +92,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								{{translate.load("sbi.multitenant.producttypes")}}
 							</md-tab-label>
 							<md-tab-body layout="column">
-						 		<md-card layout-fill layout="column">
+						 		<md-card layout="column">
 								 	<angular-table layout-fill
 										id="productTypes" ng-model="productTypes" 
 										columns='[{"label":"Name","name":"LABEL"}]'
@@ -109,7 +111,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								{{translate.load("sbi.ds.dataSource")}}
 							</md-tab-label>
 							<md-tab-body flex="90">
-								<md-card layout-fill layout="column">
+								<md-card layout="column">
 							 		<angular-table layout-fill
 										id="datasource" ng-model="datasources" 
 										columns='[{"label":"Label","name":"LABEL"},{"label":"Description","name":"DESCRIPTION"}]'
