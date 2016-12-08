@@ -89,7 +89,7 @@ angular.module('cockpitModule')
 				if(nature=="refresh" && parameters[0].value.widgetData.chartTemplate.CHART.type!="HEATMAP" && parameters[0].value.widgetData.chartTemplate.CHART.type!="TREEMAP"){
 	    			var iframe = $element.find('iframe')[0];
 		    		var wind = iframe.contentWindow;
-		    		wind.updateData(parameters[0].value.widgetData.jsonData.rows);
+		    		wind.updateData(parameters[0].value.widgetData);
 	    		} 
 	    		else{
 	    			$http.get(actionUrl.testUrl).then(function(){
