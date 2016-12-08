@@ -123,7 +123,7 @@ Ext.extend(Sbi.qbe.CalculatedFieldEditorPanel, Ext.Panel, {
 	  		this.baseExpression = expression;
 	  		if(this.expressionEditor.initialized) {
 	  			this.expressionEditor.reset();
-  				this.expressionEditor.insertAtCursor( expression );
+  				this.myInsertAtCursor(this.expressionEditor, expression );
 	  		} 
 		}
 	}
@@ -612,7 +612,7 @@ Ext.extend(Sbi.qbe.CalculatedFieldEditorPanel, Ext.Panel, {
 			,   subqueries: Ext.getCmp('QueryCataloguePanel').getSelectedQuery()?Ext.getCmp('QueryCataloguePanel').getSelectedQuery().subqueries:[]
 			});
 			this.opWin.on('click', function(win, text) {
-				this.expressionEditor.insertAtCursor(text) ;
+				this.myInsertAtCursor(this.expressionEditor,text) ;
 			}, this);
 			this.opWin.show();			
 		}else{			
@@ -623,11 +623,32 @@ Ext.extend(Sbi.qbe.CalculatedFieldEditorPanel, Ext.Panel, {
 				}else{
 					text= node.attributes.value + ' ';	
 				}
-		    	this.expressionEditor.insertAtCursor(text) ;
+				
+				
+			   	this.myInsertAtCursor(this.expressionEditor,text) ;
 			}
 		}
 	}
 	
+	, myInsertAtCursor: function(expressionEditor, text){
+		if (!expressionEditor.activated) {
+			return;
+		}
+		try{
+			this.expressionEditor.win.focus();
+			var doc = expressionEditor.getDoc(), r = doc.getSelection().getRangeAt(0);
+			if (r) {
+				var fragment	= r.createContextualFragment(text);
+				
+				doc.body.appendChild(fragment);
+				
+				expressionEditor.syncValue();
+				expressionEditor.deferFocus();
+			}
+		}catch(e){
+			expressionEditor.insertAtCursor(text) ;
+		}
+	}
 	
 	// expression editor
 	, initExpressionEditorPanel: function(c) {
@@ -682,7 +703,7 @@ Ext.extend(Sbi.qbe.CalculatedFieldEditorPanel, Ext.Panel, {
     	        	fn: function(){
 	    	          //init = true;
 	    	          this.expressionEditor.onFirstFocus();
-	    	          this.expressionEditor.insertAtCursor(this.baseExpression) ; 
+	    	          this.myInsertAtCursor(expressionEditor,this.baseExpression) ; 
 	    	        } , scope: this
     	        },
     	        'beforesync': function(){
@@ -700,3 +721,4 @@ Ext.extend(Sbi.qbe.CalculatedFieldEditorPanel, Ext.Panel, {
 		);
 	}
 });
+
