@@ -101,15 +101,20 @@ function controllerCalendar(sbiModule_download,sbiModule_config,sbiModule_transl
 			},
 			listType:$scope.listType, 
 			loadEvent: function(item){
-				item.listOfAttributes = [];
+				
+				var listOfAttributes = [];
 				
 				var array = [];
 				for(var i=0;i<item.checkEvent.length;i++){
 					if(item.checkEvent[i].trim()!=""){
-						item.listOfAttributes.push(item.checkEvent[i]);
+						listOfAttributes.push(item.checkEvent[i]);
 					}
 				}
 				
+				var index = $scope.indexinRealDate(item, $scope.selectCalendar.realDateGenerated);
+				if(index!=-1){
+					$scope.selectCalendar.realDateGenerated[index]['listOfAttributes'] = listOfAttributes;
+				}
 			}
 	};
 
@@ -313,6 +318,9 @@ function controllerCalendar(sbiModule_download,sbiModule_config,sbiModule_transl
 	}
 
 	$scope.parseRealInfo = function(){
+		if($scope.selectCalendar.realDateGenerated==undefined){
+			return;
+		}
 		var tmpSplitData=[];
 		var initIndex=$scope.tableUtils.currentPageNumber*$scope.tableUtils.itemsPerPage;
 		var finalIndex=initIndex+$scope.tableUtils.itemsPerPage;

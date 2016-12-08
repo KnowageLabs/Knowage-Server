@@ -131,7 +131,14 @@ public class CalendarDAOImpl implements ICalendarDAO {
 					Set<CalendarAttribute> listOfAttributes = new HashSet();
 
 					for (int j = 0; j < object.optJSONArray("listOfAttributes").length(); j++) {
-						String value = object.optJSONArray("listOfAttributes").getString(j);
+						String value;
+						Object attObj = object.optJSONArray("listOfAttributes").get(j);
+						if (attObj instanceof JSONObject) {
+							value = object.optJSONArray("listOfAttributes").getJSONObject(j).getJSONObject("calendarAttributeDomain")
+									.getString("attributeDomainDescr");
+						} else {
+							value = attObj.toString();
+						}
 						CalendarAttributeDomain domain = loadDomainbyDescr(session, value);
 						CalendarAttribute attribute = (CalendarAttribute) session.createCriteria(CalendarAttribute.class)
 								.add(Restrictions.eq("domainId", domain.getDomainId())).add(Restrictions.eq("calendarId", cal.getCalendarId()))
