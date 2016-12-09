@@ -485,9 +485,12 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				parameterAsMap.put(DocumentExecutionUtils.DESCRIPTION_COLUMN_NAME_METADATA, objParameter.getLovDescriptionColumnName());
 
 				// hide the parameter if is mandatory and have one value in lov (no error parameter)
-				if (admissibleValues != null && admissibleValues.size() == 1 && objParameter.isMandatory() && !admissibleValues.get(0).containsKey("error")) {
+				if (admissibleValues != null && admissibleValues.size() == 1 && objParameter.isMandatory() && !admissibleValues.get(0).containsKey("error")
+						&& (objParameter.getDataDependencies() == null || objParameter.getDataDependencies().isEmpty())
+						&& (objParameter.getLovDependencies() == null || objParameter.getLovDependencies().isEmpty())) {
 					showParameterLov = false;
 				}
+
 				// if parameterValue is not null and is array, check if all element are present in lov
 				Object values = parameterAsMap.get("parameterValue");
 				if (values != null && admissibleValues != null) {
