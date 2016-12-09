@@ -331,6 +331,8 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 	}
 
 	$scope.reloadWidgetsByChartEvent = function(event){
+		if(event.point){
+			//for highcharts
 		var columnValue = event.point.name;
 		
 		var category = $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY;
@@ -340,6 +342,12 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 		}
 		
 		$scope.doSelection(columnName,columnValue);
+		}else{
+			//for d3 charts
+			for (column in event){
+				$scope.doSelection(column,event[column]);
+			}
+		}
 	}
 	
 	$scope.finishLoadingIframe=function(){
