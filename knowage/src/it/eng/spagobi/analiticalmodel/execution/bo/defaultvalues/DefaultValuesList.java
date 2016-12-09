@@ -19,6 +19,7 @@ package it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -30,6 +31,7 @@ public class DefaultValuesList extends ArrayList<DefaultValue> {
 	 * Returns true if the default values' list contains the value specified in input.
 	 * The input is compared with the default values' value property, i.e. it is not compared with default values' description properties.
 	 */
+	@Override
 	public boolean contains(Object value) {
 		Iterator<DefaultValue> it = this.iterator();
 		while (it.hasNext()) {
@@ -59,5 +61,25 @@ public class DefaultValuesList extends ArrayList<DefaultValue> {
 		logger.debug("Value [" + value + "] not found in this default values' list");
 		return null;
 	}
-	
+
+	public List getValuesAsList() {
+		List toReturn = new ArrayList();
+		Iterator<DefaultValue> it = this.iterator();
+		while (it.hasNext()) {
+			DefaultValue defaultValue = it.next();
+			toReturn.add(defaultValue.getValue().toString());
+		}
+		return toReturn;
+	}
+
+	public List getDescriptionsAsList() {
+		List toReturn = new ArrayList();
+		Iterator<DefaultValue> it = this.iterator();
+		while (it.hasNext()) {
+			DefaultValue defaultValue = it.next();
+			toReturn.add(defaultValue.getDescription().toString());
+		}
+		return toReturn;
+	}
+
 }

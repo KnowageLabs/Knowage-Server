@@ -418,8 +418,6 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		logger.debug("IN");
 
 		RequestContainer aRequestContainer = RequestContainerAccess.getRequestContainer(req);
-		SessionContainer aSessionContainer = aRequestContainer.getSessionContainer();
-		SessionContainer permanentSession = aSessionContainer.getPermanentContainer();
 		JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
 		String label = requestVal.getString("label");
 		String role = requestVal.getString("role");
@@ -513,7 +511,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			// convert the parameterValue from array of string in array of object
 			DefaultValuesList parameterValueList = new DefaultValuesList();
 			Object o = parameterAsMap.get("parameterValue");
-			if (o != null && !(o instanceof DefaultValuesList)) {
+			if (o != null) {
 				if (o instanceof List) {
 					// CROSS NAV : INPUT PARAM PARAMETER TARGET DOC IS STRING
 					if (o.toString().startsWith("[") && o.toString().endsWith("]") && parameterUse.getValueSelection().equals("man_in")) {
@@ -554,6 +552,17 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			parameterAsMap.put("visualDependencies", objParameter.getVisualDependencies());
 			parameterAsMap.put("lovDependencies", (objParameter.getLovDependencies() != null) ? objParameter.getLovDependencies() : new ArrayList<>());
 
+			// load DEFAULT VALUE if present and if the parameter value is empty
+			if (objParameter.getDefaultValues() != null && objParameter.getDefaultValues().size() > 0) {
+				DefaultValuesList valueList = null;
+				if (jsonCrossParameters.isNull(objParameter.getId()) && !sessionParametersMap.containsKey(objParameter.getId())) {
+					valueList = objParameter.getDefaultValues();
+					if (valueList != null) {
+						parameterAsMap.put("parameterValue", valueList);
+					}
+				}
+			}
+
 			if (showParameterLov) {
 				parametersArrayList.add(parameterAsMap);
 			}
@@ -572,20 +581,12 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 	private void checkIfValuesAreAdmissible(Object values, ArrayList<HashMap<String, Object>> admissibleValues) {
 		if (values instanceof List) {
-			List valuesList = (List) values;
+			List<String> valuesList = (List) values;
 			for (int k = 0; k < valuesList.size(); k++) {
-				Object item = valuesList.get(k);
-				Object toCompare = null;
-				if (item instanceof DefaultValue) {
-					toCompare = ((DefaultValue) item).getValue();
-				} else if (item instanceof String) {
-					toCompare = item;
-				} else {
-					throw new SpagoBIRuntimeException("Value type [" + item.getClass() + "] not admissible");
-				}
+				String item = valuesList.get(k);
 				boolean found = false;
 				for (HashMap<String, Object> parHashVal : admissibleValues) {
-					if (parHashVal.containsKey("value") && parHashVal.get("value").equals(toCompare)) {
+					if (parHashVal.containsKey("value") && parHashVal.get("value").equals(item)) {
 						found = true;
 						break;
 					}

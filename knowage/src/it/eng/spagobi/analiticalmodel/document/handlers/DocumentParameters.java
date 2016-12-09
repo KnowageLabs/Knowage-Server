@@ -477,7 +477,8 @@ public class DocumentParameters {
 				// if parameter has no values set, but it has default values, those values are considered as values
 				DefaultValuesList valueList = buildDefaultValueList();
 				if (valueList != null) {
-					analyticalDocumentParameter.setParameterValues(valueList);
+					analyticalDocumentParameter.setParameterValues(valueList.getValuesAsList());
+					analyticalDocumentParameter.setParameterValuesDescription(valueList.getDescriptionsAsList());
 				}
 			}
 
