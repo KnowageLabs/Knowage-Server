@@ -86,8 +86,9 @@ angular.module('cockpitModule')
 					updateData that is implemented in highcharts414Initializer.jsp		
 				 */
 				
-				if(nature=="refresh" && parameters[0].value.widgetData.chartTemplate.CHART.type!="HEATMAP" && parameters[0].value.widgetData.chartTemplate.CHART.type!="TREEMAP"){
-	    			var iframe = $element.find('iframe')[0];
+	    		var typesOfCharts= ["HEATMAP", "TREEMAP", "CHORD", "PARALLEL","SUNBURST" ,"WORDCLOUD"];
+				if(nature=="refresh" && typesOfCharts.indexOf(parameters[0].value.widgetData.chartTemplate.CHART.type) == -1){	
+					var iframe = $element.find('iframe')[0];
 		    		var wind = iframe.contentWindow;
 		    		wind.updateData(parameters[0].value.widgetData);
 	    		} 
