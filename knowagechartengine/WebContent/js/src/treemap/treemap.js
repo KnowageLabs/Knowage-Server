@@ -142,11 +142,10 @@ function getSelectionParammsForHeatmap(point){
 	var params={
     		point:{
     			name: null, // category name
-    	        value: null, // category  value
     	    }
     	};
 	params.point.name=point.label;
-	params.point.value=point.value;
+
 	
 	return params;
 }

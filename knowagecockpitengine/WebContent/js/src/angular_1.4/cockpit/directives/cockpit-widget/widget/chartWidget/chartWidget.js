@@ -339,7 +339,12 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 		var category = $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY;
 		var columnName = category.name
 		if(Object.prototype.toString.call(category) === Object.prototype.toString.call([])){
-			columnName = category[0].name;
+			var chartType = $scope.ngModel.content.chartTemplate.CHART.type;
+			if(chartType === 'HEATMAP'){
+				columnName = category[1].name;	
+			}else{
+				columnName = category[0].name;
+			}
 		}
 		
 		$scope.doSelection(columnName,columnValue);
