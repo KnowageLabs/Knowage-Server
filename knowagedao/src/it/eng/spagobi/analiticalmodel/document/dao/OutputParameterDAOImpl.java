@@ -179,7 +179,7 @@ public class OutputParameterDAOImpl extends AbstractHibernateDAO implements IOut
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IOutputParameterDAO#removeParameters(java.lang.Integer, org.hibernate.Session)
 	 */
 	@Override
@@ -202,8 +202,10 @@ public class OutputParameterDAOImpl extends AbstractHibernateDAO implements IOut
 
 	@Override
 	public void removeSystemDefinedParametersByBiobjId(Integer biobjId, Session session) throws EMFUserError {
-		List<Integer> ids = session.createCriteria(SbiOutputParameter.class).add(Restrictions.eq("biobjId", biobjId))
-				.add(Restrictions.eq("isUserDefined", false)).setProjection(Property.forName("id")).list();
+
+		List<Integer> ids = session.createCriteria(SbiOutputParameter.class).add(Restrictions.eq("biobjId", biobjId)).add(Restrictions.isNull("isUserDefined"))
+				.setProjection(Property.forName("id")).list();
+		// .add(Restrictions.eq("isUserDefined", false)).setProjection(Property.forName("id")).list();
 		for (Integer id : ids) {
 			removeParameter(id, session);
 		}

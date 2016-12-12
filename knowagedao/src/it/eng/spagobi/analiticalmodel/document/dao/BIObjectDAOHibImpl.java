@@ -590,24 +590,24 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			// }
 
 			// If the document previously had the output parameters, remove not user defined one them in order to refresh them. (danristo)
-			if (!hibBIObject.getSbiOutputParameters().isEmpty() || hibBIObject.getSbiOutputParameters() != null) {
-				// delete SbiOutputParameters
-				if (hibBIObject.getSbiOutputParameters() != null && !hibBIObject.getSbiOutputParameters().isEmpty()) {
-
-					// delete only system parameters
-					Set<SbiOutputParameter> cleanedOutPars = new HashSet<SbiOutputParameter>();
-					for (Iterator iterator = hibBIObject.getSbiOutputParameters().iterator(); iterator.hasNext();) {
-						SbiOutputParameter sbiOutPar = (SbiOutputParameter) iterator.next();
-						if (sbiOutPar.getIsUserDefined() != null && sbiOutPar.getIsUserDefined() == true) {
-							cleanedOutPars.add(sbiOutPar);
-						}
+			// if (!hibBIObject.getSbiOutputParameters().isEmpty() || hibBIObject.getSbiOutputParameters() != null) {
+			// delete SbiOutputParameters
+			if (hibBIObject.getSbiOutputParameters() != null && !hibBIObject.getSbiOutputParameters().isEmpty()) {
+				// delete only default system parameters
+				Set<SbiOutputParameter> cleanedOutPars = new HashSet<SbiOutputParameter>();
+				for (Iterator iterator = hibBIObject.getSbiOutputParameters().iterator(); iterator.hasNext();) {
+					SbiOutputParameter sbiOutPar = (SbiOutputParameter) iterator.next();
+					// if (sbiOutPar.getIsUserDefined() != null && sbiOutPar.getIsUserDefined() == true) {
+					if (sbiOutPar.getIsUserDefined() == null || sbiOutPar.getIsUserDefined() == false) {
+						cleanedOutPars.add(sbiOutPar);
 					}
-					hibBIObject.setSbiOutputParameters(cleanedOutPars);
-					// hibBIObject.getSbiOutputParameters().clear();
-					DAOFactory.getOutputParameterDAO().removeSystemDefinedParametersByBiobjId(hibBIObject.getBiobjId(), aSession);
-					aSession.flush();
 				}
+				hibBIObject.setSbiOutputParameters(cleanedOutPars);
+				// hibBIObject.getSbiOutputParameters().clear();
+				DAOFactory.getOutputParameterDAO().removeSystemDefinedParametersByBiobjId(hibBIObject.getBiobjId(), aSession);
+				aSession.flush();
 			}
+			// }
 
 			// If there are no output parameters persisted already for this document, create new ones for it. (danristo)
 			// if (hibBIObject.getSbiOutputParameters() == null || hibBIObject.getSbiOutputParameters().isEmpty()) {
@@ -1110,7 +1110,15 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			hibBIObject = (SbiObjects) aSession.load(SbiObjects.class, id);
 
 			// Saving output parameters
-			hibBIObject.getSbiOutputParameters().addAll(loadDriverSpecificOutputParameters(hibBIObject));
+			// hibBIObject.getSbiOutputParameters().addAll(loadDriverSpecificOutputParameters(hibBIObject));
+			List<SbiOutputParameter> op = loadDriverSpecificOutputParameters(hibBIObject);
+
+			for (Iterator iterator = op.iterator(); iterator.hasNext();) {
+				SbiOutputParameter sbiOutputParameter = (SbiOutputParameter) iterator.next();
+				aSession.save(sbiOutputParameter);
+			}
+
+			hibBIObject.getSbiOutputParameters().addAll(op);
 
 			// functionalities storing
 			Set hibObjFunc = new HashSet();
@@ -2587,92 +2595,83 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 		logger.debug("OUT");
 		return realResult;
 	}
-	
-	 public  List<BIObject> loadBIObjectsByLovId(Integer idLov) throws EMFUserError{
-	    	
-	    	logger.debug("IN");
-	    	Session aSession = null;
-	    	Transaction tx = null;
-	    	List realResult = new ArrayList();
-	    	try {
-	    	    aSession = getSession();
-	    	    tx = aSession.beginTransaction();
-	    	    Query hibQuery = aSession.createQuery("select distinct obj from   SbiObjects as obj "
-	    	    									+ "inner join obj.sbiObjPars as objPars "
-	    	    									+ "inner join objPars.sbiParameter as param "
-	    	    									+ "inner join param.sbiParuses as paruses "
-	    	    									+ "inner join paruses.sbiLov as lov "
-	    	    									+ "where  lov.lovId = " + idLov
-	    	    									);
 
-	    	    									
-	    	    List hibList = hibQuery.list();
+	@Override
+	public List<BIObject> loadBIObjectsByLovId(Integer idLov) throws EMFUserError {
 
-	    	    Iterator it = hibList.iterator();
-	    	    while (it.hasNext()) {
-	    		realResult.add(toBIObject((SbiObjects) it.next(),aSession));
-	    	    }
-	    	    tx.commit();
-	    	} catch (HibernateException he) {
-	    	    logger.error("HibernateException", he);
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		List realResult = new ArrayList();
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			Query hibQuery = aSession.createQuery("select distinct obj from   SbiObjects as obj " + "inner join obj.sbiObjPars as objPars "
+					+ "inner join objPars.sbiParameter as param " + "inner join param.sbiParuses as paruses " + "inner join paruses.sbiLov as lov "
+					+ "where  lov.lovId = " + idLov);
 
-	    	    if (tx != null)
-	    		tx.rollback();
+			List hibList = hibQuery.list();
 
-	    	    throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+			Iterator it = hibList.iterator();
+			while (it.hasNext()) {
+				realResult.add(toBIObject((SbiObjects) it.next(), aSession));
+			}
+			tx.commit();
+		} catch (HibernateException he) {
+			logger.error("HibernateException", he);
 
-	    	} finally {
-	    	    if (aSession != null) {
-	    		if (aSession.isOpen())
-	    		    aSession.close();
-	    	    }
-	    	    logger.debug("OUT");
-	    	}
-	    	return realResult;
+			if (tx != null)
+				tx.rollback();
 
-	    	
-	    	
-	    }
-	 
-	 public  List<BIObject> loadBIObjectsByParamterId(Integer idParameter) throws EMFUserError {
-		 logger.debug("IN");
-	    	Session aSession = null;
-	    	Transaction tx = null;
-	    	List realResult = new ArrayList();
-	    	try {
-	    	    aSession = getSession();
-	    	    tx = aSession.beginTransaction();
-	    	    Query hibQuery = aSession.createQuery("select distinct obj from   SbiObjects as obj "
-	    	    									+ "inner join obj.sbiObjPars as objPars "
-	    	    									+ "inner join objPars.sbiParameter as param "
-	    	    									+ "where  param.parId = " + idParameter
-	    	    									);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
-	    	    									
-	    	    List hibList = hibQuery.list();
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+			logger.debug("OUT");
+		}
+		return realResult;
 
-	    	    Iterator it = hibList.iterator();
-	    	    while (it.hasNext()) {
-	    		realResult.add(toBIObject((SbiObjects) it.next(),aSession));
-	    	    }
-	    	    tx.commit();
-	    	} catch (HibernateException he) {
-	    	    logger.error("HibernateException", he);
+	}
 
-	    	    if (tx != null)
-	    		tx.rollback();
+	@Override
+	public List<BIObject> loadBIObjectsByParamterId(Integer idParameter) throws EMFUserError {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		List realResult = new ArrayList();
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			Query hibQuery = aSession.createQuery("select distinct obj from   SbiObjects as obj " + "inner join obj.sbiObjPars as objPars "
+					+ "inner join objPars.sbiParameter as param " + "where  param.parId = " + idParameter);
 
-	    	    throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+			List hibList = hibQuery.list();
 
-	    	} finally {
-	    	    if (aSession != null) {
-	    		if (aSession.isOpen())
-	    		    aSession.close();
-	    	    }
-	    	    logger.debug("OUT");
-	    	}
-	    	return realResult;
-	 }
+			Iterator it = hibList.iterator();
+			while (it.hasNext()) {
+				realResult.add(toBIObject((SbiObjects) it.next(), aSession));
+			}
+			tx.commit();
+		} catch (HibernateException he) {
+			logger.error("HibernateException", he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+			logger.debug("OUT");
+		}
+		return realResult;
+	}
 
 	/**
 	 * Search objects with the features specified
