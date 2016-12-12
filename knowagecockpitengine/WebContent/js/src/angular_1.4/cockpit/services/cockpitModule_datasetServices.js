@@ -23,13 +23,18 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 	this.checkForDSChange=function(){
 		var changed=[];
+		var removedDatasetParams=[];
+		
 		angular.forEach(cockpitModule_template.configuration.datasets,function(item){
 			var actualDs=ds.getDatasetById(item.dsId);
-			//check if label change
+			var addedParams=[];
+			var removedParams=[];
+			
+			//check if label changed
 			if(!angular.equals(actualDs.label,item.dsLabel)){
 				var oldlab=angular.copy(item.dsLabel);
 				//update the label of dataset
-				this.push("DATASET LABEL: "+item.dsLabel+" -> "+actualDs.label)
+				this.push(sbiModule_translate.load("sbi.generic.label")+": "+item.dsLabel+" -> "+actualDs.label)
 				item.dsLabel=actualDs.label;
 				
 				//update the dataset label in the associations
@@ -80,37 +85,107 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				}
 			}
 
-			//check if name change
+			//check if name changed
 			if(!angular.equals(actualDs.name,item.name)){
 				//update the name of dataset
-				this.push("DATASET NAME: "+item.name+" -> "+actualDs.name)
+				this.push(sbiModule_translate.load("sbi.generic.name")+": "+item.name+" -> "+actualDs.name)
 				item.name=actualDs.name;
 			}
 			
-			//check if parameter change
-			var parChange=false;
+			//check if parameters changed
+			removedDatasetParams[item.dsLabel] = [];
 			if(actualDs.parameters!=undefined && item.parameters!=undefined){
-				
-				if((actualDs.parameters==undefined && item.parameters!=undefined) || (actualDs.parameters!=undefined && item.parameters==undefined)){
-					parChange=true;
-				}else if(actualDs.parameters.length != Object.keys(item.parameters).length){
-					parChange=true;
-				}else{
-					for(var p=0;p<actualDs.parameters.length;p++){
-						if(!item.parameters.hasOwnProperty(actualDs.parameters[p].name)){
-							parChange=true;
-							break;
-						}
+				//check added params
+				for(var i=0; i<actualDs.parameters.length; i++){
+					var paramName = actualDs.parameters[i].name;
+					if(!item.parameters.hasOwnProperty(paramName)){
+						addedParams.push(paramName);
+						this.push(sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.addedParameter")
+								.replace("{0}", "<b>" + item.dsLabel + ".$P{" + paramName + "}</b>"));
 					}
 				}
-			}
-			if(parChange){
-				this.push("<b>!! The parameter of "+item.dsLabel+" dataset are changed. The cockpit may not work !!</b>")
+				
+				//check removed params
+				for (var paramName in item.parameters) {
+				    if (item.parameters.hasOwnProperty(paramName)) {
+				    	var removed = true;
+				    	for(var i=0; i<actualDs.parameters.length; i++){
+							if(actualDs.parameters[i].name == paramName){
+								removed = false;
+								break;
+							}
+						}
+				    	if(removed){
+				    		removedParams.push(paramName);
+				    		removedDatasetParams[item.dsLabel].push(paramName);
+				    		this.push(sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.removedParameter")
+				    				.replace("{0}", "<b>" + item.dsLabel + ".$P{" + paramName + "}</b>"));
+				    	}
+				    }
+				}
 			}
 			
+			//fix template parameters
+			for(var i=0; i<addedParams.length; i++){
+				var addedParam = addedParams[i];
+				item.parameters[addedParam] = null;
+			}
+			for(var i=0; i<removedParams.length; i++){
+				var removedParam = removedParams[i];
+				delete item.parameters[removedParam];
+			}
 		},changed)
+		
+		var modifiedAssociations = 0;
+		angular.forEach(cockpitModule_template.configuration.associations,function(item){
+			//fix fields & description
+			var modifiedAssociation = 0;
+			
+			for(var i=item.fields.length-1; i>=0; i--){
+				var field = item.fields[i];
+				var paramName = (field.column.startsWith("$P{") && field.column.endsWith("}")) ? field.column.substring(3, field.column.length - 1) : field.column;
+				if(field.type = "dataset" && removedDatasetParams[field.store].indexOf(paramName) > -1){
+					item.description = item.description.replace(field.store + "." + field.column, "");
+					if(item.description.startsWith("=")){
+						item.description = item.description.substring(1);
+					}else if(item.description.endsWith("=")){
+						item.description = item.description.substring(0, str.length - 1);
+					}else{
+						item.description = item.description.replace("==", "=");
+					}
+					
+					item.fields.splice(i, 1);
+					
+					modifiedAssociation = 1;
+				}
+			}
+			
+			modifiedAssociations += modifiedAssociation;
+		},changed)
+		
+		//remove degenerated associations
+		var removedAssociations = 0;
+		for(var i=cockpitModule_template.configuration.associations.length-1; i>=0; i--){
+			var association=cockpitModule_template.configuration.associations[i];
+			if(association.fields.length < 2){
+				cockpitModule_template.configuration.associations.splice(i, 1);
+				removedAssociations++;
+				modifiedAssociations--;
+			}
+		}
+		
+		if(modifiedAssociations > 0){
+			changed.push(sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.modifiedAssociations")
+					.replace("{0}", "" + modifiedAssociations));
+		}
+		
+		if(removedAssociations > 0){
+			changed.push(sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.removedAssociations")
+					.replace("{0}", "" + removedAssociations));
+		}
+		
 		if(changed.length>0){
-			sbiModule_messaging.showErrorMessage(changed.join("<br>"),"Dataset information change")
+			sbiModule_messaging.showErrorMessage(changed.join("<br>"), sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.title"));
 		}
 	}
 	this.getDatasetList=function(){
@@ -291,7 +366,14 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		.replace(/'/g,"%27")
 		.replace(/"/g,"%22");
 
-		var par = encodeURIComponent(JSON.stringify(ds.getDatasetParameters(dsId)))
+		var parameters = ds.getDatasetParameters(dsId);
+		var parametersString = JSON.stringify(parameters);
+		for (var parameter in parameters) {
+			if (parameters.hasOwnProperty(parameter) && (parameters[parameter] == null || parameters[parameter] == undefined)) {
+				parametersString = parametersString.replace("}" , ", \"" + parameter + "\":null}");
+			}
+		}
+		var par = encodeURIComponent(parametersString)
 		.replace(/'/g,"%27")
 		.replace(/"/g,"%22");
 		params =  "?aggregations=" +aggr+"&parameters="+par;

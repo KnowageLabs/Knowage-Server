@@ -531,7 +531,7 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, 
 				    controller: function($scope,mdPanelRef,sbiModule_translate,title,text){
 				    	$scope.title=title;
 				    	$scope.text=text;
-				    	$scope.ok=sbiModule_translate.load("sbi.general.ok")
+				    	$scope.ok=sbiModule_translate.load("sbi.general.ok");
 				    	
 				    	$scope.closeDialog=function(){
 				    		mdPanelRef.close();
