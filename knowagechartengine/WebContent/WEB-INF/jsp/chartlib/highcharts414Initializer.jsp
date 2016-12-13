@@ -207,14 +207,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		Method for updating chart		
  	*/
     function updateData(widgetData) {
+    	 
 		var category = null;
 		var column = null;
 		var orderColumn = null;
 		var data = widgetData.jsonData.rows;
-		console.log("widgetData ", widgetData);
 		if (chart.options.chart.type != "gauge") {
 			var category = widgetData.chartTemplate.CHART.VALUES.CATEGORY.name;
-			console.log("orderColumn " + widgetData.chartTemplate.CHART.VALUES.CATEGORY.orderColumn);
 			orderColumn = widgetData.chartTemplate.CHART.VALUES.CATEGORY.orderColumn == "" ? 2 : 3; 
 			for (var j = 1; j < widgetData.jsonData.metaData.fields.length; j++) {
 				if (widgetData.jsonData.metaData.fields[j].header
@@ -226,15 +225,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			
 		}
 		
-		
- 
-		console.log("category " + category);
+		var seriesNamesColumnBind ={};
+	 
+		for(var i =1 ; i<widgetData.jsonData.metaData.fields.length; i++){
+			var field = widgetData.jsonData.metaData.fields[i];
+			if(field.header){
+				seriesNamesColumnBind[field.header]=field.name;
+				if(field.header.lastIndexOf("_")>0){
+					seriesNamesColumnBind[field.header.substring(0,field.header.lastIndexOf("_"))]=field.name;
+				}
+			}
+		}
 
-		console.log("column " + column);
-		console.log("data for update ", data)
 		
 		var counterSeries =  widgetData.chartTemplate.CHART.VALUES.SERIE.length;
-		console.log(counterSeries + " counterSeries") 
 		
 		
 		for (var j = 0; j < chart.series.length; j++) {
@@ -248,8 +252,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							parseFloat(data[j]["column_" + (i + 1)]) ], true,
 							false);
 				} else {
+
 					chart.series[i].addPoint([ data[j][column],
-							parseFloat(data[j]["column_" + (i + orderColumn)]) ], true,
+							parseFloat(data[j][seriesNamesColumnBind[chart.series[i].name]]) ], true,
 							false);
 
 				}
