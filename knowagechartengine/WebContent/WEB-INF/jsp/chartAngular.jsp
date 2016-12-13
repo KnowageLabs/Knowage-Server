@@ -110,7 +110,7 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	<%-- == BODY ========================================================== --%>
 	<body ng-controller="chartExecutionController" ng-style="bodyStyleConfig">
 	      
-	      <script type="text/javascript">
+	<!--     <script type="text/javascript">
 
    
 	     
@@ -129,7 +129,7 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
     
     
     
-    </script>
+    </script>  --> 
    
 	<div ng-show=false>
 	<div class="flc-prefsEditor-separatedPanel fl-prefsEditor-separatedPanel">
