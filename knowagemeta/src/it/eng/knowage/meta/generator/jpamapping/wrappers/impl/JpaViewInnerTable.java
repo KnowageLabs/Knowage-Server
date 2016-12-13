@@ -43,10 +43,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
+ *
  * This class wrap a physical table used within a business view and provide all the utility methods used by the template engine in order to generate the java
  * class mapping
- * 
+ *
  * @authors Angelo Bernabei( angelo.bernabei@eng.it) Andrea Gioia (andrea.gioia@eng.it)
  */
 public class JpaViewInnerTable extends AbstractJpaTable {
@@ -181,9 +181,9 @@ public class JpaViewInnerTable extends AbstractJpaTable {
 
 	/**
 	 * Check if the physical column belong to the view
-	 * 
+	 *
 	 * @param physicalColumn
-	 * 
+	 *
 	 * @return the business column that wrap the physical column if it belong to the view. null otherwise
 	 */
 	protected BusinessColumn findColumnInBusinessView(PhysicalColumn physicalColumn) {
@@ -198,7 +198,7 @@ public class JpaViewInnerTable extends AbstractJpaTable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaTable#hasFakePrimaryKey()
 	 */
 	@Override
@@ -209,7 +209,7 @@ public class JpaViewInnerTable extends AbstractJpaTable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.knowage.meta.generator.jpamapping.wrappers.IJpaTable#hasCompositeKey()
 	 */
 	@Override
@@ -217,12 +217,12 @@ public class JpaViewInnerTable extends AbstractJpaTable {
 		return true;
 		/*
 		 * boolean hasCompositeKey = false;
-		 * 
+		 *
 		 * if(physicalTable.getPrimaryKey() != null) { // if there's a key... if(physicalTable.getPrimaryKey().getColumns().size() > 1) { // ...and it is
 		 * composed by more then one column hasCompositeKey = true; } } else { // if there isn't a key hasCompositeKey = true; // we return true because we are
 		 * going to generate a fake key composed by // all columns in the table in order to keep jpa runtime happy (in jpa as in // hibernate any persisted
 		 * object must have a key) }
-		 * 
+		 *
 		 * return hasCompositeKey;
 		 */
 	}
@@ -242,7 +242,7 @@ public class JpaViewInnerTable extends AbstractJpaTable {
 
 	/**
 	 * Return the <code>JpaRelationship</code> that contains this table We have to ADD only the relationship belong to this Physical Table.
-	 * 
+	 *
 	 * @return
 	 */
 	@Override
@@ -269,7 +269,7 @@ public class JpaViewInnerTable extends AbstractJpaTable {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param t
 	 * @param r
 	 * @return
@@ -319,9 +319,7 @@ public class JpaViewInnerTable extends AbstractJpaTable {
 		if ((useSchema != null) && (useSchema.equalsIgnoreCase("true"))) {
 			String schema = getModel().getPhysicalModel().getSchema();
 			if (schema != null && !schema.equals("")) {
-				if (!quoteString.equals(" ")) {
-					schema = quoteString + schema + quoteString;
-				}
+				schema = "`" + schema + "`";
 			}
 			return schema;
 		} else {
@@ -348,7 +346,7 @@ public class JpaViewInnerTable extends AbstractJpaTable {
 	@Override
 	public String getQuotedMappingTableName() {
 		String name = physicalTable.getName();
-		return quoteString + name + quoteString;
+		return "`" + name + "`";
 	}
 
 	@Override
