@@ -75,6 +75,10 @@
 	<classpathentry kind="lib" path="lib/cron-utils-3.1.6.jar"/>
 	<classpathentry kind="lib" path="lib/joda-time-2.9.3.jar"/>
 	<classpathentry kind="lib" path="lib/commons-lang3-3.4.jar"/>
+	<classpathentry kind="lib" path="lib/zero-allocation-hashing-0.6.jar"/>
+	<classpathentry kind="lib" path="lib/object-explorer.jar"/>
+	<classpathentry kind="lib" path="lib/trove-3.0.3.jar"/>
+	<classpathentry kind="lib" path="lib/kryo-4.0.0.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.16.jar"/>
 	<classpathentry kind="lib" path="lib/commons-fileupload-1.1.1.jar"/>

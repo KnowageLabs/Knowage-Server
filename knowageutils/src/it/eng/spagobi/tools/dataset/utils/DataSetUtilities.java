@@ -275,16 +275,17 @@ public class DataSetUtilities {
 
 	public static Map<String, String> getParametersMap(JSONObject jsonParameters) {
 		Map<String, String> toReturn = new HashMap<String, String>();
-
-		Iterator<String> keys = jsonParameters.keys();
-		try {
-			while (keys.hasNext()) {
-				String key = keys.next();
-				String value = jsonParameters.getString(key);
-				toReturn.put(key, value);
+		if (jsonParameters != null) {
+			Iterator<String> keys = jsonParameters.keys();
+			try {
+				while (keys.hasNext()) {
+					String key = keys.next();
+					String value = jsonParameters.getString(key);
+					toReturn.put(key, value);
+				}
+			} catch (Throwable t) {
+				throw new SpagoBIRuntimeException("An unexpected exception occured while loading parameters [" + jsonParameters + "]", t);
 			}
-		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("An unexpected exception occured while loading parameters [" + jsonParameters + "]", t);
 		}
 
 		return toReturn;

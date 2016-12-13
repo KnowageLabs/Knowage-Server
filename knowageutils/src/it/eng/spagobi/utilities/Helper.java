@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -32,15 +32,14 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.PropertyException;
 
+import net.openhft.hashing.LongHashFunction;
+
 /**
  *
  * Helper class with useful methods.
  *
  */
 public class Helper {
-
-	private static MessageDigest md5instance;
-	private static MessageDigest sha256instance;
 
 	/**
 	 * ISO format
@@ -281,6 +280,10 @@ public class Helper {
 	private static MessageDigest getSHA256Instance() throws NoSuchAlgorithmException {
 		// MessageDigest is not thread safe and is not particularly expensive to construct, so instance it each time.
 		return MessageDigest.getInstance("SHA-256");
+	}
+
+	public static long xxHash(String res) {
+		return LongHashFunction.xx_r39().hashChars(res);
 	}
 
 	public static String toNullIfempty(String s) {

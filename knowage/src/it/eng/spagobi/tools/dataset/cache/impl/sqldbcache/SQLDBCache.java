@@ -1447,7 +1447,7 @@ public class SQLDBCache implements ICache {
 		return null;
 	}
 
-	private static long getTimeout() {
+	public static long getTimeout() {
 		long lockTimeout;
 		try {
 			lockTimeout = Long.parseLong(SingletonConfig.getInstance().getConfigValue("SPAGOBI.CACHE.HAZELCAST.TIMEOUT"));
@@ -1459,7 +1459,7 @@ public class SQLDBCache implements ICache {
 		return lockTimeout;
 	}
 
-	private static long getLeaseTime() {
+	public static long getLeaseTime() {
 		long lockLeaseTime;
 		try {
 			lockLeaseTime = Long.parseLong(SingletonConfig.getInstance().getConfigValue("SPAGOBI.CACHE.HAZELCAST.LEASETIME"));

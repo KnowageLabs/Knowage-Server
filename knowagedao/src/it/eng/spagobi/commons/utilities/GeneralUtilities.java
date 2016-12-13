@@ -26,8 +26,10 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
 import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
@@ -864,6 +866,26 @@ public class GeneralUtilities extends SpagoBIUtilities {
 		}
 
 		return res;
+	}
+
+	/**
+	 * Return the value associated with the provided property name
+	 *
+	 * @param propertyName
+	 * @return the value of the property if present, null elsewhere
+	 */
+	public static String getSpagoBIConfigurationProperty(String propertyName) {
+		try {
+			String propertyValue = null;
+			IConfigDAO configDao = DAOFactory.getSbiConfigDAO();
+			Config config = configDao.loadConfigParametersByLabel(propertyName);
+			if ((config != null) && (config.isActive())) {
+				propertyValue = config.getValueCheck();
+			}
+			return propertyValue;
+		} catch (Throwable t) {
+			throw new SpagoBIRuntimeException("An unexpected exception occured while loading spagobi property [" + propertyName + "]", t);
+		}
 	}
 
 }

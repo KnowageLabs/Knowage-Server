@@ -27,6 +27,7 @@ import it.eng.spagobi.security.hmacfilter.HMACUtils;
 import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
+import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.awt.image.BufferedImage;
@@ -651,6 +652,18 @@ public class SpagoBIUtilities {
 	}
 
 	/**
+	 * Get the root resource path
+	 *
+	 * @return the path for resources
+	 */
+	public static String getRootResourcePath() {
+		SingletonConfig configSingleton = SingletonConfig.getInstance();
+		String path = configSingleton.getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
+		String resourcePath = SpagoBIUtilities.readJndiResource(path);
+		return resourcePath;
+	}
+
+	/**
 	 * Get the tenant resource path. This is likely the one that should be used 99% of the times
 	 *
 	 * @return the path for tenant resources
@@ -665,15 +678,12 @@ public class SpagoBIUtilities {
 	}
 
 	/**
-	 * Get the root resource path
+	 * Get the dataset resource path.
 	 *
-	 * @return the path for resources
+	 * @return the path for dataset resources without '/' at the end
 	 */
-	public static String getRootResourcePath() {
-		SingletonConfig configSingleton = SingletonConfig.getInstance();
-		String path = configSingleton.getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
-		String resourcePath = SpagoBIUtilities.readJndiResource(path);
-		return resourcePath;
+	public static String getDatasetResourcePath() {
+		return getResourcePath() + File.separatorChar + DataSetConstants.RESOURCE_RELATIVE_FOLDER;
 	}
 
 	public static String getHmacKey() {

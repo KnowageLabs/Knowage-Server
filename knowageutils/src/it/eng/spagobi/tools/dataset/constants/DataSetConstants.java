@@ -27,6 +27,10 @@ import java.util.Map;
  */
 public class DataSetConstants {
 
+	public static final String RESOURCE_RELATIVE_FOLDER = "dataset";
+	public static final String DOMAIN_VALUES_FOLDER = "domains";
+	public static final String DOMAIN_VALUES_EXTENSION = ".bin";
+
 	public static final String MESSAGE_DET = "MESSAGE_DET";
 	// type of service
 	public static final String DATASETS_LIST = "DATASETS_LIST";

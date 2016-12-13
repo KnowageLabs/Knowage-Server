@@ -17,20 +17,22 @@
  */
 package it.eng.spagobi.tools.dataset;
 
+import gnu.trove.set.hash.TLongHashSet;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.dao.IRoleDAO;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.tools.dataset.association.DistinctValuesCalculateWork;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
@@ -59,6 +61,7 @@ import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
+import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.crosstab.CrosstabDefinition;
 import it.eng.spagobi.tools.dataset.crosstab.Measure;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
@@ -74,7 +77,11 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.groovy.GroovySandbox;
 import it.eng.spagobi.utilities.sql.SqlUtils;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
+import it.eng.spagobi.utilities.trove.TLongHashSetSerializer;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -89,6 +96,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.zip.InflaterInputStream;
 
 import javax.naming.NamingException;
 
@@ -99,7 +107,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.io.UnsafeInput;
 import commonj.work.Work;
+import commonj.work.WorkException;
 
 /**
  * DataLayer facade class. It manage the access to SpagoBI's datasets. It is built on top of the dao. It manages all complex operations that involve more than a
@@ -513,7 +524,7 @@ public class DatasetManagementAPI {
 
 			WorkManager spagoBIWorkManager;
 			try {
-				spagoBIWorkManager = new WorkManager(getSpagoBIConfigurationProperty("JNDI_THREAD_MANAGER"));
+				spagoBIWorkManager = new WorkManager(GeneralUtilities.getSpagoBIConfigurationProperty("JNDI_THREAD_MANAGER"));
 			} catch (NamingException t) {
 				throw new RuntimeException("Impossible to initialize work manager");
 			}
@@ -570,7 +581,7 @@ public class DatasetManagementAPI {
 
 			WorkManager spagoBIWorkManager;
 			try {
-				spagoBIWorkManager = new WorkManager(getSpagoBIConfigurationProperty("JNDI_THREAD_MANAGER"));
+				spagoBIWorkManager = new WorkManager(GeneralUtilities.getSpagoBIConfigurationProperty("JNDI_THREAD_MANAGER"));
 			} catch (NamingException t) {
 				throw new RuntimeException("Impossible to initialize work manager");
 			}
@@ -668,20 +679,6 @@ public class DatasetManagementAPI {
 			}
 		}
 		return toReturn;
-	}
-
-	private static String getSpagoBIConfigurationProperty(String propertyName) {
-		try {
-			String propertyValue = null;
-			IConfigDAO configDao = DAOFactory.getSbiConfigDAO();
-			Config cacheSpaceCleanableConfig = configDao.loadConfigParametersByLabel(propertyName);
-			if ((cacheSpaceCleanableConfig != null) && (cacheSpaceCleanableConfig.isActive())) {
-				propertyValue = cacheSpaceCleanableConfig.getValueCheck();
-			}
-			return propertyValue;
-		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("An unexpected exception occured while loading spagobi property [" + propertyName + "]", t);
-		}
 	}
 
 	public List<IDataSet> getAllDataSet() {
@@ -2035,6 +2032,51 @@ public class DatasetManagementAPI {
 		} else {
 			return false;
 		}
+	}
 
+	@SuppressWarnings("unchecked")
+	public Map<String, TLongHashSet> readDomainValues(IDataSet dataSet, Map<String, String> parametersValues) throws NamingException, WorkException {
+		logger.debug("IN");
+		Map<String, TLongHashSet> toReturn = new HashMap<String, TLongHashSet>(0);
+		setDataSetParameters(dataSet, parametersValues);
+		String signature = dataSet.getSignature();
+		logger.debug("Looking for domain values for dataSet with signature [" + signature + "]...");
+		String hashSignature = Helper.sha256(signature);
+		logger.debug("Corresponding signature hash value is [" + hashSignature + "]");
+		String path = SpagoBIUtilities.getDatasetResourcePath() + File.separatorChar + DataSetConstants.DOMAIN_VALUES_FOLDER;
+		logger.debug("Reading domain values from binary file located at [" + path + "]");
+		UnsafeInput input = null;
+		try {
+			Kryo kryo = new Kryo();
+			kryo.register(TLongHashSet.class, new TLongHashSetSerializer());
+			input = new UnsafeInput(new InflaterInputStream(new FileInputStream(path + File.separatorChar + hashSignature
+					+ DataSetConstants.DOMAIN_VALUES_EXTENSION)));
+			toReturn = kryo.readObject(input, toReturn.getClass());
+			logger.debug("Reading domain values: DONE");
+		} catch (FileNotFoundException e) {
+			logger.error("Impossible to find a binary file named [" + hashSignature + DataSetConstants.DOMAIN_VALUES_EXTENSION + "] located at [" + path + "]",
+					e);
+			logger.debug("It is likely that no domain values have been calculated for dataSet [" + dataSet.getLabel() + "]");
+			calculateDomainValues(dataSet);
+			return null;
+		} finally {
+			if (input != null) {
+				input.close();
+			}
+		}
+		return toReturn;
+	}
+
+	public void calculateDomainValues(IDataSet dataSet) throws NamingException, WorkException {
+		logger.debug("IN");
+		logger.debug("Getting the JNDI Work Manager");
+		WorkManager spagoBIWorkManager = new WorkManager(GeneralUtilities.getSpagoBIConfigurationProperty("JNDI_THREAD_MANAGER"));
+		commonj.work.WorkManager workManager = spagoBIWorkManager.getInnerInstance();
+		Work domainValuesWork = new DistinctValuesCalculateWork(dataSet, userProfile);
+		logger.debug("Scheduling asynchronous work for dataSet with label [" + dataSet.getLabel() + "] and signature [" + dataSet.getSignature()
+				+ "] by user [" + userProfile.getUserId() + "].");
+		workManager.schedule(domainValuesWork);
+		logger.debug("Asynchronous work has been scheduled");
+		logger.debug("OUT");
 	}
 }

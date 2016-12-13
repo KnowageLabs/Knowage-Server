@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.tools.dataset.common.datastore;
 
+import gnu.trove.set.hash.TLongHashSet;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
@@ -32,11 +33,15 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+
+import net.openhft.hashing.LongHashFunction;
 
 import org.apache.log4j.Logger;
 import org.apache.metamodel.DataContext;
@@ -141,19 +146,16 @@ public class DataStore implements IDataStore {
 
 	@Override
 	public List findRecords(final List fieldIndexes, final List fieldValues) {
-		List results;
 
-		results = new ArrayList();
-
-		results = findRecords(new IRecordMatcher() {
+		List results = findRecords(new IRecordMatcher() {
 			@Override
 			public boolean match(IRecord record) {
 				boolean match = true;
 				for (int i = 0; i < fieldIndexes.size(); i++) {
 					Integer fieldIndex = (Integer) fieldIndexes.get(i);
 					Object fieldValue = fieldValues.get(i);
-					IField filed = record.getFieldAt(fieldIndex.intValue());
-					if (!filed.getValue().equals(fieldValue)) {
+					IField field = record.getFieldAt(fieldIndex.intValue());
+					if (!field.getValue().equals(fieldValue)) {
 						match = false;
 						break;
 					}
@@ -166,16 +168,21 @@ public class DataStore implements IDataStore {
 	}
 
 	@Override
-	public List findRecords(IRecordMatcher matcher) {
-		List results;
-		Iterator it;
+	public List findRecords(IRecordMatcher... matchers) {
 
-		results = new ArrayList();
+		List<IRecord> results = new ArrayList<>();
 
-		it = iterator();
+		Iterator<IRecord> it = iterator();
 		while (it.hasNext()) {
-			IRecord record = (IRecord) it.next();
-			if (matcher.match(record)) {
+			IRecord record = it.next();
+			boolean match = true;
+			for (int i = 0; i < matchers.length; i++) {
+				if (!matchers[i].match(record)) {
+					match = false;
+					break;
+				}
+			}
+			if (match) {
 				results.add(record);
 			}
 		}
@@ -258,6 +265,113 @@ public class DataStore implements IDataStore {
 
 				normalizedValue = String.valueOf(field.getValue());
 				results.add(normalizedValue);
+			}
+		}
+
+		return results;
+	}
+
+	@Override
+	public Map<Integer, Set<Object>> getFieldsDistinctValues(final List<Integer> fieldIndexes) {
+		logger.debug("IN");
+
+		logger.debug("Initializing structure to contain distinct values for fields with index " + fieldIndexes);
+		Map<Integer, Set<Object>> results = new HashMap<>(fieldIndexes.size());
+		for (Integer fieldIndex : fieldIndexes) {
+			results.put(fieldIndex, new HashSet<Object>());
+		}
+
+		Iterator it = iterator();
+		while (it.hasNext()) {
+			IRecord record = (IRecord) it.next();
+			for (Integer fieldIndex : fieldIndexes) {
+				IField field = record.getFieldAt(fieldIndex);
+				Object value = field.getValue();
+				if (value != null) {
+					logger.debug("Got value [" + value + "] for field index [" + fieldIndex + "]");
+					results.get(fieldIndex).add(value);
+				}
+			}
+		}
+		return results;
+	}
+
+	@Override
+	public Map<Integer, Set<String>> getFieldsDistinctValuesAsString(final List<Integer> fieldIndexes) {
+		Map<Integer, Set<String>> results = new HashMap<>(fieldIndexes.size());
+		for (Integer fieldIndex : fieldIndexes) {
+			results.put(fieldIndex, new HashSet<String>());
+		}
+
+		Iterator it = iterator();
+		while (it.hasNext()) {
+			IRecord record = (IRecord) it.next();
+			for (Integer fieldIndex : fieldIndexes) {
+				IField field = record.getFieldAt(fieldIndex);
+				Object value = field.getValue();
+				if (value != null) {
+					String normalizedValue;
+					if (value instanceof Number) {
+						Number number = (Number) value;
+						Double numericValue = number.doubleValue();
+						if ((numericValue == Math.floor(numericValue)) && !Double.isInfinite(numericValue)) {
+							// the number is an integer, this will remove the .0 trailing zeros
+							int numericInt = numericValue.intValue();
+							normalizedValue = String.valueOf(numericInt);
+						} else {
+							normalizedValue = String.valueOf(numericValue);
+
+						}
+					}
+
+					normalizedValue = String.valueOf(value);
+					logger.debug("Got value [" + normalizedValue + "] for field index [" + fieldIndex + "]");
+					results.get(fieldIndex).add(normalizedValue);
+				}
+			}
+		}
+
+		return results;
+	}
+
+	@Override
+	public Map<String, TLongHashSet> getFieldsDistinctValuesAsLongHash(final List<Integer> fieldIndexes) {
+		Map<String, TLongHashSet> results = new HashMap<>(fieldIndexes.size());
+
+		Iterator it = iterator();
+		while (it.hasNext()) {
+			IRecord record = (IRecord) it.next();
+			for (Integer fieldIndex : fieldIndexes) {
+				IField field = record.getFieldAt(fieldIndex);
+				Object value = field.getValue();
+				if (value != null) {
+					logger.debug("Field value [" + value + "]");
+					String normalizedValue;
+					if (value instanceof Number) {
+						Number number = (Number) value;
+						Double numericValue = number.doubleValue();
+						if ((numericValue == Math.floor(numericValue)) && !Double.isInfinite(numericValue)) {
+							// the number is an integer, this will remove the .0 trailing zeros
+							int numericInt = numericValue.intValue();
+							normalizedValue = String.valueOf(numericInt);
+						} else {
+							normalizedValue = String.valueOf(numericValue);
+
+						}
+					}
+
+					normalizedValue = String.valueOf(value);
+					logger.debug("Got value [" + normalizedValue + "] for field index [" + fieldIndex + "]");
+					long hashValue = LongHashFunction.xx_r39().hashChars(normalizedValue);
+					logger.debug("Value [" + normalizedValue + "] has been hashed into [" + hashValue + "]");
+
+					String fieldName = metaData.getFieldAlias(fieldIndex);
+					logger.debug("Found field name [" + fieldName + "]");
+					if (!results.containsKey(fieldName)) {
+						results.put(fieldName, new TLongHashSet());
+					}
+					results.get(fieldName).add(hashValue);
+				}
 			}
 		}
 

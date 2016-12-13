@@ -47,6 +47,7 @@ import it.eng.spagobi.hdfs.Hdfs;
 import it.eng.spagobi.hdfs.HdfsUtilities;
 import it.eng.spagobi.services.scheduler.service.ISchedulerServiceSupplier;
 import it.eng.spagobi.services.scheduler.service.SchedulerServiceSupplierFactory;
+import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.CkanDataSet;
 import it.eng.spagobi.tools.dataset.bo.ConfigurableDataSet;
 import it.eng.spagobi.tools.dataset.bo.CustomDataSet;
@@ -105,12 +106,16 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.naming.NamingException;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import commonj.work.WorkException;
 
 @SuppressWarnings("serial")
 public class ManageDatasets extends AbstractSpagoBIAction {
@@ -136,39 +141,38 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 	@Override
 	public void doService() {
 		logger.debug("IN");
-		IDataSetDAO dsDao;
 		profile = getUserProfile();
+		String serviceType = getAttributeAsString(DataSetConstants.MESSAGE_DET);
 		try {
-			dsDao = DAOFactory.getDataSetDAO();
+			IDataSetDAO dsDao = DAOFactory.getDataSetDAO();
 			dsDao.setUserProfile(profile);
-		} catch (EMFUserError e1) {
-			logger.error(e1.getMessage(), e1);
-			throw new SpagoBIServiceException(SERVICE_NAME, "Error occurred");
-		}
-		Locale locale = getLocale();
-		String serviceType = this.getAttributeAsString(DataSetConstants.MESSAGE_DET);
-		logger.debug("Service type " + serviceType);
+			Locale locale = getLocale();
+			logger.debug("Service type " + serviceType);
 
-		if (serviceType != null && serviceType.equalsIgnoreCase(DataSetConstants.DATASETS_FOR_KPI_LIST)) {
-			returnDatasetForKpiList(dsDao, locale);
-		} else if (serviceType != null && serviceType.equalsIgnoreCase(DataSetConstants.DATASETS_LIST)) {
-			returnDatasetList(dsDao, locale);
-		} else if (serviceType != null && serviceType.equalsIgnoreCase(DataSetConstants.DATASET_INSERT)) {
-			datasetInsert(dsDao, locale);
-		} else if (serviceType != null && serviceType.equalsIgnoreCase(DataSetConstants.DATASET_TEST)) {
-			datatsetTest(dsDao, locale);
-		} else if (serviceType != null && serviceType.equalsIgnoreCase(DataSetConstants.DATASET_DELETE)) {
-			datatsetDelete(dsDao, locale);
-		} else if (serviceType != null && serviceType.equalsIgnoreCase(DataSetConstants.DATASET_VERSION_DELETE)) {
-			datatsetVersionDelete(dsDao, locale);
-		} else if (serviceType != null && serviceType.equalsIgnoreCase(DataSetConstants.DATASET_ALL_VERSIONS_DELETE)) {
-			datatsetAllVersionsDelete(dsDao, locale);
-		} else if (serviceType != null && serviceType.equalsIgnoreCase(DataSetConstants.DATASET_VERSION_RESTORE)) {
-			datatsetVersionRestore(dsDao, locale);
-		} else if (serviceType == null) {
-			setUsefulItemsInSession(dsDao, locale);
+			if (serviceType != null && serviceType.equalsIgnoreCase(DataSetConstants.DATASETS_FOR_KPI_LIST)) {
+				returnDatasetForKpiList(dsDao, locale);
+			} else if (serviceType != null && serviceType.equalsIgnoreCase(DataSetConstants.DATASETS_LIST)) {
+				returnDatasetList(dsDao, locale);
+			} else if (serviceType != null && serviceType.equalsIgnoreCase(DataSetConstants.DATASET_INSERT)) {
+				datasetInsert(dsDao, locale);
+			} else if (serviceType != null && serviceType.equalsIgnoreCase(DataSetConstants.DATASET_TEST)) {
+				datatsetTest(dsDao, locale);
+			} else if (serviceType != null && serviceType.equalsIgnoreCase(DataSetConstants.DATASET_DELETE)) {
+				datatsetDelete(dsDao, locale);
+			} else if (serviceType != null && serviceType.equalsIgnoreCase(DataSetConstants.DATASET_VERSION_DELETE)) {
+				datatsetVersionDelete(dsDao, locale);
+			} else if (serviceType != null && serviceType.equalsIgnoreCase(DataSetConstants.DATASET_ALL_VERSIONS_DELETE)) {
+				datatsetAllVersionsDelete(dsDao, locale);
+			} else if (serviceType != null && serviceType.equalsIgnoreCase(DataSetConstants.DATASET_VERSION_RESTORE)) {
+				datatsetVersionRestore(dsDao, locale);
+			} else if (serviceType == null) {
+				setUsefulItemsInSession(dsDao, locale);
+			}
+		} catch (Exception e) {
+			throw new SpagoBIServiceException(SERVICE_NAME, "Error occurred while performing " + serviceType, e);
+		} finally {
+			logger.debug("OUT");
 		}
-		logger.debug("OUT");
 	}
 
 	private void returnDatasetForKpiList(IDataSetDAO dsDao, Locale locale) {
@@ -262,9 +266,11 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		IDataSet ds = getGuiGenericDatasetToInsert();
 	}
 
-	protected void datasetInsert(IDataSetDAO dsDao, Locale locale) {
+	protected void datasetInsert(IDataSetDAO dsDao, Locale locale) throws NamingException, WorkException {
 		IDataSet ds = getGuiGenericDatasetToInsert();
 		datasetInsert(ds, dsDao, locale);
+		DatasetManagementAPI datasetManagementAPI = new DatasetManagementAPI((UserProfile) profile);
+		datasetManagementAPI.calculateDomainValues(ds);
 	}
 
 	protected void datasetInsert(IDataSet ds, IDataSetDAO dsDao, Locale locale) {
@@ -1913,7 +1919,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 
 	/**
 	 * Protected for testing purposes
-	 * 
+	 *
 	 * @param value
 	 * @param type
 	 * @param forSave

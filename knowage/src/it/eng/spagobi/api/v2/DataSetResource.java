@@ -18,6 +18,7 @@
 package it.eng.spagobi.api.v2;
 
 import static it.eng.spagobi.tools.glossary.util.Util.getNumberOrNull;
+import gnu.trove.set.hash.TLongHashSet;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -39,6 +40,9 @@ import it.eng.spagobi.tools.dataset.common.association.AssociationGroupJSONSeria
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.common.similarity.Similarity;
+import it.eng.spagobi.tools.dataset.common.similarity.SimilarityEvaluator;
+import it.eng.spagobi.tools.dataset.common.similarity.SimilarityStrategyFactory;
 import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.dao.ISbiDataSetDAO;
@@ -618,6 +622,55 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+
+	@POST
+	@Path("/associations/autodetect")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Set<Similarity> autodetect(@QueryParam("top") int top, @QueryParam("threshold") double threshold, @QueryParam("strategy") String strategy,
+			@Context HttpServletRequest req) {
+		logger.debug("IN");
+		Set<Similarity> toReturn = new HashSet<>(0);
+		try {
+			JSONObject requestBodyJSONObject = RestUtilities.readBodyAsJSONObject(req);
+			if (requestBodyJSONObject != null && requestBodyJSONObject.length() > 0) {
+
+				top = top > 0 ? top : Integer.MAX_VALUE;
+				threshold = (threshold >= 0 && threshold <= 1) ? threshold : Double.MIN_VALUE;
+
+				List<String> dataSets = new ArrayList<>(requestBodyJSONObject.length());
+				Map<String, Map<String, TLongHashSet>> dataSetDomainValues = new HashMap<>(requestBodyJSONObject.length());
+
+				IDataSetDAO dataSetDAO = DAOFactory.getDataSetDAO();
+				dataSetDAO.setUserProfile(getUserProfile());
+				DatasetManagementAPI datasetManagementAPI = getDatasetManagementAPI();
+
+				Iterator<String> labels = requestBodyJSONObject.keys();
+				while (labels.hasNext()) {
+					String label = labels.next();
+					logger.debug("Getting dataSet with label [" + label + "]");
+					IDataSet dataSet = dataSetDAO.loadDataSetByLabel(label);
+					if (dataSet != null) {
+						JSONObject parameters = requestBodyJSONObject.getJSONObject(label);
+						Map<String, TLongHashSet> domainValues = datasetManagementAPI.readDomainValues(dataSet, DataSetUtilities.getParametersMap(parameters));
+						if (domainValues != null) {
+							dataSets.add(label);
+							dataSetDomainValues.put(label, domainValues);
+						}
+					} else {
+						throw new SpagoBIRuntimeException("Impossibile to load dataSet with label [" + label + "]");
+					}
+				}
+
+				SimilarityEvaluator similarityEvaluator = new SimilarityEvaluator(SimilarityStrategyFactory.createStrategyInstance(strategy), top, threshold);
+				toReturn = similarityEvaluator.evaluate(dataSets, dataSetDomainValues);
+			}
+		} catch (Exception e) {
+			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
+		} finally {
+			logger.debug("OUT");
+		}
+		return toReturn;
 	}
 
 }

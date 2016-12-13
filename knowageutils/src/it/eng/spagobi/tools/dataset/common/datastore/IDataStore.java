@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.tools.dataset.common.datastore;
 
+import gnu.trove.set.hash.TLongHashSet;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
@@ -26,6 +27,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -49,13 +51,19 @@ public interface IDataStore {
 
 	List<IRecord> findRecords(final List fieldIndexes, final List fieldValues);
 
-	List<IRecord> findRecords(IRecordMatcher matcher);
+	List<IRecord> findRecords(IRecordMatcher... matcher);
 
 	List getFieldValues(int fieldIndex);
 
 	Set getFieldDistinctValues(int fieldIndex);
 
 	Set<String> getFieldDistinctValuesAsString(int fieldIndex);
+
+	Map<Integer, Set<Object>> getFieldsDistinctValues(final List<Integer> fieldIndexes);
+
+	Map<Integer, Set<String>> getFieldsDistinctValuesAsString(final List<Integer> fieldIndexes);
+
+	Map<String, TLongHashSet> getFieldsDistinctValuesAsLongHash(final List<Integer> fieldIndexes);
 
 	void sortRecords(int fieldIndex);
 

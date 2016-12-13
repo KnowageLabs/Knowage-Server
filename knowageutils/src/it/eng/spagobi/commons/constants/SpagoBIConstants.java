@@ -78,6 +78,7 @@ public class SpagoBIConstants {
 	public static final String LIST_PAGE = "LIST_PAGE";
 
 	public static final String DISTRIBUTED_MAP_FOR_CACHE = "CACHE";
+	public static final String DISTRIBUTED_MAP_FOR_ASSOCIATION = "ASSOCIATION";
 	public static final String DISTRIBUTED_MAP_INSTANCE_NAME = "KNOWAGE";
 
 	public static final String MODALITY = "MODALITY";
@@ -554,7 +555,7 @@ public class SpagoBIConstants {
 	public static final String FUNCTIONS_CATALOG_USAGE = "FunctionsCatalogUsage";
 
 	public static final String TEMPORAL_DIMENSION = "TemporalDimension";
-	public static String CONFIG_STORE_TO_HDFS = "SPAGOBI.GENERIC_CONFIGURATION.DATASET_FILE_HDFS";
+	public static final String CONFIG_STORE_TO_HDFS = "SPAGOBI.GENERIC_CONFIGURATION.DATASET_FILE_HDFS";
 
 	public static final String IS_FOR_EXPORT = "IS_FOR_EXPORT";
 	public static final String COCKPIT_SELECTIONS = "COCKPIT_SELECTIONS";
