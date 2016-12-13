@@ -1,6 +1,5 @@
 <!-- v1.0.2 -->
 <!-- <div id="angularTableTemplate" class="{{id}}ItemBox layout-fill layout-column" style="position:absolute;"> -->
-
 <angular-table-actions layout="row" layout-align="end center">
 	<md-input-container flex  md-no-float class="tableSearchBar" ng-init="showSearch=true;"  >
 		<md-icon md-font-icon="fa fa-search" ng-click="showSearch=true;"></md-icon> 
@@ -21,7 +20,7 @@
 			<thead></thead>
 			<tbody></tbody>
 			<tfoot>
-				<tr>
+				<tr >
 					<td colspan="{{tableColumns.length}}" id="tdQueueTableContent"  >
 					<md-content id="queueTableContent">
 					</md-content> 
@@ -88,7 +87,8 @@
 <tr ui-tree-node dir-paginate="row in ngModel |  filterBySpecificColumns:columnsSearch:searchFastVal| customOrdering:internal_column_ordering:internal_reverse_col_ord:tableColumns:initialSorting:initialSortingAsc | itemsPerPage:itemsPerPage track by $index" 
 	pagination-id='id+"PaginationTable"' total-items='totalItemCount' current-page='pagination.currentPageNumber'
 	ng-class="{'selectedRowItem': (highlightsSelectedItem==true && isSelected(row) )}"  class="animate-repeat-tablerow"
- 	ng-if="isVisibleRowFunction(row)">
+ 	ng-if="isVisibleRowFunction(row)"
+	ng-style="{'height':tableStyle.autoRowsHeight? 0 :tableStyle.rowsHeight}">
 	<td  ng-repeat="column in tableColumns" ng-switch="column.static==true? '--STATIC--' : column.name" ng-click="clickItem(row,column.name,getColumnValue(row,column.name),$event,$parent.$index)" ng-dblclick="startEdit(row,column,getColumnValue(row,column.name),$event)" context-menu  data-target='{{id}}TableContextMenu-{{$parent.$index}}-{{$index}}' class="{{column.customRecordsClass}} " 
 		ng-class="{ 'highlight': highlight, 'expanded' : expanded,'tableDragBar':column.name=='--DRAG_AND_DROP--'}" ng-style="column.style==undefined ? '' :  getDynamicValue(column.style,row,column,$parent.$index)" >
 		

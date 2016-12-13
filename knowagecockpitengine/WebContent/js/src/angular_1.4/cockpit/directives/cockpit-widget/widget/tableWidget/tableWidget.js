@@ -87,14 +87,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		};
 
 		
-//		Object.prototype.getKeyByValue = function( value ) {
-//		    for( var prop in this ) {
-//		        if( this.hasOwnProperty( prop ) ) {
-//		             if( this[ prop ] === value )
-//		                 return prop;
-//		        }
-//		    }
-//		}
 		$scope.getKeyByValue = function( obj,value ) {
 		    for( var prop in obj ) {
 		        if( obj.hasOwnProperty( prop ) ) {

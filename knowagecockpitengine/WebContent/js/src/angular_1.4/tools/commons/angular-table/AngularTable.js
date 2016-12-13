@@ -56,6 +56,7 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                             changeDetector:"@?",
                             fixedItemPerPage:"=?",
                             itemsPerPage:"=?",
+                            tableStyle:"=?",
                             showExpanderRowCondition:"&?",
                             disableAutoLoadOnInit:"@?"
                         },

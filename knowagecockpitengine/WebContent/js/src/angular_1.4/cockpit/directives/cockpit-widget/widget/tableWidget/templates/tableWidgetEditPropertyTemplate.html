@@ -62,6 +62,25 @@
 	
 			           </div>
 			    </cockpit-style-custom-widget-configurator>
+			    <cockpit-style-custom-widget-configurator label="'Rows'">
+			          <div flex layout="column" ng-cloak>
+			           <div layout="row" flex>
+				           <div flex=20  layout="row" layout-align="start center">
+				           <md-checkbox  ng-model="model.style.autoRowsHeight"  class="md-block"
+									aria-label="Checkbox 1">Auto adapt rows height</md-checkbox>
+				           </div>
+				           <div flex layout=column >
+					           	<div flex layout="row" >
+									<md-input-container flex class="md-block"> 
+										<label>Row Height</label>
+										<input class="input_class" ng-disabled ="model.style.autoRowsHeight" ng-model="model.style.rowsHeight" /> 
+									</md-input-container>
+									
+					           	</div>
+			           		</div>
+			           </div>
+					</div>
+			    </cockpit-style-custom-widget-configurator>
 			  	<cockpit-style-custom-widget-configurator label="'Grid'">
 			           <div layout="row" flex ng-cloak>
 			           <div flex=20 layout=column>
