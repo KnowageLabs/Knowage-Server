@@ -17,6 +17,17 @@
  */
 package it.eng.spagobi.tools.catalogue.dao;
 
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.SpagoBIDAOException;
+import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.tools.catalogue.bo.Content;
+import it.eng.spagobi.tools.catalogue.bo.MetaModel;
+import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel;
+import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModelContent;
+import it.eng.spagobi.tools.datasource.dao.DataSourceDAOHibImpl;
+import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
+import it.eng.spagobi.utilities.assertion.Assert;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -30,17 +41,6 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Restrictions;
-
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.SpagoBIDAOException;
-import it.eng.spagobi.commons.utilities.UserUtilities;
-import it.eng.spagobi.tools.catalogue.bo.Content;
-import it.eng.spagobi.tools.catalogue.bo.MetaModel;
-import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel;
-import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModelContent;
-import it.eng.spagobi.tools.datasource.dao.DataSourceDAOHibImpl;
-import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
-import it.eng.spagobi.utilities.assertion.Assert;
 
 public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaModelsDAO {
 
@@ -789,7 +789,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			SbiMetaModelContent hibContent = (SbiMetaModelContent) query.uniqueResult();
 			logger.debug("Content loaded");
 
-			if (hibContent != null && !hibContent.getFileName().endsWith(LOG_SUFFIX)) {
+			if (hibContent != null) {
 				toReturn = toContent(hibContent, true);
 			}
 
