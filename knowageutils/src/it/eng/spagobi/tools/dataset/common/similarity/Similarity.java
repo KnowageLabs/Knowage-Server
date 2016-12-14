@@ -55,4 +55,40 @@ public class Similarity implements Comparable<Similarity> {
 	public int compareTo(Similarity other) {
 		return Double.compare(coefficient, other.coefficient);
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		long temp;
+		temp = Double.doubleToLongBits(coefficient);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + ((fields == null) ? 0 : fields.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof Similarity)) {
+			return false;
+		}
+		Similarity other = (Similarity) obj;
+		if (Double.doubleToLongBits(coefficient) != Double.doubleToLongBits(other.coefficient)) {
+			return false;
+		}
+		if (fields == null) {
+			if (other.fields != null) {
+				return false;
+			}
+		} else if (!fields.equals(other.fields)) {
+			return false;
+		}
+		return true;
+	}
 }
