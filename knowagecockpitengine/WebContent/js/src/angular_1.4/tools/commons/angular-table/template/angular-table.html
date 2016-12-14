@@ -35,6 +35,7 @@
 
 <angular-table-footer>
 <div  class="box_pagination_list" layout="row" layout-align="end end">
+<div class="pagSummary" ng-if="tableStyle.showRowsSummary"><span class="pagSummaryTitle">{{tableStyle.rowsSummaryText?tableStyle.rowsSummaryText:'Rows Number: '}}</span> <span class="pagSummaryLenght">{{totalItemCount}}</span></div>
 <!-- 	<dir-pagination-controls max-size="5"  pagination-id='id+"PaginationTable"' on-page-change="pageChangedFunction({searchValue:prevSearch,itemsPerPage:itemsPerPage,currentPageNumber:newPageNumber,columnsSearch:columnsSearch,columnOrdering:column_ordering,reverseOrdering:reverse_col_ord})"></dir-pagination-controls> -->
 	<dir-pagination-controls template-url="paginationTemplate.html" max-size="5"  pagination-id='id+"PaginationTable"' on-page-change="pageChangedHandler(prevSearch,itemsPerPage,newPageNumber,columnsSearch,column_ordering,reverse_col_ord,changeFromInput,paginationItem,directivePageChangeFunction)"></dir-pagination-controls>
 </div>

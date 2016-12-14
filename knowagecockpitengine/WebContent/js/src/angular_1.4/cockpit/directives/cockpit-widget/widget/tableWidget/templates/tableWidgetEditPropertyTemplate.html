@@ -22,10 +22,6 @@
 				           </div>
 				           <div flex layout=column >
 					           	<div flex layout="row" >
-						           <!-- 	<md-input-container flex class="md-block"> 
-										<label>{{translate.load('sbi.cockpit.table.text')}}</label>
-										<input class="input_class" ng-disabled ="!model.style.showSummary" ng-model=model.style.summary.text /> 
-									</md-input-container> -->
 										<md-input-container flex class="md-block"> 
 										<label>{{translate.load('sbi.cockpit.table.fontfamily')}}</label>
 										<md-select ng-disabled ="!model.style.showSummary" aria-label="aria-label" ng-model="model.style.summary.fontfamily">
@@ -62,18 +58,33 @@
 	
 			           </div>
 			    </cockpit-style-custom-widget-configurator>
-			    <cockpit-style-custom-widget-configurator label="'Rows'">
+			    <cockpit-style-custom-widget-configurator label="translate.load('sbi.cockpit.widget.table.rows')">
 			          <div flex layout="column" ng-cloak>
 			           <div layout="row" flex>
 				           <div flex=20  layout="row" layout-align="start center">
 				           <md-checkbox  ng-model="model.style.autoRowsHeight"  class="md-block"
-									aria-label="Checkbox 1">Auto adapt rows height</md-checkbox>
+									aria-label="Checkbox 1">{{translate.load('sbi.cockpit.table.rows.autoAdapt')}}</md-checkbox>
 				           </div>
 				           <div flex layout=column >
 					           	<div flex layout="row" >
 									<md-input-container flex class="md-block"> 
-										<label>Row Height</label>
+										<label>{{translate.load('sbi.cockpit.table.rows.height')}}</label>
 										<input class="input_class" ng-disabled ="model.style.autoRowsHeight" ng-model="model.style.rowsHeight" /> 
+									</md-input-container>
+									
+					           	</div>
+			           		</div>
+			           </div>
+			           <div layout="row" flex>
+				           <div flex=20  layout="row" layout-align="start center">
+				           <md-checkbox  ng-model="model.style.showRowsSummary"  class="md-block"
+									aria-label="Checkbox 1">Enable rows summary</md-checkbox>
+				           </div>
+				           <div flex layout=column >
+					           	<div flex layout="row" >
+									<md-input-container flex class="md-block"> 
+										<label>Rows summary text</label>
+										<input class="input_class" ng-disabled ="!model.style.showRowsSummary" ng-model="model.style.rowsSummaryText" /> 
 									</md-input-container>
 									
 					           	</div>

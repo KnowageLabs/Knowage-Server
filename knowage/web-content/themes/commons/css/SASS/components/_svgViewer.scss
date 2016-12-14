@@ -153,7 +153,7 @@
 	    		font-weight: 600;
 	    		display: flex;
 			    flex-direction: row;
-			    justify-content: space-between;
+			    justify-content: flex-end;
 			    align-items: center;
 			    .graphSpan {
 			    	text-transform:uppercase;

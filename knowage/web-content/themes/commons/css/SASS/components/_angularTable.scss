@@ -422,6 +422,16 @@ angular-table{
 	.editCell{
 		color:orange;
 	}
+	.pagSummary {
+	    font-size: $smallFontSize;
+	    display: flex;
+	    height: 30px;
+	    align-items: center;
+	    justify-content: space-around;
+	    span {
+	    	margin-right: 10px; 
+	    }
+	}
 }
 
 /* IE11 fix */
