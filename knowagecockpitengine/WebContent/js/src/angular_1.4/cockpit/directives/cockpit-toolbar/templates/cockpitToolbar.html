@@ -73,6 +73,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<md-tooltip md-direction="bottom">Data Configuration</md-tooltip>
 			<md-icon md-font-icon="fa fa-database"></md-icon>
 		</md-button>
+		<md-button aria-label="data" class="md-fab md-raised md-mini" ng-click="openSelections()" title = "Selections">
+			<md-icon md-font-icon="fa fa-check-square-o" ng-style="{color: cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS==true? 'lawngreen':''}"></md-icon>
+		</md-button>
 		<md-button aria-label="clean cache" class="md-fab md-raised md-mini" ng-click="cleanCache()" title = "Clear cache">
 		<md-tooltip md-direction="bottom">Clear Cache</md-tooltip>
 			<md-icon md-font-icon="fa fa-recycle"></md-icon>
