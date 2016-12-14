@@ -33,6 +33,7 @@ import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.tools.dataset.association.DistinctValuesCalculateWork;
+import it.eng.spagobi.tools.dataset.association.DistinctValuesClearWork;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
@@ -2073,7 +2074,20 @@ public class DatasetManagementAPI {
 		WorkManager spagoBIWorkManager = new WorkManager(GeneralUtilities.getSpagoBIConfigurationProperty("JNDI_THREAD_MANAGER"));
 		commonj.work.WorkManager workManager = spagoBIWorkManager.getInnerInstance();
 		Work domainValuesWork = new DistinctValuesCalculateWork(dataSet, userProfile);
-		logger.debug("Scheduling asynchronous work for dataSet with label [" + dataSet.getLabel() + "] and signature [" + dataSet.getSignature()
+		logger.debug("Scheduling asynchronous calculating work for dataSet with label [" + dataSet.getLabel() + "] and signature [" + dataSet.getSignature()
+				+ "] by user [" + userProfile.getUserId() + "].");
+		workManager.schedule(domainValuesWork);
+		logger.debug("Asynchronous work has been scheduled");
+		logger.debug("OUT");
+	}
+
+	public void clearDomainValues(IDataSet dataSet) throws NamingException, WorkException {
+		logger.debug("IN");
+		logger.debug("Getting the JNDI Work Manager");
+		WorkManager spagoBIWorkManager = new WorkManager(GeneralUtilities.getSpagoBIConfigurationProperty("JNDI_THREAD_MANAGER"));
+		commonj.work.WorkManager workManager = spagoBIWorkManager.getInnerInstance();
+		Work domainValuesWork = new DistinctValuesClearWork(dataSet, userProfile);
+		logger.debug("Scheduling asynchronous deleting work for dataSet with label [" + dataSet.getLabel() + "] and signature [" + dataSet.getSignature()
 				+ "] by user [" + userProfile.getUserId() + "].");
 		workManager.schedule(domainValuesWork);
 		logger.debug("Asynchronous work has been scheduled");

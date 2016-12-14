@@ -125,7 +125,7 @@ public class DistinctValuesCalculateWork implements Work {
 					}
 				} else {
 					logger.debug("Impossible to acquire the lock for dataset [" + hashSignature
-							+ "]. It is likely that another thread is calculating distinct values for the same dataset.");
+							+ "]. It is likely that another thread is calculating or clearing distinct values for the same dataset.");
 				}
 			} catch (InterruptedException e) {
 				logger.error("The current thread has failed to release the lock for dataset [" + hashSignature + "] in time.", e);

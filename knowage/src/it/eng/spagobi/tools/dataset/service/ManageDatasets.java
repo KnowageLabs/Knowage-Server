@@ -269,8 +269,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 	protected void datasetInsert(IDataSetDAO dsDao, Locale locale) throws NamingException, WorkException {
 		IDataSet ds = getGuiGenericDatasetToInsert();
 		datasetInsert(ds, dsDao, locale);
-		DatasetManagementAPI datasetManagementAPI = new DatasetManagementAPI((UserProfile) profile);
-		datasetManagementAPI.calculateDomainValues(ds);
+		calculateDomainValues(ds);
 	}
 
 	protected void datasetInsert(IDataSet ds, IDataSetDAO dsDao, Locale locale) {
@@ -562,6 +561,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			dsDao.deleteDataSet(dsID);
 			deleteDatasetFile(ds); // for FileDatase
 			deletePersistenceAndScheduling(ds, logParam);
+			clearDomainValues(ds);
 			logger.debug("Dataset deleted");
 			ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
 			String servoutStr = schedulerService.deleteJob(ds.getLabel(), JOB_GROUP);
@@ -643,6 +643,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		try {
 			IDataSet dsNewDetail = dsDao.restoreOlderDataSetVersion(dsID, dsVersionNum);
 			logger.debug("Dataset Version correctly Restored");
+			calculateDomainValues(dsNewDetail);
 			List temp = new ArrayList();
 			temp.add(dsNewDetail);
 			JSONArray itemJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(temp, locale);
@@ -2225,6 +2226,16 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 
 		logger.debug("OUT");
 		return false;
+	}
+
+	private void calculateDomainValues(IDataSet ds) throws NamingException, WorkException {
+		DatasetManagementAPI datasetManagementAPI = new DatasetManagementAPI((UserProfile) profile);
+		datasetManagementAPI.calculateDomainValues(ds);
+	}
+
+	private void clearDomainValues(IDataSet ds) throws NamingException, WorkException {
+		DatasetManagementAPI datasetManagementAPI = new DatasetManagementAPI((UserProfile) profile);
+		datasetManagementAPI.clearDomainValues(ds);
 	}
 
 	public IEngUserProfile getProfile() {
