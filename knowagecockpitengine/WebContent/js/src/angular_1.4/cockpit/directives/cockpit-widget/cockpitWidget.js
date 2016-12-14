@@ -441,8 +441,17 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
         for(var i=0; i<$scope.ngModel.content.columnSelectedOfDataset.length; i++){
         	if($scope.ngModel.content.columnSelectedOfDataset[i].aliasToShow == columnName){
         		originalColumnName = $scope.ngModel.content.columnSelectedOfDataset[i].alias;
+				break;
         	}
         }
+		if(originalColumnName==undefined){
+			for(var i=0; i<$scope.ngModel.content.columnSelectedOfDataset.length; i++){
+				if($scope.ngModel.content.columnSelectedOfDataset[i].alias == columnName){
+					originalColumnName = columnName;
+					break;
+				}
+			}
+		}
 		
 		var sel=cockpitModule_widgetSelection.getAssociativeSelections(columnValue,columnName,dsLabel,originalColumnName);
 		if(sel!=undefined){
