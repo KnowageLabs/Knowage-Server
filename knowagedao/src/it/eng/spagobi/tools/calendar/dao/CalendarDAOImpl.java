@@ -17,6 +17,7 @@ import java.util.Set;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -78,7 +79,7 @@ public class CalendarDAOImpl implements ICalendarDAO {
 
 	@Override
 	public List<CalendarConfiguration> loadCalendarDays(Integer calId, Session session) {
-		return session.createCriteria(CalendarConfiguration.class).add(Restrictions.eq("calendarId", calId)).list();
+		return session.createCriteria(CalendarConfiguration.class).add(Restrictions.eq("calendarId", calId)).addOrder(Order.asc("timeId")).list();
 	}
 
 	@Override
