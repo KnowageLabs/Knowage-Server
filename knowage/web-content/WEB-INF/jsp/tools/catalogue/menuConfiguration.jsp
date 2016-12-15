@@ -140,8 +140,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<div class="row">
       <div class="col-sm-6">
         <div ui-tree id="tree-root">
-          <ol ui-tree-nodes ng-model="listOfMenu">
-            <li data-nodrag ng-repeat="node in listOfMenu" ui-tree-node ng-include="'nodes_renderer.html'"></li>
+          <ol ui-tree-nodes ng-model="listOfMenu_copy">
+            <li data-nodrag ng-repeat="node in listOfMenu_copy" ui-tree-node ng-include="'nodes_renderer.html'"></li>
           </ol>
         </div>
       </div>
@@ -245,8 +245,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</md-card>  
 		 
 		
-			 <angular-table layout-fill id="menuRoles_id" ng-model="roles" columns='columnsArray'  no-pagination=false
-					selected-item="role" highlights-selected-item="true" multi-select=true>
+			 <angular-table layout-fill id="menuRoles_id" ng-model="roles" columns='columnsArray'  no-pagination=true
+					selected-item="role" highlights-selected-item="true"  scope-functions = tableFunction>
 				
 		</md-card>  
 			</form>
