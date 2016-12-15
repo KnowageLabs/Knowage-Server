@@ -75,40 +75,31 @@ public class MenuResource extends AbstractSpagoBIResource {
 		logger.debug("IN");
 
 		try {
-			JSONObject jResult = new JSONObject();// main object
-			JSONArray jArray = new JSONArray();// /ItemDetail jsonArray
-
 			UserProfile profile = getUserProfile();
 			IMenuDAO dao = DAOFactory.getMenuDAO();
 			dao.setUserProfile(profile);
+
 			List<Menu> allMenus = new ArrayList<>();
 
-			List<Menu> deca = new ArrayList<>();
-			List<Menu> druga = new ArrayList<Menu>();
+			List<Menu> child = new ArrayList<>();
+			List<Menu> allMenus_new = new ArrayList<Menu>();
 			allMenus = dao.loadAllMenues();
-
 			/*
-			 * for (int i = 0; i < allMenus.size() - 1; i++) { Menu f =
-			 * allMenus.get(i + 1); if (allMenus.get(i).getParentId() ==
-			 * allMenus.get(i + 1).getParentId() && allMenus.get(i).getProg() <
-			 * allMenus.get(i + 1).getProg()) { return true; }
-			 * 
+			 * ArrayList<String> roleUser = (ArrayList<String>)
+			 * profile.getRoles(); ArrayList<Role> roles = new
+			 * ArrayList<Role>(); for (String role : roleUser) { Role r =
+			 * DAOFactory.getRoleDAO().loadByName(role); roles.add(r); } Role[]
+			 * arrRole = null; for (Menu menu : allMenus) { arrRole =
+			 * menu.getRoles(); if (menu.getParentId() == null) { for (Role role
+			 * : arrRole) { child = dao.getChildrenMenu(menu.getMenuId(),
+			 * role.getId()); } menu.setLstChildren(child);
+			 *
+			 * allMenus_new.add(menu); }
+			 *
 			 * }
 			 */
-			Role[] arrRole = null;
-			for (Menu menu : allMenus) {
-				arrRole = menu.getRoles();
-				if (menu.getParentId() == null) {
-					for (Role role : arrRole) {
-						deca = dao.getChildrenMenu(menu.getMenuId(), role.getId());
-					}
-					menu.setLstChildren(deca);
-					druga.add(menu);
-				}
 
-			}
-
-			return Response.ok(druga).build();
+			return Response.ok(allMenus).build();
 		} catch (Exception e) {
 			String errorString = "sbi.menu.load.menus.error";
 			logger.error(errorString, e);
@@ -356,13 +347,11 @@ public class MenuResource extends AbstractSpagoBIResource {
 			JSONObject paramsObj = RestUtilities.readBodyAsJSONObject(req);
 			JSONArray roles = paramsObj.getJSONArray("roles");
 			System.out.println(roles);
-			JSONArray listChildren = paramsObj.getJSONArray("lstChildren");
 
 			roleDao = DAOFactory.getRoleDAO();
 
 			objDao = DAOFactory.getMenuDAO();
 			ArrayList<Role> rolesArrayList = new ArrayList<Role>();
-			ArrayList<Menu> listChildrenArrayList = new ArrayList<Menu>();
 
 			Role[] rolesArray = new Role[roles.length()];
 			for (int i = 0; i < roles.length(); i++) {
@@ -372,20 +361,12 @@ public class MenuResource extends AbstractSpagoBIResource {
 				rolesArrayList.add(r);
 
 			}
-			Menu[] listChildrenA = new Menu[listChildren.length()];
-			for (int i = 0; i < listChildren.length(); i++) {
-				int menuId = listChildren.getJSONObject(i).getInt("menuId");
-				Menu r = objDao.loadMenuByID(8);
-				listChildrenArrayList.add(r);
-
-			}
 
 			objDao.setUserProfile(getUserProfile());
 			Menu menu = objDao.loadMenuByID(paramsObj.getInt("menuId"));
 
 			menu.setDescr(paramsObj.getString("descr"));
 
-			menu.setLstChildren(listChildrenArrayList);
 			menu.setRoles(rolesArrayList.toArray(rolesArray));
 			if (paramsObj.getString("externalApplicationUrl").equals("null")) {
 				menu.setExternalApplicationUrl(null);
@@ -466,5 +447,23 @@ public class MenuResource extends AbstractSpagoBIResource {
 			logger.error(errorString, e);
 			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
 		}
+	}
+
+	@GET
+	@Path("getParent/{id}")
+	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONALITIES_MANAGEMENT })
+	@Produces(MediaType.APPLICATION_JSON + charset)
+	public Response getParent(@PathParam("id") Integer id) {
+
+		try {
+			Menu m = DAOFactory.getMenuDAO().loadMenuByID(id);
+			return Response.ok(m).build();
+
+		} catch (Exception e) {
+			String errorString = "sbi.menu.load.parent.menu";
+			logger.error(errorString, e);
+			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
+		}
+
 	}
 }
