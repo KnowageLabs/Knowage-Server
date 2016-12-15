@@ -38,10 +38,9 @@ angular.module("cockpitModule").factory("cockpitModule_template",function(sbiMod
 	if(template.configuration==undefined){
 		template.configuration={};
 	}
-	
-//	if(template.sheetsBackground==undefined){
-//		template.sheetsBackground={};
-//	}
+	if(template.configuration.showMenuOnView==undefined){
+		template.configuration.showMenuOnView=true;
+	}
 	
 	if(template.configuration.style==undefined){
 		template.configuration.style={titles : true};
@@ -103,7 +102,8 @@ angular.module("cockpitModule").factory("cockpitModule_properties",function(){
 		DS_IN_CACHE:[],
 		HAVE_SELECTIONS_OR_FILTERS:false,
 		STARTING_SELECTIONS:[],
-		STARTING_FILTERS:[]
+		STARTING_FILTERS:[],
+		
 	}
 });
 

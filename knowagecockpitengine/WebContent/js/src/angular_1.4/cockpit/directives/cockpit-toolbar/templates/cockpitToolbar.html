@@ -17,40 +17,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <div ng-cloak>
-<!--  md-toolbar class="miniToolbar">
-	<div class="md-toolbar-tools" layout-align="start center">
-		<h2> {{cockpitModule_template.configuration.info.name}}</h2>
-		<md-button aria-label="label" class="md-icon-button" ng-click="openGeneralConfigurationDialog()" ng-if="cockpitModule_properties.EDIT_MODE"  title = "General configuration">
-			<md-icon md-font-icon="fa fa-cog"></md-icon>
-		</md-button>
-		<md-button aria-label="data" class="md-icon-button" ng-click="openDataConfigurationDialog()" ng-if="cockpitModule_properties.EDIT_MODE"  title = "Data configuration">
-			<md-icon md-font-icon="fa fa-database"></md-icon>
-		</md-button>
-		<md-button aria-label="data" class="md-icon-button" ng-click="cleanCache()" title = "Clean cache">
-			<md-icon md-font-icon="fa fa-recycle"></md-icon>
-		</md-button>
-		<md-button aria-label="data" class="md-icon-button" ng-click="openSelections()" title = "Selections">
-			<md-icon md-font-icon="fa fa-check-square-o" ng-style="{color: cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS==true? 'lawngreen':''}"></md-icon>
-		</md-button-->
-	<!-- 		close button if is new cockpit
-		<md-button ng-if="isFromNewCockpit" aria-label="data" class="md-icon-button" ng-click="closeNewCockpit()" title = "close">
-			<md-icon md-font-icon="fa fa-times"></md-icon>
-		</md-button> 
-		<span flex></span>
-	</div>
- 	to-do remove style 
-	<md-button ng-if="cockpitModule_properties.EDIT_MODE" style="right: 70px;" aria-label="add" class="md-fab toolbarFab" ng-click="saveCockpit()">
-		<md-icon md-font-icon="fa fa-save" ></md-icon>
-	</md-button>
-	<md-button ng-if="cockpitModule_properties.EDIT_MODE" aria-label="add" class="md-fab toolbarFab" ng-click="addWidget()">
-		<md-icon md-font-icon="fa fa-plus" ></md-icon>
-	</md-button>
-</md-toolbar-->
-
-<div class="kn-fab-toolbar" layout="row" >
+<div class="kn-fab-toolbar" layout="row" ng-hide="!cockpitModule_properties.EDIT_MODE && !cockpitModule_template.configuration.showMenuOnView">
       <md-fab-speed-dial  md-open="fabSpeed.isOpen" md-direction="left" class="md-scale">
         <md-fab-trigger>
-          <md-button aria-label="menu" class="md-fab md-warn" ng-click="toggleFab()">
+          <md-button aria-label="menu" class="md-fab md-warn" ng-click="toggleFab()" >
           <md-tooltip md-direction="bottom">Cockpit menu</md-tooltip>
             <md-icon md-font-icon="fa fa-bars"></md-icon>
           </md-button>

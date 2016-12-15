@@ -61,6 +61,7 @@ function cockpitToolbarControllerFunction($scope,cockpitModule_widgetServices,co
 	
 	
 	$scope.saveCockpit=function(){
+		debugger;
 		var haveSel=false;
 		for(var i=0;i<cockpitModule_template.configuration.aggregations.length;i++){
 			if(Object.keys(cockpitModule_template.configuration.aggregations[i].selection).length>0){

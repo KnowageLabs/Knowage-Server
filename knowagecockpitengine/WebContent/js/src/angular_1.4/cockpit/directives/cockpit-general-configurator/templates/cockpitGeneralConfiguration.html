@@ -15,8 +15,6 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-
-
 <md-card class="flexCard" style="position:absolute;" layout-fill id="cockpitDataConfig">
 	<md-card-content flex layout="column" class="noPadding">
 		<md-toolbar>
@@ -51,7 +49,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			        		  <label>Sheets background image url</label>
 							  <input ng-model="clonedTemplate.style.imageBackgroundUrl"></input>
 							  <!--<color-picker  options="{format:'rgb'}" ng-model="clonedDocumentProperty.sheetsBackground"></color-picker> -->
-						   </md-input-container>        
+						   </md-input-container> 
+						   
+						   <md-input-container flex class="md-block"> 
+			        		   <md-checkbox layout-align="space-around center" ng-model="clonedTemplate.showMenuOnView"  class="md-block"
+										aria-label="Checkbox 1" >Show Menu on Edit</md-checkbox>
+						   </md-input-container>       
 			                      
 			                      
 				           
