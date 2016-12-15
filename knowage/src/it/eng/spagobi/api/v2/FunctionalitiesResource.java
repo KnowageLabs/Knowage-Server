@@ -281,7 +281,7 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 			return Response.ok(l).build();
 
 		} catch (Exception e) {
-			String errorString = "sbi.folder.load.folder.moveUp";
+			String errorString = "sbi.folder.load.parent.folder";
 			logger.error(errorString, e);
 			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
 		}
