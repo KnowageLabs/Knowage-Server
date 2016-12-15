@@ -257,8 +257,8 @@ if(executionRoleNames.size() > 0) {
 					                </md-button>
 					            </md-menu-item>
 					            				     				          
-								<span class="divider" >{{translate.load("sbi.execution.executionpage.toolbar.export")}}</span>
-								<md-menu-item>
+								<span class="divider" ng-if="urlViewPointService.exportation.length>0">{{translate.load("sbi.execution.executionpage.toolbar.export")}}</span>
+								<md-menu-item ng-if="urlViewPointService.exportation.length>0">  
 					                <md-menu>
 						                <md-menu-item class="md-indent">
 					                  		<md-icon class="fa fa-download"></md-icon>

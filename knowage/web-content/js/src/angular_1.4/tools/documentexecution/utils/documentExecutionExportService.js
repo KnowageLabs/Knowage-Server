@@ -2,7 +2,7 @@
 	var documentExecutionModule = angular.module('documentExecutionModule');
 	
 	documentExecutionModule.service('docExecute_exportService', function(sbiModule_translate,sbiModule_config,
-			execProperties,sbiModule_user,$http,sbiModule_dateServices, documentExecuteServices, sbiModule_download, $q, $rootScope) {
+			execProperties,sbiModule_user,sbiModule_restServices,$http,sbiModule_dateServices, documentExecuteServices, sbiModule_download, $q, $rootScope, sbiModule_messaging) {
 		
 		var dee = this;
 		dee.exporting = false;
@@ -211,59 +211,204 @@
 			return deferred.promise;
 		};
 		
-		dee.exportationHandlers = {	
-			'CHART': [
-				 {'description' : sbiModule_translate.load('sbi.execution.PdfExport') , 'iconClass': 'fa fa-file-pdf-o', 'func': function(){dee.exportDocumentChart('PDF')} }
-				 ,{'description' : sbiModule_translate.load('sbi.execution.JpgExport') , 'iconClass':'fa fa-file-image-o', 'func': function() {dee.exportDocumentChart('JPG')} }
-			],
-			'DOCUMENT_COMPOSITE': [
-			    {'description' : sbiModule_translate.load('sbi.execution.PdfExport') , 'iconClass': 'fa fa-file-pdf-o', 'func': function(){dee.exportCockpitTo('pdf','application/pdf')} }
-			    ,{'description' : sbiModule_translate.load('sbi.execution.XlsExport') , 'iconClass':'fa fa-file-excel-o', 'func': function() {dee.exportCockpitTo('xls','application/vnd.ms-excel')} }
-			    ,{'description' : sbiModule_translate.load('sbi.execution.XlsxExport') , 'iconClass':'fa fa-file-excel-o', 'func': function() {dee.exportCockpitTo('xlsx','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')} }
-//			    {'description' : sbiModule_translate.load('sbi.execution.PdfExport') , 'iconClass': 'fa fa-file-pdf-o', 'func': function(){dee.exportCockpitTo('pdf')} }
-//			    ,{'description' : sbiModule_translate.load('sbi.execution.XlsExport') , 'iconClass':'fa fa-file-excel-o', 'func': function() {dee.exportCockpitTo('xls')} }
-//			    ,{'description' : sbiModule_translate.load('sbi.execution.XlsxExport') , 'iconClass':'fa fa-file-excel-o', 'func': function() {dee.exportCockpitTo('xlsx')} }
-			],
-			'REPORT': [
-				{'description' : sbiModule_translate.load('sbi.execution.PdfExport') , 'iconClass': 'fa fa-file-pdf-o', 'func': function(){dee.exportReportTo('PDF')} }
-				,{'description' : sbiModule_translate.load('sbi.execution.XlsExport') , 'iconClass':'fa fa-file-excel-o', 'func': function() {dee.exportReportTo('XLS')} }
-				,{'description' : sbiModule_translate.load('sbi.execution.XlsxExport') , 'iconClass':'fa fa-file-excel-o', 'func': function() {dee.exportReportTo('XLSX')} }
-				,{'description' : sbiModule_translate.load('sbi.execution.rtfExport') , 'iconClass':'fa fa-file-excel-o', 'func': function() {dee.exportReportTo('RTF')} }
-				,{'description' : sbiModule_translate.load('sbi.execution.docExport') , 'iconClass':'fa fa-file-word-o', 'func': function() {dee.exportReportTo('DOC')} }
-				,{'description' : sbiModule_translate.load('sbi.execution.docxExport') , 'iconClass':'fa fa-file-word-o', 'func': function() {dee.exportReportTo('DOCX')} }
-				,{'description' : sbiModule_translate.load('sbi.execution.CsvExport') , 'iconClass':'fa fa-file-excel-o', 'func': function() {dee.exportReportTo('CSV')} }
-				,{'description' : sbiModule_translate.load('sbi.execution.XmlExport') , 'iconClass':'fa fa-file-code-o', 'func': function() {dee.exportReportTo('XML')} }
-				,{'description' : sbiModule_translate.load('sbi.execution.JpgExport') , 'iconClass':'fa fa-file-image-o', 'func': function() {dee.exportReportTo('JPG')} }
-				,{'description' : sbiModule_translate.load('sbi.execution.txtExport') , 'iconClass':'fa fa-file-text-o', 'func': function() {dee.exportReportTo('TXT')} }
-				,{'description' : sbiModule_translate.load('sbi.execution.pptExport') , 'iconClass':'fa fa-file-text-o', 'func': function() {dee.exportReportTo('PPT')} }
-				,{'description' : sbiModule_translate.load('sbi.execution.pptxExport') , 'iconClass':'fa fa-file-text-o', 'func': function() {dee.exportReportTo('PPTX')} }
-				],
-			'OLAP': [
-		         {'description' : sbiModule_translate.load('sbi.execution.PdfExport') , 'iconClass': 'fa fa-file-pdf-o', 'func': function(){dee.exportOlapTo('PDF')} }
-		         ,{'description' : sbiModule_translate.load('sbi.execution.XlsExport') , 'iconClass':'fa fa-file-excel-o', 'func': function() {dee.exportOlapTo('XLS')} }
-		         ],
-	        'DASH': [
-	              	   {'description' : sbiModule_translate.load('sbi.execution.PdfExport') , 'iconClass': 'fa fa-file-pdf-o', 'func': function(){dee.exportChartTo('PDF')} }
-	              	   ],
-      	    'MAP': [
-		        {'description' : sbiModule_translate.load('sbi.execution.PdfExport') , 'iconClass': 'fa fa-file-pdf-o', 'func': function(){dee.exportGeoTo('pdf')} }
-		       // ,{'description' : sbiModule_translate.load('sbi.execution.JpgExport') , 'iconClass':'fa fa-file-image-o', 'func': function() {dee.exportGeoTo('jpeg')} }
-			],
-			'DATAMART': [
-				{'description' : sbiModule_translate.load('sbi.execution.PdfExport') , 'iconClass': 'fa fa-file-pdf-o', 'func': function(){dee.exportQbeTo('application/pdf')} }
-				,{'description' : sbiModule_translate.load('sbi.execution.XlsExport') , 'iconClass':'fa fa-file-excel-o', 'func': function() {dee.exportQbeTo('application/vnd.ms-excel')} }
-				,{'description' : sbiModule_translate.load('sbi.execution.XlsxExport') , 'iconClass':'fa fa-file-excel-o', 'func': function() {dee.exportQbeTo('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')} }
-				,{'description' : sbiModule_translate.load('sbi.execution.rtfExport') , 'iconClass':'fa fa-file-excel-o', 'func': function() {dee.exportQbeTo('application/rtf')} }
-				,{'description' : sbiModule_translate.load('sbi.execution.CsvExport') , 'iconClass':'fa fa-file-excel-o', 'func': function() {dee.exportQbeTo('text/csv')} }
-				,{'description' : sbiModule_translate.load('sbi.execution.jrxmlExport') , 'iconClass':'fa fa-file-text-o', 'func': function() {dee.exportQbeTo('text/jrxml')} }
-				,{'description' : sbiModule_translate.load('sbi.execution.jsonExport') , 'iconClass':'fa fa-file-text-o', 'func': function() {dee.exportQbeTo('application/json')} }
-			],
-			'NETWORK': [
-			            {'description' : sbiModule_translate.load('sbi.execution.PdfExport') , 'iconClass': 'fa fa-file-pdf-o', 'func': function(){dee.exportNetworkTo('pdf')} }
-			            ,{'description' : sbiModule_translate.load('sbi.execution.PngExport') , 'iconClass':'fa fa-file-image-o', 'func': function() {dee.exportNetworkTo('png')} }
-			            ,{'description' : sbiModule_translate.load('sbi.execution.GraphmlExport') , 'iconClass':'fa fa-file-image-o', 'func': function() {dee.exportNetworkTo('graphml')} }
-			            ]
-		};
+//		dee.exportationHandlers = {	
+//			'CHART': [
+//				 {'description' : sbiModule_translate.load('sbi.execution.PdfExport') , 'iconClass': 'fa fa-file-pdf-o', 'func': function(){dee.exportDocumentChart('PDF')} }
+//				 ,{'description' : sbiModule_translate.load('sbi.execution.JpgExport') , 'iconClass':'fa fa-file-image-o', 'func': function() {dee.exportDocumentChart('JPG')} }
+//			],
+//			'DOCUMENT_COMPOSITE': [
+//			    {'description' : sbiModule_translate.load('sbi.execution.PdfExport') , 'iconClass': 'fa fa-file-pdf-o', 'func': function(){dee.exportCockpitTo('pdf','application/pdf')} }
+//			    ,{'description' : sbiModule_translate.load('sbi.execution.XlsExport') , 'iconClass':'fa fa-file-excel-o', 'func': function() {dee.exportCockpitTo('xls','application/vnd.ms-excel')} }
+//			    ,{'description' : sbiModule_translate.load('sbi.execution.XlsxExport') , 'iconClass':'fa fa-file-excel-o', 'func': function() {dee.exportCockpitTo('xlsx','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')} }
+////			    {'description' : sbiModule_translate.load('sbi.execution.PdfExport') , 'iconClass': 'fa fa-file-pdf-o', 'func': function(){dee.exportCockpitTo('pdf')} }
+////			    ,{'description' : sbiModule_translate.load('sbi.execution.XlsExport') , 'iconClass':'fa fa-file-excel-o', 'func': function() {dee.exportCockpitTo('xls')} }
+////			    ,{'description' : sbiModule_translate.load('sbi.execution.XlsxExport') , 'iconClass':'fa fa-file-excel-o', 'func': function() {dee.exportCockpitTo('xlsx')} }
+//			],
+//			'REPORT': [
+//				{'description' : sbiModule_translate.load('sbi.execution.PdfExport') , 'iconClass': 'fa fa-file-pdf-o', 'func': function(){dee.exportReportTo('PDF')} }
+//				,{'description' : sbiModule_translate.load('sbi.execution.XlsExport') , 'iconClass':'fa fa-file-excel-o', 'func': function() {dee.exportReportTo('XLS')} }
+//				,{'description' : sbiModule_translate.load('sbi.execution.XlsxExport') , 'iconClass':'fa fa-file-excel-o', 'func': function() {dee.exportReportTo('XLSX')} }
+//				,{'description' : sbiModule_translate.load('sbi.execution.rtfExport') , 'iconClass':'fa fa-file-excel-o', 'func': function() {dee.exportReportTo('RTF')} }
+//				,{'description' : sbiModule_translate.load('sbi.execution.docExport') , 'iconClass':'fa fa-file-word-o', 'func': function() {dee.exportReportTo('DOC')} }
+//				,{'description' : sbiModule_translate.load('sbi.execution.docxExport') , 'iconClass':'fa fa-file-word-o', 'func': function() {dee.exportReportTo('DOCX')} }
+//				,{'description' : sbiModule_translate.load('sbi.execution.CsvExport') , 'iconClass':'fa fa-file-excel-o', 'func': function() {dee.exportReportTo('CSV')} }
+//				,{'description' : sbiModule_translate.load('sbi.execution.XmlExport') , 'iconClass':'fa fa-file-code-o', 'func': function() {dee.exportReportTo('XML')} }
+//				,{'description' : sbiModule_translate.load('sbi.execution.JpgExport') , 'iconClass':'fa fa-file-image-o', 'func': function() {dee.exportReportTo('JPG')} }
+//				,{'description' : sbiModule_translate.load('sbi.execution.txtExport') , 'iconClass':'fa fa-file-text-o', 'func': function() {dee.exportReportTo('TXT')} }
+//				,{'description' : sbiModule_translate.load('sbi.execution.pptExport') , 'iconClass':'fa fa-file-text-o', 'func': function() {dee.exportReportTo('PPT')} }
+//				,{'description' : sbiModule_translate.load('sbi.execution.pptxExport') , 'iconClass':'fa fa-file-text-o', 'func': function() {dee.exportReportTo('PPTX')} }
+//				],
+//			'OLAP': [
+//		         {'description' : sbiModule_translate.load('sbi.execution.PdfExport') , 'iconClass': 'fa fa-file-pdf-o', 'func': function(){dee.exportOlapTo('PDF')} }
+//		         ,{'description' : sbiModule_translate.load('sbi.execution.XlsExport') , 'iconClass':'fa fa-file-excel-o', 'func': function() {dee.exportOlapTo('XLS')} }
+//		         ],
+//	        'DASH': [
+//	              	   {'description' : sbiModule_translate.load('sbi.execution.PdfExport') , 'iconClass': 'fa fa-file-pdf-o', 'func': function(){dee.exportChartTo('PDF')} }
+//	              	   ],
+//      	    'MAP': [
+//		        {'description' : sbiModule_translate.load('sbi.execution.PdfExport') , 'iconClass': 'fa fa-file-pdf-o', 'func': function(){dee.exportGeoTo('pdf')} }
+//		       // ,{'description' : sbiModule_translate.load('sbi.execution.JpgExport') , 'iconClass':'fa fa-file-image-o', 'func': function() {dee.exportGeoTo('jpeg')} }
+//			],
+//			'DATAMART': [
+//				{'description' : sbiModule_translate.load('sbi.execution.PdfExport') , 'iconClass': 'fa fa-file-pdf-o', 'func': function(){dee.exportQbeTo('application/pdf')} }
+//				,{'description' : sbiModule_translate.load('sbi.execution.XlsExport') , 'iconClass':'fa fa-file-excel-o', 'func': function() {dee.exportQbeTo('application/vnd.ms-excel')} }
+//				,{'description' : sbiModule_translate.load('sbi.execution.XlsxExport') , 'iconClass':'fa fa-file-excel-o', 'func': function() {dee.exportQbeTo('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')} }
+//				,{'description' : sbiModule_translate.load('sbi.execution.rtfExport') , 'iconClass':'fa fa-file-excel-o', 'func': function() {dee.exportQbeTo('application/rtf')} }
+//				,{'description' : sbiModule_translate.load('sbi.execution.CsvExport') , 'iconClass':'fa fa-file-excel-o', 'func': function() {dee.exportQbeTo('text/csv')} }
+//				,{'description' : sbiModule_translate.load('sbi.execution.jrxmlExport') , 'iconClass':'fa fa-file-text-o', 'func': function() {dee.exportQbeTo('text/jrxml')} }
+//				,{'description' : sbiModule_translate.load('sbi.execution.jsonExport') , 'iconClass':'fa fa-file-text-o', 'func': function() {dee.exportQbeTo('application/json')} }
+//			],
+//			'NETWORK': [
+//			            {'description' : sbiModule_translate.load('sbi.execution.PdfExport') , 'iconClass': 'fa fa-file-pdf-o', 'func': function(){dee.exportNetworkTo('pdf')} }
+//			            ,{'description' : sbiModule_translate.load('sbi.execution.PngExport') , 'iconClass':'fa fa-file-image-o', 'func': function() {dee.exportNetworkTo('png')} }
+//			            ,{'description' : sbiModule_translate.load('sbi.execution.GraphmlExport') , 'iconClass':'fa fa-file-image-o', 'func': function() {dee.exportNetworkTo('graphml')} }
+//			            ]
+//		};
+		
+
+		
+		dee.getExporters = function(engine, type) {
+			 return $q(function(resolve, reject) {
+				var exportationHandlers = {};
+				
+				sbiModule_restServices.promiseGet('2.0/exporters',engine)
+				.then(function(response) {
+					console.log("[GET]: SUCCESS!");
+					exportationHandlers = response.data.exporters;
+					//define the final data version
+					var exportersJSON = [];
+					for (e in exportationHandlers){
+						var exp = exportationHandlers[e];
+						var expJSON = {};
+						dee.setExporterDescription(exp.name, expJSON);
+						dee.setExporterIconClass(exp.name, expJSON);
+						dee.setExporterFunc(exp.name, exp.engine, expJSON)
+//						expJSON.description = sbiModule_translate.load('sbi.execution.' + exp.description + 'Export');
+//						expJSON.iconClass = 'fa fa-file-' + exp.iconClass + '-o';				    
+//	//					expJSON.func = JSON.parse(new String("function(){ dee."+ exp.func +" }");
+//						expJSON.func = new Function("function(){ dee.exportCockpitTo('pdf','application/pdf')}");
+////						expJSON.func = function(){ dee.exportReportTo('PDF')};
+						exportersJSON.push(expJSON);
+					}
+					resolve(exportersJSON);
+				},function(e){
+					reject(e);
+				});
+		
+			});
+		}
+		
+		dee.setExporterDescription = function(type, expObj) {
+			expObj.description =  sbiModule_translate.load('sbi.execution.' + type + 'Export');
+		}
+		
+		dee.setExporterIconClass = function(type, expObj) {
+			var iconClass = "fa fa-file-";
+
+			switch (type) {
+			case "PDF":
+				iconClass += "pdf";
+				break;
+			case "XLS":
+			case "XSLX":
+			case "RTF":
+			case "CSV":
+				iconClass += "excel";
+				break;
+			case "JPG":
+			case "PNG":
+			case "GRAPHML":
+				iconClass += "image";
+				break;
+			case "DOC":
+			case "DOCX":
+				iconClass += "word";
+				break;
+			case "XML":
+				iconClass += "code";
+				break;
+			case "TXT":
+			case "PPT":
+			case "PPTX":
+			case "JRXML":
+			case "JSON":
+				iconClass += "text";
+				break;
+			default:
+				
+			}
+			iconClass += "-o";
+			
+			expObj.iconClass = iconClass;
+		}
+		
+		dee.setExporterFunc = function(type, engine, expObj) {
+			
+			switch (engine) {
+			case "CHART":
+				expObj.func = function(){dee.exportDocumentChart(type)};
+				break;
+			case "DOCUMENT_COMPOSITE":
+				switch (type) {
+				case "XLS":
+					expObj.func = function(){dee.exportCockpitTo('xls','application/vnd.ms-excel')};
+					break;
+				case "XLSX":
+					expObj.func = function(){dee.exportCockpitTo('xlsx','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')};
+					break;
+				case "PDF":
+					expObj.func = function(){dee.exportCockpitTo('pdf','application/pdf')};
+					break;
+				default:
+					
+				}
+				break;
+			case "REPORT":
+				expObj.func = function(){dee.exportReportTo(type)};			
+				break;
+			case "OLAP":
+				expObj.func = function(){dee.exportOlapTo(type)};
+				break;
+			case "DASH":
+				expObj.func = function(){dee.exportChartTo(type)};
+				break;
+			case "MAP":
+				expObj.func = function(){dee.exportGeoTo(type.toLowerCase())};
+				break;
+			case "DATAMART":
+				switch (type) {
+				case "XLS":
+					expObj.func = function(){dee.exportQbeTo('application/vnd.ms-excel')};
+					break;
+				case "XLSX":
+					expObj.func = function(){dee.exportQbeTo('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')};
+					break;
+				case "PDF":					
+					expObj.func = function(){dee.exportQbeTo('application/pdf')};
+					break;
+				case "RTF":
+					expObj.func = function(){dee.exportQbeTo('application/rtf')};
+					break;
+				case "CSV":
+					expObj.func = function(){dee.exportQbeTo('text/csv')};
+					break;
+				case "JRXML":
+					expObj.func = function(){dee.exportQbeTo('text/jrxml')};
+					break;
+				case "JSON":
+					expObj.func = function(){dee.exportQbeTo('application/json')};
+					break;
+				default:
+				
+				}
+				break;
+			case "NETWORK":
+				expObj.func = function(){dee.exportNetworkTo( type.toLowerCase())};
+				break;
+			default:
+				
+			}
+		}
 		
 		dee.getCockpitCsvData = function(documentFrame) {
 			var deferred=$q.defer();

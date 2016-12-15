@@ -517,7 +517,14 @@
 //						serviceScope.documentUrl = data.url+'&timereloadurl=' + new Date().getTime();
 						execProperties.documentUrl = documentUrl;
 						//SETTING EXPORT BUTTON
-						serviceScope.exportation = docExecute_exportService.exportationHandlers[data['typeCode']];
+//						serviceScope.exportation = docExecute_exportService.exportationHandlers[data['typeCode']];
+						docExecute_exportService.getExporters(data['engineLabel'], data['typeCode'])
+						.then(function(exportersJSON){
+							serviceScope.exportation = exportersJSON;
+						},
+							  function(e){
+							
+						});
 						execProperties.executionInstance.ENGINE_LABEL=data['engineLabel'];
 						serviceScope.showOlapMenu = serviceScope.getOlapType();
 						//SETTING URL SBI EXECUTION ID
