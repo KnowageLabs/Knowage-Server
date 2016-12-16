@@ -9,9 +9,11 @@ function doClickOnSvg(id){
 }
 
 function createChart() {
-	var serviceResponse = {};
-	var labels	=[];
-	var backgrounds = [];
+	var serviceResponse = {},
+		labels	=[],
+		columns =[],
+		percCol =[],
+		backgrounds = [];
 
     function serviceGetData() {
         var jqxhr = $.ajax({
@@ -26,8 +28,11 @@ function createChart() {
 
             	if(response.data.metaData.fields[i].logicalType && response.data.metaData.fields[i].logicalType == "measure"){
             		labels.push(response.data.metaData.fields[i].header);
+            		columns.push(response.data.metaData.fields[i].name);
             	}
-           
+            	if(response.data.metaData.fields[i].logicalType && response.data.metaData.fields[i].logicalType == "perc_value"){
+            		percCol.push(response.data.metaData.fields[i].name)
+            	}
             }
             if(response.CUSTOMIZE_SETTINGS.CHART.BACKGROUND){
             	for(var j=0; j<labels.length; j++){
@@ -46,11 +51,24 @@ function createChart() {
             }
             
             initializeLegend();
+            if(response.data.rows){
             for(var k in response.data.rows){
-            	if(response.data.rows)
-                var data = [response.data.rows[k]['column_3'],response.data.rows[k]['column_4'],response.data.rows[k]['column_5']];
-            	var perc = [response.data.rows[k]['column_7'],response.data.rows[k]['column_8'],response.data.rows[k]['column_9']]
+            	
+            		var data=[],perc=[];
+            		for(var j in columns){
+            			data.push(response.data.rows[k][columns[j]]);
+            			if(percCol.length>0){
+            				perc.push(response.data.rows[k][percCol[j]]);
+            			}
+            			
+            		
+            		
+            		
+            	}
+                //var data = [response.data.rows[k]['column_3'],response.data.rows[k]['column_4'],response.data.rows[k]['column_5']];
+            	//var perc = [response.data.rows[k]['column_7'],response.data.rows[k]['column_8'],response.data.rows[k]['column_9']]
                 initializeChart(response.CUSTOMIZE_SETTINGS,data,response.data.rows[k]['column_1'],perc);
+            }
             }
         })
         .fail(function(error) {
@@ -61,23 +79,23 @@ function createChart() {
     
     window.onresize = function(event){
     	for(k in serviceResponse.rows){
-    		var svg 		= document.getElementById("svgContainer");
-            var centroide 	= svg.contentDocument.getElementById(serviceResponse.rows[k]['column_1']);
-            var position 	= centroide.getBoundingClientRect(); 
-            var canvas 		= document.getElementById(serviceResponse.rows[k]['column_1']);
-            canvas.parentElement.style.top = position.top;
-            canvas.parentElement.style.left = position.left;
-            canvas.parentElement.style.width = position.width;
-            canvas.parentElement.style.height = position.height;
+    		var svg 		= document.getElementById("svgContainer"),
+            	centroide 	= svg.contentDocument.getElementById(serviceResponse.rows[k]['column_1']),
+            	position 	= centroide.getBoundingClientRect(),
+            	canvas 		= document.getElementById(serviceResponse.rows[k]['column_1']);
+            canvas.parentElement.style.top 		= position.top;
+            canvas.parentElement.style.left 	= position.left;
+            canvas.parentElement.style.width 	= position.width;
+            canvas.parentElement.style.height 	= position.height;
     	}
     }
     
     function initializeLegend(){
     	var legend = document.getElementById("graphLegend");
     	for (var k in labels){
-    		var label = document.createElement("div");
-    		var span = document.createElement("div");
-    		var color = document.createElement("div");
+    		var label = document.createElement("div"),
+    			span = document.createElement("div"),
+    			color = document.createElement("div");
     		label.className = "graphLabel";
     		span.className 	= "graphSpan";
     		color.className = "graphColor";
@@ -95,9 +113,9 @@ function createChart() {
 
     function initializeChart(config,data,chartId,perc) {
 
-        var svg = document.getElementById("svgContainer");
-        var centroide = svg.contentDocument.getElementById(chartId);
-        var position = centroide.getBoundingClientRect();
+        var svg = document.getElementById("svgContainer"),
+        	centroide = svg.contentDocument.getElementById(chartId),
+        	position = centroide.getBoundingClientRect();
         
         function setChartToPosition(position){
             var div = document.createElement("div");
@@ -106,19 +124,22 @@ function createChart() {
             var canvas = document.createElement("canvas");
             var percLegend = document.createElement("div");
             percLegend.className = "percLegend";
-            for (var k in perc){
-        		var label = document.createElement("div");
-        		var span = document.createElement("div");
-        		var color = document.createElement("div");
-        		label.className = "graphLabel";
-        		span.className 	= "graphSpan";
-        		color.className = "graphColor";
-        		span.innerHTML 	= parseFloat(perc[k]).toFixed(2)+"%";
-        		color.style.backgroundColor = backgrounds[k];
-        		label.appendChild(span);
-        		label.appendChild(color);
-        		percLegend.appendChild(label);
+            if(perc){
+            	for (var k in perc){
+            		var label 	= document.createElement("div"),
+            		 	span 	= document.createElement("div"),
+            		 	color 	= document.createElement("div");
+            		label.className = "graphLabel";
+            		span.className 	= "graphSpan";
+            		color.className = "graphColor";
+            		span.innerHTML 	= parseFloat(perc[k]).toFixed(2)+"%";
+            		color.style.backgroundColor = backgrounds[k];
+            		label.appendChild(span);
+            		label.appendChild(color);
+            		percLegend.appendChild(label);
+                }
             }
+            
             
             
             
