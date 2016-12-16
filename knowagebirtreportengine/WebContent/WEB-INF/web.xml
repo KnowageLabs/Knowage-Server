@@ -388,5 +388,33 @@
  		<res-auth>Container</res-auth>
     </resource-ref>
 	-->
+	
+	<!-- WEBLOGIC CONFS START
+ 	<env-entry> 
+		<env-entry-name>resource_path</env-entry-name> 
+		<env-entry-type>java.lang.String</env-entry-type> 
+		<env-entry-value>D:/Sviluppo/SpagoBI/bigdata/tomcat/resource</env-entry-value>
+	</env-entry>
+	<env-entry>
+		<env-entry-name>host_url</env-entry-name>
+		<env-entry-type>java.lang.String</env-entry-type>
+		<env-entry-value>http://localhost:7001</env-entry-value>
+	</env-entry>
+	<env-entry>
+		<env-entry-name>service_url</env-entry-name>
+		<env-entry-type>java.lang.String</env-entry-type>
+		<env-entry-value>http://localhost:7001/knowage</env-entry-value>
+	</env-entry>
+	<env-entry>
+		<env-entry-name>hmacKey</env-entry-name>
+		<env-entry-type>java.lang.String</env-entry-type>
+		<env-entry-value>abc123</env-entry-value>
+	</env-entry>
+	<env-entry>
+		<env-entry-name>sso_class</env-entry-name>
+		<env-entry-type>java.lang.String</env-entry-type>
+		<env-entry-value>it.eng.spagobi.services.common.FakeSsoService</env-entry-value>
+	</env-entry>
+	WEBLOGIC CONFS END -->	
 
 </web-app>
