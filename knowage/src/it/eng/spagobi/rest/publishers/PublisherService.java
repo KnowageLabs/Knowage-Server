@@ -58,6 +58,8 @@ public class PublisherService extends AbstractSpagoBIResource {
 
 		try {
 			
+			HttpServletRequest request = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
+			HttpServletResponse response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
 			String publisher = request.getParameter(PUBLISHER);
 			
 			if(!isPublisherValid(publisher)  ) {
