@@ -292,6 +292,30 @@ public class MetaService extends AbstractSpagoBIResource {
 		return Response.serverError().build();
 	}
 
+	/*
+	 * Just apply the patch without adding new data
+	 */
+	@POST
+	@Path("/updateModel")
+	public Response updateModel(@Context HttpServletRequest req) {
+		try {
+			JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
+			Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
+			JSONObject oldJsonModel = createJson(model);
+			applyDiff(jsonRoot, model);
+			JSONObject jsonModel = createJson(model);
+			ObjectMapper mapper = new ObjectMapper();
+			JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
+
+			return Response.ok(patch.toString()).build();
+		} catch (IOException | JSONException e) {
+			logger.error(e);
+		} catch (SpagoBIException e) {
+			throw new SpagoBIServiceException(req.getPathInfo(), e);
+		}
+		return Response.serverError().build();
+	}
+
 	@POST
 	@Path("/addBusinessView")
 	public Response addBusinessView(@Context HttpServletRequest req) {

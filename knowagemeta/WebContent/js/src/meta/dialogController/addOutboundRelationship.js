@@ -46,7 +46,19 @@ function businessModelOutboundControllerFunction($scope, sbiModule_translate,sbi
 								 icon:'fa fa-trash' ,
 								action : function(item,event) {
 									$scope.selectedBusinessModel.relationships.splice($scope.selectedBusinessModel.relationships.indexOf(item),1);
+
+									//call server to apply delete on model
+									var send = metaModelServices.createRequestRest();
+									sbiModule_restServices.promisePost("1.0/metaWeb","updateModel",send)
+									.then(function(response){
+										metaModelServices.applyPatch(response.data);
+									}
+									,function(response){
+										sbiModule_restServices.errorHandler(response.data,"");
+									})
+
 								 }
+
                     			}
 						];
 }
