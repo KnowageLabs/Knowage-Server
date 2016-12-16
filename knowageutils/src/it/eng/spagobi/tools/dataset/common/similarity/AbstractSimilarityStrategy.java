@@ -31,23 +31,6 @@ public abstract class AbstractSimilarityStrategy implements ISimilarityStrategy 
 	@Override
 	public abstract double measureCoefficient(TLongHashSet setA, TLongHashSet setB);
 
-	protected int notIntersectCount(TLongHashSet setA, TLongHashSet setB) {
-		int count = 0;
-		TLongIterator it = setA.iterator();
-		while (it.hasNext()) {
-			if (!setB.contains(it.next())) {
-				count++;
-			}
-		}
-		it = setB.iterator();
-		while (it.hasNext()) {
-			if (!setA.contains(it.next())) {
-				count++;
-			}
-		}
-		return count;
-	}
-
 	protected int intersectCount(TLongHashSet setA, TLongHashSet setB) {
 		TLongHashSet a;
 		TLongHashSet b;
@@ -66,6 +49,36 @@ public abstract class AbstractSimilarityStrategy implements ISimilarityStrategy 
 			}
 		}
 		return count;
+	}
+
+	protected int notIntersectCount(TLongHashSet setA, TLongHashSet setB) {
+		int count = 0;
+		TLongIterator it = setA.iterator();
+		while (it.hasNext()) {
+			if (!setB.contains(it.next())) {
+				count++;
+			}
+		}
+		it = setB.iterator();
+		while (it.hasNext()) {
+			if (!setA.contains(it.next())) {
+				count++;
+			}
+		}
+		return count;
+	}
+
+	protected int unionCount(TLongHashSet setA, TLongHashSet setB) {
+		int intersect = intersectCount(setA, setB);
+		return unionCount(setA.size(), setB.size(), intersect);
+	}
+
+	protected int unionCount(TLongHashSet setA, TLongHashSet setB, int intersect) {
+		return unionCount(setA.size(), setB.size(), intersect);
+	}
+
+	protected int unionCount(int sizeA, int sizeB, int intersect) {
+		return sizeA + sizeB - intersect;
 	}
 
 	public double round(double value, int places) {

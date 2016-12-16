@@ -31,18 +31,31 @@ public class WeightedStrategy extends AbstractSimilarityStrategy {
 	@Override
 	public double measureCoefficient(TLongHashSet setA, TLongHashSet setB) {
 		logger.debug("IN");
-		logger.debug("First set has [" + setA.size() + "] elements, while the second set has [" + setB.size() + "] elements");
+		int sizeA = setA.size();
+		int sizeB = setB.size();
+		logger.debug("First set has [" + sizeA + "] elements, while the second set has [" + sizeB + "] elements");
 
 		long startTime = System.currentTimeMillis();
+		double weight = weight(sizeA, sizeB);
+		logger.debug("Weight: " + weight);
 		double intersect = intersectCount(setA, setB);
+		double union = unionCount(sizeA, sizeB, (int) intersect);
 		logger.debug("Intersect computed in about: " + (System.currentTimeMillis() - startTime) + "ms");
 		logger.debug("Intersect cardinality: " + intersect);
-		double notIntersect = notIntersectCount(setA, setB);
 
-		double coefficient = intersect / notIntersect;
+		double coefficient = compute(weight, intersect, union, Double.min(sizeA, sizeB));
 		logger.debug("Similary coefficient: " + coefficient);
 		logger.debug("OUT");
 		return round(coefficient);
+	}
+
+	private double weight(int sizeA, int sizeB) {
+		logger.debug("Calculate weigth as min(|A|,|B|)/max(|A|,|B|) -> min(" + sizeA + "," + sizeB + ")/max(" + sizeA + "," + sizeB + ")");
+		return Double.min(sizeA, sizeB) / Double.max(sizeA, sizeB);
+	}
+
+	private double compute(double weight, double intersect, double union, double min) {
+		return intersect / ((weight * union) + ((1 - weight) * min));
 	}
 
 }
