@@ -74,5 +74,4 @@ public class Field implements Comparable<Field> {
 		}
 		return result;
 	}
-
 }

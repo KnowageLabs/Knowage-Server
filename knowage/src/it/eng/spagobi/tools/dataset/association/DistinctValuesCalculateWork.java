@@ -153,11 +153,15 @@ public class DistinctValuesCalculateWork implements Work {
 		if (metaData != null) {
 			for (int fieldIndex = 0; fieldIndex < metaData.getFieldCount(); fieldIndex++) {
 				IFieldMetaData fieldMeta = metaData.getFieldMeta(fieldIndex);
-				if (fieldMeta.getFieldType().equals(FieldType.ATTRIBUTE)) {
+				if (fieldMeta.getFieldType().equals(FieldType.ATTRIBUTE) && !isNumber(fieldMeta)) {
 					toReturn.add(fieldIndex);
 				}
 			}
 		}
 		return toReturn;
+	}
+
+	private boolean isNumber(IFieldMetaData fieldMeta) {
+		return Number.class.isAssignableFrom(fieldMeta.getType());
 	}
 }

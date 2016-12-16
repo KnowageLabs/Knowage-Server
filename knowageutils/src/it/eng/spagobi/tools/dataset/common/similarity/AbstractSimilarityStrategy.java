@@ -21,12 +21,7 @@ package it.eng.spagobi.tools.dataset.common.similarity;
 import gnu.trove.iterator.TLongIterator;
 import gnu.trove.set.hash.TLongHashSet;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-
 public abstract class AbstractSimilarityStrategy implements ISimilarityStrategy {
-
-	private final static int DEFAULT_DECIMALS = 2;
 
 	@Override
 	public abstract double measureCoefficient(TLongHashSet setA, TLongHashSet setB);
@@ -82,15 +77,10 @@ public abstract class AbstractSimilarityStrategy implements ISimilarityStrategy 
 	}
 
 	public double round(double value, int places) {
-		if (places < 0)
-			throw new IllegalArgumentException();
-
-		BigDecimal bd = new BigDecimal(value);
-		bd = bd.setScale(places, RoundingMode.HALF_UP);
-		return bd.doubleValue();
+		return SimilarityUtilities.round(value, places);
 	}
 
 	public double round(double value) {
-		return round(value, DEFAULT_DECIMALS);
+		return SimilarityUtilities.round(value);
 	}
 }

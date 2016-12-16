@@ -21,6 +21,7 @@ package it.eng.spagobi.tools.dataset.common.similarity;
 import gnu.trove.set.hash.TLongHashSet;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -50,6 +51,10 @@ public class SimilarityEvaluator {
 	}
 
 	public Set<Similarity> evaluate(List<String> dataSets, Map<String, Map<String, TLongHashSet>> dataSetDomainValues) {
+		return evaluate(dataSets, dataSetDomainValues, false);
+	}
+
+	public Set<Similarity> evaluate(List<String> dataSets, Map<String, Map<String, TLongHashSet>> dataSetDomainValues, boolean aggregate) {
 		logger.debug("IN");
 		Set<Similarity> toReturn = new TreeSet<>(Collections.reverseOrder());
 		logger.debug("Evaluating dataSet similarity using [" + strategy.getClass().getName() + "] strategy");
@@ -66,6 +71,11 @@ public class SimilarityEvaluator {
 			}
 			dsIterator.remove();
 		}
+
+		if (aggregate) {
+			toReturn = aggregate(toReturn);
+		}
+
 		logger.debug("OUT");
 		return toReturn.size() > top ? limit(toReturn) : toReturn;
 	}
@@ -90,6 +100,43 @@ public class SimilarityEvaluator {
 		}
 		logger.debug("OUT");
 		return toReturn;
+	}
+
+	/*
+	 * This method aggregates a simple set of similarities (each similarity has two elements) to obtain a longer similarities chain
+	 */
+
+	private Set<Similarity> aggregate(Set<Similarity> similarities) {
+		Set<Similarity> chained = new TreeSet<>(Collections.reverseOrder());
+		Set<Similarity> removable = new HashSet<>();
+
+		Iterator<Similarity> itChain = similarities.iterator();
+		while (itChain.hasNext()) {
+			Similarity chain = itChain.next();
+
+			if (!removable.contains(chain)) {
+				Iterator<Similarity> itTarget = similarities.iterator();
+				while (itTarget.hasNext()) {
+					Similarity target = itTarget.next();
+					if (!removable.contains(target) && !chained.contains(target) && !chain.equals(target) && chainable(chain, target)) {
+						removable.add(target);
+						double coefficient = chain.add(target);
+						logger.debug("Update similarity coefficient while chaining: " + coefficient);
+					}
+				}
+				chained.add(chain);
+			}
+		}
+		return chained;
+	}
+
+	private boolean chainable(Similarity chain, Similarity target) {
+		for (Field field : target.getFields()) {
+			if (chain.getFields().contains(field)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private Set<Similarity> limit(Set<Similarity> set) {

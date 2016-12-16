@@ -24,7 +24,7 @@ import java.util.Set;
 public class Similarity implements Comparable<Similarity> {
 
 	private final Set<Field> fields;
-	private final double coefficient;
+	private double coefficient;
 
 	public Similarity() {
 		this(0.0);
@@ -48,6 +48,13 @@ public class Similarity implements Comparable<Similarity> {
 	}
 
 	public double getCoefficient() {
+		return coefficient;
+	}
+
+	public double add(Similarity similarity) {
+		fields.addAll(similarity.getFields());
+		double average = (coefficient + similarity.coefficient) / 2;
+		coefficient = SimilarityUtilities.round(average);
 		return coefficient;
 	}
 
