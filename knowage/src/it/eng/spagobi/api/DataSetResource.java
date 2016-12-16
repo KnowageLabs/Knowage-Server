@@ -591,11 +591,26 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	@Path("/{label}/data")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getDataStore(@PathParam("label") String label, @QueryParam("parameters") String parameters, @QueryParam("selections") String selections,
-			@QueryParam("aggregations") String aggregations, @QueryParam("summaryRow") String summaryRow, @QueryParam("offset") Integer offset,
-			@QueryParam("size") Integer fetchSize, @QueryParam("realtime") boolean isRealtime) {
+			@QueryParam("aggregations") String aggregations, @QueryParam("summaryRow") String summaryRow, @QueryParam("offset") int offset,
+			@QueryParam("size") int fetchSize, @QueryParam("realtime") boolean isRealtime) {
 		logger.debug("IN");
 
 		try {
+			int maxResults = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.API.DATASET.MAX_ROWS_NUMBER"));
+			logger.debug("Offset [" + offset + "], fetch size [" + fetchSize + "], max results[" + maxResults + "]");
+			if (maxResults <= 0) {
+				throw new SpagoBIRuntimeException("SPAGOBI.API.DATASET.MAX_ROWS_NUMBER value cannot be a non-positive integer");
+			}
+
+			if (offset < 0 || fetchSize <= 0) {
+				logger.debug("Offset or fetch size are not valid. Setting them to [0] and [" + maxResults + "] by default.");
+				offset = 0;
+				fetchSize = maxResults;
+			}
+			if (fetchSize > maxResults) {
+				throw new IllegalArgumentException("The page requested is too big. Max values is equals to [" + maxResults + "]");
+			}
+
 			List<ProjectionCriteria> projectionCriteria = new ArrayList<ProjectionCriteria>();
 			List<GroupCriteria> groupCriteria = new ArrayList<GroupCriteria>();
 			Map<String, String> columnAliasToName = new HashMap<String, String>();
@@ -630,25 +645,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 				summaryRowProjectionCriteria = getProjectionCriteria(label, new JSONArray(), summaryRowMeasuresObject);
 			}
 
-			IDataStore dataStore = null;
-
-			if (offset == null || offset.intValue() < 0 || fetchSize == null || fetchSize.intValue() < 0) {
-				logger.debug("Offset is equals to [" + offset + "] and fetch size equals to [" + fetchSize + "]. Set them to [-1] by default.");
-				offset = -1;
-				fetchSize = -1;
-			}
-
-			try {
-				int maxResults = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.API.DATASET.MAX_ROWS_NUMBER"));
-				if (fetchSize.intValue() > maxResults) {
-					throw new SpagoBIRuntimeException("The fetch size parameter [" + fetchSize
-							+ "] must be a smaller than SPAGOBI.API.DATASET.MAX_ROWS_NUMBER value [" + maxResults + "]");
-				}
-			} catch (NumberFormatException nfe) {
-				throw new SpagoBIRuntimeException("The value of SPAGOBI.API.DATASET.MAX_ROWS_NUMBER config must be set as a valid integer", nfe);
-			}
-
-			dataStore = getDatasetManagementAPI().getDataStore(label, offset, fetchSize, isRealtime, DataSetUtilities.getParametersMap(parameters),
+			IDataStore dataStore = getDatasetManagementAPI().getDataStore(label, offset, fetchSize, isRealtime, DataSetUtilities.getParametersMap(parameters),
 					groupCriteria, filterCriteria, filterCriteriaForMetaModel, projectionCriteria, summaryRowProjectionCriteria);
 
 			Map<String, Object> properties = new HashMap<String, Object>();

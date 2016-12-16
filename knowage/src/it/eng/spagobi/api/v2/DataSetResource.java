@@ -591,8 +591,8 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 	@Path("/{label}/data")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getDataStorePost(@PathParam("label") String label, @QueryParam("parameters") String parameters,
-			@QueryParam("aggregations") String aggregations, @QueryParam("summaryRow") String summaryRow, String selections,
-			@QueryParam("offset") Integer offset, @QueryParam("size") Integer fetchSize, @QueryParam("realtime") boolean isRealtime) {
+			@QueryParam("aggregations") String aggregations, @QueryParam("summaryRow") String summaryRow, String selections, @QueryParam("offset") int offset,
+			@QueryParam("size") int fetchSize, @QueryParam("realtime") boolean isRealtime) {
 		logger.debug("IN");
 		try {
 			return getDataStore(label, parameters, selections, aggregations, summaryRow, offset, fetchSize, isRealtime);
@@ -612,7 +612,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 			JSONArray requestBodyJSONArray = RestUtilities.readBodyAsJSONArray(req);
 			for (int i = 0; i < requestBodyJSONArray.length(); i++) {
 				JSONObject info = requestBodyJSONArray.getJSONObject(i);
-				getDataStore(info.getString("datasetLabel"), info.getString("parameters"), null, info.getString("aggregation"), null, null, null,
+				getDataStore(info.getString("datasetLabel"), info.getString("parameters"), null, info.getString("aggregation"), null, 0, 1,
 						info.optBoolean("realtime"));
 
 			}
