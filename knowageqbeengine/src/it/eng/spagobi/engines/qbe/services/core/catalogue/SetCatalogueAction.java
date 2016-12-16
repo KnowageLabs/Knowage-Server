@@ -162,15 +162,22 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 
 			// get the cataologue from the request
 			jsonEncodedCatalogue = getAttributeAsString(CATALOGUE);
+			if(jsonEncodedCatalogue==null){
+				jsonEncodedCatalogue = getAttributeAsString("qbeJSONQuery");
+				JSONObject jo = new JSONObject(jsonEncodedCatalogue);
+				jo = jo.getJSONObject("catalogue");
+				queries = jo.getJSONArray("queries");
+			}else{
+				queries = new JSONArray(jsonEncodedCatalogue);
+			}
+
+			
+			
 			logger.debug(CATALOGUE + " = [" + jsonEncodedCatalogue + "]");
 
-			Assert.assertNotNull(getEngineInstance(), "It's not possible to execute " + this.getActionName()
-					+ " service before having properly created an instance of EngineInstance class");
-			Assert.assertNotNull(jsonEncodedCatalogue, "Input parameter [" + CATALOGUE
-					+ "] cannot be null in oder to execute " + this.getActionName() + " service");
 
 			try {
-				queries = new JSONArray(jsonEncodedCatalogue);
+				
 				for (int i = 0; i < queries.length(); i++) {
 					queryJSON = queries.getJSONObject(i);
 					query = deserializeQuery(queryJSON);
