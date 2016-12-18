@@ -628,7 +628,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 	@Path("/associations/autodetect")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Set<Similarity> autodetect(@QueryParam("top") int top, @QueryParam("threshold") double threshold, @QueryParam("aggregate") boolean aggregate,
-			@QueryParam("strategy") String strategy, @Context HttpServletRequest req) {
+			@QueryParam("strategy") String strategy, @QueryParam("wait") boolean wait, @Context HttpServletRequest req) {
 		logger.debug("IN");
 		Set<Similarity> toReturn = new HashSet<>(0);
 		try {
@@ -652,7 +652,8 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 					IDataSet dataSet = dataSetDAO.loadDataSetByLabel(label);
 					if (dataSet != null) {
 						JSONObject parameters = requestBodyJSONObject.getJSONObject(label);
-						Map<String, TLongHashSet> domainValues = datasetManagementAPI.readDomainValues(dataSet, DataSetUtilities.getParametersMap(parameters));
+						Map<String, TLongHashSet> domainValues = datasetManagementAPI.readDomainValues(dataSet, DataSetUtilities.getParametersMap(parameters),
+								wait);
 						if (domainValues != null) {
 							dataSets.add(label);
 							dataSetDomainValues.put(label, domainValues);

@@ -21,6 +21,7 @@ import gnu.trove.set.hash.TLongHashSet;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
@@ -2036,7 +2037,8 @@ public class DatasetManagementAPI {
 	}
 
 	@SuppressWarnings("unchecked")
-	public Map<String, TLongHashSet> readDomainValues(IDataSet dataSet, Map<String, String> parametersValues) throws NamingException, WorkException {
+	public Map<String, TLongHashSet> readDomainValues(IDataSet dataSet, Map<String, String> parametersValues, boolean wait) throws NamingException,
+			WorkException, InterruptedException {
 		logger.debug("IN");
 		Map<String, TLongHashSet> toReturn = new HashMap<String, TLongHashSet>(0);
 		setDataSetParameters(dataSet, parametersValues);
@@ -2050,16 +2052,20 @@ public class DatasetManagementAPI {
 		try {
 			Kryo kryo = new Kryo();
 			kryo.register(TLongHashSet.class, new TLongHashSetSerializer());
-			input = new UnsafeInput(new InflaterInputStream(new FileInputStream(path + File.separatorChar + hashSignature
-					+ DataSetConstants.DOMAIN_VALUES_EXTENSION)));
-			toReturn = kryo.readObject(input, toReturn.getClass());
-			logger.debug("Reading domain values: DONE");
+			String filepath = path + File.separatorChar + hashSignature + DataSetConstants.DOMAIN_VALUES_EXTENSION;
+			File file = new File(filepath);
+			if (!file.exists()) {
+				logger.debug("Impossible to find a binary file named [" + hashSignature + DataSetConstants.DOMAIN_VALUES_EXTENSION + "] located at [" + path
+						+ "]");
+				calculateDomainValues(dataSet, wait);
+			}
+			if (wait) {
+				input = new UnsafeInput(new InflaterInputStream(new FileInputStream(filepath)));
+				toReturn = kryo.readObject(input, toReturn.getClass());
+				logger.debug("Reading domain values: DONE");
+			}
 		} catch (FileNotFoundException e) {
-			logger.error("Impossible to find a binary file named [" + hashSignature + DataSetConstants.DOMAIN_VALUES_EXTENSION + "] located at [" + path + "]",
-					e);
-			logger.debug("It is likely that no domain values have been calculated for dataSet [" + dataSet.getLabel() + "]");
-			calculateDomainValues(dataSet);
-			return null;
+			throw new SpagoBIRuntimeException("It is likely that no domain values have been calculated for dataSet [" + dataSet.getLabel() + "]", e);
 		} finally {
 			if (input != null) {
 				input.close();
@@ -2068,16 +2074,26 @@ public class DatasetManagementAPI {
 		return toReturn;
 	}
 
-	public void calculateDomainValues(IDataSet dataSet) throws NamingException, WorkException {
+	public void calculateDomainValues(IDataSet dataSet) throws NamingException, WorkException, InterruptedException {
+		calculateDomainValues(dataSet, false);
+	}
+
+	public void calculateDomainValues(IDataSet dataSet, boolean wait) throws NamingException, WorkException, InterruptedException {
 		logger.debug("IN");
 		logger.debug("Getting the JNDI Work Manager");
 		WorkManager spagoBIWorkManager = new WorkManager(GeneralUtilities.getSpagoBIConfigurationProperty("JNDI_THREAD_MANAGER"));
 		commonj.work.WorkManager workManager = spagoBIWorkManager.getInnerInstance();
 		Work domainValuesWork = new DistinctValuesCalculateWork(dataSet, userProfile);
-		logger.debug("Scheduling asynchronous calculating work for dataSet with label [" + dataSet.getLabel() + "] and signature [" + dataSet.getSignature()
-				+ "] by user [" + userProfile.getUserId() + "].");
-		workManager.schedule(domainValuesWork);
-		logger.debug("Asynchronous work has been scheduled");
+		logger.debug("Scheduling calculating work for dataSet with label [" + dataSet.getLabel() + "] and signature [" + dataSet.getSignature() + "] by user ["
+				+ userProfile.getUserId() + "].");
+		if (wait) {
+			long workTimeout = Long.parseLong(SingletonConfig.getInstance().getConfigValue("SPAGOBI.WORKMANAGER.SQLDBCACHE.TIMEOUT"));
+			workManager.wait(workTimeout);
+			logger.debug("Synchronous work has finished");
+		} else {
+			workManager.schedule(domainValuesWork);
+			logger.debug("Asynchronous work has been scheduled");
+		}
 		logger.debug("OUT");
 	}
 

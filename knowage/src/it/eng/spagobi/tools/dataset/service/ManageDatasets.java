@@ -266,7 +266,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		IDataSet ds = getGuiGenericDatasetToInsert();
 	}
 
-	protected void datasetInsert(IDataSetDAO dsDao, Locale locale) throws NamingException, WorkException {
+	protected void datasetInsert(IDataSetDAO dsDao, Locale locale) throws NamingException, WorkException, InterruptedException {
 		IDataSet ds = getGuiGenericDatasetToInsert();
 		datasetInsert(ds, dsDao, locale);
 		calculateDomainValues(ds);
@@ -2228,7 +2228,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		return false;
 	}
 
-	private void calculateDomainValues(IDataSet ds) throws NamingException, WorkException {
+	private void calculateDomainValues(IDataSet ds) throws NamingException, WorkException, InterruptedException {
 		DatasetManagementAPI datasetManagementAPI = new DatasetManagementAPI((UserProfile) profile);
 		datasetManagementAPI.calculateDomainValues(ds);
 	}
