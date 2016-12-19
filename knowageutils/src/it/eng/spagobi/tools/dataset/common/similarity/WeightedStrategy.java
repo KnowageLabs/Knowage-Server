@@ -43,15 +43,15 @@ public class WeightedStrategy extends AbstractSimilarityStrategy {
 		logger.debug("Intersect computed in about: " + (System.currentTimeMillis() - startTime) + "ms");
 		logger.debug("Intersect cardinality: " + intersect);
 
-		double coefficient = 0;//compute(weight, intersect, union, Double.min(sizeA, sizeB));
+		double coefficient = compute(weight, intersect, union, Math.min(sizeA, sizeB));
 		logger.debug("Similary coefficient: " + coefficient);
 		logger.debug("OUT");
 		return round(coefficient);
 	}
 
 	private double weight(int sizeA, int sizeB) {
-		//logger.debug("Calculate weigth as min(|A|,|B|)/max(|A|,|B|) -> min(" + sizeA + "," + sizeB + ")/max(" + sizeA + "," + sizeB + ")");
-		return 0;// Double.min(sizeA, sizeB) / Double.max(sizeA, sizeB);
+		logger.debug("Calculate weigth as min(|A|,|B|)/max(|A|,|B|) -> min(" + sizeA + "," + sizeB + ")/max(" + sizeA + "," + sizeB + ")");
+		return Math.min(sizeA, sizeB) / Math.max(sizeA, sizeB);
 	}
 
 	private double compute(double weight, double intersect, double union, double min) {
