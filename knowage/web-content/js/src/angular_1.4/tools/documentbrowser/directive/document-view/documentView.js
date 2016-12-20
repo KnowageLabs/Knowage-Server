@@ -22,6 +22,7 @@ angular.module('document_view', ['ngMaterial','sbiModule'])
 			deleteDocumentAction:"&",
 			executeDocumentAction:"&",
 			orderingDocumentCards:"=?",
+			firstInitialSorting:"=?",
 		},
 		link: function (scope, elem, attrs) { 
 		 

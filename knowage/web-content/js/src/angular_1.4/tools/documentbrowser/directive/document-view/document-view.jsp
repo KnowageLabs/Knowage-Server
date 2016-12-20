@@ -11,7 +11,7 @@
 							id='documentListTable' ng-model=ngModel
 							columns='[{"label":"Type","name":"typeCode"},{"label":"Name","name":"name"},{"label":"Author","name":"creationUser"},{"label":"Label","name":"label"}]'
 							columnsSearch='["name"]' 
-							initial-sorting="name"
+							initial-sorting=firstInitialSorting
 							show-search-bar=false
 							no-pagination=true
 							speed-menu-option=tableSpeedMenuOption
