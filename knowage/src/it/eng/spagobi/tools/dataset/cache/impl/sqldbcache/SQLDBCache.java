@@ -958,7 +958,6 @@ public class SQLDBCache implements ICache {
 		try {
 			if (mapLocks.tryLock(hashedSignature, getTimeout(), TimeUnit.SECONDS, getLeaseTime(), TimeUnit.SECONDS)) {
 				try {
-
 					if (forceUpdate) {
 						logger.debug("Update the dataset in cache if its old enought");
 						updateAlreadyPresent();
@@ -973,11 +972,9 @@ public class SQLDBCache implements ICache {
 							.divide(new BigDecimal(100), RoundingMode.FLOOR);
 
 					if (requiredMemory.compareTo(maxUsableMemory) < 1) { // if requiredMemory is less or equal to maxUsableMemory
-
 						if (getMetadata().isCleaningEnabled() && !getMetadata().isAvailableMemoryGreaterThen(requiredMemory)) {
 							deleteToQuota();
 						}
-
 						// check again if the cleaning mechanism is on and if there is enough space for the resultset
 						if (!getMetadata().isCleaningEnabled() || getMetadata().isAvailableMemoryGreaterThen(requiredMemory)) {
 							long start = System.currentTimeMillis();
@@ -1010,11 +1007,6 @@ public class SQLDBCache implements ICache {
 								+ " while the maximum dimension allowed is [" + maxUsableMemory + "]."
 								+ " Increase cache size or execute the dataset disabling cache.");
 					}
-				} catch (Throwable t) {
-					if (t instanceof CacheException)
-						throw (CacheException) t;
-					else
-						throw new CacheException("An unexpected error occured while adding store into cache", t);
 				} finally {
 					mapLocks.unlock(hashedSignature);
 				}
@@ -1044,7 +1036,7 @@ public class SQLDBCache implements ICache {
 			if (queryTimeout > 0) {
 				persistedTableManager.setQueryTimeout(queryTimeout);
 			}
-			String tableName = persistedTableManager.generateRandomTableName(this.getMetadata().getTableNamePrefix());
+			String tableName = PersistedTableManager.generateRandomTableName(this.getMetadata().getTableNamePrefix());
 			Monitor monitor = MonitorFactory.start("spagobi.cache.sqldb.persistStoreInCache.persistdataset");
 			persistedTableManager.persistDataset(dataset, resultset, getDataSource(), tableName);
 			monitor.stop();
