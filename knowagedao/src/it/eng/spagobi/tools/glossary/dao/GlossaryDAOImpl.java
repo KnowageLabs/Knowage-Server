@@ -1061,378 +1061,410 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 			@SuppressWarnings("unchecked")
 			@Override
 			public Map<String, Object> execute(Session session) throws JSONException {
-
-				Map<String, Object> map = new HashMap<String, Object>();
-				String tmpSearch = "";
-				Integer tmpPage = null;
-				Integer tmp_item_count = null;
-
-				String type = elem.getString("type");
-				String item = "";
-				if (elem.has("item"))
-					item = elem.getString("item");
-
-				String hql = "";
-				String countHql = "";
-				Integer v = null;
-
-				// get selected word
-				int sizeW = elem.getJSONObject("word").getJSONArray("selected").length();
-				String listid = "";
-
-				for (int i = 0; i < sizeW; i++) {
-					listid += elem.getJSONObject("word").getJSONArray("selected").getJSONObject(i).getInt("WORD_ID");
-					if (i != sizeW - 1) {
-						listid += ",";
-					}
-				}
-
-				// #########################################################DOCUMENT############################################################
-
-				if (type.compareTo("all") == 0
-						|| (item.compareTo("document") == 0 && (type.compareTo("search") == 0 || type.compareTo("pagination") == 0 || type.compareTo("reset") == 0))
-						|| ((type.compareTo("click") == 0 || type.compareTo("reset") == 0) && item.compareTo("word") == 0)) {
-					List<SbiObjects> doclist = new ArrayList<SbiObjects>();
-
-					tmpSearch = elem.getJSONObject("document").getString("search");
-					tmpPage = elem.getJSONObject("document").getInt("page");
-					tmp_item_count = elem.getJSONObject("document").getInt("item_number");
-					if (sizeW > 0) {
-						hql = "SELECT  " + "	dw.document.biobjId AS biobjId  ," + "	dw.document.label AS label  " + "FROM " + "	SbiGlDocWlist dw " + "WHERE "
-								+ "	dw.id.wordId IN (" + listid + ") " + "	AND dw.document.label LIKE :searchName  " + "GROUP BY "
-								+ "	dw.document.biobjId HAVING COUNT(dw.id.wordId) =  " + sizeW;
-
-						countHql = "SELECT" + " COUNT(*)  " + "FROM" + " SbiGlDocWlist dw " + "WHERE" + " dw.id.wordId in (" + listid + ")"
-								+ " AND dw.document.label like :searchName " + "GROUP BY dw.document.biobjId  " + "HAVING COUNT(dw.id.wordId) =  " + sizeW;
-						v = session.createQuery(countHql).setString("searchName", "%" + tmpSearch + "%").list().size();
-					} else {
-						hql = "select distinct dw.document.biobjId as biobjId  ,dw.document.label as label "
-								+ "FROM SbiGlDocWlist dw where dw.document.label like :searchName ";
-						countHql = "select count(distinct dw.document.biobjId) " + "FROM SbiGlDocWlist dw where dw.document.label like :searchName";
-						v = ((Long) session.createQuery(countHql).setString("searchName", "%" + tmpSearch + "%").uniqueResult()).intValue();
-					}
-					Query q = session.createQuery(hql);
-					q.setString("searchName", "%" + tmpSearch + "%");
-					q.setResultTransformer(Transformers.aliasToBean(SbiObjects.class));
-
-					if (type.compareTo("pagination") == 0) {
-						q.setFirstResult((tmpPage - 1) * tmp_item_count).setMaxResults(tmp_item_count);
-					} else {
-						q.setFirstResult(0).setMaxResults(tmp_item_count);
-					}
-
-					doclist = q.list();
-
-					map.put("document", doclist);
-					map.put("document_size", v);
-
-				}
-
-				// #########################################################DATASET############################################################
-				if (type.compareTo("all") == 0
-						|| (item.compareTo("dataset") == 0 && (type.compareTo("search") == 0 || type.compareTo("pagination") == 0 || type.compareTo("reset") == 0))
-						|| ((type.compareTo("click") == 0 || type.compareTo("reset") == 0) && item.compareTo("word") == 0)) {
-					List<Object[]> objlist = new ArrayList<Object[]>();
-					List<SbiDataSet> dslist = new ArrayList<SbiDataSet>();
-
-					tmpSearch = elem.getJSONObject("dataset").getString("search");
-					tmpPage = elem.getJSONObject("dataset").getInt("page");
-					tmp_item_count = elem.getJSONObject("dataset").getInt("item_number");
-
-					if (sizeW > 0) {
-						hql = "SELECT DISTINCT" + " dataset.id.dsId ," + " dataset.id.organization ," + " dataset.label " + "FROM " + " SbiDataSet dataset, "
-								+ " SbiGlDataSetWlist wl " + "WHERE " + " dataset.id.dsId = wl.id.datasetId "
-								+ " AND dataset.id.organization = wl.id.organization " + " AND dataset.active=true" + " AND wl.id.wordId in (" + listid + ")"
-								+ " AND dataset.label like :searchName " + "GROUP BY dataset.id.dsId  " + "HAVING COUNT( distinct wl.id.wordId) =  " + sizeW;
-
-						countHql = "SELECT" + " distinct dataset.id.dsId " + "FROM " + "	SbiDataSet dataset," + " SbiGlDataSetWlist wl " + "WHERE"
-								+ " dataset.id.dsId = wl.id.datasetId " + "	AND dataset.id.organization = wl.id.organization " + "	AND dataset.active=true"
-								+ " AND wl.id.wordId in (" + listid + ") " + " AND dataset.label like :searchName  " + "GROUP BY dataset.id.dsId  " + "HAVING "
-								+ "	COUNT( distinct wl.id.wordId) =  " + sizeW;
-
-						v = session.createQuery(countHql).setString("searchName", "%" + tmpSearch + "%").list().size();
-					} else {
-						hql = "SELECT DISTINCT " + " dataset.id.dsId  ," + " dataset.id.organization ," + " dataset.label " + "FROM" + " SbiDataSet dataset,"
-								+ " SbiGlDataSetWlist wl " + "WHERE dataset.id.dsId = wl.id.datasetId" + " AND dataset.id.organization = wl.id.organization"
-								+ " AND dataset.active=true" + " AND dataset.label like :searchName ";
-
-						countHql = "SELECT " + " COUNT(DISTINCT dataset.id.dsId) " + "FROM " + " SbiDataSet dataset," + " SbiGlDataSetWlist wl "
-								+ "WHERE dataset.id.dsId = wl.id.datasetId" + " AND dataset.id.organization = wl.id.organization" + " AND dataset.active=true"
-								+ " AND dataset.label like :searchName ";
-						v = ((Long) session.createQuery(countHql).setString("searchName", "%" + tmpSearch + "%").uniqueResult()).intValue();
-					}
-					Query q = session.createQuery(hql);
-					q.setString("searchName", "%" + tmpSearch + "%");
-					// q.setResultTransformer(Transformers.aliasToBean(SbiDataSet.class));
-
-					if (type.compareTo("pagination") == 0) {
-						q.setFirstResult((tmpPage - 1) * tmp_item_count).setMaxResults(tmp_item_count);
-					} else {
-						q.setFirstResult(0).setMaxResults(tmp_item_count);
-					}
-
-					objlist = q.list();
-					for (Object[] o : objlist) {
-						SbiDataSet tmp = new SbiDataSet();
-						tmp.setId(new SbiDataSetId(Integer.parseInt(o[0].toString()), null, (String) o[1]));
-						tmp.setLabel(o[2].toString());
-						dslist.add(tmp);
-					}
-
-					map.put("dataset", dslist);
-					map.put("dataset_size", v);
-
-				}
-
-				// #########################################################BUSINESS CLASS############################################################
-
-				if (type.compareTo("all") == 0
-						|| (item.compareTo("bness_cls") == 0 && (type.compareTo("search") == 0 || type.compareTo("pagination") == 0 || type.compareTo("reset") == 0))
-						|| ((type.compareTo("click") == 0 || type.compareTo("reset") == 0) && item.compareTo("word") == 0)) {
-					List<SbiMetaBc> bness_cls_list = new ArrayList<SbiMetaBc>();
-
-					tmpSearch = elem.getJSONObject("bness_cls").getString("search");
-					tmpPage = elem.getJSONObject("bness_cls").getInt("page");
-					tmp_item_count = elem.getJSONObject("bness_cls").getInt("item_number");
-					if (sizeW > 0) {
-						hql = "SELECT  distinct	dw.bness_cls.bcId AS bcId  ," + "	dw.bness_cls.sbiMetaModel AS sbiMetaModel  ,"
-								+ "	dw.bness_cls.name as name  " + "FROM " + "	SbiGlBnessClsWlist dw " + "WHERE " + "	dw.id.wordId IN (" + listid + ") " + "	"
-								+ "AND (" + " dw.bness_cls.name LIKE :searchName  " + "OR " + " dw.bness_cls.sbiMetaModel.name LIKE:searchName" + ")"
-								+ "GROUP BY " + "	dw.bness_cls.bcId HAVING COUNT(distinct dw.id.wordId) =  " + sizeW;
-
-						countHql = "SELECT distinct	dw.bness_cls.bcId   FROM  SbiGlBnessClsWlist dw " + "WHERE" + " dw.id.wordId in (" + listid + ")"
-								+ " AND ( dw.bness_cls.name like :searchName OR dw.bness_cls.sbiMetaModel.name LIKE:searchName ) "
-								+ "GROUP BY dw.bness_cls.bcId  " + "HAVING COUNT( distinct dw.id.wordId) =  " + sizeW;
-						v = session.createQuery(countHql).setString("searchName", "%" + tmpSearch + "%").list().size();
-					} else {
-						hql = "select distinct dw.bness_cls.bcId as bcId ,dw.bness_cls.sbiMetaModel as sbiMetaModel ,dw.bness_cls.name as name "
-								+ "FROM SbiGlBnessClsWlist dw where ( dw.bness_cls.name like :searchName OR dw.bness_cls.sbiMetaModel.name LIKE:searchName ) ";
-						countHql = "select count(distinct dw.bness_cls.bcId) "
-								+ "FROM SbiGlBnessClsWlist dw where ( dw.bness_cls.name like :searchName OR dw.bness_cls.sbiMetaModel.name LIKE:searchName ) ";
-						v = ((Long) session.createQuery(countHql).setString("searchName", "%" + tmpSearch + "%").uniqueResult()).intValue();
-					}
-					Query q = session.createQuery(hql);
-					q.setString("searchName", "%" + tmpSearch + "%");
-					q.setResultTransformer(Transformers.aliasToBean(SbiMetaBc.class));
-
-					if (type.compareTo("pagination") == 0) {
-						q.setFirstResult((tmpPage - 1) * tmp_item_count).setMaxResults(tmp_item_count);
-					} else {
-						q.setFirstResult(0).setMaxResults(tmp_item_count);
-					}
-
-					bness_cls_list = q.list();
-
-					map.put("bness_cls", bness_cls_list);
-					map.put("bness_cls_size", v);
-
-				}
-
-				// #########################################################TABLE############################################################
-
-				if (type.compareTo("all") == 0
-						|| (item.compareTo("table") == 0 && (type.compareTo("search") == 0 || type.compareTo("pagination") == 0 || type.compareTo("reset") == 0))
-						|| ((type.compareTo("click") == 0 || type.compareTo("reset") == 0) && item.compareTo("word") == 0)) {
-					List<SbiMetaTable> table_list = new ArrayList<SbiMetaTable>();
-
-					tmpSearch = elem.getJSONObject("table").getString("search");
-					tmpPage = elem.getJSONObject("table").getInt("page");
-					tmp_item_count = elem.getJSONObject("table").getInt("item_number");
-					if (sizeW > 0) {
-						hql = "SELECT  " + "	distinct dw.table.tableId AS tableId  ," + "dw.table.sbiMetaSource AS sbiMetaSource,	dw.table.name AS name  "
-								+ "FROM " + "	SbiGlTableWlist dw " + "WHERE " + "	dw.id.wordId IN (" + listid + ") " + "	AND dw.table.name LIKE :searchName  "
-								+ "GROUP BY " + "	dw.table.tableId HAVING COUNT( distinct dw.id.wordId) =  " + sizeW;
-
-						countHql = "SELECT" + " distinct dw.table.tableId   " + "FROM" + " SbiGlTableWlist dw " + "WHERE" + " dw.id.wordId in (" + listid + ")"
-								+ " AND dw.table.name like :searchName " + "GROUP BY dw.table.tableId  " + "HAVING COUNT( distinct dw.id.wordId) =  " + sizeW;
-						v = session.createQuery(countHql).setString("searchName", "%" + tmpSearch + "%").list().size();
-					} else {
-						hql = "select distinct dw.table.tableId as tableId  ,dw.table.sbiMetaSource AS sbiMetaSource, dw.table.name as name "
-								+ "FROM SbiGlTableWlist dw where dw.table.name like :searchName";
-						countHql = "select count(distinct dw.table.tableId) " + "FROM SbiGlTableWlist dw where dw.table.name like :searchName";
-						v = ((Long) session.createQuery(countHql).setString("searchName", "%" + tmpSearch + "%").uniqueResult()).intValue();
-					}
-					Query q = session.createQuery(hql);
-					q.setString("searchName", "%" + tmpSearch + "%");
-					q.setResultTransformer(Transformers.aliasToBean(SbiMetaTable.class));
-
-					if (type.compareTo("pagination") == 0) {
-						q.setFirstResult((tmpPage - 1) * tmp_item_count).setMaxResults(tmp_item_count);
-					} else {
-						q.setFirstResult(0).setMaxResults(tmp_item_count);
-					}
-
-					table_list = q.list();
-
-					map.put("table", table_list);
-					map.put("table_size", v);
-
-				}
-
-				// ###########################################################WORD############################################################
-
-				if (type.compareTo("reset") == 0
-						|| !((type.compareTo("search") == 0 || type.compareTo("pagination") == 0) && item.compareTo("word") != 0)
-						&& ((item.compareTo("word") == 0 && (type.compareTo("search") == 0 || type.compareTo("pagination") == 0)) || type.compareTo("all") == 0 || type
-								.compareTo("click") == 0 && item.compareTo("word") != 0)) {
-					List<SbiGlWord> wordList = new ArrayList<SbiGlWord>();
-					List<SbiGlWord> DocWordList = new ArrayList<SbiGlWord>();
-					List<SbiGlWord> DataSetWordList = new ArrayList<SbiGlWord>();
-					List<SbiGlWord> BnessClsList = new ArrayList<SbiGlWord>();
-					List<SbiGlWord> TableList = new ArrayList<SbiGlWord>();
-					v = null;
-					int sizeD = elem.getJSONObject("document").getJSONArray("selected").length();
-					int sizeDS = elem.getJSONObject("dataset").getJSONArray("selected").length();
-					int sizeBC = elem.getJSONObject("bness_cls").getJSONArray("selected").length();
-					int sizeTB = elem.getJSONObject("table").getJSONArray("selected").length();
-					String listDocid = "";
-					for (int i = 0; i < sizeD; i++) {
-						listDocid += elem.getJSONObject("document").getJSONArray("selected").getJSONObject(i).getInt("DOCUMENT_ID");
-						if (i != sizeD - 1) {
-							listDocid += ",";
+				try {
+					Map<String, Object> map = new HashMap<String, Object>();
+					String tmpSearch = "";
+					Integer tmpPage = null;
+					Integer tmp_item_count = null;
+	
+					String type = elem.getString("type");
+					String item = "";
+					if (elem.has("item"))
+						item = elem.getString("item");
+	
+					String hql = "";
+					String countHql = "";
+					Integer v = null;
+	
+					// get selected word
+					int sizeW = elem.getJSONObject("word").getJSONArray("selected").length();
+					String listid = "";
+					for (int i = 0; i < sizeW; i++) {
+						listid += elem.getJSONObject("word").getJSONArray("selected").getJSONObject(i).getInt("WORD_ID");
+						if (i != sizeW - 1) {
+							listid += ",";
 						}
 					}
-
-					String listDataSetid = "";
-					for (int i = 0; i < sizeDS; i++) {
-						listDataSetid += elem.getJSONObject("dataset").getJSONArray("selected").getJSONObject(i).getInt("DATASET_ID");
-						if (i != sizeDS - 1) {
-							listDataSetid += ",";
-						}
-					}
-
-					String listBnessClsid = "";
-					for (int i = 0; i < sizeBC; i++) {
-						listBnessClsid += elem.getJSONObject("bness_cls").getJSONArray("selected").getJSONObject(i).getInt("BC_ID");
-						if (i != sizeBC - 1) {
-							listBnessClsid += ",";
-						}
-					}
-
-					String listTableid = "";
-					for (int i = 0; i < sizeTB; i++) {
-						listTableid += elem.getJSONObject("table").getJSONArray("selected").getJSONObject(i).getInt("TABLE_ID");
-						if (i != sizeTB - 1) {
-							listTableid += ",";
-						}
-					}
-
-					tmpSearch = elem.getJSONObject("word").getString("search");
-					tmpPage = elem.getJSONObject("word").getInt("page");
-					tmp_item_count = elem.getJSONObject("word").getInt("item_number");
-					Integer gloId = null;
-					String addGloToQuery = "  WHERE";
-					if (elem.getJSONObject("word").has("GLOSSARY_ID")) {
-						gloId = elem.getJSONObject("word").getInt("GLOSSARY_ID");
-						addGloToQuery = ",SbiGlWlist wlc WHERE wlc.id.wordId=sl.word.wordId AND wlc.content.glossaryId=" + gloId + " and";
-					}
-
-					if (sizeD > 0) {
-						hql = "SELECT" + " sl.word.wordId as wordId," + " sl.word.word as word " + "FROM SbiGlDocWlist sl " + addGloToQuery
-								+ " sl.id.documentId in (" + listDocid + ")" + " AND sl.word.word like :searchName " + "GROUP BY sl.word.wordId "
-								+ "HAVING count(sl.id.documentId) =  " + sizeD;
-						countHql = "SELECT" + " COUNT(*) " + "FROM " + "SbiGlDocWlist sl " + addGloToQuery + " sl.id.documentId in (" + listDocid + ")"
-								+ " AND sl.word.word like :searchName  " + "GROUP BY sl.word.wordId " + "HAVING count(sl.id.documentId) =  " + sizeD;
-						int tmpv = session.createQuery(countHql).setString("searchName", "%" + tmpSearch + "%").list().size();
-						v = (v == null || tmpv < v) ? tmpv : v;
-						Query q = session.createQuery(hql);
-						q.setString("searchName", "%" + tmpSearch + "%");
-						q.setResultTransformer(Transformers.aliasToBean(SbiGlWord.class));
-						DocWordList = q.list();
-					}
-
-					if (sizeDS > 0) {
-						// hql= "select sl.word.wordId as wordId ,sl.word.word as word FROM SbiDataSet dataset,SbiGlDataSetWlist sl "
-						// + "where dataset.id.dsId = sl.id.datasetId and dataset.id.organization = sl.id.organization and dataset.active=true"
-						// +
-						// " and sl.id.datasetId in ("+listDataSetid+") and sl.word.word like :searchName group by sl.word.wordId having count(sl.id.datasetId)
-						// = "+sizeDS;
-
-						hql = "SELECT " + " distinct sl.word.wordId as wordId ," + "sl.word.word as word " + "FROM " + "SbiDataSet dataset,"
-								+ "SbiGlDataSetWlist sl" + addGloToQuery + "  dataset.id.dsId = sl.id.datasetId "
-								+ " AND dataset.id.organization = sl.id.organization " + " AND dataset.active=true" + " AND sl.id.datasetId in ("
-								+ listDataSetid + ")" + " AND sl.word.word like :searchName " + "GROUP BY sl.word.wordId  "
-								+ "HAVING COUNT( distinct sl.id.datasetId) =  " + sizeDS;
-
-						countHql = "SELECT" + " distinct sl.word.wordId  FROM  SbiDataSet dataset,  SbiGlDataSetWlist sl " + addGloToQuery
-								+ " dataset.id.dsId = sl.id.datasetId" + " AND dataset.id.organization = sl.id.organization" + " AND dataset.active=true"
-								+ " AND sl.id.datasetId in (" + listDataSetid + ")" + " AND sl.word.word like :searchName  " + "GROUP BY sl.word.wordId "
-								+ "HAVING COUNT( distinct sl.id.datasetId) =  " + sizeDS;
-						int tmpv = session.createQuery(countHql).setString("searchName", "%" + tmpSearch + "%").list().size();
-						v = (v == null || tmpv < v) ? tmpv : v;
-						Query q = session.createQuery(hql);
-						q.setString("searchName", "%" + tmpSearch + "%");
-						q.setResultTransformer(Transformers.aliasToBean(SbiGlWord.class));
-						DataSetWordList = q.list();
-					}
-
-					if (sizeBC > 0) {
-						hql = "SELECT" + " distinct sl.word.wordId as wordId," + " sl.word.word as word " + "FROM SbiGlBnessClsWlist sl " + addGloToQuery
-								+ " sl.id.bcId in (" + listBnessClsid + ")" + " AND sl.word.word like :searchName " + "GROUP BY sl.word.wordId "
-								+ "HAVING count( distinct sl.id.bcId) =  " + sizeBC;
-						countHql = "SELECT" + " distinct sl.word.wordId  " + "FROM " + "SbiGlBnessClsWlist sl " + addGloToQuery + " sl.id.bcId in ("
-								+ listBnessClsid + ")" + " AND sl.word.word like :searchName  " + "GROUP BY sl.word.wordId "
-								+ "HAVING count ( distinct sl.id.bcId) =  " + sizeBC;
-						int tmpv = session.createQuery(countHql).setString("searchName", "%" + tmpSearch + "%").list().size();
-						v = (v == null || tmpv < v) ? tmpv : v;
-						Query q = session.createQuery(hql);
-						q.setString("searchName", "%" + tmpSearch + "%");
-						q.setResultTransformer(Transformers.aliasToBean(SbiGlWord.class));
-						BnessClsList = q.list();
-					}
-
-					if (sizeTB > 0) {
-						hql = "SELECT" + " distinct sl.word.wordId as wordId," + " sl.word.word as word " + "FROM SbiGlTableWlist sl " + addGloToQuery
-								+ " sl.id.tableId in (" + listTableid + ")" + " AND sl.word.word like :searchName " + "GROUP BY sl.word.wordId "
-								+ "HAVING count( distinct sl.id.tableId) =  " + sizeTB;
-						countHql = "SELECT" + " distinct sl.word.wordId " + "FROM " + "SbiGlTableWlist sl " + addGloToQuery + " sl.id.tableId in ("
-								+ listTableid + ")" + " AND sl.word.word like :searchName  " + "GROUP BY sl.word.wordId  "
-								+ "HAVING count( distinct sl.id.tableId) =  " + sizeTB;
-						int tmpv = session.createQuery(countHql).setString("searchName", "%" + tmpSearch + "%").list().size();
-						v = (v == null || tmpv < v) ? tmpv : v;
-						Query q = session.createQuery(hql);
-						q.setString("searchName", "%" + tmpSearch + "%");
-						q.setResultTransformer(Transformers.aliasToBean(SbiGlWord.class));
-						TableList = q.list();
-					}
-
-					if (sizeD == 0 && sizeDS == 0 && sizeBC == 0 && sizeTB == 0) {
-						wordList = listWordFiltered(tmpSearch, tmpPage, tmp_item_count, gloId);
-						v = wordCount(tmpSearch, gloId);
-					} else {
-
-						Set<SbiGlWord> wordSet = new HashSet<SbiGlWord>();
-						wordSet.addAll(DataSetWordList);
-						wordSet.addAll(DocWordList);
-						wordSet.addAll(BnessClsList);
-						wordSet.addAll(TableList);
-
-						if (!DataSetWordList.isEmpty() || sizeDS > 0)
-							wordSet.retainAll(DataSetWordList);
-						if (!DocWordList.isEmpty() || sizeD > 0)
-							wordSet.retainAll(DocWordList);
-						if (!BnessClsList.isEmpty() || sizeBC > 0)
-							wordSet.retainAll(BnessClsList);
-						if (!TableList.isEmpty() || sizeTB > 0)
-							wordSet.retainAll(TableList);
-
-						wordList.addAll(wordSet);
-
-						// faccio una paginazione dei risultati spezzando l'array
-						int endV = ((tmpPage - 1) * tmp_item_count) + tmp_item_count;
-						endV = endV > wordList.size() ? wordList.size() : endV;
-						if (type.compareTo("pagination") == 0) {
-							wordList = wordList.subList(((tmpPage - 1) * tmp_item_count), endV);
+	
+					// #########################################################DOCUMENT############################################################
+	
+					if (type.compareTo("all") == 0
+							|| (item.compareTo("document") == 0 && (type.compareTo("search") == 0 || type.compareTo("pagination") == 0 || type.compareTo("reset") == 0))
+							|| ((type.compareTo("click") == 0 || type.compareTo("reset") == 0) && item.compareTo("word") == 0)) {
+						List<SbiObjects> doclist = new ArrayList<SbiObjects>();
+	
+						tmpSearch = elem.getJSONObject("document").getString("search");
+						tmpPage = elem.getJSONObject("document").getInt("page");
+						tmp_item_count = elem.getJSONObject("document").getInt("item_number");
+						if (sizeW > 0) {
+							hql = "SELECT  " + "	dw.document.biobjId AS biobjId  ," + "	dw.document.label AS label  " + "FROM " + "	SbiGlDocWlist dw " + "WHERE "
+									+ "	dw.id.wordId IN (" + listid + ") " + "	AND dw.document.label LIKE :searchName  " + "GROUP BY "
+									+ "	dw.document.biobjId, dw.document.label HAVING COUNT(dw.id.wordId) =  " + sizeW;
+	
+							countHql = "SELECT" + " COUNT(*)  " + "FROM" + " SbiGlDocWlist dw " + "WHERE" + " dw.id.wordId in (" + listid + ")"
+									+ " AND dw.document.label like :searchName " + "GROUP BY dw.document.biobjId, dw.document.label  " + "HAVING COUNT(dw.id.wordId) =  " + sizeW;
+							v = session.createQuery(countHql).setString("searchName", "%" + tmpSearch + "%").list().size();
 						} else {
-							wordList = wordList.subList(0, endV);
+							hql = "select distinct dw.document.biobjId as biobjId  ,dw.document.label as label "
+									+ "FROM SbiGlDocWlist dw where dw.document.label like :searchName ";
+							countHql = "select count(distinct dw.document.biobjId) " + "FROM SbiGlDocWlist dw where dw.document.label like :searchName";
+							v = ((Long) session.createQuery(countHql).setString("searchName", "%" + tmpSearch + "%").uniqueResult()).intValue();
 						}
+						Query q = session.createQuery(hql);
+						q.setString("searchName", "%" + tmpSearch + "%");
+						q.setResultTransformer(Transformers.aliasToBean(SbiObjects.class));
+	
+						if (type.compareTo("pagination") == 0) {
+							q.setFirstResult((tmpPage - 1) * tmp_item_count).setMaxResults(tmp_item_count);
+						} else {
+							q.setFirstResult(0).setMaxResults(tmp_item_count);
+						}
+	
+						doclist = q.list();
+	
+						map.put("document", doclist);
+						map.put("document_size", v);
+	
 					}
-					map.put("word", wordList);
-					map.put("word_size", v);
-
+	
+					// #########################################################DATASET############################################################
+					if (type.compareTo("all") == 0
+							|| (item.compareTo("dataset") == 0 && (type.compareTo("search") == 0 || type.compareTo("pagination") == 0 || type.compareTo("reset") == 0))
+							|| ((type.compareTo("click") == 0 || type.compareTo("reset") == 0) && item.compareTo("word") == 0)) {
+						List<Object[]> objlist = new ArrayList<Object[]>();
+						List<SbiDataSet> dslist = new ArrayList<SbiDataSet>();
+	
+						tmpSearch = elem.getJSONObject("dataset").getString("search");
+						tmpPage = elem.getJSONObject("dataset").getInt("page");
+						tmp_item_count = elem.getJSONObject("dataset").getInt("item_number");
+	
+						if (sizeW > 0) {
+							hql = "SELECT DISTINCT" + " dataset.id.dsId ," + " dataset.id.organization ," + " dataset.label " + "FROM " + " SbiDataSet dataset, "
+									+ " SbiGlDataSetWlist wl " + "WHERE " + " dataset.id.dsId = wl.id.datasetId "
+									+ " AND dataset.id.organization = wl.id.organization " + " AND dataset.active=true" + " AND wl.id.wordId in (" + listid + ")"
+									+ " AND dataset.label like :searchName " + "GROUP BY dataset.id.dsId, dataset.id.organization , dataset.label  " + "HAVING COUNT( distinct wl.id.wordId) =  " + sizeW;
+	
+							countHql = "SELECT" + " distinct dataset.id.dsId " + "FROM " + "	SbiDataSet dataset," + " SbiGlDataSetWlist wl " + "WHERE"
+									+ " dataset.id.dsId = wl.id.datasetId " + "	AND dataset.id.organization = wl.id.organization " + "	AND dataset.active=true"
+									+ " AND wl.id.wordId in (" + listid + ") " + " AND dataset.label like :searchName  " + "GROUP BY dataset.id.dsId  " + "HAVING "
+									+ "	COUNT( distinct wl.id.wordId) =  " + sizeW;
+	
+							v = session.createQuery(countHql).setString("searchName", "%" + tmpSearch + "%").list().size();
+						} else {
+							hql = "SELECT DISTINCT " + " dataset.id.dsId  ," + " dataset.id.organization ," + " dataset.label " + "FROM" + " SbiDataSet dataset,"
+									+ " SbiGlDataSetWlist wl " + "WHERE dataset.id.dsId = wl.id.datasetId" + " AND dataset.id.organization = wl.id.organization"
+									+ " AND dataset.active=true" + " AND dataset.label like :searchName ";
+	
+							countHql = "SELECT " + " COUNT(DISTINCT dataset.id.dsId) " + "FROM " + " SbiDataSet dataset," + " SbiGlDataSetWlist wl "
+									+ "WHERE dataset.id.dsId = wl.id.datasetId" + " AND dataset.id.organization = wl.id.organization" + " AND dataset.active=true"
+									+ " AND dataset.label like :searchName ";
+							v = ((Long) session.createQuery(countHql).setString("searchName", "%" + tmpSearch + "%").uniqueResult()).intValue();
+						}
+						Query q = session.createQuery(hql);
+						q.setString("searchName", "%" + tmpSearch + "%");
+						// q.setResultTransformer(Transformers.aliasToBean(SbiDataSet.class));
+	
+						if (type.compareTo("pagination") == 0) {
+							q.setFirstResult((tmpPage - 1) * tmp_item_count).setMaxResults(tmp_item_count);
+						} else {
+							q.setFirstResult(0).setMaxResults(tmp_item_count);
+						}
+	
+						objlist = q.list();
+						for (Object[] o : objlist) {
+							SbiDataSet tmp = new SbiDataSet();
+							tmp.setId(new SbiDataSetId(Integer.parseInt(o[0].toString()), null, (String) o[1]));
+							tmp.setLabel(o[2].toString());
+							dslist.add(tmp);
+						}
+	
+						map.put("dataset", dslist);
+						map.put("dataset_size", v);
+	
+					}
+	
+					// #########################################################BUSINESS CLASS############################################################
+	
+					if (type.compareTo("all") == 0
+							|| (item.compareTo("bness_cls") == 0 && (type.compareTo("search") == 0 || type.compareTo("pagination") == 0 || type.compareTo("reset") == 0))
+							|| ((type.compareTo("click") == 0 || type.compareTo("reset") == 0) && item.compareTo("word") == 0)) {
+						List<SbiMetaBc> bness_cls_list = new ArrayList<SbiMetaBc>();
+	
+						tmpSearch = elem.getJSONObject("bness_cls").getString("search");
+						tmpPage = elem.getJSONObject("bness_cls").getInt("page");
+						tmp_item_count = elem.getJSONObject("bness_cls").getInt("item_number");
+						if (sizeW > 0) {
+							hql = ""
+									+ " SELECT "
+									+ "		smbc.bcId as bcId, "
+									+ "		smbc.sbiMetaModel as sbiMetaModel"
+									+ " FROM "
+									+ "		SbiMetaBc smbc "
+									+ " WHERE "
+									+ "		smbc.bcId in ( "
+									+ "			SELECT  "
+									+ "				distinct dw.bness_cls.bcId " 
+									+ "			FROM " 
+									+ " 			SbiGlBnessClsWlist dw " 
+									+ "			WHERE "
+									+ "				dw.id.wordId IN (" + listid + ") " 
+									+ "				AND ( dw.bness_cls.name LIKE :searchName  OR dw.bness_cls.sbiMetaModel.name LIKE:searchName  ) "
+									+ "			GROUP BY dw.bness_cls.bcId "
+									+ "			HAVING COUNT(distinct dw.id.wordId) =  " + sizeW 
+									+ ")";
+							
+							countHql = "SELECT distinct	dw.bness_cls.bcId   FROM  SbiGlBnessClsWlist dw " + "WHERE" + " dw.id.wordId in (" + listid + ")"
+									+ " AND ( dw.bness_cls.name like :searchName OR dw.bness_cls.sbiMetaModel.name LIKE:searchName ) "
+									+ "GROUP BY dw.bness_cls.bcId  " + "HAVING COUNT( distinct dw.id.wordId) =  " + sizeW;
+							v = session.createQuery(countHql).setString("searchName", "%" + tmpSearch + "%").list().size();
+						} else {
+							hql = "select distinct dw.bness_cls.bcId as bcId ,dw.bness_cls.sbiMetaModel as sbiMetaModel ,dw.bness_cls.name as name "
+									+ "FROM SbiGlBnessClsWlist dw where ( dw.bness_cls.name like :searchName OR dw.bness_cls.sbiMetaModel.name LIKE:searchName ) ";
+							countHql = "select count(distinct dw.bness_cls.bcId) "
+									+ "FROM SbiGlBnessClsWlist dw where ( dw.bness_cls.name like :searchName OR dw.bness_cls.sbiMetaModel.name LIKE:searchName ) ";
+							v = ((Long) session.createQuery(countHql).setString("searchName", "%" + tmpSearch + "%").uniqueResult()).intValue();
+						}
+						Query q = session.createQuery(hql);
+						q.setString("searchName", "%" + tmpSearch + "%");
+						q.setResultTransformer(Transformers.aliasToBean(SbiMetaBc.class));
+	
+						if (type.compareTo("pagination") == 0) {
+							q.setFirstResult((tmpPage - 1) * tmp_item_count).setMaxResults(tmp_item_count);
+						} else {
+							q.setFirstResult(0).setMaxResults(tmp_item_count);
+						}
+	
+						bness_cls_list = q.list();
+	
+						map.put("bness_cls", bness_cls_list);
+						map.put("bness_cls_size", v);
+	
+					}
+	
+					// #########################################################TABLE############################################################
+	
+					if (type.compareTo("all") == 0
+							|| (item.compareTo("table") == 0 && (type.compareTo("search") == 0 || type.compareTo("pagination") == 0 || type.compareTo("reset") == 0))
+							|| ((type.compareTo("click") == 0 || type.compareTo("reset") == 0) && item.compareTo("word") == 0)) {
+						List<SbiMetaTable> table_list = new ArrayList<SbiMetaTable>();
+	
+						tmpSearch = elem.getJSONObject("table").getString("search");
+						tmpPage = elem.getJSONObject("table").getInt("page");
+						tmp_item_count = elem.getJSONObject("table").getInt("item_number");
+						if (sizeW > 0) {
+							hql = ""
+								+ " SELECT "
+								+ "		smt.tableId AS tableId,"
+								+ "		smt.sbiMetaSource AS sbiMetaSource,"
+								+ "		smt.name AS name "
+								+ " FROM "
+								+ " 	SbiMetaTable smt "
+								+ " WHERE smt.tableId in ("
+								+ " 	SELECT  "
+								+ "			distinct dw.table.tableId "
+								+ " 	FROM " 
+								+ "			SbiGlTableWlist dw " 
+								+ " 	WHERE " 
+								+ "			dw.id.wordId IN (" + listid + ") " 
+								+ "			AND dw.table.name LIKE :searchName  "
+								+ " 	GROUP BY dw.table.tableId "
+								+ " 	HAVING COUNT( distinct dw.id.wordId) =  " + sizeW
+								+ " )";
+	
+							countHql = "SELECT" + " distinct dw.table.tableId   " + "FROM" + " SbiGlTableWlist dw " + "WHERE" + " dw.id.wordId in (" + listid + ")"
+									+ " AND dw.table.name like :searchName " + "GROUP BY dw.table.tableId  " + "HAVING COUNT( distinct dw.id.wordId) =  " + sizeW;
+							v = session.createQuery(countHql).setString("searchName", "%" + tmpSearch + "%").list().size();
+						} else {
+							hql = "select distinct dw.table.tableId as tableId  ,dw.table.sbiMetaSource AS sbiMetaSource, dw.table.name as name "
+									+ "FROM SbiGlTableWlist dw where dw.table.name like :searchName";
+							countHql = "select count(distinct dw.table.tableId) " + "FROM SbiGlTableWlist dw where dw.table.name like :searchName";
+							v = ((Long) session.createQuery(countHql).setString("searchName", "%" + tmpSearch + "%").uniqueResult()).intValue();
+						}
+						Query q = session.createQuery(hql);
+						q.setString("searchName", "%" + tmpSearch + "%");
+						q.setResultTransformer(Transformers.aliasToBean(SbiMetaTable.class));
+	
+						if (type.compareTo("pagination") == 0) {
+							q.setFirstResult((tmpPage - 1) * tmp_item_count).setMaxResults(tmp_item_count);
+						} else {
+							q.setFirstResult(0).setMaxResults(tmp_item_count);
+						}
+	
+						table_list = q.list();
+	
+						map.put("table", table_list);
+						map.put("table_size", v);
+	
+					}
+	
+					// ###########################################################WORD############################################################
+	
+					if (type.compareTo("reset") == 0
+							|| !((type.compareTo("search") == 0 || type.compareTo("pagination") == 0) && item.compareTo("word") != 0)
+							&& ((item.compareTo("word") == 0 && (type.compareTo("search") == 0 || type.compareTo("pagination") == 0)) || type.compareTo("all") == 0 || type
+									.compareTo("click") == 0 && item.compareTo("word") != 0)) {
+						List<SbiGlWord> wordList = new ArrayList<SbiGlWord>();
+						List<SbiGlWord> DocWordList = new ArrayList<SbiGlWord>();
+						List<SbiGlWord> DataSetWordList = new ArrayList<SbiGlWord>();
+						List<SbiGlWord> BnessClsList = new ArrayList<SbiGlWord>();
+						List<SbiGlWord> TableList = new ArrayList<SbiGlWord>();
+						v = null;
+						int sizeD = elem.getJSONObject("document").getJSONArray("selected").length();
+						int sizeDS = elem.getJSONObject("dataset").getJSONArray("selected").length();
+						int sizeBC = elem.getJSONObject("bness_cls").getJSONArray("selected").length();
+						int sizeTB = elem.getJSONObject("table").getJSONArray("selected").length();
+						String listDocid = "";
+						for (int i = 0; i < sizeD; i++) {
+							listDocid += elem.getJSONObject("document").getJSONArray("selected").getJSONObject(i).getInt("DOCUMENT_ID");
+							if (i != sizeD - 1) {
+								listDocid += ",";
+							}
+						}
+	
+						String listDataSetid = "";
+						for (int i = 0; i < sizeDS; i++) {
+							listDataSetid += elem.getJSONObject("dataset").getJSONArray("selected").getJSONObject(i).getInt("DATASET_ID");
+							if (i != sizeDS - 1) {
+								listDataSetid += ",";
+							}
+						}
+	
+						String listBnessClsid = "";
+						for (int i = 0; i < sizeBC; i++) {
+							listBnessClsid += elem.getJSONObject("bness_cls").getJSONArray("selected").getJSONObject(i).getInt("BC_ID");
+							if (i != sizeBC - 1) {
+								listBnessClsid += ",";
+							}
+						}
+	
+						String listTableid = "";
+						for (int i = 0; i < sizeTB; i++) {
+							listTableid += elem.getJSONObject("table").getJSONArray("selected").getJSONObject(i).getInt("TABLE_ID");
+							if (i != sizeTB - 1) {
+								listTableid += ",";
+							}
+						}
+	
+						tmpSearch = elem.getJSONObject("word").getString("search");
+						tmpPage = elem.getJSONObject("word").getInt("page");
+						tmp_item_count = elem.getJSONObject("word").getInt("item_number");
+						Integer gloId = null;
+						String addGloToQuery = "  WHERE";
+						if (elem.getJSONObject("word").has("GLOSSARY_ID")) {
+							gloId = elem.getJSONObject("word").getInt("GLOSSARY_ID");
+							addGloToQuery = ",SbiGlWlist wlc WHERE wlc.id.wordId=sl.word.wordId AND wlc.content.glossaryId=" + gloId + " and";
+						}
+	
+						if (sizeD > 0) {
+							hql = "SELECT" + " sl.word.wordId as wordId," + " sl.word.word as word " + "FROM SbiGlDocWlist sl " + addGloToQuery
+									+ " sl.id.documentId in (" + listDocid + ")" + " AND sl.word.word like :searchName " + "GROUP BY sl.word.wordId, sl.word.word"
+									+ " HAVING count(sl.id.documentId) =  " + sizeD;
+							countHql = "SELECT" + " COUNT(*) " + "FROM " + "SbiGlDocWlist sl " + addGloToQuery + " sl.id.documentId in (" + listDocid + ")"
+									+ " AND sl.word.word like :searchName  " + "GROUP BY sl.word.wordId " + "HAVING count(sl.id.documentId) =  " + sizeD;
+							int tmpv = session.createQuery(countHql).setString("searchName", "%" + tmpSearch + "%").list().size();
+							v = (v == null || tmpv < v) ? tmpv : v;
+							Query q = session.createQuery(hql);
+							q.setString("searchName", "%" + tmpSearch + "%");
+							q.setResultTransformer(Transformers.aliasToBean(SbiGlWord.class));
+							DocWordList = q.list();
+						}
+	
+						if (sizeDS > 0) {
+							// hql= "select sl.word.wordId as wordId ,sl.word.word as word FROM SbiDataSet dataset,SbiGlDataSetWlist sl "
+							// + "where dataset.id.dsId = sl.id.datasetId and dataset.id.organization = sl.id.organization and dataset.active=true"
+							// +
+							// " and sl.id.datasetId in ("+listDataSetid+") and sl.word.word like :searchName group by sl.word.wordId having count(sl.id.datasetId)
+							// = "+sizeDS;
+	
+							hql = "SELECT " + " distinct sl.word.wordId as wordId ," + "sl.word.word as word " + "FROM " + "SbiDataSet dataset,"
+									+ "SbiGlDataSetWlist sl" + addGloToQuery + "  dataset.id.dsId = sl.id.datasetId "
+									+ " AND dataset.id.organization = sl.id.organization " + " AND dataset.active=true" + " AND sl.id.datasetId in ("
+									+ listDataSetid + ")" + " AND sl.word.word like :searchName " + "GROUP BY sl.word.wordId, sl.word.word  "
+									+ "HAVING COUNT( distinct sl.id.datasetId) =  " + sizeDS;
+	
+							countHql = "SELECT" + " distinct sl.word.wordId  FROM  SbiDataSet dataset,  SbiGlDataSetWlist sl " + addGloToQuery
+									+ " dataset.id.dsId = sl.id.datasetId" + " AND dataset.id.organization = sl.id.organization" + " AND dataset.active=true"
+									+ " AND sl.id.datasetId in (" + listDataSetid + ")" + " AND sl.word.word like :searchName  " + "GROUP BY sl.word.wordId "
+									+ "HAVING COUNT( distinct sl.id.datasetId) =  " + sizeDS;
+							int tmpv = session.createQuery(countHql).setString("searchName", "%" + tmpSearch + "%").list().size();
+							v = (v == null || tmpv < v) ? tmpv : v;
+							Query q = session.createQuery(hql);
+							q.setString("searchName", "%" + tmpSearch + "%");
+							q.setResultTransformer(Transformers.aliasToBean(SbiGlWord.class));
+							DataSetWordList = q.list();
+						}
+	
+						if (sizeBC > 0) {
+							hql = "SELECT" + " distinct sl.word.wordId as wordId," + " sl.word.word as word " + "FROM SbiGlBnessClsWlist sl " + addGloToQuery
+									+ " sl.id.bcId in (" + listBnessClsid + ")" + " AND sl.word.word like :searchName " + "GROUP BY sl.word.wordId, sl.word.word "
+									+ "HAVING count( distinct sl.id.bcId) =  " + sizeBC;
+							countHql = "SELECT" + " distinct sl.word.wordId  " + "FROM " + "SbiGlBnessClsWlist sl " + addGloToQuery + " sl.id.bcId in ("
+									+ listBnessClsid + ")" + " AND sl.word.word like :searchName  " + "GROUP BY sl.word.wordId "
+									+ "HAVING count ( distinct sl.id.bcId) =  " + sizeBC;
+							int tmpv = session.createQuery(countHql).setString("searchName", "%" + tmpSearch + "%").list().size();
+							v = (v == null || tmpv < v) ? tmpv : v;
+							Query q = session.createQuery(hql);
+							q.setString("searchName", "%" + tmpSearch + "%");
+							q.setResultTransformer(Transformers.aliasToBean(SbiGlWord.class));
+							BnessClsList = q.list();
+						}
+	
+						if (sizeTB > 0) {
+							hql = "SELECT" + " distinct sl.word.wordId as wordId," + " sl.word.word as word " + "FROM SbiGlTableWlist sl " + addGloToQuery
+									+ " sl.id.tableId in (" + listTableid + ")" + " AND sl.word.word like :searchName " + "GROUP BY sl.word.wordId, sl.word.word "
+									+ "HAVING count( distinct sl.id.tableId) =  " + sizeTB;
+							countHql = "SELECT" + " distinct sl.word.wordId " + "FROM " + "SbiGlTableWlist sl " + addGloToQuery + " sl.id.tableId in ("
+									+ listTableid + ")" + " AND sl.word.word like :searchName  " + "GROUP BY sl.word.wordId  "
+									+ "HAVING count( distinct sl.id.tableId) =  " + sizeTB;
+							int tmpv = session.createQuery(countHql).setString("searchName", "%" + tmpSearch + "%").list().size();
+							v = (v == null || tmpv < v) ? tmpv : v;
+							Query q = session.createQuery(hql);
+							q.setString("searchName", "%" + tmpSearch + "%");
+							q.setResultTransformer(Transformers.aliasToBean(SbiGlWord.class));
+							TableList = q.list();
+						}
+	
+						if (sizeD == 0 && sizeDS == 0 && sizeBC == 0 && sizeTB == 0) {
+							wordList = listWordFiltered(tmpSearch, tmpPage, tmp_item_count, gloId);
+							v = wordCount(tmpSearch, gloId);
+						} else {
+	
+							Set<SbiGlWord> wordSet = new HashSet<SbiGlWord>();
+							wordSet.addAll(DataSetWordList);
+							wordSet.addAll(DocWordList);
+							wordSet.addAll(BnessClsList);
+							wordSet.addAll(TableList);
+	
+							if (!DataSetWordList.isEmpty() || sizeDS > 0)
+								wordSet.retainAll(DataSetWordList);
+							if (!DocWordList.isEmpty() || sizeD > 0)
+								wordSet.retainAll(DocWordList);
+							if (!BnessClsList.isEmpty() || sizeBC > 0)
+								wordSet.retainAll(BnessClsList);
+							if (!TableList.isEmpty() || sizeTB > 0)
+								wordSet.retainAll(TableList);
+	
+							wordList.addAll(wordSet);
+	
+							// faccio una paginazione dei risultati spezzando l'array
+							int endV = ((tmpPage - 1) * tmp_item_count) + tmp_item_count;
+							endV = endV > wordList.size() ? wordList.size() : endV;
+							if (type.compareTo("pagination") == 0) {
+								wordList = wordList.subList(((tmpPage - 1) * tmp_item_count), endV);
+							} else {
+								wordList = wordList.subList(0, endV);
+							}
+						}
+						map.put("word", wordList);
+						map.put("word_size", v);
+	
+					}
+	
+					return map;
+				}catch(Exception e) {
+					logger.error(e);
+					throw e;
 				}
-
-				return map;
 			}
 		});
 
