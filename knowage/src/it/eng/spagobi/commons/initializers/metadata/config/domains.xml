@@ -244,6 +244,12 @@
 		domainNm="Exporters type" valueDs="Export type" />
 	<DOMAIN valueCd="PPTX" valueNm="PPTX" domainCd="EXPORT_TYPE"
 		domainNm="Exporters type" valueDs="Export type" />
+	<DOMAIN valueCd="DOC" valueNm="DOC" domainCd="EXPORT_TYPE"
+		domainNm="Exporters type" valueDs="Export type" />
+	<DOMAIN valueCd="DOCX" valueNm="DOCX" domainCd="EXPORT_TYPE"
+		domainNm="Exporters type" valueDs="Export type" />
+	<DOMAIN valueCd="JSON" valueNm="JSON" domainCd="EXPORT_TYPE"
+		domainNm="Exporters type" valueDs="Export type" />		
 	<DOMAIN valueCd="Basic" valueNm="Basic" domainCd="KPI_TYPE"
 		domainNm="Kpi Type" valueDs="" />
 	<DOMAIN valueCd="Derived" valueNm="Derived" domainCd="KPI_TYPE"
