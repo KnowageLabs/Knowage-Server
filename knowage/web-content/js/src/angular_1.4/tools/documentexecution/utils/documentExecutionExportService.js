@@ -283,11 +283,6 @@
 						dee.setExporterDescription(exp.name, expJSON);
 						dee.setExporterIconClass(exp.name, expJSON);
 						dee.setExporterFunc(exp.name, exp.engine, expJSON)
-//						expJSON.description = sbiModule_translate.load('sbi.execution.' + exp.description + 'Export');
-//						expJSON.iconClass = 'fa fa-file-' + exp.iconClass + '-o';				    
-//	//					expJSON.func = JSON.parse(new String("function(){ dee."+ exp.func +" }");
-//						expJSON.func = new Function("function(){ dee.exportCockpitTo('pdf','application/pdf')}");
-////						expJSON.func = function(){ dee.exportReportTo('PDF')};
 						exportersJSON.push(expJSON);
 					}
 					resolve(exportersJSON);
@@ -310,7 +305,7 @@
 				iconClass += "pdf";
 				break;
 			case "XLS":
-			case "XSLX":
+			case "XLSX":
 			case "RTF":
 			case "CSV":
 				iconClass += "excel";
