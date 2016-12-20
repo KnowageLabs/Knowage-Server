@@ -5,6 +5,13 @@
     background-color: rgba(240,240,240,1);
     background-image: #fff;
     
+    widgetImage
+    {	
+    	width:100%;
+		height:100%;    
+    }
+    
+    
 	cockpit-widget{
 		&>li{
 			&.fullScreenWidget{

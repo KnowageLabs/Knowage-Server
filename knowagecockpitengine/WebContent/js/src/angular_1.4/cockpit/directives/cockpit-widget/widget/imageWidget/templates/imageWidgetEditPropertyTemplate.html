@@ -31,6 +31,19 @@
 	         <md-tab label="{{translate.load('sbi.cockpit.style')}}">
 	        	<cockpit-style-configurator widget ng-model="model.style"></cockpit-style-configurator>
 	        </md-tab>
+	        <md-tab label="{{translate.load('sbi.cockpit.imagestyle')}}">
+				<md-input-container flex md-no-float class="md-block">
+					<label>% height</label>
+					<input ng-model="model.content.heightPerc">
+				</md-input-container>			
+				<md-input-container flex md-no-float class="md-block">
+					<label>% width</label>
+					<input ng-model="model.content.widthPerc">
+				</md-input-container>	
+				
+				
+	        </md-tab>
+	        
       	</md-tabs>
     </md-content>
 </md-card-content>
