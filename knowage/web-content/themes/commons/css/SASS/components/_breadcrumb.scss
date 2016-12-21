@@ -9,6 +9,7 @@ bread-crumb nav {
         width: 100%;
         vertical-align: top;
         overflow: hidden;
+        white-space: nowrap;
     a {
     	color: rgba($baseColor, 0.6);
     	text-decoration: none;
@@ -31,7 +32,7 @@ bread-crumb nav {
     	}
     	&:last-child {
     		color: rgba($baseColor, 1);
-            max-width: 200px;
+            max-width: 500px;
             span {
                 color: rgba($baseColor, 1);
             }

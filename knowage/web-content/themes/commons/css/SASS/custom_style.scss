@@ -640,9 +640,13 @@ md-menu-content._md-menu-bar-menu .divider {
 .md-indent .md-button {
   line-height: 30px;
 } 
-md-menu-content._md-menu-bar-menu.md-dense md-menu-item.md-indent>md-icon {
-  line-height: 20px;
+md-menu-content._md-menu-bar-menu.md-dense {
+  padding: 8px 0;
+  md-menu-item.md-indent>md-icon {
+     line-height: 20px;
+  }
 }
+
 .noMdError {
   .md-errors-spacer {
     min-height: 0 !important;

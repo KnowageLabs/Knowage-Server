@@ -48,6 +48,7 @@ function cockpitImageWidgetControllerFunction($scope,cockpitModule_widgetConfigu
 		style:{}
 	};
 	
+	
 	$scope.init=function(element,width,height){
 		var imgObj = element.find("img");
 		$scope.safeApply();
@@ -60,33 +61,14 @@ function cockpitImageWidgetControllerFunction($scope,cockpitModule_widgetConfigu
 	};
 	
 	$scope.refresh=function(element,width,height){
-		$scope.property.style.width=undefined;
-		$scope.property.style.height=undefined;
-		$scope.safeApply();
-		var imgObj = element.find("img");
-		var imgH=imgObj[0].height;
-		var imgW=imgObj[0].width;
-		if (imgW <= imgH) {
-			
-				$scope.property.style.height = height;
-				
-				var wF = (imgW*height)/imgH;
-				if(wF>width){		
-					$scope.property.style.height = undefined;
-					$scope.property.style.width =width;
-				}
-			
-		} else {
-			
-				$scope.property.style.width = width;
-				var hF = (width*imgH)/imgW
-				if(hF>height){		
-					$scope.property.style.width = undefined;
-					$scope.property.style.height =height;
-				}
-				
-			
+		
+		if((typeof($scope.ngModel.style.heightPerc)!= 'undefined' && typeof($scope.ngModel.style.widthPerc)!= 'undefined')&&($scope.ngModel.style.heightPerc!="" && $scope.ngModel.style.widthPerc!="")){
+			$scope.ngModel.style['background-size'] = $scope.ngModel.style.widthPerc+' '+$scope.ngModel.style.heightPerc;
+		}else{
+			$scope.ngModel.style['background-size'] = 'contain';
 		}
+		$scope.ngModel.style['background-position'] = $scope.ngModel.style.hAlign+' '+$scope.ngModel.style.vAlign;
+		$scope.ngModel.style['background-image'] = "url(\'"+$scope.getUrl()+"\')";
 
 		$scope.safeApply();
 
@@ -115,6 +97,9 @@ function cockpitImageWidgetControllerFunction($scope,cockpitModule_widgetConfigu
 		};
 
 		$mdPanel.open(config);
+		finishEdit.promise.then(function(){
+			$scope.refresh();
+		});
 		return finishEdit.promise;
 		 
 	};
@@ -123,10 +108,11 @@ function cockpitImageWidgetControllerFunction($scope,cockpitModule_widgetConfigu
 function EditWidgetController($scope,finishEdit,sbiModule_translate,$mdToast,sbiModule_config,sbiModule_restServices,model,mdPanelRef){
 	$scope.model = {};
 	$scope.listImages=[];
+	$scope.valigns=['center','top','bottom'];
+	$scope.haligns=['center','left','right'];
 	angular.copy(model,$scope.model);
 	$scope.translate=sbiModule_translate;
 	$scope.test=$scope.translate.load("sbi.generic.name");
-	$scope.test2="hashd"
 	$scope.uploadImg = {};
 	$scope.saveConfiguration=function(){
 		if($scope.model.content.imgId == undefined){
@@ -134,7 +120,7 @@ function EditWidgetController($scope,finishEdit,sbiModule_translate,$mdToast,sbi
 			return;
 		}
 		angular.copy($scope.model,model);
-		mdPanelRef.close();
+		mdPanelRef.hide();
 		$scope.$destroy();
 		finishEdit.resolve();
 	};

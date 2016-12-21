@@ -29,21 +29,39 @@
 			    </md-content>
 	        </md-tab>
 	         <md-tab label="{{translate.load('sbi.cockpit.style')}}">
-	        	<cockpit-style-configurator widget ng-model="model.style"></cockpit-style-configurator>
+	        	<cockpit-style-configurator widget ng-model="model.style">
+	        		<cockpit-style-custom-widget-configurator label="'Image'">
+			           <div layout="row" flex ng-cloak layout-wrap>
+							<md-input-container flex=50 class="md-block">
+								<label>Height</label>
+								<input ng-model="model.style.heightPerc">
+							</md-input-container>			
+							<md-input-container flex=50 class="md-block">
+								<label>Width</label>
+								<input ng-model="model.style.widthPerc">
+							</md-input-container>	
+							<md-input-container flex=50 class="md-block">
+								<label><i class="fa fa-arrows-h"></i> Horizontal Align</label>
+								<md-select ng-model="model.style.hAlign">
+					              <md-option ng-repeat="halign in haligns" value="{{halign}}">
+					                {{halign}}
+					              </md-option>
+					            </md-select>
+							</md-input-container>	
+							<md-input-container flex=50 class="md-block">
+								<label><i class="fa fa-arrows-v"></i> Vertical Align</label>
+								<md-select ng-model="model.style.vAlign">
+					              <md-option ng-repeat="valign in valigns" value="{{valign}}">
+					                {{valign}}
+					              </md-option>
+					            </md-select>
+							</md-input-container>	
+			          
+			           </div>
+			        </cockpit-style-custom-widget-configurator>
+	        	</cockpit-style-configurator>
 	        </md-tab>
-	        <md-tab label="{{translate.load('sbi.cockpit.imagestyle')}}">
-				<md-input-container flex md-no-float class="md-block">
-					<label>% height</label>
-					<input ng-model="model.content.heightPerc">
-				</md-input-container>			
-				<md-input-container flex md-no-float class="md-block">
-					<label>% width</label>
-					<input ng-model="model.content.widthPerc">
-				</md-input-container>	
-				
-				
-	        </md-tab>
-	        
+
       	</md-tabs>
     </md-content>
 </md-card-content>

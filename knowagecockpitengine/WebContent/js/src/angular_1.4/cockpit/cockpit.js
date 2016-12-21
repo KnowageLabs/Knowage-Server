@@ -39,7 +39,6 @@ function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,coc
 	$scope.cockpitModule_widgetServices=cockpitModule_widgetServices;
 	$scope.imageBackgroundUrl=cockpitModule_template.configuration.style.imageBackgroundUrl;
 	$scope.cockpitModule_template=cockpitModule_template;
-	
 	$scope.sbiModule_device=sbiModule_device;
 	//load the dataset list
 	$scope.datasetLoaded=false;

@@ -202,6 +202,8 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 	$scope.widgetSpinner=false;
 	$scope.actionButtonClass=[];
 	
+	
+	
 	//global WIDGET_EVENT
 	$rootScope.$on('WIDGET_EVENT',function(conf,eventType,config){
 		switch(eventType){
@@ -596,6 +598,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 			$scope.cockpitWidgetItem.css("position","relative");
 			$scope.cockpitWidgetItem.css("z-index","");
 			angular.element($scope.cockpitWidgetItem[0].firstElementChild).removeClass("fullScreenWidget");
+			cockpitModule_widgetServices.fullScreenWidget = false;
 		}else{
 			cockpitModule_properties.WIDGET_EXPANDED[cockpitModule_properties.CURRENT_SHEET]=true;
 			cockpitModule_widgetServices.setFullPageWidget(true);
@@ -604,8 +607,9 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 			angular.element(document.querySelector("cockpit-sheet>md-tabs>md-tabs-content-wrapper>md-tab-content")).css("overflow","hidden");
 			document.querySelector("cockpit-sheet>md-tabs>md-tabs-content-wrapper>md-tab-content").scrollTop=0
 			$scope.cockpitWidgetItem.css("position","absolute");
-			$scope.cockpitWidgetItem.css("z-index","3");
+			$scope.cockpitWidgetItem.css("z-index","9999");
 			angular.element($scope.cockpitWidgetItem[0].firstElementChild).addClass("fullScreenWidget");
+			cockpitModule_widgetServices.fullScreenWidget = true;
 		}
 		cockpitModule_gridsterOptions.draggable.enabled=cockpitModule_properties.EDIT_MODE && cockpitModule_properties.WIDGET_EXPANDED[cockpitModule_properties.CURRENT_SHEET]!=true;
 		cockpitModule_gridsterOptions.resizable.enabled=cockpitModule_properties.EDIT_MODE && cockpitModule_properties.WIDGET_EXPANDED[cockpitModule_properties.CURRENT_SHEET]!=true;
