@@ -45,6 +45,7 @@ angular.module('cockpitModule')
 function cockpitToolbarControllerFunction($scope,cockpitModule_widgetServices,cockpitModule_properties,cockpitModule_template,$mdDialog,sbiModule_translate,sbiModule_restServices,cockpitModule_gridsterOptions,$mdPanel,cockpitModule_widgetConfigurator,$mdToast,cockpitModule_generalServices,cockpitModule_widgetSelection,$rootScope){
 	$scope.cockpitModule_properties=cockpitModule_properties;
 	$scope.cockpitModule_template=cockpitModule_template;
+	$scope.cockpitModule_widgetServices=cockpitModule_widgetServices;
 	
 	$scope.openGeneralConfigurationDialog=function(){
 		cockpitModule_generalServices.openGeneralConfiguration();
@@ -57,7 +58,7 @@ function cockpitToolbarControllerFunction($scope,cockpitModule_widgetServices,co
 	$scope.fabSpeed = {
 			isOpen : false
 	}
-	
+	console.log("1------------------------------------"+cockpitModule_widgetServices.isFullPageWidget());
 	
 	
 	$scope.saveCockpit=function(){

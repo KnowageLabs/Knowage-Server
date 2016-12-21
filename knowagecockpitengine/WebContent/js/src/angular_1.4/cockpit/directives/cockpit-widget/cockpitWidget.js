@@ -588,6 +588,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 	$scope.expandWidget=function(){
 		
 		if(angular.element($scope.cockpitWidgetItem[0].firstElementChild).hasClass("fullScreenWidget")){
+			cockpitModule_widgetServices.setFullPageWidget(false);
 			cockpitModule_properties.WIDGET_EXPANDED[cockpitModule_properties.CURRENT_SHEET]=false;
 			$scope.cockpitWidgetItem.css("width","");
 			$scope.cockpitWidgetItem.css("height","");
@@ -597,6 +598,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 			angular.element($scope.cockpitWidgetItem[0].firstElementChild).removeClass("fullScreenWidget");
 		}else{
 			cockpitModule_properties.WIDGET_EXPANDED[cockpitModule_properties.CURRENT_SHEET]=true;
+			cockpitModule_widgetServices.setFullPageWidget(true);
 			$scope.cockpitWidgetItem.css("width",document.querySelector("cockpit-sheet>md-tabs>md-tabs-content-wrapper").offsetWidth-20);
 			$scope.cockpitWidgetItem.css("height",document.querySelector("cockpit-sheet>md-tabs>md-tabs-content-wrapper").offsetHeight-10);
 			angular.element(document.querySelector("cockpit-sheet>md-tabs>md-tabs-content-wrapper>md-tab-content")).css("overflow","hidden");

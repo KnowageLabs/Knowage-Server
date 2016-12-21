@@ -42,7 +42,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 
 	var wi=this;
 	
-
+	var fullPageWidget=false;  
 	var widgetInit=0;
 	var widgetCount=cockpitModule_templateServices.getNumberOfWidgets();
 	var widIni= $rootScope.$on("WIDGET_INITIALIZED",function(){
@@ -172,7 +172,13 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 	}
 
 	
+	this.isFullPageWidget=function()
+	{return fullPageWidget;}
 	
+	this.setFullPageWidget=function(boolean)
+	{ fullPageWidget=boolean}
+	
+		
 	
 	
 });
