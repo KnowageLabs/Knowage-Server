@@ -429,6 +429,7 @@ if(executionRoleNames.size() > 0) {
 			angular.module('documentExecutionModule').factory('execProperties', function() {
 				var selRole= '<%= request.getParameter("SELECTED_ROLE") %>'=='null' ? '' : '<%= request.getParameter("SELECTED_ROLE") %>';
 				var crossParams= <%= request.getParameter("CROSS_PARAMETER") %>==null ? {} : <%= request.getParameter("CROSS_PARAMETER") %>;
+				var menuParams= <%= request.getParameter("MENU_PARAMETERS") %>==null ? {} : <%= request.getParameter("MENU_PARAMETERS") %>;
 				var obj = {
 					roles: [<%for(Object roleObj : executionRoleNames) out.print("'" + (String)roleObj + "',");%>],
 					executionInstance: {
@@ -441,6 +442,7 @@ if(executionRoleNames.size() > 0) {
 						'isPossibleToComeBackToRolePage' : false,
 						'SBI_EXECUTION_ID' : '',
 						'CROSS_PARAMETER' : crossParams,
+						'MENU_PARAMETER' : menuParams,
 						'ENGINE_LABEL' : '',
 						'SidenavOri': '<%=obj.getParametersRegion() %>',
 						'IS_FOR_EXPORT' : <%= isForExport %>
