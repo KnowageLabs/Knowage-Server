@@ -577,6 +577,33 @@ function TableControllerFunction($scope, $timeout) {
     	return angular.isFunction(item) ? item(row,column,index) : item;
     }
     
+    $scope.getHeaderStyle=function()
+    {
+    	
+    	var elaboratedHeaderStyle={};
+    	if($scope.tableStyle.headerStyle.background!=undefined)
+    	{
+    		elaboratedHeaderStyle.background=$scope.tableStyle.headerStyle.background;
+    	}
+    	 if($scope.tableStyle.headerStyle.color!=undefined)
+    	{
+    		elaboratedHeaderStyle.color=$scope.tableStyle.headerStyle.color;
+    	}
+    	if($scope.tableStyle.headerStyle.fontfamily!=undefined)
+    	{
+    		elaboratedHeaderStyle['font-family']=$scope.tableStyle.headerStyle.fontfamily;
+    	}
+    	if($scope.tableStyle.headerStyle.fontweight!=undefined)
+    	{
+    		elaboratedHeaderStyle['font-weight']=$scope.tableStyle.headerStyle.fontweight;
+    	}
+    	if($scope.tableStyle.headerStyle.fontsize!=undefined)
+    	{
+    		elaboratedHeaderStyle['font-size']=$scope.tableStyle.headerStyle.fontsize;
+    	}
+    	return elaboratedHeaderStyle;     	
+    }
+    
     $scope.searchItem = function (searchVal) {
         if ($scope.localSearch) {
             $scope.searchFastVal = searchVal;

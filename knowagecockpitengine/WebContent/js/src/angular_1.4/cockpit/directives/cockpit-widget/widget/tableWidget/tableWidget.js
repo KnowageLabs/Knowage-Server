@@ -751,7 +751,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					
 			};
 
-			$mdPanel.open(config);
+			$mdPanel.open(config).then(function(){
+                $scope.refresh();
+            }, function(){
+                $scope.refresh();
+            });
 			return finishEdit.promise;
 
 		}

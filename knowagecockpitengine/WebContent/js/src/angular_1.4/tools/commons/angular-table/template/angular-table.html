@@ -70,7 +70,7 @@
 </script>
 
 <script type="text/ng-template" id="headThTemplate.html">
-<th ng-repeat="val in tableColumns" width="{{val.size}}" ng-class="val.customClass">
+<th ng-repeat="val in tableColumns" width="{{val.size}}" ng-class="val.customClass" ng-style="getHeaderStyle()">
 
 	<div id="headDiv{{$index}}"  ng-hide="hideTableHead==true" ng-if="val.name !='--MULTISELECT--' && val.name!='--ROW_DETAIL--'" ng-click="orderBy(val)"  ng-class="{ 'black': val.name==column_ordering}">
 		

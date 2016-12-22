@@ -58,7 +58,6 @@ function cockpitToolbarControllerFunction($scope,cockpitModule_widgetServices,co
 	$scope.fabSpeed = {
 			isOpen : false
 	}
-	console.log("1------------------------------------"+cockpitModule_widgetServices.isFullPageWidget());
 	
 	
 	$scope.saveCockpit=function(){
