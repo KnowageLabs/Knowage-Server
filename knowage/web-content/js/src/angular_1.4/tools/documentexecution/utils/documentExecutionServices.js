@@ -813,6 +813,9 @@
 					function(ok, val, scope){
 						if(ok === true){
 
+							if (val == null || val == "null") 
+								val = "{}"; 	//clean from wrong values
+							
 							var params = {
 									label:execProperties.executionInstance.OBJECT_LABEL,
 									role:role,
