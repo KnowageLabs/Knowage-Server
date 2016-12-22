@@ -270,7 +270,8 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 				conf.put("gui_settings", guiSettings);
 
 				String execId = (String) this.getEnv().get("SBI_EXECUTION_ID");
-				conf.put("execId", execId);
+				// conf.put("execId", execId);
+				conf.put("SBI_EXECUTION_ID", execId);
 
 				JSONObject localeJSON = new JSONObject();
 				Locale locale = (Locale) this.getEnv().get(EngineConstants.ENV_LOCALE);

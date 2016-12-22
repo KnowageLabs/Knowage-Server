@@ -117,7 +117,7 @@
 				        </md-button>					 		
    					   <div id="container" layout-fill>   		             
 							<iframe id="svgContainer" 
-							    src='${pageContext.request.contextPath}/api/1.0/svgviewer/drawMap'  
+							    src='${pageContext.request.contextPath}/api/1.0/svgviewer/drawMap?SBI_EXECUTION_ID=<%=executionID%>'  
 								width='100%'; height='100%'; frameborder="0" > 
 							</iframe>  			
 							<% if (isCustomizedSVG) {%>

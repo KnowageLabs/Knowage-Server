@@ -30,6 +30,7 @@
 	SvgViewerEngineInstance engineInstance;
 	Map env;
 	String executionRole;
+	String executionID;
 	Locale locale;
 	String template;
 	String docLabel;
@@ -58,6 +59,7 @@
 	locale = engineInstance.getLocale();
 
 	executionRole = (String)env.get(EngineConstants.ENV_EXECUTION_ROLE);
+	executionID = (String)env.get("SBI_EXECUTION_ID");
 	userId = (engineInstance.getDocumentUser()==null)?"":engineInstance.getDocumentUser().toString();
 	//TODO: commented just for test
 	//template = engineInstance.getGuiSettings().toString();
