@@ -404,8 +404,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 	/**
 	 * @return { filterStatus: [{ title: 'Provincia', urlName: 'provincia', type: 'list', lista:[[k,v],[k,v], [k,v]] }, { title: 'Comune', urlName: 'comune',
-	 *         type: 'list', lista:[], dependsOn: 'provincia' }, { title: 'Free Search', type: 'manual', urlName: 'freesearch' }], isReadyForExecution: true, errors: [ 'role missing',
-	 *         'operation not allowed' ] }
+	 *         type: 'list', lista:[], dependsOn: 'provincia' }, { title: 'Free Search', type: 'manual', urlName: 'freesearch' }], isReadyForExecution: true,
+	 *         errors: [ 'role missing', 'operation not allowed' ] }
 	 * @throws EMFUserError
 	 * @throws JSONException
 	 * @throws IOException
@@ -423,7 +423,9 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		String role = requestVal.getString("role");
 		JSONObject jsonCrossParameters = requestVal.getJSONObject("parameters");
 
-		Map<String, JSONObject> sessionParametersMap = getSessionParameters(requestVal);
+		Map<String, JSONObject> sessionParametersMap = new HashMap<String, JSONObject>();
+		if (("true").equals(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled")))
+			sessionParametersMap = getSessionParameters(requestVal);
 
 		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
 

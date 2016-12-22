@@ -807,22 +807,27 @@
 		
 
 		serviceScope.getParametersForExecution = function(role, buildCorrelation,crossParameters) {
-	
+			
 
 			docExecute_sessionParameterService.getParametersState(
 					function(ok, val, scope){
 						if(ok === true){
 
-							if (val == null || val == "null") 
-								val = "{}"; 	//clean from wrong values
 							
 							var params = {
 									label:execProperties.executionInstance.OBJECT_LABEL,
 									role:role,
-									parameters:crossParameters,
-									sessionParameters:val
+									parameters:crossParameters
+//									sessionParameters:val
 							};
-
+							
+							//add parameters session if they are managed
+							if (sbiModule_config.isStatePersistenceEnabled == true){
+								if (val == null || val == "null") 
+									val = "{}"; 	//clean from wrong values
+								params.sessionParameters = val;
+							}
+								
 
 							sbiModule_restServices.promisePost("1.0/documentexecution", "filters", params)
 							.then(function(response, status, headers, config) {
