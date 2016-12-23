@@ -21,7 +21,11 @@ describe('functionality-test', function() {
 
 	
 
-
+	it('checks that getting functs work',function(){
+	
+		
+		expect(element.all(by.repeater('folder in folders')).count()).toBeGreaterThan(0);
+	});
 	it('open details for one folder',function(){
 		
 	element(by.cssContainingText('.ng-binding', 'Funct1-1')).click();
