@@ -5,8 +5,10 @@ describe('functionality-test', function() {
 	});
 
 	it('should try to login', function() {
+	
 	browser.ignoreSynchronization=true;
 	 browser.get('https://spagobitest:48081/knowage');
+		browser.sleep(10000);
 	 browser.driver.findElement(by.id('password')).sendKeys('test_functionality_admin');
 	 browser.driver.findElement(by.id('username')).sendKeys('test_functionality_admin');
 	 browser.driver.findElement(by.css('.btn-signin')).click();
