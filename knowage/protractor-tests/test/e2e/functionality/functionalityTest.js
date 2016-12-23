@@ -12,7 +12,7 @@ describe('functionality-test', function() {
 	 browser.driver.findElement(by.css('.btn-signin')).click();
 	});
 
-	it('should try to login', function() {
+	it('should try to open functionality catalogue', function() {
 		browser.ignoreSynchronization=true;
 		 browser.get('https://spagobitest:48081/knowage/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/functionalitiesManagement.jsp?LIGHT_NAVIGATOR_RESET_INSERT=TRUE');
 		 
@@ -21,7 +21,7 @@ describe('functionality-test', function() {
 
 	
 
-	it('checks that getting functs work',function(){
+	it('checks that getting functionalities work',function(){
 	
 		
 		expect(element.all(by.repeater('folder in folders')).count()).toBeGreaterThan(0);
