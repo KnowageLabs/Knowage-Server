@@ -174,10 +174,10 @@
 	
 	<target name="compile.tests"  description="compile the test">
 				
-				<!-- Compile the java code from ${test} into ${build}/${webapp_name}/WEB-INF/classes -->
+				<!-- Compile the java code from ${test} into ${build}/${webapp_name}/WEB-INF/classes 
 				<javac srcdir="${test}" destdir="${build}/${webapp_name}/WEB-INF/classes" >
 					<classpath refid="web.classpath" />
-				</javac>
+				</javac>-->
 	</target>
 
 	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
