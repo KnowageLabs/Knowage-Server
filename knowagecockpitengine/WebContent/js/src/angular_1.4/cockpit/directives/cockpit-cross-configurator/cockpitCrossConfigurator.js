@@ -96,15 +96,25 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 	$scope.cockpitCross={};
 	$scope.localDataset = {};
 	$scope.crossNavigations = cockpitModule_crossServices.getCrossList();
-	
-	if($scope.model.dataset!=undefined && $scope.model.dataset.dsId != undefined){
+	$scope.chartProperties=[];
+	if($scope.localModel){
+	$scope.crossChart= $scope.localModel.wtype === 'chart';
+	}else{
+		$scope.crossChart= false;
+	}
+	if( $scope.crossChart){
+		
+		$scope.chartProperties=cockpitModule_crossServices.getChartParameters($scope.localModel.chartTemplate.CHART.type);
+	}else{
+		
+	   if($scope.model.dataset!=undefined && $scope.model.dataset.dsId != undefined){
 
 		angular.copy(cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId), $scope.localDataset);
 	} else{
 		$scope.model.dataset= {};
 		//angular.copy([], $scope.model.dataset.metadata.fieldsMeta); 
 	}
-	
+	}
 	angular.copy(cockpitModule_template.configuration.cross,$scope.cockpitCross);
 	
 	$scope.initModel=function(){

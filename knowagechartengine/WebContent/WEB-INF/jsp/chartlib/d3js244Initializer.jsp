@@ -211,6 +211,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	};
 	
 	function handleCockpitSelection(e) {
+		if (parent && parent.angular && parent.angular.element) {
+			// Cockpit 3 (AngularJS version of ockpit)			
+			debugger;
+			parent.angular.element(
+					window.frameElement.parentElement.parentElement)
+					.scope().reloadWidgetsByChartEvent(e);
+		}else {
+		
 		
 // 			debugger;
 			var cockpitWidgetManager = window.parent.cockpitPanel.widgetContainer.widgetManager;
@@ -243,7 +251,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  					//console.log(selections);
 					cockpitWidgetManager.onSelection(widget, selections);
 				}
-			}		
+			}	
+		}
 		
 	};
 	

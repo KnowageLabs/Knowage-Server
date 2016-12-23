@@ -13,14 +13,21 @@
                 {{translate.load("sbi.cockpit.cross.check")}}
             </md-checkbox>
             
-           <md-checkbox ng-model="ngModel.cross.allRow" flex ng-change=toggleBorderVisibility()>
+           <md-checkbox ng-if="!crossChart" ng-model="ngModel.cross.allRow" flex ng-change=toggleBorderVisibility()>
                 {{translate.load("sbi.cockpit.cross.allRow")}}
             </md-checkbox>
 
-           <md-input-container class="md-block" flex>
+           <md-input-container ng-if="!crossChart" class="md-block" flex>
                 <label>{{translate.load("sbi.cockpit.cross.column")}}</label>
                 <md-select ng-model="ngModel.cross.column" >
                     <md-option ng-repeat="c in localDataset.metadata.fieldsMeta" ng-value="c.name">{{c.name}}</md-option>
+                </md-select>
+            </md-input-container>
+            
+              <md-input-container ng-if="crossChart" class="md-block" flex>
+                <label>{{translate.load("sbi.cockpit.cross.column")}}</label>
+                <md-select ng-model="ngModel.cross.column" >
+                    <md-option ng-repeat="c in chartProperties" ng-value="c">{{c}}</md-option>
                 </md-select>
             </md-input-container>
 

@@ -138,16 +138,19 @@ function getCrossParamsForHeatmap(point,chartConf){
 	
 }
 
-function getSelectionParammsForHeatmap(point){
+function getSelectionParammsForHeatmap(point,chartConf){
 	var params={
     		point:{
     			name: null, // category name
     	    }
     	};
 	params.point.name=point.label;
-
+    var toReturn = {};
+    
+	toReturn.select=params;
 	
-	return params;
+	toReturn.cross= getCrossParamsForHeatmap(point,chartConf);	
+	return toReturn;
 }
 
 function getCrossParamsForTreemap(point,chartConf){
@@ -841,7 +844,7 @@ function prepareChartConfForHeatmap(chartConf) {
 //            	console.log(event.point);
             	if(chartConf.chart.isCockpit==true){
             		if(chartConf.chart.outcomingEventsEnabled){
-            		var selectParams=getSelectionParammsForHeatmap(event.point);
+            		var selectParams=getSelectionParammsForHeatmap(event.point,chartConf);
             		handleCockpitSelection(selectParams);
             		}
             	}else{ 

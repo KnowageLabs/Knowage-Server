@@ -170,6 +170,10 @@ angular.module('cockpitModule')
 function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelection,cockpitModule_datasetServices,cockpitModule_widgetConfigurator,$q,$mdPanel,sbiModule_restServices,$httpParamSerializerJQLike,sbiModule_config,buildParametersForExecution,$mdToast){
 	$scope.property={style:{}};
 	$scope.selectedTab = {'tab' : 0};
+	if($scope.ngModel.cross==undefined){
+		$scope.ngModel.cross={};
+	};
+	
 	$scope.init=function(element,width,height){
 		$scope.refreshWidget(undefined,'init');
 	};
@@ -187,11 +191,16 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 		var config = {
 				attachTo:  angular.element(document.body),
 				controller: function($scope,sbiModule_translate,model,mdPanelRef,doRefresh){
+					console.log("CHART"); 
+					console.log(model);
 					  $scope.translate=sbiModule_translate;
 					  $scope.confSpinner=false;
 					  $scope.somethingChanged=false;
 					  $scope.localStyle=angular.copy(model.style);
 					  $scope.localModel = angular.copy(model.content);
+					  $scope.localModel.cross= angular.copy(model.content.cross);
+					 // $scope.model= angular.copy(model);
+					  
 					  $scope.handleEvent=function(event, arg1){
 						  if(event=='init'){
 							  if($scope.localModel.datasetId != undefined){
@@ -226,7 +235,9 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 			    				  delete $scope.localModel.columnSelectedOfDataset;
 			    			  }
 			    			  $scope.localModel.datasetLabel = ds.label;
+			    			  
 			    		  }
+			    		  
 			    	  }
 			    	  var checkConfiguration=function(){
 			    		  var extWindow = document.getElementById("chartConfigurationIframe").contentWindow;
@@ -266,7 +277,9 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 			    					  }
 			    					  angular.copy($scope.localStyle, model.style);
 			    					  model.dataset = {dsId: $scope.localModel.datasetId, dsLabel: $scope.localModel.datasetLabel};
+			    					 
 			    				  }
+			    				 angular.copy($scope.localModel.cross,model.cross);
 			    				  mdPanelRef.close();
 			    				  $scope.$destroy();
 			    				  doRefresh(undefined,'init');
@@ -331,7 +344,36 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 		return finishEdit.promise;
 	}
 
-	$scope.reloadWidgetsByChartEvent = function(event){
+	$scope.reloadWidgetsByChartEvent = function(item){
+		var event= item.select != undefined ? item.select : item;
+		var crossParameters= createCrossParameters(item);
+		if($scope.ngModel.cliccable==false){
+			console.log("widget is not cliccable")
+			return;
+		}
+		
+		// check if cross navigation was enable don this widget
+		var model = $scope.ngModel;
+		if(model.cross != undefined  
+				&& model.cross.enable === true
+				&& model.cross.column != undefined
+				&& model.cross.outputParameter != undefined
+				){
+			
+			var outputParameter = {};
+			outputParameter[model.cross.outputParameter] = crossParameters[model.cross.column];
+			
+			// if destination document is specified don't ask
+			if(model.cross.crossName != undefined){
+				parent.execExternalCrossNavigation(outputParameter,{},model.cross.crossName);
+				return;
+			}
+			else{
+				parent.execExternalCrossNavigation(outputParameter,{});
+				return;
+			}
+		}
+	    
 		if(event.point){
 			//for highcharts
 		var columnValue = event.point.name;
@@ -358,6 +400,40 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 	
 	$scope.finishLoadingIframe=function(){
 		$scope.hideWidgetSpinner();
+	}
+	
+	function createCrossParameters(event){
+       if( $scope.ngModel.content.chartTemplate.CHART.type==="HEATMAP"){
+    	   var parameters = {
+    				"SERIE_NAME": event.cross.point.series.name,
+    				"SERIE_VALUE":event.cross.point.y,
+    				"CATEGORY_VALUE":event.cross.point.name,
+    				"CATEGORY_NAME": event.cross.point.category,
+    				"GROUPING_NAME": event.cross.point.group.name,
+    				"GROUPING_VALUE": event.cross.point.group.value
+    			};
+    			
+    			return parameters;
+			
+		}
+       if( $scope.ngModel.content.chartTemplate.CHART.type==="TREEMAP"){
+    	   var parameters = {
+    				"SERIE_NAME": event.point.series.name,
+    				"SERIE_VALUE":event.point.value,
+    				"CATEGORY_VALUE":event.point.name,
+    				"CATEGORY_NAME": $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY[0].name
+    			};
+    			
+    			return parameters;
+       }
+		var parameters = {
+			"SERIE_NAME": event.point.series.name,
+			"SERIE_VALUE":event.point.y,
+			"CATEGORY_VALUE":event.point.name,
+			"CATEGORY_NAME": $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY.name
+		};
+		
+		return parameters;
 	}
 };
 function setAggregationsOnChartEngine(wconf){
@@ -414,5 +490,9 @@ function setAggregationsOnChartEngine(wconf){
 
 //this function register the widget in the cockpitModule_widgetConfigurator factory
 addWidgetFunctionality("chart",{'initialDimension':{'width':20, 'height':20},'updateble':true,'cliccable':true});
+
+
+
+
 
 })();
