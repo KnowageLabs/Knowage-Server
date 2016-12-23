@@ -912,7 +912,7 @@
 	</target>
 	
 	<target name="knowage.unitTests" depends="compile.tests">
-		<antcall target="test.junit" />
+		<!--<antcall target="test.junit" />-->
 		
 	
 	</target>
