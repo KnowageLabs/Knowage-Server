@@ -123,7 +123,9 @@
 			    			metadataDlgCtrl.generalMetadata = response.data.GENERAL_META;
 			    			metadataDlgCtrl.shortText = response.data.SHORT_TEXT;
 				    		metadataDlgCtrl.longText = response.data.LONG_TEXT;
-				    		metadataDlgCtrl.file = response.data.FILE;
+				    		if(response.data.FILE){
+				    			metadataDlgCtrl.file = response.data.FILE;
+				    		}
 				    		console.log("RECEIVED FILES: ",metadataDlgCtrl.file)
 				    		for(var i=0;i<metadataDlgCtrl.file.length;i++) 
 				    		{
