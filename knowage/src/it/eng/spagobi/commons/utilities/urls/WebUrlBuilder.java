@@ -19,6 +19,7 @@ package it.eng.spagobi.commons.utilities.urls;
 
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.navigation.LightNavigationManager;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
 
 import java.io.File;
 import java.util.Iterator;
@@ -46,8 +47,9 @@ public class WebUrlBuilder implements IUrlBuilder{
 	 */
 	public void init(HttpServletRequest aHttpServletRequest){
 		logger.debug("IN");
-		baseResourceURL = aHttpServletRequest.getContextPath() + "/";
-		baseURL = aHttpServletRequest.getContextPath()+ "/servlet/AdapterHTTP";
+		baseResourceURL = GeneralUtilities.getSpagoBiContext()+"/";
+		logger.debug("baseResourceURL"+baseResourceURL);
+		baseURL = baseResourceURL+ "/servlet/AdapterHTTP";
 		logger.debug("OUT.baseURL="+baseURL);
 	}
 
