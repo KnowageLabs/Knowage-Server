@@ -275,29 +275,30 @@ commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext Man
 <%-- ---------------------------------------------------------------------- --%>
 <%-- INCLUDE EXT UX															--%>
 <%-- ---------------------------------------------------------------------- --%>
-<script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/ext-4.1.1a/ext-all.js'></script>
-<script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/ext-4.1.1a/examples/ux/IFrame.js'></script>
-<script type="text/javascript" src='${pageContext.request.contextPath}/js/lib/ext-4.1.1a/ux/RowExpander.js'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request,"/js/lib/ext-4.1.1a/ext-all.js")%>'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request,"/js/lib/ext-4.1.1a/examples/ux/IFrame.js")%>'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request,"/js/lib/ext-4.1.1a/ux/RowExpander.js")%>'></script>
+
 
 	<%-- ---------------------------------------------------------------------- --%>
 	<%-- INCLUDE CUSTOM CODE													--%>
 	<%-- ---------------------------------------------------------------------- --%>
 	<script type="text/javascript"
-		src='${pageContext.request.contextPath}/js/src/ext/sbi/service/ServiceRegistry.js' /></script>
+		src='<%=urlBuilder.getResourceLink(request,"/js/src/ext/sbi/service/ServiceRegistry.js")%>' /></script>
 	<script type="text/javascript"
 		src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/service/ServiceRegistry.js")%>'></script>
 	<link id="spagobi-ext-4" rel="styleSheet"
-		href="${pageContext.request.contextPath}/js/lib/ext-4.1.1a/overrides/resources/css/spagobi.css"
+		href="<%=urlBuilder.getResourceLink(request,"/js/lib/ext-4.1.1a/overrides/resources/css/spagobi.css")%>"
 		type="text/css" />
 
 	<%-- ---------------------------------------------------------------------- --%>
 	<%-- INCLUDE CUSTOM EXT													--%>
 	<%-- ---------------------------------------------------------------------- --%>
 	<link id="extall" rel="styleSheet"
-		href="${pageContext.request.contextPath}/js/lib/ext-4.1.1a/resources/css/ext-all.css"
+		href="<%=urlBuilder.getResourceLink(request,"/js/lib/ext-4.1.1a/resources/css/ext-all.css")%>"
 		type="text/css" />
 	<link id="theme-gray" rel="styleSheet"
-		href="${pageContext.request.contextPath}/js/lib/ext-4.1.1a/resources/css/ext-all-gray.css"
+		href="<%=urlBuilder.getResourceLink(request,"/js/lib/ext-4.1.1a/resources/css/ext-all-gray.css")%>"
 		type="text/css" />
 
 	<script type="text/javascript">
@@ -436,22 +437,22 @@ String extTheme=ThemesManager.getTheExtTheme(currTheme);
 <%-- ---------------------------------------------------------------------- --%>
 	<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 	
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/bootstrap/css/bootstrap.min.css">
-	<link id="spagobi-angular" rel="styleSheet"	href="${pageContext.request.contextPath}/themes/sbi_default/css/menuBar/style.css" type="text/css" />
+	<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/js/lib/bootstrap/css/bootstrap.min.css")%>">
+	<link id="spagobi-angular" rel="styleSheet"	href="<%=urlBuilder.getResourceLink(request,"/themes/sbi_default/css/menuBar/style.css")%>" type="text/css" />
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- INCLUDE JQuery															--%>
 <%-- ---------------------------------------------------------------------- --%>	
-<script src="${pageContext.request.contextPath}/js/lib/jquery-1.11.3/jquery-1.11.3.min.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/jquery-ui-1.11.4/jquery-ui.min.js" ></script>
+<script src="<%=urlBuilder.getResourceLink(request,"/js/lib/jquery-1.11.3/jquery-1.11.3.min.js")%>"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/jquery-ui-1.11.4/jquery-ui.min.js")%>" ></script>
 <%-- ---------------------------------------------------------------------- --%>
 <%-- INCLUDE Bootstrap														--%>
 <%-- ---------------------------------------------------------------------- --%>		
 
-<script src="${pageContext.request.contextPath}/js/lib/bootstrap/bootstrap.min.js"></script>
+<script src="<%=urlBuilder.getResourceLink(request,"/js/lib/bootstrap/bootstrap.min.js")%>"></script>
 
 
 
 <%@ include file="/WEB-INF/jsp/commons/includeMessageResource.jspf" %>
 <%@ include file="/WEB-INF/jsp/commons/importSbiJS410.jspf"%>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/ext-4.1.1a/overrides/overrides.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/ext-4.1.1a/overrides/overrides.js")%>"></script>

@@ -17,23 +17,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 
 
+
 <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
 <meta name="viewport" content="width=device-width">
 
-<link rel="stylesheet" href="${pageContext.request.contextPath}/themes/sbi_default/fonts/font-awesome-4.4.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/themes/sbi_default/fonts/font-awesome-4.4.0/css/font-awesome.min.css")%>">
 
 <!-- angular reference-->
 <!-- START-DEBUG -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular_1.4/angular.js")%>"></script> 
 <!-- END-DEBUG -->
+
 <!-- START-PRODUCTION 
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular.min.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular_1.4/angular.min.js")%>"></script> 
 END-PRODUCTION -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular-animate.min.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular-aria.min.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular-sanitize.min.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular-messages.min.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular-cookies.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular_1.4/angular-animate.min.js")%>"></script> 
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular_1.4/angular-aria.min.js")%>"></script> 
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular_1.4/angular-sanitize.min.js")%>"></script> 
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular_1.4/angular-messages.min.js")%>"></script> 
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular_1.4/angular-cookies.js")%>"></script> 
 
 <!-- IE Patch (official polyfill provided by https://developer.mozilla.org )-->
 <script type="text/javascript">
@@ -66,79 +68,79 @@ importAngularMaterialForExport = (String)(request.getParameter(SpagoBIConstants.
 
 if(importAngularMaterialForExport == null) {
 %>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-material_1.1.0/angular-material.min.js"></script>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/angular-material_1.1.0/angular-material.min.css">
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular-material_1.1.0/angular-material.min.js")%>"></script> 
+<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular-material_1.1.0/angular-material.min.css")%>">
 <%
 } else if(("true").equalsIgnoreCase(importAngularMaterialForExport)) {
 %>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/angular-material_1.1.0/angular-material.min.css">
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-material_1.1.0/angular-material.min.js"></script>
+<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular-material_1.1.0/angular-material.min.css")%>">
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular-material_1.1.0/angular-material.min.js")%>"></script> 
 <%
 }
 %>
 
 
 <!-- angular tree -->
-<link rel="stylesheet" 	href="${pageContext.request.contextPath}/js/lib/angular/angular-tree/angular-ui-tree.min.css">
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-tree/angular-ui-tree.js"></script>
+<link rel="stylesheet" 	href="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular-tree/angular-ui-tree.min.css")%>">
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular-tree/angular-ui-tree.js")%>"></script> 
 
 <!-- angular list -->
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/glossary/css/angular-list.css">
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/AngularList.js"></script>		
+<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request,"/themes/glossary/css/angular-list.css")%>">
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/AngularList.js")%>"></script> 		
 
 <!-- context menu -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/contextmenu/ng-context-menu.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/contextmenu/ng-context-menu.js")%>"></script> 
 
 <!--pagination-->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/pagination/dirPagination.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/pagination/dirPagination.js")%>"></script> 
 
 
 <!-- expanderBox -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/expander-box/expanderBox.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/expander-box/expanderBox.js")%>"></script> 
 
 <!-- angular table -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/angular-table/utils/daff.js"></script>
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/angular-table/AngularTable.css">
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js")%>"></script> 
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/angular-table/utils/daff.js")%>"></script> 
+<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/angular-table/AngularTable.css")%>">
 
 <!-- document tree -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/document-tree/DocumentTree.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/document-tree/DocumentTree.js")%>"></script> 
 
 <!-- component tree -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/component-tree/componentTree.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/component-tree/componentTree.js")%>"></script> 
 
 <!-- file upload -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/upload-file/FileUpload.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/upload-file/FileUploadBase64.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/upload-file/FileUpload.js")%>"></script> 
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/upload-file/FileUploadBase64.js")%>"></script> 
 
 
 <!-- 	angular time picker -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/angular-time-picker/angularTimePicker.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/angular-time-picker/angularTimePicker.js")%>"></script> 
 
 <!-- 	angular list dewtail template -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/angular-list-detail/angularListDetail.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/angular-list-detail/angularListDetail.js")%>"></script> 
 
 <!-- deprecated angular 2 col -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/angular-list-detail/angular2Col.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/angular-list-detail/angular2Col.js")%>"></script> 
 
 <!-- toastr -->
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/sbi_default/css/angular-toastr.css">
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/angular-toastr.tpls.js"></script>		
+<link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request,"/themes/sbi_default/css/angular-toastr.css")%>">
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/commons/angular-toastr.tpls.js")%>"></script> 		
 
 <!-- colorpicker -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/color-picker/tinycolor-min.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/color-picker/tinygradient.min.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/color-picker/tinycolor-min.js")%>"></script> 
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/color-picker/tinygradient.min.js")%>"></script> 
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/color-picker/angularjs-color-picker.js"></script>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/color-picker/angularjs-color-picker.min.css">
-<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/color-picker/mdColorPickerPersonalStyle.css">
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/color-picker/angularjs-color-picker.js")%>"></script> 
+<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/color-picker/angularjs-color-picker.min.css")%>">
+<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/color-picker/mdColorPickerPersonalStyle.css")%>">
 
 <!-- qbe viewer -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/workspace/scripts/services/qbeViewer.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/src/angular_1.4/tools/workspace/scripts/services/qbeViewer.js")%>"></script> 
 
 <!-- xml2js -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/xml2js/jquery-2.1.3.min.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/xml2js/xml2json.js"></script>
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/xml2js/jquery-2.1.3.min.js")%>"></script> 
+<script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/xml2js/xml2json.js")%>"></script> 
 
 <%@include file="/WEB-INF/jsp/commons/angular/sbiModule.jspf"%>
 	
