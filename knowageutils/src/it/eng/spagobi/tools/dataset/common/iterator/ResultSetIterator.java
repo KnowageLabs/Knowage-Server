@@ -60,6 +60,11 @@ public class ResultSetIterator implements DataIterator {
 	}
 
 	@Override
+	public void remove() {
+		throw new UnsupportedOperationException("This operation has to be overriden by subclasses in order to be used.");
+	}
+
+	@Override
 	public void close() {
 		try {
 			if (rs != null) {
