@@ -40,6 +40,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.List;
@@ -227,11 +228,8 @@ public class PersistedTableManager implements IPersistedManager {
 					statements[i].setQueryTimeout(queryTimeout);
 				}
 			}
-			// Steps #3: define create table statement
-			String createStmtQuery = getCreateTableQuery(datastore, datasource);
-			dropTableIfExists(datasource);
-			// Step #4: execute create table statement
-			executeStatement(createStmtQuery, datasource);
+			// Steps #3,4: define create table statement
+			createTable(datastore.getMetaData(), datasource);
 			// Step #5: execute batch with insert statements
 			for (int i = 0; i < statements.length; i++) {
 				PreparedStatement statement = statements[i];
@@ -348,6 +346,72 @@ public class PersistedTableManager implements IPersistedManager {
 			throw new SpagoBIEngineRuntimeException("Error persisting the dataset into table", e);
 		}
 		return toReturn;
+	}
+
+	private void initializeStatement(PreparedStatement statement, IRecord record, IMetaData storeMeta) {
+		for (int j = 0; j < record.getFields().size(); j++) {
+			IFieldMetaData fieldMeta = storeMeta.getFieldMeta(j);
+			IField field = record.getFieldAt(j);
+			Object fieldValue = field.getValue();
+			String fieldMetaName = fieldMeta.getName();
+			String fieldMetaTypeName = fieldMeta.getType().toString();
+			boolean isfieldMetaFieldTypeMeasure = fieldMeta.getFieldType().equals(FieldType.MEASURE);
+			PersistedTableHelper.addField(statement, j, fieldValue, fieldMetaName, fieldMetaTypeName, isfieldMetaFieldTypeMeasure, getColumnSize());
+		}
+	}
+
+	public PreparedStatement defineStatement(IMetaData storeMeta, IDataSource datasource, Connection connection) {
+		PreparedStatement statement;
+
+		int fieldCount = storeMeta.getFieldCount();
+
+		String insertQuery = "insert into " + getTableName();
+		String values = " values ";
+		// createQuery used only for HSQL at this time
+		String createQuery = "create table " + getTableName() + " (";
+
+		insertQuery += " (";
+		values += " (";
+		String separator = "";
+
+		for (int i = 0; i < fieldCount; i++) {
+			IFieldMetaData fieldMeta = storeMeta.getFieldMeta(i);
+			String columnName = getSQLColumnName(fieldMeta);
+			String escapedColumnName = AbstractJDBCDataset.encapsulateColumnName(columnName, datasource);
+
+			insertQuery += separator + escapedColumnName;
+			values += separator + "?";
+			createQuery += separator + escapedColumnName + getDBFieldType(datasource, fieldMeta);
+			separator = ",";
+		}
+		values += ") ";
+		createQuery += ") ";
+		insertQuery += ") ";
+
+		String totalQuery = insertQuery + values;
+		logger.debug("create table statement: " + createQuery);
+		try {
+			if (getDialect().contains(DIALECT_HSQL) || getDialect().contains(DIALECT_HSQL_PRED)) {
+				// WORKAROUND for HQL : it needs the physical table for define a
+				// prepareStatement.
+				// So, drop and create an empty target table
+				dropTableIfExists(datasource);
+				// creates temporary table
+				executeStatement(createQuery, datasource);
+			}
+
+			statement = connection.prepareStatement(totalQuery);
+
+			// set query timeout (if necessary)
+			if (queryTimeout > 0) {
+				statement.setQueryTimeout(queryTimeout);
+			}
+
+			logger.debug("Prepared statement for persist record as : " + totalQuery);
+		} catch (Exception e) {
+			throw new SpagoBIEngineRuntimeException("Error persisting the dataset into table", e);
+		}
+		return statement;
 	}
 
 	private String getSQLColumnName(IFieldMetaData fmd) {
@@ -470,14 +534,13 @@ public class PersistedTableManager implements IPersistedManager {
 		return toReturn;
 	}
 
-	private String getCreateTableQuery(IDataStore datastore, IDataSource dataSource) {
+	private String getCreateTableQuery(IMetaData md, IDataSource dataSource) {
 		String toReturn = "create table " + tableName + " (";
-		IMetaData md = datastore.getMetaData();
 
 		if (this.isRowCountColumIncluded()) {
 			IDataBase dataBase = DataBase.getDataBase(dataSource);
-			toReturn += " " + AbstractJDBCDataset.encapsulateColumnName(this.getRowCountColumnName(), dataSource) + " " + dataBase.getDataBaseType(Long.class)
-					+ " , ";
+			toReturn += " " + AbstractJDBCDataset.encapsulateColumnName(PersistedTableManager.getRowCountColumnName(), dataSource) + " "
+					+ dataBase.getDataBaseType(Long.class) + " , ";
 		}
 
 		for (int i = 0, l = md.getFieldCount(); i < l; i++) {
@@ -491,7 +554,7 @@ public class PersistedTableManager implements IPersistedManager {
 		return toReturn;
 	}
 
-	private Connection getConnection(IDataSource datasource) {
+	public Connection getConnection(IDataSource datasource) {
 		try {
 			Boolean multiSchema = datasource.getMultiSchema();
 			logger.debug("Datasource is multischema: " + multiSchema);
@@ -740,6 +803,32 @@ public class PersistedTableManager implements IPersistedManager {
 
 	public void setQueryTimeout(int queryTimeout) {
 		this.queryTimeout = queryTimeout;
+	}
+
+	public void createTable(IMetaData md, IDataSource dataSource) throws Exception {
+		// Steps #1: define create table statement
+		String createStmtQuery = getCreateTableQuery(md, dataSource);
+		dropTableIfExists(dataSource);
+		// Step #2: execute create table statement
+		executeStatement(createStmtQuery, dataSource);
+	}
+
+	public boolean insertRecord(IRecord record, IMetaData metadata, PreparedStatement statement) throws SQLException {
+		statement.clearParameters();
+		initializeStatement(statement, record, metadata);
+		return statement.execute();
+
+	}
+
+	public void insertRecords(List<IRecord> records, IMetaData metadata, PreparedStatement statement) throws SQLException {
+		statement.clearBatch();
+		for (IRecord record : records) {
+			statement.clearParameters();
+			initializeStatement(statement, record, metadata);
+			statement.addBatch();
+		}
+		statement.executeBatch();
+
 	}
 
 }

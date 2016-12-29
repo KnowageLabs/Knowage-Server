@@ -37,6 +37,8 @@ public interface IDataStore {
 
 	IMetaData getMetaData();
 
+	void setMetaData(IMetaData metaData);
+
 	Iterator iterator();
 
 	boolean isEmpty();

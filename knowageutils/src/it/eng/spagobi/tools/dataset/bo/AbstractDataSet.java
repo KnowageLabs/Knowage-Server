@@ -24,6 +24,7 @@ import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
 import it.eng.spagobi.tools.dataset.common.behaviour.IDataSetBehaviour;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreFilter;
+import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.transformer.IDataStoreTransformer;
 import it.eng.spagobi.tools.dataset.common.transformer.PivotDataSetTransformer;
@@ -949,5 +950,10 @@ public abstract class AbstractDataSet implements IDataSet {
 
 	public void setUserProfile(UserProfile userProfile) {
 		this.userProfile = userProfile;
+	}
+
+	@Override
+	public DataIterator iterator() {
+		throw new UnsupportedOperationException("This operation has to be overriden by subclasses in order to be used.");
 	}
 }

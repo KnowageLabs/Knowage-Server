@@ -397,50 +397,18 @@ public class DatasetManagementAPI {
 				IDataStore cachedResultSet = cache.get(dataSet, groups, filters, projections, summaryRowProjections, offset, fetchSize);
 
 				if (cachedResultSet == null) {
-					dataSet.loadData();
-					IDataStore baseDataStore = dataSet.getDataStore();
-
-					// if (baseDataStore.getRecordsCount() > METAMODEL_LIMIT || haveCountDistinct(projections) || haveCountDistinct(summaryRowProjections)) {
-					if (true) { // don't use Apache MetaModel anymore here, too many side effects (COUNT DISTINCT aggregation, unusual sorting of rows)
-						cache.put(dataSet, baseDataStore);
-						dataStore = cache.get(dataSet, groups, filters, projections, summaryRowProjections, offset, fetchSize);
-						if (dataStore == null) {
-							throw new CacheException("An unexpected error occured while executing method");
-						}
-						adjustMetadata((DataStore) dataStore, dataSet, null);
-						dataSet.decode(dataStore);
+					if (isJDBCDataSet(dataSet) && !SqlUtils.isBigDataDialect(dataSet.getDataSource().getHibDialectName())) {
+						cache.put(dataSet);
 					} else {
-						dataStore = cache.refresh(dataSet, baseDataStore, false);
-
-						String tableName = DataStore.DEFAULT_SCHEMA_NAME + "." + DataStore.DEFAULT_TABLE_NAME;
-						Map<String, String> datasetAlias = getDatasetAlias(dataSet);
-						List<String> orderColumns = new ArrayList<String>();
-
-						String originalQuery = getQueryText(null, tableName, groups, filterCriteriaForMetaModel, projections, null, dataSet, true,
-								datasetAlias, orderColumns);
-						boolean hasSortingOnCalculatedColumns = checkSortingOnCalculatedColumns(orderColumns);
-
-						IDataStore originalDataStore = dataStore.aggregateAndFilterRecords(originalQuery, -1, -1);
-						if (hasSortingOnCalculatedColumns) {
-							appendCalculatedColumnsToDataStore(projections, datasetAlias, originalDataStore);
-							sortColumnsOnDataStore(orderColumns, originalDataStore);
-						}
-
-						IDataStore pagedDataStore = originalDataStore.paginateRecords(offset, fetchSize);
-						if (!hasSortingOnCalculatedColumns) {
-							appendCalculatedColumnsToDataStore(projections, datasetAlias, pagedDataStore);
-						}
-
-						if (summaryRowProjections != null && summaryRowProjections.size() > 0) {
-							String summaryRowQuery = getQueryText(null, tableName, groups, filters, projections, summaryRowProjections, dataSet, true,
-									datasetAlias, null);
-							IDataStore summaryRowDataStore = originalDataStore.aggregateAndFilterRecords(summaryRowQuery, -1, -1);
-
-							appendSummaryRowToPagedDataStore(projections, summaryRowProjections, pagedDataStore, summaryRowDataStore);
-						}
-
-						dataStore = pagedDataStore;
+						dataSet.loadData();
+						cache.put(dataSet, dataSet.getDataStore());
 					}
+					dataStore = cache.get(dataSet, groups, filters, projections, summaryRowProjections, offset, fetchSize);
+					if (dataStore == null) {
+						throw new CacheException("An unexpected error occured while executing method");
+					}
+					adjustMetadata((DataStore) dataStore, dataSet, null);
+					dataSet.decode(dataStore);
 
 					// if result was not cached put refresh date as now
 					dataStore.setCacheDate(new Date());
@@ -455,8 +423,6 @@ public class DatasetManagementAPI {
 					dataSet.decode(dataStore);
 				}
 			}
-			// TODO: caso in cui non riesco a effettuare la pagina lato datasource... pagino direttamente sulla lista di record...
-			// pageDataStoreRecords((DataStore) dataStore, offset, fetchSize);
 			return dataStore;
 
 		} catch (Throwable t) {

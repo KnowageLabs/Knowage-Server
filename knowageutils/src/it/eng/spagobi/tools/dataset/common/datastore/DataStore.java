@@ -195,6 +195,7 @@ public class DataStore implements IDataStore {
 		return this.metaData;
 	}
 
+	@Override
 	public void setMetaData(IMetaData metaData) {
 		this.metaData = metaData;
 	}

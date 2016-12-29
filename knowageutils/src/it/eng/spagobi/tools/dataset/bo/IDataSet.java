@@ -21,6 +21,8 @@ import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.IDataSetBehaviour;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreFilter;
+import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.transformer.IDataStoreTransformer;
 import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
@@ -31,7 +33,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-public interface IDataSet {
+public interface IDataSet extends Iterable<IRecord> {
 
 	String getDsMetadata();
 
@@ -272,5 +274,8 @@ public interface IDataSet {
 	public void setSchedulingCronLine(String schedulingCronLine);
 
 	public Map<String, ?> getDefaultValues();
+
+	@Override
+	public DataIterator iterator();
 
 }

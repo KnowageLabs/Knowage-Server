@@ -27,6 +27,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreFilter;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.datastore.Record;
+import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.common.transformer.IDataStoreTransformer;
@@ -697,6 +698,11 @@ public class DataStoreListenerOperatorTest extends TestCase {
 
 		@Override
 		public void setPersistedHDFS(boolean persistedHDFS) {
+		}
+
+		@Override
+		public DataIterator iterator() {
+			return null;
 		}
 
 	}

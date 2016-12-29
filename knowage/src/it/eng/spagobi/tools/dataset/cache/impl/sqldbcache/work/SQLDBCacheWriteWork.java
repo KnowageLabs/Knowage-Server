@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -35,10 +35,10 @@ import commonj.work.Work;
  */
 public class SQLDBCacheWriteWork implements Work {
 
-	ICache cache;
-	IDataStore dataStore;
-	IDataSet dataSet;
-	UserProfile userProfile;
+	private final ICache cache;
+	private final IDataStore dataStore;
+	private final IDataSet dataSet;
+	private UserProfile userProfile;
 
 	private static transient Logger logger = Logger.getLogger(SpagoBICacheManager.class);
 
@@ -71,9 +71,10 @@ public class SQLDBCacheWriteWork implements Work {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Runnable#run()
 	 */
+	@Override
 	public void run() {
 		logger.trace("IN");
 		try {
@@ -89,19 +90,25 @@ public class SQLDBCacheWriteWork implements Work {
 			TenantManager.unset();
 			logger.trace("OUT");
 		}
-		
+
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see commonj.work.Work#isDaemon()
 	 */
+	@Override
 	public boolean isDaemon() {
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see commonj.work.Work#release()
 	 */
+	@Override
 	public void release() {
 		// TODO Auto-generated method stub
 

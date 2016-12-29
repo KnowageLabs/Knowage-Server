@@ -21,6 +21,7 @@ import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.IDataSetBehaviour;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStoreFilter;
+import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.transformer.IDataStoreTransformer;
 import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
@@ -649,6 +650,11 @@ public class VersionedDataSet implements IDataSet {
 	@Override
 	public void setPersistedHDFS(boolean persistedHDFS) {
 		wrappedDataset.setPersistedHDFS(persistedHDFS);
+	}
+
+	@Override
+	public DataIterator iterator() {
+		return wrappedDataset.iterator();
 	}
 
 }

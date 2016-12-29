@@ -179,7 +179,16 @@ public interface ICache {
 	 * @param dataStore
 	 *            the resultSet to cache
 	 */
+	@Deprecated
 	long put(IDataSet dataSet, IDataStore dataStore);
+
+	/**
+	 * Insert a resultSet inside the cache
+	 *
+	 * @param dataset
+	 *            the dataSet from which derives the resultSet
+	 */
+	void put(IDataSet dataSet);
 
 	/**
 	 * @return the metadata description object of the cache

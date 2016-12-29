@@ -314,4 +314,24 @@ public class JDBCDataProxy extends AbstractDataProxy {
 			logger.debug("OUT");
 		}
 	}
+
+	@Override
+	public ResultSet getData(IDataReader dataReader, Object... resources) {
+		logger.debug("IN");
+		Statement stmt = (Statement) resources[0];
+		ResultSet resultSet = null;
+		try {
+			if (getMaxResults() > 0) {
+				stmt.setMaxRows(getMaxResults());
+			}
+			String sqlQuery = getStatement();
+			logger.info("Executing query " + sqlQuery + " ...");
+			resultSet = stmt.executeQuery(sqlQuery);
+			return resultSet;
+		} catch (SQLException e) {
+			throw new SpagoBIRuntimeException(e);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
 }

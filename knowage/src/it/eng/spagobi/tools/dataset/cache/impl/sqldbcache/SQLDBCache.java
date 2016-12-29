@@ -37,7 +37,9 @@ import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.work.SQLDBCacheWriteWo
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.datastore.Record;
+import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
 import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
@@ -60,6 +62,8 @@ import it.eng.spagobi.utilities.threadmanager.WorkManager;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -97,6 +101,8 @@ public class SQLDBCache implements ICache {
 
 	private static final long DEFAULT_HAZELCAST_TIMEOUT = 120;
 	private static final long DEFAULT_HAZELCAST_LEASETIME = 240;
+
+	private static final int BATCH_SIZE = 5000;
 
 	static private Logger logger = Logger.getLogger(SQLDBCache.class);
 
@@ -945,10 +951,104 @@ public class SQLDBCache implements ICache {
 	 */
 
 	@Override
+	public void put(IDataSet dataSet) {
+		logger.trace("IN");
+		String signature = dataSet.getSignature();
+		String hashedSignature = Helper.sha256(dataSet.getSignature());
+		IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME, SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
+		try {
+			if (mapLocks.tryLock(hashedSignature, getTimeout(), TimeUnit.SECONDS, getLeaseTime(), TimeUnit.SECONDS)) {
+				try {
+					// check again it is not already inserted
+					if (!cacheMetadata.containsCacheItem(signature)) {
+						String tableName = PersistedTableManager.generateRandomTableName(cacheMetadata.getTableNamePrefix());
+						BigDecimal dimension = persist(dataSet, tableName);
+						cacheMetadata.addCacheItem(signature, tableName, dimension);
+					}
+				} finally {
+					mapLocks.unlock(hashedSignature);
+				}
+			} else {
+				logger.debug("Impossible to acquire the lock for dataset [" + hashedSignature + "]. Timeout.");
+			}
+		} catch (InterruptedException e) {
+			logger.debug("The current thread has failed to release the lock for dataset [" + hashedSignature + "] in time.", e);
+		}
+		logger.debug("OUT");
+	}
+
+	private BigDecimal persist(IDataSet dataSet, String tableName) {
+		logger.debug("IN");
+
+		BigDecimal dimension = new BigDecimal(-1);
+
+		try {
+			int queryTimeout = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.CACHE.CREATE_AND_PERSIST_TABLE.TIMEOUT"));
+			logger.debug("Configured query timeout is " + queryTimeout + "ms");
+			PersistedTableManager persistedTableManager = new PersistedTableManager();
+			persistedTableManager.setTableName(tableName);
+			persistedTableManager.setDialect(getDataSource().getHibDialectClass());
+			persistedTableManager.setRowCountColumIncluded(false);
+			if (queryTimeout > 0) {
+				logger.debug("Setting query timeout...");
+				persistedTableManager.setQueryTimeout(queryTimeout);
+			}
+			Monitor monitor = MonitorFactory.start("spagobi.cache.sqldb.persist.paginated");
+			try (DataIterator iterator = dataSet.iterator()) {
+				Connection connection = null;
+				PreparedStatement statement = null;
+				try {
+					connection = persistedTableManager.getConnection(getDataSource());
+					connection.setAutoCommit(false);
+					statement = persistedTableManager.defineStatement(iterator.getMetaData(), getDataSource(), connection);
+
+					persistedTableManager.createTable(iterator.getMetaData(), getDataSource());
+
+					List<IRecord> records = new ArrayList<>(BATCH_SIZE);
+					int recordCount = 0;
+					while (iterator.hasNext()) {
+						IRecord record = iterator.next();
+						records.add(record);
+						if (records.size() == BATCH_SIZE) {
+							persistedTableManager.insertRecords(records, iterator.getMetaData(), statement);
+							records.clear();
+						}
+						recordCount++;
+					}
+					if (!records.isEmpty()) {
+						persistedTableManager.insertRecords(records, iterator.getMetaData(), statement);
+						records.clear();
+					}
+					connection.commit();
+				} catch (Exception e) {
+					if (connection != null) {
+						connection.rollback();
+					}
+				} finally {
+					if (statement != null) {
+						statement.close();
+					}
+					if (connection != null) {
+						connection.close();
+					}
+				}
+			}
+			monitor.stop();
+			return dimension;
+		} catch (Exception e) {
+			throw new CacheException("An unexpected error occured while persisting store in cache", e);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
+	@Override
+	@Deprecated
 	public long put(IDataSet dataSet, IDataStore dataStore) {
 		return put(dataSet, dataStore, false);
 	}
 
+	@Deprecated
 	public long put(IDataSet dataSet, IDataStore dataStore, boolean forceUpdate) {
 		logger.trace("IN");
 		String signature = dataSet.getSignature();
@@ -978,7 +1078,7 @@ public class SQLDBCache implements ICache {
 						// check again if the cleaning mechanism is on and if there is enough space for the resultset
 						if (!getMetadata().isCleaningEnabled() || getMetadata().isAvailableMemoryGreaterThen(requiredMemory)) {
 							long start = System.currentTimeMillis();
-							String tableName = persistStoreInCache(dataSet, signature, dataStore);
+							String tableName = persistStoreInCache(dataSet, dataStore);
 							timeSpent = System.currentTimeMillis() - start;
 							Map<String, Object> properties = new HashMap<String, Object>();
 							List<Integer> breakIndexes = (List<Integer>) dataStore.getMetaData().getProperty("BREAK_INDEXES");
@@ -1020,7 +1120,7 @@ public class SQLDBCache implements ICache {
 		return timeSpent;
 	}
 
-	private String persistStoreInCache(IDataSet dataset, String signature, IDataStore resultset) {
+	private String persistStoreInCache(IDataSet dataset, IDataStore resultset) {
 		logger.trace("IN");
 		try {
 			int queryTimeout;
