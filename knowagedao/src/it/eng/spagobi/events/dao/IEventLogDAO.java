@@ -22,6 +22,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.events.bo.EventLog;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Defines the interfaces for all methods needed to insert, modify and deleting an
@@ -49,11 +50,15 @@ public interface IEventLogDAO {
 	 * 
 	 * @param profile The user profile
 	 * 
+	 * @param offset The offset for search. -1 to load all
+	 * 
+	 * @param fetchSize The fetchSize for search. -1 to load all
+	 * 
 	 * @return A <code>List</code> of <code>EventLog</code> containing all loaded information
 	 * 
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public List loadEventsLogByUser(IEngUserProfile profile) throws EMFUserError;
+	public List loadEventsLogByUser(IEngUserProfile profile, Map<String,Object> filters) throws EMFUserError;
 	
 	/**
 	 * Register a new EventLog.

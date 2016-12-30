@@ -34,6 +34,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -112,7 +113,11 @@ public class EventLogDAOHibImpl extends AbstractHibernateDAO implements IEventLo
 	/**
 	 * Load events log by user.
 	 * 
-	 * @param profile the profile
+	 * @param profile The user profile
+	 * 
+	 * @param offset The offset for search. -1 to load all
+	 * 
+	 * @param fetchSize The fetchSize for search. -1 to load all
 	 * 
 	 * @return the list
 	 * 
@@ -120,7 +125,7 @@ public class EventLogDAOHibImpl extends AbstractHibernateDAO implements IEventLo
 	 * 
 	 * @see it.eng.spagobi.events.dao.IEventLogDAO#loadEventsLogByUser(it.eng.spago.security.IEngUserProfile)
 	 */
-	public List loadEventsLogByUser(IEngUserProfile profile) throws EMFUserError {
+	public List loadEventsLogByUser(IEngUserProfile profile,Map<String,Object> filters) throws EMFUserError {
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
@@ -128,6 +133,9 @@ public class EventLogDAOHibImpl extends AbstractHibernateDAO implements IEventLo
 		String hql = null;
 		Query hqlQuery = null;
 		Collection roles = null;
+		
+		Integer itemPerPage = (Integer)filters.get("ItemPerPage");
+		Integer page = (Integer)filters.get("page");
 
 		try {
 			roles = ((UserProfile)profile).getRolesForUse();
@@ -143,33 +151,30 @@ public class EventLogDAOHibImpl extends AbstractHibernateDAO implements IEventLo
 		Iterator rolesIt = roles.iterator();
 		while (rolesIt.hasNext()) {
 			String roleName = (String) rolesIt.next();
-			//if (isFirtElement) {
-			//collectionRoles += roleName;
-			//isFirtElement = false;
-			//} else {
-			//collectionRoles += "', '" + roleName;
 			if (!roleNames.contains(roleName)) roleNames.add(roleName);
-			//}
 		}
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			/*hql = 
-				"select " +
-					"eventlog " +
-				"from " +
-					"SbiEventsLog as eventlog, " +
-					"SbiEventRole as eventRole, " +
-					"SbiExtRoles as roles " + 
-	         	"where " +
-	         		"eventlog.id = eventRole.id.event.id and " +
-	         		"eventRole.id.role.extRoleId = roles.extRoleId " +
-	         		"and " +
-	         		"roles.name in ('" + collectionRoles + "') " +
-	         	"order by " +
-	         		"eventlog.date";*/
+			String searchValue = (String) filters.get("searchValue");
+			
+			String columnOrdering = (String) filters.get("columnOrdering");
+			
+			if(columnOrdering==null || columnOrdering.length()==0){
+				columnOrdering = "date";
+			}
+			String reverseOrdering = (String) filters.get("reverseOrdering");
+			if(reverseOrdering!=null && reverseOrdering.length()>0){
+				reverseOrdering = "ASC";
+			}else{
+				reverseOrdering = "DESC";
+			}
+			
 
+
+			
+			
 			hql = 
 				"select " +
 				"eventlog " +
@@ -181,13 +186,25 @@ public class EventLogDAOHibImpl extends AbstractHibernateDAO implements IEventLo
 				"eventlog.id = eventRole.id.event.id and " +
 				"eventRole.id.role.extRoleId = roles.extRoleId " +
 				"and " +
-				"roles.name in (:ROLE_NAMES) " +
-				"order by " +
-				"eventlog.date";
+				"roles.name in (:ROLE_NAMES) ";
+				
+			
+			
+			if(searchValue!=null && searchValue.length()>0){
+				hql = hql+"and (roles.name like '%"+ searchValue  +"%' or  eventlog.user like '%"+ searchValue  +"%' or eventlog.handlerClass like '%"+ searchValue  +"%') ";
+			}
+			
+			hql = hql+ "order by eventlog."+columnOrdering+" "+reverseOrdering;
 
 			hqlQuery = aSession.createQuery(hql);
 			//hqlQuery.setString(0, collectionRoles);
 			hqlQuery.setParameterList("ROLE_NAMES", roleNames);
+			
+			if(itemPerPage!=null && itemPerPage>0 && page!=null && page > 0){
+				hqlQuery.setFirstResult((page-1)*itemPerPage);
+				hqlQuery.setMaxResults(itemPerPage);
+			}
+			
 			List hibList = hqlQuery.list();
 
 			Iterator it = hibList.iterator();
@@ -213,6 +230,80 @@ public class EventLogDAOHibImpl extends AbstractHibernateDAO implements IEventLo
 		return realResult;
 	}
 
+	
+	
+	
+	
+	public int loadEventsSizeLogByUser(IEngUserProfile profile) throws EMFUserError {
+		logger.debug("IN");
+		Session aSession = null;
+		Transaction tx = null;
+		List realResult = new ArrayList();
+		String hql = null;
+		Query hqlQuery = null;
+		Collection roles = null;
+
+		try {
+			roles = ((UserProfile)profile).getRolesForUse();
+		} catch (EMFInternalError e) {
+			logException(e);
+			return 0;
+		}
+
+		if (roles == null || roles.size() == 0) return 0;
+		boolean isFirtElement = true;
+		String collectionRoles = "";
+		List roleNames = new ArrayList();
+		Iterator rolesIt = roles.iterator();
+		while (rolesIt.hasNext()) {
+			String roleName = (String) rolesIt.next();
+			if (!roleNames.contains(roleName)) roleNames.add(roleName);
+		}
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+
+			hql = 
+				"select " +
+				"eventlog " +
+				"from " +
+				"SbiEventsLog as eventlog, " +
+				"SbiEventRole as eventRole, " +
+				"SbiExtRoles as roles " + 
+				"where " +
+				"eventlog.id = eventRole.id.event.id and " +
+				"eventRole.id.role.extRoleId = roles.extRoleId " +
+				"and " +
+				"roles.name in (:ROLE_NAMES) " +
+				"order by " +
+				"eventlog.date";
+
+			hqlQuery = aSession.createQuery(hql);
+			hqlQuery.setParameterList("ROLE_NAMES", roleNames);
+			return hqlQuery.list().size();
+
+
+
+		} catch (HibernateException he) {
+			logException(he);
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			if (aSession!=null){
+				if (aSession.isOpen()) aSession.close();
+			}
+			logger.debug("OUT");
+		}
+		
+
+	}
+
+	
+	
+	
+	
 	/**
 	 * Insert event log.
 	 * 
