@@ -581,26 +581,28 @@ function TableControllerFunction($scope, $timeout) {
     {
     	
     	var elaboratedHeaderStyle={};
-    	if($scope.tableStyle.headerStyle.background!=undefined)
-    	{
-    		elaboratedHeaderStyle.background=$scope.tableStyle.headerStyle.background;
-    	}
-    	 if($scope.tableStyle.headerStyle.color!=undefined)
-    	{
-    		elaboratedHeaderStyle.color=$scope.tableStyle.headerStyle.color;
-    	}
-    	if($scope.tableStyle.headerStyle.fontfamily!=undefined)
-    	{
-    		elaboratedHeaderStyle['font-family']=$scope.tableStyle.headerStyle.fontfamily;
-    	}
-    	if($scope.tableStyle.headerStyle.fontweight!=undefined)
-    	{
-    		elaboratedHeaderStyle['font-weight']=$scope.tableStyle.headerStyle.fontweight;
-    	}
-    	if($scope.tableStyle.headerStyle.fontsize!=undefined)
-    	{
-    		elaboratedHeaderStyle['font-size']=$scope.tableStyle.headerStyle.fontsize;
-    	}
+		if($scope.tableStyle!=undefined && $scope.tableStyle.headerStyle!=undefined){
+			if($scope.tableStyle.headerStyle.background!=undefined)
+			{
+				elaboratedHeaderStyle.background=$scope.tableStyle.headerStyle.background;
+			}
+			 if($scope.tableStyle.headerStyle.color!=undefined)
+			{
+				elaboratedHeaderStyle.color=$scope.tableStyle.headerStyle.color;
+			}
+			if($scope.tableStyle.headerStyle.fontfamily!=undefined)
+			{
+				elaboratedHeaderStyle['font-family']=$scope.tableStyle.headerStyle.fontfamily;
+			}
+			if($scope.tableStyle.headerStyle.fontweight!=undefined)
+			{
+				elaboratedHeaderStyle['font-weight']=$scope.tableStyle.headerStyle.fontweight;
+			}
+			if($scope.tableStyle.headerStyle.fontsize!=undefined)
+			{
+				elaboratedHeaderStyle['font-size']=$scope.tableStyle.headerStyle.fontsize;
+			}
+		}
     	return elaboratedHeaderStyle;     	
     }
     
