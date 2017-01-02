@@ -1,4 +1,4 @@
-angular.module("cockpitModule").controller("dataAssociationController",['$scope','cockpitModule_template','cockpitModule_datasetServices','$mdDialog','sbiModule_translate','$q','sbiModule_messaging','cockpitModule_documentServices','$timeout',dataAssociationControllerFunction]);
+angular.module("cockpitModule").controller("dataAssociationController",['$scope','cockpitModule_template','cockpitModule_datasetServices','$mdDialog','sbiModule_translate','$q','sbiModule_messaging','cockpitModule_documentServices','$timeout','sbiModule_restServices',dataAssociationControllerFunction]);
 
 angular.module("cockpitModule").filter('metatype', function() {
 	return function(data) {
@@ -13,20 +13,17 @@ angular.module("cockpitModule").filter('parametertype', function() {
 	}
 })
 
-function dataAssociationControllerFunction($scope,cockpitModule_template,cockpitModule_datasetServices,$mdDialog,sbiModule_translate,$q,sbiModule_messaging,cockpitModule_documentServices,$timeout){
+function dataAssociationControllerFunction($scope,cockpitModule_template,cockpitModule_datasetServices,$mdDialog,sbiModule_translate,$q,sbiModule_messaging,cockpitModule_documentServices,$timeout,sbiModule_restServices){
 	$scope.displayAssociationsContent=false;
-	$timeout(function(){$scope.displayAssociationsContent=true;},0); 
-	var emptyAss={description:"",fields:[]}; 
+	$timeout(function(){$scope.displayAssociationsContent=true;},0);
+	var emptyAss={description:"",fields:[]};
 	$scope.utils.currentAss=angular.copy(emptyAss);
 	$scope.jsonCurrentAss={};	//this is used to have direct response of data
 	$scope.tmpEditCurrAss={};
-	 
 	
-	
-	 $scope.toggleAssociation=function(objLabel,fieldName,type){
-		
+	$scope.toggleAssociation=function(objLabel,fieldName,type){
 		var finded=false;
-		 //check if this association is present
+		//check if this association is present
 		for(var i=0;i<$scope.utils.currentAss.fields.length;i++){
 			if(angular.equals($scope.utils.currentAss.fields[i].store,objLabel) && angular.equals($scope.utils.currentAss.fields[i].type,type)){
 				//dataset have one association
@@ -194,15 +191,16 @@ function dataAssociationControllerFunction($scope,cockpitModule_template,cockpit
 				 });
 		 
 	 }
-	 $scope.deleteCurrentAssociations=function(){
-		 if(Object.keys($scope.tmpEditCurrAss).length>0){
+	 
+	$scope.deleteCurrentAssociations=function(){
+		if(Object.keys($scope.tmpEditCurrAss).length>0){
 			//modify of present ass
-			 $scope.tmpAssociations.unshift( $scope.tmpEditCurrAss);
-		 } 
+			$scope.tmpAssociations.unshift( $scope.tmpEditCurrAss);
+		} 
 		$scope.tmpEditCurrAss={};
 		$scope.utils.currentAss=angular.copy(emptyAss);
 		$scope.jsonCurrentAss={};	 
-		}
+	}
 	 
 	 $scope.deleteAssociations=function(ass){
 		 
@@ -244,4 +242,58 @@ function dataAssociationControllerFunction($scope,cockpitModule_template,cockpit
 				 $scope.deleteCurrentAssociations();
 		  });
 	 }
+	 
+	 $scope.autodetect=function(){
+		var dataSets = {};
+		angular.forEach($scope.tmpAvaiableDataset,function(item){
+			var params = {};
+			angular.forEach(item.parameters,function(parameter){
+				this[parameter.name] = (parameter.value ? parameter.value : parameter.defaultValue);
+			},params);
+			this[item.label] = params;
+		},dataSets);
+		
+		var payload = JSON.stringify(dataSets);
+		sbiModule_restServices.restToRootProject();
+		sbiModule_restServices.promisePost("2.0/datasets","associations/autodetect?wait=true", payload).then(function(response){
+			$scope.tmpAutodetectResults=[];
+			angular.copy(response.data, $scope.tmpAutodetectResults);
+			
+			cockpitModule_datasetServices.autodetect("cockpitDataConfig",$scope.tmpAvaiableDataset,$scope.tmpAssociations,$scope.tmpAutodetectResults)
+			.then(function(autodetectResult){
+				var association = $scope.getAssociationFromAutodetectRow(autodetectResult);
+				$scope.tmpAssociations.unshift(association);				
+			});
+		},function(response){
+			sbiModule_restServices.errorHandler(response.data,"");
+		});
+	 }
+	 
+	 $scope.getAssociationFromAutodetectRow=function(autodetectRow){
+		var association = {};
+		
+		association["id"] = $scope.generateAssociationsId();
+		
+		var associationFields = [];
+		for (var property in autodetectRow) {
+		    if (autodetectRow.hasOwnProperty(property) && property!="similarity" && property!="length") {
+		    	var field = {};
+				field["column"] = autodetectRow[property];
+				field["store"] = property;
+				field["type"] = "dataset";
+		    	associationFields.push(field);
+		    }
+		}
+		association["fields"] = associationFields;
+		
+		var description = "";
+		for(var i=0; i<associationFields.length; i++){
+			var associationField = associationFields[i];
+			description += (associationField.store + "." + associationField.column + "=");
+		}
+		description = description.slice(0, -1);
+		association["description"] = description;
+		
+		return association;
+	}
 }

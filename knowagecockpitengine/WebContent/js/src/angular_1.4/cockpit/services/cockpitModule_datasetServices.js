@@ -1,4 +1,4 @@
-angular.module("cockpitModule").service("cockpitModule_datasetServices",function(sbiModule_translate,sbiModule_restServices,cockpitModule_template, $q, $mdPanel,cockpitModule_widgetSelection,cockpitModule_properties,cockpitModule_utilstServices, $rootScope,sbiModule_messaging){
+angular.module("cockpitModule").service("cockpitModule_datasetServices",function(sbiModule_translate,sbiModule_restServices,cockpitModule_template, $filter, $q, $mdPanel,cockpitModule_widgetSelection,cockpitModule_properties,cockpitModule_utilstServices, $rootScope,sbiModule_messaging){
 	var ds=this;
 
 	this.datasetList=[];
@@ -616,6 +616,96 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		})
 		
 		return def.promise;
+	}
+	
+	this.autodetect=function(attachToElementWithId,tmpAvaiableDatasets,tmpAssociations,tmpAutodetectResults){
+		var deferred = $q.defer();
+		var elemToAtt=document.body;
+		if(attachToElementWithId!=undefined){
+			elemToAtt=angular.element(document.getElementById(attachToElementWithId))
+		}
+
+		var config = {
+			attachTo: elemToAtt,
+			locals :{datasets:tmpAvaiableDatasets,associations:tmpAssociations,autodetectResults:tmpAutodetectResults,deferred:deferred},
+			controller: function($scope,mdPanelRef,sbiModule_translate,cockpitModule_datasetServices,datasets,associations,autodetectResults,deferred,$mdDialog){
+				$scope.cockpitAutodetectRows = [];
+				angular.forEach(autodetectResults,function(result){
+					var row = {similarity:result.coefficient, length:result.fields.length};
+					angular.forEach(result.fields,function(field){
+						row[field.datasetLabel] = field.datasetColumn;
+					}, row);
+					this.push(row);
+				},$scope.cockpitAutodetectRows);
+				
+				$scope.tmpCurrentAutodetectRow = null;
+				
+				$scope.cockpitAutodetectColumns=[{label:"Similarity",name:"similarity",transformer:function(input){return $filter('number')(input * 100, 0) + '%';}},{label:"Length",name:"length" }];
+				angular.forEach(datasets,function(item){
+					var column = {label:item.label, name:item.label};
+					this.push(column);
+				},$scope.cockpitAutodetectColumns);
+				
+				$scope.cockpitAutodetectSortableColumns=["similarity","length"];
+				angular.forEach(datasets,function(item){
+					this.push(item.label);
+				},$scope.cockpitAutodetectSortableColumns);
+				
+				$scope.cockpitAutodetectColumnsSearch=["length"];
+				angular.forEach(datasets,function(item){
+					this.push(item.label);
+				},$scope.cockpitAutodetectColumnsSearch);
+				
+				$scope.closeDialog=function(){
+					mdPanelRef.close();
+					$scope.$destroy();
+					deferred.reject();
+				}
+				
+				$scope.saveAutodetect=function(){
+					deferred.resolve(angular.copy($scope.tmpCurrentAutodetectRow));
+					mdPanelRef.close();
+					$scope.$destroy();
+				}
+				
+				$scope.minSimilarity = 0.0;
+				
+				$scope.minSimilarityValues = [];
+				for(var f = $scope.minSimilarity; f < 1; f = f + 0.1){
+					$scope.minSimilarityValues.unshift(f);
+				}
+				
+				$scope.selectedMinSimilarityValue = $scope.minSimilarity;
+				
+				$scope.minLength = 2;
+				
+				$scope.minLengthValues = [];
+				for(var i=$scope.minLength; i<=datasets.length; i++){
+					$scope.minLengthValues.unshift(i);
+				}
+				
+				$scope.selectedMinLengthValue = $scope.minLength;
+				
+				$scope.cockpitAutodetectSimilarityAndLengthFilter=function(row){
+					return (row.similarity >= $scope.selectedMinSimilarityValue) && (row.length >= $scope.selectedMinLengthValue);
+				}
+			},
+			disableParentScroll: true,
+			templateUrl: baseScriptPath+'/directives/cockpit-data-configuration/templates/dataAssociationAutodetectChoice.html',
+//				hasBackdrop: true,
+			position: $mdPanel.newPanelPosition().absolute().center(),
+			trapFocus: true,
+			zIndex: 150,
+			fullscreen :true,
+			clickOutsideToClose: true,
+			escapeToClose: false,
+			focusOnOpen: false,
+			onRemoving :function(){
+			}
+		};
+
+		$mdPanel.open(config);
+		return deferred.promise;
 	}
 
 })

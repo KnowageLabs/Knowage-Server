@@ -1,0 +1,55 @@
+<md-card   layout-fill layout="column" class="flexCard" style="position:absolute" >
+	<md-card-content flex layout="column" class="noPadding">
+		<md-toolbar >
+			<div class="md-toolbar-tools">Autodetect</div>
+		</md-toolbar>
+		
+		<md-content flex layout="column">
+		
+			<md-content layout="row" layout-padding layout-align="center center">
+		
+				<md-input-container flex="20">
+					<label>Min Similarity</label>
+					<md-select ng-model="selectedMinSimilarityValue">
+						<md-option ng-repeat="minSimilarity in minSimilarityValues" value="{{minSimilarity}}">
+							{{minSimilarity * 100 | number:0}}%
+						</md-option>
+					</md-select>
+				</md-input-container>
+				
+				<div flex="10"></div>
+			
+				<md-input-container flex="20">
+					<label>Min Length</label>
+					<md-select ng-model="selectedMinLengthValue">
+						<md-option ng-repeat="minLength in minLengthValues" value="{{minLength}}">
+							{{minLength}}
+						</md-option>
+					</md-select>
+				</md-input-container>
+				
+			</md-content>
+		
+			<angular-table flex 
+				id="cockpitAutodetectChoice"
+				ng-model="cockpitAutodetectRows"
+				columns="cockpitAutodetectColumns"
+				sortable-column="[]"
+				columns-search="cockpitAutodetectColumnsSearch"
+				show-search-bar="true"
+				multi-select="false"
+				highlights-selected-item="true"
+				no-pagination="false"
+				selected-item="tmpCurrentAutodetectRow"
+				visible-row-function= "cockpitAutodetectSimilarityAndLengthFilter(item)"
+				>
+			</angular-table>
+			
+		</md-content>
+	</md-card-content>
+	
+	<md-card-actions layout="row" layout-align="end center">
+		<md-button ng-click="closeDialog()">Cancel</md-button>
+		<md-button ng-click="saveAutodetect()" ng-disabled="!tmpCurrentAutodetectRow">Save</md-button>
+	</md-card-actions>
+</md-card>
