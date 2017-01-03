@@ -276,7 +276,7 @@ function dataAssociationControllerFunction($scope,cockpitModule_template,cockpit
 		
 		var associationFields = [];
 		for (var property in autodetectRow) {
-		    if (autodetectRow.hasOwnProperty(property) && property!="similarity" && property!="length") {
+		    if (autodetectRow.hasOwnProperty(property) && property!="___similarity" && property!="___length") {
 		    	var field = {};
 				field["column"] = autodetectRow[property];
 				field["store"] = property;

@@ -631,7 +631,9 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			controller: function($scope,mdPanelRef,sbiModule_translate,cockpitModule_datasetServices,datasets,associations,autodetectResults,deferred,$mdDialog){
 				$scope.cockpitAutodetectRows = [];
 				angular.forEach(autodetectResults,function(result){
-					var row = {similarity:result.coefficient, length:result.fields.length};
+					var row = {};
+					row["___similarity"] = result.coefficient;
+					row["___length"] = result.fields.length;
 					angular.forEach(result.fields,function(field){
 						row[field.datasetLabel] = field.datasetColumn;
 					}, row);
@@ -640,18 +642,18 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				
 				$scope.tmpCurrentAutodetectRow = null;
 				
-				$scope.cockpitAutodetectColumns=[{label:"Similarity",name:"similarity",transformer:function(input){return $filter('number')(input * 100, 0) + '%';}},{label:"Length",name:"length" }];
+				$scope.cockpitAutodetectColumns=[{label:"Similarity",name:"___similarity",transformer:function(input){return $filter('number')(input * 100, 0) + '%';}}];
 				angular.forEach(datasets,function(item){
 					var column = {label:item.label, name:item.label};
 					this.push(column);
 				},$scope.cockpitAutodetectColumns);
 				
-				$scope.cockpitAutodetectSortableColumns=["similarity","length"];
+				$scope.cockpitAutodetectSortableColumns=["___similarity"];
 				angular.forEach(datasets,function(item){
 					this.push(item.label);
 				},$scope.cockpitAutodetectSortableColumns);
 				
-				$scope.cockpitAutodetectColumnsSearch=["length"];
+				$scope.cockpitAutodetectColumnsSearch=[];
 				angular.forEach(datasets,function(item){
 					this.push(item.label);
 				},$scope.cockpitAutodetectColumnsSearch);
@@ -687,7 +689,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				$scope.selectedMinLengthValue = $scope.minLength;
 				
 				$scope.cockpitAutodetectSimilarityAndLengthFilter=function(row){
-					return (row.similarity >= $scope.selectedMinSimilarityValue) && (row.length >= $scope.selectedMinLengthValue);
+					return (row["___similarity"] >= $scope.selectedMinSimilarityValue) && (row["___length"] >= $scope.selectedMinLengthValue);
 				}
 			},
 			disableParentScroll: true,
