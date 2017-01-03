@@ -113,6 +113,7 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.UnsafeInput;
 import commonj.work.Work;
 import commonj.work.WorkException;
+import commonj.work.WorkItem;
 
 /**
  * DataLayer facade class. It manage the access to SpagoBI's datasets. It is built on top of the dao. It manages all complex operations that involve more than a
@@ -2052,12 +2053,14 @@ public class DatasetManagementAPI {
 		Work domainValuesWork = new DistinctValuesCalculateWork(dataSet, userProfile);
 		logger.debug("Scheduling calculating work for dataSet with label [" + dataSet.getLabel() + "] and signature [" + dataSet.getSignature() + "] by user ["
 				+ userProfile.getUserId() + "].");
+		WorkItem workItem = workManager.schedule(domainValuesWork);
 		if (wait) {
+			List<WorkItem> workItems = new ArrayList<WorkItem>(1);
+			workItems.add(workItem);
 			long workTimeout = Long.parseLong(SingletonConfig.getInstance().getConfigValue("SPAGOBI.WORKMANAGER.SQLDBCACHE.TIMEOUT"));
-			workManager.wait(workTimeout);
+			workManager.waitForAll(workItems, workTimeout);
 			logger.debug("Synchronous work has finished");
 		} else {
-			workManager.schedule(domainValuesWork);
 			logger.debug("Asynchronous work has been scheduled");
 		}
 		logger.debug("OUT");
