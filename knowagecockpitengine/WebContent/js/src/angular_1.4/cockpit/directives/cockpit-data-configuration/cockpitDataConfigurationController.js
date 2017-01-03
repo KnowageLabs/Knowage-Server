@@ -154,7 +154,7 @@ function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitMod
 	 $scope.selectParameterFromPanel=function(par,classItem){
 		 var position = $mdPanel.newPanelPosition()
 	      .relativeTo('.'+classItem)
-	      .addPanelPosition($mdPanel.xPosition.ALIGN_START, $mdPanel.yPosition.BELOW);
+	      .addPanelPosition($mdPanel.xPosition.ALIGN_START, $mdPanel.yPosition.CENTER);
  
 		 var config = {
 				    attachTo: angular.element(document.getElementById("cockpitDataConfig")) ,
@@ -270,7 +270,7 @@ function documentManagerController($scope,sbiModule_translate,$mdPanel,cockpitMo
 	 $scope.selectParameterFromPanel=function(par,classItem){
 		 var position = $mdPanel.newPanelPosition()
 	      .relativeTo('.'+classItem)
-	      .addPanelPosition($mdPanel.xPosition.ALIGN_START, $mdPanel.yPosition.BELOW);
+	      .addPanelPosition($mdPanel.xPosition.ALIGN_START, $mdPanel.yPosition.CENTER);
  
 		 var config = {
 				    attachTo: angular.element(document.getElementById("cockpitDataConfig")) ,
