@@ -335,6 +335,14 @@ function cockpitDataConfigurationController($scope,$rootScope,sbiModule_translat
 		    			 cockpitModule_widgetSelection.getAssociations(false,{associations:$scope.tmpAssociations,tmpAggregations:$scope.tmpAggregations,currentDsList:$scope.tmpAvaiableDataset});
 		    		  }
 		    	  },true);
+		    	  
+		    	  $scope.$watchCollection('tmpAvaiableDataset', function(newDatasets, oldDatasets) {
+		    		  if($scope.tmpAutodetectResults){
+		    			  console.log("$scope.tmpAutodetectResults = null;")
+		    			  $scope.tmpAutodetectResults = null;
+		    		  }
+		    		});
+		    	  
 
 		    	  $scope.saveConfiguration =function(){
 		    		  if($scope.utils.currentAss!=undefined && $scope.utils.currentAss.id != undefined ){
