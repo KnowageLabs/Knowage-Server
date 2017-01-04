@@ -255,7 +255,8 @@ function dataAssociationControllerFunction($scope,cockpitModule_template,cockpit
 		
 		var payload = JSON.stringify(dataSets);
 		sbiModule_restServices.restToRootProject();
-		sbiModule_restServices.promisePost("2.0/datasets","associations/autodetect?wait=true", payload).then(function(response){
+		sbiModule_restServices.promisePost("2.0/datasets","associations/autodetect?wait=true", payload)
+		.then(function(response){
 			$scope.tmpAutodetectResults=[];
 			angular.copy(response.data, $scope.tmpAutodetectResults);
 			
@@ -276,7 +277,7 @@ function dataAssociationControllerFunction($scope,cockpitModule_template,cockpit
 		
 		var associationFields = [];
 		for (var property in autodetectRow) {
-		    if (autodetectRow.hasOwnProperty(property) && property!="___similarity" && property!="___length") {
+		    if (autodetectRow.hasOwnProperty(property) && autodetectRow[property] && property!="___similarity" && property!="___length" && property!="___id") {
 		    	var field = {};
 				field["column"] = autodetectRow[property];
 				field["store"] = property;

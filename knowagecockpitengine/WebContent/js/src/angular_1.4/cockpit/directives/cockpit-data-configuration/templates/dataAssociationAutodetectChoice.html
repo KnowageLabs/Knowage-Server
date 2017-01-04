@@ -32,16 +32,16 @@
 		
 			<angular-table flex 
 				id="cockpitAutodetectChoice"
-				ng-model="cockpitAutodetectRows"
+				ng-model="cockpitAutodetectFilteredRows"
 				columns="cockpitAutodetectColumns"
 				sortable-column="[]"
 				columns-search="cockpitAutodetectColumnsSearch"
 				show-search-bar="true"
 				multi-select="false"
+				comparison-column="___id"
 				highlights-selected-item="true"
 				no-pagination="false"
-				selected-item="tmpCurrentAutodetectRow"
-				visible-row-function= "cockpitAutodetectSimilarityAndLengthFilter(item)"
+				selected-item="cockpitAutodetectSelectedRow"
 				>
 			</angular-table>
 			
@@ -50,6 +50,6 @@
 	
 	<md-card-actions layout="row" layout-align="end center">
 		<md-button ng-click="closeDialog()">Cancel</md-button>
-		<md-button ng-click="saveAutodetect()" ng-disabled="!tmpCurrentAutodetectRow">Save</md-button>
+		<md-button ng-click="saveAutodetect()" ng-disabled="!tmpCurrentAutodetectRow">Select</md-button>
 	</md-card-actions>
 </md-card>
