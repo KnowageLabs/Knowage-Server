@@ -96,7 +96,19 @@ function cockpitImageWidgetControllerFunction($scope,cockpitModule_widgetConfigu
 				
 		};
 
-		$mdPanel.open(config);
+
+		$mdPanel.open(config).then(function(){
+            debugger;
+            $scope.refresh();
+        }, function(){
+            debugger;
+            $scope.refresh();
+        });
+		
+		
+		
+		
+			
 		finishEdit.promise.then(function(){
 			$scope.refresh();
 		});
