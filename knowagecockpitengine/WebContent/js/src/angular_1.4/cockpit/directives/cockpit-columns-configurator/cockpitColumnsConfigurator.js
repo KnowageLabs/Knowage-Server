@@ -31,10 +31,12 @@
 		if(!$scope.model.sortingOrder){
 			$scope.model.sortingOrder = "ASC";
 		}
-		var fieldsMeta = cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId).metadata.fieldsMeta;
-		$scope.model.sortingColumns = [];
-		for(var i=0;i<fieldsMeta.length;i++){
-			$scope.model.sortingColumns.push(fieldsMeta[i].name);
+		if($scope.model && $scope.model.dataset && $scope.model.dataset.dsId){
+			var fieldsMeta = cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId).metadata.fieldsMeta;
+			$scope.model.sortingColumns = [];
+			for(var i=0;i<fieldsMeta.length;i++){
+				$scope.model.sortingColumns.push(fieldsMeta[i].name);
+			}
 		}
 		
 		$scope.selectedColumn;
@@ -363,7 +365,6 @@ function controllerCockpitColumnsConfigurator($scope,sbiModule_translate,$mdDial
 	$scope.columnSelected = [];
 	$scope.localDataset = {};
 	if($scope.model.dataset!=undefined && $scope.model.dataset.dsId != undefined){
-
 		angular.copy(cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId), $scope.localDataset);
 	} else{
 		$scope.model.dataset= {};
