@@ -20,18 +20,23 @@
 	function cockpitColumnsConfiguratorControllerFunction($scope,$mdDialog,cockpitModule_datasetServices,$mdToast,cockpitModule_widgetConfigurator,sbiModule_restServices,sbiModule_translate,sbiModule_config,$mdSidenav,$q,cockpitModule_generalOptions){
 		$scope.translate=sbiModule_translate;
 		$scope.availableDatasets=cockpitModule_datasetServices.getAvaiableDatasets();
-		$scope.modalcolumns=[];
-		//$scope.fakeColumn={"aliasToShow":""};
-		//$scope.modalcolumns.push($scope.fakeColumn);
-		//$scope.moodalselectedcol=$scope.model.content.modalselectioncolumn;
 
-		if($scope.model.content.columnSelectedOfDataset!=undefined)
-		{	
-			for(var i=0;i<$scope.model.content.columnSelectedOfDataset.length;i++)
-			{
-				$scope.modalcolumns.push($scope.model.content.columnSelectedOfDataset[i]);
-			}
-		}	
+		if(!$scope.model.content.modalselectioncolumn){
+			$scope.model.content.modalselectioncolumn="";
+		}
+		
+		if(!$scope.model.sortingColumn){
+			$scope.model.sortingColumn = "";
+		}
+		if(!$scope.model.sortingOrder){
+			$scope.model.sortingOrder = "ASC";
+		}
+		var fieldsMeta = cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId).metadata.fieldsMeta;
+		$scope.model.sortingColumns = [];
+		for(var i=0;i<fieldsMeta.length;i++){
+			$scope.model.sortingColumns.push(fieldsMeta[i].name);
+		}
+		
 		$scope.selectedColumn;
 		$scope.lastId = -1;
 		if($scope.model.dataset == undefined){
@@ -49,12 +54,15 @@
 				if($scope.model.dataset.dsId !=-1){
 					angular.copy(cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId), $scope.local); 
 					$scope.model.content.columnSelectedOfDataset  = [];
+					$scope.model.sortingColumns = [];
 					for(var i=0;i<$scope.local.metadata.fieldsMeta.length;i++){
 						var obj = $scope.local.metadata.fieldsMeta[i];
 						obj["aggregationSelected"] = "SUM";
 						obj["funcSummary"] = "SUM";
 						obj["aliasToShow"] = obj.alias;
 						$scope.model.content.columnSelectedOfDataset.push(obj);
+						
+						$scope.model.sortingColumns.push(obj.name);
 					}
 					$scope.lastId=$scope.model.dataset.dsId;
 					$scope.showCircularcolumns ={value : false};

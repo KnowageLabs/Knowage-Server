@@ -351,7 +351,6 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		}
 		return param;
 	}
-
 	
 	//TODO missing maxRows
 	this.loadDatasetRecordsById = function(dsId, page, itemPerPage,columnOrdering, reverseOrdering, ngModel){
@@ -361,6 +360,28 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		var params="";
 
 		var aggregation = cockpitModule_widgetSelection.getAggregation(ngModel,dataset,columnOrdering, reverseOrdering);
+		
+		// apply sorting column & order
+		if(ngModel.sortingColumn && ngModel.sortingColumn!=""){
+			var sortingApplied = false;
+			for(var i=0; i<aggregation.categories.length; i++){
+				var category = aggregation.categories[i];
+				if(category.columnName == ngModel.sortingColumn && category.orderType == ""){
+					category.orderType = ngModel.sortingOrder;
+					sortingApplied = true;
+					break;
+				}
+			}
+			if(!sortingApplied){
+				for(var i=0; i<aggregation.measures.length; i++){
+					var measure = aggregation.measures[i];
+					if(measure.columnName == ngModel.sortingColumn && measure.orderType == ""){
+						measure.orderType = ngModel.sortingColumn;
+						break;
+					}
+				}
+			}
+		}
 
 		var aggr = encodeURIComponent(JSON.stringify(aggregation))
 		.replace(/'/g,"%27")
@@ -397,7 +418,6 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			dataToSend=cockpitModule_widgetSelection.getCurrentFilters(dataset.label);
 		}
 		
-		
 		if(ngModel.filters){	
 			for(var i=0;i<ngModel.filters.length;i++){
 				var filterElement=ngModel.filters[i];
@@ -414,10 +434,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					dataToSend[dataset.label][colName] = values;
 				}
 			}	
-			
-			
 		}
-			
 			
 		var dataToSendWithoutParams = {};
 		if(dataset.useCache == true || ngModel.updateble == true){

@@ -79,13 +79,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.translate = sbiModule_translate;
 		$scope.summaryRow = {};
 		$scope.datasetRecods = {};
+		
 		if($scope.ngModel.style==undefined){
 			$scope.ngModel.style={};
 		};
+		
 		if($scope.ngModel.cross==undefined){
 			$scope.ngModel.cross={};
 		};
-
 		
 		$scope.getKeyByValue = function( obj,value ) {
 		    for( var prop in obj ) {

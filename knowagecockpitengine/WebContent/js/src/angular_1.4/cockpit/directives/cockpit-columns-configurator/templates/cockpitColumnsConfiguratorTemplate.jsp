@@ -25,29 +25,45 @@
                      
               </md-card-title-text>
         </md-card-title>
-        <div layout-padding ng-if="model.content.columnSelectedOfDataset.length>0 && !showCircularcolumns.value">           
-	        <md-input-container class="md-block" layout-padding>
-		       			<label>{{translate.load("sbi.cockpit.widgets.table.modalselectioncolumn");}}</label>
-		          		<md-select ng-model="model.content.modalselectioncolumn">
-		          			<md-option md-option-empty ng-value=""></md-option>
-		           			<!-- <md-option ng-repeat="modalcolumn in modalcolumns" ng-value="modalcolumn"> -->
-		           			<md-option ng-repeat="modalcolumn in model.content.columnSelectedOfDataset" ng-value="modalcolumn.aliasToShow">
-		                			{{modalcolumn.aliasToShow}}
-		           			</md-option>
-		       			</md-select>
-		    </md-input-container>		    
-		</div>    
-     	<md-card-content layout="row" layout-align="space-around center">
+        <div layout="row" layout-margin ng-show="!showCircularcolumns.value">
+	        <md-input-container flex="40" class="md-block" ng-show="model.content.columnSelectedOfDataset.length>0">
+      			<label>{{translate.load("sbi.cockpit.widgets.table.modalselectioncolumn");}}</label>
+         		<md-select md-option-empty ng-model="model.content.modalselectioncolumn">
+         			<md-option md-option-empty ng-value=""></md-option>
+          			<md-option ng-repeat="modalcolumn in model.content.columnSelectedOfDataset" ng-value="modalcolumn.aliasToShow">
+               			{{modalcolumn.aliasToShow}}
+          			</md-option>
+      			</md-select>
+		    </md-input-container>
+		    <md-input-container flex="40" class="md-block">
+       			<label>{{translate.load("sbi.cockpit.widgets.table.sorting.column");}}</label>
+          		<md-select ng-model="model.sortingColumn">
+          			<md-option md-option-empty ng-value=""></md-option>
+           			<md-option ng-repeat="sortingColumn in model.sortingColumns" ng-value="sortingColumn">
+                			{{sortingColumn}}
+           			</md-option>
+       			</md-select>
+		    </md-input-container>
+		    <md-input-container flex="20" class="md-block">
+       			<label>{{translate.load("sbi.cockpit.widgets.table.sorting.order");}}</label>
+          		<md-select ng-model="model.sortingOrder" ng-disabled="model.sortingColumn==''">
+           			<md-option value="ASC">{{translate.load("sbi.cockpit.widgets.table.sorting.asc");}}</md-option>
+          			<md-option value="DESC">{{translate.load("sbi.cockpit.widgets.table.sorting.desc");}}</md-option>
+       			</md-select>
+		    </md-input-container>
+		</div>
+		<md-card-content layout="column" layout-align="center none" style="padding-top: 0px; padding-bottom: 0px;">
      		<div layout="row" ng-if="showCircularcolumns.value" layout-sm="column" layout-align="space-around">
       			<md-progress-circular md-mode="indeterminate"></md-progress-circular>
    			 </div>
-	  		<angular-table flex ng-show="model.content.columnSelectedOfDataset.length>0 && !showCircularcolumns.value"
-			id='metadataTable' ng-model="model.content.columnSelectedOfDataset"
-			columns='metadataTableColumns'
-			columns-search='["name"]' show-search-bar=true
-			no-pagination=true  scope-functions="functionsCockpitColumn"
-			speed-menu-option= actionsOfCockpitColumns
-			> </angular-table> 
+	  		<angular-table flex
+		  		ng-show="model.content.columnSelectedOfDataset.length>0 && !showCircularcolumns.value"
+				id='metadataTable' ng-model="model.content.columnSelectedOfDataset"
+				columns='metadataTableColumns'
+				columns-search='["name"]' show-search-bar=true
+				no-pagination=true  scope-functions="functionsCockpitColumn"
+				speed-menu-option= actionsOfCockpitColumns>
+			</angular-table> 
 			 
 			
 	    	
