@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -21,7 +21,7 @@ package it.eng.spagobi.utilities.engines.rest;
 import it.eng.spagobi.services.content.bo.Content;
 import it.eng.spagobi.utilities.engines.EngineAnalysisMetadata;
 
-import java.io.IOException;
+import javax.xml.bind.DatatypeConverter;
 
 public abstract class AbstractEngineStartRestService extends AbstractEngineRestService {
 
@@ -90,13 +90,8 @@ public abstract class AbstractEngineStartRestService extends AbstractEngineRestS
 			logger.debug("IN");
 
 			spagoBISubObject = getContentServiceProxy().readSubObjectContent(getAnalysisMetadata().getId().toString());
-			try {
-				rowData = DECODER.decodeBuffer(spagoBISubObject.getContent());
-				analysisStateRowData = rowData;
-			} catch (IOException e) {
-				logger.warn("Impossible to decode the content of " + getAnalysisMetadata().getId().toString() + " subobject");
-				return null;
-			}
+			rowData = DatatypeConverter.parseBase64Binary(spagoBISubObject.getContent());
+			analysisStateRowData = rowData;
 
 			logger.debug("OUT");
 		}

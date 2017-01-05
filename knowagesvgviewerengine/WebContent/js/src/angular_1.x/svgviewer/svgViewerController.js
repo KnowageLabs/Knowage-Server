@@ -236,7 +236,7 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
    * Loads the measures list with a REST service
    * */
   $scope.getMeasures = function(){
-	  sbiModule_restServices.get("1.0/svgviewer", 'getMeasures','level='+$scope.currentLevel).success(
+	  sbiModule_restServices.get("1.0/svgviewer", 'getMeasures',$scope.requestQueryString+'&level='+$scope.currentLevel).success(
 			  function(data, status, headers, config) {
 				  if (data.hasOwnProperty("errors")) {
 					  sbiModule_logger.log("measures not retrivied");
@@ -267,7 +267,7 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
    * Loads the measures list with a REST service
    * */
   $scope.getLayers = function(){
-	  sbiModule_restServices.get("1.0/svgviewer", 'getLayers','level='+$scope.currentLevel).success(
+	  sbiModule_restServices.get("1.0/svgviewer", 'getLayers',$scope.requestQueryString+'&level='+$scope.currentLevel).success(
 			  function(data, status, headers, config) {
 				  if (data.hasOwnProperty("errors")) {
 					  sbiModule_logger.log("layers not retrivied");

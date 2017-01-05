@@ -18,14 +18,10 @@
 package it.eng.knowage.engines.svgviewer.api.page;
 
 import it.eng.knowage.engines.svgviewer.SvgViewerEngine;
-import it.eng.knowage.engines.svgviewer.SvgViewerEngineConstants;
 import it.eng.knowage.engines.svgviewer.SvgViewerEngineInstance;
 import it.eng.knowage.engines.svgviewer.api.AbstractSvgViewerEngineResource;
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.utilities.callbacks.mapcatalogue.MapCatalogueAccessUtils;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 
@@ -140,58 +136,4 @@ public class PageResource extends AbstractSvgViewerEngineResource {
 			logger.debug("OUT");
 		}
 	}
-
-	private Map getEngineEnv() throws Exception {
-		Monitor userProfileMonitor = MonitorFactory.start("GeoEngine.pageResource.userProfile");
-
-		UserProfile userProfile = (UserProfile) getIOManager().getParameterFromSession(IEngUserProfile.ENG_USER_PROFILE);
-		String userUniqueIdentifier = (String) userProfile.getUserUniqueIdentifier();
-
-		userProfileMonitor.stop();
-
-		Monitor mapCatalogueMonitor = MonitorFactory.start("GeoEngine.pageResource.mapCatalogue");
-
-		MapCatalogueAccessUtils mapCatalogueServiceProxy = new MapCatalogueAccessUtils(getHttpSession(), userUniqueIdentifier);
-		String standardHierarchy = mapCatalogueServiceProxy.getStandardHierarchy();
-
-		mapCatalogueMonitor.stop();
-		Monitor getEnvMonitor = MonitorFactory.start("GeoEngine.pageResource.getEnv");
-
-		Map env = getIOManager().getEnv();
-
-		getEnvMonitor.stop();
-
-		Monitor envVariablesMonitor = MonitorFactory.start("GeoEngine.pageResource.envVariablesMonitor");
-
-		// Add extra Environment variables specific for this engine
-		env.put(SvgViewerEngineConstants.ENV_MAPCATALOGUE_SERVICE_PROXY, mapCatalogueServiceProxy);
-
-		// env.put(SvgViewerEngineConstants.ENV_STD_HIERARCHY, standardHierarchy);
-
-		env.put(SvgViewerEngineConstants.ENV_CONTEXT_URL, getContextUrl());
-
-		env.put(SvgViewerEngineConstants.ENV_ABSOLUTE_CONTEXT_URL, getAbsoluteContextUrl());
-		envVariablesMonitor.stop();
-
-		return env;
-	}
-
-	private String getContextUrl() {
-		String contextUrl = null;
-
-		contextUrl = request.getContextPath();
-		logger.debug("Context path: " + contextUrl);
-
-		return contextUrl;
-	}
-
-	private String getAbsoluteContextUrl() {
-		String contextUrl = null;
-
-		contextUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/" + getContextUrl();
-		logger.debug("Context path: " + contextUrl);
-
-		return contextUrl;
-	}
-
 }

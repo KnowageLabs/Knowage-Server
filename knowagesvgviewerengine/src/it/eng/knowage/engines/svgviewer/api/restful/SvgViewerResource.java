@@ -75,13 +75,15 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 	@Path("/drawMap")
 	@GET
 	@Produces({ MediaType.APPLICATION_SVG_XML, MediaType.APPLICATION_JSON })
-	// @Produces(SvgViewerEngineConstants.SVG_MIME_TYPE + "; charset=UTF-8")
 	public Response drawMap(@QueryParam("level") String level) {
 		logger.debug("IN");
 		try {
-			DataMartProvider dataMartProvider = (DataMartProvider) getEngineInstance().getDataMartProvider();
+			SourceBean savedTemplate = getTemplateAsSourceBean();
+			Map env = getEngineEnv();
+			SvgViewerEngineInstance engineInstance = SvgViewerEngine.createInstance(savedTemplate, env);
+			DataMartProvider dataMartProvider = (DataMartProvider) engineInstance.getDataMartProvider();
 			dataMartProvider.setSelectedLevel(level);
-			File maptmpfile = getEngineInstance().renderMap("dsvg");
+			File maptmpfile = engineInstance.renderMap("dsvg");
 			byte[] data = Files.readAllBytes(maptmpfile.toPath());
 
 			ResponseBuilder response = Response.ok(data);
@@ -538,7 +540,7 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 
 		Integer actualLevel = getLevel(level);
 
-		SourceBean templateSB = getEngineInstance().getTemplate();
+		SourceBean templateSB = getTemplateAsSourceBean();
 		SourceBean confSB = (SourceBean) templateSB.getAttribute(SvgViewerEngineConstants.DATAMART_PROVIDER_TAG);
 		SourceBean hierarchySB = (SourceBean) confSB.getAttribute("HIERARCHY");
 		List members = hierarchySB.getAttributeAsList(SvgViewerEngineConstants.MEMBER_TAG);

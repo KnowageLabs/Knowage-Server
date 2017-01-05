@@ -48,11 +48,11 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import java.util.HashMap;
 import java.util.Locale;
 
+import javax.xml.bind.DatatypeConverter;
+
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import sun.misc.BASE64Decoder;
 
 /**
  * @author Zerbetto Davide (davide.zerbetto@eng.it)
@@ -79,8 +79,6 @@ public abstract class AbstractEngineRestService extends AbstractRestService {
 	private DataSetServiceProxy datasetProxy;
 	private MetamodelServiceProxy metamodelProxy;
 	private ArtifactServiceProxy artifactProxy;
-
-	protected static final BASE64Decoder DECODER = new BASE64Decoder();
 
 	public static final String AUDIT_ID = "SPAGOBI_AUDIT_ID";
 	public static final String DOCUMENT_ID = "document";
@@ -138,7 +136,7 @@ public abstract class AbstractEngineRestService extends AbstractRestService {
 		try {
 			if (template == null)
 				throw new SpagoBIEngineRuntimeException("There are no template associated to document [" + documentId + "]");
-			templateContent = DECODER.decodeBuffer(template.getContent());
+			templateContent = DatatypeConverter.parseBase64Binary(template.getContent());
 		} catch (Throwable e) {
 			SpagoBIEngineStartupException engineException = new SpagoBIEngineStartupException(getEngineName(), "Impossible to get template's content", e);
 			engineException.setDescription("Impossible to get template's content:  " + e.getMessage());

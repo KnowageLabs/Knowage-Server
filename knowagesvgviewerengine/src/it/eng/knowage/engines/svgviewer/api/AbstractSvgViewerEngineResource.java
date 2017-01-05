@@ -17,13 +17,18 @@
  */
 package it.eng.knowage.engines.svgviewer.api;
 
+import it.eng.knowage.engines.svgviewer.SvgViewerEngineConstants;
 import it.eng.knowage.engines.svgviewer.SvgViewerEngineInstance;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.user.UserProfileManager;
+import it.eng.spagobi.utilities.callbacks.mapcatalogue.MapCatalogueAccessUtils;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.EngineStartServletIOManager;
-import it.eng.spagobi.utilities.engines.rest.AbstractRestService;
+import it.eng.spagobi.utilities.engines.rest.AbstractEngineRestService;
+
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,7 +44,9 @@ import com.jamonapi.MonitorFactory;
  * @author Marco Cortella (marco.cortella@eng.it)
  *
  */
-public class AbstractSvgViewerEngineResource extends AbstractRestService {
+public class AbstractSvgViewerEngineResource extends AbstractEngineRestService {
+
+	private static final String ENGINE_NAME = "SvgViewerEngine";
 
 	@Context
 	protected HttpServletRequest request;
@@ -99,6 +106,54 @@ public class AbstractSvgViewerEngineResource extends AbstractRestService {
 	public HttpServletRequest getServletRequest() {
 		// TODO Auto-generated method stub
 		return request;
+	}
+
+	@Override
+	public UserProfile getUserProfile() {
+		return UserProfileManager.getProfile();
+	}
+
+	protected Map getEngineEnv() throws Exception {
+
+		UserProfile userProfile = (UserProfile) getIOManager().getParameterFromSession(IEngUserProfile.ENG_USER_PROFILE);
+		String userUniqueIdentifier = (String) userProfile.getUserUniqueIdentifier();
+
+		MapCatalogueAccessUtils mapCatalogueServiceProxy = new MapCatalogueAccessUtils(getHttpSession(), userUniqueIdentifier);
+		// String standardHierarchy = mapCatalogueServiceProxy.getStandardHierarchy();
+
+		Map env = getIOManager().getEnv();
+
+		// Add extra Environment variables specific for this engine
+		env.put(SvgViewerEngineConstants.ENV_MAPCATALOGUE_SERVICE_PROXY, mapCatalogueServiceProxy);
+
+		env.put(SvgViewerEngineConstants.ENV_CONTEXT_URL, getContextUrl());
+
+		env.put(SvgViewerEngineConstants.ENV_ABSOLUTE_CONTEXT_URL, getAbsoluteContextUrl());
+
+		return env;
+	}
+
+	private String getContextUrl() {
+		String contextUrl = null;
+
+		contextUrl = request.getContextPath();
+		logger.debug("Context path: " + contextUrl);
+
+		return contextUrl;
+	}
+
+	private String getAbsoluteContextUrl() {
+		String contextUrl = null;
+
+		contextUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/" + getContextUrl();
+		logger.debug("Context path: " + contextUrl);
+
+		return contextUrl;
+	}
+
+	@Override
+	public String getEngineName() {
+		return ENGINE_NAME;
 	}
 
 }

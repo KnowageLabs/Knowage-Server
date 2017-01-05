@@ -34,14 +34,15 @@
 		<% if (isCustomizedSVG) {%>
 			<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/svgviewer/directives/dynamicSvg.js"></script>
 		<% } %>
+	
 		<title>SVG Viewer</title>
 	</head>
 
 	
 	<body class="kn-svgviewer">    
 	          	
-			<div ng-app="svgViewerApp" class="svgMainContainer">
-			     <div  class="divFlex" ng-controller="SvgViewerController" ng-scope>  
+			<div ng-init="requestQueryString='<%=(request.getQueryString())%>';" ng-app="svgViewerApp" class="svgMainContainer">
+			     <div  class="divFlex" ng-controller="SvgViewerController" ng-scope> 
 			     <% if (isCustomizedSVG) {%><md-sidenav layout="column"  id="svgInfoSidenav" md-component-id="svgSideNav" ng-show="<%=propertiesPanelVisible%> && noError" class="md-sidenav-<%= propertiesPanelPosition %>"  ><% }else{ %>
 			      <md-sidenav layout="column" ng-class="{'_md-locked-open':sidenavOpened}" id="svgInfoSidenav" md-component-id="svgSideNav" ng-show="<%=propertiesPanelVisible%> && noError" class="md-sidenav-<%= propertiesPanelPosition %>"  ><% } %>
 			      <section  >
@@ -117,7 +118,7 @@
 				        </md-button>					 		
    					   <div id="container" layout-fill>   		             
 							<iframe id="svgContainer" 
-							    src='${pageContext.request.contextPath}/api/1.0/svgviewer/drawMap?SBI_EXECUTION_ID=<%=executionID%>'  
+							    src='${pageContext.request.contextPath}/api/1.0/svgviewer/drawMap?<%=(request.getQueryString())%>'  
 								width='100%'; height='100%'; frameborder="0" > 
 							</iframe>  			
 							<% if (isCustomizedSVG) {%>
