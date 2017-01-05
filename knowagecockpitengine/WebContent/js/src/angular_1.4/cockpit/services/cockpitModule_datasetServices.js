@@ -144,7 +144,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			for(var i=item.fields.length-1; i>=0; i--){
 				var field = item.fields[i];
 				var paramName = (field.column.startsWith("$P{") && field.column.endsWith("}")) ? field.column.substring(3, field.column.length - 1) : field.column;
-				if(field.type = "dataset" && removedDatasetParams[field.store].indexOf(paramName) > -1){
+				if(field.type == "dataset" && removedDatasetParams[field.store].indexOf(paramName) > -1){
 					item.description = item.description.replace(field.store + "." + field.column, "");
 					if(item.description.startsWith("=")){
 						item.description = item.description.substring(1);
