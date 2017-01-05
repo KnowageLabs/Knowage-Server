@@ -288,11 +288,13 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 			    					  angular.copy($scope.localStyle, model.style);
 			    					  model.dataset = {dsId: $scope.localModel.datasetId, dsLabel: $scope.localModel.datasetLabel};
 			    					 
-			    					  if(model.filters==undefined)
+			    					  if($scope.model.filters!=undefined)
 			    					  {
-			    						  model.filters=[];
+			    						  if(model.filters==undefined){
+			    							  model.filters=[];
+			    						  }
+			    						  angular.copy($scope.model.filters, model.filters);
 			    					  }	  
-			    					  angular.copy($scope.model.filters, model.filters);
 			    				  }
 			    				 angular.copy($scope.localModel.cross,model.cross);
 			    				  mdPanelRef.close();
