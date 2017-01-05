@@ -86,13 +86,7 @@ public class DistinctValuesCalculateWork implements Work {
 					try {
 						String numberOfSamples = GeneralUtilities
 								.getSpagoBIConfigurationProperty(ConfigurationConstants.SPAGOBI_DATASET_ASSOCIATIONS_AUTODETECT_SAMPLES);
-						int fetchSize;
-						try {
-							fetchSize = Integer.parseInt(numberOfSamples);
-						} catch (NumberFormatException nfe) {
-							logger.debug("Number format exception: the number of samples must be an integer. No limit on samples will be set.");
-							fetchSize = -1;
-						}
+						int fetchSize = Integer.parseInt(numberOfSamples);
 						if (fetchSize < 0) {
 							dataSet.loadData();
 						} else {

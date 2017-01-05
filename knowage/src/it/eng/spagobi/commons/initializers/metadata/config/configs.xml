@@ -504,7 +504,7 @@
 
 	<CONFIG label="IMPORTEXPORT.IMPORT_FILE_MAX_SIZE" name="IMPORTEXPORT.IMPORT_FILE_MAX_SIZE" description="IMPORTEXPORT.IMPORT_FILE_MAX_SIZE" isActive="true" valueCheck="15000000" valueType="STRING" category="GENERIC_CONFIGURATION" />
 	
-	<CONFIG label="SPAGOBI.DATASET.ASSOCIATIONS.AUTODETECT.SAMPLES" name="SPAGOBI.DATASET.ASSOCIATIONS.AUTODETECT.SAMPLES" description="Number of samples (or records) that are loaded while calculating the set of values for each attribute." isActive="true" valueCheck="-1" valueType="NUM" category="GENERIC_CONFIGURATION"/>
+	<CONFIG label="SPAGOBI.DATASET.ASSOCIATIONS.AUTODETECT.SAMPLES" name="SPAGOBI.DATASET.ASSOCIATIONS.AUTODETECT.SAMPLES" description="Number of samples (or records) that are loaded while calculating the set of values for each attribute. Please set a negative value to unlimit the samples." isActive="true" valueCheck="10000" valueType="NUM" category="GENERIC_CONFIGURATION"/>
 	
 		
 </CONFIGS>
