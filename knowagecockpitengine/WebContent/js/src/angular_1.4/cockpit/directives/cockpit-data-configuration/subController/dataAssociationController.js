@@ -244,29 +244,10 @@ function dataAssociationControllerFunction($scope,cockpitModule_template,cockpit
 	 }
 	 
 	 $scope.autodetect=function(){
-		var dataSets = {};
-		angular.forEach($scope.tmpAvaiableDataset,function(item){
-			var params = {};
-			angular.forEach(item.parameters,function(parameter){
-				this[parameter.name] = (parameter.value ? parameter.value : parameter.defaultValue);
-			},params);
-			this[item.label] = params;
-		},dataSets);
-		
-		var payload = JSON.stringify(dataSets);
-		sbiModule_restServices.restToRootProject();
-		sbiModule_restServices.promisePost("2.0/datasets","associations/autodetect?wait=true", payload)
-		.then(function(response){
-			$scope.tmpAutodetectResults=[];
-			angular.copy(response.data, $scope.tmpAutodetectResults);
-			
-			cockpitModule_datasetServices.autodetect("cockpitDataConfig",$scope.tmpAvaiableDataset,$scope.tmpAssociations,$scope.tmpAutodetectResults)
-			.then(function(autodetectResult){
-				var association = $scope.getAssociationFromAutodetectRow(autodetectResult);
-				$scope.tmpAssociations.unshift(association);				
-			});
-		},function(response){
-			sbiModule_restServices.errorHandler(response.data,"");
+		cockpitModule_datasetServices.autodetect("cockpitDataConfig",$scope.tmpAvaiableDataset,$scope.tmpAssociations)
+		.then(function(autodetectResult){
+			var association = $scope.getAssociationFromAutodetectRow(autodetectResult);
+			$scope.tmpAssociations.unshift(association);				
 		});
 	 }
 	 

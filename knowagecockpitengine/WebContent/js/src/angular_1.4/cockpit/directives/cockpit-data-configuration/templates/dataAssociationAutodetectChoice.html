@@ -6,31 +6,37 @@
 		
 		<md-content flex layout="column">
 		
-			<md-content layout="row" layout-padding layout-align="center center">
+			<div layout="row" flex layout-align="center center" ng-show="cockpitAutodetectFilteredRows===undefined">
+				<md-progress-circular md-mode="indeterminate" md-diameter="70"></md-progress-circular>
+			</div>
+					
+			<md-card ng-show="cockpitAutodetectFilteredRows!==undefined">
+				<md-card-content layout="row" layout-padding layout-align="center center">
 		
-				<md-input-container flex="20">
-					<label>Min Similarity</label>
-					<md-select ng-model="selectedMinSimilarityValue">
-						<md-option ng-repeat="minSimilarity in minSimilarityValues" value="{{minSimilarity}}">
-							{{minSimilarity * 100 | number:0}}%
-						</md-option>
-					</md-select>
-				</md-input-container>
+					<md-input-container flex="20" style="margin-bottom:0px;">
+						<label>Min Similarity</label>
+						<md-select ng-model="selectedMinSimilarityValue">
+							<md-option ng-repeat="minSimilarity in minSimilarityValues" value="{{minSimilarity}}">
+								{{minSimilarity * 100 | number:0}}%
+							</md-option>
+						</md-select>
+					</md-input-container>
+					
+					<div flex="10"></div>
 				
-				<div flex="10"></div>
-			
-				<md-input-container flex="20">
-					<label>Min Length</label>
-					<md-select ng-model="selectedMinLengthValue">
-						<md-option ng-repeat="minLength in minLengthValues" value="{{minLength}}">
-							{{minLength}}
-						</md-option>
-					</md-select>
-				</md-input-container>
+					<md-input-container flex="20" style="margin-bottom:0px;">
+						<label>Min Length</label>
+						<md-select ng-model="selectedMinLengthValue">
+							<md-option ng-repeat="minLength in minLengthValues" value="{{minLength}}">
+								{{minLength}}
+							</md-option>
+						</md-select>
+					</md-input-container>
 				
-			</md-content>
+				</md-card-content>
+			</md-card>
 		
-			<angular-table flex 
+			<angular-table flex ng-show="cockpitAutodetectFilteredRows!==undefined"
 				id="cockpitAutodetectChoice"
 				ng-model="cockpitAutodetectFilteredRows"
 				columns="cockpitAutodetectColumns"
@@ -50,6 +56,6 @@
 	
 	<md-card-actions layout="row" layout-align="end center">
 		<md-button ng-click="closeDialog()">Cancel</md-button>
-		<md-button ng-click="saveAutodetect()" ng-disabled="!tmpCurrentAutodetectRow">Select</md-button>
+		<md-button ng-click="saveAutodetect()" ng-disabled="!cockpitAutodetectSelectedRow">Select</md-button>
 	</md-card-actions>
 </md-card>
