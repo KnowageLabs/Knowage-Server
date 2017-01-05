@@ -47,8 +47,6 @@ angular.module("cockpitModule").service("cockpitModule_generalServices",function
 	}
 	
 	var doSaveCockpit=function(){
-		
-		
 		var dataToSend={};
 		dataToSend.action=cockpitModule_properties.DOCUMENT_ID==null ? "DOC_SAVE" : "MODIFY_COCKPIT";
 		dataToSend.document={};
@@ -59,6 +57,19 @@ angular.module("cockpitModule").service("cockpitModule_generalServices",function
 		dataToSend.folders=[];
 		dataToSend.customData={};
 		dataToSend.customData.templateContent=angular.copy(cockpitModule_template);
+		
+		// reset table widgets to first page
+		if(dataToSend.customData.templateContent.sheets){
+			angular.forEach(dataToSend.customData.templateContent.sheets,function(sheet){
+				if(sheet.widgets){
+					angular.forEach(sheet.widgets,function(widget){
+						if(widget.type == "table" && widget.content && widget.content.currentPageNumber){
+							widget.content.currentPageNumber = 0;
+						}
+					});
+				}
+			});
+		}
 		
 		sbiModule_restServices.restToRootProject();
 		sbiModule_restServices.promisePost("2.0/saveDocument","",dataToSend)
