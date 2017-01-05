@@ -1284,25 +1284,24 @@ public class DatasetManagementAPI {
 		IDataStore dataStore = dataSet.getDataStore();
 		if (dataStore != null && dataStore.getRecordsCount() < METAMODEL_LIMIT) {
 			String tableName = DataStore.DEFAULT_SCHEMA_NAME + "." + DataStore.DEFAULT_TABLE_NAME;
-			Map<String, String> datasetAlias = getDatasetAlias(dataSet);
 			List<String> orderColumns = new ArrayList<String>();
 
-			String originalQuery = getQueryText(null, tableName, groups, filters, projections, null, dataSet, true, datasetAlias, orderColumns);
+			String originalQuery = getQueryText(null, tableName, groups, filters, projections, null, dataSet, true, orderColumns);
 			boolean hasSortingOnCalculatedColumns = checkSortingOnCalculatedColumns(orderColumns);
 
 			IDataStore originalDataStore = dataStore.aggregateAndFilterRecords(originalQuery, -1, -1);
 			if (hasSortingOnCalculatedColumns) {
-				appendCalculatedColumnsToDataStore(projections, datasetAlias, originalDataStore);
+				appendCalculatedColumnsToDataStore(projections, originalDataStore);
 				sortColumnsOnDataStore(orderColumns, originalDataStore);
 			}
 
 			IDataStore pagedDataStore = originalDataStore.paginateRecords(offset, fetchSize);
 			if (!hasSortingOnCalculatedColumns) {
-				appendCalculatedColumnsToDataStore(projections, datasetAlias, pagedDataStore);
+				appendCalculatedColumnsToDataStore(projections, pagedDataStore);
 			}
 
 			if (summaryRowProjections != null && summaryRowProjections.size() > 0) {
-				String summaryRowQuery = getQueryText(null, tableName, groups, filters, projections, summaryRowProjections, dataSet, true, datasetAlias, null);
+				String summaryRowQuery = getQueryText(null, tableName, groups, filters, projections, summaryRowProjections, dataSet, true, null);
 				IDataStore summaryRowDataStore = originalDataStore.aggregateAndFilterRecords(summaryRowQuery, -1, -1);
 				appendSummaryRowToPagedDataStore(projections, summaryRowProjections, pagedDataStore, summaryRowDataStore);
 			}
@@ -1317,7 +1316,7 @@ public class DatasetManagementAPI {
 		return dataStore;
 	}
 
-	private void appendCalculatedColumnsToDataStore(List<ProjectionCriteria> projections, Map<String, String> datasetAlias, IDataStore pagedDataStore) {
+	private void appendCalculatedColumnsToDataStore(List<ProjectionCriteria> projections, IDataStore pagedDataStore) {
 		if (projections != null) {
 			IMetaData storeMetaData = pagedDataStore.getMetaData();
 
@@ -1327,9 +1326,6 @@ public class DatasetManagementAPI {
 
 			for (ProjectionCriteria projection : projections) {
 				String columnName = projection.getColumnName();
-				if (datasetAlias != null) {
-					columnName = datasetAlias.get(projection.getDataset()) + " - " + columnName;
-				}
 
 				String aggregateFunction = projection.getAggregateFunction();
 
@@ -1529,14 +1525,12 @@ public class DatasetManagementAPI {
 			int fetchSize) throws InstantiationException, IllegalAccessException {
 		logger.debug("IN");
 
-		Map<String, String> datasetAlias = getDatasetAlias(dataSet);
-
-		String query = getQueryText(sqlBuilder, dataSource, tableName, groups, filters, projections, null, dataSet, false, datasetAlias, null);
+		String query = getQueryText(sqlBuilder, dataSource, tableName, groups, filters, projections, null, dataSet, false, null);
 		IDataStore pagedDataStore = dataSource.executeStatement(query, offset, fetchSize);
 
 		if (summaryRowProjections != null && summaryRowProjections.size() > 0) {
 			String summaryRowQuery = getQueryText(sqlBuilder.getClass().newInstance(), dataSource, tableName, groups, filters, projections,
-					summaryRowProjections, dataSet, false, datasetAlias, null);
+					summaryRowProjections, dataSet, false, null);
 			IDataStore summaryRowDataStore = dataSource.executeStatement(summaryRowQuery, -1, -1);
 			appendSummaryRowToPagedDataStore(projections, summaryRowProjections, pagedDataStore, summaryRowDataStore);
 		}
@@ -1545,27 +1539,16 @@ public class DatasetManagementAPI {
 		return pagedDataStore;
 	}
 
-	private Map<String, String> getDatasetAlias(IDataSet dataSet) {
-		dataSet.loadData(0, 1, 1);
-		IDataStore limitedDataStore = dataSet.getDataStore();
-		if (limitedDataStore != null) {
-			Map<String, String> datasetAlias = (Map<String, String>) limitedDataStore.getMetaData().getProperty("DATASET_ALIAS");
-			return datasetAlias;
-		} else {
-			throw new SpagoBIRuntimeException("Impossible to retrieve datastore to get required metadata.");
-		}
-	}
-
 	public String getQueryText(IDataSource dataSource, String tableName, List<GroupCriteria> groups, List<FilterCriteria> filters,
 			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, boolean isRealtime,
-			Map<String, String> datasetAlias, List<String> outputOrderColumns) {
-		return getQueryText(new SelectBuilder(), dataSource, tableName, groups, filters, projections, summaryRowProjections, dataSet, isRealtime, datasetAlias,
+			List<String> outputOrderColumns) {
+		return getQueryText(new SelectBuilder(), dataSource, tableName, groups, filters, projections, summaryRowProjections, dataSet, isRealtime,
 				outputOrderColumns);
 	}
 
 	public String getQueryText(SelectBuilder sqlBuilder, IDataSource dataSource, String tableName, List<GroupCriteria> groups, List<FilterCriteria> filters,
 			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, boolean isRealtime,
-			Map<String, String> datasetAlias, List<String> outputOrderColumns) {
+			List<String> outputOrderColumns) {
 
 		if (tableName == null || tableName.isEmpty() || (!isRealtime && dataSource == null)) {
 			throw new IllegalArgumentException("Found one or more arguments invalid. Tablename [" + tableName + "] and/or dataSource [" + dataSource
@@ -1584,9 +1567,9 @@ public class DatasetManagementAPI {
 
 			Map<String, String> columnNameWithColonToAliasName = new HashMap<String, String>();
 
-			setColumnsToSelect(dataSource, projections, datasetAlias, sqlBuilder, orderColumns, isRealtime, columnNameWithColonToAliasName);
-			setWhereConditions(dataSource, filters, datasetAlias, sqlBuilder);
-			setGroupbyConditions(dataSource, groups, datasetAlias, sqlBuilder, columnNameWithColonToAliasName);
+			setColumnsToSelect(dataSource, projections, sqlBuilder, orderColumns, isRealtime, columnNameWithColonToAliasName);
+			setWhereConditions(dataSource, filters, sqlBuilder);
+			setGroupbyConditions(dataSource, groups, sqlBuilder, columnNameWithColonToAliasName);
 			setOrderbyConditions(dataSource, orderColumns, sqlBuilder);
 
 			queryText = sqlBuilder.toString();
@@ -1637,8 +1620,8 @@ public class DatasetManagementAPI {
 		return queryText;
 	}
 
-	private void setColumnsToSelect(IDataSource dataSource, List<ProjectionCriteria> projections, Map<String, String> datasetAlias, SelectBuilder sqlBuilder,
-			List<String> orderColumns, boolean isRealtime, Map<String, String> columnNameWithColonToAliasName) {
+	private void setColumnsToSelect(IDataSource dataSource, List<ProjectionCriteria> projections, SelectBuilder sqlBuilder, List<String> orderColumns,
+			boolean isRealtime, Map<String, String> columnNameWithColonToAliasName) {
 		if (orderColumns == null) {
 			throw new SpagoBIRuntimeException("Unable to manage ORDER BY clauses");
 		}
@@ -1668,10 +1651,6 @@ public class DatasetManagementAPI {
 					} else {
 						throw new SpagoBIRuntimeException("Projection [" + columnName + "] requires an alias");
 					}
-				}
-
-				if (datasetAlias != null) {
-					columnName = datasetAlias.get(projection.getDataset()) + " - " + columnName;
 				}
 
 				if (isCalculatedColumn) {
@@ -1814,7 +1793,7 @@ public class DatasetManagementAPI {
 		return columnNames;
 	}
 
-	private void setWhereConditions(IDataSource dataSource, List<FilterCriteria> filters, Map<String, String> datasetAlias, SelectBuilder sqlBuilder) {
+	private void setWhereConditions(IDataSource dataSource, List<FilterCriteria> filters, SelectBuilder sqlBuilder) {
 		if (filters != null) {
 			for (FilterCriteria filter : filters) {
 				String operator = filter.getOperator();
@@ -1836,9 +1815,6 @@ public class DatasetManagementAPI {
 					} else { // it's a column
 						String datasetLabel = filter.getLeftOperand().getOperandDataSet();
 						leftOperand = filter.getLeftOperand().getOperandValueAsString();
-						if (datasetAlias != null) {
-							leftOperand = datasetAlias.get(datasetLabel) + " - " + filter.getLeftOperand().getOperandValueAsString();
-						}
 						leftOperand = AbstractJDBCDataset.encapsulateColumnName(leftOperand, dataSource);
 					}
 				}
@@ -1881,7 +1857,7 @@ public class DatasetManagementAPI {
 		}
 	}
 
-	private void setGroupbyConditions(IDataSource dataSource, List<GroupCriteria> groups, Map<String, String> datasetAlias, SelectBuilder sqlBuilder,
+	private void setGroupbyConditions(IDataSource dataSource, List<GroupCriteria> groups, SelectBuilder sqlBuilder,
 			Map<String, String> columnNameWithColonToAliasName) {
 		if (groups != null) {
 			List<String> groupColumnNames = new ArrayList<String>();
@@ -1892,10 +1868,6 @@ public class DatasetManagementAPI {
 
 				if (columnName.contains(":")) {
 					columnName = columnNameWithColonToAliasName.get(columnName);
-				}
-
-				if (datasetAlias != null) {
-					columnName = datasetAlias.get(group.getDataset()) + " - " + group.getColumnName();
 				}
 
 				columnName = AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
