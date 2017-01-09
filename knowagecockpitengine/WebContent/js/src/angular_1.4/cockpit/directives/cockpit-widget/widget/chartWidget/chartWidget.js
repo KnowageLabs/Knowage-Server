@@ -204,11 +204,11 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 					  //$scope.model={};
 					  
 					  
-					  if(model.filters)
-					  { 
-						  $scope.model.filters=[];
-						  angular.copy(model.filters,$scope.model.filters);
-					  }	  
+//					  if(model.filters)
+//					  { 
+//						  $scope.model.filters=[];
+//						  angular.copy(model.filters,$scope.model.filters);
+//					  }	  
 					  
 					  
 					  $scope.handleEvent=function(event, arg1){
@@ -288,13 +288,13 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 			    					  angular.copy($scope.localStyle, model.style);
 			    					  model.dataset = {dsId: $scope.localModel.datasetId, dsLabel: $scope.localModel.datasetLabel};
 			    					 
-			    					  if($scope.model.filters!=undefined)
-			    					  {
-			    						  if(model.filters==undefined){
-			    							  model.filters=[];
-			    						  }
-			    						  angular.copy($scope.model.filters, model.filters);
-			    					  }	  
+//			    					  if($scope.model.filters!=undefined)
+//			    					  {
+//			    						  if(model.filters==undefined){
+//			    							  model.filters=[];
+//			    						  }
+//			    						  angular.copy($scope.model.filters, model.filters);
+//			    					  }	  
 			    				  }
 			    				 angular.copy($scope.localModel.cross,model.cross);
 			    				  mdPanelRef.close();
