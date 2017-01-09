@@ -376,7 +376,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				for(var i=0; i<aggregation.measures.length; i++){
 					var measure = aggregation.measures[i];
 					if(measure.columnName == ngModel.sortingColumn && measure.orderType == ""){
-						measure.orderType = ngModel.sortingColumn;
+						measure.orderType = ngModel.sortingOrder;
 						break;
 					}
 				}
