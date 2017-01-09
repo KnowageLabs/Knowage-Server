@@ -37,7 +37,8 @@ function renderWordCloud(chartConf,locale){
 
 	var maxic = 0;
 	var minValue=0;
-	
+	var maxWordLength = 0;
+  
 	for (var i=0; i<chartConf.data[0].length; i++){
 		
 		if (chartConf.data[0][i].value > maxic){
@@ -52,8 +53,18 @@ function renderWordCloud(chartConf,locale){
 			
 		}
 		
+		/*
+			@author: radmila.selakovic@mht.net
+				finding length of the longest word	
+		*/
+        if (chartConf.data[0][i].name.length > maxWordLength){
+         	
+        	maxWordLength = chartConf.data[0][i].name.length;
+			
+		}
+		
 	}    
-    
+	
 	/**
 	 * Normalize height and/or width of the chart if the dimension type for that dimension is
 	 * "percentage". This way the chart will take the appropriate percentage of the screen's
@@ -530,9 +541,30 @@ function renderWordCloud(chartConf,locale){
 			if (typeof module === "object" && module.exports) module.exports = cloud;
 			else (d3.layout || (d3.layout = {})).cloud = cloud;
 		})();    
-
-		var maxfontsize=chartConf.chart.maxFontSize;
-		var minfontsize=chartConf.chart.minFontSize;
+		
+		/*
+			@author: radmila.selakovic@mht.net
+				max font size will be counted dependes of 
+				length of the longest word (three cases)
+				min font size will be 2% of cloud size
+		*/
+		var actualCloudSizeHeight = heightNormalized-(Number(removePixelsFromFontSize(chartConf.title.style.fontSize))
+				+Number(removePixelsFromFontSize(chartConf.subtitle.style.fontSize)))*1.6;
+		
+		
+		var actualCloudSize = Math.min(actualCloudSizeHeight, widthNormalized); 
+		var maxfontsize=0;
+		if(maxWordLength<8){
+			maxfontsize = Math.round(actualCloudSize/5);
+		}
+		if(8<=maxWordLength<12){
+			maxfontsize= Math.round(actualCloudSize/6.67);
+		}
+		if(maxWordLength>=12){
+			maxfontsize = Math.round(actualCloudSize/10);
+	
+		}
+		var minfontsize=Math.round(actualCloudSize/50);
 		var fill = d3.scale.category20();
         
 		var wordFontSize= d3.scale.linear().domain([minValue,maxic]).range([minfontsize,maxfontsize]);
