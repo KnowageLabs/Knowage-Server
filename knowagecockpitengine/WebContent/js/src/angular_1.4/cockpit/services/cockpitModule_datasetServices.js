@@ -418,9 +418,16 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			dataToSend=cockpitModule_widgetSelection.getCurrentFilters(dataset.label);
 		}
 		
+		var filters;
 		if(ngModel.filters){
-			for(var i=0;i<ngModel.filters.length;i++){
-				var filterElement=ngModel.filters[i];
+			filters = ngModel.filters;
+		}
+		if(ngModel.content && ngModel.content.filters){
+			filters = ngModel.content.filters;
+		}
+		if(filters){
+			for(var i=0;i<filters.length;i++){
+				var filterElement=filters[i];
 				var colName=filterElement.colName;
 				var filterVals=filterElement.filterVals;
 				if(filterVals.length>0){
