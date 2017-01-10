@@ -25,18 +25,11 @@
 			$scope.model.content.modalselectioncolumn="";
 		}
 		
-		if(!$scope.model.sortingColumn){
-			$scope.model.sortingColumn = "";
+		if(!$scope.model.sortingColumnAlias){
+			$scope.model.sortingColumnAlias = undefined;
 		}
 		if(!$scope.model.sortingOrder){
 			$scope.model.sortingOrder = "ASC";
-		}
-		if($scope.model && $scope.model.dataset && $scope.model.dataset.dsId){
-			var fieldsMeta = cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId).metadata.fieldsMeta;
-			$scope.model.sortingColumns = [];
-			for(var i=0;i<fieldsMeta.length;i++){
-				$scope.model.sortingColumns.push(fieldsMeta[i].name);
-			}
 		}
 		
 		$scope.selectedColumn;
@@ -56,15 +49,12 @@
 				if($scope.model.dataset.dsId !=-1){
 					angular.copy(cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId), $scope.local); 
 					$scope.model.content.columnSelectedOfDataset  = [];
-					$scope.model.sortingColumns = [];
 					for(var i=0;i<$scope.local.metadata.fieldsMeta.length;i++){
 						var obj = $scope.local.metadata.fieldsMeta[i];
 						obj["aggregationSelected"] = "SUM";
 						obj["funcSummary"] = "SUM";
 						obj["aliasToShow"] = obj.alias;
 						$scope.model.content.columnSelectedOfDataset.push(obj);
-						
-						$scope.model.sortingColumns.push(obj.name);
 					}
 					$scope.lastId=$scope.model.dataset.dsId;
 					$scope.showCircularcolumns ={value : false};
@@ -72,7 +62,7 @@
 				}else{
 					$scope.model.content.columnSelectedOfDataset = [];
 				}
-
+				$scope.model.sortingColumnAlias = undefined;
 			}	
 		}
 

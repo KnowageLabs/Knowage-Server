@@ -362,11 +362,11 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		var aggregation = cockpitModule_widgetSelection.getAggregation(ngModel,dataset,columnOrdering, reverseOrdering);
 		
 		// apply sorting column & order
-		if(ngModel.sortingColumn && ngModel.sortingColumn!=""){
+		if(ngModel.sortingColumnAlias && ngModel.sortingColumnAlias!=""){
 			var sortingApplied = false;
 			for(var i=0; i<aggregation.categories.length; i++){
 				var category = aggregation.categories[i];
-				if(category.columnName == ngModel.sortingColumn && category.orderType == ""){
+				if(category.alias == ngModel.sortingColumnAlias && category.orderType == ""){
 					category.orderType = ngModel.sortingOrder;
 					sortingApplied = true;
 					break;
@@ -375,7 +375,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			if(!sortingApplied){
 				for(var i=0; i<aggregation.measures.length; i++){
 					var measure = aggregation.measures[i];
-					if(measure.columnName == ngModel.sortingColumn && measure.orderType == ""){
+					if(measure.alias == ngModel.sortingColumnAlias && measure.orderType == ""){
 						measure.orderType = ngModel.sortingOrder;
 						break;
 					}
@@ -418,7 +418,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			dataToSend=cockpitModule_widgetSelection.getCurrentFilters(dataset.label);
 		}
 		
-		if(ngModel.filters){	
+		if(ngModel.filters){
 			for(var i=0;i<ngModel.filters.length;i++){
 				var filterElement=ngModel.filters[i];
 				var colName=filterElement.colName;

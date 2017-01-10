@@ -37,16 +37,16 @@
 		    </md-input-container>
 		    <md-input-container flex="40" class="md-block">
        			<label>{{translate.load("sbi.cockpit.widgets.table.sorting.column");}}</label>
-          		<md-select ng-model="model.sortingColumn">
-          			<md-option md-option-empty ng-value=""></md-option>
-           			<md-option ng-repeat="sortingColumn in model.sortingColumns" ng-value="sortingColumn">
-                			{{sortingColumn}}
+          		<md-select ng-model="model.sortingColumnAlias" multiple="false">
+          			<md-option></md-option>
+           			<md-option ng-repeat="sortingColumn in model.content.columnSelectedOfDataset track by $index" ng-value="sortingColumn.aliasToShow">
+                			{{sortingColumn.aliasToShow}}
            			</md-option>
        			</md-select>
 		    </md-input-container>
 		    <md-input-container flex="20" class="md-block">
        			<label>{{translate.load("sbi.cockpit.widgets.table.sorting.order");}}</label>
-          		<md-select ng-model="model.sortingOrder" ng-disabled="model.sortingColumn==''">
+          		<md-select ng-model="model.sortingOrder" ng-disabled="!model.sortingColumnAlias || model.sortingColumnAlias==''">
            			<md-option value="ASC">{{translate.load("sbi.cockpit.widgets.table.sorting.asc");}}</md-option>
           			<md-option value="DESC">{{translate.load("sbi.cockpit.widgets.table.sorting.desc");}}</md-option>
        			</md-select>
