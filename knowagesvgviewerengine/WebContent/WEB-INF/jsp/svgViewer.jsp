@@ -32,6 +32,10 @@
 	
 		<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/svgviewer/svgViewerController.js"></script>
 		<% if (isCustomizedSVG) {%>
+			<%-- This is because dynamicSvg.js is plain javascript, and it is impossible to get the angular scope ---------------- --%>
+			<script type="text/javascript">
+				var requestQueryString = <%=(request.getQueryString())%>;
+			</script>
 			<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/svgviewer/directives/dynamicSvg.js"></script>
 		<% } %>
 	

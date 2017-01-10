@@ -33,14 +33,10 @@ import it.eng.knowage.engines.svgviewer.map.renderer.Layer;
 import it.eng.knowage.engines.svgviewer.map.renderer.Measure;
 import it.eng.knowage.engines.svgviewer.map.renderer.configurator.InteractiveMapRendererConfigurator;
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
-import it.eng.spagobi.tools.dataset.exceptions.DataSetNotLoadedYetException;
-import it.eng.spagobi.utilities.callbacks.mapcatalogue.MapCatalogueAccessUtils;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
@@ -167,22 +163,10 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 		logger.debug("IN");
 		try {
 			// 0. Define internal objects
-			SvgViewerEngineInstance engineInstance = getEngineInstance();
-			String documentIdEnv = (String) this.getEnv().get("DOCUMENT_ID");
-			if (!documentId.equals(documentIdEnv)) {
-				// update engineInstance if the template is changed for external cross navigation vs other SVG documents
-				SourceBean savedTemplate = getIOManager().getTemplateAsSourceBean();
-				engineInstance.setTemplate(savedTemplate);
-				Map newEnv = getIOManager().getEnv();
-				UserProfile userProfile = (UserProfile) getIOManager().getParameterFromSession(IEngUserProfile.ENG_USER_PROFILE);
-				String userUniqueIdentifier = (String) userProfile.getUserUniqueIdentifier();
-				MapCatalogueAccessUtils mapCatalogueServiceProxy = new MapCatalogueAccessUtils(getHttpSession(), userUniqueIdentifier);
-				newEnv.put(SvgViewerEngineConstants.ENV_MAPCATALOGUE_SERVICE_PROXY, mapCatalogueServiceProxy);
-				engineInstance.setEnv(newEnv);
-				engineInstance = SvgViewerEngine.createInstance(savedTemplate, newEnv);
-				// this.getEnv().put("DOCUMENT_ID", documentId);
-				setEngineInstance(engineInstance);
-			}
+			SourceBean savedTemplate = getTemplateAsSourceBean();
+			Map env = getEngineEnv();
+			SvgViewerEngineInstance engineInstance = SvgViewerEngine.createInstance(savedTemplate, env);
+
 			DataMartProvider dataMartProvider = (DataMartProvider) engineInstance.getDataMartProvider();
 			SOMapProvider mapProvider = (SOMapProvider) engineInstance.getMapProvider();
 			InteractiveMapRenderer mapRenderer = (InteractiveMapRenderer) engineInstance.getMapRenderer();
@@ -255,7 +239,10 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 	public Response getCustomizedConfiguration(@QueryParam("level") String level) {
 		logger.debug("IN");
 		try {
-			SvgViewerEngineInstance engineInstance = getEngineInstance();
+			SourceBean savedTemplate = getTemplateAsSourceBean();
+			Map env = getEngineEnv();
+			SvgViewerEngineInstance engineInstance = SvgViewerEngine.createInstance(savedTemplate, env);
+
 			DataMartProvider dataMartProvider = (DataMartProvider) engineInstance.getDataMartProvider();
 
 			// force level 1 if the parameter isn't valorized
@@ -277,15 +264,8 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 
 			IDataSet dataset = dataMartProvider.getDs();
 			if (dataset != null) {
-				String elementID = null;
 				JSONDataWriter writer = new JSONDataWriter();
-				IDataStore dataStore = null;
-				try {
-					dataStore = dataset.getDataStore();
-				} catch (DataSetNotLoadedYetException e) {
-					dataset.loadData();
-					dataStore = dataset.getDataStore();
-				}
+				IDataStore dataStore = dataMartProvider.getDataMart().getDataStore();
 				if (dataStore == null) {
 					logger.error("DataStore getted from dataset is null!");
 					throw new SpagoBIServiceException("getCustomizedConfiguration", "DataStore getted from dataset is null.");

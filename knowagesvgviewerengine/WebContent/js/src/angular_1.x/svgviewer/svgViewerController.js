@@ -123,7 +123,7 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 	  $scope.currentParent = e.detail.idElement;
 	  $scope.document = e.detail.document;
 	  $scope.env = e.detail.env;
-	  document.getElementById('svgContainer').src = sbiModule_config.contextName+"/api/1.0/svgviewer/drillMap?member="+$scope.currentMember+"&level="+$scope.currentLevel+"&parent="+$scope.currentParent+"&document="+$scope.document+$scope.env;
+	  document.getElementById('svgContainer').src = sbiModule_config.contextName+"/api/1.0/svgviewer/drillMap?"+$scope.requestQueryString+"&member="+$scope.currentMember+"&level="+$scope.currentLevel+"&parent="+$scope.currentParent+"&document="+$scope.document+$scope.env;
 	  
 	  
 	  if  ($scope.currentLevel > 1){
