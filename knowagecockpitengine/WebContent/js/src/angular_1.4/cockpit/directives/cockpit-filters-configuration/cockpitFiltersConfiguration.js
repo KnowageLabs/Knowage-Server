@@ -29,7 +29,7 @@ angular.module('cockpitModule')
 		   templateUrl: baseScriptPath+ '/directives/cockpit-filters-configuration/templates/cockpitFiltersConfiguration.html',
 		   controller: cockpitFiltersControllerFunction,
 		   scope: {
-			   config: '='
+			   ngModelShared: '='   
 		   	},
 		   	compile: function (tElement, tAttrs, transclude) {
                 return {
@@ -64,37 +64,100 @@ function cockpitFiltersControllerFunction($scope,cockpitModule_widgetServices,
 	}
 	
 	$scope.showFilters=false;
-	$scope.filtersToReturn=[]; // format [{colName : "..."  ,  filterVals : ["filterStr1" , "filterStr2", ... ]}   ,   {colName : "..."  ,  filterVals : [...] }]
+	//$scope.filtersToReturn=[]; // format [{colName : "..."  ,  filterVals : ["filterStr1" , "filterStr2", ... ]}   ,   {colName : "..."  ,  filterVals : [...] }]
 	
 	$scope.localDS={};
 	$scope.columnNames=[];
+
+	
+//	$scope.updateFilters=function()
+//	{
+//		$scope.filtersToReturn=[]; // format [{colName : "..."  ,  filterVals : ["filterStr1" , "filterStr2", ... ]}   ,   {colName : "..."  ,  filterVals : [...] }]
+//		$scope.showFilters=true;
+//		$scope.selectedDsId=$scope.ngModelShared.dataset.dsId;	
+//		angular.copy(cockpitModule_datasetServices.getDatasetById($scope.selectedDsId), $scope.localDS);
+//		for(var i=0;i<$scope.localDS.metadata.fieldsMeta.length;i++)
+//		{
+//			var objToInsert={};
+//			objToInsert.filterVals=[];
+//			objToInsert.colName=$scope.localDS.metadata.fieldsMeta[i].name;
+//			
+//			$scope.filtersToReturn.push(objToInsert);
+//			$scope.columnNames.push($scope.localDS.metadata.fieldsMeta[i].name);
+//		}
+//		$scope.ngModelShared.filters=$scope.filtersToReturn;	
+//	}
 	
 	
-	if($scope.$parent.model.filters==undefined)
-	{	
-		if($scope.$parent.model.dataset!=undefined && $scope.$parent.model.dataset.dsId!=undefined)
-		{
-			$scope.showFilters=true;
-			$scope.selectedDsId=$scope.$parent.model.dataset.dsId;	
-			angular.copy(cockpitModule_datasetServices.getDatasetById($scope.selectedDsId), $scope.localDS);
-			for(var i=0;i<$scope.localDS.metadata.fieldsMeta.length;i++)
-			{
-				var objToInsert={};
-				objToInsert.filterVals=[];
-				objToInsert.colName=$scope.localDS.metadata.fieldsMeta[i].name;
-				
-				$scope.filtersToReturn.push(objToInsert);
-				$scope.columnNames.push($scope.localDS.metadata.fieldsMeta[i].name);
-			}
-			$scope.$parent.model.filters=$scope.filtersToReturn;	
-
-		}
-
-	}
-	else
+	
+	$scope.updateFilters=function(dsId)
 	{
-		$scope.filtersToReturn=$scope.$parent.model.filters;
-	}
+		$scope.ngModelShared.filters=[]; // format [{colName : "..."  ,  filterVals : ["filterStr1" , "filterStr2", ... ]}   ,   {colName : "..."  ,  filterVals : [...] }]
+		//$scope.selectedDsId=$scope.ngModelShared.dataset.dsId;	
+		$scope.selectedDsId=dsId;	
+		angular.copy(cockpitModule_datasetServices.getDatasetById($scope.selectedDsId), $scope.localDS);
+		for(var i=0;i<$scope.localDS.metadata.fieldsMeta.length;i++)
+		{
+			var objToInsert={};
+			objToInsert.filterVals=[];
+			objToInsert.colName=$scope.localDS.metadata.fieldsMeta[i].name;
+			
+			$scope.ngModelShared.filters.push(objToInsert);
+		}
+   }
+	
+	
+	//for chartWidget
+	$scope.$watch("ngModelShared.datasetId", function(newValue, oldValue) {
+		
+		if(oldValue==newValue)
+		{	
+			if(oldValue!=undefined) //not initialization phase
+			{	
+				if($scope.ngModelShared.filters==undefined)	//if filters are not defined, I create them
+				{
+					$scope.updateFilters($scope.ngModelShared.datasetId);	
+				}
+			}
+			else{ //initialization phase, there is no dataset
+				
+			}
+		}
+		else
+		{
+			$scope.updateFilters($scope.ngModelShared.datasetId);	
+		}	
+	});
+	
+	
+	
+	
+	//for tableWidget
+	
+	$scope.$watch("ngModelShared.dataset.dsId", function(newValue, oldValue) {
+		
+		if(oldValue==newValue)
+		{	
+			if(oldValue!=undefined) //not initialization phase
+			{	
+				if($scope.ngModelShared.filters==undefined)	//if filters are not defined, I create them
+				{
+					$scope.updateFilters($scope.ngModelShared.dataset.dsId);	
+				}
+			}
+			else{ //initialization phase, there is no dataset
+				
+			}
+		}
+		else
+		{
+			$scope.updateFilters($scope.ngModelShared.dataset.dsId); 	
+		}	
+	});
+	
+
+	
+
 };
 
 

@@ -73,7 +73,7 @@
 					$scope.model.content.columnSelectedOfDataset = [];
 				}
 
-			}
+			}	
 		}
 
 		$scope.safeApply=function(){
