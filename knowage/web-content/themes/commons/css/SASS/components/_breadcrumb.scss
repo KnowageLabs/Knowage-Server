@@ -1,59 +1,65 @@
+
+
 bread-crumb nav {
-	color: #fff;
+    color: #fff;
     background-color: lighten($ternaryColor,10%);
     width: 100%;
-    height: 2.5em;
-    line-height: 2.5em;
-    .nav-wrapper {
-        display: inline-block;
-        width: 100%;
-        vertical-align: top;
-        overflow: hidden;
-        white-space: nowrap;
-    a {
-    	color: rgba($baseColor, 0.6);
-    	text-decoration: none;
-        max-width: 100px;
-        white-space: nowrap;
-        overflow: hidden;
-        display: inline-block;
-        text-overflow: ellipsis;
-        vertical-align: top;
-    	span {
-    		padding: .5em;
-            color: rgba($baseColor, 0.6);
-    	}
-    	&:hover span{
-    		background-color: $ternaryColor;
-    	}
-
-    	&:first-child {
-    		padding-left: 1em;
-    	}
-    	&:last-child {
-    		color: rgba($baseColor, 1);
-            max-width: 500px;
-            span {
-                color: rgba($baseColor, 1);
+    height: $toolbarHeight;
+    line-height: $toolbarHeight;
+    md-tabs {
+        md-tabs-canvas {
+            &.md-paginated {
+                height: $toolbarHeight;
             }
-    	}
-    	&:first-child:before {
-    		display: none;
-    	}
-    	&:before {
-    		content: '\f054';
-		    color: rgba($baseColor,0.6);
-		    vertical-align: top;
-		    display: inline-block;
-		    font-family: 'FontAwesome';
-		    font-weight: normal;
-		    font-style: normal;
-		    font-size: .8em;
-		    -webkit-font-smoothing: antialiased;
-    	}
-    	&.disabledLink {
-    		cursor: not-allowed;
-    	}
+            md-pagination-wrapper {
+                height: $toolbarHeight;
+                md-ink-bar {
+                    display: none;
+                }
+                
+                md-tab-item.md-tab {
+                    line-height: $toolbarHeight !important;
+                    padding: 0 12px 0 0 !important;
+                    color: rgba($baseColor, 0.6) !important;
+                    max-width: 200px !important;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    &.md-active {
+                       font-weight: inherit !important; 
+                    }
+                    &:nth-last-child(2) {
+                        color: rgba($baseColor, 1) !important;
+                        max-width: 300px !important;
+                        font-weight: bold;
+                    }
+                    &:first-child {
+                        span {
+                            padding-left: 1rem;
+                            &:before {
+                                display: none;
+                            }
+                        }
+                    }
+                    
+
+                    span {
+                        text-transform: capitalize;
+                        &:before {
+                            content: '\f054';
+                            color: rgba($baseColor,0.6);
+                            vertical-align: top;
+                            display: inline-block;
+                            font-family: 'FontAwesome';
+                            font-weight: normal;
+                            font-style: normal;
+                            font-size: $baseFontSize;
+                            padding-right: $baseFontSize;
+                            -webkit-font-smoothing: antialiased;
+                        }
+                    }
+                }
+            }
+        }
     }
-}
 }

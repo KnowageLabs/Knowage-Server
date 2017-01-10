@@ -136,41 +136,44 @@ md-toolbar.md-knowage-theme .md-toolbar-tools .md-button:not[disabled] {
 
 
 // Input fields
-
-md-input-container.md-knowage-theme .md-errors-spacer {
+md-input-container.md-knowage-theme {
+  &.noMarginBottom{
+    margin-bottom: 0;
+  }
+  .md-errors-spacer {
     min-height: 0;
-}
-
-md-input-container.md-knowage-theme:not(.md-input-invalid).md-input-focused {
-
-    .md-input {
-        border-color: $inputLineColor;
+  }
+  &:not(.md-input-invalid) {
+    &.md-input-focused {
+      .md-input {
+          border-color: $inputLineColor;
+      }
+      md-icon{
+          color: $baseColor;
+      }
     }
-    
-    md-icon{
-        color: $baseColor;
+    &.md-input-has-value label {
+      color: $inactiveLabelColor;
     }
-}
+    &.md-input-focused label {
+      color: $activeLabelColor;
+    }
+    &.md-input-invalid {
+      .md-input {
+        border-color: $inputInvalidLineColor;
+      }
+      &.md-input-invalid.md-input-focused label {
+        color: $invalidLabelColor;
+      }
+    }
+  }
 
-md-input-container.md-knowage-theme:not(.md-input-invalid).md-input-has-value label {
-    color: $inactiveLabelColor;
-}
-
-md-input-container.md-knowage-theme:not(.md-input-invalid).md-input-focused label {
-    color: $activeLabelColor;
 }
 
 md-input-container.md-knowage-theme ng-messages :not(.md-char-counter), md-input-container.md-knowage-theme [ng-messages] :not(.md-char-counter), md-input-container.md-knowage-theme ng-message :not(.md-char-counter), md-input-container.md-knowage-theme data-ng-message :not(.md-char-counter), md-input-container.md-knowage-theme x-ng-message :not(.md-char-counter), md-input-container.md-knowage-theme [ng-message] :not(.md-char-counter), md-input-container.md-knowage-theme [data-ng-message] :not(.md-char-counter), md-input-container.md-knowage-theme [x-ng-message] :not(.md-char-counter), md-input-container.md-knowage-theme [ng-message-exp] :not(.md-char-counter), md-input-container.md-knowage-theme [data-ng-message-exp] :not(.md-char-counter), md-input-container.md-knowage-theme [x-ng-message-exp] :not(.md-char-counter) {
     color: $fabPrimaryColor;
 }
 
-md-input-container.md-knowage-theme.md-input-invalid .md-input {
-    border-color: $inputInvalidLineColor;
-}
-
-md-input-container.md-knowage-theme.md-input-invalid.md-input-focused label {
-    color: $invalidLabelColor;
-}    
 
 // Radio Buttons and Checkboxes
 
