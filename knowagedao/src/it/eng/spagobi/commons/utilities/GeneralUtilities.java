@@ -667,7 +667,7 @@ public class GeneralUtilities extends SpagoBIUtilities {
 			path = spagoConfig.getConfigValue("SPAGOBI.SPAGOBI_CONTEXT");
 			if (path == null) {
 				logger.debug("SPAGOBI_CONTEXT not set, using the default value ");
-				path = "/SpagoBI";
+				path = "/knowage";
 			}
 			logger.debug("SPAGOBI_CONTEXT: " + path);
 		} catch (Exception e) {
