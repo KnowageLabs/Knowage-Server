@@ -85,6 +85,17 @@
     		background-color: white;
     	}
     }
+    .cockpitSheetTabsHook {
+    	md-tabs-canvas {
+    		overflow: visible;
+    		.md-tab {
+    			margin-right: 2px;
+    		}
+    	}
+    	md-tabs-wrapper {
+    		right: initial;
+    	}
+    }
     
 	.rtchips{
 		color: #3b678c;
@@ -871,7 +882,17 @@
 	
 //IE style
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
-	 
+	 .cockpitSheetTabsHook {
+    	md-tabs-canvas {
+    		width: 10px;
+    	}
+    	md-tabs-wrapper {
+    		width: 10px;
+    	}
+    	md-tab-data {
+    		display: none;
+    	}
+    }
 }
 
 }
