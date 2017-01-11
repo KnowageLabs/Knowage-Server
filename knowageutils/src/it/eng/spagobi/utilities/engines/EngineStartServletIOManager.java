@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,28 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.utilities.engines;
+
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.base.SourceBeanException;
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.services.content.bo.Content;
+import it.eng.spagobi.services.proxy.ContentServiceProxy;
+import it.eng.spagobi.services.proxy.DataSetServiceProxy;
+import it.eng.spagobi.services.proxy.DataSourceServiceProxy;
+import it.eng.spagobi.services.proxy.DocumentExecuteServiceProxy;
+import it.eng.spagobi.services.proxy.EventServiceProxy;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.ParametersDecoder;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.messages.EngineMessageBundle;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -34,30 +51,13 @@ import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 import sun.misc.BASE64Decoder;
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanException;
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.services.content.bo.Content;
-import it.eng.spagobi.services.proxy.ContentServiceProxy;
-import it.eng.spagobi.services.proxy.DataSetServiceProxy;
-import it.eng.spagobi.services.proxy.DataSourceServiceProxy;
-import it.eng.spagobi.services.proxy.DocumentExecuteServiceProxy;
-import it.eng.spagobi.services.proxy.EventServiceProxy;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.ParametersDecoder;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.messages.EngineMessageBundle;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- * 
+ *
  */
 public class EngineStartServletIOManager extends BaseServletIOManager {
 
-	
 	private UserProfile userProfile;
 	private String userId;
 	private String userUniqueIdentifier;
@@ -91,10 +91,9 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 	public static final String LANGUAGE = "SBI_LANGUAGE";
 	public static final String ON_EDIT_MODE = "onEditMode";
 
-	private Logger logger = Logger.getLogger(EngineStartServletIOManager.class);
+	private final Logger logger = Logger.getLogger(EngineStartServletIOManager.class);
 
-	public EngineStartServletIOManager(HttpServletRequest request,
-			HttpServletResponse response) {
+	public EngineStartServletIOManager(HttpServletRequest request, HttpServletResponse response) {
 		super(request, response);
 	}
 
@@ -106,20 +105,20 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 		// first we check if there is a user profile in session. If this is the case that means that the user have been authenticated by SpagoBI and the
 		// user profile has been succesfully loaded and stored in session by the AccessFilter
 		UserProfile userProfile = (UserProfile) getParameterFromSession(IEngUserProfile.ENG_USER_PROFILE);
-		if(userProfile == null) {
-			// if the user profile is not in session that means that the user has not been authenticated by spagobi. 
-			// This happens when the user call directly a REST service without log in spagobi before. 
+		if (userProfile == null) {
+			// if the user profile is not in session that means that the user has not been authenticated by spagobi.
+			// This happens when the user call directly a REST service without log in spagobi before.
 			// In these cases the request is catched by SecurityServerInterceptor that perform an authentication
-			// based on simple schema (= user and pwd as header proeprties). If the authentication have success 
+			// based on simple schema (= user and pwd as header proeprties). If the authentication have success
 			// and also the following authorization check have success the request is performed.
-			// In this case the profile of the user is not stored in session. There is actually no session. 
-			// The service is stateles. For this reason it is necessary to recreate the profile at each query and pass 
+			// In this case the profile of the user is not stored in session. There is actually no session.
+			// The service is stateles. For this reason it is necessary to recreate the profile at each query and pass
 			// it explicitely to the ioManager (see method setProfile).
 			userProfile = this.userProfile;
 		}
 		return userProfile;
 	}
-	
+
 	public void setUserProfile(UserProfile userProfile) {
 		this.userProfile = userProfile;
 	}
@@ -138,8 +137,7 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 		IEngUserProfile profile = null;
 
 		if (userUniqueIdentifier == null) {
-			userUniqueIdentifier = (String) getUserProfile()
-					.getUserUniqueIdentifier();
+			userUniqueIdentifier = (String) getUserProfile().getUserUniqueIdentifier();
 		}
 
 		return userUniqueIdentifier;
@@ -169,7 +167,7 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 
 		return documentId;
 	}
-	
+
 	public String getDocumentAuthor() {
 
 		if (documentAuthor == null) {
@@ -183,7 +181,7 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 
 	/**
 	 * Gets the audit id.
-	 * 
+	 *
 	 * @return the audit id
 	 */
 	public String getAuditId() {
@@ -197,28 +195,24 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 		JSONObject templateJSON = null;
 		try {
 			String template = getTemplateAsString();
-			templateJSON = template!=null? new JSONObject(template): null;
+			templateJSON = template != null ? new JSONObject(template) : null;
 		} catch (Throwable t) {
 			logger.error("Impossible to decode template's content\n" + t);
-			throw new SpagoBIRuntimeException(
-					"Impossible to decode template's content ["
-							+ template.getFileName() + "]", t);
+			throw new SpagoBIRuntimeException("Impossible to decode template's content [" + template.getFileName() + "]", t);
 
 		}
 
 		return templateJSON;
 	}
-	
+
 	public SourceBean getTemplateAsSourceBean() {
 		SourceBean templateSB = null;
 		try {
 			String template = getTemplateAsString();
-			templateSB = template!=null? SourceBean.fromXMLString(template): null;
+			templateSB = template != null ? SourceBean.fromXMLString(template) : null;
 		} catch (SourceBeanException e) {
 			logger.error("Impossible to decode template's content\n" + e);
-			throw new SpagoBIRuntimeException(
-					"Impossible to decode template's content ["
-							+ template.getFileName() + "]", e);
+			throw new SpagoBIRuntimeException("Impossible to decode template's content [" + template.getFileName() + "]", e);
 
 		}
 
@@ -231,37 +225,32 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 
 	public String getTemplateAsString(boolean forEdit) {
 		byte[] template = getTemplate(forEdit);
-		return template!=null? new String(template): null;
+		return template != null ? new String(template) : null;
 	}
-	
+
 	public byte[] getTemplate(boolean forEdit) {
 		byte[] templateContent = null;
-		
-		
+
 		if (template == null) {
 			contentProxy = getContentServiceProxy();
 			HashMap requestParameters = ParametersDecoder.getDecodedRequestParameters(getRequestContainer());
-			if(forEdit){
-				if(forEdit){
-					requestParameters.put(ON_EDIT_MODE,ON_EDIT_MODE);
-				}
+			if (forEdit) {
+				requestParameters.put(ON_EDIT_MODE, ON_EDIT_MODE);
 			}
 			template = contentProxy.readTemplate(getDocumentId(), requestParameters);
 		}
 
-		if(template != null) {			
+		if (template != null) {
 			templateName = template.getFileName();
 			logger.debug("Read the template [" + template.getFileName() + "]");
-			
+
 			try {
 				// BASE64Decoder cannot be used in a static way, since it is not thread-safe;
 				// see https://spagobi.eng.it/jira/browse/SPAGOBI-881
 				BASE64Decoder decoder = new BASE64Decoder();
 				templateContent = decoder.decodeBuffer(template.getContent());
 			} catch (IOException e) {
-				throw new SpagoBIRuntimeException(
-						"Impossible to get content from template ["
-								+ template.getFileName() + "]", e);
+				throw new SpagoBIRuntimeException("Impossible to get content from template [" + template.getFileName() + "]", e);
 			}
 		} else {
 			logger.warn("Document template is not defined or it is impossible to get it from the server");
@@ -275,7 +264,7 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 			contentProxy = getContentServiceProxy();
 			HashMap requestParameters = ParametersDecoder.getDecodedRequestParameters(getRequestContainer());
 			template = contentProxy.readTemplate(getDocumentId(), requestParameters);
-			if(template != null) {
+			if (template != null) {
 				templateName = template.getFileName();
 				logger.debug("Read the template [" + template.getFileName() + "]");
 			} else {
@@ -289,40 +278,29 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 		if (dataSource == null) {
 			String connectionName = getParameterAsString("connectionName");
 			if (connectionName != null) {
-				logger.debug("Using dataSource passed in as parameter ["
-						+ connectionName + "]");
-				dataSource = getDataSourceServiceProxy().getDataSourceByLabel(
-						connectionName);
+				logger.debug("Using dataSource passed in as parameter [" + connectionName + "]");
+				dataSource = getDataSourceServiceProxy().getDataSourceByLabel(connectionName);
 			} else {
 				logger.debug("Using default dataSource");
-				dataSource = getDataSourceServiceProxy().getDataSource(
-						getDocumentId());
+				dataSource = getDataSourceServiceProxy().getDataSource(getDocumentId());
 			}
 
 			// handle multischema
-			if (dataSource != null && dataSource.checkIsJndi()
-					&& dataSource.checkIsMultiSchema()) {
+			if (dataSource != null && dataSource.checkIsJndi() && dataSource.checkIsMultiSchema()) {
 				logger.debug("Multi schema enabled [TRUE]");
-				logger.debug("Schema profile atribute name is equals to ["
-						+ dataSource.getSchemaAttribute() + "]");
+				logger.debug("Schema profile atribute name is equals to [" + dataSource.getSchemaAttribute() + "]");
 
 				if (dataSource.getSchemaAttribute() != null) {
 
 					String schema;
 					try {
-						schema = (String) getUserProfile().getUserAttribute(
-								dataSource.getSchemaAttribute());
-						logger
-								.debug("Schema profile atribute value is equals to ["
-										+ schema + "]");
+						schema = (String) getUserProfile().getUserAttribute(dataSource.getSchemaAttribute());
+						logger.debug("Schema profile atribute value is equals to [" + schema + "]");
 						if (schema != null) {
 							dataSource.setJndi(dataSource.getJndi() + schema);
 						}
 					} catch (EMFInternalError e) {
-						logger.warn("Impossible to read attribute ["
-								+ dataSource.getSchemaAttribute()
-								+ "] from profile of user [" + getUserId()
-								+ "]", e);
+						logger.warn("Impossible to read attribute [" + dataSource.getSchemaAttribute() + "] from profile of user [" + getUserId() + "]", e);
 					}
 
 				}
@@ -351,15 +329,12 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 
 			language = getParameterAsString(LANGUAGE);
 			country = getParameterAsString(COUNTRY);
-			logger.debug("Locale parameters received: language = [" + language
-					+ "] ; country = [" + country + "]");
+			logger.debug("Locale parameters received: language = [" + language + "] ; country = [" + country + "]");
 
 			try {
 				locale = new Locale(language, country);
 			} catch (Exception e) {
-				logger
-						.debug("Error while creating Locale object from input parameters: language = ["
-								+ language + "] ; country = [" + country + "]");
+				logger.debug("Error while creating Locale object from input parameters: language = [" + language + "] ; country = [" + country + "]");
 				logger.debug("Creating default locale [en,US].");
 				locale = new Locale("en", "US");
 			}
@@ -374,8 +349,7 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 		if (getAuditServiceProxy() != null) {
 			getAuditServiceProxy().notifyServiceStartEvent();
 		} else {
-			logger
-					.warn("Impossible to log START-EVENT because the audit proxy has not been instatiated properly");
+			logger.warn("Impossible to log START-EVENT because the audit proxy has not been instatiated properly");
 		}
 	}
 
@@ -383,8 +357,7 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 		if (getAuditServiceProxy() != null) {
 			getAuditServiceProxy().notifyServiceErrorEvent(msg);
 		} else {
-			logger
-					.warn("Impossible to log ERROR-EVENT because the audit proxy has not been instatiated properly");
+			logger.warn("Impossible to log ERROR-EVENT because the audit proxy has not been instatiated properly");
 		}
 	}
 
@@ -392,15 +365,13 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 		if (getAuditServiceProxy() != null) {
 			getAuditServiceProxy().notifyServiceEndEvent();
 		} else {
-			logger
-					.warn("Impossible to log END-EVENT because the audit proxy has not been instatiated properly");
+			logger.warn("Impossible to log END-EVENT because the audit proxy has not been instatiated properly");
 		}
 	}
 
 	public ContentServiceProxy getContentServiceProxy() {
 		if (contentProxy == null) {
-			contentProxy = new ContentServiceProxy(getUserIdentifier(),
-					getHttpSession());
+			contentProxy = new ContentServiceProxy(getUserIdentifier(), getHttpSession());
 		}
 
 		return contentProxy;
@@ -408,8 +379,7 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 
 	public AuditServiceProxy getAuditServiceProxy() {
 		if (auditProxy == null && getAuditId() != null) {
-			auditProxy = new AuditServiceProxy(getAuditId(),
-					getUserIdentifier(), getHttpSession());
+			auditProxy = new AuditServiceProxy(getAuditId(), getUserIdentifier(), getHttpSession());
 		}
 
 		return auditProxy;
@@ -417,8 +387,7 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 
 	public EventServiceProxy getEventServiceProxy() {
 		if (eventProxy == null) {
-			eventProxy = new EventServiceProxy(getUserIdentifier(),
-					getHttpSession());
+			eventProxy = new EventServiceProxy(getUserIdentifier(), getHttpSession());
 		}
 
 		return eventProxy;
@@ -426,8 +395,7 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 
 	public DataSourceServiceProxy getDataSourceServiceProxy() {
 		if (datasourceProxy == null) {
-			datasourceProxy = new DataSourceServiceProxy(getUserIdentifier(),
-					getHttpSession());
+			datasourceProxy = new DataSourceServiceProxy(getUserIdentifier(), getHttpSession());
 		}
 
 		return datasourceProxy;
@@ -435,18 +403,15 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 
 	public DataSetServiceProxy getDataSetServiceProxy() {
 		if (datasetProxy == null) {
-			datasetProxy = new DataSetServiceProxy(getUserIdentifier(),
-					getHttpSession());
+			datasetProxy = new DataSetServiceProxy(getUserIdentifier(), getHttpSession());
 		}
 
 		return datasetProxy;
 	}
-	
-	
+
 	public DocumentExecuteServiceProxy getDocumentExecuteServiceProxy() {
 		if (documentExecuteProxy == null) {
-			documentExecuteProxy = new DocumentExecuteServiceProxy(getUserIdentifier(),
-					getHttpSession());
+			documentExecuteProxy = new DocumentExecuteServiceProxy(getUserIdentifier(), getHttpSession());
 		}
 
 		return documentExecuteProxy;
@@ -475,7 +440,7 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 
 	/**
 	 * Copy request parameters into env.
-	 * 
+	 *
 	 * @param env
 	 *            the env
 	 * @param serviceRequest
@@ -493,7 +458,7 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 			// TODO Auto-generated catch block
 			t.printStackTrace();
 		}
-		
+
 		parameterStopList = new HashSet();
 		parameterStopList.add("template");
 		parameterStopList.add("ACTION_NAME");
@@ -507,24 +472,19 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 		parameterNames = getRequestContainer().getKeys().iterator();
 		while (parameterNames.hasNext()) {
 			String parameterName = (String) parameterNames.next();
-			String parameterValue = (String)this.getParameter(parameterName);
-			
-			logger.debug("Parameter [" + parameterName
-					+ "] has been read from request");
-			logger.debug("Parameter [" + parameterName + "] is of type  "
-					+ parameterValue.getClass().getName());
-			logger.debug("Parameter [" + parameterName + "] is equal to "
-					+ parameterValue);
+			String parameterValue = (String) this.getParameter(parameterName);
+
+			logger.debug("Parameter [" + parameterName + "] has been read from request");
+			logger.debug("Parameter [" + parameterName + "] is of type  " + parameterValue.getClass().getName());
+			logger.debug("Parameter [" + parameterName + "] is equal to " + parameterValue);
 
 			if (parameterStopList.contains(parameterName)) {
-				logger.debug("Parameter [" + parameterName
-						+ "] copyed into environment parameters list: FALSE");
+				logger.debug("Parameter [" + parameterName + "] copyed into environment parameters list: FALSE");
 				continue;
 			}
 
 			env.put(parameterName, decodeParameterValue("" + parameterValue));
-			logger.debug("Parameter [" + parameterName
-					+ "] copyed into environment parameters list: TRUE");
+			logger.debug("Parameter [" + parameterName + "] copyed into environment parameters list: TRUE");
 		}
 
 		logger.debug("OUT");
@@ -532,10 +492,10 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 
 	/**
 	 * Decode parameter value.
-	 * 
+	 *
 	 * @param parValue
 	 *            the par value
-	 * 
+	 *
 	 * @return the string
 	 */
 	private String decodeParameterValue(String parValue) {
