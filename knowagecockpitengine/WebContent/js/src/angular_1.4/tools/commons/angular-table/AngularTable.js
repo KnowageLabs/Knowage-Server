@@ -1068,13 +1068,15 @@ function TableHeaderControllerFunction($scope, $timeout) {
     		for(var i=1;i<splname.length;i++){
     			if(tmpVal!=null && tmpVal!=undefined){
     				 tmpVal=tmpVal[splname[i]];
-    			}
-//    			else{
-//    				return "";
-//    				}
-    			
+    			}else{
+    				break;
+				}
     		}
-    		toReturn= tmpVal;
+    		if(tmpVal!=null && tmpVal!=undefined){
+    			toReturn= tmpVal;
+    		}else{
+    			toReturn= row[columnName];
+    		}
     	}else{
     		toReturn= row[columnName];
     	}
