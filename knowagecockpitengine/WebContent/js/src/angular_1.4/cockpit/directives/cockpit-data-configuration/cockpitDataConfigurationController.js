@@ -154,7 +154,7 @@ function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitMod
 	 $scope.selectParameterFromPanel=function(par,classItem){
 		 var position = $mdPanel.newPanelPosition()
 	      .relativeTo('.'+classItem)
-	      .addPanelPosition($mdPanel.xPosition.ALIGN_START, $mdPanel.yPosition.CENTER);
+	      .addPanelPosition($mdPanel.xPosition.ALIGN_START, $mdPanel.yPosition.ALIGN_BOTTOMS);
  
 		 var config = {
 				    attachTo: angular.element(document.getElementById("cockpitDataConfig")) ,
@@ -168,7 +168,7 @@ function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitMod
 				    	
 				    },
 				    template:
-				    	'<md-list><md-list-item ng-repeat="(key,val) in cockpitModule_analyticalDrivers" ng-click="addParameter(key)">{{key}}</md-list-item></md-list>',
+				    	'<md-content style="max-height: 300px;overflow-y: auto;"><md-list><md-list-item ng-repeat="(key,val) in cockpitModule_analyticalDrivers" ng-click="addParameter(key)">{{key}}</md-list-item></md-list></md-content>',
 				    position: position,
 				    locals: {parameter:par },
 				    clickOutsideToClose: true,
@@ -270,7 +270,7 @@ function documentManagerController($scope,sbiModule_translate,$mdPanel,cockpitMo
 	 $scope.selectParameterFromPanel=function(par,classItem){
 		 var position = $mdPanel.newPanelPosition()
 	      .relativeTo('.'+classItem)
-	      .addPanelPosition($mdPanel.xPosition.ALIGN_START, $mdPanel.yPosition.CENTER);
+	      .addPanelPosition($mdPanel.xPosition.ALIGN_START, $mdPanel.yPosition.ALIGN_BOTTOMS);
  
 		 var config = {
 				    attachTo: angular.element(document.getElementById("cockpitDataConfig")) ,
@@ -284,7 +284,7 @@ function documentManagerController($scope,sbiModule_translate,$mdPanel,cockpitMo
 				    	
 				    },
 				    template:
-				    	'<md-list><md-list-item ng-repeat="(key,val) in cockpitModule_analyticalDrivers" ng-click="addParameter(key)">{{key}}</md-list-item></md-list>',
+				    	'<md-content style="max-height: 300px;overflow-y: auto;"><md-list><md-list-item ng-repeat="(key,val) in cockpitModule_analyticalDrivers" ng-click="addParameter(key)">{{key}}</md-list-item></md-list></md-content>',
 				    position: position,
 				    locals: {parameter:par },
 				    clickOutsideToClose: true,
