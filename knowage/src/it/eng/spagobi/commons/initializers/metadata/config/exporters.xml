@@ -17,7 +17,6 @@
 	<EXPORTER domain="JPG" engine="knowagebirtreporteng" defaultValue="false" />
 	<EXPORTER domain="TXT" engine="knowagebirtreporteng" defaultValue="false" />
 	<EXPORTER domain="PPT" engine="knowagebirtreporteng" defaultValue="false" />
-	<EXPORTER domain="PPTX" engine="knowagebirtreporteng" defaultValue="false" />	
 	<EXPORTER domain="PDF" engine="knowagejpivotengine" defaultValue="false" />
 	<EXPORTER domain="XLS" engine="knowagejpivotengine" defaultValue="true" />	
 	<EXPORTER domain="PDF" engine="knowageqbeengine" defaultValue="true" />
