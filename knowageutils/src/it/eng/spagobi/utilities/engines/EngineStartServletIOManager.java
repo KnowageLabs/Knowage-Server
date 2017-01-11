@@ -454,9 +454,8 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 
 		try {
 			this.getRequest().setCharacterEncoding("UTF-8");
-		} catch (UnsupportedEncodingException t) {
-			// TODO Auto-generated catch block
-			t.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			logger.error(e);
 		}
 
 		parameterStopList = new HashSet();
