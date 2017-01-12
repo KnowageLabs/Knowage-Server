@@ -560,11 +560,18 @@
 	cockpit-static-pivot-table-widget{
 		@extend angular-table;
 		overflow:auto;
-	 table{
+		
+		&[multi-select] table>thead>tr>th:nth-child(2),&:not(multi-select) table>thead>tr>th:nth-child(1),
+		&[multi-select]  table>tbody>tr>td:nth-child(2),&:not(multi-select) table>tbody>tr>td:nth-child(1){
+			padding: 0 !important;
+		}
+	 &>table{
 			border-collapse: collapse;
 			width:auto;
+			border-bottom: 1px solid $tableLineSeparator;
 			tbody{
 				tr{
+					height: $angularTableDenseTRHeight;
 					td{
 					
 						&.level{
@@ -577,7 +584,7 @@
 								display: initial;
 								.crosstab-header-text{
 									text-align: center;
-									font-size: 16px;
+									font-size: $headerFontSize;
 									color: black;
 									font-weight: 600;
 								}
@@ -589,8 +596,8 @@
 						}
 						&.member{
 							text-align: center;
-							font-size: 16px;
-							color: #3b678c;
+							font-size: $baseFontSize;
+							color: $baseColor;
 							font-weight: 600;
 						}
 						&.data{
@@ -605,6 +612,12 @@
 							text-align: center;
 							background-color: rgba(59, 103, 140, 0.8);
 							color:white;
+						}
+						&.crosstab-header-text {
+							border-top:none;
+						}
+						&.sortIcon {
+							border-top: none;
 						}
 					}
 				}
