@@ -23,7 +23,7 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 <%-- ---------------------------------------------------------------------- --%>
 <%-- HTML	 																--%>
 <%-- ---------------------------------------------------------------------- --%>
-<html ng-app="chartExecutionManager">
+<html ng-init="requestQueryString='<%=(request.getQueryString())%>';" ng-app="chartExecutionManager">
 
 	<%-- == HEAD ========================================================== --%>
 	<head>
