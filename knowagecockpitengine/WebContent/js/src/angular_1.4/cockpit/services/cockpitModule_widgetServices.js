@@ -29,7 +29,7 @@ var addWidgetFunctionality=function(type,config){
 };
 
 //to add a widget type in the cockpitModule_widgetConfigurator , 
-//call the function addWidgetFunctionality grom the js of the widget directive
+//call the function addWidgetFunctionality from the js of the widget directive
 angular.module("cockpitModule").factory("cockpitModule_widgetConfigurator",function(){
 	var wc={};
 	return wc;

@@ -28,7 +28,34 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@include file="/WEB-INF/jsp/commons/angular/cockpitImport.jsp"%>
 
 <script type="text/javascript">
-angular.module("cockpitModule").factory("cockpitModule_template",function(sbiModule_translate){
+
+
+
+
+angular.module("cockpitModule").factory("cockpitModule_properties",function(){
+	return {
+		EDIT_MODE:angular.equals("<%= documentMode %>","EDIT"),
+		DOCUMENT_ID: <%=  docId%>,
+		DOCUMENT_NAME: "<%=  docName%>",
+		DOCUMENT_LABEL:"<%=  docLabel%>",
+		DOCUMENT_DESCRIPTION:"<%=  docDescription%>",
+		WIDGET_EXPANDED:{},
+		SELECTED_ROLE:"<%= 	executionRole %>",
+		OUTPUT_PARAMETERS: <%=outputParameters%>,
+		DS_IN_CACHE:[],
+		HAVE_SELECTIONS_OR_FILTERS:false,
+		STARTING_SELECTIONS:[],
+		STARTING_FILTERS:[],
+		
+	}
+});
+
+
+
+
+
+
+angular.module("cockpitModule").factory("cockpitModule_template",function(sbiModule_translate,cockpitModule_properties){
 	var template = <%=  template%>
 	
 	if(template.sheets==undefined){
@@ -65,6 +92,77 @@ angular.module("cockpitModule").factory("cockpitModule_template",function(sbiMod
 	}
 
 	
+	function filterForInitialSelection(obj){
+		if(!cockpitModule_properties.EDIT_MODE){
+			for(var i=0;i<cockpitModule_properties.STARTING_SELECTIONS.length;i++){
+				if(angular.equals(cockpitModule_properties.STARTING_SELECTIONS[i],obj)){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	function filterForInitialFilter(obj){
+		if(!cockpitModule_properties.EDIT_MODE){
+			for(var i=0;i<cockpitModule_properties.STARTING_FILTERS.length;i++){
+				if(angular.equals(cockpitModule_properties.STARTING_FILTERS[i],obj)){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+		
+	
+	template.getSelections=function(){
+		
+		template.selections=[];
+		var tmpFilters = {};
+		var tmpSelection=[];
+				
+		angular.copy(template.configuration.filters, tmpFilters);
+		for(var ds in tmpFilters){
+			for(var col in tmpFilters[ds]){
+				var tmpObj={
+						ds :ds,
+						columnName : col,
+						value : tmpFilters[ds][col],
+						aggregated:false
+				}
+				 
+				if(!filterForInitialFilter(tmpObj)){
+					template.selections.push(tmpObj);
+				}
+			}
+		}
+		
+		
+		angular.copy(template.configuration.aggregations, tmpSelection);
+		if(tmpSelection.length >0){
+			for(var i=0;i<tmpSelection.length;i++){
+				selection = tmpSelection[i].selection;
+				for(var key in selection){
+					var string = key.split(".");
+					var obj = {
+							ds : string[0],
+							columnName : string[1],
+							value : selection[key],
+							aggregated:true
+					};
+					if(!filterForInitialSelection(obj)){
+						template.selections.push(obj);
+					}
+				}
+			}
+		}
+			debugger;
+		return template.selections;
+			
+	
+	}
+	
+	
 	console.log("template:"+template);
 	// back compatibility with old document parameters
 	for(var i=0; i<template.configuration.associations.length; i++){
@@ -89,23 +187,7 @@ angular.module("cockpitModule").factory("cockpitModule_analyticalDrivers",functi
 	return ad;
 });
 
-angular.module("cockpitModule").factory("cockpitModule_properties",function(){
-	return {
-		EDIT_MODE:angular.equals("<%= documentMode %>","EDIT"),
-		DOCUMENT_ID: <%=  docId%>,
-		DOCUMENT_NAME: "<%=  docName%>",
-		DOCUMENT_LABEL:"<%=  docLabel%>",
-		DOCUMENT_DESCRIPTION:"<%=  docDescription%>",
-		WIDGET_EXPANDED:{},
-		SELECTED_ROLE:"<%= 	executionRole %>",
-		OUTPUT_PARAMETERS: <%=outputParameters%>,
-		DS_IN_CACHE:[],
-		HAVE_SELECTIONS_OR_FILTERS:false,
-		STARTING_SELECTIONS:[],
-		STARTING_FILTERS:[],
-		
-	}
-});
+
 
 
 </script>

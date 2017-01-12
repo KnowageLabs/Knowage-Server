@@ -182,6 +182,12 @@ function cockpitToolbarControllerFunction($scope,cockpitModule_widgetServices,co
 							    	  tags : ["document","datasource"],
 							    	  img : "7.png",
 							    	  type : "document"
+							      },{	
+							    	  name:"Selection",
+							    	  description: "View current selections on widgets.",
+							    	  tags : ["selection"],
+							    	  img : "8.png",
+							    	  type : "selection"
 							      }
 		    	        	];
 		    	  

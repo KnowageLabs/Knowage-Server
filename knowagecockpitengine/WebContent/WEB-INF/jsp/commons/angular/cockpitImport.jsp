@@ -52,6 +52,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/cockpit/directives/cockpit-widget/widget/tableWidget/tableWidget.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/cockpit/directives/cockpit-widget/widget/documentWidget/documentWidget.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/cockpit/directives/cockpit-widget/widget/staticPivotTableWidget/staticPivotTableWidget.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/cockpit/directives/cockpit-widget/widget/selectionWidget/selectionWidget.js"></script>
 
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/cockpit/directives/cockpit-general-configurator/cockpitGeneralConfiguratorController.js"></script>
