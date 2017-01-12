@@ -180,7 +180,6 @@ function createChart() {
 	                }
 	            });
 	        }else{
-	        	debugger;
 	        	//If the chart doesn't have data it's shown in grey
 	        	var myChart = new Chart(ctx, {
 	                type: config.CHART.type,

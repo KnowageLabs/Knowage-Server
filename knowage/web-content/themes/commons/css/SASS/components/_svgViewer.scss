@@ -135,6 +135,9 @@
     		left: -30px;
     		position: absolute;
     		bottom: 8px;
+    		&.emptyPie {
+    			left: 0;
+    		}
     	}
     	.percLegend {
 	    	position: absolute;
