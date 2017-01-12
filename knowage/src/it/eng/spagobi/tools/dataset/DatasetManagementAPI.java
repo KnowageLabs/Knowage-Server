@@ -1630,6 +1630,7 @@ public class DatasetManagementAPI {
 		String keepCategoryForOrdering = "";
 		boolean columnAndCategoryAreTheSame = false;
 		boolean isOrderColumnPresent = false;
+		boolean isAggregationPresent = false;
 
 		if (projections != null) {
 			Set<String> notCalculatedColumns = new HashSet<String>();
@@ -1675,6 +1676,7 @@ public class DatasetManagementAPI {
 				aliasName = AbstractJDBCDataset.encapsulateColumnName(aliasName, dataSource);
 				if (aggregationFunction != null && !aggregationFunction.equals(AggregationFunctions.NONE_FUNCTION) && columnName != "*") {
 					columnName = aggregationFunction.apply(columnName);
+					isAggregationPresent = true;
 					if (hasAlias) {
 						if (orderType != null && !orderType.isEmpty()) {
 							orderColumns.add(columnName + " " + orderType);
@@ -1772,6 +1774,8 @@ public class DatasetManagementAPI {
 			for (String additionalColumnName : aggregatedBasicColumns) {
 				sqlBuilder.column(additionalColumnName);
 			}
+
+			sqlBuilder.setDistinctEnabled(!isAggregationPresent);
 		}
 	}
 

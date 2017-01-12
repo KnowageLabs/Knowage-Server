@@ -131,7 +131,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#contains(it.eng.spagobi.tools .dataset.bo.IDataSet)
 	 */
 
@@ -142,7 +142,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#contains(java.lang.String)
 	 */
 
@@ -153,7 +153,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#contains(java.util.List)
 	 */
 
@@ -164,7 +164,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#getNotContained(java.util.List)
 	 */
 
@@ -185,7 +185,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#get(it.eng.spagobi.tools.dataset. bo.IDataSet)
 	 */
 
@@ -222,7 +222,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#get(java.lang.String)
 	 */
 
@@ -279,7 +279,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)int
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#get(it.eng.spagobi.tools.dataset. bo.IDataSet, java.util.List, java.util.List, java.util.List)
 	 */
 
@@ -490,6 +490,7 @@ public class SQLDBCache implements ICache {
 						String keepCategoryForOrdering = "";
 						boolean columnAndCategoryAreTheSame = false;
 						boolean isOrderColumnPresent = false;
+						boolean isAggregationPresent = false;
 						Map<String, String> columnNameWithColonToAliasName = new HashMap<String, String>();
 
 						// Columns to SELECT
@@ -534,6 +535,7 @@ public class SQLDBCache implements ICache {
 								aliasName = AbstractJDBCDataset.encapsulateColumnName(aliasName, dataSource);
 								if (aggregationFunction != null && !aggregationFunction.equals(AggregationFunctions.NONE_FUNCTION) && columnName != "*") {
 									columnName = aggregationFunction.apply(columnName);
+									isAggregationPresent = true;
 									if (hasAlias) {
 										// https://production.eng.it/jira/browse/KNOWAGE-149
 										// This variable is used for the order clause
@@ -625,6 +627,8 @@ public class SQLDBCache implements ICache {
 									orderColumns.add(arrayCategoriesForOrdering.get(i));
 								}
 							}
+
+							sqlBuilder.setDistinctEnabled(!isAggregationPresent);
 						}
 
 						// WHERE conditions
@@ -791,7 +795,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#load(it.eng.spagobi.tools.dataset .bo.IDataSet, boolean)
 	 */
 
@@ -805,7 +809,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#load(java.util.List, boolean)
 	 */
 
@@ -898,7 +902,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#load(it.eng.spagobi.tools.dataset .bo.IDataSet, boolean)
 	 */
 	@Override
@@ -943,7 +947,7 @@ public class SQLDBCache implements ICache {
 	// ===================================================================================
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#put(java.lang.String, it.eng.spagobi.tools.dataset.common.datastore.IDataStore)
 	 */
 
@@ -1154,7 +1158,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#delete(it.eng.spagobi.tools.dataset .bo.IDataSet)
 	 */
 
@@ -1184,7 +1188,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#delete(java.lang.String)
 	 */
 
@@ -1195,7 +1199,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#delete(java.lang.String)
 	 */
 	private boolean delete(String signature, boolean isHash) {
@@ -1262,7 +1266,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#deleteQuota()
 	 */
 
@@ -1327,7 +1331,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#deleteAll()
 	 */
 
@@ -1346,7 +1350,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#deleteOnlyStale()
 	 */
 	public void deleteOnlyStale() {
@@ -1450,7 +1454,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#getCacheMetadata()
 	 */
 
@@ -1461,7 +1465,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#addListener(it.eng.spagobi. tools.dataset.cache.ICacheEvent,
 	 * it.eng.spagobi.tools.dataset.cache.ICacheListener)
 	 */
@@ -1474,7 +1478,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#scheduleActivity(it.eng.spagobi .tools.dataset.cache.ICacheActivity,
 	 * it.eng.spagobi.tools.dataset.cache.ICacheTrigger)
 	 */
@@ -1487,7 +1491,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#enable(boolean)
 	 */
 
@@ -1499,7 +1503,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#isEnabled()
 	 */
 
@@ -1526,7 +1530,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#refresh(java.util.List, boolean)
 	 */
 
