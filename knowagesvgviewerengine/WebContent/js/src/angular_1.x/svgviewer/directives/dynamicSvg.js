@@ -1,14 +1,16 @@
 window.onload = function() {
+	
     createChart();
 }
 
 function doClickOnSvg(id){
-	var svg 	= document.getElementById("svgContainer");
+	
     var elem 	= svg.contentDocument.getElementById(id);
 	elem.onclick.apply(elem);
 }
 
 function createChart() {
+	var svg = document.getElementById("svgContainer");
 	var serviceResponse = {},
 		labels	=[],
 		columns =[],
@@ -22,7 +24,6 @@ function createChart() {
         })
         .done(function(response) {
         	serviceResponse = response.data;
-        	
         	
             for(var i=0;i<response.data.metaData.fields.length;i++){
 
@@ -56,7 +57,9 @@ function createChart() {
             	
             		var data=[],perc=[];
             		for(var j in columns){
-            			data.push(response.data.rows[k][columns[j]]);
+            			if(response.data.rows[k][columns[j]]!=""){
+            				data.push(response.data.rows[k][columns[j]]);
+            			}            			
             			if(percCol.length>0){
             				perc.push(response.data.rows[k][percCol[j]]);
             			}
@@ -79,14 +82,16 @@ function createChart() {
     
     window.onresize = function(event){
     	for(k in serviceResponse.rows){
-    		var svg 		= document.getElementById("svgContainer"),
-            	centroide 	= svg.contentDocument.getElementById(serviceResponse.rows[k]['column_1']),
+    		if(svg.contentDocument.getElementById(serviceResponse.rows[k]['column_1'])){
+    			var centroide 	= svg.contentDocument.getElementById(serviceResponse.rows[k]['column_1']),
             	position 	= centroide.getBoundingClientRect(),
             	canvas 		= document.getElementById(serviceResponse.rows[k]['column_1']);
-            canvas.parentElement.style.top 		= position.top;
-            canvas.parentElement.style.left 	= position.left;
-            canvas.parentElement.style.width 	= position.width;
-            canvas.parentElement.style.height 	= position.height;
+    			
+	            canvas.parentElement.style.top 		= position.top;
+	            canvas.parentElement.style.left 	= position.left;
+	            canvas.parentElement.style.width 	= position.width;
+	            canvas.parentElement.style.height 	= position.height;
+    		}
     	}
     }
     
@@ -112,74 +117,91 @@ function createChart() {
 
 
     function initializeChart(config,data,chartId,perc) {
-
-        var svg = document.getElementById("svgContainer"),
-        	centroide = svg.contentDocument.getElementById(chartId),
+    	//checking if the id is in the svg, otherwise will not render the chart
+    	if(svg.contentDocument.getElementById(chartId)){
+    		var centroide = svg.contentDocument.getElementById(chartId),
         	position = centroide.getBoundingClientRect();
         
-        function setChartToPosition(position){
-            var div = document.createElement("div");
-            div.className = "graph";
-            div.setAttribute("onclick","doClickOnSvg('"+chartId+"')");
-            var canvas = document.createElement("canvas");
-            var percLegend = document.createElement("div");
-            percLegend.className = "percLegend";
-            if(perc){
-            	for (var k in perc){
-            		var label 	= document.createElement("div"),
-            		 	span 	= document.createElement("div"),
-            		 	color 	= document.createElement("div");
-            		label.className = "graphLabel";
-            		span.className 	= "graphSpan";
-            		color.className = "graphColor";
-            		span.innerHTML 	= parseFloat(perc[k]).toFixed(2)+"%";
-            		color.style.backgroundColor = backgrounds[k];
-            		label.appendChild(span);
-            		label.appendChild(color);
-            		percLegend.appendChild(label);
-                }
-            }
-            
-            
-            
-            
-            canvas.id = chartId;
-            div.appendChild(canvas); 
-            div.appendChild(percLegend);
-            canvas.parentElement.style.top = position.top;
-            canvas.parentElement.style.left = position.left;
-            canvas.parentElement.style.width = position.width;
-            canvas.parentElement.style.height = position.height;
-            document.getElementById("dynamic-svg").appendChild(div);
-            
-        };
-        setChartToPosition(position);
+	        function setChartToPosition(position){
+	            var div = document.createElement("div");
+	            div.className = "graph";
+	            div.setAttribute("onclick","doClickOnSvg('"+chartId+"')");
+	            var canvas = document.createElement("canvas");
+	            canvas.id = chartId;
+	            canvas.setAttribute("class","emptyPie");
+	            div.appendChild(canvas);
+	            if(data.length>0){
+	            	var percLegend = document.createElement("div");
+		            percLegend.className = "percLegend";
+		            if(perc){
+		            	for (var k in perc){
+		            		var label 	= document.createElement("div"),
+		            		 	span 	= document.createElement("div"),
+		            		 	color 	= document.createElement("div");
+		            		label.className = "graphLabel";
+		            		span.className 	= "graphSpan";
+		            		color.className = "graphColor";
+		            		span.innerHTML 	= parseFloat(perc[k]).toFixed(2)+"%";
+		            		color.style.backgroundColor = backgrounds[k];
+		            		label.appendChild(span);
+		            		label.appendChild(color);
+		            		percLegend.appendChild(label);
+		                }
+		            	div.appendChild(percLegend);
+		            }
+	            }
+	            
+	            canvas.parentElement.style.top = position.top;
+	            canvas.parentElement.style.left = position.left;
+	            canvas.parentElement.style.width = position.width;
+	            canvas.parentElement.style.height = position.height;
+	            document.getElementById("dynamic-svg").appendChild(div);
+	            
+	        };
+	        setChartToPosition(position);
         
-        var ctx = document.getElementById(chartId).getContext("2d");
-
-        //DESCRITTORE GRAFICO A TORTA
-        debugger;
-        var myChart = new Chart(ctx, {
-            type: config.CHART.type,
-            data: {
-                labels: labels,
-                datasets: [{
-                    data: data,
-                    backgroundColor: backgrounds
-                }]
-            },
-            options: {//config.CHART.OPTIONS//{
-            	legend : {
-            		display: false
-            	}/*,
-            	elements: {
-            		arc: {
-            			borderWidth: 0
-            		}
-            	}*/
-            }
-        });
-
+	        var ctx = document.getElementById(chartId).getContext("2d");
+	
+	        //DESCRITTORE GRAFICO A TORTA
+	        if(data.length>0){
+	        	var myChart = new Chart(ctx, {
+	                type: config.CHART.type,
+	                data: {
+	                    labels: labels,
+	                    datasets: [{
+	                        data: data,
+	                        backgroundColor: backgrounds
+	                    }]
+	                },
+	                options: {
+	                	legend : {
+	                		display: false
+	                	}
+	                }
+	            });
+	        }else{
+	        	debugger;
+	        	//If the chart doesn't have data it's shown in grey
+	        	var myChart = new Chart(ctx, {
+	                type: config.CHART.type,
+	                data: {
+	                	labels: ['noData'],
+	                    datasets: [{       
+	                        data: [1],
+	                        backgroundColor: ['grey']
+	                    }]
+	                },
+	                options: {
+	                	tooltips: {
+	                		enabled: false
+	                	},
+	                	legend : {
+	                		display: false
+	                	}
+	                }
+	            });
+	        }
+    	}else return;
     }
 
 }
