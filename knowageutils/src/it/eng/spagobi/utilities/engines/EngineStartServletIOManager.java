@@ -470,20 +470,26 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 
 		parameterNames = getRequestContainer().getKeys().iterator();
 		while (parameterNames.hasNext()) {
-			String parameterName = (String) parameterNames.next();
-			String parameterValue = (String) this.getParameter(parameterName);
+			String parameterName = null;
+			try {
+				parameterName = (String) parameterNames.next();
+				String parameterValue = (String) this.getParameter(parameterName);
 
-			logger.debug("Parameter [" + parameterName + "] has been read from request");
-			logger.debug("Parameter [" + parameterName + "] is of type  " + parameterValue.getClass().getName());
-			logger.debug("Parameter [" + parameterName + "] is equal to " + parameterValue);
+				logger.debug("Parameter [" + parameterName + "] has been read from request");
+				logger.debug("Parameter [" + parameterName + "] is of type  " + parameterValue.getClass().getName());
+				logger.debug("Parameter [" + parameterName + "] is equal to " + parameterValue);
 
-			if (parameterStopList.contains(parameterName)) {
-				logger.debug("Parameter [" + parameterName + "] copyed into environment parameters list: FALSE");
-				continue;
+				if (parameterStopList.contains(parameterName)) {
+					logger.debug("Parameter [" + parameterName + "] copyed into environment parameters list: FALSE");
+					continue;
+				}
+
+				env.put(parameterName, decodeParameterValue("" + parameterValue));
+				logger.debug("Parameter [" + parameterName + "] copyed into environment parameters list: TRUE");
+
+			} catch (Exception e) {
+				logger.error("Error while processing request parameter [" + parameterName + "]", e);
 			}
-
-			env.put(parameterName, decodeParameterValue("" + parameterValue));
-			logger.debug("Parameter [" + parameterName + "] copyed into environment parameters list: TRUE");
 		}
 
 		logger.debug("OUT");
