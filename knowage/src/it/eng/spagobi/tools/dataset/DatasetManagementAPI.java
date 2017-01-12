@@ -1828,13 +1828,10 @@ public class DatasetManagementAPI {
 						List<String> values = filter.getRightOperand().getOperandValueAsList();
 						for (String value : values) {
 							if ("IN".equalsIgnoreCase(operator)) {
-								if (value.startsWith(stringDelimiter) && value.endsWith(stringDelimiter)) {
-									rightOperand += separator + "(1," + value + ")";
-								} else if (value.startsWith("(") && value.endsWith(")")) {
-									rightOperand += separator + "(1," + value.substring(1, value.length() - 1) + ")";
-								} else {
-									rightOperand += separator + "(1," + stringDelimiter + value + stringDelimiter + ")";
+								if (value.startsWith("(") && value.endsWith(")")) {
+									value = value.substring(1, value.length() - 1);
 								}
+								rightOperand += separator + "(1," + value + ")";
 							} else {
 								rightOperand += separator + stringDelimiter + value + stringDelimiter;
 							}

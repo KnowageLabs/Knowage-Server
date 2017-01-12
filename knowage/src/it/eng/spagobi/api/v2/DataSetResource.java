@@ -38,6 +38,7 @@ import it.eng.spagobi.tools.dataset.common.association.Association.Field;
 import it.eng.spagobi.tools.dataset.common.association.AssociationGroup;
 import it.eng.spagobi.tools.dataset.common.association.AssociationGroupJSONSerializer;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
+import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.similarity.Similarity;
@@ -64,7 +65,10 @@ import it.eng.spagobi.utilities.sql.SqlUtils;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -100,6 +104,13 @@ import com.mongodb.util.JSON;
 public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 
 	static protected Logger logger = Logger.getLogger(DataSetResource.class);
+
+	static final private String DEFAULT_TABLE_NAME_DOT = DataStore.DEFAULT_TABLE_NAME + ".";
+
+	private static final String DATE_TIME_FORMAT_MYSQL = JSONDataWriter.DATE_TIME_FORMAT.replace("yyyy", "%Y").replace("MM", "%m").replace("dd", "%d")
+			.replace("HH", "%H").replace("mm", "%i").replace("ss", "%s");
+	private static final String DATE_TIME_FORMAT_SQL_STANDARD = JSONDataWriter.DATE_TIME_FORMAT.replace("yyyy", "YYYY").replace("MM", "MM").replace("dd", "DD")
+			.replace("HH", "HH24").replace("mm", "MI").replace("ss", "SS");
 
 	@Override
 	public String getDataSets(String typeDoc, String callback) {
@@ -520,45 +531,58 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 			while (!isAnEmptySelection && it.hasNext()) {
 				String columns = it.next();
 				JSONArray values = datasetSelectionObject.getJSONArray(columns);
-				String columnNames = replaceColumnAliasesWithNames(columns, columnAliasToName);
+
 				if (values.length() > 0) {
+					List<String> columnsList = new ArrayList<String>();
+					String columnNames = replaceColumnAliasesWithNames(columns, columnAliasToName);
+					columnsList.addAll(Arrays.asList(columnNames.split("\\s*,\\s*"))); // trim spaces while splitting
+
+					List<String> dateColumnNamesList = new ArrayList<String>();
+					for (int i = 0; i < dataSet.getMetadata().getFieldCount(); i++) {
+						IFieldMetaData fieldMeta = dataSet.getMetadata().getFieldMeta(i);
+						if (Date.class.isAssignableFrom(fieldMeta.getType()) || Timestamp.class.isAssignableFrom(fieldMeta.getType())) {
+							dateColumnNamesList.add(fieldMeta.getName());
+						}
+					}
+
 					if (isRealtime && !dataSet.isFlatDataset() && !(dataSet.isPersisted() && !dataSet.isPersistedHDFS())) {
-						String defaultTableNameDot = DataStore.DEFAULT_TABLE_NAME + ".";
-						String[] columnsArray = columnNames.split(",");
-						Operand leftOperand = new Operand(defaultTableNameDot + AbstractJDBCDataset.encapsulateColumnName(columnsArray[0], null));
+						String firstColumn = columnsList.get(0);
+						Operand leftOperand = new Operand(DEFAULT_TABLE_NAME_DOT + AbstractJDBCDataset.encapsulateColumnName(firstColumn, null));
+
 						for (int i = 0; i < values.length(); i++) {
-							String currentValues = values.getString(i);
-							if (currentValues.startsWith("(") && currentValues.endsWith(")")) {
-								currentValues = currentValues.substring(1, currentValues.length() - 1);
-							}
-							String[] valuesArray = currentValues.split(",");
-							StringBuilder sb = new StringBuilder();
-							if (valuesArray.length == 1) {
-								String delim = valuesArray[0].startsWith("'") ? "" : "'";
-								sb.append(delim);
-								sb.append(valuesArray[0]);
-								sb.append(delim);
-							} else {
-								sb.append(valuesArray[0]);
-								for (int j = 1; j < valuesArray.length; j++) {
-									sb.append(" AND ");
-									sb.append(defaultTableNameDot);
-									sb.append(columnsArray[j]);
-									sb.append("=");
-									sb.append(valuesArray[j]);
+							String[] distinctValues = getDistinctValues(values.getString(i));
+							String firstValue = distinctValues[0];
+							StringBuilder valuesSB = new StringBuilder();
+							valuesSB.append(getProperValueString(firstValue, firstColumn, dateColumnNamesList, null));
+							if (distinctValues.length > 1) {
+								for (int j = 0; j < distinctValues.length; j++) {
+									valuesSB.append(" AND ");
+									valuesSB.append(DEFAULT_TABLE_NAME_DOT);
+									String column = columnsList.get(j);
+									valuesSB.append(AbstractJDBCDataset.encapsulateColumnName(column, null));
+									valuesSB.append("=");
+									valuesSB.append(getProperValueString(distinctValues[j], column, dateColumnNamesList, null));
 								}
 							}
-							Operand rightOperand = new Operand(sb.toString());
+							Operand rightOperand = new Operand(valuesSB.toString());
+
 							FilterCriteria filterCriteria = new FilterCriteria(leftOperand, "=", rightOperand);
 							filterCriterias.add(filterCriteria);
 						}
 					} else {
+						Operand leftOperand = new Operand(columnNames);
+
+						IDataSource dataSource = dataSet.getDataSource();
 						List<String> valuesList = new ArrayList<String>();
 						for (int i = 0; i < values.length(); i++) {
-							valuesList.add(values.getString(i));
+							String[] valuesArray = getDistinctValues(values.getString(i));
+							String column = columnsList.get(i);
+							for (int j = 0; j < valuesArray.length; j++) {
+								valuesList.add(getProperValueString(valuesArray[j], column, dateColumnNamesList, dataSource));
+							}
 						}
-						Operand leftOperand = new Operand(columnNames);
 						Operand rightOperand = new Operand(valuesList);
+
 						FilterCriteria filterCriteria = new FilterCriteria(leftOperand, "IN", rightOperand);
 						filterCriterias.add(filterCriteria);
 					}
@@ -566,6 +590,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 					isAnEmptySelection = true;
 				}
 			}
+
 			if (isAnEmptySelection) {
 				Operand leftOperand = new Operand("0");
 				Operand rightOperand = new Operand("1");
@@ -576,6 +601,51 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		}
 
 		return filterCriterias;
+	}
+
+	private String[] getDistinctValues(String string) {
+		String currentValues = string;
+		if (currentValues.startsWith("(") && currentValues.endsWith(")")) {
+			currentValues = currentValues.substring(1, currentValues.length() - 1);
+		}
+		String[] valuesArray = currentValues.split("\\s*,\\s*");
+		for (int i = 0; i < valuesArray.length; i++) {
+			String value = valuesArray[i];
+			if (value.startsWith("'") && value.endsWith("'")) {
+				valuesArray[i] = value.substring(1, value.length() - 1);
+			}
+		}
+		return valuesArray;
+	}
+
+	private String getProperValueString(String value, String column, List<String> dateColumnNamesList, IDataSource dataSource) {
+		if (dateColumnNamesList.contains(column)) {
+			return getConvertedDate(value, dataSource);
+		} else {
+			return "'" + value + "'";
+		}
+	}
+
+	private String getConvertedDate(String dateToConvert, IDataSource dataSource) {
+		String convertedDate = dateToConvert;
+
+		if (dataSource != null) {
+			String actualDialect = dataSource.getHibDialectClass();
+
+			if (SqlUtils.DIALECT_MYSQL.equalsIgnoreCase(actualDialect)) {
+				convertedDate = "STR_TO_DATE('" + dateToConvert + "','" + DATE_TIME_FORMAT_MYSQL + "')";
+			} else if (SqlUtils.DIALECT_POSTGRES.equalsIgnoreCase(actualDialect) || SqlUtils.DIALECT_ORACLE.equalsIgnoreCase(actualDialect)
+					|| SqlUtils.DIALECT_ORACLE9i10g.equalsIgnoreCase(actualDialect) || SqlUtils.DIALECT_HSQL.equalsIgnoreCase(actualDialect)
+					|| SqlUtils.DIALECT_TERADATA.equalsIgnoreCase(actualDialect)) {
+				convertedDate = "TO_DATE('" + dateToConvert + "','" + DATE_TIME_FORMAT_SQL_STANDARD + "')";
+			} else if (SqlUtils.DIALECT_SQLSERVER.equalsIgnoreCase(actualDialect)) {
+				convertedDate = "CONVERT(DATETIME, '" + dateToConvert + "')";
+			} else if (SqlUtils.DIALECT_INGRES.equalsIgnoreCase(actualDialect)) {
+				convertedDate = "DATE('" + dateToConvert + "')";
+			}
+		}
+
+		return convertedDate;
 	}
 
 	private String replaceColumnAliasesWithNames(String columns, Map<String, String> columnAliasToName) {

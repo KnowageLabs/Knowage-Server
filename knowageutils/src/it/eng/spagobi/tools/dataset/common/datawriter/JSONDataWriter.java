@@ -49,6 +49,12 @@ public class JSONDataWriter implements IDataWriter {
 
 	public static final String PROPERTY_PUT_IDS = "putIDs";
 
+	public static final String DATE_FORMAT = "dd/MM/yyyy";
+	public static final String CACHE_DATE_FORMAT = "yyyy-MM-dd";
+	public static final String TIME_FORMAT = "HH:mm:ss";
+	public static final String DATE_TIME_FORMAT = DATE_FORMAT + " " + TIME_FORMAT;
+	public static final String CACHE_DATE_TIME_FORMAT = CACHE_DATE_FORMAT + " " + TIME_FORMAT;
+
 	private boolean putIDs = true;
 	private boolean adjust = false;
 	private boolean setRenderer = false;
@@ -57,12 +63,14 @@ public class JSONDataWriter implements IDataWriter {
 	private Locale locale;
 	private boolean useIdProperty;
 
-	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
-	private static final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-	private static final SimpleDateFormat CACHE_TIMESTAMP_FORMATTER = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	private static final SimpleDateFormat CACHE_TIMEONLY_FORMATTER = new SimpleDateFormat("HH:mm:ss");
+	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat(DATE_FORMAT);
+	private static final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat(DATE_TIME_FORMAT);
+	private static final SimpleDateFormat CACHE_TIMESTAMP_FORMATTER = new SimpleDateFormat(CACHE_DATE_TIME_FORMAT);
+	private static final SimpleDateFormat CACHE_TIMEONLY_FORMATTER = new SimpleDateFormat(TIME_FORMAT);
+
 	// public static final String WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_OPTIONS = "options";
 	// public static final String WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR = "measureScaleFactor";
+
 	public static final String METADATA = "metaData";
 	public static final String PROPERTY_FIELD_OPTION = "PROPERTY_FIELD_OPTION";
 	public static final String PROPERTY_ADJUST = "PROPERTY_ADJUST";
