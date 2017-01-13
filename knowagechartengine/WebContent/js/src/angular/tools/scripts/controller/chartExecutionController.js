@@ -187,17 +187,17 @@ function chartExecutionFunction($scope,$http,chartExecutionWebServiceManagerFact
 	 * -------------------------------------------------
 	 */
 	chartExecutionWebServiceManagerFactory.registerService('jsonChartTemplate', {
-		service: 'jsonChartTemplate/readChartTemplate',
+		service: 'jsonChartTemplate/readChartTemplate?'+$scope.requestQueryString,
 		method: 'POST'
 	});
 	
 	chartExecutionWebServiceManagerFactory.registerService('loadDatasetFields', {
-		service: 'jsonChartTemplate/fieldsMetadata',
+		service: 'jsonChartTemplate/fieldsMetadata?'+$scope.requestQueryString,
 		method: 'GET'
 	});
 	
 	chartExecutionWebServiceManagerFactory.registerService('drilldownHighchart', {
-		service: 'jsonChartTemplate/drilldownHighchart',
+		service: 'jsonChartTemplate/drilldownHighchart?'+$scope.requestQueryString,
 		method: 'POST'
 	});
 	
@@ -555,8 +555,8 @@ function chartExecutionFunction($scope,$http,chartExecutionWebServiceManagerFact
 		var parameters = {
 			jsonTemplate: JSON.stringify(jsonChartTemplateTemp),
 			chartType: jsonChartTemplateTemp.CHART.type,
-			exportWebApp: true,
-			driverParams: driverParams
+			driverParams: driverParams,
+			exportWebApp: true
 		};	
 		
 		if (isD3Chart) {

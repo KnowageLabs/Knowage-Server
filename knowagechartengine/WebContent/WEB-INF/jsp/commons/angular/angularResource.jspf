@@ -217,7 +217,7 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	Map analyticalDrivers  = engineInstance.getAnalyticalDrivers();
 	Map driverParamsMap = new HashMap();
 	
-	for(Object key : engineInstance.getAnalyticalDrivers().keySet()) {
+	for(Object key : analyticalDrivers.keySet()) {
 		if(key instanceof String && !key.equals("widgetData")) {
 			String value = request.getParameter((String)key);
 			if(value!=null){

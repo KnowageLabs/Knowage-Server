@@ -29,6 +29,7 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.util.Map;
@@ -77,7 +78,7 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 			@FormParam("datasetLabel") String datasetLabel, @FormParam("driverParams") String driverParams, @FormParam("jsonData") String jsonData,
 			@Context HttpServletResponse servletResponse) {
 		try {
-			ChartEngineInstance engineInstance = getEngineInstance();
+			ChartEngineInstance engineInstance = ChartEngine.createInstance(jsonTemplate, getIOManager().getEnv());
 			IDataSet dataSet = engineInstance.getDataSet();
 
 			/*
@@ -91,7 +92,6 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 			Map analyticalDrivers = engineInstance.getAnalyticalDrivers();
 			if (driverParams != null && !driverParams.isEmpty()) {
 				refreshDriverParams(analyticalDrivers, driverParams);
-				engineInstance = ChartEngine.createInstance(jsonTemplate, getEngineInstance().getEnv());
 			}
 			Map profileAttributes = UserProfileUtils.getProfileAttributes((UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE));
 
@@ -107,11 +107,10 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 			jsonChartTemplate = ChartEngineUtil.replaceParameters(jsonChartTemplate, analyticalDrivers);
 
 			// @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-			return jsonChartTemplate.trim();
+			return jsonChartTemplate = jsonChartTemplate.trim();
 
-		} catch (Throwable t) {
-			throw new SpagoBIServiceException(this.request.getPathInfo(),
-					"An unexpected error occured while executing service: JsonChartTemplateService.getJSONChartTemplate", t);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("An unexpected error occured while executing service: JsonChartTemplateService.getJSONChartTemplate", e);
 		}
 	}
 
@@ -137,11 +136,12 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 	@SuppressWarnings("rawtypes")
 	public String drilldownHighchart(@FormParam("jsonTemplate") String jsonTemplate, @FormParam("breadcrumb") String breadcrumb) {
 		try {
-			IDataSet dataSet = getEngineInstance().getDataSet();
-			Map analyticalDrivers = getEngineInstance().getAnalyticalDrivers();
+			ChartEngineInstance engineInstance = ChartEngine.createInstance(jsonTemplate, getIOManager().getEnv());
+			IDataSet dataSet = engineInstance.getDataSet();
+			Map analyticalDrivers = engineInstance.getAnalyticalDrivers();
 			Map profileAttributes = UserProfileUtils.getProfileAttributes((UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE));
-			return ChartEngineDataUtil.drilldown(jsonTemplate, breadcrumb, dataSet, analyticalDrivers, profileAttributes, getLocale(), getEngineInstance()
-					.getDocumentLabel(), getEngineInstance().getUserProfile());
+			return ChartEngineDataUtil.drilldown(jsonTemplate, breadcrumb, dataSet, analyticalDrivers, profileAttributes, getLocale(),
+					engineInstance.getDocumentLabel(), engineInstance.getUserProfile());
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(),
 					"An unexpected error occured while executing service: JsonChartTemplateService.drilldownHighchart", t);
@@ -152,7 +152,8 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 	@Path("/fieldsMetadata")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getDatasetMetadata() {
-		IDataSet dataSet = getEngineInstance().getDataSet();
+		ChartEngineInstance engineInstance = ChartEngine.createInstance(getTemplateAsString(), getIOManager().getEnv());
+		IDataSet dataSet = engineInstance.getDataSet();
 		return ChartEngineDataUtil.loadMetaData(dataSet);
 	}
 

@@ -55,13 +55,13 @@ public class ChartEngineDataUtil {
 	public static transient Logger logger = Logger.getLogger(ChartEngineDataUtil.class);
 
 	@SuppressWarnings({ "rawtypes" })
-	public static String loadJsonData(String jsonTemplate, IDataSet dataSet, Map analyticalDrivers, Map userProfile, Locale locale) throws Throwable {
+	public static String loadJsonData(String jsonTemplate, IDataSet dataSet, Map analyticalDrivers, Map userProfile, Locale locale) throws Exception {
 		IQuery query = extractAggregatedQueryFromTemplate(jsonTemplate);
 		return loadJsonData(query, dataSet, analyticalDrivers, userProfile, locale);
 	}
 
 	@SuppressWarnings({ "rawtypes" })
-	private static String loadJsonData(IQuery query, IDataSet dataSet, Map analyticalDrivers, Map userProfile, Locale locale) throws Throwable {
+	private static String loadJsonData(IQuery query, IDataSet dataSet, Map analyticalDrivers, Map userProfile, Locale locale) throws Exception {
 		IDataStore dataStore = loadDatastore(query, dataSet, analyticalDrivers, userProfile, locale);
 
 		JSONObject dataSetJSON = new JSONObject();
