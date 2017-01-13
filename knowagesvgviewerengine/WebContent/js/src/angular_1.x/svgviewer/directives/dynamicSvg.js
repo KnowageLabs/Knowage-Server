@@ -63,11 +63,7 @@ function createChart() {
             			if(percCol.length>0){
             				perc.push(response.data.rows[k][percCol[j]]);
             			}
-            			
-            		
-            		
-            		
-            	}
+            		}
                 //var data = [response.data.rows[k]['column_3'],response.data.rows[k]['column_4'],response.data.rows[k]['column_5']];
             	//var perc = [response.data.rows[k]['column_7'],response.data.rows[k]['column_8'],response.data.rows[k]['column_9']]
                 initializeChart(response.CUSTOMIZE_SETTINGS,data,response.data.rows[k]['column_1'],perc);
@@ -128,7 +124,6 @@ function createChart() {
 	            div.setAttribute("onclick","doClickOnSvg('"+chartId+"')");
 	            var canvas = document.createElement("canvas");
 	            canvas.id = chartId;
-	            canvas.setAttribute("class","emptyPie");
 	            div.appendChild(canvas);
 	            if(data.length>0){
 	            	var percLegend = document.createElement("div");
@@ -149,6 +144,8 @@ function createChart() {
 		                }
 		            	div.appendChild(percLegend);
 		            }
+	            }else {
+	            	canvas.setAttribute("class","emptyPie");
 	            }
 	            
 	            canvas.parentElement.style.top = position.top;
