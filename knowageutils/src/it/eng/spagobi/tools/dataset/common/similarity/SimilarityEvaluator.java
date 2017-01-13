@@ -131,12 +131,25 @@ public class SimilarityEvaluator {
 	}
 
 	private boolean chainable(Similarity chain, Similarity target) {
-		for (Field field : target.getFields()) {
-			if (chain.getFields().contains(field)) {
-				return true;
+		boolean toReturn = false;
+		for (Field targetField : target.getFields()) {
+			for (Field chainField : chain.getFields()) {
+				if (!chainable(chainField, targetField)) {
+					return false;
+				}
+			}
+			if (chain.getFields().contains(targetField)) {
+				toReturn = true;
 			}
 		}
-		return false;
+		return toReturn;
+	}
+
+	private boolean chainable(Field chain, Field target) {
+		if (chain.equals(target.datasetLabel) && !chain.equals(target.datasetColumn)) {
+			return false;
+		}
+		return true;
 	}
 
 	private Set<Similarity> limit(Set<Similarity> set) {

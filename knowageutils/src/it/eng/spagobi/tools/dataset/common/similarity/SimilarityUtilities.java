@@ -5,7 +5,7 @@ import java.math.RoundingMode;
 
 public final class SimilarityUtilities {
 
-	private final static int DEFAULT_DECIMALS = 2;
+	private final static int DEFAULT_DECIMALS = 4;
 
 	public static double round(double value, int places) {
 		if (places < 0)
