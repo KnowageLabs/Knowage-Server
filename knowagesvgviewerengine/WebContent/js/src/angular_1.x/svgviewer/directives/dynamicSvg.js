@@ -4,7 +4,7 @@ window.onload = function() {
 }
 
 function doClickOnSvg(id){
-	
+	var svg = document.getElementById("svgContainer");
     var elem 	= svg.contentDocument.getElementById(id);
 	elem.onclick.apply(elem);
 }
