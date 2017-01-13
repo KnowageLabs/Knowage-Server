@@ -477,35 +477,27 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 	this.getSummaryRow = function(ngModel){
 		var measures = [];
-		var ds = ngModel.dataset.label;
 		var columns = ngModel.content.columnSelectedOfDataset;
 		
 		if(columns != undefined){
 			//create aggregation
 			for(var i=0;i<columns.length;i++){
 				var col = columns[i];
-				var obj = {};
-				obj["id"] = col.alias;
-				obj["alias"] = ngModel.type == "table" ? col.aliasToShow : col.alias;
-				obj["funct"] = col.funcSummary == undefined? "" : col.funcSummary;
-//				if(col.isCalculated == true){
-//					obj["columnName"] = col.formula;
-//				}else{
-					obj["columnName"] = col.name;
-//				}
 				
-			
-				if(col.fieldType=="ATTRIBUTE"){
-					//none
-				}else{
-					//it is measure add it
+				if(col.fieldType!="ATTRIBUTE"){
+					var obj = {};
+					obj["id"] = col.name;
+					obj["alias"] = ngModel.type == "table" ? col.aliasToShow : col.alias;
+					obj["funct"] = col.funcSummary == undefined? "" : col.funcSummary;
+					obj["columnName"] = ngModel.type == "table" ? col.aliasToShow : col.alias;
+
 					measures.push(obj);
 				}
 			}
 		}
 		var result = {};
 		result["measures"] = measures;
-		result["dataset"] = ds;
+		result["dataset"] = ngModel.dataset.dsId;
 
 		return result;
 

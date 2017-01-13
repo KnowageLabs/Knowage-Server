@@ -1595,7 +1595,7 @@ public class DatasetManagementAPI {
 					comma = ",";
 					sb.append(aggregateFunction);
 					sb.append("(");
-					sb.append(alias);
+					sb.append(AbstractJDBCDataset.encapsulateColumnName(alias, dataSource));
 					sb.append(")");
 				}
 			}
