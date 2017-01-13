@@ -86,7 +86,6 @@ associatorDirective.directive('draggable', function( $window) {
         	item: '='
         },
         link: function(scope, element) {
-
         	//check if is IE
         	//detecting IE
         	var isIE=false;
@@ -117,7 +116,6 @@ associatorDirective.directive('draggable', function( $window) {
 	        }else{
 	        	element.find("button")[0].draggable=true;
 	        }
-
 
 	        el.addEventListener(
 	            'dragstart',
@@ -177,9 +175,14 @@ associatorDirective.directive('droppable', function($timeout) {
             	})
             }
 
-            el.addEventListener(
+            element.bind(
             	    'dragover',
             	    function(ev) {
+    			    	if (ev.preventDefault) {
+    			    	    ev.preventDefault();
+    			    	}
+    			    	ev.stopPropagation();
+
             	    	var data = ev.dataTransfer.getData("text");
 
             	    	var accept=true;
@@ -194,39 +197,37 @@ associatorDirective.directive('droppable', function($timeout) {
         			    if(accept!=false){
         			    	ev.dataTransfer.dropEffect = 'move';
         			    	// allows us to drop
-        			    	if (ev.preventDefault) ev.preventDefault();
+
         			    	this.classList.add('over');
 
         			    }
 
             	        return false;
-            	    },
-            	    false
+            	    }
             	);
 
-            el.addEventListener(
+            element.bind(
             	    'dragenter',
             	    function(e) {
             	        this.classList.add('over');
             	        return false;
-            	    },
-            	    false
+            	    }
             	);
 
-        	el.addEventListener(
+            element.bind(
         	    'dragleave',
         	    function(e) {
         	        this.classList.remove('over');
         	        return false;
-        	    },
-        	    false
+        	    }
         	);
 
-        	el.addEventListener(
+            element.bind(
         		    'drop',
         		    function(ev) {
         		        // Stops some browsers from redirecting.
-        		        if (ev.stopPropagation) ev.stopPropagation();
+        		       // if (ev.stopPropagation) ev.stopPropagation();
+        		        ev.preventDefault();
 
         		        this.classList.remove('over');
         		        var data = ev.dataTransfer.getData("text");
@@ -267,8 +268,7 @@ associatorDirective.directive('droppable', function($timeout) {
         			    }
 
         		        return false;
-        		    },
-        		    false
+        		    }
         		);
         }
     }

@@ -7,9 +7,9 @@
 		</md-toolbar>
 		<md-list class="md-dense" flex>
 			<md-list-item
-			id="source-{{$index}}" ng-repeat="item in sourceModel" draggable
+			id="source-{{$index}}" ng-repeat="item in sourceModel" draggable="true"
 			item="item"
-			ng-click="$event.stopPropagation();$event.preventDefault();">
+			ng-click="">
 			{{item[sourceName]}} 
 				<md-divider ng-if="!$last"></md-divider>
 			</md-list-item>
