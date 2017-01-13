@@ -1,5 +1,5 @@
 angular-table{
-
+	border-collapse: collapse;
 	table>tbody>tr>td {
 	    font-size: $tableFontSize;
 	    border-top: 1px $tableLineSeparator solid;
@@ -55,8 +55,8 @@ angular-table{
 	
 	table thead th div {
 	    align-items: center;
-	    height: 40px;
-	    line-height: 40px;
+	    /*height: 40px;
+	    line-height: 40px;*/
 	  }
 	  
 	  /*style giovannilucaulivo@eng.it */
@@ -94,9 +94,11 @@ angular-table{
 	
 	&.tableWidget {
 		.fakeTable {
+			border-collapse: collapse;
 			width: 100% !important;
 		}
 		#angularTableContentBox .principalTable {
+			border-collapse: collapse;
 			width: 100% !important;
 		}
 	}
