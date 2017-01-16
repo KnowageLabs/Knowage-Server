@@ -1370,11 +1370,7 @@
 	this.visualCorrelationWatch = function(value){
 		//console.log('visual correlation : ' , value);
 		if(serviceScope.visualCorrelationMap[value.urlName]){
-			var forceExit=false;
 			for(var k=0; k<serviceScope.visualCorrelationMap[value.urlName].length; k++){
-				if(forceExit){
-					break;
-				}
 				var visualDependency=serviceScope.visualCorrelationMap[value.urlName][k];
 				//id document Parameter to control 
 				var idDocumentParameter = visualDependency.parameterToChangeId;
@@ -1427,7 +1423,6 @@
 						if(execProperties.initResetFunctionVisualDependency.status){
 							documentExecuteServices.resetParameter(execProperties.parametersData.documentParameters[idDocumentParameter]);
 						}
-						forceExit = true;
 						break;
 					}else{
 						execProperties.parametersData.documentParameters[idDocumentParameter].visible=false;
