@@ -68,6 +68,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.text.DateFormat;
 import java.text.Format;
 import java.text.ParseException;
@@ -464,7 +466,41 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					.put("allowInternalNodeSelection", objParameter.getPar().getModalityValue().getLovProvider().contains("<LOVTYPE>treeinner</LOVTYPE>"));
 
 			if (objParameter.getAnalyticalDocumentParameter().getParameterValues() != null) {
-				parameterAsMap.put("parameterValue", objParameter.getAnalyticalDocumentParameter().getParameterValues());
+				List paramValueLst = new ArrayList();
+				Object paramValues = objParameter.getAnalyticalDocumentParameter().getParameterValues();
+				if (paramValues instanceof List) {
+					List<String> valuesList = (List) paramValues;
+					for (int k = 0; k < valuesList.size(); k++) {
+						String item = valuesList.get(k);
+						String itemVal = "";
+						try {
+							item = URLDecoder.decode(item, "UTF-8");
+							if (objParameter.isMultivalue() && item.indexOf("{") >= 0) {
+
+								// check input value and convert if it's an old multivalue syntax({;{xxx;yyy}STRING}) to list of values :["A-OMP", "A-PO", "CL"]
+								String sep = item.substring(1, 2);
+								String val = item.substring(3, item.indexOf("}"));
+								String[] valLst = val.split(sep);
+								for (int k2 = 0; k2 < valLst.length; k2++) {
+									itemVal = valLst[k2];
+									if (itemVal != null && !"".equals(itemVal))
+										paramValueLst.add(itemVal);
+								}
+							} else {
+								if (item != null && !"".equals(item))
+									paramValueLst.add(item);
+							}
+						} catch (UnsupportedEncodingException e) {
+							// TODO Auto-generated catch block
+							// e.printStackTrace();
+							logger.debug("An error occured while decoding parameter with value[" + item + "]" + e);
+						}
+					}
+				} else if (paramValues instanceof String) {
+					paramValueLst.add(URLDecoder.decode((String) paramValues, "UTF-8"));
+				}
+				// parameterAsMap.put("parameterValue", objParameter.getAnalyticalDocumentParameter().getParameterValues());
+				parameterAsMap.put("parameterValue", paramValueLst);
 			}
 
 			boolean showParameterLov = true;
@@ -557,6 +593,10 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			// load DEFAULT VALUE if present and if the parameter value is empty
 			if (objParameter.getDefaultValues() != null && objParameter.getDefaultValues().size() > 0) {
 				DefaultValuesList valueList = null;
+				// check if the parameter is really valorized (for example if it isn't an empty list)
+				List lstValues = (List) parameterAsMap.get("parameterValue");
+				if (lstValues.size() == 0)
+					jsonCrossParameters.remove(objParameter.getId());
 				if (jsonCrossParameters.isNull(objParameter.getId()) && !sessionParametersMap.containsKey(objParameter.getId())) {
 					valueList = objParameter.getDefaultValues();
 					if (valueList != null) {
