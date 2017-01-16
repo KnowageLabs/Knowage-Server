@@ -962,9 +962,9 @@ public class DatasetManagementAPI {
 				if (fieldOptions != null) {
 					addMeasuresScaleFactor(fieldOptions, dataSetFieldMetadata.getName(), newFieldMetadata);
 				}
-				newFieldMetadata.setAlias(dataSetFieldMetadata.getAlias());
+				newFieldMetadata.setAlias(dataStoreFieldMetadata.getAlias());
 				newFieldMetadata.setFieldType(dataSetFieldMetadata.getFieldType());
-				newFieldMetadata.setName(dataSetFieldMetadata.getName());
+				newFieldMetadata.setName(dataStoreFieldMetadata.getName());
 				newFieldMetadata.setType(dataStoreFieldMetadata.getType());
 			} else {
 				newFieldMetadata = dataStoreFieldMetadata;

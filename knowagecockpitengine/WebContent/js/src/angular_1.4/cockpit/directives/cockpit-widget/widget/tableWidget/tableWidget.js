@@ -571,7 +571,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					}
 					if($scope.datasetRecords != undefined){
 						for(var j=1;j<$scope.datasetRecords.metaData.fields.length;j++){
-							if($scope.datasetRecords.metaData.fields[j].header == $scope.ngModel.content.columnSelectedOfDataset[i]['aliasToShow']){
+							var header = $scope.datasetRecords.metaData.fields[j].header;
+							if(header == $scope.ngModel.content.columnSelectedOfDataset[i]['aliasToShow']
+									|| header == $scope.ngModel.content.columnSelectedOfDataset[i]['alias']){
 								$scope.columnToshowinIndex.push($scope.datasetRecords.metaData.fields[j].dataIndex);
 							}
 						}
