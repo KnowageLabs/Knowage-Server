@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        <md-progress-circular  md-mode='indeterminate' style='top:50%;left:50%;margin-left:-25px;' ></md-progress-circular>
     </div>
     
-    <div class="widgetSearchBar md-whiteframe-2dp animation fade" ng-if="widgetSearchBar" layout="row" layout-align="start center">
+    <div class="widgetSearchBar md-whiteframe-2dp animation slide-down" ng-if="widgetSearchBar" layout="row" layout-align="start center">
 	    	<i class="fa fa-search" layout-padding></i>
 			<md-input-container class="md-block" flex>
 	        	<label>Search</label>
@@ -38,8 +38,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             </md-select>
             <div class="hint" hide-xs>Select the column where to search</div>
           </md-input-container>
-	      	<md-button class="md-raised md-primary" ng-click="test()">Search</md-button>
+	      	<md-button class="md-raised md-primary" ng-click="searchColumns()">Search</md-button>
 	      	<md-button class="md-raised md-warn">Reset Search</md-button>
+	      	<md-button ng-if="widExp" class="md-icon-button"  aria-label="close"   ng-click="openSearchBar()">
+				<md-icon md-font-icon="fa fa-times"  ></md-icon>
+			</md-button>
     </div>
   	
 	<md-card class="placedWidget flexCard" ng-style="borderShadowStyle" ng-class="{'shadowedBox': extendedStyle.shadows, 'noTitle':(!extendedStyle.titles && !widExp),'editWidgetMode':cockpitModule_properties.EDIT_MODE}" layout="column" layout-fill>

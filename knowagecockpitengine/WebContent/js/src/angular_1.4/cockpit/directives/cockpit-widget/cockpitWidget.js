@@ -201,7 +201,6 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 	$scope.widgetSpinner=false;
 	$scope.widgetSearchBar = false;
 	$scope.actionButtonClass=[]; 
-	debugger;
 	
 	//davverna - initializing search object to give all the columns to the user searchbar
 	if(!$scope.ngModel.search || $scope.ngModel.search.columns == []){
@@ -211,8 +210,16 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 		}
 	}
 	
-	$scope.test = function(){
-		console.log('ngModel',$scope.ngModel);
+	//davverna - method to pass the actual model and search parameters to refresh the widget table
+	//			iterating trough widgets to find the widget in the service ckecking the ID.
+	$scope.searchColumns = function(){
+		for(var j in cockpitModule_template.sheets[cockpitModule_properties.CURRENT_SHEET].widgets){
+			if(cockpitModule_template.sheets[cockpitModule_properties.CURRENT_SHEET].widgets[j].id == $scope.ngModel.id){
+				cockpitModule_template.sheets[cockpitModule_properties.CURRENT_SHEET].widgets[j] = $scope.ngModel;
+				break;
+			}
+		}
+		$scope.refreshWidget();
 	}
 	
 	
