@@ -421,8 +421,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		var filters;
 		if(ngModel.filters){
 			filters = ngModel.filters;
-		}
-		if(ngModel.content && ngModel.content.filters){
+		}else if(ngModel.content && ngModel.content.filters){
 			filters = ngModel.content.filters;
 		}
 		if(filters){
@@ -442,7 +441,18 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				}
 			}	
 		}
-			
+		
+		if(ngModel.search 
+				&& ngModel.search.text && ngModel.search.text!="" 
+				&& ngModel.search.columns && ngModel.search.columns.length>0){
+			var columns = ngModel.search.columns.join(",");
+			var searchData = {};
+			searchData[columns] = ngModel.search.text;
+			var likeSelections = {};
+			likeSelections[dataset.label] = searchData;
+			params += "&likeSelections=" + encodeURIComponent(JSON.stringify(likeSelections)).replace(/'/g,"%27").replace(/"/g,"%22");
+		}
+		
 		var dataToSendWithoutParams = {};
 		if(dataset.useCache == true || ngModel.updateble == true){
 			angular.copy(dataToSend,dataToSendWithoutParams);

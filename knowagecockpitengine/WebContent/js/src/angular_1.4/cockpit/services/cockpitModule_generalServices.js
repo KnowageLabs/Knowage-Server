@@ -58,13 +58,16 @@ angular.module("cockpitModule").service("cockpitModule_generalServices",function
 		dataToSend.customData={};
 		dataToSend.customData.templateContent=angular.copy(cockpitModule_template);
 		
-		// reset table widgets to first page
+		// reset table widgets volatile data
 		if(dataToSend.customData.templateContent.sheets){
 			angular.forEach(dataToSend.customData.templateContent.sheets,function(sheet){
 				if(sheet.widgets){
 					angular.forEach(sheet.widgets,function(widget){
-						if(widget.type == "table" && widget.content && widget.content.currentPageNumber){
-							widget.content.currentPageNumber = 0;
+						if(widget.type == "table"){
+							if(widget.content){
+								widget.content.currentPageNumber = 0;
+							}
+							widget.search = undefined;
 						}
 					});
 				}
