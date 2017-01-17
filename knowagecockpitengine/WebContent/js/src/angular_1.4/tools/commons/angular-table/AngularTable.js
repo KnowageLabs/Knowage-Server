@@ -170,6 +170,7 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                                                     tmpColData.customRecordsClass=col[i].customRecordsClass;
                                                     tmpColData.hideTooltip=col[i].hideTooltip;
                                                     tmpColData.style=col[i].style;
+                                                    tmpColData.maxChars=col[i].maxChars;
                                                     tmpColData.static=col[i].static;
                                                     tmpColData.template=col[i].template;
                                                 } else {
@@ -183,6 +184,7 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                                                 }
 
                                                 scope.tableColumns.push(tmpColData);
+                              
                                             }
                                         } else {
                                             //load all
@@ -430,7 +432,6 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                 	tElement.html("");
                     return {
                         pre: function preLink(scope, element, attrs, ctrl, transclud) {
-//                        	debugger
                         	scope.internalTableConfiguration.rowDetail=true;
                         	scope.rowDetailTemplate=notCompiledContent;
                         	scope.tableItem[0].querySelector("#angularTableContentBox").style.overflow="auto";
@@ -552,8 +553,21 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
         });
 
 
-function TableControllerFunction($scope, $timeout) {
+function TableControllerFunction($scope, $timeout,$mdDialog) {
 	$scope.pagination = {currentPageNumber : 1};
+	
+	//davverna - This modal appears only when the text lenght is more than the maxChars configuration for the column, showing the full content on cell click.
+	$scope.showFullContent = function(e,text){
+		e.stopPropagation();
+		$mdDialog.show(
+	      $mdDialog.alert()
+	        .parent(angular.element(document.body))
+	        .clickOutsideToClose(true)
+	        .textContent(text)
+	        .ok('Close')
+	        .targetEvent(e)
+	    );
+	}
 	if($scope.currentPageNumber!=undefined){
 		$scope.pagination.currentPageNumber=$scope.currentPageNumber;
 		$scope.$watch('pagination.currentPageNumber',function(nv,ov){if(nv!=ov){$scope.currentPageNumber=nv;}})
@@ -576,6 +590,7 @@ function TableControllerFunction($scope, $timeout) {
     	
     	return angular.isFunction(item) ? item(row,column,index) : item;
     }
+    
     
     $scope.getHeaderStyle=function()
     {
@@ -734,7 +749,7 @@ function TableControllerFunction($scope, $timeout) {
     
     $scope.$watchCollection('columns', function (newValue, oldValue) {
         if (!angular.equals(newValue, oldValue)) {
-            $scope.initializeColumns();
+            $scope.initializeColumns(false);
         }
     });
     

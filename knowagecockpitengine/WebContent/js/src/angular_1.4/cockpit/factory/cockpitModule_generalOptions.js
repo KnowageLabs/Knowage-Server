@@ -6,24 +6,32 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 									value:''
 								 },
 								 {
-									 label:"0.5",
-									 value:'0.5em'
+									 label:"8px",
+									 value:'8px'
 								 },
 								 {
-									 label:"1.0",
-									 value:'1.0em'
+									 label:"10px",
+									 value:'10px'
 								 },
 								 {
-									 label:"1.5",
-									 value:'1.5em'
+									 label:"12px",
+									 value:'12px'
 								 },
 								 {
-									 label:"2.0",
-									 value:'2.0em'
+									 label:"14px",
+									 value:'14px'
 								 },
 								 {
-									 label:"2.5",
-									 value:'2.3em'
+									 label:"16px",
+									 value:'16px'
+								 },
+								 {
+									 label:"20px",
+									 value:'20px'
+								 },
+								 {
+									 label:"24px",
+									 value:'24px'
 								 }
 		                  	
 						 	],

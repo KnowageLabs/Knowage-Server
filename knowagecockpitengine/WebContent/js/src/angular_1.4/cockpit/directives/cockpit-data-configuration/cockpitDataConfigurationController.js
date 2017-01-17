@@ -101,7 +101,8 @@ function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitMod
 											label:" ",
 											size:"10",
 											name:"parameters",
-											hideTooltip:true,
+											hideTooltip:false,
+											maxChars:10,
 											transformer:function(val,row){
 												for(par in val){
 													if(val[par].value==undefined || (!angular.isNumber(val[par].value) && val[par].value.trim()=="")){

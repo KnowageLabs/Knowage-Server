@@ -367,6 +367,7 @@ function controllerCockpitColumnsConfigurator($scope,sbiModule_translate,$mdDial
 			model.content.columnSelectedOfDataset = [];
 		}
 		for(var i=0;i<$scope.columnSelected.length;i++){
+			debugger;
 			var obj = $scope.columnSelected[i];
 			obj.aggregationSelected = 'SUM';
 			obj["funcSummary"] = "SUM";
@@ -384,8 +385,10 @@ function controllerCockpitColumnsConfigurator($scope,sbiModule_translate,$mdDial
 }
 
 function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,model,selectedColumn,cockpitModule_datasetServices,$mdToast){
+	debugger;
 	$scope.translate=sbiModule_translate;
 	$scope.selectedColumn = angular.copy(selectedColumn);
+	debugger;
 	$scope.fontWeight = ['normal','bold','bolder','lighter','number','initial','inherit'];
 	$scope.colorPickerProperty={placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb'}
 	$scope.visTypes=['Chart','Text','Chart & Text', 'Text & Chart','Icon only'];
@@ -467,6 +470,7 @@ function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,model,s
 		$scope.selectedColumn.style = undefined;
 	}
 	$scope.saveColumnStyleConfiguration = function(){
+		debugger;
 		angular.copy($scope.selectedColumn,selectedColumn)
 
 		$mdDialog.cancel();

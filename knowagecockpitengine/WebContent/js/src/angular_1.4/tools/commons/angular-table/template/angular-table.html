@@ -90,11 +90,10 @@
 	ng-class="{'selectedRowItem': (highlightsSelectedItem==true && isSelected(row) )}"  class="animate-repeat-tablerow"
  	ng-if="isVisibleRowFunction(row)"
 	ng-style="{'height':tableStyle.autoRowsHeight? 0 :tableStyle.rowsHeight}">
-	<td  ng-repeat="column in tableColumns" ng-switch="column.static==true? '--STATIC--' : column.name" ng-click="clickItem(row,column.name,getColumnValue(row,column.name),$event,$parent.$index)" ng-dblclick="startEdit(row,column,getColumnValue(row,column.name),$event)" context-menu  data-target='{{id}}TableContextMenu-{{$parent.$index}}-{{$index}}' class="{{column.customRecordsClass}} " 
+	<td ng-repeat="column in tableColumns" ng-switch="column.static==true? '--STATIC--' : column.name" ng-click="clickItem(row,column.name,getColumnValue(row,column.name),$event,$parent.$index)" ng-dblclick="startEdit(row,column,getColumnValue(row,column.name),$event)" context-menu  data-target='{{id}}TableContextMenu-{{$parent.$index}}-{{$index}}' class="{{column.customRecordsClass}} " 
 		ng-class="{ 'highlight': highlight, 'expanded' : expanded,'tableDragBar':column.name=='--DRAG_AND_DROP--'}" ng-style="column.style==undefined ? '' :  getDynamicValue(column.style,row,column,$parent.$index)" >
-		
-		<span ng-switch-when="--STATIC--" ng-if="column.template==undefined" ng-class="getChangedValueStyle(row,column.name)" ng-bind="row[column.name]" >
-			<md-tooltip ng-if="column.hideTooltip!=true" md-delay="1000" md-direction="bottom"  >{{row[column.name]}}</md-tooltip>
+		<span ng-switch-when="--STATIC--" ng-if="column.template==undefined  && row[column.name].length <= getDynamicValue(column.style,row,column,'-99')" ng-class="getChangedValueStyle(row,column.name)" ng-bind="row[column.name]" >
+			<md-tooltip ng-if="column.hideTooltip!=true " md-delay="1000" md-direction="bottom"  >{{row[column.name]}}</md-tooltip>
 		</span>
 		<span ng-switch-when="--STATIC--" ng-if="column.template!=undefined" ng-class="getChangedValueStyle(row,column.name)" build-template="column.template" ></span>
 
@@ -105,6 +104,9 @@
 			</span>
 			<input   ng-switch-when="true"   ng-model="row[column.name]" ng-blur="doneEdit(row,column,getColumnValue(row,column.name),$event)" autofocus />
 		</span>
+		<i ng-if="getDynamicValue(column.style,row,column,'-99') && row[column.name].length > getDynamicValue(column.style,row,column,'-99')" class="fa fa-search " ng-click="showFullContent($event,row[column.name])">
+			<md-tooltip md-delay="1000" md-direction="bottom"  >Click to show complete value</md-tooltip>
+		</i>
 
 		<md-button ng-init="exp=false" class="md-icon-button rowExpanderButton" ng-if="column.name=='--ROW_DETAIL--' && (showExpanderRowCondition==undefined || showExpanderRowCondition({row:row}))" aria-label="expander row" ng-click="$event.stopPropagation();showRowDetail($event);exp=!exp;" >
         	<md-icon md-font-icon="fa " ng-class="{'fa-chevron-up': exp,'fa-chevron-down':!exp}"></md-icon>

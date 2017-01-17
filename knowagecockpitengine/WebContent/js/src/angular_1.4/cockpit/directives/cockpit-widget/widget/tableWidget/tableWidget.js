@@ -123,6 +123,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if(ind!=-1 && $scope.ngModel.content.columnSelectedOfDataset[ind].style != undefined){
 				gridStyle = angular.extend({},gridStyle,$scope.ngModel.content.columnSelectedOfDataset[ind].style);
 			}
+			//davverna - overriding this function behaviour, index -99 returns a single item instead of all the style object
+			if(index==-99 && $scope.ngModel.content.columnSelectedOfDataset[ind].style != undefined && $scope.ngModel.content.columnSelectedOfDataset[ind].style.maxChars != undefined){
+				console.log('IF');
+				parentGridStyle = angular.extend({},gridStyle,$scope.ngModel.content.columnSelectedOfDataset[ind].style);
+				gridStyle = parentGridStyle.maxChars;
+			}
+			//davverna - if the max chars value setting for the column is not set the default is 1000
+			if(index==-99 && ($scope.ngModel.content.columnSelectedOfDataset[ind].style == undefined || $scope.ngModel.content.columnSelectedOfDataset[ind].style.maxChars == undefined)){
+				console.log('ELSE');
+				gridStyle = 1000;
+			}
 			return gridStyle;
 		}
 		
@@ -556,12 +567,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						obj.static=true;
 					}
 					
-					
-					
-					
-					
-					
-					
 					if($scope.ngModel.content.columnSelectedOfDataset[i].isCalculated){
 						obj.customRecordsClass="noClickCursor";
 					}
@@ -584,7 +589,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.tableColumns=$scope.columnsToShow;
 				for(var i=0;i<$scope.tableColumns.length;i++)
 				{
-					$scope.tableColumns[i].hideTooltip=true
+					$scope.tableColumns[i].hideTooltip=false;
 				}
 				
 				if(datasetRecords !=undefined){
@@ -658,7 +663,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 			return false;
 		}
-		
 		$scope.tableColumns=$scope.ngModel.content.columnSelectedOfDataset;
 		$scope.itemList=[]
 
