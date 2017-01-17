@@ -32,6 +32,7 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.cache.FilterCriteria;
 import it.eng.spagobi.tools.dataset.cache.Operand;
+import it.eng.spagobi.tools.dataset.cache.ProjectionCriteria;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
 import it.eng.spagobi.tools.dataset.common.association.Association;
 import it.eng.spagobi.tools.dataset.common.association.Association.Field;
@@ -41,6 +42,8 @@ import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
+import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.tools.dataset.common.similarity.Similarity;
 import it.eng.spagobi.tools.dataset.common.similarity.SimilarityEvaluator;
 import it.eng.spagobi.tools.dataset.common.similarity.SimilarityStrategyFactory;
@@ -520,12 +523,10 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 			throws JSONException {
 		List<FilterCriteria> filterCriterias = new ArrayList<FilterCriteria>();
 
-		IDataSetDAO dsDAO = getDataSetDAO();
-
-		IDataSet dataSet = dsDAO.loadDataSetByLabel(datasetLabel);
-
 		if (selectionsObject.has(datasetLabel)) {
+			IDataSet dataSet = getDataSetDAO().loadDataSetByLabel(datasetLabel);
 			boolean isAnEmptySelection = false;
+
 			JSONObject datasetSelectionObject = selectionsObject.getJSONObject(datasetLabel);
 			Iterator<String> it = datasetSelectionObject.keys();
 			while (!isAnEmptySelection && it.hasNext()) {
@@ -537,13 +538,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 					String columnNames = replaceColumnAliasesWithNames(columns, columnAliasToName);
 					columnsList.addAll(Arrays.asList(columnNames.split("\\s*,\\s*"))); // trim spaces while splitting
 
-					List<String> dateColumnNamesList = new ArrayList<String>();
-					for (int i = 0; i < dataSet.getMetadata().getFieldCount(); i++) {
-						IFieldMetaData fieldMeta = dataSet.getMetadata().getFieldMeta(i);
-						if (Date.class.isAssignableFrom(fieldMeta.getType()) || Timestamp.class.isAssignableFrom(fieldMeta.getType())) {
-							dateColumnNamesList.add(fieldMeta.getName());
-						}
-					}
+					List<String> dateColumnNamesList = getDateColumnNamesList(dataSet);
 
 					if (isRealtime && !dataSet.isFlatDataset() && !(dataSet.isPersisted() && !dataSet.isPersistedHDFS())) {
 						String firstColumn = columnsList.get(0);
@@ -592,15 +587,109 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 			}
 
 			if (isAnEmptySelection) {
-				Operand leftOperand = new Operand("0");
-				Operand rightOperand = new Operand("1");
-				FilterCriteria filterCriteria = new FilterCriteria(leftOperand, "=", rightOperand);
 				filterCriterias.clear();
-				filterCriterias.add(filterCriteria);
+				filterCriterias.add(new FilterCriteria(new Operand("0"), "=", new Operand("1")));
 			}
 		}
 
 		return filterCriterias;
+	}
+
+	private List<String> getDateColumnNamesList(IDataSet dataSet) {
+		List<String> dateColumnNamesList = new ArrayList<String>();
+		for (int i = 0; i < dataSet.getMetadata().getFieldCount(); i++) {
+			IFieldMetaData fieldMeta = dataSet.getMetadata().getFieldMeta(i);
+			if (Date.class.isAssignableFrom(fieldMeta.getType()) || Timestamp.class.isAssignableFrom(fieldMeta.getType())) {
+				dateColumnNamesList.add(fieldMeta.getName());
+			}
+		}
+		return dateColumnNamesList;
+	}
+
+	@Override
+	protected List<FilterCriteria> getLikeFilterCriteria(String datasetLabel, JSONObject likeSelectionsObject, boolean isRealtime,
+			Map<String, String> columnAliasToName, List<ProjectionCriteria> projectionCriteria, boolean getAttributes) throws JSONException {
+		List<FilterCriteria> likeFilterCriteria = new ArrayList<FilterCriteria>();
+
+		if (likeSelectionsObject.has(datasetLabel)) {
+			IDataSet dataSet = getDataSetDAO().loadDataSetByLabel(datasetLabel);
+			boolean isAnEmptySelection = false;
+
+			JSONObject datasetSelectionObject = likeSelectionsObject.getJSONObject(datasetLabel);
+			Iterator<String> it = datasetSelectionObject.keys();
+			while (!isAnEmptySelection && it.hasNext()) {
+				String columns = it.next();
+				String value = datasetSelectionObject.getString(columns);
+
+				if (value != null && !value.isEmpty()) {
+					List<String> columnsList = new ArrayList<String>();
+					String columnNames = replaceColumnAliasesWithNames(columns, columnAliasToName);
+					columnsList.addAll(Arrays.asList(columnNames.split("\\s*,\\s*"))); // trim spaces while splitting
+
+					List<String> attributesOrMeasures = getAttributesOrMeasures(columnsList, dataSet, projectionCriteria, isRealtime, getAttributes);
+					if (!attributesOrMeasures.isEmpty()) {
+						Operand leftOperand = null;
+						StringBuilder rightOperandSB = new StringBuilder();
+						for (String attributeOrMeasure : attributesOrMeasures) {
+							if (leftOperand == null) {
+								leftOperand = new Operand(attributeOrMeasure);
+
+								rightOperandSB.append("'%");
+								rightOperandSB.append(value);
+								rightOperandSB.append("%'");
+							} else {
+								rightOperandSB.append(" OR ");
+								rightOperandSB.append(attributeOrMeasure);
+								rightOperandSB.append(" LIKE '%");
+								rightOperandSB.append(value);
+								rightOperandSB.append("%'");
+							}
+						}
+						Operand rightOperand = new Operand(rightOperandSB.toString());
+						FilterCriteria filterCriteria = new FilterCriteria(leftOperand, "LIKE", rightOperand);
+						likeFilterCriteria.add(filterCriteria);
+					}
+				} else {
+					isAnEmptySelection = true;
+				}
+			}
+
+			if (isAnEmptySelection) {
+				likeFilterCriteria.clear();
+				likeFilterCriteria.add(new FilterCriteria(new Operand("0"), "=", new Operand("1")));
+			}
+		}
+
+		return likeFilterCriteria;
+	}
+
+	private List<String> getAttributesOrMeasures(List<String> columnNames, IDataSet dataSet, List<ProjectionCriteria> projectionCriteria, boolean isRealtime,
+			boolean getAttributes) {
+		List<String> attributesOrMeasures = new ArrayList<String>();
+
+		String datasetLabel = dataSet.getLabel();
+		IDataSource dataSource = isRealtime ? null : dataSet.getDataSource();
+		String defaultTableNameDot = isRealtime ? DEFAULT_TABLE_NAME_DOT : "";
+
+		for (String columnName : columnNames) {
+			for (ProjectionCriteria projection : projectionCriteria) {
+				if (projection.getDataset().equals(datasetLabel) && projection.getColumnName().equals(columnName)) {
+					IAggregationFunction aggregationFunction = AggregationFunctions.get(projection.getAggregateFunction());
+					boolean isAttribute = aggregationFunction == null || aggregationFunction.equals(AggregationFunctions.NONE_FUNCTION);
+					if (isAttribute == getAttributes) {
+						String encapsulatedColumnName = AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
+						if (isAttribute) {
+							attributesOrMeasures.add(defaultTableNameDot + encapsulatedColumnName);
+						} else {
+							attributesOrMeasures.add(defaultTableNameDot + aggregationFunction.apply(encapsulatedColumnName));
+						}
+					}
+					break;
+				}
+			}
+		}
+
+		return attributesOrMeasures;
 	}
 
 	private String[] getDistinctValues(String string) {
@@ -661,11 +750,12 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 	@Path("/{label}/data")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getDataStorePost(@PathParam("label") String label, @QueryParam("parameters") String parameters,
-			@QueryParam("aggregations") String aggregations, @QueryParam("summaryRow") String summaryRow, String selections, @QueryParam("offset") int offset,
-			@QueryParam("size") int fetchSize, @QueryParam("realtime") boolean isRealtime) {
+			@QueryParam("aggregations") String aggregations, @QueryParam("summaryRow") String summaryRow, String selections,
+			@QueryParam("likeSelections") String likeSelections, @QueryParam("offset") int offset, @QueryParam("size") int fetchSize,
+			@QueryParam("realtime") boolean isRealtime) {
 		logger.debug("IN");
 		try {
-			return getDataStore(label, parameters, selections, aggregations, summaryRow, offset, fetchSize, isRealtime);
+			return getDataStore(label, parameters, selections, likeSelections, aggregations, summaryRow, offset, fetchSize, isRealtime);
 		} catch (Exception e) {
 			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
 		} finally {
@@ -682,7 +772,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 			JSONArray requestBodyJSONArray = RestUtilities.readBodyAsJSONArray(req);
 			for (int i = 0; i < requestBodyJSONArray.length(); i++) {
 				JSONObject info = requestBodyJSONArray.getJSONObject(i);
-				getDataStore(info.getString("datasetLabel"), info.getString("parameters"), null, info.getString("aggregation"), null, 0, 1,
+				getDataStore(info.getString("datasetLabel"), info.getString("parameters"), null, null, info.getString("aggregation"), null, 0, 1,
 						info.optBoolean("realtime"));
 
 			}

@@ -591,8 +591,8 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	@Path("/{label}/data")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getDataStore(@PathParam("label") String label, @QueryParam("parameters") String parameters, @QueryParam("selections") String selections,
-			@QueryParam("aggregations") String aggregations, @QueryParam("summaryRow") String summaryRow, @QueryParam("offset") int offset,
-			@QueryParam("size") int fetchSize, @QueryParam("realtime") boolean isRealtime) {
+			@QueryParam("likeSelections") String likeSelections, @QueryParam("aggregations") String aggregations, @QueryParam("summaryRow") String summaryRow,
+			@QueryParam("offset") int offset, @QueryParam("size") int fetchSize, @QueryParam("realtime") boolean isRealtime) {
 		logger.debug("IN");
 
 		try {
@@ -637,6 +637,19 @@ public class DataSetResource extends AbstractSpagoBIResource {
 				}
 			}
 
+			List<FilterCriteria> havingCriteria = new ArrayList<FilterCriteria>();
+			List<FilterCriteria> havingCriteriaForMetaModel = new ArrayList<FilterCriteria>();
+			if (likeSelections != null && !likeSelections.equals("")) {
+				JSONObject likeSelectionsObject = new JSONObject(likeSelections);
+				if (likeSelectionsObject.names() != null) {
+					filterCriteria.addAll(getLikeFilterCriteria(label, likeSelectionsObject, false, columnAliasToName, projectionCriteria, true));
+					havingCriteria.addAll(getLikeFilterCriteria(label, likeSelectionsObject, false, columnAliasToName, projectionCriteria, false));
+
+					filterCriteriaForMetaModel.addAll(getLikeFilterCriteria(label, likeSelectionsObject, true, columnAliasToName, projectionCriteria, true));
+					havingCriteriaForMetaModel.addAll(getLikeFilterCriteria(label, likeSelectionsObject, true, columnAliasToName, projectionCriteria, false));
+				}
+			}
+
 			List<ProjectionCriteria> summaryRowProjectionCriteria = new ArrayList<ProjectionCriteria>();
 			if (summaryRow != null && !summaryRow.equals("")) {
 				JSONObject summaryRowObject = new JSONObject(summaryRow);
@@ -646,7 +659,8 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			}
 
 			IDataStore dataStore = getDatasetManagementAPI().getDataStore(label, offset, fetchSize, isRealtime, DataSetUtilities.getParametersMap(parameters),
-					groupCriteria, filterCriteria, filterCriteriaForMetaModel, projectionCriteria, summaryRowProjectionCriteria);
+					groupCriteria, filterCriteria, filterCriteriaForMetaModel, havingCriteria, havingCriteriaForMetaModel, projectionCriteria,
+					summaryRowProjectionCriteria);
 
 			Map<String, Object> properties = new HashMap<String, Object>();
 			JSONArray fieldOptions = new JSONArray("[{id: 1, options: {measureScaleFactor: 0.5}}]");
@@ -844,6 +858,12 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		}
 
 		return filterCriterias;
+	}
+
+	protected List<FilterCriteria> getLikeFilterCriteria(String datasetLabel, JSONObject likeSelectionsObject, boolean isRealtime,
+			Map<String, String> columnAliasToName, List<ProjectionCriteria> projectionCriteria, boolean getAttributes) throws JSONException {
+		List<FilterCriteria> likeFilterCriterias = new ArrayList<FilterCriteria>();
+		return likeFilterCriterias;
 	}
 
 	private static Map<String, Map<String, String>> getParametersMaps(String parameters) {

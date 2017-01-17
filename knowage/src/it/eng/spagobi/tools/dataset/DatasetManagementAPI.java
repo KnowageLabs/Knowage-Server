@@ -371,8 +371,8 @@ public class DatasetManagementAPI {
 	}
 
 	public IDataStore getDataStore(String label, int offset, int fetchSize, boolean isRealtime, Map<String, String> parametersValues,
-			List<GroupCriteria> groups, List<FilterCriteria> filters, List<FilterCriteria> filterCriteriaForMetaModel, List<ProjectionCriteria> projections,
-			List<ProjectionCriteria> summaryRowProjections) {
+			List<GroupCriteria> groups, List<FilterCriteria> filters, List<FilterCriteria> filtersForMetaModel, List<FilterCriteria> havings,
+			List<FilterCriteria> havingsForMetaModel, List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections) {
 
 		try {
 			IDataSet dataSet = getDataSetDAO().loadDataSetByLabel(label);
@@ -380,22 +380,23 @@ public class DatasetManagementAPI {
 			IDataStore dataStore = null;
 
 			if (dataSet.isPersisted() && !dataSet.isPersistedHDFS()) {
-				dataStore = queryPersistedDataset(groups, filters, projections, summaryRowProjections, dataSet, offset, fetchSize);
+				dataStore = queryPersistedDataset(groups, filters, havings, projections, summaryRowProjections, dataSet, offset, fetchSize);
 				dataStore.setCacheDate(getPersistedDate(dataSet));
 			} else if (dataSet.isFlatDataset()) {
-				dataStore = queryFlatDataset(groups, filters, projections, summaryRowProjections, dataSet, offset, fetchSize);
+				dataStore = queryFlatDataset(groups, filters, havings, projections, summaryRowProjections, dataSet, offset, fetchSize);
 				dataStore.setCacheDate(new Date());
 			} else if (isRealtime && isJDBCDataSet(dataSet) && !SqlUtils.isBigDataDialect(dataSet.getDataSource().getHibDialectName())) {
-				dataStore = queryJDBCDataset(groups, filters, projections, summaryRowProjections, dataSet, offset, fetchSize);
+				dataStore = queryJDBCDataset(groups, filters, havings, projections, summaryRowProjections, dataSet, offset, fetchSize);
 				dataStore.setCacheDate(new Date());
 			} else if (isRealtime) {
-				dataStore = queryRealtimeDataset(groups, filterCriteriaForMetaModel, projections, summaryRowProjections, dataSet, offset, fetchSize);
+				dataStore = queryRealtimeDataset(groups, filtersForMetaModel, havingsForMetaModel, projections, summaryRowProjections, dataSet, offset,
+						fetchSize);
 				dataStore.setCacheDate(new Date());
 			} else {
 				SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
 				cache.setUserProfile(userProfile);
 
-				IDataStore cachedResultSet = cache.get(dataSet, groups, filters, projections, summaryRowProjections, offset, fetchSize);
+				IDataStore cachedResultSet = cache.get(dataSet, groups, filters, havings, projections, summaryRowProjections, offset, fetchSize);
 
 				if (cachedResultSet == null) {
 					if (isJDBCDataSet(dataSet) && !SqlUtils.isBigDataDialect(dataSet.getDataSource().getHibDialectName())) {
@@ -404,7 +405,7 @@ public class DatasetManagementAPI {
 						dataSet.loadData();
 						cache.put(dataSet, dataSet.getDataStore());
 					}
-					dataStore = cache.get(dataSet, groups, filters, projections, summaryRowProjections, offset, fetchSize);
+					dataStore = cache.get(dataSet, groups, filters, havings, projections, summaryRowProjections, offset, fetchSize);
 					if (dataStore == null) {
 						throw new CacheException("An unexpected error occured while executing method");
 					}
@@ -1253,40 +1254,44 @@ public class DatasetManagementAPI {
 		return statement;
 	}
 
-	private IDataStore queryPersistedDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections,
-			List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, int offset, int fetchSize) throws InstantiationException, IllegalAccessException {
+	private IDataStore queryPersistedDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<FilterCriteria> havings,
+			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, int offset, int fetchSize)
+			throws InstantiationException, IllegalAccessException {
 		IDataSource dataSource = dataSet.getDataSourceForWriting();
 		String tableName = dataSet.getPersistTableName();
-		return queryDataset(new SelectBuilder(), dataSource, tableName, groups, filters, projections, summaryRowProjections, dataSet, offset, fetchSize);
+		return queryDataset(new SelectBuilder(), dataSource, tableName, groups, filters, havings, projections, summaryRowProjections, dataSet, offset,
+				fetchSize);
 	}
 
-	private IDataStore queryFlatDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections,
-			List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, int offset, int fetchSize) throws InstantiationException, IllegalAccessException {
+	private IDataStore queryFlatDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<FilterCriteria> havings,
+			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, int offset, int fetchSize)
+			throws InstantiationException, IllegalAccessException {
 		IDataSource dataSource = dataSet.getDataSource();
 		String tableName = dataSet.getFlatTableName();
-		return queryDataset(new SelectBuilder(), dataSource, tableName, groups, filters, projections, summaryRowProjections, dataSet, offset, fetchSize);
+		return queryDataset(new SelectBuilder(), dataSource, tableName, groups, filters, havings, projections, summaryRowProjections, dataSet, offset,
+				fetchSize);
 	}
 
-	private IDataStore queryJDBCDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections,
-			List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, int offset, int fetchSize) throws JSONException, Exception,
-			IllegalAccessException {
+	private IDataStore queryJDBCDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<FilterCriteria> havings,
+			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, int offset, int fetchSize)
+			throws JSONException, Exception, IllegalAccessException {
 		IDataSource dataSource = dataSet.getDataSource();
 		QuerableBehaviour querableBehaviour = (QuerableBehaviour) dataSet.getBehaviour(QuerableBehaviour.class.getName());
 		String tableName = querableBehaviour.getStatement();
 		InLineViewBuilder sqlBuilder = new InLineViewBuilder();
 		sqlBuilder.setInLineViewAlias("T");
-		return queryDataset(sqlBuilder, dataSource, tableName, groups, filters, projections, summaryRowProjections, dataSet, offset, fetchSize);
+		return queryDataset(sqlBuilder, dataSource, tableName, groups, filters, havings, projections, summaryRowProjections, dataSet, offset, fetchSize);
 	}
 
-	private IDataStore queryRealtimeDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<ProjectionCriteria> projections,
-			List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, int offset, int fetchSize) {
+	private IDataStore queryRealtimeDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<FilterCriteria> havings,
+			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, int offset, int fetchSize) {
 		dataSet.loadData();
 		IDataStore dataStore = dataSet.getDataStore();
 		if (dataStore != null && dataStore.getRecordsCount() < METAMODEL_LIMIT) {
 			String tableName = DataStore.DEFAULT_SCHEMA_NAME + "." + DataStore.DEFAULT_TABLE_NAME;
 			List<String> orderColumns = new ArrayList<String>();
 
-			String originalQuery = getQueryText(null, tableName, groups, filters, projections, null, dataSet, true, orderColumns);
+			String originalQuery = getQueryText(null, tableName, groups, filters, havings, projections, null, dataSet, true, orderColumns);
 			boolean hasSortingOnCalculatedColumns = checkSortingOnCalculatedColumns(orderColumns);
 
 			IDataStore originalDataStore = dataStore.aggregateAndFilterRecords(originalQuery, -1, -1);
@@ -1301,7 +1306,7 @@ public class DatasetManagementAPI {
 			}
 
 			if (summaryRowProjections != null && summaryRowProjections.size() > 0) {
-				String summaryRowQuery = getQueryText(null, tableName, groups, filters, projections, summaryRowProjections, dataSet, true, null);
+				String summaryRowQuery = getQueryText(null, tableName, groups, filters, havings, projections, summaryRowProjections, dataSet, true, null);
 				IDataStore summaryRowDataStore = originalDataStore.aggregateAndFilterRecords(summaryRowQuery, -1, -1);
 				appendSummaryRowToPagedDataStore(projections, summaryRowProjections, pagedDataStore, summaryRowDataStore);
 			}
@@ -1521,15 +1526,15 @@ public class DatasetManagementAPI {
 	}
 
 	private IDataStore queryDataset(SelectBuilder sqlBuilder, IDataSource dataSource, String tableName, List<GroupCriteria> groups,
-			List<FilterCriteria> filters, List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, int offset,
-			int fetchSize) throws InstantiationException, IllegalAccessException {
+			List<FilterCriteria> filters, List<FilterCriteria> havings, List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections,
+			IDataSet dataSet, int offset, int fetchSize) throws InstantiationException, IllegalAccessException {
 		logger.debug("IN");
 
-		String query = getQueryText(sqlBuilder, dataSource, tableName, groups, filters, projections, null, dataSet, false, null);
+		String query = getQueryText(sqlBuilder, dataSource, tableName, groups, filters, havings, projections, null, dataSet, false, null);
 		IDataStore pagedDataStore = dataSource.executeStatement(query, offset, fetchSize);
 
 		if (summaryRowProjections != null && summaryRowProjections.size() > 0) {
-			String summaryRowQuery = getQueryText(sqlBuilder.getClass().newInstance(), dataSource, tableName, groups, filters, projections,
+			String summaryRowQuery = getQueryText(sqlBuilder.getClass().newInstance(), dataSource, tableName, groups, filters, havings, projections,
 					summaryRowProjections, dataSet, false, null);
 			IDataStore summaryRowDataStore = dataSource.executeStatement(summaryRowQuery, -1, -1);
 			appendSummaryRowToPagedDataStore(projections, summaryRowProjections, pagedDataStore, summaryRowDataStore);
@@ -1540,15 +1545,15 @@ public class DatasetManagementAPI {
 	}
 
 	public String getQueryText(IDataSource dataSource, String tableName, List<GroupCriteria> groups, List<FilterCriteria> filters,
-			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, boolean isRealtime,
-			List<String> outputOrderColumns) {
-		return getQueryText(new SelectBuilder(), dataSource, tableName, groups, filters, projections, summaryRowProjections, dataSet, isRealtime,
+			List<FilterCriteria> havings, List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet,
+			boolean isRealtime, List<String> outputOrderColumns) {
+		return getQueryText(new SelectBuilder(), dataSource, tableName, groups, filters, havings, projections, summaryRowProjections, dataSet, isRealtime,
 				outputOrderColumns);
 	}
 
 	public String getQueryText(SelectBuilder sqlBuilder, IDataSource dataSource, String tableName, List<GroupCriteria> groups, List<FilterCriteria> filters,
-			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, boolean isRealtime,
-			List<String> outputOrderColumns) {
+			List<FilterCriteria> havings, List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet,
+			boolean isRealtime, List<String> outputOrderColumns) {
 
 		if (tableName == null || tableName.isEmpty() || (!isRealtime && dataSource == null)) {
 			throw new IllegalArgumentException("Found one or more arguments invalid. Tablename [" + tableName + "] and/or dataSource [" + dataSource
@@ -1570,6 +1575,7 @@ public class DatasetManagementAPI {
 			setColumnsToSelect(dataSource, projections, sqlBuilder, orderColumns, isRealtime, columnNameWithColonToAliasName);
 			setWhereConditions(dataSource, filters, sqlBuilder);
 			setGroupbyConditions(dataSource, groups, sqlBuilder, columnNameWithColonToAliasName);
+			setHavingConditions(dataSource, havings, sqlBuilder);
 			setOrderbyConditions(dataSource, orderColumns, sqlBuilder);
 
 			queryText = sqlBuilder.toString();
@@ -1882,6 +1888,17 @@ public class DatasetManagementAPI {
 
 			for (String groupColumnName : groupColumnNames) {
 				sqlBuilder.groupBy(groupColumnName);
+			}
+		}
+	}
+
+	private void setHavingConditions(IDataSource dataSource, List<FilterCriteria> filters, SelectBuilder sqlBuilder) {
+		if (filters != null) {
+			for (FilterCriteria filter : filters) {
+				String leftOperand = filter.getLeftOperand().getOperandValueAsString();
+				String operator = filter.getOperator();
+				String rightOperand = filter.getRightOperand().getOperandValueAsString();
+				sqlBuilder.having("(" + leftOperand + " " + operator + " " + rightOperand + ")");
 			}
 		}
 	}
