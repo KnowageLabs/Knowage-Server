@@ -526,7 +526,14 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		label : sbiModule_translate.load("Delete"),
 		icon : 'fa fa-trash',
 		action : function(item, event) {
-			$scope.deleteFunction(item, event);
+			var confirm=$mdDialog.confirm().clickOutsideToClose(true).title().textContent( sbiModule_translate.load("sbi.functionscatalog.suretodelete"))
+			.ariaLabel('Alert Dialog Demo').ok('OK').cancel('Cancel');
+		    
+			$mdDialog.show(confirm).then(function() {
+				$scope.deleteFunction(item, event);
+		      }, function() {
+		        console.log( sbiModule_translate.load("sbi.functionscatalog.deletecancelled"));
+		      }); 			
 		},
 		visible : function(row, column) {
 			if (row.owner == $scope.ownerUserName || isAdminGlobal) {
@@ -851,7 +858,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 	}
 	;
 
-	function executeWithNewDataController($scope, $mdDialog, logger, demoData,
+	function executeWithNewDataController($scope,$mdDialog, logger, demoData,
 			datasets, userId, translate) {
 		logger.info("received demo function data: ", demoData);
 		$scope.demoData = demoData;
