@@ -186,7 +186,7 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                                                 scope.tableColumns.push(tmpColData);
                               
                                             }
-                                        } else {
+                                        } else { 
                                             //load all
                                             var firstValue = scope.ngModel[0];
                                             if (firstValue != undefined) {

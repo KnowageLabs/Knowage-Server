@@ -366,6 +366,8 @@ function controllerCockpitColumnsConfigurator($scope,sbiModule_translate,$mdDial
 		if(model.content.columnSelectedOfDataset == undefined){
 			model.content.columnSelectedOfDataset = [];
 		}
+		
+		
 		for(var i=0;i<$scope.columnSelected.length;i++){
 			debugger;
 			var obj = $scope.columnSelected[i];
@@ -375,6 +377,21 @@ function controllerCockpitColumnsConfigurator($scope,sbiModule_translate,$mdDial
 			obj.label = $scope.columnSelected[i].alias;
 			obj.aliasToShow = $scope.columnSelected[i].alias;
 			model.content.columnSelectedOfDataset.push(obj);
+//			if($scope.model.filters!=undefined){			
+//				var filterFound=false;
+//				var filterToAdd={};
+//				for(var i=0;i<$scope.model.filters.length;i++){
+//					if($scope.model.filters[i].colName==obj.name){
+//						filterFound=true;
+//					}
+//				}
+//			}
+//			if(!filterFound){
+//				filterToAdd.colName=obj.name;
+//				filterToAdd.filterVals=[];
+//				$scope.model.filters.push(filterToAdd);		
+//			}
+
 		}
 
 		$mdDialog.hide();

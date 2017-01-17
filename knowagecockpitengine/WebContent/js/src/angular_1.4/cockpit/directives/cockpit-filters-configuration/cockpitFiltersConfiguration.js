@@ -64,32 +64,10 @@ function cockpitFiltersControllerFunction($scope,cockpitModule_widgetServices,
 	}
 	
 	$scope.showFilters=false;
-	//$scope.filtersToReturn=[]; // format [{colName : "..."  ,  filterVals : ["filterStr1" , "filterStr2", ... ]}   ,   {colName : "..."  ,  filterVals : [...] }]
 	
 	$scope.localDS={};
 	$scope.columnNames=[];
-
-	
-//	$scope.updateFilters=function()
-//	{
-//		$scope.filtersToReturn=[]; // format [{colName : "..."  ,  filterVals : ["filterStr1" , "filterStr2", ... ]}   ,   {colName : "..."  ,  filterVals : [...] }]
-//		$scope.showFilters=true;
-//		$scope.selectedDsId=$scope.ngModelShared.dataset.dsId;	
-//		angular.copy(cockpitModule_datasetServices.getDatasetById($scope.selectedDsId), $scope.localDS);
-//		for(var i=0;i<$scope.localDS.metadata.fieldsMeta.length;i++)
-//		{
-//			var objToInsert={};
-//			objToInsert.filterVals=[];
-//			objToInsert.colName=$scope.localDS.metadata.fieldsMeta[i].name;
-//			
-//			$scope.filtersToReturn.push(objToInsert);
-//			$scope.columnNames.push($scope.localDS.metadata.fieldsMeta[i].name);
-//		}
-//		$scope.ngModelShared.filters=$scope.filtersToReturn;	
-//	}
-	
-	
-	
+		
 	$scope.updateFilters=function(dsId)
 	{
 		$scope.ngModelShared.filters=[]; // format [{colName : "..."  ,  filterVals : ["filterStr1" , "filterStr2", ... ]}   ,   {colName : "..."  ,  filterVals : [...] }]
@@ -135,7 +113,7 @@ function cockpitFiltersControllerFunction($scope,cockpitModule_widgetServices,
 	//for tableWidget
 	
 	$scope.$watch("ngModelShared.dataset.dsId", function(newValue, oldValue) {
-		
+		var filterFound=false;
 		if(oldValue==newValue)
 		{	
 			if(oldValue!=undefined) //not initialization phase
@@ -144,6 +122,56 @@ function cockpitFiltersControllerFunction($scope,cockpitModule_widgetServices,
 				{
 					$scope.updateFilters($scope.ngModelShared.dataset.dsId);	
 				}
+				else
+				{
+					$scope.localDSforFilters={};
+					angular.copy(cockpitModule_datasetServices.getDatasetById($scope.ngModelShared.dataset.dsId), $scope.localDSforFilters);
+					
+					for(var i=0;i<$scope.localDSforFilters.metadata.fieldsMeta.length;i++)  //columns
+					{	
+						var obj = $scope.localDSforFilters.metadata.fieldsMeta[i];
+						
+						if($scope.ngModelShared.filters!=undefined){			
+							filterFound=false;
+							var filterToAdd={};
+							for(var j=0;j<$scope.ngModelShared.filters.length;j++){        //filters
+								if($scope.ngModelShared.filters[j].colName==obj.name){
+									filterFound=true;
+								}
+							}
+						}
+						if(!filterFound){
+							filterToAdd.colName=obj.name;
+							filterToAdd.filterVals=[];
+							$scope.ngModelShared.filters.push(filterToAdd);		
+						}
+					}
+					
+					
+					for(var k=0;k<$scope.ngModelShared.filters.length;k++)   //filters
+					{       
+						filterFound=false;
+						var f = $scope.ngModelShared.filters[k];
+						for(var l=0;l<$scope.localDSforFilters.metadata.fieldsMeta.length;l++)  //columns
+						{
+							
+							if($scope.localDSforFilters.metadata.fieldsMeta[l].name==f.colName)
+							{
+								filterFound=true;
+								
+							}
+							
+							
+						}
+						if(!filterFound) //if filter is not in columns
+						{
+							$scope.ngModelShared.filters.splice(k,1); //remove filter from filter list
+						}	
+						
+					}
+					
+					
+				}	
 			}
 			else{ //initialization phase, there is no dataset
 				
@@ -152,7 +180,7 @@ function cockpitFiltersControllerFunction($scope,cockpitModule_widgetServices,
 		else
 		{
 			$scope.updateFilters($scope.ngModelShared.dataset.dsId); 	
-		}	
+		}
 	});
 	
 
