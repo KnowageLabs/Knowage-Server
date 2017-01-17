@@ -1096,4 +1096,25 @@
 			} 
 		}
 	}
+
+	.widgetSearchBar {
+		border: 1px solid #ccc;
+	    position: absolute;
+	    top: 0;
+	    left: 0;
+	    z-index: 99999;
+	    width: 100%;
+	    background-color: rgba($tabBackground,.8);
+	    &:hover {
+	    	background-color: rgba($tabBackground,1);
+	    }
+	    .hint {
+    	    position: absolute;
+		    left: 2px;
+		    right: auto;
+		    font-size: $smallFontSize;
+		    line-height: 14px;
+		    color: $smallTextColor;
+	    }
+	}
 }

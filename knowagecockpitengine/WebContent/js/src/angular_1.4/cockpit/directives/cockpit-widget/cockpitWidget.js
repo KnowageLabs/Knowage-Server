@@ -150,7 +150,6 @@ angular.module('cockpitModule')
                     			scope.initializeWidgetProperty(directive);
                     			scope.subCockpitWidget=angular.element(directive);
                     			scope.gridsterItem=angular.element(scope.cockpitWidgetItem[0].querySelector("li.gridster-item"))
-                    			
                     		}else{
                     			console.error(scope.ngModel.type+" widget not defined");
                     		}
@@ -200,7 +199,21 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 	$scope.borderShadowStyle={};
 	$scope.titleStyle={};
 	$scope.widgetSpinner=false;
-	$scope.actionButtonClass=[];
+	$scope.widgetSearchBar = false;
+	$scope.actionButtonClass=[]; 
+	debugger;
+	
+	//davverna - initializing search object to give all the columns to the user searchbar
+	if(!$scope.ngModel.search || $scope.ngModel.search.columns == []){
+		$scope.ngModel.search ={"columns" : []};
+		for(var k in $scope.ngModel.content.columnSelectedOfDataset){
+			$scope.ngModel.search.columns.push($scope.ngModel.content.columnSelectedOfDataset[k].name);
+		}
+	}
+	
+	$scope.test = function(){
+		console.log('ngModel',$scope.ngModel);
+	}
 	
 	
 	
@@ -364,6 +377,9 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 		cockpitModule_widgetServices.deleteWidget(cockpitModule_properties.CURRENT_SHEET,$scope.ngModel,nomessage);
 	}
 	
+	$scope.openSearchBar = function(){
+		$scope.widgetSearchBar == false ? $scope.widgetSearchBar = true : $scope.widgetSearchBar = false;
+	}
 	 
 	$scope.doSelection = function(columnName,columnValue,modalColumn,modalValue,row){
 		if($scope.ngModel.cliccable==false){
