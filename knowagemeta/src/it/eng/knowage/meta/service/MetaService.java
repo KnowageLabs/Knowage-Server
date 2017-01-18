@@ -762,6 +762,51 @@ public class MetaService extends AbstractSpagoBIResource {
 	}
 
 	@POST
+	@Path("/deleteBusinessRelation")
+	public Response deleteBusinessRelation(@Context HttpServletRequest req) throws IOException, JSONException, SpagoBIException {
+
+		JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
+		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
+		JSONObject oldJsonModel = createJson(model);
+
+		applyDiff(jsonRoot, model);
+
+		JSONObject json = jsonRoot.getJSONObject("data");
+		String relName = json.getString("name");
+		String sourceTableName = json.getString("sourceTableName");
+		String destinationTableName = json.getString("destinationTableName");
+
+		BusinessModel businessModel = model.getBusinessModels().get(0);
+		BusinessTable businessTable = businessModel.getBusinessTableByUniqueName(sourceTableName);
+		BusinessRelationship businessRelationshipToRemove = null;
+		if (businessTable != null) {
+			List<BusinessRelationship> businessRelationships = businessTable.getRelationships();
+
+			for (BusinessRelationship businessRelationship : businessRelationships) {
+				String brSourceTableName = businessRelationship.getSourceTable().getUniqueName();
+				String brDestinationTableName = businessRelationship.getDestinationTable().getUniqueName();
+				String brName = businessRelationship.getUniqueName();
+				if (brSourceTableName.equals(sourceTableName) && brDestinationTableName.equals(destinationTableName) && brName.equals(relName)) {
+					// found relationship to be removed
+					businessRelationshipToRemove = businessRelationship;
+					break;
+				}
+			}
+			if (businessRelationshipToRemove != null) {
+				// remove the relationship from the model
+				businessTable.getModel().getRelationships().remove(businessRelationshipToRemove);
+			}
+		}
+
+		JSONObject jsonModel = createJson(model);
+		ObjectMapper mapper = new ObjectMapper();
+		JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
+
+		return Response.ok(patch.toString()).build();
+
+	}
+
+	@POST
 	@Path("/deleteBusinessView")
 	public Response deleteBusinessView(@Context HttpServletRequest req) throws IOException, JSONException, SpagoBIException {
 		JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
