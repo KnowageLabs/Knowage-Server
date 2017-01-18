@@ -726,7 +726,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					}
 					
 					// table columns
-					$scope.cockpitAutodetectColumns=[{label:"Similarity",name:"___similarity",transformer:function(input){return $filter('number')(input * 100, 0) + '%';}}];
+					$scope.cockpitAutodetectColumns=[{label:"Similarity",name:"___similarity",transformer:function(input){return $filter('number')(input * 100, 2) + '%';}}];
 					angular.forEach(datasets,function(item){
 						var column = {label:item.label, name:item.label};
 						this.push(column);
@@ -761,9 +761,9 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					
 					// Similarity filter management
 					
-					$scope.minSimilarity = 0.0;
+					$scope.minSimilarity = 0.2;
 					
-					$scope.minSimilarityValues = [0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.0];
+					$scope.minSimilarityValues = [0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2];
 					for(var i=$scope.minSimilarityValues.length-1; i>=0; i--){
 						if($scope.minSimilarityValues[i] < $scope.minSimilarity){
 							$scope.minSimilarityValues.splice(i, 1);
