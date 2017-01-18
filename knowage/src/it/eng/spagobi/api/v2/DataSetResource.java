@@ -60,6 +60,7 @@ import it.eng.spagobi.tools.dataset.persist.PersistedHDFSManager;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.assertion.UnreachableCodeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceParameterException;
@@ -667,9 +668,16 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 			boolean getAttributes) {
 		List<String> attributesOrMeasures = new ArrayList<String>();
 
-		String datasetLabel = dataSet.getLabel();
-		IDataSource dataSource = isRealtime ? null : dataSet.getDataSource();
 		String defaultTableNameDot = isRealtime ? DEFAULT_TABLE_NAME_DOT : "";
+		String datasetLabel = dataSet.getLabel();
+
+		IDataSource dataSource = null;
+		if (!isRealtime) {
+			try {
+				dataSource = dataSet.getDataSource();
+			} catch (UnreachableCodeException e) {
+			}
+		}
 
 		for (String columnName : columnNames) {
 			for (ProjectionCriteria projection : projectionCriteria) {
