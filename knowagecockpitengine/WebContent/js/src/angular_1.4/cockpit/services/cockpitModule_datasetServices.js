@@ -689,7 +689,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				
 				var payload = JSON.stringify(datasetNames);
 				sbiModule_restServices.restToRootProject();
-				sbiModule_restServices.promisePost("2.0/datasets","associations/autodetect?wait=true", payload)
+				sbiModule_restServices.promisePost("2.0/datasets","associations/autodetect?wait=true&aggregated=true", payload)
 				.then(function(response){
 					// get table rows from REST service response
 					$scope.cockpitAutodetectRows = [];
