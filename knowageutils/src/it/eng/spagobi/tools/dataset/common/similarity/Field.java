@@ -20,8 +20,8 @@ package it.eng.spagobi.tools.dataset.common.similarity;
 
 public class Field implements Comparable<Field> {
 
-	public final String datasetLabel;
-	public final String datasetColumn;
+	private final String datasetLabel;
+	private final String datasetColumn;
 
 	public Field(String datasetLabel, String datasetColumn) {
 		this.datasetLabel = datasetLabel;
@@ -73,5 +73,24 @@ public class Field implements Comparable<Field> {
 			result += datasetColumn.compareTo(other.datasetColumn);
 		}
 		return result;
+	}
+
+	public String getDatasetLabel() {
+		return datasetLabel;
+	}
+
+	public String getDatasetColumn() {
+		return datasetColumn;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Field [datasetLabel=");
+		builder.append(datasetLabel);
+		builder.append(", datasetColumn=");
+		builder.append(datasetColumn);
+		builder.append("]");
+		return builder.toString();
 	}
 }

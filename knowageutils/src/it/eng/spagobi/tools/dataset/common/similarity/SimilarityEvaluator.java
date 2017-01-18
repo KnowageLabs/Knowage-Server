@@ -146,7 +146,7 @@ public class SimilarityEvaluator {
 	}
 
 	private boolean chainable(Field chain, Field target) {
-		if (chain.equals(target.datasetLabel) && !chain.equals(target.datasetColumn)) {
+		if (chain.getDatasetLabel().equals(target.getDatasetLabel()) && !chain.getDatasetColumn().equals(target.getDatasetColumn())) {
 			return false;
 		}
 		return true;

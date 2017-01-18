@@ -18,8 +18,8 @@
 
 package it.eng.spagobi.tools.dataset.common.similarity;
 
-import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 public class Similarity implements Comparable<Similarity> {
 
@@ -31,11 +31,11 @@ public class Similarity implements Comparable<Similarity> {
 	}
 
 	public Similarity(double coefficient) {
-		this(new HashSet<Field>(), coefficient);
+		this(new TreeSet<Field>(), coefficient);
 	}
 
 	public Similarity(Set<Field> fields, double coefficient) {
-		this.fields = fields;
+		this.fields = new TreeSet<>(fields);
 		this.coefficient = coefficient;
 	}
 
@@ -60,7 +60,11 @@ public class Similarity implements Comparable<Similarity> {
 
 	@Override
 	public int compareTo(Similarity other) {
-		return Double.compare(coefficient, other.coefficient);
+		int result = Double.compare(coefficient, other.coefficient);
+		if (result == 0) {
+			result += fields.toString().compareTo(other.toString());
+		}
+		return result;
 	}
 
 	@Override
@@ -97,5 +101,16 @@ public class Similarity implements Comparable<Similarity> {
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Similarity [fields=");
+		builder.append(fields);
+		builder.append(", coefficient=");
+		builder.append(coefficient);
+		builder.append("]");
+		return builder.toString();
 	}
 }
