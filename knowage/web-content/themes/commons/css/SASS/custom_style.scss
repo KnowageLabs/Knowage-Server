@@ -680,6 +680,18 @@ expander-box md-toolbar {
     cursor: pointer;
 }
 
+/* font-awesome overriding */
+.fa-stack{
+  .fa {
+    &.fa-positive {
+      color: $positiveColor;
+    }
+    &.fa-negative {
+      color: $negativeColor;
+    }
+  }
+}
+
 /* IE11 fix */
 
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
@@ -694,3 +706,5 @@ expander-box md-toolbar {
   }
   
 }
+
+
