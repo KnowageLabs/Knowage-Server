@@ -475,10 +475,10 @@ public class DocumentParameters {
 			if (defaultValues.size() > 0
 					&& (analyticalDocumentParameter.getParameterValues() == null || analyticalDocumentParameter.getParameterValues().isEmpty())) {
 				// if parameter has no values set, but it has default values, those values are considered as values
-				DefaultValuesList valueList = buildDefaultValueList();
-				if (valueList != null) {
-					analyticalDocumentParameter.setParameterValues(valueList.getValuesAsList());
-					analyticalDocumentParameter.setParameterValuesDescription(valueList.getDescriptionsAsList());
+				defaultValues = buildDefaultValueList();
+				if (defaultValues != null) {
+					analyticalDocumentParameter.setParameterValues(defaultValues.getValuesAsList());
+					analyticalDocumentParameter.setParameterValuesDescription(defaultValues.getDescriptionsAsList());
 				}
 			}
 
