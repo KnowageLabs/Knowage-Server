@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 public class SimilarityEvaluator {
@@ -39,15 +40,22 @@ public class SimilarityEvaluator {
 	private final int top;
 	private final double threshold;
 
+	private final boolean evaluateNumber;
+
 	public SimilarityEvaluator(ISimilarityStrategy strategy) {
-		this(strategy, Integer.MAX_VALUE, Double.MIN_VALUE);
+		this(strategy, Integer.MAX_VALUE, 0);
 
 	}
 
 	public SimilarityEvaluator(ISimilarityStrategy strategy, int top, double threshold) {
+		this(strategy, top, threshold, false);
+	}
+
+	public SimilarityEvaluator(ISimilarityStrategy strategy, int top, double threshold, boolean evaluateNumber) {
 		this.strategy = strategy;
 		this.top = top;
 		this.threshold = threshold;
+		this.evaluateNumber = evaluateNumber;
 	}
 
 	public Set<Similarity> evaluate(List<String> dataSets, Map<String, Map<String, TLongHashSet>> dataSetDomainValues) {
@@ -88,7 +96,16 @@ public class SimilarityEvaluator {
 		for (String fieldA : valuesDataSetA.keySet()) {
 			for (String fieldB : valuesDataSetB.keySet()) {
 				logger.debug("Evaluating similarity between fields [" + fieldA + "] and [" + fieldB + "]");
-				double coefficient = strategy.measureCoefficient(valuesDataSetA.get(fieldA), valuesDataSetB.get(fieldB));
+				TLongHashSet setA = valuesDataSetA.get(fieldA);
+				TLongHashSet setB = valuesDataSetB.get(fieldB);
+
+				double coefficient = 0;
+				if (setA != null && setB != null) {
+					coefficient = strategy.measureCoefficient(setA, setB);
+				} else if (evaluateNumber && setA == null && setB == null) {
+					logger.debug("Cannot use domain values to measure field similarity. Using column name instead.");
+					coefficient = StringUtils.getJaroWinklerDistance(fieldA, fieldB);
+				}
 				logger.debug("Coefficient measures [" + coefficient + "%]");
 				if (coefficient >= threshold) {
 					Similarity similarity = new Similarity(coefficient);
@@ -105,7 +122,6 @@ public class SimilarityEvaluator {
 	/*
 	 * This method aggregates a simple set of similarities (each similarity has two elements) to obtain a longer similarities chain
 	 */
-
 	private Set<Similarity> aggregate(Set<Similarity> similarities) {
 		Set<Similarity> chained = new TreeSet<>(Collections.reverseOrder());
 		Set<Similarity> removable = new HashSet<>();

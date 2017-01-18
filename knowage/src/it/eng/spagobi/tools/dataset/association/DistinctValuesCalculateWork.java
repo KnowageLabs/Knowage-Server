@@ -34,6 +34,7 @@ import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.utilities.Helper;
+import it.eng.spagobi.utilities.NumberUtilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.locks.DistributedLockFactory;
 import it.eng.spagobi.utilities.trove.TLongHashSetSerializer;
@@ -94,7 +95,9 @@ public class DistinctValuesCalculateWork implements Work {
 						}
 
 						IDataStore dataStore = dataSet.getDataStore();
-						List<Integer> attributeFieldIndexes = getAttributeFieldIndexes(dataSet.getMetadata());
+						logger.debug("Setting datastore metadata equals to dataset metadata");
+						dataStore.setMetaData(dataSet.getMetadata());
+						List<Integer> attributeFieldIndexes = getAttributeFieldIndexes(dataStore.getMetaData());
 						Map<String, TLongHashSet> results = dataStore.getFieldsDistinctValuesAsLongHash(attributeFieldIndexes);
 						logger.debug("Distinct values for dataSet" + dataSet.getLabel() + " are: " + results);
 
@@ -147,15 +150,11 @@ public class DistinctValuesCalculateWork implements Work {
 		if (metaData != null) {
 			for (int fieldIndex = 0; fieldIndex < metaData.getFieldCount(); fieldIndex++) {
 				IFieldMetaData fieldMeta = metaData.getFieldMeta(fieldIndex);
-				if (fieldMeta.getFieldType().equals(FieldType.ATTRIBUTE) && !isNumber(fieldMeta)) {
+				if (fieldMeta.getFieldType().equals(FieldType.ATTRIBUTE) && !NumberUtilities.isFloatingPoint(fieldMeta.getType())) {
 					toReturn.add(fieldIndex);
 				}
 			}
 		}
 		return toReturn;
-	}
-
-	private boolean isNumber(IFieldMetaData fieldMeta) {
-		return Number.class.isAssignableFrom(fieldMeta.getType());
 	}
 }

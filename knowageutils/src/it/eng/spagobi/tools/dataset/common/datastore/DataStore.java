@@ -26,6 +26,7 @@ import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.common.query.IQuery;
+import it.eng.spagobi.utilities.NumberUtilities;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -343,35 +344,42 @@ public class DataStore implements IDataStore {
 		while (it.hasNext()) {
 			IRecord record = (IRecord) it.next();
 			for (Integer fieldIndex : fieldIndexes) {
-				IField field = record.getFieldAt(fieldIndex);
-				Object value = field.getValue();
-				if (value != null) {
-					logger.debug("Field value [" + value + "]");
-					String normalizedValue;
-					if (value instanceof Number) {
-						Number number = (Number) value;
-						Double numericValue = number.doubleValue();
-						if ((numericValue == Math.floor(numericValue)) && !Double.isInfinite(numericValue)) {
-							// the number is an integer, this will remove the .0 trailing zeros
-							int numericInt = numericValue.intValue();
-							normalizedValue = String.valueOf(numericInt);
-						} else {
-							normalizedValue = String.valueOf(numericValue);
-
-						}
-					}
-
-					normalizedValue = String.valueOf(value);
-					logger.debug("Got value [" + normalizedValue + "] for field index [" + fieldIndex + "]");
-					long hashValue = LongHashFunction.xx_r39().hashChars(normalizedValue);
-					logger.debug("Value [" + normalizedValue + "] has been hashed into [" + hashValue + "]");
-
-					String fieldName = metaData.getFieldAlias(fieldIndex);
-					logger.debug("Found field name [" + fieldName + "]");
+				IFieldMetaData fieldMetaData = metaData.getFieldMeta(fieldIndex);
+				String fieldName = fieldMetaData.getAlias();
+				logger.debug("Field name [" + fieldName + "]");
+				if (NumberUtilities.isNumber(fieldMetaData.getType())) {
 					if (!results.containsKey(fieldName)) {
-						results.put(fieldName, new TLongHashSet());
+						results.put(fieldName, null);
 					}
-					results.get(fieldName).add(hashValue);
+				} else {
+					IField field = record.getFieldAt(fieldIndex);
+					Object value = field.getValue();
+					if (value != null) {
+						logger.debug("Field value [" + value + "]");
+						String normalizedValue;
+						if (value instanceof Number) {
+							Number number = (Number) value;
+							Double numericValue = number.doubleValue();
+							if ((numericValue == Math.floor(numericValue)) && !Double.isInfinite(numericValue)) {
+								// the number is an integer, this will remove the .0 trailing zeros
+								int numericInt = numericValue.intValue();
+								normalizedValue = String.valueOf(numericInt);
+							} else {
+								normalizedValue = String.valueOf(numericValue);
+
+							}
+						}
+
+						normalizedValue = String.valueOf(value);
+						logger.debug("Got value [" + normalizedValue + "] for field index [" + fieldIndex + "]");
+						long hashValue = LongHashFunction.xx_r39().hashChars(normalizedValue);
+						logger.debug("Value [" + normalizedValue + "] has been hashed into [" + hashValue + "]");
+
+						if (!results.containsKey(fieldName)) {
+							results.put(fieldName, new TLongHashSet());
+						}
+						results.get(fieldName).add(hashValue);
+					}
 				}
 			}
 		}
