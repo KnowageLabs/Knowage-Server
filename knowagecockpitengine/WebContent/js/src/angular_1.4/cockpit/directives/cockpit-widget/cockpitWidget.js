@@ -207,7 +207,10 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 	if(!$scope.ngModel.search || $scope.ngModel.search.columns == []){
 		$scope.ngModel.search ={"columns" : []};
 		for(var k in $scope.ngModel.content.columnSelectedOfDataset){
-			$scope.ngModel.search.columns.push($scope.ngModel.content.columnSelectedOfDataset[k].name);
+			var column = $scope.ngModel.content.columnSelectedOfDataset[k];
+			if(column.fieldType == "ATTRIBUTE"){
+				$scope.ngModel.search.columns.push(column.name);
+			}
 		}
 	}
 	

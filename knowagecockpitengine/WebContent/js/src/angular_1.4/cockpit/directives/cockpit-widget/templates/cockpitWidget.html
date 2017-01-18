@@ -33,7 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	      	<md-input-container class="md-block" flex flex-xs=40>
 	           	<label>{{translate.load("sbi.cockpit.widgets.table.search.columns")}}</label>
 	           <md-select ng-model="ngModel.search.columns" multiple>
-	            <md-option ng-repeat="col in ngModel.content.columnSelectedOfDataset" value="{{col.name}}">
+	            <md-option ng-repeat="col in ngModel.content.columnSelectedOfDataset | filter:{fieldType:'ATTRIBUTE'}" value="{{col.name}}">
 	              {{col.name}}
 	            </md-option>
 	           </md-select>
