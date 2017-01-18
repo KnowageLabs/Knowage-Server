@@ -1415,14 +1415,6 @@
 					if(condition){
 						execProperties.parametersData.documentParameters[idDocumentParameter].label=visualDependency.viewLabel;
 						execProperties.parametersData.documentParameters[idDocumentParameter].visible=true;
-						//Exit if one conditions is verify
-						/* BUG FIX LOAD DEFAULT AND VIEWPOIN PARAMS
-						 No resetParameter for DEFAULT and Viewpoin  
-						 */
-						//console.log('reset for ' , execProperties.parametersData.documentParameters[idDocumentParameter]);
-						if(execProperties.initResetFunctionVisualDependency.status){
-							documentExecuteServices.resetParameter(execProperties.parametersData.documentParameters[idDocumentParameter]);
-						}
 						break;
 					}else{
 						execProperties.parametersData.documentParameters[idDocumentParameter].visible=false;
