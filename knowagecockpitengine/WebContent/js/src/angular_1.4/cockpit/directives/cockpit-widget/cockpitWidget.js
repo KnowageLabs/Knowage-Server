@@ -192,14 +192,15 @@ angular.module('cockpitModule')
 function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetServices,cockpitModule_properties,cockpitModule_template,cockpitModule_analyticalDrivers,cockpitModule_datasetServices,sbiModule_restServices,$q,cockpitModule_documentServices,cockpitModule_crossServices,cockpitModule_widgetSelection,$timeout,cockpitModule_gridsterOptions,sbiModule_translate){
 	$scope.cockpitModule_properties=cockpitModule_properties;
 	$scope.cockpitModule_template=cockpitModule_template;
-	$scope.translate=sbiModule_translate;
-	$scope.tmpWidgetContent={};
-	$scope.editingWidgetName=false;
-	$scope.extendedStyle={}; // the merge of the widget style and the cockpit style
-	$scope.borderShadowStyle={};
-	$scope.titleStyle={};
-	$scope.widgetSpinner=false;
-	$scope.widgetSearchBar = false;
+	$scope.translate		= sbiModule_translate;
+	$scope.tmpWidgetContent	= {};
+	$scope.editingWidgetName= false;
+	$scope.extendedStyle	= {}; // the merge of the widget style and the cockpit style
+	$scope.borderShadowStyle= {};
+	$scope.titleStyle		= {};
+	$scope.widgetSpinner	= false;
+	$scope.widgetSearchBar 	= false; // default searchBar unactive
+	$scope.activeSearch 	= false; // default search unactive
 	$scope.actionButtonClass=[]; 
 	
 	//davverna - initializing search object to give all the columns to the user searchbar
@@ -210,15 +211,16 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 		}
 	}
 	
-	//davverna - method to pass the actual model and search parameters to refresh the widget table
-	//			iterating trough widgets to find the widget in the service ckecking the ID.
+	//davverna - method to set the actual model and search parameters to refresh the widget table
 	$scope.searchColumns = function(){
-		for(var j in cockpitModule_template.sheets[cockpitModule_properties.CURRENT_SHEET].widgets){
-			if(cockpitModule_template.sheets[cockpitModule_properties.CURRENT_SHEET].widgets[j].id == $scope.ngModel.id){
-				cockpitModule_template.sheets[cockpitModule_properties.CURRENT_SHEET].widgets[j] = $scope.ngModel;
-				break;
-			}
-		}
+		$scope.activeSearch = true;
+		$scope.refreshWidget();
+	}
+	
+	//davverna - reset the actual search if active
+	$scope.resetSearch = function(){
+		$scope.ngModel.search.text = "";
+		$scope.activeSearch = false;
 		$scope.refreshWidget();
 	}
 	
