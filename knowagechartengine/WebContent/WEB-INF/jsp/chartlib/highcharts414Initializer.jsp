@@ -206,8 +206,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	
 		Method for updating chart		
  	*/
-    function updateData(widgetData) {
-    	 
+ 	function updateData(widgetData) {
+   	 
 		var category = null;
 		var column = null;
 		var orderColumn = null;
@@ -239,24 +239,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		
 		var counterSeries =  widgetData.chartTemplate.CHART.VALUES.SERIE.length;
-		
+		var dataLabel = null;
+   		var drill = null;
 		
 		for (var j = 0; j < chart.series.length; j++) {
-			chart.series[j].setData([]);
+			dataLabels =   chart.options.series[0].data[0].dataLabels;
+    		drill = chart.options.series[0].data[0].drilldown
+     		chart.series[j].setData([]);
 		}
 		for (var j = 0; j < data.length; j++) {
 			
 			for (var i = 0; i < counterSeries; i++) {
-				if (chart.options.chart.type == "gauge") {
-					chart.series[i].addPoint([ data[j]["column_" + 1],
-							parseFloat(data[j]["column_" + (i + 1)]) ], true,
-							false);
-				} else {
-
-					chart.series[i].addPoint([ data[j][column],
-							parseFloat(data[j][seriesNamesColumnBind[chart.series[i].name]]) ], true,
-							false);
-
+      			var pointOptions={};
+		      	if (chart.options.chart.type == "gauge") {
+			       pointOptions.y = parseFloat(data[j]["column_" + (i + 1)]);
+			       pointOptions.name= data[j]["column_" + 1];
+			       pointOptions.drilldown = drill;
+			       pointOptions.dataLabels = dataLabels;
+			       chart.series[i].addPoint(pointOptions, true,false);
+		      
+		      	} else {
+		       
+			       pointOptions.y = parseFloat(data[j][seriesNamesColumnBind[chart.series[i].name]]);
+			       pointOptions.name=data[j][column];
+			       pointOptions.drilldown = drill;
+			       pointOptions.dataLabels = dataLabels;
+			      
+			       chart.series[i].addPoint(pointOptions, true,false);
 				}
 			}
 		}
