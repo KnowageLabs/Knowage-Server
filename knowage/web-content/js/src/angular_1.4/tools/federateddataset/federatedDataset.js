@@ -25,6 +25,7 @@ var app = angular
 		 'ngMaterial',
 		 'angular_list',
 		 'sbiModule',
+		 'angular_table'
 		 ]
 );
 
@@ -37,6 +38,9 @@ app
 		 "$scope",
 		 "$mdDialog", 
 		 "$timeout",
+		 "$q",
+		 "$mdPanel",
+		 "$filter",
 		 "sbiModule_config",
 		 "sbiModule_translate",
 		 "sbiModule_restServices",
@@ -52,6 +56,9 @@ function federationDefinitionFunction
 		$scope,
 		$mdDialog, 
 		$timeout,
+		$q,
+		$mdPanel,
+		$filter,
 		sbiModule_config, 
 		sbiModule_translate, 
 		sbiModule_restServices,
@@ -473,6 +480,189 @@ function federationDefinitionFunction
 			);
 			ctr.clearSelections();
 		}
+	}
+	
+	ctr.autodetect = function(){
+		ctr.autodetectPanel("federationDefinition",ctr.listaNew,$scope.multiRelationships)
+		.then(function(autodetectRowString){
+			$scope.addJSONStructureToRelationshipsJSONAndMultiRelationships($scope.t, autodetectRowString);
+		});
+	}
+	
+	ctr.autodetectPanel=function(attachToElementWithId,tmpAvaiableDatasets,tmpAssociations){
+		var deferred = $q.defer();
+		var elemToAtt=document.body;
+		if(attachToElementWithId!=undefined){
+			elemToAtt=angular.element(document.getElementById(attachToElementWithId))
+		}
+
+		var config = {
+			attachTo: elemToAtt,
+			locals :{datasets:tmpAvaiableDatasets,associations:tmpAssociations,deferred:deferred},
+			controller: function($scope,mdPanelRef,sbiModule_translate,datasets,associations,deferred,$mdDialog){
+				
+				// table columns
+				$scope.autodetectColumns=[{label:"Similarity",name:"___similarity",transformer:function(input){return $filter('number')(input * 100, 2) + '%';}}];
+				angular.forEach(datasets,function(item){
+					if(item.pars.length==0){
+						var column = {label:item.label, name:item.label};
+						this.push(column);
+					}
+				},$scope.autodetectColumns);
+				
+				// table search columns
+				$scope.autodetectColumnsSearch=[];
+				angular.forEach(datasets,function(item){
+					if(item.pars.length==0){
+						this.push(item.label);
+					}
+				},$scope.autodetectColumnsSearch);
+				
+				// table selected row
+				$scope.autodetectSelectedRow = null;
+				
+				// table selected row string
+				$scope.autodetectSelectedRowString = null;
+				
+				$scope.directionLeftToRight = true;
+				
+				$scope.$watch("autodetectSelectedRow",function(newValue,oldValue){
+					$scope.setAutodetectSelectedRowString(newValue, $scope.directionLeftToRight);
+				});
+				
+				$scope.$watch("directionLeftToRight",function(newValue,oldValue){
+					$scope.setAutodetectSelectedRowString($scope.autodetectSelectedRow, newValue);
+				});
+				
+				$scope.setAutodetectSelectedRowString=function(autodetectSelectedRow, directionLeftToRight){
+					if(autodetectSelectedRow != undefined){
+						var columns = [];
+						for (var property in autodetectSelectedRow) {
+						    if (autodetectSelectedRow.hasOwnProperty(property) && !property.includes("___") && autodetectSelectedRow[property]) {
+						    	columns.push(property.toUpperCase() + "." + autodetectSelectedRow[property]);
+						    }
+						}
+						if(directionLeftToRight){
+							$scope.autodetectSelectedRowString = columns[0] + " -> " + columns[1];
+						}else{
+							$scope.autodetectSelectedRowString = columns[1] + " -> " + columns[0];
+						}
+					}
+				}
+				
+				$scope.saveAutodetect=function(){
+					deferred.resolve(angular.copy($scope.autodetectSelectedRowString));
+					mdPanelRef.close();
+					$scope.$destroy();
+				}
+				
+				$scope.closeDialog=function(){
+					mdPanelRef.close();
+					$scope.$destroy();
+					deferred.reject();
+				}
+				
+				// Similarity filter management
+				
+				$scope.minSimilarity = 0.2;
+				
+				$scope.minSimilarityValues = [0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2];
+				for(var i=$scope.minSimilarityValues.length-1; i>=0; i--){
+					if($scope.minSimilarityValues[i] < $scope.minSimilarity){
+						$scope.minSimilarityValues.splice(i, 1);
+					}
+				}
+				
+				$scope.selectedMinSimilarityValue = $scope.minSimilarity;
+				
+				$scope.$watch("selectedMinSimilarityValue",function(newValue,oldValue){
+		    		  $scope.filterAutodetectRows(newValue);
+				});
+				
+				// Filtered table model
+				$scope.autodetectRows = [];
+				$scope.autodetectFilteredRows = [];
+				
+				$scope.filterAutodetectRows=function(minSimilarity){
+					var rows = [];
+					angular.copy($scope.autodetectRows, rows);
+					
+					for(var i=rows.length-1; i>=0; i--){
+						var row = rows[i];
+						if(row["___similarity"] < minSimilarity){
+							rows.splice(i, 1);
+						}
+					}
+					
+					angular.copy(rows, $scope.autodetectFilteredRows);
+				}
+				
+				var datasetNames = {};
+				angular.forEach(datasets,function(item){
+					if(item.pars.length==0){
+						this[item.label] = {};
+					}
+				},datasetNames);
+				
+				var payload = JSON.stringify(datasetNames);
+				sbiModule_restServices.promisePost("2.0/datasets","associations/autodetect?wait=true&threshold=" + $scope.minSimilarity, payload)
+				.then(function(response){
+					// get table rows from REST service response
+					angular.forEach(response.data,function(item, key){
+						var row = {};
+						row["___id"] = key;
+						row["___similarity"] = item.coefficient;
+						row["___length"] = item.fields.length;
+						angular.forEach(datasets,function(dataset){
+							if(dataset.pars.length==0){
+								row[dataset.label] = null;
+							}
+						}, row);
+						angular.forEach(item.fields,function(field){
+							row[field.datasetLabel] = field.datasetColumn;
+						}, row);
+						this.push(row);
+					},$scope.autodetectRows);
+					
+					// remove rows equal to existing associations
+//					for(var i=0; i<associations.length; i++){
+//						var association = associations[i];
+//						var associationItems = association.match("(.*)\\.(.*) -> (.*)\\.(.*)");
+//						for(var j=$scope.autodetectRows.length-1; j>=0; j--){
+//							var autodetectRow = $scope.autodetectRows[j];
+//							var isEqual = true;
+//							if(!autodetectRow.hasOwnProperty(associationItems[1]) || autodetectRow[associationItems[1]] != associationItems[2]
+//									|| !autodetectRow.hasOwnProperty(associationItems[3]) || autodetectRow[associationItems[3]] != associationItems[4]){
+//								isEqual = false;
+//							}
+//							if(isEqual){
+//								$scope.autodetectRows.splice(j, 1);
+//								break;
+//							}
+//						}
+//					}
+					
+					angular.copy($scope.autodetectRows, $scope.autodetectFilteredRows);
+				},function(response){
+					sbiModule_restServices.errorHandler(response.data,"");
+				});
+			},
+			disableParentScroll: true,
+			templateUrl: sbiModule_config.contextName + '/js/src/angular_1.4/tools/federateddataset/commons/templates/federatedDatasetAutodetectChoice.html',
+//				hasBackdrop: true,
+			position: $mdPanel.newPanelPosition().absolute().center(),
+			trapFocus: true,
+			zIndex: 150,
+			fullscreen :true,
+			clickOutsideToClose: true,
+			escapeToClose: false,
+			focusOnOpen: false,
+			onRemoving :function(){
+			}
+		};
+
+		$mdPanel.open(config);
+		return deferred.promise;
 	}
 	
 	ctr.addSingleRelation = function() {

@@ -87,7 +87,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<body class="federatedDataset" ng-app="federationDefinitionModule" id="ng-app">
 		
 		<!-- Binding the Angular controller FederationDefinitionCTRL from the module FEDERATIONDEFINITION to the div -->
-		<div ng-controller="federationDefinitionCTRL as ctrl" layout-fill class="contentdemoBasicUsage">		
+		<div ng-controller="federationDefinitionCTRL as ctrl" layout-fill class="contentdemoBasicUsage" id="federationDefinition">		
 		  <div class ="md-container" >
 			
 			<md-toolbar class="miniheadfederation" >
@@ -109,7 +109,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				</div>
 			</md-toolbar>
 	
-			<md-content layout-padding class="mainContainer" >
+			<md-content layout-padding class="mainContainer">
 			
 				<!-- Wrapping content that will be shown when ctrl.state is true -->
 				<div ng-show="ctrl.state" layout="row" class="mozillaDatasetListHeight">
@@ -211,7 +211,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					</md-content>
 				 </md-card>	
 				</div>
-				
 			   	
 				<div ng-hide="ctrl.state">
 				 <md-card>
@@ -219,7 +218,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					<div class="md-toolbar-tools">
 						<h2 class="md-flex">{{translate.load("sbi.federationdefinition.associationsList");}}</h2>
 						<span flex=""></span>
-						<md-button class="md-fab md-fab-top-right associationListBtn" ng-click="ctrl.addSingleRelation()"><md-tooltip md-delay=1500 md-direction="left">{{translate.load("sbi.federationdefinition.add.relationship");}}</md-tooltip><md-icon md-font-icon="fa fa-plus">
+						<md-button ng-click="ctrl.autodetect()">{{translate.load("sbi.federationdefinition.autodetect")}}</md-button>
+						<md-button class="md-fab associationListBtn" ng-click="ctrl.addSingleRelation()"><md-tooltip md-delay=1500 md-direction="left">{{translate.load("sbi.federationdefinition.add.relationship");}}</md-tooltip><md-icon md-font-icon="fa fa-plus">
 						</md-icon></md-button> 
 						<!-- <md-button class="md-fab md-ExtraMini createRelationButton" ng-click="ctrl.addSingleRelation()"><md-tooltip md-delay=1500 md-direction="left">{{translate.load("sbi.federationdefinition.add.relationship");}}</md-tooltip><md-icon md-font-icon="fa fa-plus">
 						</md-icon></md-button>  -->
