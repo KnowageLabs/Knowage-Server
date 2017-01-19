@@ -258,7 +258,7 @@ public class HierarchyService {
 			if (!isInsert && doBackup) {
 				HierarchyUtils.updateHierarchyForBackup(dataSource, connection, paramsMap, false);
 			} else if (!isInsert && !doBackup) {
-				HierarchyUtils.deleteHierarchy(dimension, hierSourceName, dataSource, connection);
+				HierarchyUtils.deleteHierarchy(dimension, hierTargetName, dataSource, connection);
 			}
 
 			List lstRelMTInserted = new ArrayList();

@@ -43,7 +43,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -771,15 +770,20 @@ public class HierarchyUtils {
 			Hierarchies hierarchies = HierarchiesSingleton.getInstance();
 
 			// 2 - create query text
-			String hierarchyNameCol = AbstractJDBCDataset.encapsulateColumnName("HIER_NM", dataSource);
+			String hierarchyNameCol = AbstractJDBCDataset.encapsulateColumnName("HIER_CD", dataSource);
+			String hierarchyBckCol = AbstractJDBCDataset.encapsulateColumnName("BACKUP", dataSource);
 			String tableName = hierarchies.getHierarchyTableName(dimension);
-			String queryText = "DELETE FROM " + tableName + " WHERE " + hierarchyNameCol + "='" + hierarchyName + "' ";
+			String queryText = "DELETE FROM " + tableName + " WHERE " + hierarchyNameCol + "= ? AND " + hierarchyBckCol + " = ? ";
 
 			logger.debug("The delete query is [" + queryText + "]");
 
 			// 3 - Execute DELETE statement
-			Statement statement = connection.createStatement();
-			statement.executeUpdate(queryText);
+			// Statement statement = connection.createStatement();
+			PreparedStatement statement = connection.prepareStatement(queryText);
+			statement.setString(1, hierarchyName);
+			statement.setBoolean(2, false);
+			statement.executeUpdate();
+			// statement.executeUpdate(queryText);
 			statement.close();
 
 			logger.debug("Delete query successfully executed");
@@ -1150,7 +1154,9 @@ public class HierarchyUtils {
 			throw new SpagoBIServiceException("An unexpected error occured while updating hierarchy for backup", t);
 		}
 
-		if (paramsMap.get("doPropagation") != null && (Boolean) paramsMap.get("doPropagation")) {
+		// Backups propagations information only for MASTER HIERARCHIES type
+		String origHierType = (String) paramsMap.get("hierTargetType");
+		if (origHierType.equalsIgnoreCase("MASTER") && paramsMap.get("doPropagation") != null && (Boolean) paramsMap.get("doPropagation")) {
 			String hierNameTargetColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM_T, dataSource);
 
 			String updateRelQuery = "UPDATE " + HierarchyConstants.REL_MASTER_TECH_TABLE_NAME + " SET " + hierNameTargetColumn + "= ?, " + bkpColumn + " = ?, "
