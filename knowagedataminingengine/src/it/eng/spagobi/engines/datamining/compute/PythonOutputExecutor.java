@@ -140,12 +140,22 @@ public class PythonOutputExecutor {
 			}
 
 			logger.debug("Plot file name " + plotName);
+			String imgWidth = out.getOutputImgWidth();
+			String imgHeight = out.getOutputImgHeight();
 
 			// function recalling a function inside the main script (auto)
 			// to produce an image result
 			if (function == null) {
+
+				if (imgWidth != null && imgHeight != null) {
+					// plt.figure(figsize=(800/my_dpi, 800/my_dpi), dpi=my_dpi) //800 are pixel X and Y size in pixels
+					codeToExec = out.getOuputLabel() + ".figure(figsize=(" + imgWidth + "/my_dpi," + imgHeight + "/my_dpi),dpi=my_dpi);\n";
+					resPythonExecution = PyLib.execScript(codeToExec);
+				}
+
 				codeToExec = out.getOuputLabel() + ".savefig('" + plotName + "." + OUTPUT_PLOT_EXTENSION + "')\n" + out.getOuputLabel() + ".gcf().clear()\n"
 						+ out.getOuputLabel() + ".gcf().clear()\n";
+				// codeToExec = out.getOuputLabel() + ".savefig('" + plotName + "." + OUTPUT_PLOT_EXTENSION + "')\n";
 
 				resPythonExecution = PyLib.execScript(codeToExec);
 				if (resPythonExecution < 0) {
@@ -158,6 +168,13 @@ public class PythonOutputExecutor {
 				}
 
 			} else {
+
+				if (imgWidth != null && imgHeight != null) {
+					// plt.figure(figsize=(800/my_dpi, 800/my_dpi), dpi=my_dpi) //800 are pixel X and Y size in pixels
+					codeToExec = function + ".figure(figsize=(" + imgWidth + "/my_dpi," + imgHeight + "/my_dpi),dpi=my_dpi);\n";
+					resPythonExecution = PyLib.execScript(codeToExec);
+				}
+
 				if (outVal == null || outVal.equals("")) {
 					codeToExec = function + ".savefig('" + plotName + "." + OUTPUT_PLOT_EXTENSION + "')\n" + function + ".gcf().clear()\n";
 					resPythonExecution = PyLib.execScript(codeToExec);
@@ -168,8 +185,32 @@ public class PythonOutputExecutor {
 								+ "EXECUTION FAILED\n" + "See log file for other details\n");
 					}
 				} else {
-					codeToExec = "temporaryPlotVariableToPrintOnFile=" + function + "(" + outVal + ")\n" + "temporaryPlotVariableToPrintOnFile.savefig('"
-							+ plotName + "." + OUTPUT_PLOT_EXTENSION + "')\n";
+					// codeToExec = "temporaryPlotVariableToPrintOnFile=" + function + "(" + outVal + ")\n" + "temporaryPlotVariableToPrintOnFile.savefig('"
+					// + plotName + "." + OUTPUT_PLOT_EXTENSION + "')\n";
+					// resPythonExecution = PyLib.execScript(codeToExec);
+					// if (resPythonExecution < 0) {
+					// logger.error("Python engine error \n" + "Technical details:\n" + "PythonOutputExecutor.java:\n" + codeToExec + "EXECUTION FAILED\n"
+					// + "See log file for other details\n");
+					// throw new SpagoBIEngineRuntimeException("Python engine error \n" + "Technical details:\n" + "PythonOutputExecutor.java:\n" + codeToExec
+					// + "EXECUTION FAILED\n" + "See log file for other details\n");
+					// }
+
+					codeToExec = "temporaryPlotVariableToPrintOnFile=" + function + "(" + outVal + "); \n";
+					resPythonExecution = PyLib.execScript(codeToExec);
+					if (resPythonExecution < 0) {
+						logger.error("Python engine error \n" + "Technical details:\n" + "PythonOutputExecutor.java:\n" + codeToExec + "EXECUTION FAILED\n"
+								+ "See log file for other details\n");
+						throw new SpagoBIEngineRuntimeException("Python engine error \n" + "Technical details:\n" + "PythonOutputExecutor.java:\n" + codeToExec
+								+ "EXECUTION FAILED\n" + "See log file for other details\n");
+					}
+
+					if (imgWidth != null && imgHeight != null) {
+						// plt.figure(figsize=(800/my_dpi, 800/my_dpi), dpi=my_dpi) //800 are pixel X and Y size in pixels
+						codeToExec = function + ".figure(figsize=(" + imgWidth + "/my_dpi," + imgHeight + "/my_dpi),dpi=my_dpi);\n";
+						resPythonExecution = PyLib.execScript(codeToExec);
+					}
+
+					codeToExec = "temporaryPlotVariableToPrintOnFile.savefig('" + plotName + "." + OUTPUT_PLOT_EXTENSION + "')\n";
 					resPythonExecution = PyLib.execScript(codeToExec);
 					if (resPythonExecution < 0) {
 						logger.error("Python engine error \n" + "Technical details:\n" + "PythonOutputExecutor.java:\n" + codeToExec + "EXECUTION FAILED\n"

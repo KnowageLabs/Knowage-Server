@@ -256,6 +256,7 @@ public class DataMiningRExecutor implements IDataMiningExecutor {
 		logger.debug("OUT");
 
 	}
+
 	/*
 	 * public void updateDatasetInWorkspace(DataMiningDataset ds, IEngUserProfile userProfile) throws IOException { logger.debug("IN");
 	 * setupEnvonment(userProfile); logger.debug("Set up environment"); // datasets preparation datasetsExecutor.updateDataset(ds);
@@ -276,5 +277,77 @@ public class DataMiningRExecutor implements IDataMiningExecutor {
 	 * protected void saveUserWorkSpace() throws IOException { logger.debug("IN"); re.(parseAndEval"save(list = ls(all = TRUE), file= '" +
 	 * profile.getUserUniqueIdentifier() + ".RData')"); logger.debug("OUT"); }
 	 */
+
+	@Override
+	public DataMiningResult executeScript(Logger logger, DataMiningResult result, HashMap params, DataMiningCommand command, Output output,
+			IEngUserProfile userProfile, Boolean rerun, String documentLabel) throws Exception {
+
+		// evaluates script code
+		scriptExecutor.evalScript(command, rerun, params);
+		logger.debug("Evaluated script");
+		UserProfile profile = (UserProfile) userProfile;
+		// create output
+		result = outputExecutor.evalOutput(output, scriptExecutor, documentLabel, (String) profile.getUserId());
+		logger.debug("Got result");
+		return result;
+
+	}
+
+	@Override
+	public DataMiningResult setExecEnvironment(Logger logger, DataMiningResult result, HashMap params, DataMiningCommand command, IEngUserProfile userProfile,
+			Boolean rerun, String documentLabel) throws Exception {
+
+		logger.debug("IN");
+		setupEnvonment(userProfile);
+		logger.debug("Set up environment");
+		// datasets preparation
+		String error = datasetsExecutor.evalDatasetsNeeded(params);
+		if (error.length() > 0) {
+			result = new DataMiningResult();
+			result.setError(error);
+			return result;
+		}
+		logger.debug("Loaded datasets");
+
+		// Files input preparation
+		error = fileExecutor.evalFilesNeeded(params);
+		if (error.length() > 0) {
+			result = new DataMiningResult();
+			result.setError(error);
+			return result;
+		}
+
+		return result;
+
+	}
+
+	@Override
+	public DataMiningResult unsetExecEnvironment(Logger logger, DataMiningResult result, HashMap params, DataMiningCommand command,
+			IEngUserProfile userProfile, Boolean rerun, String documentLabel) throws Exception {
+		// Delete files if presents
+		if (fileExecutor.dataminingInstance.getFiles() != null) {
+			if (fileExecutor.dataminingInstance.getFiles().size() > 0) {
+
+				for (DataMiningFile dmFile : fileExecutor.dataminingInstance.getFiles()) {
+
+					File file = new File(DataMiningUtils.getUserResourcesPath(profile) + dmFile.getFileName());
+					if (file.delete()) {
+						logger.debug(file.getName() + " is deleted!");
+					} else {
+						logger.debug("Delete operation is failed.");
+					}
+				}
+
+			}
+		}
+		// save result of script computation objects and datasets to
+		// user workspace
+		/*
+		 * saveUserWorkSpace(); logger.debug("Saved user WS");
+		 */
+		logger.debug("OUT");
+		// re.end();//has some problems
+		return result;
+	}
 
 }

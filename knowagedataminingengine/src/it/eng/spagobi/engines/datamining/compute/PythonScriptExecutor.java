@@ -24,9 +24,11 @@ import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
 import it.eng.spagobi.engines.datamining.model.DataMiningScript;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Iterator;
 
 import org.apache.commons.lang.RandomStringUtils;
@@ -65,9 +67,13 @@ public class PythonScriptExecutor {
 			logger.debug("loaded script to execute");
 			String codeToExecute = DataMiningUtils.replaceVariables(command.getVariables(), script.getCode());
 			resPythonExecution = PyLib.execScript(codeToExecute);
+
+			// String execRes = executeAndReturnOutString(codeToExecute);
+
 			if (resPythonExecution < 0) {
 				throw new SpagoBIEngineRuntimeException("Python engine error \n" + "Technical details:\n" + "PythonScriptExecutor.java:\n"
 						+ "EXECUTION FAILED\n" + "See datamining engine log file for other details\n");
+
 			}
 			logger.debug("detects action to execute from command --> used to call functions");
 			// detects action to execute from command --> used to call functions
@@ -165,6 +171,26 @@ public class PythonScriptExecutor {
 		}
 		logger.debug("OUT");
 		return ret;
+
+	}
+
+	private String executeAndReturnOutString(String codeToExec) {
+		// Create a stream to hold the output
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		PrintStream ps = new PrintStream(baos);
+		// IMPORTANT: Save the old System.out!
+		PrintStream old = System.out;
+		// Tell Java to use your special stream
+		System.setOut(ps);
+		// Print some output: goes to your special stream
+		resPythonExecution = PyLib.execScript(codeToExec);
+		// System.out.println("CIAO");
+		// Put things back
+		String s = System.console().readLine();
+
+		System.out.flush();
+		System.setOut(old);
+		return baos.toString();
 
 	}
 

@@ -45,16 +45,33 @@ public class FunctionExecutor {
 			executor = new DataMiningRExecutor(dataminingEngineInstance, userProfile);
 		}
 
-		for (DataMiningCommand c : commands) {
-			List<Output> outputs = c.getOutputs();
-			for (Output o : outputs) {
-				try {
-					result = executor.execute(params, c, o, userProfile, true, "function_catalog");
+		try {
+
+			for (DataMiningCommand c : commands) {
+				List<Output> outputs = c.getOutputs();
+				// setta ambiente
+				result = executor.setExecEnvironment(logger, result, params, c, userProfile, false, "function_catalog");
+
+				// esegui script
+				for (Output o : outputs) {
+
+					// esegui output
+					if (c.getExecuted() == null) {
+						c.setExecuted(false);
+					}
+					// result = executor.execute(params, c, o, userProfile, c.getExecuted(), "function_catalog"); // c.getExecuted() prima era true
+					result = executor.executeScript(logger, result, params, c, o, userProfile, c.getExecuted(), "function_catalog"); // c.getExecuted() prima
+																																		// era true
 					results.add(result);
-				} catch (Exception e) {
-					throw new SpagoBIRuntimeException("Error adding dataminingengine execution results", e);
+
 				}
+
+				// unset ambiente
+				result = executor.unsetExecEnvironment(logger, result, params, c, userProfile, false, "function_catalog");
 			}
+
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error adding dataminingengine execution results", e);
 		}
 		return results;
 	}

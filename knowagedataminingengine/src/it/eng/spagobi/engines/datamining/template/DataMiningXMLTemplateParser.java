@@ -81,6 +81,8 @@ public class DataMiningXMLTemplateParser implements IDataMiningTemplateParser {
 	public static String OUTPUT_ATTRIBUTE_MODE = "mode";
 	public static String OUTPUT_ATTRIBUTE_LABEL = "label";
 	public static String OUTPUT_ATTRIBUTE_FUNCTION = "function";
+	public static String OUTPUT_ATTRIBUTE_IMG_HEIGHT = "img-height";
+	public static String OUTPUT_ATTRIBUTE_IMG_WIDTH = "img-width";
 
 	public static String PROP_PARAMETER_NAME = "name";
 	public static String PROP_PARAMETER_ALIAS = "as";
@@ -95,6 +97,7 @@ public class DataMiningXMLTemplateParser implements IDataMiningTemplateParser {
 	/** Logger component. */
 	public static transient Logger logger = Logger.getLogger(DataMiningXMLTemplateParser.class);
 
+	@Override
 	public DataMiningTemplate parse(Object template) {
 		Assert.assertNotNull(template, "Input parameter [template] cannot be null");
 		Assert.assertTrue(template instanceof SourceBean, "Input parameter [template] cannot be of type [" + template.getClass().getName() + "]");
@@ -264,6 +267,10 @@ public class DataMiningXMLTemplateParser implements IDataMiningTemplateParser {
 									out.setOuputLabel(outputLabel);
 									String outputFunction = (String) outputSB.getAttribute(OUTPUT_ATTRIBUTE_FUNCTION);
 									out.setOutputFunction(outputFunction);
+									String outputImgHeight = (String) outputSB.getAttribute(OUTPUT_ATTRIBUTE_IMG_HEIGHT);
+									out.setOutputImgHeight(outputImgHeight);
+									String outputImgWidth = (String) outputSB.getAttribute(OUTPUT_ATTRIBUTE_IMG_WIDTH);
+									out.setOutputImgWidth(outputImgWidth);
 
 									SourceBean varSB = (SourceBean) outputSB.getAttribute(TAG_VARIABLES);
 									if (varSB != null) {

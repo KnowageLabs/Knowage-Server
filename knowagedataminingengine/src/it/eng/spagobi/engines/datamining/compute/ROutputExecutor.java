@@ -106,12 +106,22 @@ public class ROutputExecutor {
 
 		if (out.getOutputType().equalsIgnoreCase(DataMiningConstants.IMAGE_OUTPUT) && out.getOutputName() != null) {
 			logger.debug("Image output");
+			REXP rexp = null;
+
+			// String imgWidth = out.getOutputImgWidth() == null ? "300" : out.getOutputImgWidth();
+			// String imgHeight = out.getOutputImgHeight() == null ? "300" : out.getOutputImgHeight();
+
+			String imgWidth = out.getOutputImgWidth();
+			String imgHeight = out.getOutputImgHeight();
+
+			// String rSetImgSize = "dev.new(width=" + imgWidth + ", height=" + imgHeight + ")";
+
+			// rexp = re.parseAndEval("try( png(width = " + imgWidth + ", height = " + imgHeight + ") )");
+
 			res.setVariablename(outVal);// could be multiple value
 										// comma separated
 			String plotName = out.getOutputName();
-			re.parseAndEval(getPlotFilePath(plotName));
-
-			REXP rexp = null;
+			re.parseAndEval(getPlotFilePath(plotName, imgHeight, imgWidth));
 
 			logger.debug("Plot file name " + plotName);
 			if (function.equals("hist")) {
@@ -379,13 +389,19 @@ public class ROutputExecutor {
 		return res;
 	}
 
-	private String getPlotFilePath(String plotName) throws IOException {
+	private String getPlotFilePath(String plotName, String imgHeight, String imgWidth) throws IOException {
 		logger.debug("IN");
 		String path = null;
+		String filePath = DataMiningUtils.getUserResourcesPath(profile).replaceAll("\\\\", "/");
 		if (plotName != null && !plotName.equals("")) {
-			String filePath = DataMiningUtils.getUserResourcesPath(profile).replaceAll("\\\\", "/");
-			path = OUTPUT_PLOT_IMG + "(\"" + filePath + DataMiningConstants.DATA_MINING_TEMP_FOR_SCRIPT + plotName + "." + OUTPUT_PLOT_EXTENSION + "\") ";
+			if (imgHeight == null || imgWidth == null) {
+				path = OUTPUT_PLOT_IMG + "(\"" + filePath + DataMiningConstants.DATA_MINING_TEMP_FOR_SCRIPT + plotName + "." + OUTPUT_PLOT_EXTENSION + "\") ";
+			} else {
+				path = OUTPUT_PLOT_IMG + "(\"" + filePath + DataMiningConstants.DATA_MINING_TEMP_FOR_SCRIPT + plotName + "." + OUTPUT_PLOT_EXTENSION
+						+ "\",width=" + imgWidth + " , height=" + imgHeight + ") ";
+			}
 		}
+
 		logger.debug("OUT");
 		return path;
 	}

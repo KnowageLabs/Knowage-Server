@@ -52,11 +52,14 @@ function dataMiningFunction (sbiModule_logger, sbiModule_config, datamining_temp
 	$scope.variableForm = false;
 	$scope.visibleOuputVariables = false;
 	$scope.config = {};
-	$scope.imgWidth=480;
-	$scope.imgHeight=480;
+	//$scope.imgWidth=480;
+	//$scope.imgHeight=480;
+	$scope.zoomX=100;
+	$scope.zoomY=100;
+	
 	$scope.pendingRequest = 0;
 	$scope.htmlShow="HTMLSHOW";
-	
+	 
 	$scope.config.params = {
 			'SBI_EXECUTION_ID' : datamining_template.ajaxBaseParams.SBI_EXECUTION_ID ,
 			'DOC_LABEL' : datamining_template.ajaxBaseParams.DOC_LABEL
@@ -103,6 +106,32 @@ function dataMiningFunction (sbiModule_logger, sbiModule_config, datamining_temp
 						 $scope.results[commandName][output.outputName].error = data.error;
 					 }
 					 $scope.pendingRequest--;
+						
+					 //added
+					 if($scope.results[commandName][output.outputName].zoomX==undefined)
+					 {
+						 $scope.results[commandName][output.outputName].zoomX=100;
+//						 $scope.$watch('results['+commandName+']'+'['+output.outputName+'].zoomX',function(){
+//							 
+//							 $scope.results[commandName][output.outputName].backgroundImgStyle={ 'background-image' : "url(\'"+$scope.results[commandName][output.outputName].result+"\')", 'background-repeat':'no-repeat', 'background-size':""+$scope.results[commandName][output.outputName].zoomX+"% "+ $scope.results[commandName][output.outputName].zoomY+"%"};
+//
+//						 });
+					 }	 
+					 if($scope.results[commandName][output.outputName].zoomY==undefined)
+					 {
+						 $scope.results[commandName][output.outputName].zoomY=100;
+//						 $scope.$watch('results['+commandName+']'+'['+output.outputName+'].zoomY',function(){
+//							 $scope.results[commandName][output.outputName].backgroundImgStyle={ 'background-image' : "url(\'"+$scope.results[commandName][output.outputName].result+"\')", 'background-repeat':'no-repeat', 'background-size':""+$scope.results[commandName][output.outputName].zoomX+"% "+ $scope.results[commandName][output.outputName].zoomY+"%"};
+//						 });
+
+					 }	 
+					
+					 $scope.results[commandName][output.outputName].backgroundImgStyle={ 'background-image' : "url(\'"+$scope.results[commandName][output.outputName].result+"\')", 'background-repeat':'no-repeat', 'background-size':""+$scope.results[commandName][output.outputName].zoomX+"% "+ $scope.results[commandName][output.outputName].zoomY+"%"};
+
+					 //$scope.backgroundImgStyle={ 'background-image' : "url(\'"+$scope.results[commandName][output.outputName].result+"\')", 'background-repeat':'no-repeat', 'background-size':""+$scope.results[commandName][output.outputName].zoomX+"% "+ $scope.results[commandName][output.outputName].zoomY+"%"};
+
+					 //$scope.backgroundImgStyle={ 'background-image' : url(results[cmd.name][out.outputName].result), 'background-repeat':'no-repeat', 'background-size':'100% 100%'};
+					 //$scope.backgroundImgStyle={ 'background-image' : url(imgDataBase64), 'background-repeat':'no-repeat', 'background-size':'100% 100%'};
 				 })
 				 .error(function(data, status){
 					var error = 'GET RESULT error with status: ' + status;
@@ -150,7 +179,11 @@ function dataMiningFunction (sbiModule_logger, sbiModule_config, datamining_temp
 						var parameters = {};
 						parameters.commandName = commandName;
 						parameters.singleOutput = output;
+						
 						promiseResult.resolve(parameters);
+						
+
+						
 					})
 					.error(function(data, status){
 						promiseResult.reject();
@@ -205,6 +238,7 @@ function dataMiningFunction (sbiModule_logger, sbiModule_config, datamining_temp
 								parameters.singleOutput = outputs[i];
 								parameters.commandName =  commandName;
 								singleOutputPromise.resolve(parameters);
+								
 								break;
 							}
 						
@@ -315,6 +349,11 @@ function dataMiningFunction (sbiModule_logger, sbiModule_config, datamining_temp
 			parameters.commandName =  cmd.name;
 			parameters.singleOutput = output;
 			singleOutputPromise.resolve(parameters);
+
+		}
+		else{
+			 $scope.results[cmd.name][output.outputName].backgroundImgStyle={ 'background-image' : "url(\'"+$scope.results[cmd.name][output.outputName].result+"\')", 'background-repeat':'no-repeat', 'background-size':""+$scope.results[cmd.name][output.outputName].zoomX+"% "+ $scope.results[cmd.name][output.outputName].zoomY+"%"};
+
 		}
 	}
 	
@@ -500,6 +539,57 @@ function dataMiningFunction (sbiModule_logger, sbiModule_config, datamining_temp
 	$scope.putSafeHtml = function(html){	
 		return $sce.trustAsHtml(html);
 	};
+	
+	
+	
+	$scope.b64toBlob=function(b64Data, contentType, sliceSize) {
+		  contentType = contentType || '';
+		  sliceSize = sliceSize || 512;
+		  var b64WithoutHead=b64Data.substring(22)
+		  var byteCharacters = atob(b64WithoutHead);
+		  var byteArrays = [];
+
+		  for (var offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+		    var slice = byteCharacters.slice(offset, offset + sliceSize);
+
+		    var byteNumbers = new Array(slice.length);
+		    for (var i = 0; i < slice.length; i++) {
+		      byteNumbers[i] = slice.charCodeAt(i);
+		    }
+
+		    var byteArray = new Uint8Array(byteNumbers);
+
+		    byteArrays.push(byteArray);
+		  }
+
+		  var blob = new Blob(byteArrays, {type: contentType});
+		  return blob;
+		}
+	
+	
+	
+	
+	
+	
+	
+	
+	$scope.downloadImage=function(imgDataBase64)
+	{
+		 
+		var fileName="img";
+	    var a = document.createElement("a");
+	    document.body.appendChild(a);
+	    a.style = "display: none";
+	    
+	    //blob = new Blob([imgDataBase64], {type: "image/png"});
+	    var blob=$scope.b64toBlob(imgDataBase64, "image/png")
+	    url = window.URL.createObjectURL(blob);
+	    a.href = url;
+	    a.download = fileName;
+	    a.click();
+	    window.URL.revokeObjectURL(url);
+	    	    
+    }
 	
 }
 

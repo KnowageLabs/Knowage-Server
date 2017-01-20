@@ -114,6 +114,7 @@ author:...
 	</head>
 <body class="bodyStile" ng-controller="Controller" ng-class="{'loading-body' : pendingRequest > 0}" ng-cloak>
 	<div id="popupContainer">
+	</div>
 		<md-content class="no-margin-bottom" ng-hide = "pendingRequest > 0" layout-margin layout="row" layout-align = "start stretch ">
 			<md-input-container flex="50">
 				<md-select placeholder="Select Command" ng-model="cmd" ng-change="calculateResult(cmd)">
@@ -168,7 +169,7 @@ author:...
 			<md-content class="no-margin-top no-margin-bottom" ng-if = "!variableForm && visibleUploadButton && cmd !== undefined" layout='row' layout-wrap>
 				<div flex="30">
 					<md-select placeholder="Select Dataset to Upload" ng-model="dataset">
-						<md-option ng-value="ds" ng-repeat="ds in datasets[cmd.name]" >
+						<md-option ng-value="ds" ng-repeat="ds in datasets[cmd.name]" > 
 							{{ds.label}}
 						</md-option>
 					</md-select>
@@ -197,7 +198,7 @@ author:...
 			</md-content>
 		
 			<md-content ng-if="!variableForm" layout-wrap>
-				<md-tabs class="mini-tabs" md-selected="idx_output" layout="column" md-dynamic-height> 
+				<md-tabs md-selected="idx_output" layout="column" md-dynamic-height> 
 					<md-tab class="mini-tabs" ng-repeat="out in cmd.outputs" label="{{out.ouputLabel}}" md-on-select="getOutputResultFromTabClick(cmd,out)">
 						<md-content layout="column" layout-padding>
 							<md-content class="no-padding-top">
@@ -242,21 +243,44 @@ author:...
 								 			{{results[cmd.name][out.outputName].error}}
 								 		</div>
 										<div class="div-image" ng-if = "results[cmd.name][out.outputName].outputType == 'image' || results[cmd.name][out.outputName].outputType == 'Image' ">
-											<div layout="row" layout-align="center center">
+											<div layout="row" layout-align="end start">
 												<md-input-container>
-													 <label>{{translate.load("sbi.datamining.img.width");}} (px)</label>
-													<input type="number" min="0" ng-model="imgWidth">
+													<label>Zoom %</label>
+													<input type="number" min="0" ng-model="results[cmd.name][out.outputName].zoomX">
+												</md-input-container>
+												
+												<md-button class="md-fab md-raised" arial-label="Download Image" ng-click="downloadImage(results[cmd.name][out.outputName].result)">
+													<md-icon class="fa fa-download center-ico"></md-icon>
+													<md-tooltip md-direction="bottom">
+		         										{{translate.load("sbi.datamining.downloadimage");}}
+		       										</md-tooltip>
+												</md-button>
+											</div>
+											
+											<!--  <div layout="row" layout-align="center center">
+												<md-input-container>
+													 <label>Zoom (%)</label>
+													<input type="number" min="0" ng-model="results[cmd.name][out.outputName].zoomX">
 												</md-input-container>
 												<div flex="5"></div>
 												<md-input-container>
-													<label>{{translate.load("sbi.datamining.img.height");}} (px)</label>
-													<input type="number" min="0" ng-model="imgHeight">
+													<label>Zoom Y (%)</label>
+													<input type="number" min="0" ng-model="results[cmd.name][out.outputName].zoomY">
 												</md-input-container>
-											</div>
+											</div>-->
+											
+											
 											<div layout="row" layout-align="center center" ng-if="results[cmd.name][out.outputName].result != null && results[cmd.name][out.outputName].result.length > 0">
-												<img ng-style="{'width':imgWidth+'px','height':imgHeight+'px'}"  alt="Result for '{{results[cmd.name][out.outputName].plotName}}'" src="{{results[cmd.name][out.outputName].outputType == 'image' ? results[cmd.name][out.outputName].result: null}}" />
+
+												
+												<div layout="row" layout-align="center center" >
+													<md-content flex>
+														<img id="img" style="zoom: {{results[cmd.name][out.outputName].zoomX}}%; -moz-transform: scale({{results[cmd.name][out.outputName].zoomX / 100}});" alt="Result for '{{results[cmd.name][out.outputName].plotName}}'" src="{{results[cmd.name][out.outputName].outputType == 'image' ? results[cmd.name][out.outputName].result: null}}" />
+													</md-content>
+												</div>	
 												<br>
 											</div>
+																						
 										</div>
 										<div layout-padding class="div-text" ng-if = "results[cmd.name][out.outputName].outputType == 'text' ">
 											<h3 class="md-subhead">	
@@ -297,7 +321,6 @@ author:...
 				</md-tabs>
 			</md-content>
 		</md-content>
-	</div>
 </body>	
 	
 </html>

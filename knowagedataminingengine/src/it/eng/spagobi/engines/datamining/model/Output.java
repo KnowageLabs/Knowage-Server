@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -45,11 +45,18 @@ public class Output {
 	 */
 	private String outputMode;
 	/**
-	 * outputFunction: used by image outputType for simple functions as plot,
-	 * biplot ecc
-	 */	
+	 * outputFunction: used by image outputType for simple functions as plot, biplot ecc
+	 */
 	private String outputFunction;
-	
+	/**
+	 * imgHeight: image height
+	 */
+	private String outputImgHeight;
+	/**
+	 * imgWidth: image width
+	 */
+	private String outputImgWidth;
+
 	private List<Variable> variables;
 
 	public List<Variable> getVariables() {
@@ -114,6 +121,22 @@ public class Output {
 
 	public void setOutputDataType(String outputDataType) {
 		this.outputDataType = outputDataType;
+	}
+
+	public String getOutputImgHeight() {
+		return outputImgHeight;
+	}
+
+	public void setOutputImgHeight(String outputImgHeight) {
+		this.outputImgHeight = outputImgHeight;
+	}
+
+	public String getOutputImgWidth() {
+		return outputImgWidth;
+	}
+
+	public void setOutputImgWidth(String outputImgWidth) {
+		this.outputImgWidth = outputImgWidth;
 	}
 
 }

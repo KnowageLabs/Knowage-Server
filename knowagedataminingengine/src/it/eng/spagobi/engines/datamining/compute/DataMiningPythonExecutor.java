@@ -123,7 +123,76 @@ public class DataMiningPythonExecutor implements IDataMiningExecutor {
 			}
 		}
 
-		// PyLib.stopPython(); //Per colpa di un errore di JPY non funziona, quando saranno disponibili nuove versioni di JPY non buggate, scommentare questo
+		// PyLib.stopPython(); // Per colpa di un errore di JPY non funziona, quando saranno disponibili nuove versioni di JPY non buggate, scommentare questo
+
+		logger.debug("Stop Python");
+
+		logger.debug("OUT");
+		return result;
+	}
+
+	@Override
+	public DataMiningResult executeScript(Logger logger, DataMiningResult result, HashMap params, DataMiningCommand command, Output output,
+			IEngUserProfile userProfile, Boolean rerun, String documentLabel) throws Exception {
+
+		// evaluates script code
+		scriptExecutor.evalScript(command, rerun);
+		logger.debug("Evaluated script");
+		// create output
+		UserProfile profile = (UserProfile) userProfile;
+		result = outputExecutor.evalOutput(output, scriptExecutor, documentLabel, (String) profile.getUserId());
+		logger.debug("Got result");
+		return result;
+
+	}
+
+	@Override
+	public DataMiningResult setExecEnvironment(Logger logger, DataMiningResult result, HashMap params, DataMiningCommand command, IEngUserProfile userProfile,
+			Boolean rerun, String documentLabel) throws Exception {
+
+		PyLib.startPython();
+		logger.debug("Start Python");
+
+		// datasets preparation
+		String error = datasetsExecutor.evalDatasetsNeeded(params);
+		if (error.length() > 0) {
+			result = new DataMiningResult();
+			result.setError(error);
+			return result;
+		}
+		logger.debug("Loaded datasets");
+
+		// Files input preparation
+		error = fileExecutor.evalFilesNeeded(params);
+		if (error.length() > 0) {
+			result = new DataMiningResult();
+			result.setError(error);
+			return result;
+		}
+		return result;
+	}
+
+	@Override
+	public DataMiningResult unsetExecEnvironment(Logger logger, DataMiningResult result, HashMap params, DataMiningCommand command,
+			IEngUserProfile userProfile, Boolean rerun, String documentLabel) throws Exception {
+		// Delete files if presents
+		if (fileExecutor.dataminingInstance.getFiles() != null) {
+			if (fileExecutor.dataminingInstance.getFiles().size() > 0) {
+
+				for (DataMiningFile dmFile : fileExecutor.dataminingInstance.getFiles()) {
+
+					File file = new File(DataMiningUtils.getUserResourcesPath(userProfile) + dmFile.getFileName());
+					if (file.delete()) {
+						logger.debug(file.getName() + " is deleted!");
+					} else {
+						logger.debug("Delete operation is failed.");
+					}
+				}
+
+			}
+		}
+
+		// PyLib.stopPython(); // Per colpa di un errore di JPY non funziona, quando saranno disponibili nuove versioni di JPY non buggate, scommentare questo
 
 		logger.debug("Stop Python");
 
