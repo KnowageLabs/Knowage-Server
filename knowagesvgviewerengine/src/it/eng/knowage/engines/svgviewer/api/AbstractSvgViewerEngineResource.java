@@ -93,8 +93,10 @@ public class AbstractSvgViewerEngineResource extends AbstractEngineRestService {
 		CacheInterface cache = TemplateCache.getCache();
 		boolean isCachedTemplate = cache.contains(document_version_id);
 		if (isCachedTemplate) {
+			logger.debug("Retrieving template from cache for document: " + document_version_id);
 			return (SourceBean) cache.get(document_version_id);
 		} else {
+			logger.debug("Retrieving template from service for document: " + document_version_id);
 			SourceBean template = getTemplateAsSourceBean();
 			cache.put(document_version_id, template);
 			return template;
@@ -125,7 +127,7 @@ public class AbstractSvgViewerEngineResource extends AbstractEngineRestService {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.utilities.engines.rest.AbstractRestService#getServletRequest ()
 	 */
 	@Override
