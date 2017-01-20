@@ -56,13 +56,16 @@ public class GenericEhCacheImpl implements CacheInterface {
 
 	public synchronized static CacheInterface getInstance(String cacheName) {
 		if (instance == null) {
+			logger.debug("Creating cache for[" + cacheName + "]");
 			instance = new GenericEhCacheImpl(cacheName);
 		}
+		logger.debug("Cache for[" + cacheName + "] already found");
 		return instance;
 	}
 
 	@Override
 	public boolean contains(String code) {
+		logger.debug("Searching element with code [" + code + "] inside cache");
 		Element el = null;
 		if (cache != null) {
 			try {
@@ -86,6 +89,7 @@ public class GenericEhCacheImpl implements CacheInterface {
 		if (cache != null) {
 			Element element = new Element(code, obj);
 			if (code != null && obj != null) {
+				logger.debug("Inserting element with code [" + code + "] inside the cache");
 				cache.put(element);
 			}
 		}
@@ -96,6 +100,7 @@ public class GenericEhCacheImpl implements CacheInterface {
 		if (cache != null && code != null) {
 			try {
 				Element el = cache.get(code);
+				logger.debug("Retrieving element with code [" + code + "] from the cache");
 				return el.getValue();
 			} catch (IllegalStateException e) {
 				logger.error("IllegalStateException", e);
