@@ -274,8 +274,9 @@ author:...
 
 												
 												<div layout="row" layout-align="center center" >
-													<md-content flex>
-														<img id="img" style="zoom: {{results[cmd.name][out.outputName].zoomX}}%; -moz-transform: scale({{results[cmd.name][out.outputName].zoomX / 100}});" alt="Result for '{{results[cmd.name][out.outputName].plotName}}'" src="{{results[cmd.name][out.outputName].outputType == 'image' ? results[cmd.name][out.outputName].result: null}}" />
+													<md-content>
+														<img id="img" ng-if="isChrome" style="zoom: {{results[cmd.name][out.outputName].zoomX}}%; -moz-transform: scale({{results[cmd.name][out.outputName].zoomX / 100}});" alt="Result for '{{results[cmd.name][out.outputName].plotName}}'" src="{{results[cmd.name][out.outputName].outputType == 'image' ? results[cmd.name][out.outputName].result: null}}" />
+														<img id="img" ng-if="!isChrome" style="width: {{results[cmd.name][out.outputName].zoomX}}%; height:{{results[cmd.name][out.outputName].zoomX}}%" alt="Result for '{{results[cmd.name][out.outputName].plotName}}'" src="{{results[cmd.name][out.outputName].outputType == 'image' ? results[cmd.name][out.outputName].result: null}}" />
 													</md-content>
 												</div>	
 												<br>

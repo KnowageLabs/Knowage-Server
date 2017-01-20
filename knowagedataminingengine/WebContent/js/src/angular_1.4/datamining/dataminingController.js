@@ -54,8 +54,12 @@ function dataMiningFunction (sbiModule_logger, sbiModule_config, datamining_temp
 	$scope.config = {};
 	//$scope.imgWidth=480;
 	//$scope.imgHeight=480;
-	$scope.zoomX=100;
-	$scope.zoomY=100;
+	//$scope.zoomX=100;
+	//$scope.zoomY=100;
+	$scope.isChrome=!!window.chrome && !!window.chrome.webstore;
+
+	
+	
 	
 	$scope.pendingRequest = 0;
 	$scope.htmlShow="HTMLSHOW";
