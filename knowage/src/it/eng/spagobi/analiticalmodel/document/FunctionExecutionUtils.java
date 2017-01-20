@@ -26,7 +26,7 @@ import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.cache.CacheInterface;
-import it.eng.spagobi.utilities.cache.CacheSingleton;
+import it.eng.spagobi.utilities.cache.ParameterCache;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
@@ -407,28 +407,28 @@ public class FunctionExecutionUtils {
 	/*
 	 * // Same method as GetParameterValuesForExecutionAction.getChildrenForTreeLov() private static JSONArray getChildrenForTreeLov(ILovDetail lovProvDet, List
 	 * rows, String mode, Integer treeLovNodeLevel, String treeLovNodeValue) {
-	 * 
+	 *
 	 * String valueColumn; String descriptionColumn; boolean addNode; String treeLovNodeName = ""; String treeLovParentNodeName = "";
-	 * 
+	 *
 	 * try {
-	 * 
+	 *
 	 * if (treeLovNodeValue != null && treeLovNodeValue.equalsIgnoreCase("lovroot")) {// root node treeLovNodeName = (String)
 	 * lovProvDet.getTreeLevelsColumns().get(0); treeLovParentNodeName = "lovroot"; treeLovNodeLevel = -1;
-	 * 
+	 *
 	 * // treeLovNodeLevel-1 because the fake root node is the level 0 } else if (lovProvDet.getTreeLevelsColumns().size() > treeLovNodeLevel + 1) {
 	 * treeLovNodeName = (String) lovProvDet.getTreeLevelsColumns().get(treeLovNodeLevel + 1); treeLovParentNodeName = (String)
 	 * lovProvDet.getTreeLevelsColumns().get(treeLovNodeLevel); }
-	 * 
+	 *
 	 * Set<JSONObject> valuesDataJSON = new LinkedHashSet<JSONObject>();
-	 * 
+	 *
 	 * valueColumn = lovProvDet.getValueColumnName(); descriptionColumn = lovProvDet.getDescriptionColumnName();
-	 * 
+	 *
 	 * for (int q = 0; q < rows.size(); q++) { SourceBean row = (SourceBean) rows.get(q); JSONObject valueJSON = null; addNode = false; List columns =
 	 * row.getContainedAttributes(); valueJSON = new JSONObject(); boolean notNullNode = false; // if the row does not contain the value atribute we don't add
 	 * the node for (int i = 0; i < columns.size(); i++) { SourceBeanAttribute attribute = (SourceBeanAttribute) columns.get(i); if ((treeLovParentNodeName ==
 	 * "lovroot") || (attribute.getKey().equalsIgnoreCase(treeLovParentNodeName) && (attribute.getValue().toString()) .equalsIgnoreCase(treeLovNodeValue))) {
 	 * addNode = true; }
-	 * 
+	 *
 	 * // its a leaf so we take the value and description defined in the lov definition if (lovProvDet.getTreeLevelsColumns().size() == treeLovNodeLevel + 2) {
 	 * if (attribute.getKey().equalsIgnoreCase(descriptionColumn)) {// its the column of the description valueJSON.put("description", attribute.getValue());
 	 * notNullNode = true; } if (attribute.getKey().equalsIgnoreCase(valueColumn)) {// its the column of the value valueJSON.put("value", attribute.getValue());
@@ -436,14 +436,14 @@ public class FunctionExecutionUtils {
 	 * (attribute.getKey().equalsIgnoreCase(treeLovNodeName)) { valueJSON = new JSONObject(); valueJSON.put("description", attribute.getValue());
 	 * valueJSON.put("value", attribute.getValue()); valueJSON.put("id", attribute.getValue() + NODE_ID_SEPARATOR + (treeLovNodeLevel + 1)); notNullNode = true;
 	 * } }
-	 * 
+	 *
 	 * if (addNode && notNullNode) { valuesDataJSON.add(valueJSON); } }
-	 * 
+	 *
 	 * JSONArray valuesDataJSONArray = new JSONArray();
-	 * 
+	 *
 	 * for (Iterator iterator = valuesDataJSON.iterator(); iterator.hasNext();) { JSONObject jsonObject = (JSONObject) iterator.next();
 	 * valuesDataJSONArray.put(jsonObject); }
-	 * 
+	 *
 	 * return valuesDataJSONArray; } catch (Exception e) { throw new SpagoBIServiceException("Impossible to serialize response", e); } }
 	 */
 	public static List<ObjParuse> getBiObjectDependencies(String executionRole, BIObjectParameter biobjParameter) {
@@ -468,11 +468,11 @@ public class FunctionExecutionUtils {
 			// queries are cached
 			String cacheKey = getCacheKey(profile, lovDefinition, dependencies, biObject);
 
-			CacheInterface cache = CacheSingleton.getInstance();
+			CacheInterface cache = ParameterCache.getCache();
 
 			if (cache.contains(cacheKey)) {
 				// lov provider is present, so read the DATA in cache
-				lovResult = cache.get(cacheKey);
+				lovResult = (String) cache.get(cacheKey);
 			} else if (retrieveIfNotcached) {
 				lovResult = lovDefinition.getLovResult(profile, dependencies, biObject.getBiObjectParameters(), req.getLocale());
 				// insert the data in cache

@@ -27,7 +27,7 @@ import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.cache.CacheInterface;
-import it.eng.spagobi.utilities.cache.CacheSingleton;
+import it.eng.spagobi.utilities.cache.ParameterCache;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
@@ -523,11 +523,11 @@ public class DocumentExecutionUtils {
 			// queries are cached
 			String cacheKey = getCacheKey(profile, lovDefinition, dependencies, biObject);
 
-			CacheInterface cache = CacheSingleton.getInstance();
+			CacheInterface cache = ParameterCache.getCache();
 
 			if (cache.contains(cacheKey)) {
 				// lov provider is present, so read the DATA in cache
-				lovResult = cache.get(cacheKey);
+				lovResult = (String) cache.get(cacheKey);
 			} else if (retrieveIfNotcached) {
 				lovResult = lovDefinition.getLovResult(profile, dependencies, biObject.getBiObjectParameters(), req.getLocale());
 				// insert the data in cache

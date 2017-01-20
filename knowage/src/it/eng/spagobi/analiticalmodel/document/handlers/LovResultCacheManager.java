@@ -25,7 +25,7 @@ import it.eng.spagobi.behaviouralmodel.lov.bo.QueryDetail;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.utilities.cache.CacheInterface;
-import it.eng.spagobi.utilities.cache.CacheSingleton;
+import it.eng.spagobi.utilities.cache.ParameterCache;
 
 import java.util.List;
 import java.util.Locale;
@@ -47,7 +47,7 @@ public class LovResultCacheManager {
 	private CacheInterface cache = null;
 
 	public LovResultCacheManager() {
-		this.cache = CacheSingleton.getInstance();
+		this.cache = ParameterCache.getCache();
 	}
 
 	/**
@@ -80,7 +80,7 @@ public class LovResultCacheManager {
 			if (cache.contains(cacheKey)) {
 				logger.info("Retrieving lov result from cache...");
 				// lov provider is present, so read the DATA in cache
-				lovResult = cache.get(cacheKey);
+				lovResult = (String) cache.get(cacheKey);
 				logger.debug(lovResult);
 			} else if (retrieveIfNotcached) {
 				logger.info("Executing lov to get result ...");
@@ -160,7 +160,7 @@ public class LovResultCacheManager {
 			if (cache.contains(cacheKey)) {
 				logger.info("Retrieving lov result from cache...");
 				// lov provider is present, so read the DATA in cache
-				lovResult = cache.get(cacheKey);
+				lovResult = (String) cache.get(cacheKey);
 				logger.debug(lovResult);
 			} else if (retrieveIfNotcached) {
 				logger.info("Executing lov to get result ...");
