@@ -17,20 +17,17 @@
  */
 package it.eng.spagobi.utilities.cache;
 
-import java.io.Serializable;
-
 /**
- * Interface for Caches
- *
+ * Cache that contains documents' parameters
+ * 
  * @author Marco Cortella (marco.cortella@eng.it)
  *
  */
+public class ParameterCache {
 
-public interface CacheInterface {
+	public static CacheInterface getCache() {
+		GenericCacheFactory genericCacheFactory = new GenericCacheFactory();
+		return genericCacheFactory.getCache("sbi_parameters");
+	}
 
-	void put(String code, Serializable obj);
-
-	Serializable get(String code);
-
-	boolean contains(String code);
 }

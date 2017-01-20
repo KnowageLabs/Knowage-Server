@@ -17,20 +17,17 @@
  */
 package it.eng.spagobi.utilities.cache;
 
-import java.io.Serializable;
-
 /**
- * Interface for Caches
+ * Cache that contains documents' templates
  *
  * @author Marco Cortella (marco.cortella@eng.it)
  *
  */
+public class TemplateCache {
 
-public interface CacheInterface {
+	public static CacheInterface getCache() {
+		GenericCacheFactory genericCacheFactory = new GenericCacheFactory();
+		return genericCacheFactory.getCache("template_cache");
+	}
 
-	void put(String code, Serializable obj);
-
-	Serializable get(String code);
-
-	boolean contains(String code);
 }

@@ -17,20 +17,20 @@
  */
 package it.eng.spagobi.utilities.cache;
 
-import java.io.Serializable;
-
 /**
- * Interface for Caches
- *
+ * A factory for cache objects implementing the CacheInterface
+ * 
  * @author Marco Cortella (marco.cortella@eng.it)
  *
  */
+public class GenericCacheFactory {
 
-public interface CacheInterface {
+	/**
+	 * @return a specific cache with the passed cache name
+	 */
+	public CacheInterface getCache(String cacheName) {
+		CacheInterface cache = GenericEhCacheImpl.getInstance(cacheName);
+		return cache;
+	}
 
-	void put(String code, Serializable obj);
-
-	Serializable get(String code);
-
-	boolean contains(String code);
 }
