@@ -102,7 +102,8 @@ public class PageResource extends AbstractSvgViewerEngineResource {
 
 		try {
 			Monitor getTemplateAsSourceBeanMonitor = MonitorFactory.start("GeoEngine.openPage.getTemplateAsSourceBean");
-			SourceBean savedTemplate = getIOManager().getTemplateAsSourceBean();
+			// SourceBean savedTemplate = getIOManager().getTemplateAsSourceBean();
+			SourceBean savedTemplate = getTemplate();
 			getTemplateAsSourceBeanMonitor.stop();
 
 			switch (pageName) {

@@ -74,7 +74,8 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 	public Response drawMap(@QueryParam("level") String level) {
 		logger.debug("IN");
 		try {
-			SourceBean savedTemplate = getTemplateAsSourceBean();
+			// SourceBean savedTemplate = getTemplateAsSourceBean();
+			SourceBean savedTemplate = getTemplate();
 			Map env = getEngineEnv();
 			SvgViewerEngineInstance engineInstance = SvgViewerEngine.createInstance(savedTemplate, env);
 			DataMartProvider dataMartProvider = (DataMartProvider) engineInstance.getDataMartProvider();
@@ -163,7 +164,8 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 		logger.debug("IN");
 		try {
 			// 0. Define internal objects
-			SourceBean savedTemplate = getTemplateAsSourceBean();
+			// SourceBean savedTemplate = getTemplateAsSourceBean();
+			SourceBean savedTemplate = getTemplate();
 			Map env = getEngineEnv();
 			SvgViewerEngineInstance engineInstance = SvgViewerEngine.createInstance(savedTemplate, env);
 
@@ -239,7 +241,8 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 	public Response getCustomizedConfiguration(@QueryParam("level") String level) {
 		logger.debug("IN");
 		try {
-			SourceBean savedTemplate = getTemplateAsSourceBean();
+			// SourceBean savedTemplate = getTemplateAsSourceBean();
+			SourceBean savedTemplate = getTemplate();
 			Map env = getEngineEnv();
 			SvgViewerEngineInstance engineInstance = SvgViewerEngine.createInstance(savedTemplate, env);
 
@@ -520,7 +523,8 @@ public class SvgViewerResource extends AbstractSvgViewerEngineResource {
 
 		Integer actualLevel = getLevel(level);
 
-		SourceBean templateSB = getTemplateAsSourceBean();
+		// SourceBean templateSB = getTemplateAsSourceBean();
+		SourceBean templateSB = getTemplate();
 		SourceBean confSB = (SourceBean) templateSB.getAttribute(SvgViewerEngineConstants.DATAMART_PROVIDER_TAG);
 		SourceBean hierarchySB = (SourceBean) confSB.getAttribute("HIERARCHY");
 		List members = hierarchySB.getAttributeAsList(SvgViewerEngineConstants.MEMBER_TAG);

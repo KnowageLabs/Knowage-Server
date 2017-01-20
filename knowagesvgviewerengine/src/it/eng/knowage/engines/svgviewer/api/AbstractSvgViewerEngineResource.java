@@ -19,15 +19,20 @@ package it.eng.knowage.engines.svgviewer.api;
 
 import it.eng.knowage.engines.svgviewer.SvgViewerEngineConstants;
 import it.eng.knowage.engines.svgviewer.SvgViewerEngineInstance;
+import it.eng.spago.base.SourceBean;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.user.UserProfileManager;
+import it.eng.spagobi.utilities.ParametersDecoder;
+import it.eng.spagobi.utilities.cache.CacheInterface;
+import it.eng.spagobi.utilities.cache.TemplateCache;
 import it.eng.spagobi.utilities.callbacks.mapcatalogue.MapCatalogueAccessUtils;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.EngineStartServletIOManager;
 import it.eng.spagobi.utilities.engines.rest.AbstractEngineRestService;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -77,6 +82,27 @@ public class AbstractSvgViewerEngineResource extends AbstractEngineRestService {
 	}
 
 	/**
+	 * Retrieve the document template using the cache (if found)
+	 *
+	 * @return
+	 */
+	public SourceBean getTemplate() {
+		HashMap requestParameters = ParametersDecoder.getDecodedRequestParameters(request);
+		String document_version_id = (String) requestParameters.get("DOCUMENT_VERSION");
+
+		CacheInterface cache = TemplateCache.getCache();
+		boolean isCachedTemplate = cache.contains(document_version_id);
+		if (isCachedTemplate) {
+			return (SourceBean) cache.get(document_version_id);
+		} else {
+			SourceBean template = getTemplateAsSourceBean();
+			cache.put(document_version_id, template);
+			return template;
+		}
+
+	}
+
+	/**
 	 * Gets the svg viewer engine instance.
 	 *
 	 * @return the svg viewer engine instance
@@ -99,7 +125,7 @@ public class AbstractSvgViewerEngineResource extends AbstractEngineRestService {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.utilities.engines.rest.AbstractRestService#getServletRequest ()
 	 */
 	@Override
