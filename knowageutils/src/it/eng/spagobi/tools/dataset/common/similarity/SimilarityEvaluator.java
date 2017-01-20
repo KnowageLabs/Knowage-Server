@@ -29,7 +29,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 public class SimilarityEvaluator {
@@ -104,7 +103,8 @@ public class SimilarityEvaluator {
 					coefficient = strategy.measureCoefficient(setA, setB);
 				} else if (evaluateNumber && setA == null && setB == null) {
 					logger.debug("Cannot use domain values to measure field similarity. Using column name instead.");
-					coefficient = StringUtils.getJaroWinklerDistance(fieldA, fieldB);
+					// coefficient = StringUtils.getJaroWinklerDistance(fieldA, fieldB);
+					coefficient = fieldA.equalsIgnoreCase(fieldB) ? 1 : 0;
 				}
 				logger.debug("Coefficient measures [" + coefficient + "%]");
 				if (coefficient >= threshold) {
