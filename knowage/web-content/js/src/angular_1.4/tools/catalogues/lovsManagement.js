@@ -424,6 +424,10 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 		
 		}
 	
+	
+	$scope.changeTreeType = function(tree){
+		
+	}
 	var cleanSelections = function() {
 		$scope.enableTest = false;
 		$scope.selectedScriptType={};
@@ -540,7 +544,7 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 			$scope.selectedLov={};
 			$scope.showme=false;
 			$scope.dirtyForm=false;
-			closeDialogFromLOV();
+			$scope.closeDialogFromLOV();
 			
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
@@ -968,6 +972,8 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 				
 			}else{
 				console.log($scope.testLovTreeModel);
+				$scope.formatedDescriptionColumns=[];
+				$scope.formatedValueColumns=[];
 				for (var i = 0; i < $scope.testLovModel.length; i++) {
 				$scope.formatedInvisibleValues.push($scope.testLovModel[i].name);
 				  }
@@ -979,7 +985,7 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 				for (var i = 0; i < $scope.testLovTreeModel.length; i++) {
 					$scope.formatedValueColumns.push($scope.testLovTreeModel[i].value);
 				}
-				tempObj['VALUE-COLUMNS'] = $scope.formatedValueColumnss.join();
+				tempObj['VALUE-COLUMNS'] = $scope.formatedValueColumns.join();
 			}
 			
 			
@@ -1010,6 +1016,8 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 		
 	
 		$scope.openPreviewDialog = function() {
+			
+			console.log($scope.selectedLov);
 			
 			$scope.paginationObj.paginationStart = 0;
 			$scope.paginationObj.paginationLimit = 20;
@@ -1080,6 +1088,29 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 			$scope.enableTest = true;
 		}
 		
+		$scope.doServerPagination = function() {
+			var toSend ={};
+			toSend.data = $scope.selectedLov;
+			toSend.pagination = $scope.paginationObj;
+				
+			sbiModule_restServices
+					.promisePost("2.0", "lovs/preview",toSend)
+					.then(
+							function(response) {
+							$scope.previewLovColumns = $scope.formatColumns(response.data.metaData.fields);
+							$scope.previewLovModel = response.data.root;
+							$scope.paginationObj.size = response.data.results;
+							
+							},
+							function(response) {
+								sbiModule_messaging
+										.showErrorMessage(
+												"An error occured while getting properties for selected member",
+												'Error');
+
+							});
+		}
+		
 		$scope.getNextPreviewSet = function() {
 			console.log("page up");
 			$scope.paginationObj.paginationStart = $scope.paginationObj.paginationStart + $scope.paginationObj.paginationLimit;
@@ -1088,7 +1119,7 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 			if($scope.paginationObj.paginationEnd > $scope.paginationObj.size){
 				$scope.paginationObj.paginationEnd = $scope.paginationObj.size;
 			}
-			$scope.previewLov();
+			$scope.doServerPagination();
 		}
 		$scope.getBackPreviewSet = function() {
 			console.log("page down");
@@ -1096,7 +1127,7 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 			$scope.paginationObj.paginationStart = $scope.paginationObj.paginationStart - $scope.paginationObj.paginationLimit;
 			$scope.paginationObj.paginationEnd = temp ;
 			
-			$scope.previewLov();
+			$scope.doServerPagination();
 		}
 		
 		$scope.checkArrows = function(type) {
