@@ -501,11 +501,18 @@ function federationDefinitionFunction
 			locals :{datasets:tmpAvaiableDatasets,associations:tmpAssociations,deferred:deferred},
 			controller: function($scope,mdPanelRef,sbiModule_translate,datasets,associations,deferred,$mdDialog){
 				
+				$scope.translate = sbiModule_translate;
+				
 				// table columns
-				$scope.autodetectColumns=[{label:"Similarity",name:"___similarity",transformer:function(input){return $filter('number')(input * 100, 2) + '%';}}];
+				$scope.autodetectColumns=[{
+					label:sbiModule_translate.load("sbi.federationdefinition.autodetect.similarity"),
+					name:"___similarity",
+					transformer:function(input){return $filter('number')(input * 100, 2) + '%';}
+				}];
 				angular.forEach(datasets,function(item){
 					if(item.pars.length==0){
-						var column = {label:item.label, name:item.label};
+						var upLabel = item.label.toUpperCase()
+						var column = {label:upLabel, name:upLabel};
 						this.push(column);
 					}
 				},$scope.autodetectColumns);
@@ -514,7 +521,7 @@ function federationDefinitionFunction
 				$scope.autodetectColumnsSearch=[];
 				angular.forEach(datasets,function(item){
 					if(item.pars.length==0){
-						this.push(item.label);
+						this.push(item.label.toUpperCase());
 					}
 				},$scope.autodetectColumnsSearch);
 				
@@ -567,13 +574,8 @@ function federationDefinitionFunction
 				$scope.minSimilarity = 0.2;
 				
 				$scope.minSimilarityValues = [0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2];
-				for(var i=$scope.minSimilarityValues.length-1; i>=0; i--){
-					if($scope.minSimilarityValues[i] < $scope.minSimilarity){
-						$scope.minSimilarityValues.splice(i, 1);
-					}
-				}
 				
-				$scope.selectedMinSimilarityValue = $scope.minSimilarity;
+				$scope.selectedMinSimilarityValue = 0.2;
 				
 				$scope.$watch("selectedMinSimilarityValue",function(newValue,oldValue){
 		    		  $scope.filterAutodetectRows(newValue);
@@ -582,6 +584,7 @@ function federationDefinitionFunction
 				// Filtered table model
 				$scope.autodetectRows = [];
 				$scope.autodetectFilteredRows = [];
+				$scope.showTable = false;
 				
 				$scope.filterAutodetectRows=function(minSimilarity){
 					var rows = [];
@@ -600,7 +603,7 @@ function federationDefinitionFunction
 				var datasetNames = {};
 				angular.forEach(datasets,function(item){
 					if(item.pars.length==0){
-						this[item.label] = {};
+						this[item.label.toUpperCase()] = {};
 					}
 				},datasetNames);
 				
@@ -615,7 +618,7 @@ function federationDefinitionFunction
 						row["___length"] = item.fields.length;
 						angular.forEach(datasets,function(dataset){
 							if(dataset.pars.length==0){
-								row[dataset.label] = null;
+								row[dataset.label.toUpperCase()] = null;
 							}
 						}, row);
 						angular.forEach(item.fields,function(field){
@@ -625,25 +628,27 @@ function federationDefinitionFunction
 					},$scope.autodetectRows);
 					
 					// remove rows equal to existing associations
-//					for(var i=0; i<associations.length; i++){
-//						var association = associations[i];
-//						var associationItems = association.match("(.*)\\.(.*) -> (.*)\\.(.*)");
-//						for(var j=$scope.autodetectRows.length-1; j>=0; j--){
-//							var autodetectRow = $scope.autodetectRows[j];
-//							var isEqual = true;
-//							if(!autodetectRow.hasOwnProperty(associationItems[1]) || autodetectRow[associationItems[1]] != associationItems[2]
-//									|| !autodetectRow.hasOwnProperty(associationItems[3]) || autodetectRow[associationItems[3]] != associationItems[4]){
-//								isEqual = false;
-//							}
-//							if(isEqual){
-//								$scope.autodetectRows.splice(j, 1);
-//								break;
-//							}
-//						}
-//					}
+					for(var i=0; i<associations.length; i++){
+						var association = associations[i];
+						var associationItems = association.match("(.*)\\.(.*) -> (.*)\\.(.*)");
+						for(var j=$scope.autodetectRows.length-1; j>=0; j--){
+							var autodetectRow = $scope.autodetectRows[j];
+							var isEqual = true;
+							if(!autodetectRow.hasOwnProperty(associationItems[1]) || autodetectRow[associationItems[1]] != associationItems[2]
+									|| !autodetectRow.hasOwnProperty(associationItems[3]) || autodetectRow[associationItems[3]] != associationItems[4]){
+								isEqual = false;
+							}
+							if(isEqual){
+								$scope.autodetectRows.splice(j, 1);
+								break;
+							}
+						}
+					}
 					
 					angular.copy($scope.autodetectRows, $scope.autodetectFilteredRows);
+					$scope.showTable = true;
 				},function(response){
+					$scope.showTable = true;
 					sbiModule_restServices.errorHandler(response.data,"");
 				});
 			},
