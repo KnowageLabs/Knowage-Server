@@ -116,6 +116,8 @@
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="LovsManagement" roleType="MODEL_ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="LovsManagement" roleType="DEV_ROLE" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="LovsView" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="LovsView" roleType="MODEL_ADMIN" />
@@ -133,6 +135,8 @@
 		userFunctionality="ParameterManagement" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="ParameterManagement" roleType="MODEL_ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="ParameterManagement" roleType="DEV_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="ParameterView" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
