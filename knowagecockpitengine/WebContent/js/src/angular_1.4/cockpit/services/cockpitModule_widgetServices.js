@@ -90,10 +90,31 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 		}
 		return null ;
 	}
+		
+	this.isFullPageWidget=function()
+	{return fullPageWidget;}
+	
+	this.setFullPageWidget=function(boolean)
+	{ fullPageWidget=boolean}
+	
+	
+	function DialogController($scope, $mdDialog) {
+		   $scope.hide = function() {
+		     $mdDialog.hide();
+		   };
+
+		   $scope.cancel = function() {
+		     $mdDialog.cancel();
+		   };
+	}
+	
+	
+	
 	this.deleteWidget=function(sheetIndex,widget,nomessage){
+		
 		if(nomessage == true){
 			cockpitModule_template.sheets[sheetIndex].widgets.splice(cockpitModule_template.sheets[sheetIndex].widgets.indexOf(widget),1);
-
+			this.setFullPageWidget(false);
 		}else{
 			var confirm = $mdDialog.confirm()
 			.title(sbiModule_translate.load("sbi.cockpit.widget.delete.title"))
@@ -103,10 +124,12 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 			.cancel(sbiModule_translate.load("sbi.ds.wizard.cancel"));
 			$mdDialog.show(confirm).then(function() {
 				cockpitModule_template.sheets[sheetIndex].widgets.splice(cockpitModule_template.sheets[sheetIndex].widgets.indexOf(widget),1);
+				
+				wi.setFullPageWidget(false);
 			});
 		}
-		
 
+		
 	};
 
 	this.initWidget=function(element,config,options){
@@ -172,14 +195,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 	}
 
 	
-	this.isFullPageWidget=function()
-	{return fullPageWidget;}
-	
-	this.setFullPageWidget=function(boolean)
-	{ fullPageWidget=boolean}
-	
-		
-	
+
 	
 });
 
