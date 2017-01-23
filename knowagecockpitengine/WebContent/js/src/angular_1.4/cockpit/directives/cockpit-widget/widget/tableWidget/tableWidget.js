@@ -136,6 +136,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 		
 		$scope.selectRow=function(row,column,listId,index,evt,columnName){
+			debugger;
+			//davverna - if the rows returned are multiple it's a bulk selection, so I use the other function instead to avoid changing the single selection behaviour
+			if(Object.prototype.toString.call( column ) === '[object Array]'){
+				$scope.doMultipleSelection(columnName,column);
+				return;
+			}
 			for(var i=0;i<$scope.ngModel.content.columnSelectedOfDataset.length;i++){
 				if($scope.ngModel.content.modalselectioncolumn!=undefined)
 				{
@@ -152,8 +158,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					}	
 				}
 			}
+			
+
 			$scope.doSelection(columnName,column,$scope.ngModel.content.modalselectioncolumn,newValue,row);
+
+			
 		}
+		
+		
 		
 		$scope.calculatedRow = function(row,column,alias){
 

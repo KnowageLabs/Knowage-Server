@@ -434,7 +434,10 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 					}
 					doCross = true;
 					// get value to pass to cross navigation
-					columnValue = row[crossColumnOrAlias];
+					if(row){
+						columnValue = row[crossColumnOrAlias];
+					}
+					
 
 			}
 			else{
@@ -504,6 +507,20 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 		}
 			
 	}
+	
+	$scope.doMultipleSelection = function(columnName,key){
+		var dsLabel=$scope.getDataset().label;
+		if(!cockpitModule_template.configuration.filters.hasOwnProperty(dsLabel)){
+			cockpitModule_template.configuration.filters[dsLabel]={};
+		}
+		for (var k in key){
+			//TODO change in array the configuration.filters
+			cockpitModule_template.configuration.filters[dsLabel][columnName]=key[k];
+			cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS=true;
+			cockpitModule_widgetSelection.refreshAllWidgetWhithSameDataset(dsLabel);
+		}
+	}
+	
 	$scope.doEditWidget=function(initOnFinish){
 		
 		var deferred;
