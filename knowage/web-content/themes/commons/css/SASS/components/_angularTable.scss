@@ -1,4 +1,20 @@
-angular-table{
+angular-table, cockpit-angular-table{
+	.infoBar {
+		font-size: $baseFontSize;
+		background-color: lighten($secondaryColor,20%);
+		min-height: 25px;
+		max-height: 25px;
+		border-top: 1px solid $baseColor;
+		border-bottom: 1px solid $baseColor;
+		text-align: center;
+		margin-bottom: 8px;
+		button {
+			min-height: 25px;
+			line-height: 25px;
+			font-size: $smallFontSize;
+		}
+
+	}
 	border-collapse: collapse;
 	table>tbody>tr>td {
 	    font-size: $tableFontSize;
@@ -433,6 +449,9 @@ angular-table{
 	    span {
 	    	margin-right: 10px; 
 	    }
+	}
+	.highlight {
+		background-color: $secondaryColor;
 	}
 }
 

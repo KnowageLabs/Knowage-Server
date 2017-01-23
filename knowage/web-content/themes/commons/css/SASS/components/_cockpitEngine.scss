@@ -51,6 +51,20 @@
 		table>thead {
 			background-color: transparent;
 		}
+		table>tbody>tr:hover{
+		    background-color: inherit;
+		}
+		table {
+			tbody {
+				td {
+					&:hover {
+						transition:0.2s linear background-color;
+						background-color: lighten($secondaryColor,10%);
+					}
+				}
+			}
+		}
+		
 	}
 
 	.noWidget {

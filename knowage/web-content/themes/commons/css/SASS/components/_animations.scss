@@ -18,4 +18,35 @@
 	  opacity:0;
 	  top: -70px;
 	}
+
+	//Fade Down Animation
+	&.fade-down.ng-enter {
+		transition:0.3s linear all;
+  		min-height: 0px;
+  		max-height: 0px;
+  		line-height: 0px;
+		opacity: 0;
+	  	top: -20px;
+	}
+	&.fade-down.ng-enter.ng-enter-active {
+  		min-height: 25px;
+  		max-height: 25px;
+  		line-height: 25px;
+	  opacity:1;
+	  top:0;
+	}
+	&.fade-down.ng-leave {
+	  transition:0.3s linear all;
+	  min-height: 25px;
+  		max-height: 25px;
+  		line-height: 25px;
+	  opacity:1;
+	}
+	&.fade-down.ng-leave.ng-leave-active {
+		min-height: 0px;
+  		max-height: 0px;
+  		line-height: 0px;
+	  opacity:0;
+	  top: -20px;
+	}
 }
