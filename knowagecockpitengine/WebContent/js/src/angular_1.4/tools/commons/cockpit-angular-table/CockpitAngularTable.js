@@ -645,6 +645,10 @@ function CockpitTableControllerFunction($scope, $timeout,$mdDialog) {
 			{
 				elaboratedHeaderStyle['font-size']=$scope.tableStyle.headerStyle.fontsize;
 			}
+			if($scope.tableStyle.headerStyle.textalign!=undefined)
+			{
+				elaboratedHeaderStyle['text-align']=$scope.tableStyle.headerStyle.textalign;
+			}
 		}
     	return elaboratedHeaderStyle;     	
     }

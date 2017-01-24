@@ -147,27 +147,33 @@
 										<md-option ng-repeat="fam in fontFamily" value="{{fam}}">{{fam}}</md-option>
 									</md-select>
 									</md-input-container>
-								<md-input-container flex class="md-block"> 
-									<label>{{translate.load('sbi.cockpit.table.fontsize')}}</label>
-									<input class="input_class" ng-model=model.style.headerStyle.fontsize /> 
-								</md-input-container>
-								<md-input-container flex class="md-block"> 
-										<label>{{translate.load('sbi.cockpit.table.fontweight')}}</label>
-										<md-select aria-label="aria-label" ng-model="model.style.headerStyle.fontweight">
-											<md-option ng-repeat="weight in fontWeight" value="{{weight}}">{{weight}}</md-option>
-										</md-select>
-										</md-input-container> 
+									<md-input-container flex class="md-block"> 
+										<label>{{translate.load('sbi.cockpit.table.fontsize')}}</label>
+										<input class="input_class" ng-model=model.style.headerStyle.fontsize /> 
+									</md-input-container>
+									<md-input-container flex class="md-block"> 
+											<label>{{translate.load('sbi.cockpit.table.fontweight')}}</label>
+											<md-select aria-label="aria-label" ng-model="model.style.headerStyle.fontweight">
+												<md-option ng-repeat="weight in fontWeight" value="{{weight}}">{{weight}}</md-option>
+											</md-select>
+									</md-input-container> 
 					          	</div>
 					          	<div flex layout=column >
 						          	<div flex layout="row" >
-										<md-input-container flex=50 class="md-block"> 
+										<md-input-container flex class="md-block"> 
 											<label>{{translate.load('sbi.cockpit.table.fontcolor')}}</label>
 											<color-picker  options="colorPickerProperty" ng-model="model.style.headerStyle.color"></color-picker>
 										</md-input-container>
-										<md-input-container flex=50 class="md-block"> 
+										<md-input-container flex class="md-block"> 
 											<label>{{translate.load('sbi.cockpit.table.backgroundcolor')}}</label>
 											<color-picker  options="colorPickerProperty" ng-model="model.style.headerStyle.background"></color-picker>
 										</md-input-container>
+										<md-input-container flex class="md-block"> 
+											<label>{{translate.load('sbi.cockpit.table.alignment')}}</label>
+											<md-select aria-label="aria-label" ng-model="model.style.headerStyle.textalign">
+												<md-option ng-repeat="a in textAlign" value="{{a}}">{{a}}</md-option>
+											</md-select>
+									</md-input-container> 
 						          	</div>
 				          		</div>
 			           	</div>  

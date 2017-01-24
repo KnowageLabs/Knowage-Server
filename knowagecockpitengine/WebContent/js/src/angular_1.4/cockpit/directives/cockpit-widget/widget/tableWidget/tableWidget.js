@@ -350,11 +350,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								
 								var prefix="";
 								var suffix="";
-								var valueWithoutPrefixAndSuffix=$scope.freeValueFromPrefixAndSuffix(value,currentColumn);
+								var horiz_align=$scope.getCellAlignment(currentColumn);
 								
-								var htm="<div layout='row' layout-align='start center'>"; //default
+								var valueWithoutPrefixAndSuffix=$scope.freeValueFromPrefixAndSuffix(value,currentColumn);								
+								
+								var htm="<div layout='row' layout-align='" + horiz_align + " center'>"; //default
 
-								
 								//find the highest index with != none condition 
 								if(currentColumn.hasOwnProperty('colorThresholdOptions'))
 								{
@@ -365,32 +366,32 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 											
 											if(currentColumn.colorThresholdOptions.condition[i]=="<" && value<currentColumn.colorThresholdOptions.conditionValue[i])
 											{
-												htm="<div layout='row' style='background-color:"+currentColumn.colorThresholdOptions.color[i] +"' layout-align='start center'>";
+												htm="<div layout='row' style='background-color:"+currentColumn.colorThresholdOptions.color[i] +"' layout-align='" + horiz_align + " center'>";
 												break;
 											}
 											else if(currentColumn.colorThresholdOptions.condition[i]==">" && value>currentColumn.colorThresholdOptions.conditionValue[i])
 											{
-												htm="<div layout='row' style='background-color:"+currentColumn.colorThresholdOptions.color[i] +"' layout-align='start center'>";
+												htm="<div layout='row' style='background-color:"+currentColumn.colorThresholdOptions.color[i] +"' layout-align='" + horiz_align + " center'>";
 												break;
 											}
 											else if(currentColumn.colorThresholdOptions.condition[i]=="=" && value==currentColumn.colorThresholdOptions.conditionValue[i])
 											{
-												htm="<div layout='row' style='background-color:"+currentColumn.colorThresholdOptions.color[i] +"' layout-align='start center'>";
+												htm="<div layout='row' style='background-color:"+currentColumn.colorThresholdOptions.color[i] +"' layout-align='" + horiz_align + " center'>";
 												break;
 											}
 											else if(currentColumn.colorThresholdOptions.condition[i]==">=" && value>=currentColumn.colorThresholdOptions.conditionValue[i])
 											{
-												htm="<div layout='row' style='background-color:"+currentColumn.colorThresholdOptions.color[i] +"' layout-align='start center'>";
+												htm="<div layout='row' style='background-color:"+currentColumn.colorThresholdOptions.color[i] +"' layout-align='" + horiz_align + " center'>";
 												break;
 											}
 											else if(currentColumn.colorThresholdOptions.condition[i]=="<=" && value<=currentColumn.colorThresholdOptions.conditionValue[i])
 											{
-												htm="<div layout='row' style='background-color:"+currentColumn.colorThresholdOptions.color[i] +"' layout-align='start center'>";
+												htm="<div layout='row' style='background-color:"+currentColumn.colorThresholdOptions.color[i] +"' layout-align='" + horiz_align + " center'>";
 												break;
 											}
 											else if(currentColumn.colorThresholdOptions.condition[i]=="!=" && value!=currentColumn.colorThresholdOptions.conditionValue[i])
 											{
-												htm="<div layout='row' style='background-color:"+currentColumn.colorThresholdOptions.color[i] +"' layout-align='start center'>";
+												htm="<div layout='row' style='background-color:"+currentColumn.colorThresholdOptions.color[i] +"' layout-align='" + horiz_align + " center'>";
 												break;
 											}
 											
@@ -605,6 +606,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		}
 
+		//returns the horizontal cell alignment
+		$scope.getCellAlignment = function (column){
+			var align = "";
+			switch (column.style && column.style.textAlign)
+            {
+               case 'left': align="start";
+               break;
+            
+               case 'right': align="end";
+               break;
+            
+               case 'center': align="center";
+               break;						           
+            
+               default:  align="start";
+            }
+			
+			return align;
+		}
+		
 		$scope.getRows = function(indexList, values){
 			var table = [];
 			if($scope.columnToshowinIndex.length >0 && values != undefined){
@@ -777,6 +798,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.translate=sbiModule_translate;
 		$scope.fontFamily = ['Times New Roman','Georgia', 'Serif'];
 		$scope.fontWeight = ['normal','bold','bolder','lighter','number','initial','inherit'];
+		$scope.textAlign = ['left','right','center'];
 		$scope.getMetadata = getMetadata;
 		$scope.model = {};
 		angular.copy(originalModel,$scope.model);
