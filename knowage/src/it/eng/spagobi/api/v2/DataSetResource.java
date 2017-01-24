@@ -60,6 +60,7 @@ import it.eng.spagobi.tools.dataset.persist.PersistedHDFSManager;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.assertion.UnreachableCodeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -747,11 +748,19 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 
 	private String replaceColumnAliasesWithNames(String columns, Map<String, String> columnAliasToName) {
 		if (columnAliasToName != null) {
-			for (String alias : columnAliasToName.keySet()) {
-				columns = columns.replace(alias, columnAliasToName.get(alias));
+			String[] columnsSplitted = columns.split(",");
+			Set<String> aliases = columnAliasToName.keySet();
+
+			for (int i = 0; i < columnsSplitted.length; i++) {
+				String column = columnsSplitted[i].trim();
+				if (aliases.contains(column)) {
+					columnsSplitted[i] = columnAliasToName.get(column);
+				}
 			}
+			return StringUtils.join(columnsSplitted, ",");
+		} else {
+			return columns;
 		}
-		return columns;
 	}
 
 	@POST
