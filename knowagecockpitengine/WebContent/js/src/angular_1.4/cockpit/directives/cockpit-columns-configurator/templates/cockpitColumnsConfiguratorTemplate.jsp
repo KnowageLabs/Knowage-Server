@@ -2,14 +2,14 @@
     <md-card >	
      	<md-card-content layout="row" layout-align="space-around center">
      		<dataset-selector flex ng-model=model.dataset.dsId on-change="resetValue(dsId);"></dataset-selector>  	
-		   	<div flex>
-				<md-switch ng-model="model.content.fixedRow" aria-label="Fixed Rows">
-					 Fixed Rows Per Page
+		   	<md-input-container flex class="md-block"> 
+				<md-switch ng-model="model.content.fixedRow" aria-label="Fixed Rows" layout-align="center center">
+					 {{translate.load('sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.fixedrowsperpage')}}
 				</md-switch>
-		     </div>	
+		     </md-input-container>
 			<md-input-container flex class="md-block"> 
 				<label>{{translate.load('sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.maxrowsnumber')}}</label>
-					<input class="input_class" ng-model="model.content.maxRowsNumber" type="number">
+					<input class="input_class" ng-model="model.content.maxRowsNumber" type="number" ng-disabled="!model.content.fixedRow">
 			</md-input-container>
 		</md-card-content>
 	</md-card>
