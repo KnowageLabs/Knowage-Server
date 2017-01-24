@@ -806,11 +806,13 @@ public class PersistedTableManager implements IPersistedManager {
 	}
 
 	public void createTable(IMetaData md, IDataSource dataSource) throws Exception {
+		logger.debug("IN");
 		// Steps #1: define create table statement
 		String createStmtQuery = getCreateTableQuery(md, dataSource);
 		dropTableIfExists(dataSource);
 		// Step #2: execute create table statement
 		executeStatement(createStmtQuery, dataSource);
+		logger.debug("OUT");
 	}
 
 	public boolean insertRecord(IRecord record, IMetaData metadata, PreparedStatement statement) throws SQLException {
@@ -821,13 +823,16 @@ public class PersistedTableManager implements IPersistedManager {
 	}
 
 	public void insertRecords(List<IRecord> records, IMetaData metadata, PreparedStatement statement) throws SQLException {
+		logger.debug("IN");
 		statement.clearBatch();
 		for (IRecord record : records) {
+			logger.debug("Setting records to be insert into statement batch");
 			statement.clearParameters();
 			initializeStatement(statement, record, metadata);
 			statement.addBatch();
 		}
 		statement.executeBatch();
+		logger.debug("OUT");
 
 	}
 

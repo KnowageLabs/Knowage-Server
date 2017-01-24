@@ -278,4 +278,6 @@ public interface IDataSet extends Iterable<IRecord> {
 	@Override
 	public DataIterator iterator();
 
+	public boolean isIterable();
+
 }

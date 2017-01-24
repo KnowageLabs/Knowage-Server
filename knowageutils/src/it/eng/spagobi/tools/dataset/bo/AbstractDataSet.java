@@ -956,4 +956,9 @@ public abstract class AbstractDataSet implements IDataSet {
 	public DataIterator iterator() {
 		throw new UnsupportedOperationException("This operation has to be overriden by subclasses in order to be used.");
 	}
+
+	@Override
+	public boolean isIterable() {
+		return false;
+	}
 }

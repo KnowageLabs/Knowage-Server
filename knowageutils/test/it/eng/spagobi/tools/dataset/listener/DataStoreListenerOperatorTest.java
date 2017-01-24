@@ -705,6 +705,11 @@ public class DataStoreListenerOperatorTest extends TestCase {
 			return null;
 		}
 
+		@Override
+		public boolean isIterable() {
+			return false;
+		}
+
 	}
 
 }

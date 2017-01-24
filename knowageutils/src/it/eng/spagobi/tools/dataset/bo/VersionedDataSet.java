@@ -657,4 +657,9 @@ public class VersionedDataSet implements IDataSet {
 		return wrappedDataset.iterator();
 	}
 
+	@Override
+	public boolean isIterable() {
+		return wrappedDataset.isIterable();
+	}
+
 }

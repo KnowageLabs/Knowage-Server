@@ -72,6 +72,7 @@ import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.scheduler.bo.Trigger;
 import it.eng.spagobi.utilities.Helper;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.cache.CacheItem;
 import it.eng.spagobi.utilities.database.AbstractDataBase;
 import it.eng.spagobi.utilities.database.temporarytable.TemporaryTableManager;
@@ -375,33 +376,43 @@ public class DatasetManagementAPI {
 			List<FilterCriteria> havingsForMetaModel, List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections) {
 
 		try {
+			logger.debug("Loading dataset with label [" + label + "]");
 			IDataSet dataSet = getDataSetDAO().loadDataSetByLabel(label);
+			Assert.assertNotNull(dataSet, "Impossible to load dataset with label [" + label + "]");
 			setDataSetParameters(dataSet, parametersValues);
 			IDataStore dataStore = null;
 
 			if (dataSet.isPersisted() && !dataSet.isPersistedHDFS()) {
+				logger.debug("Querying persisted dataset");
 				dataStore = queryPersistedDataset(groups, filters, havings, projections, summaryRowProjections, dataSet, offset, fetchSize);
 				dataStore.setCacheDate(getPersistedDate(dataSet));
 			} else if (dataSet.isFlatDataset()) {
+				logger.debug("Querying flat dataset");
 				dataStore = queryFlatDataset(groups, filters, havings, projections, summaryRowProjections, dataSet, offset, fetchSize);
 				dataStore.setCacheDate(new Date());
 			} else if (isRealtime && isJDBCDataSet(dataSet) && !SqlUtils.isBigDataDialect(dataSet.getDataSource().getHibDialectName())) {
+				logger.debug("Querying realtime/JDBC dataset");
 				dataStore = queryJDBCDataset(groups, filters, havings, projections, summaryRowProjections, dataSet, offset, fetchSize);
 				dataStore.setCacheDate(new Date());
 			} else if (isRealtime) {
+				logger.debug("Querying realtime dataset");
 				dataStore = queryRealtimeDataset(groups, filtersForMetaModel, havingsForMetaModel, projections, summaryRowProjections, dataSet, offset,
 						fetchSize);
 				dataStore.setCacheDate(new Date());
 			} else {
+				logger.debug("Querying dataset in cache");
 				SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
 				cache.setUserProfile(userProfile);
 
 				IDataStore cachedResultSet = cache.get(dataSet, groups, filters, havings, projections, summaryRowProjections, offset, fetchSize);
 
 				if (cachedResultSet == null) {
+					logger.debug("Dataset not in cache");
 					if (isJDBCDataSet(dataSet) && !SqlUtils.isBigDataDialect(dataSet.getDataSource().getHibDialectName())) {
+						logger.debug("Copying JDBC dataset in cache using its iterator");
 						cache.put(dataSet);
 					} else {
+						logger.debug("Copying dataset in cache by loading the whole set of data in memory");
 						dataSet.loadData();
 						cache.put(dataSet, dataSet.getDataStore());
 					}
