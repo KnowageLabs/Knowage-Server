@@ -50,14 +50,12 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
-import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuse;
 import it.eng.spagobi.behaviouralmodel.lov.bo.DatasetDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.FixedListDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.IJavaClassLov;
@@ -68,14 +66,11 @@ import it.eng.spagobi.behaviouralmodel.lov.bo.QueryDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ScriptDetail;
 import it.eng.spagobi.behaviouralmodel.lov.dao.IModalitiesValueDAO;
 import it.eng.spagobi.behaviouralmodel.lov.service.GridMetadataContainer;
-import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializationException;
-import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
-import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -166,13 +161,13 @@ public class LovResource extends AbstractSpagoBIResource {
 		return listOfValues;
 
 	}
-	
+
 	@GET
 	@UserConstraint(functionalities = { SpagoBIConstants.PARAMETER_MANAGEMENT })
 	@Path("/{id}/analyticalDrivers")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response loadDriversByLovId(@PathParam("id") Integer lovId) {
-		
+
 		IParameterDAO driversDao = null;
 		List<Parameter> fullList = null;
 
@@ -188,22 +183,22 @@ public class LovResource extends AbstractSpagoBIResource {
 		}
 
 	}
+
 	@GET
 	@UserConstraint(functionalities = { SpagoBIConstants.PARAMETER_MANAGEMENT })
 	@Path("/{id}/documents")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getDocumetsByLovId(@PathParam("id") Integer lovId) {
-		
+
 		IBIObjectDAO documentsDao = null;
 		List<BIObject> documents = null;
 		logger.debug("IN");
-		
-		
-		try{
+
+		try {
 			documentsDao = DAOFactory.getBIObjectDAO();
 			documentsDao.setUserProfile(getUserProfile());
 			documents = documentsDao.loadBIObjectsByLovId(lovId);
-		
+
 			return Response.ok(documents).build();
 		} catch (Exception e) {
 			logger.error("Error with loading resource", e);
@@ -221,6 +216,7 @@ public class LovResource extends AbstractSpagoBIResource {
 
 		JSONObject pagination = new JSONObject();
 		JSONObject data = new JSONObject();
+		JSONObject param = new JSONObject();
 		GridMetadataContainer lovExecutionResult = new GridMetadataContainer();
 		SourceBean rowsSourceBean = null;
 		List<String> colNames = new ArrayList<String>();
@@ -237,8 +233,16 @@ public class LovResource extends AbstractSpagoBIResource {
 			JSONObject paramsObj = new JSONObject(unsafe);
 			pagination = paramsObj.getJSONObject("pagination");
 			data = paramsObj.getJSONObject("data");
+			param = paramsObj.optJSONObject("param");
+			if (param != null) {
+				getUserProfile().addAttributes(param.getString("paramName"), param.getString("paramValue"));
+				profile = getUserProfile();
+			}
 			typeLov = data.getString("itypeCd");
 			lovProvider = data.getString("lovProvider");
+			if (lovProvider.contains("&#x27;")) {
+				lovProvider = lovProvider.replaceAll("&#x27;", "'");
+			}
 			if (typeLov != null && typeLov.equalsIgnoreCase("JAVA_CLASS")) {
 				JavaClassDetail javaClassDetail = JavaClassDetail.fromXML(lovProvider);
 				try {
@@ -677,45 +681,42 @@ public class LovResource extends AbstractSpagoBIResource {
 		}
 		return list;
 	}
-	
-	private List<Parameter> getDriversByLovId(Integer lovId){
+
+	private List<Parameter> getDriversByLovId(Integer lovId) {
 		IParameterUseDAO useModesDao = null;
 		List<ParameterUse> modes = null;
 		IParameterDAO driversDao = null;
-		
+
 		List<Parameter> drivers = new ArrayList<Parameter>();
 		List<Parameter> driversToReturn = new ArrayList<Parameter>();
-			
-			
 
-			try {
-				useModesDao = DAOFactory.getParameterUseDAO();
-				useModesDao.setUserProfile(getUserProfile());
-				modes = useModesDao.getParameterUsesAssociatedToLov(lovId);
-				driversDao = DAOFactory.getParameterDAO();
-				driversDao.setUserProfile(getUserProfile());
-				drivers = driversDao.loadAllParameters();
-				
-				for(int i =0;i<drivers.size();i++){
-					List<ParameterUse> driverModes=	useModesDao.loadParametersUseByParId(drivers.get(i).getId());
-					for(int j=0;j<driverModes.size();j++){
-						ParameterUse driverMode = driverModes.get(j);
-						for(int k =0;k<modes.size();k++){
-							if(driverMode.getId()==modes.get(k).getId()){
-								if(!driversToReturn.contains(drivers.get(i))){
-									driversToReturn.add(drivers.get(i));
-								}
-								
+		try {
+			useModesDao = DAOFactory.getParameterUseDAO();
+			useModesDao.setUserProfile(getUserProfile());
+			modes = useModesDao.getParameterUsesAssociatedToLov(lovId);
+			driversDao = DAOFactory.getParameterDAO();
+			driversDao.setUserProfile(getUserProfile());
+			drivers = driversDao.loadAllParameters();
+
+			for (int i = 0; i < drivers.size(); i++) {
+				List<ParameterUse> driverModes = useModesDao.loadParametersUseByParId(drivers.get(i).getId());
+				for (int j = 0; j < driverModes.size(); j++) {
+					ParameterUse driverMode = driverModes.get(j);
+					for (int k = 0; k < modes.size(); k++) {
+						if (driverMode.getId() == modes.get(k).getId()) {
+							if (!driversToReturn.contains(drivers.get(i))) {
+								driversToReturn.add(drivers.get(i));
 							}
+
 						}
 					}
 				}
+			}
 			return driversToReturn;
 		} catch (Exception e) {
 			logger.error("Error with loading resource", e);
 			throw new SpagoBIRestServiceException("Error with loading resource", buildLocaleFromSession(), e);
 		}
 
-			
 	}
 }

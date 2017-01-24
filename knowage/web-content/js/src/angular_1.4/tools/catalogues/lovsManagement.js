@@ -1047,11 +1047,13 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 			}
 		}
 		
-		$scope.previewLov = function() {
+		$scope.previewLov = function(param) {
 			var toSend ={};
 			toSend.data = $scope.selectedLov;
 			toSend.pagination = $scope.paginationObj;
-			console.log(toSend);
+			if(param != undefined){
+				toSend.param = param;
+			}
 			
 			$scope.previewLovModel = [];
 			
