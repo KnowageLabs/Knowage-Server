@@ -334,7 +334,7 @@ angular.module('cockpit_angular_table', ['ngMaterial', 'angularUtils.directives.
                             return {
                                 pre: function preLink(scope, element, attrs, ctrl, transclud) {
                                 	if(scope.rowDetailTemplate!=undefined){
-                                		tr.attr("angular-table-row-detail","");
+                                		tr.attr("cockpit-angular-table-row-detail","");
                                 	}
                                 }
                                     
@@ -425,7 +425,7 @@ angular.module('cockpit_angular_table', ['ngMaterial', 'angularUtils.directives.
                         }
                     };
                 })
-          .directive('rowDetail',function ($compile) {
+          .directive('cockpitRowDetail',function ($compile) {
             return {
                 template: '',
                 replace: true,
@@ -446,7 +446,7 @@ angular.module('cockpit_angular_table', ['ngMaterial', 'angularUtils.directives.
                     },
             };
         })
-        .directive('angularTableRowDetail',function ($compile) {
+        .directive('cockpitAngularTableRowDetail',function ($compile) {
         	return {
         		template: '',
         		restrict: 'A',
