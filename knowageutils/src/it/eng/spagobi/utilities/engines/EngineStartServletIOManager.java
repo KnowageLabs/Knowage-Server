@@ -488,7 +488,7 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 				logger.debug("Parameter [" + parameterName + "] copyed into environment parameters list: TRUE");
 
 			} catch (Exception e) {
-				logger.error("Error while processing request parameter [" + parameterName + "]", e);
+				logger.warn("Error while processing request parameter [" + parameterName + "]: " + e.getMessage());
 			}
 		}
 
