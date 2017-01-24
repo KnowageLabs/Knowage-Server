@@ -104,6 +104,7 @@ angular.module('cockpit_angular_table', ['ngMaterial', 'angularUtils.directives.
                                     scope.tableItem.addClass("layout-column");
                                     scope.bulkSelection = false; 	//davverna - initializing bulk selection
                                     scope.selectedCells = []; 		//davverna - initializing selected rows array, uset for bulk selection
+                                    scope.selectedRows = [];
 
 
                                     var table = angular.element(scope.tableItem[0].querySelector("table.principalTable"));
@@ -930,21 +931,26 @@ function CockpitTableBodyControllerFunction($scope) {
 	
 	
 	//davverna - enable bulk row selection
-	$scope.bulkSelect= function(e,rowIndex,column){
+	$scope.bulkSelect= function(e,rowIndex,column,row){
 		//first check to see it the column selected is the same, if not clear the past selections
 		if($scope.bulkSelection!=column.name){
 			$scope.selectedCells.splice(0,$scope.selectedCells.length);
+			$scope.selectedRows.splice(0,$scope.selectedRows.length);
 			$scope.bulkSelection = column.name;
 		}
 		
 		//check if the selected element exists in the selectedCells array, if not remove it. 
 		if($scope.selectedCells.indexOf($scope.ngModel[rowIndex][column.name])==-1){
 			$scope.selectedCells.push($scope.ngModel[rowIndex][column.name]);
+			$scope.selectedRows.push($scope.ngModel[rowIndex]);
+			
 		}else{
 			$scope.selectedCells.splice($scope.selectedCells.indexOf($scope.ngModel[rowIndex][column.name]),1);
+			$scope.selectedRows.splice($scope.selectedRows.indexOf($scope.ngModel[rowIndex][column.name]),1);
 			//if there are no selection left set bulk selection to false to avoid the selection button to show
 			if($scope.selectedCells.length==0){$scope.bulkSelection=false;}
 		}
+		console.log($scope.selectedRows);
 	}
 	
 	//davverna - cancel all active selection and exit bulk selection mode 

@@ -10,7 +10,7 @@
 <div flex layout="column" id="angularFullTableContentBox">
 	<div class="infoBar multiSelect animation fade-down " ng-if="bulkSelection" layout="row" layout-align="center center">
 	<div flex></div>
-		<md-button ng-click="clickItem(null,bulkSelection,selectedCells,$event,0)"><i class="fa fa-bolt"></i> Launch selection</md-button>
+		<md-button ng-click="clickItem(selectedRows,bulkSelection,selectedCells,$event,0)"><i class="fa fa-bolt"></i> Launch selection</md-button>
 		<div flex></div>
 		<md-button  class="md-icon-button" ng-click="cancelBulkSelection()" >
         	<md-icon md-font-icon="fa fa-times"></md-icon>
@@ -95,7 +95,7 @@
 	ng-class="{'selectedRowItem': (highlightsSelectedItem==true && isRowSelected($$hashKey) )}"  class="animate-repeat-tablerow"
  	ng-if="isVisibleRowFunction(row)"
 	ng-style="{'height':tableStyle.autoRowsHeight? 0 :tableStyle.rowsHeight}">
-	<td ng-repeat="column in tableColumns" ng-switch="column.static==true? '--STATIC--' : column.name" sglclick="bulkSelect($event,$parent.$index,column)" ng-dblclick="clickItem(row,column.name,getColumnValue(row,column.name),$event,$parent.$index)" context-menu  data-target='{{id}}TableContextMenu-{{$parent.$index}}-{{$index}}' class="{{column.customRecordsClass}} " 
+	<td ng-repeat="column in tableColumns" ng-switch="column.static==true? '--STATIC--' : column.name" sglclick="bulkSelect($event,$parent.$index,column,row)" ng-dblclick="clickItem(row,column.name,getColumnValue(row,column.name),$event,$parent.$index)" context-menu  data-target='{{id}}TableContextMenu-{{$parent.$index}}-{{$index}}' class="{{column.customRecordsClass}} " 
 		ng-class="{ 'highlight': isCellSelected($parent.$index,column), 'expanded' : expanded,'tableDragBar':column.name=='--DRAG_AND_DROP--'}" ng-style="column.style==undefined ? '' :  getDynamicValue(column.style,row,column,$parent.$index)" >
 		<span ng-switch-when="--STATIC--" ng-if="column.template==undefined" ng-class="getChangedValueStyle(row,column.name)" ng-bind="(row[column.name]|limitTo : getDynamicValue(column.style,row,column,'-99'))" >
 			<md-tooltip ng-if="column.hideTooltip!=true " md-delay="1000" md-direction="bottom"  >{{row[column.name]}}</md-tooltip>

@@ -489,6 +489,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 		}
 		
 		var sel=cockpitModule_widgetSelection.getAssociativeSelections(columnValue,columnName,dsLabel,originalColumnName);
+		debugger;
 		if(sel!=undefined){
 			if(!angular.equals("noAssoc",sel)){
 				sel.then(function(response) {
@@ -500,7 +501,16 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 				if(!cockpitModule_template.configuration.filters.hasOwnProperty(dsLabel)){
 					cockpitModule_template.configuration.filters[dsLabel]={};
 				}
-				cockpitModule_template.configuration.filters[dsLabel][columnName]=columnValue;
+				if(Object.prototype.toString.call( columnValue ) === '[object Array]'){
+					var tempValues = [];
+					for(var k in columnValue){
+						tempValues.push(columnValue[k]);
+					}
+					cockpitModule_template.configuration.filters[dsLabel][columnName]=tempValues;
+				}else{
+					cockpitModule_template.configuration.filters[dsLabel][columnName]=columnValue;
+				}
+				
 				cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS=true;
 				cockpitModule_widgetSelection.refreshAllWidgetWhithSameDataset(dsLabel);
 			}
