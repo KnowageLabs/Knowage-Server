@@ -366,6 +366,11 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 		sbiModule_restServices.promiseGet("domains", "listValueDescriptionByType","DOMAIN_TYPE=SELECTION_TYPE")
 		.then(function(response) {
 			$scope.listSelType = response.data;
+			for (var i = 0; i < $scope.listSelType.length; i++) {
+				if($scope.listSelType[i].VALUE_CD == "SLIDER"){
+					$scope.listSelType.splice(i,1);
+				}
+			}
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 			
