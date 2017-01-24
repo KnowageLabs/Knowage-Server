@@ -936,6 +936,10 @@ function CockpitTableBodyControllerFunction($scope) {
 	
 	//davverna - enable bulk row selection
 	$scope.bulkSelect= function(e,rowIndex,column,row){
+		if($scope.$parent.ngModel.cliccable==false){
+			console.log("widget is not cliccable")
+			return;
+		}
 		//first check to see it the column selected is the same, if not clear the past selections
 		if($scope.bulkSelection!=column.name){
 			$scope.selectedCells.splice(0,$scope.selectedCells.length);
