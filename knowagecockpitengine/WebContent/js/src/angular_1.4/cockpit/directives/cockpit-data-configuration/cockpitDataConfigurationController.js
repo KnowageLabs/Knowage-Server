@@ -129,7 +129,7 @@ function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitMod
 	                                    {
 	                                    	label:"Use Cache",
 	                                    	name:"usacache",
-	                                    	template: "<md-checkbox ng-init='row.useCache=row.useCache==undefined? true : row.useCache' ng-model='row.useCache' aria-label='usaCache'></md-checkbox>",
+				                                    	template : "<md-checkbox ng-init='row.useCache=row.useCache==undefined? true : row.useCache' ng-model='row.useCache' aria-label='usaCache'></md-checkbox>",
 											static:true
 //	                                    	hideTooltip:true,
 //	                                    	transformer:function(){
@@ -141,7 +141,7 @@ function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitMod
 	                                    	name:"freq",
 	                                    	static:true,
 	                                    	template:"<md-input-container style='margin:0' ng-show='row.useCache!=true' md-no-float class='md-block'>"+
-                                            		"<input type='number' ng-init='row.frequency=row.frequency==undefined? 60 : row.frequency' min='10' ng-model='row.frequency' placeholder='Frequency'>"+
+                                            		"<input type='number' ng-init='row.frequency=row.frequency==undefined? 0 : row.frequency' min='0' ng-model='row.frequency' placeholder='Frequency'>"+
                                             		"</md-input-container>"
 	                                    },
 	                                    
@@ -453,7 +453,7 @@ function cockpitDataConfigurationController($scope,$rootScope,sbiModule_translat
 	    				  $rootScope.$broadcast('WIDGET_EVENT','PARAMETER_CHANGE',{dsList:datasetParameterChanged,docList:documentParameterChanged});
 	    			  }
 		    		  
-		    		  	
+		    		  $rootScope.$broadcast("WIDGET_EVENT","UPDATE_FROM_CLEAN_CACHE",null);	
 		    		  mdPanelRef.close();
 		    		  selectionWatch();
 		    		  $scope.$destroy();
