@@ -666,6 +666,16 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
         	transformer: function() {
         		return '<md-input-container class="md-block" style="margin:0"><input ng-model="row.defaultValue" ng-change="scopeFunctions.setFormDirty()"></md-input-container>';
         	}
+		},
+		
+		{
+			"label":$scope.translate.load("sbi.ds.multivalue"), 
+			"name":"multiValue", 
+			hideTooltip:true,
+        	
+        	transformer: function() {
+        		return '<md-checkbox ng-model="row.multiValue"  aria-label="Checkbox"></md-checkbox>';
+        	}
 		}
 		
     ];
@@ -675,7 +685,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	
 	$scope.parametersAddItem = function() {
 		
-		$scope.parameterItems.push({"name":"","type":"", "defaultValue":"","index":$scope.parametersCounter++});
+		$scope.parameterItems.push({"name":"","type":"", "defaultValue":"","multiValue":"","index":$scope.parametersCounter++});
 		
 		$timeout(			
 					function() { 
@@ -1753,6 +1763,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			parameterItemTemp["name"] = parameterItems[j]["name"];
 			parameterItemTemp["type"] = parameterItems[j]["type"];
 			parameterItemTemp["defaultValue"] = parameterItems[j]["defaultValue"];
+			parameterItemTemp["multiValue"] = parameterItems[j]["multiValue"];
 			parameterItemTemp["index"] = $scope.parametersCounter++;
 			
 			parameterItemsTemp.push(parameterItemTemp);

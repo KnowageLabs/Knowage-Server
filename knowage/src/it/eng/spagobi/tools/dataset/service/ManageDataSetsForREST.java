@@ -976,11 +976,13 @@ public class ManageDataSetsForREST {
 				JSONObject obj = (JSONObject) parsListJSON.get(i);
 				String name = obj.optString("name");
 				String type = obj.optString("type");
+				String multiValue = obj.optString("multiValue");
 				String defaultValue = obj.optString(DEFAULT_VALUE_PARAM);
 
 				SourceBean b = new SourceBean("ROW");
 				b.setAttribute("NAME", name);
 				b.setAttribute("TYPE", type);
+				b.setAttribute("MULTIVALUE", multiValue);
 				b.setAttribute(DataSetParametersList.DEFAULT_VALUE_XML, defaultValue);
 				sb1.setAttribute(b);
 			}
