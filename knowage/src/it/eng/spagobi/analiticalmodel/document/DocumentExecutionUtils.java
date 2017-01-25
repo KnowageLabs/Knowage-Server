@@ -42,9 +42,13 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 
 public class DocumentExecutionUtils {
 	public static final String SELECTION_TYPE_TREE = "TREE";
@@ -61,6 +65,8 @@ public class DocumentExecutionUtils {
 	public static String DEFAULT_VALUES_METADATA = "defaultValuesMetadata";
 	public static String DESCRIPTION_COLUMN_NAME_METADATA = "descriptionColumnNameMetadata";
 	public static String VALUE_COLUMN_NAME_METADATA = "valueColumnNameMetadata";
+
+	public static transient Logger logger = Logger.getLogger(DocumentExecutionUtils.class);
 
 	public static ILovDetail getLovDetail(BIObjectParameter parameter) {
 		Parameter par = parameter.getParameter();
@@ -103,8 +109,7 @@ public class DocumentExecutionUtils {
 			try {
 				executionInstanceJSON = new JSONObject(parametersJson);
 			} catch (JSONException e2) {
-				// TODO Auto-generated catch block
-				e2.printStackTrace();
+				logger.debug("Error in handleNormalExecution", e2);
 			}
 			documentUrlManager.refreshParametersValues(executionInstanceJSON, false, obj);
 			try {
@@ -112,11 +117,7 @@ public class DocumentExecutionUtils {
 			} catch (Exception e) {
 				throw new SpagoBIServiceException(SERVICE_NAME, "Cannot evaluate errors on parameters validation", e);
 			}
-			try {
-				errors = documentUrlManager.getParametersErrors(obj, role);
-			} catch (Exception e) {
-				throw new SpagoBIServiceException(SERVICE_NAME, "Cannot evaluate errors on parameters validation", e);
-			}
+
 			// ERRORS
 			// if (errors != null && errors.size() > 0) {
 			// there are errors on parameters validation, send errors' descriptions to the client
@@ -132,8 +133,7 @@ public class DocumentExecutionUtils {
 				try {
 					AuditLogUtilities.updateAudit(req, profile, "DOCUMENT.GET_URL", logParam, "ERR");
 				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					logger.debug("Error in handleNormalExecution", e1);
 				}
 				throw new SpagoBIServiceException(SERVICE_NAME, "Cannot serialize errors to the client", e);
 			}
@@ -153,28 +153,26 @@ public class DocumentExecutionUtils {
 				try {
 					AuditLogUtilities.updateAudit(req, profile, "DOCUMENT.GET_URL", logParam, "KO");
 				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					logger.debug("Error in handleNormalExecution", e1);
 				}
 				try {
 					AuditLogUtilities.updateAudit(req, profile, "DOCUMENT.GET_URL", logParam, "ERR");
 				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					logger.debug("Error in handleNormalExecution", e1);
 				}
 				throw new SpagoBIServiceException(SERVICE_NAME, "Cannot serialize the url [" + url + "] to the client", e);
 			}
 
 			AuditLogUtilities.updateAudit(req, profile, "DOCUMENT.GET_URL", logParam, "OK");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.debug("Error in handleNormalExecution", e);
 		}
 		return response;
 	}
 
 	public static String handleNormalExecutionUrl(UserProfile profile, BIObject obj, HttpServletRequest req, String env, String role, String modality,
 			JSONObject parametersJson, Locale locale) { // isFromCross,
+		Monitor handleNormalExecutionUrlMonitor = MonitorFactory.start("Knowage.DocumentExecutionResource.handleNormalExecutionUrl");
 
 		HashMap<String, String> logParam = new HashMap<String, String>();
 		logParam.put("NAME", obj.getName());
@@ -199,12 +197,15 @@ public class DocumentExecutionUtils {
 			AuditLogUtilities.updateAudit(req, profile, "DOCUMENT.GET_URL", logParam, "OK");
 		} catch (Exception e) {
 			throw new SpagoBIServiceException(SERVICE_NAME, e.getMessage());
+		} finally {
+			handleNormalExecutionUrlMonitor.stop();
 		}
 		return url;
 	}
 
 	public static List handleNormalExecutionError(UserProfile profile, BIObject obj, HttpServletRequest req, String env, String role, String modality,
 			JSONObject parametersJson, Locale locale) { // isFromCross,
+		Monitor handleNormalExecutionErrorMonitor = MonitorFactory.start("Knowage.DocumentExecutionResource.handleNormalExecutionError");
 
 		HashMap<String, String> logParam = new HashMap<String, String>();
 		logParam.put("NAME", obj.getName());
@@ -219,15 +220,12 @@ public class DocumentExecutionUtils {
 			} catch (Exception e) {
 				throw new SpagoBIServiceException(SERVICE_NAME, "Cannot evaluate errors on parameters validation", e);
 			}
-			try {
-				errors = documentUrlManager.getParametersErrors(obj, role);
-			} catch (Exception e) {
-				throw new SpagoBIServiceException(SERVICE_NAME, "Cannot evaluate errors on parameters validation", e);
-			}
 
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.debug("Error in handleNormalExecutionError", e);
+
+		} finally {
+			handleNormalExecutionErrorMonitor.stop();
 		}
 		return errors;
 	}
