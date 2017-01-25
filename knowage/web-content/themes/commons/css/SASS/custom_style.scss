@@ -692,6 +692,22 @@ expander-box md-toolbar {
   }
 }
 
+/* element to show when angular table is hidden because empty */
+.noTable {
+  min-width: 460px;
+  span {
+    text-transform: uppercase;
+    font-size: $smallFontSize;
+    color: $smallTextColor;
+  }
+}
+
+/* fix for unaligned icon button */
+.iconAlignFix {
+  position: relative;
+  left: -4px;
+}
+
 /* IE11 fix */
 
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
@@ -706,5 +722,3 @@ expander-box md-toolbar {
   }
   
 }
-
-
