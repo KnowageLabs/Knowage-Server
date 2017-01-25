@@ -55,6 +55,9 @@ import org.json.JSONObject;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
 
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 public class DocumentUrlManager {
 
 	static private Logger logger = Logger.getLogger(DocumentUrlManager.class);
@@ -102,6 +105,8 @@ public class DocumentUrlManager {
 
 	public String getExecutionUrl(BIObject obj, String executionModality, String role) {
 		logger.debug("IN");
+		Monitor getExecutionUrlMonitor = MonitorFactory.start("Knowage.DocumentUrlManager.getExecutionUrl");
+
 		String url = null;
 		Engine engine = obj.getEngine();
 		Domain engineType;
@@ -185,6 +190,7 @@ public class DocumentUrlManager {
 			url = buffer.toString();
 		}
 		logger.debug("OUT: returning url = [" + url + "]");
+		getExecutionUrlMonitor.stop();
 		return url;
 	}
 
@@ -642,6 +648,8 @@ public class DocumentUrlManager {
 
 	public void refreshParametersValues(JSONObject jsonObject, boolean transientMode, BIObject object) {
 		logger.debug("IN");
+		Monitor refreshParametersValuesMonitor = MonitorFactory.start("Knowage.DocumentUrlManager.refreshParametersValues");
+
 		Assert.assertNotNull(jsonObject, "JSONObject in input is null!!");
 		List biparams = object.getBiObjectParameters();
 		Iterator iterParams = biparams.iterator();
@@ -650,6 +658,7 @@ public class DocumentUrlManager {
 			refreshParameter(biparam, jsonObject, transientMode);
 		}
 		logger.debug("OUT");
+		refreshParametersValuesMonitor.stop();
 	}
 
 	public void refreshParameterForFilters(BIObjectParameter biparam, JSONObject parameter) {
