@@ -314,7 +314,8 @@ public class LovResource extends AbstractSpagoBIResource {
 		IModalitiesValueDAO modalitiesValueDAO;
 		try {
 
-			JSONObject requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
+			String unsafe = RestUtilities.readBodyXSSUnsafe(req);
+			JSONObject requestBodyJSON = new JSONObject(unsafe);
 			modalitiesValueDAO = DAOFactory.getModalitiesValueDAO();
 			modalitiesValueDAO.setUserProfile(getUserProfile());
 			ModalitiesValue modVal = toModality(requestBodyJSON);
@@ -371,7 +372,8 @@ public class LovResource extends AbstractSpagoBIResource {
 		IModalitiesValueDAO modalitiesValueDAO;
 		try {
 
-			JSONObject requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
+			String unsafe = RestUtilities.readBodyXSSUnsafe(req);
+			JSONObject requestBodyJSON = new JSONObject(unsafe);
 			modalitiesValueDAO = DAOFactory.getModalitiesValueDAO();
 			modalitiesValueDAO.setUserProfile(getUserProfile());
 			ModalitiesValue modVal = toModality(requestBodyJSON);

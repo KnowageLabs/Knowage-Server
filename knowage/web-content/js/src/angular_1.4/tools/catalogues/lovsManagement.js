@@ -525,7 +525,7 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 				$scope.selectedLov={};
 				$scope.showme=false;
 				$scope.dirtyForm=false;
-				closeDialogFromLOV();
+				$scope.closeDialogFromLOV();
 				
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
@@ -955,7 +955,11 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 			var result = {}
 			var lovProvider = parseLovProvider($scope.selectedLov);
 			var property = $scope.selectedLov.itypeCd;
+			if(property == "SCRIPT"){
+				property = "SCRIPTLOV"
+			}
 			var tempObj = lovProvider[property];
+			
 			
 			if($scope.treeListTypeModel.LOVTYPE == 'simple'){
 				
@@ -993,7 +997,10 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 			
 			result[property] = tempObj
 			var x2js = new X2JS();
-			var xmlAsStr = x2js.json2xml_str(result); 
+			var xmlAsStr = x2js.json2xml_str(result);
+			if(xmlAsStr.includes("&#x27;")){
+				xmlAsStr= xmlAsStr.replace(/&#x27;/g, "'")
+			}
 			$scope.selectedLov.lovProvider = xmlAsStr;
 			console.log($scope.selectedLov.lovProvider);
 		
