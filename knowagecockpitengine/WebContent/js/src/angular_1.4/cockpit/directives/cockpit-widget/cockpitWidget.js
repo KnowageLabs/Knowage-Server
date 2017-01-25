@@ -17,8 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 /**
- * @authors Giovanni Luca Ulivo (GiovanniLuca.Ulivo@eng.it)
- * v0.0.1
+ * @authors Giovanni Luca Ulivo (GiovanniLuca.Ulivo@eng.it) v0.0.1
  * 
  */
 (function(){
@@ -133,11 +132,12 @@ angular.module('cockpitModule')
 		   	compile: function (tElement, tAttrs, transclude) {
                 return {
                     pre: function preLink(scope, element, attrs, ctrl, transclud) {
-                    	//inject the directive in a variable to allow the access from the sub-directory
+                    	// inject the directive in a variable to allow the
+						// access from the sub-directory
                     	scope.cockpitWidgetItem=element;
                     },
                     post: function postLink(scope, element, attrs, ctrl, transclud) {
-                    	//init the widget
+                    	// init the widget
                     	element.ready(function () {
                     		var objType=cockpitModule_widgetConfigurator[scope.ngModel.type.toLowerCase()];
                     		scope.updateble=objType.updateble==undefined? true : objType.updateble;
@@ -195,7 +195,8 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 	$scope.translate		= sbiModule_translate;
 	$scope.tmpWidgetContent	= {};
 	$scope.editingWidgetName= false;
-	$scope.extendedStyle	= {}; // the merge of the widget style and the cockpit style
+	$scope.extendedStyle	= {}; // the merge of the widget style and the
+									// cockpit style
 	$scope.borderShadowStyle= {};
 	$scope.titleStyle		= {};
 	$scope.widgetSpinner	= false;
@@ -203,7 +204,8 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 	$scope.activeSearch 	= false; // default search unactive
 	$scope.actionButtonClass=[]; 
 	
-	//davverna - initializing search object to give all the columns to the user searchbar
+	// davverna - initializing search object to give all the columns to the user
+	// searchbar
 	if(!$scope.ngModel.search || $scope.ngModel.search.columns == []){
 		$scope.ngModel.search ={"columns" : []};
 		for(var k in $scope.ngModel.content.columnSelectedOfDataset){
@@ -214,7 +216,8 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 		}
 	}
 	
-	//davverna - method to set the actual model and search parameters to refresh the widget table
+	// davverna - method to set the actual model and search parameters to
+	// refresh the widget table
 	$scope.searchColumns = function(){
 		if($scope.ngModel.search.text != ""){
 			$scope.activeSearch = true;
@@ -222,7 +225,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 		}
 	}
 	
-	//davverna - reset the actual search if active
+	// davverna - reset the actual search if active
 	$scope.resetSearch = function(){
 		$scope.ngModel.search.text = "";
 		$scope.activeSearch = false;
@@ -231,7 +234,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 	
 	
 	
-	//global WIDGET_EVENT
+	// global WIDGET_EVENT
 	$rootScope.$on('WIDGET_EVENT',function(conf,eventType,config){
 		switch(eventType){
 		case "UPDATE_FROM_SELECTION"  :
@@ -248,11 +251,10 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 			var ds=$scope.getDataset();
 			if(ds!=undefined && config.dsList.indexOf(ds.label)!=-1){
 				/*
-					author: rselakov, Radmila Selakovic,
-					radmila.selakovic@mht.net
-					checking type of widget because of removing load spinner
-					in case of updating charts
-				*/
+				 * author: rselakov, Radmila Selakovic,
+				 * radmila.selakovic@mht.net checking type of widget because of
+				 * removing load spinner in case of updating charts
+				 */
 				$scope.refreshWidget();
 			}
 			break;
@@ -269,7 +271,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 		default: console.error("event "+eventType+" not found")
 		}
 	})
-	// specific widget event  'WIDGET_EVENT' whith id of widget
+	// specific widget event 'WIDGET_EVENT' whith id of widget
 	$rootScope.$on('WIDGET_EVENT'+$scope.ngModel.id,function(config,eventType,config){
 		
 		switch(eventType){
@@ -339,7 +341,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 					if(associativeSelection==undefined || associativeSelection.hasOwnProperty(dataset.label)){
 						var option =$scope.getOptions == undefined? {} :  $scope.getOptions();
 						cockpitModule_widgetServices.refreshWidget($scope.subCockpitWidget,$scope.ngModel,'selections',option);
-//						$scope.refreshWidget();
+// $scope.refreshWidget();
 					}
 				}
 		}
@@ -348,11 +350,11 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 				$scope.initWidget();
 			}else{
 				if(associativeSelection==undefined || associativeSelection.hasOwnProperty(document.DOCUMENT_LABEL)){
-//					$scope.refreshWidget();
+// $scope.refreshWidget();
 					var option =$scope.getOptions == undefined? {} :  $scope.getOptions();
 					cockpitModule_widgetServices.refreshWidget($scope.subCockpitWidget,$scope.ngModel,'selections',option);
-					//to-do testare se funziona con la chiamata sotto
-//					$scope.refreshWidget(undefined,'selections');
+					// to-do testare se funziona con la chiamata sotto
+// $scope.refreshWidget(undefined,'selections');
 				}
 			}
 		}
@@ -414,7 +416,8 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 			
 			var nameToCheckForCross =  columnName;
 			
-			// check if selected column has been renamed by an alias, in tat case take the real name
+			// check if selected column has been renamed by an alias, in tat
+			// case take the real name
 			for(var colIndex in model.content.columnSelectedOfDataset){
 				var col = model.content.columnSelectedOfDataset[colIndex];
 				if(col.aliasToShow != undefined && col.aliasToShow == columnName){
@@ -423,7 +426,8 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 			}
 						
 			if(model.cross.cross.allRow == true){
-				// case all columns are enabled for cross, get value for cross column (or alias if present)
+				// case all columns are enabled for cross, get value for cross
+				// column (or alias if present)
 				var crossColumnOrAlias = model.cross.cross.column;
 					
 					for(var colIndex in model.content.columnSelectedOfDataset){
@@ -469,7 +473,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 			columnValue=modalValue;
 			columnName=modalColumn;
 		}	
-		//check if all associated data
+		// check if all associated data
 		var dsLabel=$scope.getDataset().label;
 		
 		var originalColumnName;
@@ -516,19 +520,6 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 			}
 		}
 			
-	}
-	
-	$scope.doMultipleSelection = function(columnName,key){
-		var dsLabel=$scope.getDataset().label;
-		if(!cockpitModule_template.configuration.filters.hasOwnProperty(dsLabel)){
-			cockpitModule_template.configuration.filters[dsLabel]={};
-		}
-		for (var k in key){
-			//TODO change in array the configuration.filters
-			cockpitModule_template.configuration.filters[dsLabel][columnName]=key[k];
-			cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS=true;
-			cockpitModule_widgetSelection.refreshAllWidgetWhithSameDataset(dsLabel);
-		}
 	}
 	
 	$scope.doEditWidget=function(initOnFinish){
@@ -604,23 +595,23 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 		angular.copy({},$scope.borderShadowStyle);
 		angular.copy({},$scope.titleStyle);
 		
-		//update extended style
+		// update extended style
 		angular.copy(angular.merge({},cockpitModule_template.configuration.style,$scope.ngModel.style),$scope.extendedStyle);
 		
-		//update shadow style
+		// update shadow style
 		if($scope.extendedStyle.borders!=undefined && $scope.extendedStyle.borders==true){
 			angular.merge($scope.borderShadowStyle,$scope.extendedStyle.border);
 		}
-		//update borders style
+		// update borders style
 		if($scope.extendedStyle.shadows!=undefined && $scope.extendedStyle.shadows==true){
 			angular.merge($scope.borderShadowStyle,$scope.extendedStyle.shadow);
 		}
-		//update title style
+		// update title style
 		if($scope.extendedStyle.titles!=undefined && $scope.extendedStyle.titles==true){
 			angular.merge($scope.titleStyle,$scope.extendedStyle.title);
 		}
 		
-		//update widgets background color
+		// update widgets background color
 		if($scope.extendedStyle.backgroundColor!=undefined) {
 			var tempBackGround={'background-color': $scope.extendedStyle.backgroundColor};
 			angular.merge($scope.borderShadowStyle,tempBackGround);

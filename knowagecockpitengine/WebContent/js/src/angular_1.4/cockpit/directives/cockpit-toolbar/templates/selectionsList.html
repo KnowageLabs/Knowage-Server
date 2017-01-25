@@ -1,20 +1,25 @@
-<md-card class=" flexCard" layout="column" > 
-	<md-card-content flex="" layout="column" class="noPadding">
-		<md-toolbar class="secondaryToolbar" layout="row">
-			<h1 flex class="md-toolbar-tools">List Selections</h1>
-			<md-button  flex=10  ng-click="clearAllSelection()" >
-				 <md-icon md-font-icon="fa fa-eraser" aria-label="ClearAll"></md-icon>
-			</md-button>
-		</md-toolbar>
-		<angular-table flex 
+<md-dialog>
+	<md-toolbar class="secondaryToolbar" layout="row">
+		<h1 flex class="md-toolbar-tools">{{translate.load('sbi.cockpit.selections.title')}}</h1>
+		<md-button  class="md-icon-button" ng-click="clearAllSelection()" ng-if="selection.length >0">
+			 <md-icon md-font-icon="fa fa-eraser" aria-label="ClearAll"></md-icon>
+			 <md-tooltip md-direction="bottom">{{translate.load('sbi.cockpit.selections.clearselections')}}</md-tooltip>
+		</md-button>
+	</md-toolbar>
+	
+	<md-dialog-content>
+		<angular-table layout-padding ng-show="selection.length >0" 
 			id='selectionTable' ng-model="selection"
 			columns='columnTableSelection'
 			columns-search='["label"]'
 			no-pagination=true  speed-menu-option= actionsOfSelectionColumns
 		> </angular-table> 
-				       
-	</md-card-content>
-	<md-card-actions layout="row" layout-align="end center">
+		<div layout="row" class="noTable" layout-align="center center" ng-if="selection.length ==0" layout-padding>
+			<span>{{translate.load('sbi.cockpit.selections.noselections')}}</span>
+		</div>	       
+	</md-dialog-content>
+	
+	<md-dialog-actions layout="row" layout-align="end center"  >
 	    <span flex></span>
       <md-button ng-click="cancelConfiguration()" >
         {{translate.load('sbi.generic.cancel')}}
@@ -23,5 +28,5 @@
         {{translate.load('sbi.generic.save')}}
       </md-button>
 
-	</md-card-actions>
-</md-card>
+	</md-dialog-actions>
+</md-dialog>
