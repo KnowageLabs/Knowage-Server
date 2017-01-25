@@ -7,6 +7,7 @@
   'components/alerts',
   'components/animations',
   'components/associatorDirective',
+  'components/cacheManager',
   'components/layerCatalogue',
   'components/navbar',
   'components/federatedDataset',
@@ -23,9 +24,9 @@
   'components/linkDocument',
   'components/businessModelCatalog',
   'components/etlMetadata',
-  'components/cacheManager',
   'components/usersManagement',
   'components/measures',
+  'components/metaWeb',
   'components/mondrianSchemaCatalog',
   'components/angularTimePicker',
   'components/glossary',
@@ -705,7 +706,7 @@ expander-box md-toolbar {
 /* fix for unaligned icon button */
 .iconAlignFix {
   position: relative;
-  left: -4px;
+  left: -5px;
 }
 
 /* IE11 fix */

@@ -60,13 +60,14 @@ var translatedModel=<%= translatedModel%>;
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/meta/dialogController/bvPhisicalTablesController.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/meta/dialogController/editTemporalHierarchyController.js"></script>
 </head>
-<body ng-controller="metaDefinitionController" layout="column" ng-switch on="steps.current">
+<body ng-controller="metaDefinitionController" layout="column" class="kn-metaWeb" ng-switch on="steps.current">
 
 <rest-loading></rest-loading>
 	<angular-list-detail full-screen=true>
 		<list layout="column" label="bmName" ng-controller="metaModelDefinitionController"> 
 			<angular-table flex id='datasourceStructureListTable' ng-model=dataSourceStructure
 				columns='datasourceStructureColumnsList'
+				columns-search=['columnName']
 				scope-functions='datasourceStructureScopeFunctions'
 			 	show-search-bar=true no-pagination="true"
 			 	sortable-column="['columnName']" >

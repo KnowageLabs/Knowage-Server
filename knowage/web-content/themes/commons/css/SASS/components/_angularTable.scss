@@ -43,8 +43,9 @@ angular-table, cockpit-angular-table{
 	  }
 	
 	angular-table-actions {
-	    margin-top: 15px;
-	    margin-bottom: 10px;
+	    margin-top: $standardPadding;
+	    margin-bottom: $standardPadding;
+	    min-height: $toolbarHeight;
 	  }
 	
 	table thead th {
@@ -203,8 +204,10 @@ angular-table, cockpit-angular-table{
 		overflow: hidden;
 		line-height: 26px;
 		}
-	#tdQueueTableContent div{
-		line-height : initial !important;
+	#tdQueueTableContent .layout-align-space-around-center{
+	    line-height: 50px;
+	    height: 50px;
+	    background-color: white;
 	}
 	
 	angular-table-actions md-input-container.tableSearchBar {
@@ -409,8 +412,11 @@ angular-table, cockpit-angular-table{
 	&.absoluteTfoot #fixedAngularTableContentBox{
 		display:block;
 	}
-	 #fixedAngularTableContentBox{
+	 #fixedAngularTableContentBox {
 		display:none;
+		min-height: 50px;
+	    line-height: 50px;
+	    background-color: white;
 	}
 	.principalTable>thead>tr>th>div{
 		height: 0px!important;
