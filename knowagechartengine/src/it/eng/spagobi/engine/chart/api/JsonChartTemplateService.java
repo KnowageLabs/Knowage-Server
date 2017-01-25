@@ -93,14 +93,14 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 			if (driverParams != null && !driverParams.isEmpty()) {
 				refreshDriverParams(analyticalDrivers, driverParams);
 			}
-			Map profileAttributes = UserProfileUtils.getProfileAttributes((UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE));
+			Map profileAttributes = UserProfileUtils.getProfileAttributes((UserProfile) engineInstance.getEnv().get(EngineConstants.ENV_USER_PROFILE));
 
 			if (StringUtilities.isEmpty(jsonData)) {
 				jsonData = ChartEngineDataUtil.loadJsonData(jsonTemplate, dataSet, analyticalDrivers, profileAttributes, getLocale());
 			}
 
 			VelocityContext velocityContext = ChartEngineUtil.loadVelocityContext(jsonTemplate, jsonData, Boolean.parseBoolean(exportWebApp),
-					engineInstance.getDocumentLabel(), getEngineInstance().getUserProfile());
+					engineInstance.getDocumentLabel(), engineInstance.getUserProfile());
 			String chartType = ChartEngineUtil.extractChartType(jsonTemplate, velocityContext);
 			Template velocityTemplate = ve.getTemplate(ChartEngineUtil.getVelocityModelPath(chartType));
 			String jsonChartTemplate = ChartEngineUtil.applyTemplate(velocityTemplate, velocityContext);
@@ -139,7 +139,7 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 			ChartEngineInstance engineInstance = ChartEngine.createInstance(jsonTemplate, getIOManager().getEnv());
 			IDataSet dataSet = engineInstance.getDataSet();
 			Map analyticalDrivers = engineInstance.getAnalyticalDrivers();
-			Map profileAttributes = UserProfileUtils.getProfileAttributes((UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE));
+			Map profileAttributes = UserProfileUtils.getProfileAttributes((UserProfile) engineInstance.getEnv().get(EngineConstants.ENV_USER_PROFILE));
 			return ChartEngineDataUtil.drilldown(jsonTemplate, breadcrumb, dataSet, analyticalDrivers, profileAttributes, getLocale(),
 					engineInstance.getDocumentLabel(), engineInstance.getUserProfile());
 		} catch (Throwable t) {
