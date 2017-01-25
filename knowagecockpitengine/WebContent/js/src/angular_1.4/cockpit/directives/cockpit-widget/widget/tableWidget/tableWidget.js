@@ -141,7 +141,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				{
 					if($scope.ngModel.content.columnSelectedOfDataset[i].aliasToShow==$scope.ngModel.content.modalselectioncolumn)
 					{
-						var newValue=row[$scope.ngModel.content.modalselectioncolumn]
+						if(Object.prototype.toString.call( row ) === '[object Array]'){
+							var newValue=row[0][$scope.ngModel.content.modalselectioncolumn];
+						}else{
+							var newValue=row[$scope.ngModel.content.modalselectioncolumn];
+						}
 					}
 				}	
 				
@@ -153,7 +157,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 			}
 			
-
+			debugger;
 			$scope.doSelection(columnName,column,$scope.ngModel.content.modalselectioncolumn,newValue,row);
 
 			
