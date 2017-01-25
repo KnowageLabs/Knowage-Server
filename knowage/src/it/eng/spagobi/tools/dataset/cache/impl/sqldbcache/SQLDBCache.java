@@ -1020,7 +1020,7 @@ public class SQLDBCache implements ICache {
 					connection.setAutoCommit(false);
 					statement = persistedTableManager.defineStatement(iterator.getMetaData(), getDataSource(), connection);
 
-					logger.debug("Creating table iteration to transfer data");
+					logger.debug("Creating table to transfer data");
 					persistedTableManager.createTable(iterator.getMetaData(), getDataSource());
 
 					List<IRecord> records = new ArrayList<>(BATCH_SIZE);
@@ -1047,6 +1047,7 @@ public class SQLDBCache implements ICache {
 					if (connection != null) {
 						connection.rollback();
 					}
+					throw e;
 				} finally {
 					if (statement != null) {
 						statement.close();
