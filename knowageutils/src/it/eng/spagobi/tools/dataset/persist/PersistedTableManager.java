@@ -836,4 +836,12 @@ public class PersistedTableManager implements IPersistedManager {
 
 	}
 
+	public void configureColumnSize(IMetaData metadata) {
+		for (int i = 0; i < metadata.getFieldCount(); i++) {
+			Object displaySize = metadata.getFieldMeta(i).getProperty("displaySize");
+			if (displaySize != null) {
+				columnSize.put(metadata.getFieldName(i), (Integer) displaySize);
+			}
+		}
+	}
 }

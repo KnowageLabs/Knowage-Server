@@ -1020,6 +1020,9 @@ public class SQLDBCache implements ICache {
 					connection.setAutoCommit(false);
 					statement = persistedTableManager.defineStatement(iterator.getMetaData(), getDataSource(), connection);
 
+					logger.debug("Setting required column sizes");
+					persistedTableManager.configureColumnSize(iterator.getMetaData());
+
 					logger.debug("Creating table to transfer data");
 					persistedTableManager.createTable(iterator.getMetaData(), getDataSource());
 
@@ -1044,9 +1047,12 @@ public class SQLDBCache implements ICache {
 					logger.debug("Committing inserts...");
 					connection.commit();
 				} catch (Exception e) {
+					logger.error("Error while trasferring data from source to cache");
 					if (connection != null) {
 						connection.rollback();
 					}
+					logger.debug("Removing the empty table from cache because no data has been copied");
+					persistedTableManager.dropTableIfExists(getDataSource(), tableName);
 					throw e;
 				} finally {
 					if (statement != null) {

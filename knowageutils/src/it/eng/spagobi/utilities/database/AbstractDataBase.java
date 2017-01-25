@@ -36,7 +36,7 @@ public abstract class AbstractDataBase implements IDataBase {
 	int varcharLength = 255;
 	public static final String STANDARD_ALIAS_DELIMITER = "\"";
 
-	private static transient Logger logger = Logger.getLogger(PostgreSQLDataBase.class);
+	private static transient Logger logger = Logger.getLogger(AbstractDataBase.class);
 
 	public AbstractDataBase(IDataSource dataSource) {
 		this.dataSource = dataSource;
@@ -54,7 +54,7 @@ public abstract class AbstractDataBase implements IDataBase {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.utilities.database.IDataBase#getUsedMemory(java.lang.String, java.lang.String)
 	 */
 	@Override

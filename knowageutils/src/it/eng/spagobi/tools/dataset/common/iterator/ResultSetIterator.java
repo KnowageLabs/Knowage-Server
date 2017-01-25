@@ -85,14 +85,17 @@ public class ResultSetIterator implements DataIterator {
 		IMetaData metadata = new MetaData();
 		FieldMetadata fieldMeta;
 		String fieldName;
+		int fieldSize;
 		String fieldType;
 		int columnIndex;
 		try {
 			for (columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
 				fieldMeta = new FieldMetadata();
 				fieldName = rs.getMetaData().getColumnLabel(columnIndex);
+				fieldSize = rs.getMetaData().getColumnDisplaySize(columnIndex);
 				fieldType = rs.getMetaData().getColumnClassName(columnIndex);
 				fieldMeta.setName(fieldName);
+				fieldMeta.getProperties().put("displaySize", fieldSize);
 				if (fieldType != null) {
 					if ("double".equals(fieldType.trim())) {
 						fieldMeta.setType(Class.forName("java.lang.Double"));
