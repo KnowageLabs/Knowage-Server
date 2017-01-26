@@ -46,6 +46,8 @@ import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
 import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.cache.CacheInterface;
+import it.eng.spagobi.utilities.cache.UserProfileCache;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -65,6 +67,9 @@ import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
+
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 
 public class UserUtilities {
 
@@ -158,33 +163,49 @@ public class UserUtilities {
 	}
 
 	public static IEngUserProfile getUserProfile(String userId) throws Exception {
+		Monitor getUserProfileMonitor = MonitorFactory.start("KnowageDAO.UserUtilities.getUserProfile");
+
 		logger.debug("IN.userId=" + userId);
-		if (userId == null)
-			return null;
-		ISecurityServiceSupplier supplier = createISecurityServiceSupplier();
-
-		try {
-			SpagoBIUserProfile user = supplier.createUserProfile(userId);
-			if (user == null)
+		CacheInterface cache = UserProfileCache.getCache();
+		// Search UserProfile in cache
+		if (cache.contains(userId)) {
+			UserProfile cachedUserProfile = (UserProfile) cache.get(userId);
+			getUserProfileMonitor.stop();
+			return cachedUserProfile;
+		} else {
+			if (userId == null)
 				return null;
-			checkTenant(user);
-			user.setFunctions(readFunctionality(user));
+			ISecurityServiceSupplier supplier = createISecurityServiceSupplier();
 
-			UserProfile profile = new UserProfile(user);
-			// putting locale language and country on user attributes:
-			if (profile != null) {
-				Locale defaultLocale = GeneralUtilities.getDefaultLocale();
-				profile.addAttributes(SpagoBIConstants.LANGUAGE, defaultLocale.getLanguage());
-				profile.addAttributes(SpagoBIConstants.COUNTRY, defaultLocale.getCountry());
+			try {
+				SpagoBIUserProfile user = supplier.createUserProfile(userId);
+				if (user == null)
+					return null;
+				checkTenant(user);
+				user.setFunctions(readFunctionality(user));
+
+				UserProfile profile = new UserProfile(user);
+				// putting locale language and country on user attributes:
+				if (profile != null) {
+					Locale defaultLocale = GeneralUtilities.getDefaultLocale();
+					profile.addAttributes(SpagoBIConstants.LANGUAGE, defaultLocale.getLanguage());
+					profile.addAttributes(SpagoBIConstants.COUNTRY, defaultLocale.getCountry());
+
+					// put profile in cache
+					cache.put(userId, profile);
+				}
+
+				return profile;
+
+			} catch (Exception e) {
+				logger.error("Exception while creating user profile", e);
+				throw new SecurityException("Exception while creating user profile", e);
+			} finally {
+				logger.debug("OUT");
+				getUserProfileMonitor.stop();
 			}
-			return profile;
-
-		} catch (Exception e) {
-			logger.error("Exception while creating user profile", e);
-			throw new SecurityException("Exception while creating user profile", e);
-		} finally {
-			logger.debug("OUT");
 		}
+
 	}
 
 	public static boolean isTechnicalUser(IEngUserProfile profile) {
@@ -400,18 +421,14 @@ public class UserUtilities {
 	}
 
 	/**
-	 * Load the user personal folder as a LowFunctionality object. If the
-	 * personal folder exists, it is returned; if it does not exist and create
-	 * is false, null is returned, otherwise the personal folder is created and
-	 * then returned.
+	 * Load the user personal folder as a LowFunctionality object. If the personal folder exists, it is returned; if it does not exist and create is false, null
+	 * is returned, otherwise the personal folder is created and then returned.
 	 *
 	 * @param userProfile
 	 *            UserProfile the user profile object
 	 * @param createIfNotExisting
-	 *            Boolean that specifies if the personal folder must be created
-	 *            if it doesn't exist
-	 * @return the personal folder as a LowFunctionality object, or null in case
-	 *         the personal folder does not exist and create is false
+	 *            Boolean that specifies if the personal folder must be created if it doesn't exist
+	 * @return the personal folder as a LowFunctionality object, or null in case the personal folder does not exist and create is false
 	 */
 	public static LowFunctionality loadUserFunctionalityRoot(UserProfile userProfile, boolean createIfNotExisting) {
 		Assert.assertNotNull(userProfile, "User profile in input is null");
@@ -893,7 +910,7 @@ public class UserUtilities {
 
 	/*
 	 * Method copied from SecurityServiceSupplierFactory for DAO refactoring
-	 * 
+	 *
 	 * is this method in the right place?
 	 */
 
@@ -928,10 +945,8 @@ public class UserUtilities {
 	}
 
 	/**
-	 * Clones the input profile object. We don't implement the
-	 * SpagoBIUserProfile.clone method because SpagoBIUserProfile is created by
-	 * Axis tools, and therefore, when generating the class we may lost that
-	 * method.
+	 * Clones the input profile object. We don't implement the SpagoBIUserProfile.clone method because SpagoBIUserProfile is created by Axis tools, and
+	 * therefore, when generating the class we may lost that method.
 	 *
 	 * @param profile
 	 *            The input SpagoBIUserProfile object
