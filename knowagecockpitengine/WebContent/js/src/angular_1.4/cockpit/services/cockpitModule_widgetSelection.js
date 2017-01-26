@@ -17,7 +17,8 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 		if(cockpitModule_template.configuration.filters[datasetLabel]!=undefined && Object.keys(cockpitModule_template.configuration.filters[datasetLabel]).length>0){
 			toRet[datasetLabel]={};
 			for(col in cockpitModule_template.configuration.filters[datasetLabel]){
-				toRet[datasetLabel][col]=["('"+cockpitModule_template.configuration.filters[datasetLabel][col]+"')"]
+				var values = cockpitModule_template.configuration.filters[datasetLabel][col];
+				toRet[datasetLabel][col]=["('"+values.join("','")+"')"]
 			}
 		}
 		return toRet;
