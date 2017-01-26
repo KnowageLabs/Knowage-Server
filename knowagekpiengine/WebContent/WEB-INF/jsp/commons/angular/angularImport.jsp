@@ -15,7 +15,7 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath}/fonts/font-awesome-4.4.0/css/font-awesome.min.css">
 
 <!-- angular reference-->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-1.5.0/angular.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-1.5.0/angular.min.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-1.5.0/angular-animate.min.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-1.5.0/angular-aria.min.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-1.5.0/angular-sanitize.min.js"></script>

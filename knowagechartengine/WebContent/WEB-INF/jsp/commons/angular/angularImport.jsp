@@ -27,7 +27,7 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 <link rel="stylesheet" href="${pageContext.request.contextPath}/themes/sbi_default/fonts/font-awesome-4.4.0/css/font-awesome.min.css">
 
 <!-- angular reference-->
-<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/angular/angular_1.4/angular.js"></script>
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/angular/angular_1.4/angular.min.js"></script>
 
 <!-- angular-material-->
 <script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/angular/angular-material_1.1.0/angular-material.min.js"></script>
