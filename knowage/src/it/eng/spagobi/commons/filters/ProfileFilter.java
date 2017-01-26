@@ -65,7 +65,6 @@ import org.apache.log4j.Logger;
 public class ProfileFilter implements Filter {
 
 	private static transient Logger logger = Logger.getLogger(ProfileFilter.class);
-	private boolean isTest;
 
 	@Override
 	public void destroy() {
@@ -146,13 +145,6 @@ public class ProfileFilter implements Filter {
 					manageTenant(profile);
 				}
 
-				if (isTest) {
-					try {
-						saveHttpSession(session, getSessionFileName());
-					} catch (Exception e) {
-						logger.error("Error in testing: http session can't be saved to file.");
-					}
-				}
 				chain.doFilter(request, response);
 			}
 		} catch (Exception e) {
@@ -262,12 +254,6 @@ public class ProfileFilter implements Filter {
 		Tenant tenant = new Tenant(tenantId);
 		TenantManager.setTenant(tenant);
 		logger.debug("Tenant [" + tenantId + "] set into TenantManager");
-
-		try {
-			this.isTest = (Boolean) (new InitialContext().lookup("java:/comp/env/isTest"));
-		} catch (Exception e) {
-			// nothing to do, it's testing
-		}
 	}
 
 	@Override
