@@ -764,8 +764,6 @@
 						}												
 					}
 					docExecute_dependencyService.visualCorrelationWatch(parameter);
-					docExecute_dependencyService.dataDependenciesCorrelationWatch(parameter);
-					
 				}
 				
 				
