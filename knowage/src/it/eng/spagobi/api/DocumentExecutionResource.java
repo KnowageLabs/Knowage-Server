@@ -379,10 +379,15 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				}
 
 			}
+
+			ParameterUse parameterUse = null;
 			// SUBMIT LOV SINGLE MANDATORY PARAMETER
+			Monitor lovSingleMandatoryParameterMonitor = MonitorFactory
+					.start("Knowage.DocumentExecutionResource.buildJsonParameters.singleLovMandatoryParameter");
+
 			if (objParameter.isMandatory()) {
 				Integer paruseId = objParameter.getParameterUseId();
-				ParameterUse parameterUse = parameterUseDAO.loadByUseID(paruseId);
+				parameterUse = parameterUseDAO.loadByUseID(paruseId);
 				if ("lov".equalsIgnoreCase(parameterUse.getValueSelection())
 						&& !objParameter.getSelectionType().equalsIgnoreCase(DocumentExecutionUtils.SELECTION_TYPE_TREE)
 						&& (objParameter.getLovDependencies() == null || objParameter.getLovDependencies().size() == 0)) {
@@ -398,11 +403,16 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					}
 				}
 			}
+			lovSingleMandatoryParameterMonitor.stop();
 
 			// CROSS NAV : INPUT PARAM PARAMETER TARGET DOC IS STRING
+			Monitor crossNavParameterMonitor = MonitorFactory.start("Knowage.DocumentExecutionResource.buildJsonParameters.crossNavParameter");
+
 			if (!jsonParameters.isNull(objParameter.getId())) {
 				Integer paruseId = objParameter.getParameterUseId();
-				ParameterUse parameterUse = parameterUseDAO.loadByUseID(paruseId);
+				if (parameterUse == null) {
+					parameterUse = parameterUseDAO.loadByUseID(paruseId);
+				}
 				if (jsonParameters.getString(objParameter.getId()).startsWith("[") && jsonParameters.getString(objParameter.getId()).endsWith("]")
 						&& parameterUse.getValueSelection().equals("man_in")) {
 					int strLength = jsonParameters.getString(objParameter.getId()).toString().length();
@@ -414,6 +424,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				}
 
 			}
+			crossNavParameterMonitor.stop();
 
 		}
 
