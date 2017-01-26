@@ -542,7 +542,8 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 
 					List<String> dateColumnNamesList = getDateColumnNamesList(dataSet);
 
-					if (isRealtime && !dataSet.isFlatDataset() && !(dataSet.isPersisted() && !dataSet.isPersistedHDFS())) {
+					if (isRealtime && !(DatasetManagementAPI.isJDBCDataSet(dataSet) && !SqlUtils.isBigDataDialect(dataSet.getDataSource().getHibDialectName()))
+							&& !dataSet.isFlatDataset() && !(dataSet.isPersisted() && !dataSet.isPersistedHDFS())) {
 						String firstColumn = columnsList.get(0);
 						Operand leftOperand = new Operand(DEFAULT_TABLE_NAME_DOT + AbstractJDBCDataset.encapsulateColumnName(firstColumn, null));
 
