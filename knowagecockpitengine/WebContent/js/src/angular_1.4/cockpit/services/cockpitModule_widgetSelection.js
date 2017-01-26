@@ -18,7 +18,11 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 			toRet[datasetLabel]={};
 			for(col in cockpitModule_template.configuration.filters[datasetLabel]){
 				var values = cockpitModule_template.configuration.filters[datasetLabel][col];
-				toRet[datasetLabel][col]=["('"+values.join("','")+"')"]
+				if(values.constructor === Array) {
+					toRet[datasetLabel][col]=["('"+values.join("','")+"')"];
+				} else {
+					toRet[datasetLabel][col]=["('"+values+"')"];
+				}
 			}
 		}
 		return toRet;
