@@ -114,6 +114,8 @@ import org.safehaus.uuid.UUIDGenerator;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 
 @Path("/1.0/documentexecution")
 @ManageAuthorization
@@ -171,6 +173,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	public Response getDocumentExecutionURL(@Context HttpServletRequest req) throws IOException, JSONException {
 
 		logger.debug("IN");
+		Monitor getDocumentExecutionURLMonitor = MonitorFactory.start("Knowage.DocumentExecutionResource.getDocumentExecutionURL");
+
 		JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
 		String label = requestVal.getString("label");
 		String role = requestVal.getString("role");
@@ -211,11 +215,18 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			String executingRole = getExecutionRole(role);
 			// displayToolbar
 			// modality
+			Monitor loadBIObjectForExecutionByLabelAndRoleMonitor = MonitorFactory
+					.start("Knowage.DocumentExecutionResource.getDocumentExecutionURL.loadBIObjectForExecutionByLabelAndRole");
 			BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectForExecutionByLabelAndRole(label, executingRole);
+			loadBIObjectForExecutionByLabelAndRoleMonitor.stop();
 			IParameterUseDAO parameterUseDAO = DAOFactory.getParameterUseDAO();
 			// BUILD THE PARAMETERS
+			Monitor buildJsonParametersMonitor = MonitorFactory.start("Knowage.DocumentExecutionResource.getDocumentExecutionURL.buildJsonParametersMonitor");
 			JSONObject jsonParametersToSend = buildJsonParameters(jsonParameters, req, role, permanentSession, parameterUseDAO, obj);
+			buildJsonParametersMonitor.stop();
 			// BUILD URL
+			Monitor buildJUrlMonitor = MonitorFactory.start("Knowage.DocumentExecutionResource.getDocumentExecutionURL.buildUrl");
+
 			String url = DocumentExecutionUtils.handleNormalExecutionUrl(this.getUserProfile(), obj, req, this.getAttributeAsString("SBI_ENVIRONMENT"),
 					executingRole, modality, jsonParametersToSend, locale);
 			errorList = DocumentExecutionUtils.handleNormalExecutionError(this.getUserProfile(), obj, req, this.getAttributeAsString("SBI_ENVIRONMENT"),
@@ -235,6 +246,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			if (errorList != null && !errorList.isEmpty()) {
 				resultAsMap.put("errors", errorList);
 			}
+			buildJUrlMonitor.stop();
 			// ADD TYPE CODE
 			// TODO return EXPORT FORMAT MAP
 			resultAsMap.put("typeCode", obj.getBiObjectTypeCode());
@@ -253,6 +265,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			JSONObject toRet = new JSONObject();
 			toRet.put("errors", arrerr);
 			return Response.ok(toRet.toString()).build();
+		} finally {
+			getDocumentExecutionURLMonitor.stop();
 		}
 		logger.debug("OUT");
 		return Response.ok(resultAsMap).build();
@@ -260,6 +274,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 	private String BuildEngineUrlString(JSONObject reqVal, BIObject obj, HttpServletRequest req, String isForExport, String cockpitSelections)
 			throws JSONException {
+		Monitor buildEngineUrlStringMonitor = MonitorFactory.start("Knowage.DocumentExecutionResource.buildEngineUrlString");
+
 		String ret = "";
 
 		if (obj.getBiObjectTypeCode().equals(SpagoBIConstants.OLAP_TYPE_CODE)) {
@@ -305,7 +321,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				}
 			}
 		}
-
+		buildEngineUrlStringMonitor.stop();
 		return ret;
 	}
 
