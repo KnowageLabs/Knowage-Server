@@ -128,6 +128,29 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			logger.debug("OUT");
 		}
 	}
+	
+	/**
+	 * Returns the number of existing datasets. This number is later used for server side pagination.
+	 *
+	 * @author Nikola Simovic (nsimovic, nikola.simovic@mht.net)
+	 */
+	@GET
+	@Path("/countDataSets")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public Number getNumberOfDataSets(@QueryParam("typeDoc") String typeDoc, @QueryParam("callback") String callback) {
+		logger.debug("IN");
+
+		try {
+			IDataSetDAO dsDao = DAOFactory.getDataSetDAO();
+			dsDao.setUserProfile(getUserProfile());
+			Number numOfDataSets = dsDao.countDatasets();
+			return numOfDataSets;
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
 
 	/**
 	 * The new implementation that, besides other useful information about datasets, provides also an information about old dataset versions for particular

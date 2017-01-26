@@ -105,7 +105,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					click-function="loadDataSet(item,index)"
 					selected-item="selectedDataSetInit" 
 					speed-menu-option="manageDataset"
-					current-page-number=datasetTableLastPage >
+					current-page-number=datasetTableLastPage
+					total-item-count=numOfDs
+					page-changed-function="changeDatasetPage(itemsPerPage, currentPageNumber)"
+					 >
 				</angular-table> 
 	        
 	       	</list>

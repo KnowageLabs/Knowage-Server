@@ -50,9 +50,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	
 	$scope.dataSetListColumns = [
 	    {"label":$scope.translate.load("sbi.generic.name"),"name":"name"},
-	    {"label":$scope.translate.load("sbi.generic.label"),"name":"label"},
-	    {"label":$scope.translate.load("sbi.generic.type"), "name":"dsTypeCd"},
-	    {"label":$scope.translate.load("sbi.ds.numDocs"), "name":"usedByNDocs"}
+	    {"label":$scope.translate.load("sbi.generic.type"), "name":"dsTypeCd", "size":"70px"},
+	    {"label":$scope.translate.load("sbi.ds.numDocs"), "name":"usedByNDocs", "size":"60px"}
     ];
 	
 	$scope.selectedDatasetVersion = null;
@@ -849,17 +848,35 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     $scope.deleteAllCustomAttributes = function() {
     	$scope.customAttributes = [];
     }
-	
+    
+    $scope.changeDatasetPage=function(itemsPerPage,currentPageNumber){
+    	sbiModule_restServices.promiseGet("1.0/datasets", "countDataSets")
+		.then(function(response) {
+			$scope.numOfDs = response.data;
+			var start = 0;
+			if(currentPageNumber>1){
+				start = (currentPageNumber - 1) * itemsPerPage + 1;
+			}
+			$scope.loadAllDatasets(start, itemsPerPage, response.data);
+		}, function(response) {
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+		});
+		console.log(itemsPerPage);
+		console.log(currentPageNumber);
+			
+		
+	}
+    
 	/*
 	 * 	service that loads all datasets
 	 *   																	
 	 */
-	$scope.loadAllDatasets = function(){
-		
+	$scope.loadAllDatasets = function(start, limit, numOfDS){
+		console.log(numOfDS+"datasets in total");
 		// If you want to use server-side pagination of the Dataset list, use this commented line. (danristo)
 //		sbiModule_restServices.promiseGet("1.0/datasets","pagopt","offset=0&fetchSize=5",null)
-		
-		sbiModule_restServices.promiseGet("1.0/datasets","pagopt")
+				
+		sbiModule_restServices.promiseGet("1.0/datasets","pagopt", "offset="+start+"&fetchSize="+limit)
 			.then(function(response) {
 				$scope.datasetsListTemp = angular.copy(response.data.root);
 				$scope.datasetsListPersisted = angular.copy($scope.datasetsListTemp);
@@ -869,7 +886,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		
 	}
 	
-	$scope.loadAllDatasets();	
+	
 	
 	/**
 	 * Speed-menu option configuration for deleting of a dataset.
