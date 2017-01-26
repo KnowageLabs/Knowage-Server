@@ -157,7 +157,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 			}
 			
-			debugger;
+
 			$scope.doSelection(columnName,column,$scope.ngModel.content.modalselectioncolumn,newValue,row);
 
 			
@@ -354,6 +354,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								
 								var prefix="";
 								var suffix="";
+								var formattedValue=$scope.formatValue(value, currentColumn);
 								var horiz_align=$scope.getCellAlignment(currentColumn);
 								
 								var valueWithoutPrefixAndSuffix=$scope.freeValueFromPrefixAndSuffix(value,currentColumn);								
@@ -414,7 +415,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 												
 								if(!currentColumn.hasOwnProperty("visType") || currentColumn.visType=='Text')
 								{										
-									htm=htm+"<div>"+value+"</div>"	
+									htm=htm+"<div>"+formattedValue+"</div>"	
 								}	
 								
 								if(currentColumn.hasOwnProperty("minValue") && currentColumn.hasOwnProperty("maxValue")) // 	MinValue and MaxValue are present only if you have to display a chart
@@ -436,14 +437,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 
-											htm=htm+"<div>"+value+"</div> &nbsp;  <md-progress-linear-custom flex  style='width:"+currentColumn.chartLength +"px' value="+barValue+" color=\""+  currentColumn.chartColor +"\"> </md-progress-linear-custom>"
+											htm=htm+"<div>"+formattedValue+"</div> &nbsp;  <md-progress-linear-custom flex  style='width:"+currentColumn.chartLength +"px' value="+barValue+" color=\""+  currentColumn.chartColor +"\"> </md-progress-linear-custom>"
 
 	
 									}	 
 									else if(currentColumn.visType=='Chart & Text')
 									{
 
-											htm=htm+"<md-progress-linear-custom flex  style='width:"+currentColumn.chartLength +"px' value="+barValue+" color=\""+  currentColumn.chartColor +"\"> </md-progress-linear-custom> &nbsp; <div>"+value+"</div>"
+											htm=htm+"<md-progress-linear-custom flex  style='width:"+currentColumn.chartLength +"px' value="+barValue+" color=\""+  currentColumn.chartColor +"\"> </md-progress-linear-custom> &nbsp; <div>"+formattedValue+"</div>"
 											
 
 									}							
@@ -606,26 +607,68 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 
 			}
+		}
+		
+		$scope.formatValue = function (value, column){			
+		
+			var output = value;
+			var precision = 2;  //for default has 2 decimals 
+			if (column.style && column.style.precision >= 0) precision =  column.style.precision;
+			if (column.style && column.style.format){
+		    	switch (column.style.format) {
+		    	case "#.###":
+		    		output = $scope.numberFormat(value, 0, ',', '.'); 
+		    	break;            	
+		    	case "#,###":
+		    		output = $scope.numberFormat(value, 0, '.', ',');
+		    	break;
+		    	case "#.###,##":
+		    		output = $scope.numberFormat(value, precision, ',', '.'); 
+		    	break;
+		    	case "#,###.##":
+		    		output = $scope.numberFormat(value, precision, '.', ',');
+		    		break;
+		    	default:
+		    		output = value.toLocaleString();
+		    		break;
+		    	} 
+			}
+		
+	    	return output;
+		}
+		
+		$scope.numberFormat = function (value, dec, dsep, tsep) {
+    		
+  		  if (isNaN(value) || value == null) return value;
+  		 
+  		  value = parseFloat(value).toFixed(~~dec);
+  		  tsep = typeof tsep == 'string' ? tsep : ',';
 
+  		  var parts = value.split('.'), fnums = parts[0],
+  		    decimals = parts[1] ? (dsep || '.') + parts[1] : '';
 
+  		    
+  		  return fnums.replace(/(\d)(?=(?:\d{3})+$)/g, '$1' + tsep) + decimals;
 		}
 
 		//returns the horizontal cell alignment
 		$scope.getCellAlignment = function (column){
 			var align = "";
-			switch (column.style && column.style.textAlign)
-            {
-               case 'left': align="start";
-               break;
-            
-               case 'right': align="end";
-               break;
-            
-               case 'center': align="center";
-               break;						           
-            
-               default:  align="start";
-            }
+			if (column.style && column.style.textAlign){
+				switch (column.style.textAlign)
+	            {
+	               case 'left': align="start";
+	               break;
+	            
+	               case 'right': align="end";
+	               break;
+	            
+	               case 'center': align="center";
+	               break;						           
+	            
+	               default:  align="start";
+	            }
+			}
 			
 			return align;
 		}

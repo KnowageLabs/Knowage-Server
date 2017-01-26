@@ -2,7 +2,7 @@
 
 <md-dialog aria-label="table configuration" ng-cloak  layout="column" class="width80">
    
-    <md-dialog-content flex layout="column">
+    <md-dialog-content flex layout="column" autoWrap:false>
     	  <md-toolbar class="secondaryToolbar" layout="row">
 		        <h1 flex class="md-toolbar-tools">{{translate.load('sbi.cockpit.widgets.table.columnstyle')}}</h1>
 		         <md-button  flex=10  ng-click="cleanStyleColumn()" >
@@ -65,7 +65,7 @@
 							
   
 			        	</div>
-		       
+
 		       			<md-card>
 			       			<md-toolbar class="ternaryToolbar ">
 						      <div class="md-toolbar-tools">
@@ -74,7 +74,7 @@
 						        </h2>
 					          </div>
 					       </md-toolbar>
-		       				<md-card-content layout-row>
+		       			   <md-card-content layout-row>
 						       <angular-table flex
 						    				id="thresholdsTable" 
 											ng-show=true
@@ -106,17 +106,10 @@
 												<label>{{translate.load('sbi.cockpit.table.backgroundcolor')}}</label>
 												<color-picker options="colorPickerProperty" ng-model="selectedColumn.colorThresholdOptions.color[i]"></color-picker>
 											</md-input-container>
-
-
-									</div>
-								
+									</div>							
 								</div>
-															
-							
-							
 							</md-card-content>
 						</md-card>
-							
 					  </div> 
 					        
 			   <!-- ----------------- -->
@@ -144,6 +137,12 @@
 						<label>{{translate.load('sbi.cockpit.style.precision')}}</label>
 						<input class="input_class" type="number" ng-model="selectedColumn.style.precision"> 
 					</md-input-container>
+					 <md-input-container flex class="md-block"  class="small counter">  
+							<label>{{translate.load('sbi.cockpit.style.format')}}</label>
+							<md-select aria-label="aria-label" ng-model="selectedColumn.style.format">
+									<md-option ng-repeat="f in formatPattern" value="{{f}}">{{f}}</md-option>
+							</md-select>
+					</md-input-container> 
 		       </div>	
 		       <div  flex>
 					<md-input-container class="md-block"> 
@@ -172,14 +171,14 @@
 							<input class="input_class" ng-model=selectedColumn.style.fontSize type="number"/>
 					</md-input-container>
 				</div>
-				<div flex>
+			    <div flex>
 		       		<md-input-container flex class="md-block"> 
 							<label>{{translate.load('sbi.cockpit.table.alignment')}}</label>
 							<md-select aria-label="aria-label" ng-model="selectedColumn.style.textAlign">
 									<md-option ng-repeat="a in textAlign" value="{{a}}">{{a}}</md-option>
 							</md-select>
 					</md-input-container>
-				</div>
+				</div> 
 				</md-card-content>
 				</md-card>
 		      </div>

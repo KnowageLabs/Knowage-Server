@@ -368,8 +368,7 @@ function controllerCockpitColumnsConfigurator($scope,sbiModule_translate,$mdDial
 		}
 		
 		
-		for(var i=0;i<$scope.columnSelected.length;i++){
-			debugger;
+		for(var i=0;i<$scope.columnSelected.length;i++){			
 			var obj = $scope.columnSelected[i];
 			obj.aggregationSelected = 'SUM';
 			obj["funcSummary"] = "SUM";
@@ -402,11 +401,11 @@ function controllerCockpitColumnsConfigurator($scope,sbiModule_translate,$mdDial
 }
 
 function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,model,selectedColumn,cockpitModule_datasetServices,$mdToast){
-	debugger;
 	$scope.translate=sbiModule_translate;
 	$scope.selectedColumn = angular.copy(selectedColumn);
 	$scope.fontWeight = ['normal','bold','bolder','lighter','number','initial','inherit'];
 	$scope.textAlign = ['left','right','center'];
+	$scope.formatPattern = ['#.###','#,###','#.###,##','#,###.##'];
 	$scope.colorPickerProperty={placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb'}
 	$scope.visTypes=['Chart','Text','Chart & Text', 'Text & Chart','Icon only'];
 	
@@ -457,7 +456,6 @@ function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,model,s
 	var valueString2="<md-input-container class='md-block' ng-if='scopeFunctions.condition[2].condition!=undefined && scopeFunctions.condition[2].condition!=\"none\"' flex>	<input class='input_class'  ng-model='scopeFunctions.condition[2].value' type='number' required> </md-input-container>";	
 	var valueString3="<md-input-container class='md-block' ng-if='scopeFunctions.condition[3].condition!=undefined && scopeFunctions.condition[3].condition!=\"none\"' flex>	<input class='input_class'  ng-model='scopeFunctions.condition[3].value' type='number' required> </md-input-container>";	
 
-		
 	$scope.thresholdsList=
 		[{priority:0, icon:"<md-icon style='color:red'  md-font-icon='fa fa-exclamation-circle' ng-init='scopeFunctions.condition[0].iconColor=\"red\";	scopeFunctions.condition[0].icon=\"fa fa-exclamation-circle\"'></md-icon>",condition:conditionString0,	value:valueString0},{priority:1 , icon:"<md-icon style='color:red'	md-font-icon='fa fa-times-circle' ng-init='scopeFunctions.condition[1].iconColor=\"red\"; scopeFunctions.condition[1].icon=\"fa fa-times-circle\"'></md-icon>",condition:conditionString1, value:valueString1},	{priority:2 , icon:"<md-icon style='color:yellow'  md-font-icon='fa fa-exclamation-triangle' ng-init='scopeFunctions.condition[2].iconColor=\"yellow\"; scopeFunctions.condition[2].icon=\"fa fa-exclamation-triangle\"'></md-icon>",condition:conditionString2, value:valueString2},{priority:3 , icon:"<md-icon style='color:green'  md-font-icon='fa fa-check-circle' ng-init='scopeFunctions.condition[3].iconColor=\"green\";	scopeFunctions.condition[3].icon=\"fa fa-check-circle\"'></md-icon>",condition:conditionString3, value:valueString3}];	
 	$scope.tableColumns=[{label:"Icon",name:"icon", hideTooltip:true},{label:"Condition",name:"condition", hideTooltip:true},{label:"Value",name:"value", hideTooltip:true}];
@@ -486,8 +484,7 @@ function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,model,s
 	$scope.cleanStyleColumn = function(){
 		$scope.selectedColumn.style = undefined;
 	}
-	$scope.saveColumnStyleConfiguration = function(){
-		debugger;
+	$scope.saveColumnStyleConfiguration = function(){		
 		angular.copy($scope.selectedColumn,selectedColumn)
 
 		$mdDialog.cancel();

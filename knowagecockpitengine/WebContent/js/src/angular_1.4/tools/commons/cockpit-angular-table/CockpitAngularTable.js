@@ -578,8 +578,48 @@ angular.module('cockpit_angular_table', ['ngMaterial', 'angularUtils.directives.
 		        	
 		        }
 	        };
+        })
+        .filter("formatValue", function () {
+        	return function (input, format, precision) {
+        	 	debugger;
+	        	function numberFormat (dec, dsep, tsep) {
+	        		
+	        		  if (isNaN(input) || input == null) return input;
+	
+	        		  input = parseFloat(input).toFixed(~~dec);
+	        		  tsep = typeof tsep == 'string' ? tsep : ',';
+	
+	        		  var parts = input.split('.'), fnums = parts[0],
+	        		    decimals = parts[1] ? (dsep || '.') + parts[1] : '';
+	
+	        		  return fnums.replace(/(\d)(?=(?:\d{3})+$)/g, '$1' + tsep) + decimals;
+	        	}
+
+
+            	var output;
+            	switch (format) {
+            	case "#.###":
+            		output = numberFormat(0, ',', '.'); //decimals, dec_point, thousands_sep
+            		break;            	
+            	case "#,###":
+            		output = numberFormat(0, '.', ','); //decimals, dec_point, thousands_sep
+            		break;            	
+            	case "#.###,##":
+            		output = numberFormat(precision, ',', '.'); //decimals, dec_point, thousands_sep
+            		break;            	
+            	case "#,###.##":
+            		output = numberFormat(precision, '.', ','); //decimals, dec_point, thousands_sep
+            		break;
+            	default:
+            		output = input.toLocaleString();
+            		break;
+            }
+            	
+            	return output;
+            };
         });
 
+ 
 
 function CockpitTableControllerFunction($scope, $timeout,$mdDialog) {
 	$scope.pagination = {currentPageNumber : 1};
@@ -1155,4 +1195,5 @@ function CockpitTableFooterControllerFunction($scope, $timeout) {
     	},500) 
     	 return num;
     }
+	
 }
