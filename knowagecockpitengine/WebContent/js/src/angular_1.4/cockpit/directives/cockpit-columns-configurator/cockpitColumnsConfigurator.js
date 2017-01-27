@@ -137,7 +137,7 @@
 		                             },
 		                             {
 		                            	 "label":"Column Name",
-		                            	 "name":"alias",
+		                            	 "name":"name",
 
 		                            	 hideTooltip:true
 

@@ -220,6 +220,8 @@ function cockpitSelectionControllerFunction($scope,cockpitModule_template,cockpi
 	$scope.selection = [];
 	$scope.translate = sbiModule_translate;
 	$scope.tmpSelection = [];
+	
+	
 	angular.copy(cockpitModule_template.configuration.aggregations,$scope.tmpSelection);
 	$scope.tmpFilters = {};
 	angular.copy(cockpitModule_template.configuration.filters,$scope.tmpFilters);
@@ -250,6 +252,7 @@ function cockpitSelectionControllerFunction($scope,cockpitModule_template,cockpi
 			var selection = $scope.tmpSelection[i].selection;
 			for(var key in selection){
 				var string = key.split(".");
+				
 				var obj = {
 						ds : string[0],
 						columnName : string[1],
@@ -265,10 +268,19 @@ function cockpitSelectionControllerFunction($scope,cockpitModule_template,cockpi
 	
 
 	for(var ds in $scope.tmpFilters){
+		debugger;
+		var currentDs = cockpitModule_datasetServices.getDatasetByLabel(ds).metadata.fieldsMeta;
 		for(var col in $scope.tmpFilters[ds]){
+			var aliasColumnName;
+			for(var a in cockpitModule_template.configuration.aliases){
+				if(cockpitModule_template.configuration.aliases[a].column == col){
+					aliasColumnName = cockpitModule_template.configuration.aliases[a].alias;
+				}
+			}
 			var tmpObj={
 					ds :ds,
-					columnName : col,
+					columnName : aliasColumnName,
+					column	: col,
 					value : $scope.tmpFilters[ds][col],
 					aggregated:false
 			}
@@ -327,7 +339,7 @@ function cockpitSelectionControllerFunction($scope,cockpitModule_template,cockpi
 			var index=$scope.selection.indexOf(item);
 			$scope.selection.splice(index,1);
 		}else{
-			delete $scope.tmpFilters[item.ds][item.columnName];
+			delete $scope.tmpFilters[item.ds][item.column];
 			if(Object.keys($scope.tmpFilters[item.ds]).length==0){
 				delete $scope.tmpFilters[item.ds];
 			}
