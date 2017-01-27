@@ -175,7 +175,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<md-toolbar class="md-knowage-theme"> <div class="md-toolbar-tools">{{ctrl.translate.load("cache.manager.addRemoveDataset")}}<div flex></div><md-button ng-click="ctrl.deleteFunction()" ng-disabled="ctrl.itemSelected.length<=0">{{ctrl.translate.load("cache.manager.delete")}}</md-button> <md-button ng-click="ctrl.cleanAllFunction()">{{ctrl.translate.load("cache.manager.cleanAll")}}</md-button></div></md-toolbar>
 			<div layout-align="center center" layout-padding layout-margin flex>			
 					
-					<div ng-if="ctr.metadata != undefined && ctr.metadata.length > 0">  <!-- METADATA TABLE -->
+					<div ng-if="ctrl.metadata != undefined && ctrl.metadata.length > 0">  <!-- METADATA TABLE -->
 						
 					<angular-table 	id="manageTable" 	ng-model=ctrl.metadata 
 											columns=ctrl.tableColumns
@@ -185,10 +185,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 											no-pagination="false"
 											multi-select = "true"
 											selected-item="ctrl.itemSelected"
-					></angular-table>					
+					></angular-table>
 					
 				</div>	
-				<div ng-if="ctr.metadata == undefined || ctr.metadata.length == 0">  <!--  METADATA TABLE -->
+				<div ng-if="ctrl.metadata == undefined || ctrl.metadata.length == 0">  <!--  METADATA TABLE -->
 					{{ctrl.translate.load("cache.manager.metadataUnavailable")}}
 				</div>	
 	
