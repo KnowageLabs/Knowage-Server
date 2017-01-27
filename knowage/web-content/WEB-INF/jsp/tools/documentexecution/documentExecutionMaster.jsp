@@ -78,8 +78,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		<%if (request.getParameter("SELECTED_ROLE") != null
 					&& !request.getParameter("SELECTED_ROLE").equalsIgnoreCase("")) {%>
-			obj.SELECTED_ROLE = '<%=request.getParameter("SELECTED_ROLE")%>
-	';
+			obj.SELECTED_ROLE = '<%=request.getParameter("SELECTED_ROLE")%>';
 <%}%>
 	return obj;
 					});
