@@ -167,8 +167,9 @@ public class DataSetModelStructureBuilder extends AbstractModelStructureBuilder 
 		}
 
 		IModelField datamartField;
-
-		if (fieldUniqueName.contains("it.eng.spagobi.meta")) {
+		// in case the dataset is a Qbe dataset, the name of the datamart field is the dataset field's alias (it.eng.spagobi.meta is used for
+		// retro-compatibility with models created with SpagoBI Meta)
+		if (fieldUniqueName.contains("it.eng.knowage.meta") || fieldUniqueName.contains("it.eng.spagobi.meta")) {
 			datamartField = dataMartEntity.addNormalField(keyPrefix + alias);
 			datamartField.setName(alias);
 		} else {
