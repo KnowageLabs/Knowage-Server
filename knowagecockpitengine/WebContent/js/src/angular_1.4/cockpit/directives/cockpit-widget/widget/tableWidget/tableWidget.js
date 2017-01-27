@@ -628,8 +628,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		    	case "#,###.##":
 		    		output = $scope.numberFormat(value, precision, '.', ',');
 		    		break;
-		    	default:
-		    		output = value.toLocaleString();
+		    	default:		    		
 		    		break;
 		    	} 
 			}
