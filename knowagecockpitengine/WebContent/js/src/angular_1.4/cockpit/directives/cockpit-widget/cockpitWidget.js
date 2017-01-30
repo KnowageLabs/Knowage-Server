@@ -439,7 +439,15 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 					doCross = true;
 					// get value to pass to cross navigation
 					if(row){
-						columnValue = row[crossColumnOrAlias];
+						if(row[crossColumnOrAlias]){
+							columnValue = row[crossColumnOrAlias];
+						}else{
+							columnValue = [];
+							for(var j in row){
+								columnValue.push(row[j][crossColumnOrAlias]);
+							}
+						}
+						
 					}
 					
 
