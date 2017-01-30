@@ -1583,9 +1583,9 @@ public class DatasetManagementAPI {
 
 			Map<String, String> columnNameWithColonToAliasName = new HashMap<String, String>();
 
-			setColumnsToSelect(dataSource, projections, sqlBuilder, orderColumns, isRealtime, columnNameWithColonToAliasName);
+			setColumnsToSelect(dataSource, projections, sqlBuilder, orderColumns, isRealtime, dataSet);
 			setWhereConditions(dataSource, filters, sqlBuilder);
-			setGroupbyConditions(dataSource, groups, sqlBuilder, columnNameWithColonToAliasName);
+			setGroupbyConditions(dataSource, groups, sqlBuilder, dataSet);
 			setHavingConditions(dataSource, havings, sqlBuilder);
 			setOrderbyConditions(dataSource, orderColumns, sqlBuilder);
 
@@ -1638,7 +1638,7 @@ public class DatasetManagementAPI {
 	}
 
 	private void setColumnsToSelect(IDataSource dataSource, List<ProjectionCriteria> projections, SelectBuilder sqlBuilder, List<String> orderColumns,
-			boolean isRealtime, Map<String, String> columnNameWithColonToAliasName) {
+			boolean isRealtime, IDataSet dataSet) {
 		if (orderColumns == null) {
 			throw new SpagoBIRuntimeException("Unable to manage ORDER BY clauses");
 		}
@@ -1663,12 +1663,7 @@ public class DatasetManagementAPI {
 				String orderType = projection.getOrderType().toUpperCase();
 
 				if (columnName.contains(":")) {
-					if (hasAlias) {
-						columnNameWithColonToAliasName.put(columnName, aliasName);
-						columnName = aliasName;
-					} else {
-						throw new SpagoBIRuntimeException("Projection [" + columnName + "] requires an alias");
-					}
+					columnName = getQbeDataSetColumn(dataSet, columnName);
 				}
 
 				if (isCalculatedColumn) {
@@ -1875,8 +1870,7 @@ public class DatasetManagementAPI {
 		}
 	}
 
-	private void setGroupbyConditions(IDataSource dataSource, List<GroupCriteria> groups, SelectBuilder sqlBuilder,
-			Map<String, String> columnNameWithColonToAliasName) {
+	private void setGroupbyConditions(IDataSource dataSource, List<GroupCriteria> groups, SelectBuilder sqlBuilder, IDataSet dataSet) {
 		if (groups != null) {
 			List<String> groupColumnNames = new ArrayList<String>();
 
@@ -1885,7 +1879,7 @@ public class DatasetManagementAPI {
 				String aggregateFunction = group.getAggregateFunction();
 
 				if (columnName.contains(":")) {
-					columnName = columnNameWithColonToAliasName.get(columnName);
+					columnName = getQbeDataSetColumn(dataSet, columnName);
 				}
 
 				columnName = AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
@@ -2078,5 +2072,20 @@ public class DatasetManagementAPI {
 		workManager.schedule(domainValuesWork);
 		logger.debug("Asynchronous work has been scheduled");
 		logger.debug("OUT");
+	}
+
+	public String getQbeDataSetColumn(IDataSet dataSet, String columnName) {
+		String result = columnName;
+
+		Assert.assertNotNull(dataSet, "Impossible to load dataset with label [" + dataSet.getLabel() + "]");
+		for (int i = 0; i < dataSet.getMetadata().getFieldCount(); i++) {
+			IFieldMetaData fieldMeta = dataSet.getMetadata().getFieldMeta(i);
+			if (fieldMeta.getName().equals(columnName)) {
+				result = fieldMeta.getAlias();
+				break;
+			}
+		}
+
+		return result;
 	}
 }

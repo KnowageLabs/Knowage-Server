@@ -330,7 +330,8 @@ public class SQLDBCache implements ICache {
 				logger.debug("Not found resultSet with signature [" + resultsetSignature + "] inside the Cache");
 				return null;
 			}
-			return queryStandardCachedDataset(groups, filters, havings, projections, summaryRowProjectionCriteria, resultsetSignature, offset, fetchSize);
+			return queryStandardCachedDataset(groups, filters, havings, projections, summaryRowProjectionCriteria, resultsetSignature, offset, fetchSize,
+					dataSet);
 
 		} finally {
 			logger.debug("OUT");
@@ -447,7 +448,8 @@ public class SQLDBCache implements ICache {
 
 	@SuppressWarnings("unchecked")
 	private IDataStore queryStandardCachedDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<FilterCriteria> havings,
-			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, String resultsetSignature, int offset, int fetchSize) {
+			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, String resultsetSignature, int offset, int fetchSize,
+			IDataSet dataSet) {
 
 		DataStore toReturn = null;
 
@@ -500,6 +502,7 @@ public class SQLDBCache implements ICache {
 						Map<String, String> columnNameWithColonToAliasName = new HashMap<String, String>();
 
 						// Columns to SELECT
+						DatasetManagementAPI datasetManagementAPI = new DatasetManagementAPI();
 						if (projections != null) {
 
 							for (ProjectionCriteria projection : projections) {
@@ -513,12 +516,7 @@ public class SQLDBCache implements ICache {
 								IAggregationFunction aggregationFunction = AggregationFunctions.get(aggregateFunction);
 
 								if (columnName.contains(":")) {
-									if (hasAlias) {
-										columnNameWithColonToAliasName.put(columnName, aliasName);
-										columnName = aliasName;
-									} else {
-										throw new SpagoBIRuntimeException("Projection [" + columnName + "] requires an alias");
-									}
+									columnName = datasetManagementAPI.getQbeDataSetColumn(dataSet, columnName);
 								}
 
 								if (datasetAlias != null) {
@@ -708,7 +706,7 @@ public class SQLDBCache implements ICache {
 								Map<String, String> datasetAlias = (Map<String, String>) cacheItem.getProperty("DATASET_ALIAS");
 
 								if (columnName.contains(":")) {
-									columnName = columnNameWithColonToAliasName.get(columnName);
+									columnName = datasetManagementAPI.getQbeDataSetColumn(dataSet, columnName);
 								}
 
 								if (datasetAlias != null) {
@@ -779,8 +777,7 @@ public class SQLDBCache implements ICache {
 
 							String summaryRowQuery = sb.toString();
 							IDataStore summaryRowDataStore = dataSource.executeStatement(summaryRowQuery, -1, -1);
-							DatasetManagementAPI dmApi = new DatasetManagementAPI();
-							dmApi.appendSummaryRowToPagedDataStore(projections, summaryRowProjections, dataStore, summaryRowDataStore);
+							datasetManagementAPI.appendSummaryRowToPagedDataStore(projections, summaryRowProjections, dataStore, summaryRowDataStore);
 						}
 
 						toReturn = (DataStore) dataStore;

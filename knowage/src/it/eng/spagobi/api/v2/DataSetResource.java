@@ -412,8 +412,6 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 			analyzer.process();
 			Pseudograph<String, LabeledEdge<String>> graph = analyzer.getGraph();
 
-			String selectedDataset = null;
-			String selectedColumn = null;
 			String value = null;
 			IDataSource cacheDataSource = SpagoBICacheConfiguration.getInstance().getCacheDataSource();
 
@@ -521,8 +519,8 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 	}
 
 	@Override
-	protected List<FilterCriteria> getFilterCriteria(String datasetLabel, JSONObject selectionsObject, boolean isRealtime, Map<String, String> columnAliasToName)
-			throws JSONException {
+	protected List<FilterCriteria> getFilterCriteria(String datasetLabel, JSONObject selectionsObject, boolean isRealtime,
+			Map<String, String> columnAliasToColumnName) throws JSONException {
 		List<FilterCriteria> filterCriterias = new ArrayList<FilterCriteria>();
 
 		if (selectionsObject.has(datasetLabel)) {
@@ -537,14 +535,22 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 
 				if (values.length() > 0) {
 					List<String> columnsList = new ArrayList<String>();
-					String columnNames = replaceColumnAliasesWithNames(columns, columnAliasToName);
+					String columnNames = fixColumnAliasesAndNames(columns, columnAliasToColumnName);
 					columnsList.addAll(Arrays.asList(columnNames.split("\\s*,\\s*"))); // trim spaces while splitting
+
+					for (int i = 0; i < columnsList.size(); i++) {
+						String column = columnsList.get(i);
+						if (column.contains(":")) {
+							columnsList.set(i, getDatasetManagementAPI().getQbeDataSetColumn(dataSet, column));
+						}
+					}
 
 					List<String> dateColumnNamesList = getDateColumnNamesList(dataSet);
 
 					if (isRealtime && !(DatasetManagementAPI.isJDBCDataSet(dataSet) && !SqlUtils.isBigDataDialect(dataSet.getDataSource().getHibDialectName()))
 							&& !dataSet.isFlatDataset() && !(dataSet.isPersisted() && !dataSet.isPersistedHDFS())) {
 						String firstColumn = columnsList.get(0);
+
 						Operand leftOperand = new Operand(DEFAULT_TABLE_NAME_DOT + AbstractJDBCDataset.encapsulateColumnName(firstColumn, null));
 
 						for (int i = 0; i < values.length(); i++) {
@@ -568,7 +574,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 							filterCriterias.add(filterCriteria);
 						}
 					} else {
-						Operand leftOperand = new Operand(columnNames);
+						Operand leftOperand = new Operand(StringUtils.join(columnsList, ","));
 
 						IDataSource dataSource = dataSet.getDataSource();
 						List<String> valuesList = new ArrayList<String>();
@@ -611,7 +617,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 
 	@Override
 	protected List<FilterCriteria> getLikeFilterCriteria(String datasetLabel, JSONObject likeSelectionsObject, boolean isRealtime,
-			Map<String, String> columnAliasToName, List<ProjectionCriteria> projectionCriteria, boolean getAttributes) throws JSONException {
+			Map<String, String> columnAliasToColumnName, List<ProjectionCriteria> projectionCriteria, boolean getAttributes) throws JSONException {
 		List<FilterCriteria> likeFilterCriteria = new ArrayList<FilterCriteria>();
 
 		if (likeSelectionsObject.has(datasetLabel)) {
@@ -626,7 +632,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 
 				if (value != null && !value.isEmpty()) {
 					List<String> columnsList = new ArrayList<String>();
-					String columnNames = replaceColumnAliasesWithNames(columns, columnAliasToName);
+					String columnNames = fixColumnAliasesAndNames(columns, columnAliasToColumnName);
 					columnsList.addAll(Arrays.asList(columnNames.split("\\s*,\\s*"))); // trim spaces while splitting
 
 					List<String> attributesOrMeasures = getAttributesOrMeasures(columnsList, dataSet, projectionCriteria, isRealtime, getAttributes);
@@ -687,6 +693,9 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 					IAggregationFunction aggregationFunction = AggregationFunctions.get(projection.getAggregateFunction());
 					boolean isAttribute = aggregationFunction == null || aggregationFunction.equals(AggregationFunctions.NONE_FUNCTION);
 					if (isAttribute == getAttributes) {
+						if (columnName.contains(":")) {
+							columnName = getDatasetManagementAPI().getQbeDataSetColumn(dataSet, columnName);
+						}
 						String encapsulatedColumnName = AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource);
 						if (isAttribute) {
 							attributesOrMeasures.add(defaultTableNameDot + encapsulatedColumnName);
@@ -707,7 +716,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		if (currentValues.startsWith("(") && currentValues.endsWith(")")) {
 			currentValues = currentValues.substring(1, currentValues.length() - 1);
 		}
-		String[] valuesArray = currentValues.split("\\s*,\\s*");
+		String[] valuesArray = currentValues.split("\\s*,\\s*"); // trim spaces while splitting
 		for (int i = 0; i < valuesArray.length; i++) {
 			String value = valuesArray[i];
 			if (value.startsWith("'") && value.endsWith("'")) {
@@ -747,9 +756,9 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		return convertedDate;
 	}
 
-	private String replaceColumnAliasesWithNames(String columns, Map<String, String> columnAliasToName) {
+	private String fixColumnAliasesAndNames(String columns, Map<String, String> columnAliasToName) {
 		if (columnAliasToName != null) {
-			String[] columnsSplitted = columns.split(",");
+			String[] columnsSplitted = columns.split("\\s*,\\s*");
 			Set<String> aliases = columnAliasToName.keySet();
 
 			for (int i = 0; i < columnsSplitted.length; i++) {
