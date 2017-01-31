@@ -23,12 +23,14 @@ import java.util.List;
 
 public class InLineViewBuilder extends SelectBuilder {
 
+	public final String DEFAULT_INLINE_VIEW_ALIAS = "T";
+
 	private String inLineViewSQL;
 
 	private String inLineViewAlias;
 
 	public InLineViewBuilder() {
-
+		this.inLineViewAlias = DEFAULT_INLINE_VIEW_ALIAS;
 	}
 
 	public InLineViewBuilder(String inLineView, String inLineViewAlias) {
