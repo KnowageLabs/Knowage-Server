@@ -1290,7 +1290,6 @@ public class DatasetManagementAPI {
 		QuerableBehaviour querableBehaviour = (QuerableBehaviour) dataSet.getBehaviour(QuerableBehaviour.class.getName());
 		String tableName = querableBehaviour.getStatement();
 		InLineViewBuilder sqlBuilder = new InLineViewBuilder();
-		sqlBuilder.setInLineViewAlias("T");
 		return queryDataset(sqlBuilder, dataSource, tableName, groups, filters, havings, projections, summaryRowProjections, dataSet, offset, fetchSize);
 	}
 
@@ -1622,7 +1621,9 @@ public class DatasetManagementAPI {
 			} else {
 				sb.append("(");
 				sb.append(queryText);
-				sb.append(") AS T");
+				// sb.append(") AS T");
+				sb.append(")");
+
 			}
 
 			queryText = sb.toString();
