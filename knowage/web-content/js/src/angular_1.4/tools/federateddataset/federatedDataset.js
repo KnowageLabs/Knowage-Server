@@ -657,7 +657,7 @@ function federationDefinitionFunction
 //				hasBackdrop: true,
 			position: $mdPanel.newPanelPosition().absolute().center(),
 			trapFocus: true,
-			zIndex: 150,
+			//zIndex: 150,
 			fullscreen :true,
 			clickOutsideToClose: true,
 			escapeToClose: false,
