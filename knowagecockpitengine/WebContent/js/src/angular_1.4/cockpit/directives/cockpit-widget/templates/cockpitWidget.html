@@ -50,7 +50,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   	
 	<md-card class="placedWidget flexCard" ng-style="borderShadowStyle" ng-class="{'shadowedBox': extendedStyle.shadows, 'noTitle':(!extendedStyle.titles && !widExp),'editWidgetMode':cockpitModule_properties.EDIT_MODE}" layout="column" layout-fill>
 		<md-card-title>
-			<md-toolbar>
+			<md-toolbar style="height:{{headerHeight}}px">
 				<div class="md-toolbar-tools draggableToolbar" ng-class="{'dragCursor': (cockpitModule_properties.EDIT_MODE && !widExp)}" layout="row">
 					<span ng-click="editWidgetName(); "   class="md-headline editWidgetNameSpan " ng-style="titleStyle" ng-show="editingWidgetName!=true">{{ngModel.content.name | parameter_fill}}</span>
 					<div layout="row"  flex class="editWidgetNameInput" ng-show="editingWidgetName==true">

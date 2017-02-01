@@ -600,6 +600,9 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 		angular.copy({},$scope.extendedStyle);
 		angular.copy({},$scope.borderShadowStyle);
 		angular.copy({},$scope.titleStyle);
+		//angular.copy({},$scope.headerHeight);
+		//$scope.headerHeight={};
+		
 		
 		// update extended style
 		angular.copy(angular.merge({},cockpitModule_template.configuration.style,$scope.ngModel.style),$scope.extendedStyle);
@@ -622,6 +625,13 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 			var tempBackGround={'background-color': $scope.extendedStyle.backgroundColor};
 			angular.merge($scope.borderShadowStyle,tempBackGround);
 		}
+		
+		// update header height
+		if($scope.extendedStyle.headerHeight!=undefined){
+			$scope.headerHeight=$scope.extendedStyle.headerHeight;
+		}
+		
+		
 		
 	}
 	
