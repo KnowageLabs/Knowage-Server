@@ -108,6 +108,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					current-page-number=datasetTableLastPage
 					total-item-count=numOfDs
 					page-changed-function="changeDatasetPage(itemsPerPage, currentPageNumber)"
+					search-function="datasetLike(searchValue, itemsPerPage, currentPageNumber)"
 					 >
 				</angular-table> 
 	        

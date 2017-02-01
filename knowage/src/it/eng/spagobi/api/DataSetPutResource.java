@@ -62,7 +62,7 @@ public class DataSetPutResource extends AbstractSpagoBIResource {
 		}
 		JSONObject json = RestUtilities.readBodyAsJSONObject(req);
 		ManageDataSetsForREST mdsfr = new ManageDataSetsForREST();
-		String toReturnString = mdsfr.jsonReciever(json.toString(), dsDao, null, getUserProfile(), req);
+		String toReturnString = mdsfr.insertDataset(json.toString(), dsDao, null, getUserProfile(), req);
 		return toReturnString;
 	}
 
@@ -72,7 +72,7 @@ public class DataSetPutResource extends AbstractSpagoBIResource {
 	public String previewDataSet(@Context HttpServletRequest req) throws IOException, JSONException {
 		JSONObject json = RestUtilities.readBodyAsJSONObject(req);
 		ManageDataSetsForREST mdsfr = new ManageDataSetsForREST();
-		String toReturnString = mdsfr.jsonPreviewReciever(json.toString(), getUserProfile());
+		String toReturnString = mdsfr.previewDataset(json.toString(), getUserProfile());
 		return toReturnString;
 	}
 

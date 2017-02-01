@@ -121,18 +121,19 @@ public class ManageDataSetsForREST {
 
 	protected IEngUserProfile profile;
 
-	public String jsonPreviewReciever(String jsonString, UserProfile userProfile) {
+	public String previewDataset(String jsonString, UserProfile userProfile) {
 		JSONObject json = null;
 		try {
 			json = new JSONObject(jsonString);
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Cannot get values from JSON object while previewing dataset", e);
+			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to preview Data Set due to bad formated json of data set.");
+			
 		}
 		return datatsetTest(json, userProfile);
 	}
 
-	public String jsonReciever(String jsonString, IDataSetDAO dsDao, Locale locale, UserProfile userProfile, HttpServletRequest req) throws JSONException {
+	public String insertDataset(String jsonString, IDataSetDAO dsDao, Locale locale, UserProfile userProfile, HttpServletRequest req) throws JSONException {
 		logger.debug("IN");
 		JSONObject json = new JSONObject(jsonString);
 		logger.debug("OUT");
@@ -1733,5 +1734,71 @@ public class ManageDataSetsForREST {
 		}
 		return dataSet;
 	}
+	
+	public String loadDataSetList(String jsonString, UserProfile userProfile) {
+		JSONObject json = null;
+		try {
+			json = new JSONObject(jsonString);
+		} catch (JSONException e) {
+			logger.error("Cannot get values from JSON object while previewing dataset", e);
+			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to preview Data Set due to bad formated json of data set.");
+			
+		}
+		return datatsetTest(json, userProfile);
+	}
+	
+	/*protected List<IDataSet> getListOfGenericDatasets(IDataSetDAO dsDao) throws JSONException, EMFUserError {
+		Integer start = getAttributeAsInteger(DataSetConstants.START);
+		Integer limit = getAttributeAsInteger(DataSetConstants.LIMIT);
+
+		if (start == null) {
+			start = DataSetConstants.START_DEFAULT;
+		}
+		if (limit == null) {
+			// limit = DataSetConstants.LIMIT_DEFAULT;
+			limit = DataSetConstants.LIMIT_DEFAULT;
+		}
+		JSONObject filtersJSON = null;
+		List<IDataSet> items = null;
+		if (this.requestContainsAttribute(DataSetConstants.FILTERS)) {
+			filtersJSON = getAttributeAsJSONObject(DataSetConstants.FILTERS);
+			String hsql = filterList(filtersJSON);
+			items = dsDao.loadFilteredDatasetList(hsql, start, limit, profile.getUserUniqueIdentifier().toString());
+		} else {// not filtered
+			items = dsDao.loadPagedDatasetList(start, limit);
+			// items =
+			// dsDao.loadPagedDatasetList(start,limit,profile.getUserUniqueIdentifier().toString(),
+			// true);
+		}
+		return items;
+	}
+	
+	private String filterList(JSONObject filtersJSON) throws JSONException {
+		logger.debug("IN");
+		boolean isAdmin = false;
+		try {
+			// Check if user is an admin
+			isAdmin = profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN);
+		} catch (EMFInternalError e) {
+			logger.error("Error while filtering datasets");
+		}
+		String hsql = " from SbiDataSet h where h.active = true ";
+		// Ad Admin can see other users' datasets
+		if (!isAdmin) {
+			hsql = hsql + " and h.owner = '" + profile.getUserUniqueIdentifier().toString() + "'";
+		}
+		if (filtersJSON != null) {
+			String valuefilter = (String) filtersJSON.get(SpagoBIConstants.VALUE_FILTER);
+			String typeFilter = (String) filtersJSON.get(SpagoBIConstants.TYPE_FILTER);
+			String columnFilter = (String) filtersJSON.get(SpagoBIConstants.COLUMN_FILTER);
+			if (typeFilter.equals("=")) {
+				hsql += " and h." + columnFilter + " = '" + valuefilter + "'";
+			} else if (typeFilter.equals("like")) {
+				hsql += " and h." + columnFilter + " like '%" + valuefilter + "%'";
+			}
+		}
+		logger.debug("OUT");
+		return hsql;
+	}*/
 
 }
