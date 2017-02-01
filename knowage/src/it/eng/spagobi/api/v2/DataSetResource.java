@@ -412,7 +412,6 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 			analyzer.process();
 			Pseudograph<String, LabeledEdge<String>> graph = analyzer.getGraph();
 
-			String value = null;
 			IDataSource cacheDataSource = SpagoBICacheConfiguration.getInstance().getCacheDataSource();
 
 			// get datasets from selections
@@ -429,14 +428,21 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 						column = SqlUtils.unQuote(column);
 
 						if (datasetLabel != null && !datasetLabel.isEmpty() && column != null && !column.isEmpty()) {
-							value = selectionsObject.getJSONArray(datasetDotColumn).get(0).toString();
+							String values = null;
+							Object object = selectionsObject.getJSONArray(datasetDotColumn).get(0);
+							if (object instanceof JSONArray) {
+								values = object.toString();
+								values = values.substring(1, values.length() - 1).replace("\"", "'");
+							} else {
+								values = "'" + object.toString() + "'";
+							}
 							IDataSet dataset = getDataSetDAO().loadDataSetByLabel(datasetLabel);
 							String filter;
 							if (realtimeDatasets.contains(datasetLabel)
 									&& (!DatasetManagementAPI.isJDBCDataSet(dataset) || SqlUtils.isBigDataDialect(dataset.getDataSource().getHibDialectName()))) {
-								filter = DataStore.DEFAULT_TABLE_NAME + "." + AbstractJDBCDataset.encapsulateColumnName(column, null) + "='" + value + "'";
+								filter = DataStore.DEFAULT_TABLE_NAME + "." + AbstractJDBCDataset.encapsulateColumnName(column, null) + " IN (" + values + ")";
 							} else {
-								filter = AbstractJDBCDataset.encapsulateColumnName(column, cacheDataSource) + "=('" + value + "')";
+								filter = AbstractJDBCDataset.encapsulateColumnName(column, cacheDataSource) + " IN (" + values + ")";
 							}
 							filtersMap.put(datasetLabel, filter);
 
@@ -447,7 +453,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 							if (!selection.containsKey(column)) {
 								selection.put(column, new HashSet<String>());
 							}
-							selection.get(column).add("('" + value + "')");
+							selection.get(column).add("(" + values + ")");
 						}
 					}
 				}
@@ -549,39 +555,47 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 
 					if (isRealtime && !(DatasetManagementAPI.isJDBCDataSet(dataSet) && !SqlUtils.isBigDataDialect(dataSet.getDataSource().getHibDialectName()))
 							&& !dataSet.isFlatDataset() && !(dataSet.isPersisted() && !dataSet.isPersistedHDFS())) {
-						String firstColumn = columnsList.get(0);
-
-						Operand leftOperand = new Operand(DEFAULT_TABLE_NAME_DOT + AbstractJDBCDataset.encapsulateColumnName(firstColumn, null));
-
-						for (int i = 0; i < values.length(); i++) {
-							String[] distinctValues = getDistinctValues(values.getString(i));
-							String firstValue = distinctValues[0];
-							StringBuilder valuesSB = new StringBuilder();
-							valuesSB.append(getProperValueString(firstValue, firstColumn, dateColumnNamesList, null));
-							if (distinctValues.length > 1) {
-								for (int j = 0; j < distinctValues.length; j++) {
-									valuesSB.append(" AND ");
-									valuesSB.append(DEFAULT_TABLE_NAME_DOT);
-									String column = columnsList.get(j);
-									valuesSB.append(AbstractJDBCDataset.encapsulateColumnName(column, null));
-									valuesSB.append("=");
-									valuesSB.append(getProperValueString(distinctValues[j], column, dateColumnNamesList, null));
-								}
-							}
-							Operand rightOperand = new Operand(valuesSB.toString());
-
-							FilterCriteria filterCriteria = new FilterCriteria(leftOperand, "=", rightOperand);
-							filterCriterias.add(filterCriteria);
+						for (int i = 0; i < columnsList.size(); i++) {
+							columnsList.set(i, DEFAULT_TABLE_NAME_DOT + AbstractJDBCDataset.encapsulateColumnName(columnsList.get(i), null));
 						}
+						String joinedColumns = StringUtils.join(columnsList, ",");
+						Operand leftOperand = new Operand(joinedColumns);
+
+						StringBuilder valuesSB = new StringBuilder();
+						for (int i = 0; i < values.length(); i++) {
+							String[] valuesArray = getDistinctValues(values.getString(i));
+							for (int j = 0; j < valuesArray.length; j++) {
+								if (j % columnsList.size() == 0) {
+									if (j >= columnsList.size()) {
+										valuesSB.append(" OR (");
+										valuesSB.append(joinedColumns);
+										valuesSB.append(") = ");
+									}
+									valuesSB.append("(");
+								} else {
+									valuesSB.append(",");
+								}
+								String column = columnsList.get(j % columnsList.size());
+								valuesSB.append(getProperValueString(valuesArray[j], column, dateColumnNamesList, null));
+							}
+						}
+						Operand rightOperand = new Operand(valuesSB.toString());
+
+						FilterCriteria filterCriteria = new FilterCriteria(leftOperand, "=", rightOperand);
+						filterCriterias.add(filterCriteria);
 					} else {
+						IDataSource dataSource = dataSet.getDataSource();
+
+						for (int i = 0; i < columnsList.size(); i++) {
+							columnsList.set(i, AbstractJDBCDataset.encapsulateColumnName(columnsList.get(i), dataSource));
+						}
 						Operand leftOperand = new Operand(StringUtils.join(columnsList, ","));
 
-						IDataSource dataSource = dataSet.getDataSource();
 						List<String> valuesList = new ArrayList<String>();
 						for (int i = 0; i < values.length(); i++) {
 							String[] valuesArray = getDistinctValues(values.getString(i));
-							String column = columnsList.get(i);
 							for (int j = 0; j < valuesArray.length; j++) {
+								String column = columnsList.get(j % columnsList.size());
 								valuesList.add(getProperValueString(valuesArray[j], column, dateColumnNamesList, dataSource));
 							}
 						}
@@ -711,19 +725,17 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		return attributesOrMeasures;
 	}
 
-	private String[] getDistinctValues(String string) {
-		String currentValues = string;
-		if (currentValues.startsWith("(") && currentValues.endsWith(")")) {
-			currentValues = currentValues.substring(1, currentValues.length() - 1);
+	private String[] getDistinctValues(String values) {
+		ArrayList<String> arrayList = new ArrayList<String>();
+		// get values between "'"
+		int start = values.indexOf("'");
+		while (start > -1) {
+			int end = values.indexOf("'", start + 1);
+			arrayList.add(values.substring(start + 1, end));
+			values = values.substring(end + 1);
+			start = values.indexOf("'");
 		}
-		String[] valuesArray = currentValues.split("\\s*,\\s*"); // trim spaces while splitting
-		for (int i = 0; i < valuesArray.length; i++) {
-			String value = valuesArray[i];
-			if (value.startsWith("'") && value.endsWith("'")) {
-				valuesArray[i] = value.substring(1, value.length() - 1);
-			}
-		}
-		return valuesArray;
+		return arrayList.toArray(new String[0]);
 	}
 
 	private String getProperValueString(String value, String column, List<String> dateColumnNamesList, IDataSource dataSource) {

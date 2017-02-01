@@ -203,11 +203,13 @@ public abstract class AbstractJDBCDataset extends ConfigurableDataSet {
 
 	public static String encapsulateColumnName(String columnName, IDataSource dataSource) {
 		logger.debug("IN");
-		String toReturn = null;
+		String toReturn = columnName;
 		if (columnName != null) {
 			String aliasDelimiter = TemporaryTableManager.getAliasDelimiter(dataSource);
 			logger.debug("Alias delimiter is [" + aliasDelimiter + "]");
-			toReturn = aliasDelimiter + columnName + aliasDelimiter;
+			if (!columnName.startsWith(aliasDelimiter) || !columnName.endsWith(aliasDelimiter)) {
+				toReturn = aliasDelimiter + columnName + aliasDelimiter;
+			}
 		}
 		logger.debug("OUT: returning " + toReturn);
 		return toReturn;
