@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <script>
 var sbiM=angular.module('sbiModule',["toastr"]);
-
+var httpinterceptor;
 sbiM.factory('sbiModule_docInfo',function(){
 	return {
     	label: '<%= documentLabel %>',
@@ -82,27 +82,68 @@ sbiM.directive('loading',   ['$http' ,function ($http)
 
     }]);
 
-sbiM.directive('restLoading',   ['$http' ,function ($http)
+sbiM.directive('restLoading',   ['$http',function ($http)
                               	{
                               	    return {
                               	        template:"<div loading layout-fill style='position:fixed;z-index: 500;background:rgba(0,0,0, 0.3);'>"+
                               	    	"<md-progress-circular  md-mode='indeterminate' style='top:50%;left:50%' ></md-progress-circular></div>",
                               	        link: function (scope, elm, attrs)
-                              	        {
-                              	            scope.$watch(function () {
-                              	                return $http.pendingRequests.length > 0;
-                              	            }, function (v)
-                              	            {
-                              	                if(v){
-                              	               	 elm.css("display","block");
-                              	                }else{
-                              	               	 elm.css("display","none");
-                              	                }
-                              	            });
+                              	        {	
+                              	        	scope.$on('loader_show',function(){
+                              	        		elm.css("display","block");
+                              	        	})
+                              	        	
+                              	        	
+                              	        	scope.$on('loader_hide',function(){
+                              	        		elm.css("display","none");
+                              	        	})
+                              	        	
+                              	        	
                               	        }
                               	    };
                               	}]);
 
+
+sbiM.factory('http_load_interseptor',function($rootScope,$q){
+	
+	var noLoadingUrls = ["/knowagewhatifengine/restful-services/1.0/analysis/"];
+	
+	var isNoLoadingUrl = function(url,noLoadingUrls){
+  		for(var i=0;i<noLoadingUrls.length;i++){
+  			return (url.indexOf(noLoadingUrls[i]))!==-1;
+
+  		}
+  	}
+	
+	return {
+	        request: function (config) {
+	            
+	            if(!isNoLoadingUrl(config.url,noLoadingUrls)){
+	            	
+	            	$rootScope.$broadcast("loader_show");
+	            	
+	            }
+	            
+	            return config;
+	        },
+
+	        response: function (result) {
+
+	            $rootScope.$broadcast("loader_hide");
+	            return result;
+	        },
+
+	        responseError: function (rejection) {
+	            
+	            $rootScope.$broadcast("loader_hide");
+	            return $q.reject(rejection);
+	        }
+	    }
+})
+
+sbiM.config(function ($httpProvider) {
+    $httpProvider.interceptors.push('http_load_interseptor');
+});
 
 sbiM.service('sbiModule_messaging',function(toastr){
 	this.showErrorMessage = function(msg,title){
