@@ -114,7 +114,6 @@ public class PhysicalModelInitializer {
 			IDataSourceDAO datasourceDao = DAOFactory.getDataSourceDAO();
 			DataSource ds = datasourceDao.loadDataSourceByID(datasourceId);
 			Connection conn = ds.getConnection();
-			String schemaAttribute = ds.getSchemaAttribute();
 
 			model = FACTORY.createPhysicalModel();
 			model.setName("model_name_mock");
@@ -133,6 +132,12 @@ public class PhysicalModelInitializer {
 				addSchema(dbMeta, model, schemaName);
 			} catch (AbstractMethodError e) {
 				logger.error("Cannot retrieve schema for data source " + ds.getLabel(), e);
+				if (dbMeta.getDatabaseProductName().contains("Oracle")) {
+					// workaround for Oracle use the userName as default schemaName
+					addSchema(dbMeta, model, dbMeta.getUserName().toUpperCase());
+					logger.debug("Using username as default schema: " + dbMeta.getUserName().toUpperCase());
+				}
+
 			}
 
 			addTables(dbMeta, model, selectedTables);
