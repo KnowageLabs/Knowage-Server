@@ -114,6 +114,7 @@ public class PhysicalModelInitializer {
 			IDataSourceDAO datasourceDao = DAOFactory.getDataSourceDAO();
 			DataSource ds = datasourceDao.loadDataSourceByID(datasourceId);
 			Connection conn = ds.getConnection();
+			String schemaAttribute = ds.getSchemaAttribute();
 
 			model = FACTORY.createPhysicalModel();
 			model.setName("model_name_mock");
@@ -127,7 +128,12 @@ public class PhysicalModelInitializer {
 
 			addDatabase(dbMeta, model);
 			addCatalog(conn, model, conn.getCatalog());
-			addSchema(dbMeta, model, conn.getSchema());
+			try {
+				String schemaName = conn.getSchema();
+				addSchema(dbMeta, model, schemaName);
+			} catch (AbstractMethodError e) {
+				logger.error("Cannot retrieve schema for data source " + ds.getLabel(), e);
+			}
 
 			addTables(dbMeta, model, selectedTables);
 
