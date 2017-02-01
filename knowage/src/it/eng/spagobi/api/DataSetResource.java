@@ -56,6 +56,7 @@ import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.exceptions.DatasetInUseException;
 import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
+import it.eng.spagobi.tools.dataset.service.ManageDataSetsForREST;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
 import it.eng.spagobi.tools.scheduler.bo.Trigger;
@@ -76,8 +77,10 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -163,7 +166,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	@Path("/pagopt/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getDataSetsPaginationOption(@QueryParam("typeDoc") String typeDoc, @QueryParam("callback") String callback,
-			@QueryParam("offset") Integer offsetInput, @QueryParam("fetchSize") Integer fetchSizeInput) {
+			@QueryParam("offset") Integer offsetInput, @QueryParam("fetchSize") Integer fetchSizeInput, @QueryParam("filters")  JSONObject filters) {
 
 		logger.debug("IN");
 
@@ -174,7 +177,11 @@ public class DataSetResource extends AbstractSpagoBIResource {
 
 			IDataSetDAO dsDao = DAOFactory.getDataSetDAO();
 			dsDao.setUserProfile(getUserProfile());
-			List<IDataSet> dataSets = dsDao.loadPagedDatasetList(offset, fetchSize);
+			ManageDataSetsForREST mdsfr = new ManageDataSetsForREST();
+			//List<IDataSet> dataSets = mdsfr.loadDataSetList(jsonString, userProfile)
+			//List<IDataSet> dataSets = dsDao.loadPagedDatasetList(offset, fetchSize);
+			
+			List<IDataSet> dataSets = getListOfGenericDatasets(dsDao, offset, fetchSize, filters);
 
 			List<IDataSet> toBeReturned = new ArrayList<IDataSet>();
 
@@ -1447,4 +1454,57 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		monitor.stop();
 		return labelsJSON.toString();
 	}
+	
+	protected List<IDataSet> getListOfGenericDatasets(IDataSetDAO dsDao, Integer start, Integer limit, JSONObject filters) throws JSONException, EMFUserError {
+		
+		if (start == null) {
+			start = DataSetConstants.START_DEFAULT;
+		}
+		if (limit == null) {
+			// limit = DataSetConstants.LIMIT_DEFAULT;
+			limit = DataSetConstants.LIMIT_DEFAULT;
+		}
+		JSONObject filtersJSON = null;
+		List<IDataSet> items = null;
+		if (true) {
+			filtersJSON = filters;
+			String hsql = filterList(filtersJSON);
+			items = dsDao.loadFilteredDatasetList(hsql, start, limit, getUserProfile().getUserUniqueIdentifier().toString());
+		} else {// not filtered
+			items = dsDao.loadPagedDatasetList(start, limit);
+			// items =
+			// dsDao.loadPagedDatasetList(start,limit,profile.getUserUniqueIdentifier().toString(),
+			// true);
+		}
+		return items;
+	}
+	
+	private String filterList(JSONObject filtersJSON) throws JSONException {
+		logger.debug("IN");
+		boolean isAdmin = false;
+		try {
+			// Check if user is an admin
+			isAdmin = getUserProfile().isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN);
+		} catch (EMFInternalError e) {
+			logger.error("Error while filtering datasets");
+		}
+		String hsql = " from SbiDataSet h where h.active = true ";
+		// Ad Admin can see other users' datasets
+		if (!isAdmin) {
+			hsql = hsql + " and h.owner = '" + getUserProfile().getUserUniqueIdentifier().toString() + "'";
+		}
+		if (filtersJSON != null) {
+			String valuefilter = (String) filtersJSON.get(SpagoBIConstants.VALUE_FILTER);
+			String typeFilter = (String) filtersJSON.get(SpagoBIConstants.TYPE_FILTER);
+			String columnFilter = (String) filtersJSON.get(SpagoBIConstants.COLUMN_FILTER);
+			if (typeFilter.equals("=")) {
+				hsql += " and h." + columnFilter + " = '" + valuefilter + "'";
+			} else if (typeFilter.equals("like")) {
+				hsql += " and h." + columnFilter + " like '%" + valuefilter + "%'";
+			}
+		}
+		logger.debug("OUT");
+		return hsql;
+	}
+	
 }

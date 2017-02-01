@@ -849,20 +849,14 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     	$scope.customAttributes = [];
     }
     
-    $scope.datasetLike = function (searchValue, itemsPerPage) {
+    $scope.datasetLike = function (searchValue, itemsPerPage,currentPageNumber) {
     	console.log(searchValue+""+itemsPerPage);
-    	var item="Page=1&ItemPerPage="+itemsPerPage+"&label=" + searchValue;
-		$scope.loadDatasetList(item);
+    	var start = 0;
+    	if(currentPageNumber>1){
+			start = (currentPageNumber - 1) * itemsPerPage + 1;
+		}
+		$scope.loadDatasetList(start, itemsPerPage, searchValue);
     };
-    
-    $scope.loadDatasetList=function(item){
-		sbiModule_restServices.get("2.0/datasets", "listDataset", item).then(function(response) {
-			$scope.datasetsListTemp = angular.copy(response.data.item);
-			$scope.datasetsListPersisted = angular.copy($scope.datasetsListTemp);
-		}, function(response) {
-			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-		});
-	}
     
     $scope.changeDatasetPage=function(itemsPerPage,currentPageNumber){
     	sbiModule_restServices.promiseGet("1.0/datasets", "countDataSets")
@@ -872,7 +866,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			if(currentPageNumber>1){
 				start = (currentPageNumber - 1) * itemsPerPage + 1;
 			}
-			$scope.loadAllDatasets(start, itemsPerPage, response.data);
+			$scope.loadDatasetList(start, itemsPerPage, null);
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 		});
@@ -883,15 +877,18 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	}
     
 	/*
-	 * 	service that loads all datasets
+	 * 	service that loads datasets filtered by provided configuration
 	 *   																	
 	 */
-	$scope.loadAllDatasets = function(start, limit, numOfDS){
-		console.log(numOfDS+"datasets in total");
-		// If you want to use server-side pagination of the Dataset list, use this commented line. (danristo)
-//		sbiModule_restServices.promiseGet("1.0/datasets","pagopt","offset=0&fetchSize=5",null)
-				
-		sbiModule_restServices.promiseGet("1.0/datasets","pagopt", "offset="+start+"&fetchSize="+limit)
+	$scope.loadDatasetList = function(start, limit, filter){
+		
+		var queryParams = "offset="+start+"&fetchSize="+limit;
+		if(filter!=null){
+			var filters = {"columnFilter":"label","typeValueFilter":"","typeFilter":"like","valueFilter":filter};
+			queryParams = queryParams+"&filters="+angular.toJson(filters);
+		}
+		
+		sbiModule_restServices.promiseGet("1.0/datasets","pagopt", queryParams)
 			.then(function(response) {
 				$scope.datasetsListTemp = angular.copy(response.data.root);
 				$scope.datasetsListPersisted = angular.copy($scope.datasetsListTemp);
