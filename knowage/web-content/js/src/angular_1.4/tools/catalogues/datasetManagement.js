@@ -883,7 +883,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	$scope.loadDatasetList = function(start, limit, filter){
 		
 		var queryParams = "offset="+start+"&fetchSize="+limit;
-		if(filter!=null){
+		if(filter!=null && filter!=""){
 			var filters = {"columnFilter":"label","typeValueFilter":"","typeFilter":"like","valueFilter":filter};
 			queryParams = queryParams+"&filters="+angular.toJson(filters);
 		}
@@ -892,6 +892,15 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			.then(function(response) {
 				$scope.datasetsListTemp = angular.copy(response.data.root);
 				$scope.datasetsListPersisted = angular.copy($scope.datasetsListTemp);
+			    if (filter == "") {
+					sbiModule_restServices.promiseGet("1.0/datasets", "countDataSets")
+					.then(function(response) {
+						$scope.numOfDs = response.data;},function(response){
+							sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+						});
+				} else if(filter!=null){
+					$scope.numOfDs = $scope.datasetsListTemp.length;
+				} 
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 			});
