@@ -483,6 +483,9 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 		}
 		
 		var dsSel=ws.getOriginalSelection(ass.datasets);
+		if(Object.keys(dsSel).length == 0){
+			dsSel=ws.getSelection(ass.datasets);
+		}
 		if(Object.keys(dsSel).length>0){
 			var selection = encodeURIComponent(JSON.stringify(dsSel))
 			.replace(/'/g,"%27")
