@@ -1621,9 +1621,7 @@ public class DatasetManagementAPI {
 			} else {
 				sb.append("(");
 				sb.append(queryText);
-				// sb.append(") AS T");
 				sb.append(")");
-
 			}
 
 			queryText = sb.toString();
