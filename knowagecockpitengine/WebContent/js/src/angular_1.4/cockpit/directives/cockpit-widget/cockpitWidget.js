@@ -196,7 +196,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 	$scope.tmpWidgetContent	= {};
 	$scope.editingWidgetName= false;
 	$scope.extendedStyle	= {}; // the merge of the widget style and the
-									// cockpit style
+
 	$scope.borderShadowStyle= {};
 	$scope.titleStyle		= {};
 	$scope.widgetSpinner	= false;
@@ -204,8 +204,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 	$scope.activeSearch 	= false; // default search unactive
 	$scope.actionButtonClass=[]; 
 	
-	// davverna - initializing search object to give all the columns to the user
-	// searchbar
+	// davverna - initializing search object to give all the columns to the user searchbar
 	if(!$scope.ngModel.search || $scope.ngModel.search.columns == []){
 		$scope.ngModel.search ={"columns" : []};
 		for(var k in $scope.ngModel.content.columnSelectedOfDataset){
@@ -216,8 +215,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 		}
 	}
 	
-	// davverna - method to set the actual model and search parameters to
-	// refresh the widget table
+	// davverna - method to set the actual model and search parameters to refresh the widget table
 	$scope.searchColumns = function(){
 		if($scope.ngModel.search.text != ""){
 			$scope.activeSearch = true;
@@ -486,21 +484,21 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 		
 		var originalColumnName;
         for(var i=0; i<$scope.ngModel.content.columnSelectedOfDataset.length; i++){
-        	if($scope.ngModel.content.columnSelectedOfDataset[i].aliasToShow == columnName){
+        	if($scope.ngModel.content.columnSelectedOfDataset[i].aliasToShow.toUpperCase() === columnName.toUpperCase()){
         		originalColumnName = $scope.ngModel.content.columnSelectedOfDataset[i].alias;
 				break;
         	}
         }
 		if(originalColumnName==undefined){
 			for(var i=0; i<$scope.ngModel.content.columnSelectedOfDataset.length; i++){
-				if($scope.ngModel.content.columnSelectedOfDataset[i].alias == columnName){
+				if($scope.ngModel.content.columnSelectedOfDataset[i].alias.toUpperCase() === columnName.toUpperCase()){
 					originalColumnName = columnName;
 					break;
 				}
 			}
 		}
 		
-		var sel=cockpitModule_widgetSelection.getAssociativeSelections(columnValue,columnName,dsLabel,originalColumnName);1
+		var sel=cockpitModule_widgetSelection.getAssociativeSelections(columnValue,columnName,dsLabel,originalColumnName);
 		if(sel!=undefined){
 			if(!cockpitModule_template.configuration.aliases){
 				cockpitModule_template.configuration.aliases = [];
@@ -515,8 +513,12 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 				if(!cockpitModule_template.configuration.filters.hasOwnProperty(dsLabel)){
 					cockpitModule_template.configuration.filters[dsLabel]={};
 				}
+				// 02/02/17 - davverna
+				// if columnvalue is an array, usually from a bulk selection, I use a copy to avoid the direct object binding. 
+				// With the double click there is not the same issue because the binding is on a primitive value (string).
 				if(Object.prototype.toString.call( columnValue ) === '[object Array]'){
-					cockpitModule_template.configuration.filters[dsLabel][originalColumnName]=columnValue;
+					cockpitModule_template.configuration.filters[dsLabel][originalColumnName]=[];
+					angular.copy(columnValue,cockpitModule_template.configuration.filters[dsLabel][originalColumnName]);
 				}else{
 					cockpitModule_template.configuration.filters[dsLabel][originalColumnName]=columnValue;
 				}
@@ -602,7 +604,6 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 		angular.copy({},$scope.titleStyle);
 		//angular.copy({},$scope.headerHeight);
 		//$scope.headerHeight={};
-		
 		
 		// update extended style
 		angular.copy(angular.merge({},cockpitModule_template.configuration.style,$scope.ngModel.style),$scope.extendedStyle);
