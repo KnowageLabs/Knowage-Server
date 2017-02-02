@@ -31,6 +31,7 @@ import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.tools.catalogue.bo.Content;
 import it.eng.spagobi.tools.catalogue.bo.MetaModel;
 import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
+import it.eng.spagobi.tools.catalogue.dao.SpagoBIDAOMetaModelNameExistingException;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.utilities.JSError;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
@@ -392,7 +393,9 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 				bm = new MetaModel();
 				return bm;
 			}
-
+			if(businessModelsDAO.loadMetaModelByName(bm.getName())!=null){
+				throw new SpagoBIDAOMetaModelNameExistingException("Error while trying to add new business model with existing name");
+			}
 			businessModelsDAO.insertMetaModel(bm);
 			MetaModel insertedBM = businessModelsDAO.loadMetaModelByName(bm.getName());
 
@@ -400,7 +403,10 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 				businessModelsDAO.lockMetaModel(insertedBM.getId(), (String) getUserProfile().getUserId());
 			}
 			return insertedBM;
-		} catch (Exception e) {
+		} catch(SpagoBIDAOMetaModelNameExistingException e){
+			logger.error("Error while trying to add new business model with existing name", e);
+			throw new SpagoBIRestServiceException("A model with same name already exists", buildLocaleFromSession(), e);
+		}catch (Exception e) {
 			logger.error("An error occurred while inserting new business model in database", e);
 			throw new SpagoBIRestServiceException("An error occurred while inserting new business model in database", buildLocaleFromSession(), e);
 
