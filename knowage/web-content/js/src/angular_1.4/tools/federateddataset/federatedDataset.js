@@ -484,8 +484,12 @@ function federationDefinitionFunction
 	
 	ctr.autodetect = function(){
 		ctr.autodetectPanel("federationDefinition",ctr.listaNew,$scope.multiRelationships)
-		.then(function(autodetectRowString){
-			$scope.addJSONStructureToRelationshipsJSONAndMultiRelationships($scope.t, autodetectRowString);
+		.then(function(autodetectRowObj){
+			$scope.t["sourceTable"] = {name: autodetectRowObj.srcTable, className: autodetectRowObj.srcTable};
+			$scope.t["sourceColumns"] = [autodetectRowObj.srcColumn];
+			$scope.t["destinationTable"] = {name: autodetectRowObj.destTable, className: autodetectRowObj.destTable};
+			$scope.t["destinationColumns"] = [autodetectRowObj.destColumn];
+			$scope.addJSONStructureToRelationshipsJSONAndMultiRelationships($scope.t, autodetectRowObj["string"]);
 		});
 	}
 	
@@ -511,8 +515,7 @@ function federationDefinitionFunction
 				}];
 				angular.forEach(datasets,function(item){
 					if(item.pars.length==0){
-						var upLabel = item.label.toUpperCase()
-						var column = {label:upLabel, name:upLabel};
+						var column = {label: item.label.toUpperCase(), name: item.label};
 						this.push(column);
 					}
 				},$scope.autodetectColumns);
@@ -521,44 +524,51 @@ function federationDefinitionFunction
 				$scope.autodetectColumnsSearch=[];
 				angular.forEach(datasets,function(item){
 					if(item.pars.length==0){
-						this.push(item.label.toUpperCase());
+						this.push(item.label);
 					}
 				},$scope.autodetectColumnsSearch);
 				
 				// table selected row
 				$scope.autodetectSelectedRow = null;
 				
-				// table selected row string
-				$scope.autodetectSelectedRowString = null;
+				// table selected row obj
+				$scope.autodetectSelectedRowObj = null;
 				
 				$scope.directionLeftToRight = true;
 				
 				$scope.$watch("autodetectSelectedRow",function(newValue,oldValue){
-					$scope.setAutodetectSelectedRowString(newValue, $scope.directionLeftToRight);
+					$scope.setAutodetectSelectedRowObj(newValue, $scope.directionLeftToRight);
 				});
 				
 				$scope.$watch("directionLeftToRight",function(newValue,oldValue){
-					$scope.setAutodetectSelectedRowString($scope.autodetectSelectedRow, newValue);
+					$scope.setAutodetectSelectedRowObj($scope.autodetectSelectedRow, newValue);
 				});
 				
-				$scope.setAutodetectSelectedRowString=function(autodetectSelectedRow, directionLeftToRight){
+				$scope.setAutodetectSelectedRowObj=function(autodetectSelectedRow, directionLeftToRight){
 					if(autodetectSelectedRow != undefined){
+						var tables = [];
 						var columns = [];
 						for (var property in autodetectSelectedRow) {
 						    if (autodetectSelectedRow.hasOwnProperty(property) && !property.includes("___") && autodetectSelectedRow[property]) {
-						    	columns.push(property.toUpperCase() + "." + autodetectSelectedRow[property]);
+						    	tables.push(property);
+						    	columns.push(autodetectSelectedRow[property]);
 						    }
 						}
-						if(directionLeftToRight){
-							$scope.autodetectSelectedRowString = columns[0] + " -> " + columns[1];
-						}else{
-							$scope.autodetectSelectedRowString = columns[1] + " -> " + columns[0];
-						}
+						
+						var srcIndex = directionLeftToRight ? 0 : 1;
+						var destIndex = directionLeftToRight ? 1 : 0;
+						
+						$scope.autodetectSelectedRowObj = {};
+						$scope.autodetectSelectedRowObj.srcTable = tables[srcIndex];
+						$scope.autodetectSelectedRowObj.srcColumn = columns[srcIndex];
+						$scope.autodetectSelectedRowObj.destTable = tables[destIndex];
+						$scope.autodetectSelectedRowObj.destColumn = columns[destIndex];
+						$scope.autodetectSelectedRowObj.string = tables[srcIndex].toUpperCase() + "." + columns[srcIndex] + " -> " + tables[destIndex].toUpperCase() + "." + columns[destIndex];
 					}
 				}
 				
 				$scope.saveAutodetect=function(){
-					deferred.resolve(angular.copy($scope.autodetectSelectedRowString));
+					deferred.resolve(angular.copy($scope.autodetectSelectedRowObj));
 					mdPanelRef.close();
 					$scope.$destroy();
 				}
@@ -603,7 +613,7 @@ function federationDefinitionFunction
 				var datasetNames = {};
 				angular.forEach(datasets,function(item){
 					if(item.pars.length==0){
-						this[item.label.toUpperCase()] = {};
+						this[item.label] = {};
 					}
 				},datasetNames);
 				
@@ -618,7 +628,7 @@ function federationDefinitionFunction
 						row["___length"] = item.fields.length;
 						angular.forEach(datasets,function(dataset){
 							if(dataset.pars.length==0){
-								row[dataset.label.toUpperCase()] = null;
+								row[dataset.label] = null;
 							}
 						}, row);
 						angular.forEach(item.fields,function(field){
