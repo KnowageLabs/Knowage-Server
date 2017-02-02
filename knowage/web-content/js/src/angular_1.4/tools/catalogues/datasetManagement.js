@@ -2876,14 +2876,25 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			.then(
 				function(response) {
 					$scope.getPreviewSet(response.data);
-					$mdDialog.show({
-						  scope:$scope,
-						  preserveScope: true,
-					      controller: DatasetPreviewController,
-					      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/workspace/templates/datasetPreviewDialogTemplate.html',  
-					      clickOutsideToClose:false,
-					      escapeToClose :false
-					    });
+					if(response.data.rows.length==0){
+						 $mdDialog.show(
+							      $mdDialog.alert()
+							        .clickOutsideToClose(true)
+							        .title($scope.translate.load('sbi.federationdefinition.info'))
+							        .textContent($scope.translate.load('sbi.widgets.datastorepanel.grid.emptywarningmsg'))
+							        .ariaLabel('Info Dialog No Data Returned Dataset Preview')
+							        .ok($scope.translate.load('sbi.federationdefinition.template.button.gotIt'))
+							    );
+					} else {
+						$mdDialog.show({
+							  scope:$scope,
+							  preserveScope: true,
+						      controller: DatasetPreviewController,
+						      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/workspace/templates/datasetPreviewDialogTemplate.html',  
+						      clickOutsideToClose:false,
+						      escapeToClose :false
+						    });
+					} 
 				},
 				function(response) {				
 					// Since the repsonse contains the error that is related to the Query syntax and/or content, close the parameters dialog
