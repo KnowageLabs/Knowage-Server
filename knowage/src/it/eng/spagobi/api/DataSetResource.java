@@ -77,10 +77,8 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -131,7 +129,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			logger.debug("OUT");
 		}
 	}
-	
+
 	/**
 	 * Returns the number of existing datasets. This number is later used for server side pagination.
 	 *
@@ -166,7 +164,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	@Path("/pagopt/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getDataSetsPaginationOption(@QueryParam("typeDoc") String typeDoc, @QueryParam("callback") String callback,
-			@QueryParam("offset") Integer offsetInput, @QueryParam("fetchSize") Integer fetchSizeInput, @QueryParam("filters")  JSONObject filters) {
+			@QueryParam("offset") Integer offsetInput, @QueryParam("fetchSize") Integer fetchSizeInput, @QueryParam("filters") JSONObject filters) {
 
 		logger.debug("IN");
 
@@ -178,9 +176,9 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			IDataSetDAO dsDao = DAOFactory.getDataSetDAO();
 			dsDao.setUserProfile(getUserProfile());
 			ManageDataSetsForREST mdsfr = new ManageDataSetsForREST();
-			//List<IDataSet> dataSets = mdsfr.loadDataSetList(jsonString, userProfile)
-			//List<IDataSet> dataSets = dsDao.loadPagedDatasetList(offset, fetchSize);
-			
+			// List<IDataSet> dataSets = mdsfr.loadDataSetList(jsonString, userProfile)
+			// List<IDataSet> dataSets = dsDao.loadPagedDatasetList(offset, fetchSize);
+
 			List<IDataSet> dataSets = getListOfGenericDatasets(dsDao, offset, fetchSize, filters);
 
 			List<IDataSet> toBeReturned = new ArrayList<IDataSet>();
@@ -684,7 +682,6 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			if (summaryRow != null && !summaryRow.equals("")) {
 				JSONObject summaryRowObject = new JSONObject(summaryRow);
 				JSONArray summaryRowMeasuresObject = summaryRowObject.getJSONArray("measures");
-
 				summaryRowProjectionCriteria = getProjectionCriteria(label, new JSONArray(), summaryRowMeasuresObject);
 			}
 
@@ -1454,9 +1451,9 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		monitor.stop();
 		return labelsJSON.toString();
 	}
-	
+
 	protected List<IDataSet> getListOfGenericDatasets(IDataSetDAO dsDao, Integer start, Integer limit, JSONObject filters) throws JSONException, EMFUserError {
-		
+
 		if (start == null) {
 			start = DataSetConstants.START_DEFAULT;
 		}
@@ -1478,7 +1475,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		}
 		return items;
 	}
-	
+
 	private String filterList(JSONObject filtersJSON) throws JSONException {
 		logger.debug("IN");
 		boolean isAdmin = false;
@@ -1506,5 +1503,5 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		logger.debug("OUT");
 		return hsql;
 	}
-	
+
 }

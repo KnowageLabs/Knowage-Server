@@ -1343,10 +1343,11 @@ public class DatasetManagementAPI {
 				String columnName = projection.getColumnName();
 
 				String aggregateFunction = projection.getAggregateFunction();
+				IAggregationFunction aggregationFunction = AggregationFunctions.get(aggregateFunction);
 
 				if (columnName.contains(AbstractDataBase.STANDARD_ALIAS_DELIMITER)) { // this is a calculated field!
 					for (String basicColumnName : getBasicColumnsFromCalculatedColumn(columnName)) {
-						basicColumnMap.put(aggregateFunction + "(" + basicColumnName + ")", basicColumnName);
+						basicColumnMap.put(aggregationFunction.apply(basicColumnName), basicColumnName);
 					}
 
 					if (pagedDataStore.getRecordsCount() > 0) {
@@ -1375,7 +1376,8 @@ public class DatasetManagementAPI {
 
 							// evaluate calculated column expression
 							Object calculatedValue = null;
-							if (aggregateFunction.toUpperCase().contains("COUNT")) {
+							if (aggregationFunction.equals(AggregationFunctions.COUNT_FUNCTION)
+									|| aggregationFunction.equals(AggregationFunctions.COUNT_DISTINCT_FUNCTION)) {
 								long count = -1;
 								for (String basicColumnName : basicValues.keySet()) {
 									count = Math.max(count, (long) basicValues.get(basicColumnName));
@@ -1396,8 +1398,8 @@ public class DatasetManagementAPI {
 
 						// add column metadata
 						IFieldMetaData fieldMetaData = new FieldMetadata();
-						if (aggregateFunction != null && !aggregateFunction.isEmpty()) {
-							fieldMetaData.setName(aggregateFunction + "(" + columnName + ")");
+						if (aggregationFunction != null && !aggregationFunction.equals(AggregationFunctions.NONE_FUNCTION)) {
+							fieldMetaData.setName(aggregationFunction.apply(columnName));
 						} else {
 							fieldMetaData.setName(columnName);
 						}
@@ -1410,8 +1412,8 @@ public class DatasetManagementAPI {
 						storeMetaData.addFiedMeta(fieldMetaData);
 					}
 				} else {
-					if (aggregateFunction != null && !aggregateFunction.isEmpty()) {
-						columnName = aggregateFunction + "(" + columnName + ")";
+					if (aggregationFunction != null && !aggregationFunction.equals(AggregationFunctions.NONE_FUNCTION)) {
+						columnName = aggregationFunction.apply(columnName);
 					}
 					notCalculatedColumns.add(columnName);
 				}
