@@ -386,13 +386,14 @@
 			
 			docExecute_urlViewPointService.frameLoaded=false;
 			docExecute_urlViewPointService.executionProcesRestV1(execProperties.selectedRole.name, 
-					 documentExecuteServices.buildStringParameters(execProperties.parametersData.documentParameters));			
+					 documentExecuteServices.buildStringParameters(execProperties.parametersData.documentParameters));
 //			if($mdSidenav('parametersPanelSideNav').isOpen()) {
 //				$mdSidenav('parametersPanelSideNav').close();
 //				execProperties.showParametersPanel.status = $mdSidenav('parametersPanelSideNav').isOpen();
 //			}
 //			execProperties.showParametersPanel.status=false;
 			docExecute_paramRolePanelService.toggleParametersPanel(false);
+			$scope.cockpitEditing.documentMode="VIEW";
 			console.log("executeParameter OUT ");
 		};
 		
