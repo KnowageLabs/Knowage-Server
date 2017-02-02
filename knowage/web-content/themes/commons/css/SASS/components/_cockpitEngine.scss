@@ -1131,4 +1131,40 @@
 		    color: $smallTextColor;
 	    }
 	}
+	
+	.datasetParameterDetail {
+		.chip {
+			padding: 4px 8px;
+		    background-color: #ccc;
+		    border-radius: 20px;
+		    margin: 2px 4px;
+		    cursor: pointer;
+		}
+		md-list.md-knowage-theme {
+		
+			padding-top: 0;
+			.md-subheader {
+				._md-subheader-inner {
+			    	padding: $tabPadding;
+			    }
+			}
+			md-list-item {
+			&:hover {
+				background-color: rgba($secondaryColor,0.4);
+			}
+				min-height: $smallLineHeight;
+				height: $smallLineHeight;
+				.md-button.md-icon-button {
+					min-height: $smallLineHeight;
+					height: $smallLineHeight;
+					line-height: $smallLineHeight;
+					font-size: $smallFontSize;
+					padding: 0;
+				}
+				p {
+					font-size: $smallFontSize;
+				}
+			}
+		}
+	}
 }
