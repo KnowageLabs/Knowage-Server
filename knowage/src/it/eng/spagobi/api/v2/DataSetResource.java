@@ -827,7 +827,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 	@Path("/associations/autodetect")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Set<Similarity> autodetect(@QueryParam("top") int top, @QueryParam("threshold") double threshold, @QueryParam("aggregate") boolean aggregate,
-			@QueryParam("strategy") String strategy, @QueryParam("wait") boolean wait, @Context HttpServletRequest req) {
+			@QueryParam("strategy") String strategy, @QueryParam("wait") boolean wait, @QueryParam("evaluateNumber") boolean evaluateNumber, @Context HttpServletRequest req) {
 		logger.debug("IN");
 		Set<Similarity> toReturn = new HashSet<>(0);
 		try {
@@ -862,7 +862,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 					}
 				}
 
-				SimilarityEvaluator similarityEvaluator = new SimilarityEvaluator(SimilarityStrategyFactory.createStrategyInstance(strategy), top, threshold);
+				SimilarityEvaluator similarityEvaluator = new SimilarityEvaluator(SimilarityStrategyFactory.createStrategyInstance(strategy), top, threshold, evaluateNumber);
 				toReturn = similarityEvaluator.evaluate(dataSets, dataSetDomainValues, aggregate);
 
 			}
