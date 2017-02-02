@@ -1131,6 +1131,11 @@
 		    color: $smallTextColor;
 	    }
 	}
+
+	.textEllipsis {
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
 	
 	.datasetParameterDetail {
 		.chip {
@@ -1166,5 +1171,9 @@
 				}
 			}
 		}
+	}
+
+	.widgetToolbar {
+		height: $toolbarHeight;
 	}
 }

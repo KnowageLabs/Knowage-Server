@@ -12,3 +12,11 @@
 		}
 	}	
 }*/
+
+.accessible-mode-on {
+	button, .md-button {
+	  &:focus {
+	    outline: 2px !important;
+	  }
+	}
+}
