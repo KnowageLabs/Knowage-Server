@@ -24,17 +24,17 @@
 					           	<div flex layout="row" >
 										<md-input-container flex class="md-block"> 
 										<label>{{translate.load('sbi.cockpit.table.fontfamily')}}</label>
-										<md-select ng-disabled ="!model.style.showSummary" aria-label="aria-label" ng-model="model.style.summary.fontfamily">
+										<md-select ng-disabled ="!model.style.showSummary" aria-label="aria-label" ng-model="model.style.summary['font-family']">
 											<md-option ng-repeat="fam in fontFamily" value="{{fam}}">{{fam}}</md-option>
 										</md-select>
 										</md-input-container>
 									<md-input-container flex class="md-block"> 
 										<label>{{translate.load('sbi.cockpit.table.fontsize')}}</label>
-										<input class="input_class" ng-disabled ="!model.style.showSummary" ng-model=model.style.summary.fontsize /> 
+										<input class="input_class" ng-disabled ="!model.style.showSummary" ng-model="model.style.summary['font-size']" /> 
 									</md-input-container>
 									<md-input-container flex class="md-block"> 
 											<label>{{translate.load('sbi.cockpit.table.fontweight')}}</label>
-											<md-select ng-disabled ="!model.style.showSummary" aria-label="aria-label" ng-model="model.style.summary.fontweight">
+											<md-select ng-disabled ="!model.style.showSummary" aria-label="aria-label" ng-model="model.style.summary['font-weight']">
 												<md-option ng-repeat="weight in fontWeight" value="{{weight}}">{{weight}}</md-option>
 											</md-select>
 									</md-input-container>
