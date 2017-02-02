@@ -33,7 +33,10 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -262,13 +265,12 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 		}
 
 	}
-	
+
 	/**
 	 * Service that get parent folder of selected folder
 	 *
 	 * @author Radmila Selakovic (rselakov, radmila.selakovic@mht.net
 	 */
-
 
 	@GET
 	@Path("getParent/{id}")
@@ -463,6 +465,9 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 			lowFunctionality.setProg(paramsObj.getInt("prog"));
 
 			objDao.modifyLowFunctionality(lowFunctionality);
+			Set set = new HashSet();
+			loadRolesToErase(lowFunctionality, set);
+			DAOFactory.getLowFunctionalityDAO().deleteInconsistentRoles(set);
 			return Response.ok().build();
 
 		} catch (Exception e) {
@@ -471,6 +476,243 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 			logger.error(errorString, e);
 			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
 		}
+	}
+
+	/**
+	 * Defines all roles that have to be erased in order to keep functionalities
+	 * tree consistence. When we leave some permissions to a functionality,
+	 * those permissions will not be assignable to all the children
+	 * functionality. If any child has a permission that his parent anymore has,
+	 * this permission mus be deleted for all father's children and descendants.
+	 * This metod recusively scans all father's descendants and saves inside a
+	 * Set all roles that must be erased from the Database.
+	 *
+	 * @param lowFuncParent
+	 *            the parent Functionality
+	 * @param rolesToErase
+	 *            the set containing all roles to erase
+	 *
+	 * @throws EMFUserError
+	 *             if any EMFUserError exception occurs
+	 * @throws BuildOperationException
+	 *             if any BuildOperationException exception occurs
+	 * @throws OperationExecutionException
+	 *             if any OperationExecutionException exception occurs
+	 */
+	public void loadRolesToErase(LowFunctionality lowFuncParent, Set rolesToErase) throws EMFUserError {
+		String parentPath = lowFuncParent.getPath();
+		// ArrayList childs =
+		// DAOFactory.getFunctionalityCMSDAO().recoverChilds(parentPath);
+		List childs = DAOFactory.getLowFunctionalityDAO().loadSubLowFunctionalities(parentPath, false);
+		if (childs.size() != 0) {
+			Iterator i = childs.iterator();
+			while (i.hasNext()) {
+				LowFunctionality childNode = (LowFunctionality) i.next();
+				String childPath = childNode.getPath();
+				// LowFunctionality lowFuncParent =
+				// DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByPath(parentPath);
+				LowFunctionality lowFuncChild = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByPath(childPath, false);
+				if (lowFuncChild != null) {
+					// control childs permissions and fathers permissions
+					// remove from childs those persmissions that are not
+					// present in the fathers
+					// control for test Roles
+					Role[] testChildRoles = lowFuncChild.getTestRoles();
+					// Role[] testParentRoles = lowFuncParent.getTestRoles();
+					// ArrayList newTestChildRoles = new ArrayList();
+					// HashMap rolesToErase = new HashMap();
+					for (int j = 0; j < testChildRoles.length; j++) {
+						String rule = testChildRoles[j].getId().toString();
+						if (!isParentRule(rule, lowFuncParent, SpagoBIConstants.PERMISSION_ON_FOLDER_TO_TEST)) {
+							ArrayList roles = new ArrayList();
+							roles.add(0, lowFuncChild.getId());
+							roles.add(1, testChildRoles[j].getId());
+							roles.add(2, SpagoBIConstants.PERMISSION_ON_FOLDER_TO_TEST);
+							rolesToErase.add(roles);
+							lowFuncChild = eraseRolesFromFunctionality(lowFuncChild, rule, SpagoBIConstants.PERMISSION_ON_FOLDER_TO_TEST);
+							// rolesToErase.put(lowFuncChild.getId(),testChildRoles[j].getId());
+							// DAOFactory.getLowFunctionalityDAO().deleteFunctionalityRole(lowFuncChild,testChildRoles[j].getId());
+						}
+					}
+					// control for development roles
+					Role[] devChildRoles = lowFuncChild.getDevRoles();
+					// Role[] devParentRoles = lowFuncParent.getDevRoles();
+					// ArrayList newDevChildRoles = new ArrayList();
+					for (int j = 0; j < devChildRoles.length; j++) {
+						String rule = devChildRoles[j].getId().toString();
+						if (!isParentRule(rule, lowFuncParent, SpagoBIConstants.PERMISSION_ON_FOLDER_TO_DEVELOP)) {
+							ArrayList roles = new ArrayList();
+							roles.add(0, lowFuncChild.getId());
+							roles.add(1, devChildRoles[j].getId());
+							roles.add(2, SpagoBIConstants.PERMISSION_ON_FOLDER_TO_DEVELOP);
+							rolesToErase.add(roles);
+							lowFuncChild = eraseRolesFromFunctionality(lowFuncChild, rule, SpagoBIConstants.PERMISSION_ON_FOLDER_TO_DEVELOP);
+							// rolesToErase.put(lowFuncChild.getId(),devChildRoles[j].getId());
+							// DAOFactory.getLowFunctionalityDAO().deleteFunctionalityRole(lowFuncChild,devChildRoles[j].getId());
+						}
+					}
+					// control for execution roles
+					Role[] execChildRoles = lowFuncChild.getExecRoles();
+					// Role[] execParentRoles = lowFuncParent.getExecRoles();
+					// ArrayList newExecChildRoles = new ArrayList();
+					for (int j = 0; j < execChildRoles.length; j++) {
+						String rule = execChildRoles[j].getId().toString();
+						if (!isParentRule(rule, lowFuncParent, SpagoBIConstants.PERMISSION_ON_FOLDER_TO_EXECUTE)) {
+							ArrayList roles = new ArrayList();
+							roles.add(0, lowFuncChild.getId());
+							roles.add(1, execChildRoles[j].getId());
+							roles.add(2, SpagoBIConstants.PERMISSION_ON_FOLDER_TO_EXECUTE);
+							rolesToErase.add(roles);
+							lowFuncChild = eraseRolesFromFunctionality(lowFuncChild, rule, SpagoBIConstants.PERMISSION_ON_FOLDER_TO_EXECUTE);
+							// rolesToErase.put(lowFuncChild.getId(),execChildRoles[j].getId());
+							// DAOFactory.getLowFunctionalityDAO().deleteFunctionalityRole(lowFuncChild,execChildRoles[j].getId());
+						}
+					}
+					// control for development roles
+					Role[] createChildRoles = lowFuncChild.getCreateRoles();
+					for (int j = 0; j < createChildRoles.length; j++) {
+						String rule = createChildRoles[j].getId().toString();
+						if (!isParentRule(rule, lowFuncParent, SpagoBIConstants.PERMISSION_ON_FOLDER_TO_CREATE)) {
+							ArrayList roles = new ArrayList();
+							roles.add(0, lowFuncChild.getId());
+							roles.add(1, createChildRoles[j].getId());
+							roles.add(2, SpagoBIConstants.PERMISSION_ON_FOLDER_TO_CREATE);
+							rolesToErase.add(roles);
+							lowFuncChild = eraseRolesFromFunctionality(lowFuncChild, rule, SpagoBIConstants.PERMISSION_ON_FOLDER_TO_CREATE);
+							// rolesToErase.put(lowFuncChild.getId(),devChildRoles[j].getId());
+							// DAOFactory.getLowFunctionalityDAO().deleteFunctionalityRole(lowFuncChild,devChildRoles[j].getId());
+						}
+					}
+
+					// loadRolesToErase(lowFuncChild,rolesToErase);
+				}
+
+				// loadRolesToErase(childPath,rolesToErase);
+			}
+
+		}
+
+	}
+
+	/**
+	 * Erases the defined input role from a functionality object, if this one
+	 * has the role.The updated functionality object is returned.
+	 *
+	 * @param func
+	 *            the input functionality object
+	 * @param roleId
+	 *            the role id for the role to erase
+	 * @param permission
+	 *            the permission of the role to erase
+	 *
+	 * @return the updated functionality
+	 */
+	public LowFunctionality eraseRolesFromFunctionality(LowFunctionality func, String roleId, String permission) {
+		if (permission.equals(SpagoBIConstants.PERMISSION_ON_FOLDER_TO_DEVELOP)) {
+			Role[] roles = func.getDevRoles();
+			Set devRolesSet = new HashSet();
+			for (int i = 0; i < roles.length; i++) {
+				if (!roles[i].getId().toString().equals(roleId)) {
+					devRolesSet.add(roles[i]);
+				}
+
+			}
+			func.setDevRoles((Role[]) devRolesSet.toArray(new Role[0]));
+
+		}
+		if (permission.equals(SpagoBIConstants.PERMISSION_ON_FOLDER_TO_TEST)) {
+			Role[] roles = func.getTestRoles();
+			Set testRolesSet = new HashSet();
+			for (int i = 0; i < roles.length; i++) {
+				if (!roles[i].getId().toString().equals(roleId)) {
+					testRolesSet.add(roles[i]);
+				}
+
+			}
+			func.setTestRoles((Role[]) testRolesSet.toArray(new Role[0]));
+
+		}
+		if (permission.equals(SpagoBIConstants.PERMISSION_ON_FOLDER_TO_EXECUTE)) {
+			Role[] roles = func.getExecRoles();
+			Set execRolesSet = new HashSet();
+			for (int i = 0; i < roles.length; i++) {
+				if (!roles[i].getId().toString().equals(roleId)) {
+					execRolesSet.add(roles[i]);
+				}
+
+			}
+			func.setExecRoles((Role[]) execRolesSet.toArray(new Role[0]));
+
+		}
+		if (permission.equals(SpagoBIConstants.PERMISSION_ON_FOLDER_TO_CREATE)) {
+			Role[] roles = func.getCreateRoles();
+			Set createRolesSet = new HashSet();
+			for (int i = 0; i < roles.length; i++) {
+				if (!roles[i].getId().toString().equals(roleId)) {
+					createRolesSet.add(roles[i]);
+				}
+
+			}
+			func.setCreateRoles((Role[]) createRolesSet.toArray(new Role[0]));
+
+		}
+		return func;
+	}
+
+	/**
+	 * Controls if a particular role belongs to the parent functionality. It is
+	 * called inside functionalities Jsp in ordet to identify those roles that a
+	 * child functionality is able to select.
+	 *
+	 * @param rule
+	 *            The role id string identifying the role
+	 * @param parentLowFunct
+	 *            the parent low functionality object
+	 * @param permission
+	 *            The role's permission
+	 *
+	 * @return True if the role belongs to the parent funct, else false
+	 */
+	public boolean isParentRule(String rule, LowFunctionality parentLowFunct, String permission) {
+		boolean isParent = false;
+		if (permission.equals(SpagoBIConstants.PERMISSION_ON_FOLDER_TO_DEVELOP)) {
+			Role[] devRolesObj = parentLowFunct.getDevRoles();
+			String[] devRules = new String[devRolesObj.length];
+			for (int i = 0; i < devRolesObj.length; i++) {
+				devRules[i] = devRolesObj[i].getId().toString();
+				if (rule.equals(devRules[i])) {
+					isParent = true;
+				}
+			}
+		} else if (permission.equals(SpagoBIConstants.PERMISSION_ON_FOLDER_TO_EXECUTE)) {
+			Role[] execRolesObj = parentLowFunct.getExecRoles();
+			String[] execRules = new String[execRolesObj.length];
+			for (int i = 0; i < execRolesObj.length; i++) {
+				execRules[i] = execRolesObj[i].getId().toString();
+				if (rule.equals(execRules[i])) {
+					isParent = true;
+				}
+			}
+		} else if (permission.equals(SpagoBIConstants.PERMISSION_ON_FOLDER_TO_TEST)) {
+			Role[] testRolesObj = parentLowFunct.getTestRoles();
+			String[] testRules = new String[testRolesObj.length];
+			for (int i = 0; i < testRolesObj.length; i++) {
+				testRules[i] = testRolesObj[i].getId().toString();
+				if (rule.equals(testRules[i])) {
+					isParent = true;
+				}
+			}
+		} else if (permission.equals(SpagoBIConstants.PERMISSION_ON_FOLDER_TO_CREATE)) {
+			Role[] createRolesObj = parentLowFunct.getCreateRoles();
+			String[] createRules = new String[createRolesObj.length];
+			for (int i = 0; i < createRolesObj.length; i++) {
+				createRules[i] = createRolesObj[i].getId().toString();
+				if (rule.equals(createRules[i])) {
+					isParent = true;
+				}
+			}
+		}
+		return isParent;
 	}
 
 	/**
