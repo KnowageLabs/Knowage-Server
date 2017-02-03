@@ -127,7 +127,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 		if($scope.flag){
 
 			//case: modify layer
-			if($scope.selectedLayer.layerFile == null || $scope.selectedLayer.layerFile == undefined){
+			if($scope.selectedLayer.layerFile.file == null || $scope.selectedLayer.layerFile.file == undefined){ //.file added
 				//modify layer without upload file
 				sbiModule_restServices.put("layers", '', $scope.selectedLayer).success(
 
@@ -187,9 +187,9 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 			//add new Layer
 			var fd = new FormData();
 			fd.append('data', angular.toJson($scope.selectedLayer));
-			fd.append('layerFile', $scope.selectedLayer.layerFile);
+			fd.append('layerFile', $scope.selectedLayer.layerFile.file); //file added
 
-			if($scope.selectedLayer.layerFile == null || $scope.selectedLayer.layerFile == undefined){
+			if($scope.selectedLayer.layerFile.file == null || $scope.selectedLayer.layerFile.file == undefined){
 				//add layer without upload file
 				sbiModule_restServices.post("layers",'',$scope.selectedLayer).success(
 						function(data, status, headers, config) {
