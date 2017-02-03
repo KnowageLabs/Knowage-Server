@@ -19,12 +19,20 @@ package it.eng.spagobi.tools.dataset.dao;
 
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.SpagoBIDAOException;
+import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.utilities.assertion.Assert;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
@@ -32,6 +40,8 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Conjunction;
+import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -113,7 +123,7 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 	}
 
 	@Override
-	public List<SbiDataSet> loadPaginatedSearchSbiDataSet(String search, Integer page, Integer item_per_page) {
+	public List<SbiDataSet> loadPaginatedSearchSbiDataSet(String search, Integer page, Integer item_per_page, IEngUserProfile finalUserProfile) {
 		Session session;
 		List<SbiDataSet> list = null;
 
@@ -129,6 +139,58 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 
 			c.add(Restrictions.like("label", search == null ? "" : search, MatchMode.ANYWHERE).ignoreCase());
 			c.add(Restrictions.eq("active", true));
+
+			if (finalUserProfile != null) {
+
+				logger.debug("For final user take only owned, enterprise and shared");
+
+				SbiDomains scopeUserDomain = DAOFactory.getDomainDAO().loadSbiDomainByCodeAndValue("DS_SCOPE", SpagoBIConstants.DS_SCOPE_USER);
+				SbiDomains scopeEnterpriseDomain = DAOFactory.getDomainDAO().loadSbiDomainByCodeAndValue("DS_SCOPE", SpagoBIConstants.DS_SCOPE_ENTERPRISE);
+
+				Disjunction or = Restrictions.disjunction();
+
+				// OWNER OR
+
+				// take owned datasets
+				or.add(Restrictions.eq("owner", finalUserProfile.getUserUniqueIdentifier().toString()));
+
+				// get categories
+				Set<Domain> categoryList = UserUtilities.getDataSetCategoriesByUser(finalUserProfile);
+
+				if (categoryList != null) {
+					if (categoryList.size() > 0) {
+						SbiDomains[] categoryArray = new SbiDomains[categoryList.size()];
+						int i = 0;
+						for (Iterator iterator = categoryList.iterator(); iterator.hasNext();) {
+							Domain domain = (Domain) iterator.next();
+							String domainCd = domain.getDomainCode();
+							String valueCd = domain.getValueCd();
+							SbiDomains sbiDomain = DAOFactory.getDomainDAO().loadSbiDomainByCodeAndValue(domainCd, valueCd);
+							categoryArray[i] = sbiDomain;
+							i++;
+						}
+						// IN CATEGORY AND (SCOPE=USER OR SCOPE=ENTERPRISE)
+						Conjunction andCategories = Restrictions.conjunction();
+						andCategories.add(Restrictions.in("category", categoryArray));
+
+						Disjunction orScope = Restrictions.disjunction();
+						orScope.add(Restrictions.eq("scope", scopeUserDomain));
+						orScope.add(Restrictions.eq("scope", scopeEnterpriseDomain));
+
+						andCategories.add(orScope);
+
+						or.add(andCategories);
+
+					}
+				} else {
+					// if no categoryList take also all USER and ENTERPRISE dataset
+					// SCOPE=USER OR SCOPE=ENTERPRISE)
+					or.add(Restrictions.eq("scope", scopeUserDomain));
+					or.add(Restrictions.eq("scope", scopeEnterpriseDomain));
+				}
+
+				c.add(or);
+			}
 
 			list = c.list();
 		} catch (Exception e) {

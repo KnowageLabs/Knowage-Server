@@ -18,6 +18,7 @@
 package it.eng.spagobi.tools.dataset.dao;
 
 import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 
@@ -32,7 +33,7 @@ public interface ISbiDataSetDAO extends ISpagoBIDao {
 	public List<SbiDataSet> loadDataSets(String owner, Boolean includeOwned, Boolean includePublic, String scope, String type, String category,
 			String implementation, Boolean showDerivedDatasets);
 
-	public List<SbiDataSet> loadPaginatedSearchSbiDataSet(String search, Integer page, Integer item_per_page);
+	public List<SbiDataSet> loadPaginatedSearchSbiDataSet(String search, Integer page, Integer item_per_page, IEngUserProfile finalUserProfile);
 
 	public Integer countSbiDataSet(String search) throws EMFUserError;
 

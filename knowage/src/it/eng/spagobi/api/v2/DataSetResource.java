@@ -24,6 +24,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
+import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.dataset.AssociativeLogicManager;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
@@ -289,7 +290,12 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		search = search != null ? search : "";
 
 		try {
-			List<SbiDataSet> dataset = dao.loadPaginatedSearchSbiDataSet(search, page, item_per_page);
+			List<SbiDataSet> dataset = null;
+			if (UserUtilities.isAdministrator(getUserProfile())) {
+				dataset = dao.loadPaginatedSearchSbiDataSet(search, page, item_per_page, null);
+			} else {
+				dataset = dao.loadPaginatedSearchSbiDataSet(search, page, item_per_page, getUserProfile());
+			}
 
 			JSONObject jo = new JSONObject();
 			JSONArray ja = new JSONArray();
