@@ -834,10 +834,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             }, function(){
                 $scope.refresh();
             });
+			
 			return finishEdit.promise;
-
 		}
-
 	};
 
 	function tableWidgetEditControllerFunction($scope,finishEdit,sbiModule_translate,$mdDialog,originalModel,mdPanelRef,getMetadata,scopeFather,$mdToast){
@@ -958,7 +957,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 		}
 		
-		
+		$scope.$watchCollection('model.content.columnSelectedOfDataset', function(newColumns, oldColumns) {
+			var disableShowSummary = true;
+			for(var i=0; i<newColumns.length; i++){
+				if(newColumns[i].fieldType == "MEASURE"){
+					disableShowSummary = false;
+					break;
+				}
+			}
+			$scope.model.style.disableShowSummary = disableShowSummary;
+			if(disableShowSummary){
+				$scope.model.style.showSummary = false;
+			}
+		});
 	}
 //	this function register the widget in the cockpitModule_widgetConfigurator factory
 	addWidgetFunctionality("table",{'initialDimension':{'width':20, 'height':20},'updateble':true,'cliccable':true});

@@ -17,7 +17,7 @@
 			          <div flex layout="column" ng-cloak>
 			           <div layout="row" flex>
 				           <div flex=20  layout="row" layout-align="start center">
-				           <md-checkbox  ng-model="model.style.showSummary"  class="md-block"
+				           <md-checkbox  ng-model="model.style.showSummary"  class="md-block" ng-disabled="model.style.disableShowSummary"
 									aria-label="Checkbox 1">{{translate.load('sbi.cockpit.table.sumamry.showsummary')}}</md-checkbox>
 				           </div>
 				           <div flex layout=column >

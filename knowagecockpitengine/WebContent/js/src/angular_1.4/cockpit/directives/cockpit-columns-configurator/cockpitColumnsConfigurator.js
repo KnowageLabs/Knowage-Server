@@ -177,7 +177,7 @@
 		                            	 transformer:function(){
 
 		                            		 var temp = '<md-input-container class="md-block"> '
-		                            			 +'<md-select aria-label="aria-label" ng-model="row.fieldType">'
+		                            			 +'<md-select aria-label="aria-label" ng-model="row.fieldType" ng-change="scopeFunctions.fieldTypeChanged()">'
 		                            			 +'<md-option value=""></md-option>'
 		                            			 +'<md-option value="ATTRIBUTE">String</md-option>'
 		                            			 +'<md-option value="MEASURE">Number</md-option>'
@@ -222,7 +222,7 @@
 				getBackground: function(){
 					return $scope.selectedColumn.style !=undefined ?  $scope.selectedColumn.style.background : "";
 				},
-				draw :function(row,column,index) {
+				draw: function(row,column,index) {
 					$scope.selectedColumn = row;
 					//  $mdSidenav("columnStyleTab").toggle();
 					$mdDialog.show({
@@ -245,7 +245,19 @@
 
 				},
 				AggregationFunctions: cockpitModule_generalOptions.aggregationFunctions,
-
+				fieldTypeChanged: function(){
+					var disableShowSummary = true;
+					for(var i=0; i<$scope.model.content.columnSelectedOfDataset.length; i++){
+						if($scope.model.content.columnSelectedOfDataset[i].fieldType == "MEASURE"){
+							disableShowSummary = false;
+							break;
+						}
+					}
+					$scope.model.style.disableShowSummary = disableShowSummary;
+					if(disableShowSummary){
+						$scope.model.style.showSummary = false;
+					}
+				}
 		}
 
 		$scope.openListColumn = function(){
@@ -344,7 +356,6 @@
 			});
 		}
 	}
-
 })();
 
 
@@ -395,6 +406,7 @@ function controllerCockpitColumnsConfigurator($scope,sbiModule_translate,$mdDial
 
 		$mdDialog.hide();
 	}
+
 	$scope.cancelConfiguration=function(){
 		$mdDialog.cancel();
 	}
@@ -522,8 +534,8 @@ function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,model,s
 		}
 		return false;
 	}
-	
 }
+
 function controllerCockpitSummaryInfo($scope,sbiModule_translate,$mdDialog,items,model,getMetadata,actualItem,cockpitModule_datasetServices,$mdToast,cockpitModule_generalOptions){
 	$scope.translate=sbiModule_translate;
 	$scope.model = model;
@@ -539,8 +551,8 @@ function controllerCockpitSummaryInfo($scope,sbiModule_translate,$mdDialog,items
 	$scope.cancelConfiguration=function(){
 		$mdDialog.cancel();
 	}
-
 }
+
 function controllerCockpitCalculatedFieldController($scope,sbiModule_translate,$mdDialog,items,model,getMetadata,actualItem,cockpitModule_datasetServices,$mdToast){
 	$scope.translate=sbiModule_translate;
 	$scope.model = model;
@@ -754,6 +766,5 @@ function controllerCockpitCalculatedFieldController($scope,sbiModule_translate,$
 	if(actualItem !=undefined){
 		$scope.reloadValue();
 	}
-
 }
 
