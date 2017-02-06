@@ -627,6 +627,17 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 			angular.merge($scope.borderShadowStyle,tempBackGround);
 		}
 		
+		
+		// update sheets background color
+		if($scope.extendedStyle.sheetsBackgroundColor!=undefined) {
+				
+			$scope.sheetsBackgroundColor=$scope.extendedStyle.sheetsBackgroundColor;
+			$scope.cockpitModule_template.style.background=$scope.extendedStyle.sheetsBackgroundColor;
+
+		}
+		
+		
+		
 		// update header height
 		if($scope.extendedStyle.headerHeight!=undefined){
 			$scope.headerHeight=$scope.extendedStyle.headerHeight;
