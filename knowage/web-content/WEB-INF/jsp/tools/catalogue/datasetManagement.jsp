@@ -1492,7 +1492,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					                  		
 					                  		<md-input-container class="small counter" style="padding-left:8px;">
 					                     		<md-checkbox 	aria-label="Checkbox 2" 
-						                     					ng-model="selectedDataSet.pivotIsNumRows" ng-checked="" 
+						                     					ng-model="selectedDataSet.pivotIsNumRows"
 						                     					ng-change="setFormDirty()">
 												</md-checkbox>
 					                  		</md-input-container>
