@@ -22,7 +22,7 @@ import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.security.hmacfilter.HMACFilterAuthenticationProvider;
 import it.eng.spagobi.security.hmacfilter.HMACUtils;
 import it.eng.spagobi.services.common.EnginConf;
-import it.eng.spagobi.tools.dataset.ckan.CKANClient;
+import it.eng.spagobi.tools.dataset.ckan.utils.CKANUtils;
 import it.eng.spagobi.utilities.Helper;
 
 import java.util.Iterator;
@@ -32,13 +32,15 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.axis.encoding.Base64;
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpState;
+import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.log4j.Logger;
 import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.client.ClientResponse;
 import org.jboss.resteasy.client.core.executors.ApacheHttpClientExecutor;
 
 /**
- * 
+ *
  * @author Alberto Ghedin (alberto.ghedin@eng.it), Giulio Gavardi(giulio.gavardi@eng.it)
  */
 
@@ -48,6 +50,7 @@ public class SimpleRestClient {
 	static protected Logger logger = Logger.getLogger(SimpleRestClient.class);
 
 	private boolean addServerUrl = true;
+	private boolean useProxy = false;
 
 	private HMACFilterAuthenticationProvider authenticationProvider;
 
@@ -69,9 +72,14 @@ public class SimpleRestClient {
 		}
 	}
 
+	public SimpleRestClient(boolean useProxy) {
+		this();
+		useProxy = useProxy;
+	}
+
 	/**
 	 * Invokes a rest service in get and return response
-	 * 
+	 *
 	 * @param parameters
 	 *            the parameters of the request
 	 * @param serviceUrl
@@ -87,7 +95,7 @@ public class SimpleRestClient {
 
 	/**
 	 * Invokes a rest service in post and return response
-	 * 
+	 *
 	 * @param parameters
 	 *            the parameters of the request
 	 * @param serviceUrl
@@ -119,7 +127,7 @@ public class SimpleRestClient {
 			logger.debug("Call service URL " + serviceUrl);
 		}
 
-		HttpClient httpClient = getHttpClient();
+		HttpClient httpClient = getHttpClient(useProxy);
 		ApacheHttpClientExecutor httpExecutor = httpClient == null ? new ApacheHttpClientExecutor() : new ApacheHttpClientExecutor(httpClient);
 		ClientRequest request = new ClientRequest(serviceUrl, httpExecutor);
 
@@ -170,9 +178,7 @@ public class SimpleRestClient {
 
 	}
 
-	protected HttpClient getHttpClient() {
-		return CKANClient.getHttpClient();
-	}
+
 
 	public boolean isAddServerUrl() {
 		return addServerUrl;
@@ -184,6 +190,41 @@ public class SimpleRestClient {
 
 	public enum RequestTypeEnum {
 		POST, GET
+	}
+
+	public static HttpClient getHttpClient(boolean useProxy) {
+
+		// Getting proxy properties set as JVM args
+		String proxyHost = System.getProperty("http.proxyHost");
+		String proxyPort = System.getProperty("http.proxyPort");
+		int proxyPortInt = CKANUtils.portAsInteger(proxyPort);
+		String proxyUsername = System.getProperty("http.proxyUsername");
+		String proxyPassword = System.getProperty("http.proxyPassword");
+
+		logger.debug("Setting REST client");
+		HttpClient httpClient = new HttpClient();
+		httpClient.setConnectionTimeout(500);
+
+		if (proxyHost != null && proxyPortInt > 0 && useProxy) {
+			if (proxyUsername != null && proxyPassword != null) {
+				logger.debug("Setting proxy with authentication");
+				httpClient.getHostConfiguration().setProxy(proxyHost, proxyPortInt);
+				HttpState state = new HttpState();
+				state.setProxyCredentials(null, null, new UsernamePasswordCredentials(proxyUsername, proxyPassword));
+				httpClient.setState(state);
+				logger.debug("Proxy with authentication set");
+			} else {
+				// Username and/or password not acceptable. Trying to set proxy without credentials
+				logger.debug("Setting proxy without authentication");
+				httpClient.getHostConfiguration().setProxy(proxyHost, proxyPortInt);
+				logger.debug("Proxy without authentication set");
+			}
+		} else {
+			logger.debug("No proxy configuration found");
+		}
+		logger.debug("REST client set");
+
+		return httpClient;
 	}
 
 }
