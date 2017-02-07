@@ -95,7 +95,14 @@ public class PythonDatasetsExecutor {
 					}
 					String datasetFileName = ds.getFileName();
 
-					codeToExec = ds.getSpagobiLabel() + " = pandas.read_" + "csv('" + datasetFileName + "', " + ds.getOptions() + ")\n";
+					if (ds.getSubstituteLabel() != null && ds.getSubstituteLabel() != "") // functionsCatalog executeWithNewData
+					{
+						codeToExec = ds.getSubstituteLabel() + " = pandas.read_" + "csv('" + datasetFileName + "', " + ds.getOptions() + ")\n";
+					} else // dataminingEngine e functionsCatalog executeDemo
+					{
+						codeToExec = ds.getSpagobiLabel() + " = pandas.read_" + "csv('" + datasetFileName + "', " + ds.getOptions() + ")\n";
+					}
+
 					resPythonExecution = PyLib.execScript(codeToExec);
 
 					if (resPythonExecution < 0) {
