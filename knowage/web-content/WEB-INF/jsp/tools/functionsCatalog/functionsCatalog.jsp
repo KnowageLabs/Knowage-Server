@@ -176,7 +176,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					
 		    		<angular-table
 		    				id="functionsTable" 
-							flex
+							flex=70
 							ng-show=true
 							ng-model="functionsList"
 							columns='[{"label":"Function Name","name":"name"},{"label":"Owner","name":"owner"}]'  
