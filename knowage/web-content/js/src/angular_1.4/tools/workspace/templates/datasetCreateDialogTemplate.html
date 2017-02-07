@@ -2,9 +2,9 @@
 
 	<div class="dsCreateCatalogContainerTwo">
 	    
-		  <div class="dsCreateCatalogContainerThree">
+		  <!--  div class="dsCreateCatalogContainerThree"-->
 		    
-			<md-dialog flex class="mdDialogDatasetWizard" ng-cloak>
+			<md-dialog flex class="mdDialogDatasetWizard" ng-cloak style="width:80%;max-width:80%;min-width:80%;">
 			  
 				<md-toolbar>
 			      
@@ -320,14 +320,14 @@
 							 		<md-content flex class="step3PreviewTableContainer">
 							 		
 										<angular-table 
-										            flex
+										flex
 										            id="step3PreviewTable"
-										            class="step3PreviewTable"
+										            class="step3PreviewTable clippedText"
 										            ng-model="resultRowsStep2"
 													columns="allHeadersForStep3Preview" 
 													no-pagination=false
-													items-per-page=6
-													fixed-item-per-page=true
+													items-per-page="6"
+					   								fixed-item-per-page="true"
 													show-search-bar=false>
 										</angular-table>
 									
@@ -434,7 +434,7 @@
 			   
 			</md-dialog>
 	
-		</div>
+		<!--  /div-->
 	
 	</div>
 	

@@ -459,6 +459,11 @@ angular-table, cockpit-angular-table{
 	.highlight {
 		background-color: $secondaryColor;
 	}
+	&.clippedText {
+		td, th>div {
+			text-overflow: clip !important;
+		}
+	}
 }
 
 /* IE11 fix */

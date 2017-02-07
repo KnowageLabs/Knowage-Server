@@ -75,7 +75,9 @@
 	<div id="headDiv{{$index}}"  ng-hide="hideTableHead==true" ng-if="val.name !='--MULTISELECT--' && val.name!='--ROW_DETAIL--'" ng-click="orderBy(val)"  ng-class="{ 'black': val.name==column_ordering}">
 		
 		<md-icon  ng-class="{ 'hidden': val.name!=column_ordering.name ,'fa fa-arrow-down' : (val.name==column_ordering.name && reverse_col_ord) ,'fa fa-arrow-up' : (val.name==column_ordering.name && !reverse_col_ord)}"></md-icon>
-		<span >{{val.label}}</span>
+		<span >{{val.label}}
+			<md-tooltip ng-if="column.hideTooltip!=true" md-delay="1000" md-direction="bottom"  >{{val.label}}</md-tooltip>
+		</span>
 	</div>
 
 	<md-checkbox  ng-checked="multiSelectVal" ng-if="val.name=='--MULTISELECT--'"  ng-click="selectAll()" aria-label="selected item checked"> </md-checkbox>
