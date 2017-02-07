@@ -43,7 +43,7 @@
        					<div ng-if="dataset.metaData.fields.length<7">
 						{{translate.load("sbi.functionscatalog.executionresult.firstrowspreview")}}
 						</div>
-						<div ng-if = "dataset.rows != undefined && dataset.rows.length > 0 && dataset.metaData.fields.length<=15">
+						<div ng-if = "dataset.rows != undefined && dataset.rows.length > 0 && dataset.metaData.fields.length<=25">
 							<angular-table 
 										id="tablePreview"
 										flex
@@ -55,7 +55,7 @@
 							</angular-table>		
 						</div>
 						
-						<div ng-if = "dataset.rows != undefined && dataset.rows.length > 0 && dataset.metaData.fields.length>16">
+						<div ng-if = "dataset.rows != undefined && dataset.rows.length > 0 && dataset.metaData.fields.length>26">
 							{{translate.load("sbi.workspace.dataset.datasetpreview.toomanycols")}}
 						</div>
 
