@@ -102,7 +102,7 @@ public class GetCertificatedDatasets {
 
 			if (isTech != null && isTech.equals("true")) {
 				// if is technical dataset == ENTERPRISE --> get all ADMIN/DEV public datasets
-				unfilteredDataSets = dataSetDao.loadEnterpriseDataSets((UserProfile)profile);
+				unfilteredDataSets = dataSetDao.loadEnterpriseDataSets((UserProfile) profile);
 			} else {
 				if (allMyDataDS != null && allMyDataDS.equals("true")) {
 					// get all the Datasets visible for the current user (MyData,Enterprise,Shared Datasets,Ckan)
@@ -226,7 +226,7 @@ public class GetCertificatedDatasets {
 
 			datasetJSON.put("actions", actions);
 			if (typeDocWizard != null && typeDocWizard.equalsIgnoreCase("GEO")) {
-				// if is caming from myAnalysis - create Geo Document - must shows only ds geospatial --> isGeoDataset == true
+				// if is coming from myAnalysis - create Geo Document - must shows only ds geospatial --> isGeoDataset == true
 				if (geoEngine != null && isGeoDataset)
 					datasetsJSONReturn.put(datasetJSON);
 			} else
@@ -266,11 +266,6 @@ public class GetCertificatedDatasets {
 
 		JSONArray datasetsJsonArray = new JSONArray();
 
-		/*
-		 * Connection fiwareConnection = new Connection(CKANConfig.getInstance().getConfig().getProperty("ckan.url"),
-		 * profile.getUserUniqueIdentifier().toString(), ((UserProfile) profile).getUserId().toString()); Connection demoConnection = new
-		 * Connection("http://demo.ckan.org", "740f922c-3929-4715-9273-72210e7982e8", "alessandroportosa");
-		 */
 		Connection customConnection = new Connection(url, null, null);
 
 		CKANClient client = new CKANClient(customConnection);
@@ -294,7 +289,6 @@ public class GetCertificatedDatasets {
 	}
 
 	private void synchronizeDatasets(List<IDataSet> spagobiDs, JSONArray ckanDs) throws JSONException {
-		// boolean dsFound = false;
 		logger.debug("Synchronize resources...");
 		long start = System.currentTimeMillis();
 		Iterator<IDataSet> iterator = spagobiDs.iterator();
@@ -304,15 +298,10 @@ public class GetCertificatedDatasets {
 			JSONObject jsonConf = ObjectUtils.toJSONObject(config);
 			for (int i = 0; i < ckanDs.length(); i++) {
 				if (jsonConf.getString("ckanId").equals(ckanDs.getJSONObject(i).getJSONObject("configuration").getString("ckanId"))) {
-					// dsFound = true;
 					ckanDs.remove(i);
 					break;
 				}
 			}
-			// If the saved CKAN dataset is not available anymore, it has to be delete from Sbi... To be implemented
-			// if (!dsFound) {
-			// iterator.remove();
-			// }
 		}
 		logger.debug("Resources synchronized in " + (System.currentTimeMillis() - start) + "ms.");
 	}
