@@ -103,8 +103,16 @@ public class RDatasetsExecutor {
 					logger.debug("Dataset");
 					// dataset content could change independently from
 
+					String stringToEval = null;
 					String csvToEval = DataMiningUtils.getFileFromSpagoBIDataset(paramsFilled, ds, profile);
-					String stringToEval = ds.getSpagobiLabel() + "<-read.csv(\"" + csvToEval + "\",header = TRUE, sep = \",\");";
+
+					if (ds.getSubstituteLabel() != null && ds.getSubstituteLabel() != "") // functionsCatalog executeWithNewData
+					{
+						stringToEval = ds.getSubstituteLabel() + "<-read.csv(\"" + csvToEval + "\",header = TRUE, sep = \",\");";
+					} else // dataminingEngine e functionsCatalog executeDemo
+					{
+						stringToEval = ds.getSpagobiLabel() + "<-read.csv(\"" + csvToEval + "\",header = TRUE, sep = \",\");";
+					}
 
 					REXP resultRead = re.parseAndEval(stringToEval);
 					if (resultRead.inherits("try-error")) {
@@ -157,7 +165,15 @@ public class RDatasetsExecutor {
 			fileDSPath = fileDSPath.replaceAll("\\\\", "/");
 			logger.debug("File ds path " + fileDSPath);
 
-			String stringToEval = ds.getName() + "<-read." + ds.getReadType() + "(\"" + fileDSPath + "\"," + ds.getOptions() + ");";
+			String stringToEval = null;
+			if (ds.getSubstituteLabel() != null && ds.getSubstituteLabel() != "") // functionsCatalog executeWithNewData
+			{
+				stringToEval = ds.getSubstituteLabel() + "<-read." + ds.getReadType() + "(\"" + fileDSPath + "\"," + ds.getOptions() + ");";
+			} else // dataminingEngine e functionsCatalog executeDemo
+			{
+				stringToEval = ds.getName() + "<-read." + ds.getReadType() + "(\"" + fileDSPath + "\"," + ds.getOptions() + ");";
+
+			}
 			logger.debug("R code to eval " + stringToEval);
 			re.parseAndEval(stringToEval);
 		}

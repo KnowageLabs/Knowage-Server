@@ -38,12 +38,12 @@
         			 <div class="md-padding"
         			 ng-if="res.resultType.toLowerCase()=='dataset'">
           				{{translate.load("sbi.functionscatalog.executionresult.spagobidatasetsaved")}}&nbsp;{{res.result}}
-          				
+          				<br> 
       				 
        					<div ng-if="dataset.metaData.fields.length<7">
 						{{translate.load("sbi.functionscatalog.executionresult.firstrowspreview")}}
 						</div>
-						<div ng-if = "dataset.rows != undefined && dataset.rows.length > 0 && dataset.metaData.fields.length<7">
+						<div ng-if = "dataset.rows != undefined && dataset.rows.length > 0 && dataset.metaData.fields.length<=15">
 							<angular-table 
 										id="tablePreview"
 										flex
@@ -55,7 +55,7 @@
 							</angular-table>		
 						</div>
 						
-						<div ng-if = "dataset.rows != undefined && dataset.rows.length > 0 && dataset.metaData.fields.length>7">
+						<div ng-if = "dataset.rows != undefined && dataset.rows.length > 0 && dataset.metaData.fields.length>16">
 							{{translate.load("sbi.workspace.dataset.datasetpreview.toomanycols")}}
 						</div>
 

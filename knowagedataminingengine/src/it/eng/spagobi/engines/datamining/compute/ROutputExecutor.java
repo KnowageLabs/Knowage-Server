@@ -295,9 +295,10 @@ public class ROutputExecutor {
 				// pythonResult = PyModule.getMain().getAttribute(outVal).getStringValue();
 			}
 
-			res.setOutputType("text");
+			res.setOutputType("dataset");
 			// res.setResult("" + pythonResult); //return Json
-			res.setResult("SpagoBi dataset saved, visible from Data Set section in Document Browser, with label :" + creationResult.getDatasetlabel());
+			// res.setResult("SpagoBi dataset saved, visible from Data Set section in Document Browser, with label :" + creationResult.getDatasetlabel());
+			res.setResult(creationResult.getDatasetlabel());
 			logger.debug("Evaluated result");
 
 		} else if (out.getOutputType().equalsIgnoreCase(DataMiningConstants.FILE_OUTPUT) && out.getOutputName() != null) {

@@ -160,14 +160,54 @@ public class FunctionExecutionUtils {
 		return true;
 	}
 
-	@SuppressWarnings("unchecked")
-	public static void substituteWithReplacingValues(SbiCatalogFunction function, String body) {
-		logger.debug("IN");
+	public static Map<String, String> getReplacementsDatasetMap(String body) {
+		ObjectMapper mapper = new ObjectMapper();
+		// Map<String, String> variablesInMap = new HashMap<String, String>();
+		Map<String, String> datasetsInMap = new HashMap<String, String>();
+		// Map<String, Map<String, String>> filesInMap = new HashMap<String, Map<String, String>>();
+
 		try {
-			ObjectMapper mapper = new ObjectMapper();
-			Map<String, String> variablesInMap = new HashMap<String, String>();
-			Map<String, String> datasetsInMap = new HashMap<String, String>();
-			Map<String, Map<String, String>> filesInMap = new HashMap<String, Map<String, String>>();
+
+			JSONArray replacements = new JSONArray(body);
+			for (int i = 0; i < replacements.length(); i++) {
+				JSONObject object = replacements.getJSONObject(i);
+				JSONObject items = object.getJSONObject("items");
+				String type = object.getString("type");
+				switch (type) {
+				// case DataMiningConstants.VARIABLES_IN:
+				// variablesInMap = mapper.readValue(items.toString(), new TypeReference<Map<String, String>>() {
+				// });
+				// break;
+				case DataMiningConstants.DATASETS_IN:
+					datasetsInMap = mapper.readValue(items.toString(), new TypeReference<Map<String, String>>() {
+					});
+					break;
+				// case DataMiningConstants.FILES_IN:
+				// //
+				// {"f":{"file":{},"base64":"data:;base64,CBZb3UgbWF5IG9idGFpbiBhIGNvcHkgb2YgdGhlIExpY2Vuc2UgYXQKIwojICAgICBodHRwOi8vd3d3LmFwYWNoZS5vcmcvbGljZW5zZXMvTElDRU5TRS0yLjAKIwojIFVubGVzcyByZXF1aXJlZCBieSBhcHBsaWNhYmxlIGxhdyBvciBhZ3JlZWQgdG8gaW4gd3JpdGluZywgc29mdHdhcmUKIyBkaXN0cmlidXRlZCB1bmRlciB0aGUgTGljZW5zZSBpcyBkaXN0cmlidXRlZCBvbiBhbiAiQVMgSVMiIEJBU0lTLAojIFdJVEhPVVQgV0FSUkFOVElFUyBPUiBDT05ESVRJT05TIE9GIEFOWSBLSU5ELCBlaXRoZXIgZXhwcmVzcyBvciBpbXBsaWVkLgojIFNlZSB0aGUgTGljZW5zZSBmb3IgdGhlIHNwZWNpZmljIGxhbmd1YWdlIGdvdmVybmluZyBwZXJtaXNzaW9ucyBhbmQKIyBsaW1pdGF0aW9ucyB1bmRlciB0aGUgTGljZW5zZS4KCiMgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KIyBTY3JpcHQgdG8gZGlnZXN0IHBhc3N3b3JkIHVzaW5nIHRoZSBhbGdvcml0aG0gc3BlY2lmaWVkCiMgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KCiMgQmV0dGVyIE9TLzQwMCBkZXRlY3Rpb246IHNlZSBCdWd6aWxsYSAzMTEzMgpvczQwMD1mYWxzZQpjYXNlICJgdW5hbWVgIiBpbgpPUzQwMCopIG9zNDAwPXRydWU7Owplc2FjCgojIHJlc29sdmUgbGlua3MgLSAkMCBtYXkgYmUgYSBzb2Z0bGluawpQUkc9IiQwIgoKd2hpbGUgWyAtaCAiJFBSRyIgXSA7IGRvCiAgbHM9YGxzIC1sZCAiJFBSRyJgCiAgbGluaz1gZXhwciAiJGxzIiA6ICcuKi0+IFwoLipcKSQnYAogIGlmIGV4cHIgIiRsaW5rIiA6ICcvLionID4gL2Rldi9udWxsOyB0aGVuCiAgICBQUkc9IiRsaW5rIgogIGVsc2UKICAgIFBSRz1gZGlybmFtZSAiJFBSRyJgLyIkbGluayIKICBmaQpkb25lCgpQUkdESVI9YGRpcm5hbWUgIiRQUkciYApFWEVDVVRBQkxFPXRvb2wtd3JhcHBlci5zaAoKIyBDaGVjayB0aGF0IHRhcmdldCBleGVjdXRhYmxlIGV4aXN0cwppZiAkb3M0MDA7IHRoZW4KICAjIC14IHdpbGwgT25seSB3b3JrIG9uIHRoZSBvczQwMCBpZiB0aGUgZmlsZXMgYXJlOgogICMgMS4gb3duZWQgYnkgdGhlIHVzZXIKICAjIDIuIG93bmVkIGJ5IHRoZSBQUklNQVJZIGdyb3VwIG9mIHRoZSB1c2VyCiAgIyB0aGlzIHdpbGwgbm90IHdvcmsgaWYgdGhlIHVzZXIgYmVsb25ncyBpbiBzZWNvbmRhcnkgZ3JvdXBzCiAgZXZhbAplbHNlCiAgaWYgWyAhIC14ICIkUFJHRElSIi8iJEVYRUNVVEFCTEUiIF07IHRoZW4KICAgIGVjaG8gIkNhbm5vdCBmaW5kICRQUkdESVIvJEVYRUNVVEFCTEUiCiAgICBlY2hvICJUaGUgZmlsZSBpcyBhYnNlbnQgb3IgZG9lcyBub3QgaGF2ZSBleGVjdXRlIHBlcm1pc3Npb24iCiAgICBlY2hvICJUaGlzIGZpbGUgaXMgbmVlZGVkIHRvIHJ1biB0aGlzIHByb2dyYW0iCiAgICBleGl0IDEKICBmaQpmaQoKZXhlYyAiJFBSR0RJUiIvIiRFWEVDVVRBQkxFIiAtc2VydmVyIG9yZy5hcGFjaGUuY2F0YWxpbmEucmVhbG0uUmVhbG1CYXNlICIkQCIK","fileName":"digest.sh"}}
+				// Iterator<String> iter = items.keys();
+				// while (iter.hasNext()) {
+				// String key = iter.next();
+				// items.getJSONObject(key).remove("file");
+				// }
+				// filesInMap = mapper.readValue(items.toString(), new TypeReference<Map<String, Map<String, String>>>() {
+				// });
+				// break;
+				}
+			}
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error while reading dataset and variables replacements from body: ", e);
+		}
+		return datasetsInMap;
+	}
+
+	public static Map<String, String> getReplacementsVariablesMap(String body) {
+		ObjectMapper mapper = new ObjectMapper();
+		Map<String, String> variablesInMap = new HashMap<String, String>();
+		// Map<String, String> datasetsInMap = new HashMap<String, String>();
+		// Map<String, Map<String, String>> filesInMap = new HashMap<String, Map<String, String>>();
+		// List<Map<String, String>> listToReturtn = new ArrayList<Map<String, String>>();
+		try {
 
 			JSONArray replacements = new JSONArray(body);
 			for (int i = 0; i < replacements.length(); i++) {
@@ -179,13 +219,53 @@ public class FunctionExecutionUtils {
 					variablesInMap = mapper.readValue(items.toString(), new TypeReference<Map<String, String>>() {
 					});
 					break;
-				case DataMiningConstants.DATASETS_IN:
-					datasetsInMap = mapper.readValue(items.toString(), new TypeReference<Map<String, String>>() {
-					});
-					break;
+				// case DataMiningConstants.DATASETS_IN:
+				// datasetsInMap = mapper.readValue(items.toString(), new TypeReference<Map<String, String>>() {
+				// });
+				// break;
+				// case DataMiningConstants.FILES_IN:
+				// //
+				// {"f":{"file":{},"base64":"data:;base64,CBZb3UgbWF5IG9idGFpbiBhIGNvcHkgb2YgdGhlIExpY2Vuc2UgYXQKIwojICAgICBodHRwOi8vd3d3LmFwYWNoZS5vcmcvbGljZW5zZXMvTElDRU5TRS0yLjAKIwojIFVubGVzcyByZXF1aXJlZCBieSBhcHBsaWNhYmxlIGxhdyBvciBhZ3JlZWQgdG8gaW4gd3JpdGluZywgc29mdHdhcmUKIyBkaXN0cmlidXRlZCB1bmRlciB0aGUgTGljZW5zZSBpcyBkaXN0cmlidXRlZCBvbiBhbiAiQVMgSVMiIEJBU0lTLAojIFdJVEhPVVQgV0FSUkFOVElFUyBPUiBDT05ESVRJT05TIE9GIEFOWSBLSU5ELCBlaXRoZXIgZXhwcmVzcyBvciBpbXBsaWVkLgojIFNlZSB0aGUgTGljZW5zZSBmb3IgdGhlIHNwZWNpZmljIGxhbmd1YWdlIGdvdmVybmluZyBwZXJtaXNzaW9ucyBhbmQKIyBsaW1pdGF0aW9ucyB1bmRlciB0aGUgTGljZW5zZS4KCiMgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KIyBTY3JpcHQgdG8gZGlnZXN0IHBhc3N3b3JkIHVzaW5nIHRoZSBhbGdvcml0aG0gc3BlY2lmaWVkCiMgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KCiMgQmV0dGVyIE9TLzQwMCBkZXRlY3Rpb246IHNlZSBCdWd6aWxsYSAzMTEzMgpvczQwMD1mYWxzZQpjYXNlICJgdW5hbWVgIiBpbgpPUzQwMCopIG9zNDAwPXRydWU7Owplc2FjCgojIHJlc29sdmUgbGlua3MgLSAkMCBtYXkgYmUgYSBzb2Z0bGluawpQUkc9IiQwIgoKd2hpbGUgWyAtaCAiJFBSRyIgXSA7IGRvCiAgbHM9YGxzIC1sZCAiJFBSRyJgCiAgbGluaz1gZXhwciAiJGxzIiA6ICcuKi0+IFwoLipcKSQnYAogIGlmIGV4cHIgIiRsaW5rIiA6ICcvLionID4gL2Rldi9udWxsOyB0aGVuCiAgICBQUkc9IiRsaW5rIgogIGVsc2UKICAgIFBSRz1gZGlybmFtZSAiJFBSRyJgLyIkbGluayIKICBmaQpkb25lCgpQUkdESVI9YGRpcm5hbWUgIiRQUkciYApFWEVDVVRBQkxFPXRvb2wtd3JhcHBlci5zaAoKIyBDaGVjayB0aGF0IHRhcmdldCBleGVjdXRhYmxlIGV4aXN0cwppZiAkb3M0MDA7IHRoZW4KICAjIC14IHdpbGwgT25seSB3b3JrIG9uIHRoZSBvczQwMCBpZiB0aGUgZmlsZXMgYXJlOgogICMgMS4gb3duZWQgYnkgdGhlIHVzZXIKICAjIDIuIG93bmVkIGJ5IHRoZSBQUklNQVJZIGdyb3VwIG9mIHRoZSB1c2VyCiAgIyB0aGlzIHdpbGwgbm90IHdvcmsgaWYgdGhlIHVzZXIgYmVsb25ncyBpbiBzZWNvbmRhcnkgZ3JvdXBzCiAgZXZhbAplbHNlCiAgaWYgWyAhIC14ICIkUFJHRElSIi8iJEVYRUNVVEFCTEUiIF07IHRoZW4KICAgIGVjaG8gIkNhbm5vdCBmaW5kICRQUkdESVIvJEVYRUNVVEFCTEUiCiAgICBlY2hvICJUaGUgZmlsZSBpcyBhYnNlbnQgb3IgZG9lcyBub3QgaGF2ZSBleGVjdXRlIHBlcm1pc3Npb24iCiAgICBlY2hvICJUaGlzIGZpbGUgaXMgbmVlZGVkIHRvIHJ1biB0aGlzIHByb2dyYW0iCiAgICBleGl0IDEKICBmaQpmaQoKZXhlYyAiJFBSR0RJUiIvIiRFWEVDVVRBQkxFIiAtc2VydmVyIG9yZy5hcGFjaGUuY2F0YWxpbmEucmVhbG0uUmVhbG1CYXNlICIkQCIK","fileName":"digest.sh"}}
+				// Iterator<String> iter = items.keys();
+				// while (iter.hasNext()) {
+				// String key = iter.next();
+				// items.getJSONObject(key).remove("file");
+				// }
+				// filesInMap = mapper.readValue(items.toString(), new TypeReference<Map<String, Map<String, String>>>() {
+				// });
+				// break;
+				}
+			}
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error while reading dataset and variables replacements from body: ", e);
+		}
+		return variablesInMap;
+	}
+
+	public static Map<String, Map<String, String>> getReplacementsFilesMap(String body) {
+		ObjectMapper mapper = new ObjectMapper();
+		// Map<String, String> variablesInMap = new HashMap<String, String>();
+		// Map<String, String> datasetsInMap = new HashMap<String, String>();
+		Map<String, Map<String, String>> filesInMap = new HashMap<String, Map<String, String>>();
+		try {
+
+			JSONArray replacements = new JSONArray(body);
+			for (int i = 0; i < replacements.length(); i++) {
+				JSONObject object = replacements.getJSONObject(i);
+				JSONObject items = object.getJSONObject("items");
+				String type = object.getString("type");
+				switch (type) {
+				// case DataMiningConstants.VARIABLES_IN:
+				// variablesInMap = mapper.readValue(items.toString(), new TypeReference<Map<String, String>>() {
+				// });
+				// break;
+				// case DataMiningConstants.DATASETS_IN:
+				// datasetsInMap = mapper.readValue(items.toString(), new TypeReference<Map<String, String>>() {
+				// });
+				// break;
 				case DataMiningConstants.FILES_IN:
 					// {"f":{"file":{},"base64":"data:;base64,CBZb3UgbWF5IG9idGFpbiBhIGNvcHkgb2YgdGhlIExpY2Vuc2UgYXQKIwojICAgICBodHRwOi8vd3d3LmFwYWNoZS5vcmcvbGljZW5zZXMvTElDRU5TRS0yLjAKIwojIFVubGVzcyByZXF1aXJlZCBieSBhcHBsaWNhYmxlIGxhdyBvciBhZ3JlZWQgdG8gaW4gd3JpdGluZywgc29mdHdhcmUKIyBkaXN0cmlidXRlZCB1bmRlciB0aGUgTGljZW5zZSBpcyBkaXN0cmlidXRlZCBvbiBhbiAiQVMgSVMiIEJBU0lTLAojIFdJVEhPVVQgV0FSUkFOVElFUyBPUiBDT05ESVRJT05TIE9GIEFOWSBLSU5ELCBlaXRoZXIgZXhwcmVzcyBvciBpbXBsaWVkLgojIFNlZSB0aGUgTGljZW5zZSBmb3IgdGhlIHNwZWNpZmljIGxhbmd1YWdlIGdvdmVybmluZyBwZXJtaXNzaW9ucyBhbmQKIyBsaW1pdGF0aW9ucyB1bmRlciB0aGUgTGljZW5zZS4KCiMgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KIyBTY3JpcHQgdG8gZGlnZXN0IHBhc3N3b3JkIHVzaW5nIHRoZSBhbGdvcml0aG0gc3BlY2lmaWVkCiMgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KCiMgQmV0dGVyIE9TLzQwMCBkZXRlY3Rpb246IHNlZSBCdWd6aWxsYSAzMTEzMgpvczQwMD1mYWxzZQpjYXNlICJgdW5hbWVgIiBpbgpPUzQwMCopIG9zNDAwPXRydWU7Owplc2FjCgojIHJlc29sdmUgbGlua3MgLSAkMCBtYXkgYmUgYSBzb2Z0bGluawpQUkc9IiQwIgoKd2hpbGUgWyAtaCAiJFBSRyIgXSA7IGRvCiAgbHM9YGxzIC1sZCAiJFBSRyJgCiAgbGluaz1gZXhwciAiJGxzIiA6ICcuKi0+IFwoLipcKSQnYAogIGlmIGV4cHIgIiRsaW5rIiA6ICcvLionID4gL2Rldi9udWxsOyB0aGVuCiAgICBQUkc9IiRsaW5rIgogIGVsc2UKICAgIFBSRz1gZGlybmFtZSAiJFBSRyJgLyIkbGluayIKICBmaQpkb25lCgpQUkdESVI9YGRpcm5hbWUgIiRQUkciYApFWEVDVVRBQkxFPXRvb2wtd3JhcHBlci5zaAoKIyBDaGVjayB0aGF0IHRhcmdldCBleGVjdXRhYmxlIGV4aXN0cwppZiAkb3M0MDA7IHRoZW4KICAjIC14IHdpbGwgT25seSB3b3JrIG9uIHRoZSBvczQwMCBpZiB0aGUgZmlsZXMgYXJlOgogICMgMS4gb3duZWQgYnkgdGhlIHVzZXIKICAjIDIuIG93bmVkIGJ5IHRoZSBQUklNQVJZIGdyb3VwIG9mIHRoZSB1c2VyCiAgIyB0aGlzIHdpbGwgbm90IHdvcmsgaWYgdGhlIHVzZXIgYmVsb25ncyBpbiBzZWNvbmRhcnkgZ3JvdXBzCiAgZXZhbAplbHNlCiAgaWYgWyAhIC14ICIkUFJHRElSIi8iJEVYRUNVVEFCTEUiIF07IHRoZW4KICAgIGVjaG8gIkNhbm5vdCBmaW5kICRQUkdESVIvJEVYRUNVVEFCTEUiCiAgICBlY2hvICJUaGUgZmlsZSBpcyBhYnNlbnQgb3IgZG9lcyBub3QgaGF2ZSBleGVjdXRlIHBlcm1pc3Npb24iCiAgICBlY2hvICJUaGlzIGZpbGUgaXMgbmVlZGVkIHRvIHJ1biB0aGlzIHByb2dyYW0iCiAgICBleGl0IDEKICBmaQpmaQoKZXhlYyAiJFBSR0RJUiIvIiRFWEVDVVRBQkxFIiAtc2VydmVyIG9yZy5hcGFjaGUuY2F0YWxpbmEucmVhbG0uUmVhbG1CYXNlICIkQCIK","fileName":"digest.sh"}}
-					Iterator<String> iter=items.keys();
+					Iterator<String> iter = items.keys();
 					while (iter.hasNext()) {
 						String key = iter.next();
 						items.getJSONObject(key).remove("file");
@@ -195,6 +275,17 @@ public class FunctionExecutionUtils {
 					break;
 				}
 			}
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error while reading files replacements from body: ", e);
+		}
+		return filesInMap;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static void substituteWithReplacingValues(SbiCatalogFunction function, Map<String, String> variablesInMap, Map<String, String> datasetsInMap,
+			Map<String, Map<String, String>> filesInMap) {
+		logger.debug("IN");
+		try {
 
 			logger.debug("Initializing function with POSTed contents");
 			logger.debug("Initializing dataset input type");

@@ -204,7 +204,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						
 						<md-input-container class="md-block" >
         					<label>{{translate.load("sbi.functionscatalog.functionname");}}</label>
-        					<input ng-model=shownFunction.name ng-disabled="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))">  <!-- prima era !isAdmin senza apici-->
+        					<input ng-model=shownFunction.name ng-disabled="!(isAdmin || (isDev && shownFunction.owner==ownerUserName))">
       					</md-input-container>
   
   						<md-input-container class="md-block" >

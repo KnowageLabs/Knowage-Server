@@ -8,6 +8,7 @@ import it.eng.spagobi.engines.datamining.compute.DataMiningPythonExecutor;
 import it.eng.spagobi.engines.datamining.compute.DataMiningRExecutor;
 import it.eng.spagobi.engines.datamining.compute.IDataMiningExecutor;
 import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
+import it.eng.spagobi.engines.datamining.model.DataMiningDataset;
 import it.eng.spagobi.engines.datamining.model.Output;
 import it.eng.spagobi.engines.datamining.template.DataMiningTemplate;
 import it.eng.spagobi.functions.metadata.SbiCatalogFunction;
@@ -22,6 +23,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
 
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpStatus;
@@ -113,12 +116,30 @@ public class FunctionExecutor {
 							"The remote service response is not compliant with the expected format. Please contact the remote function supplier.");
 				}
 			} else {
+				boolean replacing = false;
+				Map<String, Map<String, String>> fileMap = new HashMap<String, Map<String, String>>();
+				Map<String, String> datasetMap = new HashMap<String, String>();
+				Map<String, String> variablesMap = new HashMap<String, String>();
 				if (body != null && !body.isEmpty()) {
 					logger.debug("Request with user provided data [" + body + "]");
-					FunctionExecutionUtils.substituteWithReplacingValues(function, body);
+					fileMap = FunctionExecutionUtils.getReplacementsFilesMap(body);
+					datasetMap = FunctionExecutionUtils.getReplacementsDatasetMap(body);
+					variablesMap = FunctionExecutionUtils.getReplacementsVariablesMap(body);
+					FunctionExecutionUtils.substituteWithReplacingValues(function, variablesMap, datasetMap, fileMap);
+					replacing = true;
 				}
 				logger.debug("Creating engine instance ...");
 				DataMiningTemplate template = FunctionExecutionUtils.getDataMiningTemplate(function);
+				if (replacing == true) {
+					List<DataMiningDataset> datasets = template.getDatasets();
+					for (DataMiningDataset d : datasets) {
+						String wrongLabel = d.getSpagobiLabel();
+						String labelForSubstitution = getKeyByValue(datasetMap, wrongLabel);
+						if (labelForSubstitution != null) {
+							d.setSubstituteLabel(labelForSubstitution);
+						}
+					}
+				}
 				DataMiningEngineInstance dataMiningEngineInstance = DataMiningEngine.createInstance(template, env);
 				logger.debug("Engine instance succesfully created");
 
@@ -131,5 +152,14 @@ public class FunctionExecutor {
 			logger.debug("OUT");
 		}
 		return serviceResponse.toString();
+	}
+
+	public static <T, E> T getKeyByValue(Map<T, E> map, E value) {
+		for (Entry<T, E> entry : map.entrySet()) {
+			if (Objects.equals(value, entry.getValue())) {
+				return entry.getKey();
+			}
+		}
+		return null;
 	}
 }
