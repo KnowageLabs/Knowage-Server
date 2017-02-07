@@ -282,8 +282,7 @@ public class GetCertificatedDatasets {
 			}
 			logger.debug("Resources translated in " + (System.currentTimeMillis() - start) + "ms.");
 		} catch (CKANException e) {
-			logger.debug("Error while getting CKAN resources: " + e.getErrorMessages().get(0));
-			throw new SpagoBIServiceException("REST service /certificateddatasets", "Error while getting CKAN resources: " + e.getErrorMessages().get(0));
+			throw new SpagoBIServiceException("REST service /certificateddatasets", "Error while getting CKAN resources: " + e);
 		}
 		return datasetsJsonArray;
 	}
