@@ -51,49 +51,34 @@ angular.module('cockpitModule')
  
         		link: function (scope, ele, attrs) {
         			
-        			var actionButtonItem=angular.element(ele[0].parentNode.querySelector("."+attrs.actionButtonClassContainer));
+        			var actionButtonItem=angular.element(ele[0].querySelector("."+attrs.actionButtonClassContainer));
         			actionButtonItem.css("display", "none");
         			var showActionButton=false;
         			var lastShowActionButtonValue=(new Date).getTime();
-        			
-        			scope.togglePanel = function(){
-        				if(showActionButton){
-        					var time=(new Date).getTime();
-            				lastShowActionButtonValue=time;
-            				actionButtonItem.css("z-index","2");
-            				ele.css("z-index","2");
-            				handleActionButtonVisibility(false)
-        				}else{
-        					handleActionButtonVisibility(true);
-            				lastShowActionButtonValue= (new Date).getTime();
-        				}
-        				
-        			}
-        			
-//        		    var mouseOver=function(ev){
-//        		    	if(angular.isObject(scope.gridster.movingItem)){
-//        		    		return
-//        		    	}
-//        				lastShowActionButtonValue= (new Date).getTime();;
-//        				handleActionButtonVisibility(true)
-//        			};
-//        			var mouseLeave=function(ev){
-//        				if(angular.isObject(scope.gridster.movingItem)){
-//        		    		return
-//        		    	}
-//        				var time=(new Date).getTime();
-//        				lastShowActionButtonValue=time;
-//        				actionButtonItem.css("z-index","2");
-//        				ele.css("z-index","2");
-//        				$timeout(function(){
-//    						if(angular.equals(lastShowActionButtonValue,time)){
-//    							handleActionButtonVisibility(false)
-//    						}else{
-//    							actionButtonItem.css("z-index","3");
-//    							ele.css("z-index","3");
-//    						}
-//    					},500)
-//        			};
+        		    var mouseOver=function(ev){
+        		    	if(angular.isObject(scope.gridster.movingItem)){
+        		    		return
+        		    	}
+        				lastShowActionButtonValue= (new Date).getTime();;
+        				handleActionButtonVisibility(true)
+        			};
+        			var mouseLeave=function(ev){
+        				if(angular.isObject(scope.gridster.movingItem)){
+        		    		return
+        		    	}
+        				var time=(new Date).getTime();
+        				lastShowActionButtonValue=time;
+        				actionButtonItem.css("z-index","2");
+        				ele.css("z-index","2");
+        				$timeout(function(){
+    						if(angular.equals(lastShowActionButtonValue,time)){
+    							handleActionButtonVisibility(false)
+    						}else{
+    							actionButtonItem.css("z-index","3");
+    							ele.css("z-index","3");
+    						}
+    					},500)
+        			};
         			
         			var handleActionButtonVisibility=function(show){
         				if(!angular.equals(show,showActionButton)){
@@ -105,15 +90,15 @@ angular.module('cockpitModule')
         			}
         			
         			
-        			//actionButtonItem.bind('mouseover', mouseOver );
-//        			actionButtonItem.bind('mouseleave', mouseLeave );
-//        			ele.bind('mouseover', mouseOver )
-//        			ele.bind('mouseleave', mouseLeave )
-        			actionButtonItem.addClass(scope.$eval(attrs.widgetXPosition)<=1 ? 'rightPosition': 'leftPosition')
+        			actionButtonItem.bind('mouseover', mouseOver );
+        			actionButtonItem.bind('mouseleave', mouseLeave );
+        			ele.bind('mouseover', mouseOver )
+        			ele.bind('mouseleave', mouseLeave )
+        			ele.addClass(scope.$eval(attrs.widgetXPosition)<=1 ? 'rightPosition': 'leftPosition')
         			$timeout(function(){
-        				actionButtonItem.removeClass('rightPosition');
-        				actionButtonItem.removeClass('leftPosition');
-        				actionButtonItem.addClass(scope.$eval(attrs.widgetXPosition)<=1 ? 'rightPosition': 'leftPosition')
+        				ele.removeClass('rightPosition');
+						ele.removeClass('leftPosition');
+        				ele.addClass(scope.$eval(attrs.widgetXPosition)<=1 ? 'rightPosition': 'leftPosition')
         			},1000);
         			
         			 
@@ -121,9 +106,9 @@ angular.module('cockpitModule')
         			scope.$watch(function(){return scope.gridsterItem.isMoving()},function(newVal,oldVal){
         				if(newVal!=oldVal){
         					if(!newVal){
-        						actionButtonItem.removeClass('rightPosition');
-        						actionButtonItem.removeClass('leftPosition');
-        						actionButtonItem.addClass(scope.$eval(attrs.widgetXPosition)<=1 ? 'rightPosition': 'leftPosition')
+        						ele.removeClass('rightPosition');
+        						ele.removeClass('leftPosition');
+        						ele.addClass(scope.$eval(attrs.widgetXPosition)<=1 ? 'rightPosition': 'leftPosition')
         					} 
         				}
         			})
