@@ -674,7 +674,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     	}
     	else {
     		$scope.paginationDisabled = false;
-    		$scope.previewPaginationEnabled = false;
+    		$scope.previewPaginationEnabled = true;
     	}
     	
     	params={};
