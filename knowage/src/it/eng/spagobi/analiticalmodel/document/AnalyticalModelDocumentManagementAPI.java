@@ -492,6 +492,7 @@ public class AnalyticalModelDocumentManagementAPI {
 
 		document.setLabel(buildCopiedString(document.getLabel(), version));
 		document.setName(buildCopiedString(document.getName(), version));
+		document.setCreationUser(String.valueOf(this.documentDAO.getUserProfile().getUserUniqueIdentifier()));
 	}
 
 	private String buildCopiedString(String toCopy, int newVersion) {
