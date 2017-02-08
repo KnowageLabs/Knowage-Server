@@ -38,6 +38,16 @@ public class HotLink implements Serializable {
 	protected String subObjName;
 	protected String parameters;
 	protected String engineName;
+	protected String previewFile;
+	
+	public String getPreviewFile() {
+		return previewFile;
+	}
+
+	public void setPreviewFile(String previewFile) {
+		this.previewFile = previewFile;
+	}
+
 	protected long requestTime;
 
 	public long getRequestTime() {

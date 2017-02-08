@@ -61,8 +61,9 @@ angular.module('workspace_document_view', ['ngMaterial'])
 	}
 });
 
-function workspaceDocumentViewControllerFunction($scope,sbiModule_translate){
+function workspaceDocumentViewControllerFunction($scope,sbiModule_translate, sbiModule_config){
 	
+	$scope.sbiModule_config = sbiModule_config;
 	$scope.translate = sbiModule_translate;
 	
 	$scope.clickDocument=function(item){		

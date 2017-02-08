@@ -50,8 +50,9 @@ angular.module('organizer_view', ['ngMaterial'])
 	}
 });
 
-function organizerViewControllerFunction($scope,sbiModule_translate){
+function organizerViewControllerFunction($scope,sbiModule_translate, sbiModule_config){
 
+	$scope.sbiModule_config = sbiModule_config;
 	$scope.clickDocument=function(item){
 		 $scope.selectDocumentAction({doc: item});
 	}

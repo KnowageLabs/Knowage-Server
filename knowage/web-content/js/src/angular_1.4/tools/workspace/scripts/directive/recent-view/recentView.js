@@ -20,7 +20,7 @@
 	var currentScriptPath = scripts[scripts.length - 1].src;
 	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
 
-angular.module('recent_view', ['ngMaterial'])
+angular.module('recent_view', ['ngMaterial','sbiModule'])
 .directive('recentView', function() {
 	return {
 //		templateUrl: '/knowage/js/src/angular_1.4/tools/workspace/scripts/directive/recent-view/recent-view.html',
@@ -49,8 +49,9 @@ angular.module('recent_view', ['ngMaterial'])
 	}
 });
 
-function recentViewControllerFunction($scope,sbiModule_translate){
+function recentViewControllerFunction($scope,sbiModule_translate, sbiModule_config){
 	
+	$scope.sbiModule_config = sbiModule_config;
 	$scope.clickDocument=function(item){
 		
 		 $scope.selectDocumentAction({doc: item});
