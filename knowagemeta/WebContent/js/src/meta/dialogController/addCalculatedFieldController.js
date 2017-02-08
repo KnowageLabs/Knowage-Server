@@ -1,4 +1,16 @@
 function addCalculatedFieldController($scope, $mdDialog,sbiModule_translate,sbiModule_restServices, selectedBusinessModel,metaModelServices,editMode,currentCF){
+	//synchronize model before creating the calculated field
+	var send = metaModelServices.createRequestRest();
+	sbiModule_restServices.promisePost("1.0/metaWeb","updateModel",send)
+	.then(function(response){
+		metaModelServices.applyPatch(response.data);
+	}
+	,function(response){
+		sbiModule_restServices.errorHandler(response.data,"");
+	})
+
+
+
 	$scope.translate=sbiModule_translate;
 	$scope.selectedBusinessModel=selectedBusinessModel;
 	$scope.type=[{label:sbiModule_translate.load("sbi.lookup.asString"),name:"STRING"},{label:sbiModule_translate.load("sbi.lookup.asNumber"),name:"NUMBER"}]
