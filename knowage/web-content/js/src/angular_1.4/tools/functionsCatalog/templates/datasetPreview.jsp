@@ -19,7 +19,7 @@
 							{{translate.load("sbi.workspace.dataset.datasetpreview.toomanycols")}}
 		</div>
 	
-		<div ng-if = "dataset.metaData.fields.length<=7">
+		<div ng-if = "dataset.metaData.fields.length<=20">
 			<angular-table 	id="tablePreview"
 						flex
 						columns="headers"
