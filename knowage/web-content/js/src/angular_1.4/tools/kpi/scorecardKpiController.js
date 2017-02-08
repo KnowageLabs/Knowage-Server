@@ -97,7 +97,7 @@ $scope.scorecardColumnsList=[
 			//convert the target to frontend object
 			for(var targ=0;targ<tmpPersp.targets.length;targ++){
 				var tmpTarg=tmpPersp.targets[targ];
-				var tmpOption=JSON.parse(tmpTarg.options);
+				var tmpOption=tmpTarg.options;
 				var tmpCritPri=[];
 				if(tmpOption.hasOwnProperty("criterionPriority")){
 					for(var critP=0;critP<tmpOption.criterionPriority.length;critP++){
@@ -115,7 +115,7 @@ $scope.scorecardColumnsList=[
 			}
 			
 			//convert the target to frontend object
-			var tmpPerspOption=JSON.parse(tmpPersp.options);
+			var tmpPerspOption=tmpPersp.options;
 			var tmpPerspCritPri=[];
 			if(tmpPerspOption.hasOwnProperty("criterionPriority")){		
 				for(var critP=0;critP<tmpPerspOption.criterionPriority.length;critP++){
@@ -272,7 +272,7 @@ function scorecardDetailControllerFunction($scope,sbiModule_translate,sbiModule_
 					tmpTargetOptions.push(tmpScorecard.perspectives[i].options.criterionPriority[targetIndex].name);
 				}
 				tmpScorecard.perspectives[i].options.criterionPriority=tmpTargetOptions;
-				tmpScorecard.perspectives[i].options=JSON.stringify(tmpScorecard.perspectives[i].options);
+//				tmpScorecard.perspectives[i].options=JSON.stringify(tmpScorecard.perspectives[i].options);
 			}
 			
 			for(var j=0;j<tmpScorecard.perspectives[i].targets.length;j++){
@@ -282,7 +282,7 @@ function scorecardDetailControllerFunction($scope,sbiModule_translate,sbiModule_
 						tmpKpiOptions.push(tmpScorecard.perspectives[i].targets[j].options.criterionPriority[kpiIndex].name);
 					}
 					tmpScorecard.perspectives[i].targets[j].options.criterionPriority=tmpKpiOptions;
-					tmpScorecard.perspectives[i].targets[j].options=JSON.stringify(tmpScorecard.perspectives[i].targets[j].options);
+//					tmpScorecard.perspectives[i].targets[j].options=JSON.stringify(tmpScorecard.perspectives[i].targets[j].options);
 				 }
 			}
 		}

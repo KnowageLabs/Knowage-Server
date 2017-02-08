@@ -55,7 +55,7 @@ angular.module('kpi_color_indicator', ['ngMaterial','sbiModule'])
 			            "translatedValueName": "Policy \"Majority\"",
 			            "translatedValueDescription": "it.eng.spagobi.kpi.statusCriterion.Majority"
 			          },
-					'options':'{\"criterionPriority\":[]}',
+					'options':{"criterionPriority":[]},
 					'targets':[],
 					'groupedKpis':[]
 				};
@@ -77,7 +77,7 @@ angular.module('kpi_color_indicator', ['ngMaterial','sbiModule'])
 			            "translatedValueName": "Policy \"Majority\"",
 			            "translatedValueDescription": "it.eng.spagobi.kpi.statusCriterion.Majority"
 			          },
-	                "options": "{\"criterionPriority\":[]}",
+	                "options": {"criterionPriority":[]},
 	                "status": "GRAY",
 	                "kpis": []
 	               };

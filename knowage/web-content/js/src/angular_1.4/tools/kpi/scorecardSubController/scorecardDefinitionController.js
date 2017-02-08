@@ -19,7 +19,7 @@ function scorecardDefinitionControllerFunction($scope,$mdDialog, sbiModule_trans
 	            "translatedValueName": "Policy \"Majority\"",
 	            "translatedValueDescription": "it.eng.spagobi.kpi.statusCriterion.Majority"
 	          },
-			'options':'{\"criterionPriority\":[]}',
+			'options':{"criterionPriority":[]},
 			'targets':[],
 			'groupedKpis':[]
 		};
