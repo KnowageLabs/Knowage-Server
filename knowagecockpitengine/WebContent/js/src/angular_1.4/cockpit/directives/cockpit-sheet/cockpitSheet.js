@@ -50,13 +50,32 @@ angular.module('cockpitModule').directive('cockpitSheet',function($compile){
 	   }
 });
 
+angular.module('cockpitModule').filter('orderObjectBy', function() {
+	  return function(items, field, reverse) {
+	    var filtered = [];
+	    angular.forEach(items, function(item) {
+	      filtered.push(item);
+	    });
+	    filtered.sort(function (a, b) {
+	      return (a[field] > b[field] ? 1 : -1);
+	    });
+	    if(reverse) filtered.reverse();
+	    return filtered;
+	  };
+	});
+
 function cockpitSheetControllerFunction($scope,cockpitModule_template,cockpitModule_properties,sbiModule_translate,$mdPanel,$mdDialog,$timeout){
 	$scope.cockpitModule_template=cockpitModule_template;
 	$scope.cockpitModule_properties=cockpitModule_properties;
+	
+	for(var sh in cockpitModule_template.sheets){
+		cockpitModule_template.sheets[sh].index = cockpitModule_template.sheets[sh].index!=undefined?parseInt(cockpitModule_template.sheets[sh].index):sh;
+	}
+	
 	$scope.addSheet=function(){
-		cockpitModule_template.sheets.push({label:sbiModule_translate.load("sbi.cockpit.new.sheet"),widgets:[]});
-		
+		cockpitModule_template.sheets.push({index:cockpitModule_template.sheets.length,label:sbiModule_translate.load("sbi.cockpit.new.sheet"),widgets:[]});
 	};
+	
 	$scope.hide=false;
 	$scope.refreshToolbar=function(){
 		$scope.hide=true;
@@ -81,14 +100,15 @@ function cockpitSheetControllerFunction($scope,cockpitModule_template,cockpitMod
 				  $mdPanel.open(config);
 	}
 	
-	$scope.menuController=function(sbiModule_translate,sheet,mdPanelRef,$mdDialog,refreshToolbar){
-		this.translate=sbiModule_translate;
+	$scope.menuController=function($scope,sbiModule_translate,sheet,mdPanelRef,$mdDialog,refreshToolbar){
+		var self = this;
+		self.translate=sbiModule_translate;
+		self.cockpitModule_template = cockpitModule_template;
 		var closeMenu=function(){
 			mdPanelRef.close();
 		}
-		this.deleteSheet=function(){
+		self.deleteSheet=function(){
 
-			
 			var confirm = $mdDialog.confirm()
 	        .title(sbiModule_translate.load("sbi.cockpit.sheet.delete.title"))
 	        .textContent(sbiModule_translate.load("sbi.cockpit.sheet.delete.messages"))
@@ -96,13 +116,35 @@ function cockpitSheetControllerFunction($scope,cockpitModule_template,cockpitMod
 	        .ok(sbiModule_translate.load("sbi.ds.wizard.confirm"))
 	        .cancel(sbiModule_translate.load("sbi.ds.wizard.cancel"));
 		  $mdDialog.show(confirm).then(function() {
+			  for(var sh in cockpitModule_template.sheets){
+				  if(cockpitModule_template.sheets[sh].index>sheet.index){
+					  cockpitModule_template.sheets[sh].index --; 
+				  } 
+			  }
 		    cockpitModule_template.sheets.splice(cockpitModule_template.sheets.indexOf(sheet),1);
 		    closeMenu();
 		  });
 			 
 		}
 		
-		this.renameSheet=function(ev){
+		self.moveSheet = function(direction){
+			var cur, prev, next;
+			for(var sh in cockpitModule_template.sheets){
+				if(sheet.index==cockpitModule_template.sheets[sh].index){cur=sh}
+				if(sheet.index-cockpitModule_template.sheets[sh].index==1){prev=sh}
+				if(sheet.index-cockpitModule_template.sheets[sh].index==-1){next=sh}
+			}
+			if(direction == 'prev'){
+				cockpitModule_template.sheets[cur].index --;
+				cockpitModule_template.sheets[prev].index ++;	
+			}else {
+				cockpitModule_template.sheets[cur].index ++;
+				cockpitModule_template.sheets[next].index --;
+			}
+			
+		};
+		
+		self.renameSheet=function(ev){
 			var confirm = $mdDialog.prompt()
 		      .title(sbiModule_translate.load("sbi.cockpit.sheet.rename.title"))
 		      .placeholder(sbiModule_translate.load("sbi.cockpit.sheet.name"))
