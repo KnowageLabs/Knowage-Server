@@ -834,5 +834,99 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		$mdPanel.open(config);
 		return deferred.promise;
 	}
+	
+	this.substitutePlaceholderValues = function(text, datasetLabel, model){
+		
+		if(text != undefined){
+			var deferred = $q.defer();
+			var dataset = this.getDatasetByLabel(datasetLabel);
+			if (dataset != undefined) {
+				var columnsToshow = [];
+				var columnsToshowMeta = [];
+        		var columnsToshowIndex = [];    
+				var localModel = model;
+	       	 	var datasetId = dataset.id.dsId;
+	       	 	model.dataset = {}
+	       	 	model.dataset.dsId = datasetId;
+        		
+	       	 	//get columnsSelected metadata: adds aggregation functions if required
+				for(var dsField in dataset.metadata.fieldsMeta){
+					var dsObject = dataset.metadata.fieldsMeta[dsField];
+					var header = dsObject.alias;
+					var reg = new RegExp('\\$F\\{('+dataset.label+'.'+header+')\\}','g');
+            		var matches = text.match(reg);
+            		if (matches){            			
+//            			//aggregation function management (ie: COUNT($F{xxx}) )
+            			var regAgg = new RegExp('(AVG|MIN|MAX|SUM|COUNT|DISTINCT COUNT)(\\(\\$F{'+dataset.label+'.'+header+'}\\))','g');
+            			var matchAgg = text.match(regAgg);
+    					if (matchAgg && dsObject.fieldType == 'MEASURE'){    						
+    						//get the optional function
+                    		var regFunc = new RegExp('(AVG|MIN|MAX|SUM|COUNT|DISTINCT COUNT)','g');
+                    		var matchFunc = matchAgg[0].match(regFunc);
+                    		if (matchFunc){ 
+	    						dsObject.aggregationSelected = matchFunc[0];
+//	    						dsObject.funcSummary = matchFunc[0];
+	    						//set configuration for ask summary values
+//	    						if (!model.style) model.style={};
+//	    						model.style.showSummary=true;
+//                    		}else{
+//                    			dsObject.aggregationSelected = 'NONE';
+//	    						dsObject.funcSummary = 'NONE';
+                    		}
+                    		
+    					}
+    					//column is required
+            			columnsToshow.push(dataset.label+'.'+header);
+            			columnsToshowMeta.push(dsObject);
+            		}
+				}	 
+//				model.content.columnSelectedOfDataset = dataset.metadata.fieldsMeta;
+				model.content.columnSelectedOfDataset = columnsToshowMeta;
+				
+				this.loadDatasetRecordsById(datasetId, undefined, undefined, undefined, undefined, model).then(function(allDatasetRecords){         				
+	 				
+	 				//get columnsSelected dataIndex
+	 				for (var col in columnsToshow){
+	 					var headerToSearch = columnsToshow[col].substring(columnsToshow[col].indexOf('.')+1);	         					
+	                	for (var field in allDatasetRecords.metaData.fields){
+	                		if (allDatasetRecords.metaData.fields[field] && allDatasetRecords.metaData.fields[field].header){
+	                			var header = allDatasetRecords.metaData.fields[field].header;
+	                			if (header == headerToSearch){
+	                				columnsToshowIndex.push(columnsToshow[col] + '|' +allDatasetRecords.metaData.fields[field].dataIndex);
+	                				break;
+	                			}
+	                		}
+	                	}
+	 				}
+	 				//get columnsSelected values and replace placeholders
+	 				var row = allDatasetRecords.rows[0] || []; //get the first row
+	 				for (var col in columnsToshowIndex){
+	 					var colAlias =  columnsToshowIndex[col].substring(0,  columnsToshowIndex[col].indexOf('|'));
+	 					var colIdx = columnsToshowIndex[col].substring( columnsToshowIndex[col].indexOf('|')+1);
+	 					var colValue = row[colIdx];
+	 					//at first check for aggregation functions , than for simple values
+	 					var reg = new RegExp('(AVG|MIN|MAX|SUM|COUNT|DISTINCT COUNT)(\\(\\$F{'+colAlias+'}\\))','g');
+	 					var matches = text.match(reg);	 					
+	            		if (matches){
+	            			text = text.replace(reg, colValue);
+	            		}else{
+	            			var reg = new RegExp('\\$F\\{('+colAlias+')\\}','g');
+	            			matches = text.match(reg);
+	            			if (matches){
+		            			text = text.replace(reg, colValue);
+	            			}
+	            		}
+	 				}		
+	 				deferred.resolve(text);
+	 			},function(error){
+	         		deferred.reject(error);
+	 			});
+				return deferred.promise;
+				
+			}
+			
+		}
+		
+	}
 
 })

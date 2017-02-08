@@ -40,6 +40,9 @@
   'components/cockpitEngine',
    'components/chartEngine';
    
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none !important;
+}
 
 .no-margin {
   margin: 0;
@@ -707,6 +710,10 @@ expander-box md-toolbar {
 .iconAlignFix {
   position: relative;
   left: -5px;
+}
+
+.floatRight {
+	float:right;
 }
 
 /* IE11 fix */

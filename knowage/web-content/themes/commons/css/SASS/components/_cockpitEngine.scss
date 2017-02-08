@@ -1144,6 +1144,10 @@
 		    border-radius: 20px;
 		    margin: 2px 4px;
 		    cursor: pointer;
+		    font-size: $smallFontSize;
+		    &.active {
+		    	background-color: darken(#ccc,20%);
+		    }
 		}
 		md-list.md-knowage-theme {
 		
@@ -1151,6 +1155,7 @@
 			.md-subheader {
 				._md-subheader-inner {
 			    	padding: $tabPadding;
+			    	width:100%;
 			    }
 			}
 			md-list-item {

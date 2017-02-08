@@ -1,1 +1,4 @@
-<p text-widget-text-render="ngModel.content.text" ng-style="ngModel.style" style="margin:0" flex></p>
+<div layout-align="center center" class="widthDivContent">
+	<md-progress-circular md-mode="indeterminate" ng-if="!ngModel.isReady"></md-progress-circular> 
+	<p text-widget-text-render="ngModel.content.text" ng-style="ngModel.style" class="noMargin" flex ng-cloak ng-show="ngModel.isReady"></p>
+</div>

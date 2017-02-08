@@ -23,20 +23,50 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 (function() {
 angular.module('cockpitModule')
-.directive('textWidgetTextRender', function ($compile,cockpitModule_utilstServices) {
+.directive('textWidgetTextRender', function ($compile,cockpitModule_utilstServices,cockpitModule_datasetServices,cockpitModule_generalServices) {
     return {
         restrict: 'A',
         replace: true,
+        css: baseScriptPath+ '/directives/cockpit-widget/widget/textWidget/templates/editorCss.css',
         link: function (scope, ele, attrs) {
             scope.$watch(attrs.textWidgetTextRender, function (html) {
-            	html=cockpitModule_utilstServices.getParameterValue(html)
-                ele.html(html);
-                $compile(ele.contents())(scope);
+            	html=cockpitModule_utilstServices.getParameterValue(html);
+                 
+                var model = scope.ngModel;
+                scope.ngModel.isReady=(cockpitModule_generalServices.isFromNewCockpit())?true:false;
+                if (html && html.indexOf("$F{")  >= 0){
+                	var elems = []; 
+	                for (var dsLabel in model.datasets){
+	                	elems.push(dsLabel);
+	                }
+
+                	function checkPlaceholders (counter){
+                		if (counter < elems.length){
+		                	cockpitModule_datasetServices.substitutePlaceholderValues(html, elems[counter], model).then(function(htmlReturned){
+		         				html = htmlReturned;
+		         				ele.html(html);
+		         				$compile(ele.contents())(scope);
+		         				counter++;
+		         				checkPlaceholders(counter);		         				
+		         			},function(error){
+		         			});
+                		}else{
+                			 scope.ngModel.isReady=true; //view the content replaced
+                		}
+                	}       
+                	
+                	checkPlaceholders(0);
+                }else{
+                	 ele.html(html);
+                     $compile(ele.contents())(scope);
+                }
+               
+                
             });
         }
     };
 })
-.directive('cockpitTextWidget',function(cockpitModule_widgetServices,$mdDialog){
+.directive('cockpitTextWidget',function(cockpitModule_widgetServices,cockpitModule_datasetServices,$mdDialog){
 	   return{
 		   templateUrl: baseScriptPath+ '/directives/cockpit-widget/widget/textWidget/templates/textWidgetTemplate.html',
 		   controller: cockpitTextWidgetControllerFunction,
@@ -51,17 +81,15 @@ angular.module('cockpitModule')
                     	//init the widget
                     	element.ready(function () {
                     		scope.initWidget();
-                        });
-                    	
-                    	
-                    	
+                        });                   	
                     }
                 };
 		   	}
 	   };
 });
 
-function cockpitTextWidgetControllerFunction($scope,cockpitModule_widgetConfigurator,sbiModule_translate,$q,$mdPanel){
+function cockpitTextWidgetControllerFunction($scope,cockpitModule_widgetConfigurator,cockpitModule_datasetServices,sbiModule_translate,$q,$mdPanel){
+	
 	$scope.property={style:{}};
 	$scope.init=function(element,width,height){
 		$scope.refreshWidget();
@@ -102,10 +130,27 @@ function cockpitTextWidgetControllerFunction($scope,cockpitModule_widgetConfigur
 			    	            { name: 'basicStyling', items: ['bold', 'italic', 'underline', 'strikethrough', 'subscript', 'superscript', '-', 'leftAlign', 'centerAlign', 'rightAlign', 'blockJustify', '-'] },
 			    	            { name: 'paragraph', items: ['orderedList', 'unorderedList', 'outdent', 'indent', '-'] },
 			    	            { name: 'colors', items: ['fontColor', 'backgroundColor', '-'] }, 
-			    	            { name: 'styling', items: ['font', 'size', 'format'] },
+			    	            { name: 'styling', items: ['font', 'size', 'format'] }
 			    	            ]
 			    	  };
 			    	  
+			    	  
+			    	  $scope.handleEvent=function(event, arg1){
+			    		  if(event=='datasetChanged'){
+							  changeDatasetFunction(arg1);
+						  }
+					  }
+			    	  
+			    	  var changeDatasetFunction=function(dsId){
+			    		  var ds = cockpitModule_datasetServices.getDatasetById(dsId);
+			    		  if(ds){
+		    				$scope.localModel.datasets[ds.label] = ds.metadata.fieldsMeta;
+		    				$scope.localModel.viewDatasetsDett = {};
+		    				$scope.localModel.viewDatasetsDett[ds.label] = false;
+		    				$scope.localModel.functions=['SUM', 'AVG', 'MIN', 'MAX','COUNT'];
+		    				$scope.localModel.viewDatasets = true;
+			    		  }
+			    	  }
 			    	  
 			    	  $scope.saveConfiguration=function(){
 			    		  if($scope.localModel.content.text == undefined || $scope.localModel.content.text ==""){
@@ -155,7 +200,7 @@ function cockpitTextWidgetControllerFunction($scope,cockpitModule_widgetConfigur
 		
 	
 	}
-	
+
 };
 
 

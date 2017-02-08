@@ -77,6 +77,7 @@
 	
 	Map analyticalDrivers  = engineInstance.getAnalyticalDrivers();
     Map driverParamsMap = new HashMap();
+    Map driverParamsObjMap = new HashMap();
 	for(Object key : engineInstance.getAnalyticalDrivers().keySet()){
 		if(key instanceof String){
 			String value = request.getParameter((String)key);
@@ -92,6 +93,10 @@
 		
 		List<BIObjectParameter> bIObjectParameters = objectParameterDAO.loadBIObjectParametersById(docId);
 		for(BIObjectParameter bIObjectParameter : bIObjectParameters){
+			JSONObject param = new JSONObject();
+			param.put("label",bIObjectParameter.getLabel());
+			param.put("url",bIObjectParameter.getParameterUrlName());
+			driverParamsObjMap.put(bIObjectParameter.getLabel(), param);
 			if(bIObjectParameter.getVisible().compareTo(1) == 0){
 				Parameter parameter = parameterDao.loadForDetailByParameterID(bIObjectParameter.getParID());
 				String parameterName = parameter.getName();
@@ -104,6 +109,7 @@
 	}
 	
 	String analyticalDriversParams = new JSONObject(driverParamsMap).toString().replaceAll("'", "\\\\'");
+	String analyticalDriversParamsObj = new JSONObject(driverParamsObjMap).toString().replaceAll("'", "\\\\'");
 	
 	List<String> outputParametersList  = engineInstance.getOutputParameters();
     String outputParameters = "{}";  

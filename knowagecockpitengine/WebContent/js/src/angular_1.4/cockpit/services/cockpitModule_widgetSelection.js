@@ -68,7 +68,10 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 					categories.push(obj)
 				}else{
 					//it is measure
-					obj["funct"] = col.aggregationSelected.toUpperCase();
+					if (col.aggregationSelected)
+						obj["funct"] = col.aggregationSelected.toUpperCase();
+					else
+						obj["funct"] = 'NONE';
 					measures.push(obj);
 				}
 			}

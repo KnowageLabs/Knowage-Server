@@ -1,6 +1,6 @@
 <md-card   class="flexCard customTableWidgetConfiguration textWidget" >
 	<md-card-content flex layout="column" class="noPadding">
-	    <md-toolbar>
+	    <md-toolbar> 
 	      <div class="md-toolbar-tools">
 	        <h2>{{translate.format(translate.load('sbi.cockpit.widget.configuration'),translate.load('sbi.cockpit.widget.text'))}}</h2>
 	        <span flex></span>
@@ -10,8 +10,10 @@
 			<md-tabs flex md-border-bottom>
 		      
 				<md-tab label="{{translate.load('sbi.cockpit.widget.text.editor')}}">
-					<md-content layout-fill class="noPadding" >
-						<wysiwyg-edit content="localModel.content.text" config="editorConfig"></wysiwyg-edit>
+					<md-content class="noPadding" layout="row" >
+						<!-- <wysiwyg-edit content="localModel.content.text" config="editorConfig" ng-content="editorCss.css" flex="66"></wysiwyg-edit>--> 
+						<wysiwyg-edit content="localModel.content.text" config="editorConfig" ng-content="editorCss.css" flex></wysiwyg-edit> 
+						<cockpit-text-configuration editor-text="localModel.content.text" ng-model-shared="localModel">
 				    </md-content>
 		        </md-tab>
 		        <md-tab label="{{translate.load('sbi.cockpit.style')}}">
@@ -40,6 +42,10 @@
 			        </cockpit-style-custom-widget-configurator>
 		        	</cockpit-style-configurator>
 		        </md-tab>
+		        
+		        <md-tab label="{{translate.load('sbi.cockpit.dataset')}}">
+		   			<dataset-selector ng-model="localModel.datasetId" on-change="handleEvent('datasetChanged',dsId)"></dataset-selector>  	
+		     	</md-tab>
 	      	</md-tabs>
 	    </md-content>
     </md-card-content>

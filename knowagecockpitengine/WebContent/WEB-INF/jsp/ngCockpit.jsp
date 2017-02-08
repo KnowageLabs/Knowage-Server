@@ -187,6 +187,10 @@ angular.module("cockpitModule").factory("cockpitModule_analyticalDrivers",functi
 	return ad;
 });
 
+angular.module("cockpitModule").factory("cockpitModule_analyticalDriversUrls",function(){
+	var ad = <%= analyticalDriversParamsObj %>
+	return ad;
+});
 
 
 
