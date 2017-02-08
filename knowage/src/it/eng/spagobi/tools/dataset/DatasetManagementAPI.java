@@ -1748,6 +1748,8 @@ public class DatasetManagementAPI {
 
 				if (!isCalculatedColumn) {
 					notCalculatedColumns.add(columnName);
+				}
+				if (!isCalculatedColumn || !isRealtime) {
 					if (hasAlias) {
 						columnName += " AS " + aliasName;
 					}
