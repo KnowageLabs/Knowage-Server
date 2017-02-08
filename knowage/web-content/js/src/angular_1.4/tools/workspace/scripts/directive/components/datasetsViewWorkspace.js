@@ -945,7 +945,8 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		params.isTech=false;
 		params.showDerivedDataset=false;
 		params.ckanDs=true;
-		params.ckanFilter="NOFILTER";
+		//params.ckanFilter="NOFILTER";
+		params.ckanFilter="USA";
 		params.showOnlyOwner=true;
 		params.ckanOffset=0;
 		params.ckanRepository=repo.url;
