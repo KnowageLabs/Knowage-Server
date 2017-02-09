@@ -49,6 +49,7 @@ import it.eng.knowage.meta.model.olap.Hierarchy;
 import it.eng.knowage.meta.model.olap.Level;
 import it.eng.knowage.meta.model.olap.OlapModel;
 import it.eng.knowage.meta.model.physical.PhysicalColumn;
+import it.eng.knowage.meta.model.physical.PhysicalForeignKey;
 import it.eng.knowage.meta.model.physical.PhysicalModel;
 import it.eng.knowage.meta.model.physical.PhysicalTable;
 import it.eng.knowage.meta.model.serializer.EmfXmiSerializer;
@@ -228,8 +229,8 @@ public class MetaService extends AbstractSpagoBIResource {
 	}
 
 	@POST
-	@Path("/addBusinessModel")
-	public Response addBusinessModel(@Context HttpServletRequest req) {
+	@Path("/addBusinessClass")
+	public Response addBusinessClass(@Context HttpServletRequest req) {
 		try {
 			JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
 			;
@@ -242,7 +243,7 @@ public class MetaService extends AbstractSpagoBIResource {
 			JSONObject json = jsonRoot.getJSONObject("data");
 			ObjectMapper mapper = new ObjectMapper();
 			JsonNode newBM = mapper.readTree(json.toString());
-			applyBusinessModel(newBM, model);
+			applyBusinessClass(newBM, model);
 
 			JSONObject jsonModel = createJson(model);
 			JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
@@ -1029,7 +1030,7 @@ public class MetaService extends AbstractSpagoBIResource {
 		}
 	}
 
-	private void applyBusinessModel(JsonNode newBM, Model model) {
+	private void applyBusinessClass(JsonNode newBM, Model model) {
 		String name = newBM.get("name").textValue();
 		String description = newBM.get("description").textValue();
 		String table = newBM.get("physicalModel").textValue();
@@ -1046,7 +1047,6 @@ public class MetaService extends AbstractSpagoBIResource {
 		bt.setDescription(description);
 		bt.setPhysicalTable(pt);
 		bt.setDescription(description);
-		new BusinessModelInitializer().getPropertiesInitializer().addProperties(bt);
 		BusinessModelInitializer businessModelInitializer = new BusinessModelInitializer();
 
 		while (colIterator.hasNext()) {
@@ -1054,6 +1054,32 @@ public class MetaService extends AbstractSpagoBIResource {
 			String colName = col.textValue();
 			businessModelInitializer.addColumn(pt.getColumn(colName), bt);
 		}
+
+		// adding table identifier if requested
+		if (pt.getPrimaryKey() != null) {
+			businessModelInitializer.addIdentifier(bt, bm);
+		}
+
+		businessModelInitializer.getPropertiesInitializer().addProperties(bt);
+
+		// add outcome relationship
+		List<PhysicalForeignKey> physicalForeignKeys = bt.getPhysicalTable().getForeignKeys();
+		for (PhysicalForeignKey foreignKey : physicalForeignKeys) {
+			for (BusinessTable businessTable : bm.getBusinessTables()) {
+				businessModelInitializer.addRelationship(bt, businessTable, foreignKey);
+			}
+		}
+
+		// add income relationship
+		for (BusinessTable businessTable : bm.getBusinessTables()) {
+			if (businessTable == bt)
+				continue;
+			List<PhysicalForeignKey> foreignKeys = businessTable.getPhysicalTable().getForeignKeys();
+			for (PhysicalForeignKey foreignKey : foreignKeys) {
+				businessModelInitializer.addRelationship(businessTable, bt, foreignKey);
+			}
+		}
+
 	}
 
 	private Model getModelWeb(String modelName, HttpServletRequest req) {

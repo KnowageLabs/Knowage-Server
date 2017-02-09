@@ -2,23 +2,23 @@
 	<form name="newBMForm" layout="column" flex>
 		<md-toolbar>
 			<div class="md-toolbar-tools">
-				<h2>{{translate.load("sbi.meta.new.businessmodel")}}</h2>
+				<h2>{{translate.load("sbi.meta.new.businessclass")}}</h2>
 			</div>
 		</md-toolbar>
 		<md-dialog-content flex layout="column"> 
 		 <div class="md-dialog-content" layout="column" flex>
-				<md-input-container    class="md-block"  >
-					<label>{{translate.load("sbi.generic.name")}}</label>
-					<input ng-model="tmpBnssModel.name" required>
-				</md-input-container>
 				<md-input-container   class="md-block" >
-					<label>{{translate.load("sbi.meta.model.physical")}}</label>
+					<label>{{translate.load("sbi.meta.table.physical")}}</label>
 					<md-select ng-model="tmpBnssModel.physicalModel" ng-model-options="{trackBy:'$value.name'}" ng-change="changePhYModel()">
 						<md-option ng-repeat="phTable in physicalModel" ng-value="phTable">
 							{{phTable.name}}
 						</md-option>
 					</md-select>
 				</md-input-container>
+				<md-input-container    class="md-block"  >
+					<label>{{translate.load("sbi.generic.name")}}</label>
+					<input ng-model="tmpBnssModel.name" required>
+				</md-input-container>				
 			
 			 <md-input-container class="md-block">
 				<label>Description**</label>

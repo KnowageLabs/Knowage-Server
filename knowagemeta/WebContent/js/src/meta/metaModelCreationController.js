@@ -220,10 +220,10 @@ function metaModelCreationBusinessControllerFunction($scope, sbiModule_translate
 
 	$scope.addBusinessModel=function(){
 		$mdDialog.show({
-			controller: addBusinessModelController,
+			controller: addBusinessClassController,
 			preserveScope: true,
 			locals: {businessModel:$scope.meta.businessModels, physicalModel: $scope.meta.physicalModels},
-			templateUrl:sbiModule_config.contextName + '/js/src/meta/templates/addBusinessModel.jsp',
+			templateUrl:sbiModule_config.contextName + '/js/src/meta/templates/addBusinessClass.jsp',
 			clickOutsideToClose:false,
 			escapeToClose :false,
 			fullscreen: true
