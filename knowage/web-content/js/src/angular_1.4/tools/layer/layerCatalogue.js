@@ -127,7 +127,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 		if($scope.flag){
 
 			//case: modify layer
-			if($scope.selectedLayer.layerFile.file == null || $scope.selectedLayer.layerFile.file == undefined){ //.file added
+			if($scope.selectedLayer.layerFile == undefined || $scope.selectedLayer.layerFile.file == null || $scope.selectedLayer.layerFile.file == undefined){ //.file added
 				//modify layer without upload file
 				sbiModule_restServices.put("layers", '', $scope.selectedLayer).success(
 
