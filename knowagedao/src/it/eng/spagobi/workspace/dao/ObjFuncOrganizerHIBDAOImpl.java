@@ -63,7 +63,7 @@ public class ObjFuncOrganizerHIBDAOImpl extends AbstractHibernateDAO implements 
 			tx = aSession.beginTransaction();
 
 			Query hibQuery = aSession.createQuery(" from SbiObjFuncOrganizer");
-
+			
 			List hibList = hibQuery.list();
 			Iterator it = hibList.iterator();
 
@@ -299,6 +299,7 @@ public class ObjFuncOrganizerHIBDAOImpl extends AbstractHibernateDAO implements 
 
 		SbiObjects sbiObj = hibObj.getId().getSbiObjects();
 		toReturn.setBiObjId(sbiObj.getBiobjId());
+		toReturn.setPreviewFile(sbiObj.getPreviewFile());
 		toReturn.setDocumentLabel(sbiObj.getLabel());
 		toReturn.setDocumentName(sbiObj.getName());
 		toReturn.setDocumentDescription(sbiObj.getDescr());
