@@ -189,7 +189,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 			fd.append('data', angular.toJson($scope.selectedLayer));
 			fd.append('layerFile', $scope.selectedLayer.layerFile.file); //file added
 
-			if($scope.selectedLayer.layerFile.file == null || $scope.selectedLayer.layerFile.file == undefined){
+			if($scope.selectedLayer.layerFile == undefined || $scope.selectedLayer.layerFile.file == null || $scope.selectedLayer.layerFile.file == undefined){
 				//add layer without upload file
 				sbiModule_restServices.post("layers",'',$scope.selectedLayer).success(
 						function(data, status, headers, config) {
