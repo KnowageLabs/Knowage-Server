@@ -77,7 +77,8 @@ public class CrossTab {
 	public static final String SUBTOTAL = "SubTotal";
 
 	private static final String PATH_SEPARATOR = "_S_";
-	private static final String DATA_MATRIX_NA = "NA";
+	// private static final String DATA_MATRIX_NA = "NA";
+	private static final String DATA_MATRIX_NA = "";
 	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
 	private static final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
