@@ -12,6 +12,7 @@ import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
@@ -19,6 +20,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -53,6 +55,17 @@ public class DocumentExecutionSnapshot extends AbstractSpagoBIResource {
 		resultAsMap.put("schedulers", snapshotsList);
 		resultAsMap.put("urlPath", GeneralUtilities.getSpagoBIProfileBaseUrl(this.getUserProfile().getUserUniqueIdentifier().toString()));
 		return Response.ok(resultAsMap).build();
+	}
+	@GET
+	@Path("/getSnapshootBySchedulation")
+	public Map<String, Map<Integer,List<Snapshot>>> getSnapshoots(@QueryParam("schedulation") String schedulation) {
+		try {
+			ISnapshotDAO snapdao = DAOFactory.getSnapshotDAO();
+			return snapdao.getSnapshotsBySchedulation(schedulation);
+		} catch (EMFUserError e) {
+			logger.error(e);
+			throw new SpagoBIRestServiceException(getLocale(), e);
+		}
 	}
 
 	@GET

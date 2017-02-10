@@ -536,6 +536,7 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 						dispatchContext.setParametersMap(parametersMap);
 						dispatchContext.setTotalNumberOfDocumentsToDispatch(documentLabels.length);
 						dispatchContext.setIndexNumberOfDocumentToDispatch(documentIndex);
+						dispatchContext.setSchedulationStartDate(startSchedule);
 
 						// unique mail is calculated one for all
 						dispatchContext.setGlobalUniqueMail(uniqueMailForAll);

@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,47 +11,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.tools.scheduler.jobs;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.mail.Authenticator;
-import javax.mail.Message;
-import javax.mail.Multipart;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-
-import org.apache.commons.validator.GenericValidator;
-import org.apache.log4j.Logger;
-import org.quartz.Job;
-import org.quartz.JobDataMap;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
@@ -94,35 +58,71 @@ import it.eng.spagobi.tools.scheduler.utils.BIObjectParametersIterator;
 import it.eng.spagobi.tools.scheduler.utils.JavaClassDestination;
 import it.eng.spagobi.tools.scheduler.utils.SchedulerUtilities;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.mail.Authenticator;
+import javax.mail.Message;
+import javax.mail.Multipart;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+
+import org.apache.commons.validator.GenericValidator;
+import org.apache.log4j.Logger;
+import org.quartz.Job;
+import org.quartz.JobDataMap;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+
 
 public class CopyOfExecuteBIDocumentJob implements Job {
 
-	static private Logger logger = Logger.getLogger(CopyOfExecuteBIDocumentJob.class);	
+	static private Logger logger = Logger.getLogger(CopyOfExecuteBIDocumentJob.class);
 
+	@Override
 	public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
 		IEngUserProfile profile;
 		JobDataMap jobDataMap;
-		
+
 		// documentLabel__num this is necessary because the same document can be added to one scheduled activity more than one time
 		String documentInstanceName;
 		String documentLabel;
-		
+
 		// par1=val1&par2=val2... for parameters already set in scheduled activity's configuration
 		String inputParametersQueryString;
-		
+
 		IBIObjectDAO biobjdao;
 		BIObject biobj;
 		ExecutionController executionController;
 		ExecutionProxy executionProxy;
 		EventsManager eventManager;
-		
+
 		logger.debug("IN");
-		
+
 		try {
 			profile = UserProfile.createSchedulerUserProfile();
 			jobDataMap = jobExecutionContext.getMergedJobDataMap();
 			biobjdao = DAOFactory.getBIObjectDAO();
-			
+
 			String doclabelsConcat = jobDataMap.getString("documentLabels");
 			String[] docLabels = doclabelsConcat.split(",");
 			Iterator itr = jobDataMap.keySet().iterator();
@@ -131,7 +131,7 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 				Object value = jobDataMap.get(key);
 				logger.debug("jobDataMap parameter [" + key + "] is equal to [" + value + "]");
 			}
-			
+
 			long startSchedule = System.currentTimeMillis();
 			logger.debug("Scheduled activity contains [" + docLabels.length + "] documnt(s)");
 
@@ -139,32 +139,32 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 				documentInstanceName = docLabels[ind];
 				documentLabel = documentInstanceName.substring(0, documentInstanceName.lastIndexOf("__"));
 				logger.debug("Processing document [" + (ind+1) + "] with label [" + documentLabel + "] ...");
-				
+
 				inputParametersQueryString = jobDataMap.getString(documentInstanceName);
 				logger.debug("Input parameters query string for documet [" + documentLabel + "] is equal to [" + inputParametersQueryString + "]");
-				
+
 				// load bidocument
 				biobj = biobjdao.loadBIObjectByLabel(documentLabel);
-				
+
 				// get the save options
 				String saveOptString = jobDataMap.getString("biobject_id_" + biobj.getId() + "__"+ (ind+1));
 				DispatchContext saveInfo = SchedulerUtilities.decodeDispatchContext(saveOptString);
-				
-				// create the execution controller 
+
+				// create the execution controller
 				executionController = new ExecutionController();
 				executionController.setBiObject(biobj);
-				
-				// fill parameters 
+
+				// fill parameters
 				executionController.refreshParameters(biobj, inputParametersQueryString);
 
 				String iterativeParametersString = jobDataMap.getString(documentInstanceName + "_iterative");
 				logger.debug("Iterative parameter configuration for documet [" + documentLabel + "] is equal to [" + iterativeParametersString + "]");
 				setIterativeParameters(biobj, iterativeParametersString);
-				
+
 				String loadAtRuntimeParametersString = jobDataMap.getString(documentInstanceName + "_loadAtRuntime");
 				logger.debug("Runtime parameter configuration for documet [" + documentLabel + "] is equal to [" + loadAtRuntimeParametersString + "]");
 				setLoadAtRuntimeParameters(biobj, loadAtRuntimeParametersString);
-				
+
 				String useFormulaParametersString = jobDataMap.getString(documentInstanceName + "_useFormula");
 				logger.debug("Formuula based parameter configuration for documet [" + documentLabel + "] is equal to [" + useFormulaParametersString + "]");
 				setUseFormulaParameters(biobj, useFormulaParametersString);
@@ -187,28 +187,28 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 					dataSet.loadData();
 					 folderDispatchDataSotre = dataSet.getDataStore();
 				}
-				
+
 				eventManager = EventsManager.getInstance();
 				List roles = DAOFactory.getBIObjectDAO().getCorrectRolesForExecution(biobj.getId());
-				
-				String startExecMsg = "${scheduler.startexecsched} " + biobj.getName();	
+
+				String startExecMsg = "${scheduler.startexecsched} " + biobj.getName();
 				Integer idEvent = eventManager.registerEvent("Scheduler", startExecMsg, "", roles);
 
-				
+
 				Map tempParMap = new HashMap();
 				BIObjectParametersIterator objectParametersIterator = new BIObjectParametersIterator(biobj.getBiObjectParameters());
 				while (objectParametersIterator.hasNext()) {
 					List parameters = (List) objectParametersIterator.next();
 					biobj.setBiObjectParameters(parameters);
-				
+
 
 					StringBuffer toBeAppendedToName = new StringBuffer();
 					StringBuffer toBeAppendedToDescription = new StringBuffer(" [");
 					Iterator parametersIt = parameters.iterator();
 					while (parametersIt.hasNext()) {
-						
+
 						BIObjectParameter aParameter = (BIObjectParameter) parametersIt.next();
-						
+
 						tempParMap.put(aParameter.getParameterUrlName(), aParameter.getParameterValuesAsString());
 						if (aParameter.isIterative()) {
 							toBeAppendedToName.append("_" + aParameter.getParameterValuesAsString());
@@ -230,10 +230,10 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 					sdf.applyPattern("dd:MM:yyyy");
 					String dateStr = sdf.format(date);
 					toBeAppendedToName.append("_" + dateStr);
-					
-					
 
-					//check parameters value: if a parameter hasn't value but isn't mandatory the process 
+
+
+					//check parameters value: if a parameter hasn't value but isn't mandatory the process
 					//must go on and so hasValidValue is set to true
 					List tmpBIObjectParameters = biobj.getBiObjectParameters();
 					Iterator it = tmpBIObjectParameters.iterator();
@@ -251,7 +251,7 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 								}
 							}
 						}
-						if (!isMandatory && 
+						if (!isMandatory &&
 								(aBIObjectParameter.getParameterValues() == null  || aBIObjectParameter.getParameterValues().size() == 0)) {
 							aBIObjectParameter.setParameterValues(new ArrayList());
 							aBIObjectParameter.setHasValidValues(true);
@@ -261,13 +261,13 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 
 					// exec the document only if all its parameter are filled
 					if(executionController.directExecution()) {
-						
+
 						logger.debug("Save as snapshot is eual to [" + saveInfo.isSnapshootDispatchChannelEnabled() + "]");
 						logger.debug("Dispatch to a distribution list is eual to [" + saveInfo.isDistributionListDispatchChannelEnabled() + "]");
 						logger.debug("Dispatch to a java class is eual to [" + saveInfo.isJavaClassDispatchChannelEnabled() + "]");
 						logger.debug("Dispatch by mail-list is eual to [" + saveInfo.isMailDispatchChannelEnabled() + "]");
 						logger.debug("Dispatch by folder-list is eual to [" + saveInfo.isFunctionalityTreeDispatchChannelEnabled() + "]");
-						
+
 						if(!saveInfo.isSnapshootDispatchChannelEnabled() && !saveInfo.isDistributionListDispatchChannelEnabled() && !saveInfo.isJavaClassDispatchChannelEnabled()) {
 							boolean noValidDispatchTarget = false;
 							if(saveInfo.isMailDispatchChannelEnabled()) {
@@ -278,8 +278,8 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 								}else{
 									noValidDispatchTarget = true;
 								}
-							} 
-							
+							}
+
 							if(saveInfo.isFunctionalityTreeDispatchChannelEnabled()) {
 								List storeInFunctionalities = findFolders(saveInfo, biobj, folderDispatchDataSotre);
 								if(storeInFunctionalities != null && !storeInFunctionalities.isEmpty()) {
@@ -289,7 +289,7 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 									noValidDispatchTarget = true;
 								}
 							}
-							
+
 							if(noValidDispatchTarget) {
 								logger.debug("No valid dispatch target for document [" + (ind+1) + "] with label [" + documentInstanceName + "] and parameters [" + toBeAppendedToDescription +"]");
 								logger.info("Document [" + (ind+1) + "] with label [" + documentInstanceName + "] and parameters " + toBeAppendedToDescription + " not executed: no valid dispatch target");
@@ -303,10 +303,10 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 
 						executionProxy = new ExecutionProxy();
 						executionProxy.setBiObject(biobj);
-						
-						
-						
-						
+
+
+
+
 						logger.info("Executing document [" + (ind+1) + "] with label [" + documentInstanceName + "] and parameters " + toBeAppendedToDescription +" ...");
 						long start = System.currentTimeMillis();
 						byte[] response = executionProxy.exec(profile, "SCHEDULATION", null);
@@ -315,11 +315,11 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 						}
 						String retCT = executionProxy.getReturnedContentType();
 						String fileextension = executionProxy.getFileExtensionFromContType(retCT);
-						long end = System.currentTimeMillis();			
+						long end = System.currentTimeMillis();
 						long elapsed = (end - start)/1000;
 						logger.info("Document [" + (ind+1) + "] with label [" + documentInstanceName + "] and parameters " + toBeAppendedToDescription +" executed in [" + elapsed + "]");
-						
-						
+
+
 						if(saveInfo.isSnapshootDispatchChannelEnabled()) {
 							saveAsSnap(saveInfo, biobj, response, toBeAppendedToName.toString(), toBeAppendedToDescription.toString(),profile);
 						}
@@ -357,13 +357,13 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 						"maybe some prameters are not filled ");
 					}
 				}
-				
+
 				String endExecMsg = "${scheduler.endexecsched} " + biobj.getName();
 				eventManager.registerEvent("Scheduler", endExecMsg, "", roles);
 
 			}
 
-			
+
 			long endSchedule = System.currentTimeMillis();
 			long elapsedSchedule = (endSchedule-startSchedule)/1000;
 			logger.info("Scheduled activity succesfully ended in [" + elapsedSchedule +"] sec.");
@@ -616,7 +616,8 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 					logger.error("Error while deleting object snapshots", e);
 				}
 			}
-			snapDao.saveSnapshot(response, biobj.getId(), snapName, snapDesc, null);	
+
+			snapDao.saveSnapshot(response, biobj.getId(), snapName, snapDesc, null,sInfo.getSchedulationStartDate(),sInfo.getJobExecutionContext().getTrigger().getJobName(), sInfo.getJobExecutionContext().getTrigger().getName());
 		} catch (Exception e) {
 			logger.error("Error while saving schedule result as new snapshot", e);
 		}finally{
@@ -649,7 +650,7 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 			if(engines.isEmpty()) {
 				throw new Exception(" No suitable engines for the new document");
 			}
-			Engine engine = (Engine)engines.get(0);		
+			Engine engine = (Engine)engines.get(0);
 			// load the template
 			ObjTemplate objTemp = new ObjTemplate();
 			objTemp.setActive(new Boolean(true));
@@ -718,7 +719,7 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 			String smtphost = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.smtphost");
 		    String smtpport = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.smtpport");
 		    int smptPort=25;
-		    
+
 			if( (smtphost==null) || smtphost.trim().equals(""))
 				throw new Exception("Smtp host not configured");
 			if( (smtpport==null) || smtpport.trim().equals("")){
@@ -726,23 +727,23 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 			}else{
 				smptPort=Integer.parseInt(smtpport);
 			}
-				
-		    
+
+
 			String from = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.from");
 			if( (from==null) || from.trim().equals(""))
 				from = "spagobi.scheduler@eng.it";
 			String user = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.user");
 			if( (user==null) || user.trim().equals("")){
-				logger.debug("Smtp user not configured");	
+				logger.debug("Smtp user not configured");
 				user=null;
 			}
 			//	throw new Exception("Smtp user not configured");
 			String pass = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.scheduler.password");
 			if( (pass==null) || pass.trim().equals("")){
-			logger.debug("Smtp password not configured");	
+			logger.debug("Smtp password not configured");
 			}
 			//	throw new Exception("Smtp password not configured");
-			
+
 			String mailSubj = sInfo.getMailSubj();
 			mailSubj = StringUtilities.substituteParametersInString(mailSubj, parMap, null, false);
 
@@ -758,10 +759,10 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 			Properties props = new Properties();
 			props.put("mail.smtp.host", smtphost);
 			props.put("mail.smtp.port", smptPort);
-			
+
 			// open session
 			Session session=null;
-			
+
 			// create autheticator object
 			Authenticator auth = null;
 			if (user!=null) {
@@ -773,7 +774,7 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 				session = Session.getDefaultInstance(props);
 				logger.error("Session.getDefaultInstance(props)");
 			}
-			
+
 			// create a message
 			Message msg = new MimeMessage(session);
 			// set the from and to address
@@ -943,15 +944,15 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 				String recipient = null;
 				IRecord record = (IRecord)it.next();
 				// the parameter value is used to filter on the first dataset field
-				IField valueField = (IField) record.getFieldAt(0);
+				IField valueField = record.getFieldAt(0);
 				Object valueObj = valueField.getValue();
 				String value = null;
-				if (valueObj != null) 
+				if (valueObj != null)
 					value = valueObj.toString();
 				if (codeValue.equals(value)) {
 					logger.debug("Found value [" + codeValue + "] on the first field of a record of the dataset.");
 					// recipient address is on the second dataset field
-					IField recipientField = (IField) record.getFieldAt(1);
+					IField recipientField = record.getFieldAt(1);
 					Object recipientFieldObj = recipientField.getValue();
 					if (recipientFieldObj != null) {
 						recipient = recipientFieldObj.toString();
@@ -986,12 +987,12 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 		} catch (Exception e) {
 			logger.error(e);
 		}
-		
+
 		toReturn = folders;
 		logger.debug("OUT: returning " + toReturn);
 		return toReturn;
 	}
-	
+
 	private List findFoldersFromFixedList(DispatchContext info) throws Exception {
 		logger.debug("IN");
 		List folders = new ArrayList();
@@ -1044,21 +1045,21 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 
 			codeValue = (String) values.get(0);
 			logger.debug("Using value [" + codeValue + "] for dataset filtering...");
-			
+
 			Iterator it = dataStore.iterator();
 			while (it.hasNext()) {
 				String folder = null;
 				IRecord record = (IRecord)it.next();
 				// the parameter value is used to filter on the first dataset field
-				IField valueField = (IField) record.getFieldAt(0);
+				IField valueField = record.getFieldAt(0);
 				Object valueObj = valueField.getValue();
 				String value = null;
-				if (valueObj != null) 
+				if (valueObj != null)
 					value = valueObj.toString();
 				if (codeValue.equals(value)) {
 					logger.debug("Found value [" + codeValue + "] on the first field of a record of the dataset.");
 					// recipient address is on the second dataset field
-					IField folderField = (IField) record.getFieldAt(1);
+					IField folderField = record.getFieldAt(1);
 					Object folderFieldObj = folderField.getValue();
 					if (folderFieldObj != null) {
 						folder = folderFieldObj.toString();
@@ -1082,7 +1083,7 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 		logger.debug("OUT");
 		return folders;
 	}
-	
+
 	private void sendToDl(DispatchContext sInfo, BIObject biobj, byte[] response, String retCT, String fileExt, String toBeAppendedToName, String toBeAppendedToDescription) {
 		logger.debug("IN");
 		try{
@@ -1115,8 +1116,8 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 					Email e = (Email) j.next();
 					String email = e.getEmail();
 					String userTemp = e.getUserId();
-					IEngUserProfile userProfile = GeneralUtilities.createNewUserProfile(userTemp);				
-					if(ObjectsAccessVerifier.canSee(biobj, userProfile))	{				
+					IEngUserProfile userProfile = GeneralUtilities.createNewUserProfile(userTemp);
+					if(ObjectsAccessVerifier.canSee(biobj, userProfile))	{
 						if (j.hasNext()) {mailTos = mailTos+email+",";}
 						else {mailTos = mailTos+email;}
 					}
@@ -1125,7 +1126,7 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 			}
 
 
-			if( (mailTos==null) || mailTos.trim().equals("")) {	
+			if( (mailTos==null) || mailTos.trim().equals("")) {
 				throw new Exception("No recipient address found");
 			}
 
@@ -1182,6 +1183,7 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 		private String username = "";
 		private String password = "";
 
+		@Override
 		public PasswordAuthentication getPasswordAuthentication()
 		{
 			return new PasswordAuthentication(username, password);
@@ -1200,19 +1202,23 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 		String name = null;
 		String contentType = null;
 
+		@Override
 		public String getContentType() {
 			return contentType;
 		}
 
+		@Override
 		public InputStream getInputStream() throws IOException {
 			ByteArrayInputStream bais = new ByteArrayInputStream(content);
 			return bais;
 		}
 
+		@Override
 		public String getName() {
 			return name;
 		}
 
+		@Override
 		public OutputStream getOutputStream() throws IOException {
 			return null;
 		}

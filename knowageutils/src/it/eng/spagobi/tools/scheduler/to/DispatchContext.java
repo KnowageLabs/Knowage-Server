@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -126,6 +126,8 @@ public class DispatchContext implements Serializable {
 	// property to set name of zip file and of containedFile
 	private String zipMailName;
 	private String containedFileName;
+
+	private long schedulationStartDate;
 
 	public boolean isZipMailDocument() {
 		return zipMailDocument;
@@ -276,7 +278,7 @@ public class DispatchContext implements Serializable {
 
 	/**
 	 * Removes the dl id.
-	 * 
+	 *
 	 * @param dlId
 	 *            the dl id
 	 */
@@ -286,7 +288,7 @@ public class DispatchContext implements Serializable {
 
 	/**
 	 * Adds the dl id.
-	 * 
+	 *
 	 * @param dlId
 	 *            the dl id
 	 */
@@ -296,7 +298,7 @@ public class DispatchContext implements Serializable {
 
 	/**
 	 * Gets the document description.
-	 * 
+	 *
 	 * @return the document description
 	 */
 	public String getDocumentDescription() {
@@ -305,7 +307,7 @@ public class DispatchContext implements Serializable {
 
 	/**
 	 * Sets the document description.
-	 * 
+	 *
 	 * @param documentDescription
 	 *            the new document description
 	 */
@@ -315,7 +317,7 @@ public class DispatchContext implements Serializable {
 
 	/**
 	 * Gets the document history length.
-	 * 
+	 *
 	 * @return the document history length
 	 */
 	public String getDocumentHistoryLength() {
@@ -324,7 +326,7 @@ public class DispatchContext implements Serializable {
 
 	/**
 	 * Sets the document history length.
-	 * 
+	 *
 	 * @param documentHistoryLength
 	 *            the new document history length
 	 */
@@ -334,7 +336,7 @@ public class DispatchContext implements Serializable {
 
 	/**
 	 * Gets the document name.
-	 * 
+	 *
 	 * @return the document name
 	 */
 	public String getDocumentName() {
@@ -343,7 +345,7 @@ public class DispatchContext implements Serializable {
 
 	/**
 	 * Sets the document name.
-	 * 
+	 *
 	 * @param documentName
 	 *            the new document name
 	 */
@@ -353,7 +355,7 @@ public class DispatchContext implements Serializable {
 
 	/**
 	 * Gets the mail tos.
-	 * 
+	 *
 	 * @return the mail tos
 	 */
 	public String getMailTos() {
@@ -362,7 +364,7 @@ public class DispatchContext implements Serializable {
 
 	/**
 	 * Sets the mail tos.
-	 * 
+	 *
 	 * @param mailTos
 	 *            the new mail tos
 	 */
@@ -372,7 +374,7 @@ public class DispatchContext implements Serializable {
 
 	/**
 	 * Gets the mail subj.
-	 * 
+	 *
 	 * @return the mail subj
 	 */
 	public String getMailSubj() {
@@ -381,7 +383,7 @@ public class DispatchContext implements Serializable {
 
 	/**
 	 * Sets the mail subj.
-	 * 
+	 *
 	 * @param mailSubj
 	 *            the new mail subj
 	 */
@@ -391,7 +393,7 @@ public class DispatchContext implements Serializable {
 
 	/**
 	 * Gets the mail txt.
-	 * 
+	 *
 	 * @return the mail txt
 	 */
 	public String getMailTxt() {
@@ -400,7 +402,7 @@ public class DispatchContext implements Serializable {
 
 	/**
 	 * Sets the mail txt.
-	 * 
+	 *
 	 * @param mailTxt
 	 *            the new mail txt
 	 */
@@ -410,7 +412,7 @@ public class DispatchContext implements Serializable {
 
 	/**
 	 * Gets the snapshot description.
-	 * 
+	 *
 	 * @return the snapshot description
 	 */
 	public String getSnapshotDescription() {
@@ -419,7 +421,7 @@ public class DispatchContext implements Serializable {
 
 	/**
 	 * Sets the snapshot description.
-	 * 
+	 *
 	 * @param snapshotDescription
 	 *            the new snapshot description
 	 */
@@ -429,7 +431,7 @@ public class DispatchContext implements Serializable {
 
 	/**
 	 * Gets the snapshot history length.
-	 * 
+	 *
 	 * @return the snapshot history length
 	 */
 	public String getSnapshotHistoryLength() {
@@ -438,7 +440,7 @@ public class DispatchContext implements Serializable {
 
 	/**
 	 * Sets the snapshot history length.
-	 * 
+	 *
 	 * @param snapshotHistoryLength
 	 *            the new snapshot history length
 	 */
@@ -448,7 +450,7 @@ public class DispatchContext implements Serializable {
 
 	/**
 	 * Gets the snapshot name.
-	 * 
+	 *
 	 * @return the snapshot name
 	 */
 	public String getSnapshotName() {
@@ -457,7 +459,7 @@ public class DispatchContext implements Serializable {
 
 	/**
 	 * Sets the snapshot name.
-	 * 
+	 *
 	 * @param snapshotName
 	 *            the new snapshot name
 	 */
@@ -467,7 +469,7 @@ public class DispatchContext implements Serializable {
 
 	/**
 	 * Gets the functionality ids.
-	 * 
+	 *
 	 * @return the functionality ids
 	 */
 	public String getFunctionalityIds() {
@@ -476,7 +478,7 @@ public class DispatchContext implements Serializable {
 
 	/**
 	 * Sets the functionality ids.
-	 * 
+	 *
 	 * @param functionalityIds
 	 *            the new functionality ids
 	 */
@@ -486,7 +488,7 @@ public class DispatchContext implements Serializable {
 
 	/**
 	 * Gets the dl ids.
-	 * 
+	 *
 	 * @return the dl ids
 	 */
 	public List getDlIds() {
@@ -495,7 +497,7 @@ public class DispatchContext implements Serializable {
 
 	/**
 	 * Sets the dl ids.
-	 * 
+	 *
 	 * @param dlIds
 	 *            the new dl ids
 	 */
@@ -505,7 +507,7 @@ public class DispatchContext implements Serializable {
 
 	/**
 	 * Gets the biobj id.
-	 * 
+	 *
 	 * @return the biobj id
 	 */
 	public int getBiobjId() {
@@ -514,7 +516,7 @@ public class DispatchContext implements Serializable {
 
 	/**
 	 * Sets the biobj id.
-	 * 
+	 *
 	 * @param biobjId
 	 *            the new biobj id
 	 */
@@ -781,4 +783,14 @@ public class DispatchContext implements Serializable {
 	public void setDocumentLabels(String documentLabels) {
 		this.documentLabels = documentLabels;
 	}
+
+	public long getSchedulationStartDate() {
+		return schedulationStartDate;
+	}
+
+	public void setSchedulationStartDate(long schedulationStartDate) {
+		this.schedulationStartDate = schedulationStartDate;
+	}
+
+
 }

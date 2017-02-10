@@ -44,7 +44,9 @@
         <property name="organization" type="string">
             <column name="ORGANIZATION" length="20" not-null="false" />
         </property>  			 
-  </component>
+  	 	
+  		
+  		</component>
          
         <many-to-one name="sbiObject" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects">
             <column name="biobj_id" />
@@ -68,6 +70,18 @@
         
         <property name="contentType" type="string">
             <column name="content_type" />
+        </property>
+        
+        <property name="schedulation" type="string">
+            <column name="SCHEDULATION" />
+        </property>
+
+        <property name="scheduler" type="string">
+            <column name="SCHEDULER" />
+        </property>
+        
+        <property name="schedulationStartDate" type="integer">
+            <column name="SCHEDULATION_START" />
         </property>
                 
      	<filter name="tenantFilter" condition="organization=:tenant" />  

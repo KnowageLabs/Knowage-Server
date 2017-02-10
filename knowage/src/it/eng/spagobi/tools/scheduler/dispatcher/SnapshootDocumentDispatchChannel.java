@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,22 +11,21 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.tools.scheduler.dispatcher;
-
-import java.util.List;
 
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.Snapshot;
 import it.eng.spagobi.analiticalmodel.document.dao.ISnapshotDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.tools.massiveExport.services.StartMassiveScheduleAction;
 import it.eng.spagobi.tools.scheduler.to.DispatchContext;
 import it.eng.spagobi.tools.scheduler.utils.SchedulerUtilities;
+
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -35,42 +34,46 @@ import org.apache.log4j.Logger;
  *
  */
 public class SnapshootDocumentDispatchChannel implements IDocumentDispatchChannel {
-	
+
 	private DispatchContext dispatchContext;
-	
+
 	// logger component
-	private static Logger logger = Logger.getLogger(SnapshootDocumentDispatchChannel.class); 
-	
+	private static Logger logger = Logger.getLogger(SnapshootDocumentDispatchChannel.class);
+
 	public SnapshootDocumentDispatchChannel(DispatchContext dispatchContext) {
 		this.dispatchContext = dispatchContext;
 	}
-	
+
+	@Override
 	public void setDispatchContext(DispatchContext dispatchContext) {
 		this.dispatchContext = dispatchContext;
 	}
 
+	@Override
 	public void close() {
-		
+
 	}
-	
+
+	@Override
 	public boolean canDispatch(BIObject document)  {
 		return true;
 	}
-	
+
+	@Override
 	public boolean dispatch(BIObject document, byte[] executionOutput) {
 		IEngUserProfile profile;
-		String descriptionSuffix; 
-		
+		String descriptionSuffix;
+
 		logger.debug("IN");
 		try {
 			profile = dispatchContext.getUserProfile();
 			descriptionSuffix = dispatchContext.getDescriptionSuffix();
-			
+
 			String snapName = dispatchContext.getSnapshotName();
 			if( (snapName==null) || snapName.trim().equals("")) {
 				throw new Exception("Document name not specified");
 			}
-			
+
 			if (snapName.length() > 100) {
 				logger.warn("Snapshot name [" + snapName + "] exceeds maximum length that is 100, it will be truncated");
 				snapName = snapName.substring(0, 100);
@@ -111,15 +114,16 @@ public class SnapshootDocumentDispatchChannel implements IDocumentDispatchChanne
 					logger.error("Error while deleting object snapshots", e);
 				}
 			}
-			snapDao.saveSnapshot(executionOutput, document.getId(), snapName, snapDesc, dispatchContext.getContentType());	
-			
+
+			snapDao.saveSnapshot(executionOutput, document.getId(), snapName, snapDesc, dispatchContext.getContentType(),dispatchContext.getSchedulationStartDate(),dispatchContext.getJobExecutionContext().getTrigger().getJobName(), dispatchContext.getJobExecutionContext().getTrigger().getName());
+
 		} catch (Exception e) {
 			logger.error("Error while saving schedule result as new snapshot", e);
 			return false;
 		} finally{
 			logger.debug("OUT");
 		}
-		
+
 		return true;
 	}
 }
