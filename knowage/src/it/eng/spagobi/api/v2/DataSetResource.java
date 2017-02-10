@@ -444,7 +444,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 							}
 							IDataSet dataset = getDataSetDAO().loadDataSetByLabel(datasetLabel);
 							String filter;
-							if (realtimeDatasets.contains(datasetLabel)
+							if (realtimeDatasets.contains(datasetLabel) && !(dataset.isPersisted() && !dataset.isPersistedHDFS()) && !(dataset.isFlatDataset())
 									&& (!DatasetManagementAPI.isJDBCDataSet(dataset) || SqlUtils.isBigDataDialect(dataset.getDataSource().getHibDialectName()))) {
 								filter = DataStore.DEFAULT_TABLE_NAME + "." + AbstractJDBCDataset.encapsulateColumnName(column, null) + " IN (" + values + ")";
 							} else {
@@ -833,7 +833,8 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 	@Path("/associations/autodetect")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Set<Similarity> autodetect(@QueryParam("top") int top, @QueryParam("threshold") double threshold, @QueryParam("aggregate") boolean aggregate,
-			@QueryParam("strategy") String strategy, @QueryParam("wait") boolean wait, @QueryParam("evaluateNumber") boolean evaluateNumber, @Context HttpServletRequest req) {
+			@QueryParam("strategy") String strategy, @QueryParam("wait") boolean wait, @QueryParam("evaluateNumber") boolean evaluateNumber,
+			@Context HttpServletRequest req) {
 		logger.debug("IN");
 		Set<Similarity> toReturn = new HashSet<>(0);
 		try {
@@ -868,7 +869,8 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 					}
 				}
 
-				SimilarityEvaluator similarityEvaluator = new SimilarityEvaluator(SimilarityStrategyFactory.createStrategyInstance(strategy), top, threshold, evaluateNumber);
+				SimilarityEvaluator similarityEvaluator = new SimilarityEvaluator(SimilarityStrategyFactory.createStrategyInstance(strategy), top, threshold,
+						evaluateNumber);
 				toReturn = similarityEvaluator.evaluate(dataSets, dataSetDomainValues, aggregate);
 
 			}
