@@ -99,14 +99,19 @@
 	ng-style="{'height':tableStyle.autoRowsHeight? 0 :tableStyle.rowsHeight}">
 	<td ng-repeat="column in tableColumns" ng-switch="column.static==true? '--STATIC--' : column.name" sglclick="bulkSelect($event,$parent.$index,column,row)" ng-dblclick="clickItem(row,column.name,getColumnValue(row,column.name),$event,$parent.$index)" context-menu  data-target='{{id}}TableContextMenu-{{$parent.$index}}-{{$index}}' class="{{column.customRecordsClass}} " 
 		ng-class="{ 'highlight': isCellSelected($parent.$index,column), 'expanded' : expanded,'tableDragBar':column.name=='--DRAG_AND_DROP--'}" ng-style="column.style==undefined ? '' :  getDynamicValue(column.style,row,column,$parent.$index)" >
-		<div ng-switch-when="--STATIC--" layout="row" layout-align="start center">
+		<div ng-switch-when="--STATIC--" ng-if="getDynamicValue(column.style,row,column,'-99') && getDynamicValue(column.style,row,column,'-99') != 0" layout="row" layout-align="start center">
 			<span  ng-if="column.template==undefined" class="textEllipsis" ng-class="getChangedValueStyle(row,column.name)" ng-bind="row[column.name]" >
-				<md-tooltip ng-if="column.hideTooltip!=true " md-delay="1000" md-direction="bottom"  >{{row[column.name]}}</md-tooltip>
+				<md-tooltip ng-if="column.hideTooltip!=true " md-delay="1000" md-direction="bottom"  >{{row[column.name]}}{{getDynamicValue(column.style,row,column,'-99')}}</md-tooltip>
 			</span>
-			<i ng-if="getDynamicValue(column.style,row,column,'-99') && row[column.name].length > getDynamicValue(column.style,row,column,'-99')" class="fa fa-search " ng-click="showFullContent($event,row[column.name])">
+			<i  class="fa fa-search " ng-if="getDynamicValue(column.style,row,column,'-99') && row[column.name].length > getDynamicValue(column.style,row,column,'-99')" ng-click="showFullContent($event,row[column.name])">
 				<md-tooltip md-delay="1000" md-direction="bottom"  >Click to show complete value</md-tooltip>
 			</i>
 		</div>
+
+			<span  ng-switch-when="--STATIC--" ng-if="!getDynamicValue(column.style,row,column,'-99')" ng-if="column.template==undefined" class="textEllipsis" ng-class="getChangedValueStyle(row,column.name)" ng-bind="row[column.name]" >
+				<md-tooltip ng-if="column.hideTooltip!=true " md-delay="1000" md-direction="bottom"  >{{row[column.name]}}</md-tooltip>
+			</span>
+
 		<span ng-switch-when="--STATIC--" ng-if="column.template!=undefined" ng-class="getChangedValueStyle(row,column.name)" build-template="column.template" ></span>
 
 		<span ng-switch-default ng-switch="allowEdit==true && row.editing==true && column.editable==true" > 
