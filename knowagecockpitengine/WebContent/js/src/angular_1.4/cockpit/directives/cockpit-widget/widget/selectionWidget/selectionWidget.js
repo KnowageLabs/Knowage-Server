@@ -23,19 +23,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 (function() {
 angular.module('cockpitModule')
-.directive('textWidgetTextRender', function ($compile,cockpitModule_utilstServices) {
-    return {
-        restrict: 'A',
-        replace: true,
-        link: function (scope, ele, attrs) {
-            scope.$watch(attrs.textWidgetTextRender, function (html) {
-            	html=cockpitModule_utilstServices.getParameterValue(html)
-                ele.html(html);
-                $compile(ele.contents())(scope);
-            });
-        }
-    };
-})
 .directive('cockpitSelectionWidget',function(cockpitModule_widgetServices,$mdDialog){
 	   return{
 		   templateUrl: baseScriptPath+ '/directives/cockpit-widget/widget/selectionWidget/templates/selectionWidgetTemplate.html',
@@ -62,13 +49,24 @@ angular.module('cockpitModule')
 });
 
 function cockpitSelectionWidgetControllerFunction($scope,cockpitModule_widgetConfigurator,$mdPanel,cockpitModule_template,cockpitModule_datasetServices,$mdDialog,sbiModule_translate,$q,sbiModule_messaging,cockpitModule_documentServices,cockpitModule_widgetSelection,cockpitModule_properties){
-
+	$scope.property={
+			style:{}
+		};
+	
 	$scope.selection = [];
 	$scope.translate = sbiModule_translate;
 	$scope.tmpSelection = [];
 	angular.copy(cockpitModule_template.configuration.aggregations,$scope.tmpSelection);
 	$scope.tmpFilters = {};
 	angular.copy(cockpitModule_template.configuration.filters,$scope.tmpFilters);
+	
+	$scope.init=function(element,width,height){
+		$scope.refreshWidget();
+	};
+	
+	$scope.refresh=function(element,width,height){
+
+	};
 	
 	$scope.filterForInitialSelection=function(obj){
 		if(!cockpitModule_properties.EDIT_MODE){
@@ -142,38 +140,35 @@ function cockpitSelectionWidgetControllerFunction($scope,cockpitModule_widgetCon
 	$scope.getSelections();
 	
 	$scope.columnTableSelection =[
-	                              {
-	                            	  label:"Dataset",
-	                            	  name:"ds",
-
-	                            	  hideTooltip:true
-	                              },
-	                              {
-	                            	  label:"Column Name",
-	                            	  name:"columnName",
-
-	                            	  hideTooltip:true
-	                              },
-	                              ,
-	                              {
-	                            	  label:"Values",
-	                            	  name:"value",
-
-	                            	  hideTooltip:true
-	                              }
-	                              ];
+	  {
+		  label:"Dataset",
+		  name:"ds",
+		  hideTooltip:true
+	  },
+	  {
+		  label:"Column Name",
+		  name:"columnName",
+		  hideTooltip:true
+	  },
+	  ,
+	  {
+		  label:"Values",
+		  name:"value",
+		  hideTooltip:true
+	  }
+    ];
 
 
 	$scope.actionsOfSelectionColumns = [
 
-	                                    {
-	                                    	icon:'fa fa-trash' ,   
-	                                    	action : function(item,event) {	
-	                                    		$scope.deleteSelection(item);
-	                                    		
-	                                    	}
-	                                    } 
-	                                    ];
+	    {
+	    	icon:'fa fa-trash' ,   
+	    	action : function(item,event) {	
+	    		$scope.deleteSelection(item);
+	    		
+	    	}
+	    } 
+    ];
 	
 	$scope.deleteSelection=function(item){
 		if(item.aggregated){
@@ -247,8 +242,7 @@ function cockpitSelectionWidgetControllerFunction($scope,cockpitModule_widgetCon
 	}
 	
 	
-	
-	// general widget event  'WIDGET_EVENT' whithout ID
+	// general widget event  'WIDGET_EVENT' without ID
 	$scope.$on('WIDGET_EVENT',function(config,eventType,config){
 		
 		switch(eventType){
@@ -262,21 +256,51 @@ function cockpitSelectionWidgetControllerFunction($scope,cockpitModule_widgetCon
 		}
 	});
 	
+		$scope.editWidget=function(index){
+			var finishEdit=$q.defer();
+			var config = {
+					attachTo:  angular.element(document.body),
+					locals: {finishEdit:finishEdit,model:$scope.ngModel},
+					controller: function($scope,finishEdit,sbiModule_translate,model,mdPanelRef,$mdToast){
+				    	  $scope.localModel = {};
+				    	  angular.copy(model,$scope.localModel);
+				    	  $scope.translate=sbiModule_translate;
+
+				    	  $scope.saveConfiguration=function(){
+				    		  angular.copy($scope.localModel,model);
+				    		  mdPanelRef.close();
+				    		  $scope.$destroy();
+				    		  finishEdit.resolve();
+
+				    	  }
+				    	  
+				    	  $scope.cancelConfiguration=function(){
+				    		  mdPanelRef.close();
+				    		  $scope.$destroy();
+				    		  finishEdit.reject();
+
+				    	  }
+				    	  
+				      },
+					disableParentScroll: true,
+					templateUrl: baseScriptPath+ '/directives/cockpit-widget/widget/selectionWidget/templates/selectionWidgetEditPropertyTemplate.html',
+					position: $mdPanel.newPanelPosition().absolute().center(),
+					fullscreen :true,
+					hasBackdrop: true,
+					clickOutsideToClose: false,
+					escapeToClose: false,
+					focusOnOpen: true,
+					preserveScope: true,
+					
+				
+			};
+
+			$mdPanel.open(config);
+			return finishEdit.promise;
+			
 		
-	
-	//----------------old code of the widget--------------
+		}
 
-	
-	
-	$scope.refresh=function(element,width,height){
-
-
-	};
-	
-	$scope.editWidget=function(index){
-
-	
-	}
 	
 };
 

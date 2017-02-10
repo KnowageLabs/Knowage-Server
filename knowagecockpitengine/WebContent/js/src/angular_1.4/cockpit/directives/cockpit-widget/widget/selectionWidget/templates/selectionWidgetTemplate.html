@@ -1,27 +1,34 @@
-<!--  <post-iframe layout-column flex ng-show="ngModel.content.datasetLabel"></post-iframe> -->
-<md-card class=" flexCard" layout="column" > 
-	<md-card-content flex="" layout="column" class="noPadding">
-		<md-toolbar class="secondaryToolbar" layout="row">
-			<h1 flex class="md-toolbar-tools">List Selections</h1>
-			<md-button  flex=10  ng-click="clearAllSelection()" >
-				 <md-icon md-font-icon="fa fa-eraser" aria-label="ClearAll"></md-icon>
-			</md-button>
-		</md-toolbar>
-		<angular-table flex 
+<div flex layout="column" ng-style="ngModel.style"> 
+	<md-toolbar class="secondaryToolbar" layout="row" ng-if="showToolbar">
+		<h1 flex class="md-toolbar-tools">{{translate.load('sbi.cockpit.selections.title')}}</h1>
+		<md-button  class="md-icon-button" ng-click="clearAllSelection()" ng-if="selection.length >0">
+			 <md-icon md-font-icon="fa fa-eraser" aria-label="ClearAll"></md-icon>
+			 <md-tooltip md-direction="bottom">{{translate.load('sbi.cockpit.selections.clearselections')}}</md-tooltip>
+		</md-button>
+	</md-toolbar>
+		
+		<angular-table
 			id='selectionTable' ng-model="selection"
+			ng-show="selection.length >0"
 			columns='columnTableSelection'
 			columns-search='["label"]'
 			no-pagination=true  speed-menu-option= actionsOfSelectionColumns
+			style="min-height:0 !important"
 		> </angular-table> 
+		<div layout="column" flex  layout-align="center center" ng-if="selection.length ==0" layout-padding>
+			<span>{{translate.load('sbi.cockpit.selections.noselections')}}</span>
+			<md-button ng-click="saveConfiguration()"  >
+	        {{translate.load('sbi.generic.apply')}}
+	      </md-button>
+		</div>
 				       
-	</md-card-content>
-	<md-card-actions layout="row" layout-align="end center">
+	<div layout="row" layout-align="end center">
 	    <span flex></span>
 
-      <md-button ng-click="saveConfiguration()"  >
+      <md-button ng-click="saveConfiguration()"  ng-if="selection.length !=0">
         {{translate.load('sbi.generic.apply')}}
       </md-button>
 
-	</md-card-actions>
-</md-card>
+	</div>
+</div>
 
