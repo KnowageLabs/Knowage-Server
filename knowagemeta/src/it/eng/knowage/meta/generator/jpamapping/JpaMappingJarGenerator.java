@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- * 
+ *
  */
 public class JpaMappingJarGenerator extends JpaMappingClassesGenerator {
 
@@ -47,18 +47,18 @@ public class JpaMappingJarGenerator extends JpaMappingClassesGenerator {
 
 	@Override
 	public void generate(ModelObject o, String outputDir) {
-		generate(o, outputDir, false, null, null);
+		generate(o, outputDir, false, false, null, null);
 	}
 
 	@Override
-	public void generate(ModelObject o, String outputDir, boolean isUpdatableMapping, File libsDir, byte[] fileModel) {
+	public void generate(ModelObject o, String outputDir, boolean isUpdatableMapping, boolean includeSources, File libsDir, byte[] fileModel) {
 
 		logger.trace("IN");
 
 		try {
 			// The output dir is the model directory plus the business model name
 			outputDir = outputDir + File.separator + o.getName();
-			super.generate(o, outputDir, isUpdatableMapping, libsDir, fileModel);
+			super.generate(o, outputDir, isUpdatableMapping, includeSources, libsDir, fileModel);
 
 			distDir = (distDir == null) ? new File(baseOutputDir, DEFAULT_DIST_DIR) : distDir;
 			jarFileName = (jarFileName == null) ? DEFAULT_JAR_FILE_NAME : jarFileName;

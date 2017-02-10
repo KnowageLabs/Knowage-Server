@@ -233,7 +233,6 @@ public class MetaService extends AbstractSpagoBIResource {
 	public Response addBusinessClass(@Context HttpServletRequest req) {
 		try {
 			JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
-			;
 
 			Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
 			JSONObject oldJsonModel = createJson(model);
@@ -588,6 +587,7 @@ public class MetaService extends AbstractSpagoBIResource {
 		String schemaName = req.getParameter("schema");
 		String catalogName = req.getParameter("catalog");
 		String isForRegistry = req.getParameter("registry");
+		String includeSourcesValue = req.getParameter("includeSources");
 
 		BusinessModel businessModel = model.getBusinessModels().get(0);
 
@@ -601,6 +601,8 @@ public class MetaService extends AbstractSpagoBIResource {
 		setCatalogName(businessModel, catalogName);
 
 		boolean isUpdatable = Boolean.parseBoolean(isForRegistry);
+		// include sources or not with the generated datamart
+		boolean includeSources = Boolean.parseBoolean(includeSourcesValue);
 
 		JpaMappingJarGenerator jpaMappingJarGenerator = new JpaMappingJarGenerator();
 
@@ -618,7 +620,7 @@ public class MetaService extends AbstractSpagoBIResource {
 			java.nio.file.Path outDir = Files.createTempDirectory("model_");
 
 			try {
-				jpaMappingJarGenerator.generate(businessModel, outDir.toString(), isUpdatable, new File(libDir), content.getFileModel());
+				jpaMappingJarGenerator.generate(businessModel, outDir.toString(), isUpdatable, includeSources, new File(libDir), content.getFileModel());
 			} catch (GenerationException e) {
 				logger.error(e);
 				errors.addErrorKey("metaWeb.generation.generic.error");

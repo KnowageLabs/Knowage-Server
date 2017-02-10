@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- * 
+ *
  */
 public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 
@@ -62,18 +62,18 @@ public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 
 	@Override
 	public void generate(ModelObject o, String outputDir) {
-		generate(o, outputDir, false, null, null);
+		generate(o, outputDir, false, false, null, null);
 	}
 
 	@Override
-	public void generate(ModelObject o, String outputDir, boolean isUpdatableMapping, File libsDir, byte[] fileModel) {
+	public void generate(ModelObject o, String outputDir, boolean isUpdatableMapping, boolean includeSources, File libsDir, byte[] fileModel) {
 
 		logger.trace("IN");
 
 		// try {
 		BusinessModel model;
 
-		super.generate(o, outputDir, isUpdatableMapping, libsDir, null);
+		super.generate(o, outputDir, isUpdatableMapping, includeSources, libsDir, null);
 
 		binDir = (binDir == null) ? new File(outputDir, DEFAULT_BIN_DIR) : binDir;
 		logger.debug("src dir is equal to [{}]", getSrcDir());
@@ -98,6 +98,7 @@ public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 		boolean compiled = compiler.compile();
 
 		if (!compiled) {
+			logger.error("Impossible to compile mapping code. Please download compiler errors log");
 			throw new GenerationException("Impossible to compile mapping code. Please download errors log");
 		}
 
@@ -122,6 +123,15 @@ public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 		}
 
 		FileUtilities.copyFile(new File(srcDir, "META-INF/persistence.xml"), new File(binDir, "META-INF"));
+
+		if (includeSources) {
+			try {
+				// copy sources files to binDir (to include it in the jar)
+				FileUtils.copyDirectory(srcDir, binDir);
+			} catch (IOException e) {
+				logger.error("Error copying source files to bin directory", e);
+			}
+		}
 
 		// } catch (Throwable t) {
 		// logger.error("An error occur while generating JPA jar", t);

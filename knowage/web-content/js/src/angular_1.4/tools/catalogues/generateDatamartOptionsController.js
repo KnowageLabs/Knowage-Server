@@ -9,12 +9,14 @@ function generateDatamartOptionsController(sbiModule_translate, sbiModule_restSe
 	$scope.catalogName = catalogName;
 	$scope.isGeneratedForRegistry = false;
 	$scope.showAdvancedOptions = false;
+	$scope.includeSources = false;
+
 	
 	//build the datamart
 	$scope.buildDatamart = function(){
 
 		sbiModule_restServices.alterContextPath(sbiModule_config.contextMetaName);
-		sbiModule_restServices.promiseGet("1.0/metaWeb", "buildModel/"+$scope.selectedBusinessModel.id+"?user_id="+sbiModule_user.userId+"&model="+$scope.modelName+"&schema="+$scope.schemaName+"&catalog="+$scope.catalogName+"&registry="+$scope.isGeneratedForRegistry)
+		sbiModule_restServices.promiseGet("1.0/metaWeb", "buildModel/"+$scope.selectedBusinessModel.id+"?user_id="+sbiModule_user.userId+"&model="+$scope.modelName+"&schema="+$scope.schemaName+"&catalog="+$scope.catalogName+"&registry="+$scope.isGeneratedForRegistry+"&includeSources="+$scope.includeSources)
 		.then(
 				function(response) {
 					//ok case

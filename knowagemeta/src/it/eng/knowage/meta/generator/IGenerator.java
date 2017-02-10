@@ -34,7 +34,7 @@ public interface IGenerator {
 	 * @param outputDir
 	 * @param isUpdatableMapping
 	 */
-	void generate(ModelObject o, String outputDir, boolean isUpdatableMapping, File libsDir, byte[] fileModel);
+	void generate(ModelObject o, String outputDir, boolean isUpdatableMapping, boolean includeSources, File libsDir, byte[] fileModel);
 
 	void generate(ModelObject o, String outputDir);
 
