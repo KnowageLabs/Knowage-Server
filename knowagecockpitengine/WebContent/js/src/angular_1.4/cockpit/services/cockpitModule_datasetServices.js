@@ -459,7 +459,8 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			angular.forEach(dataToSendWithoutParams, function(item){
 				var paramsToDelete = [];
 				for (var property in item) {
-				    if (item.hasOwnProperty(property) && property.startsWith("$P{") && property.endsWith("}")) {
+				    if (item.hasOwnProperty(property) && (typeof item[property] === 'string' || item[property] instanceof String)
+				    		&& property.startsWith("$P{") && property.endsWith("}")) {
 				    	paramsToDelete.push(property);
 				    }
 				}
