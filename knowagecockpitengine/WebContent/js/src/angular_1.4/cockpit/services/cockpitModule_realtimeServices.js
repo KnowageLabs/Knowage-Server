@@ -33,7 +33,6 @@ angular.module("cockpitModule").service("cockpitModule_realtimeServices",functio
 			if(rt.getRealTimeDatasetFromList(aggr.datasets).length>0){
 				$interval(function(){
 					$rootScope.$broadcast("WIDGET_EVENT","UPDATE_FROM_REALTIME",{dsList:aggr.datasets});
-					debugger;
 				},(aggr.frequency==undefined?60:aggr.frequency)*1000)
 			}
 		})
@@ -43,7 +42,6 @@ angular.module("cockpitModule").service("cockpitModule_realtimeServices",functio
 				var freq=rt.getDatasetFrequency(dsLab);
 				if(freq && freq!=0){
 					$interval(function(){
-						debugger;
 						$rootScope.$broadcast("WIDGET_EVENT","UPDATE_FROM_REALTIME",{dsList:[dsLab]});
 					},(freq==undefined?60:freq)*1000)
 				}

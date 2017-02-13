@@ -922,7 +922,6 @@ $scope.clickItem = function (row,columnName, cell, evt,index) {
 };
 
 $scope.toggleMultiSelect = function (row, evt) {
-	debugger;
     evt.stopPropagation();
     var index = $scope.indexInList($scope.selectedItem, row);
     if (index > -1) {

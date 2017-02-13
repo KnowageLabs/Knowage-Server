@@ -581,7 +581,6 @@ angular.module('cockpit_angular_table', ['ngMaterial', 'angularUtils.directives.
         })
         .filter("formatValue", function () {
         	return function (input, format, precision) {
-        	 	debugger;
 	        	function numberFormat (dec, dsep, tsep) {
 	        		
 	        		  if (isNaN(input) || input == null) return input;

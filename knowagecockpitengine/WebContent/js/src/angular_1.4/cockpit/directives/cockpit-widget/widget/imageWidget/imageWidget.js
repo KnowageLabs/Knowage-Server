@@ -98,10 +98,8 @@ function cockpitImageWidgetControllerFunction($scope,cockpitModule_widgetConfigu
 
 
 		$mdPanel.open(config).then(function(){
-            debugger;
             $scope.refresh();
         }, function(){
-            debugger;
             $scope.refresh();
         });
 		

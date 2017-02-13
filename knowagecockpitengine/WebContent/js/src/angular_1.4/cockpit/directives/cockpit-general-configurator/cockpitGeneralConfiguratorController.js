@@ -10,7 +10,6 @@ function cockpitGeneralConfigurationController($scope,$rootScope,sbiModule_trans
 	  $scope.saveConfiguration=function(){
 		  
 		  $rootScope.cockpitBackgroundColor = $scope.clonedTemplate.style.backgroundColor;
-		  debugger;
 		  angular.copy($scope.clonedTemplate,cockpitModule_template.configuration);
 		  angular.copy($scope.clonedDocumentProperty,cockpitModule_properties);
 

@@ -268,7 +268,6 @@ function cockpitSelectionControllerFunction($scope,cockpitModule_template,cockpi
 	
 
 	for(var ds in $scope.tmpFilters){
-		debugger;
 		var currentDs = cockpitModule_datasetServices.getDatasetByLabel(ds).metadata.fieldsMeta;
 		for(var col in $scope.tmpFilters[ds]){
 			var aliasColumnName;
