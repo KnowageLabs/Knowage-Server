@@ -107,7 +107,8 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 		return snaps;
 	}
 
-	public List getSnapshotsForSchedulationAndDocument(Integer idBIObj, String schedulation)  throws EMFUserError {
+	@Override
+	public List getSnapshotsForSchedulationAndDocument(Integer idBIObj, String scheduler)  throws EMFUserError {
 		List snaps = new ArrayList();
 		Session aSession = null;
 		Transaction tx = null;
@@ -115,11 +116,11 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			//String hql = "from SbiSnapshots ss where ss.sbiObject.biobjId = " + idBIObj;
-			String hql = "from SbiSnapshots ss where ss.sbiObject.biobjId = ? and ss.schedulation = ?" ;
+			String hql = "from SbiSnapshots ss where ss.sbiObject.biobjId = ? and ss.scheduler = ?" ;
 
 			Query query = aSession.createQuery(hql);
 			query.setInteger(0, idBIObj.intValue());
-			query.setString(1, schedulation);
+			query.setString(1, scheduler);
 
 			List hibSnaps = query.list();
 			Iterator iterHibSnaps = hibSnaps.iterator();

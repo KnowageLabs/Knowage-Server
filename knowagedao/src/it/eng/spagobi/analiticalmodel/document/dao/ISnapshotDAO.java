@@ -104,5 +104,5 @@ public interface ISnapshotDAO extends ISpagoBIDao{
 	 *
 	 * @throws EMFUserError the EMF user error
 	 */
-	public List getSnapshotsForSchedulationAndDocument(Integer idBIObj, String schedulation)  throws EMFUserError;
+	public List getSnapshotsForSchedulationAndDocument(Integer idBIObj, String scheduler)  throws EMFUserError;
 }
