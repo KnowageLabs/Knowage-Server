@@ -107,6 +107,40 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 		return snaps;
 	}
 
+	public List getSnapshotsForSchedulationAndDocument(Integer idBIObj, String schedulation)  throws EMFUserError {
+		List snaps = new ArrayList();
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			//String hql = "from SbiSnapshots ss where ss.sbiObject.biobjId = " + idBIObj;
+			String hql = "from SbiSnapshots ss where ss.sbiObject.biobjId = ? and ss.schedulation = ?" ;
+
+			Query query = aSession.createQuery(hql);
+			query.setInteger(0, idBIObj.intValue());
+			query.setString(1, schedulation);
+
+			List hibSnaps = query.list();
+			Iterator iterHibSnaps = hibSnaps.iterator();
+			while(iterHibSnaps.hasNext()) {
+				SbiSnapshots hibSnap = (SbiSnapshots)iterHibSnaps.next();
+				Snapshot snap = toSnapshot(hibSnap);
+				snaps.add(snap);
+			}
+			tx.commit();
+		} catch (HibernateException he) {
+			logException(he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (aSession!=null){
+				if (aSession.isOpen()) aSession.close();
+			}
+		}
+		return snaps;
+	}
 
 
 	/* (non-Javadoc)

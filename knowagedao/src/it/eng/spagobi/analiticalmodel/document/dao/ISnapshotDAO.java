@@ -92,4 +92,17 @@ public interface ISnapshotDAO extends ISpagoBIDao{
 	 * @throws EMFUserError the EMF user error
 	 */
 	public Map<String, Map<Integer,List<Snapshot>>> getSnapshotsBySchedulation(String schedulationName)  throws EMFUserError;
+
+	/**
+	 * Gets the list of the snapshot details that are children of a biobject and belongs to a specific schedulation.
+	 *
+	 * @param idBIObj the id of the biobject parent
+	 *
+	 * @param schedulation the name of the schedulation
+	 *
+	 * @return List of BIObject.BIObjectSnapshot objects
+	 *
+	 * @throws EMFUserError the EMF user error
+	 */
+	public List getSnapshotsForSchedulationAndDocument(Integer idBIObj, String schedulation)  throws EMFUserError;
 }

@@ -69,6 +69,23 @@ public class DocumentExecutionSnapshot extends AbstractSpagoBIResource {
 	}
 
 	@GET
+	@Path("/getSnapshotsForSchedulationAndDocument")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public Response getSnapshotsForSchedulationAndDocument(@QueryParam("id") Integer biobjectId, @QueryParam("schedulationName") String schedulationName, @Context HttpServletRequest req) {
+		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
+		List snapshotsList = null;
+		try {
+			snapshotsList = DAOFactory.getSnapshotDAO().getSnapshotsForSchedulationAndDocument(biobjectId, schedulationName);
+		} catch (EMFUserError e) {
+			throw new SpagoBIServiceException("Cannot load scheduled executions", e);
+		}
+		resultAsMap.put("schedulers", snapshotsList);
+		resultAsMap.put("urlPath", GeneralUtilities.getSpagoBIProfileBaseUrl(this.getUserProfile().getUserUniqueIdentifier().toString()));
+		return Response.ok(resultAsMap).build();
+	}
+
+
+	@GET
 	@Path("/getSnapshotContent")
 	@Produces("application/octet-stream")
 	public String getSnapshotContent(@QueryParam("biobjectId") Integer objectId, @QueryParam("idSnap") Integer idSnap, @Context HttpServletRequest req) {
