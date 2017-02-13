@@ -269,7 +269,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 		default: console.error("event "+eventType+" not found")
 		}
 	})
-	// specific widget event 'WIDGET_EVENT' whith id of widget
+	// specific widget event 'WIDGET_EVENT' with id of widget
 	$rootScope.$on('WIDGET_EVENT'+$scope.ngModel.id,function(config,eventType,config){
 		
 		switch(eventType){
@@ -283,14 +283,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 			}
 			break;
 		case "INIT" :
-			if($scope.init == undefined){
-				$timeout(function(){
-					$scope.init(config.element,config.width,config.height, config.data,config.nature,config.associativeSelection);
-				},1000);
-			}else{
-				$scope.init(config.element,config.width,config.height, config.data,config.nature,config.associativeSelection);
-
-			}
+			$scope.scopeInit(config.element,config.width,config.height, config.data,config.nature,config.associativeSelection);
 			break;
 		case "RESIZE" :
 			$scope.refreshWidget(undefined, 'resize');
@@ -312,6 +305,16 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 		default: console.error("event "+eventType+" not found")
 		}
 	})
+	
+	$scope.scopeInit=function(element,width,height,data,nature,associativeSelection){
+		if($scope.init == undefined){
+			$timeout(function(){
+				$scope.scopeInit(element,width,height,data,nature,associativeSelection);
+			},1000);
+		}else{
+			$scope.init(element,width,height,data,nature,associativeSelection);
+		}
+	}
 	
 	$scope.showWidgetSpinner=function(){
 		$scope.widgetSpinner=true;
