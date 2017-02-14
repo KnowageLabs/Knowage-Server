@@ -23,6 +23,7 @@ import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.security.hmacfilter.HMACUtils;
 import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.tenant.Tenant;
@@ -727,4 +728,32 @@ public class SpagoBIUtilities {
 		logger.debug("OUT");
 		return encodedImage;
 	}
+
+	public static String getGenericLicensePath() {
+		logger.debug("IN");
+
+		String resourceLicPath = SpagoBIUtilities.getRootResourcePath()
+				+ (SpagoBIUtilities.getRootResourcePath().endsWith(File.separatorChar + "") ? "" : File.separatorChar) + SpagoBIConstants.LICENSE_PATH_SUFFIX;
+		logger.debug("Resource license path " + resourceLicPath);
+
+		logger.debug("OUT");
+		return resourceLicPath;
+	}
+
+	public static String getCurrentHostName() {
+		logger.debug("IN");
+		InetAddress addr;
+		String hostname;
+		try {
+			addr = InetAddress.getLocalHost();
+			hostname = addr.getHostName();
+			logger.debug("Hostname is " + hostname);
+		} catch (UnknownHostException e) {
+			logger.error("Error in retrieving host name", e);
+			throw new SpagoBIRuntimeException("Error in retrieving host name", e);
+		}
+		logger.debug("OUT");
+		return hostname;
+	}
+
 }
