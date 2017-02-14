@@ -20,6 +20,7 @@ angular
 	.module('workspace.directive', [
 	                                'recent_view_workspace',
 	                                'favourites_view_workspace',
+	                                'schedulation_view_workspace',
 	                                'documents_view_workspace',
 	                                'datasets_view_workspace',
 	                                'analysis_view_workspace',
@@ -38,5 +39,7 @@ angular
 	                                'folder_view',
 	                                'bread_crumb',
 	                                'organizer_view',
-	                                'document_tree'
+	                                'document_tree',
+	                                'schedulation_view',
+	                                'document_schedulation'
 	                                ]);

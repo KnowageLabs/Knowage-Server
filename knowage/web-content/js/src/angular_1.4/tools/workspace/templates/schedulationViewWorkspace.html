@@ -1,0 +1,92 @@
+<md-content layout="row" flex class="workspaceBckgColorRightSide workspaceWhiteframeContainer">
+	<md-whiteframe 	ng-if=showDocSchedJsp flex layout="column" layout-margin
+					class="md-whiteframe-5dp workspaceBckgColorRightSide workspaceWhiteframe">
+	
+		<md-content layout="row" flex class="workspaceBckgColorRightSide workspaceWhiteframeContent">
+		
+			<md-content layout="row" flex layout-fill class="workspaceBckgColorRightSide">
+			
+				<document-schedulation></document-schedulation>
+			
+			</md-content>
+		
+		</md-content>
+	
+	</md-whiteframe>
+	
+	<div ng-if=!showDocSchedJsp>
+	<md-whiteframe 	flex layout="column" layout-margin
+					class="md-whiteframe-5dp workspaceBckgColorRightSide workspaceWhiteframe">
+	
+		<md-content layout="row" flex class="workspaceBckgColorRightSide workspaceWhiteframeContent">
+		
+			<md-content layout="row" flex layout-fill class="workspaceBckgColorRightSide">
+			
+				<schedulation-view 	class="kn-documentBrowser" flex
+			 					ng-model=schedulationList
+			 					show-grid-view=showGridView
+			 					show-add-to-organizer="true"
+			 					selected-row=selectedRow
+			 					selected-document=selectedDocument
+			 					table-speed-menu-option=recentSpeedMenu
+			 					execute-document-action="triggerExecute(doc)"
+			 					preview-document-action="openSchedulersDocumentsAndSnapshots(doc)"
+			 					select-document-action="selectDocument(doc)">
+				</schedulation-view>
+			
+			</md-content>
+		
+		</md-content>
+	
+	</md-whiteframe>
+		
+	<md-sidenav class="md-sidenav-right selectedDocumentSidenav md-whiteframe-4dp" md-component-id="rightDoc" md-is-locked-open="$mdMedia('gt-md')"  ng-class="{'full-screen-sidenav': smallScreen}" ng-show="showDocumentDetails()">
+			
+		<md-toolbar class="ternaryToolbar">
+			<div layout="row" layout-align="space-around center">
+				<md-button ng-if="smallScreen" title="{{translate.load('sbi.documentbrowser.execute')}}" aria-label="Close panel" class="md-icon-button" ng-click="selectDocument();toggleDocumentDetail();">
+									<md-icon md-font-icon="fa fa-times" ></md-icon>
+							</md-button>
+
+							<md-button title="{{translate.load('sbi.workspace.execute.document')}}" aria-label="Execute Document" class="md-icon-button" ng-click="triggerExecute(selectedDocument)">
+									<md-icon md-font-icon="fa fa-play-circle" ></md-icon>
+							</md-button>
+                            <!-- hidden because organizaer is not implemented -->
+							<md-button  class="md-icon-button" ng-show="false" aria-label="Organizer" ng-click="addToOrganizerAction({doc:document});">
+			            		<md-icon  md-font-icon="fa fa-plus-circle"></md-icon>
+			          		</md-button>
+			          		
+			          		<!-- @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) -->
+			          		<md-button title="{{translate.load('sbi.workspace.dataset.detail.close')}}" aria-label="Close Recent Details" class="md-icon-button" ng-click="hideRightSidePanel()">
+									<md-icon md-font-icon="fa fa-times" ></md-icon>
+							</md-button>
+
+			</div>
+		</md-toolbar>
+		
+		<md-content layout-margin>
+			
+			<md-list>
+
+				<md-list-item class="md-2-line">
+	 	          	<div class="md-list-item-text">
+		 	            <h3><b>{{translate.load('sbi.schedulation.jobName')}}</b></h3>
+		 	            <p>{{selectedDocument.jobName}}</p>
+	 	         	 </div>
+				</md-list-item>
+	
+				<md-list-item class="md-2-line">
+	 	          	<div class="md-list-item-text">
+	 	            	<h3><b>{{translate.load('sbi.schedulation.jobDesc')}}</b></h3>
+	 	            	<p>{{selectedDocument.jobDescription}}</p>
+	 	          	</div>
+					</md-list-item>
+
+			</md-list>
+			
+		</md-content>
+			
+	</md-sidenav>
+	</div>
+		
+</md-content>

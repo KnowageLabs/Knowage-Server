@@ -111,7 +111,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							<datasets-view-workspace 		ng-show="currentOptionMainMenu=='datasets'">		</datasets-view-workspace>
 							<models-view-workspace			ng-show="currentOptionMainMenu=='models'">	    	</models-view-workspace>
 							<smartfilters-view-workspace	ng-show="currentOptionMainMenu=='smartfilters'">	</smartfilters-view-workspace>
-							<analysis-view-workspace 		ng-show="currentOptionMainMenu=='analysis'">		</analysis-view-workspace>	
+							<analysis-view-workspace 		ng-show="currentOptionMainMenu=='analysis'">		</analysis-view-workspace>
+							<schedulation-view-workspace 		ng-show="currentOptionMainMenu=='schedulation'">		</schedulation-view-workspace>	
 							
 					</md-content>
 					

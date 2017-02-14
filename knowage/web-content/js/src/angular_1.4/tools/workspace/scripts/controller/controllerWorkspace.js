@@ -377,6 +377,12 @@ function workspaceFunction($scope, $http, $mdDialog, $timeout, $mdSidenav, $docu
 					}
 
 					break;
+					
+			case "schedulation":
+					
+					$scope.loadSchedulations();
+
+					break;
 
 				case "favorites":
 					

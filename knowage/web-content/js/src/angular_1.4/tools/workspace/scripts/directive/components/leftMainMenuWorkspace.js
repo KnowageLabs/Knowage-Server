@@ -123,6 +123,15 @@ function leftMenuController($scope, sbiModule_translate, sbiModule_user){
   	 		"visible":!$scope.isUserAdmin && $scope.showAnalysis , 
   	 		"active":false, 
   	 		"selected":false
+ 		},
+ 		
+ 		{
+  	 		"name": "Schedulation", 
+  	 		"label":sbiModule_translate.load('sbi.schedulation.title'), 	
+  	 		"icon": "fa fa-calendar",
+  	 		"visible":true, 
+  	 		"active":false, 
+  	 		"selected":false
  		}
  	];
 	
