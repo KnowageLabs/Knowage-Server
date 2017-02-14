@@ -172,6 +172,7 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 				var context=Sbi.config;
 				var parentEl = angular.element(document.body);
 				$scope.licenseData=[];			
+				$scope.hostsData=[];			
 				
 	        	$http.get(Sbi.config.contextName+'/restful-services/1.0/license?onlyValid=true').success(function(data){
 				//$http.get(Sbi.config.contextName+'/restful-services/1.0/FunctionsCatalog').success(function(data){
@@ -180,7 +181,8 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 						return;
 					}
 	        		console.log("License Data:", data);
-	        		$scope.licenseData=data;
+	        		$scope.hostsData=data.hosts;
+	        		$scope.licenseData=data.licenses;
 					$mdDialog.show({
 						parent: parentEl,
 						templateUrl: Sbi.config.contextName+'/themes/'+Sbi.config.currTheme+'/html/license.jsp',
@@ -189,6 +191,7 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 							okMessage : LN('sbi.general.ok'),
 							licenseData :  $scope.licenseData,
 							config : Sbi.config,
+							hosts: $scope.hostsData,
 							translate : $scope.translate,
 							messaging : $scope.messaging,
 							download : $scope.download
@@ -200,7 +203,7 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 	        		$scope.showAlert('Attention, ' + "Error Calling REST service for Menu. Please check if the server or connection is working.")
 	        	});
 				
-	        	function licenseDialogController(scope, $mdDialog, title, okMessage,licenseData, config, translate, messaging, download) {
+	        	function licenseDialogController(scope, $mdDialog, title, okMessage,licenseData, config, translate, messaging, download, hosts) {
 	        			scope.title = title;
 	        	        scope.okMessage = okMessage;
 	        	        scope.licenseData = licenseData;
@@ -209,6 +212,7 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 						scope.messaging = $scope.messaging;
 						scope.download = $scope.download;
 						scope.dialog = $mdDialog;
+						scope.hosts = hosts;
 	        	        
 	        	        var restLicense = {
 	        	        		base : scope.config.contextName + '/restful-services/1.0/license',
@@ -221,7 +225,7 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 	        	        	scope.$apply();
 	        	        }
 	        	        
-	        	        scope.uploadFile = function(){
+	        	        scope.uploadFile = function(hostName){
 	        	        	if (scope.file){
 	        	        		var config = {
 	        	        				transformRequest:angular.identity,
@@ -230,15 +234,15 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 	        	        		
 	        	        		var formData = new FormData();
 	        	        		formData.append(scope.file.name,scope.file);
-
-	        	        		$http.post(restLicense.base + restLicense.upload ,formData,config)
+	        	        		var currentHostName = hostName;
+	        	        		$http.post(restLicense.base + restLicense.upload + "/"+hostName ,formData,config)
 	        	        			.then(
 	        	        				function(response,status,headers,config){
 	        	        					if (response.data.errors){
-	        	        						scope.messaging.showErrorMessage(response.data.errors[0].message,scope.translate.load('sbi.generic.error'));
+	        	        						scope.messaging.showErrorMessage(scope.translate.load(response.data.errors[0].message),scope.translate.load('sbi.generic.error'));
 	        	        					}else{
 	        	        						// add the new license to the list
-	        	        						$scope.licenseData.push(response.data);
+	        	        						$scope.licenseData[currentHostName].push(response.data);
 	        	        						scope.file = undefined;
 	        	        						scope.messaging.showInfoMessage(scope.translate.load('sbi.generic.resultMsg'),scope.translate.load('sbi.generic.info'));
 	        	        					}
@@ -253,13 +257,13 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 	        	        	}
 	        	        }
 	        	        
-	        	        scope.dowloadFile = function(license){
+	        	        scope.dowloadFile = function(license, hostName){
 	        	        	$http
-	        	        		.get(restLicense.base + restLicense.download + '/' + license.product)
+	        	        		.get(restLicense.base + restLicense.download + '/' + hostName+ '/' + license.product)
 	        	        		.then(
-        	        				function(response,status,headers,config){
+        	        				function(response,status,headers,config){	
         	        					if (response.data.errors){
-        	        						scope.messaging.showErrorMessage(response.data.errors[0].message,scope.translate.load('sbi.generic.error'));
+        	        						scope.messaging.showErrorMessage(scope.translate.load(response.data.errors[0].message),scope.translate.load('sbi.generic.error'));
         	        					}else{
         	        						var paramsString = response.headers("Content-Disposition");
         	        						var arrayParam = paramsString.split(';');
@@ -294,10 +298,10 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 	        	        
 	        	        
 	        	        
-	        	        scope.deleteFile = function(license){
+	        	        scope.deleteFile = function(license, hostName){
 	        	        	
-	        	        	
-	        	        	var urlToCall = restLicense.base + '/delete' + '/' + license.product;
+	        	        	var currentHostName = hostName;
+	        	        	var urlToCall = restLicense.base + '/delete' + '/' + hostName +'/' + license.product;
 	        	        	$http
 	        	        		.get(urlToCall)
 	        	        		.then(
@@ -309,8 +313,8 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
         	        							var productD = response.data.product; 
         	        							var obj = $filter('filter')($scope.licenseData, {product: productD}, true)[0];
 
-        	        							var index = $scope.licenseData.indexOf(obj);
-        	        							$scope.licenseData.splice(index, 1);  
+        	        							var index = $scope.licenseData[currentHostName].indexOf(obj);
+        	        							$scope.licenseData[currentHostName].splice(index, 1);  
         	        							scope.file = undefined;
             	        						scope.messaging.showInfoMessage(scope.translate.load('sbi.generic.resultMsg'),scope.translate.load('sbi.generic.info'));
         	        						}
@@ -329,7 +333,27 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 	        	        }
 	        	        
 	        	        scope.closeDialog = function() {
-	        	          $mdDialog.hide();
+	        	        	$http
+        	        		.get(restLicense.base + '/checkLicensesDistributed')
+        	        		.then(
+    	        				function(response,status,headers,config){
+    	        					if (response.data.errors){
+    	        						scope.messaging.showErrorMessage(response.data.errors[0].message,scope.translate.load('sbi.generic.error'));
+    	        					}else{
+    	        						if(response.data.isDistributed == false){
+    	        							scope.messaging.showErrorMessage(scope.translate.load('error.message.license.distributed'),scope.translate.load('sbi.generic.warning'));
+    	        						}
+    	        						$mdDialog.hide();
+    	        					}
+    	        				},
+    	        				function(response,status,headers,config){
+    	        					if (response.data.errors){
+    	        						scope.messaging.showErrorMessage(response.data.errors[0].message,scope.translate.load('sbi.generic.error'));
+    	        					}else{
+    	        						scope.messaging.showErrorMessage(scope.translate.load('sbi.generic.genericError'),scope.translate.load('sbi.generic.error'));
+    	        					}
+    	        			});
+	        	        	//$mdDialog.hide();
 	        	        }
         	      }
 			}
