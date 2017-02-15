@@ -233,7 +233,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			if (hibBIObject != null) {
 				toReturn = toBIObject(hibBIObject, aSession);
 			} else {
-				logger.error("Unable to load document whose id is equal to [" + biObjectID + "]");
+				logger.warn("Unable to load document whose id is equal to [" + biObjectID + "]");
 			}
 			tx.commit();
 		} catch (HibernateException he) {
@@ -279,7 +279,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			if (hibObject != null) {
 				biObject = toBIObject(hibObject, aSession);
 			} else {
-				logger.error("Unable to load document whose id is equal to [" + id + "]");
+				logger.warn("Unable to load document whose id is equal to [" + id + "]");
 			}
 			tx.commit();
 		} catch (HibernateException he) {
@@ -324,7 +324,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			if (hibObject != null) {
 				biObject = toBIObject(hibObject, aSession);
 			} else {
-				logger.error("Unable to load document whose label is equal to [" + label + "]");
+				logger.warn("Unable to load document whose label is equal to [" + label + "]");
 			}
 			tx.commit();
 		} catch (HibernateException he) {
@@ -373,7 +373,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			if (hibObject != null) {
 				biObject = toBIObject(hibObject, aSession);
 			} else {
-				logger.error("Unable to load document whose id is equal to [" + id + "]");
+				logger.warn("Unable to load document whose id is equal to [" + id + "]");
 			}
 			tx.commit();
 		} catch (HibernateException he) {
@@ -2165,7 +2165,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			if (hibObject != null) {
 				biObject = toBIObject(hibObject, aSession);
 			} else {
-				logger.error("Unable to load document whose path is equal to [" + path + "]");
+				logger.warn("Unable to load document whose path is equal to [" + path + "]");
 			}
 			tx.commit();
 		} catch (HibernateException he) {
@@ -3085,9 +3085,10 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 	private List<SbiOutputParameter> loadDriverSpecificOutputParameters(SbiObjects sbiObject) {
 		List<SbiOutputParameter> ret = new ArrayList<>();
-		if (sbiObject.getSbiEngines() != null && !sbiObject.getSbiEngines().equals("") && sbiObject.getSbiEngines().getDriverNm() != null) {
+		SbiEngines sbiEngines = sbiObject.getSbiEngines();
+		if (sbiEngines != null && sbiEngines.getDriverNm() != null && !sbiEngines.getDriverNm().isEmpty()) {
 			try {
-				IEngineDriver driver = (IEngineDriver) Class.forName(sbiObject.getSbiEngines().getDriverNm()).newInstance();
+				IEngineDriver driver = (IEngineDriver) Class.forName(sbiEngines.getDriverNm()).newInstance();
 				List<DefaultOutputParameter> params = driver.getDefaultOutputParameters();
 				for (DefaultOutputParameter defaultOutputParameter : params) {
 					SbiOutputParameter outputParameter = new SbiOutputParameter();
@@ -3098,7 +3099,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 					ret.add(outputParameter);
 				}
 			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-				logger.error("Error trying to load default output parameters for engine [" + sbiObject.getSbiEngines().getDriverNm() + "] ", e);
+				logger.error("Error trying to load default output parameters for engine [" + sbiEngines.getDriverNm() + "] ", e);
 			}
 		}
 		return ret;
