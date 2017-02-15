@@ -114,8 +114,12 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 								for(var paramIndex=0; paramIndex < document.parameters.length; paramIndex++){
 									var parameter = document.parameters[paramIndex];
 									if(parameter.value.trim() != ""){
-										parameter.values = parameter.value.split(";");
-										parameter.selectedValues = parameter.value.split(";");
+										var temp = parameter.value.split(";");
+										parameter.values = temp.filter(function(item, pos) {
+											return temp.indexOf(item) == pos;
+										});
+										parameter.selectedValues = [];
+										angular.copy(parameter.values, parameter.selectedValues);
 									}else{
 										parameter.values = [];
 										parameter.selectedValues = [];
@@ -721,7 +725,10 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 							}else{
 								parameter.selectedValues = [];
 							}
-							parameter.values = data.values;
+							var temp = data.values;
+							parameter.values = temp.filter(function(item, pos) {
+								return temp.indexOf(item) == pos;
+							});
 							parameter.manualInput = data.manualInput;
 						}
 					})
