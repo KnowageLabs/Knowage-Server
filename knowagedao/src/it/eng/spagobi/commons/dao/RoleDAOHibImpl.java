@@ -17,28 +17,6 @@
  */
 package it.eng.spagobi.commons.dao;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
-import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
-import org.hibernate.Hibernate;
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Expression;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Property;
-import org.hibernate.criterion.Restrictions;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuse;
@@ -56,9 +34,32 @@ import it.eng.spagobi.commons.metadata.SbiProductType;
 import it.eng.spagobi.events.metadata.SbiEventsLog;
 import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayersRoles;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
+
+import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
+import org.hibernate.Hibernate;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Property;
+import org.hibernate.criterion.Restrictions;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Defines the Hibernate implementations for all DAO methods, for a Role.
@@ -213,12 +214,10 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 	/**
 	 * Load all roles.
-	 *
+	 * 
 	 * @return the list
-	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 *
 	 * @see it.eng.spagobi.commons.dao.IRoleDAO#loadAllRoles()
 	 */
 	@Override
@@ -573,7 +572,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 						|| (authI.getName().equals("MANAGE_GLOSSARY_BUSINESS") && aRole.isAbleToManageGlossaryBusiness())
 						|| (authI.getName().equals("MANAGE_GLOSSARY_TECHNICAL") && aRole.isAbleToManageGlossaryTechnical())
 						|| (authI.getName().equals("MANAGE_KPI_VALUE") && aRole.isAbleToManageKpiValue())
-						|| (authI.getName().equals("MANAGE_CALENDAR") && aRole.isAbleToManageCalendar())) {
+						|| (authI.getName().equals("MANAGE_CALENDAR") && aRole.isAbleToManageCalendar())
+						|| (authI.getName().equals("FUNCTIONS_CATALOG_USAGE") && aRole.isAbleToUseFunctionsCatalog())) {
 
 					SbiAuthorizationsRoles fr = new SbiAuthorizationsRoles();
 					SbiAuthorizationsRolesId id = new SbiAuthorizationsRolesId(authI.getId(), hibRole.getExtRoleId());
@@ -877,6 +877,9 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			if (name.equals("MANAGE_CALENDAR")) {
 				role.setAbleToManageCalendar(true);
 			}
+			if (name.equals("FUNCTIONS_CATALOG_USAGE")) {
+				role.setAbleToUseFunctionsCatalog(true);
+			}
 
 		}
 
@@ -1057,7 +1060,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 						|| (functI.getName().equals("MANAGE_GLOSSARY_BUSINESS") && role.isAbleToManageGlossaryBusiness())
 						|| (functI.getName().equals("MANAGE_GLOSSARY_TECHNICAL") && role.isAbleToManageGlossaryTechnical())
 						|| (functI.getName().equals("MANAGE_KPI_VALUE") && role.isAbleToManageKpiValue())
-						|| (functI.getName().equals("MANAGE_CALENDAR") && role.isAbleToManageCalendar())) {
+						|| (functI.getName().equals("MANAGE_CALENDAR") && role.isAbleToManageCalendar())
+						|| (functI.getName().equals("FUNCTIONS_CATALOG_USAGE") && role.isAbleToUseFunctionsCatalog())) {
 
 					SbiAuthorizationsRoles fr = new SbiAuthorizationsRoles();
 					SbiAuthorizationsRolesId id = new SbiAuthorizationsRolesId(functI.getId(), hibRole.getExtRoleId());

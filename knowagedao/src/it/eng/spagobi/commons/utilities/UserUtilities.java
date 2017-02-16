@@ -111,7 +111,7 @@ public class UserUtilities {
 
 	/**
 	 * Gets the user profile.
-	 *
+	 * 
 	 * @return the user profile
 	 * @throws Exception
 	 *             the exception
@@ -671,6 +671,9 @@ public class UserUtilities {
 			if (virtualRole.isAbleToManageCalendar()) {
 				roleFunctionalities.add(SpagoBIConstants.MANAGE_CALENDAR);
 			}
+			if (virtualRole.isAbleToUseFunctionsCatalog()) {
+				roleFunctionalities.add(SpagoBIConstants.FUNCTIONS_CATALOG_USAGE);
+			}
 
 			if (!roleFunctionalities.isEmpty()) {
 				List<String> roleTypeFunctionalities = Arrays.asList(functionalities);
@@ -883,6 +886,10 @@ public class UserUtilities {
 					if (anotherRole.isAbleToManageCalendar()) {
 						logger.debug("User has role " + roleName + " that is able to manage Calendar.");
 						virtualRole.setAbleToManageCalendar(true);
+					}
+					if (anotherRole.isAbleToUseFunctionsCatalog()) {
+						logger.debug("User has role " + roleName + " that is able to use functions catalog.");
+						virtualRole.setAbleToUseFunctionsCatalog(true);
 					}
 				}
 			}
