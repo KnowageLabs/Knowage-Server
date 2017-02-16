@@ -31,8 +31,8 @@ IEngUserProfile profile = (IEngUserProfile)session.getAttribute(IEngUserProfile.
 	</div>
 </md-toolbar>
 		
-<md-content ng-show="showSelectRoles" ng-cloak>
-	<md-input-container class="small counter" flex>
+<div ng-show="showSelectRoles" ng-cloak layout-padding>
+	<md-input-container class="md-block">
 		<label>{{::translate.load("sbi.users.roles")}}</label>
 		<md-select aria-label="aria-label" ng-model="selectedRole.name" ng-disabled="::crossNavigationScope.isNavigationInProgress()" >
 			<md-option ng-click="changeRole(role)" ng-repeat="role in roles" value="{{role}}">
@@ -40,10 +40,15 @@ IEngUserProfile profile = (IEngUserProfile)session.getAttribute(IEngUserProfile.
 			</md-option>
 		</md-select>
 	</md-input-container>
-</md-content>
+</div>
 
-<md-content flex>
-	<md-list ng-hide="isParameterPanelDisabled()" layout="{{filterDropping}}">
+<md-content >
+	<div ng-hide="isParameterPanelDisabled()" layout="{{filterDropping}}">
+		<document-paramenter-element parameter="parameter" ng-repeat="parameter in documentParameters" ng-show="parameter.visible"
+					layout="row" flex layout-align="start" />
+		
+	</div>
+	<!--  md-list ng-hide="isParameterPanelDisabled()" layout="{{filterDropping}}">
 		<md-list-item ng-repeat="parameter in documentParameters"
 				layout="row" aria-label="" class="md-3-line" ng-show="parameter.visible">
 
@@ -51,8 +56,9 @@ IEngUserProfile profile = (IEngUserProfile)session.getAttribute(IEngUserProfile.
 					layout="row" flex layout-align="start" />
 			
 		</md-list-item>
-	</md-list>
+	</md-list-->
 </md-content>
+<div flex></div>
 		
 <!-- execute button -->
 <md-button ng-cloak class="toolbar-button-custom md-raised" ng-disabled="paramRolePanelService.isExecuteParameterDisabled()"

@@ -4,19 +4,12 @@
 </md-button>
 <div flex layout-align="start">
 	
-	
-		<%--
-		<md-content style="font-size:8px;" ng-if="parameter.typeCode=='MAN_IN' && parameter.valueSelection=='map_in'">{{parameter|json}}</md-content>
-		<md-content style="font-size:8px;" ng-cloak>{{parameter|json}}</md-content>
-		--%>
-		
 		<!-- Map input -->
-		<section ng-if="parameter.typeCode=='MAN_IN' && parameter.valueSelection=='map_in'" layout="column">
+		<div ng-if="parameter.typeCode=='MAN_IN' && parameter.valueSelection=='map_in'" layout="column">
 		 	<div layout="row" layout-align="start">
 				<md-button ng-click="popupMapParameterDialog(parameter)" ng-required="::parameter.mandatory"
 						id="{{::parameter.urlName}}" aria-label="{{parameter.label}}">
 					<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >{{parameter.label}}</label>
-	<!-- 			<i class="fa fa-globe"></i> -->
 					<i class="fa fa-external-link"></i>
 				</md-button>
 			</div>
@@ -32,11 +25,11 @@
 					ng-show="(!parameter.multivalue && parameter.parameterValue && parameter.parameterValue != '')">
 				<md-chips><md-chip>{{parameter.parameterValue}}</md-chip></md-chips>
 			</span> 
-		</section>
+		</div>
 	
 		<!-- lov LOOKUP single and multiple input -->
 		
-		<section ng-if="parameter.selectionType=='LOOKUP'">
+		<div ng-if="parameter.selectionType=='LOOKUP'">
 			<div layout="row" layout-align="start">
 				<md-button class="" id="{{::parameter.urlName}}"
 						ng-click="popupLookupParameterDialog(parameter)" aria-label="{{parameter.label}}">
@@ -61,10 +54,10 @@
 				</md-chips>
 				
 			</span>
-		</section>
+		</div>
 		
 		<!-- Tree input -->
-		<section ng-if="parameter.selectionType=='TREE'" layout="column">
+		<div ng-if="parameter.selectionType=='TREE'" layout="column">
 			<div layout="row" layout-align="start">
 				<md-button ng-click="getTreeParameterValue()" ng-required="::parameter.mandatory"
 						id="{{::parameter.urlName}}" aria-label="{{parameter.label}}">
@@ -87,30 +80,21 @@
 			        </md-chip-template>
 				</md-chips>
 			</span>
-			<!--
-			<span ng-class="{'layout-padding': !parameter.multivalue && parameter.parameterValue && parameter.parameterValue != ''}"
-					ng-show="(!parameter.multivalue && parameter.parameterValue && parameter.parameterValue != '')">
-				<md-chips><md-chip>{{parameter.parameterValue.value}}</md-chip></md-chips>
-			</span>
-			-->
-		</section>
+
+		</div>
 				
 		<!-- Date -->
-		<section ng-if="parameter.type=='DATE' && parameter.selectionType=='' && parameter.valueSelection=='man_in'" layout="column">
-<!-- 			<div layout="row" layout-align="start"> -->
+		<div ng-if="parameter.type=='DATE' && parameter.selectionType=='' && parameter.valueSelection=='man_in'" layout="column" class="datePicker" >
 				<label 	ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >
 					{{parameter.label}}
 					</label>
-<!-- 			</div> -->
-<!-- 				<span style="padding-top: 12;"> -->
-					<md-datepicker ng-model="parameter.parameterValue"  md-placeholder="{{parameter.label}}" >
+					<md-datepicker ng-model="parameter.parameterValue"  md-placeholder="{{parameter.label}}" style="margin-right:0;max-height:90px;">
 					</md-datepicker>
-<!-- 				</span> -->
-		</section>		
+		</div>		
 	
 	
 	<!-- Date RANGE-->
-		<section ng-if="parameter.type=='DATE_RANGE' && parameter.selectionType=='' && parameter.valueSelection=='man_in'" layout="column">
+		<section ng-if="parameter.type=='DATE_RANGE' && parameter.selectionType=='' && parameter.valueSelection=='man_in'" layout="column" class="datePicker">
 		<label 	ng-class="showRequiredFieldMessageDateRange(parameter) ? 'requiredField' : 'norequiredField'" >
 				{{parameter.label}}
 		</label>

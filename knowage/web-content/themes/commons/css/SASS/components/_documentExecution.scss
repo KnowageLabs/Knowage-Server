@@ -156,9 +156,37 @@
 		background-repeat: no-repeat no-repeat;
 	}
 	
-	document-paramenter-element button.md-icon-button.md-button {
-	    margin: 5px 0px;
+	document-paramenter-element {
+		label {
+			font-size: $baseFontSize;
+    		color: $secondaryColor;
+		}
+		md-input-container {
+			label {
+				font-size: $headerFontSize;
+			}
+		}
+		.datePicker {
+			max-height: 70px;
+		}
+		md-radio-button {
+			margin-bottom: 4px;
+			&:first-child {
+				margin-top: 8px;
+			}
+		}
+		button.md-icon-button.md-button {
+	    	margin: 5px 0px;
+		}
 	}
-	
+}
 
+/* IE11 fix */
+
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+	.kn-documentExecution {
+		document-paramenter-element {
+			max-width: 97%;
+		}
+	}
 }

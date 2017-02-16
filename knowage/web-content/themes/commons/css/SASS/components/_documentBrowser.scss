@@ -102,8 +102,8 @@
 	}
 	
 	md-tabs.documentNavigationToolbar>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-ink-bar{
-		color:  #c70751 !important;
-		background:  #c70751 !important;
+		color:  #c70751 ;
+		background:  #c70751 ;
 	}
 		
 	md-tabs.documentNavigationToolbar>md-tabs-wrapper>md-tabs-canvas>md-pagination-wrapper>md-tab-item {
@@ -152,7 +152,7 @@
 	}
 	
 	md-tabs.documentNavigationToolbar>button.documentBrowserTabButton.selectedDocumentBrowserTabButton{
-	    border-bottom: 2px solid #C70751;
+	    border-bottom: 2px solid $fabPrimaryColor;
     	height: 28px;
     }
     
