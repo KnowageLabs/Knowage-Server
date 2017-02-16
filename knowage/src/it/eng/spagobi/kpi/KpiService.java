@@ -17,45 +17,6 @@
  */
 package it.eng.spagobi.kpi;
 
-import java.io.IOException;
-import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.quartz.JobExecutionException;
-
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongodb.util.JSON;
-
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
@@ -102,6 +63,45 @@ import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
+
+import java.io.IOException;
+import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.quartz.JobExecutionException;
+
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.util.JSON;
 
 /**
  * @authors Salvatore Lupo (Salvatore.Lupo@eng.it)
@@ -518,8 +518,8 @@ public class KpiService {
 		}
 	}
 
-	private boolean checkValuesFormatForTemporalAttributes(HttpServletRequest req, Rule rule, String query, RuleOutput ruleOut)
-			throws EMFUserError, EMFInternalError, JSONException {
+	private boolean checkValuesFormatForTemporalAttributes(HttpServletRequest req, Rule rule, String query, RuleOutput ruleOut) throws EMFUserError,
+			EMFInternalError, JSONException {
 		boolean isValid = true;
 		String distinctQuery = "SELECT DISTINCT " + ruleOut.getAlias() + " FROM ( " + query + ") a_l_i_a_s";
 		JSONObject distinctResult = executeQuery(rule.getDataSourceId(), distinctQuery, 0, rule.getPlaceholders(), getProfile(req));
@@ -578,8 +578,8 @@ public class KpiService {
 		return isValid;
 	}
 
-	private boolean checkValuesNumberForTemporalAttributes(HttpServletRequest req, Rule rule, String query, RuleOutput ruleOut)
-			throws JSONException, EMFUserError, EMFInternalError {
+	private boolean checkValuesNumberForTemporalAttributes(HttpServletRequest req, Rule rule, String query, RuleOutput ruleOut) throws JSONException,
+			EMFUserError, EMFInternalError {
 		String countQuery = "SELECT count(distinct " + ruleOut.getAlias() + ") as totRows  FROM ( " + query + ") a_l_i_a_s";
 		JSONObject countResult = executeQuery(rule.getDataSourceId(), countQuery, 0, rule.getPlaceholders(), getProfile(req));
 		Integer maxSize = 0;
@@ -948,7 +948,7 @@ public class KpiService {
 			logger.debug("saveSchedulerKPI OUT");
 			return out;
 		} catch (SpagoBIException e) {
-			logger.error("saveSchedulerKpi");
+			logger.error("saveSchedulerKpi", e);
 			out = Response.ok(new JSError().addErrorKey("newKpi.kpi.jobOrTriggerError").toString()).build();
 			logger.debug("saveSchedulerKPI OUT");
 			return out;
@@ -1104,8 +1104,9 @@ public class KpiService {
 				if (dao.loadScorecardByName(scorecard.getName()) == null) {
 					id = dao.insertScorecard(scorecard);
 				} else {
-					out = Response.ok(new JSONObject()
-							.put("errors", new JSONArray().put(new JSONObject().put("message", "Error existing scorecard with this name"))).toString()).build();
+					out = Response.ok(
+							new JSONObject().put("errors", new JSONArray().put(new JSONObject().put("message", "Error existing scorecard with this name")))
+									.toString()).build();
 					logger.debug("Error existing scorecard with this name");
 					return out;
 				}
