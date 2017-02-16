@@ -76,6 +76,8 @@ public class Role implements Serializable {
 
 	private boolean isAbleToManageCalendar;
 
+	private boolean isAbleToUseFunctionsCatalog;
+
 	private boolean defaultRole;
 
 	private List<RoleMetaModelCategory> roleMetaModelCategories;
@@ -640,6 +642,14 @@ public class Role implements Serializable {
 
 	public void setAbleToManageCalendar(boolean isAbleToManageCalendar) {
 		this.isAbleToManageCalendar = isAbleToManageCalendar;
+	}
+
+	public boolean isAbleToUseFunctionsCatalog() {
+		return isAbleToUseFunctionsCatalog;
+	}
+
+	public void setAbleToUseFunctionsCatalog(boolean isAbleToUseFunctionsCatalog) {
+		this.isAbleToUseFunctionsCatalog = isAbleToUseFunctionsCatalog;
 	}
 
 	public void setAbleToManageGlossaryTechnical(boolean isAbleToManageGlossaryTechnical) {

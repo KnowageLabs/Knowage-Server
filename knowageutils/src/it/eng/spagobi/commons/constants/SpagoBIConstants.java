@@ -511,7 +511,7 @@ public class SpagoBIConstants {
 	public static final String MANAGE_GLOSSARY_BUSINESS = "ManageGlossaryBusiness";
 	public static final String MANAGE_GLOSSARY_TECHNICAL = "ManageGlossaryTechnical";
 
-	public static final String CALENDAR = "Calendar";
+	// public static final String CALENDAR = "Calendar";
 
 	public static final String MANAGE_KPI_VALUE = "ManageKpiValue";
 
