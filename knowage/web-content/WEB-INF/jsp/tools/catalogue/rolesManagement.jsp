@@ -457,6 +457,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			       </div> 
 			   </div>
 				
+               <div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('functionsCatalogUsage')">
+                 <md-input-container class="small counter"> 
+                    <md-checkbox
+                     ng-change="setDirty()"  ng-model="selectedRole.ableToUseFunctionsCatalog" aria-label="check" name="functionsCatalogUsage">
+                    </md-checkbox> 
+                   </md-input-container>
+                   <div >
+                    <label>{{translate.load("sbi.roles.functionsCatalogUsage")}}</label>
+                   </div> 
+               </div>
 			
 				
 				</md-card>

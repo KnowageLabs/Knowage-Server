@@ -17,16 +17,6 @@
  */
 package it.eng.spagobi.profiling.services;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.error.EMFUserError;
@@ -43,6 +33,16 @@ import it.eng.spagobi.security.RoleSynchronizer;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
 import it.eng.spagobi.utilities.service.JSONSuccess;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class ManageRolesAction extends AbstractSpagoBIAction {
 	/**
@@ -101,6 +101,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 
 	private final String MANAGE_KPI_VALUE = "manageKpiValue";
 	private final String MANAGE_CALENDAR = "manageCalendar";
+	private final String FUNCTIONS_CATALOG_USAGE = "functionsCatalogUsage";
 	private final String BM_CATEGORY_ID = "bmCategoryId";
 	private final String BM_CATEGORIES = "bmCategories";
 
@@ -200,6 +201,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 
 			Boolean manageKpiValue = getAttributeAsBoolean(MANAGE_KPI_VALUE);
 			Boolean manageCalendar = getAttributeAsBoolean(MANAGE_CALENDAR);
+			Boolean functionsCatalogUsage = getAttributeAsBoolean(FUNCTIONS_CATALOG_USAGE);
 			List<String> bmCategoryIds = getAttributeAsList(BM_CATEGORIES);
 			if (bmCategoryIds.size() == 1) {
 				if (bmCategoryIds.get(0).equals("")) {
@@ -293,6 +295,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 
 				role.setAbleToManageKpiValue(manageKpiValue);
 				role.setAbleToManageCalendar(manageCalendar);
+				role.setAbleToUseFunctionsCatalog(functionsCatalogUsage);
 				try {
 					String id = getAttributeAsString(ID);
 					if (id != null && !id.equals("") && !id.equals("0")) {

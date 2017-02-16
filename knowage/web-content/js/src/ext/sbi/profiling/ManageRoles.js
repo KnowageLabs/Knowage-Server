@@ -144,6 +144,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 	                        	          , 'manageGlossaryTechnical'
 	                        	          , 'manageKpiValue'
 	                        	          , 'manageCalendar'
+	                        	          , 'functionsCatalogUsage'
 	                        	          , 'seeDocBrowser'
 	                        	          , 'seeFavourites'
 	                        	          , 'seeSubscriptions'
@@ -185,6 +186,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 											manageGlossaryTechnical:false,
 											manageKpiValue:false,
 											manageCalendar:false,
+											functionsCatalogUsage:false,
 											seeDocBrowser:false,
 		                        	        seeFavourites:false,
 		                        	        seeSubscriptions:false,
@@ -577,8 +579,8 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 		                {boxLabel: LN('sbi.roles.manageGlossaryBusiness'), name: 'manageGlossaryBusiness', id: 'manageGlossaryBusiness', id:'manageGlossaryBusiness', checked:'manageGlossaryBusiness',inputValue: 1},
 		                {boxLabel: LN('sbi.roles.manageGlossaryTechnical'), name: 'manageGlossaryTechnical', id: 'manageGlossaryTechnical', id:'manageGlossaryTechnical', checked:'manageGlossaryTechnical',inputValue: 1},
 		                {boxLabel: LN('sbi.roles.manageKpiValue'), name: 'manageKpiValue', id: 'manageKpiValue',  checked:'manageKpiValue',inputValue: 1},
-		                {boxLabel: LN('sbi.roles.manageCalendar'), name: 'manageCalendar', id: 'manageCalendar',  checked:'manageCalendar',inputValue: 1}
-
+		                {boxLabel: LN('sbi.roles.manageCalendar'), name: 'manageCalendar', id: 'manageCalendar',  checked:'manageCalendar',inputValue: 1},
+		                {boxLabel: LN('sbi.roles.functionsCatalogUsage'), name: 'functionsCatalogUsage', id: 'functionsCatalogUsage',  checked:'functionsCatalogUsage',inputValue: 1}
 		                ]
 		        },
 		        {
@@ -719,6 +721,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
         			  item.setValue('createSocialAnalysis', rec.get('createSocialAnalysis'));
         			  item.setValue('viewSocialAnalysis', rec.get('viewSocialAnalysis'));
         			  item.setValue('hierarchiesManagement', rec.get('hierarchiesManagement'));
+            		  item.setValue('functionsCatalogUsage', rec.get('functionsCatalogUsage'));
             	  }        		  
      	  });
 		
@@ -813,6 +816,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 								manageGlossaryTechnical:false,
 								manageKpiValue:false,
 								manageCalendar:false,
+								functionsCatalogUsage:false,
 								seeDocBrowser:this.isVisible('seeDocBrowser'),
                     	        seeFavourites:this.isVisible('seeFavourites'),
                     	        seeSubscriptions:this.isVisible('seeSubscriptions'),
@@ -859,6 +863,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
         var manageGlossaryTechnical =values['manageGlossaryTechnical'];  
         var manageKpiValue = values['manageKpiValue'];
         var manageCalendar = values['manageCalendar'];
+        var functionsCatalogUsage = values['functionsCatalogUsage'];
         var seeDocBrowser =values['seeDocBrowser'];  
         var seeMyData =values['seeMyData'];  
         var seeFavourites =values['seeFavourites'];  
@@ -958,6 +963,11 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
         	record.set('manageCalendar', true);
         }else{
         	record.set('manageCalendar', false);
+        }
+        if(functionsCatalogUsage == 1){
+        	record.set('functionsCatalogUsage', true);
+        }else{
+        	record.set('functionsCatalogUsage', false);
         }
         if(seeDocBrowser == 1){
         	record.set('seeDocBrowser', true);
@@ -1124,6 +1134,7 @@ Ext.extend(Sbi.profiling.ManageRoles, Sbi.widgets.ListDetailForm, {
 			manageGlossaryTechnical:newRec.data.manageGlossaryTechnical,
 			manageKpiValue:newRec.data.manageKpiValue,
 			manageCalendar:newRec.data.manageCalendar,
+			functionsCatalogUsage:newRec.data.functionsCatalogUsage,
 			seeDocBrowser: newRec.data.seeDocBrowser,
 			seeMyData: newRec.data.seeMyData,
 			seeFavourites: newRec.data.seeFavourites,

@@ -17,16 +17,16 @@
  */
 package it.eng.spagobi.commons.serializer;
 
+import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IRoleDAO;
+
 import java.util.List;
 import java.util.Locale;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import it.eng.spagobi.commons.bo.Role;
-import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IRoleDAO;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -75,6 +75,7 @@ public class RoleJSONSerializer implements Serializer {
 	public static final String MANAGE_KPI_VALUE = "manageKpiValue";
 
 	public static final String MANAGE_CALENDAR = "manageCalendar";
+	public static final String FUNCTIONS_CATALOG_USAGE = "functionsCatalogUsage";
 
 	@Override
 	public Object serialize(Object o, Locale locale) throws SerializationException {
@@ -124,6 +125,7 @@ public class RoleJSONSerializer implements Serializer {
 			result.put(MANAGE_GLOSSARY_TECHNICAL, role.isAbleToManageGlossaryTechnical());
 			result.put(MANAGE_KPI_VALUE, role.isAbleToManageKpiValue());
 			result.put(MANAGE_CALENDAR, role.isAbleToManageCalendar());
+			result.put(FUNCTIONS_CATALOG_USAGE, role.isAbleToUseFunctionsCatalog());
 			result.put(ENABLE_DATASET_PERSISTENCE, role.isAbleToEnableDatasetPersistence());
 			result.put(ENABLE_FEDERATED_DATASET, role.isAbleToEnableFederatedDataset());
 

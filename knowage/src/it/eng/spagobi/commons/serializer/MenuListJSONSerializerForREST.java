@@ -405,10 +405,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			socialAnalysis.put(LINK_TYPE, "execDirectUrl");
 
 			/*
-			 * } else { socialAnalysis.put(HREF, "javascript:execDirectUrl('" +
-			 * HREF_SOCIAL_ANALYSIS + "?" + SpagoBIConstants.SBI_LANGUAGE + "="
-			 * + locale.getLanguage() + "&" + SpagoBIConstants.SBI_COUNTRY + "="
-			 * + locale.getCountry() + "');"); }
+			 * } else { socialAnalysis.put(HREF, "javascript:execDirectUrl('" + HREF_SOCIAL_ANALYSIS + "?" + SpagoBIConstants.SBI_LANGUAGE + "=" +
+			 * locale.getLanguage() + "&" + SpagoBIConstants.SBI_COUNTRY + "=" + locale.getCountry() + "');"); }
 			 */
 			tempMenuList.put(socialAnalysis);
 		}
@@ -491,7 +489,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			tempMenuList.put(o);
 		}
 
-		if (isAbleTo(SpagoBIConstants.CALENDAR, funcs)) {
+		if (isAbleTo(SpagoBIConstants.MANAGE_CALENDAR, funcs)) {
 			JSONObject calendar = new JSONObject();
 			calendar.put(ICON_CLS, "event");
 			calendar.put(TOOLTIP, messageBuilder.getMessage("menu.calendar", locale));

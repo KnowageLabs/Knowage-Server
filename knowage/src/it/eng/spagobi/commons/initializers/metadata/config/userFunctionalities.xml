@@ -363,7 +363,7 @@
 	<USER_FUNCTIONALITY productType="KnowagePA" name="EventsManagement" description="EventsManagement" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="FunctionalitiesManagement" description="FunctionalitiesManagement" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="FunctionsCatalogManagement" description="FunctionsCatalogManagement" />
-	<USER_FUNCTIONALITY productType="KnowagePA" name="FunctionsCatalogUsage" description="FunctionsCatalogUsage" />
+	<!--  <USER_FUNCTIONALITY productType="KnowagePA" name="FunctionsCatalogUsage" description="FunctionsCatalogUsage" /> -->
 	<USER_FUNCTIONALITY productType="KnowagePA" name="HotLinkManagement" description="HotLinkManagement" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="ImagesManagement" description="ImagesManagement" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="ImpExpCatalog" description="ImpExpCatalog" />

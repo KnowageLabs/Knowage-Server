@@ -17,6 +17,28 @@
  */
 package it.eng.spagobi.api.v2;
 
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
+import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
+import it.eng.spagobi.behaviouralmodel.check.bo.Check;
+import it.eng.spagobi.behaviouralmodel.check.dao.ICheckDAO;
+import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
+import it.eng.spagobi.behaviouralmodel.lov.dao.IModalitiesValueDAO;
+import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.bo.RoleBO;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
+import it.eng.spagobi.mapcatalogue.dao.ISbiGeoLayersDAO;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -36,32 +58,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
-import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
-import it.eng.spagobi.behaviouralmodel.check.bo.Check;
-import it.eng.spagobi.behaviouralmodel.check.dao.ICheckDAO;
-import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
-import it.eng.spagobi.behaviouralmodel.lov.dao.IModalitiesValueDAO;
-import it.eng.spagobi.commons.bo.Role;
-import it.eng.spagobi.commons.bo.RoleBO;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
-import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
-import it.eng.spagobi.mapcatalogue.dao.ISbiGeoLayersDAO;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.services.rest.annotations.UserConstraint;
-import it.eng.spagobi.services.serialization.JsonConverter;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 @Path("/2.0/analyticalDrivers")
 @ManageAuthorization
@@ -191,18 +187,19 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 			modalitiesValueDAO = DAOFactory.getModalitiesValueDAO();
 			modalitiesValueDAO.setUserProfile(getUserProfile());
 			modalitiesValues = modalitiesValueDAO.loadModalitiesValueByParamaterId(idParameter);
-				
-				
+			
+			
 			
 			return Response.ok(modalitiesValues).build();
 		} catch (Exception e) {
 			logger.error("Error with loading resource", e);
 			throw new SpagoBIRestServiceException("Error with loading resource", buildLocaleFromSession(), e);
 		}
-			
-			
+		
+		
 
 	}
+
 	@GET
 	@UserConstraint(functionalities = { SpagoBIConstants.PARAMETER_MANAGEMENT })
 	@Path("/{id}/documents")
@@ -219,7 +216,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 			documentsDao = DAOFactory.getBIObjectDAO();
 			documentsDao.setUserProfile(getUserProfile());
 			documents = documentsDao.loadBIObjectsByParamterId(idParameter);
-		
+			
 			return Response.ok(documents).build();
 		} catch (Exception e) {
 			logger.error("Error with loading resource", e);
@@ -426,6 +423,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 		role.setAbleToManageGlossaryTechnical(bo.isAbleToManageGlossaryTechnical());
 		role.setAbleToManageKpiValue(bo.isAbleToManageKpiValue());
 		role.setAbleToManageCalendar(bo.isAbleToManageCalendar());
+		role.setAbleToUseFunctionsCatalog(bo.isAbleToUseFunctionsCatalog());
 		role.setIsAbleToSaveSubobjects(bo.isAbleToSaveSubobjects());
 		role.setIsAbleToSeeSubobjects(bo.isAbleToSeeSubobjects());
 		role.setIsAbleToSeeViewpoints(bo.isAbleToSeeViewpoints());

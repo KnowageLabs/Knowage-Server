@@ -24,6 +24,7 @@ Sbi.profiling.AuthorizationsMapping =  {
 			    			['manageGlossaryTechnical','MANAGE_GLOSSARY_TECHNICAL'],
 			    			['manageKpiValue','MANAGE_KPI_VALUE'],
 			    			['manageCalendar','MANAGE_CALENDAR'],
+			    			['functionsCatalogUsage','FUNCTIONS_CATALOG_USAGE'],
 			    			['seeDocBrowser','SEE_DOCUMENT_BROWSER'],
 			    			['seeFavourites','SEE_FAVOURITES'],
 			    			['seeSubscriptions','SEE_SUBSCRIPTIONS'],

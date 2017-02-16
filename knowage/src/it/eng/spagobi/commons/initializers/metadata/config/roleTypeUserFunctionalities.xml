@@ -409,11 +409,13 @@
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="TemporalDimension" roleType="TEST_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="TemporalDimension" roleType="MODEL_ADMIN" />
 	
+	<!--
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="FunctionsCatalogUsage" roleType="USER" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="FunctionsCatalogUsage" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="FunctionsCatalogUsage" roleType="DEV_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="FunctionsCatalogUsage" roleType="TEST_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="FunctionsCatalogUsage" roleType="MODEL_ADMIN" />
+	-->
 	
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="FunctionsCatalogManagement" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="FunctionsCatalogManagement" roleType="DEV_ROLE" />

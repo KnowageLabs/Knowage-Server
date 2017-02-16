@@ -142,6 +142,7 @@
 		<AUTHORIZATION productType="KnowageLI" authorizationName="CREATE_DOCUMENTS" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageLI" authorizationName="ENABLE_DATASET_PERSISTENCE" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageLI" authorizationName="MANAGE_CALENDAR" organization="DEFAULT_TENANT" />
+        <AUTHORIZATION productType="KnowageLI" authorizationName="FUNCTIONS_CATALOG_USAGE" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageLI" authorizationName="MANAGE_USERS" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageLI" authorizationName="SAVE_INTO_FOLDER" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageLI" authorizationName="SAVE_METADATA" organization="DEFAULT_TENANT" />
@@ -159,6 +160,7 @@
 		<AUTHORIZATION productType="KnowagePA" authorizationName="CREATE_DOCUMENTS" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowagePA" authorizationName="ENABLE_DATASET_PERSISTENCE" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowagePA" authorizationName="MANAGE_CALENDAR" organization="DEFAULT_TENANT" />
+        <AUTHORIZATION productType="KnowagePA" authorizationName="FUNCTIONS_CATALOG_USAGE" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowagePA" authorizationName="MANAGE_USERS" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowagePA" authorizationName="SAVE_INTO_FOLDER" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowagePA" authorizationName="SAVE_METADATA" organization="DEFAULT_TENANT" />
