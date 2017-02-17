@@ -45,6 +45,7 @@ public class QuartzNativeObjectsConverter {
 
 	private static String SPAGOBI_CRON_EXPRESSION_DEPRECATED = "chronString";
 	private static String SPAGOBI_CRON_EXPRESSION = "spagoBIcronExpression";
+	private static final String MERGE_ALL_SNAPSHOTS = "mergeAllSnapshots";
 
 	private static Logger logger = Logger.getLogger(QuartzNativeObjectsConverter.class);
 
@@ -61,6 +62,11 @@ public class QuartzNativeObjectsConverter {
 		quartzJob.setVolatility(spagobiJob.isVolatile());
 
 		JobDataMap parameters = convertParametersToNativeObject(spagobiJob.getParameters());
+		if (parameters.containsKey(MERGE_ALL_SNAPSHOTS)) {
+			throw new SpagoBIRuntimeException("An unexpected error occured while converting Job to native object: " + MERGE_ALL_SNAPSHOTS
+					+ " property already defined");
+		}
+		parameters.put(MERGE_ALL_SNAPSHOTS, spagobiJob.isMergeAllSnapshots() ? "true" : "false");
 		quartzJob.setJobDataMap(parameters);
 
 		return quartzJob;
@@ -79,6 +85,10 @@ public class QuartzNativeObjectsConverter {
 		spagobiJob.setVolatile(quartzJob.isVolatile());
 
 		Map<String, String> parameters = convertParametersFromNativeObject(quartzJob.getJobDataMap());
+		if (parameters.containsKey(MERGE_ALL_SNAPSHOTS)) {
+			spagobiJob.setMergeAllSnapshots("true".equalsIgnoreCase(parameters.get(MERGE_ALL_SNAPSHOTS)));
+			parameters.remove(MERGE_ALL_SNAPSHOTS);
+		}
 		spagobiJob.addParameters(parameters);
 
 		return spagobiJob;

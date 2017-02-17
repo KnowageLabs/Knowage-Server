@@ -121,6 +121,11 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 											<label>{{translate.load("sbi.generic.descr")}}</label>
 											<input class="input_class" ng-model="ctrl.selectedJob.jobDescription" maxlength="120" ng-maxlength="120" md-maxlength="120">
 										</md-input-container>
+										<md-input-container class="md-block">
+											<md-checkbox ng-model="ctrl.selectedJob.jobMergeAllSnapshots" aria-label="Merge all snapshots">
+            									{{translate.load("sbi.scheduler.mergeallsnapshots");}}
+          									</md-checkbox>
+          								</md-input-container>
 									</div>
 								</div>
 								<md-toolbar class="md-blue minihead" layout="row">

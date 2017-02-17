@@ -43,6 +43,7 @@ public class JobJSONSerializer implements Serializer {
 	public static final String JOB_CLASS = "jobClass";
 	public static final String JOB_DURABILITY = "jobDurability";
 	public static final String JOB_REQUEST_RECOVERY = "jobRequestRecovery";
+	public static final String JOB_MERGE_ALL_SNAPSHOTS = "jobMergeAllSnapshots";
 	public static final String USE_VOLATILITY = "useVolatility";
 	public static final String JOB_PARAMETERS = "jobParameters";
 	public static final String JOB_DOCUMENTS = "documents";
@@ -65,6 +66,7 @@ public class JobJSONSerializer implements Serializer {
 			result.put(JOB_CLASS, job.getJobClass().getName());
 			result.put(JOB_DURABILITY, job.isDurable());
 			result.put(JOB_REQUEST_RECOVERY, job.isRequestsRecovery());
+			result.put(JOB_MERGE_ALL_SNAPSHOTS, job.isMergeAllSnapshots());
 			result.put(USE_VOLATILITY, job.isVolatile());
 
 			JSONArray parsListJSON = new JSONArray();
