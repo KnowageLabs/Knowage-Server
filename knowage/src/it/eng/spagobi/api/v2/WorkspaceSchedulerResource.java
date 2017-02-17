@@ -17,34 +17,6 @@
  */
 package it.eng.spagobi.api.v2;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-
-import org.apache.log4j.Logger;
-import org.apache.pdfbox.multipdf.PDFMergerUtility;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.Snapshot;
@@ -52,13 +24,26 @@ import it.eng.spagobi.analiticalmodel.document.dao.ISnapshotDAO;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
-import it.eng.spagobi.utilities.rest.RestUtilities;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * @author Stefan Petrovic (Stefan.Petrovic@mht.net)
@@ -104,55 +89,10 @@ public class WorkspaceSchedulerResource extends AbstractSpagoBIResource {
 			}
 
 		}
-		return toreturn.toString();
-
-	}
-
-	@POST
-	@Path("/merge")
-	@Produces("application/pdf")
-	@UserConstraint(functionalities = { SpagoBIConstants.SCHEDULER_MANAGEMENT })
-	public void  merge(@Context HttpServletRequest req) {
-		logger.debug("IN");
-		ISnapshotDAO snapDao = null;
-		PDFMergerUtility mergePdf = new PDFMergerUtility();
-		
-		try {
-			snapDao = DAOFactory.getSnapshotDAO();
-			JSONArray snapshotIds = RestUtilities.readBodyAsJSONArray(req);
-			for (int i = 0; i < snapshotIds.length(); i++) {
-				Integer id = Integer.valueOf(snapshotIds.getString(i));
-				Snapshot snap = snapDao.loadSnapshot(id);
-				InputStream is = new ByteArrayInputStream(snap.getContent());
-				mergePdf.addSource(is);
-			}
-			// download merged file
-			 ByteArrayOutputStream pdfDownload = new ByteArrayOutputStream();
-			 //mergePdf.setDestinationFileName(SpagoBIUtilities.getResourcePath()+"/"+"Merge.pdf");
-			 mergePdf.setDestinationStream(pdfDownload);
-			 mergePdf.mergeDocuments(null);
-			 
-			 response.setContentLength(pdfDownload.size());
-			  response.setContentType("application/pdf");
-			  response.setHeader("Content-Disposition", "filename=mergedDocument.pdf");
-			  response.setHeader("Pragma", "public");
-			  response.setHeader("Cache-Control", "max-age=0");
-			  response.addDateHeader("Expires", 0);
-			  response.getOutputStream().write(pdfDownload.toByteArray());
-
-		} catch (EMFUserError e) {
-			throw new SpagoBIRestServiceException("Error with getting snapshpots", buildLocaleFromSession(), e);
-		} catch (IOException e) {
-			throw new SpagoBIRestServiceException("I/O Error with getting snapshpot ids from request", buildLocaleFromSession(), e);
-		} catch (JSONException e) {
-			throw new SpagoBIRestServiceException("JSON Error with getting snapshpot ids from request", buildLocaleFromSession(), e);
-		} catch (EMFInternalError e) {
-			throw new SpagoBIRestServiceException(" Error while crating input stream for the content of a snapshot", buildLocaleFromSession(), e);
-		}
-
-		
-
-
+		JSONObject resultAsMap = new JSONObject();
+		resultAsMap.put("urlPath", GeneralUtilities.getSpagoBIProfileBaseUrl(this.getUserProfile().getUserUniqueIdentifier().toString()));
+		resultAsMap.put("schedulations", toreturn);
+		return resultAsMap.toString();
 
 	}
 

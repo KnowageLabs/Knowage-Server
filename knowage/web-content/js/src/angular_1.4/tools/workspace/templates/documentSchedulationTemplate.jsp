@@ -1,6 +1,6 @@
 
 <div flex layout="column">
-	<div ng-if=!mergePdfsInto1 flex layout="column">
+
 	<script type="text/ng-template" id="dialog1.tmpl.html">
 <md-dialog aria-label="Snapshot"  style="height:90%; width:90%; max-width: 100%;  max-height: 100%;" ng-cloak>
 <md-toolbar>
@@ -17,6 +17,9 @@
 	</md-dialog-content> 
  </md-dialog>
 	</script>
+
+	<div ng-if=!mergePdfsInto1 flex layout="column">
+
 	
 	<md-toolbar flex>
 	    <div class="md-toolbar-tools" flex layout-align="center center">

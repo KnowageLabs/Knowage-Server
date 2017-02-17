@@ -60,7 +60,8 @@ function schedulationController($scope, sbiModule_messaging, $mdDialog, $httpPar
 		sbiModule_restServices.promiseGet("2.0/pdf",scheduler)
 		.then(function(response) {
 			console.info("[LOAD START]: Loading of Recent documents is started.");
-			angular.copy(response.data,$scope.schedulationListForMerge);
+			angular.copy(response.data.schedulations,$scope.schedulationListForMerge);
+			$scope.snapshotUrlPath=response.data.urlPath;
 			//$scope.recentDocumentsInitial = $scope.recentDocumentsList;
 			//$scope.convertTimestampToDate();
 			console.info("[LOAD END]: Loading of Recent documents is finished.");
@@ -101,32 +102,25 @@ function schedulationController($scope, sbiModule_messaging, $mdDialog, $httpPar
 				 icon:"fa fa-download",
 				 color:'#222222',
 				 action : function(item) { 
-					
-					 if($scope.mergePdfsInto1) {
-						 sbiModule_restServices.promisePost("2.0/pdf","merge",item.ids)
-							.then(function(response) {
-								console.info("[LOAD START]: Loading of Recent documents is started.");
-							
-								console.info("[LOAD END]: Loading of Recent documents is finished.");
-							},function(response){
-								
-								// Take the toaster duration set inside the main controller of the Workspace. (danristo)
-								toastr.error(response.data, sbiModule_translate.load('sbi.browser.folder.load.error'), $scope.toasterConfig);
-								
-							});
-					 } else {
-						 $scope.snapshotUrl=$scope.snapshotUrlPath+
-						   "&ACTION_NAME=GET_SNAPSHOT_CONTENT"+"&SNAPSHOT_ID=" + item.id+"&OBJECT_ID=" + item.biobjId+
-						   "&LIGHT_NAVIGATOR_DISABLED=TRUE";
-						 $mdDialog.show({
-								templateUrl: 'dialog1.tmpl.html',
-								scope:$scope,
-								preserveScope: true,
-								targetEvent:item,
-								clickOutsideToClose:true
-							})
-					 }
 					 
+					var queryParams = "";
+
+					 if($scope.mergePdfsInto1) {
+						 for(var i=0; i<item.ids.length;i++){
+							 queryParams=queryParams+"&mergeitems="+item.ids[i]; 
+						 }
+					 } else {
+						 queryParams="&OBJECT_ID=" + item.biobjId;
+					 }
+					 $scope.snapshotUrl=$scope.snapshotUrlPath+
+					   "&ACTION_NAME=GET_SNAPSHOT_CONTENT"+"&SNAPSHOT_ID=" + item.id+"&LIGHT_NAVIGATOR_DISABLED=TRUE"+queryParams;
+					 $mdDialog.show({
+							templateUrl: 'dialog1.tmpl.html',
+							scope:$scope,
+							preserveScope: true,
+							targetEvent:item,
+							clickOutsideToClose:true
+						})
 					 
 					 					 
 				 }	
