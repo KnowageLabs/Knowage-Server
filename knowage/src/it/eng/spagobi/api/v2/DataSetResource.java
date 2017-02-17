@@ -592,9 +592,6 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 					} else {
 						IDataSource dataSource = dataSet.getDataSource();
 
-						for (int i = 0; i < columnsList.size(); i++) {
-							columnsList.set(i, AbstractJDBCDataset.encapsulateColumnName(columnsList.get(i), dataSource));
-						}
 						Operand leftOperand = new Operand(StringUtils.join(columnsList, ","));
 
 						List<String> valuesList = new ArrayList<String>();
