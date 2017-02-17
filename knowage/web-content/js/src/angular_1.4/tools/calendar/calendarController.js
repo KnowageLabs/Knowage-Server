@@ -165,6 +165,17 @@ function controllerCalendar(sbiModule_download,sbiModule_config,sbiModule_transl
 //			}
 //		});
 //	}
+	
+	$scope.selectCalendar.calStartDay = undefined;
+	$scope.selectCalendar.calEndDay = undefined;
+	
+	$scope.$watch("selectCalendar.calStartDay",function(newValue,oldValue){
+		if($scope.selectCalendar.calStartDay!=undefined
+				&& $scope.selectCalendar.calEndDay!=undefined
+				&& newValue.getTime()>$scope.selectCalendar.calEndDay.getTime()){
+			$scope.selectCalendar.calEndDay = newValue;
+		}
+	});
 
 	$scope.saveCalendar = function(){
 		if($scope.selectCalendar.calendar==undefined || $scope.selectCalendar.calendar.trim()==""){

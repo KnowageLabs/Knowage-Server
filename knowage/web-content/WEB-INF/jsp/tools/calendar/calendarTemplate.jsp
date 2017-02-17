@@ -82,13 +82,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								maxlength="30" ng-maxlength="30" md-maxlength="30"   ng-disabled="selectCalendar.calendarId!=undefined"> </md-input-container>
 						</div>
 				</div>
-				<div layout="row" flex>
+				<div layout="row" flex layout-align="center center" flex>
 					<label style="margin-top: 10px;">{{translate.load("sbi.target.startvalidity")}}</label>
 					<md-datepicker ng-model="selectCalendar.calStartDay" name="Select Data"
-						 md-placeholder={{translate.load("sbi.target.selectdate");}}   ng-disabled="selectCalendar.calendarId!=undefined"></md-datepicker>
+						md-placeholder={{translate.load("sbi.target.selectdate");}}   ng-disabled="selectCalendar.calendarId!=undefined"></md-datepicker>
+					
 					<label style="margin-top: 10px;">{{translate.load("sbi.target.endvalidity")}}</label>
 					<md-datepicker ng-model="selectCalendar.calEndDay" name="Select Data"
-						 md-placeholder={{translate.load("sbi.target.selectdate");}}  ng-disabled="selectCalendar.calendarId!=undefined"></md-datepicker>
+						md-min-date="selectCalendar.calStartDay"
+						md-placeholder={{translate.load("sbi.target.selectdate");}}  ng-disabled="selectCalendar.calendarId!=undefined"></md-datepicker>
 				</div>
 				<div layout="row" flex> 
 					<span flex></span>
