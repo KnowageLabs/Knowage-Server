@@ -45,8 +45,15 @@ function schedulationController($scope, sbiModule_messaging, $mdDialog, $httpPar
 		.then(function(response) {
 			console.info("[LOAD START]: Loading of Recent documents is started.");
 			angular.copy(response.data.root,$scope.schedulationList);
-			//$scope.recentDocumentsInitial = $scope.recentDocumentsList;
-			//$scope.convertTimestampToDate();
+			for(var jobIndex = $scope.schedulationList.length - 1; jobIndex >= 0; jobIndex--){
+				var job = $scope.schedulationList[jobIndex];
+				
+				if(job.jobGroup != "BIObjectExecutions"){
+					// discard job if group is not BIObjectExecutions
+					$scope.schedulationList.splice(jobIndex, 1);
+					continue;
+				}
+			}
 			console.info("[LOAD END]: Loading of Recent documents is finished.");
 		},function(response){
 			
