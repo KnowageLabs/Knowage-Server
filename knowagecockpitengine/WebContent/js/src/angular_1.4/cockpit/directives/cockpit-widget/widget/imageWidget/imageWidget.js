@@ -161,7 +161,7 @@ function EditWidgetController($scope,finishEdit,sbiModule_translate,$mdToast,sbi
 		};
 	$scope.upload = function(ev){
 		if($scope.uploadImg.fileName == "" || $scope.uploadImg.fileName == undefined){
-			$mdToast.show($mdToast.simple().content('sbi.impexpusers.missinguploadfile').position('top').action(
+			$mdToast.show($mdToast.simple().content(sbiModule_translate.load('sbi.impexpusers.missinguploadfile')).position('top').action(
 			'OK').highlightAction(false).hideDelay(5000));
 		}else{
 			var fd = new FormData();
@@ -172,10 +172,10 @@ function EditWidgetController($scope,finishEdit,sbiModule_translate,$mdToast,sbi
 				if(data.success){
 					refreshImagesList();
 				}else if (data.hasOwnProperty("msg")){
-						$mdToast.show($mdToast.simple().content(data.msg).position('top').action(
+						$mdToast.show($mdToast.simple().content(sbiModule_translate.load(data.msg)).position('top').action(
 						'OK').highlightAction(false).hideDelay(5000));
 				}else{
-					$mdToast.show($mdToast.simple().content('sbi.generic.genericError').position('top').action(
+					$mdToast.show($mdToast.simple().content(sbiModule_translate.load('sbi.generic.genericError')).position('top').action(
 					'OK').highlightAction(false).hideDelay(5000));
 				}
 			})
