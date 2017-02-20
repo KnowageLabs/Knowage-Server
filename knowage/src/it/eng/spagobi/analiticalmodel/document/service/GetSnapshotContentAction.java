@@ -60,7 +60,7 @@ public class GetSnapshotContentAction extends AbstractHttpAction {
 		Map<String,Object> contentMap;
 
 		List<String> objectIdStr = request.getAttributeAsList("mergeitems");
-		if(objectIdStr==null){
+		if(objectIdStr==null || objectIdStr.size()==0){
 			contentMap = getSnapshotForOneDocument(request);
 		}else{
 			contentMap = merge(objectIdStr);
