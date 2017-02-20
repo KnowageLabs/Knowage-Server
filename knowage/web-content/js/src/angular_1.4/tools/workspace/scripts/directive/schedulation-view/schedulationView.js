@@ -30,7 +30,6 @@ angular.module('schedulation_view', ['ngMaterial'])
 		scope: {
 			ngModel:"=",
 			showGridView:"=?",
-			showAddToOrganizer:"=?",
 			selectedRow:"=?",
 			tableSpeedMenuOption:"=?",
 			selectedDocument:"=?",

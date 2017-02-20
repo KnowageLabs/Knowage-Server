@@ -28,7 +28,6 @@ angular
 		 return {
 		      restrict: 'E',
 		      replace: 'true',
-//		      templateUrl: '/knowage/js/src/angular_1.4/tools/workspace/templates/recentViewWorkspace.html',
 		      templateUrl: currentScriptPath + '../../../templates/schedulationViewWorkspace.html',
 		      controller: schedulationController
 		  };
@@ -43,7 +42,7 @@ function schedulationController($scope, sbiModule_messaging, $mdDialog, $httpPar
 	$scope.loadSchedulations = function(){
 		sbiModule_restServices.promiseGet("scheduler/listAllJobs","")
 		.then(function(response) {
-			console.info("[LOAD START]: Loading of Recent documents is started.");
+			console.info("[LOAD START]: Loading of Shcedulers is started.");
 			angular.copy(response.data.root,$scope.schedulationList);
 			for(var jobIndex = $scope.schedulationList.length - 1; jobIndex >= 0; jobIndex--){
 				var job = $scope.schedulationList[jobIndex];
@@ -54,10 +53,9 @@ function schedulationController($scope, sbiModule_messaging, $mdDialog, $httpPar
 					continue;
 				}
 			}
-			console.info("[LOAD END]: Loading of Recent documents is finished.");
+			console.info("[LOAD END]: Loading of Shcedulers is finished.");
 		},function(response){
 			
-			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
 			toastr.error(response.data, sbiModule_translate.load('sbi.browser.folder.load.error'), $scope.toasterConfig);
 			
 		});
@@ -66,12 +64,10 @@ function schedulationController($scope, sbiModule_messaging, $mdDialog, $httpPar
 	$scope.loadSchedulationsForMerge = function(scheduler){
 		sbiModule_restServices.promiseGet("2.0/pdf",scheduler)
 		.then(function(response) {
-			console.info("[LOAD START]: Loading of Recent documents is started.");
+			console.info("[LOAD START]: Loading of Shcedulations for selected scheduler is started.");
 			angular.copy(response.data.schedulations,$scope.schedulationListForMerge);
 			$scope.snapshotUrlPath=response.data.urlPath;
-			//$scope.recentDocumentsInitial = $scope.recentDocumentsList;
-			//$scope.convertTimestampToDate();
-			console.info("[LOAD END]: Loading of Recent documents is finished.");
+			console.info("[LOAD END]: Loading of Shcedulations for selected scheduler is finished.");
 		},function(response){
 			
 			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
@@ -79,8 +75,6 @@ function schedulationController($scope, sbiModule_messaging, $mdDialog, $httpPar
 			
 		});
 	}
-	
-	$scope.mergePdfsInto1 = true;
 	
 	$scope.convertTimestampToDate = function(){
 		for (var i = 0; i < $scope.recentDocumentsInitial.length; i++) {
@@ -98,13 +92,11 @@ function schedulationController($scope, sbiModule_messaging, $mdDialog, $httpPar
 	$scope.closeFilter = function(){
 		$mdDialog.cancel();
 	}
-	
-	$scope.loadRecentDocumentExecutionsForUser();
-		
+			
 	$scope.downloadSnapshotSpeedMenuOption = 
 		[ 			 		               	
 			 			 		               	
-			 { // Fill Form
+			 { 
 				 label: sbiModule_translate.load("sbi.generic.download"),
 				 icon:"fa fa-download",
 				 color:'#222222',
@@ -127,9 +119,7 @@ function schedulationController($scope, sbiModule_messaging, $mdDialog, $httpPar
 							preserveScope: true,
 							targetEvent:item,
 							clickOutsideToClose:true
-						})
-					 
-					 					 
+						}) 					 
 				 }	
 			 }
 	 ];
@@ -157,6 +147,7 @@ function schedulationController($scope, sbiModule_messaging, $mdDialog, $httpPar
 	};
 	
 	$scope.openSchedulersDocumentsAndSnapshots = function(doc) {
+		$scope.mergePdfsInto1 = doc.jobMergeAllSnapshots;
 		$scope.scheduler = doc;
 		$scope.showDocSchedJsp = true;
 		if($scope.mergePdfsInto1) {
