@@ -401,10 +401,21 @@
             md-card-title{
            	 flex: inherit;
             }
+            &:hover {
+            	.showActionButtonHandler {
+            		opacity: 1;
+            	}
+            }
 			.showActionButtonHandler{
 			    position: absolute;
-				width: 100%;
+			    right: 10px;
+			    opacity: .4;
+				width: 40px;
 				height: 40px;
+				z-index: 9999;
+				button:hover {
+					background-color: rgba($ternaryColor, 0.5);
+				}
 			}
 			
 			.widgetActionButton{
