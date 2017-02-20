@@ -204,6 +204,17 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 	$scope.activeSearch 	= false; // default search unactive
 	$scope.actionButtonClass=[]; 
 	
+	$scope.widgetActionButtonsVisible = false;
+	$scope.widExp = false;
+	
+	$scope.showWidgetActionButtons = function(){
+		$scope.widgetActionButtonsVisible = $scope.widgetActionButtonsVisible?false:true;
+	}
+	
+	$scope.closeWidgetActionButtons = function() {
+		$scope.widgetActionButtonsVisible=false;
+	}
+	
 	// davverna - initializing search object to give all the columns to the user searchbar
 	if(!$scope.ngModel.search || $scope.ngModel.search.columns == []){
 		$scope.ngModel.search ={"columns" : []};
@@ -678,6 +689,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 			$scope.cockpitWidgetItem.css("z-index","");
 			angular.element($scope.cockpitWidgetItem[0].firstElementChild).removeClass("fullScreenWidget");
 			cockpitModule_widgetServices.fullScreenWidget = false;
+			$scope.widExp = false;
 		}else{
 			cockpitModule_properties.WIDGET_EXPANDED[cockpitModule_properties.CURRENT_SHEET]=true;
 			cockpitModule_widgetServices.setFullPageWidget(true);
@@ -689,6 +701,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 			$scope.cockpitWidgetItem.css("z-index","9999");
 			angular.element($scope.cockpitWidgetItem[0].firstElementChild).addClass("fullScreenWidget");
 			cockpitModule_widgetServices.fullScreenWidget = true;
+			$scope.widExp = true;
 		}
 		cockpitModule_gridsterOptions.draggable.enabled=cockpitModule_properties.EDIT_MODE && cockpitModule_properties.WIDGET_EXPANDED[cockpitModule_properties.CURRENT_SHEET]!=true;
 		cockpitModule_gridsterOptions.resizable.enabled=cockpitModule_properties.EDIT_MODE && cockpitModule_properties.WIDGET_EXPANDED[cockpitModule_properties.CURRENT_SHEET]!=true;

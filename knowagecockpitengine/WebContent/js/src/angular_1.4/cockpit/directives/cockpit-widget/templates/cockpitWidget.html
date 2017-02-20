@@ -16,7 +16,7 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<li gridster-item="ngModel" ng-cloak  ng-class="{'topPosition' : widExp || gridsterItem.gridster.isMobile}"
+<li gridster-item="ngModel" ng-cloak  ng-class="{'topPosition' : widExp || gridsterItem.gridster.isMobile}"  ng-mouseleave="closeWidgetActionButtons()"
 	action-button-position-handler   widget-x-position=ngModel.col  action-button-class-container="widgetActionButton">
   	
   	<div ng-show="widgetSpinner" layout-fill style='position:absolute;z-index: 500;background:rgba(0,0,0, 0.3);'>
@@ -67,26 +67,41 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				</div>
 			</md-toolbar>
 		</md-card-title>
+		<div class="showActionButtonHandler" ng-if="!widExp">
+			<md-button class="md-icon-button "  aria-label="show menu" ng-click="showWidgetActionButtons()">
+				<md-icon md-font-icon="fa fa-ellipsis-v"></md-icon>
+			</md-button>
+		</div>
 		
-		<div class="widgetActionButton" ng-style="borderShadowStyle" >
+		<div class="widgetActionButton" ng-style="borderShadowStyle" ng-if="widgetActionButtonsVisible">
+			<!-- HAMBURGER ICON FOR DRAG START -->
 			<md-icon md-font-icon="fa fa-bars draggableToolbar dragCursor" ng-if="(cockpitModule_properties.EDIT_MODE && !widExp)" style="padding: 5px 0px 0px 10px;"></md-icon>
-			<md-button class="md-icon-button "  aria-label="expand" ng-click="expandWidget();widExp=!widExp;$event.stopPropagation();" ng-init="widExp=false">
+			
+			<!-- FULL PAGE EXPANSION BUTTON -->
+			<md-button class="md-icon-button "  aria-label="expand button" ng-click="expandWidget();$event.stopPropagation();" >
 				<md-icon md-font-icon="fa" ng-class="{'fa-compress':widExp ,' fa-expand':!widExp }"></md-icon>
 			</md-button>
-			<md-button class="md-icon-button " aria-label="search" ng-if="ngModel.type == 'table'" ng-click="openSearchBar();$event.stopPropagation();">
+			
+			<!-- SEARCH BUTTON for table widget only -->
+			<md-button class="md-icon-button " aria-label="search button" ng-if="ngModel.type == 'table'" ng-click="openSearchBar();$event.stopPropagation();">
 				<span class="fa-stack">
 				  <i class="fa fa-search fa-stack-1x"></i>
 				  <i ng-if="activeSearch" class="fa fa-check fa-stack-2x fa-positive"></i>
 				</span>
 			</md-button>
-			<md-button class="md-icon-button " aria-label="edit" ng-if="cockpitModule_properties.EDIT_MODE" ng-click="doEditWidget();$event.stopPropagation();">
+			
+			<!-- EDIT BUTTON -->
+			<md-button class="md-icon-button " aria-label="edit button" ng-if="cockpitModule_properties.EDIT_MODE" ng-click="doEditWidget();$event.stopPropagation();">
 				<md-icon md-font-icon="fa fa-pencil-square-o"></md-icon>
 			</md-button>
-			<md-button class="md-icon-button " aria-label="delete" ng-if="cockpitModule_properties.EDIT_MODE" ng-click="deleteWidget();$event.stopPropagation();">
+			
+			<!-- DELETE BUTTON -->
+			<md-button class="md-icon-button " aria-label="delete button" ng-if="cockpitModule_properties.EDIT_MODE" ng-click="deleteWidget();$event.stopPropagation();">
 				<md-icon md-font-icon="fa fa-trash"></md-icon>
 			</md-button>
 			
-			<md-button class="md-icon-button " aria-label="delete" ng-if="cliccable==true && cockpitModule_properties.EDIT_MODE" ng-click="ngModel.cliccable=!ngModel.cliccable;$event.stopPropagation();" ng-init="ngModel.cliccable=ngModel.cliccable==undefined? true : ngModel.cliccable">
+			<!-- SELECTABLE BUTTON -->
+			<md-button class="md-icon-button " aria-label="unselectable button" ng-if="cliccable==true && cockpitModule_properties.EDIT_MODE" ng-click="ngModel.cliccable=!ngModel.cliccable;$event.stopPropagation();" ng-init="ngModel.cliccable=ngModel.cliccable==undefined? true : ngModel.cliccable">
 				<md-tooltip md-direction="top" md-delay="1000">
 		          {{translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.outcomingeventsenabled.description")}}
 		        </md-tooltip>
@@ -96,7 +111,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				</span>
 			</md-button>
 			
-			 <md-button  class="md-icon-button " aria-label="delete" ng-if="updateble==true  && cockpitModule_properties.EDIT_MODE" ng-click="ngModel.updateble=!ngModel.updateble;$event.stopPropagation();" ng-init="ngModel.updateble=ngModel.updateble==undefined? true : ngModel.updateble">
+			<!-- UPDATEABLE BUTTON -->
+			 <md-button  class="md-icon-button " aria-label="updateable button" ng-if="updateble==true  && cockpitModule_properties.EDIT_MODE" ng-click="ngModel.updateble=!ngModel.updateble;$event.stopPropagation();" ng-init="ngModel.updateble=ngModel.updateble==undefined? true : ngModel.updateble">
 				<md-tooltip md-direction="top" md-delay="1000">
 		          {{translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.incomingeventsenabled.description")}}
 		        </md-tooltip>
