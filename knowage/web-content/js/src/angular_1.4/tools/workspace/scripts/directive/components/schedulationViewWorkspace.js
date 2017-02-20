@@ -38,6 +38,7 @@ function schedulationController($scope, sbiModule_messaging, $mdDialog, $httpPar
 	$scope.translate=sbiModule_translate;
 	$scope.schedulationList = [];
 	$scope.schedulationListForMerge = [];
+	$scope.mergePdfsInto1 = true;
 		
 	$scope.loadSchedulations = function(){
 		sbiModule_restServices.promiseGet("scheduler/listAllJobs","")
@@ -147,7 +148,7 @@ function schedulationController($scope, sbiModule_messaging, $mdDialog, $httpPar
 	};
 	
 	$scope.openSchedulersDocumentsAndSnapshots = function(doc) {
-		$scope.mergePdfsInto1 = doc.jobMergeAllSnapshots;
+		//$scope.mergePdfsInto1 = doc.jobMergeAllSnapshots;
 		$scope.scheduler = doc;
 		$scope.showDocSchedJsp = true;
 		if($scope.mergePdfsInto1) {
