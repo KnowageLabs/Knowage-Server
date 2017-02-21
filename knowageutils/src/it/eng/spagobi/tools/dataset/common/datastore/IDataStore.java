@@ -81,6 +81,8 @@ public interface IDataStore {
 
 	IDataStore aggregateAndFilterRecords(String sqlQuery, int offset, int fetchSize);
 
+	IDataStore aggregateAndFilterRecords(String sqlQuery, int offset, int fetchSize, int maxRowCount);
+
 	IDataStore aggregateAndFilterRecords(IQuery query);
 
 	org.apache.metamodel.data.DataSet getMetaModelResultSet(String sqlQuery);

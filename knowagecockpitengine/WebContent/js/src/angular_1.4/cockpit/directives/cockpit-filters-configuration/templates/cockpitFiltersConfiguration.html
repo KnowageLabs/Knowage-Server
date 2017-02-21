@@ -6,20 +6,22 @@
 				<md-icon md-font-icon="fa fa-eraser" ng-if="isWidget && (ngModel.borders!=cockpitStyle.borders || !angular.equals(ngModel.border,cockpitStyle.border))" ng-click="resetBordersStyle()"></md-icon>
 			</md-card-title-text>
 		</md-card-title>
-		<md-card-content layout="column">
 
+		<md-card-content layout="column">
+			<div layout="row" layout-align="center center">
+				<md-switch ng-model="ngModelShared.limitRows.enable" aria-label="Limit rows">
+					{{translate.load("sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.limitrows")}} &nbsp;
+				</md-switch>
+				
+				<md-input-container>
+					<label>{{translate.load("sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.maxrowsnumber")}}</label>
+					<input type="number" ng-model="ngModelShared.limitRows.rows" ng-disabled="!ngModelShared.limitRows.enable" min="1">
+				</md-input-container>
+			</div>
 			
-			<!--<div layout="row" ng-repeat="filterObj in filtersToReturn" > -->
 			<div layout="row" ng-repeat="filterObj in ngModelShared.filters" >
-				<div flex="15" layout="row" layout-align="center center">
-					<div>
-							{{filterObj.colName}}
-					</div>		
-				</div>	
-				
-				<md-chips flex="85" ng-model="filterObj.filterVals" name="filters" readonly="false" md-removable="true">
+				<md-chips flex ng-model="filterObj.filterVals" name="filters" readonly="false" md-removable="true" placeholder="{{filterObj.colName}}">
       			</md-chips>
-				
 			</div>	
 		</md-card-content>
 	</md-card>
@@ -27,7 +29,7 @@
 	<md-card ng-if="ngModelShared.filters==undefined">
 		<md-card class="noWidget ng-scope _md md-knowage-theme">
 				<md-card-content layout-align="center center" class="layout-align-center-center">
-					You need to specify a dataset to put a filter on it!
+					{{translate.load("sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.specifydatasettofilter")}}
 				</md-card-content>
 		</md-card>
 	

@@ -418,6 +418,16 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			dataToSend=cockpitModule_widgetSelection.getCurrentFilters(dataset.label);
 		}
 		
+		var limitRows;
+		if(ngModel.limitRows){
+			limitRows = ngModel.limitRows;
+		}else if(ngModel.content && ngModel.content.limitRows){
+			limitRows = ngModel.content.limitRows;
+		}
+		if(limitRows != undefined && limitRows.enable && limitRows.rows > 0){
+			params += "&limit=" + limitRows.rows;
+		}
+		
 		var filters;
 		if(ngModel.filters){
 			filters = ngModel.filters;

@@ -959,10 +959,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		$scope.$watchCollection('model.content.columnSelectedOfDataset', function(newColumns, oldColumns) {
 			var disableShowSummary = true;
-			for(var i=0; i<newColumns.length; i++){
-				if(newColumns[i].fieldType == "MEASURE"){
-					disableShowSummary = false;
-					break;
+			if(newColumns){
+				for(var i=0; i<newColumns.length; i++){
+					if(newColumns[i].fieldType == "MEASURE"){
+						disableShowSummary = false;
+						break;
+					}
 				}
 			}
 			$scope.model.style.disableShowSummary = disableShowSummary;

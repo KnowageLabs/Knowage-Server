@@ -619,8 +619,9 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	@Path("/{label}/data")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getDataStore(@PathParam("label") String label, @QueryParam("parameters") String parameters, @QueryParam("selections") String selections,
-			@QueryParam("likeSelections") String likeSelections, @QueryParam("aggregations") String aggregations, @QueryParam("summaryRow") String summaryRow,
-			@QueryParam("offset") int offset, @QueryParam("size") int fetchSize, @QueryParam("realtime") boolean isRealtime) {
+			@QueryParam("likeSelections") String likeSelections, @QueryParam("limit") int maxRowCount, @QueryParam("aggregations") String aggregations,
+			@QueryParam("summaryRow") String summaryRow, @QueryParam("offset") int offset, @QueryParam("size") int fetchSize,
+			@QueryParam("realtime") boolean isRealtime) {
 		logger.debug("IN");
 
 		try {
@@ -636,7 +637,10 @@ public class DataSetResource extends AbstractSpagoBIResource {
 				fetchSize = maxResults;
 			}
 			if (fetchSize > maxResults) {
-				throw new IllegalArgumentException("The page requested is too big. Max values is equals to [" + maxResults + "]");
+				throw new IllegalArgumentException("The page requested is too big. Max page size is equals to [" + maxResults + "]");
+			}
+			if (maxRowCount > maxResults) {
+				throw new IllegalArgumentException("The dataset requested is too big. Max row count is equals to [" + maxResults + "]");
 			}
 
 			List<ProjectionCriteria> projectionCriteria = new ArrayList<ProjectionCriteria>();
@@ -685,9 +689,9 @@ public class DataSetResource extends AbstractSpagoBIResource {
 				summaryRowProjectionCriteria = getProjectionCriteria(label, new JSONArray(), summaryRowMeasuresObject);
 			}
 
-			IDataStore dataStore = getDatasetManagementAPI().getDataStore(label, offset, fetchSize, isRealtime, DataSetUtilities.getParametersMap(parameters),
-					groupCriteria, filterCriteria, filterCriteriaForMetaModel, havingCriteria, havingCriteriaForMetaModel, projectionCriteria,
-					summaryRowProjectionCriteria);
+			IDataStore dataStore = getDatasetManagementAPI().getDataStore(label, offset, fetchSize, maxRowCount, isRealtime,
+					DataSetUtilities.getParametersMap(parameters), groupCriteria, filterCriteria, filterCriteriaForMetaModel, havingCriteria,
+					havingCriteriaForMetaModel, projectionCriteria, summaryRowProjectionCriteria);
 
 			Map<String, Object> properties = new HashMap<String, Object>();
 			JSONArray fieldOptions = new JSONArray("[{id: 1, options: {measureScaleFactor: 0.5}}]");

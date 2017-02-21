@@ -527,11 +527,16 @@ public class DataStore implements IDataStore {
 
 	@Override
 	public IDataStore aggregateAndFilterRecords(IQuery query) {
-		return aggregateAndFilterRecords(query.toSql(DEFAULT_SCHEMA_NAME, DEFAULT_TABLE_NAME), -1, -1);
+		return aggregateAndFilterRecords(query.toSql(DEFAULT_SCHEMA_NAME, DEFAULT_TABLE_NAME), -1, -1, -1);
 	}
 
 	@Override
 	public IDataStore aggregateAndFilterRecords(String sqlQuery, int offset, int fetchSize) {
+		return aggregateAndFilterRecords(sqlQuery, offset, fetchSize, -1);
+	}
+
+	@Override
+	public IDataStore aggregateAndFilterRecords(String sqlQuery, int offset, int fetchSize, int maxRowCount) {
 
 		// **************************************************************************************************************
 		// ***** This part build data structures used to convert a SpagoBI DataStore into an MetaModel DataContext ******
@@ -593,14 +598,14 @@ public class DataStore implements IDataStore {
 
 		int resultCount = 0;
 		if (offset == -1 || fetchSize == -1) {
-			while (dataSet.next()) {
+			while (dataSet.next() && resultCount < maxRowCount) {
 				Row row = dataSet.getRow();
 				IRecord record = getRecordFromRow(row, dataStore);
 				dataStore.appendRecord(record);
 				resultCount++;
 			}
 		} else {
-			while (dataSet.next()) {
+			while (dataSet.next() && resultCount < maxRowCount) {
 				if (offset <= resultCount && resultCount < offset + fetchSize) {
 					Row row = dataSet.getRow();
 					IRecord record = getRecordFromRow(row, dataStore);

@@ -171,7 +171,8 @@ public class JDBCDataProxy extends AbstractDataProxy {
 			}
 
 			if (resultNumber > -1) { // it means that resultNumber was successfully calculated by this data proxy
-				dataStore.getMetaData().setProperty("resultNumber", new Integer(resultNumber));
+				int limitedResultNumber = getMaxResults() > 0 && resultNumber > getMaxResults() ? getMaxResults() : resultNumber;
+				dataStore.getMetaData().setProperty("resultNumber", new Integer(limitedResultNumber));
 			}
 
 		} finally {

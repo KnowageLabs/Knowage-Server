@@ -298,12 +298,18 @@ public class SQLDBCache implements ICache {
 	@Override
 	public IDataStore get(IDataSet dataSet, List<GroupCriteria> groups, List<FilterCriteria> filters, List<FilterCriteria> havings,
 			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjectionCriteria, int offset, int fetchSize) {
+		return get(dataSet, groups, filters, havings, projections, summaryRowProjectionCriteria, offset, fetchSize, -1);
+	}
+
+	@Override
+	public IDataStore get(IDataSet dataSet, List<GroupCriteria> groups, List<FilterCriteria> filters, List<FilterCriteria> havings,
+			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjectionCriteria, int offset, int fetchSize, int maxRowCount) {
 		logger.debug("IN");
 
 		IDataStore dataStore = null;
 		try {
 			if (dataSet != null) {
-				dataStore = getInternal(dataSet, groups, filters, havings, projections, summaryRowProjectionCriteria, offset, fetchSize);
+				dataStore = getInternal(dataSet, groups, filters, havings, projections, summaryRowProjectionCriteria, offset, fetchSize, maxRowCount);
 			} else {
 				logger.warn("Input parameter [dataSet] is null");
 			}
@@ -320,7 +326,7 @@ public class SQLDBCache implements ICache {
 	}
 
 	public IDataStore getInternal(IDataSet dataSet, List<GroupCriteria> groups, List<FilterCriteria> filters, List<FilterCriteria> havings,
-			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjectionCriteria, int offset, int fetchSize) {
+			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjectionCriteria, int offset, int fetchSize, int maxRowCount) {
 		logger.debug("IN");
 
 		try {
@@ -331,7 +337,7 @@ public class SQLDBCache implements ICache {
 				return null;
 			}
 			return queryStandardCachedDataset(groups, filters, havings, projections, summaryRowProjectionCriteria, resultsetSignature, offset, fetchSize,
-					dataSet);
+					maxRowCount, dataSet);
 
 		} finally {
 			logger.debug("OUT");
@@ -450,7 +456,7 @@ public class SQLDBCache implements ICache {
 	@SuppressWarnings("unchecked")
 	private IDataStore queryStandardCachedDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<FilterCriteria> havings,
 			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, String resultsetSignature, int offset, int fetchSize,
-			IDataSet dataSet) {
+			int maxRowCount, IDataSet dataSet) {
 
 		DataStore toReturn = null;
 
@@ -747,7 +753,7 @@ public class SQLDBCache implements ICache {
 
 						String queryText = sqlBuilder.toString();
 						logger.debug("Cached dataset access query is equal to [" + queryText + "]");
-						IDataStore dataStore = dataSource.executeStatement(queryText, offset, fetchSize);
+						IDataStore dataStore = dataSource.executeStatement(queryText, offset, fetchSize, maxRowCount);
 
 						if (summaryRowProjections != null && summaryRowProjections.size() > 0) {
 							StringBuilder sb = new StringBuilder();

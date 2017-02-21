@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -54,51 +54,51 @@ public class DataSource implements Serializable, IDataSource {
 	@NotNull
 	@Max(11)
 	private int dsId;
-	
+
 	@Xss
 	@Max(160)
 	private String descr;
-	
+
 	@NotNull
 	@Xss
 	@Max(50)
 	private String label;
-	
+
 	@Xss
 	@Max(50)
 	private String jndi;
-	
+
 	@Xss
 	@Max(500)
 	private String urlConnection;
-	
+
 	@Xss
 	@Max(50)
 	private String user;
-	
+
 	@Xss
 	@Max(50)
 	private String pwd;
-	
+
 	@Xss
 	@Max(160)
 	private String driver;
-	
+
 	@NotNull
 	@Max(11)
 	private Integer dialectId;
-	
+
 	private String hibDialectClass;
 	private String hibDialectName;
 	private Set engines = null;
 	private Set objects = null;
-	
+
 	@Max(45)
 	private String schemaAttribute = null;
-	
+
 	@NotNull
 	private Boolean multiSchema = null;
-	
+
 	private Boolean readOnly;
 	private Boolean writeDefault;
 
@@ -132,7 +132,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#toSpagoBiDataSource()
 	 */
 	@Override
@@ -236,7 +236,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getDsId()
 	 */
 	@Override
@@ -246,7 +246,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#setDsId(int)
 	 */
 	@Override
@@ -256,7 +256,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getDescr()
 	 */
 	@Override
@@ -266,9 +266,8 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 *
-	 * @see
-	 * it.eng.spagobi.tools.datasource.bo.IDataSource#setDescr(java.lang.String)
+	 * 
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#setDescr(java.lang.String)
 	 */
 	@Override
 	public void setDescr(String descr) {
@@ -277,7 +276,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getLabel()
 	 */
 	@Override
@@ -287,9 +286,8 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 *
-	 * @see
-	 * it.eng.spagobi.tools.datasource.bo.IDataSource#setLabel(java.lang.String)
+	 * 
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#setLabel(java.lang.String)
 	 */
 	@Override
 	public void setLabel(String label) {
@@ -298,7 +296,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getJndi()
 	 */
 	@Override
@@ -308,9 +306,8 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 *
-	 * @see
-	 * it.eng.spagobi.tools.datasource.bo.IDataSource#setJndi(java.lang.String)
+	 * 
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#setJndi(java.lang.String)
 	 */
 	@Override
 	public void setJndi(String jndi) {
@@ -319,7 +316,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getUrlConnection()
 	 */
 	@Override
@@ -329,10 +326,8 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 *
-	 * @see
-	 * it.eng.spagobi.tools.datasource.bo.IDataSource#setUrlConnection(java.
-	 * lang.String)
+	 * 
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#setUrlConnection(java. lang.String)
 	 */
 	@Override
 	public void setUrlConnection(String url_connection) {
@@ -341,7 +336,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getUser()
 	 */
 	@Override
@@ -351,9 +346,8 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 *
-	 * @see
-	 * it.eng.spagobi.tools.datasource.bo.IDataSource#setUser(java.lang.String)
+	 * 
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#setUser(java.lang.String)
 	 */
 	@Override
 	public void setUser(String user) {
@@ -362,7 +356,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getPwd()
 	 */
 	@Override
@@ -372,9 +366,8 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 *
-	 * @see
-	 * it.eng.spagobi.tools.datasource.bo.IDataSource#setPwd(java.lang.String)
+	 * 
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#setPwd(java.lang.String)
 	 */
 	@Override
 	public void setPwd(String pwd) {
@@ -383,7 +376,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getDriver()
 	 */
 	@Override
@@ -393,10 +386,8 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 *
-	 * @see
-	 * it.eng.spagobi.tools.datasource.bo.IDataSource#setDriver(java.lang.String
-	 * )
+	 * 
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#setDriver(java.lang.String )
 	 */
 	@Override
 	public void setDriver(String driver) {
@@ -405,7 +396,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getDialectId()
 	 */
 	@Override
@@ -415,10 +406,8 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 *
-	 * @see
-	 * it.eng.spagobi.tools.datasource.bo.IDataSource#setDialectId(java.lang
-	 * .Integer)
+	 * 
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#setDialectId(java.lang .Integer)
 	 */
 	@Override
 	public void setDialectId(Integer dialectId) {
@@ -427,7 +416,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getEngines()
 	 */
 	@Override
@@ -438,9 +427,8 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 *
-	 * @see
-	 * it.eng.spagobi.tools.datasource.bo.IDataSource#setEngines(java.util.Set)
+	 * 
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#setEngines(java.util.Set)
 	 */
 	@Override
 	public void setEngines(Set engines) {
@@ -449,7 +437,7 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#getObjects()
 	 */
 	@Override
@@ -460,9 +448,8 @@ public class DataSource implements Serializable, IDataSource {
 
 	/*
 	 * (non-Javadoc)
-	 *
-	 * @see
-	 * it.eng.spagobi.tools.datasource.bo.IDataSource#setObjects(java.util.Set)
+	 * 
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#setObjects(java.util.Set)
 	 */
 	@Override
 	public void setObjects(Set objects) {
@@ -515,7 +502,12 @@ public class DataSource implements Serializable, IDataSource {
 
 	@Override
 	public IDataStore executeStatement(String statement, Integer start, Integer limit) {
-		logger.debug("IN: Statement is [" + statement + "], start = [" + start + "], limit = [" + limit + "]");
+		return executeStatement(statement, start, limit, -1);
+	}
+
+	@Override
+	public IDataStore executeStatement(String statement, Integer start, Integer limit, Integer maxRowCount) {
+		logger.debug("IN: Statement is [" + statement + "], start = [" + start + "], limit = [" + limit + "], maxResults = [" + maxRowCount + "]");
 		IDataSet dataSet = JDBCDatasetFactory.getJDBCDataSet(this);
 		dataSet.setDataSource(this);
 		((AbstractJDBCDataset) dataSet).setQuery(statement); // all datasets
@@ -523,10 +515,10 @@ public class DataSource implements Serializable, IDataSource {
 																// the factory
 																// extend
 																// AbstractJDBCDataset
-		if (start == null && limit == null) {
+		if (start == null && limit == null && maxRowCount == null) {
 			dataSet.loadData();
 		} else {
-			dataSet.loadData(start, limit, -1);
+			dataSet.loadData(start, limit, maxRowCount);
 		}
 		IDataStore dataStore = dataSet.getDataStore();
 		logger.debug("Data store retrieved successfully");

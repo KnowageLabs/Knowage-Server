@@ -362,18 +362,19 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 			JSONObject associationGroupObjectWithoutParams = new JSONObject(associationGroupString);
 			JSONArray associationsWithoutParams = associationGroupObjectWithoutParams.optJSONArray("associations");
 			if (associationsWithoutParams != null) {
-				for (int associationIndex = 0; associationIndex < associationsWithoutParams.length(); associationIndex++) {
+				for (int associationIndex = associationsWithoutParams.length() - 1; associationIndex >= 0; associationIndex--) {
 					JSONObject association = associationsWithoutParams.getJSONObject(associationIndex);
-					JSONArray fields = association.optJSONArray("fields");
-					if (fields != null) {
-						for (int fieldIndex = fields.length() - 1; fieldIndex >= 0; fieldIndex--) {
-							JSONObject field = fields.getJSONObject(fieldIndex);
-							String column = field.getString("column");
-							String type = field.optString("type");
-							if ("document".equalsIgnoreCase(type) || column.startsWith("$P{") && column.endsWith("}")) {
-								fields.remove(fieldIndex);
-							}
+					JSONArray fields = association.getJSONArray("fields");
+					for (int fieldIndex = fields.length() - 1; fieldIndex >= 0; fieldIndex--) {
+						JSONObject field = fields.getJSONObject(fieldIndex);
+						String column = field.getString("column");
+						String type = field.optString("type");
+						if ("document".equalsIgnoreCase(type) || column.startsWith("$P{") && column.endsWith("}")) {
+							fields.remove(fieldIndex);
 						}
+					}
+					if (fields.length() < 2) {
+						associationsWithoutParams.remove(associationIndex);
 					}
 				}
 			}
@@ -791,13 +792,13 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 	@POST
 	@Path("/{label}/data")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getDataStorePost(@PathParam("label") String label, @QueryParam("parameters") String parameters,
-			@QueryParam("aggregations") String aggregations, @QueryParam("summaryRow") String summaryRow, String selections,
-			@QueryParam("likeSelections") String likeSelections, @QueryParam("offset") int offset, @QueryParam("size") int fetchSize,
+	public String getDataStorePost(@PathParam("label") String label, @QueryParam("parameters") String parameters, String selections,
+			@QueryParam("likeSelections") String likeSelections, @QueryParam("limit") int maxRowCount, @QueryParam("aggregations") String aggregations,
+			@QueryParam("summaryRow") String summaryRow, @QueryParam("offset") int offset, @QueryParam("size") int fetchSize,
 			@QueryParam("realtime") boolean isRealtime) {
 		logger.debug("IN");
 		try {
-			return getDataStore(label, parameters, selections, likeSelections, aggregations, summaryRow, offset, fetchSize, isRealtime);
+			return getDataStore(label, parameters, selections, likeSelections, maxRowCount, aggregations, summaryRow, offset, fetchSize, isRealtime);
 		} catch (Exception e) {
 			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
 		} finally {
@@ -814,7 +815,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 			JSONArray requestBodyJSONArray = RestUtilities.readBodyAsJSONArray(req);
 			for (int i = 0; i < requestBodyJSONArray.length(); i++) {
 				JSONObject info = requestBodyJSONArray.getJSONObject(i);
-				getDataStore(info.getString("datasetLabel"), info.getString("parameters"), null, null, info.getString("aggregation"), null, 0, 1,
+				getDataStore(info.getString("datasetLabel"), info.getString("parameters"), null, null, -1, info.getString("aggregation"), null, 0, 1,
 						info.optBoolean("realtime"));
 
 			}

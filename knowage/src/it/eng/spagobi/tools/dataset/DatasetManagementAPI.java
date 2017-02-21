@@ -371,7 +371,7 @@ public class DatasetManagementAPI {
 		logger.debug("OUT");
 	}
 
-	public IDataStore getDataStore(String label, int offset, int fetchSize, boolean isRealtime, Map<String, String> parametersValues,
+	public IDataStore getDataStore(String label, int offset, int fetchSize, int maxRowCount, boolean isRealtime, Map<String, String> parametersValues,
 			List<GroupCriteria> groups, List<FilterCriteria> filters, List<FilterCriteria> filtersForMetaModel, List<FilterCriteria> havings,
 			List<FilterCriteria> havingsForMetaModel, List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections) {
 
@@ -384,27 +384,27 @@ public class DatasetManagementAPI {
 
 			if (dataSet.isPersisted() && !dataSet.isPersistedHDFS()) {
 				logger.debug("Querying persisted dataset");
-				dataStore = queryPersistedDataset(groups, filters, havings, projections, summaryRowProjections, dataSet, offset, fetchSize);
+				dataStore = queryPersistedDataset(groups, filters, havings, projections, summaryRowProjections, dataSet, offset, fetchSize, maxRowCount);
 				dataStore.setCacheDate(getPersistedDate(dataSet));
 			} else if (dataSet.isFlatDataset()) {
 				logger.debug("Querying flat dataset");
-				dataStore = queryFlatDataset(groups, filters, havings, projections, summaryRowProjections, dataSet, offset, fetchSize);
+				dataStore = queryFlatDataset(groups, filters, havings, projections, summaryRowProjections, dataSet, offset, fetchSize, maxRowCount);
 				dataStore.setCacheDate(new Date());
 			} else if (isRealtime && isJDBCDataSet(dataSet) && !SqlUtils.isBigDataDialect(dataSet.getDataSource().getHibDialectName())) {
 				logger.debug("Querying realtime/JDBC dataset");
-				dataStore = queryJDBCDataset(groups, filters, havings, projections, summaryRowProjections, dataSet, offset, fetchSize);
+				dataStore = queryJDBCDataset(groups, filters, havings, projections, summaryRowProjections, dataSet, offset, fetchSize, maxRowCount);
 				dataStore.setCacheDate(new Date());
 			} else if (isRealtime) {
 				logger.debug("Querying realtime dataset");
 				dataStore = queryRealtimeDataset(groups, filtersForMetaModel, havingsForMetaModel, projections, summaryRowProjections, dataSet, offset,
-						fetchSize);
+						fetchSize, maxRowCount);
 				dataStore.setCacheDate(new Date());
 			} else {
 				logger.debug("Querying dataset in cache");
 				SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
 				cache.setUserProfile(userProfile);
 
-				IDataStore cachedResultSet = cache.get(dataSet, groups, filters, havings, projections, summaryRowProjections, offset, fetchSize);
+				IDataStore cachedResultSet = cache.get(dataSet, groups, filters, havings, projections, summaryRowProjections, offset, fetchSize, maxRowCount);
 
 				if (cachedResultSet == null) {
 					logger.debug("Dataset not in cache");
@@ -416,7 +416,7 @@ public class DatasetManagementAPI {
 						dataSet.loadData();
 						cache.put(dataSet, dataSet.getDataStore());
 					}
-					dataStore = cache.get(dataSet, groups, filters, havings, projections, summaryRowProjections, offset, fetchSize);
+					dataStore = cache.get(dataSet, groups, filters, havings, projections, summaryRowProjections, offset, fetchSize, maxRowCount);
 					if (dataStore == null) {
 						throw new CacheException("An unexpected error occured while executing method");
 					}
@@ -1266,35 +1266,36 @@ public class DatasetManagementAPI {
 	}
 
 	private IDataStore queryPersistedDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<FilterCriteria> havings,
-			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, int offset, int fetchSize)
+			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, int offset, int fetchSize, int maxRowCount)
 			throws InstantiationException, IllegalAccessException {
 		IDataSource dataSource = dataSet.getDataSourceForWriting();
 		String tableName = dataSet.getPersistTableName();
 		return queryDataset(new SelectBuilder(), dataSource, tableName, groups, filters, havings, projections, summaryRowProjections, dataSet, offset,
-				fetchSize);
+				fetchSize, maxRowCount);
 	}
 
 	private IDataStore queryFlatDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<FilterCriteria> havings,
-			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, int offset, int fetchSize)
+			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, int offset, int fetchSize, int maxRowCount)
 			throws InstantiationException, IllegalAccessException {
 		IDataSource dataSource = dataSet.getDataSource();
 		String tableName = dataSet.getFlatTableName();
 		return queryDataset(new SelectBuilder(), dataSource, tableName, groups, filters, havings, projections, summaryRowProjections, dataSet, offset,
-				fetchSize);
+				fetchSize, maxRowCount);
 	}
 
 	private IDataStore queryJDBCDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<FilterCriteria> havings,
-			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, int offset, int fetchSize)
+			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, int offset, int fetchSize, int maxRowCount)
 			throws JSONException, Exception, IllegalAccessException {
 		IDataSource dataSource = dataSet.getDataSource();
 		QuerableBehaviour querableBehaviour = (QuerableBehaviour) dataSet.getBehaviour(QuerableBehaviour.class.getName());
 		String tableName = querableBehaviour.getStatement();
 		InLineViewBuilder sqlBuilder = new InLineViewBuilder();
-		return queryDataset(sqlBuilder, dataSource, tableName, groups, filters, havings, projections, summaryRowProjections, dataSet, offset, fetchSize);
+		return queryDataset(sqlBuilder, dataSource, tableName, groups, filters, havings, projections, summaryRowProjections, dataSet, offset, fetchSize,
+				maxRowCount);
 	}
 
 	private IDataStore queryRealtimeDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<FilterCriteria> havings,
-			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, int offset, int fetchSize) {
+			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, int offset, int fetchSize, int maxRowCount) {
 		dataSet.loadData();
 		IDataStore dataStore = dataSet.getDataStore();
 		if (dataStore != null && dataStore.getRecordsCount() < METAMODEL_LIMIT) {
@@ -1304,7 +1305,7 @@ public class DatasetManagementAPI {
 			String originalQuery = getQueryText(null, tableName, groups, filters, havings, projections, null, dataSet, true, orderColumns);
 			boolean hasSortingOnCalculatedColumns = checkSortingOnCalculatedColumns(orderColumns);
 
-			IDataStore originalDataStore = dataStore.aggregateAndFilterRecords(originalQuery, -1, -1);
+			IDataStore originalDataStore = dataStore.aggregateAndFilterRecords(originalQuery, -1, -1, maxRowCount);
 			if (hasSortingOnCalculatedColumns) {
 				appendCalculatedColumnsToDataStore(projections, originalDataStore);
 				sortColumnsOnDataStore(orderColumns, originalDataStore);
@@ -1317,7 +1318,7 @@ public class DatasetManagementAPI {
 
 			if (summaryRowProjections != null && summaryRowProjections.size() > 0) {
 				String summaryRowQuery = getQueryText(null, tableName, groups, filters, havings, projections, summaryRowProjections, dataSet, true, null);
-				IDataStore summaryRowDataStore = originalDataStore.aggregateAndFilterRecords(summaryRowQuery, -1, -1);
+				IDataStore summaryRowDataStore = originalDataStore.aggregateAndFilterRecords(summaryRowQuery, -1, -1, maxRowCount);
 				appendSummaryRowToPagedDataStore(projections, summaryRowProjections, pagedDataStore, summaryRowDataStore);
 			}
 
@@ -1539,16 +1540,16 @@ public class DatasetManagementAPI {
 
 	private IDataStore queryDataset(SelectBuilder sqlBuilder, IDataSource dataSource, String tableName, List<GroupCriteria> groups,
 			List<FilterCriteria> filters, List<FilterCriteria> havings, List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections,
-			IDataSet dataSet, int offset, int fetchSize) throws InstantiationException, IllegalAccessException {
+			IDataSet dataSet, int offset, int fetchSize, int maxRowCount) throws InstantiationException, IllegalAccessException {
 		logger.debug("IN");
 
 		String query = getQueryText(sqlBuilder, dataSource, tableName, groups, filters, havings, projections, null, dataSet, false, null);
-		IDataStore pagedDataStore = dataSource.executeStatement(query, offset, fetchSize);
+		IDataStore pagedDataStore = dataSource.executeStatement(query, offset, fetchSize, maxRowCount);
 
 		if (summaryRowProjections != null && summaryRowProjections.size() > 0) {
 			String summaryRowQuery = getQueryText(sqlBuilder.getClass().newInstance(), dataSource, tableName, groups, filters, havings, projections,
 					summaryRowProjections, dataSet, false, null);
-			IDataStore summaryRowDataStore = dataSource.executeStatement(summaryRowQuery, -1, -1);
+			IDataStore summaryRowDataStore = dataSource.executeStatement(summaryRowQuery, -1, -1, maxRowCount);
 			appendSummaryRowToPagedDataStore(projections, summaryRowProjections, pagedDataStore, summaryRowDataStore);
 		}
 
