@@ -196,6 +196,8 @@ public class CrossTabHTMLSerializer {
 					if (crossTab.getCrosstabDefinition().isMeasuresOnRows() && i + 1 == levels) {
 						String measureAlias = aNode.getDescription();
 						text = MeasureScaleFactorOption.getScaledName(measureAlias, crossTab.getMeasureScaleFactor(measureAlias), this.locale);
+						// } else if (crossTab.getCrosstabDefinition().isMeasuresOnRows() && crossTab.getCrosstabDefinition().getMeasures().size() == 1) {
+						// text = "";
 					} else {
 						text = aNode.getDescription();
 						if (text.equalsIgnoreCase("Total")) {
@@ -203,8 +205,10 @@ public class CrossTabHTMLSerializer {
 								text = "";
 							else
 								addedLabelTotal = true;
-						} else if (crossTab.getCrosstabDefinition().getMeasures().size() == 1)
-							text = "";
+						}
+						// else if (crossTab.getCrosstabDefinition().getMeasures().size() == 1)
+						// text = "";
+
 					}
 
 					aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "clickFunction('" + crossTab.getCrosstabDefinition().getRows().get(i).getEntityId() + "','" + text
