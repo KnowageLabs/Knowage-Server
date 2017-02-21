@@ -159,9 +159,39 @@ function EditWidgetController($scope,finishEdit,sbiModule_translate,$mdToast,sbi
 				}
 			});
 		};
+		
+		$scope.erase= function(ev){
+			var imgId =	$scope.model.content.imgId;	
+			sbiModule_restServices.restToRootProject();
+			if(imgId == undefined){
+				$mdToast.show($mdToast.simple().content(sbiModule_translate.load('sbi.cockpit.widgets.image.missingselectedfile')).position('top').action(
+				'OK').highlightAction(false).hideDelay(5000));
+			}
+			else{
+				var imageId = 'imageId='+imgId; 
+				sbiModule_restServices.get("1.0/images", 'deleteImage', imageId)
+				.success(function(data, status, headers, config) {
+					if(data.success){
+						refreshImagesList();
+					}else if (data.hasOwnProperty("msg")){
+						$mdToast.show($mdToast.simple().content(sbiModule_translate.load(data.msg)).position('top').action(
+						'OK').highlightAction(false).hideDelay(5000));
+					}else{
+						$mdToast.show($mdToast.simple().content(sbiModule_translate.load('sbi.generic.genericError')).position('top').action(
+						'OK').highlightAction(false).hideDelay(5000));
+					}
+				})
+				.error(function(data, status, headers, config) {
+					$mdToast.show($mdToast.simple().content(data.ERROR).position('top').action(
+					'OK').highlightAction(false).hideDelay(5000));
+
+				});
+			}
+	}
+	
 	$scope.upload = function(ev){
 		if($scope.uploadImg.fileName == "" || $scope.uploadImg.fileName == undefined){
-			$mdToast.show($mdToast.simple().content(sbiModule_translate.load('sbi.impexpusers.missinguploadfile')).position('top').action(
+			$mdToast.show($mdToast.simple().content(sbiModule_translate.load('sbi.cockpit.widgets.image.missinguploadfile')).position('top').action(
 			'OK').highlightAction(false).hideDelay(5000));
 		}else{
 			var fd = new FormData();

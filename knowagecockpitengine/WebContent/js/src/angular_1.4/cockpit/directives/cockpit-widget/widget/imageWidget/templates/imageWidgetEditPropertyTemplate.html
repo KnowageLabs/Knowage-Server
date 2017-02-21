@@ -14,10 +14,15 @@
 						<div layout="row"  >
 							<file-upload flex id="ImageUpload" ng-model="uploadImg"></file-upload>
 							<md-button ng-click="upload($event)" aria-label="upload Menu"
-									class="md-fab md-mini"  > <md-icon
-									md-font-icon="fa fa-upload"  >
+									class="md-fab md-mini"  > 
+    					       <md-icon md-font-icon="fa fa-upload"  />  
+	                         </md-button>				         
+					         <md-button ng-click="erase($event)" aria-label="upload Menu"
+                                     class="md-fab md-mini"  > 
+                             <md-icon md-font-icon="fa fa-eraser"  />
+                             </md-button>
 						</div>
-						<md-grid-list layout-margin
+					<md-grid-list layout-margin
 					        md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6"
 					        md-row-height-gt-md="1:1" md-row-height="4:3"
 					        md-gutter="8px" md-gutter-gt-sm="4px" >
