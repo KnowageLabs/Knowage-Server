@@ -19,7 +19,10 @@ package it.eng.spagobi.images;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.images.dao.IImagesDAO;
 import it.eng.spagobi.images.dao.IImagesDAO.Direction;
@@ -35,6 +38,7 @@ import java.io.OutputStream;
 import java.sql.Blob;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -56,6 +60,10 @@ import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Path("/1.0/images")
 public class ImagesService {
@@ -197,23 +205,132 @@ public class ImagesService {
 		}
 	}
 
+	public boolean isValidJSON(final String json) {
+		boolean valid = false;
+		try {
+			final JsonParser parser = new ObjectMapper().getJsonFactory().createJsonParser(json);
+			while (parser.nextToken() != null) {
+			}
+			valid = true;
+		} catch (JsonParseException jpe) {
+			logger.debug("Parsed String is not a valid JSON: " + json);
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+		}
+
+		return valid;
+	}
+
+	private String checkIfImageIsInUse(Integer imageId) {
+		logger.debug("IN");
+
+		String toReturn = null;
+
+		try {
+			List biObjects = DAOFactory.getBIObjectDAO().loadBIObjects(SpagoBIConstants.DOCUMENT_COMPOSITE_TYPE, null, null);
+
+			// check with string, is enough
+			for (Iterator iterator = biObjects.iterator(); iterator.hasNext();) {
+				BIObject object = (BIObject) iterator.next();
+				boolean foundInObj = false;
+				ObjTemplate template = object.getActiveTemplate();
+				if (template != null) {
+					byte[] templateContentBytes = template.getContent();
+					if (templateContentBytes != null) {
+						String templateContent = new String(templateContentBytes);
+						if (templateContent.indexOf("\"imgId\":" + imageId) != -1) {
+							if (toReturn == null) {
+								toReturn = object.getName();
+								foundInObj = true;
+							} else {
+								foundInObj = true;
+								toReturn += ", " + object.getName();
+							}
+						}
+					}
+				}
+			}
+
+			// check with json, too complicated
+			// for (Iterator iterator = biObjects.iterator(); iterator.hasNext();) {
+			// BIObject object = (BIObject) iterator.next();
+			// boolean foundInObj = false;
+			// ObjTemplate template = object.getActiveTemplate();
+			// byte[] templateContentBytes = template.getContent();
+			// if (templateContentBytes != null) {
+			// String templateContent = new String(templateContentBytes);
+			// // to check if is a XML or JSON (other map templates are XML)
+			// if (!templateContent.trim().startsWith("<")) {
+			// if (isValidJSON(templateContent)) {
+			// JSONObject templateJSONObject = JSONUtils.toJSONObject(templateContent);
+			// if (templateJSONObject.has("widgets")) {
+			// JSONArray widgets = templateJSONObject.getJSONArray("widgets");
+			// for (int index = 0; index < widgets.length() && foundInObj == false; index++) {
+			// Object object2 = widgets.get(index);
+			// if (object2 instanceof JSONObject) {
+			// JSONObject widget = (JSONObject) object2;
+			// if (widget.has("type") && widget.getString("type").equals("image")) {
+			// if (widget.has("content")) {
+			// JSONObject content = widget.getJSONObject("content");
+			// if (content.has("imgId")) {
+			// String idS = content.getString("imgId");
+			// Integer id = Integer.valueOf(idS);
+			// if (id.equals(imageId)) {
+			// if (toReturn == null) {
+			// toReturn = object.getLabel();
+			// foundInObj = true;
+			// } else {
+			// foundInObj = true;
+			// toReturn += ", " + object.getLabel();
+			// }
+			// }
+			// }
+			// }
+			// }
+			// }
+			// }
+			// }
+			// }
+			// }
+			// }
+			// }
+
+		} catch (Exception e) {
+			logger.error("Error in checking if image is used in other cockpits template", e);
+
+		}
+
+		logger.debug("OUT");
+		return toReturn;
+	}
+
 	@GET
 	@Path("/deleteImage")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String deleteImage(@Context HttpServletRequest req) {
+		logger.debug("IN");
 		String msg = "sbi.cockpit.widgets.image.imageWidgetDesigner.deleteOK";
 		boolean success = true;
 		try {
-			// JSONObject jobj = RestUtilities.readBodyAsJSONObject(req);
-			String name = req.getParameter("name");
-			if (name == null || name.isEmpty()) {
+			Object idObj = req.getParameter("imageId");
+			Integer id = null;
+			if (idObj == null) {
 				msg = "sbi.cockpit.widgets.image.imageWidgetDesigner.emptyParameter";
 				success = false;
 			} else {
-				IImagesDAO dao = DAOFactory.getImagesDAO();
-				IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-				dao.setUserProfile(profile);
-				dao.deleteImage(name);
+				id = Integer.valueOf(idObj.toString());
+
+				String labelInUSe = checkIfImageIsInUse(id);
+				if (labelInUSe != null) {
+					logger.error("Cannot delete image because it is in use in " + labelInUSe);
+					msg = "Cannot delete image because it is in use in documents " + labelInUSe;
+					success = false;
+				} else {
+					IImagesDAO dao = DAOFactory.getImagesDAO();
+					IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+					dao.setUserProfile(profile);
+					dao.deleteImage(id);
+				}
 			}
 		} catch (EMFUserError e) {
 			success = false;
@@ -227,8 +344,10 @@ public class ImagesService {
 			JSONObject ret = new JSONObject();
 			ret.put("success", success);
 			ret.put("msg", msg);
+			logger.debug("OUT");
 			return ret.toString();
 		} catch (JSONException e) {
+			logger.debug("OUT");
 			return "{\"success\":false,\"msg\":\"JSON Error\"}";
 		}
 	}
