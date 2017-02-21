@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -25,11 +25,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
- * This class wrap the crosstab configuration state (a JSONObject) and provide
- * parsing methods.
- * 
+ * This class wrap the crosstab configuration state (a JSONObject) and provide parsing methods.
+ *
  * @author Alberto Alagna
- * 
+ *
  */
 public class CrosstabDefinition {
 
@@ -123,24 +122,32 @@ public class CrosstabDefinition {
 			return true;
 	}
 
+	public boolean showMeasureHeader() {
+		String value = config.optString(CrosstabSerializationConstants.SHOW_MEASURE_HEADER);
+		if (value != null) {
+			return value.equalsIgnoreCase("true");
+		} else
+			return true;
+	}
+
 	public class Row extends Attribute {
 
-		public Row(String entityId, String alias, String iconCls, String nature, String values) {
-			super(entityId, alias, iconCls, nature, values);
+		public Row(String entityId, String alias, String iconCls, String nature, String values, JSONObject config) {
+			super(entityId, alias, iconCls, nature, values, config);
 		}
 
 		public Row(Attribute attribute) {
-			super(attribute.getEntityId(), attribute.getAlias(), attribute.getIconCls(), attribute.getNature(), attribute.getValues());
+			super(attribute.getEntityId(), attribute.getAlias(), attribute.getIconCls(), attribute.getNature(), attribute.getValues(), attribute.getConfig());
 		}
 	}
 
 	public class Column extends Attribute {
-		public Column(String entityId, String alias, String iconCls, String nature, String values) {
-			super(entityId, alias, iconCls, nature, values);
+		public Column(String entityId, String alias, String iconCls, String nature, String values, JSONObject config) {
+			super(entityId, alias, iconCls, nature, values, config);
 		}
 
 		public Column(Attribute attribute) {
-			super(attribute.getEntityId(), attribute.getAlias(), attribute.getIconCls(), attribute.getNature(), attribute.getValues());
+			super(attribute.getEntityId(), attribute.getAlias(), attribute.getIconCls(), attribute.getNature(), attribute.getValues(), attribute.getConfig());
 		}
 	}
 
@@ -186,7 +193,7 @@ public class CrosstabDefinition {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return true if the component is a pivot table (not a chart)
 	 */
 	public boolean isPivotTable() {

@@ -117,11 +117,13 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 				memberItem=angular.element($scope.subCockpitWidget[0].querySelectorAll(".member"));
 				crossItem=angular.element($scope.subCockpitWidget[0].querySelectorAll(".crosstab-header-text"));
 				for(var prop in $scope.ngModel.content.style.generic){
-					totalsItem.css(prop,$scope.ngModel.content.style.generic[prop]);
-					subtotalsItem.css(prop,$scope.ngModel.content.style.generic[prop]);
-					dataItem.css(prop,$scope.ngModel.content.style.generic[prop]);
-					memberItem.css(prop,$scope.ngModel.content.style.generic[prop]);
-					crossItem.css(prop,$scope.ngModel.content.style.generic[prop]);
+					if ($scope.ngModel.content.style.generic[prop]!=""){
+						totalsItem.css(prop,$scope.ngModel.content.style.generic[prop]);
+						subtotalsItem.css(prop,$scope.ngModel.content.style.generic[prop]);
+						dataItem.css(prop,$scope.ngModel.content.style.generic[prop]);
+						memberItem.css(prop,$scope.ngModel.content.style.generic[prop]);
+						crossItem.css(prop,$scope.ngModel.content.style.generic[prop]);
+					}
 				}
 			}
 			
@@ -133,9 +135,9 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 				angular.forEach(rowList,function(row,index){
 					var dataColumnList=row.querySelectorAll(".data");
 					if(dataColumnList.length>0){
-						if(tmpOddRow){
+						if(tmpOddRow && $scope.ngModel.content.style.measuresRow["odd-background-color"]!= ""){
 							angular.element(dataColumnList).css("background-color",$scope.ngModel.content.style.measuresRow["odd-background-color"])
-						}else{
+						}else if ($scope.ngModel.content.style.measuresRow["even-background-color"]!= ""){
 							angular.element(dataColumnList).css("background-color",$scope.ngModel.content.style.measuresRow["even-background-color"])
 						}
 						tmpOddRow=!tmpOddRow;
@@ -151,7 +153,8 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 					totalsItem=angular.element($scope.subCockpitWidget[0].querySelectorAll(".totals"));
 				}
 				for(var prop in $scope.ngModel.content.style.totals){
-					totalsItem.css(prop,$scope.ngModel.content.style.totals[prop])
+					if ($scope.ngModel.content.style.totals[prop]!= "")
+						totalsItem.css(prop,$scope.ngModel.content.style.totals[prop])
 				}
 			}
 			//subTotals
@@ -160,7 +163,8 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 					subtotalsItem=angular.element($scope.subCockpitWidget[0].querySelectorAll(".partialsum"));
 				}
 				for(var prop in $scope.ngModel.content.style.subTotals){
-					subtotalsItem.css(prop,$scope.ngModel.content.style.subTotals[prop])
+					if ($scope.ngModel.content.style.subTotals[prop] != "")
+						subtotalsItem.css(prop,$scope.ngModel.content.style.subTotals[prop])
 				}
 			}
 			
@@ -170,7 +174,8 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 					dataItem=angular.element($scope.subCockpitWidget[0].querySelectorAll(".data"));
 				}
 				for(var prop in $scope.ngModel.content.style.measures){
-					dataItem.css(prop,$scope.ngModel.content.style.measures[prop])
+					if ($scope.ngModel.content.style.measures[prop] != "")
+						dataItem.css(prop,$scope.ngModel.content.style.measures[prop])
 				}
 			}
 			
@@ -180,18 +185,20 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 					memberItem=angular.element($scope.subCockpitWidget[0].querySelectorAll(".member"));
 				}
 				for(var prop in $scope.ngModel.content.style.measuresHeaders){
-					memberItem.css(prop,$scope.ngModel.content.style.measuresHeaders[prop])
+					if ($scope.ngModel.content.style.measuresHeaders[prop]!= "")
+						memberItem.css(prop,$scope.ngModel.content.style.measuresHeaders[prop])
 				}
 			}
+			
 			//crossTabHeaders
 			if($scope.ngModel.content.style.crossTabHeaders!=undefined && Object.keys($scope.ngModel.content.style.crossTabHeaders).length>0 ){
 				if(crossItem==undefined){
 					crossItem=angular.element($scope.subCockpitWidget[0].querySelectorAll(".crosstab-header-text"));
 				}
 				for(var prop in $scope.ngModel.content.style.crossTabHeaders){
-					if(angular.equals("background-color",prop)){
+					if(angular.equals("background-color",prop) && $scope.ngModel.content.style.crossTabHeaders[prop]!= ""){
 						crossItem.parent().parent().parent().parent().css(prop,$scope.ngModel.content.style.crossTabHeaders[prop])
-					}else{
+					}else if ($scope.ngModel.content.style.crossTabHeaders[prop]!=""){
 						crossItem.css(prop,$scope.ngModel.content.style.crossTabHeaders[prop])
 					}
 				}
@@ -308,7 +315,8 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 			    					   tmpItem={
 			    							  id: item.name,
 			    							  alias: item.alias,
-			    							  iconCls: item.fieldType.toLowerCase(),
+			    							  containerType : containerType,
+			    							  iconCls: item.fieldType.toLowerCase(),			    							  
 			    							  nature: item.fieldType.toLowerCase(),
 			    							  values: "[]",
 			    							  sortable: false,
@@ -379,32 +387,53 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 
 			    	  }
 			    	  
-			    	  $scope.editFieldsProperty=function(item){
+//			    	  $scope.editFieldsProperty=function(item){
+			    	  $scope.editFieldsProperty=function(selectedColumn){
+			    		  //original
+//			    		  $mdDialog.show({
+//			    		      controller: function($scope,sbiModule_translate,item){
+//			    		    	  $scope.translate=sbiModule_translate;
+//			    		    	  $scope.isMeasure=angular.equals(item.nature,"measure");
+//			    		    	  $scope.currentItem=angular.copy(item);
+//						    	  $scope.AggregationFunctions= cockpitModule_generalOptions.aggregationFunctions;						    	  
+//			    		    	  $scope.saveConfiguration=function(){
+//						    		  angular.copy($scope.currentItem,item);
+//						    		 $mdDialog.hide();
+//						    	  }
+//						    	  $scope.cancelConfiguration=function(){
+//						    		  $mdDialog.cancel();
+//						    	  }
+//						    	  
+//						    	  
+//			    		      },
+//			    		      templateUrl:baseScriptPath+ '/directives/cockpit-widget/widget/staticPivotTableWidget/templates/staticPivotTableWidgetEditFieldsPropertyTemplate.html',
+//			    		      locals:{item:item},
+//			    		      hasBackdrop: true,
+//			  				  clickOutsideToClose: false,
+//			  				  escapeToClose: false,
+//			    		      fullscreen: true
+//			    		    });
+			    		  // fine original
+			    		  //table columnstyle management 
 			    		  $mdDialog.show({
-			    		      controller: function($scope,sbiModule_translate,item){
-			    		    	  $scope.translate=sbiModule_translate;
-			    		    	  $scope.isMeasure=angular.equals(item.nature,"measure");
-			    		    	  $scope.currentItem=angular.copy(item);
-						    	  $scope.AggregationFunctions= cockpitModule_generalOptions.aggregationFunctions;
+								templateUrl:  baseScriptPath+ '/directives/cockpit-columns-configurator/templates/cockpitColumnStyle.html',
+								parent : angular.element(document.body),
+								clickOutsideToClose:true,
+								escapeToClose :true,
+								preserveScope: true,
+								autoWrap:false,
+								fullscreen: true,
+//								locals:{model:$scope.model, selectedColumn : $scope.selectedColumn},
+								locals:{model:$scope.localModel, selectedColumn:selectedColumn},
+								controller: cockpitStyleColumnFunction
 
+							}).then(function(answer) { 			
+								console.log("Selected column:", $scope.selectedColumn);
 
-			    		    	  $scope.saveConfiguration=function(){
-						    		  angular.copy($scope.currentItem,item);
-						    		 $mdDialog.hide();
-						    	  }
-						    	  $scope.cancelConfiguration=function(){
-						    		  $mdDialog.cancel();
-						    	  }
-						    	  
-						    	  
-			    		      },
-			    		      templateUrl:baseScriptPath+ '/directives/cockpit-widget/widget/staticPivotTableWidget/templates/staticPivotTableWidgetEditFieldsPropertyTemplate.html',
-			    		      locals:{item:item},
-			    		      hasBackdrop: true,
-			  				  clickOutsideToClose: false,
-			  				  escapeToClose: false,
-			    		      fullscreen: true
-			    		    })
+							}, function() {
+								console.log("Selected column:", $scope.selectedColumn);
+							});
+// 					fine table columnstyle management 
 			    	  }
 			      },
 				disableParentScroll: true,
@@ -426,6 +455,146 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 		return finishEdit.promise;
 		
 	}
+	
+
+	function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,model,selectedColumn,cockpitModule_datasetServices,cockpitModule_generalOptions,$mdToast){
+		$scope.translate=sbiModule_translate;
+		$scope.selectedColumn = angular.copy(selectedColumn);
+		$scope.selectedColumn.fieldType = selectedColumn.nature.toUpperCase();
+		$scope.selectedColumn.widgetType = "staticPivotTable";		
+//		$scope.selectedColumn.showHeader = (selectedColumn.showHeader==undefined || model.content.crosstabDefinition.measures.length>1)?true:selectedColumn.showHeader;
+		$scope.selectedColumn.showHeader = (selectedColumn.showHeader==undefined)?true:selectedColumn.showHeader;
+		$scope.AggregationFunctions= cockpitModule_generalOptions.aggregationFunctions;
+		$scope.fontWeight = ['normal','bold','bolder','lighter','number','initial','inherit'];
+		$scope.textAlign = ['left','right','center'];
+		$scope.formatPattern = ['#.###','#,###','#.###,##','#,###.##'];
+		$scope.colorPickerProperty={placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb'}
+		$scope.visTypes=['Text','Icon only'];
+//		$scope.selectedColumn.disableShowHeader = (model.content.crosstabDefinition.measures.length==1) ? false : true;
+		$scope.selectedColumn.disableShowHeader = false; //default is enabled: only for measures force disable if there are many measures
+		if ($scope.selectedColumn.containerType && $scope.selectedColumn.containerType == 'MEASURE-PT'){
+			if (model.content.crosstabDefinition.measures.length==1)
+				$scope.selectedColumn.disableShowHeader  = false;
+			else{
+				$scope.selectedColumn.disableShowHeader  = true;
+				$scope.selectedColumn.showHeader = true;
+			}
+		}
+		
+		if(!$scope.selectedColumn.hasOwnProperty('colorThresholdOptions'))
+		{	
+			$scope.selectedColumn.colorThresholdOptions={};
+			$scope.selectedColumn.colorThresholdOptions.condition=[];
+			for(var i=0;i<3;i++)
+			{
+				$scope.selectedColumn.colorThresholdOptions.condition[i]="none";
+			}
+		}	
+		
+		
+		if($scope.selectedColumn.visType==undefined)
+		{
+			$scope.selectedColumn.visType="Text";
+		}	
+		if($scope.selectedColumn.minValue==undefined||$scope.selectedColumn.minValue===''||$scope.selectedColumn.maxValue==undefined||$scope.selectedColumn.maxValue==='')
+		{
+			$scope.selectedColumn.minValue=0;
+			$scope.selectedColumn.maxValue=100;
+		}	
+		if($scope.selectedColumn.chartColor==undefined||$scope.selectedColumn.chartColor==='')
+		{	
+			$scope.selectedColumn.chartColor="rgb(19, 30, 137)";
+		}
+		if($scope.selectedColumn.chartLength==undefined||$scope.selectedColumn.chartLength==='')
+		{
+			$scope.selectedColumn.chartLength=200;
+		}
+
+	                        
+		$scope.conditions=['none','>','<','=','>=','<=','!='];
+		if($scope.selectedColumn.scopeFunc==undefined)
+		{	
+			$scope.selectedColumn.scopeFunc={conditions:$scope.conditions, condition:[{condition:'none'},{condition:'none'},{condition:'none'},{condition:'none'}]};  
+		}
+		//------------------------- Threshold icon table -----------------------------	
+		var conditionString0="	<md-input-container class='md-block'> 	<md-select ng-model='scopeFunctions.condition[0].condition'>	<md-option ng-repeat='cond in scopeFunctions.conditions' value='{{cond}}'>{{cond}}</md-option>	</md-select> </md-input-container>"
+		var conditionString1="	<md-input-container class='md-block'> 	<md-select ng-model='scopeFunctions.condition[1].condition'>	<md-option ng-repeat='cond in scopeFunctions.conditions' value='{{cond}}'>{{cond}}</md-option>	</md-select> </md-input-container>"
+		var conditionString2="	<md-input-container class='md-block'> 	<md-select ng-model='scopeFunctions.condition[2].condition'>	<md-option ng-repeat='cond in scopeFunctions.conditions' value='{{cond}}'>{{cond}}</md-option>	</md-select> </md-input-container>"
+		var conditionString3="	<md-input-container class='md-block'> 	<md-select ng-model='scopeFunctions.condition[3].condition'>	<md-option ng-repeat='cond in scopeFunctions.conditions' value='{{cond}}'>{{cond}}</md-option>	</md-select> </md-input-container>"
+
+			
+		var valueString0="<md-input-container class='md-block' ng-if='scopeFunctions.condition[0].condition!=undefined && scopeFunctions.condition[0].condition!=\"none\"' flex>	<input class='input_class'  ng-model='scopeFunctions.condition[0].value' type='number' required> </md-input-container>";	
+		var valueString1="<md-input-container class='md-block' ng-if='scopeFunctions.condition[1].condition!=undefined && scopeFunctions.condition[1].condition!=\"none\"' flex>	<input class='input_class'  ng-model='scopeFunctions.condition[1].value' type='number' required> </md-input-container>";	
+		var valueString2="<md-input-container class='md-block' ng-if='scopeFunctions.condition[2].condition!=undefined && scopeFunctions.condition[2].condition!=\"none\"' flex>	<input class='input_class'  ng-model='scopeFunctions.condition[2].value' type='number' required> </md-input-container>";	
+		var valueString3="<md-input-container class='md-block' ng-if='scopeFunctions.condition[3].condition!=undefined && scopeFunctions.condition[3].condition!=\"none\"' flex>	<input class='input_class'  ng-model='scopeFunctions.condition[3].value' type='number' required> </md-input-container>";	
+
+		$scope.thresholdsList=
+			[{priority:0, icon:"<md-icon style='color:red'  md-font-icon='fa fa-exclamation-circle' ng-init='scopeFunctions.condition[0].iconColor=\"red\";	scopeFunctions.condition[0].icon=\"fa fa-exclamation-circle\"'></md-icon>",condition:conditionString0,	value:valueString0},{priority:1 , icon:"<md-icon style='color:red'	md-font-icon='fa fa-times-circle' ng-init='scopeFunctions.condition[1].iconColor=\"red\"; scopeFunctions.condition[1].icon=\"fa fa-times-circle\"'></md-icon>",condition:conditionString1, value:valueString1},	{priority:2 , icon:"<md-icon style='color:yellow'  md-font-icon='fa fa-exclamation-triangle' ng-init='scopeFunctions.condition[2].iconColor=\"yellow\"; scopeFunctions.condition[2].icon=\"fa fa-exclamation-triangle\"'></md-icon>",condition:conditionString2, value:valueString2},{priority:3 , icon:"<md-icon style='color:green'  md-font-icon='fa fa-check-circle' ng-init='scopeFunctions.condition[3].iconColor=\"green\";	scopeFunctions.condition[3].icon=\"fa fa-check-circle\"'></md-icon>",condition:conditionString3, value:valueString3}];	
+		$scope.tableColumns=[{label:"Icon",name:"icon", hideTooltip:true},{label:"Condition",name:"condition", hideTooltip:true},{label:"Value",name:"value", hideTooltip:true}];
+
+//		$scope.selectedColumn.conditions=$scope.scopeFunc.condition;
+		
+		//----------------------- Cell color table ------------------------------------
+		
+		var condString0="	<md-input-container class='md-block'> 	<md-select ng-model='scopeFunctions.condition[0].condition'>	<md-option ng-repeat='cond in scopeFunctions.conditions' value='{{cond}}'>{{cond}}</md-option>	</md-select> </md-input-container>"
+		var condString1="	<md-input-container class='md-block'> 	<md-select ng-model='scopeFunctions.condition[1].condition'>	<md-option ng-repeat='cond in scopeFunctions.conditions' value='{{cond}}'>{{cond}}</md-option>	</md-select> </md-input-container>"
+		var condString2="	<md-input-container class='md-block'> 	<md-select ng-model='scopeFunctions.condition[2].condition'>	<md-option ng-repeat='cond in scopeFunctions.conditions' value='{{cond}}'>{{cond}}</md-option>	</md-select> </md-input-container>"
+
+		var valString0="<md-input-container class='md-block' ng-if='scopeFunctions.condition[0].condition!=undefined && scopeFunctions.condition[0].condition!=\"none\"' flex>	<input class='input_class'  ng-model='scopeFunctions.condition[0].value' type='number' required> </md-input-container>";	
+		var valString1="<md-input-container class='md-block' ng-if='scopeFunctions.condition[1].condition!=undefined && scopeFunctions.condition[1].condition!=\"none\"' flex>	<input class='input_class'  ng-model='scopeFunctions.condition[1].value' type='number' required> </md-input-container>";	
+		var valString2="<md-input-container class='md-block' ng-if='scopeFunctions.condition[2].condition!=undefined && scopeFunctions.condition[2].condition!=\"none\"' flex>	<input class='input_class'  ng-model='scopeFunctions.condition[2].value' type='number' required> </md-input-container>";	
+
+				
+		$scope.cellColorThresholdsList=[{priority:0, color:"<md-input-container class=\"md-block\">  <color-picker  options=\"{format:'rgb'}\" ng-model=\"scopeFunctions.colorCondition[0].value \"></color-picker>  </md-input-container>",condition:condString0, value:valString0},{priority:1 , color:"<md-input-container class=\"md-block\"> <color-picker  options=\"{format:'rgb'}\" ng-model=\"scopeFunctions.colorCondition[1].value \"></color-picker></md-input-container>",condition:condString1, value:valString1},{priority:2 , color:"<md-input-container class=\"md-block\"> <color-picker  options=\"{format:'rgb'}\" ng-model=\"scopeFunctions.colorCondition[2].value \"></color-picker></md-input-container>",condition:condString2, value:valString2}];		
+		$scope.cellColorTableColumns=[{label:"Color",name:"color", hideTooltip:true},{label:"Condition",name:"condition", hideTooltip:true},{label:"Value",name:"value", hideTooltip:true}];
+		
+		//----------------------------------------------------------------------------
+
+
+		$scope.cleanStyleColumn = function(){
+			$scope.selectedColumn.style = undefined;
+		}
+		$scope.saveColumnStyleConfiguration = function(){		
+			angular.copy($scope.selectedColumn,selectedColumn);
+//			angular.copy($scope.currentItem,selectedColumn);
+
+			$mdDialog.cancel();
+		}
+
+		$scope.cancelcolumnStyleConfiguration = function(){
+			$mdDialog.cancel();
+		}
+		
+		
+		$scope.checkIfDisable = function(){
+			
+			if($scope.selectedColumn.selectThreshold==true)
+			{	
+				if($scope.selectedColumn.threshold==undefined||$scope.selectedColumn.threshold=="")
+				{
+					return true;
+				}				
+			}	
+			
+			if($scope.selectedColumn.maxValue==undefined || $scope.selectedColumn.minValue==undefined || $scope.selectedColumn.maxValue==="" || $scope.selectedColumn.minValue==="")
+			{
+				return true;
+			}
+			
+			for(var i=0;i<$scope.selectedColumn.scopeFunc.condition.length;i++)
+			{
+				if($scope.selectedColumn.scopeFunc.condition[i].condition!=undefined && $scope.selectedColumn.scopeFunc.condition[i].condition!="none")
+				{
+					if($scope.selectedColumn.scopeFunc.condition[i].value==="" || $scope.selectedColumn.scopeFunc.condition[i].value==undefined)
+					{
+						return true;
+					}	
+				}	
+			}
+			return false;
+		}
+	}
+
 	
 	$scope.orderPivotTable=function(column, axis, globalId){
 		if($scope.ngModel.content.sortOptions==undefined){
@@ -455,6 +624,7 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 		
 		$scope.refreshWidget();
 	}
+	
 	
 };
 

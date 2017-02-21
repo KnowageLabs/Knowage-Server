@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -49,12 +49,24 @@ public class CrosstabBuilder {
 	private final String crosstabDefinition;
 	private final JSONArray jsonDataSource;
 	private final JSONObject jsonMetaData;
+	private final JSONObject jsonStyle;
+	private final JSONArray jsonConfigMeasure;
+	private final JSONArray jsonConfigRows;
+	private final JSONArray jsonConfigColumns;
 
-	public CrosstabBuilder(Locale locale, String crosstabDefinition, JSONArray jsonDataSource, JSONObject metadata) {
+	public CrosstabBuilder(Locale locale, JSONObject crosstabDefinition, JSONArray jsonDataSource, JSONObject metadata, JSONObject style) {
 		this.locale = locale;
-		this.crosstabDefinition = crosstabDefinition;
+		this.crosstabDefinition = crosstabDefinition.toString();
 		this.jsonDataSource = jsonDataSource;
 		this.jsonMetaData = metadata;
+		this.jsonStyle = style;
+		try {
+			this.jsonConfigMeasure = crosstabDefinition.getJSONArray(CrosstabSerializationConstants.MEASURES);
+			this.jsonConfigColumns = crosstabDefinition.getJSONArray(CrosstabSerializationConstants.COLUMNS);
+			this.jsonConfigRows = crosstabDefinition.getJSONArray(CrosstabSerializationConstants.ROWS);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("An unexpecte error occured while getting cross tab configurations", e);
+		}
 	}
 
 	public String getSortedCrosstab(Map<Integer, NodeComparator> columnsSortKeysMap, Map<Integer, NodeComparator> rowsSortKeysMap, Integer myGlobalId)
@@ -65,8 +77,8 @@ public class CrosstabBuilder {
 
 	}
 
-	private String createCrossTable(String jsonData, JSONArray jsonDataSource, Map<Integer, NodeComparator> columnsSortKeysMap, Map<Integer, NodeComparator> rowsSortKeysMap,
-			Integer myGlobalId) {
+	private String createCrossTable(String jsonData, JSONArray jsonDataSource, Map<Integer, NodeComparator> columnsSortKeysMap,
+			Map<Integer, NodeComparator> rowsSortKeysMap, Integer myGlobalId) {
 
 		CrossTab crossTab;
 		CrosstabDefinition crosstabDefinition = null;
@@ -80,7 +92,7 @@ public class CrosstabBuilder {
 
 		try {
 
-			totalTimeMonitor = MonitorFactory.start("WorksheetEngine.loadCrosstabAction.totalTime");
+			totalTimeMonitor = MonitorFactory.start("CockpitEngine.loadCrosstabAction.totalTime");
 			// jsonData =
 			// "{\"config\":{\"measureson\":\"columns\",\"type\":\"pivot\",\"maxcellnumber\":2000},\"rows\":[{\"id\":\"Comune\",\"alias\":\"Comune\",\"iconCls\":\"attribute\",\"nature\":\"attribute\",\"values\":\"[]\"}],\"columns\":[{\"id\":\"Maschi Totale\",\"alias\":\"Maschi Totale\",\"iconCls\":\"attribute\",\"nature\":\"attribute\",\"values\":\"[]\"}],\"measures\":[{\"id\":\"Femmine corsi a tempo pieno\",\"alias\":\"Femmine corsi a tempo pieno\",\"iconCls\":\"measure\",\"nature\":\"measure\",\"funct\":\"SUM\"}]}";
 			JSONObject crosstabDefinitionJSON = new JSONObject(jsonData);
@@ -93,29 +105,12 @@ public class CrosstabBuilder {
 
 			crosstabDefinition = crosstabJSONDeserializer.deserialize(crosstabDefinitionJSON);
 
-			// // serialize crosstab
-			// if (crosstabDefinition.isPivotTable()) {
-			// // load the crosstab for a crosstab widget (with headers, sum,
-			// // ...)
-			// if (crosstabDefinition.isStatic()) {
-			// crossTab = new CrossTab(jsonDataSource, crosstabDefinition, null,
-			// columnsSortKeysMap, rowsSortKeysMap, myGlobalId);
-			// } else {
-			// crossTab = new CrossTab(jsonDataSource, crosstabDefinition, null,
-			// columnsSortKeysMap, rowsSortKeysMap, myGlobalId);
-			// }
-			// } else {
-			// // load the crosstab data structure for all other widgets
-			// crossTab = new CrossTab(valuesDataStore, crosstabDefinition,
-			// null, columnsSortKeysMap, rowsSortKeysMap, myGlobalId);
-			// }
-
 			crossTab = new CrossTab(jsonDataSource, this.jsonMetaData, crosstabDefinition, null, columnsSortKeysMap, rowsSortKeysMap, myGlobalId);
 
 			htmlCode = crossTab.getHTMLCrossTab(locale);//
 
 		} catch (Exception e) {
-			errorHitsMonitor = MonitorFactory.start("WorksheetEngine.errorHits");
+			errorHitsMonitor = MonitorFactory.start("CockpitEngine.errorHits");
 			errorHitsMonitor.stop();
 			throw new SpagoBIRuntimeException("An unexpecte error occured while genereting cross tab html", e);
 		} finally {
@@ -162,19 +157,19 @@ public class CrosstabBuilder {
 		dataStore.setMetaData(newdataStoreMetadata);
 	}
 
-	public static final String WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_OPTIONS = "options";
-	public static final String WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR = "measureScaleFactor";
+	public static final String CROSSTAB_ADDITIONAL_DATA_FIELDS_OPTIONS_OPTIONS = "options";
+	public static final String CROSSTAB_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR = "measureScaleFactor";
 
 	private void addMeasuresScaleFactor(JSONArray fieldOptions, String fieldId, FieldMetadata newFieldMetadata) {
 		if (fieldOptions != null) {
 			for (int i = 0; i < fieldOptions.length(); i++) {
 				try {
 					JSONObject afield = fieldOptions.getJSONObject(i);
-					JSONObject aFieldOptions = afield.getJSONObject(WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_OPTIONS);
+					JSONObject aFieldOptions = afield.getJSONObject(CROSSTAB_ADDITIONAL_DATA_FIELDS_OPTIONS_OPTIONS);
 					String afieldId = afield.getString("id");
-					String scaleFactor = aFieldOptions.optString(WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR);
+					String scaleFactor = aFieldOptions.optString(CROSSTAB_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR);
 					if (afieldId.equals(fieldId) && scaleFactor != null) {
-						newFieldMetadata.setProperty(WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR, scaleFactor);
+						newFieldMetadata.setProperty(CROSSTAB_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR, scaleFactor);
 						return;
 					}
 				} catch (Exception e) {

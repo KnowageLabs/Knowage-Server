@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,23 +11,27 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.knowage.engine.cockpit.api.crosstable;
+
+import org.json.JSONObject;
 
 public class Field {
 	String entityId = null;
 	String alias = null;
 	String iconCls = null;
 	String nature = null;
+	JSONObject config = null;
 
-	public Field(String entityId, String alias, String iconCls, String nature) {
+	public Field(String entityId, String alias, String iconCls, String nature, JSONObject config) {
 		this.entityId = entityId;
 		this.alias = alias;
 		this.iconCls = iconCls;
 		this.nature = nature;
+		this.config = config;
 	}
 
 	public String getEntityId() {
@@ -44,6 +48,10 @@ public class Field {
 
 	public String getNature() {
 		return nature;
+	}
+
+	public JSONObject getConfig() {
+		return config;
 	}
 
 	@Override

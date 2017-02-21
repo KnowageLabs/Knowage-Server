@@ -146,6 +146,7 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 		// the sort options
 		Map<String, Object> columnsSortKeys;
 		Map<String, Object> rowsSortKeys;
+
 		// the id of the crosstab in the client configuration array
 		Integer myGlobalId;
 
@@ -153,7 +154,13 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 
 			JSONObject request = RestUtilities.readBodyAsJSONObject(servletRequest);
 
-			String crosstabDefinition = request.getJSONObject("crosstabDefinition").toString();
+			JSONObject crosstabDefinitionJo = request.getJSONObject("crosstabDefinition");
+			JSONObject crosstabDefinitionConfigJo = crosstabDefinitionJo.optJSONObject(CrosstabSerializationConstants.CONFIG);
+			JSONObject crosstabStyleJo = (request.isNull("style")) ? new JSONObject() : request.getJSONObject("style");
+			crosstabDefinitionConfigJo.put("style", crosstabStyleJo);
+			// String crosstabDefinition = crosstabDefinitionJo.toString();
+			// String crosstabDefinition = request.getJSONObject("crosstabDefinition").toString();
+			JSONObject crosstabDefinition = request.getJSONObject("crosstabDefinition");
 
 			JSONObject sortOptions = request.getJSONObject("sortOptions");
 
@@ -165,8 +172,9 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 
 			Map<Integer, NodeComparator> columnsSortKeysMap = toComparatorMap(columnsSortKeys);
 			Map<Integer, NodeComparator> rowsSortKeysMap = toComparatorMap(rowsSortKeys);
-
-			CrosstabBuilder builder = new CrosstabBuilder(getLocale(), crosstabDefinition, request.getJSONArray("jsonData"), request.getJSONObject("metadata"));
+			JSONObject styleJSON = (!request.isNull("style") ? request.getJSONObject("style") : new JSONObject());
+			CrosstabBuilder builder = new CrosstabBuilder(getLocale(), crosstabDefinition, request.getJSONArray("jsonData"), request.getJSONObject("metadata"),
+					styleJSON);
 
 			JSONObject ret = new JSONObject();
 			ret.put("htmlTable", builder.getSortedCrosstab(columnsSortKeysMap, rowsSortKeysMap, myGlobalId));
@@ -214,7 +222,7 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 
 		try {
 
-			totalTimeMonitor = MonitorFactory.start("WorksheetEngine.loadCrosstabAction.totalTime");
+			totalTimeMonitor = MonitorFactory.start("CockpitEngine.loadCrosstabAction.totalTime");
 			// jsonData =
 			// "{\"config\":{\"measureson\":\"columns\",\"type\":\"pivot\",\"maxcellnumber\":2000},\"rows\":[{\"id\":\"Comune\",\"alias\":\"Comune\",\"iconCls\":\"attribute\",\"nature\":\"attribute\",\"values\":\"[]\"}],\"columns\":[{\"id\":\"Maschi Totale\",\"alias\":\"Maschi Totale\",\"iconCls\":\"attribute\",\"nature\":\"attribute\",\"values\":\"[]\"}],\"measures\":[{\"id\":\"Femmine corsi a tempo pieno\",\"alias\":\"Femmine corsi a tempo pieno\",\"iconCls\":\"measure\",\"nature\":\"measure\",\"funct\":\"SUM\"}]}";
 			JSONObject crosstabDefinitionJSON = new JSONObject(jsonData);
@@ -244,14 +252,14 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 
 			crosstabDefinition = crosstabJSONDeserializer.deserialize(crosstabDefinitionJSON);
 
-			String worksheetQuery = null;
+			String crosstabQuery = null;
 			IDataSource dsForTheTemporaryTable = descriptor.getDataSource();
 
-			worksheetQuery = this.buildSqlStatement(crosstabDefinition, descriptor, whereFields, dsForTheTemporaryTable);
+			crosstabQuery = this.buildSqlStatement(crosstabDefinition, descriptor, whereFields, dsForTheTemporaryTable);
 
 			// execute SQL query against temporary table
-			logger.debug("Executing query on temporary table : " + worksheetQuery);
-			valuesDataStore = this.executeWorksheetQuery(worksheetQuery, null, null, dataset);
+			logger.debug("Executing query on temporary table : " + crosstabQuery);
+			valuesDataStore = this.executeCrosstabQuery(crosstabQuery, null, null, dataset);
 
 			LogMF.debug(logger, "Query on temporary table executed successfully; datastore obtained: {0}", valuesDataStore);
 			Assert.assertNotNull(valuesDataStore, "Datastore obatined is null!!");
@@ -286,7 +294,7 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 			htmlCode = crossTab.getHTMLCrossTab(this.getLocale());//
 
 		} catch (Exception e) {
-			errorHitsMonitor = MonitorFactory.start("WorksheetEngine.errorHits");
+			errorHitsMonitor = MonitorFactory.start("CockpitEngine.errorHits");
 			errorHitsMonitor.stop();
 			throw new SpagoBIRuntimeException("An unexpecte error occured while genereting cross tab html", e);
 		} finally {
@@ -398,15 +406,15 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 		return CrosstabQueryCreator.getCrosstabQuery(crosstabDefinition, descriptor, filters, dataSource);
 	}
 
-	public IDataStore executeWorksheetQuery(String worksheetQuery, Integer start, Integer limit, IDataSet dataset) {
+	public IDataStore executeCrosstabQuery(String crosstabQuery, Integer start, Integer limit, IDataSet dataset) {
 
 		IDataStore dataStore = null;
 
 		if (dataset.isFlatDataset() || dataset.isPersisted()) {
-			dataStore = useDataSetStrategy(worksheetQuery, dataset, start, limit);
+			dataStore = useDataSetStrategy(crosstabQuery, dataset, start, limit);
 		} else {
 			logger.debug("Using temporary table strategy....");
-			dataStore = useTemporaryTableStrategy(worksheetQuery, start, limit);
+			dataStore = useTemporaryTableStrategy(crosstabQuery, start, limit);
 		}
 
 		Assert.assertNotNull(dataStore, "The dataStore cannot be null");
@@ -578,23 +586,23 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 		return td;
 	}
 
-	private IDataStore useDataSetStrategy(String worksheetQuery, IDataSet dataset, Integer start, Integer limit) {
+	private IDataStore useDataSetStrategy(String crosstabQuery, IDataSet dataset, Integer start, Integer limit) {
 		IDataStore dataStore = null;
 
 		UserProfile userProfile = (UserProfile) getEnv().get(EngineConstants.ENV_USER_PROFILE);
 
-		logger.debug("Querying dataset's flat/persistence table: user [" + userProfile.getUserId() + "] (SQL): [" + worksheetQuery + "]");
+		logger.debug("Querying dataset's flat/persistence table: user [" + userProfile.getUserId() + "] (SQL): [" + crosstabQuery + "]");
 
 		try {
 
-			logger.debug("SQL statement is [" + worksheetQuery + "]");
+			logger.debug("SQL statement is [" + crosstabQuery + "]");
 			IDataSet newdataset;
 			if (dataset instanceof JDBCHiveDataSet) {
 				newdataset = new JDBCHiveDataSet();
-				((JDBCHiveDataSet) newdataset).setQuery(worksheetQuery);
+				((JDBCHiveDataSet) newdataset).setQuery(crosstabQuery);
 			} else {
 				newdataset = new JDBCDataSet();
-				((JDBCDataSet) newdataset).setQuery(worksheetQuery);
+				((JDBCDataSet) newdataset).setQuery(crosstabQuery);
 			}
 
 			newdataset.setDataSource(dataset.getDataSourceForReading());
@@ -614,7 +622,7 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 		}
 	}
 
-	private IDataStore useTemporaryTableStrategy(String worksheetQuery, Integer start, Integer limit) {
+	private IDataStore useTemporaryTableStrategy(String crosstabQuery, Integer start, Integer limit) {
 
 		IDataSource dataSource = null;
 
@@ -630,10 +638,10 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 
 		UserProfile userProfile = (UserProfile) getEnv().get(EngineConstants.ENV_USER_PROFILE);
 
-		logger.debug("Querying temporary table: user [" + userProfile.getUserId() + "] (SQL): [" + worksheetQuery + "]");
+		logger.debug("Querying temporary table: user [" + userProfile.getUserId() + "] (SQL): [" + crosstabQuery + "]");
 
 		try {
-			dataStore = TemporaryTableManager.queryTemporaryTable(worksheetQuery, dataSource, start, limit);
+			dataStore = TemporaryTableManager.queryTemporaryTable(crosstabQuery, dataSource, start, limit);
 		} catch (Exception e) {
 			logger.debug("Query execution aborted because of an internal exception");
 
@@ -677,33 +685,12 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 	}
 
 	public Map<String, List<String>> getFiltersOnDomainValues() {
-		// WorksheetEngineInstance engineInstance = this.getEngineInstance();
-		// WorkSheetDefinition workSheetDefinition = (WorkSheetDefinition)
-		// engineInstance.getAnalysisState();
-		// Map<String, List<String>> toReturn = null;
-		// try {
-		// toReturn = workSheetDefinition.getFiltersOnDomainValues();
-		// } catch (WrongConfigurationForFiltersOnDomainValuesException e) {
-		// throw new SpagoBIEngineServiceException(this.getActionName(),
-		// e.getMessage(), e);
-		// }
-
 		Map<String, List<String>> toReturn = new HashMap();
 
 		return toReturn;
 	}
 
 	public List<String> getAllFields() {
-		// WorksheetEngineInstance engineInstance = this.getEngineInstance();
-		// WorkSheetDefinition workSheetDefinition = (WorkSheetDefinition)
-		// engineInstance.getAnalysisState();
-		// List<Field> fields = workSheetDefinition.getAllFields();
-		// Iterator<Field> it = fields.iterator();
-		// List<String> toReturn = new ArrayList<String>();
-		// while (it.hasNext()) {
-		// Field field = it.next();
-		// toReturn.add(field.getEntityId());
-		// }
 		List<String> toReturn = new ArrayList<String>();
 		return toReturn;
 	}
@@ -718,19 +705,19 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 		this.getHttpSession().setAttribute(attributeName, recorder);
 	}
 
-	public static final String WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_OPTIONS = "options";
-	public static final String WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR = "measureScaleFactor";
+	public static final String CROSSTAB_ADDITIONAL_DATA_FIELDS_OPTIONS_OPTIONS = "options";
+	public static final String CROSSTAB_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR = "measureScaleFactor";
 
 	private void addMeasuresScaleFactor(JSONArray fieldOptions, String fieldId, FieldMetadata newFieldMetadata) {
 		if (fieldOptions != null) {
 			for (int i = 0; i < fieldOptions.length(); i++) {
 				try {
 					JSONObject afield = fieldOptions.getJSONObject(i);
-					JSONObject aFieldOptions = afield.getJSONObject(WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_OPTIONS);
+					JSONObject aFieldOptions = afield.getJSONObject(CROSSTAB_ADDITIONAL_DATA_FIELDS_OPTIONS_OPTIONS);
 					String afieldId = afield.getString("id");
-					String scaleFactor = aFieldOptions.optString(WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR);
+					String scaleFactor = aFieldOptions.optString(CROSSTAB_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR);
 					if (afieldId.equals(fieldId) && scaleFactor != null) {
-						newFieldMetadata.setProperty(WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR, scaleFactor);
+						newFieldMetadata.setProperty(CROSSTAB_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR, scaleFactor);
 						return;
 					}
 				} catch (Exception e) {

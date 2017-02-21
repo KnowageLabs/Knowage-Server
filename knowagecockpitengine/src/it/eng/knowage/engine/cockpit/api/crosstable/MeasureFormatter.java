@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -33,7 +33,7 @@ import org.json.JSONObject;
 
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
- * 
+ *
  */
 public class MeasureFormatter {
 
@@ -42,34 +42,6 @@ public class MeasureFormatter {
 	boolean measureOnRow;
 	DecimalFormat numberFormat;
 	String pattern;
-
-	// public MeasureFormatter(JSONObject crosstabDefinitionJSON, DecimalFormat
-	// numberFormat, String pattern) throws SerializationException,
-	// JSONException{
-	// JSONArray measuresJSON =
-	// crosstabDefinitionJSON.optJSONArray(CrosstabSerializationConstants.MEASURES);
-	// JSONObject config =
-	// crosstabDefinitionJSON.optJSONObject(CrosstabSerializationConstants.CONFIG);
-	// //Assert.assertTrue(rows != null && rows.length() > 0,
-	// "No measures specified!");
-	// this.pattern = pattern;
-	// this.numberFormat=numberFormat;
-	// if (measuresJSON != null) {
-	// measureMetadata = new String[measuresJSON.length()][3];
-	// for (int i = 0; i < measuresJSON.length(); i++) {
-	// JSONObject obj = (JSONObject) measuresJSON.get(i);
-	// measureMetadata[i][0] = obj.getString("name");
-	// measureMetadata[i][1] = obj.getString("format");
-	// measureMetadata[i][2] = obj.getString("type");
-	// }
-	// }
-	// measureOnRow = false;
-	// if(config!=null){
-	// measureOnRow =
-	// config.optString(CrosstabSerializationConstants.MEASURESON).equals(CrosstabSerializationConstants.ROWS);
-	// }
-	// }
-	//
 
 	public MeasureFormatter(JSONObject crosstabDefinitionJSON, DecimalFormat numberFormat, String pattern) throws SerializationException, JSONException {
 
@@ -149,19 +121,53 @@ public class MeasureFormatter {
 
 	}
 
+	// public String format(double value, int i, int j, Locale locale) {
+	// int decimals = this.getFormatXLS(i, j);
+	// Double scaledValue = this.applyScaleFactor(value, i, j);
+	// String pattern = "#,##0";
+	// if (decimals > 0) {
+	// pattern += ".";
+	// for (int count = 0; count < decimals; count++) {
+	// pattern += "0";
+	// }
+	// }
+	// NumberFormat nf = NumberFormat.getInstance(locale);
+	// DecimalFormat formatter = (DecimalFormat) nf;
+	// formatter.applyPattern(pattern);
+	// String toReturn = formatter.format(scaledValue);
+	// return toReturn;
+	// }
+
 	public String format(double value, int i, int j, Locale locale) {
-		int decimals = this.getFormatXLS(i, j);
-		Double scaledValue = this.applyScaleFactor(value, i, j);
-		String pattern = "#,##0";
-		if (decimals > 0) {
-			pattern += ".";
-			for (int count = 0; count < decimals; count++) {
-				pattern += "0";
-			}
+		String pattern = getDefaultPattern(i, j);
+		String toReturn = format(value, pattern, 2, i, j, locale);
+		return toReturn;
+	}
+
+	public String format(double value, String pattern, int precision, int i, int j, Locale locale) {
+		if (pattern == null) {
+			pattern = getDefaultPattern(i, j);
 		}
-		NumberFormat nf = NumberFormat.getInstance(locale);
-		DecimalFormat formatter = (DecimalFormat) nf;
-		formatter.applyPattern(pattern);
+		Double scaledValue = this.applyScaleFactor(value, i, j);
+		DecimalFormat formatter = null;
+		if (pattern.equals("#.###") || pattern.equals("#.###,##")) {
+			formatter = (DecimalFormat) DecimalFormat.getNumberInstance(Locale.GERMAN);
+			if (pattern.equals("#.###"))
+				precision = 0;
+			formatter.setMinimumFractionDigits(precision);
+			formatter.setMaximumFractionDigits(precision);
+		} else if (pattern.equals("#,###") || pattern.equals("#,###.##")) {
+			formatter = (DecimalFormat) DecimalFormat.getNumberInstance(Locale.ENGLISH);
+			if (pattern.equals("#,###"))
+				precision = 0;
+			formatter.setMinimumFractionDigits(precision);
+			formatter.setMaximumFractionDigits(precision);
+		} else {
+			NumberFormat nf = NumberFormat.getInstance(locale);
+			formatter = (DecimalFormat) nf;
+			formatter.applyPattern(pattern);
+		}
+
 		String toReturn = formatter.format(scaledValue);
 		return toReturn;
 	}
@@ -173,6 +179,20 @@ public class MeasureFormatter {
 		formatter.applyPattern(pattern);
 		String toReturn = formatter.format(value);
 		return toReturn;
+	}
+
+	private String getDefaultPattern(int i, int j) {
+		// ex: #,##0.00
+		int decimals = this.getFormatXLS(i, j);
+		String toReturn = "#,##0";
+		if (decimals > 0) {
+			toReturn += ".";
+			for (int count = 0; count < decimals; count++) {
+				toReturn += "0";
+			}
+		}
+		return toReturn;
+
 	}
 
 }

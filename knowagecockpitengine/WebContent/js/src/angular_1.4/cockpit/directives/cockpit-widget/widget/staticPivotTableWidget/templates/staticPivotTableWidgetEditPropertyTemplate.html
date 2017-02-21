@@ -340,23 +340,23 @@
 			     		<div layout=row >
 				     		<md-input-container flex class="md-block"> 
 								<label>{{translate.load('sbi.cockpit.table.alternate.evenrows')}}</label>
-								<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.measuresRow['even-background-color']"></color-picker>
+								<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.measuresRow['even-background-color']" ></color-picker>
 							</md-input-container>
 							<md-input-container flex class="md-block"> 
 								<label>{{translate.load('sbi.cockpit.table.alternate.oddrows')}}</label>
-								<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.measuresRow['odd-background-color'] "></color-picker>
+								<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.measuresRow['odd-background-color']" ></color-picker>
 							</md-input-container>
 			     		</div>
 			     	</cockpit-style-custom-widget-configurator>
-		     		<cockpit-style-custom-widget-configurator label="translate.load('sbi.cockpit.designer.fontConf.measuresHeadersFontOpts')" layout="column">
-		     			<div layout=row >
+		     		<cockpit-style-custom-widget-configurator label="translate.load('sbi.cockpit.designer.fontConf.measuresHeaders')" layout="column">
+		     			<div layout=row flex >		     							     			
 				     		<md-input-container flex class="md-block"> 
 								<label>{{translate.load('sbi.cockpit.style.color')}}</label>
-								<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.measuresHeaders.color "></color-picker>
+								<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.measuresHeaders.color"></color-picker>
 							</md-input-container>
 							<md-input-container flex class="md-block"> 
 								<label>{{translate.load('sbi.cockpit.style.background')}}</label>
-								<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.measuresHeaders['background-color'] "></color-picker>
+								<color-picker  options="colorPickerProperty" ng-model="localModel.content.style.measuresHeaders['background-color']" ></color-picker>
 							</md-input-container>
 			     		</div>
 			     		<div layout=row >

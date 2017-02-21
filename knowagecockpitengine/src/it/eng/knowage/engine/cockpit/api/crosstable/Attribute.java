@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 public class Attribute extends Field {
 
@@ -36,8 +37,8 @@ public class Attribute extends Field {
 		return values;
 	}
 
-	public Attribute(String entityId, String alias, String iconCls, String nature, String values) {
-		super(entityId, alias, iconCls, nature);
+	public Attribute(String entityId, String alias, String iconCls, String nature, String values, JSONObject config) {
+		super(entityId, alias, iconCls, nature, config);
 		this.values = values;
 	}
 
@@ -61,7 +62,7 @@ public class Attribute extends Field {
 
 	@Override
 	public Attribute clone() {
-		return new Attribute(entityId, alias, iconCls, nature, values);
+		return new Attribute(entityId, alias, iconCls, nature, values, config);
 	}
 
 	public void setValues(List<String> values) {

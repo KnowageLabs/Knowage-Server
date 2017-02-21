@@ -12,7 +12,8 @@
 		      <div layout-margin layout="column" flex class="relative"> 
 		       	
 				<div flex>
-				<div layout="row">
+				<div layout="row" ng-if="!selectedColumn.widgetType">
+					<!-- only for simple table -->
 					<md-input-container class="md-block" class="small counter" flex>
 						<label>{{translate.load('sbi.cockpit.table.columnSize')}}</label>
 						<input class="input_class" type="text" ng-model="selectedColumn.style.size"> 
@@ -24,93 +25,112 @@
 					  <md-switch ng-model="selectedColumn.style.hideonMobile" aria-label="Hide Mobile" flex>
 					 {{translate.load('sbi.cockpit.table.hide')}}
 					  </md-switch>
-					  </div>
+				 </div>
+				 
+				 <div class="md-dialog-content" layout="column"  ng-if="selectedColumn.widgetType=='staticPivotTable'">
+				 <!-- only for static pivot table -->
+				 	<md-checkbox ng-disabled="selectedColumn.disableShowHeader" flex ng-model="selectedColumn.showHeader">
+								{{translate.load("sbi.cockpit.table.showHeader")}}
+					</md-checkbox>
+					<md-input-container>
+					  <label>{{translate.load('sbi.cockpit.table.alias')}}</label>
+					  <input ng-model="selectedColumn.alias">
+					</md-input-container>							
+					<md-input-container ng-if="selectedColumn.fieldType=='MEASURE'">
+						<label>{{translate.load('sbi.cockpit.aggregationwindow.selectAggregation')}}</label>
+						<md-select ng-model="selectedColumn.funct">
+							<md-option ng-repeat="agF in AggregationFunctions" ng-value="agF.value" >
+							{{agF.label}}
+							</md-option>
+						</md-select>
+					</md-input-container>
+				</div>
 		       
 				<!-- added by alepiova & revised by davverna -->
-				       
-				       <div ng-if="selectedColumn.fieldType=='MEASURE'">
-				       		
-				       		<div layout="row">
-				       		<md-input-container md-class="md-block" flex>
-		          				<label>{{translate.load('sbi.cockpit.table.visualizationtype')}}</label>
-		          					<md-select ng-model="selectedColumn.visType">
-		            					<md-option ng-repeat="vType in visTypes" value="{{vType}}">
-		              						{{vType}}
-		            					</md-option>
-		          					</md-select>
-		        			</md-input-container>
-				     
-					       <div ng-if="selectedColumn.visType=='Chart'|| selectedColumn.visType=='Chart & Text' || selectedColumn.visType== 'Text & Chart' ">
-					       		<md-input-container flex class="md-block" class="small counter">
-									<label>{{translate.load('sbi.cockpit.table.minvalue')}}</label>
-									<input class="input_class" type="number" ng-model="selectedColumn.minValue" required> 
-								</md-input-container>	
-								
-								<md-input-container flex class="md-block" class="small counter">
-									<label>{{translate.load('sbi.cockpit.table.maxvalue')}}</label>
-									<input class="input_class" type="number" ng-model="selectedColumn.maxValue" required> 
-								</md-input-container>
-								
-								<md-input-container flex class="md-block" class="small counter">
-									<label>{{translate.load('sbi.cockpit.table.chartlength')}}(px)</label>
-									<input class="input_class" type="number" ng-model="selectedColumn.chartLength" required> 
-								</md-input-container>
-								
-								<md-input-container flex class="md-block" class="small counter">
-									<label>{{translate.load('sbi.cockpit.table.chartcolor')}}</label> 
-									<color-picker  options="colorPickerProperty" ng-model="selectedColumn.chartColor "></color-picker>
-								</md-input-container>
-								
-					       </div>			
-							
-  
-			        	</div>
+		       
+		       <div ng-if="selectedColumn.fieldType=='MEASURE'">
+		       		<!-- both simple table and static pivot table -->
+		       		<div layout="row">
+		       		<md-input-container md-class="md-block" flex>
+          				<label>{{translate.load('sbi.cockpit.table.visualizationtype')}}</label>
+          					<md-select ng-model="selectedColumn.visType">
+            					<md-option ng-repeat="vType in visTypes" value="{{vType}}">
+              						{{vType}}
+            					</md-option>
+          					</md-select>
+        			</md-input-container>
+		     
+			       <div ng-if="selectedColumn.visType=='Chart'|| selectedColumn.visType=='Chart & Text' || selectedColumn.visType== 'Text & Chart' ">
+			       		<md-input-container flex class="md-block" class="small counter">
+							<label>{{translate.load('sbi.cockpit.table.minvalue')}}</label>
+							<input class="input_class" type="number" ng-model="selectedColumn.minValue" required> 
+						</md-input-container>	
+						
+						<md-input-container flex class="md-block" class="small counter">
+							<label>{{translate.load('sbi.cockpit.table.maxvalue')}}</label>
+							<input class="input_class" type="number" ng-model="selectedColumn.maxValue" required> 
+						</md-input-container>
+						
+						<md-input-container flex class="md-block" class="small counter">
+							<label>{{translate.load('sbi.cockpit.table.chartlength')}}(px)</label>
+							<input class="input_class" type="number" ng-model="selectedColumn.chartLength" required> 
+						</md-input-container>
+						
+						<md-input-container flex class="md-block" class="small counter">
+							<label>{{translate.load('sbi.cockpit.table.chartcolor')}}</label> 
+							<color-picker  options="colorPickerProperty" ng-model="selectedColumn.chartColor "></color-picker>
+						</md-input-container>
+						
+			       </div>			
+					
 
-		       			<md-card>
-			       			<md-toolbar class="ternaryToolbar ">
-						      <div class="md-toolbar-tools">
-						        <h2>
-						          <span>{{translate.load('sbi.cockpit.table.threshold')}}</span>
-						        </h2>
-					          </div>
-					       </md-toolbar>
-		       			   <md-card-content layout-row>
-						       <angular-table flex
-						    				id="thresholdsTable" 
-											ng-show=true
-											ng-model="thresholdsList"
-											highlights-selected-item=true
-											no-pagination=true
-											columns="tableColumns"		
-											scope-functions="selectedColumn.scopeFunc"	
-								>						
-								</angular-table>
-								
-								<div flex>
-								{{translate.load('sbi.cockpit.table.backgroundthresholds')}}
-									<div ng-repeat="i in [0, 1, 2]"  layout="row">
-											
-											<md-input-container flex class="md-block" flex="33%"> 
-												<label>{{translate.load('sbi.cockpit.table.condition')}}</label>
-												<md-select aria-label="aria-label" ng-model="selectedColumn.colorThresholdOptions.condition[i]">
-													<md-option ng-repeat="c in conditions" value="{{c}}">{{c}}</md-option>
-												</md-select>
-											</md-input-container>
-											
-											<md-input-container flex class="md-block"  ng-if="selectedColumn.colorThresholdOptions.condition[i]!='none'" class="small counter">
-												<label>{{translate.load('sbi.cockpit.table.threshold')}}</label>
-												<input class="input_class" type="number" ng-model="selectedColumn.colorThresholdOptions.conditionValue[i]" required> 
-											</md-input-container>
-											
-											<md-input-container flex class="md-block" ng-if="selectedColumn.colorThresholdOptions.condition[i]!='none'"> 
-												<label>{{translate.load('sbi.cockpit.table.backgroundcolor')}}</label>
-												<color-picker options="colorPickerProperty" ng-model="selectedColumn.colorThresholdOptions.color[i]"></color-picker>
-											</md-input-container>
-									</div>							
-								</div>
-							</md-card-content>
-						</md-card>
-					  </div> 
+	        	</div>
+
+       			<md-card>
+	       			<md-toolbar class="ternaryToolbar ">
+				      <div class="md-toolbar-tools">
+				        <h2>
+				          <span>{{translate.load('sbi.cockpit.table.threshold')}}</span>
+				        </h2>
+			          </div>
+			       </md-toolbar>
+			      
+       			   <md-card-content layout-row>
+				       <angular-table flex
+				    				id="thresholdsTable" 
+									ng-show=true
+									ng-model="thresholdsList"
+									highlights-selected-item=true
+									no-pagination=true
+									columns="tableColumns"		
+									scope-functions="selectedColumn.scopeFunc"	
+						>						
+						</angular-table> 
+						<div flex>
+						{{translate.load('sbi.cockpit.table.backgroundthresholds')}}
+							<div ng-repeat="i in [0, 1, 2]"  layout="row">
+									
+									<md-input-container flex class="md-block" flex="33%"> 
+										<label>{{translate.load('sbi.cockpit.table.condition')}}</label>
+										<md-select aria-label="aria-label" ng-model="selectedColumn.colorThresholdOptions.condition[i]">
+											<md-option ng-repeat="c in conditions" value="{{c}}">{{c}}</md-option>
+										</md-select>
+									</md-input-container>
+									
+									<md-input-container flex class="md-block"  ng-if="selectedColumn.colorThresholdOptions.condition[i]!='none'" class="small counter">
+										<label>{{translate.load('sbi.cockpit.table.threshold')}}</label>
+										<input class="input_class" type="number" ng-model="selectedColumn.colorThresholdOptions.conditionValue[i]" required> 
+									</md-input-container>
+									
+									<md-input-container flex class="md-block" ng-if="selectedColumn.colorThresholdOptions.condition[i]!='none'"> 
+										<label>{{translate.load('sbi.cockpit.table.backgroundcolor')}}</label>
+										<color-picker options="colorPickerProperty" ng-model="selectedColumn.colorThresholdOptions.color[i]"></color-picker>
+									</md-input-container>
+							</div>							
+						</div>
+					</md-card-content>
+				</md-card>
+			  </div> 
 					        
 			   <!-- ----------------- -->
 		       
