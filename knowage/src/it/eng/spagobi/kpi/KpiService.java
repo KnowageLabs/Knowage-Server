@@ -1310,6 +1310,11 @@ public class KpiService {
 		if (target.getValues() == null || target.getValues().isEmpty()) {
 			e.addError("Values are mandatory");
 		}
+
+		if (target.getId() == null && target.getName() != null && dao.loadTargetByName(target.getName()) != null) {
+			e.addError("A target with name " + target.getName() + " already exists");
+		}
+
 		// start/end validity dates of targets with same kpis cannot overlap
 		Set<Kpi> kpis = new HashSet<>();
 		for (TargetValue targetValue : target.getValues()) {

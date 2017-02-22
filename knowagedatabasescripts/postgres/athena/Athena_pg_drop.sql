@@ -1,1 +1,0 @@
--- CONTENT MOVED TO: /knowagedatabasescripts/postgres/PG_drop.sql

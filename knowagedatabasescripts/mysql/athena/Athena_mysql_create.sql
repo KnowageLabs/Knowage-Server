@@ -1,1 +1,0 @@
--- CONTENT MOVED TO: /knowagedatabasescripts/mysql/MySQL_create.sql
