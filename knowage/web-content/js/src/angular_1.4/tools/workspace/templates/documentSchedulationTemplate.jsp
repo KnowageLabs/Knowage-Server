@@ -34,17 +34,21 @@
 	
 	<md-tabs md-dynamic-height flex=95>
 	 <md-tab ng-repeat="d in scheduler.documents" label="{{d.name}}" md-on-select="getDocumentsSnapshots(scheduler.jobName, d.name)"  >
-	  	<md-content>
-	  	<angular-table layout-fill
+	  	<div layout-fill layout="column" flex>
+	  	
+	  	<angular-table style="min-height:600px"
 			id="tableSchedulers" ng-model="schedulers" 
 			columns='schedulatinColumns'
-			columns-search='["name","description","dateCreation"]'
+			columns-search='["name","description","time"]'
+			initial-sorting="'dateCreation'"
+			initial-sorting-asc="true"
 			highlights-selected-item = "true"
 			show-search-bar="true"
 			speed-menu-option=downloadSnapshotSpeedMenuOption
 				>
 		</angular-table>
-		</md-content>
+		
+		</div>
 	  </md-tab>
 	 </md-tabs>
 	 </div>
@@ -64,6 +68,8 @@
 			id="tableMergeSchedulers" ng-model=schedulationListForMerge 
 			columns='schedulatinMergeColumns'
 			highlights-selected-item = "true"
+			initial-sorting="'time'"
+			initial-sorting-asc="true"
 			show-search-bar="true"
 			speed-menu-option=downloadSnapshotSpeedMenuOption
 				>

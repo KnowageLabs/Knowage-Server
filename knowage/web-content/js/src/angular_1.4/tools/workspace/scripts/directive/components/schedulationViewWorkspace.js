@@ -33,7 +33,7 @@ angular
 		  };
 	});
 
-function schedulationController($scope, sbiModule_messaging, $mdDialog, $httpParamSerializer, sbiModule_restServices, sbiModule_translate, sbiModule_config , $documentViewer, toastr){
+function schedulationController($scope, sbiModule_messaging, $filter, $mdDialog, $httpParamSerializer, sbiModule_restServices, sbiModule_translate, sbiModule_config , $documentViewer, toastr){
 	
 	$scope.translate=sbiModule_translate;
 	$scope.schedulationList = [];
@@ -157,7 +157,8 @@ function schedulationController($scope, sbiModule_messaging, $mdDialog, $httpPar
 	
 	$scope.schedulatinColumns = [
 	    {"label":$scope.translate.load("sbi.generic.name"),"name":"name"},
-	    {"label":$scope.translate.load("sbi.glossary.description"), "name":"description"}
+	    {"label":$scope.translate.load("sbi.glossary.description"), "name":"description"},
+	    {"label":$scope.translate.load("sbi.timespan.type.time"), "name":"dateCreation", transformer : function(data){ return $filter('date')(data, "HH:mm:ss yyyy-MM-dd ");  }}
     ];
 	
 	$scope.schedulatinMergeColumns = [
@@ -166,30 +167,75 @@ function schedulationController($scope, sbiModule_messaging, $mdDialog, $httpPar
     ];
 	
 	$scope.triggerExecute = function(doc){
+		$scope.mergePdfsInto1 = true;
 		var requestString =
 			"executeTrigger?jobName="+doc.jobName
 			+"&jobGroup="+doc.jobGroup
 			+"&triggerName="+doc.triggerName
 			+"&triggerGroup="+doc.triggerGroup;
-		sbiModule_restServices.post("scheduler", requestString)
-		.success(function(data, status, headers, config) {
-			if (data.hasOwnProperty("errors")) {
-				sbiModule_logger.log("unable to execute schedulation");
-			} else {
-				$mdDialog.show( 
+		
+		sbiModule_restServices.promisePost("scheduler",requestString)
+		.then(function(response) {
+			console.info("[LOAD START]: Execution of schedulation is started.");
+			
+			/*$mdDialog.show( 
 					$mdDialog.alert()
 				        .parent(angular.element(document.body))
 				        .clickOutsideToClose(false)
 				        .title(sbiModule_translate.load("sbi.generic.ok"))
 				        .content(sbiModule_translate.load("sbi.scheduler.schedulation.executed"))
 				        .ok(sbiModule_translate.load("sbi.general.ok"))
-				);
-			}
-		})
-		.error(function(data, status, headers, config) {
-			sbiModule_logger.log("unable to execute schedulation " + status);
+				);*/
+			
+			sbiModule_restServices.promiseGet("2.0/pdf",doc.jobName)
+			.then(function(response) {
+				console.info("[LOAD START]: Loading of Shcedulations for selected scheduler is started.");
+				//response.data.schedulations
+				$scope.snapshotUrlPath=response.data.urlPath;
+				var itemsSorted  = $filter('orderBy')(response.data.schedulations, 'time');
+				$scope.openPdf(itemsSorted[itemsSorted.length-1]);				
+				console.info("[LOAD END]: Loading of Shcedulations for selected scheduler is finished.");
+			},function(response){
+				
+				// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+				toastr.error(response.data, sbiModule_translate.load('sbi.browser.folder.load.error'), $scope.toasterConfig);
+				
+			});
+			
+			
+			
+			console.info("[LOAD END]: Execution of schedulation is finished.");
+		},function(response){
+			
+			toastr.error(response.data, sbiModule_translate.load('sbi.browser.folder.load.error'), $scope.toasterConfig);
+			
 		});
+		
 	}
+	
+	 $scope.openPdf = function(item) { 
+		 
+			var queryParams = "";
+
+			 if($scope.mergePdfsInto1) {
+				 for(var i=0; i<item.ids.length;i++){
+					 queryParams=queryParams+"&mergeitems="+item.ids[i]; 
+				 }
+			 } else {
+				 queryParams="&OBJECT_ID=" + item.biobjId;
+			 }
+			 $scope.snapshotUrl=$scope.snapshotUrlPath+
+			   "&ACTION_NAME=GET_SNAPSHOT_CONTENT"+"&SNAPSHOT_ID=" + item.id+"&LIGHT_NAVIGATOR_DISABLED=TRUE"+queryParams;
+			 $mdDialog.show({
+					templateUrl: 'dialog1.tmpl.html',
+					scope:$scope,
+					preserveScope: true,
+					targetEvent:item,
+					clickOutsideToClose:true
+				}) 					 
+		 }	
+	
+	
 	
 }
 })();
