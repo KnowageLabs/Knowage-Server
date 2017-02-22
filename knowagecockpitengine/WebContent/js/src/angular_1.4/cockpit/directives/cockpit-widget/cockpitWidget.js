@@ -212,7 +212,9 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 	}
 	
 	$scope.closeWidgetActionButtons = function() {
-		$scope.widgetActionButtonsVisible=false;
+		if(!widExp){
+			$scope.widgetActionButtonsVisible=false;
+		}
 	}
 	
 	// davverna - initializing search object to give all the columns to the user searchbar
