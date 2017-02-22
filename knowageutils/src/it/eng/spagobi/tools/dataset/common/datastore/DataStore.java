@@ -598,14 +598,14 @@ public class DataStore implements IDataStore {
 
 		int resultCount = 0;
 		if (offset == -1 || fetchSize == -1) {
-			while (dataSet.next() && resultCount < maxRowCount) {
+			while (dataSet.next() && (maxRowCount < 0 || resultCount < maxRowCount)) {
 				Row row = dataSet.getRow();
 				IRecord record = getRecordFromRow(row, dataStore);
 				dataStore.appendRecord(record);
 				resultCount++;
 			}
 		} else {
-			while (dataSet.next() && resultCount < maxRowCount) {
+			while (dataSet.next() && (maxRowCount < 0 || resultCount < maxRowCount)) {
 				if (offset <= resultCount && resultCount < offset + fetchSize) {
 					Row row = dataSet.getRow();
 					IRecord record = getRecordFromRow(row, dataStore);
