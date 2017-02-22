@@ -178,10 +178,12 @@
 		domainCd="DIALECT_HIB" domainNm="OrientDB dialect" valueDs="sbidomains.ds.orient" />
 	<DOMAIN valueCd="RANGE" valueNm="sbidomains.nm.range" domainCd="THRESHOLD_TYPE"
 		domainNm="Threshold Type" valueDs="sbidomains.ds.range" />
+	<!-- 
 	<DOMAIN valueCd="MINIMUM" valueNm="sbidomains.nm.minimum"
 		domainCd="THRESHOLD_TYPE" domainNm="Threshold Type" valueDs="sbidomains.ds.minimum" />
 	<DOMAIN valueCd="MAXIMUM" valueNm="sbidomains.nm.maximum"
-		domainCd="THRESHOLD_TYPE" domainNm="Threshold Type" valueDs="sbidomains.ds.maximum" />
+		domainCd="THRESHOLD_TYPE" domainNm="Threshold Type" valueDs="sbidomains.ds.maximum" />  
+	-->
 	<DOMAIN valueCd="URGENT" valueNm="sbidomains.nm.Urgent"
 		domainCd="SEVERITY" domainNm="Severity Level" valueDs="sbidomains.ds.Urgent" />
 	<DOMAIN valueCd="HIGH" valueNm="sbidomains.nm.High" domainCd="SEVERITY"
