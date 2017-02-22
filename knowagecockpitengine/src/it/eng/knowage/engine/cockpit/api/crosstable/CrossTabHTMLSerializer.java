@@ -57,8 +57,8 @@ public class CrossTabHTMLSerializer {
 	private static String LEVEL_CLASS = "level";
 	private static String NA_CLASS = "na";
 
-	private static String DEFAULT_BG_TOTALS = "background:rgba(59, 103, 140, 0.45);";
-	private static String DEFAULT_BG_SUBTOTALS = "background:rgba(59, 103, 140, 0.8);";
+	private static String DEFAULT_BG_TOTALS = "background:rgba(59, 103, 140, 0.8);";
+	private static String DEFAULT_BG_SUBTOTALS = "background:rgba(59, 103, 140, 0.45);";
 	private static String DEFAULT_COLOR_TOTALS = "white;";
 
 	private Locale locale = null;
@@ -206,9 +206,6 @@ public class CrossTabHTMLSerializer {
 							else
 								addedLabelTotal = true;
 						}
-						// else if (crossTab.getCrosstabDefinition().getMeasures().size() == 1)
-						// text = "";
-
 					}
 
 					aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "clickFunction('" + crossTab.getCrosstabDefinition().getRows().get(i).getEntityId() + "','" + text
@@ -321,6 +318,8 @@ public class CrossTabHTMLSerializer {
 							if (parentStyle != null && !parentStyle.equals("")) {
 								aColumn.setAttribute(STYLE_ATTRIBUTE, parentStyle);
 							}
+							// aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "orderPivotTable('" + i + "','1'," + myGlobalId + ")");
+							aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "orderPivotTable('" + i + "','1'," + myGlobalId + ")");
 						}
 					}
 
