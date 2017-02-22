@@ -498,6 +498,12 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 		
 	};
 	
+	$scope.$watch('ctrl.selectedDocumentIndex', function(newVal, oldVal){
+		if(ctrl.selectedJob && newVal && newVal >= 0){
+			ctrl.selectDocument(newVal);
+		}
+	});
+	
 	ctrl.selectDocument = function(documentIndex){
 		ctrl.selectedDocumentIndex = documentIndex;
 		if(documentIndex >= 0 && documentIndex < ctrl.selectedJob.documents.length){
