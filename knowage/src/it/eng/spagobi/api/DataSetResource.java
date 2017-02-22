@@ -619,9 +619,9 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	@Path("/{label}/data")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getDataStore(@PathParam("label") String label, @QueryParam("parameters") String parameters, @QueryParam("selections") String selections,
-			@QueryParam("likeSelections") String likeSelections, @QueryParam("limit") int maxRowCount, @QueryParam("aggregations") String aggregations,
-			@QueryParam("summaryRow") String summaryRow, @QueryParam("offset") int offset, @QueryParam("size") int fetchSize,
-			@QueryParam("realtime") boolean isRealtime) {
+			@QueryParam("likeSelections") String likeSelections, @DefaultValue("-1") @QueryParam("limit") int maxRowCount,
+			@QueryParam("aggregations") String aggregations, @QueryParam("summaryRow") String summaryRow, @QueryParam("offset") int offset,
+			@QueryParam("size") int fetchSize, @QueryParam("realtime") boolean isRealtime) {
 		logger.debug("IN");
 
 		try {

@@ -83,6 +83,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -793,9 +794,9 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 	@Path("/{label}/data")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getDataStorePost(@PathParam("label") String label, @QueryParam("parameters") String parameters, String selections,
-			@QueryParam("likeSelections") String likeSelections, @QueryParam("limit") int maxRowCount, @QueryParam("aggregations") String aggregations,
-			@QueryParam("summaryRow") String summaryRow, @QueryParam("offset") int offset, @QueryParam("size") int fetchSize,
-			@QueryParam("realtime") boolean isRealtime) {
+			@QueryParam("likeSelections") String likeSelections, @DefaultValue("-1") @QueryParam("limit") int maxRowCount,
+			@QueryParam("aggregations") String aggregations, @QueryParam("summaryRow") String summaryRow, @QueryParam("offset") int offset,
+			@QueryParam("size") int fetchSize, @QueryParam("realtime") boolean isRealtime) {
 		logger.debug("IN");
 		try {
 			return getDataStore(label, parameters, selections, likeSelections, maxRowCount, aggregations, summaryRow, offset, fetchSize, isRealtime);
