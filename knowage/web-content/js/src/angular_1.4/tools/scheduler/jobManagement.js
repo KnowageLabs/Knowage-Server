@@ -18,10 +18,10 @@ var EmptyJob = {
 }
 
 app.controller('Controller', [ "sbiModule_download", "sbiModule_translate","sbiModule_restServices", "sbiModule_logger",
-                               "sbiModule_config", "$scope", "$mdDialog", "$mdToast", "$timeout", "$location", "$window","sbiModule_messaging", mainFunction ]);
+                               "sbiModule_config", "$scope", "$mdDialog", "$mdToast", "$timeout", "$location", "$window", "sbiModule_messaging", mainFunction ]);
 
 function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restServices, sbiModule_logger,
-		sbiModule_config, $scope, $mdDialog, $mdToast, $timeout, $location, $window,sbiModule_messaging) {
+		sbiModule_config, $scope, $mdDialog, $mdToast, $timeout, $location, $window, sbiModule_messaging) {
 	var ctrl = this;
 	sbiModule_translate.addMessageFile("component_scheduler_messages");
 	
@@ -796,6 +796,12 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 			templateUrl : sbiModule_config.contextName + '/js/src/angular_1.4/tools/scheduler/templates/dialog-trigger-info.html'
 		});
 	}
+	
+	$scope.$watch('ctrl.selectedJob.jobMergeAllSnapshots', function(newVal, oldVal){
+		if(newVal == false){
+			ctrl.selectedJob.jobCollateSnapshots = false;
+		}
+	});
 	
 	ctrl.editTrigger = function(jobName, jobGroup, triggerName, triggerGroup){
 		$mdDialog.show({

@@ -29,6 +29,7 @@ public class JobInfo implements Serializable {
 	private String jobGroupName = "";
 	private String jobDescription = "";
 	private boolean jobMergeAllSnapshots = false;
+	private boolean jobCollateSnapshots = false;
 	private String schedulerAdminstratorIdentifier = "";
 	private List<BIObject> documents = new ArrayList<BIObject>();
 
@@ -57,6 +58,14 @@ public class JobInfo implements Serializable {
 
 	public void setJobMergeAllSnapshots(boolean jobMergeAllSnapshots) {
 		this.jobMergeAllSnapshots = jobMergeAllSnapshots;
+	}
+
+	public boolean isJobCollateSnapshots() {
+		return jobCollateSnapshots;
+	}
+
+	public void setJobCollateSnapshots(boolean jobCollateSnapshots) {
+		this.jobCollateSnapshots = jobCollateSnapshots;
 	}
 
 	/**

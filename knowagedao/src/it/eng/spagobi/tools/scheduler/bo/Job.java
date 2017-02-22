@@ -35,6 +35,7 @@ public class Job {
 	boolean durable;
 	boolean requestsRecovery;
 	boolean mergeAllSnapshots;
+	boolean collateSnapshots;
 	boolean _volatile;
 	Map<String, String> parameters;
 
@@ -45,6 +46,7 @@ public class Job {
 		_volatile = false;
 		requestsRecovery = false;
 		mergeAllSnapshots = false;
+		collateSnapshots = false;
 	}
 
 	public String getName() {
@@ -155,6 +157,26 @@ public class Job {
 	 */
 	public void setMergeAllSnapshots(boolean mergeAllSnapshots) {
 		this.mergeAllSnapshots = mergeAllSnapshots;
+	}
+
+	/**
+	 * Whether or not the <code>Job</code> should collate snapshots.
+	 *
+	 * If not explicitly set, the default value is false.
+	 *
+	 * @return true if the Job should collate snapshots.
+	 */
+	public boolean isCollateSnapshots() {
+		return collateSnapshots;
+	}
+
+	/**
+	 * Instructs the Scheduler whether or not the <code>Job</code> should collate snapshots.
+	 *
+	 * @params collateSnapshot true if the Job should collate snapshots. false otherwise
+	 */
+	public void setCollateSnapshots(boolean collateSnapshots) {
+		this.collateSnapshots = collateSnapshots;
 	}
 
 	/**

@@ -42,6 +42,7 @@ public class JobXMLSerializer implements Serializer {
 	public static final String JOB_DURABILITY = "jobDurability";
 	public static final String JOB_REQUEST_RECOVERY = "jobRequestRecovery";
 	public static final String JOB_MERGE_ALL_SNAPSHOTS = "jobMergeAllSnapshots";
+	public static final String JOB_COLLATE_SNAPSHOTS = "jobCollateSnapshots";
 	public static final String USE_VOLATILITY = "jobVolatility";
 
 	static private Logger logger = Logger.getLogger(JobXMLSerializer.class);
@@ -69,6 +70,7 @@ public class JobXMLSerializer implements Serializer {
 			String jobDurability = job.isDurable() ? "true" : "false";
 			String jobRequestRecovery = job.isRequestsRecovery() ? "true" : "false";
 			String jobMergeAllSnapshots = job.isMergeAllSnapshots() ? "true" : "false";
+			String jobCollateSnapshots = job.isCollateSnapshots() ? "true" : "false";
 			String jobVolatility = job.isVolatile() ? "true" : "false";
 			Map<String, String> parameters = job.getParameters();
 
@@ -87,6 +89,7 @@ public class JobXMLSerializer implements Serializer {
 			result.append(" " + JOB_DURABILITY + "=\"" + jobDurability + "\"");
 			result.append(" " + JOB_REQUEST_RECOVERY + "=\"" + jobRequestRecovery + "\"");
 			result.append(" " + JOB_MERGE_ALL_SNAPSHOTS + "=\"" + jobMergeAllSnapshots + "\"");
+			result.append(" " + JOB_COLLATE_SNAPSHOTS + "=\"" + jobCollateSnapshots + "\"");
 			result.append(" " + USE_VOLATILITY + "=\"" + jobVolatility + "\"");
 			if (isForServiceConsumer) {
 				result.append(">");

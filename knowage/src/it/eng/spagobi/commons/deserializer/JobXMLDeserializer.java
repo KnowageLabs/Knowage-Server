@@ -43,6 +43,7 @@ public class JobXMLDeserializer implements Deserializer {
 	public static String JOB_CLASS = "jobClass";
 	public static String JOB_REQUEST_RECOVERY = "jobRequestRecovery";
 	public static String JOB_MERGE_ALL_SNAPSHOTS = "jobMergeAllSnapshots";
+	public static String JOB_COLLATE_SNAPSHOTS = "jobCollateSnapshots";
 	public static String JOB_PARAMETERS = "PARAMETERS";
 
 	private static Logger logger = Logger.getLogger(JobXMLDeserializer.class);
@@ -56,6 +57,7 @@ public class JobXMLDeserializer implements Deserializer {
 		String jobDescription;
 		boolean jobRequestRecovery;
 		boolean jobMergeAllSnapshots;
+		boolean jobCollateSnapshots;
 		Map<String, String> jobParameters;
 		Class jobClass;
 
@@ -81,6 +83,7 @@ public class JobXMLDeserializer implements Deserializer {
 			jobDescription = (String) xml.getAttribute(JOB_DESCRIPTION);
 			jobRequestRecovery = deserializeBooleanAttribute(xml, JOB_REQUEST_RECOVERY);
 			jobMergeAllSnapshots = deserializeBooleanAttribute(xml, JOB_MERGE_ALL_SNAPSHOTS);
+			jobCollateSnapshots = deserializeBooleanAttribute(xml, JOB_COLLATE_SNAPSHOTS);
 			jobParameters = deserializeParametersAttribute(xml);
 			jobClass = deserializeClassAttribute(xml);
 
@@ -89,6 +92,7 @@ public class JobXMLDeserializer implements Deserializer {
 			job.setDescription(jobDescription);
 			job.setRequestsRecovery(jobRequestRecovery);
 			job.setMergeAllSnapshots(jobMergeAllSnapshots);
+			job.setCollateSnapshots(jobCollateSnapshots);
 			job.addParameters(jobParameters);
 			job.setJobClass(jobClass);
 		} catch (Throwable t) {
