@@ -40,14 +40,14 @@
 							</md-button>
 							<md-menu-content>
 								<md-menu-item ng-repeat="item in document.triggers | filter: onlySnapshots">
-						            <md-button ng-click="executeDocumentAction({doc:item});">
+						            <md-button ng-click="executeDocumentAction({doc:item, merge:document.jobMergeAllSnapshots});">
 						                Execute   {{item.triggerName}}
 						            </md-button>
 						        </md-menu-item>	
 							</md-menu-content>
 						</md-menu>
 					</md-menu-bar>
-					<md-button class="md-icon-button" aria-label="Execute" ng-click="executeDocumentAction({doc:document.triggers[0]});" ng-if="document.triggers.length==1">
+					<md-button class="md-icon-button" aria-label="Execute" ng-click="executeDocumentAction({doc:document.triggers[0], merge:document.jobMergeAllSnapshots});" ng-if="document.triggers.length==1">
 						<md-icon md-font-icon="fa fa-play-circle fa-2x"></md-icon>
 						<md-tooltip md-delay="1000"> {{translate.load("sbi.workspace.execute.document")}}</md-tooltip>
 					</md-button>
