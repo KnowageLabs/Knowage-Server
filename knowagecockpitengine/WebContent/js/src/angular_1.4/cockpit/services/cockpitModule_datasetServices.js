@@ -95,6 +95,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			//check if parameters changed
 			removedDatasetParams[item.dsLabel] = [];
 			if(actualDs.parameters!=undefined && item.parameters!=undefined){
+				
 				//check added params
 				for(var i=0; i<actualDs.parameters.length; i++){
 					var paramName = actualDs.parameters[i].name;
@@ -185,6 +186,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		}
 		
 		if(changed.length>0){
+			changed.push(sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.checkconfigandsave"));
 			sbiModule_messaging.showErrorMessage(changed.join("<br>"), sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.title"));
 		}
 	}

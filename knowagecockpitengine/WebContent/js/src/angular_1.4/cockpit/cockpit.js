@@ -34,8 +34,8 @@ cockpitApp.config(['$mdThemingProvider', function($mdThemingProvider) {
  
 
 
-cockpitApp.controller("cockpitMasterController",['$scope','cockpitModule_widgetServices','cockpitModule_template','cockpitModule_datasetServices','cockpitModule_crossServices','cockpitModule_realtimeServices','cockpitModule_properties','cockpitModule_templateServices','$rootScope','$q','sbiModule_device',cockpitMasterControllerFunction]);
-function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,cockpitModule_template,cockpitModule_datasetServices,cockpitModule_crossServices,cockpitModule_realtimeServices,cockpitModule_properties,cockpitModule_templateServices,$rootScope,$q,sbiModule_device){
+cockpitApp.controller("cockpitMasterController",['$scope','cockpitModule_widgetServices','cockpitModule_template','cockpitModule_datasetServices','cockpitModule_documentServices','cockpitModule_crossServices','cockpitModule_realtimeServices','cockpitModule_properties','cockpitModule_templateServices','$rootScope','$q','sbiModule_device',cockpitMasterControllerFunction]);
+function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,cockpitModule_template,cockpitModule_datasetServices,cockpitModule_documentServices,cockpitModule_crossServices,cockpitModule_realtimeServices,cockpitModule_properties,cockpitModule_templateServices,$rootScope,$q,sbiModule_device){
 	$scope.cockpitModule_widgetServices=cockpitModule_widgetServices;
 	$scope.imageBackgroundUrl=cockpitModule_template.configuration.style.imageBackgroundUrl;
 	$scope.cockpitModule_template=cockpitModule_template;
@@ -58,6 +58,8 @@ function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,coc
 	},function(){
 		console.error("error when load dataset list")
 	});
+	
+	cockpitModule_documentServices.loadDocumentList(undefined, undefined, undefined, undefined, undefined, false, undefined, true);
 
 	if(cockpitModule_properties.DOCUMENT_LABEL != undefined && cockpitModule_properties.DOCUMENT_LABEL != ''){
 	cockpitModule_crossServices.loadCrossNavigationByDocument(cockpitModule_properties.DOCUMENT_LABEL).then(
