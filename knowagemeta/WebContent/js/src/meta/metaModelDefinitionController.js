@@ -5,7 +5,7 @@ function metaModelDefinitionControllerFunction($scope, sbiModule_translate,sbiMo
 
 	$scope.datasourceStructureColumnsList = [
 			{
-				label : sbiModule_translate.load("sbi.resources.columnname"),
+				label : sbiModule_translate.load("sbi.resources.tablename"),
 				name : "columnName"
 			},
 			{

@@ -28,6 +28,7 @@ import it.eng.knowage.meta.initializer.descriptor.CalculatedFieldDescriptor;
 import it.eng.knowage.meta.initializer.descriptor.HierarchyDescriptor;
 import it.eng.knowage.meta.initializer.descriptor.HierarchyLevelDescriptor;
 import it.eng.knowage.meta.initializer.properties.OlapModelPropertiesFromFileInitializer;
+import it.eng.knowage.meta.initializer.utils.Pair;
 import it.eng.knowage.meta.model.Model;
 import it.eng.knowage.meta.model.ModelFactory;
 import it.eng.knowage.meta.model.ModelPropertyType;
@@ -181,6 +182,50 @@ public class MetaService extends AbstractSpagoBIResource {
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(req.getPathInfo(), t);
 		}
+	}
+
+	@POST
+	@Path("/checkRelationships")
+	public Response checkRelationships(@Context HttpServletRequest req) {
+		try {
+			EmfXmiSerializer serializer = new EmfXmiSerializer();
+			JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
+			Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
+
+			applyDiff(jsonRoot, model);
+
+			BusinessModel businessModel = model.getBusinessModels().get(0);
+
+			BusinessModelInitializer businessModelInitializer = new BusinessModelInitializer();
+			List<Pair<BusinessRelationship, Integer>> incorrectRelationships = businessModelInitializer.checkRelationshipsConstraints(businessModel);
+
+			JSONObject checksResult = new JSONObject();
+			JSONArray checksArray = new JSONArray();
+			for (Pair<BusinessRelationship, Integer> incorrectRelationshipPair : incorrectRelationships) {
+				// extract information and convert to json
+				String businessRelationshipName = incorrectRelationshipPair.a.getName();
+				Integer requiredNumberOfColumns = incorrectRelationshipPair.b;
+				String sourceTableName = incorrectRelationshipPair.a.getSourceTable().getName();
+				String destinationTableName = incorrectRelationshipPair.a.getDestinationTable().getName();
+				JSONObject incorrectRelationship = new JSONObject();
+				incorrectRelationship.put("businessRelationshipName", businessRelationshipName);
+				incorrectRelationship.put("sourceTableName", sourceTableName);
+				incorrectRelationship.put("destinationTableName", destinationTableName);
+				incorrectRelationship.put("requiredNumberOfColumns", requiredNumberOfColumns);
+				checksArray.put(incorrectRelationship);
+			}
+			checksResult.put("incorrectRelationships", checksArray);
+
+			return Response.ok(checksResult).build();
+
+		} catch (IOException | JSONException e) {
+			logger.error("Error during check of relationships", e);
+		} catch (SpagoBIException e) {
+			logger.error("Error during check of relationships", e);
+			throw new SpagoBIServiceException(req.getPathInfo(), e);
+		}
+		return Response.serverError().build();
+
 	}
 
 	@POST

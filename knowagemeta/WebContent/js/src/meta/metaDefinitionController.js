@@ -93,6 +93,32 @@ app.service("metaModelServices",function(sbiModule_jsonServices){
 	}
 })
 
+app.controller('checkModelController', [ '$scope', 'sbiModule_translate','sbiModule_restServices','sbiModule_config','dialogScope','metaModelServices','$interval','$angularListDetail','$mdDialog','$window','incorrectRelationships','dataToSend', checkModelControllerFunction ]);
+
+function checkModelControllerFunction($scope, sbiModule_translate,sbiModule_restServices,sbiModule_config,dialogScope,metaModelServices,$interval,$angularListDetail,$mdDialog,$window,incorrectRelationships,dataToSend) {
+	$scope.incorrectRelationships=incorrectRelationships;
+	$scope.translate=sbiModule_translate;
+	$scope.dataToSend = dataToSend;
+
+	//cancel action
+	$scope.cancel = function(){
+		$mdDialog.cancel();
+	};
+
+	//save model
+	$scope.saveModel=function(){
+		sbiModule_restServices.promisePost("1.0/metaWeb", "generateModel", metaModelServices.createRequestRest($scope.dataToSend))
+		.then(
+				function(response) {
+					sbiModule_restServices.errorHandler(sbiModule_translate.load("sbi.catalogues.toast.updated"), "");
+
+				},function(response) {
+					sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.meta.model.generate.error"));
+				});
+	};
+
+}
+
 app.controller('metaDefinitionController', [ '$scope', 'sbiModule_translate','sbiModule_restServices','sbiModule_config','dialogScope','metaModelServices','$interval','$angularListDetail','$mdDialog','$window', metaDefinitionControllerFunction ]);
 
 
@@ -149,13 +175,38 @@ function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_
 		var dataToSend={};
 		dataToSend.name=bmName;
 		dataToSend.id=bmId;
-		sbiModule_restServices.promisePost("1.0/metaWeb", "generateModel", metaModelServices.createRequestRest(dataToSend))
+		sbiModule_restServices.promisePost("1.0/metaWeb", "checkRelationships", metaModelServices.createRequestRest(dataToSend))
 		.then(
 				function(response) {
-					sbiModule_restServices.errorHandler(sbiModule_translate.load("sbi.catalogues.toast.updated"), "");
+					//check if any error was found during the validation
+					if (response.data.incorrectRelationships !== undefined && response.data.incorrectRelationships.length > 0) {
+						//show the warning dialog
+						$mdDialog.show({
+							controller: 'checkModelController',
+							preserveScope: true,
+							locals: {incorrectRelationships:response.data.incorrectRelationships, dataToSend: dataToSend},
+							templateUrl:sbiModule_config.contextName + '/js/src/meta/templates/checkModel.jsp',
+							clickOutsideToClose:false,
+							escapeToClose :false,
+							fullscreen: true
+						});
+					} else {
+						//After the check if there aren't warnings, let's continue saving
+						sbiModule_restServices.promisePost("1.0/metaWeb", "generateModel", metaModelServices.createRequestRest(dataToSend))
+						.then(
+								function(response) {
+									sbiModule_restServices.errorHandler(sbiModule_translate.load("sbi.catalogues.toast.updated"), "");
+
+								},function(response) {
+									sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.meta.model.generate.error"));
+								});
+					}
+
 				},function(response) {
-					sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.meta.model.generate.error"));
+					sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.meta.model.checkmodel.error"));
 				});
+
+
 	}
 
 	$scope.closeMetaDefinition = function() {
@@ -216,6 +267,8 @@ function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_
 
 	};
 }
+
+
 
 angular.module('metaManager').filter('filterByCategory', function() {
 	return function(items, categoryName) {
