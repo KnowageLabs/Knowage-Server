@@ -131,7 +131,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#contains(it.eng.spagobi.tools .dataset.bo.IDataSet)
 	 */
 
@@ -142,7 +142,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#contains(java.lang.String)
 	 */
 
@@ -153,7 +153,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#contains(java.util.List)
 	 */
 
@@ -164,7 +164,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#getNotContained(java.util.List)
 	 */
 
@@ -185,7 +185,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#get(it.eng.spagobi.tools.dataset. bo.IDataSet)
 	 */
 
@@ -222,7 +222,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#get(java.lang.String)
 	 */
 
@@ -279,7 +279,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)int
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#get(it.eng.spagobi.tools.dataset. bo.IDataSet, java.util.List, java.util.List, java.util.List)
 	 */
 
@@ -648,8 +648,8 @@ public class SQLDBCache implements ICache {
 								String operator = filter.getOperator();
 
 								String leftOperand = null;
+								String[] columns = filter.getLeftOperand().getOperandValueAsString().split(",");
 								if (operator.equalsIgnoreCase("IN")) {
-									String[] columns = filter.getLeftOperand().getOperandValueAsString().split(",");
 									leftOperand = "(1,";
 									String separator = "";
 									for (String value : columns) {
@@ -672,34 +672,52 @@ public class SQLDBCache implements ICache {
 									}
 								}
 
-								String rightOperand = null;
+								StringBuilder rightOperandSB = new StringBuilder();
 								if (filter.getRightOperand().isCostant()) {
 									if (filter.getRightOperand().isMultivalue()) {
-										rightOperand = "(";
+										rightOperandSB.append("(");
 										String separator = "";
-										String stringDelimiter = "'";
 										List<String> values = filter.getRightOperand().getOperandValueAsList();
-										for (String value : values) {
-											if (operator.equalsIgnoreCase("IN")) {
+										for (int i = 0; i < values.size(); i++) {
+											String value = values.get(i);
+											if ("IN".equalsIgnoreCase(operator)) {
 												if (value.startsWith("(") && value.endsWith(")")) {
 													value = value.substring(1, value.length() - 1);
 												}
-												rightOperand += separator + "(1," + value + ")";
+												if (i % columns.length == 0) {// 1st item of tuple of values
+													if (i >= columns.length) { // starting from 2nd tuple of values
+														rightOperandSB.append(",");
+													}
+													rightOperandSB.append("(1");
+												}
+												rightOperandSB.append(",");
+												rightOperandSB.append(value);
+												if (i % columns.length == columns.length - 1) { // last item of tuple of values
+													rightOperandSB.append(")");
+												}
 											} else {
-												rightOperand += separator + stringDelimiter + value + stringDelimiter;
+												rightOperandSB.append(separator);
+												rightOperandSB.append("'");
+												rightOperandSB.append(value);
+												rightOperandSB.append("'");
 											}
 											separator = ",";
 										}
-										rightOperand += ")";
+										rightOperandSB.append(")");
 									} else {
-										rightOperand = filter.getRightOperand().getOperandValueAsString();
+										rightOperandSB.append(filter.getRightOperand().getOperandValueAsString());
 									}
 								} else { // it's a column
-									rightOperand = filter.getRightOperand().getOperandValueAsString();
-									rightOperand = AbstractJDBCDataset.encapsulateColumnName(rightOperand, dataSource);
+									rightOperandSB.append(AbstractJDBCDataset.encapsulateColumnName(filter.getRightOperand().getOperandValueAsString(),
+											dataSource));
 								}
 
-								sqlBuilder.where("(" + leftOperand + " " + operator + " " + rightOperand + ")");
+								String rightOperandString = rightOperandSB.toString();
+								if (sqlBuilder.isWhereOrEnabled() && !rightOperandString.contains(" AND ")) {
+									sqlBuilder.where(leftOperand + " " + operator + " " + rightOperandString);
+								} else {
+									sqlBuilder.where("(" + leftOperand + " " + operator + " " + rightOperandString + ")");
+								}
 							}
 						}
 
@@ -814,7 +832,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#load(it.eng.spagobi.tools.dataset .bo.IDataSet, boolean)
 	 */
 
@@ -828,7 +846,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#load(java.util.List, boolean)
 	 */
 
@@ -921,7 +939,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#load(it.eng.spagobi.tools.dataset .bo.IDataSet, boolean)
 	 */
 	@Override
@@ -966,7 +984,7 @@ public class SQLDBCache implements ICache {
 	// ===================================================================================
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#put(java.lang.String, it.eng.spagobi.tools.dataset.common.datastore.IDataStore)
 	 */
 
@@ -1190,7 +1208,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#delete(it.eng.spagobi.tools.dataset .bo.IDataSet)
 	 */
 
@@ -1220,7 +1238,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#delete(java.lang.String)
 	 */
 
@@ -1231,7 +1249,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#delete(java.lang.String)
 	 */
 	private boolean delete(String signature, boolean isHash) {
@@ -1298,7 +1316,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#deleteQuota()
 	 */
 
@@ -1363,7 +1381,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#deleteAll()
 	 */
 
@@ -1382,7 +1400,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#deleteOnlyStale()
 	 */
 	public void deleteOnlyStale() {
@@ -1486,7 +1504,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.dataset.cache.ICache#getCacheMetadata()
 	 */
 
@@ -1497,7 +1515,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#addListener(it.eng.spagobi. tools.dataset.cache.ICacheEvent,
 	 * it.eng.spagobi.tools.dataset.cache.ICacheListener)
 	 */
@@ -1510,7 +1528,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#scheduleActivity(it.eng.spagobi .tools.dataset.cache.ICacheActivity,
 	 * it.eng.spagobi.tools.dataset.cache.ICacheTrigger)
 	 */
@@ -1523,7 +1541,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#enable(boolean)
 	 */
 
@@ -1535,7 +1553,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#isEnabled()
 	 */
 
@@ -1562,7 +1580,7 @@ public class SQLDBCache implements ICache {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.tools.dataset.cache.ICache#refresh(java.util.List, boolean)
 	 */
 

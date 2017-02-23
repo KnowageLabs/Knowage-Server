@@ -1819,8 +1819,8 @@ public class DatasetManagementAPI {
 				String operator = filter.getOperator();
 
 				String leftOperand = null;
+				String[] columns = filter.getLeftOperand().getOperandValueAsString().split(",");
 				if ("IN".equalsIgnoreCase(operator)) {
-					String[] columns = filter.getLeftOperand().getOperandValueAsString().split(",");
 					leftOperand = "(1,";
 					String separator = "";
 					for (String value : columns) {
@@ -1839,36 +1839,50 @@ public class DatasetManagementAPI {
 					}
 				}
 
-				String rightOperand = null;
+				StringBuilder rightOperandSB = new StringBuilder();
 				if (filter.getRightOperand().isCostant()) {
 					if (filter.getRightOperand().isMultivalue()) {
-						rightOperand = "(";
+						rightOperandSB.append("(");
 						String separator = "";
-						String stringDelimiter = "'";
 						List<String> values = filter.getRightOperand().getOperandValueAsList();
-						for (String value : values) {
+						for (int i = 0; i < values.size(); i++) {
+							String value = values.get(i);
 							if ("IN".equalsIgnoreCase(operator)) {
 								if (value.startsWith("(") && value.endsWith(")")) {
 									value = value.substring(1, value.length() - 1);
 								}
-								rightOperand += separator + "(1," + value + ")";
+								if (i % columns.length == 0) {// 1st item of tuple of values
+									if (i >= columns.length) { // starting from 2nd tuple of values
+										rightOperandSB.append(",");
+									}
+									rightOperandSB.append("(1");
+								}
+								rightOperandSB.append(",");
+								rightOperandSB.append(value);
+								if (i % columns.length == columns.length - 1) { // last item of tuple of values
+									rightOperandSB.append(")");
+								}
 							} else {
-								rightOperand += separator + stringDelimiter + value + stringDelimiter;
+								rightOperandSB.append(separator);
+								rightOperandSB.append("'");
+								rightOperandSB.append(value);
+								rightOperandSB.append("'");
 							}
 							separator = ",";
 						}
-						rightOperand += ")";
+						rightOperandSB.append(")");
 					} else {
-						rightOperand = filter.getRightOperand().getOperandValueAsString();
+						rightOperandSB.append(filter.getRightOperand().getOperandValueAsString());
 					}
 				} else { // it's a column
-					rightOperand = filter.getRightOperand().getOperandValueAsString();
-					rightOperand = AbstractJDBCDataset.encapsulateColumnName(rightOperand, dataSource);
+					rightOperandSB.append(AbstractJDBCDataset.encapsulateColumnName(filter.getRightOperand().getOperandValueAsString(), dataSource));
 				}
-				if (sqlBuilder.isWhereOrEnabled() && !rightOperand.contains(" AND ")) {
-					sqlBuilder.where(leftOperand + " " + operator + " " + rightOperand);
+
+				String rightOperandString = rightOperandSB.toString();
+				if (sqlBuilder.isWhereOrEnabled() && !rightOperandString.contains(" AND ")) {
+					sqlBuilder.where(leftOperand + " " + operator + " " + rightOperandString);
 				} else {
-					sqlBuilder.where("(" + leftOperand + " " + operator + " " + rightOperand + ")");
+					sqlBuilder.where("(" + leftOperand + " " + operator + " " + rightOperandString + ")");
 				}
 			}
 		}
