@@ -20,6 +20,45 @@ package it.eng.spagobi.api.v2;
 import static it.eng.spagobi.tools.glossary.util.Util.fromDocumentLight;
 import static it.eng.spagobi.tools.glossary.util.Util.fromObjectParameterListLight;
 import static it.eng.spagobi.tools.glossary.util.Util.getNumberOrNull;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
+
+import org.apache.log4j.Logger;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.index.CorruptIndexException;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.queryParser.ParseException;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.store.FSDirectory;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.dbaccess.sql.DataRow;
 import it.eng.spago.error.EMFInternalError;
@@ -63,45 +102,8 @@ import it.eng.spagobi.sdk.utilities.SDKObjectsConverter;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.utilities.JSError;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-
-import org.apache.log4j.Logger;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.index.CorruptIndexException;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.store.FSDirectory;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
 
 /**
  * @author Alessandro Daniele (alessandro.daniele@eng.it)
@@ -160,9 +162,9 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 			String toBeReturned = JsonConverter.objectToJson(objects, objects.getClass());
 			return Response.ok(toBeReturned).build();
 		} catch (EMFUserError e) {
-			e.printStackTrace();
+			logger.error(e.getDescription());
+			throw new SpagoBIRestServiceException(e.getDescription(), getLocale(), e);
 		}
-		return null;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -273,10 +275,10 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
 
 		if (!parameter.getBiObjectID().equals(document.getId())) {
-			logger.error("[" + parameter.getBiObjectID() + "] is not the id of document with label [" + label + "]. The correct id is [" + document.getId()
-					+ "]");
-			throw new SpagoBIRuntimeException("[" + parameter.getBiObjectID() + "] is not the id of document with label [" + label + "]. The correct id is ["
-					+ document.getId() + "]");
+			logger.error(
+					"[" + parameter.getBiObjectID() + "] is not the id of document with label [" + label + "]. The correct id is [" + document.getId() + "]");
+			throw new SpagoBIRuntimeException(
+					"[" + parameter.getBiObjectID() + "] is not the id of document with label [" + label + "]. The correct id is [" + document.getId() + "]");
 		}
 
 		try {
@@ -308,10 +310,10 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
 
 		if (!parameter.getBiObjectID().equals(document.getId())) {
-			logger.error("[" + parameter.getBiObjectID() + "] is not the id of document with label [" + label + "]. The correct id is [" + document.getId()
-					+ "]");
-			throw new SpagoBIRuntimeException("[" + parameter.getBiObjectID() + "] is not the id of document with label [" + label + "]. The correct id is ["
-					+ document.getId() + "]");
+			logger.error(
+					"[" + parameter.getBiObjectID() + "] is not the id of document with label [" + label + "]. The correct id is [" + document.getId() + "]");
+			throw new SpagoBIRuntimeException(
+					"[" + parameter.getBiObjectID() + "] is not the id of document with label [" + label + "]. The correct id is [" + document.getId() + "]");
 		}
 
 		parameter.setId(id);
@@ -407,8 +409,8 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 					rb.header("Content-Disposition", "attachment; filename=" + content.getFileName());
 					return rb.build();
 				} else
-					throw new SpagoBIRuntimeException("User [" + getUserProfile().getUserName() + "] has no rights to execute document with label [" + label
-							+ "]");
+					throw new SpagoBIRuntimeException(
+							"User [" + getUserProfile().getUserName() + "] has no rights to execute document with label [" + label + "]");
 			} else
 				throw new SpagoBIRuntimeException("User [" + getUserProfile().getUserName() + "] has no rights to execute document with label [" + label + "]");
 
@@ -459,7 +461,8 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 		// in glossary, the user with admin role and specific authorization can
 		// see all document of the organization
 		if (scope != null && scope.compareTo("GLOSSARY") == 0) {
-			if (UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ADMIN_ROLE_TYPE, new String[] { SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL })) {
+			if (UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ADMIN_ROLE_TYPE,
+					new String[] { SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL })) {
 				UserFilter = null;
 			}
 		}
@@ -512,7 +515,6 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 
 			return jo.toString();
 		} catch (Exception e) {
-			e.printStackTrace();
 			logger.error("Error while getting the list of documents", e);
 			throw new SpagoBIRuntimeException("Error while getting the list of documents", e);
 		} finally {
