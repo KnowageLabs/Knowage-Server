@@ -212,7 +212,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 	}
 	
 	$scope.closeWidgetActionButtons = function() {
-		if(!widExp){
+		if(!$scope.widExp){
 			$scope.widgetActionButtonsVisible=false;
 		}
 	}
