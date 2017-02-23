@@ -318,8 +318,22 @@ public class CrossTabHTMLSerializer {
 							if (parentStyle != null && !parentStyle.equals("")) {
 								aColumn.setAttribute(STYLE_ATTRIBUTE, parentStyle);
 							}
-							// aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "orderPivotTable('" + i + "','1'," + myGlobalId + ")");
-							aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "orderPivotTable('" + i + "','1'," + myGlobalId + ")");
+							// List<Measure> measures = crossTab.getCrosstabDefinition().getMeasures();
+							// int measureIdx = -1;
+							// int generalIdx = -1;
+							// for (int m = 0; m < measures.size(); m++) {
+							// Measure mis = measures.get(m);
+							// if (mis.getAlias().equals(text)) {
+							// if (crossTab.getCrosstabDefinition().isMeasuresOnRows()) {
+							// generalIdx = crossTab.getCrosstabDefinition().getRows().size();
+							// } else {
+							// generalIdx = crossTab.getCrosstabDefinition().getColumns().size();
+							// }
+							// measureIdx = m;
+							// break;
+							// }
+							// }
+							aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "orderPivotTable('" + j + "','1'," + myGlobalId + ", true)");
 						}
 					}
 
@@ -841,19 +855,19 @@ public class CrossTabHTMLSerializer {
 	private SourceBean serializeTopLeftCorner(CrossTab crossTab) throws SourceBeanException, JSONException {
 		int columnHeadersVerticalDepth = crossTab.getColumnsRoot().getDistanceFromLeaves();
 		int rowHeadersHorizontalDepth = crossTab.getRowsRoot().getDistanceFromLeaves();
-		boolean hideRow = false;
+		boolean hideHeaderColumn = false;
 		// check the columns header visibility on columns
 		List<Column> columns = crossTab.getCrosstabDefinition().getColumns();
 		for (int c = 0; c < columns.size(); c++) {
 			JSONObject colConf = columns.get(c).getConfig();
 			if (!colConf.isNull("showHeader") && !colConf.getBoolean("showHeader")) {
 				columnHeadersVerticalDepth--;
-				hideRow = true;
+				hideHeaderColumn = true;
 			}
 		}
 		// for measures hide header only if there is only one
+		boolean hideHeaderMeasure = false;
 		if (!crossTab.isMeasureOnRow()) {
-			boolean hideHeaderMeasure = false;
 			List<Measure> measures = crossTab.getCrosstabDefinition().getMeasures();
 			if (measures.size() == 1) {
 				JSONObject colMeasure = measures.get(0).getConfig();
@@ -876,8 +890,8 @@ public class CrossTabHTMLSerializer {
 			SourceBean emptyColumn = new SourceBean(COLUMN_TAG);
 			emptyColumn.setAttribute(CLASS_ATTRIBUTE, EMPTY_CLASS);
 			emptyRow.setAttribute(emptyColumn);
-			// if headers are hidden add a td field ONLY when there are more than one measure
-			if (crossTab.getCrosstabDefinition().getMeasures().size() > 1) {
+			// if headers are hidden add a td field ONLY when there are more than one measure to mantein alignments
+			if ((crossTab.isMeasureOnRow() || hideHeaderMeasure || hideHeaderColumn) && crossTab.getCrosstabDefinition().getMeasures().size() > 1) {
 				emptyRow.setAttribute(emptyColumn);
 			}
 			table.setAttribute(emptyRow);
