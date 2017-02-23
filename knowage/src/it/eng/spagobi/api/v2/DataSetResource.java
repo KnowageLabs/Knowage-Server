@@ -570,21 +570,28 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 						Operand leftOperand = new Operand(joinedColumns);
 
 						StringBuilder valuesSB = new StringBuilder();
+						String openingBracket = columnsList.size() > 1 ? "(" : "";
+						String closingBracket = columnsList.size() > 1 ? ")" : "";
 						for (int i = 0; i < values.length(); i++) {
 							String[] valuesArray = getDistinctValues(values.getString(i));
 							for (int j = 0; j < valuesArray.length; j++) {
-								if (j % columnsList.size() == 0) {
-									if (j >= columnsList.size()) {
-										valuesSB.append(" OR (");
+								if (j % columnsList.size() == 0) { // 1st item of tuple of values
+									if (j >= columnsList.size()) { // starting from 2nd tuple of values
+										valuesSB.append(" OR ");
+										valuesSB.append(openingBracket);
 										valuesSB.append(joinedColumns);
-										valuesSB.append(") = ");
+										valuesSB.append(closingBracket);
+										valuesSB.append(" = ");
 									}
-									valuesSB.append("(");
+									valuesSB.append(openingBracket);
 								} else {
-									valuesSB.append(",");
+									valuesSB.append(","); // starting from 2nd item of tuple of values
 								}
 								String column = columnsList.get(j % columnsList.size());
 								valuesSB.append(getProperValueString(valuesArray[j], column, dateColumnNamesList, null));
+								if (j % columnsList.size() == columnsList.size() - 1) { // last item of tuple of values
+									valuesSB.append(closingBracket);
+								}
 							}
 						}
 						Operand rightOperand = new Operand(valuesSB.toString());
