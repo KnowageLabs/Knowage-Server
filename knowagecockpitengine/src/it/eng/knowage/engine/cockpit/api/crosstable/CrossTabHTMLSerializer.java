@@ -185,7 +185,7 @@ public class CrossTabHTMLSerializer {
 					JSONObject rowConfig = row.getConfig();
 					style = getConfiguratedElementStyle(null, null, rowConfig, crossTab);
 					if (!style.equals("")) {
-						style += " padding:0;";
+						style += " padding:0 5 0 0 !important;;";
 						aColumn.setAttribute(STYLE_ATTRIBUTE, style);
 						appliedStyle = true;
 					}
@@ -280,7 +280,8 @@ public class CrossTabHTMLSerializer {
 									showHeader = columnConfig.getBoolean("showHeader");
 								style = getConfiguratedElementStyle(null, null, columnConfig, crossTab);
 								if (!style.equals("")) {
-									style += " padding:0;";
+									// style += " padding:0;";
+									style += " padding:0 5 0 0 !important;";
 									aColumn.setAttribute(STYLE_ATTRIBUTE, style);
 									parentStyle = style;
 									break;
