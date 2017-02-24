@@ -211,7 +211,6 @@ if(executionRoleNames.size() > 0) {
 						<cross-navigation-bread-crumb id="clonedCrossBreadcrumb"> </cross-navigation-bread-crumb>
 	 				</cross-navigation>
 		
-	                <span flex=""></span>
 	                
 		<% if(engineName.equalsIgnoreCase( SpagoBIConstants.COCKPIT_ENGINE_NAME)
 							&& userId.equals(obj.getCreationUser())) {%>
