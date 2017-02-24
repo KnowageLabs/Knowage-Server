@@ -213,7 +213,7 @@
 				}
 				.contentElementTab{
 					.contentElementBox{
-						border: 1px solid lightgray;
+						border: $cockpitDefaultBorder;
 						margin: 5px;
 						}
 				}
@@ -309,7 +309,7 @@
 		}
 		&.cockpitEditMode{
 			background-size:40px 10px;
-			border: 1px solid #e2e2e2;
+			border: $cockpitDefaultBorder;
 			background-image:repeating-linear-gradient(0deg, #e2e2e2, #e2e2e2 1px, transparent 1px, transparent 40px), repeating-linear-gradient(-90deg, #e2e2e2, #e2e2e2 1px, transparent 1px, transparent 10px)
 			//background: url("../../sbi_default/img/grid.png") repeat 0 0 transparent;
 		}
@@ -332,6 +332,9 @@
 				}
 			}
 			
+			&.leftPosition .showActionButtonHandler {
+				left: 0;
+			}
 			 
 			
 			&.leftPosition .widgetActionButton{
@@ -421,8 +424,8 @@
 			.widgetActionButton{
 				position:absolute;
 				background-color: white;
-				top: -2px;
-				border: 1px solid lightgrey;
+				top: -1px;
+				border: $cockpitDefaultBorder;
 				
 			}    	
 			.widgetActionButton>.md-button{
@@ -1123,7 +1126,7 @@
 	}
 
 	.widgetSearchBar {
-		border: 1px solid #ccc;
+		border: $cockpitDefaultBorder;
 	    position: absolute;
 	    top: 0;
 	    left: 0;

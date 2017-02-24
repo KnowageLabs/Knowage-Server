@@ -716,6 +716,33 @@ expander-box md-toolbar {
 	float:right;
 }
 
+md-tab-item {
+  &.kn-success {
+    color: $positiveColor;
+    span {
+      color: $positiveColor;
+    }
+    &.md-active {
+      border-bottom: 2px solid $positiveColor;
+      z-index: 9999;
+      position: relative;
+      padding-bottom: 10px;
+    }
+  }
+
+  &.kn-danger {
+    color: $negativeColor;
+    span {
+      color: $negativeColor;
+    }
+    &.md-active {
+      border-bottom: 2px solid $negativeColor;
+      z-index: 9999;
+      position: relative;
+      padding-bottom: 10px;
+    }
+  }
+}
 .kn-success {
   color: $positiveColor;
 }
