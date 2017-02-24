@@ -21,14 +21,14 @@
 	function kpiStyleController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_restServices,sbiModule_translate,sbiModule_config){
 		$scope.translate=sbiModule_translate;
 		
-		$scope.measure = [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1];
+		$scope.measure = ["4px","6px","8px","10px","12px","14px","16px","20px","24px","28px","34px"];
 		$scope.fontFamily = ['Times New Roman','Georgia', 'Serif'];
 		$scope.fontWeight = ['normal','bold','bolder','lighter','number','initial','inherit'];
 		if($scope.ngModel.fontWeight==undefined){
 			$scope.ngModel.fontWeight ='normal';
 		}
 		if($scope.ngModel.size==undefined){
-			$scope.ngModel.size =1;
+			$scope.ngModel.size ="10px";
 		}
 		if($scope.ngModel.fontFamily==undefined){
 			$scope.ngModel.fontFamily ='Times New Roman';

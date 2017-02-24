@@ -1,9 +1,9 @@
  <md-whiteframe class="md-whiteframe-4dp layout-padding " layout layout-fill layout-margin > 
  <div layout="column" layout-fill>
  	<span  layout="row">
-	   	<h4 flex>{{translate.load("sbi.kpistyle.sizeinem")}}</h4>
+	   	<h4 flex>Font-size</h4>
 	   	<md-select flex aria-label="aria-label" ng-model="ngModel.size">
-			<md-option ng-repeat="em in measure" value="{{em}}">{{em}}</md-option>
+			<md-option ng-repeat="px in measure" value="{{px}}">{{px}}</md-option>
 		</md-select>
 		<span flex></span>
    	</span>
@@ -13,7 +13,7 @@
 		<md-select aria-label="aria-label" flex ng-model="ngModel.fontFamily">
 			<md-option ng-repeat="font in fontFamily" value="{{font}}">{{font}}</md-option>
 		</md-select>
-		<span flex></span>
+		<span flex></span> 
 	 </span>
  	
  	<span layout="row">
