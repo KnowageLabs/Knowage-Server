@@ -598,12 +598,16 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			@Override
 			public Kpi execute(Session session) {
 				SbiKpiKpi sbiKpiKpi = null;
+				Set<Integer> sbiKpiTargetIds = new HashSet<>();
 				if (newVersion) {
 					SbiKpiKpi oldKpi = (SbiKpiKpi) session.load(SbiKpiKpi.class, new SbiKpiKpiId(kpi.getId(), kpi.getVersion()));
 					sbiKpiKpi = new SbiKpiKpi();
 					if (Character.valueOf('T').equals(oldKpi.getActive())) {
 						oldKpi.setActive(null);
 						sbiKpiKpi.setActive('T');
+					}
+					for (SbiKpiTargetValue sbiKpiTargetValue : oldKpi.getSbiKpiTargetValues()) {
+						sbiKpiTargetIds.add(sbiKpiTargetValue.getSbiKpiTarget().getTargetId());
 					}
 					sbiKpiKpi.getSbiKpiKpiId().setId(kpi.getId());
 				}
@@ -613,6 +617,9 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 					SbiKpiKpiId sbiKpiKpiId = (SbiKpiKpiId) session.save(sbiKpi);
 					kpi.setId(sbiKpiKpiId.getId());
 					kpi.setVersion(sbiKpiKpiId.getVersion());
+					if (newVersion) {
+						updateKpiTargetValues(session, sbiKpiTargetIds, sbiKpiKpiId);
+					}
 					return kpi;
 				} catch (JSONException e) {
 					throw new SpagoBIDAOException(e);
@@ -620,6 +627,18 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			}
 
 		}, session);
+	}
+
+	private void updateKpiTargetValues(Session session, Set<Integer> sbiKpiTargetIds, SbiKpiKpiId sbiKpiKpiId) {
+		for (Integer sbiKpiTargetId : sbiKpiTargetIds) {
+			Target target = loadTarget(sbiKpiTargetId, session);
+			for (TargetValue targetValue : target.getValues()) {
+				if (targetValue.getKpiId().equals(sbiKpiKpiId.getId())) {
+					targetValue.setKpiVersion(sbiKpiKpiId.getVersion());
+				}
+			}
+			updateTarget(target, session);
+		}
 	}
 
 	@Override
@@ -671,6 +690,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		sbiKpi.setCategory(category);
 		// Updating relations with RuleOutput and KpiScheduler
 		refreshKpiRuleOutputRel(session, sbiKpi);
+
 		return sbiKpi;
 	}
 
@@ -1617,13 +1637,18 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	}
 
 	@Override
-	public Target loadTarget(final Integer id) {
+	public Target loadTarget(final Integer id, Session session) {
 		return executeOnTransaction(new IExecuteOnTransaction<Target>() {
 			@Override
 			public Target execute(Session session) throws Exception {
 				return from((SbiKpiTarget) session.load(SbiKpiTarget.class, id), true);
 			}
-		});
+		}, session);
+	}
+
+	@Override
+	public Target loadTarget(final Integer id) {
+		return loadTarget(id, null);
 	}
 
 	@Override
@@ -1651,6 +1676,11 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	@Override
 	public void updateTarget(final Target target) {
+		updateTarget(target, null);
+	}
+
+	@Override
+	public void updateTarget(final Target target, Session session) {
 		executeOnTransaction(new IExecuteOnTransaction<Boolean>() {
 			@Override
 			public Boolean execute(Session session) throws Exception {
@@ -1682,7 +1712,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				return Boolean.TRUE;
 			}
 
-		});
+		}, session);
 	}
 
 	private SbiKpiTarget from(Target target, SbiKpiTarget sbiTarget, Session session) {

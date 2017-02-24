@@ -17,15 +17,6 @@
  */
 package it.eng.spagobi.kpi.dao;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.hibernate.Session;
-
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
@@ -47,6 +38,15 @@ import it.eng.spagobi.kpi.bo.Threshold;
 import it.eng.spagobi.kpi.dao.KpiDAOImpl.STATUS;
 import it.eng.spagobi.kpi.metadata.SbiKpiThresholdValue;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.hibernate.Session;
 
 public interface IKpiDAO extends ISpagoBIDao {
 
@@ -288,6 +288,8 @@ public interface IKpiDAO extends ISpagoBIDao {
 
 	public Target loadTarget(Integer id);
 
+	public Target loadTarget(Integer id, Session session);
+
 	public Target loadTargetByName(String name);
 
 	public Target loadTargetByName(String name, Session session);
@@ -297,6 +299,8 @@ public interface IKpiDAO extends ISpagoBIDao {
 	public Integer insertTarget(Target target, Session session);
 
 	public void updateTarget(Target target);
+
+	public void updateTarget(Target target, Session session);
 
 	public void removeTarget(Integer id);
 
