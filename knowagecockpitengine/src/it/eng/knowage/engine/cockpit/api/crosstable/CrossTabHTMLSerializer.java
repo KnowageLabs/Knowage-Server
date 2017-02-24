@@ -1,5 +1,4 @@
 /*
- * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
  *
  * Knowage is free software: you can redistribute it and/or modify
@@ -185,7 +184,7 @@ public class CrossTabHTMLSerializer {
 					JSONObject rowConfig = row.getConfig();
 					style = getConfiguratedElementStyle(null, null, rowConfig, crossTab);
 					if (!style.equals("")) {
-						style += " padding:0 5 0 0 !important;;";
+						// style += " padding:0 5 0 0 !important;";
 						aColumn.setAttribute(STYLE_ATTRIBUTE, style);
 						appliedStyle = true;
 					}
@@ -280,8 +279,7 @@ public class CrossTabHTMLSerializer {
 									showHeader = columnConfig.getBoolean("showHeader");
 								style = getConfiguratedElementStyle(null, null, columnConfig, crossTab);
 								if (!style.equals("")) {
-									// style += " padding:0;";
-									style += " padding:0 5 0 0 !important;";
+									// style += " padding:0 5 0 0 !important;";
 									aColumn.setAttribute(STYLE_ATTRIBUTE, style);
 									parentStyle = style;
 									break;
@@ -589,6 +587,13 @@ public class CrossTabHTMLSerializer {
 					}
 				}
 				dataStyle += " " + keyStyle + ":" + String.valueOf(valueStyle) + ";";
+				// normalize padding for text-align
+				if (keyStyle.equals("text-align")) {
+					if (!valueStyle.equals("center"))
+						dataStyle += " padding:0 5 0 0 !important;";
+					else
+						dataStyle += " padding:0 3 0 3 !important;";
+				}
 			}
 		}
 
