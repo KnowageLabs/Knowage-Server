@@ -269,7 +269,7 @@ public class CrossTabHTMLSerializer {
 					} else {
 						// categories headers
 						text = aNode.getDescription();
-						// Get specific columns configuration (format, bgcolor, icon visualization,..)
+						// Set specific columns configuration style
 						List<Column> columns = crossTab.getCrosstabDefinition().getColumns();
 						for (int c = 0; c < columns.size(); c++) {
 							Column col = columns.get(c);
@@ -279,7 +279,6 @@ public class CrossTabHTMLSerializer {
 									showHeader = columnConfig.getBoolean("showHeader");
 								style = getConfiguratedElementStyle(null, null, columnConfig, crossTab);
 								if (!style.equals("")) {
-									// style += " padding:0 5 0 0 !important;";
 									aColumn.setAttribute(STYLE_ATTRIBUTE, style);
 									parentStyle = style;
 									break;
@@ -290,8 +289,6 @@ public class CrossTabHTMLSerializer {
 
 					if (isLevel) {
 						aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "orderPivotTable('" + i + "','1'," + myGlobalId + ")");
-						// aColumn.setAttribute(ON_CLICK_ATTRIBUTE, "javascript:Sbi.cockpit.widgets.crosstab.HTMLCrossTab.sort('" + i + "','1'," + myGlobalId+
-						// ")");
 
 						Integer direction = 1;
 						if (columnsSortKeysMap != null && columnsSortKeysMap.get(i) != null) {
@@ -317,21 +314,6 @@ public class CrossTabHTMLSerializer {
 							if (parentStyle != null && !parentStyle.equals("")) {
 								aColumn.setAttribute(STYLE_ATTRIBUTE, parentStyle);
 							}
-							// List<Measure> measures = crossTab.getCrosstabDefinition().getMeasures();
-							// int measureIdx = -1;
-							// int generalIdx = -1;
-							// for (int m = 0; m < measures.size(); m++) {
-							// Measure mis = measures.get(m);
-							// if (mis.getAlias().equals(text)) {
-							// if (crossTab.getCrosstabDefinition().isMeasuresOnRows()) {
-							// generalIdx = crossTab.getCrosstabDefinition().getRows().size();
-							// } else {
-							// generalIdx = crossTab.getCrosstabDefinition().getColumns().size();
-							// }
-							// measureIdx = m;
-							// break;
-							// }
-							// }
 							aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "orderPivotTable('" + j + "','1'," + myGlobalId + ", true)");
 						}
 					}
@@ -816,7 +798,7 @@ public class CrossTabHTMLSerializer {
 				direction = rowsSortKeysMap.get(i).getDirection();
 			}
 
-			// Get specific rows configuration (format, bgcolor, icon visualization,..)
+			// Set specific rows configuration layout
 			JSONObject rowsConfig = rows.get(i).getConfig();
 			style = getConfiguratedElementStyle(null, null, rowsConfig, crossTab);
 			if (!rowsConfig.isNull("showHeader") && !rowsConfig.getBoolean("showHeader")) {
@@ -831,7 +813,7 @@ public class CrossTabHTMLSerializer {
 				appliedStyle = true;
 			} else
 				aColumn.setAttribute(CLASS_ATTRIBUTE, LEVEL_CLASS);
-			// aColumn.setAttribute(ON_CLICK_ATTRIBUTE, "javascript:Sbi.cockpit.widgets.crosstab.HTMLCrossTab.sort('" + i + "','0'," + myGlobalId + ")");
+
 			aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "orderPivotTable('" + i + "','0'," + myGlobalId + ")");
 			aColumn.setAttribute(addSortArrow(aRow, aRowDef.getAlias(), style, direction));
 			aRow.setAttribute(aColumn);
@@ -862,8 +844,10 @@ public class CrossTabHTMLSerializer {
 		int columnHeadersVerticalDepth = crossTab.getColumnsRoot().getDistanceFromLeaves();
 		int rowHeadersHorizontalDepth = crossTab.getRowsRoot().getDistanceFromLeaves();
 		boolean hideHeaderColumn = false;
-		// check the columns header visibility on columns
+		// check the columns header visibility on columns (and uses rows count to manage colspan property)
 		List<Column> columns = crossTab.getCrosstabDefinition().getColumns();
+		List<Row> rows = crossTab.getCrosstabDefinition().getRows();
+
 		for (int c = 0; c < columns.size(); c++) {
 			JSONObject colConf = columns.get(c).getConfig();
 			if (!colConf.isNull("showHeader") && !colConf.getBoolean("showHeader")) {
@@ -895,11 +879,14 @@ public class CrossTabHTMLSerializer {
 			SourceBean emptyRow = new SourceBean(ROW_TAG);
 			SourceBean emptyColumn = new SourceBean(COLUMN_TAG);
 			emptyColumn.setAttribute(CLASS_ATTRIBUTE, EMPTY_CLASS);
+			if (!crossTab.isMeasureOnRow()) {
+				emptyColumn.setAttribute(COLSPAN_ATTRIBUTE, rows.size());
+			}
 			emptyRow.setAttribute(emptyColumn);
 			// if headers are hidden add a td field ONLY when there are more than one measure to mantein alignments
-			if ((crossTab.isMeasureOnRow() || hideHeaderMeasure || hideHeaderColumn) && crossTab.getCrosstabDefinition().getMeasures().size() > 1) {
-				emptyRow.setAttribute(emptyColumn);
-			}
+			// if ((crossTab.isMeasureOnRow() || hideHeaderMeasure || hideHeaderColumn) && crossTab.getCrosstabDefinition().getMeasures().size() > 1) {
+			// emptyRow.setAttribute(emptyColumn);
+			// }
 			table.setAttribute(emptyRow);
 		}
 		return table;
