@@ -1,5 +1,5 @@
-<md-dialog  flex style="height:100%; width:100%; max-height:100%; max-width:100%" ng-cloak>
-  	<md-content flex>
+<md-dialog  layout="column" flex style="height:100%; width:100%; max-height:100%; max-width:100%;" ng-cloak>
+  	
    	<md-toolbar>
  
      <div class="md-toolbar-tools layout-align-center-center layout-row">
@@ -34,17 +34,16 @@
    </div>
    </md-toolbar>
    <br>
-
+	<md-content style="overflow-y:hidden">
 	<!-- 
 		Provide checking if the client-side (Angular Table) pagination should be enabled. 
 		Two separate DIVs for this purpose. 
 		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	-->
-	<div flex style="height:85%" ng-if=paginationDisabled>
+	<div layout-fill ng-if=paginationDisabled>
 		<angular-table 
 					id='previewDatasetTable'
 		            flex
-		            style="position:absolute;"
 		            ng-model="previewDatasetModel"
 					columns="previewDatasetColumns" 
 					no-pagination=true
@@ -53,11 +52,10 @@
 		</angular-table>	
 	 </div>
 	 
-	 <div flex style="height:85%" ng-if=!paginationDisabled>
+	 <div layout-fill ng-if=!paginationDisabled>
 		<angular-table 
-					layout-fill
+					flex
 					id='previewDatasetTable'
-		            style="position:absolute;"
 		            ng-model="previewDatasetModel"
 					columns="previewDatasetColumns" 
 					no-pagination=false
