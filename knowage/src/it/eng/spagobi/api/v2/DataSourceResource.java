@@ -30,6 +30,7 @@ import it.eng.spagobi.tools.datasource.bo.DataSourceModel;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -41,8 +42,10 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import javax.naming.AuthenticationException;
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -66,6 +69,8 @@ import com.mongodb.MongoClient;
 @Path("/2.0/datasources")
 @ManageAuthorization
 public class DataSourceResource extends AbstractSpagoBIResource {
+	
+	public static final String SERVICE_NAME = "2.0/datasources/";
 
 	static protected Logger logger = Logger.getLogger(DataSourceResource.class);
 
@@ -358,7 +363,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	public String testDataSource(@Valid DataSource dataSource) throws Exception {
 
 		logger.debug("IN");
-
+		
 		String url = dataSource.getUrlConnection();
 		String user = dataSource.getUser();
 		String pwd = dataSource.getPwd();
@@ -374,10 +379,23 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 
 		if (jndi != null && jndi.length() > 0) {
 			String jndiName = schema == null ? jndi : jndi + schema;
-			logger.debug("Lookup JNDI name:" + jndiName);
-			Context ctx = new InitialContext();
-			javax.sql.DataSource ds = (javax.sql.DataSource) ctx.lookup(jndiName);
-			connection = ds.getConnection();
+			
+			try {
+				logger.debug("Lookup JNDI name:" + jndiName);
+				Context ctx = new InitialContext();
+				javax.sql.DataSource ds = (javax.sql.DataSource) ctx.lookup(jndiName);
+				connection = ds.getConnection();
+			} catch (AuthenticationException e) {
+				logger.error("Error while attempting to reacquire the authentication information on provided JNDI name", e);
+			    throw new SpagoBIServiceException(SERVICE_NAME, e);
+			} catch (NamingException e) {
+				logger.error("Error with provided JNDI name. Can't find the database with that name.", e);
+				throw new SpagoBIServiceException(SERVICE_NAME, e);
+			} catch (Exception e) {
+				logger.error("Error with provided JNDI name.", e);
+				throw new SpagoBIServiceException(SERVICE_NAME, e);	
+			}
+			
 		} else {
 
 			if (driver.toLowerCase().contains("mongo")) {
