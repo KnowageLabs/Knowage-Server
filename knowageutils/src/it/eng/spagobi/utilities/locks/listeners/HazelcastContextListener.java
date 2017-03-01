@@ -5,8 +5,6 @@ import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.tools.license.HostInfo;
 import it.eng.spagobi.utilities.locks.DistributedLockFactory;
 
-import java.util.concurrent.TimeUnit;
-
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
@@ -35,23 +33,13 @@ public class HazelcastContextListener implements ServletContextListener {
 
 		// Get localhost and add itsa info to distributed map
 		String hostname = SpagoBIUtilities.getCurrentHostName();
+
 		logger.debug("Put in distributed map infos for current host " + hostname);
-		try {
-			// current hostname, build HostInfo and set them on map,
-			if (mapLocks.tryLock(hostname, 1, TimeUnit.SECONDS, DEFAULT_HAZELCAST_LEASETIME, TimeUnit.SECONDS)) {
-				HostInfo hostInfo = new HostInfo();
-				mapLocks.put(hostname, hostInfo);
+		HostInfo hostInfo = new HostInfo();
+		mapLocks.put(hostname, hostInfo);
+		logger.debug("Info put now size is " + mapLocks.size());
 
-				// HostInfo hi = new HostInfo();
-				// hi.setHardwareId("testOtherId");
-				// mapLocks.put("testOther", hi);
-
-			}
-		} catch (InterruptedException e) {
-			logger.error("The current thread has failed to release the lock for hostname [" + hostname + "] in time.", e);
-		} finally {
-			mapLocks.unlock(hostname);
-		}
+		logger.debug(System.identityHashCode(mapLocks));
 
 		logger.debug("OUT");
 
