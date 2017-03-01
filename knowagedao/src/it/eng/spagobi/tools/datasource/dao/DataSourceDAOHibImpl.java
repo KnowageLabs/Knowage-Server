@@ -420,9 +420,10 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 					String previousDataSourceLabel = hibDataSource.getLabel();
 					String newDataSOurceLabel = aDataSource.getLabel();
-
-					Query listQuery = aSession.createQuery("from SbiDataSet h where h.active = ? order by h.name ");
+					aSession.disableFilter("tenantFilter");
+					Query listQuery = aSession.createQuery("from SbiDataSet h where h.active = ? and h.configuration like :previousDataSource");
 					listQuery.setBoolean(0, true);
+					listQuery.setParameter("previousDataSource", "%dataSource%:%"+previousDataSourceLabel+"\"%");
 					List dsList = listQuery.list();
 
 					// iterate the dataset, (only the active ones)
