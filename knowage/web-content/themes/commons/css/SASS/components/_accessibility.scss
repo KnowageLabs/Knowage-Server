@@ -1,4 +1,4 @@
-/*.fl-prefsEditor-separatedPanel {
+.fl-prefsEditor-separatedPanel {
 	position: fixed;
     top: 0;
     z-index: 9999;
@@ -11,12 +11,26 @@
 			z-index: 9999;
 		}
 	}	
-}*/
+}
 
 .accessible-mode-on {
 	button, .md-button {
 	  &:focus {
 	    outline: 2px !important;
 	  }
+	}
+}
+
+.accessibleTable {
+	border-collapse: collapse;
+	thead {
+		th {
+			color: $baseColor;
+		}
+	}
+	tbody {
+		td {
+			color: $darkTextColor;
+		}
 	}
 }

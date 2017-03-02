@@ -59,7 +59,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	 </md-tab>
 	 
 	 
-	 <md-tab ng-repeat="doc in runningDocuments">
+	 <md-tab ng-repeat="doc in runningDocuments" tabindex="1">
 	 <md-tab-label>
 	 {{doc.name}}
 <!-- 	  <md-button class="md-icon-button tabCloseButton" aria-label="close document" ng-click="removeDocumentFromList(doc.id)"> -->
@@ -74,13 +74,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	</md-tabs>
 	
 	 
-		<md-button  md-tab-fixed-first-document-browser class="documentBrowserTabButton " aria-label="close document" ng-class="{'selectedDocumentBrowserTabButton' : documentNavigationToolbarSelectedIndex==0}" ng-click="documentNavigationToolbarSelectedIndex=0">
+		<md-button tabindex="1" md-tab-fixed-first-document-browser class="documentBrowserTabButton " aria-label="close document" ng-class="{'selectedDocumentBrowserTabButton' : documentNavigationToolbarSelectedIndex==0}" ng-click="documentNavigationToolbarSelectedIndex=0">
             <md-icon md-font-icon="fa fa-folder-open-o"></md-icon>
      	</md-button> 
      	
 
      	<md-menu md-tab-fixed-last-clear-tabs >
-	      <md-button aria-label="Create new document" class="documentBrowserClearButton" ng-click="$mdOpenMenu($event)" ng-disabled="runningDocuments.length==0">
+	      <md-button tabindex="1" aria-label="clear documents" class="documentBrowserClearButton" ng-click="$mdOpenMenu($event)" ng-disabled="runningDocuments.length==0">
 	        <md-icon md-menu-origin  md-font-icon="fa fa-times-circle-o" class="md-primary"></md-icon>
 	      </md-button>
 	      <md-menu-content width="4" class="documentBrowserDropdown"> 

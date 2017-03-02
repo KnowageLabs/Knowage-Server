@@ -419,7 +419,16 @@ angular-table, cockpit-angular-table{
 	    background-color: white;
 	}
 	.principalTable>thead>tr>th>div{
-		height: 0px!important;
+		//height: 0px!important;
+		@extend .noSelect;
+		cursor: pointer;
+		height: $angularTableTRHeight;
+		line-height: $angularTableTRHeight;
+		md-icon {
+			margin-top: 0;
+			height: $angularTableTRHeight;
+			line-height: $angularTableTRHeight;
+		}
 	}
 	.principalTable>thead>tr>th>md-checkbox{
 		display:none;

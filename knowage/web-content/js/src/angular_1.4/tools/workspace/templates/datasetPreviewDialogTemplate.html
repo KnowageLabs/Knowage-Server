@@ -43,7 +43,6 @@
 	<div layout-fill ng-if=paginationDisabled>
 		<angular-table 
 					id='previewDatasetTable'
-		            flex
 		            ng-model="previewDatasetModel"
 					columns="previewDatasetColumns" 
 					no-pagination=true
@@ -53,7 +52,7 @@
 	 </div>
 	 
 	 <div layout-fill ng-if=!paginationDisabled>
-		<angular-table 
+		<angular-table layout-fill
 					flex
 					id='previewDatasetTable'
 		            ng-model="previewDatasetModel"

@@ -21,6 +21,7 @@
 <html>
 <head>
 	<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/bootstrap/css/bootstrap.min.css">
+	<link id="spagobi-angular" rel="styleSheet"	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css" type="text/css" />
 
 <style>
 
@@ -29,14 +30,6 @@ html,
 body {
     height: 100%;
 }
- /*
-body {
-	background-image: url('../img/pixels.png');
-	background-repeat: repeat;
-	 height: 100%;
-}
-*/
-
 .carousel,
 .item,
 .active {
@@ -114,13 +107,8 @@ footer {
 
 </style>  
 </head>
-<body>
-  
-
-	<div class="layer">
-		<img src="../img/enduserLogo.png" class="logo"/>
-
-	</div>
+<body class="landingPageEndUser">
+ 
 
 <header id="myCarousel" class="carousel slide">
         <!-- Indicators -->

@@ -45,6 +45,7 @@ bread-crumb nav {
 
                     span {
                         text-transform: capitalize;
+                        font-size: $baseFontSize;
                         &:before {
                             content: '\f054';
                             color: rgba($baseColor,0.6);
@@ -53,7 +54,7 @@ bread-crumb nav {
                             font-family: 'FontAwesome';
                             font-weight: normal;
                             font-style: normal;
-                            font-size: $baseFontSize;
+                            font-size: $smallFontSize;
                             padding-right: $baseFontSize;
                             -webkit-font-smoothing: antialiased;
                         }

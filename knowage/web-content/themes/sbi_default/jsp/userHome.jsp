@@ -99,7 +99,7 @@ Ext.onReady(function () {
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/menu/menuApp.js"></script>
 
 
-<div data-ng-controller="menuCtrl" ng-app="menuApp">
+<div data-ng-controller="menuCtrl" ng-app="menuApp" id="menuApp">
 <div id="divContainer" class="overlayButtonBar ">
 	<a href="#" data-ng-click="toggleMenu()" class="menuKnowage"><i class="material-icons md-24">menu</i></a>
 	<a href="#" aria-hidden="true" class="logoKnowage"><img src="<%=urlBuilder.getResourceLinkByTheme(request, "/css/menuBar/logo_knowage.png", currTheme)%>" /></a>

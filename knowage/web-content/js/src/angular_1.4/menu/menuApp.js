@@ -25,7 +25,7 @@ myApp.controller('menuCtrl', ['$scope','$mdDialog',
 	
 		$scope.languages = [];
 	
-		$scope.openAside = false;
+		$scope.openAside = true;
 	
 		$scope.toggleMenu = function(){
 			//debugger;

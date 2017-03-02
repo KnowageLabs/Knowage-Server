@@ -115,7 +115,7 @@ Ext.onReady(function () {
 
 
 
-<div data-ng-controller="menuCtrl" ng-app="menuAppAdmin">
+<div data-ng-controller="menuCtrl" ng-app="menuAppAdmin" id="menuAppAdmin">
 <menu-aside></menu-aside>
 <div id="divContainer" class="overlayButtonBar ">
 	<a href="#" data-ng-click="toggleMenu()" class="menuKnowage"><i class="material-icons md-24">menu</i></a>

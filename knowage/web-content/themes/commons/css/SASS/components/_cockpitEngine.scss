@@ -309,12 +309,12 @@
 		}
 		&.cockpitEditMode{
 			background-size:40px 10px;
+			height: 100% !important;
 			border: $cockpitDefaultBorder;
 			background-image:repeating-linear-gradient(0deg, #e2e2e2, #e2e2e2 1px, transparent 1px, transparent 40px), repeating-linear-gradient(-90deg, #e2e2e2, #e2e2e2 1px, transparent 1px, transparent 10px)
 			//background: url("../../sbi_default/img/grid.png") repeat 0 0 transparent;
 		}
         
-        margin: 10px;
 		min-height: calc(100% - 20px);
 
         .gridster-item{

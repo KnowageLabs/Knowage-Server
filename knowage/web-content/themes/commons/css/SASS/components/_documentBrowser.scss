@@ -12,6 +12,7 @@
 	.md-fab.md-mini md-icon {
 		height: 28px;
 		width: 28px;
+		line-height: 28px;
 	}
 
 	md-toolbar.documentBrowserToolbar button.md-icon-button,
@@ -310,23 +311,12 @@
 	}
 	angular-table {
 		padding: 0;
-		.fakeTable {
-			md-icon {
-				padding-right: .5em;
-				color: white;
-			}
-			th:first-child {
-				div {
-					padding-left: 1em;
-				}
-			}
-		}
 		.principalTable {
 			tr {
 				td:first-child {
 					span {
 						span {
-							padding-left: 1em;
+							//padding-left: 1em;
 						}
 					}
 				}
@@ -334,7 +324,10 @@
 		}
 		th {
 			background-color: $baseColor;
-			color: white;
+			color: $lightTextColor;
+			md-icon {
+				color: $lightTextColor;
+			}
 		}
 	}
 
