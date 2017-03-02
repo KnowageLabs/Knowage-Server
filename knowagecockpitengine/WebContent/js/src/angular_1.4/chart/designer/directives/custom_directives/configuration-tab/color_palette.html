@@ -1,0 +1,88 @@
+<div ng-form name="configuration-ColorPaletteForm" layout="row" flex layout-margin >
+   
+   <md-list flex>
+										
+	<md-list-item ng-repeat="color in colors" class="noright colorpaletteItem" ng-style="{'background-color':true ?  color.value:'white'}">
+		<span ng-style="{'color':checkColor(color.name) ?  'white':'black'}"><b>{{color.order+':'+color.name}}</b></span>
+		<md-icon ng-style="{'color':checkColor(color.name) ?  'white':'black'}" ng-show="$index>0" md-font-icon="fa fa-arrow-up" class="md-secondary md-hue-3 fa-lg"  ng-click="moveColorUp(color,$event)" aria-label="move_up"></md-icon>
+		<md-icon ng-style="{'color':checkColor(color.name) ?  'white':'black'}" ng-show="$index<colors.length-1" md-font-icon="fa fa-arrow-down" class="md-secondary md-hue-3 fa-lg"  ng-click="moveColorDown(color,$event)" aria-label="move_down"></md-icon>
+		<md-icon ng-style="{'color':checkColor(color.name) ?  'white':'black'}" md-font-icon="fa fa-trash" class="md-secondary md-hue-3 fa-lg"  ng-click="deleteColor(color,$event)" aria-label="delete_color"></md-icon>
+	</md-list-item>					
+					  	
+	</md-list>	
+</div>	
+
+
+<div ng-if="selectedChartType != 'heatmap'">
+<md-subheader class="md-primary">{{translate.load("sbi.chartengine.designer.tab.configuration.customcolor")}}</md-subheader>
+ 
+<div layout="row" flex layout-margin>
+
+	<md-input-container class="md-block colorInputContainer" flex=80>
+	<label>{{translate.load("sbi.cockpit.widgets.chartseriespanel.columns.color")}}</label>
+	 <color-picker
+		options="colorPickerOptionsCockpit"
+		ng-model="selectedColor" name ="custom_color">
+	</color-picker> 
+	</md-input-container>
+	
+	<md-button class="md-icon-button" aria-label="Info" ng-click="addColor(selectedColor)" flex=20>
+	<md-icon md-font-icon="fa fa-plus" class="fa fa-lg"></md-icon>
+	</md-button>
+
+</div>
+</div>
+
+<div ng-if="selectedChartType == 'heatmap'">
+<md-subheader class="md-primary">{{translate.load("sbi.chartengine.designer.tab.configuration.customcolorgradient")}}</md-subheader>
+ 
+<div layout="row" flex layout-margin>
+
+	<md-input-container class="md-block colorInputContainer" flex=100>
+	<label>{{translate.load("sbi.chartengine.designer.tab.configuration.customcolorgradientFirst")}}</label>
+	 <color-picker
+		options="colorPickerOptionsCockpit"
+		ng-model="gradientFirstColor" name ="gradient_first">
+	</color-picker> 
+	</md-input-container>
+	
+	<md-input-container class="md-block colorInputContainer" flex=100>
+	<label>{{translate.load("sbi.chartengine.designer.tab.configuration.customcolorgradientLast")}}</label>
+	 <color-picker
+		options="colorPickerOptionsCockpit"
+		ng-model="gradientLastColor" name ="gradient_last">
+	</color-picker> 
+	</md-input-container>
+	
+		<md-input-container class="md-block"> 
+	<label>{{translate.load("sbi.chartengine.designer.tab.configuration.customcolorgradientSteps")}}</label>
+		 <input type="number" step="any" name="gradient_step"
+		ng-model="gradientSteps" min="0" /> </md-input-container>
+	
+	<md-button class="md-icon-button" ng-disabled="colors.length != 0" aria-label="Info" ng-click="makeGradient(gradientFirstColor,gradientLastColor,gradientSteps)" flex=100>
+	<md-icon md-font-icon="fa fa-plus" class="fa fa-lg"></md-icon>
+	</md-button>
+
+</div>
+</div>
+
+<expander-box expanded="true" title="translate.load('sbi.chartengine.designer.tab.configuration.presetcolors')">
+
+<div layout="row" layout-wrap layout-align="center center">
+    <md-button ng-repeat="color in presetColors" flex-gt-md="10" flex="10" class="presetButtons"
+               md-colors="{background: '{{color}}'}" ng-click="addColor(color)">
+      {{color}}
+    </md-button>
+</div>    
+							
+</expander-box>
+
+
+
+    
+ 
+
+
+
+
+    

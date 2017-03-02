@@ -34,6 +34,11 @@ angular.module('cockpitModule')
 	return {
 		restrict: 'E',
 	    templateUrl: baseScriptPath+ '/directives/cockpit-widget/widget/chartWidget/templates/postIframe.html',
+	    scope:{
+	    	   datasetLabel:'=',
+	    	   isCockpitEng:'=',
+	    	   localMod:'='
+	    	  },
 	    link: function(scope, elem, attrs) {
 	    	var genId = i++;
 	    	scope.iframeName = attrs.id + "_frameName" + genId;
@@ -46,6 +51,10 @@ angular.module('cockpitModule')
 	    	$scope.updateAction = function(actionUrl){
 	    		$scope.actionUrl = actionUrl + "&SBI_EXECUTION_ID=" + (new Date().getTime() + '_' + (i++));
 	    	};
+	    	
+	    	$scope.showWidgetSpinner=function(){
+	    		  $scope.confSpinner=true;
+	    	  }
 	    	$scope.updateParameters = function(parameters){
 	    		$scope.formParameters = parameters;
 	    	};
@@ -129,14 +138,14 @@ angular.module('cockpitModule')
 .factory('buildParametersForExecution',function(sbiModule_user, sbiModule_config){
 	var formAction = function(service){
 		return {url: '/' + sbiModule_config.chartEngineContextName
-		+ "/api/1.0/pages/" + service
+		+ "/api/1.0/chart/pages/" + service //changed by Dragan was /api/1.0/pages/
 		+ "?SBICONTEXT=" + sbiModule_config.externalBasePath
 		+ "&SBI_HOST=localhost"
 		+ "&SBI_LANGUAGE=" + sbiModule_config.curr_language
 		+ "&SBI_COUNTRY=" + sbiModule_config.curr_country
 		+ "&user_id=" + sbiModule_user.userId
 		,testUrl: '/' + sbiModule_config.chartEngineContextName
-		+ "/api/1.0/pages/executeTest"};
+		+ "/api/1.0/chart/pages/executeTest"};//changed by Dragan was /api/1.0/pages/executeTest
 	}
 	var formEditAction =  formAction('edit_cockpit');
 	var formExecAction =  formAction('execute_cockpit');
@@ -167,7 +176,7 @@ angular.module('cockpitModule')
 	}
 });
 
-function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelection,cockpitModule_datasetServices,cockpitModule_widgetConfigurator,$q,$mdPanel,sbiModule_restServices,$httpParamSerializerJQLike,sbiModule_config,buildParametersForExecution,$mdToast){
+function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelection,cockpitModule_datasetServices,cockpitModule_widgetConfigurator,$q,$mdPanel,sbiModule_restServices,$httpParamSerializerJQLike,sbiModule_config,buildParametersForExecution,$mdToast,sbiModule_messaging,sbiModule_translate){
 	$scope.property={style:{}};
 	$scope.selectedTab = {'tab' : 0};
 	if($scope.ngModel.cross==undefined){
@@ -177,12 +186,15 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 	$scope.init=function(element,width,height){
 		$scope.refreshWidget(undefined,'init');
 	};
+	$scope.chartLibNamesConfig = chartLibNamesConfig;
 	
 	$scope.refresh=function(element,width,height,data,nature){
-		var widgetData = angular.copy($scope.ngModel.content);
-		$scope.postIframe = element.find('post-iframe').scope();
-		var execPar = buildParametersForExecution.execute(widgetData,data);
-		$scope.postIframe.updateContent(execPar.formAction, execPar.formParameters,nature,width,height);
+		
+				
+		$scope.$broadcast(nature,data);
+
+		
+		
 		
 	};
 	
@@ -191,8 +203,6 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 		var config = {
 				attachTo:  angular.element(document.body),
 				controller: function($scope,sbiModule_translate,model,mdPanelRef,doRefresh){
-					console.log("CHART"); 
-					console.log(model);
 					  $scope.translate=sbiModule_translate;
 					  $scope.confSpinner=false;
 					  $scope.somethingChanged=false;
@@ -201,14 +211,7 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 					  $scope.localModel.cross= angular.copy(model.content.cross);
 					 
 					  $scope.model= angular.copy(model);
-					  //$scope.model={};
-					  
-					  
-//					  if(model.filters)
-//					  { 
-//						  $scope.model.filters=[];
-//						  angular.copy(model.filters,$scope.model.filters);
-//					  }	  
+ 
 					  
 					  
 					  $scope.handleEvent=function(event, arg1){
@@ -219,8 +222,20 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 							  }
 						  }else if(event=='closeConfiguration'){
 							  checkConfiguration();
+						  }else if(event=='openStyle'){
+							  $scope.somethingChanged = true;
 						  }else if(event=='save'){
-							  saveConfiguration();
+							  if(!checkChartSettings()){
+								  	if($scope.localModel.chartTemplate.type.toUpperCase()=="SCATTER"){
+										showAction($scope.translate.load('sbi.cockpit.select.no.aggregation.for.all.series'));
+									}
+									
+									
+							  }
+							  else{
+								  $scope.attachCategoriesToTemplateInIframe();
+								  saveConfiguration();
+							  }
 						  }else if(event=='datasetChanged'){
 							  $scope.somethingChanged = true;
 							  changeDatasetFunction(arg1);
@@ -245,33 +260,60 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 			    				  delete $scope.localModel.columnSelectedOfDataset;
 			    			  }
 			    			  $scope.localModel.datasetLabel = ds.label;
-			    			  
 			    		  }
-			    		  
 			    	  }
 			    	  var checkConfiguration=function(){
-			    		  var extWindow = document.getElementById("chartConfigurationIframe").contentWindow;
-			    		  if(extWindow.Sbi!=undefined){
-			    			  var designer = extWindow.Sbi.chart.designer.Designer;
-			    			  var error = designer.validateTemplate(true);
-			    			  $scope.confChecked = true;
-			    			  if(error==false){
-				    			  $scope.localModel.chartTemplate = designer.exportAsJson(true);
-			    				  setAggregationsOnChartEngine($scope.localModel);
-			    				  return true;
-			    			  }else{
-			    				  showAction(error);
-			    				  return false;
-			    			  }
-			    		  }
-			    		  if(!$scope.confChecked || $scope.datasetChanged){
-		    				  // Warning: Please configure chart
-		    				  showAction($scope.translate.load('sbi.cockpit.widgets.chartengine.conf.missing'));
-		    				  return false;
-		    			  }
-			    		  return true;
+			    		  
+			    		  $scope.confChecked = true;
+			    		  
+	    				  setAggregationsOnChartEngine($scope.localModel);
+	    				  return true;
 			    	  }
+			    	  
+			    	  var checkChartSettings = function (){
+			    		  
+			    		  if(!$scope.localModel.hasOwnProperty('chartTemplate')){
+			    			  
+			    			  sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.data.editor.association.AssociationEditor.warning.misingChartDesigner"), sbiModule_translate.load("sbi.data.editor.association.AssociationEditor.warning"));
+			    			  return;
+			    		  }
+			    		  var f = true;
+			    		  if(document.getElementById('chartConfigurationIframe').contentWindow.hasOwnProperty('validateForm')){
+			    			  var isFormValid = document.getElementById('chartConfigurationIframe').contentWindow.validateForm();
+				    		  
+				    		  if(!isFormValid) {
+				    			  return false;
+				    		  }
+			    		  }
+
+				    	  var chartTemplateFake = $scope.localModel.chartTemplate.CHART ? $scope.localModel.chartTemplate.CHART : $scope.localModel.chartTemplate;
+	    				  if (chartTemplateFake.type == "SCATTER" && chartTemplateFake.VALUES.SERIE.length>1) {
+	    					  var allSeries = chartTemplateFake.VALUES.SERIE;
+	    						var counter = 0; 
+	    						for (var i = 0; i < allSeries.length; i++) {
+	    							if(allSeries[i].groupingFunction=="NONE"){
+	    								counter++ 
+	    							};
+	    						}
+	    						if(counter<chartTemplateFake.VALUES.SERIE.length){
+	    							f=false;
+	    						}
+	    						if (counter == 0) f = true;
+	    				  } 
+	    				  return f;
+	    				  
+			    	  }
+			    	  
+			    	  $scope.attachCategoriesToTemplateInIframe = function() {
+			    		  var attach = document.getElementById('chartConfigurationIframe').contentWindow.attachCategories;
+			    		  if (typeof attach === "function") {
+			    			  document.getElementById('chartConfigurationIframe').contentWindow.attachCategories();
+			    			}
+			             
+			          };
+			    	  
 			    	  var saveConfiguration=function(){
+			    		  
 			    		  if($scope.localModel.datasetId == undefined){
 			    			  // Warning: Please select a dataset
 			    			  showAction($scope.translate.load('sbi.cockpit.table.missingdataset'));
@@ -287,16 +329,7 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 			    					  }
 			    					  angular.copy($scope.localStyle, model.style);
 			    					  model.dataset = {dsId: $scope.localModel.datasetId, dsLabel: $scope.localModel.datasetLabel};
-			    					 
-//			    					  if($scope.model.filters!=undefined)
-//			    					  {
-//			    						  if(model.filters==undefined){
-//			    							  model.filters=[];
-//			    						  }
-//			    						  angular.copy($scope.model.filters, model.filters);
-//			    					  }	  
 			    				  }
-			    				 angular.copy($scope.localModel.cross,model.cross);
 			    				  mdPanelRef.close();
 			    				  $scope.$destroy();
 			    				  doRefresh(undefined,'init');
@@ -328,9 +361,7 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 			  				}
 			  			});
 			  		  }
-			    	  $scope.showWidgetSpinner=function(){
-			    		  $scope.confSpinner=true;
-			    	  }
+			    	  
 			    	  $scope.hideWidgetSpinner=function(){
 			    		  $scope.confSpinner=false;
 			    		  safeApply();
@@ -361,7 +392,7 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 		return finishEdit.promise;
 	}
 
-	$scope.reloadWidgetsByChartEvent = function(item){
+		$scope.reloadWidgetsByChartEvent = function(item){
 		var event= item.select != undefined ? item.select : item;
 		var crossParameters= createCrossParameters(item);
 		if($scope.ngModel.cliccable==false){
@@ -479,7 +510,9 @@ function setAggregationsOnChartEngine(wconf){
 		if(chartTemplate.CHART.VALUES.CATEGORY){
 			
 			var chartCategory= chartTemplate.CHART.VALUES.CATEGORY;
-			
+			if(chartCategory.name=="" || chartCategory.name==null || chartCategory.name==undefined){
+				chartCategory.name=chartCategory.column
+			}
 			if(Array.isArray(chartCategory)){
 				for(var i = 0; i < chartCategory.length; i++){
 					
@@ -507,9 +540,5 @@ function setAggregationsOnChartEngine(wconf){
 
 //this function register the widget in the cockpitModule_widgetConfigurator factory
 addWidgetFunctionality("chart",{'initialDimension':{'width':20, 'height':20},'updateble':true,'cliccable':true});
-
-
-
-
 
 })();

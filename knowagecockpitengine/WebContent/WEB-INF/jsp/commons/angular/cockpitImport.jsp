@@ -41,6 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/cockpit/services/cockpitModule_crossServices.js"></script>
 
 
+
 <!-- Factory -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/cockpit/factory/cockpitModule_gridsterOptions.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/cockpit/factory/cockpitModule_generalOptions.js"></script>
@@ -49,7 +50,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <!-- Widget -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/cockpit/directives/cockpit-widget/widget/imageWidget/imageWidget.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/cockpit/directives/cockpit-widget/widget/textWidget/textWidget.js"></script>
+
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/cockpit/directives/cockpit-widget/widget/chartWidget/chartWidget.js"></script>
+
+
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/cockpit/directives/cockpit-widget/widget/tableWidget/tableWidget.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/cockpit/directives/cockpit-widget/widget/documentWidget/documentWidget.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/cockpit/directives/cockpit-widget/widget/staticPivotTableWidget/staticPivotTableWidget.js"></script>

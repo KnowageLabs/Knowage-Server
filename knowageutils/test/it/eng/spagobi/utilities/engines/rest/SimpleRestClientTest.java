@@ -83,7 +83,7 @@ public class SimpleRestClientTest {
 
 	protected SimpleRestClient getSimpleRestClient() {
 		SimpleRestClient client = new SimpleRestClient(HMACFilterTest.key) {
-			@Override
+			//@Override
 			protected HttpClient getHttpClient() {
 				return null;
 			}
@@ -93,7 +93,7 @@ public class SimpleRestClientTest {
 
 	protected SimpleRestClient getSimpleRestClientFail() {
 		SimpleRestClient client = new SimpleRestClient("qw9") {
-			@Override
+			//@Override
 			protected HttpClient getHttpClient() {
 				return null;
 			}

@@ -418,25 +418,36 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 	}
 
 	public Map getEnv() {
-		if (env == null) {
-			env = new HashMap();
+		  getCommonEnvInfo();
+		  env.put(EngineConstants.ENV_DATASOURCE, getDataSource());
+		  env.put(EngineConstants.ENV_DATASET, getDataSet());
+		  env.put(EngineConstants.ENV_DOCUMENT_ID, getDocumentId());
 
-			copyRequestParametersIntoEnv(env);
-			env.put(EngineConstants.ENV_DATASOURCE, getDataSource());
-			env.put(EngineConstants.ENV_DATASET, getDataSet());
-			env.put(EngineConstants.ENV_DOCUMENT_ID, getDocumentId());
-			env.put(EngineConstants.ENV_CONTENT_SERVICE_PROXY, getContentServiceProxy());
-			env.put(EngineConstants.ENV_AUDIT_SERVICE_PROXY, getAuditServiceProxy());
-			env.put(EngineConstants.ENV_EVENT_SERVICE_PROXY, getEventServiceProxy());
-			env.put(EngineConstants.ENV_LOCALE, getLocale());
-			env.put(EngineConstants.ENV_USER_PROFILE, getUserProfile());
-			env.put(EngineConstants.ENV_EXECUTION_ROLE, getUserExecutionRole());
-			env.put(EngineConstants.ENV_DOCUMENT_AUTHOR, getDocumentAuthor());
-			env.put(EngineConstants.ENV_DOCUMENT_USER, getUserId());
-		}
+		  return env;
+		 }
 
-		return env;
-	}
+		 public Map getEnvForWidget() {
+		  getCommonEnvInfo();
+		  return env;
+		 }
+
+		 private Map getCommonEnvInfo() {
+		  if (env == null) {
+		   env = new HashMap();
+
+		   copyRequestParametersIntoEnv(env);
+		   env.put(EngineConstants.ENV_CONTENT_SERVICE_PROXY, getContentServiceProxy());
+		   env.put(EngineConstants.ENV_AUDIT_SERVICE_PROXY, getAuditServiceProxy());
+		   env.put(EngineConstants.ENV_EVENT_SERVICE_PROXY, getEventServiceProxy());
+		   env.put(EngineConstants.ENV_LOCALE, getLocale());
+		   env.put(EngineConstants.ENV_USER_PROFILE, getUserProfile());
+		   env.put(EngineConstants.ENV_EXECUTION_ROLE, getUserExecutionRole());
+		   env.put(EngineConstants.ENV_DOCUMENT_AUTHOR, getDocumentAuthor());
+		   env.put(EngineConstants.ENV_DOCUMENT_USER, getUserId());
+		  }
+
+		  return env;
+		 }
 
 	/**
 	 * Copy request parameters into env.

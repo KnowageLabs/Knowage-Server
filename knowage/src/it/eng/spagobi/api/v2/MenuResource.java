@@ -291,7 +291,6 @@ public class MenuResource extends AbstractSpagoBIResource {
 			menu.setHideSliders(paramsObj.getBoolean("hideSliders"));
 			menu.setHideToolbar(paramsObj.getBoolean("hideToolbar"));
 			menu.setLevel(paramsObj.getInt("level"));
-			System.out.println(paramsObj.getString("objId"));
 			if (paramsObj.getString("objId").equals("null")) {
 				menu.setObjId(null);
 			} else {
@@ -346,7 +345,6 @@ public class MenuResource extends AbstractSpagoBIResource {
 		try {
 			JSONObject paramsObj = RestUtilities.readBodyAsJSONObject(req);
 			JSONArray roles = paramsObj.getJSONArray("roles");
-			System.out.println(roles);
 
 			roleDao = DAOFactory.getRoleDAO();
 
@@ -355,7 +353,6 @@ public class MenuResource extends AbstractSpagoBIResource {
 
 			Role[] rolesArray = new Role[roles.length()];
 			for (int i = 0; i < roles.length(); i++) {
-				System.out.println(roles.getJSONObject(i));
 				int roleID = roles.getJSONObject(i).getInt("id");
 				Role r = roleDao.loadByID(roleID);
 				rolesArrayList.add(r);
@@ -380,7 +377,6 @@ public class MenuResource extends AbstractSpagoBIResource {
 			menu.setHideSliders(paramsObj.getBoolean("hideSliders"));
 			menu.setHideToolbar(paramsObj.getBoolean("hideToolbar"));
 			menu.setLevel(paramsObj.getInt("level"));
-			// System.out.println(paramsObj.getString("objId"));
 			if (paramsObj.getString("objId").equals("null")) {
 				menu.setObjId(null);
 			} else {

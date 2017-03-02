@@ -480,8 +480,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 	@POST
 	@Path("/saveChartTemplate")
 	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	public String saveTemplate(@FormParam("jsonTemplate") String jsonTemplate, @FormParam("docLabel") String docLabel,
+	public String saveTemplate(@QueryParam("jsonTemplate") String jsonTemplate, @QueryParam("docLabel") String docLabel,
 			@Context HttpServletResponse servletResponse) {
 		String xml = null;
 		try {
@@ -697,7 +696,11 @@ public class DocumentResource extends AbstractSpagoBIResource {
 			IBIObjectDAO biObjectDao;
 			BIObject document;
 			biObjectDao = DAOFactory.getBIObjectDAO();
-			document = biObjectDao.loadBIObjectById(new Integer(docLabel));
+			if(docLabel instanceof String){
+				document = biObjectDao.loadBIObjectByLabel(docLabel);
+			} else {
+				document = biObjectDao.loadBIObjectById(new Integer(docLabel));
+			}			
 
 			// In the case of the SUNBURST and OLAP document type, this
 			// variable will be not empty. (danristo) (nsimovic)

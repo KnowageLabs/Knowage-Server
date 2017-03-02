@@ -1,0 +1,49 @@
+<div layout="column" >
+	<md-input-container class="md-block" >
+		<label>{{translate.load("sbi.chartengine.configuration.nodata")}}</label>
+		<input name="no_data_text" ng-model="chartTemplate.EMPTYMESSAGE.text"> 
+	</md-input-container>
+<div ng-if="selectedChartType=='wordcloud' || selectedChartType=='heatmap' || selectedChartType=='treemap' ||
+           selectedChartType=='chord' || selectedChartType=='parallel' || selectedChartType=='sunburst'">	
+	<md-input-container class="md-block" >
+	 <label>{{translate.load("sbi.chartengine.designer.tab.configuration.textalignment")}}</label>
+		 <md-select ng-model="chartTemplate.EMPTYMESSAGE.style.align" name="no_data_align"> <md-option
+		ng-repeat="option in fontAlignOptions" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+</div>
+
+<div ng-if="selectedChartType=='bar' || selectedChartType=='pie' || selectedChartType=='line' ||
+           selectedChartType=='scatter' || selectedChartType=='radar' || selectedChartType=='gauge'">	
+	<md-input-container class="md-block" >
+	 <label>{{translate.load("sbi.chartengine.designer.tab.configuration.textalignment")}}</label>
+		 <md-select ng-model="chartTemplate.EMPTYMESSAGE.position.align" name="no_data_align"> <md-option
+		ng-repeat="option in fontAlignOptions" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+	
+	
+</div>
+	<md-input-container class="md-block" >
+	 <label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontfamily")}}</label>
+		 <md-select ng-model="chartTemplate.EMPTYMESSAGE.style.fontFamily" name="no_data_ffamily"> <md-option
+		ng-repeat="option in fontFamilyOptions" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+	<md-input-container class="md-block" > 
+	<label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontsize")}}</label>
+		 <md-select ng-model="chartTemplate.EMPTYMESSAGE.style.fontSize" name="no_data_fsize"> <md-option
+		ng-repeat="option in fontSizeOptions" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+	<md-input-container class="md-block" > 
+	 <label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontstyle")}}</label> 
+		 <md-select ng-model="chartTemplate.EMPTYMESSAGE.style.fontWeight" name="no_data_fstyle"> <md-option 
+ 		ng-repeat="option in fontStyleOptions" value="{{option.value}}">{{option.name}}</md-option> 
+ 	</md-select> </md-input-container> 
+
+	<md-input-container class="md-block colorInputContainer" >
+	<label>{{translate.load("sbi.chartengine.designer.tooltip.color")}}</label>
+	 <color-picker
+		options="colorPickerOptionsCockpit"
+		ng-model="chartTemplate.EMPTYMESSAGE.style.color" name="no_data_color"></color-picker> </md-input-container>
+
+</div>

@@ -35,6 +35,7 @@
 <%@page import="it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO"%>
 <%@page import="it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter"%>
 <%@page import="it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter"%>
+<%@page import="it.eng.spagobi.engine.chart.util.ChartEngineUtil"%>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>

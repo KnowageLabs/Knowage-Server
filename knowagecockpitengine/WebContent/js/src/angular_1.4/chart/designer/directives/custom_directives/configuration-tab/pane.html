@@ -1,0 +1,12 @@
+<div ng-form novalidate name="paneForm" layout="column" layout-padding>
+
+	<md-input-container class="md-block" > 
+	<label>{{translate.load("sbi.chartengine.configuration.gauge.startAnglePane")}}</label>
+		 <input type="number" step="any" name="pane_start_angle"
+		ng-model="chartTemplate.PANE.startAngle" min="-270" max="360"  ng-required="chartTemplate.type.toLowerCase()=='gauge'"/> </md-input-container>
+
+	<md-input-container class="md-block" > 
+	<label>{{translate.load("sbi.chartengine.configuration.gauge.endAnglePane")}}</label>
+		 <input type="number" step="any" name="pane_end_angle"
+		ng-model="chartTemplate.PANE.endAngle" min="{{chartTemplate.PANE.startAngle}}" max="360"  ng-required="chartTemplate.type.toLowerCase()=='gauge'"/> </md-input-container>
+</div>

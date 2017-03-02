@@ -112,7 +112,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 				template = buildBaseTemplate();
 				// create a new engine instance
 				engineInstance = CockpitEngine.createInstance(template.toString(), // servletIOManager.getTemplateAsString(),
-						getIOManager().getEnv());
+						getIOManager().getEnvForWidget());
 				getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
 				//getExecutionSession().setAttributeInSession(EngineConstants.ENGINE_INSTANCE, engineInstance);
 				dispatchUrl = "/WEB-INF/jsp/ngCockpit.jsp";

@@ -175,10 +175,11 @@ md-input-container.md-knowage-theme {
       }
       &.md-input-invalid.md-input-focused label {
         color: $invalidLabelColor;
+        
       }
     }
   }
-
+ 
 }
 
 md-input-container.md-knowage-theme ng-messages :not(.md-char-counter), md-input-container.md-knowage-theme [ng-messages] :not(.md-char-counter), md-input-container.md-knowage-theme ng-message :not(.md-char-counter), md-input-container.md-knowage-theme data-ng-message :not(.md-char-counter), md-input-container.md-knowage-theme x-ng-message :not(.md-char-counter), md-input-container.md-knowage-theme [ng-message] :not(.md-char-counter), md-input-container.md-knowage-theme [data-ng-message] :not(.md-char-counter), md-input-container.md-knowage-theme [x-ng-message] :not(.md-char-counter), md-input-container.md-knowage-theme [ng-message-exp] :not(.md-char-counter), md-input-container.md-knowage-theme [data-ng-message-exp] :not(.md-char-counter), md-input-container.md-knowage-theme [x-ng-message-exp] :not(.md-char-counter) {
@@ -763,5 +764,6 @@ md-tab-item {
   md-select-menu[multiple] md-option[selected]._md-checkbox-enabled ._md-icon::after{
     padding-top: 11px;
   }
+  
   
 }

@@ -75,6 +75,16 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 					measures.push(obj);
 				}
 			}
+						
+			var arrayOfSeries = ngModel.content.chartTemplate.CHART.VALUES.SERIE;
+			for (var i = 0; i < arrayOfSeries.length; i++) {
+				for (var j = 0; j < measures.length; j++) {
+					if(arrayOfSeries[i].column == measures[j].columnName){
+						measures[j].orderType = arrayOfSeries[i].orderType;
+						
+					}
+				}
+			}
 		}
 		
 		var crosstabDef = ngModel==undefined ? undefined : ngModel.content.crosstabDefinition;

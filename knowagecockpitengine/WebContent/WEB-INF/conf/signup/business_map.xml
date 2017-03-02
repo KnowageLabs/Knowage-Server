@@ -8,6 +8,7 @@
     <MAP_REST_SERVICES>
     	<MAP_REST_SERVICE serviceUrl="/engine.*" businessProcess="CreateCockpitFunctionality" />
     	<MAP_REST_SERVICE serviceUrl="/pages.*" businessProcess="CreateCockpitFunctionality" />
+    	<MAP_REST_SERVICE serviceUrl="/chart.*" businessProcess="CreateCockpitFunctionality" />
     	<MAP_REST_SERVICE serviceUrl="/associations.*" businessProcess="CreateCockpitFunctionality" />
     	<MAP_REST_SERVICE serviceUrl="/crosstab.*" businessProcess="CreateCockpitFunctionality" />
     </MAP_REST_SERVICES>

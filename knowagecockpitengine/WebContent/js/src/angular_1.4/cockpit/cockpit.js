@@ -22,7 +22,7 @@ baseScriptPath =baseScriptPath .substring(0, baseScriptPath .lastIndexOf('/'));
 
 (function() {
 	
-var cockpitApp= angular.module("cockpitModule",['ngMaterial','sbiModule','gridster','file_upload','ngWYSIWYG','angular_table','cockpit_angular_table','color.picker','dndLists']);
+var cockpitApp= angular.module("cockpitModule",['ngMaterial','sbiModule','gridster','file_upload','ngWYSIWYG','angular_table','cockpit_angular_table','color.picker','dndLists','chartRendererModule']);
 cockpitApp.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.theme('knowage')
     $mdThemingProvider.setDefaultTheme('knowage');

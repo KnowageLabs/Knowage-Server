@@ -1,0 +1,25 @@
+<div ng-form name="structure-orderingColumnForm" >
+<div layout="column" layout-padding>
+
+<md-input-container class="md-block">
+	 <label>{{translate.load("sbi.chartengine.structure.categoryStyleConfig.orderByColumn.labelText")}}</label>
+		 <md-select ng-model="categories[0].orderColumn" name="categories_ordering_column"> <md-option
+		ng-repeat="option in allAttributes" value="{{option.id}}">{{option.id}}</md-option>
+	</md-select> </md-input-container>
+	
+<md-input-container class="md-block">
+	 <label>{{translate.load("sbi.chartengine.structure.categoryStyleConfig.orderingType.labelText")}}</label>
+		 <md-select ng-model="categories[0].orderType" name="categories_ordering_type"> <md-option
+		ng-repeat="option in seriesItemOrderingTypes" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+	
+</div>	
+<div layout="row"
+		ng-show="selectedChartType == 'bar'" flex=100 layout-align="start center">
+	
+		<label>{{translate.load("sbi.chartengine.designer.tab.configuration.groupCategories")}}</label>
+		<md-input-container class="small counter"> <md-checkbox
+			ng-model="chartTemplate.groupCategories" style="margin:0 8px" aria-label="groupCategories" name="generic_groupCategories"></md-checkbox>
+		</md-input-container>
+</div>
+</div>	
