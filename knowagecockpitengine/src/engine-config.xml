@@ -102,4 +102,6 @@
 	<ChartEngineContextName>knowagecockpitengine</ChartEngineContextName>
 	<KpiEngineContextName>knowagekpiengine</KpiEngineContextName>
 	
+	<HMAC_JNDI_LOOKUP>java:/comp/env/hmacKey</HMAC_JNDI_LOOKUP>
+	
 </ENGINE-CONFIGURATION>
