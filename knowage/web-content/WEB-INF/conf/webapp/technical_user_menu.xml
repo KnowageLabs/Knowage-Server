@@ -49,7 +49,7 @@
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/users.png" />
 			<ITEM	title="#menu.menuconfiguration"
 					functionality="MenuManagement"
-					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=MenuConfigurationPage"
+					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/menuConfiguration.jsp?LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/menu16.png" />		
 			<ITEM	title="#menu.FunctMan"
 					functionality="FunctionalitiesManagement"
@@ -92,11 +92,14 @@
 	        <ITEM   title="#menu.MondrianCatalogue"
 	                functionality="ArtifactCatalogueManagement"
 	                url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/mondrianSchemasCatalogue.jsp?type=MONDRIAN_SCHEMA&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
-	                iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/cube16.png" />	
+	                iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/cube16.png" />
+	          <!-- 
+	          TODO convert to angular      	
 			<ITEM	title="#menu.MapCat"
 					functionality="MapCatalogueManagement"
 					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListMapsPage&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/mapcatalogue/maps16.png" />
+				--> 
 			<ITEM	title="#menu.FeatureMapCat"
 					functionality="MapFeaturesManagement"
 					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListFeaturesPage&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
@@ -179,12 +182,16 @@
 					functionality="DomainManagement"
 					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=DOMAIN_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/functionalities16.png" />
-		 -->					
+		 -->
+		 <!--
+		 TODO convert to angular					
 			<ITEM	title="#menu.MetadataMan"
 					functionality="ObjMetadataManagement"
 					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListObjMetadataPage&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/tools/objmetadata/document-meta.gif" />
+		-->			
 		</ITEM>
+		
 	</ITEM>
 	
 	
