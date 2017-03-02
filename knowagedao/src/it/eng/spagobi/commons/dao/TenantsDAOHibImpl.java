@@ -21,8 +21,11 @@ import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.metadata.SbiAuthorizations;
 import it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles;
+import it.eng.spagobi.commons.metadata.SbiAuthorizationsRolesId;
 import it.eng.spagobi.commons.metadata.SbiCommonInfo;
+import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.metadata.SbiOrganizationDatasource;
 import it.eng.spagobi.commons.metadata.SbiOrganizationDatasourceId;
 import it.eng.spagobi.commons.metadata.SbiOrganizationProductType;
@@ -52,8 +55,11 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringEscapeUtils;
@@ -688,7 +694,7 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 			}
 
 			// check associations between roles and authorizations to remove (possibly)
-			checkAuthorizationsRoles(aTenant, aSession);
+			checkAuthorizationsRoles(aTenant, existingProductTypeAssociated, aSession);
 
 			tx.commit();
 		} catch (HibernateException he) {
@@ -714,7 +720,7 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 	 * @param aTenant
 	 * @param aSession
 	 */
-	private void checkAuthorizationsRoles(SbiTenant aTenant, Session aSession) {
+	private void checkAuthorizationsRoles(SbiTenant aTenant, ArrayList<SbiOrganizationProductType> existingProductTypeAssociated, Session aSession) {
 		// 1) Get the product types id currently configured for the tenant
 
 		Set<SbiOrganizationProductType> productTypes = aTenant.getSbiOrganizationProductType();
@@ -742,7 +748,46 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 		List<SbiAuthorizationsRoles> associations = new ArrayList<SbiAuthorizationsRoles>();
 		associations = hqlQueryAutRole.list();
 
-		// 4) Remove not valid associations
+		// 4) Get current existing association between roles and authorizations (before changing products)
+		ArrayList<Integer> oldProductTypesIds = new ArrayList<Integer>();
+		// get possible authorizations of current (old) products types
+		for (SbiOrganizationProductType existingProductType : existingProductTypeAssociated) {
+			oldProductTypesIds.add(existingProductType.getSbiProductType().getProductTypeId());
+		}
+		String oldHql = "select f.id from SbiAuthorizations f where f.productType.productTypeId IN (:PRODUCT_TYPES)";
+		Query oldHqlQueryAut = aSession.createQuery(oldHql);
+		oldHqlQueryAut.setParameterList("PRODUCT_TYPES", oldProductTypesIds);
+		List<Integer> oldAuthorizations = oldHqlQueryAut.list();
+
+		// search current associations roles-authorizations of current (old) product types
+		oldHql = "select autrole from SbiAuthorizationsRoles autrole where autrole.commonInfo.organization = :TENANT and autrole.id.authorizationId IN (:AUTHORIZATIONS)";
+		Query oldHqlQueryAutRole = aSession.createQuery(oldHql);
+		oldHqlQueryAutRole.setString("TENANT", aTenant.getName());
+		oldHqlQueryAutRole.setParameterList("AUTHORIZATIONS", oldAuthorizations);
+		List<SbiAuthorizationsRoles> oldAssociations = new ArrayList<SbiAuthorizationsRoles>();
+		oldAssociations = oldHqlQueryAutRole.list();
+
+		// save the old authorizations names and associated roles to be applied again with new products (if not already set)
+		Map<String, Set<SbiExtRoles>> oldAuthMap = new HashMap<String, Set<SbiExtRoles>>();
+		for (SbiAuthorizationsRoles oldAssociation : oldAssociations) {
+			String anAuthName = oldAssociation.getSbiAuthorizations().getName();
+			if (oldAuthMap.containsKey(anAuthName)) {
+				// authorization name previously found in the map, just update the roles set
+				SbiExtRoles role = oldAssociation.getSbiExtRoles();
+				Set<SbiExtRoles> roles = oldAuthMap.get(anAuthName);
+				// update the roles set
+				roles.add(role);
+				oldAuthMap.put(anAuthName, roles);
+			} else {
+				// new authorization found
+				SbiExtRoles role = oldAssociation.getSbiExtRoles();
+				Set<SbiExtRoles> roles = new HashSet<SbiExtRoles>();
+				roles.add(role);
+				oldAuthMap.put(anAuthName, roles);
+			}
+		}
+
+		// 5) Remove not valid associations with new products
 		Iterator it = associations.iterator();
 		while (it.hasNext()) {
 			SbiAuthorizationsRoles anAssociation = (SbiAuthorizationsRoles) it.next();
@@ -750,6 +795,73 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 			aSession.flush();
 		}
 
+		// 6) Restore old associations also valid for new products (if not already set)
+		restorePreviousAuthorizationsRoles(aSession, oldAuthMap, aTenant, productTypesIds);
+
+	}
+
+	/**
+	 * Restore authorizations valid for specific roles after changing the product types associated with specific tenant
+	 *
+	 * @param aSession
+	 * @param oldAuthMap
+	 *            a map that contains authorizations names as keys and roles as values
+	 * @param aTenant
+	 *            the specific tenant
+	 * @param productTypesIds
+	 *            the new products types associated with the tenant
+	 */
+	private void restorePreviousAuthorizationsRoles(Session aSession, Map<String, Set<SbiExtRoles>> oldAuthMap, SbiTenant aTenant,
+			ArrayList<Integer> productTypesIds) {
+		// iterate the map for each authorization and enable it on the same roles if this is possible also with the new product types
+		for (Map.Entry<String, Set<SbiExtRoles>> entry : oldAuthMap.entrySet()) {
+			String oldAuthName = entry.getKey();
+			// search if this old association is also valid for new product type set
+			String hqlRestoreAut = "select f from SbiAuthorizations f where  f.name = :AUTHORIZATION_NAME AND f.productType.productTypeId IN (:PRODUCT_TYPES) ";
+			Query hqlQueryRestoreAut = aSession.createQuery(hqlRestoreAut);
+			hqlQueryRestoreAut.setString("AUTHORIZATION_NAME", oldAuthName);
+			hqlQueryRestoreAut.setParameterList("PRODUCT_TYPES", productTypesIds);
+			List<SbiAuthorizations> autsToRestore = hqlQueryRestoreAut.list();
+
+			if (!autsToRestore.isEmpty()) {
+				// old auth is also valid for new products, so restore the associations with the same roles
+				for (SbiAuthorizations autToRestore : autsToRestore) {
+					Set<SbiExtRoles> roles = entry.getValue();
+					for (SbiExtRoles role : roles) {
+
+						// Check if the association Authorization-Role is already present
+						String checkAutHql = "select autrole from SbiAuthorizationsRoles autrole where autrole.commonInfo.organization = :TENANT and autrole.id.authorizationId = :AUTHORIZATION AND autrole.id.roleId = :ROLE";
+						Query checkAutHqlQuery = aSession.createQuery(checkAutHql);
+						checkAutHqlQuery.setString("TENANT", aTenant.getName());
+						checkAutHqlQuery.setInteger("AUTHORIZATION", autToRestore.getId());
+						checkAutHqlQuery.setInteger("ROLE", role.getExtRoleId());
+
+						List<SbiAuthorizationsRoles> checkAssociations = new ArrayList<SbiAuthorizationsRoles>();
+						checkAssociations = checkAutHqlQuery.list();
+
+						if (checkAssociations.isEmpty()) {
+							// the association is not already present on the db so we can insert it
+							SbiAuthorizationsRoles sbiAuthorizationsRoles = new SbiAuthorizationsRoles();
+							SbiAuthorizationsRolesId sbiAuthorizationsRolesId = new SbiAuthorizationsRolesId(autToRestore.getId(), role.getExtRoleId());
+
+							sbiAuthorizationsRoles.setId(sbiAuthorizationsRolesId);
+							sbiAuthorizationsRoles.setSbiAuthorizations(autToRestore);
+							sbiAuthorizationsRoles.setSbiExtRoles(role);
+							// force the correct tenant (otherwise the super admin tenant's was used)
+							sbiAuthorizationsRoles.setOrganization(aTenant.getName());
+							sbiAuthorizationsRoles.getCommonInfo().setOrganization(aTenant.getName());
+
+							updateSbiCommonInfo4Update(sbiAuthorizationsRoles);
+							// Save on db
+							aSession.save(sbiAuthorizationsRoles);
+							aSession.flush();
+						}
+
+					}
+				}
+			}
+
+		}
 	}
 
 	@Override
