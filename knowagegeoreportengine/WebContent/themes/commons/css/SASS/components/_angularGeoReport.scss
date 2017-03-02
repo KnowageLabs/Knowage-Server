@@ -110,70 +110,76 @@ expander-box md-content md-radio-button, expander-box md-content md-checkbox
 	margin: 0px 4px 11px 16px !important;
 }
 
-geo-legend .legendBox .colorbox {
-	height: 18px;
-	width: 18px;
-	border: 1px solid rgba(0, 0, 0, 0.15);
-	margin: 1px;
-}
-
-geo-legend .legendBox {
-	background-color: white;
-	border-radius: 5px;
-	padding: 5px;
-	max-width: 350px;
-}
-
-geo-legend  .legendBox:before {
-	border-top: 7px solid white;
-	border-right: 6px solid transparent;
-	border-left: 6px solid transparent;
-	content: "";
-	position: absolute;
-	bottom: 45px;
-	left: 23px;
-}
-
-geo-distance-calculator .clearMeasure {
-	position: absolute;
-	bottom: 25px;
-	z-index: 21 !important;
-	width: 20px !important;
-	height: 20px !important;
-	min-height: 20px;
-}
-
-geo-distance-calculator .clearMeasure md-icon {
-	line-height: 19px;
-	margin-left: -1px;
-}
-
-geo-distance-calculator md-input-container {
-	padding: 3px;
-}
-
-geo-distance-calculator .calcBox  md-input-container{
-	min-width: 120px;
+geo-legend {
+	md-whiteframe {
+		position: absolute;
+		bottom: 50px;
+	    &:before {
+	    	display: none;
+	    }
+	}
+	.legendBox {
+		background-color: white;
+		border-radius: 5px;
+		padding: 5px;
+		max-width: 350px;
+		&:before {
+			border-top: 7px solid white;
+			border-right: 6px solid transparent;
+			border-left: 6px solid transparent;
+			content: "";
+			position: absolute;
+			bottom: 45px;
+			left: 23px;
+		}
+		.colorbox {
+			height: 18px;
+			width: 18px;
+			border: 1px solid rgba(0, 0, 0, 0.15);
+			margin: 1px;
+		}
 	}
 	
-geo-distance-calculator .calcBox {
-	background-color: white;
-	border-radius: 5px;
 }
 
-geo-distance-calculator .calcBox:before {
-	border-top: 7px solid white;
-	border-right: 6px solid transparent;
-	border-left: 6px solid transparent;
-	content: "";
-	position: absolute;
-	bottom: 45px;
-	margin-left: 20px;
-}
-
-geo-distance-calculator .calcBox .measureDisplay {
-	margin: 0px;
-	text-align: center;
+geo-distance-calculator {
+	md-whiteframe {
+	    position: absolute;
+	    bottom: 50px;
+	    right: 25%;
+	}
+	.clearMeasure {
+		position: absolute;
+	    right: -15px;
+	    top: -15px !important;
+	    text-align: center;
+	    width: 34px;
+	    line-height: 34px;
+	    height: 34px;
+	}
+	md-input-container {
+		padding: 3px;
+	}
+	.calcBox {
+		background-color: white;
+		border-radius: 5px;
+		md-input-container{
+			min-width: 120px;
+		}
+		&:before {
+			border-top: 7px solid white;
+			border-right: 6px solid transparent;
+			border-left: 6px solid transparent;
+			content: "";
+			position: absolute;
+			bottom: 45px;
+			margin-left: 20px;
+		}
+		.measureDisplay {
+			margin: 0px;
+			text-align: center;
+		}
+	}
 }
 
 .tooltip {
