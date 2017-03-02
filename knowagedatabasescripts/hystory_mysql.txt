@@ -3953,3 +3953,8 @@ ALTER TABLE SBI_KPI_TARGET ADD CONSTRAINT XAK1SBI_KPI_TARGET UNIQUE (
 	NAME,
 	ORGANIZATION
 );
+
+-- 02.03.2017 Dragan Pirkovic
+-- changed path for chart document execution
+
+UPDATE `knowage`.`sbi_engines` SET `MAIN_URL`='/knowagecockpitengine/api/1.0/chart/pages/execute' WHERE `NAME`='Chart Engine';

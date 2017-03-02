@@ -84,3 +84,7 @@ ALTER TABLE SBI_SNAPSHOTS ADD COLUMN SCHEDULATION_START INT(11);
 ALTER TABLE SBI_IMAGES
 DROP INDEX NAME_UNIQUE,
 ADD UNIQUE INDEX NAME_UNIQUE (NAME, ORGANIZATION);
+
+-- 02.03.2017 Dragan Pirkovic 
+-- changed path for chart document execution
+update SBI_ENGINES set MAIN_URL='/knowagecockpitengine/api/1.0/chart/pages/execute' where LABEL = 'knowagechartengine';
