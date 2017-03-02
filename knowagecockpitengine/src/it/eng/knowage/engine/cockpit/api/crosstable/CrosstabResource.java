@@ -153,6 +153,10 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 		try {
 
 			JSONObject request = RestUtilities.readBodyAsJSONObject(servletRequest);
+			JSONArray jsonData = request.getJSONArray("jsonData");
+
+			if (jsonData.length() == 0)
+				return "";
 
 			JSONObject crosstabDefinitionJo = request.getJSONObject("crosstabDefinition");
 			JSONObject crosstabDefinitionConfigJo = crosstabDefinitionJo.optJSONObject(CrosstabSerializationConstants.CONFIG);
@@ -173,8 +177,7 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 			Map<Integer, NodeComparator> columnsSortKeysMap = toComparatorMap(columnsSortKeys);
 			Map<Integer, NodeComparator> rowsSortKeysMap = toComparatorMap(rowsSortKeys);
 			JSONObject styleJSON = (!request.isNull("style") ? request.getJSONObject("style") : new JSONObject());
-			CrosstabBuilder builder = new CrosstabBuilder(getLocale(), crosstabDefinition, request.getJSONArray("jsonData"), request.getJSONObject("metadata"),
-					styleJSON);
+			CrosstabBuilder builder = new CrosstabBuilder(getLocale(), crosstabDefinition, jsonData, request.getJSONObject("metadata"), styleJSON);
 
 			JSONObject ret = new JSONObject();
 			ret.put("htmlTable", builder.getSortedCrosstab(columnsSortKeysMap, rowsSortKeysMap, myGlobalId));
