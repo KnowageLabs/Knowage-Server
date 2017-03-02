@@ -5,7 +5,7 @@
       <div class="md-toolbar-tools">
         <h1>Export PDF</h1>
         <span flex></span>
-        <md-button  ng-click="close()">
+        <md-button  class="md-icon-button" ng-click="close()">
           <md-icon md-font-icon="fa fa-times" aria-label="Close dialog"></md-icon>
         </md-button>
       </div>
@@ -24,8 +24,10 @@
 		</form>
 
 	</div>
-	<div class="footer">
-	<md-button id="export-png" style="margin-left:80%;" ng-click="downloadLayer()"><md-icon md-font-icon="fa fa-download" aria-label="Download"></md-icon></md-button>
+	<div class="footer" layout="row" layout-align="end center" layout-padding>
+	<md-button class="md-icon-button" id="export-png" ng-click="downloadLayer()" >
+		<md-icon md-font-icon="fa fa-download" aria-label="Download"></md-icon>
+	</md-button>
 	
 </div>
    	 </md-dialog-content>

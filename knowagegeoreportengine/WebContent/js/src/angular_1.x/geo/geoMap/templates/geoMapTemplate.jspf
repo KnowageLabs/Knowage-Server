@@ -10,11 +10,11 @@
 		<div layout="row" 	style="bottom: 0; right: 0; position: absolute;">
 		<span flex></span>
 		
-		    <geo-dataset ng-if="!geoModule_template.noDatasetReport"></geo-dataset>
-			<geo-legend id="legend" ng-if="!geoModule_template.noDatasetReport" ng-show="visibility.showLegendButton" ></geo-legend>
-			<geo-distance-calculator id="calculator" ng-show="visibility.showDistanceCalculator"></geo-distance-calculator>
-			<geo-download ng-show="visibility.showDownloadButton"></geo-download>
-			<geo-save ng-show="showSaveButton==true"></geo-save>
+		    <geo-dataset ng-if="!geoModule_template.noDatasetReport" tabindex="4"></geo-dataset>
+			<geo-legend id="legend" ng-if="!geoModule_template.noDatasetReport" ng-show="visibility.showLegendButton" tabindex="4"></geo-legend>
+			<geo-distance-calculator id="calculator" ng-show="visibility.showDistanceCalculator" tabindex="4"></geo-distance-calculator>
+			<geo-download ng-show="visibility.showDownloadButton" tabindex="4"></geo-download>
+			<geo-save ng-show="showSaveButton==true" tabindex="4"></geo-save>
 			
 		</div>
 	</div>

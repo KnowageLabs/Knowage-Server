@@ -16,19 +16,27 @@
      </div>   
    </md-toolbar>
    
-     <md-dialog-content layout="column" class="mdDialogSize" >
-
-	 
-	 <div class="md-dialog-content" layout="column" style="height:90%">
-		<angular-table flex
+     <md-dialog-content class="mdDialogSize" layout-padding>
+		<table class="accessibleTable">
+			<thead>
+				<tr>
+					<th tabindex="1" ng-repeat="col in datasetColumns" scope="col">{{col.label}}</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="row in datasetRows">
+					<td tabindex="2" ng-repeat="(key,value) in row" scope="row" ng-if="key!='id'">{{value}}</td>
+				</tr>
+			</tbody>
+		</table>
+		<!--  angular-table layout-fill
 					id='geoPreviewDatasetTable'
 		            ng-model="datasetRows"
 					columns="datasetColumns" 
 					no-pagination=false
 					show-search-bar=false 
-					full-width>
+					full-width-->
 		</angular-table>	
-	</div>
 	 </md-dialog-content>
 
 </md-dialog>

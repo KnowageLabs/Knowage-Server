@@ -174,14 +174,6 @@ geo-legend  .legendBox:before {
 	left: 23px;
 }
 
-geo-distance-calculator .clearMeasure {
-	position: absolute;
-	bottom: 25px;
-	z-index: 21 !important;
-	width: 20px !important;
-	height: 20px !important;
-	min-height: 20px;
-}
 
 geo-distance-calculator .clearMeasure md-icon {
 	line-height: 19px;
