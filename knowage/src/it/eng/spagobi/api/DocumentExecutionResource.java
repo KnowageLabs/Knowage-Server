@@ -175,6 +175,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		logger.debug("IN");
 		Monitor getDocumentExecutionURLMonitor = MonitorFactory.start("Knowage.DocumentExecutionResource.getDocumentExecutionURL");
 
+		Monitor getDocumentExecutionURLIntroMonitor = MonitorFactory.start("Knowage.DocumentExecutionResource.getDocumentExecutionURL.intro");
+
 		JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
 		String label = requestVal.getString("label");
 		String role = requestVal.getString("role");
@@ -211,6 +213,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			sbiExecutionId = sbiExecutionId.replaceAll("-", "");
 		}
 		resultAsMap.put("sbiExecutionId", sbiExecutionId);
+		getDocumentExecutionURLIntroMonitor.stop();
 		try {
 			String executingRole = getExecutionRole(role);
 			// displayToolbar
@@ -327,7 +330,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 	private JSONObject buildJsonParameters(JSONObject jsonParameters, HttpServletRequest req, String role, SessionContainer permanentSession,
 			IParameterUseDAO parameterUseDAO, BIObject obj) throws JSONException, EMFUserError {
-
+		Monitor checkingsParameterMonitor = MonitorFactory.start("Knowage.DocumentExecutionResource.buildJsonParameters.checkings");
 		List<DocumentParameters> parameters = DocumentExecutionUtils.getParameters(obj, role, req.getLocale(), null);
 		for (DocumentParameters objParameter : parameters) {
 			// SETTING DEFAULT VALUE IF NO PRESENT IN JSON SUBMIT PARAMETER
@@ -381,6 +384,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			}
 
 			ParameterUse parameterUse = null;
+			checkingsParameterMonitor.stop();
 			// SUBMIT LOV SINGLE MANDATORY PARAMETER
 			Monitor lovSingleMandatoryParameterMonitor = MonitorFactory
 					.start("Knowage.DocumentExecutionResource.buildJsonParameters.singleLovMandatoryParameter");

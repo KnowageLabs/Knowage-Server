@@ -82,6 +82,8 @@ public class DocumentExecutionUtils {
 	}
 
 	public static List<DocumentParameters> getParameters(BIObject document, String executionRole, Locale locale, String modality) {
+		Monitor getParametersMonitor = MonitorFactory.start("Knowage.DocumentExecutionResource.getParameters");
+
 		List<DocumentParameters> parametersForExecution = new ArrayList<DocumentParameters>();
 		List<BIObjectParameter> parameters = document.getBiObjectParameters();
 		if (parameters != null && parameters.size() > 0) {
@@ -91,6 +93,7 @@ public class DocumentExecutionUtils {
 				parametersForExecution.add(new DocumentParameters(parameter, executionRole, locale, document));
 			}
 		}
+		getParametersMonitor.stop();
 		return parametersForExecution;
 	}
 
