@@ -97,6 +97,10 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	$scope.saveOrUpdateDataSource = function(){
 
 		delete $scope.jdbcOrJndi.type;
+		
+		if($scope.selectedDataSource.driver!=""){
+			$scope.selectedDataSource.jndi = "";
+		}	
 
 		if($scope.selectedDataSource.hasOwnProperty("dsId")){
 
@@ -105,7 +109,7 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 
 			//MODIFY DATA SOURCE
 				$scope.checkReadOnly();
-							
+						
 				sbiModule_restServices.promisePut('2.0/datasources','',angular.toJson($scope.selectedDataSource))
 				.then(function(response) {
 					console.log("[PUT]: SUCCESS!");
