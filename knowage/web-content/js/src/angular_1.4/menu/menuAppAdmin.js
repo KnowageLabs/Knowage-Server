@@ -22,7 +22,7 @@ var myApp = angular.module('menuAppAdmin', ['ngMaterial', 'sbiModule']);
 myApp.controller('menuCtrl', ['$scope','$mdDialog',
 	function ($scope,$mdDialog ) {
 		$scope.languages = [];
-		$scope.openAside = true;
+		$scope.openAside = false;
 		$scope.toggleMenu = function(){
 			$scope.openAside = !$scope.openAside;
 		}
