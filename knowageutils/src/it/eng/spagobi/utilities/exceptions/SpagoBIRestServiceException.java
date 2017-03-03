@@ -23,9 +23,19 @@ import java.util.Locale;
 
 public class SpagoBIRestServiceException extends SpagoBIRuntimeException {
 
+	private String serviceName;
 	private String localizationCode = "generic.error";
-	private Locale locale = Locale.US;
+	
+	public String getServiceName() {
+		return serviceName;
+	}
 
+	public void setServiceName(String serviceName) {
+		this.serviceName = serviceName;
+	}
+
+	private Locale locale = Locale.US;
+	
 	private static final long serialVersionUID = 7238971352468593356L;
 
 	/**
