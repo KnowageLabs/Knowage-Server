@@ -27,14 +27,20 @@
 					since the Angular now waits for that amount of time to pass the model's change (update the model after that time). 
 					@modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 				 -->
-			    <md-input-container class="searchInput" hide show-gt-sm>
+			    <md-input-container class="searchInput" hide ng-if="currentDatasetsTab!='ckanDataSet'" show-gt-sm>
 					<input 	class="workspaceSearchInput" type="text" id="searchInput" ng-model="searchInput" 
 							title="{{translate.load('sbi.workspace.mainmenu.search.tooltip')}}" focus-on="searchInput" 
 							ng-change="setSearchInput(searchInput)" ng-model-options='{ debounce: 200 }'>
 				</md-input-container>
 				
+				<md-input-container class="searchInput" hide ng-if="currentDatasetsTab=='ckanDataSet'" show-gt-sm>
+					<input 	class="workspaceSearchInput" type="text" id="ckanFilter" ng-model="ckanFilter" 
+							title="{{translate.load('sbi.workspace.mainmenu.search.tooltip')}}" focus-on="searchInput" 
+							ng-change="loadFilteredCkanDatasets(ckanFilter)" ng-model-options='{ debounce: 1000 }'>
+				</md-input-container>
+				
 				<!-- Search clear -->
-				<md-button 	class="md-icon-button" title="{{translate.load('sbi.generic.search.clear')}}" aria-label="Clear" 
+				<md-button 	class="md-icon-button"  ng-if="currentDatasetsTab!='ckanDataSet'" title="{{translate.load('sbi.generic.search.clear')}}" aria-label="Clear" 
 							ng-show=true ng-click="setSearchInput('')" hide show-gt-sm>
 					   <md-icon md-font-icon="fa fa-times"></md-icon>
 				</md-button>

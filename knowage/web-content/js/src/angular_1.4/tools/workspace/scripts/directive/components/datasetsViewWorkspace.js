@@ -54,6 +54,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     $scope.totalItemsInPreview=-1;	// modified by: danristo
     $scope.previewPaginationEnabled=true;     
     $scope.paginationDisabled = null;
+    $scope.ckanFilter = "";
     
     $scope.itemsPerPage=15;
     $scope.datasetInPreview=undefined;
@@ -919,6 +920,12 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     $scope.selectedCkanRepo={};
     $scope.ckanDatasetsList=[];
     $scope.ckanDatasetsListInitial=[];
+    
+    $scope.loadMoreCkanDatasets = function () {
+    	if($scope.selectedCkanRepo.hasOwnProperty("name")&&$scope.selectedCkanRepo.hasOwnProperty("url")){
+    		$scope.loadCkanDatasets($scope.selectedCkanRepo, $scope.newOffset+1)
+    	}
+    }
 
     /**
      * If the CKAN repository is picked by simple clicking on the combobox that contains repository targets, then we need to send
@@ -927,8 +934,12 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
      * get it from our scope.
      * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
      */
-	$scope.loadCkanDatasets=function(selectedCkanRepo) {
-		
+	$scope.loadCkanDatasets=function(selectedCkanRepo, offset) {
+		if(offset==0){
+			$scope.ckanDatasetsList = [];
+		}
+		$scope.ckanOffset = offset;
+		$scope.selectedCkanRepo = selectedCkanRepo;
 		var repo = selectedCkanRepo;
 		
 		// The implementation when the Load button is present and clicked. (danristo)
@@ -945,10 +956,85 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		params.isTech=false;
 		params.showDerivedDataset=false;
 		params.ckanDs=true;
-		//params.ckanFilter="NOFILTER";
-		params.ckanFilter="USA";
+		if($scope.ckanFilter!=undefined && $scope.ckanFilter.length>0 ){
+			params.ckanFilter=$scope.ckanFilter;
+		} else {
+			params.ckanFilter="NOFILTER";
+		}
+		
 		params.showOnlyOwner=true;
-		params.ckanOffset=0;
+		params.ckanOffset=offset;
+		params.ckanRepository=repo.url;
+		
+		config={};
+		config.params=params;
+		sbiModule_restServices.promiseGet("certificateddatasets", "","",config)
+		.then(function(response) {
+			if($scope.ckanDatasetsList.length==0){
+				angular.copy(response.data.root,$scope.ckanDatasetsList);
+			} else {
+				if(response.data.root.length==$scope.ckanDatasetsList.length){
+					$mdDialog.show(
+						      $mdDialog.alert()
+						        .clickOutsideToClose(true)
+						        .title(sbiModule_translate.load("sbi.generic.info"))
+						        .textContent(sbiModule_translate.load("sbi.mydata.ckandataset.repo.loaded"))
+						        .ariaLabel('Alert Dialog repo is loaded')
+						        .ok('OK')
+						    );
+				} else {
+					for (var i = 0; i < response.data.root.length; i++) {
+						$scope.ckanDatasetsList.push(response.data.root[i]);
+					}
+				}
+				
+			}
+            $scope.newOffset = $scope.ckanDatasetsList.length;
+            angular.copy($scope.ckanDatasetsList,$scope.ckanDatasetsListInitial);
+		},function(response){
+			
+			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+			toastr.error(response.data, sbiModule_translate.load("sbi.generic.error"), $scope.toasterConfig);
+			
+		});
+		
+		
+	}
+	}
+	
+	$scope.clearFilteredCKANDatasets = function () {
+		$scope.ckanFilter = "";
+		$scope.loadFilteredCkanDatasets("NOFILTER");
+	}
+	
+	
+	
+	$scope.loadFilteredCkanDatasets=function(filter) {
+		if($scope.selectedCkanRepo.hasOwnProperty("name")&&$scope.selectedCkanRepo.hasOwnProperty("url")){
+			
+	
+		
+		var repo = $scope.selectedCkanRepo
+		
+		// The implementation when the Load button is present and clicked. (danristo)
+//		var repo=$scope.selectedCkanRepo;
+		
+		if(repo.url==undefined){
+					
+			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+			toastr.warning(sbiModule_translate.load('sbi.workspace.dataset.ckan.selectRepo'), 
+					sbiModule_translate.load('sbi.workspace.dataset.ckan.noRepository'), $scope.toasterConfig);
+			
+		}else{
+		params={};
+		params.isTech=false;
+		params.showDerivedDataset=false;
+		params.ckanDs=true;
+		params.ckanFilter=filter;
+		
+		//params.ckanFilter="USA";
+		params.showOnlyOwner=true;
+		params.ckanOffset=$scope.ckanOffset;
 		params.ckanRepository=repo.url;
 		
 		config={};
@@ -966,6 +1052,18 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		});
 		
 		
+		}
+	} else {
+		if(filter!=""){
+			$mdDialog.show(
+				      $mdDialog.alert()
+				        .clickOutsideToClose(true)
+				        .title(sbiModule_translate.load("sbi.generic.error"))
+				        .textContent(sbiModule_translate.load("sbi.mydata.ckandataset.select.repo"))
+				        .ariaLabel('Alert Dialog Select a CKAN Repo')
+				        .ok('OK')
+				    );
+		}		 
 	}
 	}
 	

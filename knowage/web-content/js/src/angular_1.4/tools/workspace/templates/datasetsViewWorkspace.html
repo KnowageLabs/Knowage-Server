@@ -68,7 +68,6 @@
 				 	 	 <div layout="row" flex>
 				 	 	 
 					 	 	   <span flex></span>
-					 	 	  	
 					 	 	  	<md-input-container flex=30>
 					          		
 					          		<md-select ng-model="selectedCkanRepo" placeholder="{{translate.load('sbi.workspace.dataset.ckan.repository')}}">
@@ -78,13 +77,18 @@
 					    					dedicated function of our scope. 
 					    					@modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 					    				 -->
-						    			<md-option ng-value="repository" ng-repeat="repository in ckanRepos" ng-click="loadCkanDatasets(repository)">
+						    			<md-option ng-value="repository" ng-repeat="repository in ckanRepos" ng-click="loadCkanDatasets(repository,0)">
 						    				{{ repository.name }}
 					    				</md-option>
 				    				
 					  			    </md-select>
 					  			    
 					            </md-input-container>
+					            
+					            <md-button class="md-raised" ng-disabled="ckanFilter.length>0"
+					    			ng-click="loadMoreCkanDatasets()" class="md-primary">
+					      				{{translate.load("sbi.mydata.ckandataset.more");}}
+					    		</md-button>
 					            
 					            <!-- 
 					            	Instead of having a dedicated Load button next to the combo (for loading specified (picked) data source in the combobox),
