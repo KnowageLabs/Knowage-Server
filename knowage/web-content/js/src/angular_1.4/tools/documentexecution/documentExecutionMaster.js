@@ -32,7 +32,7 @@ $scope.executeSourceDocument = function() {
 		try{
 			var menuParameters = sourceDocumentExecProperties.MENU_PARAMETERS.replace(/&$/g, ''); //removes last '&' char
 			
-			var splittedMenuParams = menuParameters=='null'? [] : menuParameters.split("&");
+			var splittedMenuParams = menuParameters=='null' || menuParameters==''? [] : menuParameters.split("&");
 			
 			for(var i=0;i<splittedMenuParams.length;i++){
 				var splittedItem=splittedMenuParams[i].split("=");
@@ -63,6 +63,9 @@ $scope.executeSourceDocument = function() {
 			+ '&SBI_EXECUTION_ID=null'
 			+ '&OBJECT_NAME=' + sourceDocumentExecProperties.OBJECT_NAME
 			+ '&EDIT_MODE=' + sourceDocumentExecProperties.EDIT_MODE
+			+ '&TOOLBAR_VISIBLE=' + sourceDocumentExecProperties.TOOLBAR_VISIBLE
+			+ '&CAN_RESET_PARAMETERS=' + sourceDocumentExecProperties.CAN_RESET_PARAMETERS
+
 			/**
 			 * Getting the starting point of the document execution (JSP page from which we go to the document execution page) from
 			 * the 'documentViewer.js'. This information will be forwarded towards the 'documentExecutionNg.jsp', where it will be

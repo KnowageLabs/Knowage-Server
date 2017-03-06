@@ -147,6 +147,7 @@ public class LoginActionWeb extends AbstractBaseHttpAction {
 
 			// Propagate user profile
 			getSessionContainer().getPermanentContainer().setAttribute(IEngUserProfile.ENG_USER_PROFILE, profile);
+			getHttpRequest().getSession().setAttribute(IEngUserProfile.ENG_USER_PROFILE, profile);
 
 			// Propagate THEME if present
 			if (theme != null && theme.length() > 0) {

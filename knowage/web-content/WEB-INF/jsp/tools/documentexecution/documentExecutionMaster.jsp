@@ -72,14 +72,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				'EXEC_FROM': '<%=request.getParameter("EXEC_FROM")%>',
 				'COCKPIT_PARAMETER' : '<%=request.getParameter("COCKPIT_PARAMETER")%>',
 				'IS_FROM_DOCUMENT_WIDGET' : '<%=request.getParameter("IS_FROM_DOCUMENT_WIDGET")%>',
+                'TOOLBAR_VISIBLE' : '<%=request.getParameter("TOOLBAR_VISIBLE")%>',
+                'CAN_RESET_PARAMETERS' : '<%=request.getParameter("CAN_RESET_PARAMETERS")%>',
+               
 
 		};
 		
 		
-		<%if (request.getParameter("SELECTED_ROLE") != null
+		<%
+		if (request.getParameter("SELECTED_ROLE") != null
 					&& !request.getParameter("SELECTED_ROLE").equalsIgnoreCase("")) {%>
 			obj.SELECTED_ROLE = '<%=request.getParameter("SELECTED_ROLE")%>';
-<%}%>
+        <%} else if (request.getParameter("ROLE") != null
+                && !request.getParameter("ROLE").equalsIgnoreCase("")) {%>
+                obj.SELECTED_ROLE = '<%=request.getParameter("ROLE")%>';
+        <%}%>
+        
 	return obj;
 					});
 </script>
