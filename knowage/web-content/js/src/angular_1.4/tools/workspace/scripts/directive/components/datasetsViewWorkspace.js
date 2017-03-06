@@ -55,6 +55,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     $scope.previewPaginationEnabled=true;     
     $scope.paginationDisabled = null;
     $scope.ckanFilter = "";
+    $scope.newOffset=0;
     
     $scope.itemsPerPage=15;
     $scope.datasetInPreview=undefined;
@@ -923,7 +924,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     
     $scope.loadMoreCkanDatasets = function () {
     	if($scope.selectedCkanRepo.hasOwnProperty("name")&&$scope.selectedCkanRepo.hasOwnProperty("url")){
-    		$scope.loadCkanDatasets($scope.selectedCkanRepo, $scope.newOffset+1)
+    		$scope.loadCkanDatasets($scope.selectedCkanRepo, $scope.newOffset);
     	}
     }
 
@@ -937,6 +938,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	$scope.loadCkanDatasets=function(selectedCkanRepo, offset) {
 		if(offset==0){
 			$scope.ckanDatasetsList = [];
+			 $scope.newOffset = 0;
 		}
 		$scope.ckanOffset = offset;
 		$scope.selectedCkanRepo = selectedCkanRepo;
@@ -989,7 +991,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 				}
 				
 			}
-            $scope.newOffset = $scope.ckanDatasetsList.length;
+            $scope.newOffset = $scope.newOffset + 200;
             angular.copy($scope.ckanDatasetsList,$scope.ckanDatasetsListInitial);
 		},function(response){
 			
