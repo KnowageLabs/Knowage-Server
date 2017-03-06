@@ -16,12 +16,12 @@
         	<md-icon md-font-icon="fa fa-times"></md-icon>
       	</md-button>	
 	</div>
-	 <table class="fakeTable">
+	 <!--  table class="fakeTable">
 	 	<thead>
 	 		<tr ng-include="'cockpitHeadThTemplate.html'">
 	 		</tr>
 	 	</thead>
-	 </table>
+	 </table-->
 	 
 	<div flex  id="angularTableContentBox">
 		<table class="principalTable" >
@@ -97,7 +97,7 @@
 	ng-class="{'selectedRowItem': (highlightsSelectedItem==true && isRowSelected($$hashKey) )}"  class="animate-repeat-tablerow"
  	ng-if="isVisibleRowFunction(row)"
 	ng-style="{'height':tableStyle.autoRowsHeight? 0 :tableStyle.rowsHeight}">
-	<td ng-repeat="column in tableColumns" ng-switch="column.static==true? '--STATIC--' : column.name" sglclick="bulkSelect($event,$parent.$index,column,row)" ng-dblclick="clickItem(row,column.name,getColumnValue(row,column.name),$event,$parent.$index)" context-menu  data-target='{{id}}TableContextMenu-{{$parent.$index}}-{{$index}}' class="{{column.customRecordsClass}} " 
+	<td ng-repeat="column in tableColumns" ng-switch="column.static==true? '--STATIC--' : column.name" sglclick="bulkSelect($event,$parent.$index,column,row,getColumnValue(row,column.name))" ng-dblclick="clickItem(row,column.name,getColumnValue(row,column.name),$event,$parent.$index)" context-menu  data-target='{{id}}TableContextMenu-{{$parent.$index}}-{{$index}}' class="{{column.customRecordsClass}} " 
 		ng-class="{ 'highlight': isCellSelected($parent.$index,column), 'expanded' : expanded,'tableDragBar':column.name=='--DRAG_AND_DROP--'}" ng-style="column.style==undefined ? '' :  getDynamicValue(column.style,row,column,$parent.$index)" >
 		<div ng-switch-when="--STATIC--" ng-if="getDynamicValue(column.style,row,column,'-99') && getDynamicValue(column.style,row,column,'-99') != 0" layout="row" layout-align="start center">
 			<span  ng-if="column.template==undefined" class="textEllipsis" ng-class="getChangedValueStyle(row,column.name)" ng-bind="row[column.name]" >
