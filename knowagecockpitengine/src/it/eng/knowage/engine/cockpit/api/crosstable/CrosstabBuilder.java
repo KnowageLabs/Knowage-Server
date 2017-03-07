@@ -69,16 +69,16 @@ public class CrosstabBuilder {
 		}
 	}
 
-	public String getSortedCrosstab(Map<Integer, NodeComparator> columnsSortKeysMap, Map<Integer, NodeComparator> rowsSortKeysMap, Integer myGlobalId)
-			throws JSONException {
+	public String getSortedCrosstab(Map<Integer, NodeComparator> columnsSortKeysMap, Map<Integer, NodeComparator> rowsSortKeysMap,
+			Map<Integer, NodeComparator> measuresSortKeysMap, Integer myGlobalId) throws JSONException {
 		logger.debug("IN");
 
-		return createCrossTable(crosstabDefinition, jsonDataSource, columnsSortKeysMap, rowsSortKeysMap, myGlobalId);
+		return createCrossTable(crosstabDefinition, jsonDataSource, columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap, myGlobalId);
 
 	}
 
 	private String createCrossTable(String jsonData, JSONArray jsonDataSource, Map<Integer, NodeComparator> columnsSortKeysMap,
-			Map<Integer, NodeComparator> rowsSortKeysMap, Integer myGlobalId) {
+			Map<Integer, NodeComparator> rowsSortKeysMap, Map<Integer, NodeComparator> measuresSortKeysMap, Integer myGlobalId) {
 
 		CrossTab crossTab;
 		CrosstabDefinition crosstabDefinition = null;
@@ -105,7 +105,8 @@ public class CrosstabBuilder {
 
 			crosstabDefinition = crosstabJSONDeserializer.deserialize(crosstabDefinitionJSON);
 
-			crossTab = new CrossTab(jsonDataSource, this.jsonMetaData, crosstabDefinition, null, columnsSortKeysMap, rowsSortKeysMap, myGlobalId);
+			crossTab = new CrossTab(jsonDataSource, this.jsonMetaData, crosstabDefinition, null, columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap,
+					myGlobalId);
 
 			htmlCode = crossTab.getHTMLCrossTab(locale);//
 

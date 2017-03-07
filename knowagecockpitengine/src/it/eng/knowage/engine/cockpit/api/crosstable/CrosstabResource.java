@@ -110,6 +110,7 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 		// the sort options
 		Map<String, Object> columnsSortKeys;
 		Map<String, Object> rowsSortKeys;
+		Map<String, Object> measuresSortKeys;
 		// the id of the crosstab in the client configuration array
 		Integer myGlobalId;
 
@@ -117,9 +118,11 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 			JSONObject object = RestUtilities.readBodyAsJSONObject(servletRequest);
 			JSONObject columnsSortKeysJo = object.optJSONObject("columnsSortKeys");
 			JSONObject rowsSortKeysJo = object.optJSONObject("rowsSortKeys");
+			JSONObject measuresSortKeysJo = object.optJSONObject("measuresSortKeys");
 			myGlobalId = object.optInt("myGlobalId");
 			columnsSortKeys = JSONUtils.toMap(columnsSortKeysJo);
 			rowsSortKeys = JSONUtils.toMap(rowsSortKeysJo);
+			measuresSortKeys = JSONUtils.toMap(measuresSortKeysJo);
 		} catch (Exception e) {
 			logger.error("Error getting the sort info from the request");
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", e);
@@ -127,9 +130,10 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 
 		Map<Integer, NodeComparator> columnsSortKeysMap = toComparatorMap(columnsSortKeys);
 		Map<Integer, NodeComparator> rowsSortKeysMap = toComparatorMap(rowsSortKeys);
+		Map<Integer, NodeComparator> measuresSortKeysMap = toComparatorMap(measuresSortKeys);
 
 		try {
-			return createCrossTable(crosstabDefinition, datasetLabel, columnsSortKeysMap, rowsSortKeysMap, myGlobalId);
+			return createCrossTable(crosstabDefinition, datasetLabel, columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap, myGlobalId);
 		} catch (Exception e) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", e);
 		} finally {
@@ -146,6 +150,7 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 		// the sort options
 		Map<String, Object> columnsSortKeys;
 		Map<String, Object> rowsSortKeys;
+		Map<String, Object> measuresSortKeys;
 
 		// the id of the crosstab in the client configuration array
 		Integer myGlobalId;
@@ -153,6 +158,7 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 		try {
 
 			JSONObject request = RestUtilities.readBodyAsJSONObject(servletRequest);
+
 			JSONArray jsonData = request.getJSONArray("jsonData");
 
 			if (jsonData.length() == 0)
@@ -170,17 +176,20 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 
 			JSONObject columnsSortKeysJo = sortOptions.optJSONObject("columnsSortKeys");
 			JSONObject rowsSortKeysJo = sortOptions.optJSONObject("rowsSortKeys");
+			JSONObject measuresSortKeysJo = sortOptions.optJSONObject("measuresSortKeys");
 			myGlobalId = sortOptions.optInt("myGlobalId");
 			columnsSortKeys = JSONUtils.toMap(columnsSortKeysJo);
 			rowsSortKeys = JSONUtils.toMap(rowsSortKeysJo);
+			measuresSortKeys = JSONUtils.toMap(measuresSortKeysJo);
 
 			Map<Integer, NodeComparator> columnsSortKeysMap = toComparatorMap(columnsSortKeys);
 			Map<Integer, NodeComparator> rowsSortKeysMap = toComparatorMap(rowsSortKeys);
+			Map<Integer, NodeComparator> measuresSortKeysMap = toComparatorMap(measuresSortKeys);
 			JSONObject styleJSON = (!request.isNull("style") ? request.getJSONObject("style") : new JSONObject());
 			CrosstabBuilder builder = new CrosstabBuilder(getLocale(), crosstabDefinition, jsonData, request.getJSONObject("metadata"), styleJSON);
 
 			JSONObject ret = new JSONObject();
-			ret.put("htmlTable", builder.getSortedCrosstab(columnsSortKeysMap, rowsSortKeysMap, myGlobalId));
+			ret.put("htmlTable", builder.getSortedCrosstab(columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap, myGlobalId));
 
 			return ret.toString();
 
@@ -195,22 +204,29 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 		Map<Integer, NodeComparator> sortKeys = new HashMap<Integer, NodeComparator>();
 
 		Iterator<String> mapIter = sortKeyMap.keySet().iterator();
-
+		NodeComparator nc = new NodeComparator();
+		Integer key = null;
 		while (mapIter.hasNext()) {
 			String field = mapIter.next();
-			Object order = sortKeyMap.get(field);
-			if (order.toString().equals("-1")) {
-				sortKeys.put(new Integer(field), DESC);
+			Object fieldValue = sortKeyMap.get(field);
+
+			if (field.equalsIgnoreCase("parentValue")) {
+				nc.setParentValue(fieldValue.toString());
+			} else if (field.equalsIgnoreCase("measureLabel")) {
+				nc.setMeasureLabel(fieldValue.toString());
 			} else {
-				sortKeys.put(new Integer(field), ASC);
+				key = new Integer(field);
+				nc.setDirection(Integer.valueOf(fieldValue.toString()));
 			}
 		}
+		if (key != null)
+			sortKeys.put(key, nc);
 
 		return sortKeys;
 	}
 
 	private String createCrossTable(String jsonData, String datasetLabel, Map<Integer, NodeComparator> columnsSortKeysMap,
-			Map<Integer, NodeComparator> rowsSortKeysMap, Integer myGlobalId) {
+			Map<Integer, NodeComparator> rowsSortKeysMap, Map<Integer, NodeComparator> measuresSortKeysMap, Integer myGlobalId) {
 
 		CrossTab crossTab;
 		IDataStore valuesDataStore = null;
@@ -285,13 +301,13 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 				// load the crosstab for a crosstab widget (with headers, sum,
 				// ...)
 				if (crosstabDefinition.isStatic()) {
-					crossTab = new CrossTab(valuesDataStore, crosstabDefinition, null, columnsSortKeysMap, rowsSortKeysMap, myGlobalId);
+					crossTab = new CrossTab(valuesDataStore, crosstabDefinition, null, columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap, myGlobalId);
 				} else {
-					crossTab = new CrossTab(valuesDataStore, crosstabDefinition, null, columnsSortKeysMap, rowsSortKeysMap, myGlobalId);
+					crossTab = new CrossTab(valuesDataStore, crosstabDefinition, null, columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap, myGlobalId);
 				}
 			} else {
 				// load the crosstab data structure for all other widgets
-				crossTab = new CrossTab(valuesDataStore, crosstabDefinition, null, columnsSortKeysMap, rowsSortKeysMap, myGlobalId);
+				crossTab = new CrossTab(valuesDataStore, crosstabDefinition, null, columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap, myGlobalId);
 			}
 
 			htmlCode = crossTab.getHTMLCrossTab(this.getLocale());//

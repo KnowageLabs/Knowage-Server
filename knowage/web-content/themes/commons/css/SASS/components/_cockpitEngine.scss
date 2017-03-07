@@ -610,23 +610,32 @@
 							table{
 								table-layout:auto;
 								display: initial;
-								.crosstab-header-text{
-									text-align: center;
-									font-size: $headerFontSize;
-									color: black;
-									font-weight: 600;
-								}
-								.sortIcon{
-									line-height: 33px;
-									padding: 0!important;
-								}
 							}
+							.crosstab-header-text{
+								font-family: Roboto,"Helvetica Neue",sans-serif;
+								text-align: center;
+								font-size: $headerFontSize;
+								color: black;
+								font-weight: 600;								
+							}
+							.sortIcon{
+								line-height: 33px;
+								padding: 0!important;
+							}
+							/*}*/
 						}
 						&.member{
 							text-align: center;
 							font-size: $baseFontSize;
 							color: $baseColor;
 							font-weight: 600;
+							.crosstab-header-text{
+								font-family: Roboto,"Helvetica Neue",sans-serif;
+								text-align: center;
+								font-size: $headerFontSize;
+								font-weight: 600;
+								font-style:normal !important;								
+							}
 						}
 						&.data{
 							text-align: center;
@@ -642,7 +651,7 @@
 							color:white;
 						}
 						&.crosstab-header-text {
-							border-top:none;
+							border-top:none;							
 						}
 						&.sortIcon {
 							border-top: none;

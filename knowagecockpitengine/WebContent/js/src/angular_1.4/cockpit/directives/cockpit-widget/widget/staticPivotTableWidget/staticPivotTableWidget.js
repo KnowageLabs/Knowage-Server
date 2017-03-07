@@ -596,22 +596,51 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 	}
 
 	
-	$scope.orderPivotTable=function(column, axis, globalId){
+	$scope.orderPivotTable=function(column, axis, globalId, measureLabel, parentValue){
 		if($scope.ngModel.content.sortOptions==undefined){
 			$scope.ngModel.content.sortOptions={};
 		}
 		var axisConfig;
 		if(axis==1){
-			if($scope.ngModel.content.sortOptions.columnsSortKeys==undefined){
-				$scope.ngModel.content.sortOptions.columnsSortKeys={}
-			}
-			axisConfig = $scope.ngModel.content.sortOptions.columnsSortKeys;
+			if (measureLabel){
+				var previousSelection = $scope.getPreviousSelection($scope.ngModel.content.sortOptions.measuresSortKeys);
+				if($scope.ngModel.content.sortOptions.measuresSortKeys==undefined || previousSelection!=column){
+					$scope.ngModel.content.sortOptions.measuresSortKeys={}
+				}	
+				$scope.ngModel.content.sortOptions.measuresSortKeys.parentValue = parentValue;
+				$scope.ngModel.content.sortOptions.measuresSortKeys.measureLabel = measureLabel;
+				axisConfig = $scope.ngModel.content.sortOptions.measuresSortKeys;
+			}else{
+				var previousSelection = $scope.getPreviousSelection($scope.ngModel.content.sortOptions.columnsSortKeys);
+				if($scope.ngModel.content.sortOptions.columnsSortKeys==undefined || previousSelection!=column){
+					$scope.ngModel.content.sortOptions.columnsSortKeys={}
+				}
+				//reset measure ordering
+				if($scope.ngModel.content.sortOptions.measuresSortKeys!=undefined ){
+					$scope.ngModel.content.sortOptions.measuresSortKeys=undefined;
+				}
+				axisConfig = $scope.ngModel.content.sortOptions.columnsSortKeys;
+			}			
 		}else{
-			if($scope.ngModel.content.sortOptions.rowsSortKeys==undefined){
-				$scope.ngModel.content.sortOptions.rowsSortKeys={}
+			if (measureLabel){
+				var previousSelection = $scope.getPreviousSelection($scope.ngModel.content.sortOptions.measuresSortKeys);
+				if($scope.ngModel.content.sortOptions.measuresSortKeys==undefined || previousSelection!=column){
+					$scope.ngModel.content.sortOptions.measuresSortKeys={}
+				}				
+				$scope.ngModel.content.sortOptions.measuresSortKeys.parentValue = parentValue;
+				$scope.ngModel.content.sortOptions.measuresSortKeys.measureLabel = measureLabel;
+				axisConfig = $scope.ngModel.content.sortOptions.measuresSortKeys;
+			}else{
+				var previousSelection = $scope.getPreviousSelection($scope.ngModel.content.sortOptions.rowsSortKeys);
+				if($scope.ngModel.content.sortOptions.rowsSortKeys==undefined || previousSelection!=column){
+					$scope.ngModel.content.sortOptions.rowsSortKeys={}
+				}
+				//reset measure ordering
+				if($scope.ngModel.content.sortOptions.measuresSortKeys!=undefined ){
+					$scope.ngModel.content.sortOptions.measuresSortKeys=undefined;
+				}
+				axisConfig = $scope.ngModel.content.sortOptions.rowsSortKeys;
 			}
-			 
-			axisConfig = $scope.ngModel.content.sortOptions.rowsSortKeys;
 		}
 
 		var direction = axisConfig[column];
@@ -623,6 +652,19 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 		axisConfig[column] = direction;
 		
 		$scope.refreshWidget();
+	}
+	
+	$scope.getPreviousSelection = function (keys){
+		var toReturn = undefined;
+		
+		if(keys!=undefined){
+			for (var m in keys){
+				toReturn = m;
+				break;
+			}
+		}
+			
+		return toReturn;
 	}
 	
 	

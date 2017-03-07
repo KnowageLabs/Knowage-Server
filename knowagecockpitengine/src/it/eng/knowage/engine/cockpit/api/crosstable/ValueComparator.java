@@ -19,51 +19,27 @@ package it.eng.knowage.engine.cockpit.api.crosstable;
 
 import java.util.Comparator;
 
-/**
- * @authors Alberto Ghedin (alberto.ghedin@eng.it)
- *
- */
-
-public class NodeComparator implements Comparator<Node> {
+public class ValueComparator implements Comparator<Double> {
 
 	private int direction;
-	private String parentValue;
-	private String measureLabel;
 
-	public NodeComparator() {
+	public ValueComparator() {
 		this.direction = 1; // default
-		this.parentValue = null;
-		this.measureLabel = null;
 	}
 
-	public NodeComparator(int direction, String parentValue, String measureLabel) {
+	public ValueComparator(int direction) {
 		this.direction = direction;
-		this.parentValue = parentValue;
-		this.measureLabel = measureLabel;
-	}
-
-	public NodeComparator(int direction, String parentValue) {
-		this.direction = direction;
-		this.parentValue = parentValue;
-	}
-
-	public NodeComparator(int direction) {
-		this.direction = direction;
-		this.parentValue = null;
-		this.measureLabel = null;
 	}
 
 	@Override
-	public int compare(Node arg0, Node arg1) {
+	public int compare(Double arg0, Double arg1) {
 		try {
 			// compares only on values
-			Float arg0Value = new Float(arg0.getValue());
-			Float arg1Value = new Float(arg1.getValue());
-			return direction * arg0Value.compareTo(arg1Value);
+			return direction * arg0.compareTo(arg1);
 		} catch (Exception e) {
 			// if its not possible to convert the values in float, consider them
 			// as strings
-			return direction * arg0.getValue().compareTo(arg1.getValue());
+			return direction * arg0.compareTo(arg1);
 		}
 	}
 
@@ -73,22 +49,6 @@ public class NodeComparator implements Comparator<Node> {
 
 	public void setDirection(int dir) {
 		this.direction = dir;
-	}
-
-	public String getParentValue() {
-		return parentValue;
-	}
-
-	public void setParentValue(String value) {
-		this.parentValue = value;
-	}
-
-	public String getMeasureLabel() {
-		return measureLabel;
-	}
-
-	public void setMeasureLabel(String label) {
-		this.measureLabel = label;
 	}
 
 }

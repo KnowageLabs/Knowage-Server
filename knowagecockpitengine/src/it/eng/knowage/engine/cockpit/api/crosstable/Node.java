@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -31,7 +31,7 @@ import org.json.JSONObject;
 
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
- * 
+ *
  */
 public class Node implements Cloneable, Comparable<Node> {
 	public static final String CROSSTAB_NODE_JSON_CHILDS = "node_childs";
@@ -76,6 +76,11 @@ public class Node implements Cloneable, Comparable<Node> {
 		return description;
 	}
 
+	public Node getParentNode() {
+		return this.fatherNode;
+
+	}
+
 	public List<Node> getChilds() {
 		return childs;
 	}
@@ -92,6 +97,17 @@ public class Node implements Cloneable, Comparable<Node> {
 		}
 	}
 
+	public void addOrderedChild(Node child, Comparator<Node> comp) {
+		childs.add(child);
+
+		if (childs != null) {
+			if (comp == null)
+				Collections.sort(childs);
+			else
+				Collections.sort(childs, comp);
+		}
+	}
+
 	public void addChild(Node child) {
 		childs.add(child);
 	}
@@ -102,7 +118,7 @@ public class Node implements Cloneable, Comparable<Node> {
 
 	/**
 	 * Get the number of leafs in the tree
-	 * 
+	 *
 	 * @return
 	 */
 	public int getLeafsNumber() {
@@ -119,7 +135,7 @@ public class Node implements Cloneable, Comparable<Node> {
 
 	/**
 	 * Serialize the node and the subtree
-	 * 
+	 *
 	 * @return
 	 * @throws JSONException
 	 */
@@ -177,7 +193,7 @@ public class Node implements Cloneable, Comparable<Node> {
 
 	/**
 	 * return the list of nodes of the passed level
-	 * 
+	 *
 	 * @param level
 	 * @return
 	 */
@@ -197,11 +213,34 @@ public class Node implements Cloneable, Comparable<Node> {
 	}
 
 	/**
-	 * Returns the depth level of the node: root is depth 0, its children are
-	 * depth 1 and so on...
-	 * 
-	 * @return the depth level of the node: root is depth 0, its children are
-	 *         depth 1 and so on...
+	 * set the list of nodes of the passed level
+	 *
+	 * @param level
+	 * @param nodes
+	 */
+	// public void setLevel(int level, List<Node> nodes) {
+	//
+	// List<Node> oldNodes = childs.getLevel(level);
+	// for (int i = 0; i < childs.size(); i++) {
+	// nodes.addAll(childs.get(i).getLevel(level - 1));
+	// }
+	//
+	// if (level == 0) {
+	// nodes.add(this);
+	// } else {
+	// if (childs.size() == 0) {
+	// return null;
+	// }
+	// for (int i = 0; i < childs.size(); i++) {
+	// nodes.addAll(childs.get(i).getLevel(level - 1));
+	// }
+	// }
+	// }
+
+	/**
+	 * Returns the depth level of the node: root is depth 0, its children are depth 1 and so on...
+	 *
+	 * @return the depth level of the node: root is depth 0, its children are depth 1 and so on...
 	 */
 	public int getDistanceFromRoot() {
 		if (this.distanceFromRoot == null) {
@@ -215,13 +254,11 @@ public class Node implements Cloneable, Comparable<Node> {
 	}
 
 	/**
-	 * Returns the level distance between the node and its leaves (it is assumed
-	 * that the tree is balanced, therefore every leaf has the same distance to
-	 * this node). If the node is a leaf, 0 is returned.
-	 * 
-	 * @return the level distance between the node and its leaves (it is assumed
-	 *         that the tree is balanced, therefore every leaf has the same
-	 *         distance to this node). If the node is a leaf, 0 is returned.
+	 * Returns the level distance between the node and its leaves (it is assumed that the tree is balanced, therefore every leaf has the same distance to this
+	 * node). If the node is a leaf, 0 is returned.
+	 *
+	 * @return the level distance between the node and its leaves (it is assumed that the tree is balanced, therefore every leaf has the same distance to this
+	 *         node). If the node is a leaf, 0 is returned.
 	 */
 	public int getDistanceFromLeaves() {
 		if (this.getChilds() == null || this.getChilds().isEmpty()) {
@@ -233,7 +270,7 @@ public class Node implements Cloneable, Comparable<Node> {
 
 	/**
 	 * Return the list of leafs of the subtree with this node as radix
-	 * 
+	 *
 	 * @return
 	 */
 	public List<Node> getLeafs() {
@@ -267,8 +304,7 @@ public class Node implements Cloneable, Comparable<Node> {
 	}
 
 	/**
-	 * Remove this node from the tree.. IThe fathers must be valued for all the
-	 * tree
+	 * Remove this node from the tree.. IThe fathers must be valued for all the tree
 	 */
 	public void removeNodeFromTree() {
 		if (fatherNode != null) {
@@ -324,7 +360,7 @@ public class Node implements Cloneable, Comparable<Node> {
 
 	/**
 	 * For test
-	 * 
+	 *
 	 * @param height
 	 * @param branch
 	 */
@@ -382,9 +418,8 @@ public class Node implements Cloneable, Comparable<Node> {
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Comparable#compareTo(java.lang.Object) order always for
-	 * value
+	 *
+	 * @see java.lang.Comparable#compareTo(java.lang.Object) order always for value
 	 */
 	@Override
 	public int compareTo(Node arg0) {

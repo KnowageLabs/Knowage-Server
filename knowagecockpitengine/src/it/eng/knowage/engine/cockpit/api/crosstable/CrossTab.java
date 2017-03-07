@@ -34,9 +34,11 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -76,16 +78,19 @@ public class CrossTab {
 	public static final String TOTAL = "Total";
 	public static final String SUBTOTAL = "SubTotal";
 
-	private static final String PATH_SEPARATOR = "_S_";
+	public static final String PATH_SEPARATOR = "_S_";
 	// private static final String DATA_MATRIX_NA = "NA";
 	private static final String DATA_MATRIX_NA = "";
 	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
 	private static final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+	private static final NodeComparator ASC = new NodeComparator(1);
+	private static final NodeComparator DESC = new NodeComparator(-1);
 
 	private static Logger logger = Logger.getLogger(CrossTab.class);
 
 	private Node columnsRoot;
 	private Node rowsRoot;
+
 	String[][] dataMatrix;
 	private JSONObject config;
 	private List<MeasureInfo> measures;
@@ -106,6 +111,7 @@ public class CrossTab {
 	// used to sort the rows/columns
 	private Map<Integer, NodeComparator> columnsSortKeysMap;
 	private Map<Integer, NodeComparator> rowsSortKeysMap;
+	private Map<Integer, NodeComparator> measuresSortKeysMap;
 
 	public enum CellType {
 		DATA("data"), CF("cf"), SUBTOTAL("partialsum"), TOTAL("totals");
@@ -140,10 +146,10 @@ public class CrossTab {
 	 *            : array of JSONObjects the CF
 	 */
 	public CrossTab(IDataStore dataStore, CrosstabDefinition crosstabDefinition, JSONArray calculateFields, Map<Integer, NodeComparator> columnsSortKeysMap,
-			Map<Integer, NodeComparator> rowsSortKeysMap, Integer myGlobalId) throws JSONException {
-		this(dataStore, crosstabDefinition, columnsSortKeysMap, rowsSortKeysMap);
+			Map<Integer, NodeComparator> rowsSortKeysMap, Map<Integer, NodeComparator> measuresSortKeysMap, Integer myGlobalId) throws JSONException {
+		this(dataStore, crosstabDefinition, columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap);
 
-		init(crosstabDefinition, calculateFields, columnsSortKeysMap, rowsSortKeysMap, myGlobalId);
+		init(crosstabDefinition, calculateFields, columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap, myGlobalId);
 	}
 
 	/**
@@ -159,14 +165,15 @@ public class CrossTab {
 	 *            : array of JSONObjects the CF
 	 */
 	public CrossTab(JSONArray datastore, JSONObject datastoreMetadata, CrosstabDefinition crosstabDefinition, JSONArray calculateFields,
-			Map<Integer, NodeComparator> columnsSortKeysMap, Map<Integer, NodeComparator> rowsSortKeysMap, Integer myGlobalId) throws JSONException {
-		this(datastore, datastoreMetadata, crosstabDefinition, columnsSortKeysMap, rowsSortKeysMap);
+			Map<Integer, NodeComparator> columnsSortKeysMap, Map<Integer, NodeComparator> rowsSortKeysMap, Map<Integer, NodeComparator> measuresSortKeysMap,
+			Integer myGlobalId) throws JSONException {
+		this(datastore, datastoreMetadata, crosstabDefinition, columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap);
 
-		init(crosstabDefinition, calculateFields, columnsSortKeysMap, rowsSortKeysMap, myGlobalId);
+		init(crosstabDefinition, calculateFields, columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap, myGlobalId);
 	}
 
 	private void init(CrosstabDefinition crosstabDefinition, JSONArray calculateFields, Map<Integer, NodeComparator> columnsSortKeysMap,
-			Map<Integer, NodeComparator> rowsSortKeysMap, Integer myGlobalId) throws JSONException {
+			Map<Integer, NodeComparator> rowsSortKeysMap, Map<Integer, NodeComparator> measuresSortKeysMap, Integer myGlobalId) throws JSONException {
 
 		this.myGlobalId = myGlobalId;
 
@@ -198,7 +205,8 @@ public class CrossTab {
 	 *            : the definition of the crossTab
 	 */
 	public CrossTab(JSONArray dataStoredata, JSONObject datastoreMetadata, CrosstabDefinition crosstabDefinition,
-			Map<Integer, NodeComparator> columnsSortKeysMap, Map<Integer, NodeComparator> rowsSortKeysMap) throws JSONException {
+			Map<Integer, NodeComparator> columnsSortKeysMap, Map<Integer, NodeComparator> rowsSortKeysMap, Map<Integer, NodeComparator> measuresSortKeysMap)
+			throws JSONException {
 		JSONObject valueRecord;
 		String rowPath;
 		String columnPath;
@@ -217,9 +225,11 @@ public class CrossTab {
 
 		this.columnsSortKeysMap = columnsSortKeysMap;
 		this.rowsSortKeysMap = rowsSortKeysMap;
+		this.measuresSortKeysMap = measuresSortKeysMap;
 
 		List<String> rowCordinates = new ArrayList<String>();
 		List<String> columnCordinates = new ArrayList<String>();
+		List<String> measuresCordinates = new ArrayList<String>();
 		List<String> data = new ArrayList<String>();
 
 		columnsRoot = new Node("rootC");
@@ -272,6 +282,7 @@ public class CrossTab {
 		int cellCount = 0;
 		int actualRows = 0;
 		int actualColumns = 0;
+		// counts the cell number
 		for (index = 0; index < dataStoredata.length() && (cellLimit <= 0 || cellCount < cellLimit); index++) {
 			valueRecord = dataStoredata.getJSONObject(index);
 
@@ -285,9 +296,6 @@ public class CrossTab {
 		columnsRoot.updateFathers();
 		rowsRoot.updateFathers();
 
-		columnsRoot.orderedSubtree(columnsSortKeysMap);
-		rowsRoot.orderedSubtree(rowsSortKeysMap);
-
 		if (index < dataStoredata.length()) {
 			logger.debug("Crosstab cells number limit exceeded");
 			Node completeColumnsRoot = new Node("rootCompleteC");
@@ -298,6 +306,10 @@ public class CrossTab {
 			}
 			columnsOverflow = columnsRoot.getLeafsNumber() < completeColumnsRoot.getLeafsNumber();
 		}
+
+		List<String> columnsSpecification = new ArrayList();
+		List<String> rowsSpecification = new ArrayList();
+		Map measureToOrderMap = new LinkedHashMap();
 
 		for (index = 0; index < dataStoredata.length(); index++) {
 			valueRecord = dataStoredata.getJSONObject(index);
@@ -327,17 +339,80 @@ public class CrossTab {
 				}
 				rowPath = rowPath + PATH_SEPARATOR + valueStr.toString();
 			}
-
+			// defines array of data in according to coordinate:
 			for (int i = 0; i < measuresNameList.size(); i++) {
+				// apply logic for measure ordering if it's required
+				if (measuresSortKeysMap.size() > 0) {
+					for (Map.Entry<Integer, NodeComparator> entry : measuresSortKeysMap.entrySet()) {
+						Integer idx = getColumnIndex(entry.getValue().getMeasureLabel(), measuresHeaderList);
+						if (idx >= 0) {
+							String colName = measuresNameList.get(idx);
+							Double value = Double.valueOf(String.valueOf(valueRecord.get(colName)));
+							String[] columnPathArray = columnPath.trim().split(PATH_SEPARATOR);
+							String[] entryParents = measuresSortKeysMap.get(entry.getKey()).getParentValue().split(PATH_SEPARATOR);
+							// add value to order only if parents are correct (usefull for deep levels)
+							if (columnPathArray != null && entryParents != null && Arrays.deepEquals(columnPathArray, entryParents)) {
+								String valueLbl = rowPath + columnPath + PATH_SEPARATOR + colName;
+								measureToOrderMap.put(valueLbl, value);
+							}
+						}
+					}
+				}
 				String measure = measuresNameList.get(i);
 				columnCordinates.add(columnPath);
 				rowCordinates.add(rowPath);
+				measuresCordinates.add(rowPath + columnPath + PATH_SEPARATOR + getStringValue(valueRecord.get(measure)));
 				data.add("" + getStringValue(valueRecord.get(measure)));
 			}
 		}
 
-		List<String> columnsSpecification = getLeafsPathList(columnsRoot);
-		List<String> rowsSpecification = getLeafsPathList(rowsRoot);
+		// measure sort has priority on columns and rows
+		if (measuresSortKeysMap.size() > 0) {
+			Node orderedColumnsRoot = new Node("rootC");
+			Node orderedRowsRoot = new Node("rootR");
+
+			Map<String, Double> orderedMeasures = sortMeasures(measuresSortKeysMap, measureToOrderMap, rowsCount, columnsCount, actualRows, actualColumns);
+			for (String key : orderedMeasures.keySet()) {
+
+				int nodePosition;
+				Object[] measureInfo = key.split(PATH_SEPARATOR);
+				if (measuresOnColumns) {
+					Node nodeToCheck = orderedRowsRoot;
+					// update paths order and coordinates for rows
+					for (int r = 0; r < rowsCount; r++) {
+						Node node = new Node(measureInfo[r + 1].toString());
+
+						nodePosition = nodeToCheck.getChilds().indexOf(node);
+						if (nodePosition < 0) {
+							nodeToCheck.addChild(node);
+							nodeToCheck = node;
+						} else {
+							nodeToCheck = nodeToCheck.getChilds().get(nodePosition);
+						}
+					}
+
+				} else {
+					// update paths order and coordinates for columns
+					Node n = new Node(measureInfo[2].toString(), measureInfo[2].toString());
+					orderedColumnsRoot.addChild(n);
+				}
+			}
+			if (orderedRowsRoot.getChilds().size() > 0)
+				rowsRoot = orderedRowsRoot;
+			else
+				rowsRoot.orderedSubtree(rowsSortKeysMap);
+
+			if (orderedColumnsRoot.getChilds().size() > 0)
+				columnsRoot = orderedColumnsRoot;
+			else
+				columnsRoot.orderedSubtree(columnsSortKeysMap);
+		} else {
+			columnsRoot.orderedSubtree(columnsSortKeysMap);
+			rowsRoot.orderedSubtree(rowsSortKeysMap);
+		}
+
+		columnsSpecification = getLeafsPathList(columnsRoot);
+		rowsSpecification = getLeafsPathList(rowsRoot);
 
 		if (measuresOnColumns) {
 			addMeasuresToTree(columnsRoot, crosstabDefinition.getMeasures());
@@ -345,8 +420,8 @@ public class CrossTab {
 			addMeasuresToTree(rowsRoot, crosstabDefinition.getMeasures());
 		}
 		config.put("columnsOverflow", columnsOverflow);
-		dataMatrix = getDataMatrix(columnsSpecification, rowsSpecification, columnCordinates, rowCordinates, data, measuresOnColumns, measuresCount,
-				columnsRoot.getLeafsNumber());
+		dataMatrix = getDataMatrix(columnsSpecification, rowsSpecification, columnCordinates, rowCordinates, measuresCordinates, data, measuresOnColumns,
+				measuresCount, columnsRoot.getLeafsNumber());
 
 		// put measures' info into measures variable
 		measures = new ArrayList<CrossTab.MeasureInfo>();
@@ -389,7 +464,7 @@ public class CrossTab {
 	 *            : the definition of the crossTab
 	 */
 	public CrossTab(IDataStore valuesDataStore, CrosstabDefinition crosstabDefinition, Map<Integer, NodeComparator> columnsSortKeysMap,
-			Map<Integer, NodeComparator> rowsSortKeysMap) throws JSONException {
+			Map<Integer, NodeComparator> rowsSortKeysMap, Map<Integer, NodeComparator> measuresSortKeysMap) throws JSONException {
 		IRecord valueRecord;
 		String rowPath;
 		String columnPath;
@@ -415,6 +490,7 @@ public class CrossTab {
 
 		this.columnsSortKeysMap = columnsSortKeysMap;
 		this.rowsSortKeysMap = rowsSortKeysMap;
+		this.measuresSortKeysMap = measuresSortKeysMap;
 
 		List<String> rowCordinates = new ArrayList<String>();
 		List<String> columnCordinates = new ArrayList<String>();
@@ -496,7 +572,7 @@ public class CrossTab {
 			addMeasuresToTree(rowsRoot, crosstabDefinition.getMeasures());
 		}
 		config.put("columnsOverflow", columnsOverflow);
-		dataMatrix = getDataMatrix(columnsSpecification, rowsSpecification, columnCordinates, rowCordinates, data, measuresOnColumns, measuresCount,
+		dataMatrix = getDataMatrix(columnsSpecification, rowsSpecification, columnCordinates, rowCordinates, null, data, measuresOnColumns, measuresCount,
 				columnsRoot.getLeafsNumber());
 
 		// put measures' info into measures variable
@@ -603,7 +679,7 @@ public class CrossTab {
 	 * @return the matrix that represent the data
 	 */
 	private String[][] getDataMatrix(List<String> columnsSpecification, List<String> rowsSpecification, List<String> columnCordinates,
-			List<String> rowCordinates, List<String> data, boolean measuresOnColumns, int measuresLength, int columnsN) {
+			List<String> rowCordinates, List<String> measuresCordinates, List<String> data, boolean measuresOnColumns, int measuresLength, int columnsN) {
 		String[][] dataMatrix;
 		int x, y;
 		int rowsN;
@@ -2230,7 +2306,7 @@ public class CrossTab {
 	}
 
 	public String getHTMLCrossTab(Locale locale) {
-		CrossTabHTMLSerializer serializer = new CrossTabHTMLSerializer(locale, myGlobalId, columnsSortKeysMap, rowsSortKeysMap);
+		CrossTabHTMLSerializer serializer = new CrossTabHTMLSerializer(locale, myGlobalId, columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap);
 		String html = serializer.serialize(this);
 		return html;
 	}
@@ -2239,4 +2315,103 @@ public class CrossTab {
 		return crosstabDefinition;
 	}
 
+	private Map<String, Double> sortMeasures(Map<Integer, NodeComparator> sortKeys, Map<String, Double> values, int rowsCount, int columnsCount, int totRows,
+			int totColumns) {
+		Map<String, Double> valuesCopy = (Map<String, Double>) ((HashMap<String, Double>) values).clone();
+		Map toReturn = new LinkedHashMap<String, Double>();
+		List valuesToOrder = new ArrayList();
+
+		ValueComparator comparator = null;
+		if (sortKeys != null) {
+			int idx = 0;
+			Iterator<Integer> mapIter = sortKeys.keySet().iterator();
+			while (mapIter.hasNext()) {
+				Object field = mapIter.next();
+				idx = (Integer) field;
+			}
+			// only a measure at time could sort values
+			comparator = new ValueComparator(sortKeys.get(idx).getDirection());
+		}
+
+		// sort measure on rows
+		for (int c = 0; c < totRows; c++) {
+			List valuesForCategory = getRowsCategoryValues(valuesCopy, rowsCount);
+			if (valuesForCategory.size() == 0)
+				continue;
+			if (valuesForCategory.size() > 0 && comparator != null) {
+				Collections.sort(valuesForCategory, comparator);
+			} else {
+				Collections.sort(valuesForCategory);
+			}
+			valuesToOrder.addAll(valuesForCategory); // add ordered sublist
+			c = valuesToOrder.size() - 1; // update counter
+		}
+
+		// reproduce order to original map
+		for (int v = 0; v < valuesToOrder.size(); v++) {
+			Double value = (Double) valuesToOrder.get(v);
+			String valueLabel = getLabelFromValue(value, values);
+			toReturn.put(valueLabel, value);
+		}
+
+		return toReturn;
+	}
+
+	/**
+	 * Returns the sorted sub-list on values considering the father category's value
+	 *
+	 * @param key
+	 * @param values
+	 * @param numCategories
+	 * @return
+	 */
+	private List getRowsCategoryValues(Map<String, Double> values, int numCategories) {
+		List toReturn = new ArrayList();
+		Map<String, Double> valuesCopy = (Map<String, Double>) ((HashMap<String, Double>) values).clone();
+
+		String parentValue = "";
+		for (String key : valuesCopy.keySet()) {
+			String[] measureInfo = key.split(PATH_SEPARATOR);
+
+			if (parentValue.equals("") && numCategories > 1)
+				parentValue = measureInfo[numCategories - 1]; // parentValue is setted only with more categories
+			if (!parentValue.equals("") && measureInfo[numCategories - 1].equalsIgnoreCase(parentValue)) {
+				// if it's last category level and the parent is the same add value to the list, else returns the list
+				toReturn.add(valuesCopy.get(key));
+				values.remove(key);
+			} else if (numCategories == 1) {
+				// only one category case: put directly the value in the list to order
+				toReturn.add(valuesCopy.get(key));
+				values.remove(key);
+			} else
+				break;
+		}
+
+		return toReturn;
+	}
+
+	private String getLabelFromValue(Double value, Map<String, Double> originalValues) {
+		String toReturn = null;
+		for (String key : originalValues.keySet()) {
+			Double originalValue = originalValues.get(key);
+			if (originalValue == value) {
+				toReturn = key;
+				break;
+			}
+		}
+
+		return toReturn;
+	}
+
+	private int getColumnIndex(String columnLabel, List measuresHeaderList) {
+		int toReturn = -1;
+
+		for (int l = 0; l < measuresHeaderList.size(); l++) {
+			if (columnLabel.equalsIgnoreCase((String) measuresHeaderList.get(l))) {
+				toReturn = l;
+				break;
+			}
+		}
+		return toReturn;
+	}
 }
