@@ -18,7 +18,7 @@
 package it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues;
 
 public class DefaultValue {
-	
+
 	private Object value;
 	private Object description;
 
@@ -37,10 +37,12 @@ public class DefaultValue {
 	public void setDescription(Object description) {
 		this.description = description;
 	}
-	
+
 	@Override
 	public String toString() {
-		return "DefaultValue [value=" + value + ", description=" + description
-				+ "]";
+		String valueS = value != null ? value.toString() : "";
+		String descriptionS = description != null ? description.toString() : "";
+
+		return "DefaultValue [value=" + valueS + ", description=" + descriptionS + "]";
 	}
 }

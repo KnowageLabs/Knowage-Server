@@ -501,11 +501,23 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				Object paramValues = objParameter.getAnalyticalDocumentParameter().getParameterValues();
 				if (paramValues instanceof List) {
 					List<String> valuesList = (List) paramValues;
+					String item = null;
 					for (int k = 0; k < valuesList.size(); k++) {
-						String item = valuesList.get(k);
+						Object oItem = valuesList.get(k);
+						if (oItem instanceof DefaultValue) {
+							Object o = ((DefaultValue) oItem).getValue();
+							item = o != null ? o.toString() : "";
+						} else {
+							item = oItem.toString();
+						}
+
 						String itemVal = "";
 						try {
-							item = URLDecoder.decode(item, "UTF-8");
+							// % character breaks decode method
+							if (!item.contains("%")) {
+								item = URLDecoder.decode(item, "UTF-8");
+							}
+
 							if (objParameter.isMultivalue() && item.indexOf("{") >= 0) {
 
 								// check input value and convert if it's an old multivalue syntax({;{xxx;yyy}STRING}) to list of values :["A-OMP", "A-PO", "CL"]
@@ -528,7 +540,11 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 						}
 					}
 				} else if (paramValues instanceof String) {
-					paramValueLst.add(URLDecoder.decode((String) paramValues, "UTF-8"));
+					// % character breaks decode method
+					if (!((String) paramValues).contains("%")) {
+						paramValues = URLDecoder.decode((String) paramValues, "UTF-8");
+					}
+					paramValueLst.add(paramValues.toString());
 				}
 				// parameterAsMap.put("parameterValue", objParameter.getAnalyticalDocumentParameter().getParameterValues());
 				parameterAsMap.put("parameterValue", paramValueLst);
@@ -910,7 +926,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 	/**
 	 * Produces a json of document metadata grouped by typeCode ("GENERAL_META", "LONG_TEXT", "SHORT_TEXT","FILE")
-	 *
+	 * 
 	 * @param id
 	 *            of document
 	 * @param id
@@ -1181,7 +1197,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 	/**
 	 * Produces a json with a bynary content of a metadata file and its name
-	 *
+	 * 
 	 * @param id
 	 *            of document
 	 * @param id
