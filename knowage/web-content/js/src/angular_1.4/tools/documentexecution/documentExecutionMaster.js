@@ -1,28 +1,35 @@
 angular.module('documentExecutionMasterModule',  [ 'ngMaterial', 'sbiModule','cross_navigation'])
-.factory('$documentNavigationScope', function($window) {
-	var angularTmp = null;
-	var isFromCockpit = false;
-	
-	if($window.parent.angular) {
-		angularTmp = $window.parent.angular;
-	} else if ($window.parent.parent.angular){
-		angularTmp = $window.parent.parent.angular;
-		isFromCockpit = true;
-	}
-	
-	var docNavFrameScope = null;
-	if(isFromCockpit) {
-		docNavFrameScope = angularTmp.element($window.parent.frameElement).scope();
-	} else{
-		docNavFrameScope = angularTmp.element($window.frameElement).scope();
-	}
-	
-    return (docNavFrameScope == undefined || docNavFrameScope == null) ? 
-    		{} : docNavFrameScope.$parent;
-})
-.controller('docExMasterController',['$scope','sbiModule_translate','$timeout','sourceDocumentExecProperties','sbiModule_config','$crossNavigationHelper','$documentNavigationScope','$mdDialog',docExMasterControllerFunction]);
+.factory('$documentNavigationScope', function($window, sbiModule_logger) {
 
-function docExMasterControllerFunction($scope,sbiModule_translate,$timeout,sourceDocumentExecProperties,sbiModule_config,$crossNavigationHelper,$documentNavigationScope,$mdDialog){
+	try {
+	
+		var angularTmp = null;
+		var isFromCockpit = false;
+		
+		if($window.parent.angular) {
+			angularTmp = $window.parent.angular;
+		} else if ($window.parent.parent.angular){
+			angularTmp = $window.parent.parent.angular;
+			isFromCockpit = true;
+		}
+		
+		var docNavFrameScope = null;
+		if(isFromCockpit) {
+			docNavFrameScope = angularTmp.element($window.parent.frameElement).scope();
+		} else{
+			docNavFrameScope = angularTmp.element($window.frameElement).scope();
+		}
+		
+	    return (docNavFrameScope == undefined || docNavFrameScope == null) ? 
+	    		{} : docNavFrameScope.$parent;
+	
+	} catch (err) {
+		sbiModule_logger.trace(err);
+		return {};
+	}
+
+})
+.controller('docExMasterController',function($scope,sbiModule_translate,$timeout,sourceDocumentExecProperties,sbiModule_config,$crossNavigationHelper,$documentNavigationScope,$mdDialog){
 	$scope.crossNavigationHelper=$crossNavigationHelper;
 	$scope.documentNavigationScope=$documentNavigationScope;
 //	$scope.sourceDocumentUrl="";
@@ -163,4 +170,4 @@ $scope.executeSourceDocument = function() {
 	$scope.isNavigationInProgress=function(){
 		return $crossNavigationHelper.crossNavigationSteps.stepItem.length>1;
 	}
-}
+});
