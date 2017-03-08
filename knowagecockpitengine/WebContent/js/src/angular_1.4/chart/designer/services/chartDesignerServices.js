@@ -2116,7 +2116,7 @@ angular.module('ChartDesignerService', [])
 						}
 					},
 					{
-						"alias": "Y",
+						"alias": "X",
 						"position": "",
 						"style": {
 							"rotate": "",
