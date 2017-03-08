@@ -82,6 +82,9 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 			return;
 		}
 		
+		//clean dataToSend from empty/default configuration  (ie. color: "hsl(0, 0%, 100%)", background-color: "hsl(0, 0%, 100%)" because it's white color on white bg)
+		dataToSend.style = $scope.cleanDataToSend(dataToSend.style);
+		
 		sbiModule_restServices.promisePost("1.0/crosstab","update",dataToSend).then(
 				function(response){
 					$scope.subCockpitWidget.html(response.data.htmlTable);
@@ -99,8 +102,9 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 	$scope.clickFunction=function(columnName,columnValue){
 		 
 		$scope.doSelection(columnName,columnValue);
-	}
-
+	};
+	
+	
 	
 	$scope.addPivotTableStyle=function(){
 		if($scope.ngModel.content.style!=undefined){
@@ -206,6 +210,94 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 				
 		}
 		
+	};
+	
+	
+	$scope.cleanDataToSend=function(styleDataToSend){
+		var EMPTY_COLOR = "hsl(0, 0%, 100%)";
+		var styleDataToSendC = {};
+
+		if (!styleDataToSend) return;
+		
+		
+		//crossTabHeaders configuration
+		if (styleDataToSend.crossTabHeaders!=undefined){
+			styleDataToSendC.crossTabHeaders = {};
+			for (p in styleDataToSend.crossTabHeaders){	
+				if ((p == "color" || p == "background-color") && styleDataToSend.crossTabHeaders["color"] == EMPTY_COLOR && styleDataToSend.crossTabHeaders["background-color"] == EMPTY_COLOR){
+					continue;
+				}
+				styleDataToSendC[p] = styleDataToSend.crossTabHeaders[p];
+			}
+		}
+			
+		//measure configuration
+		if (styleDataToSend.measures!=undefined){
+			styleDataToSendC.measures = {};
+			for (p in styleDataToSend.measures){	
+				if ((p == "color" || p == "background-color") && styleDataToSend.measures["color"]  == EMPTY_COLOR && styleDataToSend.measures["background-color"] == EMPTY_COLOR){
+					continue;
+				}
+				styleDataToSendC[p] = styleDataToSend.measures[p];
+			}
+		}	
+			
+		//measureHeaders configuration
+		if (styleDataToSend.measureHeaders!=undefined){
+			styleDataToSendC.measureHeaders = {};
+			for (p in styleDataToSend.measureHeaders){	
+				if ((p == "color" || p == "background-color") && styleDataToSend.measureHeaders["color"]  == EMPTY_COLOR && styleDataToSend.measureHeaders["background-color"] == EMPTY_COLOR){
+					continue;
+				}
+				styleDataToSendC[p] = styleDataToSend.measureHeaders[p];
+			}
+		}	
+			
+		//measureRows configuration
+		if (styleDataToSend.measureRows!=undefined){
+			styleDataToSendC.measureRows = {};
+			for (p in styleDataToSend.measureRows){	
+				if ((p == "color" || p == "background-color") && styleDataToSend.measureRows["color"]  == EMPTY_COLOR && styleDataToSend.measureRows["background-color"] == EMPTY_COLOR){
+					continue;
+				}
+				styleDataToSendC[p] = styleDataToSend.measureRows[p];
+			}
+		}
+			
+		//measureColumns configuration
+		if (styleDataToSend.measureColumns!=undefined){
+			styleDataToSendC.measureColumns = {};
+			for (p in styleDataToSend.measureColumns){	
+				if ((p == "color" || p == "background-color") && styleDataToSend.measureColumns["color"]  == EMPTY_COLOR && styleDataToSend.measureColumns["background-color"] == EMPTY_COLOR){
+					continue;
+				}
+				styleDataToSendC[p] = styleDataToSend.measureColumns[p];
+			}
+		}
+			
+		//subTotals configuration
+		if (styleDataToSend.subTotals!=undefined){
+			styleDataToSendC.subTotals = {};
+			for (p in styleDataToSend.subTotals){	
+				if ((p == "color" || p == "background-color") && styleDataToSend.subTotals["color"]  == EMPTY_COLOR && styleDataToSend.subTotals["background-color"] == EMPTY_COLOR){
+					continue;
+				}
+				styleDataToSendC[p] = styleDataToSend.subTotals[p];
+			}
+		}
+			
+		//totals configuration
+		if (styleDataToSend.totals!=undefined){
+			styleDataToSendC.totals = {};
+			for (p in styleDataToSend.totals){	
+				if ((p == "color" || p == "background-color") && styleDataToSend.totals["color"]  == EMPTY_COLOR && styleDataToSend.totals["background-color"] == EMPTY_COLOR){
+					continue;
+				}
+				styleDataToSendC[p] = styleDataToSend.totals[p];
+			}
+		}
+			
+		return styleDataToSendC;
 	};
 	
 	$scope.editWidget=function(index){
@@ -423,7 +515,6 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 								preserveScope: true,
 								autoWrap:false,
 								fullscreen: true,
-//								locals:{model:$scope.model, selectedColumn : $scope.selectedColumn},
 								locals:{model:$scope.localModel, selectedColumn:selectedColumn},
 								controller: cockpitStyleColumnFunction
 
@@ -433,7 +524,6 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 							}, function() {
 								console.log("Selected column:", $scope.selectedColumn);
 							});
-// 					fine table columnstyle management 
 			    	  }
 			      },
 				disableParentScroll: true,
@@ -462,15 +552,13 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 		$scope.selectedColumn = angular.copy(selectedColumn);
 		$scope.selectedColumn.fieldType = selectedColumn.nature.toUpperCase();
 		$scope.selectedColumn.widgetType = "staticPivotTable";		
-//		$scope.selectedColumn.showHeader = (selectedColumn.showHeader==undefined || model.content.crosstabDefinition.measures.length>1)?true:selectedColumn.showHeader;
 		$scope.selectedColumn.showHeader = (selectedColumn.showHeader==undefined)?true:selectedColumn.showHeader;
 		$scope.AggregationFunctions= cockpitModule_generalOptions.aggregationFunctions;
-		$scope.fontWeight = ['normal','bold','bolder','lighter','number','initial','inherit'];
-		$scope.textAlign = ['left','right','center'];
-		$scope.formatPattern = ['#.###','#,###','#.###,##','#,###.##'];
+		$scope.fontWeight = ['','normal','bold','bolder','lighter','number','initial','inherit'];
+		$scope.textAlign = ['','left','right','center'];
+		$scope.formatPattern = ['','#.###','#,###','#.###,##','#,###.##'];
 		$scope.colorPickerProperty={placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb'}
 		$scope.visTypes=['Text','Icon only'];
-//		$scope.selectedColumn.disableShowHeader = (model.content.crosstabDefinition.measures.length==1) ? false : true;
 		$scope.selectedColumn.disableShowHeader = false; //default is enabled: only for measures force disable if there are many measures
 		if ($scope.selectedColumn.containerType && $scope.selectedColumn.containerType == 'MEASURE-PT'){
 			if (model.content.crosstabDefinition.measures.length==1)

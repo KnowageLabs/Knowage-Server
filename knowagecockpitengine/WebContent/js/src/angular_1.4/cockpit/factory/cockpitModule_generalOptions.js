@@ -93,6 +93,10 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 	           				 value:''
 	           			 },
 	           			 {
+	           				 label:sbiModule_translate.load("sbi.cockpit.style.font.roboto"),
+	           				 value:'roboto'
+	           			 },
+	           			 {
 	           				 label:sbiModule_translate.load("sbi.cockpit.style.font.arial"),
 	           				 value:'arial'
 	           			 },

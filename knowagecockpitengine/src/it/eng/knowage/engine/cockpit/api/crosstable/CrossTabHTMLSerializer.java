@@ -177,6 +177,19 @@ public class CrossTabHTMLSerializer {
 					Node aNode = levelNodes.get(j);
 					SourceBean aColumn = new SourceBean(COLUMN_TAG);
 
+					String text = null;
+					if (crossTab.getCrosstabDefinition().isMeasuresOnRows() && i + 1 == levels) {
+						String measureAlias = aNode.getDescription();
+						text = MeasureScaleFactorOption.getScaledName(measureAlias, crossTab.getMeasureScaleFactor(measureAlias), this.locale);
+					} else {
+						text = aNode.getDescription();
+						if (text.equalsIgnoreCase("Total")) {
+							if (addedLabelTotal) {
+								text = "";
+							} else
+								addedLabelTotal = true;
+						}
+					}
 					// Get specific columns configuration (format, bgcolor, icon visualization,..)
 					String style;
 					boolean appliedStyle = false;
@@ -185,29 +198,17 @@ public class CrossTabHTMLSerializer {
 
 					JSONObject rowConfig = row.getConfig();
 					style = getConfiguratedElementStyle(null, null, rowConfig, crossTab);
-					if (!style.equals("")) {
-						// style += " padding:0 5 0 0 !important;";
+					if (!style.equals("") && !text.equalsIgnoreCase("Total") && !text.equalsIgnoreCase("SubTotal")) {
 						aColumn.setAttribute(STYLE_ATTRIBUTE, style);
 						appliedStyle = true;
+					} else {
+						// get only the alignment from the detail configuration cells
+						String totStyle = getConfiguratedElementStyle(null, null, rowConfig, crossTab, "text-align");
+						aColumn.setAttribute(STYLE_ATTRIBUTE, totStyle);
 					}
+
 					if (!appliedStyle)
 						aColumn.setAttribute(CLASS_ATTRIBUTE, MEMBER_CLASS);
-
-					String text = null;
-					if (crossTab.getCrosstabDefinition().isMeasuresOnRows() && i + 1 == levels) {
-						String measureAlias = aNode.getDescription();
-						text = MeasureScaleFactorOption.getScaledName(measureAlias, crossTab.getMeasureScaleFactor(measureAlias), this.locale);
-						// } else if (crossTab.getCrosstabDefinition().isMeasuresOnRows() && crossTab.getCrosstabDefinition().getMeasures().size() == 1) {
-						// text = "";
-					} else {
-						text = aNode.getDescription();
-						if (text.equalsIgnoreCase("Total")) {
-							if (addedLabelTotal)
-								text = "";
-							else
-								addedLabelTotal = true;
-						}
-					}
 
 					aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "clickFunction('" + crossTab.getCrosstabDefinition().getRows().get(i).getEntityId() + "','" + text
 							+ "')");
@@ -325,14 +326,14 @@ public class CrossTabHTMLSerializer {
 								lastLevelValues.add(completeText);
 							}
 							// Set the parent node style
-							if (parentStyle != null && !parentStyle.equals("")) {
-								aColumn.setAttribute(STYLE_ATTRIBUTE, parentStyle);
-							}
+							// if (parentStyle != null && !parentStyle.equals("")) {
+							// aColumn.setAttribute(STYLE_ATTRIBUTE, parentStyle);
+							// }
 						} else {
 							// Measures Headers: Get parent node for get correct configuration
-							if (parentStyle != null && !parentStyle.equals("")) {
-								aColumn.setAttribute(STYLE_ATTRIBUTE, parentStyle);
-							}
+							// if (parentStyle != null && !parentStyle.equals("")) {
+							// aColumn.setAttribute(STYLE_ATTRIBUTE, parentStyle);
+							// }
 							if (categoriesValues == null)
 								categoriesValues = getCompleteCategoriesValues(measureNumber, lastLevelValues);
 
@@ -513,7 +514,8 @@ public class CrossTabHTMLSerializer {
 					String dataStyle = getConfiguratedElementStyle(value, cellType, measureConfig, crossTab);
 					if (!dataStyle.equals("")) {
 						aColumn.setAttribute(STYLE_ATTRIBUTE, dataStyle);
-						classType += "noStandardStyle";
+						if (classType.equalsIgnoreCase("data"))
+							classType += "noStandardStyle";
 					}
 
 					// 6. set value
@@ -578,6 +580,27 @@ public class CrossTabHTMLSerializer {
 		return toReturn;
 	}
 
+	// get the specific prop from the style definition if it's valorized
+	private String getConfiguratedElementStyle(Double value, CellType cellType, JSONObject config, CrossTab crossTab, String prop) throws JSONException {
+		String toReturn = "";
+		String dataStyle = "";
+		dataStyle = getConfiguratedElementStyle(value, cellType, config, crossTab);
+
+		if (dataStyle.equals(""))
+			return toReturn;
+
+		String[] props = dataStyle.split(";");
+		for (int p = 0; p < props.length; p++) {
+			String property = props[p];
+			String propKey = property.substring(0, property.indexOf(":"));
+			if (propKey.trim().equalsIgnoreCase(prop)) {
+				toReturn = property + ";";
+				break;
+			}
+		}
+		return toReturn;
+	}
+
 	private String getConfiguratedElementStyle(Double value, CellType cellType, JSONObject config, CrossTab crossTab) throws JSONException {
 		JSONObject colorThrJ = null;
 		boolean bgColorApplied = false;
@@ -595,7 +618,6 @@ public class CrossTabHTMLSerializer {
 			}
 		}
 		// cellType is null for rows and columns header
-		// if (cellType == null || (cellType.getValue().equals("data") && !config.isNull("style"))) {
 		if (cellTypeValue.equals("") || !config.isNull("style")) {
 			JSONObject styleJ = (config.isNull("style")) ? new JSONObject() : config.getJSONObject("style");
 
@@ -865,21 +887,21 @@ public class CrossTabHTMLSerializer {
 				direction = rowsSortKeysMap.get(i).getDirection();
 			}
 
-			// Set specific rows configuration layout
-			JSONObject rowsConfig = rows.get(i).getConfig();
-			style = getConfiguratedElementStyle(null, null, rowsConfig, crossTab);
-			if (!rowsConfig.isNull("showHeader") && !rowsConfig.getBoolean("showHeader")) {
-				// ADD AN EMPTY TD IF THERE IS A HEADER FOR THE MEASURE with the level class
-				if (crossTab.getCrosstabDefinition().getMeasures().size() > 1)
-					aColumn.setAttribute(CLASS_ATTRIBUTE, LEVEL_CLASS);
-				aRow.setAttribute(aColumn);
-				continue; // skips header if not required
-			}
-			if (!style.equals("")) {
-				aColumn.setAttribute(STYLE_ATTRIBUTE, style);
-				appliedStyle = true;
-			} else
-				aColumn.setAttribute(CLASS_ATTRIBUTE, LEVEL_CLASS);
+			// Set specific rows configuration layout: NOT for the header: they uses general style
+			// JSONObject rowsConfig = rows.get(i).getConfig();
+			// style = getConfiguratedElementStyle(null, null, rowsConfig, crossTab);
+			// if (!rowsConfig.isNull("showHeader") && !rowsConfig.getBoolean("showHeader")) {
+			// // ADD AN EMPTY TD IF THERE IS A HEADER FOR THE MEASURE with the level class
+			// if (crossTab.getCrosstabDefinition().getMeasures().size() > 1)
+			// aColumn.setAttribute(CLASS_ATTRIBUTE, LEVEL_CLASS);
+			// aRow.setAttribute(aColumn);
+			// continue; // skips header if not required
+			// }
+			// if (!style.equals("")) {
+			// aColumn.setAttribute(STYLE_ATTRIBUTE, style);
+			// appliedStyle = true;
+			// } else
+			aColumn.setAttribute(CLASS_ATTRIBUTE, LEVEL_CLASS);
 
 			aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "orderPivotTable('" + i + "','0'," + myGlobalId + ")");
 			aColumn.setAttribute(addSortArrow(aRow, aRowDef.getAlias(), style, direction));
