@@ -36,6 +36,9 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 	$scope.minMaxCategories = {};
 	$scope.minMaxSeries = {};
 	$scope.$watch('selectedChartType',function(newValue,oldValue){
+		
+		$scope.minMaxCategories = {};
+		$scope.minMaxSeries = {};
 		switch(newValue){
 		
 		case 'parallel':
