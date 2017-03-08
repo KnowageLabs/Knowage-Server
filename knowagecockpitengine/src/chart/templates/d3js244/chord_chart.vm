@@ -37,7 +37,7 @@
 		
 #foreach($value in $categories)	
 
-	#set($columnsNeeded[$columnCounter] = $value.column)
+	#set($columnsNeeded[$columnCounter] = $value.name)
 	#set($columnCounter = $columnCounter + 1)
 #end
 #set($crossNavigation = '')

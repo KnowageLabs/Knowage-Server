@@ -16,9 +16,10 @@
 
    
 #foreach($value in $category) 
- #set($columnsNeeded[$columnCouter] = $value.column)
+ #set($columnsNeeded[$columnCouter] = $value.name)
  #set($columnCouter = $columnCouter + 1)
 #end
+
 
 ## class java.util.LinkedHashMap - collection when rendering the chart
 ## class java.util.ArrayList - collection when exporting the chart (preview from the Designer)

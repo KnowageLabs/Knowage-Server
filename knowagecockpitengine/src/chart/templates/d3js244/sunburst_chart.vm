@@ -3,8 +3,9 @@
 #set($dataRows = $data.rows)
 #set($dataFields = $data.metaData.fields) ## columns of data table
 #set($dataColumnsMapper = {})
-
 #foreach ($dataField in $dataFields) ## conversion column name to internal column name
+
+
 	#if($dataField.class.name == 'java.util.LinkedHashMap')
 		#set($workAroundNoPrint = $dataColumnsMapper.put($dataField.header, $dataField.name))
 	#end
@@ -19,8 +20,9 @@
 
 #set($columnCounter = 0)
 		
-#foreach($value in $category)	
-	#set($columnsNeeded[$columnCounter] = $value.column)
+#foreach($value in $category)
+$datasettransformer.print($value)	
+	#set($columnsNeeded[$columnCounter] = $value.name)
 	#set($columnCounter = $columnCounter + 1)
 #end
 
@@ -315,5 +317,6 @@
 	data:
 	[
 	 	$datasettransformer.toTree($columnsNeeded,$serieName,$dataColumnsMapper,$dataRows,$groupingFunction)
+	 	
 	]
 }

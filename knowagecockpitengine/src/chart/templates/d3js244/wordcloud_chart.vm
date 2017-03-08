@@ -21,7 +21,8 @@
 
 #if(!$category.column)
 	#foreach($value in $category) 
-		 #set($columnsNeeded[$columnCounter] = $value.column)
+		 #set($columnsNeeded[$columnCounter] = $value.name)
+		 
 		 #set($columnCounter = $columnCounter + 1)
 	#end
 #else
