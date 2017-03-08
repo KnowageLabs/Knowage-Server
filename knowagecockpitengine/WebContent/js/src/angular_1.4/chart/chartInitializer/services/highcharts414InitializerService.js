@@ -24,7 +24,8 @@ angular.module('chartInitializer')
 	this.chart = null;
 	
 	this.renderChart = function(chartConf,element,handleCockpitSelection){
-		console.log('Rendering highchart!!!');
+		
+		adjustChartSize(element,chartConf);
 		var chartType = chartConf.chart.type.toLowerCase();
 		
 		if (chartType == 'treemap') 
@@ -45,6 +46,9 @@ angular.module('chartInitializer')
 	}
 	
 	this.initChartLibrary = function(panelId, drillUpText, decimalPoint, thousandsSep){
+		
+		
+		
 		Highcharts.setOptions({
 			chart : {
 				renderTo : panelId,
@@ -340,7 +344,15 @@ angular.module('chartInitializer')
 		
 	}
 	
-	
+	var adjustChartSize = function(container,chartConf){
+		if(chartConf.chart.heightDimType=='percentage'){
+			chartConf.chart.height = container.clientHeight*(chartConf.chart.height/100);
+		}
+		
+		if(chartConf.chart.widthDimType=='percentage'){
+			chartConf.chart.width = container.clientWidth*(chartConf.chart.width/100);
+		}
+	}
 	
 	
 	
