@@ -644,7 +644,16 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				List lstValues = (List) parameterAsMap.get("parameterValue");
 				if (lstValues.size() == 0)
 					jsonCrossParameters.remove(objParameter.getId());
-				if (jsonCrossParameters.isNull(objParameter.getId()) && !sessionParametersMap.containsKey(objParameter.getId())) {
+
+				String parLab = objParameter.getAnalyticalDocumentParameter() != null && objParameter.getAnalyticalDocumentParameter().getParameter() != null ? objParameter
+						.getAnalyticalDocumentParameter().getParameter().getLabel()
+						: "";
+				String useModLab = objParameter.getAnalyticalDriverExecModality() != null ? objParameter.getAnalyticalDriverExecModality().getLabel() : "";
+				String sessionKey = parLab + "_" + useModLab;
+
+				if (jsonCrossParameters.isNull(objParameter.getId())
+				// && !sessionParametersMap.containsKey(objParameter.getId())) {
+						&& !sessionParametersMap.containsKey(sessionKey)) {
 					valueList = objParameter.getDefaultValues();
 					if (valueList != null) {
 						parameterAsMap.put("parameterValue", valueList);
