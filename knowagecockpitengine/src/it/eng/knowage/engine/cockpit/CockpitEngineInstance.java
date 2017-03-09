@@ -74,23 +74,28 @@ public class CockpitEngineInstance extends AbstractEngineInstance {
 			
 			// loading from old designer
 			if(this.template.length() > 0){
-			JSONObject sheet = this.template.optJSONArray("sheets").optJSONObject(0);
-			JSONArray widgets = sheet.optJSONArray("widgets");
-			for (int i = 0; i < widgets.length(); i++) {
-				JSONObject widget = widgets.optJSONObject(i);
-				String type = widget.getString("type");
-				if(type.equals("chart")){
-					
-					JSONObject content = widget.getJSONObject("content");
-					JSONObject oldDesigner = content.optJSONObject("chartTemplate").optJSONObject("CHART");
-					if(oldDesigner.get("style") instanceof String){
-						this.template = parseTemplate(this.template);
-					}
-					}
+				JSONArray sheets = this.template.optJSONArray("sheets");
+				for (int i = 0; i < sheets.length(); i++) {
+					JSONObject sheet = sheets.optJSONObject(i);
+					JSONArray widgets = sheet.optJSONArray("widgets");
+					for (int j = 0; j < widgets.length(); j++) {
+						JSONObject widget = widgets.optJSONObject(j);
+						String type = widget.getString("type");
+						if(type.equals("chart")){
+							
+							JSONObject content = widget.getJSONObject("content");
+							JSONObject oldDesigner = content.optJSONObject("chartTemplate").optJSONObject("CHART");
+							if(oldDesigner.get("style") instanceof String){
+								this.template = parseTemplate(this.template);
+							}
+							}
+							
+						}
 					
 				}
-					
-				}
+				
+						
+					}
 			
 			
 			this.associationManager = new AssociationManager();
@@ -296,8 +301,11 @@ public class CockpitEngineInstance extends AbstractEngineInstance {
            	 
            	 JSONArray array = (JSONArray)keyValue;
            	 for (int i = 0; i < array.length(); i++) {
-           		 JSONObject obj = array.getJSONObject(i);
-           		 parseTemplate(obj);
+           		 if (array.getJSONObject(i) instanceof JSONObject) {
+           			JSONObject obj = array.getJSONObject(i);
+              		 parseTemplate(obj);
+				}
+           		 
 				}
            	 
             }
