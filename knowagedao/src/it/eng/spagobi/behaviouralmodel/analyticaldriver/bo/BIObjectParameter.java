@@ -17,7 +17,6 @@
  */
 package it.eng.spagobi.behaviouralmodel.analyticaldriver.bo;
 
-import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.services.validation.Alphanumeric;
 import it.eng.spagobi.services.validation.ExtendedAlphanumeric;
 import it.eng.spagobi.services.validation.NoSpaces;
@@ -40,9 +39,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author Zoppello This class map the SBI_OBJ_PAR table
  */
 public class BIObjectParameter implements Serializable {
-	
+
 	private Integer id = null;
-	
+
 	/* BIOBJ_ID NUMBER N Business Intelligence Object identifier */
 	private Integer biObjectID = null;
 
@@ -51,10 +50,9 @@ public class BIObjectParameter implements Serializable {
 	private Integer parID = null;
 
 	private Parameter parameter = null;
-	
+
 	/*
-	 * LABEL VARCHAR2(36) Y Parameter label in BIObj use (short textual
-	 * identifier)
+	 * LABEL VARCHAR2(36) Y Parameter label in BIObj use (short textual identifier)
 	 */
 	@NotEmpty
 	@ExtendedAlphanumeric
@@ -72,15 +70,13 @@ public class BIObjectParameter implements Serializable {
 
 	/* MULT_FL NUMBER Y Multivalue parameter. */
 	private Integer multivalue = null;
-	
+
 	/* COL_SPAN Span column parameter. */
 	private Integer colSpan = null;
 
 	/* thick_perc column parameter. */
 	private Integer thickPerc = null;
 
-
-	
 	/*
 	 * PROG NUMBER N Ordinal number for sorting
 	 */
@@ -90,7 +86,7 @@ public class BIObjectParameter implements Serializable {
 	 * PRIORITY NUMBER N Ordinal number for sorting BIObjectParameters relative to one BIObject
 	 */
 	private Integer priority = null;
-	
+
 	/* PARURL_NM VARCHAR2(18) Y Parameter name in HTTP request. */
 	@NotEmpty
 	@Alphanumeric
@@ -100,23 +96,23 @@ public class BIObjectParameter implements Serializable {
 
 	/* VALUES LIST OF THE PARAMETER (STRINGS) */
 	private List parameterValues = null;
-	
+
 	private List parameterValuesDescription = null;
-	
+
 	/* transient flag. set to true for parameters buil on the fly */
 	private boolean transientParmeters = false;
-	
+
 	// default value is false; when the parameter values are set and they are correct, this field must be set to true
 	private boolean hasValidValues = false;
-	
+
 	// if isIterative is true, it means that the execution must be executed for each value of the parameter,
 	// example: if the parameter values are "a" and "b" and isIterative = true, the document should be executed 2 times: the first time with "a"
 	// and second time with "b"; if isIterative = false, document should be executed only with time with "a" and "b" at the same time.
 	// It is used by the scheduler.
 	private boolean isIterative = false;
-	
+
 	private ParameterValuesRetriever parameterValuesRetriever = null;
-	
+
 	/**
 	 * Gets the id.
 	 * 
@@ -125,16 +121,17 @@ public class BIObjectParameter implements Serializable {
 	public Integer getId() {
 		return id;
 	}
-	
+
 	/**
 	 * Sets the id.
 	 * 
-	 * @param id The BIObjectParameter to set
+	 * @param id
+	 *            The BIObjectParameter to set
 	 */
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	
+
 	/**
 	 * Gets the bi object id.
 	 * 
@@ -143,16 +140,17 @@ public class BIObjectParameter implements Serializable {
 	public Integer getBiObjectID() {
 		return biObjectID;
 	}
-	
+
 	/**
 	 * Sets the bi object id.
 	 * 
-	 * @param biObjectID The biObjectID to set.
+	 * @param biObjectID
+	 *            The biObjectID to set.
 	 */
 	public void setBiObjectID(Integer biObjectID) {
 		this.biObjectID = biObjectID;
 	}
-	
+
 	/**
 	 * Gets the label.
 	 * 
@@ -161,16 +159,17 @@ public class BIObjectParameter implements Serializable {
 	public String getLabel() {
 		return label;
 	}
-	
+
 	/**
 	 * Sets the label.
 	 * 
-	 * @param label The label to set.
+	 * @param label
+	 *            The label to set.
 	 */
 	public void setLabel(String label) {
 		this.label = label;
 	}
-	
+
 	/**
 	 * Gets the modifiable.
 	 * 
@@ -179,16 +178,17 @@ public class BIObjectParameter implements Serializable {
 	public Integer getModifiable() {
 		return modifiable;
 	}
-	
+
 	/**
 	 * Sets the modifiable.
 	 * 
-	 * @param modifiable The modifiable to set.
+	 * @param modifiable
+	 *            The modifiable to set.
 	 */
 	public void setModifiable(Integer modifiable) {
 		this.modifiable = modifiable;
 	}
-	
+
 	/**
 	 * Gets the multivalue attribute that is equal to 0 if the parameter is not multivalue, 1 otherwise .
 	 * 
@@ -205,11 +205,12 @@ public class BIObjectParameter implements Serializable {
 			return false;
 		return multivalue.intValue() > 0;
 	}
-	
+
 	/**
 	 * Sets the multivalue.
 	 * 
-	 * @param multivalue The multivalue to set.
+	 * @param multivalue
+	 *            The multivalue to set.
 	 */
 	@JsonIgnore
 	public void setMultivalue(Integer multivalue) {
@@ -231,16 +232,17 @@ public class BIObjectParameter implements Serializable {
 	public String getParameterUrlName() {
 		return parameterUrlName;
 	}
-	
+
 	/**
 	 * Sets the parameter url name.
 	 * 
-	 * @param parameterUrlName The parameterUrlName to set.
+	 * @param parameterUrlName
+	 *            The parameterUrlName to set.
 	 */
 	public void setParameterUrlName(String parameterUrlName) {
 		this.parameterUrlName = parameterUrlName;
 	}
-	
+
 	/**
 	 * Gets the parameter values.
 	 * 
@@ -249,10 +251,9 @@ public class BIObjectParameter implements Serializable {
 	public List getParameterValues() {
 		return parameterValues;
 	}
-	
+
 	/**
-	 * Gets the parameter values as a unique String (values are separated by ";").
-	 * If the parameter has no values set, null is returned.
+	 * Gets the parameter values as a unique String (values are separated by ";"). If the parameter has no values set, null is returned.
 	 * 
 	 * @return Returns the parameter values as a unique String (values are separated by ";").
 	 */
@@ -272,16 +273,17 @@ public class BIObjectParameter implements Serializable {
 		}
 		return buffer.toString();
 	}
-	
+
 	/**
 	 * Sets the parameter values.
 	 * 
-	 * @param parameterValues The parameterValues to set.
+	 * @param parameterValues
+	 *            The parameterValues to set.
 	 */
 	public void setParameterValues(List parameterValues) {
 		this.parameterValues = parameterValues;
 	}
-	
+
 	/**
 	 * Gets the par id.
 	 * 
@@ -290,16 +292,17 @@ public class BIObjectParameter implements Serializable {
 	public Integer getParID() {
 		return parID;
 	}
-	
+
 	/**
 	 * Sets the par id.
 	 * 
-	 * @param parID The parID to set.
+	 * @param parID
+	 *            The parID to set.
 	 */
 	public void setParID(Integer parID) {
 		this.parID = parID;
 	}
-	
+
 	/**
 	 * Gets the prog.
 	 * 
@@ -308,16 +311,17 @@ public class BIObjectParameter implements Serializable {
 	public Integer getProg() {
 		return prog;
 	}
-	
+
 	/**
 	 * Sets the prog.
 	 * 
-	 * @param prog The prog to set.
+	 * @param prog
+	 *            The prog to set.
 	 */
 	public void setProg(Integer prog) {
 		this.prog = prog;
 	}
-	
+
 	/**
 	 * Gets the required.
 	 * 
@@ -334,11 +338,12 @@ public class BIObjectParameter implements Serializable {
 			return false;
 		return required.intValue() > 0;
 	}
-	
+
 	/**
 	 * Sets the required.
 	 * 
-	 * @param required The required to set.
+	 * @param required
+	 *            The required to set.
 	 */
 	@JsonIgnore
 	public void setRequired(Integer required) {
@@ -360,16 +365,17 @@ public class BIObjectParameter implements Serializable {
 	public Integer getVisible() {
 		return visible;
 	}
-	
+
 	/**
 	 * Sets the visible.
 	 * 
-	 * @param visible The visible to set.
+	 * @param visible
+	 *            The visible to set.
 	 */
 	public void setVisible(Integer visible) {
 		this.visible = visible;
 	}
-	
+
 	/**
 	 * Gets the parameter.
 	 * 
@@ -378,16 +384,17 @@ public class BIObjectParameter implements Serializable {
 	public Parameter getParameter() {
 		return parameter;
 	}
-	
+
 	/**
 	 * Sets the parameter.
 	 * 
-	 * @param parameter The Parameter to set
+	 * @param parameter
+	 *            The Parameter to set
 	 */
 	public void setParameter(Parameter parameter) {
 		this.parameter = parameter;
 	}
-	
+
 	/**
 	 * Gets the priority.
 	 * 
@@ -396,16 +403,17 @@ public class BIObjectParameter implements Serializable {
 	public Integer getPriority() {
 		return priority;
 	}
-	
+
 	/**
 	 * Sets the priority.
 	 * 
-	 * @param priority The priority to set
+	 * @param priority
+	 *            The priority to set
 	 */
 	public void setPriority(Integer priority) {
 		this.priority = priority;
 	}
-	
+
 	/**
 	 * Checks if is transient parmeters.
 	 * 
@@ -414,16 +422,17 @@ public class BIObjectParameter implements Serializable {
 	public boolean isTransientParmeters() {
 		return transientParmeters;
 	}
-	
+
 	/**
 	 * Sets the transient parmeters.
 	 * 
-	 * @param transientParmeters the new transient parmeters
+	 * @param transientParmeters
+	 *            the new transient parmeters
 	 */
 	public void setTransientParmeters(boolean transientParmeters) {
 		this.transientParmeters = transientParmeters;
 	}
-	
+
 	/**
 	 * Checks for valid values.
 	 * 
@@ -432,16 +441,17 @@ public class BIObjectParameter implements Serializable {
 	public boolean hasValidValues() {
 		return hasValidValues;
 	}
-	
+
 	/**
 	 * Sets the checks for valid values.
 	 * 
-	 * @param hasValidValues the new checks for valid values
+	 * @param hasValidValues
+	 *            the new checks for valid values
 	 */
 	public void setHasValidValues(boolean hasValidValues) {
 		this.hasValidValues = hasValidValues;
 	}
-	
+
 	/**
 	 * Gets the parameter values description.
 	 * 
@@ -450,11 +460,12 @@ public class BIObjectParameter implements Serializable {
 	public List getParameterValuesDescription() {
 		return parameterValuesDescription;
 	}
-	
+
 	/**
 	 * Sets the parameter values description.
 	 * 
-	 * @param parameterValuesDescription the new parameter values description
+	 * @param parameterValuesDescription
+	 *            the new parameter values description
 	 */
 	public void setParameterValuesDescription(List parameterValuesDescription) {
 		this.parameterValuesDescription = parameterValuesDescription;
@@ -490,7 +501,7 @@ public class BIObjectParameter implements Serializable {
 		toReturn.setVisible(visible);
 		toReturn.setColSpan(colSpan);
 		toReturn.setThickPerc(thickPerc);
-		
+
 		return toReturn;
 	}
 
@@ -498,8 +509,7 @@ public class BIObjectParameter implements Serializable {
 		return parameterValuesRetriever;
 	}
 
-	public void setParameterValuesRetriever(
-			ParameterValuesRetriever parameterValuesRetriever) {
+	public void setParameterValuesRetriever(ParameterValuesRetriever parameterValuesRetriever) {
 		this.parameterValuesRetriever = parameterValuesRetriever;
 	}
 
@@ -518,7 +528,5 @@ public class BIObjectParameter implements Serializable {
 	public void setThickPerc(Integer thickPerc) {
 		this.thickPerc = thickPerc;
 	}
-	
-	
-	
+
 }
