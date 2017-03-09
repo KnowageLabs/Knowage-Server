@@ -218,7 +218,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 	}
 	
 	// davverna - initializing search object to give all the columns to the user searchbar
-	if(!$scope.ngModel.search || $scope.ngModel.search.columns == []){
+	if($scope.ngModel.type.toLowerCase() == "table" && (!$scope.ngModel.search || $scope.ngModel.search.columns == [])){
 		$scope.ngModel.search ={"columns" : []};
 		for(var k in $scope.ngModel.content.columnSelectedOfDataset){
 			var column = $scope.ngModel.content.columnSelectedOfDataset[k];
