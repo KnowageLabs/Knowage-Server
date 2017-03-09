@@ -54,6 +54,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		   var datasetParameters=<%=selfServiceParameters%>;
 		   var isAdmin =<%=isAdmin%>;
 		   var isTechnicalUser = <%=isTechnicalUser%>;
+		   var globalQbeJsonWorkspace = "";
 		</script>
 		
 	</head>
@@ -69,9 +70,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				The progress circular animation will be shown until all the data for the Workspace is collected. 
 				@commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
 			-->		
-			<div loading ng-show="showEl" class="loadingMask">
+			<div loading ng-show="showEl || processing" class="loadingMask">
 			 	<md-progress-circular md-mode="indeterminate" md-diameter="75%" class="progressCircularWorkspace"></md-progress-circular>		 
 			</div>
+			
+			
 			
 			<md-content layout="column" flex layout-fill>
 				
