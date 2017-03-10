@@ -39,7 +39,6 @@ import it.eng.spagobi.kpi.bo.Rule;
 import it.eng.spagobi.kpi.bo.RuleOutput;
 import it.eng.spagobi.kpi.bo.SchedulerFilter;
 import it.eng.spagobi.kpi.bo.Scorecard;
-import it.eng.spagobi.kpi.bo.ScorecardStatus;
 import it.eng.spagobi.kpi.bo.Target;
 import it.eng.spagobi.kpi.bo.TargetValue;
 import it.eng.spagobi.kpi.bo.Threshold;
@@ -1004,37 +1003,6 @@ public class KpiService {
 		logger.debug("editKpiValue OUT");
 	}
 
-	/*
-	 * Gets a criterion id and a list of ScorecardStatus and returns a status
-	 */
-	@POST
-	@Path("/{criterionId}/evaluateCriterion")
-	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
-	public Response evaluateCriterion(@PathParam("criterionId") Integer criterionId, @Context HttpServletRequest req) throws EMFUserError {
-		logger.debug("evaluateCriterion IN");
-		Response out;
-		try {
-			JSONArray requestValues = RestUtilities.readBodyAsJSONArray(req);
-			List<ScorecardStatus> scorecardStatusLst = new ArrayList<>();
-			for (int i = 0; i < requestValues.length(); i++) {
-				scorecardStatusLst.add((ScorecardStatus) JsonConverter.jsonToObject(requestValues.getJSONObject(i).toString(), ScorecardStatus.class));
-			}
-			IKpiDAO dao = getKpiDAO(req);
-			String status = dao.evaluateScorecardStatus(criterionId, scorecardStatusLst);
-			JSONObject resp = new JSONObject();
-			resp.put("status", status);
-			out = Response.ok(resp.toString()).build();
-			logger.debug("listPlaceholderByMeasures OUT");
-			return out;
-		} catch (Throwable e) {
-			logger.error("evaluateCriterion ");
-			logger.error(req.getPathInfo(), e);
-		}
-		out = Response.ok().build();
-		logger.debug("evaluateCriterion OUT");
-		return out;
-	}
-
 	@GET
 	@Path("/{id}/loadSchedulerKPI")
 	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
@@ -1045,110 +1013,6 @@ public class KpiService {
 		KpiScheduler t = dao.loadKpiScheduler(id);
 		out = Response.ok(JsonConverter.objectToJson(t, t.getClass())).build();
 		logger.debug("loadSchedulerKPI OUT");
-		return out;
-	}
-
-	@GET
-	@Path("/listScorecard")
-	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
-	public Response listScorecard(@Context HttpServletRequest req) throws EMFUserError {
-		logger.debug("listScorecard IN");
-		Response out;
-		IKpiDAO dao = getKpiDAO(req);
-		List<Scorecard> scorecards = dao.listScorecard();
-		out = Response.ok(JsonConverter.objectToJson(scorecards, scorecards.getClass())).build();
-		logger.debug("listScorecard OUT");
-		return out;
-	}
-
-	@GET
-	@Path("/{id}/loadScorecard")
-	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
-	public String loadScorecard(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
-		logger.debug("loadScorecard IN");
-		String ret;
-		IKpiDAO dao = getKpiDAO(req);
-		Scorecard scorecard = dao.loadScorecard(id);
-		ret = JsonConverter.objectToJson(scorecard, scorecard.getClass());
-		logger.debug("loadScorecard OUT");
-		return ret;
-	}
-
-	@GET
-	@Path("/{name}/loadScorecardbyName")
-	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
-	public String loadScorecard(@PathParam("name") String name, @Context HttpServletRequest req) throws EMFUserError {
-		logger.debug("loadScorecard IN");
-		String ret;
-		IKpiDAO dao = getKpiDAO(req);
-		Scorecard scorecard = dao.loadScorecardByName(name);
-		ret = JsonConverter.objectToJson(scorecard, scorecard.getClass());
-		logger.debug("loadScorecard OUT");
-		return ret;
-	}
-
-	@POST
-	@Path("/saveScorecard")
-	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
-	public Response saveScorecard(@Context HttpServletRequest req) throws EMFUserError {
-		logger.debug("saveScorecard IN");
-		Response out;
-		try {
-			String requestVal = RestUtilities.readBodyAsJSONObject(req).toString();
-			Scorecard scorecard = (Scorecard) JsonConverter.jsonToObject(requestVal, Scorecard.class);
-			scorecard.setCreationDate(new Date());
-			check(scorecard);
-			IKpiDAO dao = getKpiDAO(req);
-			Integer id = scorecard.getId();
-			if (id == null) {
-				if (dao.loadScorecardByName(scorecard.getName()) == null) {
-					id = dao.insertScorecard(scorecard);
-				} else {
-					out = Response.ok(
-							new JSONObject().put("errors", new JSONArray().put(new JSONObject().put("message", "Error existing scorecard with this name")))
-									.toString()).build();
-					logger.debug("Error existing scorecard with this name");
-					return out;
-				}
-
-			} else {
-				dao.updateScorecard(scorecard);
-			}
-			JSONObject ret = new JSONObject();
-			ret.put("id", id);
-			ret.put("date", scorecard.getCreationDate().getTime());
-			ret.put("author", getProfile(req).getUserUniqueIdentifier());
-			out = Response.ok(ret.toString()).build();
-			logger.debug("saveScorecard OUT");
-			return out;
-
-		} catch (IOException | JSONException | SpagoBIException e) {
-			logger.error("saveScorecard ");
-			logger.error(req.getPathInfo(), e);
-		}
-		try {
-			out = Response.ok(new JSONObject().put("errors", new JSONArray().put(new JSONObject().put("message", "Error"))).toString()).build();
-			logger.debug("saveScorecard OUT");
-			return out;
-		} catch (JSONException e) {
-			logger.error("saveScorecard ");
-			logger.error(req.getPathInfo(), e);
-		}
-		out = Response.ok().build();
-		logger.debug("saveScorecard OUT");
-		return out;
-	}
-
-	@DELETE
-	@Path("/{id}/deleteScorecard")
-	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
-	public Response deleteScorecard(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
-		logger.debug("deleteScorecard IN");
-		Response out;
-		IKpiDAO dao = getKpiDAO(req);
-		dao.removeScorecard(id);
-		out = Response.ok().build();
-		logger.debug("deleteScorecard OUT");
 		return out;
 	}
 
