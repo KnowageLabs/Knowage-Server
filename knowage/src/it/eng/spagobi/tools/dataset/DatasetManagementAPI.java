@@ -380,6 +380,13 @@ public class DatasetManagementAPI {
 			IDataSet dataSet = getDataSetDAO().loadDataSetByLabel(label);
 			Assert.assertNotNull(dataSet, "Impossible to load dataset with label [" + label + "]");
 			setDataSetParameters(dataSet, parametersValues);
+
+			// force resolution of parameters
+			QuerableBehaviour querableBehaviour = (QuerableBehaviour) dataSet.getBehaviour(QuerableBehaviour.class.getName());
+			if (querableBehaviour != null) {
+				querableBehaviour.getStatement();
+			}
+
 			IDataStore dataStore = null;
 
 			if (dataSet.isPersisted() && !dataSet.isPersistedHDFS()) {
@@ -390,50 +397,55 @@ public class DatasetManagementAPI {
 				logger.debug("Querying flat dataset");
 				dataStore = queryFlatDataset(groups, filters, havings, projections, summaryRowProjections, dataSet, offset, fetchSize, maxRowCount);
 				dataStore.setCacheDate(new Date());
-			} else if (isRealtime && isJDBCDataSet(dataSet) && !SqlUtils.isBigDataDialect(dataSet.getDataSource().getHibDialectName())) {
-				logger.debug("Querying realtime/JDBC dataset");
-				dataStore = queryJDBCDataset(groups, filters, havings, projections, summaryRowProjections, dataSet, offset, fetchSize, maxRowCount);
-				dataStore.setCacheDate(new Date());
-			} else if (isRealtime) {
-				logger.debug("Querying realtime dataset");
-				dataStore = queryRealtimeDataset(groups, filtersForMetaModel, havingsForMetaModel, projections, summaryRowProjections, dataSet, offset,
-						fetchSize, maxRowCount);
-				dataStore.setCacheDate(new Date());
 			} else {
-				logger.debug("Querying dataset in cache");
-				SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
-				cache.setUserProfile(userProfile);
-
-				IDataStore cachedResultSet = cache.get(dataSet, groups, filters, havings, projections, summaryRowProjections, offset, fetchSize, maxRowCount);
-
-				if (cachedResultSet == null) {
-					logger.debug("Dataset not in cache");
-					if (isJDBCDataSet(dataSet) && !SqlUtils.isBigDataDialect(dataSet.getDataSource().getHibDialectName())) {
-						logger.debug("Copying JDBC dataset in cache using its iterator");
-						cache.put(dataSet);
-					} else {
-						logger.debug("Copying dataset in cache by loading the whole set of data in memory");
-						dataSet.loadData();
-						cache.put(dataSet, dataSet.getDataStore());
-					}
-					dataStore = cache.get(dataSet, groups, filters, havings, projections, summaryRowProjections, offset, fetchSize, maxRowCount);
-					if (dataStore == null) {
-						throw new CacheException("An unexpected error occured while executing method");
-					}
-					adjustMetadata((DataStore) dataStore, dataSet, null);
-					dataSet.decode(dataStore);
-
-					// if result was not cached put refresh date as now
+				boolean isJDBCDataSet = isJDBCDataSet(dataSet);
+				boolean isBigDataDialect = SqlUtils.isBigDataDialect(dataSet.getDataSource() != null ? dataSet.getDataSource().getHibDialectName() : "");
+				if (isRealtime && isJDBCDataSet && !isBigDataDialect) {
+					logger.debug("Querying realtime/JDBC dataset");
+					dataStore = queryJDBCDataset(groups, filters, havings, projections, summaryRowProjections, dataSet, offset, fetchSize, maxRowCount);
+					dataStore.setCacheDate(new Date());
+				} else if (isRealtime) {
+					logger.debug("Querying realtime dataset");
+					dataStore = queryRealtimeDataset(groups, filtersForMetaModel, havingsForMetaModel, projections, summaryRowProjections, dataSet, offset,
+							fetchSize, maxRowCount);
 					dataStore.setCacheDate(new Date());
 				} else {
-					dataStore = cachedResultSet;
-					addLastCacheDate(cache, dataStore, dataSet);
-					/*
-					 * since the datastore, at this point, is a JDBC datastore, it does not contain information about measures/attributes, fields' name and
-					 * alias... therefore we adjust its metadata
-					 */
-					adjustMetadata((DataStore) dataStore, dataSet, null);
-					dataSet.decode(dataStore);
+					logger.debug("Querying dataset in cache");
+					SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
+					cache.setUserProfile(userProfile);
+
+					IDataStore cachedResultSet = cache.get(dataSet, groups, filters, havings, projections, summaryRowProjections, offset, fetchSize,
+							maxRowCount);
+
+					if (cachedResultSet == null) {
+						logger.debug("Dataset not in cache");
+						if (isJDBCDataSet && !isBigDataDialect) {
+							logger.debug("Copying JDBC dataset in cache using its iterator");
+							cache.put(dataSet);
+						} else {
+							logger.debug("Copying dataset in cache by loading the whole set of data in memory");
+							dataSet.loadData();
+							cache.put(dataSet, dataSet.getDataStore());
+						}
+						dataStore = cache.get(dataSet, groups, filters, havings, projections, summaryRowProjections, offset, fetchSize, maxRowCount);
+						if (dataStore == null) {
+							throw new CacheException("An unexpected error occured while executing method");
+						}
+						adjustMetadata((DataStore) dataStore, dataSet, null);
+						dataSet.decode(dataStore);
+
+						// if result was not cached put refresh date as now
+						dataStore.setCacheDate(new Date());
+					} else {
+						dataStore = cachedResultSet;
+						addLastCacheDate(cache, dataStore, dataSet);
+						/*
+						 * since the datastore, at this point, is a JDBC datastore, it does not contain information about measures/attributes, fields' name and
+						 * alias... therefore we adjust its metadata
+						 */
+						adjustMetadata((DataStore) dataStore, dataSet, null);
+						dataSet.decode(dataStore);
+					}
 				}
 			}
 			return dataStore;
