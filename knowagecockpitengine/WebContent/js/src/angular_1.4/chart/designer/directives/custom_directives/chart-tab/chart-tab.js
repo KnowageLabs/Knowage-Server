@@ -441,7 +441,7 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 			$scope.chartTemplate.depth = chartEngineSettings.tree_D_Options.depth;
 			$scope.chartTemplate.viewDistance = chartEngineSettings.tree_D_Options.viewDistance;
 			$scope.chartTemplate.isCockpitEngine = $scope.isCockpitEng;
-			
+			break;
 		case 'pie':
 			serie = $scope.chartTemplate.VALUES.SERIE;
 			angular.copy(StructureTabService.getBaseTemplate(), $scope.chartTemplate);
