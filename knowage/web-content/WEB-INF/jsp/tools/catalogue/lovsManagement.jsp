@@ -67,6 +67,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	</head>
 	
 	<body class="bodyStyle kn-layerCatalogue kn-lovCatalog" ng-controller="lovsManagementController as LOVSctrl" >
+	
+	<rest-loading></rest-loading>
 	<angular-list-detail show-detail="showMe">
  		<list label='translate.load("sbi.behavioural.lov.title")' new-function="createLov"> 
 
@@ -98,6 +100,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			  <md-button class="md-flat" ng-click="testLov()" ng-show="showMe" ng-disabled="!enableTest" >{{translate.load("sbi.datasource.testing")}}</md-button>
 		</extra-button>
 		
+		<extra-button>
+			  <md-button class="md-flat" ng-click="saveLov()" ng-show="selectedLov.id != undefined" >{{translate.load("sbi.generic.save")}}</md-button>
+		</extra-button>
 		
 		<detail label=' selectedLov.label==undefined? "" : selectedLov.label'  save-function="saveLov"
 		cancel-function="cancel"
@@ -204,8 +209,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				        </md-input-container>
 				   </div>
 			</div>
+			
+			<label>{{translate.load("sbi.functionscatalog.script")}}</label>
 			<md-input-container class="md-block">
-		          <label>{{translate.load("sbi.functionscatalog.script")}}</label>
+		          
 		          <textarea flex ui-codemirror="cmOption" ng-model="selectedScriptType.text" ></textarea>
         	</md-input-container>
 		</div>
@@ -229,8 +236,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				        </md-input-container>
 				   </div>
 			</div>
+			<label>{{translate.load("sbi.tools.dataset.qbedatasetswizard.query")}}</label>
 			 <md-input-container class="md-block">
-		          <label>{{translate.load("sbi.tools.dataset.qbedatasetswizard.query")}}</label>
+		          
 		          <textarea flex ui-codemirror="cmOption" ng-model="selectedQuery.query"></textarea>
         	</md-input-container>
 		</div>
