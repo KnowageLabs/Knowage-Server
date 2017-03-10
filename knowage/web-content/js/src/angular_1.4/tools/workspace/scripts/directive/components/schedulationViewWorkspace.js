@@ -33,7 +33,7 @@ angular
 		  };
 	});
 
-function schedulationController($scope, sbiModule_messaging, $filter, $mdDialog, $httpParamSerializer, sbiModule_restServices, sbiModule_translate, sbiModule_config , $documentViewer, toastr, $timeout){
+function schedulationController($scope, sbiModule_messaging, $filter, $mdDialog, $httpParamSerializer, sbiModule_restServices, sbiModule_translate, sbiModule_config , $documentViewer, toastr, $timeout, sbiModule_logger){
 	
 	$scope.translate=sbiModule_translate;
 	$scope.schedulationList = [];
@@ -42,7 +42,7 @@ function schedulationController($scope, sbiModule_messaging, $filter, $mdDialog,
 	$scope.loadSchedulations = function(){
 		sbiModule_restServices.promiseGet("scheduler/listAllJobs","")
 		.then(function(response) {
-			console.info("[LOAD START]: Loading of Shcedulers is started.");
+			sbiModule_logger.log("[LOAD START]: Loading of Shcedulers is started.");
 			angular.copy(response.data.root,$scope.schedulationList);
 			for(var jobIndex = $scope.schedulationList.length - 1; jobIndex >= 0; jobIndex--){
 				var job = $scope.schedulationList[jobIndex];
@@ -53,7 +53,7 @@ function schedulationController($scope, sbiModule_messaging, $filter, $mdDialog,
 					continue;
 				}
 			}
-			console.info("[LOAD END]: Loading of Shcedulers is finished.");
+			sbiModule_logger.log("[LOAD END]: Loading of Shcedulers is finished.");
 		},function(response){
 			
 			toastr.error(response.data, sbiModule_translate.load('sbi.browser.folder.load.error'), $scope.toasterConfig);
@@ -64,10 +64,10 @@ function schedulationController($scope, sbiModule_messaging, $filter, $mdDialog,
 	$scope.loadSchedulationsForMerge = function(scheduler){
 		sbiModule_restServices.promiseGet("2.0/pdf",scheduler)
 		.then(function(response) {
-			console.info("[LOAD START]: Loading of Shcedulations for selected scheduler is started.");
+			sbiModule_logger.log("[LOAD START]: Loading of Shcedulations for selected scheduler is started.");
 			angular.copy(response.data.schedulations,$scope.schedulationListForMerge);
 			$scope.snapshotUrlPath=response.data.urlPath;
-			console.info("[LOAD END]: Loading of Shcedulations for selected scheduler is finished.");
+			sbiModule_logger.log("[LOAD END]: Loading of Shcedulations for selected scheduler is finished.");
 		},function(response){
 			
 			// Take the toaster duration set inside the main controller of the Workspace. (danristo)
@@ -134,9 +134,9 @@ function schedulationController($scope, sbiModule_messaging, $filter, $mdDialog,
 			sbiModule_restServices.get( "1.0/documentsnapshot", "getSnapshotsForSchedulationAndDocument", 
 					$httpParamSerializer(queryParams))
 			.success(function(data, status, headers, config) {	
-				console.log('data scheduler '  ,  data.schedulers);
+				sbiModule_logger.log('data scheduler '  ,  data.schedulers);
 				$scope.schedulers = data.schedulers;
-				console.log('url path ' + data.urlPath);
+				sbiModule_logger.log('url path ' + data.urlPath);
 				$scope.snapshotUrlPath=data.urlPath;
 			})
 			.error(function(data, status, headers, config) {});	
@@ -179,7 +179,7 @@ function schedulationController($scope, sbiModule_messaging, $filter, $mdDialog,
 			$scope.processing = true;
 			$timeout(function(){
 				$scope.processing = false;
-				console.info("[LOAD START]: Execution of schedulation is started.");
+				sbiModule_logger.log("[LOAD START]: Execution of schedulation is started.");
 				if(!merge){
 					$mdDialog.show( 
 							$mdDialog.alert()
@@ -192,12 +192,12 @@ function schedulationController($scope, sbiModule_messaging, $filter, $mdDialog,
 				} else {
 					sbiModule_restServices.promiseGet("2.0/pdf",doc.jobName)
 					.then(function(response) {
-						console.info("[LOAD START]: Loading of Shcedulations for selected scheduler is started.");
+						sbiModule_logger.log("[LOAD START]: Loading of Shcedulations for selected scheduler is started.");
 						//response.data.schedulations
 						$scope.snapshotUrlPath=response.data.urlPath;
 						var itemsSorted  = $filter('orderBy')(response.data.schedulations, 'time');
 						$scope.openPdf(itemsSorted[itemsSorted.length-1]);				
-						console.info("[LOAD END]: Loading of Shcedulations for selected scheduler is finished.");
+						sbiModule_logger.log("[LOAD END]: Loading of Shcedulations for selected scheduler is finished.");
 					},function(response){
 						
 						// Take the toaster duration set inside the main controller of the Workspace. (danristo)
@@ -206,7 +206,7 @@ function schedulationController($scope, sbiModule_messaging, $filter, $mdDialog,
 					});
 				}
 				
-				console.info("[LOAD END]: Execution of schedulation is finished.");
+				sbiModule_logger.log("[LOAD END]: Execution of schedulation is finished.");
 			}, 5000)
 		},function(response){
 			
