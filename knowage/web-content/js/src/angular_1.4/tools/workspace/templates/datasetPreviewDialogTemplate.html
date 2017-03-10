@@ -41,7 +41,8 @@
 		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	-->
 	<div layout-fill ng-if=paginationDisabled>
-		<angular-table 
+		<angular-table
+		style="position:absolute;"
 					id='previewDatasetTable'
 		            ng-model="previewDatasetModel"
 					columns="previewDatasetColumns" 
@@ -52,7 +53,8 @@
 	 </div>
 	 
 	 <div layout-fill ng-if=!paginationDisabled>
-		<angular-table layout-fill
+		<angular-table
+		style="position:absolute;"
 					flex
 					id='previewDatasetTable'
 		            ng-model="previewDatasetModel"

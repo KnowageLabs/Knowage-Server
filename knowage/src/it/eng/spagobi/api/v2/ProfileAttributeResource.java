@@ -22,6 +22,8 @@ import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.profiling.bean.SbiAttribute;
+import it.eng.spagobi.profiling.bean.SbiUser;
+import it.eng.spagobi.profiling.bean.SbiUserAttributes;
 import it.eng.spagobi.profiling.bo.ProfileAttribute;
 import it.eng.spagobi.profiling.dao.ISbiAttributeDAO;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
@@ -46,12 +48,15 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 @Path("/2.0/attributes")
 @ManageAuthorization
 public class ProfileAttributeResource extends AbstractSpagoBIResource {
 
 	private static Logger logger = Logger.getLogger(ProfileAttributeResource.class);
+	private final String charset = "; charset=UTF-8";
 
 	@GET
 	@Path("/")
@@ -81,6 +86,30 @@ public class ProfileAttributeResource extends AbstractSpagoBIResource {
 			throw new SpagoBIRestServiceException(getLocale(), e);
 		}
 
+	}
+	
+	@GET
+	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT })
+	@Path("/user/")
+	@Produces(MediaType.APPLICATION_JSON + charset)
+	public String getAttributesByUserId() {
+		JSONArray toReturn = new JSONArray();
+		try {
+			
+			SbiUser user = DAOFactory.getSbiUserDAO().loadSbiUserByUserId(getUserProfile().getUserId().toString());
+			ArrayList<SbiUserAttributes> attributes = DAOFactory.getSbiUserDAO().loadSbiUserAttributesById(user.getId());
+			
+			for (int i = 0; i < attributes.size(); i++) {
+				JSONObject obj = new JSONObject();
+				obj.put("Name", attributes.get(i).getSbiAttribute().getAttributeName());
+				obj.put("Value", attributes.get(i).getAttributeValue());
+				toReturn.put(obj);
+			}
+			return toReturn.toString();
+		} catch (Exception e) {
+			logger.error("Error with loading resource", e);
+			throw new SpagoBIRestServiceException("sbi.modalities.check.rest.error", buildLocaleFromSession(), e);
+		}
 	}
 
 	@PUT

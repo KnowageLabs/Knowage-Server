@@ -37,11 +37,12 @@ app.controller
 	 	"sbiModule_messaging",
 	 	"sbiModule_config",
 	 	"$timeout",
+	 	"sbiModule_user",
 	 	lovsManagementFunction
 	 ]
 );
 
-function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,sbiModule_messaging,sbiModule_config,$timeout)
+function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,sbiModule_messaging,sbiModule_config,$timeout,sbiModule_user)
 {
 	/**
 	 * =====================
@@ -52,6 +53,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	$scope.dirtyForm = false; // flag to check for modification
 	$scope.enableTest = false;
 	$scope.translate = sbiModule_translate;
+	$scope.user = sbiModule_user;
 	$scope.listOfLovs = [];
 	$scope.previewLovModel = []
 	$scope.testLovTreeModel = [];
@@ -133,6 +135,10 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
            }                                    
        }                     
 	    ]
+	
+
+	
+	
 	$scope.testLovTreeRightColumns = [
 	                  	   {
 	                  		   label:"Level",
@@ -145,13 +151,17 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	                  		   label:"Value",
 	                             name:"value",
 	                             hideTooltip:true,
-	                             editable:true           
+	                             transformer: function() {
+	                 				return '<md-select ng-model=row.value class="noMargin"><md-option ng-repeat="col in scopeFunctions.treeOptions()" value="{{col.name}}">{{col.name}}</md-option></md-select>';
+	                 			}           
 	                         },
 	                         {
 	                  		   label:"Description",
 	                             name:"description",
 	                             hideTooltip:true,
-	                             editable:true                         
+	                             transformer: function() {
+		                 				return '<md-select ng-model=row.description class="noMargin"><md-option ng-repeat="col in scopeFunctions.treeOptions()" value="{{col.name}}">{{col.name}}</md-option></md-select>';
+		                 			}                         
 	                         }                     
 	                  	    ]
 	
@@ -466,12 +476,13 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	
 	$scope.getUserAttributes = function() {
 		
-		sbiModule_restServices.promiseGet("2.0/users/attributes", '')
+		sbiModule_restServices.promiseGet("2.0/attributes/user", '')
 		.then(function(response) {
 			$scope.userAttributes = response.data;
 			console.log($scope.userAttributes);
 		}, function(response) {
-			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, sbiModule_translate.load("sbi.generic.toastr.title.error"));
+			console.log(response);
+			sbiModule_messaging.showErrorMessage(response.data, sbiModule_translate.load("sbi.generic.toastr.title.error"));
 			
 		});
 	}
@@ -499,6 +510,8 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 			
 	}
 	$scope.closeDialogFromLOV = function() {
+		$scope.testLovTreeModel = [];
+		$scope.testLovModel = [];
 		$scope.previewLovModel = [];
 		$mdDialog.cancel();
 	}
@@ -828,7 +841,7 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 			
 			
 			 $scope.buildTestTable();
-			
+			 console.log($scope.tableModelForTest)
 			$mdDialog
 			.show({
 				scope : $scope,
@@ -1068,25 +1081,39 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 					.promisePost("2.0", "lovs/preview",toSend)
 					.then(
 							function(response) {
-							$scope.tableModelForTest = response.data.metaData.fields;
-							$scope.previewLovColumns = $scope.formatColumns(response.data.metaData.fields);
-							$scope.previewLovModel = response.data.root;
-							$scope.paginationObj.size = response.data.results;
-							
-							
-							$mdDialog
-							.show({
-								scope : $scope,
-								preserveScope : true,
-								parent : angular.element(document.body),
-								controllerAs : 'LOVSctrl',
-								templateUrl : sbiModule_config.contextName +'/js/src/angular_1.4/tools/catalogues/templates/lovPreview.html',
-								clickOutsideToClose : false,
-								hasBackdrop : false
-							});
+							if(response.statusText == 'No Content'){
+								$scope.enableTest = false;
+								sbiModule_messaging.showErrorMessage("Check your syntax", sbiModule_translate.load("sbi.generic.toastr.title.error"));
+								
+							}else{
+								$scope.tableModelForTest = response.data.metaData.fields;
+								$scope.previewLovColumns = $scope.formatColumns(response.data.metaData.fields);
+								$scope.previewLovModel = response.data.root;
+								$scope.paginationObj.size = response.data.results;
+								
+								
+								$mdDialog
+								.show({
+									scope : $scope,
+									preserveScope : true,
+									parent : angular.element(document.body),
+									controllerAs : 'LOVSctrl',
+									templateUrl : sbiModule_config.contextName +'/js/src/angular_1.4/tools/catalogues/templates/lovPreview.html',
+									clickOutsideToClose : false,
+									hasBackdrop : false
+								});
+								
+								
+								$scope.enableTest = true;
+								
+								
+								
+								
+							}	
 							
 							},
 							function(response) {
+								$scope.enableTest = false;	
 								sbiModule_messaging
 										.showErrorMessage(
 												"An error occured while getting properties for selected member",
@@ -1094,8 +1121,16 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 
 							});
 			
-			$scope.enableTest = true;
 		}
+		
+		 $scope.testTreeScopeFunctions = {
+				 
+					treeOptions: function() {
+						return $scope.tableModelForTest;
+					},
+						
+						
+				};
 		
 		$scope.doServerPagination = function() {
 			var toSend ={};
@@ -1149,6 +1184,12 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 		}
 		
 	$scope.moveToTree = function(item) {
+		
+		for (var i = 0; i < $scope.testLovTreeModel.length; i++) {
+			if($scope.testLovTreeModel[i].level == item.name){
+				return;
+			}
+		}
 		var defObj = {};
 		defObj.level = item.name;
 		defObj.value = item.name;
@@ -1163,7 +1204,6 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 			 var prop = lovProviderEnum[propName];
 			 var provider = parseLovProvider($scope.selectedLov);
 			 $scope.treeListTypeModel = provider[prop];
-			 console.log($scope.treeListTypeModel);
 			 if($scope.selectedLov.id != undefined){
 				 console.log("we have existing one")
 				 console.log($scope.treeListTypeModel);
@@ -1183,12 +1223,15 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 				 $scope.treeListTypeModel.LOVTYPE = 'simple';
 			 }
 			 if($scope.treeListTypeModel.LOVTYPE != 'simple' && $scope.treeListTypeModel.LOVTYPE != ''){
+				 $scope.testLovTreeModel = [];
 				 //$scope.formatedTreeValues = $scope.treeListTypeModel['TREE-LEVELS-COLUMNS'].split(",");
 				for (var i = 0; i < $scope.formatedValues.length; i++) {
+					
 					var defObj = {};
 					defObj.level = $scope.formatedValues[i];
 					defObj.value = $scope.formatedValues[i];
-					defObj.description = $scope.formatedValues[i];
+					defObj.description = $scope.formatedDescriptionValues[i];
+
 					$scope.testLovTreeModel.push(defObj);
 				} 
 			 }
@@ -1196,8 +1239,10 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 		 $scope.testLovModel = $scope.tableModelForTest;
 		 
 		 
+		 
 	 }
 	
+
 		
 		$scope.checkForParams = function(item) {
 			var lovProvider = parseLovProvider(item);
