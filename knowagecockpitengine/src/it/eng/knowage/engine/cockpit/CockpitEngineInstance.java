@@ -301,7 +301,7 @@ public class CockpitEngineInstance extends AbstractEngineInstance {
            	 
            	 JSONArray array = (JSONArray)keyValue;
            	 for (int i = 0; i < array.length(); i++) {
-           		 if (array.getJSONObject(i) instanceof JSONObject) {
+           		 if (array.get(i) instanceof JSONObject) {
            			JSONObject obj = array.getJSONObject(i);
               		 parseTemplate(obj);
 				}
