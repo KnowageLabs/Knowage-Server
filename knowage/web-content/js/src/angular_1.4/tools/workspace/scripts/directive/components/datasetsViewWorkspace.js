@@ -1228,6 +1228,26 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
     	      }
     	    });
     }
+    
+    $scope.editQbeDataset = function(dataset) {
+    	$scope.selectedDataSet = dataset;
+    	var url = null;
+	     if(dataset.dsTypeCd=='Federated'){
+	      url = datasetParameters.qbeEditFederatedDataSetServiceUrl
+	         +'&FEDERATION_ID='+dataset.federationId;
+	     } else {
+	      var modelName= dataset.qbeDatamarts;
+	   var dataSource=dataset.qbeDataSource;
+	      url = datasetParameters.buildQbeDataSetServiceUrl
+	           +'&DATAMART_NAME='+modelName
+	           +'&DATASOURCE_LABEL='+ dataSource;
+	     }
+	  
+	  //url = "http://localhost:8080/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=BUILD_QBE_DATASET_START_ACTION&user_id=biadmin&NEW_SESSION=TRUE&SBI_LANGUAGE=en&SBI_COUNTRY=US&DATASOURCE_LABEL=foodmart&DATAMART_NAME=foodmart";      
+	  // $window.location.href=url;
+	  $scope.isFromDataSetCatalogue = false;
+	  $qbeViewer.openQbeInterface($scope,url);
+    }
         
 }
 })();

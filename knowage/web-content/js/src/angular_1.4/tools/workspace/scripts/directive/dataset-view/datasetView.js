@@ -39,7 +39,7 @@ angular.module('dataset_view', ['ngMaterial'])
 			previewDatasetAction:"&",
 			//cloneDocumentAction:"&",
 			showQbeDatasetAction:"&",
-			
+			editQbeDatasetAction:"&",
 			showQbeEnabled:"=?",
 			showDetailDatasetAction:"&",
 			showDetailDatasetEnabled:"=?",
@@ -66,7 +66,7 @@ function datasetViewControllerFunction($scope,sbiModule_user,sbiModule_translate
 		 
 		 
 	}
-	
+	$scope.sbiUser = sbiModule_user;
 	$scope.translate=sbiModule_translate;
 	
 }

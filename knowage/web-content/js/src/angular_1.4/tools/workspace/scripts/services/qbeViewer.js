@@ -23,11 +23,16 @@
 
 angular
 	.module('qbe_viewer', [ 'ngMaterial' ,'sbiModule'])
-	.service('$qbeViewer', function($mdDialog,sbiModule_config,sbiModule_restServices) { 
+	.service('$qbeViewer', function($mdDialog,sbiModule_config,sbiModule_restServices,$log) { 
 	 		
 		this.openQbeInterface = function($scope,url) {
 			if(typeof  globalQbeJson != 'undefined'){
 				globalQbeJson = $scope.selectedDataSet.qbeJSONQuery;
+			}
+			
+			if(typeof  globalQbeJsonWorkspace != 'undefined' && $scope.hasOwnProperty("selectedDataSet")){
+				globalQbeJson = $scope.selectedDataSet.qbeJSONQuery;
+				$scope.editQbeDset = true;
 			}
 			
 			$mdDialog
@@ -50,23 +55,6 @@ angular
 		};
 		
 		function openQbeInterfaceController($scope,url,$timeout) {
-		
-		   /* angular.element(window.document.body).ready(function () {
-		    	if($scope.isFromDataSetCatalogue) {
-			    	if(typeof $scope.selectedDataSet.qbeJSONQuery === 'string'){
-						$scope.selectedDataSet.qbeJSONQuery = JSON.parse($scope.selectedDataSet.qbeJSONQuery);
-					}
-			    	var timeoutTime = 8000;
-			    	if($scope.selectedDataSet.dsTypeCd.toUpperCase()=='QBE'){
-			    		timeoutTime = 3000;
-			    	}
-					if($scope.selectedDataSet.qbeJSONQuery!=undefined){
-						$timeout(function(){
-							document.getElementById("documentViewerIframe").contentWindow.qbe.setQueriesCatalogue($scope.selectedDataSet.qbeJSONQuery);
-						}, timeoutTime);
-					}
-		    	}
-            });*/
 
 			$scope.documentViewerUrl = url;
 			
@@ -115,7 +103,28 @@ angular
 //				frame.contentWindow.qbe.openSaveDataSetWizard('TRUE');
 				
 				// NEW IMPLEMENTATION
-				document.getElementById("documentViewerIframe").contentWindow.qbe.openSaveDataSetWizard("TRUE");
+				
+				
+				
+				if(!$scope.editQbeDset){
+					document.getElementById("documentViewerIframe").contentWindow.qbe.openSaveDataSetWizard("TRUE");
+				} else {
+					
+					$scope.selectedDataSet.qbeJSONQuery = document.getElementById("documentViewerIframe").contentWindow.qbe.getQueriesCatalogue();
+					sbiModule_restServices.promisePost('1.0/datasets','', angular.toJson($scope.selectedDataSet))
+					.then(
+							function(response) {
+											
+								sbiModule_restServices.promiseGet('1.0/datasets/dataset/id',response.data.id)
+									.then(
+											function(responseDS) {
+												
+												$log.info("Dataset saved successfully");
+												$scope.closeDocument();
+												
+											})})
+				}
+							
 				
 				/**
 				 * Catch the 'save' event that is fired when the DS is persisted (saved) after confirming the dataset wizard inside the QBE (as a 
