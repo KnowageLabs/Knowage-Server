@@ -33,7 +33,7 @@
     	#end
    		
    		#if($chart.height != '')
-    		height:'$chart.height',
+    		height:$chart.height,
     	#end
     	
     	#*
