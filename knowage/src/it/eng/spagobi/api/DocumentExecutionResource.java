@@ -751,8 +751,13 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			JSONObject sessionValue = sessionParametersMap.get(parameter.getParameter().getLabel() + "_" + parameterUse.getLabel());
 			if (sessionValue != null && sessionValue.optString("value") != null) {
 
-				DefaultValuesList valueList = buildParameterSessionValueList(sessionValue.optString("value"), sessionValue.optString("description"), parameter);
-				parameter.setParameterValues(valueList);
+				DefaultValuesList defValueList = buildParameterSessionValueList(sessionValue.optString("value"), sessionValue.optString("description"),
+						parameter);
+				List values = defValueList.getValuesAsList();
+				List descriptions = defValueList.getDescriptionsAsList();
+
+				parameter.setParameterValues(values);
+				parameter.setParameterValuesDescription(descriptions);
 
 			}
 		}
