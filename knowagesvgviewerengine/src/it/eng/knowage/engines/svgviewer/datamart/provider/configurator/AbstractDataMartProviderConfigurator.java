@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -328,6 +329,9 @@ public class AbstractDataMartProviderConfigurator {
 					String enableCross = getMemberProperty("enableExternalCross", memberSB, env);
 					enableCross = (enableCross == null) ? "false" : enableCross;
 					logger.debug("Member [" + i + "] enableExternalCross [" + enableCross + "]");
+					JSONArray labelsCross = getMemberPropertyAsList("lablesExternalCross", memberSB, env);
+					labelsCross = (labelsCross == null) ? new JSONArray() : labelsCross;
+					logger.debug("Member [" + i + "] lablesExternalCross [" + enableCross + "]");
 					String isCustomized = getMemberProperty("isCustomizedSVG", memberSB, env);
 					isCustomized = (isCustomized == null) ? "false" : isCustomized;
 					logger.debug("Member [" + i + "] isCustomizedSVG [" + isCustomized + "]");
@@ -348,6 +352,7 @@ public class AbstractDataMartProviderConfigurator {
 					member.setDsPlaceholder(dsPlaceholder);
 					member.setLevel(Integer.valueOf(level));
 					member.setEnableCross(new Boolean(enableCross));
+					member.setLabelsCross(labelsCross);
 					member.setIsCustomized(new Boolean(isCustomized));
 
 					// get metadata informations
@@ -502,6 +507,31 @@ public class AbstractDataMartProviderConfigurator {
 			String placeholder = toReturn.substring(startPos, endPos);
 			toReturn = (String) env.get(placeholder);
 			logger.debug("Member name value getted from analytical driver [" + placeholder + "] is [" + toReturn + "]");
+		}
+		return toReturn;
+	}
+
+	private static JSONArray getMemberPropertyAsList(String prop, SourceBean memberSB, Map env) {
+		JSONArray toReturn = new JSONArray();
+		String propStr = (String) memberSB.getAttribute(prop);
+
+		if (propStr == null)
+			return toReturn;
+
+		String[] propVal = propStr.split(",");
+		for (int p = 0; p < propVal.length; p++) {
+			if (propVal[p].trim().equals(""))
+				continue;
+
+			// replace the member name with analytical driver value if it's required
+			if (propVal[p] != null && propVal[p].indexOf("$P{") >= 0) {
+				int startPos = propVal[p].indexOf("$P{") + 3;
+				int endPos = propVal[p].indexOf("}", startPos);
+				String placeholder = propVal[p].substring(startPos, endPos);
+				propVal[p] = (String) env.get(placeholder);
+				logger.debug("Member name value getted from analytical driver [" + placeholder + "] is [" + toReturn + "]");
+			}
+			toReturn.put(propVal[p]);
 		}
 		return toReturn;
 	}

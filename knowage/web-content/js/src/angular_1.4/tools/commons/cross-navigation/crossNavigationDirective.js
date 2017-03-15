@@ -18,23 +18,66 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 			 
 			sbiModule_restServices.promiseGet("1.0/crossNavigation",this.crossNavigationSteps.currentDocument.label+"/loadCrossNavigationByDocument")
 			.then(function(response){
-				 
 				var navObj=response.data;
 				var targetUrl="";
 				if(navObj.length==0){
-					alert("non ci sono documenti di destinazione");
+					$mdDialog.show(
+							  $mdDialog
+							    .alert({
+							        title: 'Attention',
+							        textContent: 'The document doesn\'t have cross navigations defined!',
+							        ok: 'Close'
+							      })
+							);
 					return;
-				}else if(navObj.length==1){
+				}
+				
+				var targetDocumentJSON = null;
+				try{
+					targetDocumentJSON = JSON.parse(targetDocument);
+					if (targetDocumentJSON.length == 0) {
+						//the starter engine doesn't set specific cross navigation: all must be considered
+						targetDocumentJSON = undefined;
+						targetDocument = undefined;
+					}
+				}catch (e){
+					//isn't a JSON object but it's a simple string with the label of the cross to use
+					targetDocumentJSON = undefined;					
+				}
+				
+				if (targetDocumentJSON && Array.isArray(targetDocumentJSON)){
+					//makes a sublist of objects if its required from the starter engine				
+					for (var n in navObj){
+						if (!objectIsRequired(targetDocumentJSON, navObj[n].crossName))
+							navObj.splice(n,1); //remove element
+					}										
+				}else{
+					if (targetDocument && navObj.length==1 && !objectIsRequired(new Array(targetDocument), navObj[0].crossName)){
+						//show dialog with error for wrong configuration
+						$mdDialog.show(
+								  $mdDialog
+								    .alert({
+								        title: 'Attention',
+								        textContent: 'The cross definition with label [\''+ targetDocument +'\'] doesn\'t exists for the document !',
+								        ok: 'Close'
+								      })
+								);
+						return;
+					}
+				}
+			
+				
+				if(navObj.length==1){
 					execCross(navObj[0],outputParameter,inputParameter,true); 
 				}
-				else if(navObj.length>=1){
+				else if(navObj.length>1){
 					if(targetDocument!=undefined){
 						for(var i=0;i<navObj.length;i++){
 							if(angular.equals(navObj[i].crossName,targetDocument)){
 								execCross(navObj[i],outputParameter,inputParameter,true); 
 								return;
 							}
-						}
+						}					
 					}
 					
 					$mdDialog.show({
@@ -85,6 +128,14 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 			})
 			 
 		};
+		
+		function objectIsRequired(targetDocs, crossName){
+			for (var t in targetDocs){
+				if (targetDocs[t].trim() == crossName.trim())
+					return true;
+			}
+			return false;
+		}
 		
 		function execCross(doc,outputParameter,inputParameter,externalCross){
 			var parameterStr="";

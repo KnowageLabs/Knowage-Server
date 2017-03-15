@@ -22,6 +22,7 @@ import it.eng.knowage.engines.svgviewer.map.renderer.Measure;
 
 import java.util.Map;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -38,6 +39,7 @@ public class HierarchyMember {
 	private String dsPlaceholder;
 	private Integer level;
 	private Boolean enableCross;
+	private JSONArray labelsCross;
 	private Boolean isCustomized;
 
 	private DataSetMetaData dsMetaData;
@@ -195,6 +197,21 @@ public class HierarchyMember {
 	 */
 	public void setEnableCross(Boolean enableCross) {
 		this.enableCross = enableCross;
+	}
+
+	/**
+	 * @return the labelsCross
+	 */
+	public JSONArray getLabelsCross() {
+		return labelsCross;
+	}
+
+	/**
+	 * @param labelsCross
+	 *            the labelsCross to set
+	 */
+	public void setLabelsCross(JSONArray labelsCross) {
+		this.labelsCross = labelsCross;
 	}
 
 	/**

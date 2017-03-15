@@ -94,7 +94,7 @@ onload="init(evt);">
 		
 	}
 	
-		function clickedElementCrossNavigation(idElement){
+		function clickedElementCrossNavigation(idElement, crossLabels){
 			var crossData = JSON.parse(idElement);
 			//call the method for add the 'selected class' to the element
 			for (var o in crossData){
@@ -105,7 +105,11 @@ onload="init(evt);">
 		  		}
 		  	} 
 			//Launch an event to announce that an element was clicked and cross navigation is called
-			var event = new CustomEvent("SVGElementClickedCrossNavigation", { "detail": idElement });
+			var objEvent = {};
+			objEvent.values = idElement;
+			objEvent.crossLabels = crossLabels;
+			//var event = new CustomEvent("SVGElementClickedCrossNavigation", { "detail": idElement});
+			var event = new CustomEvent("SVGElementClickedCrossNavigation", { "detail": objEvent });
 			window.parent.document.dispatchEvent(event);
 		}
 		

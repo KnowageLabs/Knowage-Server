@@ -578,7 +578,8 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 
 						if (linkType.equals("cross")) {
 							JSONArray jsonValue = (JSONArray) tmpMap.get("crossData");
-							addHRefLinksCross(targetMap, featureElement, jsonValue, datamartProvider);
+							JSONArray jsonCross = datamartProvider.getHierarchyMember(datamartProvider.getSelectedMemberName()).getLabelsCross();
+							addHRefLinksCross(targetMap, featureElement, jsonValue, jsonCross, datamartProvider);
 						} else {
 							addHRefLinksDrill(targetMap, featureElement, elementId, drillId, linkUrl);
 						}
@@ -1465,7 +1466,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	 *            the link type ('cross' or 'drill')
 	 *
 	 */
-	private void addHRefLinksCross(SVGDocument targetMap, Element featureElement, JSONArray JSONValues, IDataMartProvider datamatProvider) {
+	private void addHRefLinksCross(SVGDocument targetMap, Element featureElement, JSONArray JSONValues, JSONArray JSONCross, IDataMartProvider datamatProvider) {
 		logger.debug("IN");
 		Element linkCrossElement = targetMap.createElement("a");
 		linkCrossElement.setAttribute("xlink:href", "javascript:void(0)");
@@ -1478,7 +1479,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 			featureElement.setAttribute("style", "cursor:pointer");
 		}
 
-		featureElement.setAttribute("onclick", "javascript:clickedElementCrossNavigation('" + JSONValues.toString() + "')");
+		featureElement.setAttribute("onclick", "javascript:clickedElementCrossNavigation('" + JSONValues.toString() + "', '" + JSONCross.toString() + "')");
 
 		logger.debug("OUT");
 	}

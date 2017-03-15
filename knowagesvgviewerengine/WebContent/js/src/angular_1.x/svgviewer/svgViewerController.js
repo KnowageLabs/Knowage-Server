@@ -139,8 +139,15 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 	  	var driversParameter = getDriverParameters();
 	  	
 	  	//pass the values element as output parameter  	
-	  	var crossData = JSON.parse(e.detail);  	
-		parent.execExternalCrossNavigation(crossData,driversParameter,undefined,driversParameter.DOCUMENT_LABEL);
+//	  	var crossData = JSON.parse(e.detail);
+	  	var crossData = JSON.parse(e.detail.values);
+	  	var crossLabels = (e.detail.crossLabels) ? e.detail.crossLabels : undefined;
+	  	if (crossLabels ){
+	  		var crossLabelsJSON = JSON.parse(crossLabels);
+	  		if (crossLabelsJSON && crossLabelsJSON.length == 0)  		
+	  			crossLabels = undefined;
+	  	}
+		parent.execExternalCrossNavigation(crossData,driversParameter,crossLabels,driversParameter.DOCUMENT_LABEL);
 
 	});
   
@@ -177,7 +184,7 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 			  	var domTooltip = document.getElementById("svgTooltip");
 			  	var wEl = 0;
 //			  	if (domEl.localName == 'path'){
-//			  		var screenTCM = domEl.getScreenCTM();
+//			  		var screenTCM = do	mEl.getScreenCTM();
 //			  		wEl = screenTCM + e;
 //			  	}else if (domEl.getAttribute("width")){
 //			  		wEl = parseInt(domEl.getAttribute("width"));
