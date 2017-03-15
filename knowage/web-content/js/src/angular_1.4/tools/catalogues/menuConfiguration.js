@@ -679,8 +679,24 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 				});
 	}
 	
-	$scope.deleteMenu= function (item){
-		sbiModule_restServices.promiseDelete("2.0/menu", item.menuId).then(
+	$scope.deleteMenu= function (item,$event){
+		var confirm = $mdDialog.confirm()
+		.title(sbiModule_translate.load("sbi.catalogues.toast.confirm.title"))
+		.content(sbiModule_translate.load("sbi.catalogues.toast.confirm.content"))
+		.ariaLabel("confirm_delete")
+		.targetEvent($event)
+		.ok(sbiModule_translate.load("sbi.general.continue"))
+		.cancel(sbiModule_translate.load("sbi.general.cancel"));
+	$mdDialog.show(confirm).then(function() {
+		$scope.deleteMenuItem(item.menuId);
+    }, function() {
+
+    });
+	
+		
+	}
+	$scope.deleteMenuItem= function (id){
+		sbiModule_restServices.promiseDelete("2.0/menu", id).then(
 				function(response) {
 					$scope.getListOfMenu();
 					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.deleted"), 'Success!');
