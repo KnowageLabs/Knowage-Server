@@ -142,7 +142,7 @@ function execExternalCrossNavigation(outputParameters, inputParameter, targetCro
 		 outputParameters = outputParameters[0];
 			
 	//call REST service to get cross navigation informations
-	var sourceLabelForRest = (sourceLabel.indexOf("iframe_")>=0) ? sourceLabel.substring(7) : sourceLabel
+	var sourceLabelForRest = (sourceLabel.indexOf("iframe_")>=0) ? sourceLabel.substring(7) : sourceLabel;
 	var urlRest =  Sbi.config.serviceRegistry.getRestServiceUrl({
 			serviceName: '1.0/crossNavigation/'+ sourceLabelForRest +'/loadCrossNavigationByDocument'
 			, baseParams: {}			
