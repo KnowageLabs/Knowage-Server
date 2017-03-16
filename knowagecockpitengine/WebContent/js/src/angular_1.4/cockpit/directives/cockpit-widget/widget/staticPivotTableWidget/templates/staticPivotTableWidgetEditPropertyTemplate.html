@@ -1,4 +1,4 @@
-<md-card   class="flexCard customTableWidgetConfiguration pivotTableWidget" ng-clock>
+<md-card class="flexCard customTableWidgetConfiguration pivotTableWidget" ng-cloak>
 	<md-card-content flex layout="column" class="noPadding">
 		<md-toolbar>
 		  <div class="md-toolbar-tools">
@@ -11,30 +11,29 @@
 		  <md-tabs flex md-border-bottom md-selected="tabsUtils.selectedIndex">
 		  
 		  <md-tab label="{{translate.load('sbi.cockpit.dataset')}}">
-		  	<div layout="column" layout-fill ng-clock ng-if="tabsUtils.selectedIndex==0">
+		  	<div layout="column" layout-fill ng-cloak ng-if="tabsUtils.selectedIndex==0">
 		      	
-			   <dataset-selector ng-model=localModel.dataset.dsId on-change="changeDatasetFunction(dsId)"></dataset-selector>  
+			   <dataset-selector ng-model=localModel.dataset.dsId on-change="changeDatasetFunction(dsId)"></dataset-selector>
 			   
 			   <md-card ng-if="localModel.dataset.dsId!=undefined" layout="column" flex class="flexCard">	
 			     	<md-card-content flex layout="row" class="pivotTableDesigner" >
 			     	
 			     		<div layout="column" class="measureAttributeTab">
 			     			<div layout="column" flex="50">
-			     				<md-toolbar class="md-hue-2">  
+			     				<md-toolbar class="md-hue-2">
 		      						<div class="md-toolbar-tools">
 			      						<h2 flex>{{translate.load("sbi.cockpit.pivot.measures")}}</h2>
 		      						</div>
 		      					</md-toolbar>
-		      					<md-content flex layout="column" ng-class="{'dropZone': (sbiModule_device.browser.name=='chrome' && dragUtils.dragObjectType=='MEASURE-PT' )  }">
-		      						<md-list flex dnd-list="currentDataset.metadata.fieldsMeta"  dnd-allowed-types="['MEASURE-PT']" dnd-drop="dropCallback(event, index,currentDataset.metadata.fieldsMeta, item, external, type, 'MEASURE')">
+		      					<md-content flex layout="column" ng-class="{'dropZone': (sbiModule_device.browser.name=='chrome' && dragUtils.dragObjectType=='MEASURE-PT')}">
+		      						<md-list flex dnd-list="currentDataset.metadata.fieldsMeta" dnd-allowed-types="['MEASURE-PT']" dnd-drop="dropCallback(event, index,currentDataset.metadata.fieldsMeta, item, external, type, 'MEASURE')">
 		      							<md-list-item ng-repeat="item in currentDataset.metadata.fieldsMeta"
 		      							ng-if="item.fieldType=='MEASURE'"
 		      							dnd-draggable="item"
 		      							dnd-moved="currentDataset.metadata.fieldsMeta.splice($index, 1)"
 		      							dnd-type="'MEASURE'"
 		      							dnd-dragstart="dragUtils.dragObjectType='MEASURE'"
-		      							dnd-dragend="dragUtils.dragObjectType=undefined"
-		      							 >
+		      							dnd-dragend="dragUtils.dragObjectType=undefined">
 		      							 <md-icon md-font-icon="fa fa-bars" style="margin:0!important;"></md-icon>
 		      							{{item.alias}}
 		      							</md-list-item>
@@ -45,12 +44,12 @@
 		      					</md-content>
 			     			</div>
 			     			<div layout="column" flex="50">
-			     				<md-toolbar class="md-hue-2">  
+			     				<md-toolbar class="md-hue-2">
 		      						<div class="md-toolbar-tools">
 			      						<h2 flex>{{translate.load("sbi.cockpit.pivot.attributes")}}</h2>
 		      						</div>
 		      					</md-toolbar>
-		      					<md-content flex layout="column"ng-class="{'dropZone': (sbiModule_device.browser.name=='chrome' &&  (dragUtils.dragObjectType=='COLUMNS' || dragUtils.dragObjectType=='ROWS'))  }">
+		      					<md-content flex layout="column"ng-class="{'dropZone': (sbiModule_device.browser.name=='chrome' && (dragUtils.dragObjectType=='COLUMNS' || dragUtils.dragObjectType=='ROWS'))}">
 		      						<md-list flex dnd-list="currentDataset.metadata.fieldsMeta" dnd-allowed-types="['COLUMNS','ROWS']" dnd-drop="dropCallback(event, index,currentDataset.metadata.fieldsMeta, item, external, type, 'ATTRIBUTE')">
 		      							<md-list-item ng-repeat="item in currentDataset.metadata.fieldsMeta" 
 		      							ng-if="item.fieldType=='ATTRIBUTE'"
@@ -58,8 +57,7 @@
 		      							dnd-moved="currentDataset.metadata.fieldsMeta.splice($index, 1)"
 		      							dnd-type="'ATTRIBUTE'"
 		      							dnd-dragstart="dragUtils.dragObjectType='ATTRIBUTE'"
-		      							dnd-dragend="dragUtils.dragObjectType=undefined"
-		      							 >
+		      							dnd-dragend="dragUtils.dragObjectType=undefined">
 		      							 <md-icon md-font-icon="fa fa-bars" style="margin:0!important;"></md-icon>
 		      							{{item.alias}}
 		      							</md-list-item>
