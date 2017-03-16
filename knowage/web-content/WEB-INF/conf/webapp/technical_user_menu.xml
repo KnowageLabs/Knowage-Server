@@ -94,12 +94,12 @@
 	                url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/mondrianSchemasCatalogue.jsp?type=MONDRIAN_SCHEMA&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
 	                iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/cube16.png" />
 	          <!-- 
-	          TODO convert to angular      	
+	          TODO convert to angular   SVG catalogue   	--> 
 			<ITEM	title="#menu.MapCat"
 					functionality="MapCatalogueManagement"
 					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListMapsPage&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/mapcatalogue/maps16.png" />
-				--> 
+				
 			<ITEM	title="#menu.FeatureMapCat"
 					functionality="MapFeaturesManagement"
 					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListFeaturesPage&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
