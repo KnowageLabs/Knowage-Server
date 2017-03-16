@@ -58,7 +58,8 @@ angular.module('cockpit_angular_table', ['ngMaterial', 'angularUtils.directives.
                             itemsPerPage:"=?",
                             tableStyle:"=?",
                             showExpanderRowCondition:"&?",
-                            disableAutoLoadOnInit:"@?"
+                            disableAutoLoadOnInit:"@?",
+                            settings:"=?"
                         },
                         compile: function (tElement, tAttrs, transclude) {
                         	
@@ -974,7 +975,11 @@ function CockpitTableBodyControllerFunction($scope) {
 	
 	
 	//davverna - enable bulk row selection
-	$scope.bulkSelect= function(e,rowIndex,column,row){
+	$scope.bulkSelect= function(e,rowIndex,column,row,columnValue){
+	        if(!$scope.settings.multiselectable){
+	        	$scope.clickItem(row,column.name,columnValue,e,rowIndex);
+	            return;
+	        }
 		if($scope.$parent.ngModel.cliccable==false){
 			console.log("widget is not cliccable")
 			return;

@@ -79,6 +79,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.translate = sbiModule_translate;
 		$scope.summaryRow = {};
 		$scope.datasetRecods = {};
+		if($scope.ngModel.multiselectable==undefined){
+			$scope.ngModel.multiselectable=false;
+		}
+		
 		
 		if($scope.ngModel.style==undefined){
 			$scope.ngModel.style={};
@@ -841,7 +845,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	function tableWidgetEditControllerFunction($scope,finishEdit,sbiModule_translate,$mdDialog,originalModel,mdPanelRef,getMetadata,scopeFather,$mdToast){
 		$scope.translate=sbiModule_translate;
-		$scope.fontFamily = ['Times New Roman','Georgia', 'Serif'];
+		$scope.fontFamily = ['Inherit','Roboto','Times New Roman','Georgia', 'Serif'];
 		$scope.fontWeight = ['normal','bold','bolder','lighter','number','initial','inherit'];
 		$scope.textAlign = ['left','right','center'];
 		$scope.getMetadata = getMetadata;

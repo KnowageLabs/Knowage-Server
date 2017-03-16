@@ -59,8 +59,14 @@
 			           </div>
 			    </cockpit-style-custom-widget-configurator>
 			    <cockpit-style-custom-widget-configurator label="translate.load('sbi.cockpit.widget.table.rows')">
+		     		
+			     	
 			          <div flex layout="column" ng-cloak>
-			           <div layout="row" flex>
+			          <div layout="row" flex>
+							<md-checkbox  ng-model="model.multiselectable"  class="md-block"
+						aria-label="Checkbox 2">Multiselectable</md-checkbox>
+				    </div>
+			           <div layout="row" flex>			          	    
 				           <div flex=20  layout="row" layout-align="start center">
 				           <md-checkbox  ng-model="model.style.autoRowsHeight"  class="md-block"
 									aria-label="Checkbox 1">{{translate.load('sbi.cockpit.table.rows.autoAdapt')}}</md-checkbox>
@@ -73,6 +79,7 @@
 									</md-input-container>
 									
 					           	</div>
+					           	
 			           		</div>
 			           </div>
 			           <div layout="row" flex>
