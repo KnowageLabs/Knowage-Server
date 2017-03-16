@@ -471,9 +471,7 @@ function exportChartExecution(exportType, sbiLabelDocLinked) {
 function  exportExecution(item) {
 	var  exportType = item.text;
 	var doclabel = item.document;
-    //alert('Export document '+doclabel+' as '+exportType);
     var endUrl = this.changeDocumentExecutionUrlParameter('outputType', exportType, doclabel);
-    //alert(endUrl);
     if(item.docType == 'REPORT' || (item.docType == 'MAP')){
     	window.open(endUrl, 'name', 'resizable=1,height=750,width=1000');
     
@@ -521,7 +519,6 @@ function setMultivalueFormat(newValue, oldValue){
 }
 
 function createPanels(){
-	//alert("createPanels!!");
 	//create panel for each document
 	for (var docLabel in asUrls){ 	
 		//alert(asUrls.toSource());
