@@ -99,18 +99,21 @@ public class DocumentExecutionUtils {
 	}
 
 	public static List<DocumentParameters> getParameters(BIObject document, String executionRole, Locale locale, String modality) {
-		Monitor getParametersMonitor = MonitorFactory.start("Knowage.DocumentExecutionResource.getParameters");
-
-		List<DocumentParameters> parametersForExecution = new ArrayList<DocumentParameters>();
-		List<BIObjectParameter> parameters = document.getBiObjectParameters();
-		if (parameters != null && parameters.size() > 0) {
-			Iterator<BIObjectParameter> it = parameters.iterator();
-			while (it.hasNext()) {
-				BIObjectParameter parameter = it.next();
-				parametersForExecution.add(new DocumentParameters(parameter, executionRole, locale, document));
+		Monitor monitor = MonitorFactory.start("Knowage.DocumentExecutionUtils.getParameters");
+		List<DocumentParameters> parametersForExecution = null;
+		try {
+			parametersForExecution = new ArrayList<DocumentParameters>();
+			List<BIObjectParameter> parameters = document.getBiObjectParameters();
+			if (parameters != null && parameters.size() > 0) {
+				Iterator<BIObjectParameter> it = parameters.iterator();
+				while (it.hasNext()) {
+					BIObjectParameter parameter = it.next();
+					parametersForExecution.add(new DocumentParameters(parameter, executionRole, locale, document));
+				}
 			}
+		} finally {
+			monitor.stop();
 		}
-		getParametersMonitor.stop();
 		return parametersForExecution;
 	}
 
