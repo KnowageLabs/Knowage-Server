@@ -16,12 +16,19 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 				return {'newRecord':true};
 			};
 			
+
+			
+			$scope.selectedCrossMode = []
+			
 			s.translate = sbiModule_translate;
+			
+			$scope.crossModes = [{label:s.translate.load("sbi.crossnavigation.modality.normal"),value:0},
+			                     {label:s.translate.load("sbi.crossnavigation.modality.popup"),value:1}
+			                    ];
 			
 			ctr.list = [];
 			ctr.detail = newRecord();
 			ctr.dragging = false;
-			ctr.selectedItem = '';
 			
 			ctr.addFixedParam = function(){
 				if(ctr.tmpfixedValue != 'undefined' && ctr.tmpfixedValue != '' && ctr.tmpfixedValue != null){

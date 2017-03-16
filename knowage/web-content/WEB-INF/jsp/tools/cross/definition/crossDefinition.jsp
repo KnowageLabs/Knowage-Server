@@ -163,6 +163,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						    </div>
 						</md-input-container>
 					</div>
+					<div flex="50">
+					      <md-input-container class="md-block" >
+							<label>{{translate.load("sbi.crossnavigation.modality.lbl")}}</label>
+					        <md-select ng-model="ctrl.detail.simpleNavigation.type" ng-disabled="true">
+					          <md-option ng-repeat="crossMode in crossModes track by $index" ng-value="crossMode.value" ng-selected="$first">{{crossMode.label}}</md-option>
+					        </md-select>						      
+					      </md-input-container>
+					</div>					
 				</div>
 	
 				<div layout="row" layout-wrap>
