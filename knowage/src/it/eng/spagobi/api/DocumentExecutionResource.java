@@ -330,105 +330,113 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 	private JSONObject buildJsonParameters(JSONObject jsonParameters, HttpServletRequest req, String role, SessionContainer permanentSession,
 			IParameterUseDAO parameterUseDAO, BIObject obj) throws JSONException, EMFUserError {
-		Monitor checkingsParameterMonitor = MonitorFactory.start("Knowage.DocumentExecutionResource.buildJsonParameters.checkings");
 		List<DocumentParameters> parameters = DocumentExecutionUtils.getParameters(obj, role, req.getLocale(), null);
 		for (DocumentParameters objParameter : parameters) {
-			// SETTING DEFAULT VALUE IF NO PRESENT IN JSON SUBMIT PARAMETER
-			if (jsonParameters.isNull(objParameter.getId())) {
-				if (objParameter.getDefaultValues() != null && objParameter.getDefaultValues().size() > 0) {
-					if (objParameter.getDefaultValues().size() == 1) {
-						// SINGLE
-						Object value;
-						// DEFAULT DATE FIELD : {date#format}
-
-						if (objParameter.getParType().equals("DATE") && objParameter.getDefaultValues().get(0).getValue().toString().contains("#")) {
-							// CONVERT DATE FORMAT FROM DEFAULT TO SERVER
-							value = convertDate(objParameter.getDefaultValues().get(0).getValue().toString().split("#")[1],
-							// GeneralUtilities.getLocaleDateFormat(permanentSession),
-									SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"), objParameter.getDefaultValues().get(0)
-											.getValue().toString().split("#")[0]);
-						}
-
-						// DEFAULT DATE RANGE FIELD : {date_2W#format}
-						else if (objParameter.getParType().equals("DATE_RANGE") && objParameter.getDefaultValues().get(0).getValue().toString().contains("#")) {
-							String dateRange = objParameter.getDefaultValues().get(0).getValue().toString().split("#")[0];
-							String[] dateRangeArr = dateRange.split("_");
-							String range = "_" + dateRangeArr[dateRangeArr.length - 1];
-							dateRange = dateRange.replace(range, "");
-							// CONVERT DATE FORMAT FROM DEFAULT TO Server
-							value = convertDate(objParameter.getDefaultValues().get(0).getValue().toString().split("#")[1],
-							// GeneralUtilities.getLocaleDateFormat(permanentSession)
-									SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"), dateRange);
-							value = value + range;
-						} else {
-							value = objParameter.getDefaultValues().get(0).getValue();
-						}
-						jsonParameters.put(objParameter.getId(), value);
-						jsonParameters.put(objParameter.getId() + "_field_visible_description", value);
-					} else {
-						// MULTIPLE
-						ArrayList<String> paramValArr = new ArrayList<String>();
-						String paramDescStr = "";
-						for (int i = 0; i < objParameter.getDefaultValues().size(); i++) {
-							paramValArr.add(objParameter.getDefaultValues().get(i).getValue().toString());
-							paramDescStr = paramDescStr + objParameter.getDefaultValues().get(i).getValue().toString();
-							if (i < objParameter.getDefaultValues().size() - 1) {
-								paramDescStr = paramDescStr + ";";
+			Monitor checkingsParameterMonitor = MonitorFactory.start("Knowage.DocumentExecutionResource.buildJsonParameters.checkings");
+			try {
+				// SETTING DEFAULT VALUE IF NO PRESENT IN JSON SUBMIT PARAMETER
+				if (jsonParameters.isNull(objParameter.getId())) {
+					if (objParameter.getDefaultValues() != null && objParameter.getDefaultValues().size() > 0) {
+						if (objParameter.getDefaultValues().size() == 1) {
+							// SINGLE
+							Object value;
+							// DEFAULT DATE FIELD : {date#format}
+	
+							if (objParameter.getParType().equals("DATE") && objParameter.getDefaultValues().get(0).getValue().toString().contains("#")) {
+								// CONVERT DATE FORMAT FROM DEFAULT TO SERVER
+								value = convertDate(objParameter.getDefaultValues().get(0).getValue().toString().split("#")[1],
+								// GeneralUtilities.getLocaleDateFormat(permanentSession),
+										SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"), objParameter.getDefaultValues().get(0)
+												.getValue().toString().split("#")[0]);
 							}
+	
+							// DEFAULT DATE RANGE FIELD : {date_2W#format}
+							else if (objParameter.getParType().equals("DATE_RANGE") && objParameter.getDefaultValues().get(0).getValue().toString().contains("#")) {
+								String dateRange = objParameter.getDefaultValues().get(0).getValue().toString().split("#")[0];
+								String[] dateRangeArr = dateRange.split("_");
+								String range = "_" + dateRangeArr[dateRangeArr.length - 1];
+								dateRange = dateRange.replace(range, "");
+								// CONVERT DATE FORMAT FROM DEFAULT TO Server
+								value = convertDate(objParameter.getDefaultValues().get(0).getValue().toString().split("#")[1],
+								// GeneralUtilities.getLocaleDateFormat(permanentSession)
+										SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"), dateRange);
+								value = value + range;
+							} else {
+								value = objParameter.getDefaultValues().get(0).getValue();
+							}
+							jsonParameters.put(objParameter.getId(), value);
+							jsonParameters.put(objParameter.getId() + "_field_visible_description", value);
+						} else {
+							// MULTIPLE
+							ArrayList<String> paramValArr = new ArrayList<String>();
+							String paramDescStr = "";
+							for (int i = 0; i < objParameter.getDefaultValues().size(); i++) {
+								paramValArr.add(objParameter.getDefaultValues().get(i).getValue().toString());
+								paramDescStr = paramDescStr + objParameter.getDefaultValues().get(i).getValue().toString();
+								if (i < objParameter.getDefaultValues().size() - 1) {
+									paramDescStr = paramDescStr + ";";
+								}
+							}
+							jsonParameters.put(objParameter.getId(), paramValArr);
+							jsonParameters.put(objParameter.getId() + "_field_visible_description", paramDescStr);
 						}
-						jsonParameters.put(objParameter.getId(), paramValArr);
-						jsonParameters.put(objParameter.getId() + "_field_visible_description", paramDescStr);
 					}
 				}
-
+			} finally {
+				checkingsParameterMonitor.stop();
 			}
-
+			
 			ParameterUse parameterUse = null;
-			checkingsParameterMonitor.stop();
+			
 			// SUBMIT LOV SINGLE MANDATORY PARAMETER
 			Monitor lovSingleMandatoryParameterMonitor = MonitorFactory
 					.start("Knowage.DocumentExecutionResource.buildJsonParameters.singleLovMandatoryParameter");
-
-			if (objParameter.isMandatory()) {
-				Integer paruseId = objParameter.getParameterUseId();
-				parameterUse = parameterUseDAO.loadByUseID(paruseId);
-				if ("lov".equalsIgnoreCase(parameterUse.getValueSelection())
-						&& !objParameter.getSelectionType().equalsIgnoreCase(DocumentExecutionUtils.SELECTION_TYPE_TREE)
-						&& (objParameter.getLovDependencies() == null || objParameter.getLovDependencies().size() == 0)) {
-					HashMap<String, Object> defaultValuesData = DocumentExecutionUtils.getLovDefaultValues(role, obj,
-							objParameter.getAnalyticalDocumentParameter(), req);
-
-					ArrayList<HashMap<String, Object>> defaultValues = (ArrayList<HashMap<String, Object>>) defaultValuesData
-							.get(DocumentExecutionUtils.DEFAULT_VALUES);
-
-					if (defaultValues != null && defaultValues.size() == 1 && !defaultValues.get(0).containsKey("error")) {
-						jsonParameters.put(objParameter.getId(), defaultValues.get(0).get("value"));
-						jsonParameters.put(objParameter.getId() + "_field_visible_description", defaultValues.get(0).get("value"));
+			try {
+				if (objParameter.isMandatory()) {
+					Integer paruseId = objParameter.getParameterUseId();
+					parameterUse = parameterUseDAO.loadByUseID(paruseId);
+					if ("lov".equalsIgnoreCase(parameterUse.getValueSelection())
+							&& !objParameter.getSelectionType().equalsIgnoreCase(DocumentExecutionUtils.SELECTION_TYPE_TREE)
+							&& (objParameter.getLovDependencies() == null || objParameter.getLovDependencies().size() == 0)) {
+						HashMap<String, Object> defaultValuesData = DocumentExecutionUtils.getLovDefaultValues(role, obj,
+								objParameter.getAnalyticalDocumentParameter(), req);
+	
+						ArrayList<HashMap<String, Object>> defaultValues = (ArrayList<HashMap<String, Object>>) defaultValuesData
+								.get(DocumentExecutionUtils.DEFAULT_VALUES);
+	
+						if (defaultValues != null && defaultValues.size() == 1 && !defaultValues.get(0).containsKey("error")) {
+							jsonParameters.put(objParameter.getId(), defaultValues.get(0).get("value"));
+							jsonParameters.put(objParameter.getId() + "_field_visible_description", defaultValues.get(0).get("value"));
+						}
 					}
 				}
+			} finally {
+				lovSingleMandatoryParameterMonitor.stop();
 			}
-			lovSingleMandatoryParameterMonitor.stop();
 
 			// CROSS NAV : INPUT PARAM PARAMETER TARGET DOC IS STRING
 			Monitor crossNavParameterMonitor = MonitorFactory.start("Knowage.DocumentExecutionResource.buildJsonParameters.crossNavParameter");
-
-			if (!jsonParameters.isNull(objParameter.getId())) {
-				Integer paruseId = objParameter.getParameterUseId();
-				if (parameterUse == null) {
-					parameterUse = parameterUseDAO.loadByUseID(paruseId);
-				}
-				if (jsonParameters.getString(objParameter.getId()).startsWith("[") && jsonParameters.getString(objParameter.getId()).endsWith("]")
-						&& parameterUse.getValueSelection().equals("man_in")) {
-					int strLength = jsonParameters.getString(objParameter.getId()).toString().length();
-					String jsonParamRet = jsonParameters.getString(objParameter.getId()).toString().substring(1, strLength - 1);
-					if (objParameter.isMultivalue()) {
-						jsonParamRet = jsonParamRet.replaceAll("\"", "'");
+			try {
+				if (!jsonParameters.isNull(objParameter.getId())) {
+					Integer paruseId = objParameter.getParameterUseId();
+					if (parameterUse == null) {
+						parameterUse = parameterUseDAO.loadByUseID(paruseId);
 					}
-					jsonParameters.put(objParameter.getId(), jsonParamRet);
+					if (jsonParameters.getString(objParameter.getId()).startsWith("[") && jsonParameters.getString(objParameter.getId()).endsWith("]")
+							&& parameterUse.getValueSelection().equals("man_in")) {
+						int strLength = jsonParameters.getString(objParameter.getId()).toString().length();
+						String jsonParamRet = jsonParameters.getString(objParameter.getId()).toString().substring(1, strLength - 1);
+						if (objParameter.isMultivalue()) {
+							jsonParamRet = jsonParamRet.replaceAll("\"", "'");
+						}
+						jsonParameters.put(objParameter.getId(), jsonParamRet);
+					}
+	
 				}
-
+			} finally {
+				crossNavParameterMonitor.stop();
 			}
-			crossNavParameterMonitor.stop();
+			
 
 		}
 
