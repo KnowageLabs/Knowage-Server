@@ -48,6 +48,9 @@ function cockpitImageWidgetControllerFunction($scope,cockpitModule_widgetConfigu
 		style:{}
 	};
 	
+	if($scope.ngModel.cross==undefined){
+		$scope.ngModel.cross={};
+	};	
 	
 	$scope.init=function(element,width,height){
 		var imgObj = element.find("img");
@@ -81,21 +84,19 @@ function cockpitImageWidgetControllerFunction($scope,cockpitModule_widgetConfigu
 	$scope.editWidget=function(index){
 		var finishEdit=$q.defer();
 		var config = {
-				attachTo:  angular.element(document.body),
-				controller: EditWidgetController,
-				disableParentScroll: true,
-				templateUrl: baseScriptPath+ '/directives/cockpit-widget/widget/imageWidget/templates/imageWidgetEditPropertyTemplate.html',
-				position: $mdPanel.newPanelPosition().absolute().center(),
-				fullscreen :true,
-				hasBackdrop: true,
-				clickOutsideToClose: false,
-				escapeToClose: false,
-				focusOnOpen: true,
-				preserveScope: true,
-				locals: {finishEdit:finishEdit,model:$scope.ngModel},
-				
+			attachTo:  angular.element(document.body),
+			controller: EditWidgetController,
+			disableParentScroll: true,
+			templateUrl: baseScriptPath+ '/directives/cockpit-widget/widget/imageWidget/templates/imageWidgetEditPropertyTemplate.html',
+			position: $mdPanel.newPanelPosition().absolute().center(),
+			fullscreen :true,
+			hasBackdrop: true,
+			clickOutsideToClose: false,
+			escapeToClose: false,
+			focusOnOpen: true,
+			preserveScope: true,
+			locals: {finishEdit:finishEdit,model:$scope.ngModel},
 		};
-
 
 		$mdPanel.open(config).then(function(){
             $scope.refresh();
@@ -103,15 +104,11 @@ function cockpitImageWidgetControllerFunction($scope,cockpitModule_widgetConfigu
             $scope.refresh();
         });
 		
-		
-		
-		
-			
 		finishEdit.promise.then(function(){
 			$scope.refresh();
 		});
+
 		return finishEdit.promise;
-		 
 	};
 };
 

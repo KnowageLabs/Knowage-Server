@@ -313,7 +313,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 			public JSONArray execute(Session session) throws JSONException, EMFUserError {
 				BIObject document = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(label);
 				if (document == null) {
-					throw new RuntimeException("Impossible to get document with label [" + label + "]");
+					throw new RuntimeException("Unable to get document with label [" + label + "]");
 				}
 
 				// load Input Parameter
@@ -349,25 +349,26 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 				Criteria crit = session.createCriteria(SbiCrossNavigationPar.class).add(disjunction);
 				List<SbiCrossNavigationPar> cnParams = crit.list();
 
-				Map<Integer, JSONObject> mapDocIdToJsonDoc = new HashMap<Integer, JSONObject>();
+				Map<Integer, JSONObject> mapCrossIdToJsonCnParam = new HashMap<Integer, JSONObject>();
+
 				for (SbiCrossNavigationPar cnParam : cnParams) {
-					// from cross navigation item get the document whith input params like cross navigation toKeyId value in input params
-					SbiObjects obj = cnParam.getToKey().getSbiObject();
-					Integer docId = obj.getBiobjId();
+					// from cross navigation item get the document with input params like cross navigation toKeyId value in input params
+					Integer crossId = cnParam.getSbiCrossNavigation().getId();
 
-					if (!mapDocIdToJsonDoc.containsKey(docId)) {
-						BIObject biObject = DAOFactory.getBIObjectDAO().toBIObject(obj, session);
+					JSONObject jsonCnParam = mapCrossIdToJsonCnParam.get(crossId);
+					if (jsonCnParam == null) {
+						SbiObjects sbiObj = cnParam.getToKey().getSbiObject();
+						BIObject biObject = DAOFactory.getBIObjectDAO().toBIObject(sbiObj, session);
 
-						JSONObject jsonDoc = new JSONObject();
-						jsonDoc.put("document", new JSONObject(JsonConverter.objectToJson(biObject, biObject.getClass())));
-						jsonDoc.put("documentId", docId);
-						jsonDoc.put("crossName", cnParam.getSbiCrossNavigation().getName());
-						jsonDoc.put("crossId", cnParam.getSbiCrossNavigation().getId());
-						jsonDoc.put("navigationParams", new JSONObject());
+						jsonCnParam = new JSONObject();
+						jsonCnParam.put("document", new JSONObject(JsonConverter.objectToJson(biObject, biObject.getClass())));
+						jsonCnParam.put("documentId", sbiObj.getBiobjId());
+						jsonCnParam.put("crossName", cnParam.getSbiCrossNavigation().getName());
+						jsonCnParam.put("crossId", crossId);
+						jsonCnParam.put("navigationParams", new JSONObject());
 
-						mapDocIdToJsonDoc.put(docId, jsonDoc);
+						mapCrossIdToJsonCnParam.put(crossId, jsonCnParam);
 					}
-					JSONObject jsonDoc = mapDocIdToJsonDoc.get(docId);
 
 					JSONObject jsonNavParam = new JSONObject();
 
@@ -392,16 +393,15 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 						throw new SpagoBIRuntimeException("Unsupported cross navigation type [" + type + "]");
 					}
 
-					jsonDoc.getJSONObject("navigationParams").put(cnParam.getToKey().getParurlNm(), jsonNavParam);
+					jsonCnParam.getJSONObject("navigationParams").put(cnParam.getToKey().getParurlNm(), jsonNavParam);
+
 				}
 
-				Iterator it = mapDocIdToJsonDoc.entrySet().iterator();
-				JSONArray ret = new JSONArray();
-				while (it.hasNext()) {
-					Map.Entry pair = (Map.Entry) it.next();
-					ret.put(pair.getValue());
+				JSONArray results = new JSONArray();
+				for (JSONObject jsonDoc : mapCrossIdToJsonCnParam.values()) {
+					results.put(jsonDoc);
 				}
-				return ret;
+				return results;
 			}
 		});
 	}

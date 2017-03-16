@@ -421,21 +421,21 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 		var model = $scope.ngModel;
 		if(model.cross != undefined  && model.cross.cross != undefined 
 				&& model.cross.cross.enable === true
-				&& model.cross.cross.column != undefined
-				&& model.cross.cross.outputParameter != undefined
 				){
 			
 			// enter cross navigation mode
 			var doCross = false;
 			
-			var nameToCheckForCross =  columnName;
-			
-			// check if selected column has been renamed by an alias, in tat
-			// case take the real name
-			for(var colIndex in model.content.columnSelectedOfDataset){
-				var col = model.content.columnSelectedOfDataset[colIndex];
-				if(col.aliasToShow != undefined && col.aliasToShow == columnName){
-					nameToCheckForCross = col.name;
+			var nameToCheckForCross = columnName;
+			if(columnName != undefined){
+				// check if selected column has been renamed by an alias, in that
+				// case take the real name
+				for(var colIndex in model.content.columnSelectedOfDataset){
+					var col = model.content.columnSelectedOfDataset[colIndex];
+					if(col.aliasToShow != undefined && col.aliasToShow == columnName){
+						nameToCheckForCross = col.name;
+						break;
+					}
 				}
 			}
 						
@@ -444,106 +444,107 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 				// column (or alias if present)
 				var crossColumnOrAlias = model.cross.cross.column;
 					
-					for(var colIndex in model.content.columnSelectedOfDataset){
-						var col = model.content.columnSelectedOfDataset[colIndex];
-						if(col.aliasToShow != undefined && col.name == model.cross.cross.column){
-							crossColumnOrAlias = col.aliasToShow;
+				for(var colIndex in model.content.columnSelectedOfDataset){
+					var col = model.content.columnSelectedOfDataset[colIndex];
+					if(col.aliasToShow != undefined && col.name == model.cross.cross.column){
+						crossColumnOrAlias = col.aliasToShow;
+					}
+				}
+				doCross = true;
+				// get value to pass to cross navigation
+				if(row){
+					if(row[crossColumnOrAlias]){
+						columnValue = row[crossColumnOrAlias];
+					}else{
+						columnValue = [];
+						for(var j in row){
+							columnValue.push(row[j][crossColumnOrAlias]);
 						}
 					}
-					doCross = true;
-					// get value to pass to cross navigation
-					if(row){
-						if(row[crossColumnOrAlias]){
-							columnValue = row[crossColumnOrAlias];
-						}else{
-							columnValue = [];
-							for(var j in row){
-								columnValue.push(row[j][crossColumnOrAlias]);
-							}
-						}
-						
-					}
-					
-
-			}
-			else{
+				}
+			}else{
 				// case a specific column is enabled for cross
 				// check if column clicked is the one for cross navigation
-				if(model.cross.cross.column === nameToCheckForCross){
+				if(model.cross.cross.column == undefined || model.cross.cross.column === nameToCheckForCross){
 					doCross = true;
 				}
 			}
 
 			if(doCross === true){
 				var outputParameter = {};
-				outputParameter[model.cross.cross.outputParameter] = columnValue;
+				if(model.cross.cross.outputParameter){
+					outputParameter[model.cross.cross.outputParameter] = columnValue;
+				}
 				
 				// if destination document is specified don't ask
 				if(model.cross.cross.crossName != undefined){
 					parent.execExternalCrossNavigation(outputParameter,{},model.cross.cross.crossName);
-					return;
 				}
 				else{
 					parent.execExternalCrossNavigation(outputParameter,{});
-					return;
 				}
-			}
-		}
-
-		if(modalColumn!=undefined && modalValue!=undefined)
-		{	
-			columnValue=modalValue;
-			columnName=modalColumn;
-		}	
-		// check if all associated data
-		var dsLabel=$scope.getDataset().label;
-		
-		var originalColumnName;
-        for(var i=0; i<$scope.ngModel.content.columnSelectedOfDataset.length; i++){
-        	if($scope.ngModel.content.columnSelectedOfDataset[i].aliasToShow && $scope.ngModel.content.columnSelectedOfDataset[i].aliasToShow.toUpperCase() === columnName.toUpperCase()){
-        		originalColumnName = $scope.ngModel.content.columnSelectedOfDataset[i].alias;
-				break;
-        	}
-        }
-		if(originalColumnName==undefined){
-			for(var i=0; i<$scope.ngModel.content.columnSelectedOfDataset.length; i++){
-				if($scope.ngModel.content.columnSelectedOfDataset[i].alias && $scope.ngModel.content.columnSelectedOfDataset[i].alias.toUpperCase() === columnName.toUpperCase()){
-					originalColumnName = columnName;
-					break;
-				}
+				return;
 			}
 		}
 		
-		var sel=cockpitModule_widgetSelection.getAssociativeSelections(columnValue,columnName,dsLabel,originalColumnName);
-		if(sel!=undefined){
-			if(!cockpitModule_template.configuration.aliases){
-				cockpitModule_template.configuration.aliases = [];
+		if($scope.getDataset() && columnName){
+	
+			if(modalColumn!=undefined && modalValue!=undefined)
+			{	
+				columnValue = modalValue;
+				columnName = modalColumn;
 			}
-			if(!angular.equals("noAssoc",sel)){
-				sel.then(function(response) {
-					cockpitModule_widgetSelection.refreshAllAssociatedWidget(false,response);
-				}, function(error) {
-					console.log(error)
-				});
-			}else{
-				if(!cockpitModule_template.configuration.filters.hasOwnProperty(dsLabel)){
-					cockpitModule_template.configuration.filters[dsLabel]={};
-				}
-				// 02/02/17 - davverna
-				// if columnvalue is an array, usually from a bulk selection, I use a copy to avoid the direct object binding. 
-				// With the double click there is not the same issue because the binding is on a primitive value (string).
-				if(Object.prototype.toString.call( columnValue ) === '[object Array]'){
-					cockpitModule_template.configuration.filters[dsLabel][originalColumnName]=[];
-					angular.copy(columnValue,cockpitModule_template.configuration.filters[dsLabel][originalColumnName]);
-				}else{
-					cockpitModule_template.configuration.filters[dsLabel][originalColumnName]=columnValue;
-				}
-				cockpitModule_template.configuration.aliases.push({'dataset':dsLabel,'column':originalColumnName,'alias':columnName});
-				cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS=true;
-				cockpitModule_widgetSelection.refreshAllWidgetWhithSameDataset(dsLabel);
-			}
-		}
 			
+			// check if all associated data
+			var dsLabel=$scope.getDataset().label;
+			
+			var originalColumnName;
+	        for(var i=0; i<$scope.ngModel.content.columnSelectedOfDataset.length; i++){
+	        	if($scope.ngModel.content.columnSelectedOfDataset[i].aliasToShow && $scope.ngModel.content.columnSelectedOfDataset[i].aliasToShow.toUpperCase() === columnName.toUpperCase()){
+	        		originalColumnName = $scope.ngModel.content.columnSelectedOfDataset[i].alias;
+					break;
+	        	}
+	        }
+			if(originalColumnName==undefined){
+				for(var i=0; i<$scope.ngModel.content.columnSelectedOfDataset.length; i++){
+					if($scope.ngModel.content.columnSelectedOfDataset[i].alias && $scope.ngModel.content.columnSelectedOfDataset[i].alias.toUpperCase() === columnName.toUpperCase()){
+						originalColumnName = columnName;
+						break;
+					}
+				}
+			}
+			
+			var sel=cockpitModule_widgetSelection.getAssociativeSelections(columnValue,columnName,dsLabel,originalColumnName);
+			if(sel!=undefined){
+				if(!cockpitModule_template.configuration.aliases){
+					cockpitModule_template.configuration.aliases = [];
+				}
+				
+				if(!angular.equals("noAssoc",sel)){
+					sel.then(function(response) {
+						cockpitModule_widgetSelection.refreshAllAssociatedWidget(false,response);
+					}, function(error) {
+						console.log(error)
+					});
+				}else{
+					if(!cockpitModule_template.configuration.filters.hasOwnProperty(dsLabel)){
+						cockpitModule_template.configuration.filters[dsLabel]={};
+					}
+					// 02/02/17 - davverna
+					// if columnvalue is an array, usually from a bulk selection, I use a copy to avoid the direct object binding. 
+					// With the double click there is not the same issue because the binding is on a primitive value (string).
+					if(Object.prototype.toString.call( columnValue ) === '[object Array]'){
+						cockpitModule_template.configuration.filters[dsLabel][originalColumnName]=[];
+						angular.copy(columnValue,cockpitModule_template.configuration.filters[dsLabel][originalColumnName]);
+					}else{
+						cockpitModule_template.configuration.filters[dsLabel][originalColumnName]=columnValue;
+					}
+					cockpitModule_template.configuration.aliases.push({'dataset':dsLabel,'column':originalColumnName,'alias':columnName});
+					cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS=true;
+					cockpitModule_widgetSelection.refreshAllWidgetWhithSameDataset(dsLabel);
+				}
+			}
+		}
 	}
 	
 	$scope.doEditWidget=function(initOnFinish){

@@ -506,9 +506,23 @@ var execCrossNavigation=function(frameid, doclabel, params, subobjid, title, tar
 };
 
 var execExternalCrossNavigation=function(outputParameters,inputParameters,targetCrossNavigation,docLabel){ 
-	angular.element(frameElement).scope().$parent.navigateTo(outputParameters,inputParameters,targetCrossNavigation,docLabel);
+	var parent = angular.element(frameElement).scope().$parent;
+	while(parent != undefined){
+		if(parent.navigateTo != undefined){
+			break;
+		}
+		parent = parent.$parent;
+	}
+	parent.navigateTo(outputParameters,inputParameters,targetCrossNavigation,docLabel);
 };
 
 var execShowHelpOnLine=function(data){
-	angular.element(frameElement).scope().$parent.execShowHelpOnLine(data);
+	var parent = angular.element(frameElement).scope().$parent;
+	while(parent != undefined){
+		if(parent.execShowHelpOnLine != undefined){
+			break;
+		}
+		parent = parent.$parent;
+	}
+	parent.execShowHelpOnLine(data);
 }

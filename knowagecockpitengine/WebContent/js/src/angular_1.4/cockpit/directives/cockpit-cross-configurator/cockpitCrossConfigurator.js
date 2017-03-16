@@ -97,23 +97,20 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 	$scope.localDataset = {};
 	$scope.crossNavigations = cockpitModule_crossServices.getCrossList();
 	$scope.chartProperties=[];
-	if($scope.localModel){
-	$scope.crossChart= $scope.localModel.wtype === 'chart';
-	}else{
-		$scope.crossChart= false;
-	}
-	if( $scope.crossChart){
-		
+	
+	$scope.crossTable = $scope.model != undefined && $scope.model.type === 'table';
+	
+	$scope.crossChart = $scope.localModel != undefined && $scope.localModel.wtype === 'chart'; 
+	
+	if($scope.crossChart){
 		$scope.chartProperties=cockpitModule_crossServices.getChartParameters($scope.localModel.chartTemplate.CHART.type);
 	}else{
-		
 	   if($scope.model.dataset!=undefined && $scope.model.dataset.dsId != undefined){
-
-		angular.copy(cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId), $scope.localDataset);
-	} else{
-		$scope.model.dataset= {};
-		//angular.copy([], $scope.model.dataset.metadata.fieldsMeta); 
-	}
+		   angular.copy(cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId), $scope.localDataset);
+	   }else{
+		   $scope.model.dataset= {};
+		   //angular.copy([], $scope.model.dataset.metadata.fieldsMeta); 
+	   }
 	}
 	angular.copy(cockpitModule_template.configuration.cross,$scope.cockpitCross);
 	
@@ -121,12 +118,10 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 		angular.copy(angular.merge({},$scope.cockpitCross,$scope.ngModel),$scope.ngModel)
 	}
 	
-	
 	$scope.resetCross=function(){
 		$scope.ngModel.cross=$scope.cockpitCross;
 		angular.copy($scope.cockpitCross,$scope.ngModel.cross);
 	}
 }
-
 
 })();
