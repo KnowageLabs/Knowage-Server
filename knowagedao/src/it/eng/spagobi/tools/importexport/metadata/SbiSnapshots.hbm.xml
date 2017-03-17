@@ -30,7 +30,7 @@
         <property name="contentType" type="string">
             <column name="content_type" />
         </property>
-
+<!-- 
         <property name="schedulation" type="string">
             <column name="schedulation" />
         </property>
@@ -42,6 +42,6 @@
         <property name="schedulationStartDate" type="integer">
             <column name="schedulation_start" />
         </property>
-
+ -->
     </class>
 </hibernate-mapping>
