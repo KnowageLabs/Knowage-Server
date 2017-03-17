@@ -59,6 +59,7 @@ angular.module('cockpitModule')
                 }else{
                 	 ele.html(html);
                      $compile(ele.contents())(scope);
+                     scope.ngModel.isReady=true;
                 }
                
                 
