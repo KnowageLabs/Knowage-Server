@@ -761,7 +761,7 @@ function renderWordCloud(chartConf,panel,locale){
 	    var tooltipBorderRadius=chartConf.tooltip.borderRadius?chartConf.tooltip.borderRadius:'3';
 	    
 		d3.selectAll(".tooltip")
-			.style("position","absolute")
+			.style("position","fixed")
 			.style("text-align",chartConf.tooltip.align)
 			.style("min-width",10)
 			.style("max-width",1000)
