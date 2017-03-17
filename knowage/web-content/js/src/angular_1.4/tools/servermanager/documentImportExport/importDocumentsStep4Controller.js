@@ -16,8 +16,9 @@ function importStep4FuncController($scope,importExportDocumentModule_importConf,
 			.success(function(data, status, headers, config) {
 			if(data.hasOwnProperty("errors")){
 				$scope.stopImport(data.errors[0].message);	
-			}else if(data.STATUS=="NON OK"){
-				$scope.stopImport(data.SUBMESSAGE,$scope.translate.load(data.ERROR,'component_impexp_messages'));	
+			}else if(data.STATUS=="NON OK"){				
+//				$scope.stopImport(data.SUBMESSAGE,msgError);
+				$scope.stopImport($scope.translate.load(data.ERROR,'component_impexp_messages'));
 				
 			}
 			else if(data.STATUS=="OK"){
