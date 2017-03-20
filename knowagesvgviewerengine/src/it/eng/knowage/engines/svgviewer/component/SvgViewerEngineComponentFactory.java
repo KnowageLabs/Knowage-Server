@@ -89,7 +89,7 @@ public class SvgViewerEngineComponentFactory {
 		Monitor setEnvMonitor = MonitorFactory.start("GeoEngine.SvgViewerEngineComponentFactory.setEnv");
 		geoEngineComponent.setEnv(env);
 		setEnvMonitor.stop();
-		Monitor initMonitor = MonitorFactory.start("GeoEngine.SvgViewerEngineComponentFactory.init");
+		Monitor initMonitor = MonitorFactory.start("GeoEngine.SvgViewerEngineComponentFactory.init." + geoEngineComponentClassName);
 		geoEngineComponent.init(conf);
 		initMonitor.stop();
 		logger.debug("Component " + geoEngineComponentClassName + " configurated succesfully");
