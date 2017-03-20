@@ -334,19 +334,21 @@ public class CrossTabHTMLSerializer {
 							// if (parentStyle != null && !parentStyle.equals("")) {
 							// aColumn.setAttribute(STYLE_ATTRIBUTE, parentStyle);
 							// }
+							String measureParentValue = "";
+							Integer direction = null;
 							if (categoriesValues == null)
 								categoriesValues = getCompleteCategoriesValues(measureNumber, lastLevelValues);
-
-							String measureParentValue = categoriesValues.get(j);
-							if (measureParentValue.indexOf(CrossTab.TOTAL) < 0 && measureParentValue.indexOf(CrossTab.SUBTOTAL) < 0) {
-								Integer direction = null;
-								if (measuresSortKeysMap != null && measuresSortKeysMap.get(j) != null) {
-									direction = measuresSortKeysMap.get(j).getDirection();
+							if (categoriesValues.size() > 0) {
+								measureParentValue = categoriesValues.get(j);
+								if (measureParentValue.indexOf(CrossTab.TOTAL) < 0 && measureParentValue.indexOf(CrossTab.SUBTOTAL) < 0) {
+									if (measuresSortKeysMap != null && measuresSortKeysMap.get(j) != null) {
+										direction = measuresSortKeysMap.get(j).getDirection();
+									}
 								}
-								aColumn.setAttribute(addSortArrow(aRow, text, parentStyle, direction));
-								aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "orderPivotTable('" + j + "','1'," + myGlobalId + ", '" + text + "' , '"
-										+ measureParentValue + "')");
 							}
+							aColumn.setAttribute(addSortArrow(aRow, text, parentStyle, direction));
+							aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "orderPivotTable('" + j + "','1'," + myGlobalId + ", '" + text + "' , '"
+									+ measureParentValue + "')");
 						}
 						// aColumn.setCharacters(text);
 					}
