@@ -209,6 +209,8 @@ public class CrossTabHTMLSerializer {
 
 					if (!appliedStyle)
 						aColumn.setAttribute(CLASS_ATTRIBUTE, MEMBER_CLASS);
+					else
+						aColumn.setAttribute(CLASS_ATTRIBUTE, MEMBER_CLASS + "NoStandardStyle");
 
 					aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "clickFunction('" + crossTab.getCrosstabDefinition().getRows().get(i).getEntityId() + "','" + text
 							+ "')");

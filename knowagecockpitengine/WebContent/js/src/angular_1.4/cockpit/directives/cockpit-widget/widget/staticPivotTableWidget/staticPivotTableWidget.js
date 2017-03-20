@@ -48,7 +48,41 @@ angular.module('cockpitModule')
 });
 
 function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_widgetConfigurator,$q,$mdPanel,sbiModule_restServices,$compile,cockpitModule_generalOptions,$mdDialog,sbiModule_device){
+	$scope.bordersSize=[{
+    	label:$scope.translate.load("sbi.cockpit.style.borders.solid"),
+    	value:'solid',
+    	exampleClass:"borderExampleSolid"
+    },
+    {
+    	label:$scope.translate.load("sbi.cockpit.style.borders.dashed"),
+    	value:'dashed',
+    	exampleClass:"borderExampleDashed"
+    },
+    {
+    	label:$scope.translate.load("sbi.cockpit.style.borders.dotted"),
+    	value:'dotted',
+    	exampleClass:"borderExampleDotted"
+    }
+	];
+	$scope.bordersWidth=[{
+	    	label:$scope.translate.load("sbi.cockpit.style.small"),
+	    	value:"0.1em"
+	    },
+	    {
+	    	label:$scope.translate.load("sbi.cockpit.style.medium"),
+	    	value:"0.3em"
+	    },
+	    {
+	    	label:$scope.translate.load("sbi.cockpit.style.large"),
+	    	value:"0.7em"
+	    },
+	    {
+	    	label:$scope.translate.load("sbi.cockpit.style.extralarge"),
+	    	value:"1em"
+	    },
+	];
 	
+
 	$scope.init=function(element,width,height){
 		$scope.refreshWidget();
 	};
@@ -104,6 +138,14 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 		$scope.doSelection(columnName,columnValue);
 	};
 	
+	$scope.enableAlternate = function(){
+		$scope.colorPickerProperty['disabled'] = $scope.ngModel.content.style.showAlternateRows;
+	}
+	
+	$scope.enableGrid =  function(){
+		$scope.colorPickerPropertyGrid['disabled'] = $scope.ngModel.content.style.showGrid; 
+	}
+	
 	
 	
 	$scope.addPivotTableStyle=function(){
@@ -131,20 +173,41 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 				}
 			}
 			
-			//altrnateRow
-			
+			//altrnateRow & grid border
 			if($scope.ngModel.content.style.measuresRow!=undefined && Object.keys($scope.ngModel.content.style.measuresRow).length>0 ){
 				var rowList=angular.element($scope.subCockpitWidget[0].querySelectorAll("tr"));
 				var tmpOddRow=false;
 				angular.forEach(rowList,function(row,index){
-					var dataColumnList=row.querySelectorAll(".data");
+					//apply borders on member class
+					var dataColumnList=row.querySelectorAll(".member");
+					if(dataColumnList.length>0){							
+						$scope.applyBorderStyle(dataColumnList);								
+					}
+					dataColumnList=row.querySelectorAll(".memberNoStandardStyle");
+					if(dataColumnList.length>0){							
+						$scope.applyBorderStyle(dataColumnList);								
+					}
+					//apply borders on level class
+					dataColumnList=row.querySelectorAll(".level");
+					if(dataColumnList.length>0){							
+						$scope.applyBorderStyle(dataColumnList);								
+					}
+					//apply styles on data (values)
+					dataColumnList=row.querySelectorAll(".data");
+					if(dataColumnList.length == 0){
+						dataColumnList=row.querySelectorAll(".dataNoStandardStyle"); //personal user settings						
+					}
 					if(dataColumnList.length>0){
+						//alternateRow
 						if(tmpOddRow && $scope.ngModel.content.style.measuresRow["odd-background-color"]!= ""){
 							angular.element(dataColumnList).css("background-color",$scope.ngModel.content.style.measuresRow["odd-background-color"])
 						}else if ($scope.ngModel.content.style.measuresRow["even-background-color"]!= ""){
 							angular.element(dataColumnList).css("background-color",$scope.ngModel.content.style.measuresRow["even-background-color"])
 						}
 						tmpOddRow=!tmpOddRow;
+						
+						//border cell style
+						$scope.applyBorderStyle(dataColumnList);		
 					}else{
 						tmpOddRow=false;
 					}
@@ -212,6 +275,18 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 		
 	};
 	
+	//border cell style
+	$scope.applyBorderStyle = function(dataColumnList){
+		if($scope.ngModel.content.style.measuresRow["border-width"]!= ""){
+			angular.element(dataColumnList).css("border-width",$scope.ngModel.content.style.measuresRow["border-width"])
+		}
+		if ($scope.ngModel.content.style.measuresRow["border-color"]!= ""){
+			angular.element(dataColumnList).css("border-color",$scope.ngModel.content.style.measuresRow["border-color"])
+		}
+		if ($scope.ngModel.content.style.measuresRow["border-style"]!= ""){
+			angular.element(dataColumnList).css("border-style",$scope.ngModel.content.style.measuresRow["border-style"])
+		}	
+	}
 	
 	$scope.cleanDataToSend=function(styleDataToSend){
 		var EMPTY_COLOR = "hsl(0, 0%, 100%)";
