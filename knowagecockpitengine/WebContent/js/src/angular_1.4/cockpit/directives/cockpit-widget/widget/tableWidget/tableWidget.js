@@ -201,44 +201,59 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return -1;
 		};
 
-
 		$scope.lastChangePageConf={};
-		$scope.changeDocPage = function(searchValue, itemsPerPage, currentPageNumber , columnsSearch,columnOrdering, reverseOrdering){
-			if($scope.gridsterItem.hasClass("gridster-item-resizing") || !$scope.widgetIsInit ){
-				return
+		
+		$scope.changeDocPage = function(searchValue, itemsPerPage, currentPageNumber, columnsSearch, columnOrdering, reverseOrdering){
+			if($scope.gridsterItem.hasClass("gridster-item-resizing")
+					|| !$scope.widgetIsInit
+					|| itemsPerPage == 0){
+				return;
 			}
+			if($scope.ngModel
+					&& $scope.ngModel.content
+					&& $scope.ngModel.content.currentPageNumber + 1 == currentPageNumber
+					&& $scope.datasetRecords
+					&& $scope.datasetRecords.rows
+					&& $scope.datasetRecords.rows.length == itemsPerPage){
+				return;
+			}
+			
 			var time=(new Date()).getTime();
 			$scope.lastChangePageConf=time;
 			$timeout(function(){
 				if(angular.equals(time,	$scope.lastChangePageConf)){
-					currentPageNumber--;
-					$scope.ngModel.content.currentPageNumber = currentPageNumber;
 					
-					var numberOfElement = angular.copy(itemsPerPage);
 					if(searchValue==undefined || searchValue.trim().lenght==0 ){
 						searchValue='';
 					}
+					
+					var numberOfElement = angular.copy(itemsPerPage);					
+					if($scope.ngModel.content.maxRowsNumber !=undefined){
+						numberOfElement = angular.copy($scope.ngModel.content.maxRowsNumber)
+						$scope.columnOrdering = columnOrdering;
+						$scope.reverseOrdering = reverseOrdering;
+					}
+					
 					if($scope.ngModel.style.showSummary == true){
 						numberOfElement--;
 					}
-					if($scope.ngModel.content.maxRowsNumber !=undefined){
-						numberOfElement = angular.copy($scope.ngModel.content.maxRowsNumber)
-						if($scope.ngModel.style.showSummary == true){
-							numberOfElement--;
-						}
-						$scope.columnOrdering = columnOrdering;
-						$scope.reverseOrdering = reverseOrdering;
-						var options = {page:currentPageNumber, itemPerPage:numberOfElement, columnOrdering:columnOrdering,reverseOrdering:reverseOrdering };
-						$scope.refreshWidget(options);
-
-					}else{
-						var options = {page:currentPageNumber, itemPerPage:numberOfElement, columnOrdering:columnOrdering,reverseOrdering:reverseOrdering };
-						$scope.refreshWidget(options);
-					}
+					
+					currentPageNumber--;
+					$scope.ngModel.content.currentPageNumber = currentPageNumber;
+					
+					var options = {
+						page: currentPageNumber,
+						itemPerPage: numberOfElement,
+						columnOrdering: columnOrdering,
+						reverseOrdering: reverseOrdering,
+						type: $scope.ngModel.type
+					};
+					$scope.refreshWidget(options);
 				}
 			},1000);
 			 
 		};
+		
 		$scope.isMobile = {
 			    Android: function() {
 			        return navigator.userAgent.match(/Android/i);
