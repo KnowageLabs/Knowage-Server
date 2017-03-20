@@ -731,33 +731,38 @@ function CockpitTableControllerFunction($scope, $timeout,$mdDialog) {
     	if($scope.tableContainer==undefined || $scope.tableContainer.$$NG_REMOVED==true){
     		var tableContainer = angular.element($scope.tableItem[0].querySelector('#angularFullTableContentBox'))[0];
 //    		var tableContainer = angular.element(document.querySelector('angular-table.' + $scope.id + 'ItemBox #angularFullTableContentBox'))[0];
-    			$scope.tableContainer=tableContainer;
+    		$scope.tableContainer=tableContainer;
     	}
     	
     	if($scope.headButton==undefined || $scope.headButton.$$NG_REMOVED==true){
     		var headButton = angular.element($scope.tableItem[0].querySelector('table.fakeTable thead'))[0];
     		var headButton = angular.element(document.querySelector('angular-table.' + $scope.id + 'ItemBox table.fakeTable thead'))[0];
-    			$scope.headButton=headButton;
+    		$scope.headButton=headButton;
     	}
     	
     	if($scope.listItemTemplBox==undefined || $scope.listItemTemplBox.$$NG_REMOVED==true){
     		var listItemTemplBox = angular.element($scope.tableItem[0].querySelector(' table.principalTable tbody tr'))[0];
-    			$scope.listItemTemplBox=listItemTemplBox;
+    		$scope.listItemTemplBox=listItemTemplBox;
     	}
 
     	if($scope.queueTable==undefined || $scope.queueTable.$$NG_REMOVED==true){
     		var queueTable = angular.element($scope.tableItem[0].querySelector(' #queueTableContent'))[0];
-    			$scope.queueTable=queueTable;
+    		$scope.queueTable=queueTable;
+    	}
+    	
+    	if($scope.tableFooter==undefined || $scope.tableFooter.$$NG_REMOVED==true){
+    		var tableFooter = angular.element($scope.tableItem[0].querySelector('cockpit-angular-table-footer'))[0];
+    		$scope.tableFooter = tableFooter;
     	}
     		 
     	var tableContainerHeight = $scope.tableContainer == undefined ? 36 : $scope.tableContainer.offsetHeight;
         var headButtonHeight = $scope.headButton == undefined ? 0 : $scope.headButton.offsetHeight;
         var listItemTemplBoxHeight = $scope.listItemTemplBox == undefined ? 36 : $scope.listItemTemplBox.offsetHeight;
-        var heightQueueTable = $scope.queueTable.offsetHeight>0? $scope.queueTable.offsetHeight:0;;
+        var queueTableHeight = $scope.queueTable.offsetHeight>0? $scope.queueTable.offsetHeight : 0;
+        var scrollHeight=($scope.tableContainer.scrollWidth>$scope.tableContainer.offsetWidth) ? 20 : 0;
+        var tableFooterHeight = $scope.tableFooter == undefined ? 0 : $scope.tableFooter.offsetHeight;
         
-        var scrollHeight=($scope.tableContainer.scrollWidth>$scope.tableContainer.offsetWidth) ? 20:0;
-        
-        var avaiableHeight=tableContainerHeight - headButtonHeight - heightQueueTable-scrollHeight;
+        var avaiableHeight = tableContainerHeight - headButtonHeight - queueTableHeight - scrollHeight - tableFooterHeight;
         if ($scope.firstLoad && $scope.noPagination != true) {
         	avaiableHeight-=30;
         }
