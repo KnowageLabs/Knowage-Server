@@ -299,7 +299,7 @@ public class DataMartProvider extends AbstractDataMartProvider {
 				// IDataStoreTransformer dddLinkFieldTransformer = new AddLinkFieldsTransformer(measureColumnNames, getSelectedLevel(), this.getEnv());
 				// dddLinkFieldTransformer.transform(dataStore);
 			} catch (Exception e) {
-				logger.error(e.getMessage());
+				logger.error(e.getMessage(), e);
 				throw new SvgViewerEngineRuntimeException("Impossible to get DataMart. ", e);
 			}
 		}
