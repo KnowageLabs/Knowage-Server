@@ -24,6 +24,8 @@ import it.eng.spagobi.tools.dataset.common.dataproxy.JDBCDataProxy;
 import it.eng.spagobi.tools.dataset.common.datareader.JDBCStandardDataReader;
 import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
 import it.eng.spagobi.tools.dataset.common.iterator.ResultSetIterator;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.sql.Connection;
@@ -70,7 +72,9 @@ public class JDBCDataSet extends AbstractJDBCDataset {
 			logger.debug("Obtained statement [" + statement + "]");
 			dataProxy.setStatement(statement);
 			JDBCDataProxy jdbcDataProxy = (JDBCDataProxy) dataProxy;
-			Connection connection = jdbcDataProxy.getDataSource().getConnection(jdbcDataProxy.getSchema());
+			IDataSource dataSource = jdbcDataProxy.getDataSource();
+			Assert.assertNotNull(dataSource, "Invalid datasource");
+			Connection connection = dataSource.getConnection(jdbcDataProxy.getSchema());
 			Statement stmt = connection.createStatement();
 			ResultSet rs = (ResultSet) dataProxy.getData(dataReader, stmt);
 			DataIterator iterator = new ResultSetIterator(connection, stmt, rs);

@@ -1316,7 +1316,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			String dsType = datasetJSON.optString(DataSetConstants.DS_TYPE_CD);
 			if (dsType == null || !dsType.equals(DataSetFactory.FEDERATED_DS_TYPE)) {
 				if (qbeEngine != null && (typeDocWizard == null || typeDocWizard.equalsIgnoreCase("REPORT"))) {
-					if (profile.getFunctionalities().contains(SpagoBIConstants.BUILD_QBE_QUERIES_FUNCTIONALITY)) {
+					if (profile.getFunctionalities() != null && profile.getFunctionalities().contains(SpagoBIConstants.BUILD_QBE_QUERIES_FUNCTIONALITY)) {
 						actions.put(qbeAction);
 					}
 				}

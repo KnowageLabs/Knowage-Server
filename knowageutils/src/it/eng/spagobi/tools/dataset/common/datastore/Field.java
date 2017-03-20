@@ -102,4 +102,12 @@ public class Field implements IField, Cloneable {
 		return (Field) super.clone();
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Field[");
+		sb.append(value);
+		sb.append("]");
+		return sb.toString();
+	}
 }

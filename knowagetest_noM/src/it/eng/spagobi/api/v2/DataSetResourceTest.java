@@ -24,15 +24,19 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import it.eng.spagobi.UtilitiesForTest;
 import it.eng.spagobi.api.common.AbstractV2BasicAuthTestCase;
 import it.eng.spagobi.api.common.TestConstants;
 import it.eng.spagobi.commons.bo.Config;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.UtilitiesDAOForTest;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
+import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.locks.DistributedLockFactory;
 
@@ -44,6 +48,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.json.JSONException;
@@ -51,6 +56,7 @@ import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
@@ -59,6 +65,7 @@ import com.hazelcast.config.TcpIpConfig;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.response.Response;
+import com.jayway.restassured.response.ValidatableResponse;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class DataSetResourceTest extends AbstractV2BasicAuthTestCase {
@@ -67,15 +74,26 @@ public class DataSetResourceTest extends AbstractV2BasicAuthTestCase {
 	private static final String CSV_FILE_NAME = "SbiFileDataSet.csv";
 	private String encoding;
 
+	private it.eng.spagobi.api.DataSetResource resourceV1;
+	private it.eng.spagobi.api.v2.DataSetResource resourceV2;
+
 	@BeforeClass
 	public static void setUpClass() {
 		try {
 			UtilitiesForTest.setUpMasterConfiguration();
 			UtilitiesDAOForTest.setUpDatabaseTestJNDI();
-			TenantManager.setTenant(new Tenant("SPAGOBI"));
+			TenantManager.setTenant(new Tenant("DEFAULT_TENANT"));
+
+			UserProfileManager.setProfile(new UserProfile("biadmin", "DEFAULT_TENANT"));
 		} catch (Exception e) {
 			fail(e.toString());
 		}
+	}
+
+	@Before
+	public void initialize() {
+		resourceV1 = new it.eng.spagobi.api.DataSetResource();
+		resourceV2 = new it.eng.spagobi.api.v2.DataSetResource();
 	}
 
 	private static void setHazelcastDefaultConfig() {
@@ -169,32 +187,38 @@ public class DataSetResourceTest extends AbstractV2BasicAuthTestCase {
 		try {
 			createDatasets(datasetLabel, false);
 
+			ValidatableResponse response;
+
 			// selections + realtime
-			given().contentType(ContentType.JSON).body(selections).when().post("/datasets/SbiQueryDataSet/data?realtime=true").then()
-					.contentType(ContentType.JSON).statusCode(200).body("results", equalTo(2)).body("rows", hasSize(2)).body("rows[0].column_1", equalTo("8"))
+			response = given().contentType(ContentType.JSON).body(selections).when().post("/datasets/SbiQueryDataSet/data?realtime=true").then();
+			response.contentType(ContentType.JSON).statusCode(200).body("results", equalTo(2)).body("rows", hasSize(2)).body("rows[0].column_1", equalTo("8"))
 					.body("rows[1].column_1", equalTo("12"));
 
 			// selections
-			given().contentType(ContentType.JSON).body(selections).when().post("/datasets/SbiQueryDataSet/data").then().contentType(ContentType.JSON)
-					.statusCode(200).body("results", equalTo(2)).body("rows", hasSize(2)).body("rows[0].column_1", equalTo("8"))
+			response = given().contentType(ContentType.JSON).body(selections).when().post("/datasets/SbiQueryDataSet/data").then();
+			response.contentType(ContentType.JSON).statusCode(200).body("results", equalTo(2)).body("rows", hasSize(2)).body("rows[0].column_1", equalTo("8"))
 					.body("rows[1].column_1", equalTo("12"));
 
 			// pagination
-			given().contentType(ContentType.JSON).body("").when().post("/datasets/SbiQueryDataSet/data?offset=-1&size=7").then().contentType(ContentType.JSON)
-					.statusCode(200).body("results", equalTo(25)).body("rows", hasSize(25));
-			given().contentType(ContentType.JSON).body("").when().post("/datasets/SbiQueryDataSet/data?offset=0&size=-1").then().contentType(ContentType.JSON)
-					.statusCode(200).body("results", equalTo(25)).body("rows", hasSize(25));
-			given().contentType(ContentType.JSON).body("").when().post("/datasets/SbiQueryDataSet/data?offset=0&size=7").then().contentType(ContentType.JSON)
-					.statusCode(200).body("results", equalTo(25)).body("rows", hasSize(7)).body("rows[0].column_1", equalTo("0"))
+			response = given().contentType(ContentType.JSON).body("").when().post("/datasets/SbiQueryDataSet/data?offset=-1&size=7").then();
+			response.contentType(ContentType.JSON).statusCode(200).body("results", equalTo(25)).body("rows", hasSize(25));
+
+			response = given().contentType(ContentType.JSON).body("").when().post("/datasets/SbiQueryDataSet/data?offset=0&size=-1").then();
+			response.contentType(ContentType.JSON).statusCode(200).body("results", equalTo(25)).body("rows", hasSize(25));
+
+			response = given().contentType(ContentType.JSON).body("").when().post("/datasets/SbiQueryDataSet/data?offset=0&size=7").then();
+			response.contentType(ContentType.JSON).statusCode(200).body("results", equalTo(25)).body("rows", hasSize(7)).body("rows[0].column_1", equalTo("0"))
 					.body("rows[1].column_1", equalTo("1")).body("rows[2].column_1", equalTo("2")).body("rows[3].column_1", equalTo("3"))
 					.body("rows[4].column_1", equalTo("4")).body("rows[5].column_1", equalTo("5")).body("rows[6].column_1", equalTo("6"));
-			given().contentType(ContentType.JSON).body("").when().post("/datasets/SbiQueryDataSet/data?offset=21&size=7").then().contentType(ContentType.JSON)
-					.statusCode(200).body("results", equalTo(25)).body("rows", hasSize(4)).body("rows[0].column_1", equalTo("21"))
-					.body("rows[1].column_1", equalTo("22")).body("rows[2].column_1", equalTo("23")).body("rows[3].column_1", equalTo("24"));
+
+			response = given().contentType(ContentType.JSON).body("").when().post("/datasets/SbiQueryDataSet/data?offset=21&size=7").then();
+			response.contentType(ContentType.JSON).statusCode(200).body("results", equalTo(25)).body("rows", hasSize(4))
+					.body("rows[0].column_1", equalTo("21")).body("rows[1].column_1", equalTo("22")).body("rows[2].column_1", equalTo("23"))
+					.body("rows[3].column_1", equalTo("24"));
 
 			// pagination + realtime
-			given().contentType(ContentType.JSON).body("").when().post("/datasets/SbiQueryDataSet/data?offset=0&size=2&realtime=true").then()
-					.contentType(ContentType.JSON).statusCode(200).body("results", equalTo(25)).body("rows", hasSize(2)).body("rows[0].column_1", equalTo("0"))
+			response = given().contentType(ContentType.JSON).body("").when().post("/datasets/SbiQueryDataSet/data?offset=0&size=2&realtime=true").then();
+			response.contentType(ContentType.JSON).statusCode(200).body("results", equalTo(25)).body("rows", hasSize(2)).body("rows[0].column_1", equalTo("0"))
 					.body("rows[1].column_1", equalTo("1"));
 		} catch (Exception e) {
 			fail(e.toString());
@@ -279,6 +303,107 @@ public class DataSetResourceTest extends AbstractV2BasicAuthTestCase {
 	}
 
 	@Test
+	public void getDataStorePostNoRestTest() {
+		String queryDatasetLabel = "SbiQueryDataSet";
+		testDataStorePostNoRest(queryDatasetLabel, false);
+		testDataStorePostNoRest(queryDatasetLabel, true);
+	}
+
+	private void testDataStorePostNoRest(String datasetLabel, boolean isPersisted) {
+		String storeNameAggregations = "{\"measures\":[{\"id\":\"store_sqft\",\"columnName\":\"store_sqft\",\"funct\":\"SUM\",\"alias\":\"sqft\",\"orderType\":\"\"},{\"id\":\"double_sqft\",\"columnName\":\"\\\"store_sqft\\\"+\\\"store_sqft\\\"+0\",\"funct\":\"SUM\",\"alias\":\"double_sqft\",\"orderType\":\"\"}],\"categories\":[{\"id\":\"store_name\",\"columnName\":\"store_name\",\"funct\":\"NONE\",\"alias\":\"store_name\",\"orderType\":\"ASC\"}],\"dataset\":\"Store\"}";
+		String storeTypeAggregations = storeNameAggregations.replace("store_name", "store_type");
+		String summaryRow = "{\"measures\":[{\"id\":\"sr_sqft\",\"columnName\":\"sqft\",\"funct\":\"SUM\",\"alias\":\"sr_sqft\",\"orderType\":\"\"},{\"id\":\"sr_double_sqft\",\"columnName\":\"double_sqft\",\"funct\":\"SUM\",\"alias\":\"sr_double_sqft\",\"orderType\":\"\"}],\"categories\":[],\"dataset\":\"Store\"}";
+		try {
+			createDatasetsNoRest(datasetLabel, isPersisted);
+
+			JsonPath jsonPath;
+			List<Object> rows;
+			HashMap<String, String> row;
+
+			// store name aggregations + summary row
+			jsonPath = JsonPath.from(resourceV2.getDataStorePost(datasetLabel, null, null, null, -1, storeNameAggregations, summaryRow, -1, -1, false));
+			assertEquals(25, jsonPath.getInt("results"));
+			rows = jsonPath.getList("rows");
+			assertEquals(26, rows.size());
+			row = (HashMap<String, String>) rows.get(25);
+			assertTrue(row.get("column_2").contains("571596"));
+			assertTrue(row.get("column_3").contains("1143192"));
+
+			// store name aggregations + summary row + realtime
+			jsonPath = JsonPath.from(resourceV2.getDataStorePost(datasetLabel, null, null, null, -1, storeNameAggregations, summaryRow, -1, -1, true));
+			assertEquals(25, jsonPath.getInt("results"));
+			rows = jsonPath.getList("rows");
+			assertEquals(26, rows.size());
+			row = (HashMap<String, String>) rows.get(25);
+			assertTrue(row.get("column_2").contains("571596"));
+			assertTrue(row.get("column_3").contains("1143192"));
+
+			// store name aggregations + summary row + pagination + realtime
+			jsonPath = JsonPath.from(resourceV2.getDataStorePost(datasetLabel, null, null, null, -1, storeNameAggregations, summaryRow, 1, 3, true));
+			assertEquals(25, jsonPath.getInt("results"));
+			rows = jsonPath.getList("rows");
+			assertEquals(4, rows.size());
+			row = (HashMap<String, String>) rows.get(3);
+			assertTrue(row.get("column_2").contains("571596"));
+			assertTrue(row.get("column_3").contains("1143192"));
+
+			// store type aggregations with SUM + realtime
+			jsonPath = JsonPath.from(resourceV2.getDataStorePost(datasetLabel, null, null, null, -1, storeTypeAggregations, null, -1, -1, true));
+			assertEquals(6, jsonPath.getInt("results"));
+			rows = jsonPath.getList("rows");
+			assertEquals(6, rows.size());
+			row = (HashMap<String, String>) rows.get(5);
+			assertTrue(row.get("column_2").contains("193480"));
+			assertTrue(row.get("column_3").contains("386960"));
+
+			// store type aggregations with AVG + realtime
+			String storeTypeAggregationsWithAvg = storeTypeAggregations.replace("SUM", "AVG");
+			jsonPath = JsonPath.from(resourceV2.getDataStorePost(datasetLabel, null, null, null, -1, storeTypeAggregationsWithAvg, null, -1, -1, true));
+			assertEquals(6, jsonPath.getInt("results"));
+			rows = jsonPath.getList("rows");
+			assertEquals(6, rows.size());
+			row = (HashMap<String, String>) rows.get(5);
+			assertTrue(row.get("column_2").contains("27640"));
+			assertTrue(row.get("column_3").contains("55280"));
+
+			// store type aggregations with MAX + realtime
+			String storeTypeAggregationsWithMax = storeTypeAggregations.replace("SUM", "MAX");
+			jsonPath = JsonPath.from(resourceV2.getDataStorePost(datasetLabel, null, null, null, -1, storeTypeAggregationsWithMax, null, -1, -1, true));
+			assertEquals(6, jsonPath.getInt("results"));
+			rows = jsonPath.getList("rows");
+			assertEquals(6, rows.size());
+			row = (HashMap<String, String>) rows.get(5);
+			assertTrue(row.get("column_2").contains("39696"));
+			assertTrue(row.get("column_3").contains("79392"));
+
+			// store type aggregations with MIN + realtime
+			String storeTypeAggregationsWithMin = storeTypeAggregations.replace("SUM", "MIN");
+			jsonPath = JsonPath.from(resourceV2.getDataStorePost(datasetLabel, null, null, null, -1, storeTypeAggregationsWithMin, null, -1, -1, true));
+			assertEquals(6, jsonPath.getInt("results"));
+			rows = jsonPath.getList("rows");
+			assertEquals(6, rows.size());
+			row = (HashMap<String, String>) rows.get(5);
+			assertTrue(row.get("column_2").contains("20319"));
+			assertTrue(row.get("column_3").contains("40638"));
+
+			// store type aggregations with COUNT + realtime
+			String storeTypeAggregationsWithCount = storeTypeAggregations.replace("SUM", "COUNT");
+			jsonPath = JsonPath.from(resourceV2.getDataStorePost(datasetLabel, null, null, null, -1, storeTypeAggregationsWithCount, null, -1, -1, true));
+			assertEquals(6, jsonPath.getInt("results"));
+			rows = jsonPath.getList("rows");
+			assertEquals(6, rows.size());
+			row = (HashMap<String, String>) rows.get(5);
+			assertTrue(row.get("column_2").contains("7"));
+			assertTrue(row.get("column_3").contains("7"));
+		} catch (Exception e) {
+			fail(e.toString());
+		} finally {
+			deleteDatasetNoRest(datasetLabel);
+		}
+	}
+
+	@Ignore
+	@Test
 	public void SbiFlatDataSetTest() {
 		String datasetLabel = "SbiFlatDataSet";
 		testSbiFlatDataSet(datasetLabel, false);
@@ -301,6 +426,7 @@ public class DataSetResourceTest extends AbstractV2BasicAuthTestCase {
 		}
 	}
 
+	@Ignore
 	@Test
 	public void SbiQueryDataSetTest() {
 		String datasetLabel = "SbiQueryDataSet";
@@ -326,6 +452,7 @@ public class DataSetResourceTest extends AbstractV2BasicAuthTestCase {
 		}
 	}
 
+	@Ignore
 	@Test
 	public void SbiFileDataSetTest() {
 		String datasetLabel = "SbiFileDataSet";
@@ -355,6 +482,7 @@ public class DataSetResourceTest extends AbstractV2BasicAuthTestCase {
 		}
 	}
 
+	@Ignore
 	@Test
 	public void SbiJClassDataSetTest() {
 		String datasetLabel = "SbiJClassDataSet";
@@ -379,6 +507,7 @@ public class DataSetResourceTest extends AbstractV2BasicAuthTestCase {
 		}
 	}
 
+	@Ignore
 	@Test
 	public void SbiScriptDataSetTest() {
 		String datasetLabel = "SbiScriptDataSet";
@@ -403,6 +532,7 @@ public class DataSetResourceTest extends AbstractV2BasicAuthTestCase {
 		}
 	}
 
+	@Ignore
 	@Test
 	public void SbiRestDataSetTest() {
 		String datasetLabel = "SbiRESTDataSet";
@@ -427,6 +557,7 @@ public class DataSetResourceTest extends AbstractV2BasicAuthTestCase {
 		}
 	}
 
+	@Ignore
 	@Test
 	public void SbiCkanDataSetTest() {
 		String datasetLabel = "SbiCkanDataSet";
@@ -462,6 +593,11 @@ public class DataSetResourceTest extends AbstractV2BasicAuthTestCase {
 		given().basePath(TestConstants.v1Path).contentType(ContentType.JSON).when().delete("/datasets/" + datasetLabel + "/cleanCache").then();
 	}
 
+	private void deleteDatasetNoRest(String datasetLabel) {
+		resourceV1.cleanCache(datasetLabel);
+		resourceV1.deleteDataset(datasetLabel);
+	}
+
 	@SuppressWarnings("unchecked")
 	private void createDatasets(String datasetLabel, boolean isPersisted) throws UnsupportedEncodingException, IOException, JSONException {
 		// delete dataset if it exists
@@ -490,6 +626,40 @@ public class DataSetResourceTest extends AbstractV2BasicAuthTestCase {
 
 		// force data loading (for cached dataset)
 		given().contentType(ContentType.JSON).when().get("/datasets/" + datasetLabel + "/data").then().contentType(ContentType.JSON).statusCode(200);
+	}
+
+	private void createDatasetsNoRest(String datasetLabel, boolean isPersisted) throws UnsupportedEncodingException, IOException, JSONException {
+		String responseJson;
+
+		// delete dataset if it exists
+		try {
+			responseJson = resourceV1.getDataSet(datasetLabel); // thows exception if dataset doesn't exist
+			deleteDatasetNoRest(datasetLabel);
+		} catch (Exception e) {
+		}
+
+		// check that the dataset doesn't exist
+		try {
+			responseJson = resourceV1.getDataSet(datasetLabel);
+			fail("Dataset [" + datasetLabel + "] still exists");
+		} catch (Exception e) {
+		}
+
+		// create the dataset
+		String description = getDatasetDescription(datasetLabel);
+		JSONObject jsonDescription = new JSONObject(description);
+		jsonDescription.put("persisted", isPersisted);
+		jsonDescription.put("persistTableName", datasetLabel);
+		javax.ws.rs.core.Response response = resourceV2.addDataSet(jsonDescription.toString());
+		assertEquals(response.getStatus(), 201);
+
+		// check that the dataset exists
+		responseJson = resourceV1.getDataSet(datasetLabel);
+		assertTrue(responseJson.contains(datasetLabel));
+
+		// force data loading (for cached dataset)
+		responseJson = resourceV1.getDataStore(datasetLabel, null, null, null, -1, null, null, -1, -1, false);
+		assertTrue(responseJson != null && !responseJson.isEmpty());
 	}
 
 	private String getResourceDir() {

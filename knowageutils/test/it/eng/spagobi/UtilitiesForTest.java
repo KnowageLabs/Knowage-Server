@@ -46,7 +46,7 @@ public class UtilitiesForTest {
 	public static void setUpMasterConfiguration() {
 		System.setProperty("AF_CONFIG_FILE", "resources-test/master.xml");
 		ConfigSingleton.setConfigurationCreation(new FileCreatorConfiguration("./"));
-
+		ConfigSingleton.getRootPath();
 	}
 
 	/**

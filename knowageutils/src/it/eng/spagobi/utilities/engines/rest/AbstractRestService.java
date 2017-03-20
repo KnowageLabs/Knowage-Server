@@ -33,7 +33,7 @@ import org.json.JSONObject;
 
 /**
  * The Class AbstractRestService.
- * 
+ *
  * @author Alberto Ghedin (alberto.ghedin@eng.it)
  */
 public abstract class AbstractRestService {
@@ -42,7 +42,7 @@ public abstract class AbstractRestService {
 
 	/**
 	 * Creates the context manager
-	 * 
+	 *
 	 * @return ExecutionSession container of the execution manager
 	 */
 	public ExecutionSession getExecutionSession() {
@@ -54,7 +54,7 @@ public abstract class AbstractRestService {
 
 	/**
 	 * Gets the what if engine instance.
-	 * 
+	 *
 	 * @return the console engine instance
 	 */
 	public IEngineInstance getEngineInstance() {
@@ -63,7 +63,7 @@ public abstract class AbstractRestService {
 
 	/**
 	 * Check if the number is null
-	 * 
+	 *
 	 * @param value
 	 *            the value to check
 	 * @return true if the value is null
@@ -74,7 +74,7 @@ public abstract class AbstractRestService {
 
 	/**
 	 * Check if the string is null
-	 * 
+	 *
 	 * @param value
 	 *            the value to check
 	 * @return true if the value is null
@@ -85,7 +85,7 @@ public abstract class AbstractRestService {
 
 	/**
 	 * Check if the string is null or ""
-	 * 
+	 *
 	 * @param value
 	 *            the value to check
 	 * @return true if the value is null or ""
@@ -104,30 +104,37 @@ public abstract class AbstractRestService {
 
 	public Locale buildLocaleFromSession() {
 		Locale locale = null;
-		Object countryO = getHttpSession().getAttribute(SpagoBIConstants.AF_COUNTRY);
-		Object languageO = getHttpSession().getAttribute(SpagoBIConstants.AF_LANGUAGE);
-		String country = countryO != null ? countryO.toString() : null;
-		String language = languageO != null ? languageO.toString() : null;
-		if (country != null && language != null) {
-			locale = new Locale(language, country);
+		HttpSession httpSession = getHttpSession();
+		if (httpSession != null) {
+			Object countryO = httpSession.getAttribute(SpagoBIConstants.AF_COUNTRY);
+			Object languageO = httpSession.getAttribute(SpagoBIConstants.AF_LANGUAGE);
+			String country = countryO != null ? countryO.toString() : null;
+			String language = languageO != null ? languageO.toString() : null;
+			if (country != null && language != null) {
+				locale = new Locale(language, country);
+			}
 		}
 		return locale;
 	}
 
 	/**
 	 * Gets the HttpServletRequest.. A standard implementation is to get the HttpServletRequest from the context.. The implementing class can be:
-	 * 
+	 *
 	 * public class XXXEngineService extends AbstractRestService{
-	 * 
+	 *
 	 * @Context protected HttpServletRequest servletRequest;
-	 * 
+	 *
 	 *          public HttpServletRequest getServletRequest(){ return servletRequest; }
 	 * @return the HttpServletRequest
 	 */
 	public abstract HttpServletRequest getServletRequest();
 
 	public HttpSession getHttpSession() {
-		return getServletRequest().getSession();
+		if (getServletRequest() != null) {
+			return getServletRequest().getSession();
+		} else {
+			return null;
+		}
 	}
 
 	public Object getAttributeFromHttpSession(String attrName) {

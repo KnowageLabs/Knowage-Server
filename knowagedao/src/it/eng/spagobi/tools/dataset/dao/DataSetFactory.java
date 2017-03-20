@@ -227,7 +227,8 @@ public class DataSetFactory {
 		String config = JSONUtils.escapeJsonString(sbiDataSet.getConfiguration());
 		JSONObject jsonConf = ObjectUtils.toJSONObject(config);
 		try {
-			if (sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_FILE)) {
+			String type = sbiDataSet.getType();
+			if (type.equalsIgnoreCase(DataSetConstants.DS_FILE)) {
 				FileDataSet fds;
 
 				if (sbiDataSet.isPersistedHDFS()) {
@@ -252,13 +253,9 @@ public class DataSetFactory {
 				}
 				fds.setFileName(jsonConf.getString(DataSetConstants.FILE_NAME));
 				fds.setDsType(FILE_DS_TYPE);
-			}
-
-			if (DataSetConstants.DS_REST_TYPE.equalsIgnoreCase(sbiDataSet.getType())) {
+			} else if (DataSetConstants.DS_REST_TYPE.equalsIgnoreCase(type)) {
 				ds = manageRESTDataSet(jsonConf);
-			}
-
-			if (sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_CKAN)) {
+			} else if (type.equalsIgnoreCase(DataSetConstants.DS_CKAN)) {
 				ds = new CkanDataSet();
 				CkanDataSet cds = (CkanDataSet) ds;
 
@@ -300,9 +297,7 @@ public class DataSetFactory {
 				cds.setFileName(jsonConf.getString(DataSetConstants.FILE_NAME));
 				cds.setDsType(CKAN_DS_TYPE);
 
-			}
-
-			if (sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_QUERY)) {
+			} else if (type.equalsIgnoreCase(DataSetConstants.DS_QUERY)) {
 
 				DataSourceDAOHibImpl dataSourceDao = new DataSourceDAOHibImpl();
 				if (userProfile != null)
@@ -339,40 +334,30 @@ public class DataSetFactory {
 							+ sbiDataSet.getLabel());
 				}
 
-			}
-
-			if (sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_WS)) {
+			} else if (type.equalsIgnoreCase(DataSetConstants.DS_WS)) {
 				ds = new WebServiceDataSet();
 				ds.setConfiguration(sbiDataSet.getConfiguration());
 				((WebServiceDataSet) ds).setAddress(jsonConf.getString(DataSetConstants.WS_ADDRESS));
 				((WebServiceDataSet) ds).setOperation(jsonConf.getString(DataSetConstants.WS_OPERATION));
 				ds.setDsType(WS_DS_TYPE);
-			}
-
-			if (sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_SCRIPT)) {
+			} else if (type.equalsIgnoreCase(DataSetConstants.DS_SCRIPT)) {
 				ds = new ScriptDataSet();
 				ds.setConfiguration(sbiDataSet.getConfiguration());
 				((ScriptDataSet) ds).setScript(jsonConf.getString(DataSetConstants.SCRIPT));
 				((ScriptDataSet) ds).setScriptLanguage(jsonConf.getString(DataSetConstants.SCRIPT_LANGUAGE));
 				ds.setDsType(SCRIPT_DS_TYPE);
-			}
-
-			if (sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_JCLASS)) {
+			} else if (type.equalsIgnoreCase(DataSetConstants.DS_JCLASS)) {
 				ds = new JavaClassDataSet();
 				ds.setConfiguration(sbiDataSet.getConfiguration());
 				((JavaClassDataSet) ds).setClassName(jsonConf.getString(DataSetConstants.JCLASS_NAME));
 				ds.setDsType(JCLASS_DS_TYPE);
-			}
-
-			if (sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_CUSTOM)) {
+			} else if (type.equalsIgnoreCase(DataSetConstants.DS_CUSTOM)) {
 				ds = new CustomDataSet();
 				ds.setConfiguration(sbiDataSet.getConfiguration());
 				((CustomDataSet) ds).setCustomData(jsonConf.getString(DataSetConstants.CUSTOM_DATA));
 				((CustomDataSet) ds).setJavaClassName(jsonConf.getString(DataSetConstants.JCLASS_NAME));
 				ds.setDsType(CUSTOM_DS_TYPE);
-			}
-
-			if (sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_FEDERATED)) {
+			} else if (type.equalsIgnoreCase(DataSetConstants.DS_FEDERATED)) {
 
 				SbiFederationDefinition sbiFederation = sbiDataSet.getFederation();
 
@@ -415,9 +400,7 @@ public class DataSetFactory {
 				ds.setDataSource(dataSource);
 				ds.setDsType(FEDERATED_DS_TYPE);
 
-			}
-
-			if (sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_QBE)) {
+			} else if (type.equalsIgnoreCase(DataSetConstants.DS_QBE)) {
 				ds = new QbeDataSet();
 				ds.setConfiguration(sbiDataSet.getConfiguration());
 				((QbeDataSet) ds).setJsonQuery(jsonConf.getString(DataSetConstants.QBE_JSON_QUERY));
@@ -447,9 +430,7 @@ public class DataSetFactory {
 				}
 				ds.setDsType(QBE_DS_TYPE);
 
-			}
-
-			if (sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_FLAT)) {
+			} else if (type.equalsIgnoreCase(DataSetConstants.DS_FLAT)) {
 				ds = new FlatDataSet();
 				ds.setConfiguration(sbiDataSet.getConfiguration());
 				if (ds.isPersisted()) {
