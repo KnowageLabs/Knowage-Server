@@ -681,6 +681,9 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 	
 	
 	$scope.expandWidget=function(){
+		if($scope.ngModel.type == "table"){
+			$scope.$root.$broadcast("WIDGET_EVENT"+$scope.ngModel.id,"WIDGET_SPINNER",{show:true});
+		}
 		
 		if(angular.element($scope.cockpitWidgetItem[0].firstElementChild).hasClass("fullScreenWidget")){
 			cockpitModule_widgetServices.setFullPageWidget(false);
