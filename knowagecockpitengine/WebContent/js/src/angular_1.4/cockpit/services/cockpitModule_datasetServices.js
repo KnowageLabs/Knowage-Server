@@ -365,21 +365,49 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		
 		// apply sorting column & order
 		if(ngModel.sortingColumnAlias && ngModel.sortingColumnAlias!=""){
-			var sortingApplied = false;
+			var isSortingAlreadyDefined = false;
+			
+			// check if a sorting order is alredy defined on categories
 			for(var i=0; i<aggregation.categories.length; i++){
 				var category = aggregation.categories[i];
-				if(category.alias == ngModel.sortingColumnAlias && category.orderType == ""){
-					category.orderType = ngModel.sortingOrder;
-					sortingApplied = true;
+				if(category.orderType.trim() != ""){
+					isSortingAlreadyDefined = true;
 					break;
 				}
 			}
-			if(!sortingApplied){
+			
+			// check if a sorting order is alredy defined on measures
+			if(!isSortingAlreadyDefined){
 				for(var i=0; i<aggregation.measures.length; i++){
 					var measure = aggregation.measures[i];
-					if(measure.alias == ngModel.sortingColumnAlias && measure.orderType == ""){
-						measure.orderType = ngModel.sortingOrder;
+					if(measure.orderType.trim() != ""){
+						isSortingAlreadyDefined = true;
 						break;
+					}
+				}
+			}
+			
+			if(!isSortingAlreadyDefined){
+				var isSortingApplied = false;
+				
+				// apply sorting order on categories
+				for(var i=0; i<aggregation.categories.length; i++){
+					var category = aggregation.categories[i];
+					if(category.alias == ngModel.sortingColumnAlias && category.orderType == ""){
+						category.orderType = ngModel.sortingOrder;
+						isSortingApplied = true;
+						break;
+					}
+				}
+				
+				// apply sorting order on measures
+				if(!isSortingApplied){
+					for(var i=0; i<aggregation.measures.length; i++){
+						var measure = aggregation.measures[i];
+						if(measure.alias == ngModel.sortingColumnAlias && measure.orderType == ""){
+							measure.orderType = ngModel.sortingOrder;
+							break;
+						}
 					}
 				}
 			}
