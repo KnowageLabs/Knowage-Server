@@ -5,6 +5,8 @@
 -- Oracle install, so most users need not worry about this.
 --
 
+ALTER SESSION SET CURRENT_SCHEMA =REDA_KA_OWN;
+
 CREATE TABLE qrtz_job_details
   (
     JOB_NAME  VARCHAR2(80) NOT NULL,
