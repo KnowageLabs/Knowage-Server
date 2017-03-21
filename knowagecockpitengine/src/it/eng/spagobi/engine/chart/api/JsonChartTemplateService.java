@@ -203,11 +203,11 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 	}
 	
 	@GET
-	@Path("/fieldsMetadataforCockpit/{datasetLabel}")
+	@Path("/fieldsMetadataforCockpit/{datasetId}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getDatasetMetadataForCockpit(@PathParam("datasetLabel") String datasetLabel) {
+	public String getDatasetMetadataForCockpit(@PathParam("datasetId") String datasetId) {
 		IDataSet dataSet =null;
-		if (dataSet == null && datasetLabel != null) {
+		if (dataSet == null && datasetId != null) {
 			IDataSetDAO dataSetDao;
 			try {
 				dataSetDao = DAOFactory.getDataSetDAO();
@@ -215,7 +215,7 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 				throw new SpagoBIServiceException(this.request.getPathInfo(),
 						"An unexpected error occured while executing service: JsonChartTemplateService.fieldsMetadataforCockpit", t);
 			}
-			dataSet = dataSetDao.loadDataSetByLabel(datasetLabel);
+			dataSet = dataSetDao.loadDataSetById(Integer.parseInt(datasetId));
 		}
 		return ChartEngineDataUtil.loadMetaData(dataSet);
 	}

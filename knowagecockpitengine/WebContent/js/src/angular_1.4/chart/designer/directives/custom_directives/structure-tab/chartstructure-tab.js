@@ -55,7 +55,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 	
 	var urlForMetadata="";
 	if($scope.isCockpitEng){
-		urlForMetadata = "../api/1.0/chart/jsonChartTemplate/fieldsMetadataforCockpit/"+parent.angular.element(window.frameElement).scope().datasetLabel;
+		urlForMetadata = "../api/1.0/chart/jsonChartTemplate/fieldsMetadataforCockpit/"+parent.angular.element(window.frameElement).scope().datasetId;
 	}else{
 		urlForMetadata = "../api/1.0/chart/jsonChartTemplate/fieldsMetadata";
 	}
@@ -560,7 +560,8 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 		else {
 			$scope.categoriesExist = true;
 		}
-	 console.log($scope.categories);	
+	 
+	 
 	}
 	
 	/**
