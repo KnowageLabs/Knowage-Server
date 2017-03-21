@@ -32,8 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<%@include file="/WEB-INF/jsp/chart/designer/chartImport.jsp"%>
 	
 		<link rel="stylesheet" type="text/css" href="<%=GeneralUtilities.getSpagoBiContext()%>/themes/commons/css/customStyle.css">
-		<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/designer/chartDesigner.js"></script>
-		<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/chart/treemap/treemap.js"></script>	
+		
 	
 		<script>
 		
@@ -61,7 +60,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	
 	</head>
 
-	<body class="bodyStyle" ng-controller="ChartDesignerController">
+	<body class="bodyStyle kn-chartdesigner" ng-controller="ChartDesignerController">
 		<form name="userForm" layout="column" layout-fill ng-submit="saveChartTemplate()">
 		
 		<md-toolbar ng-if=!isCockpitEng>
