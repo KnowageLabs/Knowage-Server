@@ -374,7 +374,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								var prefix="";
 								var suffix="";
 								var formattedValue=$scope.formatValue(value, currentColumn);
-								var horiz_align=$scope.getCellAlignment(currentColumn);
+								var horiz_align=$scope.getCellAlignment(currentColumn)?$scope.getCellAlignment(currentColumn):"center";
+			
 								
 								var valueWithoutPrefixAndSuffix=$scope.freeValueFromPrefixAndSuffix(value,currentColumn);								
 								
@@ -456,14 +457,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 
-											htm=htm+"<div>"+formattedValue+"</div> &nbsp;  <md-progress-linear-custom flex  style='width:"+currentColumn.chartLength +"px' value="+barValue+" color=\""+  currentColumn.chartColor +"\"> </md-progress-linear-custom>"
+											htm=htm+"<div class='inlineChartText' flex=20>"+formattedValue+"</div> &nbsp;  <md-progress-linear-custom flex=80  style='width:"+currentColumn.chartLength +"px' value="+barValue+" color=\""+  currentColumn.chartColor +"\"> </md-progress-linear-custom>"
 
 	
 									}	 
 									else if(currentColumn.visType=='Chart & Text')
 									{
 
-											htm=htm+"<md-progress-linear-custom flex  style='width:"+currentColumn.chartLength +"px' value="+barValue+" color=\""+  currentColumn.chartColor +"\"> </md-progress-linear-custom> &nbsp; <div>"+formattedValue+"</div>"
+											htm=htm+"<md-progress-linear-custom flex=80  style='width:"+currentColumn.chartLength +"px' value="+barValue+" color=\""+  currentColumn.chartColor +"\"> </md-progress-linear-custom> &nbsp; <div class='inlineChartText' flex=20>"+formattedValue+"</div>"
 											
 
 									}							

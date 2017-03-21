@@ -75,7 +75,7 @@ function cockpitToolbarControllerFunction($scope,cockpitModule_widgetServices,co
 			var confirm = $mdDialog.confirm()
 			.title(sbiModule_translate.load('sbi.cockpit.widgets.save.keepselections'))
 			.textContent('')
-			.ariaLabel('Lucky day')
+			.ariaLabel('save cockpit')
 			.ok(sbiModule_translate.load('sbi.qbe.messagewin.yes'))
 			.cancel(sbiModule_translate.load('sbi.qbe.messagewin.no'));
 			$mdDialog.show(confirm).then(function() {

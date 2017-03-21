@@ -116,6 +116,8 @@ function cockpitSheetControllerFunction($scope,cockpitModule_template,cockpitMod
 	        .ok(sbiModule_translate.load("sbi.ds.wizard.confirm"))
 	        .cancel(sbiModule_translate.load("sbi.ds.wizard.cancel"));
 		  $mdDialog.show(confirm).then(function() {
+			  
+			  //davverna - added others sheet index change based on the element position.
 			  for(var sh in cockpitModule_template.sheets){
 				  if(cockpitModule_template.sheets[sh].index>sheet.index){
 					  cockpitModule_template.sheets[sh].index --; 
@@ -127,6 +129,9 @@ function cockpitSheetControllerFunction($scope,cockpitModule_template,cockpitMod
 			 
 		}
 		
+		//davverna - Sheets movement.
+		//			possible directions are prev and next
+		//			based on the cockpitModule_template.sheets.index
 		self.moveSheet = function(direction){
 			var cur, prev, next;
 			for(var sh in cockpitModule_template.sheets){
