@@ -224,7 +224,10 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 							  checkConfiguration();
 						  }else if(event=='openStyle'){
 							  $scope.somethingChanged = true;
-						  }else if(event=='save'){
+						  }else if(event=='openCross'){
+							  $scope.somethingChanged = true;
+						  }
+						  else if(event=='save'){
 							  if(!checkChartSettings()){
 								  	if($scope.localModel.chartTemplate.type.toUpperCase()=="SCATTER"){
 										showAction($scope.translate.load('sbi.cockpit.select.no.aggregation.for.all.series'));
@@ -401,7 +404,13 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 		}
 		
 		// check if cross navigation was enable don this widget
-		var model = $scope.ngModel;
+		var model = {};
+		if($scope.ngModel.cross.enable!=undefined){
+			model = $scope.ngModel;
+		} else {
+			model = $scope.ngModel.content;
+		}
+		
 		if(model.cross != undefined  
 				&& model.cross.enable === true
 				&& model.cross.column != undefined
