@@ -106,7 +106,7 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 
 	/**
 	 * Returns a map of parameters which will be send in the request to the engine application.
-	 * 
+	 *
 	 * @param subObject
 	 *            SubObject to execute
 	 * @param profile
@@ -157,7 +157,7 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 
 	/**
 	 * Starting from a BIObject extracts from it the map of the paramaeters for the execution call
-	 * 
+	 *
 	 * @param biobj
 	 *            BIObject to execute
 	 * @return Map The map of the execution call parameters
@@ -183,12 +183,12 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 			}
 
 			if (objtemplate == null) {
-				throw new SpagoBIRuntimeException("Template is [null]");
+				throw new SpagoBIRuntimeException("Template is [null] in document with id equals to [" + biobj.getId() + "]");
 			}
 
 			template = DAOFactory.getBinContentDAO().getBinContent(objtemplate.getBinId());
 			if (template == null) {
-				throw new SpagoBIRuntimeException("Content of the active template is [null]");
+				throw new SpagoBIRuntimeException("Content of the active template is [null] in document with id equals to [" + biobj.getId() + "]");
 			}
 
 			documentId = biobj.getId().toString();
@@ -241,7 +241,7 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 
 	/**
 	 * Add into the parameters map the BIObject's BIParameter names and values
-	 * 
+	 *
 	 * @param biobj
 	 *            BIOBject to execute
 	 * @param pars
@@ -281,7 +281,7 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 
 	/**
 	 * Add into the map the BIObject's outputparameters names
-	 * 
+	 *
 	 * @param biobj
 	 *            BIOBject to execute
 	 * @param pars
@@ -325,7 +325,7 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 
 	/**
 	 * Function not implemented. Thid method should not be called
-	 * 
+	 *
 	 * @param biobject
 	 *            The BIOBject to edit
 	 * @param profile
@@ -341,7 +341,7 @@ public class GenericDriver extends AbstractDriver implements IEngineDriver {
 
 	/**
 	 * Function not implemented. Thid method should not be called
-	 * 
+	 *
 	 * @param biobject
 	 *            The BIOBject to edit
 	 * @param profile
