@@ -119,6 +119,7 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 		//clean dataToSend from empty/default configuration  (ie. color: "hsl(0, 0%, 100%)", background-color: "hsl(0, 0%, 100%)" because it's white color on white bg)
 		dataToSend.style = $scope.cleanDataToSend(dataToSend.style);
 		
+		
 		sbiModule_restServices.promisePost("1.0/crosstab","update",dataToSend).then(
 				function(response){
 					$scope.subCockpitWidget.html(response.data.htmlTable);
@@ -189,6 +190,21 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 					}
 					//apply borders on level class
 					dataColumnList=row.querySelectorAll(".level");
+					if(dataColumnList.length>0){							
+						$scope.applyBorderStyle(dataColumnList);								
+					}
+					//apply borders on 'na' class
+					dataColumnList=row.querySelectorAll(".na");
+					if(dataColumnList.length>0){							
+						$scope.applyBorderStyle(dataColumnList);								
+					}
+					//apply borders on 'total' class
+					dataColumnList=row.querySelectorAll(".totals");
+					if(dataColumnList.length>0){							
+						$scope.applyBorderStyle(dataColumnList);								
+					}
+					//apply borders on 'subtotal' class
+					dataColumnList=row.querySelectorAll(".subTotals");
 					if(dataColumnList.length>0){							
 						$scope.applyBorderStyle(dataColumnList);								
 					}
@@ -289,10 +305,14 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 	}
 	
 	$scope.cleanDataToSend=function(styleDataToSend){
+		
 		var EMPTY_COLOR = "hsl(0, 0%, 100%)";
 		var styleDataToSendC = {};
 
 		if (!styleDataToSend) return;
+		if (styleDataToSend instanceof String){
+			styleDataToSend = JSONParse(styleDataToSend);
+		}
 		
 		
 		//crossTabHeaders configuration
