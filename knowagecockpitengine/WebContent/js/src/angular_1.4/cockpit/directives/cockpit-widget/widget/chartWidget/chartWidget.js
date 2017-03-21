@@ -36,6 +36,7 @@ angular.module('cockpitModule')
 	    templateUrl: baseScriptPath+ '/directives/cockpit-widget/widget/chartWidget/templates/postIframe.html',
 	    scope:{
 	    	   datasetLabel:'=',
+	    	   datasetId:'=',
 	    	   isCockpitEng:'=',
 	    	   localMod:'='
 	    	  },

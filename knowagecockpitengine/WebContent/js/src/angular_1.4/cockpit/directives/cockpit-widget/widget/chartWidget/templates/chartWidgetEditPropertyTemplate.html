@@ -18,7 +18,7 @@
 		     	 	<div ng-show="confSpinner" layout-fill style='position:absolute;z-index: 500;background:rgba(0,0,0, 0.3);'>
        					<md-progress-circular  md-mode='indeterminate' style='top:50%;left:50%;margin-left:-25px;' ></md-progress-circular>
     				</div>
- 		     	 	<post-iframe iframe-id="chartConfigurationIframe" ng-if="localModel.datasetId" dataset-label="localModel.datasetLabel" is-cockpit-eng=true local-mod=localModel></post-iframe> 
+ 		     	 	<post-iframe iframe-id="chartConfigurationIframe" ng-if="localModel.datasetId" dataset-label="localModel.datasetLabel"  dataset-id="localModel.datasetId" is-cockpit-eng=true local-mod=localModel></post-iframe> 
 
 		     	 	<p ng-if="!localModel.datasetId" >{{translate.load('sbi.cockpit.table.missingdataset')}}</p>
 			    </md-tab>
