@@ -214,7 +214,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					&& $scope.ngModel.content.currentPageNumber + 1 == currentPageNumber
 					&& $scope.datasetRecords
 					&& $scope.datasetRecords.rows
-					&& $scope.datasetRecords.rows.length == itemsPerPage){
+					&& $scope.datasetRecords.rows.length == itemsPerPage
+					&& $scope.columnOrdering == columnOrdering
+					&& $scope.reverseOrdering == reverseOrdering){
 				return;
 			}
 			
@@ -228,10 +230,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					}
 					
 					var numberOfElement = angular.copy(itemsPerPage);					
-					if($scope.ngModel.content.maxRowsNumber !=undefined){
+					if($scope.ngModel.content.maxRowsNumber != undefined){
 						numberOfElement = angular.copy($scope.ngModel.content.maxRowsNumber)
-						$scope.columnOrdering = columnOrdering;
-						$scope.reverseOrdering = reverseOrdering;
 					}
 					
 					if($scope.ngModel.style.showSummary == true){
@@ -240,6 +240,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					
 					currentPageNumber--;
 					$scope.ngModel.content.currentPageNumber = currentPageNumber;
+					
+					$scope.columnOrdering = columnOrdering;
+					$scope.reverseOrdering = reverseOrdering;
 					
 					var options = {
 						page: currentPageNumber,
