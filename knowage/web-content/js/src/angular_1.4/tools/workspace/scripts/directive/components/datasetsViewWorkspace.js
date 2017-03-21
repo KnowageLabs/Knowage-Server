@@ -553,7 +553,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		       + (isTechnicalUser != undefined ? '&isTechnicalUser=' + isTechnicalUser : '');
 
 		 //$window.location.href=url;
-		$qbeViewer.openQbeInterface($scope,url);
+		$qbeViewer.openQbeInterfaceDSet($scope, false, url);
 		
     }
     
@@ -1246,7 +1246,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	  //url = "http://localhost:8080/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=BUILD_QBE_DATASET_START_ACTION&user_id=biadmin&NEW_SESSION=TRUE&SBI_LANGUAGE=en&SBI_COUNTRY=US&DATASOURCE_LABEL=foodmart&DATAMART_NAME=foodmart";      
 	  // $window.location.href=url;
 	  $scope.isFromDataSetCatalogue = false;
-	  $qbeViewer.openQbeInterface($scope,url);
+	  $qbeViewer.openQbeInterfaceDSet($scope, true, url);
     }
         
 }

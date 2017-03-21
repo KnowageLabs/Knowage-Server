@@ -216,7 +216,7 @@ function modelsController($scope, sbiModule_restServices, sbiModule_translate, $
 			+ '&FEDERATION_ID=' + federationId 
 			+ (isTechnicalUser != undefined ? '&isTechnicalUser=' + isTechnicalUser : '');
 		
-		$qbeViewer.openQbeInterface($scope,url);
+		$qbeViewer.openQbeInterfaceFromModel($scope,url);
 		
 //		 $window.location.href=url;
 		
@@ -314,7 +314,7 @@ function modelsController($scope, sbiModule_restServices, sbiModule_translate, $
 		        + (isTechnicalUser != undefined ? '&isTechnicalUser=' + isTechnicalUser : '');
 		       
 		// $window.location.href=url;
-		$qbeViewer.openQbeInterface($scope,url);
+		$qbeViewer.openQbeInterfaceFromModel($scope,url);
 	}
 	
 	function DialogEditFederationController($scope,$mdDialog,sbiModule_config,federation){

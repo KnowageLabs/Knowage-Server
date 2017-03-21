@@ -54,7 +54,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		   var datasetParameters=<%=selfServiceParameters%>;
 		   var isAdmin =<%=isAdmin%>;
 		   var isTechnicalUser = <%=isTechnicalUser%>;
-		   var globalQbeJsonWorkspace = "";
 		</script>
 		
 	</head>

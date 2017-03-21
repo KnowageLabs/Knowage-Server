@@ -25,15 +25,31 @@ angular
 	.module('qbe_viewer', [ 'ngMaterial' ,'sbiModule'])
 	.service('$qbeViewer', function($mdDialog,sbiModule_config,sbiModule_restServices,$log) { 
 	 		
-		this.openQbeInterface = function($scope,url) {
-			if(typeof  globalQbeJson != 'undefined'){
-				globalQbeJson = $scope.selectedDataSet.qbeJSONQuery;
-			}
+		this.openQbeInterfaceFromModel = function($scope,url) {
+				
+			$mdDialog
+				.show
+				(	
+					{   
+						scope:$scope,
+						preserveScope: true,
+						controller: openQbeInterfaceController,
+//						templateUrl: '/knowage/js/src/angular_1.4/tools/workspace/scripts/services/qbeViewerTemplate.html',
+						templateUrl: sbiModule_config.contextName + '/js/src/angular_1.4/tools/workspace/scripts/services/qbeViewerTemplate.html',
+						fullscreen: true,
+						locals:{url:url}				
+					}
+				) 
+				.then(function() {
+					
+				});
+		
+		};
+		
+		this.openQbeInterfaceDSet = function($scope, editDSet, url) {
 			
-			if(typeof  globalQbeJsonWorkspace != 'undefined' && $scope.hasOwnProperty("selectedDataSet")){
-				globalQbeJson = $scope.selectedDataSet.qbeJSONQuery;
-				$scope.editQbeDset = true;
-			}
+			$scope.editQbeDset = editDSet;
+			globalQbeJson = $scope.selectedDataSet.qbeJSONQuery;
 			
 			$mdDialog
 				.show
