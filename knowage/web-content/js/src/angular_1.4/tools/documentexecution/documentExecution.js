@@ -1,7 +1,5 @@
 (function() {
 
-	
-
 	var stringStartsWith = function (string, prefix) {
 		return string.toLowerCase().slice(0, prefix.length) == prefix.toLowerCase();
 	};
@@ -13,6 +11,7 @@
 		$mdThemingProvider.setDefaultTheme('knowage');
 	}]);
 
+	
 	documentExecutionApp.controller( 'documentExecutionController', 
 			['$scope', '$http', '$mdSidenav', '$mdDialog', '$mdToast', 'sbiModule_translate', 'sbiModule_restServices', 'sbiModule_user', 
 			 'sbiModule_config', 'sbiModule_messaging', 'execProperties', 'documentExecuteFactories', 'sbiModule_helpOnLine',
@@ -27,6 +26,15 @@
 			docExecute_dependencyService, $timeout, docExecute_exportService, $filter, sbiModule_dateServices, cockpitEditing) {
 
 		console.log("documentExecutionControllerFn IN ");
+		
+		//NAVIGATOR WHEEL
+		$scope.navigatorVisibility = false;
+		$scope.toggleNavigator = function(e) {
+			$scope.navigatorStyle = {
+					"left" : (e.pageX-150)+'px'	
+			}
+			$scope.navigatorVisibility = $scope.navigatorVisibility?false:true;
+		}
 		
 		$scope.execProperties = execProperties;
 		$scope.cockpitEditing = cockpitEditing;
@@ -78,6 +86,10 @@
 		$scope.isSuperAdmin = isSuperAdmin;
 		$scope.isAbleToExecuteAction = isAbleToExecuteAction;
 		$scope.addToWorkspaceEnabled = (sbiModule_user.functionalities.indexOf("SaveIntoFolderFunctionality")>-1)? true:false;
+		
+		//navigation default parameters
+		$scope.navigatorEnabled 	= true;
+		$scope.navigatorVisibility 	= false;
 		
 		$scope.isOrganizerEnabled = function () {
 			if(!$scope.addToWorkspaceEnabled){
@@ -174,32 +186,6 @@
 			}
 		};
 				
-//		
-//		  $scope.$watch(function () {
-//        	  var elem = angular.element(document.querySelector('#sidenavContent'))[0];
-//        	  return elem == undefined ? null : elem.offsetHeight;
-//        }, function (newValue, oldValue) {
-//        	if(newValue > 50){
-//        		var elem2 = angular.element(document.querySelector('#sidenavOri'))[0];
-//        		var newHeight = newValue  + 50;
-//        		var str = newHeight.toString() + 'px';
-//        		var class1 = angular.element(document.querySelector('#sidenavOri'))[0].classList[2];
-//        		elem2.scrollHeight = 0 ;
-//        		elem2.offsetHeight = 2 * newValue  + 50 ;
-//        		elem2.clientHeight = 2 * newValue  + 50 ;
-//	       		// angular.element(document.querySelector('#sidenavOri'))[0].offsetHeight = newValue  + 50 ;
-//        		elem2.style.height = str ;
-//        		angular.element(document.querySelector('#sidenavOri'))[0].scrollHeight = 0 ;
-//        		 angular.element(document.querySelector('#sidenavOri'))[0].offsetHeight = 2 * newValue  + 50 ;
-//        		 angular.element(document.querySelector('#sidenavOri'))[0].clientHeight = 2 * newValue  + 50 ;
-//        		// angular.element(document.querySelector('#sidenavOri'))[0].offsetHeight = newValue  + 50 ;
-//        		 angular.element(document.querySelector('#sidenavOri'))[0].style.height = str ;
-//        	}
-//        }, true);
-//		
-		
-		
-		
 		
 		 /*
 		  * WATCH ON LOV DEPENDENCIES PARAMETER OBJECT
@@ -375,7 +361,11 @@
 		$scope.execShowHelpOnLine = function(data) {	
 			sbiModule_helpOnLine.show(data);
 		};
-		
+
+		//davverna - mcortella: toggle visibility of the navigator between documents
+		$scope.openNavigator = function(){
+			$scope.navigatorVisibility = $scope.navigatorVisibility ? false: true;
+		}
 					
 		/*
 		 * EXECUTE PARAMS
@@ -387,11 +377,6 @@
 			docExecute_urlViewPointService.frameLoaded=false;
 			docExecute_urlViewPointService.executionProcesRestV1(execProperties.selectedRole.name, 
 					 documentExecuteServices.buildStringParameters(execProperties.parametersData.documentParameters));
-//			if($mdSidenav('parametersPanelSideNav').isOpen()) {
-//				$mdSidenav('parametersPanelSideNav').close();
-//				execProperties.showParametersPanel.status = $mdSidenav('parametersPanelSideNav').isOpen();
-//			}
-//			execProperties.showParametersPanel.status=false;
 			docExecute_paramRolePanelService.toggleParametersPanel(false);
 			$scope.cockpitEditing.documentMode="VIEW";
 			console.log("executeParameter OUT ");

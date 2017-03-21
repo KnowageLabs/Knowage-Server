@@ -1,0 +1,12 @@
+#piemenu > svg { width: 100%; height: 100%; }
+#piemenu { height: 300px; width: 300px; margin:auto; position: absolute; top: -118px; z-index: 2;}
+#piemenu tspan {font-family:'FontAwesome' !important; font-size:18px;}
+@media (max-width: 300px) { #piemenu { height: 200px; width: 200px; } }
+
+[class|=wheelnav-piemenu-slice-basic] { fill: lighten($baseColor,5%); stroke: none; }
+[class|=wheelnav-piemenu-slice-selected] { fill: lighten($baseColor,5%); stroke: none; }
+[class|=wheelnav-piemenu-slice-hover] { fill: lighten($baseColor,15%);  stroke: none; fill-opacity: 0.77; cursor: pointer; }
+
+[class|=wheelnav-piemenu-title-basic] { fill: #fff; stroke: none; }
+[class|=wheelnav-piemenu-title-selected] { fill: #fff; stroke: none; }
+[class|=wheelnav-piemenu-title-hover] { fill: darken(#fff,15%); stroke: none; cursor: pointer; }

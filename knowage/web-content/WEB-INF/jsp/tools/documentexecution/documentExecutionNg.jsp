@@ -88,21 +88,6 @@ try{
         isFromCross = true;
     }
     
-    
-    /*if(obj == null 
-            && (
-                    (isForExport != null 
-                        && ("true").equalsIgnoreCase(isForExport))
-                    || (isFromDocumentWidget != null 
-                        && ("true").equalsIgnoreCase(isFromDocumentWidget))
-                )
-    ) {
-        
-        IBIObjectDAO biObjectDAO = DAOFactory.getBIObjectDAO();
-        
-        obj = biObjectDAO.loadBIObjectByLabel(objLabel);
-    }*/
-
     executingEngine = obj.getEngine();
     engineName = executingEngine.getName();
     
@@ -143,14 +128,21 @@ if(executionRoleNames.size() > 0) {
 <%-- INCLUDE Persist JS                                                     --%>
 <%-- ---------------------------------------------------------------------- --%>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/persist-0.1.0/persist.js"></script>
+<script type="text/javascript">
+	//defining GLOBAL context url for following directives and template usage
+	_CURRENTCONTEXTURL="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution")%>"
+</script>
     
         
         <!-- Styles -->
         <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css"> 
-        <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/commons/component-tree/componentTree.js")%>"></script>
-        <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/commons/document-tree/DocumentTree.js")%>"></script>
         <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/angular/ngWYSIWYG/wysiwyg.min.js")%>"></script>  
         <link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "js/lib/angular/ngWYSIWYG/editor.min.css")%>"> 
+        
+         <!-- Wheel navigator -->
+        <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/wheelnav/raphael.min.js")%>""></script>
+	    <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/wheelnav/raphael.icons.min.js")%>"></script>
+	    <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/wheelnav/wheelnav.js")%>"></script>
         
         <!--    breadCrumb -->
         <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/commons/BreadCrumb.js"></script>
@@ -170,6 +162,7 @@ if(executionRoleNames.size() > 0) {
     </head>
 
     <body class="kn-documentExecution" ng-app="documentExecutionModule" ng-controller="documentExecutionController" layout="row" ng-cloak >
+    <wheel-navigator ng-if="navigatorVisibility" navigator-style="navigatorStyle"></wheel-navigator>
         
         <!--
             Move these Java variables to the Javascript so they can eventually be attached to the scope of the controller
@@ -236,6 +229,10 @@ if(executionRoleNames.size() > 0) {
                          <md-icon md-font-icon="fa fa-pencil-square-o"></md-icon>
                     </md-button>
         <%} %>
+                    <md-button class="md-icon-button" ng-if="navigatorEnabled" ng-click="toggleNavigator($event)"
+                            title="Navigator">
+                         <md-icon md-font-icon="fa fa-compass"></md-icon>
+                    </md-button>
                     
                     <md-button class="md-icon-button"  ng-if="checkHelpOnline()"  aria-label="{{::translate.load('sbi.generic.helpOnLine')}}" ng-click="openHelpOnLine()"
                             title="{{::translate.load('sbi.generic.helpOnLine')}}">
@@ -395,6 +392,8 @@ if(executionRoleNames.size() > 0) {
                     </md-button>
                 </div>
             </md-toolbar>
+            
+            
             
             
     <%               }   // close TOOLBAR_VISIBLE CASE
@@ -593,11 +592,14 @@ if(executionRoleNames.size() > 0) {
                 src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/menuFunctions/infoMetadataService.js")%>"></script>
         <script type="text/javascript" 
                 src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/documentExecution.js")%>"></script>
-        
+        <script type="text/javascript" 
+        		src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/wheelNavigator/ngWheelNavigator.js")%>"></script>
         <script type="text/javascript" 
                 src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/documentExecutionNote.js")%>"></script>
         <script type="text/javascript" 
                 src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/documentExecutionRank.js")%>"></script>
+        
+        
     </body>
 <% 
 } else {
@@ -614,27 +616,7 @@ if(executionRoleNames.size() > 0) {
             angular.module('cantExecuteDocumentModule')
             
             .factory('$documentBrowserScope', function($window) {
-                /*
-                // return $window.parent.angular.element($window.frameElement).scope().$parent.$parent;
-                if($window.parent.angular && $window.frameElement!=null) {
-                    return $window.parent.angular.element($window.frameElement).scope().$parent.$parent;
-                
-                } else if($window.parent.parent.angular ){ // coming from cockpit DocumentWidget
-                    var scope = $window.parent.parent.angular.element($window.parent.parent.frameElement).scope().$parent
-                    if (!scope.changeNavigationRole) {
-                        scope.changeNavigationRole = function(){};
-                    }
-                    return scope;
-                    
-                } else {
-                    var f = function(){};
-                    return {
-                        changeNavigationRole: f,
-                        isCloseDocumentButtonVisible: f
-                    };
-                }
-                */
-                
+               
                 var f = function(){};
                 var fakeScope = {
                         changeNavigationRole: f,
@@ -696,6 +678,11 @@ if(executionRoleNames.size() > 0) {
             };
         })();
         </script>
+        
+       
+        
+        
+        
     </body>
 <% }%>
 </html>

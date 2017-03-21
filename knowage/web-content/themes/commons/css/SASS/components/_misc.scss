@@ -26,6 +26,7 @@
 md-toolbar.md-knowage-theme {
 		min-height: $toolbarHeight;
         outline: none;
+        z-index: 10;
 		height: $toolbarHeight;
 		background-color: $headerBackground !important;
 		color: $lightTextColor !important;
@@ -727,6 +728,41 @@ md-tab-item {
         -ms-user-select: none; /* Internet Explorer/Edge */
             user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome and Opera */
+}
+
+.knowageStandardTable {
+  width: 100%;
+  border-collapse: collapse;
+  tr{
+    height: 32px;
+  }
+  thead {
+    background-color: $baseColor;
+    th {
+      text-align: left;
+      padding-left: 4px;
+      color: $lightTextColor;
+    }
+  }
+  tbody {
+    tr{
+      background-color: $lightTextColor;
+      border-bottom: 1px solid $ternaryColor;
+      &:hover {
+        background-color: lighten($ternaryColor,20%);
+      }
+      td {
+        text-align: left;
+        padding-left: 4px;
+        color: $darkTextColor;
+        font-size: $smallFontSize;
+        button {
+          padding: 0 !important;
+          height: 32px !important;
+        }
+      }
+    }
+  }
 }
 
 /* IE11 fix */

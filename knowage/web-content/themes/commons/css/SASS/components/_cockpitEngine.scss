@@ -315,7 +315,7 @@
 			//background: url("../../sbi_default/img/grid.png") repeat 0 0 transparent;
 		}
         
-		min-height: calc(100% - 20px);
+		//min-height: calc(100% - 20px);
 
         .gridster-item{
 			 md-card.md-knowage-theme md-card-title {
@@ -429,7 +429,7 @@
 				
 			}    	
 			.widgetActionButton>.md-button{
-				z-index: 2;
+				z-index: 10;
 			}
     
 
