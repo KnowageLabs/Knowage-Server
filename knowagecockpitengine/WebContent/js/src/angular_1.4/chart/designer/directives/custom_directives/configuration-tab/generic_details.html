@@ -2,7 +2,8 @@
 		<md-input-container class="md-block" flex=80 ng-if="!isCockpitEng">
 	<label>{{translate.load("sbi.chartengine.designer.tab.configuration.height")}}</label>
 	<input type="number" step="any" name="height"
-		ng-model="chartTemplate.height" min="0" /> </md-input-container>
+		ng-model="chartTemplate.height" min="0" 
+		ng-required="!isCockpitEng"/> </md-input-container>
 
 	<md-input-container class="md-block" flex=20 ng-if="!isCockpitEng"> <md-select
 		ng-model="chartTemplate.heightDimType" name="generic_heightType" aria-label="Height Dimension Type"> <md-option
@@ -12,7 +13,8 @@
 	<md-input-container class="md-block" flex=80 ng-if="!isCockpitEng">
 	 <label>{{translate.load("sbi.chartengine.designer.tab.configuration.width")}}</label>
 	<input type="number" step="any" name="width"
-		ng-model="chartTemplate.width" min="0" /> </md-input-container>
+		ng-model="chartTemplate.width" min="0" 
+		ng-required="!isCockpitEng"/> </md-input-container>
 
 	<md-input-container class="md-block" flex=20 ng-if="!isCockpitEng"> <md-select
 		ng-model="chartTemplate.widthDimType" name="generic_widthType" aria-label="Width Dimension Type"> <md-option
@@ -50,9 +52,13 @@
 	<md-input-container class="md-block colorInputContainer" flex=100>
 	<label>{{translate.load("sbi.chartengine.designer.tab.configuration.bgcolor")}}</label>
 	 <color-picker
-		options="colorPickerOptionsCockpit"
-		ng-model="chartTemplate.style.backgroundColor" name="generic_bc"></color-picker> </md-input-container>
-
+		
+		ng-model="chartTemplate.style.backgroundColor" 
+		name="generic_bc"
+		event-api="eventApi"
+		
+		></color-picker> </md-input-container>
+		
 <div layout="row"
 	ng-show="selectedChartType == 'parallel'" flex=100 layout-align="start center">
 
