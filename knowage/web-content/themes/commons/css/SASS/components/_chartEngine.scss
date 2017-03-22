@@ -197,6 +197,9 @@
 	@include custom-background-image('../../sbi_default/img/chart/configuration/configuration_advanced_serie.png');
 }
 
+.dangerBorder {
+	border: 2px solid $negativeColor;
+}
 
 @-moz-document url-prefix() {
     .firefoxPreviewFix {
