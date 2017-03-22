@@ -14,14 +14,14 @@
 		    		
 	    		<md-content layout="row" flex class="workspaceBckgColorRightSide workspaceWhiteframeContent">
  
-					<md-content flex layout-fill class="workspaceBckgColorRightSide">
+					<md-content flex layout-fill  ng-class="{'layout-row':!showGridView,'':showGridView}" class="workspaceBckgColorRightSide">
 	          
 			          	<!-- 
 			          		The 'searching-organizer' directive is used as an indicator if the Organizer is being searched (needed
 			          		for handling the graphical elements in it.
 			          		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 				-->
-					 	<folder-view	class="kn-documentBrowser" flex 
+					 	<folder-view	class="kn-documentBrowser" flex=50
 					 					style='overflow:auto;' 
 					 					ng-model=foldersToShow
 					 					show-grid-view=showGridView
@@ -32,7 +32,7 @@
 					 					delete-folder-action="deleteFolder(folder)" >
 						</folder-view>	
 						
-						<organizer-view class="kn-documentBrowser" flex
+						<organizer-view class="kn-documentBrowser" flex=50
 					 					style='overflow:auto;'
 					 					ng-model=documentsOfSelectedFolder
 					 					show-grid-view=showGridView
