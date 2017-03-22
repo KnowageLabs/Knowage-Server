@@ -61,6 +61,7 @@ import it.eng.spagobi.tools.dataset.persist.PersistedHDFSManager;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.assertion.UnreachableCodeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
@@ -181,10 +182,23 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		try {
 			dsDAO = DAOFactory.getDataSetDAO();
 		} catch (EMFUserError e) {
-			logger.error("Error while looking for datasets", e);
-			throw new SpagoBIRuntimeException("Error while looking for datasets", e);
+			String error = "Error while looking for datasets";
+			logger.error(error, e);
+			throw new SpagoBIRuntimeException(error, e);
 		}
 		return dsDAO;
+	}
+
+	private IDataSourceDAO getDataSourceDAO() {
+		IDataSourceDAO dataSourceDAO;
+		try {
+			dataSourceDAO = DAOFactory.getDataSourceDAO();
+		} catch (EMFUserError e) {
+			String error = "Error while looking for datasources";
+			logger.error(error, e);
+			throw new SpagoBIRuntimeException(error, e);
+		}
+		return dataSourceDAO;
 	}
 
 	@Override
@@ -705,13 +719,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		String defaultTableNameDot = isRealtime ? DEFAULT_TABLE_NAME_DOT : "";
 		String datasetLabel = dataSet.getLabel();
 
-		IDataSource dataSource = null;
-		if (!isRealtime) {
-			try {
-				dataSource = dataSet.getDataSource();
-			} catch (UnreachableCodeException e) {
-			}
-		}
+		IDataSource dataSource = getDataSource(dataSet, isRealtime);
 
 		for (String columnName : columnNames) {
 			for (ProjectionCriteria projection : projectionCriteria) {
@@ -735,6 +743,24 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		}
 
 		return attributesOrMeasures;
+	}
+
+	private IDataSource getDataSource(IDataSet dataSet, boolean isRealTime) {
+		IDataSource dataSource = null;
+		if (dataSet.isPersisted() && !dataSet.isPersistedHDFS()) {
+			dataSource = dataSet.getDataSourceForWriting();
+		} else if (dataSet.isFlatDataset()
+				|| (isRealTime && DatasetManagementAPI.isJDBCDataSet(dataSet) && !SqlUtils.isBigDataDialect(dataSet.getDataSource().getHibDialectName()))) {
+			try {
+				dataSource = dataSet.getDataSource();
+			} catch (UnreachableCodeException e) {
+			}
+		} else if (isRealTime) {
+			dataSource = null;
+		} else {
+			dataSource = SpagoBICacheConfiguration.getInstance().getCacheDataSource();
+		}
+		return dataSource;
 	}
 
 	private String[] getDistinctValues(String values) {
