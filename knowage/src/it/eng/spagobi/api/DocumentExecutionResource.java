@@ -341,17 +341,18 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 							// SINGLE
 							Object value;
 							// DEFAULT DATE FIELD : {date#format}
-	
+
 							if (objParameter.getParType().equals("DATE") && objParameter.getDefaultValues().get(0).getValue().toString().contains("#")) {
 								// CONVERT DATE FORMAT FROM DEFAULT TO SERVER
 								value = convertDate(objParameter.getDefaultValues().get(0).getValue().toString().split("#")[1],
-								// GeneralUtilities.getLocaleDateFormat(permanentSession),
-										SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"), objParameter.getDefaultValues().get(0)
-												.getValue().toString().split("#")[0]);
+										// GeneralUtilities.getLocaleDateFormat(permanentSession),
+										SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"),
+										objParameter.getDefaultValues().get(0).getValue().toString().split("#")[0]);
 							}
-	
+
 							// DEFAULT DATE RANGE FIELD : {date_2W#format}
-							else if (objParameter.getParType().equals("DATE_RANGE") && objParameter.getDefaultValues().get(0).getValue().toString().contains("#")) {
+							else if (objParameter.getParType().equals("DATE_RANGE")
+									&& objParameter.getDefaultValues().get(0).getValue().toString().contains("#")) {
 								String dateRange = objParameter.getDefaultValues().get(0).getValue().toString().split("#")[0];
 								String[] dateRangeArr = dateRange.split("_");
 								String range = "_" + dateRangeArr[dateRangeArr.length - 1];
@@ -385,9 +386,9 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			} finally {
 				checkingsParameterMonitor.stop();
 			}
-			
+
 			ParameterUse parameterUse = null;
-			
+
 			// SUBMIT LOV SINGLE MANDATORY PARAMETER
 			Monitor lovSingleMandatoryParameterMonitor = MonitorFactory
 					.start("Knowage.DocumentExecutionResource.buildJsonParameters.singleLovMandatoryParameter");
@@ -400,10 +401,10 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 							&& (objParameter.getLovDependencies() == null || objParameter.getLovDependencies().size() == 0)) {
 						HashMap<String, Object> defaultValuesData = DocumentExecutionUtils.getLovDefaultValues(role, obj,
 								objParameter.getAnalyticalDocumentParameter(), req);
-	
+
 						ArrayList<HashMap<String, Object>> defaultValues = (ArrayList<HashMap<String, Object>>) defaultValuesData
 								.get(DocumentExecutionUtils.DEFAULT_VALUES);
-	
+
 						if (defaultValues != null && defaultValues.size() == 1 && !defaultValues.get(0).containsKey("error")) {
 							jsonParameters.put(objParameter.getId(), defaultValues.get(0).get("value"));
 							jsonParameters.put(objParameter.getId() + "_field_visible_description", defaultValues.get(0).get("value"));
@@ -431,12 +432,11 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 						}
 						jsonParameters.put(objParameter.getId(), jsonParamRet);
 					}
-	
+
 				}
 			} finally {
 				crossNavParameterMonitor.stop();
 			}
-			
 
 		}
 
@@ -1440,10 +1440,25 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 		} else {
 			logger.debug("NOT - multivalue case");
-			DefaultValue valueDef = new DefaultValue();
-			valueDef.setValue(sessionParameterValue);
-			valueDef.setDescription(sessionParameterDescription);
-			valueList.add(valueDef);
+			try {
+				String value = null;
+				if (sessionParameterValue != null && sessionParameterValue.length() > 0 && sessionParameterValue.charAt(0) == '[') {
+					JSONArray valuesArray = new JSONArray(sessionParameterValue);
+					if (valuesArray.get(0) != null) {
+						value = valuesArray.get(0).toString();
+					}
+				} else {
+					value = sessionParameterValue;
+				}
+
+				DefaultValue valueDef = new DefaultValue();
+				valueDef.setValue(value);
+				valueDef.setDescription(sessionParameterDescription);
+				valueList.add(valueDef);
+
+			} catch (Exception e) {
+				logger.error("Error in converting single value session values", e);
+			}
 		}
 
 		logger.debug("OUT");
