@@ -126,7 +126,7 @@
 							<md-menu>
 							      
 						      	<md-button 	aria-label="Help categories container" class="md-icon-button" ng-click="openMenu($mdOpenMenu, $event)"
-						      				style="margin-left:2; margin-right:2;" ng-class="structureForm.categoriesNumber.$invalid ? 'kn-dangerButtons' : ''">
+						      				style="margin-left:2; margin-right:2;" ng-class="structureForm.categoriesNumber.$invalid ? 'dangerBorder' : ''">
 						        	<md-icon md-menu-origin class="fa fa-question-circle"  style="display:inline"></md-icon>
 						      	</md-button>
 						      	
@@ -189,7 +189,7 @@
 					
 					</md-toolbar>
 				
-					<md-list flex ng-class="structureForm.categoriesNumber.$invalid ? 'kn-dangerButtons' : ''">
+					<md-list flex ng-class="structureForm.categoriesNumber.$invalid ? 'dangerBorder' : ''">
 							
 						<!-- If the categories container has at least one category item inside of it. -->					
 						<md-list-item  ng-repeat="cat in categories track by $index" class="noright" style="padding:0 8 0 16">
@@ -295,7 +295,7 @@
 							<md-menu>
 							      
 						      	<md-button 	aria-label="Help categories container" class="md-icon-button" ng-click="openMenu($mdOpenMenu, $event)"
-						      				style="margin-left:2; margin-right:2;" ng-class="structureForm.{{seriesContainer.name}}.$invalid ? 'kn-dangerButtons' : ''">
+						      				style="margin-left:2; margin-right:2;" ng-class="structureForm.{{seriesContainer.name}}.$invalid ? 'dangerBorder' : ''">
 						        	<md-icon md-menu-origin class="fa fa-question-circle" style="display:inline"></md-icon>
 						      	</md-button>
 						      	
@@ -420,7 +420,7 @@
 					</md-toolbar>
 				
 					<!-- SERIES ITEMS -->
-					<md-list flex ng-class="structureForm.{{seriesContainer.name}}.$invalid ? 'kn-dangerButtons' : ''">
+					<md-list flex ng-class="structureForm.{{seriesContainer.name}}.$invalid ? 'dangerBorder' : ''">
 								
 						<!-- If the series container has at least one series item inside of it. -->		
 						<md-list-item ng-if="seriesContainer.series.length>0" ng-repeat="seriesItem in seriesContainer.series track by $index" class="noright" style="padding:0 8 0 16">
