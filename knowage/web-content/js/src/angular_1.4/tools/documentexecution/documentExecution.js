@@ -88,7 +88,7 @@
 		$scope.addToWorkspaceEnabled = (sbiModule_user.functionalities.indexOf("SaveIntoFolderFunctionality")>-1)? true:false;
 		
 		//navigation default parameters
-		$scope.navigatorEnabled 	= true;
+		$scope.navigatorEnabled 	= false;
 		$scope.navigatorVisibility 	= false;
 		
 		$scope.isOrganizerEnabled = function () {
