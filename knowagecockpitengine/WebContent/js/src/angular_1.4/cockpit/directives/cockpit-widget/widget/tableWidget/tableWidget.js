@@ -453,21 +453,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									{	
 
 
-										htm=htm+" <div>&nbsp;</div><md-progress-linear-custom flex  style='width:"+currentColumn.chartLength +"px' value="+barValue+" color=\""+  currentColumn.chartColor +"\"> </md-progress-linear-custom>"
+										htm=htm+" <div>&nbsp;</div><md-progress-linear-custom flex  style='padding:0 8px 0 8px; width:"+currentColumn.chartLength +"px' value="+barValue+" color=\""+  currentColumn.chartColor +"\"> </md-progress-linear-custom>"
 									}	
 									else if(currentColumn.visType=='Text & Chart')
 									{
 
 
 
-											htm=htm+"<div class='inlineChartText' flex=20>"+formattedValue+"</div> &nbsp;  <md-progress-linear-custom flex=80  style='width:"+currentColumn.chartLength +"px' value="+barValue+" color=\""+  currentColumn.chartColor +"\"> </md-progress-linear-custom>"
+											htm=htm+"<div class='inlineChartText' flex>"+formattedValue+"</div> &nbsp;  <md-progress-linear-custom flex  style='padding-right:8px;width:"+currentColumn.chartLength +"px' value="+barValue+" color=\""+  currentColumn.chartColor +"\"> </md-progress-linear-custom>"
 
 	
 									}	 
 									else if(currentColumn.visType=='Chart & Text')
 									{
 
-											htm=htm+"<md-progress-linear-custom flex=80  style='width:"+currentColumn.chartLength +"px' value="+barValue+" color=\""+  currentColumn.chartColor +"\"> </md-progress-linear-custom> &nbsp; <div class='inlineChartText' flex=20>"+formattedValue+"</div>"
+											htm=htm+"<md-progress-linear-custom flex  style='padding-left:8px;width:"+currentColumn.chartLength +"px' value="+barValue+" color=\""+  currentColumn.chartColor +"\"> </md-progress-linear-custom> &nbsp; <div class='inlineChartText' flex>"+formattedValue+"</div>"
 											
 
 									}							
