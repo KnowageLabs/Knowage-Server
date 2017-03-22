@@ -165,13 +165,13 @@
 		<md-icon ng-show="parameter.lovNotDefine && parameter.selectionType=='COMBOBOX'" md-font-icon="fa fa-info-circle">
 			  <md-tooltip >{{sbiModule_translate.load("sbi.execution.parameter.lovnotdefined")}} </md-tooltip>
 	    </md-icon>
-		<md-input-container class="md-block">
-			<label ng-if="parameter.selectionType=='COMBOBOX'" ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField' ">
+		<md-input-container class="md-block" ng-if="parameter.selectionType=='COMBOBOX'">
+			<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField' ">
 			 {{parameter.label}}
 			 </label>
 			<!-- multiple -->
 			<md-select ng-model="parameter.parameterValue" multiple ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField' " 
-				 	ng-if="showDefaultValueAreValid(parameter) && parameter.selectionType=='COMBOBOX' && parameter.multivalue" > 
+				 	ng-if="showDefaultValueAreValid(parameter) && parameter.multivalue" > 
 				<md-option ng-repeat="defaultParameter in parameter.defaultValues" ng-value="defaultParameter.value"
 					  ng-if="defaultParameter.isEnabled">
 					{{defaultParameter.label}}
@@ -179,7 +179,7 @@
 			</md-select>
 			<!-- single -->
 			<md-select ng-model="parameter.parameterValue" ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField' " 
-				 	ng-if="showDefaultValueAreValid(parameter) && parameter.selectionType=='COMBOBOX' && !parameter.multivalue"> 
+				 	ng-if="showDefaultValueAreValid(parameter) && !parameter.multivalue"> 
 				<md-option></md-option>
 				<md-option ng-repeat="defaultParameter in parameter.defaultValues" ng-value="defaultParameter.value" ng-if="defaultParameter.isEnabled">
 					{{defaultParameter.label}}
