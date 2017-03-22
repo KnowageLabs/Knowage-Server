@@ -489,11 +489,16 @@
 			align: 'high',
 			#end
 		 },
-		 categories:  [
-            	#foreach($element in $datasettransformer.prepareDataForScater($rows,$columnMap,$isCockpitEngine,null).entrySet())
-            		'$element.key',
-				#end
-            ],
+		#set ($counter = $datasettransformer.prepareDataForScater($rows,$columnMap,$isCockpitEngine,null).entrySet())
+   		categories:  [
+            #foreach($element in $counter)
+            	'$element.key',
+             
+    		#end
+        ],
+            
+        min: 0.5,
+        max: $counter.size()-1.5,
             
 		labels:{
 				 
