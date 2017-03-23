@@ -9,7 +9,7 @@
 
 #set($rows = $data.rows) ## data in table rows
 
-
+#set($categoriesNumber = $rows.size()) 
 #set($series = $chart.VALUES.SERIE) ## metadata related to series
 
 #set($seriesMap = {}) ## conversion series metadata to map object
@@ -23,6 +23,7 @@
 #set($categorieColumns = $chart.VALUES.CATEGORY) ## metadata related to categories
 #set($crossNavigation = '')
 #set($crossNavigation = $chart.DRILL)
+
 
 {
     chart: {
@@ -110,21 +111,6 @@
 			
 			#foreach($color in $chart.COLORPALETTE.COLOR)
 				'$color.value', 
-			#end	
-					
-		#else		
-			
-			#*
-				If user does not specify any color inside the color palette the chart
-				will take predefined value for the color (#518BC6) (else-case).	Otherwise, 
-				we will take the single value specified in the palette (if-case).
-				@author: danristo (danilo.ristovski@mht.net)
-			*#
-			
-			#if ($chart.COLORPALETTE.COLOR)
-				'$chart.COLORPALETTE.COLOR.value'
-			#else
-				'#518BC6'
 			#end
 			
 		#end
@@ -132,7 +118,11 @@
     #else
     	colors: {},
 	#end
-    
+     backupcolors: [
+		'#7cb5ec', '#434348', '#90ed7d', '#f7a35c', 
+		    '#8085e9', '#f15c80', '#e4d354', '#2b908f', '#f45b5b', '#91e8e1'
+		
+    ],
     title: {
         text: "$chart.TITLE.text",
         
@@ -502,39 +492,17 @@
 	            showInLegend: false,
 		   	#end
 		   	
-	        data: [
-	    	    
-				#if($categorieColumns.name=="")
-				#set($categorieColumns.name = $categorieColumns.column)
-				#end
-				#if($chart.isCockpitEngine=="true")
-				#set($serieColumnCategory = $dataColumnsMapper.get($categorieColumns.name)) ## "product" -> "column_3"
-				#end
-				#if($chart.isCockpitEngine!="true")
-				#set($serieColumnCategory = $dataColumnsMapper.get($categorieColumns.column)) ## "product" -> "column_3"
-				#end
-
-
-	    	    #set($relatedSerieColName = "$relatedSerie.column"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction#{else}'SUM')#end")
-	    	    #set($serieColumnsMapped = $dataColumnsMapper.get($relatedSerieColName)) ## "Vendite_AVG" -> "column_5" ## "Ricavi_SUM" -> "column_6"
-				#foreach($row in $rows)
-					#set ($serieName = $row.get($serieColumnCategory))
-					#set ($serieValue = $row.get($serieColumnsMapped))
-					{
-						name: '$serieName',
-						y: $serieValue,
+		    #set($relatedSerieShowAbsValue = $relatedSerie.showAbsValue)
+			#set($relatedSerieShowPercentage = $relatedSerie.showPercentage)
+			#set($showDataLabels = $relatedSerieShowAbsValue || $relatedSerieShowPercentage)						
+			
+			#if ($relatedSerie.precision == "")
+				#set($precision = 0)
+			#else
+			#set($precision = $relatedSerie.precision)
+			#end
 						
-						#set($relatedSerieShowAbsValue = $relatedSerie.showAbsValue)
-						#set($relatedSerieShowPercentage = $relatedSerie.showPercentage)
-						#set($showDataLabels = $relatedSerieShowAbsValue || $relatedSerieShowPercentage)						
-						
-						#if ($relatedSerie.precision == "")
-							#set($precision = 0)
-						#else
-							#set($precision = $relatedSerie.precision)
-						#end
-						
-						#if ($relatedSerieShowAbsValue == true && $relatedSerieShowPercentage == false)
+			#if ($relatedSerieShowAbsValue == true && $relatedSerieShowPercentage == false)
 							
 							dataLabels: 
 							{							
@@ -684,7 +652,41 @@
 			                }
 			                
 						#end
+				,   
+				
+				data: [
+	    	    
+				#if($categorieColumns.name=="")
+				#set($categorieColumns.name = $categorieColumns.column)
+				#end
+				#if($chart.isCockpitEngine=="true")
+				#set($serieColumnCategory = $dataColumnsMapper.get($categorieColumns.name)) ## "product" -> "column_3"
+				#end
+				#if($chart.isCockpitEngine!="true")
+				#set($serieColumnCategory = $dataColumnsMapper.get($categorieColumns.column)) ## "product" -> "column_3"
+				#end
+
+
+	    	    #set($relatedSerieColName = "$relatedSerie.column"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction#{else}'SUM')#end")
+	    	    #set($serieColumnsMapped = $dataColumnsMapper.get($relatedSerieColName)) ## "Vendite_AVG" -> "column_5" ## "Ricavi_SUM" -> "column_6"
+				#set ($zeroValues =0)
+				#foreach($row in $rows)
+					#set ($serieValue = $row.get($serieColumnsMapped))
+				
+					#if($serieValue==0)
+			    		#set($zeroValues=$zeroValues+1)  
+					#end
+					 
+				#end
+	    	    #if($categoriesNumber!=$zeroValues)
+	    	    #foreach($row in $rows)
+					#set ($serieName = $row.get($serieColumnCategory))
+					#set ($serieValue = $row.get($serieColumnsMapped))
+					{
+						name: '$serieName',
+						y: $serieValue,
 					},
+				#end
 				#end
 				 
 	    	],
