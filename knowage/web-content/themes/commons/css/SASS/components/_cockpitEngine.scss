@@ -584,13 +584,15 @@
             }
         }
     }
+
 	 
 	cockpit-static-pivot-table-widget{
 		@extend angular-table;
 		overflow:auto;
 		
 		&[multi-select] table>thead>tr>th:nth-child(2),&:not(multi-select) table>thead>tr>th:nth-child(1),
-		&[multi-select]  table>tbody>tr>td:nth-child(2),&:not(multi-select) table>tbody>tr>td:nth-child(1){
+		&[multi-select]  table>tbody>tr>td:nth-child(2),&:not(multi-select) table>tbody>tr>td:nth-child(1),
+		&:not(multi-select) table>tbody>tr>td:nth-child(n+1):nth-last-child(n+2){
 			padding: 0 !important;
 		}
 	 &>table{
