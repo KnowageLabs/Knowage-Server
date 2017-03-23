@@ -311,7 +311,11 @@ function associationGroupController($scope,sbiModule_translate,cockpitModule_rea
 	})
 }
 
-function cockpitDataConfigurationController($scope,$rootScope,sbiModule_translate,cockpitModule_template,cockpitModule_datasetServices,sbiModule_restServices,$mdPanel,$mdDialog,mdPanelRef,cockpitModule_widgetSelection,cockpitModule_documentServices,cockpitModule_widgetServices,cockpitModule_widgetSelectionUtils,cockpitModule_widgetSelection,cockpitModule_templateServices,cockpitModule_properties,$rootScope){
+function cockpitDataConfigurationController($scope,$rootScope,sbiModule_translate,cockpitModule_template,cockpitModule_datasetServices,sbiModule_restServices,$mdPanel,$mdDialog,mdPanelRef,cockpitModule_widgetSelection,cockpitModule_documentServices,cockpitModule_widgetServices,cockpitModule_widgetSelectionUtils,cockpitModule_templateServices,cockpitModule_properties,sbiModule_user){			
+	
+	// see if smart detection is enabled
+	$scope.showSmartDetection = (sbiModule_user.functionalities.indexOf("DatasetAssociationSmartDetection")>-1)? true:false;
+
 	$scope.translate=sbiModule_translate;
 		    	 $scope.baseScriptPath=baseScriptPath;
 		    	 $scope.cockpitModule_template=cockpitModule_template;

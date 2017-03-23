@@ -1,20 +1,20 @@
 /*
-* Knowage, Open Source Business Intelligence suite
-* Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
-*
-* Knowage is free software: you can redistribute it and/or modify
-* it under the terms of the GNU Affero General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-*
-* Knowage is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU Affero General Public License for more details.
-*
-* You should have received a copy of the GNU Affero General Public License
-* along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Knowage, Open Source Business Intelligence suite
+ * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+ *
+ * Knowage is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Knowage is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package it.eng.spagobi.tools.dataset.graph;
 
 import static org.junit.Assert.assertEquals;
@@ -22,6 +22,7 @@ import static org.junit.Assert.assertTrue;
 import it.eng.spagobi.tools.dataset.common.association.Association;
 import it.eng.spagobi.tools.dataset.common.association.Association.Field;
 import it.eng.spagobi.tools.dataset.common.association.AssociationGroup;
+import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicResult;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -190,11 +191,17 @@ public class AssociationAnalyzerTest {
 		EdgeGroup edgeGroupA3 = new EdgeGroup(edgesA3);
 		EdgeGroup edgeGroupA4 = new EdgeGroup(edgesA4);
 
-		Map<EdgeGroup, Set<String>> egdegroupToValuesMap = new HashMap<EdgeGroup, Set<String>>();
-		egdegroupToValuesMap.put(edgeGroupA1A5, valuesA1A5);
-		egdegroupToValuesMap.put(edgeGroupA1A5A6, valuesA1A5A6);
-		egdegroupToValuesMap.put(edgeGroupA3, valuesA3);
-		egdegroupToValuesMap.put(edgeGroupA4, valuesA4);
+		// Map<EdgeGroup, Set<String>> egdegroupToValuesMap = new HashMap<EdgeGroup, Set<String>>();
+		// egdegroupToValuesMap.put(edgeGroupA1A5, valuesA1A5);
+		// egdegroupToValuesMap.put(edgeGroupA1A5A6, valuesA1A5A6);
+		// egdegroupToValuesMap.put(edgeGroupA3, valuesA3);
+		// egdegroupToValuesMap.put(edgeGroupA4, valuesA4);
+
+		AssociativeLogicResult result = new AssociativeLogicResult();
+		result.getEdgeGroupValues().put(edgeGroupA1A5, valuesA1A5);
+		result.getEdgeGroupValues().put(edgeGroupA1A5A6, valuesA1A5A6);
+		result.getEdgeGroupValues().put(edgeGroupA3, valuesA3);
+		result.getEdgeGroupValues().put(edgeGroupA4, valuesA4);
 
 		AssociationAnalyzer analyzer = new AssociationAnalyzer(fiveAssociationsMap.values());
 		analyzer.process();
@@ -202,7 +209,7 @@ public class AssociationAnalyzerTest {
 
 		AssociationGroup associationGroup = new AssociationGroup();
 		associationGroup.addAssociations(fiveAssociationsMap.values());
-		Map<String, Map<String, Set<String>>> selections = AssociationAnalyzer.getSelections(associationGroup, graph, egdegroupToValuesMap);
+		Map<String, Map<String, Set<String>>> selections = AssociationAnalyzer.getSelections(associationGroup, graph, result);
 
 		Map<String, Set<String>> columnsToValuesMap = null;
 		String columns = null;

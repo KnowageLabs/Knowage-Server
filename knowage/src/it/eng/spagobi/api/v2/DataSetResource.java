@@ -18,16 +18,18 @@
 package it.eng.spagobi.api.v2;
 
 import static it.eng.spagobi.tools.glossary.util.Util.getNumberOrNull;
-import gnu.trove.set.hash.TLongHashSet;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.constants.ConfigurationConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.services.serialization.JsonConverter;
-import it.eng.spagobi.tools.dataset.AssociativeLogicManager;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
+import it.eng.spagobi.tools.dataset.associativity.IAssociativityManager;
+import it.eng.spagobi.tools.dataset.associativity.strategy.AssociativeStrategyFactory;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
@@ -45,15 +47,14 @@ import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
-import it.eng.spagobi.tools.dataset.common.similarity.Similarity;
-import it.eng.spagobi.tools.dataset.common.similarity.SimilarityEvaluator;
-import it.eng.spagobi.tools.dataset.common.similarity.SimilarityStrategyFactory;
 import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.dao.ISbiDataSetDAO;
 import it.eng.spagobi.tools.dataset.graph.AssociationAnalyzer;
-import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
 import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
+import it.eng.spagobi.tools.dataset.graph.associativity.Config;
+import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicResult;
+import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicUtils;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSetId;
 import it.eng.spagobi.tools.dataset.persist.IPersistedManager;
@@ -481,12 +482,14 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 				}
 			}
 
-			AssociativeLogicManager manager = new AssociativeLogicManager(graph, datasetToAssociationToColumnMap, filtersMap, realtimeDatasets,
+			String strategy = SingletonConfig.getInstance().getConfigValue(ConfigurationConstants.SPAGOBI_DATASET_ASSOCIATIVE_LOGIC_STRATEGY);
+			Config config = AssociativeLogicUtils.buildConfig(strategy, graph, datasetToAssociationToColumnMap, filtersMap, realtimeDatasets,
 					datasetParameters, documents);
-			manager.setUserProfile(getUserProfile());
-			Map<EdgeGroup, Set<String>> egdegroupToValuesMap = manager.process();
 
-			Map<String, Map<String, Set<String>>> selections = AssociationAnalyzer.getSelections(associationGroup, graph, egdegroupToValuesMap);
+			IAssociativityManager manager = AssociativeStrategyFactory.createStrategyInstance(config, getUserProfile());
+			AssociativeLogicResult result = manager.process();
+
+			Map<String, Map<String, Set<String>>> selections = AssociationAnalyzer.getSelections(associationGroup, graph, result);
 
 			for (String d : selectionsMap.keySet()) {
 				if (!selections.containsKey(d)) {
@@ -860,58 +863,4 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 			logger.debug("OUT");
 		}
 	}
-
-	@POST
-	@Path("/associations/autodetect")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Set<Similarity> autodetect(@QueryParam("top") int top, @QueryParam("threshold") double threshold, @QueryParam("aggregate") boolean aggregate,
-			@QueryParam("strategy") String strategy, @QueryParam("wait") boolean wait, @QueryParam("evaluateNumber") boolean evaluateNumber,
-			@Context HttpServletRequest req) {
-		logger.debug("IN");
-		Set<Similarity> toReturn = new HashSet<>(0);
-		try {
-			JSONObject requestBodyJSONObject = RestUtilities.readBodyAsJSONObject(req);
-			if (requestBodyJSONObject != null && requestBodyJSONObject.length() > 0) {
-
-				top = top > 0 ? top : Integer.MAX_VALUE;
-				threshold = (threshold >= 0 && threshold <= 1) ? threshold : Double.MIN_VALUE;
-
-				List<String> dataSets = new ArrayList<>(requestBodyJSONObject.length());
-				Map<String, Map<String, TLongHashSet>> dataSetDomainValues = new HashMap<>(requestBodyJSONObject.length());
-
-				IDataSetDAO dataSetDAO = DAOFactory.getDataSetDAO();
-				dataSetDAO.setUserProfile(getUserProfile());
-				DatasetManagementAPI datasetManagementAPI = getDatasetManagementAPI();
-
-				Iterator<String> labels = requestBodyJSONObject.keys();
-				while (labels.hasNext()) {
-					String label = labels.next();
-					logger.debug("Getting dataSet with label [" + label + "]");
-					IDataSet dataSet = dataSetDAO.loadDataSetByLabel(label);
-					if (dataSet != null) {
-						JSONObject parameters = requestBodyJSONObject.getJSONObject(label);
-						Map<String, TLongHashSet> domainValues = datasetManagementAPI.readDomainValues(dataSet, DataSetUtilities.getParametersMap(parameters),
-								wait);
-						if (domainValues != null) {
-							dataSets.add(label);
-							dataSetDomainValues.put(label, domainValues);
-						}
-					} else {
-						throw new SpagoBIRuntimeException("Impossibile to load dataSet with label [" + label + "]");
-					}
-				}
-
-				SimilarityEvaluator similarityEvaluator = new SimilarityEvaluator(SimilarityStrategyFactory.createStrategyInstance(strategy), top, threshold,
-						evaluateNumber);
-				toReturn = similarityEvaluator.evaluate(dataSets, dataSetDomainValues, aggregate);
-
-			}
-		} catch (Exception e) {
-			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
-		} finally {
-			logger.debug("OUT");
-		}
-		return toReturn;
-	}
-
 }

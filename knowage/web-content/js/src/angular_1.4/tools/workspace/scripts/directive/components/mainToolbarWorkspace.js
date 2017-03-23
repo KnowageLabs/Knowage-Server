@@ -35,7 +35,9 @@ angular
 		  };	  
 	});
 
-function toolbarController($scope,$mdSidenav,sbiModule_translate){
+function toolbarController($scope,$mdSidenav,sbiModule_translate,sbiModule_user){
+	
+	$scope.showOrganizeFolder = (sbiModule_user.functionalities.indexOf("SelfServiceFolderManagement")>-1)? true:false;
 
 	//$scope.openedSidebar = $mdSidenav('leftWorkspaceSideNav').isOpen();
 	$scope.translate = sbiModule_translate;

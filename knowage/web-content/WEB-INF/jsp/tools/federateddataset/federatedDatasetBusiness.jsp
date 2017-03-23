@@ -218,7 +218,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					<div class="md-toolbar-tools">
 						<h2 class="md-flex">{{translate.load("sbi.federationdefinition.associationsList");}}</h2>
 						<span flex=""></span>
-						<md-button ng-click="ctrl.autodetect()">{{translate.load("sbi.federationdefinition.autodetect")}}</md-button>
+						<md-button ng-if="ctrl.showSmartDetection" ng-click="ctrl.autodetect()">{{translate.load("sbi.federationdefinition.autodetect")}}</md-button>
 						<md-button class="md-fab associationListBtn" ng-click="ctrl.addSingleRelation()"><md-tooltip md-delay=1500 md-direction="left">{{translate.load("sbi.federationdefinition.add.relationship");}}</md-tooltip><md-icon md-font-icon="fa fa-plus">
 						</md-icon></md-button> 
 						<!-- <md-button class="md-fab md-ExtraMini createRelationButton" ng-click="ctrl.addSingleRelation()"><md-tooltip md-delay=1500 md-direction="left">{{translate.load("sbi.federationdefinition.add.relationship");}}</md-tooltip><md-icon md-font-icon="fa fa-plus">

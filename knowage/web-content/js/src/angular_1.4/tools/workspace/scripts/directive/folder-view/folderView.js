@@ -47,7 +47,9 @@ angular.module('folder_view', ['ngMaterial'])
 	}
 });
 
-function folderViewControllerFunction($scope,sbiModule_translate){
+function folderViewControllerFunction($scope,sbiModule_translate,sbiModule_user){
+	
+	$scope.showOrganizeFolder = (sbiModule_user.functionalities.indexOf("SelfServiceFolderManagement")>-1)? true:false;
 	
 	$scope.clickFolder=function(item){
 		

@@ -467,7 +467,9 @@
 	<CONFIG label="SPAGOBI.CACHE.HAZELCAST.TIMEOUT" name="SPAGOBI.CACHE.HAZELCAST.TIMEOUT" description="Timeout value (in seconds) to acquire a lock." isActive="true" valueCheck="120" valueType="NUM" category="GENERIC_CONFIGURATION"/>
 	<CONFIG label="SPAGOBI.CACHE.HAZELCAST.LEASETIME" name="SPAGOBI.CACHE.HAZELCAST.LEASETIME" description="Timeout value (in seconds) to release a lock." isActive="true" valueCheck="240" valueType="NUM" category="GENERIC_CONFIGURATION"/>
 	
-	
+	<CONFIG label="SPAGOBI.DATASET.ASSOCIATIVE_LOGIC.STRATEGY" name="Strategy to perform the dataset associative logic"
+		description="Strategy to perform the dataset associative logic"" isActive="true"
+		valueCheck="INNER" valueType="STRING" category="GENERIC_CONFIGURATION" />	
 
 	<CONFIG label="SPAGOBI.DOCUMENTS.MAX_PREVIEW_IMAGE_SIZE" name="Max preview image size"
 		description="Max dimension for a document's preview image" isActive="true"
@@ -507,6 +509,5 @@
 	<CONFIG label="SPAGOBI.DATASET.ASSOCIATIONS.AUTODETECT.SAMPLES" name="SPAGOBI.DATASET.ASSOCIATIONS.AUTODETECT.SAMPLES" description="Number of samples (or records) that are loaded while calculating the set of values for each attribute. Please set a negative value to unlimit the samples." isActive="true" valueCheck="10000" valueType="NUM" category="GENERIC_CONFIGURATION"/>
 	<CONFIG label="SPAGOBI.UPLOAD.MAX_FILE_SIZE_MB" name="SPAGOBI.UPLOAD.MAX_FILE_SIZE_MB" description="Max file size in MB" isActive="true" valueCheck="-1" valueType="NUM" category="GENERIC_CONFIGURATION"/>
 	
-		
 </CONFIGS>
 

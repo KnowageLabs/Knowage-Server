@@ -45,6 +45,7 @@ app
 		 "sbiModule_translate",
 		 "sbiModule_restServices",
 		 "sbiModule_messaging",
+		 "sbiModule_user",
 		 federationDefinitionFunction
 		 ]
 );
@@ -62,7 +63,8 @@ function federationDefinitionFunction
 		sbiModule_config, 
 		sbiModule_translate, 
 		sbiModule_restServices,
-		sbiModule_messaging
+		sbiModule_messaging,
+		sbiModule_user
 ) {
 	//current scope
 	ctr = this;
@@ -71,6 +73,9 @@ function federationDefinitionFunction
 	
 	//creating translate variable that is accessible from the global scope, and can be used as an expression inside html
 	$scope.translate = sbiModule_translate;
+	
+	// see if smart detection is enabled
+	$scope.showSmartDetection = (sbiModule_user.functionalities.indexOf("DatasetAssociationSmartDetection")>-1)? true:false;
 
 	//data from the fields of saveFederateddataset.html
 	$scope.federateddataset = {};

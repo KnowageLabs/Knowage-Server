@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -21,6 +21,7 @@ package it.eng.spagobi.tools.dataset.graph;
 import it.eng.spagobi.tools.dataset.common.association.Association;
 import it.eng.spagobi.tools.dataset.common.association.Association.Field;
 import it.eng.spagobi.tools.dataset.common.association.AssociationGroup;
+import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicResult;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -97,14 +98,14 @@ public class AssociationAnalyzer {
 	}
 
 	public static Map<String, Map<String, Set<String>>> getSelections(AssociationGroup associationGroup, Pseudograph<String, LabeledEdge<String>> graph,
-			Map<EdgeGroup, Set<String>> egdegroupToValues) {
+			AssociativeLogicResult result) {
 
 		Map<Set<String>, Set<String>> associationsToValuesMap = new HashMap<Set<String>, Set<String>>();
-		for (EdgeGroup edgeGroup : egdegroupToValues.keySet()) {
+		for (EdgeGroup edgeGroup : result.getEdgeGroupValues().keySet()) {
 			Set<String> associations = new TreeSet<String>();
 			String associationString = edgeGroup.getOrderedEdgeNames();
 			associations.addAll(Arrays.asList(associationString.split(",")));
-			Set<String> values = egdegroupToValues.get(edgeGroup);
+			Set<String> values = result.getEdgeGroupValues().get(edgeGroup);
 			associationsToValuesMap.put(associations, values);
 		}
 

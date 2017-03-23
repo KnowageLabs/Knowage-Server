@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -28,6 +28,8 @@ public class EdgeGroup {
 
 	private final Set<String> edgeNames;
 	private final String orderedEdgeNames;
+	private final Set<String> values = new HashSet<>();
+	private boolean resolved = false;
 
 	public EdgeGroup(Set<LabeledEdge<String>> edges) {
 		this.edgeNames = new HashSet<String>(edges.size());
@@ -44,6 +46,30 @@ public class EdgeGroup {
 
 	public String getOrderedEdgeNames() {
 		return orderedEdgeNames;
+	}
+
+	public Set<String> getValues() {
+		return values;
+	}
+
+	public void addValues(Set<String> values) {
+		this.values.addAll(values);
+	}
+
+	public void addValue(String value) {
+		this.values.add(value);
+	}
+
+	public boolean isResolved() {
+		return resolved;
+	}
+
+	public void resolve() {
+		resolved = true;
+	}
+
+	public void unresolve() {
+		resolved = false;
 	}
 
 	@Override
@@ -75,5 +101,10 @@ public class EdgeGroup {
 		} else if (!edgeNames.equals(other.edgeNames))
 			return false;
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "[" + orderedEdgeNames + "]";
 	}
 }
