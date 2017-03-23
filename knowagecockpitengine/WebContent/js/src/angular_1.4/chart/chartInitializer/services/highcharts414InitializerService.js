@@ -35,10 +35,12 @@ angular.module('chartInitializer')
 		} 
 		else if (chartType == 'heatmap') 
 		{
+			delete this.updateData;
 			this.chart = renderHeatmap(chartConf,handleCockpitSelection);
-		}
+		} 
 		else
 		{
+			if (chartType == 'scatter') delete this.updateData;
 			this.chart =  new Highcharts.Chart(chartConf);
 			//return chart;
  
@@ -275,8 +277,18 @@ angular.module('chartInitializer')
 		var column = null;
 		var orderColumn = null;
 		var data = widgetData.jsonData.rows;
+		var counter = 0;
+		var arrayOfMeasuers = [];
 		
-		  if (this.chart.options.chart.type != "gauge") {
+		for (var i = 0; i<widgetData.columnSelectedOfDataset.length; i++){
+			if(widgetData.columnSelectedOfDataset[i].fieldType=="MEASURE"){
+				arrayOfMeasuers.push(widgetData.columnSelectedOfDataset[i].alias)
+			}
+		}
+		
+		var columnsSerieValue = [];
+		
+		if (this.chart.options.chart.type != "gauge") {
 			  
 		   category = widgetData.chartTemplate.CHART.VALUES.CATEGORY.name;
 		   orderColumn = widgetData.chartTemplate.CHART.VALUES.CATEGORY.orderColumn == "" ? 2 : 3; 
@@ -289,59 +301,76 @@ angular.module('chartInitializer')
 				   column =  widgetData.jsonData.metaData.fields[j].name;
 
 			   }
-		   	}
+		   }
 		   
-		  }
+		}
 		  
-		  var seriesNamesColumnBind ={}; 
-		  for(var i =1 ; i<widgetData.jsonData.metaData.fields.length; i++){
+		var seriesNamesColumnBind ={}; 
+		for(var i =1 ; i<widgetData.jsonData.metaData.fields.length; i++){
 			  
-			  var field = widgetData.jsonData.metaData.fields[i];
+			var field = widgetData.jsonData.metaData.fields[i];
 			  
-			  if(field.header){
+			if(field.header){
 			  		
-			  	seriesNamesColumnBind[field.header]=field.name;
+				seriesNamesColumnBind[field.header]=field.name;
 			  	
 			  	if(field.header.lastIndexOf("_")>0){
 			  		seriesNamesColumnBind[field.header.substring(0,field.header.lastIndexOf("_"))]=field.name;
 			  	}
-			  }
-		  }
+			  	if (arrayOfMeasuers.indexOf(field.header) !=-1) {
+					columnsSerieValue.push(field.name);
+				}
+			}
+		}
 
 		  
-		  var counterSeries =  widgetData.chartTemplate.CHART.VALUES.SERIE.length;
-		  var dataLabel = null;
-		  var drill = null;
-		  for (var j = 0; j < this.chart.series.length; j++) {
-			  dataLabels =   this.chart.options.series[0].data[0].dataLabels;
+		var counterSeries =  widgetData.chartTemplate.CHART.VALUES.SERIE.length;
+	 
+		var drill = null;
+		
+		for (var j = 0; j < this.chart.series.length; j++) {
+			  
 			  drill = this.chart.options.series[0].data[0].drilldown
 			  this.chart.series[j].setData([]);
 		  }
-		  
-		  for (var j = 0; j < data.length; j++) {
-		   
-		   for (var i = 0; i < counterSeries; i++) {
-			   var pointOptions={};
-		    if (this.chart.options.chart.type == "gauge") {
-		    	pointOptions.y = parseFloat(data[j]["column_" + (i + 1)]);
-		    	pointOptions.name= data[j]["column_" + 1];
-		    	pointOptions.drilldown = drill;
-		    	pointOptions.dataLabels = dataLabels;
-		     this.chart.series[i].addPoint(pointOptions, true,false);
-		    
-		    } else {
-		    	
-		    	pointOptions.y = parseFloat(data[j][seriesNamesColumnBind[this.chart.series[i].name]]);
-		    	pointOptions.name=data[j][column];
-		    	pointOptions.drilldown = drill;
-		    	pointOptions.dataLabels = dataLabels;
-		    
-		     this.chart.series[i].addPoint(pointOptions, true,false);
-
-		    }
-		   }
-		  }
 		
+		
+		for (var j = 0; j < data.length; j++) {
+			   
+			for (var i = 0; i < counterSeries; i++) {
+				var pointOptions={};
+				if (this.chart.options.chart.type == "gauge") {
+					pointOptions.y = parseFloat(data[j]["column_" + (i + 1)]);
+				    pointOptions.name= data[j]["column_" + 1];
+				    pointOptions.drilldown = drill;
+				    
+				    this.chart.series[i].addPoint(pointOptions, true,false);
+					    
+				} else {
+					pointOptions.y = parseFloat(data[j][seriesNamesColumnBind[this.chart.series[i].name]]);
+					pointOptions.name=data[j][column];
+					pointOptions.drilldown = drill;
+									    
+				    this.chart.series[i].addPoint(pointOptions, true,false);
+			
+				}
+			}
+		}
+		if(this.chart.options.chart.type == "pie"){
+			for (var i = 0; i<this.chart.series.length; i++){
+				for (var j = 0; j<this.chart.series[i].data.length; j++){
+						
+					if(this.chart.series[i].data[j].y==0){
+						counter ++
+					}
+				}
+				if (counter==this.chart.series[i].data.length){
+					this.chart.series[i].setData([]);
+					counter = 0;
+				}
+			}
+		}
+			
 	}
 	
 	var adjustChartSize = function(container,chartConf){
