@@ -307,8 +307,7 @@ public class CrossTabHTMLSerializer {
 					} else {
 						boolean parentIsLevel = !((i) % 2 == 0 || (i) == levels);
 						if (parentIsLevel) {
-
-							aColumn.setCharacters(text);
+							// aColumn.setCharacters(text);
 							aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "clickFunction('" + crossTab.getColumnsRoot().getLevel(i).get(0).getValue() + "','" + text
 									+ "')");
 							levelValues.add(text);
@@ -328,10 +327,12 @@ public class CrossTabHTMLSerializer {
 										aColumn.setAttribute(STYLE_ATTRIBUTE, measureStyle);
 										// ONLY in this case (unique measure without header) add a div to force width if it's defined
 										SourceBean divEl = new SourceBean(COLUMN_DIV);
+										divEl.setCharacters(text);
 										divEl.setAttribute(STYLE_ATTRIBUTE, measureStyle);
 										aColumn.setAttribute(divEl);
 									}
-								}
+								} else
+									aColumn.setCharacters(text);
 							}
 							// Set the parent node style
 							// if (parentStyle != null && !parentStyle.equals("")) {
@@ -345,7 +346,8 @@ public class CrossTabHTMLSerializer {
 
 							// Set specific measures configuration style
 							String measureStyle = getMeasureWidthStyle(crossTab, text);
-							aColumn.setAttribute(STYLE_ATTRIBUTE, measureStyle);
+							if (!measureStyle.equals(""))
+								aColumn.setAttribute(STYLE_ATTRIBUTE, measureStyle);
 							table.setAttribute("table-layout", "fixed;");
 							String measureParentValue = "";
 							Integer direction = null;
@@ -386,11 +388,13 @@ public class CrossTabHTMLSerializer {
 			if (text == null || mis.getAlias().equals(text)) {
 				JSONObject measureConfig = mis.getConfig();
 				String width = getConfiguratedElementStyle(null, null, measureConfig, crossTab, "width");
-				if (width.indexOf("%") >= 0)
-					width = ""; // set width only with pixel values (for div)
-				String display = " overflow:hidden; text-overflow:ellipses;";
-				measureStyle = width + display;
-				break;
+				if (!width.equals("")) {
+					if (width.indexOf("%") >= 0)
+						width = ""; // set width only with pixel values (for div)
+					String display = " overflow:hidden; text-overflow:ellipses;";
+					measureStyle = width + display;
+					break;
+				}
 			}
 		}
 		return measureStyle;
