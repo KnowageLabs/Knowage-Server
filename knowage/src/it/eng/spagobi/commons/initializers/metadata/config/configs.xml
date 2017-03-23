@@ -468,7 +468,7 @@
 	<CONFIG label="SPAGOBI.CACHE.HAZELCAST.LEASETIME" name="SPAGOBI.CACHE.HAZELCAST.LEASETIME" description="Timeout value (in seconds) to release a lock." isActive="true" valueCheck="240" valueType="NUM" category="GENERIC_CONFIGURATION"/>
 	
 	<CONFIG label="SPAGOBI.DATASET.ASSOCIATIVE_LOGIC.STRATEGY" name="Strategy to perform the dataset associative logic"
-		description="Strategy to perform the dataset associative logic"" isActive="true"
+		description="Strategy to perform the dataset associative logic" isActive="true"
 		valueCheck="INNER" valueType="STRING" category="GENERIC_CONFIGURATION" />	
 
 	<CONFIG label="SPAGOBI.DOCUMENTS.MAX_PREVIEW_IMAGE_SIZE" name="Max preview image size"
