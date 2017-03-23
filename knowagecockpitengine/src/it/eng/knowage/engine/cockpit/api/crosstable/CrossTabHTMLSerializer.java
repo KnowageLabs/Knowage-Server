@@ -328,6 +328,7 @@ public class CrossTabHTMLSerializer {
 										// ONLY in this case (unique measure without header) add a div to force width if it's defined
 										SourceBean divEl = new SourceBean(COLUMN_DIV);
 										divEl.setCharacters(text);
+										divEl.setAttribute(TITLE_ATTRIBUTE, text);
 										divEl.setAttribute(STYLE_ATTRIBUTE, measureStyle);
 										aColumn.setAttribute(divEl);
 									}
