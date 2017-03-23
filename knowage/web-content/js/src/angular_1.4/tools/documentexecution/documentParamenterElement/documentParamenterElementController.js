@@ -135,18 +135,95 @@
 	        return parameter.parameterValue.indexOf(parVal) > -1;
 	      };
 	      
-		$scope.toggleCheckboxParameter = function(parVal,parameter) {
+
+
+		
+		var addParameterValueDescription = function(parameter) {
+
+			// if parameter description not present get it from default value
+			if(parameter.parameterValue != undefined){
+				var parDescription = null;
+				
+				var valuesList = null;
+				// if parameterValue is string instead of list create one element list
+				if(typeof parameter.parameterValue === 'string'){
+					valuesList=[];
+					valuesList.push(parameter.parameterValue);
+				}
+				else{
+					valuesList = parameter.parameterValue;
+				}
+				
+				for(var z = 0; z < valuesList.length; z++) {
+					var parVal =valuesList[z];
+					//check if parval
+					var found = false;
+					for(var z2 = 0; parameter.defaultValues && z2 < parameter.defaultValues.length && !found; z2++) {
+						var defvalue =parameter.defaultValues[z2];
+						if(parVal == defvalue.value){
+							if(parDescription != null){
+								parDescription += ";";
+							}
+							else{
+								parDescription="";
+							}
+							parDescription += defvalue.label;
+							found = true;
+
+						}
+					}
+
+				}
+				if(parDescription != null){
+					parameter.parameterDescription = parDescription; 
+				}
+			}
+		};
+		
+		
+		$scope.toggleCheckboxParameter = function(parVal ,parDesc, parameter) {
 			if (typeof parameter.parameterValue == 'undefined'){
 				parameter.parameterValue= [];
 			}
 			var idx = parameter.parameterValue.indexOf(parVal);
 	        if (idx > -1) {
+	        	// in case the element is removed recalculate description 
 	        	parameter.parameterValue.splice(idx, 1);
+	        	//recalculate descriptions
+				addParameterValueDescription(parameter);
+
 	        }
 	        else {
+	        	// in case the elemnt is addedd can add description
 	        	parameter.parameterValue.push(parVal);
+	        	if(parameter.parameterDescription == undefined) parameter.parameterDescription = ""; 
+	        	if(parameter.parameterDescription==""){
+	        		parameter.parameterDescription = parDesc;	        		
+	        	}
+	        	else{
+	        		parameter.parameterDescription += ";"+parDesc;	
+	        	}
+	        	 
 	        } 
+
 		};
+		
+		$scope.toggleRadioParameter = function(parVal ,parDesc, parameter) {
+			if(parameter.parameterDescription == undefined ) parameter.parameterDescription = "";
+			parameter.parameterDescription = parDesc;			
+		};
+	
+		$scope.toggleComboParameter = function(parameter) {
+			if (typeof parameter.parameterValue == 'undefined'){
+				parameter.parameterValue= [];
+			}
+			if(parameter.parameterDescription == undefined ) parameter.parameterDescription ="";
+//			var idx = parameter.parameterValue.indexOf(parVal);
+//			parameter.parameterDescription[idx] = parDescr;	
+			addParameterValueDescription(parameter);
+			
+		}
+
 		
 		$scope.popupLookupParameterDialog = function(parameter) {
 			

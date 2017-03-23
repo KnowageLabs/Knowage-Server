@@ -47,6 +47,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -671,6 +672,7 @@ public class DocumentUrlManager {
 		Assert.assertNotNull(jsonObject, "JSONObject in input is null!!");
 		String nameUrl = biparam.getParameterUrlName();
 		List values = new ArrayList();
+		List descrs = new ArrayList();
 		try {
 			Object o = jsonObject.opt(nameUrl);
 			if (o != null) {
@@ -690,7 +692,30 @@ public class DocumentUrlManager {
 						values.add(valToInsert);
 					}
 				}
+
 			}
+
+			// put also descriptions
+			Object oDescr = jsonObject.opt(nameUrl + "_field_visible_description");
+			if (oDescr != null) {
+
+				if (oDescr instanceof JSONArray) {
+					JSONArray jsonArray = (JSONArray) oDescr;
+					for (int c = 0; c < jsonArray.length(); c++) {
+						Object anObject = jsonArray.get(c);
+						if (anObject != null) {
+							descrs.add(anObject.toString());
+						}
+					}
+				} else {
+					// should be in thew form of ;
+					StringTokenizer stk = new StringTokenizer((String) oDescr, ";");
+					while (stk.hasMoreTokens()) {
+						descrs.add(stk.nextToken());
+					}
+				}
+			}
+
 		} catch (JSONException e) {
 			logger.error("Cannot get " + nameUrl + " values from JSON object", e);
 			throw new SpagoBIServiceException("Cannot retrieve values for biparameter " + biparam.getLabel(), e);
@@ -699,9 +724,12 @@ public class DocumentUrlManager {
 		if (values.size() > 0) {
 			logger.debug("Updating values of biparameter " + biparam.getLabel() + " to " + values.toString());
 			biparam.setParameterValues(values);
+			biparam.setParameterValuesDescription(descrs);
+
 		} else {
 			logger.debug("Erasing values of biparameter " + biparam.getLabel());
 			biparam.setParameterValues(null);
+			biparam.setParameterValuesDescription(null);
 		}
 
 		biparam.setTransientParmeters(transientMode);

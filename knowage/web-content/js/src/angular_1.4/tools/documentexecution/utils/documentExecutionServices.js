@@ -79,22 +79,57 @@
 								
 								
 							} else {
-//								parameter.parameterValue = parameter.parameterValue || [];
-								if(			
-										/*
-										parameter.parameterValue 
-										&& Array.isArray(parameter.parameterValue) 
-										&& */
-										parameter.multivalue) {
-									
+
+
+								if(parameter.multivalue) {
+
 									parameter.parameterValue = parameter.parameterValue || [];
-									
 									jsonDatumValue = parameter.parameterValue;
-									jsonDatumDesc = jsonDatumValue.join(";");
+									// set descritpion
+									if(parameter.parameterDescription){
+										// if already in the form ; ;
+										if (typeof parameter.parameterDescription === 'string') {
+											jsonDatumDesc = parameter.parameterDescription;	
+										}
+										else{
+											// else in the form object
+											var desc = '';
+											for(var z = 0; parameter.parameterValue && z < parameter.parameterValue.length; z++) {
+												if(z > 0) {
+													desc += ";";
+												}
+												// description is at index or at value depending on parameters type
+												if(parameter.parameterDescription[z] != undefined){
+													desc+=parameter.parameterDescription[z];
+												}
+												else if(parameter.parameterDescription[parameter.parameterValue[z]]!= undefined){
+													desc+=parameter.parameterDescription[parameter.parameterValue[z]];
+												}
+												else{
+													desc+= parameter.parameterValue[z];
+												}
+											}
+											jsonDatumDesc = desc;
+										}
+									}
+									else{
+										jsonDatumDesc = jsonDatumValue.join(";");	
+									}
+				
 								} else {
-//									jsonDatumValue = (typeof parameter.parameterValue === 'undefined')? '' : parameter.parameterValue;
+
 									jsonDatumValue = parameter.parameterValue != undefined? parameter.parameterValue : '';
-									jsonDatumDesc = jsonDatumValue;
+									if(parameter.parameterDescription){
+										if (typeof parameter.parameterDescription === 'string') {
+											jsonDatumDesc = parameter.parameterDescription;	
+										}
+										else{
+											jsonDatumDesc = parameter.parameterDescription[0];											
+										}
+									}
+									else{
+										jsonDatumDesc = jsonDatumValue;
+									}
 								}
 							}
 						} else if(parameter.valueSelection.toLowerCase() == 'map_in'){
@@ -1154,12 +1189,32 @@
 										//console.log("parameter ID : " + data.idParam + " set value " + data.result.root[p].value);
 										for(var z=0; z<execProperties.parametersData.documentParameters.length;z++){
 											if(execProperties.parametersData.documentParameters[z].urlName==data.idParam){
+												
+//												if(!execProperties.parametersData.documentParameters[z].defaultValues){
+//													execProperties.parametersData.documentParameters[z].defaultValues = [];
+//												}
+//												
+//												execProperties.parametersData.documentParameters[z].defaultValues.push(data.result.root[p].value);
+//																						
+//												if(data.result.root.length ==1 && execProperties.parametersData.documentParameters[z].mandatory
+//												&& (execProperties.parametersData.documentParameters[z].selectionType == 'COMBOBOX' 
+//													|| execProperties.parametersData.documentParameters[z].selectionType == 'LIST')){
+//
+//													execProperties.parametersData.documentParameters[z].parameterValue = execProperties.parametersData.documentParameters[z].multivalue ?
+//													[data.result.root[0].value]	: data.result.root[0].value;																	
+//												}
+												
+												var toAdd = [];
+											
 												if(execProperties.parametersData.documentParameters[z].defaultValues &&
 														execProperties.parametersData.documentParameters[z].defaultValues.length>0){
-													for(var y=0;y<execProperties.parametersData.documentParameters[z].defaultValues.length;y++){
+													var found = false;
+														
+													for(var y=0;y<execProperties.parametersData.documentParameters[z].defaultValues.length && !found;y++){
 														if( execProperties.parametersData.documentParameters[z].defaultValues[y].value==data.result.root[p].value){
 															//console.log("enabled for : " ,  execProperties.parametersData.documentParameters[z].defaultValues[y]);
 															execProperties.parametersData.documentParameters[z].defaultValues[y].isEnabled=true;
+															found = true;
 															//if mandatory and if combo o list set parameter default !!!
 															if(data.result.root.length ==1 && execProperties.parametersData.documentParameters[z].mandatory
 																	&& (execProperties.parametersData.documentParameters[z].selectionType == 'COMBOBOX' 
@@ -1168,9 +1223,20 @@
 																execProperties.parametersData.documentParameters[z].parameterValue = execProperties.parametersData.documentParameters[z].multivalue ?
 																		[data.result.root[0].value]	: data.result.root[0].value;																	
 															}
-														}	  
-													} 
+														}	
+														
+														// if not found add
+														if(!found){
+															var objBase = null;															
+															objBase.value = data.result.root[p].value;
+															objBase.label = data.result.root[p].label;
+															objBase.description = data.result.root[p].description;
+															objBase.isEnabled = true;
+															execProperties.parametersData.documentParameters[z].defaultValues.push(objBase);
+														}
+													}
 												}
+												
 												break;
 											}
 										}	   

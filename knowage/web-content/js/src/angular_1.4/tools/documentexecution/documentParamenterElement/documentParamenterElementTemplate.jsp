@@ -138,7 +138,7 @@
 			 </md-icon>
 			 </label>
 			<md-radio-group ng-model="parameter.parameterValue" ng-required="::parameter.mandatory">
-				<md-radio-button class="md-primary" ng-repeat="defaultParameter in parameter.defaultValues" ng-if="defaultParameter.isEnabled" value="{{::defaultParameter.value}}">
+				<md-radio-button class="md-primary" ng-repeat="defaultParameter in parameter.defaultValues" ng-if="defaultParameter.isEnabled" value="{{::defaultParameter.value}}" ng-click="toggleRadioParameter(defaultParameter.value, defaultParameter.description, parameter)">
 					{{::defaultParameter.label}} 
 				</md-radio-button>
 			</md-radio-group>
@@ -154,7 +154,7 @@
 			
 			<div ng-repeat="defaultParameter in parameter.defaultValues">
 				<md-checkbox class="md-primary" value="{{::defaultParameter.value}}" ng-if="defaultParameter.isEnabled"
-						ng-checked="checkboxParameterExists(defaultParameter.value, parameter)" ng-click="toggleCheckboxParameter(defaultParameter.value, parameter)" >
+						ng-checked="checkboxParameterExists(defaultParameter.value, parameter)" ng-click="toggleCheckboxParameter(defaultParameter.value, defaultParameter.description, parameter)" >
 					{{::defaultParameter.label}}
 				</md-checkbox>
 			</div>
@@ -171,6 +171,7 @@
 			 </label>
 			<!-- multiple -->
 			<md-select ng-model="parameter.parameterValue" multiple ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField' " 
+				 	ng-change="toggleComboParameter(parameter)"
 				 	ng-if="showDefaultValueAreValid(parameter) && parameter.multivalue" > 
 				<md-option ng-repeat="defaultParameter in parameter.defaultValues" ng-value="defaultParameter.value"
 					  ng-if="defaultParameter.isEnabled">
@@ -178,10 +179,12 @@
 				</md-option>
 			</md-select>
 			<!-- single -->
-			<md-select ng-model="parameter.parameterValue" ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField' " 
+			<md-select ng-model="parameter.parameterValue" ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField' "
+			        ng-change="toggleComboParameter(parameter)" 
 				 	ng-if="showDefaultValueAreValid(parameter) && !parameter.multivalue"> 
 				<md-option></md-option>
-				<md-option ng-repeat="defaultParameter in parameter.defaultValues" ng-value="defaultParameter.value" ng-if="defaultParameter.isEnabled">
+				<md-option ng-repeat="defaultParameter in parameter.defaultValues" 
+				           ng-value="defaultParameter.value" ng-if="defaultParameter.isEnabled">
 					{{defaultParameter.label}}
 				</md-option>
 			</md-select>

@@ -463,7 +463,6 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		String label = requestVal.getString("label");
 		String role = requestVal.getString("role");
 		JSONObject jsonCrossParameters = requestVal.getJSONObject("parameters");
-
 		Map<String, JSONObject> sessionParametersMap = new HashMap<String, JSONObject>();
 		if (("true").equals(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled")))
 			sessionParametersMap = getSessionParameters(requestVal);
@@ -504,47 +503,58 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			parameterAsMap
 					.put("allowInternalNodeSelection", objParameter.getPar().getModalityValue().getLovProvider().contains("<LOVTYPE>treeinner</LOVTYPE>"));
 
+			// get values
 			if (objParameter.getAnalyticalDocumentParameter().getParameterValues() != null) {
-				List paramValueLst = new ArrayList();
-				Object paramValues = objParameter.getAnalyticalDocumentParameter().getParameterValues();
-				if (paramValues instanceof List) {
-					List<String> valuesList = (List) paramValues;
-					String item = null;
-					for (int k = 0; k < valuesList.size(); k++) {
-						Object oItem = valuesList.get(k);
-						if (oItem instanceof DefaultValue) {
-							Object o = ((DefaultValue) oItem).getValue();
-							item = o != null ? o.toString() : "";
-						} else {
-							item = oItem.toString();
-						}
 
-						String itemVal = "";
+				List paramValueLst = new ArrayList();
+				List paramDescrLst = new ArrayList();
+				Object paramValues = objParameter.getAnalyticalDocumentParameter().getParameterValues();
+				Object paramDescriptionValues = objParameter.getAnalyticalDocumentParameter().getParameterValuesDescription();
+
+				if (paramValues instanceof List) {
+
+					List<String> valuesList = (List) paramValues;
+					List<String> descriptionList = (List) paramDescriptionValues;
+					if (paramDescriptionValues == null || !(paramDescriptionValues instanceof List)) {
+						descriptionList = new ArrayList<String>();
+					}
+
+					// String item = null;
+					for (int k = 0; k < valuesList.size(); k++) {
+
+						String itemVal = valuesList.get(k);
+						String itemDescr = descriptionList.get(k) != null ? descriptionList.get(k) : itemVal;
+
 						try {
 							// % character breaks decode method
-							if (!item.contains("%")) {
-								item = URLDecoder.decode(item, "UTF-8");
+							if (!itemVal.contains("%")) {
+								itemVal = URLDecoder.decode(itemVal, "UTF-8");
+							}
+							if (!itemDescr.contains("%")) {
+								itemDescr = URLDecoder.decode(itemDescr, "UTF-8");
 							}
 
-							if (objParameter.isMultivalue() && item.indexOf("{") >= 0) {
-
-								// check input value and convert if it's an old multivalue syntax({;{xxx;yyy}STRING}) to list of values :["A-OMP", "A-PO", "CL"]
-								String sep = item.substring(1, 2);
-								String val = item.substring(3, item.indexOf("}"));
+							// check input value and convert if it's an old multivalue syntax({;{xxx;yyy}STRING}) to list of values :["A-OMP", "A-PO", "CL"]
+							if (objParameter.isMultivalue() && itemVal.indexOf("{") >= 0) {
+								String sep = itemVal.substring(1, 2);
+								String val = itemVal.substring(3, itemVal.indexOf("}"));
 								String[] valLst = val.split(sep);
 								for (int k2 = 0; k2 < valLst.length; k2++) {
-									itemVal = valLst[k2];
-									if (itemVal != null && !"".equals(itemVal))
-										paramValueLst.add(itemVal);
+									String itemVal2 = valLst[k2];
+									if (itemVal2 != null && !"".equals(itemVal2))
+										paramValueLst.add(itemVal2);
+
 								}
 							} else {
-								if (item != null && !"".equals(item))
-									paramValueLst.add(item);
+								if (itemVal != null && !"".equals(itemVal))
+									paramValueLst.add(itemVal);
+								paramDescrLst.add(itemDescr);
+
 							}
 						} catch (UnsupportedEncodingException e) {
 							// TODO Auto-generated catch block
 							// e.printStackTrace();
-							logger.debug("An error occured while decoding parameter with value[" + item + "]" + e);
+							logger.debug("An error occured while decoding parameter with value[" + itemVal + "]" + e);
 						}
 					}
 				} else if (paramValues instanceof String) {
@@ -553,9 +563,18 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 						paramValues = URLDecoder.decode((String) paramValues, "UTF-8");
 					}
 					paramValueLst.add(paramValues.toString());
+
+					String parDescrVal = paramDescriptionValues != null && paramDescriptionValues instanceof String ? paramDescriptionValues.toString()
+							: paramValues.toString();
+					if (!parDescrVal.contains("%")) {
+						parDescrVal = URLDecoder.decode(parDescrVal, "UTF-8");
+					}
+					paramDescrLst.add(parDescrVal);
+
 				}
-				// parameterAsMap.put("parameterValue", objParameter.getAnalyticalDocumentParameter().getParameterValues());
+
 				parameterAsMap.put("parameterValue", paramValueLst);
+				parameterAsMap.put("parameterDescription", paramDescriptionValues);
 			}
 
 			boolean showParameterLov = true;
@@ -603,12 +622,14 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 			// convert the parameterValue from array of string in array of object
 			DefaultValuesList parameterValueList = new DefaultValuesList();
-			Object o = parameterAsMap.get("parameterValue");
-			if (o != null) {
-				if (o instanceof List) {
+			Object oVals = parameterAsMap.get("parameterValue");
+			Object oDescr = parameterAsMap.get("parameterDescription") != null ? parameterAsMap.get("parameterDescription") : new ArrayList<String>();
+
+			if (oVals != null) {
+				if (oVals instanceof List) {
 					// CROSS NAV : INPUT PARAM PARAMETER TARGET DOC IS STRING
-					if (o.toString().startsWith("[") && o.toString().endsWith("]") && parameterUse.getValueSelection().equals("man_in")) {
-						List<String> valList = (ArrayList) o;
+					if (oVals.toString().startsWith("[") && oVals.toString().endsWith("]") && parameterUse.getValueSelection().equals("man_in")) {
+						List<String> valList = (ArrayList) oVals;
 						String stringResult = "";
 						for (int k = 0; k < valList.size(); k++) {
 							String itemVal = valList.get(k);
@@ -626,12 +647,14 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 						defValue.setDescription(stringResult);
 						parameterValueList.add(defValue);
 					} else {
-						List<String> valList = (ArrayList) o;
+						List<String> valList = (ArrayList) oVals;
+						List<String> descrList = (ArrayList) oDescr;
 						for (int k = 0; k < valList.size(); k++) {
 							String itemVal = valList.get(k);
+							String itemDescr = descrList.get(k);
 							DefaultValue defValue = new DefaultValue();
 							defValue.setValue(itemVal);
-							defValue.setDescription(itemVal);
+							defValue.setDescription(itemDescr != null ? itemDescr : itemVal);
 							parameterValueList.add(defValue);
 
 						}
@@ -1440,6 +1463,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 		} else {
 			logger.debug("NOT - multivalue case");
+			// value could be String or array
+
 			try {
 				String value = null;
 				if (sessionParameterValue != null && sessionParameterValue.length() > 0 && sessionParameterValue.charAt(0) == '[') {
