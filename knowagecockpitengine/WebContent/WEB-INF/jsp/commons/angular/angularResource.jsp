@@ -85,6 +85,17 @@
 			if(value!=null){
 				driverParamsMap.put(key, value);
 			}
+			String keyDescription = (String)key+"_description";
+            String description = request.getParameter(keyDescription);
+            
+            if(description!=null){
+                driverParamsMap.put(key+"_description", description);
+            }
+            
+            
+            
+			
+			
 		}
 	}
 	
