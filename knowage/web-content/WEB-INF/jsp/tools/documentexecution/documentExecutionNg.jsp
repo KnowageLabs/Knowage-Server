@@ -261,7 +261,7 @@ if(executionRoleNames.size() > 0) {
                     
                     <md-menu-bar id="menu">
                         <md-menu>
-                            <md-button id="menuButton" class="md-icon-button" aria-label="Menu" ng-click="$mdOpenMenu()" >
+                            <md-button id="menuButton" class="md-icon-button" aria-label="Menu" ng-click="$mdOpenMenu(); closeMdMenu();" >
                                 <md-icon md-font-icon="fa  fa-ellipsis-v"></md-icon>
                             </md-button>
                             <md-menu-content>

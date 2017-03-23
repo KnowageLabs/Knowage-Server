@@ -16,17 +16,20 @@
 			['$scope', '$http', '$mdSidenav', '$mdDialog', '$mdToast', 'sbiModule_translate', 'sbiModule_restServices', 'sbiModule_user', 
 			 'sbiModule_config', 'sbiModule_messaging', 'execProperties', 'documentExecuteFactories', 'sbiModule_helpOnLine',
 			 'documentExecuteServices', 'docExecute_urlViewPointService', 'docExecute_paramRolePanelService', 'infoMetadataService', 'sbiModule_download', '$crossNavigationScope',
-			 'docExecute_dependencyService', '$timeout', 'docExecute_exportService', '$filter', 'sbiModule_dateServices', 'cockpitEditing', '$window',
+			 'docExecute_dependencyService', '$timeout', 'docExecute_exportService', '$filter', 'sbiModule_dateServices', 'cockpitEditing', '$window','$mdMenu',
 			 documentExecutionControllerFn]);
 
 	function documentExecutionControllerFn(
 			$scope, $http, $mdSidenav, $mdDialog,$mdToast, sbiModule_translate, sbiModule_restServices,sbiModule_user, sbiModule_config,
 			sbiModule_messaging, execProperties, documentExecuteFactories, sbiModule_helpOnLine, documentExecuteServices,
 			docExecute_urlViewPointService, docExecute_paramRolePanelService, infoMetadataService, sbiModule_download, $crossNavigationScope,
-			docExecute_dependencyService, $timeout, docExecute_exportService, $filter, sbiModule_dateServices, cockpitEditing,$window) {
+			docExecute_dependencyService, $timeout, docExecute_exportService, $filter, sbiModule_dateServices, cockpitEditing,$window,$mdMenu) {
 
 		console.log("documentExecutionControllerFn IN ");
 		
+		
+
+
 		//NAVIGATOR WHEEL
 		$scope.navigatorVisibility = false;
 		$scope.toggleNavigator = function(e) {
@@ -93,6 +96,9 @@
 		//navigation default parameters
 		$scope.navigatorEnabled 	= false;
 		$scope.navigatorVisibility 	= false;
+		
+		//menu Toggle override
+		$scope.closeMdMenu = function() { $mdMenu.hide(); };
 		
 		$scope.isOrganizerEnabled = function () {
 			if(!$scope.addToWorkspaceEnabled){
