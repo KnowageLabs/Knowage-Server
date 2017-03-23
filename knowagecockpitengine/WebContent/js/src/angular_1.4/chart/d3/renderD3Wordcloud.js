@@ -809,16 +809,17 @@ function renderWordCloud(chartConf,panel,handleCockpitSelection,locale){
 				if(chartConf.chart.isCockpit==true){
 					if(chartConf.chart.outcomingEventsEnabled){
 						
-//					paramethers=fetchParamethers(d);
-//					var selectParam={
-//							categoryName:paramethers.categoryName,
-//							categoryValue:paramethers.categoryValue,
-//							serieName:paramethers.serieName,
-//							serieValue:paramethers.serieValue,
-//							groupingCategoryName:paramethers.groupingCategoryName,
-//							groupingCategoryValue:paramethers.groupingCategoryValue	
-//					};
+					paramethers=fetchParamethers(d);
+					var selectParam_cross={
+							categoryName:paramethers.categoryName,
+							categoryValue:paramethers.categoryValue,
+							serieName:paramethers.serieName,
+							serieValue:paramethers.serieValue,
+							groupingCategoryName:paramethers.groupingCategoryName,
+							groupingCategoryValue:paramethers.groupingCategoryValue	
+					};
 					var	selectParam=fetchSelectionParamethers(d);
+					selectParam.selectParam_cross = selectParam_cross;
 					handleCockpitSelection(selectParam);
 					}
 				}else if(chartConf.crossNavigation.hasOwnProperty('crossNavigationDocumentName')){

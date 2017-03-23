@@ -473,7 +473,7 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
     			
     			return parameters;
 			
-		}
+		}else
        if( $scope.ngModel.content.chartTemplate.CHART.type==="TREEMAP"){
     	   var parameters = {
     				"SERIE_NAME": event.point.series.name,
@@ -483,14 +483,24 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
     			};
     			
     			return parameters;
-       }
+       }else
+       if( $scope.ngModel.content.chartTemplate.CHART.type==="WORDCLOUD"){
+    	   var parameters = {
+    				"SERIE_NAME": event.selectParam_cross.serieName,
+    				"SERIE_VALUE":event.selectParam_cross.serieValue,
+    				"CATEGORY_VALUE":event.selectParam_cross.categoryValue,
+    				"CATEGORY_NAME": event.selectParam_cross.categoryName
+    			};
+    			
+    			return parameters;
+       }else{
 		var parameters = {
 			"SERIE_NAME": event.point.series.name,
 			"SERIE_VALUE":event.point.y,
 			"CATEGORY_VALUE":event.point.name,
 			"CATEGORY_NAME": $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY.name
 		};
-		
+       }
 		return parameters;
 	}
 };
