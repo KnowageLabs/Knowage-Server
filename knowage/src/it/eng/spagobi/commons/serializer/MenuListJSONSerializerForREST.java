@@ -791,6 +791,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 					case "menu.Scheduler":
 					case "menu.SchedulerMonitor":
 					case "menu.CacheManagement":
+					case "menu.calendar":
 						Class.forName("it.eng.knowage.tools.servermanager.importexport.ExporterMetadata", false, this.getClass().getClassLoader());
 						break;
 					}
