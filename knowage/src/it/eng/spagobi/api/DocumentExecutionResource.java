@@ -652,7 +652,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 						List<String> descrList = (ArrayList) oDescr;
 						for (int k = 0; k < valList.size(); k++) {
 							String itemVal = valList.get(k);
-							String itemDescr = descrList.get(k);
+							String itemDescr = descrList.size() > k ? descrList.get(k) : itemVal;
 							DefaultValue defValue = new DefaultValue();
 							defValue.setValue(itemVal);
 							defValue.setDescription(itemDescr != null ? itemDescr : itemVal);
@@ -1451,7 +1451,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 				for (int z = 0; z < values.size(); z++) {
 					String parValue = values.get(z);
-					String parDescription = descriptions.get(z);
+					String parDescription = descriptions.size() > z ? descriptions.get(z) : parValue;
 					DefaultValue valueDef = new DefaultValue();
 					valueDef.setValue(parValue);
 					valueDef.setDescription(parDescription);
