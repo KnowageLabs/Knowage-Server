@@ -75,10 +75,10 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 	$scope.getHTMLFiles= function() {
 		
 		 
-		sbiModule_restServices.promiseGet("2.0/menu/htmls",!$scope.selectedMenu.menuId ? 0 : $scope.selectedMenu.menuId).then(
+		sbiModule_restServices.promiseGet("2.0/menu/htmls","").then(
 				function(response) {
 					$scope.files = response.data; 
-					 $scope.checkHtml($scope.selectedMenu);
+					
 				},
 				function(response) {
 					sbiModule_messaging.showErrorMessage(sbiModule_translate.load(response.data.errors[0].message), 'Error');
@@ -87,6 +87,7 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 	angular.element(document).ready(function() { // on page load function
 		$scope.getListOfMenu();
 		$scope.getRoles();
+		$scope.getHTMLFiles();
 		 
 
 	});
@@ -145,8 +146,8 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 								sbiModule_translate
 										.load("sbi.catalogues.toast.updated"),
 								'Success!');
-						$scope.selectedMenu = {};
-						$scope.showme = false;
+						//$scope.selectedMenu = {};
+						$scope.showme = true;
 						$scope.dirtyForm = false;
 
 					},
@@ -185,8 +186,8 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 					$scope.listOfMenu_copy = $scope.getListOfMenu();
 					sbiModule_messaging.showSuccessMessage(sbiModule_translate.
 							load("sbi.catalogues.toast.created"),'Success!');
-					$scope.selectedMenu = {};
-					$scope.showme = false;
+				//	$scope.selectedMenu = {};
+					$scope.showme = true;
 					$scope.dirtyForm = false;
 				}, function(response) {
 					sbiModule_messaging.showErrorMessage(sbiModule_translate.
@@ -356,7 +357,7 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 		if (menuItem.staticPage) {
 
 			for (i = 0; i < $scope.files.length; i++) {
-				if ($scope.files[i].name.toLowerCase() === menuItem.staticPage) {
+				if ($scope.files[i].name.toLowerCase() === menuItem.staticPage.toLowerCase()) {
 					$scope.selectedMenuItem.page = $scope.files[i].name;
 					break;
 				}
@@ -410,9 +411,7 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 		$scope.selectedMenu.hideToolbar = false;
 		$scope.selectedMenu.hideSliders = false;
 		$scope.selectedMenu.externalApplicationUrl = null;
-		if ($scope.selectedMenuItem.typeId === 3) {
-			$scope.getHTMLFiles();
-		}
+		
 	}
 	$scope.setRoles = function() {
 		$scope.role = [];
@@ -540,7 +539,7 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 
 	}
 	$scope.styleO = "";
-	$scope.showSelectedMenu = function(item) {
+	$scope.showSelectedMenu = function(item) { 
 		$scope.nodeTempT = item; 
 		if ($scope.selectedMenu.menuId != item.menuId) {
 			$scope.selectedMenu = {};
@@ -555,7 +554,8 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 					}
 					$scope.checkPropertiesFromSelectedMenu($scope.selectedMenu);
 					if ($scope.selectedMenu.staticPage) {
-						$scope.getHTMLFiles();
+					
+						 $scope.checkHtml($scope.selectedMenu);
 					}
 					if ($scope.selectedMenu.objId) {
 						$scope.getDocName(item.objId);
@@ -578,7 +578,7 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 				} else {
 					$scope.checkPropertiesFromSelectedMenu($scope.selectedMenu);
 					if ($scope.selectedMenu.staticPage) {
-						$scope.getHTMLFiles();
+						 $scope.checkHtml($scope.selectedMenu);
 					}
 					if ($scope.selectedMenu.objId) {
 						$scope.getDocName(item.objId);
