@@ -31,7 +31,7 @@
        
     });
     
-    function test(){
+    function save(){
     	
     	var infusionSettings= fluid.prefs.cookieStore.get('fluid-ui-settings');
     	console.log(infusionSettings);
@@ -65,9 +65,8 @@
     <!-- This div is for the sliding panel that shows and hides the Preference Editor controls -->
     <div class="fl-panelBar">
         <span class="fl-prefsEditor-buttons">
-            <button id="reset" class="flc-prefsEditor-reset fl-prefsEditor-reset"><span class="fl-icon-undo"></span> Reset</button>
+            <button id="reset" onclick="test()" class="flc-prefsEditor-reset fl-prefsEditor-reset"><span class="fl-icon-undo"></span> Reset</button>
             <button id="show-hide" class="flc-slidingPanel-toggleButton fl-prefsEditor-showHide"> Show/Hide</button>
-            <button id="save" onclick="test()" class="fl-prefsEditor-reset" class="fl-icon-save"> Save</button>
         </span>
     </div>
 </div>
