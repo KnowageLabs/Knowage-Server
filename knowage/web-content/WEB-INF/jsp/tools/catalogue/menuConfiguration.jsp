@@ -197,7 +197,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<md-input-container class="md-block"> <label>{{translate.load("sbi.menu.HTMLPage")}}:</label>
 				<md-select aria-label="aria-label" ng-model=selectedMenuItem.page
 					ng-change="setFormDirty()"> <md-option
-					ng-value="type.name" ng-repeat="type in files">{{type.name}}</md-option>
+					ng-repeat="type in files" ng-value="type.name" >{{type.name}}</md-option>
 				</md-select></md-input-container>
 			</div>
 
