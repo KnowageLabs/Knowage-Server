@@ -46,6 +46,7 @@ public class CrossTabHTMLSerializer {
 	private static String COLUMN_DIV = "DIV";
 	private static String CLASS_ATTRIBUTE = "class";
 	private static String STYLE_ATTRIBUTE = "style";
+	private static String TITLE_ATTRIBUTE = "title";
 	private static String ROWSPAN_ATTRIBUTE = "rowspan";
 	private static String COLSPAN_ATTRIBUTE = "colspan";
 	private static final String ON_CLICK_ATTRIBUTE = "onClick";
@@ -219,6 +220,7 @@ public class CrossTabHTMLSerializer {
 					if (rowSpan > 1) {
 						aColumn.setAttribute(ROWSPAN_ATTRIBUTE, rowSpan);
 					}
+					aColumn.setAttribute(TITLE_ATTRIBUTE, text);
 					aRow.setAttribute(aColumn);
 					counter = counter + rowSpan;
 				}
@@ -268,15 +270,7 @@ public class CrossTabHTMLSerializer {
 						String measureAlias = aNode.getDescription();
 						text = MeasureScaleFactorOption.getScaledName(measureAlias, crossTab.getMeasureScaleFactor(measureAlias), this.locale);
 						// check header visibility for measures
-						List<Measure> measures = crossTab.getCrosstabDefinition().getMeasures();
-						if (measures.size() == 1) {
-							Measure measure = measures.get(0);
-							JSONObject measureConfig = measure.getConfig();
-							if (!measureConfig.isNull("showHeader"))
-								showHeader = measureConfig.getBoolean("showHeader");
-						} else
-							// for default with 2 or more measures the header is always visible
-							showHeader = true;
+						showHeader = isMeasureHeaderVisible(crossTab);
 					} else {
 						// categories headers
 						text = aNode.getDescription();
@@ -307,13 +301,13 @@ public class CrossTabHTMLSerializer {
 						}
 						if (parentStyle != null)
 							style = parentStyle;
-						aColumn.setAttribute(addSortArrow(aRow, text, style, direction));
+						aColumn.setAttribute(addSortArrow(aRow, text, style, null, direction));
 						aColumn.setAttribute(STYLE_ATTRIBUTE, style);
 
 					} else {
-						// aColumn.setCharacters(text);
 						boolean parentIsLevel = !((i) % 2 == 0 || (i) == levels);
 						if (parentIsLevel) {
+
 							aColumn.setCharacters(text);
 							aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "clickFunction('" + crossTab.getColumnsRoot().getLevel(i).get(0).getValue() + "','" + text
 									+ "')");
@@ -326,6 +320,18 @@ public class CrossTabHTMLSerializer {
 								}
 								completeText += text;
 								lastLevelValues.add(completeText);
+								// set width column if measure doesn't show header. Get values from measure settings
+								if (!isMeasureHeaderVisible(crossTab) && i + 2 == levels) {
+									// if not measure are visible set
+									String measureStyle = getMeasureWidthStyle(crossTab, null);
+									if (!measureStyle.equals("")) {
+										aColumn.setAttribute(STYLE_ATTRIBUTE, measureStyle);
+										// ONLY in this case (unique measure without header) add a div to force width if it's defined
+										SourceBean divEl = new SourceBean(COLUMN_DIV);
+										divEl.setAttribute(STYLE_ATTRIBUTE, measureStyle);
+										aColumn.setAttribute(divEl);
+									}
+								}
 							}
 							// Set the parent node style
 							// if (parentStyle != null && !parentStyle.equals("")) {
@@ -336,6 +342,11 @@ public class CrossTabHTMLSerializer {
 							// if (parentStyle != null && !parentStyle.equals("")) {
 							// aColumn.setAttribute(STYLE_ATTRIBUTE, parentStyle);
 							// }
+
+							// Set specific measures configuration style
+							String measureStyle = getMeasureWidthStyle(crossTab, text);
+							aColumn.setAttribute(STYLE_ATTRIBUTE, measureStyle);
+							table.setAttribute("table-layout", "fixed;");
 							String measureParentValue = "";
 							Integer direction = null;
 							if (categoriesValues == null)
@@ -348,11 +359,10 @@ public class CrossTabHTMLSerializer {
 									}
 								}
 							}
-							aColumn.setAttribute(addSortArrow(aRow, text, parentStyle, direction));
+							aColumn.setAttribute(addSortArrow(aRow, text, parentStyle, measureStyle, direction));
 							aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "orderPivotTable('" + j + "','1'," + myGlobalId + ", '" + text + "' , '"
 									+ measureParentValue + "')");
 						}
-						// aColumn.setCharacters(text);
 					}
 
 					int colSpan = aNode.getLeafsNumber();
@@ -366,6 +376,40 @@ public class CrossTabHTMLSerializer {
 			}
 		}
 		return table;
+	}
+
+	private String getMeasureWidthStyle(CrossTab crossTab, String text) throws JSONException {
+		String measureStyle = "";
+		List<Measure> measures = crossTab.getCrosstabDefinition().getMeasures();
+		for (int m = 0; m < measures.size(); m++) {
+			Measure mis = measures.get(m);
+			if (text == null || mis.getAlias().equals(text)) {
+				JSONObject measureConfig = mis.getConfig();
+				String width = getConfiguratedElementStyle(null, null, measureConfig, crossTab, "width");
+				if (width.indexOf("%") >= 0)
+					width = ""; // set width only with pixel values (for div)
+				String display = " overflow:hidden; text-overflow:ellipses;";
+				measureStyle = width + display;
+				break;
+			}
+		}
+		return measureStyle;
+	}
+
+	private boolean isMeasureHeaderVisible(CrossTab crossTab) throws JSONException {
+		boolean showHeader = true;
+		// check header visibility for measures
+		List<Measure> measures = crossTab.getCrosstabDefinition().getMeasures();
+		if (measures.size() == 1) {
+			Measure measure = measures.get(0);
+			JSONObject measureConfig = measure.getConfig();
+			if (!measureConfig.isNull("showHeader"))
+				showHeader = measureConfig.getBoolean("showHeader");
+		} else
+			// for default with 2 or more measures the header is always visible
+			showHeader = true;
+
+		return showHeader;
 	}
 
 	private List<String> getCompleteCategoriesValues(int measuresNumber, List<String> levelValues) {
@@ -436,6 +480,7 @@ public class CrossTabHTMLSerializer {
 				String text = values[j];
 				SourceBean aColumn = new SourceBean(COLUMN_TAG);
 				CellType cellType = crossTab.getCellType(i, j);
+				String classType = "";
 				try {
 					// 1. Get specific measure configuration (format, bgcolor, icon visualization,..)
 					if (crossTab.isMeasureOnRow()) {
@@ -513,22 +558,23 @@ public class CrossTabHTMLSerializer {
 						aColumn.setAttribute(iconSB);
 					}
 
-					String classType = cellType.getValue();
+					classType = cellType.getValue();
 					// 5. style and alignment management
 					String dataStyle = getConfiguratedElementStyle(value, cellType, measureConfig, crossTab);
 					if (!dataStyle.equals("")) {
 						aColumn.setAttribute(STYLE_ATTRIBUTE, dataStyle);
 						if (classType.equalsIgnoreCase("data"))
-							classType += "noStandardStyle";
+							classType += "NoStandardStyle";
 					}
 
 					// 6. set value
-					// aColumn.setAttribute(CLASS_ATTRIBUTE, cellType.getValue());
 					aColumn.setAttribute(CLASS_ATTRIBUTE, classType);
 					aColumn.setCharacters(actualText);
+					aColumn.setAttribute(TITLE_ATTRIBUTE, actualText);
 				} catch (NumberFormatException e) {
 					logger.debug("Text " + text + " is not recognized as a number");
-					aColumn.setAttribute(CLASS_ATTRIBUTE, NA_CLASS);
+					// aColumn.setAttribute(CLASS_ATTRIBUTE, NA_CLASS + "NoStandardStyle");
+					aColumn.setAttribute(CLASS_ATTRIBUTE, "dataNoStandardStyle");
 					aColumn.setCharacters(text);
 				}
 				aRow.setAttribute(aColumn);
@@ -630,7 +676,7 @@ public class CrossTabHTMLSerializer {
 			while (keys.hasNext()) {
 				String keyStyle = (String) keys.next();
 				Object valueStyle = styleJ.get(keyStyle);
-				if (valueStyle != null) {
+				if (valueStyle != null && !valueStyle.equals("")) {
 					// normalize label properties
 					switch (keyStyle) {
 					case "textAlign":
@@ -645,6 +691,9 @@ public class CrossTabHTMLSerializer {
 					case "fontStyle":
 						keyStyle = "font-style";
 						break;
+					case "size":
+						keyStyle = "width";
+						break;
 					case "background":
 						if (bgColorApplied || cellTypeValue.equalsIgnoreCase("partialSum") || cellTypeValue.equalsIgnoreCase("totals"))
 							continue;
@@ -652,8 +701,9 @@ public class CrossTabHTMLSerializer {
 						if (cellTypeValue.equalsIgnoreCase("partialSum") || cellTypeValue.equalsIgnoreCase("totals"))
 							continue;
 					}
+					dataStyle += " " + keyStyle + ":" + String.valueOf(valueStyle) + ";";
 				}
-				dataStyle += " " + keyStyle + ":" + String.valueOf(valueStyle) + ";";
+
 				// normalize padding for text-align
 				if (keyStyle.equals("text-align")) {
 					if (!valueStyle.equals("center"))
@@ -664,6 +714,11 @@ public class CrossTabHTMLSerializer {
 				// default font-style
 				if (dataStyle.indexOf("font-style") < 0)
 					dataStyle += " font-style:normal!important;";
+				// add contextual properties if width is defined
+				if (keyStyle.equals("width")) {
+					dataStyle += " overflow:hidden; text-overflow:ellipses;";
+					dataStyle += " max-width:" + String.valueOf(valueStyle) + ";";
+				}
 			}
 		}
 
@@ -844,17 +899,21 @@ public class CrossTabHTMLSerializer {
 		return table;
 	}
 
-	private SourceBean addSortArrow(SourceBean aRow, String alias, String style, Integer direction) throws SourceBeanException {
+	private SourceBean addSortArrow(SourceBean aRow, String alias, String parentStyle, String divStyle, Integer direction) throws SourceBeanException {
 
-		SourceBean div1 = new SourceBean("div");
+		SourceBean div1 = new SourceBean(COLUMN_DIV);
+		if (divStyle != null && !divStyle.equals("")) {
+			div1.setAttribute(STYLE_ATTRIBUTE, divStyle);
+		}
+		div1.setAttribute(TITLE_ATTRIBUTE, alias);
 
 		SourceBean icon = new SourceBean("i");
 		SourceBean text = new SourceBean("span");
 
 		// Defining text...
 		text.setCharacters(alias);
-		if (style != null && !style.equals(""))
-			text.setAttribute(STYLE_ATTRIBUTE, style);
+		if (parentStyle != null && !parentStyle.equals(""))
+			text.setAttribute(STYLE_ATTRIBUTE, parentStyle);
 		else
 			text.setAttribute(CLASS_ATTRIBUTE, "crosstab-header-text");
 
@@ -892,15 +951,17 @@ public class CrossTabHTMLSerializer {
 			}
 
 			// Set specific rows configuration layout: NOT for the header: they uses general style
-			// JSONObject rowsConfig = rows.get(i).getConfig();
-			// style = getConfiguratedElementStyle(null, null, rowsConfig, crossTab);
-			// if (!rowsConfig.isNull("showHeader") && !rowsConfig.getBoolean("showHeader")) {
-			// // ADD AN EMPTY TD IF THERE IS A HEADER FOR THE MEASURE with the level class
-			// if (crossTab.getCrosstabDefinition().getMeasures().size() > 1)
-			// aColumn.setAttribute(CLASS_ATTRIBUTE, LEVEL_CLASS);
-			// aRow.setAttribute(aColumn);
-			// continue; // skips header if not required
-			// }
+			JSONObject rowsConfig = rows.get(i).getConfig();
+			String widthStyle = getConfiguratedElementStyle(null, null, rowsConfig, crossTab, "width");
+			if (widthStyle.indexOf("%") >= 0)
+				widthStyle = ""; // set width only with pixel values (for div)
+			if (!rowsConfig.isNull("showHeader") && !rowsConfig.getBoolean("showHeader")) {
+				// ADD AN EMPTY TD IF THERE IS A HEADER FOR THE MEASURE with the level class
+				if (crossTab.getCrosstabDefinition().getMeasures().size() > 1)
+					aColumn.setAttribute(CLASS_ATTRIBUTE, LEVEL_CLASS);
+				aRow.setAttribute(aColumn);
+				continue; // skips header if not required
+			}
 			// if (!style.equals("")) {
 			// aColumn.setAttribute(STYLE_ATTRIBUTE, style);
 			// appliedStyle = true;
@@ -908,7 +969,7 @@ public class CrossTabHTMLSerializer {
 			aColumn.setAttribute(CLASS_ATTRIBUTE, LEVEL_CLASS);
 
 			aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "orderPivotTable('" + i + "','0'," + myGlobalId + ")");
-			aColumn.setAttribute(addSortArrow(aRow, aRowDef.getAlias(), style, direction));
+			aColumn.setAttribute(addSortArrow(aRow, aRowDef.getAlias(), style, widthStyle, direction));
 			aRow.setAttribute(aColumn);
 		}
 		if (crossTab.getCrosstabDefinition().isMeasuresOnRows()) {
@@ -918,7 +979,6 @@ public class CrossTabHTMLSerializer {
 			else
 				aColumn.setAttribute(STYLE_ATTRIBUTE, style);
 
-			// aColumn.setCharacters(EngineMessageBundle.getMessage("sbi.crosstab.runtime.headers.measures", this.getLocale()));
 			aRow.setAttribute(aColumn);
 		}
 
@@ -976,10 +1036,7 @@ public class CrossTabHTMLSerializer {
 				emptyColumn.setAttribute(COLSPAN_ATTRIBUTE, rows.size());
 			}
 			emptyRow.setAttribute(emptyColumn);
-			// if headers are hidden add a td field ONLY when there are more than one measure to mantein alignments
-			// if ((crossTab.isMeasureOnRow() || hideHeaderMeasure || hideHeaderColumn) && crossTab.getCrosstabDefinition().getMeasures().size() > 1) {
-			// emptyRow.setAttribute(emptyColumn);
-			// }
+
 			table.setAttribute(emptyRow);
 		}
 		return table;

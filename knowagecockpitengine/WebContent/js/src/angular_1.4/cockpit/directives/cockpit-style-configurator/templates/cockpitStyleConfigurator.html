@@ -22,11 +22,6 @@
 					<md-option ng-repeat="bwidth in bordersWidth" ng-value="bwidth.value">{{bwidth.label}}</md-option>
 				</md-select>	
 			</md-input-container>
-<!-- 			<md-input-container class="md-block" flex> -->
-<!-- 				<label>{{translate.load("sbi.cockpit.style.borders.color")}}</label> -->
-<!-- 				<input ng-model="ngModel.border['border-color']" ng-disabled="!ngModel.borders"> -->
-<!-- 			</md-input-container> -->
-			
 			<md-input-container flex class="md-block"> 
 				<label>{{translate.load('sbi.cockpit.style.borders.color')}}</label>
 				<color-picker options="borderColorOptions" ng-model="ngModel.border['border-color']"></color-picker>

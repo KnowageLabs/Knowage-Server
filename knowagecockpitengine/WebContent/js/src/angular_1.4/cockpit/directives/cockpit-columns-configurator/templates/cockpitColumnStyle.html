@@ -12,19 +12,19 @@
 		      <div layout-margin layout="column" flex class="relative"> 
 		       	
 				<div flex>
-				<div layout="row" ng-if="!selectedColumn.widgetType">
-					<!-- only for simple table -->
+				<div layout="row" ng-if="!selectedColumn.widgetType || (selectedColumn.widgetType == 'staticPivotTable' && selectedColumn.containerType!='COLUMNS') " >					
 					<md-input-container class="md-block" class="small counter" flex>
 						<label>{{translate.load('sbi.cockpit.table.columnSize')}}</label>
 						<input class="input_class" type="text" ng-model="selectedColumn.style.size"> 
 					</md-input-container>
-					<md-input-container class="md-block" class="small counter" flex>
+					<!-- only for simple table ng-enabled="!selectedColumn.widgetType" -->
+					<md-input-container  class="md-block" class="small counter" flex>
 						<label>{{translate.load('sbi.cockpit.table.maxChars')}}</label>
-						<input class="input_class" type="text" ng-model="selectedColumn.style.maxChars"> 
-					</md-input-container>
-					  <md-switch ng-model="selectedColumn.style.hideonMobile" aria-label="Hide Mobile" flex>
+						<input  ng-disabled="selectedColumn.widgetType!=undefined" class="input_class" type="text" ng-model="selectedColumn.style.maxChars"> 
+					</md-input-container>				  
+					<md-switch  ng-disabled="selectedColumn.widgetType!=undefined"  ng-model="selectedColumn.style.hideonMobile" aria-label="Hide Mobile" flex>
 					 {{translate.load('sbi.cockpit.table.hide')}}
-					  </md-switch>
+					</md-switch>
 				 </div>
 				 
 				 <div class="md-dialog-content" layout="column"  ng-if="selectedColumn.widgetType=='staticPivotTable'">

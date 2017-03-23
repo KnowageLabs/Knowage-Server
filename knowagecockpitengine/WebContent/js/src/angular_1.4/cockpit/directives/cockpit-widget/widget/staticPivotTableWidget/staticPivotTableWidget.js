@@ -116,10 +116,6 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 			return;
 		}
 		
-		//clean dataToSend from empty/default configuration  (ie. color: "hsl(0, 0%, 100%)", background-color: "hsl(0, 0%, 100%)" because it's white color on white bg)
-		dataToSend.style = $scope.cleanDataToSend(dataToSend.style);
-		
-		
 		sbiModule_restServices.promisePost("1.0/crosstab","update",dataToSend).then(
 				function(response){
 					$scope.subCockpitWidget.html(response.data.htmlTable);
@@ -195,6 +191,11 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 					}
 					//apply borders on 'na' class
 					dataColumnList=row.querySelectorAll(".na");
+					if(dataColumnList.length>0){							
+						$scope.applyBorderStyle(dataColumnList);								
+					}
+					//apply borders on 'na' class
+					dataColumnList=row.querySelectorAll(".naNoStandardStyle");
 					if(dataColumnList.length>0){							
 						$scope.applyBorderStyle(dataColumnList);								
 					}
@@ -303,97 +304,6 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 			angular.element(dataColumnList).css("border-style",$scope.ngModel.content.style.measuresRow["border-style"])
 		}	
 	}
-	
-	$scope.cleanDataToSend=function(styleDataToSend){
-		
-		var EMPTY_COLOR = "hsl(0, 0%, 100%)";
-		var styleDataToSendC = {};
-
-		if (!styleDataToSend) return;
-		if (styleDataToSend instanceof String){
-			styleDataToSend = JSONParse(styleDataToSend);
-		}
-		
-		
-		//crossTabHeaders configuration
-		if (styleDataToSend.crossTabHeaders!=undefined){
-			styleDataToSendC.crossTabHeaders = {};
-			for (p in styleDataToSend.crossTabHeaders){	
-				if ((p == "color" || p == "background-color") && styleDataToSend.crossTabHeaders["color"] == EMPTY_COLOR && styleDataToSend.crossTabHeaders["background-color"] == EMPTY_COLOR){
-					continue;
-				}
-				styleDataToSendC[p] = styleDataToSend.crossTabHeaders[p];
-			}
-		}
-			
-		//measure configuration
-		if (styleDataToSend.measures!=undefined){
-			styleDataToSendC.measures = {};
-			for (p in styleDataToSend.measures){	
-				if ((p == "color" || p == "background-color") && styleDataToSend.measures["color"]  == EMPTY_COLOR && styleDataToSend.measures["background-color"] == EMPTY_COLOR){
-					continue;
-				}
-				styleDataToSendC[p] = styleDataToSend.measures[p];
-			}
-		}	
-			
-		//measureHeaders configuration
-		if (styleDataToSend.measureHeaders!=undefined){
-			styleDataToSendC.measureHeaders = {};
-			for (p in styleDataToSend.measureHeaders){	
-				if ((p == "color" || p == "background-color") && styleDataToSend.measureHeaders["color"]  == EMPTY_COLOR && styleDataToSend.measureHeaders["background-color"] == EMPTY_COLOR){
-					continue;
-				}
-				styleDataToSendC[p] = styleDataToSend.measureHeaders[p];
-			}
-		}	
-			
-		//measureRows configuration
-		if (styleDataToSend.measureRows!=undefined){
-			styleDataToSendC.measureRows = {};
-			for (p in styleDataToSend.measureRows){	
-				if ((p == "color" || p == "background-color") && styleDataToSend.measureRows["color"]  == EMPTY_COLOR && styleDataToSend.measureRows["background-color"] == EMPTY_COLOR){
-					continue;
-				}
-				styleDataToSendC[p] = styleDataToSend.measureRows[p];
-			}
-		}
-			
-		//measureColumns configuration
-		if (styleDataToSend.measureColumns!=undefined){
-			styleDataToSendC.measureColumns = {};
-			for (p in styleDataToSend.measureColumns){	
-				if ((p == "color" || p == "background-color") && styleDataToSend.measureColumns["color"]  == EMPTY_COLOR && styleDataToSend.measureColumns["background-color"] == EMPTY_COLOR){
-					continue;
-				}
-				styleDataToSendC[p] = styleDataToSend.measureColumns[p];
-			}
-		}
-			
-		//subTotals configuration
-		if (styleDataToSend.subTotals!=undefined){
-			styleDataToSendC.subTotals = {};
-			for (p in styleDataToSend.subTotals){	
-				if ((p == "color" || p == "background-color") && styleDataToSend.subTotals["color"]  == EMPTY_COLOR && styleDataToSend.subTotals["background-color"] == EMPTY_COLOR){
-					continue;
-				}
-				styleDataToSendC[p] = styleDataToSend.subTotals[p];
-			}
-		}
-			
-		//totals configuration
-		if (styleDataToSend.totals!=undefined){
-			styleDataToSendC.totals = {};
-			for (p in styleDataToSend.totals){	
-				if ((p == "color" || p == "background-color") && styleDataToSend.totals["color"]  == EMPTY_COLOR && styleDataToSend.totals["background-color"] == EMPTY_COLOR){
-					continue;
-				}
-				styleDataToSendC[p] = styleDataToSend.totals[p];
-			}
-		}
-			
-		return styleDataToSendC;
-	};
 	
 	$scope.editWidget=function(index){
 		
@@ -574,34 +484,7 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 
 			    	  }
 			    	  
-//			    	  $scope.editFieldsProperty=function(item){
-			    	  $scope.editFieldsProperty=function(selectedColumn){
-			    		  //original
-//			    		  $mdDialog.show({
-//			    		      controller: function($scope,sbiModule_translate,item){
-//			    		    	  $scope.translate=sbiModule_translate;
-//			    		    	  $scope.isMeasure=angular.equals(item.nature,"measure");
-//			    		    	  $scope.currentItem=angular.copy(item);
-//						    	  $scope.AggregationFunctions= cockpitModule_generalOptions.aggregationFunctions;						    	  
-//			    		    	  $scope.saveConfiguration=function(){
-//						    		  angular.copy($scope.currentItem,item);
-//						    		 $mdDialog.hide();
-//						    	  }
-//						    	  $scope.cancelConfiguration=function(){
-//						    		  $mdDialog.cancel();
-//						    	  }
-//						    	  
-//						    	  
-//			    		      },
-//			    		      templateUrl:baseScriptPath+ '/directives/cockpit-widget/widget/staticPivotTableWidget/templates/staticPivotTableWidgetEditFieldsPropertyTemplate.html',
-//			    		      locals:{item:item},
-//			    		      hasBackdrop: true,
-//			  				  clickOutsideToClose: false,
-//			  				  escapeToClose: false,
-//			    		      fullscreen: true
-//			    		    });
-			    		  // fine original
-			    		  //table columnstyle management 
+			    	  $scope.editFieldsProperty=function(selectedColumn){			    	
 			    		  $mdDialog.show({
 								templateUrl:  baseScriptPath+ '/directives/cockpit-columns-configurator/templates/cockpitColumnStyle.html',
 								parent : angular.element(document.body),
@@ -714,8 +597,6 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 		$scope.thresholdsList=
 			[{priority:0, icon:"<md-icon style='color:red'  md-font-icon='fa fa-exclamation-circle' ng-init='scopeFunctions.condition[0].iconColor=\"red\";	scopeFunctions.condition[0].icon=\"fa fa-exclamation-circle\"'></md-icon>",condition:conditionString0,	value:valueString0},{priority:1 , icon:"<md-icon style='color:red'	md-font-icon='fa fa-times-circle' ng-init='scopeFunctions.condition[1].iconColor=\"red\"; scopeFunctions.condition[1].icon=\"fa fa-times-circle\"'></md-icon>",condition:conditionString1, value:valueString1},	{priority:2 , icon:"<md-icon style='color:yellow'  md-font-icon='fa fa-exclamation-triangle' ng-init='scopeFunctions.condition[2].iconColor=\"yellow\"; scopeFunctions.condition[2].icon=\"fa fa-exclamation-triangle\"'></md-icon>",condition:conditionString2, value:valueString2},{priority:3 , icon:"<md-icon style='color:green'  md-font-icon='fa fa-check-circle' ng-init='scopeFunctions.condition[3].iconColor=\"green\";	scopeFunctions.condition[3].icon=\"fa fa-check-circle\"'></md-icon>",condition:conditionString3, value:valueString3}];	
 		$scope.tableColumns=[{label:"Icon",name:"icon", hideTooltip:true},{label:"Condition",name:"condition", hideTooltip:true},{label:"Value",name:"value", hideTooltip:true}];
-
-//		$scope.selectedColumn.conditions=$scope.scopeFunc.condition;
 		
 		//----------------------- Cell color table ------------------------------------
 		
@@ -739,7 +620,6 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 		}
 		$scope.saveColumnStyleConfiguration = function(){		
 			angular.copy($scope.selectedColumn,selectedColumn);
-//			angular.copy($scope.currentItem,selectedColumn);
 
 			$mdDialog.cancel();
 		}
