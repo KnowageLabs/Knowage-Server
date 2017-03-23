@@ -86,6 +86,44 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 	$scope.init=function(element,width,height){
 		$scope.refreshWidget();
 	};
+	
+	$scope.cleanProperties = function(config, obj, admitObject) {
+		var toReturn = {};
+		for (var c in config){
+			if (c == obj){
+				if (typeof config[c] == 'object'){
+					var objProp = config[c];
+					var propToReturn = {};
+					for (p in objProp){							
+						if (!admitObject && p.startsWith("{\"")){
+							continue;	//skip the object element. ONLY attribute are added
+						}
+						propToReturn[p] = objProp[p];
+					}	
+					toReturn[c] = propToReturn;
+				}						
+			}else
+				toReturn[c] = config[c];
+		}
+		return toReturn;
+	}
+	
+	$scope.cleanObjectConfiguration = function(config, obj, admitObject){	
+		
+		if (Array.isArray(config)){
+			var toReturnArray = [];
+			for (var e=0; e<config.length; e++){
+				var elem = config[e];
+				toReturnArray.push($scope.cleanProperties(elem, obj, admitObject));				
+			}
+			return toReturnArray;
+		}else{	
+			var toReturn = {};
+			toReturn = $scope.cleanProperties(config, obj, admitObject);
+			return toReturn;
+		}	
+	}
+	
 	$scope.refresh=function(element,width,height, datasetRecords,nature){
 		if(datasetRecords==undefined){
 			return;
@@ -115,6 +153,11 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 			$scope.hideWidgetSpinner();
 			return;
 		}
+		
+//		dataToSend.crosstabDefinition = $scope.cleanObjectConfiguration(dataToSend.crosstabDefinition, 'style', false);
+		dataToSend.crosstabDefinition.measures = $scope.cleanObjectConfiguration(dataToSend.crosstabDefinition.measures, 'style', false);
+		dataToSend.crosstabDefinition.rows = $scope.cleanObjectConfiguration(dataToSend.crosstabDefinition.rows, 'style', false);
+		dataToSend.crosstabDefinition.columns = $scope.cleanObjectConfiguration(dataToSend.crosstabDefinition.columns, 'style', false);
 		
 		sbiModule_restServices.promisePost("1.0/crosstab","update",dataToSend).then(
 				function(response){
@@ -618,7 +661,9 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 		$scope.cleanStyleColumn = function(){
 			$scope.selectedColumn.style = undefined;
 		}
-		$scope.saveColumnStyleConfiguration = function(){		
+		$scope.saveColumnStyleConfiguration = function(){
+//			selectedColumn = $scope.cleanObjectConfiguration(selectedColumn, 'style', false);
+			$scope.selectedColumn = $scope.cleanObjectConfiguration($scope.selectedColumn, 'style', false);
 			angular.copy($scope.selectedColumn,selectedColumn);
 
 			$mdDialog.cancel();
@@ -626,6 +671,27 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 
 		$scope.cancelcolumnStyleConfiguration = function(){
 			$mdDialog.cancel();
+		}
+		
+		$scope.cleanObjectConfiguration = function(config, obj, admitObject){
+			var toReturn = {};
+			for (var c in config){
+				if (c == obj){
+					if (typeof config[c] == 'object'){
+						var objProp = config[c];
+						var propToReturn = {};
+						for (p in objProp){							
+							if (!admitObject && p.startsWith("{\"")){
+								continue;	//skip the object element. ONLY attribute are added
+							}
+							propToReturn[p] = objProp[p];
+						}	
+						toReturn[c] = propToReturn;
+					}						
+				}else
+					toReturn[c] = config[c];
+			}
+			return toReturn;
 		}
 		
 		
