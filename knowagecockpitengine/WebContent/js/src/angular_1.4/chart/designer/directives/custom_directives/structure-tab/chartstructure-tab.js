@@ -81,6 +81,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 			$scope.checkSeries();
 			$scope.checkAxis();
 			
+			
 		}, function(response) {
 			
 			var message = "";
@@ -560,8 +561,22 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 		else {
 			$scope.categoriesExist = true;
 		}
-	 
-	 
+	 var cflag = 0;
+	 for (var i = $scope.fieldsMetadata.results.length-1; i>=0; i--) {
+		if($scope.fieldsMetadata.results[i].nature == 'attribute'){
+			for (var j = 0; j < $scope.categories.length; j++) {
+				if($scope.categories[j].column == $scope.fieldsMetadata.results[i].id){
+					cflag++;
+
+				}
+				
+			}
+		} 
+		 
+	 }
+	 if($scope.categories.length>0 && cflag == 0){
+		 sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.chartengine.designer.dschange.categories"), 'Warning');
+	 }
 	}
 	
 	/**
@@ -603,6 +618,22 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 			
 			
 		}
+		var sflag = 0;
+		 for (var i = $scope.fieldsMetadata.results.length-1; i>=0; i--) {
+			if($scope.fieldsMetadata.results[i].nature == 'measure'){
+				for (var j = 0; j < $scope.chartTemplate.VALUES.SERIE.length; j++) {
+					if($scope.chartTemplate.VALUES.SERIE[j].column == $scope.fieldsMetadata.results[i].id){
+						sflag++;
+
+					}
+					
+				}
+			} 
+			 
+		 }
+		 if($scope.chartTemplate.VALUES.SERIE.length> 0 && sflag == 0){
+			 sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.chartengine.designer.dschange.series"), 'Warning');
+		 }
 		
 	}
 	
