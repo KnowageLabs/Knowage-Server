@@ -80,8 +80,8 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 				.then(function(response) {
 					$scope.folders_copy = $scope.getFolders(); 
 					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
-					$scope.selectedFolder ={};
-					$scope.showme = false;
+					//$scope.selectedFolder ={};
+					$scope.showme = true;
 					$scope.dirtyForm=false;
 					
 				}, function(response) {
@@ -106,8 +106,8 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 			sbiModule_restServices.promisePost('2.0/functionalities','',$scope.fake)
 			.then(function(response) {
 				$scope.folders_copy = $scope.getFolders(); 
-				$scope.selectedFolder ={};
-				$scope.showme = false;
+				//$scope.selectedFolder ={};
+				$scope.showme = true;
 				$scope.dirtyForm=false;	
 				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
 				
@@ -248,7 +248,7 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 			method that disable choosing role that parent does not have
 		*/
 		isDisabled : function(row, criteria) {
-			console.log($scope.parent!=undefined )
+			
 			if($scope.parent!=undefined ){
 				if($scope.parent.parentId){
 					if ($scope.parent[criteria] != undefined ) {
@@ -427,7 +427,6 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 		sbiModule_restServices.promiseGet("2.0/functionalities/getParent", id).then(
 				function(response) {
 					$scope.parent = angular.copy(response.data);
-					console.log(angular.copy(response.data));
 				},
 				function(response) {
 					sbiModule_messaging.showErrorMessage(sbiModule_translate.load(response.data.errors[0].message), 'Error');
