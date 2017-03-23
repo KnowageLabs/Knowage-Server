@@ -1,8 +1,8 @@
-angular.module('cockpitModule').controller("datasetManagerController",["$scope","sbiModule_translate","$mdPanel","cockpitModule_datasetServices","cockpitModule_widgetSelection","$mdDialog","cockpitModule_template","cockpitModule_analyticalDrivers","$timeout",datasetManagerController]);
+angular.module('cockpitModule').controller("datasetManagerController",["$scope","sbiModule_translate","$mdPanel","cockpitModule_datasetServices","cockpitModule_widgetSelection","$mdDialog","cockpitModule_template","cockpitModule_analyticalDrivers","$timeout","sbiModule_user",datasetManagerController]);
 angular.module('cockpitModule').controller("documentManagerController",["$scope","sbiModule_translate","$mdPanel","cockpitModule_documentServices","cockpitModule_widgetSelection","$mdDialog","cockpitModule_analyticalDrivers","$timeout",documentManagerController]);
 angular.module('cockpitModule').controller("associationGroupController",["$scope","sbiModule_translate","cockpitModule_realtimeServices", associationGroupController]);
 
-function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitModule_datasetServices,cockpitModule_widgetSelection,$mdDialog,cockpitModule_template,cockpitModule_analyticalDrivers,$timeout){
+function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitModule_datasetServices,cockpitModule_widgetSelection,$mdDialog,cockpitModule_template,cockpitModule_analyticalDrivers,$timeout,sbiModule_user){
 	$scope.displayDatasetCard=false;
 	$timeout(function(){$scope.displayDatasetCard=true;},0);
 	
@@ -96,57 +96,55 @@ function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitMod
 		 	}
 	 }
 	 
-	 $scope.cockpitDatasetTableColumns=[
-										{
-											label:" ",
-											size:"10",
-											name:"parameters",
-											hideTooltip:false,
-											maxChars:10,
-											transformer:function(val,row){
-												for(par in val){
-													if(val[par].value==undefined || (!angular.isNumber(val[par].value) && val[par].value.trim()=="")){
-														return 	'<span>'+
-																'<md-tooltip md-direction="top">'+sbiModule_translate.load("sbi.cockpit.parameter.fill")+'</md-tooltip>'+
-												        		'<md-icon style="color:red"  md-font-icon="fa fa-times-circle"></md-icon>'+
-												        		'</span>';
-												      
-													}
-												}
-												return "";
-											}
-										},
-	                                    {
-	                                    	label:"Label",
-	                                    	name:"label",
-	                                    	static:true
-	                                    },
-	                                    {
-	                                    	label:"Name",
-	                                    	name:"name",
-	                                    	static:true
-	                                    },
-	                                    {
-	                                    	label:"Use Cache",
-	                                    	name:"usacache",
-				                                    	template : "<md-checkbox ng-init='row.useCache=row.useCache==undefined? true : row.useCache' ng-model='row.useCache' aria-label='usaCache'></md-checkbox>",
-											static:true
-//	                                    	hideTooltip:true,
-//	                                    	transformer:function(){
-//	                                    		return " <md-checkbox ng-init='row.useCache=row.useCache==undefined? true : row.useCache' ng-model='row.useCache' aria-label='usaCache'></md-checkbox>";
-//	                                    	}
-	                                    },
-	                                    {
-	                                    	label:"Frequency (seconds)",
-	                                    	name:"freq",
-	                                    	static:true,
-	                                    	template:"<md-input-container style='margin:0' ng-show='row.useCache!=true' md-no-float class='md-block'>"+
-                                            		"<input type='number' ng-init='row.frequency=row.frequency==undefined? 0 : row.frequency' min='0' ng-model='row.frequency' placeholder='Frequency'>"+
-                                            		"</md-input-container>"
-	                                    },
-	                                    
-	                                    ]
+	 $scope.showNearRealTimeCockpit = sbiModule_user.functionalities.indexOf("NearRealTimeCockpit")>-1;
 	 
+	 $scope.cockpitDatasetTableColumns=[
+		{
+			label:" ",
+			size:"10",
+			name:"parameters",
+			hideTooltip:false,
+			maxChars:10,
+			transformer:function(val,row){
+				for(par in val){
+					if(val[par].value==undefined || (!angular.isNumber(val[par].value) && val[par].value.trim()=="")){
+						return 	'<span>'+
+								'<md-tooltip md-direction="top">'+sbiModule_translate.load("sbi.cockpit.parameter.fill")+'</md-tooltip>'+
+				        		'<md-icon style="color:red"  md-font-icon="fa fa-times-circle"></md-icon>'+
+				        		'</span>';
+				      
+					}
+				}
+				return "";
+			}
+		},
+        {
+        	label:"Label",
+        	name:"label",
+        	static:true
+        },
+        {
+        	label:"Name",
+        	name:"name",
+        	static:true
+        }];
+	 if($scope.showNearRealTimeCockpit){
+		 $scope.cockpitDatasetTableColumns.push(
+			{
+				label:"Use Cache",
+				name:"usacache",
+				template:"<md-checkbox ng-init='row.useCache=row.useCache==undefined? true : row.useCache' ng-model='row.useCache' aria-label='usaCache'></md-checkbox>",
+				static:true
+			},
+			{
+				label:"Frequency (seconds)",
+				name:"freq",
+				static:true,
+				template:"<md-input-container style='margin:0' ng-show='row.useCache!=true' md-no-float class='md-block'>"+
+						"<input type='number' ng-init='row.frequency=row.frequency==undefined? 0 : row.frequency' min='0' ng-model='row.frequency' placeholder='Frequency'>"+
+						"</md-input-container>"
+			});
+	 }
 	  
 	 $scope.addDataset=function(){ 
 		 cockpitModule_datasetServices.addDataset("cockpitDataConfig",$scope.tmpAvaiableDataset,true);
