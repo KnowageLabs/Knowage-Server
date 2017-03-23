@@ -7,7 +7,7 @@ Released under the GNU General Public License, version 3.*/
  * @param locale Information about the locale (language). Needed for the formatting of the series values (data labels and tooltips). 
  * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
  */
-function renderChordChart(jsonData,panel,locale)
+function renderChordChart(jsonData,panel,handleCockpitSelection,locale)
 {
 
 	/**

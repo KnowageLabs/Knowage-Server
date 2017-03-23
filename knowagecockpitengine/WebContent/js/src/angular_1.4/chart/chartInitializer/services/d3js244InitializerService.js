@@ -26,21 +26,21 @@ angular.module('chartInitializer')
 		d3.select(panel).selectAll("*").remove();
 	}
 	
-	this.renderChart = function(chartConf,panel,locale){
+	this.renderChart = function(chartConf,panel,handleCockpitSelection,locale){
 		
 		this.cleanChart(panel);
 		
 		if(chartConf.chart.type.toLowerCase() == "wordcloud") {			
-			renderWordCloud(chartConf,panel,locale);			
+			renderWordCloud(chartConf,panel,handleCockpitSelection,locale);			
 		}
 		else if (chartConf.chart.type.toLowerCase() == "sunburst") {
-			renderSunburst(chartConf,panel,locale);			
+			renderSunburst(chartConf,panel,handleCockpitSelection,locale);			
 		}
 		else if (chartConf.chart.type.toLowerCase() == "parallel") {
-			renderParallelChart(chartConf,panel,locale);			
+			renderParallelChart(chartConf,panel,handleCockpitSelection,locale);			
 		}
 		else if (chartConf.chart.type.toLowerCase() == "chord") {
-			renderChordChart(chartConf,panel,locale);
+			renderChordChart(chartConf,panel,handleCockpitSelection,locale);
 		}
 		else {
 			alert("Chart not defined");

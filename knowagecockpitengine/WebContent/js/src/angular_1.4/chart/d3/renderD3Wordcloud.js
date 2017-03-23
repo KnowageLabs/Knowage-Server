@@ -33,7 +33,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
  * @param locale Information about the locale (language). Needed for the formatting of the series values (data labels and tooltips). 
  * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
  */
-function renderWordCloud(chartConf,panel,locale){
+function renderWordCloud(chartConf,panel,handleCockpitSelection,locale){
 
 	var maxic = 0;
 	var minValue=0;

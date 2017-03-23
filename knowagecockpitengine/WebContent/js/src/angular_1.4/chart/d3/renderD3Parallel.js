@@ -4,7 +4,7 @@
  * @param locale Information about the locale (language). Needed for the formatting of the series values (data labels and tooltips). 
  * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
  */
-function renderParallelChart(data,panel,locale){
+function renderParallelChart(data,panel,handleCockpitSelection,locale){
 	
 	var records = data.data[0];
 	
