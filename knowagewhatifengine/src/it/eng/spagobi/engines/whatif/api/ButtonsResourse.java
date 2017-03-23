@@ -40,7 +40,7 @@ public class ButtonsResourse extends AbstractWhatIfEngineService {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/")
-	public List<SbiToolbarButton> getAllDataSources() {
+	public List<SbiToolbarButton> getButtons() {
 		List<SbiToolbarButton> stb = ToolbarButtonManager.loadAllToolbarButtons();
 
 		return stb;
