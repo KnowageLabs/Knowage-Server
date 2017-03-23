@@ -523,7 +523,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					for (int k = 0; k < valuesList.size(); k++) {
 
 						String itemVal = valuesList.get(k);
-						String itemDescr = descriptionList.get(k) != null ? descriptionList.get(k) : itemVal;
+
+						String itemDescr = descriptionList.size() > k && descriptionList.get(k) != null ? descriptionList.get(k) : itemVal;
 
 						try {
 							// % character breaks decode method
