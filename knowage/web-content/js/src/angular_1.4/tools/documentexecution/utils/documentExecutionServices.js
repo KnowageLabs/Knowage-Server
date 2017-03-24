@@ -1437,6 +1437,9 @@
 	this.visualCorrelationWatch = function(value){
 		//console.log('visual correlation : ' , value);
 		if(serviceScope.visualCorrelationMap[value.urlName]){
+			// when condition satisfied for a destination stop cehcking that destination
+			var destinationOk = {};
+
 			for(var k=0; k<serviceScope.visualCorrelationMap[value.urlName].length; k++){
 				var visualDependency=serviceScope.visualCorrelationMap[value.urlName][k];
 				//id document Parameter to control 
@@ -1444,6 +1447,11 @@
 				//value to compare
 				var compareValueArr = visualDependency.compareValue.split(",");
 				for(var z=0; z<compareValueArr.length; z++){
+					
+					if(destinationOk[idDocumentParameter]){
+						break;
+					}
+					
 					var newValueStr = value.parameterValue;
 					var compareValueStr=compareValueArr[z].trim();
 					//conditions
@@ -1482,6 +1490,7 @@
 					if(condition){
 						execProperties.parametersData.documentParameters[idDocumentParameter].label=visualDependency.viewLabel;
 						execProperties.parametersData.documentParameters[idDocumentParameter].visible=true;
+						destinationOk[idDocumentParameter]=true;
 						break;
 					}else{
 						execProperties.parametersData.documentParameters[idDocumentParameter].visible=false;
