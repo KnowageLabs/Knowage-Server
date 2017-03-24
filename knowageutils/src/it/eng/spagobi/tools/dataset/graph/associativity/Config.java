@@ -2,6 +2,8 @@ package it.eng.spagobi.tools.dataset.graph.associativity;
 
 import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -16,6 +18,12 @@ public class Config {
 	private Set<String> realtimeDatasets;
 	private Map<String, Map<String, String>> datasetParameters;
 	private Set<String> documents;
+
+	public Config() {
+		realtimeDatasets = new HashSet<>(0);
+		datasetParameters = new HashMap<>(0);
+		documents = new HashSet<>(0);
+	}
 
 	public String getStrategy() {
 		return strategy;
