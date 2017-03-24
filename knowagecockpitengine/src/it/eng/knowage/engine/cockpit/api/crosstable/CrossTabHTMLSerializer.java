@@ -319,22 +319,22 @@ public class CrossTabHTMLSerializer {
 								}
 								completeText += text;
 								lastLevelValues.add(completeText);
-								// set width column if measure doesn't show header. Get values from measure settings
-								if (!isMeasureHeaderVisible(crossTab) && i + 2 == levels) {
-									// if not measure are visible set
-									String measureStyle = getMeasureWidthStyle(crossTab, null);
-									if (!measureStyle.equals("")) {
-										aColumn.setAttribute(STYLE_ATTRIBUTE, measureStyle);
-										// ONLY in this case (unique measure without header) add a div to force width if it's defined
-										SourceBean divEl = new SourceBean(COLUMN_DIV);
-										divEl.setCharacters(text);
-										divEl.setAttribute(TITLE_ATTRIBUTE, text);
-										divEl.setAttribute(STYLE_ATTRIBUTE, measureStyle);
-										aColumn.setAttribute(divEl);
-									}
-								} else
-									aColumn.setCharacters(text);
 							}
+							// set width column if measure doesn't show header. Get values from measure settings
+							if (!isMeasureHeaderVisible(crossTab) && i + 2 == levels) {
+								// if not measure are visible set
+								String measureStyle = getMeasureWidthStyle(crossTab, null);
+								if (!measureStyle.equals("")) {
+									aColumn.setAttribute(STYLE_ATTRIBUTE, measureStyle);
+									// ONLY in this case (unique measure without header) add a div to force width if it's defined
+									SourceBean divEl = new SourceBean(COLUMN_DIV);
+									divEl.setCharacters(text);
+									divEl.setAttribute(TITLE_ATTRIBUTE, text);
+									divEl.setAttribute(STYLE_ATTRIBUTE, measureStyle);
+									aColumn.setAttribute(divEl);
+								}
+							} else
+								aColumn.setCharacters(text);
 							// Set the parent node style
 							// if (parentStyle != null && !parentStyle.equals("")) {
 							// aColumn.setAttribute(STYLE_ATTRIBUTE, parentStyle);
