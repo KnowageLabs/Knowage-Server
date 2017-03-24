@@ -34,7 +34,10 @@ angular.module('sbi_table_toolbar',['sbiModule'])
 	}
 });
 
-function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $sce, sbiModule_messaging, sbiModule_restServices, sbiModule_translate, sbiModule_config,sbiModule_download,olapSharedSettings) {
+function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $sce, sbiModule_messaging, sbiModule_restServices, sbiModule_translate, sbiModule_config,sbiModule_download, sbiModule_user, olapSharedSettings) {
+	
+	// see if calculated field is enabled
+	$scope.showCalculatedField = (sbiModule_user.functionalities.indexOf("OlapCalculatedFieldView")>-1)? true:false;
 	  
 	var saveAsTimeout = olapSharedSettings.getSettings().persistNewVersionTransformations;
 	$scope.availAlgorithms = [];
@@ -139,7 +142,9 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
   	  
 	  $scope.classiffyToolbarButtons = function() {
 		  for (var i = 0; i < $scope.buttons.length; i++) {
-				
+				if($scope.buttons[i].name == 'BUTTON_CC' && !$scope.showCalculatedField) {
+					$scope.buttons.splice(i, 1);
+				}
 				switch ($scope.buttons[i].category) {
 				/*case "DRILL_ON_DATA":
 					whatifButtonNames.push($scope.buttons[i].name);
@@ -167,8 +172,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 			  if(engineName == 'knowageolapengine'){
 				for (var i = 0; i < $scope.olapDesignerButtonNames.length; i++) {
 					if($scope.olapDesignerButtonNames[i].name == 'BUTTON_SCENARIO_WIZARD'){
-						$scope.olapDesignerButtonNames.splice(i, 1);
-						
+						$scope.olapDesignerButtonNames.splice(i, 1);	
 					}
 				}
 				  
