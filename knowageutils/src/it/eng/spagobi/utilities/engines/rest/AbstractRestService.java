@@ -28,6 +28,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.jboss.resteasy.annotations.GZIP;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -36,6 +37,7 @@ import org.json.JSONObject;
  *
  * @author Alberto Ghedin (alberto.ghedin@eng.it)
  */
+@GZIP
 public abstract class AbstractRestService {
 
 	public ExecutionSession es;
