@@ -139,7 +139,6 @@
 	<USER_FUNCTIONALITY productType="KnowageSI" name="RegistryDataEntry" description="RegistryDataEntry" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="DocumentScheduling" description="DocumentScheduling" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="SchedulingDistributedOutput" description="SchedulingDistributedOutput" />
-	<USER_FUNCTIONALITY productType="KnowageSI" name="MetaModelCwmExporting" description="MetaModelCwmExporting" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="MetaModelLifecycleManagement" description="MetaModelLifecycleManagement" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="MetaModelSavingToRdbms" description="MetaModelSavingToRdbms" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="MultisheetCockpit" description="MultisheetCockpit" />
