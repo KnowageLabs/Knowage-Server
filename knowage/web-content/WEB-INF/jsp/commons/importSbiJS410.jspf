@@ -93,6 +93,16 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 <script type="text/javascript"
 	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/widgets/frame/EditorIFramePanelContainer.js")%>'></script>
 
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/behavioural/analyticalDriver/AnalyticalDriverListDetailPanel.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/behavioural/analyticalDriver/AnalyticalDriverModel.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/behavioural/analyticalDriver/AnalyticalDriverDetailPanel.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/behavioural/analyticalDriver/AnalyticalDriverUseModel.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/behavioural/analyticalDriver/AnalyticalDriverUseTabPanel.js")%>'></script>
 
 <script type="text/javascript"
 	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/browser/DocumentsTree.js")%>'></script>
@@ -100,9 +110,29 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/execution/SaveDocumentWindowsExt4.js")%>'></script>
 
 
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/behavioural/lov/TestLovTreePanel.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/behavioural/lov/TestLovResultPanel.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/behavioural/lov/TestLovConfigurationGridPanel.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/behavioural/lov/TestLovPanel.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/behavioural/lov/LOVDetailPanel.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/behavioural/lov/LOVListDetailPanel.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/behavioural/lov/LOVModel.js")%>'></script>
 
 
 
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/tools/datasource/DataSourceModel.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/tools/datasource/DataSourceListDetailPanel.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/tools/datasource/DataSourceDetailPanel.js")%>'></script>
 
 <script type="text/javascript"
 	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/tools/multitenant/MultitenantModel.js")%>'></script>
@@ -112,12 +142,42 @@ create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must b
 	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/tools/multitenant/MultitenantListDetailPanel.js")%>'></script>
 
 <script type="text/javascript"
-	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/tools/model/MetaModelsBrowser.js")%>'></script>
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext/sbi/tools/dataset/FileDatasetPanel.js")%>'></script>
 
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/tools/dataset/ValidateDatasetGrid.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/tools/dataset/ValidateDataset.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/tools/dataset/ManageDatasetFieldMetadata.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/tools/dataset/DataSetModel.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/tools/dataset/DataSetsBrowser.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/tools/dataset/DataSetsView.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/tools/dataset/DataSetsWizard.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/tools/dataset/QbeDataSetsWizard.js")%>'></script>
+<script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/tools/dataset/CkanDataSetsWizard.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/tools/dataset/DatasetMetadataMainPage.js")%>'></script>
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/tools/dataset/GeoBIDatasetFieldMetadata.js")%>'></script>
+
+<script type="text/javascript"
+	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/tools/model/MetaModelsBrowser.js")%>'></script>
+<script type="text/javascript"
+    src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/tools/dataset/FederatedDatasetBrowser.js")%>'></script>
 <script type="text/javascript"
 	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/tools/model/MetaModelsView.js")%>'></script>
 <script type="text/javascript"
 	src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/tools/model/MetaModelModel.js")%>'></script>
+<script type="text/javascript"
+    src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/tools/dataset/FederatedDatasetView.js")%>'></script>
+<script type="text/javascript"
+    src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/tools/dataset/FederatedDatasetModel.js")%>'></script>
 
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/tools/document/SmartFilterBrowser.js")%>'></script>
 <script type="text/javascript" src='<%=urlBuilder.getResourceLink(request, "/js/src/ext4/sbi/tools/document/SmartFilterView.js")%>'></script>
