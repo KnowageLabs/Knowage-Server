@@ -313,6 +313,8 @@ function cockpitDataConfigurationController($scope,$rootScope,sbiModule_translat
 	
 	// see if smart detection is enabled
 	$scope.showSmartDetection = (sbiModule_user.functionalities.indexOf("DatasetAssociationSmartDetection")>-1)? true:false;
+	
+	$scope.showNearRealTimeCockpit = sbiModule_user.functionalities.indexOf("NearRealTimeCockpit")>-1;
 
 	$scope.translate=sbiModule_translate;
 		    	 $scope.baseScriptPath=baseScriptPath;
