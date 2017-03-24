@@ -111,19 +111,15 @@ public class MenuResource extends AbstractSpagoBIResource {
 
 	@SuppressWarnings("unchecked")
 	@GET
-	@Path("htmls/{id}")
+	@Path("/htmls")
 	@UserConstraint(functionalities = { SpagoBIConstants.MENU_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response getHTMLs(@PathParam("id") Integer id) {
+	public Response getHTMLs() {
 		logger.debug("IN");
 
 		try {
 			UserProfile profile = getUserProfile();
 			IMenuDAO dao = DAOFactory.getMenuDAO();
-			if (id != 0) {
-				Menu menu = dao.loadMenuByID(id);
-				String currentStaticPage = menu.getStaticPage();
-			}
 
 			String resourcePath = SpagoBIUtilities.getResourcePath() + File.separatorChar + "static_menu";
 			File dir = new File(resourcePath);
