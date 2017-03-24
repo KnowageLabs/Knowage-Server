@@ -17,31 +17,6 @@
  */
 package it.eng.spagobi.api.v2;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import org.apache.log4j.LogMF;
-import org.apache.log4j.Logger;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spago.base.SourceBeanException;
@@ -78,6 +53,31 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import org.apache.log4j.LogMF;
+import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
  */
@@ -105,9 +105,27 @@ public class LovResource extends AbstractSpagoBIResource {
 			modalitiesValueDAO = DAOFactory.getModalitiesValueDAO();
 			modalitiesValueDAO.setUserProfile(getUserProfile());
 			modalitiesValues = modalitiesValueDAO.loadAllModalitiesValue();
+			String lovProvider = null;
 			for(ModalitiesValue lov : modalitiesValues){
-				String providerString = Xml.xml2json(lov.getLovProvider());
-				lov.setLovProvider(providerString);
+
+				try {
+					lovProvider = lov.getLovProvider();
+					if(!lovProvider.contains("[CDATA[")){
+						lovProvider = lovProvider.replace("<SCRIPT>", "<SCRIPT><![CDATA[");
+						lovProvider = lovProvider.replace("</SCRIPT>", "]]></SCRIPT>");
+					}else if(!lovProvider.contains("[CDATA[")){
+						lovProvider = lovProvider.replace("<STMT>", "<STMT><![CDATA[");
+						lovProvider = lovProvider.replace("</STMT>", "]]></STMT>");
+					}
+
+
+					String providerString = Xml.xml2json(lovProvider);
+					lov.setLovProvider(providerString);
+				} catch (Exception e) {
+					int t = 8;
+					t++;
+				}
+
 			}
 			logger.debug("Getting the list of all LOVs - done successfully");
 
