@@ -99,8 +99,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	$scope.paramsList = [];
 	$scope.paramObj = {
 		
-		"paramName":'',
-		"paramValue":''
+		
 	};
 	$scope.userAttributes = [];
 	$scope.testLovColumns = [
@@ -197,7 +196,6 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 			       
 			       // HACK to have the codemirror instance in the scope...
 			       $scope.modeChanged = function(type){
-			        console.log(type)
 			        if(type=='ECMAScript'){
 			         _cm.setOption("mode", 'text/javascript');
 			     } else {
@@ -207,21 +205,6 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 			     }
 			   };
 
-	
-	/**
-	 * Function that parse  xml LovProvider property of the object
-	 * to json so it can be seen in interface.
-	 * x2js library is used. https://github.com/abdmob/x2js
-	 * @author: spetrovic (Stefan.Petrovic@mht.net)
-	 */
-	var parseLovProvider = function(item) {
-		var x2js = new X2JS(); 
-        var json = x2js.xml_str2json(item.lovProvider); 
-        return json; 
-		
-	}
-	
-	
 	
 	/**
 	 * Speed menu for handling the deleting action on one 
@@ -377,67 +360,52 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	 * from combobox
 	 * @author: spetrovic (Stefan.Petrovic@mht.net)
 	 */
-	$scope.changeType = function(item,type) {
-		
-		
-		if(type == lovTypeEnum.MAIN){
-			 switch (item) {
-				case $scope.lovItemEnum.SCRIPT:
-					$scope.toolbarTitle = sbiModule_translate.load("sbi.behavioural.lov.details.scriptWizard");
-					$scope.infoTitle= sbiModule_translate.load("sbi.behavioural.lov.info.syntax")
-					cleanSelections();
-					
-					break;
-				case $scope.lovItemEnum.QUERY:
-					$scope.toolbarTitle = sbiModule_translate.load("sbi.behavioural.lov.details.queryWizard");
-					$scope.infoTitle= sbiModule_translate.load("sbi.behavioural.lov.info.syntax")
-					cleanSelections();
-					
-					break;
-				case $scope.lovItemEnum.FIX_LOV:
-					$scope.toolbarTitle = sbiModule_translate.load("sbi.behavioural.lov.details.fixedListWizard");
-					$scope.infoTitle= sbiModule_translate.load("sbi.behavioural.lov.info.rules")
-					cleanSelections();
-					
-					break;	
-				case $scope.lovItemEnum.JAVA_CLASS:
-					$scope.toolbarTitle = sbiModule_translate.load("sbi.behavioural.lov.details.javaClassWizard");
-					$scope.infoTitle= sbiModule_translate.load("sbi.behavioural.lov.info.rules")
-					cleanSelections();
-					
-					break;
-				case $scope.lovItemEnum.DATASET:
-					$scope.toolbarTitle = sbiModule_translate.load("sbi.behavioural.lov.details.datasetWizard");
-					cleanSelections();
-					
-					break;	
-				default:
-					break;
-				}
-			 
-			 
-			 for (var i = 0; i < $scope.listOfInputTypes.length; i++) {
-					if($scope.listOfInputTypes[i].VALUE_CD == item){
-						$scope.selectedLov.itypeId = ""+$scope.listOfInputTypes[i].VALUE_ID;
-					}
-				}
-			 formatForTest($scope.selectedLov,'new');
-			 
-			}else if (type == lovTypeEnum.SCRIPT) {
-					
-			}else if (type == lovTypeEnum.QUERY) {
-				
-			}else if (type == lovTypeEnum.DATASET) {
-				
-				
-			}
-		
+	
+	$scope.changeLovType = function(item) {
+		switch (item) {
+		case $scope.lovItemEnum.SCRIPT:
+			$scope.toolbarTitle = sbiModule_translate.load("sbi.behavioural.lov.details.scriptWizard");
+			$scope.infoTitle= sbiModule_translate.load("sbi.behavioural.lov.info.syntax")
+			cleanSelections();
+			
+			break;
+		case $scope.lovItemEnum.QUERY:
+			$scope.toolbarTitle = sbiModule_translate.load("sbi.behavioural.lov.details.queryWizard");
+			$scope.infoTitle= sbiModule_translate.load("sbi.behavioural.lov.info.syntax")
+			cleanSelections();
+			
+			break;
+		case $scope.lovItemEnum.FIX_LOV:
+			$scope.toolbarTitle = sbiModule_translate.load("sbi.behavioural.lov.details.fixedListWizard");
+			$scope.infoTitle= sbiModule_translate.load("sbi.behavioural.lov.info.rules")
+			cleanSelections();
+			
+			break;	
+		case $scope.lovItemEnum.JAVA_CLASS:
+			$scope.toolbarTitle = sbiModule_translate.load("sbi.behavioural.lov.details.javaClassWizard");
+			$scope.infoTitle= sbiModule_translate.load("sbi.behavioural.lov.info.rules")
+			cleanSelections();
+			
+			break;
+		case $scope.lovItemEnum.DATASET:
+			$scope.toolbarTitle = sbiModule_translate.load("sbi.behavioural.lov.details.datasetWizard");
+			cleanSelections();
+			
+			break;	
+		default:
+			break;
 		}
-	
-	
-	$scope.changeTreeType = function(tree){
-		
+	 
+	 
+	 for (var i = 0; i < $scope.listOfInputTypes.length; i++) {
+			if($scope.listOfInputTypes[i].VALUE_CD == item){
+				$scope.selectedLov.itypeId = ""+$scope.listOfInputTypes[i].VALUE_ID;
+			}
+		}
+	 //formatForTest($scope.selectedLov,'new');
 	}
+	
+	
 	var cleanSelections = function() {
 		$scope.enableTest = false;
 		$scope.selectedScriptType={};
@@ -513,6 +481,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 		$scope.testLovTreeModel = [];
 		$scope.testLovModel = [];
 		$scope.previewLovModel = [];
+		$scope.paramObj = {}
 		$mdDialog.cancel();
 	}
 	/**
@@ -592,7 +561,7 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 		if($scope.listForFixLov.length> 0){
 		
 			for (var i = 0; i < $scope.listForFixLov.length; i++) {
-				if($scope.selectedFIXLov._VALUE !=  $scope.listForFixLov[i]._VALUE && $scope.selectedFIXLov._DESCRIPTION !=  $scope.listForFixLov[i]._DESCRIPTION){
+				if($scope.selectedFIXLov.VALUE !=  $scope.listForFixLov[i].VALUE && $scope.selectedFIXLov.DESCRIPTION !=  $scope.listForFixLov[i].DESCRIPTION){
 					console.log("new one");
 					$scope.listForFixLov.push($scope.selectedFIXLov);
 					$scope.selectedFIXLov= {};
@@ -620,53 +589,46 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 	 * LOV item on the left side of the page (the one from the catalog).
 	 * @author: danristo (danilo.ristovski@mht.net)
 	 */
-	$scope.itemOnClick = function(item)
-	{	
-		$scope.enableTest = false;
-		$scope.changeType(item.itypeCd);
-		var lovProvider = parseLovProvider(item);
-		console.log(item);
-		if(lovProvider != null){
-			if (lovProvider.hasOwnProperty(lovProviderEnum.SCRIPT)) {
-				if(lovProvider.SCRIPTLOV.LANGUAGE != null){
-					$scope.selectedScriptType.language = lovProvider.SCRIPTLOV.LANGUAGE;		
-				}else{
-					$scope.selectedScriptType.language = 'groovy';
-				}
-							
-				$scope.selectedScriptType.text = lovProvider.SCRIPTLOV.SCRIPT;
-				
-			}else if(lovProvider.hasOwnProperty(lovProviderEnum.QUERY)){
-				
-				$scope.selectedQuery.datasource = lovProvider.QUERY.CONNECTION;
-				$scope.selectedQuery.query = lovProvider.QUERY.STMT;
-				
-			}else if (lovProvider.hasOwnProperty(lovProviderEnum.FIX_LOV)) {
-				
-				if(lovProvider.FIXLISTLOV.ROWS.ROW && Array === lovProvider.FIXLISTLOV.ROWS.ROW.constructor){
-					
-					$scope.listForFixLov = [];
-					$scope.listForFixLov = lovProvider.FIXLISTLOV.ROWS.ROW;
-				}else{
-					$scope.listForFixLov = [];
-					$scope.listForFixLov.push(lovProvider.FIXLISTLOV.ROWS.ROW);
-				}
-				
-			}else if(lovProvider.hasOwnProperty(lovProviderEnum.JAVA_CLASS)){
-				
-				$scope.selectedJavaClass.name = lovProvider.JAVACLASSLOV.JAVA_CLASS_NAME;
-				
-			}else if (lovProvider.hasOwnProperty(lovProviderEnum.DATASET)) {
-				
-				$scope.selectedDataset.id = lovProvider.DATASET.ID;
+	$scope.itemOnClick = function(item){
+		item.lovProvider = angular.fromJson(item.lovProvider);
+		$scope.selectedLov=angular.copy(item);
+		$scope.changeLovType($scope.selectedLov.itypeCd);
+		
+		if ($scope.selectedLov.lovProvider.hasOwnProperty(lovProviderEnum.SCRIPT)) {
+			if($scope.selectedLov.lovProvider.SCRIPTLOV.LANGUAGE != null){
+				$scope.selectedScriptType.language = $scope.selectedLov.lovProvider.SCRIPTLOV.LANGUAGE;		
+			}else{
+				$scope.selectedScriptType.language = 'groovy';
 			}
-		}else{
-			sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.behavioural.lov.xml.error"), sbiModule_translate.load("sbi.generic.toastr.title.error"));
+						
+			$scope.selectedScriptType.text = $scope.selectedLov.lovProvider.SCRIPTLOV.SCRIPT;
+			
+		}else if($scope.selectedLov.lovProvider.hasOwnProperty(lovProviderEnum.QUERY)){
+			
+			$scope.selectedQuery.datasource = $scope.selectedLov.lovProvider.QUERY.CONNECTION;
+			$scope.selectedQuery.query = $scope.selectedLov.lovProvider.QUERY.STMT;
+			
+		}else if ($scope.selectedLov.lovProvider.hasOwnProperty(lovProviderEnum.FIX_LOV)) {
+			
+			if(Array === $scope.selectedLov.lovProvider.FIXLISTLOV.ROWS.ROW.constructor){
+				
+				$scope.listForFixLov = [];
+				$scope.listForFixLov = $scope.selectedLov.lovProvider.FIXLISTLOV.ROWS.ROW;
+			}else{
+				$scope.listForFixLov = [];
+				$scope.listForFixLov.push($scope.selectedLov.lovProvider.FIXLISTLOV.ROWS.ROW);
+			}
+			
+		}else if($scope.selectedLov.lovProvider.hasOwnProperty(lovProviderEnum.JAVA_CLASS)){
+			
+			$scope.selectedJavaClass.name = $scope.selectedLov.lovProvider.JAVACLASSLOV.JAVA_CLASS_NAME;
+			
+		}else if ($scope.selectedLov.lovProvider.hasOwnProperty(lovProviderEnum.DATASET)) {
+			
+			$scope.selectedDataset.id = $scope.selectedLov.lovProvider.DATASET.ID;
 		}
 		
-		
-		
-		 if($scope.dirtyForm){
+		if($scope.dirtyForm){
 			   $mdDialog.show($scope.confirm).then(function(){
 				$scope.dirtyForm=false;   
 				$scope.selectedLov=angular.copy(item);
@@ -702,14 +664,14 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 		var lastRow = $scope.listForFixLov[$scope.listForFixLov.length-1];
 		if(direction == 'up'){
 			
-			if(row._VALUE == firstRow._VALUE){
+			if(row.VALUE == firstRow.VALUE){
 				return false;
 			}else{
 				return true;
 			}
 			
 		}else if (direction == 'down') {
-			if(row._VALUE == lastRow._VALUE){
+			if(row.VALUE == lastRow.VALUE){
 				return false;
 			}else{
 				return true;
@@ -853,6 +815,20 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 				hasBackdrop : false
 			});
 		}
+		
+		
+		$scope.indexInList = function(item, list) {
+
+			for (var i = 0; i < list.length; i++) {
+				var object = list[i];
+				if (object == item.name) {
+					return i;
+				}
+			}
+
+			return -1;
+		}
+		
 		 $scope.tableFunction = {
 		 
 			 getItem : function(row,column){
@@ -880,10 +856,16 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 			 			$scope.treeListTypeModel['VALUE-COLUMN'] = row.name;
 		 		 }
 		 		 if(column == 'visible'){
-		 			 	
-		 			$scope.formatedVisibleValues.push(row.name);
-		 			 	
-		 			 	
+		 			 
+		 			var index = $scope.indexInList(row,$scope.formatedVisibleValues); 
+		 			
+		 			if (index != -1) {
+		 				$scope.formatedVisibleValues.splice(index, 1);
+					} else {
+						$scope.formatedVisibleValues.push(row.name);
+					}
+		 			 
+		 		 	
 		 		 }
 		 	}
 		 }
@@ -911,67 +893,66 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 		
 		
 		var formatForTest = function(item,state){
-			var tempObj = {}
-			var propName = item.itypeCd;
-			var property = lovProviderEnum[propName];
+			
+			var propName = $scope.selectedLov.itypeCd;
+			var prop = lovProviderEnum[propName];
 			
 			if(state == 'new'){
-				
-				tempObj[property] = {
+				$scope.selectedLov.lovProvider = {};
+				$scope.selectedLov.lovProvider[prop] = {
 						"DESCRIPTION-COLUMN" : "",
 						"INVISIBLE-COLUMNS" : "",
 						"LOVTYPE" : "",
-						"TREE-LEVELS-COLUMNS" : "",
 						"VALUE-COLUMN" : "",
 						"VISIBLE-COLUMNS" : ""
 						};
 				
-			}else{
-				
-				var lovProvider = parseLovProvider($scope.selectedLov);
-			    tempObj = lovProvider;
-			    console.log(tempObj);
 			}
 			
-			switch (property) {
+			
+			
+			switch (prop) {
 			case lovProviderEnum.QUERY:
-				tempObj[property].CONNECTION = $scope.selectedQuery.datasource;
-				tempObj[property].STMT = $scope.selectedQuery.query;
+				$scope.selectedLov.lovProvider[prop].CONNECTION = $scope.selectedQuery.datasource;
+				$scope.selectedLov.lovProvider[prop].STMT = $scope.selectedQuery.query;
 				
 			break;
 			case lovProviderEnum.SCRIPT:
-				tempObj[property].LANGUAGE = $scope.selectedScriptType.language;
-				tempObj[property].SCRIPT =  $scope.selectedScriptType.text;
+				$scope.selectedLov.lovProvider[prop].LANGUAGE = $scope.selectedScriptType.language;
+				$scope.selectedLov.lovProvider[prop].SCRIPT =  $scope.selectedScriptType.text;
 			break;
 			case lovProviderEnum.FIX_LOV:
 				if($scope.listForFixLov != null && $scope.listForFixLov.length > 0){
 				
-				tempObj[property].ROWS.ROW = $scope.listForFixLov;
+					$scope.selectedLov.lovProvider[prop].ROWS.ROW = $scope.listForFixLov;
 				}
 			break;
 			case lovProviderEnum.JAVA_CLASS:
-				tempObj[property].JAVA_CLASS_NAME = $scope.selectedJavaClass.name;
+				$scope.selectedLov.lovProvider[prop].JAVA_CLASS_NAME = $scope.selectedJavaClass.name;
 			break;
 			case lovProviderEnum.DATASET:
-				tempObj[property].ID = $scope.selectedDataset.id;
-				tempObj[property].LABEL =  $scope.selectedDataset.label;	
+				$scope.selectedLov.lovProvider[prop].ID = $scope.selectedDataset.id;
+				if($scope.selectedDataset.id){
+					for (var i = 0; i < $scope.listOfDatasets.length; i++) {
+						if($scope.listOfDatasets[i].id == $scope.selectedDataset.id){
+							$scope.selectedLov.lovProvider[prop].LABEL = $scope.listOfDatasets[i].label;
+						}
+					}
+				}
+				
+					
 			break;
 			}
-			var x2js = new X2JS(); 
-			var xmlAsStr = x2js.json2xml_str(tempObj); 
-			$scope.selectedLov.lovProvider = xmlAsStr;
-			console.log($scope.selectedLov.lovProvider)
-		}
+			
+					}
 		
 		var formatForSave = function() {
 			
 			var result = {}
-			var lovProvider = parseLovProvider($scope.selectedLov);
-			var property = $scope.selectedLov.itypeCd;
-			if(property == "SCRIPT"){
-				property = "SCRIPTLOV"
-			}
-			var tempObj = lovProvider[property];
+			var propName = $scope.selectedLov.itypeCd;
+			var prop = lovProviderEnum[propName];
+			
+			var tempObj = $scope.selectedLov.lovProvider[prop];
 			
 			
 			if($scope.treeListTypeModel.LOVTYPE == 'simple'){
@@ -988,7 +969,8 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 				
 				
 			}else{
-				console.log($scope.testLovTreeModel);
+				tempObj['TREE-LEVELS-COLUMNS'] = "";
+				
 				$scope.formatedDescriptionColumns=[];
 				$scope.formatedValueColumns=[];
 				for (var i = 0; i < $scope.testLovModel.length; i++) {
@@ -1008,7 +990,7 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 			
 			tempObj.LOVTYPE = $scope.treeListTypeModel.LOVTYPE;
 			
-			result[property] = tempObj
+			result[prop] = tempObj
 			var x2js = new X2JS();
 			var xmlAsStr = x2js.json2xml_str(result);
 			if(xmlAsStr.includes("&#x27;")){
@@ -1068,8 +1050,16 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 		}
 		
 		$scope.previewLov = function(param) {
+			
+			
 			var toSend ={};
-			toSend.data = $scope.selectedLov;
+			var selectedLovForPreview = angular.copy($scope.selectedLov);
+			var x2js = new X2JS(); 
+			var xmlAsStr = x2js.json2xml_str(selectedLovForPreview.lovProvider); 
+			selectedLovForPreview.lovProvider = xmlAsStr;
+
+			
+			toSend.data = selectedLovForPreview;
 			toSend.pagination = $scope.paginationObj;
 			if(param != undefined){
 				toSend.param = param;
@@ -1120,7 +1110,7 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 												'Error');
 
 							});
-			
+			selectedLovForPreview = null;
 		}
 		
 		 $scope.testTreeScopeFunctions = {
@@ -1134,7 +1124,11 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 		
 		$scope.doServerPagination = function() {
 			var toSend ={};
-			toSend.data = $scope.selectedLov;
+			var selectedLovForPreview = angular.copy($scope.selectedLov);
+			var x2js = new X2JS(); 
+			var xmlAsStr = x2js.json2xml_str(selectedLovForPreview.lovProvider); 
+			selectedLovForPreview.lovProvider = xmlAsStr;
+			toSend.data = selectedLovForPreview;
 			toSend.pagination = $scope.paginationObj;
 				
 			sbiModule_restServices
@@ -1153,6 +1147,7 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 												'Error');
 
 							});
+			selectedLovForPreview = null;
 		}
 		
 		$scope.getNextPreviewSet = function() {
@@ -1202,8 +1197,7 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 			 $scope.treeListTypeModel = {};
 			 var propName = $scope.selectedLov.itypeCd;
 			 var prop = lovProviderEnum[propName];
-			 var provider = parseLovProvider($scope.selectedLov);
-			 $scope.treeListTypeModel = provider[prop];
+			 $scope.treeListTypeModel = $scope.selectedLov.lovProvider[prop];
 			 if($scope.selectedLov.id != undefined){
 				 console.log("we have existing one")
 				 console.log($scope.treeListTypeModel);
@@ -1245,12 +1239,12 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 
 		
 		$scope.checkForParams = function(item) {
-			var lovProvider = parseLovProvider(item);
+			
 			$scope.paramFlag = false;
 			
 			
-			if (lovProvider.hasOwnProperty(lovProviderEnum.SCRIPT)) {
-				var script = lovProvider.SCRIPTLOV.SCRIPT; 
+			if ($scope.selectedLov.lovProvider.hasOwnProperty(lovProviderEnum.SCRIPT)) {
+				var script = $scope.selectedLov.lovProvider.SCRIPTLOV.SCRIPT; 
 				if(script.match(/{(.*)}/)){
 					$scope.paramObj.paramName = script.match(/{(.*)}/).pop();
 					var check = false;
@@ -1271,8 +1265,8 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 					$scope.paramFlag = false;
 				}
 				
-			}else if(lovProvider.hasOwnProperty(lovProviderEnum.QUERY)){
-				var query = lovProvider.QUERY.STMT;
+			}else if($scope.selectedLov.lovProvider.hasOwnProperty(lovProviderEnum.QUERY)){
+				var query = $scope.selectedLov.lovProvider.QUERY.STMT;
 				if(query.match(/{(.*)}/)){
 					$scope.paramObj.paramName = query.match(/{(.*)}/).pop();
 					var check = false;
@@ -1294,13 +1288,13 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 					$scope.paramFlag = false;
 				}
 				
-			}else if (lovProvider.hasOwnProperty(lovProviderEnum.FIX_LOV)) {
+			}else if ($scope.selectedLov.lovProvider.hasOwnProperty(lovProviderEnum.FIX_LOV)) {
 				
-				if(lovProvider.FIXLISTLOV.ROWS.ROW && Array === lovProvider.FIXLISTLOV.ROWS.ROW.constructor){
+				if($scope.selectedLov.lovProvider.FIXLISTLOV.ROWS.ROW && Array === $scope.selectedLov.lovProvider.FIXLISTLOV.ROWS.ROW.constructor){
 					var fixLovArray = [];
-					fixLovArray = lovProvider.FIXLISTLOV.ROWS.ROW;
+					fixLovArray = $scope.selectedLov.lovProvider.FIXLISTLOV.ROWS.ROW;
 					for (var i = 0; i < fixLovArray.length; i++) {
-						var one = fixLovArray[i]._VALUE;
+						var one = fixLovArray[i].VALUE;
 						if(one.match(/{(.*)}/)){
 							$scope.paramObj = {};
 							$scope.paramObj.paramName = one.match(/{(.*)}/).pop();
@@ -1324,9 +1318,9 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 						console.log("No params in query");	
 					}
 				}else{
-					var row = lovProvider.FIXLISTLOV.ROWS.ROW;
-					if(row._VALUE.match(/{(.*)}/)){
-						$scope.paramObj.paramName = row._VALUE.match(/{(.*)}/).pop();
+					var row = $scope.selectedLov.lovProvider.FIXLISTLOV.ROWS.ROW;
+					if(row.VALUE.match(/{(.*)}/)){
+						$scope.paramObj.paramName = row.VALUE.match(/{(.*)}/).pop();
 						var check = false;
 						for (var i = 0; i < $scope.userAttributes.length; i++) {
 							if($scope.paramObj.paramName == $scope.userAttributes[i].Name ){

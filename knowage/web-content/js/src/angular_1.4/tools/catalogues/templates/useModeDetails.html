@@ -16,7 +16,7 @@
 							 <md-input-container class="md-block">
 								<label>{{translate.load("sbi.ds.label")}}</label>
 								<input name="lbl" ng-model="selectedParUse.label" ng-required="selectedTab == 1"
-								ng-maxlength="20" ng-change="setDirty()">
+								maxlength="20" ng-change="setDirty()">
 							
 									<div  ng-messages="attributeForm.lbl.$error" ng-show="selectedParUse.label== null">
 										<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
@@ -30,13 +30,12 @@
 							<md-input-container class="md-block">
 							<label>{{translate.load("sbi.ds.name")}}</label>
 							<input name="name" ng-model="selectedParUse.name"  ng-required = "selectedTab == 1"
-						    ng-maxlength="40" ng-change="setDirty()">
+						    maxlength="40" ng-change="setDirty()">
 						    
 						    <div  ng-messages="attributeForm.name.$error" ng-show="selectedParUse.name== null">
 				        <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 				      </div>
-						    
-						    
+						        
 						     </md-input-container>
 						</div>
 	</div>
@@ -45,7 +44,7 @@
 							<md-input-container class="md-block">
 							<label>{{translate.load("sbi.ds.description")}}</label>
 							<input ng-model="selectedParUse.description"
-					        ng-maxlength="160" ng-change="setDirty()"> </md-input-container>
+					        maxlength="160" ng-change="setDirty()"> </md-input-container>
 						</div>
 	</div>
 	<md-radio-group ng-model="selectedParUse.valueSelection" layout="row">
@@ -60,13 +59,23 @@
 						<div layout="row" layout-wrap>
 	      				<div flex=100>
 					       <md-input-container class="md-block"> 
-					       <label>{{translate.load("sbi.analytical.drivers.usemode.lovdate")}}</label>
+					       <label>{{translate.load("sbi.analytical.drivers.usemode.lov")}}</label>
 					       <md-select  aria-label="dropdown"
 					       	name ="dropdown" 
 					        ng-required = "selectedParUse.valueSelection == 'lov'"
-					        ng-model="selectedParUse.idLov">
+					        ng-model="selectedParUse.idLov"
+					        md-on-close="clearLovSearch()">
+					        <md-select-header>
+					        <md-input-container class="md-block">
+					          <input
+					            type="search"
+					            ng-model="searchLovText"
+					            ng-keydown="$event.stopPropagation()"
+					            placeholder="Search..">
+					          </md-input-container>  
+					        </md-select-header>
 					        <md-option 
-					        ng-repeat="l in listDate track by $index" value="{{l.id}}">{{l.name}}
+					        ng-repeat="l in listDate | filter:searchLovText" value="{{l.id}}">{{l.label}}-{{l.name}}-{{l.description}}
 					        </md-option>
 					       </md-select>
 					       <div  ng-messages="attributeForm.dropdown.$error" ng-show="selectedParUse.idLov== -1">
@@ -78,7 +87,7 @@
 					    <div layout="row" layout-wrap>
 	      				<div flex=100>
 					       <md-input-container class="md-block" > 
-					       <label>{{translate.load("sbi.generic.select")}}</label>
+					       <label>{{translate.load("sbi.analytical.drivers.usemode.modality")}}</label>
 					       <md-select  aria-label="dropdown"
 					       	name ="dropdown" 
 					        ng-required = "selectedParUse.valueSelection == 'lov'"
@@ -100,8 +109,19 @@
 					       <md-select  aria-label="dropdown"
 					       	name ="dropdown" 
 					        ng-required = "selectedParUse.valueSelection == 'map_in'"
-					        ng-model="selectedParUse.selectedLayer"> <md-option 
-					        ng-repeat="l in layersList track by $index" value="{{l.name}}">{{l.name}} </md-option>
+					        ng-model="selectedParUse.selectedLayer"
+					        md-on-close="clearLovSearch()">
+					        <md-select-header>
+					        <md-input-container class="md-block">
+					          <input
+					            type="search"
+					            ng-model="searchLayerText"
+					            ng-keydown="$event.stopPropagation()"
+					            placeholder="Search..">
+					          </md-input-container>  
+					        </md-select-header>
+					        <md-option 
+					        ng-repeat="l in layersList | filter:searchLayerText" value="{{l.name}}">{{l.label}}-{{l.name}}-{{l.type}}</md-option>
 					       </md-select>
 					       <div  ng-messages="attributeForm.dropdown.$error" ng-show="selectedParUse.selectedLayer== null">
 					        <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
@@ -113,7 +133,7 @@
 						<div flex=100>
 							<md-input-container class="md-block">
 							<label>{{translate.load("sbi.analytical.drivers.usemode.mapinput.layer.prop")}}</label>
-							<input ng-model="selectedParUse.selectedLayerProp"
+							<input ng-model="selectedParUse.selectedLayerProp" ng-disabled ="selectedParUse.selectedLayer == null "
 					        ng-maxlength="160" ng-change="setDirty()"> </md-input-container>
 						</div>
 					</div>					
@@ -149,12 +169,25 @@
 						<div layout="row" layout-wrap>
 	      				<div flex=100>
 					       <md-input-container class="md-block" > 
-					       <label>{{translate.load("sbi.analytical.drivers.usemode.lovdate")}}</label>
+					       <label>{{translate.load("sbi.analytical.drivers.usemode.lov")}}</label>
 					       <md-select  aria-label="dropdown"
-					       	name ="dropdown" 
+					       name ="dropdown" 
 					        ng-required = "defaultrg == 'lov'"
-					        ng-model="selectedParUse.idLovForDefault"> <md-option 
-					        ng-repeat="l in listDate track by $index" value="{{l.id}}">{{l.name}} </md-option>
+					        ng-model="selectedParUse.idLovForDefault"
+					        md-on-close="clearLovSearch()"
+					        >
+					       
+					        <md-select-header>
+					        <md-input-container class="md-block">
+					          <input
+					            type="search"
+					            ng-model="searchLovText"
+					            ng-keydown="$event.stopPropagation()"
+					            placeholder="Search..">
+					          </md-input-container>  
+					        </md-select-header>
+					       	 <md-option 
+					        ng-repeat="l in listDate  | filter:searchLovText" value="{{l.id}}">{{l.label}}-{{l.name}}-{{l.description}}</md-option>
 					       </md-select>
 					       <div  ng-messages="attributeForm.dropdown.$error" ng-show="selectedParUse.idLovForDefault == -1">
 					        <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>

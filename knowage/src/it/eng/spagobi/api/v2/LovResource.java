@@ -69,6 +69,7 @@ import it.eng.spagobi.behaviouralmodel.lov.service.GridMetadataContainer;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializationException;
+import it.eng.spagobi.json.Xml;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -89,6 +90,7 @@ public class LovResource extends AbstractSpagoBIResource {
 
 	@SuppressWarnings("unchecked")
 	@GET
+	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.LOVS_MANAGEMENT })
 	public List<ModalitiesValue> getAllListOfValues() {
@@ -103,7 +105,10 @@ public class LovResource extends AbstractSpagoBIResource {
 			modalitiesValueDAO = DAOFactory.getModalitiesValueDAO();
 			modalitiesValueDAO.setUserProfile(getUserProfile());
 			modalitiesValues = modalitiesValueDAO.loadAllModalitiesValue();
-
+			for(ModalitiesValue lov : modalitiesValues){
+				String providerString = Xml.xml2json(lov.getLovProvider());
+				lov.setLovProvider(providerString);
+			}
 			logger.debug("Getting the list of all LOVs - done successfully");
 
 		} catch (Exception exception) {

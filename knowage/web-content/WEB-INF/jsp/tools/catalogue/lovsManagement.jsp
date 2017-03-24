@@ -116,7 +116,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							<md-input-container class="md-block">
 							<label>{{translate.load("sbi.ds.label")}}</label>
 							<input name="lovLbl" ng-model="selectedLov.label" ng-required="true"
-							ng-maxlength="20" ng-change="setDirty()">
+							maxlength="20" ng-change="setDirty()">
 							
 							<div  ng-messages="attributeForm.lbl.$error" ng-show="selectedLov.label== null">
 				        <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
@@ -131,7 +131,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							<md-input-container class="md-block">
 							<label>{{translate.load("sbi.ds.name")}}</label>
 							<input name="lovName" ng-model="selectedLov.name"  ng-required = "true"
-						    ng-maxlength="40" ng-change="setDirty()">
+						    maxlength="40" ng-change="setDirty()">
 						    
 						    <div  ng-messages="attributeForm.name.$error" ng-show="selectedLov.name== null">
 				        <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
@@ -147,19 +147,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							<md-input-container class="md-block">
 							<label>{{translate.load("sbi.ds.description")}}</label>
 							<input ng-model="selectedLov.description"
-					        ng-maxlength="160" ng-change="setDirty()"> </md-input-container>
+					        maxlength="160" ng-change="setDirty()">
+					        <div  ng-messages="attributeForm.name.$error" ng-show="selectedLov.description== null">
+				        <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+				      </div>
+					        
+					        
+					         </md-input-container>
 						</div>
 					</div>
 				
 				<div layout="row" layout-wrap>
       				<div flex=100>
 				       <md-input-container class="md-block" > 
-				       <label>{{translate.load("sbi.modalities.check.details.check_type")}}</label>
+				       <label>{{translate.load("sbi.analytical.drivers.usemode.lovtype")}}</label>
 				       <md-select  aria-label="dropdown" placeholder ="{{translate.load('sbi.modalities.check.details.check_type')}}"
 				       	name ="typeLovDropdown" 
 				        ng-required = "true"
 				        ng-model="selectedLov.itypeCd"
-				        ng-change="changeType(selectedLov.itypeCd)"
+				        ng-change="changeLovType(selectedLov.itypeCd)"
 				        > <md-option 
 				        ng-repeat="l in listOfInputTypes track by $index" value="{{l.VALUE_CD}}">{{l.VALUE_NM}} </md-option>
 				       </md-select>
@@ -226,7 +232,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				       	name ="queryDsDropdown" 
 				        ng-required = "true"
 				        ng-model="selectedQuery.datasource"
-				        ng-change="changeType(selectedQuery.datasource,'query');modeChanged(selectedQuery.datasource);"
+				        ng-change="changeDatasourceCombo(selectedQuery.datasource);modeChanged(selectedQuery.datasource);"
 				        > <md-option 
 				        ng-repeat="l in listOfDatasources track by $index" value="{{l.label}}">{{l.label}} </md-option>
 				       </md-select>
@@ -249,7 +255,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						<div flex=100>
 							<md-input-container class="md-block">
 							<label>{{translate.load("sbi.generic.value")}}</label>
-							<input name="fixLovValue" ng-model="selectedFIXLov._VALUE"
+							<input name="fixLovValue" ng-model="selectedFIXLov.VALUE"
 							ng-maxlength="20" ng-change="setDirty()">
 							
 							 </md-input-container>
@@ -260,7 +266,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						<div flex=100>
 							<md-input-container class="md-block">
 							<label>{{translate.load("sbi.generic.descr")}}</label>
-							<input name="fixLovDescription" ng-model="selectedFIXLov._DESCRIPTION"
+							<input name="fixLovDescription" ng-model="selectedFIXLov.DESCRIPTION"
 						    ng-maxlength="160" ng-change="setDirty()">
 						    
 						     </md-input-container>
@@ -277,8 +283,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						id="listForFixLov_id" 
 						ng-model="listForFixLov"
 						columns='[
-								  {"label":"Value","name":"_VALUE"},
-								  {"label":"Description","name":"_DESCRIPTION"}
+								  {"label":"Value","name":"VALUE"},
+								  {"label":"Description","name":"DESCRIPTION"}
 								]'
 						show-search-bar ="false"		
 						highlights-selected-item=true

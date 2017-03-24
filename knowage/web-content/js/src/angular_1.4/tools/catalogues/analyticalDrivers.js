@@ -26,7 +26,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 	$scope.checksList = []; // array that hold checks list
 	$scope.useModeList= []; // array that hold use mode objects list
 	$scope.valueSelectionRadioGroup = [
-	 {label: sbiModule_translate.load("sbi.analytical.drivers.usemode.lovdate"), value: 'lov'},
+	 {label: sbiModule_translate.load("sbi.analytical.drivers.usemode.lov"), value: 'lov'},
 	 {label: sbiModule_translate.load("sbi.analytical.drivers.usemode.mapinput"), value: 'map_in'},
 	 {label: sbiModule_translate.load("sbi.analytical.drivers.usemode.manualinput"), value: 'man_in'}
 	                                   
@@ -34,7 +34,8 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 	
 	$scope.searchByName = {label:"Name" ,isSelected:true};
 	$scope.searchByRole = {label:"Role", isSelected:false};
-	               
+	$scope.searchLovText = "";
+	$scope.searchLayerText="";               
 	
 	
 	//speed menus for the tables   
@@ -113,6 +114,12 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 				  angular.copy($scope.useModeList,$scope.useModeListTemp);
 				  $scope.getUseModesById($scope.selectedDriver);
 				  $scope.searchInput = "";
+			};
+			
+			$scope.clearLovSearch = function() {
+				
+				$scope.searchLovText = "";
+				$scope.searchLayerText="";
 			};
 			
 			var filterThroughCollection = function(newSearchInput,inputCollection,mode) {
@@ -326,6 +333,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 		sbiModule_restServices.promiseGet("2.0/analyticalDrivers/layers/", "")
 		.then(function(response) {
 			$scope.layersList = response.data;
+			console.log($scope.layersList);
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 			
@@ -381,6 +389,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 		sbiModule_restServices.promiseGet("2.0", "lovs")
 		.then(function(response) {
 			$scope.listDate = response.data;
+			console.log($scope.listDate);
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 			
@@ -450,11 +459,11 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 						$scope.getDrivers();
 					}, 1000);
 					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
-					$scope.selectedDriver={};
+					//$scope.selectedDriver={};
 					$scope.selectedTab = 0;
-					$scope.showme=false;
-					$scope.showadMode = false;
-					$scope.dirtyForm=false;	
+					//$scope.showme=false;
+					$scope.showadMode = true;
+					//$scope.dirtyForm=false;	
 					
 				}, function(response) {
 					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
@@ -469,11 +478,11 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 						$scope.getDrivers();
 					}, 1000);
 					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
-					$scope.selectedDriver={};
+					//$scope.selectedDriver={};
 					$scope.selectedTab = 0;
-					$scope.showme=false;
-					$scope.showadMode = false;
-					$scope.dirtyForm=false;	
+					//$scope.showme=false;
+					$scope.showadMode = true;
+					//$scope.dirtyForm=false;	
 					
 				}, function(response) {
 					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
