@@ -66,7 +66,7 @@
 			iconCls="group_work">
 			<ITEM	title="#menu.LovMan"
 					functionality="LovsView"
-					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/lovsManagement.jsp?LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListLovsPage&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/lovs16.png" />
 			<ITEM	title="#menu.ParameterMan"
 					functionality="ParameterView"
