@@ -73,6 +73,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
@@ -110,6 +111,7 @@ public class LovResource extends AbstractSpagoBIResource {
 
 				try {
 					lovProvider = lov.getLovProvider();
+					lovProvider = StringEscapeUtils.escapeJavaScript(lovProvider);
 					if(!lovProvider.contains("[CDATA[")){
 						lovProvider = lovProvider.replace("<SCRIPT>", "<SCRIPT><![CDATA[");
 						lovProvider = lovProvider.replace("</SCRIPT>", "]]></SCRIPT>");
