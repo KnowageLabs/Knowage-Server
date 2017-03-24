@@ -367,7 +367,6 @@
 	
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="SchedulingDistributedOutput" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="MetaModelLifecycleManagement" roleType="ADMIN" />
-	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="MetaModelSavingToRdbms" roleType="ADMIN" />
 	
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="SharedDevelopment" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="SharedDevelopment" roleType="DEV_ROLE" />
