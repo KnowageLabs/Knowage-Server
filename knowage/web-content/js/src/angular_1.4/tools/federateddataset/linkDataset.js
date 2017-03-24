@@ -109,7 +109,6 @@ $scope.remove = function(item){
 	var index = $scope.selectedTables.indexOf(item);
 	var index1 = $scope.forAdding.indexOf(item);
 	if($scope.forAdding.indexOf(item)>-1){
-		console.log("aaaa");
 		$scope.forAdding.splice(index1,1);
 	}
 	

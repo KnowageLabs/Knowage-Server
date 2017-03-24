@@ -68,6 +68,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	String modality = (String) moduleResponse
 			.getAttribute(ObjectsTreeConstants.MODALITY);
 	
+	
 	IObjTemplateDAO objtempdao = DAOFactory.getObjTemplateDAO();
 
 	// CREATE PAGE URLs
@@ -1875,17 +1876,33 @@ function downloadAlsoLinkedTemplatesConfirm(message, urlYes, urlNo){
 					break;
 				}
 			}
+		
+			String adName = "";
+			if(request.getParameter("ADName") != null){
+				adName = request.getParameter("ADName");
+			}else if(parameter != null && StringEscapeUtils.escapeHtml(parameter.getName()) != null){
+				adName = StringEscapeUtils.escapeHtml(parameter.getName());
+			}
+			
+			String adId = "";
+			if(request.getParameter("ADId") != null){
+				adId = request.getParameter("ADId");
+			}else if(parameter != null && parameter.getId().toString() != null){
+				adId = parameter.getId().toString();
+			}
+
+
+		
 	%> 
     <input type='hidden' id='par_Id' 
-			   value='<%=parameter != null ? parameter.getId().toString() : ""%>' name='par_Id' />	 
+			   value='<%=adId != null ? adId : ""%>' name='par_Id' />	 
 		<input class='portlet-form-input-field' type="text" id="parameterName" size="42" 
-	    	   name="parameterName" value='<%=parameter != null ? StringEscapeUtils
-						.escapeHtml(parameter.getName()) : ""%>' 
+	    	   name="parameterName" value='<%=adName != null ? adName : ""%>' 
 			   	maxlength="100" readonly />
 
 
   		&nbsp;*&nbsp;
-		<a style="text-decoration:none;"  href="javascript:verifyDependencies();">
+		<a style="text-decoration:none;"  href="${pageContext.request.contextPath}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/documentbrowser/templates/analyticalDriversList.jsp">
 			<img src='<%=urlBuilder.getResourceLinkByTheme(request,
 						"/img/detail.gif", currTheme)%>' 
 			   title='<spagobi:message key = "SBIDev.docConf.docDetParam.parametersLookupList" />' 
