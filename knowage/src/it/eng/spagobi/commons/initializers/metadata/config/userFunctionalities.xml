@@ -118,7 +118,6 @@
 	<USER_FUNCTIONALITY productType="KnowageSI" name="SelfServiceMetaModelManagement" description="SelfServiceMetaModelManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="CreateCockpitFunctionality" description="CreateCockpitFunctionality"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ImagesManagement" description="ImagesManagement" />
-	<USER_FUNCTIONALITY productType="KnowageSI" name="Glossary" description="Glossary" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="CreateChartFunctionality" description="CreateChartFunctionality" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="CreateDatasetsAsFinalUser" description="CreateDatasetsAsFinalUser" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="FederationDefinition" description="FederationDefinition" />
