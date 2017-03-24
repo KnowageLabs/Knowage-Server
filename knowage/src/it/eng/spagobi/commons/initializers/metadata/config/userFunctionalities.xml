@@ -214,7 +214,6 @@
 	
 	
 	<!-- Authorizations for KnowagePM -->
-	<USER_FUNCTIONALITY productType="KnowagePM" name="AlertManagement" description="AlertManagement" />
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ConstraintManagement" description="ConstraintManagement"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ConstraintView" description="ConstraintView"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="CreateChartFunctionality" description="CreateChartFunctionality" />
