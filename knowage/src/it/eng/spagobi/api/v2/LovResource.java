@@ -73,11 +73,12 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import sun.misc.BASE64Encoder;
 
 /**
  * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
@@ -110,15 +111,42 @@ public class LovResource extends AbstractSpagoBIResource {
 			for(ModalitiesValue lov : modalitiesValues){
 
 				try {
+
 					lovProvider = lov.getLovProvider();
-					lovProvider = StringEscapeUtils.escapeJavaScript(lovProvider);
-					if(!lovProvider.contains("[CDATA[")){
-						lovProvider = lovProvider.replace("<SCRIPT>", "<SCRIPT><![CDATA[");
-						lovProvider = lovProvider.replace("</SCRIPT>", "]]></SCRIPT>");
-					}else if(!lovProvider.contains("[CDATA[")){
-						lovProvider = lovProvider.replace("<STMT>", "<STMT><![CDATA[");
-						lovProvider = lovProvider.replace("</STMT>", "]]></STMT>");
+
+					if(lovProvider.contains("SCRIPT")){
+					//	SourceBean sb = SourceBean.fromXMLString(lovProvider).getContainedAttributes()[0];
+						//sb.getContainedAttributes()
+						lovProvider = lovProvider.replace("<SCRIPT><![CDATA[", "<SCRIPT>");
+						lovProvider = lovProvider.replace("]]></SCRIPT>", "</SCRIPT>");
+						int pos1 = lovProvider.indexOf("<SCRIPT>");
+						int pos2 = lovProvider.indexOf("</SCRIPT>");
+						String content = lovProvider.substring(pos1+8,pos2);
+
+						BASE64Encoder bASE64Encoder = new BASE64Encoder();
+						String encoded = bASE64Encoder.encode(content.getBytes());
+						lovProvider  = lovProvider.substring(0,pos1+8)+encoded+lovProvider.substring(pos2);
+
 					}
+
+					if(lovProvider.contains("STMT")){
+					//	SourceBean sb = SourceBean.fromXMLString(lovProvider).getContainedAttributes()[0];
+						//sb.getContainedAttributes()
+						lovProvider = lovProvider.replace("<STMT><![CDATA[", "<STMT>");
+						lovProvider = lovProvider.replace("]]></STMT>", "</STMT>");
+						int pos1 = lovProvider.indexOf("<STMT>");
+						int pos2 = lovProvider.indexOf("</STMT>");
+						String content = lovProvider.substring(pos1+6,pos2);
+
+						BASE64Encoder bASE64Encoder = new BASE64Encoder();
+						String encoded = bASE64Encoder.encode(content.getBytes());
+						lovProvider  = lovProvider.substring(0,pos1+6)+encoded+lovProvider.substring(pos2);
+
+					}
+
+
+
+
 
 
 					String providerString = Xml.xml2json(lovProvider);

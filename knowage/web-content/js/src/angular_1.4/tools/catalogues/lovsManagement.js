@@ -584,6 +584,19 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 		
 	}
 	
+	
+	var decode = function(item){
+		try {
+			if(item.lovProvider.SCRIPTLOV){
+				item.lovProvider.SCRIPTLOV.SCRIPT = window.atob(item.lovProvider.SCRIPTLOV.SCRIPT);
+			}
+			if(item.lovProvider.QUERY){
+				item.lovProvider.QUERY.STMT = window.atob(item.lovProvider.QUERY.STMT);
+			}			
+		}catch(err) {}
+		
+	};
+	
 	/**
 	 * Function that handles what should be done when user clicks on the
 	 * LOV item on the left side of the page (the one from the catalog).
@@ -591,6 +604,9 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 	 */
 	$scope.itemOnClick = function(item){
 		item.lovProvider = angular.fromJson(item.lovProvider);
+		
+		decode(item);
+
 		$scope.selectedLov=angular.copy(item);
 		$scope.changeLovType($scope.selectedLov.itypeCd);
 		
