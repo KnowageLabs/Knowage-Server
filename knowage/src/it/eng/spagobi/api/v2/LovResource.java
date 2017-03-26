@@ -17,44 +17,9 @@
  */
 package it.eng.spagobi.api.v2;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanAttribute;
-import it.eng.spago.base.SourceBeanException;
-import it.eng.spago.dbaccess.sql.DataRow;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
-import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
-import it.eng.spagobi.behaviouralmodel.lov.bo.DatasetDetail;
-import it.eng.spagobi.behaviouralmodel.lov.bo.FixedListDetail;
-import it.eng.spagobi.behaviouralmodel.lov.bo.IJavaClassLov;
-import it.eng.spagobi.behaviouralmodel.lov.bo.JavaClassDetail;
-import it.eng.spagobi.behaviouralmodel.lov.bo.LovDetailFactory;
-import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
-import it.eng.spagobi.behaviouralmodel.lov.bo.QueryDetail;
-import it.eng.spagobi.behaviouralmodel.lov.bo.ScriptDetail;
-import it.eng.spagobi.behaviouralmodel.lov.dao.IModalitiesValueDAO;
-import it.eng.spagobi.behaviouralmodel.lov.service.GridMetadataContainer;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.serializer.SerializationException;
-import it.eng.spagobi.json.Xml;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.services.rest.annotations.UserConstraint;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import it.eng.spagobi.utilities.rest.RestUtilities;
-
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -69,16 +34,53 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import sun.misc.BASE64Encoder;
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.base.SourceBeanAttribute;
+import it.eng.spago.base.SourceBeanException;
+import it.eng.spago.dbaccess.sql.DataRow;
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
+import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
+import it.eng.spagobi.behaviouralmodel.lov.bo.DatasetDetail;
+import it.eng.spagobi.behaviouralmodel.lov.bo.FixedListDetail;
+import it.eng.spagobi.behaviouralmodel.lov.bo.IJavaClassLov;
+import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
+import it.eng.spagobi.behaviouralmodel.lov.bo.JavaClassDetail;
+import it.eng.spagobi.behaviouralmodel.lov.bo.LovDetailFactory;
+import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
+import it.eng.spagobi.behaviouralmodel.lov.bo.QueryDetail;
+import it.eng.spagobi.behaviouralmodel.lov.bo.ScriptDetail;
+import it.eng.spagobi.behaviouralmodel.lov.dao.IModalitiesValueDAO;
+import it.eng.spagobi.behaviouralmodel.lov.service.GridMetadataContainer;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.serializer.SerializationException;
+import it.eng.spagobi.json.Xml;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 
 /**
  * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
@@ -103,59 +105,15 @@ public class LovResource extends AbstractSpagoBIResource {
 		IModalitiesValueDAO modalitiesValueDAO = null;
 
 		try {
-
+			// TODO this part
 			modalitiesValueDAO = DAOFactory.getModalitiesValueDAO();
 			modalitiesValueDAO.setUserProfile(getUserProfile());
 			modalitiesValues = modalitiesValueDAO.loadAllModalitiesValue();
-			String lovProvider = null;
-			for(ModalitiesValue lov : modalitiesValues){
-
-				try {
-
-					lovProvider = lov.getLovProvider();
-
-					if(lovProvider.contains("SCRIPT")){
-					//	SourceBean sb = SourceBean.fromXMLString(lovProvider).getContainedAttributes()[0];
-						//sb.getContainedAttributes()
-						lovProvider = lovProvider.replace("<SCRIPT><![CDATA[", "<SCRIPT>");
-						lovProvider = lovProvider.replace("]]></SCRIPT>", "</SCRIPT>");
-						int pos1 = lovProvider.indexOf("<SCRIPT>");
-						int pos2 = lovProvider.indexOf("</SCRIPT>");
-						String content = lovProvider.substring(pos1+8,pos2);
-
-						BASE64Encoder bASE64Encoder = new BASE64Encoder();
-						String encoded = bASE64Encoder.encode(content.getBytes());
-						lovProvider  = lovProvider.substring(0,pos1+8)+encoded+lovProvider.substring(pos2);
-
-					}
-
-					if(lovProvider.contains("STMT")){
-					//	SourceBean sb = SourceBean.fromXMLString(lovProvider).getContainedAttributes()[0];
-						//sb.getContainedAttributes()
-						lovProvider = lovProvider.replace("<STMT><![CDATA[", "<STMT>");
-						lovProvider = lovProvider.replace("]]></STMT>", "</STMT>");
-						int pos1 = lovProvider.indexOf("<STMT>");
-						int pos2 = lovProvider.indexOf("</STMT>");
-						String content = lovProvider.substring(pos1+6,pos2);
-
-						BASE64Encoder bASE64Encoder = new BASE64Encoder();
-						String encoded = bASE64Encoder.encode(content.getBytes());
-						lovProvider  = lovProvider.substring(0,pos1+6)+encoded+lovProvider.substring(pos2);
-
-					}
-
-
-
-
-
-
-					String providerString = Xml.xml2json(lovProvider);
-					lov.setLovProvider(providerString);
-				} catch (Exception e) {
-					int t = 8;
-					t++;
-				}
-
+			for (ModalitiesValue lov : modalitiesValues) {
+				String providerString = lov.getLovProvider();
+				// String converted = convertSpecialChars(providerString);
+				String result = Xml.xml2json(providerString);
+				lov.setLovProvider(result);
 			}
 			logger.debug("Getting the list of all LOVs - done successfully");
 
@@ -269,7 +227,7 @@ public class LovResource extends AbstractSpagoBIResource {
 
 		JSONObject pagination = new JSONObject();
 		JSONObject data = new JSONObject();
-		JSONObject param = new JSONObject();
+		JSONArray param = new JSONArray();
 		GridMetadataContainer lovExecutionResult = new GridMetadataContainer();
 		SourceBean rowsSourceBean = null;
 		List<String> colNames = new ArrayList<String>();
@@ -286,16 +244,14 @@ public class LovResource extends AbstractSpagoBIResource {
 			JSONObject paramsObj = new JSONObject(unsafe);
 			pagination = paramsObj.getJSONObject("pagination");
 			data = paramsObj.getJSONObject("data");
-			param = paramsObj.optJSONObject("param");
-			if (param != null) {
-				getUserProfile().addAttributes(param.getString("paramName"), param.getString("paramValue"));
-				profile = getUserProfile();
+			param = paramsObj.optJSONArray("param");
+			if (param != null && param.length() > 0) {
+				UserProfile fake = insertIntoFakeUser(param);
+				profile = fake;
 			}
 			typeLov = data.getString("itypeCd");
 			lovProvider = data.getString("lovProvider");
-			if (lovProvider.contains("&#x27;")) {
-				lovProvider = lovProvider.replaceAll("&#x27;", "'");
-			}
+
 			if (typeLov != null && typeLov.equalsIgnoreCase("JAVA_CLASS")) {
 				JavaClassDetail javaClassDetail = JavaClassDetail.fromXML(lovProvider);
 				try {
@@ -305,25 +261,30 @@ public class LovResource extends AbstractSpagoBIResource {
 					rowsSourceBean = SourceBean.fromXMLString(result);
 					colNames = findFirstRowAttributes(rowsSourceBean);
 				} catch (Exception e) {
-
+					logger.error("Cannot get values from java class");
+					throw new SpagoBIRuntimeException("Cannot get values from java class");
 				}
 			} else if (typeLov != null && typeLov.equalsIgnoreCase("FIX_LOV")) {
+
 				FixedListDetail fixlistDet = FixedListDetail.fromXML(lovProvider);
 				try {
 					result = fixlistDet.getLovResult(profile, null, toMockedBIObjectParameters(paramFilled), null);
 					rowsSourceBean = SourceBean.fromXMLString(result);
 					colNames = findFirstRowAttributes(rowsSourceBean);
 				} catch (Exception e) {
-
+					logger.error("Cannot get values from fixed lov");
+					throw new SpagoBIRuntimeException("Cannot get values from fixed lov");
 				}
 			} else if (typeLov != null && typeLov.equalsIgnoreCase("QUERY")) {
+
 				QueryDetail qd = QueryDetail.fromXML(lovProvider);
 				try {
 					result = qd.getLovResult(profile, null, toMockedBIObjectParameters(paramFilled), null, true);
 					rowsSourceBean = SourceBean.fromXMLString(result);
 					colNames = findFirstRowAttributes(rowsSourceBean);
 				} catch (Exception e) {
-
+					logger.error("Cannot get values from query");
+					throw new SpagoBIRuntimeException("Cannot get values from query");
 				}
 
 			} else if (typeLov != null && typeLov.equalsIgnoreCase("SCRIPT")) {
@@ -333,7 +294,8 @@ public class LovResource extends AbstractSpagoBIResource {
 					rowsSourceBean = SourceBean.fromXMLString(result);
 					colNames = findFirstRowAttributes(rowsSourceBean);
 				} catch (Exception e) {
-
+					logger.error("Cannot get values from script");
+					throw new SpagoBIRuntimeException("Cannot get values from script");
 				}
 			} else if (typeLov != null && typeLov.equalsIgnoreCase("DATASET")) {
 				DatasetDetail datasetClassDetail = DatasetDetail.fromXML(lovProvider);
@@ -342,7 +304,8 @@ public class LovResource extends AbstractSpagoBIResource {
 					rowsSourceBean = SourceBean.fromXMLString(result);
 					colNames = findFirstRowAttributes(rowsSourceBean);
 				} catch (Exception e) {
-
+					logger.error("Cannot get values from dataset");
+					throw new SpagoBIRuntimeException("Cannot get values from dataset");
 				}
 			}
 			Integer start = pagination.getInt("paginationStart");
@@ -372,6 +335,10 @@ public class LovResource extends AbstractSpagoBIResource {
 			modalitiesValueDAO = DAOFactory.getModalitiesValueDAO();
 			modalitiesValueDAO.setUserProfile(getUserProfile());
 			ModalitiesValue modVal = toModality(requestBodyJSON);
+			if (labelControl(modVal.getLabel())) {
+				logger.error("LOV with same label already exists");
+				throw new SpagoBIRestServiceException("", getLocale(), "LOV with same label already exists");
+			}
 			modalitiesValueDAO.insertModalitiesValue(modVal);
 
 			logger.debug("OUT: Posting the LOV - done successfully");
@@ -389,22 +356,23 @@ public class LovResource extends AbstractSpagoBIResource {
 		}
 	}
 
-	@POST
-	@Path("/deleteSmth")
+	@DELETE
+	@Path("/delete/{id}")
 	@UserConstraint(functionalities = { SpagoBIConstants.LOVS_MANAGEMENT })
-	public Response remove(@javax.ws.rs.core.Context HttpServletRequest req) {
-
+	public Response remove(@PathParam("id") Integer id) {
 		IModalitiesValueDAO modalitiesValueDAO;
 
 		try {
 
-			JSONObject requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
 			modalitiesValueDAO = DAOFactory.getModalitiesValueDAO();
 			modalitiesValueDAO.setUserProfile(getUserProfile());
-			ModalitiesValue modVal = toModality(requestBodyJSON);
+			ModalitiesValue modVal = modalitiesValueDAO.loadModalitiesValueByID(id);
+			boolean hasPar = DAOFactory.getModalitiesValueDAO().hasParameters(id.toString());
+			if (hasPar) {
+				logger.error("Lov cant be deleted it has parameters associated");
+				throw new SpagoBIRestServiceException("", getLocale(), "Lov cant be deleted it has parameters associated");
+			}
 			modalitiesValueDAO.eraseModalitiesValue(modVal);
-
-			logger.debug("OUT: Posting the LOV - done successfully");
 
 			return Response.ok().build();
 
@@ -430,6 +398,7 @@ public class LovResource extends AbstractSpagoBIResource {
 			modalitiesValueDAO = DAOFactory.getModalitiesValueDAO();
 			modalitiesValueDAO.setUserProfile(getUserProfile());
 			ModalitiesValue modVal = toModality(requestBodyJSON);
+
 			modalitiesValueDAO.modifyModalitiesValue(modVal);
 			logger.debug("OUT: Putting the LOV - done successfully");
 
@@ -444,88 +413,39 @@ public class LovResource extends AbstractSpagoBIResource {
 
 	}
 
-	@DELETE
-	// @Produces(MediaType.APPLICATION_JSON)
+	@POST
+	@Path("/checkparams")
+	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.LOVS_MANAGEMENT })
-	public Response delete(@Context HttpServletRequest servletRequest) {
+	public List checkParams(@javax.ws.rs.core.Context HttpServletRequest req) {
 
-		logger.debug("IN");
-
+		IModalitiesValueDAO modalitiesValueDAO;
+		List profAttrToFill = new ArrayList<>();
 		try {
 
-			JSONObject requestJSONObject = RestUtilities.readBodyAsJSONObject(servletRequest);
-			ModalitiesValue modVal = recoverModalitiesValueDetails(requestJSONObject);
-			IModalitiesValueDAO modalitiesDAO = DAOFactory.getModalitiesValueDAO();
-			modalitiesDAO.setUserProfile(getUserProfile());
-			modalitiesDAO.eraseModalitiesValue(modVal);
-
-			logger.debug("OUT: Deleting the LOV - done successfully");
-
-			return Response.ok().build();
+			modalitiesValueDAO = DAOFactory.getModalitiesValueDAO();
+			modalitiesValueDAO.setUserProfile(getUserProfile());
+			String unsafe = RestUtilities.readBodyXSSUnsafe(req);
+			JSONObject requestBodyJSON = new JSONObject(unsafe);
+			String lovProv = requestBodyJSON.getString("provider");
+			lovProv = lovProv.replaceAll("&#x27;", "'");
+			System.out.println(lovProv);
+			ILovDetail lovDet = LovDetailFactory.getLovFromXML(lovProv);
+			profAttrToFill = getProfileAttributesToFill(lovDet);
+			if (profAttrToFill.size() != 0) {
+				return profAttrToFill;
+			}
 
 		} catch (Exception exception) {
 
-			logger.error("Error while deleting LOV", exception);
-			throw new SpagoBIServiceException("Error while deleting LOV", exception);
-			// return Response.status(Status.NOT_MODIFIED).build();
+			logger.error("test", exception);
+			throw new SpagoBIServiceException("test", exception);
 
 		}
 
-	}
+		return profAttrToFill;
 
-	// private JSONArray serializeModalitiesValues(List<ModalitiesValue>
-	// modalitiesValues) {
-	//
-	// logger.debug("IN");
-	//
-	// JSONArray modalitiesValuesJSONArray = new JSONArray();
-	//
-	// Assert.assertNotNull(modalitiesValues, "Input object cannot be null");
-	//
-	// try {
-	//
-	// modalitiesValuesJSONArray = (JSONArray)
-	// SerializerFactory.getSerializer("application/json").serialize(modalitiesValues,
-	// null);
-	// logger.debug("OUT: Serializing the list of LOVs - done successfully");
-	//
-	// } catch (SerializationException exception) {
-	//
-	// logger.error("Error while serializing list of LOVs", exception);
-	// throw new SpagoBIServiceException("Error while serializing list of LOVs",
-	// exception);
-	//
-	// }
-	//
-	// return modalitiesValuesJSONArray;
-	//
-	// }
-	//
-	// private JSONObject serializeModalitiesValues(ModalitiesValue
-	// modalitiesValue) {
-	//
-	// logger.debug("IN");
-	//
-	// JSONObject modalitiesValuesJSON = new JSONObject();
-	// Assert.assertNotNull(modalitiesValue, "Input object cannot be null");
-	//
-	// try {
-	// modalitiesValuesJSON = (JSONObject)
-	// SerializerFactory.getSerializer("application/json").serialize(modalitiesValue,
-	// null);
-	// logger.debug("OUT: Serializing one LOV - done successfully");
-	//
-	// } catch (SerializationException exception) {
-	//
-	// logger.error("Error while serializing list one LOV", exception);
-	// throw new SpagoBIServiceException("Error while serializing one LOV",
-	// exception);
-	//
-	// }
-	//
-	// return modalitiesValuesJSON;
-	//
-	// }
+	}
 
 	private ModalitiesValue toModality(JSONObject requestBodyJSON) throws EMFUserError, SerializationException, SourceBeanException {
 
@@ -591,6 +511,25 @@ public class LovResource extends AbstractSpagoBIResource {
 
 	}
 
+	public boolean labelControl(String newLabel) {
+		List<ModalitiesValue> modalitiesValues = null;
+		IModalitiesValueDAO modalitiesValueDAO = null;
+
+		try {
+			modalitiesValueDAO = DAOFactory.getModalitiesValueDAO();
+			modalitiesValues = modalitiesValueDAO.loadAllModalitiesValue();
+			for (ModalitiesValue lov : modalitiesValues) {
+				if (lov.getLabel().equalsIgnoreCase(newLabel)) {
+					return true;
+				}
+			}
+		} catch (EMFUserError e) {
+			logger.error("Error while getting the list of LOVs", e);
+			throw new SpagoBIServiceException("Error while getting the list of LOVs", e);
+		}
+		return false;
+	}
+
 	private ModalitiesValue recoverModalitiesValueDetails(JSONObject requestBodyJSON) throws EMFUserError, SerializationException, SourceBeanException {
 
 		logger.debug("IN");
@@ -651,6 +590,56 @@ public class LovResource extends AbstractSpagoBIResource {
 		logger.debug("OUT: Recovering data of the LOV from JSON object - done successfully");
 
 		return lovToReturn;
+
+	}
+
+	private List getProfileAttributesToFill(ILovDetail lovDet) {
+		List attrsToFill = new ArrayList();
+		try {
+			Collection userAttrNames = getUserProfile().getUserAttributeNames();
+			List attrsRequired = lovDet.getProfileAttributeNames();
+			Iterator attrsReqIter = attrsRequired.iterator();
+			while (attrsReqIter.hasNext()) {
+				String attrName = (String) attrsReqIter.next();
+				if (!userAttrNames.contains(attrName)) {
+					attrsToFill.add(attrName);
+				}
+			}
+		} catch (Exception e) {
+			logger.error("Error while checking the profile " + "attributes required for test", e);
+		}
+		return attrsToFill;
+	}
+
+	private UserProfile insertIntoFakeUser(JSONArray params) throws EMFInternalError, JSONException {
+
+		// create a fake user profile
+		UserProfile currentUserProfile = getUserProfile();
+		UserProfile userProfile = new UserProfile((String) currentUserProfile.getUserId(), currentUserProfile.getOrganization());
+		// copy all the roles, functionalities of the original profile
+		userProfile.setFunctionalities(getUserProfile().getFunctionalities());
+		userProfile.setRoles(getUserProfile().getRolesForUse());
+		userProfile.setDefaultRole(getUserProfile().getDefaultRole());
+
+		// copy attributes and add the missing ones
+		Map attributes = new HashMap();
+		Collection origAttrNames = getUserProfile().getUserAttributeNames();
+		Iterator origAttrNamesIter = origAttrNames.iterator();
+		while (origAttrNamesIter.hasNext()) {
+			String profileAttrName = (String) origAttrNamesIter.next();
+			String profileAttrValue = getUserProfile().getUserAttribute(profileAttrName).toString();
+			attributes.put(profileAttrName, profileAttrValue);
+		}
+		for (int i = 0; i < params.length(); i++) {
+			JSONObject obj = params.getJSONObject(i);
+			String profileAttrName = obj.getString("paramName");
+			String profileAttrValue = obj.getString("paramValue");
+			attributes.put(profileAttrName, profileAttrValue);
+
+		}
+
+		userProfile.setAttributes(attributes);
+		return userProfile;
 
 	}
 
@@ -735,6 +724,55 @@ public class LovResource extends AbstractSpagoBIResource {
 			}
 		}
 		return list;
+	}
+
+	public String convertSpecialChars(String provider) {
+
+		String converted = "";
+		String script = "";
+		String query = "";
+		int startInd = 0;
+		int endId = 0;
+		if (provider.indexOf("<SCRIPT>") != -1) {
+			startInd = provider.indexOf("<SCRIPT>");
+			endId = provider.indexOf("</SCRIPT>");
+			script = provider.substring(startInd + 8, endId);
+			script = script.trim();
+		}
+
+		if (provider.indexOf("<STMT>") != -1) {
+			startInd = provider.indexOf("<STMT>");
+			endId = provider.indexOf("</STMT>");
+			query = provider.substring(startInd + 6, endId);
+			query = query.trim();
+
+		}
+
+		if (!script.isEmpty()) {
+			converted = script;
+		} else {
+			converted = query;
+		}
+
+		if (converted.contains("'")) {
+			converted = converted.replaceAll("'", "&#x27;");
+		}
+		if (converted.contains("<")) {
+			converted = converted.replaceAll("<", "&lt;");
+		}
+		if (converted.contains(">")) {
+			converted = converted.replaceAll(">", "&gt;");
+		}
+
+		if (converted.contains("&")) {
+			converted = converted.replaceAll("&", "&amp;");
+		}
+
+		if (!converted.isEmpty()) {
+			provider = provider.replace(provider.substring(startInd, endId), converted);
+		}
+		return provider;
+
 	}
 
 	private List<Parameter> getDriversByLovId(Integer lovId) {

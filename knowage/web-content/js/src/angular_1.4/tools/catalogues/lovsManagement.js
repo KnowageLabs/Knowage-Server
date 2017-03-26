@@ -63,6 +63,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	$scope.listOfDatasets = [];
 	$scope.listForFixLov = [];
 	$scope.listOfProfileAttributes = [];
+	$scope.listOfEmptyParams = [];
 	$scope.selectedLov = {};
 	$scope.toolbarTitle ="";
 	$scope.infoTitle="";
@@ -481,7 +482,9 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 		$scope.testLovTreeModel = [];
 		$scope.testLovModel = [];
 		$scope.previewLovModel = [];
-		$scope.paramObj = {}
+		$scope.paramsList = [];
+		$scope.paramObj = {};
+		
 		$mdDialog.cancel();
 	}
 	/**
@@ -584,29 +587,15 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 		
 	}
 	
-	
-	var decode = function(item){
-		try {
-			if(item.lovProvider.SCRIPTLOV){
-				item.lovProvider.SCRIPTLOV.SCRIPT = window.atob(item.lovProvider.SCRIPTLOV.SCRIPT);
-			}
-			if(item.lovProvider.QUERY){
-				item.lovProvider.QUERY.STMT = window.atob(item.lovProvider.QUERY.STMT);
-			}			
-		}catch(err) {}
-		
-	};
-	
 	/**
 	 * Function that handles what should be done when user clicks on the
 	 * LOV item on the left side of the page (the one from the catalog).
 	 * @author: danristo (danilo.ristovski@mht.net)
 	 */
 	$scope.itemOnClick = function(item){
-		item.lovProvider = angular.fromJson(item.lovProvider);
 		
-		decode(item);
-
+		console.log(item.lovProvider)
+		item.lovProvider = angular.fromJson(item.lovProvider);
 		$scope.selectedLov=angular.copy(item);
 		$scope.changeLovType($scope.selectedLov.itypeCd);
 		
@@ -807,6 +796,7 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 		$scope.getDatasets = function() {
 			sbiModule_restServices.promiseGet("1.0/datasets","")
 			.then(function(response) {
+				console.log(response);
 				$scope.listOfDatasets = response.data.root;
 				console.log($scope.listOfDatasets);
 			}, function(response) {
@@ -889,7 +879,7 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 		var deleteLovItem = function(item) {
 			
 			sbiModule_restServices
-					.promisePost("2.0/lovs/deleteSmth","", item)
+					.promiseDelete("2.0/lovs/delete",item.id)
 					.then(
 							function(response) {
 								$scope.listOfLovs = [];
@@ -916,12 +906,66 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 			if(state == 'new'){
 				$scope.selectedLov.lovProvider = {};
 				$scope.selectedLov.lovProvider[prop] = {
-						"DESCRIPTION-COLUMN" : "",
-						"INVISIBLE-COLUMNS" : "",
-						"LOVTYPE" : "",
-						"VALUE-COLUMN" : "",
-						"VISIBLE-COLUMNS" : ""
+						
+						"LOVTYPE" : "simple",
 						};
+				
+				switch (prop) {
+				case lovProviderEnum.QUERY:
+					
+					$scope.selectedLov.lovProvider[prop]['VISIBLE-COLUMNS'] = "";
+					$scope.selectedLov.lovProvider[prop]['INVISIBLE-COLUMNS'] = "";
+					
+					$scope.selectedLov.lovProvider[prop]['DESCRIPTION-COLUMN'] = "";
+					$scope.selectedLov.lovProvider[prop]['VALUE-COLUMN'] = "";
+					
+				break;
+				case lovProviderEnum.SCRIPT:
+					
+					$scope.selectedLov.lovProvider[prop]['VISIBLE-COLUMNS'] = "";
+					$scope.selectedLov.lovProvider[prop]['INVISIBLE-COLUMNS'] = "";
+					
+					$scope.selectedLov.lovProvider[prop]['DESCRIPTION-COLUMN'] = "";
+					$scope.selectedLov.lovProvider[prop]['VALUE-COLUMN'] = "";
+					
+					$scope.selectedLov.lovProvider[prop]['TREE-LEVELS-COLUMNS'] = "";
+					
+					
+				break;
+				case lovProviderEnum.FIX_LOV:
+					
+					$scope.selectedLov.lovProvider[prop]['VISIBLE-COLUMNS'] = "DESCRIPTION";
+					$scope.selectedLov.lovProvider[prop]['INVISIBLE-COLUMNS'] = "VALUE";
+					
+					$scope.selectedLov.lovProvider[prop]['DESCRIPTION-COLUMN'] = "DESCRIPTION";
+					$scope.selectedLov.lovProvider[prop]['VALUE-COLUMN'] = "VALUE";
+					
+					$scope.selectedLov.lovProvider[prop]['TREE-LEVELS-COLUMNS'] = "";
+					
+					$scope.selectedLov.lovProvider[prop].ROWS = {};
+					
+				break;
+				case lovProviderEnum.JAVA_CLASS:
+					
+					$scope.selectedLov.lovProvider[prop]['VISIBLE-COLUMNS'] = "VALUE";
+					$scope.selectedLov.lovProvider[prop]['INVISIBLE-COLUMNS'] = "VALUE";
+					
+					$scope.selectedLov.lovProvider[prop]['DESCRIPTION-COLUMN'] = "VALUE";
+					$scope.selectedLov.lovProvider[prop]['VALUE-COLUMN'] = "VALUE";
+					
+					$scope.selectedLov.lovProvider[prop]['TREE-LEVELS-COLUMNS'] = "";
+					
+				break;
+				case lovProviderEnum.DATASET:
+					
+					$scope.selectedLov.lovProvider[prop]['VISIBLE-COLUMNS'] = "";
+					$scope.selectedLov.lovProvider[prop]['INVISIBLE-COLUMNS'] = "";
+					
+					$scope.selectedLov.lovProvider[prop]['DESCRIPTION-COLUMN'] = "null";
+					$scope.selectedLov.lovProvider[prop]['VALUE-COLUMN'] = "null";
+						
+				break;
+				}
 				
 			}
 			
@@ -929,6 +973,8 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 			
 			switch (prop) {
 			case lovProviderEnum.QUERY:
+				
+				
 				$scope.selectedLov.lovProvider[prop].CONNECTION = $scope.selectedQuery.datasource;
 				$scope.selectedLov.lovProvider[prop].STMT = $scope.selectedQuery.query;
 				
@@ -938,9 +984,11 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 				$scope.selectedLov.lovProvider[prop].SCRIPT =  $scope.selectedScriptType.text;
 			break;
 			case lovProviderEnum.FIX_LOV:
-				if($scope.listForFixLov != null && $scope.listForFixLov.length > 0){
 				
+				if($scope.listForFixLov != null && $scope.listForFixLov.length > 1){
 					$scope.selectedLov.lovProvider[prop].ROWS.ROW = $scope.listForFixLov;
+				}else if($scope.listForFixLov != null && $scope.listForFixLov.length == 1){
+					$scope.selectedLov.lovProvider[prop].ROWS.ROW = $scope.listForFixLov[0];
 				}
 			break;
 			case lovProviderEnum.JAVA_CLASS:
@@ -985,22 +1033,32 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 				
 				
 			}else{
-				tempObj['TREE-LEVELS-COLUMNS'] = "";
 				
+				
+				//tempObj['TREE-LEVELS-COLUMNS'] = "";
+				delete tempObj['DESCRIPTION-COLUMN'];
+				delete tempObj['VALUE-COLUMN'];
 				$scope.formatedDescriptionColumns=[];
 				$scope.formatedValueColumns=[];
-				for (var i = 0; i < $scope.testLovModel.length; i++) {
-				$scope.formatedInvisibleValues.push($scope.testLovModel[i].name);
-				  }
-				tempObj['INVISIBLE-COLUMNS'] = $scope.formatedInvisibleValues.join();
+				
 				for (var i = 0; i < $scope.testLovTreeModel.length; i++) {
 					$scope.formatedDescriptionColumns.push($scope.testLovTreeModel[i].description);
 				}
 				tempObj['DESCRIPTION-COLUMNS'] = $scope.formatedDescriptionColumns.join();
+				
 				for (var i = 0; i < $scope.testLovTreeModel.length; i++) {
 					$scope.formatedValueColumns.push($scope.testLovTreeModel[i].value);
 				}
 				tempObj['VALUE-COLUMNS'] = $scope.formatedValueColumns.join();
+				
+				for (var i = 0; i < $scope.testLovModel.length; i++) {
+					
+					if ($scope.formatedValueColumns.indexOf($scope.testLovModel[i].name) === -1) {
+				    	$scope.formatedInvisibleValues.push($scope.testLovModel[i].name);
+				    }
+					
+					  }
+					tempObj['INVISIBLE-COLUMNS'] = $scope.formatedInvisibleValues.join();
 			}
 			
 			
@@ -1032,10 +1090,31 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 			return arr;
 		}
 		
+		$scope.getEmptyParams = function(){
+			
+			var toSend ={};
+			var selectedLovForParams = angular.copy($scope.selectedLov);
+			var x2js = new X2JS(); 
+			var xmlAsStr = x2js.json2xml_str(selectedLovForParams.lovProvider); 
+			selectedLovForParams.lovProvider = xmlAsStr;
+
+			
+			toSend.provider = selectedLovForParams.lovProvider;
+		
+			sbiModule_restServices.promisePost("2.0", "lovs/checkparams",toSend)
+			.then(function(response) {
+				$scope.listOfEmptyParams = response.data;
+			}, function(response) {
+
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, sbiModule_translate.load("sbi.generic.toastr.title.error"));
+				
+			});
+		}
+		
 	
 		$scope.openPreviewDialog = function() {
 			
-			console.log($scope.selectedLov);
+			$scope.getEmptyParams();
 			
 			$scope.paginationObj.paginationStart = 0;
 			$scope.paginationObj.paginationLimit = 20;
@@ -1043,12 +1122,22 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 			if(!$scope.selectedLov.hasOwnProperty('lovProvider')){
 				
 				formatForTest($scope.selectedLov,'new');
+				console.log("new")
 			}else{
 				formatForTest($scope.selectedLov,'edit');
-				console.log("editing")
+				console.log("edit")
 			}
-			$scope.checkForParams($scope.selectedLov);
-			if($scope.paramFlag){
+			
+			
+			if($scope.listOfEmptyParams.length > 0){
+				$scope.paramsList = [];
+				for (var i = 0; i < $scope.listOfEmptyParams.length; i++) {
+					$scope.paramObj = {};
+					$scope.paramObj.paramName = $scope.listOfEmptyParams[i];
+					$scope.paramsList.push($scope.paramObj);
+					$scope.paramObj = {};
+				}
+				
 				$mdDialog
 				.show({
 					scope : $scope,
@@ -1060,9 +1149,14 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 					hasBackdrop : false
 				});
 				
+				
 			}else{
 				$scope.previewLov();
 			}
+			
+			
+			
+			
 		}
 		
 		$scope.previewLov = function(param) {
@@ -1216,7 +1310,6 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 			 $scope.treeListTypeModel = $scope.selectedLov.lovProvider[prop];
 			 if($scope.selectedLov.id != undefined){
 				 console.log("we have existing one")
-				 console.log($scope.treeListTypeModel);
 				 $scope.formatedVisibleValues = $scope.treeListTypeModel['VISIBLE-COLUMNS'].split(",");
 				 $scope.formatedInvisibleValues = $scope.treeListTypeModel['INVISIBLE-COLUMNS'].split(",");
 				 if($scope.treeListTypeModel.LOVTYPE == 'simple'){
@@ -1252,114 +1345,5 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 		 
 	 }
 	
-
-		
-		$scope.checkForParams = function(item) {
-			
-			$scope.paramFlag = false;
-			
-			
-			if ($scope.selectedLov.lovProvider.hasOwnProperty(lovProviderEnum.SCRIPT)) {
-				var script = $scope.selectedLov.lovProvider.SCRIPTLOV.SCRIPT; 
-				if(script.match(/{(.*)}/)){
-					$scope.paramObj.paramName = script.match(/{(.*)}/).pop();
-					var check = false;
-					for (var i = 0; i < $scope.userAttributes.length; i++) {
-						if($scope.paramObj.paramName == $scope.userAttributes[i].Name ){
-							console.log("param " +$scope.paramObj.paramName+ " found in user attributes");
-							check = true;
-							break;
-						}
-					}
-					if(!check){
-						console.log("opening dialog");
-						$scope.paramFlag = true;
-					}
-					
-				}else{
-					console.log("No params in script");
-					$scope.paramFlag = false;
-				}
-				
-			}else if($scope.selectedLov.lovProvider.hasOwnProperty(lovProviderEnum.QUERY)){
-				var query = $scope.selectedLov.lovProvider.QUERY.STMT;
-				if(query.match(/{(.*)}/)){
-					$scope.paramObj.paramName = query.match(/{(.*)}/).pop();
-					var check = false;
-					for (var i = 0; i < $scope.userAttributes.length; i++) {
-						if($scope.paramObj.paramName == $scope.userAttributes[i].Name ){
-							console.log("param " +$scope.paramObj.paramName+ " found in user attributes");
-							check = true;
-							break;
-						}
-					}
-					if(!check){
-						console.log("opening dialog");
-						$scope.paramFlag = true;
-					}
-					
-					
-				}else{
-					console.log("No params in query");
-					$scope.paramFlag = false;
-				}
-				
-			}else if ($scope.selectedLov.lovProvider.hasOwnProperty(lovProviderEnum.FIX_LOV)) {
-				
-				if($scope.selectedLov.lovProvider.FIXLISTLOV.ROWS.ROW && Array === $scope.selectedLov.lovProvider.FIXLISTLOV.ROWS.ROW.constructor){
-					var fixLovArray = [];
-					fixLovArray = $scope.selectedLov.lovProvider.FIXLISTLOV.ROWS.ROW;
-					for (var i = 0; i < fixLovArray.length; i++) {
-						var one = fixLovArray[i].VALUE;
-						if(one.match(/{(.*)}/)){
-							$scope.paramObj = {};
-							$scope.paramObj.paramName = one.match(/{(.*)}/).pop();
-							$scope.paramsList.push($scope.paramObj);
-							
-						}
-					}
-					for (var i = 0; i < $scope.userAttributes.length; i++) {
-						for (var j = 0; j < $scope.paramsList.length; j++) {
-							if($scope.paramsList[j].paramName == $scope.userAttributes[i].Name){
-								$scope.paramsList.splice(j,1);
-								
-							}
-						}
-					}
-					if($scope.paramsList.length > 0){
-						$scope.paramFlag = true;
-						console.log("opening dialog");
-					}else{
-						$scope.paramFlag = false;
-						console.log("No params in query");	
-					}
-				}else{
-					var row = $scope.selectedLov.lovProvider.FIXLISTLOV.ROWS.ROW;
-					if(row.VALUE.match(/{(.*)}/)){
-						$scope.paramObj.paramName = row.VALUE.match(/{(.*)}/).pop();
-						var check = false;
-						for (var i = 0; i < $scope.userAttributes.length; i++) {
-							if($scope.paramObj.paramName == $scope.userAttributes[i].Name ){
-								console.log("param " +$scope.paramObj.paramName+ " found in user attributes");
-								check = true;
-								break;
-							}
-						}
-						if(!check){
-							console.log("opening dialog");
-							$scope.paramFlag = true;
-						}
-						
-						
-					}else{
-						console.log("No params in query");
-						$scope.paramFlag = false;
-					}
-					
-				}
-				
-			}
-				
-		}
 
 };

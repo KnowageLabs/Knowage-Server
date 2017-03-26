@@ -17,15 +17,6 @@
  */
 package it.eng.spagobi.behaviouralmodel.lov.bo;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanException;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
-import it.eng.spagobi.commons.utilities.GeneralUtilities;
-import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.utilities.objects.Couple;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -34,6 +25,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.base.SourceBeanException;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.utilities.objects.Couple;
 
 /**
  * Defines method to manage lov of fixed list type
@@ -100,13 +100,26 @@ public class FixedListDetail extends DependenciesPostProcessingLov implements IL
 		while (iterRows.hasNext()) {
 			FixedListItemDetail lov = new FixedListItemDetail();
 			SourceBean element = (SourceBean) iterRows.next();
-			String value = (String) element.getAttribute("VALUE");
+			String value = null;
+			try {
+				value = (String) element.getAttribute("VALUE");
+			} catch (ClassCastException e) {
+				value = element.getCharacters("VALUE");
+			}
+
 			// ******** only for retro compatibility
 			if (value == null)
 				value = (String) element.getAttribute("NAME");
 			// *************************************
 			lov.setValue(value);
-			String description = (String) element.getAttribute("DESCRIPTION");
+
+			String description = null;
+			try {
+				description = (String) element.getAttribute("DESCRIPTION");
+			} catch (ClassCastException e) {
+				description = element.getCharacters("DESCRIPTION");
+			}
+
 			lov.setDescription(description);
 			lovList.add(lov);
 		}
@@ -147,7 +160,8 @@ public class FixedListDetail extends DependenciesPostProcessingLov implements IL
 		}
 		setInvisibleColumnNames(invisColNames);
 
-		// compatibility control (versions till 3.6 does not have TREE-LEVELS-COLUMN definition)
+		// compatibility control (versions till 3.6 does not have
+		// TREE-LEVELS-COLUMN definition)
 		SourceBean treeLevelsColumnsBean = (SourceBean) source.getAttribute("TREE-LEVELS-COLUMNS");
 		String treeLevelsColumnsString = null;
 		if (treeLevelsColumnsBean != null) {
@@ -200,7 +214,8 @@ public class FixedListDetail extends DependenciesPostProcessingLov implements IL
 	}
 
 	/**
-	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, ExecutionInstance
+	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getLovResult(IEngUserProfile
+	 *      profile, List<ObjParuse> dependencies, ExecutionInstance
 	 *      executionInstance) throws Exception;
 	 */
 	@Override
@@ -286,7 +301,8 @@ public class FixedListDetail extends DependenciesPostProcessingLov implements IL
 	/**
 	 * Checks if the lov requires one or more profile attributes.
 	 *
-	 * @return true if the lov require one or more profile attributes, false otherwise
+	 * @return true if the lov require one or more profile attributes, false
+	 *         otherwise
 	 *
 	 * @throws Exception
 	 *             the exception
@@ -350,8 +366,9 @@ public class FixedListDetail extends DependenciesPostProcessingLov implements IL
 	}
 
 	/**
-	 * Splits an XML string by using some <code>SourceBean</code> object methods in order to obtain the source <code>LovDetail</code> objects whom XML has been
-	 * built.
+	 * Splits an XML string by using some <code>SourceBean</code> object methods
+	 * in order to obtain the source <code>LovDetail</code> objects whom XML has
+	 * been built.
 	 *
 	 * @param dataDefinition
 	 *            The XML input String
@@ -387,7 +404,8 @@ public class FixedListDetail extends DependenciesPostProcessingLov implements IL
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getDescriptionColumnName()
+	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#
+	 * getDescriptionColumnName()
 	 */
 	@Override
 	public String getDescriptionColumnName() {
@@ -397,7 +415,8 @@ public class FixedListDetail extends DependenciesPostProcessingLov implements IL
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setDescriptionColumnName(java.lang.String)
+	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#
+	 * setDescriptionColumnName(java.lang.String)
 	 */
 	@Override
 	public void setDescriptionColumnName(String descriptionColumnName) {
@@ -407,7 +426,9 @@ public class FixedListDetail extends DependenciesPostProcessingLov implements IL
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getInvisibleColumnNames()
+	 * @see
+	 * it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getInvisibleColumnNames
+	 * ()
 	 */
 	@Override
 	public List getInvisibleColumnNames() {
@@ -417,7 +438,9 @@ public class FixedListDetail extends DependenciesPostProcessingLov implements IL
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setInvisibleColumnNames(java.util.List)
+	 * @see
+	 * it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setInvisibleColumnNames
+	 * (java.util.List)
 	 */
 	@Override
 	public void setInvisibleColumnNames(List invisibleColumnNames) {
@@ -427,7 +450,8 @@ public class FixedListDetail extends DependenciesPostProcessingLov implements IL
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getValueColumnName()
+	 * @see
+	 * it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getValueColumnName()
 	 */
 	@Override
 	public String getValueColumnName() {
@@ -437,7 +461,9 @@ public class FixedListDetail extends DependenciesPostProcessingLov implements IL
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setValueColumnName(java.lang.String)
+	 * @see
+	 * it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setValueColumnName(java
+	 * .lang.String)
 	 */
 	@Override
 	public void setValueColumnName(String valueColumnName) {
@@ -447,7 +473,8 @@ public class FixedListDetail extends DependenciesPostProcessingLov implements IL
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getVisibleColumnNames()
+	 * @see
+	 * it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getVisibleColumnNames()
 	 */
 	@Override
 	public List getVisibleColumnNames() {
@@ -457,7 +484,9 @@ public class FixedListDetail extends DependenciesPostProcessingLov implements IL
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setVisibleColumnNames(java.util.List)
+	 * @see
+	 * it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setVisibleColumnNames(
+	 * java.util.List)
 	 */
 	@Override
 	public void setVisibleColumnNames(List visibleColumnNames) {

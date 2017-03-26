@@ -22,21 +22,12 @@
 						</div>
 					</div>    
    </div>
-   <div ng-if = "paramsList.length == 0" style="padding: 5px;">
-  <div layout="row" layout-wrap>
-						<div flex=100>
-							<md-input-container class="md-block">
-							<label>{{paramObj.paramName}}</label>
-							<input ng-model="paramObj.paramValue"> 
-							</md-input-container>
-						</div>
-					</div>    
-   </div>
+
 </md-dialog-content>
 	
 		<md-dialog-actions layout="row" style="margin-top:25px;">
 		
-			<md-button class="md-raised" ng-click="previewLov(paramObj)">
+			<md-button class="md-raised" ng-click="previewLov(paramsList)">
 				{{translate.load("sbi.ds.test");}}
 			</md-button>
 			<md-button class="md-raised" ng-click="closeDialogFromLOV()">
