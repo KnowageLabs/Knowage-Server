@@ -46,11 +46,13 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 				}
 				
 				if (targetDocumentJSON && Array.isArray(targetDocumentJSON)){
-					//makes a sublist of objects if its required from the starter engine				
+					//makes a sublist of objects if its required from the starter engine	
+					var navObjTemp = [];
 					for (var n in navObj){
-						if (!objectIsRequired(targetDocumentJSON, navObj[n].crossName))
-							navObj.splice(n,1); //remove element
-					}										
+						if (objectIsRequired(targetDocumentJSON, navObj[n].crossName))
+							navObjTemp.push(navObj[n]);  //add only the required cross
+					}	
+					navObj = navObjTemp; //update final object
 				}else{
 					if (targetDocument && navObj.length==1 && !objectIsRequired(new Array(targetDocument), navObj[0].crossName)){
 						//show dialog with error for wrong configuration
