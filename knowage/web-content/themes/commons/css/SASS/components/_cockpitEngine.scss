@@ -1136,6 +1136,11 @@
 			md-tab-item:only-of-type {
 				display: none
 			} 
+			&.highlander {
+				md-tab-item {
+					display: none;
+				}
+			}
 		}
 	}
 
