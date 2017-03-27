@@ -31,7 +31,8 @@ angular.module('chartInitializer')
 	
 	this.renderChart = function(chartConf,panel){
 		// Catch the Title (or Empty message), Subtitle, the Canvas (the rendered chart container) and the Main panel from the DOM. (danristo)
-			
+		var panelWidth = angular.copy(panel.offsetParent.clientWidth);
+		var panelHeight = angular.copy(panel.offsetParent.clientHeight);
 		var mainPanelRegion = angular.element(panel);
 		mainPanelRegion.empty();
 		var chartPanelSubtitle = angular.element("<div></div>")[0];
@@ -188,7 +189,7 @@ angular.module('chartInitializer')
 			
 			if (!chartConf.chart.width && !chartConf.chart.widthInPerc) {	
 				
-				ctx.canvas.width = mainPanelRegion[0].offsetWidth-1;
+				ctx.canvas.width = panelWidth-1;
 				//mainPanelRegion.style.width = window.innerWidth-1;	
 				
 //				if (window.myNewChart) { 
