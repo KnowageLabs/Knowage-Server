@@ -629,9 +629,9 @@ public class DatasetManagementAPI {
 
 			List<ProjectionCriteria> projectionCriteria = this.getProjectionCriteria(label, crosstabDefinition);
 			List<FilterCriteria> filterCriteria = new ArrayList<FilterCriteria>(); // empty
-																					// in
-																					// this
-																					// case
+			// in
+			// this
+			// case
 			List<GroupCriteria> groupCriteria = this.getGroupCriteria(label, crosstabDefinition);
 			dataStore = cache.get(dataSet, groupCriteria, filterCriteria, projectionCriteria, 0, 0);
 
@@ -1216,35 +1216,35 @@ public class DatasetManagementAPI {
 			String tableName = cacheItem.getTable();
 			Connection conn = null;
 			Statement stmt = null;
-			for (String column : columns) {
-				try {
-					String query = buildIndexStatement(tableName, column);
-					if (query != null) {
-						conn = cache.getDataSource().getConnection();
-						stmt = conn.createStatement();
-						stmt.executeUpdate(query);
-					} else {
-						logger.debug("Impossible to build the index statement and thus creating the index. Tablename and/or column are null or empty.");
+
+			try {
+				String query = buildIndexStatement(tableName, columns);
+				if (query != null) {
+					conn = cache.getDataSource().getConnection();
+					stmt = conn.createStatement();
+					stmt.executeUpdate(query);
+				} else {
+					logger.debug("Impossible to build the index statement and thus creating the index. Tablename and/or column are null or empty.");
+				}
+			} catch (ClassNotFoundException | NamingException | SQLException e) {
+				logger.debug("Impossible to build index for table [" + tableName + "] and columns [" + columns + "]", e);
+			} finally {
+				if (stmt != null) {
+					try {
+						stmt.close();
+					} catch (SQLException e) {
+						logger.debug(e);
 					}
-				} catch (ClassNotFoundException | NamingException | SQLException e) {
-					logger.debug("Impossible to build index for table [" + tableName + "] and column [" + column + "]", e);
-				} finally {
-					if (stmt != null) {
-						try {
-							stmt.close();
-						} catch (SQLException e) {
-							logger.debug(e);
-						}
-					}
-					if (conn != null) {
-						try {
-							conn.close();
-						} catch (SQLException e) {
-							logger.debug(e);
-						}
+				}
+				if (conn != null) {
+					try {
+						conn.close();
+					} catch (SQLException e) {
+						logger.debug(e);
 					}
 				}
 			}
+
 		} else {
 			if (signature != null && !signature.isEmpty()) {
 				logger.error("Table name could not be found for signature [" + signature + "] and hash [" + Helper.sha256(signature) + "]");
@@ -1256,30 +1256,42 @@ public class DatasetManagementAPI {
 		logger.debug("OUT");
 	}
 
-	private String buildIndexStatement(String tableName, String column) {
-		logger.debug("IN - Table [" + tableName + "], Column [" + column + "]");
+	private String buildIndexStatement(String tableName, Set<String> columns) {
+		logger.debug("IN - Table [" + tableName + "], Column [" + columns + "]");
+
 		String statement = null;
-		if (tableName != null && !tableName.isEmpty() && column != null && !column.isEmpty()) {
-			StringBuilder sb = new StringBuilder();
-			sb.append("CREATE INDEX");
-			sb.append(" ");
-			sb.append(tableName.toUpperCase());
-			sb.append(column.toUpperCase());
-			sb.append(" ");
-			sb.append("ON");
-			sb.append(" ");
-			sb.append(tableName);
-			sb.append("(");
-			sb.append(column);
-			sb.append(")");
-			statement = sb.toString();
+		if (tableName != null && !tableName.isEmpty() && columns != null && !columns.isEmpty()) {
+
+			StringBuilder columnsSTring= new StringBuilder();
+			for (Iterator iterator = columns.iterator(); iterator.hasNext();) {
+				String column = (String) iterator.next();
+				columnsSTring = columnsSTring.append(column);
+				columnsSTring = columnsSTring.append(",");
+			}
+			if(columnsSTring.length()>2){
+				columnsSTring.setLength(columnsSTring.length()-1);
+
+				StringBuilder sb = new StringBuilder();
+				sb.append("CREATE INDEX");
+				sb.append(" ");
+				sb.append("fed");
+				sb.append(columns.hashCode());
+				sb.append(" ");
+				sb.append("ON");
+				sb.append(" ");
+				sb.append(tableName);
+				sb.append("(");
+				sb.append(columnsSTring);
+				sb.append(")");
+				statement = sb.toString();
+			}
 		}
 		return statement;
 	}
 
 	private IDataStore queryPersistedDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<FilterCriteria> havings,
 			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, int offset, int fetchSize, int maxRowCount)
-			throws InstantiationException, IllegalAccessException {
+					throws InstantiationException, IllegalAccessException {
 		IDataSource dataSource = dataSet.getDataSourceForWriting();
 		String tableName = dataSet.getPersistTableName();
 		return queryDataset(new SelectBuilder(), dataSource, tableName, groups, filters, havings, projections, summaryRowProjections, dataSet, offset,
@@ -1288,7 +1300,7 @@ public class DatasetManagementAPI {
 
 	private IDataStore queryFlatDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<FilterCriteria> havings,
 			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, int offset, int fetchSize, int maxRowCount)
-			throws InstantiationException, IllegalAccessException {
+					throws InstantiationException, IllegalAccessException {
 		IDataSource dataSource = dataSet.getDataSource();
 		String tableName = dataSet.getFlatTableName();
 		return queryDataset(new SelectBuilder(), dataSource, tableName, groups, filters, havings, projections, summaryRowProjections, dataSet, offset,
@@ -1297,7 +1309,7 @@ public class DatasetManagementAPI {
 
 	private IDataStore queryJDBCDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<FilterCriteria> havings,
 			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, int offset, int fetchSize, int maxRowCount)
-			throws JSONException, Exception, IllegalAccessException {
+					throws JSONException, Exception, IllegalAccessException {
 		IDataSource dataSource = dataSet.getDataSource();
 		QuerableBehaviour querableBehaviour = (QuerableBehaviour) dataSet.getBehaviour(QuerableBehaviour.class.getName());
 		String tableName = querableBehaviour.getStatement();
@@ -2030,7 +2042,7 @@ public class DatasetManagementAPI {
 
 	@SuppressWarnings("unchecked")
 	public Map<String, TLongHashSet> readDomainValues(IDataSet dataSet, Map<String, String> parametersValues, boolean wait) throws NamingException,
-			WorkException, InterruptedException {
+	WorkException, InterruptedException {
 		logger.debug("IN");
 		Map<String, TLongHashSet> toReturn = new HashMap<String, TLongHashSet>(0);
 		setDataSetParameters(dataSet, parametersValues);
