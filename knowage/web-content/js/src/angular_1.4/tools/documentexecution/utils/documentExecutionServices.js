@@ -388,23 +388,24 @@
 		 * clears a stored parameter
 		 * The input par is parName
 		 */
-		this.clear =  function(parName) {
+		this.clear =  function(parDetail) {
 			try {
+				var thisContext = this;
 				if (sbiModule_config.isStatePersistenceEnabled == true && execProperties.executionInstance.isFromCross == false) {
 					this.store.get(this.PARAMETER_STATE_OBJECT_KEY, function(ok, value) {
 						if (ok) {
 							var storedParameters = angular.fromJson(value);
 							if (storedParameters !== undefined && storedParameters !== null) {
-								var key = this.getParameterStorageKey(parName);
+								var key = thisContext.getParameterStorageKey(parDetail);
 								delete storedParameters[key];
 							}
-							this.store.set(this.PARAMETER_STATE_OBJECT_KEY, angular.toJson(storedParameters));
+							thisContext.store.set(thisContext.PARAMETER_STATE_OBJECT_KEY, angular.toJson(storedParameters));
 						}
 					});
 				}
 			}
 				catch (err) {
-					console.error('Error in clearing session parameter for parameter '+parName);
+					console.error('Error in clearing session parameter for parameter '+parDetail.driverLabel);
 				}		
 		}
 		
@@ -460,7 +461,7 @@
 
 					if (parValue === undefined || parValue === null || parValue === '' || parValue.length === 0) {
 
-						thisContext.clear(parName);
+						thisContext.clear(parDetail);
 
 					} else {
 						var parameterStateObject = {};
