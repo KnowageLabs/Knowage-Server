@@ -494,11 +494,12 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 		}
 		var saveUseMode= function(){  // this function is called when clicking on save button
 			$scope.formatUseMode();
+			$scope.updateMainDriverWithCurrentUseMode($scope.selectedParUse);
 			if($scope.selectedParUse.hasOwnProperty("useID")){ // if item already exists do update @PUT	
 				sbiModule_restServices.promisePut("2.0/analyticalDrivers/modes",$scope.selectedParUse.useID , $scope.selectedParUse)
 				.then(function(response) {
 					$scope.useModeList=[];
-					$timeout(function(){								
+					$timeout(function(){
 						$scope.getUseModesById($scope.selectedDriver);
 					}, 1000);
 					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
@@ -516,7 +517,8 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 				sbiModule_restServices.promisePost("2.0/analyticalDrivers/modes","",angular.toJson($scope.selectedParUse))
 				.then(function(response) {
 					$scope.useModeList=[];
-					$timeout(function(){								
+					$timeout(function(){
+						
 						$scope.getUseModesById($scope.selectedDriver);
 					}, 1000);
 					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
@@ -541,9 +543,32 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 			console.log("SAVING USEMODE");
 			console.log($scope.selectedParUse);
 			saveUseMode();
+			saveDriver();
 			$scope.closeDialogFromAD();
 		}
 		
+	}
+	
+	$scope.updateMainDriverWithCurrentUseMode = function(useMode) {
+		switch (useMode.valueSelection) {
+		case "lov":
+			$scope.selectedDriver.valueSelection = useMode.valueSelection;
+			$scope.selectedDriver.selectedLayer = null;
+			$scope.selectedDriver.selectedLayerProp = null;
+			break;
+		case "map_in":
+			$scope.selectedDriver.valueSelection = useMode.valueSelection;
+			$scope.selectedDriver.selectedLayer = useMode.selectedLayer;
+			$scope.selectedDriver.selectedLayerProp = useMode.selectedLayerProp;
+			break;
+		case "man_in":
+			$scope.selectedDriver.valueSelection = useMode.valueSelection;
+			$scope.selectedDriver.selectedLayer = null;
+			$scope.selectedDriver.selectedLayerProp = null;
+			break;	
+		default:
+			break;
+		}
 	}
 	
 	$scope.deleteDrivers = function(item){

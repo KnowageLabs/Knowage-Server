@@ -594,7 +594,6 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 	 */
 	$scope.itemOnClick = function(item){
 		
-		console.log(item.lovProvider)
 		item.lovProvider = angular.fromJson(item.lovProvider);
 		$scope.selectedLov=angular.copy(item);
 		$scope.changeLovType($scope.selectedLov.itypeCd);
