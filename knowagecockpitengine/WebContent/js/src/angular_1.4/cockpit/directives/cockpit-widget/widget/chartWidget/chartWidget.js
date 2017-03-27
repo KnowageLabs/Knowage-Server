@@ -463,12 +463,12 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 	function createCrossParameters(event){
        if( $scope.ngModel.content.chartTemplate.CHART.type==="HEATMAP"){
     	   var parameters = {
-    				"SERIE_NAME": event.cross.point.series.name,
-    				"SERIE_VALUE":event.cross.point.y,
-    				"CATEGORY_VALUE":event.cross.point.name,
-    				"CATEGORY_NAME": event.cross.point.category,
-    				"GROUPING_NAME": event.cross.point.group.name,
-    				"GROUPING_VALUE": event.cross.point.group.value
+    				"SERIE_NAME": event.selectParam_cross.point.series.name,
+    				"SERIE_VALUE":event.selectParam_cross.point.y,
+    				"CATEGORY_VALUE":event.selectParam_cross.point.name,
+    				"CATEGORY_NAME": event.selectParam_cross.point.category,
+    				"GROUPING_NAME": event.selectParam_cross.point.group.name,
+    				"GROUPING_VALUE": event.selectParam_cross.point.group.value
     			};
     			
     			return parameters;

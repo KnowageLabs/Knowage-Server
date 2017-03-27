@@ -141,7 +141,7 @@ function getCrossParamsForHeatmap(point,chartConf){
 	
 }
 
-function getSelectionParammsForHeatmap(point){
+function getSelectionParammsForHeatmap(point,chartConf){
 	var params={
     		point:{
     			name: null, // category name
@@ -854,7 +854,8 @@ function prepareChartConfForHeatmap(chartConf,handleCockpitSelection) {
 //            	console.log(event.point);
             	if(chartConf.chart.isCockpit==true){
             		if(chartConf.chart.outcomingEventsEnabled){
-            		var selectParams=getSelectionParammsForHeatmap(event.point);
+            		var selectParams=getSelectionParammsForHeatmap(event.point,chartConf);
+            		selectParams.selectParam_cross=getCrossParamsForHeatmap(event.point,chartConf);
             		handleCockpitSelection(selectParams);
             		}
             	}else{ 
