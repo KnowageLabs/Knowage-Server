@@ -596,6 +596,19 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 		
 	}
 	
+	var decode = function(item){
+		try {
+			if(item.lovProvider.SCRIPTLOV){
+				item.lovProvider.SCRIPTLOV.SCRIPT = window.atob(item.lovProvider.SCRIPTLOV.SCRIPT);
+			}
+			if(item.lovProvider.QUERY){
+				item.lovProvider.QUERY.STMT = window.atob(item.lovProvider.QUERY.STMT);
+			}			
+		}catch(err) {}
+		
+	};
+	
+	
 	/**
 	 * Function that handles what should be done when user clicks on the
 	 * LOV item on the left side of the page (the one from the catalog).
@@ -604,6 +617,8 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 	$scope.itemOnClick = function(item){
 		
 		item.lovProvider = angular.fromJson(item.lovProvider);
+		decode(item);
+		
 		$scope.selectedLov=angular.copy(item);
 		$scope.changeLovType($scope.selectedLov.itypeCd);
 		
@@ -1026,7 +1041,9 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 			
 			var tempObj = $scope.selectedLov.lovProvider[prop];
 			
-			
+			if(!$scope.treeListTypeModel){
+				$scope.treeListTypeModel={"LOVTYPE" : 'simple'};
+			}
 			if($scope.treeListTypeModel.LOVTYPE == 'simple'){
 				
 				tempObj['DESCRIPTION-COLUMN'] = $scope.treeListTypeModel['DESCRIPTION-COLUMN'];
@@ -1322,7 +1339,7 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 				 console.log("we have existing one")
 				 $scope.formatedVisibleValues = $scope.treeListTypeModel['VISIBLE-COLUMNS'].split(",");
 				 $scope.formatedInvisibleValues = $scope.treeListTypeModel['INVISIBLE-COLUMNS'].split(",");
-				 if($scope.treeListTypeModel.LOVTYPE == 'simple'){
+				 if(!$scope.treeListTypeModel.LOVTYPE || $scope.treeListTypeModel.LOVTYPE == 'simple'){
 					 $scope.formatedValues = $scope.treeListTypeModel['VALUE-COLUMN'].split(",");
 					 $scope.formatedDescriptionValues = $scope.treeListTypeModel['DESCRIPTION-COLUMN'].split(",");
 				 }else{

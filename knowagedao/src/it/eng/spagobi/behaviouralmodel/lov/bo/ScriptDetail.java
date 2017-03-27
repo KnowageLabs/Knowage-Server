@@ -17,18 +17,6 @@
  */
 package it.eng.spagobi.behaviouralmodel.lov.bo;
 
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.log4j.Logger;
-
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.dbaccess.sql.DataRow;
@@ -42,6 +30,18 @@ import it.eng.spagobi.commons.utilities.SpagoBITracer;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.utilities.objects.Couple;
 import it.eng.spagobi.utilities.scripting.SpagoBIScriptManager;
+
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
 
 /**
  * Defines the <code>ScriptDetail</code> objects. This object is used to store
@@ -327,7 +327,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 			converted = converted.replaceAll("&#x27;", "'");
 		}
 		if (converted.contains("&quot;")) {
-			converted = converted.replaceAll("&quot;", "\"" + "\"");
+			converted = converted.replaceAll("&quot;", "\"" );
 		}
 
 		if (converted.contains("&lt;")) {
