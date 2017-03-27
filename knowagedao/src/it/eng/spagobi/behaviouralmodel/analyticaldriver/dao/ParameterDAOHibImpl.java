@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,22 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.behaviouralmodel.analyticaldriver.dao;
+
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParameters;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuse;
+import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
+import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.metadata.SbiDomains;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,17 +42,6 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
-
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParameters;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuse;
-import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
-import it.eng.spagobi.commons.bo.Role;
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.metadata.SbiDomains;
 
 /**
  * Defines the Hibernate implementations for all DAO methods, for a parameter
@@ -139,8 +139,7 @@ public class ParameterDAOHibImpl extends AbstractHibernateDAO implements IParame
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 *
-	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO#loadForExecutionByParameterIDandRoleName(java.lang.Integer,
-	 *      java.lang.String)
+	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO#loadForExecutionByParameterIDandRoleName(java.lang.Integer, java.lang.String)
 	 */
 	@Override
 	public Parameter loadForExecutionByParameterIDandRoleName(Integer parameterID, String roleName) throws EMFUserError {
@@ -191,11 +190,12 @@ public class ParameterDAOHibImpl extends AbstractHibernateDAO implements IParame
 			// modality
 			// force the man_in modality to the parameter
 			Integer man_in = hibParuse.getManualInput();
+			Boolean isMapDriver = (hibParuse.getSelectedLayer() == null || hibParuse.getSelectedLayer().equals("")) ? false : true;
 			// Integer sbiLovId = sbiLov.getLovId();
-			if (man_in.intValue() == 1) {
+			if (isMapDriver || man_in.intValue() == 1) {
 				ModalitiesValue manInModVal = new ModalitiesValue();
 				manInModVal.setITypeCd("MAN_IN");
-				manInModVal.setITypeId("37");
+				manInModVal.setITypeId("37"); // why is setted a FIX id?? Isn't possible get it by other dao method ??
 				parameter.setModalityValue(manInModVal);
 			} else {
 				ModalitiesValue modVal = DAOFactory.getModalitiesValueDAO().loadModalitiesValueByID(hibParuse.getSbiLov().getLovId());
@@ -282,8 +282,9 @@ public class ParameterDAOHibImpl extends AbstractHibernateDAO implements IParame
 		}
 		return realResult;
 	}
-	
-	public List<Parameter> loadParametersByLovId(Integer lovId) throws EMFUserError{
+
+	@Override
+	public List<Parameter> loadParametersByLovId(Integer lovId) throws EMFUserError {
 		Session aSession = null;
 		Transaction tx = null;
 		List realResult = new ArrayList();
@@ -291,11 +292,8 @@ public class ParameterDAOHibImpl extends AbstractHibernateDAO implements IParame
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			Query hibQuery = aSession.createQuery(("select distinct params from   SbiParameters as params "
-												+ "inner join params.sbiParuses as paruses "
-												+ "inner join paruses.sbiLov as lov "
-												+ "where  lov.lovId = " + lovId
-					));
+			Query hibQuery = aSession.createQuery(("select distinct params from   SbiParameters as params " + "inner join params.sbiParuses as paruses "
+					+ "inner join paruses.sbiLov as lov " + "where  lov.lovId = " + lovId));
 			List hibList = hibQuery.list();
 
 			Iterator it = hibList.iterator();
@@ -320,8 +318,9 @@ public class ParameterDAOHibImpl extends AbstractHibernateDAO implements IParame
 		}
 		return realResult;
 	}
-	
-	public List<Parameter> loadParametersByBIObjectLabel(String label) throws EMFUserError{
+
+	@Override
+	public List<Parameter> loadParametersByBIObjectLabel(String label) throws EMFUserError {
 		Session aSession = null;
 		Transaction tx = null;
 		List realResult = new ArrayList();
@@ -329,11 +328,8 @@ public class ParameterDAOHibImpl extends AbstractHibernateDAO implements IParame
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			Query hibQuery = aSession.createQuery("select distinct params from   SbiParameters as params "
-												+ "inner join params.sbiObjPars as objpars "
-												+ "inner join objpars.sbiObject as obj "
-												+ "where  obj.label = '" + label+"'"
-												);
+			Query hibQuery = aSession.createQuery("select distinct params from   SbiParameters as params " + "inner join params.sbiObjPars as objpars "
+					+ "inner join objpars.sbiObject as obj " + "where  obj.label = '" + label + "'");
 			List hibList = hibQuery.list();
 
 			Iterator it = hibList.iterator();
@@ -548,8 +544,7 @@ public class ParameterDAOHibImpl extends AbstractHibernateDAO implements IParame
 	}
 
 	/**
-	 * From the hibernate parametes at input, gives the corrispondent
-	 * <code>Parameter</code> object.
+	 * From the hibernate parametes at input, gives the corrispondent <code>Parameter</code> object.
 	 *
 	 * @param hibParameters
 	 *            The hybernate parameter
