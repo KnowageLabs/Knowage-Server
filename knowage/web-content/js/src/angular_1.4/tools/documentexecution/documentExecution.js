@@ -39,7 +39,9 @@
 			$scope.navigatorVisibility = $scope.navigatorVisibility?false:true;
 		}
 		$scope.goBackHome = function(){
-			$window.location.href = "http://161.27.39.83:8080/knowage/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ANGULAR_ACTION&SBI_ENVIRONMENT=DOCBROWSER&OBJECT_LABEL=HOME_PAGE&IS_SOURCE_DOCUMENT=true";
+			$crossNavigationScope.crossNavigationHelper.crossNavigationSteps.stepControl.resetBreadCrumb();
+			//$window.location.href = "http://localhost:8080/knowage/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ANGULAR_ACTION&SBI_ENVIRONMENT=DOCBROWSER&OBJECT_LABEL=PADRE_CROSS&OBJECT_NAME=Home%20page&IS_SOURCE_DOCUMENT=true";
+			$window.location.href = "http://161.27.39.83:8080/knowage/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ANGULAR_ACTION&SBI_ENVIRONMENT=DOCBROWSER&OBJECT_LABEL=HOME_PAGE&OBJECT_NAME=Home%20page&IS_SOURCE_DOCUMENT=true";
 		}
 		
 		$scope.execProperties = execProperties;
