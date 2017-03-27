@@ -17,32 +17,6 @@
  */
 package it.eng.spagobi.api.v2;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import org.apache.log4j.LogMF;
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spago.base.SourceBeanException;
@@ -82,6 +56,34 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import org.apache.log4j.LogMF;
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import sun.misc.BASE64Encoder;
+
 /**
  * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
  */
@@ -111,8 +113,8 @@ public class LovResource extends AbstractSpagoBIResource {
 			modalitiesValues = modalitiesValueDAO.loadAllModalitiesValue();
 			for (ModalitiesValue lov : modalitiesValues) {
 				String providerString = lov.getLovProvider();
-				//String converted = convertSpecialChars(providerString);
-				String result = Xml.xml2json(providerString);
+				String converted = convertSpecialChars(providerString);
+				String result = Xml.xml2json(converted);
 				lov.setLovProvider(result);
 			}
 			logger.debug("Getting the list of all LOVs - done successfully");
@@ -726,7 +728,7 @@ public class LovResource extends AbstractSpagoBIResource {
 	}
 
 	public String convertSpecialChars(String provider) {
-
+/*
 		String converted = "";
 		String script = "";
 		String query = "";
@@ -735,7 +737,7 @@ public class LovResource extends AbstractSpagoBIResource {
 		if (provider.indexOf("<SCRIPT>") != -1) {
 			startInd = provider.indexOf("<SCRIPT>");
 			endId = provider.indexOf("</SCRIPT>");
-			startInd = startInd +8; 
+			startInd = startInd +8;
 			script = provider.substring(startInd, endId);
 			script = script.trim();
 		}
@@ -771,8 +773,42 @@ public class LovResource extends AbstractSpagoBIResource {
 
 		if (!converted.isEmpty()) {
 			provider = provider.replace(provider.substring(startInd, endId), converted);
-			
+
+		}*/
+
+
+		if(provider.contains("<SCRIPT>")){
+		//	SourceBean sb = SourceBean.fromXMLString(lovProvider).getContainedAttributes()[0];
+			//sb.getContainedAttributes()
+			provider = provider.replace("<SCRIPT><![CDATA[", "<SCRIPT>");
+			provider = provider.replace("]]></SCRIPT>", "</SCRIPT>");
+			int pos1 = provider.indexOf("<SCRIPT>");
+			int pos2 = provider.indexOf("</SCRIPT>");
+			String content = provider.substring(pos1+8,pos2);
+
+			BASE64Encoder bASE64Encoder = new BASE64Encoder();
+			String encoded = bASE64Encoder.encode(content.getBytes());
+			provider  = provider.substring(0,pos1+8)+encoded+provider.substring(pos2);
+
 		}
+
+		if(provider.contains("<STMT>")){
+		//	SourceBean sb = SourceBean.fromXMLString(provider).getContainedAttributes()[0];
+			//sb.getContainedAttributes()
+			provider = provider.replace("<STMT><![CDATA[", "<STMT>");
+			provider = provider.replace("]]></STMT>", "</STMT>");
+			int pos1 = provider.indexOf("<STMT>");
+			int pos2 = provider.indexOf("</STMT>");
+			String content = provider.substring(pos1+6,pos2);
+
+			BASE64Encoder bASE64Encoder = new BASE64Encoder();
+			String encoded = bASE64Encoder.encode(content.getBytes());
+			provider  = provider.substring(0,pos1+6)+encoded+provider.substring(pos2);
+
+		}
+
+
+
 		return provider;
 
 	}
