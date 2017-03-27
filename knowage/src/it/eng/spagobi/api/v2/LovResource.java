@@ -429,7 +429,6 @@ public class LovResource extends AbstractSpagoBIResource {
 			JSONObject requestBodyJSON = new JSONObject(unsafe);
 			String lovProv = requestBodyJSON.getString("provider");
 			lovProv = lovProv.replaceAll("&#x27;", "'");
-			System.out.println(lovProv);
 			ILovDetail lovDet = LovDetailFactory.getLovFromXML(lovProv);
 			profAttrToFill = getProfileAttributesToFill(lovDet);
 			if (profAttrToFill.size() != 0) {

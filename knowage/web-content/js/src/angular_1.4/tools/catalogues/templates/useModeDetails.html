@@ -246,10 +246,12 @@
 				    <div layout="row" layout-wrap flex>
 					<div flex="25" ng-repeat="role in rolesList">
 					
-						<md-checkbox 
+						<md-checkbox
+						
 						ng-required = "associatedRoles.length== 0"
 						ng-checked="getCheckboxes(role , associatedRoles)"
-						ng-click="checkCheckboxes(role , associatedRoles)"
+						ng-click="disableUsedRoles(role) || checkCheckboxes(role , associatedRoles)"
+						ng-disabled = "disableUsedRoles(role)" 
 						>
 						{{ role.name }}
 						</md-checkbox>

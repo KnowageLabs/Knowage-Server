@@ -1090,7 +1090,7 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 			return arr;
 		}
 		
-		$scope.getEmptyParams = function(){
+		$scope.checkForParams = function(){
 			
 			var toSend ={};
 			var selectedLovForParams = angular.copy($scope.selectedLov);
@@ -1100,10 +1100,38 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 
 			
 			toSend.provider = selectedLovForParams.lovProvider;
-		
+			
 			sbiModule_restServices.promisePost("2.0", "lovs/checkparams",toSend)
 			.then(function(response) {
+				$scope.listOfEmptyParams = [];
 				$scope.listOfEmptyParams = response.data;
+				
+				if($scope.listOfEmptyParams.length > 0){
+					$scope.paramsList = [];
+					for (var i = 0; i < $scope.listOfEmptyParams.length; i++) {
+						$scope.paramObj = {};
+						$scope.paramObj.paramName = $scope.listOfEmptyParams[i];
+						$scope.paramsList.push($scope.paramObj);
+						$scope.paramObj = {};
+					}
+					
+					$mdDialog
+					.show({
+						scope : $scope,
+						preserveScope : true,
+						parent : angular.element(document.body),
+						controllerAs : 'LOVSctrl',
+						templateUrl : sbiModule_config.contextName +'/js/src/angular_1.4/tools/catalogues/templates/lovParams.html',
+						clickOutsideToClose : false,
+						hasBackdrop : false
+					});
+					
+					
+				}else{
+					$scope.previewLov();
+				}
+				
+				
 			}, function(response) {
 
 				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, sbiModule_translate.load("sbi.generic.toastr.title.error"));
@@ -1111,10 +1139,10 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 			});
 		}
 		
-	
+		
 		$scope.openPreviewDialog = function() {
 			
-			$scope.getEmptyParams();
+			
 			
 			$scope.paginationObj.paginationStart = 0;
 			$scope.paginationObj.paginationLimit = 20;
@@ -1128,33 +1156,7 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 				console.log("edit")
 			}
 			
-			
-			if($scope.listOfEmptyParams.length > 0){
-				$scope.paramsList = [];
-				for (var i = 0; i < $scope.listOfEmptyParams.length; i++) {
-					$scope.paramObj = {};
-					$scope.paramObj.paramName = $scope.listOfEmptyParams[i];
-					$scope.paramsList.push($scope.paramObj);
-					$scope.paramObj = {};
-				}
-				
-				$mdDialog
-				.show({
-					scope : $scope,
-					preserveScope : true,
-					parent : angular.element(document.body),
-					controllerAs : 'LOVSctrl',
-					templateUrl : sbiModule_config.contextName +'/js/src/angular_1.4/tools/catalogues/templates/lovParams.html',
-					clickOutsideToClose : false,
-					hasBackdrop : false
-				});
-				
-				
-			}else{
-				$scope.previewLov();
-			}
-			
-			
+			$scope.checkForParams();
 			
 			
 		}

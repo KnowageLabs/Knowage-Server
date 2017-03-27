@@ -263,6 +263,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 	    }
 		
 	$scope.loadDrivers=function(item){  // this function is called when item from custom table is clicked
+		console.log(item);
 		$scope.showadMode = true;
 		$scope.getUseModesById(item);
 		 if($scope.dirtyForm){
@@ -481,7 +482,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 					//$scope.selectedDriver={};
 					$scope.selectedTab = 0;
 					//$scope.showme=false;
-					$scope.showadMode = true;
+					//$scope.showadMode = true;
 					//$scope.dirtyForm=false;	
 					
 				}, function(response) {
@@ -492,7 +493,6 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 			}
 		}
 		var saveUseMode= function(){  // this function is called when clicking on save button
-			console.log("testiing")
 			$scope.formatUseMode();
 			if($scope.selectedParUse.hasOwnProperty("useID")){ // if item already exists do update @PUT	
 				sbiModule_restServices.promisePut("2.0/analyticalDrivers/modes",$scope.selectedParUse.useID , $scope.selectedParUse)
@@ -603,12 +603,14 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 		$scope.associatedRoles = item.associatedRoles;
 		$scope.associatedChecks = item.associatedChecks;
 		$scope.selectedParUse.defaultrg= null;
+		$scope.searchLovText = "";
 		$scope.selectedParUse=angular.copy(item);
 		$scope.setParUse();
 		 $mdDialog
 			.show({
 				scope : $scope,
 				preserveScope : true,
+				autoWrap: false,
 				parent : angular.element(document.body),
 				controllerAs : 'AnalyticalDriversController',
 				templateUrl : sbiModule_config.contextName +'/js/src/angular_1.4/tools/catalogues/templates/useModeDetails.html',
@@ -684,18 +686,21 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 		return -1;
 	}
 	// TODO if needed
-	$scope.disableSelectedRoles = function() {
+	$scope.disableUsedRoles = function(currentRole) {
 		var roles = null;
-		for (var i = 0; i < $scope.rolesList.length; i++) {
-			for (var j = 0; j < $scope.useModeList.length; j++) {
-				roles = $scope.useModeList[j].associatedRoles;
-				for (var k = 0; k < roles.length; k++) {
-					if(roles[k].name == $scope.rolesList[i].name){
-						$scope.rolesList.splice(i,1);
-					}
-				}
+		var usedRoles = [];
+		for (var i = 0; i < $scope.useModeList.length; i++) {
+			roles = $scope.useModeList[i].associatedRoles;
+			for (var k = 0; k < roles.length; k++) {
+				usedRoles.push(roles[k]);
 			}
 		}
+		for (var i = 0; i < usedRoles.length; i++) {
+			if (currentRole.name == usedRoles[i].name) {
+				return true;
+			}
+		}
+		
 	}
 	//this function checks all roles
 	$scope.checkAllRoles = function() {
@@ -766,9 +771,9 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 			}, 1000);
 			sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.deleted"), 'Success!');
 			$scope.selectedParUse = {};
-			$scope.selectedTab = 0;
-			$scope.showme=false;
-			$scope.showadMode = false;
+			//$scope.selectedTab = 0;
+			//$scope.showme=false;
+			//$scope.showadMode = false;
 			$scope.dirtyForm=false;
 
 		}, function(response) {
