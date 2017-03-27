@@ -212,7 +212,7 @@ if(executionRoleNames.size() > 0) {
                     </md-button>
                     <span>&nbsp;&nbsp;</span>
                     <h2 class="md-flex" ng-hide="::crossNavigationScope.isNavigationInProgress()">
-                        {{::translate.load("sbi.generic.document")}}: {{executionInstance.OBJECT_NAME}}
+                        {{executionInstance.OBJECT_NAME}}
                     </h2>
                     <cross-navigation cross-navigation-helper="crossNavigationScope.crossNavigationHelper" flex>
                         <cross-navigation-bread-crumb id="clonedCrossBreadcrumb"> </cross-navigation-bread-crumb>
