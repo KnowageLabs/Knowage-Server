@@ -363,6 +363,10 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	 */
 	
 	$scope.changeLovType = function(item) {
+		
+		var propName = item;
+		var prop = lovProviderEnum[propName];
+		
 		switch (item) {
 		case $scope.lovItemEnum.SCRIPT:
 			$scope.toolbarTitle = sbiModule_translate.load("sbi.behavioural.lov.details.scriptWizard");
@@ -403,7 +407,13 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 				$scope.selectedLov.itypeId = ""+$scope.listOfInputTypes[i].VALUE_ID;
 			}
 		}
-	 //formatForTest($scope.selectedLov,'new');
+	 	
+	 if($scope.selectedLov.lovProvider && !$scope.selectedLov.lovProvider.hasOwnProperty(prop)){
+		 
+		
+			 $scope.selectedLov.lovProvider = {};
+			 $scope.selectedLov.lovProvider[prop] = {};
+		 }
 	}
 	
 	
@@ -496,7 +506,6 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	$scope.saveLov = function(){  // this function is called when clicking on save button
 		
 		formatForSave();
-		console.log($scope.selectedLov);
 		
 if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update PUT
 			

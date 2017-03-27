@@ -111,7 +111,7 @@ public class LovResource extends AbstractSpagoBIResource {
 			modalitiesValues = modalitiesValueDAO.loadAllModalitiesValue();
 			for (ModalitiesValue lov : modalitiesValues) {
 				String providerString = lov.getLovProvider();
-				// String converted = convertSpecialChars(providerString);
+				//String converted = convertSpecialChars(providerString);
 				String result = Xml.xml2json(providerString);
 				lov.setLovProvider(result);
 			}
@@ -735,14 +735,16 @@ public class LovResource extends AbstractSpagoBIResource {
 		if (provider.indexOf("<SCRIPT>") != -1) {
 			startInd = provider.indexOf("<SCRIPT>");
 			endId = provider.indexOf("</SCRIPT>");
-			script = provider.substring(startInd + 8, endId);
+			startInd = startInd +8; 
+			script = provider.substring(startInd, endId);
 			script = script.trim();
 		}
 
 		if (provider.indexOf("<STMT>") != -1) {
 			startInd = provider.indexOf("<STMT>");
 			endId = provider.indexOf("</STMT>");
-			query = provider.substring(startInd + 6, endId);
+			startInd = startInd +6;
+			query = provider.substring(startInd, endId);
 			query = query.trim();
 
 		}
@@ -769,6 +771,7 @@ public class LovResource extends AbstractSpagoBIResource {
 
 		if (!converted.isEmpty()) {
 			provider = provider.replace(provider.substring(startInd, endId), converted);
+			
 		}
 		return provider;
 
