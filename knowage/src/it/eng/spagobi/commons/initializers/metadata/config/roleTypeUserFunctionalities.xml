@@ -395,12 +395,6 @@
 	
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="DocumentScheduling" roleType="ADMIN" />
 	
-	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="TemporalDimension" roleType="USER" />
-	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="TemporalDimension" roleType="ADMIN" />
-	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="TemporalDimension" roleType="DEV_ROLE" />
-	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="TemporalDimension" roleType="TEST_ROLE" />
-	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="TemporalDimension" roleType="MODEL_ADMIN" />
-	
 	<!--
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="FunctionsCatalogUsage" roleType="USER" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="FunctionsCatalogUsage" roleType="ADMIN" />
@@ -417,12 +411,6 @@
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="DomainWrite" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="DomainWrite" roleType="DEV_ROLE" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="DomainWrite" roleType="MODEL_ADMIN" />
-	
-	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="SpatialDimension" roleType="USER" />
-	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="SpatialDimension" roleType="ADMIN" />
-	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="SpatialDimension" roleType="DEV_ROLE" />
-	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="SpatialDimension" roleType="TEST_ROLE" />
-	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="SpatialDimension" roleType="MODEL_ADMIN" />
 	
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="GisWebDesigner" roleType="USER" />
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="GisWebDesigner" roleType="ADMIN" />

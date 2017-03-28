@@ -143,7 +143,6 @@
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ChartWidget" description="ChartWidget" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="StaticWidget" description="StaticWidget" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="AnalyticalWidget" description="AnalyticalWidget" />
-	<USER_FUNCTIONALITY productType="KnowageSI" name="TemporalDimension" description="TemporalDimension" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="DomainWrite" description="DomainWrite" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="Calendar" description="Calendar" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="Timespan" description="Timespan" />	
@@ -321,7 +320,6 @@
 	<USER_FUNCTIONALITY productType="KnowageLI" name="ReadEnginesManagement" description="ReadEnginesManagement" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="SelfServiceDatasetManagement" description="SelfServiceDatasetManagement" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="SelfServiceMetaModelManagement" description="SelfServiceMetaModelManagement" />
-	<USER_FUNCTIONALITY productType="KnowageLI" name="SpatialDimension" description="SpatialDimension" />	
 	<USER_FUNCTIONALITY productType="KnowageLI" name="SyncronizeRolesManagement" description="SyncronizeRolesManagement" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="TemplateManagement" description="TemplateManagement" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="Timespan" description="Timespan" />
