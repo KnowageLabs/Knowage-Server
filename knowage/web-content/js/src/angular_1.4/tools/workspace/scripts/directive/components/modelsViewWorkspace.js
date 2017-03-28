@@ -66,7 +66,7 @@ function modelsController($scope, sbiModule_restServices, sbiModule_translate, $
 	}
 		
 	$scope.getFederatedDatasets = function() {
-		sbiModule_restServices.promiseGet("1.0/federated", "")
+		sbiModule_restServices.promiseGet("1.0/datasets/federated", "")
 		.then(function(response) {
 			var allDatasets = response.data.root;
 			for (var i = 0; i < allDatasets.length; i++) {
