@@ -1333,7 +1333,7 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 		 if($scope.selectedLov != null){
 			 var propName = $scope.selectedLov.itypeCd;
 			 var prop = lovProviderEnum[propName];
-			 if($scope.selectedLov.lovProvider[prop].LOVTYPE == ""){
+			 if($scope.selectedLov.lovProvider[prop].LOVTYPE == "" || $scope.selectedLov.lovProvider[prop].LOVTYPE == undefined){
 					$scope.selectedLov.lovProvider[prop].LOVTYPE = "simple";
 				}	 
 			 $scope.treeListTypeModel = {};
