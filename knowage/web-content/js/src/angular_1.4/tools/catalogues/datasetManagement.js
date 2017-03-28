@@ -849,11 +849,12 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     	$scope.customAttributes = [];
     }
     
+    
     $scope.datasetLike = function (searchValue, itemsPerPage,currentPageNumber) {
     	console.log(searchValue+""+itemsPerPage);
     	var start = 0;
     	if(currentPageNumber>1){
-			start = (currentPageNumber - 1) * itemsPerPage + 1;
+			start = (currentPageNumber - 1) * itemsPerPage ;
 		}
 		$scope.loadDatasetList(start, itemsPerPage, searchValue);
     };
@@ -864,7 +865,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			$scope.numOfDs = response.data;
 			var start = 0;
 			if(currentPageNumber>1){
-				start = (currentPageNumber - 1) * itemsPerPage + 1;
+				start = (currentPageNumber - 1) * itemsPerPage;
 			}
 			$scope.loadDatasetList(start, itemsPerPage, null);
 		}, function(response) {
