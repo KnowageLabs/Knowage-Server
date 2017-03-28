@@ -457,7 +457,9 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 		}else{
 			//for d3 charts
 			for (column in event){
-				$scope.doSelection(column,event[column]);
+				if(column!="selectParam_cross"){
+					$scope.doSelection(column,event[column]);
+				}
 			}
 		}
 	}
