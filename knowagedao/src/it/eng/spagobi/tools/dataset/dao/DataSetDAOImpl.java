@@ -241,7 +241,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				results.add(iDataSet);
 			}
 		}
-		
+
 		List<IDataSet> shared = loadDatasetsSharedWithUser(user, false);
 		//results.addAll(shared);
 		for (IDataSet iDataSet : shared) {
@@ -249,7 +249,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				results.add(iDataSet);
 			}
 		}
-		
+
 		List<IDataSet> enterprise = loadEnterpriseDataSets(user);
 		//results.addAll(enterprise);
 		for (IDataSet iDataSet : enterprise) {
@@ -257,7 +257,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				results.add(iDataSet);
 			}
 		}
-		
+
 		return results;
 	}
 
@@ -364,7 +364,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				logger.debug("We'll take in consideration categories");
 				if (categoryList.size() > 0) {
 					logger.debug("User has one or more categories");
-					if (owner != null) {
+					if (owner != null && includeOwned) {
 						logger.debug("The owner can see all it's datasets");
 						// the owner of the dataset can see dataste even if category is null
 						// statement.append(" and (h.category.valueCd is null or ");
@@ -403,7 +403,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			}
 			if (type != null)
 				query.setString(paramIndex++, type);
-			if (categoryList != null && categoryList.size() > 0 && owner == null) {
+			if (categoryList != null && categoryList.size() > 0 && (owner == null || !includeOwned)) {
 				Iterator<Domain> it = categoryList.iterator();
 				while (it.hasNext()) {
 					Domain type2 = it.next();
