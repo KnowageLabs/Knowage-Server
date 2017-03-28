@@ -441,13 +441,19 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 		if(Object.prototype.toString.call(category) === Object.prototype.toString.call([])){
 			var chartType = $scope.ngModel.content.chartTemplate.CHART.type;
 			if(chartType === 'HEATMAP'){
-				columnName = category[1].name;	
+				columnName = event.point.category;
+				columnValue = event.point.name;
+				$scope.doSelection(columnName,columnValue);
+				columnName = event.point.group.name;
+				columnValue = event.point.group.value;
+				$scope.doSelection(columnName,columnValue);
 			}else{
 				columnName = category[0].name;
+				$scope.doSelection(columnName,columnValue);
 			}
 		}
 		
-		$scope.doSelection(columnName,columnValue);
+		
 		}else{
 			//for d3 charts
 			for (column in event){
@@ -463,12 +469,12 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 	function createCrossParameters(event){
        if( $scope.ngModel.content.chartTemplate.CHART.type==="HEATMAP"){
     	   var parameters = {
-    				"SERIE_NAME": event.selectParam_cross.point.series.name,
-    				"SERIE_VALUE":event.selectParam_cross.point.y,
-    				"CATEGORY_VALUE":event.selectParam_cross.point.name,
-    				"CATEGORY_NAME": event.selectParam_cross.point.category,
-    				"GROUPING_NAME": event.selectParam_cross.point.group.name,
-    				"GROUPING_VALUE": event.selectParam_cross.point.group.value
+    				"SERIE_NAME": event.point.series.name,
+    				"SERIE_VALUE":event.point.y,
+    				"CATEGORY_VALUE":event.point.name,
+    				"CATEGORY_NAME": event.point.category,
+    				"GROUPING_NAME": event.point.group.name,
+    				"GROUPING_VALUE": event.point.group.value
     			};
     			
     			return parameters;
