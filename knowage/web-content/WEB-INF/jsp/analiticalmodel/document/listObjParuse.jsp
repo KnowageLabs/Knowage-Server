@@ -755,63 +755,63 @@ function getParNameFromParId(parId){
 }
 
 function getFilterOpNameFromCode(filterOpCode) {
-	if(filterOpCode=='<%=SpagoBIConstants.START_FILTER%>') {
-      return '<spagobi:message key = "SBIListLookPage.startWith" />';
-    }
-    if(filterOpCode=='<%=SpagoBIConstants.END_FILTER%>') {
-       return '<spagobi:message key = "SBIListLookPage.endWith" />';
-    }
-    if(filterOpCode=='<%=SpagoBIConstants.CONTAIN_FILTER%>') {
-       return '<spagobi:message key = "SBIListLookPage.contains" />';
-    }
-    if(filterOpCode=='<%=SpagoBIConstants.EQUAL_FILTER%>') {
-       return '<spagobi:message key = "SBIListLookPage.isEquals" />';
-    }
-    if(filterOpCode=='<%=SpagoBIConstants.LESS_FILTER%>') {
-       return '<spagobi:message key = "SBIListLookPage.isLessThan" />';
-    }
-    if(filterOpCode=='<%=SpagoBIConstants.LESS_BEGIN_FILTER%>') {
-        return '<spagobi:message key = "SBIListLookPage.isLessThanBegin" />';
-     }
-    if(filterOpCode=='<%=SpagoBIConstants.LESS_END_FILTER%>') {
-        return '<spagobi:message key = "SBIListLookPage.isLessThanEnd" />';
-     }
-    if(filterOpCode=='<%=SpagoBIConstants.LESS_OR_EQUAL_FILTER%>') {
-       return '<spagobi:message key = "SBIListLookPage.isLessOrEqualThan" />';
-    }
-    if(filterOpCode=='<%=SpagoBIConstants.LESS_OR_EQUAL_BEGIN_FILTER%>') {
-        return '<spagobi:message key = "SBIListLookPage.isLessOrEqualThanBegin" />';
-     }
-    if(filterOpCode=='<%=SpagoBIConstants.LESS_OR_EQUAL_END_FILTER%>') {
-        return '<spagobi:message key = "SBIListLookPage.isLessOrEqualThanEnd" />';
-     }
-    if(filterOpCode=='<%=SpagoBIConstants.GREATER_FILTER%>') {
-       return '<spagobi:message key = "SBIListLookPage.isGreaterThan" />';
-    }
-    if(filterOpCode=='<%=SpagoBIConstants.GREATER_BEGIN_FILTER%>') {
-        return '<spagobi:message key = "SBIListLookPage.isGreaterThanBegin" />';
-     }
-    if(filterOpCode=='<%=SpagoBIConstants.GREATER_END_FILTER%>') {
-        return '<spagobi:message key = "SBIListLookPage.isGreaterThanEnd" />';
-     }
-    if(filterOpCode=='<%=SpagoBIConstants.GREATER_OR_EQUAL_FILTER%>') {
-       return '<spagobi:message key = "SBIListLookPage.isGreaterOrEqualThan" />';
-    }
-    if(filterOpCode=='<%=SpagoBIConstants.GREATER_OR_EQUAL_BEGIN_FILTER%>') {
-        return '<spagobi:message key = "SBIListLookPage.isGreaterOrEqualThanBegin" />';
-     }
-    if(filterOpCode=='<%=SpagoBIConstants.GREATER_OR_EQUAL_END_FILTER%>') {
-        return '<spagobi:message key = "SBIListLookPage.isGreaterOrEqualThanEnd" />';
-     }
-    if(filterOpCode=='<%=SpagoBIConstants.NOT_CONTAIN_FILTER%>') {
-        return '<spagobi:message key = "SBIListLookPage.notcontains" />';
-     }
-    if(filterOpCode=='<%=SpagoBIConstants.IN_RANGE_FILTER%>') {
-        return '<spagobi:message key = "SBIListLookPage.inRange" />';
-     }
-    if(filterOpCode=='<%=SpagoBIConstants.NOT_IN_RANGE_FILTER%>') {
-        return '<spagobi:message key = "SBIListLookPage.notInrange" />';
-     }
+		if(filterOpCode=='<%=SpagoBIConstants.START_FILTER%>') {
+	      return "<spagobi:message key = 'SBIListLookPage.startWith' />";
+	    }
+	    if(filterOpCode=='<%=SpagoBIConstants.END_FILTER%>') {
+	       return "<spagobi:message key = 'SBIListLookPage.endWith' />";
+	    }
+	    if(filterOpCode=='<%=SpagoBIConstants.CONTAIN_FILTER%>') {
+	       return "<spagobi:message key = 'SBIListLookPage.contains' />";
+	    }
+	    if(filterOpCode=='<%=SpagoBIConstants.EQUAL_FILTER%>') {
+	       return "<spagobi:message key = 'SBIListLookPage.isEquals' />";
+	    }
+	    if(filterOpCode=='<%=SpagoBIConstants.LESS_FILTER%>') {
+	       return "<spagobi:message key = 'SBIListLookPage.isLessThan' />";
+	    }
+	    if(filterOpCode=='<%=SpagoBIConstants.LESS_BEGIN_FILTER%>') {
+	        return "<spagobi:message key = 'SBIListLookPage.isLessThanBegin' />";
+	     }
+	    if(filterOpCode=='<%=SpagoBIConstants.LESS_END_FILTER%>') {
+	        return "<spagobi:message key = 'SBIListLookPage.isLessThanEnd' />";
+	     }
+	    if(filterOpCode=='<%=SpagoBIConstants.LESS_OR_EQUAL_FILTER%>') {
+	       return "<spagobi:message key = 'SBIListLookPage.isLessOrEqualThan' />";
+	    }
+	    if(filterOpCode=='<%=SpagoBIConstants.LESS_OR_EQUAL_BEGIN_FILTER%>') {
+	        return "<spagobi:message key = 'SBIListLookPage.isLessOrEqualThanBegin' />";
+	     }
+	    if(filterOpCode=='<%=SpagoBIConstants.LESS_OR_EQUAL_END_FILTER%>') {
+	        return "<spagobi:message key = 'SBIListLookPage.isLessOrEqualThanEnd' />";
+	     }
+	    if(filterOpCode=='<%=SpagoBIConstants.GREATER_FILTER%>') {
+	       return "<spagobi:message key = 'SBIListLookPage.isGreaterThan' />";
+	    }
+	    if(filterOpCode=='<%=SpagoBIConstants.GREATER_BEGIN_FILTER%>') {
+	        return "<spagobi:message key = 'SBIListLookPage.isGreaterThanBegin' />";
+	     }
+	    if(filterOpCode=='<%=SpagoBIConstants.GREATER_END_FILTER%>') {
+	        return "<spagobi:message key = 'SBIListLookPage.isGreaterThanEnd' />";
+	     }
+	    if(filterOpCode=='<%=SpagoBIConstants.GREATER_OR_EQUAL_FILTER%>') {
+	       return "<spagobi:message key = 'SBIListLookPage.isGreaterOrEqualThan' />";
+	    }
+	    if(filterOpCode=='<%=SpagoBIConstants.GREATER_OR_EQUAL_BEGIN_FILTER%>') {
+	        return "<spagobi:message key = 'SBIListLookPage.isGreaterOrEqualThanBegin' />";
+	     }
+	    if(filterOpCode=='<%=SpagoBIConstants.GREATER_OR_EQUAL_END_FILTER%>') {
+	        return "<spagobi:message key = 'SBIListLookPage.isGreaterOrEqualThanEnd' />";
+	     }
+	    if(filterOpCode=='<%=SpagoBIConstants.NOT_CONTAIN_FILTER%>') {
+	        return "<spagobi:message key = 'SBIListLookPage.notcontains' />";
+	     }
+	    if(filterOpCode=='<%=SpagoBIConstants.IN_RANGE_FILTER%>') {
+	        return "<spagobi:message key = 'SBIListLookPage.inRange' />";
+	     }
+	    if(filterOpCode=='<%=SpagoBIConstants.NOT_IN_RANGE_FILTER%>') {
+	        return "<spagobi:message key = 'SBIListLookPage.notInrange' />";
+	     }
 }
     
 //************************************ End correlation checks ************************************
