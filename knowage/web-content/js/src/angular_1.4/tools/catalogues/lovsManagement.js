@@ -410,9 +410,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	 	
 	 if($scope.selectedLov.lovProvider && !$scope.selectedLov.lovProvider.hasOwnProperty(prop)){
 		 
-		
-			 $scope.selectedLov.lovProvider = {};
-			 $scope.selectedLov.lovProvider[prop] = {};
+		 formatForTest($scope.selectedLov,'new');
 		 }
 	}
 	
