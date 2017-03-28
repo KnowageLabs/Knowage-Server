@@ -69,13 +69,16 @@
 				libIniName="{name}Initializer.jspf"
 	 -->
 	<chartConfiguration>
+		
+		<!-- 
 				<chart type="line" 		name="highcharts414"	vmName="column_chart.vm"	enabledInCockpit="true"/> 
 		<chart type="pie"		name="highcharts414" 	vmName="pie_chart.vm"	enabledInCockpit="true"/>	
 		
 		<chart type="bar" 		name="highcharts414" 	vmName="column_chart.vm" 	enabledInCockpit="true"/>
+			-->
 		
 
-		<!-- 
+		
 			Not needed, not handled by the Designer.
 			@commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		<chart type="column"	name="highcharts414" 	vmName="column_chart.vm"	/> 
@@ -88,8 +91,7 @@
 		
 		
 
-		-->
-		
+	
 		<chart type="radar"		name="highcharts414" 	vmName="column_chart.vm" 	enabledInCockpit="true"/>
 		<chart type="gauge" 	name="highcharts414" 	vmName="gauge_chart.vm"		enabledInCockpit="true"/> 	
 		<chart type="scatter"	name="highcharts414" 	vmName="scatter_chart.vm"	enabledInCockpit="true"/>
