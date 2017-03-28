@@ -1043,8 +1043,8 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 			
 			var tempObj = $scope.selectedLov.lovProvider[prop];
 			
-			
-			if($scope.treeListTypeModel.LOVTYPE == 'simple'){
+
+			if(!$scope.treeListTypeModel || $scope.treeListTypeModel.LOVTYPE == 'simple'){
 				
 				tempObj['DESCRIPTION-COLUMN'] = $scope.treeListTypeModel['DESCRIPTION-COLUMN'];
 				tempObj['VALUE-COLUMN'] = $scope.treeListTypeModel['VALUE-COLUMN'];
@@ -1358,7 +1358,7 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 				 console.log("we have new one")
 				 $scope.treeListTypeModel.LOVTYPE = 'simple';
 			 }
-			 if($scope.treeListTypeModel.LOVTYPE != 'simple' && $scope.treeListTypeModel.LOVTYPE != ''){
+			 if($scope.treeListTypeModel && ($scope.treeListTypeModel.LOVTYPE != 'simple' && $scope.treeListTypeModel.LOVTYPE != '')){
 				 $scope.testLovTreeModel = [];
 				 //$scope.formatedTreeValues = $scope.treeListTypeModel['TREE-LEVELS-COLUMNS'].split(",");
 				for (var i = 0; i < $scope.formatedValues.length; i++) {
