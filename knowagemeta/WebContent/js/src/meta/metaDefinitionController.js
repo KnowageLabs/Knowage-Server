@@ -119,11 +119,11 @@ function checkModelControllerFunction($scope, sbiModule_translate,sbiModule_rest
 
 }
 
-app.controller('metaDefinitionController', [ '$scope', 'sbiModule_translate','sbiModule_restServices','sbiModule_config','dialogScope','metaModelServices','$interval','$angularListDetail','$mdDialog','$window', metaDefinitionControllerFunction ]);
+app.controller('metaDefinitionController', [ '$scope', 'sbiModule_translate','sbiModule_restServices','sbiModule_config','dialogScope','metaModelServices','$interval','$angularListDetail','$mdDialog','$window','sbiModule_config','sbiModule_user', metaDefinitionControllerFunction ]);
 
 
 
-function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_restServices,sbiModule_config,dialogScope,metaModelServices,$interval,$angularListDetail,$mdDialog,$window) {
+function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_restServices,sbiModule_config,dialogScope,metaModelServices,$interval,$angularListDetail,$mdDialog,$window,sbiModule_user) {
 	$scope.translate = sbiModule_translate;
 	$scope.physicalModelTreeInterceptor = {};
 	$scope.businessModelTreeInterceptor = {};
@@ -282,19 +282,22 @@ angular.module('metaManager').filter('filterByCategory', function() {
 	};
 });
 
-angular.module('metaManager').filter('filterByProductType', function(sbiModule_config) {
+angular.module('metaManager').filter('filterByProductType', function(sbiModule_config,sbiModule_user) {
 	return function(items, prop) {
 
+		var showSpatialDimension = sbiModule_user.functionalities.indexOf("SpatialDimension")>-1;
+		var showTemporalDimension = sbiModule_user.functionalities.indexOf("TemporalDimension")>-1;
+
 		if(angular.equals(prop.value.propertyType.name,"Type")){
-			if(sbiModule_config.productTypes.indexOf("KnowageLI")==-1){
+			if(sbiModule_config.productTypes.indexOf("KnowageLI")==-1 && !showSpatialDimension){
 				//remove spatial dimension
-				var sdInd=items.indexOf("dimension");
+				var sdInd=items.indexOf("geographic dimension");
 				if(sdInd!=-1){
 					items.splice(sdInd,1);
 				}
 			}
 
-			if(sbiModule_config.productTypes.indexOf("KnowageSI")==-1){
+			if(sbiModule_config.productTypes.indexOf("KnowageSI")==-1 && !showTemporalDimension){
 				//remove temporal dimension
 				var tdInd=items.indexOf("temporal dimension");
 				if(tdInd!=-1){

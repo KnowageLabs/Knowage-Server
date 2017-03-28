@@ -131,11 +131,11 @@ sbiM.factory('sbiModule_user',function(){
 <%-- 	<% } %> --%>
 	
 // 	//set functionalities
-// 	user.functionalities =[];
-<%-- 	<% if (userProfile != null && userProfile.getFunctionalities() != null && !userProfile.getFunctionalities().isEmpty()) { --%>
-<%-- 		for(Object fun :  userProfile.getFunctionalities()){ %> --%>
-<%-- 		user.functionalities.push('<%=StringEscapeUtils.escapeJavaScript(fun.toString())%>'); --%>
-<%-- 		<% } }%> --%>
+ 	user.functionalities =[];
+ 	<% if (userProfile != null && userProfile.getFunctionalities() != null && !userProfile.getFunctionalities().isEmpty()) { 
+ 		for(Object fun :  userProfile.getFunctionalities()){ %> 
+ 		user.functionalities.push('<%=StringEscapeUtils.escapeJavaScript(fun.toString())%>'); 
+ 		<% } }%> 
 		
 	return user;
 });
