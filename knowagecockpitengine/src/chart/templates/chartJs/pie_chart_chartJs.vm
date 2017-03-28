@@ -63,7 +63,7 @@
  	#end
 #end
 
-#set($colorPalette = $chart.COLORPALETTE.COLOR)
+#set($colorPalette = $chart.COLORPALETTE.COLOR) 
 #set($colorPaletteLength = $chart.COLORPALETTE.COLOR.size())
 
 {
@@ -213,8 +213,16 @@
 	#else
        		value: '$serieValue',
 	#end
+	
+	#if($relatedSerieColor)
 	        color: '$ChartEngineUtil.hex2Rgb($relatedSerieColor)',
 	        highlight: '$ChartEngineUtil.hex2Rgb($relatedSerieColor, "75")',
+	#end
+	#if(!$relatedSerieColor)
+	#set($relatedSerieColor = "#7cb5ec")
+	        color: '$ChartEngineUtil.hex2Rgb($relatedSerieColor)',
+	        highlight: '$ChartEngineUtil.hex2Rgb($relatedSerieColor, "75")',
+	#end
 	        label: "$categoryName",
 	        ##label: "$relatedSerie.name",
 	        customProperty: 42

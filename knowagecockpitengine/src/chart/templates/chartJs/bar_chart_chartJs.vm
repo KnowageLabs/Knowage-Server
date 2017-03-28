@@ -169,6 +169,7 @@
 	    datasets: [
 	    
 		#set($seriesIndex = 0)
+		
     	#foreach($valueKey in $seriesMap.keySet())
     		#set($relatedSerie = $seriesMap.get($valueKey))
     		
@@ -181,9 +182,19 @@
 				#set($colorIndex = $seriesIndex % $colorPaletteLength)
 				#set($colorPaletteItem = $colorPalette.get($colorIndex))
 				#set($relatedSerieColor = $colorPaletteItem.value)
+		
 		    #end
-
-			#if($relatedSerieColor)
+		    
+			#if($relatedSerieColor!="")
+				strokeColor: '$ChartEngineUtil.hex2Rgb($relatedSerieColor, "60")',
+				pointColor: '$ChartEngineUtil.hex2Rgb($relatedSerieColor, "60")',
+    			fillColor: '$ChartEngineUtil.hex2Rgb($relatedSerieColor, "60")',
+    			pointStrokeColor: '$ChartEngineUtil.hex2Rgb($relatedSerieColor, "60")',
+    			highlightFill: "$ChartEngineUtil.hex2Rgb($relatedSerieColor)",
+            	highlightStroke: "$ChartEngineUtil.hex2Rgb($relatedSerieColor)",
+    		#end
+    		#if($relatedSerieColor=="")
+    		#set($relatedSerieColor = "#7cb5ec")
 				strokeColor: '$ChartEngineUtil.hex2Rgb($relatedSerieColor, "60")',
 				pointColor: '$ChartEngineUtil.hex2Rgb($relatedSerieColor, "60")',
     			fillColor: '$ChartEngineUtil.hex2Rgb($relatedSerieColor, "60")',
