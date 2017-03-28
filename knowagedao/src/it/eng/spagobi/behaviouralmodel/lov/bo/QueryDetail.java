@@ -18,27 +18,6 @@
 package it.eng.spagobi.behaviouralmodel.lov.bo;
 
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_TYPE;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
-import javax.naming.NamingException;
-
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.validator.GenericValidator;
-import org.apache.log4j.Logger;
-
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.dbaccess.Utils;
@@ -69,6 +48,26 @@ import it.eng.spagobi.utilities.DateRangeUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.objects.Couple;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+import javax.naming.NamingException;
+
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.validator.GenericValidator;
+import org.apache.log4j.Logger;
 
 //import it.eng.spagobi.commons.utilities.DataSourceUtilities;
 
@@ -1075,26 +1074,8 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 
 	public String convertSpecialChars(String query) {
 
-		String converted = query;
-		if (converted.contains("&#x27;")) {
-			converted = converted.replaceAll("&#x27;", "'");
-		}
-		if (converted.contains("&quot;")) {
-			converted = converted.replaceAll("&quot;", "\"" + "\"");
-		}
-
-		if (converted.contains("&lt;")) {
-			converted = converted.replaceAll("&lt;", "<");
-		}
-		if (converted.contains("&gt;")) {
-			converted = converted.replaceAll("&gt;", ">");
-		}
-
-		if (converted.contains("&amp;")) {
-			converted = converted.replaceAll("&amp;", "&");
-		}
-
-		return converted;
+		query = org.apache.commons.lang3.StringEscapeUtils.unescapeHtml4(query);
+		return query;
 
 	}
 

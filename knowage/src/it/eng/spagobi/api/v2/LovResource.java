@@ -76,6 +76,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -785,7 +786,7 @@ public class LovResource extends AbstractSpagoBIResource {
 			int pos1 = provider.indexOf("<SCRIPT>");
 			int pos2 = provider.indexOf("</SCRIPT>");
 			String content = provider.substring(pos1+8,pos2);
-
+			content = StringEscapeUtils.unescapeHtml4(content);
 			BASE64Encoder bASE64Encoder = new BASE64Encoder();
 			String encoded = bASE64Encoder.encode(content.getBytes());
 			provider  = provider.substring(0,pos1+8)+encoded+provider.substring(pos2);
@@ -800,7 +801,7 @@ public class LovResource extends AbstractSpagoBIResource {
 			int pos1 = provider.indexOf("<STMT>");
 			int pos2 = provider.indexOf("</STMT>");
 			String content = provider.substring(pos1+6,pos2);
-
+			content = StringEscapeUtils.unescapeHtml4(content);
 			BASE64Encoder bASE64Encoder = new BASE64Encoder();
 			String encoded = bASE64Encoder.encode(content.getBytes());
 			provider  = provider.substring(0,pos1+6)+encoded+provider.substring(pos2);

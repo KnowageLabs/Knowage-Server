@@ -41,6 +41,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import oadd.org.apache.commons.lang3.StringEscapeUtils;
+
 import org.apache.log4j.Logger;
 
 /**
@@ -322,26 +324,9 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 	public String convertSpecialChars(String script) {
 
-		String converted = script;
-		if (converted.contains("&#x27;")) {
-			converted = converted.replaceAll("&#x27;", "'");
-		}
-		if (converted.contains("&quot;")) {
-			converted = converted.replaceAll("&quot;", "\"" );
-		}
 
-		if (converted.contains("&lt;")) {
-			converted = converted.replaceAll("&lt;", "<");
-		}
-		if (converted.contains("&gt;")) {
-			converted = converted.replaceAll("&gt;", ">");
-		}
-
-		if (converted.contains("&amp;")) {
-			converted = converted.replaceAll("&amp;", "&");
-		}
-
-		return converted;
+		script = StringEscapeUtils.unescapeHtml4(script);
+		return script;
 
 	}
 
