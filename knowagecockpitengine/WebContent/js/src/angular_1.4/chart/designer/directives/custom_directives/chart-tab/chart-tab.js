@@ -32,6 +32,7 @@ angular.module('chart-tab', [])
 function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModule_restServices,sbiModule_messaging,ChartDesignerData,StructureTabService,chartEngineSettings){
 	$scope.translate = sbiModule_translate;
 	$scope.datasetLabel = datasetLabel;
+	$scope.chartLibNamesConfig = chartLibNamesConfig;
 	$scope.selectedChartType;
 	$scope.minMaxCategories = {};
 	$scope.minMaxSeries = {};
@@ -87,8 +88,14 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 			$scope.minMaxSeries.min = 1;
 			break;
 		case 'pie':
-			$scope.minMaxCategories.min = 1;
-			$scope.minMaxSeries.min = 1;
+			if($scope.chartLibNamesConfig.pie=="chartJs") {
+				$scope.minMaxCategories.min = 1;
+				$scope.minMaxSeries.min = 1;
+				$scope.minMaxSeries.max = 1; 
+			} else {
+				$scope.minMaxCategories.min = 1;
+				$scope.minMaxSeries.min = 1; 
+			}
 			break;
 		case 'chord':
 			$scope.minMaxCategories.min = 2;

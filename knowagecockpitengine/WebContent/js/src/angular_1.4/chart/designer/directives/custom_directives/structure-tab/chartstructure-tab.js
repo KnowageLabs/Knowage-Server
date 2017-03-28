@@ -37,7 +37,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 	$scope.translate = sbiModule_translate;
 	$scope.structureDetailsShown = false;
 	$scope.structurePreviewFlex = 50;
-	
+	$scope.chartLibNamesConfig = chartLibNamesConfig;
 	$scope.categoriesContainer = [];
 	$scope.categories = [];
 	$scope.seriesContainers = [];
