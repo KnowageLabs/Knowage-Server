@@ -933,6 +933,8 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 						"LOVTYPE" : "simple",
 						};
 				
+				
+				
 				switch (prop) {
 				case lovProviderEnum.QUERY:
 					
@@ -1041,9 +1043,7 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 			
 			var tempObj = $scope.selectedLov.lovProvider[prop];
 			
-			if(!$scope.treeListTypeModel){
-				$scope.treeListTypeModel={"LOVTYPE" : 'simple'};
-			}
+			
 			if($scope.treeListTypeModel.LOVTYPE == 'simple'){
 				
 				tempObj['DESCRIPTION-COLUMN'] = $scope.treeListTypeModel['DESCRIPTION-COLUMN'];
@@ -1330,16 +1330,22 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 	}
 		
 	 $scope.buildTestTable = function() {
+		 
+		 
 		 if($scope.selectedLov != null){
-			 $scope.treeListTypeModel = {};
 			 var propName = $scope.selectedLov.itypeCd;
 			 var prop = lovProviderEnum[propName];
+			 if($scope.selectedLov.lovProvider[prop].LOVTYPE == ""){
+					$scope.selectedLov.lovProvider[prop].LOVTYPE = "simple";
+				}	 
+			 $scope.treeListTypeModel = {};
+			 
 			 $scope.treeListTypeModel = $scope.selectedLov.lovProvider[prop];
 			 if($scope.selectedLov.id != undefined){
 				 console.log("we have existing one")
 				 $scope.formatedVisibleValues = $scope.treeListTypeModel['VISIBLE-COLUMNS'].split(",");
 				 $scope.formatedInvisibleValues = $scope.treeListTypeModel['INVISIBLE-COLUMNS'].split(",");
-				 if(!$scope.treeListTypeModel.LOVTYPE || $scope.treeListTypeModel.LOVTYPE == 'simple'){
+				 if($scope.treeListTypeModel.LOVTYPE == 'simple'){
 					 $scope.formatedValues = $scope.treeListTypeModel['VALUE-COLUMN'].split(",");
 					 $scope.formatedDescriptionValues = $scope.treeListTypeModel['DESCRIPTION-COLUMN'].split(",");
 				 }else{
