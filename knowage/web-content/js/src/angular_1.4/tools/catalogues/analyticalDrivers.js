@@ -711,21 +711,24 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 		return -1;
 	}
 	// TODO if needed
-	$scope.disableUsedRoles = function(currentRole) {
-		var roles = null;
-		var usedRoles = [];
+	$scope.disableUsedRoles = function(currentRole,useModeRoles) {
+		var allRoles = [];
+		 var currentRoles = useModeRoles
+		$scope.usedRoles = [];
 		for (var i = 0; i < $scope.useModeList.length; i++) {
-			roles = $scope.useModeList[i].associatedRoles;
-			for (var k = 0; k < roles.length; k++) {
-				usedRoles.push(roles[k]);
+			allRoles = $scope.useModeList[i].associatedRoles;
+			if(allRoles == currentRoles){
+				continue;
+			}
+			for (var k = 0; k < allRoles.length; k++) {
+				$scope.usedRoles.push(allRoles[k]);
 			}
 		}
-		for (var i = 0; i < usedRoles.length; i++) {
-			if (currentRole.name == usedRoles[i].name) {
+		for (var i = 0; i < $scope.usedRoles.length; i++) {
+			if (currentRole.name == $scope.usedRoles[i].name) {
 				return true;
 			}
-		}
-		
+		}		
 	}
 	//this function checks all roles
 	$scope.checkAllRoles = function() {

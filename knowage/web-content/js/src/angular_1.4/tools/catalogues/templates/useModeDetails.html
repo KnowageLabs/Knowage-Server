@@ -250,8 +250,8 @@
 						
 						ng-required = "associatedRoles.length== 0"
 						ng-checked="getCheckboxes(role , associatedRoles)"
-						ng-click="disableUsedRoles(role) || checkCheckboxes(role , associatedRoles)"
-						ng-disabled = "disableUsedRoles(role)" 
+						ng-click="disableUsedRoles(role, associatedRoles) || checkCheckboxes(role , associatedRoles)"
+						ng-disabled = "disableUsedRoles(role, associatedRoles)" 
 						>
 						{{ role.name }}
 						</md-checkbox>
