@@ -1343,7 +1343,7 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 				 console.log("we have existing one")
 				 $scope.formatedVisibleValues = $scope.treeListTypeModel['VISIBLE-COLUMNS'].split(",");
 				 $scope.formatedInvisibleValues = $scope.treeListTypeModel['INVISIBLE-COLUMNS'].split(",");
-				 if($scope.treeListTypeModel.LOVTYPE == 'simple'){
+				 if(!$scope.treeListTypeModel.LOVTYPE  || $scope.treeListTypeModel.LOVTYPE == 'simple'){
 					 $scope.formatedValues = $scope.treeListTypeModel['VALUE-COLUMN'].split(",");
 					 $scope.formatedDescriptionValues = $scope.treeListTypeModel['DESCRIPTION-COLUMN'].split(",");
 				 }else{
