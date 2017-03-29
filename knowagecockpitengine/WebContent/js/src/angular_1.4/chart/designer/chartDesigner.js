@@ -63,9 +63,11 @@ function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config, sbiM
 		}
 		else {
 			var temp = {"CHART":$scope.chartTemplate}
-			if(temp.CHART.VALUES.CATEGORY.name=="" || temp.CHART.VALUES.CATEGORY.name==null || temp.CHART.VALUES.CATEGORY.name==undefined){
-				temp.CHART.VALUES.CATEGORY.name=temp.CHART.VALUES.CATEGORY.column
-			}
+			if(temp.CHART.VALUES.CATEGORY){
+				if(temp.CHART.VALUES.CATEGORY.name=="" || temp.CHART.VALUES.CATEGORY.name==null || temp.CHART.VALUES.CATEGORY.name==undefined){
+					temp.CHART.VALUES.CATEGORY.name=temp.CHART.VALUES.CATEGORY.column
+				}
+			}		
 			sbiModule_restServices.promisePost('../api/1.0/chart/template/save','', 'jsonTemplate='+angular.toJson(temp)+'&docLabel='+docLabel+'&userId='+userId, {
 				transformRequest:angular.identity,
 				headers:{'Content-Type': ' application/x-www-form-urlencoded'}
