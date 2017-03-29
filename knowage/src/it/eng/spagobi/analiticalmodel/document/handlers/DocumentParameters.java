@@ -123,6 +123,22 @@ public class DocumentParameters {
 	public class LovDependency extends ParameterDependency {
 	}
 
+	public DocumentParameters(BIObjectParameter biParam, String exeRole, Locale loc, BIObject obj) {
+		analyticalDocumentParameter = biParam;
+		executionRole = exeRole;
+		object = obj;
+		locale = loc;
+
+		initDAO();
+		initAttributes();
+		initDependencies();
+
+		loadAdmissibleValues();
+
+		loadDefaultValues();
+		objParameterIds = new ArrayList<Integer>();
+	}
+
 	public DocumentParameters(BIObjectParameter biParam, String exeRole, Locale loc, BIObject obj, boolean _isFromCross, boolean loadAdmissible) {
 		analyticalDocumentParameter = biParam;
 		executionRole = exeRole;
