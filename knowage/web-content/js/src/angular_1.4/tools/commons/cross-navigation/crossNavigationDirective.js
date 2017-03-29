@@ -94,19 +94,19 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 					    	  }
 					    	  
 					    	  },
-					      template: '<md-dialog aria-label="Select document" layout="column" ng-cloak style="max-width: 400px;">'
+					      template: '<md-dialog aria-label="Select document" layout="column" ng-cloak style="max-width: 800px;">'
 					    	  +'<md-toolbar>'
 					    	  +'	<div class="md-toolbar-tools">'
 					    	  +'		<h2>{{translate.load("Seleziona il documento di destinazione")}}</h2>'
 					    	  +'	</div>'
 					    	  +'</md-toolbar>'
-					    	  +'<div layout-margin flex>'
-					    	  +'	<angular-table flex id="selectDoctableCross" ng-model=documents columns="[{label:\'\',name:\'document.name\'}]" hide-table-head="true" click-function="selectDocument(item);"></angular-table>'
-					    	  +'</div>'
-					    	  +'<div layout="row">'
+					    	  +'<md-dialog-content>'
+					    	  +'	<angular-table flex id="selectDoctableCross" ng-model=documents columns="[{label:\'Label\',name:\'document.label\'},{label:\'Name\',name:\'document.name\'},{label:\'Description\',name:\'document.description\'}]" click-function="selectDocument(item);"></angular-table>'
+					    	  +'</md-dialog-content>'
+					    	  +'<md-dialog-actions layout="row">'
 					    	  +'	<span flex></span>'
 					    	  +'	<md-button ng-click="cancel()">Cancel</md-button>'
-					    	  +'</div>'
+					    	  +'</md-dialog-actions>'
 					    	  +'</md-dialog>',
 					      clickOutsideToClose:false, 
 					      locals:{documents:navObj,
