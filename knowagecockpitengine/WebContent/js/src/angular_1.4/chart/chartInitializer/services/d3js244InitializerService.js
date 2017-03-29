@@ -19,7 +19,7 @@
 
 angular.module('chartInitializer')
 
-.service('d3js244',function(){
+.service('d3js244',['chartEngineSettings',function(chartEngineSettings){
 	
 	this.cleanChart = function(panel){
 		
@@ -37,7 +37,7 @@ angular.module('chartInitializer')
 			renderSunburst(chartConf,panel,handleCockpitSelection,locale);			
 		}
 		else if (chartConf.chart.type.toLowerCase() == "parallel") {
-			renderParallelChart(chartConf,panel,handleCockpitSelection,locale);			
+			renderParallelChart(chartConf,panel,handleCockpitSelection,chartEngineSettings,locale);			
 		}
 		else if (chartConf.chart.type.toLowerCase() == "chord") {
 			renderChordChart(chartConf,panel,handleCockpitSelection,locale);
@@ -86,4 +86,4 @@ angular.module('chartInitializer')
 			}
 		}		
 	}
-})
+}])
