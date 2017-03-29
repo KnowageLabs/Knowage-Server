@@ -98,6 +98,11 @@ public class DocumentExecutionUtils {
 		return lovProvDet;
 	}
 
+	public static List<DocumentParameters> getParameters(BIObject document, String executionRole, Locale locale, String modality) {
+		List<DocumentParameters> toReturn = getParameters(document, executionRole, locale, modality, null, true);
+		return toReturn;
+	}
+
 	public static List<DocumentParameters> getParameters(BIObject document, String executionRole, Locale locale, String modality, List<String> parsFromCross,
 			boolean loadAdmissible) {
 		Monitor monitor = MonitorFactory.start("Knowage.DocumentExecutionUtils.getParameters");
