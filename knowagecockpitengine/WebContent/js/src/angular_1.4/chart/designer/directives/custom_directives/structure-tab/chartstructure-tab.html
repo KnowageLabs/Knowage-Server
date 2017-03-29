@@ -302,8 +302,8 @@
 						      	<md-menu-content>
 							      
 					        		<md-menu-item class="noright" style="padding:0 8 0 16">
-					          			<span ng-if="chartLibNamesConfig.pie!='chartJs'" ng-bind-html="translate.load('sbi.chartengine.designer.emptytext.dragdropmeasures.' + selectedChartType.toLowerCase())"></span>
-					        			<span ng-if="chartLibNamesConfig.pie=='chartJs'" ng-bind-html="translate.load('sbi.chartengine.designer.emptytext.dragdropmeasures.' + selectedChartType.toLowerCase()+'_chartJS')"></span>
+					          			<span ng-if="selectedChartType.toLowerCase()!='pie' || chartLibNamesConfig.pie!='chartJs'" ng-bind-html="translate.load('sbi.chartengine.designer.emptytext.dragdropmeasures.' + selectedChartType.toLowerCase())"></span>
+					        			<span ng-if="selectedChartType.toLowerCase()=='pie' && chartLibNamesConfig.pie=='chartJs'" ng-bind-html="translate.load('sbi.chartengine.designer.emptytext.dragdropmeasures.' + selectedChartType.toLowerCase()+'_chartJS')"></span>
 					        		
 					        		</md-menu-item>
 					        		
@@ -461,10 +461,10 @@
 					  	
 					  	<!-- If the series container is empty - no series data. -->		
 					  	<md-list-item ng-if="seriesContainer.series.length==0" class="noright" style="padding:0 8 0 16">
-				  		 	<span ng-if="chartLibNamesConfig.pie!='chartJs'"	ng-bind-html="translate.load('sbi.chartengine.designer.emptytext.dragdropmeasures.' + selectedChartType.toLowerCase())"
+				  		 	<span ng-if="selectedChartType.toLowerCase()!='pie' || chartLibNamesConfig.pie!='chartJs'"	ng-bind-html="translate.load('sbi.chartengine.designer.emptytext.dragdropmeasures.' + selectedChartType.toLowerCase())"
 				  		 			style="color:#bfbfbf">
 		  		 			</span>
-		  		 			<span ng-if="chartLibNamesConfig.pie=='chartJs'"	ng-bind-html="translate.load('sbi.chartengine.designer.emptytext.dragdropmeasures.' + selectedChartType.toLowerCase()+'_chartJS')"
+		  		 			<span ng-if="selectedChartType.toLowerCase()=='pie' && chartLibNamesConfig.pie=='chartJs'"	ng-bind-html="translate.load('sbi.chartengine.designer.emptytext.dragdropmeasures.' + selectedChartType.toLowerCase()+'_chartJS')"
 				  		 			style="color:#bfbfbf">
 		  		 			</span>
 					  	</md-list-item>
