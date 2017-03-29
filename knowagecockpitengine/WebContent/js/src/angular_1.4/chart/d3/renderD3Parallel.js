@@ -4,10 +4,10 @@
  * @param locale Information about the locale (language). Needed for the formatting of the series values (data labels and tooltips). 
  * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
  */
-function renderParallelChart(data,panel,handleCockpitSelection,locale){
+function renderParallelChart(data,panel,handleCockpitSelection,chartEngineSettings,locale){
 	
 	var records = data.data[0];
-	
+	var chartEngineSharedSettings = chartEngineSettings;
 	if(records.length>0){
 
 		if (records.length>data.limit.maxNumberOfLines){
@@ -655,12 +655,20 @@ function renderParallelChart(data,panel,handleCockpitSelection,locale){
 		
 		if(data.chart.isCockpit==true){
 			if(data.chart.outcomingEventsEnabled){
-			var paramethers=cockpitSelectionParamethers(d);
-//			var selectParams={
-//					categoryValue:paramethers.groupingCategoryValue		
-//			};
-//			console.log(paramethers);
-			handleCockpitSelection(paramethers);
+			var paramethers = crossNavigationParamethers(d);
+			var selectParam_cross={
+					categoryName:paramethers.categoryName,
+					categoryValue:paramethers.categoryValue,
+					serieName:paramethers.serieName,
+					serieValue:paramethers.serieValue,
+					groupingCategoryName:paramethers.groupingCategoryName,
+					groupingCategoryValue:paramethers.groupingCategoryValue	
+			};
+			
+			
+			var selectParam=cockpitSelectionParamethers(d);
+			selectParam.selectParam_cross = selectParam_cross;
+			handleCockpitSelection(selectParam);
 			}
 		}else if(data.crossNavigation.hasOwnProperty('crossNavigationDocumentName')){
 			paramethers=crossNavigationParamethers(d);
