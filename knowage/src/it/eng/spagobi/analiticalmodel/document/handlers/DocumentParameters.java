@@ -85,6 +85,8 @@ public class DocumentParameters {
 	Integer colspan;
 	Integer thickPerc;
 
+	boolean isFromCross;
+
 	String lovValueColumnName;
 	String lovDescriptionColumnName;
 	List<String> lovColumnsNames;
@@ -121,15 +123,18 @@ public class DocumentParameters {
 	public class LovDependency extends ParameterDependency {
 	}
 
-	public DocumentParameters(BIObjectParameter biParam, String exeRole, Locale loc, BIObject obj) {
+	public DocumentParameters(BIObjectParameter biParam, String exeRole, Locale loc, BIObject obj, boolean _isFromCross, boolean loadAdmissible) {
 		analyticalDocumentParameter = biParam;
 		executionRole = exeRole;
 		object = obj;
 		locale = loc;
+		isFromCross = _isFromCross;
 		initDAO();
 		initAttributes();
 		initDependencies();
-		loadAdmissibleValues();
+		if (loadAdmissible) {
+			loadAdmissibleValues();
+		}
 		loadDefaultValues();
 		objParameterIds = new ArrayList<Integer>();
 	}
@@ -326,12 +331,17 @@ public class DocumentParameters {
 		}
 	}
 
-	public void loadAdmissibleValues() {
+	/**
+	 * Load admissible values from LOV done if not lookup and not manual input done if is from cross and not manual input
+	 */
 
+	public void loadAdmissibleValues() {
+		logger.debug("IN");
 		try {
 
 			DocumentUrlManager dum = new DocumentUrlManager(UserProfileManager.getProfile(), locale);
 
+			// get LOV info
 			Integer paruseId = analyticalDriverExecModality.getUseID();
 			ParameterUse parameterUse = DAOFactory.getParameterUseDAO().loadByUseID(paruseId);
 			// get admissible values metadata (i.e. LOV metadata, in case AD has LOV)
@@ -343,9 +353,20 @@ public class DocumentParameters {
 				lovValueColumnName = lovProvDet.getValueColumnName();
 			}
 
-			// load values only if it is not a lookup
-			if ("COMBOBOX".equalsIgnoreCase(selectionType) || "LIST".equalsIgnoreCase(selectionType) || "SLIDER".equalsIgnoreCase(selectionType)
-					|| "TREE".equalsIgnoreCase(selectionType)) {
+			// check if to retrieve defaultValues, if it is not LOOKUP or if it is from Cross
+			boolean retrieveAdmissibleValue = false;
+			boolean lookupAndCrossCase = (isFromCross && ("LOOKUP".equalsIgnoreCase(selectionType)));
+			logger.debug("Is lookup and cross case? " + lookupAndCrossCase);
+			boolean otherPreLoadCase = (("COMBOBOX".equalsIgnoreCase(selectionType) || "LIST".equalsIgnoreCase(selectionType)
+					|| "SLIDER".equalsIgnoreCase(selectionType) || "TREE".equalsIgnoreCase(selectionType)));
+			logger.debug("Other pre-load cases ? " + otherPreLoadCase);
+			if (lookupAndCrossCase || otherPreLoadCase) // for these type pre-load values
+			{
+				retrieveAdmissibleValue = true;
+			}
+
+			// Load values by executing LOV
+			if (retrieveAdmissibleValue) {
 				List rows;
 				try {
 					rows = executeLOV();
@@ -354,13 +375,14 @@ public class DocumentParameters {
 					setValuesCount(-1); // it means that we don't know the lov size
 					return;
 				}
-
 				rows = applyPostProcessingDependencies(rows);
-
 				setValuesCount(rows == null ? 0 : rows.size());
+				logger.debug("Loaded " + valuesCount + "values");
 
+				// field
 				admissibleValues = new ArrayList<HashMap<String, Object>>();
 
+				// if the parameter is mandatory and there is only one admissible value set it to BiObjectParameter
 				if (getValuesCount() == 1 && this.isMandatory()) {
 					SourceBean lovSB = (SourceBean) rows.get(0);
 					value = getValueFromLov(lovSB);
@@ -373,13 +395,14 @@ public class DocumentParameters {
 
 				for (int i = 0; i < valuesJSONArray.length(); i++) {
 					JSONObject item = valuesJSONArray.getJSONObject(i);
+
 					if (item.length() > 0) {
 
 						HashMap<String, Object> itemAsMap = fromJSONtoMap(item);
 
-						// CHECH VALID DEFAULT PARAM
 						ArrayList<HashMap<String, Object>> defaultErrorValues = new ArrayList<HashMap<String, Object>>();
 						boolean defaultParameterAlreadyExist = false;
+						// if it is a LOOKUP
 						if (analyticalDocumentParameter.getParameter() != null && analyticalDocumentParameter.getParameter().getModalityValue() != null
 								&& analyticalDocumentParameter.getParameter().getModalityValue().getSelectionType() != null
 								&& !analyticalDocumentParameter.getParameter().getModalityValue().getSelectionType().equals("LOOKUP")) {
@@ -409,13 +432,55 @@ public class DocumentParameters {
 					}
 				}
 
+				// retrieve description for cross case
+				if (isFromCross) {
+					logger.debug("Parameter value for parameter " + analyticalDocumentParameter.getParameterUrlName()
+							+ " is retrieved from cross so it is necessary to retrieve description from admissible values");
+					// add values description search for description
+					List<String> descriptions = new ArrayList<String>();
+					for (Iterator iterator = analyticalDocumentParameter.getParameterValues().iterator(); iterator.hasNext();) {
+						Object parameterValue = iterator.next();
+						String value = parameterValue != null && parameterValue instanceof String ? parameterValue.toString() : null;
+						if (value != null) {
+							boolean found = false;
+							for (Iterator iterator2 = admissibleValues.iterator(); iterator2.hasNext() && !found;) {
+								Map map = (Map) iterator2.next();
+								String valueD = map.get("value") != null && map.get("value") instanceof String ? map.get("value").toString() : null;
+								if (valueD != null && valueD.equals(value)) {
+									String description = map.get("description") != null && map.get("description") instanceof String ? map.get("description")
+											.toString() : null;
+									if (description != null) {
+										logger.debug("Description found for cross navigation parameter: " + description);
+										descriptions.add(description);
+									} else {
+										logger.debug("No description found for cross navigation parameter use value as default: " + value);
+										descriptions.add(value);
+									}
+									found = true;
+								}
+
+							}
+						}
+					}
+					analyticalDocumentParameter.setParameterValuesDescription(descriptions);
+
+					// if parameter is of type lookup empty admissible values
+					if (isFromCross && "LOOKUP".equalsIgnoreCase(selectionType)) {
+						admissibleValues = null;
+					}
+
+				} // end retrieve description from cross case
+
 			} else {
 				setValuesCount(-1); // it means that we don't know the lov size
 			}
 
 		} catch (Exception e) {
+			logger.error("Errpr in retrieving admissible values");
 			throw new SpagoBIRuntimeException(e);
 		}
+		logger.debug("OUT");
+
 	}
 
 	private HashMap<String, Object> fromJSONtoMap(JSONObject item) throws JSONException {

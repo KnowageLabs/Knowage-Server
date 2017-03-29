@@ -98,7 +98,8 @@ public class DocumentExecutionUtils {
 		return lovProvDet;
 	}
 
-	public static List<DocumentParameters> getParameters(BIObject document, String executionRole, Locale locale, String modality) {
+	public static List<DocumentParameters> getParameters(BIObject document, String executionRole, Locale locale, String modality, List<String> parsFromCross,
+			boolean loadAdmissible) {
 		Monitor monitor = MonitorFactory.start("Knowage.DocumentExecutionUtils.getParameters");
 		List<DocumentParameters> parametersForExecution = null;
 		try {
@@ -108,7 +109,14 @@ public class DocumentExecutionUtils {
 				Iterator<BIObjectParameter> it = parameters.iterator();
 				while (it.hasNext()) {
 					BIObjectParameter parameter = it.next();
-					parametersForExecution.add(new DocumentParameters(parameter, executionRole, locale, document));
+
+					// check if coming from cross
+					boolean comingFromCross = false;
+					if (parsFromCross != null && parsFromCross.contains(parameter.getParameterUrlName())) {
+						comingFromCross = true;
+					}
+
+					parametersForExecution.add(new DocumentParameters(parameter, executionRole, locale, document, comingFromCross, loadAdmissible));
 				}
 			}
 		} finally {
@@ -567,7 +575,7 @@ public class DocumentExecutionUtils {
 	 * This method finds out the cache to be used for lov's result cache. This key is composed mainly by the user identifier and the lov definition. Note that,
 	 * in case when the lov is a query and there is correlation, the executed statement if different from the original query (since correlation expression is
 	 * injected inside SQL query using in-line view construct), therefore we should consider the modified query.
-	 *
+	 * 
 	 * @param profile
 	 *            The user profile
 	 * @param lovDefinition

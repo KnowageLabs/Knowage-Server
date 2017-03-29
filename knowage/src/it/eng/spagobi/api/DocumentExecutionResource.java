@@ -330,7 +330,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 	private JSONObject buildJsonParameters(JSONObject jsonParameters, HttpServletRequest req, String role, SessionContainer permanentSession,
 			IParameterUseDAO parameterUseDAO, BIObject obj) throws JSONException, EMFUserError {
-		List<DocumentParameters> parameters = DocumentExecutionUtils.getParameters(obj, role, req.getLocale(), null);
+		List<DocumentParameters> parameters = DocumentExecutionUtils.getParameters(obj, role, req.getLocale(), null, null, false);
 		for (DocumentParameters objParameter : parameters) {
 			Monitor checkingsParameterMonitor = MonitorFactory.start("Knowage.DocumentExecutionResource.buildJsonParameters.checkings");
 			try {
@@ -467,6 +467,9 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		if (("true").equals(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled")))
 			sessionParametersMap = getSessionParameters(requestVal);
 
+		// keep track of par coming from cross to get descriptions from admissible values
+		List<String> parsFromCross = new ArrayList<String>();
+
 		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
 
 		IBIObjectDAO dao = DAOFactory.getBIObjectDAO();
@@ -475,11 +478,11 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 		Locale locale = GeneralUtilities.getCurrentLocale(aRequestContainer);
 
-		applyRequestParameters(biObject, jsonCrossParameters, sessionParametersMap, role, locale);
+		applyRequestParameters(biObject, jsonCrossParameters, sessionParametersMap, role, locale, parsFromCross);
 
 		ArrayList<HashMap<String, Object>> parametersArrayList = new ArrayList<>();
 
-		List<DocumentParameters> parameters = DocumentExecutionUtils.getParameters(biObject, role, req.getLocale(), null);
+		List<DocumentParameters> parameters = DocumentExecutionUtils.getParameters(biObject, role, req.getLocale(), null, parsFromCross, true);
 		for (DocumentParameters objParameter : parameters) {
 			Integer paruseId = objParameter.getParameterUseId();
 			ParameterUse parameterUse = parameterUseDAO.loadByUseID(paruseId);
@@ -763,13 +766,14 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	}
 
 	private void applyRequestParameters(BIObject biObject, JSONObject crossNavigationParametesMap, Map<String, JSONObject> sessionParametersMap, String role,
-			Locale locale) {
+			Locale locale, List<String> parsFromCross) {
 		DocumentUrlManager documentUrlManager = new DocumentUrlManager(this.getUserProfile(), locale);
 		List<BIObjectParameter> parameters = biObject.getBiObjectParameters();
 		for (BIObjectParameter parameter : parameters) {
 			if (crossNavigationParametesMap.has(parameter.getParameterUrlName())) {
 				logger.debug("Found value from request for parmaeter [" + parameter.getParameterUrlName() + "]");
 				documentUrlManager.refreshParameterForFilters(parameter, crossNavigationParametesMap);
+				parsFromCross.add(parameter.getParameterUrlName());
 				continue;
 			}
 
