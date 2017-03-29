@@ -15,7 +15,8 @@ var app = angular.module
 	 	'sbiModule',
 	 	'angular-list-detail',
 	 	'ui.codemirror',
-	 	'ui.tree'
+	 	'ui.tree',
+	 	'ab-base64'
 	 ]
 );
 
@@ -38,11 +39,12 @@ app.controller
 	 	"sbiModule_config",
 	 	"$timeout",
 	 	"sbiModule_user",
+	 	"base64",
 	 	lovsManagementFunction
 	 ]
 );
 
-function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,sbiModule_messaging,sbiModule_config,$timeout,sbiModule_user)
+function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,sbiModule_messaging,sbiModule_config,$timeout,sbiModule_user,base64)
 {
 	/**
 	 * =====================
@@ -488,6 +490,8 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	}
 	$scope.closeDialogFromLOV = function() {
 		$scope.testLovTreeModel = [];
+		$scope.formatedVisibleValues = [];
+		$scope.formatedInvisibleValues = [];
 		$scope.testLovModel = [];
 		$scope.previewLovModel = [];
 		$scope.paramsList = [];
@@ -503,17 +507,36 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	 */
 	$scope.saveLov = function(){  // this function is called when clicking on save button
 		
-		formatForSave();
-		
-if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update PUT
+		if(formatForSave()){
 			
-			sbiModule_restServices.promisePut("2.0/lovs","",$scope.selectedLov)
+			if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update PUT
+				
+				sbiModule_restServices.promisePut("2.0/lovs","",$scope.selectedLov)
+				.then(function(response) {
+					$scope.listOfLovs = [];
+					$timeout(function(){								
+						$scope.getAllLovs();
+					}, 1000);
+					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
+					$scope.selectedLov={};
+					$scope.showme=false;
+					$scope.dirtyForm=false;
+					$scope.closeDialogFromLOV();
+					
+				}, function(response) {
+					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+					
+				});	
+				
+			}else{
+			
+			sbiModule_restServices.promisePost("2.0/lovs","",$scope.selectedLov)
 			.then(function(response) {
 				$scope.listOfLovs = [];
 				$timeout(function(){								
 					$scope.getAllLovs();
 				}, 1000);
-				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
+				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
 				$scope.selectedLov={};
 				$scope.showme=false;
 				$scope.dirtyForm=false;
@@ -522,17 +545,40 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 				
-			});	
+			});			
+			}
 			
-		}else{
+			
+			
+			
+			
+		}
 		
-		sbiModule_restServices.promisePost("2.0/lovs","",$scope.selectedLov)
+	}
+	
+
+	
+	$scope.updateLovWithoutProvider = function() {
+		var result = {}
+		var propName = $scope.selectedLov.itypeCd;
+		var prop = lovProviderEnum[propName];
+		
+		var tempObj = $scope.selectedLov.lovProvider[prop];
+		result[prop] = tempObj
+		var x2js = new X2JS();
+		var xmlAsStr = x2js.json2xml_str(result);
+		if(xmlAsStr.includes("&#x27;")){
+			xmlAsStr= xmlAsStr.replace(/&#x27;/g, "'")
+		}
+		$scope.selectedLov.lovProvider = xmlAsStr;
+		
+		sbiModule_restServices.promisePut("2.0/lovs","",$scope.selectedLov)
 		.then(function(response) {
 			$scope.listOfLovs = [];
 			$timeout(function(){								
 				$scope.getAllLovs();
 			}, 1000);
-			sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
+			sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
 			$scope.selectedLov={};
 			$scope.showme=false;
 			$scope.dirtyForm=false;
@@ -541,11 +587,9 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 			
-		});			
-		}
+		});	
+		
 	}
-	
-	
 	/**
 	 * When clicking on Cancel button in the header of the right panel, 
 	 * this function will be called and the right panel will be hidden.	  
@@ -597,10 +641,10 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 	var decode = function(item){
 		try {
 			if(item.lovProvider.SCRIPTLOV){
-				item.lovProvider.SCRIPTLOV.SCRIPT = window.atob(item.lovProvider.SCRIPTLOV.SCRIPT);
+				item.lovProvider.SCRIPTLOV.SCRIPT = base64.decode(item.lovProvider.SCRIPTLOV.SCRIPT);
 			}
 			if(item.lovProvider.QUERY){
-				item.lovProvider.QUERY.STMT = window.atob(item.lovProvider.QUERY.STMT);
+				item.lovProvider.QUERY.STMT = base64.decode(item.lovProvider.QUERY.STMT);
 			}			
 		}catch(err) {}
 		
@@ -616,8 +660,8 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 		
 		item.lovProvider = angular.fromJson(item.lovProvider);
 		decode(item);
-		
 		$scope.selectedLov=angular.copy(item);
+		console.log($scope.selectedLov);
 		$scope.changeLovType($scope.selectedLov.itypeCd);
 		
 		if ($scope.selectedLov.lovProvider.hasOwnProperty(lovProviderEnum.SCRIPT)) {
@@ -1087,6 +1131,16 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 			
 			tempObj.LOVTYPE = $scope.treeListTypeModel.LOVTYPE;
 			
+			if(tempObj.LOVTYPE == "simple" && (tempObj['VALUE-COLUMN'] == "" || tempObj['DESCRIPTION-COLUMN'] == "") ){
+				sbiModule_messaging.showErrorMessage("Value or description field is empty", sbiModule_translate.load("sbi.generic.toastr.title.error"));
+				return false;
+			}
+			
+			if(tempObj.LOVTYPE == "tree" && (tempObj['VALUE-COLUMNS'] == "" || tempObj['DESCRIPTION-COLUMNS'] == "") ){
+				sbiModule_messaging.showErrorMessage("Tree is not defined", sbiModule_translate.load("sbi.generic.toastr.title.error"));
+				return false;
+			}
+			
 			result[prop] = tempObj
 			var x2js = new X2JS();
 			var xmlAsStr = x2js.json2xml_str(result);
@@ -1094,7 +1148,7 @@ if($scope.selectedLov.hasOwnProperty("id")){ // if item already exists do update
 				xmlAsStr= xmlAsStr.replace(/&#x27;/g, "'")
 			}
 			$scope.selectedLov.lovProvider = xmlAsStr;
-			console.log($scope.selectedLov.lovProvider);
+			return true;
 		
 		}
 		

@@ -101,7 +101,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		</extra-button>
 		
 		<extra-button>
-			  <md-button class="md-flat" ng-click="saveLov()" ng-show="selectedLov.id != undefined" >{{translate.load("sbi.generic.save")}}</md-button>
+			  <md-button class="md-flat" ng-click="updateLovWithoutProvider()" ng-show="selectedLov.id != undefined" >{{translate.load("sbi.generic.save")}}</md-button>
 		</extra-button>
 		
 		<detail label=' selectedLov.label==undefined? "" : selectedLov.label'  save-function="saveLov"
