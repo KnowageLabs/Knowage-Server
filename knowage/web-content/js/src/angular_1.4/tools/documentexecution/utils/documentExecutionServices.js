@@ -1229,15 +1229,16 @@
 															}
 														}	
 														
-														// if not found add
-														if(!found){
-															var objBase = null;															
-															objBase.value = data.result.root[p].value;
-															objBase.label = data.result.root[p].label;
-															objBase.description = data.result.root[p].description;
-															objBase.isEnabled = true;
-															execProperties.parametersData.documentParameters[z].defaultValues.push(objBase);
-														}
+													}
+													
+													// if not found add
+													if(!found) {
+														var objBase = {};															
+														objBase.value = data.result.root[p].value;
+														objBase.label = data.result.root[p].label;
+														objBase.description = data.result.root[p].description;
+														objBase.isEnabled = true;
+														execProperties.parametersData.documentParameters[z].defaultValues.push(objBase);
 													}
 												}
 												
