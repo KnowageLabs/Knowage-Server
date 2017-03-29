@@ -391,7 +391,9 @@
 		this.clear =  function(parDetail) {
 			try {
 				var thisContext = this;
-				if (sbiModule_config.isStatePersistenceEnabled == true && execProperties.executionInstance.isFromCross == false) {
+				if (sbiModule_config.isStatePersistenceEnabled == true 
+						//&& execProperties.executionInstance.isFromCross == false
+						) {
 					this.store.get(this.PARAMETER_STATE_OBJECT_KEY, function(ok, value) {
 						if (ok) {
 							var storedParameters = angular.fromJson(value);
