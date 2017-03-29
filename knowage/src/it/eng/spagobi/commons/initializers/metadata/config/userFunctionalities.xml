@@ -17,7 +17,6 @@
 	<USER_FUNCTIONALITY productType="KnowageBD" name="DocumentDevManagement" description="DocumentDevManagement" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="DocumentTestManagement" description="DocumentTestManagement" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="DocumentAdminManagement" description="DocumentAdminManagement" />
-	<USER_FUNCTIONALITY productType="KnowageBD" name="SchedulerManagement" description="SchedulerManagement" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="EventsManagement" description="EventsManagement" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="WorkspaceManagement" description="WorkspaceManagement" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="WorklistManagement" description="WorklistManagement" />
@@ -83,7 +82,6 @@
 	<USER_FUNCTIONALITY productType="KnowageSI" name="DocumentDevManagement" description="DocumentDevManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="DocumentTestManagement" description="DocumentTestManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="DocumentAdminManagement" description="DocumentAdminManagement"/>
-	<USER_FUNCTIONALITY productType="KnowageSI" name="SchedulerManagement" description="SchedulerManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="EventsManagement" description="EventsManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="WorkspaceManagement" description="WorkspaceManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="WorklistManagement" description="WorklistManagement"/>
@@ -136,8 +134,6 @@
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ExecuteCrossNavigation" description="ExecuteCrossNavigation" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="InstallConfig" description="InstallConfig" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="RegistryDataEntry" description="RegistryDataEntry" />
-	<USER_FUNCTIONALITY productType="KnowageSI" name="DocumentScheduling" description="DocumentScheduling" />
-	<USER_FUNCTIONALITY productType="KnowageSI" name="SchedulingDistributedOutput" description="SchedulingDistributedOutput" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="MetaModelLifecycleManagement" description="MetaModelLifecycleManagement" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="MultisheetCockpit" description="MultisheetCockpit" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ChartWidget" description="ChartWidget" />
@@ -158,7 +154,6 @@
 	<USER_FUNCTIONALITY productType="KnowageER" name="DocumentDevManagement" description="DocumentDevManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="DocumentTestManagement" description="DocumentTestManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="DocumentAdminManagement" description="DocumentAdminManagement"/>
-	<USER_FUNCTIONALITY productType="KnowageER" name="SchedulerManagement" description="SchedulerManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="EventsManagement" description="EventsManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="WorklistManagement" description="WorklistManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="DocumentManagement" description="DocumentManagement"/>
@@ -203,8 +198,6 @@
 	<USER_FUNCTIONALITY productType="KnowageER" name="ManageCrossNavigation" description="ManageCrossNavigation" />
 	<USER_FUNCTIONALITY productType="KnowageER" name="ExecuteCrossNavigation" description="ExecuteCrossNavigation" />
 	<USER_FUNCTIONALITY productType="KnowageER" name="InstallConfig" description="InstallConfig" />
-	<USER_FUNCTIONALITY productType="KnowageER" name="DocumentScheduling" description="DocumentScheduling" />
-	<USER_FUNCTIONALITY productType="KnowageER" name="SchedulingDistributedOutput" description="SchedulingDistributedOutput" />
 	<USER_FUNCTIONALITY productType="KnowageER" name="SharedDevelopment" description="SharedDevelopment" />
 	<USER_FUNCTIONALITY productType="KnowageER" name="DomainWrite" description="DomainWrite" />
 	
