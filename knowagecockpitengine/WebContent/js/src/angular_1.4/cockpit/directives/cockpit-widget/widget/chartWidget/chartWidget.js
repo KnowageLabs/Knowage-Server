@@ -489,7 +489,20 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
     			
     			return parameters;
 			
-		}else
+       }
+       
+       if( $scope.ngModel.content.chartTemplate.CHART.type==="PARALLEL"){
+    	   var parameters = {
+    				
+    				"CATEGORY_VALUE":event.selectParam_cross.categoryValue,
+    				"CATEGORY_NAME": event.selectParam_cross.categoryName,
+    				"GROUPING_NAME": event.selectParam_cross.groupingCategoryName,
+    				"GROUPING_VALUE": event.selectParam_cross.groupingCategoryValue
+    			};
+    			
+    			return parameters;
+			
+       }
        if( $scope.ngModel.content.chartTemplate.CHART.type==="TREEMAP"){
     	   var parameters = {
     				"SERIE_NAME": event.point.series.name,
@@ -499,7 +512,7 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
     			};
     			
     			return parameters;
-       }else
+       }
        if( $scope.ngModel.content.chartTemplate.CHART.type==="WORDCLOUD"){
     	   var parameters = {
     				"SERIE_NAME": event.selectParam_cross.serieName,
@@ -509,14 +522,25 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
     			};
     			
     			return parameters;
-       }else{
+       }
+       
+       if($scope.ngModel.content.chartTemplate.CHART.type==="SCATTER"){
+    	   var parameters = {
+    				"SERIE_NAME": event.point.series.name,
+    				"SERIE_VALUE":event.point.y,
+    				"CATEGORY_VALUE":event.point.category.name,
+    				"CATEGORY_NAME": $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY.name
+    			};
+    	   
+    	   return parameters;
+       }
 		var parameters = {
 			"SERIE_NAME": event.point.series.name,
 			"SERIE_VALUE":event.point.y,
 			"CATEGORY_VALUE":event.point.name,
 			"CATEGORY_NAME": $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY.name
 		};
-       }
+       
 		return parameters;
 	}
 };
