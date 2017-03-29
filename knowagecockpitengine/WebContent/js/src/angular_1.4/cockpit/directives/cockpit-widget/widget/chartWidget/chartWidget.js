@@ -434,12 +434,20 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 	    
 		if(event.point){
 			//for highcharts
-		var columnValue = event.point.name;
-		
-		var category = $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY;
-		var columnName = category.name
-		if(Object.prototype.toString.call(category) === Object.prototype.toString.call([])){
+			var columnValue = event.point.name;
+			
+			var category = $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY;
+			var columnName = category.name
+	
 			var chartType = $scope.ngModel.content.chartTemplate.CHART.type;
+			//var d3Types = ["WORDCLOUD", "PARALLEL", "SUNBURST"];
+			
+			//if(d3Types.indexOf(chartType)<0){
+			if( Array.isArray(category)){
+				columnName = category[0].name;
+			}else{
+				columnName = category.name;
+			}
 			if(chartType === 'HEATMAP'){
 				columnName = event.point.category;
 				columnValue = event.point.name;
@@ -448,12 +456,9 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 				columnValue = event.point.group.value;
 				$scope.doSelection(columnName,columnValue);
 			}else{
-				columnName = category[0].name;
+				
 				$scope.doSelection(columnName,columnValue);
 			}
-		}
-		
-		
 		}else{
 			//for d3 charts
 			for (column in event){
@@ -462,6 +467,9 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 				}
 			}
 		}
+		
+		
+
 	}
 	
 	$scope.finishLoadingIframe=function(){
