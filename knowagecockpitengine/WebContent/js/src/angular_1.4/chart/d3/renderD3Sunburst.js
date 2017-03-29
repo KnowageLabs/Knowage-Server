@@ -1332,6 +1332,7 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale)
 //						groupingCategoryValue:paramethers.groupingCategoryValue	
 //				};
 			var selectParams=cockpitSelectionParams(d);
+			selectParams.selectParam_cross=  genericNavigationParams(d)
 			handleCockpitSelection(selectParams);
 			}
 		}else if(jsonObject.crossNavigation.hasOwnProperty('crossNavigationDocumentName')){
@@ -1352,36 +1353,40 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale)
 		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
 		else {
-			
-			/**
-			 * This variable will contain all the output parameters that the SUNBURST should possess: all category-custom named ones and the one
-			 * for the series item. Both will contain paired properties that represend the output parameter value and name, for both categories
-			 * and series item.
-			 */
-			var outputParams = {};
-			
-			/**
-			 * Collect all categories covered by the mouse (after clicking on some segment of the SUNBURST chart), so all those beginning from the
-			 * lowest layer to the one on which the user clicked. These categories will be taken as output parameter names and their values.
-			 */
-			var categoriesCovered = cockpitSelectionParams(d);			
-			
-			// Customize output parameter category names and values for the SUNBURST.
-			for (cat in categoriesCovered) {
-				outputParams[cat + "_NAME"] = cat;
-				outputParams[cat + "_VALUE"] = categoriesCovered[cat];
-			}
-			
-			// Specify output parameters series item name and value for the SUNBURST.
-			outputParams["SERIE_NAME"] = jsonObject.series.name;
-			outputParams["SERIE_VALUE"] = d.value;
-			
-			console.info("SUNBURST chart output parameters:", outputParams);
-						
+			var outputParams = genericNavigationParams(d)
 			// Calling the function for providing the cross-navigation from this chart to the target one (function is defined inside the d3js244Initializer.jsp).
 			handleCrossNavigationTo(outputParams,"SUNBURST");
-			
 		}
+		
+		
+	}
+	
+	function genericNavigationParams(d){
+		/**
+		 * This variable will contain all the output parameters that the SUNBURST should possess: all category-custom named ones and the one
+		 * for the series item. Both will contain paired properties that represend the output parameter value and name, for both categories
+		 * and series item.
+		 */
+		var outputParams = {};
+		
+		/**
+		 * Collect all categories covered by the mouse (after clicking on some segment of the SUNBURST chart), so all those beginning from the
+		 * lowest layer to the one on which the user clicked. These categories will be taken as output parameter names and their values.
+		 */
+		var categoriesCovered = cockpitSelectionParams(d);			
+		
+		// Customize output parameter category names and values for the SUNBURST.
+		for (cat in categoriesCovered) {
+			outputParams[cat + "_NAME"] = cat;
+			outputParams[cat + "_VALUE"] = categoriesCovered[cat];
+		}
+		
+		// Specify output parameters series item name and value for the SUNBURST.
+		outputParams["SERIE_NAME"] = jsonObject.series.name;
+		outputParams["SERIE_VALUE"] = d.value;
+		
+		console.info("SUNBURST chart output parameters:", outputParams);
+		return outputParams;			
 		
 		
 	}

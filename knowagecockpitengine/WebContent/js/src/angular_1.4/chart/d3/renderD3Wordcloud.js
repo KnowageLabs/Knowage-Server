@@ -562,7 +562,7 @@ function renderWordCloud(chartConf,panel,handleCockpitSelection,locale){
 				+Number(removePixelsFromFontSize(chartConf.subtitle.style.fontSize)))*1.6])
 		.words(chartConf.data[0].map(function(d) {
 			 wordSize= wordFontSize(d.value);
-			 return {text: d.name, size: wordSize};
+			 return {text: d.name, size: wordSize, categoryId:d.categoriId };
 		}))
 		.padding(chartConf.chart.wordPadding)
 		.rotate(function() {
@@ -816,7 +816,8 @@ function renderWordCloud(chartConf,panel,handleCockpitSelection,locale){
 							serieName:paramethers.serieName,
 							serieValue:paramethers.serieValue,
 							groupingCategoryName:paramethers.groupingCategoryName,
-							groupingCategoryValue:paramethers.groupingCategoryValue	
+							groupingCategoryValue:paramethers.groupingCategoryValue	,
+							categoryId: d.categoryId
 					};
 					var	selectParam=fetchSelectionParamethers(d);
 					selectParam.selectParam_cross = selectParam_cross;

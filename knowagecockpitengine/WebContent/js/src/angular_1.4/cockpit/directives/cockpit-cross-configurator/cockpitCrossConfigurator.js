@@ -107,7 +107,7 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 		if(!chart){
 			chart = $scope.localModel.chartTemplate;
 		}
-		$scope.chartProperties=cockpitModule_crossServices.getChartParameters(chart.type);
+		$scope.chartProperties=cockpitModule_crossServices.getChartParameters(chart.type, chart);
 	}else{
 	   if($scope.model.dataset!=undefined && $scope.model.dataset.dsId != undefined){
 		   angular.copy(cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId), $scope.localDataset);

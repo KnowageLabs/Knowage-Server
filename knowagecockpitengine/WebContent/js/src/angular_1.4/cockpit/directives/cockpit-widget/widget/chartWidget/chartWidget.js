@@ -518,13 +518,16 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
     				"SERIE_NAME": event.selectParam_cross.serieName,
     				"SERIE_VALUE":event.selectParam_cross.serieValue,
     				"CATEGORY_VALUE":event.selectParam_cross.categoryValue,
-    				"CATEGORY_NAME": event.selectParam_cross.categoryName
+    				"CATEGORY_NAME": event.selectParam_cross.categoryName,
+    				"CATEGORY_ID": event.selectParam_cross.categoryId
     			};
     			
     			return parameters;
-       }
-       
-       if($scope.ngModel.content.chartTemplate.CHART.type==="SCATTER"){
+       }else if( $scope.ngModel.content.chartTemplate.CHART.type==="SUNBURST"){
+        	   var parameters = event.selectParam_cross;
+        			
+        			return parameters;
+           }else        if($scope.ngModel.content.chartTemplate.CHART.type==="SCATTER"){
     	   var parameters = {
     				"SERIE_NAME": event.point.series.name,
     				"SERIE_VALUE":event.point.y,

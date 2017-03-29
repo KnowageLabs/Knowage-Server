@@ -67,6 +67,20 @@ public class DataSetTransformer {
 
 		}
 
+
+		String categoryIdColumn = null;
+		//get the name of the category id if exist
+		Iterator<String> it = mapper.values().iterator();
+		while (it.hasNext()) {
+			String string = it.next();
+			if(!listColumns.contains(string) && string!=serieRawColumn){
+				categoryIdColumn = string;
+				break;
+			}
+		}
+
+
+
 		for (int i = 0; i < dataRows.size(); i++) {
 			Map<String, Object> row = (Map<String, Object>) dataRows.get(i);
 			HashMap<String, String> record = new HashMap<String, String>();
@@ -76,6 +90,13 @@ public class DataSetTransformer {
 				Object x = row.get(listColumns.get(j));
 				record.put(columns.get(j).toString(), x.toString());
 			}
+
+			if(categoryIdColumn!=null){
+				record.put("category_id_value",row.get(categoryIdColumn).toString());
+			}
+
+
+
 
 			if (serie != null) {
 
@@ -99,6 +120,8 @@ public class DataSetTransformer {
 	private JSONArray toWordcloudArray(Map<String, String> columns, Object serie, HashMap<Integer, HashMap> result, Object sizeCriteria) throws JSONException {
 
 		JSONArray fr = new JSONArray();
+
+		HashMap<String, String> categoryToId = new HashMap<String, String>();
 
 		HashMap<String, Map<String, Double>> res = new HashMap<String, Map<String, Double>>();
 
@@ -126,7 +149,7 @@ public class DataSetTransformer {
 					}
 					valueMap.put(categoryName, value);
 					res.put(name, valueMap);
-
+					categoryToId.put((String)result.get(i).get(categoryName), (String)result.get(i).get("category_id_value"));
 				}
 
 				else {
@@ -156,6 +179,7 @@ public class DataSetTransformer {
 					res.remove(name);
 
 					res.put(name, oldValueMap);
+					categoryToId.put((String)result.get(i).get(categoryName), (String)result.get(i).get("category_id_value"));
 
 				}
 
@@ -183,6 +207,8 @@ public class DataSetTransformer {
 			// Added for the purposes of the cross-navigation execution.
 			// (author: danristo)
 			jo.put("seriesItemName", serie.toString());
+
+			jo.put("categoriId", categoryToId.get(pair.getKey()));
 			fr.put(jo);
 
 		}
@@ -712,7 +738,7 @@ public class DataSetTransformer {
 		return ja;
 
 	}
-	
+
 	/**
 	 *  Method that serves for preparing the data that JS code will use for
 	 * rendering the BAR chart when order by some column is needed
@@ -723,13 +749,13 @@ public class DataSetTransformer {
 	 *            and on the query formed upon the XML of the document (VALUES
 	 *            tag, particularly CATEGORY and SERIE subtags)
 	 * author rselakov, radmila.selakovic@mht.net
-	 *  
+	 *
 	*/
-	
+
 	public LinkedHashMap<String, ArrayList<String>> prepareDataForGroupingForBar(List<Object> dataRows) throws JSONException {
-		
+
 		LinkedHashMap<String,ArrayList<String>> map = new LinkedHashMap<String, ArrayList<String>>();
-		
+
 		for (Object singleObject : dataRows) {
 			if (!map.containsKey(((Map)singleObject).get("column_1"))) {
 				ArrayList<String> newListOfOrderColumnItems =  new ArrayList<String>();
@@ -742,14 +768,14 @@ public class DataSetTransformer {
 				map.put((String) ((Map)singleObject).get("column_1"),oldArrayList);
 			}
 		}
-		
+
 		return map;
-		
+
 	}
-	
+
 	/**
 	 *  Method that serves for preparing the data that JS code will use for
-	 * rendering the SCATTER chart 
+	 * rendering the SCATTER chart
 	 *
 	 * @param dataRows
 	 *			List of objects that represent the result of the query based
@@ -761,9 +787,9 @@ public class DataSetTransformer {
 	 * @param columnSerie
 	 * 			column_y,z that is serie
 	 * @author rselakov, radmila.selakovic@mht.net
-	 *  
+	 *
 	*/
-	
+
 	public LinkedHashMap<String, Set<ArrayList<String>>> prepareDataForScater(List<Object> dataRows,String columnCategorie,String isCockpitEngine,String columnSerie) throws JSONException {
 		  LinkedHashMap<String, Set<ArrayList<String>>> map = new LinkedHashMap<String, Set<ArrayList<String>>>();
 		  boolean isCockpit = Boolean.parseBoolean(isCockpitEngine);
@@ -808,7 +834,7 @@ public class DataSetTransformer {
 		return map;
 
 	}
-	
+
 	public LinkedHashMap<String, LinkedHashMap > seriesMapTransformedMethod(LinkedHashMap<String, LinkedHashMap > serieMap) throws JSONException {
 		LinkedHashMap<String, LinkedHashMap > newSerieMap = new LinkedHashMap<String, LinkedHashMap>();
 
@@ -819,14 +845,14 @@ public class DataSetTransformer {
 			if(value.get("type").equals("arearangelow" ) || value.get("type").equals("arearangehigh")){
 				value.put("type", "arearange");
 				key = "common";
-				
+
 				if (!newSerieMap.containsKey(key)) {
 					newSerieMap.put(key, value);
 				}
 			} else {
 				newSerieMap.put(key, value);
 			}
-			
+
 		}
 		return newSerieMap;
 
