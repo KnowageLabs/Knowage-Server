@@ -82,7 +82,7 @@
 						</md-input-container>
 					</expander-box>	
 				
-					<expander-box layout-margin layout="column" expanded="true" label="catProp" background-color="transparent" color="black" ng-repeat="catProp in currentBusinessModelParameterCategories">
+					<expander-box layout-margin layout="column" expanded="true" label="catProp" background-color="transparent" color="black" ng-repeat="catProp in currentBusinessModelParameterCategories | filterByMainCategory">
 						<md-input-container ng-repeat="prop in selectedBusinessModel.properties | filterByCategory:catProp"
 						ng-class=" {'md-icon-right' : (prop.value.value=='temporal dimension' || prop.value.value=='time dimension')  }"
 						ng-init="prop.value.value= (prop.value.value==undefined || prop.value.value==null) ? prop.value.propertyType.defaultValue : prop.value.value">

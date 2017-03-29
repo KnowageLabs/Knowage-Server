@@ -268,14 +268,37 @@ function metaDefinitionControllerFunction($scope, sbiModule_translate,sbiModule_
 	};
 }
 
+angular.module('metaManager').filter('filterByMainCategory', function(sbiModule_user) {
+	var showDataProfiling = sbiModule_user.functionalities.indexOf("MetaModelDataProfiling")>-1;
 
+	return function(items, prop) {
+		angular.forEach(items, function(item) {
+			if(item == "behavioural" && !showDataProfiling){
+				//remove behavioural category
+				var sdInd = items.indexOf("behavioural");
+				if(sdInd != -1){
+					items.splice(sdInd,1);
+				}
+			}
+		});
+		return items;
+	};
+});
 
-angular.module('metaManager').filter('filterByCategory', function() {
+angular.module('metaManager').filter('filterByCategory', function(sbiModule_user) {
+	var showDataProfiling = sbiModule_user.functionalities.indexOf("MetaModelDataProfiling")>-1;
+
 	return function(items, categoryName) {
 		var filtered = [];
 		angular.forEach(items, function(item) {
 			if (angular.equals(item.key.split(".")[0], categoryName)) {
-				filtered.push(item);
+				if (categoryName == "behavioural" || item.key == "structural.attribute"){
+					if (showDataProfiling == true) {
+						filtered.push(item);
+					}
+				} else {
+					filtered.push(item);
+				}
 			}
 		});
 		return filtered;
