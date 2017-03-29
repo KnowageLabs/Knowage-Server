@@ -7,9 +7,9 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
 }]);
 
 
-app.controller('templateBuildController', ['$scope','sbiModule_translate' ,"$mdDialog","sbiModule_restServices","$q","$mdToast",'$timeout','sbiModule_config','$httpParamSerializer','$filter',templateBuildControllerFunction ]);
+app.controller('templateBuildController', ['$scope','sbiModule_translate' ,"$mdDialog","sbiModule_restServices","$q","$mdToast",'$timeout','sbiModule_config','$httpParamSerializer','$filter','sbiModule_user',templateBuildControllerFunction ]);
 
-function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, sbiModule_restServices,$q,$mdToast,$timeout,sbiModule_config,$httpParamSerializer,$filter){
+function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, sbiModule_restServices,$q,$mdToast,$timeout,sbiModule_config,$httpParamSerializer,$filter,sbiModule_user){
 	$scope.translate=sbiModule_translate;
 	$scope.addKpis = [];
 	$scope.typeDocument = 'widget';
@@ -24,6 +24,8 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 	$scope.kpiList = [];
 	$scope.scorecardSelected =[];
 	$scope.allScorecard = [];
+	$scope.showScorecards = sbiModule_user.functionalities.indexOf("ScorecardsManagement")>-1;
+
 	
 	$scope.tableFunction={
 			

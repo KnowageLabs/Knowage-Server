@@ -51,7 +51,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <md-whiteframe class="md-whiteframe-2dp relative" layout-fill layout-margin flex  >
 	<md-radio-group layout="row" ng-model="typeChart">
 	     		<md-radio-button  value='kpi' >{{translate.load("sbi.kpi.kpi")}}</md-radio-button>
-	     		<md-radio-button  value='scorecard'>{{translate.load("sbi.kpi.scorecard")}} </md-radio-button>
+	     		<md-radio-button ng-if="showScorecards" value='scorecard'>{{translate.load("sbi.kpi.scorecard")}} </md-radio-button>
    	</md-radio-group>
    	<md-toolbar  class="miniheadimportexport" layout="row" ng-if="typeChart=='kpi'">
 	<div class="md-toolbar-tools" flex>

@@ -22,12 +22,6 @@ sbiM.config(function($mdThemingProvider) {
 	$mdThemingProvider.theme('default').primaryPalette('indigo').accentPalette('blue-grey');
 });
 
-sbiM.factory('sbiModule_user',function(){
-
-	var user={};
-
-	return user;
-});
 
 sbiM.service('sbiModule_logger',function(){
 	this.exec=true;

@@ -35,5 +35,17 @@
 		};
 	});
 
+	sbiM.factory('sbiModule_user',function(){
+
+		var user={};
+	 	user.functionalities =[];
+	 	<% if (profile != null && profile.getFunctionalities() != null && !profile.getFunctionalities().isEmpty()) { 
+	 		for(Object fun :  profile.getFunctionalities()){ %> 
+	 		user.functionalities.push('<%=StringEscapeUtils.escapeJavaScript(fun.toString())%>'); 
+	 		<% } }%> 
+			
+		return user;
+	});	
+
 })();
 </script>
