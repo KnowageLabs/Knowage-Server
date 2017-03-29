@@ -429,11 +429,15 @@
 							var parValue = parameters[parName]; 
 							if(parametersDetail[parName].type == 'DATE'){
 								var parDateFormat = sbiModule_config.serverDateFormat;
-								parValue+=('#'+parDateFormat);
+								if(parValue != undefined && parValue != ''){
+									parValue+=('#'+parDateFormat);
+								}
 							}
 							else if(parametersDetail[parName].type == 'DATE_RANGE'){
 								var parDateFormat = sbiModule_config.serverDateFormat;
-								parValue+=('#'+parDateFormat);
+								if(parValue != undefined  && parValue != ''){
+									parValue+=('#'+parDateFormat);
+								}
 							}
 							var parValueDescription = copyParameters[parName+"_field_visible_description"]; 
 							this.saveParameterState(parName, parValue, parValueDescription, parametersDetail[parName]);	
