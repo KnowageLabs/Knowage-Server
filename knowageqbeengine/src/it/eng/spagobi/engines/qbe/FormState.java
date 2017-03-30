@@ -37,7 +37,6 @@ import org.json.JSONObject;
 
 /**
  * @author Zerbetto Davide (davide.zerbetto@eng.it)
- *
  */
 public class FormState extends EngineAnalysisState {
 
@@ -53,7 +52,7 @@ public class FormState extends EngineAnalysisState {
 	private static transient Logger logger = Logger.getLogger(FormState.class);
 
 	@Override
-	public void load(byte[] rowData) throws SpagoBIEngineException {
+	public void load(byte[] rowData) throws SpagoBIEngineException {  testToBreak
 		String str = null;
 		JSONObject formStateJSON = null;
 		JSONObject rowDataJSON = null;
