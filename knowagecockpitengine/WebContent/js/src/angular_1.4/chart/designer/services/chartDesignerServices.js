@@ -407,8 +407,8 @@ angular.module('ChartDesignerService', [])
 							         ] 
 					      },
 					         
-					      "height":0,
-					      "width":0,
+					      "height":"",
+					      "width":"",
 					      "isCockpitEngine":"",
 					      "orientation":"",
 					      "style":{
