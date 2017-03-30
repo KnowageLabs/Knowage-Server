@@ -21,17 +21,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 		function link(scope, element, attrs) {
 			
 			scope.baseUrl 	= "http://161.27.39.83:8080/knowage/servlet/AdapterHTTP?";
-			scope.params	= "ACTION_NAME=EXECUTE_DOCUMENT_ANGULAR_ACTION&SBI_ENVIRONMENT=DOCBROWSER&OBJECT_LABEL=";
+			scope.params	= "ACTION_NAME=EXECUTE_DOCUMENT_ANGULAR_ACTION&SBI_ENVIRONMENT=DOCBROWSER&IS_SOURCE_DOCUMENT=true&OBJECT_LABEL=";
 			
 			//Items list for the navigator. ID is the index of the element to be shown and the link is the page to open on click
 			scope.pieItems = [
-			                {id:0,link: scope.baseUrl+scope.params+"VIEW_OBJECTS&OBJECT_NAME=VIEW_OBJECTS&IS_SOURCE_DOCUMENT=true"},
-			                {id:1,link: scope.baseUrl+scope.params+"VIEW_CONTRACT&OBJECT_NAME=VIEW_CONTRACT&IS_SOURCE_DOCUMENT=true"},
-			                {id:2,link: scope.baseUrl+scope.params+"VIEW_EVENT&OBJECT_NAME=VIEW_EVENT&IS_SOURCE_DOCUMENT=true"},
-			                {id:3,link: scope.baseUrl+scope.params+"VIEW_TICKETS&OBJECT_NAME=VIEW_TICKETS&IS_SOURCE_DOCUMENT=true"},
-			                {id:4,link: scope.baseUrl+scope.params+"VIEW_BACKUPS&OBJECT_NAME=VIEW_BACKUPS&IS_SOURCE_DOCUMENT=true"},
-			                {id:5,link: scope.baseUrl+scope.params+"VIEW_AVAILABILITY&OBJECT_NAME=VIEW_AVAILABILITY&IS_SOURCE_DOCUMENT=true"},
-			                {id:6,link: scope.baseUrl+scope.params+"VIEW_BACKLOGS&OBJECT_NAME=VIEW_BACKLOGS&IS_SOURCE_DOCUMENT=true"}
+			                {id:0,link: scope.baseUrl+scope.params+"VIEW_OBJECTS&OBJECT_NAME=VIEW_OBJECTS"},
+			                {id:1,link: scope.baseUrl+scope.params+"VIEW_CONTRACT&OBJECT_NAME=VIEW_CONTRACT"},
+			                {id:2,link: scope.baseUrl+scope.params+"VIEW_EVENT&OBJECT_NAME=VIEW_EVENT"},
+			                {id:3,link: scope.baseUrl+scope.params+"VIEW_TICKETS&OBJECT_NAME=VIEW_TICKETS"},
+			                {id:4,link: scope.baseUrl+scope.params+"VIEW_BACKUPS&OBJECT_NAME=VIEW_BACKUPS"},
+			                {id:5,link: scope.baseUrl+scope.params+"VIEW_AVAILABILITY&OBJECT_NAME=VIEW_AVAILABILITY"},
+			                {id:6,link: scope.baseUrl+scope.params+"VIEW_BACKLOGS&OBJECT_NAME=VIEW_BACKLOGS"}
 			                ];
 			
 			//Pie menu constructor from http://pmg.softwaretailoring.net/. To change the number of element or tooltip those properties must be changed
