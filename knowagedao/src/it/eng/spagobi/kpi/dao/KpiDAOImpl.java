@@ -108,6 +108,7 @@ import java.util.TreeSet;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -2506,6 +2507,8 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	@Override
 	public void insertKpiValueExecLog(KpiValueExecLog kpiValueExecLog) {
+		logger.debug("IN");
+
 		SbiKpiValueExecLog sbiKpiValueExecLog = new SbiKpiValueExecLog();
 		sbiKpiValueExecLog.setSchedulerId(kpiValueExecLog.getSchedulerId());
 		sbiKpiValueExecLog.setTimeRun(kpiValueExecLog.getTimeRun());
@@ -2513,10 +2516,26 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		sbiKpiValueExecLog.setSuccessCount(kpiValueExecLog.getSuccessCount());
 		sbiKpiValueExecLog.setTotalCount(kpiValueExecLog.getTotalCount());
 		sbiKpiValueExecLog.setOutput(kpiValueExecLog.getOutput() == null ? null : kpiValueExecLog.getOutput().getBytes(Charset.forName("utf8")));
-		Session session = getSession();
-		Transaction tx = session.beginTransaction();
-		session.save(sbiKpiValueExecLog);
-		tx.commit();
+		Session session = null;
+		Transaction tx = null;
+		try {
+			session = getSession();
+			tx = session.beginTransaction();
+			session.save(sbiKpiValueExecLog);
+			tx.commit();
+		} catch (HibernateException he) {
+			if (tx != null) {
+				tx.rollback();
+			}
+			throw new SpagoBIDAOException("HibernateException while saving execution log", he);
+		} finally {
+			if (session != null) {
+				if (session.isOpen()) {
+					session.close();
+				}
+			}
+			logger.debug("OUT");
+		}
 	}
 
 	@Override
