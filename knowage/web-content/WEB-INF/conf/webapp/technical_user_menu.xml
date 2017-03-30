@@ -82,7 +82,7 @@
 					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/modalitiesCheck.jsp?LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/checks16.png" />
 					<ITEM	title="#menu.BehaviouralModelLineage"
-					functionality="ConstraintView"
+					functionality="BehaviouralModelLineage"
 					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/behaviouralModelLineage.jsp?LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
 					 />
 		</ITEM>
