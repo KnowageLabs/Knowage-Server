@@ -411,7 +411,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 		$scope.widgetSearchBar == false ? $scope.widgetSearchBar = true : $scope.widgetSearchBar = false;
 	}
 	 
-	$scope.doSelection = function(columnName,columnValue,modalColumn,modalValue,row){
+	$scope.doSelection = function(columnName,columnValue,modalColumn,modalValue,row, skipRefresh){
 		if($scope.ngModel.cliccable==false){
 			console.log("widget is not cliccable")
 			return;
@@ -522,7 +522,9 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 				
 				if(!angular.equals("noAssoc",sel)){
 					sel.then(function(response) {
-						cockpitModule_widgetSelection.refreshAllAssociatedWidget(false,response);
+						if(!skipRefresh){
+							cockpitModule_widgetSelection.refreshAllAssociatedWidget(false,response);
+						}
 					}, function(error) {
 						console.log(error)
 					});
@@ -541,7 +543,10 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 					}
 					cockpitModule_template.configuration.aliases.push({'dataset':dsLabel,'column':originalColumnName,'alias':columnName});
 					cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS=true;
-					cockpitModule_widgetSelection.refreshAllWidgetWhithSameDataset(dsLabel);
+					if(!skipRefresh){
+						cockpitModule_widgetSelection.refreshAllWidgetWhithSameDataset(dsLabel);
+					}
+					
 				}
 			}
 		}

@@ -451,7 +451,7 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 			if(chartType === 'HEATMAP'){
 				columnName = event.point.category;
 				columnValue = event.point.name;
-				$scope.doSelection(columnName,columnValue);
+				$scope.doSelection(columnName,columnValue, true);
 				columnName = event.point.group.name;
 				columnValue = event.point.group.value;
 				$scope.doSelection(columnName,columnValue);
@@ -519,8 +519,13 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
     				"SERIE_VALUE":event.selectParam_cross.serieValue,
     				"CATEGORY_VALUE":event.selectParam_cross.categoryValue,
     				"CATEGORY_NAME": event.selectParam_cross.categoryName,
-    				"CATEGORY_ID": event.selectParam_cross.categoryId
     			};
+    	   
+    	   if(event.selectParam_cross.categoryId){
+    		   parameters["CATEGORY_ID"]= event.selectParam_cross.categoryId;
+    	   }else{
+    		   parameters["CATEGORY_ID"]= event.selectParam_cross.categoryValue;
+    	   }
     			
     			return parameters;
        }else if( $scope.ngModel.content.chartTemplate.CHART.type==="SUNBURST"){
