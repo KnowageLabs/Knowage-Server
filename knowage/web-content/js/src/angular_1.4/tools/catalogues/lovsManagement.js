@@ -1187,7 +1187,8 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 					$scope.paramsList = [];
 					for (var i = 0; i < $scope.listOfEmptyParams.length; i++) {
 						$scope.paramObj = {};
-						$scope.paramObj.paramName = $scope.listOfEmptyParams[i];
+						$scope.paramObj.paramName = $scope.listOfEmptyParams[i].name;
+						$scope.paramObj.type = $scope.listOfEmptyParams[i].type;
 						$scope.paramsList.push($scope.paramObj);
 						$scope.paramObj = {};
 					}

@@ -4,16 +4,19 @@
 <md-toolbar class="primaryToolbar">
       <div class="md-toolbar-tools">
         <h2>
-          <span>{{translate.load("sbi.behavioural.lov.params.title");}}</span>
+          <span>{{translate.load("sbi.behavioural.lov.dependencies.title");}}</span>
         </h2>
       </div>
 </md-toolbar>
 
 <md-dialog-content>
- <p class="md-body-1" style="padding: 5px;">{{translate.load("sbi.behavioural.lov.params.text");}}</p>    
- 
+    
  <div ng-if = "paramsList.length > 0" style="padding: 5px;">
   <div layout="row" layout-wrap ng-repeat="param in paramsList">
+  
+  <p ng-if="param.type == 'profile'" class="md-body-1" style="padding: 5px;">{{translate.load("sbi.behavioural.lov.profile.popup.text");}}</p>
+  <p ng-if="param.type == 'parameter'" class="md-body-1" style="padding: 5px;">{{translate.load("sbi.behavioural.lov.parameter.popup.text");}}</p>
+  
 						<div flex=100>
 							<md-input-container class="md-block">
 							<label>{{param.paramName}}</label>

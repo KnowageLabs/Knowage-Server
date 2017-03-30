@@ -63,6 +63,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -82,6 +83,8 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.lowagie.tools.concat_pdf;
 
 import sun.misc.BASE64Encoder;
 
@@ -231,6 +234,8 @@ public class LovResource extends AbstractSpagoBIResource {
 		JSONObject pagination = new JSONObject();
 		JSONObject data = new JSONObject();
 		JSONArray param = new JSONArray();
+		JSONArray adparam = new JSONArray();
+		JSONArray profiles = new JSONArray();
 		GridMetadataContainer lovExecutionResult = new GridMetadataContainer();
 		SourceBean rowsSourceBean = null;
 		List<String> colNames = new ArrayList<String>();
@@ -239,7 +244,7 @@ public class LovResource extends AbstractSpagoBIResource {
 		String typeLov = null;
 		String lovProvider = null;
 
-		Map<String, String> paramFilled = (Map<String, String>) getAttributeFromHttpSession(SpagoBIConstants.PARAMETERS_FILLED);
+		Map<String, String> paramFilled = new HashMap<>();
 
 		try {
 			IEngUserProfile profile = getUserProfile();
@@ -249,11 +254,32 @@ public class LovResource extends AbstractSpagoBIResource {
 			data = paramsObj.getJSONObject("data");
 			param = paramsObj.optJSONArray("param");
 			if (param != null && param.length() > 0) {
-				UserProfile fake = insertIntoFakeUser(param);
+				
+				for (int i = 0; i < param.length(); i++) {
+					JSONObject obj = param.getJSONObject(i);
+					if(obj.getString("type").equals("profile")){
+						profiles.put(obj);
+					}else{
+						adparam.put(obj);
+					}
+				}	
+			}
+			
+			if (profiles != null && profiles.length() > 0) {
+				UserProfile fake = insertIntoFakeUser(profiles);
 				profile = fake;
 			}
+			if (adparam != null && adparam.length() > 0) {
+				for (int i = 0; i < adparam.length(); i++) {            
+			        String name = adparam.getJSONObject(i).getString("paramName");
+			        String value = adparam.getJSONObject(i).getString("paramValue");
+			        paramFilled.put(name, value);
+			    }
+			}
+			
 			typeLov = data.getString("itypeCd");
 			lovProvider = data.getString("lovProvider");
+			lovProvider = StringEscapeUtils.unescapeXml(lovProvider);
 
 			if (typeLov != null && typeLov.equalsIgnoreCase("JAVA_CLASS")) {
 				JavaClassDetail javaClassDetail = JavaClassDetail.fromXML(lovProvider);
@@ -291,6 +317,7 @@ public class LovResource extends AbstractSpagoBIResource {
 				}
 
 			} else if (typeLov != null && typeLov.equalsIgnoreCase("SCRIPT")) {
+				
 				ScriptDetail scriptDetail = ScriptDetail.fromXML(lovProvider);
 				try {
 					result = scriptDetail.getLovResult(profile, null, toMockedBIObjectParameters(paramFilled), null);
@@ -420,10 +447,11 @@ public class LovResource extends AbstractSpagoBIResource {
 	@Path("/checkparams")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.LOVS_MANAGEMENT })
-	public List checkParams(@javax.ws.rs.core.Context HttpServletRequest req) {
+	public String checkParams(@javax.ws.rs.core.Context HttpServletRequest req) {
 
 		IModalitiesValueDAO modalitiesValueDAO;
-		List profAttrToFill = new ArrayList<>();
+		JSONArray dependencies = new JSONArray();
+		
 		try {
 
 			modalitiesValueDAO = DAOFactory.getModalitiesValueDAO();
@@ -433,9 +461,24 @@ public class LovResource extends AbstractSpagoBIResource {
 			String lovProv = requestBodyJSON.getString("provider");
 			lovProv = lovProv.replaceAll("&#x27;", "'");
 			ILovDetail lovDet = LovDetailFactory.getLovFromXML(lovProv);
-			profAttrToFill = getProfileAttributesToFill(lovDet);
+			List profAttrToFill = getProfileAttributesToFill(lovDet);
+			Set<String> paramsToFill = lovDet.getParameterNames();
 			if (profAttrToFill.size() != 0) {
-				return profAttrToFill;
+				for (Object profile : profAttrToFill) {
+					JSONObject obj = new JSONObject();
+					obj.put("name" , profile);
+					obj.put("type" , "profile");
+					dependencies.put(obj);
+				}
+			}
+			
+			if (paramsToFill.size() != 0) {
+				for (String param : paramsToFill) {
+					JSONObject obj = new JSONObject();
+					obj.put("name" , param);
+					obj.put("type" , "parameter");
+					dependencies.put(obj);
+				}
 			}
 
 		} catch (Exception exception) {
@@ -445,7 +488,7 @@ public class LovResource extends AbstractSpagoBIResource {
 
 		}
 
-		return profAttrToFill;
+		return dependencies.toString();
 
 	}
 
