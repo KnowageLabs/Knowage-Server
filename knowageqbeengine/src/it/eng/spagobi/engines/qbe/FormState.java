@@ -52,7 +52,7 @@ public class FormState extends EngineAnalysisState {
 	private static transient Logger logger = Logger.getLogger(FormState.class);
 
 	@Override
-	public void load(byte[] rowData) throws SpagoBIEngineException {  testToBreak
+	public void load(byte[] rowData) throws SpagoBIEngineException {
 		String str = null;
 		JSONObject formStateJSON = null;
 		JSONObject rowDataJSON = null;
