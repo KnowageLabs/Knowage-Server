@@ -11,6 +11,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		sbiModule_restServices.promiseGet("2.0/datasets","listDataset")
 		.then(function(response){
 			angular.copy(response.data.item,ds.datasetList);
+			ds.initRealTimeValues();
 			ds.checkForDSChange();
 			cockpitModule_widgetSelection.getAssociations(cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS,undefined,def);
 //			def.resolve();
@@ -20,6 +21,18 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		})
 		return def.promise;
 	};
+	
+	this.initRealTimeValues=function(){
+		for(var i=0; i < ds.datasetList.length; i++){
+			var dataset = ds.datasetList[i];
+			if(dataset.useCache == undefined){
+				dataset.useCache = true;
+			}
+			if(dataset.frequency == undefined){
+				dataset.frequency = 0;
+			}
+		}
+	}
 
 	this.checkForDSChange=function(){
 		var changed=[];
@@ -281,18 +294,19 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 	this.getAvaiableDatasets=function(){
 		var fad=[];
 		for(var i=0;i<cockpitModule_template.configuration.datasets.length;i++){
-			var dsIl=ds.getDatasetById(cockpitModule_template.configuration.datasets[i].dsId);
+			var dataset = cockpitModule_template.configuration.datasets[i];
+			var dsIl=ds.getDatasetById(dataset.dsId);
 			if(dsIl!=undefined){
-				dsIl.useCache=cockpitModule_template.configuration.datasets[i].useCache;
-				dsIl.frequency=cockpitModule_template.configuration.datasets[i].frequency;
-				if(cockpitModule_template.configuration.datasets[i].parameters!=undefined){
+				dsIl.useCache = (dataset.useCache == undefined) ? true : dataset.useCache;
+				dsIl.frequency = (dataset.frequency == undefined) ? 0 : dataset.frequency;
+				if(dataset.parameters!=undefined){
 					angular.forEach(dsIl.parameters,function(item){
-						item.value=cockpitModule_template.configuration.datasets[i].parameters[item.name];
+						item.value=dataset.parameters[item.name];
 					})
 				}
 				fad.push(dsIl);
 			}else{
-				console.error("ds with id "+cockpitModule_template.configuration.datasets[i].dsId +" not found;")
+				console.error("ds with id "+dataset.dsId +" not found;")
 			}
 		}
 
@@ -313,8 +327,8 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		tmpDS.dsId=avDataset.id.dsId;
 		tmpDS.name=avDataset.name;
 		tmpDS.dsLabel=avDataset.label;
-		tmpDS.useCache=avDataset.useCache;
-		tmpDS.frequency=avDataset.frequency;
+		tmpDS.useCache = (avDataset.useCache == undefined) ? true : avDataset.useCache;
+		tmpDS.frequency = (avDataset.frequency == undefined) ? 0 : avDataset.frequency;
 		tmpDS.parameters={};
 		if(avDataset.parameters!=undefined){
 			for(var p=0;p<avDataset.parameters.length;p++){
