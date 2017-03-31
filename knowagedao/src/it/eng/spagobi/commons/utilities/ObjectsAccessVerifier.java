@@ -883,6 +883,7 @@ public class ObjectsAccessVerifier {
 			}
 		}
 
+
 		List foldersId = obj.getFunctionalities();
 		if (foldersId == null || foldersId.size() == 0) {
 			monitor.stop();
