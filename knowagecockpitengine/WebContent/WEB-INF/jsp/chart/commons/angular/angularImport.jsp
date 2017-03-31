@@ -30,8 +30,12 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 <link rel="stylesheet" href="${pageContext.request.contextPath}/themes/sbi_default/fonts/font-awesome-4.4.0/css/font-awesome.min.css">
 
 <!-- angular reference-->
+<!-- START-DEBUG -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular.js"></script>
-
+<!-- END-DEBUG -->
+<!-- START-PRODUCTION 
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular.min.js"></script>
+END-PRODUCTION -->
 <!-- angular-material-->
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-material_1.1.0/angular-material.min.js"></script>
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/js/lib/angular/angular-material_1.1.0/angular-material.min.css">

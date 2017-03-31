@@ -161,6 +161,54 @@
 
 	<target name="liferay.tomcat">
 	</target>
+	
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!--   ATTIVITA' SPECIFICHE PER COMPRESSIONE CODICE JS                              -->
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<target name="production" >
+		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/angular/angularImport.jsp">
+			<replacetoken><![CDATA[<!-- START-PRODUCTION]]></replacetoken>
+			<replacevalue><![CDATA[<!-- START-PRODUCTION -->]]></replacevalue>
+		</replace>
+		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/angular/angularImport.jsp">
+			<replacetoken><![CDATA[END-PRODUCTION -->]]></replacetoken>
+			<replacevalue><![CDATA[<!-- END-PRODUCTION -->]]></replacevalue>
+		</replace>
+
+		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/angular/angularImport.jsp">
+			<replacetoken><![CDATA[<!-- START-DEBUG -->]]></replacetoken>
+			<replacevalue><![CDATA[<!-- START-DEBUG]]></replacevalue>
+		</replace>
+		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/angular/angularImport.jsp">
+			<replacetoken><![CDATA[<!-- END-DEBUG -->]]></replacetoken>
+			<replacevalue><![CDATA[END-DEBUG -->]]></replacevalue>
+		</replace>		
+		
+		<replace file="${build}/${webapp_name}/WEB-INF/jsp/chart/commons/angular/angularImport.jsp">
+			<replacetoken><![CDATA[<!-- START-PRODUCTION]]></replacetoken>
+			<replacevalue><![CDATA[<!-- START-PRODUCTION -->]]></replacevalue>
+		</replace>
+		<replace file="${build}/${webapp_name}/WEB-INF/jsp/chart/commons/angular/angularImport.jsp">
+			<replacetoken><![CDATA[END-PRODUCTION -->]]></replacetoken>
+			<replacevalue><![CDATA[<!-- END-PRODUCTION -->]]></replacevalue>
+		</replace>
+
+		<replace file="${build}/${webapp_name}/WEB-INF/jsp/chart/commons/angular/angularImport.jsp">
+			<replacetoken><![CDATA[<!-- START-DEBUG -->]]></replacetoken>
+			<replacevalue><![CDATA[<!-- START-DEBUG]]></replacevalue>
+		</replace>
+		<replace file="${build}/${webapp_name}/WEB-INF/jsp/chart/commons/angular/angularImport.jsp">
+			<replacetoken><![CDATA[<!-- END-DEBUG -->]]></replacetoken>
+			<replacevalue><![CDATA[END-DEBUG -->]]></replacevalue>
+		</replace>	
+
+	</target>
+	
+	<target name="development">
+
+
+	</target>
+	
 
 	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 	<!--   ATTIVITA' SPECIFICHE PER LA GESTIONE DEL SSI                          -->
@@ -195,7 +243,9 @@
 	<target name="create.war" depends="init,copy.artifacts">
 		<antcall target="${sso}" />
 		<antcall target="${specific.ant.task}" />
+		<antcall target="${ext.deploy}" />
 		<antcall target="upgrade.mf" />
+		
 		<mkdir dir="${dist}" />
 		<delete file="${dist}/${war_name}" />
 		<war warfile="${dist}/${war_name}" webxml="${build}/${webapp_name}/WEB-INF/web.xml" manifest="${build}/${webapp_name}/META-INF/MANIFEST.MF" basedir="${build}/${webapp_name}" />
