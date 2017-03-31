@@ -132,9 +132,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				parentGridStyle = angular.extend({},gridStyle,$scope.ngModel.content.columnSelectedOfDataset[ind].style);
 				gridStyle = parentGridStyle.maxChars;
 			}
-			//davverna - if the max chars value setting for the column is not set the default is 1000
+			//davverna - if the max chars value setting for the column is not set the default is false
 			if(index==-99 && ($scope.ngModel.content.columnSelectedOfDataset[ind].style == undefined || $scope.ngModel.content.columnSelectedOfDataset[ind].style.maxChars == undefined)){
-				gridStyle = 1000;
+				gridStyle = false;
 			}
 			return gridStyle;
 		}
