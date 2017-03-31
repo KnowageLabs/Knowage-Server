@@ -521,22 +521,21 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 				aSession.saveOrUpdate(sbiExtUserRole);
 				aSession.flush();
 			}
-
-			// sets attributes
+			// set attributes
 			// remove existing attributes
-			// qr = " from SbiUserAttributes x where x.id.id = :id ";
-			// queryR = aSession.createQuery(qr);
-			// queryR.setInteger("id", id);
-			// List<SbiUserAttributes> userAttributes = (List<SbiUserAttributes>) queryR.list();
-			// if (userAttributes != null && !userAttributes.isEmpty()) {
-			// Iterator<SbiUserAttributes> attrsIt = userAttributes.iterator();
-			// while (attrsIt.hasNext()) {
-			// SbiUserAttributes temp = attrsIt.next();
-			// attrsIt.remove();
-			// aSession.delete(temp);
-			// aSession.flush();
-			// }
-			// }
+			qr = " from SbiUserAttributes x where x.id.id = :id ";
+			queryR = aSession.createQuery(qr);
+			queryR.setInteger("id", id);
+			List<SbiUserAttributes> userAttributes = queryR.list();
+			if (userAttributes != null && !userAttributes.isEmpty()) {
+				Iterator<SbiUserAttributes> attrsIt = userAttributes.iterator();
+				while (attrsIt.hasNext()) {
+					SbiUserAttributes temp = attrsIt.next();
+					attrsIt.remove();
+					aSession.delete(temp);
+					aSession.flush();
+				}
+			}
 			// add new attributes
 			Set<SbiUserAttributes> newAttributes = user.getSbiUserAttributeses();
 			if (newAttributes != null && !newAttributes.isEmpty()) {
@@ -568,19 +567,23 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 	}
 
 	/**
-	 * Check if the user identifier in input is valid (for insertion or modification) for the user with the input integer id. In case of user insertion, id
-	 * should be null.
+	 * Check if the user identifier in input is valid (for insertion or
+	 * modification) for the user with the input integer id. In case of user
+	 * insertion, id should be null.
 	 *
 	 * @param userId
 	 *            The user identifier to check
 	 * @param id
-	 *            The id of the user to which the user identifier should be validated
+	 *            The id of the user to which the user identifier should be
+	 *            validated
 	 * @throws a
-	 *             EMFUserError with severity EMFErrorSeverity.ERROR and code 400 in case the user id is already in use
+	 *             EMFUserError with severity EMFErrorSeverity.ERROR and code
+	 *             400 in case the user id is already in use
 	 */
 	@Override
 	public void checkUserId(String userId, Integer id) throws EMFUserError {
-		// if id == 0 means you are in insert case check user name is not already used
+		// if id == 0 means you are in insert case check user name is not
+		// already used
 		logger.debug("Check if user identifier " + userId + " is already present ...");
 		Integer existingId = this.isUserIdAlreadyInUse(userId);
 		if (id != null) {
@@ -638,7 +641,8 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 	}
 
 	/**
-	 * From the Hibernate SbiUser at input, gives the corrispondent BI object (UserBO).
+	 * From the Hibernate SbiUser at input, gives the corrispondent BI object
+	 * (UserBO).
 	 *
 	 * @param sbiUser
 	 *            The Hibernate SbiUser
@@ -735,17 +739,20 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 	//
 	// offset = offset < 0 ? 0 : offset;
 	// if(resultNumber > 0) {
-	// fetchSize = (fetchSize > 0)? Math.min(fetchSize, resultNumber): resultNumber;
+	// fetchSize = (fetchSize > 0)? Math.min(fetchSize, resultNumber):
+	// resultNumber;
 	// }
 	//
-	// hibernateQuery = aSession.createQuery("from SbiUser su where su.id in (" +
+	// hibernateQuery = aSession.createQuery("from SbiUser su where su.id in ("
+	// +
 	// " select ur.id.id " +
 	// " from " +
 	// " SbiExtUserRoles ur, SbiExtRoles r " +
 	// " where " +
 	// " ur.id.extRoleId = r.extRoleId " +
 	// " group by ur.id.id " +
-	// " having sum(case when r.roleType.valueCd = 'USER' then 0 else 1 end) = 0) " +
+	// " having sum(case when r.roleType.valueCd = 'USER' then 0 else 1 end) =
+	// 0) " +
 	// ") order by userId");
 	// hibernateQuery.setFirstResult(offset);
 	// if(fetchSize > 0) hibernateQuery.setMaxResults(fetchSize);
@@ -796,7 +803,8 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 	}
 
 	/**
-	 * Get the SbiUser object with the input user identifier. The search method is CASE INSENSITIVE!!!
+	 * Get the SbiUser object with the input user identifier. The search method
+	 * is CASE INSENSITIVE!!!
 	 *
 	 * @param userId
 	 *            The user identifier
@@ -808,7 +816,8 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 		Transaction tx = null;
 		try {
 			aSession = getSession();
-			// WE MUST UNSET THE TENANT FILTER, SINCE USER ID MUST BE UNIQUE ACCROSS ALL TENANTS
+			// WE MUST UNSET THE TENANT FILTER, SINCE USER ID MUST BE UNIQUE
+			// ACCROSS ALL TENANTS
 			this.disableTenantFilter(aSession);
 			tx = aSession.beginTransaction();
 			LogMF.debug(logger, "IN : user id = [{0}]", userId);
@@ -847,8 +856,22 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			List users = hibernateQuery.list();
 
 			total = users.size();
-			int indexStart = offset < 0 ? 0 : Math.min(offset, total - 1); // if total = 0 --> indexStart = -1
-			int indexEnd = (fetchSize > 0) ? Math.min(indexStart + fetchSize - 1, total - 1) // if total = 0 --> indexEnd = -1
+			int indexStart = offset < 0 ? 0 : Math.min(offset, total - 1); // if
+																			// total
+																			// =
+																			// 0
+																			// -->
+																			// indexStart
+																			// =
+																			// -1
+			int indexEnd = (fetchSize > 0) ? Math.min(indexStart + fetchSize - 1, total - 1) // if
+																								// total
+																								// =
+																								// 0
+																								// -->
+																								// indexEnd
+																								// =
+																								// -1
 					: total - 1;
 
 			List<UserBO> results = new ArrayList<UserBO>();
@@ -963,7 +986,8 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 
 	}
 
-	// public List<UserBO> loadSbiUserListFiltered(String hsql,Integer offset, Integer fetchSize) throws EMFUserError {
+	// public List<UserBO> loadSbiUserListFiltered(String hsql,Integer offset,
+	// Integer fetchSize) throws EMFUserError {
 	// logger.debug("IN");
 	// List<UserBO> toReturn = null;
 	// Session aSession = null;
@@ -984,7 +1008,8 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 	//
 	// offset = offset < 0 ? 0 : offset;
 	// if(resultNumber > 0) {
-	// fetchSize = (fetchSize > 0)? Math.min(fetchSize, resultNumber): resultNumber;
+	// fetchSize = (fetchSize > 0)? Math.min(fetchSize, resultNumber):
+	// resultNumber;
 	// }
 	//
 	// hibernateQuery = aSession.createQuery(hsql);

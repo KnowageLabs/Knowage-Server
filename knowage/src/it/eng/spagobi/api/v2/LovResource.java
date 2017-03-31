@@ -17,6 +17,34 @@
  */
 package it.eng.spagobi.api.v2;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.log4j.LogMF;
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spago.base.SourceBeanException;
@@ -55,37 +83,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.log4j.LogMF;
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.lowagie.tools.concat_pdf;
-
 import sun.misc.BASE64Encoder;
 
 /**
@@ -233,8 +230,8 @@ public class LovResource extends AbstractSpagoBIResource {
 
 		JSONObject pagination = new JSONObject();
 		JSONObject data = new JSONObject();
-		JSONArray param = new JSONArray();
-		JSONArray adparam = new JSONArray();
+		JSONArray dependencies = new JSONArray();
+		JSONArray parameters = new JSONArray();
 		JSONArray profiles = new JSONArray();
 		GridMetadataContainer lovExecutionResult = new GridMetadataContainer();
 		SourceBean rowsSourceBean = null;
@@ -249,34 +246,34 @@ public class LovResource extends AbstractSpagoBIResource {
 		try {
 			IEngUserProfile profile = getUserProfile();
 			String unsafe = RestUtilities.readBodyXSSUnsafe(req);
-			JSONObject paramsObj = new JSONObject(unsafe);
-			pagination = paramsObj.getJSONObject("pagination");
-			data = paramsObj.getJSONObject("data");
-			param = paramsObj.optJSONArray("param");
-			if (param != null && param.length() > 0) {
-				
-				for (int i = 0; i < param.length(); i++) {
-					JSONObject obj = param.getJSONObject(i);
-					if(obj.getString("type").equals("profile")){
+			JSONObject dependenciesObj = new JSONObject(unsafe);
+			pagination = dependenciesObj.getJSONObject("pagination");
+			data = dependenciesObj.getJSONObject("data");
+			dependencies = dependenciesObj.optJSONArray("dependencies");
+			if (dependencies != null && dependencies.length() > 0) {
+
+				for (int i = 0; i < dependencies.length(); i++) {
+					JSONObject obj = dependencies.getJSONObject(i);
+					if (obj.getString("type").equals("profile")) {
 						profiles.put(obj);
-					}else{
-						adparam.put(obj);
+					} else {
+						parameters.put(obj);
 					}
-				}	
+				}
 			}
-			
+
 			if (profiles != null && profiles.length() > 0) {
 				UserProfile fake = insertIntoFakeUser(profiles);
 				profile = fake;
 			}
-			if (adparam != null && adparam.length() > 0) {
-				for (int i = 0; i < adparam.length(); i++) {            
-			        String name = adparam.getJSONObject(i).getString("paramName");
-			        String value = adparam.getJSONObject(i).getString("paramValue");
-			        paramFilled.put(name, value);
-			    }
+			if (parameters != null && parameters.length() > 0) {
+				for (int i = 0; i < parameters.length(); i++) {
+					String name = parameters.getJSONObject(i).getString("name");
+					String value = parameters.getJSONObject(i).getString("value");
+					paramFilled.put(name, value);
+				}
 			}
-			
+
 			typeLov = data.getString("itypeCd");
 			lovProvider = data.getString("lovProvider");
 			lovProvider = StringEscapeUtils.unescapeXml(lovProvider);
@@ -317,7 +314,7 @@ public class LovResource extends AbstractSpagoBIResource {
 				}
 
 			} else if (typeLov != null && typeLov.equalsIgnoreCase("SCRIPT")) {
-				
+
 				ScriptDetail scriptDetail = ScriptDetail.fromXML(lovProvider);
 				try {
 					result = scriptDetail.getLovResult(profile, null, toMockedBIObjectParameters(paramFilled), null);
@@ -444,14 +441,14 @@ public class LovResource extends AbstractSpagoBIResource {
 	}
 
 	@POST
-	@Path("/checkparams")
+	@Path("/checkdependecies")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.LOVS_MANAGEMENT })
-	public String checkParams(@javax.ws.rs.core.Context HttpServletRequest req) {
+	public String checkDependencies(@javax.ws.rs.core.Context HttpServletRequest req) {
 
 		IModalitiesValueDAO modalitiesValueDAO;
 		JSONArray dependencies = new JSONArray();
-		
+
 		try {
 
 			modalitiesValueDAO = DAOFactory.getModalitiesValueDAO();
@@ -459,32 +456,32 @@ public class LovResource extends AbstractSpagoBIResource {
 			String unsafe = RestUtilities.readBodyXSSUnsafe(req);
 			JSONObject requestBodyJSON = new JSONObject(unsafe);
 			String lovProv = requestBodyJSON.getString("provider");
-			lovProv = lovProv.replaceAll("&#x27;", "'");
+			lovProv = StringEscapeUtils.unescapeXml(lovProv);
 			ILovDetail lovDet = LovDetailFactory.getLovFromXML(lovProv);
 			List profAttrToFill = getProfileAttributesToFill(lovDet);
 			Set<String> paramsToFill = lovDet.getParameterNames();
 			if (profAttrToFill.size() != 0) {
 				for (Object profile : profAttrToFill) {
 					JSONObject obj = new JSONObject();
-					obj.put("name" , profile);
-					obj.put("type" , "profile");
+					obj.put("name", profile);
+					obj.put("type", "profile");
 					dependencies.put(obj);
 				}
 			}
-			
+
 			if (paramsToFill.size() != 0) {
 				for (String param : paramsToFill) {
 					JSONObject obj = new JSONObject();
-					obj.put("name" , param);
-					obj.put("type" , "parameter");
+					obj.put("name", param);
+					obj.put("type", "parameter");
 					dependencies.put(obj);
 				}
 			}
 
 		} catch (Exception exception) {
 
-			logger.error("test", exception);
-			throw new SpagoBIServiceException("test", exception);
+			logger.error("Could not get dependencies", exception);
+			throw new SpagoBIServiceException("Could not get dependencies", exception);
 
 		}
 
@@ -656,7 +653,7 @@ public class LovResource extends AbstractSpagoBIResource {
 		return attrsToFill;
 	}
 
-	private UserProfile insertIntoFakeUser(JSONArray params) throws EMFInternalError, JSONException {
+	private UserProfile insertIntoFakeUser(JSONArray profiles) throws EMFInternalError, JSONException {
 
 		// create a fake user profile
 		UserProfile currentUserProfile = getUserProfile();
@@ -675,10 +672,9 @@ public class LovResource extends AbstractSpagoBIResource {
 			String profileAttrValue = getUserProfile().getUserAttribute(profileAttrName).toString();
 			attributes.put(profileAttrName, profileAttrValue);
 		}
-		for (int i = 0; i < params.length(); i++) {
-			JSONObject obj = params.getJSONObject(i);
-			String profileAttrName = obj.getString("paramName");
-			String profileAttrValue = obj.getString("paramValue");
+		for (int i = 0; i < profiles.length(); i++) {
+			String profileAttrName = profiles.getJSONObject(i).getString("name");
+			String profileAttrValue = profiles.getJSONObject(i).getString("value");
 			attributes.put(profileAttrName, profileAttrValue);
 
 		}
@@ -772,86 +768,68 @@ public class LovResource extends AbstractSpagoBIResource {
 	}
 
 	public String convertSpecialChars(String provider) {
-/*
-		String converted = "";
-		String script = "";
-		String query = "";
-		int startInd = 0;
-		int endId = 0;
-		if (provider.indexOf("<SCRIPT>") != -1) {
-			startInd = provider.indexOf("<SCRIPT>");
-			endId = provider.indexOf("</SCRIPT>");
-			startInd = startInd +8;
-			script = provider.substring(startInd, endId);
-			script = script.trim();
-		}
+		/*
+		 * String converted = ""; String script = ""; String query = ""; int
+		 * startInd = 0; int endId = 0; if (provider.indexOf("<SCRIPT>") != -1)
+		 * { startInd = provider.indexOf("<SCRIPT>"); endId =
+		 * provider.indexOf("</SCRIPT>"); startInd = startInd +8; script =
+		 * provider.substring(startInd, endId); script = script.trim(); }
+		 *
+		 * if (provider.indexOf("<STMT>") != -1) { startInd =
+		 * provider.indexOf("<STMT>"); endId = provider.indexOf("</STMT>");
+		 * startInd = startInd +6; query = provider.substring(startInd, endId);
+		 * query = query.trim();
+		 *
+		 * }
+		 *
+		 * if (!script.isEmpty()) { converted = script; } else { converted =
+		 * query; }
+		 *
+		 * if (converted.contains("'")) { converted = converted.replaceAll("'",
+		 * "&#x27;"); } if (converted.contains("<")) { converted =
+		 * converted.replaceAll("<", "&lt;"); } if (converted.contains(">")) {
+		 * converted = converted.replaceAll(">", "&gt;"); }
+		 *
+		 * if (converted.contains("&")) { converted = converted.replaceAll("&",
+		 * "&amp;"); }
+		 *
+		 * if (!converted.isEmpty()) { provider =
+		 * provider.replace(provider.substring(startInd, endId), converted);
+		 *
+		 * }
+		 */
 
-		if (provider.indexOf("<STMT>") != -1) {
-			startInd = provider.indexOf("<STMT>");
-			endId = provider.indexOf("</STMT>");
-			startInd = startInd +6;
-			query = provider.substring(startInd, endId);
-			query = query.trim();
-
-		}
-
-		if (!script.isEmpty()) {
-			converted = script;
-		} else {
-			converted = query;
-		}
-
-		if (converted.contains("'")) {
-			converted = converted.replaceAll("'", "&#x27;");
-		}
-		if (converted.contains("<")) {
-			converted = converted.replaceAll("<", "&lt;");
-		}
-		if (converted.contains(">")) {
-			converted = converted.replaceAll(">", "&gt;");
-		}
-
-		if (converted.contains("&")) {
-			converted = converted.replaceAll("&", "&amp;");
-		}
-
-		if (!converted.isEmpty()) {
-			provider = provider.replace(provider.substring(startInd, endId), converted);
-
-		}*/
-
-
-		if(provider.contains("<SCRIPT>")){
-		//	SourceBean sb = SourceBean.fromXMLString(lovProvider).getContainedAttributes()[0];
-			//sb.getContainedAttributes()
+		if (provider.contains("<SCRIPT>")) {
+			// SourceBean sb =
+			// SourceBean.fromXMLString(lovProvider).getContainedAttributes()[0];
+			// sb.getContainedAttributes()
 			provider = provider.replace("<SCRIPT><![CDATA[", "<SCRIPT>");
 			provider = provider.replace("]]></SCRIPT>", "</SCRIPT>");
 			int pos1 = provider.indexOf("<SCRIPT>");
 			int pos2 = provider.indexOf("</SCRIPT>");
-			String content = provider.substring(pos1+8,pos2);
+			String content = provider.substring(pos1 + 8, pos2);
 			content = StringEscapeUtils.unescapeHtml4(content);
 			BASE64Encoder bASE64Encoder = new BASE64Encoder();
 			String encoded = bASE64Encoder.encode(content.getBytes());
-			provider  = provider.substring(0,pos1+8)+encoded+provider.substring(pos2);
+			provider = provider.substring(0, pos1 + 8) + encoded + provider.substring(pos2);
 
 		}
 
-		if(provider.contains("<STMT>")){
-		//	SourceBean sb = SourceBean.fromXMLString(provider).getContainedAttributes()[0];
-			//sb.getContainedAttributes()
+		if (provider.contains("<STMT>")) {
+			// SourceBean sb =
+			// SourceBean.fromXMLString(provider).getContainedAttributes()[0];
+			// sb.getContainedAttributes()
 			provider = provider.replace("<STMT><![CDATA[", "<STMT>");
 			provider = provider.replace("]]></STMT>", "</STMT>");
 			int pos1 = provider.indexOf("<STMT>");
 			int pos2 = provider.indexOf("</STMT>");
-			String content = provider.substring(pos1+6,pos2);
+			String content = provider.substring(pos1 + 6, pos2);
 			content = StringEscapeUtils.unescapeHtml4(content);
 			BASE64Encoder bASE64Encoder = new BASE64Encoder();
 			String encoded = bASE64Encoder.encode(content.getBytes());
-			provider  = provider.substring(0,pos1+6)+encoded+provider.substring(pos2);
+			provider = provider.substring(0, pos1 + 6) + encoded + provider.substring(pos2);
 
 		}
-
-
 
 		return provider;
 

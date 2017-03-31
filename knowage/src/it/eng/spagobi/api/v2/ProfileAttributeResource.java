@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,24 +11,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.api.v2;
-
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.profiling.bean.SbiAttribute;
-import it.eng.spagobi.profiling.bean.SbiUser;
-import it.eng.spagobi.profiling.bean.SbiUserAttributes;
-import it.eng.spagobi.profiling.bo.ProfileAttribute;
-import it.eng.spagobi.profiling.dao.ISbiAttributeDAO;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.services.rest.annotations.UserConstraint;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,8 +35,17 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONObject;
+
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.profiling.bean.SbiAttribute;
+import it.eng.spagobi.profiling.bo.ProfileAttribute;
+import it.eng.spagobi.profiling.dao.ISbiAttributeDAO;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 
 @Path("/2.0/attributes")
 @ManageAuthorization
@@ -86,30 +82,6 @@ public class ProfileAttributeResource extends AbstractSpagoBIResource {
 			throw new SpagoBIRestServiceException(getLocale(), e);
 		}
 
-	}
-	
-	@GET
-	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT })
-	@Path("/user/")
-	@Produces(MediaType.APPLICATION_JSON + charset)
-	public String getAttributesByUserId() {
-		JSONArray toReturn = new JSONArray();
-		try {
-			
-			SbiUser user = DAOFactory.getSbiUserDAO().loadSbiUserByUserId(getUserProfile().getUserId().toString());
-			ArrayList<SbiUserAttributes> attributes = DAOFactory.getSbiUserDAO().loadSbiUserAttributesById(user.getId());
-			
-			for (int i = 0; i < attributes.size(); i++) {
-				JSONObject obj = new JSONObject();
-				obj.put("Name", attributes.get(i).getSbiAttribute().getAttributeName());
-				obj.put("Value", attributes.get(i).getAttributeValue());
-				toReturn.put(obj);
-			}
-			return toReturn.toString();
-		} catch (Exception e) {
-			logger.error("Error with loading resource", e);
-			throw new SpagoBIRestServiceException("sbi.modalities.check.rest.error", buildLocaleFromSession(), e);
-		}
 	}
 
 	@PUT

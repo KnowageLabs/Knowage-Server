@@ -65,15 +65,25 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	$scope.listOfDatasets = [];
 	$scope.listForFixLov = [];
 	$scope.listOfProfileAttributes = [];
-	$scope.listOfEmptyParams = [];
+	$scope.listOfEmptyDependencies = [];
 	$scope.selectedLov = {};
 	$scope.toolbarTitle ="";
 	$scope.infoTitle="";
-	$scope.selectedScriptType={};
-	$scope.selectedQuery = {};
+	$scope.selectedScriptType={
+		language : "",
+		text : ""
+	};
+	$scope.selectedQuery = {
+		datasource : "",
+		query : ""
+	};
 	$scope.selectedFIXLov = {};
-	$scope.selectedJavaClass = {};
-	$scope.selectedDataset = {};
+	$scope.selectedJavaClass = {
+		name : ""	
+	};
+	$scope.selectedDataset = {
+		id : ""	
+	};
 	$scope.lovItemEnum ={
 		"SCRIPT" : "SCRIPT",
 		"QUERY" : "QUERY",
@@ -99,12 +109,8 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 		"paginationLimit" : 20,	
 		"paginationEnd" : 20
 	};
-	$scope.paramsList = [];
-	$scope.paramObj = {
-		
-		
-	};
-	$scope.userAttributes = [];
+	$scope.dependenciesList = [];
+	$scope.dependencyObj = {};
 	$scope.testLovColumns = [
 	   {
 		   label:"Name",
@@ -318,7 +324,6 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 		$scope.getScriptTypes();
 		$scope.getDatasources();
 		$scope.getDatasets();
-		$scope.getUserAttributes();
     });
 	
 	$scope.setDirty=function()
@@ -451,21 +456,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 			clickOutsideToClose : false,
 			hasBackdrop : false
 		});
-	}
-	
-	$scope.getUserAttributes = function() {
-		
-		sbiModule_restServices.promiseGet("2.0/attributes/user", '')
-		.then(function(response) {
-			$scope.userAttributes = response.data;
-			console.log($scope.userAttributes);
-		}, function(response) {
-			console.log(response);
-			sbiModule_messaging.showErrorMessage(response.data, sbiModule_translate.load("sbi.generic.toastr.title.error"));
-			
-		});
-	}
-	
+	}	
 	/**
 	 * Function opens dialog with information
 	 * about selection
@@ -547,18 +538,15 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 				
 			});			
 			}
-			
-			
-			
-			
-			
 		}
 		
 	}
 	
-
 	
+	
+
 	$scope.updateLovWithoutProvider = function() {
+		console.log( $scope.lovProviderFlag)
 		var result = {}
 		var propName = $scope.selectedLov.itypeCd;
 		var prop = lovProviderEnum[propName];
@@ -638,13 +626,25 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 		
 	}
 	
+	var escapeXml =  function(unsafe) {
+		   return unsafe.replace(/&apos;/g, "'")
+           .replace(/&quot;/g, '"')
+           .replace(/&gt;/g, '>')
+           .replace(/&lt;/g, '<')
+           .replace(/&amp;/g, '&');
+	}
+	
 	var decode = function(item){
 		try {
 			if(item.lovProvider.SCRIPTLOV){
 				item.lovProvider.SCRIPTLOV.SCRIPT = base64.decode(item.lovProvider.SCRIPTLOV.SCRIPT);
+				item.lovProvider.SCRIPTLOV.SCRIPT = escapeXml(item.lovProvider.SCRIPTLOV.SCRIPT);
+				
+				
 			}
 			if(item.lovProvider.QUERY){
 				item.lovProvider.QUERY.STMT = base64.decode(item.lovProvider.QUERY.STMT);
+				item.lovProvider.QUERY.STMT = escapeXml(item.lovProvider.QUERY.STMT);
 			}			
 		}catch(err) {}
 		
@@ -1167,30 +1167,30 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 			return arr;
 		}
 		
-		$scope.checkForParams = function(){
+		$scope.checkForDependencies = function(){
 			
 			var toSend ={};
-			var selectedLovForParams = angular.copy($scope.selectedLov);
+			var selectedLovForDependencyChecking = angular.copy($scope.selectedLov);
 			var x2js = new X2JS(); 
-			var xmlAsStr = x2js.json2xml_str(selectedLovForParams.lovProvider); 
-			selectedLovForParams.lovProvider = xmlAsStr;
-
+			var xmlAsStr = x2js.json2xml_str(selectedLovForDependencyChecking.lovProvider); 
+			selectedLovForDependencyChecking.lovProvider = xmlAsStr;
 			
-			toSend.provider = selectedLovForParams.lovProvider;
 			
-			sbiModule_restServices.promisePost("2.0", "lovs/checkparams",toSend)
+			toSend.provider = selectedLovForDependencyChecking.lovProvider;
+			
+			sbiModule_restServices.promisePost("2.0", "lovs/checkdependecies",toSend)
 			.then(function(response) {
-				$scope.listOfEmptyParams = [];
-				$scope.listOfEmptyParams = response.data;
+				$scope.listOfEmptyDependencies = [];
+				$scope.listOfEmptyDependencies = response.data;
 				
-				if($scope.listOfEmptyParams.length > 0){
-					$scope.paramsList = [];
-					for (var i = 0; i < $scope.listOfEmptyParams.length; i++) {
-						$scope.paramObj = {};
-						$scope.paramObj.paramName = $scope.listOfEmptyParams[i].name;
-						$scope.paramObj.type = $scope.listOfEmptyParams[i].type;
-						$scope.paramsList.push($scope.paramObj);
-						$scope.paramObj = {};
+				if($scope.listOfEmptyDependencies.length > 0){
+					$scope.dependenciesList = [];
+					for (var i = 0; i < $scope.listOfEmptyDependencies.length; i++) {
+						$scope.dependencyObj = {};
+						$scope.dependencyObj.name = $scope.listOfEmptyDependencies[i].name;
+						$scope.dependencyObj.type = $scope.listOfEmptyDependencies[i].type;
+						$scope.dependenciesList.push($scope.dependencyObj);
+						$scope.dependencyObj = {};
 					}
 					
 					$mdDialog
@@ -1215,6 +1215,8 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, sbiModule_translate.load("sbi.generic.toastr.title.error"));
 				
 			});
+			
+			selectedLovForDependencyChecking = null;
 		}
 		
 		
@@ -1234,12 +1236,12 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 				console.log("edit")
 			}
 			
-			$scope.checkForParams();
+			$scope.checkForDependencies();
 			
 			
 		}
 		
-		$scope.previewLov = function(param) {
+		$scope.previewLov = function(dependencies) {
 			
 			
 			var toSend ={};
@@ -1251,8 +1253,8 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 			
 			toSend.data = selectedLovForPreview;
 			toSend.pagination = $scope.paginationObj;
-			if(param != undefined){
-				toSend.param = param;
+			if(dependencies != undefined){
+				toSend.dependencies = dependencies;
 			}
 			
 			$scope.previewLovModel = [];
@@ -1285,9 +1287,6 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 								
 								
 								$scope.enableTest = true;
-								
-								
-								
 								
 							}	
 							
@@ -1426,10 +1425,6 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 			 }
 		 }
 		 $scope.testLovModel = $scope.tableModelForTest;
-		 
-		 
-		 
+	 		 
 	 }
-	
-
 };
