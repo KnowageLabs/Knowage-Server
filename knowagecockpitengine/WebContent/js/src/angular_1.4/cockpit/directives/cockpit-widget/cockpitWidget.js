@@ -189,7 +189,7 @@ angular.module('cockpitModule')
 	   }
 });
 
-function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetServices,cockpitModule_properties,cockpitModule_template,cockpitModule_analyticalDrivers,cockpitModule_datasetServices,sbiModule_restServices,$q,cockpitModule_documentServices,cockpitModule_crossServices,cockpitModule_widgetSelection,$timeout,cockpitModule_gridsterOptions,sbiModule_translate){
+function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetServices,cockpitModule_properties,cockpitModule_template,cockpitModule_analyticalDrivers,cockpitModule_datasetServices,sbiModule_restServices,$q,cockpitModule_documentServices,cockpitModule_crossServices,cockpitModule_widgetSelection,$timeout,cockpitModule_gridsterOptions,sbiModule_translate,sbiModule_user){
 	$scope.cockpitModule_properties=cockpitModule_properties;
 	$scope.cockpitModule_template=cockpitModule_template;
 	$scope.translate		= sbiModule_translate;
@@ -260,7 +260,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 			break;
 		case "UPDATE_FROM_REALTIME":
 			var ds=$scope.getDataset();
-			if(ds!=undefined && config.dsList.indexOf(ds.label)!=-1){
+			if(ds!=undefined && config.dsList.indexOf(ds.label)!=-1 && sbiModule_user.isAbleTo("NearRealTimeCockpit")){
 				/*
 				 * author: rselakov, Radmila Selakovic,
 				 * radmila.selakovic@mht.net checking type of widget because of
