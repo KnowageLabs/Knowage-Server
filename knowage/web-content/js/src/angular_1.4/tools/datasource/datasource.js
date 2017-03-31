@@ -96,11 +96,18 @@ function dataSourceFunction(sbiModule_translate, sbiModule_restServices, $scope,
 	//REST
 	$scope.saveOrUpdateDataSource = function(){
 
-		delete $scope.jdbcOrJndi.type;
 		
-		if($scope.selectedDataSource.driver!=""){
+		
+		if($scope.jdbcOrJndi.type=="JDBC") {
 			$scope.selectedDataSource.jndi = "";
-		}	
+		} else if($scope.jdbcOrJndi.type=="JNDI") {
+			$scope.selectedDataSource.driver = "";
+			$scope.selectedDataSource.pwd = "";
+			$scope.selectedDataSource.user = "";
+			$scope.selectedDataSource.urlConnection = "";
+		}
+		
+		delete $scope.jdbcOrJndi.type;
 
 		if($scope.selectedDataSource.hasOwnProperty("dsId")){
 

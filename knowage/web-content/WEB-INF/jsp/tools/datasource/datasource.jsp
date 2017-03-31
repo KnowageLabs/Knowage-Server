@@ -208,9 +208,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 									<!-- JNDI -->
 									<div flex=100 layout="row" ng-if= "jdbcOrJndi.type == 'JNDI'" >
-										<md-input-container flex="90" >
+										<md-input-container flex="90">
 											<label>{{translate.load("sbi.datasource.type.jndi.name")}}</label>
-											<input ng-model="selectedDataSource.jndi" ng-readonly="readOnly">
+											<input ng-model="selectedDataSource.jndi" ng-readonly="readOnly"  ng-required="jdbcOrJndi.type == 'JNDI'">
+											<div ng-messages="forms.dataSourceForm.jndi.$error" ng-show="!selectedDataSource.jndi">
+				          								<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired")}}</div>
+				        							</div>
 										</md-input-container>
 										<md-icon ng-click="showJdniInfo()" md-font-icon="fa fa-info-circle fa-lg" flex="10"></md-icon>
 									</div>
