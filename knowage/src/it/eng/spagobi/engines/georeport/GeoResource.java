@@ -17,11 +17,7 @@
  */
 package it.eng.spagobi.engines.georeport;
 
-import static it.eng.spagobi.engines.georeport.utils.geoUtils.getFileLayerAction;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.engines.georeport.utils.geoUtils;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
@@ -39,15 +35,11 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * @authors Giovanni Luca Ulivo (GiovanniLuca.Ulivo@eng.it)
@@ -121,17 +113,6 @@ public class GeoResource {
 			}
 			return Response.ok(new ByteArrayInputStream(imageData)).build();
 		}
-	}
-
-	@Path("/getFileLayer")
-	@POST
-	@Produces(MediaType.APPLICATION_JSON)
-	public String getFileLayer(@Context HttpServletRequest req) throws IOException, JSONException, EMFUserError {
-		JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
-		String layerUrl = requestVal.getString(geoUtils.LAYER_URL);
-		String result = getFileLayerAction(layerUrl);
-
-		return result;
 	}
 
 }

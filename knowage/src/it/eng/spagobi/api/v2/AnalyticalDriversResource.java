@@ -17,9 +17,7 @@
  */
 package it.eng.spagobi.api.v2;
 
-import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
-import it.eng.spago.validation.EMFValidationError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
@@ -28,19 +26,14 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.service.ListParametersModule;
 import it.eng.spagobi.behaviouralmodel.check.bo.Check;
 import it.eng.spagobi.behaviouralmodel.check.dao.ICheckDAO;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
 import it.eng.spagobi.behaviouralmodel.lov.dao.IModalitiesValueDAO;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.RoleBO;
-import it.eng.spagobi.commons.constants.AdmintoolsConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.AuditLogUtilities;
-import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
-import it.eng.spagobi.mapcatalogue.dao.ISbiGeoLayersDAO;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
@@ -49,11 +42,9 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Vector;
 
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
@@ -95,26 +86,26 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 
 	}
 
-	@GET
-	@UserConstraint(functionalities = { SpagoBIConstants.PARAMETER_MANAGEMENT })
-	@Path("/layers")
-	@Produces(MediaType.APPLICATION_JSON + charset)
-	public Response getLayers() {
-		ISbiGeoLayersDAO layersDao = DAOFactory.getSbiGeoLayerDao();
-		List<GeoLayer> fullList = null;
-
-		try {
-
-			layersDao = DAOFactory.getSbiGeoLayerDao();
-			layersDao.setUserProfile(getUserProfile());
-			fullList = layersDao.loadAllLayers(null, getUserProfile());
-			return Response.ok(fullList).build();
-		} catch (Exception e) {
-			logger.error("Error with loading resource", e);
-			throw new SpagoBIRestServiceException("Error with loading resource", buildLocaleFromSession(), e);
-		}
-
-	}
+	// @GET
+	// @UserConstraint(functionalities = { SpagoBIConstants.PARAMETER_MANAGEMENT })
+	// @Path("/layers")
+	// @Produces(MediaType.APPLICATION_JSON + charset)
+	// public Response getLayers() {
+	// ISbiGeoLayersDAO layersDao = DAOFactory.getSbiGeoLayerDao();
+	// List<GeoLayer> fullList = null;
+	//
+	// try {
+	//
+	// layersDao = DAOFactory.getSbiGeoLayerDao();
+	// layersDao.setUserProfile(getUserProfile());
+	// fullList = layersDao.loadAllLayers(null, getUserProfile());
+	// return Response.ok(fullList).build();
+	// } catch (Exception e) {
+	// logger.error("Error with loading resource", e);
+	// throw new SpagoBIRestServiceException("Error with loading resource", buildLocaleFromSession(), e);
+	// }
+	//
+	// }
 
 	@GET
 	@UserConstraint(functionalities = { SpagoBIConstants.PARAMETER_MANAGEMENT })
@@ -178,14 +169,12 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 		}
 
 	}
-	
+
 	@GET
 	@UserConstraint(functionalities = { SpagoBIConstants.PARAMETER_MANAGEMENT })
 	@Path("/{id}/lovs")
 	@Produces(MediaType.APPLICATION_JSON + charset)
 	public Response getLovsForDriver(@PathParam("id") Integer idParameter) {
-		
-		
 
 		logger.debug("IN");
 
@@ -197,16 +186,12 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 			modalitiesValueDAO = DAOFactory.getModalitiesValueDAO();
 			modalitiesValueDAO.setUserProfile(getUserProfile());
 			modalitiesValues = modalitiesValueDAO.loadModalitiesValueByParamaterId(idParameter);
-			
-			
-			
+
 			return Response.ok(modalitiesValues).build();
 		} catch (Exception e) {
 			logger.error("Error with loading resource", e);
 			throw new SpagoBIRestServiceException("Error with loading resource", buildLocaleFromSession(), e);
 		}
-		
-		
 
 	}
 
@@ -215,18 +200,16 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 	@Path("/{id}/documents")
 	@Produces(MediaType.APPLICATION_JSON + charset)
 	public Response getDocumentsById(@PathParam("id") Integer idParameter) {
-		
 
 		IBIObjectDAO documentsDao = null;
 		List<BIObject> documents = null;
 		logger.debug("IN");
-		
-		
-		try{
+
+		try {
 			documentsDao = DAOFactory.getBIObjectDAO();
 			documentsDao.setUserProfile(getUserProfile());
 			documents = documentsDao.loadBIObjectsByParamterId(idParameter);
-			
+
 			return Response.ok(documents).build();
 		} catch (Exception e) {
 			logger.error("Error with loading resource", e);
@@ -234,6 +217,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 		}
 
 	}
+
 	@POST
 	@Path("/")
 	@UserConstraint(functionalities = { SpagoBIConstants.PARAMETER_MANAGEMENT })
@@ -247,7 +231,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 			logger.error("Error paramters. New check should not have ID value");
 			throw new SpagoBIRuntimeException("Error paramters. New check should not have ID value");
 		}
-		if(parameterLabelControl(driver, "INSERT")){
+		if (parameterLabelControl(driver, "INSERT")) {
 			logger.error("Error inserting parameter.Same nqame already exists");
 			throw new SpagoBIRuntimeException("Error inserting parameter.Same name already exists");
 		}
@@ -279,11 +263,11 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 			logger.error("Error paramters. New check should not have ID value");
 			throw new SpagoBIRuntimeException("Error paramters. New check should not have ID value");
 		}
-		if(parameterUseLabelControl(useMode, "INSERT")){
+		if (parameterUseLabelControl(useMode, "INSERT")) {
 			logger.error("Error inserting parameter.Same nqame already exists");
 			throw new SpagoBIRuntimeException("Error inserting use mode.Same name already exists");
 		}
-		
+
 		List<Role> formatedRoles = new ArrayList<>();
 		List<Check> formatedChecks = new ArrayList<>();
 		for (LinkedHashMap temp : roles) {
@@ -370,9 +354,10 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 				// there are some correlations
 				if (useMode.getManualInput().intValue() == 1 || useMode.getIdLov().intValue() != useMode.getIdLov().intValue()) {
 					// the ParameterUse was changed to manual input or the lov id was changed
-					logger.error("Cant modify use mode because it is used in some documents" );
+					logger.error("Cant modify use mode because it is used in some documents");
 					throw new SpagoBIRuntimeException("Cant modify use mode because it is used");
-				}}
+				}
+			}
 			useModesDao.modifyParameterUse(useMode);
 			String encodedUseMode = URLEncoder.encode("" + useMode.getUseID(), "UTF-8");
 			return Response.created(new URI("2.0/analyticalDrivers/" + encodedUseMode)).entity(encodedUseMode).build();
@@ -400,7 +385,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 			fullList = useModesDao.loadParametersUseByParId(id);
 			List objectsLabels = DAOFactory.getBIObjectParameterDAO().getDocumentLabelsListUsingParameter(id);
 			if (objectsLabels != null && objectsLabels.size() > 0) {
-				logger.error("Driver in use" );
+				logger.error("Driver in use");
 				throw new SpagoBIRuntimeException("Driver in use");
 			}
 			if (fullList != null) {
@@ -484,8 +469,8 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 
 		return role;
 	}
-	
-	private boolean parameterLabelControl(Parameter parameter, String operation){
+
+	private boolean parameterLabelControl(Parameter parameter, String operation) {
 		String labelToCheck = parameter.getLabel();
 		List allparameters = null;
 		try {
@@ -528,7 +513,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 	 * @throws EMFUserError
 	 *             If any Exception occurred
 	 */
-	private boolean parameterUseLabelControl(ParameterUse paruse, String operation){
+	private boolean parameterUseLabelControl(ParameterUse paruse, String operation) {
 
 		Integer parId = paruse.getId();
 		String labelToCheck = paruse.getLabel();

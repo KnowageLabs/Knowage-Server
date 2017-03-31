@@ -4,13 +4,16 @@
 </md-button>
 <div flex layout-align="start">
 	
-		<!-- Map input -->
+		<!-- Map input -->		
 		<div ng-if="parameter.typeCode=='MAN_IN' && parameter.valueSelection=='map_in'" layout="column">
 		 	<div layout="row" layout-align="start">
-				<md-button ng-click="popupMapParameterDialog(parameter)" ng-required="::parameter.mandatory"
+				<md-button ng-disabled="!parameter.showMapDriver" ng-click="popupMapParameterDialog(parameter)" ng-required="::parameter.mandatory"
 						id="{{::parameter.urlName}}" aria-label="{{parameter.label}}">
-					<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >{{parameter.label}}</label>
+					<label ng-class="parameter.showMapDriver && showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >{{parameter.label}}
+						<md-tooltip ng-if="!parameter.showMapDriver"> The parameter is disabled because you aren't enabled to use the Map Drivers! </md-tooltip>
+					</label>
 					<i class="fa fa-external-link"></i>
+					
 				</md-button>
 			</div>
 			<span ng-class="{'layout-padding': parameter.multivalue && parameter.parameterValue && parameter.parameterValue.length > 0}"

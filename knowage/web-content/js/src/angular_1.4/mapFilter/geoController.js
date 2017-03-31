@@ -142,7 +142,7 @@ function mapCtrlFunction($scope, $window, $map, geoModule_layerServices,
 		$map.render();
 
 		var labelUriParameter = 'label=' + layerConfLabel;
-		sbiModule_restServices.get("layers", 'getLayerByLabel', labelUriParameter).success(
+		sbiModule_restServices.get("2.0/analyticalDrivers", 'getLayerByLabel', labelUriParameter).success(
 			function(data, status, headers, config) {
 				if (data.hasOwnProperty("errors")) {
 					sbiModule_logger.log("layer not retrieved: " + status);

@@ -3,11 +3,11 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.theme('knowage')
     $mdThemingProvider.setDefaultTheme('knowage');
  }]);
-app.controller("AnalyticalDriversController",["sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast","$timeout","sbiModule_messaging","sbiModule_config",AnalyticalDriversFunction]);
-function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,$timeout,sbiModule_messaging,sbiModule_config){
+app.controller("AnalyticalDriversController",["sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast","$timeout","sbiModule_messaging","sbiModule_config","sbiModule_user",AnalyticalDriversFunction]);
+
+function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,$timeout,sbiModule_messaging,sbiModule_config,sbiModule_user){
 	
 	//VARIABLES
-	
 	$scope.showme = false; // flag for showing right side 
 	$scope.showadMode = false; // flag that shows use mode details
 	$scope.dirtyForm = false; // flag to check for modification
@@ -25,12 +25,15 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 	$scope.associatedChecks=[]; // temp array that hold selected object checks list
 	$scope.checksList = []; // array that hold checks list
 	$scope.useModeList= []; // array that hold use mode objects list
-	$scope.valueSelectionRadioGroup = [
-	 {label: sbiModule_translate.load("sbi.analytical.drivers.usemode.lov"), value: 'lov'},
-	 {label: sbiModule_translate.load("sbi.analytical.drivers.usemode.mapinput"), value: 'map_in'},
-	 {label: sbiModule_translate.load("sbi.analytical.drivers.usemode.manualinput"), value: 'man_in'}
-	                                   
-	                                   ]
+	
+	var showMapDriver = sbiModule_user.functionalities.indexOf("MapDriverManagement")>-1;
+
+    $scope.valueSelectionRadioGroup = [
+	                               	 {label: sbiModule_translate.load("sbi.analytical.drivers.usemode.lov"), value: 'lov'},	                               	 
+	                               	 {label: sbiModule_translate.load("sbi.analytical.drivers.usemode.manualinput"), value: 'man_in'}	                                   
+	                                   ];
+	 if (showMapDriver)
+		 $scope.valueSelectionRadioGroup.push({label: sbiModule_translate.load("sbi.analytical.drivers.usemode.mapinput"), value: 'map_in'});
 	
 	$scope.searchByName = {label:"Name" ,isSelected:true};
 	$scope.searchByRole = {label:"Role", isSelected:false};
@@ -226,10 +229,11 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 				$scope.getDrivers();
 				$scope.getDomainType();
 				$scope.getLovDates();
-				$scope.getSelTypes();
-				$scope.getLayers();
+				$scope.getSelTypes();				
 				$scope.getRoles();
 				$scope.getChecks();				
+				if (showMapDriver)
+					$scope.getLayers();
 		    });
 	
 	$scope.setDirty=function(){ 
@@ -330,15 +334,17 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 		});
 	}
 	
-	$scope.getLayers = function(){ // service that gets list of layers @GET
-		sbiModule_restServices.promiseGet("2.0/analyticalDrivers/layers/", "")
-		.then(function(response) {
-			$scope.layersList = response.data;
-			console.log($scope.layersList);
-		}, function(response) {
-			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-			
-		});
+	if (showMapDriver){
+		$scope.getLayers = function(){ // service that gets list of layers @GET
+			sbiModule_restServices.promiseGet("2.0/analyticalDrivers/layers/", "")
+			.then(function(response) {
+				$scope.layersList = response.data;
+				console.log($scope.layersList);
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+				
+			});
+		}
 	}
 	
 	$scope.getRoles = function () { // service that gets list of roles @GET
@@ -444,6 +450,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 			break;
 		}
 		delete $scope.selectedParUse.defaultrg;
+		delete $scope.selectedParUse.show
 	}
 	 
 	$scope.save= function(){  // this function is called when clicking on save button
@@ -623,13 +630,14 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 	}
 	
 	$scope.openUseModeDetails = function(item){
-		console.log(item);
+		console.log('item detail: ',item);
 		//$scope.disableSelectedRoles();
 		$scope.associatedRoles = item.associatedRoles;
 		$scope.associatedChecks = item.associatedChecks;
 		$scope.selectedParUse.defaultrg= null;
 		$scope.searchLovText = "";
 		$scope.selectedParUse=angular.copy(item);
+		$scope.selectedParUse.showMapDriver = showMapDriver;
 		$scope.setParUse();
 		 $mdDialog
 			.show({
@@ -765,6 +773,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 			   $scope.useModeInit();
 			   $scope.showadMode = true;
 			  }
+		 $scope.selectedParUse.showMapDriver = showMapDriver;		 
 		 $scope.selectedTab = 1;
 		 $mdDialog
 			.show({
@@ -780,6 +789,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 	}
 	// service that gets list of use modes for selected driver @GET
 	$scope.getUseModesById = function (item) { 
+		
 		sbiModule_restServices.promiseGet("2.0/analyticalDrivers/"+item.id+"/modes", "")
 		.then(function(response) {
 			$scope.useModeList = response.data;

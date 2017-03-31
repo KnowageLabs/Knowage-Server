@@ -34,8 +34,9 @@
 	
 	var documentParamenterElementCtrl = function(
 			$scope, sbiModule_config, sbiModule_restServices, sbiModule_translate, 
-			execProperties, documentExecuteServices, $mdDialog, $mdMedia,execProperties,$filter,sbiModule_dateServices) {
+			execProperties, documentExecuteServices, $mdDialog, $mdMedia,execProperties,$filter,sbiModule_dateServices, sbiModule_user) {
 		
+		$scope.parameter.showMapDriver = sbiModule_user.functionalities.indexOf("MapDriverManagement")>-1;
 		$scope.execProperties = execProperties;
 		$scope.documentExecuteServices = documentExecuteServices;
 		$scope.sbiModule_translate = sbiModule_translate;

@@ -248,7 +248,9 @@ geoM.service('geoModule_layerServices', function($http, $map, geo_interaction,
 			
 			var deferredLayer = $q.defer();
 
-			sbiModule_restServices.post("1.0/geo", 'getFileLayer', { layerUrl:layerConf.pathFile })
+//			sbiModule_restServices.post("1.0/geo", 'getFileLayer', { layerUrl:layerConf.pathFile })
+			sbiModule_restServices.post("2.0/analyticalDrivers", 'getFileLayer', { layerUrl:layerConf.pathFile })
+
 			.success(function(data, status, headers, config) {
 				if (data.hasOwnProperty("errors")) {
 					sbiModule_logger.log("file layer non Ottenuto");
@@ -291,36 +293,6 @@ geoM.service('geoModule_layerServices', function($http, $map, geo_interaction,
 		}
 
 		return tmpLayer;
-	};
-
-	this.getLayerFromFile=function(layerConf){
-		var deferredLayer = $q.defer();
-
-		sbiModule_restServices.post("1.0/geo", 'getFileLayer',{layerUrl:layerConf.pathFile})
-		.success(function(data, status, headers, config) {
-			if (data.hasOwnProperty("errors")) {
-				sbiModule_logger.log("file layer non Ottenuto");
-			} else {
-				sbiModule_logger.trace("file layer caricato",data);
-
-				var vectorSource = new ol.source.Vector({
-					features : (new ol.format.GeoJSON()).readFeatures(data,	{
-						featureProjection : 'EPSG:3857'
-					})
-				});
-
-				var tmpLayer= new ol.layer.Vector({
-					source : vectorSource,
-					style: layerServ.applyFilter
-				}); 
-				deferredLayer.resolve(tmpLayer);
-			}
-		})
-		.error(function(data, status, headers, config) {
-			sbiModule_logger.log("file layer non Ottenuto");
-		});
-
-		return deferredLayer.promise;
 	};
 
 	this.applyFilter = function(feature, resolution){
