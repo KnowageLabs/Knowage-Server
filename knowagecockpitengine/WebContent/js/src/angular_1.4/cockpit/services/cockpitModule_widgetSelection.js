@@ -76,7 +76,10 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				}
 			}
 				
-			if(ngModel.type.toUpperCase()=="CHART"){ 
+			if(ngModel.type.toUpperCase()=="CHART"){
+				if(!ngModel.content.chartTemplate.hasOwnProperty("CHART")){
+					ngModel.content.chartTemplate = {"CHART":ngModel.content.chartTemplate};
+				}
 				var arrayOfSeries = ngModel.content.chartTemplate.CHART.VALUES.SERIE;
 				for (var i = 0; i < arrayOfSeries.length; i++) {
 					for (var j = 0; j < measures.length; j++) {

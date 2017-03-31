@@ -47,6 +47,9 @@ angular.module('chartRendererModule')
 					
 					var jsonTemp = angular.fromJson(chartTemplate);
 					if(jsonTemp!=undefined){
+						if(!jsonTemp.hasOwnProperty("CHART")){
+							jsonTemp = {"CHART":jsonTemp};
+						}
 						var chartType = jsonTemp.CHART.type.toLowerCase();
 						return scope.chartLibNamesConfig[chartType];
 					}	

@@ -555,6 +555,9 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 function setAggregationsOnChartEngine(wconf){
 	
 	var aggregations = [];
+	if(!wconf.chartTemplate.hasOwnProperty("CHART")){
+		wconf.chartTemplate = {"CHART":wconf.chartTemplate};
+	}
 	var chartTemplate = wconf.chartTemplate;
 	if(chartTemplate && chartTemplate.CHART && chartTemplate.CHART.VALUES) {
 		
