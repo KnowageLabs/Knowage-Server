@@ -885,9 +885,9 @@ public class ObjectsAccessVerifier {
 
 		List foldersId = obj.getFunctionalities();
 		if (foldersId == null || foldersId.size() == 0) {
-			logger.warn("BIObject does not belong to any functionality!!");
 			monitor.stop();
-			throw new EMFInternalError(EMFErrorSeverity.ERROR, "BIObject does not belong to any functionality!!"+"["+obj.getLabel()+"]");
+			logger.error( "BIObject does not belong to any functionality!!"+"["+obj.getLabel()+"]");
+			return false;
 		}
 		Iterator foldersIdIt = foldersId.iterator();
 		while (foldersIdIt.hasNext()) {
