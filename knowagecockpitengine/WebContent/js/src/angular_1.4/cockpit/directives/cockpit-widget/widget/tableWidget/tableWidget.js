@@ -380,7 +380,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								var horiz_align=$scope.getCellAlignment(currentColumn)?$scope.getCellAlignment(currentColumn):"center";
 			
 								
-								var valueWithoutPrefixAndSuffix=$scope.freeValueFromPrefixAndSuffix(value,currentColumn);								
+								var valueWithoutPrefixAndSuffix=$scope.freeValueFromPrefixAndSuffix(value,currentColumn);		
+								if(!currentColumn.hasOwnProperty("visType") || currentColumn.visType=='Text')
+								{										
+									return "<span>"+formattedValue+"</span>"	
+								}else{
 								
 								var htm="<div layout='row' layout-align='" + horiz_align + " center'>"; //default
 
@@ -436,10 +440,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								}	
 								
 												
-								if(!currentColumn.hasOwnProperty("visType") || currentColumn.visType=='Text')
-								{										
-									htm=htm+"<div>"+formattedValue+"</div>"	
-								}	
+								
 								
 								if(currentColumn.hasOwnProperty("minValue") && currentColumn.hasOwnProperty("maxValue")) // 	MinValue and MaxValue are present only if you have to display a chart
 								{	
@@ -594,7 +595,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								}	
 								
 								return htm+"</div>";									
-
+								}
 						}
 					}else{
 						obj.static=true;
