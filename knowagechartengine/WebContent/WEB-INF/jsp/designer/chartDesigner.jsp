@@ -59,7 +59,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	
 	</head>
 
-	<body class="bodyStyle" layout="column" ng-controller="ChartDesignerController">
+	<body class="bodyStyle kn-chartdesigner" layout="column" ng-controller="ChartDesignerController">
 	
 		<md-toolbar>
 			<div class="md-toolbar-tools">
