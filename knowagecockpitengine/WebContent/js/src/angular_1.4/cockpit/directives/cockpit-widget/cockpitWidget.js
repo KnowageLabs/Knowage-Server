@@ -651,7 +651,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 		
 		
 		// update sheets background color
-		if($scope.extendedStyle.sheetsBackgroundColor!=undefined) {
+		if($scope.extendedStyle.sheetsBackgroundColor!=undefined && $scope.cockpitModule_template.style) {
 				
 			$scope.sheetsBackgroundColor=$scope.extendedStyle.sheetsBackgroundColor;
 			$scope.cockpitModule_template.style.background=$scope.extendedStyle.sheetsBackgroundColor;
