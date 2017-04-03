@@ -98,7 +98,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spago.dispatching.module.AbstractModule#init(it.eng.spago.base.SourceBean)
 	 */
 	@Override
@@ -107,12 +107,11 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 
 	/**
 	 * Reads the operation asked by the user and calls the insertion, modify, detail and deletion methods.
-	 *
+	 * 
 	 * @param request
 	 *            The Source Bean containing all request parameters
 	 * @param response
 	 *            The Source Bean containing all response parameters
-	 *
 	 * @throws exception
 	 *             If an exception occurs
 	 * @throws Exception
@@ -349,7 +348,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 	/**
 	 * Gets the detail of a BI object choosed by the user from the BI objects list. It reaches the key from the request and asks to the DB all detail BI objects
 	 * information, by calling the method <code>loadBIObjectForDetail</code>.
-	 *
+	 * 
 	 * @param request
 	 *            The request Source Bean
 	 * @param response
@@ -386,7 +385,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 
 	/**
 	 * Controls if there are some BIObjectParameter objects that depend by the BIObjectParameter object at input, given its id.
-	 *
+	 * 
 	 * @param objParFatherId
 	 *            The id of the BIObjectParameter object to check
 	 * @throws EMFUserError
@@ -409,7 +408,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 	 * Before modifing a BIObjectParameter (not inserting), this method must be invoked in order to verify that the BIObjectParameter stored into db (to be
 	 * modified as per the BIObjectParameter in input) has dependencies associated; if it is the case, verifies that the associated Parameter was not changed.
 	 * In case of changed Parameter adds a EMFValidationError into the error handler.
-	 *
+	 * 
 	 * @param objPar
 	 *            The BIObjectParameter to verify
 	 * @throws EMFUserError
@@ -440,7 +439,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 
 	/**
 	 * Controls that the BIObjectParameter url name is not in use by another BIObjectParameter
-	 *
+	 * 
 	 * @param objId
 	 *            The id of the document
 	 * @param biObjPar
@@ -517,7 +516,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 	/**
 	 * Fills the response SourceBean with the elements that will be displayed in the BIObject detail page: the BIObject itself and the required
 	 * BIObjectParameter.
-	 *
+	 * 
 	 * @param response
 	 *            The response SourceBean to be filled
 	 * @param obj
@@ -587,7 +586,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 	 * Deletes a BI Object choosed by user. If the folder id is specified, it deletes only the instance of the object in that folder. If the folder id is not
 	 * specified: if the user is an administrator the object is deleted from all the folders, else it is deleted from the folder on which the user is a
 	 * developer.
-	 *
+	 * 
 	 * @param request
 	 *            The request SourceBean
 	 * @param mod
@@ -621,7 +620,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 	 * Deletes a BI Object chosen by user. If the folder id is specified, it deletes only the instance of the object in that folder. If the folder id is not
 	 * specified: if the user is an administrator the object is deleted from all the folders, else it is deleted from the folder on which the user is a
 	 * developer.
-	 *
+	 * 
 	 * @param request
 	 *            The request SourceBean
 	 * @param mod
@@ -715,7 +714,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 	/**
 	 * Instantiates a new <code>BIObject<code> object when a new BI object insertion
 	 * is required, in order to prepare the page for the insertion.
-	 *
+	 * 
 	 * @param response
 	 *            The response SourceBean
 	 * @throws EMFUserError
@@ -761,12 +760,11 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 
 	/**
 	 * Erase version.
-	 *
+	 * 
 	 * @param request
 	 *            the request
 	 * @param response
 	 *            the response
-	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -790,7 +788,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 
 	/**
 	 * Clean the SessionContainer from no more useful objects.
-	 *
+	 * 
 	 * @param request
 	 *            The request SourceBean
 	 * @param response
@@ -808,7 +806,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 	 * Inserts/Modifies the detail of a BI Object according to the user request. When a BI Object is modified, the <code>modifyBIObject</code> method is called;
 	 * when a new BI Object is added, the <code>insertBIObject</code>method is called. These two cases are differentiated by the <code>mod</code> String input
 	 * value .
-	 *
+	 * 
 	 * @param request
 	 *            The request information contained in a SourceBean Object
 	 * @param mod
