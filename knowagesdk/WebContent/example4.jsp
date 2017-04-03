@@ -45,7 +45,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		execTest5 = function() {
 		    Sbi.sdk.api.injectDocument({
-				documentLabel: 'par_document_label'
+		        documentLabel: 'documentLabel'
+		        , documentName: 'document name'
 				, executionRole: '/spagobi/user'
 				, parameters: {par: 'test', par2: 'test2'}
 				, displayToolbar: false
@@ -75,7 +76,8 @@ pointing to the execution service. In this example the specified target div does
 <PRE>
 example5Function = function() {
 	Sbi.sdk.api.injectDocument({
-		documentLabel: 'par_document_label'
+		documentLabel: 'documentLabel'
+        , documentName: 'document name'
 		, executionRole: '/spagobi/user'
 		, parameters: {par: 'test', par2: 'test2'}
 		, displayToolbar: false

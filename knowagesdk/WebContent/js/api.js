@@ -106,7 +106,7 @@ Sbi.sdk.apply(Sbi.sdk.api, {
 
 		if(config.documentId !== undefined) params.OBJECT_ID = config.documentId;
 		if(config.documentLabel !== undefined) params.OBJECT_LABEL = config.documentLabel;
-
+		if(config.documentName !== undefined) params.OBJECT_NAME = config.documentName;
 		if (config.executionRole !== undefined) params.ROLE = config.executionRole;
 		if (config.displayToolbar !== undefined) params.TOOLBAR_VISIBLE = config.displayToolbar;
 		if (config.canResetParameters !== undefined) params.CAN_RESET_PARAMETERS = config.canResetParameters;

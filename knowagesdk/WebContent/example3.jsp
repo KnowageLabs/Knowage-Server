@@ -45,7 +45,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		execTest3 = function() {
 		    Sbi.sdk.api.injectDocument({
-				documentLabel: 'par_document_label'
+		        documentLabel: 'documentLabel'
+		        , documentName: 'document name'
 				, executionRole: '/spagobi/user'
 				, parameters: {par: 'test', par2: 'test2'}
 				, displayToolbar: true
@@ -74,7 +75,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <PRE>
 example3Function = function() {
 	Sbi.sdk.api.injectDocument({
-		documentLabel: 'par_document_label'
+        documentLabel: 'documentLabel'
+        , documentName: 'document name'
 		, executionRole: '/spagobi/user'
 		, parameters: {par: 'test', par2: 'test2'}
 		, displayToolbar: true

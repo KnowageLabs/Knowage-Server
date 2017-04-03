@@ -30,7 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        <script type="text/javascript" src="/knowagesdk/js/api_jsonp.js"></script>
        <script type="text/javascript" src="/knowagesdk/js/api_cors.js"></script>
        <script type="text/javascript" src="/knowagesdk/js/api.js"></script>
-       <script type="text/javascript" src="/knowagesdk/js/lib/angular/angular_1.4/angular.min.js"></script>       
+       
        
 	<script type="text/javascript">
 
@@ -44,7 +44,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		execTest1 = function() {
 		    var url = Sbi.sdk.api.getDocumentUrl({
-				documentLabel: 'par_document_label'
+				documentLabel: 'documentLabel'
+			   , documentName: 'document name'
 				, executionRole: '/spagobi/user'
 				, parameters: {par: 'test', par2: 'test2'}
 				, displayToolbar: true
@@ -71,7 +72,8 @@ specific execution (i.e. document + execution role + parameters)
 <PRE>
 example1Function = function() {
 	var url = Sbi.sdk.api.getDocumentUrl({
-		documentLabel: 'par_document_label'
+        documentLabel: 'documentLabel'
+        , documentName: 'document name'
 		, executionRole: '/spagobi/user'
 		, parameters: {par: 'test', par2: 'test2'}
 		, displayToolbar: false

@@ -45,7 +45,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		execTest4 = function() {
 		    Sbi.sdk.api.injectDocument({
-				documentLabel: 'par_document_label'
+		        documentLabel: 'documentLabel'
+		            , documentName: 'document name'
 				, executionRole: '/spagobi/user'
 				, parameters: {'PARAMETERS': 'par=test'}
 				, displayToolbar: false
@@ -76,7 +77,8 @@ differently from the previous the new execution module, fully based on ajax tech
 <PRE>
 example4Function = function() {
 	Sbi.sdk.api.injectDocument({
-		documentLabel: 'par_document_Label'
+        documentLabel: 'documentLabel'
+        , documentName: 'document name'
 		, executionRole: '/spagobi/user'
 		, parameters: {'PARAMETERS': 'par=test'}
 		, displayToolbar: false

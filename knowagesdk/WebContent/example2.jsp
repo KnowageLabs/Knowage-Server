@@ -45,7 +45,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		execTest2 = function() {
 		    var html = Sbi.sdk.api.getDocumentHtml({
-				documentLabel: 'par_document_label'
+                documentLabel: 'documentLabel'
+                    , documentName: 'document name'
 				, executionRole: '/spagobi/user'
 				, parameters: {par: 'test', par2: 'test2'}
 				, displayToolbar: true
@@ -74,7 +75,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <PRE>
 example2Function = function() {
 	var html = Sbi.sdk.api.getDocumentHtml({
-		documentLabel: 'par_document_label'
+        documentLabel: 'documentLabel'
+        , documentName: 'document name'
 		, executionRole: '/spagobi/user'
 		, parameters:{par: 'test', par2: 'test2'}
 		, displayToolbar: true
