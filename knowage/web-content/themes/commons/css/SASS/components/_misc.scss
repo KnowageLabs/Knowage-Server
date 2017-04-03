@@ -40,6 +40,16 @@ md-toolbar.md-knowage-theme {
         height: $toolbarHeight;
         line-height: $toolbarHeight;
       }
+      button.md-icon-button:not(.md-fab) {
+        height: $fontIconHeight;
+        min-height: $fontIconHeight;
+        line-height: $fontIconHeight;
+        width: $fontIconHeight;
+        padding: 0;
+        .md-ripple-container {
+          height: $fontIconHeight;
+        }
+      }
 		}
 }
 

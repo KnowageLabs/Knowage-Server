@@ -115,59 +115,43 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	       	</list>
 	       
       		<extra-button>
-      		
-				<!-- <md-fab-speed-dial md-open="false" md-direction="left"
-	                         ng-class="'md-scale'" >
-			        
-			        <md-fab-trigger>
-			          	<md-button aria-label="menu" class="md-fab md-raised md-mini md-warn">
-			            	<md-icon md-font-icon="fa fa-bars" class="fa fa-2x"></md-icon>
-			          	</md-button>
-			        </md-fab-trigger>
-			
-			        <md-fab-actions>
-			            <md-icon md-font-icon="fa fa-eye" ng-click="previewDataset()"></md-icon>			            
-			        </md-fab-actions>
-			        
-	      		</md-fab-speed-dial>  -->
-	      		
+
 	      		<!-- ADDITIONAL BUTTONS -->
 	      		<div style="float:left;">
 	      			
 	      			<!-- FIELDS METADATA BUTTON -->
 	      			<md-button aria-label="menu" class="md-fab md-raised md-mini md-warn" 
 	      					ng-show="selectedDataSet" title="Fields metadata" ng-click="openFieldsMetadata()">
-		            	<!-- <md-icon md-font-icon="fa fa-plus" class="fa fa-2x"></md-icon> -->
 		            	<!-- FM -->
-		            	<md-icon md-font-icon="fa fa-magic" class="fa fa-2x"></md-icon>
+		            	<md-icon md-font-icon="fa fa-magic" ></md-icon>
 		          	</md-button>
 		          	
 		          	<!-- LINK DATASET BUTTON (visible only in Advanced tab) -->
 		          	<md-button aria-label="menu" class="md-fab md-raised md-mini md-warn" 
 		          			ng-show="selectedDataSet && selectedTab==2" title="Link dataset" ng-click="openLinkDataset()">
 		            	<!-- LD -->
-		            	<md-icon md-font-icon="fa fa-link" class="fa fa-2x"></md-icon>		            	
+		            	<md-icon md-font-icon="fa fa-link" ></md-icon>		            	
 		          	</md-button>
 		          	
 		          	<!-- SAVE WITHOUT METADATA BUTTON -->
 		          	<md-button aria-label="menu" class="md-fab md-raised md-mini md-warn" 
 		          			ng-show="selectedDataSet" title="Save without metadata" ng-click="saveWithoutMetadata()">
 		            	<!-- SWM -->
-		            	<md-icon md-font-icon="fa fa-hourglass-start" class="fa fa-2x"></md-icon>
+		            	<md-icon md-font-icon="fa fa-hourglass-start"></md-icon>
 		          	</md-button>
 		          	
 		          	<!-- AVAILABLE PROFILE ATTRIBUTES BUTTON (visible only in Type tab) -->
 		          	<md-button aria-label="menu" class="md-fab md-raised md-mini md-warn" 
 		          			ng-show="selectedDataSet && selectedTab==1" title="Available profile attributes" ng-click="openAvaliableProfileAttributes()">
 		            	<!-- APA -->
-	            		<md-icon md-font-icon="fa fa-user" class="fa fa-2x"></md-icon>		            	
+	            		<md-icon md-font-icon="fa fa-user" ></md-icon>		            	
 		          	</md-button> 		          	            
 		          	
 		          	<!-- HELP BUTTON -->
 		          	<md-button aria-label="menu" class="md-fab md-raised md-mini md-warn" 
 		          			ng-show="selectedDataSet!=null && selectedTab && selectedTab>0" title="Help" ng-click="openHelp()">
 		            	<!-- H -->
-	            		<md-icon md-font-icon="fa fa-question-circle" class="fa fa-2x"></md-icon>			            	
+	            		<md-icon md-font-icon="fa fa-question-circle"></md-icon>			            	
 		          	</md-button>
 		          	
 	      		</div> 
@@ -275,7 +259,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						         		<span flex></span>
 							         											            
 							            <md-button class="md-icon-button" aria-label="Clear all" ng-click="deleteAllDatasetVersions()" title="{{translate.load('sbi.ds.clearOldVersion')}}">
-							              <md-icon md-font-icon="fa fa-eraser" class="fa fa-2x"></md-icon>
+							              <md-icon md-font-icon="fa fa-eraser" ></md-icon>
 							            </md-button>
 							         
 						          	</div>
@@ -716,76 +700,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							</md-card>
 							
 						</md-content>
-							
-						<!-- CUSTOM DATASET -->
-						<!-- <md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='Custom'">
-							
-							<md-card layout-padding style="margin-top:0">
-								
-								<md-input-container class="md-block" flex-gt-sm>
-						           	
-						           	<label>{{translate.load("sbi.ds.jclassName")}}</label>
-						           	<input ng-model="selectedDataSet.jclassName" ng-required="selectedDataSet.dsTypeCd=='Custom'" ng-change="setFormDirty()">
-						           
-						           	<div  ng-messages="datasetForm.lbl.$error" ng-show="selectedDataSet.dsTypeCd=='Custom' && !selectedDataSet.jclassName">
-	       						 		<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
-	    						 	</div>
-	    						 	
-						         </md-input-container>
-						         
-							</md-card>
-							
-							<md-card style="max-height:100%">
-							
-								<expander-box id="layersList" color="white"  expanded="true" title="translate.load('sbi.ds.customData')" layout-column>
-							 		
-							 		<md-content layout-column>
-							 			
-							 			TOOLBAR FOR THE CARD THAT HOLDS CUSTOM ATTRIBUTES
-								     	<md-toolbar class="secondaryToolbar" layout-padding>
-								     	
-								          	<div class="md-toolbar-tools">
-									            									            
-								         		<span flex></span>
-									         											            
-									            <md-button class="md-icon-button" aria-label="Add custom attributes" 
-									            		ng-click="addCustomAttributes()" title="Add custom attributes">
-									              	<md-icon md-font-icon="fa fa-plus-circle" class="fa fa-2x"></md-icon>
-									            </md-button>
-									            
-									            <md-button class="md-icon-button" aria-label="Delete all custom attributes" 
-															ng-click="deleteAllCustomAttributes()" title="Delete all custom attributes">
-									              <md-icon md-font-icon="fa fa-eraser" class="fa fa-2x"></md-icon>
-									            </md-button>
-									         
-								          	</div>
-								          	
-								        </md-toolbar>						         
-									    										
-										<md-card layout-padding style="height:300px; margin:0 0 8 0">
-											
-											<angular-table
-													id="customAttributes"
-													flex
-													style="height:100%;padding:8px"
-													ng-model=customAttributes
-													columns="customAttributesTableColumns"
-													show-search-bar=false
-													scope-functions="customAttrScopeFunctions"
-													no-pagination=false
-													speed-menu-option="customAttributesDelete" >
-											</angular-table>
-											   									
-										</md-card>
-						   	      	
-						   	      	</md-content>
-						   	      	
-							 	</expander-box>
-							
-							</md-card>
-							
-						</md-content> -->
-							
+
 						<!-- FLAT DATASET -->
 						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='Flat'">
 							
@@ -1001,59 +916,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				         		
 						    </md-card>
 						
-							<!--<md-card layout-padding style="margin-top:0">
-							 <md-input-container class="md-block" flex-gt-sm>
-					           <label>{{translate.load("sbi.ds.ckanFileType")}}</label>
-					           <input ng-model="selectedDataSet.ckanFileType" ng-required = "true">
-					           <div  ng-messages="datasetForm.lbl.$error" ng-show="!a">
-	       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
-       						 	</div>
-					         </md-input-container> 
-					         <md-input-container class="md-block" flex-gt-sm>
-					           <label>{{translate.load("sbi.ds.ckanCsvDelimiter")}}</label>
-					           <input ng-model="selectedDataSet.ckanCsvDelimiter" ng-required = "true">
-					           <div  ng-messages="datasetForm.lbl.$error" ng-show="!b">
-	       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
-       						 	</div>
-					         </md-input-container>
-					         <md-input-container class="md-block" flex-gt-sm>
-					           <label>{{translate.load("sbi.ds.ckanCsvQuote")}}</label>
-					           <input ng-model="selectedDataSet.ckanCsvDelimiter" ng-required = "true">
-					           <div  ng-messages="datasetForm.lbl.$error" ng-show="!c">
-	       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
-       						 	</div>
-					         </md-input-container>
-					         <md-input-container class="md-block" flex-gt-sm>
-					           <label>{{translate.load("sbi.ds.ckanCsvEncoding")}}</label>
-					           <input ng-model="selectedDataSet.ckanCsvEncoding">
-					         </md-input-container>
-					         <md-input-container class="md-block" flex-gt-sm>
-					           <label>{{translate.load("sbi.ds.ckanSkipRows")}}</label>
-					           <input ng-model="selectedDataSet.ckanSkipRows">
-					         </md-input-container>
-					         <md-input-container class="md-block" flex-gt-sm>
-					           <label>{{translate.load("sbi.ds.ckanLimitRows")}}</label>
-					           <input ng-model="selectedDataSet.ckanLimitRows">
-					         </md-input-container>
-					         <md-input-container class="md-block" flex-gt-sm>
-					           <label>{{translate.load("sbi.ds.ckanXslSheetNumber")}}</label>
-					           <input ng-model="selectedDataSet.ckanXslSheetNumber">
-					         </md-input-container>
-					         <md-input-container class="md-block" flex-gt-sm>
-					           <label>{{translate.load("sbi.ds.ckanId")}}</label>
-					           <input ng-model="selectedDataSet.ckanId" ng-required = "true">
-					           <div  ng-messages="datasetForm.lbl.$error" ng-show="!h">
-	       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
-       						 	</div>
-					         </md-input-container>
-					         <md-input-container class="md-block" flex-gt-sm>
-					           <label>{{translate.load("sbi.ds.ckanUrl")}}</label>
-					           <input ng-model="selectedDataSet.ckanUrl" ng-required = "true">
-					           <div  ng-messages="datasetForm.lbl.$error" ng-show="!j">
-	       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
-       						 	</div>
-					         </md-input-container>
-							</md-card>-->
 						</md-content>
 							
 						<!-- FEDERATED DATASET -->
@@ -1116,34 +978,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										
 										<div  ng-messages="datasetForm.lbl.$error" ng-show="selectedDataSet.dsTypeCd=='REST' && !selectedDataSet.restHttpMethod">
 			       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
-		       						 	</div>
-		       						 	
-		       						 	<!-- <md-autocomplete
-									          ng-disabled="false"
-									          md-no-cache="true"
-									          md-selected-item=""
-									          md-search-text-change="asd()"
-									          md-search-text="aaa"
-									          md-selected-item-change="ert()"
-									          md-items="item in selectedDataSet.owner"
-									          md-item-text="da"
-									          md-min-length="0"
-									          placeholder="Pick an Angular repository"
-									          md-menu-class="autocomplete-custom-template">
-									        
-									      </md-autocomplete> -->
-									      
-									      <!-- <md-autocomplete 
-									          ng-disabled="false" 
-									          md-selected-item="item.dsTypeCd" 
-									          md-search-text="searchText" 
-									          md-items="item in querySearchCategory(searchText)"
-									          md-item-text="item.dsTypeCd" 
-									         >
-									        <md-item-template>
-									          <span md-highlight-text="searchText">{{item.dsTypeCd}}</span>
-									        </md-item-template> 
-									      </md-autocomplete> -->									
+		       						 	</div>								
 		       						 									        
 	       						 	</md-input-container>
 		       						 
@@ -1170,12 +1005,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						            <md-button 	class="md-icon-button" aria-label="Add request header" 
 						            			ng-click="requestHeaderAddItem(); setFormDirty();" 
 						            			title="{{translate.load('sbi.generic.add')}}">
-						              	<md-icon md-font-icon="fa fa-plus-circle" class="fa fa-2x"></md-icon>
+						              	<md-icon md-font-icon="fa fa-plus-circle"></md-icon>
 						            </md-button>
 						            
 						            <md-button class="md-icon-button" aria-label="Clear all request headers" 
 												ng-click="deleteAllRESTRequestHeaders()" title="Clear all request headers">
-						              	<md-icon md-font-icon="fa fa-eraser" class="fa fa-2x"></md-icon>
+						              	<md-icon md-font-icon="fa fa-eraser"></md-icon>
 						            </md-button>
 						         
 					          	</div>
@@ -1218,7 +1053,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										<md-button 	style="margin:16px 0 16px 0; float:right;" class="md-icon-button" 
 													aria-label="Add request header" ng-click="showInfoForRestParams('jsonPathItems')" 
 													title="{{translate.load('sbi.ds.help')}}">
-							              	<md-icon md-font-icon="fa fa-info-circle" class="fa fa-2x"></md-icon>
+							              	<md-icon md-font-icon="fa fa-info-circle"></md-icon>
 							            </md-button>
 						            </div>
 									
@@ -1245,7 +1080,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										<md-button 	style="margin:16px 0 16px 0; float:right;" class="md-icon-button" 
 													aria-label="Add request header" ng-click="showInfoForRestParams('directJsonAttributes')" 
 													title="{{translate.load('sbi.ds.help')}}">
-							              	<md-icon md-font-icon="fa fa-info-circle" class="fa fa-2x"></md-icon>
+							              	<md-icon md-font-icon="fa fa-info-circle"></md-icon>
 							            </md-button>
 						            </div>
 						            
@@ -1273,7 +1108,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										<md-button 	style="margin:16px 0 16px 0; float:right;" class="md-icon-button" 
 													aria-label="Add request header" ng-click="showInfoForRestParams('ngsi')" 
 													title="{{translate.load('sbi.ds.help')}}">
-							              	<md-icon md-font-icon="fa fa-info-circle" class="fa fa-2x"></md-icon>
+							              	<md-icon md-font-icon="fa fa-info-circle"></md-icon>
 							            </md-button>
 						            </div>
 						            
@@ -1301,16 +1136,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						         											            
 						            <md-button 	class="md-icon-button" aria-label="Add JSON path attributes" 
 						            			ng-click="restJsonPathAttributesAddItem(); setFormDirty();" title="{{translate.load('sbi.generic.add')}}">
-						              	<md-icon md-font-icon="fa fa-plus-circle" class="fa fa-2x"></md-icon>
+						              	<md-icon md-font-icon="fa fa-plus-circle"></md-icon>
 						            </md-button>
 						         
 						         	<md-button class="md-icon-button" aria-label="Clear all JSON path attributes" 
 												ng-click="deleteAllRESTJsonPathAttributes()" title="Clear all JSON path attributes">
-						              <md-icon md-font-icon="fa fa-eraser" class="fa fa-2x"></md-icon>
+						              <md-icon md-font-icon="fa fa-eraser"></md-icon>
 						            </md-button>
 						         
 						         	 <md-button class="md-icon-button" aria-label="Help" ng-click="showInfoForRestParams('jsonPathAttributes')" title="{{translate.load('sbi.ds.help')}}">
-						              	<md-icon md-font-icon="fa fa-info-circle" class="fa fa-2x"></md-icon>
+						              	<md-icon md-font-icon="fa fa-info-circle"></md-icon>
 						            </md-button>
 						            
 					          	</div>
@@ -1388,12 +1223,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									
 										<md-button class="md-icon-button" aria-label="Add new dataset parameter" ng-click="parametersAddItem(); setFormDirty()" 
 												title="{{translate.load('sbi.ds.parameters.add.tooltip')}}">
-										  <md-icon md-font-icon="fa fa-plus-circle" class="fa fa-2x"></md-icon>
+										  <md-icon md-font-icon="fa fa-plus-circle" ></md-icon>
 										</md-button>
 										
 										<md-button class="md-icon-button" aria-label="Clear all parameters" 
 												ng-click="deleteAllParameters();" title="Clear all parameters">
-							              <md-icon md-font-icon="fa fa-eraser" class="fa fa-2x"></md-icon>
+							              <md-icon md-font-icon="fa fa-eraser" ></md-icon>
 							            </md-button>
 										
 									</div>
