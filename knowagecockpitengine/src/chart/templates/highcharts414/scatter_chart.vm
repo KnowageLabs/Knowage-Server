@@ -801,16 +801,14 @@
 		                },
 						#end
 	    	events :{ 
-	    	         #if($chart.outcomingEventsEnabled == 'true')
-	    	         click: handleCockpitSelection
-	    	         
-	    	         #elseif($crossNavigation != '')
-				      click: function(event){
-						  handleCrossNavigationTo(event);
-						  }
-						#end  
-					},
-	    	
+               #if($chart.isCockpitEngine=="false")
+						click: scope.chartInitializer.handleCrossNavigationTo,
+
+		         #elseif($chart.outcomingEventsEnabled == 'true')
+		                	click: handleCockpitSelection
+
+		         #end
+	    	},
 	    	tooltip: { 
 			#set($seriePrefix = $relatedSerie.prefixChar)
 			#if($seriePrefix != '')

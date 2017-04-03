@@ -22,21 +22,22 @@ angular.module('chartInitializer')
 .service('highcharts414',['highchartsDrilldownHelper','jsonChartTemplate',function(highchartsDrilldownHelper,jsonChartTemplate){
 	
 	this.chart = null;
+	var chartConfConf = null;
 	
 	this.renderChart = function(chartConf,element,handleCockpitSelection){
-		
+		chartConfConf = chartConf;
 		adjustChartSize(element,chartConf);
 		var chartType = chartConf.chart.type.toLowerCase();
 		
 		if (chartType == 'treemap') 
 		{
 			delete this.updateData;
-			this.chart = renderTreemap(chartConf,handleCockpitSelection);
+			this.chart = renderTreemap(chartConf,handleCockpitSelection, this.handleCrossNavigationTo );
 		} 
 		else if (chartType == 'heatmap') 
 		{
 			delete this.updateData;
-			this.chart = renderHeatmap(chartConf,handleCockpitSelection);
+			this.chart = renderHeatmap(chartConf,handleCockpitSelection, this.handleCrossNavigationTo );
 		} 
 		else
 		{
@@ -170,7 +171,56 @@ angular.module('chartInitializer')
 	
 	
 	
+	this.handleCrossNavigationTo =function(e) {
+		var t = chartConfConf;
+		console.log(e.point);
+		if (!e.seriesOptions) {
+			var chart = this;
+			//chart.showLoading('Loading...');
+			var categoryName = null;
+			var categoryValue = e.point.name;
+
+			if (e.point.hasOwnProperty('category')) {
+				if(isNaN(e.point.category)){
+				categoryName = e.point.category;
+				}
+			}
+			
+			//for scatter
+			if(!categoryValue && e.point.category &&e.point.category.name){
+				categoryValue = e.point.category.name;
+			}
+			
 	
+			var serieName = e.point.series.name;
+			var serieValue = e.point.y;
+
+			var groupingCategoryName = null;
+			var groupingCategoryValue = null;
+
+			if (e.point.hasOwnProperty('group')) {
+				groupingCategoryName = e.point.group.name;
+				groupingCategoryValue = e.point.group.value;
+			}
+		
+         
+          
+			if(parent.execExternalCrossNavigation){
+				var navData={
+         			chartType:	"HIGHCHART",
+         			CATEGORY_NAME :categoryName,
+         			CATEGORY_VALUE :categoryValue,
+         			SERIE_NAME :serieName,
+         			SERIE_VALUE :serieValue,
+         			GROUPING_NAME:groupingCategoryName,
+         			GROUPING_VALUE:groupingCategoryValue,
+         			stringParameters:null
+				}; 
+				parent.execExternalCrossNavigation(navData,JSON.parse(driverParams))
+			}
+		
+		}
+	};
 	
 	
 	this.handleDrilldown = function(e){

@@ -19,7 +19,7 @@ limitations under the License.*/
  * @param locale Information about the locale (language). Needed for the formatting of the series values (data labels and tooltips). 
  * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
  */
-function renderSunburst(jsonObject,panel,handleCockpitSelection,locale)
+function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCrossNavigationTo)
 {		
 	/**
 	 * Configuration of the series items of the chart (precision, prefix, etc.).

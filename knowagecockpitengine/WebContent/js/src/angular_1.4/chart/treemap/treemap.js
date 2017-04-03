@@ -1,6 +1,6 @@
-function renderTreemap(chartConf,handleCockpitSelection) {
+function renderTreemap(chartConf,handleCockpitSelection, handleCrossNavigationTo ) {
 	
-    chartConf = prepareChartConfForTreemap(chartConf,handleCockpitSelection);
+    chartConf = prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCrossNavigationTo);
     
     /**
      * Text that will be displayed inside the Back (drillup) button
@@ -65,9 +65,9 @@ function renderTreemap(chartConf,handleCockpitSelection) {
 
 
 
-function renderHeatmap(chartConf,handleCockpitSelection){
+function renderHeatmap(chartConf,handleCockpitSelection,handleCrossNavigationTo){
     
-    chartConfig = prepareChartConfForHeatmap(chartConf,handleCockpitSelection); 
+    chartConfig = prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCrossNavigationTo); 
     
     var chart = new Highcharts.Chart(chartConfig);
     
@@ -124,8 +124,8 @@ function getCrossParamsForHeatmap(point,chartConf){
     		}
     	};
     	
-    	params.point.crossNavigationDocumentName=chartConf.crossNavigation.crossNavigationDocumentName;
-    	params.point.crossNavigationDocumentParams=chartConf.crossNavigation.crossNavigationDocumentParams;
+    	
+    	
     	params.point.category=chartConf.additionalData.columns[0].value;
     	if(chartConf.chart.xAxisDate){
     	params.point.name= new Date(point.x);
@@ -159,8 +159,7 @@ function getCrossParamsForTreemap(point,chartConf){
 			point:{
 				name: null, // category value
 				category: null, // category  value
-				crossNavigationDocumentName:null,
-				crossNavigationDocumentParams:null,
+
 
 				series:{ // serie name and value
 					name:null,
@@ -173,8 +172,6 @@ function getCrossParamsForTreemap(point,chartConf){
 			}
 	};
 
-	params.point.crossNavigationDocumentName=chartConf.crossNavigation.crossNavigationDocumentName;
-	params.point.crossNavigationDocumentParams=chartConf.crossNavigation.crossNavigationDocumentParams;
 
 	params.point.name=point.name;
 
@@ -186,7 +183,7 @@ function getCrossParamsForTreemap(point,chartConf){
 	
 }
 
-function prepareChartConfForTreemap(chartConf,handleCockpitSelection) {
+function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCrossNavigationTo) {
 	
 	var points = [];
 	
@@ -364,10 +361,10 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection) {
 			        	handleCockpitSelection(event);
 			        	}
 			        }else if(event.point.node.children.length==0){
-						if(chartConf.crossNavigation.hasOwnProperty('crossNavigationDocumentName')){
-		            		var params=getCrossParamsForTreemap(event.point,chartConf);
-		            	    handleCrossNavigationTo(params);
-		            	}
+						
+		            	var params=getCrossParamsForTreemap(event.point,chartConf);
+		            	handleCrossNavigationTo(params);
+		            	
 					}
 				}
 			}
@@ -440,7 +437,7 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection) {
 
 
 
-function prepareChartConfForHeatmap(chartConf,handleCockpitSelection) {
+function prepareChartConfForHeatmap(chartConf,handleCockpitSelection,handleCrossNavigationTo) {
 	var start;
 	 var startDate;
 	 var endDate;
@@ -858,11 +855,11 @@ function prepareChartConfForHeatmap(chartConf,handleCockpitSelection) {
             		handleCockpitSelection(selectParams);
             		}
             	}else{ 
-            		if(chartConf.crossNavigation.hasOwnProperty('crossNavigationDocumentName')){
+            		
             		
             		var params=getCrossParamsForHeatmap(event.point,chartConf);
             	    handleCrossNavigationTo(params);
-            	}
+            	
             	}		
             }
             },

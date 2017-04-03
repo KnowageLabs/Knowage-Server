@@ -445,7 +445,29 @@
 	    		    		
 		    	point:
 		    	{
-			    	#if($chart.outcomingEventsEnabled == 'true')
+					categoryName: 'ciao',
+		            #if($chart.isCockpitEngine=="false")
+		              	events:{
+		                	click: scope.chartInitializer.handleCrossNavigationTo,
+		                	legendItemClick: function(e) {
+				            	var series = this.series.chart.series,
+								name = this.name,
+				                each = Highcharts.each;
+				
+				                e.preventDefault();
+				
+				                each(series, function(s) {
+				                	each(s.data, function(point) {
+				                    	if (point.name === name) {
+				                      		point.setVisible(!point.visible);
+				                    	}
+				                  	});
+				                });
+				            },
+		            }
+		            
+		            
+		            #elseif($chart.outcomingEventsEnabled == 'true')
 		              	events:{
 		                	click: handleCockpitSelection,
 		                	legendItemClick: function(e) {
@@ -464,27 +486,8 @@
 				                });
 				            },
 		            }
-		            #elseif($crossNavigation != '')
-		               events:{
-		                	click: handleCrossNavigationTo,
-		                	
-		                	legendItemClick: function(e) {
-				            	var series = this.series.chart.series,
-								name = this.name,
-				                each = Highcharts.each;
-				
-				                e.preventDefault();
-				
-				                each(series, function(s) {
-				                	each(s.data, function(point) {
-				                    	if (point.name === name) {
-				                      		point.setVisible(!point.visible);
-				                    	}
-				                  	});
-				                });
-				            },
-		            	}
-		            #end	
+
+		            #end		
 	            },
 			#if ($chart.LEGEND.show != '' && $chart.LEGEND.show == 'true' && $i==1 )
             	showInLegend: true,

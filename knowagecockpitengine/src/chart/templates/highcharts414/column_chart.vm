@@ -195,13 +195,7 @@
     		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
     	*#
     	#if($drilldownEnabledFlag && $exportWebApp==false)
-	    	#if($crossNavigation != '')
-		    events: {
-				drilldown: handleCrossNavigationTo,
-				drillup: handleCrossNavigationFrom
-		    },
-    	
-	    	#elseif($enableDrilldown)
+	    	#if($enableDrilldown)
 		    events: {
 				drilldown: scope.chartInitializer.handleDrilldown,
 				drillup: scope.chartInitializer.handleDrillup
@@ -1567,11 +1561,19 @@
 	        
       	#end
       
+      
+      
+      
         
         series: {
             cursor: 'pointer',
             point: {
-                #if($chart.outcomingEventsEnabled == 'true')
+            
+               #if($chart.isCockpitEngine=="false")
+					events:{
+						click: scope.chartInitializer.handleCrossNavigationTo,
+					}
+		         #elseif($chart.outcomingEventsEnabled == 'true')
 		              	events:{
 		                	click: handleCockpitSelection
 		            	}

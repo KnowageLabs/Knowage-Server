@@ -38,7 +38,7 @@ angular.module('chartRendererModule')
 			
 			
 				var handleCockpitSelection = scope.onClickSeries;
-				
+
 				//var handleDrilldown = function (e) {};
 				
 				//var handleDrillup = function () {};

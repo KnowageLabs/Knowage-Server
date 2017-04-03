@@ -97,15 +97,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								
 				if(parent.execExternalCrossNavigation) {
 					
-					// OLD IMPLEMENTATION (comment by: danristo)
-					/* var navData={
-	            			chartType:	"SUNBURST",
-	            			documentName:e.crossNavigationDocumentName,
-	            			documentParameters:e.crossNavigationDocumentParams,
-	            			stringParameters:  e.stringParameters
-	            	}; */     
-					//parent.execExternalCrossNavigation(navData,{},undefined,e.crossNavigationDocumentName); 
-	            	
 	            	/*
 	            		Start the cross navigation according to the navigation parameters. This is the implementation that satisfied the new
 	            		cross-navigation implementation (the cross-navigation data is not persisted in the chart document template ever more).
