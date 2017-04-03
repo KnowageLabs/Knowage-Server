@@ -21,18 +21,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@page import="java.util.List"%>
 <%@page import="java.util.HashMap"%>
 <%@page import="java.util.Map"%>
+<%@page import="it.eng.spagobi.commons.constants.ObjectsTreeConstants"%>
 <%@page import="it.eng.spago.navigation.LightNavigationManager"%>
 
 <%@page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
 <%@include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>
 
  <%
-		 	
+ 
+            String objId = request.getParameter(ObjectsTreeConstants.OBJECT_ID);
+            String selectedObjParId = request.getParameter("selected_obj_par_id");
+            String parurl_nm = request.getParameter("parurl_nm");
+            
  			Map backUrlPars = new HashMap();
  			backUrlPars.put("PAGE", "detailBIObjectPage");
  			backUrlPars.put(LightNavigationManager.LIGHT_NAVIGATOR_BACK_TO,"0");
+ 			backUrlPars.put("LIGHT_NAVIGATOR_DISABLED","TRUE");
+ 			
  			backUrlPars.put("MESSAGEDET", "DETAIL_SELECT");
+            backUrlPars.put("OBJECT_ID", objId);
+ 			backUrlPars.put("selected_obj_par_id", selectedObjParId);
+ 			backUrlPars.put("parurl_nm", parurl_nm);
+ 			
  			String backUrl = urlBuilder.getUrl(request, backUrlPars);
+ 
  			 			
 		%>
 		

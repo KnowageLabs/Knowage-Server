@@ -281,7 +281,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 			verifyForDependencies(biObjPar);
 			if (!errorHandler.isOKByCategory(EMFErrorCategory.VALIDATION_ERROR)) {
 				helper.fillResponse(initialPath);
-				prepareBIObjectDetailPage(response, obj, biObjPar, biObjPar.getId().toString(), ObjectsTreeConstants.DETAIL_MOD, false, false);
+				prepareBIObjectDetailPage(request, response, obj, biObjPar, biObjPar.getId().toString(), ObjectsTreeConstants.DETAIL_MOD, false, false);
 				return;
 			}
 			IBIObjectParameterDAO dao = DAOFactory.getBIObjectParameterDAO();
@@ -314,7 +314,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 		session.delAttribute("modality");
 		session.delAttribute("modalityBkp");
 		helper.fillResponse(initialPath);
-		prepareBIObjectDetailPage(response, obj, biObjPar, biObjPar.getId().toString(), modality, false, false);
+		prepareBIObjectDetailPage(request, response, obj, biObjPar, biObjPar.getId().toString(), modality, false, false);
 
 	}
 
@@ -341,7 +341,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 		delateLoopbackContext();
 
 		helper.fillResponse(initialPath);
-		prepareBIObjectDetailPage(response, obj, biObjPar, biObjPar.getId().toString(), modality, false, false);
+		prepareBIObjectDetailPage(request, response, obj, biObjPar, biObjPar.getId().toString(), modality, false, false);
 		session.delAttribute("PAR_ID");
 	}
 
@@ -375,7 +375,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 				selectedObjParIdStr = new Integer(selectedObjParId).toString();
 			}
 			helper.fillResponse(initialPath);
-			prepareBIObjectDetailPage(response, obj, null, selectedObjParIdStr, ObjectsTreeConstants.DETAIL_MOD, true, true);
+			prepareBIObjectDetailPage(request, response, obj, null, selectedObjParIdStr, ObjectsTreeConstants.DETAIL_MOD, true, true);
 		} catch (Exception ex) {
 			logger.error("Cannot fill response container", ex);
 			AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DOCUMENT.MODIFY", logParam, "ERR");
@@ -535,8 +535,8 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 	 * @throws SourceBeanException
 	 * @throws EMFUserError
 	 */
-	private void prepareBIObjectDetailPage(SourceBean response, BIObject obj, BIObjectParameter biObjPar, String selectedObjParIdStr, String detail_mod,
-			boolean initialBIObject, boolean initialBIObjectParameter) throws SourceBeanException, EMFUserError {
+	private void prepareBIObjectDetailPage(SourceBean request, SourceBean response, BIObject obj, BIObjectParameter biObjPar, String selectedObjParIdStr,
+			String detail_mod, boolean initialBIObject, boolean initialBIObjectParameter) throws SourceBeanException, EMFUserError {
 
 		List biObjParams = DAOFactory.getBIObjectParameterDAO().loadBIObjectParametersById(obj.getId());
 		obj.setBiObjectParameters(biObjParams);
@@ -552,6 +552,12 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 			} else if ("-1".equals(selectedObjParIdStr)) {
 				biObjPar = DetBIObjModHelper.createNewBIObjectParameter(obj.getId());
 				selectedObjParIdStr = "-1";
+
+				String parUrlName = request.getAttribute("parurl_nm") != null ? request.getAttribute("parurl_nm").toString() : null;
+				if (parUrlName != null) {
+					biObjPar.setParameterUrlName(parUrlName);
+				}
+
 			} else {
 				int selectedObjParId = Integer.parseInt(selectedObjParIdStr);
 				Iterator it = biObjParams.iterator();
@@ -779,7 +785,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 			// populate response
 			BIObject obj = biobjDAO.loadBIObjectForDetail(objId);
 			helper.fillResponse(initialPath);
-			prepareBIObjectDetailPage(response, obj, null, "", ObjectsTreeConstants.DETAIL_MOD, false, false);
+			prepareBIObjectDetailPage(request, response, obj, null, "", ObjectsTreeConstants.DETAIL_MOD, false, false);
 		} catch (Exception e) {
 			logger.error("Cannot erase version", e);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
@@ -878,7 +884,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 			// if there are some validation errors into the errorHandler return without write into DB
 			if (!errorHandler.isOKByCategory(EMFErrorCategory.VALIDATION_ERROR)) {
 				helper.fillResponse(initialPath);
-				prepareBIObjectDetailPage(response, obj, null, selectedObjParIdStr, mod, false, false);
+				prepareBIObjectDetailPage(request, response, obj, null, selectedObjParIdStr, mod, false, false);
 
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DOCUMENT.MODIFY_VALIDATION_ERROR", logParam, "ERR");
 				return;
@@ -924,7 +930,8 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 						// if there are some validation errors into the errorHandler does not write into DB
 						if (!errorHandler.isOKByCategory(EMFErrorCategory.VALIDATION_ERROR)) {
 							helper.fillResponse(initialPath);
-							prepareBIObjectDetailPage(response, obj, biObjPar, biObjPar.getId().toString(), ObjectsTreeConstants.DETAIL_MOD, false, false);
+							prepareBIObjectDetailPage(request, response, obj, biObjPar, biObjPar.getId().toString(), ObjectsTreeConstants.DETAIL_MOD, false,
+									false);
 
 							AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DOCUMENT.MODIFY_DETAIL_MOD", logParam, "OK");
 							return;
@@ -938,14 +945,14 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 							// it is requested to modify a BIObjectParameter
 							objParDAO.modifyBIObjectParameter(biObjPar);
 						}
-						prepareBIObjectDetailPage(response, obj, null, selectedObjParIdStr, ObjectsTreeConstants.DETAIL_MOD, false, true);
+						prepareBIObjectDetailPage(request, response, obj, null, selectedObjParIdStr, ObjectsTreeConstants.DETAIL_MOD, false, true);
 
 						logParam.put("Document_name", obj.getName());
 						AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DOCUMENT.MODIFY_DETAIL_MOD", logParam, "OK");
 						return;
 					} else {
 						helper.fillResponse(initialPath);
-						prepareBIObjectDetailPage(response, obj, null, selectedObjParIdStr, ObjectsTreeConstants.DETAIL_MOD, false, true);
+						prepareBIObjectDetailPage(request, response, obj, null, selectedObjParIdStr, ObjectsTreeConstants.DETAIL_MOD, false, true);
 						// exits without writing into DB
 
 						logParam.put("Document_name", obj.getName());
@@ -967,7 +974,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 					// if there are some validation errors into the errorHandler does not write into DB
 					if (!errorHandler.isOKByCategory(EMFErrorCategory.VALIDATION_ERROR)) {
 						helper.fillResponse(initialPath);
-						prepareBIObjectDetailPage(response, obj, biObjPar, biObjPar.getId().toString(), ObjectsTreeConstants.DETAIL_MOD, false, false);
+						prepareBIObjectDetailPage(request, response, obj, biObjPar, biObjPar.getId().toString(), ObjectsTreeConstants.DETAIL_MOD, false, false);
 						AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DOCUMENT.MODIFY_DETAIL_MOD", logParam, "KO");
 						return;
 					}
@@ -976,7 +983,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 					BIObjectParameter objPar = objParDAO.loadForDetailByObjParId(new Integer(objParId));
 					objParDAO.eraseBIObjectParameter(objPar, true);
 					selectedObjParIdStr = "";
-					prepareBIObjectDetailPage(response, obj, null, selectedObjParIdStr, ObjectsTreeConstants.DETAIL_MOD, false, true);
+					prepareBIObjectDetailPage(request, response, obj, null, selectedObjParIdStr, ObjectsTreeConstants.DETAIL_MOD, false, true);
 
 					logParam.put("Document_name", obj.getName());
 					AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DOCUMENT.MODIFY_DETAIL_MOD", logParam, "OK");
@@ -1003,7 +1010,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 					// if there are some validation errors into the errorHandler does not write into DB
 					if (!errorHandler.isOKByCategory(EMFErrorCategory.VALIDATION_ERROR)) {
 						helper.fillResponse(initialPath);
-						prepareBIObjectDetailPage(response, obj, biObjPar, biObjPar.getId().toString(), ObjectsTreeConstants.DETAIL_MOD, false, false);
+						prepareBIObjectDetailPage(request, response, obj, biObjPar, biObjPar.getId().toString(), ObjectsTreeConstants.DETAIL_MOD, false, false);
 
 						logParam.put("Document_name", obj.getName());
 						AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DOCUMENT.MODIFY_DETAIL_MOD", logParam, "OK");

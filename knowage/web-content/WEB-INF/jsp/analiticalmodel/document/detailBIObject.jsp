@@ -257,6 +257,7 @@ function saveDocument(goBack) {
 	document.objectForm.submit();
 }
  
+ 
 </script>
 
 <form method='POST' action='<%=formUrl%>' id = 'objectForm' name='objectForm' enctype="multipart/form-data">
@@ -1622,10 +1623,13 @@ function isBIParameterFormChanged () {
 
 function changeBIParameter (objParId, message) {
 	
+	
 	var biobjParFormModified = isBIParameterFormChanged();
 	
-	document.getElementById('selected_obj_par_id').name = 'selected_obj_par_id';
-	document.getElementById('selected_obj_par_id').value = objParId;
+	var element = document.getElementById('selected_obj_par_id');
+
+	element.name = 'selected_obj_par_id';
+	element.value = objParId;
 	
 	if (biobjParFormModified == 'true') 
 	{
@@ -1890,10 +1894,16 @@ function downloadAlsoLinkedTemplatesConfirm(message, urlYes, urlNo){
 			}else if(parameter != null && parameter.getId().toString() != null){
 				adId = parameter.getId().toString();
 			}
-
-
+	
+			
 		
 	%> 
+	
+	<script type="text/javascript">
+	var urlurl = "${pageContext.request.contextPath}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/documentbrowser/templates/analyticalDriversList.jsp?OBJECT_ID=<%=obj.getId().toString()%>&selected_obj_par_id=<%=obj_par_idStr%>";
+ //alert(urlurl);
+</script>
+	
     <input type='hidden' id='par_Id' 
 			   value='<%=adId != null ? adId : ""%>' name='par_Id' />	 
 		<input class='portlet-form-input-field' type="text" id="parameterName" size="42" 
@@ -1902,7 +1912,9 @@ function downloadAlsoLinkedTemplatesConfirm(message, urlYes, urlNo){
 
 
   		&nbsp;*&nbsp;
-		<a style="text-decoration:none;"  href="${pageContext.request.contextPath}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/documentbrowser/templates/analyticalDriversList.jsp">
+		<a style="text-decoration:none;" 
+		 href="javascript:writeParametersCurrentUrl(urlurl)"
+		 >
 			<img src='<%=urlBuilder.getResourceLinkByTheme(request,
 						"/img/detail.gif", currTheme)%>' 
 			   title='<spagobi:message key = "SBIDev.docConf.docDetParam.parametersLookupList" />' 
@@ -1911,6 +1923,17 @@ function downloadAlsoLinkedTemplatesConfirm(message, urlYes, urlNo){
 			   
 		<input type='hidden' name='' value='' id='loadParametersLookup' />
 	</div>
+	
+	<script>
+	function writeParametersCurrentUrl(url){
+	    var parurl_nm = document.getElementById('parurl_nm').value;
+	    url += "&parurl_nm="+parurl_nm;
+	    document.location.href = url;
+	     return url; 
+	}
+
+	</script>
+	
 	
 	
 	<!-- URL NAME -->
