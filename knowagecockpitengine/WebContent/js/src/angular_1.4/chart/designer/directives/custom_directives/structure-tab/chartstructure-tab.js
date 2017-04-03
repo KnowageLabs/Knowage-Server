@@ -20,8 +20,9 @@
  * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
  */
 
-angular.module('chartstructure-tab', [])
-	.directive('chartstructureTab', function(sbiModule_config) {
+var app = angular.module('chartstructure-tab', []);
+
+app.directive('chartstructureTab', function(sbiModule_config) {
 		return {
 			restrict: 'AE',
 			replace: true,
@@ -944,14 +945,26 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 	@author: Radmila Selakovic (rselakov, radmila.selakovic@mht.net)
 	function that filter list of agregation options
 	"NONE" wll be present only if type of chart is SCATTER
-*/
-$scope.filterAgregations = function(item) {
-
-if($scope.chartTemplate.type!="SCATTER"){
-	return item.name != 'NONE';
-}
-else return item.name ;
-
-}
+	*/
+	$scope.filterAgregations = function(item) {
+		if($scope.chartTemplate.type!="SCATTER"){
+			return item.name != 'NONE';
+		}
+		else{
+			return item.name ;
+		}
+	}
     
 }
+
+app.filter('qbeColumnName', function() {
+	return function(val){
+		var re = /(.*\.)*(.*):(.*)/;
+		var match = re.exec(val);
+		if(match){
+			return match[match.length - 2]+":"+match[match.length - 1];
+		}else{
+			return val;
+		}
+	};
+});
