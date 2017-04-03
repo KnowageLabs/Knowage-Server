@@ -27,60 +27,63 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 
 /**
  * The implementation of IUrlBuilder used when SpagoBI is used as a STANDALONE WEB APPLICATION
  */
-public class WebUrlBuilder implements IUrlBuilder{
-	
+public class WebUrlBuilder implements IUrlBuilder {
+
 	private static transient Logger logger = Logger.getLogger(WebUrlBuilder.class);
 
-	private String baseURL="";
-	private String baseResourceURL="";
-	
+	private String baseURL = "";
+	private String baseResourceURL = "";
+
 	/**
 	 * Inits the.
 	 * 
-	 * @param aHttpServletRequest the a http servlet request
+	 * @param aHttpServletRequest
+	 *            the a http servlet request
 	 */
-	public void init(HttpServletRequest aHttpServletRequest){
+	public void init(HttpServletRequest aHttpServletRequest) {
 		logger.debug("IN");
-		baseResourceURL = GeneralUtilities.getSpagoBiContext()+"/";
-		logger.debug("baseResourceURL"+baseResourceURL);
-		baseURL = baseResourceURL+ "/servlet/AdapterHTTP";
-		logger.debug("OUT.baseURL="+baseURL);
+		baseResourceURL = GeneralUtilities.getSpagoBiContext() + "/";
+		logger.debug("baseResourceURL" + baseResourceURL);
+		baseURL = baseResourceURL + "/servlet/AdapterHTTP";
+		logger.debug("OUT.baseURL=" + baseURL);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see it.eng.spagobi.commons.utilities.urls.IUrlBuilder#getUrl(javax.servlet.http.HttpServletRequest, java.util.Map)
 	 */
+	@Override
 	public String getUrl(HttpServletRequest aHttpServletRequest, Map parameters) {
 		logger.debug("IN");
 		init(aHttpServletRequest);
-		//ConfigSingleton.getInstance().getAttribute(dal master fin qua SPAGO_ADAPTERHTTP_URL)
+		// ConfigSingleton.getInstance().getAttribute(dal master fin qua SPAGO_ADAPTERHTTP_URL)
 		StringBuffer sb = new StringBuffer();
 		sb.append(baseURL);
-		if (parameters != null){
+		if (parameters != null) {
 			Iterator keysIt = parameters.keySet().iterator();
 			boolean isFirst = true;
 			String paramName = null;
 			Object paramValue = null;
-			while (keysIt.hasNext()){
-				paramName = (String)keysIt.next();
+			while (keysIt.hasNext()) {
+				paramName = (String) keysIt.next();
 				paramValue = parameters.get(paramName);
 				if (paramValue == null) {
 					logger.warn("Parameter with name " + paramName + " has null value. This parameter will be not considered.");
 					continue;
 				}
-				if (isFirst){
+				if (isFirst) {
 					sb.append("?");
 					isFirst = false;
-				}else{
+				} else {
 					sb.append("&");
 				}
-				sb.append(paramName+"="+paramValue.toString());
+				sb.append(paramName + "=" + paramValue.toString());
 			}
 		}
 		// propagating light navigator id
@@ -89,67 +92,65 @@ public class WebUrlBuilder implements IUrlBuilder{
 			if (sb.indexOf("?") != -1) {
 				sb.append("&" + LightNavigationManager.LIGHT_NAVIGATOR_ID + "=" + lightNavigatorId);
 			} else {
-				sb.append("?" + LightNavigationManager.LIGHT_NAVIGATOR_ID+ "=" + lightNavigatorId);
+				sb.append("?" + LightNavigationManager.LIGHT_NAVIGATOR_ID + "=" + lightNavigatorId);
 			}
 		}
 		String url = sb.toString();
-		
-		logger.debug("OUT.url="+url);
+
+		logger.debug("OUT.url=" + url);
 		return url;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see it.eng.spagobi.commons.utilities.urls.IUrlBuilder#getResourceLink(javax.servlet.http.HttpServletRequest, java.lang.String)
 	 */
-	public String getResourceLink(HttpServletRequest aHttpServletRequest, String originalUrl){
-		logger.debug("IN.originalUrl="+originalUrl);
+	@Override
+	public String getResourceLink(HttpServletRequest aHttpServletRequest, String originalUrl) {
+		logger.debug("IN.originalUrl=" + originalUrl);
 		init(aHttpServletRequest);
 		originalUrl = originalUrl.trim();
-		if(originalUrl.startsWith("/")) {
+		if (originalUrl.startsWith("/")) {
 			originalUrl = originalUrl.substring(1);
 		}
 		originalUrl = baseResourceURL + originalUrl;
-		logger.debug("OUT.originalUrl="+originalUrl);
+		logger.debug("OUT.originalUrl=" + originalUrl);
 		return originalUrl;
 	}
 
-	
-	public String getResourceLinkByTheme(HttpServletRequest aHttpServletRequest, String originalUrl, String theme){
+	@Override
+	public String getResourceLinkByTheme(HttpServletRequest aHttpServletRequest, String originalUrl, String theme) {
 		logger.debug("IN");
 		ConfigSingleton config = ConfigSingleton.getInstance();
-		String rootPath=config.getRootPath();
-		String urlByTheme=originalUrl;
+		String rootPath = config.getRootPath();
+		String urlByTheme = originalUrl;
 		originalUrl.trim();
-		if(originalUrl.startsWith("/"))
-			originalUrl=originalUrl.substring(1);
+		if (originalUrl.startsWith("/"))
+			originalUrl = originalUrl.substring(1);
 
-		if(theme!=null)
-		{
-			urlByTheme="/themes/"+theme+"/"+originalUrl;
+		if (theme != null) {
+			urlByTheme = "/themes/" + theme + "/" + originalUrl;
 		}
 
-		String urlComplete=rootPath+urlByTheme;
+		String urlComplete = rootPath + urlByTheme;
 		// check if object exists
-		File check=new File(urlComplete);
+		File check = new File(urlComplete);
 		// if file
-		if(!check.exists())
-		{
-			urlByTheme="/themes/sbi_default/"+originalUrl;
+		if (!check.exists()) {
+			urlByTheme = "/themes/sbi_default/" + originalUrl;
 
-		// check if the default object exist
-		urlComplete=rootPath+urlByTheme;
-		File checkDef=new File(urlComplete);
-		// if file
-		if(!checkDef.exists())
-		{
-			urlByTheme=originalUrl;
-		}
+			// check if the default object exist
+			urlComplete = rootPath + urlByTheme;
+			File checkDef = new File(urlComplete);
+			// if file
+			if (!checkDef.exists()) {
+				urlByTheme = originalUrl;
+			}
 		}
 
 		logger.debug("OUT");
 		return getResourceLink(aHttpServletRequest, urlByTheme);
 	}
-	
-	
-	
+
 }
