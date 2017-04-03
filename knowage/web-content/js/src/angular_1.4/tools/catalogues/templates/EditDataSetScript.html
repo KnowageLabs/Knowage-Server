@@ -27,18 +27,18 @@
 	   
 	   <md-tabs md-dynamic-height  md-border-bottom="">	            			
 			 <md-tab label='{{translate.load("sbi.ds.script");}}'>
-			 	<md-content flex class="ToolbarBox miniToolbar noBorder mozTable">
+			 	<md-content flex class="ToolbarBox miniToolbar noBorder codeMirrorScriptEditor">
 					<md-card layout-padding>
-						<md-input-container class="md-block">
-					    	<label>{{translate.load("sbi.ds.query")}}</label>
-							<textarea  	ui-codemirror="cmOption" ng-model="selectedDataSet.queryScript" 
+					<label>{{translate.load("sbi.ds.script")}}</label>
+						<md-input-container class="md-block">		    	
+							<textarea  	ui-codemirror ui-codemirror-opts="cmOption" ng-model="selectedDataSet.queryScript" 
 										md-select-on-focus ng-change="setFormDirty()"></textarea>
 						</md-input-container>
 					</md-card>
 				</md-content>
 			</md-tab>
 			<md-tab label='{{translate.load("sbi.ds.query");}}'>
-			 	<md-content flex class="ToolbarBox miniToolbar noBorder mozTable">
+			 	<md-content flex class="ToolbarBox miniToolbar noBorder">
 					<md-card layout-padding>
 						<md-input-container class="md-block">
 					    	<label>{{translate.load("sbi.ds.query")}}</label>

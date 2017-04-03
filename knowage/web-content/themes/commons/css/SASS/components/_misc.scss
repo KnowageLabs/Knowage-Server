@@ -765,6 +765,10 @@ md-tab-item {
   }
 }
 
+.codeMirrorScriptEditor .CodeMirror-gutter-wrapper {
+  left: -30px !important;
+}
+
 /* IE11 fix */
 
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {

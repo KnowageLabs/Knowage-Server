@@ -2566,8 +2566,13 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	
 	  // The ui-codemirror option
 	  $scope.cmOption = {
-	    lineNumbers: true,
-	    tabMode: "indent",
+			  indentWithTabs: true,
+			   smartIndent: true,
+			   lineWrapping : true,
+			   matchBrackets : true,
+			   autofocus: true,
+			   theme:"eclipse",
+			   lineNumbers: true,
 	    onLoad : function(_cm){
 	      
 	      // HACK to have the codemirror instance in the scope...
