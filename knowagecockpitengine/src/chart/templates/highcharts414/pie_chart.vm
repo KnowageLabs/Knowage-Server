@@ -21,8 +21,6 @@
 	#end
 #end
 #set($categorieColumns = $chart.VALUES.CATEGORY) ## metadata related to categories
-#set($crossNavigation = '')
-#set($crossNavigation = $chart.DRILL)
 
 
 {
