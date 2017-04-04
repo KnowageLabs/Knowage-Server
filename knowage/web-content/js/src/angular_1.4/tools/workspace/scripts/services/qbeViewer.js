@@ -136,7 +136,9 @@ angular
 											function(responseDS) {
 												
 												$log.info("Dataset saved successfully");
+												$scope.datasetSavedFromQbe=true;
 												$scope.closeDocument();
+												
 												
 											})})
 				}
