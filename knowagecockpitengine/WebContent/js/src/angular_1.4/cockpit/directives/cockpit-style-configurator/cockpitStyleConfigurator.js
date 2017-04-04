@@ -108,6 +108,7 @@ function cockpitStyleConfiguratorControllerFunction($scope,sbiModule_translate,c
 	}
 	$scope.resetTitlesStyle=function(){
 		$scope.ngModel.titles=$scope.cockpitStyle.titles;
+		$scope.ngModel.headerHeight=0;
 		angular.copy($scope.cockpitStyle.title,$scope.ngModel.title);
 	}
 	$scope.resetShadowsStyle=function(){
