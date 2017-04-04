@@ -1023,7 +1023,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		 	// Clone the dataset.
 		 	{
 		 		label: $scope.translate.load("sbi.ds.clone.tooltip"),
-			 	icon:'fa fa-files-o' , // alternative: 'fa fa-clone'
+			 	icon:'fa fa-files-o',
 			 	backgroundColor:'transparent',
 		   
 			 	action: function(item,event) {
@@ -1051,18 +1051,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 													cloningDataset(item);
 //													console.log("prosao clone 3");
 										 		},
-										 		
 										 		function() {
-										 			
 										 			console.log("keep changes");
-										 			
-					//					 			if ($scope.selectedDataSet.id) {
-					//					 				$scope.selectedDataSetInit = $scope.datasetsListPersisted[$scope.selectedDSIndex];
-					//					 			}
-					//					 			else {
-					//					 				$scope.selectedDataSetInit = $scope.datasetsListTemp[$scope.datasetsListTemp.length-1];
-					//					 			}
-										 			
 										 		}
 											);
 					 				
@@ -1082,23 +1072,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 						}
 						
 					}
-					
-
-//					if ($scope.datasetsListTemp.length == $scope.datasetsListPersisted.length + 1) {
-////			 			sbiModule_messaging.showErrorMessage($scope.translate.load('sbi.ds.clone.warning.onlyonenewdataset.msg'));
-//			 			
-//			 			$mdDialog
-//						.show(
-//								$mdDialog.alert()
-//							        .clickOutsideToClose(true)
-//							        .title('Cannot clone a new dataset')
-//							        .textContent("You cannot clone dataset that is not saved yet. Please, save before cloning it")
-//							        .ariaLabel('Cannot clone a new dataset')
-//							        .ok('Ok')
-//						    );
-//			 			
-//			 		}
-		 			
 			 	} 
 		 	}
  		 	
@@ -1243,6 +1216,11 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			 					   					if ($scope.selectedDataSet.id == $scope.datasetsListTemp[i].id) {			 			
 			 					   						
 			 					   						($scope.selectedDataSet.dsTypeCd.toLowerCase()=="file") ? $scope.refactorFileDatasetConfig(response.data[0]) : null;
+			 					   					
+			 					   						//if($scope.selectedDataSet.dsTypeCd.toLowerCase()=="file") {
+			 					   						//$scope.refactorFileDatasetConfig(response.data[0]);
+			 					   						//$scope.changingFile = false;
+			 					   						//}
 			 					   						
 			 					   						// Remove the dataset's version from the collection of all datasets (the array in the left angular-table).
 	 					   								$scope.datasetsListTemp[i] = angular.copy(response.data[0]);
@@ -1251,6 +1229,28 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	 					   								// Needed in order to have a copy of the selected dataset that will not influence the selected dataset in the AT while performing changes on it
 	 					   								$scope.selectedDataSetInit = angular.copy(response.data[0]);	
 	 					   								// Call the scope function that is responsible for transformation of configuration data of the File dataset.
+	 					   								
+		 					   							// DATASET PARAMETERS
+		 					   							var parameterItemsTemp = [];			
+		 					   							
+		 					   							var parameterItems = $scope.selectedDataSet.pars;
+		 					   							var parameterItemsLength = parameterItems.length;
+		 					   							
+		 					   							for (j=0; j<parameterItemsLength; j++) {
+		 					   								
+		 					   								var parameterItemTemp = {};
+		 					   								
+		 					   								parameterItemTemp["name"] = parameterItems[j]["name"];
+		 					   								parameterItemTemp["type"] = parameterItems[j]["type"];
+		 					   								parameterItemTemp["defaultValue"] = parameterItems[j]["defaultValue"];
+		 					   								parameterItemTemp["multiValue"] = parameterItems[j]["multiValue"];
+		 					   								parameterItemTemp["index"] = $scope.parametersCounter++;
+		 					   								
+		 					   								parameterItemsTemp.push(parameterItemTemp);
+		 					   								  
+		 					   							}
+		 					   							
+		 					   							$scope.parameterItems = parameterItemsTemp;
 	 					   								
 	 					   								
 	 					   								break;
