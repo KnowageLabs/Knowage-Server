@@ -265,8 +265,8 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 			for (i=0; i<$scope.seriesContainers.length; i++) {				
 				if ($scope.seriesContainers[i].name == seriesContainer.name) {
 					//checkIt($scope.selectedChartType,$scope.seriesContainers);
-					if ($scope.seriesContainers[i].series.indexOf(item.id)<0) {
-						$scope.seriesContainers[i].series.push(item.id);
+					if ($scope.seriesContainers[i].series.indexOf(item.alias)<0) {
+						$scope.seriesContainers[i].series.push(item.alias);
 					
 					}else{
 						console.log("duplicate");
@@ -277,8 +277,8 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 		// If we want to move measure into the only series container that we have
 		else {
 			//checkIt($scope.selectedChartType,$scope.seriesContainers);
-			if ($scope.seriesContainers[0].series.indexOf(item.id)<0)  {
-				$scope.seriesContainers[0].series.push(item.id);
+			if ($scope.seriesContainers[0].series.indexOf(item.alias)<0)  {
+				$scope.seriesContainers[0].series.push(item.alias);
 			}else if($scope.seriesLimit == false){
 				sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.chartengine.designer.max.series"), sbiModule_translate.load("sbi.data.editor.association.AssociationEditor.warning"));
 			}else{
@@ -288,7 +288,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 		for (var i = 0; i < $scope.seriesContainers.length; i++) {
 			console.log($scope.seriesContainers[i]);
 			for (var j = 0; j < $scope.seriesContainers[i].series.length; j++) {
-				if($scope.seriesContainers[i].series[j] == item.id){
+				if($scope.seriesContainers[i].series[j] == item.alias){
 					var base = "";
 					switch ($scope.selectedChartType) {
 					case 'parallel':
@@ -334,7 +334,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 					var temp = base.VALUES.SERIE[0];
 					temp.axis = $scope.seriesContainers[i].name;
 					temp.column = item.id;
-					temp.name = item.id;
+					temp.name = item.alias;
 					temp.precision = Number(item.precision);
 					var checkForSameAxis = findInArray($scope.chartTemplate.VALUES.SERIE,'axis',temp.axis)
 					var checkForSameColumn = findInArray($scope.chartTemplate.VALUES.SERIE,'column',temp.column);
@@ -956,15 +956,3 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 	}
     
 }
-
-app.filter('qbeColumnName', function() {
-	return function(val){
-		var re = /(.*\.)*(.*):(.*)/;
-		var match = re.exec(val);
-		if(match){
-			return match[match.length - 2]+":"+match[match.length - 1];
-		}else{
-			return val;
-		}
-	};
-});

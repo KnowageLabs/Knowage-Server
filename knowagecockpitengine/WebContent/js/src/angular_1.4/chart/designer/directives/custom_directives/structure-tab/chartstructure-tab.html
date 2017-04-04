@@ -1,5 +1,5 @@
 <md-tab-content class="knowage-grey-color" layout="column">
-	
+
 	<div layout="row" md-content layout-padding ng-form name="structureForm" flex layout-align="center">
 	
 		<!-- 
@@ -30,7 +30,7 @@
 						<expander-box color="white" expanded="true" title="translate.load('sbi.chartengine.designer.structureTab.attributemeasures.attributes.title')">
 							<md-list flex style="padding-top:0; padding-bottom:0">
 								<md-list-item ng-repeat="attribute in allAttributes" ng-click="moveAttributeToCategories(attribute)" class="noright">
-								   <span><b>{{attribute.id | qbeColumnName}}</b></span>
+								   <span><b>{{attribute.alias || attribute.id}}</b></span>
 							  	</md-list-item>
 						  	</md-list>
 					  	</expander-box>
@@ -44,7 +44,7 @@
 							
 							<md-list flex style="padding-top:0; padding-bottom:0" ng-if="numberOfSeriesContainers<=1">
 								<md-list-item ng-repeat="measure in allMeasures" ng-click="moveMeasureToSeries(measure)" class="noright">
-								    <span ><b>{{measure.id | qbeColumnName}}</b></span>
+								    <span ><b>{{measure.alias || measure.id}}</b></span>
 							  	</md-list-item>
 						  	</md-list>
 						  	
@@ -52,7 +52,7 @@
 								
 								<md-list-item ng-repeat="measure in allMeasures">
 								   
-								    <span class="noright"><b>{{measure.id | qbeColumnName}}</b></span>
+								    <span class="noright"><b>{{measure.alias || measure.id}}</b></span>
 								     
 								    <md-menu style="padding:0px;">
 							      
@@ -194,7 +194,7 @@
 						<!-- If the categories container has at least one category item inside of it. -->					
 						<md-list-item  ng-repeat="cat in categories track by $index" class="noright" style="padding:0 8 0 16">
 						    
-						    <span><b>{{cat.column | qbeColumnName}}</b></span>
+						    <span><b>{{cat.name || cat.column}}</b></span>
 						    
 						    <span flex></span>
 						   
