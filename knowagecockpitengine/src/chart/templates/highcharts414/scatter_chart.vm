@@ -34,6 +34,20 @@
 
 {
     chart: {
+    
+    	## Additional data needed for cross navigation paramteres	
+			
+		additionalData:
+		{
+			categoryColumn: '$categorieColumns.column',
+			categoryGroupBy: '$categorieColumns.groupby',
+			categoryGroupByNamens: '$categorieColumns.groupbyNames',
+			categoryName: '$categorieColumns.name',
+			categoryOrderColumn: '$categorieColumns.orderColumn',
+			categoryOrderType: '$categorieColumns.orderType',
+			categoryStacked: '$categorieColumns.stacked',
+			categoryStackedType: '$categorieColumns.stackedType'
+		},
         
         type: 'scatter',
         

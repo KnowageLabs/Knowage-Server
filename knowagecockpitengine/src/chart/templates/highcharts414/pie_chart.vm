@@ -28,6 +28,20 @@
 {
     chart: {
    		type: 'pie',
+   		
+    	## Additional data needed for cross navigation paramteres	
+			
+		additionalData:
+		{
+			categoryColumn: '$categorieColumns.column',
+			categoryGroupBy: '$categorieColumns.groupby',
+			categoryGroupByNamens: '$categorieColumns.groupbyNames',
+			categoryName: '$categorieColumns.name',
+			categoryOrderColumn: '$categorieColumns.orderColumn',
+			categoryOrderType: '$categorieColumns.orderType',
+			categoryStacked: '$categorieColumns.stacked',
+			categoryStackedType: '$categorieColumns.stackedType'
+		},
 
    		#if($chart.style.backgroundColor != '')
    		backgroundColor: '$chart.style.backgroundColor', ##outer chart background

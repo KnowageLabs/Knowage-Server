@@ -73,6 +73,21 @@
 
     chart: {
     
+    
+    	## Additional data needed for cross navigation paramteres	
+			
+		additionalData:
+		{
+			categoryColumn: '$categorieColumns.column',
+			categoryGroupBy: '$categorieColumns.groupby',
+			categoryGroupByNamens: '$categorieColumns.groupbyNames',
+			categoryName: '$categorieColumns.name',
+			categoryOrderColumn: '$categorieColumns.orderColumn',
+			categoryOrderType: '$categorieColumns.orderType',
+			categoryStacked: '$categorieColumns.stacked',
+			categoryStackedType: '$categorieColumns.stackedType'
+		},
+    
     	#*
     		The zoom in option for BAR and LINE charts. User will be able to zoom in on either of those two chart types
     		by both axes ('x' and 'y'). [KNOWAGE-1110 JIRA ISSUE]
@@ -1569,7 +1584,7 @@
             cursor: 'pointer',
             point: {
             
-               #if($chart.isCockpitEngine=="false")
+               #if($chart.isCockpitEngine=="false" && !$enableDrilldown)
 					events:{
 						click: scope.chartInitializer.handleCrossNavigationTo,
 					}

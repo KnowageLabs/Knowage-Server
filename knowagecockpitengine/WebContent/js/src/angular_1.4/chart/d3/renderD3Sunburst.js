@@ -27,6 +27,7 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
 	 */
 	var seriesItemConf = jsonObject.series;
 	
+	
 	var seriesItemPrecision = seriesItemConf.precision;
 	var seriesItemScaleFactor = seriesItemConf.scaleFactor;
 	var seriesItemPrefix = seriesItemConf.prefixChar!=null ? seriesItemConf.prefixChar : "";
