@@ -39,7 +39,12 @@ function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config, sbiM
 	$scope.translate = sbiModule_translate;
 	$scope.previewButtonEnabled = false;
 	$scope.selectedChartType = "";
-	
+
+	$scope.disableHtmlElementForChartJs = function() {
+		if($scope.libInUse=='chartJs') {
+			return true;
+		}
+	}
 	$scope.saveChartTemplate = function() {
 		$scope.attachCategoriesToTemplate();
 		$scope.chartTemplate.COLORPALETTE.COLOR = $scope.colors;

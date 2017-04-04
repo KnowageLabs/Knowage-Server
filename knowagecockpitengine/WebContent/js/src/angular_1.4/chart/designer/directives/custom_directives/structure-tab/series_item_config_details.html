@@ -33,7 +33,7 @@
  ng-if="selectedChartType =='bar' || selectedChartType =='line'">  
 	<md-input-container class="md-block" flex> 
 		<label>{{translate.load('sbi.chartengine.designer.seriestype')}}</label>
-		<md-select ng-model="detailsForSeriesItem.type"> 
+		<md-select ng-model="detailsForSeriesItem.type" ng-disabled="disableHtmlElementForChartJs()"> 
 			<md-option ng-repeat="option in seriesItemTypes" value="{{option.value}}">{{option.name}}</md-option>
 		</md-select> 
 	</md-input-container>
@@ -73,7 +73,7 @@ ng-if="selectedChartType != 'chord' && selectedChartType != 'heatmap' && selecte
 && selectedChartType != 'parallel' && selectedChartType != 'sunburst' && selectedChartType != 'wordcloud' && selectedChartType != 'pie'">
 	<label>{{translate.load("sbi.chartengine.designer.showvalue")}}</label>
 	<md-input-container class="small counter"> 
-		<md-checkbox ng-model="detailsForSeriesItem.showValue" aria-label="Show series item values"></md-checkbox>
+		<md-checkbox ng-model="detailsForSeriesItem.showValue" aria-label="Show series item values" ng-disabled="disableHtmlElementForChartJs()"></md-checkbox>
 	</md-input-container>	
 </div>
 
@@ -100,7 +100,7 @@ ng-if="selectedChartType != 'chord' && selectedChartType != 'heatmap' && selecte
 ng-if="selectedChartType != 'chord' && selectedChartType != 'heatmap' && selectedChartType != 'treemap'">
 	<md-input-container class="md-block" flex> 
 		<label>{{translate.load('sbi.chartengine.designer.scalefactor.label')}}</label>
-		<md-select ng-model="detailsForSeriesItem.scaleFactor"> 
+		<md-select ng-model="detailsForSeriesItem.scaleFactor" ng-disabled="disableHtmlElementForChartJs()"> 
 			<md-option ng-repeat="option in scaleFactorsFixed" value="{{option.value}}">{{option.name}}</md-option>
 		</md-select> 
 	</md-input-container>
@@ -120,7 +120,7 @@ ng-if="selectedChartType != 'heatmap' && selectedChartType != 'treemap'">
 ng-if="selectedChartType != 'heatmap' && selectedChartType != 'treemap'">
 	<md-input-container class="md-block" flex>
 		<label>{{translate.load('sbi.chartengine.designer.prefixtext')}}</label>
-		<input name="prefix" ng-model="detailsForSeriesItem.prefixChar"/> 
+		<input name="prefix" ng-model="detailsForSeriesItem.prefixChar" ng-readonly="disableHtmlElementForChartJs()"/> 
 	</md-input-container>	
 </div>
 
@@ -129,7 +129,7 @@ ng-if="selectedChartType != 'heatmap' && selectedChartType != 'treemap'">
 ng-if="selectedChartType != 'heatmap' && selectedChartType != 'treemap'">
 	<md-input-container class="md-block" flex>
 		<label>{{translate.load('sbi.chartengine.designer.postfixtext')}}</label>
-		<input name="suffix" ng-model="detailsForSeriesItem.postfixChar"/> 
+		<input name="suffix" ng-model="detailsForSeriesItem.postfixChar" ng-readonly="disableHtmlElementForChartJs()"/> 
 	</md-input-container>	
 </div>	
 </div>

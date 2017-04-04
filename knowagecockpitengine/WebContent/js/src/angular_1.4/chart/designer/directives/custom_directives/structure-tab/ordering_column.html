@@ -19,7 +19,7 @@
 	
 		<label>{{translate.load("sbi.chartengine.designer.tab.configuration.groupCategories")}}</label>
 		<md-input-container class="small counter"> <md-checkbox
-			ng-model="chartTemplate.groupCategories" style="margin:0 8px" aria-label="groupCategories" name="generic_groupCategories"></md-checkbox>
+			ng-model="chartTemplate.groupCategories" style="margin:0 8px" aria-label="groupCategories" name="generic_groupCategories" ng-disabled="disableHtmlElementForChartJs()"></md-checkbox>
 		</md-input-container>
 </div>
 </div>	

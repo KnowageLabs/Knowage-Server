@@ -34,10 +34,12 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 	$scope.datasetLabel = datasetLabel;
 	$scope.chartLibNamesConfig = chartLibNamesConfig;
 	$scope.selectedChartType;
+	$scope.libInUse;
 	$scope.minMaxCategories = {};
 	$scope.minMaxSeries = {};
 	$scope.$watch('selectedChartType',function(newValue,oldValue){
 		
+		$scope.libInUse=$scope.chartLibNamesConfig[$scope.selectedChartType];
 		$scope.minMaxCategories = {};
 		$scope.minMaxSeries = {};
 		switch(newValue){
