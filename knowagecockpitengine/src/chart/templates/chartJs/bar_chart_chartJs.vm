@@ -10,7 +10,16 @@
 #set($rows = $data.rows) ## data in table rows
 
 #set($categorieColumns = $chart.VALUES.CATEGORY) ## metadata related to categories
+
+#if($categorieColumns.name=="")
+#set($categorieColumns.name = $categorieColumns.column)
+#end
+#if($chart.isCockpitEngine=="true")
+#set($categorieColumnsMapped = $dataColumnsMapper.get($categorieColumns.name)) ## "product" -> "column_3"
+#end
+#if($chart.isCockpitEngine!="true")
 #set($categorieColumnsMapped = $dataColumnsMapper.get($categorieColumns.column)) ## "product" -> "column_3"
+#end
 
 #set($series = $chart.VALUES.SERIE) ## metadata related to series
 
