@@ -27,7 +27,7 @@ import org.json.JSONObject;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
 
-import it.eng.knowage.enterprise.commons.constants.UserFunctionalityConstants;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFInternalError;
