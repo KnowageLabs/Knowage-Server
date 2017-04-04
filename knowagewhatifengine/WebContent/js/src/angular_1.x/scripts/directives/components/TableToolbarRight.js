@@ -34,11 +34,11 @@ angular.module('sbi_table_toolbar',['sbiModule'])
 	}
 });
 
-function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $sce, sbiModule_messaging, sbiModule_restServices, sbiModule_translate, sbiModule_config,sbiModule_download, sbiModule_user, olapSharedSettings) {
+function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $sce, sbiModule_messaging, sbiModule_restServices, sbiModule_translate, sbiModule_config,sbiModule_download, sbiModule_user,olapSharedSettings) {
 	
 	// see if calculated field is enabled
 	$scope.showCalculatedField = (sbiModule_user.functionalities.indexOf("OlapCalculatedFieldView")>-1)? true:false;
-	  
+	$scope.enableWorkFlow = (sbiModule_user.functionalities.indexOf("WorkFlowManagment")>-1)? true:false; 
 	var saveAsTimeout = olapSharedSettings.getSettings().persistNewVersionTransformations;
 	$scope.availAlgorithms = [];
 	$scope.activeAlg;

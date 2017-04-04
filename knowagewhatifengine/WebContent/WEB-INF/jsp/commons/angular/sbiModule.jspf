@@ -81,6 +81,35 @@ sbiM.directive('loading',   ['$http' ,function ($http)
         };
 
     }]);
+    
+sbiM.factory('sbiModule_user',function(){
+	
+	var user={};
+	user.userUniqueIdentifier = '<%= StringEscapeUtils.escapeJavaScript(userUniqueIdentifier) %>';
+	user.userId = '<%= StringEscapeUtils.escapeJavaScript(userId) %>';
+	user.userName = '<%= StringEscapeUtils.escapeJavaScript(userName) %>'; 
+	user.ismodeweb = true;
+	user.isSuperAdmin = '<%= userProfile != null && ((UserProfile)userProfile).getIsSuperadmin() %>';
+	user.isTechnicalUser = '<%= userProfile != null && UserUtilities.isTechnicalUser((UserProfile)userProfile)%>'
+	user.defaultRole = '<%= defaultRole != null ? StringEscapeUtils.escapeJavaScript(defaultRole)  : ""%>';
+	// 	set roles
+	user.roles =[];
+	<% for(Object rol : userRoles) { 	%>
+	user.roles.push('<%=StringEscapeUtils.escapeJavaScript(rol.toString())%>');
+	<% } %>
+	
+	//set functionalities
+	user.functionalities =[];
+	<% if (userProfile != null && userProfile.getFunctionalities() != null && !userProfile.getFunctionalities().isEmpty()) {
+		for(Object fun :  userProfile.getFunctionalities()){ %>
+		user.functionalities.push('<%=StringEscapeUtils.escapeJavaScript(fun.toString())%>');
+		<% } }%>
+	
+	user.isAbleTo=function(func){
+		return user.functionalities.indexOf(func)!=-1;
+	}
+	return user;
+});
 
 sbiM.directive('restLoading',   ['$http',function ($http)
                               	{

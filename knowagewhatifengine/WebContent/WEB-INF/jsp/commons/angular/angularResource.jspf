@@ -38,6 +38,17 @@ author:...
 <%@page import= "java.util.Locale"%>
 <%@page import= "it.eng.spagobi.services.common.EnginConf" %>
 <%@page import= "it.eng.spagobi.utilities.engines.rest.ExecutionSession" %>
+<%@page import="org.apache.commons.lang.StringEscapeUtils"%>
+<%@page import="it.eng.spago.security.IEngUserProfile" %>
+<%@page import="it.eng.spagobi.commons.utilities.messages.IMessageBuilder"%>
+<%@page import="it.eng.spagobi.commons.utilities.messages.MessageBuilder"%>
+<%@page import="it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory"%>
+<%@page import="java.util.List"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
+<%@page import="it.eng.spagobi.commons.utilities.UserUtilities" %>
+<%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
+
 
 
 
@@ -48,7 +59,7 @@ author:...
 <%
        WhatIfEngineInstance whatIfEngineInstance;
        //UserProfile profile;
-       Locale locale;
+       Locale locale =null;
        String isFromCross;
        String spagobiServerHost = null;
        String spagobiContext = null;
@@ -66,11 +77,29 @@ author:...
        ExecutionSession es = new ExecutionSession(request, request.getSession());
        
        
-	  
+      whatIfEngineInstance = (WhatIfEngineInstance)es.getAttributeFromSession(EngineConstants.ENGINE_INSTANCE );
+
+   	//load user profile 
+   	IEngUserProfile userProfile  = (IEngUserProfile)whatIfEngineInstance.getEnv().get(EngineConstants.ENV_USER_PROFILE);
+   	String userUniqueIdentifier="";
+   	String userId="";
+   	String userName="";
+   	String defaultRole="";
+   	List userRoles = new ArrayList();
+   	
+   	//if (userProfile!=null) userId=(String)userProfile.getUserUniqueIdentifier();
+   	if (userProfile!=null){
+   		userId=(String)((UserProfile)userProfile).getUserId();
+   		userUniqueIdentifier=(String)userProfile.getUserUniqueIdentifier();
+   		userName=(String)((UserProfile)userProfile).getUserName();
+   		userRoles = (ArrayList)userProfile.getRoles();
+   		defaultRole = ((UserProfile)userProfile).getDefaultRole();		
+   		
+   	}
 	 
        
        
-       whatIfEngineInstance = (WhatIfEngineInstance)es.getAttributeFromSession(EngineConstants.ENGINE_INSTANCE );
+      
        //profile = (UserProfile)whatIfEngineInstance.getEnv().get(EngineConstants.ENV_USER_PROFILE);
        locale = (Locale)whatIfEngineInstance.getEnv().get(EngineConstants.ENV_LOCALE);
    
