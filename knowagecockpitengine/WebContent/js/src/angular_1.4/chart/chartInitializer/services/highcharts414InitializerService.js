@@ -383,8 +383,11 @@ angular.module('chartInitializer')
 		var drill = null;
 		
 		for (var j = 0; j < this.chart.series.length; j++) {
-			  
-			  drill = this.chart.options.series[0].data[0].drilldown
+			  if (this.chart.options.series[0].data.length > 0 && this.chart.options.series[0].data[0].drilldown) {
+				  drill = this.chart.options.series[0].data[0].drilldown
+			  } else {
+				  drill = false
+			  }
 			  this.chart.series[j].setData([]);
 		  }
 		
@@ -395,16 +398,14 @@ angular.module('chartInitializer')
 				var pointOptions={};
 				if (this.chart.options.chart.type == "gauge") {
 					pointOptions.y = parseFloat(data[j]["column_" + (i + 1)]);
-				    pointOptions.name= data[j]["column_" + 1];
-				    pointOptions.drilldown = drill;
-				    
 				    this.chart.series[i].addPoint(pointOptions, true,false);
 					    
 				} else {
 					pointOptions.y = parseFloat(data[j][seriesNamesColumnBind[this.chart.series[i].name]]);
 					pointOptions.name=data[j][column];
-					pointOptions.drilldown = drill;
-									    
+					if(this.chart.options.chart.type!= "pie"){
+						pointOptions.drilldown = drill;
+					}			    
 				    this.chart.series[i].addPoint(pointOptions, true,false);
 			
 				}
