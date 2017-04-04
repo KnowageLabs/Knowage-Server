@@ -16,6 +16,10 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 
+<%@page import="it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO"%>
+<%@page import="it.eng.spagobi.analiticalmodel.document.dao.BIObjectDAOHibImpl"%>
+<%@page import="it.eng.spagobi.analiticalmodel.document.bo.BIObject"%>
+<%@page import="it.eng.spagobi.commons.dao.DAOFactory"%>
 <%@ page language="java" pageEncoding="utf-8" session="true"%>
 <%@ include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>
 
@@ -51,6 +55,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			NOTE: Can be used for other document execution starting points, as well.
 			@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		*/ 
+		<%BIObject biObj = null;
+			IBIObjectDAO biObjDAO = DAOFactory.getBIObjectDAO();
+			String objectName = null;
+			if (request.getParameter("OBJECT_NAME") == null && aRequestContainer.getServiceRequest().getAttribute("OBJECT_NAME") == null) {
+				if (request.getParameter("OBJECT_ID") != null) {
+					Object id = request.getParameter("OBJECT_ID");
+					biObj = biObjDAO.loadBIObjectById(Integer.valueOf(id.toString()));
+				} else if (aRequestContainer.getServiceRequest().getAttribute("OBJECT_ID") != null) {
+					Object id = aRequestContainer.getServiceRequest().getAttribute("OBJECT_ID");
+					biObj = biObjDAO.loadBIObjectById(Integer.valueOf(id.toString()));
+				} else if (request.getParameter("OBJECT_LABEL") != null) {
+					Object label = request.getParameter("OBJECT_LABEL");
+					biObj = biObjDAO.loadBIObjectByLabel(label.toString());
+				} else if (aRequestContainer.getServiceRequest().getAttribute("OBJECT_LABEL") != null) {
+					Object label = aRequestContainer.getServiceRequest().getAttribute("OBJECT_LABEL");
+					biObj = biObjDAO.loadBIObjectByLabel(label.toString());
+				}
+
+				objectName = biObj.getName();
+			} else {
+				objectName = request.getParameter("OBJECT_NAME") != null ? request.getParameter("OBJECT_NAME").toString(): aRequestContainer.getServiceRequest()
+						.getAttribute("OBJECT_NAME").toString();
+			}
+%>
+		
 		var obj = { 
 				'OBJECT_ID' : 			'<%=request.getParameter("OBJECT_ID") != null
 					? request.getParameter("OBJECT_ID")
@@ -58,9 +87,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				'OBJECT_LABEL' : 		'<%=request.getParameter("OBJECT_LABEL") != null
 					? request.getParameter("OBJECT_LABEL")
 					: aRequestContainer.getServiceRequest().getAttribute("OBJECT_LABEL")%>',
-				'OBJECT_NAME' : 		'<%=request.getParameter("OBJECT_NAME") != null
-					? request.getParameter("OBJECT_NAME")
-					: aRequestContainer.getServiceRequest().getAttribute("OBJECT_NAME")%>',
+				'OBJECT_NAME' : 		'<%=objectName%>',
 				'isSourceDocument' : 	'<%=request.getParameter("IS_SOURCE_DOCUMENT") != null
 					? request.getParameter("IS_SOURCE_DOCUMENT")
 					: aRequestContainer.getServiceRequest().getAttribute("IS_SOURCE_DOCUMENT")%>',
