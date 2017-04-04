@@ -450,7 +450,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 			break;
 		}
 		delete $scope.selectedParUse.defaultrg;
-		delete $scope.selectedParUse.show
+		delete $scope.selectedParUse.showMapDriver;
 	}
 	 
 	$scope.save= function(){  // this function is called when clicking on save button
