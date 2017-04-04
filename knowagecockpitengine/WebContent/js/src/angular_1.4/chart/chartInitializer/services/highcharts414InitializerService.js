@@ -186,6 +186,10 @@ angular.module('chartInitializer')
 				}
 			}
 			
+			if(!categoryName && chartConfConf.chart.additionalData){
+				categoryName = chartConfConf.chart.additionalData.categoryName;
+			}
+			
 			//for scatter
 			if(!categoryValue && e.point.category &&e.point.category.name){
 				categoryValue = e.point.category.name;
