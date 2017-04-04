@@ -27,8 +27,10 @@ import org.json.JSONObject;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
 
+import it.eng.knowage.enterprise.commons.constants.UserFunctionalityConstants;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
+import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
@@ -261,7 +263,7 @@ public class WhatIfDriver extends GenericDriver {
 
 		String statusToReturn = null;
 		String userId = profile.getUserUniqueIdentifier().toString();
-
+		String locker;
 		logger.debug("User Id is " + userId);
 		logger.debug("Artifact Id is " + artifactId);
 
@@ -278,31 +280,39 @@ public class WhatIfDriver extends GenericDriver {
 
 		int did = artifact.getId();
 
-		WhatIfWorkflowManager wfm = new WhatIfWorkflowManager();
+		
 
 		// Boolean locked = artifact.getModelLocked();
-		String locker;
+		
 		try {
-			locker = wfm.getActiveUser(did);
+			if(!profile.getFunctionalities().contains("WorkFlowManagment")){
+				statusToReturn = SpagoBIConstants.SBI_ARTIFACT_VALUE_LOCKED_BY_USER;
+				locker = userId;
+			}else{
+				WhatIfWorkflowManager wfm = new WhatIfWorkflowManager();
+				locker = wfm.getActiveUser(did);
+				if (locker == null) {
+					logger.debug("Artifact with id " + artifactId + " is unlocked");
+					statusToReturn = SpagoBIConstants.SBI_ARTIFACT_VALUE_UNLOCKED;
+				} else {
+					if (locker != null && locker.equals(userId)) {
+						statusToReturn = SpagoBIConstants.SBI_ARTIFACT_VALUE_LOCKED_BY_USER;
+					} else {
+						statusToReturn = SpagoBIConstants.SBI_ARTIFACT_VALUE_LOCKED_BY_OTHER;
+					}
+
+				}
+			};
+		} catch (EMFInternalError e) {
+			logger.error("Error checking functionality", e);
+			throw new SpagoBIRuntimeException("Error checking functionality", e);
 		} catch (EMFUserError e) {
 			logger.error("Error loading locker user", e);
 			throw new SpagoBIRuntimeException("Error loading locker user", e);
 		}
-
-		// List<WhatifWorkflow> l = wfm.getWorkflowByDocumentId(1);
-		// String lockerTemp = wfm.getLockerUser(1);
-
-		if (locker == null) {
-			logger.debug("Artifact with id " + artifactId + " is unlocked");
-			statusToReturn = SpagoBIConstants.SBI_ARTIFACT_VALUE_UNLOCKED;
-		} else {
-			if (locker != null && locker.equals(userId)) {
-				statusToReturn = SpagoBIConstants.SBI_ARTIFACT_VALUE_LOCKED_BY_USER;
-			} else {
-				statusToReturn = SpagoBIConstants.SBI_ARTIFACT_VALUE_LOCKED_BY_OTHER;
-			}
-
-		}
+		
+		
+		
 
 		logger.debug("Status of artifact is " + statusToReturn);
 		pars.put(SpagoBIConstants.SBI_ARTIFACT_STATUS, statusToReturn);

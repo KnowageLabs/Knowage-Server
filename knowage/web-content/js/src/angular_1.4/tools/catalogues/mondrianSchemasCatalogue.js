@@ -8,9 +8,9 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.setDefaultTheme('knowage');
  }]);
 
-app.controller('mondrianSchemasCatalogueController',["sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast","$timeout","$filter","multipartForm","sbiModule_messaging","sbiModule_download",mondrianSchemasCatalogueFunction]);
+app.controller('mondrianSchemasCatalogueController',["sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast","$timeout","$filter","multipartForm","sbiModule_messaging","sbiModule_download","sbiModule_user",mondrianSchemasCatalogueFunction]);
 
-function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,$timeout,$filter,multipartForm,sbiModule_messaging,sbiModule_download){
+function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,$timeout,$filter,multipartForm,sbiModule_messaging,sbiModule_download,sbiModule_user){
 	
 	$scope.translate = sbiModule_translate;
 	$scope.showMe = false;
@@ -27,6 +27,8 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 	$scope.file ={};
 	$scope.isDirty = false;
 	
+	
+	$scope.disableWorkFlow = !(sbiModule_user.functionalities.indexOf("WorkFlowManagment")>-1);
 	//workflow variables
 	$scope.isStartedWf=false;
 	$scope.allUsers =[];

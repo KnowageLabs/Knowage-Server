@@ -38,7 +38,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	
 	// see if calculated field is enabled
 	$scope.showCalculatedField = (sbiModule_user.functionalities.indexOf("OlapCalculatedFieldView")>-1)? true:false;
-	$scope.enableWorkFlow = (sbiModule_user.functionalities.indexOf("WorkFlowManagment")>-1)? true:false; 
+	$scope.isWorkFlowExists = (sbiModule_user.functionalities.indexOf("WorkFlowManagment")>-1)? true:false; 
 	var saveAsTimeout = olapSharedSettings.getSettings().persistNewVersionTransformations;
 	$scope.availAlgorithms = [];
 	$scope.activeAlg;

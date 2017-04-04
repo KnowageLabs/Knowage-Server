@@ -65,7 +65,7 @@
         md-cols="3" 
         md-row-height="50px"
          ng-show="wiGridNeeded">
-    <md-grid-tile  ng-if="!wiMessageNeeded">
+    <md-grid-tile  ng-if="!wiMessageNeeded && isWorkFlowExists">
     	<md-button class="right-toolbar-menu {{lockerClass}}"  ng-click="lockFunction()">
     		<md-tooltip md-direction="bottom">
 				{{lockTooltip}}

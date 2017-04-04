@@ -404,6 +404,7 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 		$scope.reloadWidgetsByChartEvent = function(item){
 		var event= item.select != undefined ? item.select : item;
 		var crossParameters= createCrossParameters(item);
+		var chartType = $scope.ngModel.content.chartTemplate.CHART.type;
 		if($scope.ngModel.cliccable==false){
 			console.log("widget is not cliccable")
 			return;
@@ -439,12 +440,17 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 	    
 		if(event.point){
 			//for highcharts
-			var columnValue = event.point.name;
+			if(chartType === 'SCATTER'){
+				var columnValue = event.point.category.name;
+			}else{
+				var columnValue = event.point.name;
+			}
+			
 			
 			var category = $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY;
 			var columnName = category.name
 	
-			var chartType = $scope.ngModel.content.chartTemplate.CHART.type;
+			
 			//var d3Types = ["WORDCLOUD", "PARALLEL", "SUNBURST"];
 			
 			//if(d3Types.indexOf(chartType)<0){

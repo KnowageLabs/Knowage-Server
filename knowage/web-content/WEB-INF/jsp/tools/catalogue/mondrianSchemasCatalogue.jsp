@@ -232,7 +232,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</form>
 			</md-content>
 	     	</md-tab>
-	     		<md-tab label='{{translate.load("sbi.generic.workflow");}}'>
+	     		<md-tab ng-disabled = 'disableWorkFlow' label='{{translate.load("sbi.generic.workflow");}}'>
+	     		
 	     			<md-contet layout="row">
 	     				<md-card flex>
 	     					<md-toolbar class="md-hue-2">
