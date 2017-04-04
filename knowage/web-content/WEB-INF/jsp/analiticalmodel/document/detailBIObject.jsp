@@ -1423,6 +1423,7 @@ function saveDocument(goBack) {
 	<div class="first-tab-level" style="background-color:#f8f8f8">
 		<div style="overflow: hidden; width:  100%">
 			<input type='hidden' id='selected_obj_par_id' name='' value=''/>
+			<input type='hidden' id='toDriversList' name='' value=''/>
 <%
 	List biObjParams = obj.getBiObjectParameters();
 		String obj_par_idStr = (String) moduleResponse
@@ -1627,9 +1628,12 @@ function changeBIParameter (objParId, message) {
 	var biobjParFormModified = isBIParameterFormChanged();
 	
 	var element = document.getElementById('selected_obj_par_id');
-
 	element.name = 'selected_obj_par_id';
 	element.value = objParId;
+
+     var det = document.getElementById('toDriversList');
+     det.name = 'toDriversList';
+     det.value = 'false';
 	
 	if (biobjParFormModified == 'true') 
 	{
@@ -1899,10 +1903,6 @@ function downloadAlsoLinkedTemplatesConfirm(message, urlYes, urlNo){
 		
 	%> 
 	
-	<script type="text/javascript">
-	var urlurl = "${pageContext.request.contextPath}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/documentbrowser/templates/analyticalDriversList.jsp?OBJECT_ID=<%=obj.getId().toString()%>&selected_obj_par_id=<%=obj_par_idStr%>";
- //alert(urlurl);
-</script>
 	
     <input type='hidden' id='par_Id' 
 			   value='<%=adId != null ? adId : ""%>' name='par_Id' />	 
@@ -1913,7 +1913,7 @@ function downloadAlsoLinkedTemplatesConfirm(message, urlYes, urlNo){
 
   		&nbsp;*&nbsp;
 		<a style="text-decoration:none;" 
-		 href="javascript:writeParametersCurrentUrl(urlurl)"
+		 href="javascript:writeParametersCurrentUrl('<%=obj_par_idStr%>')"
 		 >
 			<img src='<%=urlBuilder.getResourceLinkByTheme(request,
 						"/img/detail.gif", currTheme)%>' 
@@ -1925,11 +1925,49 @@ function downloadAlsoLinkedTemplatesConfirm(message, urlYes, urlNo){
 	</div>
 	
 	<script>
-	function writeParametersCurrentUrl(url){
-	    var parurl_nm = document.getElementById('parurl_nm').value;
+	function writeParametersCurrentUrl(objParId){
+		
+		var url = "${pageContext.request.contextPath}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/documentbrowser/templates/analyticalDriversList.jsp?";
+	    url+="OBJECT_ID="+<%=obj.getId().toString()%>;
+		
+	    url+="&selected_obj_par_id="+objParId;
+		var parurl_nm = document.getElementById('parurl_nm').value;
 	    url += "&parurl_nm="+parurl_nm;
+	    var objParLabel = document.getElementById('objParLabel').value;
+	    url += "&objParLabel="+objParLabel;
+	    var view_fl = document.getElementById('view_fl').checked ? 1 : 0;
+	    url += "&view_fl="+view_fl;
+        
+	    var modes = document.getElementsByName('mult_fl');
+	    var mult_fl;
+	    for(var i = 0; i < modes.length; i++){
+	        if(modes[i].checked){
+	            mult_fl = modes[i].value;
+	        }
+	    }
+        url += "&mult_fl="+mult_fl;   
+
+	    var reqs = document.getElementsByName('req_fl');
+	    var req_fl;
+	    for(var i = 0; i < reqs.length; i++){
+	        if(reqs[i].checked){
+	            req_fl = reqs[i].value;
+	        }
+	     }
+	    url += "&req_fl="+req_fl;
+	    
+	    var priorityV = document.getElementsByName('priority');
+	    if(!priorityV.selectedIndex){
+	        priorityV = priorityV[0];   
+	    }
+	    var priorityIndex = priorityV.selectedIndex;
+	    var priorityOption = priorityV.options;
+	    var priority = priorityOption[priorityIndex].value;
+	    
+        url += "&priority="+priority;
+	    
+        url += "&toDriversList=true"; 
 	    document.location.href = url;
-	     return url; 
 	}
 
 	</script>

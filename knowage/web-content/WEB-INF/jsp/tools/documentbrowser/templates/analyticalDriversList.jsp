@@ -32,19 +32,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             String objId = request.getParameter(ObjectsTreeConstants.OBJECT_ID);
             String selectedObjParId = request.getParameter("selected_obj_par_id");
             String parurl_nm = request.getParameter("parurl_nm");
-            
- 			Map backUrlPars = new HashMap();
+            String objParLabel = request.getParameter("objParLabel");
+            String priority = request.getParameter("priority");
+            String view_fl = request.getParameter("view_fl");
+            String req_fl = request.getParameter("req_fl");
+            String mult_fl = request.getParameter("mult_fl");
+            String toDriversList = request.getParameter("toDriversList");
+ 			
+            Map backUrlPars = new HashMap();
  			backUrlPars.put("PAGE", "detailBIObjectPage");
  			backUrlPars.put(LightNavigationManager.LIGHT_NAVIGATOR_BACK_TO,"0");
  			backUrlPars.put("LIGHT_NAVIGATOR_DISABLED","TRUE");
  			
  			backUrlPars.put("MESSAGEDET", "DETAIL_SELECT");
             backUrlPars.put("OBJECT_ID", objId);
- 			backUrlPars.put("selected_obj_par_id", selectedObjParId);
+ 			backUrlPars.put("selected_obj_par_id", selectedObjParId); 
  			backUrlPars.put("parurl_nm", parurl_nm);
- 			
- 			String backUrl = urlBuilder.getUrl(request, backUrlPars);
- 
+            backUrlPars.put("objParLabel", objParLabel);
+            backUrlPars.put("priority", priority);
+            backUrlPars.put("view_fl", view_fl);
+            backUrlPars.put("req_fl", req_fl);
+            backUrlPars.put("mult_fl", mult_fl);
+            backUrlPars.put("toDriversList", toDriversList);
+
+            String backUrl = urlBuilder.getUrl(request, backUrlPars);
  			 			
 		%>
 		

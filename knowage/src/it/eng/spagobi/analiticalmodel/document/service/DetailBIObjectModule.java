@@ -552,12 +552,6 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 			} else if ("-1".equals(selectedObjParIdStr)) {
 				biObjPar = DetBIObjModHelper.createNewBIObjectParameter(obj.getId());
 				selectedObjParIdStr = "-1";
-
-				String parUrlName = request.getAttribute("parurl_nm") != null ? request.getAttribute("parurl_nm").toString() : null;
-				if (parUrlName != null) {
-					biObjPar.setParameterUrlName(parUrlName);
-				}
-
 			} else {
 				int selectedObjParId = Integer.parseInt(selectedObjParIdStr);
 				Iterator it = biObjParams.iterator();
@@ -567,6 +561,11 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 						break;
 				}
 			}
+		}
+
+		// if going on Drivers List keep track of current infos
+		if (biObjPar != null && request.getAttribute("toDriversList") != null && request.getAttribute("toDriversList").equals("true")) {
+			getTemporaryParDataFromRequestDetailCase(request, biObjPar);
 		}
 
 		response.setAttribute("selected_obj_par_id", selectedObjParIdStr);
@@ -585,6 +584,41 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 			BIObjectParameter biObjParClone = DetBIObjModHelper.clone(biObjPar);
 			session.setAttribute("initial_BIObjectParameter", biObjParClone);
 		}
+	}
+
+	void getTemporaryParDataFromRequestDetailCase(SourceBean request, BIObjectParameter biObjPar) {
+		logger.debug("IN");
+
+		String parUrlName = request.getAttribute("parurl_nm") != null ? request.getAttribute("parurl_nm").toString() : null;
+		if (parUrlName != null) {
+			biObjPar.setParameterUrlName(parUrlName);
+		}
+		String objParLabel = request.getAttribute("objParLabel") != null ? request.getAttribute("objParLabel").toString() : null;
+		if (objParLabel != null) {
+			biObjPar.setLabel(objParLabel);
+		}
+		String priority = request.getAttribute("priority") != null ? request.getAttribute("priority").toString() : null;
+		if (priority != null) {
+			Integer priOInt = Integer.valueOf(priority);
+			biObjPar.setPriority(priOInt);
+		}
+		String view_fl = request.getAttribute("view_fl") != null ? request.getAttribute("view_fl").toString() : null;
+		if (view_fl != null) {
+			Integer view = Integer.valueOf(view_fl);
+			biObjPar.setVisible(view);
+		}
+		String req_fl = request.getAttribute("req_fl") != null ? request.getAttribute("req_fl").toString() : null;
+		if (req_fl != null) {
+			Boolean req = Boolean.valueOf(req_fl.equals("1") ? true : false);
+			biObjPar.setRequired(req);
+		}
+		String mult_fl = request.getAttribute("mult_fl") != null ? request.getAttribute("mult_fl").toString() : null;
+		if (mult_fl != null) {
+			Boolean mult = Boolean.valueOf(mult_fl.equals("1") ? true : false);
+			biObjPar.setMultivalue(mult);
+		}
+
+		logger.debug("OUT");
 
 	}
 
