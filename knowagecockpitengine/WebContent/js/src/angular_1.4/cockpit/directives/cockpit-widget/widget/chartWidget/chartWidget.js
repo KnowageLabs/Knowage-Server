@@ -238,6 +238,11 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 							  }
 							  else{
 								  $scope.attachCategoriesToTemplateInIframe();
+						          if($scope.localModel.chartTemplate.CHART.hasOwnProperty('CHART')){
+						        	  var temp = $scope.localModel.chartTemplate.CHART.CHART;
+						        	  delete $scope.localModel.chartTemplate.CHART;
+						        	  $scope.localModel.chartTemplate.CHART = temp;
+						          }
 								  saveConfiguration();
 							  }
 						  }else if(event=='datasetChanged'){
