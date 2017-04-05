@@ -76,7 +76,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				}
 			}
 				
-			if(ngModel.type.toUpperCase()=="CHART"){
+			if(ngModel.type && ngModel.type.toUpperCase()=="CHART"){
 				if(!ngModel.content.chartTemplate.hasOwnProperty("CHART")){
 					ngModel.content.chartTemplate = {"CHART":ngModel.content.chartTemplate};
 				}
