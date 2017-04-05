@@ -58,6 +58,13 @@
 {
 	chart: {
 		type: '$chartType',
+		
+		isCockpitEngine: $chart.isCockpitEngine,
+	
+		additionalData: {
+			categoryColumn: '$categorieColumns.column',
+			categoryName: '$categorieColumns.name'
+		},
 	#if($chart.height != '')
 		height: $chart.height,
 	#end

@@ -22,6 +22,7 @@ angular.module('chartInitializer')
 .service('chartJs',function(){
 	
 	this.chart =null;
+	var chartConfConf = null;
 	
 	this.initChartLibrary = function(panelId, drillUpText, decimalPoint, thousandsSep){
 		
@@ -29,17 +30,21 @@ angular.module('chartInitializer')
 	
 	
 	
-	this.renderChart = function(chartConf,panel){
+	this.renderChart = function(chartConf,panel,handleCockpitSelection){
+
+		chartConfConf = chartConf;
 		// Catch the Title (or Empty message), Subtitle, the Canvas (the rendered chart container) and the Main panel from the DOM. (danristo)
 		var panelWidth = angular.copy(panel.offsetParent.clientWidth);
-		var panelHeight = angular.copy(panel.offsetParent.clientHeight);
+		var panelHeight = angular.copy(panel.clientHeight);
 		var mainPanelRegion = angular.element(panel);
 		mainPanelRegion.empty();
 		var chartPanelSubtitle = angular.element("<div></div>")[0];
 		var chartPanelTitleOrNoData = angular.element("<div></div>")[0];
-		var chartPanelCanvas = angular.element("<canvas></canvas>")[0];
+		var chartPanelCanvas = angular.element("<canvas ></canvas>")[0];
+		var chartPanelLegend = angular.element("<div id='js-legend' class='chart-legend'></div>")[0];
 		var chartPanelCanvasDiv = angular.element("<div flex></div>")[0];
 		chartPanelCanvasDiv.append(chartPanelCanvas);
+		chartPanelCanvasDiv.append(chartPanelLegend);
 		mainPanelRegion.append(chartPanelTitleOrNoData);
 		mainPanelRegion.append(chartPanelSubtitle);
 		mainPanelRegion.append(chartPanelCanvasDiv);
@@ -231,7 +236,8 @@ angular.module('chartInitializer')
 				 this.chart = new Chart(ctx).Line(chartConf.data, chartConf.options);
 			} else if (chartType == 'pie') {
 				var legend = {};
-				legend.display = true;
+				legend.display = chartConf.chart.showLegend;
+				legend.position = chartConf.chart.legendPosition;
 				legend.labels = {};
 				legend.labels.fontColor = 'rgb(255, 99, 132';
 				chartConf.options.legend = legend;
@@ -239,10 +245,86 @@ angular.module('chartInitializer')
 			} else { // bar
 				this.chart = new Chart(ctx).Bar(chartConf.data, chartConf.options);
 			}	
+
+		 	var mychart = this.chart
+		 /*	var originalShowTooltip = mychart.showTooltip;
+		 	var timeout;
+		 	mychart.showTooltip = function (activeElements) {
+		 	    var delay = (activeElements.length === 0) ? 2000 : 0;
+		 	    clearTimeout(timeout);
+		 	    timeout = setTimeout(function () {
+		 	        originalShowTooltip.call(mychart, activeElements);
+		 	    }, delay);
+		 	}*/
+		 	if (chartConf.chart.showLegend==true){
+			 	document.getElementById('js-legend').innerHTML = this.chart.generateLegend()
+			 	var legendDivHeight = chartPanelLegend.clientHeight;
+			 	mainPanelRegion[0].clientHeight = mainPanelRegion[0].offsetHeight + legendDivHeight;
+			}
 		 	
-		 	var chartPanelLegend = angular.element(this.chart.generateLegend());
-		 	chartPanelLegend[0].style.top = 0;
-		 	//chartPanelCanvasDiv.append(chartPanelLegend);
+		 	
+		 	chartPanelCanvas.onclick = function (evt) {
+		 		var activePoints = null;
+		 		var series = {};
+		 		var point = {};
+		 		var event = {
+		 				point: {
+		 					series: {
+		 						name: ""
+		 					},
+		 					y : null,
+		 					name: ""
+		 				}		
+		 		};
+		 		
+		 		switch(chartType){
+		 		
+				
+				case 'line':
+					activePoints = mychart.getPointsAtEvent(evt);
+					if(!chartConf.chart.isCockpitEngine){
+							handleCrossNavigationTo(activePoints);
+					}
+			        else {
+				 		event.point.series.name = activePoints[0].datasetLabel;
+				 		event.point.y = activePoints[0].value;
+				 		event.point.name = activePoints[0].label;
+			 			handleCockpitSelection(event);
+			        }
+			        				
+					console.log(activePoints);
+					break;
+				case 'pie':
+					activePoints = mychart.getSegmentsAtEvent(evt);
+					if(!chartConf.chart.isCockpitEngine){
+						handleCrossNavigationTo(activePoints);
+					}
+			        else {
+			        	event.point.series.name = chartConfConf.chart.additionalData.serieName;
+				 		event.point.y = activePoints[0].value;
+				 		event.point.name = activePoints[0].label;
+			 			handleCockpitSelection(event);
+			        }
+					console.log(activePoints);
+					break;
+				case 'bar':
+					activePoints = mychart.getBarsAtEvent(evt);
+					if(!chartConf.chart.isCockpitEngine){
+						handleCrossNavigationTo(activePoints);
+					}
+			        else {
+			        	event.point.series.name = activePoints[0].datasetLabel;
+				 		event.point.y = activePoints[0].value;
+				 		event.point.name = activePoints[0].label;
+			 			handleCockpitSelection(event);
+			        }
+					console.log(activePoints);
+					break;
+				default: break;
+		 		
+		 		
+		 		};
+		 	}
 		 	return;
 			// TODO: SETTING FOR THE LEGEND
 			if (chartConf && chartConf.chart && chartConf.chart.showLegend) {
@@ -293,4 +375,44 @@ angular.module('chartInitializer')
 				
 		}
 	}
+	var handleCrossNavigationTo =function(e) {
+		var t = chartConfConf;
+		
+			var chart = this;
+			
+			var categoryName = null;
+			var serieName = null;
+			
+			if(!categoryName && chartConfConf.chart.additionalData){
+				categoryName = chartConfConf.chart.additionalData.categoryName;
+			}
+			
+			if(chartConfConf.chart.type.toLowerCase()=='pie'){
+				if(!serieName && chartConfConf.chart.additionalData){
+					serieName = chartConfConf.chart.additionalData.serieName;
+				}
+			}
+			
+			else {
+				serieName = e[0].datasetLabel;
+			}
+			
+			var categoryValue = e[0].label;
+			var serieValue = e[0].value;
+         
+			if(parent.execExternalCrossNavigation){
+				var navData={
+         			chartType:	"CHARTJS",
+         			CATEGORY_NAME :categoryName,
+         			CATEGORY_VALUE :categoryValue,
+         			SERIE_NAME :serieName,
+         			SERIE_VALUE :serieValue,
+         			stringParameters:null
+				}; 
+				parent.execExternalCrossNavigation(navData,JSON.parse(driverParams))
+			}
+		
+		
+	};
+	
 })

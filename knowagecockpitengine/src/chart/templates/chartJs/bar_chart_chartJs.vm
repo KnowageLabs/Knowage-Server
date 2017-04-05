@@ -59,7 +59,13 @@
 {
 	chart: {
 		type: '$chartType',
-	
+		isCockpitEngine: $chart.isCockpitEngine,
+		## Additional data needed for cross navigation paramteres	
+			
+		additionalData: {
+			categoryColumn: '$categorieColumns.column',
+			categoryName: '$categorieColumns.name'
+		},
 	#if($chart.height != '')
 		height: $chart.height,
 	#end

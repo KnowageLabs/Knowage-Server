@@ -76,8 +76,21 @@
 
 {
 	chart: {
+		
 		type: '$chartType',
 		
+		isCockpitEngine: $chart.isCockpitEngine,
+		additionalData: {
+			categoryColumn: '$category.column',
+			categoryName: '$category.name',
+			#if($series.class.name == 'java.util.LinkedHashMap')
+				serieName: '$series.name'		
+			#end		
+			#if($series.class.name != 'java.util.LinkedHashMap')
+				serieName: '$series.get(0).name'	
+			#end
+				
+		},
 		#if($chart.height != '')
 				height: $chart.height,
 		#end
