@@ -82,6 +82,12 @@ public class DataMartProvider extends AbstractDataMartProvider {
 		IDataSet dataSet;
 
 		dataSet = (IDataSet) getEnv().get(EngineConstants.ENV_DATASET);
+		if (dataSet == null) {
+			logger.error("Dataset isn't present into the env object. Check the existence of the template's datasets.");
+			throw new SvgViewerEngineRuntimeException(
+					"Dataset wasn't loaded into the environment. Please check that datasets specified into the template are existing into the system.");
+		}
+
 		Map dataSetPars = getEnv();
 		// adds parent as parameter for substitute placeholder $P{xxx} into dataset. The xxx is the attribute placeholder_dataaset got from the template
 		if (getSelectedParentName() != null && !getSelectedParentName().equals("")) {
@@ -352,7 +358,7 @@ public class DataMartProvider extends AbstractDataMartProvider {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.engines.geo.dataset.provider.AbstractDatasetProvider#getDataDetails(java.lang.String)
 	 */
 	@Override
