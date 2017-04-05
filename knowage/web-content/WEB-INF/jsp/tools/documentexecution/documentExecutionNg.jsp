@@ -283,7 +283,7 @@ if(executionRoleNames.size() > 0) {
                                             	<md-progress-circular ng-show="exportService.isExporting()" md-mode="indeterminate" md-diameter="20"></md-progress-circular>
                                            	</md-button>
                                         </md-menu-item>
-                                        <md-menu-content ng-hide="exportService.isExporting()">
+                                        <md-menu-content>
                                             <md-menu-item class="md-indent" ng-repeat="exportationFormat in urlViewPointService.exportation">
                                                 <md-icon class="{{exportationFormat.iconClass}}"></md-icon>
                                                 <md-button ng-click="exportationFormat.func()">{{exportationFormat.description}}</md-button>
