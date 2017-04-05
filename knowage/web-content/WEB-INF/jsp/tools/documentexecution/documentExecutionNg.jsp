@@ -278,9 +278,12 @@ if(executionRoleNames.size() > 0) {
                                     <md-menu>
                                         <md-menu-item class="md-indent">
                                             <md-icon class="fa fa-download"></md-icon>
-                                            <md-button ng-click="$mdOpenMenu()">{{translate.load("sbi.execution.executionpage.toolbar.export")}}</md-button>
+                                            <md-button ng-click="$mdOpenMenu()">
+                                            	{{translate.load("sbi.execution.executionpage.toolbar.export")}}
+                                            	<md-progress-circular ng-show="exportService.isExporting()" md-mode="indeterminate" md-diameter="20"></md-progress-circular>
+                                           	</md-button>
                                         </md-menu-item>
-                                        <md-menu-content>
+                                        <md-menu-content ng-hide="exportService.isExporting()">
                                             <md-menu-item class="md-indent" ng-repeat="exportationFormat in urlViewPointService.exportation">
                                                 <md-icon class="{{exportationFormat.iconClass}}"></md-icon>
                                                 <md-button ng-click="exportationFormat.func()">{{exportationFormat.description}}</md-button>

@@ -76,6 +76,7 @@
 		$scope.selectedTab={'tab':0};
 		$scope.contentNotes = "";
 		$scope.dependenciesService = docExecute_dependencyService;
+		$scope.exportService = docExecute_exportService;
 		$scope.crossNavigationScope=$crossNavigationScope;
 		$scope.firstExecutionProcessRestV1=true;
 		$scope.download=sbiModule_download;
