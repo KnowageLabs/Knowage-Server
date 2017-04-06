@@ -407,6 +407,7 @@ public class SpagoBIConstants {
 
 	public static final String SEE_DOCUMENT_BROWSER = "SeeDocBrowser";
 	public static final String SEE_MY_DATA = "SeeMyData";
+	public static final String SEE_MY_WORKSPACE = "SeeMyWorkspace";
 	public static final String SEE_FAVOURITES = "SeeFavourites";
 	public static final String SEE_SUBSCRIPTIONS = "SeeSubscriptions";
 	public static final String SEE_TODO_LIST = "SeeToDoList";
