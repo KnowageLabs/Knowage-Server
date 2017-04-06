@@ -15,6 +15,12 @@
 		line-height: 28px;
 	}
 
+	.selectedDocumentSidenav {
+		md-toolbar {
+			padding: 30px 0 15px 0;
+		}
+	}
+
 	md-toolbar.documentBrowserToolbar button.md-icon-button,
 		.selectedDocumentSidenav md-toolbar button.md-icon-button {
 		height: 40px;
