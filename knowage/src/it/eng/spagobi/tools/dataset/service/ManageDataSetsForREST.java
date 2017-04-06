@@ -449,6 +449,7 @@ public class ManageDataSetsForREST {
 			String dsId = json.optString(DataSetConstants.ID);
 			String dsLabel = json.getString(DataSetConstants.LABEL);
 			String fileType = json.getString(DataSetConstants.FILE_TYPE);
+			String versionNum = json.getString(DataSetConstants.VERSION_NUM);
 
 			String csvDelimiter = json.optString(DataSetConstants.CSV_FILE_DELIMITER_CHARACTER);
 			String csvQuote = json.optString(DataSetConstants.CSV_FILE_QUOTE_CHARACTER);
@@ -456,10 +457,16 @@ public class ManageDataSetsForREST {
 			String skipRows = json.optString(DataSetConstants.XSL_FILE_SKIP_ROWS);
 			String limitRows = json.optString(DataSetConstants.XSL_FILE_LIMIT_ROWS);
 			String xslSheetNumber = json.optString(DataSetConstants.XSL_FILE_SHEET_NUMBER);
+			
+			String dsLab = dsLabel;
 
 			Boolean newFileUploaded = false;
 			if (json.optString("fileUploaded") != null) {
 				newFileUploaded = Boolean.valueOf(json.optString("fileUploaded"));
+			}
+			
+			if(versionNum!=""){
+				dsLab = dsLabel + "_" + versionNum;
 			}
 
 			jsonDsConfig.put(DataSetConstants.FILE_TYPE, fileType);
@@ -484,7 +491,7 @@ public class ManageDataSetsForREST {
 				// when saving the dataset the file associated will get the
 				// dataset label name
 				if (dsLabel != null) {
-					jsonDsConfig.put(DataSetConstants.FILE_NAME, dsLabel + "." + fileType.toLowerCase());
+					jsonDsConfig.put(DataSetConstants.FILE_NAME, dsLab + "." + fileType.toLowerCase());
 				}
 			} else {
 				jsonDsConfig.put(DataSetConstants.FILE_NAME, fileName);
@@ -508,7 +515,7 @@ public class ManageDataSetsForREST {
 					// rename and move the file
 					String resourcePath = ((FileDataSet) dataSet).getResourcePath();
 					if (dsLabel != null) {
-						renameAndMoveDatasetFile(fileName, dsLabel, resourcePath, fileType);
+						renameAndMoveDatasetFile(fileName, dsLab, resourcePath, fileType);
 						((FileDataSet) dataSet).setUseTempFile(false);
 					}
 
@@ -556,15 +563,16 @@ public class ManageDataSetsForREST {
 								logger.error("Impossible to move the file from HDFS path\"" + source + "\" to path: \"" + dest + "\"");
 							}
 						} else {
+							
 							File dest = new File(SpagoBIUtilities.getResourcePath() + File.separatorChar + "dataset" + File.separatorChar + "files"
-									+ File.separatorChar + dsLabel + "." + configuration.getString("fileType").toLowerCase());
+									+ File.separatorChar + dsLab + "." + configuration.getString("fileType").toLowerCase());
 							File source = new File(SpagoBIUtilities.getResourcePath() + File.separatorChar + "dataset" + File.separatorChar + "files"
 									+ File.separatorChar + realName);
 
-							if (!source.getCanonicalPath().equals(dest.getCanonicalPath())) {
+							if (!source.getCanonicalPath().equals(dest.getCanonicalPath()) && savingDataset && !newFileUploaded) {
 								logger.debug("Source and destination are not the same. Copying from source to dest");
 								FileUtils.copyFile(source, dest);
-								FileUtils.forceDeleteOnExit(source);
+								//FileUtils.forceDeleteOnExit(source);
 							}
 						}
 					}
@@ -575,9 +583,6 @@ public class ManageDataSetsForREST {
 				} catch (JSONException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				}
 
 				if (newFileUploaded) {
@@ -593,7 +598,7 @@ public class ManageDataSetsForREST {
 						// rename and move the file
 						String resourcePath = ((FileDataSet) dataSet).getResourcePath();
 						if (dsLabel != null) {
-							renameAndMoveDatasetFile(fileName, dsLabel, resourcePath, fileType);
+							renameAndMoveDatasetFile(fileName, dsLabel+"_"+versionNum, resourcePath, fileType);
 							((FileDataSet) dataSet).setUseTempFile(false);
 						}
 					}
@@ -608,7 +613,7 @@ public class ManageDataSetsForREST {
 
 			if (savingDataset) {
 				// the file used will have the name equals to dataset's label
-				((FileDataSet) dataSet).setFileName(dsLabel + "." + fileType.toLowerCase());
+				((FileDataSet) dataSet).setFileName(dsLab + "." + fileType.toLowerCase());
 			} else {
 				((FileDataSet) dataSet).setFileName(fileName);
 			}
@@ -1260,7 +1265,7 @@ public class ManageDataSetsForREST {
 		}
 
 	}
-
+	
 	private void deleteDatasetFile(String fileName, String resourcePath, String fileType) {
 		String filePath = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar + "temp" + File.separatorChar;
 
