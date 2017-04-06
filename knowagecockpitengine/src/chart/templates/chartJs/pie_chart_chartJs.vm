@@ -203,6 +203,7 @@
 
 #foreach($row in $data.rows)
 	#set ($categoryName = $row.get($categoryMapped))
+	#set( $categoryName = $categoryName.replace("""", "\""") )
 	
 	#set($colorIndex = $piePiecesCounter % $colorPaletteLength)
 	#set($colorPaletteItem = $colorPalette.get($colorIndex))

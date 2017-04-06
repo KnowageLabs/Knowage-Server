@@ -459,7 +459,6 @@
 	    		    		
 		    	point:
 		    	{
-					categoryName: 'ciao',
 		            #if($chart.isCockpitEngine=="false")
 		              	events:{
 		                	click: scope.chartInitializer.handleCrossNavigationTo,
@@ -698,9 +697,10 @@
 	    	    #if($categoriesNumber!=$zeroValues)
 	    	    #foreach($row in $rows)
 					#set ($serieName = $row.get($serieColumnCategory))
+					#set( $serieName = $serieName.replace("""", "\""") )
 					#set ($serieValue = $row.get($serieColumnsMapped))
 					{
-						name: '$serieName',
+						name: "$serieName",
 						y: $serieValue,
 					},
 				#end

@@ -108,6 +108,9 @@
 #end
 
 #set($groups = $datasettransformer.getGroupsForParallelChart($columnsNeeded,$dataColumnsMapper,$dataRows))
+
+
+
 ## @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net) [JIRA 1060 and 1061]
 #set($series = $datasettransformer.getSeriesForParallelChart($serieNeeded, $groupingFunction, $seriePrefix, $seriePostfix, $seriePrecision, $serieScaleFactor))
 
@@ -152,6 +155,9 @@
 #else
    #set($tooltipColumn=$columnsNeeded[0])
 #end
+
+
+#set($groups=$groups.replace("sepquotesep", "\'"))
 
 {
  	chart: 

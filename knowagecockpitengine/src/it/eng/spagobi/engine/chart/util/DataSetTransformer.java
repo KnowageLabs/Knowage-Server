@@ -700,7 +700,7 @@ public class DataSetTransformer {
 		return root;
 	}
 
-	public JSONArray getGroupsForParallelChart(Object columnsNeeded, Object dataColumnsMapper, List<Object> dataRows) throws JSONException {
+	public String getGroupsForParallelChart(Object columnsNeeded, Object dataColumnsMapper, List<Object> dataRows) throws JSONException {
 
 		JSONArray ja = new JSONArray();
 
@@ -729,13 +729,16 @@ public class DataSetTransformer {
 				}
 
 				JSONObject jo = new JSONObject();
-				jo.put((new Integer(j)).toString(), row.get(groupvalue).toString());
+				String value = row.get(groupvalue).toString();
+				value = value.replace("\"", "\\\"");
+				value = value.replace("'", "sepquotesep");
+				jo.put((new Integer(j)).toString(), value);
 				ja.put(jo);
 				j++;
 			}
 		}
 
-		return ja;
+		return ja.toString();
 
 	}
 
@@ -1017,8 +1020,17 @@ public class DataSetTransformer {
 
 				Object x = row.get(listColumns.get(j));
 
-				jo.put(colMapper.get(listColumns.get(j)), x);
+				/*iif(x instanceof String){
+					String xS = (String)x;
+					x= xS.replace("'", "\'");
+				}
 
+				f(x instanceof String){
+					String xS = (String)x;
+					x= xS.replace("\"", "\\\"");
+				}*/
+
+				jo.put(colMapper.get(listColumns.get(j)), x);
 			}
 
 			res.put(jo);
