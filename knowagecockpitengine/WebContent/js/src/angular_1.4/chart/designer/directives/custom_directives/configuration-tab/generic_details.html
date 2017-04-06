@@ -31,7 +31,7 @@
 
 	<md-input-container class="md-block" flex=100>
 	 <label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontfamily")}}</label>
-		 <md-select ng-model="chartTemplate.style.fontFamily" name="generic_ffamily" ng-disabled="disableHtmlElementForChartJs()"> <md-option
+		 <md-select ng-model="chartTemplate.style.fontFamily" name="generic_ffamily"  > <md-option
 		ng-repeat="option in fontFamilyOptions" value="{{option.value}}">{{option.name}}</md-option>
 	</md-select> </md-input-container>
 
@@ -39,13 +39,13 @@
 
 	<md-input-container class="md-block" flex=100> 
 	<label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontsize")}}</label>
-		 <md-select ng-model="chartTemplate.style.fontSize"  name="generic_fsize" ng-disabled="disableHtmlElementForChartJs()"> <md-option
+		 <md-select ng-model="chartTemplate.style.fontSize"  name="generic_fsize"  > <md-option
 		ng-repeat="option in fontSizeOptions" value="{{option.value}}">{{option.name}}</md-option>
 	</md-select> </md-input-container>
 
 	<md-input-container class="md-block" flex=100>
 	 <label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontstyle")}}</label>
-		 <md-select ng-model="chartTemplate.style.fontWeight" name="generic_fstyle" ng-disabled="disableHtmlElementForChartJs()"> <md-option
+		 <md-select ng-model="chartTemplate.style.fontWeight" name="generic_fstyle"  > <md-option
 		ng-repeat="option in fontStyleOptions" value="{{option.value}}">{{option.name}}</md-option>
 	</md-select> </md-input-container>
 

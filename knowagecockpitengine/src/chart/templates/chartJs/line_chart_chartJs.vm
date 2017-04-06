@@ -198,7 +198,7 @@
 		    #end
 
 			#if($relatedSerieColor!="")
-				fillColor: '$ChartEngineUtil.hex2Rgb($relatedSerieColor, "5")',
+				fillColor: '$ChartEngineUtil.hex2Rgb($relatedSerieColor, "0")',
 	            strokeColor: '$ChartEngineUtil.hex2Rgb($relatedSerieColor)',
 	            pointColor: '$ChartEngineUtil.hex2Rgb($relatedSerieColor)',
 	            pointStrokeColor: "#fff",
@@ -207,12 +207,12 @@
     		#end
     		#if($relatedSerieColor=="")
     		#set($relatedSerieColor = "#7cb5ec")
-				strokeColor: '$ChartEngineUtil.hex2Rgb($relatedSerieColor, "60")',
-				pointColor: '$ChartEngineUtil.hex2Rgb($relatedSerieColor, "60")',
-    			fillColor: '$ChartEngineUtil.hex2Rgb($relatedSerieColor, "60")',
-    			pointStrokeColor: '$ChartEngineUtil.hex2Rgb($relatedSerieColor, "60")',
-    			highlightFill: "$ChartEngineUtil.hex2Rgb($relatedSerieColor)",
-            	highlightStroke: "$ChartEngineUtil.hex2Rgb($relatedSerieColor)",
+				strokeColor: '$ChartEngineUtil.hex2Rgb($relatedSerieColor)',
+				pointColor: '$ChartEngineUtil.hex2Rgb($relatedSerieColor)',
+    			fillColor: '$ChartEngineUtil.hex2Rgb($relatedSerieColor, "0")',
+    			pointStrokeColor: "#fff",
+    			pointHighlightFill: "#fff",
+	            pointHighlightStroke: '$ChartEngineUtil.hex2Rgb($relatedSerieColor)',
     		#end	
 			#set($relatedSerieColName = "$relatedSerie.column"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction#{else}SUM#end")
     	    #set($serieColumnsMapped = $dataColumnsMapper.get($relatedSerieColName))
@@ -284,49 +284,33 @@
 	    // Boolean - Whether the scale should stick to integers, not floats even if drawing space is there
 	    scaleIntegersOnly: false,
 	
-	    #set($scaleFontFamily = false)
 	    #set($scaleFontFamily = $genericStyle.fontFamily)
-	    #if($scaleFontFamily == false)
-		    #set($scaleFontFamily = "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif")
-	    #end
-	    #if($yAxis.style != false && $yAxis.style.fontFamily != false)
-		    #set($scaleFontFamily = $yAxis.style.fontFamily)
+	    #if($scaleFontFamily == "")
+		    #set($scaleFontFamily = "Arial")
 	    #end
 	    // String - Scale label font declaration for the scale label
 	    scaleFontFamily: "$scaleFontFamily",
 	
-	    #set($scaleFontSize = false)
 	    #set($scaleFontSize = $genericStyle.fontSize.replace("px", ""))
-	    
-	    #if($yAxis.style != false && $yAxis.style.fontSize != false)
-		    #set($scaleFontSize = $yAxis.style.fontSize.replace("px", ""))
+		#if("$scaleFontSize" == "")
+		    #set($scaleFontSize = 12)
 	    #end
 	    
-	    #if((!$scaleFontSize ) || ("$scaleFontSize" == ""))
-		    #set($scaleFontSize = "12")
-	    #end
-	    
-	   	## This creates problem with the position of the chart (without this it is stretched - what we need)!
-	   	## @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	    ## This creates problem with the position of the chart (without this it is stretched - what we need)!
+		## @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	    // Number - Scale label font size in pixels
-	    ##scaleFontSize: "$scaleFontSize", 
-	
-	    #set($scaleFontStyle = false)
+	    scaleFontSize: $scaleFontSize,
+
 	    #set($scaleFontStyle = $genericStyle.fontWeight)
-	    #if($scaleFontStyle == false)
+		
+		#if($scaleFontStyle == "")
 		    #set($scaleFontStyle = "normal")
 	    #end
-	    #if($yAxis.style != false && $yAxis.style.fontWeight != false)
-		    #set($scaleFontStyle = $yAxis.style.fontWeight)
-	    #end
+	    
 	    // String - Scale label font weight style
 	    scaleFontStyle: "$scaleFontStyle",
 	
-	    #set($scaleFontColor = false)
-	    #if($yAxis.style != false && $yAxis.style.color != false)
-		    #set($scaleFontColor = $yAxis.style.color)
-	    #end
-	    // String - Scale label font colour
+	    #set($scaleFontColor = "#000000")
 	    scaleFontColor: "$scaleFontColor",
 	
 	    ## Before, this value was set to TRUE, but in that case, the width is making problems
