@@ -594,10 +594,6 @@
 				<file name="./src/ext/sbi/udp/ManageUdp.js" />
 				<file name="./src/ext/sbi/udp/ManageUdpValues.js" />
 
-				<file name="./src/ext/sbi/profiling/ManageAttributes.js" />
-				<file name="./src/ext/sbi/profiling/AuthorizationsMapping.js" />
-				<file name="./src/ext/sbi/profiling/ManageRoles.js" />
-				<file name="./src/ext/sbi/profiling/ManageUsers.js" />
 				<file name="./src/ext/sbi/alarm/ManageContacts.js" />
 				<file name="./src/ext/sbi/alarm/ManageAlarms.js" />
 
@@ -628,21 +624,7 @@
 				<file name="./src/ext/sbi/kpi/ManageGoalsGrid.js" />
 				<file name="./src/ext/sbi/widgets/ColumnNodeUI.js" />
 
-				<file name="./src/ext/sbi/tools/ManageDatasetVersions.js" />
-				<file name="./src/ext/sbi/tools/ManageDatasetParameters.js" />
-				<file name="./src/ext/sbi/tools/ParametersFillGrid.js" />
-				<file name="./src/ext/sbi/tools/dataset/DatasetManagementPanel.js" />
-				<file name="./src/ext/sbi/tools/dataset/QueryDatasetConfigurationPanel.js" />
-				<file name="./src/ext/sbi/tools/dataset/QueryDatasetScriptWizard.js" />
-				<file name="./src/ext/sbi/tools/dataset/ManageDatasetFieldMetadata.js" />
-				<file name="./src/ext/sbi/tools/dataset/FileDatasetPanel.js" />
-
 				<file name="./src/ext/sbi/engines/EngineManagementPanel.js" />
-
-
-				<file name="./src/ext/sbi/tools/dataset/QbeDatasetBuilder.js" />
-				<file name="./src/ext/sbi/tools/dataset/PreviewWindow.js" />
-				<file name="./src/ext/sbi/tools/dataset/CustomDataGrid.js" />
 
 				<file name="./src/ext/sbi/browser/mexport/MassiveExportWizard.js" /> 
 				<file name="./src/ext/sbi/browser/mexport/MassiveExportWizardTriggerPage.js" /> 
@@ -674,7 +656,6 @@
 				<file name="./src/ext/sbi/kpi/GUI/KpiGUIHistorical.js" />
 
 				<file name="./src/ext/sbi/tools/catalogue/MetaModelsCatalogue.js" />
-				<file name="./src/ext/sbi/tools/catalogue/MondrianSchemasCatalogue.js" />
 
 				<file name="./src/ext/sbi/browser/DocumentsTree.js" />
 				<file name="./src/ext/sbi/execution/SaveDocumentWindow.js" />
@@ -700,8 +681,6 @@
 
 				<file name="./src/ext/sbi/widgets/FileUploadPanel.js" />
 				
-				<file name="./src/ext/sbi/tools/dataset/FileDatasetPanel.js" />		
-				
 				<file name="./src/ext4/sbi/widgets/store/DynamicStore.js" />
 				<file name="./src/ext4/sbi/widgets/store/InMemoryFilteredStore.js" />
 				<file name="./src/ext4/sbi/widgets/grid/RadioColumn.js" />
@@ -720,15 +699,8 @@
 				<file name="./src/ext4/sbi/widgets/frame/EditorIFramePanel.js" />
 				<file name="./src/ext4/sbi/widgets/frame/EditorIFramePanelContainer.js" />
 				
-				<file name="./src/ext4/sbi/behavioural/analyticalDriver/AnalyticalDriverListDetailPanel.js" />
-				<file name="./src/ext4/sbi/behavioural/analyticalDriver/AnalyticalDriverModel.js" />
-				<file name="./src/ext4/sbi/behavioural/analyticalDriver/AnalyticalDriverDetailPanel.js" />
-				<file name="./src/ext4/sbi/behavioural/analyticalDriver/AnalyticalDriverUseModel.js" />
-				<file name="./src/ext4/sbi/behavioural/analyticalDriver/AnalyticalDriverUseTabPanel.js" />
-				
 				<file name="./src/ext4/sbi/browser/DocumentsTree.js" />
 				<file name="./src/ext4/sbi/execution/SaveDocumentWindowsExt4.js" />
-				
 				
 				<file name="./src/ext4/sbi/behavioural/lov/TestLovTreePanel.js" />
 				<file name="./src/ext4/sbi/behavioural/lov/TestLovResultPanel.js" />
@@ -738,34 +710,13 @@
 				<file name="./src/ext4/sbi/behavioural/lov/LOVListDetailPanel.js" />
 				<file name="./src/ext4/sbi/behavioural/lov/LOVModel.js" />
 				
-				
-				
-				<file name="./src/ext4/sbi/tools/datasource/DataSourceModel.js" />
-				<file name="./src/ext4/sbi/tools/datasource/DataSourceListDetailPanel.js" />
-				<file name="./src/ext4/sbi/tools/datasource/DataSourceDetailPanel.js" />
-				
 				<file name="./src/ext4/sbi/tools/multitenant/MultitenantModel.js" />
 				<file name="./src/ext4/sbi/tools/multitenant/MultitenantDetailPanel.js" />
 				<file name="./src/ext4/sbi/tools/multitenant/MultitenantListDetailPanel.js" />
 				
-				<file name="./src/ext4/sbi/tools/dataset/ValidateDatasetGrid.js" />
-				<file name="./src/ext4/sbi/tools/dataset/ValidateDataset.js" />
-				<file name="./src/ext4/sbi/tools/dataset/ManageDatasetFieldMetadata.js" />
-				<file name="./src/ext4/sbi/tools/dataset/DataSetModel.js" />
-				<file name="./src/ext4/sbi/tools/dataset/DataSetsBrowser.js" />
-				<file name="./src/ext4/sbi/tools/dataset/DataSetsView.js" />
-				<file name="./src/ext4/sbi/tools/dataset/DataSetsWizard.js" />
-				<file name="./src/ext4/sbi/tools/dataset/QbeDataSetsWizard.js" />
-				<file name="./src/ext4/sbi/tools/dataset/CkanDataSetsWizard.js" />
-				<file name="./src/ext4/sbi/tools/dataset/DatasetMetadataMainPage.js" />
-				<file name="./src/ext4/sbi/tools/dataset/GeoBIDatasetFieldMetadata.js" />
-				
 				<file name="./src/ext4/sbi/tools/model/MetaModelsBrowser.js" />
-				<file name="./src/ext4/sbi/tools/dataset/FederatedDatasetBrowser.js" />
 				<file name="./src/ext4/sbi/tools/model/MetaModelsView.js" />
 				<file name="./src/ext4/sbi/tools/model/MetaModelModel.js" />
-				<file name="./src/ext4/sbi/tools/dataset/FederatedDatasetView.js" />
-				<file name="./src/ext4/sbi/tools/dataset/FederatedDatasetModel.js" />
 				
 				<file name="./src/ext4/sbi/tools/document/SmartFilterBrowser.js" />
 				<file name="./src/ext4/sbi/tools/document/SmartFilterView.js" />
