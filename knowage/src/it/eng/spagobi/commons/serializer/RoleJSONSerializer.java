@@ -55,6 +55,7 @@ public class RoleJSONSerializer implements Serializer {
 	private static final String DEFAULT_ROLE = "defaultRole";
 	private static final String SEE_DOC_BROWSER = "seeDocBrowser";
 	private static final String SEE_MY_DATA = "seeMyData";
+	private static final String SEE_MY_WORKSPACE = "seeMyWorkspace";
 	private static final String SEE_FAVOURITES = "seeFavourites";
 	private static final String SEE_SUBSCRIPTIONS = "seeSubscriptions";
 	private static final String SEE_TODO_LIST = "seeToDoList";
@@ -111,6 +112,7 @@ public class RoleJSONSerializer implements Serializer {
 			result.put(DEFAULT_ROLE, role.isDefaultRole());
 			result.put(SEE_DOC_BROWSER, role.isAbleToSeeDocumentBrowser());
 			result.put(SEE_MY_DATA, role.isAbleToSeeMyData());
+			result.put(SEE_MY_WORKSPACE, role.isAbleToSeeMyWorkspace());
 			result.put(SEE_FAVOURITES, role.isAbleToSeeFavourites());
 			result.put(SEE_SUBSCRIPTIONS, role.isAbleToSeeSubscriptions());
 			result.put(SEE_TODO_LIST, role.isAbleToSeeToDoList());

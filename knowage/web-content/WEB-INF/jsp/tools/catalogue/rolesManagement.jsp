@@ -379,6 +379,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			        <label>{{translate.load("sbi.roles.seeMyData")}}</label>
 			       </div> 
 			   </div>
+			   <div layout="row" class="kn-checkInput" layout-padding ng-if="isVisible('seeMyWorkspace')">
+                  <md-input-container class="small counter"> 
+                    <md-checkbox
+                     ng-change="setDirty()"  ng-model="selectedRole.ableToSeeMyWorkspace" aria-label="check" ng-disabled="disable" name="seeMyWorkspace">
+                    </md-checkbox> 
+                   </md-input-container>
+                   <div >
+                    <label>{{translate.load("sbi.roles.seeMyWorkspace")}}</label>
+                   </div> 
+               </div>
+			   
 			   
 			   <!-- 
 			   		"Add to favorites" option is not used, so it should not be visible in the Authorization tab

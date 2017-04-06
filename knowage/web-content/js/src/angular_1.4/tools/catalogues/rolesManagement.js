@@ -48,8 +48,8 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 	               {dbname:"ENABLE_DATASET_PERSISTENCE",label:"enableDatasetPersistence",visible:false, category:"ENABLE"},
 	               {dbname:"ENABLE_FEDERATED_DATASET",label:"enableFederatedDataset",visible:false, category:"ENABLE"},
 	               {dbname:"SEE_MY_DATA",label:"seeMyData",visible:false, category:"ITEMS"},
-	               {dbname:"DO_MASSIVE_EXPORT",label:"doMassiveExport",visible:false, category:"EXPORT"},
-	               
+	               {dbname:"SEE_MY_WORKSPACE",label:"seeMyWorkspace",visible:false, category:"ITEMS"},
+	               {dbname:"DO_MASSIVE_EXPORT",label:"doMassiveExport",visible:false, category:"EXPORT"},     
 	               {dbname:"SEE_SUBSCRIPTIONS",label:"seeSubscriptions",visible:false, category:"ITEMS"},
 	               {dbname:"CREATE_SOCIAL_ANALYSIS",label:"createSocialAnalysis",visible:false, category:"ITEMS"},
 	               {dbname:"VIEW_SOCIAL_ANALYSIS",label:"viewSocialAnalysis",visible:false, category:"ITEMS"},
@@ -140,6 +140,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 		$scope.selectedRole.ableToSeeDocumentBrowser= true;
 		$scope.selectedRole.ableToSeeSubscriptions= true;
 		$scope.selectedRole.ableToSeeMyData= true;
+		$scope.selectedRole.ableToSeeMyWorkspace= true;
 		$scope.selectedRole.ableToSeeMetadata= true;
 		$scope.selectedRole.ableToSeeToDoList= true;
 		$scope.selectedRole.ableToViewSocialAnalysis= true;

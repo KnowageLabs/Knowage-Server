@@ -458,6 +458,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 		role.setIsAbleToSeeFavourites(bo.isAbleToSeeFavourites());
 		role.setIsAbleToSeeSubscriptions(bo.isAbleToSeeSubscriptions());
 		role.setIsAbleToSeeMyData(bo.isAbleToSeeMyData());
+		role.setIsAbleToSeeMyWorkspace(bo.isAbleToSeeMyWorkspace());
 		role.setIsAbleToSeeToDoList(bo.isAbleToSeeToDoList());
 		role.setIsAbleToCreateDocuments(bo.isAbleToCreateDocuments());
 		role.setIsAbleToCreateSocialAnalysis(bo.isAbleToCreateSocialAnalysis());
@@ -505,7 +506,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 
 	/**
 	 * Controls if the name of the ParameterUse is already in use.
-	 *
+	 * 
 	 * @param paruse
 	 *            The paruse to check
 	 * @param operation

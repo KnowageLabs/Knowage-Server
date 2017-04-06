@@ -80,7 +80,7 @@ public class MenuListJSONSerializer implements Serializer {
 
 	/**
 	 * The URL for the Workspace web page.
-	 *
+	 * 
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
 	private static final String HREF_DOC_BROWSER_WORKSPACE = "/servlet/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_WORKSPACE&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
@@ -215,7 +215,7 @@ public class MenuListJSONSerializer implements Serializer {
 
 							/**
 							 * The URL for the Workspace web page.
-							 *
+							 * 
 							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 							 */
 							if (menuElem.getCode() != null && menuElem.getCode().equals("workspace")) {
@@ -318,15 +318,18 @@ public class MenuListJSONSerializer implements Serializer {
 		// tempMenuList.put(myData);
 		// }
 
-		// workspace should always be visible
-		JSONObject workspace = new JSONObject();
-		workspace.put(ICON_CLS, "work");
-		workspace.put(TOOLTIP, messageBuilder.getMessage("menu.workspace", locale));
-		workspace.put(ICON_ALIGN, "top");
-		workspace.put(SCALE, "large");
-		workspace.put(TARGET, "_self");
-		workspace.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_WORKSPACE + "');");
-		tempMenuList.put(workspace);
+		if (isAbleTo(SpagoBIConstants.SEE_MY_WORKSPACE, funcs)) {
+			// workspace should always be visible
+			JSONObject workspace = new JSONObject();
+
+			workspace.put(ICON_CLS, "work");
+			workspace.put(TOOLTIP, messageBuilder.getMessage("menu.workspace", locale));
+			workspace.put(ICON_ALIGN, "top");
+			workspace.put(SCALE, "large");
+			workspace.put(TARGET, "_self");
+			workspace.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_WORKSPACE + "');");
+			tempMenuList.put(workspace);
+		}
 
 		String strSbiSocialAnalysisStatus = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SOCIAL_ANALYSIS_IS_ACTIVE");
 		boolean sbiSocialAnalysisStatus = "TRUE".equalsIgnoreCase(strSbiSocialAnalysisStatus);

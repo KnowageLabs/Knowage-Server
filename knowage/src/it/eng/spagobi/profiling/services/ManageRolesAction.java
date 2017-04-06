@@ -83,6 +83,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 	private final String MANAGE_USERS = "manageUsers";
 	private final String SEE_DOCUMENT_BROWSER = "seeDocBrowser";
 	private final String SEE_MY_DATA = "seeMyData";
+	private final String SEE_MY_WORKSPACE = "seeMyWorkspace";
 	private final String SEE_FAVOURITES = "seeFavourites";
 	private final String SEE_SUBSCRIPTIONS = "seeSubscriptions";
 	private final String SEE_TODO_LIST = "seeToDoList";
@@ -183,6 +184,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 			Boolean manageUsers = getAttributeAsBoolean(MANAGE_USERS);
 			Boolean seeDocBrowser = getAttributeAsBoolean(SEE_DOCUMENT_BROWSER);
 			Boolean seeMyData = getAttributeAsBoolean(SEE_MY_DATA);
+			Boolean seeMyWorkspace = getAttributeAsBoolean(SEE_MY_WORKSPACE);
 			Boolean seeFavourites = getAttributeAsBoolean(SEE_FAVOURITES);
 			Boolean seeSubscriptions = getAttributeAsBoolean(SEE_SUBSCRIPTIONS);
 			Boolean seeToDoList = getAttributeAsBoolean(SEE_TODO_LIST);
@@ -277,6 +279,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 				role.setIsAbleToManageUsers(manageUsers);
 				role.setIsAbleToSeeDocumentBrowser(seeDocBrowser);
 				role.setIsAbleToSeeMyData(seeMyData);
+				role.setIsAbleToSeeMyWorkspace(seeMyWorkspace);
 				role.setIsAbleToSeeFavourites(seeFavourites);
 				role.setIsAbleToSeeSubscriptions(seeSubscriptions);
 				role.setIsAbleToSeeToDoList(seeToDoList);
@@ -498,7 +501,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 
 	/**
 	 * Creates a json array with children roles informations
-	 *
+	 * 
 	 * @param rows
 	 * @return
 	 * @throws JSONException
@@ -515,7 +518,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 
 	/**
 	 * Creates a json array with children informations
-	 *
+	 * 
 	 * @param rows
 	 * @return
 	 * @throws JSONException

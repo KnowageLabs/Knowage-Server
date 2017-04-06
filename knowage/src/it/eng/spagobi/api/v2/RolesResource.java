@@ -330,6 +330,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 		role.setIsAbleToSeeFavourites(bo.isAbleToSeeFavourites());
 		role.setIsAbleToSeeSubscriptions(bo.isAbleToSeeSubscriptions());
 		role.setIsAbleToSeeMyData(bo.isAbleToSeeMyData());
+		role.setIsAbleToSeeMyWorkspace(bo.isAbleToSeeMyWorkspace());
 		role.setIsAbleToSeeToDoList(bo.isAbleToSeeToDoList());
 		role.setIsAbleToCreateDocuments(bo.isAbleToCreateDocuments());
 		role.setIsAbleToCreateSocialAnalysis(bo.isAbleToCreateSocialAnalysis());
