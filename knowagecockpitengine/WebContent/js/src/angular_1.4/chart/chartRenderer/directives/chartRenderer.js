@@ -21,7 +21,7 @@ angular.module('chartRendererModule')
 	
 	return{
 		restrict:'E',
-		template:'',
+		template:'<div ng-show="noLib">no library impl</div>',
 		scope:{
 			
 			chartLibNamesConfig:'=',
@@ -36,7 +36,7 @@ angular.module('chartRendererModule')
 		
 		link:function(scope,element){
 			
-			
+				
 				var handleCockpitSelection = scope.onClickSeries;
 
 				//var handleDrilldown = function (e) {};
@@ -59,6 +59,7 @@ angular.module('chartRendererModule')
 				scope.chartConf;
 				scope.chartTemplate;
 				scope.chartInitializer;
+				scope.noLib = false;
 				
 				
 				
@@ -137,9 +138,14 @@ angular.module('chartRendererModule')
 			scope.$on('init',function(event,data){
 				
 				var lib = getChartExecutionLib(scope.chartTemplate);
+				if(lib){
+					scope.chartInitializer = chartInitializerRetriver.getChartInitializer(lib);
+					scope.loadChart(scope.chartTemplate,scope.datasetLabel,data);
+					scope.noLib = false;
+				}else{
+					scope.noLib = true;
+				}
 				
-				scope.chartInitializer = chartInitializerRetriver.getChartInitializer(lib);
-				scope.loadChart(scope.chartTemplate,scope.datasetLabel,data);
 				
 			})
 			
@@ -173,10 +179,13 @@ angular.module('chartRendererModule')
 			
 			if(!scope.widgetData){
 				var lib = getChartExecutionLib(scope.chartTemplate);
-				
-				scope.chartInitializer = chartInitializerRetriver.getChartInitializer(lib);
-				
-				scope.loadChart(scope.chartTemplate,scope.datasetLabel,undefined);
+				if(lib){
+					scope.chartInitializer = chartInitializerRetriver.getChartInitializer(lib);
+					
+					scope.loadChart(scope.chartTemplate,scope.datasetLabel,undefined);
+					scope.noLib = false;
+				}
+				scope.noLib = true;
 			}
 			
 			
