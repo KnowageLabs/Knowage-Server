@@ -38,30 +38,36 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             String req_fl = request.getParameter("req_fl");
             String mult_fl = request.getParameter("mult_fl");
             String toDriversList = request.getParameter("toDriversList");
+            
+ 			Map saveUrlPars = new HashMap();
+ 			saveUrlPars.put("PAGE", "detailBIObjectPage");
+ 			saveUrlPars.put(LightNavigationManager.LIGHT_NAVIGATOR_BACK_TO,"0");
+ 			saveUrlPars.put("LIGHT_NAVIGATOR_DISABLED","TRUE");
  			
-            Map backUrlPars = new HashMap();
- 			backUrlPars.put("PAGE", "detailBIObjectPage");
- 			backUrlPars.put(LightNavigationManager.LIGHT_NAVIGATOR_BACK_TO,"0");
- 			backUrlPars.put("LIGHT_NAVIGATOR_DISABLED","TRUE");
+ 			saveUrlPars.put("MESSAGEDET", "DETAIL_SELECT");
+            saveUrlPars.put("OBJECT_ID", objId);
+ 			saveUrlPars.put("selected_obj_par_id", selectedObjParId); 
+ 			saveUrlPars.put("parurl_nm", parurl_nm);
+            saveUrlPars.put("objParLabel", objParLabel);
+            saveUrlPars.put("priority", priority);
+            saveUrlPars.put("view_fl", view_fl);
+            saveUrlPars.put("req_fl", req_fl);
+            saveUrlPars.put("mult_fl", mult_fl);
+            saveUrlPars.put("toDriversList", toDriversList);
  			
- 			backUrlPars.put("MESSAGEDET", "DETAIL_SELECT");
-            backUrlPars.put("OBJECT_ID", objId);
- 			backUrlPars.put("selected_obj_par_id", selectedObjParId); 
- 			backUrlPars.put("parurl_nm", parurl_nm);
-            backUrlPars.put("objParLabel", objParLabel);
-            backUrlPars.put("priority", priority);
-            backUrlPars.put("view_fl", view_fl);
-            backUrlPars.put("req_fl", req_fl);
-            backUrlPars.put("mult_fl", mult_fl);
-            backUrlPars.put("toDriversList", toDriversList);
-
-            String backUrl = urlBuilder.getUrl(request, backUrlPars);
- 			 			
+ 			String saveUrl = urlBuilder.getUrl(request, saveUrlPars);
+ 
+ 			Map closeUrlPars = new HashMap();
+ 			closeUrlPars.put("PAGE", "detailBIObjectPage");
+ 			closeUrlPars.put(LightNavigationManager.LIGHT_NAVIGATOR_BACK_TO,"0");
+ 			closeUrlPars.put("MESSAGEDET", "DETAIL_SELECT");
+ 			String closeUrl = urlBuilder.getUrl(request, closeUrlPars); 			
 		%>
 		
 		<script>
 			
-			var backUrl =  '<%= backUrl %>';
+			var saveUrl =  '<%= saveUrl %>';
+			var closeUrl =  '<%= closeUrl %>';
 		</script> 
 
 
@@ -82,19 +88,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<body class="bodyStyle" ng-app="analyticalDriversListModule" id="ng-app">
 	
 	<div ng-controller="analyticalDriversListCTRL" layout-fill>
-		<md-toolbar>
-	     <div class="md-toolbar-tools layout-align-center-center layout-row">
-      	
-      	
-       	<h2>Analytical Drivers List</h2> 
-       	
-       
-     </div>   
-   </md-toolbar>
-   <md-content layout-padding>
- 
-   <angular-table
-			flex
+		
+		<md-card   layout-fill layout="column" class="flexCard" style="position:absolute">
+ <md-card-content flex layout="column" class="noPadding">
+  <md-toolbar >
+      <div class="md-toolbar-tools">
+      {{translate.load("sbi.analytical.drivers.list");}}
+      </div>
+  </md-toolbar>
+  <md-content flex layout="column" >
+
+    <angular-table flex
 			id="adList_id" 
 			ng-model="adList"
 			columns='[
@@ -106,14 +110,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			highlights-selected-item=true
 			click-function="selectAD(item)">
 		     </angular-table>
-		     </md-content>
-		<md-dialog-actions layout="row">
-		<span flex></span>
-			<md-button class="md-raised" ng-click="goBackandSave()">
-				{{translate.load("sbi.generic.save");}}
-			</md-button>
-		</md-dialog-actions>
-   
+					
+  </md-content>
+</md-card-content>
+<md-card-actions layout="row" layout-align="end center">
+<md-button ng-click="close()">{{translate.load("sbi.generic.cancel");}}</md-button>
+<md-button ng-click="goBackandSave()">{{translate.load("sbi.generic.save");}}</md-button>
+</md-card-actions>
+</md-card>
+		
+		
+		
+		
 	</div>
 	</body>
 

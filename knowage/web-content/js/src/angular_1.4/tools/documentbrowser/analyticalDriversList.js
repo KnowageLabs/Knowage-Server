@@ -16,24 +16,17 @@ function analyticalDriversListFunction(sbiModule_translate, sbiModule_restServic
 	$scope.selectedAD = {};
 	//FUNCTIONS	
 		 
-	angular.element(document).ready(function () { // on page load function
-				
-		$scope.getDrivers();
-		    });
-	
-
-	
 
 	$scope.getDrivers = function(){ // service that gets list of drivers @GET
 		sbiModule_restServices.promiseGet("2.0", "analyticalDrivers")
 		.then(function(response) {
 			$scope.adList = response.data;
-			console.log($scope.adList)
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 			
 		});
 	}
+	$scope.getDrivers();
 	
 	$scope.selectAD = function(item){
 		$scope.selectedAD = angular.copy(item);
@@ -41,12 +34,16 @@ function analyticalDriversListFunction(sbiModule_translate, sbiModule_restServic
 	
 
 $scope.goBackandSave = function(){
-	console.log(backUrl);
-	backUrl += "&ADName="+$scope.selectedAD.label
-	backUrl += "&ADId="+$scope.selectedAD.id
-	console.log(backUrl);
+	saveUrl += "&ADName="+$scope.selectedAD.label
+	saveUrl += "&ADId="+$scope.selectedAD.id
 	$scope.selectedAD = {};
-	document.location.href = backUrl;
+	document.location.href = saveUrl;
+}
+
+$scope.close = function(){
+	
+	$scope.selectedAD = {};
+	document.location.href = closeUrl;
 }
 
 

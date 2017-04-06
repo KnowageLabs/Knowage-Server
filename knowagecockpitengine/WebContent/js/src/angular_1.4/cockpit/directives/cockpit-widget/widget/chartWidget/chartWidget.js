@@ -59,6 +59,7 @@ angular.module('cockpitModule')
 	    	$scope.updateParameters = function(parameters){
 	    		$scope.formParameters = parameters;
 	    	};
+	    	    	
 	    	var loadPageIntoIframe = function(actionUrl, parameters){
 	    		var iframe = $element.find('iframe')[0];
     			if(actionUrl){
@@ -72,7 +73,10 @@ angular.module('cockpitModule')
     			var form = angular.element('<form id="'+formId+'" action="'+formAction+'" method="POST" style="display:none;"></form>');
     			for(var x=0;x<$scope.formParameters.length;x++){
     				var param = $scope.formParameters[x];
-    				form.append('<input type="hidden" name="' + param.name + '" value=\'' + JSON.stringify(param.value) + '\'>');
+    				var paramName = param.name;
+    				var paramValue = JSON.stringify(param.value);
+    				paramValue = paramValue.replace(/'/g, "");
+    				form.append('<input type="hidden" name="' + paramName + '" value=\'' + paramValue + '\'>');
     			}
     			var doc = iframe.contentWindow.document;
     			doc.open();
