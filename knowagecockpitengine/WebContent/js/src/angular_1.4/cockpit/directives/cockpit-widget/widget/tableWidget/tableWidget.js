@@ -107,10 +107,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		$scope.getGridStyle=function(row,column,index){
+			var ind = $scope.indexInList(column.label, $scope.ngModel.content.columnSelectedOfDataset);
 			var gridStyle = {};
-			//style summary row
+			//style summary row - returning the column style, if there are summary styles defined they override the default
 			if($scope.ngModel.style.showSummary == true && index == $scope.datasetRecods.rows.length-1){
-				return $scope.ngModel.style.summary;
+				var summaryStyle  = angular.merge({},$scope.ngModel.content.columnSelectedOfDataset[ind].style, $scope.ngModel.style.summary);
+				return summaryStyle;
 			}
 			if($scope.ngModel.style.grid !=undefined && $scope.ngModel.style.showGrid){
 				gridStyle = angular.extend(gridStyle,$scope.ngModel.style.grid);
@@ -123,7 +125,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					gridStyle["background"] = $scope.ngModel.style.alternateRows.oddRowsColor;
 				}
 			}
-			var ind = $scope.indexInList(column.label, $scope.ngModel.content.columnSelectedOfDataset);
 			if(ind!=-1 && $scope.ngModel.content.columnSelectedOfDataset[ind].style != undefined){
 				gridStyle = angular.extend({},gridStyle,$scope.ngModel.content.columnSelectedOfDataset[ind].style);
 			}
