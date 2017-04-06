@@ -29,6 +29,8 @@ public class MySQLDataBase extends AbstractDataBase {
 
 	private static transient Logger logger = Logger.getLogger(MySQLDataBase.class);
 
+	private static int MAX_VARCHAR_VALUE = 65535;
+
 	public MySQLDataBase(IDataSource dataSource) {
 		super(dataSource);
 	}
@@ -37,7 +39,7 @@ public class MySQLDataBase extends AbstractDataBase {
 	public String getDataBaseType(Class javaType) {
 		String toReturn = null;
 		String javaTypeName = javaType.toString();
-		if (javaTypeName.contains("java.lang.String")) {
+		if (javaTypeName.contains("java.lang.String") && getVarcharLength() <= MAX_VARCHAR_VALUE) {
 			toReturn = " VARCHAR (" + getVarcharLength() + ")";
 		} else if (javaTypeName.contains("java.lang.Byte")) {
 			toReturn = " INTEGER ";
@@ -63,7 +65,8 @@ public class MySQLDataBase extends AbstractDataBase {
 			toReturn = " TIME ";
 		} else if (javaTypeName.contains("[B") || javaTypeName.contains("BLOB")) {
 			toReturn = " MEDIUMBLOB ";
-		} else if (javaTypeName.contains("[C") || javaTypeName.contains("CLOB")) {
+		} else if ((javaTypeName.contains("java.lang.String") && getVarcharLength() > MAX_VARCHAR_VALUE) || javaTypeName.contains("[C")
+				|| javaTypeName.contains("CLOB")) {
 			toReturn = " TEXT ";
 		} else {
 			logger.debug("Cannot map java type [" + javaTypeName + "] to a valid database type ");
@@ -74,7 +77,7 @@ public class MySQLDataBase extends AbstractDataBase {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.utilities.database.IDataBase#getAliasDelimiter()
 	 */
 	@Override
@@ -84,7 +87,7 @@ public class MySQLDataBase extends AbstractDataBase {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.utilities.database.AbstractDataBase#getUsedMemorySizeQuery(java.lang.String, java.lang.String)
 	 */
 	@Override
