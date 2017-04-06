@@ -37,6 +37,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	.selectedElement {
 		background-color: rgb(169, 195, 219);
 	}
+	.line-container{
+		font-family: Roboto,"Helvetica Neue",sans-serif;
+		font-size: 14px;
+		color: rgba(0, 0, 0, 0.87);
+		font-weight: normal;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow: hidden;
+		max-width: 20rem;
+		outline: none;
+	}
 </style>
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 <!-- Styles -->
