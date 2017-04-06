@@ -164,15 +164,20 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	*/
 	
 	boolean isLibChartJS = true;
-	
+	String chartType = null;
+	ChartConfig chartLib = null;
 	if (!template.equals("{}")) {
 		
 		String templateSubstrFromType = template.substring(template.indexOf("\"type\":"),template.length()-1);
 		int indexOfSeparator = templateSubstrFromType.indexOf(",");
-		String chartType = templateSubstrFromType.substring("\"type\":".length()+1,indexOfSeparator-1); // + and -1 to avoid quotes in the chart type name
+		chartType = templateSubstrFromType.substring("\"type\":".length()+1,indexOfSeparator-1); // + and -1 to avoid quotes in the chart type name
 		
 		// Set the indicator value so both the interface and the logic could "know" of we are dealing with the ChartJS chart types. (danristo)
-		isLibChartJS = ChartEngineConfig.getChartLibConf().get(chartType.toLowerCase()).getLibIniName().equals("chartJsInitializer.jsp");
+		chartLib = ChartEngineConfig.getChartLibConf().get(chartType.toLowerCase());
+		if(chartLib!=null){
+			isLibChartJS = chartLib.getLibIniName().equals("chartJsInitializer.jsp");
+		}
+		
 		
 	}	
 		
