@@ -17,6 +17,7 @@
         <property name="parameterTypeId" column="PAR_TYPE_ID" />
         <property name="formatCode" column="format_code" type="string" />
         <property name="formatValue" column="format_value" type="string" />  
+        <property name="isUserDefined" column="is_user_defined" type="boolean"/>
 
 	</class>
 
