@@ -2,5 +2,5 @@ Manifest-Version: 1.0
 
 Name: KnowageMeta.war
 Implementation-Title: KnowageMeta
-Implementation-Version: 1.3.0
+Implementation-Version: 6.0.0
 
