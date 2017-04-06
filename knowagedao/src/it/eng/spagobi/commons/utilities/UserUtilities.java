@@ -379,7 +379,7 @@ public class UserUtilities {
 
 	/**
 	 * User functionality root exists.
-	 *
+	 * 
 	 * @param username
 	 *            the username
 	 * @return true, if successful
@@ -401,7 +401,7 @@ public class UserUtilities {
 
 	/**
 	 * User functionality root exists.
-	 *
+	 * 
 	 * @param userProfile
 	 *            the user profile
 	 * @return true, if successful
@@ -423,7 +423,7 @@ public class UserUtilities {
 	/**
 	 * Load the user personal folder as a LowFunctionality object. If the personal folder exists, it is returned; if it does not exist and create is false, null
 	 * is returned, otherwise the personal folder is created and then returned.
-	 *
+	 * 
 	 * @param userProfile
 	 *            UserProfile the user profile object
 	 * @param createIfNotExisting
@@ -483,7 +483,7 @@ public class UserUtilities {
 
 	/**
 	 * Creates the user functionality root.
-	 *
+	 * 
 	 * @param userProfile
 	 *            the user profile
 	 * @throws Exception
@@ -622,6 +622,9 @@ public class UserUtilities {
 			}
 			if (virtualRole.isAbleToSeeMyData()) {
 				roleFunctionalities.add(SpagoBIConstants.SEE_MY_DATA);
+			}
+			if (virtualRole.isAbleToSeeMyWorkspace()) {
+				roleFunctionalities.add(SpagoBIConstants.SEE_MY_WORKSPACE);
 			}
 			if (virtualRole.isAbleToSeeFavourites()) {
 				roleFunctionalities.add(SpagoBIConstants.SEE_FAVOURITES);
@@ -823,6 +826,10 @@ public class UserUtilities {
 						logger.debug("User has role " + roleName + " that is able to see MyData.");
 						virtualRole.setIsAbleToSeeMyData(true);
 					}
+					if (anotherRole.isAbleToSeeMyWorkspace()) {
+						logger.debug("User has role " + roleName + " that is able to see MyWorkspace.");
+						virtualRole.setIsAbleToSeeMyWorkspace(true);
+					}
 					if (anotherRole.isAbleToSeeFavourites()) {
 						logger.debug("User has role " + roleName + " that is able to see Favourites.");
 						virtualRole.setIsAbleToSeeFavourites(true);
@@ -917,7 +924,7 @@ public class UserUtilities {
 
 	/*
 	 * Method copied from SecurityServiceSupplierFactory for DAO refactoring
-	 *
+	 * 
 	 * is this method in the right place?
 	 */
 
@@ -954,7 +961,7 @@ public class UserUtilities {
 	/**
 	 * Clones the input profile object. We don't implement the SpagoBIUserProfile.clone method because SpagoBIUserProfile is created by Axis tools, and
 	 * therefore, when generating the class we may lost that method.
-	 *
+	 * 
 	 * @param profile
 	 *            The input SpagoBIUserProfile object
 	 * @return a clone of the input SpagoBIUserProfile object

@@ -480,6 +480,7 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 		aRole.setIsAbleToSeeFavourites(true);
 		aRole.setIsAbleToSeeMetadata(true);
 		aRole.setIsAbleToSeeMyData(true);
+		aRole.setIsAbleToSeeMyWorkspace(true);
 		aRole.setIsAbleToSeeNotes(true);
 		aRole.setIsAbleToSeeSnapshots(true);
 		aRole.setIsAbleToSeeSubobjects(true);
@@ -716,7 +717,7 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 
 	/**
 	 * Remove not valid association between authorizations and roles after changing product types related to a tenant
-	 *
+	 * 
 	 * @param aTenant
 	 * @param aSession
 	 */
@@ -802,7 +803,7 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 
 	/**
 	 * Restore authorizations valid for specific roles after changing the product types associated with specific tenant
-	 *
+	 * 
 	 * @param aSession
 	 * @param oldAuthMap
 	 *            a map that contains authorizations names as keys and roles as values
