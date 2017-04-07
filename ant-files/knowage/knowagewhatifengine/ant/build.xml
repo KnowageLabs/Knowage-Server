@@ -266,7 +266,7 @@
 	<!--   WAR CREATION FOR SINGLE PACKAGES                                                               -->
 	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
-	<target name="create-bin.war" depends="init,copy.artifacts">
+	<target name="create-bin.war" depends="init,jar,copy.artifacts">
 		<antcall target="${sso}" />
 		<antcall target="${specific.ant.task}" />
 		<antcall target="${ext.deploy}" />
