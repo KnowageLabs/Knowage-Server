@@ -4,7 +4,9 @@
 
 .kn-detail {
 	.extraButtonContainer {
-	    top: 6px;
-    	position: relative;
+		.datasetSpecific{
+			position: relative;
+			top: 6px;
+		}
 	}
 }

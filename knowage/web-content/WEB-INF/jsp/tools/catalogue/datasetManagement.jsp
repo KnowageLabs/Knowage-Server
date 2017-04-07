@@ -117,7 +117,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       		<extra-button>
 
 	      		<!-- ADDITIONAL BUTTONS -->
-	      		<div style="float:left;">
+	      		<div style="float:left;" >
 	      			
 	      			<!-- FIELDS METADATA BUTTON -->
 	      			<md-button aria-label="menu" class="md-fab md-raised md-mini md-warn" 
@@ -157,7 +157,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	      		</div> 
 	      		
 	      		<!-- PREVIEW BUTTON -->
-	      		<md-button aria-label="Preview dataset" ng-click="checkIfDataSetHasParameters()" 
+	      		<md-button aria-label="Preview dataset" ng-click="checkIfDataSetHasParameters()" class="datasetSpecific" 
 	      				ng-show="selectedDataSet" style="float:right; margin-top:2px">
 	              	{{translate.load('sbi.ds.test')}}
 	            </md-button>
@@ -167,7 +167,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	       <!-- DATASET DETAIL PANEL -->
 	       <detail 	save-function="saveDataset" cancel-function="closeDatasetDetails" 
 	       			show-save-button="showSaveAndCancelButtons" show-cancel-button="showSaveAndCancelButtons" 
-	       			disable-save-button="!datasetForm.$valid">
+	       			disable-save-button="!datasetForm.$valid" 
+	       			extra-functions='[
+	       			{"name":"test","showOn":showSaveAndCancelButtons,"function":"test"},
+	       			{"name":"test2","showOn":showSaveAndCancelButtons}]'>
 	       
 	       		<form name=datasetForm ng-show="selectedDataSet!=null" style="height:100%; overflow-y:hidden">
 	       		
