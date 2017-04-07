@@ -1466,7 +1466,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		
 	}
 	
-	var exctractFieldsMetadata = function(metadata) {
+	var exctractFieldsMetadata = function(metadata, type) {
 				
 		var fieldsMetadata = new Array();
 		var jsonTemp = {};
@@ -1477,7 +1477,13 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			jsonTemp = {};
 			
 			if (metadata[i].pname=="fieldType") {
-				jsonTemp["column"] = metadata[i].column;
+				if(type.toUpperCase()=="QBE"){
+					var str = metadata[i].column;
+					jsonTemp["column"] = str.substring(str.indexOf(":") + 1);
+				} else {
+					jsonTemp["column"] = metadata[i].column;
+				}
+				
 				jsonTemp["fieldType"] = metadata[i].pvalue;
 				$scope.datasetMetaWithFieldsMetaIndexes.push(i);
 				fieldsMetadata.push(jsonTemp);
@@ -3248,7 +3254,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     	
     	if ($scope.selectedDataSet.id) {
     		
-    		$scope.fieldsMetadata = exctractFieldsMetadata($scope.selectedDataSet.meta.columns);
+    		$scope.fieldsMetadata = exctractFieldsMetadata($scope.selectedDataSet.meta.columns, $scope.selectedDataSet.dsTypeCd);
         	
         	$mdDialog
     		   .show({
