@@ -242,7 +242,7 @@
 	<!--   WAR CREATION FOR DEMO ALL IN ONE                                                               -->
 	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
-	<target name="create.war" depends="init,copy.artifacts">
+	<target name="create.war" depends="init,copy.artifacts,jar">
 		<antcall target="${sso}" />
 		<antcall target="${specific.ant.task}" />
 		<antcall target="${ext.deploy}" />
