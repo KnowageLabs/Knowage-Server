@@ -23,7 +23,7 @@
 		</fileset>
 		
 		<!-- CLASSI DI KNOWAGEWHATIFENGINE -->
-		<fileset dir="../../../../knowagewhatifengine/web-content/WEB-INF/lib/">
+		<fileset dir="../../../../knowagewhatifengine/WebContent/WEB-INF/lib/">
 			<include name="**/*.jar" />
 		</fileset>
 	</path>
