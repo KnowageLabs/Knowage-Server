@@ -318,7 +318,7 @@ Sbi.sdk.apply(Sbi.sdk.api, {
 		console.log(token);
 		var baseUrl = Sbi.sdk.services.baseUrl;
 		var serviceUrl = baseUrl.protocol + '://' + baseUrl.host + ":" + baseUrl.port + '/' + baseUrl.contextPath + '/restful-services/2.0/autenticateUser';
-
+		console.log(serviceUrl);
 		var headers = [];
 		headers[0] = {
 				name: 'X-Auth-Token',
@@ -328,10 +328,14 @@ Sbi.sdk.apply(Sbi.sdk.api, {
 		Sbi.sdk.cors.asyncRequest({
 			method: 'GET',
 			url: serviceUrl,
-			headers: headers ,
-			callbackOk : function (){
+			headers: headers,
+			callbackOk: function(obj) {
+				alert("response ok")
+	        },
+	        callbackError: function (a){
+	        	alert("response bad")
+	        }
 
-			}
 		});	}
 
 });
