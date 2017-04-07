@@ -958,6 +958,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 //			 						   						console.log($scope.dirtyForm);
 //			 						   						console.log($scope.selectedDataSet.label == item.label);
 			 						   						$scope.datasetsListTemp.splice(i,1);
+			 						   						$scope.datasetsListPersisted.splice(i,1);
 			 						   						$scope.showSaveAndCancelButtons = false;
 			 						   						break;
 			 						   					}			   					
