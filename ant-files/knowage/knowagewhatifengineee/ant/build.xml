@@ -17,13 +17,9 @@
 			<include name="**/*.jar" />
 		</fileset>
 		
-		<!-- LIBRERIE DI KNOWAGEWHATIFENGINE -->
-		<fileset dir="../../../../knowagewhatifengine/dist">
-			<include name="**/*.jar" />
-		</fileset>
 		
 		<!-- CLASSI DI KNOWAGEWHATIFENGINE -->
-		<fileset dir="../../../../knowagewhatifengine/WebContent/WEB-INF/lib/">
+		<fileset dir="../../../../knowagewhatifengine/ant-build/knowagewhatifengine/WEB-INF/lib/">
 			<include name="**/*.jar" />
 		</fileset>
 	</path>
