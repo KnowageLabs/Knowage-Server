@@ -697,6 +697,7 @@
 	    	    #if($categoriesNumber!=$zeroValues)
 	    	    #foreach($row in $rows)
 					#set ($serieName = $row.get($serieColumnCategory))
+					#set( $serieName = $serieName.replace("\", "\\") )
 					#set( $serieName = $serieName.replace("""", "\""") )
 					#set ($serieValue = $row.get($serieColumnsMapped))
 					{

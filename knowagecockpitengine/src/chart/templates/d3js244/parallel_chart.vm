@@ -157,6 +157,7 @@
 #end
 
 
+#set($groups=$groups.replace("sepslashsep", "\\\\"))
 #set($groups=$groups.replace("sepquotesep", "\'"))
 
 {

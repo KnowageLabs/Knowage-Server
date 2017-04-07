@@ -39,10 +39,10 @@ import edu.emory.mathcs.backport.java.util.Collections;
 public class DataSetTransformer {
 
 	public void print(Object object) {
-		System.out.println("-----------------------");
+		/*System.out.println("-----------------------");
 		System.out.println(object);
 		System.out.println(object.getClass().toString());
-		System.out.println("-----------------------");
+		System.out.println("-----------------------");*/
 	}
 
 	public JSONArray toWordcloud(Object columnsNeeded, Object dataColumnsMapper, List<Object> dataRows, Object serie, Object sizeCriteria,
@@ -730,8 +730,10 @@ public class DataSetTransformer {
 
 				JSONObject jo = new JSONObject();
 				String value = row.get(groupvalue).toString();
+				value = value.replace("\\", "sepslashsep");
 				value = value.replace("\"", "\\\"");
 				value = value.replace("'", "sepquotesep");
+
 				jo.put((new Integer(j)).toString(), value);
 				ja.put(jo);
 				j++;

@@ -1040,6 +1040,7 @@
 			   
 					#set ($serieValue = $row.get($serieColumnsMapped))
 					#set ($serieCategoryName =  $row.get($categorieColumnsMapped))
+					#set( $serieCategoryName = $serieCategoryName.replace("\", "\\") )
 					#set( $serieCategoryName = $serieCategoryName.replace("""", "\""") )
 					
 					{
