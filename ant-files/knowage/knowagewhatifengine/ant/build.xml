@@ -114,16 +114,6 @@
 	<target name="jar" depends="copy.artifacts" description="Generates executable jar file">
 		<typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpathref="svnant.classpath" />
 
-		<!-- 
-		The following task has been commented out because it causes an error. 
-		See: http://www.spagoworld.org/jforum/posts/list/1045.page 
-		-->
-		<!-- 
-		<svn>
-			<wcVersion path="${src}" prefix="svn." />
-		</svn>
-		-->
-
 		<jar destfile="${build}/${webapp_name}/WEB-INF/lib/knowagewhatifengine.core-${project.version}.jar">
 			<fileset dir="${build}/${webapp_name}/WEB-INF/classes/">
 				<include name="it/**/*" />
@@ -266,7 +256,7 @@
 	<!--   WAR CREATION FOR SINGLE PACKAGES                                                               -->
 	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
-	<target name="create-bin.war" depends="init,jar,copy.artifacts">
+	<target name="create-bin.war" depends="init,copy.artifacts,jar">
 		<antcall target="${sso}" />
 		<antcall target="${specific.ant.task}" />
 		<antcall target="${ext.deploy}" />
