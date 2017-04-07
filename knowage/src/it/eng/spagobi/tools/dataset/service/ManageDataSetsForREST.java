@@ -1243,9 +1243,13 @@ public class ManageDataSetsForREST {
 	private void renameAndMoveDatasetFile(String originalFileName, String newFileName, String resourcePath, String fileType) {
 		String filePath = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar + "temp" + File.separatorChar;
 		String fileNewPath = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar;
-
+		
 		File originalDatasetFile = new File(filePath + originalFileName);
 		File newDatasetFile = new File(fileNewPath + newFileName + "." + fileType.toLowerCase());
+		
+		String filePathCloning = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar;
+		File originalDatasetFileCloning = new File(filePathCloning + originalFileName);
+		
 		if (originalDatasetFile.exists()) {
 			/*
 			 * This method copies the contents of the specified source file to
@@ -1262,9 +1266,16 @@ public class ManageDataSetsForREST {
 				logger.debug("Cannot move dataset File");
 				throw new SpagoBIRuntimeException("Cannot move dataset File", e);
 			}
+		} else if (originalDatasetFileCloning.exists()) {
+			try {
+				FileUtils.copyFile(originalDatasetFileCloning, newDatasetFile);
+			} catch (IOException e) {
+				logger.debug("Cannot move dataset File");
+				throw new SpagoBIRuntimeException("Cannot move dataset File", e);
+			}
 		}
 
-	}
+	} 
 	
 	private void deleteDatasetFile(String fileName, String resourcePath, String fileType) {
 		String filePath = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar + "temp" + File.separatorChar;
