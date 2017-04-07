@@ -546,10 +546,42 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	
 
 	$scope.updateLovWithoutProvider = function() {
-		console.log( $scope.lovProviderFlag)
 		var result = {}
 		var propName = $scope.selectedLov.itypeCd;
 		var prop = lovProviderEnum[propName];
+		
+		switch (prop) {
+		case lovProviderEnum.QUERY:
+			$scope.selectedLov.lovProvider[prop].CONNECTION = $scope.selectedQuery.datasource;
+			$scope.selectedLov.lovProvider[prop].STMT = $scope.selectedQuery.query;
+			
+		break;
+		case lovProviderEnum.SCRIPT:
+			$scope.selectedLov.lovProvider[prop].LANGUAGE = $scope.selectedScriptType.language;
+			$scope.selectedLov.lovProvider[prop].SCRIPT =  $scope.selectedScriptType.text;
+		break;
+		case lovProviderEnum.FIX_LOV:
+			
+			if($scope.listForFixLov != null && $scope.listForFixLov.length > 1){
+				$scope.selectedLov.lovProvider[prop].ROWS.ROW = $scope.listForFixLov;
+			}else if($scope.listForFixLov != null && $scope.listForFixLov.length == 1){
+				$scope.selectedLov.lovProvider[prop].ROWS.ROW = $scope.listForFixLov[0];
+			}
+		break;
+		case lovProviderEnum.JAVA_CLASS:
+			$scope.selectedLov.lovProvider[prop].JAVA_CLASS_NAME = $scope.selectedJavaClass.name;
+		break;
+		case lovProviderEnum.DATASET:
+			$scope.selectedLov.lovProvider[prop].ID = $scope.selectedDataset.id;
+			if($scope.selectedDataset.id){
+				for (var i = 0; i < $scope.listOfDatasets.length; i++) {
+					if($scope.listOfDatasets[i].id == $scope.selectedDataset.id){
+						$scope.selectedLov.lovProvider[prop].LABEL = $scope.listOfDatasets[i].label;
+					}
+				}
+			}		
+		break;
+		}
 		
 		var tempObj = $scope.selectedLov.lovProvider[prop];
 		result[prop] = tempObj
@@ -559,6 +591,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 			xmlAsStr= xmlAsStr.replace(/&#x27;/g, "'")
 		}
 		$scope.selectedLov.lovProvider = xmlAsStr;
+		
 		
 		sbiModule_restServices.promisePut("2.0/lovs","",$scope.selectedLov)
 		.then(function(response) {
@@ -859,10 +892,10 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 		 */
 		
 		$scope.getDatasets = function() {
-			sbiModule_restServices.promiseGet("1.0/datasets","")
+			sbiModule_restServices.promiseGet("1.0/datasets/lov","")
 			.then(function(response) {
 				console.log(response);
-				$scope.listOfDatasets = response.data.root;
+				$scope.listOfDatasets = response.data;
 				console.log($scope.listOfDatasets);
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, sbiModule_translate.load("sbi.generic.toastr.title.error"));
