@@ -10,7 +10,11 @@
 
 	<!-- Initializer for SpagoBI metadata   -->  
 	<INITIALIZER class="it.eng.spagobi.commons.initializers.metadata.MetadataInitializer" config="" />
-
+	
+	<!-- 
+	<INITIALIZER class="it.eng.spagobi.commons.initializers.metadata.OAuth2MetadataInitializer" config="" />
+	 -->  
+	
 	<!-- Initializer for Alarm Sending-->
 	<!-- 
 	<INITIALIZER class="it.eng.spagobi.tools.scheduler.init.AlarmQuartzInitializer" config="" />
