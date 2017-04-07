@@ -331,6 +331,9 @@
 		<unzip src="../../../knowagewhatifengine/dist/knowagewhatifengine.war" dest="${tomcat.home}/webapps/knowagewhatifengine" />
 	</target>
 	
+	<target name="create.knowagewhatifengineee.jar" depends="create.knowagewhatifengine.war">
+		<ant dir="../knowagewhatifengineee/ant" />
+	</target>
 	
 	
 	<!-- SOCIAL ENGINE -->
@@ -493,12 +496,19 @@
 
 	<target name="deploy.all.with.server.manager" depends="deploy.all" >
 		<antcall target="add.server.manager" />
+		<antcall target="add.knowagewhatifenfineee" />
 	</target>
 	
 	<target name="add.server.manager">
 		<antcall target="create.knowage.servermanager.jar" />
 		<delete file="${tomcat.home}/webapps/knowage/WEB-INF/lib/knowage.servermanager-*.jar" />
 		<copy file="../../../knowageservermanager/dist/knowage.servermanager-${project.version}.jar" todir="${tomcat.home}/webapps/knowage/WEB-INF/lib" overwrite="true" />
+	</target>
+	
+	<target name="add.knowagewhatifenfineee">
+		<antcall target="create.knowagewhatifengineee.jar" />
+		<delete file="${tomcat.home}/webapps/knowagewhatifengine/WEB-INF/lib/knowagewhatifengineee-*.jar" />
+		<copy file="../../../knowagewhatifengineee/dist/knowagewhatifengineee-${project.version}.jar" todir="${tomcat.home}/webapps/knowagewhatifengine/WEB-INF/lib" overwrite="true" />
 	</target>
 
 	<target name="clean-bin.all" >
