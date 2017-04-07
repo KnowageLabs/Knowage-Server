@@ -53,11 +53,11 @@ public class StyleResource {
 		JSONArray allStyles = new JSONArray();
 
 		File folder = new File(resourcePath + PATH_TO_STYLE);
-
+		
 		if (!folder.exists()) {
 			return allStyles.toString();
 		}
-
+		
 		File[] listOfFiles = folder.listFiles();
 
 		for (int i = 0; i < listOfFiles.length; i++) {
@@ -95,6 +95,16 @@ public class StyleResource {
 
 			String template = fileContent.toString();
 			JSONObject obj = new JSONObject(Xml.xml2json(template));
+			 Iterator keys = obj.keys();
+		        
+		       String key= (String) keys.next();
+		       Object keyValue = obj.get(key);
+		       JSONObject style = (JSONObject) keyValue;
+		        if(key.equalsIgnoreCase("chart")){
+		        	obj.remove(key);
+		        	obj.put("CHARTSTYLE", style);
+		        }
+		           
 			obj = parseTemplate(obj);
 
 			// if empty json object is returned it would not be added to styles

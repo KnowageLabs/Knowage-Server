@@ -17,7 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 angular.module('ChartDesignerService', [])
 .service('ChartDesignerData',function(sbiModule_restServices, sbiModule_messaging,sbiModule_translate,sbiModule_config, $http){
 	
@@ -413,7 +412,7 @@ angular.module('ChartDesignerService', [])
 					      "isCockpitEngine":"",
 					      "orientation":"",
 					      "style":{
-		                	  "backgroundColor":"",
+		                	  "backgroundColor":"#FFFFFF",
 		                	  "fontFamily":"",
 		                	  "fontWeight":"",
 		                	  "fontSize":""
@@ -604,7 +603,7 @@ angular.module('ChartDesignerService', [])
 						"fontFamily":"",
 						"fontSize":"",
 						"fontWeight":"",
-						"backgroundColor":""
+						"backgroundColor":"#FFFFFF"
 					},
 					"styleName": "",
 					"width": "",
@@ -793,7 +792,7 @@ angular.module('ChartDesignerService', [])
 				"orientation": "horizontal",
 				"seriesStacking": false,
 				"style":{
-              	  "backgroundColor":"",
+              	  "backgroundColor":"#FFFFFF",
               	  "fontFamily":"",
               	  "fontWeight":"",
               	  "fontSize":""
@@ -997,7 +996,7 @@ angular.module('ChartDesignerService', [])
 				"seriesStacking": false,
 				"showTableParallel": false,
 				"style":{
-              	  "backgroundColor":"",
+              	  "backgroundColor":"#FFFFFF",
               	  "fontFamily":"",
               	  "fontWeight":"",
               	  "fontSize":""
@@ -1187,7 +1186,7 @@ angular.module('ChartDesignerService', [])
 				"isCockpitEngine": "",
 				"orientation": "",
 				"style":{
-              	  "backgroundColor":"",
+              	  "backgroundColor":"#FFFFFF",
               	  "fontFamily":"",
               	  "fontWeight":"",
               	  "fontSize":""
@@ -1380,7 +1379,7 @@ angular.module('ChartDesignerService', [])
 				"orientation": "",
 				"seriesStacking": false,
 				"style":{
-              	  "backgroundColor":"",
+              	  "backgroundColor":"#FFFFFF",
               	  "fontFamily":"",
               	  "fontWeight":"",
               	  "fontSize":""
@@ -1554,7 +1553,7 @@ angular.module('ChartDesignerService', [])
 				"opacMouseOver": 0,
 				"orientation": "",
 				"style":{
-              	  "backgroundColor":"",
+              	  "backgroundColor":"#FFFFFF",
               	  "fontFamily":"",
               	  "fontWeight":"",
               	  "fontSize":""
@@ -1760,7 +1759,7 @@ angular.module('ChartDesignerService', [])
 				"isCockpitEngine": "",
 				"orientation": "horizontal",
 				"style":{
-              	  "backgroundColor":"",
+              	  "backgroundColor":"#FFFFFF",
               	  "fontFamily":"",
               	  "fontWeight":"",
               	  "fontSize":""
@@ -1953,7 +1952,7 @@ angular.module('ChartDesignerService', [])
 				"seriesStacking": false,
 				"sizeCriteria": "serie",
 				"style":{
-              	  "backgroundColor":"",
+              	  "backgroundColor":"#FFFFFF",
               	  "fontFamily":"",
               	  "fontWeight":"",
               	  "fontSize":""
@@ -2027,7 +2026,7 @@ angular.module('ChartDesignerService', [])
 					"fontFamily": "",
 					"fontSize": "",
 					"fontWeight": "",
-					"backgroundColor": ""
+					"backgroundColor": "#FFFFFF"
 				},
 				"styleName": "",
 				"type": "CHORD",
