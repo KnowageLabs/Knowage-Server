@@ -43,34 +43,5 @@ import org.jboss.resteasy.annotations.interception.ServerInterceptor;
 @ServerInterceptor
 @Precedence("SECURITY")
 public class SecurityServerInterceptor extends ExternalEngineSecurityServerInterceptor {
-	static private Logger logger = Logger.getLogger(SecurityServerInterceptor.class);
-
-	@Context
-	private HttpServletRequest servletRequest;
-
-	@Override
-	protected UserProfile authenticateUser() {
-		UserProfile profile = null;
-
-		logger.trace("IN");
-
-		try {
-			String user = servletRequest.getHeader("user");
-			String password = servletRequest.getHeader("password");
-
-			ISecurityServiceSupplier supplier = SecurityServiceSupplierFactory.createISecurityServiceSupplier();
-
-			SpagoBIUserProfile spagoBIUserProfile = supplier.checkAuthentication(user, password);
-			if (spagoBIUserProfile != null) {
-				profile = (UserProfile) UserUtilities.getUserProfile(user);
-			}
-		} catch (Exception e) {
-			throw new RuntimeException("An unexpected error occured while authenticating user", e);
-		} finally {
-			logger.trace("OUT");
-		}
-
-		return profile;
-	}
 
 }

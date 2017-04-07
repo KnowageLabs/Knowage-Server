@@ -181,4 +181,10 @@ public class InternalSecurityServiceSupplierImpl implements ISecurityServiceSupp
 
 	}
 
+	@Override
+	public SpagoBIUserProfile checkAuthenticationToken(String token) {
+		// TODO Auto-generated method stub
+		return createUserProfile(token);
+	}
+
 }

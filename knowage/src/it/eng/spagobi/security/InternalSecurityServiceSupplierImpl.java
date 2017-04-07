@@ -182,4 +182,9 @@ public class InternalSecurityServiceSupplierImpl implements
 
 	}
 
+	@Override
+	public SpagoBIUserProfile checkAuthenticationToken(String token) {
+		return null;
+	}
+
 }

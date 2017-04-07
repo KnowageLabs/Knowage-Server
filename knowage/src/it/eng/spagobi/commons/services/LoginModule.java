@@ -244,7 +244,7 @@ public class LoginModule extends AbstractHttpModule {
 			userId = userProxy.readUserIdentifier(servletRequest);
 			logger.debug("OUT,userId:"+userId);
 			// if we are in SSO and user has a previous profile keep it!
-			if (previousProfile != null && previousProfile.getUserId().equals(userId)) {
+			if (previousProfile != null && previousProfile.getUserUniqueIdentifier().equals(userId)) {
 				if (previousProfile != null) {
 					profile = previousProfile;
 					// user is authenticated, nothing to do

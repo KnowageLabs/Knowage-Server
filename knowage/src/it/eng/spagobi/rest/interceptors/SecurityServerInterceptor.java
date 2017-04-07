@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -45,8 +45,9 @@ import org.jboss.resteasy.spi.interception.AcceptedByMethod;
 import org.jboss.resteasy.spi.interception.PreProcessInterceptor;
 
 /**
- * The org.jboss.resteasy.spi.interception.PreProcessInterceptor runs after a JAX-RS resource method is found to invoke on, but before the actual invocation
- * happens
+ * The org.jboss.resteasy.spi.interception.PreProcessInterceptor runs after a
+ * JAX-RS resource method is found to invoke on, but before the actual
+ * invocation happens
  *
  * Similar to SpagoBIAccessFilter but designed for REST services
  *
@@ -64,11 +65,13 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 	@Override
 	protected ServerResponse notAuthenticated() {
 		/*
-		 * This response is standard in Basic authentication. If the header with credentials is missing the server send the response asking for the header. The
-		 * browser will show a popup that requires the user credential.
+		 * This response is standard in Basic authentication. If the header with
+		 * credentials is missing the server send the response asking for the
+		 * header. The browser will show a popup that requires the user
+		 * credential.
 		 */
 		Headers<Object> header = new Headers<Object>();
-		//header.add("WWW-Authenticate", "Basic realm='spagobi'");
+		// header.add("WWW-Authenticate", "Basic realm='spagobi'");
 		return new ServerResponse("", 401, header);
 	}
 
@@ -79,15 +82,12 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 		logger.trace("IN");
 
 		try {
-			String auto = servletRequest.getHeader("Authorization");
-			int position = auto.indexOf("Direct");
-			if(position>-1 && position<5){//Direct stay at the beginning of the header
-				String encodedUser=  auto.replaceFirst("Direct ", "");
-				byte[] decodedBytes = Base64.decode(encodedUser);
-				String user = new String(decodedBytes, "UTF-8");
-				profile = (UserProfile) UserUtilities.getUserProfile(user);
-			}else{
-				String encodedUserPassword =  auto.replaceFirst("Basic ", "");
+			/*
+			 * author radmila.selakovic@mht.net checking if request header is
+			 * "X-Auth-Token"
+			 */
+			if (servletRequest.getHeader("X-Auth-Token") == null) {
+				String encodedUserPassword = servletRequest.getHeader("Authorization").replaceFirst("Basic ", "");
 				String credentials = null;
 				byte[] decodedBytes = Base64.decode(encodedUserPassword);
 				credentials = new String(decodedBytes, "UTF-8");
@@ -100,8 +100,19 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 
 				SpagoBIUserProfile spagoBIUserProfile = supplier.checkAuthentication(user, password);
 				if (spagoBIUserProfile != null) {
-					profile = (UserProfile) UserUtilities.getUserProfile(user);
+					profile = (UserProfile) UserUtilities.getUserProfile(spagoBIUserProfile.getUniqueIdentifier());
 				}
+			} else {
+				// if request header is
+				// "X-Auth-Token chencking authorization will be by access token"
+				String token = servletRequest.getHeader("X-Auth-Token");
+				ISecurityServiceSupplier supplier = SecurityServiceSupplierFactory.createISecurityServiceSupplier();
+
+				SpagoBIUserProfile spagoBIUserProfile = supplier.checkAuthenticationToken(token);
+				if (spagoBIUserProfile != null) {
+					profile = (UserProfile) UserUtilities.getUserProfile(spagoBIUserProfile.getUniqueIdentifier());
+				}
+				servletRequest.getSession().setAttribute(IEngUserProfile.ENG_USER_PROFILE, profile);
 
 			}
 		} catch (Throwable t) {
@@ -118,9 +129,29 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 		boolean authenticated = true;
 		IEngUserProfile engProfile = getUserProfileFromSession();
 
-		if (engProfile == null) {
-			authenticated = false;
-			logger.debug("User profile not in session.");
+		if (engProfile != null) {
+			// verify if the profile stored in session is still valid
+			String userId = null;
+			try {
+				userId = getUserIdentifier();
+			} catch (Exception e) {
+				logger.debug("User identifier not found");
+			}
+			if (userId != null && userId.equals(engProfile.getUserUniqueIdentifier().toString()) == false) {
+				logger.debug("User is authenticated but the profile store in session need to be updated");
+				engProfile = this.getUserProfileFromUserId();
+			} else {
+				logger.debug("User is authenticated and his profile is already stored in session");
+			}
+
+		} else {
+			engProfile = this.getUserProfileFromUserId();
+			if (engProfile != null) {
+				logger.debug("User is authenticated but his profile is not already stored in session");
+			} else {
+				logger.debug("User is not authenticated");
+				authenticated = false;
+			}
 		}
 		return authenticated;
 	}
@@ -142,6 +173,7 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 		return (IEngUserProfile) servletRequest.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 	}
 
+	@Override
 	public boolean accept(Class declaring, Method method) {
 		// return !method.isAnnotationPresent(POST.class);
 		return true;
