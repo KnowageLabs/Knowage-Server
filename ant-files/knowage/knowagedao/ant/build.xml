@@ -61,7 +61,7 @@
   <target name="compile"  description="compile the source" >
   	<antcall target="upgrade.mf" />
     <!-- Compile the java code from ${src} into ${build}/${webapp_name}/WEB-INF/classes -->
-    <javac srcdir="${src}" destdir="${build}" debug="on" encoding="${encoding}" build.compiler="modern"  >
+    <javac srcdir="${src}" destdir="${build}" debug="on" encoding="${encoding}">
       <classpath refid="jar.classpath"/>
     </javac> 
 	<exec dir="${project.dir}" executable="svn" output="${build}/svn.properties">
