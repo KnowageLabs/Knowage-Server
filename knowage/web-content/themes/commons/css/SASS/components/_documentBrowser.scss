@@ -283,34 +283,6 @@
 	.document_browser_image_QBE{
 	    background-image: url('../../sbi_default/img/analiticalmodel/browser/document_qbe.png')!important;
 	}
-	 
-	/*
-	.document_browser_image_CHART{
-	    background-image: url('../../sbi_default/img/analiticalmodel/browser/document_adhocreporting.png')!important;
-	}
-	
-	.document_browser_image_CHART{
-	    background-image: url('../../sbi_default/img/analiticalmodel/browser/document_collaborations.png')!important;
-	}
-	
-	.document_browser_image_CHART{
-	    background-image: url('../../sbi_default/img/analiticalmodel/browser/document_datamanagement.png')!important;
-	}
-	
-	.document_browser_image_CHART{
-	    background-image: url('../../sbi_default/img/analiticalmodel/browser/document_externalprocess.png')!important;
-	}
-	.document_browser_image_CHART{
-	    background-image: url('../../sbi_default/img/analiticalmodel/browser/document_freeinquiry.png')!important;
-	}
-	.document_browser_image_CHART{
-	    background-image: url('../../sbi_default/img/analiticalmodel/browser/document_inmemory.png')!important;
-	}
-	.document_browser_image_CHART{
-	    background-image: url('../../sbi_default/img/analiticalmodel/browser/document_whatif.png')!important;
-	}
-	
-	*/
 	
 	.preferiteDocumentIcon{
 	color: #E4A400;
@@ -368,6 +340,16 @@
 	.kn-documentBrowser{
 		.documentGridViewInput {
 			margin-top: 30px;
+		}
+		.selectedDocumentSidenav {
+			md-toolbar {
+				padding: 0;
+				div {
+					&.layout-row {
+						height: 100%;
+					}
+				}
+			}
 		}
 	}
 }
