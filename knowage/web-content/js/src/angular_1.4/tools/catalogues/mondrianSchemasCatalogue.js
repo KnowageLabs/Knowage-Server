@@ -450,8 +450,11 @@ function mondrianSchemasCatalogueFunction(sbiModule_translate, sbiModule_restSer
 	
 	//CLICK FUNCTION FOR CATALOQUE TABLE
 	$scope.catalogueClickFunction = function(item){
-		loadUsersInWF(item.id); // loading users for existing document legit state of catalog
-		isWorkflowStarted(item.id);
+		if(!$scope.disableWorkFlow ){
+			loadUsersInWF(item.id); // loading users for existing document legit state of catalog
+			isWorkflowStarted(item.id);
+		}
+
 		
 		if(item!=$scope.selectedMondrianSchema){
 			if($scope.isDirty){
