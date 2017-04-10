@@ -80,6 +80,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                  frameborder='0' >
 </iframe> 
 
+<iframe id='invalidSessionWhatIf'
+                 name='invalidSessionChart'
+                 src='<%=GeneralUtilities.getSpagoBiHost()	%><%=GeneralUtilities.getSpagoBiContext()%>whatifengine/invalidateSession.jsp'
+                 height='0'
+                 width='0'
+                 frameborder='0' >
+</iframe>
+
 <iframe id='invalidSessionCockpit'
                  name='invalidSessionCockpit'
                  src='<%=GeneralUtilities.getSpagoBiHost()	%><%=GeneralUtilities.getSpagoBiContext()%>cockpitengine/invalidateSession.jsp'
