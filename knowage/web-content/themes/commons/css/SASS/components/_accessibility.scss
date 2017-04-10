@@ -34,3 +34,54 @@
 		}
 	}
 }
+
+.kn-accessiblePdf {
+	width: 60%;
+	.progressLinearAccessibleTables {
+		margin-bottom: 8px;
+		.bottom-block {
+			position: relative;
+			height: $biggerLineHeight;
+			width: 100%; 
+			strong {
+				text-transform: capitalize;
+			}
+			&.success {
+				background-color: lighten($positiveColor,40%);
+			}
+			&.active {
+				background-color: lighten($secondaryColor,20%);
+			}
+			&.available {
+				background-color: lighten($ternaryColor,10%);
+			}
+			&.error {
+				background-color: lighten($negativeColor,30%);
+			}
+			> span {
+				line-height: $biggerLineHeight;
+				padding-left: 20px;
+				font-size: $baseFontSize;
+			}
+		}
+	}
+
+	.hint {
+		text-align: center;
+		background-color: $pageBackground;
+		margin-bottom: 30px;
+		border-radius: 2px;
+		font-size: .6rem;
+		text-transform: uppercase;
+		padding: 8px;
+		width: 80%;
+		-webkit-box-shadow: 0px 2px 3px 2px $shadowsColor;
+		-moz-box-shadow: 0px 2px 3px 2px $shadowsColor;
+		box-shadow: 0px 2px 3px 2px $shadowsColor;
+		margin:0 auto 10px auto;
+		p {
+			margin:0;
+		}
+	}
+}
+
