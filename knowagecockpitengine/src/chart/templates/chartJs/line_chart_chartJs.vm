@@ -63,7 +63,7 @@
 	
 		additionalData: {
 			categoryColumn: '$categorieColumns.column',
-			categoryName: '$categorieColumns.name'
+			categoryName: '$categorieColumns.name.replace("'","\'")'
 		},
 	#if($chart.height != '')
 		height: $chart.height,

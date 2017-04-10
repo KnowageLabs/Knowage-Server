@@ -82,7 +82,7 @@
 		isCockpitEngine: $chart.isCockpitEngine,
 		additionalData: {
 			categoryColumn: '$category.column',
-			categoryName: '$category.name',
+			categoryName: '$category.name.replace("'","\'")',
 			#if($series.class.name == 'java.util.LinkedHashMap')
 				serieName: '$series.name'		
 			#end		

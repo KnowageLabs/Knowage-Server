@@ -407,8 +407,8 @@ angular.module('ChartDesignerService', [])
 							         ] 
 					      },
 					         
-					      "height":"",
-					      "width":"",
+					      "height":100,
+					      "width":100,
 					      "isCockpitEngine":"",
 					      "orientation":"",
 					      "style":{
@@ -465,8 +465,8 @@ angular.module('ChartDesignerService', [])
 				                  }
 					         }
 					      },
-					      "heightDimType":"pixels",
-					      "widthDimType":"pixels",
+					      "heightDimType":"percentage",
+					      "widthDimType":"percentage",
 					      "borderVisible":false,
 					      "seriesStacking":false,
 					      "alpha":  0,
@@ -594,8 +594,8 @@ angular.module('ChartDesignerService', [])
 					"COLORPALETTE": {
 						"COLOR": []
 					},
-					"height": "",
-					"heightDimType": "pixels",
+					"height": 100,
+					"heightDimType": "percentage",
 					"isCockpitEngine": "",
 					"orientation": "",
 					"seriesStacking": false,
@@ -606,8 +606,8 @@ angular.module('ChartDesignerService', [])
 						"backgroundColor":"#FFFFFF"
 					},
 					"styleName": "",
-					"width": "",
-					"widthDimType": "pixels",
+					"width": 100,
+					"widthDimType": "percentage",
 					"SUBTITLE": {
 						"style":{
 							"align":"",
@@ -786,8 +786,8 @@ angular.module('ChartDesignerService', [])
 				"COLORPALETTE": {
 					"COLOR": []
 				},
-				"height": 0,
-				"heightDimType": "pixels",
+				"height": 100,
+				"heightDimType": "percentage",
 				"isCockpitEngine": "",
 				"orientation": "horizontal",
 				"seriesStacking": false,
@@ -798,8 +798,8 @@ angular.module('ChartDesignerService', [])
               	  "fontSize":""
                 },
 				"styleName": "",
-				"width": 0,
-				"widthDimType": "pixels",
+				"width": 100,
+				"widthDimType": "percentage",
 				"SUBTITLE": {
 					"style":{
 	                	  "align":"",
@@ -989,8 +989,8 @@ angular.module('ChartDesignerService', [])
 				"COLORPALETTE": {
 					"COLOR": []
 				},
-				"height": 0,
-				"heightDimType": "pixels",
+				"height": 100,
+				"heightDimType": "percentage",
 				"isCockpitEngine": "",
 				"orientation": "horizontal",
 				"seriesStacking": false,
@@ -1002,8 +1002,8 @@ angular.module('ChartDesignerService', [])
               	  "fontSize":""
                 },
 				"styleName": "",
-				"width": 0,
-				"widthDimType": "pixels",
+				"width": 100,
+				"widthDimType": "percentage",
 				"EMPTYMESSAGE":{  
 					"style":{
 	                	  "align":"",
@@ -1182,7 +1182,7 @@ angular.module('ChartDesignerService', [])
 				"COLORPALETTE": {
 					"COLOR": []
 				},
-				"height": "",
+				"height": 100,
 				"isCockpitEngine": "",
 				"orientation": "",
 				"style":{
@@ -1191,7 +1191,7 @@ angular.module('ChartDesignerService', [])
               	  "fontWeight":"",
               	  "fontSize":""
                 },
-				"width": "",
+				"width": 100,
 				"LEGEND": {
 					"layout": "",
 					"position": "",
@@ -1241,8 +1241,8 @@ angular.module('ChartDesignerService', [])
 	                  },
 			         "text":""
 			      },
-				"heightDimType": "pixels",
-				"widthDimType": "pixels",
+				"heightDimType": "percentage",
+				"widthDimType": "percentage",
 				"borderVisible": false,
 				"seriesStacking": false,
 				"styleName": ""
@@ -1373,8 +1373,8 @@ angular.module('ChartDesignerService', [])
 					"COLOR": []
 				},
 				"borderVisible": false,
-				"height": "",
-				"heightDimType": "pixels",
+				"height": 100,
+				"heightDimType": "percentage",
 				"isCockpitEngine": "",
 				"orientation": "",
 				"seriesStacking": false,
@@ -1385,8 +1385,8 @@ angular.module('ChartDesignerService', [])
               	  "fontSize":""
                 },
 				"styleName": "",
-				"width": "",
-				"widthDimType": "pixels",
+				"width": 100,
+				"widthDimType": "percentage",
 				"zoomType": "",
 				"LEGEND": {
 					"layout": "",
@@ -1548,7 +1548,7 @@ angular.module('ChartDesignerService', [])
 				"COLORPALETTE": {
 					"COLOR": []
 				},
-				"height": 0,
+				"height": 100,
 				"isCockpitEngine": "",
 				"opacMouseOver": 0,
 				"orientation": "",
@@ -1559,7 +1559,7 @@ angular.module('ChartDesignerService', [])
               	  "fontSize":""
                 },
 				"styleName": "",
-				"width": 0,
+				"width": 100,
 				"LEGEND": {
 					"layout": "",
 					"position": "",
@@ -1627,8 +1627,8 @@ angular.module('ChartDesignerService', [])
 	                  },
 			         "text":""
 			     },
-				"heightDimType": "pixels",
-				"widthDimType": "pixels",
+				"heightDimType": "percentage",
+				"widthDimType": "percentage",
 				"seriesStacking": false,
 				"percAbsolSliceValue": ""
 			};
@@ -1755,7 +1755,7 @@ angular.module('ChartDesignerService', [])
 				"COLORPALETTE": {
 					"COLOR": []
 				},
-				"height": 0,
+				"height": 100,
 				"isCockpitEngine": "",
 				"orientation": "horizontal",
 				"style":{
@@ -1764,7 +1764,7 @@ angular.module('ChartDesignerService', [])
               	  "fontWeight":"",
               	  "fontSize":""
                 },
-				"width": 0,
+				"width": 100,
 				"LEGEND": {
 					"layout": "",
 					"position": "",
@@ -1811,8 +1811,8 @@ angular.module('ChartDesignerService', [])
 	                  },
 			         "text":""
 			      },
-				"heightDimType": "pixels",
-				"widthDimType": "pixels",
+				"heightDimType": "percentage",
+				"widthDimType": "percentage",
 				"seriesStacking": false,
 				"styleName": ""
 			};
@@ -1939,8 +1939,8 @@ angular.module('ChartDesignerService', [])
 				"COLORPALETTE": {
 					"COLOR": []
 				},
-				"height": 0,
-				"heightDimType": "pixels",
+				"height": 100,
+				"heightDimType": "percentage",
 				"isCockpitEngine": "",
 				"maxAngle": 0,
 				"maxFontSize": 10,
@@ -1958,8 +1958,8 @@ angular.module('ChartDesignerService', [])
               	  "fontSize":""
                 },
 				"styleName": "",
-				"width": 0,
-				"widthDimType": "pixels",
+				"width": 100,
+				"widthDimType": "percentage",
 				"wordLayout": "horizontal",
 				"wordPadding": 2,
 				"SUBTITLE":{  
@@ -2019,7 +2019,7 @@ angular.module('ChartDesignerService', [])
 	
 	this.getChordTemplate = function() {
 		var chordTemp = {
-				"height": 0,
+				"height": 100,
 				"isCockpitEngine": "",
 				"orientation": "horizontal",
 				"style": {
@@ -2030,7 +2030,9 @@ angular.module('ChartDesignerService', [])
 				},
 				"styleName": "",
 				"type": "CHORD",
-				"width": 0,
+				"width": 100,
+				"heightDimType": "percentage",
+				"widthDimType": "percentage",
 				"TITLE": {
 					"style": {
 						"align": "",
