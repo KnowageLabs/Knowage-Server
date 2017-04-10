@@ -389,9 +389,6 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 							fields.remove(fieldIndex);
 						}
 					}
-					if (fields.length() < 2) {
-						associationsWithoutParams.remove(associationIndex);
-					}
 				}
 			}
 			AssociationGroup associationGroupWithoutParams = serializer.deserialize(associationGroupObjectWithoutParams);
@@ -459,14 +456,24 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 							} else {
 								values = "'" + object.toString() + "'";
 							}
+
 							IDataSet dataset = getDataSetDAO().loadDataSetByLabel(datasetLabel);
-							String filter;
-							if (realtimeDatasets.contains(datasetLabel) && !(dataset.isPersisted() && !dataset.isPersistedHDFS()) && !(dataset.isFlatDataset())
-									&& (!DatasetManagementAPI.isJDBCDataSet(dataset) || SqlUtils.isBigDataDialect(dataset.getDataSource().getHibDialectName()))) {
-								filter = DataStore.DEFAULT_TABLE_NAME + "." + AbstractJDBCDataset.encapsulateColumnName(column, null) + " IN (" + values + ")";
+							IDataSource dataSource;
+							String filter = "";
+
+							if (dataset.isPersisted() && !dataset.isPersistedHDFS()) {
+								dataSource = dataset.getDataSourceForWriting();
+							} else if (dataset.isFlatDataset()
+									|| (realtimeDatasets.contains(datasetLabel) && DatasetManagementAPI.isJDBCDataSet(dataset) && !SqlUtils
+											.isBigDataDialect(dataset.getDataSource().getHibDialectName()))) {
+								dataSource = dataset.getDataSource();
+							} else if (realtimeDatasets.contains(datasetLabel)) {
+								dataSource = null;
+								filter = DataStore.DEFAULT_TABLE_NAME + ".";
 							} else {
-								filter = AbstractJDBCDataset.encapsulateColumnName(column, cacheDataSource) + " IN (" + values + ")";
+								dataSource = cacheDataSource;
 							}
+							filter += AbstractJDBCDataset.encapsulateColumnName(column, dataSource) + " IN (" + values + ")";
 							filtersMap.put(datasetLabel, filter);
 
 							if (!selectionsMap.containsKey(datasetLabel)) {
