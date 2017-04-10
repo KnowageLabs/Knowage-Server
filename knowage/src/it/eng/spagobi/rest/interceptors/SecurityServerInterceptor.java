@@ -87,20 +87,29 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 			 * "X-Auth-Token"
 			 */
 			if (servletRequest.getHeader("X-Auth-Token") == null) {
-				String encodedUserPassword = servletRequest.getHeader("Authorization").replaceFirst("Basic ", "");
-				String credentials = null;
-				byte[] decodedBytes = Base64.decode(encodedUserPassword);
-				credentials = new String(decodedBytes, "UTF-8");
+				String auto = servletRequest.getHeader("Authorization");
+				int position = auto.indexOf("Direct");
+				if(position>-1 && position<5){//Direct stay at the beginning of the header
+					String encodedUser=  auto.replaceFirst("Direct ", "");
+					byte[] decodedBytes = Base64.decode(encodedUser);
+					String user = new String(decodedBytes, "UTF-8");
+					profile = (UserProfile) UserUtilities.getUserProfile(user);
+				}else{
+					String encodedUserPassword =  auto.replaceFirst("Basic ", "");
+					String credentials = null;
+					byte[] decodedBytes = Base64.decode(encodedUserPassword);
+					credentials = new String(decodedBytes, "UTF-8");
 
-				StringTokenizer tokenizer = new StringTokenizer(credentials, ":");
-				String user = tokenizer.nextToken();
-				String password = tokenizer.nextToken();
+					StringTokenizer tokenizer = new StringTokenizer(credentials, ":");
+					String user = tokenizer.nextToken();
+					String password = tokenizer.nextToken();
 
-				ISecurityServiceSupplier supplier = SecurityServiceSupplierFactory.createISecurityServiceSupplier();
+					ISecurityServiceSupplier supplier = SecurityServiceSupplierFactory.createISecurityServiceSupplier();
 
-				SpagoBIUserProfile spagoBIUserProfile = supplier.checkAuthentication(user, password);
-				if (spagoBIUserProfile != null) {
-					profile = (UserProfile) UserUtilities.getUserProfile(spagoBIUserProfile.getUniqueIdentifier());
+					SpagoBIUserProfile spagoBIUserProfile = supplier.checkAuthentication(user, password);
+					if (spagoBIUserProfile != null) {
+						profile = (UserProfile) UserUtilities.getUserProfile(user);
+					}
 				}
 			} else {
 				// if request header is

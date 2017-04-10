@@ -49,7 +49,10 @@ angular
 		this.openQbeInterfaceDSet = function($scope, editDSet, url) {
 			
 			$scope.editQbeDset = editDSet;
-			globalQbeJson = $scope.selectedDataSet.qbeJSONQuery;
+			if( $scope.selectedDataSet){
+				globalQbeJson = $scope.selectedDataSet.qbeJSONQuery;
+			}
+			
 			
 			$mdDialog
 				.show
@@ -58,7 +61,6 @@ angular
 						scope:$scope,
 						preserveScope: true,
 						controller: openQbeInterfaceController,
-//						templateUrl: '/knowage/js/src/angular_1.4/tools/workspace/scripts/services/qbeViewerTemplate.html',
 						templateUrl: sbiModule_config.contextName + '/js/src/angular_1.4/tools/workspace/scripts/services/qbeViewerTemplate.html',
 						fullscreen: true,
 						locals:{url:url}				
