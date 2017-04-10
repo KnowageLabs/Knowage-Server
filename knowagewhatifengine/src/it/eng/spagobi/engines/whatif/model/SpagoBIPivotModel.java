@@ -86,26 +86,26 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 
 	/*
 	 * public void addCalucatedMembers(boolean add) {
-	 * 
+	 *
 	 * if (add) { QueryAxis qaRows = getQueryAxis(Axis.ROWS); QueryAxis
 	 * qaColumns = getQueryAxis(Axis.COLUMNS);
-	 * 
+	 *
 	 * Exp rowsExp = qaRows.getExp();
-	 * 
+	 *
 	 * List<Exp> rowsArgs = new ArrayList<Exp>(1); rowsArgs.add(rowsExp);
-	 * 
+	 *
 	 * FunCall rowsCC = new FunCall("AddCalculatedMembers", Syntax.Function,
 	 * rowsArgs); qaRows.setExp(rowsCC);
-	 * 
+	 *
 	 * Exp columnsExp = qaColumns.getExp();
-	 * 
+	 *
 	 * List<Exp> columsArgs = new ArrayList<Exp>(1); columsArgs.add(columnsExp);
-	 * 
+	 *
 	 * FunCall columnsCC = new FunCall("AddCalculatedMembers", Syntax.Function,
 	 * columsArgs); qaColumns.setExp(columnsCC); }
-	 * 
+	 *
 	 * fireModelChanged();
-	 * 
+	 *
 	 * }
 	 */
 	@Override
@@ -485,18 +485,23 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 	}
 
 	private boolean isSubset(QueryAxis qa) {
-		FunCall f = (FunCall) qa.getExp();
-		if (f.getFunction().equalsIgnoreCase("Subset")) {
-			return true;
+		if(qa.getExp() instanceof FunCall){
+			FunCall f = (FunCall) qa.getExp();
+			if (f.getFunction().equalsIgnoreCase("Subset")) {
+				return true;
+			}
 		}
 
 		return false;
 	}
 
 	private FunCall getSubSetFunction(QueryAxis qa) {
-		FunCall f = (FunCall) qa.getExp();
-		f.getFunction();
-		return f;
+		if(qa.getExp() instanceof FunCall){
+			FunCall f = (FunCall) qa.getExp();
+			f.getFunction();
+			return f;
+		}
+		return null;
 
 	}
 
