@@ -27,6 +27,7 @@ import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 import it.eng.spagobi.wapp.bo.Menu;
 import it.eng.spagobi.wapp.dao.IMenuDAO;
@@ -152,20 +153,29 @@ public class MenuResource extends AbstractSpagoBIResource {
 				filesHtmls = filesHtmlsArrayList.toArray(filesHtmls);
 			}
 			JSONArray njo = new JSONArray();
-			for (int i = 0; i < filesHtmls.length; i++) {
+			if (filesHtmls != null) {
+				for (int i = 0; i < filesHtmls.length; i++) {
 
-				JSONObject file = new JSONObject();
-				try {
-					file.put("id", i + 1);
-					file.put("name", filesHtmls[i]);
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					JSONObject file = new JSONObject();
+					try {
+						file.put("id", i + 1);
+						file.put("name", filesHtmls[i]);
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					njo.put(file);
 				}
-				njo.put(file);
-			}
 
-			return Response.ok(njo.toString()).build();
+				return Response.ok(njo.toString()).build();
+			} else {
+				String errorString = "Folder static_menu does not exist inside tenant";
+				throw new SpagoBIRuntimeException(errorString);
+			}
+		} catch (SpagoBIRuntimeException e) {
+			logger.error(e.getMessage(), e);
+			throw new SpagoBIRestServiceException(e.getMessage(), buildLocaleFromSession(), e);
+
 		} catch (Exception e) {
 			String errorString = "sbi.menu.load.htmls.error";
 			logger.error(errorString, e);
