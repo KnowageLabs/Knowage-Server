@@ -877,7 +877,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     		console.log(currentPageNumber);
 		} else if ($scope.searchValue!=undefined || $scope.searchValue.length!=0) {
 			//TO DO:
-			/*front-end pagination when the search result is greater than the number of itemsPerPage*/
+			/*front-end pagination when the search result is greater than the number of itemsPerPage*/			
 		}
     	
 			
