@@ -851,28 +851,35 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     
     
     $scope.datasetLike = function (searchValue, itemsPerPage,currentPageNumber) {
+    	$scope.searchValue = searchValue;
     	console.log(searchValue+""+itemsPerPage);
     	var start = 0;
-    	if(currentPageNumber>1){
-			start = (currentPageNumber - 1) * itemsPerPage ;
-		}
-		$scope.loadDatasetList(start, itemsPerPage, searchValue);
+    	//if(currentPageNumber>1){
+		//	start = (currentPageNumber - 1) * itemsPerPage ;
+		//}
+		$scope.loadDatasetList(start, -1, searchValue);
     };
     
     $scope.changeDatasetPage=function(itemsPerPage,currentPageNumber){
-    	sbiModule_restServices.promiseGet("1.0/datasets", "countDataSets")
-		.then(function(response) {
-			$scope.numOfDs = response.data;
-			var start = 0;
-			if(currentPageNumber>1){
-				start = (currentPageNumber - 1) * itemsPerPage;
-			}
-			$scope.loadDatasetList(start, itemsPerPage, null);
-		}, function(response) {
-			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-		});
-		console.log(itemsPerPage);
-		console.log(currentPageNumber);
+    	if($scope.searchValue==undefined || $scope.searchValue.length==0 ){
+    		sbiModule_restServices.promiseGet("1.0/datasets", "countDataSets")
+    		.then(function(response) {
+    			$scope.numOfDs = response.data;
+    			var start = 0;
+    			if(currentPageNumber>1){
+    				start = (currentPageNumber - 1) * itemsPerPage;
+    			}
+    			$scope.loadDatasetList(start, itemsPerPage, null);
+    		}, function(response) {
+    			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+    		});
+    		console.log(itemsPerPage);
+    		console.log(currentPageNumber);
+		} else if ($scope.searchValue!=undefined || $scope.searchValue.length!=0) {
+			//TO DO:
+			/*front-end pagination when the search result is greater than the number of itemsPerPage*/
+		}
+    	
 			
 		
 	}
