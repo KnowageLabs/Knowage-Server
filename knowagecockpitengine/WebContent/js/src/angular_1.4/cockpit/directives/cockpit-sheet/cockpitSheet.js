@@ -65,6 +65,7 @@ angular.module('cockpitModule').filter('orderObjectBy', function() {
 	});
 
 function cockpitSheetControllerFunction($scope,cockpitModule_template,cockpitModule_properties,sbiModule_translate,$mdPanel,$mdDialog,$timeout){
+	$scope.translate = sbiModule_translate;
 	$scope.cockpitModule_template=cockpitModule_template;
 	$scope.cockpitModule_properties=cockpitModule_properties;
 	
@@ -75,6 +76,7 @@ function cockpitSheetControllerFunction($scope,cockpitModule_template,cockpitMod
 	$scope.addSheet=function(){
 		cockpitModule_template.sheets.push({index:cockpitModule_template.sheets.length,label:sbiModule_translate.load("sbi.cockpit.new.sheet"),widgets:[]});
 	};
+	
 	
 	$scope.hide=false;
 	$scope.refreshToolbar=function(){
@@ -107,6 +109,14 @@ function cockpitSheetControllerFunction($scope,cockpitModule_template,cockpitMod
 		var closeMenu=function(){
 			mdPanelRef.close();
 		}
+		
+		self.cloneSheet = function(ev) {
+			cockpitModule_template.sheets.push({
+				index:cockpitModule_template.sheets.length,
+				label:sbiModule_translate.load("sbi.cockpit.new.sheet"),
+				widgets:sheet.widgets});
+		}
+		
 		self.deleteSheet=function(){
 
 			var confirm = $mdDialog.confirm()
