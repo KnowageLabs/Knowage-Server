@@ -23,11 +23,14 @@ import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.RoleBO;
 import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.dao.IRoleDAO;
+import it.eng.spagobi.commons.domains.DomainCRUD;
 import it.eng.spagobi.commons.metadata.SbiDomains;
+import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
@@ -36,6 +39,8 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -160,6 +165,48 @@ public class RolesResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			logger.error("Role with selected id: " + id + " doesn't exists", e);
 			throw new SpagoBIRestServiceException("Item with selected id: " + id + " doesn't exists", buildLocaleFromSession(), e);
+		}
+	}
+
+
+
+	@SuppressWarnings({ "unchecked", "unchecked" })
+	@GET
+	@Path("/ds_categories")
+	@Produces(MediaType.APPLICATION_JSON + charset)
+	public String getDataSetCategories() {
+		IRoleDAO rolesDao = null;
+		List<RoleMetaModelCategory> ds = new ArrayList<RoleMetaModelCategory>();
+		List<Domain> resp = new ArrayList<Domain>();
+
+		try {
+			UserProfile up = getUserProfile();
+			Collection<String> roles = up.getRoles();
+
+				List<Domain> array = DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants.CATEGORY_DOMAIN_TYPE);
+				if (UserUtilities.isAdministrator(up)) {
+					resp = array;
+
+				}else{
+					for (Iterator iterator = roles.iterator(); iterator.hasNext();) {
+						String role = (String) iterator.next();
+						rolesDao = DAOFactory.getRoleDAO();
+						rolesDao.setUserProfile(getUserProfile());
+						ds.addAll(rolesDao.getDataSetCategoriesForRole(role));
+					}
+					for (RoleMetaModelCategory r : ds) {
+						for (Domain dom : array) {
+							if (r.getCategoryId().equals(dom.getValueId())) {
+								resp.add(dom);
+							}
+						}
+					}
+				}
+
+			return DomainCRUD.translate(resp, null).toString();
+		} catch (Exception e) {
+			logger.error("Error loading the list of dataset categories associated to user",  e);
+			throw new SpagoBIRestServiceException("Error loading the list of dataset categories associated to user", buildLocaleFromSession(), e);
 		}
 	}
 
@@ -345,7 +392,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 
 	/**
 	 * Service for getting list of Roles only with id and name of role
-	 * 
+	 *
 	 * @author Radmila Selakovic (rselakov, radmila.selakovic@mht.net
 	 */
 

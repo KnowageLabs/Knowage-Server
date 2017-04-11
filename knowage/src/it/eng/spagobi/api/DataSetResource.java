@@ -56,7 +56,6 @@ import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.exceptions.DatasetInUseException;
 import it.eng.spagobi.tools.dataset.exceptions.ParametersNotValorizedException;
-import it.eng.spagobi.tools.dataset.service.ManageDataSetsForREST;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
 import it.eng.spagobi.tools.scheduler.bo.Trigger;
@@ -175,7 +174,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 
 			IDataSetDAO dsDao = DAOFactory.getDataSetDAO();
 			dsDao.setUserProfile(getUserProfile());
-			ManageDataSetsForREST mdsfr = new ManageDataSetsForREST();
+			//ManageDataSetsForREST mdsfr = new ManageDataSetsForREST();
 			// List<IDataSet> dataSets = mdsfr.loadDataSetList(jsonString, userProfile)
 			// List<IDataSet> dataSets = dsDao.loadPagedDatasetList(offset, fetchSize);
 
@@ -231,8 +230,14 @@ public class DataSetResource extends AbstractSpagoBIResource {
 						}
 					}
 				}
+/**
+ * alberto ghedin
+ * next line is commented because the dao that return the datasets will return just datset owned by user or of same category
+ */
+			//	if (DataSetUtilities.isExecutableByUser(dataset, getUserProfile()))
 
-				if (DataSetUtilities.isExecutableByUser(dataset, getUserProfile()))
+
+
 					toBeReturned.add(dataset);
 			}
 
@@ -1467,33 +1472,26 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		}
 		JSONObject filtersJSON = null;
 		List<IDataSet> items = null;
-		if (true) {
+	//	if (true) {
 			filtersJSON = filters;
 			String hsql = filterList(filtersJSON);
 			items = dsDao.loadFilteredDatasetList(hsql, start, limit, getUserProfile().getUserUniqueIdentifier().toString());
-		} else {// not filtered
-			items = dsDao.loadPagedDatasetList(start, limit);
-			// items =
-			// dsDao.loadPagedDatasetList(start,limit,profile.getUserUniqueIdentifier().toString(),
-			// true);
-		}
+//		} else {// not filtered
+//			items = dsDao.loadPagedDatasetList(start, limit);
+//			// items =
+//			// dsDao.loadPagedDatasetList(start,limit,profile.getUserUniqueIdentifier().toString(),
+//			// true);
+//		}
 		return items;
 	}
 
 	private String filterList(JSONObject filtersJSON) throws JSONException {
 		logger.debug("IN");
-		boolean isAdmin = false;
-		try {
-			// Check if user is an admin
-			isAdmin = getUserProfile().isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN);
-		} catch (EMFInternalError e) {
-			logger.error("Error while filtering datasets");
-		}
+
+
 		String hsql = " from SbiDataSet h where h.active = true ";
 		// Ad Admin can see other users' datasets
-		if (!isAdmin) {
-			hsql = hsql + " and h.owner = '" + getUserProfile().getUserUniqueIdentifier().toString() + "'";
-		}
+
 		if (filtersJSON != null) {
 			String valuefilter = (String) filtersJSON.get(SpagoBIConstants.VALUE_FILTER);
 			String typeFilter = (String) filtersJSON.get(SpagoBIConstants.TYPE_FILTER);

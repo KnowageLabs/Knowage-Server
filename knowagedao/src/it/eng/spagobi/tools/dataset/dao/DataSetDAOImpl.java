@@ -24,6 +24,7 @@ import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
@@ -701,6 +702,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	@Override
 	public List<IDataSet> loadFilteredDatasetList(String hsql, Integer offset, Integer fetchSize, String owner) {
 
+
+
 		List<IDataSet> toReturn;
 		Session session;
 		Transaction transaction;
@@ -712,6 +715,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		transaction = null;
 		try {
 			toReturn = new ArrayList<IDataSet>();
+			boolean isAdmin = getUserProfile().isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN);
 
 			if (offset == null) {
 				logger.warn("Input parameter [offset] is null. It will be set to [0]");
@@ -731,16 +735,30 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 			}
 
-			Query countQuery = session.createQuery("select count(*) " + hsql);
-			Long temp = (Long) countQuery.uniqueResult();
-			Integer resultNumber = new Integer(temp.intValue());
+			//if not admin filter by category and owner
+			List idsCat = null;
+			if(!isAdmin){
+				List<Domain> devCategories = new LinkedList<Domain>();
+				fillDevCategories(devCategories);
 
-			offset = offset < 0 ? 0 : offset;
-			if (resultNumber > 0) {
-				fetchSize = (fetchSize > 0) ? Math.min(fetchSize, resultNumber) : resultNumber;
+				idsCat = createIdsCatogriesList(devCategories);
+
+				if(idsCat==null || idsCat.size()==0){
+					hsql = hsql+" and h.owner = :owner";
+				}else{
+					hsql = hsql+ " and (h.category.valueId IN (:idsCat) or h.owner = :owner)";
+				}
 			}
 
+			offset = offset < 0 ? 0 : offset;
 			Query listQuery = session.createQuery(hsql);
+			if(idsCat!=null && idsCat.size()>0){
+				listQuery.setParameterList("idsCat", idsCat);
+			}
+			if(!isAdmin){
+				listQuery.setString("owner", owner);
+			}
+
 			listQuery.setFirstResult(offset);
 			if (fetchSize > 0)
 				listQuery.setMaxResults(fetchSize);
@@ -754,10 +772,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 					if (Integer.valueOf(sbiDatasetVersion.getId().getVersionNum()) != null) {
 						Integer dsId = sbiDatasetVersion.getId().getDsId();
-						Query hibQuery = session.createQuery("from SbiDataSet h where h.active = ? and h.id.dsId = ? and h.owner = ? ");
+						Query hibQuery = session.createQuery("from SbiDataSet h where h.active = ? and h.id.dsId = ?");
 						hibQuery.setBoolean(0, false);
 						hibQuery.setInteger(1, dsId);
-						hibQuery.setString(2, owner);
 
 						List<SbiDataSet> olderTemplates = hibQuery.list();
 						if (olderTemplates != null && !olderTemplates.isEmpty()) {
@@ -840,11 +857,20 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			if (isDev) {
 				List idsCat = createIdsCatogriesList(devCategories);
 				String owner = getUserProfile().getUserUniqueIdentifier().toString();
-				Query countQuery = session
-						.createQuery("select count(*) from SbiDataSet sb where sb.active = ? and (sb.category.valueId  IN (:idsCat) or sb.owner = :owner) ");
-				countQuery.setBoolean(0, true);
-				countQuery.setParameterList("idsCat", idsCat);
-				countQuery.setString("owner", owner);
+				Query countQuery = null;
+				if(idsCat!=null && idsCat.size()>0){
+					countQuery = session.createQuery("select count(*) from SbiDataSet sb where sb.active = ? and (sb.category.valueId  IN (:idsCat) or sb.owner = :owner) ");
+					countQuery.setBoolean(0, true);
+					countQuery.setParameterList("idsCat", idsCat);
+					countQuery.setString("owner", owner);
+				}else{
+					countQuery = session.createQuery("select count(*) from SbiDataSet sb where sb.active = ? and  sb.owner = :owner) ");
+					countQuery.setBoolean(0, true);
+					countQuery.setString("owner", owner);
+				}
+
+
+
 				Long resultNumber = (Long) countQuery.uniqueResult();
 
 				offset = offset < 0 ? 0 : offset;
@@ -1202,11 +1228,18 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			if (isDev) {
 				List idsCat = createIdsCatogriesList(devCategories);
 				String owner = getUserProfile().getUserUniqueIdentifier().toString();
-				Query countQuery = session
-						.createQuery("select count(*) from SbiDataSet sb where sb.active = ? and (sb.category.valueId IN (:idsCat) or owner = :owner)");
-				countQuery.setBoolean(0, true);
-				countQuery.setParameterList("idsCat", idsCat);
-				countQuery.setString("owner", owner);
+				Query countQuery;
+				if(idsCat==null || idsCat.size()==0){
+					countQuery = session.createQuery("select count(*) from SbiDataSet sb where sb.active = ? and owner = :owner");
+					countQuery.setBoolean(0, true);
+					countQuery.setString("owner", owner);
+				}else{
+					countQuery = session.createQuery("select count(*) from SbiDataSet sb where sb.active = ? and (sb.category.valueId IN (:idsCat) or owner = :owner)");
+					countQuery.setBoolean(0, true);
+					countQuery.setParameterList("idsCat", idsCat);
+					countQuery.setString("owner", owner);
+				}
+
 				resultNumber = (Long) countQuery.uniqueResult();
 			} else {
 				String hql = "select count(*) from SbiDataSet ds where ds.active = ? ";

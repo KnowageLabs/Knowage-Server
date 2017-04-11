@@ -1413,8 +1413,9 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	 * 	@GET service that gets domain types for
 	 *  category 																	
 	 */
+	
 	$scope.getDomainTypeCategory = function(){	
-		sbiModule_restServices.promiseGet("domains","listValueDescriptionByType","DOMAIN_TYPE=CATEGORY_TYPE")
+		sbiModule_restServices.promiseGet("2.0/roles","ds_categories","")
 		.then(function(response) {
 			$scope.categoryList = response.data;
 		}, function(response) {
