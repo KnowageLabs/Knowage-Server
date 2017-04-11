@@ -452,6 +452,9 @@ public class DocumentParameters {
 				if (isFromCross) {
 					logger.debug("Parameter value for parameter " + analyticalDocumentParameter.getParameterUrlName()
 							+ " is retrieved from cross so it is necessary to retrieve description from admissible values");
+					if(analyticalDocumentParameter.getParameterValues() == null){
+						analyticalDocumentParameter.setParameterValues(new ArrayList());
+					}
 					// add values description search for description
 					List<String> descriptions = new ArrayList<String>();
 					for (Iterator iterator = analyticalDocumentParameter.getParameterValues().iterator(); iterator.hasNext();) {
