@@ -184,13 +184,11 @@
 					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?ACTION_NAME=DOMAIN_ACTION&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
 					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/wapp/functionalities16.png" />
 		 -->
-		 <!--
-		 TODO convert to angular					
-			<ITEM	title="#menu.MetadataMan"
-					functionality="ObjMetadataManagement"
-					url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListObjMetadataPage&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
-					iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/tools/objmetadata/document-meta.gif" />
-		-->			
+		 <!-- TODO convert to angular -->
+		<ITEM	title="#menu.MetadataMan"
+				functionality="ObjMetadataManagement"
+				url="${SPAGOBI_CONTEXT}${SPAGO_ADAPTER_HTTP}?PAGE=ListObjMetadataPage&amp;LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
+				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/tools/objmetadata/document-meta.gif" />
 		</ITEM>
 		
 	</ITEM>
