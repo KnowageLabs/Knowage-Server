@@ -31,19 +31,30 @@ angular.module("cockpitModule").service("cockpitModule_realtimeServices",functio
 		
 		angular.forEach(cockpitModule_template.configuration.aggregations,function(aggr){
 			if(rt.getRealTimeDatasetFromList(aggr.datasets).length>0){
-				$interval(function(){
-					$rootScope.$broadcast("WIDGET_EVENT","UPDATE_FROM_REALTIME",{dsList:aggr.datasets});
-				},(aggr.frequency==undefined?60:aggr.frequency)*1000)
+				var freq = aggr.frequency;
+				if(freq == undefined){
+					freq = 60;
+				}
+				
+				if(freq>0){
+					$interval(function(){
+						$rootScope.$broadcast("WIDGET_EVENT","UPDATE_FROM_REALTIME",{dsList:aggr.datasets});
+					},freq*1000)
+				}
 			}
 		})
 		
 		angular.forEach(cockpitModule_templateServices.getDatasetUsetByWidgetNotAssociated(),function(dsLab){
 			if(rt.isRealTime(dsLab)){
-				var freq=rt.getDatasetFrequency(dsLab);
-				if(freq && freq!=0){
+				var freq = rt.getDatasetFrequency(dsLab);
+				if(freq == undefined){
+					freq = 60;
+				}
+				
+				if(freq>0){
 					$interval(function(){
 						$rootScope.$broadcast("WIDGET_EVENT","UPDATE_FROM_REALTIME",{dsList:[dsLab]});
-					},(freq==undefined?60:freq)*1000)
+					},freq*1000)
 				}
 			}
 			
