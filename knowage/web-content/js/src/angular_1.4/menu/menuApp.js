@@ -217,14 +217,13 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
        	         ,controller: AccessibilityDialogController
        	      });
        	       
-       	      function AccessibilityDialogController(scope, $mdDialog) {
+       	      function AccessibilityDialogController(scope, $mdDialog, $window) {
        	    	scope.enableUIO= enableUIO;
        	    	scope.enableRobobraille= enableRobobraille;
        	    	scope.enableVoice= enableVoice;
        	    	scope.enableGraphSonification= enableGraphSonification;
        	    	
        	        scope.saveAccessibilityPreferences = function(){
-       	        	console.log("IN SAVE");
        	        	var preferencesObj={
        	        		id:null,
        	        		user:null,
@@ -237,13 +236,16 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
        				sbiModule_restServices.promisePost('2.0/preferences','',preferencesObj)
        				.then(function(response) {
        			         console.log(response);
-       			      sbiModule_messaging.showSuccessMessage("preferences saved successuly", 'Success');
+       			      sbiModule_messaging.showSuccessMessage("preferences saved successfully", 'Success');
        			        enableUIO=scope.enableUIO;
              	        enableRobobraille= scope.enableRobobraille;
              	    	enableVoice= scope.enableVoice;
+             	    	$mdDialog.hide();
              	    	enableGraphSonification= scope.enableGraphSonification;
-       			         
-             	    	sbiModule_messaging.showSuccessMessage("Preferences saved successfuly", 'Successs');
+             	    	
+             	    	$window.location.reload();
+             	    	sbiModule_messaging.showSuccessMessage("Preferences saved successfully", 'Successs');
+             	    	
        				}, function(response) {
        					sbiModule_messaging.showErrorMessage(response, 'Error');
        					
