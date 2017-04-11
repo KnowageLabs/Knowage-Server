@@ -892,7 +892,7 @@ $scope.setAndLoadCN = function(num) {
 		 $scope.initMDX();
 		 console.log(OlapTemplateService.getTempateJson());
 		 sbiModule_restServices.alterContextPath("/knowage");
-		 sbiModule_restServices.promisePost("1.0/documents/",sbiModule_docInfo.id+'/saveOlapTemplate', OlapTemplateService.getTempateJson())
+		 sbiModule_restServices.promisePost("1.0/documents/",sbiModule_docInfo.label+'/saveOlapTemplate', OlapTemplateService.getTempateJson())
 			.then(function(response) {
 				console.log("[POST]: SUCCESS!");
 				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.olap.designer.templateSave'),'Success');

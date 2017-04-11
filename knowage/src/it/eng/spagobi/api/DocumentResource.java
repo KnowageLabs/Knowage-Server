@@ -445,7 +445,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 			throw new SpagoBIRuntimeException(errorMessage);
 		}
 
-		saveTemplate(docId, xml);
+		saveOlapTemplate(docId, xml, json);
 
 		return xml;
 	}
@@ -536,6 +536,95 @@ public class DocumentResource extends AbstractSpagoBIResource {
 	// ===================================================================
 	// UTILITY METHODS
 	// ===================================================================
+	
+	private void saveOlapTemplate(String docLabel, String xml, JSONObject json) {
+		
+		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
+
+		ObjTemplate template = new ObjTemplate();
+		template.setName("Template.xml");
+		template.setContent(xml.getBytes());
+		template.setDimension(Long.toString(xml.getBytes().length / 1000) + " KByte");
+
+		ArrayList<String> categoriesNames = new ArrayList<String>();
+
+		/**
+		 * Handles OLAP template cross-navigation parameters.
+		 *
+		 * @author Nikola Simovic (nsimovic, nikola.simovic@mht.net)
+		 */
+		try{
+		JSONObject olapJSONObject = new JSONObject();
+		JSONArray jaCategories = new JSONArray();
+		olapJSONObject = json;
+
+		JSONObject crossNavFromCellSingle = new JSONObject();
+		JSONArray crossNavFromCellMulti = new JSONArray();
+
+		JSONObject crossNavFromMemberSingle = new JSONObject();
+		JSONArray crossNavFromMemberMulti = new JSONArray();
+
+		if (olapJSONObject.optJSONObject("CROSS_NAVIGATION") != null) {
+
+			crossNavFromCellSingle = olapJSONObject.optJSONObject("CROSS_NAVIGATION").optJSONObject("PARAMETERS").optJSONObject("PARAMETER");
+			crossNavFromCellMulti = olapJSONObject.optJSONObject("CROSS_NAVIGATION").optJSONObject("PARAMETERS").optJSONArray("PARAMETER");
+
+			if (crossNavFromCellMulti == null) {
+				if (crossNavFromCellSingle != null) {
+					jaCategories.put(crossNavFromCellSingle);
+				}
+			} else if (crossNavFromCellMulti != null) {
+				for (int i = 0; i < crossNavFromCellMulti.length(); i++) {
+					JSONObject joT = (JSONObject) crossNavFromCellMulti.get(i);
+					jaCategories.put(joT);
+				}
+			}
+		}
+
+		if (olapJSONObject.optJSONObject("MDXQUERY") != null) {
+
+			crossNavFromMemberSingle = olapJSONObject.optJSONObject("MDXQUERY").optJSONObject("clickable");
+			crossNavFromMemberMulti = olapJSONObject.optJSONObject("MDXQUERY").optJSONArray("clickable");
+
+			if (crossNavFromMemberMulti == null) {
+				if (crossNavFromMemberSingle != null) {
+					jaCategories.put(crossNavFromMemberSingle.opt("clickParameter"));
+				}
+			} else if (crossNavFromMemberMulti != null) {
+				for (int i = 0; i < crossNavFromMemberMulti.length(); i++) {
+					JSONObject joT = (JSONObject) crossNavFromMemberMulti.get(i);
+					jaCategories.put(joT.opt("clickParameter"));
+				}
+			}
+		}
+
+		for (int i = 0; i < jaCategories.length(); i++) {
+			JSONObject joT = (JSONObject) jaCategories.get(i);
+			categoriesNames.add((String) joT.opt("name"));
+		}
+		logger.info("Category names for the OLAP document are: " + categoriesNames);
+		} catch (JSONException e) {
+			logger.error("Cannot get OLAP values from JSON object", e);
+			throw new SpagoBIServiceException("Cannot get OLAP values from JSON object", e);
+		}	
+		
+		try {
+			IBIObjectDAO biObjectDao;
+			BIObject document;
+			biObjectDao = DAOFactory.getBIObjectDAO();
+			if(docLabel instanceof String){
+				document = biObjectDao.loadBIObjectByLabel(docLabel);
+			} else {
+				document = biObjectDao.loadBIObjectById(new Integer(docLabel));
+			}			
+
+			documentManager.saveDocument(document, template);
+
+		} catch (EMFUserError e) {
+			logger.error("Error saving JSON Template to XML...", e);
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", e);
+		}
+	}
 
 	private void saveTemplate(String docLabel, String xml) {
 		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
