@@ -675,6 +675,20 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 		
 		this.tree.getSelectionModel().on('beforeselect', this.onSelect, this);
 		this.treeLoader.on('load', this.onLoad, this);
+		
+     	if(parent.globalQbeJson){
+     		this.treeLoader.on("load",function(){
+     			if(parent.globalQbeJson){
+     				var questo = this;
+     				
+     				 questo.setQueriesCatalogue(JSON.parse(parent.globalQbeJson));
+     				 parent.globalQbeJson=null; 
+     			}
+     		},this);
+     		
+     	}
+         		
+
 	}
 	
 	, onLoad: function(loader, node, response) {
@@ -714,7 +728,9 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
 			var root = this.tree.getRootNode();
 			this.setQueryOnCatalogue(root, query);
 		}
+		//var tree = this.tree;
 		this.tree.getSelectionModel().select( root.childNodes[0] );
+		
 	}
 	
 	,
