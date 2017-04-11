@@ -17,19 +17,19 @@
  */
 package it.eng.spagobi.commons.dao;
 
-import java.util.Collection;
-import java.util.List;
-
-import org.hibernate.Session;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
 import it.eng.spagobi.commons.metadata.SbiAuthorizations;
 import it.eng.spagobi.commons.metadata.SbiAuthorizationsRoles;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
+
+import java.util.Collection;
+import java.util.List;
+
+import org.hibernate.Session;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Defines the interfaces for all methods needed to insert, modify and deleting a role
@@ -195,6 +195,9 @@ public interface IRoleDAO extends ISpagoBIDao {
 	public void removeRoleMetaModelCategory(Integer roleId, Integer categoryId) throws EMFUserError;
 
 	public List<RoleMetaModelCategory> getMetaModelCategoriesForRole(Integer roleId) throws EMFUserError;
+
+	public List<RoleMetaModelCategory> getDataSetCategoriesForRole(String roleName) throws EMFUserError;
+
 
 	public List<Integer> getMetaModelCategoriesForRoles(Collection<String> roles) throws EMFUserError;
 

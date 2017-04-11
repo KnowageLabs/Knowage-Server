@@ -63,7 +63,7 @@ import org.json.JSONObject;
 
 /**
  * Defines the Hibernate implementations for all DAO methods, for a Role.
- * 
+ *
  * @author zoppello
  */
 public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
@@ -76,7 +76,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 	/**
 	 * Load by id.
-	 * 
+	 *
 	 * @param roleID
 	 *            the role id
 	 * @return the role
@@ -150,7 +150,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 	/**
 	 * Load by name.
-	 * 
+	 *
 	 * @param roleName
 	 *            the role name
 	 * @return the role
@@ -208,7 +208,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 	/**
 	 * Load all roles.
-	 * 
+	 *
 	 * @return the list
 	 * @throws EMFUserError
 	 *             the EMF user error
@@ -337,7 +337,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 	/**
 	 * Insert role.
-	 * 
+	 *
 	 * @param aRole
 	 *            the a role
 	 * @throws EMFUserError
@@ -396,7 +396,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 	/**
 	 * Erase role.
-	 * 
+	 *
 	 * @param aRole
 	 *            the a role
 	 * @throws EMFUserError
@@ -467,7 +467,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 	/**
 	 * Modify role.
-	 * 
+	 *
 	 * @param aRole
 	 *            the a role
 	 * @throws EMFUserError
@@ -603,7 +603,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 	/**
 	 * Load all free roles for insert.
-	 * 
+	 *
 	 * @param parameterID
 	 *            the parameter id
 	 * @return the list
@@ -670,7 +670,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 	/**
 	 * Load all free roles for detail.
-	 * 
+	 *
 	 * @param parUseID
 	 *            the par use id
 	 * @return the list
@@ -746,7 +746,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 	/**
 	 * From the hibernate Role at input, gives the corrispondent <code>Role</code> object.
-	 * 
+	 *
 	 * @param hibRole
 	 *            The hybernate role
 	 * @return The corrispondent <code>Role</code> object
@@ -877,7 +877,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 	/**
 	 * Gets all the authorizations associated to the role.
-	 * 
+	 *
 	 * @param roleID
 	 *            The role id
 	 * @return The authorizations associated to the role
@@ -920,7 +920,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 	/**
 	 * Gets all the parameter uses associated to the role.
-	 * 
+	 *
 	 * @param roleID
 	 *            The role id
 	 * @return The parameter uses associated to the role
@@ -1171,7 +1171,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 	/**
 	 * Associate a Meta Model Category to the role
-	 * 
+	 *
 	 * @see it.eng.spagobi.commons.dao.IRoleDAO#insertRoleMetaModelCategory(java.lang.Integer, java.lang.Integer)
 	 */
 	@Override
@@ -1223,7 +1223,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 	/**
 	 * Remove the association between the role and the Meta Model Category
-	 * 
+	 *
 	 * @see it.eng.spagobi.commons.dao.IRoleDAO#removeRoleMetaModelCategory(java.lang.Integer, java.lang.Integer)
 	 */
 	@Override
@@ -1276,7 +1276,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 	/**
 	 * Get the Meta Model Categories associated to a role
-	 * 
+	 *
 	 * @see it.eng.spagobi.commons.dao.IRoleDAO#getMetaModelCategoryForRole(java.lang.Integer)
 	 */
 	@Override
@@ -1318,9 +1318,53 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 		return categories;
 	}
 
+
+	/**
+	 * Get the Dataset Categories associated to a role
+	 *
+	 * @see it.eng.spagobi.commons.dao.IRoleDAO#getDataSetCategoriesForRole(java.lang.Integer)
+	 */
+	@Override
+	public List<RoleMetaModelCategory> getDataSetCategoriesForRole(String roleName) throws EMFUserError {
+		Session aSession = null;
+
+		List<RoleMetaModelCategory> categories = new ArrayList<RoleMetaModelCategory>();
+		try {
+			aSession = getSession();
+			SbiExtRoles  sbiExtRole = loadByNameInSession(roleName, aSession);
+			Integer extRoleId = sbiExtRole.getExtRoleId();
+			Set<SbiDomains> sbiDomains = sbiExtRole.getSbiDataSetCategories();
+
+			// For each category associated to the role
+			if(sbiDomains!=null){
+				for (SbiDomains sbiDomain : sbiDomains) {
+					RoleMetaModelCategory category = new RoleMetaModelCategory();
+					category.setCategoryId(sbiDomain.getValueId());
+					category.setRoleId(extRoleId);
+					categories.add(category);
+				}
+
+			}
+
+		} catch (HibernateException he) {
+			logException(he);
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+		return categories;
+	}
+
+
+
 	/**
 	 * Get the Meta Model Categories associated to a role
-	 * 
+	 *
 	 * @see it.eng.spagobi.commons.dao.IRoleDAO#getMetaModelCategoryForRole(java.lang.Integer)
 	 */
 	@Override
@@ -1339,7 +1383,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 	/**
 	 * Associate a Data Set Category to the role
-	 * 
+	 *
 	 * @see it.eng.spagobi.commons.dao.IRoleDAO#insertRoleDataSetCategory(java.lang.Integer, java.lang.Integer)
 	 */
 	@Override
@@ -1391,7 +1435,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 	/**
 	 * Remove the association between the role and the Data Set Category
-	 * 
+	 *
 	 * @see it.eng.spagobi.commons.dao.IRoleDAO#removeRoleDataSetCategory(java.lang.Integer, java.lang.Integer)
 	 */
 	@Override
@@ -1444,7 +1488,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 	/**
 	 * Gets all the Authorizationsations present
-	 * 
+	 *
 	 * @return The authorizations
 	 * @throws EMFUserError
 	 *             the EMF user error
@@ -1481,7 +1525,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 	/**
 	 * Gets all the Authorizations for product Types
-	 * 
+	 *
 	 * @return The authorizations
 	 * @throws EMFUserError
 	 *             the EMF user error
@@ -1519,7 +1563,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 	/**
 	 * Gets all the Authorizations names for product Types
-	 * 
+	 *
 	 * @return The authorizations
 	 * @throws EMFUserError
 	 *             the EMF user error
@@ -1557,7 +1601,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 	/**
 	 * Gets all the authorizations associated to the role.
-	 * 
+	 *
 	 * @param roleID
 	 *            The role id
 	 * @return The authorizations associated to the role
@@ -1598,7 +1642,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 	/**
 	 * Gets all the authorizationsRoles object (relationn objects) associated to the role.
-	 * 
+	 *
 	 * @param roleID
 	 *            The role id
 	 * @return The authorizations associated to the role

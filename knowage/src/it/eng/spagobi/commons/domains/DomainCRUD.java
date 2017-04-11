@@ -110,7 +110,7 @@ public class DomainCRUD extends AbstractSpagoBIResource {
 		}
 	}
 
-	protected JSONArray translate(Collection<Domain> domains, Locale locale) throws JSONException {
+	public static JSONArray translate(Collection<Domain> domains, Locale locale) throws JSONException {
 		JSONArray dialectsJSONArray = new JSONArray();
 		if (domains != null) {
 			for (Domain domainObject : domains) {
