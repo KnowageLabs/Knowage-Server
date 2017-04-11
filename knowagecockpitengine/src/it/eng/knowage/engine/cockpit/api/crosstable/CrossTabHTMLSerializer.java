@@ -138,14 +138,37 @@ public class CrossTabHTMLSerializer {
 					table.setAttribute(aRow);
 				}
 			} else {
-				// nothing on rows
+
+				// nothing on rows : why nothing ????
 				SourceBean aRow = new SourceBean(ROW_TAG);
-				SourceBean aColumn = new SourceBean(COLUMN_TAG);
-				aColumn.setAttribute(CLASS_ATTRIBUTE, MEMBER_CLASS);
-				aColumn.setCharacters(EngineMessageBundle.getMessage("sbi.crosstab.runtime.headers.data", this.getLocale()));
-				aRow.setAttribute(aColumn);
+				// manage one single data row without columns and measure on columns
+				if (crossTab.getCrosstabDefinition().getColumns().size() == 0) {
+					int levels = crossTab.getRowsRoot().getDistanceFromLeaves();
+					if (crossTab.isMeasureOnRow()) {
+						levels--;
+					}
+					for (int i = 0; i < levels; i++) {
+						List<Node> levelNodes = crossTab.getRowsRoot().getLevel(i + 1);
+						for (int j = 0; j < levelNodes.size(); j++) {
+							Node aNode = levelNodes.get(j);
+							String text = aNode.getDescription();
+							SourceBean aColumn = new SourceBean(COLUMN_TAG);
+							aColumn.setAttribute(CLASS_ATTRIBUTE, MEMBER_CLASS);
+							aColumn.setCharacters(text);
+							aRow.setAttribute(aColumn);
+						}
+					}
+				}
+				// SourceBean aColumn = new SourceBean(COLUMN_TAG);
+				// aColumn.setAttribute(CLASS_ATTRIBUTE, MEMBER_CLASS);
+				// aColumn.setCharacters(EngineMessageBundle.getMessage("sbi.crosstab.runtime.headers.data", this.getLocale()));
+				// aRow.setAttribute(aColumn);
 				table.setAttribute(aRow);
 				JSONObject config = crossTab.getCrosstabDefinition().getConfig();
+				// int rowSpan = aNode.getLeafsNumber();
+				// if (rowSpan > 1) {
+				// aColumn.setAttribute(ROWSPAN_ATTRIBUTE, rowSpan);
+				// }
 				String rowsTotals = config.optString("calculatetotalsoncolumns");
 				if (rowsTotals != null && rowsTotals.equals("on")) {
 					SourceBean totalRow = new SourceBean(ROW_TAG);
