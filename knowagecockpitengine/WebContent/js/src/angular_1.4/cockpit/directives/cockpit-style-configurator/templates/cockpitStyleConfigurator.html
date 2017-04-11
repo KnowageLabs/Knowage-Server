@@ -56,7 +56,7 @@
 			</md-input-container>
 			<md-input-container class="md-block" flex>
 				<label>{{translate.load("sbi.cockpit.style.titles.font.headerheight")}} (px)</label>
-				<input ng-model="ngModel.headerHeight" type="number" min="0">
+				<input ng-model="ngModel.headerHeight" type="number" min="0" ng-disabled="!ngModel.titles">
 			</md-input-container>
 		</md-card-content>
 	</md-card>
