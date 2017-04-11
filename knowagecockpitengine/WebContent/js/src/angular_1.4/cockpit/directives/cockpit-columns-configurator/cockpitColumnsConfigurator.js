@@ -25,8 +25,8 @@
 			$scope.model.content.modalselectioncolumn="";
 		}
 		
-		if(!$scope.model.sortingColumnAlias){
-			$scope.model.sortingColumnAlias = undefined;
+		if(!$scope.model.sortingColumn){
+			$scope.model.sortingColumn = undefined;
 		}
 		if(!$scope.model.sortingOrder){
 			$scope.model.sortingOrder = "ASC";
@@ -36,6 +36,9 @@
 		$scope.lastId = -1;
 		if($scope.model.dataset == undefined){
 			$scope.model.dataset = {};
+		}
+		if($scope.model.dataset && $scope.model.dataset.dsId){
+			$scope.local = cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId);
 		}
 		$scope.showCircularcolumns = {value :false};
 		$scope.resetValue = function(dsId){
@@ -62,7 +65,7 @@
 				}else{
 					$scope.model.content.columnSelectedOfDataset = [];
 				}
-				$scope.model.sortingColumnAlias = undefined;
+				$scope.model.sortingColumn = undefined;
 			}	
 		}
 

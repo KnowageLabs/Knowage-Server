@@ -378,7 +378,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		var aggregation = cockpitModule_widgetSelection.getAggregation(ngModel,dataset,columnOrdering, reverseOrdering);
 		
 		// apply sorting column & order
-		if(ngModel.sortingColumnAlias && ngModel.sortingColumnAlias!=""){
+		if(ngModel.sortingColumn && ngModel.sortingColumn!=""){
 			var isSortingAlreadyDefined = false;
 			
 			// check if a sorting order is alredy defined on categories
@@ -407,7 +407,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				// apply sorting order on categories
 				for(var i=0; i<aggregation.categories.length; i++){
 					var category = aggregation.categories[i];
-					if(category.alias == ngModel.sortingColumnAlias && category.orderType == ""){
+					if(category.columnName == ngModel.sortingColumn && category.orderType == ""){
 						category.orderType = ngModel.sortingOrder;
 						isSortingApplied = true;
 						break;
@@ -418,11 +418,22 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				if(!isSortingApplied){
 					for(var i=0; i<aggregation.measures.length; i++){
 						var measure = aggregation.measures[i];
-						if(measure.alias == ngModel.sortingColumnAlias && measure.orderType == ""){
+						if(measure.columnName == ngModel.sortingColumn && measure.orderType == ""){
 							measure.orderType = ngModel.sortingOrder;
 							break;
 						}
 					}
+				}
+				
+				// add a new category if necessary
+				if(!isSortingApplied){
+					var newCategory = {
+							alias : ngModel.sortingColumn,
+							columnName : ngModel.sortingColumn,
+							id : ngModel.sortingColumn,
+							orderType : ngModel.sortingOrder
+					}
+					aggregation.categories.push(newCategory);
 				}
 			}
 		}
