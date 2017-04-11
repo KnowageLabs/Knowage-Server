@@ -861,6 +861,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     };
     
     $scope.changeDatasetPage=function(itemsPerPage,currentPageNumber){
+    	
     	if($scope.searchValue==undefined || $scope.searchValue.length==0 ){
     		sbiModule_restServices.promiseGet("1.0/datasets", "countDataSets")
     		.then(function(response) {
@@ -879,8 +880,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			//TO DO:
 			/*front-end pagination when the search result is greater than the number of itemsPerPage*/			
 		}
-    	
-			
 		
 	}
     
@@ -1485,7 +1484,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			
 			jsonTemp = {};
 			
-			if (metadata[i].pname=="fieldType") {
+			if (metadata[i].pname=="fieldType" || metadata[i].pname=="fieldAlias" || metadata[i].pname=="Type") {
 				if(type.toUpperCase()=="QBE"){
 					var str = metadata[i].column;
 					jsonTemp["column"] = str.substring(str.indexOf(":") + 1);
