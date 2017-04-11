@@ -230,24 +230,27 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			});	
 	}
 	
-	$scope.searchFilter = function(){		
-		hlght = true;
-		var toSend = {
-			'hierarchy':filterFather,
-			'axis': $scope.activeaxis,
-			'name': $scope.searchText,
-			'showS':$scope.showSiblings
-		};
-		
-		var encoded = encodeURI('1.0/hierarchy/search?SBI_EXECUTION_ID='+ JSsbiExecutionID);
-		sbiModule_restServices.promisePost
-		(encoded,"",toSend)
-		.then(function(response) {
-				checkIfExists(response.data);
-				$scope.searchSucessText = $scope.searchText.toLowerCase();
-		}, function(response) {
-			sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.filterSearch.error'), 'Error');
-		});
+	$scope.searchFilter = function(keyEvent){	
+		if (!keyEvent || keyEvent.which === 13 ){
+			hlght = true;
+			var toSend = {
+				'hierarchy':filterFather,
+				'axis': $scope.activeaxis,
+				'name': $scope.searchText,
+				'showS':$scope.showSiblings
+			};
+			
+			var encoded = encodeURI('1.0/hierarchy/search?SBI_EXECUTION_ID='+ JSsbiExecutionID);
+			sbiModule_restServices.promisePost
+			(encoded,"",toSend)
+			.then(function(response) {
+					checkIfExists(response.data);
+					$scope.searchSucessText = $scope.searchText.toLowerCase();
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.filterSearch.error'), 'Error');
+			});
+		}
+
 	};
 	
 	checkIfExists = function(data){
