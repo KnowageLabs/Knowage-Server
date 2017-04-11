@@ -14,20 +14,19 @@
 
 <md-dialog-content class="mdDialogSize">
       	<div class="md-dialog-content" layout="column" style="height: calc(100% - 40px);">
-    		   <div layout="row" layout-wrap>
-      				<div flex=100>
-				       <md-input-container> 
-				       <label>{{translate.load("sbi.behavioural.lov.test.treeType")}}</label>
-				       <md-select  aria-label="dropdown" placeholder ="Tree Type"
-				       	name ="dropdown" 
-				        ng-model="treeListTypeModel.LOVTYPE"
-				        ng-change="changeTreeType(treeListTypeModel.LOVTYPE)"
-				        > <md-option 
-				        ng-repeat="l in TreeListType track by $index" value="{{l.value}}">{{l.name}} </md-option>
-				       </md-select>
-				        </md-input-container>
-				   </div>
-			</div>
+
+
+	       <md-input-container class="md-block"> 
+	       <label>{{translate.load("sbi.behavioural.lov.test.treeType")}}</label>
+	       <md-select  aria-label="dropdown" placeholder ="Tree Type"
+	       	name ="dropdown" 
+	        ng-model="treeListTypeModel.LOVTYPE"
+	        ng-change="changeTreeType(treeListTypeModel.LOVTYPE)"
+	        > <md-option 
+	        ng-repeat="l in TreeListType track by $index" value="{{l.value}}">{{l.name}} </md-option>
+	       </md-select>
+	        </md-input-container>
+
       	
    <div ng-if="treeListTypeModel.LOVTYPE == 'simple'">   	 
 		<angular-table 
