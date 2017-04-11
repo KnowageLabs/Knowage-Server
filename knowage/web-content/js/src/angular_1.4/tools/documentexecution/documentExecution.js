@@ -386,11 +386,27 @@
 		$scope.executeParameter = function() {
 			console.log("executeParameter IN ");
 			
-			docExecute_urlViewPointService.frameLoaded=false;
-			docExecute_urlViewPointService.executionProcesRestV1(execProperties.selectedRole.name, 
-					 documentExecuteServices.buildStringParameters(execProperties.parametersData.documentParameters));
-			docExecute_paramRolePanelService.toggleParametersPanel(false);
-			$scope.cockpitEditing.documentMode="VIEW";
+			var action = function() {
+				docExecute_urlViewPointService.frameLoaded=false;
+				docExecute_urlViewPointService.executionProcesRestV1(execProperties.selectedRole.name, 
+						 documentExecuteServices.buildStringParameters(execProperties.parametersData.documentParameters));
+				docExecute_paramRolePanelService.toggleParametersPanel(false);
+				$scope.cockpitEditing.documentMode="VIEW";
+			};
+			
+			if($scope.cockpitEditing.documentMode == "EDIT"){
+				var confirm = $mdDialog.confirm()
+						.title(sbiModule_translate.load('sbi.execution.executionpage.toolbar.editmode'))
+						.content(sbiModule_translate.load('sbi.execution.executionpage.toolbar.editmode.quit'))
+						.ariaLabel('Leave edit mode')
+						.ok(sbiModule_translate.load("sbi.general.continue"))
+						.cancel(sbiModule_translate.load("sbi.general.cancel"));
+				
+				$mdDialog.show(confirm).then(function(){action.call()});
+			}else{
+				action.call();
+			}
+			
 			console.log("executeParameter OUT ");
 		};
 		
@@ -448,9 +464,24 @@
 				frame.contentWindow.print();
 			}
 		};
-				
+		
 		$scope.closeDocument = function() {
-			$crossNavigationScope.closeDocument($scope.executionInstance.OBJECT_ID);  
+			var action = function() {
+				$crossNavigationScope.closeDocument($scope.executionInstance.OBJECT_ID);
+			};
+			
+			if($scope.cockpitEditing.documentMode == "EDIT"){
+				var confirm = $mdDialog.confirm()
+						.title(sbiModule_translate.load('sbi.execution.executionpage.toolbar.editmode'))
+						.content(sbiModule_translate.load('sbi.execution.executionpage.toolbar.editmode.quit'))
+						.ariaLabel('Leave edit mode')
+						.ok(sbiModule_translate.load("sbi.general.continue"))
+						.cancel(sbiModule_translate.load("sbi.general.cancel"));
+				
+				$mdDialog.show(confirm).then(function(){action.call()});
+			}else{
+				action.call();
+			}
 		};
 
 		$scope.isCloseDocumentButtonVisible=function(){
@@ -496,6 +527,7 @@
 	}]);
 })();
 
+//from executed document, call this function to exec old cross navigation method
 //from executed document, call this function to exec old cross navigation method
 var execCrossNavigation=function(frameid, doclabel, params, subobjid, title, target){
 	var jsonEncodedParams=params?JSON.parse('{"' + decodeURI(params).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}'):{};

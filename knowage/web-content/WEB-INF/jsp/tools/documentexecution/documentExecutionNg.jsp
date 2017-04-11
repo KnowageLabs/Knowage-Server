@@ -514,7 +514,7 @@ if(executionRoleNames.size() > 0) {
             });
             
             angular.module('documentExecutionModule').service('cockpitEditing',
-                    function($mdToast, execProperties, sbiModule_restServices, sbiModule_config, $filter) {
+                    function($mdToast, execProperties, sbiModule_restServices, sbiModule_config, $filter, $mdDialog, sbiModule_translate) {
     <% 
     if(engineName.equalsIgnoreCase( SpagoBIConstants.COCKPIT_ENGINE_NAME)
         && userId.equals(obj.getCreationUser())) { 
@@ -534,12 +534,27 @@ if(executionRoleNames.size() > 0) {
                 };
                 
                 cockpitEditingService.stopCockpitEditing = function() {
-                    cockpitEditingService.documentMode = 'VIEW';
-                    //cockpitEditingService.synchronize(this.controller, this.executionInstance);
-                    
-                    var newUrl = cockpitEditingService.changeDocumentExecutionUrlParameter('documentMode', cockpitEditingService.documentMode);
-                    //cockpitEditingService.controller.getFrame().setSrc(newUrl);
-                    execProperties.documentUrl = newUrl;
+                	var action = function() {
+						cockpitEditingService.documentMode = 'VIEW';
+						//cockpitEditingService.synchronize(this.controller, this.executionInstance);
+						
+						var newUrl = cockpitEditingService.changeDocumentExecutionUrlParameter('documentMode', cockpitEditingService.documentMode);
+						//cockpitEditingService.controller.getFrame().setSrc(newUrl);
+						execProperties.documentUrl = newUrl;
+					};
+					
+					if(cockpitEditingService.documentMode == 'EDIT'){
+						var confirm = $mdDialog.confirm()
+								.title(sbiModule_translate.load('sbi.execution.executionpage.toolbar.editmode'))
+								.content(sbiModule_translate.load('sbi.execution.executionpage.toolbar.editmode.quit'))
+								.ariaLabel('Leave edit mode')
+								.ok(sbiModule_translate.load("sbi.general.continue"))
+								.cancel(sbiModule_translate.load("sbi.general.cancel"));
+	
+						$mdDialog.show(confirm).then(function(){action.call()});
+					}else{
+						action.call();
+					}
                 };
                 
                 cockpitEditingService.changeDocumentExecutionUrlParameter = function(parameterName, parameterValue) {
