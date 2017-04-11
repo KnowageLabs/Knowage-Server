@@ -52,7 +52,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
@@ -368,8 +367,9 @@ public class LayerCRUD {
 			List<InputPart> inputParts = formDataMap.get("layerFile");
 			for (InputPart inputPart : inputParts) {
 
-				byte[] data = inputPart.getBodyAsString().replace("data:;base64,", "").getBytes(Charset.forName("UTF-8"));
-				data = Base64.decodeBase64(data);
+				// byte[] data = inputPart.getBodyAsString().replace("data:;base64,", "").getBytes(Charset.forName("UTF-8"));
+				// data = Base64.decodeBase64(data);
+				byte[] data = inputPart.getBodyAsString().getBytes(Charset.forName("UTF-8"));
 
 				// String path = layerServices.getResourcePath(data);
 				aLayer.setPathFile("");
