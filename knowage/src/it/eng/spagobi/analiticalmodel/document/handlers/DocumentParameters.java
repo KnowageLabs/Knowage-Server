@@ -410,6 +410,7 @@ public class DocumentParameters {
 				JSONArray valuesJSONArray = valuesJSON.getJSONArray("root");
 
 				for (int i = 0; i < valuesJSONArray.length(); i++) {
+					// System.out.println(i);
 					JSONObject item = valuesJSONArray.getJSONObject(i);
 
 					if (item.length() > 0) {
@@ -425,7 +426,8 @@ public class DocumentParameters {
 
 							for (HashMap<String, Object> defVal : admissibleValues) {
 								if (defVal.get("value").equals(item.get("value")) && !item.isNull("label")) {
-									if (defVal.get("label").equals(item.get("label")) && defVal.get("description").equals(item.get("description"))) {
+									if (defVal.get("label").equals(item.get("label")) && defVal.get("description") != null && item.get("description") != null
+											&& defVal.get("description").equals(item.get("description"))) {
 										defaultParameterAlreadyExist = true;
 										break;
 									} else {
@@ -452,7 +454,7 @@ public class DocumentParameters {
 				if (isFromCross) {
 					logger.debug("Parameter value for parameter " + analyticalDocumentParameter.getParameterUrlName()
 							+ " is retrieved from cross so it is necessary to retrieve description from admissible values");
-					if(analyticalDocumentParameter.getParameterValues() == null){
+					if (analyticalDocumentParameter.getParameterValues() == null) {
 						analyticalDocumentParameter.setParameterValues(new ArrayList());
 					}
 					// add values description search for description
@@ -521,6 +523,7 @@ public class DocumentParameters {
 		if (item.has("leaf")) {
 			itemAsMap.put("leaf", item.get("leaf"));
 		}
+		// System.out.println(item.get("value") + " - " + item.get("description"));
 		itemAsMap.put("description", item.get("description"));
 		itemAsMap.put("isEnabled", true);
 
