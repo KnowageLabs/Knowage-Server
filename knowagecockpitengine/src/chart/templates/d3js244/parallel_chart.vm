@@ -169,30 +169,31 @@
   		tooltip: '$tooltipColumn',
   		group: '$columnsNeeded[0]',  	
 
-  		#if($chart.height != '')
+  			 #if($chart.height != '' && $chart.isCockpitEngine!="true")
         	height: $chart.height,
         #end
         
         #*
     		Dimension type (pixels or percentage) parameter for height of the chart
-    		is provided. 
-    		
-    		NOTE: The same goes for the width of the chart (parameter 'widthDimType').
-    				
+    		is provided.     		
+    		NOTE: The same goes for the width of the chart (parameter 'widthDimType').    				
     		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
     	*#
-     	#if($chart.heightDimType)
+     	#if($chart.heightDimType && $chart.isCockpitEngine!="true")
        	 	heightDimType: '$chart.heightDimType',
+       	#else 
+      	 	heightDimType: 'pixels',
         #end
         
-        #if($chart.width != '')
+        #if($chart.width != '' && $chart.isCockpitEngine!="true")
     		width: $chart.width,
     	#end
     	
-    	#if($chart.widthDimType)
+    	#if($chart.widthDimType && $chart.isCockpitEngine!="true")
         	widthDimType: '$chart.widthDimType',
+  	   	#else 
+	  	   	widthDimType: 'pixels',
         #end
-  		
   		colors: '$colorsPal',
   		isCockpit: $chart.isCockpitEngine,
   		
