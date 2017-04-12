@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package it.eng.spagobi.engines.whatif.api;
+package it.eng.spagobi.enterprise.whatif.api;
 
 import java.io.IOException;
 import java.util.ArrayList;
