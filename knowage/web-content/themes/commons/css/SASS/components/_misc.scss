@@ -730,6 +730,11 @@ md-tab-item {
   color: $negativeColor;
 }
 
+.kn-inputError {
+  color: $negativeColor !important;
+  border-bottom-color: $negativeColor !important;
+}
+
 .noSelect {
   -webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none; /* Safari */
