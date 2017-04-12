@@ -349,3 +349,22 @@
 		}
 	}
 }
+
+@-moz-document url-prefix() {
+	.kn-documentBrowser{
+		.documentGridViewInput {
+			margin-top: 30px;
+		}
+		.selectedDocumentSidenav {
+			md-toolbar {
+				padding-bottom: 20px;
+				div {
+					&.layout-row {
+						height: 100%;
+						padding-top: 0;
+					}
+				}
+			}
+		}
+	}
+}
