@@ -892,7 +892,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 		 */
 		
 		$scope.getDatasets = function() {
-			sbiModule_restServices.promiseGet("1.0/datasets/lov","")
+			sbiModule_restServices.promiseGet("1.0/datasets/datasetsforlov","")
 			.then(function(response) {
 				console.log(response);
 				$scope.listOfDatasets = response.data;
