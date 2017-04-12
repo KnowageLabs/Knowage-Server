@@ -524,7 +524,11 @@ public class DocumentParameters {
 			itemAsMap.put("leaf", item.get("leaf"));
 		}
 		// System.out.println(item.get("value") + " - " + item.get("description"));
-		itemAsMap.put("description", item.get("description"));
+		if (item.opt("description") == null) {
+			itemAsMap.put("description", item.get("value"));
+		} else {
+			itemAsMap.put("description", item.get("description"));
+		}
 		itemAsMap.put("isEnabled", true);
 
 		return itemAsMap;
