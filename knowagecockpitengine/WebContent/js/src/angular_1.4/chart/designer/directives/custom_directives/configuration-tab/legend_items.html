@@ -81,7 +81,8 @@
 
 	<md-input-container class="md-block"> 
 	<label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontsize")}}</label>
-		 <md-select ng-model="chartTemplate.LEGEND.ELEMENT.style.fontSize" name="legenditems_element_fsize"> <md-option
+		 <md-select ng-model="chartTemplate.LEGEND.ELEMENT.style.fontSize" name="legenditems_element_fsize"
+		 ng-required="chartTemplate.type.toLowerCase() == 'parallel'"> <md-option
 		ng-repeat="option in fontSizeOptions" value="{{option.value}}">{{option.name}}</md-option>
 	</md-select> </md-input-container>
 
