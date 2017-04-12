@@ -230,7 +230,7 @@
 				 	 	text: "$yAxis.TITLE.text",		
 				 	#end   
 				 	#else
-				  		text: "$xAxis.TITLE.text",		
+				  		text: "$yAxis.TITLE.text",		
 					#end 
 	        		
 				 	#if( $yAxis.TITLE.style )
