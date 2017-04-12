@@ -476,10 +476,15 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 			}
 		}else{
 			//for d3 charts
+			delete event["selectParam_cross"];
+			var count = Object.keys(event).length;
 			for (column in event){
-				if(column!="selectParam_cross"){
+				if(count>1){
+					$scope.doSelection(column,event[column],null,null,null,true);
+				}else{
 					$scope.doSelection(column,event[column]);
 				}
+				count--;
 			}
 		}
 		

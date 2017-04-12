@@ -665,6 +665,10 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
 	 // @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 function calculateAbsoluteValue(finalValueToDisplay,d) {
 		 
+		if(!locale){
+			locale = window.navigator.userLanguage || window.navigator.language;
+		}
+		 
 		 var number = d.value;			
 			
 		/* 
