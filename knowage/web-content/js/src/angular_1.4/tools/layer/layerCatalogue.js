@@ -80,13 +80,13 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 						console.log("layer non Ottenuti");
 					} else {
 						$scope.layerList = data.root;
-						for(var i=0; i<$scope.layerList.length;i++){
-							if($scope.layerList[i].type == "WFS" || $scope.layerList[i].type == "File" ){
-								$scope.layerList[i].icon = '<md-button class="md-icon-button" ng-click="scopeFunctions.download(row,$event)" > <md-icon md-font-icon="fa fa-download" style=" margin-top: 6px ; color: #153E7E;"></md-icon> </md-button>';
-							} else{
-								$scope.layerList[i].icon = '';
-							}
-						}
+//						for(var i=0; i<$scope.layerList.length;i++){
+//							if($scope.layerList[i].type == "WFS" || $scope.layerList[i].type == "File" ){
+//								$scope.layerList[i].icon = '<md-button class="md-icon-button" ng-click="scopeFunctions.download(row,$event)" > <md-icon md-font-icon="fa fa-download" style=" margin-top: 6px ; color: #153E7E;"></md-icon> </md-button>';
+//							} else{
+//								$scope.layerList[i].icon = '';
+//							}
+//						}
 
 					}
 
@@ -434,10 +434,15 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 			$scope.showme=false;
 		}
 		
-
 	}
 
 	$scope.menuLayer= [{
+		label : sbiModule_translate.load('sbi.generic.download'),
+		icon:'fa fa-download' ,
+		action : function(item,event) {
+			$scope.showDetails(item);
+		}
+	},{
 		label : sbiModule_translate.load('sbi.generic.delete'),
 		 icon:'fa fa-trash' ,	 
 
