@@ -680,9 +680,13 @@ Ext.extend(Sbi.qbe.QueryCataloguePanel, Ext.Panel, {
      		this.treeLoader.on("load",function(){
      			if(parent.globalQbeJson){
      				var questo = this;
+     				if(typeof parent.globalQbeJson === "string"){
+     					questo.setQueriesCatalogue(JSON.parse(parent.globalQbeJson));
+     				}else{
+     					questo.setQueriesCatalogue(parent.globalQbeJson);
+     				}
      				
-     				 questo.setQueriesCatalogue(JSON.parse(parent.globalQbeJson));
-     				 parent.globalQbeJson=null; 
+     				parent.globalQbeJson=null; 
      			}
      		},this);
      		
