@@ -658,8 +658,8 @@ angular.module('ChartDesignerService', [])
 						}
 					},
 					"PANE": {
-						"endAngle": -120,
-						"startAngle": 120
+						"endAngle": 120,
+						"startAngle": -120
 					}
 				}
 
