@@ -65,28 +65,30 @@
 			marginTop: 40,
 		#end
         
-        #if($chart.height != '')
+       #if($chart.height != '' && $chart.isCockpitEngine!="true")
         	height: $chart.height,
         #end
         
         #*
     		Dimension type (pixels or percentage) parameter for height of the chart
-    		is provided. 
-    		
-    		NOTE: The same goes for the width of the chart (parameter 'widthDimType').
-    				
+    		is provided.     		
+    		NOTE: The same goes for the width of the chart (parameter 'widthDimType').    				
     		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
     	*#
-        #if($chart.heightDimType)
+     	#if($chart.heightDimType && $chart.isCockpitEngine!="true")
        	 	heightDimType: '$chart.heightDimType',
+       	#else 
+      	 	heightDimType: 'pixels',
         #end
         
-        #if($chart.width != '')
+        #if($chart.width != '' && $chart.isCockpitEngine!="true")
     		width: $chart.width,
     	#end
     	
-    	#if($chart.widthDimType)
+    	#if($chart.widthDimType && $chart.isCockpitEngine!="true")
         	widthDimType: '$chart.widthDimType',
+  	   	#else 
+	  	   	widthDimType: 'pixels',
         #end
     	
     	#*
@@ -477,9 +479,16 @@
 		 	 #if($xAxis.TITLE.enabled)
 		 	 	enabled: $xAxis.TITLE.enabled
 		 	 #end
-		 	 
-			 text: "$xAxis.TITLE.text",	 
-			 
+			 #if($chart.hideAxisTitleCategory)
+				#if($chart.hideAxisTitleCategory=="true")
+				 	 text: "",	
+				 
+				#else
+				  	text: "$xAxis.TITLE.text",		
+				#end 
+			#else
+			  text: "$xAxis.TITLE.text",		
+			#end
 			 style:{
 	        	#foreach($styleName in $xAxis.TITLE.style.keySet())
 		        	#set ($axisTitleStyle = $xAxis.TITLE.style[$styleName])
@@ -508,7 +517,7 @@
             #foreach($element in $counter)
             	#set( $elementKey = $element.key )
             	#set( $elementKey = $elementKey.replace("""", "\""") )
-            	"elementKey",
+            	"$elementKey",
              
     		#end
         ],
@@ -586,7 +595,16 @@
 			 	 	enabled: $yAxis.TITLE.enabled
 			 	#end
 		 	 
-        		text: "$yAxis.TITLE.text",		
+        		#if($chart.hideAxisTitleSerie)
+				 	#if($chart.hideAxisTitleSerie=="true")
+				 	 	text: "",	
+				 
+				 	#else
+				 	 	text: "$yAxis.TITLE.text",		
+				 	#end   
+			 	#else
+			  		text: "$yAxis.TITLE.text",		
+				#end 
 			 			 
         		style:{
 		        	#foreach($styleName in $yAxis.TITLE.style.keySet())

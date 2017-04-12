@@ -58,28 +58,30 @@
    		backgroundColor: '$chart.style.backgroundColor', ##outer chart background
     	#end
    		
-   		#if($chart.height != '')
-    		height:'$chart.height',
-    	#end
-    	
-    	#*
-    		Dimension type (pixels or percentage) parameter for height of the chart
-    		is provided. 
-    		
-    		NOTE: The same goes for the width of the chart (parameter 'widthDimType').
-    				
-    		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-    	*#
-    	#if($chart.heightDimType)
-       	 	heightDimType: '$chart.heightDimType',
+   		 #if($chart.height != '' && $chart.isCockpitEngine!="true")
+        	height: $chart.height,
         #end
         
-        #if($chart.width != '')
+        #*
+    		Dimension type (pixels or percentage) parameter for height of the chart
+    		is provided.     		
+    		NOTE: The same goes for the width of the chart (parameter 'widthDimType').    				
+    		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+    	*#
+     	#if($chart.heightDimType && $chart.isCockpitEngine!="true")
+       	 	heightDimType: '$chart.heightDimType',
+       	#else 
+      	 	heightDimType: 'pixels',
+        #end
+        
+        #if($chart.width != '' && $chart.isCockpitEngine!="true")
     		width: $chart.width,
     	#end
     	
-    	#if($chart.widthDimType)
+    	#if($chart.widthDimType && $chart.isCockpitEngine!="true")
         	widthDimType: '$chart.widthDimType',
+  	   	#else 
+	  	   	widthDimType: 'pixels',
         #end
 
         plotBackgroundColor: null,
@@ -220,9 +222,16 @@
 				 	 	enabled: $yAxis.TITLE.enabled
 				 	#end
 			 	 	
-			 	 	#if($yAxis.TITLE.text)
-	        			text: "$yAxis.TITLE.text",
-	        		#end
+			 	 	#if($chart.hideAxisTitleSerie)
+				 	#if($chart.hideAxisTitleSerie=="true")
+				 	 	text: "",	
+				 
+				 	#else
+				 	 	text: "$yAxis.TITLE.text",		
+				 	#end   
+				 	#else
+				  		text: "$xAxis.TITLE.text",		
+					#end 
 	        		
 				 	#if( $yAxis.TITLE.style )
 		        		style:{
