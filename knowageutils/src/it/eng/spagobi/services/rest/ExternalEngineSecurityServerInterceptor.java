@@ -141,4 +141,10 @@ public class ExternalEngineSecurityServerInterceptor extends AbstractSecuritySer
 		return true;
 	}
 
+	@Override
+	protected boolean isBackEndService() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

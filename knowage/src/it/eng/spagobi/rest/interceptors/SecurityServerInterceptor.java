@@ -187,4 +187,11 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 		// return !method.isAnnotationPresent(POST.class);
 		return true;
 	}
+
+	@Override
+	protected boolean isBackEndService() {
+		String auto = servletRequest.getHeader("Authorization");
+		int position = auto.indexOf("Direct");
+		return (position>-1 && position<5);
+	}
 }

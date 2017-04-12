@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -162,9 +162,15 @@ public abstract class AbstractSecurityServerInterceptor {
 
 	protected abstract boolean isUserAuthenticatedInSpagoBI();
 
+	protected abstract boolean isBackEndService();
+
 	protected IEngUserProfile getUserProfileFromUserId() {
 		IEngUserProfile engProfile = null;
 		String userId = null;
+
+		if(isBackEndService()){
+			return null;
+		}
 		try {
 			userId = getUserIdentifier();
 		} catch (Exception e) {
@@ -177,7 +183,8 @@ public abstract class AbstractSecurityServerInterceptor {
 			try {
 				engProfile = createProfile(userId);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.debug("Error creating user profile");
+				throw new SpagoBIRuntimeException("Error creating user profile", e);
 			}
 			setUserProfileInSession(engProfile);
 		}
