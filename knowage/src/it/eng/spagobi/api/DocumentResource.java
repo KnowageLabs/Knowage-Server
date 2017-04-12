@@ -711,63 +711,6 @@ public class DocumentResource extends AbstractSpagoBIResource {
 					logger.info("Category names for the SUNBURST document are: " + categoriesNames);
 
 				}
-				/**
-				 * Handles OLAP template cross-navigation parameters.
-				 *
-				 * @author Nikola Simovic (nsimovic, nikola.simovic@mht.net)
-				 */
-				else if (key.equalsIgnoreCase("OLAP")) {
-
-					JSONObject olapJSONObject = new JSONObject();
-					olapJSONObject = obj.optJSONObject(key);
-
-					JSONObject crossNavFromCellSingle = new JSONObject();
-					JSONArray crossNavFromCellMulti = new JSONArray();
-
-					JSONObject crossNavFromMemberSingle = new JSONObject();
-					JSONArray crossNavFromMemberMulti = new JSONArray();
-
-					if (olapJSONObject.optJSONObject("CROSS_NAVIGATION") != null) {
-
-						crossNavFromCellSingle = olapJSONObject.optJSONObject("CROSS_NAVIGATION").optJSONObject("PARAMETERS").optJSONObject("PARAMETER");
-						crossNavFromCellMulti = olapJSONObject.optJSONObject("CROSS_NAVIGATION").optJSONObject("PARAMETERS").optJSONArray("PARAMETER");
-
-						if (crossNavFromCellMulti == null) {
-							if (crossNavFromCellSingle != null) {
-								jaCategories.put(crossNavFromCellSingle);
-							}
-						} else if (crossNavFromCellMulti != null) {
-							for (int i = 0; i < crossNavFromCellMulti.length(); i++) {
-								JSONObject joT = (JSONObject) crossNavFromCellMulti.get(i);
-								jaCategories.put(joT);
-							}
-						}
-					}
-
-					if (olapJSONObject.optJSONObject("MDXQUERY") != null) {
-
-						crossNavFromMemberSingle = olapJSONObject.optJSONObject("MDXQUERY").optJSONObject("clickable");
-						crossNavFromMemberMulti = olapJSONObject.optJSONObject("MDXQUERY").optJSONArray("clickable");
-
-						if (crossNavFromMemberMulti == null) {
-							if (crossNavFromMemberSingle != null) {
-								jaCategories.put(crossNavFromMemberSingle.opt("clickParameter"));
-							}
-						} else if (crossNavFromMemberMulti != null) {
-							for (int i = 0; i < crossNavFromMemberMulti.length(); i++) {
-								JSONObject joT = (JSONObject) crossNavFromMemberMulti.get(i);
-								jaCategories.put(joT.opt("clickParameter"));
-							}
-						}
-					}
-
-					for (int i = 0; i < jaCategories.length(); i++) {
-						JSONObject joT = (JSONObject) jaCategories.get(i);
-						categoriesNames.add((String) joT.opt("name"));
-					}
-					logger.info("Category names for the OLAP document are: " + categoriesNames);
-				}
-
 			}
 
 		} catch (JSONException e1) {
