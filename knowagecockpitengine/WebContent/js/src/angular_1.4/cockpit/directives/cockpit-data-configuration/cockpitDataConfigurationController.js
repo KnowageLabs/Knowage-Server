@@ -158,7 +158,15 @@ function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitMod
 		 var config = {
 				    attachTo: angular.element(document.getElementById("cockpitDataConfig")) ,
 				    controller: function($scope,parameter,cockpitModule_analyticalDrivers,mdPanelRef){
-				    	$scope.cockpitModule_analyticalDrivers=cockpitModule_analyticalDrivers;
+				    	var parameters = {};
+				    	var suffix = "_description";
+				    	for (var property in cockpitModule_analyticalDrivers) {
+				    	    if (cockpitModule_analyticalDrivers.hasOwnProperty(property) && property.endsWith(suffix)) {
+				    	    	parameters[property.substring(0,property.length - suffix.length)] = cockpitModule_analyticalDrivers[property];
+				    	    }
+				    	}
+				    	$scope.cockpitModule_analyticalDrivers = parameters;
+				    	
 				    	$scope.addParameter=function(par){
 				    		parameter.value="$P{"+par+"}"
 				    		mdPanelRef.close();
