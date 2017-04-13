@@ -455,7 +455,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 	 
 	$scope.save= function(){  // this function is called when clicking on save button
 		
-		var saveDriver = function() {
+		var saveDriver = function(path) {
 			$scope.formatDriver();
 			
 			if($scope.selectedDriver.hasOwnProperty("id")){ // if item already exists do update @PUT
@@ -465,13 +465,20 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 					$scope.adList=[];
 					$timeout(function(){								
 						$scope.getDrivers();
+						$scope.selectedCreated = $scope.adList[$scope.adList.length -1];
+						console.log($scope.selectedCreated);
 					}, 1000);
 					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
 					//$scope.selectedDriver={};
-					$scope.selectedTab = 0;
+					if(path == 'usemode'){
+						$scope.selectedTab = 1;
+					}else{
+						$scope.selectedTab = 0;
+					}
+					
 					//$scope.showme=false;
 					$scope.showadMode = true;
-					//$scope.dirtyForm=false;	
+					$scope.dirtyForm=false;	
 					
 				}, function(response) {
 					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
@@ -487,10 +494,14 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 					}, 1000);
 					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
 					//$scope.selectedDriver={};
-					$scope.selectedTab = 0;
+					if(path == 'usemode'){
+						$scope.selectedTab = 1;
+					}else{
+						$scope.selectedTab = 0;
+					}
 					//$scope.showme=false;
 					//$scope.showadMode = true;
-					//$scope.dirtyForm=false;	
+					$scope.dirtyForm=false;	
 					
 				}, function(response) {
 					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
@@ -510,9 +521,9 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 						$scope.getUseModesById($scope.selectedDriver);
 					}, 1000);
 					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
-					$scope.selectedTab = 0;
-					$scope.showme=false;
-					$scope.showadMode = false;
+					$scope.selectedTab = 1;
+					$scope.showme=true;
+					$scope.showadMode = true;
 					$scope.dirtyForm=false;	
 					
 				}, function(response) {
@@ -530,9 +541,9 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 					}, 1000);
 					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
 					$scope.selectedParUse={};
-					$scope.selectedTab = 0;
-					$scope.showme=false;
-					$scope.showadMode = false;
+					$scope.selectedTab = 1;
+					$scope.showme=true;
+					$scope.showadMode = true;
 					$scope.dirtyForm=false;
 					
 				}, function(response) {
@@ -550,7 +561,8 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 			console.log("SAVING USEMODE");
 			console.log($scope.selectedParUse);
 			saveUseMode();
-			saveDriver();
+			saveDriver('usemode');
+			$scope.selectedTab=1;
 			$scope.closeDialogFromAD();
 		}
 		
@@ -719,8 +731,10 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 		return -1;
 	}
 	// TODO if needed
+	$scope.blabla= [];
 	$scope.disableUsedRoles = function(currentRole,useModeRoles) {
 		var allRoles = [];
+		
 		 var currentRoles = useModeRoles
 		$scope.usedRoles = [];
 		for (var i = 0; i < $scope.useModeList.length; i++) {
@@ -734,15 +748,15 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 		}
 		for (var i = 0; i < $scope.usedRoles.length; i++) {
 			if (currentRole.name == $scope.usedRoles[i].name) {
+				
+				$scope.blabla.push($scope.usedRoles[i]);
 				return true;
 			}
 		}		
 	}
 	//this function checks all roles
 	$scope.checkAllRoles = function() {
-		for (var i = 0; i < $scope.rolesList.length; i++) {
-			$scope.associatedRoles.push($scope.rolesList[i]);
-		}
+		console.log($scope.blabla);
 		
 	}
 	// this function unchecks all roles
