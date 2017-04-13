@@ -76,6 +76,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	$scope.restDsRequestHeaderTableLastPage = 1;
 	$scope.restDsJsonPathAttribTableLastPage = 1;
 	
+	$scope.currentPageNumber = 1;
+	
 	$scope.fileObj={};
 	$scope.selectedTab = 0;	// Initially, the first tab is selected.
 	$scope.tempScope = {};
@@ -853,29 +855,53 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     
     
     $scope.datasetLike = function (searchValue, itemsPerPage,currentPageNumber) {
-    	console.log(searchValue+""+itemsPerPage);
-    	var start = 0;
-    	if(currentPageNumber>1){
-			start = (currentPageNumber - 1) * itemsPerPage ;
-		}
-		$scope.loadDatasetList(start, itemsPerPage, searchValue);
+    	$scope.searchValue = searchValue;
+    	if($scope.searchValue!=""){
+    		sbiModule_restServices.promiseGet("1.0/datasets", "countDataSetSearch/"+$scope.searchValue)
+    		.then(function(response) {
+    			$scope.numOfDs = response.data;
+    			$scope.loadDatasetList(0, itemsPerPage, searchValue);
+    		}, function(response) {
+    			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+    		});
+    		
+    	} else if ($scope.searchValue=="") {
+    		$scope.loadDatasetList(0, itemsPerPage, searchValue);
+    	}
     };
     
     $scope.changeDatasetPage=function(itemsPerPage,currentPageNumber){
-    	sbiModule_restServices.promiseGet("1.0/datasets", "countDataSets")
-		.then(function(response) {
-			$scope.numOfDs = response.data;
-			var start = 0;
-			if(currentPageNumber>1){
-				start = (currentPageNumber - 1) * itemsPerPage;
-			}
-			$scope.loadDatasetList(start, itemsPerPage, null);
-		}, function(response) {
-			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-		});
-		console.log(itemsPerPage);
-		console.log(currentPageNumber);
+    	$scope.currentItemsPerPage = itemsPerPage;
+    	$scope.currentPageNumber = currentPageNumber;
+    	if($scope.searchValue==undefined || $scope.searchValue.length==0 ){
+    		sbiModule_restServices.promiseGet("1.0/datasets", "countDataSets")
+    		.then(function(response) {
+    			$scope.numOfDs = response.data;
+    			var start = 0;
+    			if(currentPageNumber>1){
+    				start = (currentPageNumber - 1) * itemsPerPage;
+    			}
+    			if($scope.searchValue==undefined){
+    				$scope.searchValue = null;
+    			}
+    			$scope.loadDatasetList(start, itemsPerPage, $scope.searchValue);
+    		}, function(response) {
+    			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+    		});
+		} else if ($scope.searchValue!=undefined || $scope.searchValue.length!=0) {
 			
+			sbiModule_restServices.promiseGet("1.0/datasets", "countDataSetSearch/"+$scope.searchValue)
+    		.then(function(response) {
+    			$scope.numOfDs = response.data;
+    			var start = 0;
+    			if(currentPageNumber>1){
+    				start = (currentPageNumber - 1) * itemsPerPage;
+    			}
+    			$scope.loadDatasetList(start, itemsPerPage, $scope.searchValue);
+    		}, function(response) {
+    			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+    		});
+		}
 		
 	}
     
@@ -902,7 +928,11 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 							sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
 						});
 				} else if(filter!=null){
-					$scope.numOfDs = $scope.datasetsListTemp.length;
+					sbiModule_restServices.promiseGet("1.0/datasets", "countDataSetSearch/"+$scope.searchValue)
+					.then(function(response) {
+						$scope.numOfDs = response.data;},function(response){
+							sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+						});
 				} 
 			}, function(response) {
 				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
@@ -944,56 +974,50 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		 						function() {
 		 							
 		 							sbiModule_restServices.promiseDelete("1.0/datasets", item.label, "/")
-									.then(
-											function(response) {
-							 					
-		 						   				sbiModule_messaging.showSuccessMessage($scope.translate.format($scope.translate.load('sbi.ds.deletedataset.success'), item.label));
-		 						   				
-		 						   				// If the dataset that is deleted is selected, deselect it and hence close its details.
-		 						   				if ($scope.selectedDataSet && $scope.selectedDataSet.label == item.label) {
-		 						   					$scope.selectedDataSet = null;			   					
-		 						   				}
-		 						   				
-		 						   				// Find the dataset, that is deleted on the server-side, in the array of all datasets and remove it from the array.
-		 						   				for (var i=0; i<$scope.datasetsListTemp.length; i++) {			   					
-		 						   					if ($scope.datasetsListTemp[i].label == item.label) {
-//		 						   						console.log($scope.dirtyForm);
-//		 						   						console.log($scope.selectedDataSet.label == item.label);
-		 						   						$scope.datasetsListTemp.splice(i,1);
-		 						   						$scope.showSaveAndCancelButtons = false;
-		 						   						break;
-		 						   					}			   					
-		 						   				}
-		 						   				
-		 						   				$scope.selectedTab = null;
-		 						   				
-			 						   			sbiModule_restServices.promiseDelete('scheduler/persistence/dataset/label', item.label, "/")
-					 							.then(
-					 									function(responseDS) {
-															console.log("[DELETE]: Persistence schedulation removed!");
-														},
-					 									
-					 									function(responseDS) {
-															sbiModule_messaging.showWarningMessage(sbiModule_translate.load("sbi.catalogues.toast.warning.schedulation"), 'Warning!');
-															$log.warn("An error occured while trying to delete a dataset persistence schedulation");
-														}
-					 								);
-		 						
-		 						   			}, 
-		 						   			
-		 						   			function(response) {	
-		 						   				
-		 						   				// If there is a message that is provided when attempting to delete a dataset that is used in some documents.
-			 					   				if (response.data && response.data.errors && Array.isArray(response.data.errors)) {
-			 					   					sbiModule_messaging.showErrorMessage(response.data.errors[0].message);
-			 					   				}
-			 					   				else {
-			 					   					sbiModule_messaging.showErrorMessage($scope.translate.format($scope.translate.load('sbi.ds.deletedataset.error'), item.label));
-			 					   				}
-		 						   				
-		 						   			}
-
-									);
+			 							.then(
+			 									function(response) {
+			 					
+			 						   				sbiModule_messaging.showSuccessMessage($scope.translate.format($scope.translate.load('sbi.ds.deletedataset.success'), item.label));
+			 						   							 						   				
+				 						   			var start = 0;
+				 					    			if($scope.currentPageNumber>1){
+				 					    				start = ($scope.currentPageNumber - 1) * $scope.currentItemsPerPage;
+				 					    			}
+				 					    			$scope.loadDatasetList(start, $scope.currentItemsPerPage, null);
+			 						   				/*// If the dataset that is deleted is selected, deselect it and hence close its details.
+			 						   				if ($scope.selectedDataSet && $scope.selectedDataSet.label == item.label) {
+			 						   					$scope.selectedDataSet = null;			   					
+			 						   				}
+			 						   				
+			 						   				// Find the dataset, that is deleted on the server-side, in the array of all datasets and remove it from the array.
+			 						   				for (var i=0; i<$scope.datasetsListTemp.length; i++) {			   					
+			 						   					if ($scope.datasetsListTemp[i].label == item.label) {
+//			 						   						console.log($scope.dirtyForm);
+//			 						   						console.log($scope.selectedDataSet.label == item.label);
+			 						   						$scope.datasetsListTemp.splice(i,1);
+			 						   						$scope.datasetsListPersisted.splice(i,1);
+			 						   						$scope.showSaveAndCancelButtons = false;
+			 						   						break;
+			 						   					}			   					
+			 						   				}
+			 						   				
+			 						   				$scope.selectedTab = null;*/
+			 						
+			 						   			}, 
+			 						   			
+			 						   			function(response) {	
+			 						   				
+			 						   				// If there is a message that is provided when attempting to delete a dataset that is used in some documents.
+				 					   				if (response.data && response.data.errors && Array.isArray(response.data.errors)) {
+				 					   					sbiModule_messaging.showErrorMessage(response.data.errors[0].message);
+				 					   				}
+				 					   				else {
+				 					   					sbiModule_messaging.showErrorMessage($scope.translate.format($scope.translate.load('sbi.ds.deletedataset.error'), item.label));
+				 					   				}
+			 						   				
+			 						   			}
+			 								);
+		 							
 		 						},
 		 						
 		 						function() {
@@ -1480,7 +1504,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		
 	}
 	
-	var exctractFieldsMetadata = function(metadata) {
+	var exctractFieldsMetadata = function(metadata, type) {
 				
 		var fieldsMetadata = new Array();
 		var jsonTemp = {};
@@ -1488,10 +1512,14 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		
 		for (i=0; i<metadata.length; i++) {
 			
-			jsonTemp = {};
-			
-			if (metadata[i].pname=="fieldType") {
-				jsonTemp["column"] = metadata[i].column;
+			if (metadata[i].pvalue=="ATTRIBUTE" || metadata[i].pvalue=="MEASURE") {
+				if(type.toUpperCase()=="QBE"){
+					var str = metadata[i].column;
+					jsonTemp["column"] = str.substring(str.indexOf(":") + 1);
+				} else {
+					jsonTemp["column"] = metadata[i].column;
+				}
+				
 				jsonTemp["fieldType"] = metadata[i].pvalue;
 				$scope.datasetMetaWithFieldsMetaIndexes.push(i);
 				fieldsMetadata.push(jsonTemp);
@@ -3116,7 +3144,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     	
     	if ($scope.selectedDataSet.id) {
     		
-    		$scope.fieldsMetadata = exctractFieldsMetadata($scope.selectedDataSet.meta.columns);
+    		$scope.fieldsMetadata = exctractFieldsMetadata($scope.selectedDataSet.meta.columns, $scope.selectedDataSet.dsTypeCd);
         	
         	$mdDialog
     		   .show({

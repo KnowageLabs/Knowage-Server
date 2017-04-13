@@ -1241,7 +1241,12 @@ public class ManageDataSetsForREST {
 			}
 		} else if (originalDatasetFileCloning.exists()) {
 			try {
-				FileUtils.copyFile(originalDatasetFileCloning, newDatasetFile);
+				boolean isTwoEqual = FileUtils.contentEquals(originalDatasetFileCloning, newDatasetFile);
+				if(!isTwoEqual){
+					FileUtils.copyFile(originalDatasetFileCloning, newDatasetFile);
+				}
+				
+				
 			} catch (IOException e) {
 				logger.debug("Cannot move dataset File");
 				throw new SpagoBIRuntimeException("Cannot move dataset File", e);

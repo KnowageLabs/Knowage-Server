@@ -100,6 +100,8 @@ public interface IDataSetDAO extends ISpagoBIDao {
 	public Integer countBIObjAssociated(Integer dsId);
 
 	public Integer countDatasets();
+	
+	public Integer countDatasetsSearch(String search);
 
 	public boolean hasBIObjAssociated(String dsId);
 

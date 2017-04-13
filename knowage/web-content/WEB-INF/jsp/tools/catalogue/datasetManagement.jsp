@@ -111,7 +111,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					search-function="datasetLike(searchValue, itemsPerPage, currentPageNumber)"
 					 >
 				</angular-table> 
-	        
 	       	</list>
 	       
       		<extra-button>

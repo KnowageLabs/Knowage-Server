@@ -1260,6 +1260,56 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		}
 		return new Integer(resultNumber.intValue());
 	}
+	
+	
+	
+	/**
+	 * Counts number of filtered DataSets that are a result of a search 
+	 *
+	 * @return Integer, number of DataSets searched for
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 */
+	@Override
+	public Integer countDatasetsSearch(String search) {
+		logger.debug("IN");
+		Session session = null;
+		Transaction transaction = null;
+		Long resultNumber;
+		try {
+			session = getSession();
+			transaction = session.beginTransaction();
+			List<Domain> devCategories = new LinkedList<Domain>();
+			boolean isDev = fillDevCategories(devCategories);
+			if (isDev) {
+				List idsCat = createIdsCatogriesList(devCategories);
+				String owner = getUserProfile().getUserUniqueIdentifier().toString();
+				//hsql += " and h." + columnFilter + " like '%" + valuefilter + "%'";
+				Query countQuery = session
+						.createQuery("select count(*) from SbiDataSet sb where sb.active = ? and (sb.category.valueId IN (:idsCat) or owner = :owner) and sb.label "+ " like '%" + search + "%'");
+				countQuery.setBoolean(0, true);
+				countQuery.setParameterList("idsCat", idsCat);
+				countQuery.setString("owner", owner);
+				resultNumber = (Long) countQuery.uniqueResult();
+			} else {
+				String hql = "select count(*) from SbiDataSet ds where ds.active = ? and ds.label "+ " like '%" + search + "%'";
+				Query hqlQuery = session.createQuery(hql);
+				hqlQuery.setBoolean(0, true);
+				resultNumber = (Long) hqlQuery.uniqueResult();
+			}
+		} catch (Throwable t) {
+			if (transaction != null && transaction.isActive()) {
+				transaction.rollback();
+			}
+			throw new SpagoBIDAOException("Error while loading the list of SbiDataSet", t);
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+			logger.debug("OUT");
+		}
+		return new Integer(resultNumber.intValue());
+	}
 
 	/**
 	 * Checks for bi obj associated.
