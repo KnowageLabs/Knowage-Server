@@ -763,8 +763,8 @@ function renderChordChart(jsonData,panel,handleCockpitSelection,locale,handleCro
 	var borderWidth=jsonData.tooltip.borderWidth?jsonData.tooltip.borderWidth: '1';
 	var borderRadius=jsonData.tooltip.borderRadius?jsonData.tooltip.borderRadius:'3';
 	
-	d3.selectAll(".tooltip")
-	.style("position","absolute")
+	d3.select(panel).selectAll(".tooltip")
+	.style("position","fixed")
 	.style("text-align",jsonData.tooltip.align)
 	.style("min-width",20)
 	.style("max-width",1500)

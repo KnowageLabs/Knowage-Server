@@ -426,8 +426,8 @@ function renderParallelChart(data,panel,handleCockpitSelection,chartEngineSettin
 		.attr("class","tooltip")
 		.style("opacity","0");
 		
-		d3.selectAll(".tooltip")
-		.style("position","absolute")
+		d3.select(panel).selectAll(".tooltip")
+		.style("position","fixed")
 		.style("text-align","center")
 		.style("min-width",10)
 		.style("max-width",1000)
@@ -1193,7 +1193,7 @@ function renderParallelChart(data,panel,handleCockpitSelection,chartEngineSettin
 			})
 	     .on("mouseout",function(d){
 			d3.select(this).style("outline","none");
-	    	d3.selectAll(".notfade").style({ "fill": "none", "stroke-opacity": ".5","stroke-width": "2px"})
+	    	d3.select(panel).selectAll(".notfade").style({ "fill": "none", "stroke-opacity": ".5","stroke-width": "2px"})
 	 		.style({"stroke":function(d) { return myColors(d[groupcolumn]);}});
            })
 	     .selectAll("td")
@@ -1209,8 +1209,8 @@ function renderParallelChart(data,panel,handleCockpitSelection,chartEngineSettin
 		   .style("text-align","center");
 		}
 		
-		d3.selectAll(".fade").style({"stroke": "#000","stroke-opacity": ".02"}); 
-		d3.selectAll(".notfade").style({ "fill": "none", "stroke-opacity": ".5","stroke-width": "2px"})
+		d3.select(panel).selectAll(".fade").style({"stroke": "#000","stroke-opacity": ".02"}); 
+		d3.select(panel).selectAll(".notfade").style({ "fill": "none", "stroke-opacity": ".5","stroke-width": "2px"})
 		.style({"stroke" :function(d) { return myColors(d[groupcolumn]);}});
 
 		
@@ -1298,8 +1298,8 @@ function renderParallelChart(data,panel,handleCockpitSelection,chartEngineSettin
 				return (d[selectedCell.column]===selectedCell.value)?"true":"false";
 			});
 
-			d3.selectAll(".fade").attr("visible","false");
-			d3.selectAll(".notfade").attr("visible", function(d){
+			d3.select(panel).selectAll(".fade").attr("visible","false");
+			d3.select(panel).selectAll(".notfade").attr("visible", function(d){
 				return (d[selectedCell.column]===selectedCell.value)?"true":"false";
 			});
 

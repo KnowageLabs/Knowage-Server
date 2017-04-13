@@ -760,7 +760,7 @@ function renderWordCloud(chartConf,panel,handleCockpitSelection,locale, handleCr
 	    var tooltipBorderWidth=chartConf.tooltip.borderWidth?chartConf.tooltip.borderWidth:'1';
 	    var tooltipBorderRadius=chartConf.tooltip.borderRadius?chartConf.tooltip.borderRadius:'3';
 	    
-		d3.selectAll(".tooltip")
+	    d3.select(panel).selectAll(".tooltip")
 			.style("position","fixed")
 			.style("text-align",chartConf.tooltip.align)
 			.style("min-width",10)
