@@ -87,6 +87,7 @@
 	<filter-mapping>
 		<filter-name>SpagoBICoreCheckSessionFilter</filter-name>
 		<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
+		<url-pattern>/restful-services/publish/*</url-pattern>		
 	</filter-mapping>
 
 	<!-- START-CAS 
