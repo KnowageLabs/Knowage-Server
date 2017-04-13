@@ -24,15 +24,24 @@ import it.eng.spagobi.analiticalmodel.document.bo.Snapshot;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
+import it.eng.spagobi.services.scheduler.service.ISchedulerServiceSupplier;
+import it.eng.spagobi.services.scheduler.service.SchedulerServiceSupplierFactory;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.service.ManageDataSetsForREST;
+import it.eng.spagobi.tools.dataset.utils.DatasetPersistenceUtilsForRest;
 import it.eng.spagobi.tools.scheduler.Formula;
 import it.eng.spagobi.tools.scheduler.FormulaParameterValuesRetriever;
 import it.eng.spagobi.tools.scheduler.RuntimeLoadingParameterValuesRetriever;
+import it.eng.spagobi.tools.scheduler.bo.Trigger;
+import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
 import it.eng.spagobi.tools.scheduler.to.DispatchContext;
 import it.eng.spagobi.tools.scheduler.to.JobInfo;
 import it.eng.spagobi.tools.scheduler.to.TriggerInfo;
+import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,7 +52,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+import org.json.JSONObject;
+
 public class SchedulerUtilities {
+
+	public static Logger logger = Logger.getLogger(SchedulerUtilities.class);
 
 	/**
 	 * Gets the named history snapshot.
@@ -492,4 +506,31 @@ public class SchedulerUtilities {
 		return dispatchContext;
 	}
 
+	public static void scheduleDataset(UserProfile profile, IDataSet dataset, JSONObject datasetJson) throws Exception {
+		DatasetPersistenceUtilsForRest dspu = new DatasetPersistenceUtilsForRest(profile, null, "SCHEDULE_DATASET_PERSISTENCE", dataset);
+		String jobName = dspu.saveDatasetJob(dataset, null);
+		if (jobName != null) {
+			dspu.saveTriggerForDatasetJob(jobName, datasetJson);
+		} else {
+			logger.error("The job is not saved correctly!");
+			throw new SpagoBIException("The job is not saved correctly!");
+		}
+	}
+
+	public static void unscheduleDataset(UserProfile profile, String label) throws Exception {
+		ISchedulerDAO schedulerDAO = DAOFactory.getSchedulerDAO();
+		List<Trigger> triggers = schedulerDAO.loadTriggers(ManageDataSetsForREST.JOB_GROUP, label);
+
+		if (triggers != null && !triggers.isEmpty()) {
+			ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
+			String servoutStr = schedulerService.deleteJob(label, ManageDataSetsForREST.JOB_GROUP);
+			SourceBean execOutSB = SchedulerUtilities.getSBFromWebServiceResponse(servoutStr);
+			if (execOutSB != null) {
+				String outcome = (String) execOutSB.getAttribute("outcome");
+				if (outcome.equalsIgnoreCase("fault")) {
+					throw new SpagoBIException("Job " + label + " not deleted by the web service");
+				}
+			}
+		}
+	}
 }

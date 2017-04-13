@@ -1409,7 +1409,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						</md-content>
 						
 						<!-- OLD ADVANCED TAB (Scheduling) -->
-						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" style="margin:0 8 0 8" ng-if="selectedDataSet.isPersisted">
+						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" style="margin:0 8 0 8" ng-if="showDatasetScheduler && selectedDataSet.isPersisted">
 							
 							<md-toolbar class="secondaryToolbar" layout-padding>
 						     	

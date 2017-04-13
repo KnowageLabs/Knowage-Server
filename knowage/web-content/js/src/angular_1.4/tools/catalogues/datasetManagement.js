@@ -44,6 +44,8 @@ datasetModule
 
 function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_translate, sbiModule_restServices, sbiModule_messaging, sbiModule_user, $mdDialog, multipartForm, $timeout, $qbeViewer){
 	
+	 $scope.showDatasetScheduler = sbiModule_user.functionalities.indexOf("SchedulingDatasetManagement")>-1;
+	
 	$scope.translate = sbiModule_translate;
 	$scope.codeMirror = null;
 	$scope.isSomething = false;
@@ -851,35 +853,29 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     
     
     $scope.datasetLike = function (searchValue, itemsPerPage,currentPageNumber) {
-    	$scope.searchValue = searchValue;
     	console.log(searchValue+""+itemsPerPage);
     	var start = 0;
-    	//if(currentPageNumber>1){
-		//	start = (currentPageNumber - 1) * itemsPerPage ;
-		//}
-		$scope.loadDatasetList(start, -1, searchValue);
+    	if(currentPageNumber>1){
+			start = (currentPageNumber - 1) * itemsPerPage ;
+		}
+		$scope.loadDatasetList(start, itemsPerPage, searchValue);
     };
     
     $scope.changeDatasetPage=function(itemsPerPage,currentPageNumber){
-    	
-    	if($scope.searchValue==undefined || $scope.searchValue.length==0 ){
-    		sbiModule_restServices.promiseGet("1.0/datasets", "countDataSets")
-    		.then(function(response) {
-    			$scope.numOfDs = response.data;
-    			var start = 0;
-    			if(currentPageNumber>1){
-    				start = (currentPageNumber - 1) * itemsPerPage;
-    			}
-    			$scope.loadDatasetList(start, itemsPerPage, null);
-    		}, function(response) {
-    			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-    		});
-    		console.log(itemsPerPage);
-    		console.log(currentPageNumber);
-		} else if ($scope.searchValue!=undefined || $scope.searchValue.length!=0) {
-			//TO DO:
-			/*front-end pagination when the search result is greater than the number of itemsPerPage*/			
-		}
+    	sbiModule_restServices.promiseGet("1.0/datasets", "countDataSets")
+		.then(function(response) {
+			$scope.numOfDs = response.data;
+			var start = 0;
+			if(currentPageNumber>1){
+				start = (currentPageNumber - 1) * itemsPerPage;
+			}
+			$scope.loadDatasetList(start, itemsPerPage, null);
+		}, function(response) {
+			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+		});
+		console.log(itemsPerPage);
+		console.log(currentPageNumber);
+			
 		
 	}
     
@@ -948,45 +944,56 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		 						function() {
 		 							
 		 							sbiModule_restServices.promiseDelete("1.0/datasets", item.label, "/")
-			 							.then(
-			 									function(response) {
-			 					
-			 						   				sbiModule_messaging.showSuccessMessage($scope.translate.format($scope.translate.load('sbi.ds.deletedataset.success'), item.label));
-			 						   				
-			 						   				// If the dataset that is deleted is selected, deselect it and hence close its details.
-			 						   				if ($scope.selectedDataSet && $scope.selectedDataSet.label == item.label) {
-			 						   					$scope.selectedDataSet = null;			   					
-			 						   				}
-			 						   				
-			 						   				// Find the dataset, that is deleted on the server-side, in the array of all datasets and remove it from the array.
-			 						   				for (var i=0; i<$scope.datasetsListTemp.length; i++) {			   					
-			 						   					if ($scope.datasetsListTemp[i].label == item.label) {
-//			 						   						console.log($scope.dirtyForm);
-//			 						   						console.log($scope.selectedDataSet.label == item.label);
-			 						   						$scope.datasetsListTemp.splice(i,1);
-			 						   						$scope.datasetsListPersisted.splice(i,1);
-			 						   						$scope.showSaveAndCancelButtons = false;
-			 						   						break;
-			 						   					}			   					
-			 						   				}
-			 						   				
-			 						   				$scope.selectedTab = null;
-			 						
-			 						   			}, 
-			 						   			
-			 						   			function(response) {	
-			 						   				
-			 						   				// If there is a message that is provided when attempting to delete a dataset that is used in some documents.
-				 					   				if (response.data && response.data.errors && Array.isArray(response.data.errors)) {
-				 					   					sbiModule_messaging.showErrorMessage(response.data.errors[0].message);
-				 					   				}
-				 					   				else {
-				 					   					sbiModule_messaging.showErrorMessage($scope.translate.format($scope.translate.load('sbi.ds.deletedataset.error'), item.label));
-				 					   				}
-			 						   				
-			 						   			}
-			 								);
-		 							
+									.then(
+											function(response) {
+							 					
+		 						   				sbiModule_messaging.showSuccessMessage($scope.translate.format($scope.translate.load('sbi.ds.deletedataset.success'), item.label));
+		 						   				
+		 						   				// If the dataset that is deleted is selected, deselect it and hence close its details.
+		 						   				if ($scope.selectedDataSet && $scope.selectedDataSet.label == item.label) {
+		 						   					$scope.selectedDataSet = null;			   					
+		 						   				}
+		 						   				
+		 						   				// Find the dataset, that is deleted on the server-side, in the array of all datasets and remove it from the array.
+		 						   				for (var i=0; i<$scope.datasetsListTemp.length; i++) {			   					
+		 						   					if ($scope.datasetsListTemp[i].label == item.label) {
+//		 						   						console.log($scope.dirtyForm);
+//		 						   						console.log($scope.selectedDataSet.label == item.label);
+		 						   						$scope.datasetsListTemp.splice(i,1);
+		 						   						$scope.showSaveAndCancelButtons = false;
+		 						   						break;
+		 						   					}			   					
+		 						   				}
+		 						   				
+		 						   				$scope.selectedTab = null;
+		 						   				
+			 						   			sbiModule_restServices.promiseDelete('scheduler/persistence/dataset/label', item.label, "/")
+					 							.then(
+					 									function(responseDS) {
+															console.log("[DELETE]: Persistence schedulation removed!");
+														},
+					 									
+					 									function(responseDS) {
+															sbiModule_messaging.showWarningMessage(sbiModule_translate.load("sbi.catalogues.toast.warning.schedulation"), 'Warning!');
+															$log.warn("An error occured while trying to delete a dataset persistence schedulation");
+														}
+					 								);
+		 						
+		 						   			}, 
+		 						   			
+		 						   			function(response) {	
+		 						   				
+		 						   				// If there is a message that is provided when attempting to delete a dataset that is used in some documents.
+			 					   				if (response.data && response.data.errors && Array.isArray(response.data.errors)) {
+			 					   					sbiModule_messaging.showErrorMessage(response.data.errors[0].message);
+			 					   				}
+			 					   				else {
+			 					   					sbiModule_messaging.showErrorMessage($scope.translate.format($scope.translate.load('sbi.ds.deletedataset.error'), item.label));
+			 					   				}
+		 						   				
+		 						   			}
+
+									);
 		 						},
 		 						
 		 						function() {
@@ -1412,9 +1419,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	 * 	@GET service that gets domain types for
 	 *  category 																	
 	 */
-	
 	$scope.getDomainTypeCategory = function(){	
-		sbiModule_restServices.promiseGet("2.0/roles","ds_categories","")
+		sbiModule_restServices.promiseGet("domains","listValueDescriptionByType","DOMAIN_TYPE=CATEGORY_TYPE")
 		.then(function(response) {
 			$scope.categoryList = response.data;
 		}, function(response) {
@@ -1474,7 +1480,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		
 	}
 	
-	var exctractFieldsMetadata = function(metadata, type) {
+	var exctractFieldsMetadata = function(metadata) {
 				
 		var fieldsMetadata = new Array();
 		var jsonTemp = {};
@@ -1484,14 +1490,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			
 			jsonTemp = {};
 			
-			if (metadata[i].pname=="fieldType" || metadata[i].pname=="fieldAlias" || metadata[i].pname=="Type") {
-				if(type.toUpperCase()=="QBE"){
-					var str = metadata[i].column;
-					jsonTemp["column"] = str.substring(str.indexOf(":") + 1);
-				} else {
-					jsonTemp["column"] = metadata[i].column;
-				}
-				
+			if (metadata[i].pname=="fieldType") {
+				jsonTemp["column"] = metadata[i].column;
 				jsonTemp["fieldType"] = metadata[i].pvalue;
 				$scope.datasetMetaWithFieldsMetaIndexes.push(i);
 				fieldsMetadata.push(jsonTemp);
@@ -2293,182 +2293,36 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			sbiModule_restServices.promisePost('1.0/datasets','', angular.toJson($scope.selectedDataSet))
 				.then(
 						function(response) {
-										
-							sbiModule_restServices.promiseGet('1.0/datasets/dataset/id',response.data.id)
+							sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
+							if($scope.selectedDataSet.isScheduled) {
+								sbiModule_restServices.promisePost('scheduler/persistence/dataset/id',response.data.id, angular.toJson($scope.selectedDataSet))
 								.then(
 										function(responseDS) {
-											
-											$log.info("Dataset saved successfully"); 
-											
-		
-		
-											var savedDataset = responseDS.data[0];		
-											
-											$scope.selectedDataSet = angular.copy(savedDataset);
-											$scope.datasetsListTemp[indexOfExistingDSInAT] = angular.copy($scope.selectedDataSet);
-											$scope.datasetsListPersisted = angular.copy($scope.datasetsListTemp);
-											$scope.selectedDataSetInit = angular.copy($scope.selectedDataSet);
-											$scope.isCategoryRequired = false;
-											
-											// SCHEDULING
-											if ($scope.selectedDataSet.isScheduled) {
-												$scope.selectedDataSet.startDate = new Date($scope.selectedDataSet.startDate);
-												console.log($scope.selectedDataSet);
-												
-												if (!$scope.selectedDataSet.endDate) {
-													$scope.selectedDataSet.endDate = null;
-												}
-												else {
-													$scope.selectedDataSet.endDate = new Date($scope.selectedDataSet.endDate);
-												}
-												
-												// Deparse the CRON from the response (since we do not need seconds from it)
-												var splitCron = $scope.selectedDataSet.schedulingCronLine.split(" ");
-												var cronNoSeconds = "";
-												var selectedMinutesCronString = splitCron[1]!="*" ? splitCron[1] : null;
-												var selectedHoursCronString = splitCron[2]!="*" ? splitCron[2] : null;
-												var selectedDaysCronString = splitCron[3]!="*" ? splitCron[3] : null;
-												var selectedMonthsCronString = splitCron[4]!="*" ? splitCron[4] : null;
-												var selectedWeekdaysCronString = splitCron[5]!="*" && splitCron[5]!="?" ? splitCron[5] : null;
-																								
-												for (i=1; i<splitCron.length; i++) {
-													cronNoSeconds += splitCron[i] + " ";
-												}
-												
-												$scope.selectedDataSet.schedulingCronLine = cronNoSeconds;
-												
-												$scope.scheduling.cronDescriptionDate = prettyCron.toString($scope.selectedDataSet.schedulingCronLine);
-												$scope.scheduling.cronDescriptionTime = prettyCron.getNext($scope.selectedDataSet.schedulingCronLine);
-																								
-												// =====================
-												// Comboboxes
-												// =====================
-												
-												// MINUTES
-												
-												var splitMinutes = new Array();
-												
-												if (selectedMinutesCronString!=null) { 
-													
-													var minutesTemp = selectedMinutesCronString.split(",");
-													
-													for (i=0; i<minutesTemp.length; i++) {
-														splitMinutes.push(minutesTemp[i]);
-													}
-													
-													$scope.scheduling.minutesSelected = splitMinutes;
-													$scope.scheduling.minutesCustom = true;
-													
-												}
-												else {
-													$scope.scheduling.minutesSelected = [];
-													$scope.scheduling.minutesCustom = false;
-												}
-												
-												// HOURS
-												
-												var splitHours = new Array();
-												
-												if (selectedHoursCronString!=null) { 
-													
-													var hoursTemp = selectedHoursCronString.split(",");
-													
-													for (i=0; i<hoursTemp.length; i++) {
-														splitHours.push(hoursTemp[i]);
-													}
-													
-													$scope.scheduling.hoursSelected = splitHours;
-													$scope.scheduling.hoursCustom = true;
-													
-												}
-												else {
-													$scope.scheduling.hoursSelected = [];
-													$scope.scheduling.hoursCustom = false;
-												}
-												
-												// DAYS
-												
-												var splitDays = new Array();
-												
-												if (selectedDaysCronString!=null) { 
-													
-													var daysTemp = selectedDaysCronString.split(",");
-													
-													for (i=0; i<daysTemp.length; i++) {
-														splitDays.push(daysTemp[i]);
-													}
-													
-													$scope.scheduling.daysSelected = splitDays;
-													$scope.scheduling.daysCustom = true;
-													
-												}
-												else {
-													$scope.scheduling.daysSelected = [];
-													$scope.scheduling.daysCustom = false;
-												}
-												
-												// MONTHS
-												
-												var splitMonths = new Array();
-												
-												if (selectedMonthsCronString!=null) { 
-													
-													var monthsTemp = selectedMonthsCronString.split(",");
-													
-													for (i=0; i<monthsTemp.length; i++) {
-														splitMonths.push(monthsTemp[i]);
-													}
-													
-													$scope.scheduling.monthsSelected = splitMonths;
-													$scope.scheduling.monthsCustom = true;
-													
-												}
-												else {
-													$scope.scheduling.monthsSelected = [];
-													$scope.scheduling.monthsCustom = false;
-												}
-												
-												// WEEKDAYS
-												
-												var splitWeekdays = new Array();
-												
-												if (selectedWeekdaysCronString!=null) { 
-													
-													var weekdaysTemp = selectedWeekdaysCronString.split(",");
-													
-													for (i=0; i<weekdaysTemp.length; i++) {
-														splitWeekdays.push(weekdaysTemp[i]);
-													}
-													
-													console.logsplitWeekdays();
-													
-													$scope.scheduling.weekdaysSelected = splitWeekdays;
-													$scope.scheduling.weekdaysCustom = true;
-													
-												}
-												else {
-													console.log("KOLOKOLLO");
-													console.log($scope.scheduling.weekdaysSelected );
-													$scope.scheduling.weekdaysSelected = [];
-													$scope.scheduling.weekdaysCustom = false;
-												}
-											}
-											
+											console.log("[POST]: SUCCESS!");
+											getDatasetFromId($scope, indexOfExistingDSInAT, response.data.id);
+											$scope.setFormNotDirty();
 										},
 										
 										function(responseDS) {
-											$log.warn("ERROR");
+											sbiModule_messaging.showWarningMessage(sbiModule_translate.load("sbi.catalogues.toast.warning.schedulation"), 'Warning!');	
+											$log.warn("An error occured while trying to save a dataset persistence schedulation");
 										}
-									);
-												
-							console.log("[POST]: SUCCESS!");					
-							sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');					
-							
-							// RELOAD ALL THE DATASETS AFTER SAVE OPERATION
-		//					$scope.loadAllDatasets();
-							//$scope.selectedDataSet = null;
-							
-							$scope.setFormNotDirty();
+								);
+							} else {
+								sbiModule_restServices.promiseDelete('scheduler/persistence/dataset/label', $scope.selectedDataSet.label, "/")
+								.then(
+										function(responseDS) {	
+											console.log("[DELETE]: SUCCESS!");
+											getDatasetFromId($scope, indexOfExistingDSInAT,response.data.id);
+											$scope.setFormNotDirty();
+										},
+										
+										function(responseDS) {
+											sbiModule_messaging.showWarningMessage(sbiModule_translate.load("sbi.catalogues.toast.warning.schedulation"), 'Warning!');	
+											$log.warn("An error occured while trying to delete a dataset persistence schedulation");
+										}
+								);
+							}
 							
 						}, 
 						
@@ -3262,7 +3116,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     	
     	if ($scope.selectedDataSet.id) {
     		
-    		$scope.fieldsMetadata = exctractFieldsMetadata($scope.selectedDataSet.meta.columns, $scope.selectedDataSet.dsTypeCd);
+    		$scope.fieldsMetadata = exctractFieldsMetadata($scope.selectedDataSet.meta.columns);
         	
         	$mdDialog
     		   .show({
@@ -3370,6 +3224,171 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     
     $scope.transformationCheck = function() {
     	$scope.selectedDataSet.trasfTypeCd = !$scope.transformDatasetState ? "" : $scope.transformationDataset.VALUE_CD;
+    }
+    
+    function getDatasetFromId($scope,index,id){
+    	sbiModule_restServices.promiseGet('1.0/datasets/dataset/id',id)
+		.then(
+				function(responseDS) {
+
+					var savedDataset = responseDS.data[0];		
+					
+					$scope.selectedDataSet = angular.copy(savedDataset);
+					$scope.datasetsListTemp[index] = angular.copy($scope.selectedDataSet);
+					$scope.datasetsListPersisted = angular.copy($scope.datasetsListTemp);
+					$scope.selectedDataSetInit = angular.copy($scope.selectedDataSet);
+					$scope.isCategoryRequired = false;
+					
+					// SCHEDULING
+					if ($scope.selectedDataSet.isScheduled) {
+						$scope.selectedDataSet.startDate = new Date($scope.selectedDataSet.startDate);
+						console.log($scope.selectedDataSet);
+						
+						if (!$scope.selectedDataSet.endDate) {
+							$scope.selectedDataSet.endDate = null;
+						}
+						else {
+							$scope.selectedDataSet.endDate = new Date($scope.selectedDataSet.endDate);
+						}
+						
+						// Deparse the CRON from the response (since we do not need seconds from it)
+						var splitCron = $scope.selectedDataSet.schedulingCronLine.split(" ");
+						var cronNoSeconds = "";
+						var selectedMinutesCronString = splitCron[1]!="*" ? splitCron[1] : null;
+						var selectedHoursCronString = splitCron[2]!="*" ? splitCron[2] : null;
+						var selectedDaysCronString = splitCron[3]!="*" ? splitCron[3] : null;
+						var selectedMonthsCronString = splitCron[4]!="*" ? splitCron[4] : null;
+						var selectedWeekdaysCronString = splitCron[5]!="*" && splitCron[5]!="?" ? splitCron[5] : null;
+																		
+						for (i=1; i<splitCron.length; i++) {
+							cronNoSeconds += splitCron[i] + " ";
+						}
+						
+						$scope.selectedDataSet.schedulingCronLine = cronNoSeconds;
+						
+						$scope.scheduling.cronDescriptionDate = prettyCron.toString($scope.selectedDataSet.schedulingCronLine);
+						$scope.scheduling.cronDescriptionTime = prettyCron.getNext($scope.selectedDataSet.schedulingCronLine);
+																		
+						// =====================
+						// Comboboxes
+						// =====================
+						
+						// MINUTES
+						
+						var splitMinutes = new Array();
+						
+						if (selectedMinutesCronString!=null) { 
+							
+							var minutesTemp = selectedMinutesCronString.split(",");
+							
+							for (i=0; i<minutesTemp.length; i++) {
+								splitMinutes.push(minutesTemp[i]);
+							}
+							
+							$scope.scheduling.minutesSelected = splitMinutes;
+							$scope.scheduling.minutesCustom = true;
+							
+						}
+						else {
+							$scope.scheduling.minutesSelected = [];
+							$scope.scheduling.minutesCustom = false;
+						}
+						
+						// HOURS
+						
+						var splitHours = new Array();
+						
+						if (selectedHoursCronString!=null) { 
+							
+							var hoursTemp = selectedHoursCronString.split(",");
+							
+							for (i=0; i<hoursTemp.length; i++) {
+								splitHours.push(hoursTemp[i]);
+							}
+							
+							$scope.scheduling.hoursSelected = splitHours;
+							$scope.scheduling.hoursCustom = true;
+							
+						}
+						else {
+							$scope.scheduling.hoursSelected = [];
+							$scope.scheduling.hoursCustom = false;
+						}
+						
+						// DAYS
+						
+						var splitDays = new Array();
+						
+						if (selectedDaysCronString!=null) { 
+							
+							var daysTemp = selectedDaysCronString.split(",");
+							
+							for (i=0; i<daysTemp.length; i++) {
+								splitDays.push(daysTemp[i]);
+							}
+							
+							$scope.scheduling.daysSelected = splitDays;
+							$scope.scheduling.daysCustom = true;
+							
+						}
+						else {
+							$scope.scheduling.daysSelected = [];
+							$scope.scheduling.daysCustom = false;
+						}
+						
+						// MONTHS
+						
+						var splitMonths = new Array();
+						
+						if (selectedMonthsCronString!=null) { 
+							
+							var monthsTemp = selectedMonthsCronString.split(",");
+							
+							for (i=0; i<monthsTemp.length; i++) {
+								splitMonths.push(monthsTemp[i]);
+							}
+							
+							$scope.scheduling.monthsSelected = splitMonths;
+							$scope.scheduling.monthsCustom = true;
+							
+						}
+						else {
+							$scope.scheduling.monthsSelected = [];
+							$scope.scheduling.monthsCustom = false;
+						}
+						
+						// WEEKDAYS
+						
+						var splitWeekdays = new Array();
+						
+						if (selectedWeekdaysCronString!=null) { 
+							
+							var weekdaysTemp = selectedWeekdaysCronString.split(",");
+							
+							for (i=0; i<weekdaysTemp.length; i++) {
+								splitWeekdays.push(weekdaysTemp[i]);
+							}
+							
+							console.logsplitWeekdays();
+							
+							$scope.scheduling.weekdaysSelected = splitWeekdays;
+							$scope.scheduling.weekdaysCustom = true;
+							
+						}
+						else {
+							console.log("KOLOKOLLO");
+							console.log($scope.scheduling.weekdaysSelected );
+							$scope.scheduling.weekdaysSelected = [];
+							$scope.scheduling.weekdaysCustom = false;
+						}
+					}
+					
+				},
+				
+				function(responseDS) {
+					$log.warn("ERROR");
+				}
+			);
     }
 	
 };

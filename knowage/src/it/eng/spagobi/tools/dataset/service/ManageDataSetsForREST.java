@@ -45,8 +45,6 @@ import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.hdfs.Hdfs;
 import it.eng.spagobi.hdfs.HdfsUtilities;
-import it.eng.spagobi.services.scheduler.service.ISchedulerServiceSupplier;
-import it.eng.spagobi.services.scheduler.service.SchedulerServiceSupplierFactory;
 import it.eng.spagobi.tools.dataset.bo.CkanDataSet;
 import it.eng.spagobi.tools.dataset.bo.ConfigurableDataSet;
 import it.eng.spagobi.tools.dataset.bo.CustomDataSet;
@@ -80,12 +78,8 @@ import it.eng.spagobi.tools.dataset.persist.PersistedHDFSManager;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
-import it.eng.spagobi.tools.dataset.utils.DatasetPersistenceUtilsForRest;
 import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.tools.scheduler.bo.Trigger;
-import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
-import it.eng.spagobi.tools.scheduler.utils.SchedulerUtilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.json.JSONUtils;
@@ -128,7 +122,7 @@ public class ManageDataSetsForREST {
 		} catch (JSONException e) {
 			logger.error("Cannot get values from JSON object while previewing dataset", e);
 			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to preview Data Set due to bad formated json of data set.");
-			
+
 		}
 		return datatsetTest(json, userProfile);
 	}
@@ -887,37 +881,20 @@ public class ManageDataSetsForREST {
 	}
 
 	/*
-	 * private void setUsefulItemsInSession(IDataSetDAO dsDao, Locale locale) {
-	 * try { List dsTypesList =
-	 * DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants
-	 * .DATA_SET_TYPE); filterDataSetType(dsTypesList); List catTypesList =
-	 * getCategories(); getSessionContainer().setAttribute("catTypesList",
-	 * catTypesList); List dataSourceList =
-	 * DAOFactory.getDataSourceDAO().loadAllDataSources();
-	 * getSessionContainer().setAttribute("dataSourceList", dataSourceList);
-	 * List scriptLanguageList =
-	 * DAOFactory.getDomainDAO().loadListDomainsByType(
-	 * DataSetConstants.SCRIPT_TYPE);
-	 * getSessionContainer().setAttribute("scriptLanguageList",
-	 * scriptLanguageList); List trasfTypesList =
-	 * DAOFactory.getDomainDAO().loadListDomainsByType
-	 * (DataSetConstants.TRANSFORMER_TYPE);
-	 * getSessionContainer().setAttribute("trasfTypesList", trasfTypesList);
-	 * List sbiAttrs = DAOFactory.getSbiAttributeDAO().loadSbiAttributes();
-	 * getSessionContainer().setAttribute("sbiAttrsList", sbiAttrs);
-	 *
-	 * List scopeCdList =
-	 * DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants
-	 * .DS_SCOPE); getSessionContainer().setAttribute("scopeCdList",
+	 * private void setUsefulItemsInSession(IDataSetDAO dsDao, Locale locale) { try { List dsTypesList =
+	 * DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants .DATA_SET_TYPE); filterDataSetType(dsTypesList); List catTypesList = getCategories();
+	 * getSessionContainer().setAttribute("catTypesList", catTypesList); List dataSourceList = DAOFactory.getDataSourceDAO().loadAllDataSources();
+	 * getSessionContainer().setAttribute("dataSourceList", dataSourceList); List scriptLanguageList = DAOFactory.getDomainDAO().loadListDomainsByType(
+	 * DataSetConstants.SCRIPT_TYPE); getSessionContainer().setAttribute("scriptLanguageList", scriptLanguageList); List trasfTypesList =
+	 * DAOFactory.getDomainDAO().loadListDomainsByType (DataSetConstants.TRANSFORMER_TYPE); getSessionContainer().setAttribute("trasfTypesList",
+	 * trasfTypesList); List sbiAttrs = DAOFactory.getSbiAttributeDAO().loadSbiAttributes(); getSessionContainer().setAttribute("sbiAttrsList", sbiAttrs);
+	 * 
+	 * List scopeCdList = DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants .DS_SCOPE); getSessionContainer().setAttribute("scopeCdList",
 	 * scopeCdList);
-	 *
-	 * String filePath = SpagoBIUtilities.getResourcePath(); filePath +=
-	 * File.separator + "dataset" + File.separator + "files"; File dir = new
-	 * File(filePath); String[] fileNames = dir.list();
-	 * getSessionContainer().setAttribute("fileNames", fileNames); } catch
-	 * (EMFUserError | EMFInternalError e) { logger.error(e.getMessage(), e);
-	 * throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.dsTypesRetrieve",
-	 * e); } }
+	 * 
+	 * String filePath = SpagoBIUtilities.getResourcePath(); filePath += File.separator + "dataset" + File.separator + "files"; File dir = new File(filePath);
+	 * String[] fileNames = dir.list(); getSessionContainer().setAttribute("fileNames", fileNames); } catch (EMFUserError | EMFInternalError e) {
+	 * logger.error(e.getMessage(), e); throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.dsTypesRetrieve", e); } }
 	 */
 
 	public List getCategories(UserProfile userProfile) {
@@ -1227,10 +1204,8 @@ public class ManageDataSetsForREST {
 
 		if (hdfs.exists(filePath)) {
 			/*
-			 * This method copies the contents of the specified source file to
-			 * the specified destination file. The directory holding the
-			 * destination file is created if it does not exist. If the
-			 * destination file exists, then this method will overwrite it.
+			 * This method copies the contents of the specified source file to the specified destination file. The directory holding the destination file is
+			 * created if it does not exist. If the destination file exists, then this method will overwrite it.
 			 */
 			String newDatasetPath = fileNewPath + newFileName + "." + fileType.toLowerCase();
 			hdfs.mkdirsParent(newDatasetPath);
@@ -1252,10 +1227,8 @@ public class ManageDataSetsForREST {
 		
 		if (originalDatasetFile.exists()) {
 			/*
-			 * This method copies the contents of the specified source file to
-			 * the specified destination file. The directory holding the
-			 * destination file is created if it does not exist. If the
-			 * destination file exists, then this method will overwrite it.
+			 * This method copies the contents of the specified source file to the specified destination file. The directory holding the destination file is
+			 * created if it does not exist. If the destination file exists, then this method will overwrite it.
 			 */
 			try {
 				FileUtils.copyFile(originalDatasetFile, newDatasetFile);
@@ -1410,7 +1383,7 @@ public class ManageDataSetsForREST {
 			try {
 				if (id != null && !id.equals("") && !id.equals("0")) {
 					ds.setId(Integer.valueOf(id));
-					modifyPersistenceAndScheduling(ds, logParam, req);
+					modifyPersistence(ds, logParam, req);
 					dsDao.modifyDataSet(ds);
 					logger.debug("Resource " + id + " updated");
 					attributesResponseSuccessJSON.put("success", true);
@@ -1443,7 +1416,7 @@ public class ManageDataSetsForREST {
 				// handle insert of persistence and scheduling
 				if (!isFromSaveNoMetadata) {
 					auditlogger.info("[Start persisting metadata for dataset with id " + ds.getId() + "]");
-					insertPersistenceAndScheduling(ds, logParam, json, userProfile, req);
+					insertPersistence(ds, logParam, json, userProfile, req);
 					auditlogger.info("Metadata saved for dataset with id " + ds.getId() + "]");
 					auditlogger.info("[End persisting metadata for dataset with id " + ds.getId() + "]");
 				}
@@ -1483,7 +1456,7 @@ public class ManageDataSetsForREST {
 		}
 	}
 
-	public void modifyPersistenceAndScheduling(IDataSet ds, HashMap<String, String> logParam, HttpServletRequest req) throws Exception {
+	public void modifyPersistence(IDataSet ds, HashMap<String, String> logParam, HttpServletRequest req) throws Exception {
 		logger.debug("IN");
 		try {
 			IDataSetDAO iDatasetDao = DAOFactory.getDataSetDAO();
@@ -1494,33 +1467,6 @@ public class ManageDataSetsForREST {
 				if (!previousDataset.isPersistedHDFS()) {
 					PersistedTableManager ptm = new PersistedTableManager(profile);
 					ptm.dropTableIfExists(previousDataset.getDataSourceForWriting(), previousDataset.getTableNameForReading());
-				}
-
-				ISchedulerDAO schedulerDAO = DAOFactory.getSchedulerDAO();
-				List<Trigger> triggers = schedulerDAO.loadTriggers(JOB_GROUP, previousDataset.getLabel());
-
-				if (triggers != null && !triggers.isEmpty() && !ds.isScheduled()) {
-					logger.error("The dataset [" + previousDataset.getLabel() + "] has to be unscheduled");
-
-					ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
-					String servoutStr = schedulerService.deleteJob(previousDataset.getLabel(), JOB_GROUP);
-					SourceBean execOutSB = SchedulerUtilities.getSBFromWebServiceResponse(servoutStr);
-					if (execOutSB != null) {
-						String outcome = (String) execOutSB.getAttribute("outcome");
-						if (outcome.equalsIgnoreCase("fault")) {
-							try {
-								AuditLogUtilities.updateAudit(req, profile, "SCHED_JOB.DELETE", logParam, "KO");
-							} catch (Exception e) {
-								logger.error(e);
-							}
-							throw new SpagoBIServiceException(SERVICE_NAME, "Job " + ds.getLabel() + " not deleted by the web service");
-						}
-					}
-					try {
-						AuditLogUtilities.updateAudit(req, profile, "SCHED_TRIGGER.DELETE", logParam, "OK");
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
 				}
 			} else if (ds.isPersistedHDFS() && !previousDataset.isPersistedHDFS()) {
 				if (previousDataset instanceof FileDataSet) {
@@ -1537,7 +1483,7 @@ public class ManageDataSetsForREST {
 		logger.debug("OUT");
 	}
 
-	public void insertPersistenceAndScheduling(IDataSet ds, HashMap<String, String> logParam, JSONObject json, UserProfile userProfile, HttpServletRequest req)
+	public void insertPersistence(IDataSet ds, HashMap<String, String> logParam, JSONObject json, UserProfile userProfile, HttpServletRequest req)
 			throws Exception {
 		logger.debug("IN");
 		if (ds.isPersisted()) {
@@ -1585,36 +1531,6 @@ public class ManageDataSetsForREST {
 			// }
 
 			logger.debug("Persistence ended succesfully!");
-			if (ds.isScheduled()) {
-				DatasetPersistenceUtilsForRest dspu = new DatasetPersistenceUtilsForRest(profile, req, SERVICE_NAME, ds);
-				String jobName = dspu.saveDatasetJob(ds, logParam);
-				if (jobName != null) {
-					dspu.saveTriggerForDatasetJob(jobName, json);
-				} else {
-					logger.error("The job is not saved correctly!");
-					throw new SpagoBIServiceException(SERVICE_NAME, "The job is not saved correctly!");
-				}
-			} else {
-				ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
-				String servoutStr = schedulerService.deleteJob(ds.getLabel(), JOB_GROUP);
-				SourceBean execOutSB = SchedulerUtilities.getSBFromWebServiceResponse(servoutStr);
-				if (execOutSB != null) {
-					String outcome = (String) execOutSB.getAttribute("outcome");
-					if (outcome.equalsIgnoreCase("fault")) {
-						try {
-							AuditLogUtilities.updateAudit(req, profile, "SCHED_JOB.DELETE", logParam, "KO");
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-						throw new SpagoBIServiceException(SERVICE_NAME, "Job " + ds.getLabel() + " not deleted by the web service");
-					}
-				}
-				try {
-					AuditLogUtilities.updateAudit(req, profile, "SCHED_TRIGGER.DELETE", logParam, "OK");
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
 		}
 		logger.debug("OUT");
 	}
@@ -1750,7 +1666,7 @@ public class ManageDataSetsForREST {
 		}
 		return dataSet;
 	}
-	
+
 	public String loadDataSetList(String jsonString, UserProfile userProfile) {
 		JSONObject json = null;
 		try {
@@ -1758,63 +1674,29 @@ public class ManageDataSetsForREST {
 		} catch (JSONException e) {
 			logger.error("Cannot get values from JSON object while previewing dataset", e);
 			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to preview Data Set due to bad formated json of data set.");
-			
+
 		}
 		return datatsetTest(json, userProfile);
 	}
-	
-	/*protected List<IDataSet> getListOfGenericDatasets(IDataSetDAO dsDao) throws JSONException, EMFUserError {
-		Integer start = getAttributeAsInteger(DataSetConstants.START);
-		Integer limit = getAttributeAsInteger(DataSetConstants.LIMIT);
 
-		if (start == null) {
-			start = DataSetConstants.START_DEFAULT;
-		}
-		if (limit == null) {
-			// limit = DataSetConstants.LIMIT_DEFAULT;
-			limit = DataSetConstants.LIMIT_DEFAULT;
-		}
-		JSONObject filtersJSON = null;
-		List<IDataSet> items = null;
-		if (this.requestContainsAttribute(DataSetConstants.FILTERS)) {
-			filtersJSON = getAttributeAsJSONObject(DataSetConstants.FILTERS);
-			String hsql = filterList(filtersJSON);
-			items = dsDao.loadFilteredDatasetList(hsql, start, limit, profile.getUserUniqueIdentifier().toString());
-		} else {// not filtered
-			items = dsDao.loadPagedDatasetList(start, limit);
-			// items =
-			// dsDao.loadPagedDatasetList(start,limit,profile.getUserUniqueIdentifier().toString(),
-			// true);
-		}
-		return items;
-	}
-	
-	private String filterList(JSONObject filtersJSON) throws JSONException {
-		logger.debug("IN");
-		boolean isAdmin = false;
-		try {
-			// Check if user is an admin
-			isAdmin = profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN);
-		} catch (EMFInternalError e) {
-			logger.error("Error while filtering datasets");
-		}
-		String hsql = " from SbiDataSet h where h.active = true ";
-		// Ad Admin can see other users' datasets
-		if (!isAdmin) {
-			hsql = hsql + " and h.owner = '" + profile.getUserUniqueIdentifier().toString() + "'";
-		}
-		if (filtersJSON != null) {
-			String valuefilter = (String) filtersJSON.get(SpagoBIConstants.VALUE_FILTER);
-			String typeFilter = (String) filtersJSON.get(SpagoBIConstants.TYPE_FILTER);
-			String columnFilter = (String) filtersJSON.get(SpagoBIConstants.COLUMN_FILTER);
-			if (typeFilter.equals("=")) {
-				hsql += " and h." + columnFilter + " = '" + valuefilter + "'";
-			} else if (typeFilter.equals("like")) {
-				hsql += " and h." + columnFilter + " like '%" + valuefilter + "%'";
-			}
-		}
-		logger.debug("OUT");
-		return hsql;
-	}*/
+	/*
+	 * protected List<IDataSet> getListOfGenericDatasets(IDataSetDAO dsDao) throws JSONException, EMFUserError { Integer start =
+	 * getAttributeAsInteger(DataSetConstants.START); Integer limit = getAttributeAsInteger(DataSetConstants.LIMIT);
+	 * 
+	 * if (start == null) { start = DataSetConstants.START_DEFAULT; } if (limit == null) { // limit = DataSetConstants.LIMIT_DEFAULT; limit =
+	 * DataSetConstants.LIMIT_DEFAULT; } JSONObject filtersJSON = null; List<IDataSet> items = null; if
+	 * (this.requestContainsAttribute(DataSetConstants.FILTERS)) { filtersJSON = getAttributeAsJSONObject(DataSetConstants.FILTERS); String hsql =
+	 * filterList(filtersJSON); items = dsDao.loadFilteredDatasetList(hsql, start, limit, profile.getUserUniqueIdentifier().toString()); } else {// not filtered
+	 * items = dsDao.loadPagedDatasetList(start, limit); // items = // dsDao.loadPagedDatasetList(start,limit,profile.getUserUniqueIdentifier().toString(), //
+	 * true); } return items; }
+	 * 
+	 * private String filterList(JSONObject filtersJSON) throws JSONException { logger.debug("IN"); boolean isAdmin = false; try { // Check if user is an admin
+	 * isAdmin = profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN); } catch (EMFInternalError e) {
+	 * logger.error("Error while filtering datasets"); } String hsql = " from SbiDataSet h where h.active = true "; // Ad Admin can see other users' datasets if
+	 * (!isAdmin) { hsql = hsql + " and h.owner = '" + profile.getUserUniqueIdentifier().toString() + "'"; } if (filtersJSON != null) { String valuefilter =
+	 * (String) filtersJSON.get(SpagoBIConstants.VALUE_FILTER); String typeFilter = (String) filtersJSON.get(SpagoBIConstants.TYPE_FILTER); String columnFilter
+	 * = (String) filtersJSON.get(SpagoBIConstants.COLUMN_FILTER); if (typeFilter.equals("=")) { hsql += " and h." + columnFilter + " = '" + valuefilter + "'";
+	 * } else if (typeFilter.equals("like")) { hsql += " and h." + columnFilter + " like '%" + valuefilter + "%'"; } } logger.debug("OUT"); return hsql; }
+	 */
 
 }
