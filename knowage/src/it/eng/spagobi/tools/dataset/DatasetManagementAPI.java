@@ -1262,14 +1262,14 @@ public class DatasetManagementAPI {
 		String statement = null;
 		if (tableName != null && !tableName.isEmpty() && columns != null && !columns.isEmpty()) {
 
-			StringBuilder columnsSTring= new StringBuilder();
+			StringBuilder columnsSTring = new StringBuilder();
 			for (Iterator iterator = columns.iterator(); iterator.hasNext();) {
 				String column = (String) iterator.next();
 				columnsSTring = columnsSTring.append(column);
 				columnsSTring = columnsSTring.append(",");
 			}
-			if(columnsSTring.length()>2){
-				columnsSTring.setLength(columnsSTring.length()-1);
+			if (columnsSTring.length() > 2) {
+				columnsSTring.setLength(columnsSTring.length() - 1);
 
 				StringBuilder sb = new StringBuilder();
 				sb.append("CREATE INDEX");
@@ -1291,7 +1291,7 @@ public class DatasetManagementAPI {
 
 	private IDataStore queryPersistedDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<FilterCriteria> havings,
 			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, int offset, int fetchSize, int maxRowCount)
-					throws InstantiationException, IllegalAccessException {
+			throws InstantiationException, IllegalAccessException {
 		IDataSource dataSource = dataSet.getDataSourceForWriting();
 		String tableName = dataSet.getPersistTableName();
 		return queryDataset(new SelectBuilder(), dataSource, tableName, groups, filters, havings, projections, summaryRowProjections, dataSet, offset,
@@ -1300,7 +1300,7 @@ public class DatasetManagementAPI {
 
 	private IDataStore queryFlatDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<FilterCriteria> havings,
 			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, int offset, int fetchSize, int maxRowCount)
-					throws InstantiationException, IllegalAccessException {
+			throws InstantiationException, IllegalAccessException {
 		IDataSource dataSource = dataSet.getDataSource();
 		String tableName = dataSet.getFlatTableName();
 		return queryDataset(new SelectBuilder(), dataSource, tableName, groups, filters, havings, projections, summaryRowProjections, dataSet, offset,
@@ -1309,7 +1309,7 @@ public class DatasetManagementAPI {
 
 	private IDataStore queryJDBCDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<FilterCriteria> havings,
 			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, int offset, int fetchSize, int maxRowCount)
-					throws JSONException, Exception, IllegalAccessException {
+			throws JSONException, Exception, IllegalAccessException {
 		IDataSource dataSource = dataSet.getDataSource();
 		QuerableBehaviour querableBehaviour = (QuerableBehaviour) dataSet.getBehaviour(QuerableBehaviour.class.getName());
 		String tableName = querableBehaviour.getStatement();
@@ -1665,6 +1665,12 @@ public class DatasetManagementAPI {
 
 	private void setColumnsToSelect(IDataSource dataSource, List<ProjectionCriteria> projections, SelectBuilder sqlBuilder, List<String> orderColumns,
 			boolean isRealtime, IDataSet dataSet) {
+
+		boolean isHsqlDialect = false;
+		if (dataSource != null) {
+			isHsqlDialect = dataSource.getHibDialectName().contains("hsql");
+		}
+
 		if (orderColumns == null) {
 			throw new SpagoBIRuntimeException("Unable to manage ORDER BY clauses");
 		}
@@ -1717,7 +1723,11 @@ public class DatasetManagementAPI {
 					isAggregationPresent = true;
 					if (hasAlias) {
 						if (orderType != null && !orderType.isEmpty()) {
-							orderColumns.add(columnName + " " + orderType);
+							if (isHsqlDialect) {
+								orderColumns.add(aliasName + " " + orderType);
+							} else {
+								orderColumns.add(columnName + " " + orderType);
+							}
 						}
 					} else {
 						throw new SpagoBIRuntimeException("Projection [" + columnName + "] requires an alias");
@@ -1759,13 +1769,21 @@ public class DatasetManagementAPI {
 						}
 					} else {
 						if (!orderType.isEmpty()) {
-							orderColumns.add(columnName + " " + orderType);
+							if (hasAlias && isHsqlDialect) {
+								orderColumns.add(aliasName + " " + orderType);
+							} else {
+								orderColumns.add(columnName + " " + orderType);
+							}
 						} else {
 							/**
 							 * Keep the ordering for the first category so it can be appended to the end of the ORDER BY clause when it is needed.
 							 */
 							if (keepCategoryForOrdering.isEmpty()) {
-								keepCategoryForOrdering = columnName + " ASC";
+								if (hasAlias && isHsqlDialect) {
+									keepCategoryForOrdering = aliasName + " ASC";
+								} else {
+									keepCategoryForOrdering = columnName + " ASC";
+								}
 							}
 						}
 					}
@@ -2042,7 +2060,7 @@ public class DatasetManagementAPI {
 
 	@SuppressWarnings("unchecked")
 	public Map<String, TLongHashSet> readDomainValues(IDataSet dataSet, Map<String, String> parametersValues, boolean wait) throws NamingException,
-	WorkException, InterruptedException {
+			WorkException, InterruptedException {
 		logger.debug("IN");
 		Map<String, TLongHashSet> toReturn = new HashMap<String, TLongHashSet>(0);
 		setDataSetParameters(dataSet, parametersValues);
