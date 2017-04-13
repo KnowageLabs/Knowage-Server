@@ -31,11 +31,15 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.log4j.Logger;
+
 /**
  * @author Salvo Lupo
  *
  */
 public class HMACUtils {
+
+	private static transient Logger logger = Logger.getLogger(HMACUtils.class);
 
 	public static final String AUTHORIZATION_USER_HEADER = "Authorization";
 
@@ -55,11 +59,17 @@ public class HMACUtils {
 		// it permits to read body more than once
 		req = new MultiReadHttpServletRequest(req);
 		String signatureClient = getSignatureClient(req);
+		logger.debug("Client signature is: [" + signatureClient + "]");
 		String uniqueToken = getUniqueToken(req);
+		logger.debug("Unique token is: [" + uniqueToken + "]");
 		String headers = getHeadersString(req);
+		logger.debug("Header string is: [" + headers + "]");
 		String paramsString = getParamsString(req);
+		logger.debug("Params string is: [" + paramsString + "]");
 		String queryPath = getQueryPath(req);
+		logger.debug("Query path: [" + queryPath + "]");
 		String body = RestUtilities.readBodyXSSUnsafe(req);
+		logger.debug("Body: [" + body + "]");
 		checkHMAC(body, queryPath, paramsString, headers, uniqueToken, signatureClient, tokenValidator, key);
 	}
 
@@ -84,6 +94,7 @@ public class HMACUtils {
 			}
 		}
 		String signature = sign(body, queryPath, paramsString, headers, uniqueToken, key);
+		logger.debug("Server signature is [" + signature + "]");
 		if (signatureClient == null) {
 			throw new HMACSecurityException("Signature of request not present.");
 		}
