@@ -1,5 +1,12 @@
 <div ng-form name="structure-axsisTitleDetailsForm" layout="column" layout-padding>
 
+<div layout="row" flex layout-margin>
+	<label>{{translate.load("sbi.chartengine.designer.hideAxisTitle")}}</label>
+	<md-input-container class="small counter"> 
+		<md-checkbox ng-model="chartTemplate.hideAxisTitleSerie" aria-label="Hide axis title"></md-checkbox>
+	</md-input-container>	
+</div>
+
 <md-input-container class="md-block">
 		<label>{{translate.load('sbi.chartengine.axisstylepopup.title')}}</label>
 		<input name="YaxisTitle" ng-model="axisForDisplay.TITLE.text"> 

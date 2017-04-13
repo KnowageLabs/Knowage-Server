@@ -194,7 +194,7 @@
 						<!-- If the categories container has at least one category item inside of it. -->					
 						<md-list-item  ng-repeat="cat in categories track by $index" class="noright" style="padding:0 8 0 16">
 						    
-						    <span><b>{{cat.name || cat.column}}</b></span>
+						    <span><b>{{cat.column}}</b></span>
 						    
 						    <span flex></span>
 						   
@@ -206,12 +206,12 @@
    	 							<md-icon aria-label="Move category down" class="fa fa-arrow-down" style="display:inline"></md-icon>
  							</md-button>
  							
- 							<md-menu ng-show="selectedChartType!='parallel'">
+ 						<!-- 	<md-menu ng-show="selectedChartType!='parallel'">
 			
-						      	<md-button 	aria-label="Category alias" class="md-icon-button" ng-click="openMenuCategory($mdOpenMenu, $event, cat)"
+						     	<md-button 	aria-label="Category alias" class="md-icon-button" ng-click="openMenuCategory($mdOpenMenu, $event, cat)"
 						      				style="margin-left:2; margin-right:2;">
 						        	<md-icon md-menu-origin class="fa fa-font" style="display:inline"></md-icon>
-						      	</md-button>
+						      	</md-button>  
 						      	
 						      	<md-menu-content layout="row" layout-align="end center">
 					        		<md-menu-item class="noright" style="padding:0 8 0 16" flex>
@@ -222,7 +222,7 @@
 					        		</md-menu-item>
 				        		</md-menu-content>
 				        		
-					      	</md-menu>
+					      	</md-menu>-->
    	 						   	 						
    	 						<md-button class="md-icon-button" ng-click="categoryRemove($index)" style="margin-left:0; margin-right:0; padding-left:0; padding-right:0;">
    	 							<md-icon aria-label="Delete category" class="fa fa-trash-o" style="display:inline"></md-icon>
