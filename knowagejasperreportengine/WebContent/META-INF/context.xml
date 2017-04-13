@@ -1,4 +1,4 @@
-<Context  path="/knowagejasperreportengine" privileged="true" reloadable="false">
+<Context  path="/knowagejasperreportengine" >
 
         <ResourceLink global="jdbc/knowage" name="jdbc/knowage" type="javax.sql.DataSource"/>
         <ResourceLink global="jdbc/foodmart" name="jdbc/foodmart" type="javax.sql.DataSource"/>
