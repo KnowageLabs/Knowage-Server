@@ -667,7 +667,7 @@ public class SQLDBCache implements ICache {
 								String leftOperand = null;
 								String[] columns = filter.getLeftOperand().getOperandValueAsString().split(",");
 								if (operator.equalsIgnoreCase("IN")) {
-									leftOperand = "(1,";
+									leftOperand = isHsqlDialect ? "(" : "(1,";
 									String separator = "";
 									for (String value : columns) {
 										leftOperand += separator + AbstractJDBCDataset.encapsulateColumnName(value, dataSource);
@@ -692,7 +692,9 @@ public class SQLDBCache implements ICache {
 								StringBuilder rightOperandSB = new StringBuilder();
 								if (filter.getRightOperand().isCostant()) {
 									if (filter.getRightOperand().isMultivalue()) {
-										rightOperandSB.append("(");
+										if (!isHsqlDialect) {
+											rightOperandSB.append("(");
+										}
 										String separator = "";
 										List<String> values = filter.getRightOperand().getOperandValueAsList();
 										for (int i = 0; i < values.size(); i++) {
@@ -705,9 +707,11 @@ public class SQLDBCache implements ICache {
 													if (i >= columns.length) { // starting from 2nd tuple of values
 														rightOperandSB.append(",");
 													}
-													rightOperandSB.append("(1");
+													rightOperandSB.append(isHsqlDialect ? "(" : "(1");
 												}
-												rightOperandSB.append(",");
+												if (i % columns.length != 0 || !isHsqlDialect) {
+													rightOperandSB.append(",");
+												}
 												rightOperandSB.append(value);
 												if (i % columns.length == columns.length - 1) { // last item of tuple of values
 													rightOperandSB.append(")");
@@ -720,7 +724,9 @@ public class SQLDBCache implements ICache {
 											}
 											separator = ",";
 										}
-										rightOperandSB.append(")");
+										if (!isHsqlDialect) {
+											rightOperandSB.append(")");
+										}
 									} else {
 										rightOperandSB.append(filter.getRightOperand().getOperandValueAsString());
 									}

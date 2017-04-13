@@ -1857,13 +1857,18 @@ public class DatasetManagementAPI {
 
 	private void setWhereConditions(IDataSource dataSource, List<FilterCriteria> filters, SelectBuilder sqlBuilder) {
 		if (filters != null) {
+			boolean isHsqlDialect = false;
+			if (dataSource != null) {
+				isHsqlDialect = dataSource.getHibDialectName().contains("hsql");
+			}
+
 			for (FilterCriteria filter : filters) {
 				String operator = filter.getOperator();
 
 				String leftOperand = null;
 				String[] columns = filter.getLeftOperand().getOperandValueAsString().split(",");
 				if ("IN".equalsIgnoreCase(operator)) {
-					leftOperand = "(1,";
+					leftOperand = isHsqlDialect ? "(" : "(1,";
 					String separator = "";
 					for (String value : columns) {
 						leftOperand += separator + AbstractJDBCDataset.encapsulateColumnName(value, dataSource);
@@ -1884,7 +1889,9 @@ public class DatasetManagementAPI {
 				StringBuilder rightOperandSB = new StringBuilder();
 				if (filter.getRightOperand().isCostant()) {
 					if (filter.getRightOperand().isMultivalue()) {
-						rightOperandSB.append("(");
+						if (!isHsqlDialect) {
+							rightOperandSB.append("(");
+						}
 						String separator = "";
 						List<String> values = filter.getRightOperand().getOperandValueAsList();
 						for (int i = 0; i < values.size(); i++) {
@@ -1897,9 +1904,11 @@ public class DatasetManagementAPI {
 									if (i >= columns.length) { // starting from 2nd tuple of values
 										rightOperandSB.append(",");
 									}
-									rightOperandSB.append("(1");
+									rightOperandSB.append(isHsqlDialect ? "(" : "(1");
 								}
-								rightOperandSB.append(",");
+								if (i % columns.length != 0 || !isHsqlDialect) {
+									rightOperandSB.append(",");
+								}
 								rightOperandSB.append(value);
 								if (i % columns.length == columns.length - 1) { // last item of tuple of values
 									rightOperandSB.append(")");
@@ -1912,7 +1921,9 @@ public class DatasetManagementAPI {
 							}
 							separator = ",";
 						}
-						rightOperandSB.append(")");
+						if (!isHsqlDialect) {
+							rightOperandSB.append(")");
+						}
 					} else {
 						rightOperandSB.append(filter.getRightOperand().getOperandValueAsString());
 					}
