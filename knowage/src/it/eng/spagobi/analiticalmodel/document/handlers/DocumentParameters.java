@@ -426,7 +426,7 @@ public class DocumentParameters {
 
 							for (HashMap<String, Object> defVal : admissibleValues) {
 								if (defVal.get("value").equals(item.get("value")) && !item.isNull("label")) {
-									if (defVal.get("label").equals(item.get("label")) && defVal.get("description") != null && item.get("description") != null
+									if (defVal.get("label").equals(item.get("label")) && defVal.get("description") != null && item.opt("description") != null
 											&& defVal.get("description").equals(item.get("description"))) {
 										defaultParameterAlreadyExist = true;
 										break;
