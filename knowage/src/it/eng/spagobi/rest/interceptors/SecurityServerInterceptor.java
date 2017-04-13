@@ -191,6 +191,10 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 	@Override
 	protected boolean isBackEndService() {
 		String auto = servletRequest.getHeader("Authorization");
+		//no header provided
+		if(auto==null){
+			return false;
+		}
 		int position = auto.indexOf("Direct");
 		return (position>-1 && position<5);
 	}
