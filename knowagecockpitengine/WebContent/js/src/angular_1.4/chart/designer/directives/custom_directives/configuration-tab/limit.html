@@ -4,7 +4,7 @@
 	<label>{{translate.load("sbi.chartengine.configuration.parallel.limit.serieFilterColumn")}}</label>
 		 <md-select ng-model="chartTemplate.LIMIT.style.serieFilterColumn" name ="limit_filterColumn"
 		 ng-required="chartTemplate.type.toLowerCase()=='parallel'"> <md-option
-		ng-repeat="option in seriesForParallel" value="{{option}}">{{option}}</md-option>
+		ng-repeat="option in seriesContainers[0].series" value="{{option}}">{{option}}</md-option>
 	</md-select> </md-input-container>
 
 	<md-input-container class="md-block"> 

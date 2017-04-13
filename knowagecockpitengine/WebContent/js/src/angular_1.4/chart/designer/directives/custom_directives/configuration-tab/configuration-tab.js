@@ -259,12 +259,12 @@ function configurationTabControllerFunction(sbiModule_translate,$scope,sbiModule
 	 if($scope.selectedChartType == 'parallel'){
 		 $scope.chartTemplate.LEGEND.show = true;
 		 $scope.disableLegendCheckbox = true;
-		 console.log($scope.seriesContainers)
+		/* console.log($scope.seriesContainers)
 		 if($scope.seriesContainers.length >0){
 			 $scope.seriesForParallel = $scope.seriesContainers[0].series;
 		 }else{
 			 $scope.seriesForParallel = [];
-		 }
+		 }*/
 		 
 	 }
 	 
