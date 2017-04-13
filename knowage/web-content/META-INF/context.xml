@@ -1,4 +1,4 @@
-<Context docBase="knowage" path="/knowage" reloadable="true" source="org.eclipse.jst.j2ee.server:knowage">
+<Context path="/knowage" >
 	<ResourceLink global="jdbc/knowage" name="jdbc/knowage" type="javax.sql.DataSource" />
 	<ResourceLink global="jdbc/foodmart" name="jdbc/foodmart" type="javax.sql.DataSource" />
 	<ResourceLink global="jdbc/ds_cache" name="jdbc/ds_cache" type="javax.sql.DataSource" />
