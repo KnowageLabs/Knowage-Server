@@ -62,7 +62,6 @@
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ManageCrossNavigation" description="ManageCrossNavigation" />	
     <USER_FUNCTIONALITY productType="KnowageBD" name="ExecuteCrossNavigation" description="ExecuteCrossNavigation" />  	
 	
-	
 	<!-- Authorizations for KnowageSI -->
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ReadEnginesManagement" description="ReadEnginesManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="FunctionalitiesManagement" description="FunctionalitiesManagement"/>
@@ -209,7 +208,7 @@
 	<USER_FUNCTIONALITY productType="KnowagePM" name="UserSaveDocumentFunctionality" description="UserSaveDocumentFunctionality"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ViewMyFolderAdmin" description="ViewMyFolderAdmin"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="DomainWrite" description="DomainWrite" />
-	
+	<USER_FUNCTIONALITY productType="KnowagePM" name="AlertManagement" description="AlertManagement" />
 	
 	<!-- Authorizations for KnowageLI -->
 	<USER_FUNCTIONALITY productType="KnowageLI" name="AnalyticalWidget" description="AnalyticalWidget" />

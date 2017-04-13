@@ -16,6 +16,7 @@ import it.eng.spagobi.tools.alert.metadata.SbiAlertListener;
 import it.eng.spagobi.tools.alert.metadata.SbiAlertLog;
 import it.eng.spagobi.tools.scheduler.bo.Trigger;
 import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -52,8 +53,20 @@ public class AlertDAOImpl extends AbstractHibernateDAO implements IAlertDAO {
 	public List<AlertAction> listAction() {
 		List<SbiAlertAction> lst = list(SbiAlertAction.class);
 		List<AlertAction> ret = new ArrayList<>();
-		for (SbiAlertAction sbiAlertAction : lst) {
-			ret.add(from(sbiAlertAction));
+		try {
+			for (SbiAlertAction sbiAlertAction : lst) {
+				AlertAction action = from(sbiAlertAction);
+				try {
+					Class cls = Class.forName(action.getClassName());
+					if (getUserProfile().getFunctionalities().contains(cls.getSimpleName() + "Action")) {
+						ret.add(action);
+					}
+				} catch (ClassNotFoundException e) {
+					// nothing to do here...
+				}
+			}
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException(e);
 		}
 		return ret;
 	}
