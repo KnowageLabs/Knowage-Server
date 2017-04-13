@@ -852,7 +852,7 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
 	  var opacMouseOver = chartOpacityOnMouseOver;
 	  opacMouseOver = opacMouseOver/100; // normalize value from interval [1,100] to %
 	  
-	  d3.selectAll("path")
+	  d3.select(panel).selectAll("path")
       	.style("opacity", opacMouseOver);
 	
 	  // Then highlight only those that are an ancestor of the current segment.
@@ -871,10 +871,10 @@ function renderSunburst(jsonObject,panel,handleCockpitSelection,locale,handleCro
 	      .style("visibility", "hidden");
 	
 	  // Deactivate all segments during transition.
-	  d3.selectAll("path").on("mouseover", null);
+	  d3.select(panel).selectAll("path").on("mouseover", null);
 	
 	  // Transition each segment to full opacity and then reactivate it.
-	  d3.selectAll("path")
+	  d3.select(panel).selectAll("path")
 	      .transition()
 	      .duration(1000)
 	      .style("opacity", 1)
