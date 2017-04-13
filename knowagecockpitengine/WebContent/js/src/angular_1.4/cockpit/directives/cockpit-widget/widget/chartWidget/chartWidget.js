@@ -476,7 +476,9 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 			}
 		}else{
 			//for d3 charts
-			delete event["selectParam_cross"];
+			if( event["selectParam_cross"]){
+				delete event["selectParam_cross"];
+			}	
 			var count = Object.keys(event).length;
 			for (column in event){
 				if(count>1){
