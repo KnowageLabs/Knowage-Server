@@ -382,6 +382,8 @@ angular.module('chartInitializer')
 	 
 		var drill = null;
 		
+		
+		
 		for (var j = 0; j < this.chart.series.length; j++) {
 			  if (this.chart.options.series[0].data.length > 0 && this.chart.options.series[0].data[0].drilldown) {
 				  drill = this.chart.options.series[0].data[0].drilldown
@@ -391,14 +393,15 @@ angular.module('chartInitializer')
 			  this.chart.series[j].setData([]);
 		  }
 		
-		
-		for (var j = 0; j < data.length; j++) {
-			   
-			for (var i = 0; i < counterSeries; i++) {
+		var newData = new Array();
+		for (var i = 0; i < counterSeries; i++) {
+			var newDataSerie = new Array();
+			for (var j = 0; j < data.length; j++) {
+				
 				var pointOptions={};
 				if (this.chart.options.chart.type == "gauge") {
 					pointOptions.y = parseFloat(data[j]["column_" + (i + 1)]);
-				    this.chart.series[i].addPoint(pointOptions, true,false);
+					newDataSerie.add(pointOptions);
 					    
 				} else {
 					pointOptions.y = parseFloat(data[j][seriesNamesColumnBind[this.chart.series[i].name]]);
@@ -406,11 +409,14 @@ angular.module('chartInitializer')
 					if(this.chart.options.chart.type!= "pie"){
 						pointOptions.drilldown = drill;
 					}			    
-				    this.chart.series[i].addPoint(pointOptions, true,false);
-			
+					newDataSerie.push(pointOptions);
 				}
 			}
+			newData.push(newDataSerie);
 		}
+		
+		
+		
 		if(this.chart.options.chart.type == "pie"){
 			for (var i = 0; i<this.chart.series.length; i++){
 				for (var j = 0; j<this.chart.series[i].data.length; j++){
@@ -425,7 +431,11 @@ angular.module('chartInitializer')
 				}
 			}
 		}
-			
+		
+		for (var i = 0; i < counterSeries; i++) {
+			this.chart.series[i].update({data:newData[i]},false);
+		}
+		this.chart.redraw() 	
 	}
 	
 	var adjustChartSize = function(container,chartConf){
