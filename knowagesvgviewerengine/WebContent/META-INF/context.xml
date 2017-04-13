@@ -1,5 +1,4 @@
-<Context path="/knowagesvgviewerengine" privileged="true"	reloadable="false">
-	<Manager className="org.apache.catalina.session.PersistentManager" saveOnRestart="false" />
+<Context path="/knowagesvgviewerengine" >
 	<ResourceLink global="jdbc/knowage" name="jdbc/knowage" type="javax.sql.DataSource" />
 	<ResourceLink global="jdbc/foodmart" name="jdbc/foodmart" type="javax.sql.DataSource" />
 	<ResourceLink global="jdbc/ds_cache" name="jdbc/ds_cache" type="javax.sql.DataSource" />
@@ -7,5 +6,5 @@
 	<ResourceLink global="sso_class" name="sso_class" type="java.lang.String" />
 	<ResourceLink global="hmacKey" name="hmacKey" type="java.lang.String"/>
 	<ResourceLink global="service_url" name="service_url" type="java.lang.String" />
-	<ResourceLink global="wm/SpagoWorkManager" name="wm/SpagoWorkManager" type="jcommonj.work.WorkManager" />
+	<ResourceLink global="wm/SpagoWorkManager" name="wm/SpagoWorkManager" type="commonj.work.WorkManager" />
 </Context>
