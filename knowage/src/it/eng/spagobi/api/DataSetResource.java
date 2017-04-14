@@ -188,7 +188,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	@Path("/pagopt/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getDataSetsPaginationOption(@QueryParam("typeDoc") String typeDoc, @QueryParam("callback") String callback,
-			@QueryParam("offset") Integer offsetInput, @QueryParam("fetchSize") Integer fetchSizeInput, @QueryParam("filters") JSONObject filters) {
+			@QueryParam("offset") Integer offsetInput, @QueryParam("fetchSize") Integer fetchSizeInput, @QueryParam("filters") JSONObject filters,  @QueryParam("ordering") JSONObject ordering) {
 
 		logger.debug("IN");
 
@@ -203,7 +203,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			// List<IDataSet> dataSets = mdsfr.loadDataSetList(jsonString, userProfile)
 			// List<IDataSet> dataSets = dsDao.loadPagedDatasetList(offset, fetchSize);
 
-			List<IDataSet> dataSets = getListOfGenericDatasets(dsDao, offset, fetchSize, filters);
+			List<IDataSet> dataSets = getListOfGenericDatasets(dsDao, offset, fetchSize, filters, ordering);
 
 			List<IDataSet> toBeReturned = new ArrayList<IDataSet>();
 
@@ -1483,7 +1483,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		return labelsJSON.toString();
 	}
 
-	protected List<IDataSet> getListOfGenericDatasets(IDataSetDAO dsDao, Integer start, Integer limit, JSONObject filters) throws JSONException, EMFUserError {
+	protected List<IDataSet> getListOfGenericDatasets(IDataSetDAO dsDao, Integer start, Integer limit, JSONObject filters, JSONObject ordering) throws JSONException, EMFUserError {
 
 		if (start == null) {
 			start = DataSetConstants.START_DEFAULT;
@@ -1493,10 +1493,11 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			limit = DataSetConstants.LIMIT_DEFAULT;
 		}
 		JSONObject filtersJSON = null;
+				
 		List<IDataSet> items = null;
 		if (true) {
 			filtersJSON = filters;
-			String hsql = filterList(filtersJSON);
+			String hsql = filterList(filtersJSON, ordering);
 			items = dsDao.loadFilteredDatasetList(hsql, start, limit, getUserProfile().getUserUniqueIdentifier().toString());
 		} else {// not filtered
 			items = dsDao.loadPagedDatasetList(start, limit);
@@ -1507,7 +1508,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		return items;
 	}
 
-	private String filterList(JSONObject filtersJSON) throws JSONException {
+	private String filterList(JSONObject filtersJSON, JSONObject ordering) throws JSONException {
 		logger.debug("IN");
 		boolean isAdmin = false;
 		try {
@@ -1529,6 +1530,15 @@ public class DataSetResource extends AbstractSpagoBIResource {
 				hsql += " and h." + columnFilter + " = '" + valuefilter + "'";
 			} else if (typeFilter.equals("like")) {
 				hsql += " and h." + columnFilter + " like '%" + valuefilter + "%'";
+			}
+		}
+		
+		if(ordering!=null){
+			boolean reverseOrdering = ordering.optBoolean("reverseOrdering");
+			if(reverseOrdering) {
+				hsql += "order by h.name desc";
+			} else {
+				hsql += "order by h.name asc";
 			}
 		}
 		logger.debug("OUT");

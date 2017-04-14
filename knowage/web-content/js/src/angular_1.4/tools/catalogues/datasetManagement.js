@@ -854,19 +854,20 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     }
     
     
-    $scope.datasetLike = function (searchValue, itemsPerPage,currentPageNumber) {
+    $scope.datasetLike = function (searchValue, itemsPerPage,currentPageNumber, columnsSearch, columnOrdering, reverseOrdering) {
+    	$scope.reverseOrdering = reverseOrdering;
     	$scope.searchValue = searchValue;
     	if($scope.searchValue!=""){
     		sbiModule_restServices.promiseGet("1.0/datasets", "countDataSetSearch/"+$scope.searchValue)
     		.then(function(response) {
     			$scope.numOfDs = response.data;
-    			$scope.loadDatasetList(0, itemsPerPage, searchValue);
+    			$scope.loadDatasetList(0, itemsPerPage, searchValue, reverseOrdering);
     		}, function(response) {
     			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
     		});
     		
     	} else if ($scope.searchValue=="") {
-    		$scope.loadDatasetList(0, itemsPerPage, searchValue);
+    		$scope.loadDatasetList(0, itemsPerPage, searchValue, reverseOrdering);
     	}
     };
     
@@ -884,7 +885,10 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     			if($scope.searchValue==undefined){
     				$scope.searchValue = null;
     			}
-    			$scope.loadDatasetList(start, itemsPerPage, $scope.searchValue);
+    			if($scope.reverseOrdering==undefined){
+    				$scope.reverseOrdering=false;
+    			}
+    			$scope.loadDatasetList(start, itemsPerPage, $scope.searchValue, $scope.reverseOrdering);
     		}, function(response) {
     			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
     		});
@@ -897,7 +901,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
     			if(currentPageNumber>1){
     				start = (currentPageNumber - 1) * itemsPerPage;
     			}
-    			$scope.loadDatasetList(start, itemsPerPage, $scope.searchValue);
+    			$scope.loadDatasetList(start, itemsPerPage, $scope.searchValue, null);
     		}, function(response) {
     			sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
     		});
@@ -909,13 +913,17 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	 * 	service that loads datasets filtered by provided configuration
 	 *   																	
 	 */
-	$scope.loadDatasetList = function(start, limit, filter){
+	$scope.loadDatasetList = function(start, limit, filter, reverseOrdering){
 		
 		var queryParams = "offset="+start+"&fetchSize="+limit;
 		if(filter!=null && filter!=""){
 			var filters = {"columnFilter":"label","typeValueFilter":"","typeFilter":"like","valueFilter":filter};
 			queryParams = queryParams+"&filters="+angular.toJson(filters);
 		}
+		if(reverseOrdering!==null && reverseOrdering!==""){
+			var ordering = {"reverseOrdering":reverseOrdering};
+			queryParams = queryParams+"&ordering="+angular.toJson(ordering);
+		}	
 		
 		sbiModule_restServices.promiseGet("1.0/datasets","pagopt", queryParams)
 			.then(function(response) {
@@ -983,7 +991,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				 					    			if($scope.currentPageNumber>1){
 				 					    				start = ($scope.currentPageNumber - 1) * $scope.currentItemsPerPage;
 				 					    			}
-				 					    			$scope.loadDatasetList(start, $scope.currentItemsPerPage, null);
+				 					    			$scope.loadDatasetList(start, $scope.currentItemsPerPage, null, $scope.reverseOrdering);
 			 						   				/*// If the dataset that is deleted is selected, deselect it and hence close its details.
 			 						   				if ($scope.selectedDataSet && $scope.selectedDataSet.label == item.label) {
 			 						   					$scope.selectedDataSet = null;			   					
