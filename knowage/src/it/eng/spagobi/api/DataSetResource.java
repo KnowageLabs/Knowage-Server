@@ -129,6 +129,36 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			logger.debug("OUT");
 		}
 	}
+	
+	@GET
+	@Path("/datasetsforlov")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String getDataSetsForLOV(@QueryParam("typeDoc") String typeDoc, @QueryParam("callback") String callback) {
+		logger.debug("IN");
+
+		try {
+
+			// The old implementation. (commented by: danristo)
+			List<IDataSet> dataSets = getDatasetManagementAPI().getDataSets();
+			JSONArray toReturn = new JSONArray();
+
+			for (IDataSet dataset : dataSets) {
+				
+				JSONObject obj = new JSONObject();
+				if (DataSetUtilities.isExecutableByUser(dataset, getUserProfile()))
+					
+					obj.put("label", dataset.getLabel());
+					obj.put("id", dataset.getId());
+					toReturn.put(obj);
+			}
+
+			return toReturn.toString();
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
 
 	/**
 	 * Returns the number of existing datasets. This number is later used for server side pagination.
