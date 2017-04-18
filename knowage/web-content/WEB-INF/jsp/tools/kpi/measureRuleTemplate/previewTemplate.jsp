@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
      	<h3>{{translate.load("sbi.measurerule.valuefilter")}}</h3>
  	</div>
 	<angular-table class="relative"  flex id='previewtable' ng-model="detailProperty.previewData.rows"
-				columns="detailProperty.previewData.columns" no-pagination="true" full-width>
+				columns="detailProperty.previewData.columns" no-pagination="true">
 	</angular-table>
 				 
 	<md-sidenav class="md-sidenav-rigth md-whiteframe-z2" md-component-id="placeholderFormTab" md-is-locked-open="::havePlaceholder()">
