@@ -194,7 +194,7 @@
 						<!-- If the categories container has at least one category item inside of it. -->					
 						<md-list-item  ng-repeat="cat in categories track by $index" class="noright" style="padding:0 8 0 16">
 						    
-						    <span><b>{{cat.column}}</b></span>
+						    <span><b>{{cat.name || cat.column}}</b></span>
 						    
 						    <span flex></span>
 						   
