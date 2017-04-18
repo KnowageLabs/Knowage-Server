@@ -420,6 +420,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 						var measure = aggregation.measures[i];
 						if(measure.columnName == ngModel.sortingColumn && measure.orderType == ""){
 							measure.orderType = ngModel.sortingOrder;
+							isSortingApplied = true;
 							break;
 						}
 					}
