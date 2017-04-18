@@ -30,7 +30,7 @@
     </div>
     
  
-	<angular-table  flex class="overflow relative thresholdTable" full-width
+	<angular-table  flex class="overflow relative thresholdTable" 
 		id='kpiListTableThreshold' ng-model=kpi.threshold.thresholdValues
 		columns='thresholdColumn'
 		click-function="" 
