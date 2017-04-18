@@ -141,8 +141,9 @@
 	md-toolbar.documentExecutionToolbar button.md-icon-button {
 		height: 40px;
 		width: 40px;
+		margin-right: 20px;
 	}
-	
+
 	md-toolbar.documentExecutionToolbar md-menu-bar {
 		padding: 0px;
 	}
@@ -157,6 +158,7 @@
 	}
 	
 	document-paramenter-element {
+		overflow: hidden;
 		label {
 			font-size: $baseFontSize;
     		color: $secondaryColor;
