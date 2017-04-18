@@ -157,11 +157,11 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	$scope.fieldsMetadataColumns = [
 		{
 			label:"Field name",
-			name:"column",
+			name:"fieldAlias",
 			hideTooltip: true,
 			
 			transformer: function() {
-				return '<md-input-container class="md-block" style="margin:0"><input readonly ng-model="row.column"></md-input-container>';
+				return '<md-input-container class="md-block" style="margin:0"><input readonly ng-model="row.fieldAlias"></md-input-container>';
 			}
 		},
 		{
@@ -1512,29 +1512,26 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		
 	}
 	
-	var exctractFieldsMetadata = function(metadata, type) {
-				
-		var fieldsMetadata = new Array();
-		var jsonTemp = {};
-		$scope.datasetMetaWithFieldsMetaIndexes = new Array();
+	var exctractFieldsMetadata = function(array, type) {
 		
-		for (i=0; i<metadata.length; i++) {
-			
-			if (metadata[i].pvalue=="ATTRIBUTE" || metadata[i].pvalue=="MEASURE") {
-				if(type.toUpperCase()=="QBE"){
-					var str = metadata[i].column;
-					jsonTemp["column"] = str.substring(str.indexOf(":") + 1);
-				} else {
-					jsonTemp["column"] = metadata[i].column;
-				}
-				
-				jsonTemp["fieldType"] = metadata[i].pvalue;
-				$scope.datasetMetaWithFieldsMetaIndexes.push(i);
-				fieldsMetadata.push(jsonTemp);
-			}
-			
+		var object = {};
+	
+		for(item in array){
+		     var element = object[array[item].column];
+		     if(!element){
+		    	 element = {};
+		         object[array[item].column] = element;
+		         element["column"] = array[item].column;
+		     }
+		     element[array[item].pname] = array[item].pvalue;
 		}
 		
+		var fieldsMetadata = new Array();
+		
+		for (item in object) {
+			fieldsMetadata.push(object[item]);
+		}
+
 		return fieldsMetadata;
 		
 	}
@@ -1549,8 +1546,13 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		console.log($scope.datasetMetaWithFieldsMetaIndexes);
 		
 		for (i=0; i<$scope.fieldsMetadata.length; i++) {
-			var index = $scope.datasetMetaWithFieldsMetaIndexes[i];
-			$scope.selectedDataSet.meta.columns[index].pvalue = $scope.fieldsMetadata[i].fieldType;
+			//var index = $scope.datasetMetaWithFieldsMetaIndexes[i];
+			//$scope.selectedDataSet.meta.columns[index].pvalue = $scope.fieldsMetadata[i].fieldType;
+			for(j=0; j<$scope.selectedDataSet.meta.columns.length; j++){
+				if($scope.fieldsMetadata[i].column==$scope.selectedDataSet.meta.columns[j].column && $scope.selectedDataSet.meta.columns[j].pname=="fieldType"){
+					$scope.selectedDataSet.meta.columns[j].pvalue=$scope.fieldsMetadata[i].fieldType;
+				}
+			}
 		}
 		
 		console.log("posle: ",$scope.selectedDataSet.meta.columns);
