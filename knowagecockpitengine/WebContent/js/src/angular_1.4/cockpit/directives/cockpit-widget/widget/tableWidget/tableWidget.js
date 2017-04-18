@@ -288,17 +288,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		
 		
-		$scope.freeValueFromPrefixAndSuffix=function(value,currentColumn)
-		{
-			
-			if(currentColumn.hasOwnProperty("style"))
-			{	
-				if(currentColumn.style.hasOwnProperty("suffix"))
-				{
+		$scope.freeValueFromPrefixAndSuffix=function(value,currentColumn){
+			if(currentColumn.hasOwnProperty("style") && value!=undefined){
+				if(currentColumn.style.hasOwnProperty("suffix")){
 					value=value.replace(" "+currentColumn.style.suffix, "");
 				}	
-				if(currentColumn.style.hasOwnProperty("prefix"))
-				{
+				if(currentColumn.style.hasOwnProperty("prefix")){
 					value=value.replace(currentColumn.style.prefix+" ", "");
 				}	
 			}
