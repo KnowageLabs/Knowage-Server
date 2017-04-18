@@ -45,9 +45,10 @@
 
 	<md-input-container class="md-block"> 
 	<label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontsize")}}</label>
-		 <md-select ng-model="chartTemplate.TOOLBAR.style.fontSize" name="sequence_fsize"> <md-option
+		 <md-select ng-model="chartTemplate.TOOLBAR.style.fontSize" name="sequence_fsize"
+		  ng-required="chartTemplate.type.toLowerCase()=='sunburst'"> <md-option
 		ng-repeat="option in fontSizeOptions" value="{{option.value}}">{{option.name}}</md-option>
 	</md-select> </md-input-container>
-
+	
 </div>
 
