@@ -30,15 +30,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		    <th ng-mouseover="blinkMeasure($event,'',$index)" ng-mouseleave="removeblinkMeasure()" ng-repeat="measure in kpi.cardinality.measureList" >{{measure.measureName}}</th>
 	    </tr>
 	  </thead>
-	  </table>
-<div flex class="overflow" >	
-	<table  class="cardinalityTable" >
-	<thead >
-		<tr>
-			<th></th>
-		    <th ng-repeat="measure in kpi.cardinality.measureList" ><span class=removeHeight></span></th>
-	    </tr>
-	  </thead>
 	  <tbody>
 		<tr class="attributeRow" ng-repeat="attr in attributesList">
 		<td class="attribute truncate hasTooltip" ng-class ="{classBold:currentCell.row==attr}">{{attr}}</td>
@@ -54,6 +45,5 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</td>
 		</tr>
 		</tbody>
-	</table>
-</div>
+	  </table>
 </md-content>
