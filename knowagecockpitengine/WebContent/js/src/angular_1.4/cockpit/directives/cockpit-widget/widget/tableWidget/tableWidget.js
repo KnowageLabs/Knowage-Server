@@ -615,6 +615,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							if(header == $scope.ngModel.content.columnSelectedOfDataset[i]['aliasToShow']
 									|| header == $scope.ngModel.content.columnSelectedOfDataset[i]['alias']){
 								$scope.columnToshowinIndex.push($scope.datasetRecords.metaData.fields[j].dataIndex);
+								break;
 							}
 						}
 					}
