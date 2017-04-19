@@ -135,7 +135,7 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 							var saveSuccessMsg = sbiModule_translate.load("sbi.kpidocumentdesigner.save.success");
 							$scope.showAction(saveSuccessMsg);
 						},function(response) {
-							$scope.errorHandler(response.data,"");
+							sbiModule_restServices.errorHandler(response.data,"");
 						});
 	};
 	
