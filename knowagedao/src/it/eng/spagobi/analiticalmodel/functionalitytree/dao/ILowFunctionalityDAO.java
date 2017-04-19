@@ -17,17 +17,18 @@
  */
 package it.eng.spagobi.analiticalmodel.functionalitytree.dao;
 
-import java.util.List;
-import java.util.Set;
-
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.UserFunctionality;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 
+import java.util.List;
+import java.util.Set;
+
 /**
- * Defines the interfaces for all methods needed to insert, modify and deleting a low functionality.
+ * Defines the interfaces for all methods needed to insert, modify and deleting
+ * a low functionality.
  */
 
 public interface ILowFunctionalityDAO extends ISpagoBIDao {
@@ -60,15 +61,18 @@ public interface ILowFunctionalityDAO extends ISpagoBIDao {
 	/* ********* end luca changes ***************** */
 
 	/**
-	 * Loads all information for a low functionality identified by its <code>functionalityID</code>. All these information, are stored into a
+	 * Loads all information for a low functionality identified by its
+	 * <code>functionalityID</code>. All these information, are stored into a
 	 * <code>LowFunctionality</code> object, which is returned.
 	 *
 	 * @param functionalityID
 	 *            The id for the low functionality to load
 	 * @param recoverBIObjects
-	 *            If true the <code>LowFunctionality</code> at output will have the list of contained <code>BIObject</code> objects
+	 *            If true the <code>LowFunctionality</code> at output will have
+	 *            the list of contained <code>BIObject</code> objects
 	 *
-	 * @return A <code>LowFunctionality</code> object containing all loaded information
+	 * @return A <code>LowFunctionality</code> object containing all loaded
+	 *         information
 	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
@@ -76,15 +80,18 @@ public interface ILowFunctionalityDAO extends ISpagoBIDao {
 	public LowFunctionality loadLowFunctionalityByID(Integer functionalityID, boolean recoverBIObjects) throws EMFUserError;
 
 	/**
-	 * Loads all information for a low functionality identified by its <code>code</code>. All these information, are stored into a <code>LowFunctionality</code>
-	 * object, which is returned.
+	 * Loads all information for a low functionality identified by its
+	 * <code>code</code>. All these information, are stored into a
+	 * <code>LowFunctionality</code> object, which is returned.
 	 *
 	 * @param code
 	 *            The code for the low functionality to load
 	 * @param recoverBIObjects
-	 *            If true the <code>LowFunctionality</code> at output will have the list of contained <code>BIObject</code> objects
+	 *            If true the <code>LowFunctionality</code> at output will have
+	 *            the list of contained <code>BIObject</code> objects
 	 *
-	 * @return A <code>LowFunctionality</code> object containing all loaded information
+	 * @return A <code>LowFunctionality</code> object containing all loaded
+	 *         information
 	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
@@ -107,15 +114,18 @@ public interface ILowFunctionalityDAO extends ISpagoBIDao {
 	public List loadLowFunctionalityList(List functionalityIDs) throws EMFUserError;
 
 	/**
-	 * Loads all information for a low functionality identified by its <code>functionalityPath</code>. All these information, are stored into a
+	 * Loads all information for a low functionality identified by its
+	 * <code>functionalityPath</code>. All these information, are stored into a
 	 * <code>LowFunctionality</code> object, which is returned.
 	 *
 	 * @param functionalityPath
 	 *            The path for the low functionality to load
 	 * @param recoverBIObjects
-	 *            If true the <code>LowFunctionality</code> at output will have the list of contained <code>BIObject</code> objects
+	 *            If true the <code>LowFunctionality</code> at output will have
+	 *            the list of contained <code>BIObject</code> objects
 	 *
-	 * @return A <code>LowFunctionality</code> object containing all loaded information
+	 * @return A <code>LowFunctionality</code> object containing all loaded
+	 *         information
 	 *
 	 * @throws EMFUserError
 	 *             If an Exception occurred
@@ -123,7 +133,8 @@ public interface ILowFunctionalityDAO extends ISpagoBIDao {
 	public LowFunctionality loadLowFunctionalityByPath(String functionalityPath, boolean recoverBIObjects) throws EMFUserError;
 
 	/**
-	 * Implements the query to modify a low functionality. All information needed is stored into the input <code>LowFunctionality</code> object.
+	 * Implements the query to modify a low functionality. All information
+	 * needed is stored into the input <code>LowFunctionality</code> object.
 	 *
 	 * @param aLowFunctionality
 	 *            The object containing all modify information
@@ -134,7 +145,8 @@ public interface ILowFunctionalityDAO extends ISpagoBIDao {
 	public void modifyLowFunctionality(LowFunctionality aLowFunctionality) throws EMFUserError;
 
 	/**
-	 * Implements the query to insert a low functionality. All information needed is stored into the input <code>LowFunctionality</code> object.
+	 * Implements the query to insert a low functionality. All information
+	 * needed is stored into the input <code>LowFunctionality</code> object.
 	 *
 	 * @param aLowFunctionality
 	 *            The object containing all insert information
@@ -144,10 +156,11 @@ public interface ILowFunctionalityDAO extends ISpagoBIDao {
 	 * @throws EMFUserError
 	 *             If an Exception occurred
 	 */
-	public void insertLowFunctionality(LowFunctionality aLowFunctionality, IEngUserProfile profile) throws EMFUserError;
+	public LowFunctionality insertLowFunctionality(LowFunctionality aLowFunctionality, IEngUserProfile profile) throws EMFUserError;
 
 	/**
-	 * Implements the query to erase a low functionality. All information needed is stored into the input <code>LowFunctionality</code> object.
+	 * Implements the query to erase a low functionality. All information needed
+	 * is stored into the input <code>LowFunctionality</code> object.
 	 *
 	 * @param aLowFunctionality
 	 *            The object containing all erase information
@@ -200,7 +213,8 @@ public interface ILowFunctionalityDAO extends ISpagoBIDao {
 	 * Loads all the functionalities.
 	 *
 	 * @param recoverBIObjects
-	 *            If true each <code>LowFunctionality</code> at output will have the list of contained <code>BIObject</code> objects
+	 *            If true each <code>LowFunctionality</code> at output will have
+	 *            the list of contained <code>BIObject</code> objects
 	 *
 	 * @return the list of functionalities
 	 *
@@ -213,7 +227,8 @@ public interface ILowFunctionalityDAO extends ISpagoBIDao {
 	 * Loads all the functionalities.
 	 *
 	 * @param recoverBIObjects
-	 *            If true each <code>LowFunctionality</code> at output will have the list of contained <code>BIObject</code> objects
+	 *            If true each <code>LowFunctionality</code> at output will have
+	 *            the list of contained <code>BIObject</code> objects
 	 *
 	 * @return the list of functionalities
 	 *
@@ -228,7 +243,8 @@ public interface ILowFunctionalityDAO extends ISpagoBIDao {
 	 * @param initialPath
 	 *            The String representing the initial path
 	 * @param recoverBIObjects
-	 *            If true each <code>LowFunctionality</code> at output will have the list of contained <code>BIObject</code> objects
+	 *            If true each <code>LowFunctionality</code> at output will have
+	 *            the list of contained <code>BIObject</code> objects
 	 *
 	 * @return the list of functionalities
 	 *
@@ -243,7 +259,8 @@ public interface ILowFunctionalityDAO extends ISpagoBIDao {
 	 * @param parentId
 	 *            The Integer representing the parent id
 	 * @param recoverBIObjects
-	 *            If true each <code>LowFunctionality</code> at output will have the list of contained <code>BIObject</code> objects
+	 *            If true each <code>LowFunctionality</code> at output will have
+	 *            the list of contained <code>BIObject</code> objects
 	 *
 	 * @return the list of functionalities
 	 *
@@ -256,7 +273,8 @@ public interface ILowFunctionalityDAO extends ISpagoBIDao {
 	 * Loads the root functionality.
 	 *
 	 * @param recoverBIObjects
-	 *            If true each <code>LowFunctionality</code> at output will have the list of contained <code>BIObject</code> objects
+	 *            If true each <code>LowFunctionality</code> at output will have
+	 *            the list of contained <code>BIObject</code> objects
 	 *
 	 * @return the root functionality
 	 *
@@ -266,7 +284,8 @@ public interface ILowFunctionalityDAO extends ISpagoBIDao {
 	public LowFunctionality loadRootLowFunctionality(boolean recoverBIObjects) throws EMFUserError;
 
 	/**
-	 * Moves up the functionality specified by the id at input in the functionalities tree.
+	 * Moves up the functionality specified by the id at input in the
+	 * functionalities tree.
 	 *
 	 * @param functionalityID
 	 *            the functionality id
@@ -277,7 +296,8 @@ public interface ILowFunctionalityDAO extends ISpagoBIDao {
 	public void moveUpLowFunctionality(Integer functionalityID) throws EMFUserError;
 
 	/**
-	 * Moves down the functionality specified by the id at input in the functionalities tree.
+	 * Moves down the functionality specified by the id at input in the
+	 * functionalities tree.
 	 *
 	 * @param functionalityID
 	 *            the functionality id
@@ -293,7 +313,8 @@ public interface ILowFunctionalityDAO extends ISpagoBIDao {
 	 * @param onlyFirstLevel
 	 *            If true returns only first level functionalities, if else all
 	 * @param recoverBIObjects
-	 *            If true each <code>LowFunctionality</code> at output will have the list of contained <code>BIObject</code> objects
+	 *            If true each <code>LowFunctionality</code> at output will have
+	 *            the list of contained <code>BIObject</code> objects
 	 * @param profile
 	 *            the user profile
 	 *
@@ -346,7 +367,8 @@ public interface ILowFunctionalityDAO extends ISpagoBIDao {
 	public List loadAllUserFunct() throws EMFUserError;
 
 	/**
-	 * Implements the query to insert a community functionality. All information needed is stored into the input <code>LowFunctionality</code> object.
+	 * Implements the query to insert a community functionality. All information
+	 * needed is stored into the input <code>LowFunctionality</code> object.
 	 *
 	 * @param aLowFunctionality
 	 *            The object containing all insert information

@@ -17,28 +17,6 @@
  */
 package it.eng.spagobi.analiticalmodel.functionalitytree.dao;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.Vector;
-
-import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Expression;
-import org.hibernate.criterion.MatchMode;
-
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.error.EMFErrorSeverity;
@@ -64,12 +42,36 @@ import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.Vector;
+
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
+import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.MatchMode;
+
 /**
- * Defines the Hibernate implementations for all DAO methods, for a functionality.
+ * Defines the Hibernate implementations for all DAO methods, for a
+ * functionality.
  */
 public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements ILowFunctionalityDAO {
 	private static transient Logger logger = Logger.getLogger(LowFunctionalityDAOHibImpl.class);
@@ -80,12 +82,17 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 
 	public static CacheManager cacheManager = null;
 
-	/* ********* start luca changes ************************************************** */
+	/*
+	 *  ********* start luca changes
+	 * **************************************************
+	 */
 
 	/*
 	 * (non-Javadoc)
-	 *
-	 * @see it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO#checkUserRootExists(java.lang.String)
+	 * 
+	 * @see
+	 * it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO
+	 * #checkUserRootExists(java.lang.String)
 	 */
 	@Override
 	public boolean checkUserRootExists(String userId) throws EMFUserError {
@@ -121,10 +128,12 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see
-	 * it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO#insertUserFunctionality(it.eng.spagobi.analiticalmodel.functionalitytree.bo
-	 * .UserFunctionality)
+	 * it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO
+	 * #
+	 * insertUserFunctionality(it.eng.spagobi.analiticalmodel.functionalitytree.
+	 * bo .UserFunctionality)
 	 */
 	@Override
 	public void insertUserFunctionality(UserFunctionality userfunct) throws EMFUserError {
@@ -152,7 +161,8 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			Integer parentId = userfunct.getParentId();
 			SbiFunctions hibParentFunct = null;
 			if (parentId != null) {
-				// if it is not the root controls if the parent functionality exists
+				// if it is not the root controls if the parent functionality
+				// exists
 				Criteria parentCriteria = aSession.createCriteria(SbiFunctions.class);
 				Criterion parentCriterion = Expression.eq("functId", parentId);
 				parentCriteria.add(parentCriterion);
@@ -170,7 +180,9 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 				hibFunct.setProg(new Integer(1));
 			else {
 				// loads sub functionalities
-				// Query hibQuery = aSession.createQuery("select max(s.prog) from SbiFunctions s where s.parentFunct.functId = " + parentId);
+				// Query hibQuery =
+				// aSession.createQuery("select max(s.prog) from SbiFunctions s where s.parentFunct.functId = "
+				// + parentId);
 				Query hibQuery = aSession.createQuery("select max(s.prog) from SbiFunctions s where s.parentFunct.functId = ?");
 				hibQuery.setInteger(0, parentId.intValue());
 				Integer maxProg = (Integer) hibQuery.uniqueResult();
@@ -187,17 +199,28 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			// save functionality roles
 
 			/*
-			 * TODO does it make sens to assign execution permissions on personal folder??? Set functRoleToSave = new HashSet(); criteria =
-			 * aSession.createCriteria(SbiDomains.class); Criterion relstatecriterion = Expression.eq("valueCd", "REL"); criteria.add(relstatecriterion);
-			 * SbiDomains relStateDomain = (SbiDomains)criteria.uniqueResult(); Criterion nameEqrolenameCri = null; Role[] roles = userfunct.getExecRoles();
-			 * if(roles!=null){ for(int i=0; i<roles.length; i++) { Role role = roles[i]; if (role!=null) { logger.debug("Role Name="+role.getName());
-			 * nameEqrolenameCri = Expression.eq("name", role.getName()); } else logger.debug("Role IS NULL");
-			 *
-			 * criteria = aSession.createCriteria(SbiExtRoles.class); criteria.add(nameEqrolenameCri); SbiExtRoles hibRole =
-			 * (SbiExtRoles)criteria.uniqueResult(); SbiFuncRoleId sbifuncroleid = new SbiFuncRoleId(); sbifuncroleid.setFunction(hibFunct);
-			 * sbifuncroleid.setState(relStateDomain); sbifuncroleid.setRole(hibRole); SbiFuncRole sbifuncrole = new SbiFuncRole();
-			 * sbifuncrole.setId(sbifuncroleid); sbifuncrole.setStateCd(relStateDomain.getValueCd()); aSession.save(sbifuncrole);
-			 * functRoleToSave.add(sbifuncrole); } } hibFunct.setSbiFuncRoles(functRoleToSave);
+			 * TODO does it make sens to assign execution permissions on
+			 * personal folder??? Set functRoleToSave = new HashSet(); criteria
+			 * = aSession.createCriteria(SbiDomains.class); Criterion
+			 * relstatecriterion = Expression.eq("valueCd", "REL");
+			 * criteria.add(relstatecriterion); SbiDomains relStateDomain =
+			 * (SbiDomains)criteria.uniqueResult(); Criterion nameEqrolenameCri
+			 * = null; Role[] roles = userfunct.getExecRoles(); if(roles!=null){
+			 * for(int i=0; i<roles.length; i++) { Role role = roles[i]; if
+			 * (role!=null) { logger.debug("Role Name="+role.getName());
+			 * nameEqrolenameCri = Expression.eq("name", role.getName()); } else
+			 * logger.debug("Role IS NULL");
+			 * 
+			 * criteria = aSession.createCriteria(SbiExtRoles.class);
+			 * criteria.add(nameEqrolenameCri); SbiExtRoles hibRole =
+			 * (SbiExtRoles)criteria.uniqueResult(); SbiFuncRoleId sbifuncroleid
+			 * = new SbiFuncRoleId(); sbifuncroleid.setFunction(hibFunct);
+			 * sbifuncroleid.setState(relStateDomain);
+			 * sbifuncroleid.setRole(hibRole); SbiFuncRole sbifuncrole = new
+			 * SbiFuncRole(); sbifuncrole.setId(sbifuncroleid);
+			 * sbifuncrole.setStateCd(relStateDomain.getValueCd());
+			 * aSession.save(sbifuncrole); functRoleToSave.add(sbifuncrole); } }
+			 * hibFunct.setSbiFuncRoles(functRoleToSave);
 			 */
 
 			tx.commit();
@@ -216,7 +239,10 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 
 	}
 
-	/* ********* end luca changes ************************************************** */
+	/*
+	 *  ********* end luca changes
+	 * **************************************************
+	 */
 
 	/**
 	 * Load low functionality by id.
@@ -365,7 +391,8 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			Criterion domainCdCriterrion = Expression.in("functId", functionalityIDs);
 			criteria.add(domainCdCriterrion);
 			List temp = criteria.list();
-			// Query query=aSession.createQuery("from SbiFunctions f inner join f.sbiFuncRoles where s.functId in ("+functionalityIDs.get(0)+")");
+			// Query
+			// query=aSession.createQuery("from SbiFunctions f inner join f.sbiFuncRoles where s.functId in ("+functionalityIDs.get(0)+")");
 			// List temp = query.list();
 			if (!temp.isEmpty()) {
 				Iterator it = temp.iterator();
@@ -567,11 +594,14 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			String newCode = aLowFunctionality.getCode();
 			String newPath = aLowFunctionality.getPath();
 			if (!previousCode.equals(newCode) || !previousPath.equals(newPath)) {
-				// the code or the path was changed, so the path of the current folder and of its child folders
+				// the code or the path was changed, so the path of the current
+				// folder and of its child folders
 				// must be changed
 
-				// the condition !previousPath.equals(newPath) was added for the following reason:
-				// till SpagoBI 1.9.3 a folder may have a path different from parentPath + "/" + code,
+				// the condition !previousPath.equals(newPath) was added for the
+				// following reason:
+				// till SpagoBI 1.9.3 a folder may have a path different from
+				// parentPath + "/" + code,
 				// with this condition those cases are considered and corrected.
 
 				// changes the code and path of the current folder
@@ -615,8 +645,9 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	}
 
 	/**
-	 * Saves all roles for a functionality, using session and permission information. The permission for a functionality can be DEVELOPMENT, TEST, EXECUTION AND
-	 * CREATE and each permission has its own roles.
+	 * Saves all roles for a functionality, using session and permission
+	 * information. The permission for a functionality can be DEVELOPMENT, TEST,
+	 * EXECUTION AND CREATE and each permission has its own roles.
 	 *
 	 * @param aSession
 	 *            The current session object
@@ -691,7 +722,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	 *      it.eng.spago.security.IEngUserProfile)
 	 */
 	@Override
-	public void insertLowFunctionality(LowFunctionality aLowFunctionality, IEngUserProfile profile) throws EMFUserError {
+	public LowFunctionality insertLowFunctionality(LowFunctionality aLowFunctionality, IEngUserProfile profile) throws EMFUserError {
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
@@ -717,7 +748,8 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			Integer parentId = aLowFunctionality.getParentId();
 			SbiFunctions hibParentFunct = null;
 			if (parentId != null) {
-				// if it is not the root controls if the parent functionality exists
+				// if it is not the root controls if the parent functionality
+				// exists
 				Criteria parentCriteria = aSession.createCriteria(SbiFunctions.class);
 				Criterion parentCriterion = Expression.eq("functId", parentId);
 				parentCriteria.add(parentCriterion);
@@ -735,7 +767,9 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 				hibFunct.setProg(new Integer(1));
 			else {
 				// loads sub functionalities
-				// Query hibQuery = aSession.createQuery("select max(s.prog) from SbiFunctions s where s.parentFunct.functId = " + parentId);
+				// Query hibQuery =
+				// aSession.createQuery("select max(s.prog) from SbiFunctions s where s.parentFunct.functId = "
+				// + parentId);
 				Query hibQuery = aSession.createQuery("select max(s.prog) from SbiFunctions s where s.parentFunct.functId = ?");
 				hibQuery.setInteger(0, parentId.intValue());
 				Integer maxProg = (Integer) hibQuery.uniqueResult();
@@ -747,7 +781,9 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 
 			updateSbiCommonInfo4Insert(hibFunct);
 			aSession.save(hibFunct);
-
+			aLowFunctionality.setProg(hibFunct.getProg());
+			aLowFunctionality.setId(hibFunct.getFunctId());
+			aLowFunctionality.setParentId(hibFunct.getParentFunct().getFunctId());
 			// save roles functionality
 			Set functRoleToSave = new HashSet();
 			functRoleToSave.addAll(saveRolesFunctionality(aSession, hibFunct, aLowFunctionality, SpagoBIConstants.PERMISSION_ON_FOLDER_TO_DEVELOP));
@@ -776,6 +812,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 				logger.debug("OUT");
 			}
 		}
+		return aLowFunctionality;
 
 	}
 
@@ -802,7 +839,8 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			if (hasChild(aLowFunctionality.getId())) {
 				HashMap params = new HashMap();
 				params.put(PAGE, "BIObjectsPage");
-				// params.put(SpagoBIConstants.ACTOR, SpagoBIConstants.ADMIN_ACTOR);
+				// params.put(SpagoBIConstants.ACTOR,
+				// SpagoBIConstants.ADMIN_ACTOR);
 				params.put(SpagoBIConstants.OPERATION, SpagoBIConstants.FUNCTIONALITIES_OPERATION);
 				throw new EMFUserError(EMFErrorSeverity.ERROR, 1000, new Vector(), params);
 			}
@@ -817,8 +855,10 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			}
 
 			// update prog column in other functions
-			// String hqlUpdateProg = "update SbiFunctions s set s.prog = (s.prog - 1) where s.prog > "
-			// + hibFunct.getProg() + " and s.parentFunct.functId = " + hibFunct.getParentFunct().getFunctId();
+			// String hqlUpdateProg =
+			// "update SbiFunctions s set s.prog = (s.prog - 1) where s.prog > "
+			// + hibFunct.getProg() + " and s.parentFunct.functId = " +
+			// hibFunct.getParentFunct().getFunctId();
 			if (hibFunct.getParentFunct() != null) {
 				String hqlUpdateProg = "update SbiFunctions s set s.prog = (s.prog - 1) where s.prog > ? " + " and s.parentFunct.functId = ?";
 				Query query = aSession.createQuery(hqlUpdateProg);
@@ -861,12 +901,14 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	}
 
 	/**
-	 * From the Hibernate Low Functionality object at input, gives the corrispondent <code>LowFunctionality</code> object.
+	 * From the Hibernate Low Functionality object at input, gives the
+	 * corrispondent <code>LowFunctionality</code> object.
 	 *
 	 * @param hibFunct
 	 *            The Hibernate Low Functionality object
 	 * @param recoverBIObjects
-	 *            If true the <code>LowFunctionality</code> at output will have the list of contained <code>BIObject</code> objects
+	 *            If true the <code>LowFunctionality</code> at output will have
+	 *            the list of contained <code>BIObject</code> objects
 	 *
 	 * @return the corrispondent output <code>LowFunctionality</code>
 	 */
@@ -875,12 +917,14 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	}
 
 	/**
-	 * From the Hibernate Low Functionality object at input, gives the corrispondent <code>LowFunctionality</code> object.
+	 * From the Hibernate Low Functionality object at input, gives the
+	 * corrispondent <code>LowFunctionality</code> object.
 	 *
 	 * @param hibFunct
 	 *            The Hibernate Low Functionality object
 	 * @param recoverBIObjects
-	 *            If true the <code>LowFunctionality</code> at output will have the list of contained <code>BIObject</code> objects
+	 *            If true the <code>LowFunctionality</code> at output will have
+	 *            the list of contained <code>BIObject</code> objects
 	 *
 	 * @return the corrispondent output <code>LowFunctionality</code>
 	 *
@@ -1120,7 +1164,8 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			} catch (Exception e) {
 				logger.error("Error while recovering user profile", e);
 			}
-			// user has admin functionality "ViewMyFolderAdmin" he can view all Low_func and all user func
+			// user has admin functionality "ViewMyFolderAdmin" he can view all
+			// Low_func and all user func
 			// else he can view only his personal userFunc
 
 			// giovanniluca.ulivo@eng.it change
@@ -1136,13 +1181,14 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 
 			try {
 				if (profile != null && profile.isAbleToExecuteAction("ViewMyFolderAdmin")) {
-					hibQuery = aSession.createQuery(
-							" from SbiFunctions s where s.functTypeCd = 'LOW_FUNCT' or s.functTypeCd = 'USER_FUNCT' order by s.parentFunct.functId, s.prog");
+					hibQuery = aSession
+							.createQuery(" from SbiFunctions s where s.functTypeCd = 'LOW_FUNCT' or s.functTypeCd = 'USER_FUNCT' order by s.parentFunct.functId, s.prog");
 				} else if (username == null) {
 					hibQuery = aSession.createQuery(" from SbiFunctions s where s.functTypeCd = 'LOW_FUNCT' order by s.parentFunct.functId, s.prog");
 				} else {
 					// hibQuery =
-					// aSession.createQuery(" from SbiFunctions s where s.functTypeCd = 'LOW_FUNCT' or s.path like '/"+username+"' order by
+					// aSession.createQuery(" from SbiFunctions s where s.functTypeCd = 'LOW_FUNCT' or s.path like '/"+username+"'
+					// order by
 					// s.parentFunct.functId, s.prog");
 					hibQuery = aSession
 							.createQuery(" from SbiFunctions s where s.functTypeCd = 'LOW_FUNCT' or s.path like ? order by s.parentFunct.functId, s.prog");
@@ -1195,7 +1241,8 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 *
-	 * @see it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO#loadSubLowFunctionalities(java.lang.String, boolean)
+	 * @see it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO#loadSubLowFunctionalities(java.lang.String,
+	 *      boolean)
 	 */
 	@Override
 	public List loadSubLowFunctionalities(String initialPath, boolean recoverBIObjects) throws EMFUserError {
@@ -1222,9 +1269,13 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			// loads sub functionalities
 
 			/* ********* start luca changes *************** */
-			// Query hibQuery = aSession.createQuery(" from SbiFunctions s where s.path like '" + initialPath + "/%' order by s.parentFunct.functId, s.prog");
+			// Query hibQuery =
+			// aSession.createQuery(" from SbiFunctions s where s.path like '" +
+			// initialPath + "/%' order by s.parentFunct.functId, s.prog");
 			Query hibQuery = aSession.createQuery(" from SbiFunctions s where s.path like ? order by s.parentFunct.functId, s.prog");
-			// Query hibQuery = aSession.createQuery(" from SbiFunctions s where s.functTypeCd = 'LOW_FUNCT' and s.path like '" + initialPath +
+			// Query hibQuery =
+			// aSession.createQuery(" from SbiFunctions s where s.functTypeCd = 'LOW_FUNCT' and s.path like '"
+			// + initialPath +
 			// "/%' order by s.parentFunct.functId, s.prog");
 			/* ********* end luca changes ***************** */
 			hibQuery.setString(0, initialPath + "/%");
@@ -1289,8 +1340,10 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			Set hibObjfunctions = hibFunct.getSbiObjFuncs();
 			if (hibObjfunctions != null && hibObjfunctions.size() > 0)
 				return true;
-			// Criterion objectChildCriterion = Expression.eq("sbiFunction.functId", id);
-			// Criteria objectCriteria = aSession.createCriteria(SbiObjFunc.class);
+			// Criterion objectChildCriterion =
+			// Expression.eq("sbiFunction.functId", id);
+			// Criteria objectCriteria =
+			// aSession.createCriteria(SbiObjFunc.class);
 			// objectCriteria.add(objectChildCriterion);
 			// List childObjects = objectCriteria.list();
 			// if (childObjects != null && childObjects.size() > 0) return true;
@@ -1317,7 +1370,8 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	}
 
 	/**
-	 * Deletes a set of inconsistent roles reference from the database, in order to keep functionalities tree permissions consistence.
+	 * Deletes a set of inconsistent roles reference from the database, in order
+	 * to keep functionalities tree permissions consistence.
 	 *
 	 * @param rolesSet
 	 *            the set containing the roles to erase
@@ -1346,8 +1400,11 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 				SbiFunctions sbiFunct = new SbiFunctions();
 				sbiFunct.setFunctId(functId);
 
-				// hql = " from SbiFuncRole as funcRole where funcRole.id.function = '" + sbiFunct.getFunctId() +
-				// "' AND funcRole.id.role = '"+ roleId +"' AND funcRole.stateCd ='"+stateCD+"'";
+				// hql =
+				// " from SbiFuncRole as funcRole where funcRole.id.function = '"
+				// + sbiFunct.getFunctId() +
+				// "' AND funcRole.id.role = '"+ roleId
+				// +"' AND funcRole.stateCd ='"+stateCD+"'";
 				hql = " from SbiFuncRole as funcRole where funcRole.id.function = ? " + " AND  funcRole.id.role = ?  AND funcRole.stateCd = ?";
 
 				hqlQuery = aSession.createQuery(hql);
@@ -1387,8 +1444,10 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 
 	/*
 	 * (non-Javadoc)
-	 *
-	 * @see it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO#loadChildFunctionalities(java.lang.Integer, boolean)
+	 * 
+	 * @see
+	 * it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO
+	 * #loadChildFunctionalities(java.lang.Integer, boolean)
 	 */
 	@Override
 	public List loadChildFunctionalities(Integer parentId, boolean recoverBIObjects) throws EMFUserError {
@@ -1431,8 +1490,10 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 
 	/*
 	 * (non-Javadoc)
-	 *
-	 * @see it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO#moveDownLowFunctionality(java.lang.Integer)
+	 * 
+	 * @see
+	 * it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO
+	 * #moveDownLowFunctionality(java.lang.Integer)
 	 */
 	@Override
 	public void moveDownLowFunctionality(Integer functionalityID) throws EMFUserError {
@@ -1447,8 +1508,10 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			Integer oldProg = hibFunct.getProg();
 			Integer newProg = new Integer(oldProg.intValue() + 1);
 
-			// String upperFolderHql = "from SbiFunctions s where s.prog = " + newProg.toString() +
-			// " and s.parentFunct.functId = " + hibFunct.getParentFunct().getFunctId().toString();
+			// String upperFolderHql = "from SbiFunctions s where s.prog = " +
+			// newProg.toString() +
+			// " and s.parentFunct.functId = " +
+			// hibFunct.getParentFunct().getFunctId().toString();
 			String upperFolderHql = "from SbiFunctions s where s.prog = ? " + " and s.parentFunct.functId = ?";
 			Query query = aSession.createQuery(upperFolderHql);
 			query.setInteger(0, newProg.intValue());
@@ -1488,8 +1551,10 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 
 	/*
 	 * (non-Javadoc)
-	 *
-	 * @see it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO#moveUpLowFunctionality(java.lang.Integer)
+	 * 
+	 * @see
+	 * it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO
+	 * #moveUpLowFunctionality(java.lang.Integer)
 	 */
 	@Override
 	public void moveUpLowFunctionality(Integer functionalityID) throws EMFUserError {
@@ -1503,8 +1568,10 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			Integer oldProg = hibFunct.getProg();
 			Integer newProg = new Integer(oldProg.intValue() - 1);
 
-			// String upperFolderHql = "from SbiFunctions s where s.prog = " + newProg.toString() +
-			// " and s.parentFunct.functId = " + hibFunct.getParentFunct().getFunctId().toString();
+			// String upperFolderHql = "from SbiFunctions s where s.prog = " +
+			// newProg.toString() +
+			// " and s.parentFunct.functId = " +
+			// hibFunct.getParentFunct().getFunctId().toString();
 			String upperFolderHql = "from SbiFunctions s where s.prog = ? " + " and s.parentFunct.functId = ? ";
 			Query query = aSession.createQuery(upperFolderHql);
 			query.setInteger(0, newProg.intValue());
@@ -1601,7 +1668,8 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			String username = null;
 			Collection roles = null;
 			try {
-				// RequestContainer reqCont = RequestContainer.getRequestContainer();
+				// RequestContainer reqCont =
+				// RequestContainer.getRequestContainer();
 				if (profile != null) {
 					username = (String) ((UserProfile) profile).getUserId();
 					roles = ((UserProfile) profile).getRolesForUse();
@@ -1614,7 +1682,8 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 
 			Query hibQuery = null;
 
-			// getting correct root parent id (if the function must return only functionality of first level)
+			// getting correct root parent id (if the function must return only
+			// functionality of first level)
 			Integer tmpParentId = null;
 			List lstParentId = null;
 			if (onlyFirstLevel) {
@@ -1687,9 +1756,8 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			// maintains functionalities that have the same user's role
 			while (it.hasNext()) {
 				SbiFunctions tmpFunc = (SbiFunctions) it.next();
-				if ((UserUtilities.isAdministrator(profile)
-						&& (tmpFunc.getFunctTypeCd().equalsIgnoreCase("USER_FUNCT") || tmpFunc.getFunctTypeCd().equalsIgnoreCase("LOW_FUNCT")))
-						|| tmpFunc.getFunctTypeCd().equalsIgnoreCase("COMMUNITY_FUNCT")) {
+				if ((UserUtilities.isAdministrator(profile) && (tmpFunc.getFunctTypeCd().equalsIgnoreCase("USER_FUNCT") || tmpFunc.getFunctTypeCd()
+						.equalsIgnoreCase("LOW_FUNCT"))) || tmpFunc.getFunctTypeCd().equalsIgnoreCase("COMMUNITY_FUNCT")) {
 					LowFunctionality funct = toLowFunctionality(tmpFunc, recoverBIObjects);
 					putIntoCache(String.valueOf(funct.getId()), funct);
 					realResult.add(funct);
@@ -1766,7 +1834,8 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 
 			Query hibQuery = null;
 
-			// getting correct root parent id (if the function must return only functionality of first level)
+			// getting correct root parent id (if the function must return only
+			// functionality of first level)
 			Integer tmpParentId = null;
 			List lstParentId = null;
 			if (isFirstLevel) {
@@ -1782,12 +1851,15 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 				hibQuery = aSession.createQuery("select distinct sfr.id.function from SbiFuncRole sfr where "
 						+ "sfr.id.function.functTypeCd = 'LOW_FUNCT' and sfr.id.function.parentFunct.functId = ?  "
 						+ "and sfr.stateCd = ? and sfr.id.role.name in (:roles) ");
-				// CANNOT order by in SQL query: see https://spagobi.eng.it/jira/browse/SPAGOBI-942
-				// + "order by sfr.id.function.parentFunct.functId, sfr.id.function.prog");
+				// CANNOT order by in SQL query: see
+				// https://spagobi.eng.it/jira/browse/SPAGOBI-942
+				// +
+				// "order by sfr.id.function.parentFunct.functId, sfr.id.function.prog");
 				hibQuery.setInteger(0, tmpParentId.intValue());
 				hibQuery.setString(1, permission);
 				hibQuery.setParameterList("roles", roles);
-				// only for administrator are getted personal folders (since SpagoBI 5)
+				// only for administrator are getted personal folders (since
+				// SpagoBI 5)
 				if (UserUtilities.isAdministrator(profile)) {
 					Query hibQueryPersonalFolder = aSession.createQuery("select f from SbiFunctions f where f.path like ? ");
 					hibQueryPersonalFolder.setString(0, "/" + username);
@@ -1804,15 +1876,18 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 				hibQuery = aSession.createQuery("select distinct sfr.id.function from SbiFuncRole sfr where "
 						+ "sfr.id.function.functTypeCd = 'LOW_FUNCT' and sfr.id.function.parentFunct.functId = ? "
 						+ "and sfr.stateCd = ? and sfr.id.role.name in (:roles) ");
-				// CANNOT order by in SQL query: see https://spagobi.eng.it/jira/browse/SPAGOBI-942
-				// + "order by sfr.id.function.parentFunct.functId, sfr.id.function.prog");
+				// CANNOT order by in SQL query: see
+				// https://spagobi.eng.it/jira/browse/SPAGOBI-942
+				// +
+				// "order by sfr.id.function.parentFunct.functId, sfr.id.function.prog");
 				hibQuery.setInteger(0, tmpParentId.intValue());
 				hibQuery.setString(1, permission);
 				hibQuery.setParameterList("roles", roles);
 			}
 			List<SbiFunctions> hibList = hibQuery.list();
 
-			// MUST order using a comparator, see https://spagobi.eng.it/jira/browse/SPAGOBI-942
+			// MUST order using a comparator, see
+			// https://spagobi.eng.it/jira/browse/SPAGOBI-942
 			Collections.sort(hibList, new Comparator<SbiFunctions>() {
 
 				@Override
@@ -1982,7 +2057,8 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			Integer parentId = aLowFunctionality.getParentId();
 			SbiFunctions hibParentFunct = null;
 			if (parentId != null) {
-				// if it is not the root controls if the parent functionality exists
+				// if it is not the root controls if the parent functionality
+				// exists
 				Criteria parentCriteria = aSession.createCriteria(SbiFunctions.class);
 				Criterion parentCriterion = Expression.eq("functId", parentId);
 				parentCriteria.add(parentCriterion);
@@ -2101,7 +2177,8 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 					if (cacheManager.cacheExists(cacheName)) {
 						cacheManager.getCache(cacheName).removeAll();
 					}
-					// else nothing to do, no cache existed for the current tenant
+					// else nothing to do, no cache existed for the current
+					// tenant
 				}
 				// else nothing to do, no cache manager exists
 			} catch (Throwable t) {

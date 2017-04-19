@@ -384,8 +384,8 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 			lowFunctionality.setPath(paramsObj.getString("path"));
 			lowFunctionality.setParentId(paramsObj.getInt("parentId"));
 
-			objDao.insertLowFunctionality(lowFunctionality, getUserProfile());
-			return Response.ok().build();
+			lowFunctionality = objDao.insertLowFunctionality(lowFunctionality, getUserProfile());
+			return Response.ok(lowFunctionality).build();
 		} catch (Exception e) {
 			e.printStackTrace();
 			String errorString = "sbi.folder.save.error";
