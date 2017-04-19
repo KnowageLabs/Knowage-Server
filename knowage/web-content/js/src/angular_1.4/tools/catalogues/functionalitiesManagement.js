@@ -109,6 +109,7 @@ function FunctionalitiesManagementFunction($scope, sbiModule_restServices,sbiMod
 				//$scope.selectedFolder ={};
 				$scope.showme = true;
 				$scope.dirtyForm=false;	
+				$scope.loadFolder (response.data);
 				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
 				
 			}, function(response) {
