@@ -77,7 +77,7 @@
 		engineTypeCd="EXT" classNm="" biobjTypeCd="CONSOLE" useDataSet="true"
 		useDataSource="true" encrypt="0" />
 	<ENGINE label="knowagechartengine" name="Chart Engine" descr="Chart Engine"
-		mainUrl="/knowagechartengine/api/1.0/pages/execute" driverNm="it.eng.spagobi.engines.drivers.chart.ChartDriver"
+		mainUrl="/knowagecockpitengine/api/1.0/chart/pages/execute" driverNm="it.eng.spagobi.engines.drivers.chart.ChartDriver"
 		engineTypeCd="EXT" classNm="" biobjTypeCd="CHART" useDataSet="true"
 		useDataSource="false" encrypt="0" />
 	<!-- start mobile engines 
