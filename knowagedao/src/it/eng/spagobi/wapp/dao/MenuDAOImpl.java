@@ -81,7 +81,8 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 			if (hibMenu == null)
 				return null;
 
-			// SbiMenu hibMenu = (SbiMenu)tmpSession.load(SbiMenu.class, menuID);
+			// SbiMenu hibMenu = (SbiMenu)tmpSession.load(SbiMenu.class,
+			// menuID);
 			toReturn = toMenu(hibMenu, null);
 			// toReturn = toMenu(loadSbiMenuByID(menuID), null);
 
@@ -178,7 +179,8 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 			if (hibMenu == null)
 				return null;
 
-			// SbiMenu hibMenu = (SbiMenu)tmpSession.load(SbiMenu.class, menuID);
+			// SbiMenu hibMenu = (SbiMenu)tmpSession.load(SbiMenu.class,
+			// menuID);
 			toReturn = toMenu(hibMenu, roleID);
 
 		} catch (HibernateException he) {
@@ -360,7 +362,7 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 	 * @see it.eng.spagobi.wapp.dao.IMenuDAO#insertMenu(it.eng.spagobi.wapp.bo.Menu)
 	 */
 	@Override
-	public void insertMenu(Menu aMenu) throws EMFUserError {
+	public Menu insertMenu(Menu aMenu) throws EMFUserError {
 		Session tmpSession = null;
 		Transaction tx = null;
 		try {
@@ -385,11 +387,14 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 
 			// manages prog column that determines the menu order
 			Query hibQuery = null;
-			if (aMenu.getParentId() == null || aMenu.getParentId().intValue() == 0) // hibMenu.setProg(new Integer(1));
+			if (aMenu.getParentId() == null || aMenu.getParentId().intValue() == 0) // hibMenu.setProg(new
+																					// Integer(1));
 				hibQuery = tmpSession.createQuery("select max(s.prog) from SbiMenu s where s.parentId is null ");
 			else {
 				// loads sub menu
-				// hibQuery = tmpSession.createQuery("select max(s.prog) from SbiMenu s where s.parentId = " + aMenu.getParentId());
+				// hibQuery =
+				// tmpSession.createQuery("select max(s.prog) from SbiMenu s where s.parentId = "
+				// + aMenu.getParentId());
 				hibQuery = tmpSession.createQuery("select max(s.prog) from SbiMenu s where s.parentId = ?");
 				hibQuery.setInteger(0, aMenu.getParentId().intValue());
 			}
@@ -401,7 +406,9 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 
 			updateSbiCommonInfo4Insert(hibMenu);
 			tmpSession.save(hibMenu);
-
+			aMenu.setMenuId(hibMenu.getMenuId());
+			aMenu.setParentId(hibMenu.getParentId());
+			aMenu.setProg(hibMenu.getProg());
 			Set menuRoleToSave = new HashSet();
 			Set temp = saveRolesMenu(tmpSession, hibMenu, aMenu);
 			menuRoleToSave.addAll(temp);
@@ -425,6 +432,7 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 			}
 
 		}
+		return aMenu;
 	}
 
 	/*
@@ -559,8 +567,10 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 			eraseMenuSons(eventualFatherId, tmpSession);
 
 			// update prog column in other menu
-			// String hqlUpdateProg = "update SbiMenu s set s.prog = (s.prog - 1) where s.prog > "
-			// + hibMenu.getProg() + " and s.parentId = " + hibMenu.getParentId();
+			// String hqlUpdateProg =
+			// "update SbiMenu s set s.prog = (s.prog - 1) where s.prog > "
+			// + hibMenu.getProg() + " and s.parentId = " +
+			// hibMenu.getParentId();
 
 			Integer parentId = hibMenu.getParentId();
 			String hqlUpdateProg = null;
@@ -855,7 +865,8 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 	}
 
 	/**
-	 * From the Hibernate Menu object at input, gives the corrispondent <code>Menu</code> object.
+	 * From the Hibernate Menu object at input, gives the corrispondent
+	 * <code>Menu</code> object.
 	 *
 	 * @param hibMenu
 	 *            The Hibernate Menu object
@@ -898,8 +909,11 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 
 		// set the dephts
 		/*
-		 * if(menu.getParentId()!=null){ Menu parent=loadMenuByID(menu.getParentId()); if(parent!=null){ Integer depth=parent.getDepth(); menu.setDepth(new
-		 * Integer(depth.intValue()+1)); } } else{ menu.setDepth(new Integer(0)); }
+		 * if(menu.getParentId()!=null){ Menu
+		 * parent=loadMenuByID(menu.getParentId()); if(parent!=null){ Integer
+		 * depth=parent.getDepth(); menu.setDepth(new
+		 * Integer(depth.intValue()+1)); } } else{ menu.setDepth(new
+		 * Integer(0)); }
 		 */
 
 		List rolesList = new ArrayList();
@@ -937,7 +951,8 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 	}
 
 	/**
-	 * Return the level of menu element: 1 - first, 2 - second|third, 4 - last, 0 other
+	 * Return the level of menu element: 1 - first, 2 - second|third, 4 - last,
+	 * 0 other
 	 */
 	private Integer getLevel(Integer parentId, Integer objId) {
 		if ((parentId == null || parentId.intValue() == 0) && objId != null)
@@ -1087,13 +1102,15 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 			String upperMenuHql = "";
 			Query query = null;
 			if (hibMenu.getParentId() == null || hibMenu.getParentId().intValue() == 0) {
-				// upperMenuHql = "from SbiMenu s where s.prog = " + newProg.toString() +
+				// upperMenuHql = "from SbiMenu s where s.prog = " +
+				// newProg.toString() +
 				// " and s.parentId is null ";
 				upperMenuHql = "from SbiMenu s where s.prog = ? " + " and (s.parentId is null or s.parentId = 0)";
 				query = tmpSession.createQuery(upperMenuHql);
 				query.setInteger(0, newProg.intValue());
 			} else {
-				// upperMenuHql = "from SbiMenu s where s.prog = " + newProg.toString() +
+				// upperMenuHql = "from SbiMenu s where s.prog = " +
+				// newProg.toString() +
 				// " and s.parentId = " + hibMenu.getParentId().toString();
 				upperMenuHql = "from SbiMenu s where s.prog = ? " + " and s.parentId = ? ";
 				query = tmpSession.createQuery(upperMenuHql);
@@ -1150,13 +1167,15 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 			String upperMenuHql = "";
 			Query query = null;
 			if (hibMenu.getParentId() == null || hibMenu.getParentId().intValue() == 0) {
-				// upperMenuHql = "from SbiMenu s where s.prog = " + newProg.toString() +
+				// upperMenuHql = "from SbiMenu s where s.prog = " +
+				// newProg.toString() +
 				// " and s.parentId is null ";
 				upperMenuHql = "from SbiMenu s where s.prog = ? " + " and (s.parentId is null or s.parentId = 0)";
 				query = tmpSession.createQuery(upperMenuHql);
 				query.setInteger(0, newProg.intValue());
 			} else {
-				// upperMenuHql = "from SbiMenu s where s.prog = " + newProg.toString() +
+				// upperMenuHql = "from SbiMenu s where s.prog = " +
+				// newProg.toString() +
 				// " and s.parentId = " + hibMenu.getParentId().toString();
 				upperMenuHql = "from SbiMenu s where s.prog = ? " + " and s.parentId = ? ";
 				query = tmpSession.createQuery(upperMenuHql);

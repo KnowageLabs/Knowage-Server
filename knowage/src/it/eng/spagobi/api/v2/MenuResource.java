@@ -48,6 +48,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -94,9 +95,9 @@ public class MenuResource extends AbstractSpagoBIResource {
 			 * menu.getRoles(); if (menu.getParentId() == null) { for (Role role
 			 * : arrRole) { child = dao.getChildrenMenu(menu.getMenuId(),
 			 * role.getId()); } menu.setLstChildren(child);
-			 *
+			 * 
 			 * allMenus_new.add(menu); }
-			 *
+			 * 
 			 * }
 			 */
 
@@ -128,7 +129,10 @@ public class MenuResource extends AbstractSpagoBIResource {
 			String[] filesHtmls = null;
 			ArrayList<String> filesHtmlsArrayList = new ArrayList<String>();
 			int count = 0;
-			if (dir != null && dir.isDirectory()) {
+			if (!dir.isDirectory()) {
+				FileUtils.forceMkdir(new File(resourcePath));
+			}
+			if (dir != null) {
 				// get all avalaible files
 				files = dir.list();
 
@@ -153,25 +157,22 @@ public class MenuResource extends AbstractSpagoBIResource {
 				filesHtmls = filesHtmlsArrayList.toArray(filesHtmls);
 			}
 			JSONArray njo = new JSONArray();
-			if (filesHtmls != null) {
-				for (int i = 0; i < filesHtmls.length; i++) {
 
-					JSONObject file = new JSONObject();
-					try {
-						file.put("id", i + 1);
-						file.put("name", filesHtmls[i]);
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					njo.put(file);
+			for (int i = 0; i < filesHtmls.length; i++) {
+
+				JSONObject file = new JSONObject();
+				try {
+					file.put("id", i + 1);
+					file.put("name", filesHtmls[i]);
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-
-				return Response.ok(njo.toString()).build();
-			} else {
-				String errorString = "Folder static_menu does not exist inside tenant";
-				throw new SpagoBIRuntimeException(errorString);
+				njo.put(file);
 			}
+
+			return Response.ok(njo.toString()).build();
+
 		} catch (SpagoBIRuntimeException e) {
 			logger.error(e.getMessage(), e);
 			throw new SpagoBIRestServiceException(e.getMessage(), buildLocaleFromSession(), e);
@@ -324,8 +325,8 @@ public class MenuResource extends AbstractSpagoBIResource {
 
 			menu.setViewIcons(paramsObj.getBoolean("viewIcons"));
 
-			objDao.insertMenu(menu);
-			return Response.ok().build();
+			menu = 	objDao.insertMenu(menu);
+			return Response.ok(menu).build();
 		} catch (Exception e) {
 			e.printStackTrace();
 			String errorString = "sbi.menu.save.error";

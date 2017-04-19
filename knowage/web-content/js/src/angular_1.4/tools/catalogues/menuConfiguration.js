@@ -189,6 +189,7 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 				//	$scope.selectedMenu = {};
 					$scope.showme = true;
 					$scope.dirtyForm = false;
+					$scope.showSelectedMenu(response.data)
 				}, function(response) {
 					sbiModule_messaging.showErrorMessage(sbiModule_translate.
 							load(response.data.errors[0].message), 'Error');
