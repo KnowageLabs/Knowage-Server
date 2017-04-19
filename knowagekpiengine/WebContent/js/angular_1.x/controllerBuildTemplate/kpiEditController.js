@@ -220,7 +220,7 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 				function(response) {
 
 					var template = response.data;
-					if(template!=undefined){
+					if(template!=undefined && !angular.equals(template, {})){
 						$scope.typeChart = template.chart.type;
 
 						if($scope.typeChart=='kpi'){
