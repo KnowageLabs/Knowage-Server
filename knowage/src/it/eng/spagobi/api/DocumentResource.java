@@ -23,11 +23,8 @@ import it.eng.spagobi.analiticalmodel.document.AnalyticalModelDocumentManagement
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
 import it.eng.spagobi.behaviouralmodel.lov.dao.IModalitiesValueDAO;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -37,6 +34,7 @@ import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.json.Xml;
 import it.eng.spagobi.services.serialization.JsonConverter;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
@@ -373,13 +371,13 @@ public class DocumentResource extends AbstractSpagoBIResource {
 			logger.debug("OUT");
 		}
 	}
-	
+
 	@GET
 	@Path("/{label}/analyticalDrivers")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response getDocumentAD(@PathParam("label") String label) {
 		logger.debug("IN");
-		
+
 		IParameterDAO driversDao = null;
 		List<Parameter> fullList = null;
 
@@ -395,13 +393,12 @@ public class DocumentResource extends AbstractSpagoBIResource {
 			logger.debug("OUT");
 		}
 	}
-	
+
 	@GET
 	@Path("/{label}/lovs")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response getDocumentLovs(@PathParam("label") String label) {
 		logger.debug("IN");
-		
 
 		List<ModalitiesValue> modalitiesValues = null;
 		IModalitiesValueDAO modalitiesValueDAO = null;
@@ -411,9 +408,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 			modalitiesValueDAO = DAOFactory.getModalitiesValueDAO();
 			modalitiesValueDAO.setUserProfile(getUserProfile());
 			modalitiesValues = modalitiesValueDAO.loadModalitiesValueByBIObjectLabel(label);
-				
-				
-			
+
 			return Response.ok(modalitiesValues).build();
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
@@ -536,9 +531,9 @@ public class DocumentResource extends AbstractSpagoBIResource {
 	// ===================================================================
 	// UTILITY METHODS
 	// ===================================================================
-	
+
 	private void saveOlapTemplate(String docLabel, String xml, JSONObject json) {
-		
+
 		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
 
 		ObjTemplate template = new ObjTemplate();
@@ -553,70 +548,70 @@ public class DocumentResource extends AbstractSpagoBIResource {
 		 *
 		 * @author Nikola Simovic (nsimovic, nikola.simovic@mht.net)
 		 */
-		try{
-		JSONObject olapJSONObject = new JSONObject();
-		JSONArray jaCategories = new JSONArray();
-		olapJSONObject = json;
+		try {
+			JSONObject olapJSONObject = new JSONObject();
+			JSONArray jaCategories = new JSONArray();
+			olapJSONObject = json;
 
-		JSONObject crossNavFromCellSingle = new JSONObject();
-		JSONArray crossNavFromCellMulti = new JSONArray();
+			JSONObject crossNavFromCellSingle = new JSONObject();
+			JSONArray crossNavFromCellMulti = new JSONArray();
 
-		JSONObject crossNavFromMemberSingle = new JSONObject();
-		JSONArray crossNavFromMemberMulti = new JSONArray();
+			JSONObject crossNavFromMemberSingle = new JSONObject();
+			JSONArray crossNavFromMemberMulti = new JSONArray();
 
-		if (olapJSONObject.optJSONObject("CROSS_NAVIGATION") != null) {
+			if (olapJSONObject.optJSONObject("CROSS_NAVIGATION") != null) {
 
-			crossNavFromCellSingle = olapJSONObject.optJSONObject("CROSS_NAVIGATION").optJSONObject("PARAMETERS").optJSONObject("PARAMETER");
-			crossNavFromCellMulti = olapJSONObject.optJSONObject("CROSS_NAVIGATION").optJSONObject("PARAMETERS").optJSONArray("PARAMETER");
+				crossNavFromCellSingle = olapJSONObject.optJSONObject("CROSS_NAVIGATION").optJSONObject("PARAMETERS").optJSONObject("PARAMETER");
+				crossNavFromCellMulti = olapJSONObject.optJSONObject("CROSS_NAVIGATION").optJSONObject("PARAMETERS").optJSONArray("PARAMETER");
 
-			if (crossNavFromCellMulti == null) {
-				if (crossNavFromCellSingle != null) {
-					jaCategories.put(crossNavFromCellSingle);
-				}
-			} else if (crossNavFromCellMulti != null) {
-				for (int i = 0; i < crossNavFromCellMulti.length(); i++) {
-					JSONObject joT = (JSONObject) crossNavFromCellMulti.get(i);
-					jaCategories.put(joT);
-				}
-			}
-		}
-
-		if (olapJSONObject.optJSONObject("MDXQUERY") != null) {
-
-			crossNavFromMemberSingle = olapJSONObject.optJSONObject("MDXQUERY").optJSONObject("clickable");
-			crossNavFromMemberMulti = olapJSONObject.optJSONObject("MDXQUERY").optJSONArray("clickable");
-
-			if (crossNavFromMemberMulti == null) {
-				if (crossNavFromMemberSingle != null) {
-					jaCategories.put(crossNavFromMemberSingle.opt("clickParameter"));
-				}
-			} else if (crossNavFromMemberMulti != null) {
-				for (int i = 0; i < crossNavFromMemberMulti.length(); i++) {
-					JSONObject joT = (JSONObject) crossNavFromMemberMulti.get(i);
-					jaCategories.put(joT.opt("clickParameter"));
+				if (crossNavFromCellMulti == null) {
+					if (crossNavFromCellSingle != null) {
+						jaCategories.put(crossNavFromCellSingle);
+					}
+				} else if (crossNavFromCellMulti != null) {
+					for (int i = 0; i < crossNavFromCellMulti.length(); i++) {
+						JSONObject joT = (JSONObject) crossNavFromCellMulti.get(i);
+						jaCategories.put(joT);
+					}
 				}
 			}
-		}
 
-		for (int i = 0; i < jaCategories.length(); i++) {
-			JSONObject joT = (JSONObject) jaCategories.get(i);
-			categoriesNames.add((String) joT.opt("name"));
-		}
-		logger.info("Category names for the OLAP document are: " + categoriesNames);
+			if (olapJSONObject.optJSONObject("MDXQUERY") != null) {
+
+				crossNavFromMemberSingle = olapJSONObject.optJSONObject("MDXQUERY").optJSONObject("clickable");
+				crossNavFromMemberMulti = olapJSONObject.optJSONObject("MDXQUERY").optJSONArray("clickable");
+
+				if (crossNavFromMemberMulti == null) {
+					if (crossNavFromMemberSingle != null) {
+						jaCategories.put(crossNavFromMemberSingle.opt("clickParameter"));
+					}
+				} else if (crossNavFromMemberMulti != null) {
+					for (int i = 0; i < crossNavFromMemberMulti.length(); i++) {
+						JSONObject joT = (JSONObject) crossNavFromMemberMulti.get(i);
+						jaCategories.put(joT.opt("clickParameter"));
+					}
+				}
+			}
+
+			for (int i = 0; i < jaCategories.length(); i++) {
+				JSONObject joT = (JSONObject) jaCategories.get(i);
+				categoriesNames.add((String) joT.opt("name"));
+			}
+			logger.info("Category names for the OLAP document are: " + categoriesNames);
 		} catch (JSONException e) {
 			logger.error("Cannot get OLAP values from JSON object", e);
 			throw new SpagoBIServiceException("Cannot get OLAP values from JSON object", e);
-		}	
-		
+		}
+
 		try {
 			IBIObjectDAO biObjectDao;
 			BIObject document;
 			biObjectDao = DAOFactory.getBIObjectDAO();
-			if(docLabel instanceof String){
+			if (docLabel instanceof String) {
 				document = biObjectDao.loadBIObjectByLabel(docLabel);
 			} else {
 				document = biObjectDao.loadBIObjectById(new Integer(docLabel));
-			}			
+			}
 
 			documentManager.saveDocument(document, template);
 
@@ -728,11 +723,20 @@ public class DocumentResource extends AbstractSpagoBIResource {
 			IBIObjectDAO biObjectDao;
 			BIObject document;
 			biObjectDao = DAOFactory.getBIObjectDAO();
-			if(docLabel instanceof String){
+			try {
+				int docId = Integer.parseInt(docLabel);
+				document = biObjectDao.loadBIObjectById(docId);
+				if (document == null) {
+					// This is wrong. We should use only one type of identifier!!!
+					logger.debug("The document identifier is an Integer, but no document is found with such identifier. Trying with with it as a String.");
+					document = biObjectDao.loadBIObjectByLabel(docLabel);
+				}
+			} catch (NumberFormatException e) {
+				logger.debug("The document identifier is not an Integer.");
 				document = biObjectDao.loadBIObjectByLabel(docLabel);
-			} else {
-				document = biObjectDao.loadBIObjectById(new Integer(docLabel));
-			}			
+			}
+
+			Assert.assertNotNull(document, "Document identifier or label cannot be null");
 
 			// In the case of the SUNBURST and OLAP document type, this
 			// variable will be not empty. (danristo) (nsimovic)
