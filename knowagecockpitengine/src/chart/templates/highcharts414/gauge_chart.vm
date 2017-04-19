@@ -373,94 +373,95 @@
 		        	#end
 	            },
 	        	#end
-	        	
-	        	#if($yAxis.PLOTBANDS)
-		        	plotBands: [        	
-		        	
-		        	#set($plots = $yAxis.PLOTBANDS.PLOT) 
-		        	       	
-		        	#if ($plots.class.name == "java.util.ArrayList")
-		        	
-			        	#foreach($plotElement in $plots)
-		        		{
-			        		#foreach($valueKey in $plotElement.keySet())
-				        	
-				    			#if ($valueKey == "color" && $plotElement.color)
-				    				color: '$plotElement.color',
-				    			#elseif ($valueKey == "from")
-				    				from: $plotElement.from,
-				    			#elseif ($valueKey == "to")
-				    				to: $plotElement.to,
-				    			#end
-		        			
-		        			#end
-		        		},
-			        	#end
+	        	#if($yAxis.PLOTBANDS!="")
+		        	#if($yAxis.PLOTBANDS)
+			        	plotBands: [        	
 			        	
-			        #else
-			         
-			         	#if ($plots.color != "" && $plots.from != "" && $plots.to != "")
-				        	{
-				        		#if($plots.color != "")
-				        			color: '$plots.color',
-				        		#end
-				        		
-				        		#if($plots.from != "")
-				        			from: $plots.from,
-				        		#end
-				        		
-				        		#if($plots.to != "")
-				        			to: $plots.to
-				        		#end		        		
-				        	},
+			        	#set($plots = $yAxis.PLOTBANDS.PLOT) 
+			        	       	
+			        	#if ($plots.class.name == "java.util.ArrayList")
+			        	
+				        	#foreach($plotElement in $plots)
+			        		{
+				        		#foreach($valueKey in $plotElement.keySet())
+					        	
+					    			#if ($valueKey == "color" && $plotElement.color)
+					    				color: '$plotElement.color',
+					    			#elseif ($valueKey == "from")
+					    				from: $plotElement.from,
+					    			#elseif ($valueKey == "to")
+					    				to: $plotElement.to,
+					    			#end
+			        			
+			        			#end
+			        		},
+				        	#end
+				        	
+				        #else
+				         
+				         	#if ($plots.color != "" && $plots.from != "" && $plots.to != "")
+					        	{
+					        		#if($plots.color != "")
+					        			color: '$plots.color',
+					        		#end
+					        		
+					        		#if($plots.from != "")
+					        			from: $plots.from,
+					        		#end
+					        		
+					        		#if($plots.to != "")
+					        			to: $plots.to
+					        		#end		        		
+					        	},
+					        #end
+				        	
 				        #end
 			        	
-			        #end
-		        	
-		        	#*
-		        	#foreach($valueKey in $yAxis.PLOTBANDS.PLOT.keySet())
-		        	{
-		    			#if ($valueKey == "color")
-		    				color: $yAxis.PLOTBANDS.PLOT.color
-		    			#end
-	        			
-        			},
-	        		#end
-		        	
-		        	#if ($yAxis.PLOTBANDS.PLOT.class.name != "java.util.LinkedHashMap")
-		        	
-			        	#foreach($band in $yAxis.PLOTBANDS.PLOT)
+			        	#*
+			        	#foreach($valueKey in $yAxis.PLOTBANDS.PLOT.keySet())
 			        	{
+			    			#if ($valueKey == "color")
+			    				color: $yAxis.PLOTBANDS.PLOT.color
+			    			#end
+		        			
+	        			},
+		        		#end
 			        	
-			        		from: $band.from,
-			        		to: $band.to,
-			        		color: '$band.color'
-			        		
-			        	},
-			        	#end 
-		        	#else
-		        		{
-		        			#if ($yAxis.PLOTBANDS.PLOT.from != '')
-			        			from: $yAxis.PLOTBANDS.PLOT.from,
-		        			#else
-		        				from: '',
-		        			#end
-		        			
-		        			#if ($yAxis.PLOTBANDS.PLOT.to != '')
-			        			to: $yAxis.PLOTBANDS.PLOT.to,
-		        			#else
-		        				to: '',
-		        			#end
-		        			
-		        			#if ($yAxis.PLOTBANDS.PLOT.color != '')
-			        			color: $yAxis.PLOTBANDS.PLOT.color,
-		        			#else
-		        				color: '',
-		        			#end
-			        	}
-		        	#end
-		        	*#
-		        	]
+			        	#if ($yAxis.PLOTBANDS.PLOT.class.name != "java.util.LinkedHashMap")
+			        	
+				        	#foreach($band in $yAxis.PLOTBANDS.PLOT)
+				        	{
+				        	
+				        		from: $band.from,
+				        		to: $band.to,
+				        		color: '$band.color'
+				        		
+				        	},
+				        	#end 
+			        	#else
+			        		{
+			        			#if ($yAxis.PLOTBANDS.PLOT.from != '')
+				        			from: $yAxis.PLOTBANDS.PLOT.from,
+			        			#else
+			        				from: '',
+			        			#end
+			        			
+			        			#if ($yAxis.PLOTBANDS.PLOT.to != '')
+				        			to: $yAxis.PLOTBANDS.PLOT.to,
+			        			#else
+			        				to: '',
+			        			#end
+			        			
+			        			#if ($yAxis.PLOTBANDS.PLOT.color != '')
+				        			color: $yAxis.PLOTBANDS.PLOT.color,
+			        			#else
+			        				color: '',
+			        			#end
+				        	}
+			        	#end
+			        	*#
+			        	]
+			        #end 
 		        #end
 		        },
     		#end       

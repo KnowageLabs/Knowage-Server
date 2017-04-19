@@ -152,6 +152,10 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 	}
 	$scope.addNewPlotband = function() {
 		var newPlot = {};
+		if($scope.chartTemplate.AXES_LIST.AXIS[0].PLOTBANDS==""){
+			$scope.chartTemplate.AXES_LIST.AXIS[0].PLOTBANDS = {};
+			$scope.chartTemplate.AXES_LIST.AXIS[0].PLOTBANDS.PLOT=[];
+		}
 		if($scope.chartTemplate.AXES_LIST.AXIS[0].PLOTBANDS.PLOT.length == 0){
 			newPlot = {
 					"from": $scope.chartTemplate.AXES_LIST.AXIS[0].min,
