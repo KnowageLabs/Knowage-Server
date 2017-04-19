@@ -158,7 +158,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				</div>
 				</div>
 				<div ng-if="selectedLayer.type == 'File'" flex="50">
-					<file-upload  flex id="layerFile" ng-model="selectedLayer.layerFile"  ng-init ="selectedLayer.layerFile = {}"></file-upload>
+					<file-upload  flex id="layerFile" ng-model="selectedLayer.layerFile"  ng-init ="selectedLayer.layerFile = {}" file-max-size="20"></file-upload>
 				</div>
 				<span flex></span>
 			</div>
