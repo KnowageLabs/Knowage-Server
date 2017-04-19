@@ -2783,6 +2783,8 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	}
 	
 	$scope.continueToRestExecutionOfPreview = function() {
+		
+		$scope.disableBack = true;
 	
 		sbiModule_restServices.promisePost('1.0/datasets','preview', angular.toJson($scope.selectedDataSet))
 			.then(
