@@ -61,7 +61,8 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 	$scope.forms = {};
 	$scope.selectedTab = 0;
 	$scope.typeWFS='geojson';
-
+	$scope.fileMaxSize=20;
+	 
 	$scope.tableFunction={
 
 			download: function(item,evt){
