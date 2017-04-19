@@ -139,16 +139,16 @@
 						</div>
 					</div>					
 				</div>
-				<div  ng-if = "selectedParUse.valueSelection != 'map_in'">
-			    	<md-input-container class="small counter"> 
-				        <md-checkbox
-				         ng-change="setDirty()"  ng-model="selectedParUse.maximizerEnabled" aria-label="driver">
-				        </md-checkbox> 
-			       </md-input-container>
+<!-- 				<div  ng-if = "selectedParUse.valueSelection != 'map_in'"> -->
+<!-- 			    	<md-input-container class="small counter">  -->
+<!-- 				        <md-checkbox -->
+<!-- 				         ng-change="setDirty()"  ng-model="selectedParUse.maximizerEnabled" aria-label="driver"> -->
+<!-- 				        </md-checkbox>  -->
+<!-- 			       </md-input-container> -->
 			       
-			        <label>{{translate.load("sbi.analytical.drivers.usemode.expandable")}}</label>
+<!-- 			        <label>{{translate.load("sbi.analytical.drivers.usemode.expandable")}}</label> -->
 			        
-			   	</div>
+<!-- 			   	</div> -->
 					   		
 				<label>{{translate.load("sbi.generic.defaultValue")}}</label>
 				<md-radio-group ng-model="selectedParUse.defaultrg" layout="row"> 				
@@ -223,7 +223,7 @@
 			        </h2>
 			        <span flex></span>
 			   		
-			        <md-button class="md-icon-button" aria-label="checkAll" ng-click="checkAllRoles()">
+			        <md-button class="md-icon-button" aria-label="checkAll" ng-click="checkAllRoles(associatedRoles)">
 			                <md-tooltip md-direction="bottom">
 			      						{{translate.load("sbi.analytical.drivers.roles.check");}}
 			    						</md-tooltip>

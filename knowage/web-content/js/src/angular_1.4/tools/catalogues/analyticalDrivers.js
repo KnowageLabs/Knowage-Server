@@ -251,7 +251,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 		$scope.selectedParUse.selectionType= null;
 		$scope.selectedParUse.defaultFormula = null;
 		$scope.selectedParUse.valueSelection = "man_in";
-		$scope.selectedParUse.maximizerEnabled = true;
+		$scope.selectedParUse.maximizerEnabled = false;
 		$scope.selectedParUse.defaultrg="none";
 		
 	}
@@ -469,6 +469,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 						console.log($scope.selectedCreated);
 					}, 1000);
 					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
+				
 					//$scope.selectedDriver={};
 					if(path == 'usemode'){
 						$scope.selectedTab = 1;
