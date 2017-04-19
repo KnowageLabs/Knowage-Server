@@ -788,6 +788,9 @@ md-tab-item {
 /* IE11 fix */
 
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  .itemboxGU {
+    min-height: 100px;
+  }
   md-checkbox.md-knowage-theme.md-checked ._md-icon:after {
 /*    transform: rotate(135deg);
     top:10px;*/
