@@ -536,9 +536,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							        
 							   	</div>
 							   	
+							   	<label>{{translate.load("sbi.ds.query")}}</label>
 							   	<md-input-container class="md-block">
 							    	
-							    	<label>{{translate.load("sbi.ds.query")}}</label>
+							    	
 									<textarea 	ng-required="selectedDataSet.dsTypeCd=='Query'" ng-model="selectedDataSet.query" ui-codemirror="{ onLoad : codemirrorLoaded }" 
 												ui-codemirror-opts="codemirrorOptions" rows="8" md-select-on-focus
 											 	ng-change="setFormDirty()">
@@ -569,37 +570,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							</md-card>
 						</md-content>
 						
-						<!-- WEB SERVICE DATASET -->
-						<!-- <md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='Web Service'">
-							
-							<md-card layout-padding style="margin-top:0">
-								
-								<md-input-container class="md-block" flex-gt-sm>
-						           	
-						           	<label>{{translate.load("sbi.ds.wsAddress")}}</label>
-						           	<input ng-model="selectedDataSet.wsAddress" ng-required="true" ng-change="setFormDirty()">
-						           	
-						           	<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.wsAddress">
-		       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
-	       						 	</div>
-	       						 	
-						         </md-input-container>
-						         
-						         <md-input-container class="md-block" flex-gt-sm>
-						           	
-						           	<label>{{sbi.ds.wsOperation")}}</label>
-						           	<input ng-model="selectedDataSet.wsOperation" ng-required="true" ng-change="setFormDirty()">
-						           	
-						           	<div  ng-messages="datasetForm.lbl.$error" ng-show="!selectedDataSet.wsOperation">
-		       						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
-	       						 	</div>
-	       						 	
-						         </md-input-container>
-						         
-							</md-card>
-							
-						</md-content> -->
-							
 						<!-- SCRIPT DATASET -->
 						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" ng-if="selectedDataSet.dsTypeCd=='Script'">
 							
