@@ -81,7 +81,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 	</head>
 	
-	<body ng-controller="datasetController" class="bodyStyle kn-rolesManagement" style="overflow-y:hidden;">
+	<body ng-controller="datasetController" class="bodyStyle kn-rolesManagement kn-datasetmanagement" style="overflow-y:hidden;">
 	
 		<!-- 
 			The progress circular animation will be shown whenever the REST calls are in progress (before the getting of the response).
@@ -1425,8 +1425,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 												<md-datepicker ng-model="selectedDataSet.startDate" md-placeholder="Enter date"
 		            											md-min-date="minStartDate" md-max-date="maxStartDate" 
 		            											ng-change="setFormDirty();checkPickedStartDate();"
-		            											md-open-on-focus ng-required=false>
+		            											md-open-on-focus ng-required="selectedDataSet.isScheduled==true">
 												</md-datepicker>
+												<div  ng-messages="datasetForm.lbl.$error" class="required-message" ng-show="selectedDataSet.isScheduled==true && !selectedDataSet.startDate">
+		       						 				<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+	   						 					</div>
+											
 											</div>
 											
 											<div style="float:right" flex=50>
@@ -1434,8 +1438,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 												<md-datepicker ng-model="selectedDataSet.endDate" md-placeholder="Enter date"
 		            											md-min-date="minEndDate" md-max-date="maxEndDate" 
 		            											ng-change="setFormDirty();checkPickedEndDate();"
-		            											md-open-on-focus ng-required=false>
+		            											md-open-on-focus ng-required="selectedDataSet.isScheduled==true">
 												</md-datepicker>
+												<div  ng-messages="datasetForm.lbl.$error" class="required-message" ng-show="selectedDataSet.isScheduled==true && !selectedDataSet.endDate">
+		       						 				<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+	   						 					</div>
 											</div>
 											
 										</div>
