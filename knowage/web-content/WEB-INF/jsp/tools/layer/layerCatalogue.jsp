@@ -64,9 +64,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
    		 </md-radio-group>
      </div>
     
-	<div class="footer">
-	<md-button class="dialogButton" ng-click="getDownload(selectedLayer)" md-autofocus>Download <md-icon md-font-icon="fa fa-download buttonIcon" aria-label="Download"></md-icon></md-button>
-	</div>
+ <md-dialog-actions layout="row">
+      <span flex></span>
+      <md-button class="dialogButton" ng-click="getDownload(selectedLayer)" md-autofocus>Download</md-button>
+	
+    </md-dialog-actions>
    	 </md-dialog-content>
   </form>
 </md-dialog>
