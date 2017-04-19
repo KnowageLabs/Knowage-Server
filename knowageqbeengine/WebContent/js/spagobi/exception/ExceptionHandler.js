@@ -78,7 +78,12 @@ Sbi.exception.ExceptionHandler = function(){
 			        			} else if (anError.localizedMessage !== undefined && anError.localizedMessage !== '') {
 			        				errMessage += anError.localizedMessage;
 			        			} else if (anError.message !== undefined && anError.message !== '') {
-			        				errMessage += anError.message;
+			        				if(anError.message.indexOf("[9001]")<0){
+			        					errMessage += anError.message;
+			        				}else{
+			        					errMessage += LN("sbi.qbe.savedatasetwindow.error.mandatory");
+			        				}
+			        				
 			        			}
 			        			if (count < content.errors.length - 1) {
 			        				errMessage += '<br/>';
