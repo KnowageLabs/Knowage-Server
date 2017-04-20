@@ -819,6 +819,8 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 					"id": newSerContName,
 					"type": "Serie",
 					"position": "right",
+					"min":0,
+					"max":0,
 					"style":{
 		            	   "rotate":"",
 		            	   "align":"",

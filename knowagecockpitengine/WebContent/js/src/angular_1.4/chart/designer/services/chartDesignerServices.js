@@ -342,6 +342,8 @@ angular.module('ChartDesignerService', [])
 					               "alias":"Y",
 					               "type":"Serie",
 					               "position":"",
+					               "min":0,
+					               "max":0,
 					               "style":{
 					            	   "rotate":"",
 					            	   "align":"",

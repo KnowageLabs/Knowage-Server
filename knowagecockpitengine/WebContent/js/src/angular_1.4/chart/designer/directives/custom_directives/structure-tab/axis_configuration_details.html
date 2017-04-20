@@ -13,7 +13,7 @@
 	</md-input-container>
 </div>
 
-<div layout="column" layout-padding ng-if="selectedChartType == 'heatmap'">
+<div layout="column" layout-padding ng-if="selectedChartType == 'heatmap' || selectedChartType == 'line' ">
 <md-input-container class="md-block">
 	<label>{{translate.load("sbi.chartengine.designer.heatmap.axisMin")}}</label>
 	<input type="number" step="any" name="axis_min"
