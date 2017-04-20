@@ -312,7 +312,7 @@ angular.module('metaManager').filter('filterByProductType', function(sbiModule_c
 		var showTemporalDimension = sbiModule_user.functionalities.indexOf("TemporalDimension")>-1;
 
 		if(angular.equals(prop.value.propertyType.name,"Type")){
-			if(sbiModule_config.productTypes.indexOf("KnowageLI")==-1 && !showSpatialDimension){
+			if(sbiModule_config.productTypes.indexOf("KnowageLI")==-1 || !showSpatialDimension){
 				//remove spatial dimension
 				var sdInd=items.indexOf("geographic dimension");
 				if(sdInd!=-1){
@@ -320,7 +320,7 @@ angular.module('metaManager').filter('filterByProductType', function(sbiModule_c
 				}
 			}
 
-			if(sbiModule_config.productTypes.indexOf("KnowageSI")==-1 && !showTemporalDimension){
+			if(sbiModule_config.productTypes.indexOf("KnowageSI")==-1 || !showTemporalDimension){
 				//remove temporal dimension
 				var tdInd=items.indexOf("temporal dimension");
 				if(tdInd!=-1){
