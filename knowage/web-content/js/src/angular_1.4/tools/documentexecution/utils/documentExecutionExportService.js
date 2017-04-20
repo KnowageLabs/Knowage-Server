@@ -2,7 +2,7 @@
 	var documentExecutionModule = angular.module('documentExecutionModule');
 	
 	documentExecutionModule.service('docExecute_exportService', function(sbiModule_translate,sbiModule_config,
-			execProperties,sbiModule_user,sbiModule_restServices,$http,sbiModule_dateServices, documentExecuteServices, sbiModule_download, $q, $rootScope, sbiModule_messaging) {
+			execProperties,sbiModule_user,sbiModule_restServices,$http,sbiModule_dateServices, documentExecuteServices, sbiModule_download, $q, $rootScope, sbiModule_messaging,multipartForm,$sce) {
 		
 		var dee = this;
 		dee.exporting = false;
@@ -99,6 +99,37 @@
 //			window.open(dee.getExportationUrl(format,'', '/knowagebirtreportengine/BirtReportServlet') , 'name', 'resizable=1,height=750,width=1000');
 			window.open(dee.getExportationUrl(format,'', sbiModule_config.birtReportEngineContextName + '/BirtReportServlet') , 'name', 'resizable=1,height=750,width=1000');
 		};
+		
+		dee.exportCockpitTablesToAPDF = function($sce){
+			var accessibleTables = document.getElementById("documentFrame").contentWindow.document.getElementsByTagName("accessible-angular-table");
+			var finalHtml="";
+			var jobId;
+			
+			for(var i=0;i<accessibleTables.length;i++){
+				finalHtml += accessibleTables[i].innerHTML;
+			}
+			
+			var formData = {};
+			formData.file = finalHtml;
+			formData.size = "4";
+			
+			
+			multipartForm.post("2.0/exportAccessibleDocument/HTMLPDF/startconversion",formData).success(
+					
+					function(data,status,headers,config){
+						if(data.hasOwnProperty("errors")){
+							
+							console.log("[UPLOAD]: DATA HAS ERRORS PROPERTY!");
+							
+						}else{
+							
+											
+							sbiModule_download.getLink("/restful-services/2.0/exportAccessibleDocument/HTMLPDF/getResult/"+data)
+						}		
+					}).error(function(data, status, headers, config) {
+								console.log("[UPLOAD]: FAIL!"+status);
+							});
+		}
 			
 		dee.exportCockpitTo = function(exportType, mimeType){
 			dee.exporting = true;
@@ -302,6 +333,7 @@
 
 			switch (type) {
 			case "PDF":
+			case "APDF":	
 				iconClass += "pdf";
 				break;
 			case "XLS":
@@ -354,6 +386,10 @@
 				case "PDF":
 					expObj.func = function(){dee.exportCockpitTo('pdf','application/pdf')};
 					break;
+				case "APDF":
+					expObj.func = function(){dee.exportCockpitTablesToAPDF()};
+					break;
+					
 				default:
 					
 				}
