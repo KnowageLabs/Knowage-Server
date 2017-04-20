@@ -33,7 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 %>
   
    	<html>
-   	
+   	  <%--
 	   	<script>
 		    function signup(){
 		    	var form = document.getElementById('formId');
@@ -42,7 +42,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		    	form.submit();		    	
 		    }
 	   	</script>
-	   	
+	  --%> 	
    	  	<body>
    	   		 <link rel='stylesheet' type='text/css' href='<%=urlBuilder.getResourceLinkByTheme(request, "css/home40/standard.css",currTheme)%>'/>
    	   	  	 <form id="formId" name="login" action="<%=contextName%>/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE" method="POST">
@@ -54,7 +54,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		      		<h1><%=msgBuilder.getMessage("authError")%></h1>
 					<span class="ops">Ooooooops!</span>
 					<p class="retry"><%=msgBuilder.getMessage("userPwdInvalid")%>, <a href="<%=loginUrl%>"><%=msgBuilder.getMessage("retry")%>!</a></p>
-					<p><!-- Hai <a href="#">dimenticato la password</a>? --> <%=msgBuilder.getMessage("noAccount")%> <a href="#" onclick="signup();"><%=msgBuilder.getMessage("signup")%></a></p>
+					<%--
+					<p><%=msgBuilder.getMessage("noAccount")%> <a href="#" onclick="signup();"><%=msgBuilder.getMessage("signup")%></a></p>
+					--%>
 				</div>
 	       </div>
 	       </main> 
