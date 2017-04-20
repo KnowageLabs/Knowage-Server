@@ -224,7 +224,11 @@ public class ChartEngineUtil {
 					LinkedHashMap<String, String> changedValue = stylizeString(value);
 					result.put(key, changedValue);
 				} else {
-					String escapedString = mapElement2.get(key).toString();
+					Object obj = mapElement2.get(key);
+					if (obj == null) {
+						obj = 0;
+					}
+					String escapedString = obj.toString();
 					result.put(key, escapedString);
 				}
 
