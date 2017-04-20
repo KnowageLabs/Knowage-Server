@@ -240,7 +240,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 		
 		if($scope.olapToolbarButtons.length == 0)
 			$scope.olapGridNeeded = false;
-		if($scope.olapToolbarButtons.length == 0)
+		if($scope.tableToolbarButtons.length == 0)
 			$scope.tableGridNeeded = false;
 	};
 	
