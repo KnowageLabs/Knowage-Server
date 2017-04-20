@@ -83,7 +83,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	public static CacheManager cacheManager = null;
 
 	/*
-	 *  ********* start luca changes
+	 * ********* start luca changes
 	 * **************************************************
 	 */
 
@@ -240,7 +240,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	}
 
 	/*
-	 *  ********* end luca changes
+	 * ********* end luca changes
 	 * **************************************************
 	 */
 
@@ -783,7 +783,11 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			aSession.save(hibFunct);
 			aLowFunctionality.setProg(hibFunct.getProg());
 			aLowFunctionality.setId(hibFunct.getFunctId());
-			aLowFunctionality.setParentId(hibFunct.getParentFunct().getFunctId());
+			if (hibFunct.getFunctType().equals("USER_FUNCT")) {
+				if (hibFunct.getParentFunct() != null) {
+					aLowFunctionality.setParentId(hibFunct.getParentFunct().getFunctId());
+				}
+			}
 			// save roles functionality
 			Set functRoleToSave = new HashSet();
 			functRoleToSave.addAll(saveRolesFunctionality(aSession, hibFunct, aLowFunctionality, SpagoBIConstants.PERMISSION_ON_FOLDER_TO_DEVELOP));
