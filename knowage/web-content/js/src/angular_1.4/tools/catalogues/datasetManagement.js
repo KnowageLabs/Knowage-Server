@@ -2332,35 +2332,38 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				.then(
 						function(response) {
 							sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
-							if($scope.selectedDataSet.isScheduled) {
-								sbiModule_restServices.promisePost('scheduler/persistence/dataset/id',response.data.id, angular.toJson($scope.selectedDataSet))
-								.then(
-										function(responseDS) {
-											console.log("[POST]: SUCCESS!");
-											getDatasetFromId($scope, indexOfExistingDSInAT, response.data.id);
-											$scope.setFormNotDirty();
-										},
-										
-										function(responseDS) {
-											sbiModule_messaging.showWarningMessage(sbiModule_translate.load("sbi.catalogues.toast.warning.schedulation"), 'Warning!');	
-											$log.warn("An error occured while trying to save a dataset persistence schedulation");
-										}
-								);
-							} else {
-								sbiModule_restServices.promiseDelete('scheduler/persistence/dataset/label', $scope.selectedDataSet.label, "/")
-								.then(
-										function(responseDS) {	
-											console.log("[DELETE]: SUCCESS!");
-											getDatasetFromId($scope, indexOfExistingDSInAT,response.data.id);
-											$scope.setFormNotDirty();
-										},
-										
-										function(responseDS) {
-											sbiModule_messaging.showWarningMessage(sbiModule_translate.load("sbi.catalogues.toast.warning.schedulation"), 'Warning!');	
-											$log.warn("An error occured while trying to delete a dataset persistence schedulation");
-										}
-								);
+							if( $scope.showDatasetScheduler){
+								if($scope.selectedDataSet.isScheduled) {
+									sbiModule_restServices.promisePost('scheduler/persistence/dataset/id',response.data.id, angular.toJson($scope.selectedDataSet))
+									.then(
+											function(responseDS) {
+												console.log("[POST]: SUCCESS!");
+												getDatasetFromId($scope, indexOfExistingDSInAT, response.data.id);
+												$scope.setFormNotDirty();
+											},
+											
+											function(responseDS) {
+												sbiModule_messaging.showWarningMessage(sbiModule_translate.load("sbi.catalogues.toast.warning.schedulation"), 'Warning!');	
+												$log.warn("An error occured while trying to save a dataset persistence schedulation");
+											}
+									);
+								} else {
+									sbiModule_restServices.promiseDelete('scheduler/persistence/dataset/label', $scope.selectedDataSet.label, "/")
+									.then(
+											function(responseDS) {	
+												console.log("[DELETE]: SUCCESS!");
+												getDatasetFromId($scope, indexOfExistingDSInAT,response.data.id);
+												$scope.setFormNotDirty();
+											},
+											
+											function(responseDS) {
+												sbiModule_messaging.showWarningMessage(sbiModule_translate.load("sbi.catalogues.toast.warning.schedulation"), 'Warning!');	
+												$log.warn("An error occured while trying to delete a dataset persistence schedulation");
+											}
+									);
+								}
 							}
+							
 							
 						}, 
 						
