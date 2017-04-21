@@ -562,4 +562,7 @@
 	<DOMAIN valueCd="All" valueNm="All"
 		domainCd="FUNCTION_TYPE" domainNm="All kind of functions" valueDs="all.png" />				
 			
+	<DOMAIN valueCd="APDF" valueNm="APDF"
+		domainCd="EXPORT_TYPE" domainNm="Exporters types" valueDs="Export type" />				
+			
 </DOMAINS>
