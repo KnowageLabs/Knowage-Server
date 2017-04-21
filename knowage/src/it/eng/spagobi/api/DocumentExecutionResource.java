@@ -27,7 +27,6 @@ import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.DocumentExecutionUtils;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.handlers.DocumentParameters;
 import it.eng.spagobi.analiticalmodel.document.handlers.DocumentUrlManager;
@@ -46,14 +45,11 @@ import it.eng.spagobi.commons.utilities.DateRangeDAOUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.commons.utilities.indexing.LuceneIndexer;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
-import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
-import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
 import it.eng.spagobi.tools.objmetadata.dao.IObjMetacontentDAO;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.AbstractEngineStartAction;
@@ -70,19 +66,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.text.DateFormat;
 import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -112,8 +105,6 @@ import org.json.JSONObject;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
@@ -974,95 +965,6 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		return Response.ok(toBeReturned).build();
 	}
 
-	/**
-	 * Produces a json of document metadata grouped by typeCode ("GENERAL_META", "LONG_TEXT", "SHORT_TEXT","FILE")
-	 * 
-	 * @param id
-	 *            of document
-	 * @param id
-	 *            of subObject
-	 * @param httpRequest
-	 * @return a response with a json
-	 * @throws EMFUserError
-	 */
-	@GET
-	@Path("/{id}/documentMetadata")
-	public Response documentMetadata(@PathParam("id") Integer objectId, @QueryParam("subobjectId") Integer subObjectId, @Context HttpServletRequest httpRequest)
-			throws EMFUserError {
-
-		try {
-			RequestContainer aRequestContainer = RequestContainerAccess.getRequestContainer(httpRequest);
-			Locale locale = GeneralUtilities.getCurrentLocale(aRequestContainer);
-
-			Map<String, JSONArray> documentMetadataMap = new HashMap<>();
-
-			JSONArray generalMetadata = new JSONArray();
-			documentMetadataMap.put("GENERAL_META", generalMetadata);
-
-			MessageBuilder msgBuild = new MessageBuilder();
-
-			// START GENERAL METADATA
-			if (subObjectId != null) {
-				// SubObj Name
-				String textSubName = msgBuild.getMessage(SUBOBJ_NAME, locale);
-				SubObject subobj = DAOFactory.getSubObjectDAO().getSubObject(subObjectId);
-				addMetadata(generalMetadata, textSubName, subobj.getName());
-			}
-
-			BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectById(objectId);
-
-			// Obj Label
-			String textLabel = msgBuild.getMessage(LABEL, locale);
-			addMetadata(generalMetadata, textLabel, obj.getLabel());
-
-			// Obj Name
-			String textName = msgBuild.getMessage(NAME, locale);
-			addMetadata(generalMetadata, textName, obj.getName());
-
-			// Obj Type
-			String textType = msgBuild.getMessage(TYPE, locale);
-			addMetadata(generalMetadata, textType, obj.getBiObjectTypeCode());
-
-			// Obj Description
-			String description = msgBuild.getMessage(DESCR, locale);
-			addMetadata(generalMetadata, description, obj.getDescription());
-
-			// Obj Engine Name
-			String textEngName = msgBuild.getMessage(ENG_NAME, locale);
-			addMetadata(generalMetadata, textEngName, obj.getEngine().getName());
-
-			// END GENERAL METADATA
-
-			List metadata = DAOFactory.getObjMetadataDAO().loadAllObjMetadata();
-			if (metadata != null && !metadata.isEmpty()) {
-				Iterator it = metadata.iterator();
-				while (it.hasNext()) {
-					ObjMetadata objMetadata = (ObjMetadata) it.next();
-					ObjMetacontent objMetacontent = DAOFactory.getObjMetacontentDAO().loadObjMetacontent(objMetadata.getObjMetaId(), objectId, subObjectId);
-
-					if (objMetadata.getDataTypeCode().equals(SpagoBIConstants.FILE_METADATA_TYPE_CODE)) {
-						// If FILE, we do not need the data content. Instead, we get its filename which is saved in additionalInfo field
-						addMetadata(documentMetadataMap, objMetadata.getDataTypeCode(), objMetadata.getName(),
-								objMetacontent != null && objMetacontent.getAdditionalInfo() != null ? new String(objMetacontent.getAdditionalInfo()) : "",
-								objMetadata.getObjMetaId());
-					} else {
-						addMetadata(documentMetadataMap, objMetadata.getDataTypeCode(), objMetadata.getName(),
-								objMetacontent != null && objMetacontent.getContent() != null ? new String(objMetacontent.getContent()) : "",
-								objMetadata.getObjMetaId());
-					}
-				}
-			}
-
-			if (!documentMetadataMap.isEmpty()) {
-				return Response.ok(new JSONObject(documentMetadataMap).toString()).build();
-			}
-		} catch (Exception e) {
-			logger.error(httpRequest.getPathInfo(), e);
-		}
-
-		return Response.ok().build();
-	}
-
 	/*
 	 * File Upload to local temp directory
 	 */
@@ -1117,137 +1019,9 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 	}
 
-	@POST
-	@Path("/saveDocumentMetadata")
-	public Response saveDocumentMetadata(@Context HttpServletRequest httpRequest) throws JSONException {
-		try {
-			JSONObject params = RestUtilities.readBodyAsJSONObject(httpRequest);
-			IObjMetacontentDAO dao = DAOFactory.getObjMetacontentDAO();
-
-			dao.setUserProfile(getUserProfile());
-			Integer biobjectId = params.getInt("id");
-			Integer subobjectId = params.has("subobjectId") ? params.getInt("subobjectId") : null;
-			String jsonMeta = params.getString("jsonMeta");
-
-			DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-			Date date = new Date();
-			String saveFileDateString = dateFormat.format(date);
-
-			logger.debug("Object id = " + biobjectId);
-			logger.debug("Subobject id = " + subobjectId);
-
-			List<ObjMetacontent> previousMetacontents = dao.loadObjOrSubObjMetacontents(biobjectId, subobjectId);
-			Set<Integer> toDeleteMetadataIds = new HashSet<Integer>();
-			JSONArray metadata = getCorrectMetadataToBeSaved(new JSONArray(jsonMeta), previousMetacontents, toDeleteMetadataIds);
-			for (int i = 0; i < metadata.length(); i++) {
-				JSONObject aMetadata = metadata.getJSONObject(i);
-				Integer metadataId = aMetadata.getInt("id");
-				String text = aMetadata.getString("value");
-
-				boolean isFileMetadata = aMetadata.has("fileToSave");
-
-				ObjMetacontent aObjMetacontent = dao.loadObjMetacontent(metadataId, biobjectId, subobjectId);
-				String filePath = SpagoBIUtilities.getResourcePath() + "/" + METADATA_DIR + "/" + getUserProfile().getUserName().toString();
-
-				if (aObjMetacontent == null) {
-					logger.debug("ObjMetacontent for metadata id = " + metadataId + ", biobject id = " + biobjectId + ", subobject id = " + subobjectId
-							+ " was not found, creating a new one...");
-					aObjMetacontent = new ObjMetacontent();
-					aObjMetacontent.setObjmetaId(metadataId);
-					aObjMetacontent.setBiobjId(biobjectId);
-					aObjMetacontent.setSubobjId(subobjectId);
-					aObjMetacontent.setCreationDate(new Date());
-					aObjMetacontent.setLastChangeDate(new Date());
-
-					if (isFileMetadata) {
-						JSONObject fileMetadataObject = aMetadata.getJSONObject("fileToSave");
-						String fileName = fileMetadataObject.getString("fileName");
-						String completeFilePath = filePath + "/" + fileName;
-						byte[] bytes = getFileByteArray(completeFilePath);
-						File metadataTempFile = new File(completeFilePath);
-						if (metadataTempFile.delete()) {
-							logger.debug("File [" + completeFilePath + "] removed successfully");
-						}
-						;
-						aObjMetacontent.setContent(bytes);
-						JSONObject uploadedFileWithDate = new JSONObject();
-						uploadedFileWithDate.put("fileName", fileName);
-						uploadedFileWithDate.put("saveDate", saveFileDateString);
-						aObjMetacontent.setAdditionalInfo(uploadedFileWithDate.toString());
-					} else {
-						aObjMetacontent.setContent(text.getBytes("UTF-8"));
-					}
-					dao.insertObjMetacontent(aObjMetacontent);
-				} else { // modify existing metadata
-					logger.debug("ObjMetacontent for metadata id = " + metadataId + ", biobject id = " + biobjectId + ", subobject id = " + subobjectId
-							+ " was found, it will be modified...");
-					if (isFileMetadata) {
-						JSONObject fileMetadataObject = aMetadata.getJSONObject("fileToSave");
-						String fileName = fileMetadataObject.getString("fileName");
-						String completeFilePath = filePath + "/" + fileName;
-						byte[] bytes = getFileByteArray(completeFilePath);
-						aObjMetacontent.setContent(bytes);
-						JSONObject uploadedFileWithDate = new JSONObject();
-						uploadedFileWithDate.put("fileName", fileName);
-						uploadedFileWithDate.put("saveDate", saveFileDateString);
-						aObjMetacontent.setAdditionalInfo(uploadedFileWithDate.toString());
-					} else {
-						aObjMetacontent.setContent(text.getBytes("UTF-8"));
-					}
-					aObjMetacontent.setLastChangeDate(new Date());
-					dao.modifyObjMetacontent(aObjMetacontent);
-				}
-
-			}
-
-			// Building a list of metadata that has to be removed.
-			for (ObjMetacontent previousMetacontent : previousMetacontents) {
-				if (toDeleteMetadataIds.contains(previousMetacontent.getObjmetaId())) {
-					dao.eraseObjMetadata(previousMetacontent);
-				}
-			}
-
-			/*
-			 * indexes biobject by modifying document in index
-			 */
-			BIObject biObjToIndex = DAOFactory.getBIObjectDAO().loadBIObjectById(biobjectId);
-			LuceneIndexer.updateBiobjInIndex(biObjToIndex, false);
-
-		} catch (Exception e) {
-			logger.error(request.getPathInfo(), e);
-			return Response.ok(new JSONObject("{\"errors\":[{\"message\":\"Exception occurred while saving metadata\"}]}").toString()).build();
-		}
-		return Response.ok().build();
-	}
-
-	private JSONArray getCorrectMetadataToBeSaved(JSONArray metadata, List<ObjMetacontent> previousMetacontents, Set<Integer> toDeleteMetadataIds)
-			throws JSONException {
-		JSONArray toReturn = new JSONArray();
-
-		// Getting IDs list of old metadata
-		for (ObjMetacontent metacontent : previousMetacontents) {
-			toDeleteMetadataIds.add(metacontent.getObjmetaId());
-		}
-
-		for (int i = 0; i < metadata.length(); i++) {
-			JSONObject aMetadata = metadata.getJSONObject(i);
-			Integer metadataId = aMetadata.getInt("id");
-
-			// This comes from the request, so it has not to be deleted
-			toDeleteMetadataIds.remove(metadataId);
-
-			boolean isFileMetadata = aMetadata.has("fileToSave");
-			if (!isFileMetadata || (isFileMetadata && aMetadata.getJSONObject("fileToSave").length() != 0)) {
-				// If it is not a FILE metadata, then it's sure it has to be saved and it has not to be deleted
-				toReturn.put(aMetadata);
-			}
-		}
-		return toReturn;
-	}
-
 	/**
 	 * Produces a json with a bynary content of a metadata file and its name
-	 * 
+	 *
 	 * @param id
 	 *            of document
 	 * @param id
@@ -1337,32 +1111,6 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		}
 		return bFile;
 
-	}
-
-	private void addMetadata(JSONArray generalMetadata, String name, String value) throws JsonMappingException, JsonParseException, JSONException, IOException {
-		addGeneralMetadata(generalMetadata, name, value, null, null);
-	}
-
-	private void addGeneralMetadata(JSONArray generalMetadata, String name, String value, Integer id, String type) throws JsonMappingException,
-			JsonParseException, JSONException, IOException {
-		JSONObject data = new JSONObject();
-		if (id != null) {
-			data.put("id", id);
-		}
-		data.put("name", name);
-		data.put("value", value);
-		generalMetadata.put(data);
-	}
-
-	private void addMetadata(Map<String, JSONArray> metadataMap, String type, String name, String value, Integer id) throws JSONException,
-			JsonMappingException, JsonParseException, IOException {
-		JSONArray jsonArray = metadataMap.get(type);
-		if (jsonArray == null) {
-			jsonArray = new JSONArray();
-		}
-
-		addGeneralMetadata(jsonArray, name, value, id, type);
-		metadataMap.put(type, jsonArray);
 	}
 
 	protected String getExecutionRole(String role) throws EMFInternalError, DocumentExecutionException {
