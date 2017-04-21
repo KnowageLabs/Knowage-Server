@@ -4,9 +4,9 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
 	$mdThemingProvider.setDefaultTheme('knowage');
 }]);
 
-app.controller("RolesManagementController", ["sbiModule_translate", "sbiModule_restServices", "$scope", "$mdDialog", "$mdToast", "$timeout","sbiModule_messaging", RolesManagementFunction]);
+app.controller("RolesManagementController", ["sbiModule_translate", "sbiModule_restServices", "$scope", "$mdDialog", "$mdToast", "$timeout","sbiModule_messaging","sbiModule_user", RolesManagementFunction]);
 
-function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast, $timeout,sbiModule_messaging) {
+function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast, $timeout,sbiModule_messaging,sbiModule_user) {
 
 	// VARIABLES
 
@@ -31,14 +31,12 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 	checkboxList =[{dbname:"SAVE_SUBOBJECTS",label:"saveSubobj",visible:false, category:"SAVE"},  //save,see,send,build,manage,items,export,edit
 	               {dbname:"SEE_SUBOBJECTS",label:"seeSubobj",visible:false, category:"SEE"},
 	               {dbname:"SEE_VIEWPOINTS",label:"seeViewpoints",visible:false, category:"SEE"},
-	               {dbname:"SEE_SNAPSHOTS",label:"seeSnapshot",visible:false, category:"SEE"},
 	               {dbname:"SEE_NOTES",label:"seeNotes",visible:false, category:"SEE"},
 	               {dbname:"SEND_MAIL",label:"sendMail",visible:false, category:"SEND"},
 	               {dbname:"SAVE_INTO_FOLDER",label:"savePersonalFolder",visible:false, category:"SAVE"},
 	               {dbname:"SAVE_REMEMBER_ME",label:"saveRemember",visible:false, category:"SAVE"},
 	               {dbname:"SEE_METADATA",label:"seeMeta",visible:false, category:"SEE"},
 	               {dbname:"SAVE_METADATA",label:"saveMeta",visible:false, category:"SAVE"},
-	               
 	               {dbname:"BUILD_QBE_QUERY",label:"buildQbe",visible:false, category:"BUILD"},
 	               {dbname:"MANAGE_USERS",label:"manageUsers",visible:false, category:"MANAGE"},
 	               {dbname:"SEE_DOCUMENT_BROWSER",label:"seeDocBrowser",visible:false, category:"SEE"},
@@ -53,14 +51,21 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 	               {dbname:"SEE_SUBSCRIPTIONS",label:"seeSubscriptions",visible:false, category:"ITEMS"},
 	               {dbname:"CREATE_SOCIAL_ANALYSIS",label:"createSocialAnalysis",visible:false, category:"ITEMS"},
 	               {dbname:"VIEW_SOCIAL_ANALYSIS",label:"viewSocialAnalysis",visible:false, category:"ITEMS"},
-	               {dbname:"GLOSSARY",label:"",visible:false, category:"save"},
-	               {dbname:"MANAGE_GLOSSARY_BUSINESS",label:"manageGlossaryBusiness",visible:false, category:"MANAGE"},
-	               {dbname:"MANAGE_GLOSSARY_TECHNICAL",label:"manageGlossaryTechnical",visible:false, category:"MANAGE"},
 	               {dbname:"MANAGE_KPI_VALUE",label:"manageKpiValue",visible:false, category:"MANAGE"},
-	               {dbname:"MANAGE_CALENDAR",label:"manageCalendar",visible:false, category:"MANAGE"},
 	               {dbname:"FUNCTIONS_CATALOG_USAGE",label:"functionsCatalogUsage",visible:false, category:"ITEMS"},
 	               {dbname:"HIERARCHIES_MANAGEMENT",label:"hierarchiesManagement",visible:false, category:"ITEMS"}
 	               ];
+	
+	var showEEAuthorizations = sbiModule_user.functionalities.indexOf("EnterpriseAuthorizations")>-1;
+	if (showEEAuthorizations){
+		checkboxList.push({dbname:"GLOSSARY",label:"",visible:false, category:"save"});
+		checkboxList.push({dbname:"MANAGE_GLOSSARY_BUSINESS",label:"manageGlossaryBusiness",visible:false, category:"MANAGE"});
+		checkboxList.push({dbname:"MANAGE_GLOSSARY_TECHNICAL",label:"manageGlossaryTechnical",visible:false, category:"MANAGE"});
+		checkboxList.push({dbname:"MANAGE_CALENDAR",label:"manageCalendar",visible:false, category:"MANAGE"});
+		checkboxList.push({dbname:"SEE_SNAPSHOTS",label:"seeSnapshot",visible:false, category:"SEE"});
+	}
+
+
 
 	$scope.rmSpeedMenu = [{
 		label: sbiModule_translate.load("sbi.generic.delete"),
@@ -132,7 +137,7 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 		$scope.selectedRole.ableToSaveMetadata= true;
 		$scope.selectedRole.ableToSeeViewpoints= true;
 		$scope.selectedRole.ableToSeeNotes= true;
-		$scope.selectedRole.ableToSeeSnapshots= true;
+		$scope.selectedRole.ableToSeeSnapshots= false;
 		$scope.selectedRole.ableToDoMassiveExport= true;
 		$scope.selectedRole.ableToCreateDocuments= true;
 		$scope.selectedRole.ableToHierarchiesManagement= true;
