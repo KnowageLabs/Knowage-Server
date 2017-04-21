@@ -221,7 +221,7 @@
 		<ITEM	code="kpiDefinition" title="#menu.KpiModel" groupingMenu="true" iconCls="traffic">
 			<ITEM	title="#menu.kpi.kpiDefinition" functionality="KpiManagement" url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/kpi/kpiDefinition.jsp" />	
 			<ITEM	title="#menu.kpi.measureRuleDefinition" functionality="KpiManagement" url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/kpi/measureRuleDefinition.jsp" />	
-			<ITEM	title="#menu.kpi.targetDefinition" functionality="KpiManagement" url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/kpi/targetDefinition.jsp" />
+			<ITEM	title="#menu.kpi.targetDefinition" functionality="KpiTargetsManagement" url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/kpi/targetDefinition.jsp" />
 			<ITEM	title="#menu.kpi.schedulerKpi" functionality="KpiManagement" url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/kpi/schedulerKpi.jsp" />
 			<ITEM	title="#menu.kpi.scorecard" functionality="ScorecardsManagement" url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/kpi/scorecardKpi.jsp" />
 			
