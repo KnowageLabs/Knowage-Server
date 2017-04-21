@@ -28,6 +28,7 @@
 		console.log("documentExecutionControllerFn IN ");
 		
 		
+		$scope.showCollaborationMenu = sbiModule_user.functionalities.indexOf("Collaboration")>-1;
 
 
 		//NAVIGATOR WHEEL

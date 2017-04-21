@@ -302,21 +302,21 @@ if(executionRoleNames.size() > 0) {
                                 </md-menu-item>
                                 <%} %>
                           
-                                <span class="divider">{{translate.load("sbi.generic.info")}}</span>
+                                <span class="divider" ng-if="showCollaborationMenu">{{translate.load("sbi.generic.info")}}</span>
                                 <% if (userProfile.isAbleToExecuteAction(SpagoBIConstants.SEE_METADATA_FUNCTIONALITY)) { %>
-                                <md-menu-item class="md-indent">
+                                <md-menu-item class="md-indent" ng-if="showCollaborationMenu">
                                     <md-icon class="fa fa-info-circle"></md-icon>
                                     <md-button ng-click="openInfoMetadata()">{{translate.load("sbi.execution.executionpage.toolbar.metadata")}}</md-button>
                                 </md-menu-item>
                                 <%} %>
-                                <md-menu-item class="md-indent">
+                                <md-menu-item class="md-indent" ng-if="showCollaborationMenu">
                                     <md-icon class="fa fa-star"></md-icon>
                                     <md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.rating')}}" class="toolbar-button-custom"
                                         ng-click="rankDocument()">{{translate.load('sbi.execution.executionpage.toolbar.rating')}}
                                     </md-button>
                                 </md-menu-item>
                                 <% if (userProfile.isAbleToExecuteAction(SpagoBIConstants.SEE_NOTES_FUNCTIONALITY)) { %>
-                                <md-menu-item class="md-indent">
+                                <md-menu-item class="md-indent" ng-if="showCollaborationMenu">
                                     <md-icon class="fa fa-sticky-note-o"></md-icon>
                                     <md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.annotate')}}" class="toolbar-button-custom"
                                             ng-click="noteDocument()">{{translate.load('sbi.execution.executionpage.toolbar.annotate')}}
