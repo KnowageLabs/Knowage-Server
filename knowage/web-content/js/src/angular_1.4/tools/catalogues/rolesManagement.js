@@ -31,12 +31,9 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 	checkboxList =[{dbname:"SAVE_SUBOBJECTS",label:"saveSubobj",visible:false, category:"SAVE"},  //save,see,send,build,manage,items,export,edit
 	               {dbname:"SEE_SUBOBJECTS",label:"seeSubobj",visible:false, category:"SEE"},
 	               {dbname:"SEE_VIEWPOINTS",label:"seeViewpoints",visible:false, category:"SEE"},
-	               {dbname:"SEE_NOTES",label:"seeNotes",visible:false, category:"SEE"},
 	               {dbname:"SEND_MAIL",label:"sendMail",visible:false, category:"SEND"},
 	               {dbname:"SAVE_INTO_FOLDER",label:"savePersonalFolder",visible:false, category:"SAVE"},
 	               {dbname:"SAVE_REMEMBER_ME",label:"saveRemember",visible:false, category:"SAVE"},
-	               {dbname:"SEE_METADATA",label:"seeMeta",visible:false, category:"SEE"},
-	               {dbname:"SAVE_METADATA",label:"saveMeta",visible:false, category:"SAVE"},
 	               {dbname:"BUILD_QBE_QUERY",label:"buildQbe",visible:false, category:"BUILD"},
 	               {dbname:"MANAGE_USERS",label:"manageUsers",visible:false, category:"MANAGE"},
 	               {dbname:"SEE_DOCUMENT_BROWSER",label:"seeDocBrowser",visible:false, category:"SEE"},
@@ -58,6 +55,9 @@ function RolesManagementFunction(sbiModule_translate, sbiModule_restServices, $s
 	
 	var showEEAuthorizations = sbiModule_user.functionalities.indexOf("EnterpriseAuthorizations")>-1;
 	if (showEEAuthorizations){
+		checkboxList.push({dbname:"SEE_NOTES",label:"seeNotes",visible:false, category:"SEE"});
+		checkboxList.push({dbname:"SEE_METADATA",label:"seeMeta",visible:false, category:"SEE"});
+		checkboxList.push({dbname:"SAVE_METADATA",label:"saveMeta",visible:false, category:"SAVE"});
 		checkboxList.push({dbname:"GLOSSARY",label:"",visible:false, category:"save"});
 		checkboxList.push({dbname:"MANAGE_GLOSSARY_BUSINESS",label:"manageGlossaryBusiness",visible:false, category:"MANAGE"});
 		checkboxList.push({dbname:"MANAGE_GLOSSARY_TECHNICAL",label:"manageGlossaryTechnical",visible:false, category:"MANAGE"});
