@@ -75,7 +75,7 @@ function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config, sbiM
 			}		
 			sbiModule_restServices.promisePost('../api/1.0/chart/template/save','', 'jsonTemplate='+angular.toJson(temp)+'&docLabel='+docLabel+'&userId='+userId, {
 				transformRequest:angular.identity,
-				headers:{'Content-Type': ' application/x-www-form-urlencoded'}
+				headers:{'Content-Type': ' application/x-www-form-urlencoded; charset=utf-8'}
 			})
 			.then(function(response) {
 				console.log("[POST]: SUCCESS!");

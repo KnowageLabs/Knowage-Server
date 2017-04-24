@@ -2397,7 +2397,7 @@ angular.module('ChartDesignerService', [])
 			$http({
 			    method: 'POST',
 			    url: sbiHost + '/highcharts-export-web/',
-			    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+			    headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'},
 			    transformRequest: function(obj) {
 			        var str = [];
 			        for(var p in obj)
