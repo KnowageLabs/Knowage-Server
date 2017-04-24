@@ -50,6 +50,7 @@ function leftMenuController($scope, sbiModule_translate, sbiModule_user){
 	$scope.showAnalysis= (sbiModule_user.functionalities.indexOf("CreateDocument")>-1)? true:false;
     $scope.showOrganizer= (sbiModule_user.functionalities.indexOf("SaveIntoFolderFunctionality")>-1)? true:false;
     $scope.isUserAdmin= isAdmin;
+    $scope.isUserDeveloper = isDeveloper;
     
     /**
      * Smart Filters are temporarily invisible as option (user should not be able to see it under the Data option).
@@ -87,7 +88,7 @@ function leftMenuController($scope, sbiModule_translate, sbiModule_user){
 			"label":sbiModule_translate.load('sbi.workspace.menu.data'), 	
 			"icon": "fa fa-angle-down", 
 			"activeIcon":"fa fa-angle-up",
-			"visible":$scope.showMyData || $scope.isUserAdmin, 
+			"visible":$scope.showMyData || $scope.isUserAdmin || $scope.isUserDeveloper, 
 			"active":false,
   	 		
 			"submenuOptions":

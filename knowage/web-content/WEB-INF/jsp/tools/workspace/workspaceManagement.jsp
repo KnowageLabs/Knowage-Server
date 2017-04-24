@@ -30,6 +30,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   JSONObject selfServiceParameters=new JSONObject(parameters);
   boolean isAdmin = UserUtilities.isAdministrator(userProfile);
   boolean isTechnicalUser =  UserUtilities.isTechnicalUser(userProfile);
+  boolean isDeveloper =  UserUtilities.hasDeveloperRole(userProfile);
+  
  
 %>
 
@@ -54,6 +56,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		   var datasetParameters=<%=selfServiceParameters%>;
 		   var isAdmin =<%=isAdmin%>;
 		   var isTechnicalUser = <%=isTechnicalUser%>;
+		   var isDeveloper = <%=isDeveloper%>;
 		</script>
 		
 	</head>
