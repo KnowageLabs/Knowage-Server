@@ -537,4 +537,8 @@
 	 	overflow:auto;
 	 	auto-scroll:true;
 	 }
+
+	 md-list-item button.md-button {
+	 	z-index: 10;
+	 }
 }
