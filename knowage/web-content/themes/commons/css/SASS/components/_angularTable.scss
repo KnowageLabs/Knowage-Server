@@ -162,7 +162,7 @@ angular-table, cockpit-angular-table{
 	
 	
 	table>tbody>tr>td {
-	    font-size: 13px;
+	    font-size:  $tableFontSize;
 	    color: rgba(0,0,0,.87);
 	    border-top: 1px rgba(0,0,0,.12) solid;
 	    text-overflow: ellipsis;

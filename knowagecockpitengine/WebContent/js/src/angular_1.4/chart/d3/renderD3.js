@@ -47,7 +47,7 @@ function rgbToHsl(r, g, b)
  * Function for extracting the font size from the string value that contains
  * also the 'px' substring. Function is called whenever we need pure numeric
  * value of the size (especially for purposes of dynamic resizing of the chart).
- * 
+ *  
  * @param fontSize String value of the size of the font
  * @returns Pure numeric value for size of the font
  * 
@@ -79,12 +79,13 @@ function removePixelsFromFontSize(fontSize)
  */
 function positionTheTooltip(chartHeight,chartWidth,ttText)
 {
+	debugger;
 	var windowHeight = window.innerHeight;
 	var windowWidth = window.innerWidth;
 	
 	ttText
-		.style("left", (d3.event.pageX) + "px")
-		.style("top", (d3.event.pageY - 25) + "px");
+		.style("left", (d3.event.layerX) + "px")
+		.style("top", (d3.event.layerY) + "px");
 	
 	/**
 	 * Old implementation that included vertical centering

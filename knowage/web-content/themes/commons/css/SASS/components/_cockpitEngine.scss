@@ -47,6 +47,16 @@
 		}
 	}
 
+	cockpit-chart-widget {
+		/* d3 binded classes for the chart widgets */
+		.d3chartclass {
+			position: relative;
+			.tooltip {
+				position: absolute !important;
+			}
+		}
+	}
+
 	cockpit-table-widget {
 		table>thead {
 			background-color: transparent;
@@ -1088,6 +1098,7 @@
 
 	.kn-fab-toolbar {
 		position: absolute;
+		background-color: transparent !important;
 		top: 0;
 		right: 20px;
 		.md-button.md-knowage-theme.md-fab:not([disabled]) {
@@ -1103,6 +1114,18 @@
 			}
 			md-icon {
 				color: $baseColor;
+			}
+		}
+		md-fab-speed-dial {
+			background-color: transparent !important;
+			md-fab-trigger{
+					background-color: transparent !important;
+				}
+			md-fab-actions {
+				background-color: transparent !important;
+				.md-fab-action-item {
+					background-color: transparent !important;
+				}
 			}
 		}
 	}
@@ -1214,4 +1237,6 @@
 	.widgetToolbar {
 		height: $toolbarHeight;
 	}
+
+
 }
