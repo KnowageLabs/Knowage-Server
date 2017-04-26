@@ -111,7 +111,7 @@ public class UserUtilities {
 
 	/**
 	 * Gets the user profile.
-	 * 
+	 *
 	 * @return the user profile
 	 * @throws Exception
 	 *             the exception
@@ -379,7 +379,7 @@ public class UserUtilities {
 
 	/**
 	 * User functionality root exists.
-	 * 
+	 *
 	 * @param username
 	 *            the username
 	 * @return true, if successful
@@ -401,7 +401,7 @@ public class UserUtilities {
 
 	/**
 	 * User functionality root exists.
-	 * 
+	 *
 	 * @param userProfile
 	 *            the user profile
 	 * @return true, if successful
@@ -423,7 +423,7 @@ public class UserUtilities {
 	/**
 	 * Load the user personal folder as a LowFunctionality object. If the personal folder exists, it is returned; if it does not exist and create is false, null
 	 * is returned, otherwise the personal folder is created and then returned.
-	 * 
+	 *
 	 * @param userProfile
 	 *            UserProfile the user profile object
 	 * @param createIfNotExisting
@@ -483,7 +483,7 @@ public class UserUtilities {
 
 	/**
 	 * Creates the user functionality root.
-	 * 
+	 *
 	 * @param userProfile
 	 *            the user profile
 	 * @throws Exception
@@ -924,7 +924,7 @@ public class UserUtilities {
 
 	/*
 	 * Method copied from SecurityServiceSupplierFactory for DAO refactoring
-	 * 
+	 *
 	 * is this method in the right place?
 	 */
 
@@ -961,7 +961,7 @@ public class UserUtilities {
 	/**
 	 * Clones the input profile object. We don't implement the SpagoBIUserProfile.clone method because SpagoBIUserProfile is created by Axis tools, and
 	 * therefore, when generating the class we may lost that method.
-	 * 
+	 *
 	 * @param profile
 	 *            The input SpagoBIUserProfile object
 	 * @return a clone of the input SpagoBIUserProfile object
@@ -1051,6 +1051,26 @@ public class UserUtilities {
 
 		return preferences;
 
+	}
+
+	public static List<RoleMetaModelCategory> getUserCategories(IEngUserProfile profile) {
+		Assert.assertNotNull(profile, "Object in input is null");
+		logger.debug("IN.user unique id = [" + profile.getUserUniqueIdentifier() + "]");
+		List<RoleMetaModelCategory> categories = new ArrayList<RoleMetaModelCategory>();
+		try {
+			IRoleDAO roleDAO = DAOFactory.getRoleDAO();
+			Collection<String> roles = ((UserProfile) profile).getRolesForUse();
+			for (String role : roles) {
+				Role r = roleDAO.loadByName(role);
+				if(r.getRoleMetaModelCategories()!=null){
+					categories.addAll(r.getRoleMetaModelCategories());
+				}
+
+			}
+			return categories;
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error while getting user's information", e);
+		}
 	}
 
 }
