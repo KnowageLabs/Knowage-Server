@@ -294,7 +294,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 	@Path("/listDataset")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getDocumentSearchAndPaginate(@Context HttpServletRequest req, @QueryParam("Page") String pageStr,
-			@QueryParam("ItemPerPage") String itemPerPageStr, @QueryParam("label") String search) throws EMFUserError {
+			@QueryParam("ItemPerPage") String itemPerPageStr, @QueryParam("label") String search, @QueryParam("seeTechnical") Boolean seeTechnical) throws EMFUserError {
 
 		ISbiDataSetDAO dao = DAOFactory.getSbiDataSetDAO();
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
@@ -308,9 +308,9 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		try {
 			List<SbiDataSet> dataset = null;
 			if (UserUtilities.isAdministrator(getUserProfile())) {
-				dataset = dao.loadPaginatedSearchSbiDataSet(search, page, item_per_page, null);
+				dataset = dao.loadPaginatedSearchSbiDataSet(search, page, item_per_page, null, null);
 			} else {
-				dataset = dao.loadPaginatedSearchSbiDataSet(search, page, item_per_page, getUserProfile());
+				dataset = dao.loadPaginatedSearchSbiDataSet(search, page, item_per_page, getUserProfile(), seeTechnical);
 			}
 
 			JSONObject jo = new JSONObject();
