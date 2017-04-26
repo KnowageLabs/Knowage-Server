@@ -52,7 +52,7 @@
 			<md-toolbar class="md-blue xs-head no-margin" style="  border-bottom: 1px solid rgb(210, 210, 210);">
 			<div class="md-toolbar-tools">
 				<div>{{translate.load("sbi.glossary.elements");}}</div>
-				   <md-button class="md-primary md-hue-1 delete_select" ng-click="ctrl.deleteSelect()">{{translate.load("sbi.config.manageconfig.fields.clearFilter");}}</md-button>
+				   <!--  md-button class="md-primary md-hue-1 delete_select" ng-click="ctrl.deleteSelect()">{{translate.load("sbi.config.manageconfig.fields.clearFilter");}}</md-button-->
 			</div>
 			</md-toolbar>
 
