@@ -466,7 +466,7 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 			if(chartType === 'HEATMAP'){
 				columnName = event.point.category;
 				columnValue = event.point.name;
-				$scope.doSelection(columnName,columnValue, true);
+				$scope.doSelection(columnName,columnValue, null, null, null, true);
 				columnName = event.point.group.name;
 				columnValue = event.point.group.value;
 				$scope.doSelection(columnName,columnValue);
