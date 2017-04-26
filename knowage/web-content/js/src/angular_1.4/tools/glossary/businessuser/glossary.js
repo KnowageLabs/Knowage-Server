@@ -41,9 +41,8 @@ var EmptyGloss = {
 		GLOSSARY_CD : "",
 		GLOSSARY_NM : "",
 		GLOSSARY_DS : "",
-		SBI_GL_CONTENTS : [], // DOVREBBERO ESSERE I NODI
+		SBI_GL_CONTENTS : [],
 		NEWGLOSS : true
-//		MI SERVE SOLO PER LA CREAZIONE DI UN NODO E POI LO RIMUOVO
 };
 
 app.controller('Controller', [ "sbiModule_translate", "sbiModule_restServices", "$q", "$scope",
@@ -232,14 +231,12 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 		if (ele == undefined) {
 			ctr.newWord = JSON.parse(JSON.stringify(EmptyWord));
 		} else {
-			// scarico tutte le informazioni del word
+			// downloading all word informations
 			getWord(ele);
-			// ctr.newWord = ele;
 		}
 	};
 
-	// querysearch della select autocompleate durante l'inserimento delle
-	// proprietà in new word
+	// new words autocomplete
 
 	ctr.loadProperty = function() {
 		sbiModule_restServices.get("1.0/udp", "loadUdp", "FAMILY=Glossary")
@@ -363,7 +360,6 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 		return result;
 	};
 
-	// non sincronizzato( sulla base dei word presenti)
 	ctr.querySearchold = function(chip) {
 		var found = $filter('filter')(ctr.words, {
 			WORD : chip.toUpperCase()
@@ -437,7 +433,6 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 			ctr.newWord.SaveOrUpdate = "Save";
 		} else {
 			ctr.newWord.SaveOrUpdate = "Update";
-			// ctr.newWord = JSON.parse(JSON.stringify(EmptyWord));
 		}
 
 		for (var i = 0; i < ctr.newWord.SBI_GL_WORD_ATTR.length; i++) {
@@ -488,25 +483,15 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 					.success(function(data) {
 						if (data.hasOwnProperty("errors")) {
 							showErrorToast(data.errors[0].message,sbiModule_translate.load("sbi.glossary.error.save"))
-//							showToast(
-//									sbiModule_translate.load("sbi.glossary.error.save"),
-//									3000);
 						} else if (data.Status == "NON OK") {
 							showToast(
 									sbiModule_translate
 									.load(data.Message),
 									3000);
 						} else {
-							// showToast(sbiModule_translate.load("sbi.glossary.success.save"),3000);
-
 							par.HAVE_WORD_CHILD = true;
-
 							par.CHILD
 							.push(ctr.newWord);
-							// ctr.newWord.PARENT.HAVE_WORD_CHILD
-							// = true;
-							// ctr.newWord.PARENT.CHILD.push(ctr.newWord);
-
 						}
 
 						if (ctr.expanderNode != undefined) {
@@ -549,8 +534,6 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 		})
 		.error(function(data, status, headers, config) {
 			showErrorToast("word non salvato " + status, sbiModule_translate.load("sbi.glossary.word.save.error"))
-//			showToast(sbiModule_translate
-//					.load("sbi.glossary.word.save.error"), 3000);
 			hidePreloader();
 		});
 	};
@@ -564,13 +547,9 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 				if (type == "modify") {
 					arrList[i].WORD = newName;
 					break;
-					// i break because if is a word , is unique in the list e
-					// dont'have child.
 				} else if (type == "delete") {
 					arrList.splice(i, 1);
 					break;
-					// i break because if is a word , is unique in the list e
-					// dont'have child.
 				}
 			}
 			if (arrList[i].hasOwnProperty("CHILD")) {
@@ -579,26 +558,6 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 		}
 	};
 
-	// ctr.findWordInSelectedGloss=function(arrList,wordId){
-	// if(arrList==undefined){
-	// return false;
-	// }
-	// for(var i=0;i<arrList.length;i++){
-	// if(arrList[i].hasOwnProperty("WORD_ID") && arrList[i].WORD_ID==wordId ){
-	// return true;
-	// break;
-	// }
-	//			
-	// if(arrList[i].hasOwnProperty("CHILD") ){
-	// if(ctr.findWordInSelectedGloss(arrList[i].CHILD,wordId)){
-	// return true;
-	// }
-	// }
-	// }
-	// return false;
-	//			
-	// };
-	//	
 	ctr.deleteWord = function(ev) {
 		// Appending dialog to document.body to cover
 		// sidenav in docs app
@@ -621,10 +580,6 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 			.success(function(data, status, headers, config) {
 				if (data.hasOwnProperty("errors")) {
 					showErrorToast(data.errors[0].message, sbiModule_translate.load("sbi.glossary.word.delete.error"));
-//					showToast(
-//							sbiModule_translate
-//							.load("sbi.glossary.word.delete.error"),
-//							3000);
 				} else {
 					ctr.modyfyWordInSelectedGloss(
 							ctr.selectedGloss.SBI_GL_CONTENTS,
@@ -645,15 +600,10 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 			.error(function(data, status, headers, config) {
 				console.log("WORD NON ELMINIATO " + status);
 				showErrorToast("word non eliminato " + status, sbiModule_translate.load("sbi.glossary.word.delete.error"));
-//				showToast(
-//						sbiModule_translate
-//						.load("sbi.glossary.word.delete.error"),
-//						3000);
 				hidePreloader();
 			});
 
-			// controllo se l'elemento che si vule eliminare è
-			// in fase di modifica
+			// checking if the element is in modification status
 			if (nw.WORD_ID === ev.WORD_ID) {
 				nw.NEWWORD = true;
 			}
@@ -687,10 +637,6 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 						if (data.hasOwnProperty("errors")) {
 							showErrorToast(data.errors[0].message, sbiModule_translate.load("sbi.glossary.load.error"));
 							$mdDialog.hide();
-//							showToast(
-//									sbiModule_translate
-//									.load("sbi.glossary.load.error"),
-//									3000);
 						} else {
 							gctl.newGloss = data;
 						}
@@ -699,14 +645,10 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 					.error(function(data, status, headers, config) {
 						showErrorToast('Ci sono errori! \n status ' + status, sbiModule_translate.load("sbi.glossary.load.error"));
 						hidePreloader();
-						//sbiModule_translate.load("sbi.glossary.load.error");
 					});
 				} else {
 					showErrorToast("Errore! glossario non puo essere nullo", sbiModule_translate.load("sbi.glossary.load.error"));
 					$mdDialog.hide();
-//					showToast(
-//							sbiModule_translate.load("sbi.glossary.load.error"),
-//							3000);
 					return false;
 				}
 
@@ -721,10 +663,6 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 					.success(function(data, status, headers, config) {
 						if (data.hasOwnProperty("errors")) {
 							showErrorToast(data.errors[0].message,sbiModule_translate.load("sbi.glossary.clone.error"));
-
-//							showToast(
-//									sbiModule_translate.load("sbi.glossary.clone.error"),
-//									3000);
 						} else {
 							showToast(
 									sbiModule_translate
@@ -747,7 +685,6 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 
 				}
 			},
-//			templateUrl : '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/dialog-new-glossary.html'
 			templateUrl :  currentScriptPath + '../commons/templates/dialog-new-glossary.html'
 		})
 	};
@@ -772,10 +709,6 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 				if (data
 						.hasOwnProperty("errors")) {
 					showErrorToast(data.errors[0].message,sbiModule_translate.load("sbi.glossary.delete.error"))
-//					showToast(
-//							sbiModule_translate
-//							.load("sbi.glossary.delete.error"),
-//							3000);
 				} else {
 					var index = wds.indexOf(ev);
 					wds.splice(index, 1);
@@ -792,10 +725,6 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 			.error(function(data, status, headers, config) {
 				console.log("WORD NON ELMINIATO " + status);
 				showErrorToast("word non eliminato " + status, sbiModule_translate.load("sbi.glossary.delete.error"));
-//				showToast(
-//						sbiModule_translate
-//						.load("sbi.glossary.delete.error"),
-//						3000);
 
 				hidePreloader();
 			})
@@ -825,10 +754,6 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 										.hasOwnProperty("errors")) {
 									showErrorToast(data.errors[0].message, sbiModule_translate.load("sbi.glossary.load.error"));
 									$mdDialog.hide();
-//									showToast(
-//											sbiModule_translate
-//											.load("sbi.glossary.load.error"),
-//											3000);
 									return false;
 								} else {
 									gctl.newGloss = data;
@@ -840,10 +765,6 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 								console.log("Words non Ottenuti "+ status);
 								showErrorToast('Ci sono errori! \n status ' + status, sbiModule_translate.load("sbi.glossary.load.error"));
 								$mdDialog.hide();
-//								showToast(
-//										sbiModule_translate
-//										.load("sbi.glossary.load.error"),
-//										3000);
 								hidePreloader();
 							});
 				} else {
@@ -864,12 +785,11 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 					.success(function(data, status, headers, config) {
 						if (data.hasOwnProperty("errors")) {
 							showErrorToast(data.errors[0].message, sbiModule_translate.load("sbi.glossary.save.error"));
-//							showToast(sbiModule_translate.load("sbi.glossary.save.error"),3000);
 						} else if (data.Status == "NON OK") {
 							showToast(sbiModule_translate.load(data.Message),3000);
 						} else {
 							if (gctl.newGloss.SaveOrUpdate == "Save") {
-								// salvataggio riuscito
+								// save success
 								delete gctl.newGloss.NEWGLOSS;
 								gctl.newGloss.GLOSSARY_ID = data.id;
 								console.log(gctl.newGloss);
@@ -878,7 +798,7 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 								$mdDialog.hide();
 								showToast(sbiModule_translate.load("sbi.glossary.save.success"),3000);
 							} else {
-								// modifica riuscita
+								// modification success
 								gl.GLOSSARY_NM = gctl.newGloss.GLOSSARY_NM;
 								ctr.newGloss = JSON.parse(JSON.stringify(EmptyGloss));
 								$mdDialog.hide();
@@ -889,9 +809,8 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 					})
 					.error(function(data, status, headers, config) {
 						$mdDialog.hide();
-						showErrorToast("glossary non salvato " + status, sbiModule_translate.load("sbi.glossary.save.error"));
+						showErrorToast("glossary not saved " + status, sbiModule_translate.load("sbi.glossary.save.error"));
 						hidePreloader();
-						//showToast(sbiModule_translate.load("sbi.glossary.save.error"), 3000);
 					})
 				};
 				
@@ -900,13 +819,9 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 					ctr.newGloss = JSON.parse(JSON.stringify(EmptyGloss));
 				};
 			},
-
-			// "/knowage/js/dialog-new-glossary.html"
-//			templateUrl : '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/dialog-new-glossary.html'
 			templateUrl : currentScriptPath + '../commons/templates/dialog-new-glossary.html'
 		});
 	};
-	// <!-- tree -->
 
 	ctr.TreeOptionsWord = {
 		accept : function(sourceNodeScope, destNodesScope, destIndex) {
@@ -941,11 +856,9 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 				.success(function(data, status, headers, config) {
 					if (data.hasOwnProperty("errors")) {
 						showErrorToast(data.errors[0].message, sbiModule_translate.load("sbi.glossary.error.save"));
-						//showToast(sbiModule_translate.load("sbi.glossary.error.save"), 3000);
 					} else if (data.Status == "NON OK") {
 						showToast(sbiModule_translate.load(data.Message), 3000);
 					} else {
-						// showToast(sbiModule_translate.load("sbi.glossary.success.save"),3000);
 
 						elem.WORD = event.source.nodeScope.$modelValue.WORD;
 						if (elem.PARENT_ID != null) {
@@ -979,7 +892,7 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 				});
 			}
 
-			// non faccio spostare l'elemento automaticamente
+			// locking the automatical moving of the element
 			event.source.nodeScope.$$apply = false;
 
 		},
@@ -1028,17 +941,8 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 						}
 					}
 
-					// //controllo che il glossario non contenghi gia lo stesso
-					// vocabolo
-					// console.log(ctr.selectedGloss)
-					// if(ctr.findWordInSelectedGloss(ctr.selectedGloss.SBI_GL_CONTENTS,sourceNodeScope.$modelValue.WORD_ID)){
-					// console.log("Word presente neol glossario")
-					// return false;
-					//					
-					// }
-
-					// controllo che già non ci sia uno stesso elemento come figlio
-					// del padre
+					// checking the uniqueness of the word in the glossary 
+					// checking the presence of the same element as a child 
 					for (var i = 0; i < destNodesScope.$parent.$modelValue.CHILD.length; i++) {
 						if (sourceNodeScope.$parentNodeScope != null 
 								&& sourceNodeScope.$parentNodeScope.$modelValue
@@ -1058,14 +962,7 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 						}
 					}
 				} else {
-
-					// if (destNodesScope.$parent.$modelValue
-					// .hasOwnProperty("SBI_GL_CONTENTS")) {
-					// // root
-					// return true;
-					// }
 					if (isRootD) {
-						// root
 						return true;
 					}
 
@@ -1088,15 +985,6 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 					}
 
 				}
-
-				// if (destNodesScope.hasChild()) {
-				// var child = destNodesScope.childNodes()
-				// for (ch in child) {
-				// if (child[ch].$modelValue.CONTENT_CD != undefined) {
-				// return false;
-				// }
-				// }
-				// }
 				return true;
 			},
 
@@ -1145,10 +1033,6 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 									function(data, status, headers, config) {
 										if (data.hasOwnProperty("errors")) {
 											showErrorToast(data.errors[0].message, sbiModule_translate.load("sbi.glossary.error.save"));
-//											showToast(
-//													sbiModule_translate
-//													.load("sbi.glossary.error.save"),
-//													3000);
 											event.source.nodesScope.insertNode(
 													event.dest.index,
 													event.source.nodeScope.item);
@@ -1163,9 +1047,6 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 											event.dest.nodesScope.$modelValue
 											.splice(event.dest.index, 1);
 										} else {
-
-											// showToast(sbiModule_translate.load("sbi.glossary.success.save"),3000);
-
 											if (elem.hasOwnProperty("WORD_ID")) {
 												// confirm that there is a word and
 												// check if destination have other
@@ -1202,9 +1083,6 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 													}
 												}
 											}
-
-											// event.dest.nodesScope.insertNode(event.dest.index,elem);
-											// event.source.nodesScope.$modelValue.splice(event.source.index,1);
 
 											if (!isRootD) {
 												event.dest.nodesScope.expand();
@@ -1260,10 +1138,6 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 							});
 
 				}
-
-				// non faccio spostare l'elemento automaticamente
-				// event.source.nodeScope.$$apply = false;
-
 			},
 
 			dragStart : function(event) {
@@ -1349,10 +1223,6 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 
 						if (data.hasOwnProperty("errors")) {
 							showErrorToast(data.errors[0].message,sbiModule_translate.load("sbi.glossary.content.delete.error"));
-//							showToast(
-//									sbiModule_translate
-//									.load("sbi.glossary.content.delete.error"),
-//									3000);
 						} else {
 							if (ev.$parentNodeScope.$modelValue.CHILD.length == 1) {
 								console.log("ci sono figli")
@@ -1378,10 +1248,6 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 							function(data, status, headers, config) {
 
 								showErrorToast("nodo non eliminato " + status, sbiModule_translate.load("sbi.glossary.content.delete.error"));
-//								showToast(
-//										sbiModule_translate
-//										.load("sbi.glossary.content.delete.error"),
-//										3000);
 								hidePreloader();
 							})
 		}
@@ -1465,10 +1331,6 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 												.hasOwnProperty("errors")) {
 											showErrorToast(data.errors[0].message, sbiModule_translate.load("sbi.glossary.content.load.error"));
 											$mdDialog.hide();
-//											showToast(
-//													sbiModule_translate
-//													.load("sbi.glossary.content.load.error"),
-//													3000);
 										} else {
 											rn.tmpNW = data;
 										}
@@ -1483,10 +1345,6 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 														+ status);
 												showErrorToast('Ci sono errori! \n status '
 														+ status, sbiModule_translate.load("sbi.glossary.content.load.error"));
-//														showToast(
-//																sbiModule_translate
-//																.load("sbi.glossary.content.load.error"),
-//																3000);
 												hidePreloader();
 											})
 
@@ -1518,10 +1376,6 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 										if (data
 												.hasOwnProperty("errors")) {
 											showErrorToast(data.errors[0].message, sbiModule_translate.load("sbi.glossary.error.save"));
-//											showToast(
-//													sbiModule_translate
-//													.load("sbi.glossary.error.save"),
-//													3000);
 										} else if (data.Status == "NON OK") {
 											showToast(
 													sbiModule_translate
@@ -1550,7 +1404,6 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 															ctr.selectedGloss,
 															parent,
 															scope);
-													// scope.expand();
 
 												} else {
 													parent.SBI_GL_CONTENTS
@@ -1567,7 +1420,6 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 												rn.tmpNW = JSON
 												.parse(JSON
 														.stringify(EmptyLogicalNode));
-												// showToast(sbiModule_translate.load("sbi.glossary.success.modify"),3000);
 
 											}
 
@@ -1586,7 +1438,6 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 												hidePreloader();
 											});
 
-					// $mdDialog.hide();
 				};
 				rn.annulla = function() {
 					console.log("annulla");
@@ -1594,14 +1445,11 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 				}
 
 			},
-//			templateUrl : '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/new.logical.node.dialog.html',
 			templateUrl : currentScriptPath + '../commons/templates/new.logical.node.dialog.html',
 			parent : angular.element(document.body),
 
 		})
 	};
-
-	// <!-- fine tree -->
 
 	ctr.showInfoWORD = function(wordid) {
 		$mdDialog
@@ -1634,7 +1482,6 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 
 										})
 			},
-//			templateUrl : '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/info_word.html',
 			templateUrl : currentScriptPath + '../commons/templates/info_word.html',
 			clickOutsideToClose : true
 		});
@@ -1648,8 +1495,6 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 				function(data, status, headers, config) {
 					if (data.hasOwnProperty("errors")) {
 						showErrorToast(data.errors[0].message, sbiModule_translate.load("sbi.glossary.load.error"));
-//						showToast(sbiModule_translate.load("sbi.glossary.load.error"),
-//								3000);
 
 					} else {
 						ctr.words = data;
@@ -1658,7 +1503,6 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 					hidePreloader();
 				}).error(function(data, status, headers, config) {
 					showErrorToast('Ci sono errori! \n status ' + status, sbiModule_translate.load("sbi.glossary.load.error"));
-					//showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 
 					hidePreloader();
 				})
@@ -1671,8 +1515,7 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 				function(data, status, headers, config) {
 					if (data.hasOwnProperty("errors")) {
 						showErrorToast(data.errors[0].message, sbiModule_translate.load("sbi.glossary.load.error"));
-//						showToast(sbiModule_translate.load("sbi.glossary.load.error"),
-//								3000);
+							3000);
 
 					} else {
 						ctr.glossary = data;
@@ -1681,8 +1524,6 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 					hidePreloader();
 				}).error(function(data, status, headers, config) {
 					showErrorToast('Ci sono errori! \n status ' + status, sbiModule_translate.load("sbi.glossary.load.error"));
-					//showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
-
 					hidePreloader();
 				})
 
@@ -1697,8 +1538,6 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 
 					if (data.hasOwnProperty("errors")) {
 						showErrorToast(data.errors[0].message, sbiModule_translate.load("sbi.glossary.load.error"));
-//						showToast(sbiModule_translate.load("sbi.glossary.load.error"),
-//								3000);
 
 					} else {
 						ctr.words = data.item;
@@ -1720,8 +1559,6 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 				function(data, status, headers, config) {
 					if (data.hasOwnProperty("errors")) {
 						showErrorToast(data.errors[0].message, sbiModule_translate.load("sbi.glossary.load.error"));
-//						showToast(sbiModule_translate
-//								.load("sbi.glossary.load.error"), 3000);
 						ctr.newWord = JSON.parse(JSON
 								.stringify(EmptyWord));
 					} else {
@@ -1735,7 +1572,6 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 
 				}).error(function(data, status, headers, config) {
 					showErrorToast('Ci sono errori! \n status ' + status, sbiModule_translate.load("sbi.glossary.load.error"));
-					//showToast(sbiModule_translate.load("sbi.glossary.load.error"), 3000);
 					hidePreloader();
 				})
 
@@ -1756,8 +1592,6 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 
 							if (data.hasOwnProperty("errors")) {
 								showErrorToast(data.errors[0].message, sbiModule_translate.load("sbi.glossary.load.error"));
-//								showToast(sbiModule_translate
-//										.load("sbi.glossary.load.error"), 3000);
 
 							} else {
 								if (togg == undefined || togg.collapsed) {
@@ -1793,13 +1627,9 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 	}
 
 	function showErrorToast(errLog, errShow) {
-		//var timer = time == undefined ? 6000 : time
 				console.log("ci sono errori")
 				console.log(errLog)
 				hidePreloader();
-		// $mdToast.show($mdToast.simple().content('Ci sono errori! \n ' + err)
-		// .position('top').action('OK').highlightAction(false).hideDelay(
-		// timer));
 		
 		sbiModule_messaging.showErrorMessage(errShow,"");
 	}
@@ -1807,9 +1637,7 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 	function showToast(text, time) {
 		var timer = time == undefined ? 6000 : time;
 
-		console.log(text)
-//		$mdToast.show($mdToast.simple().content(text).position('top').action(
-//		'OK').highlightAction(false).hideDelay(timer));
+		console.log(text);
 		
 		sbiModule_messaging.showInfoMessage(text,"");
 	}
@@ -1902,37 +1730,6 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 	}
 
 	];
-//
-//	 ctr.glossSpeedMenuOpt = [
-//	 {
-//	 label : sbiModule_translate.load('sbi.generic.modify'),
-//	 icon :'fa fa-pencil' ,
-//	 backgroundColor:'red',
-//	 action : function(item,event) {
-//	 ctr.createNewGlossary(item);
-//	 }
-//	 },
-//			               	
-//	 {
-//	 label : sbiModule_translate.load('sbi.generic.clone'),
-//	 icon:"fa fa-files-o",
-//	 backgroundColor:'green',
-//	 action : function(item,event) {
-//	 ctr.CloneGloss(item);
-//	 }
-//	 } ,
-//			               	
-//	 {
-//	 label : sbiModule_translate.load('sbi.generic.delete'),
-//	 icon:"fa fa-trash-o",
-//	 backgroundColor:'blue',
-//	 action : function(item,event) {
-//	 ctr.deleteGlossary(item);
-//	 }
-//	 }
-//			             
-//	 ];
-
 }
 	
 })();
