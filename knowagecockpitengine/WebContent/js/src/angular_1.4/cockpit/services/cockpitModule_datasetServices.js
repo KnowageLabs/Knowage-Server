@@ -8,7 +8,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 	this.loadDatasetList=function(){
 		var def=$q.defer();
 		sbiModule_restServices.restToRootProject();
-		sbiModule_restServices.promiseGet("2.0/datasets","listDataset")
+		sbiModule_restServices.promiseGet("2.0/datasets","listDataset?seeTechnical=TRUE")
 		.then(function(response){
 			angular.copy(response.data.item,ds.datasetList);
 			ds.initRealTimeValues();

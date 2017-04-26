@@ -123,7 +123,7 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 	}
 
 	@Override
-	public List<SbiDataSet> loadPaginatedSearchSbiDataSet(String search, Integer page, Integer item_per_page, IEngUserProfile finalUserProfile) {
+	public List<SbiDataSet> loadPaginatedSearchSbiDataSet(String search, Integer page, Integer item_per_page, IEngUserProfile finalUserProfile, Boolean seeTechnical) {
 		Session session;
 		List<SbiDataSet> list = null;
 
@@ -146,6 +146,7 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 
 				SbiDomains scopeUserDomain = DAOFactory.getDomainDAO().loadSbiDomainByCodeAndValue("DS_SCOPE", SpagoBIConstants.DS_SCOPE_USER);
 				SbiDomains scopeEnterpriseDomain = DAOFactory.getDomainDAO().loadSbiDomainByCodeAndValue("DS_SCOPE", SpagoBIConstants.DS_SCOPE_ENTERPRISE);
+				SbiDomains scopeTechnicalDomain = DAOFactory.getDomainDAO().loadSbiDomainByCodeAndValue("DS_SCOPE", SpagoBIConstants.DS_SCOPE_TECHNICAL);
 
 				Disjunction or = Restrictions.disjunction();
 
@@ -169,7 +170,7 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 							categoryArray[i] = sbiDomain;
 							i++;
 						}
-						// IN CATEGORY AND (SCOPE=USER OR SCOPE=ENTERPRISE)
+						// (IN CATEGORY AND (SCOPE=USER OR SCOPE=ENTERPRISE)) OR SCOPE=TECHNICAL
 						Conjunction andCategories = Restrictions.conjunction();
 						andCategories.add(Restrictions.in("category", categoryArray));
 
@@ -179,7 +180,19 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 
 						andCategories.add(orScope);
 
-						or.add(andCategories);
+						if(seeTechnical!=null && seeTechnical){
+							Disjunction orTechnical = Restrictions.disjunction();
+							orTechnical.add(andCategories);
+							orTechnical.add(Restrictions.eq("scope", scopeTechnicalDomain));
+							or.add(orTechnical);
+						}else{
+							or.add(andCategories);
+						}
+
+
+
+
+
 
 					}
 				} else {

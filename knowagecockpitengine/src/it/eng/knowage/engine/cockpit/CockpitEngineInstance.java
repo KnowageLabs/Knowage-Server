@@ -65,13 +65,13 @@ public class CockpitEngineInstance extends AbstractEngineInstance {
 		super(env);
 		try {
 			this.template = new JSONObject(template);
-			
+
 			if (this.template.length() > 0 && (!this.template.has("sheets") && !this.template.has("configuration"))) {
 				// TODO This is on old cockpit, maybe we need a translator here
 				throw new SpagoBIRuntimeException("This is an outdated and not supported cockpit.");
 			}
-			
-			
+
+
 			// loading from old designer
 			if(this.template.length() > 0){
 				JSONArray sheets = this.template.optJSONArray("sheets");
@@ -82,22 +82,18 @@ public class CockpitEngineInstance extends AbstractEngineInstance {
 						JSONObject widget = widgets.optJSONObject(j);
 						String type = widget.getString("type");
 						if(type.equals("chart")){
-							
+
 							JSONObject content = widget.getJSONObject("content");
 							JSONObject oldDesigner = content.optJSONObject("chartTemplate").optJSONObject("CHART");
 							if(oldDesigner.get("style") instanceof String){
 								this.template = parseTemplate(this.template);
 							}
-							}
-							
 						}
-					
-				}
-				
-						
 					}
-			
-			
+				}
+			}
+
+
 			this.associationManager = new AssociationManager();
 		} catch (JSONException e) {
 			throw new SpagoBIRuntimeException("Impossible to parse template", e);
@@ -254,7 +250,7 @@ public class CockpitEngineInstance extends AbstractEngineInstance {
 		}
 		return true;
 	}
-	
+
 	private static JSONObject parseTemplate(JSONObject jsonObj) throws JSONException {
 
 		 Iterator keys = jsonObj.keys();
@@ -262,74 +258,74 @@ public class CockpitEngineInstance extends AbstractEngineInstance {
             String key= (String) keys.next();
             Object keyValue = jsonObj.get(key);
             if(key.equalsIgnoreCase("style")){
-           	 
-           	 String value = keyValue.toString(); 
+
+           	 String value = keyValue.toString();
              	String[] result = value.split(";");
              	JSONObject obj = new JSONObject();
              	for (int i = 0; i < result.length; i++) {
  					String[] temp = result[i].split(":");
  					if(temp.length>1){
- 						
+
  						if(isNumeric(temp[1])){
  						   int num = Integer.parseInt(temp[1]);
- 							obj.put(temp[0], num);							
+ 							obj.put(temp[0], num);
  						}else if(temp[1].equals("true") || temp[1].equals("false")){
  							boolean bool = Boolean.parseBoolean(temp[1]);
  							obj.put(temp[0], bool);
  						}else{
  							obj.put(temp[0],temp[1]);
- 						}	
- 						
+ 						}
+
  					}else{
  						obj.put(temp[0], "");
  					}
- 			
+
  				}
              	jsonObj.put(key, obj);
-        
+
             }
-            
+
             if(isNumeric(keyValue.toString())){
            	 jsonObj.put(key, Integer.parseInt(keyValue.toString()));
             }
-            
+
             if(keyValue.toString().equals("true") || keyValue.toString().equals("false")){
            	 jsonObj.put(key, Boolean.parseBoolean(keyValue.toString()));
             }
-            
+
             if(keyValue instanceof JSONArray){
-           	 
+
            	 JSONArray array = (JSONArray)keyValue;
            	 for (int i = 0; i < array.length(); i++) {
            		 if (array.get(i) instanceof JSONObject) {
            			JSONObject obj = array.getJSONObject(i);
               		 parseTemplate(obj);
 				}
-           		 
+
 				}
-           	 
+
             }
-            
+
             if(keyValue instanceof JSONObject){
-           	 
+
            	 parseTemplate((JSONObject)keyValue);
             }
-    
+
         }
         return jsonObj;
 	}
-	
-	private static boolean isNumeric(String str)  
-	{  
-	  try  
-	  {  
-	    int num = Integer.parseInt(str);  
-	  }  
-	  catch(NumberFormatException nfe)  
-	  {  
-	    return false;  
-	  }  
-	  return true;  
+
+	private static boolean isNumeric(String str)
+	{
+	  try
+	  {
+	    int num = Integer.parseInt(str);
+	  }
+	  catch(NumberFormatException nfe)
+	  {
+	    return false;
+	  }
+	  return true;
 	}
 
 	// -- unimplemented methods ----------------------------------
