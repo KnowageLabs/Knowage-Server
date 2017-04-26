@@ -82,7 +82,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 	/**
 	 * The URL for the Workspace web page.
-	 * 
+	 *
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
 	private static final String HREF_DOC_BROWSER_WORKSPACE = "/servlet/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_WORKSPACE&LIGHT_NAVIGATOR_RESET_INSERT=TRUE";
@@ -246,7 +246,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 							/**
 							 * The URL for the Workspace web page.
-							 * 
+							 *
 							 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 							 */
 							if (menuElem.getCode() != null && menuElem.getCode().equals("workspace")) {
@@ -789,10 +789,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 				try {
 					switch (titleCode) {
 					case "menu.ServerManager":
-					case "menu.Scheduler":
-					case "menu.SchedulerMonitor":
 					case "menu.CacheManagement":
-					case "menu.calendar":
 						Class.forName("it.eng.knowage.tools.servermanager.importexport.ExporterMetadata", false, this.getClass().getClassLoader());
 						break;
 					}
