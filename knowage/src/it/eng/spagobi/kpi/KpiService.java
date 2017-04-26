@@ -40,7 +40,6 @@ import it.eng.spagobi.kpi.bo.RuleOutput;
 import it.eng.spagobi.kpi.bo.SchedulerFilter;
 import it.eng.spagobi.kpi.bo.Scorecard;
 import it.eng.spagobi.kpi.bo.Target;
-import it.eng.spagobi.kpi.bo.TargetValue;
 import it.eng.spagobi.kpi.bo.Threshold;
 import it.eng.spagobi.kpi.dao.IKpiDAO;
 import it.eng.spagobi.kpi.dao.KpiDAOImpl.STATUS;
@@ -814,91 +813,6 @@ public class KpiService {
 		return out;
 	}
 
-	@GET
-	@Path("/listTarget")
-	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
-	public Response listTarget(@Context HttpServletRequest req) throws EMFUserError {
-		logger.debug("listTarget IN");
-		Response out;
-		IKpiDAO dao = getKpiDAO(req);
-		List<Target> targetList = dao.listTarget();
-		out = Response.ok(JsonConverter.objectToJson(targetList, targetList.getClass()).toString()).build();
-		logger.debug("listTarget OUT");
-		return out;
-	}
-
-	@GET
-	@Path("/{targetId}/listKpiWithTarget")
-	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
-	public Response listKpiWithTarget(@PathParam("targetId") Integer targetId, @Context HttpServletRequest req) throws EMFUserError {
-		logger.debug("listKpiWithTarget IN");
-		Response out;
-		IKpiDAO dao = getKpiDAO(req);
-		List<TargetValue> kpiList = dao.listKpiWithTarget(targetId);
-		out = Response.ok(JsonConverter.objectToJson(kpiList, kpiList.getClass()).toString()).build();
-		logger.debug("listKpiWithTarget OUT");
-		return out;
-	}
-
-	@GET
-	@Path("/{id}/loadTarget")
-	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
-	public Response loadTarget(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
-		logger.debug("loadTarget IN");
-		Response out;
-		IKpiDAO dao = getKpiDAO(req);
-		Target t = dao.loadTarget(id);
-		out = Response.ok(JsonConverter.objectToJson(t, t.getClass())).build();
-		logger.debug("loadTarget OUT");
-		return out;
-	}
-
-	@POST
-	@Path("/saveTarget")
-	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
-	public Response saveTarget(@Context HttpServletRequest req) throws EMFUserError {
-		logger.debug("saveTarget IN");
-		Response out;
-		try {
-			String requestVal = RestUtilities.readBodyAsJSONObject(req).toString();
-			Target target = (Target) JsonConverter.jsonToObject(requestVal, Target.class);
-			IKpiDAO dao = getKpiDAO(req);
-			JSError errors = check(target, dao);
-			if (errors.hasErrors()) {
-				return Response.ok(errors.toString()).build();
-			}
-			Integer id = target.getId();
-			if (id == null) {
-				id = dao.insertTarget(target);
-			} else {
-				dao.updateTarget(target);
-			}
-			out = Response.ok(new JSONObject().put("id", id).toString()).build();
-			logger.debug("saveTarget OUT");
-			return out;
-		} catch (IOException | JSONException | SpagoBIException e) {
-			logger.error("saveTarget");
-			logger.error(req.getPathInfo(), e);
-		}
-		out = Response.ok().build();
-		logger.debug("saveTarget OUT");
-		return out;
-	}
-
-	@DELETE
-	@Path("/{id}/deleteTarget")
-	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
-	public Response deleteTarget(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
-		logger.debug("deleteTarget IN");
-		Response out;
-		IKpiDAO dao = getKpiDAO(req);
-		dao.removeTarget(id);
-		out = Response.ok().build();
-		logger.debug("deleteTarget OUT");
-		return out;
-
-	}
-
 	@DELETE
 	@Path("/{id}/deleteKpiScheduler")
 	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
@@ -1155,48 +1069,6 @@ public class KpiService {
 			jsError.addErrorKey("newKpi.kpi.kpiIsUsedBySchedulers", names);
 		}
 		return jsError;
-	}
-
-	private JSError check(Target target, IKpiDAO dao) throws SpagoBIException {
-		JSError e = new JSError();
-		if (target.getName() == null) {
-			e.addError("Name id mandatory");
-		}
-		if (target.getStartValidity() == null) {
-			e.addError("StartValidity is mandatory");
-		}
-		if (target.getEndValidity() == null) {
-			e.addError("EndValidity is mandatory");
-		}
-		if (target.getStartValidity() != null && target.getEndValidity() != null && target.getStartValidity().after(target.getEndValidity())) {
-			e.addErrorKey("newKpi.target.invalidPeriod");
-		}
-		if (target.getValues() == null || target.getValues().isEmpty()) {
-			e.addError("Values are mandatory");
-		}
-
-		if (target.getId() == null && target.getName() != null && dao.loadTargetByName(target.getName()) != null) {
-			e.addError("A target with name " + target.getName() + " already exists");
-		}
-
-		// start/end validity dates of targets with same kpis cannot overlap
-		Set<Kpi> kpis = new HashSet<>();
-		for (TargetValue targetValue : target.getValues()) {
-			kpis.add(new Kpi(targetValue.getKpiId(), targetValue.getKpiVersion()));
-		}
-		List<Target> ll = dao.listOverlappingTargets(target.getId(), target.getStartValidity(), target.getEndValidity(), kpis);
-		String names = "";
-		for (int i = 0; i < ll.size(); i++) {
-			if (i != 0) {
-				names += ", ";
-			}
-			Target sameDateTarget = ll.get(i);
-			names += sameDateTarget.getName();
-		}
-		if (!names.isEmpty()) {
-			e.addErrorKey("newKpi.target.alreadyExistingPeriod", names);
-		}
-		return e;
 	}
 
 	private void checkValidity(KpiScheduler scheduler) throws SpagoBIException {
