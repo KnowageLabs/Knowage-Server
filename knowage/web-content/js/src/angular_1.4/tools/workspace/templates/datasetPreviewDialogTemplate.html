@@ -4,11 +4,7 @@
  
      <div class="md-toolbar-tools layout-align-center-center layout-row">
       	
-      	<!-- 
-      		Provide an information about the name of the dataset that is previewed, as well as the icon that represents the
-      		Datasets option in the Workspace.
-      		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-      	 -->
+      	
       	<i class="fa fa-database"></i>
     	&nbsp;&nbsp;
        	<h2>{{translate.load('sbi.browser.document.dataset')}}:{{selectedDataSet.name}}</h2> 
@@ -44,11 +40,7 @@
    </md-toolbar>
    <br>
 	<md-content style="overflow-y:hidden">
-	<!-- 
-		Provide checking if the client-side (Angular Table) pagination should be enabled. 
-		Two separate DIVs for this purpose. 
-		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-	-->
+	
 	<div layout-fill ng-if=paginationDisabled>
 		<angular-table
 		style="position:absolute;"
@@ -76,3 +68,47 @@
 	
 </md-content>
 </md-dialog>
+<!-- 
+<md-dialog class="fullscreen-dialog" >
+
+		<md-toolbar>
+ 
+	     <div class="md-toolbar-tools layout-align-center-center layout-row">
+	      	
+	      	<i class="fa fa-database"></i>
+	    	&nbsp;&nbsp;
+	       	<h2>{{translate.load('sbi.browser.document.dataset')}}:{{selectedDataSet.name}}</h2> 
+	       	
+	       	 <span flex></span> <h2>{{translate.load('Sbi.browser.mexport.MassiveExportWizardParametersPage.parameters')}}: &nbsp;</h2> 
+	       	<div ng-repeat="par in selectedDataSet.pars">
+		       	<div ng-if="par.value!=''">
+		       	{{par.name}}-{{par.value}};       	
+		       	</div>
+		       	<div ng-if="par.value==''">
+		       	{{par.name}}-{{par.defaultValue}};       
+		       	</div>
+	       	&nbsp;
+	       	</div>
+	       <span flex></span>
+	       <md-button id="close-preview" class="md-icon-button" ng-click="closeDatasetPreviewDialog()">
+	         <md-icon class="fa fa-times-circle-o fa-2x"></md-icon>
+	       </md-button>
+	     </div>   
+	   </md-toolbar>
+	
+	
+	<angular-table
+	    	flex
+	 	id='previewDatasetTable' 
+	 	ng-model="previewDatasetModel"
+		columns=previewDatasetColumns
+		show-search-bar=false 
+		highlights-selected-item=true
+		current-page-number=datasetTableLastPage
+		total-item-count=numOfDSPreview
+		page-changed-function="changePreviewPage(itemsPerPage, currentPageNumber)"
+		full-width
+		 >
+	</angular-table> 
+</md-dialog>
+ -->

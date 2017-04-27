@@ -2857,6 +2857,29 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	    }		
     }
     
+    /*$scope.changePreviewPage = function(itemsPerPage, currentPageNumber){
+	var start = 0;
+	if(currentPageNumber>1){
+		start = (currentPageNumber - 1) * itemsPerPage;
+	}
+	 $scope.selectedDataSet.start = start;
+ 	 $scope.selectedDataSet.limit = itemsPerPage;
+ 	 sbiModule_restServices.promisePost('1.0/datasets','preview', angular.toJson($scope.selectedDataSet))
+	 .then(
+		function(response) {
+			console.log(response.data);
+			$scope.newDatasetMeta = response.data;
+			$scope.getPreviewSet(null);
+		},
+		function(response) {
+			$scope.translate.load(response.data.errors.messages)
+		}
+	 ); 
+}*/
+
+
+//$scope.numOfDSPreview = response.data.results;
+    
     $scope.getNextPreviewSet = function(){ 
     	 if($scope.startPreviewIndex+$scope.itemsPerPage > $scope.totalItemsInPreview){
     		 $scope.startPreviewIndex=$scope.totalItemsInPreview-($scope.totalItemsInPreview%$scope.itemsPerPage);  		
