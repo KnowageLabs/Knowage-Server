@@ -49,11 +49,6 @@
 		secnUrl="/knowagedataminingengine/DataMiningServlet" driverNm="it.eng.spagobi.engines.drivers.datamining.DataMiningDriver"
 		engineTypeCd="EXT" classNm="" biobjTypeCd="DATA_MINING" useDataSet="false"
 		useDataSource="true" encrypt="0" />
-	<ENGINE label="knowageaccessibleeng" name="Accessible Report Engine"
-		descr="Accessible Report Engine" mainUrl="/knowageaccessibilityengine/servlet/AccessibilityServlet"
-		driverNm="it.eng.spagobi.engines.drivers.accessibility.AccessibilityDriver"
-		engineTypeCd="EXT" classNm="" biobjTypeCd="ACCESSIBLE_HTML"
-		useDataSet="true" useDataSource="true" encrypt="0" />
 	<ENGINE label="knowageprocessengine" name="Process Engine" descr="Process Engine"
 		mainUrl="/knowagecommonjengine/servlet/AdapterHTTP" driverNm="it.eng.spagobi.engines.drivers.commonj.CommonjDriver"
 		engineTypeCd="EXT" classNm="" biobjTypeCd="ETL" useDataSet="false"
