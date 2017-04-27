@@ -78,11 +78,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	<md-checkbox ng-model="kpi.enableVersioning">{{translate.load('sbi.kpi.edit.enable.versioning')}}</md-checkbox>  
      </div>
-    
-	<div class="footer">
+</md-dialog-content>
+    <md-dialog-actions layout="row">
 	<md-button class="dialogButton" ng-click="apply()" ng-disable="kpi.name.length==0" md-autofocus>Save <md-icon md-font-icon="fa fa-check buttonIcon" aria-label="apply"></md-icon></md-button>
-	</div>
-   	 </md-dialog-content>
+   	 </md-dialog-actions>
   </form>
 </md-dialog>
 </script>

@@ -210,58 +210,62 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 			tmpKpiToSave.definition = JSON.stringify($scope.kpi.definition);
 		}
 		//update cardinality
-		if(Object.keys($scope.kpi.cardinality).length>0 ){
-			if(angular.isObject($scope.kpi.cardinality)){
+		if(angular.isObject($scope.kpi.cardinality)){
+			debugger;
+			if(Object.keys($scope.kpi.cardinality).length>0 ){
 				if($scope.kpi.cardinality.length!=$scope.kpi.cardinality.measureList.length && $scope.formulaModified.value){
 					$scope.setCardinality();
 					tmpKpiToSave.cardinality=JSON.stringify($scope.kpi.cardinality);
 				}else{
 					tmpKpiToSave.cardinality=JSON.stringify($scope.kpi.cardinality);
 				}
-			
-
 			}else{
-				$scope.kpi.cardinality = JSON.parse($scope.kpi.cardinality);
-				if($scope.kpi.cardinality.length!=$scope.kpi.cardinality.measureList.length && $scope.formulaModified.value){
-					$scope.setCardinality();
-					tmpKpiToSave.cardinality=JSON.stringify($scope.kpi.cardinality);
+				var obj;
+				if(angular.isObject($scope.kpi.cardinality)){
+					obj = $scope.kpi.cardinality;
 				}else{
+					obj=JSON.parse($scope.kpi.cardinality);
+				}
+				var obj2;
+				if(angular.isObject($scope.kpi.definition)){
+					obj2= $scope.kpi.definition.measures;
+				}else{
+					obj2=JSON.parse($scope.kpi.definition).measures;
+				}
+
+				For1:for(var i=0;i<obj.length;i++){
+					if(obj.measureList[i].measureName!=obj2[i]){
+						break For1;
+					}
+				}
+				if(obj2.length!=obj.measureList.length){
+					$scope.kpi.cardinality={"measureList":[],"checkedAttribute":{}};
 					tmpKpiToSave.cardinality=JSON.stringify($scope.kpi.cardinality);
 				}
+
 			}
+
 		}else{
-			var obj;
-			if(angular.isObject($scope.kpi.cardinality)){
-				obj = $scope.kpi.cardinality;
+			$scope.kpi.cardinality = JSON.parse($scope.kpi.cardinality);
+			if($scope.kpi.cardinality.length!=$scope.kpi.cardinality.measureList.length && $scope.formulaModified.value){
+				$scope.setCardinality();
+				tmpKpiToSave.cardinality=JSON.stringify($scope.kpi.cardinality);
 			}else{
-				obj=JSON.parse($scope.kpi.cardinality);
-			}
-			var obj2;
-			if(angular.isObject($scope.kpi.definition)){
-				obj2= $scope.kpi.definition.measures;
-			}else{
-				obj2=JSON.parse($scope.kpi.definition).measures;
-			}
-
-			For1:for(var i=0;i<obj.length;i++){
-				if(obj.measureList[i].measureName!=obj2[i]){
-					break For1;
-				}
-			}
-			if(obj2.length!=obj.measureList.length){
-				$scope.kpi.cardinality={"measureList":[],"checkedAttribute":{}};
 				tmpKpiToSave.cardinality=JSON.stringify($scope.kpi.cardinality);
 			}
-
 		}
+		
+			
+		
 		//update placeholder
-		if(tmpKpiToSave.placeholder==null || tmpKpiToSave.placeholder==undefined || Object.keys(tmpKpiToSave.placeholder)==0){
+		debugger;
+		if(tmpKpiToSave.placeholder==null || tmpKpiToSave.placeholder==undefined || (angular.isObject(tmpKpiToSave.placeholder) && Object.keys(tmpKpiToSave.placeholder).length==0)){
 			tmpKpiToSave.placeholder='';
 		}
 		else if(angular.isObject(tmpKpiToSave.placeholder) && !$scope.formulaModified.value){
 			$scope.parsePlaceholder(tmpKpiToSave.placeholder);
 			tmpKpiToSave.placeholder=JSON.stringify(tmpKpiToSave.placeholder);
-		}else if($scope.formulaModified.value){
+		}else if($scope.formulaModified.value && tmpKpiToSave.placeholder!=""){
 			tmpKpiToSave.placeholder=JSON.stringify(tmpKpiToSave.placeholder);
 		}
 		$scope.convertThresholdToCorrectObject(tmpKpiToSave);

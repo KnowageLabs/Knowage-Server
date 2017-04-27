@@ -46,11 +46,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<md-radio-button  value="COUNT">COUNT</md-radio-button>
    		 </md-radio-group>
      </div>
-    
-	<div class="footer">
+</md-dialog-content>
+    <md-dialog-actions layout="row">
 	<md-button class="dialogButton" ng-click="apply()" md-autofocus>Apply <md-icon md-font-icon="fa fa-check buttonIcon" aria-label="apply"></md-icon></md-button>
-	</div>
-   	 </md-dialog-content>
+	</md-dialog-actions>
   </form>
 </md-dialog>
 </script>
