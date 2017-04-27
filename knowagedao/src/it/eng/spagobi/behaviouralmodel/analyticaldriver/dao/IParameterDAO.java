@@ -100,10 +100,11 @@ public interface IParameterDAO extends ISpagoBIDao{
 	 * into the input <code>Parameter</code> object.
 	 * 
 	 * @param aParameter The object containing all insert information
+	 * @return 
 	 * 
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public void insertParameter(Parameter aParameter) throws EMFUserError;
+	public Parameter insertParameter(Parameter aParameter) throws EMFUserError;
 
 	/**
 	 * Implements the query to erase a parameter. All information needed is stored

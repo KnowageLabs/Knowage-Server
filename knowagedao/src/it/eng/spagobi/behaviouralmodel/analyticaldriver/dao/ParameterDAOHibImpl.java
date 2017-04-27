@@ -443,7 +443,7 @@ public class ParameterDAOHibImpl extends AbstractHibernateDAO implements IParame
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO#insertParameter(it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter)
 	 */
 	@Override
-	public void insertParameter(Parameter aParameter) throws EMFUserError {
+	public Parameter insertParameter(Parameter aParameter) throws EMFUserError {
 		Session aSession = null;
 		Transaction tx = null;
 
@@ -485,6 +485,8 @@ public class ParameterDAOHibImpl extends AbstractHibernateDAO implements IParame
 			updateSbiCommonInfo4Insert(hibParameters);
 			aSession.save(hibParameters);
 			tx.commit();
+			Parameter toReturn = toParameter(hibParameters);
+			return toReturn;
 		} catch (HibernateException he) {
 			logException(he);
 

@@ -465,8 +465,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 					$scope.adList=[];
 					$timeout(function(){								
 						$scope.getDrivers();
-						$scope.selectedCreated = $scope.adList[$scope.adList.length -1];
-						console.log($scope.selectedCreated);
+						
 					}, 1000);
 					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
 				
@@ -492,6 +491,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 					$scope.adList=[];
 					$timeout(function(){								
 						$scope.getDrivers();
+						$scope.loadDrivers(response.data);
 					}, 1000);
 					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
 					//$scope.selectedDriver={};
@@ -501,7 +501,13 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 						$scope.selectedTab = 0;
 					}
 					//$scope.showme=false;
-					//$scope.showadMode = true;
+					
+					
+					
+					
+					
+					$scope.showadMode = true;
+					$scope.selectedTab = 1;
 					$scope.dirtyForm=false;	
 					
 				}, function(response) {
@@ -732,7 +738,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 		return -1;
 	}
 	// TODO if needed
-	$scope.blabla= [];
+	$scope.usedRolesCopy = [];
 	$scope.disableUsedRoles = function(currentRole,useModeRoles) {
 		var allRoles = [];
 		
@@ -747,18 +753,39 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 				$scope.usedRoles.push(allRoles[k]);
 			}
 		}
+		$scope.usedRolesCopy = angular.copy($scope.usedRoles);
 		for (var i = 0; i < $scope.usedRoles.length; i++) {
 			if (currentRole.name == $scope.usedRoles[i].name) {
 				
-				$scope.blabla.push($scope.usedRoles[i]);
 				return true;
 			}
 		}		
 	}
+	
+	var findWithAttr =	function(array, attr, value) {
+	    for(var i = 0; i < array.length; i += 1) {
+	        if(array[i][attr] === value) {
+	            return i;
+	        }
+	    }
+	    return -1;
+	}
+	
 	//this function checks all roles
-	$scope.checkAllRoles = function() {
-		console.log($scope.blabla);
+	$scope.checkAllRoles = function(associated) {
 		
+
+	
+		  // Looping through arr1 to find elements that do not exist in arr2  
+		  for (var i = 0; i < $scope.rolesList.length; i++) {
+		    if (findWithAttr($scope.usedRolesCopy,'name',$scope.rolesList[i].name) === -1){
+		      // Pushing the unique to arr1 elements to the newArr
+		    	if (findWithAttr($scope.associatedRoles,'name',$scope.rolesList[i].name) === -1){
+		    		$scope.associatedRoles.push($scope.rolesList[i]);
+		    	}
+		    
+		    }
+		  }
 	}
 	// this function unchecks all roles
 	$scope.uncheckAllRoles = function() {

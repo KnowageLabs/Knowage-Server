@@ -40,11 +40,12 @@ app.controller
 	 	"$timeout",
 	 	"sbiModule_user",
 	 	"base64",
+	 	"sbiModule_device",
 	 	lovsManagementFunction
 	 ]
 );
 
-function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,sbiModule_messaging,sbiModule_config,$timeout,sbiModule_user,base64)
+function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $scope, $mdDialog, $mdToast,sbiModule_messaging,sbiModule_config,$timeout,sbiModule_user,base64,sbiModule_device)
 {
 	/**
 	 * =====================
@@ -489,6 +490,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 		$scope.paramObj = {};
 		
 		$mdDialog.cancel();
+		console.log(sbiModule_device.browser.name);
 	}
 	/**
 	 * When clicking on Save button in the header of the right panel, 
@@ -509,8 +511,8 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 						$scope.getAllLovs();
 					}, 1000);
 					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
-					$scope.selectedLov={};
-					$scope.showme=false;
+					//$scope.selectedLov={};
+					//$scope.showMe=false;
 					$scope.dirtyForm=false;
 					$scope.closeDialogFromLOV();
 					
@@ -528,8 +530,8 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 					$scope.getAllLovs();
 				}, 1000);
 				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
-				$scope.selectedLov={};
-				$scope.showme=false;
+				//$scope.selectedLov={};
+				//$scope.showMe=false;
 				$scope.dirtyForm=false;
 				$scope.closeDialogFromLOV();
 				
@@ -587,7 +589,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 		result[prop] = tempObj
 		var x2js = new X2JS();
 		var xmlAsStr = x2js.json2xml_str(result);
-		if(xmlAsStr.includes("&#x27;")){
+		if(xmlAsStr.indexOf("&#x27;") != -1){
 			xmlAsStr= xmlAsStr.replace(/&#x27;/g, "'")
 		}
 		$scope.selectedLov.lovProvider = xmlAsStr;
@@ -601,7 +603,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 			}, 1000);
 			sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
 			$scope.selectedLov={};
-			$scope.showme=false;
+			$scope.showMe=false;
 			$scope.dirtyForm=false;
 			$scope.closeDialogFromLOV();
 			
@@ -666,6 +668,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
            .replace(/&lt;/g, '<')
            .replace(/&amp;/g, '&');
 	}
+	
 	
 	var decode = function(item){
 		try {
@@ -986,7 +989,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 								}, 1000);
 								sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.deleted"), 'Success!');
 								$scope.selectedLov={};
-								$scope.showme=false;
+								$scope.showMe=false;
 								$scope.dirtyForm=false;
 
 							},
@@ -1111,7 +1114,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 					}
 		
 		var formatForSave = function() {
-			
+			console.log(sbiModule_device);
 			var result = {}
 			var propName = $scope.selectedLov.itypeCd;
 			var prop = lovProviderEnum[propName];
@@ -1177,7 +1180,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 			result[prop] = tempObj
 			var x2js = new X2JS();
 			var xmlAsStr = x2js.json2xml_str(result);
-			if(xmlAsStr.includes("&#x27;")){
+			if(xmlAsStr.indexOf("&#x27;") != -1){
 				xmlAsStr= xmlAsStr.replace(/&#x27;/g, "'")
 			}
 			$scope.selectedLov.lovProvider = xmlAsStr;

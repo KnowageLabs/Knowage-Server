@@ -241,7 +241,7 @@
 			   
 				
 			    <div layout="row" layout-wrap flex>
-					<div flex="25" ng-repeat="role in rolesList">
+					<div flex="25" ng-repeat="role in rolesList" track by $index>
 					
 						<md-checkbox				
 							ng-required = "associatedRoles.length== 0"

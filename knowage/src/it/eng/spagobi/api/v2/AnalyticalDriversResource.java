@@ -239,9 +239,8 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 		try {
 			driversDao = DAOFactory.getParameterDAO();
 			driversDao.setUserProfile(getUserProfile());
-			driversDao.insertParameter(driver);
-			String encodedDriver = URLEncoder.encode("" + driver.getId(), "UTF-8");
-			return Response.created(new URI("2.0/analyticalDrivers/" + encodedDriver)).entity(encodedDriver).build();
+			Parameter toReturn = driversDao.insertParameter(driver);
+			return Response.ok(toReturn).build();
 		} catch (Exception e) {
 			logger.error("Error while inserting resource", e);
 			throw new SpagoBIRestServiceException("Error while inserting resource", buildLocaleFromSession(), e);
