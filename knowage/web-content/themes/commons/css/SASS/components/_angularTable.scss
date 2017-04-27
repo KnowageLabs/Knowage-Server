@@ -488,5 +488,10 @@ angular-table, cockpit-angular-table{
     #angularFullTableContentBox{
 		overflow:auto;
 	}
-  }
+
+	  md-checkbox.md-checked ._md-icon {
+	  	border-collapse: separate;
+	  }
+	}
+  
 }
