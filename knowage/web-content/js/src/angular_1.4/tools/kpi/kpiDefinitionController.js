@@ -211,7 +211,6 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 		}
 		//update cardinality
 		if(angular.isObject($scope.kpi.cardinality)){
-			debugger;
 			if(Object.keys($scope.kpi.cardinality).length>0 ){
 				if($scope.kpi.cardinality.length!=$scope.kpi.cardinality.measureList.length && $scope.formulaModified.value){
 					$scope.setCardinality();
@@ -258,7 +257,6 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 			
 		
 		//update placeholder
-		debugger;
 		if(tmpKpiToSave.placeholder==null || tmpKpiToSave.placeholder==undefined || (angular.isObject(tmpKpiToSave.placeholder) && Object.keys(tmpKpiToSave.placeholder).length==0)){
 			tmpKpiToSave.placeholder='';
 		}
