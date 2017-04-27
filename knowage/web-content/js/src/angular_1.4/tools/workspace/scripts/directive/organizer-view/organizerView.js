@@ -50,7 +50,7 @@ angular.module('organizer_view', ['ngMaterial'])
 	}
 });
 
-function organizerViewControllerFunction($scope,sbiModule_translate, sbiModule_config){
+function organizerViewControllerFunction($scope,sbiModule_translate, sbiModule_config,sbiModule_user){
 
 	$scope.sbiModule_config = sbiModule_config;
 	$scope.clickDocument=function(item){
@@ -58,5 +58,11 @@ function organizerViewControllerFunction($scope,sbiModule_translate, sbiModule_c
 	}
 	
 	$scope.translate=sbiModule_translate;
+	
+	$scope.sbiModule_user = sbiModule_user;
+	
+	$scope.showMoveDocument = sbiModule_user.functionalities.indexOf("WorkspaceMoveDocument")>-1;
+
+
 }
 })();

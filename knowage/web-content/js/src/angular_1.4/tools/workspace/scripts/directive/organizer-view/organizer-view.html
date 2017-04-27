@@ -54,8 +54,8 @@
 			            <md-icon  md-font-icon="fa fa-plus-circle fa-2x"></md-icon>
 			          </md-button> -->
 			          
-			           <md-button class="md-icon-button" aria-label="Move" ng-click="moveDocumentAction({doc:document});">
-			            <md-icon md-font-icon="fa fa-taxi fa-2x"></md-icon>
+			           <md-button class="md-icon-button" aria-label="Move" ng-click="moveDocumentAction({doc:document});" ng-if="showMoveDocument" >
+			            <md-icon md-font-icon="fa fa-share fa-2x"></md-icon>
 			            <md-tooltip md-delay="1000"> {{translate.load("sbi.workspace.organizer.document.move")}}</md-tooltip>
 			          </md-button>
 			          
