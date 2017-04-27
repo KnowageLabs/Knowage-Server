@@ -29,7 +29,6 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 	$scope.placeHolderList=[];
 	$scope.placeholder={};
 	//variables cardinality
-	//$scope.cardinality={"measureList":[],"checkedAttribute":{}};
 	$scope.countAccessCardinality = 0;
 	
 	//methods formula
@@ -54,31 +53,19 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 			return 'New Kpi';
 		}
 	}
+	
 	$scope.parseFormula = function(){
 		$scope.$broadcast ('parseEvent');
-
 		if($scope.showGUI){
-			$scope.showSaveGUI().then(function(response){{}
-			$timeout(function(){
-				$scope.selectedTab.tab=2;
-			},0)
-			if($scope.activeSave=="add"){
+			$scope.showSaveGUI().then(function(response){
 				$scope.saveKPI();
-			}else{
-				$scope.saveKPI();
-			}
-
 			});
-
 		}
-
-
 	}
 
 	$scope.flagActivateBrother= function(event){
 		$scope.$broadcast (event);
 	}
-
 
 
 	$scope.cancelMeasureFunction=function(){
@@ -100,6 +87,7 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 			$angularListDetail.goToList();
 		} 
 	};
+	
 	$scope.cancel = function(){
 		if($scope.formulaModified.value && $scope.kpi.id!=undefined){
 			var confirm = $mdDialog.confirm()
@@ -128,11 +116,8 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 			$scope.$broadcast('clearAllEvent');
 			$scope.$broadcast ('cancelEvent');
 		}
-
-
-
-
 	}
+	
 	$scope.showSaveGUI= function(){
 		var deferred = $q.defer();
 		$mdDialog.show({
@@ -151,23 +136,8 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 		return deferred.promise;
 	}
 
-
-	$scope.showAction = function(text) {
-//		var toast = $mdToast.simple()
-//		.content(text)
-//		.action('OK')
-//		.highlightAction(false)
-//		.hideDelay(3000)
-//		.position('top')
-//
-//		$mdToast.show(toast).then(function(response) {
-//			if ( response == 'ok' ) {
-//			}
-//		});
-		
+	$scope.showAction = function(text) {		
 		sbiModule_messaging.showInfoMessage(text,"");
-		
-		
 	}
 
 	$scope.errorHandler=function(text,title){
@@ -191,18 +161,16 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 		.ok('OK') 
 		return $mdDialog.show(confirm);
 	}
+	
 	$scope.parsePlaceholder = function(placeholder){
 		for(var key in Object.keys( placeholder)){
 			if( placeholder[Object.keys( placeholder)[key]]==""){
 				delete  placeholder[Object.keys( placeholder)[key]];
 			}
 		}
-
 	}
 
-
 	$scope.saveKPI = function(){
-
 		var tmpKpiToSave={};
 		angular.copy($scope.kpi,tmpKpiToSave);
 		//save formula
@@ -241,9 +209,7 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 					$scope.kpi.cardinality={"measureList":[],"checkedAttribute":{}};
 					tmpKpiToSave.cardinality=JSON.stringify($scope.kpi.cardinality);
 				}
-
 			}
-
 		}else{
 			$scope.kpi.cardinality = JSON.parse($scope.kpi.cardinality);
 			if($scope.kpi.cardinality.length!=$scope.kpi.cardinality.measureList.length && $scope.formulaModified.value){
@@ -253,8 +219,6 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 				tmpKpiToSave.cardinality=JSON.stringify($scope.kpi.cardinality);
 			}
 		}
-		
-			
 		
 		//update placeholder
 		if(tmpKpiToSave.placeholder==null || tmpKpiToSave.placeholder==undefined || (angular.isObject(tmpKpiToSave.placeholder) && Object.keys(tmpKpiToSave.placeholder).length==0)){
@@ -280,20 +244,10 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 				},function(response) {
 					$scope.errorHandler(response.data,"");
 				})
-
-
 	}
 
 	$scope.convertThresholdToCorrectObject=function(kpi){
 		for(var i=0;i<kpi.threshold.thresholdValues.length;i++){
-//			delete kpi.threshold.thresholdValues[i].move;
-//			delete kpi.threshold.thresholdValues[i].inputLable;
-//			delete kpi.threshold.thresholdValues[i].includeNumericInputMin;
-//			delete kpi.threshold.thresholdValues[i].includeNumericInputMax;
-//			delete kpi.threshold.thresholdValues[i].includeMinCheck;
-//			delete kpi.threshold.thresholdValues[i].includeMaxCheck;
-//			delete kpi.threshold.thresholdValues[i].selectColor;
-//			delete kpi.threshold.thresholdValues[i].comboSeverity;
 			if(kpi.threshold.thresholdValues[i].position != i+1){
 				kpi.threshold.thresholdValues[i].position = i+1;
 			}
@@ -327,7 +281,6 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 		.cancel($scope.translate.load("sbi.general.No"));
 		$mdDialog.show(confirm).then(function() {
 
-
 			sbiModule_restServices.promiseDelete("1.0/kpi",item.id+"/"+item.version+"/deleteKpi").then(
 					function(response){
 						$scope.$broadcast("deleteKpiEvent");
@@ -335,9 +288,6 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 					function(response){
 						$scope.errorHandler(response.data,""); 
 					});
-
-
-
 
 		}, function() {
 		});
@@ -352,8 +302,6 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 		$mdDialog.show(confirm).then(function() {
 			sbiModule_restServices.promiseGet("1.0/kpi",item.id+"/"+item.version+"/loadKpi")
 			.then(function(response){ 
-
-			//	angular.copy({},$scope.kpi.cardinality);
 				$timeout(function(){
 					$scope.selectedTab.tab=0;
 				},0)
@@ -433,7 +381,6 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 
 	}
 
-
 	$scope.resetMatrix = function(){
 		$scope.kpi.cardinality.measureList=[];
 		if(Object.keys($scope.kpi.definition).length!=0){
@@ -459,7 +406,6 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 					},function(response) {
 						$scope.errorHandler(response.data,"");
 					})
-
 		}
 	}
 //	methods Filters
@@ -508,30 +454,6 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 	};
 	//methods Threshold
 	$scope.loadThreshold=function(){
-
-//		for(var i=0;i<$scope.kpi.threshold.thresholdValues.length;i++){
-//			$scope.kpi.threshold.thresholdValues[i].move="<div layout=\"row\"> " 
-//				+"<md-button ng-click=\"scopeFunctions.moveUp($event,$parent.$parent.$parent.$parent.$parent.$index)\" class=\"md-icon-button h20 \" aria-label=\"up\">" 
-//				+"  <md-icon md-font-icon=\"fa fa-arrow-up\"></md-icon>" 
-//				+" </md-button>" 
-//				+" <md-button ng-click=\"scopeFunctions.moveDown($event,$parent.$parent.$parent.$parent.$parent.$index)\" class=\"md-icon-button h20\" aria-label=\"down\">" 
-//				+" <md-icon md-font-icon=\"fa fa-arrow-down\"></md-icon>" 
-//				+"</md-button>" 
-//				+"</div>";
-//			$scope.kpi.threshold.thresholdValues[i].inputLable=' <input  class="tableInput" ng-model="row.label"  ></input>'
-//				$scope.kpi.threshold.thresholdValues[i].includeNumericInputMin=' <input type="number" class="tableInput" ng-model="row.minValue" step="0,1"  ></input>'
-//					$scope.kpi.threshold.thresholdValues[i].includeNumericInputMax=' <input type="number" class="tableInput" ng-model="row.maxValue" step="0,1"  ></input>'
-//						$scope.kpi.threshold.thresholdValues[i].includeMinCheck="<md-checkbox ng-model='row.includeMin'  aria-label='Checkbox'></md-checkbox>";
-//			$scope.kpi.threshold.thresholdValues[i].includeMaxCheck='<md-checkbox ng-model="row.includeMax"  aria-label="Checkbox"></md-checkbox>';
-//			$scope.kpi.threshold.thresholdValues[i].selectColor='<color-picker class="tableColorPiker"  color-picker-alpha="true" color-picker-swatch="true" color-picker-format="\'hex\'" ng-model="row.color"></color-picker>';
-//			$scope.kpi.threshold.thresholdValues[i].comboSeverity=' <md-select ng-model="row.severityId" class="noMargin">'
-//				+'<md-option value=""></md-option>'
-//				+'<md-option ng-repeat="sev in scopeFunctions.severityType" value="{{sev.valueId}}">'
-//				+'	{{sev.translatedValueName}}'
-//				+' </md-option>'
-//				+'</md-select>';
-//		}
-
 		$scope.checkIfIsUsedByAnotherKpi();
 	};
 
@@ -560,7 +482,6 @@ function kpiDefinitionMasterControllerFunction($scope,sbiModule_translate,sbiMod
 	$scope.checkIfIsUsedByAnotherKpi=function(){
 		if($scope.kpi.id!=undefined && $scope.kpi.threshold.usedByKpi==true){
 			$scope.isUsedByAnotherKpi.value=true;
-//			$scope.kpi.threshold.usedByKpi=false;
 		}else{
 			$scope.isUsedByAnotherKpi.value=false;
 		}
@@ -605,12 +526,4 @@ function DialogControllerKPI($scope,$mdDialog,items,AttributeCategoryList,kpi, t
 		};
 	}
 
-
-
 }
-
-
-
-
-
-

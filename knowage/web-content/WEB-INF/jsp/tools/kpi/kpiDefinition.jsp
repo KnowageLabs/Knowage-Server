@@ -108,13 +108,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <body class="kn-kpi-definition">
 	<angular-list-detail ng-controller="kpiDefinitionMasterController" full-screen=true>
 		<list label="translate.load('sbi.kpi.list')" ng-controller="listController" new-function="addKpi" >
-		<angular-table flex 
-		id='kpiListTable' ng-model=kpiList
-		columns='[{"label":"Name","name":"name"},{"label":"DateCreation","name":"datacreation"},{"label":"Category","name":"valueCd"},{"label":"Author","name":"author"}]'
-		columns-search='["name"]' show-search-bar=true
-		speed-menu-option=measureMenuOption 
-		scope-functions=tableFunction 
-		click-function="loadKPI(item);"> </angular-table>
+			<angular-table flex 
+			id='kpiListTable' ng-model=kpiList
+			columns='[{"label":"Name","name":"name"},{"label":"DateCreation","name":"datacreation"},{"label":"Category","name":"valueCd"},{"label":"Author","name":"author"}]'
+			columns-search='["name"]' show-search-bar=true
+			speed-menu-option=measureMenuOption 
+			scope-functions=tableFunction 
+			click-function="loadKPI(item);"> </angular-table>
 		</list>
 		<extra-button>
 			  <md-button class="md-flat" ng-click="showAliasTab=!showAliasTab;" >{{translate.load("sbi.kpi.alias")}}</md-button>
