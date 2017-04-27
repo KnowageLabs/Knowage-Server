@@ -118,7 +118,6 @@
 	<USER_FUNCTIONALITY productType="KnowageSI" name="StaticWidget" description="StaticWidget" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="AnalyticalWidget" description="AnalyticalWidget" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="DomainWrite" description="DomainWrite" />
-	<USER_FUNCTIONALITY productType="KnowageSI" name="Timespan" description="Timespan" />	
 	
 	
 	<!-- Authorizations for KnowageER -->
@@ -204,7 +203,6 @@
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ProfileManagement" description="ProfileManagement"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ReadEnginesManagement" description="ReadEnginesManagement"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="SyncronizeRolesManagement" description="SyncronizeRolesManagement"/>
-	<USER_FUNCTIONALITY productType="KnowagePM" name="Timespan" description="Timespan" />
 	<USER_FUNCTIONALITY productType="KnowagePM" name="UserSaveDocumentFunctionality" description="UserSaveDocumentFunctionality"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ViewMyFolderAdmin" description="ViewMyFolderAdmin"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="DomainWrite" description="DomainWrite" />
@@ -257,7 +255,6 @@
 	<USER_FUNCTIONALITY productType="KnowageLI" name="SelfServiceDatasetManagement" description="SelfServiceDatasetManagement" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="SelfServiceMetaModelManagement" description="SelfServiceMetaModelManagement" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="SyncronizeRolesManagement" description="SyncronizeRolesManagement" />
-	<USER_FUNCTIONALITY productType="KnowageLI" name="Timespan" description="Timespan" />
 	<!-- <USER_FUNCTIONALITY productType="KnowageLI" name="UserDefinedPropertyManagement" description="UserDefinedPropertyManagement" /> -->
 	<USER_FUNCTIONALITY productType="KnowageLI" name="UserSaveDocumentFunctionality" description="UserSaveDocumentFunctionality" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="ViewMyFolderAdmin" description="ViewMyFolderAdmin" />
@@ -306,7 +303,6 @@
 	<USER_FUNCTIONALITY productType="KnowagePA" name="ProfileManagement" description="ProfileManagement" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="ReadEnginesManagement" description="ReadEnginesManagement" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="SyncronizeRolesManagement" description="SyncronizeRolesManagement" />
-	<USER_FUNCTIONALITY productType="KnowagePA" name="Timespan" description="Timespan" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="UserSaveDocumentFunctionality" description="UserSaveDocumentFunctionality" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="ViewMyFolderAdmin" description="ViewMyFolderAdmin" />
 	<USER_FUNCTIONALITY productType="KnowagePA" name="WorklistManagement" description="WorklistManagement" />
