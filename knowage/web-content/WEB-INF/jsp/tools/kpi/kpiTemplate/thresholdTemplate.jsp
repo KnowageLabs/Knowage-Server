@@ -1,4 +1,7 @@
 <md-content layout-fill layout="column" ng-controller="kpiDefinitionThresholdController"> 
+
+<md-card>
+<md-card-content>
  	
  	<md-whiteframe class="md-whiteframe-2dp cloneWarningTab" layout="row"  ng-if="isUsedByAnotherKpi.value==true">
 	   <p flex>{{translate.load("sbi.kpi.threshold.load.reused.title")}} {{ translate.load("sbi.kpi.threshold.load.reused.message")}}</p>
@@ -65,4 +68,6 @@
 
 	      </md-content>
 	    </md-sidenav>
+	    </md-card-content>
+	    </md-card>
 </md-content>
