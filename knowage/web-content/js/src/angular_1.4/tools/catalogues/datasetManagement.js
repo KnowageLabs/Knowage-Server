@@ -2336,6 +2336,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 								if($scope.selectedDataSet.isScheduled) {
 									sbiModule_restServices.promisePost('scheduler/persistence/dataset/id',response.data.id, angular.toJson($scope.selectedDataSet))
 									.then(
+											
 											function(responseDS) {
 												console.log("[POST]: SUCCESS!");
 												getDatasetFromId($scope, indexOfExistingDSInAT, response.data.id);
@@ -2362,6 +2363,10 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 											}
 									);
 								}
+							}else{
+								console.log("[POST]: SUCCESS!");
+								getDatasetFromId($scope, indexOfExistingDSInAT, response.data.id);
+								$scope.setFormNotDirty();
 							}
 							
 							
