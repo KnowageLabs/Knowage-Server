@@ -332,6 +332,11 @@ angular.module('metaManager').filter('filterByProductType', function(sbiModule_c
 					items.splice(tdInd,1);
 				}
 
+				var tdInd=items.indexOf("calendar");
+				if(tdInd!=-1){
+					items.splice(tdInd,1);
+				}
+
 			}
 		}
 		return items;
