@@ -3129,6 +3129,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 
     $scope.saveWithoutMetadata = function () {
     	$scope.selectedDataSet.isFromSaveNoMetadata = true;
+    	$scope.isFromSaveNoMetadata = true;
     	$scope.saveDataset();
     }
     
@@ -3309,6 +3310,12 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					$scope.datasetsListPersisted = angular.copy($scope.datasetsListTemp);
 					$scope.selectedDataSetInit = angular.copy($scope.selectedDataSet);
 					$scope.isCategoryRequired = false;
+					
+					if($scope.isFromSaveNoMetadata == true) {
+						$scope.selectedDataSet.isFromSaveNoMetadata = false;
+						$scope.isFromSaveNoMetadata = false;
+						$scope.saveDataset();						
+					}
 					
 					// SCHEDULING
 					if ($scope.selectedDataSet.isScheduled) {
