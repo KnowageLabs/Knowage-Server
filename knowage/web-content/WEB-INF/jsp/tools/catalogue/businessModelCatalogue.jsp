@@ -169,7 +169,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				</div>
 			</md-card-content>
 	      </md-card>
-	      
+	      <%
+					if( (userProfile.isAbleToExecuteAction(SpagoBIConstants.META_MODEL_SAVING_TO_RDBMS)) || (userProfile.isAbleToExecuteAction(SpagoBIConstants.META_MODEL_CWM_EXPORTING)) ) {%>
 	      <md-card ng-if="bmVersions!=undefined && bmVersions.length>0">
 
 	      	<md-toolbar class="secondaryToolbar">
@@ -206,7 +207,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				    </div>
       			</div> 
 	      	</div>
-	      	 
+		<%
+			if (userProfile.isAbleToExecuteAction(SpagoBIConstants.META_MODEL_CWM_EXPORTING)) {%>		      	 
 	      	 <md-divider layout-margin></md-divider>
 	      	<div layout="row" layout-wrap layout-align="start center">
 				<label flex  class="buttonLabel">{{translate.load("sbi.metadata.cwm.import.file.upload")}}:</label>
@@ -218,6 +220,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
                                      						 
       		</div>
+      	<%} %>
       		<div   ng-show="bmCWMImportingShow" >
     				<md-progress-linear md-mode="indeterminate"></md-progress-linear>
     				<div class="bottom-block">
@@ -226,7 +229,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       			</div> 
 	      </md-card-content>
 	      </md-card>
-	      
+ 		<%} %>   
 	      
 	      <md-card layout="column">
 	      	<md-toolbar class="secondaryToolbar">
