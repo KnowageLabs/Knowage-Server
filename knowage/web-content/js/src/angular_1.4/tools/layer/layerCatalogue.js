@@ -20,7 +20,7 @@ var EmptyLayer = {
 
 
 
-app.controller('Controller', [ "sbiModule_download", "sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast","sbiModule_messaging", funzione ]);
+app.controller('Controller', [ "sbiModule_download", "sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast","sbiModule_messaging","sbiModule_user", funzione ]);
 
 
 
@@ -43,8 +43,9 @@ app.directive("fileread", [function () {
 	}
 }]);
 
-function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices, $scope, $mdDialog, $mdToast,sbiModule_messaging) {
+function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices, $scope, $mdDialog, $mdToast,sbiModule_messaging,sbiModule_user) {
 	//variables
+	$scope.showFilters = sbiModule_user.functionalities.indexOf("SpatialFilter")>-1; 
 	$scope.showme=false;
 	$scope.pathFileCheck = false;
 	$scope.isRequired=true;

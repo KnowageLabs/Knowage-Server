@@ -276,7 +276,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</md-content>
 		</form>
 		</md-tab>
-		<md-tab label="Filter" md-on-select="setTab('Filter')"
+		<md-tab label="Filter" md-on-select="setTab('Filter')" ng-if="showFilters"
 			md-active="isSelectedTab('Filter')" ng-click="loadFilter();">
 			<md-card layout-fill>	
 				<md-card-content layout="column"  layout-fill class="noPadding">
