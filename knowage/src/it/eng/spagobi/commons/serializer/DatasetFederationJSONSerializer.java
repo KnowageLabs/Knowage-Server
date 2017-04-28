@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,18 +11,20 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.commons.serializer;
 
-import it.eng.spagobi.api.CacheResource;
+import it.eng.spagobi.tools.dataset.cache.ICache;
+import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
+import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
 import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.Locale;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class DatasetFederationJSONSerializer implements Serializer {
@@ -37,6 +39,7 @@ public class DatasetFederationJSONSerializer implements Serializer {
 	public static final String SOURCE_DATASETS = "sourceDataset";
 	public static final String CACHE_DATA_SOURCE = "cache_data_source";
 
+	@Override
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject result = null;
 
@@ -53,13 +56,11 @@ public class DatasetFederationJSONSerializer implements Serializer {
 			result.put(DESCRIPTION, fd.getDescription());
 			result.put(RELATIONSHIPS, fd.getRelationships());
 			result.put(TYPE, "FEDERATED_DATASET");
-			if(fd.getSourceDatasets()!=null){
-				result.put(SOURCE_DATASETS, (JSONArray) SerializerFactory.getSerializer("application/json").serialize(fd.getSourceDatasets(), Locale.ENGLISH));
-			} 
+			if (fd.getSourceDatasets() != null) {
+				result.put(SOURCE_DATASETS, SerializerFactory.getSerializer("application/json").serialize(fd.getSourceDatasets(), Locale.ENGLISH));
+			}
 
-			
-			
-			String cacheDataSource = new CacheResource().getCacheDataSource();
+			String cacheDataSource = getCacheDataSource();
 			if (cacheDataSource != null) {
 				result.put(CACHE_DATA_SOURCE, cacheDataSource);
 			}
@@ -71,6 +72,19 @@ public class DatasetFederationJSONSerializer implements Serializer {
 		}
 
 		return result;
+	}
+
+	private String getCacheDataSource() {
+		String label = "";
+		try {
+			ICache cache = SpagoBICacheManager.getCache();
+			if (cache instanceof SQLDBCache) {
+				label = ((SQLDBCache) cache).getDataSource().getLabel();
+			}
+			return label;
+		} catch (Throwable t) {
+			throw new SpagoBIRuntimeException("Unable to get cache datasource", t);
+		}
 	}
 
 }

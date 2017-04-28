@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,14 +11,17 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.commons.serializer;
 
-import it.eng.spagobi.api.CacheResource;
 import it.eng.spagobi.tools.catalogue.bo.MetaModel;
+import it.eng.spagobi.tools.dataset.cache.ICache;
+import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
+import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.Locale;
 
@@ -36,6 +39,7 @@ public class MetaModelJSONSerializer implements Serializer {
 	public static final String TYPE = "type";
 	public static final String CACHE_DATA_SOURCE = "cache_data_source";
 
+	@Override
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject result = null;
 
@@ -55,7 +59,7 @@ public class MetaModelJSONSerializer implements Serializer {
 			result.put(LOCKER, model.getModelLocker());
 			result.put(TYPE, "MODEL");
 
-			String cacheDataSource = new CacheResource().getCacheDataSource();
+			String cacheDataSource = getCacheDataSource();
 			if (cacheDataSource != null) {
 				result.put(CACHE_DATA_SOURCE, cacheDataSource);
 			}
@@ -69,4 +73,16 @@ public class MetaModelJSONSerializer implements Serializer {
 		return result;
 	}
 
+	private String getCacheDataSource() {
+		String label = "";
+		try {
+			ICache cache = SpagoBICacheManager.getCache();
+			if (cache instanceof SQLDBCache) {
+				label = ((SQLDBCache) cache).getDataSource().getLabel();
+			}
+			return label;
+		} catch (Throwable t) {
+			throw new SpagoBIRuntimeException("Unable to get cache datasource", t);
+		}
+	}
 }
