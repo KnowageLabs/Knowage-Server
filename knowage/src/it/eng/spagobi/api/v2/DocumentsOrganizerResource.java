@@ -33,7 +33,6 @@ import java.util.List;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -118,7 +117,7 @@ public class DocumentsOrganizerResource extends AbstractSpagoBIResource {
 		}
 		/*
 		 * The catch block is commented, since the lower is now used.
-		 * 
+		 *
 		 * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
 		// catch (Exception exception) {
@@ -166,39 +165,5 @@ public class DocumentsOrganizerResource extends AbstractSpagoBIResource {
 		}
 	}
 
-	@PUT
-	@Path("/{documentId}/{sourceFolderId}/{destinationFolderId}")
-	public Response moveDocumentToDifferentFolderInOrganizer(@PathParam("documentId") Integer documentId, @PathParam("sourceFolderId") Integer sourceFolderId,
-			@PathParam("destinationFolderId") Integer destinationFolderId) throws EMFUserError {
-		logger.debug("IN");
-
-		try {
-
-			objFuncOrganizer = DAOFactory.getObjFuncOrganizerDAO();
-			objFuncOrganizer.moveDocumentToDifferentFolder(documentId, sourceFolderId, destinationFolderId);
-			return Response.ok().build();
-
-		} catch (HibernateException he) {
-
-			/**
-			 * If the value of the state is 23000, the user is trying to make a duplicate entry. In our case, user is trying to move the document to another
-			 * (target) folder in which he already has this document. Inform user about this exception (problem) and throw it to the client side.
-			 *
-			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-			 */
-			String state = ((SQLException) he.getCause().getCause()).getSQLState();
-
-			if (state.equals("23000")) {
-				logger.error("Document duplication while moving document to different folder (it already exists in this folder)", he);
-				throw new SpagoBIRuntimeException("sbi.workspace.organizer.document.move.error.duplicateentry", he);
-			} else {
-				logger.error("Error while moving document to different folder", he);
-				throw new SpagoBIRuntimeException("sbi.workspace.organizer.document.move.error.general", he);
-			}
-
-		} finally {
-			logger.debug("OUT");
-		}
-	}
 
 }
