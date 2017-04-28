@@ -131,7 +131,7 @@ function leftMenuController($scope, sbiModule_translate, sbiModule_user){
   	 		"name": "Schedulation", 
   	 		"label":sbiModule_translate.load('sbi.schedulation.title'), 	
   	 		"icon": "fa fa-calendar",
-  	 		"visible":true, 
+  	 		"visible":false, 
   	 		"active":false, 
   	 		"selected":false
  		}
