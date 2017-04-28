@@ -76,3 +76,4 @@ ALTER TABLE SBI_KPI_TARGET ADD CONSTRAINT XAK1SBI_KPI_TARGET UNIQUE (NAME, ORGAN
 -- changed path for chart document execution
 
 UPDATE SBI_ENGINES SET MAIN_URL = '/knowagecockpitengine/api/1.0/chart/pages/execute' WHERE LABEL = 'knowagechartengine';
+ALTER TABLE SBI_CROSS_NAVIGATION ADD COLUMN TYPE INTEGER NOT NULL;

@@ -152,10 +152,42 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 			+ '&OBJECT_LABEL=' + doc.document.label 
 			+ '&SELECTED_ROLE=' + selectedRole.name
 			+ '&SBI_EXECUTION_ID=null'
-			+ '&OBJECT_NAME=' + doc.document.name
-			+"&CROSS_PARAMETER="+parameterStr
-			;
-			cns.crossNavigationSteps.stepControl.insertBread({name:doc.document.name,label:doc.document.label,id:doc.document.id,url:targetUrl});
+			+ '&OBJECT_NAME=' + encodeURIComponent(doc.document.name)
+			+"&CROSS_PARAMETER="+parameterStr;
+			if (doc.crossType == 1){
+				//open cross navigation inside dialog (a.k.a pop-up)
+				targetUrl = targetUrl + "&TOOLBAR_VISIBLE=false";
+				documentName = doc.document.name;
+				$mdDialog.show({
+				      controller: function($scope,translate,$mdDialog){
+				    	  $scope.translate=translate;
+				    	  $scope.cancel=function(){
+				    		  $mdDialog.cancel();
+				    	  };
+				    	  
+				      },
+				      template: '<md-dialog aria-label="'+documentName+'" layout="column" ng-cloak flex="85">'
+				    	  +'<md-toolbar>'
+				    	  +'	<div class="md-toolbar-tools">'
+				    	  +'		<h2>'+ documentName +'</h2>'
+				          +'<span flex></span>'
+				          +'		<md-button class="md-icon-button" ng-click="cancel()">'
+				          +'			<md-icon md-font-icon="fa fa-close"></md-icon>'
+				          +'		</md-button>'
+				    	  +'	</div>'
+				    	  +'</md-toolbar>'
+				    	  +'<md-dialog-content>'
+				    	  +'	<iframe frameBorder="0" class="crossNavigationDialogIframe" src='+ targetUrl +'></iframe>'
+				    	  +'</md-dialog-content>'
+				    	  +'</md-dialog>',
+				      clickOutsideToClose:true, 
+				      locals:{ translate:sbiModule_translate, targetUrl:targetUrl, documentName: documentName },
+				      fullscreen: false
+				    })
+			} else {
+				// normal cross navigation
+				cns.crossNavigationSteps.stepControl.insertBread({name:doc.document.name,label:doc.document.label,id:doc.document.id,url:targetUrl});
+			}
 		};
 		
 		this.responseToStringParameter=function(navObj,outputParameter,inputParameter){
@@ -281,6 +313,7 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 .factory('$crossNavigationSteps',function(){
 	return {stepControl:{},stepItem:[],value:{}}
 })
+
 
 .directive('crossNavigation', function() {
 	return {

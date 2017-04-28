@@ -75,6 +75,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 					SimpleNavigation sn = new SimpleNavigation();
 					sn.setId(cn.getId());
 					sn.setName(cn.getName());
+					sn.setType(cn.getType());
 					if (cn.getSbiCrossNavigationPars() != null && !cn.getSbiCrossNavigationPars().isEmpty()) {
 						SbiCrossNavigationPar cnp = cn.getSbiCrossNavigationPars().iterator().next();
 						sn.setToDoc(cnp.getToKey().getSbiObject().getLabel());
@@ -126,6 +127,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 				}
 				SbiCrossNavigation cn = new SbiCrossNavigation();
 				cn.setName(nd.getSimpleNavigation().getName());
+				cn.setType(nd.getSimpleNavigation().getType());
 				cn.setSbiCrossNavigationPars(new HashSet<SbiCrossNavigationPar>());
 				if (nd.getToPars() != null) {
 					for (SimpleParameter sp : nd.getToPars()) {
@@ -154,6 +156,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 					throw new SpagoBIDAOException("Write error: record not found");
 				}
 				cn.setName(nd.getSimpleNavigation().getName());
+				cn.setType(nd.getSimpleNavigation().getType());
 				if (cn.getSbiCrossNavigationPars() != null) {
 					cn.getSbiCrossNavigationPars().clear();
 				} else {
@@ -248,7 +251,8 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 						}
 					}
 
-					nd.setSimpleNavigation(new SimpleNavigation(cn.getId(), cn.getName(), fromDoc.getLabel(), fromDoc.getBiobjId(), toDoc.getLabel()));
+					nd.setSimpleNavigation(new SimpleNavigation(cn.getId(), cn.getName(), cn.getType(), fromDoc.getLabel(), fromDoc.getBiobjId(), toDoc
+							.getLabel()));
 
 				}
 				return nd;
@@ -364,6 +368,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 						jsonCnParam.put("document", new JSONObject(JsonConverter.objectToJson(biObject, biObject.getClass())));
 						jsonCnParam.put("documentId", sbiObj.getBiobjId());
 						jsonCnParam.put("crossName", cnParam.getSbiCrossNavigation().getName());
+						jsonCnParam.put("crossType", cnParam.getSbiCrossNavigation().getType());
 						jsonCnParam.put("crossId", crossId);
 						jsonCnParam.put("navigationParams", new JSONObject());
 

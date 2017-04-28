@@ -88,3 +88,6 @@ ADD UNIQUE INDEX NAME_UNIQUE (NAME, ORGANIZATION);
 -- 02.03.2017 Dragan Pirkovic 
 -- changed path for chart document execution
 update SBI_ENGINES set MAIN_URL='/knowagecockpitengine/api/1.0/chart/pages/execute' where LABEL = 'knowagechartengine';
+
+ALTER TABLE SBI_CROSS_NAVIGATION
+ADD COLUMN TYPE INT(10) NOT NULL AFTER NAME;

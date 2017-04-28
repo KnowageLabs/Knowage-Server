@@ -18,6 +18,9 @@
         </id>
         
         <property name="name" type="string" column="NAME" length="40" not-null="true"/>
+        
+        <property name="type" type="int" column="TYPE" />
+        
 
 	    <set name="sbiCrossNavigationPars" inverse="true" cascade="all,delete-orphan" >
 	    	<key column="CN_ID" />

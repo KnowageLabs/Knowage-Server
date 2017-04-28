@@ -119,7 +119,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					});
 </script>
 </head>
-<body ng-controller="docExMasterController">
+<body ng-controller="docExMasterController" class="kn-documentExecutionMaster">
 	<cross-navigation layout="column" layout-fill> <cross-navigation-bread-crumb
 		ng-show="false" id="docExecCrossNav"> </cross-navigation-bread-crumb>
 
