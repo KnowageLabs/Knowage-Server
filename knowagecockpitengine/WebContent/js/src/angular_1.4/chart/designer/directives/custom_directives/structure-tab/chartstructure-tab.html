@@ -160,15 +160,15 @@
 						      	
 						      	<md-menu-content width="4">
 							      
-					        		<md-menu-item ng-if="categoriesConfigExcludeTypes.indexOf(selectedChartType.toLowerCase())<0">
-					          			<md-button ng-click="showStructureDetails('categoriesAxisDetails',categoriesAxis.alias)" ng-disabled="disableHtmlElementForChartJs()">
+					        		<md-menu-item ng-if="categoriesConfigExcludeTypes.indexOf(selectedChartType.toLowerCase())<0 && disableHtmlElementForChartJs()">
+					          			<md-button ng-click="showStructureDetails('categoriesAxisDetails',categoriesAxis.alias)">
 					 						<md-icon class="fa fa-pencil-square-o" style="display:inline"></md-icon>
 						            		<span>Axis configuration</span>
 						          		</md-button>
 					        		</md-menu-item>
 						        
-						        	<md-menu-item ng-if="categoriesTitleConfigExcludeTypes.indexOf(selectedChartType.toLowerCase())<0">
-						          		<md-button ng-click="showStructureDetails('categoriesAxisTitleDetails',categoriesAxis.alias)" ng-disabled="disableHtmlElementForChartJs()">
+						        	<md-menu-item ng-if=" categoriesTitleConfigExcludeTypes.indexOf(selectedChartType.toLowerCase())<0 && disableHtmlElementForChartJs()">
+						          		<md-button ng-click="showStructureDetails('categoriesAxisTitleDetails',categoriesAxis.alias)" >
 						            		<md-icon class="fa fa-text-width" style="display:inline"></md-icon>
 						            		<span>Axis' title configuration</span>
 						          		</md-button>
@@ -322,7 +322,7 @@
 							</md-button> -->
 							
 							<!-- Menu for generic axis customization: axis configuration, title configuration, major grid, minor grid -->
-							<md-menu ng-hide="seriesContainerConfigDropDownExcludeTypes.indexOf(selectedChartType.toLowerCase())>=0">
+							<md-menu ng-hide="seriesContainerConfigDropDownExcludeTypes.indexOf(selectedChartType.toLowerCase())>=0" ng-if="disableHtmlElementForChartJs()">
 							      
 						      	<md-button 	aria-label="Open generic axis configurations' list" class="md-icon-button" 
 						      				ng-click="openMenu($mdOpenMenu, $event);"
@@ -332,29 +332,29 @@
 						      	
 						      	<md-menu-content width="4">
 							    
-					        		<md-menu-item>
-					          			<md-button ng-click="showStructureDetails('axisConfiguration',seriesContainer.name)" ng-disabled="disableHtmlElementForChartJs()">
+					        		<md-menu-item ng-if="disableHtmlElementForChartJs()">
+					          			<md-button ng-click="showStructureDetails('axisConfiguration',seriesContainer.name)">
 					 						<md-icon class="fa fa-pencil-square-o" style="display:inline"></md-icon>
 						            		<span>Axis configuration</span>
 						          		</md-button>
 					        		</md-menu-item>
 						        
-						        	<md-menu-item ng-if="seriesAxisTitleExcludeTypes.indexOf(selectedChartType.toLowerCase())<0">
-						          		<md-button ng-click="showStructureDetails('axisTitleConfiguration',seriesContainer.name)" ng-disabled="disableHtmlElementForChartJs()">
+						        	<md-menu-item ng-if=" seriesAxisTitleExcludeTypes.indexOf(selectedChartType.toLowerCase())<0 && disableHtmlElementForChartJs()">
+						          		<md-button ng-click="showStructureDetails('axisTitleConfiguration',seriesContainer.name)" >
 						            		<md-icon class="fa fa-text-width" style="display:inline"></md-icon>
 						            		<span>Axis' title configuration</span>
 						          		</md-button>
 						        	</md-menu-item>	
 						        	
-						        	<md-menu-item ng-if="seriesAxisMajorMinorGirdExcludeTypes.indexOf(selectedChartType.toLowerCase())<0">
-						          		<md-button ng-click="showStructureDetails('axisMajorGridConfiguration',seriesContainer.name)" ng-disabled="disableHtmlElementForChartJs()">
+						        	<md-menu-item ng-if="seriesAxisMajorMinorGirdExcludeTypes.indexOf(selectedChartType.toLowerCase())<0 && disableHtmlElementForChartJs()">
+						          		<md-button ng-click="showStructureDetails('axisMajorGridConfiguration',seriesContainer.name)" >
 						          			<md-icon class="fa fa-th-large" style="display:inline"></md-icon>
 						            		<span>Major grid configuration</span>
 						          		</md-button>
 						        	</md-menu-item>	
 						        	
-						        	<md-menu-item ng-if="seriesAxisMajorMinorGirdExcludeTypes.indexOf(selectedChartType.toLowerCase())<0">
-						          		<md-button ng-click="showStructureDetails('axisMinorGridConfiguration',seriesContainer.name)" ng-disabled="disableHtmlElementForChartJs()">
+						        	<md-menu-item ng-if=" seriesAxisMajorMinorGirdExcludeTypes.indexOf(selectedChartType.toLowerCase())<0 && disableHtmlElementForChartJs()">
+						          		<md-button ng-click="showStructureDetails('axisMinorGridConfiguration',seriesContainer.name)" >
 						            		<md-icon class="fa fa-th" style="display:inline"></md-icon>
 						            		<span>Minor grid configuration</span>
 						          		</md-button>
@@ -446,8 +446,8 @@
 						   		<md-icon aria-label="Series item configuration" class="fa fa-pencil-square-o" style="display:inline"></md-icon>
 					   		</md-button>
 					   		
-					   		<div ng-if="selectedChartType != 'treemap' && selectedChartType != 'heatmap' && selectedChartType != 'sunburst' && selectedChartType != 'parallel'">
-					   		<md-button class="md-icon-button" ng-click="showStructureDetails('seriesItemTooltip');prepareSeriesItemConfiguration(seriesItem,seriesContainer.name);" style="margin-left:0; margin-right:0; padding-left:0; padding-right:0;" ng-disabled="disableHtmlElementForChartJs()">
+					   		<div ng-if="(selectedChartType != 'treemap' && selectedChartType != 'heatmap' && selectedChartType != 'sunburst' && selectedChartType != 'parallel'  ) && disableHtmlElementForChartJs() " >
+					   		<md-button class="md-icon-button" ng-click="showStructureDetails('seriesItemTooltip');prepareSeriesItemConfiguration(seriesItem,seriesContainer.name);" style="margin-left:0; margin-right:0; padding-left:0; padding-right:0;" >
 					   			<!-- alternative: fa-comment-o -->
 						   		<md-icon aria-label="Series item tooltip configuration" class="fa fa-commenting" style="display:inline"></md-icon>
 					   		</md-button>
@@ -519,7 +519,8 @@
 		 -->
 		 <!-- TODO: Uncomment this line and remove the one below, which is  just for development process -->
 		<!-- <div hide-md layout="column" flex={{structurePreviewFlex}} style="padding:0">  -->
-			<!--commented perview panel -->
+		
+		<!--commented perview panel -->
 		<!--<div hide-md layout="column" flex={{structurePreviewFlex}} style="padding:0" ng-if=!isCockpitEng > 
 			<md-toolbar class="secondaryToolbar">
 				<div class="md-toolbar-tools">

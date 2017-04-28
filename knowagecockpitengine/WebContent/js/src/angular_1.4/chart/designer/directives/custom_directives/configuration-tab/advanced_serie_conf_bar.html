@@ -1,17 +1,19 @@
 <div ng-form name="configuration-AdvancedSerieConfForm" layout="row" flex layout-margin
-	ng-show="selectedChartType == 'bar'" flex=100 layout-align="start center">
+	ng-show="selectedChartType == 'bar'" flex=100 layout-align="start center"
+	ng-if="disableHtmlElementForChartJs()">
 	<label>{{translate.load("sbi.chartengine.designer.tab.configuration.3d")}}</label>
 	<md-input-container class="small counter"> <md-checkbox
-		ng-model="chartTemplate.show3D" style="margin:0 8px" aria-label="Show_3d" name="generic_show3D" ng-disabled="disableHtmlElementForChartJs()"></md-checkbox>
+		ng-model="chartTemplate.show3D" style="margin:0 8px" aria-label="Show_3d" name="generic_show3D" ></md-checkbox>
 	</md-input-container>
 </div>
 
 <div layout="row" flex layout-margin
-	ng-show="selectedChartType == 'bar' || selectedChartType == 'line'" flex=100 layout-align="start center">
+	ng-show="selectedChartType == 'bar' || selectedChartType == 'line'" flex=100 layout-align="start center" 
+	ng-if="disableHtmlElementForChartJs()">
 
 	<label>{{translate.load("sbi.chartengine.designer.tab.configuration.seriesstacking")}}</label>
 	<md-input-container class="small counter"> <md-checkbox
-		ng-model="chartTemplate.seriesStacking" style="margin:0 8px" aria-label="Series stacking" name="generic_sstacking" ng-disabled="disableHtmlElementForChartJs()"></md-checkbox>
+		ng-model="chartTemplate.seriesStacking" style="margin:0 8px" aria-label="Series stacking" name="generic_sstacking" ></md-checkbox>
 	</md-input-container>
 </div>
 

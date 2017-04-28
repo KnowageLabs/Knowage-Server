@@ -30,10 +30,10 @@
 	the type of individual series item can be any of: BAR, LINE, AREA.
 -->
 <div layout="row" flex layout-margin
- ng-if="selectedChartType =='bar' || selectedChartType =='line'">  
+ ng-if="(selectedChartType =='bar' || selectedChartType =='line') && disableHtmlElementForChartJs()">  
 	<md-input-container class="md-block" flex> 
 		<label>{{translate.load('sbi.chartengine.designer.seriestype')}}</label>
-		<md-select ng-model="detailsForSeriesItem.type" ng-disabled="disableHtmlElementForChartJs()"> 
+		<md-select ng-model="detailsForSeriesItem.type" > 
 			<md-option ng-repeat="option in seriesItemTypes" value="{{option.value}}">{{option.name}}</md-option>
 		</md-select> 
 	</md-input-container>
@@ -69,11 +69,11 @@ ng-if="selectedChartType != 'chord' && selectedChartType != 'heatmap' && selecte
 
 <!-- Indicator that defines if the series item values should be shown on the chart.  -->
 <div layout="row" flex layout-margin
-ng-if="selectedChartType != 'chord' && selectedChartType != 'heatmap' && selectedChartType != 'treemap'
-&& selectedChartType != 'parallel' && selectedChartType != 'sunburst' && selectedChartType != 'wordcloud' && selectedChartType != 'pie'">
+ng-if="(selectedChartType != 'chord' && selectedChartType != 'heatmap' && selectedChartType != 'treemap'
+&& selectedChartType != 'parallel' && selectedChartType != 'sunburst' && selectedChartType != 'wordcloud' && selectedChartType != 'pie') && disableHtmlElementForChartJs()">
 	<label>{{translate.load("sbi.chartengine.designer.showvalue")}}</label>
 	<md-input-container class="small counter"> 
-		<md-checkbox ng-model="detailsForSeriesItem.showValue" aria-label="Show series item values" ng-disabled="disableHtmlElementForChartJs()"></md-checkbox>
+		<md-checkbox ng-model="detailsForSeriesItem.showValue" aria-label="Show series item values" ></md-checkbox>
 	</md-input-container>	
 </div>
 
@@ -97,10 +97,10 @@ ng-if="selectedChartType != 'chord' && selectedChartType != 'heatmap' && selecte
 
 <!-- Scale factor for series values (if it is going to be shown as a raw value or in kilos, megas) -->
 <div layout="row" flex layout-margin
-ng-if="selectedChartType != 'chord' && selectedChartType != 'heatmap' && selectedChartType != 'treemap'">
+ng-if="(selectedChartType != 'chord' && selectedChartType != 'heatmap' && selectedChartType != 'treemap') && disableHtmlElementForChartJs()">
 	<md-input-container class="md-block" flex> 
 		<label>{{translate.load('sbi.chartengine.designer.scalefactor.label')}}</label>
-		<md-select ng-model="detailsForSeriesItem.scaleFactor" ng-disabled="disableHtmlElementForChartJs()"> 
+		<md-select ng-model="detailsForSeriesItem.scaleFactor" > 
 			<md-option ng-repeat="option in scaleFactorsFixed" value="{{option.value}}">{{option.name}}</md-option>
 		</md-select> 
 	</md-input-container>
@@ -117,19 +117,19 @@ ng-if="selectedChartType != 'heatmap' && selectedChartType != 'treemap'">
 
 <!-- Prefix for the series item tooltip  -->
 <div layout="row" flex layout-margin
-ng-if="selectedChartType != 'heatmap' && selectedChartType != 'treemap'">
+ng-if="(selectedChartType != 'heatmap' && selectedChartType != 'treemap') && disableHtmlElementForChartJs()">
 	<md-input-container class="md-block" flex>
 		<label>{{translate.load('sbi.chartengine.designer.prefixtext')}}</label>
-		<input name="prefix" ng-model="detailsForSeriesItem.prefixChar" ng-readonly="disableHtmlElementForChartJs()"/> 
+		<input name="prefix" ng-model="detailsForSeriesItem.prefixChar" /> 
 	</md-input-container>	
 </div>
 
 <!-- Suffix for the series item tooltip  -->
 <div layout="row" flex layout-margin
-ng-if="selectedChartType != 'heatmap' && selectedChartType != 'treemap'">
+ng-if="(selectedChartType != 'heatmap' && selectedChartType != 'treemap') && disableHtmlElementForChartJs()">
 	<md-input-container class="md-block" flex>
 		<label>{{translate.load('sbi.chartengine.designer.postfixtext')}}</label>
-		<input name="suffix" ng-model="detailsForSeriesItem.postfixChar" ng-readonly="disableHtmlElementForChartJs()"/> 
+		<input name="suffix" ng-model="detailsForSeriesItem.postfixChar"/> 
 	</md-input-container>	
 </div>	
 </div>

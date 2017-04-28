@@ -42,8 +42,8 @@ function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config, sbiM
 
 	$scope.disableHtmlElementForChartJs = function() {
 		if($scope.libInUse=='chartJs') {
-			return true;
-		}
+			return false;
+		} else return true;
 	}
 	$scope.saveChartTemplate = function() {
 		$scope.attachCategoriesToTemplate();
