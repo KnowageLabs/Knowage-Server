@@ -2,7 +2,8 @@
 
 <!-- <link rel="stylesheet" href="http://openlayers.org/en/v3.13.0/css/ol.css" type="text/css"> -->
 <!-- <script src="http://openlayers.org/en/v3.13.0/build/ol.js" type="text/javascript"></script> -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/openlayers/3.x.x/ol.js"></script> 
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/openlayers/3.x.x/ol.js"></script>
+<!--<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/openlayers/3.x.x/ol-debug.js"></script> -->
 <link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/openlayers/3.x.x/ol.css" type="text/css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/js/src/angular_1.x/geo/geoConfig/templates/geoCss.css" type="text/css">
 

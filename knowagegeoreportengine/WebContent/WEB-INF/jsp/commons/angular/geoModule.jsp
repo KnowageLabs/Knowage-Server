@@ -7,9 +7,10 @@
 <%-- the JSP variable are present in angularResources.jsp--%>
 
 var template;
-geoM.factory('geoModule_template',function(geoReportCompatibility){
+geoM.factory('geoModule_template',function(geoReportCompatibility, sbiModule_user){
 	template= <%= template %>;
 	template.noDatasetReport= "<%= docDatasetLabel %>"=="" ? true : false;
+	template.showFilters = sbiModule_user.functionalities.indexOf("SpatialFilter")>-1; 
 	
 	if(template.hasOwnProperty('role')) {
 		template.role = template.role.charAt(0) == '/'? template.role.charAt(0): '/' + template.role.charAt(0);

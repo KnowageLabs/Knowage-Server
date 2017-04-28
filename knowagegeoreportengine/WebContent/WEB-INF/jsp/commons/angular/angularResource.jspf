@@ -4,6 +4,7 @@
 
 <!-- this imports are used for language controls  -->
 <%@page import="it.eng.spago.security.IEngUserProfile"%>
+<%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@ page language="java" 
 	     contentType="text/html; charset=UTF-8" 
 	     pageEncoding="UTF-8"%>	
@@ -23,6 +24,8 @@
 <%@page import="java.util.HashMap"%>
 <%@page import="org.json.JSONObject"%>
 <%@page import="it.eng.spagobi.commons.ParameterValuesDecoder"%>
+<%@page import="it.eng.spago.security.IEngUserProfile"%>
+<%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>
@@ -53,6 +56,7 @@
 	env = engineInstance.getEnv();
 	locale = engineInstance.getLocale();
 
+	IEngUserProfile profile= engineInstance.getUserProfile();
 	executionRole = (String)env.get(EngineConstants.ENV_EXECUTION_ROLE);
 	userId = (engineInstance.getDocumentUser()==null)?"":engineInstance.getDocumentUser().toString();
 	template = engineInstance.getGuiSettings().toString();

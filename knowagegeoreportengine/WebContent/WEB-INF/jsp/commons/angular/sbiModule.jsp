@@ -28,4 +28,20 @@ sbiM.factory('sbiModule_config',function(){
 		 adapterPath:'<%= GeneralUtilities.getSpagoBiContext() + GeneralUtilities.getSpagoAdapterHttpUrl() %>'
 	};
 });
+
+sbiM.factory('sbiModule_user',function(){
+	
+	var user={};
+
+ 	//set functionalities
+ 	user.functionalities =[];
+ 	<% if (profile != null && profile.getFunctionalities() != null && !profile.getFunctionalities().isEmpty()) { 
+ 		for(Object fun :  profile.getFunctionalities()){ %> 
+ 			user.functionalities.push('<%=StringEscapeUtils.escapeJavaScript(fun.toString())%>'); 
+ 		<% } 
+ 		}%> 
+		
+	return user;
+});
+
 </script>

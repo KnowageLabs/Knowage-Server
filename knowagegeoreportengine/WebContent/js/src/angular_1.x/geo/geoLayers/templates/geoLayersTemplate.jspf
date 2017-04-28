@@ -88,7 +88,7 @@
 			</md-radio-group>
 		</expander-box>
 
-		<expander-box id="analitycalFilter"  expanded='true' title='translate.load("gisengine.filter.analitical")' ng-if="geoModule_template.noDatasetReport"> 
+		<expander-box id="analitycalFilter"  expanded='true' title='translate.load("gisengine.filter.analitical")' ng-if="geoModule_template.noDatasetReport && geoModule_template.showFilters"> 
 			
 			<md-input-container ng-if="geoModule_driverParameters[analF]!=undefined && geoModule_driverParameters[analF].length>0" ng-repeat="analF in geoModule_template.analitycalFilter" class="md-block">
 				<label>{{analF}}</label>
@@ -99,7 +99,7 @@
 				</md-select>
 			</md-input-container>
 		</expander-box>
-			
+			 
 	</md-content>
 	
 </div>
