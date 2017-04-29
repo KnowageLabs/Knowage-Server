@@ -27,11 +27,6 @@
 			<ATTRIBUTE name="name" value="Knowage Developer" />
 			<ROLE name="dev" />
 		</USER>
-		<USER userId="bam" password="bam" fullName="Bam User"
-			organization="DEFAULT_TENANT">
-			<ATTRIBUTE name="name" value="Bam User" />
-			<ROLE name="bam" />
-		</USER>
 		<USER userId="public_user" password="public_user" fullName="Knowage Public User"
 			organization="DEFAULT_TENANT">
 			<ATTRIBUTE name="name" value="Public User" />
@@ -56,18 +51,10 @@
 			roleTypeCD="TEST_ROLE" organization="DEFAULT_TENANT" />
 		<ROLE roleName="user" description="user"
 			roleTypeCD="USER" organization="DEFAULT_TENANT" />
-		<ROLE roleName="userb" description="userb"
-			roleTypeCD="USER" organization="DEFAULT_TENANT" />
 		<ROLE roleName="admin" description="admin"
 			roleTypeCD="ADMIN" organization="DEFAULT_TENANT" />
 		<ROLE roleName="modeladmin" description="modeladmin"
 			roleTypeCD="MODEL_ADMIN" organization="DEFAULT_TENANT" />
-		<ROLE roleName="op_reva" description="op_reva"
-			roleTypeCD="USER" organization="DEFAULT_TENANT" />
-		<ROLE roleName="an_reva" description="an_reva"
-			roleTypeCD="USER" organization="DEFAULT_TENANT" />
-		<ROLE roleName="bam" description="bam"
-			roleTypeCD="USER" organization="DEFAULT_TENANT" />
 		<ROLE roleName="demo" description="demo"
 			roleTypeCD="USER" organization="DEFAULT_TENANT" />
 
