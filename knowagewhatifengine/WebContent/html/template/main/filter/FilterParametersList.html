@@ -1,0 +1,28 @@
+<div style="width:40%" layout="column">
+   
+		<p class="knowage-blue">ANALYTICAL DRIVERS</p>		
+	
+   <angular-table 
+	id='adParamsTable' 
+	ng-model="driversList"
+	columns='[{"name":"label","label":"Name"},{"name":"url","label":"URL"},{"name":"replace","label":"Replace filter"}]'
+	show-search-bar = false
+	selected-item = "selectedAttribute" 
+	speed-menu-option="parametersSpeedMenu"
+	click-function="clickItem(item);"
+>
+</angular-table>
+
+ <p class="knowage-blue">PROFILE ATTRIBUTES</p>	
+   <angular-table 
+	id='paParamsTable' 
+	ng-model="attributeList"
+	columns='[{"name":"attributeName","label":"Name"},{"name":"replace","label":"Replace filter"}]'
+	show-search-bar = false
+	selected-item = "selectedAttribute" 
+	click-function="clickItem(item);"
+	speed-menu-option="parametersSpeedMenu"
+>
+</angular-table>
+
+</div>

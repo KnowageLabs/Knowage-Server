@@ -1,0 +1,533 @@
+.workspace {
+
+	md-list {
+		padding-top: 0;
+	}
+
+	md-toolbar.md-knowage-theme .md-button:not(.md-fab) md-icon {
+		line-height: 24px !important;
+	}
+
+	.leftRightPanelHeight {
+		height: calc(100% - 40px);
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	.rightPanelDocuments {
+		height: calc(100% - 20px);
+		min-height: calc(100% - 20px);
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	.rightPanelDocuments-datasets {
+		height: 100%;
+		min-height: 100%;
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	@-moz-document url-prefix() { 
+		.rightPanelDocuments {			
+			height: calc(100%);
+			min-height: calc(100%);		
+		}
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	.md-whiteframe-5dp-rightPanelDocuments {
+		height: calc(100% - 60px);
+		min-height: calc(100% - 60px);
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	.md-whiteframe-5dp-rightPanelDocuments-datasets {
+		height: calc(100% - 20px);
+		min-height: calc(100% - 20px);
+	}
+	
+	/*
+		The amount of pixels subtracted from the total height is increased, since the Organizer possess the
+		breadcrumb on the top of the right-side detail panel (documents container).
+		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	*/
+	.md-whiteframe-5dp-rightPanelDocuments-organizer {
+		height: calc(100% - 120px);
+		min-height: calc(100% - 120px);
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	@-moz-document url-prefix() { 
+		.md-whiteframe-5dp-rightPanelDocuments {
+			height: calc(100% - 16px);		/* empiric approach (danristo) */
+			min-height: calc(100% - 16);	/* empiric approach (danristo) */
+		}
+	}
+	
+	.panelBackgoundColor {
+		background-color:#ECEFF1;
+	}
+	
+	.yesFav {
+		color:orange;
+	}
+    
+    .workspace_image_dataset{
+	    background-image: url('../../sbi_default/img/dataset/img-dataset-1.jpg')!important;
+	}
+	
+	.workspace_image_federation{
+	    background-image: url('../../sbi_default/img/metamodel/federation.png')!important;
+	}
+	
+	.workspace_image_metamodel{
+	    background-image: url('../../sbi_default/img/metamodel/metamodel.png')!important;
+	}
+	
+	.workspace_image_folder{
+		background-image: url('../../sbi_default/img/analiticalmodel/browser/folder.png')!important;
+	}
+	
+	.shared {
+	   color: #c70751;
+	}
+
+	.workspaceSearchInput{
+		color: #FFFFFF !important;
+		border-color: #FFFFFF !important;
+		padding-top:15px;
+		font-size: 16px;
+	}	
+		
+	.workspace-submenu{
+	   padding-left:20px;
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	.workspaceBckgColorRightSide {
+		background-color: #FAFAFA;
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	.workspaceWhiteframeContainer {
+		height: 100%;
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	/* empiric approach - mimics the same value in the default style for the md-whiteframe (danristo) */	
+	.workspaceWhiteframe {
+		margin: 8px !important;
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	/* empiric approach - mimics the same value in the default style for the md-content (danristo) */
+	.workspaceWhiteframeContent {
+		height: 100%; 
+		margin: 8px !important; 
+		width: 98.65%; 
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	// Text in tabs is Knowage red (rose)
+	/*md-tabs md-tabs-wrapper md-tabs-canvas md-pagination-wrapper md-tab-item:not([disabled]).md-active, md-tabs md-tabs-wrapper md-tabs-canvas md-pagination-wrapper md-tab-item:not([disabled]).md-active md-icon, md-tabs.md-accent md-tabs-wrapper md-tabs-canvas md-pagination-wrapper md-tab-item:not([disabled]).md-active md-icon, md-tabs.md-default-theme.md-accent md-tabs-wrapper md-tabs-canvas md-pagination-wrapper md-tab-item:not([disabled]).md-focused, md-tabs.md-default-theme.md-accent md-tabs-wrapper md-tabs-canvas md-pagination-wrapper md-tab-item:not([disabled]).md-focused md-icon {
+	  color: #C70751 !important;
+	}*/
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	md-tab-content {
+		top: 5px;
+	}
+	
+	.datasetWizardPadding{
+		padding: 30px;
+	}
+	
+	// @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	.knowageGrey {
+		background-color: #F6F6F6;
+		min-height:458px; 	/* author: danristo */
+		max-height:458px;	/* author: danristo */
+	}
+	
+	.loadFilePadding{
+		padding:10px;
+	}
+	
+	.checkboxPadding{
+		padding-top: 7px;
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	.selectedLeftMenuItem, .selectedLeftMenuSubitem{
+		background-color: lighten($secondaryColor,10%);
+		button {
+			background-color: transparent;
+			&:hover {
+				background-color: transparent !important;
+			}
+		}
+	}
+	
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	.addNewDocumentButton {
+		top: 0px !important;
+		right: -15px !important;
+	}
+		
+	/* REMOVE (if not used anymore!!!) */
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	.datasetWizardCardHeight {
+		height: 65%;
+		min-height: 65%;
+	}
+	
+	/* REMOVE (if not used anymore!!!) */
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	@-moz-document url-prefix() { 
+		.datasetWizardCardHeight {
+			height: 90%;
+			min-height: 90%;
+		}
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	.mdDialogDatasetWizard {
+		/*height:65%; 
+		max-height:65%;*/
+		height:100%; 
+		max-height:100%; 
+		width: 100%;
+    	max-width: 100%;
+    	min-width:100%;
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	@-moz-document url-prefix() { 
+		.mdDialogDatasetWizard {
+			height:100%; 
+			max-height:100%; 
+			width: 100%;
+	    	max-width: 100%;
+	    	min-width:100%;
+		}
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	.threeCombosThreeNumFields {
+		background-color: #FFFFFF !important;
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	.threeCombosLayout {
+		padding: 10px 10px 0px 10px;
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	.step3PreviewPanel {
+		height: 80%; 
+		max-height: 80%;
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	@-moz-document url-prefix() { 
+		.step3PreviewPanel {
+			height: 87%; 
+			max-height: 87%;
+		}
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	.step3PreviewTableContainer {
+		/* Old values - before fixing the problem with the Angular table's size (danristo) */
+		/*height: 95%; 
+		max-height: 95%;*/
+		height: 100%; 
+		max-height: 100%;		
+	}
+	
+	.step3PreviewTable {
+		position: absolute;
+		height: 100%;
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	.step3ValidationText {
+		padding-left: 10px;
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	.validStatusColor {
+		color: #009933 !important;
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	.invalidStatusColor {
+		color: #FF0000 !important;
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	.step2DefDataTableContainer {
+		height: 60%;
+		max-height: 60%;
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	.step2DefDataTable {
+		height: 100%; 
+		min-height: 100%
+	}
+	
+	// WHEN COLUMNS/DATASET COMBO WAS MOVED FROM THE STEP 2 OF THE DATASET WIZARD
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	.step2DefDataCardContent {
+		height: calc(100% - 40px);
+		max-height: calc(100% - 40px);
+	}
+	
+	.step2And3Card {
+			height: calc(100% - 56px);
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	@-moz-document url-prefix() { 
+		/*.step2DefDataCardContent {
+			height: 87%;
+			max-height: 87%;
+		}*/
+		
+		.step2And3Card {
+			height: calc(100% - 16px);
+		}
+	}
+	
+	
+	
+	/* CSS class for IE9 and above. */
+	@media screen and (min-width:0\0) and (min-resolution: +72dpi) {
+		
+		.step2And3Card {
+			height: calc(100% - 16px);
+		}
+		
+		/*.step2DefDataCardContent {
+			height: calc(100% - 40px);
+			max-height: calc(100% - 40px);
+		}*/
+		
+		.step2Height {
+			height: 100%;
+		}
+		
+		.step3PreviewTable {
+			width: 100%;
+		}
+	}
+	
+	md-tab-content {
+		overflow-x: hidden;
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	/*@-moz-document url-prefix() { 
+		.step2DefDataTable {
+			height: auto; 
+			min-height: auto;
+		}
+	}*/
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
+	.uploadButton {
+		padding-top: 8px;
+	}
+	
+	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	.step4BottomPadding {
+		padding-bottom: 20px;
+	}
+	
+	// From the OLAP
+	// @addedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	.loadingMask {
+		 position: fixed;
+		 z-index:500;
+		 height: 100%;
+		 width: 100%;
+		 background-color: black;
+		 opacity :0.5;
+	 }
+		
+	// From the OLAP
+	// @addedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+	.loadingNoMask {
+		 position: fixed;
+		 z-index:500;
+		 height: 100%;
+		 width: 100%;		 
+	 }
+	 
+	 /*
+	 	Since the rectangle that surrounds the circular loading animation is 100px when 100% size, we need to calculate the top/left padding everytime we change 
+	 	the diameter. I.e. we should enter exactly the value of half of the value specified in percents (e.g. 75% diameter asks for substitution with 75px/2).
+	 	@author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+	 */
+	 .progressCircularWorkspace {
+	 	position: fixed;
+	 	top: calc(50% - #{($progCirculWorkspaceDiam/2)}px);
+	 	left: calc(50% - #{($progCirculWorkspaceDiam/2)}px);
+	 }
+	 
+	 // From the OLAP
+	// @addedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	.searchMask {
+		 position: absolute;
+		 z-index:500;
+		 height: 100%;
+		 width: 100%;
+		 background-color: black;
+		 opacity :0.3;
+	 }
+	 
+	 .progressCircularWorkspaceSearch {
+	 	position: absolute;
+	 	top: calc(50% - #{($progCirculWorkspaceDiam/2)}px);
+	 	left: calc(50% - #{($progCirculWorkspaceDiam/2)}px);
+	 }
+
+	 .documentCard {
+	 	md-card-title {
+	 		padding: 4px;
+	 	}
+	 	md-card-actions {
+	 		margin: 0;
+	 		md-icon.shared {
+	 			color: #c70751;
+	 		}
+	 	}
+	 }
+	 
+	 // @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+	 .md-button.md-icon-button.ckanButton {
+	 	margin: auto;
+	 	margin-top: 15px;
+	 }
+	 
+	 // @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+	 .ckanButtonIcon {
+	 	width: 200px;
+	 	min-width: 200px;
+	 }
+	 
+	 // @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+	 .invalidTypeMetadata {
+	 	color: #990000; 
+	 	background-color: #ffcccc;
+	 	width: 55%; 
+	 	padding-left: 45%;  
+	 	height: 100%;
+	 }
+	 
+	 // @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+	 .validTypeMetadata {
+	 	color: #006600; 
+	 	background-color: #c6ecc6; 
+	 	width: 55%; 
+	 	padding-left: 45%;  
+	 	height: 100%
+	 }
+	 
+	 // @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+	 .defaultStateValidType {
+	 	background-color: #e6e6e6; 
+	 	width: 55%; 
+	 	padding-left: 45%; 
+	 	height: 100%
+	 }
+	 
+	 // @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+	 .dsCreateCatalogContainerOne {
+	 	height: 65%;
+	 	display: flex; 
+	 	flex-direction: column; 
+	 	min-width: 100%;
+	 	max-width: 100%;
+	 }
+	 
+	 // @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+	 .dsCreateCatalogContainerTwo {
+	 	height: 100%;
+	 	align-items: center;
+	    display: flex;
+	    /*flex-direction: column;*/
+	    justify-content: center;
+	    /*margin: 1em;*/
+	 }
+	 
+	 // @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+	 .dsCreateCatalogContainerThree {
+	 	height: 100%;
+	    align-items: center;
+	    justify-content: center;
+	    margin: 1em;
+	   /* padding: 2em;*/
+	    min-width: 50%;
+	    max-width: 50%;
+	 }
+	 
+	 // @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+	 .xlsCsvConfigParams {
+	 	margin:8px !important; 
+	 	width: 98%; /* empiric approach (danristo) */
+	 }
+	 
+	 // @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+	 .workspaceLabelCheckboxContainer {
+	 	height: 30px; 
+	 	margin: 5px 0px 10px 0px;
+	 }
+	 
+	 // @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 .workspaceLabelForCheckBox {
+ 		height: 25px;
+	 }
+	 
+	 // @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	 .workspaceLimitCheckboxContainer {
+	 	height: 30px; 
+	 	width: 30px; 
+	 	margin-left: 6px; 
+	 	padding: 0px;
+	 }
+	 
+	 // @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+	 .workspaceCheckbox {
+	 	height: 30px; 
+	 	width: 30px;
+	 	margin: 0px;
+	 }
+	 
+	 // @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+	 .workspacePersistCheckboxContainer {
+	 	margin-left: 6px; 
+	 }
+	 
+	 // @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+	 .workspaceLabelButtonFileLoaded {
+	 	margin-top: 14px; 
+	 	margin-bottom: 8px;
+	 }
+	 
+	 // @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+	 .workspacePersistDatasetLabel {
+	 	height: 30px;
+	 }
+	 
+	 // @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)  
+	 .workspacePersistDatasetTableName {
+	 	height: 80px;
+	 }
+	 
+	 // @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)  
+	 .workspaceDatasetDescription {
+	 	overflow:auto;
+	 	auto-scroll:true;
+	 }
+}

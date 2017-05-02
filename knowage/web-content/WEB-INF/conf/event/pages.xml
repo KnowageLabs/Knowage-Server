@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PAGES>
+  	<PAGE name="DetailEventLogPage" scope="REQUEST" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="DetailEventLogPage" target="DetailEventLogModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="DetailEventLogModule"/>
+    	</MODULES>
+  	</PAGE>
+	<PAGE name="EVENTS_MONITOR_PAGE" scope="REQUEST" >
+    	<DEPENDENCIES>
+    	 
+    	    <DEPENDENCE source="EVENTS_MONITOR_PAGE" target="PortletLoginModule">
+        		<CONDITIONS>
+        		<!-- 	<PARAMETER name="REFRESH" scope="SERVICE_REQUEST" value="AF_NOT_DEFINED" />  -->
+        			<PARAMETER name="WEBMODE" scope="SERVICE_REQUEST" value="AF_NOT_DEFINED" />
+        		</CONDITIONS>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+      		 
+      		<DEPENDENCE source="EVENTS_MONITOR_PAGE" target="ListEventsLogModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<!-- MODULE keep_instance="false" keep_response="false" name="PortletEventsMonitorModule"/-->
+      		<MODULE keep_instance="false" keep_response="false" name="PortletLoginModule"/>
+      		<MODULE keep_instance="false" keep_response="false" name="ListEventsLogModule"/>
+    	</MODULES>
+  	</PAGE>
+</PAGES>

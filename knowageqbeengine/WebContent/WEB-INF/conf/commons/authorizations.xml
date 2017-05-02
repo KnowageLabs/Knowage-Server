@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AUTHORIZATIONS default="FALSE">
+	<ENTITIES>
+		<!--  IF YOU WANT TO USE XML AUTHENTICATION HANDLER UNCOMMENT THIS-->
+		<USERS>
+			<USER userID="SPAGOBI" password="/bh9/RmQRa9xZXgLEWQLg3aKDVc=" />
+		</USERS>
+		
+		<ROLES>
+			<ROLE roleName="QbeDev" description="Qbe Developer" />
+			<ROLE roleName="QbeUser" description="Qbe User" />
+			<ROLE roleName="QbeAdmin" description="Qbe Administrator"/>
+		</ROLES>
+		
+		<FUNCTIONALITIES>
+			<FUNCTIONALITY functionalityName="UploadDataMart" description="Upload Data Mart" />
+			<FUNCTIONALITY functionalityName="ExecuteDatamart" description="Execute Datamart" />
+			<FUNCTIONALITY functionalityName="DeleteDatamart" description="Delete Datamart" />
+		</FUNCTIONALITIES>
+		
+		<!--
+		<RESOURCES>
+			<RESOURCE resourceName="foodmartNew" description="Datamart Foodmart" />
+		</RESOURCES>
+		-->
+		
+	</ENTITIES>
+	
+	<RELATIONS>
+		
+		<!--
+		<USER-RESOURCES>
+			<USER-RESOURCE userID="SPAGOBI" resourceName="foodmartNew"/>			
+		</USER-RESOURCES>
+		-->
+		
+		<BEHAVIOURS>
+			<BEHAVIOUR userID="SPAGOBI" roleName="QbeDev" />
+			<BEHAVIOUR userID="SPAGOBI" roleName="QbeAdmin" />
+			<BEHAVIOUR userID="SPAGOBI" roleName="QbeUser" />		
+		</BEHAVIOURS>
+		
+		<PRIVILEDGES>
+			<PRIVILEDGE roleName="QbeAdmin" functionalityName="DeleteDatamart" />
+			<PRIVILEDGE roleName="QbeDev" functionalityName="UploadDatamart" />
+			<PRIVILEDGE roleName="QbeDev" functionalityName="ExecuteDatamart" />
+			<PRIVILEDGE roleName="QbeUser" functionalityName="ExecuteDatamart" />
+		</PRIVILEDGES>
+	
+	</RELATIONS>
+	
+</AUTHORIZATIONS>

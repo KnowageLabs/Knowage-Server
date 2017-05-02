@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="it.eng.spagobi.tools.glossary.metadata.SbiGlWord" table="SBI_GL_WORD" >
+        <id name="wordId" type="integer">
+           <column name="WORD_ID" />
+        </id>
+
+        
+        <property name="word" type="string">
+            <column name="WORD" length="100" />
+        </property> 
+        <property name="descr" type="string">
+            <column name="DESCR" length="500" />
+        </property> 
+        <property name="formula" type="string">
+            <column name="FORMULA" length="500" />
+        </property> 
+        <property name="state_id" type="integer">
+            <column name="STATE"  />
+        </property> 
+        <property name="category_id" type="integer">
+            <column name="CATEGORY"  />
+        </property> 
+
+        <set name="attributes" >
+            <key>
+                <column name="REFERENCE_ID" />
+            </key>
+            <one-to-many class="it.eng.spagobi.tools.udp.metadata.SbiUdpValue" />
+        </set> 
+          
+ </class>
+
+</hibernate-mapping>

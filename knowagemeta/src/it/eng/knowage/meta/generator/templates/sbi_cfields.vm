@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<CFIELDS>
+#foreach ($jpaTable in $jpaTables)
+#foreach ($jpaCalculatedColumn in $jpaTable.getCalculatedColumns())
+	<CFIELD entity="${jpaTable.uniqueNameWithDoubleDots}" name="${jpaCalculatedColumn.name}" type="${jpaCalculatedColumn.dataType}" isInLine="true"><![CDATA[${jpaCalculatedColumn.expressionWithUniqueNames}]]></CFIELD>
+#end
+#end
+#foreach ($jpaView in $jpaViews)
+#foreach ($jpaCalculatedColumn in $jpaView.getCalculatedColumns())
+	<CFIELD entity="${jpaView.uniqueNameWithDoubleDots}" name="${jpaCalculatedColumn.name}" type="${jpaCalculatedColumn.dataType}" isInLine="true"><![CDATA[${jpaCalculatedColumn.expressionWithUniqueNames}]]></CFIELD>
+#end
+#end
+</CFIELDS>

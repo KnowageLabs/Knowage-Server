@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+<!-- 
+        Auto-generated mapping file from
+        the hibernate.org cfg2hbm engine
+-->
+    <class name="it.eng.spagobi.tools.dataset.metadata.SbiObjDataSet" table="SBI_OBJ_DATA_SET" >
+
+        <id name="biObjDsId" type="integer">
+            <column name="biobj_ds_id" />
+        </id>      
+
+        <many-to-one name="sbiObject" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects">
+            <column name="biobj_id" not-null="true" />
+        </many-to-one>
+  
+           <property name="dsId" type="integer">
+           <column  name="ds_id" not-null="true"/>
+          </property>
+ 
+        <property name="isDetail" type="boolean">
+            <column name="is_detail" />
+        </property>
+
+      </class>
+</hibernate-mapping>

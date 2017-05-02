@@ -1,0 +1,32 @@
+<md-card   layout-fill layout="column" class="flexCard" style="position:absolute">
+ <md-card-content flex layout="column" class="noPadding">
+  <md-toolbar >
+      <div class="md-toolbar-tools">
+      Selezione documenti
+      </div>
+  </md-toolbar>
+  <md-content flex layout="column" >
+  
+<!-- 		comparison-column="'id'" -->
+   <angular-table flex 
+		id="cockpitDocumentChoice"
+		ng-model='documentList'
+		columns="cockpitDocumentColumn"
+		sortable-column='[]'
+		show-search-bar="true"
+		multi-select=multiple
+		highlights-selected-item=(!multiple)
+		selected-item="tmpCurrentAvaiableDocument"
+		total-item-count = totalCount
+		page-changed-function="changeDocPage(searchValue, itemsPerPage, currentPageNumber , columnsSearch,columnOrdering, reverseOrdering)"
+		search-function="changeDocPage(searchValue, itemsPerPage, 0, columnsSearch, columnOrdering, reverseOrdering)"
+		>
+	</angular-table>
+					
+  </md-content>
+</md-card-content>
+<md-card-actions layout="row" layout-align="end center">
+<md-button ng-click="closeDialog()">Cancel</md-button>
+<md-button ng-click="saveDocuments()">Save</md-button>
+</md-card-actions>
+</md-card>

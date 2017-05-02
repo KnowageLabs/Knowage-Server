@@ -1,0 +1,132 @@
+.fl-debug-holder {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 0px;
+    background-color: #dff;
+}
+
+.fl-debug-holder-open {
+    height: 20em;
+}
+
+.fl-debug-holder-closed {
+    height: 0px;
+ }
+
+.fl-debug-open-pane-trigger {
+    width: 32px;
+    height: 32px;
+    position: absolute;
+    top: -37px;
+    right: 5px;
+    background: url("../images/debug_tab.png");
+}
+
+.fl-debug-open-pane-trigger:hover {
+    background-color: #bbb;
+}
+
+.fl-debug-pane {
+    width: 100%;
+    height: 100%;
+    font-family: OpenSans, 'Helvetica Neue', Helvetica, Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    color: black;
+    padding-top: 40px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.fl-debug-pane thead {
+    padding-bottom: 2px;
+    font-weight: bold;
+}
+
+.fl-debug-pointer-events-none {
+    pointer-events: none;
+}
+
+.fl-debug-highlightElement {
+    z-index: 999999;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.fl-debug-highlightRoot {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.flc-debug-pane-indexel {
+    width: 2em;
+    height: 1em;
+    margin: 0.2em;
+    border: 2px solid black
+}
+
+.fl-debug-inspect-trigger {
+    width: 32px;
+    height: 32px;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    background: url("../images/magnifying_glass.png");
+}
+
+.fl-debug-inspect-trigger:hover {
+    background-color: #ddd;
+}
+
+.fl-debug-inspect-active {
+    background-color: #aaa;
+}
+
+.fl-debug-inspect-active:hover {
+    background-color: #888;
+}
+
+.fl-debug-selector-cell {
+    text-align: right;
+    padding-right: 1em;
+}
+
+/* See http://stackoverflow.com/questions/14765817/why-does-css-td-width-not-work */
+
+.fl-debug-pane-index {
+    min-width: 3em;
+}
+
+.fl-debug-pane-dom-id {
+    min-width: 11em;
+}
+
+.fl-debug-pane-component-id {
+    min-width: 11em;
+}
+
+.fl-debug-pane-grades {
+    min-width: 40em;
+}
+
+.fl-debug-line {
+    min-width: 18em;
+}
+
+.fl-debug-tooltip {
+    width: 40em;
+    font-size: 10px;
+    position: absolute;
+    background-color: #FFC;
+    border: 2px solid #444;
+    padding: 0.5em;
+}
+
+.flc-debug-tooltip-trigger:hover {
+    background-color: rgba(128, 128, 128, 0.3);
+}

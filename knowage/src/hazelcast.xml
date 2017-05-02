@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hazelcast xsi:schemaLocation="http://www.hazelcast.com/schema/config hazelcast-config-3.6.xsd"
+           xmlns="http://www.hazelcast.com/schema/config"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <management-center enabled="false">http://localhost:8080/mancenter</management-center>
+    <network>
+        <port auto-increment="false" port-count="100">5701</port>
+        <join>
+            <multicast enabled="false"></multicast>
+            <tcp-ip enabled="true">
+                <member-list>
+                    <member>127.0.0.1</member>
+                </member-list>
+            </tcp-ip>
+        </join>
+    </network>
+    <properties> 
+    	<property name="hazelcast.socket.bind.any">false</property>
+    	<property name="hazelcast.logging.type">log4j</property>
+    </properties>
+</hazelcast>

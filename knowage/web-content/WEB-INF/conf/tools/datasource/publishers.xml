@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PUBLISHERS>
+
+
+	  	
+  	<PUBLISHER name="detailDataSourceLoop">
+    	<RENDERING channel="PORTLET" mode="" type="LOOP">
+      		<RESOURCES>
+        		<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="ListDataSourcePage" />
+        		<PARAMETER name="LIGHT_NAVIGATOR_BACK_TO" type="ABSOLUTE" scope="" value="1" />
+      		</RESOURCES>
+   	 	</RENDERING>
+    	<RENDERING channel="HTTP" mode="" type="LOOP">
+      		<RESOURCES>
+        		<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="ListDataSourcePage" />
+        		<PARAMETER name="LIGHT_NAVIGATOR_BACK_TO" type="ABSOLUTE" scope="" value="1" />
+      		</RESOURCES>
+   	 	</RENDERING>   	 	
+  	</PUBLISHER>
+
+  	
+  	<PUBLISHER name="ListDataSourcePubJ">
+    	<RENDERING channel="PORTLET" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="it.eng.spagobi.tools.datasource.presentation.ListDataSourcePublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="it.eng.spagobi.tools.datasource.presentation.ListDataSourcePublisher"/>
+      		</RESOURCES>
+   	 </RENDERING>
+  	</PUBLISHER>
+  	
+  	<PUBLISHER name="listDataSource">
+    	<RENDERING channel="PORTLET" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/tools/datasource/listDataSource.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+    	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/tools/datasource/listDataSource.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+  	</PUBLISHER>
+  	
+  	<PUBLISHER name="DetailDataSourcePubJ">
+    	<RENDERING channel="PORTLET" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="it.eng.spagobi.tools.datasource.presentation.DetailDataSourcePublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="it.eng.spagobi.tools.datasource.presentation.DetailDataSourcePublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+  	
+  	<PUBLISHER name="detailDataSource">
+    	<RENDERING channel="PORTLET" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/tools/datasource/detailDataSource.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/tools/datasource/detailDataSource.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+  	
+</PUBLISHERS>

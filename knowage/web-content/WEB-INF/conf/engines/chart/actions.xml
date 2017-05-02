@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ACTIONS>
+
+
+ <ACTION name="GET_PNG" class="it.eng.spagobi.engines.chart.service.GetPngAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+ 
+ <ACTION name="EXPORT_CHART_PDF" class="it.eng.spagobi.engines.chart.service.ChartExporterAction"
+    scope="REQUEST">
+    <CONFIG></CONFIG>
+  </ACTION>  
+  
+  <ACTION name="GET_DATA_CHART_ACTION" class="it.eng.spagobi.engines.chart.service.GetChartDataAction" scope="REQUEST">
+ 	<CONFIG/>
+  </ACTION>
+  
+  <ACTION name="EXPORT_HIGHCHART_ACTION" class="it.eng.spagobi.engines.chart.service.ExportHighChartsAction"
+    scope="REQUEST">
+    <CONFIG></CONFIG>
+  </ACTION>  
+
+</ACTIONS>
+

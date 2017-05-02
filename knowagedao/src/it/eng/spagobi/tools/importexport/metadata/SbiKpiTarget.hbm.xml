@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 5-nov-2008 17.16.34 by Hibernate Tools 3.1.0 beta3 -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.kpi.metadata.SbiKpiTarget" table="SBI_KPI_TARGET" >
+        <id name="targetId" column="TARGET_ID" type="integer">
+        </id>
+        <property name="name" type="string" column="NAME" />
+        <many-to-one name="category" class="it.eng.spagobi.commons.metadata.SbiDomains">
+            <column name="CATEGORY_ID" />
+        </many-to-one>
+        <property name="startValidity" type="timestamp" column="START_VALIDITY_DAY" not-null="true"/>
+        <property name="endValidity" type="timestamp" column="END_VALIDITY_DAY" not-null="false" />
+        
+        <set name="sbiKpiTargetValues" inverse="true" cascade="all-delete-orphan" lazy="false">
+            <key>
+                <column name="TARGET_ID" />
+            </key>
+            <one-to-many class="it.eng.spagobi.kpi.metadata.SbiKpiTargetValue" />
+        </set>
+        
+        <filter name="tenantFilter" condition="organization=:tenant"/>  
+    </class>
+	<filter-def name="tenantFilter">
+		<filter-param name="tenant" type="string"/>
+	</filter-def>
+</hibernate-mapping>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SPAGOBI_LIFERAY>
+     <SECURITY>
+        <WS_SERVICE url="localhost:58080/tunnel-web/secure/axis/"  username="bruno" password="bruno"/>
+	    <PROFILE_ATTRIBUTES>
+		    <ATTRIBUTE name="NAME" default="" source="NAME" />
+		    <ATTRIBUTE name="SURNAME" default="" source="SURNAME" />
+		    <ATTRIBUTE name="USER_ID" default="" source="USER_ID" />
+		    <ATTRIBUTE name="E_MAIL" default="" source="E_MAIL" />
+	    </PROFILE_ATTRIBUTES>
+	    <ROLES>
+	    	<ROLE name="/spagobi/admin" desc="/spagobi/admin" />
+	    	<ROLE name="/spagobi/dev" desc="/spagobi/dev" />
+	    	<ROLE name="/spagobi/test" desc="/spagobi/test" />
+	    	<ROLE name="/spagobi/modeladmin" desc="/spagobi/modeladmin" />
+	    	<ROLE name="/spagobi/user" desc="/spagobi/user" />
+	    </ROLES>
+      </SECURITY>	
+</SPAGOBI_LIFERAY>

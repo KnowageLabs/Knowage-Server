@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VALIDATIONS>
+<SERVICE name="DetailObjMetadataPage" type="PAGE">
+		<VALIDATION blocking="false" validators="">
+			<CONDITIONS>
+				<PARAMETER name="MESSAGEDET" scope="SERVICE_REQUEST" value="DETAIL_INS"/>
+			</CONDITIONS>
+			<FIELDS>
+				<FIELD name="LABEL" label="#metadata.metaLabel">
+					<VALIDATOR validatorName="MANDATORY"/>
+					<VALIDATOR validatorName="ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="20"/>
+				</FIELD>	
+				<FIELD name="NAME" label="#metadata.metaName">
+					<VALIDATOR validatorName="MANDATORY"/>
+					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="40"/>
+				</FIELD>
+			</FIELDS>
+		</VALIDATION>	
+		<VALIDATION blocking="false" validators="">
+			<CONDITIONS>
+				<PARAMETER name="MESSAGEDET" scope="SERVICE_REQUEST" value="DETAIL_MOD"/>
+			</CONDITIONS>
+			<FIELDS>
+			<FIELD name="LABEL" label="#metadata.metaLabel">
+					<VALIDATOR validatorName="MANDATORY"/>
+					<VALIDATOR validatorName="ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="20"/>
+				</FIELD>	
+				<FIELD name="NAME" label="#metadata.metaName">
+					<VALIDATOR validatorName="MANDATORY"/>
+					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="40"/>
+				</FIELD>
+			</FIELDS>
+		</VALIDATION>
+	</SERVICE>
+</VALIDATIONS>

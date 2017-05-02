@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DATA-ACCESS>
+   <DATE-FORMAT format="DD-MM-YYYY"/>
+   <TIMESTAMP-FORMAT format="DD-MM-YYYY hh:mm:ss"/>
+
+   <CONNECTION-MANAGER>
+   </CONNECTION-MANAGER>
+   
+</DATA-ACCESS>
+

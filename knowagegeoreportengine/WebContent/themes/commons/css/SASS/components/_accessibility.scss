@@ -1,0 +1,51 @@
+.fl-prefsEditor-separatedPanel {
+	position: fixed;
+    top: 0;
+    z-index: 9999;
+    width: 100%;
+	.fl-panelBar  {
+		.fl-prefsEditor-buttons {
+			float: left !important;
+			position: absolute;
+			left: 40%;
+			z-index: 9999;
+		}
+	}	
+}
+
+.accessible-mode-on {
+	button, .md-button {
+	  &:focus {
+	    outline: 2px !important;
+	  }
+	}
+}
+
+.accessibleTable {
+	border-collapse: collapse;
+	width: 100%;
+	min-width: 700px;
+	thead {
+		tr{
+			height: 2rem;
+			th {
+				text-transform: uppercase;
+				font-size: 1rem;
+				color: $baseColor;
+			}
+		}
+	}
+	tbody {
+		tr{
+			height: 2rem;
+			&:nth-child(odd) {
+				background-color: lighten($ternaryColor,10%);
+			}
+			td {
+				text-align: center;
+				font-size: .8rem;
+				color: $darkTextColor;
+			}
+		}
+	}
+}

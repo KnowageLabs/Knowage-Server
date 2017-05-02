@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PRESENTATION>
+
+    <MAPPING 
+           business_name="MANAGE_META_MODELS_CATALOGUE_ACTION" 
+           business_type="ACTION" 
+           publisher_name="MANAGE_META_MODELS_CATALOGUE_PUBLISHER"/>    
+
+	<MAPPING 
+	       business_name="MANAGE_ARTIFACTS_CATALOGUE_ACTION" 
+	       business_type="ACTION" 
+	       publisher_name="MANAGE_ARTIFACTS_CATALOGUE_PUBLISHER"/>
+	        	 
+</PRESENTATION>
+

@@ -1,0 +1,46 @@
+<div> <!-- flex=5 -->
+
+<!-- <div style=" background-color:blue; height:32px; border-radious:10px; border-radius: 7px 0px 0px 7px; background-color:#3b678c; margin-top:78%" layout="row">
+
+		<md-button class="customization-button" ng-click="toggleRight()">
+			<md-icon class="fa fa-bars" style="color:white" />
+		</md-button>
+
+	<div>					
+</div> -->
+<!-- Side nav -->
+<md-sidenav
+	style="overflow-x:hidden"
+	md-component-id="right"
+    class="md-sidenav-right"
+    
+    >
+<md-toolbar class='md-toolbar-tools knowage-blue'>
+	Menu<!-- Customization later -->
+	<md-button class="md-icon-button side-nav-x-btn-position" ng-click="closeSideNav('right')">
+    	<md-icon class="fa fa-times icon-color-white" aria-label="Close dialog"></md-icon>
+    </md-button>
+</md-toolbar>
+<!-- Temporary hidden it will be used in the future -->
+<div class="right-menu" layout="row" ng-hide="true"> 
+	<div class="side-nav-tabs" >
+		<md-button id="sidenav-table-btn" ng-class="tableIcon && !chartIcon? 'selected-right-panel-buttons' : 'right-panel-buttons'" ng-click="changeDataRepr('table')">
+			<md-icon class="fa fa-table fa-2x"/>
+		</md-button>
+	</div>
+	<div class="side-nav-tabs" >
+		<md-button id="sidenav-chart-btn" ng-class="!tableIcon && chartIcon? 'selected-right-panel-buttons' : 'right-panel-buttons'" ng-click="changeDataRepr('chart')">
+			<md-icon class="fa fa-pie-chart fa-2x"/>
+		</md-button> 
+	</div>
+	<div class="side-nav-tabs">
+		<md-button id="sidenav-tablechart-btn" ng-class="tableIcon && chartIcon? 'selected-right-panel-buttons' : 'right-panel-buttons'" ng-click="changeDataRepr('both')">
+			<md-icon class="fa fa-table"/>
+			<md-icon class="fa fa-pie-chart"/>			
+		</md-button>
+	</div>
+</div>
+<md-toolbar class='md-toolbar-tools knowage-blue' ng-hide="true">Menu</md-toolbar>
+	<sbi-table-toolbar ng-show="tableIcon && !chartIcon"></sbi-table-toolbar>
+	<sbi-chart-toolbar ng-show="!tableIcon && chartIcon"></sbi-chart-toolbar>
+</md-sidenav>

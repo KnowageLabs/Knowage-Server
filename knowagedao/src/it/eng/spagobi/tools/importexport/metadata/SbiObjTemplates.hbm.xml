@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjTemplates" table="SBI_OBJECT_TEMPLATES" >
+        <id name="objTempId" type="integer">
+            <column name="obj_temp_id" />
+        </id>   
+        
+        <many-to-one name="sbiObject" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects">
+            <column name="biobj_id" />
+        </many-to-one>
+        
+        <many-to-one name="sbiBinContents" class="it.eng.spagobi.commons.metadata.SbiBinContents">
+            <column name="bin_id" />
+        </many-to-one>
+        
+        <property name="name" type="string">
+            <column name="name" />
+        </property>
+        
+        <property name="prog" type="integer">
+            <column name="prog" />
+        </property>
+        
+        <property name="creationDate" type="timestamp">
+            <column name="creation_date"/>
+        </property>
+        <property name="dimension" type="string">
+            <column name="dimension" />
+        </property>  
+        <property name="creationUser" type="string">
+            <column name="CREATION_USER" />
+        </property>         
+        <property name="active" type="boolean">
+            <column name="active"/>
+        </property>
+        
+    </class>
+</hibernate-mapping>

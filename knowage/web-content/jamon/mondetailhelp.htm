@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" type="text/css" href="css/formatteddataset.css">
+<title>JAmon Admin Help</title>
+</head>
+<body>
+
+<h2>Mondetail Help</h2>
+
+
+<h3>1) General</h3>
+<p>mondetail.jsp displays any JAMonListeners that implement the com.jamonapi.utils.DetailData interface.   It is up to the developer
+to decide what data to present.  The JAMonBufferListener that ships with JAMon displays the following information
+that belongs to the associated monitor:  
+<ul>
+<li>RowNum - A sequential row number
+<li>Label - The detail label associated with the monitor.  Typically this will either be the JAMon summary label (for example 'pageHits'
+or a more specific label such as the actual page name (For example: '/myapp/mypage.jsp')
+<li>Value - The value of this monitor entry
+<li>Active - How many monitors of this type that were opened/active at the time of invocation
+<li>Date - The time when the monitor was invoked
+</ul>
+
+
+<h3>2) Output</h3>
+<blockquote>Determines the output format for the JAMon monitors.  Options for output are HTML, XML, and an MS Excel spreadsheet. 
+HTML is the default.</blockquote>
+
+<h3>3) Cell Formatting</h3>
+<blockquote>Indicates how numeric data should be displayed.  Depending on what you are measuring you may want to have decimals appear or
+not. Cell Formatting allows you to toggle between precision when viewing the monitors.  The underlying data is not affected - just the view.
+Note the com.fdsapi.arrays.ArrayConverter class was used to format the data.  You can also pass any String that is accepted to
+DecimalFormat.applyPattern(...)
+<ul>
+<li>#,### - 1.2345 would show as 1
+<li>#,###.# - 1.2345 would show as 1.2
+<li>#,###.## - 1.2345 would show as 1.23
+<li>#,###.### - 1.2345 would show as 1.234
+<li>#,###.#### - 1.2345 would show as 1.2345
+<li>No Format - Shows all digits
+</ul>
+</blockquote>
+
+
+<h3>4) Filter (optional)</h3>
+<blockquote>Filter leverages the com.fdsapi.ArraySQL class to query the JAMon data with a SQL like syntax.  
+<ul>
+<li>If you specify any string within the filter (something like:  com), the string will be used in a Regular Expression to
+find any monitors with the given pattern in their label.   This allows you to search for monitors of interest.  Note:  A regular expression is used,
+not the more typical SQL 'like' clause (i.e. '%com%').  Also the regular expressions are case insensitive.
+<li>You can also enter a full ArraySQL syntax and do more complex queries on any of the JAMon columns.  
+Note Strings should be surrounded by single quotes not double quotes. You can use the reports column names as part of 
+your query. Examples follow:
+<ul>
+<li>select * from array where label like 'pageHit' or label like 'mypackage'
+<li>select * from array where hits>500
+<li>select * from array where label like 'pageHit' or (label like 'mypackage' and hits>500 and total>100000)
+<li>select * from array where label in ('bytessent', 'bytesreceived')
+<li>Or you can just put in the where clause:  where hits>500
+</ul>
+</ul>
+</blockquote>
+
+<h3>5) Highlight (optional)</h3>
+<blockquote>Any text that is entered here and appears in the label column will be hightlighted
+</blockquote>
+
+<h3>6) Text Display Length (optional)</h3>
+<blockquote>In some cases labels (SQL statements) can become quite large and make the report difficult to read.  By entering an integer in this field
+the display of the label column will be truncated to the specified length.  Note this only affects the display and the actual data in the report is not altered.  
+</blockquote>
+
+
+<h3>7) Links</h3>
+<blockquote>Links to various classes from FormattedDataSet API that were used in creating this page.
+<ul>
+<li><a href="http://fdsapi.sourceforge.net/javadocs/com/fdsapi/FormattedDataSet.html" target="_blank">FormattedDataSet</a> - Used to generate
+dynamic text
+<li><a href="http://fdsapi.sourceforge.net/javadocs/com/fdsapi/arrays/ArrayConverter.html" target="_blank">ArrayConverter</a> - Used to format JAMon
+statistics for display.
+<li><a href="http://fdsapi.sourceforge.net/javadocs/com/fdsapi/arrays/ArraySQL.html" target="_blank">ArraySQL</a> - Used to query Object arrays 
+(Object[][]) that can contain any datatype. 
+</ul>
+</blockquote>
+
+<center><a href="javascript:window.close();">Close</a><br></center>
+
+</body>
+</html>

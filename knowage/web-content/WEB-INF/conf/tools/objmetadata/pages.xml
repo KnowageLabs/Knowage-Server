@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PAGES>
+
+
+  	<PAGE name="ListObjMetadataPage" scope="REQUEST" title="Metadata Configuration" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="ListObjMetadataPage" target="ListObjMetadataModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="ListObjMetadataModule"/>
+    	</MODULES>
+  	</PAGE>
+  	
+  	
+  	<PAGE name="DetailObjMetadataPage" scope="REQUEST" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="DetailObjMetadataPage" target="DetailObjMetadataModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="DetailObjMetadataModule"/>
+    	</MODULES>
+  	</PAGE>  	
+</PAGES>

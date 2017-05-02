@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="it.eng.spagobi.kpi.metadata.SbiKpiValue" table="SBI_KPI_VALUE">
+		<!-- 
+			CREATE TABLE sbi_kpi_value ( 
+			id INTEGER NOT NULL PRIMARY KEY, 
+			kpi_id INTEGER NOT NULL,
+			kpi_version INTEGER NOT NULL,
+			logical_key VARCHAR(4096) NOT NULL,
+			time_run TIMESTAMP NOT NULL,
+			computed_value DOUBLE NOT NULL,
+			manual_value DOUBLE NULL NULL,
+			the_day VARCHAR(3) NOT NULL,
+			the_week VARCHAR(3) NOT NULL,
+			the_month VARCHAR(3) NOT NULL,
+			the_quarter VARCHAR(3) NOT NULL,
+			the_year VARCHAR(4) NOT NULL,
+			state CHAR(1) NOT NULL DEFAULT '0',
+			manual_note VARCHAR(4) NULL NULL
+			)
+		 -->
+		<id name="id" type="integer">
+			<column name="id" />
+			<generator class="org.hibernate.id.enhanced.TableGenerator">
+				<param name="optimizer">none</param>
+				<param name="segment_value">SBI_KPI_VALUE</param>
+				<param name="initial_value">1</param>
+			</generator>
+		</id>
+		<property name="kpiId" type="integer">
+			<column name="KPI_ID" not-null="true" />
+		</property>
+		<property name="kpiVersion" type="integer">
+			<column name="KPI_VERSION" not-null="true" />
+		</property>
+		<property name="logicalKey" type="string">
+			<column name="LOGICAL_KEY" length="4096" not-null="true" />
+		</property>
+		<property name="timeRun" type="timestamp">
+			<column name="TIME_RUN" not-null="true" />
+		</property>
+		<property name="computedValue" type="double">
+			<column name="COMPUTED_VALUE" not-null="true" />
+		</property>
+		<property name="manualValue" type="double">
+			<column name="MANUAL_VALUE" not-null="false" />
+		</property>
+		<property name="manualNote" type="string">
+			<column name="MANUAL_NOTE" length="1000" not-null="false" />
+		</property>
+		<property name="theDay" type="string">
+			<column name="THE_DAY" length="4" not-null="true" />
+		</property>
+		<property name="theWeek" type="string">
+			<column name="THE_WEEK" length="4" not-null="true" />
+		</property>
+		<property name="theMonth" type="string">
+			<column name="THE_MONTH" length="4" not-null="true" />
+		</property>
+		<property name="theQuarter" type="string">
+			<column name="THE_QUARTER" length="4" not-null="true" />
+		</property>
+		<property name="theYear" type="string">
+			<column name="THE_YEAR" length="4" not-null="true" />
+		</property>
+		<property name="state" type="char">
+			<column name="STATE" length="1" not-null="true" default="0"/>
+		</property>
+	
+	</class>
+</hibernate-mapping>

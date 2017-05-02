@@ -1,0 +1,45 @@
+<md-dialog style='width:50%;' layout="column">
+	
+	<md-toolbar class="knowage-blue dialog-toolbar" >
+		<p>Saving customized view</p>
+	</md-toolbar>
+	
+	<md-dialog-content layout-padding  layout="column">
+	
+		<div>
+			<md-input-container class="md-block">
+ 				<label>Name</label>
+  				<input type="text" ng-model="subObject.name">
+  				<div   ng-show="!subObject.isValid()">
+            		 <div ng-message="required">{{translate.load("sbi.olap.generic.required");}}</div>
+          		</div>
+			</md-input-container>
+		</div>
+		
+		<div>
+			<md-input-container class="md-block">
+ 				<label>Descrition</label>
+  				<input type="text" ng-model="subObject.description">
+			</md-input-container>
+		</div>
+		<div>
+			<md-input-container class="md-block">
+			<label>Scope</label>
+  				<md-select ng-model="subObject.scope" placeholder="Select a scope">
+  					
+    				<md-option value="public" ng-selected="true">Public</md-option>
+    				<md-option value="private" >Private</md-option>
+  				</md-select>
+			</md-input-container>
+		 </div>
+		<md-dialog-actions layout="row">
+			<md-button ng-click="cancelSavingSubObject()" class="md-raised">
+				Cancel
+			</md-button>
+			<md-button ng-disabled = "!subObject.isValid()" ng-click="saveSubObject()" class="md-raised">
+				Save
+			</md-button>
+		</md-dialog-actions>
+	</md-dialog-content>
+	
+</md-dialog>

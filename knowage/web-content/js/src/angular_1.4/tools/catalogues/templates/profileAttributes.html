@@ -1,0 +1,35 @@
+<md-dialog style='width:40%;height:50%'>
+
+
+<md-toolbar class="primaryToolbar">
+      <div class="md-toolbar-tools">
+        <h2>
+          <span>{{translate.load("sbi.attributes.title");}}</span>
+        </h2>
+      </div>
+</md-toolbar>
+
+<md-dialog-content>
+      <div class="md-dialog-content" flex style="height:75%">
+      
+      <angular-table	style="height:100%";
+                        flex
+						id="ProfileAttributes_id"
+						ng-model="listOfProfileAttributes"
+						columns ='[
+							{"label":"NAME","name":"attributeName"},
+							 ]' >
+										
+	</angular-table>  
+      
+      </div>
+</md-dialog-content>
+	
+		<md-dialog-actions layout="row" style="margin-top:25px;">
+			<md-button class="md-raised" ng-click="closeDialogFromLOV()">
+				{{translate.load("sbi.generic.cancel");}}
+			</md-button>
+		</md-dialog-actions>
+	
+	
+</md-dialog>

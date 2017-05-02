@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+
+Name: KnowageCockpitEngine.war
+Implementation-Title: KnowageCockpitEngine
+Implementation-Version: 6.0.0
+

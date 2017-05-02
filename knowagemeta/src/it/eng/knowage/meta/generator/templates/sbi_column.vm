@@ -1,0 +1,25 @@
+###------------------------------------------------
+########## MACRO
+#macro( append $members $parameters )
+#if( $members == "")
+	#set( $members = $parameters )
+#else
+	#set( $members = "$members, $parameters" ) 
+#end	
+#end
+###------------------------------------------------
+#if ( $jpaColumn.isDataTypeLOB() )
+@Lob()
+#end
+#if ( $jpaColumn.isDataTypeGeometry() )
+@Type(type = "org.hibernatespatial.GeometryUserType")
+#end
+#if ($jpaColumn.needMapTemporalType())
+@Temporal( TemporalType.$jpaColumn.getMapTemporalType())
+#end
+#set ($members = "")
+#append($members "name=$jpaColumn.quotedMappingColumnName" )
+#####    ADD THE LINE TO THE SOURCE CODE
+#if( $members !="" )
+@Column($members)
+#end

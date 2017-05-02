@@ -1,0 +1,1 @@
+  delete Ext.tip.Tip.prototype.minWidth;

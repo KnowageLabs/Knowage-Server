@@ -1,0 +1,183 @@
+<?xml version="1.0"?>
+<Schema name="FoodMart">
+  <!-- == $Id: FoodMart.xml,v 1.1 2005/12/13 12:03:52 avix Exp $ == This software is subject to the terms of the Common Public License == Agreement, available at the following URL: == http://www.opensource.org/licenses/cpl.html. == (C) Copyright 2000-2005 Kana Software, Inc. and others. == All Rights Reserved. == You must accept the terms of that agreement to use this software. -->
+  <!-- Shared dimensions -->
+  
+                  <Dimension name="Customers">
+                    <Hierarchy hasAll="true" allMemberName="All Customers" primaryKey="customer_id">
+                        <Table name="customer"/>
+                        <Level name="Country" column="country" uniqueMembers="true"/>
+                        <Level name="State Province" column="state_province" uniqueMembers="true"/>
+                        <Level name="City" column="city" uniqueMembers="false"/>
+                        <Level name="Name" column="lname" uniqueMembers="false"/>
+                    </Hierarchy>
+					<Hierarchy name="short" hasAll="true" allMemberName="All Customers" primaryKey="customer_id">
+                        <Table name="customer"/>
+                        <Level name="Country" column="country" uniqueMembers="true"/>
+                        <Level name="City" column="city" uniqueMembers="false"/>
+                    </Hierarchy>
+                  </Dimension>
+                  
+                  <Dimension name="Version" >
+						<Hierarchy hasAll="false" primaryKey="wbversion"> 
+							<Table name="wbversion"/>
+							<Level name="Versione" column="wbversion" uniqueMembers="true"  captionColumn="version_name"/>
+						</Hierarchy>
+                  </Dimension>
+
+                  <Dimension name="Region">
+                     <Hierarchy hasAll="true" allMemberName="All Regions" primaryKey="store_id" primaryKeyTable="store">
+                          <Join leftKey="region_id" rightKey="region_id">
+                            <Table name="store"/>
+                            <Table name="region"/>
+                          </Join>
+                          <Level name="Sales Region" table="region" column="sales_region" uniqueMembers="true"/>
+
+                          <Level name="Sales District" table="region" column="sales_district" uniqueMembers="false"/>
+                          <Level name="Sales City" table="region" column="sales_city" uniqueMembers="false"/>
+                          <Level name="Store Name" table="store" column="store_name" uniqueMembers="true">
+                            <Property name="Store Type" column="store_type"/>
+                            <Property name="Store Manager" column="store_manager"/>
+                            <Property name="Store Sqft" column="store_sqft" type="Numeric"/>
+                            <Property name="Grocery Sqft" column="grocery_sqft" type="Numeric"/>
+                            <Property name="Frozen Sqft" column="frozen_sqft" type="Numeric"/>
+                            <Property name="Meat Sqft" column="meat_sqft" type="Numeric"/>
+                            <Property name="Has coffee bar" column="coffee_bar" type="Boolean"/>
+                            <Property name="Street address" column="store_street_address" type="String"/>
+                          </Level>
+
+                      </Hierarchy>
+                  </Dimension>
+ 
+                  <Dimension name="Product">
+                    <Hierarchy hasAll="true" allMemberName="All Products" primaryKey="product_id" primaryKeyTable="product">
+                      <Table name="product"/>
+                      <Level name="Product Family" table="product" column="product_family" uniqueMembers="false"/>
+                      <Level name="Product Department" table="product" column="product_department" uniqueMembers="false"/>
+                      <Level name="Product Category" table="product" column="product_category" uniqueMembers="false"/>
+                      <Level name="Product Subcategory" table="product" column="product_subcategory" uniqueMembers="false"/>
+                      <Level name="Brand Name" table="product" column="brand_name" uniqueMembers="false"/>
+                      <Level name="Product Name" table="product" column="product_name" uniqueMembers="true"/>
+                    </Hierarchy>
+                  </Dimension>
+                  
+              
+                  
+                  <Cube name="Sales">
+                    <Table name="sales_fact"/>
+                    <DimensionUsage name="Product" source="Product" foreignKey="product_id"/>
+                    <DimensionUsage name="Region" source="Region" foreignKey="store_id"/>   
+					<DimensionUsage name="Customers" source="Customers" foreignKey="customer_id"/>   
+                    <Measure name="Unit Sales Original" column="unit_sales" aggregator="sum"       formatString="Standard"/>
+                    <Measure name="Store Cost" column="store_cost" aggregator="sum"       formatString="#,###.00"/>
+                    <Measure name="Sales Count Original" column="product_id" aggregator="count"       formatString="#,###" visible="false"/>
+				    <Measure name="Customer Count" column="customer_id"       aggregator="distinct count" formatString="#,###"/>
+        
+					<Measure name="Atomic" aggregator="count"/>
+
+                  </Cube>
+				  
+				   <Cube name="Sales_Edit">
+                    <Table name="sales_fact_virtual"/>
+                    <DimensionUsage name="Product" source="Product" foreignKey="product_id"/>
+
+                    <DimensionUsage name="Region" source="Region" foreignKey="store_id"/>   
+					<DimensionUsage name="Customers" source="Customers" foreignKey="customer_id"/>   
+					<DimensionUsage name="Version" source="Version" foreignKey="wbversion"/>   
+                    <Measure name="Store Sales" column="store_sales" aggregator="sum"       formatString="#,###.00"/>
+                    <Measure name="Store Cost" column="store_cost" aggregator="sum"       formatString="#,###.00"/>        
+                  </Cube>
+				  
+				  
+				  <VirtualCube name="Sales_V">
+    <CubeUsages>
+        <CubeUsage cubeName="Sales_Edit" ignoreUnrelatedDimensions="true"/>
+		<CubeUsage cubeName="Sales" ignoreUnrelatedDimensions="true"/>
+    </CubeUsages>
+    <VirtualCubeDimension cubeName="Sales" name="Customers"/>
+    <VirtualCubeDimension cubeName="Sales" name="Product"/>
+    <VirtualCubeDimension cubeName="Sales" name="Region"/>
+    <VirtualCubeDimension cubeName="Sales_Edit" name="Customers"/>
+    <VirtualCubeDimension cubeName="Sales_Edit" name="Product"/>
+    <VirtualCubeDimension cubeName="Sales_Edit" name="Region"/>
+	<VirtualCubeDimension cubeName="Sales_Edit" name="Version"/>
+    <VirtualCubeMeasure cubeName="Sales" name="[Measures].[Unit Sales Original]" visible="false"/>
+	<VirtualCubeMeasure cubeName="Sales" name="[Measures].[Sales Count Original]" visible="false"/>
+	<VirtualCubeMeasure cubeName="Sales_Edit" name="[Measures].[Store Sales]" visible="true"/>
+	<VirtualCubeMeasure cubeName="Sales_Edit" name="[Measures].[Store Cost]" visible="true"/>
+	<CalculatedMember name="Sales Count" dimension="Measures">
+		<Formula>
+			VALIDMEASURE([Measures].[Sales Count Original])
+		</Formula>
+	</CalculatedMember>   
+	<CalculatedMember name="Unit Sales" dimension="Measures">
+		<Formula>
+			VALIDMEASURE([Measures].[Unit Sales Original])
+		</Formula>
+	</CalculatedMember>   
+</VirtualCube>
+				  
+                  
+                  <Cube name="Sales_profiled">
+                    <Table name="sales_fact_1998"/>
+                    <DimensionUsage name="Region" source="Region" foreignKey="store_id"/>
+                    <Dimension name="Product" foreignKey="product_id">
+                      <Hierarchy hasAll="true" allMemberName="All Products" primaryKey="product_id">
+                        <View alias="Product">
+                          <SQL dialect="generic">
+                            select 
+                                  pc.product_family as product_family,
+                                  p.product_id as product_id,
+                                  p.product_name as product_name,
+                                  p.brand_name as brand_name,
+                                  pc.product_subcategory as product_subcategory,
+                                  pc.product_category as product_category,
+                                  pc.product_department as product_department
+                            from 
+                                  product as p, product_class as pc
+                            where 
+                                  p.product_class_id = pc.product_class_id
+                                  and pc.product_family = '${filter}'
+                          </SQL>
+                        </View>
+                        <Level name="Product Family" column="product_family" uniqueMembers="false"/>
+                        <Level name="Product Department" column="product_department" uniqueMembers="false"/>
+                        <Level name="Product Category" column="product_category" uniqueMembers="false"/>
+                        <Level name="Product Subcategory" column="product_subcategory" uniqueMembers="false"/>
+                        <Level name="Brand Name" column="brand_name" uniqueMembers="false"/>
+                        <Level name="Product Name" column="product_name" uniqueMembers="true"/>
+                      </Hierarchy>
+                    </Dimension>
+                    <DimensionUsage name="Customers" source="Customers" foreignKey="customer_id"/>
+
+                    <Dimension name="Promotion Media" foreignKey="promotion_id">
+                      <Hierarchy hasAll="true" allMemberName="All Media" primaryKey="promotion_id">
+                        <Table name="promotion"/>
+                        <Level name="Media Type" column="media_type" uniqueMembers="true"/>
+                        </Hierarchy>
+                        </Dimension>
+                        <Dimension name="Promotions" foreignKey="promotion_id">
+                          <Hierarchy hasAll="true" allMemberName="All Promotions" primaryKey="promotion_id">
+                            <Table name="promotion"/>
+                            <Level name="Promotion Name" column="promotion_name" uniqueMembers="true"/>
+                            </Hierarchy>
+                            </Dimension>
+                            <Measure name="Unit Sales" column="unit_sales" aggregator="sum"       formatString="Standard"/>
+                            <Measure name="Store Cost" column="store_cost" aggregator="sum"       formatString="#,###.00"/>
+                            <Measure name="Store Sales" column="store_sales" aggregator="sum"       formatString="#,###.00"/>
+                            <Measure name="Sales Count" column="product_id" aggregator="count"       formatString="#,###"/>
+                            <Measure name="Customer Count" column="customer_id"       aggregator="distinct count" formatString="#,###"/>
+                            <CalculatedMember       name="Profit"       dimension="Measures">
+                              <Formula>
+                                [Measures].[Store Sales] - [Measures].[Store Cost]
+                              </Formula>
+							  
+                              <CalculatedMemberProperty name="FORMAT_STRING" value="$#,##0.00"/>
+                              </CalculatedMember>
+                  </Cube>
+                  
+                  
+                  
+     
+    
+</Schema>

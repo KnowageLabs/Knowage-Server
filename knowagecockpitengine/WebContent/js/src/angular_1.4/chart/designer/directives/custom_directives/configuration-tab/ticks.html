@@ -1,0 +1,25 @@
+<div ng-form name="configuration-ticksForm">
+	<div layout="row" flex layout-margin>
+	
+		<label>{{translate.load("sbi.chartengine.configuration.scatter.startOnTick")}}</label>
+		<md-input-container class="small counter"> <md-checkbox
+			ng-model="chartTemplate.AXES_LIST.AXIS[1].startOnTick" aria-label="starttick" name="ticks_starttick"></md-checkbox>
+		</md-input-container>
+	</div>
+	
+	<div layout="row" flex layout-margin>
+	
+		<label>{{translate.load("sbi.chartengine.configuration.scatter.endOnTick")}}</label>
+		<md-input-container class="small counter"> <md-checkbox
+			ng-model="chartTemplate.AXES_LIST.AXIS[1].endOnTick" aria-label="endtick" name="ticks_endtick"></md-checkbox>
+		</md-input-container>
+	</div>
+	
+	<div layout="row" flex layout-margin>
+	
+		<label>{{translate.load("sbi.chartengine.configuration.scatter.showLastLabel")}}</label>
+		<md-input-container class="small counter"> <md-checkbox
+			ng-model="chartTemplate.AXES_LIST.AXIS[1].showLastLabel" aria-label="lastlabel" name="ticks_lastlabel"></md-checkbox>
+		</md-input-container>
+	</div>
+<div>

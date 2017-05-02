@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PUBLISHERS>
+
+  	<PUBLISHER name="importexportHome">
+    	<RENDERING channel="PORTLET" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/tools/importexport/importexportHome.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/tools/importexport/importexportHome.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+	
+  	<PUBLISHER name="ImportExportPubJ">
+    	<RENDERING channel="PORTLET" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="it.eng.spagobi.tools.importexport.publishers.ImportExportPublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="it.eng.spagobi.tools.importexport.publishers.ImportExportPublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+  	
+	<PUBLISHER name="ImportExportLoopback">
+    	<RENDERING channel="PORTLET" mode="" type="LOOP">
+      		<RESOURCES>
+      			<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="BIObjectsPage" />
+      			<PARAMETER name="LIGHT_NAVIGATOR_DISABLED" type="ABSOLUTE" scope="" value="true" />
+      			<PARAMETER name="ACTOR" type="ABSOLUTE" scope="" value="ADMIN_ACTOR" />
+      			<PARAMETER name="OBJECTS_VIEW" type="ABSOLUTE" scope="" value="VIEW_OBJECTS_AS_TREE" />
+      			<PARAMETER name="OPERATION" type="ABSOLUTE" scope="" value="IMPORTEXPORT_OPERATION" />
+      			<PARAMETER name="EXPORT_FILE_PATH" 
+      					   type="RELATIVE" 
+      					   scope="SERVICE_RESPONSE" 
+      					   value="IMPORTEXPORTMODULE.EXPORT_FILE_PATH"/>
+      			<PARAMETER name="IMPORT_RESULT_INFO" 
+      					   type="RELATIVE" 
+      					   scope="SERVICE_RESPONSE" 
+      					   value="IMPORTEXPORTMODULE.IMPORT_RESULT_INFO"/>
+        	</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="LOOP">
+      		<RESOURCES>
+      			<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="BIObjectsPage" />
+      			<PARAMETER name="LIGHT_NAVIGATOR_DISABLED" type="ABSOLUTE" scope="" value="true" />
+      			<PARAMETER name="ACTOR" type="ABSOLUTE" scope="" value="ADMIN_ACTOR" />
+      			<PARAMETER name="OBJECTS_VIEW" type="ABSOLUTE" scope="" value="VIEW_OBJECTS_AS_TREE" />
+      			<PARAMETER name="OPERATION" type="ABSOLUTE" scope="" value="IMPORTEXPORT_OPERATION" />
+      			<PARAMETER name="EXPORT_FILE_PATH" 
+      					   type="RELATIVE" 
+      					   scope="SERVICE_RESPONSE" 
+      					   value="IMPORTEXPORTMODULE.EXPORT_FILE_PATH"/>
+      			<PARAMETER name="IMPORT_RESULT_INFO" 
+      					   type="RELATIVE" 
+      					   scope="SERVICE_RESPONSE" 
+      					   value="IMPORTEXPORTMODULE.IMPORT_RESULT_INFO"/>
+        	</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+  	
+  	<PUBLISHER name="ImportExportLoopbackStopImport">
+    	<RENDERING channel="PORTLET" mode="" type="LOOP">
+      		<RESOURCES>
+      			<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="BIObjectsPage" />
+      			<PARAMETER name="LIGHT_NAVIGATOR_DISABLED" type="ABSOLUTE" scope="" value="true" />
+      			<PARAMETER name="ACTOR" type="ABSOLUTE" scope="" value="ADMIN_ACTOR" />
+      			<PARAMETER name="OPERATION" type="ABSOLUTE" scope="" value="IMPORTEXPORT_OPERATION" />
+      			<PARAMETER name="OBJECTS_VIEW" type="ABSOLUTE" scope="" value="VIEW_OBJECTS_AS_TREE" />
+        	</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="LOOP">
+      		<RESOURCES>
+      			<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="BIObjectsPage" />
+      			<PARAMETER name="LIGHT_NAVIGATOR_DISABLED" type="ABSOLUTE" scope="" value="true" />
+      			<PARAMETER name="ACTOR" type="ABSOLUTE" scope="" value="ADMIN_ACTOR" />
+      			<PARAMETER name="OPERATION" type="ABSOLUTE" scope="" value="IMPORTEXPORT_OPERATION" />
+      			<PARAMETER name="OBJECTS_VIEW" type="ABSOLUTE" scope="" value="VIEW_OBJECTS_AS_TREE" />
+        	</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+  	
+  	<PUBLISHER name="ImportExportRoleAssociation">
+		<RENDERING channel="PORTLET" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/tools/importexport/importexportRoleAssociation.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp" />
+      		</RESOURCES>
+    	</RENDERING>
+    	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/tools/importexport/importexportRoleAssociation.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+  	</PUBLISHER>
+  	<PUBLISHER name="ImportExportSkipRoleAssociation">
+		<RENDERING channel="PORTLET" mode="" type="LOOP">
+      		<RESOURCES>
+      			<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="ImportExportPage" />
+      			<PARAMETER name="LIGHT_NAVIGATOR_DISABLED" type="ABSOLUTE" scope="" value="true" />
+      			<PARAMETER name="MESSAGEDET" type="ABSOLUTE" scope="" value="IMPEXP_ROLE_ASSOCIATION" />
+      			<PARAMETER name="ROLES_ASSOCIATIONS_SKIPPED" type="ABSOLUTE" scope="" value="TRUE" />
+      		</RESOURCES>
+    	</RENDERING>
+    	<RENDERING channel="HTTP" mode="" type="LOOP">
+      		<RESOURCES>
+      			<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="ImportExportPage" />
+      			<PARAMETER name="LIGHT_NAVIGATOR_DISABLED" type="ABSOLUTE" scope="" value="true" />
+      			<PARAMETER name="MESSAGEDET" type="ABSOLUTE" scope="" value="IMPEXP_ROLE_ASSOCIATION" />
+      			<PARAMETER name="ROLES_ASSOCIATIONS_SKIPPED" type="ABSOLUTE" scope="" value="TRUE" />
+      		</RESOURCES>
+    	</RENDERING>
+  	</PUBLISHER>
+  	
+  	<PUBLISHER name="ImportExportEngineAssociation">
+		<RENDERING channel="PORTLET" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/tools/importexport/importexportEngineAssociation.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp" />
+      		</RESOURCES>
+    	</RENDERING>
+    	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/tools/importexport/importexportEngineAssociation.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+  	</PUBLISHER>
+  	<PUBLISHER name="ImportExportSkipEngineAssociation">
+		<RENDERING channel="PORTLET" mode="" type="LOOP">
+      		<RESOURCES>
+      			<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="ImportExportPage" />
+      			<PARAMETER name="LIGHT_NAVIGATOR_DISABLED" type="ABSOLUTE" scope="" value="true" />
+      			<PARAMETER name="MESSAGEDET" type="ABSOLUTE" scope="" value="IMPEXP_ENGINE_ASSOCIATION" />
+      			<PARAMETER name="ENGINES_ASSOCIATIONS_SKIPPED" type="ABSOLUTE" scope="" value="TRUE" />
+      		</RESOURCES>
+    	</RENDERING>
+    	<RENDERING channel="HTTP" mode="" type="LOOP">
+      		<RESOURCES>
+      			<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="ImportExportPage" />
+      			<PARAMETER name="LIGHT_NAVIGATOR_DISABLED" type="ABSOLUTE" scope="" value="true" />
+      			<PARAMETER name="MESSAGEDET" type="ABSOLUTE" scope="" value="IMPEXP_ENGINE_ASSOCIATION" />
+      			<PARAMETER name="ENGINES_ASSOCIATIONS_SKIPPED" type="ABSOLUTE" scope="" value="TRUE" />
+      		</RESOURCES>
+    	</RENDERING>
+  	</PUBLISHER>
+  	
+  	<PUBLISHER name="ImportExportDataSourceAssociation">
+		<RENDERING channel="PORTLET" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/tools/importexport/importexportDataSourceAssociation.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp" />
+      		</RESOURCES>
+    	</RENDERING>
+    	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/tools/importexport/importexportDataSourceAssociation.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+  	</PUBLISHER>
+  	
+  	<PUBLISHER name="ImportExportExistingMetadataAssociation">
+		<RENDERING channel="PORTLET" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/tools/importexport/importexportExistingMetadataAssociation.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp" />
+      		</RESOURCES>
+    	</RENDERING>
+    	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/tools/importexport/importexportExistingMetadataAssociation.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+  	</PUBLISHER>
+   	<PUBLISHER name="ImportExportSkipExistingMetadataAssociation">
+		<RENDERING channel="PORTLET" mode="" type="LOOP">
+      		<RESOURCES>
+      			<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="ImportExportPage" />
+      			<PARAMETER name="LIGHT_NAVIGATOR_DISABLED" type="ABSOLUTE" scope="" value="true" />
+      			<PARAMETER name="MESSAGEDET" type="ABSOLUTE" scope="" value="IMPEXP_METADATA_ASS" />
+      		</RESOURCES>
+    	</RENDERING>
+    	<RENDERING channel="HTTP" mode="" type="LOOP">
+      		<RESOURCES>
+      			<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="ImportExportPage" />
+      			<PARAMETER name="LIGHT_NAVIGATOR_DISABLED" type="ABSOLUTE" scope="" value="true" />
+      			<PARAMETER name="MESSAGEDET" type="ABSOLUTE" scope="" value="IMPEXP_METADATA_ASS" />
+      		</RESOURCES>
+    	</RENDERING>
+  	</PUBLISHER>
+  	
+  	
+</PUBLISHERS>

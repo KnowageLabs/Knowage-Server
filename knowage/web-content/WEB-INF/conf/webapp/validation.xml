@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VALIDATIONS>
+	<SERVICE name="DetailMenuPage" type="PAGE">
+		<VALIDATION blocking="true" validators="">
+			<CONDITIONS>
+				<PARAMETER name="MESSAGEDET" scope="SERVICE_REQUEST" value="DETAIL_INS"/>
+			</CONDITIONS>
+			<FIELDS>
+				<FIELD name="name" label="#SBISet.detailMenu.nameField">
+					<VALIDATOR validatorName="MANDATORY"/>
+					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+				</FIELD>
+				<FIELD name="description" label="#SBISet.detailMenu.descriptionField">
+					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+				</FIELD>
+				<FIELD name="objParameters" label="#SBISet.detailMenu.parameters">
+					<VALIDATOR validatorName="XSS"/>
+				</FIELD>
+				<FIELD name="subobjectName" label="#SBISet.detailMenu.subobject">
+					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+				</FIELD>
+				<FIELD name="snapshotName" label="#SBISet.detailMenu.snapshotName">
+					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+				</FIELD>
+				<FIELD name="snapshotHistory" label="#SBISet.detailMenu.snapshotHistory">
+					<VALIDATOR validatorName="NUMERIC"/>
+				</FIELD>
+				<FIELD name="staticpage" label="#SBISet.menu.staticPage">
+					<VALIDATOR validatorName="REGEXP" arg0="^([a-zA-Z0-9.\s\-\_])*$"/>
+				</FIELD>
+				<FIELD name="EXT_APP_URL" label="#SBISet.menu.externalAppUrl">
+					<VALIDATOR validatorName="MAXLENGTH" arg0="1000"/>
+				</FIELD>
+				<FIELD name="viewicons" label="#SBISet.menu.viewDocumentIcons">
+					<VALIDATOR validatorName="BOOLEAN"/>
+				</FIELD>
+				<FIELD name="hideToolbar" label="#SBISet.menu.hideToolbar">
+					<VALIDATOR validatorName="BOOLEAN"/>
+				</FIELD>
+				<FIELD name="hideSliders" label="#SBISet.menu.hideSliders">
+					<VALIDATOR validatorName="BOOLEAN"/>
+				</FIELD>
+				<FIELD name="functionality" label="#SBISet.menu.functionality">
+					<VALIDATOR validatorName="^([a-zA-Z0-9\s\-\_])*$"/>
+				</FIELD>
+				<FIELD name="initialPath" label="#SBISet.menu.initialPath">
+					<VALIDATOR validatorName="^([a-zA-Z0-9/])*$"/>
+				</FIELD>
+			</FIELDS>
+		</VALIDATION>
+		<VALIDATION blocking="true" validators="">
+			<CONDITIONS>
+				<PARAMETER name="MESSAGEDET" scope="SERVICE_REQUEST" value="DETAIL_MOD"/>
+			</CONDITIONS>
+			<FIELDS>
+				<FIELD name="name" label="#SBISet.detailMenu.nameField">
+					<VALIDATOR validatorName="MANDATORY"/>
+					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+				</FIELD>
+				<FIELD name="description" label="#SBISet.detailMenu.descriptionField">
+					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+				</FIELD>
+				<FIELD name="objParameters" label="#SBISet.detailMenu.parameters">
+					<VALIDATOR validatorName="XSS"/>
+				</FIELD>
+				<FIELD name="subobjectName" label="#SBISet.detailMenu.subobject">
+					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+				</FIELD>
+				<FIELD name="snapshotName" label="#SBISet.detailMenu.snapshotName">
+					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+				</FIELD>
+				<FIELD name="snapshotHistory" label="#SBISet.detailMenu.snapshotHistory">
+					<VALIDATOR validatorName="NUMERIC"/>
+				</FIELD>
+				<FIELD name="staticpage" label="#SBISet.menu.staticPage">
+					<VALIDATOR validatorName="REGEXP" arg0="^([a-zA-Z0-9.\s\-\_])*$"/>
+				</FIELD>
+				<FIELD name="EXT_APP_URL" label="#SBISet.menu.externalAppUrl">
+					<VALIDATOR validatorName="MAXLENGTH" arg0="1000"/>
+				</FIELD>
+				<FIELD name="viewicons" label="#SBISet.menu.viewDocumentIcons">
+					<VALIDATOR validatorName="BOOLEAN"/>
+				</FIELD>
+				<FIELD name="hideToolbar" label="#SBISet.menu.hideToolbar">
+					<VALIDATOR validatorName="BOOLEAN"/>
+				</FIELD>
+				<FIELD name="hideSliders" label="#SBISet.menu.hideSliders">
+					<VALIDATOR validatorName="BOOLEAN"/>
+				</FIELD>
+				<FIELD name="functionality" label="#SBISet.menu.functionality">
+					<VALIDATOR validatorName="^([a-zA-Z0-9\s\-\_])*$"/>
+				</FIELD>
+				<FIELD name="initialPath" label="#SBISet.menu.initialPath">
+					<VALIDATOR validatorName="^([a-zA-Z0-9/])*$"/>
+				</FIELD>
+			</FIELDS>
+		</VALIDATION>
+	</SERVICE>
+</VALIDATIONS>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<olap>
+	<cube reference="Mondrian_what_if_mysql" />
+
+	<MDXquery>
+		SELECT {[Measures].[Quantita]} ON COLUMNS,
+		{[Clienti].[All Clienti]} ON ROWS FROM [TabellaFattiVend] 
+	</MDXquery>
+	<MDXMondrianQuery>
+		SELECT {[Measures].[Quantita]} ON COLUMNS,
+		{[Clienti].[All Clienti]} ON ROWS FROM [TabellaFattiVend] 
+	</MDXMondrianQuery>
+
+
+	<STANDALONE>
+		<CONNECTION>
+			<USR>sa</USR>
+			<PWD>root</PWD>
+			<CATALOG>\Olap\tt3.xml</CATALOG>
+			<CONNECTIONSTRING>jdbc:sqlserver://GHEDIN\MSSQLSERVER2;jdbc.databaseName=TEST_DWH</CONNECTIONSTRING>
+			<DRIVER>com.microsoft.sqlserver.jdbc.SQLServerDriver</DRIVER>
+		</CONNECTION>
+	</STANDALONE>
+
+
+
+
+</olap>

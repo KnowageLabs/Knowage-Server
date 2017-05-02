@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+
+Name: KnowageTalendEngine.war
+Implementation-Title: KnowageTalendEngine
+Implementation-Version: 6.0.0 (Compatible with TOS 3.0.4)
+

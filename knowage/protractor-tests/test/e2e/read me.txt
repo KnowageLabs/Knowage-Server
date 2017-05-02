@@ -1,0 +1,1 @@
+Tests(*.js files) to execute go in e2e directory by default. This can be changed in /protractor-tests/conf.js.

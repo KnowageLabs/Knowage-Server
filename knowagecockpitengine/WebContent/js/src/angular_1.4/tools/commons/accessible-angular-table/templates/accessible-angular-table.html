@@ -1,0 +1,9 @@
+<table border='1' summary="test summary" caption="test caption" width="100%">
+	<tr >
+		<th scope="col" ng-repeat="column in columns">{{column.label}}</th>
+	</tr>
+	
+	<tr ng-repeat="item in ngModel">
+		<td ng-repeat="column in columns">{{item[column.label]}}</td>
+	</tr>
+</table>

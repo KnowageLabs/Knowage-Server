@@ -1,0 +1,46 @@
+/*
+Styles for the component Ext.ux.RadioColumn
+*/ 
+
+.radio-column-checked{
+	background-position: 0 -14px!important; 
+	
+}
+		
+.radio-column-unchecked{
+	background-position: 0 0px; 
+}
+
+.check-column-checked{
+	background-position: 0 -14px!important; 
+	margin-left: expression((this.width-13)/2);
+}
+		
+.check-column-unchecked{
+	background-position: 0 0px; 
+}
+
+.delete-icon{
+	background-image: url('../img/icon/delete.gif') !important;
+}
+
+.x-form-text-search{
+	background-image: url('../img/form/text-bg-search.gif') !important;
+	background-repeat: no-repeat;
+}
+
+.x-livesearch-match {
+    font-weight: bold;
+    background-color: yellow;
+}
+
+.x-form-question-trigger{
+	background-image:url('../img/form/question-trigger.gif');
+}
+
+
+.custom-error  { 
+	background-color: #ffe2e2 !important; 
+    color: #900; 
+} 
+

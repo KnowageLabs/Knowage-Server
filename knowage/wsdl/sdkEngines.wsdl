@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="urn:spagobisdkengines" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="urn:spagobisdkengines" xmlns:intf="urn:spagobisdkengines" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns2="http://bo.engines.sdk.spagobi.eng.it" xmlns:tns3="http://exceptions.sdk.spagobi.eng.it" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!--WSDL created by Apache Axis version: 1.4
+Built on Apr 22, 2006 (06:55:48 PDT)-->
+ <wsdl:types>
+  <schema targetNamespace="http://bo.engines.sdk.spagobi.eng.it" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="urn:spagobisdkengines"/>
+   <import namespace="http://exceptions.sdk.spagobi.eng.it"/>
+   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+   <complexType name="SDKEngine">
+    <sequence>
+     <element name="className" nillable="true" type="soapenc:string"/>
+     <element name="description" nillable="true" type="soapenc:string"/>
+     <element name="documentType" nillable="true" type="soapenc:string"/>
+     <element name="driverClassName" nillable="true" type="soapenc:string"/>
+     <element name="driverName" nillable="true" type="soapenc:string"/>
+     <element name="encrypt" nillable="true" type="soapenc:int"/>
+     <element name="engineType" nillable="true" type="soapenc:string"/>
+     <element name="id" nillable="true" type="soapenc:int"/>
+     <element name="label" nillable="true" type="soapenc:string"/>
+     <element name="mainUrl" nillable="true" type="soapenc:string"/>
+     <element name="name" nillable="true" type="soapenc:string"/>
+     <element name="secondUrl" nillable="true" type="soapenc:string"/>
+     <element name="url" nillable="true" type="soapenc:string"/>
+     <element name="useDataSet" nillable="true" type="soapenc:boolean"/>
+     <element name="useDataSource" nillable="true" type="soapenc:boolean"/>
+    </sequence>
+   </complexType>
+  </schema>
+  <schema targetNamespace="urn:spagobisdkengines" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="http://bo.engines.sdk.spagobi.eng.it"/>
+   <import namespace="http://exceptions.sdk.spagobi.eng.it"/>
+   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+   <complexType name="ArrayOf_tns2_SDKEngine">
+    <complexContent>
+     <restriction base="soapenc:Array">
+      <attribute ref="soapenc:arrayType" wsdl:arrayType="tns2:SDKEngine[]"/>
+     </restriction>
+    </complexContent>
+   </complexType>
+  </schema>
+  <schema targetNamespace="http://exceptions.sdk.spagobi.eng.it" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="http://bo.engines.sdk.spagobi.eng.it"/>
+   <import namespace="urn:spagobisdkengines"/>
+   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+   <complexType name="NotAllowedOperationException">
+    <sequence/>
+   </complexType>
+  </schema>
+ </wsdl:types>
+
+   <wsdl:message name="getEnginesRequest">
+
+   </wsdl:message>
+
+   <wsdl:message name="NotAllowedOperationException">
+
+      <wsdl:part name="fault" type="tns3:NotAllowedOperationException"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getEnginesResponse">
+
+      <wsdl:part name="getEnginesReturn" type="impl:ArrayOf_tns2_SDKEngine"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getEngineResponse">
+
+      <wsdl:part name="getEngineReturn" type="tns2:SDKEngine"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getEngineRequest">
+
+      <wsdl:part name="in0" type="soapenc:int"/>
+
+   </wsdl:message>
+
+   <wsdl:portType name="EnginesService">
+
+      <wsdl:operation name="getEngines">
+
+         <wsdl:input message="impl:getEnginesRequest" name="getEnginesRequest"/>
+
+         <wsdl:output message="impl:getEnginesResponse" name="getEnginesResponse"/>
+
+         <wsdl:fault message="impl:NotAllowedOperationException" name="NotAllowedOperationException"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getEngine" parameterOrder="in0">
+
+         <wsdl:input message="impl:getEngineRequest" name="getEngineRequest"/>
+
+         <wsdl:output message="impl:getEngineResponse" name="getEngineResponse"/>
+
+         <wsdl:fault message="impl:NotAllowedOperationException" name="NotAllowedOperationException"/>
+
+      </wsdl:operation>
+
+   </wsdl:portType>
+
+   <wsdl:binding name="EnginesServiceSoapBinding" type="impl:EnginesService">
+
+      <wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="getEngines">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getEnginesRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkengines" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getEnginesResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkengines" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="NotAllowedOperationException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="NotAllowedOperationException" namespace="urn:spagobisdkengines" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getEngine">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getEngineRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkengines" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getEngineResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobisdkengines" use="encoded"/>
+
+         </wsdl:output>
+
+         <wsdl:fault name="NotAllowedOperationException">
+
+            <wsdlsoap:fault encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" name="NotAllowedOperationException" namespace="urn:spagobisdkengines" use="encoded"/>
+
+         </wsdl:fault>
+
+      </wsdl:operation>
+
+   </wsdl:binding>
+
+   <wsdl:service name="EnginesServiceService">
+
+      <wsdl:port binding="impl:EnginesServiceSoapBinding" name="EnginesService">
+
+         <wsdlsoap:address location="http://localhost:8080/SpagoBI/sdk/EnginesService"/>
+
+      </wsdl:port>
+
+   </wsdl:service>
+
+</wsdl:definitions>

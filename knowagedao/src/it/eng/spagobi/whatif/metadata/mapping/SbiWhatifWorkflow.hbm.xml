@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+	<class name="it.eng.spagobi.whatif.metadata.SbiWhatifWorkflow"
+		table="SBI_WHATIF_WORKFLOW">
+		<id name="id" type="integer">
+			<column name="id" />
+			<generator class="org.hibernate.id.enhanced.TableGenerator">
+				<param name="optimizer">none</param>
+				<param name="segment_value">SBI_WHATIF_WORKFLOW</param>
+				<param name="initial_value">1</param>
+			</generator>
+		</id>
+		<component class="it.eng.spagobi.commons.metadata.SbiCommonInfo"
+			name="commonInfo">
+			<property generated="never" lazy="false" name="userIn" type="string">
+				<column length="100" name="USER_IN" not-null="true" />
+			</property>
+			<property generated="never" lazy="false" name="userUp" type="string">
+				<column length="100" name="USER_UP" not-null="false" />
+			</property>
+			<property generated="never" lazy="false" name="userDe" type="string">
+				<column length="100" name="USER_DE" not-null="false" />
+			</property>
+			<property generated="never" lazy="false" name="timeIn" type="timestamp">
+				<column name="TIME_IN" not-null="true" />
+			</property>
+			<property generated="never" lazy="false" name="timeUp" type="timestamp">
+				<column name="TIME_UP" not-null="false" />
+			</property>
+			<property generated="never" lazy="false" name="timeDe" type="timestamp">
+				<column name="TIME_DE" not-null="false" />
+			</property>
+			<property generated="never" lazy="false" name="sbiVersionIn"
+				type="string">
+				<column length="10" name="SBI_VERSION_IN" not-null="false" />
+			</property>
+			<property generated="never" lazy="false" name="sbiVersionUp"
+				type="string">
+				<column length="10" name="SBI_VERSION_UP" not-null="false" />
+			</property>
+			<property generated="never" lazy="false" name="sbiVersionDe"
+				type="string">
+				<column length="10" name="SBI_VERSION_DE" not-null="false" />
+			</property>
+			<property generated="never" lazy="false" name="organization"
+				type="string">
+				<column length="20" name="ORGANIZATION" not-null="false" />
+			</property>
+		</component>
+		<property generated="never" lazy="false" name="userId" type="integer">
+			<column length="20" name="USER_ID" />
+		</property>
+		<property generated="never" lazy="false" name="sequcence" type="integer">
+			<column length="20" name="SEQUENCE" unique="true" />
+		</property>
+		<property generated="never" lazy="false" name="state" type="string">
+			<column length="20" name="STATE" />
+		</property>
+		<property generated="never" lazy="false" name="notes" type="string">
+			<column length="100" name="NOTES" />
+		</property>
+		<property generated="never" lazy="false" name="info" type="string">
+			<column length="100" name="INFO" />
+		</property>
+		<property generated="never" lazy="false" name="modelId" type="integer">
+			<column length="20" name="MODEL_ID" />
+		</property>
+	 	<filter name="tenantFilter" condition="organization=:tenant" />  
+	</class>
+ 	<filter-def name="tenantFilter">
+  		<filter-param name="tenant" type="string"/>
+	</filter-def>
+
+</hibernate-mapping>

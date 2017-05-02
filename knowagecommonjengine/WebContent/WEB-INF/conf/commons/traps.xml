@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<TRAPS>
+<!--  	<TRAP trap_type="ACTION" 
+		  trap_name="SERVICE_EXCEPTION_TRAP_ACTION" 
+		  name="serviceError" CATEGORY="serviceError"/>
+	
+	<TRAP trap_type="ACTION" 
+	      trap_name="ENGINE_STARTUP_EXCEPTION_TRAP_ACTION" 
+	      name="startupError" CATEGORY="startupError"/>	
+		-->  
+</TRAPS>

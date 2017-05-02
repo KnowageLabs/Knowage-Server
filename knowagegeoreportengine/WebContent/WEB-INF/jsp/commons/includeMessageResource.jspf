@@ -1,0 +1,55 @@
+<!--
+Knowage, Open Source Business Intelligence suite
+Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+  
+Knowage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+ 
+Knowage is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+  
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/js/lib/messageResource/messageResource.min.js"></script>
+
+<script type="text/javascript">
+	//Function that gets the properties file's content in an synchronous way
+	getSynch=function(url, callback){
+		var xmlhttp;
+		
+		//Get XMLHttpRequest
+		if (window.XMLHttpRequest) {
+			xmlhttp = new XMLHttpRequest();
+		} else {
+			//For IE6, IE5
+			xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+		}
+		
+		xmlhttp.open('GET', url, false);
+		xmlhttp.send();
+		callback(xmlhttp.responseText)
+	}
+	
+	//Initialization of the messageResource object
+	messageResource.init({
+  		filePath : "${pageContext.request.contextPath}/js/src/ext/sbi/messages/"
+  		, defaultLocale : 'en_US'
+  		, ajaxFunction : getSynch
+	});
+	
+	//Load of default file (en_US): it can be used if a message of the current locale is missing
+    messageResource.load('messages', function(){});
+    messageResource.setCurrentLocale('<%=locale.getLanguage()%>_<%=locale.getCountry()%>');
+    
+    //en_US has already been loaded: if current locale is en_US it is not necessary to load it again
+    if ('<%=locale.getLanguage()%>_<%=locale.getCountry()%>'!='en_US'){
+    	messageResource.load('messages', function(){});
+    }
+</script>

@@ -1,0 +1,31 @@
+<div>
+<div class="menu-text" >Template editing</div>
+<md-grid-list
+        md-cols="2" 
+        md-row-height="50px"
+         md-gutter="5px">
+  
+  <md-grid-tile ng-repeat="odb in olapDesignerButtonNames">
+    	<md-button class="right-toolbar-menu {{odb.name}}"  ng-click="btnFunctions(odb.name)">
+    		<md-tooltip md-direction="bottom">
+				
+				{{translate.load(odb.name)}}
+			</md-tooltip>
+    	</md-button>
+  </md-grid-tile>
+</md-grid-list>
+
+<div style="bottom: 0;position: absolute;">
+
+	<md-button class="md-raised"  ng-click="closeOlapTemplate()">
+		{{translate.load("sbi.olap.designer.close")}}
+	</md-button>
+
+	<md-button class="md-raised"  ng-click="sendOlapJsonTemplate()">
+		{{translate.load("sbi.olap.designer.save")}}
+	</md-button>
+
+
+</div>
+
+</div>

@@ -1,0 +1,176 @@
+<html>
+<html>
+<head>
+	<title>Knowage's JS-API Test Page</title>
+</head>
+<body>
+    <!--
+	<script type="text/javascript" src="commons.js"></script>
+    <script type="text/javascript" src="ajax.js"></script>
+    <script type="text/javascript" src="jsonp.js"></script>
+    <script type="text/javascript" src="services.js"></script>
+    <script type="text/javascript" src="api.js"></script>
+    -->
+   
+     
+     <script type="text/javascript" src="http://localhost:8080/knowage/js/src/sdk/sbisdk-all-production.js"></script>
+    
+    
+	
+	<p><b>TEST 1: getDocumentUrl</b><p>
+	<iframe id="execiframe" src='' height="300px" width="800px"></iframe>
+	<hr>
+	
+	<p><b>TEST 2: getDocumentHtml</b><p>
+	<div height="300px" width="800px" id='department'></div>
+	<hr>
+		
+	<p><b>TEST 3: injectDocument into existing div</b><p>
+	<div height="300px" width="100%" id='employee'></div>
+	<hr>
+	
+	<p><b>TEST 4: injectDocument into existing div using ExtJs UI</b><p>
+	<div height="500px" width="100%" id='departmentext'></div>
+	<hr>
+	
+	<p><b>TEST 5: injectDocument into non-existing div</b><p>
+	
+	
+	<script type="text/javascript">
+	<!--
+    Sbi.sdk.services.setBaseUrl({
+        protocol: 'http'     
+        , host: 'athos'
+        , port: '1084'
+        , contextPath: 'knowage'
+        , controllerPath: 'servlet/AdapterHTTP'  
+    });
+    
+    var cb = function(result, args, success) {
+        
+		if(success === true) {
+		 this.execTest1();
+        //this.execTest2();
+	    //this.execTest3();
+	    //this.execTest4();
+	    //this.execTest5();
+		} else {
+			alert('ERROR: Wrong username or password');
+		}
+    };
+
+
+    Sbi.sdk.api.authenticate({ 
+		params: {
+			user: 'biuser'
+			, password: 'biuser'
+		}
+		
+		, callback: {
+			fn: cb
+			, scope: this
+			//, args: {arg1: 'A', arg2: 'B', ...}
+		}
+	});
+
+
+
+    // Sbi.sdk.api.authenticate('biadmin','biadmin', cb, this);
+
+    
+
+	
+	
+    // TEST 1: getDocumentUrl -----------------------------------------------------
+    this.execTest1 = function() {
+	    var url = Sbi.sdk.api.getDocumentUrl({
+			documentLabel: 'DepartmentList'
+			, executionRole: '/spagobi/user'
+			, displayToolbar: false
+			, displaySliders: false
+			, height: '500px'
+			, width: '800px'
+			, iframe: {
+				style: 'border: 0px;'
+			}
+		});
+	    document.getElementById('execiframe').src = url;
+	};
+
+   
+ 	// TEST 2: getDocumentHtml ----------------------------------------------------
+    this.execTest2 = function() {
+	    var html = Sbi.sdk.api.getDocumentHtml({
+			documentLabel: 'DepartmentList'
+			, executionRole: '/spagobi/user'
+			, displayToolbar: false
+			, displaySliders: false
+			, iframe: {
+	    		height: '500px'
+	    		, width: '100%'
+				, style: 'border: 0px;'
+			}
+		});
+	    document.getElementById('department').innerHTML = html;
+	};
+
+ 	// TEST 3: injectDocument into existing div ------------------------------------
+ 	this.execTest3 = function() {
+	    Sbi.sdk.api.injectDocument({
+			documentLabel: 'EmployeeList'
+			, executionRole: '/spagobi/user'
+			, parameters: {department_id: 2}
+			, displayToolbar: false
+			, displaySliders: false
+			, target: 'employee'
+			, height: '500px'
+			, width: '800px'
+			, iframe: {
+				style: 'border: 0px;'
+			}
+		});
+	};
+	
+	
+ 	// TEST 4: injectDocument into non-existing div with ext ---------------------
+ 	this.execTest4 = function() {
+	    Sbi.sdk.api.injectDocument({
+			documentLabel: 'DepartmentList'
+			, executionRole: '/spagobi/user'
+			, displayToolbar: false
+			, displaySliders: false
+			, target: 'departmentext'
+			, iframe: {
+				style: 'border: 0px;'
+			}
+			, useExtUI: true
+		});
+	};
+
+	
+ 	// TEST 5: injectDocument into existing div ------------------------------------
+ 	this.execTest5 = function() {
+	    Sbi.sdk.api.injectDocument({
+			documentLabel: 'EmployeeList'
+			, executionRole: '/spagobi/user'
+			, parameters: {department_id: 2}
+			, displayToolbar: false
+			, displaySliders: false
+			, target: 'newmployee'
+			, height: '500px'
+			, width: '800px'
+			, iframe: {
+				style: 'border: 0px;'
+			}
+		});
+	};
+	
+
+ 	
+
+		//-->
+	</script>
+	
+
+</body>
+</html>

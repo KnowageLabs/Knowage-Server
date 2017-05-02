@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 5-nov-2008 17.17.40 by Hibernate Tools 3.1.0 beta3 -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.kpi.threshold.metadata.SbiThreshold" table="SBI_THRESHOLD" >
+        <id name="thresholdId" type="integer">
+            <column name="THRESHOLD_ID" />
+        </id>
+        <many-to-one name="thresholdType" class="it.eng.spagobi.commons.metadata.SbiDomains" >
+            <column name="THRESHOLD_TYPE_ID" not-null="true" />
+        </many-to-one>
+        <property name="name" type="string">
+            <column name="name" length="127" />
+		</property>
+        <property name="description" type="string">
+            <column name="description" />
+        </property>
+        <property name="code" type="string">
+            <column name="code" />
+        </property>
+        <set name="sbiKpis" inverse="true">
+            <key>
+                <column name="THRESHOLD_ID" />
+            </key>
+            <one-to-many class="it.eng.spagobi.kpi.config.metadata.SbiKpi" />
+        </set>
+        <set name="sbiKpiInstanceHistories" inverse="true">
+            <key>
+                <column name="THRESHOLD_ID" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.kpi.config.metadata.SbiKpiInstanceHistory" />
+        </set>
+        <set name="sbiKpiInstances" inverse="true">
+            <key>
+                <column name="THRESHOLD_ID" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.kpi.config.metadata.SbiKpiInstance" />
+        </set>
+        <set name="sbiThresholdValues" inverse="true" order-by="position" >
+            <key>
+                <column name="THRESHOLD_ID" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.kpi.threshold.metadata.SbiThresholdValue" />
+        </set>
+    </class>
+</hibernate-mapping>

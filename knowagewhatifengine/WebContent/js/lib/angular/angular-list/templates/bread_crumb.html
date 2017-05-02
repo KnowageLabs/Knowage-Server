@@ -1,0 +1,7 @@
+	
+<md-tabs ng-if="ngModel!=undefined && ngModel.length!=0" >
+	<md-tab ng-repeat="item in ngModel" label="{{item[itemName]}}" md-on-select="moveToItem(item,$index)" md-active="selectedIndex==$index">
+		<md-tab-body>
+		</md-tab-body>
+	</md-tab>
+</md-tabs>

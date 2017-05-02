@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DOCUMENT_BROWSER>
+
+
+  <FOLDER>
+  	<FIELD id="id" visible="false" showLabel="false" maxChars="20"/>	
+  	<FIELD id="name" visible="true" showLabel="false" maxChars="50"/>	  
+  	<FIELD id="description" visible="true" showLabel="false" maxChars="100"/>	 
+  	<FIELD id="code" visible="false" showLabel="false" maxChars="20"/>	
+  	<FIELD id="codType" visible="false" showLabel="false" maxChars="20"/>	
+  	<FIELD id="path" visible="false" showLabel="false" maxChars="20"/>	
+  	<FIELD id="parentId" visible="false" showLabel="false" maxChars="20"/>	
+  	
+  	<FIELD id="devRoles" visible="false" showLabel="false" maxChars="20"/>	
+  	<FIELD id="testRoles" visible="false" showLabel="false" maxChars="20"/>	
+  	<FIELD id="execRoles" visible="false" showLabel="false" maxChars="20"/>	
+  	<FIELD id="biObjects" visible="false" showLabel="false" maxChars="20"/>		 	
+  </FOLDER>
+  
+  
+  <DOCUMENT>
+  	   <FIELD id="label" sortable="false" groupable="true" searchable="true" visible="false" showLabel="false" maxChars="20"/>	  	
+	   <FIELD id="name" sortable="true" groupable="true" searchable="true" visible="true" showLabel="false" maxChars="40"/>	  
+	   <FIELD id="engine" sortable="true" groupable="false" searchable="true" visible="true" showLabel="true" maxChars="20"/>	  	  
+	   <FIELD id="description" sortable="false" groupable="fasle" visible="true" showLabel="true" maxChars="70"/>	  
+	   <FIELD id="creationDate" sortable="true" groupable="true" searchable="true"  visible="true" showLabel="false" maxChars="40"/>
+	   
+	   <FIELD id="typeCode" sortable="false" groupable="fasle" visible="false" showLabel="true" maxChars="20"/>	  
+	   <FIELD id="typeId" sortable="false" groupable="fasle" visible="false" showLabel="true" maxChars="20"/>	  
+	   <FIELD id="encrypt" sortable="false" groupable="fasle" visible="false" showLabel="true" maxChars="20"/>	  
+	   <FIELD id="profiledVisibility" sortable="false" groupable="fasle" visible="false" showLabel="true" maxChars="20"/>	  
+	   <FIELD id="datasource" sortable="false" groupable="fasle" visible="false" showLabel="true" maxChars="20"/>	  
+	   <FIELD id="dataset" sortable="false" groupable="fasle" visible="false" showLabel="true" maxChars="20"/>	  
+	   <FIELD id="uuid" sortable="false" groupable="fasle" visible="false" showLabel="true" maxChars="20"/>	  
+	   <FIELD id="relname" sortable="false" groupable="fasle" visible="false" showLabel="true" maxChars="20"/>	  
+	   <FIELD id="stateCode" sortable="false" groupable="fasle" visible="false" showLabel="true" maxChars="20"/>	  
+	   <FIELD id="stateId" sortable="false" groupable="fasle" visible="false" showLabel="true" maxChars="20"/>	  
+	   <FIELD id="functionalities" sortable="false" groupable="fasle" visible="false" showLabel="true" maxChars="20"/>	  
+	   <FIELD id="extendedDescription" sortable="false" groupable="fasle" visible="false" showLabel="true" maxChars="20"/>	  
+	   <FIELD id="creationUser" sortable="false" groupable="true" visible="false" showLabel="true" maxChars="20"/>	  
+	   <FIELD id="language" sortable="false" groupable="fasle" visible="false" showLabel="true" maxChars="20"/>	  
+	   <FIELD id="objectve" sortable="false" groupable="fasle" visible="false" showLabel="true" maxChars="20"/>	  
+	   <FIELD id="keywords" groupable="fasle" visible="false" showLabel="true" maxChars="20"/>	  
+	   <FIELD id="refreshSeconds" sortable="false" groupable="fasle" visible="false" showLabel="true" maxChars="20"/>	  	  
+	   <FIELD id="exporters" sortable="false" groupable="fasle" visible="false" showLabel="false" maxChars="20"/>	  
+  </DOCUMENT>
+
+</DOCUMENT_BROWSER>

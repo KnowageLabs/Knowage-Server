@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PRESENTATION>
+	<MAPPING business_type="ACTION" business_name="CREATE_CHART" publisher_name="CHARTKPI"/>
+	<MAPPING business_type="ACTION" business_name="GET_DATA_CHART_ACTION" publisher_name="HIGHCHART"/>
+</PRESENTATION>
+

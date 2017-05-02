@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ACTIONS>
+
+  <ACTION name="AJAX_SERVICE_EXCEPTION_ACTION" class="it.eng.spagobi.analiticalmodel.execution.service.ServiceExceptionAction" scope="REQUEST">
+		<CONFIG></CONFIG>
+	</ACTION>
+
+  <ACTION class="it.eng.spago.dispatching.action.EmptyAction" name="SERVICE_EXCEPTION_ACTION" scope="REQUEST">
+    <CONFIG/>
+  </ACTION>
+
+  <ACTION class="it.eng.spago.dispatching.action.EmptyAction" name="EMPTY_ACTION" scope="REQUEST">
+    <CONFIG/>
+  </ACTION>
+
+  <ACTION class="it.eng.spagobi.commons.services.SessionExpiredAction" name="SESSION_EXPIRED_ACTION" scope="REQUEST">
+    <CONFIG/>
+  </ACTION>
+  <ACTION name="START_ACTION" class="it.eng.spago.dispatching.action.util.PublishAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+ <ACTION name="START_ACTION_PUBLIC_USER" class="it.eng.spagobi.wapp.services.PublicUserStartAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+  <ACTION name="LOGIN_ACTION_SBI_SETTINGS" class="it.eng.spagobi.commons.services.PortletLoginAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+ <ACTION name="LOGIN_ACTION_SBI_DEVELOPMENT_CONTEXT" class="it.eng.spagobi.commons.services.PortletLoginAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+ <ACTION name="LOGIN_ACTION_SBI_ADMINISTRATION_CONTEXT" class="it.eng.spagobi.commons.services.PortletLoginAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+ <ACTION name="UPDATE_EXECUTION_MANAGER" class="it.eng.spagobi.commons.services.UpdateExecutionManager" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+  
+ <!-- new organization portlet for SpagoBI 2.0 -->
+ <ACTION name="LOGIN_ACTION_SBI_ANALITICAL_MODELS" class="it.eng.spagobi.commons.services.PortletLoginAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+ <ACTION name="LOGIN_ACTION_SBI_BEHAVIORAL_MODELS" class="it.eng.spagobi.commons.services.PortletLoginAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+ <ACTION name="LOGIN_ACTION_SBI_EVENTS" class="it.eng.spagobi.commons.services.PortletLoginAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+ <ACTION name="LOGIN_ACTION_SBI_CATALOGUES" class="it.eng.spagobi.commons.services.PortletLoginAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+ <ACTION name="LOGIN_ACTION_SBI_TOOLS" class="it.eng.spagobi.commons.services.PortletLoginAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+ <ACTION name="LOGIN_ACTION_SBI_RESOURCES" class="it.eng.spagobi.commons.services.PortletLoginAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION> 
+  <ACTION name="LOGIN_ACTION_SBI_DISTRIBUTIONLIST" class="it.eng.spagobi.commons.services.PortletLoginAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION> 
+   <ACTION name="LOGIN_ACTION_SBI_DISTRIBUTIONLISTUSER" class="it.eng.spagobi.commons.services.PortletLoginAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION> 
+   <ACTION name="LOGIN_ACTION_SBI_DOCUMENTEXECUTION" class="it.eng.spagobi.commons.services.PortletLoginAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+ <ACTION name="CHECK_USER_PROFILE_EXISTENCE" class="it.eng.spagobi.commons.services.CheckUserProfileAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION> 
+ <ACTION name="LOGIN_ACTION_WEB" class="it.eng.spagobi.commons.services.LoginActionWeb" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION> 
+ <ACTION name="DOMAIN_ACTION" class="it.eng.spagobi.commons.services.ManageDomainService" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>  
+  <ACTION name="CONFIG_ACTION" class="it.eng.spagobi.commons.services.ManageConfigService" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION> 
+ 
+</ACTIONS>
+

@@ -1,0 +1,15 @@
+it.eng.qbe.classloader
+it.eng.qbe.datasource
+it.eng.qbe.datasource.configuration
+it.eng.qbe.datasource.naming
+it.eng.qbe.model.accessmodality
+it.eng.qbe.model.properties
+it.eng.qbe.model.properties.initializer
+it.eng.qbe.model.structure
+it.eng.qbe.model.structure.builder
+it.eng.qbe.model.structure.filter
+it.eng.qbe.query
+it.eng.qbe.query.catalogue
+it.eng.qbe.query.transformers
+it.eng.qbe.statement
+it.eng.qbe.utility

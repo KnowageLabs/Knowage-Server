@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PORTLETINITIALIZERS>
+	<INITIALIZER class="it.eng.spagobi.security.init.SecurityInitializer" config="" />
+	<INITIALIZER class="it.eng.spagobi.analiticalmodel.functionalitytree.init.TreeInitializer" config="TREE_INITIALIZATION" />
+</PORTLETINITIALIZERS>

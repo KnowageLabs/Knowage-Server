@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PRESENTATION>
+
+	<MAPPING business_type="ACTION" business_name="MANAGE_ALARMS_ACTION" publisher_name="ManageAlarmsPublisher"/>
+	<MAPPING business_type="ACTION" business_name="MANAGE_CONTACTS_ACTION" publisher_name="ManageContactsPublisher"/>
+	
+	<MAPPING business_type="ACTION" business_name="INIT_MANAGE_ALARMS_GUI_ACTION" publisher_name="InitManageAlarmsGuiPublisher"/>
+	<MAPPING business_type="ACTION" business_name="INIT_MANAGE_CONTACTS_GUI_ACTION" publisher_name="InitManageContactsGuiPublisher"/>
+
+</PRESENTATION>

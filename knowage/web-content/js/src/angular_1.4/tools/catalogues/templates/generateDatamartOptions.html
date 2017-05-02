@@ -1,0 +1,55 @@
+<md-dialog aria-label="Generate Datamart Options" ng-cloak layout="column" flex="50">
+  	<md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>{{translate.load('sbi.bm.generate.title')}}</h2>
+       </div>
+    </md-toolbar>
+	<form name="generateDatamartOptionsForm" layout="column" flex>
+    <md-dialog-content flex layout="column" layout-margin >
+    	<p>
+    		{{translate.load('sbi.bm.generate.hint')}}
+    	</p>
+	    <md-input-container>
+          <md-switch ng-model="showAdvancedOptions">{{translate.load('sbi.bm.generate.showAdvancedOptions')}}</md-switch>
+        </md-input-container>
+	    <div ng-show="showAdvancedOptions">
+		    <md-input-container class="md-icon-float md-block">
+		      <label>{{translate.load('sbi.bm.generate.modelName')}}</label>
+		      <input ng-model="modelName" type="text">
+		    </md-input-container>    
+	    
+	    
+		    <md-input-container class="md-icon-float md-block">
+		      <label>{{translate.load('sbi.bm.generate.schemaName')}}</label>
+		      <input ng-model="schemaName" type="text">
+		    </md-input-container>	    
+	  
+	
+		    <md-input-container class="md-icon-float md-block">
+		      <label>{{translate.load('sbi.bm.generate.catalogName')}}</label>
+		      <input ng-model="catalogName" type="text">
+		    </md-input-container>			
+		    <div layout="row" layout-wrap layout-align="start center">
+			  <md-checkbox ng-model="isGeneratedForRegistry" aria-label="Generate for Registry">
+	            {{translate.load('sbi.bm.generate.forRegistry')}}
+	          </md-checkbox>	    
+	          <md-checkbox ng-model="includeSources" aria-label="Include Sources">
+	            {{translate.load('sbi.bm.generate.includeSources')}}
+	          </md-checkbox>
+		    </div>
+		</div>
+	 	
+ 	       
+	</md-dialog-content>
+			
+	<md-dialog-actions layout="row">
+          
+	      <md-button ng-click="cancel()">
+	       {{translate.load('sbi.general.cancel')}}
+	      </md-button>
+	      <md-button ng-click="buildDatamart()" >
+	        {{translate.load('sbi.generic.create')}}
+	      </md-button>
+	 </md-dialog-actions>
+	</form>		
+</md-dialog>

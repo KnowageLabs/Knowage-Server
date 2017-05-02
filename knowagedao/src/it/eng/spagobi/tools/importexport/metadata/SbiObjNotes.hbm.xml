@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjNotes" table="SBI_OBJECT_NOTES" >
+        <id name="objNoteId" type="integer">
+            <column name="obj_note_id" />
+        </id>   
+        
+        <many-to-one name="sbiObject" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects">
+            <column name="biobj_id" />
+        </many-to-one>
+        
+        <many-to-one name="sbiBinContents" class="it.eng.spagobi.commons.metadata.SbiBinContents">
+            <column name="bin_id" />
+        </many-to-one>
+        
+        <property name="execReq" type="string">
+            <column name="exec_req" />
+        </property>
+        
+    </class>
+</hibernate-mapping>

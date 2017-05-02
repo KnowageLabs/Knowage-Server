@@ -1,0 +1,61 @@
+<div ng-form name="tooltipForm">
+<div layout="column" ng-show="selectedChartType !='parallel'">
+
+	<md-input-container class="md-block" >
+	 <label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontfamily")}}</label>
+		 <md-select ng-model="chartTemplate.TOOLTIP.style.fontFamily" name="tooltip_ffamily"> <md-option
+		ng-repeat="option in fontFamilyOptions" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+	<md-input-container class="md-block" > 
+	<label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontsize")}}</label>
+		 <md-select ng-model="chartTemplate.TOOLTIP.style.fontSize" name="tooltip_fsize"> <md-option
+		ng-repeat="option in fontSizeOptions" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+	<md-input-container class="md-block" >
+	 <label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontstyle")}}</label>
+		 <md-select ng-model="chartTemplate.TOOLTIP.style.fontWeight" name="tooltip_fstyle"> <md-option
+		ng-repeat="option in fontStyleOptions" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+	<md-input-container class="md-block colorInputContainer">
+	<label>{{translate.load("sbi.chartengine.designer.tooltip.color")}}</label>
+	 <color-picker
+		options="colorPickerOptionsCockpit"
+		ng-model="chartTemplate.TOOLTIP.style.color" name="tooltip_color"></color-picker> </md-input-container>
+
+</div>
+
+<div layout="column" ng-show="selectedChartType =='parallel'">
+
+	<md-input-container class="md-block">
+	 <label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontfamily")}}</label>
+		 <md-select ng-model="chartTemplate.PARALLEL_TOOLTIP.style.fontFamily" name="tooltip_parallel_ffamily"
+		 ng-required="chartTemplate.type.toLowerCase()=='parallel'"> <md-option
+		ng-repeat="option in fontFamilyOptions" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+	<md-input-container class="md-block" > 
+	<label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontsize")}}</label>
+		 <md-select ng-model="chartTemplate.PARALLEL_TOOLTIP.style.fontSize" name="tooltip_parallel_fsize"
+		 ng-required="chartTemplate.type.toLowerCase()=='parallel'"> <md-option
+		ng-repeat="option in fontSizeOptions" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+	<md-input-container class="md-block"> 
+	<label>{{translate.load("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipBorder")}}</label>
+		 <input type="number" step="any" name="tooltip_parallel_border"
+		ng-model="chartTemplate.PARALLEL_TOOLTIP.style.border" 
+		ng-required="chartTemplate.type.toLowerCase()=='parallel'"
+		ng-min="chartTemplate.type.toLowerCase()=='parallel'?0:undefined" /> </md-input-container>
+
+	<md-input-container class="md-block" > 
+	<label>{{translate.load("sbi.chartengine.configuration.parallel.tooltip.parallelTooltipBorderRadius")}}</label>
+		 <input type="number" step="any" name="tooltip_parallel_radius"
+		ng-model="chartTemplate.PARALLEL_TOOLTIP.style.borderRadius" 
+		ng-required="chartTemplate.type.toLowerCase()=='parallel'"
+		ng-min="chartTemplate.type.toLowerCase()=='parallel'?0:undefined" /> </md-input-container>
+
+</div>
+</div>

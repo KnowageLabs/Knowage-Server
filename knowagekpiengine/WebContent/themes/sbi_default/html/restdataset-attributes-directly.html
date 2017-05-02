@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>REST DataSet - Use directly JSON Attributes</title>
+</head>
+<body bgcolor="#0000ff">
+    <div style='width: 600px; font-size: 10px; font-family: verdana;'>
+      If the JSON response contains the data in simple list of objects format like:
+      <pre>
+  {
+    "contextResponses": [
+      {
+        "a":3,
+        "c":"d",
+        "e":"f"
+      },{
+        "a":2,
+        "e":"r",
+        "f":"s",
+        "b":"q"
+       }
+     ]
+  }
+      </pre>
+      then it will be sufficient to define only the JSON Path Items and check <b>Use directly JSON Attributes</b>
+without defining the attributes. The attributes will be retrieved automatically from the JSON Objects: the names will be the fields names, the values will be the fields values. In this examples, the JSON Path Items will be:
+      <pre>
+  $.contextResponses[*]
+      </pre>
+      and the result DataSet content will have these objects (name: value):
+      <pre>
+  "a":3
+  "c":"d"
+  "e":"f"
+  ...
+      </pre>
+    </div>
+
+</body>
+</html>

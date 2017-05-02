@@ -1,0 +1,2 @@
+1) set JAVA_OPTS="-Djava.library.path=D:\progetti\RIntegration\rJava\jri\x64" in catalina.bat o qualcosa del genere
+2) script per modificare conf del datamining engine (xchè c'era già)

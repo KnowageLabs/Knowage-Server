@@ -1,0 +1,32 @@
+/* 
+Extended tool-sprites with 2 additional icons ('list' and 'tree')
+ */
+.x-tool {
+    background-image:url(../images/default/panel/tool-sprites.gif);
+}
+
+.x-tool-tree {
+    background-position:0 -330px;
+}
+
+.x-tool-tree-over {
+    background-position:-15px -330px;
+}
+
+.x-tool-list {
+    background-position:0 -345px;
+}
+
+.x-tool-list-over {
+    background-position:-15px -345px;
+}
+
+.delete-icon {
+	background-image:url(../images/gray/tabs/tab-close.gif);
+	background-repeat:no-repeat;
+}
+
+.edit-icon {
+	background-image:url(../images/gray/tabs/tab-edit.gif);
+	background-repeat:no-repeat;
+}

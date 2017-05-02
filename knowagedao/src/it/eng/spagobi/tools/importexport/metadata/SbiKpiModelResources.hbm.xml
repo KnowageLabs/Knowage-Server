@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 5-nov-2008 17.17.19 by Hibernate Tools 3.1.0 beta3 -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.kpi.model.metadata.SbiKpiModelResources" table="SBI_KPI_MODEL_RESOURCES" >
+        <id name="kpiModelResourcesId" type="integer">
+            <column name="KPI_MODEL_RESOURCES_ID" />
+        </id>
+        <many-to-one name="sbiKpiModelInst" class="it.eng.spagobi.kpi.model.metadata.SbiKpiModelInst" >
+            <column name="KPI_MODEL_INST" not-null="true" />
+        </many-to-one>
+        <many-to-one name="sbiResources" class="it.eng.spagobi.kpi.model.metadata.SbiResources" >
+            <column name="RESOURCE_ID" not-null="true" />
+        </many-to-one>
+    </class>
+</hibernate-mapping>

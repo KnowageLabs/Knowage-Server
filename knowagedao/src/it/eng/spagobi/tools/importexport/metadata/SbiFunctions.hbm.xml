@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+<!-- 
+        Auto-generated mapping file from
+        the hibernate.org cfg2hbm engine
+-->
+    <class name="it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFunctions" table="SBI_FUNCTIONS">
+        <id name="functId" type="integer">
+            <column name="funct_id" />
+        </id>
+        <many-to-one name="functType" class="it.eng.spagobi.commons.metadata.SbiDomains">
+            <column name="funct_type_id" not-null="true" />
+        </many-to-one>
+        <many-to-one name="parentFunct" class="it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFunctions">
+            <column name="parent_funct_id" />
+        </many-to-one>
+        <property name="functTypeCd" type="string">
+            <column name="funct_type_cd" length="20" not-null="true" />
+        </property>
+        <property name="code" type="string">
+            <column name="code" length="20" unique="true" />
+        </property>
+        <property name="name" type="string">
+            <column name="name" length="40" />
+        </property>
+        <property name="descr" type="string">
+            <column name="descr" length="160" />
+        </property>
+        <property name="path" type="string">
+            <column name="path" length="400" />
+        </property>
+ 		<property name="prog" type="integer">
+            <column name="prog" not-null="true" />
+        </property>
+        <set name="sbiObjFuncs" inverse="true" sort="natural">
+            <key>
+                <column name="funct_id" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjFunc" />
+        </set>
+        <set name="sbiFuncRoles" inverse="true">
+            <key>
+                <column name="funct_id" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFuncRole" />
+        </set>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MODULES>
+	
+	<MODULE class="it.eng.spagobi.commons.services.LoginModule" name="LoginModule">
+     	<CONFIG/>
+    </MODULE>
+    
+    <!--
+    <MODULE class="it.eng.spagobi.commons.services.LogoutModule" name="LogoutModule">
+     	<CONFIG/>
+    </MODULE>
+    -->
+    
+    <MODULE class="it.eng.spagobi.commons.services.ViewBuilderModule" name="ViewBuilderModule">
+     	<CONFIG/>
+    </MODULE>
+    
+    <MODULE class="it.eng.spagobi.analiticalmodel.document.service.DirectExecutionModule" name="DirectExecutionModule">
+     	<CONFIG/>
+    </MODULE>
+
+    <MODULE class="it.eng.spagobi.wapp.services.TreeMenuModule" name="TreeMenuModule">
+     	<CONFIG/>
+    </MODULE>
+
+    <MODULE class="it.eng.spagobi.wapp.services.DetailMenuModule" name="DetailMenuModule">
+     	<CONFIG/>
+    </MODULE>
+	
+	
+	
+	<MODULE class="it.eng.spagobi.wapp.services.ListLookupDocumentModule" name="ListLookupDocumentModule">
+	    <CONFIG pool="spagobi" rows="10" title="menu.listlookupdocument.title" >
+	      <QUERIES>
+	        <SELECT_QUERY statement="SELECT_BIOBJECT_VALUE">
+	        	<PARAMETER type="RELATIVE" value="TENANT_ID" scope="USER" />
+				<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="FIELD_ORDER"/>
+				<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="TYPE_ORDER" />
+			</SELECT_QUERY>
+	      </QUERIES>
+	      <CAPTIONS>
+ 			<SELECT_CAPTION  confirm="FALSE" image="/img/button_ok.gif" label="SBIListLookPage.selectButton">
+				<ONCLICK>
+ 					<![CDATA[
+ 							parent.document.getElementById('documentReadLabel').value='<PARAMETER name='NAME' scope='LOCAL'/>';
+ 							parent.document.getElementById('menu_obj').value='<PARAMETER name='ID' scope='LOCAL'/>';
+ 							parent.win_document.hide();
+ 							parent.loadObjectDetails(<PARAMETER name='ID' scope='LOCAL'/>);
+ 					]]>
+					</ONCLICK>
+	        </SELECT_CAPTION>
+	       </CAPTIONS>
+	      <COLUMNS>
+	        <COLUMN label="ID" name="ID" hidden="true" />
+	        <COLUMN label="menu.lookupDocumentList.label" name="LABEL" />
+	        <COLUMN label="menu.lookupDocumentList.name" name="NAME" />
+	        <COLUMN label="menu.lookupDocumentList.description" name="DESCR"/>
+	        <COLUMN label="menu.lookupDocumentList.engine" name="ENGINE"/>
+	      </COLUMNS>
+	      <BUTTONS/>
+	    </CONFIG>
+  	</MODULE>
+	
+</MODULES>

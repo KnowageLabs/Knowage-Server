@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ACTIONS>
+  	
+  	<ACTION name="START_WORK" 
+			class="it.eng.spagobi.engines.commonj.services.StartWorkAction"  
+			scope="REQUEST">
+    	<CONFIG></CONFIG>
+  	</ACTION>
+
+  	<ACTION name="STOP_WORK" 
+			class="it.eng.spagobi.engines.commonj.services.StopWorkAction"  
+			scope="REQUEST">
+    	<CONFIG></CONFIG>
+  	</ACTION>
+
+  	<ACTION name="STATUS_WORK" 
+			class="it.eng.spagobi.engines.commonj.services.StatusWorkAction"  
+			scope="REQUEST">
+    	<CONFIG></CONFIG>
+  	</ACTION>
+    
+</ACTIONS>

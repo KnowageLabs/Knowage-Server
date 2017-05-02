@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+<!-- 
+        Auto-generated mapping file from
+        the hibernate.org cfg2hbm engine
+-->
+    <class name="it.eng.spagobi.tools.calendar.metadata.Calendar" table="A_T_CALENDAR">
+        
+        <id name="calendarId" type="integer">
+           <column name="CALENDAR_ID" />
+		   <generator class="org.hibernate.id.enhanced.TableGenerator">
+				<param name="optimizer">none</param>
+				<param name="segment_value">A_T_CALENDAR</param>	
+				<param name="initial_value">1</param>	
+		   </generator>
+        </id>
+        
+        <property name="calendar" column="CALENDAR" type="string" length="100" not-null="true"/>
+        
+        <property name="calType" column="CAL_TYPE" type="string" length="30" />
+		
+		<property name="calStartDay" type="timestamp">
+	            <column name="CAL_START_DAY" not-null="true" />
+	    </property> 
+	    	<property name="calEndDay" type="timestamp">
+	            <column name="CAL_END_DAY" not-null="true" />
+	    </property> 
+	     <property name="recStatus" column="REC_STATUS" type="string" length="1" not-null="true"/>
+	    
+	    
+       
+	</class>
+	
+</hibernate-mapping>

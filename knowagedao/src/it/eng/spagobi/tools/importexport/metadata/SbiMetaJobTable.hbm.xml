@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 12-apr-2016 10.43.25 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.metadata.metadata.SbiMetaJobTable" table="SBI_META_JOB_TABLE" >
+        <composite-id name="id" class="it.eng.spagobi.metadata.metadata.SbiMetaJobTableId">
+            <key-property name="jobId" type="int">
+                <column name="JOB_ID" />
+            </key-property>
+            <key-property name="tableId" type="int">
+                <column name="TABLE_ID" />
+            </key-property>
+        </composite-id>
+        <many-to-one name="sbiMetaTable" class="it.eng.spagobi.metadata.metadata.SbiMetaTable" lazy="false" update="false" insert="false" fetch="select">
+            <column name="TABLE_ID" not-null="true" />
+        </many-to-one>
+        <many-to-one name="sbiMetaJob" class="it.eng.spagobi.metadata.metadata.SbiMetaJob" lazy="false" update="false" insert="false" fetch="select">
+            <column name="JOB_ID" not-null="true" />
+        </many-to-one>
+        <property name="role" type="string">
+	            <column name="ROLE" />
+	    </property>
+
+        <filter name="tenantFilter" condition="organization=:tenant"/> 
+    </class>
+    <filter-def name="tenantFilter">
+		<filter-param name="tenant" type="string"/>
+	</filter-def>
+</hibernate-mapping>

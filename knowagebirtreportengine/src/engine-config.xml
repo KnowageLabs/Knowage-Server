@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ENGINE-CONFIGURATION>
+
+	<!-- ====================================================================================== -->
+	<!--  SSO settings 																	--> 
+	<!-- ====================================================================================== -->
+	<INTEGRATION_CLASS_JNDI>java://comp/env/sso_class</INTEGRATION_CLASS_JNDI>
+	<FILTER_RECEIPT>/proxyCallback</FILTER_RECEIPT>
+	<PASS>PASS</PASS>
+	<!--  SPAGOBI_SERVER_URL Address for invoking WebService, if empty use the request parameters -->
+	<SPAGOBI_SERVER_URL></SPAGOBI_SERVER_URL>
+	<SPAGOBI_SERVER_URL_JNDI_NAME>java://comp/env/service_url</SPAGOBI_SERVER_URL_JNDI_NAME>	
+	<!--  THE JNDI RESOURCE NAME FOR RETRIVE THE RESOURCE PATH -->
+	<RESOURCE_PATH_JNDI_NAME>java://comp/env/resource_path</RESOURCE_PATH_JNDI_NAME>
+	<!--  THE JNDI NAME FOR SPAGOBI DOMAIN -->
+	<!-- SPAGOBI_DOMAIN_JNDI_NAME>java://comp/env/spagobi_domain</SPAGOBI_DOMAIN_JNDI_NAME-->	
+	<SecurityServiceProxy_URL>/services/SecurityService</SecurityServiceProxy_URL>
+	<SchedulerServiceProxy_URL>/services/SchedulerService</SchedulerServiceProxy_URL>
+	<EventServiceProxy_URL>/services/EventService</EventServiceProxy_URL>
+	<ContentServiceProxy_URL>/services/ContentService</ContentServiceProxy_URL>
+	<AuditServiceProxy_URL>/services/AuditService</AuditServiceProxy_URL>
+	<DataSourceServiceProxy_URL>/services/DataSourceService</DataSourceServiceProxy_URL>
+	<DocumentExecuteServiceProxy_URL>/services/DocumentExecuteService</DocumentExecuteServiceProxy_URL>
+	<DataSetServiceProxy_URL>/services/DataSetService</DataSetServiceProxy_URL>
+	<SbiDocumentServiceProxy_URL>/services/SbiDocumentService</SbiDocumentServiceProxy_URL>
+	<MetamodelServiceProxy_URL>/services/MetamodelService</MetamodelServiceProxy_URL>
+
+	<!-- default XLS emitter -->
+	<!-- <XLS_EMITTER id="org.eclipse.birt.report.engine.emitter.prototype.excel" output_format="xls" /> -->
+	<!-- spudsoft XLS emitter -->
+	<XLS_EMITTER id="uk.co.spudsoft.birt.emitters.excel.XlsEmitter" output_format="xls_spudsoft" />
+  	<!-- arctorus  emitter -->
+  	<!-- <XLS_EMITTER id="com.arctorus.export.birt43x.xls" output_format="xls" /> -->
+	
+	<!-- spudsoft XLSX emitter -->
+	<XLSX_EMITTER id="uk.co.spudsoft.birt.emitters.excel.XlsxEmitter" output_format="xlsx" />
+  	<!-- arctorus XLSX emitter -->
+	<!-- <XLSX_EMITTER id="com.arctorus.export.birt43x.xlsx" output_format="xlsx" /> -->
+	
+	<!-- default DOC emitter -->
+	<DOC_EMITTER id="org.eclipse.birt.report.engine.emitter.word" output_format="doc" />	
+	<!-- arctorus DOC emitter -->
+	<!-- <DOC_EMITTER id="com.arctorus.export.birt43x.doc" output_format="doc" /> -->
+
+	<!-- default DOCX emitter -->
+	<DOCX_EMITTER id="org.eclipse.birt.report.engine.emitter.docx" output_format="docx" />	
+	<!-- arctorus DOCX emitter -->
+	<!-- <DOCX_EMITTER id="com.arctorus.export.birt43x.docx" output_format="docx" /> -->
+
+	<!-- default PPT emitter -->
+	<PPT_EMITTER id="org.eclipse.birt.report.engine.emitter.ppt" output_format="ppt" />
+
+	<!-- default PPTX emitter -->
+	<PPTX_EMITTER id="org.eclipse.birt.report.engine.emitter.pptx" output_format="pptx" />
+	<!-- arctorus PPTX emitter -->
+	<!-- <PPTX_EMITTER id="com.arctorus.export.birt43x.pptx" output_format="pptx" /> -->
+	
+	<!--  <CSV_EMITTER_ENCODING>UTF-8</CSV_EMITTER_ENCODING> -->
+ 
+	<HMAC_JNDI_LOOKUP>java:/comp/env/hmacKey</HMAC_JNDI_LOOKUP>
+ 
+</ENGINE-CONFIGURATION>

@@ -1,0 +1,38 @@
+<ul ng-model="item.children" ng-show="item.collapsed">
+
+	<li ng-repeat="item in item.children">
+	<div ng-class="item.leaf ? 'leaf-paddin-filter no-wrap':'no-wrap'">
+		<md-icon md-font-icon="fa fa-list-alt" ng-show="item.leaf && activeaxis == -1" ng-click=""> 
+		</md-icon>
+		<md-icon md-font-icon="fa fa-angle-right" ng-show="!item.collapsed && !item.leaf" 
+				ng-click="expandTreeAsync(item)" class="dialog-button-padding"> 
+		</md-icon>
+		<md-icon md-font-icon="fa fa-angle-down" ng-show="item.collapsed && !item.leaf" 
+				ng-click="hideAsyncTree(item)" class="dialog-button-padding"> 
+		</md-icon>
+		<span ng-click="selectFilter(item)" ng-show="activeaxis == -1" id="tdl-value-{{item.name}}">
+			<span ng-class="highlight(item.name)?'highlight-filter-result':''">
+				{{item.name}}
+			</span>
+			<md-icon md-font-icon="fa fa-check-circle-o" class="icon-color-green" ng-show="item.uniqueName == filterSelected[filterAxisPosition].uniqueName"> 
+			</md-icon>
+		</span>
+		<span ng-click="" ng-show="activeaxis >= 0 && !item.leaf">
+			<md-checkbox ng-checked="item.visible" ng-click="checkboxSelected(item)">
+			<span ng-class="highlight(item.name)?'highlight-filter-result':''">
+				{{item.name}}
+			</span>
+			</md-checkbox>
+		</span>
+		<span ng-click="" ng-show="activeaxis >= 0 && item.leaf" style="padding-left:35px;">
+			<md-checkbox ng-checked="item.visible" ng-click="checkboxSelected(item)">
+			<span ng-class="highlight(item.name)?'highlight-filter-result':''" class="no-wrap">
+				{{item.name}}
+			</span>
+			</md-checkbox>
+		</span>	
+		<filter-tree-deeper-levels></filter-tree-deeper-levels>	
+	</div>
+</li>
+</ul>
+

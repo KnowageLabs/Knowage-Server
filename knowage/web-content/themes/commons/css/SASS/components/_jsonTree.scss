@@ -1,0 +1,30 @@
+json-tree {
+	.key {
+		color: $baseColor;
+		font-size: $baseFontSize;
+	}
+	ul {
+		margin-top: 0;
+		padding-left: 40px;
+	}
+	li {
+		margin-top: 0;
+	}
+	md-input-container {
+		padding: 0;
+		margin: 0;
+		input {
+			font-size: $baseFontSize;
+		}
+	}
+	md-checkbox {
+		margin-bottom: 0;
+	}
+	json-node {
+		position: relative;
+		md-checkbox {
+			top: 5px;
+			position: absolute;
+		}
+	}
+}

@@ -1,0 +1,105 @@
+<div layout="column">
+
+<md-toolbar  class="miniheadimportexport" layout="row">
+	<div class="md-toolbar-tools" flex>
+		<h2 class="md-flex" >Olap Designer</h2>
+	</div>
+	<span flex></span>
+	<md-button class="md-primary" ng-click="saveMDX()" ng-disabled="editDisabled" >Start</md-button>
+
+
+	
+
+</md-toolbar>
+
+<md-card layout-padding>
+
+<div layout="row" layout-wrap>
+      				<div flex=100>
+				       <md-input-container layout="column" flex=30> 
+				       <label>Select type of Template</label>
+				       <md-select
+				        ng-model="selectedType"
+				        > <md-option 
+				        ng-repeat="l in templateTypeList track by $index" value="{{l.value}}">{{l.name}} </md-option>
+				       </md-select>
+				        </md-input-container>
+				   </div>
+			</div>				
+
+<div ng-if="selectedType == 'mondrian' " >
+
+<div layout="row" layout-wrap>
+      				<div flex=100>
+				       <md-input-container  layout="column" flex=30> 
+				       <label>Select Mondrian Schema</label>
+				       <md-select
+				        ng-model="selectedSchema.currentContentId"
+				        > <md-option 
+				        ng-repeat="l in schemasList track by $index" value="{{l.currentContentId}}" ng-click="getCube(l)">{{l.name}} </md-option>
+				       </md-select>
+				        </md-input-container>
+				   </div>
+
+
+</div>
+
+<div layout="row" layout-wrap ng-show="showCubes">
+      				<div flex=100>
+				       <md-input-container  layout="column" flex=30> 
+				       <label>Select Cube</label>
+				       <md-select
+				        ng-model="selectedCube.name"
+				        ng-change="setMDX()"
+				        > <md-option 
+				        ng-repeat="l in cubeList track by $index" value="{{l}}">{{l}} </md-option>
+				       </md-select>
+				        </md-input-container>
+				   </div>
+</div>
+
+</div>
+<div ng-if="selectedType == 'xmla' " >
+
+<div layout="row" layout-wrap>
+						<div flex=100>
+							<md-input-container  layout="column" flex=60>
+							<label>XMLA Address</label>
+							<input ng-model="xmlaObj.address">
+					       </md-input-container>
+						</div>
+					</div>
+
+						<div>
+  							XMLA Parameters
+  							<i class="fa fa-plus-square" ng-click="input=addXmlaParameter()" aria-hidden="true" ></i>
+  							
+  							<div ng-repeat="p in xmlaObj.parameters" layout-gt-sm="row" layout-align="start center">
+
+	     						<div layout="row"> 								
+      								<md-input-container class="md-block" flex-gt-sm>
+            							<label>Parameter Name</label>
+        								<input ng-model="p.name">
+      								</md-input-container>
+      								
+      								<md-input-container class="md-block" flex-gt-sm>
+            							<label>Parameter Value</label>
+        								<input ng-model="p.value">
+      								</md-input-container>
+	     						</div> 						
+				      						
+	      						<div>
+									<i class="fa fa-minus-square" ng-click="output=removeXmlaParameter(i)" aria-hidden="true"></i> 	
+								</div>	      						
+  							</div>
+  						</div>
+
+
+
+</div>
+
+</md-card>
+	
+
+
+</div>

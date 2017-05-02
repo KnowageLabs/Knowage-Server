@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PAGES>
+
+	<PAGE name="ListMapsPage" scope="REQUEST" title="Maps Management" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="ListMapsPage" target="ListMapsModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="ListMapsModule"/>
+    	</MODULES>
+  	</PAGE>
+  	
+  	<PAGE name="ListFeaturesPage" scope="REQUEST" title="Features Management" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="ListFeaturesPage" target="ListFeaturesModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="ListFeaturesModule"/>
+    	</MODULES>
+  	</PAGE>
+  	
+   <PAGE name="DetailMapPage" scope="REQUEST" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="DetailMapPage" target="DetailMapModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="DetailMapModule"/>
+    	</MODULES>
+  	</PAGE>
+  	
+  	   <PAGE name="DetailFeaturePage" scope="REQUEST" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="DetailFeaturePage" target="DetailFeatureModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="DetailFeatureModule"/>
+    	</MODULES>
+  	</PAGE>
+  	
+	<PAGE name="FeaturesLookupPage" scope="REQUEST" title="FeaturesLookupPage" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="FeaturesLookupPage" target="ListLookupFeaturesModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="ListLookupFeaturesModule"/>
+    	</MODULES>
+  	</PAGE>
+</PAGES>

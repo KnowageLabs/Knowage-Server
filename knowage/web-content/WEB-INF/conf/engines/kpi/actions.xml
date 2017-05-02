@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ACTIONS>
+
+ <ACTION name="GET_PNG2" class="it.eng.spagobi.engines.kpi.service.GetPngAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+ <ACTION name="GET_THR_IMAGE" class="it.eng.spagobi.engines.kpi.service.GetThresholdImageAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+  <ACTION name="GET_TREND" class="it.eng.spagobi.engines.kpi.service.CreateTrendAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+  <ACTION name="GET_KPI_METADATA" class="it.eng.spagobi.engines.kpi.service.CreateKpiMetadataAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+<!-- NEW GUI -->
+  <ACTION name="MANAGE_COMMENTS" class="it.eng.spagobi.engines.kpi.service.ManageCommentsAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+ <ACTION name="GET_TREND_KPI_VALUES" class="it.eng.spagobi.engines.kpi.service.ManageTrendAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+</ACTIONS>

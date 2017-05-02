@@ -1,0 +1,100 @@
+<!--
+ * SpagoBI - The Business Intelligence Free Platform
+ *
+ * Copyright (C) 2004 - 2008 Engineering Ingegneria Informatica S.p.A.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+-->
+<html>
+
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<link rel="stylesheet" type="text/css" href="style.css">
+<title>SpagoBI Talend Engine's Template Specification</title>
+</head>
+
+<body>
+
+<h2><a name="etl">JOB</a></h2>
+<h3>Description</h3>
+<p>Root tag
+
+<h3>Parameters</h3>
+<table border="1" cellpadding="2" cellspacing="0">
+  <tr>
+    <td valign="top"><b>Attribute</b></td>
+    <td valign="top"><b>Description</b></td>
+    <td align="center" valign="top"><b>Required</b></td>
+  </tr>
+  <tr>
+    <td valign="top">jobName</td>
+    <td valign="top">
+    The name of the job to execute
+    </td>
+    <td valign="top" align="center">Yes</td>
+  </tr>
+  <tr>
+    <td valign="top">version</td>
+    <td valign="top">
+    The job version. If not specified the engine will assume 0.1 as default version number. If the version number does not match with the one of the 
+    referenced deployed job the engine wont be able to locate it in the runtime repository.
+    </td>
+    <td valign="top" align="center">Yes</td>
+  </tr>
+  <tr>
+    <td valign="top">project</td>
+    <td valign="top">
+    The name of the talend project in which your job has been created
+    </td>
+    <td valign="top" align="center">Yes</td>
+  </tr>
+  <tr>
+    <td valign="top">language</td>
+    <td valign="top">
+    The esportation language used (Java or Perl)
+    </td>
+    <td valign="top" align="center">Yes</td>
+  </tr>
+  <tr>
+    <td valign="top">context</td>
+    <td valign="top">
+    The name of the target context to use with the job. If not specified DEFAULT will be used as default value
+    </td>
+    <td valign="top" align="center">No</td>
+  </tr>
+</table>
+
+<h3>Nested elements</h3>
+<p>noone</p>
+
+  
+  
+<h3>Examples</h3>
+
+<blockquote><pre>&lt;ETL version='2.0.0'&gt;
+  &lt;JOB&gt; 
+    project="DEMO_PROJECT"
+    jobName="myFirstJob"
+    version="2.4"
+    language="java" 
+    context="Default"     
+  &lt;JOB/&gt; 
+&lt;/ETL&gt;
+</pre></blockquote>
+
+
+
+</body>
+</html>

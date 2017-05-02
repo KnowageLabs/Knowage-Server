@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 22-dic-2009 10.27.37 by Hibernate Tools 3.2.4.GA -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.tools.calendar.metadata.CalendarAttributeDomain" table="A_T_CAL_ATT_DOMAIN">
+        <id name="domainId" type="int">
+            <column name="DOMAIN_ID" />
+   <generator class="org.hibernate.id.enhanced.TableGenerator">
+		<param name="optimizer">none</param>
+		<param name="segment_value">A_T_CAL_ATT_DOMAIN</param>
+		<param name="initial_value">1</param>		
+   </generator>
+        </id>
+        
+
+        <property name="attributeDomain" type="string">
+            <column name="ATTRIBUTE_DOMAIN" length="50" not-null="true"/>
+        </property>
+         <property name="attributeDomainDescr" type="string">
+            <column name="ATTRIBUTE_DOMAIN_DESCR" length="100"/>
+        </property>
+          <property name="recStatus" type="string">
+            <column name="REC_STATUS" length="1" not-null="true"/>
+        </property>
+    		
+    </class>
+	
+</hibernate-mapping>

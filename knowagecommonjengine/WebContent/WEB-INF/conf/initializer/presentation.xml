@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PRESENTATION>	
+	
+	<!-- <MAPPING business_type="ACTION" 
+			 business_name="SHOW_DATA_DETAILS_ACTION" 
+			 publisher_name="DATA_DETAILS_PUBLISHER"/>  -->
+			 
+	<MAPPING business_name="COMMONJ_ACTION" business_type="ACTION" publisher_name="manageWorkPublisher"/>
+	
+</PRESENTATION>

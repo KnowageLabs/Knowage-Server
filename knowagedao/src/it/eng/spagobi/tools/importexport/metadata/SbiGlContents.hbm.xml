@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="it.eng.spagobi.tools.glossary.metadata.SbiGlContents"
+		table="SBI_GL_CONTENTS">
+
+		<id name="contentId" type="integer">
+			<column name="CONTENT_ID" />
+		</id>
+
+		<property name="contentCd" type="string">
+			<column name="CONTENT_CD" length="30" />
+		</property>
+		<property name="contentNm" type="string">
+			<column name="CONTENT_NM" length="100" />
+		</property>
+		<property name="contentDs" type="string">
+			<column name="CONTENT_DS" length="500" />
+		</property>
+		<property name="depth" type="integer">
+			<column name="DEPTH" />
+		</property>
+
+		<property name="glossaryId" type="integer">
+			<column name="GLOSSARY_ID" />
+		</property>
+		
+		<property name="parentId" type="integer">
+			<column name="PARENT_ID" />
+		</property>
+
+
+ </class>
+
+</hibernate-mapping>

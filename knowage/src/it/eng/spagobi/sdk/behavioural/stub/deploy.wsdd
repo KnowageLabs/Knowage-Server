@@ -1,0 +1,65 @@
+<!-- Use this file to deploy some handlers/chains and services      -->
+<!-- Two ways to do this:                                           -->
+<!--   java org.apache.axis.client.AdminClient deploy.wsdd          -->
+<!--      after the axis server is running                          -->
+<!-- or                                                             -->
+<!--   java org.apache.axis.utils.Admin client|server deploy.wsdd   -->
+<!--      from the same directory that the Axis engine runs         -->
+
+<deployment
+    xmlns="http://xml.apache.org/axis/wsdd/"
+    xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+  <!-- Services from BehaviouralServiceService WSDL service -->
+
+  <service name="BehaviouralService" provider="java:RPC" style="rpc" use="encoded">
+      <parameter name="wsdlTargetNamespace" value="urn:spagobisdkbehavioural"/>
+      <parameter name="wsdlServiceElement" value="BehaviouralServiceService"/>
+      <parameter name="schemaUnqualified" value="http://exceptions.sdk.spagobi.eng.it,urn:spagobisdkbehavioural,http://bo.behavioural.sdk.spagobi.eng.it"/>
+      <parameter name="wsdlServicePort" value="BehaviouralService"/>
+      <parameter name="className" value="it.eng.spagobi.sdk.behavioural.stub.BehaviouralServiceSoapBindingSkeleton"/>
+      <parameter name="wsdlPortType" value="BehaviouralService"/>
+      <parameter name="typeMappingVersion" value="1.2"/>
+      <parameter name="allowedMethods" value="*"/>
+      <parameter name="scope" value="Application"/>
+
+      <arrayMapping
+        xmlns:ns="urn:spagobisdkbehavioural"
+        qname="ns:ArrayOf_tns2_SDKAttribute"
+        type="java:it.eng.spagobi.sdk.behavioural.bo.SDKAttribute[]"
+        innerType="cmp-ns:SDKAttribute" xmlns:cmp-ns="http://bo.behavioural.sdk.spagobi.eng.it"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <arrayMapping
+        xmlns:ns="urn:spagobisdkbehavioural"
+        qname="ns:ArrayOf_tns2_SDKRole"
+        type="java:it.eng.spagobi.sdk.behavioural.bo.SDKRole[]"
+        innerType="cmp-ns:SDKRole" xmlns:cmp-ns="http://bo.behavioural.sdk.spagobi.eng.it"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://exceptions.sdk.spagobi.eng.it"
+        qname="ns:NotAllowedOperationException"
+        type="java:it.eng.spagobi.sdk.exceptions.NotAllowedOperationException"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://bo.behavioural.sdk.spagobi.eng.it"
+        qname="ns:SDKRole"
+        type="java:it.eng.spagobi.sdk.behavioural.bo.SDKRole"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://bo.behavioural.sdk.spagobi.eng.it"
+        qname="ns:SDKAttribute"
+        type="java:it.eng.spagobi.sdk.behavioural.bo.SDKAttribute"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+  </service>
+</deployment>

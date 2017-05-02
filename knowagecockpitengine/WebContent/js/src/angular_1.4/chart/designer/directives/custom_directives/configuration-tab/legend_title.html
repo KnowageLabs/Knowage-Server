@@ -1,0 +1,44 @@
+<div ng-form name="configuration-legendTitleForm">
+
+<div layout="row" layout-margin>
+
+	<label>{{translate.load("sbi.worksheet.designer.barchartdesignerpanel.form.showlegend.title")}}</label>
+	<md-input-container class="small counter"> <md-checkbox
+		ng-model="chartTemplate.LEGEND.show" aria-label="Show legend" ng-disabled="disableLegendCheckbox" name="legendtitle_showcb"></md-checkbox>
+	</md-input-container>
+</div>
+
+<div ng-show="chartTemplate.LEGEND.show" layout="column">
+
+	<md-input-container class="md-block" >
+		<label>{{translate.load("sbi.chartengine.configuration.parallel.legend.title.popupTitle")}}</label>
+		<input name="legendtitle_text" ng-model="chartTemplate.LEGEND.TITLE.text"> 
+	</md-input-container>
+
+	<md-input-container class="md-block" >
+	 <label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontfamily")}}</label>
+		 <md-select ng-model="chartTemplate.LEGEND.TITLE.style.fontFamily" name="legendtitle_ffamily"> <md-option
+		ng-repeat="option in fontFamilyOptions" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+	<md-input-container class="md-block" > 
+	<label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontsize")}}</label>
+		 <md-select ng-model="chartTemplate.LEGEND.TITLE.style.fontSize" name="legendtitle_fsize"> <md-option
+		ng-repeat="option in fontSizeOptions" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+	<md-input-container class="md-block">
+	 <label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontstyle")}}</label>
+		 <md-select ng-model="chartTemplate.LEGEND.TITLE.style.fontWeight" name="legendtitle_fstyle"> <md-option
+		ng-repeat="option in fontStyleOptions" value="{{option.value}}">{{option.name}}</md-option>
+	</md-select> </md-input-container>
+
+	<md-input-container class="md-block colorInputContainer" ng-show="selectedChartType != 'parallel'">
+	<label>{{translate.load("sbi.chartengine.designer.tooltip.color")}}</label>
+	 <color-picker
+		options="colorPickerOptionsCockpit"
+		ng-model="chartTemplate.LEGEND.TITLE.style.color" name="legendtitle_color"></color-picker> </md-input-container>
+
+</div>
+
+</div>

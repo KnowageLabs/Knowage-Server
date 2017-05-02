@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+<!-- 
+        Auto-generated mapping file from
+        the hibernate.org cfg2hbm engine
+-->
+    <class name="it.eng.spagobi.tools.crossnavigation.metadata.SbiOutputParameter" table="SBI_OUTPUT_PARAMETER">
+        
+        <id name="id" type="integer">
+           <column name="ID" />
+        </id>
+        
+        <property name="biobjId" column="BIOBJ_ID" />
+        <property name="label" column="label" type="string" />
+        <property name="parameterTypeId" column="PAR_TYPE_ID" />
+        <property name="formatCode" column="format_code" type="string" />
+        <property name="formatValue" column="format_value" type="string" />  
+        <property name="isUserDefined" column="is_user_defined" type="boolean"/>
+
+	</class>
+
+</hibernate-mapping>

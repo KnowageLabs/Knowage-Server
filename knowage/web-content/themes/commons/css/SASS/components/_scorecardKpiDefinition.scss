@@ -1,0 +1,144 @@
+.kn-scorecardKpiDefinition, .kn-scorecard-visualization{
+	.md-mini {
+		min-width: 40px;
+	}
+
+	.fa-rotate-45 {
+	    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
+	    -webkit-transform: rotate(45deg);
+	    -ms-transform: rotate(45deg);
+	    transform: rotate(45deg);
+	}
+	
+	.scorecardSemaphoreBackIcon{
+		font-size: 22px;
+	}
+	
+	.scorecardSemaphoreFrontIcon{
+		font-size: 18px;
+	}
+	
+	.scorecardPrespectiveCard{
+	  width: 250px;
+	}
+	.scorecardPrespectiveCard>md-content>b{
+	  line-height: 30px;
+	}
+	
+	.scorecardPrespectiveCard>md-toolbar>.md-toolbar-tools>md-menu{
+	  padding: 0;
+  	  height: 100%;
+	}
+
+	//CUSTOM DIRECTIVE
+	.kpi-color-indicator, .scorecardDialog {
+		md-toolbar {
+			min-height: 20px;
+    		height: 30px;
+			&.greyKpi {
+				background-color: $kpiGreyColor !important;
+				border-bottom:3px solid darken($kpiGreyColor, 10%);
+			}
+			&.redKpi {
+				background-color: $kpiRedColor !important;
+				border-bottom:3px solid darken($kpiRedColor, 10%);
+			}
+			&.greenKpi {
+				background-color: $kpiGreenColor !important;
+				border-bottom:3px solid darken($kpiGreenColor, 10%);
+			}
+			&.yellowKpi {
+				background-color: $kpiYellowColor !important;
+				border-bottom:3px solid darken($kpiYellowColor, 10%);
+			}
+			i.fa {
+				padding-right:10px;
+			}
+			span {
+				white-space: nowrap;
+				font-size: $baseFontSize;
+			}
+			.md-menu {
+			    height: 40px;
+    			margin: 0;
+    			margin-right:-8px;
+			}
+
+		}
+		.singleKpiColorValue {
+			min-height: 30px;
+			height: 30px;
+			padding: 0 8px;
+			border-bottom: 1px solid $bordersColor;
+			p {
+				font-size: $smallFontSize;
+			}
+			._md-secondary-container {
+				height: inherit;
+			}
+		}
+		.kpiColorValue, .singleKpiColorValue{
+			.kpiColorBox {
+				margin: 0 4px;
+				width: 24px;
+				height: 24px;
+				.fa {
+					color: white;
+					text-align: center;
+				}
+				&.greyKpi {
+					background-color: $kpiGreyColor;
+				}
+				&.redKpi {
+					background-color: $kpiRedColor;
+				}
+				&.greenKpi {
+					background-color: $kpiGreenColor;
+				}
+				&.yellowKpi {
+					background-color: $kpiYellowColor;
+				}
+			}
+		}
+		.target {
+			padding-left:10px;
+			margin-bottom: 4px;
+			border:1px solid $ternaryColor;
+			border-left-width: 5px;
+			height: 40px;
+			&.greyKpi {
+				border-left-color: $kpiGreyColor;
+			}
+			&.redKpi {
+				border-left-color: $kpiRedColor;
+			}
+			&.greenKpi {
+				border-left-color: $kpiGreenColor;
+			}
+			&.yellowKpi {
+				border-left-color: $kpiYellowColor;
+			}	
+		}
+		.addTarget {
+			background-color: $listBackground;
+		    text-align: center;
+		    font-size: 14px;
+		    text-transform: uppercase;
+		    height: 30px;
+		    color: darken($listBackground,20%);
+		    cursor: pointer;
+		}
+	}
+
+}
+
+/* IE11 FIX */
+
+@media all and (-ms-high-contrast:none) {
+	.kn-scorecardKpiDefinition{
+		.kpiSelectionDialog {
+			height: 100%;
+		display: block;
+		}
+	}
+}

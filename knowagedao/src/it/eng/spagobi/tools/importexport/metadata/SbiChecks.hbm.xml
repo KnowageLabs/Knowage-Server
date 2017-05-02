@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+<!-- 
+        Auto-generated mapping file from
+        the hibernate.org cfg2hbm engine
+-->
+    <class name="it.eng.spagobi.behaviouralmodel.check.metadata.SbiChecks" table="SBI_CHECKS">
+        <id name="checkId" type="integer">
+            <column name="check_id" />
+        </id>
+        <many-to-one name="checkType" class="it.eng.spagobi.commons.metadata.SbiDomains">
+            <column name="value_type_id" not-null="true" />
+        </many-to-one>
+        <property name="valueTypeCd" type="string">
+            <column name="value_type_cd" length="20" not-null="true" />
+        </property>
+        <property name="value1" type="string">
+            <column name="value_1" length="400" />
+        </property>
+        <property name="value2" type="string">
+            <column name="value_2" length="400" />
+        </property>
+        
+        <property name="label" type="string">
+            <column name="label" length="20" unique="true" not-null="true"/>
+        </property>
+        
+        <property name="name" type="string">
+            <column name="name" length="40" not-null="true" />
+        </property>
+        
+        <property name="descr" type="string">
+            <column name="descr" length="160" />
+        </property>
+        
+    </class>
+</hibernate-mapping>

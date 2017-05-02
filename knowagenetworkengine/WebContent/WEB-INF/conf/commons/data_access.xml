@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DATA-ACCESS>
+<!--
+		<CONNECTION name="foodmart" jndiResourceName="jdbc/foodmart" jndiContext="java:comp/env" />
+		<CONNECTION name="genova" jndiResourceName="jdbc/genova" jndiContext="java:comp/env" />
+		<CONNECTION name="artemis" jndiResourceName="jdbc/artemis" jndiContext="java:comp/env" />
+		<CONNECTION name="bam" jndiResourceName="jdbc/bam" jndiContext="java:comp/env" />
+-->
+</DATA-ACCESS>

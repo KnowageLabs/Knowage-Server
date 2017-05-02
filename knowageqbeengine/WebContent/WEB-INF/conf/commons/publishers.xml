@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ================================================================================= -->
+<!-- QBE BASE PUBLISHERS															   -->
+<!-- ================================================================================= -->
+<PUBLISHERS>
+
+	<PUBLISHER name="DYNAMIC_FORWARD_PUBLISHER">
+		<RENDERING channel="HTTP" type="JAVA" mode="">
+			<RESOURCES>
+				<ITEM prog="0" resource="it.eng.spago.presentation.DynamicForwardPublisher" />
+			</RESOURCES>
+		</RENDERING>
+	</PUBLISHER>  	
+ 	
+  	
+  	<PUBLISHER name="ENGINE_STARTUP_EXCEPTION_TRAP_ACTION_PUBLISHER">
+		<RENDERING channel="HTTP" type="JSP" mode="FORWARD">
+			<RESOURCES>
+				<ITEM prog="0" resource="/WEB-INF/jsp/errors/serviceError.jsp" />
+			</RESOURCES>
+		</RENDERING>
+	</PUBLISHER>
+	
+	
+	<!-- ================================================================================= -->
+	<!-- TRAPS																			   -->
+	<!-- ================================================================================= -->
+	
+	<PUBLISHER name="SESSION_EXPIRED_PUBLISHER">
+    	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/commons/sessionExpired.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+	</PUBLISHER>
+  	
+</PUBLISHERS>

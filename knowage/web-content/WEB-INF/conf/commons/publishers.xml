@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PUBLISHERS>
+	
+  	<PUBLISHER name="CheckLinksDefaultPublischer">
+    	<RENDERING channel="PORTLET" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/analiticalmodel/document/checklist.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+    	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/analiticalmodel/document/checklist.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+  	</PUBLISHER>
+	<PUBLISHER name="saveConfiguration">
+    	<RENDERING channel="PORTLET" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>  	
+	<PUBLISHER name="saveConfigurationLoop">
+    	<RENDERING channel="PORTLET" mode="" type="LOOP">
+      		<RESOURCES>
+        		<PARAMETER name="LIGHT_NAVIGATOR_BACK_TO" type="ABSOLUTE" scope="" value="0" />
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>  
+
+
+
+  	<PUBLISHER name="error">
+    	<RENDERING channel="PORTLET" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/commons/error.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/commons/error.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+  	
+  	<PUBLISHER name="errorLogin">
+    	<RENDERING channel="PORTLET" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/wapp/errorLogin.jsp"/>
+        		<!-- <ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/> -->
+      		</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/wapp/errorLogin.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+    
+      	
+	<PUBLISHER name="DYN_FORWARD_PUBLISHER">
+		<RENDERING channel="HTTP" type="JAVA" mode="">
+			<RESOURCES>
+				<ITEM prog="0"
+					resource="it.eng.spagobi.commons.presentation.DynamicForwardPublisher" />
+			</RESOURCES>
+		</RENDERING>
+		<RENDERING channel="PORTLET" type="JAVA" mode="">
+			<RESOURCES>
+				<ITEM mode="VIEW"
+					resource="it.eng.spagobi.commons.presentation.DynamicForwardPublisher" />
+				<ITEM mode="EDIT"
+					resource="it.eng.spagobi.commons.presentation.DynamicForwardPublisher" />
+			</RESOURCES>
+		</RENDERING>
+	</PUBLISHER>
+  	
+  	
+  	
+  	<PUBLISHER name="LoginSBISettingsPublisher">
+    	<RENDERING channel="PORTLET" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/commons/startSBISettings.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+
+  	
+   	
+  	
+  	<PUBLISHER name="LoginSBIDevelopmentContextPublisher">
+    	<RENDERING channel="PORTLET" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/commons/startSBIDevelopmentContext.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+    
+
+  	
+  	<PUBLISHER name="LoginSBIAdministrationContextPublisher">
+    	<RENDERING channel="PORTLET" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/commons/startSBIAdministrationContext.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+	<PUBLISHER name="SaveConfigurationPubJ">
+    	<RENDERING channel="PORTLET" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="it.eng.spagobi.commons.presentation.SaveConfigurationPublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>    
+  	
+  	<!-- new organization portlet for SpagoBI 2.0 -->
+  	<PUBLISHER name="LoginSBIAnaliticalModelPublisher">
+    	<RENDERING channel="PORTLET" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/commons/startSBIAnaliticalModel.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>      
+  	
+  	<PUBLISHER name="LoginSBIBehavioralModelPublisher">
+    	<RENDERING channel="PORTLET" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/commons/startSBIBehavioralModel.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+  	
+    <PUBLISHER name="LoginSBIEventsPublisher">
+    	<RENDERING channel="PORTLET" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/commons/startSBIEvents.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+  	
+  	<PUBLISHER name="LoginSBICataloguePublisher">
+    	<RENDERING channel="PORTLET" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/mapcatalogue/startSBIMapCatalogue.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>  
+  	
+  	<PUBLISHER name="LoginSBIToolsPublisher">
+    	<RENDERING channel="PORTLET" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/commons/startSBITools.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>   
+  	
+  	<PUBLISHER name="LoginSBIResourcesPublisher">
+    	<RENDERING channel="PORTLET" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/commons/startSBIResources.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>  
+  	  	<PUBLISHER name="LoginSBIDistributionListPublisher">
+    	<RENDERING channel="PORTLET" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/commons/startSBIDistributionList.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER> 
+  	<PUBLISHER name="LoginSBIDistributionListUserPublisher">
+    	<RENDERING channel="PORTLET" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/commons/startSBIDistributionList.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+  	<PUBLISHER name="LoginSBIDocumentExecutionPublisher">
+    	<RENDERING channel="PORTLET" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/commons/startSBIDocumentExecution.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER> 
+
+	<PUBLISHER name="SESSION_EXPIRED_PUBLISHER">
+    	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/commons/sessionExpired.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+	</PUBLISHER>
+  <PUBLISHER name="DomainPublisher">
+    	<RENDERING channel="PORTLET" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/commons/manageDomains.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+    	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/commons/manageDomains.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+  	</PUBLISHER>
+  	<PUBLISHER name="ConfigPublisher">
+    	<RENDERING channel="PORTLET" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/commons/manageConfig.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+    	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/commons/manageConfig.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+  	</PUBLISHER>
+
+</PUBLISHERS>

@@ -1,0 +1,13 @@
+ENGINE-NAME: SpagoBINetworkEngine
+VERSION: 2.5.0 (Stable)
+
+NOTE: Please do not modify the content of this file. If you modify the code of the package, for example 
+adding some patches to it, report a detailed description of these modifications and how to re-genearte them
+in file PATCHES.txt
+
+WARNING: Even if it is clearly advised against to modify this file (see the note above) everyone is free
+to modified it any time after the package installation, so there is no guarantee 
+that the version number written here reflect the real version of the code. 
+To be sure of the real version number of this package please use the script version.{bat|sh} in the 
+bin directory or connect to the url: http://host/engineContext/version
+

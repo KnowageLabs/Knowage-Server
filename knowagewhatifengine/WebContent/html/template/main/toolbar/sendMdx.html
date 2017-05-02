@@ -1,0 +1,25 @@
+<md-dialog style='height:40%; width:50%;' layout="column">
+	
+	<md-toolbar class="knowage-blue dialog-toolbar" style="font-size:100%" flex=20>
+		<p>Insert MDX Query</p>
+	</md-toolbar>
+	
+	<md-content class="mdx-dialog">
+		<md-input-container class="md-block">
+       		<label>MDX Query</label>
+       		<textarea ng-model="mdxQuery" columns="1" rows="15"></textarea>
+     	</md-input-container>
+	
+	
+	</md-content>
+	
+	<md-dialog-actions layout="row">
+			<md-button ng-click="closeDialogToolbarRight()">
+				Cancel
+			</md-button>
+			<md-button ng-click="sendMdxQuery(mdxQuery)">
+				Save
+			</md-button>		
+		</md-dialog-actions>
+	
+</md-dialog>

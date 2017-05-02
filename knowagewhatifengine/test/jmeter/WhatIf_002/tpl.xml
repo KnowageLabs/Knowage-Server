@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<olap>
+	<cube reference="Mondrian_what_if_mysql"/>
+	
+	<!-- MDXquery>
+		SELECT {[Measures].[Store Sales]} ON COLUMNS, {[Product].[Food]} ON ROWS FROM [Sales_V] WHERE CrossJoin([Version].[0], [Region].[Mexico Central])
+	</MDXquery -->
+	<MDXquery>
+		SELECT
+        CrossJoin({
+        [Measures].[Store Cost],
+        [Measures].[Store Sales],
+        [Measures].[Sales Count]},
+        {[Customers].[All Customers],
+        [Customers].[Canada],
+        [Customers].[Mexico],
+        [Customers].[USA]}) 
+            ON COLUMNS,
+            Hierarchize(
+    	Union
+    	({[Product].[Food], [Product].[Food].[Baked Goods], [Product].[Food].[Baking Goods], [Product].[Food].[Breakfast Foods], [Product].[Food].[Canned Foods], [Product].[Food].[Canned Products], [Product].[Food].[Dairy], [Product].[Food].[Deli], [Product].[Food].[Eggs], [Product].[Food].[Frozen Foods], [Product].[Food].[Meat], [Product].[Food].[Produce], [Product].[Food].[Seafood], [Product].[Food].[Snack Foods], [Product].[Food].[Snacks], [Product].[Food].[Starchy Foods], [Product].[Drink]}, [Product].[Drink].Children)) 
+        ON ROWS 
+		FROM
+    	[Sales_V]
+    	WHERE
+   		[Version].[0]
+	</MDXquery>
+	<MDXMondrianQuery>
+		SELECT {[Measures].[Store Sales]} ON COLUMNS, {[Product].[Food]} ON ROWS FROM [Sales_V] WHERE CrossJoin([Version].[0], [Region].[Mexico Central])
+	</MDXMondrianQuery>
+	
+	<STANDALONE>
+		<CONNECTION>
+			<!--
+			<USR>root</USR>
+			<PWD></PWD>
+			<CONNECTIONSTRING>jdbc:mysql://localhost:3306/foodmart_new</CONNECTIONSTRING>
+			<DRIVER>com.mysql.jdbc.Driver</DRIVER>
+			-->
+			<JNDI_NAME>java:comp/env/jdbc/foodmart</JNDI_NAME>
+			<CATALOG>\resources\Olap\FoodMartMySQL.xml</CATALOG>
+			<DIALECT>MySQL</DIALECT>
+		</CONNECTION>
+	</STANDALONE>
+	
+	<SCENARIO name="scenario" editCube="Sales_Edit" initialVersion="0">
+		<MEASURE>Store Sales</MEASURE>
+		<MEASURE>Store Cost</MEASURE>
+		<VARIABLE name="var" value="5"/>
+		<VARIABLE name="PD" value="[Product].[Drink.Dairy]" type="string"/>
+	</SCENARIO>
+	
+	<TOOLBAR>
+		<BUTTON_MDX visible="true" menu="false" />                            
+		<BUTTON_FATHER_MEMBERS visible="true" menu="false"/>                  
+		<BUTTON_HIDE_SPANS visible="true" menu="false"/>                     
+		<BUTTON_SHOW_PROPERTIES visible="true" menu="false"/>               
+		<BUTTON_HIDE_EMPTY visible="true" menu="false" />                   
+        <BUTTON_FLUSH_CACHE visible="true" menu="false"  />                 
+        <BUTTON_SAVE visible="true" menu="false" />                       
+        <BUTTON_SAVE_NEW visible="true" menu="false" />
+        <BUTTON_UNDO visible="true" menu="false" />
+		<BUTTON_VERSION_MANAGER visible="true" menu="false" />
+		<BUTTON_EXPORT_OUTPUT visible="true" menu="false" />
+	</TOOLBAR>
+
+</olap>

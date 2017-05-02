@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ACTIONS>
+
+<!--START alarms new interface actions in WEB modality -->
+ <ACTION name="MANAGE_ALARMS_ACTION" class="it.eng.spagobi.kpi.alarm.service.ManageAlarmsAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION> 
+  <ACTION name="MANAGE_CONTACTS_ACTION" class="it.eng.spagobi.kpi.alarm.service.ManageContactsAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION> 
+ <!--END alarms new interface actions in WEB modality -->
+ 
+ 
+ <!--START alarms new interface actions in PORTLET modality -->
+ <ACTION name="INIT_MANAGE_ALARMS_GUI_ACTION" class="it.eng.spago.dispatching.action.EmptyAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION> 
+  <ACTION name="INIT_MANAGE_CONTACTS_GUI_ACTION" class="it.eng.spago.dispatching.action.EmptyAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION> 
+ <!--END alarms new interface actions in PORTLET modality -->
+ 
+</ACTIONS>
+

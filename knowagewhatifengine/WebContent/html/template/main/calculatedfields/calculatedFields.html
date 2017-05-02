@@ -1,0 +1,112 @@
+
+<md-dialog style='width:50%;'>
+
+      <md-toolbar class="md-toolbar">
+		      <div class="md-toolbar-tools">
+		        <h2>
+		          <span style= "margin-left: 10px;">Select Function</span>
+		        </h2>
+		   
+		      </div>
+		   </md-toolbar>
+    
+    
+    
+       <div style="margin-left: 20px; margin-right: 20px; " ng-hide="hideName">
+      <md-input-container class="md-block">
+          <label>Name</label>
+          <input ng-model="selectedMDXFunctionName" >
+        </md-input-container>
+      </div>
+  <md-dialog-content ng-cloak>
+    <md-tabs md-dynamic-height  md-selected="selectedTab" md-border-bottom>
+      <md-tab label="Aggregation" ng-if="aggregationArray.length > 0">
+    <md-content class="md-padding">
+      <md-list flex>
+        <md-list-item class="md-3-line"
+         ng-repeat="formula in aggregationArray"
+         ng-class="{selected:(selectedMDXFunction.name == formula.name)}"
+          ng-click="selectMDXFunction(formula)">
+          <div class="md-list-item-text" layout="column" >
+            <h3>{{ formula.name }}</h3>
+            <h4>{{  formula.syntax }}</h4>
+            <p>{{  formula.description }}</p>
+          </div>
+          <md-divider ></md-divider>
+        </md-list-item>
+    </md-content>      
+      </md-tab>
+      <md-tab label="Arithmetic" ng-if="arithmeticArray.length > 0">
+    <md-content class="md-padding">
+      <md-list flex>
+	       <md-list-item class="md-3-line"
+         ng-repeat="formula in arithmeticArray"
+         ng-class="{selected:(selectedMDXFunction.name == formula.name)}"
+          ng-click="selectMDXFunction(formula)">
+          <div class="md-list-item-text" layout="column" >
+          
+            <h3>{{ formula.name }}</h3>
+            <h4>{{  formula.syntax }}</h4>
+            <p>{{  formula.description }}</p>
+          </div>
+          <md-divider ></md-divider>
+        </md-list-item>
+    </md-content>      
+      </md-tab>
+      <md-tab label="Temporal" ng-if="temporalArray.length > 0">
+    <md-content class="md-padding">
+      <md-list flex>
+        <md-list-item class="md-3-line"
+         ng-repeat="formula in temporalArray"
+         ng-class="{selected:(selectedMDXFunction.name == formula.name)}"
+          ng-click="selectMDXFunction(formula)">
+          <div class="md-list-item-text" layout="column" >
+            <h3>{{ formula.name }}</h3>
+            <h4>{{  formula.syntax }}</h4>
+            <p>{{  formula.description }}</p>
+          </div>
+          <md-divider ></md-divider>
+        </md-list-item>
+    </md-content>      
+      </md-tab>
+       <md-tab label="Custom" ng-if="customArray.length > 0">
+    <md-content class="md-padding">
+      <md-list flex>
+        <md-list-item class="md-3-line"
+         ng-repeat="formula in customArray"
+         ng-class="{selected:(selectedMDXFunction.name == formula.name)}"
+          ng-click="selectMDXFunction(formula)">
+          <div class="md-list-item-text" layout="column" >
+            <h3>{{ formula.name }}</h3>
+            <h4>{{  formula.body }}</h4>
+            <p>{{  formula.description }}</p>
+          </div>
+          <md-divider ></md-divider>
+        </md-list-item>
+    </md-content>      
+      </md-tab>
+      
+     <md-tab label="Recent" md-on-select="hideNameInputCC('select')" md-on-deselect="hideNameInputCC('deselect')">
+    <md-content class="md-padding">
+      <md-list flex>
+        <md-list-item class="secondary-button-padding" ng-click="edit(item)" ng-repeat="item in cookieArray | filter: {'docName': olapDocName}">
+	<img alt="{{ item.name }}" ng-src="{{ item.img }}" class="md-avatar" />
+	<p>{{ item.name }}</p>
+	<md-button class="md-warn md-secondary" ng-click="deleteFromCookie($index,item);">Delete</md-button> 
+	<md-divider ></md-divider>
+</md-list-item>
+    </md-content>      
+      </md-tab>
+    </md-tabs>
+  </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+      <md-button class="md-raised" ng-click="openArgumentsdialog()" ng-disabled="checkValidity()" md-autofocus>
+        OK
+      </md-button>
+      <md-button class="md-raised" ng-click="closeDialog()" style="margin-right:20px;" >
+       Cancel
+      </md-button>
+    </md-dialog-actions>
+</md-dialog>
+

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MODULES>
+  	<MODULE class="it.eng.spagobi.engines.config.service.DetailEngineModule" name="DetailEngineModule">
+     	<CONFIG/>
+    </MODULE>  
+	
+	<MODULE class="it.eng.spagobi.engines.config.service.ListEnginesModule" name="ListEnginesModule">
+	    <CONFIG pool="spagobi" rows="20" title="SBISet.ListEngine.title" >
+	      <QUERIES>
+	        <SELECT_QUERY statement="SELECT_LIST_ENGINE">
+	        	<PARAMETER type="RELATIVE" value="TENANT_ID" scope="USER" />
+	        	<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="FIELD_ORDER"/>
+	        	<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="TYPE_ORDER" />
+	        </SELECT_QUERY>
+	        <DELETE_QUERY statement="DELETE_REPORT_ENGINE">
+	          <PARAMETER scope="SERVICE_REQUEST" type="RELATIVE" value="ENGINE_ID"/>
+	        </DELETE_QUERY>
+	      </QUERIES>
+	      <COLUMNS>
+	        <COLUMN label="ENGINE_ID" name="ENGINE_ID" hidden="true" />
+	        <COLUMN label="SBISet.ListEngine.columnLabel" name="LABEL" />
+	        <COLUMN label="SBISet.ListEngine.columnName" name="NAME" />
+	        <COLUMN label="SBISet.ListEngine.columnDesc" name="DESCR"/>
+	      </COLUMNS>
+	      <CAPTIONS>
+	        <SELECT_CAPTION confirm="FALSE" image="/img/detail.gif" label="SBISet.ListEngine.selectCaption">
+	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="detailEnginePage"/>
+	          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_SELECT"/>
+	          <PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="ENGINE_ID"/>
+	        </SELECT_CAPTION>
+	        <DELETE_CAPTION confirm="TRUE" image="/img/erase.gif" label="SBISet.ListEngine.deleteCaption">
+	          <PARAMETER name="ID" scope="LOCAL" type="RELATIVE" value="ENGINE_ID"/>
+	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="detailEnginePage"/>
+	          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_DEL"/>
+	        </DELETE_CAPTION>
+	      </CAPTIONS>
+	      <BUTTONS>
+	        <INSERT_BUTTON confirm="TRUE" image="/img/new.png" label="SBISet.ListEngine.insertButton">
+	          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="DETAIL_NEW"/>
+	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="detailEnginePage"/>
+	        </INSERT_BUTTON>
+	        <BACK_BUTTON confirm="FALSE" image="/img/back.png" label="SBISet.ListEngine.backButton" onlyPortletRunning="true"  >
+	          <PARAMETER name="ACTION_NAME" scope="" type="ABSOLUTE" value="START_ACTION"/>
+	          <PARAMETER name="PUBLISHER_NAME" scope="" type="ABSOLUTE" value="LoginSBIResourcesPublisher"/>
+	          <PARAMETER name="LIGHT_NAVIGATOR_RESET" scope="" type="ABSOLUTE" value="true"/>
+	        </BACK_BUTTON>
+	      </BUTTONS>
+	    </CONFIG>
+  	</MODULE>
+
+		
+       	                    
+</MODULES>
+
+

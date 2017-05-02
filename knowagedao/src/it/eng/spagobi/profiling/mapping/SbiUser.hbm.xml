@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 22-dic-2009 10.27.37 by Hibernate Tools 3.2.4.GA -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.profiling.bean.SbiUser" table="SBI_USER">
+        <id name="id" type="int">
+            <column name="ID" />
+   <generator class="org.hibernate.id.enhanced.TableGenerator">
+		<param name="optimizer">none</param>
+		<param name="segment_value">SBI_USER</param>
+		<param name="initial_value">1</param>		
+   </generator>
+        </id>
+        
+                <component name="commonInfo" insert="true" update="true" 
+  			 class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
+        <property name="userIn" type="string">
+            <column name="USER_IN" length="100" not-null="true" />
+        </property> 
+        <property name="userUp" type="string">
+            <column name="USER_UP" length="100" not-null="false" />
+        </property> 
+        <property name="userDe" type="string">
+            <column name="USER_DE" length="100" not-null="false" />
+        </property>                 
+        <property name="timeIn" type="timestamp">
+            <column name="TIME_IN" not-null="true" />
+        </property> 
+        <property name="timeUp" type="timestamp">
+            <column name="TIME_UP" not-null="false" />
+        </property> 
+        <property name="timeDe" type="timestamp">
+            <column name="TIME_DE" not-null="false" />
+        </property>                      
+        <property name="sbiVersionIn" type="string">
+            <column name="SBI_VERSION_IN" length="10" not-null="false" />
+        </property> 
+        <property name="sbiVersionUp" type="string">
+            <column name="SBI_VERSION_UP" length="10" not-null="false" />
+        </property> 
+        <property name="sbiVersionDe" type="string">
+            <column name="SBI_VERSION_DE" length="10" not-null="false" />
+        </property>                 
+        <property name="organization" type="string">
+            <column name="ORGANIZATION" length="20" not-null="false" />
+        </property>  			 
+  </component> 
+  
+        <property name="userId" type="string">
+            <column name="USER_ID" length="100" not-null="true" unique="true" />
+        </property>
+        <property name="password" type="string">
+            <column name="PASSWORD" length="150" />
+        </property>
+        <property name="fullName" type="string">
+            <column name="FULL_NAME" />
+        </property>
+        <property name="dtPwdBegin" type="timestamp">
+            <column name="DT_PWD_BEGIN" length="19" />
+        </property>
+        <property name="dtPwdEnd" type="timestamp">
+            <column name="DT_PWD_END" length="19" />
+        </property>
+        <property name="flgPwdBlocked" type="java.lang.Boolean">
+            <column name="FLG_PWD_BLOCKED" />
+        </property>
+        <property name="dtLastAccess" type="timestamp">
+            <column name="DT_LAST_ACCESS" length="19" />
+        </property>
+        <property name="isSuperadmin" type="java.lang.Boolean">
+            <column name="IS_SUPERADMIN" />
+        </property>
+        <set name="sbiExtUserRoleses" inverse="false" lazy="true" table="SBI_EXT_USER_ROLES" cascade="all" >
+            <key>
+                <column name="ID" not-null="true" />
+            </key>
+            <many-to-many entity-name="it.eng.spagobi.commons.metadata.SbiExtRoles">
+                <column name="EXT_ROLE_ID" not-null="true"/>
+            </many-to-many>
+        </set>
+        <set name="sbiUserAttributeses" inverse="false" lazy="true" table="SBI_USER_ATTRIBUTES" cascade="all" >
+            <key>
+                <column name="ID" not-null="true" />
+            </key>
+            <one-to-many entity-name="it.eng.spagobi.profiling.bean.SbiUserAttributes" />
+
+        </set>
+
+        <filter name="tenantFilter" condition="organization=:tenant"/>  
+    </class>
+	<filter-def name="tenantFilter">
+		<filter-param name="tenant" type="string"/>
+	</filter-def>
+</hibernate-mapping>

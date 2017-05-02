@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ================================================================================= -->
+<!-- GEO BASE PUBLISHERS															   -->
+<!-- ================================================================================= -->
+
+<PUBLISHERS>	
+	
+	<PUBLISHER name="SECURITY_ERROR_PUBLISHER">
+		<RENDERING channel="HTTP" type="JSP" mode="FORWARD">
+			<RESOURCES>
+				<ITEM prog="0" resource="/WEB-INF/jsp/errors/securityError.jsp" />
+			</RESOURCES>
+		</RENDERING>
+	</PUBLISHER>
+	
+	
+	<PUBLISHER name="ENGINE_STARTUP_EXCEPTION_TRAP_ACTION_PUBLISHER">
+		<RENDERING channel="HTTP" type="JSP" mode="FORWARD">
+			<RESOURCES>
+				<ITEM prog="0" resource="/WEB-INF/jsp/errors/serviceError.jsp" />
+			</RESOURCES>
+		</RENDERING>
+	</PUBLISHER>
+	
+
+	
+</PUBLISHERS>

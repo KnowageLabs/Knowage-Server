@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="urn:spagobimetamodel" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="urn:spagobimetamodel" xmlns:intf="urn:spagobimetamodel" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!--WSDL created by Apache Axis version: 1.4
+Built on Apr 22, 2006 (06:55:48 PDT)-->
+
+   <wsdl:message name="getMetamodelContentByNameResponse">
+
+      <wsdl:part name="getMetamodelContentByNameReturn" type="apachesoap:DataHandler"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getMetamodelContentByNameRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+      <wsdl:part name="in1" type="soapenc:string"/>
+
+      <wsdl:part name="in2" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getMetamodelContentLastModifiedRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+      <wsdl:part name="in1" type="soapenc:string"/>
+
+      <wsdl:part name="in2" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getMetamodelContentLastModifiedResponse">
+
+      <wsdl:part name="getMetamodelContentLastModifiedReturn" type="xsd:long"/>
+
+   </wsdl:message>
+
+   <wsdl:portType name="MetamodelService">
+
+      <wsdl:operation name="getMetamodelContentByName" parameterOrder="in0 in1 in2">
+
+         <wsdl:input message="impl:getMetamodelContentByNameRequest" name="getMetamodelContentByNameRequest"/>
+
+         <wsdl:output message="impl:getMetamodelContentByNameResponse" name="getMetamodelContentByNameResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getMetamodelContentLastModified" parameterOrder="in0 in1 in2">
+
+         <wsdl:input message="impl:getMetamodelContentLastModifiedRequest" name="getMetamodelContentLastModifiedRequest"/>
+
+         <wsdl:output message="impl:getMetamodelContentLastModifiedResponse" name="getMetamodelContentLastModifiedResponse"/>
+
+      </wsdl:operation>
+
+   </wsdl:portType>
+
+   <wsdl:binding name="MetamodelServiceSoapBinding" type="impl:MetamodelService">
+
+      <wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="getMetamodelContentByName">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getMetamodelContentByNameRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobimetamodel" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getMetamodelContentByNameResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobimetamodel" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getMetamodelContentLastModified">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getMetamodelContentLastModifiedRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobimetamodel" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getMetamodelContentLastModifiedResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobimetamodel" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+   </wsdl:binding>
+
+   <wsdl:service name="MetamodelServiceService">
+
+      <wsdl:port binding="impl:MetamodelServiceSoapBinding" name="MetamodelService">
+
+         <wsdlsoap:address location="http://localhost:8181/SpagoBI/services/MetamodelService"/>
+
+      </wsdl:port>
+
+   </wsdl:service>
+
+</wsdl:definitions>

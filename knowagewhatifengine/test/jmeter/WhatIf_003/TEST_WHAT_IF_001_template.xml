@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<olap>
+	<cube reference="FoodMartMySQL"/>
+	<MDXquery>
+		SELECT
+        CrossJoin({
+        [Measures].[Store Cost],
+        [Measures].[Store Sales],
+        [Measures].[Sales Count]},
+        {[Customers].[All Customers],
+        [Customers].[Canada],
+        [Customers].[Mexico],
+        [Customers].[USA]}) 
+            ON COLUMNS,
+            Hierarchize(
+    	Union
+    	({[Product].[Food], [Product].[Food].[Baked Goods], [Product].[Food].[Baking Goods], [Product].[Food].[Breakfast Foods], [Product].[Food].[Canned Foods], [Product].[Food].[Canned Products], [Product].[Food].[Dairy], [Product].[Food].[Deli], [Product].[Food].[Eggs], [Product].[Food].[Frozen Foods], [Product].[Food].[Meat], [Product].[Food].[Produce], [Product].[Food].[Seafood], [Product].[Food].[Snack Foods], [Product].[Food].[Snacks], [Product].[Food].[Starchy Foods], [Product].[Drink]}, [Product].[Drink].Children)) 
+        ON ROWS 
+		FROM
+    	[Sales_V]
+    	WHERE
+   		[Version].[0]
+	</MDXquery>
+	<MDXMondrianQuery>
+		SELECT
+        CrossJoin({
+        [Measures].[Store Cost],
+        [Measures].[Store Sales],
+        [Measures].[Sales Count]},
+        {[Customers].[All Customers],
+        [Customers].[Canada],
+        [Customers].[Mexico],
+        [Customers].[USA]}) 
+            ON COLUMNS,
+            Hierarchize(
+    	Union
+    	({[Product].[Food], [Product].[Food].[Baked Goods], [Product].[Food].[Baking Goods], [Product].[Food].[Breakfast Foods], [Product].[Food].[Canned Foods], [Product].[Food].[Canned Products], [Product].[Food].[Dairy], [Product].[Food].[Deli], [Product].[Food].[Eggs], [Product].[Food].[Frozen Foods], [Product].[Food].[Meat], [Product].[Food].[Produce], [Product].[Food].[Seafood], [Product].[Food].[Snack Foods], [Product].[Food].[Snacks], [Product].[Food].[Starchy Foods], [Product].[Drink]}, [Product].[Drink].Children)) 
+        ON ROWS 
+		FROM
+    	[Sales_V]
+    	WHERE
+   		[Version].[0]
+	</MDXMondrianQuery>
+	<TOOLBAR>
+		<BUTTON_MDX visible="true" menu="false" />                            
+		<BUTTON_FATHER_MEMBERS visible="true" menu="false"/>                  
+		<BUTTON_HIDE_SPANS visible="true" menu="false"/>                     
+		<BUTTON_SHOW_PROPERTIES visible="true" menu="false"/>               
+		<BUTTON_HIDE_EMPTY visible="true" menu="false" />                   
+        <BUTTON_FLUSH_CACHE visible="true" menu="false"  />                 
+        <BUTTON_SAVE visible="true" menu="false" />                       
+        <BUTTON_SAVE_NEW visible="true" menu="false" />
+        <BUTTON_UNDO visible="true" menu="false" />
+		<BUTTON_VERSION_MANAGER visible="true" menu="false" />
+		<BUTTON_EXPORT_OUTPUT visible="true" menu="false" />
+	</TOOLBAR>
+</olap>

@@ -1,0 +1,94 @@
+/*
+ * Knowage, Open Source Business Intelligence suite
+ * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+ *
+ * Knowage is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Knowage is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package it.eng.knowage.meta.model.olap;
+
+import it.eng.knowage.meta.model.ModelObject;
+
+/**
+ * <!-- begin-user-doc -->
+ * A representation of the model object '<em><b>Calculated Member</b></em>'.
+ * <!-- end-user-doc -->
+ *
+ * <p>
+ * The following features are supported:
+ * <ul>
+ *   <li>{@link it.eng.knowage.meta.model.olap.CalculatedMember#getCube <em>Cube</em>}</li>
+ *   <li>{@link it.eng.knowage.meta.model.olap.CalculatedMember#getHierarchy <em>Hierarchy</em>}</li>
+ * </ul>
+ * </p>
+ *
+ * @see it.eng.knowage.meta.model.olap.OlapModelPackage#getCalculatedMember()
+ * @model
+ * @generated
+ */
+public interface CalculatedMember extends ModelObject {
+	/**
+	 * Returns the value of the '<em><b>Cube</b></em>' reference.
+	 * It is bidirectional and its opposite is '{@link it.eng.knowage.meta.model.olap.Cube#getCalculatedMembers <em>Calculated Members</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Cube</em>' reference isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Cube</em>' reference.
+	 * @see #setCube(Cube)
+	 * @see it.eng.knowage.meta.model.olap.OlapModelPackage#getCalculatedMember_Cube()
+	 * @see it.eng.knowage.meta.model.olap.Cube#getCalculatedMembers
+	 * @model opposite="calculatedMembers"
+	 * @generated
+	 */
+	Cube getCube();
+
+	/**
+	 * Sets the value of the '{@link it.eng.knowage.meta.model.olap.CalculatedMember#getCube <em>Cube</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Cube</em>' reference.
+	 * @see #getCube()
+	 * @generated
+	 */
+	void setCube(Cube value);
+
+	/**
+	 * Returns the value of the '<em><b>Hierarchy</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Hierarchy</em>' reference isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Hierarchy</em>' reference.
+	 * @see #setHierarchy(Hierarchy)
+	 * @see it.eng.knowage.meta.model.olap.OlapModelPackage#getCalculatedMember_Hierarchy()
+	 * @model
+	 * @generated
+	 */
+	Hierarchy getHierarchy();
+
+	/**
+	 * Sets the value of the '{@link it.eng.knowage.meta.model.olap.CalculatedMember#getHierarchy <em>Hierarchy</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Hierarchy</em>' reference.
+	 * @see #getHierarchy()
+	 * @generated
+	 */
+	void setHierarchy(Hierarchy value);
+
+} // CalculatedMember

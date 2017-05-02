@@ -1,0 +1,90 @@
+
+<md-dialog class="fullscreen-dialog">
+	
+	   <md-toolbar class="knowage-blue dialog-toolbar">
+		<h2 flex="flex" class="md-title">Drill Through</h2>
+	</md-toolbar>
+	 <md-card>
+	 
+	
+            <span class="md-subhead">Select visible levels:</span>
+        
+        <div layout="row">
+      	<div>
+        <md-menu-bar>
+          <md-menu ng-repeat="parent in dtTree">
+            <button ng-click="$mdOpenMenu()">
+              {{parent.caption}}
+            </button>
+            <md-menu-content>
+              <md-menu-item ng-repeat="child in parent.children">
+                	<md-checkbox style="margin-left:5px;"  md-prevent-menu-close="md-prevent-menu-close"
+						ng-click="checkCheckboxes(child , dtAssociatedLevels)"
+						ng-checked="getCheckboxes(child , dtAssociatedLevels)"
+						> 
+						{{ child.caption }} 
+						</md-checkbox>
+              </md-menu-item>
+            </md-menu-content>
+          </md-menu>
+        </md-menu-bar>
+      </div>
+      <span flex></span>
+      
+      <md-button class="md-raised"  ng-click="clearLevels()">
+				{{translate.load("sbi.olap.drillTrough.clearAll")}}
+	</md-button>		  
+    </div>	
+ </md-card>
+		
+		
+		
+	<md-content flex 
+				class="ToolbarBox miniToolbar noBorder mozTable">
+			<md-card layout-padding>
+					<angular-table 
+						
+						layout-fill
+						id="dtData_id"
+						ng-model="dtData"
+						columns ="formateddtColumns"
+						show-search-bar = "true"
+						>
+						
+													 					
+					</angular-table>  
+	
+	
+	</md-card>
+	</md-content>	
+		<md-dialog-actions layout="row">
+		
+			<md-input-container >
+			<label>Maximum rows</label>
+			 <md-select name="maxRows" ng-model="dtMaxRows" required>
+		        <md-option value="0">0</md-option>
+		        <md-option value="10">10</md-option>
+		        <md-option value="25">25</md-option>
+		        <md-option value="50">50</md-option>
+		        <md-option value="100">100</md-option>
+		        <md-option value="250">250</md-option>
+		        <md-option value="500">500</md-option>
+		        <md-option value="1000">1000</md-option>
+		      </md-select>
+		     </md-input-container>
+		     
+		     
+				<span flex></span>
+			<md-button class="md-raised" ng-click="closeDialog()">
+				Cancel
+			</md-button>
+			<md-button class="md-raised" ng-click="exportDrill(dtData, 'DrillTrough Table', true)">
+				Export
+			</md-button>
+			<md-button class="md-raised"  ng-click="drillThrough()" md-autofocus>
+				Apply 
+			</md-button>		
+		</md-dialog-actions>
+	
+	
+</md-dialog>

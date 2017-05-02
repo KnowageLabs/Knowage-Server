@@ -1,0 +1,48 @@
+
+<div id="geoRigthMenu">
+<md-button id="showMenu" class="md-fab zoomAnimation"
+			ng-click="toggleMenu($event)"
+			aria-label="toggle menu"> 
+		<i ng-if="!openRigthMenu" class="fa fa-angle-double-left"></i>
+		<i ng-if="openRigthMenu" class="fa fa-angle-double-right"></i>
+	</md-button>
+
+	<md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id='menu' md-is-locked-open="openRigthMenu" layout="column">
+		<section class="md-sidenav-right-wrapper">
+			<md-toolbar class="md-theme-light" style="display: flex; flex: 0 0 auto;">
+				<div class="md-toolbar-tools" style="height: 100%; width: 100%; text-align: center;">
+					<i class="fa fa-crosshairs"></i>
+					<span style="height: 100%; width: 100%; line-height: 23px;">{{translate.load("gisengine.rigthMenu.locationIntelligence")}}</span>
+				</div>
+			</md-toolbar>
+		</section>
+		<md-content style="height: 100%;" class="no-padding" layout> 
+			<md-tabs class="mini-tabs" ng-class="{hiddenTabs:template.noDatasetReport==true}" flex>
+				<md-tab id="GEOMAP" ng-if="template.noDatasetReport!=true"> 
+					<md-tab-label>{{translate.load("gisengine.rigthMenu.tabs.geomap")}} </md-tab-label> 
+					<md-tab-body>
+						<geo-map-menu id="map"></geo-map-menu>
+					</md-tab-body>
+				</md-tab>
+				<md-tab id="LAYER"> 
+					<md-tab-label>{{translate.load("gisengine.rigthMenu.tabs.layer")}}</md-tab-label> 
+					<md-tab-body>
+						<geo-layers id="layer"></geo-layers>
+					</md-tab-body>
+				</md-tab>
+				<md-tab id="CONFIG" ng-if="template.noDatasetReport!=true && visibility.showMapConfig"> 
+					<md-tab-label>{{translate.load("gisengine.rigthMenu.tabs.config")}}</md-tab-label> 
+					<md-tab-body>
+						<geo-config id="config"></geo-config>
+					</md-tab-body>
+				</md-tab>
+		<!-- 	<md-tab id="TEMPLATE"> 
+					<md-tab-label>TEMPLATE</md-tab-label> 
+					<md-tab-body>
+					<pre>{{template | json}}</pre>
+					</md-tab-body>
+				</md-tab>  -->
+			</md-tabs>
+		</md-content>
+	</md-sidenav>
+</div>

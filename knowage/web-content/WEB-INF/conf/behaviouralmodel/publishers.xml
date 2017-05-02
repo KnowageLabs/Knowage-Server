@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PUBLISHERS>
+  	
+	<PUBLISHER name="ChecklistLookupPublisher">
+    	<RENDERING channel="PORTLET" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/behaviouralmodel/lov/checklistLookupModalitiesValues.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+    	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/behaviouralmodel/lov/checklistLookupModalitiesValues.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+  	</PUBLISHER>
+
+  	<PUBLISHER name="listModalitiesChecks">
+    	<RENDERING channel="PORTLET" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/behaviouralmodel/check/listModalitiesChecks.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+    	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/behaviouralmodel/check/listModalitiesChecks.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+  	</PUBLISHER>
+
+  	<PUBLISHER name="detailModalitiesChecks">
+    	<RENDERING channel="PORTLET" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/behaviouralmodel/check/detailModalitiesChecks.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/behaviouralmodel/check/detailModalitiesChecks.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+  	<PUBLISHER name="detailModalitiesChecksLoop">
+    	<RENDERING channel="PORTLET" mode="" type="LOOP">
+      		<RESOURCES>
+        		<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="ListModalitiesChecksPage" />
+        		<PARAMETER name="LIGHT_NAVIGATOR_BACK_TO" type="ABSOLUTE" scope="" value="1" />
+      		</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="LOOP">
+      		<RESOURCES>
+        		<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="ListModalitiesChecksPage" />
+        		<PARAMETER name="LIGHT_NAVIGATOR_BACK_TO" type="ABSOLUTE" scope="" value="1" />
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+  	
+  	
+
+  	<PUBLISHER name="listLovs">
+    	<RENDERING channel="PORTLET" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/behaviouralmodel/lov/listLovs.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+    	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/behaviouralmodel/lov/listLovs.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+  	</PUBLISHER>
+
+  	<PUBLISHER name="detailModalitiesValue">
+    	<RENDERING channel="PORTLET" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/behaviouralmodel/lov/detailModalitiesValue.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/behaviouralmodel/lov/detailModalitiesValue.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+  	<PUBLISHER name="detailModalitiesValueLoop">
+    	<RENDERING channel="PORTLET" mode="" type="LOOP">
+      		<RESOURCES>
+        		<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="ListLovsPage" />
+        		<PARAMETER name="LIGHT_NAVIGATOR_BACK_TO" type="ABSOLUTE" scope="" value="1" />
+        		<!--  <PARAMETER name="LIGHT_NAVIGATOR_BACK_TO" type="RELATIVE" scope="SERVICE_RESPONSE" value="DetailModalitiesValueModule.LIGHT_NAVIGATOR_BACK_TO" /> -->
+      		</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="LOOP">
+      		<RESOURCES>
+        		<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="ListLovsPage" />
+        		<PARAMETER name="LIGHT_NAVIGATOR_BACK_TO" type="ABSOLUTE" scope="" value="1" />
+        		<!-- <PARAMETER name="LIGHT_NAVIGATOR_BACK_TO" type="RELATIVE" scope="SERVICE_RESPONSE" value="DetailModalitiesValueModule.LIGHT_NAVIGATOR_BACK_TO" /> -->
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+  	<PUBLISHER name="deleteModalitiesValueLoop">
+    	<RENDERING channel="PORTLET" mode="" type="LOOP">
+      		<RESOURCES>
+        		<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="ListLovsPage" />
+        		<PARAMETER name="LIGHT_NAVIGATOR_BACK_TO" type="ABSOLUTE" scope="" value="0" />
+      		</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="LOOP">
+      		<RESOURCES>
+        		<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="ListLovsPage" />
+        		<PARAMETER name="LIGHT_NAVIGATOR_BACK_TO" type="ABSOLUTE" scope="" value="0" />
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+	<PUBLISHER name="detailLovTestResult">
+    	<RENDERING channel="PORTLET" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/behaviouralmodel/lov/detailLovTestResult.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/behaviouralmodel/lov/detailLovTestResult.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+  	<PUBLISHER name="detailLovFillProfileAttributes">
+    	<RENDERING channel="PORTLET" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/behaviouralmodel/lov/detailLovFillProfileAttributes.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/behaviouralmodel/lov/detailLovFillProfileAttributes.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+
+  	<PUBLISHER name="listParameters">
+    	<RENDERING channel="PORTLET" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/behaviouralmodel/analyticaldriver/listParameters.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+    	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/behaviouralmodel/analyticaldriver/listParameters.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+  	</PUBLISHER>
+
+  	<PUBLISHER name="detailParameter">
+    	<RENDERING channel="PORTLET" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/behaviouralmodel/analyticaldriver/detailParameter.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/behaviouralmodel/analyticaldriver/detailParameter.jsp"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+  	<PUBLISHER name="afterInsertionLoop">
+        <RENDERING channel="PORTLET" mode="" type="LOOP">
+            <RESOURCES>
+                <PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="DetailParameterPage" />
+                <PARAMETER name="MESSAGEDET" type="ABSOLUTE" scope="" value="DETAIL_SELECT" />
+                <PARAMETER name="id" type="RELATIVE" scope="SERVICE_RESPONSE" value="DetailParameterModule.id" />
+                <PARAMETER name="LIGHT_NAVIGATOR_REPLACE_LAST" type="ABSOLUTE" scope="" value="true" />
+            </RESOURCES>
+        </RENDERING>
+        <RENDERING channel="HTTP" mode="" type="LOOP">
+            <RESOURCES>
+                <PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="DetailParameterPage" />
+                <PARAMETER name="MESSAGEDET" type="ABSOLUTE" scope="" value="DETAIL_SELECT" />
+                <PARAMETER name="id" type="RELATIVE" scope="SERVICE_RESPONSE" value="DetailParameterModule.id" />
+                <PARAMETER name="LIGHT_NAVIGATOR_REPLACE_LAST" type="ABSOLUTE" scope="" value="true" />
+            </RESOURCES>
+        </RENDERING>
+    </PUBLISHER>
+  	<PUBLISHER name="detailParameterLoop">
+    	<RENDERING channel="PORTLET" mode="" type="LOOP">
+      		<RESOURCES>
+        		<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="ListParametersPage" />
+        		<PARAMETER name="LIGHT_NAVIGATOR_BACK_TO" type="ABSOLUTE" scope="" value="1" />
+      		</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="LOOP">
+      		<RESOURCES>
+        		<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="ListParametersPage" />
+        		<PARAMETER name="LIGHT_NAVIGATOR_BACK_TO" type="ABSOLUTE" scope="" value="1" />
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+	 <PUBLISHER name="lovLookupLoop">
+    	<RENDERING channel="PORTLET" mode="" type="LOOP">
+      		<RESOURCES>
+      		<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="LovLookupPage" />
+        	</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="LOOP">
+      		<RESOURCES>
+      		<PARAMETER name="PAGE" type="ABSOLUTE" scope="" value="LovLookupPage" />
+        	</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+    <PUBLISHER name="exitLovLookupLoop">
+        <RENDERING channel="PORTLET" mode="" type="LOOP">
+            <RESOURCES>
+            <PARAMETER name="LIGHT_NAVIGATOR_BACK_TO" type="ABSOLUTE" scope="" value="1" />
+            </RESOURCES>
+        </RENDERING>
+        <RENDERING channel="HTTP" mode="" type="LOOP">
+            <RESOURCES>
+            <PARAMETER name="LIGHT_NAVIGATOR_BACK_TO" type="ABSOLUTE" scope="" value="1" />
+            </RESOURCES>
+        </RENDERING>
+    </PUBLISHER>
+
+  	<PUBLISHER name="LookupPublisher">
+    	<RENDERING channel="PORTLET" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/behaviouralmodel/lov/listLookupModalitiesValues.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+    	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0"  resource="/WEB-INF/jsp/behaviouralmodel/lov/listLookupModalitiesValues.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+  	</PUBLISHER>
+
+	<PUBLISHER name="DetailParameterPubJ">
+    	<RENDERING channel="PORTLET" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="it.eng.spagobi.behaviouralmodel.analyticaldriver.presentation.DetailParameterPublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="it.eng.spagobi.behaviouralmodel.analyticaldriver.presentation.DetailParameterPublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+
+   	<PUBLISHER name="DynamicPublisher">
+		<RENDERING channel="PORTLET" type="JAVA" mode="">
+			<RESOURCES>
+				<ITEM mode="VIEW" 	resource="it.eng.spagobi.commons.presentation.DynamicPublisher" />
+				<ITEM mode="EDIT"  resource="it.eng.spagobi.commons.presentation.DynamicPublisher" />
+			</RESOURCES>
+		</RENDERING>
+		<RENDERING channel="HTTP" type="JAVA" mode="">
+			<RESOURCES>
+				<ITEM prog="0"	resource="it.eng.spagobi.commons.presentation.DynamicPublisher" />
+			</RESOURCES>
+		</RENDERING>
+	</PUBLISHER>   
+
+  	
+
+    
+  	<PUBLISHER name="ListObjParusePublisher">
+    	<RENDERING channel="PORTLET" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="it.eng.spagobi.behaviouralmodel.analyticaldriver.presentation.ListObjParusePublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="it.eng.spagobi.behaviouralmodel.analyticaldriver.presentation.ListObjParusePublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>    
+  	<PUBLISHER name="ListParametersPubJ">
+    	<RENDERING channel="PORTLET" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="it.eng.spagobi.behaviouralmodel.analyticaldriver.presentation.ListParametersPublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="it.eng.spagobi.behaviouralmodel.analyticaldriver.presentation.ListParametersPublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>    
+    
+	<PUBLISHER name="CheckLinksDispatcherPublisher">
+    	<RENDERING channel="PORTLET" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="it.eng.spagobi.behaviouralmodel.check.presentation.CheckLinksDispatcherPublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="it.eng.spagobi.behaviouralmodel.check.presentation.CheckLinksDispatcherPublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+  	<PUBLISHER name="DetailModalitiesChecksPubJ">
+    	<RENDERING channel="PORTLET" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="it.eng.spagobi.behaviouralmodel.check.presentation.DetailModalitiesChecksPublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="it.eng.spagobi.behaviouralmodel.check.presentation.DetailModalitiesChecksPublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>    
+  	<PUBLISHER name="ListModalitiesChecksPubJ">
+    	<RENDERING channel="PORTLET" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="it.eng.spagobi.behaviouralmodel.check.presentation.ListModalitiesChecksPublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="it.eng.spagobi.behaviouralmodel.check.presentation.ListModalitiesChecksPublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>    
+  	<PUBLISHER name="DetailModalitiesValuePubJ">
+    	<RENDERING channel="PORTLET" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="it.eng.spagobi.behaviouralmodel.analyticaldriver.presentation.DetailModalitiesValuePublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="it.eng.spagobi.behaviouralmodel.analyticaldriver.presentation.DetailModalitiesValuePublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>   
+    
+  	<PUBLISHER name="LovLookupPublisher">
+    	<RENDERING channel="PORTLET" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/behaviouralmodel/lov/listLookupLov.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+    	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/behaviouralmodel/lov/listLookupLov.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+  	</PUBLISHER>
+  	<PUBLISHER name="ParametersLookupPublisher">
+    	<RENDERING channel="PORTLET" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/behaviouralmodel/analyticaldriver/listLookupParameters.jsp"/>
+        		<ITEM mode="EDIT" resource="/WEB-INF/jsp/commons/edit.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+    	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/behaviouralmodel/analyticaldriver/listLookupParameters.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+  	</PUBLISHER>    
+  	<PUBLISHER name="ListLovsPubJ">
+    	<RENDERING channel="PORTLET" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="it.eng.spagobi.behaviouralmodel.lov.presentation.ListLovsPublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+   	 	<RENDERING channel="HTTP" mode="" type="JAVA">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="it.eng.spagobi.behaviouralmodel.lov.presentation.ListLovsPublisher"/>
+      		</RESOURCES>
+   	 	</RENDERING>
+  	</PUBLISHER>
+  	
+                                  	
+</PUBLISHERS>

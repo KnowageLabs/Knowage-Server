@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2-dic-2008 10.47.58 by Hibernate Tools 3.1.0 beta3 -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.kpi.config.metadata.SbiKpiInstanceHistory" table="SBI_KPI_INSTANCE_HISTORY">
+        <id name="idKpiInstanceHistory" type="integer">
+            <column name="id_kpi_instance_history" />
+        </id>
+        <many-to-one name="sbiDomains" class="it.eng.spagobi.commons.metadata.SbiDomains" >
+            <column name="CHART_TYPE_ID" />
+        </many-to-one>
+        <many-to-one name="sbiKpiInstance" class="it.eng.spagobi.kpi.config.metadata.SbiKpiInstance" >
+            <column name="id_kpi_instance" not-null="true" />
+        </many-to-one>
+        <many-to-one name="sbiThreshold" class="it.eng.spagobi.kpi.threshold.metadata.SbiThreshold" >
+            <column name="THRESHOLD_ID" />
+        </many-to-one>
+        <many-to-one name="sbiMeasureUnit" class="it.eng.spagobi.kpi.config.metadata.SbiMeasureUnit" >
+            <column name="id_measure_unit" />
+        </many-to-one>
+        <property name="weight" type="double">
+            <column name="weight" precision="22" scale="0" />
+        </property>
+        <property name="target" type="double">
+            <column name="target" precision="22" scale="0" />
+        </property>
+        <property name="beginDt" type="timestamp">
+            <column name="BEGIN_DT" length="19" />
+        </property>
+        <property name="endDt" type="timestamp">
+            <column name="END_DT" length="19" />
+        </property>
+    </class>
+</hibernate-mapping>

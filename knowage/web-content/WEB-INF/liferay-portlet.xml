@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE liferay-portlet-app PUBLIC "-//Liferay//DTD Portlet Application 4.1.0//EN" "http://www.liferay.com/dtd/liferay-portlet-app_4_1_0.dtd">
+
+<liferay-portlet-app>
+
+	<portlet>
+		<portlet-name>SBIBehavioralModels</portlet-name>
+		<instanceable>true</instanceable>
+	</portlet>
+	<portlet>
+		<portlet-name>SBIAdminDistributionList</portlet-name>
+		<instanceable>true</instanceable>
+	</portlet>
+	<portlet>
+		<portlet-name>SBIDistributionList</portlet-name>
+		<instanceable>true</instanceable>
+	</portlet>
+	<portlet>
+		<portlet-name>SBIAnaliticalModels</portlet-name>
+		<instanceable>true</instanceable>
+	</portlet>
+	<portlet>
+		<portlet-name>SBICatalolgues</portlet-name>
+		<instanceable>true</instanceable>
+	</portlet>
+	<portlet>
+		<portlet-name>SbiTools</portlet-name>
+		<instanceable>true</instanceable>
+	</portlet>
+	<portlet>
+		<portlet-name>SbiEvents</portlet-name>
+		<instanceable>true</instanceable>
+	</portlet>
+	<portlet>
+		<portlet-name>SbiResources</portlet-name>
+		<instanceable>true</instanceable>
+	</portlet>
+	<portlet>
+		<portlet-name>SBIFunctionality</portlet-name>
+		<instanceable>true</instanceable>
+	</portlet>
+	<portlet>
+		<portlet-name>SbiHotLink</portlet-name>
+		<instanceable>true</instanceable>
+	</portlet>
+	<portlet>
+		<portlet-name>KPIConfiguration</portlet-name>
+		<instanceable>true</instanceable>
+	</portlet>
+	<portlet>
+		<portlet-name>DocumentsBrowser</portlet-name>
+		<instanceable>true</instanceable>
+	</portlet>
+	<portlet>
+		<portlet-name>DocumentExecution</portlet-name>
+		<instanceable>true</instanceable>
+	</portlet>
+</liferay-portlet-app>

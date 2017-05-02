@@ -1,0 +1,60 @@
+#set( $isFirstItem = "true" )
+
+{
+	"relationships": [
+#foreach ($jpaTable in $jpaTables)
+		 //==================================================================
+		 // $velocityCount $jpaTable.name
+		 //==================================================================
+		 
+		 #if($velocityCount > 1 && $jpaTable.getRelationships().size() > 0 && $isFirstItem == "false") , #end
+		 
+#foreach ($jpaRelationship in $jpaTable.getRelationships())
+		#if($velocityCount > 1) , #end {
+			#set( $isFirstItem = "false" )
+//---------------------------------------------------------------
+		 	// $velocityCount ${jpaRelationship.description}
+		 	//---------------------------------------------------------------
+		 	"name": '${jpaRelationship.propertyName}'
+			, "bidirectional": $jpaRelationship.isBidirectional()
+			, "cardinality": '${jpaRelationship.cardinality}'
+			, "label": '${jpaRelationship.businessRelationship.name}'
+		
+			, "sourceTable": {
+				"name": '${jpaRelationship.jpaTable.name}'
+				, "uniqueName": '${jpaRelationship.jpaTable.uniqueName}'
+				, "package": '${jpaRelationship.jpaTable.package}'
+				, "className": '${jpaRelationship.jpaTable.className}'
+			}
+			, "sourceColumns": [
+			#foreach ($sourceColumn in $jpaRelationship.sourceColumns)
+		#if ($sourceColumn.jpaTable.hasFakePrimaryKey()|| ( $sourceColumn.jpaTable.hasCompositeKey() && $sourceColumn.isIdentifier()))			
+'${sourceColumn.jpaTable.compositeKeyPropertyName}.${sourceColumn.propertyName}'#if($velocityHasNext) , #end
+		#else
+'${sourceColumn.propertyName}'#if($velocityHasNext) , #end
+		#end
+			#end			
+			]
+			, "destinationTable": {
+				"name": '${jpaRelationship.referencedTable.name}'
+				, "uniqueName": '${jpaRelationship.referencedTable.uniqueName}'
+				, "package": '${jpaRelationship.referencedTable.package}'
+				, "className": '${jpaRelationship.referencedTable.className}'
+			}
+			, "destinationColumns": [
+			#foreach ($destinationColumn in $jpaRelationship.destinationColumns)
+		#if ($destinationColumn.jpaTable.hasFakePrimaryKey()|| ( $destinationColumn.jpaTable.hasCompositeKey() && $destinationColumn.isIdentifier()))			
+'${destinationColumn.jpaTable.compositeKeyPropertyName}.${destinationColumn.propertyName}'#if($velocityHasNext) , #end
+		#else
+'${destinationColumn.propertyName}'#if($velocityHasNext) , #end
+		#end
+			#end
+			
+			]
+		}
+		
+#end
+
+#end
+	]
+}

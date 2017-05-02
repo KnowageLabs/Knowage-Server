@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VALIDATIONS>
+		
+	<SERVICE name="DetailDistributionListPage" type="PAGE">
+		<VALIDATION blocking="true" validators="">
+			<CONDITIONS>
+				<PARAMETER name="MESSAGEDET" scope="SERVICE_REQUEST" value="DETAIL_INS"/>
+			</CONDITIONS>
+			<FIELDS>				
+				<FIELD name="DESCR" label="#SBISet.ListDL.columnDescr">
+					<VALIDATOR validatorName="MAXLENGTH" arg0="160"/>
+					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+				</FIELD>
+				<FIELD name="NAME" label="#SBISet.ListDL.columnName">
+					<VALIDATOR validatorName="MAXLENGTH" arg0="40"/>
+					<VALIDATOR validatorName="MANDATORY"/>
+					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+				</FIELD>
+			</FIELDS>
+		</VALIDATION>	
+		<VALIDATION blocking="false" validators="">
+			<CONDITIONS>
+				<PARAMETER name="MESSAGEDET" scope="SERVICE_REQUEST" value="DETAIL_MOD"/>
+			</CONDITIONS>
+			<FIELDS>
+			 	<FIELD name="DESCR" label="#SBISet.ListDL.columnDescr">
+					<VALIDATOR validatorName="MAXLENGTH" arg0="160"/>
+					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+				</FIELD>
+				<FIELD name="NAME" label="#SBISet.ListDL.columnName">
+					<VALIDATOR validatorName="MAXLENGTH" arg0="40"/>
+					<VALIDATOR validatorName="MANDATORY"/>
+					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+				</FIELD>
+			</FIELDS>
+		</VALIDATION>
+	</SERVICE>
+	
+			
+	<SERVICE name="DetailDistributionListUserPage" type="PAGE">
+		<VALIDATION blocking="false" validators="">
+			<CONDITIONS>
+				<PARAMETER name="MESSAGEDET" scope="SERVICE_REQUEST" value="DETAIL_INS"/>
+			</CONDITIONS>
+			<FIELDS>
+				<FIELD name="NAME" label="#SBISet.ListDL.columnName">
+					<VALIDATOR validatorName="MANDATORY"/>
+					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="40"/>
+				</FIELD>	
+				<FIELD name="DESCR" label="#SBISet.ListDL.columnDescr">
+					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="160"/>
+				</FIELD>			
+			</FIELDS>
+		</VALIDATION>	
+	</SERVICE>
+	
+	<SERVICE name="InsertEmailPage" type="PAGE">
+		<VALIDATION blocking="true" validators="">
+			<CONDITIONS>
+				<PARAMETER name="MESSAGEDET" scope="SERVICE_REQUEST" value="DETAIL_INS"/>
+			</CONDITIONS>
+			<FIELDS>
+				<FIELD name="EMAIL" label="#SBISet.ListDL.columnEmail">
+					<VALIDATOR validatorName="EMAIL"/>
+					<VALIDATOR validatorName="MANDATORY"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="70"/>
+				</FIELD>				
+			</FIELDS>
+		</VALIDATION>	
+	</SERVICE>
+	
+	
+</VALIDATIONS>

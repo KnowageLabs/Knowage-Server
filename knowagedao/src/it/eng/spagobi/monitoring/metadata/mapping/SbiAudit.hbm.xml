@@ -1,0 +1,151 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+<!-- 
+        Auto-generated mapping file from
+        the hibernate.org cfg2hbm engine
+-->
+    <class name="it.eng.spagobi.monitoring.metadata.SbiAudit" table="SBI_AUDIT">
+        <id name="id" type="integer">
+            <column name="id" />
+   <generator class="org.hibernate.id.enhanced.TableGenerator">
+		<param name="optimizer">none</param>
+		<param name="segment_value">SBI_AUDIT</param>	
+		<param name="initial_value">1</param>	
+   </generator>  
+        </id>
+        
+        <component name="commonInfo" insert="true" update="true" 
+  			 class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
+        <property name="userIn" type="string">
+            <column name="USER_IN" length="100" not-null="true" />
+        </property> 
+        <property name="userUp" type="string">
+            <column name="USER_UP" length="100" not-null="false" />
+        </property> 
+        <property name="userDe" type="string">
+            <column name="USER_DE" length="100" not-null="false" />
+        </property>                 
+        <property name="timeIn" type="timestamp">
+            <column name="TIME_IN" not-null="true" />
+        </property> 
+        <property name="timeUp" type="timestamp">
+            <column name="TIME_UP" not-null="false" />
+        </property> 
+        <property name="timeDe" type="timestamp">
+            <column name="TIME_DE" not-null="false" />
+        </property>                      
+        <property name="sbiVersionIn" type="string">
+            <column name="SBI_VERSION_IN" length="10" not-null="false" />
+        </property> 
+        <property name="sbiVersionUp" type="string">
+            <column name="SBI_VERSION_UP" length="10" not-null="false" />
+        </property> 
+        <property name="sbiVersionDe" type="string">
+            <column name="SBI_VERSION_DE" length="10" not-null="false" />
+        </property>                 
+        <property name="organization" type="string">
+            <column name="ORGANIZATION" length="20" not-null="false" />
+        </property>  			 
+  </component> 
+  
+        <property name="userName" type="string">
+            <column name="username" length="40" not-null="true" />
+        </property>
+        <property name="userGroup" type="string">
+            <column name="usergroup" length="100" not-null="false" />
+        </property>
+        <many-to-one name="sbiObject" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects">
+            <column name="doc_ref" not-null="false" />
+        </many-to-one>
+        <property name="documentId" type="integer">
+            <column name="doc_id" not-null="true" />
+        </property>
+        <property name="documentLabel" type="string">
+            <column name="doc_label" length="20" not-null="true" />
+        </property>
+        <property name="documentName" type="string">
+            <column name="doc_name" length="40" not-null="true" />
+        </property>
+        <property name="documentType" type="string">
+            <column name="doc_type" length="20" not-null="true" />
+        </property>
+        <property name="documentState" type="string">
+            <column name="doc_state" length="20" not-null="true" />
+        </property>
+        <property name="documentParameters" type="string">
+            <column name="doc_parameters" not-null="false" />
+        </property>
+        <many-to-one name="sbiSubObject" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiSubObjects">
+            <column name="subobj_ref" not-null="false" />
+        </many-to-one>
+        <property name="subObjId" type="integer">
+            <column name="subobj_id" not-null="false" />
+        </property>
+        <property name="subObjName" type="string">
+            <column name="subobj_name" length="50" not-null="false" />
+        </property>
+        <property name="subObjOwner" type="string">
+            <column name="subobj_owner" length="50" not-null="false" />
+        </property>
+        <property name="subObjIsPublic" type="short">
+            <column name="subobj_ispublic" not-null="false" />
+        </property>
+        <many-to-one name="sbiEngine" class="it.eng.spagobi.engines.config.metadata.SbiEngines">
+            <column name="engine_ref" not-null="false" />
+        </many-to-one>
+        <property name="engineId" type="integer">
+            <column name="engine_id" not-null="true" />
+        </property>
+        <property name="engineLabel" type="string">
+            <column name="engine_label" length="40" not-null="true" />
+        </property>
+        <property name="engineName" type="string">
+            <column name="engine_name" length="40" not-null="true" />
+        </property>
+        <property name="engineType" type="string">
+            <column name="engine_type" length="20" not-null="true" />
+        </property>
+        <property name="engineUrl" type="string">
+            <column name="engine_url" length="400" not-null="false" />
+        </property>
+        <property name="engineDriver" type="string">
+            <column name="engine_driver" length="400" not-null="false" />
+        </property>
+        <property name="engineClass" type="string">
+            <column name="engine_class" length="400" not-null="false" />
+        </property>
+        <property name="requestTime" type="timestamp">
+            <column name="request_time" not-null="true"/>
+        </property>
+        <property name="executionStartTime" type="timestamp">
+            <column name="execution_start" not-null="false"/>
+        </property>
+        <property name="executionEndTime" type="timestamp">
+            <column name="execution_end" not-null="false"/>
+        </property>
+        <property name="executionTime" type="integer">
+            <column name="execution_time" not-null="false"/>
+        </property>
+        <property name="executionState" type="string">
+            <column name="execution_state" length="20" not-null="false" />
+        </property>
+        <property name="error" type="short">
+            <column name="error" not-null="false" />
+        </property>
+        <property name="errorMessage" type="string">
+            <column name="error_message" length="400" not-null="false" />
+        </property>
+        <property name="errorCode" type="string">
+            <column name="error_code" length="20" not-null="false" />
+        </property>
+        <property name="executionModality" type="string">
+            <column name="execution_modality" length="40" not-null="false" />
+        </property>
+        <filter name="tenantFilter" condition="organization=:tenant"/>  
+    </class>
+	<filter-def name="tenantFilter">
+		<filter-param name="tenant" type="string"/>
+	</filter-def>
+</hibernate-mapping>

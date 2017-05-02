@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+<!-- 
+        Auto-generated mapping file from
+        the hibernate.org cfg2hbm engine
+-->
+    <class name="it.eng.spagobi.kpi.metadata.SbiKpiThreshold" table="SBI_KPI_THRESHOLD">
+        
+        <id name="id" type="integer">
+           <column name="ID" />
+        </id>
+        
+        <property name="name" column="NAME" length="40" type="string"/>
+        <property name="description" column="DESCRIPTION" type="string" length="1024" />
+        
+        <many-to-one name="type" class="it.eng.spagobi.commons.metadata.SbiDomains" lazy="false">
+            <column name="TYPE_ID" />
+        </many-to-one>
+        
+        <set name="sbiKpiThresholdValues" cascade="all,delete-orphan" lazy="false" inverse="true" order-by="position">
+            <key column="THRESHOLD_ID" />
+            <one-to-many class="it.eng.spagobi.kpi.metadata.SbiKpiThresholdValue" />
+        </set>
+        
+        <component name="commonInfo" insert="true" update="true" class="it.eng.spagobi.commons.metadata.SbiCommonInfo">
+	        <property name="userIn" type="string">
+	            <column name="USER_IN" length="100" not-null="false" />
+	        </property> 
+	        <property name="userUp" type="string">
+	            <column name="USER_UP" length="100" not-null="false" />
+	        </property> 
+	        <property name="userDe" type="string">
+	            <column name="USER_DE" length="100" not-null="false" />
+	        </property>                 
+	        <property name="timeIn" type="timestamp">
+	            <column name="TIME_IN" not-null="false" />
+	        </property> 
+	        <property name="timeUp" type="timestamp">
+	            <column name="TIME_UP" not-null="false" />
+	        </property> 
+	        <property name="timeDe" type="timestamp">
+	            <column name="TIME_DE" not-null="false" />
+	        </property>                      
+	        <property name="sbiVersionIn" type="string">
+	            <column name="SBI_VERSION_IN" length="10" not-null="false" />
+	        </property> 
+	        <property name="sbiVersionUp" type="string">
+	            <column name="SBI_VERSION_UP" length="10" not-null="false" />
+	        </property> 
+	        <property name="sbiVersionDe" type="string">
+	            <column name="SBI_VERSION_DE" length="10" not-null="false" />
+	        </property>                 
+	        <property name="organization" type="string">
+	            <column name="ORGANIZATION" length="20" not-null="false" />
+	        </property>  			 
+		</component>
+		<filter name="tenantFilter" condition="organization=:tenant"/> 
+	</class>
+	<filter-def name="tenantFilter">
+		<filter-param name="tenant" type="string"/>
+	</filter-def>
+</hibernate-mapping>

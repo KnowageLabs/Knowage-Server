@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PRESENTATION>	
+  	
+	<MAPPING business_type="ACTION" 
+			 business_name="START_WORK" 
+			 publisher_name="DATA_DETAILS_PUBLISHER"/>
+			 
+	
+	
+</PRESENTATION>

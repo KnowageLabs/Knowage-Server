@@ -1,0 +1,30 @@
+.kn-tree, .kn-list-tree {
+	.angular-ui-tree-nodes {
+		top: 0;
+	}
+	.md-button {
+		line-height: 27px;
+	}
+	position: relative; 
+	height: 100%;
+	i.dragged-item-icon {
+		margin-top: 6px;
+	}
+	.angular-ui-tree-node p, .angular-ui-tree-node md-list-item, .angular-ui-tree-node md-list-item button, .angular-ui-tree-node md-list-item button .md-list-item-inner, .angular-ui-tree-node .md-ripple-container{
+		min-height: 27px !important;
+		height: 27px !important; 
+	}
+	md-list-item, md-list-item ._md-list-item-inner {
+		min-height: 27px !important;
+		height: 27px !important; 
+	}
+	.searchBarList md-icon {
+		top: 0;
+		margin-top: 0;
+	}
+	.angular-ui-tree-handle {
+		md-icon {
+			line-height: inherit;
+		}
+	}
+}

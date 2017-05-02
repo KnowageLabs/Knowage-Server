@@ -1,0 +1,12 @@
+.kn-target-kpi {
+	
+}
+
+/*IE11 FIX */
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+	.kn-target-kpi {
+		#selectDivKPI {
+			height:100% !important;
+		}
+	}
+}

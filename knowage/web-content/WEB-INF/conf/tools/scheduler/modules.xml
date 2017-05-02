@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MODULES>
+    
+    <MODULE class="it.eng.spagobi.tools.scheduler.services.SchedulerModule" name="SchedulerModule">
+    	<CONFIG/>
+    </MODULE>
+       
+    <MODULE class="it.eng.spagobi.tools.scheduler.services.LovLookupAjaxModule" name="LovLookupAjaxModule">
+	</MODULE>
+    
+    <MODULE class="it.eng.spagobi.tools.scheduler.services.JobManagementModule" name="JobManagementModule">
+     	<CONFIG rows="20" title="scheduler.JobList" >
+	      <QUERIES/>
+	      <COLUMNS>
+	      	<COLUMN label="scheduler.JobName" name="jobName" />
+	        <COLUMN label="scheduler.JobDescription" name="JobDescription" />
+	        <COLUMN label="scheduler.NumSchedule" name="numSchedule" />
+	      </COLUMNS>
+	      <CAPTIONS> 
+	      	<SCHEDULE_CAPTION confirm="FALSE" image="/img/tools/scheduler/schedule.png" label="scheduler.TriggerList">
+	          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="MESSAGE_GET_JOB_SCHEDULES"/>
+	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="TriggerManagementPage"/>
+	          <PARAMETER name="jobGroupName" scope="LOCAL" type="RELATIVE" value="jobGroupName"/>
+	          <PARAMETER name="jobName" scope="LOCAL" type="RELATIVE" value="jobName"/>
+	        </SCHEDULE_CAPTION>
+	      	<DETAIL_CAPTION confirm="FALSE" image="/img/detail.gif" label="scheduler.JobDetail">
+	          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="MESSAGE_GET_JOB_DETAIL"/>
+	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="JobManagementPage"/>
+	          <PARAMETER name="jobGroupName" scope="LOCAL" type="RELATIVE" value="jobGroupName"/>
+	          <PARAMETER name="jobName" scope="LOCAL" type="RELATIVE" value="jobName"/>
+	        </DETAIL_CAPTION>
+	        <DELETE_CAPTION confirm="TRUE" image="/img/erase.gif" label="scheduler.delete">
+	          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="MESSAGE_DELETE_JOB"/>
+	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="JobManagementPage"/>
+	          <PARAMETER name="jobGroupName" scope="LOCAL" type="RELATIVE" value="jobGroupName"/>
+	          <PARAMETER name="jobName" scope="LOCAL" type="RELATIVE" value="jobName"/>
+	          <PARAMETER name="LIGHT_NAVIGATOR_DISABLED" type="ABSOLUTE" scope="" value="TRUE" />
+	        </DELETE_CAPTION>
+	      </CAPTIONS>
+	      <BUTTONS>
+	        <INSERT_BUTTON confirm="TRUE" image="/img/new.png" label="scheduler.NewJob">
+	          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="MESSAGE_NEW_JOB"/>
+	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="JobManagementPage"/>
+	        </INSERT_BUTTON>
+	        <BACK_BUTTON confirm="FALSE" image="/img/back.png" label="scheduler.back" onlyPortletRunning="true">
+	        	<PARAMETER name="ACTION_NAME" scope="" type="ABSOLUTE" value="START_ACTION"/>
+	          	<PARAMETER name="PUBLISHER_NAME" scope="" type="ABSOLUTE" value="LoginSBIToolsPublisher"/>
+	          	<PARAMETER name="LIGHT_NAVIGATOR_RESET" scope="" type="ABSOLUTE" value="true"/>
+	        </BACK_BUTTON>
+	      </BUTTONS>
+	    </CONFIG>
+    </MODULE>
+    
+    
+    
+    <MODULE class="it.eng.spagobi.tools.scheduler.services.TriggerManagementModule" name="TriggerManagementModule">
+     	<CONFIG rows="20" title="scheduler.SchedulationListTitle" >
+	      <QUERIES/>
+	      <COLUMNS>
+	      	<COLUMN label="scheduler.TriggerName" name="TriggerName" />
+	        <COLUMN label="scheduler.triggerDescription" name="triggerDescription" />
+			<COLUMN label="scheduler.triggerStartTime" name="triggerStartTime" />
+			<COLUMN label="scheduler.triggerEndTime" name="triggerEndTime" />
+	      </COLUMNS>
+	      <CAPTIONS> 
+	      	<DETAIL_CAPTION confirm="FALSE" image="/img/detail.gif" label="scheduler.triggerDetail">
+	          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="MESSAGE_GET_SCHEDULE_DETAIL"/>
+	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="TriggerManagementPage"/>
+	          <PARAMETER name="jobName" scope="SERVICE_REQUEST" type="RELATIVE" value="jobName"/>
+	          <PARAMETER name="jobGroupName" scope="SERVICE_REQUEST" type="RELATIVE" value="jobGroupName"/>
+	          <PARAMETER name="triggerName" scope="LOCAL" type="RELATIVE" value="triggerName"/>
+	          <PARAMETER name="triggerGroup" scope="LOCAL" type="RELATIVE" value="triggerGroup"/>
+	        </DETAIL_CAPTION>
+	        <RUN_CAPTION confirm="FALSE" image="/img/tools/scheduler/run.gif" label="scheduler.run">
+	          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="MESSAGE_RUN_SCHEDULE"/>
+	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="TriggerManagementPage"/>
+	          <PARAMETER name="jobName" scope="SERVICE_REQUEST" type="RELATIVE" value="jobName"/>
+	          <PARAMETER name="jobGroupName" scope="SERVICE_REQUEST" type="RELATIVE" value="jobGroupName"/>
+	          <PARAMETER name="triggerName" scope="LOCAL" type="RELATIVE" value="triggerName"/>
+	          <PARAMETER name="triggerGroup" scope="LOCAL" type="RELATIVE" value="triggerGroup"/>
+	        </RUN_CAPTION>
+	        <DELETE_CAPTION confirm="TRUE" image="/img/erase.gif" label="scheduler.delete">
+	          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="MESSAGE_DELETE_SCHEDULE"/>
+	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="TriggerManagementPage"/>
+	          <PARAMETER name="jobName" scope="SERVICE_REQUEST" type="RELATIVE" value="jobName"/>
+	          <PARAMETER name="jobGroupName" scope="SERVICE_REQUEST" type="RELATIVE" value="jobGroupName"/>
+	          <PARAMETER name="triggerGroup" scope="LOCAL" type="RELATIVE" value="triggerGroup"/>
+	          <PARAMETER name="triggerName" scope="LOCAL" type="RELATIVE" value="triggerName"/>
+	        </DELETE_CAPTION>
+	      </CAPTIONS>
+	      <BUTTONS>
+	      	<INSERT_BUTTON confirm="TRUE" image="/img/new.png" label="scheduler.newschedule">
+	          <PARAMETER name="MESSAGEDET" scope="" type="ABSOLUTE" value="MESSAGE_NEW_SCHEDULE"/>
+	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="TriggerManagementPage"/>
+	          <PARAMETER name="jobName" scope="SERVICE_REQUEST" type="RELATIVE" value="jobName"/>
+	          <PARAMETER name="jobGroupName" scope="SERVICE_REQUEST" type="RELATIVE" value="jobGroupName"/>
+	        </INSERT_BUTTON>
+	        <BACK_BUTTON confirm="FALSE" image="/img/back.png" label="scheduler.back">
+	          <PARAMETER name="LIGHT_NAVIGATOR_BACK_TO" scope="" type="ABSOLUTE" value="1"/>
+	        </BACK_BUTTON>
+	      </BUTTONS>
+	    </CONFIG>
+    </MODULE>
+    
+ 
+</MODULES>

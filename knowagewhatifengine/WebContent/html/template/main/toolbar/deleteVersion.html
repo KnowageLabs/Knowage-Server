@@ -1,0 +1,34 @@
+<md-dialog style='height:75%; width:30%;' layout="column">
+	
+	<md-toolbar class="knowage-blue dialog-toolbar" style="font-size:100%" flex=20>
+		<p>{{translate.load("sbi.olap.toolbar.versionmanagerwindow.version.title")}}</p>
+	</md-toolbar>
+	<md-content class="dialog-style" style="height:90%">
+		<div style="display:flex;">
+			<div style="width:10%;">
+				<md-checkbox ng-checked="outputVersions.length == versionsForDelete.length" ng-click="selectUnselectAll()"></md-checkbox>
+			</div>
+			<div class="delete-version-id">Id</div>
+			<div class="delete-version-info">name</div>
+			<div class="delete-version-info">description</div>
+		</div>
+		<div ng-repeat="version in outputVersions">
+		<div style="display:flex;">
+			<div style="width:10%;">
+				<md-checkbox ng-checked="exists(version.id)" ng-click="selectForDelete(version.id)"></md-checkbox>
+			</div>
+			<div class="delete-version-id">{{version.id}}</div>
+			<div class="delete-version">{{version.name}}</div>
+			<div class="delete-version">{{version.description}}</div>
+		</div>
+		</div> 
+	</md-content>
+	<md-dialog-actions layout="row">
+			<md-button ng-click="deleteVersions()">
+				Delete
+			</md-button>
+			<md-button ng-click="closeDialogToolbarRight()">
+				Cancel
+			</md-button>
+		</md-dialog-actions>
+</md-dialog>

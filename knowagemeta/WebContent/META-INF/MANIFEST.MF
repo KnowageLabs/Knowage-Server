@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+
+Name: KnowageMeta.war
+Implementation-Title: KnowageMeta
+Implementation-Version: 6.0.0
+

@@ -1,0 +1,64 @@
+bread-crumb nav {
+    color: #fff;
+    background-color: lighten($ternaryColor,10%);
+    width: 100%;
+    height: $toolbarHeight;
+    line-height: $toolbarHeight;
+    md-tabs {
+        md-tabs-canvas {
+            &.md-paginated {
+                height: $toolbarHeight;
+            }
+            md-pagination-wrapper {
+                height: $toolbarHeight;
+                md-ink-bar {
+                    display: none;
+                }
+                
+                md-tab-item.md-tab {
+                    line-height: $toolbarHeight !important;
+                    padding: 0 12px 0 0 !important;
+                    color: rgba($baseColor, 0.6) !important;
+                    max-width: 200px !important;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    &.md-active {
+                       font-weight: inherit !important; 
+                    }
+                    &:nth-last-child(2) {
+                        color: rgba($baseColor, 1) !important;
+                        max-width: 300px !important;
+                        font-weight: bold;
+                    }
+                    &:first-child {
+                        span {
+                            padding-left: 1rem;
+                            &:before {
+                                display: none;
+                            }
+                        }
+                    }
+                    
+
+                    span {
+                        text-transform: capitalize;
+                        font-size: $baseFontSize;
+                        &:before {
+                            content: '\f054';
+                            color: rgba($baseColor,0.6);
+                            vertical-align: top;
+                            display: inline-block;
+                            font-family: 'FontAwesome';
+                            font-weight: normal;
+                            font-style: normal;
+                            font-size: $smallFontSize;
+                            padding-right: $baseFontSize;
+                            -webkit-font-smoothing: antialiased;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

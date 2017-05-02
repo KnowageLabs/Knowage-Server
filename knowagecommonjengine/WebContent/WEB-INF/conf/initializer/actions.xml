@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ACTIONS>
+	<ACTION   name="COMMONJ_ACTION" 
+			  class="it.eng.spagobi.engines.commonj.services.CommonjEngineStartAction"    
+			  scope="REQUEST">
+    	<CONFIG/>
+  	</ACTION>    
+</ACTIONS>

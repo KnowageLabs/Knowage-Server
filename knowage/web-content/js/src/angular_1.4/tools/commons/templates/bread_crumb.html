@@ -1,0 +1,8 @@
+<nav>
+
+<md-tabs md-dynamic-height ng-if="ngModel!=undefined && ngModel.length!=0">
+      <md-tab label="{{item[itemName]}}" ng-class="{disabledLink : !canGoBack(item,$index) }" ng-repeat="item in ngModel"  tabindex="3" ng-click="moveToItem(item,$index,true)" title="{{item[itemName]}}">
+      </md-tab>
+</md-tabs>
+
+</nav>

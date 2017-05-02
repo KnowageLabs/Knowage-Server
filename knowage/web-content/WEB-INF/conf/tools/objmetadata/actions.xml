@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ACTIONS>
+ <ACTION name="GET_METADATA_ACTION" class="it.eng.spagobi.analiticalmodel.execution.service.GetMetadataAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+ <ACTION name="SAVE_METADATA_ACTION" class="it.eng.spagobi.analiticalmodel.execution.service.SaveMetadataAction" scope="REQUEST">
+ 	<CONFIG/>
+ </ACTION>
+</ACTIONS>
+

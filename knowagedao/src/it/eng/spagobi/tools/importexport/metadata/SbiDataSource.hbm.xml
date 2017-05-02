@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="it.eng.spagobi.tools.datasource.metadata.SbiDataSource" table="SBI_DATA_SOURCE" >
+        <id name="dsId" type="int">
+            <column name="DS_ID" />     
+        </id>
+        <many-to-one name="dialect" class="it.eng.spagobi.commons.metadata.SbiDomains">
+            <column name="DIALECT_ID" not-null="true" />
+        </many-to-one>
+        <property name="descr" type="string">
+            <column name="DESCR" />
+        </property>
+        <property name="label" type="string">
+            <column name="LABEL" />
+        </property>        
+        <property name="jndi" type="string">
+            <column name="JNDI" />
+        </property>
+        <property name="url_connection" type="string">
+            <column name="URL_CONNECTION" />
+        </property>
+        <property name="user" type="string">
+            <column name="USERNAME" />
+        </property>
+        <property name="pwd" type="string">
+            <column name="PWD" />
+        </property>
+        <property name="driver" type="string">
+            <column name="DRIVER" />
+        </property>
+        <property name="schemaAttribute" type="string">
+            <column name="ATTR_SCHEMA" />
+        </property>
+        <property name="multiSchema" type="boolean">
+            <column name="MULTI_SCHEMA" />
+        </property>
+        <property name="readOnly" type="boolean">
+            <column name="READ_ONLY" />
+        </property>
+        <property name="writeDefault" type="boolean">
+            <column name="WRITE_DEFAULT" />
+        </property>
+        <set name="sbiObjectses" inverse="true">
+            <key>
+                <column name="DATA_SOURCE_ID" />
+            </key>
+            <one-to-many class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects" />
+        </set>
+        <set name="sbiEngineses" inverse="true">
+            <key>
+                <column name="DEFAULT_DS_ID" />
+            </key>
+            <one-to-many class="it.eng.spagobi.engines.config.metadata.SbiEngines" />
+        </set>
+    </class>
+</hibernate-mapping>

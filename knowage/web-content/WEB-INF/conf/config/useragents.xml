@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<USER-AGENTS>
+	<USER-AGENT logicalName="IE6" identifierString="Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.1.4322)"/>
+	<USER-AGENT logicalName="Firefox" identifierString="Mozilla/5.0 (Windows; U; Windows NT 5.1; it-IT; rv:1.7.10) Gecko/20050717 Firefox/1.0.6"/>
+</USER-AGENTS>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VALIDATIONS>
+<SERVICE name="DetailDataSourcePage" type="PAGE">
+		<VALIDATION blocking="false" validators="">
+			<CONDITIONS>
+				<PARAMETER name="MESSAGEDET" scope="SERVICE_REQUEST" value="DETAIL_INS"/>
+			</CONDITIONS>
+			<FIELDS>
+				<FIELD name="LABEL" label="#SBISet.ListDS.columnLabel">
+					<VALIDATOR validatorName="MANDATORY"/>
+					<VALIDATOR validatorName="ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="50"/>
+				</FIELD>	
+				<FIELD name="DIALECT" label="#SBISet.ListDS.columnDialect">
+					<VALIDATOR validatorName="MANDATORY"/>	
+					<VALIDATOR validatorName="NUMERIC"/>				
+				</FIELD>
+				<FIELD name="DESCR" label="#SBISet.eng.descriptionField">
+					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="160"/>
+				</FIELD>
+				<FIELD name="typeDS" label="typeDS">
+					<VALIDATOR validatorName="NUMERIC"/>				
+				</FIELD>	
+				<FIELD name="JNDI" label="JNDI">
+					<VALIDATOR validatorName="REGEXP" arg0="^([a-zA-Z0-9.:@\s\-\_\(\)\\\/])*$"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="50"/>
+				</FIELD>	
+				<FIELD name="URL_CONNECTION" label="URL_CONNECTION">
+					<VALIDATOR validatorName="REGEXP" arg0="^([a-zA-Z0-9.:;=@\s\-\_\(\)\\\/])*$"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="500"/>
+				</FIELD>
+				<FIELD name="USER" label="USER">
+					<VALIDATOR validatorName="ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="50"/>
+				</FIELD>
+				<FIELD name="PWD" label="PWD">
+					<VALIDATOR validatorName="MAXLENGTH" arg0="50"/>
+				</FIELD>	
+				<FIELD name="DRIVER" label="DRIVER">
+				<VALIDATOR validatorName="REGEXP" arg0="^([a-zA-Z0-9.:@\s\-\_\(\)\\\/])*$"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="160"/>
+				</FIELD>	
+			</FIELDS>
+		</VALIDATION>	
+		<VALIDATION blocking="false" validators="">
+			<CONDITIONS>
+				<PARAMETER name="MESSAGEDET" scope="SERVICE_REQUEST" value="DETAIL_MOD"/>
+			</CONDITIONS>
+			<FIELDS>
+				<FIELD name="LABEL" label="#SBISet.ListDS.columnLabel">
+					<VALIDATOR validatorName="MANDATORY"/>
+					<VALIDATOR validatorName="ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="50"/>
+				</FIELD>
+			   <FIELD name="DIALECT" label="#SBISet.ListDS.columnDialect">
+					<VALIDATOR validatorName="MANDATORY"/>					
+				</FIELD>	
+				<FIELD name="DESCR" label="#SBISet.eng.descriptionField">
+					<VALIDATOR validatorName="EXTENDED_ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="160"/>
+				</FIELD>
+				<FIELD name="typeDS" label="typeDS">
+					<VALIDATOR validatorName="NUMERIC"/>				
+				</FIELD>	
+				<FIELD name="JNDI" label="JNDI">
+					<VALIDATOR validatorName="REGEXP" arg0="^([a-zA-Z0-9.:@\s\-\_\(\)\\\/])*$"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="50"/>
+				</FIELD>	
+				<FIELD name="URL_CONNECTION" label="URL_CONNECTION">
+					<VALIDATOR validatorName="REGEXP" arg0="^([a-zA-Z0-9.:;=@\s\-\_\(\)\\\/])*$"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="500"/>
+				</FIELD>
+				<FIELD name="USER" label="USER">
+					<VALIDATOR validatorName="ALFANUMERIC"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="50"/>
+				</FIELD>
+				<FIELD name="PWD" label="PWD">
+					<VALIDATOR validatorName="MAXLENGTH" arg0="50"/>
+				</FIELD>	
+				<FIELD name="DRIVER" label="DRIVER">
+				<VALIDATOR validatorName="REGEXP" arg0="^([a-zA-Z0-9.:@\s\-\_\(\)\\\/])*$"/>
+					<VALIDATOR validatorName="MAXLENGTH" arg0="160"/>
+				</FIELD>
+			</FIELDS>
+		</VALIDATION>
+	</SERVICE>
+</VALIDATIONS>

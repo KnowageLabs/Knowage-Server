@@ -1,0 +1,157 @@
+<Context path="/QbeWeb" docBase="QbeWeb"
+     debug="0" privileged="true">
+     <!--  Tomcat 5.5.X -->
+     <!--Resource name="jdbc/hsql-spagodemo" auth="Container" type="javax.sql.DataSource"
+     driverClassName="org.hsqldb.jdbcDriver" url="jdbc:hsqldb:hsql://localhost:9001/spagodemo"
+     username="spagodemo" password="spagodemo" maxActive="20" maxIdle="10" /-->
+
+     <!--  Tomcat 5.0.X -->
+    <Resource name="jdbc/foodmart" auth="Container" type="javax.sql.DataSource"/>
+    <Resource name="jdbc/oracle" auth="Container" type="javax.sql.DataSource"/>
+    <Resource name="jdbc/provvedimenti" auth="Container" type="javax.sql.DataSource"/>
+    <Resource name="jdbc/tributihsql" auth="Container" type="javax.sql.DataSource"/>
+    <Resource name="jdbc/tributimysql" auth="Container" type="javax.sql.DataSource"/>
+    
+    <ResourceParams name="jdbc/foodmart">
+    
+      <parameter>
+        <name>username</name>
+        <value>sa</value>
+      </parameter>
+      <parameter>
+        <name>password</name>
+        <value></value>
+      </parameter>
+      <parameter>
+         <name>driverClassName</name>
+        <value>org.hsqldb.jdbcDriver</value>
+      </parameter>
+      <parameter>
+        <name>url</name>
+        <value>jdbc:hsqldb:hsql://localhost/foodmart</value>
+      </parameter>
+      <parameter>
+        <name>maxActive</name>
+        <value>20</value>
+      </parameter>
+      <parameter>
+        <name>maxIdle</name>
+        <value>10</value>
+      </parameter>    
+    
+    </ResourceParams>
+    
+    <ResourceParams name="jdbc/tributihsql">
+    
+      <parameter>
+        <name>username</name>
+        <value>sa</value>
+      </parameter>
+      <parameter>
+        <name>password</name>
+        <value></value>
+      </parameter>
+      <parameter>
+         <name>driverClassName</name>
+        <value>org.hsqldb.jdbcDriver</value>
+      </parameter>
+      <parameter>
+        <name>url</name>
+        <value>jdbc:hsqldb:hsql://localhost/tributi</value>
+      </parameter>
+      <parameter>
+        <name>maxActive</name>
+        <value>20</value>
+      </parameter>
+      <parameter>
+        <name>maxIdle</name>
+        <value>10</value>
+      </parameter>    
+    
+    </ResourceParams>
+    
+    <ResourceParams name="jdbc/oracle">
+      <parameter>
+        <name>username</name>
+        <value>COSAP_MIGR</value>
+      </parameter>
+      <parameter>
+        <name>password</name>
+        <value>COSAP_MIGR</value>
+      </parameter>
+      <parameter>
+         <name>driverClassName</name>
+        <value>oracle.jdbc.driver.OracleDriver</value>
+      </parameter>
+      <parameter>
+        <name>url</name>
+        <value>jdbc:oracle:thin:@172.28.31.100:1521:ORCL</value>
+      </parameter>
+      <parameter>
+        <name>maxActive</name>
+        <value>20</value>
+      </parameter>
+      <parameter>
+        <name>maxIdle</name>
+        <value>10</value>
+      </parameter>   
+    </ResourceParams>
+    
+    <ResourceParams name="jdbc/provvedimenti">
+    
+      <parameter>
+        <name>username</name>
+        <value>root</value>
+      </parameter>
+      <parameter>
+        <name>password</name>
+        <value>root</value>
+      </parameter>
+      <parameter>
+         <name>driverClassName</name>
+        <value>com.mysql.jdbc.Driver</value>
+      </parameter>
+      <parameter>
+        <name>url</name>
+        <value>jdbc:mysql://localhost:3306/dwh_rn</value>
+      </parameter>
+      <parameter>
+        <name>maxActive</name>
+        <value>20</value>
+      </parameter>
+      <parameter>
+        <name>maxIdle</name>
+        <value>10</value>
+      </parameter>    
+    
+    </ResourceParams>
+    
+     <ResourceParams name="jdbc/tributimysql">
+    
+      <parameter>
+        <name>username</name>
+        <value>root</value>
+      </parameter>
+      <parameter>
+        <name>password</name>
+        <value>root</value>
+      </parameter>
+      <parameter>
+         <name>driverClassName</name>
+        <value>com.mysql.jdbc.Driver</value>
+      </parameter>
+      <parameter>
+        <name>url</name>
+        <value>jdbc:mysql://localhost:3306/public</value>
+      </parameter>
+      <parameter>
+        <name>maxActive</name>
+        <value>20</value>
+      </parameter>
+      <parameter>
+        <name>maxIdle</name>
+        <value>10</value>
+      </parameter>    
+    
+    </ResourceParams>
+ </Context>

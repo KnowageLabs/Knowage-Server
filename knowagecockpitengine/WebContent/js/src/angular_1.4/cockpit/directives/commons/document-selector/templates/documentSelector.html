@@ -1,0 +1,12 @@
+<md-input-container class="md-block md-icon-right">
+	<label>{{translate.load('sbi.cockpit.document')}}</label>
+	<md-select ng-model="ngModel"  ng-change="searchTerm ='';onChange({docId:ngModel});" data-md-container-class="selectdemoSelectHeader">
+		<md-select-header class="demo-select-header">
+			<input ng-model="searchTerm" type="search" ng-keydown="$event.stopPropagation()" placeholder="Search for a document.." class="demo-header-searchbox _md-text">
+		</md-select-header>
+		<md-optgroup label="document">
+			<md-option ng-value="item.DOCUMENT_ID" ng-repeat="item in availableDocuments | filter:searchTerm">{{item.DOCUMENT_LABEL}}</md-option>
+		</md-optgroup>
+	</md-select>
+	<md-icon ng-click="addNewDocument()" md-font-icon="fa fa-plus"></md-icon>
+</md-input-container>	

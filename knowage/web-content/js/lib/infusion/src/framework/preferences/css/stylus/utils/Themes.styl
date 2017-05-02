@@ -1,0 +1,338 @@
+// Contains utility functions for building contrast themes
+// !important is used for all styles to ensure that Preferences Framework's enactors are able to override the pages default styles.
+
+themes = {
+    ".fl-theme-bw": {
+        foregroundColor: #000000,
+        backgroundColor: #ffffff
+    }
+    ".fl-theme-wb": {
+        foregroundColor: #ffffff,
+        backgroundColor: #000000
+    }
+    ".fl-theme-yb": {
+        foregroundColor: #ffff00,
+        backgroundColor: #000000
+    }
+    ".fl-theme-by": {
+        foregroundColor: #000000,
+        backgroundColor: #ffff00
+    }
+    ".fl-theme-lgdg": {
+        foregroundColor: #bdbdbb,
+        backgroundColor: #555555
+    }
+}
+
+build-themes-prefsEditor(contrastThemes) {
+    for themeName in contrastThemes {
+        fColor = contrastThemes[themeName].foregroundColor;
+        bColor = contrastThemes[themeName].backgroundColor;
+
+        {themeName} {
+            .fl-prefsEditor {
+                // slider
+                & .fl-slider {
+                    background: none;
+                    background-color: fColor;
+
+                    a, a:hover,
+                    .fl-slider-handle, .fl-slider-handle:hover {
+                        border:1px solid fColor;
+                        background-color: bColor;
+                        background-image: none;
+                    }
+                }
+
+                // ON/OFF switch
+                .fl-prefsEditor-switch,
+                .fl-prefsEditor-switch-inner,
+                input + label .fl-prefsEditor-switch:before {
+                    box-shadow: none !important;
+                    text-shadow: none;
+                    color: inherit;
+                    background-image: none;
+                    background-color: inherit;
+                }
+
+                input:focus + label,
+                .fl-choice input:focus ~ label {
+                    outline: 0.2em solid fColor;
+                }
+            }
+        }
+
+        .fl-prefsEditor .fl-choice label {
+            &{themeName},
+            &{themeName} span,
+            &{themeName} .fl-crossout {
+                background-color: bColor !important;
+                border-color: fColor !important;
+                color: fColor !important;
+            }
+        }
+    }
+}
+
+// For the separated panel
+get-colors-for-separatedPanelPrefsEditor(fColor, bColor) {
+    background-color: bColor;
+    border-color: fColor;
+    color: fColor;
+}
+
+build-themes-separatedPanelPrefsEditor(contrastThemes) {
+    for themeName in contrastThemes {
+        fColor = contrastThemes[themeName].foregroundColor;
+        bColor = contrastThemes[themeName].backgroundColor;
+
+        {themeName} {
+            background-image: none !important;
+            get-colors-for-separatedPanelPrefsEditor(fColor, bColor);
+
+            .fl-prefsEditor-separatedPanel {
+                .fl-panelBar, .fl-prefsEditor-reset {
+                    get-colors-for-separatedPanelPrefsEditor(fColor, bColor);
+                }
+                .fl-prefsEditor-buttons { //FLUID-4991: The shadow effect around the hide/show preferences bug fix.
+                    box-shadow:none;
+                }
+            }
+        }
+    }
+}
+
+// For the separated panel iframe
+build-themes-separatedPanelPrefsEditorFrame(contrastThemes) {
+    for themeName in contrastThemes {
+        fColor = contrastThemes[themeName].foregroundColor;
+        bColor = contrastThemes[themeName].backgroundColor;
+
+        .fl-prefsEditor-separatedPanel{themeName} {
+            background-image: none;
+        }
+    }
+}
+
+// For the general theme styling that applies to html elements and infusion components
+build-themes-Enactors(contrastThemes) {
+    for themeName in contrastThemes {
+        fColor = contrastThemes[themeName].foregroundColor;
+        bColor = contrastThemes[themeName].backgroundColor;
+
+        {themeName} {
+            // General Styling
+            &, *, .fl-preview-theme&,
+            div, input,
+            h1, h2, h3, h4, h5, h6 {
+                color: fColor !important;
+                background-color: bColor !important;
+                border-top-color: fColor !important;
+                border-right-color: fColor !important;
+                border-bottom-color: fColor !important;
+                border-left-color: fColor !important;
+            }
+
+            iframe {
+                border-top-color: fColor !important;
+                border-right-color: fColor !important;
+                border-bottom-color: fColor !important;
+                border-left-color: fColor !important;
+            }
+
+            a {
+                color: fColor !important;
+                font-weight: bold !important;
+                background-color: bColor !important;
+            }
+
+            // Tables
+            th {
+                border-top-width: 0.1em;
+                border-top-style: solid;
+                border-top-color: fColor !important;
+                border-right-width: 0.1em;
+                border-right-style: solid;
+                border-right-color: fColor !important;
+                border-bottom-width: 0.1em;
+                border-bottom-style: solid;
+                border-bottom-color: fColor !important;
+                border-left-width: 0.1em;
+                border-left-style: solid;
+                border-left-color: fColor !important;
+                background-color: fColor !important;
+                color: bColor !important;
+            }
+
+            td {
+                border-top-width: 0.1em;
+                border-top-style: solid;
+                border-top-color: fColor !important;
+                border-right-width: 0.1em;
+                border-right-style: solid;
+                border-right-color: fColor !important;
+                border-bottom-width: 0.1em;
+                border-bottom-style: solid;
+                border-bottom-color: fColor !important;
+                border-left-width: 0.1em;
+                border-left-style: solid;
+                border-left-color: fColor !important;
+            }
+
+            // Focus
+            .fl-focus:focus, .fl-focus :focus, &.fl-focus :focus, .selectable {
+                outline-width: 0.2em;
+                outline-style: solid;
+                outline-color: fColor;
+            }
+
+            // Infusion Components
+            // Reorderer
+            .fl-reorderer-dropMarker {
+                background-color: #f00 !important;
+            }
+
+            // Inline edit
+            .fl-inlineEdit-edit {
+                background-color: fColor !important;
+                color: bColor !important;
+                border-top-width: 0.1em;
+                border-top-style: solid;
+                border-top-color: bColor !important;
+                border-right-width: 0.1em;
+                border-right-style: solid;
+                border-right-color: bColor !important;
+                border-bottom-width: 0.1em;
+                border-bottom-style: solid;
+                border-bottom-color: bColor !important;
+                border-left-width: 0.1em;
+                border-left-style: solid;
+                border-left-color: bColor !important;
+                padding-top: 0.1em;
+                padding-right: 0.1em;
+                padding-bottom: 0.1em;
+                padding-left: 0.1em;
+                margin-top: -0.1em;
+                margin-right: -0.1em;
+                margin-bottom: -0.1em;
+                margin-left: -0.1em;
+            }
+
+            // Inverted color
+            // General Styling
+            &.fl-inverted-color, &.fl-inverted-color *, .fl-preview-theme&.fl-inverted-color {
+                color: bColor !important;
+                background-color: fColor !important;
+                border-top-color: bColor !important;
+                border-right-color: bColor !important;
+                border-bottom-color: bColor !important;
+                border-left-color: bColor !important;
+            }
+
+            // Focus
+            &.fl-inverted-color.fl-focus :focus {
+                outline-width: 0.2em;
+                outline-style: solid;
+                outline-color: bColor;
+            }
+
+            .fl-inverted-color {
+                &, *,
+                div, input,
+                h1, h2, h3, h4, h5, h6 {
+                    color: bColor !important;
+                    background-color: fColor !important;
+                    border-top-color: bColor !important;
+                    border-right-color: bColor !important;
+                    border-bottom-color: bColor !important;
+                    border-left-color: bColor !important;
+                }
+
+                iframe {
+                    border-top-color: bColor !important;
+                    border-right-color: bColor !important;
+                    border-bottom-color: bColor !important;
+                    border-left-color: bColor !important;
+                }
+
+                a {
+                    color: bColor !important;
+                    font-weight: bold !important;
+                    background-color: fColor !important;
+                }
+
+                // Tables
+                th {
+                    border-top-width: 0.1em;
+                    border-top-style: solid;
+                    border-top-color: bColor !important;
+                    border-right-width: 0.1em;
+                    border-right-style: solid;
+                    border-right-color: bColor !important;
+                    border-bottom-width: 0.1em;
+                    border-bottom-style: solid;
+                    border-bottom-color: bColor !important;
+                    border-left-width: 0.1em;
+                    border-left-style: solid;
+                    border-left-color: bColor !important;
+                    background-color: bColor !important;
+                    color: fColor !important;
+                }
+
+                td {
+                    border-top-width: 0.1em;
+                    border-top-style: solid;
+                    border-top-color: bColor !important;
+                    border-right-width: 0.1em;
+                    border-right-style: solid;
+                    border-right-color: bColor !important;
+                    border-bottom-width: 0.1em;
+                    border-bottom-style: solid;
+                    border-bottom-color: bColor !important;
+                    border-left-width: 0.1em;
+                    border-left-style: solid;
+                    border-left-color: bColor !important;
+                }
+
+                // Infusion focus element
+                .fl-focus:focus, .fl-focus :focus, .selectable {
+                    outline-width: 0.2em;
+                    outline-style: solid;
+                    outline-color: bColor;
+                }
+
+                // Infusion Components
+                // Reorderer
+                .fl-reorderer-dropMarker {
+                    background-color: #f00 !important;
+                }
+
+                // Inline Edit
+                .fl-inlineEdit-edit {
+                    background-color: bColor !important;
+                    color: fColor !important;
+                    border-top-width: 0.1em;
+                    border-top-style: solid;
+                    border-top-color: fColor !important;
+                    border-right-width: 0.1em;
+                    border-right-style: solid;
+                    border-right-color: fColor !important;
+                    border-bottom-width: 0.1em;
+                    border-bottom-style: solid;
+                    border-bottom-color: fColor !important;
+                    border-left-width: 0.1em;
+                    border-left-style: solid;
+                    border-left-color: fColor !important;
+                    padding-top: 0.1em;
+                    padding-right: 0.1em;
+                    padding-bottom: 0.1em;
+                    padding-left: 0.1em;
+                    margin-top: -0.1em;
+                    margin-right: -0.1em;
+                    margin-bottom: -0.1em;
+                    margin-left: -0.1em;
+                }
+            }
+        }
+    }
+}

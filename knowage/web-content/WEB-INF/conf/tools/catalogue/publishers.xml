@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PUBLISHERS>
+
+    <PUBLISHER name="MANAGE_META_MODELS_CATALOGUE_PUBLISHER">
+        <RENDERING channel="PORTLET" mode="FORWARD" type="JSP">
+            <RESOURCES>
+                <ITEM mode="VIEW" resource="/WEB-INF/jsp/tools/catalogue/metaModelsHome.jsp"/>
+            </RESOURCES>
+        </RENDERING>
+        <RENDERING channel="HTTP" mode="FORWARD" type="JSP">
+            <RESOURCES>
+                <ITEM prog="0" resource="/WEB-INF/jsp/tools/catalogue/metaModelsHome.jsp"/>
+            </RESOURCES>
+        </RENDERING>
+    </PUBLISHER>
+
+    <PUBLISHER name="MANAGE_ARTIFACTS_CATALOGUE_PUBLISHER">
+		<RENDERING channel="HTTP" type="JAVA" mode="FORWARD">
+			<RESOURCES>
+				<ITEM prog="0" resource="it.eng.spago.presentation.DefaultPublisherDispatcher">
+					<CONFIG>
+						<CHECKS>
+							<CHECK target="MONDRIAN_SCHEMAS_HOME_PUBLISHER">
+								<CONDITIONS>
+									<PARAMETER name="type" scope="SERVICE_REQUEST"
+										value="MONDRIAN_SCHEMA" />
+								</CONDITIONS>
+							</CHECK>
+						</CHECKS>
+					</CONFIG>
+				</ITEM>
+			</RESOURCES>
+		</RENDERING>
+	</PUBLISHER>
+
+    <PUBLISHER name="MONDRIAN_SCHEMAS_HOME_PUBLISHER">
+        <RENDERING channel="HTTP" mode="FORWARD" type="JSP">
+            <RESOURCES>
+                <ITEM prog="0" resource="/WEB-INF/jsp/tools/catalogue/mondrianSchemasHome.jsp"/>
+            </RESOURCES>
+        </RENDERING>
+    </PUBLISHER>
+
+    <!--
+    <PUBLISHER name="MANAGE_ARTIFACTS_CATALOGUE_PUBLISHER">
+        <RENDERING channel="PORTLET" mode="FORWARD" type="JSP">
+            <RESOURCES>
+                <ITEM mode="VIEW" resource="/WEB-INF/jsp/tools/catalogue/artifactsHome.jsp"/>
+            </RESOURCES>
+        </RENDERING>
+        <RENDERING channel="HTTP" mode="FORWARD" type="JSP">
+            <RESOURCES>
+                <ITEM prog="0" resource="/WEB-INF/jsp/tools/catalogue/artifactsHome.jsp"/>
+            </RESOURCES>
+        </RENDERING>
+    </PUBLISHER>
+    -->
+</PUBLISHERS>

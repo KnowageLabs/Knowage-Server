@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DATA_MINING>
+    <PARAMETERS>
+        <PARAMETER name="par1" />
+        <PARAMETER name="par2" />
+        <PARAMETER name="par3" />
+    </PARAMETERS> 
+	<SCRIPTS>  
+        <SCRIPT name="scriptplot" mode="auto" datasets="" label="label scriptplot">
+			<![CDATA[
+			x<-c(1,5,3,8,5)		
+			]]>
+		</SCRIPT>
+	</SCRIPTS>
+	<COMMANDS>
+        <COMMAND name="command1" scriptName="scriptplot" label="label Command1" mode="auto">
+            <OUTPUTS>
+                <OUTPUT type="image" name="prova" value="x" function="plot" mode="auto" label="label Output 1"/>
+            </OUTPUTS>
+        </COMMAND>
+    </COMMANDS>
+	
+</DATA_MINING>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BUSINESS_MAP>
+	<MAP_ACTIONS>
+		<MAP_ACTION actionName="LIST_TEST_LOV_ACTION" businessProcess="LovsView" />
+		<MAP_ACTION actionName="SAVE_LOV_ACTION" businessProcess="LovsView" />
+	</MAP_ACTIONS>
+	<MAP_PAGE_MODULES>
+<MAP_PAGE_MODULE pageName="DetailParameterPage" moduleName="DetailParameterModule" businessProcess="ParameterView" />
+<MAP_PAGE_MODULE pageName="ParametersLookupPage" moduleName="ListLookupParametersModule" businessProcess="ParameterView" />
+<MAP_PAGE_MODULE pageName="ListObjParusePage" moduleName="ListObjParuseModule" businessProcess="ParameterView" />
+<MAP_PAGE_MODULE pageName="ListParametersPage" moduleName="ListParametersModule" businessProcess="ParameterView" />
+<MAP_PAGE_MODULE pageName="CheckLinksPage" moduleName="CheckLinksModule" businessProcess="ConstraintView" />
+<MAP_PAGE_MODULE pageName="DetailModalitiesChecksPage" moduleName="DetailChecksModule" businessProcess="ConstraintView" />
+<MAP_PAGE_MODULE pageName="ListModalitiesChecksPage" moduleName="ListPredefinedChecksModule" businessProcess="ConstraintView" />
+<MAP_PAGE_MODULE pageName="ListModalitiesChecksPage" moduleName="ListModalitiesChecksModule" businessProcess="ConstraintView" />
+<MAP_PAGE_MODULE pageName="DetailModalitiesValuePage" moduleName="DetailModalitiesValueModule" businessProcess="LovsView" />
+<MAP_PAGE_MODULE pageName="DetailModalitiesValuePage" moduleName="ListTestLovModule" businessProcess="LovsView" />
+<MAP_PAGE_MODULE pageName="LovLookupPage" moduleName="ListLookupLovModule" businessProcess="LovsView" />
+<MAP_PAGE_MODULE pageName="ListLovsPage" moduleName="ListLovsModule" businessProcess="LovsView" />
+
+	</MAP_PAGE_MODULES>
+</BUSINESS_MAP>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BUSINESS_MAP>
+	<MAP_ACTIONS>
+		<MAP_ACTION actionName="MOVE_UP_LOWFUNCTIONALITY" businessProcess="FunctionalitiesManagement" />
+		<MAP_ACTION actionName="MOVE_DOWN_LOWFUNCTIONALITY" businessProcess="FunctionalitiesManagement" />
+		<MAP_ACTION actionName="DOWNLOAD_BIOBJ_TEMPLATE" businessProcess="DocumentDevManagement" />
+        <MAP_ACTION actionName="DELETE_PREVIEW_FILE_ACTION" businessProcess="DocumentDevManagement" />
+		<!-- 
+		<MAP_ACTION actionName="GET_FTREE_FOLDERS_ACTION"  businessProcess="DocumentUserManagement"/>
+		<MAP_ACTION actionName="GET_FOLDER_CONTENT_ACTION" businessProcess="DocumentUserManagement"/>
+		
+		<MAP_ACTION actionName="GET_FOLDER_PATH_ACTION"  businessProcess="DocumentUserManagement"/>
+		<MAP_ACTION actionName="SEARCH_CONTENT_ACTION"  businessProcess="DocumentUserManagement"/>
+		<MAP_ACTION actionName="GET_CATEGORIES_ACTION"  businessProcess="DocumentUserManagement"/>
+		-->
+		<MAP_ACTION actionName="START_EXECUTION_PROCESS_ACTION"  businessProcess="DocumentUserManagement"/>
+		<MAP_ACTION actionName="GET_ROLES_FOR_EXECUTION_ACTION"  businessProcess="DocumentUserManagement"/>
+		<MAP_ACTION actionName="GET_PARAMETERS_FOR_EXECUTION_ACTION"  businessProcess="DocumentUserManagement"/>
+		<MAP_ACTION actionName="GET_PARAMETER_VALUES_FOR_EXECUTION_ACTION"  businessProcess="DocumentUserManagement"/>
+		
+		<MAP_ACTION actionName="DELETE_SNAPSHOTS_ACTION"  businessProcess="DocumentAdminManagement"/>
+
+		<MAP_ACTION actionName="SAVE_PERSONAL_FOLDER"  businessProcess="SaveIntoFolderFunctionality"/>
+		<MAP_ACTION actionName="SHOW_SEND_TO_FORM"  businessProcess="SendMailFunctionality"/>
+		<MAP_ACTION actionName="SEND_TO_ACTION"  businessProcess="SendMailFunctionality"/>
+		<MAP_ACTION actionName="GET_SUBOBJECTS_ACTION"  businessProcess="SeeSubobjectsFunctionality"/>
+		<MAP_ACTION actionName="DELETE_SUBOBJECTS_ACTION"  businessProcess="SeeSubobjectsFunctionality"/>
+		<MAP_ACTION actionName="INSERT_NOTES_ACTION"  businessProcess="SeeNotesFunctionality"/>
+		<MAP_ACTION actionName="DELETE_NOTES_ACTION"  businessProcess="SeeNotesFunctionality"/>
+		<MAP_ACTION actionName="GET_NOTES_ACTION"  businessProcess="SeeNotesFunctionality"/>
+		<MAP_ACTION actionName="SAVE_NOTES_ACTION"  businessProcess="SeeNotesFunctionality"/>
+		<MAP_ACTION actionName="PRINT_NOTES_ACTION"  businessProcess="SeeNotesFunctionality"/>
+		<MAP_ACTION actionName="SAVE_REMEMBER_ME_ACTION"  businessProcess="SaveRememberMeFunctionality"/>
+		<MAP_ACTION actionName="GET_VIEWPOINTS_ACTION"  businessProcess="SeeViewpointsFunctionality"/>
+		<MAP_ACTION actionName="DELETE_VIEWPOINTS_ACTION"  businessProcess="SeeViewpointsFunctionality"/>
+		<MAP_ACTION actionName="SAVE_VIEWPOINT_ACTION"  businessProcess="SeeViewpointsFunctionality"/>
+		<MAP_ACTION actionName="GET_SNAPSHOTS_ACTION"  businessProcess="SeeSnapshotsFunctionality"/>
+		<MAP_ACTION actionName="GET_FAVOURITES_ACTION"  businessProcess="SeeSnapshotsFunctionality"/>
+		
+		
+		<MAP_ACTION actionName="MANAGE_BIOBJECTS_ACTION"  businessProcess="KpiManagement"/>
+		<MAP_ACTION actionName="SAVE_DOCUMENT_ACTION"  businessProcess="UserSaveDocumentFunctionality"/>
+
+
+	</MAP_ACTIONS>
+	
+	<MAP_PAGE_MODULES>
+		<MAP_PAGE_MODULE pageName="ListBIObjectsPage" moduleName="ListBIObjectsModule" businessProcess="DocumentManagement" />
+		<MAP_PAGE_MODULE pageName="ReportsLookupPage" moduleName="ListLookupReportsModule" businessProcess="DocumentUserManagement" />
+		<MAP_PAGE_MODULE pageName="MYFOLDERMANAGEMENTPAGE" moduleName="EraseDocumentModule" businessProcess="DocumentUserManagement" />
+		<MAP_PAGE_MODULE pageName="MYFOLDERMANAGEMENTPAGE" moduleName="BIObjectsModule" businessProcess="DocumentUserManagement" />
+		<MAP_PAGE_MODULE pageName="MYFOLDERMANAGEMENTPAGE" moduleName="TreeObjectsModule" businessProcess="DocumentUserManagement" />
+		<MAP_PAGE_MODULE pageName="DetailFunctionalityPage" moduleName="DetailFunctionalityModule" businessProcess="FunctionalitiesManagement" />
+		<MAP_PAGE_MODULE pageName="UpdateBIObjectStatePage" moduleName="UpdateBIObjectStateModule" businessProcess="DocumentManagement" />
+		<MAP_PAGE_MODULE pageName="UpdateBIObjectStatePage" moduleName="UpdateBIObjectStateModule" businessProcess="DocumentTestManagement" />
+		<MAP_PAGE_MODULE pageName="UpdateBIObjectStatePage" moduleName="UpdateBIObjectStateModule" businessProcess="DocumentDevManagement" />
+		<MAP_PAGE_MODULE pageName="ExecutionWorkspacePage" moduleName="PortletLoginModule" businessProcess="DocumentUserManagement" />
+		<MAP_PAGE_MODULE pageName="ExecutionWorkspacePage" moduleName="ExecutionWorkspaceModule" businessProcess="DocumentUserManagement" />
+		<MAP_PAGE_MODULE pageName="DetailBIObjectPage" moduleName="DetailBIObjectModule" businessProcess="DocumentManagement" />
+		<MAP_PAGE_MODULE pageName="DocumentTemplateBuildPage" moduleName="DocumentTemplateBuildModule" businessProcess="DocumentManagement" />
+		<MAP_PAGE_MODULE pageName="ExecuteBIObjectPage" moduleName="ExecuteBIObjectModule" businessProcess="DocumentUserManagement" />
+	</MAP_PAGE_MODULES>
+	
+</BUSINESS_MAP>

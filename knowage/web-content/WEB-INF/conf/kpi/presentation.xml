@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PRESENTATION>
+	<MAPPING business_type="ACTION" business_name="LOGIN_ACTION_KPI_CONFIGURATION" publisher_name="KPIConfigurationPublisher" />
+	<MAPPING business_type="ACTION" business_name="MANAGE_KPIS_ACTION" publisher_name="ManageKpisPublisher"/>
+	<MAPPING business_type="ACTION" business_name="MANAGE_THRESHOLDS_ACTION" publisher_name="ManageThresholdsPublisher"/>	
+	<MAPPING business_type="ACTION" business_name="MANAGE_MODELS_ACTION" publisher_name="ManageModelsPublisher"/>
+	<MAPPING business_type="ACTION" business_name="MANAGE_MODEL_INSTANCES_ACTION" publisher_name="ManageModelInstancesPublisher"/>
+	<MAPPING business_type="ACTION" business_name="MANAGE_RESOURCES_ACTION" publisher_name="ManageResourcesPublisher"/>
+	<MAPPING business_type="ACTION" business_name="MANAGE_OU_EMPTY_ACTION" publisher_name="ManageGrantsPublisher"/>
+	<MAPPING business_type="ACTION" business_name="MANAGE_GOALS_EMPTY_ACTION" publisher_name="ManageGoalsPublisher"/>
+	
+	<MAPPING business_type="ACTION" business_name="INIT_MANAGE_KPIS_GUI_ACTION" publisher_name="InitManageKpisGuiPublisher"/>
+	<MAPPING business_type="ACTION" business_name="INIT_MANAGE_THRESHOLDS_GUI_ACTION" publisher_name="InitManageThresholdsGuiPublisher"/>
+	<MAPPING business_type="ACTION" business_name="INIT_MANAGE_MODELS_GUI_ACTION" publisher_name="InitManageModelsGuiPublisher"/>
+	<MAPPING business_type="ACTION" business_name="INIT_MANAGE_MODEL_INSTANCES_GUI_ACTION" publisher_name="InitModelInstancesGuiPublisher"/>
+	<MAPPING business_type="ACTION" business_name="INIT_MANAGE_RESOURCES_GUI_ACTION" publisher_name="InitManageResourcesGuiPublisher"/>
+	 
+
+</PRESENTATION>

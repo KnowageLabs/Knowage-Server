@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MODULES>
+	<MODULE class="it.eng.spagobi.workflow.services.AcceptActivityModule" name="AcceptActivityModule">
+	</MODULE>
+
+
+	
+	<MODULE class="it.eng.spagobi.workflow.services.CompleteOrRejectActivityModule" name="CompleteOrRejectActivityModule">
+	</MODULE>  	     	
+  
+
+	
+	<MODULE class="it.eng.spagobi.workflow.services.WorkListModule" name="WorkListModule">
+		<CONFIG pool="spagobi" rows="20" title="SBIWorkflowTaskList.workflowToDoList.title" >
+	      <QUERIES/>
+	      <COLUMNS>
+	      	<COLUMN label="ActivityKey" name="ActivityKey" hidden="true" />
+	        <COLUMN label="SBIWorkflowTaskList.workflowToDoList.activityName" name="ActivityName" />
+			<COLUMN label="SBIWorkflowTaskList.workflowToDoList.activityDescription" name="ActivityDescription" />
+			<COLUMN label="SBIWorkflowTaskList.workflowToDoList.activityPriority" name="ActivityPriority" />
+			<COLUMN label="SBIWorkflowTaskList.workflowToDoList.processName" name="ProcessName" />
+	      </COLUMNS>
+	      <CAPTIONS>
+	      	<ACCEPT_ACTIVITY_CAPTION confirm="FALSE" image="/img/detail.gif" label="Accept">
+	          <PARAMETER name="PAGE" scope="" type="ABSOLUTE" value="AcceptActivityPage"/>
+	          <PARAMETER name="ActivityKey" scope="LOCAL" type="RELATIVE" value="ActivityKey"/>
+	        </ACCEPT_ACTIVITY_CAPTION>
+	      </CAPTIONS>
+	      <BUTTONS>
+	     	<BACK_BUTTON confirm="FALSE" name="back" image="/img/back.png" label="SBIDev.ListSubreport.backCaption" onlyPortletRunning="true">
+				<PARAMETER name="ACTION_NAME" scope="" type="ABSOLUTE" value="START_ACTION"/>
+	          <PARAMETER name="PUBLISHER_NAME" scope="" type="ABSOLUTE" value="LoginSBIEventsPublisher"/>
+	          <!-- <PARAMETER name="LIGHT_NAVIGATOR_RESET" scope="" type="ABSOLUTE" value="true"/> -->
+	          <PARAMETER name="LIGHT_NAVIGATOR_BACK_TO" type="ABSOLUTE" scope="" value="1" />
+	          </BACK_BUTTON>
+	      </BUTTONS>
+	    </CONFIG>
+	</MODULE>
+</MODULES>
+
+

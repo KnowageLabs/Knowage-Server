@@ -1,0 +1,53 @@
+{
+  "contextResponses": [
+    {
+      "contextElement": {
+      "a":3,
+      "c":"d",
+      "e":"f",
+        "id": "pros6_Meter",
+        "attributes": [
+          {
+            "name": "atTime",
+            "type": "timestamp",
+            "value": "2015-07-14T17:19:14.014+0200"
+          },
+          {
+            "name": "downstreamActivePower",
+            "type": "double",
+            "value": "4.8"
+          }
+        ]
+      },
+      "statusCode": {
+        "reasonPhrase": "OK",
+        "code": "200"
+      }
+    },
+    {
+      "contextElement": {
+      "a":2.1,
+      "e":"r",
+      "f":"s",
+      "b":"q",
+        "id": "pros1_Meter",
+        "attributes": [
+          {
+            "name": "atTime",
+            "type": "timestamp",
+            "value": "2015-07-14T17:16:14.014+0200"
+          },
+          {
+            "name": "downstreamActivePower",
+            "type": "double",
+            "value": "3.5"
+          }
+        ]
+      },
+      "statusCode": {
+        "reasonPhrase": "OK",
+        "code": "200"
+      }
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+# ==================================================================
+# TABLES
+# ==================================================================
+
+#foreach ($jpaTable in $jpaTables)
+
+# $jpaTable.name
+
+${jpaTable.uniqueName}.label = $jpaTable.name
+${jpaTable.uniqueName}.tooltip = $jpaTable.description
+
+#foreach ($jpaColumn in $jpaTable.getColumns())
+${jpaColumn.uniqueName}.label = $jpaColumn.name
+${jpaColumn.uniqueName}.tooltip = $jpaColumn.description
+#end
+
+
+
+#end
+
+# ==================================================================
+# VIEWS
+# ==================================================================
+
+#foreach ($jpaView in $jpaViews)
+${jpaView.uniqueName}.label = $jpaView.name
+${jpaView.uniqueName}.tooltip = $jpaView.description
+#foreach ($jpaTable in $jpaView.innerTables)
+
+#foreach ($jpaColumn in $jpaTable.columns)
+${jpaView.uniqueName}/${jpaColumn.uniqueName}.label = $jpaColumn.name
+${jpaView.uniqueName}/${jpaColumn.uniqueName}.tooltip = $jpaColumn.description
+#end
+
+#end
+
+#end
+

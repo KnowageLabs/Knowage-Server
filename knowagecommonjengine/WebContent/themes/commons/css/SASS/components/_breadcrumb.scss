@@ -1,0 +1,58 @@
+bread-crumb nav {
+	color: #fff;
+    background-color: lighten($ternaryColor,10%);
+    width: 100%;
+    height: 2.5em;
+    line-height: 2.5em;
+    .nav-wrapper {
+        display: inline-block;
+        width: 100%;
+        vertical-align: top;
+        overflow: hidden;
+    a {
+    	color: rgba($baseColor, 0.6);
+    	text-decoration: none;
+        max-width: 100px;
+        white-space: nowrap;
+        overflow: hidden;
+        display: inline-block;
+        text-overflow: ellipsis;
+        vertical-align: top;
+    	span {
+    		padding: .5em;
+            color: rgba($baseColor, 0.6);
+    	}
+    	&:hover span{
+    		background-color: $ternaryColor;
+    	}
+
+    	&:first-child {
+    		padding-left: 1em;
+    	}
+    	&:last-child {
+    		color: rgba($baseColor, 1);
+            max-width: 200px;
+            span {
+                color: rgba($baseColor, 1);
+            }
+    	}
+    	&:first-child:before {
+    		display: none;
+    	}
+    	&:before {
+    		content: '\f054';
+		    color: rgba($baseColor,0.6);
+		    vertical-align: top;
+		    display: inline-block;
+		    font-family: 'FontAwesome';
+		    font-weight: normal;
+		    font-style: normal;
+		    font-size: .8em;
+		    -webkit-font-smoothing: antialiased;
+    	}
+    	&.disabledLink {
+    		cursor: not-allowed;
+    	}
+    }
+}
+}

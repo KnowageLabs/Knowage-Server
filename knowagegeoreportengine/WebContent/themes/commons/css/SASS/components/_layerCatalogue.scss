@@ -1,0 +1,168 @@
+.kn-layerCatalogue {
+.md-container {
+      //position: static;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+      box-sizing: border-box;
+      -webkit-flex-direction: column;
+      -ms-flex-direction: column;
+      flex-direction: column;
+      bottom: 0;
+    }
+
+    md-icon.fa {
+      display:block;
+      padding-left:0px;
+    }
+
+    md-icon.s32 span {
+      padding-left:8px;
+    }
+    
+    .h100{
+      height: 100%;
+      background: transparent;
+    }
+
+    .md-switch-thumb .md-container, md-radio-button .md-container {
+      box-sizing: border-box;
+      position: relative;
+      top: 4px;
+      display: inline-block ;
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+    }
+
+    .closeIcon {
+      font-size: 22px
+    }
+
+    md-icon.buttonIcon {
+      display: inline;
+    }
+
+    .md-button.dialogButton {
+      margin-left: 55%;
+    }
+
+}
+
+.kn-list {
+  background: $listBackground;
+  border-right: $listRightBorder;
+
+  md-icon.fa {
+    padding-left: 2px;
+    display: inline;
+  }
+  md-content.md-knowage-theme {
+    background-color: transparent;
+  }
+
+ /* angular-table table>tbody>tr>td {
+    font-size: $tableFontSize;
+    border-top: 1px $tableLineSeparator solid;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  angular-table table>thead {
+    background: white;
+  }
+
+  angular-table #angularTableTemplate {
+    padding: 0 5px;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  angular-table-actions {
+    margin-top: 15px;
+    margin-bottom: 10px;
+  }
+
+  angular-table table thead th {
+    text-align: left;
+    font-size: $tableFontSize;
+    color: $baseColor;
+    font-weight: 600;
+  }
+
+  angular-table[multi-select] table>thead>tr>th:nth-child(2), angular-table:not(multi-select) table>thead>tr>th:nth-child(1), angular-table[multi-select] table>tbody>tr>td:nth-child(2), angular-table:not(multi-select) table>tbody>tr>td:nth-child(1) {
+    padding: 5px !important
+  }
+
+  angular-table table>tbody>tr.selectedRowItem {
+    background-color: $tableSelectedElementColor;
+  }
+
+  angular-table table>tbody>tr:hover{
+    cursor: pointer;
+  }
+
+  angular-table table thead th div {
+    align-items: center;
+    height: 40px;
+    line-height: 40px;
+  }
+  */
+
+}
+
+.kn-detail {
+  background: $detailBackground;
+
+  .kn-detail-content {
+    background: transparent;
+  }
+
+  .containerDiv {
+    position: absolute;
+  }
+
+  .layerFilter {
+    padding: 10px;
+  }
+
+  md-content .layerFilterContent{
+    overflow: hidden;
+  }
+
+  .angularListTemplate .searchBarList input {
+    margin: 0px;
+    padding-left: 18px;
+    height: initial;
+  }
+
+  .md-button.md-knowage-theme.md-fab {
+    top: 0px;
+
+    md-icon {
+      font-size: inherit;
+      padding-top: inherit;
+    }
+  }
+
+  .angularListTemplate {
+    font-family: Roboto,Verdana, Geneva, Arial, Helvetica, sans-serif;
+  }
+}
+
+.kn-rolesManagement {
+  .rolesMetaModelCategories_idItemBox,.rolesDatasetCategories_idItemBox {
+    md-checkbox {
+      margin: 0 0 0 10px;
+    }
+  }
+  .authorizationList {
+    md-input-container.md-knowage-theme {
+      padding: 2px 2px 2px;
+    }
+    label {
+      font-size: .8em;
+    }
+  }
+}

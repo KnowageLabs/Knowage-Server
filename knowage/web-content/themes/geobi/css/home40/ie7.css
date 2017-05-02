@@ -1,0 +1,12 @@
+/* --------------------------------------------------
+Theme Name: 
+file: ie7.css
+author: 
+---------------------------------------------------*/
+.list-actions .search-form{width:246px}
+.list-actions .search-form .submit input{display:block}
+.list-actions .order li{width:134px}
+.list-tab .favourite a{padding-top:15px}
+.panel .radio .radio-option input{position:relative;top:-4px}
+.panel .group .select select{height:23px}
+.login-panel .submit input{padding-left:9px;padding-right:9px}

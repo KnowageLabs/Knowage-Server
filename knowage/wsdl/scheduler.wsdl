@@ -1,0 +1,414 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="urn:spagobischeduler" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="urn:spagobischeduler" xmlns:intf="urn:spagobischeduler" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!--WSDL created by Apache Axis version: 1.4
+Built on Apr 22, 2006 (06:55:48 PDT)-->
+
+   <wsdl:message name="getJobSchedulationDefinitionResponse">
+
+      <wsdl:part name="getJobSchedulationDefinitionReturn" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="scheduleJobRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+      <wsdl:part name="in1" type="soapenc:string"/>
+
+      <wsdl:part name="in2" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="defineJobRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+      <wsdl:part name="in1" type="soapenc:string"/>
+
+      <wsdl:part name="in2" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="scheduleJobResponse">
+
+      <wsdl:part name="scheduleJobReturn" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getJobListResponse">
+
+      <wsdl:part name="getJobListReturn" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getJobDefinitionResponse">
+
+      <wsdl:part name="getJobDefinitionReturn" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="existJobDefinitionRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+      <wsdl:part name="in1" type="soapenc:string"/>
+
+      <wsdl:part name="in2" type="soapenc:string"/>
+
+      <wsdl:part name="in3" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getJobSchedulationListRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+      <wsdl:part name="in1" type="soapenc:string"/>
+
+      <wsdl:part name="in2" type="soapenc:string"/>
+
+      <wsdl:part name="in3" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="deleteJobRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+      <wsdl:part name="in1" type="soapenc:string"/>
+
+      <wsdl:part name="in2" type="soapenc:string"/>
+
+      <wsdl:part name="in3" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getJobSchedulationDefinitionRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+      <wsdl:part name="in1" type="soapenc:string"/>
+
+      <wsdl:part name="in2" type="soapenc:string"/>
+
+      <wsdl:part name="in3" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="deleteSchedulationRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+      <wsdl:part name="in1" type="soapenc:string"/>
+
+      <wsdl:part name="in2" type="soapenc:string"/>
+
+      <wsdl:part name="in3" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="existJobDefinitionResponse">
+
+      <wsdl:part name="existJobDefinitionReturn" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getJobSchedulationListResponse">
+
+      <wsdl:part name="getJobSchedulationListReturn" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="defineJobResponse">
+
+      <wsdl:part name="defineJobReturn" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="deleteJobResponse">
+
+      <wsdl:part name="deleteJobReturn" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getJobListRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+      <wsdl:part name="in1" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="getJobDefinitionRequest">
+
+      <wsdl:part name="in0" type="soapenc:string"/>
+
+      <wsdl:part name="in1" type="soapenc:string"/>
+
+      <wsdl:part name="in2" type="soapenc:string"/>
+
+      <wsdl:part name="in3" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="deleteSchedulationResponse">
+
+      <wsdl:part name="deleteSchedulationReturn" type="soapenc:string"/>
+
+   </wsdl:message>
+
+   <wsdl:portType name="SchedulerService">
+
+      <wsdl:operation name="getJobList" parameterOrder="in0 in1">
+
+         <wsdl:input message="impl:getJobListRequest" name="getJobListRequest"/>
+
+         <wsdl:output message="impl:getJobListResponse" name="getJobListResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getJobSchedulationList" parameterOrder="in0 in1 in2 in3">
+
+         <wsdl:input message="impl:getJobSchedulationListRequest" name="getJobSchedulationListRequest"/>
+
+         <wsdl:output message="impl:getJobSchedulationListResponse" name="getJobSchedulationListResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="deleteSchedulation" parameterOrder="in0 in1 in2 in3">
+
+         <wsdl:input message="impl:deleteSchedulationRequest" name="deleteSchedulationRequest"/>
+
+         <wsdl:output message="impl:deleteSchedulationResponse" name="deleteSchedulationResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="deleteJob" parameterOrder="in0 in1 in2 in3">
+
+         <wsdl:input message="impl:deleteJobRequest" name="deleteJobRequest"/>
+
+         <wsdl:output message="impl:deleteJobResponse" name="deleteJobResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="defineJob" parameterOrder="in0 in1 in2">
+
+         <wsdl:input message="impl:defineJobRequest" name="defineJobRequest"/>
+
+         <wsdl:output message="impl:defineJobResponse" name="defineJobResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getJobDefinition" parameterOrder="in0 in1 in2 in3">
+
+         <wsdl:input message="impl:getJobDefinitionRequest" name="getJobDefinitionRequest"/>
+
+         <wsdl:output message="impl:getJobDefinitionResponse" name="getJobDefinitionResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="scheduleJob" parameterOrder="in0 in1 in2">
+
+         <wsdl:input message="impl:scheduleJobRequest" name="scheduleJobRequest"/>
+
+         <wsdl:output message="impl:scheduleJobResponse" name="scheduleJobResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getJobSchedulationDefinition" parameterOrder="in0 in1 in2 in3">
+
+         <wsdl:input message="impl:getJobSchedulationDefinitionRequest" name="getJobSchedulationDefinitionRequest"/>
+
+         <wsdl:output message="impl:getJobSchedulationDefinitionResponse" name="getJobSchedulationDefinitionResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="existJobDefinition" parameterOrder="in0 in1 in2 in3">
+
+         <wsdl:input message="impl:existJobDefinitionRequest" name="existJobDefinitionRequest"/>
+
+         <wsdl:output message="impl:existJobDefinitionResponse" name="existJobDefinitionResponse"/>
+
+      </wsdl:operation>
+
+   </wsdl:portType>
+
+   <wsdl:binding name="SchedulerServiceSoapBinding" type="impl:SchedulerService">
+
+      <wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="getJobList">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getJobListRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobischeduler" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getJobListResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobischeduler" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getJobSchedulationList">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getJobSchedulationListRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobischeduler" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getJobSchedulationListResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobischeduler" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="deleteSchedulation">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="deleteSchedulationRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobischeduler" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="deleteSchedulationResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobischeduler" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="deleteJob">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="deleteJobRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobischeduler" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="deleteJobResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobischeduler" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="defineJob">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="defineJobRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobischeduler" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="defineJobResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobischeduler" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getJobDefinition">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getJobDefinitionRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobischeduler" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getJobDefinitionResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobischeduler" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="scheduleJob">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="scheduleJobRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobischeduler" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="scheduleJobResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobischeduler" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="getJobSchedulationDefinition">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="getJobSchedulationDefinitionRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobischeduler" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="getJobSchedulationDefinitionResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobischeduler" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="existJobDefinition">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="existJobDefinitionRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobischeduler" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="existJobDefinitionResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:spagobischeduler" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+   </wsdl:binding>
+
+   <wsdl:service name="SchedulerServiceService">
+
+      <wsdl:port binding="impl:SchedulerServiceSoapBinding" name="SchedulerService">
+
+         <wsdlsoap:address location="http://localhost:8080/SpagoBI/services/SchedulerService"/>
+
+      </wsdl:port>
+
+   </wsdl:service>
+
+</wsdl:definitions>

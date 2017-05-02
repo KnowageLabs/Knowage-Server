@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+<!-- 
+        Auto-generated mapping file from
+        the hibernate.org cfg2hbm engine
+-->
+    <class name="it.eng.spagobi.tools.crossnavigation.metadata.SbiCrossNavigationPar" table="SBI_CROSS_NAVIGATION_PAR">
+        
+        <id name="id" type="integer">
+           <column name="ID" />
+        </id>
+         
+        <property name="fromKeyId" column="FROM_KEY" type="int" />
+        <property name="toKeyId" column="TO_KEY" type="int" />
+
+        <property name="fromType" column="FROM_TYPE" type="int" />
+        
+        <property name="fixedValue" column="FIXED_VALUE" type="string" />
+        
+        <many-to-one name="toKey" column="TO_KEY" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar"  lazy="false" insert="false" update="false"/>
+        <many-to-one name="sbiCrossNavigation" column="CN_ID" class="it.eng.spagobi.tools.crossnavigation.metadata.SbiCrossNavigation" not-null="true" />
+        
+	</class>
+	
+</hibernate-mapping>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PAGES>
+
+
+  	<PAGE name="ListDistributionListPage" scope="REQUEST" title="Distribution List Configuration" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="ListDistributionListPage" target="ListDistributionListModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="ListDistributionListModule"/>
+    	</MODULES>
+  	</PAGE>
+  	
+  	
+  	<PAGE name="DetailDistributionListPage" scope="REQUEST" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="DetailDistributionListPage" target="DetailDistributionListModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="DetailDistributionListModule"/>
+    	</MODULES>
+  	</PAGE>  	
+  	
+  	
+  	<PAGE name="ListDistributionListUserPage" scope="REQUEST" title="Distribution List Configuration" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="ListDistributionListUserPage" target="ListDistributionListUserModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="ListDistributionListUserModule"/>
+    	</MODULES>
+  	</PAGE>
+  	
+  	<PAGE name="ListDistributionListUserPageWithOutback" scope="REQUEST" title="Distribution List Configuration" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="ListDistributionListUserPageWithOutback" target="ListDistributionListUserModuleWithOutback">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="ListDistributionListUserModuleWithOutback"/>
+    	</MODULES>
+  	</PAGE>  	
+  	
+  	
+  	<PAGE name="DetailDistributionListUserPage" scope="REQUEST" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="DetailDistributionListUserPage" target="DetailDistributionListUserModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="DetailDistributionListUserModule"/>
+    	</MODULES>
+  	</PAGE>  	
+  	
+  	<PAGE name="InsertEmailPage" scope="REQUEST" >
+    	<DEPENDENCIES>
+      		<DEPENDENCE source="InsertEmailPage" target="DetailDistributionListUserModule">
+        		<CONDITIONS/>
+        		<CONSEQUENCES/>
+      		</DEPENDENCE>
+    	</DEPENDENCIES>
+    	<MODULES>
+      		<MODULE keep_instance="false" keep_response="false" name="DetailDistributionListUserModule"/>
+    	</MODULES>
+  	</PAGE>  	
+ 
+</PAGES>

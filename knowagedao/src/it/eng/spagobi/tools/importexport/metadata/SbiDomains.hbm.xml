@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+<!-- 
+        Auto-generated mapping file from
+        the hibernate.org cfg2hbm engine
+-->
+    <class name="it.eng.spagobi.commons.metadata.SbiDomains" table="SBI_DOMAINS">
+        <id name="valueId" type="integer">
+            <column name="value_id" />
+        </id>
+        <property name="domainCd" type="string">
+            <column name="domain_cd" length="20" />
+        </property>
+        <property name="domainNm" type="string">
+            <column name="domain_nm" length="40" />
+        </property>
+        <property name="valueCd" type="string">
+            <column name="value_cd" length="20" />
+        </property>
+        <property name="valueNm" type="string">
+            <column name="value_nm" length="40" />
+        </property>
+        <property name="valueDs" type="string">
+            <column name="value_ds" length="160" />
+        </property>
+        <!--
+        <set name="sbiParameterses" inverse="true">
+            <key>
+                <column name="par_type_id" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParameters" />
+        </set>
+        <set name="sbiObjectses" inverse="true">
+            <key>
+                <column name="state_id" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects" />
+        </set>
+        <set name="sbiObjStates" inverse="true">
+            <key>
+                <column name="state_id" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjState" />
+        </set>
+        <set name="sbiExtRoleses" inverse="true">
+            <key>
+                <column name="role_type_id" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.commons.metadata.SbiExtRoles" />
+        </set>
+        <set name="sbiFuncRoles" inverse="true">
+            <key>
+                <column name="state_id" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFuncRole" />
+        </set>
+        <set name="sbiCheckses" inverse="true">
+            <key>
+                <column name="value_type_id" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.behaviouralmodel.check.metadata.SbiChecks" />
+        </set>
+        <set name="sbiObjectses_1" inverse="true">
+            <key>
+                <column name="state_cons_id" />
+            </key>
+            <one-to-many class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects" />
+        </set>
+        <set name="sbiLovs" inverse="true">
+            <key>
+                <column name="input_type_id" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.behaviouralmodel.lov.metadata.SbiLov" />
+        </set>
+        <set name="sbiFunctionses" inverse="true">
+            <key>
+                <column name="funct_type_id" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.analiticalmodel.functionalitytree.metadata.SbiFunctions" />
+        </set>
+        <set name="sbiObjectses_2" inverse="true">
+            <key>
+                <column name="biobj_type_id" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects" />
+        </set>
+        <set name="sbiObjectses_3" inverse="true">
+            <key>
+                <column name="exec_mode_id" />
+            </key>
+            <one-to-many class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects" />
+        </set>
+        -->
+    </class>
+</hibernate-mapping>

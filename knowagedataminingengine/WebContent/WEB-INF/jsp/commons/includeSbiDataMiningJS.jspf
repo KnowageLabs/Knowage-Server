@@ -1,0 +1,34 @@
+<!-- 
+IMPORTANT: every time this file get modified (i.e. a new js file is added to the importation list or an old one is removed) also the target
+create-debug in ant-files/SpagoBI-2.x-source/SpagoBIProject/ant/build.xml must be updated properly
+ -->
+
+<!-- Include DATAMINING stylesheets -->
+<link rel="styleSheet" href ="../css/datamining.css" type="text/css" />
+
+<!-- Include localized labels  -->
+<script type="text/javascript" src='../js/spagobi/commons/Settings.js'/></script>
+<script type="text/javascript" src='../js/spagobi/commons/Utils.js'/></script>		
+<script type="text/javascript" src='../js/spagobi/formats/LocaleUtils.js'/></script>
+<script type="text/javascript" src='../js/spagobi/formats/<%=locale.getLanguage()%>.js'/></script>
+
+
+
+<script type="text/javascript" src='../js/spagobi/service/ServiceRegistry.js'/></script>
+<script type="text/javascript" src='../js/spagobi/service/RestService.js'/></script>
+
+<script type="text/javascript" src='../js/spagobi/commons/Format.js'/></script>
+<script type="text/javascript" src='../js/spagobi/commons/Utils.js'/></script>
+<script type="text/javascript" src='../js/spagobi/commons/Log.js'/></script>
+
+<script type="text/javascript" src='../js/spagobi/widgets/Help.js'></script>
+
+<script type="text/javascript" src='../js/spagobi/exception/ExceptionHandler.js'/></script>
+
+<script type="text/javascript" src='../js/spagobi/datamining/FillVariablesPanel.js'></script>
+<script type="text/javascript" src='../js/spagobi/datamining/ResultPanel.js'></script>
+<script type="text/javascript" src='../js/spagobi/datamining/UploadPanel.js'></script>
+<script type="text/javascript" src='../js/spagobi/datamining/OutputPanel.js'></script>
+<script type="text/javascript" src='../js/spagobi/datamining/OutputsTabPanel.js'></script>
+<script type="text/javascript" src='../js/spagobi/datamining/CommandsTabPanel.js'></script>
+<script type="text/javascript" src='../js/spagobi/datamining/DataMiningPanel.js'></script>

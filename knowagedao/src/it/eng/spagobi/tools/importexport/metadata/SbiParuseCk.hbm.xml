@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+<!-- 
+        Auto-generated mapping file from
+        the hibernate.org cfg2hbm engine
+-->
+    <class name="it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuseCk" table="SBI_PARUSE_CK" >
+        <composite-id name="id" class="it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuseCkId">
+            <key-many-to-one name="sbiParuse" class="it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuse">
+                <column name="use_id" />
+            </key-many-to-one>
+            <key-many-to-one name="sbiChecks" class="it.eng.spagobi.behaviouralmodel.check.metadata.SbiChecks">
+                <column name="check_id" />
+            </key-many-to-one>
+        </composite-id>
+        <property name="prog" type="integer">
+            <column name="prog" />
+        </property>
+    </class>
+</hibernate-mapping>

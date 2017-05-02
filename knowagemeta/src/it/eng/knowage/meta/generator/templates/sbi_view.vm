@@ -1,0 +1,133 @@
+{
+	meta: {
+		
+	},
+	
+	views: [
+#foreach ($jpaView in $jpaViews)
+###################################################################################
+#####                           VIEWS
+###################################################################################
+	{
+		name: '${jpaView.className}'
+		, tables: [
+#foreach ($jpaTable in $jpaView.innerTables)
+		{
+			name: '${jpaTable.className}'
+			, package: '${jpaView.package}'
+			, columns: [
+#foreach ($jpaColumn in $jpaView.getColumns($jpaTable))
+			{
+				name: '${jpaColumn.propertyName}'
+			} #if($velocityHasNext) , #end
+#end
+			]
+		} #if($velocityHasNext) , #end
+#end
+		]
+		, joins: [
+#foreach ($joinRelationship in $jpaView.joinRelationships)
+		{
+			sourceTable: {
+				package: '${joinRelationship.sourceTable.package}'
+				, name: '${joinRelationship.sourceTable.className}'
+			}
+			, sourceColumns: [
+#foreach ($sourceColumn in $joinRelationship.sourceColumns)
+## column name				
+#if ($sourceColumn.jpaTable.hasFakePrimaryKey()|| ( $sourceColumn.jpaTable.hasCompositeKey() && $sourceColumn.isIdentifier()))			
+				'${sourceColumn.jpaTable.compositeKeyPropertyName}.${sourceColumn.propertyName}'#if($velocityHasNext) , #end
+#else
+				'${sourceColumn.propertyName}'#if($velocityHasNext) , #end
+#end
+## column name	
+#end
+			]
+			, destinationTable: {
+				package: '${joinRelationship.destinationTable.package}'
+				, name: '${joinRelationship.destinationTable.className}'
+			}
+			, destinationColumns: [
+#foreach ($destinationColumn in $joinRelationship.destinationColumns)
+## column name				
+#if ($destinationColumn.jpaTable.hasFakePrimaryKey()|| ( $destinationColumn.jpaTable.hasCompositeKey() && $destinationColumn.isIdentifier()))			
+				'${destinationColumn.jpaTable.compositeKeyPropertyName}.${destinationColumn.propertyName}'#if($velocityHasNext) , #end
+#else
+				'${destinationColumn.propertyName}'#if($velocityHasNext) , #end
+#end
+## column name	
+#end
+			]
+		} #if($velocityHasNext) , #end
+#end
+		]
+		, outbound: [
+## outbound relationships			
+#set ($firstOutbound = true)
+#foreach ($relationship in $jpaView.relationships)
+#if ($relationship.isOutboundRelationship())		
+		#if(!$firstOutbound) , #end
+		#set ($firstOutbound = false)
+		{
+			destinationTable: {
+				package: '${relationship.package}'
+				, name: '${relationship.destinationTable}'
+				, isBusinessView: '${relationship.destinationTableView}'			
+			}
+			, sourceColumns: [
+#foreach ($sourceColumn in $relationship.sourceColumns)
+## column name				
+				'${sourceColumn}'#if($velocityHasNext) , #end
+## column name	
+#end				
+			] 
+			, destinationColumns: [
+#foreach ($destinationColumn in $relationship.destinationColumns)
+## column name				
+				'${destinationColumn}'#if($velocityHasNext) , #end
+## column name				
+#end				
+			]			
+		}
+#end	
+#end	
+		]
+## outbound relationships		
+## inbound relationships	
+		,inbound: [
+#set ($firstInbound = true)		
+#foreach ($relationship in $jpaView.relationships)
+#if (!$relationship.isOutboundRelationship())			
+		#if(!$firstInbound) , #end
+		#set ($firstInbound = false)
+		{
+				sourceTable: {
+					package: '${relationship.package}'
+					, name: '${relationship.sourceTable}'
+					, isBusinessView: '${relationship.sourceTableView}'
+				}
+				, sourceColumns: [
+#foreach ($sourceColumn in $relationship.sourceColumns)
+## column name				
+				'${sourceColumn}'#if($velocityHasNext) , #end
+## column name	
+#end				
+				] 
+				, destinationColumns: [
+#foreach ($destinationColumn in $relationship.destinationColumns)
+## column name				
+				'${destinationColumn}'#if($velocityHasNext) , #end
+## column name				
+#end				
+				]
+		}
+#end
+#end							
+		]
+	}#if($velocityHasNext) , #end
+###################################################################################
+#####                           VIEWS
+###################################################################################
+#end	
+	]
+}

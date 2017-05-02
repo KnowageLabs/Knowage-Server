@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PUBLISHERS>
+
+  	<PUBLISHER name="ManageUdpPublisher">
+    	<RENDERING channel="PORTLET" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM mode="VIEW" resource="/WEB-INF/jsp/udp/manageUdp.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+    	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
+      		<RESOURCES>
+        		<ITEM prog="0" resource="/WEB-INF/jsp/udp/manageUdp.jsp"/>
+      		</RESOURCES>
+    	</RENDERING>
+  	</PUBLISHER>
+
+</PUBLISHERS>

@@ -1,0 +1,125 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 22-dic-2009 10.27.37 by Hibernate Tools 3.2.4.GA -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.tools.calendar.metadata.TimeByDay" table="A_D_TIME_BY_DAY">
+        <id name="timeId" type="int">
+           <column name="TIME_ID" />
+		   <generator class="org.hibernate.id.enhanced.TableGenerator">
+				<param name="optimizer">none</param>
+				<param name="segment_value">A_D_TIME_BY_DAY</param>
+				<param name="initial_value">1</param>		
+		   </generator>
+        </id>
+        <property name="timeDate" type="timestamp">
+            <column name="TIME_DATE" />
+        </property>
+               
+        <property name="dayDesc" type="string">
+            <column name="DAY_DESC" length="50" />
+        </property>
+        <property name="dayName" type="string">
+            <column name="DAY_NAME" length="30" />
+        </property>
+         <property name="dayOfWeek" type="int">
+            <column name="DAY_OF_WEEK" />
+        </property>
+       	<property name="dayOfMonth" type="int">
+            <column name="DAY_OF_MONTH" />
+        </property>
+        <property name="dayOfYear" type="int">
+            <column name="DAY_OF_YEAR" />
+        </property>
+        <property name="monthId" type="string">
+            <column name="MONTH_ID" length="30" />
+        </property>
+        <property name="monthDesc" type="string">
+            <column name="MONTH_DESC" length="100" />
+        </property>
+        <property name="monthOfQuarter" type="int">
+            <column name="MONTH_OF_QUARTER" />
+        </property>
+       	<property name="monthOfYear" type="int">
+            <column name="MONTH_OF_YEAR" />
+        </property>
+      	<property name="monthName" type="string">
+            <column name="MONTH_NAME" length="30" />
+        </property>
+         <property name="endOfMonth" type="timestamp">
+            <column name="END_OF_MONTH" />
+        </property>
+      <property name="daysInMonth" type="string">
+            <column name="DAYS_IN_MONTH" length="30" />
+        </property>
+        <property name="quarterId" type="string">
+            <column name="QUARTER_ID" length="30" />
+        </property>
+        <property name="quarterDesc" type="string">
+            <column name="QUARTER_DESC" length="100" />
+        </property>
+      	<property name="quarterOfYear" type="int">
+            <column name="QUARTER_OF_YEAR" />
+        </property>
+         <property name="endOfQuarter" type="timestamp">
+            <column name="END_OF_QUARTER" />
+        </property>
+        	<property name="daysInQuarter" type="int">
+            <column name="DAYS_IN_QUARTER" />
+        </property>
+        <property name="semesterId" type="string">
+            <column name="SEMESTER_ID" length="10" />
+        </property>
+        <property name="semesterDesc" type="string">
+            <column name="SEMESTER_DESC" length="100" />
+        </property>
+		<property name="semesterOfYear" type="int">
+            <column name="SEMESTER_OF_YEAR" />
+        </property>
+         <property name="endOfSemester" type="timestamp">
+            <column name="END_OF_SEMESTER" />
+        </property>
+        <property name="daysInSemester" type="int">
+            <column name="DAYS_IN_SEMESTER" />
+        </property>
+        <property name="yearId" type="int">
+            <column name="YEAR_ID" />
+        </property>
+        <property name="daysInYear" type="int">
+            <column name="DAYS_IN_YEAR" />
+        </property>
+         <property name="endOfYear" type="timestamp">
+            <column name="END_OF_YEAR" />
+        </property>
+        <property name="daysInWeek" type="int">
+            <column name="DAYS_IN_WEEK" />
+        </property>
+        <property name="calWeekId" type="string">
+            <column name="CAL_WEEK_ID" length="30" />
+        </property>
+        <property name="calWeekDesc" type="string">
+            <column name="CAL_WEEK_DESC" length="100" />
+        </property>
+        <property name="calWeekOfYear" type="int">
+            <column name="CAL_WEEK_OF_YEAR" />
+        </property>
+         <property name="endOfCalWeek" type="timestamp">
+            <column name="END_OF_CAL_WEEK" />
+        </property>
+         <property name="isoWeekId" type="string">
+            <column name="ISO_WEEK_ID" length="30" />
+        </property>
+        <property name="isoWeekDesc" type="string">
+            <column name="ISO_WEEK_DESC" length="100" />
+        </property>
+         <property name="isoWeekOfYear" type="int">
+            <column name="ISO_WEEK_OF_YEAR" />
+        </property>
+         <property name="endOfIsoWeek" type="timestamp">
+            <column name="END_OF_ISO_WEEK" />
+        </property>
+    
+       
+    </class>
+	
+</hibernate-mapping>

@@ -1,0 +1,77 @@
+
+<md-dialog style='width:50%;'>
+    
+      <md-toolbar class="knowage-blue dialog-toolbar">
+		<h2 flex="flex" class="md-title">Cross Navigation Definition</h2>
+	</md-toolbar>
+      
+      
+      <md-content> 
+    <div style="padding: 5px;">
+   <p class="md-body-1" ng-if="crossNavType == 'cell'">
+   The parameters for cross navigation on cell required the name of the dimension, hierarchy and level. 
+In order to select these values you should click on "select from table". Than on the table you should open the filter panel of the hierarchy you want to include in the parameter. Than on the filter panel you should select one member of the level you want to include in the cross navigation. 
+For example: suppose you want to create a parameter on dimension="Product" hierarchy="[Product]" level="[Product].[Product Department]. You should select the hierarchy Product on dimension Product. Than you should open the filter panel and select a member of the level [Product].[Product Department] for example Food.Seafood
+
+   </p>
+   
+   <div layout="row" layout-wrap ng-if="crossNavType == 'cell'">
+						<div flex=100>
+							<md-input-container class="md-block">
+							<label>Value</label>
+							<input ng-model="cellForShowObj.name"> 
+							</md-input-container>
+						</div>				
+	<md-button class="md-raised" ng-click="enterSelectModeCN()">
+       Select from table
+    </md-button>				
+						
+	</div>
+	
+	
+	
+	<div layout="row" layout-wrap ng-if="crossNavType == 'cell'">
+						<div flex=100>
+							<md-input-container class="md-block">
+							<label>Parameter Name</label>
+							<input ng-model="crossNavfromCellObj.name"> 
+							</md-input-container>
+						</div>
+	</div>
+	
+		
+   
+   <div layout="row" layout-wrap ng-if="crossNavType == 'member'">
+						<div flex=100>
+							<md-input-container class="md-block">
+							<label>Member Name</label>
+							<input ng-model="crossNavfromMemberObj.uniqueName"> 
+							</md-input-container>
+						</div>
+						
+					<md-button class="md-raised" ng-click="enterSelectModeCN()" style="float: right;">
+				       Select from table
+				    </md-button>
+	</div>
+	
+	  <div layout="row" layout-wrap ng-if="crossNavType == 'member'">
+						<div flex=100>
+							<md-input-container class="md-block">
+							<label>Parameter Name</label>
+							<input ng-model="crossNavfromMemberObj.clickParameter.name"> 
+							</md-input-container>
+						</div>
+	</div>
+   
+ 	</div>
+	</md-content>
+    <md-dialog-actions layout="row">
+    	<md-button ng-click="saveCN(crossNavType)" class="md-raised" ng-disabled="checkCNValidity(crossNavType)" md-autofocus>
+       Finish
+      </md-button>
+      <md-button ng-click="closeDialogOlapDesigner()" class="md-raised" style="margin-right:20px;" >
+       Cancel
+      </md-button>
+    </md-dialog-actions>
+</md-dialog>
+

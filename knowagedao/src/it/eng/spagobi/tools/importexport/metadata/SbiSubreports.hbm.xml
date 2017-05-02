@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="it.eng.spagobi.analiticalmodel.document.metadata.SbiSubreports" table="sbi_subreports">
+       <composite-id name="id" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiSubreportsId">
+            <key-many-to-one name="masterReport" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects">
+                <column name="master_rpt_id" />
+            </key-many-to-one>
+            <key-many-to-one name="subReport" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects">
+                <column name="sub_rpt_id" />
+            </key-many-to-one>
+       </composite-id>      
+    </class>
+    
+</hibernate-mapping>

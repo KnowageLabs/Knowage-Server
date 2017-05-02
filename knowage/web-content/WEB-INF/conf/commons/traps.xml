@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Exception handling configuration:
+TRAP is an association beetween a Spago service and an exception category
+
+	<TRAP
+		trap_type="ACTION"  type of Spago service accepted values "ACTION,PAGE"
+		trap_name="ServiceExceptionAction"  name of the Spago service
+		category="serviceError"  name of the exception category
+	/>
+-->
+<TRAPS>
+	<!-- DEFAULT TRAP CONFIGURATION TO HANDLE NON SPECIFIC EXCEPTIONS -->
+	<TRAP trap_type="ACTION" trap_name="SERVICE_EXCEPTION_ACTION" category="serviceError"/>
+	
+	<!-- SESSION_EXPIRED_ACTION is specific for SpagoWeb module -->
+	<TRAP trap_type="ACTION" trap_name="SESSION_EXPIRED_ACTION" category="sessionExpiredError"/>
+	
+	<!-- AJAX_SERVICE_EXCEPTION_ACTION is specific for Ajax call service exceptions -->
+	<TRAP trap_type="ACTION" trap_name="AJAX_SERVICE_EXCEPTION_ACTION" category="ajaxServiceError"/>
+	
+</TRAPS>

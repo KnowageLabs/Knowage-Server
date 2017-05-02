@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 18-nov-2009 17.58.49 by Hibernate Tools 3.1.0 beta3 -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.tools.objmetadata.metadata.SbiObjMetadata" table="SBI_OBJ_METADATA">
+        <id name="objMetaId" type="integer">
+            <column name="OBJ_META_ID" />
+        </id>
+        <many-to-one name="dataType" class="it.eng.spagobi.commons.metadata.SbiDomains">
+            <column name="DATA_TYPE_ID" not-null="true" />
+        </many-to-one>
+        <property name="label" type="string">
+            <column name="LABEL" length="20" not-null="true" />
+        </property>
+        <property name="name" type="string">
+            <column name="NAME" length="40" not-null="true" />
+        </property>
+        <property name="description" type="string">
+            <column name="DESCR" length="100" />
+        </property>
+        <property name="creationDate" type="timestamp">
+            <column name="CREATION_DATE" length="19" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>

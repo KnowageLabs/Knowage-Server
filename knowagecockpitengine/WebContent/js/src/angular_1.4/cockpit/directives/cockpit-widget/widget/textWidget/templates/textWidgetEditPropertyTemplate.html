@@ -1,0 +1,60 @@
+<md-card   class="flexCard customTableWidgetConfiguration textWidget" >
+	<md-card-content flex layout="column" class="noPadding">
+	    <md-toolbar> 
+	      <div class="md-toolbar-tools">
+	        <h2>{{translate.format(translate.load('sbi.cockpit.widget.configuration'),translate.load('sbi.cockpit.widget.text'))}}</h2>
+	        <span flex></span>
+	      </div>
+	    </md-toolbar>
+	    <md-content flex layout="column">
+			<md-tabs flex md-border-bottom>
+		      
+				<md-tab label="{{translate.load('sbi.cockpit.widget.text.editor')}}">
+					<md-content class="noPadding" layout="row" >
+						<!-- <wysiwyg-edit content="localModel.content.text" config="editorConfig" ng-content="editorCss.css" flex="66"></wysiwyg-edit>--> 
+						<wysiwyg-edit content="localModel.content.text" config="editorConfig" ng-content="editorCss.css" flex></wysiwyg-edit> 
+						<cockpit-text-configuration editor-text="localModel.content.text" ng-model-shared="localModel">
+				    </md-content>
+		        </md-tab>
+		        <md-tab label="{{translate.load('sbi.cockpit.style')}}">
+		        	<cockpit-style-configurator widget ng-model="localModel.style">
+		        		<cockpit-style-custom-widget-configurator label="'Padding'">
+			           <div layout="row" flex ng-cloak layout-wrap>
+
+					           	<md-input-container flex=50 class="md-block"> 
+									<label><i class="fa fa-angle-double-up"></i> Top</label>
+									<input class="input_class" ng-model="localModel.style['padding-top']" /> 
+								</md-input-container>
+								<md-input-container flex=50 class="md-block"> 
+									<label><i class="fa fa-angle-double-right"></i> Right</label>
+									<input class="input_class" ng-model="localModel.style['padding-right']" />
+								</md-input-container>
+					           	<md-input-container flex=50 class="md-block"> 
+									<label><i class="fa fa-angle-double-left"></i> Left</label>
+									<input class="input_class" ng-model="localModel.style['padding-left']" />
+								</md-input-container>
+								<md-input-container flex=50 class="md-block"> 
+									<label><i class="fa fa-angle-double-down"></i> Bottom</label>
+									<input class="input_class" ng-model="localModel.style['padding-bottom']" />
+								</md-input-container>
+			          
+			           </div>
+			        </cockpit-style-custom-widget-configurator>
+		        	</cockpit-style-configurator>
+		        </md-tab>
+		        
+		        <md-tab label="{{translate.load('sbi.cockpit.dataset')}}">
+		   			<dataset-selector ng-model="localModel.datasetId" on-change="handleEvent('datasetChanged',dsId)"></dataset-selector>  	
+		     	</md-tab>
+	      	</md-tabs>
+	    </md-content>
+    </md-card-content>
+    <md-card-actions layout="row"  layout-align="end center">
+	    <md-button ng-click="cancelConfiguration()" >
+	     {{translate.load('sbi.generic.cancel')}}
+	    </md-button>
+	    <md-button ng-click="saveConfiguration()"  >
+	     {{translate.load('sbi.generic.save')}}
+	    </md-button>
+    </md-card-actions>
+</md-card>

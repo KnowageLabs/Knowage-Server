@@ -1,0 +1,94 @@
+<div layout-fill class="overlayGray" layout="row" layout-align="center center">
+
+<md-dialog aria-label="table configuration" ng-cloak  layout="column" class="width80">
+    <md-toolbar class="secondaryToolbar" layout="row">
+		<h1 flex class="md-toolbar-tools">{{translate.load('sbi.cockpit.table.column.calcfield')}}</h1>
+	</md-toolbar>
+    <md-dialog-content flex layout>
+     <!-- New field from FORMULA -->
+     	<md-whiteframe class="md-whiteframe-1dp" layout="column">
+				<md-toolbar>
+			      <div class="md-toolbar-tools">
+			        <h2>{{translate.load('sbi.cockpit.table.columns')}}</h2>
+			       </div>
+			    </md-toolbar>
+				<div flex  class="overflowAuto">
+				<h3 ng-if="measuresList.length==0">{{translate.load('sbi.cockpit.table.nomeasure')}}</h3>
+					<md-list flex>
+			   		   	<md-list-item ng-repeat="meas in measuresList" ng-click="addMeasures(meas)">
+			   		   		{{meas.alias}}
+			   		   		<md-divider></md-divider>
+			   		   	</md-list-item>
+		   		   </md-list>
+				</div>
+			</md-whiteframe>
+		
+	   		<div flex layout="column" layout-margin>
+	   			<div layout="row">
+		   			 <md-input-container  flex class="md-block" >
+			            <label>{{translate.load('sbi.cockpit.table.alias')}}</label>
+			            <input ng-model="column.alias">
+			          </md-input-container>
+	   			</div>
+	   			
+	   			<md-whiteframe class="md-whiteframe-1dp" layout="column" flex>
+					<md-toolbar>
+				      <div class="md-toolbar-tools">
+				        <h2>{{translate.load('sbi.cockpit.table.formula')}}</h2>
+				       </div>
+				    </md-toolbar>
+				
+					<div layout="column" flex>
+						<div layout="row">
+							<div layout="row" flex >
+				   				 <md-button class="md-raised" flex aria-label="{{op}}" ng-repeat = "op in operators" ng-click = "addOperator(op)" >
+				   				 	{{op}}
+				   				 	<md-tooltip md-delay=700>
+							        	{{op}}
+							        </md-tooltip>
+				   				 </md-button>
+				   			</div>
+				   			<div layout="row" flex >
+				   				 <md-button class="md-raised" flex aria-label="{{br}}" ng-repeat = "br in brackets" ng-click = "addBracket(br)" >
+				   				 	{{br}}
+				   				 	<md-tooltip md-delay=700>
+							        	{{br}}
+							        </md-tooltip>
+				   				 </md-button>
+				   			</div>
+				   			<div layout="row" flex=20>
+				   				 <md-button class="md-raised" flex aria-label="cancel" ng-click="deleteLast()">
+				   				 	←
+				   				 	<md-tooltip md-delay=700>
+							        	{{translate.load('sbi.generic.cancel')}}
+							        </md-tooltip>
+				   				 </md-button>
+				   			</div>
+						</div>
+						<textarea flex ng-model="formula"  rows=4  md-select-on-focus  ng-keydown="checkInput($event)"></textarea>
+					</div>
+				</md-whiteframe>
+	   			
+		   		
+		   		
+				
+		   		
+		   		
+	   		</div>
+	</md-dialog-content>
+			
+	    <md-dialog-actions layout="row">
+      <span flex></span>
+      <md-button ng-click="cancelConfiguration()" >
+        {{translate.load('sbi.generic.cancel')}}
+      </md-button>
+      <md-button ng-click="saveColumnConfiguration()"  >
+        {{translate.load('sbi.generic.save')}}
+      </md-button>
+    </md-dialog-actions>
+	 
+	 
+	
+
+</md-dialog>
+</div>

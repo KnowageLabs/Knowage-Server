@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 2-dic-2008 10.47.58 by Hibernate Tools 3.1.0 beta3 -->
+<hibernate-mapping>
+    <class name="it.eng.spagobi.kpi.config.metadata.SbiKpiPeriodicity" table="SBI_KPI_PERIODICITY" >
+        <id name="idKpiPeriodicity" type="integer">
+            <column name="id_kpi_periodicity" />
+        </id>
+        <property name="name" type="string">
+            <column name="name" length="400" />
+        </property>
+        <property name="months" type="integer">
+            <column name="months" />
+        </property>
+        <property name="days" type="integer">
+            <column name="days" />
+        </property>
+        <property name="hours" type="integer">
+            <column name="hours" />
+        </property>
+        <property name="minutes" type="integer">
+            <column name="minutes" />
+        </property>
+        <property name="chronString" type="string">
+            <column name="chron_string" length="20" />
+        </property>
+        <property name="startDate" type="timestamp">
+            <column name="start_date" length="19" />
+        </property>
+        <set name="sbiKpiInstPeriods" inverse="true">
+            <key>
+                <column name="PERIODICITY_ID" not-null="true" />
+            </key>
+            <one-to-many class="it.eng.spagobi.kpi.config.metadata.SbiKpiInstPeriod" />
+        </set>
+    </class>
+</hibernate-mapping>

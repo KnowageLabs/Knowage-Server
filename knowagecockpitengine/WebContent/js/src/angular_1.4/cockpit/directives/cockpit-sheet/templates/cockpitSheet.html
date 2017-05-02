@@ -1,0 +1,38 @@
+<md-tabs ng-class="{'cockpitSheetTabs':cockpitModule_properties.EDIT_MODE, 'highlander':cockpitModule_template.sheets.length==1}" class="cockpitSheetTabsHook" md-align-tabs="bottom" flex md-selected="cockpitModule_properties.CURRENT_SHEET" md-autoselect >
+	<md-tab    ng-repeat="sheet in cockpitModule_template.sheets | orderObjectBy : 'index'">
+		<md-tab-label >
+			<span ng-if="hide!=true" class="sheetPageButton-{{$index}}" >{{sheet.label}}</span>
+			 <md-button ng-if="cockpitModule_properties.EDIT_MODE"  class="md-icon-button openSheetMenuIconButton"  ng-click="showMenu(sheet,$event,$index);$event.stopPropagation();" aria-label="Settings">
+				<md-icon md-font-icon="fa fa-sort-desc" ></md-icon>
+			 </md-button>
+		</md-tab-label>
+		<md-tab-body >
+			<md-card ng-if="sheet.widgets.length == 0" class="noWidget">
+				<md-card-content layout-align="center center">
+					<p>{{translate.load("sbi.cockpit.nowidget1")}}</p>
+					<p>{{translate.load("sbi.cockpit.nowidget2")}}</p>
+				</md-card-content>
+			</md-card>
+			<cockpit-grid layout-fill ng-style="cockpitModule_template.style.background" >
+				<cockpit-widget ng-model="prop" ng-repeat="prop in sheet.widgets"  >
+				</cockpit-widget>
+			</cockpit-grid>
+		</md-tab-body>
+	</md-tab>
+</md-tabs>
+
+<md-button  ng-if="cockpitModule_properties.EDIT_MODE" md-tab-fixed-add-sheet-button class="addSheetTabButton " aria-label="add sheet"  ng-click="addSheet();">
+<md-tooltip md-direction="top">Add sheet</md-tooltip>
+	<md-icon md-font-icon="fa fa-plus"></md-icon>
+</md-button> 
+
+<script type="text/ng-template" id="sheetContextMenu.html">
+
+<md-list>
+	 <md-list-item ng-click="ctrl.deleteSheet($event)">{{ctrl.translate.load("sbi.generic.delete")}}</md-list-item>
+	 <md-list-item ng-click="ctrl.renameSheet($event)">{{ctrl.translate.load("sbi.generic.rename")}}</md-list-item>
+	<md-list-item ng-click="ctrl.cloneSheet($event)">{{ctrl.translate.load("sbi.cockpit.window.toolbar.clone")}}</md-list-item>
+	<md-list-item ng-click="ctrl.moveSheet('prev')" ng-if="ctrl.sheet.index!=0">{{ctrl.translate.load("sbi.generic.moveleft")}}</md-list-item>
+	<md-list-item ng-click="ctrl.moveSheet('next')" ng-if="ctrl.sheet.index!=ctrl.cockpitModule_template.sheets.length-1">{{ctrl.translate.load("sbi.generic.moveright")}}</md-list-item>
+</md-list>
+</script>

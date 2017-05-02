@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+<!-- 
+        Auto-generated mapping file from
+        the hibernate.org cfg2hbm engine
+-->
+    <class name="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjPar" table="SBI_OBJ_PAR" >
+        <id name="objParId" type="integer">
+            <column name="obj_par_id" />
+
+        </id>    
+<!--
+        <composite-id name="id" class="it.eng.spagobi.metadata.SbiObjParId">
+            <key-many-to-one name="sbiParameters" class="it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParameters">
+                <column name="par_id" />
+            </key-many-to-one>
+            <key-many-to-one name="sbiObjects" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects">
+                <column name="biobj_id" />
+            </key-many-to-one>
+            <key-property name="prog" type="integer">
+                <column name="prog" />
+            </key-property>
+        </composite-id>
+-->    
+
+        <many-to-one name="sbiParameter" class="it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParameters">
+            <column name="par_id" not-null="true" />
+        </many-to-one>
+        <many-to-one name="sbiObject" class="it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects">
+            <column name="biobj_id" not-null="true" />
+        </many-to-one>
+  
+        <property name="reqFl" type="short">
+            <column name="req_fl" />
+        </property>
+        <property name="modFl" type="short">
+            <column name="mod_fl" />
+        </property>
+        <property name="viewFl" type="short">
+            <column name="view_fl" />
+        </property>
+        <property name="multFl" type="short">
+            <column name="mult_fl" />
+        </property>
+        <property name="label" type="string">
+            <column name="label" length="20" not-null="true"/>
+        </property>
+        <property name="parurlNm" type="string">
+            <column name="parurl_nm" length="20" />
+        </property>
+        <property name="prog" type="integer">
+            <column name="prog" />
+        </property>
+        <property name="priority" type="integer">
+            <column name="priority" />
+        </property>
+        <property name="colSpan" type="integer">
+            <column name="col_span" />
+        </property>        
+        <property name="thickPerc" type="integer">
+            <column name="thick_perc" />
+        </property>          
+    </class>
+</hibernate-mapping>

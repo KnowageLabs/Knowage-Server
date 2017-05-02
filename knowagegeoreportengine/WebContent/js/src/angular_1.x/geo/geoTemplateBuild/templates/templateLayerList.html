@@ -1,0 +1,25 @@
+<md-dialog aria-label="Select Function" class="flex2" ng-cloak style="height:80%">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h1>Layer list</h1>
+        <span flex></span>
+		<md-button class="md-primary" ng-click="changeSelectedLayer()">
+          	{{translate.load('gisengine.desiner.save')}}
+        </md-button>
+		<md-button class="md-primary" ng-click="closeDialog()">
+			{{translate.load('gisengine.desiner.close')}} 
+        </md-button>
+      </div>
+	
+    </md-toolbar>
+    <md-dialog-content layout="column" class="mdDialogSize">
+     <div class="md-dialog-content" layout="column" style="height:90%;" >
+		<angular-table flex
+		id='layersTable' ng-model="layerCatalogs"
+		columns='[{"label":"ID","name":"layerId"},{"label":"Name","name":"name"},{"label":"Description","name":"descr"},{"label":"Type","name":"type"}]'
+		columns-search='["name"]' show-search-bar=true multi-select="multiSelect" selected-item="newLayerCatalog" 
+		highlights-selected-item="true" 
+		></angular-table>
+		</div>
+   	 </md-dialog-content>
+</md-dialog>
