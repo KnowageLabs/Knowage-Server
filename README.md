@@ -17,5 +17,6 @@ Knowage supports a modern vision of the data analytics, providing new self-servi
 Knowage is available on two versions:
 * the community edition, with the whole set of analytical capabilities, it is part of the software stack managed by OW2 as SpagoBI always did;
 * the enterprise edition, provided and guaranteed directly from Engineering Group - the leading Italian software and services company - with a commercial offering and some facilities for the administrator.
+
 This repository contains the source code of the Community Edition. 
 Please visit [Knowage project website](http://www.knowage-suite.com) for information about the Enterprise Edition.
