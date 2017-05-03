@@ -392,12 +392,32 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 			return "noAssoc";
 		}
 		
+		//converts parameters in array for simulate multiselection management 
+		var arColumnName = [];
+		var arOriginalColumnName =[];
+		var arColumn = [];
+		if (!Array.isArray(columnName)){
+			arColumnName.push(columnName);
+			arOriginalColumnName.push(originalColumnName);
+			arColumn.push(column);
+		}else{
+			arColumnName = columnName;
+			arOriginalColumnName = originalColumnName;
+			arColumn = column;
+		}
 		
-		var key = datasetLabel+"."+columnName;
-		var originalKey = datasetLabel+"."+originalColumnName;
-		var array = [];
-		array.push(column);
-		ws.addValueToSelection(key , array, datasetLabel, originalKey);
+		for (var c=0; c<arColumnName.length; c++){
+			var key = datasetLabel+"."+arColumnName[c];
+			var originalKey = datasetLabel+"."+arOriginalColumnName[c];
+			var array = [];
+			array.push(arColumn[c]);
+			ws.addValueToSelection(key , array, datasetLabel, originalKey);
+		}
+//		var key = datasetLabel+"."+columnName;
+//		var originalKey = datasetLabel+"."+originalColumnName;
+//		var array = [];
+//		array.push(column);
+//		ws.addValueToSelection(key , array, datasetLabel, originalKey);
 		this.loadAssociativeSelection(defer,ws.getDatasetAssociation(datasetLabel));
 		defer.promise.then(function(){
 			

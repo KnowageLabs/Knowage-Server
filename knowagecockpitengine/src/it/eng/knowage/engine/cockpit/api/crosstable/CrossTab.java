@@ -39,6 +39,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -113,6 +114,20 @@ public class CrossTab {
 	private Map<Integer, NodeComparator> rowsSortKeysMap;
 	private Map<Integer, NodeComparator> measuresSortKeysMap;
 
+	private List<String> rowCordinates;
+	private List<String> columnCordinates;
+	private List<String> measuresCordinates;
+
+	private List<String> columnsSpecification = new ArrayList();
+	private List<String> rowsSpecification = new ArrayList();
+
+	private List<String> columnsHeaderList = new ArrayList<String>();
+	private List<String> rowsHeaderList = new ArrayList<String>();
+	private List<String> measuresHeaderList = new ArrayList<String>();
+	private List<String> columnsHeaderIdList = new ArrayList<String>();
+	private List<String> rowsHeaderIdList = new ArrayList<String>();
+	private List<String> measuresHeaderIdList = new ArrayList<String>();
+
 	public enum CellType {
 		DATA("data"), CF("cf"), SUBTOTAL("partialsum"), TOTAL("totals");
 		CellType(String value) {
@@ -124,7 +139,6 @@ public class CrossTab {
 		public String getValue() {
 			return this.value;
 		}
-
 	}
 
 	private List<CellType> celltypeOfColumns;
@@ -227,9 +241,14 @@ public class CrossTab {
 		this.rowsSortKeysMap = rowsSortKeysMap;
 		this.measuresSortKeysMap = measuresSortKeysMap;
 
-		List<String> rowCordinates = new ArrayList<String>();
-		List<String> columnCordinates = new ArrayList<String>();
-		List<String> measuresCordinates = new ArrayList<String>();
+		// List<String> rowCordinates = new ArrayList<String>();
+		// List<String> columnCordinates = new ArrayList<String>();
+		// List<String> measuresCordinates = new ArrayList<String>();
+
+		rowCordinates = new LinkedList<String>();
+		columnCordinates = new LinkedList<String>();
+		measuresCordinates = new LinkedList<String>();
+
 		List<String> data = new ArrayList<String>();
 
 		columnsRoot = new Node("rootC");
@@ -242,12 +261,12 @@ public class CrossTab {
 		List<String> rowsNameList = new ArrayList<String>();
 		List<String> measuresNameList = new ArrayList<String>();
 
-		List<String> columnsHeaderList = new ArrayList<String>();
-		List<String> rowsHeaderList = new ArrayList<String>();
-		List<String> measuresHeaderList = new ArrayList<String>();
-		List<String> columnsHeaderIdList = new ArrayList<String>();
-		List<String> rowsHeaderIdList = new ArrayList<String>();
-		List<String> measuresHeaderIdList = new ArrayList<String>();
+		// List<String> columnsHeaderList = new ArrayList<String>();
+		// List<String> rowsHeaderList = new ArrayList<String>();
+		// List<String> measuresHeaderList = new ArrayList<String>();
+		// List<String> columnsHeaderIdList = new ArrayList<String>();
+		// List<String> rowsHeaderIdList = new ArrayList<String>();
+		// List<String> measuresHeaderIdList = new ArrayList<String>();
 
 		for (int i = 0; i < crosstabDefinition.getMeasures().size(); i++) {
 			measuresHeaderList.add(crosstabDefinition.getMeasures().get(i).getAlias());
@@ -307,8 +326,8 @@ public class CrossTab {
 			columnsOverflow = columnsRoot.getLeafsNumber() < completeColumnsRoot.getLeafsNumber();
 		}
 
-		List<String> columnsSpecification = new ArrayList();
-		List<String> rowsSpecification = new ArrayList();
+		// List<String> columnsSpecification = new ArrayList();
+		// List<String> rowsSpecification = new ArrayList();
 		Map measureToOrderMap = new LinkedHashMap();
 
 		for (index = 0; index < dataStoredata.length(); index++) {
@@ -492,9 +511,11 @@ public class CrossTab {
 		this.rowsSortKeysMap = rowsSortKeysMap;
 		this.measuresSortKeysMap = measuresSortKeysMap;
 
-		List<String> rowCordinates = new ArrayList<String>();
-		List<String> columnCordinates = new ArrayList<String>();
-		List<String> data = new ArrayList<String>();
+		// List<String> rowCordinates = new ArrayList<String>();
+		// List<String> columnCordinates = new ArrayList<String>();
+		rowCordinates = new LinkedList<String>();
+		columnCordinates = new LinkedList<String>();
+		List<String> data = new LinkedList<String>();
 
 		columnsRoot = new Node("rootC");
 		rowsRoot = new Node("rootR");
@@ -1739,7 +1760,10 @@ public class CrossTab {
 		if (measuresOnRow) {
 			if (rowsTotals) {
 				if (!measuresOnRow) {
+					// gestire il secondo true in base al fatto che ci siano o meno le colonne
+					// addSubtotalsToTheNodeFirstLevel(columnsRoot, true, true, 0);
 					addSubtotalsToTheNodeFirstLevel(columnsRoot, true, 0);
+					// addSubtotalsToTheTree(columnsRoot, true, true, 0);
 					addSubtotalsToTheTree(columnsRoot, true, 0);
 				} else {
 					int startPosition = 0;
@@ -1751,7 +1775,10 @@ public class CrossTab {
 
 			if (columnsTotals) {
 				if (measuresOnRow) {
+					// anto
+					// addSubtotalsToTheNodeFirstLevel(rowsRoot, false, true, 0);
 					addSubtotalsToTheNodeFirstLevel(rowsRoot, false, 0);
+					// addSubtotalsToTheTree(rowsRoot, false, true, 0);
 					addSubtotalsToTheTree(rowsRoot, false, 0);
 				} else {
 					int startPosition = 0;
@@ -1764,7 +1791,10 @@ public class CrossTab {
 
 			if (columnsTotals) {
 				if (measuresOnRow) {
+					// anto
+					// addSubtotalsToTheNodeFirstLevel(rowsRoot, false, true, 0);
 					addSubtotalsToTheNodeFirstLevel(rowsRoot, false, 0);
+					// addSubtotalsToTheTree(rowsRoot, false, true, 0);
 					addSubtotalsToTheTree(rowsRoot, false, 0);
 				} else {
 					int startPosition = 0;
@@ -1775,7 +1805,10 @@ public class CrossTab {
 			}
 			if (rowsTotals) {
 				if (!measuresOnRow) {
+					// anto gestire secondo true
+					// addSubtotalsToTheNodeFirstLevel(columnsRoot, true, true, 0);
 					addSubtotalsToTheNodeFirstLevel(columnsRoot, true, 0);
+					// addSubtotalsToTheTree(columnsRoot, true, true, 0);
 					addSubtotalsToTheTree(columnsRoot, true, 0);
 				} else {
 					int startPosition = 0;
@@ -1910,17 +1943,21 @@ public class CrossTab {
 
 	}
 
+	// public void addSubtotalsToTheTree(Node node, boolean horizontal, boolean hasColumns, int startingPosition) {
 	public void addSubtotalsToTheTree(Node node, boolean horizontal, int startingPosition) {
 		if (node.getSubTreeDepth() <= 4) {
 			return;
 		} else {
 			for (int i = 0; i < node.getChilds().size(); i++) {
+				// addSubtotalsToTheTree(node.getChilds().get(i), horizontal, hasColumns, startingPosition);
 				addSubtotalsToTheTree(node.getChilds().get(i), horizontal, startingPosition);
+				// startingPosition = addSubtotalsToTheNodeUpLevel(node.getChilds().get(i), horizontal, hasColumns, startingPosition);
 				startingPosition = addSubtotalsToTheNodeUpLevel(node.getChilds().get(i), horizontal, startingPosition);
 			}
 		}
 	}
 
+	// public int addSubtotalsToTheNodeUpLevel(Node node, boolean horizontal, boolean hasColumns, int startingPosition) {
 	public int addSubtotalsToTheNodeUpLevel(Node node, boolean horizontal, int startingPosition) {
 		List<Node> children = node.getChilds();
 		List<List<Integer>> valuesTosum = new ArrayList<List<Integer>>();
@@ -1943,6 +1980,7 @@ public class CrossTab {
 
 		for (int y = 0; y < valuesTosum.size(); y++) {
 			List<Integer> linesToSum = valuesTosum.get(y);
+			// linesums.add(getTotals(linesToSum, horizontal, hasColumns));
 			linesums.add(getTotals(linesToSum, horizontal));
 		}
 
@@ -1951,6 +1989,7 @@ public class CrossTab {
 		return startingPosition + measures.size();
 	}
 
+	// public int addSubtotalsToTheNodeFirstLevel(Node node, boolean horizontal, boolean hasColumns, int positionToAddNode) {
 	public int addSubtotalsToTheNodeFirstLevel(Node node, boolean horizontal, int positionToAddNode) {
 		Node n = node;
 		List<String[]> linesums = new ArrayList<String[]>();
@@ -1963,6 +2002,7 @@ public class CrossTab {
 																					// not
 																					// leaf
 			for (int i = 0; i < n.getChilds().size(); i++) {
+				// positionToAddNode = addSubtotalsToTheNodeFirstLevel(n.getChilds().get(i), horizontal, hasColumns, positionToAddNode);
 				positionToAddNode = addSubtotalsToTheNodeFirstLevel(n.getChilds().get(i), horizontal, positionToAddNode);
 			}
 		} else {
@@ -1972,6 +2012,7 @@ public class CrossTab {
 				for (int k = 0; k < n.getChilds().size(); k++) {
 					linesToSum.add(positionToAddNode + measures.size() * k + y);
 				}
+				// linesums.add(getTotals(linesToSum, horizontal, hasColumns));
 				linesums.add(getTotals(linesToSum, horizontal));
 			}
 			positionToAddNode = positionToAddNode + measures.size() * n.getChilds().size();
@@ -2003,6 +2044,7 @@ public class CrossTab {
 
 	}
 
+	// private String[] getTotals(List<Integer> lines, boolean horizontal, boolean hasColumns) {
 	private String[] getTotals(List<Integer> lines, boolean horizontal) {
 		double sum[];
 		if (!horizontal) {
@@ -2029,7 +2071,9 @@ public class CrossTab {
 					sum[i] = new Double(value);
 				}
 			}
-			for (int j = 1; j < lines.size(); j++) {
+			// int startJ = (hasColumns) ? 1 : 0;
+			int startJ = 1;
+			for (int j = startJ; j < lines.size(); j++) {
 				for (int i = 0; i < dataMatrix.length; i++) {
 					String value = dataMatrix[i][lines.get(j)];
 					if (!value.equals(DATA_MATRIX_NA) && (getCellType(i, lines.get(j)).equals(CellType.DATA))) {
@@ -2274,6 +2318,71 @@ public class CrossTab {
 		return dataMatrix;
 	}
 
+	public List<String> getRowCordinates() {
+		return rowCordinates;
+	}
+
+	public void setRowCordinates(List<String> rowCordinates) {
+		this.rowCordinates = rowCordinates;
+	}
+
+	public List<String> getColumnCordinates() {
+		return columnCordinates;
+	}
+
+	/**
+	 * @param columnCordinates
+	 *            the columnCordinates to set
+	 */
+	public void setColumnCordinates(List<String> columnCordinates) {
+		this.columnCordinates = columnCordinates;
+	}
+
+	/**
+	 * @return the measuresCordinates
+	 */
+	public List<String> getMeasuresCordinates() {
+		return measuresCordinates;
+	}
+
+	/**
+	 * @return the columnsSpecification
+	 */
+	public List<String> getColumnsSpecification() {
+		return columnsSpecification;
+	}
+
+	/**
+	 * @param columnsSpecification
+	 *            the columnsSpecification to set
+	 */
+	public void setColumnsSpecification(List<String> columnsSpecification) {
+		this.columnsSpecification = columnsSpecification;
+	}
+
+	/**
+	 * @return the rowsSpecification
+	 */
+	public List<String> getRowsSpecification() {
+		return rowsSpecification;
+	}
+
+	/**
+	 * @param rowsSpecification
+	 *            the rowsSpecification to set
+	 */
+	public void setRowsSpecification(List<String> rowsSpecification) {
+		this.rowsSpecification = rowsSpecification;
+	}
+
+	/**
+	 * @param measuresCordinates
+	 *            the measuresCordinates to set
+	 */
+	public void setMeasuresCordinates(List<String> measuresCordinates) {
+		this.measuresCordinates = measuresCordinates;
+	}
+
 	private void addMeasuresScaleFactor() {
 		for (int i = 0; i < measures.size(); i++) {
 			MeasureInfo measure = measures.get(i);
@@ -2292,8 +2401,98 @@ public class CrossTab {
 		return rowHeadersTitles;
 	}
 
+	/**
+	 * @return the columnsHeaderList
+	 */
+	public List<String> getColumnsHeaderList() {
+		return columnsHeaderList;
+	}
+
+	/**
+	 * @param columnsHeaderList
+	 *            the columnsHeaderList to set
+	 */
+	public void setColumnsHeaderList(List<String> columnsHeaderList) {
+		this.columnsHeaderList = columnsHeaderList;
+	}
+
+	/**
+	 * @return the rowsHeaderList
+	 */
+	public List<String> getRowsHeaderList() {
+		return rowsHeaderList;
+	}
+
+	/**
+	 * @param rowsHeaderList
+	 *            the rowsHeaderList to set
+	 */
+	public void setRowsHeaderList(List<String> rowsHeaderList) {
+		this.rowsHeaderList = rowsHeaderList;
+	}
+
+	/**
+	 * @return the columnsHeaderIdList
+	 */
+	public List<String> getColumnsHeaderIdList() {
+		return columnsHeaderIdList;
+	}
+
+	/**
+	 * @param columnsHeaderIdList
+	 *            the columnsHeaderIdList to set
+	 */
+	public void setColumnsHeaderIdList(List<String> columnsHeaderIdList) {
+		this.columnsHeaderIdList = columnsHeaderIdList;
+	}
+
+	/**
+	 * @return the rowsHeaderIdList
+	 */
+	public List<String> getRowsHeaderIdList() {
+		return rowsHeaderIdList;
+	}
+
+	/**
+	 * @param rowsHeaderIdList
+	 *            the rowsHeaderIdList to set
+	 */
+	public void setRowsHeaderIdList(List<String> rowsHeaderIdList) {
+		this.rowsHeaderIdList = rowsHeaderIdList;
+	}
+
 	public List<MeasureInfo> getMeasures() {
 		return measures;
+	}
+
+	/**
+	 * @return the celltypeOfColumns
+	 */
+	public List<CellType> getCelltypeOfColumns() {
+		return celltypeOfColumns;
+	}
+
+	/**
+	 * @param celltypeOfColumns
+	 *            the celltypeOfColumns to set
+	 */
+	public void setCelltypeOfColumns(List<CellType> celltypeOfColumns) {
+		this.celltypeOfColumns = celltypeOfColumns;
+	}
+
+	/**
+	 * @return the celltypeOfRows
+	 */
+	public List<CellType> getCelltypeOfRows() {
+		return celltypeOfRows;
+	}
+
+	/**
+	 * @param celltypeOfRows
+	 *            the celltypeOfRows to set
+	 */
+	public void setCelltypeOfRows(List<CellType> celltypeOfRows) {
+		this.celltypeOfRows = celltypeOfRows;
 	}
 
 	public boolean isMeasureOnRow() {
