@@ -1366,9 +1366,9 @@ angular.module('ChartDesignerService', [])
 				                	  "fontSize":""
 				                  }
 				               },
-						"startOnTick": false,
-						"endOnTick": false,
-						"showLastLabel": false
+						"startOnTick": true,
+						"endOnTick": true,
+						"showLastLabel": true
 					}]
 				},
 				"COLORPALETTE": {
