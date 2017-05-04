@@ -22,7 +22,7 @@
 		$scope.translate=sbiModule_translate;
 		
 		$scope.measure = ["4px","6px","8px","10px","12px","14px","16px","20px","24px","28px","34px"];
-		$scope.fontFamily = ['Times New Roman','Georgia', 'Serif'];
+		$scope.fontFamily = ['Roboto','Times New Roman','Georgia', 'Serif','Verdana'];
 		$scope.fontWeight = ['normal','bold','bolder','lighter','number','initial','inherit'];
 		if($scope.ngModel.fontWeight==undefined){
 			$scope.ngModel.fontWeight ='normal';

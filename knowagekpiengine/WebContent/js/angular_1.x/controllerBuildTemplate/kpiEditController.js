@@ -194,13 +194,13 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 					+'</md-input-container>';
 				
 				obj["isSuffix"] = kpiItem.isSuffix;
-				obj["isSuffixHTML"] = 
-					'<div layout-align="center center" layout="row">'
-						+ '<md-checkbox aria-label="Switch" ng-init="row.isSuffix=' + kpiItem.isSuffix + '" ng-model="row.isSuffix">' 
-						+ '</md-checkbox>'
-						+ '<span ng-show="row.isSuffix==false">' + sbiModule_translate.load('sbi.kpiedit.prefix') + '</span>'
-						+ '<span ng-show="row.isSuffix==true">' + sbiModule_translate.load('sbi.kpiedit.suffix')+ '</span>'
-					+ '</div>';
+				obj["isSuffixHTML"] = '<md-input-container class="md-block">'
+					+'<label>Prefix/Suffix</label>'
+					+'<md-select ng-model="row.isSuffix">'
+					+'<md-option value="false">'+ sbiModule_translate.load('sbi.kpiedit.prefix') +'</md-option>'
+					+'<md-option value="true">'+ sbiModule_translate.load('sbi.kpiedit.suffix') +'</md-option>'
+					+'</md-select>'
+					+'</md-input-container>';
 				
 				
 				$scope.kpiList.push(obj);
@@ -359,13 +359,13 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 					+'</md-input-container>';
 				
 				obj["isSuffix"] = (selectedKpi.isSuffix != undefined && selectedKpi.isSuffix != '') ? selectedKpi.isSuffix : false;
-				obj["isSuffixHTML"] = 
-					'<div layout-align="center center" layout="row">'
-						+ '<md-checkbox aria-label="Switch" ng-init="row.isSuffix=' + obj["isSuffix"] + '" ng-model="row.isSuffix">' 
-						+ '</md-checkbox>'
-						+ '<span ng-show="row.isSuffix==false">' + sbiModule_translate.load('sbi.kpiedit.prefix') + '</span>'
-						+ '<span ng-show="row.isSuffix==true">' + sbiModule_translate.load('sbi.kpiedit.suffix')+ '</span>'
-					+ '</div>';
+				obj["isSuffixHTML"] = '<md-input-container class="md-block">'
+					+'<label>Prefix/Suffix</label>'
+					+'<md-select ng-model="row.isSuffix">'
+					+'<md-option value="false">'+ sbiModule_translate.load('sbi.kpiedit.prefix') +'</md-option>'
+					+'<md-option value="true">'+ sbiModule_translate.load('sbi.kpiedit.suffix') +'</md-option>'
+					+'</md-select>'
+					+'</md-input-container>';
 				
 				arr.push(obj);
 			}
