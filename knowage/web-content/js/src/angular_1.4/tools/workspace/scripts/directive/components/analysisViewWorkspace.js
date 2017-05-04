@@ -403,31 +403,37 @@ function analysisController($scope, sbiModule_restServices, sbiModule_translate,
 		}
 		
 		$scope.shareDoc = function () {
-			$scope.foldersToShare = [];
-			for (var item in $scope.selectedItems) {
-				$scope.foldersToShare.push($scope.selectedItems[item].id);
+			if($scope.selectedItems.length==0){
+				toastr.info(sbiModule_translate.load('sbi.workspace.share.no.document.selected'),
+						sbiModule_translate.load('sbi.federationdefinition.info'), $scope.toasterConfig);
+			} else {
+				$scope.foldersToShare = [];
+				for (var item in $scope.selectedItems) {
+					$scope.foldersToShare.push($scope.selectedItems[item].id);
+				}
+				
+				var json = {docId:$scope.docForSharing, isShare:true, functs: $scope.foldersToShare};
+				
+				sbiModule_restServices
+				.promisePost("documents","share?"+$httpParamSerializer(json))
+				.then(
+						function(response) {
+							
+							$mdDialog.cancel();
+							$scope.loadAllMyAnalysisDocuments();
+							toastr.success(sbiModule_translate.load('sbi.browser.document.share.success'),
+									sbiModule_translate.load('sbi.generic.success'), $scope.toasterConfig);
+							
+						},
+						
+						function(response) {
+						
+							toastr.error(response.data, sbiModule_translate.load('sbi.browser.document.clone.error'), $scope.toasterConfig);
+							
+						}
+					);
 			}
 			
-			var json = {docId:$scope.docForSharing, isShare:true, functs: $scope.foldersToShare};
-			
-			sbiModule_restServices
-			.promisePost("documents","share?"+$httpParamSerializer(json))
-			.then(
-					function(response) {
-						
-						$mdDialog.cancel();
-						$scope.loadAllMyAnalysisDocuments();
-						toastr.success(sbiModule_translate.load('sbi.browser.document.share.success'),
-								sbiModule_translate.load('sbi.generic.success'), $scope.toasterConfig);
-						
-					},
-					
-					function(response) {
-					
-						toastr.error(response.data, sbiModule_translate.load('sbi.browser.document.clone.error'), $scope.toasterConfig);
-						
-					}
-				);
 		}
 		
 	}
