@@ -107,6 +107,8 @@ angular.module('ChartDesignerService', [])
 	
 	this.getFontFamilyOptions = function(){
 		var data = [
+			{name:"Inherit",value:"inherit"},
+			{name:"Roboto",value:"Roboto"},
            	{name:"Arial",value:"Arial"},
            	{name:"Times New Roman",value:"Times New Roman"},
            	{name:"Tahoma",value:"Tahoma"},

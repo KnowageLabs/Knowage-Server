@@ -858,7 +858,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	function tableWidgetEditControllerFunction($scope,finishEdit,sbiModule_translate,$mdDialog,originalModel,mdPanelRef,getMetadata,scopeFather,$mdToast){
 		$scope.translate=sbiModule_translate;
-		$scope.fontFamily = ['Inherit','Roboto','Times New Roman','Georgia', 'Serif'];
+		$scope.fontFamily = ["Inherit","Roboto","Arial","Times New Roman","Tahoma","Verdana","Impact","Calibri","Cambria","Georgia","Gungsuh"],
 		$scope.fontWeight = ['normal','bold','bolder','lighter','number','initial','inherit'];
 		$scope.textAlign = ['left','right','center'];
 		$scope.getMetadata = getMetadata;
