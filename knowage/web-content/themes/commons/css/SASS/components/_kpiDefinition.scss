@@ -1,4 +1,8 @@
 .kn-kpi-definition {
+	md-card .thresholdDefinitionWarning {
+		background-color: $warningColor;
+		margin-bottom: 30px;
+	}
 	.thresholdTable {
 		.thresholdOrderButton {
 			padding: 0;

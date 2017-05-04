@@ -172,12 +172,14 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 				}
 				obj["author"]=kpiItem.author;
 				obj["id"]=kpiItem.id;
-				obj["vieweAsList"] ='<md-select ng-model="row.vieweAs" class="noMargin">'
+				obj["vieweAsList"] ='<md-input-container class="md-block">'
+					+'<label>Widget Type</label>'
+					+'<md-select ng-model="row.vieweAs" class="noMargin">'
 					+'<md-option value=""></md-option>'
 					+'<md-option ng-repeat="sev in scopeFunctions.vieweAs" value="{{sev.label}}">'
 					+'{{sev.value}}'
 					+' </md-option>'
-					+'</md-select>';
+					+'</md-select></md-input-container>';
 				obj["rangeMinValueHTML"]= '<md-input-container class="md-block">'
 					+'<label ng-class="{\'redLabel\':scopeFunctions.checkValue(row)}">Range Min Value</label>'
 					+'<input required type="number" name="min" ng-model="row.rangeMinValue" />'
@@ -334,12 +336,14 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 				obj["author"]=kpiListItem.author;
 				obj["id"]=kpiListItem.id;
 				obj["vieweAs"]= selectedKpi.vieweas;
-				obj["vieweAsList"] ='<md-select ng-model="row.vieweAs" class="noMargin">'
+				obj["vieweAsList"] ='<md-input-container class="md-block">'
+					+'<label>Widget Type</label>'
+					+'<md-select ng-model="row.vieweAs" class="noMargin">'
 					+'<md-option value=""></md-option>'
 					+'<md-option ng-repeat="sev in scopeFunctions.vieweAs" value="{{sev.label}}">'
 					+'{{sev.value}}'
 					+' </md-option>'
-					+'</md-select>';
+					+'</md-select></md-input-container>';
 				obj["rangeMinValueHTML"]= '<md-input-container class="md-block">'
 					+'<label ng-class="{\'redLabel\':scopeFunctions.checkValue(row)}">Range Min Value</label>'
 					+'<input required type="number" name="min" ng-model="row.rangeMinValue" />'

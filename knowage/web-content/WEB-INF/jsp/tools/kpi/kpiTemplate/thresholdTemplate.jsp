@@ -2,11 +2,18 @@
 
 <md-card>
 <md-card-content>
+
+	<md-card  ng-if="isUsedByAnotherKpi.value==true" class="thresholdDefinitionWarning">
+		<md-card-content layout="row" layout-align="start center">
+			<span flex>{{translate.load("sbi.kpi.threshold.load.reused.title")}} {{ translate.load("sbi.kpi.threshold.load.reused.message")}}</span>
+	   		<md-button    ng-click="cloneThreshold()"  >  {{translate.load("sbi.generic.clone")}} </md-button>
+		</md-card-content>
+	</md-card>
  	
- 	<md-whiteframe class="md-whiteframe-2dp cloneWarningTab" layout="row"  ng-if="isUsedByAnotherKpi.value==true">
+ 	<!--  md-whiteframe class="md-whiteframe-2dp cloneWarningTab" layout="row"  ng-if="isUsedByAnotherKpi.value==true">
 	   <p flex>{{translate.load("sbi.kpi.threshold.load.reused.title")}} {{ translate.load("sbi.kpi.threshold.load.reused.message")}}</p>
 	   <md-button    ng-click="cloneThreshold()"  >  {{translate.load("sbi.generic.clone")}} </md-button>
- 	 </md-whiteframe>
+ 	 </md-whiteframe-->
   <div layout="row">
 	  <md-input-container flex class="md-block">
 	            <label>{{translate.load("sbi.generic.name")}}</label>
