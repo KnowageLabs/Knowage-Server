@@ -186,10 +186,12 @@
 					</md-input-container>
 				</div>
 				<div flex>
-		       		<md-input-container flex class="md-block"> 
-							<label>{{translate.load('sbi.cockpit.table.fontsize')}}</label>
-							<input class="input_class" ng-model=selectedColumn.style.fontSize type="number"/>
-					</md-input-container>
+					<md-input-container class="md-block" flex>
+				<label>{{translate.load("sbi.cockpit.table.fontsize")}}</label>
+				<md-select ng-model="selectedColumn.style.fontSize">
+					<md-option ng-repeat="fs in cockpitModule_generalOptions.fontSizeDimension" ng-value="fs.value">{{fs.label}}</md-option>
+				</md-select>
+			</md-input-container>
 				</div>
 			    <div flex>
 		       		<md-input-container flex class="md-block"> 
