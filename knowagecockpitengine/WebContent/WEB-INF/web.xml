@@ -82,6 +82,21 @@
   </filter-mapping>
   
   <filter-mapping>
+    <filter-name>CAS Authentication Filter</filter-name>
+    <url-pattern>/api/*</url-pattern>
+  </filter-mapping> 
+    	
+   <filter-mapping>
+    <filter-name>CAS Validation Filter</filter-name>
+    <url-pattern>/api/*</url-pattern>
+  </filter-mapping> 
+   	
+   <filter-mapping>
+    <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
+    <url-pattern>/api/*</url-pattern>
+  </filter-mapping> 
+  
+  <filter-mapping>
 		<filter-name>CAS Validation Filter</filter-name>
 		<url-pattern>/proxyCallback</url-pattern>	
 	</filter-mapping>
@@ -160,9 +175,9 @@
   <welcome-file-list>
     <welcome-file>/html/index.html</welcome-file>
   </welcome-file-list>
-
-	<!-- WEBLOGIC CONFS START 
-		<resource-ref id="ResourceRef_1233743772692">
+  	<!-- WEBLOGIC CONFS START 
+  	
+  	  	<resource-ref id="ResourceRef_1233743772692">
 		<description>
 		</description>
 		<res-ref-name>jdbc/knowage</res-ref-name>
