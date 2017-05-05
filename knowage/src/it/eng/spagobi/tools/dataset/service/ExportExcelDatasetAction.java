@@ -20,18 +20,15 @@ package it.eng.spagobi.tools.dataset.service;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
-import it.eng.spagobi.commons.utilities.SpagoBIServiceExceptionHandler;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.sql.SQLException;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -39,8 +36,6 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException;
 
 public class ExportExcelDatasetAction extends AbstractSpagoBIAction {
 
@@ -65,23 +60,7 @@ public class ExportExcelDatasetAction extends AbstractSpagoBIAction {
 			IDataSetDAO dao = DAOFactory.getDataSetDAO();
 			dao.setUserProfile(this.getUserProfile());
 			IDataSet dataSet = dao.loadDataSetById(id);
-			
-			try {
-				dataSet.loadData();
-			} catch (Exception e) {
-				if(e.getCause() instanceof MySQLSyntaxErrorException) {
-					logger.error("SQL syntax is wrong" + e.getMessage());
-					try {
-						writeBackToClient("SQL syntax is wrong");
-					} catch (IOException e1) {
-						logger.error("Error while sending response back to client" + e.getMessage());
-						throw new SpagoBIServiceException(this.getActionName(), "Error while sending response back to client ", e1);
-					}
-					//throw new SpagoBIServiceException(this.getActionName(), "SQL syntax is wrong ", e);
-					throw SpagoBIServiceExceptionHandler.getInstance().getWrappedException(SERVICE_NAME, e);
-				}
-			}
-			
+			dataSet.loadData();
 			IDataStore dataStore = dataSet.getDataStore();
 			// setup response
 			String url = contextPath + "/restful-services/selfservicedataset/export/" + dataSet.getLabel();
