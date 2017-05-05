@@ -473,7 +473,11 @@ angular-table, cockpit-angular-table{
 			text-overflow: clip !important;
 		}
 	}
+	.hiddenColumn {
+		display:none;
+	}
 }
+
 
 /* IE11 fix */
 
