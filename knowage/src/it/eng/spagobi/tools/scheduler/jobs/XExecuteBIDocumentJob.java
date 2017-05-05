@@ -515,9 +515,9 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 						String contentType = executionProxy.getReturnedContentType();
 
 						String fileExtension = null;
-						if ("application/vnd.ms-excel".equals(contentType)) {
+						if (contentType.contains("application/vnd.ms-excel")) {
 							fileExtension = "xls";
-						} else if ("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet".equals(contentType)) {
+						} else if (contentType.contains("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")) {
 							fileExtension = "xlsx";
 						} else {
 							fileExtension = MimeUtils.getFileExtension(contentType);

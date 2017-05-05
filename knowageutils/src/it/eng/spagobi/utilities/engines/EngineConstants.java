@@ -92,4 +92,6 @@ public class EngineConstants {
 
 	public static final String DOCUMENT_OUTPUT_PARAMETERS = "DOCUMENT_OUTPUT_PARAMETERS";
 
+	public static final String OUTPUT_TYPE = "outputType";
+
 }

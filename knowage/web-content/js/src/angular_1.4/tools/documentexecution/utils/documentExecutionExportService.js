@@ -134,7 +134,7 @@
 		dee.exportCockpitTo = function(exportType, mimeType){
 			dee.exporting = true;
 			
-			dee.buildRequestConf(exportType, mimeType).then(function(requestConf){
+			dee.buildBackendRequestConf(exportType, mimeType).then(function(requestConf){
 				$http(requestConf)
 				.then(function successCallback(response) {
 					sbiModule_download.getBlob(
@@ -208,6 +208,57 @@
 //					config:config,
 					responseType: 'arraybuffer',
 					headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+					transformRequest: function(obj) {
+						var str = [];
+						for(var p in obj)
+							str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+						return str.join("&");
+					}
+			};
+			
+			if(exportType.toLowerCase() != 'xlsx') {
+				requestConf.transformResponse = function (data) {
+					var blob;
+					if (data) {
+						blob = new Blob([data], {
+							type: mimeType
+						});
+					}
+					return blob;
+				};
+			}
+			if(exportType.toLowerCase() == 'xls' || exportType.toLowerCase() == 'xlsx') {
+				dee.getCockpitCsvData(documentFrame).then(function(csvData){
+					if(csvData != null) {
+						data.csvData = csvData;
+					}
+					deferred.resolve(requestConf);
+				},function(e){
+					deferred.reject(e);
+				});
+			}else{
+				deferred.resolve(requestConf);
+			}
+			return deferred.promise;
+		};
+		
+		dee.buildBackendRequestConf = function(exportType, mimeType){
+			var deferred = $q.defer();
+			var data = {};
+			data.documentId = execProperties.executionInstance.OBJECT_ID;
+			data.documentLabel = execProperties.executionInstance.OBJECT_LABEL;
+			data.outputType = mimeType;
+						
+			var config={"responseType": "arraybuffer"};
+			
+			var requestUrl = sbiModule_config.host;
+			requestUrl += '/knowagecockpitengine/api/1.0/pages/export/excel?documentId='+data.documentId+'&documentLabel='+data.documentLabel+'&outputType='+exportType;
+			
+			var requestConf = {
+					method: 'POST',
+					url: requestUrl,
+					responseType: 'arraybuffer',
+					headers: {},
 					transformRequest: function(obj) {
 						var str = [];
 						for(var p in obj)

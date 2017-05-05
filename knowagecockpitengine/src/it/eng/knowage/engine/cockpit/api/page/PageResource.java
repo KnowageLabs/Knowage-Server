@@ -17,6 +17,14 @@
  */
 package it.eng.knowage.engine.cockpit.api.page;
 
+import it.eng.knowage.engine.cockpit.CockpitEngine;
+import it.eng.knowage.engine.cockpit.CockpitEngineInstance;
+import it.eng.knowage.engine.cockpit.api.AbstractCockpitEngineResource;
+import it.eng.knowage.engine.cockpit.api.export.ExcelExporter;
+import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -25,25 +33,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.log4j.Logger;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import it.eng.knowage.engine.cockpit.CockpitEngine;
-import it.eng.knowage.engine.cockpit.CockpitEngineInstance;
-import it.eng.knowage.engine.cockpit.api.AbstractCockpitEngineResource;
-import it.eng.spagobi.utilities.engines.EngineConstants;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @authors Andrea Gioia (andrea.gioia@eng.it)
@@ -96,33 +100,11 @@ public class PageResource extends AbstractCockpitEngineResource {
 
 	@GET
 	@Path("/{pagename}")
-	@Produces("text/html")
 	public void openPage(@PathParam("pagename") String pageName, @QueryParam("extjs") @DefaultValue("4") String extjs) {
 		CockpitEngineInstance engineInstance;
 		String dispatchUrl = null;
 
 		try {
-			if ("execute".equals(pageName)) {
-				engineInstance = CockpitEngine.createInstance(getIOManager().getTemplateAsString(), getIOManager().getEnv());
-				getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
-				//getExecutionSession().setAttributeInSession(EngineConstants.ENGINE_INSTANCE, engineInstance);
-				dispatchUrl = "/WEB-INF/jsp/ngCockpit.jsp";
-			} else if ("edit".equals(pageName)) {
-				JSONObject template = null;
-				template = buildBaseTemplate();
-				// create a new engine instance
-				engineInstance = CockpitEngine.createInstance(template.toString(), // servletIOManager.getTemplateAsString(),
-						getIOManager().getEnvForWidget());
-				getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
-				//getExecutionSession().setAttributeInSession(EngineConstants.ENGINE_INSTANCE, engineInstance);
-				dispatchUrl = "/WEB-INF/jsp/ngCockpit.jsp";
-			} else if ("test".equals(pageName)) {
-				dispatchUrl = "/WEB-INF/jsp/test4.jsp";
-			} else {
-				// error
-				dispatchUrl = "/WEB-INF/jsp/error.jsp";
-			}
-
 			// To deploy into JBOSSEAP64 is needed a StandardWrapper, instead of RestEasy Wrapper
 			HttpServletRequest request = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
 			HttpServletResponse response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
@@ -134,8 +116,36 @@ public class PageResource extends AbstractCockpitEngineResource {
 			 *
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
-			response.setContentType("text/html");
+			response.setContentType(MediaType.TEXT_HTML);
 			response.setCharacterEncoding("UTF-8");
+
+			if ("execute".equals(pageName)) {
+				String outputType = request.getParameter("outputType");
+				if ("xls".equals(outputType) || "xlsx".equals(outputType)) {
+					request.setAttribute("template", getIOManager().getTemplateAsString());
+					dispatchUrl = "/WEB-INF/jsp/ngCockpitExportExcel.jsp";
+					response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+				} else {
+					engineInstance = CockpitEngine.createInstance(getIOManager().getTemplateAsString(), getIOManager().getEnv());
+					getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
+					// getExecutionSession().setAttributeInSession(EngineConstants.ENGINE_INSTANCE, engineInstance);
+					dispatchUrl = "/WEB-INF/jsp/ngCockpit.jsp";
+				}
+			} else if ("edit".equals(pageName)) {
+				JSONObject template = null;
+				template = buildBaseTemplate();
+				// create a new engine instance
+				engineInstance = CockpitEngine.createInstance(template.toString(), // servletIOManager.getTemplateAsString(),
+						getIOManager().getEnvForWidget());
+				getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
+				// getExecutionSession().setAttributeInSession(EngineConstants.ENGINE_INSTANCE, engineInstance);
+				dispatchUrl = "/WEB-INF/jsp/ngCockpit.jsp";
+			} else if ("test".equals(pageName)) {
+				dispatchUrl = "/WEB-INF/jsp/test4.jsp";
+			} else {
+				// error
+				dispatchUrl = "/WEB-INF/jsp/error.jsp";
+			}
 
 			request.getRequestDispatcher(dispatchUrl).forward(request, response);
 		} catch (Exception e) {
@@ -143,6 +153,26 @@ public class PageResource extends AbstractCockpitEngineResource {
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+
+	@POST
+	@Path("/export/excel")
+	@Produces(MediaType.APPLICATION_OCTET_STREAM)
+	public Response exportDocumentToExcelByDocId(@QueryParam("documentId") Integer documentId, @QueryParam("documentLabel") String documentLabel,
+			@QueryParam("outputType") String outputType) {
+		logger.debug("IN");
+
+		String userId = (String) getUserProfile().getUserUniqueIdentifier();
+		ExcelExporter excelExporter = new ExcelExporter(outputType, userId);
+		String mimeType = excelExporter.getMimeType();
+		byte[] binaryData = excelExporter.getBinaryData(documentId, documentLabel, null);
+
+		ResponseBuilder response = Response.ok(binaryData);
+		response.header("Content-Type", mimeType);
+		response.header("Content-Disposition", "attachment; fileName=" + documentLabel + "; fileType=text; extensionFile=" + outputType);
+
+		logger.debug("OUT");
+		return response.build();
 	}
 
 	@GET

@@ -64,6 +64,7 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 	private String userExecutionRole;
 	private String auditId;
 	private String documentId;
+	private String documentLabel;
 	private String documentAuthor;
 	private Locale locale;
 
@@ -84,6 +85,7 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 
 	public static final String AUDIT_ID = "SPAGOBI_AUDIT_ID";
 	public static final String DOCUMENT_ID = "document";
+	public static final String DOCUMENT_LABEL = "DOCUMENT_LABEL";
 	public static final String DOCUMENT_AUTHOR = "DOCUMENT_AUTHOR";
 	public static final String EXECUTION_ROLE = "SBI_EXECUTION_ROLE";
 
@@ -166,6 +168,24 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 		}
 
 		return documentId;
+	}
+
+	public String getDocumentLabel() {
+		String documentLabelInSession = null;
+
+		if (documentLabel == null) {
+			documentLabelInSession = getParameterFromSessionAsString(DOCUMENT_LABEL);
+			logger.debug("documentLabel in Session:" + documentLabelInSession);
+
+			if (requestContainsParameter(DOCUMENT_LABEL)) {
+				documentLabel = getParameterAsString(DOCUMENT_LABEL);
+			} else {
+				documentLabel = documentLabelInSession;
+				logger.debug("documentLabel has been taken from session");
+			}
+		}
+
+		return documentLabel;
 	}
 
 	public String getDocumentAuthor() {
@@ -418,36 +438,36 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 	}
 
 	public Map getEnv() {
-		  getCommonEnvInfo();
-		  env.put(EngineConstants.ENV_DATASOURCE, getDataSource());
-		  env.put(EngineConstants.ENV_DATASET, getDataSet());
-		  env.put(EngineConstants.ENV_DOCUMENT_ID, getDocumentId());
+		getCommonEnvInfo();
+		env.put(EngineConstants.ENV_DATASOURCE, getDataSource());
+		env.put(EngineConstants.ENV_DATASET, getDataSet());
+		env.put(EngineConstants.ENV_DOCUMENT_ID, getDocumentId());
 
-		  return env;
-		 }
+		return env;
+	}
 
-		 public Map getEnvForWidget() {
-		  getCommonEnvInfo();
-		  return env;
-		 }
+	public Map getEnvForWidget() {
+		getCommonEnvInfo();
+		return env;
+	}
 
-		 private Map getCommonEnvInfo() {
-		  if (env == null) {
-		   env = new HashMap();
+	private Map getCommonEnvInfo() {
+		if (env == null) {
+			env = new HashMap();
 
-		   copyRequestParametersIntoEnv(env);
-		   env.put(EngineConstants.ENV_CONTENT_SERVICE_PROXY, getContentServiceProxy());
-		   env.put(EngineConstants.ENV_AUDIT_SERVICE_PROXY, getAuditServiceProxy());
-		   env.put(EngineConstants.ENV_EVENT_SERVICE_PROXY, getEventServiceProxy());
-		   env.put(EngineConstants.ENV_LOCALE, getLocale());
-		   env.put(EngineConstants.ENV_USER_PROFILE, getUserProfile());
-		   env.put(EngineConstants.ENV_EXECUTION_ROLE, getUserExecutionRole());
-		   env.put(EngineConstants.ENV_DOCUMENT_AUTHOR, getDocumentAuthor());
-		   env.put(EngineConstants.ENV_DOCUMENT_USER, getUserId());
-		  }
+			copyRequestParametersIntoEnv(env);
+			env.put(EngineConstants.ENV_CONTENT_SERVICE_PROXY, getContentServiceProxy());
+			env.put(EngineConstants.ENV_AUDIT_SERVICE_PROXY, getAuditServiceProxy());
+			env.put(EngineConstants.ENV_EVENT_SERVICE_PROXY, getEventServiceProxy());
+			env.put(EngineConstants.ENV_LOCALE, getLocale());
+			env.put(EngineConstants.ENV_USER_PROFILE, getUserProfile());
+			env.put(EngineConstants.ENV_EXECUTION_ROLE, getUserExecutionRole());
+			env.put(EngineConstants.ENV_DOCUMENT_AUTHOR, getDocumentAuthor());
+			env.put(EngineConstants.ENV_DOCUMENT_USER, getUserId());
+		}
 
-		  return env;
-		 }
+		return env;
+	}
 
 	/**
 	 * Copy request parameters into env.

@@ -44,6 +44,7 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
@@ -51,8 +52,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
 
+import org.apache.axis.encoding.Base64;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.NameValuePair;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.log4j.Logger;
 import org.safehaus.uuid.UUID;
@@ -112,7 +117,7 @@ public class ExecutionProxy {
 			Engine eng = biObject.getEngine();
 			// if engine is not an external it's not possible to call it using
 			// url
-			if (!EngineUtilities.isExternal(eng))
+			if (!EngineUtilities.isExternal(eng)) {
 				if (eng.getClassName().equals("it.eng.spagobi.engines.kpi.SpagoBIKpiInternalEngine")) {
 					SourceBean request = null;
 					SourceBean resp = null;
@@ -217,6 +222,7 @@ public class ExecutionProxy {
 				else {
 					return response;
 				}
+			}
 			// get driver class
 			String driverClassName = eng.getDriverName();
 
@@ -295,25 +301,49 @@ public class ExecutionProxy {
 				mapPars.put(AuditManager.AUDIT_ID, auditId.toString());
 			}
 
-			// built the request to sent to the engine
-			Iterator iterMapPar = mapPars.keySet().iterator();
-			HttpClient client = new HttpClient();
 			// get the url of the engine
 			String urlEngine = getExternalEngineUrl(eng);
-			PostMethod httppost = new PostMethod(urlEngine);
-			while (iterMapPar.hasNext()) {
-				String parurlname = (String) iterMapPar.next();
-				String parvalue = "";
-				if (mapPars.get(parurlname) != null)
-					parvalue = mapPars.get(parurlname).toString();
-				httppost.addParameter(parurlname, parvalue);
+
+			// built the request to sent to the engine
+			HttpMethod httpMethod;
+			if ("it.eng.spagobi.engines.drivers.cockpit.CockpitDriver".equals(eng.getDriverName())) {
+				GetMethod getMethod = new GetMethod(urlEngine);
+				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+				Iterator iterMapPar = mapPars.keySet().iterator();
+				while (iterMapPar.hasNext()) {
+					String parurlname = (String) iterMapPar.next();
+					String parvalue = "";
+					if (mapPars.get(parurlname) != null) {
+						parvalue = mapPars.get(parurlname).toString();
+					}
+					nameValuePairs.add(new NameValuePair(parurlname, parvalue));
+				}
+				getMethod.setQueryString(nameValuePairs.toArray(new NameValuePair[0]));
+				httpMethod = getMethod;
+			} else {
+				PostMethod postMethod = new PostMethod(urlEngine);
+				Iterator iterMapPar = mapPars.keySet().iterator();
+				while (iterMapPar.hasNext()) {
+					String parurlname = (String) iterMapPar.next();
+					String parvalue = "";
+					if (mapPars.get(parurlname) != null) {
+						parvalue = mapPars.get(parurlname).toString();
+					}
+					postMethod.addParameter(parurlname, parvalue);
+				}
+				httpMethod = postMethod;
 			}
+			String userId = (String) UserProfile.createSchedulerUserProfile().getUserUniqueIdentifier();
+			String encodedUserId = Base64.encode(userId.getBytes("UTF-8"));
+			httpMethod.addRequestHeader("Authorization", "Direct " + encodedUserId);
+
 			// sent request to the engine
-			int statusCode = client.executeMethod(httppost);
+			HttpClient client = new HttpClient();
+			int statusCode = client.executeMethod(httpMethod);
 			logger.debug("statusCode=" + statusCode);
-			response = httppost.getResponseBody();
-			logger.debug("response=" + response.toString());
-			Header headContetType = httppost.getResponseHeader("Content-Type");
+			response = httpMethod.getResponseBody();
+			logger.debug("response=" + new String(response));
+			Header headContetType = httpMethod.getResponseHeader("Content-Type");
 			if (headContetType != null) {
 				returnedContentType = headContetType.getValue();
 			} else {
@@ -321,7 +351,7 @@ public class ExecutionProxy {
 			}
 
 			auditManager.updateAudit(auditId, null, new Long(GregorianCalendar.getInstance().getTimeInMillis()), "EXECUTION_PERFORMED", null, null);
-			httppost.releaseConnection();
+			httpMethod.releaseConnection();
 		} catch (Exception e) {
 			logger.error("Error while executing object ", e);
 		}
@@ -341,8 +371,11 @@ public class ExecutionProxy {
 		logger.debug("Engine url is " + urlEngine);
 		Assert.assertTrue(urlEngine != null && !urlEngine.trim().equals(""), "External engine url is not defined!!");
 		urlEngine = resolveRelativeUrls(urlEngine);
-		// ADD this extension because this is a BackEnd engine invocation
-		urlEngine = urlEngine + backEndExtension;
+
+		if (!"it.eng.spagobi.engines.drivers.cockpit.CockpitDriver".equals(eng.getDriverName())) {
+			// ADD this extension because this is a BackEnd engine invocation
+			urlEngine = urlEngine + backEndExtension;
+		}
 		logger.debug("OUT: returning " + urlEngine);
 		return urlEngine;
 	}
