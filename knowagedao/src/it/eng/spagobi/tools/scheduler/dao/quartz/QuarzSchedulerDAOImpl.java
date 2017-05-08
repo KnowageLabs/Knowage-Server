@@ -57,7 +57,6 @@ import org.quartz.impl.StdSchedulerFactory;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- * 
  */
 public class QuarzSchedulerDAOImpl extends AbstractHibernateDAO implements ISchedulerDAO {
 
@@ -207,7 +206,6 @@ public class QuarzSchedulerDAOImpl extends AbstractHibernateDAO implements ISche
 	 * @param jobGroupNames
 	 *            the list of group names in which to look for jobs. It can be empty but it cannot be null. If it is an empty list an empty list of jobs will be
 	 *            returned.
-	 * 
 	 * @return the jobs contained in the specified groups. Never returns null. If there are no jobs in the specified groups it returns an empty list of jobs
 	 */
 	@Override
@@ -237,7 +235,6 @@ public class QuarzSchedulerDAOImpl extends AbstractHibernateDAO implements ISche
 	/**
 	 * @param jobGroupName
 	 *            the name of the group in which to look for jobs. It it cannot be empty.
-	 * 
 	 * @return the jobs contained in the specified group. Never returns null. If there are no jobs in the specified group it returns an empty list of jobs
 	 */
 	@Override
@@ -280,7 +277,6 @@ public class QuarzSchedulerDAOImpl extends AbstractHibernateDAO implements ISche
 	 *            the name of the group in which to look up. It it cannot be empty.
 	 * @param jobName
 	 *            the name of the job to load. It it cannot be empty.
-	 * 
 	 * @return the job if exists a job named jobName in group jobGroupName. null otherwise
 	 */
 	@Override
@@ -831,7 +827,7 @@ public class QuarzSchedulerDAOImpl extends AbstractHibernateDAO implements ISche
 		trigger.setGroupName(triggerGroup);
 		trigger.setStartTime(startTime.getTime());
 		trigger.setChronType(frequency.getCron());
-		if (frequency.getCron() != null) {
+		if (frequency.getCron() != null && !frequency.getCron().equals("null")) {
 			trigger.setCronExpression(new CronExpression(frequency.getCron().replace('"', '\'')));
 		}
 		trigger.setName(job.getName());
