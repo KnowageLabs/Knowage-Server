@@ -33,7 +33,7 @@ angular
 		  };
 	});
 
-function schedulationController($scope, sbiModule_messaging, $filter, $mdDialog, $httpParamSerializer, sbiModule_restServices, sbiModule_translate, sbiModule_config , $documentViewer, toastr,$timeout){
+function schedulationController($scope, sbiModule_messaging, $filter, $mdDialog, $httpParamSerializer, sbiModule_restServices, sbiModule_translate, sbiModule_config , $documentViewer, toastr, $timeout, sbiModule_logger){
 	
 	$scope.translate=sbiModule_translate;
 	$scope.schedulationList = [];
