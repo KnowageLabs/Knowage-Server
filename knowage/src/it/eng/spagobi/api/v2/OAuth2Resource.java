@@ -28,7 +28,6 @@ public class OAuth2Resource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response authencticateUser() {
 		try {
-			System.out.println("dddd");
 			return Response.ok((new JSONObject()).toString()).build();
 		} catch (Exception e) {
 			String errorString = "User cannot be authenticated";
