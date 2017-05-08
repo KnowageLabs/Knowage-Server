@@ -280,7 +280,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			};
 
 		$scope.canSeeColumnByMobile = function(obj){
-			if($scope.isMobile.any()!=null && obj!=undefined && obj.hideonMobile == true){
+			if($scope.isMobile.any()!=null && obj!=undefined && (obj.hiddenColumn == true || obj.hideonMobile == true)){
 				return false;
 			}
 			return true;
