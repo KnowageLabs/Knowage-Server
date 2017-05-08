@@ -69,6 +69,25 @@ angular.module('JsonChartTemplateServiceModule')
 		readChartTemplate:function(jsonTemplate,exportWebData,datasetLabel,jsonData){
 			
 			var params = {};
+			if( jsonTemplate.CHART.groupCategories && jsonTemplate.CHART.VALUES.CATEGORY.groupby!=""){
+				var arrayOfCateg = [];
+				arrayOfCateg.push(jsonTemplate.CHART.VALUES.CATEGORY)
+				 
+				var subs = angular.copy(jsonTemplate.CHART.VALUES.CATEGORY.groupby.substring(0, jsonTemplate.CHART.VALUES.CATEGORY.groupby.indexOf(',')));
+				var groupby = {};
+				groupby['column'] = subs;
+				groupby['groupby'] = "";
+				groupby['name'] = subs;
+				groupby['groupbyNames'] = "";
+				groupby['orderColumn'] = jsonTemplate.CHART.VALUES.CATEGORY.orderColumn;
+				groupby['orderType'] =jsonTemplate.CHART.VALUES.CATEGORY.orderType;;
+				groupby['stackedType'] = jsonTemplate.CHART.VALUES.CATEGORY.stackedType;
+				groupby['stacked'] =  jsonTemplate.CHART.VALUES.CATEGORY.stacked;
+				arrayOfCateg.push(groupby);
+				delete jsonTemplate.CHART.VALUES.CATEGORY;
+				 jsonTemplate.CHART.VALUES.CATEGORY = arrayOfCateg;
+			}
+		
 			params.jsonTemplate = jsonTemplate;
 			params.exportWebData = exportWebData;
 			params.datasetLabel = datasetLabel;

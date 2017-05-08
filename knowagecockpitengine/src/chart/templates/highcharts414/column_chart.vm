@@ -6,11 +6,12 @@
 		#set($workAroundNoPrint = $dataColumnsMapper.put($dataField.header , $dataField.name))
 	#end
 #end
-
 #set($rows = $data.rows) ## data in table rows
-
+#if($chart.groupCategories =='true' && $chart.isCockpitEngine == 'false')
+#set($categorieColumns = $chart.VALUES.CATEGORY.get(0))
+#else
 #set($categorieColumns = $chart.VALUES.CATEGORY) ## metadata related to categories
-
+#end
 #if($categorieColumns.name=="")
 #set($categorieColumns.name = $categorieColumns.column)
 #end
@@ -783,7 +784,7 @@
 		
 		## author: rselakov, radmila.selakovic@mht.net
 		## Calling the method for reconfiguring the original data about the ordering column and its category values
-		#set($map = $datasettransformer.prepareDataForGroupingForBar($rows))
+		#set($map = $datasettransformer.prepareDataForGroupingForBar($rows,$isCockpitEngine))
 		
 		#if($chart.groupCategories && $chart.groupCategories =='true')
             categories: [

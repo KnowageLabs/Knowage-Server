@@ -624,6 +624,16 @@ function setAggregationsOnChartEngine(wconf){
 				obj['fieldType'] = "ATTRIBUTE";
 				
 				aggregations.push(obj);
+				if( chartTemplate.CHART.groupCategories && chartCategory.groupby!=""){
+					 
+					var subs = angular.copy(chartCategory.groupby.substring(0, chartCategory.groupby.indexOf(',')));
+					var groupby = {};
+					groupby['name'] = subs;
+					groupby['alias'] = subs;
+					groupby['aliasToShow'] = subs;
+					groupby['fieldType'] = "ATTRIBUTE";
+					aggregations.push(groupby);
+				}
 			};
 			
 		}
