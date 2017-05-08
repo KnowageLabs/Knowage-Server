@@ -172,6 +172,15 @@ function alertDefinitionDetailControllerFunction($scope,$angularListDetail,sbiMo
 	$scope.saveAlertFunction=function(){ 
 		var itemToSave={};
 		angular.copy($scope.alert,itemToSave); 
+		
+		// if cron is not defined means user did not click, than take default value
+		if(!itemToSave.frequency.cron){
+			itemToSave.frequency.cron = {};
+			itemToSave.frequency.cron.type = "minute";
+			itemToSave.frequency.cron.parameter = {};
+			itemToSave.frequency.cron.parameter.numRepetition = "1";
+		}
+		
 		$cronFrequency.parseForBackend(itemToSave.frequency);
 		
 		for(var i=0;i<itemToSave.jsonOptions.actions.length;i++){
