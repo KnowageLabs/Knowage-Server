@@ -320,7 +320,7 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 
 			String allDocumentLabels = "";
 			boolean firstTime = true;
-
+			int sequence = 0;
 			for (int documentIndex = 0; documentIndex < documentLabels.length; documentIndex++) {
 				documentInstanceName = documentLabels[documentIndex];
 				documentLabel = documentInstanceName.substring(0, documentInstanceName.lastIndexOf("__"));
@@ -537,6 +537,7 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 						dispatchContext.setTotalNumberOfDocumentsToDispatch(documentLabels.length);
 						dispatchContext.setIndexNumberOfDocumentToDispatch(documentIndex);
 						dispatchContext.setSchedulationStartDate(startSchedule);
+						dispatchContext.setSequence(sequence);
 
 						// unique mail is calculated one for all
 						dispatchContext.setGlobalUniqueMail(uniqueMailForAll);
@@ -557,6 +558,7 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 						if (globalDocumentDispatcher == null) {
 							documentDispatcher.dispose();
 						}
+						sequence++;
 
 					} else {
 						logger.warn("The document with label " + documentInstanceName + " cannot be executed directly, "

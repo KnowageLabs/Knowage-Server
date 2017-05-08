@@ -83,6 +83,10 @@
         <property name="schedulationStartDate" type="integer">
             <column name="SCHEDULATION_START" />
         </property>
+
+        <property name="sequence" type="integer">
+            <column name="SEQUENCE" />
+        </property>
                 
      	<filter name="tenantFilter" condition="organization=:tenant" />  
 	</class>

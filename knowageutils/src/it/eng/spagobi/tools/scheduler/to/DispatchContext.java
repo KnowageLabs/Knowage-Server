@@ -129,6 +129,8 @@ public class DispatchContext implements Serializable {
 
 	private long schedulationStartDate;
 
+	private int sequence;
+
 	public boolean isZipMailDocument() {
 		return zipMailDocument;
 	}
@@ -790,6 +792,13 @@ public class DispatchContext implements Serializable {
 
 	public void setSchedulationStartDate(long schedulationStartDate) {
 		this.schedulationStartDate = schedulationStartDate;
+	}
+	public int getSequence() {
+		return sequence;
+	}
+
+	public void setSequence(int sequence) {
+		this.sequence = sequence;
 	}
 
 

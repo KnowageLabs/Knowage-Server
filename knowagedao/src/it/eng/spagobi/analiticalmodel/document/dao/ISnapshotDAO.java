@@ -38,7 +38,7 @@ public interface ISnapshotDAO extends ISpagoBIDao{
 	 * @param schedulationName name of the schedulation
 	 * @throws EMFUserError the EMF user error
 	 */
-	public void saveSnapshot(byte[] content, Integer idBIObj, String name, String description, String contentType, long schedulationStart, String schedulerName,	String schedulationName) throws EMFUserError;
+	public void saveSnapshot(byte[] content, Integer idBIObj, String name, String description, String contentType, long schedulationStart, String schedulerName,	String schedulationName, int sequence) throws EMFUserError;
 
 	/**
 	 * Gets the list of the snapshot details that are children of a biobject.
@@ -91,7 +91,17 @@ public interface ISnapshotDAO extends ISpagoBIDao{
 	 *
 	 * @throws EMFUserError the EMF user error
 	 */
-	public Map<String, Map<Integer,List<Snapshot>>> getSnapshotsBySchedulation(String schedulationName)  throws EMFUserError;
+	public Map<String, Map<Integer,List<Snapshot>>> getSnapshotsBySchedulation(String schedulationName, boolean collate)  throws EMFUserError;
+
+	/**
+	 * same as getSnapshotsBySchedulation just takes last
+	 * @param schedulationName
+	 * @param collate
+	 * @return
+	 * @throws EMFUserError
+	 */
+	public List<Snapshot> getLastSnapshotsBySchedulation(String schedulationName, boolean collate)  throws EMFUserError;
+
 
 	/**
 	 * Gets the list of the snapshot details that are children of a biobject and belongs to a specific schedulation.
@@ -105,4 +115,7 @@ public interface ISnapshotDAO extends ISpagoBIDao{
 	 * @throws EMFUserError the EMF user error
 	 */
 	public List getSnapshotsForSchedulationAndDocument(Integer idBIObj, String scheduler)  throws EMFUserError;
+
+
+	public String loadSnapshotSchedulation(Integer idSnap) throws EMFUserError;
 }

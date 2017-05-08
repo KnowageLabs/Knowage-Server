@@ -33,36 +33,41 @@ angular
 		  };
 	});
 
-function schedulationController($scope, sbiModule_messaging, $filter, $mdDialog, $httpParamSerializer, sbiModule_restServices, sbiModule_translate, sbiModule_config , $documentViewer, toastr, $timeout, sbiModule_logger){
+function schedulationController($scope, sbiModule_messaging, $filter, $mdDialog, $httpParamSerializer, sbiModule_restServices, sbiModule_translate, sbiModule_config , $documentViewer, toastr,$timeout){
 	
 	$scope.translate=sbiModule_translate;
 	$scope.schedulationList = [];
 	$scope.schedulationListForMerge = [];
 		
 	$scope.loadSchedulations = function(){
-		sbiModule_restServices.promiseGet("scheduler/listAllJobs","")
-		.then(function(response) {
-			sbiModule_logger.log("[LOAD START]: Loading of Shcedulers is started.");
-			angular.copy(response.data.root,$scope.schedulationList);
-			for(var jobIndex = $scope.schedulationList.length - 1; jobIndex >= 0; jobIndex--){
-				var job = $scope.schedulationList[jobIndex];
-				
-				if(job.jobGroup != "BIObjectExecutions"){
-					// discard job if group is not BIObjectExecutions
-					$scope.schedulationList.splice(jobIndex, 1);
-					continue;
+		
+		if(!$scope.isUserAdmin && !$scope.isUserDeveloper && $scope.showScheduler){
+			sbiModule_restServices.promiseGet("scheduler/listAllJobs","")
+			.then(function(response) {
+				sbiModule_logger.log("[LOAD START]: Loading of Shcedulers is started.");
+				angular.copy(response.data.root,$scope.schedulationList);
+				for(var jobIndex = $scope.schedulationList.length - 1; jobIndex >= 0; jobIndex--){
+					var job = $scope.schedulationList[jobIndex];
+					
+					if(job.jobGroup != "BIObjectExecutions"){
+						// discard job if group is not BIObjectExecutions
+						$scope.schedulationList.splice(jobIndex, 1);
+						continue;
+					}
 				}
-			}
-			sbiModule_logger.log("[LOAD END]: Loading of Shcedulers is finished.");
-		},function(response){
-			
-			toastr.error(response.data, sbiModule_translate.load('sbi.browser.folder.load.error'), $scope.toasterConfig);
-			
-		});
+				sbiModule_logger.log("[LOAD END]: Loading of Shcedulers is finished.");
+			},function(response){
+				
+				toastr.error(response.data, sbiModule_translate.load('sbi.browser.folder.load.error'), $scope.toasterConfig);
+				
+			});
+		}
+		
+
 	}
 	
-	$scope.loadSchedulationsForMerge = function(scheduler){
-		sbiModule_restServices.promiseGet("2.0/pdf",scheduler)
+	$scope.loadSchedulationsForMerge = function(scheduler, collate){
+		sbiModule_restServices.promiseGet("2.0/pdf",scheduler,"collate="+collate)
 		.then(function(response) {
 			sbiModule_logger.log("[LOAD START]: Loading of Shcedulations for selected scheduler is started.");
 			angular.copy(response.data.schedulations,$scope.schedulationListForMerge);
@@ -117,7 +122,7 @@ function schedulationController($scope, sbiModule_messaging, $filter, $mdDialog,
 							templateUrl: 'dialog1.tmpl.html',
 							scope:$scope,
 							preserveScope: true,
-							targetEvent:item,
+							//targetEvent:item,
 							clickOutsideToClose:true
 						}) 					 
 				 }	
@@ -151,7 +156,7 @@ function schedulationController($scope, sbiModule_messaging, $filter, $mdDialog,
 		$scope.scheduler = doc;
 		$scope.showDocSchedJsp = true;
 		if($scope.mergePdfsInto1) {
-			$scope.loadSchedulationsForMerge(doc.jobName);
+			$scope.loadSchedulationsForMerge(doc.jobName, doc.jobCollateSnapshots);
 		}
 	}
 	
@@ -166,7 +171,7 @@ function schedulationController($scope, sbiModule_messaging, $filter, $mdDialog,
 	    {"label":$scope.translate.load("sbi.timespan.type.time"), "name":"time"}
     ];
 	
-	$scope.triggerExecute = function(doc, merge){
+	$scope.triggerExecute = function(doc, merge, document){
 		$scope.mergePdfsInto1 = merge;
 		var requestString =
 			"executeTrigger?jobName="+doc.jobName
@@ -177,43 +182,48 @@ function schedulationController($scope, sbiModule_messaging, $filter, $mdDialog,
 		sbiModule_restServices.promisePost("scheduler",requestString)
 		.then(function(response) {
 			$scope.processing = true;
-			$timeout(function(){
-				$scope.processing = false;
-				sbiModule_logger.log("[LOAD START]: Execution of schedulation is started.");
-				if(!merge){
-					$mdDialog.show( 
-							$mdDialog.alert()
-						        .parent(angular.element(document.body))
-						        .clickOutsideToClose(false)
-						        .title(sbiModule_translate.load("sbi.generic.ok"))
-						        .content(sbiModule_translate.load("sbi.scheduler.schedulation.executed"))
-						        .ok(sbiModule_translate.load("sbi.general.ok"))
-						);
-				} else {
-					sbiModule_restServices.promiseGet("2.0/pdf",doc.jobName)
-					.then(function(response) {
-						sbiModule_logger.log("[LOAD START]: Loading of Shcedulations for selected scheduler is started.");
-						//response.data.schedulations
-						$scope.snapshotUrlPath=response.data.urlPath;
-						var itemsSorted  = $filter('orderBy')(response.data.schedulations, 'time');
-						$scope.openPdf(itemsSorted[itemsSorted.length-1]);				
-						sbiModule_logger.log("[LOAD END]: Loading of Shcedulations for selected scheduler is finished.");
-					},function(response){
-						
-						// Take the toaster duration set inside the main controller of the Workspace. (danristo)
-						toastr.error(response.data, sbiModule_translate.load('sbi.browser.folder.load.error'), $scope.toasterConfig);
-						
-					});
-				}
-				
-				sbiModule_logger.log("[LOAD END]: Execution of schedulation is finished.");
-			}, 5000)
+			$timeout(function(){$scope.triggerExecuteTimeOut(doc, merge, document)}, 10000);
+			
+			sbiModule_logger.log("[LOAD END]: Execution of schedulation is finished.");
 		},function(response){
 			
 			toastr.error(response.data, sbiModule_translate.load('sbi.browser.folder.load.error'), $scope.toasterConfig);
 			
 		});
 		
+	}
+	
+	$scope.triggerExecuteTimeOut = function(doc, merge, document){
+		$scope.processing = false;
+		sbiModule_logger.log("[LOAD START]: Execution of schedulation is started.");
+		if(!merge){
+			$mdDialog.show( 
+					$mdDialog.alert()
+				        .parent(angular.element(document.body))
+				        .clickOutsideToClose(false)
+				        .title(sbiModule_translate.load("sbi.generic.ok"))
+				        .content(sbiModule_translate.load("sbi.scheduler.schedulation.executed"))
+				        .ok(sbiModule_translate.load("sbi.general.ok"))
+				);
+		} else {
+			sbiModule_restServices.promiseGet("2.0/pdf",doc.jobName,"collate="+document.jobCollateSnapshots)
+			
+			.then(function(response) {
+				sbiModule_logger.log("[LOAD START]: Loading of Shcedulations for selected scheduler is started.");
+				//response.data.schedulations
+				$scope.snapshotUrlPath=response.data.urlPath;
+				var itemsSorted  = $filter('orderBy')(response.data.schedulations, 'time');
+				$scope.openPdf(itemsSorted[itemsSorted.length-1]);				
+				sbiModule_logger.log("[LOAD END]: Loading of Shcedulations for selected scheduler is finished.");
+			},function(response){
+				
+				// Take the toaster duration set inside the main controller of the Workspace. (danristo)
+				toastr.error(response.data, sbiModule_translate.load('sbi.browser.folder.load.error'), $scope.toasterConfig);
+				
+			});
+		}
+		
+		sbiModule_logger.log("[LOAD END]: Execution of schedulation is finished.");
 	}
 	
 	 $scope.openPdf = function(item) { 
@@ -233,7 +243,7 @@ function schedulationController($scope, sbiModule_messaging, $filter, $mdDialog,
 					templateUrl: 'dialog1.tmpl.html',
 					scope:$scope,
 					preserveScope: true,
-					targetEvent:item,
+					//targetEvent:item,
 					clickOutsideToClose:true
 				}) 					 
 		 }	

@@ -61,7 +61,7 @@ public class DocumentExecutionSnapshot extends AbstractSpagoBIResource {
 	public Map<String, Map<Integer,List<Snapshot>>> getSnapshoots(@QueryParam("schedulation") String schedulation) {
 		try {
 			ISnapshotDAO snapdao = DAOFactory.getSnapshotDAO();
-			return snapdao.getSnapshotsBySchedulation(schedulation);
+			return snapdao.getSnapshotsBySchedulation(schedulation, true);
 		} catch (EMFUserError e) {
 			logger.error(e);
 			throw new SpagoBIRestServiceException(getLocale(), e);

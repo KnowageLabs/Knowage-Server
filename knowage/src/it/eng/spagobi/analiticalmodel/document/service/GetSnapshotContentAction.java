@@ -30,12 +30,18 @@ import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
+import it.eng.spagobi.services.scheduler.service.ISchedulerServiceSupplier;
+import it.eng.spagobi.services.scheduler.service.SchedulerServiceSupplierFactory;
+import it.eng.spagobi.tools.scheduler.services.JobManagementModule;
+import it.eng.spagobi.tools.scheduler.to.JobInfo;
+import it.eng.spagobi.tools.scheduler.utils.SchedulerUtilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,11 +65,19 @@ public class GetSnapshotContentAction extends AbstractHttpAction {
 		HttpServletResponse httpResp = getHttpResponse();
 		Map<String,Object> contentMap;
 
-		List<String> objectIdStr = request.getAttributeAsList("mergeitems");
-		if(objectIdStr==null || objectIdStr.size()==0){
-			contentMap = getSnapshotForOneDocument(request);
+		String schedulationName = (String)request.getAttribute("schedulationName");
+		if(schedulationName!=null){
+			boolean collate = false;
+			List<Snapshot> snaps = DAOFactory.getSnapshotDAO().getLastSnapshotsBySchedulation(schedulationName, collate);
+			contentMap = mergeListSnap(snaps);
 		}else{
-			contentMap = merge(objectIdStr);
+			List<String> objectIdStr = request.getAttributeAsList("mergeitems");
+			if(objectIdStr==null || objectIdStr.size()==0){
+				contentMap = getSnapshotForOneDocument(request);
+			}else{
+				contentMap = merge(objectIdStr);
+			}
+
 		}
 
 		byte[] content = (byte[])contentMap.get("content");
@@ -115,14 +129,71 @@ public class GetSnapshotContentAction extends AbstractHttpAction {
 	public Map<String,Object> merge( List<String> snapshotIds) {
 		logger.debug("IN");
 		ISnapshotDAO snapDao = null;
-		PDFMergerUtility mergePdf = new PDFMergerUtility();
-
+		List<Snapshot> snapList = new ArrayList<Snapshot>();
 		try {
+			//load the snapshots
 			snapDao = DAOFactory.getSnapshotDAO();
-			//JSONArray snapshotIds = RestUtilities.readBodyAsJSONArray(req);
 			for (int i = 0; i < snapshotIds.size(); i++) {
 				Integer id = new Integer(snapshotIds.get(i));
-				Snapshot snap = snapDao.loadSnapshot(id);
+				snapList.add(snapDao.loadSnapshot(id));
+
+			}
+			return mergeListSnap(snapList);
+		} catch (Exception e) {
+			logger.error(" Error while crating input stream for the content of a snapshot",e);
+			throw new SpagoBIRuntimeException(" Error while crating input stream for the content of a snapshot", e);
+		}
+	}
+
+
+
+	private Map<String,Object> mergeListSnap( List<Snapshot> snapList) {
+		logger.debug("IN");
+
+		try {
+
+			ISnapshotDAO snapDao = DAOFactory.getSnapshotDAO();
+			String jobName = snapDao.loadSnapshotSchedulation(snapList.get(0).getId());
+			PDFMergerUtility mergePdf = new PDFMergerUtility();
+			List<Snapshot> sortedSnapList = new ArrayList<Snapshot>();
+
+			//sort snapshot of documents respecting the order of document in the schedulation
+			ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
+			String jobDetail = schedulerService.getJobDefinition(jobName, JobManagementModule.JOB_GROUP);
+			SourceBean jobDetailSB = SchedulerUtilities.getSBFromWebServiceResponse(jobDetail);
+			JobInfo jobInfo = SchedulerUtilities.getJobInfoFromJobSourceBean(jobDetailSB);
+//			List<Integer> sortedDocList = jobInfo.getDocumentIds();
+
+			if(!jobInfo.isJobCollateSnapshots()){
+				int min = -1;
+				Snapshot minSnap = null;
+				int snapPos = -1;
+				for(int i=0; i<snapList.size(); i++){
+					min = -1;
+					minSnap = null;
+					snapPos = -1;
+					for(int j=0; j<snapList.size(); j++){
+						Snapshot thisSnao = snapList.get(j);
+						if(thisSnao!=null){
+							Integer thisSeq = thisSnao.getSequence();
+
+							if(min<0 || min>thisSeq){
+								min =  thisSeq;
+								minSnap = thisSnao;
+								snapPos = j;
+							}
+						}
+					}
+
+					sortedSnapList.add(minSnap);
+					snapList.set(snapPos, null);
+				}
+			}else{
+				sortedSnapList = snapList;
+			}
+			//JSONArray snapshotIds = RestUtilities.readBodyAsJSONArray(req);
+			for (int i = 0; i < sortedSnapList.size(); i++) {
+				Snapshot snap = sortedSnapList.get(i);
 				InputStream is = new ByteArrayInputStream(snap.getContent());
 				mergePdf.addSource(is);
 			}
@@ -148,11 +219,6 @@ public class GetSnapshotContentAction extends AbstractHttpAction {
 			logger.error(" Error while crating input stream for the content of a snapshot",e);
 			throw new SpagoBIRuntimeException(" Error while crating input stream for the content of a snapshot", e);
 		}
-
-
-
-
-
 	}
 
 }
