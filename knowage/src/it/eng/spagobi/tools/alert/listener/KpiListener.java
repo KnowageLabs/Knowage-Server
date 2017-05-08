@@ -5,6 +5,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
+import it.eng.spagobi.kpi.bo.Kpi;
 import it.eng.spagobi.kpi.bo.KpiValue;
 import it.eng.spagobi.kpi.bo.ThresholdValue;
 import it.eng.spagobi.kpi.metadata.SbiKpiKpi;
@@ -24,12 +25,15 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class KpiListener extends AbstractAlertListener {
 	private static Logger logger = Logger.getLogger(KpiListener.class);
 
 	private static IMessageBuilder message = MessageBuilderFactory.getMessageBuilder();
-	private static final String VALUE_TABLE_PLACEHOLDER = "*VALUE_TABLE*";
+	public static final String VALUE_TABLE_PLACEHOLDER = "*VALUE_TABLE*";
+	public static final String KPI_INFO_PLACEHOLDER = "*KPI_INFO*";
 	private static final String ALL = "ALL";
 
 	private final Set<ThresholdValue> thresholds = new HashSet<>();
@@ -85,6 +89,11 @@ public class KpiListener extends AbstractAlertListener {
 							if (hasValues(action)) {
 								Map<String, String> parameters = new HashMap<>();
 								parameters.put(VALUE_TABLE_PLACEHOLDER, makeHtmlValueTable(action.getThresholdValues()));
+								try {
+									parameters.put(KPI_INFO_PLACEHOLDER, makeJsonKpiInfo(action.getThresholdValues()));
+								} catch (JSONException e) {
+									logger.error("Error in producing JSON with KPI result");
+								}
 								executeAction(par, action.getIdAction(), action, parameters);
 							}
 						}
@@ -120,6 +129,38 @@ public class KpiListener extends AbstractAlertListener {
 			valueMap.put(thresholdId, new ArrayList<KpiValue>());
 		}
 		valueMap.get(thresholdId).add(sbiKpiValue);
+	}
+
+	private String makeJsonKpiInfo(List<Integer> thresholdValues) throws JSONException, EMFUserError {
+		logger.debug("IN");
+		JSONObject toReturn = new JSONObject();
+		for (Integer thresholdId : thresholdValues) {
+			List<KpiValue> values = valueMap.get(thresholdId);
+			if (values != null && !values.isEmpty()) {
+
+				for (KpiValue sbiKpiValue : values) {
+					Integer kpiId = sbiKpiValue.getKpiId();
+					// get label
+					Kpi kpi = DAOFactory.getKpiDAO().loadLastActiveKpi(kpiId);
+					String label = kpi.getName();
+
+					Double compuetedValue = sbiKpiValue.getComputedValue();
+					Double manualValue = sbiKpiValue.getManualValue();
+
+					JSONObject kpiDetail = new JSONObject();
+					kpiDetail.put("kpiId", kpiId);
+					kpiDetail.put("kpiLabel", label);
+					kpiDetail.put("computedValue", compuetedValue);
+					kpiDetail.put("manualValue", manualValue);
+
+					toReturn.put("kpiId", kpiDetail);
+
+				}
+			}
+		}
+		logger.debug("Made JSON from Kpi Info: " + toReturn.toString());
+		logger.debug("OUT");
+		return toReturn.toString();
 	}
 
 	private String makeHtmlValueTable(List<Integer> thresholdValues) {
