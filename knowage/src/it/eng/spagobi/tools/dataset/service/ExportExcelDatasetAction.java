@@ -21,6 +21,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
@@ -60,8 +61,15 @@ public class ExportExcelDatasetAction extends AbstractSpagoBIAction {
 			IDataSetDAO dao = DAOFactory.getDataSetDAO();
 			dao.setUserProfile(this.getUserProfile());
 			IDataSet dataSet = dao.loadDataSetById(id);
-			dataSet.loadData();
-			IDataStore dataStore = dataSet.getDataStore();
+
+			IDataStore dataStore = null;
+			try {
+				dataSet.loadData();
+				dataStore = dataSet.getDataStore();
+			} catch (Exception e) {
+				logger.error("Error loading datat for xls export");
+			}
+
 			// setup response
 			String url = contextPath + "/restful-services/selfservicedataset/export/" + dataSet.getLabel();
 
@@ -124,17 +132,26 @@ public class ExportExcelDatasetAction extends AbstractSpagoBIAction {
 					XSSFRow row1 = sheet.getRow(2);
 					XSSFCell urlCell = row1.getCell(2);
 					urlCell.setCellValue(url);
-					OutputStream out;
-					try {
-						out = getHttpResponse().getOutputStream();
-						wb.write(out);
-						getHttpResponse().getOutputStream().flush();
-						getHttpResponse().getOutputStream().close();
-					} catch (IOException e) {
-						logger.error("write output file stream error " + e.getMessage());
-						throw new SpagoBIServiceException(this.getActionName(), "Impossible to write output file xls error", e);
-					}
+				}else{
+					MessageBuilder msgBuild = new MessageBuilder();
+
+					XSSFRow header = sheet.createRow((short) 3);// quarta riga
+					XSSFCell cell = header.createCell(1);
+					cell.setCellValue(msgBuild.getMessage( "exporter.dataset.excel",getLocale()));
+					cell.setCellStyle(borderStyleHeader);
 				}
+
+				OutputStream out;
+				try {
+					out = getHttpResponse().getOutputStream();
+					wb.write(out);
+					getHttpResponse().getOutputStream().flush();
+					getHttpResponse().getOutputStream().close();
+				} catch (IOException e) {
+					logger.error("write output file stream error " + e.getMessage());
+					throw new SpagoBIServiceException(this.getActionName(), "Impossible to write output file xls error", e);
+				}
+
 			}
 
 		} catch (EMFUserError e) {
