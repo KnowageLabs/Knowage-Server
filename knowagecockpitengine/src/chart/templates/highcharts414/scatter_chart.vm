@@ -522,7 +522,7 @@
     		#end
         ],
             
-        min: 0.5,
+        min: 0.6, 
         max: $counter.size()-1.5,
             
 		labels:{

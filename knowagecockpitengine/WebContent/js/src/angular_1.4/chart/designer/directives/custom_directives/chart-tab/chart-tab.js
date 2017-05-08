@@ -455,6 +455,8 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 			serie = $scope.chartTemplate.VALUES.SERIE;
 			angular.copy(StructureTabService.getBaseTemplate(), $scope.chartTemplate);
 			$scope.chartTemplate.type="PIE";
+			$scope.chartTemplate.alpha = chartEngineSettings.tree_D_Options.alpha;
+			$scope.chartTemplate.beta = chartEngineSettings.tree_D_Options.beta;
 			$scope.chartTemplate.isCockpitEngine = $scope.isCockpitEng;
 			$scope.chartTemplate.VALUES.SERIE = serie;
 			ifNeededTrimDownCategoriesToSizeNeededByChartType();
