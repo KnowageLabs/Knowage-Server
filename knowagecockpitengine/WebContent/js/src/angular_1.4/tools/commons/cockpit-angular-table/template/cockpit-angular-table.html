@@ -78,10 +78,10 @@
 </script>
 
 <script type="text/ng-template" id="cockpitHeadThTemplate.html">
-<th ng-repeat="val in tableColumns" width="{{val.size}}" ng-class="[val.customClass, {'hiddenColumn': getDynamicValue(val.style,null,val,-1) && getDynamicValue(val.style,null,val,-1).hiddenColumn}]" ng-style="getHeaderStyle()">
+<th ng-repeat="val in tableColumns" width="{{val.size}}" ng-class="val.customClass" ng-style="getHeaderStyle()">
 	<div id="headDiv{{$index}}"  ng-hide="hideTableHead==true" ng-if="val.name !='--MULTISELECT--' && val.name!='--ROW_DETAIL--'" ng-click="orderBy(val)"  ng-class="{ 'black': val.name==column_ordering}">		
-		<md-icon  ng-class="{ 'hidden': val.name!=column_ordering.name ,'fa fa-arrow-down' : (val.name==column_ordering.name && reverse_col_ord) ,'fa fa-arrow-up' : (val.name==column_ordering.name && !reverse_col_ord)}"></md-icon>
-		<span >{{val.label}}
+		<md-icon ng-class="{ 'hidden': val.name!=column_ordering.name ,'fa fa-arrow-down' : (val.name==column_ordering.name && reverse_col_ord) ,'fa fa-arrow-up' : (val.name==column_ordering.name && !reverse_col_ord)}"></md-icon>
+		<span>{{val.label}}
 			<md-tooltip md-delay="1000" md-direction="bottom"  >{{val.label}}</md-tooltip>
 		</span>
 	</div>
@@ -96,7 +96,7 @@
  	ng-if="isVisibleRowFunction(row)"
 	ng-style="{'height':tableStyle.autoRowsHeight? 0 :tableStyle.rowsHeight}">
 	<td ng-repeat="column in tableColumns" ng-switch="column.static==true? '--STATIC--' : column.name" sglclick="bulkSelect($event,$parent.$index,column,row,getColumnValue(row,column.name))" ng-dblclick="clickItem(row,column.name,getColumnValue(row,column.name),$event,$parent.$index)" context-menu  data-target='{{id}}TableContextMenu-{{$parent.$index}}-{{$index}}' class="{{column.customRecordsClass}} " 
-			ng-class="{ 'highlight': isCellSelected($parent.$index,column), 'expanded': expanded, 'tableDragBar': column.name=='--DRAG_AND_DROP--', 'hiddenColumn': getDynamicValue(column.style,row,column,$parent.$index) && getDynamicValue(column.style,row,column,$parent.$index).hiddenColumn}" 
+			ng-class="{ 'highlight': isCellSelected($parent.$index,column), 'expanded': expanded, 'tableDragBar': column.name=='--DRAG_AND_DROP--'}" 
 			ng-style="column.style==undefined ? '' :  getDynamicValue(column.style,row,column,$parent.$index)" >
 		<div ng-switch-when="--STATIC--" ng-if="getDynamicValue(column.style,row,column,'-99') && getDynamicValue(column.style,row,column,'-99') != 0" layout="row" layout-align="start center">
 			<span ng-if="column.template==undefined" class="textEllipsis" ng-class="getChangedValueStyle(row,column.name)" ng-bind="row[column.name]" >

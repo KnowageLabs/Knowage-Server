@@ -280,7 +280,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			};
 
 		$scope.canSeeColumnByMobile = function(obj){
-			if($scope.isMobile.any()!=null && obj!=undefined && (obj.hiddenColumn == true || obj.hideonMobile == true)){
+			if(obj!=undefined && (obj.hiddenColumn == true || ($scope.isMobile.any()!=null && obj.hideonMobile == true))){
 				return false;
 			}
 			return true;
@@ -755,7 +755,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 			return false;
 		}
-		$scope.tableColumns=$scope.ngModel.content.columnSelectedOfDataset;
+		$scope.tableColumns=$scope.ngModel.content.columnSelectedOfDataset.filter(function(column){
+			if(column.style && column.style.hiddenColumn){
+				return false;
+			}
+			return true;
+		});
 		$scope.itemList=[]
 
 		$scope.showAction = function(text) {
