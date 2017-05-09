@@ -129,7 +129,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			logger.debug("OUT");
 		}
 	}
-	
+
 	@GET
 	@Path("/datasetsforlov")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
@@ -143,10 +143,10 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			JSONArray toReturn = new JSONArray();
 
 			for (IDataSet dataset : dataSets) {
-				
+
 				JSONObject obj = new JSONObject();
 				if (DataSetUtilities.isExecutableByUser(dataset, getUserProfile()))
-					
+
 					obj.put("label", dataset.getLabel());
 					obj.put("id", dataset.getId());
 					toReturn.put(obj);
@@ -182,7 +182,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			logger.debug("OUT");
 		}
 	}
-	
+
 	/**
 	 * Returns the number of datasets for a particular search. This number is later used for server side pagination when searching.
 	 *
@@ -193,9 +193,9 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Number getNumberOfDataSetsSearch(@PathParam("searchValue") String searchValue) {
 		logger.debug("IN");
-		
+
 		try {
-			
+
 			IDataSetDAO dsDao = DAOFactory.getDataSetDAO();
 			dsDao.setUserProfile(getUserProfile());
 			Number numOfDataSets = dsDao.countDatasetsSearch(searchValue);
@@ -1523,7 +1523,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			limit = DataSetConstants.LIMIT_DEFAULT;
 		}
 		JSONObject filtersJSON = null;
-				
+
 		List<IDataSet> items = null;
 		if (true) {
 			filtersJSON = filters;
@@ -1549,9 +1549,9 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		}
 		String hsql = " from SbiDataSet h where h.active = true ";
 		// Ad Admin can see other users' datasets
-		if (!isAdmin) {
+		/*if (!isAdmin) { filter is applyed in the dao because need also to take care about categories
 			hsql = hsql + " and h.owner = '" + getUserProfile().getUserUniqueIdentifier().toString() + "'";
-		}
+		}*/
 		if (filtersJSON != null) {
 			String valuefilter = (String) filtersJSON.get(SpagoBIConstants.VALUE_FILTER);
 			String typeFilter = (String) filtersJSON.get(SpagoBIConstants.TYPE_FILTER);
@@ -1562,7 +1562,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 				hsql += " and h." + columnFilter + " like '%" + valuefilter + "%'";
 			}
 		}
-		
+
 		if(ordering!=null){
 			boolean reverseOrdering = ordering.optBoolean("reverseOrdering");
 			if(reverseOrdering) {

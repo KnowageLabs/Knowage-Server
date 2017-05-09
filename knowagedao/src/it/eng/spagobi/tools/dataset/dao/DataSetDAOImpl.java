@@ -703,7 +703,6 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	public List<IDataSet> loadFilteredDatasetList(String hsql, Integer offset, Integer fetchSize, String owner) {
 
 
-
 		List<IDataSet> toReturn;
 		Session session;
 		Transaction transaction;
@@ -716,6 +715,13 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		try {
 			toReturn = new ArrayList<IDataSet>();
 			boolean isAdmin = getUserProfile().isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN);
+
+			int orderByPos = hsql.indexOf("order by");
+			String orderBy = "";
+			if(orderByPos>0){
+				orderBy = hsql.substring(orderByPos);
+				hsql = hsql.substring(0,orderByPos);
+			}
 
 			if (offset == null) {
 				logger.warn("Input parameter [offset] is null. It will be set to [0]");
@@ -749,6 +755,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 					hsql = hsql+ " and (h.category.valueId IN (:idsCat) or h.owner = :owner)";
 				}
 			}
+
+			hsql = hsql+" "+orderBy;
 
 			offset = offset < 0 ? 0 : offset;
 			Query listQuery = session.createQuery(hsql);
@@ -1260,11 +1268,11 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		}
 		return new Integer(resultNumber.intValue());
 	}
-	
-	
-	
+
+
+
 	/**
-	 * Counts number of filtered DataSets that are a result of a search 
+	 * Counts number of filtered DataSets that are a result of a search
 	 *
 	 * @return Integer, number of DataSets searched for
 	 * @throws EMFUserError
