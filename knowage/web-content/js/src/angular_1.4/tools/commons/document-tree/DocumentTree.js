@@ -20,6 +20,7 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree'])
 			, selectedItem : "=?" //optional to get the selected  item value
 			, showFiles : '=?' //boolean value
 			, multiSelect : "=?" //boolean value
+			, multiSelectLeafes : "=?" //boolean value
 			, textSearch : "=?" //text to search
 			, fieldsSearch : '=?' //array of the fields on which apply the filter
 			, orderBy : '=?' //field on which order the array
@@ -170,7 +171,7 @@ function DocumentTreeControllerFunction($scope,$timeout,$mdDialog){
 				$scope.selectedItem.splice(idx, 1);
 			}
 		
-			if (element.type == "folder"){
+			if (element.type == "folder" && !$scope.multiSelectLeafes){
 				for (var i =0 ; i < element[$scope.subfoldersId].length; i++){
 					$scope.toogleSelected(element[$scope.subfoldersId][i],element);
 				}
