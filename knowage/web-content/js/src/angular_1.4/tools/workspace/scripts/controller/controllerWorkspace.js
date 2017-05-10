@@ -564,6 +564,17 @@ function workspaceFunction($scope, $http, $mdDialog, $timeout, $mdSidenav, $docu
 				$scope.currentOptionMainMenu==$scope.resetOption ? $scope.resetSearchedData = false : null;
 				$scope.organizerSearch = false;
 				break;
+				
+			/**
+			 * SEARCH FOR SCHEDULATION
+			 */
+			case "schedulation":	
+				angular.copy($scope.schedulationListInitial,$scope.schedulationList);
+				$scope.clearSearch = false;
+				$scope.currentOptionMainMenu==$scope.resetOption ? $scope.resetSearchedData = false : null;
+				$scope.searchInput="";
+				$scope.organizerSearch = false;
+				break;
 			
 			/**
 			 * SEARCH FOR DATASETS
@@ -742,6 +753,14 @@ function workspaceFunction($scope, $http, $mdDialog, $timeout, $mdSidenav, $docu
 						case "analysis":					
 							$scope.cockpitAnalysisDocs = filterThroughCollection(newSearchInput,$scope.cockpitAnalysisDocsInitial,"name");
 							$scope.searching = false;							
+							break;
+						
+						/**
+						 * SEARCH FOR SCHEDULATION
+						 */
+						case "schedulation":
+							$scope.schedulationList = filterThroughCollection(newSearchInput,$scope.schedulationListInitial,"jobName");
+							$scope.searching = false;
 							break;
 						
 						/**

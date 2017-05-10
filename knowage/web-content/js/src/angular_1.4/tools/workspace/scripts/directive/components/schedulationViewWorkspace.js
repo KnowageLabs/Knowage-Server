@@ -38,6 +38,7 @@ function schedulationController($scope, sbiModule_messaging, $filter, $mdDialog,
 	$scope.translate=sbiModule_translate;
 	$scope.schedulationList = [];
 	$scope.schedulationListForMerge = [];
+	$scope.schedulationListInitial = [];
 		
 	$scope.loadSchedulations = function(){
 		
@@ -55,6 +56,8 @@ function schedulationController($scope, sbiModule_messaging, $filter, $mdDialog,
 						continue;
 					}
 				}
+				
+				angular.copy($scope.schedulationList,$scope.schedulationListInitial);
 				sbiModule_logger.log("[LOAD END]: Loading of Shcedulers is finished.");
 			},function(response){
 				
