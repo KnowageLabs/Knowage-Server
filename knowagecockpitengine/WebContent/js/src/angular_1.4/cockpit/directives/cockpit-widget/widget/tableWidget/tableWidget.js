@@ -755,12 +755,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 			return false;
 		}
-		$scope.tableColumns=$scope.ngModel.content.columnSelectedOfDataset.filter(function(column){
-			if(column.style && column.style.hiddenColumn){
-				return false;
-			}
-			return true;
-		});
+		$scope.tableColumns=$scope.ngModel.content.columnSelectedOfDataset;
 		$scope.itemList=[]
 
 		$scope.showAction = function(text) {
