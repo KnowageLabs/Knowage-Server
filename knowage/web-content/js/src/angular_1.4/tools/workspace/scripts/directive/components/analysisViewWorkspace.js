@@ -376,7 +376,6 @@ function analysisController($scope, sbiModule_restServices, sbiModule_translate,
 							
 					}
 					$scope.folders = angular.copy(response.data); 	
-					$scope.folders_copy = angular.copy($scope.folders);
 					
 					$mdDialog.show({
 						  scope:$scope,
@@ -447,7 +446,7 @@ function analysisController($scope, sbiModule_restServices, sbiModule_translate,
 				$scope.loadAllMyAnalysisDocuments();
 				$mdDialog.cancel();
 				$scope.previewFile = {};
-		        toastr.success(sbiModule_translate.load("sbi.workspace.analysis.upload.preview.file.success"+response.data.fileName), 
+		        toastr.success(sbiModule_translate.load("sbi.workspace.analysis.upload.preview.file.success")+" "+response.data.fileName, 
 		        		sbiModule_translate.load('sbi.generic.success'), $scope.toasterConfig);
 				
 			}, function(response) {	
