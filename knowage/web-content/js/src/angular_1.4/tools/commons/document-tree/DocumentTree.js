@@ -99,8 +99,9 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree'])
 			    	scope.initializeFolders = function (folders, parent){
 				    	if(folders){
 				    		for (var i = 0 ; i < folders.length; i ++ ){
+				    			
 								folders[i].checked = folders[i].checked === undefined ? false : folders[i].checked;
-								folders[i].expanded = folders[i].expanded === undefined ? false : folders[i].expanded;
+								folders[i].expanded = folders[i].expanded === undefined ? false : (scope.multiSelectLeafes ? false : folders[i].expanded);
 								folders[i].type = folders[i].type === undefined ? "folder" : folders[i].type;
 								folders[i].visible = folders[i].visible === undefined ? true : folders[i].visible;
 								folders[i].$parent = parent; 
