@@ -30,7 +30,7 @@
 			        
         <img align="center" class="preview-icon" ng-if="document.previewFile!=null"
 		ng-src="{{sbiModule_config.contextName}}/servlet/AdapterHTTP?ACTION_NAME=MANAGE_PREVIEW_FILE_ACTION&amp;SBI_ENVIRONMENT=DOCBROWSER&amp;
-		LIGHT_NAVIGATOR_DISABLED=TRUE&amp;operation=DOWNLOAD&amp;fileName={{document.previewFile}}">					
+		LIGHT_NAVIGATOR_DISABLED=TRUE&amp;operation=DOWNLOAD&amp;fileName={{document.previewFile}}" ng-click="clickDocument(document);">					
        	
        	<md-card-actions layout="row" layout-align="space-around end">
          	<md-button class="md-icon-button" aria-label="Edit" ng-click="editDocumentAction({doc:document});" ng-if="document.typeCode=='MAP'">

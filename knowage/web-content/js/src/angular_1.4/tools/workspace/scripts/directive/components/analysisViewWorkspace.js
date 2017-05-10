@@ -40,6 +40,24 @@ angular
 		      controller: analysisController
 		  };	  
 	})
+	.service('multipartForm',['$http',function($http){
+	
+	this.post = function(uploadUrl,data){
+		
+		var formData = new FormData();
+		
+		for(var key in data){
+			
+			
+				formData.append(key,data[key]);
+			}
+
+		return $http.post(uploadUrl,formData,{
+			transformRequest:angular.identity,
+			headers:{'Content-Type': undefined}
+		})
+	}
+	}])
 	.filter("asDate", function () {
 		
 	    return function (input) {
@@ -49,12 +67,13 @@ angular
 	});
 
 function analysisController($scope, sbiModule_restServices, sbiModule_translate, sbiModule_config, sbiModule_user, 
-			$mdDialog, $mdSidenav, $documentViewer, $qbeViewer, toastr, $httpParamSerializer) {
+			$mdDialog, $mdSidenav, $documentViewer, $qbeViewer, toastr, $httpParamSerializer, multipartForm) {
 	
 	$scope.cockpitAnalysisDocsInitial = [];	
 	$scope.activeTabAnalysis = null;	
 	$scope.translate = sbiModule_translate;
 	$scope.selectedItems = [];
+	$scope.previewFile = {};
 	
 	$scope.loadAllMyAnalysisDocuments = function() {
 		
@@ -300,6 +319,22 @@ function analysisController($scope, sbiModule_restServices, sbiModule_translate,
 			$scope.openEditDialog(document.label,"");
 		}
 	}
+		
+	$scope.uploadPreviewFile = function (selectedDocument) {
+		$mdDialog.show({
+			  scope:$scope,
+			  preserveScope: true,
+		      controller: UploadPreviewFileController,
+		      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/workspace/templates/analysisUploadPreviewFile.html',  
+		      clickOutsideToClose: false,
+		      escapeToClose :true,
+		      //fullscreen: true,
+		      locals:{
+		    	 // previewDatasetModel:$scope.previewDatasetModel,
+		         // previewDatasetColumns:$scope.previewDatasetColumns 
+		      }
+		    });
+	}
 	
 	
 	$scope.openEditDialog=function(doclabel,dsLabel){
@@ -394,6 +429,33 @@ function analysisController($scope, sbiModule_restServices, sbiModule_translate,
 		}
 		
 		
+	}
+	
+	function UploadPreviewFileController($scope,$mdDialog) {
+		$scope.closePreviewFileUploadDialog = function () {
+			$mdDialog.cancel();
+			$scope.previewFile = {};
+		}
+		
+		$scope.uploadFile = function () {
+			console.log($scope.previewFile)
+			console.log($scope.selectedDocument)
+			
+			multipartForm.post("2.0/analysis/"+$scope.selectedDocument.id,$scope.previewFile)
+			.then(function(response) {
+				console.log("[POST]: SUCCESS!");
+				$scope.loadAllMyAnalysisDocuments();
+				$mdDialog.cancel();
+				$scope.previewFile = {};
+		        toastr.success(sbiModule_translate.load("sbi.workspace.analysis.upload.preview.file.success"+response.data.fileName), 
+		        		sbiModule_translate.load('sbi.generic.success'), $scope.toasterConfig);
+				
+			}, function(response) {	
+				toastr.error(sbiModule_translate.load(response.data.errors[0].message), 
+						sbiModule_translate.load('sbi.generic.error'), $scope.toasterConfig);
+				
+			});
+		}
 	}
 	
 	function  ShareDocumentrController($scope,$mdDialog,doc){
