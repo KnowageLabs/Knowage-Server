@@ -1612,7 +1612,7 @@ public class ManageDataSetsForREST {
 					dataStore = dataSet.test(start, limit, GeneralUtilities.getDatasetMaxResults());
 				}
 				if (dataStore == null) {
-					throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to read resultset");
+					throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to read resultset - the headers of the file must not be empty in order to be possible to parse the content of the file");
 				}
 			} catch (Throwable t) {
 				Throwable rootException = t;
