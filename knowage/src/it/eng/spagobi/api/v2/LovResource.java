@@ -522,7 +522,6 @@ public class LovResource extends AbstractSpagoBIResource {
 		Integer dataSetID = -1;
 
 		Assert.assertNotNull(lovName, "LOV name cannot be null");
-		Assert.assertNotNull(lovDecription, "LOV description cannot be null");
 		Assert.assertNotNull(lovProvider, "LOV provider cannot be null");
 		Assert.assertNotNull(lovInputTypeCD, "LOV input type cannot be null");
 		Assert.assertNotNull(lovInputTypeID, "LOV input type ID cannot be null");

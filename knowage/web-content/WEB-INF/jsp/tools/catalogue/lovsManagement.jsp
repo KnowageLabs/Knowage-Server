@@ -145,15 +145,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					<div layout="row" layout-wrap>
 						<div flex=100>
 							<md-input-container class="md-block">
-							<label>{{translate.load("sbi.ds.description")}}</label>
-							<input ng-model="selectedLov.description"
-					        maxlength="160" ng-change="setDirty()">
-					        <div  ng-messages="attributeForm.name.$error" ng-show="selectedLov.description== null">
-				        <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
-				      </div>
-					        
-					        
-					         </md-input-container>
+								<label>{{translate.load("sbi.ds.description")}}</label>
+								<input ng-model="selectedLov.description"  
+						        maxlength="160" ng-change="setDirty()"> 
+				             </md-input-container>
 						</div>
 					</div>
 				
@@ -203,7 +198,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				       <label>{{translate.load("sbi.functionscatalog.language")}}</label>
 				       <md-select  aria-label="dropdown" placeholder ="{{translate.load('sbi.behavioural.lov.placeholder.script')}}"
 				       	name ="scriptLanguageDropdown" 
-				        ng-required = "true"
+				        ng-required = "selectedLov.itypeCd == lovItemEnum.SCRIPT"
 				        ng-model="selectedScriptType.language"
 				        ng-change="changeType(selectedScriptType.language,'script');modeChanged(selectedScriptType.language);"
 				        > <md-option 
@@ -230,7 +225,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				       <label>{{translate.load("sbi.datasource.label")}}</label>
 				       <md-select  aria-label="dropdown" placeholder ="{{translate.load('sbi.behavioural.lov.placeholder.datasource')}}"
 				       	name ="queryDsDropdown" 
-				        ng-required = "true"
+				        ng-required = "electedLov.itypeCd == lovItemEnum.QUERY"
 				        ng-model="selectedQuery.datasource"
 				        ng-change="changeDatasourceCombo(selectedQuery.datasource);modeChanged(selectedQuery.datasource);"
 				        > <md-option 
@@ -302,7 +297,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						<div flex=100>
 							<md-input-container class="md-block">
 							<label>{{translate.load("sbi.ds.jclassName")}}</label>
-							<input name="javaClassName" ng-model="selectedJavaClass.name" ng-required="true"
+							<input name="javaClassName" ng-model="selectedJavaClass.name" ng-required="selectedLov.itypeCd == lovItemEnum.JAVA_CLASS"
 							ng-maxlength="160" ng-change="setDirty()">
 							
 							<div  ng-messages="attributeForm.lbl.$error" ng-show="selectedJavaClass.name == null">
@@ -323,7 +318,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				       <label>{{translate.load("sbi.datasource.label")}}</label>
 				       <md-select  aria-label="dropdown" placeholder ="{{translate.load('sbi.behavioural.lov.placeholder.dataset')}}"
 				       	name ="datasetDropdown" 
-				        ng-required = "true"
+				        ng-required = "selectedLov.itypeCd == lovItemEnum.DATASET"
 				        ng-model="selectedDataset.id"
 				        ng-change="changeType(selectedDataset.name,'dataset')"
 				        > <md-option 

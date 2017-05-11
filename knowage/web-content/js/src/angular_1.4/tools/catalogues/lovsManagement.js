@@ -55,6 +55,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	$scope.showMe = false;
 	$scope.dirtyForm = false; // flag to check for modification
 	$scope.enableTest = false;
+	$scope.previewClicked = false;
 	$scope.translate = sbiModule_translate;
 	$scope.user = sbiModule_user;
 	$scope.listOfLovs = [];
@@ -492,6 +493,22 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 		$mdDialog.cancel();
 		console.log(sbiModule_device.browser.name);
 	}
+	
+	$scope.$watch('attributeForm.$invalid',function(newValue,oldValue){
+		
+		
+		switch(newValue){
+	
+		case false:
+			if($scope.previewClicked)
+			$scope.enableTest = true;
+			break
+		default:
+			$scope.enableTest = false;
+			break
+		}
+	})
+	
 	/**
 	 * When clicking on Save button in the header of the right panel, 
 	 * this function will be called and the functionality for saving
@@ -1279,7 +1296,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 		
 		$scope.previewLov = function(dependencies) {
 			
-			
+			$scope.perviewClicked = true;
 			var toSend ={};
 			var selectedLovForPreview = angular.copy($scope.selectedLov);
 			var x2js = new X2JS(); 
@@ -1322,7 +1339,11 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 								});
 								
 								
-								$scope.enableTest = true;
+								if(!$scope.attributeForm.$invalid){
+									$scope.enableTest = true;
+								} else {
+									$scope.enableTest = false;
+								}
 								
 							}	
 							
