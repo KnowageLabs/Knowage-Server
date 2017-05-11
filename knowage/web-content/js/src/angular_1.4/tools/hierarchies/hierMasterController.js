@@ -103,18 +103,21 @@ function masterControllerFunction($timeout,sbiModule_config,sbiModule_logger,sbi
 					//if it is master get the relations between master and technical, used for propagation
 					var parameters="dimension="+$scope.dim.DIMENSION_NM+"&hierSourceCode="+$scope.hierMaster.HIER_CD+"&hierSourceName="+$scope.hierMaster.HIER_NM+"&nodeSourceCode="+dest.$modelValue[dest.$modelValue.aliasId];
 					var getListHierarchiesPromise = $scope.restService.get("hierarchies","getRelationsMasterTechnical",parameters);
+					$scope.toggleLoading('tree',true);
 					getListHierarchiesPromise   
 						.success(function(data){
 							if (data.errors === undefined){
-								if (data.root.length == 0 ){
+								if (data.root.length == 0 ){								
 									//if no relations are found copy the node
 									$scope.showAlert($scope.translate.load("sbi.generic.info"),$scope.translate.load("sbi.hierarchies.info.drag.listhierarchies"));
 									$scope.copyNodeTableToTree(e,[]);
+									$scope.toggleLoading('tree',false);
 								}else{
 									//else select the hierarchy for propagation and copy the node
 									$scope.showListHierarchies(data.root.length == 0 ? listHierarchies.root : data.root)
 										.then(function(list) {
 												$scope.copyNodeTableToTree(e,list);
+												$scope.toggleLoading('tree',false);
 											}, function() {
 										});
 								}
