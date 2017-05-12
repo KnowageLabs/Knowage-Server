@@ -445,9 +445,32 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 		if(event.point){
 			//for highcharts
 			if(chartType === 'SCATTER'){
-				var columnValue = event.point.category.name;
+				
+				var columnValue  = {};
+				if($scope.ngModel.content.chartTemplate.CHART.dateTime){
+					var date = new Date(event.point.x);
+					var char =  "/" ;
+					var theyear=date.getFullYear()
+					var themonth=date.getMonth()+1
+					var theday=date.getDate()
+					var date_format = theday+char+themonth+char+theyear;
+					columnValue = date_format;
+				}else {
+					columnValue = event.point.category.name;
+				}
 			}else{
-				var columnValue = event.point.name;
+				var columnValue  = {};
+				if($scope.ngModel.content.chartTemplate.CHART.dateTime){
+					var date = new Date(event.point.x);
+					var char = "/";
+					var theyear=date.getFullYear()
+					var themonth=date.getMonth()+1
+					var theday=date.getDate()
+					var date_format = theday+char+themonth+char+theyear;
+					columnValue = date_format;
+				}else {
+					columnValue = event.point.name;
+				}
 			}
 			
 			
@@ -625,8 +648,14 @@ function setAggregationsOnChartEngine(wconf){
 				
 				aggregations.push(obj);
 				if( chartTemplate.CHART.groupCategories && chartCategory.groupby!=""){
-					 
-					var subs = angular.copy(chartCategory.groupby.substring(0, chartCategory.groupby.indexOf(',')));
+					var subs = "";
+					if (chartCategory.groupby.indexOf(',') == -1) { 
+						subs = chartCategory.groupby 
+					}
+					
+					else {
+						subs = angular.copy(chartCategory.groupby.substring(0, chartCategory.groupby.indexOf(',')));
+					}
 					var groupby = {};
 					groupby['name'] = subs;
 					groupby['alias'] = subs;

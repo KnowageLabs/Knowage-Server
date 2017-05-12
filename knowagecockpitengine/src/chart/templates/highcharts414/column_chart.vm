@@ -1,6 +1,5 @@
 #set($dataFields = $data.metaData.fields) ## columns of data table
 #set($dataColumnsMapper = {}) 
-
 #foreach ($dataField in $dataFields) ## conversion column name to internal column name
 	#if($dataField.class.name == 'java.util.LinkedHashMap')
 		#set($workAroundNoPrint = $dataColumnsMapper.put($dataField.header , $dataField.name))
@@ -684,6 +683,13 @@
 	 	#set ($xAxis = $xAxisList[$xAxisKey])
 	
 	{
+	
+		#if($chart.dateTime=="true")
+			type: 'datetime',
+			 
+		#else 
+			type: 'category',
+		#end
 	 	title: {
 	 	    #if($xAxis.TITLE.text != '')
 			text: "$xAxis.TITLE.text",
@@ -765,13 +771,34 @@
         			rotation: $rotation,
     			#end
         	#end
+        	#if($chart.dateFormat=="year")
+				#set($dateFormat = "%Y")
+			#elseif($chart.dateFormat=="month")
+				#set($dateFormat = "%B %Y")
+			#elseif($chart.dateFormat=="week")
+				#set($dateFormat = "Week from %A, %b %e, %Y")
+			#elseif($chart.dateFormat=="day")
+				#set($dateFormat = "%A, %b %e, %Y")
+			#elseif($chart.dateFormat=="hour")
+				#set($dateFormat = "%A, %b %e, %H")
+			#elseif($chart.dateFormat=="minute")
+				#set($dateFormat = "%A, %b %e, %H:%M")
+			#elseif($chart.dateFormat=="second")
+				#set($dateFormat = "%A, %b %e, %H:%M:%S")
+			#else
+				#set($dateFormat = "%A, %b %e, %H:%M:%S.%L")
+			#end 
+			#if($chart.dateTime=="true")
+            formatter: function() {
+                return '' + Highcharts.dateFormat('$dateFormat', this.value);
+            },  
+            #end
+        	
 		},
 
 		#if($xAxis.position == 'top')
 		 	opposite: true,
 		#end
-		 
-		type: 'category',
 		
 		#*			
 			Place the points of chart onto the axes (lines), instead of inside the slices for RADAR.
@@ -1057,6 +1084,7 @@
 					#set ($serieCategoryName =  $row.get($categorieColumnsMapped))
 					#set( $serieCategoryName = $serieCategoryName.replace("\", "\\") )
 					#set( $serieCategoryName = $serieCategoryName.replace("""", "\""") )
+					#if($chart.dateTime!="true")
 					
 					{
 						##drilldown: $enableDrilldown,
@@ -1077,6 +1105,22 @@
 						name: "$serieCategoryName",
 						
 					},
+					#else
+						#if($chart.isCockpitEngine=="true")
+						#set($date = $serieCategoryName.split("/"))
+						#set($day = $date.get(0))
+						#set($month = $Integer.parseInt($date.get(1)))
+						#set($month = $month - 1 )
+						#set($year= $date.get(2))
+						#else
+						#set($date = $serieCategoryName.split("-"))
+						#set($day = $date.get(2))
+						#set($month = $Integer.parseInt($date.get(1)))
+						#set($month =$month - 1 )
+						#set($year= $date.get(0))
+						#end
+						[Date.UTC($year, $month, $day), $serieValue],
+					#end  
 				#end
 	    	],
 	    	#set($relatedSerieShowValue = $relatedSerie.showValue)
@@ -1428,7 +1472,13 @@
         		element on it. HTML tag <strong> is removed.
         		@modifiedBy: danristo (danilo.ristovski@mht.net)
         	*/ 	
-            result += '<span>' + this.key + '</span><br/>' + this.series.name + ': ' + prefix + thisValue + postfix + '</div>';
+        	
+            #if($chart.dateTime=="true")
+             result += '<span>' + Highcharts.dateFormat('$dateFormat', this.key) + '</span><br/>' + this.series.name + ': ' + prefix + thisValue + postfix + '</div>';
+            #else
+             result += '<span>' + this.key + '</span><br/>' + this.series.name + ': ' + prefix + thisValue + postfix + '</div>';
+           
+            #end
             return result;
         }
     },

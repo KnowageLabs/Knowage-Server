@@ -936,6 +936,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
     
     $scope.seriesItemTypes = StructureTabService.getSeriesItemTypes();
     $scope.seriesItemOrderingTypes = StructureTabService.getSeriesItemOrderingTypes();
+    $scope.listDateFormats = StructureTabService.getListOfDateFormats();
     $scope.scaleFactorsFixed = StructureTabService.getScaleFactorsFixed();
         
     $scope.textAlignment = ChartDesignerData.getAlignTypeOptions();

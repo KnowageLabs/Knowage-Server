@@ -69,23 +69,22 @@ public class ChartEngineUtil {
 
 	public static VelocityEngine ve;
 
-	
 	static {
-		
-		try{
+
+		try {
 			ve = new VelocityEngine();
 			ve.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
 			ve.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
 			ve.setProperty(RuntimeConstants.FILE_RESOURCE_LOADER_CACHE, "true");
-			
+
 			ve.setProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.SimpleLog4JLogSystem");
 			ve.setProperty("runtime.log.logsystem.log4j.category", "velocity");
 			ve.setProperty("runtime.log.logsystem.log4j.logger", "velocity");
 			ve.init();
-		}catch(Exception e){
+		} catch (Exception e) {
 			e.toString();
 		}
-		
+
 	}
 
 	public static String getLibraryInitializerPath(String jsonTemplateFromXML, String documentLabel, IEngUserProfile profile) {
@@ -129,9 +128,12 @@ public class ChartEngineUtil {
 	}
 
 	/**
-	 * We are sending additional information about the web application from which we call the VM. This boolean will tell us if we are coming from the Highcharts
-	 * Export web application. The value of "exportWebApp" input parameter contains this boolean. This information is useful when we have drilldown, i.e. more
-	 * than one category for the Highcharts chart (BAR, LINE).
+	 * We are sending additional information about the web application from
+	 * which we call the VM. This boolean will tell us if we are coming from the
+	 * Highcharts Export web application. The value of "exportWebApp" input
+	 * parameter contains this boolean. This information is useful when we have
+	 * drilldown, i.e. more than one category for the Highcharts chart (BAR,
+	 * LINE).
 	 *
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
@@ -143,6 +145,7 @@ public class ChartEngineUtil {
 		try {
 			velocityContext.put("datasettransformer", new DataSetTransformer());
 			velocityContext.put("ChartEngineUtil", ChartEngineUtil.class);
+			velocityContext.put(Integer.class.getSimpleName(), Integer.class);
 
 			if (jsonToConvert != null) {
 				mapTemplate = convertJsonToMap(jsonToConvert, true);
@@ -152,7 +155,6 @@ public class ChartEngineUtil {
 				mapData = convertJsonToMap(jsonData, false);
 				velocityContext.put("data", mapData);
 			}
-
 			ICrossNavigationDAO crossDao = DAOFactory.getCrossNavigationDAO();
 			crossDao.setUserProfile(profile);
 			if (crossDao.documentIsCrossable(documentLabel)) {
@@ -162,9 +164,12 @@ public class ChartEngineUtil {
 			}
 
 			/**
-			 * We are sending additional information about the web application from which we call the VM. This boolean will tell us if we are coming from the
-			 * Highcharts Export web application. The value of "exportWebApp" input parameter contains this boolean. This information is useful when we have
-			 * drilldown, i.e. more than one category for the Highcharts chart (BAR, LINE).
+			 * We are sending additional information about the web application
+			 * from which we call the VM. This boolean will tell us if we are
+			 * coming from the Highcharts Export web application. The value of
+			 * "exportWebApp" input parameter contains this boolean. This
+			 * information is useful when we have drilldown, i.e. more than one
+			 * category for the Highcharts chart (BAR, LINE).
 			 *
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
@@ -232,7 +237,8 @@ public class ChartEngineUtil {
 					result.put(key, escapedString);
 				}
 
-			} else { // Nel caso è un semplice nodo viene chiamata la funzione ricorsivamente
+			} else { // Nel caso è un semplice nodo viene chiamata la funzione
+						// ricorsivamente
 				@SuppressWarnings("unchecked")
 				Map<String, Object> value = escapeMapStrings((Map<String, Object>) mapElement2.get(key));
 				result.put(key, value);
@@ -376,7 +382,8 @@ public class ChartEngineUtil {
 	}
 
 	/**
-	 * This method converts the CSS format "#xxxxxx" (where "x" is a hexadecimal digit [0-F]) color returning the equivalent format "rgba(r, g, b, o)".
+	 * This method converts the CSS format "#xxxxxx" (where "x" is a hexadecimal
+	 * digit [0-F]) color returning the equivalent format "rgba(r, g, b, o)".
 	 *
 	 * @param colorStr
 	 * @param opacity

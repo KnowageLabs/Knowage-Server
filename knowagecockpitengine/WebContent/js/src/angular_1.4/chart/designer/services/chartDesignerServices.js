@@ -479,7 +479,9 @@ angular.module('ChartDesignerService', [])
 			              "depth":  0,
 			              "viewDistance":  0,
 			              "show3D" : false,
-			              "groupCategories" : false
+			              "groupCategories" : false,
+			              "dateTime":false,
+			              "dateFormat":"day"
 					   }
 					}
 		return barLine.CHART;
@@ -1381,6 +1383,8 @@ angular.module('ChartDesignerService', [])
 				"height": 100,
 				"heightDimType": "percentage",
 				"isCockpitEngine": "",
+				"dateTime":false,
+				"dateFormat":"day",
 				"orientation": "",
 				"seriesStacking": false,
 				"style":{
@@ -2246,6 +2250,24 @@ angular.module('ChartDesignerService', [])
 		
 	}
 	
+	this.getListOfDateFormats = function() {
+		
+		var listDateFormats = 
+		[
+		 	{name: translate.load('sbi.chartengine.structure.categoryStyleConfig.year'), value:'year'},
+	        {name: translate.load('sbi.chartengine.structure.categoryStyleConfig.month'), value:'month'}, 
+	        {name: translate.load('sbi.chartengine.structure.categoryStyleConfig.week'), value:'week'}, 
+	        {name: translate.load('sbi.chartengine.structure.categoryStyleConfig.day'), value:'day'}, 
+	        {name: translate.load('sbi.chartengine.structure.categoryStyleConfig.hour'), value:'hour'}, 
+	        {name: translate.load('sbi.chartengine.structure.categoryStyleConfig.minute'), value:'minute'}, 
+	        {name: translate.load('sbi.chartengine.structure.categoryStyleConfig.second'), value:'second'}, 
+	        {name: translate.load('sbi.chartengine.structure.categoryStyleConfig.millisecond'), value:'millisecond'}
+		];
+		
+		return listDateFormats;
+		
+	}
+	
 	this.getScaleFactorsFixed = function() {
 		
 		var scaleFactorsFixed = 
@@ -2303,6 +2325,9 @@ angular.module('ChartDesignerService', [])
 			case "categoriesOrdering": templatesURLs = sbiModule_config.contextName + 
 			"/js/src/angular_1.4/chart/designer/directives/custom_directives/structure-tab/ordering_column.html"; break;
 			
+			case "categoriesDateTime": templatesURLs = sbiModule_config.contextName + 
+			"/js/src/angular_1.4/chart/designer/directives/custom_directives/structure-tab/categories_DateTime.html"; break;
+			
 			case "additionalParameters": templatesURLs = sbiModule_config.contextName + 
 			"/js/src/angular_1.4/chart/designer/directives/custom_directives/structure-tab/additional_parameters.html"; break;
 			
@@ -2340,6 +2365,7 @@ angular.module('ChartDesignerService', [])
 			case "categoriesAxisDetails": detailsNameToReturn = translate.load("sbi.chartengine.designer.structureTab.axis.configuration.toolbar.title"); break;
 			case "categoriesAxisTitleDetails": detailsNameToReturn = translate.load("sbi.chartengine.designer.structureTab.axis.title.toolbar.title"); break;
 			case "categoriesOrdering": detailsNameToReturn = translate.load("sbi.chartengine.structure.categoryStyleConfig.title"); break;
+			case "categoriesDateTime": detailsNameToReturn = translate.load("sbi.chartengine.structure.categoryStyleConfig.categoriesDateTime"); break;
 			default : detailsNameToReturn = translate.load("Gauge axis additional options"); break;
 		}
 		

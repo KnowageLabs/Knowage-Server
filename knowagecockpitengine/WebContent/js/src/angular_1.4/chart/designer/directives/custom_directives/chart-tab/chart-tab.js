@@ -108,7 +108,25 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 		default:
 			break;
 		}
+	});
+	
+	$scope.$watch('chartTemplate.dateTime',function(newValue,oldValue){
+		
+		$scope.minMaxCategories = {};
+		$scope.minMaxSeries = {};
+		switch(newValue){
+	
+		case true:
+			$scope.minMaxCategories.max = 1; 
+			break;
+		default:
+
+			$scope.minMaxCategories.min = 1;
+			$scope.minMaxSeries.min = 1;
+			break;
+		}
 	})
+	
 	var setConfigurationButtons = function(type) {
 		
 		switch (type) {

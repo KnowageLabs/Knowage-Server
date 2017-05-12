@@ -72,8 +72,13 @@ angular.module('JsonChartTemplateServiceModule')
 			if( jsonTemplate.CHART.groupCategories && jsonTemplate.CHART.VALUES.CATEGORY.groupby!=""){
 				var arrayOfCateg = [];
 				arrayOfCateg.push(jsonTemplate.CHART.VALUES.CATEGORY)
-				 
-				var subs = angular.copy(jsonTemplate.CHART.VALUES.CATEGORY.groupby.substring(0, jsonTemplate.CHART.VALUES.CATEGORY.groupby.indexOf(',')));
+				 if (jsonTemplate.CHART.VALUES.CATEGORY.groupby.indexOf(',') == -1) { 
+						subs = jsonTemplate.CHART.VALUES.CATEGORY.groupby ;
+					}
+					
+					else {
+						subs = angular.copy(jsonTemplate.CHART.VALUES.CATEGORY.groupby.substring(0, jsonTemplate.CHART.VALUES.CATEGORY.groupby.indexOf(',')));
+					}
 				var groupby = {};
 				groupby['column'] = subs;
 				groupby['groupby'] = "";
