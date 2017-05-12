@@ -212,7 +212,7 @@
 								|| activityEventCtrl.selectedDocument.saveasdocument
 								|| activityEventCtrl.selectedDocument.sendtojavaclass
 								|| activityEventCtrl.selectedDocument.sendmail">
-						{{translate.load("sbi.alert.listener.kpi.action.add.new")}}
+						{{translate.load("sbi.scheduler.schedulation.error.atleastoneaction")}}
 					</span>
 				        
 					<span ng-if="!(activityEventCtrl.selectedDocument!=undefined && activityEventCtrl.selectedDocument.length!=0)">
