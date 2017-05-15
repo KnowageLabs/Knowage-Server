@@ -97,7 +97,7 @@ public class SchedulerUtilitiesV2 {
 			}
 
 			if (validTime) {
-				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm");
+				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 				try {
 					Date dateStart = sdf.parse(jobt.getStartDate() + " " + jobt.getStartTime());
 					Date dateEnd = sdf.parse(jobt.getEndDate() + " " + jobt.getEndTime());
@@ -184,7 +184,7 @@ public class SchedulerUtilitiesV2 {
 			}
 
 			if (validTime) {
-				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm");
+				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 				try {
 					Date dateStart = sdf.parse(jobTrigger.getStartDate() + " " + jobTrigger.getStartTime());
 					Date dateEnd = sdf.parse(jobTrigger.getEndDate() + " " + jobTrigger.getEndTime());
