@@ -388,6 +388,7 @@ public class SpagoBIConstants {
 	public static final String MENU_MANAGEMENT = "MenuManagement";
 	public static final String HOTLINK_MANAGEMENT = "HotLinkManagement";
 	public static final String KPI_MANAGEMENT = "KpiManagement";
+	public static final String KPI_SCHEDULATION = "KpiSchedulation";
 	public static final String PROFILE_MANAGEMENT = "ProfileManagement";
 	public static final String FINAL_USERS_MANAGEMENT = "FinalUsersManagement";
 	public static final String SELF_SERVICE_DATASET_MANAGEMENT = "SelfServiceDatasetManagement";

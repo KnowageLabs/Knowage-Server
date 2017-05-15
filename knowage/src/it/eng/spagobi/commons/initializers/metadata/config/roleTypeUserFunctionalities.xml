@@ -170,6 +170,10 @@
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="KpiManagement" roleType="MODEL_ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="KpiSchedulation" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="KpiSchedulation" roleType="MODEL_ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="ObjMetadataManagement" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="ProfileManagement" roleType="ADMIN" />
