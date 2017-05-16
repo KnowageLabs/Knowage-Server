@@ -1453,7 +1453,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 			 if($scope.selectedLov.id != undefined){
 				 console.log("we have existing one")
 				 $scope.formatedVisibleValues = $scope.treeListTypeModel['VISIBLE-COLUMNS'].split(",");
-				 $scope.formatedInvisibleValues = $scope.treeListTypeModel['INVISIBLE-COLUMNS'].split(",");
+				 $scope.formatedInvisibleValues = [];
 				 if(!$scope.treeListTypeModel.LOVTYPE  || $scope.treeListTypeModel.LOVTYPE == 'simple'){
 					 $scope.formatedValues = $scope.treeListTypeModel['VALUE-COLUMN'].split(",");
 					 $scope.formatedDescriptionValues = $scope.treeListTypeModel['DESCRIPTION-COLUMN'].split(",");
@@ -1482,6 +1482,15 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 			 }
 		 }
 		 $scope.testLovModel = $scope.tableModelForTest;
+		 var newformatedVisibleValues = [];
+		 for (var i = 0; i < $scope.formatedVisibleValues.length; i++) {
+			for (var j = 0; j < $scope.testLovModel.length; j++) {
+				if ($scope.formatedVisibleValues[i]==$scope.testLovModel[j].name) {
+					newformatedVisibleValues.push($scope.testLovModel[j].name)
+				}
+			}
+		}
+		 $scope.formatedVisibleValues =  newformatedVisibleValues;
 	 		 
 	 }
 };
