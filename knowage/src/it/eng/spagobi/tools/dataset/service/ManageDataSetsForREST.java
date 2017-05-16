@@ -29,6 +29,7 @@ import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
@@ -83,6 +84,8 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.json.JSONUtils;
+import it.eng.spagobi.utilities.sql.SqlUtils;
+import net.sf.jsqlparser.JSQLParserException;
 
 import java.io.File;
 import java.io.IOException;
@@ -730,7 +733,20 @@ public class ManageDataSetsForREST {
 						if (dataSource.getHibDialectClass().toLowerCase().contains("mongo")) {
 							dataSet = new MongoDataSet();
 						} else {
-							dataSet = JDBCDatasetFactory.getJDBCDataSet(dataSource);
+							String checkSqlValidation =  SingletonConfig.getInstance().getConfigValue("DATA_SET_SQL_VALIDATION");
+							if (("true").equals(checkSqlValidation)){
+								boolean isSelect = SqlUtils.isSelectStatement(query);
+								if(isSelect){
+									dataSet = JDBCDatasetFactory.getJDBCDataSet(dataSource);
+								} else {
+									logger.error("SQL is NOT a SELECT statement.");
+									throw new SpagoBIServiceException("Manage Dataset", "Provided SQL is NOT a SELECT statement");
+								}
+								
+							} else {
+								
+							}
+							
 						}
 
 						((ConfigurableDataSet) dataSet).setDataSource(dataSource);

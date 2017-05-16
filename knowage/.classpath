@@ -23,5 +23,6 @@
 	<classpathentry kind="lib" path="web-content/WEB-INF/lib/hawk-core-1.0.0.jar"/>
 	<classpathentry kind="lib" path="web-content/WEB-INF/lib/wealdtech-core-2.0.0.jar"/>
 	<classpathentry kind="lib" path="web-content/WEB-INF/lib/wealdtech-configuration-2.0.0.jar"/>
+	<classpathentry kind="lib" path="web-content/WEB-INF/lib/jsqlparser-1.0.jar"/>
 	<classpathentry kind="output" path="web-content/WEB-INF/classes"/>
 </classpath>

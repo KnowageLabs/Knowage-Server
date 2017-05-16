@@ -153,5 +153,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/l4j-4.6.1.jar"/>
+	<classpathentry kind="lib" path="lib/jsqlparser-1.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

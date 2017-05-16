@@ -401,6 +401,9 @@
 	<CONFIG label="DATA_SET_NULL_VALUE" name="DATA_SET_NULL_VALUE"
 		description="Default value to replace null dataset values" isActive="true"
 		valueCheck="%" valueType="STRING" category="MAIL" />
+	<CONFIG label="DATA_SET_SQL_VALIDATION" name="DATA_SET_SQL_VALIDATION"
+		description="Enable the validation of SQL statement" isActive="true"
+		valueCheck="true" valueType="STRING" category="SECURITY" />
 	<CONFIG label="JNDI_THREAD_MANAGER" name="JNDI_THREAD_MANAGER"
 		description="Jndi to build work manager" isActive="true"
 		valueCheck="java:/comp/env/wm/SpagoWorkManager" valueType="STRING"
