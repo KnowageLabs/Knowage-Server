@@ -1027,13 +1027,11 @@
         		element on it. HTML tag <strong> is removed.
         		@modifiedBy: danristo (danilo.ristovski@mht.net)
         	*# 	
-           #if($chart.dateTime)
-             result += '<span>' + Highcharts.dateFormat('$dateFormat', this.key) + '</span><br/>' + this.series.name + ': ' + thisValue + '</div>';
-            #else
-             result += '<span>' + this.key + '</span><br/>' + this.series.name + ': ' thisValue + '</div>';
-           
-            #end
-            return result;
+			#if($chart.dateTime!="false")
+			result += '<span>' + Highcharts.dateFormat('$dateFormat', this.key) + '</span><br/>' + this.series.name + ': ' + thisValue + '</div>';
+			#else
+			result += '<span>' + this.key + '</span><br/>' + this.series.name + ': '+ thisValue + '</div>';
+			#end
             return result;
         }
     },
