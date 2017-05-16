@@ -1,0 +1,32 @@
+package it.eng.knowage.slimerjs.wrapper;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.UUID;
+
+class SlimerJSConstants {
+	static final String DEFAULT_RENDER_SCRIPT = "defaultrender.js";
+
+	static final String ZIP_EXTENSION = ".zip";
+
+	static final String SLIMER_BINARIES_RESOURCEPATH = "it/eng/knowage/slimerjs/wrapper/slimerjs-0.9.6-%s", SLIMER_BINARIES_PACKAGENAME = "slimerjs-0.9.6-%s",
+			SLIMER_BINARIES_BIN = "slimerjs%s", SLIMER_BINARIES_WINDOWS = "win32", SLIMER_BINARIES_MAC = "macosx", SLIMER_BINARIES_UNIX = "linux-x86_64";
+
+	private static final String JVM_UUID = UUID.randomUUID().toString();
+
+	static final Path TEMP_DIR = Paths.get(System.getProperty("java.io.tmpdir", "/tmp")).resolve("java-slimerjs");
+
+	static final Path TEMP_SCRIPT_DIR = TEMP_DIR.resolve("scripts-" + JVM_UUID), TEMP_SOURCE_DIR = TEMP_DIR.resolve("source-" + JVM_UUID),
+			TEMP_RENDER_DIR = TEMP_DIR.resolve("output-" + JVM_UUID);
+
+	static final String HEADER_PREFIX = "header-", FOOTER_PREFIX = "footer-", TARGET_PREFIX = "target-", SCRIPT_PREFIX = "script-", SCRIPT_EXTENSION = ".js",
+			SOURCE_PREFIX = "source-";
+
+	static final String HEADERFUNCTION_FILE = "headerFunctionFile", FOOTERFUNCTION_FILE = "footerFunctionFile";
+
+	static final String SOURCEPATH_TEMPLATENAME = "sourcePath", RENDERPATH_TEMPLATENAME = "renderPath-";
+
+	static final String JSWAIT_TEMPLATENAME = "jsWait", JSINTERVAL_TEMPLATENAME = "jsInterval";
+
+	static final String SHUTDOWN_HOOK_THREAD_NAME = "SlimerJSSetupShutDownHook";
+}
