@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,14 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.engine.chart.api;
+
+import it.eng.spagobi.engine.chart.ChartEngineConfig;
+import it.eng.spagobi.json.Xml;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -34,14 +37,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import it.eng.spagobi.engine.chart.ChartEngineConfig;
-import it.eng.spagobi.json.Xml;
-
 @Path("/chart/style")
 public class StyleResource {
 	static private Logger logger = Logger.getLogger(StyleResource.class);
 	private static final String PATH_TO_STYLE = File.separator + "style";
-	private static final String PATH_TO_SFNAS = "/chart/templates/styles/nostyle/sfnas.xml";
+	private static final String PATH_TO_SFNAS = "/chart/templates/styles/nostyle/default.xml";
 
 	@SuppressWarnings("unchecked")
 	@GET
@@ -53,11 +53,11 @@ public class StyleResource {
 		JSONArray allStyles = new JSONArray();
 
 		File folder = new File(resourcePath + PATH_TO_STYLE);
-		
+
 		if (!folder.exists()) {
 			return allStyles.toString();
 		}
-		
+
 		File[] listOfFiles = folder.listFiles();
 
 		for (int i = 0; i < listOfFiles.length; i++) {
@@ -95,16 +95,16 @@ public class StyleResource {
 
 			String template = fileContent.toString();
 			JSONObject obj = new JSONObject(Xml.xml2json(template));
-			 Iterator keys = obj.keys();
-		        
-		       String key= (String) keys.next();
-		       Object keyValue = obj.get(key);
-		       JSONObject style = (JSONObject) keyValue;
-		        if(key.equalsIgnoreCase("chart")){
-		        	obj.remove(key);
-		        	obj.put("CHARTSTYLE", style);
-		        }
-		           
+			Iterator keys = obj.keys();
+
+			String key = (String) keys.next();
+			Object keyValue = obj.get(key);
+			JSONObject style = (JSONObject) keyValue;
+			if (key.equalsIgnoreCase("chart")) {
+				obj.remove(key);
+				obj.put("CHARTSTYLE", style);
+			}
+
 			obj = parseTemplate(obj);
 
 			// if empty json object is returned it would not be added to styles
@@ -118,96 +118,92 @@ public class StyleResource {
 		}
 		return null;
 	}
-	
+
 	private static JSONObject parseTemplate(JSONObject jsonObj) throws JSONException {
 
-		 Iterator keys = jsonObj.keys();
-        while (keys.hasNext()) {
-            String key= (String) keys.next();
-            Object keyValue = jsonObj.get(key);
-            if(key.equalsIgnoreCase("style")){
-           	 
-           	 String value = keyValue.toString(); 
-             	String[] result = value.split(";");
-             	JSONObject obj = new JSONObject();
-             	for (int i = 0; i < result.length; i++) {
- 					String[] temp = result[i].split(":");
- 					if(temp.length>1){
- 						
- 						if(isNumeric(temp[1])){
-  							if(temp[1].indexOf(".")!=-1){
-  								double num = Double.parseDouble(temp[1]);
-  								obj.put(temp[0], num);
-  							}else{
-  								int num = Integer.parseInt(temp[1]);
-  								obj.put(temp[0], num);
-  							}
-  														
-  						}else if(temp[1].equals("true") || temp[1].equals("false")){
- 							boolean bool = Boolean.parseBoolean(temp[1]);
- 							obj.put(temp[0], bool);
- 						}else{
- 							obj.put(temp[0],temp[1]);
- 						}	
- 						
- 					}else{
- 						obj.put(temp[0], "");
- 					}
- 			
- 				}
-             	jsonObj.put(key, obj);
-        
-            }
-            
-            if(isNumeric(keyValue.toString())){
-           	 
-           	 if(keyValue.toString().indexOf(".")!=-1){
-           		 jsonObj.put(key, Double.parseDouble(keyValue.toString()));
-					}else{
-						jsonObj.put(key, Integer.parseInt(keyValue.toString()));
+		Iterator keys = jsonObj.keys();
+		while (keys.hasNext()) {
+			String key = (String) keys.next();
+			Object keyValue = jsonObj.get(key);
+			if (key.equalsIgnoreCase("style")) {
+
+				String value = keyValue.toString();
+				String[] result = value.split(";");
+				JSONObject obj = new JSONObject();
+				for (int i = 0; i < result.length; i++) {
+					String[] temp = result[i].split(":");
+					if (temp.length > 1) {
+
+						if (isNumeric(temp[1])) {
+							if (temp[1].indexOf(".") != -1) {
+								double num = Double.parseDouble(temp[1]);
+								obj.put(temp[0], num);
+							} else {
+								int num = Integer.parseInt(temp[1]);
+								obj.put(temp[0], num);
+							}
+
+						} else if (temp[1].equals("true") || temp[1].equals("false")) {
+							boolean bool = Boolean.parseBoolean(temp[1]);
+							obj.put(temp[0], bool);
+						} else {
+							obj.put(temp[0], temp[1]);
+						}
+
+					} else {
+						obj.put(temp[0], "");
 					}
-           	 
-            }
-            
-            if(keyValue.toString().equals("true") || keyValue.toString().equals("false")){
-           	 jsonObj.put(key, Boolean.parseBoolean(keyValue.toString()));
-            }
-            
-            if(keyValue instanceof JSONArray){
-           	 
-           	 JSONArray array = (JSONArray)keyValue;
-           	 for (int i = 0; i < array.length(); i++) {
-           		 JSONObject obj = array.getJSONObject(i);
-           		 parseTemplate(obj);
+
 				}
-           	 
-            }
-            
-            if(keyValue instanceof JSONObject){
-           	 
-           	 parseTemplate((JSONObject)keyValue);
-            }
-    
-        }
-        return jsonObj;
-	}
-	
-	private static boolean isNumeric(String str)  
-	{  
-	  try  
-	  { 
-		if(str.indexOf(".")!=-1){
-			double num = Double.parseDouble(str);
-		}else{
-			int num = Integer.parseInt(str);
+				jsonObj.put(key, obj);
+
+			}
+
+			if (isNumeric(keyValue.toString())) {
+
+				if (keyValue.toString().indexOf(".") != -1) {
+					jsonObj.put(key, Double.parseDouble(keyValue.toString()));
+				} else {
+					jsonObj.put(key, Integer.parseInt(keyValue.toString()));
+				}
+
+			}
+
+			if (keyValue.toString().equals("true") || keyValue.toString().equals("false")) {
+				jsonObj.put(key, Boolean.parseBoolean(keyValue.toString()));
+			}
+
+			if (keyValue instanceof JSONArray) {
+
+				JSONArray array = (JSONArray) keyValue;
+				for (int i = 0; i < array.length(); i++) {
+					JSONObject obj = array.getJSONObject(i);
+					parseTemplate(obj);
+				}
+
+			}
+
+			if (keyValue instanceof JSONObject) {
+
+				parseTemplate((JSONObject) keyValue);
+			}
+
 		}
-	      
-	  }  
-	  catch(NumberFormatException nfe)  
-	  {  
-	    return false;  
-	  }  
-	  return true;  
+		return jsonObj;
+	}
+
+	private static boolean isNumeric(String str) {
+		try {
+			if (str.indexOf(".") != -1) {
+				double num = Double.parseDouble(str);
+			} else {
+				int num = Integer.parseInt(str);
+			}
+
+		} catch (NumberFormatException nfe) {
+			return false;
+		}
+		return true;
 	}
 
 }

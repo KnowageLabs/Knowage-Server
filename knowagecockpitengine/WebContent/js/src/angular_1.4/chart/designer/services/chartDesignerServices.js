@@ -422,7 +422,7 @@ angular.module('ChartDesignerService', [])
 		                	  "fontWeight":"",
 		                	  "fontSize":""
 		                  },
-					      "styleName":"",
+		                  "styleName": "default",
 					      "SUBTITLE":{  
 					    	  "style":{
 			                	  "align":"",
@@ -612,7 +612,7 @@ angular.module('ChartDesignerService', [])
 						"fontWeight":"",
 						"backgroundColor":"#FFFFFF"
 					},
-					"styleName": "",
+					"styleName": "default",
 					"width": 100,
 					"widthDimType": "percentage",
 					"SUBTITLE": {
@@ -804,7 +804,7 @@ angular.module('ChartDesignerService', [])
               	  "fontWeight":"",
               	  "fontSize":""
                 },
-				"styleName": "",
+				"styleName": "default",
 				"width": 100,
 				"widthDimType": "percentage",
 				"SUBTITLE": {
@@ -1008,7 +1008,7 @@ angular.module('ChartDesignerService', [])
               	  "fontWeight":"",
               	  "fontSize":""
                 },
-				"styleName": "",
+				"styleName": "default",
 				"width": 100,
 				"widthDimType": "percentage",
 				"EMPTYMESSAGE":{  
@@ -1252,7 +1252,7 @@ angular.module('ChartDesignerService', [])
 				"widthDimType": "percentage",
 				"borderVisible": false,
 				"seriesStacking": false,
-				"styleName": ""
+				"styleName": "default"
 			};
 		return radarTemp;
 	}
@@ -1393,7 +1393,7 @@ angular.module('ChartDesignerService', [])
               	  "fontWeight":"",
               	  "fontSize":""
                 },
-				"styleName": "",
+				"styleName": "default",
 				"width": 100,
 				"widthDimType": "percentage",
 				"zoomType": "",
@@ -1567,7 +1567,7 @@ angular.module('ChartDesignerService', [])
               	  "fontWeight":"",
               	  "fontSize":""
                 },
-				"styleName": "",
+				"styleName": "default",
 				"width": 100,
 				"LEGEND": {
 					"layout": "",
@@ -1823,7 +1823,7 @@ angular.module('ChartDesignerService', [])
 				"heightDimType": "percentage",
 				"widthDimType": "percentage",
 				"seriesStacking": false,
-				"styleName": ""
+				"styleName": "default"
 			};
 
 		return treeMapTemp;
@@ -1966,7 +1966,7 @@ angular.module('ChartDesignerService', [])
               	  "fontWeight":"",
               	  "fontSize":""
                 },
-				"styleName": "",
+				"styleName": "default",
 				"width": 100,
 				"widthDimType": "percentage",
 				"wordLayout": "horizontal",
@@ -2037,7 +2037,7 @@ angular.module('ChartDesignerService', [])
 					"fontWeight": "",
 					"backgroundColor": "#FFFFFF"
 				},
-				"styleName": "",
+				"styleName": "default",
 				"type": "CHORD",
 				"width": 100,
 				"heightDimType": "percentage",

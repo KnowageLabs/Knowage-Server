@@ -293,7 +293,7 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 	var getDefaultStyleForEmpty = function() {
 		$scope.styleTemplate = "";
 		var type = $scope.chartTemplate.type.toLowerCase();
-		if($scope.chartTemplate.styleName==""){
+		if($scope.chartTemplate.styleName=="default"){
 			for (var i = 0; i < $scope.chartStyles.length; i++) {
 				if($scope.chartStyles[i].CHARTSTYLE.isDefault){
 					$scope.styleTemplate = $scope.chartStyles[i].CHARTSTYLE.TEMPLATE;
@@ -319,7 +319,7 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 	}
 	
 	$scope.filterStyles = function(item) {
-		return item.CHARTSTYLE.name != 'sfnas'
+		return item.CHARTSTYLE.name != 'default' || $scope.chartStyles.length==1
 	}
 	
 	$scope.changeStyle = function(style) {
