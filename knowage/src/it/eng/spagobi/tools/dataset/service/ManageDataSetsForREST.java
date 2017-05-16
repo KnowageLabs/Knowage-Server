@@ -744,7 +744,7 @@ public class ManageDataSetsForREST {
 								}
 								
 							} else {
-								
+								dataSet = JDBCDatasetFactory.getJDBCDataSet(dataSource);
 							}
 							
 						}
