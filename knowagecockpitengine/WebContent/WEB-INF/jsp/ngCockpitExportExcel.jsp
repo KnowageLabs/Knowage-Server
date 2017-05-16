@@ -19,18 +19,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%-- ------------------------------------------------------------------------%>
 <%-- JAVA IMPORTS                                                          --%>
 <%-- ------------------------------------------------------------------------%>
+<%@ page import="java.util.Map"%>
 <%@ page import="it.eng.knowage.engine.cockpit.api.export.excel.ExcelExporter"%>
 
 <%@ page trimDirectiveWhitespaces="true" %>
 <%@ page contentType="applicaton/octet-stream" %>
 <%
+String outputType = request.getParameter("outputType");
 String userId = request.getParameter("user_id");
+Map<String,String[]> parameterMap = request.getParameterMap();
+
 Integer documentId = Integer.valueOf(request.getParameter("document"));
 String documentLabel = request.getParameter("DOCUMENT_LABEL");
-String outputType = request.getParameter("outputType");
 String template = (String) request.getAttribute("template");
 
-ExcelExporter excelExporter = new ExcelExporter(outputType, userId);
+ExcelExporter excelExporter = new ExcelExporter(outputType, userId, parameterMap);
 String mimeType = excelExporter.getMimeType();
 if(mimeType != null){
 	byte[] data = excelExporter.getBinaryData(documentId, documentLabel, template);

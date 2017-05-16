@@ -25,6 +25,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -53,10 +54,12 @@ public class ExcelExporter {
 
 	private String outputType;
 	private String userUniqueIdentifier;
+	private Map<String, String[]> parameterMap;
 
-	public ExcelExporter(String outputType, String userUniqueIdentifier) {
+	public ExcelExporter(String outputType, String userUniqueIdentifier, Map<String, String[]> parameterMap) {
 		this.outputType = outputType;
 		this.userUniqueIdentifier = userUniqueIdentifier;
+		this.parameterMap = parameterMap;
 	}
 
 	public String getMimeType() {
@@ -294,7 +297,20 @@ public class ExcelExporter {
 
 	private JSONObject getParametersFromTableWidget(JSONObject widget, JSONObject configuration) throws JSONException {
 		JSONObject dataset = getDatasetFromWidget(widget, configuration);
-		return dataset.getJSONObject("parameters");
+		JSONObject parameters = dataset.getJSONObject("parameters");
+
+		Iterator<String> keys = parameters.keys();
+		while (keys.hasNext()) {
+			String parameter = keys.next();
+			String value = parameters.getString(parameter);
+			String regex = "\\$P\\{" + parameter + "\\}";
+			if (value.matches(regex)) {
+				value = value.replaceAll(regex, parameterMap.get(parameter)[0]);
+				parameters.put(parameter, value);
+			}
+		}
+
+		return parameters;
 	}
 
 	private JSONObject getSummaryRowFromTableWidget(JSONObject widget) throws JSONException {
