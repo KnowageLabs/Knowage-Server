@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.knowage.engine.cockpit.api.export;
+package it.eng.knowage.engine.cockpit.api.export.excel;
 
 import it.eng.spagobi.utilities.engines.rest.SimpleRestClient;
 

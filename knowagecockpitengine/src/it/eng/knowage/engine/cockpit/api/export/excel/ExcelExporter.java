@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.knowage.engine.cockpit.api.export;
+package it.eng.knowage.engine.cockpit.api.export.excel;
 
 import it.eng.spago.error.EMFAbstractError;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
@@ -166,7 +166,10 @@ public class ExcelExporter {
 						ExcelExporterClient client = new ExcelExporterClient();
 						String csv;
 						try {
+							logger.debug("map = " + map.toString());
+							logger.debug("selections = " + selections.toString());
 							JSONObject datastore = client.getDataStore(map, datasetName, userUniqueIdentifier, selections.toString());
+							logger.debug("datastore = " + datastore.toString());
 							csv = getCsvSheet(datastore, widget);
 						} catch (Exception e) {
 							logger.error("Unable to get data", e);

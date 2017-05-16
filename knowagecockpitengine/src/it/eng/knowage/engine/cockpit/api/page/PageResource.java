@@ -20,7 +20,6 @@ package it.eng.knowage.engine.cockpit.api.page;
 import it.eng.knowage.engine.cockpit.CockpitEngine;
 import it.eng.knowage.engine.cockpit.CockpitEngineInstance;
 import it.eng.knowage.engine.cockpit.api.AbstractCockpitEngineResource;
-import it.eng.knowage.engine.cockpit.api.export.ExcelExporter;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -33,15 +32,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.log4j.Logger;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
@@ -125,6 +121,10 @@ public class PageResource extends AbstractCockpitEngineResource {
 					request.setAttribute("template", getIOManager().getTemplateAsString());
 					dispatchUrl = "/WEB-INF/jsp/ngCockpitExportExcel.jsp";
 					response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+				} else if ("pdf".equals(outputType)) {
+					request.setAttribute("requestURL", request.getRequestURL().toString());
+					dispatchUrl = "/WEB-INF/jsp/ngCockpitExportPdf.jsp";
+					response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 				} else {
 					engineInstance = CockpitEngine.createInstance(getIOManager().getTemplateAsString(), getIOManager().getEnv());
 					getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
@@ -153,26 +153,6 @@ public class PageResource extends AbstractCockpitEngineResource {
 		} finally {
 			logger.debug("OUT");
 		}
-	}
-
-	@POST
-	@Path("/export/excel")
-	@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	public Response exportDocumentToExcelByDocId(@QueryParam("documentId") Integer documentId, @QueryParam("documentLabel") String documentLabel,
-			@QueryParam("outputType") String outputType) {
-		logger.debug("IN");
-
-		String userId = (String) getUserProfile().getUserUniqueIdentifier();
-		ExcelExporter excelExporter = new ExcelExporter(outputType, userId);
-		String mimeType = excelExporter.getMimeType();
-		byte[] binaryData = excelExporter.getBinaryData(documentId, documentLabel, null);
-
-		ResponseBuilder response = Response.ok(binaryData);
-		response.header("Content-Type", mimeType);
-		response.header("Content-Disposition", "attachment; fileName=" + documentLabel + "; fileType=text; extensionFile=" + outputType);
-
-		logger.debug("OUT");
-		return response.build();
 	}
 
 	@GET

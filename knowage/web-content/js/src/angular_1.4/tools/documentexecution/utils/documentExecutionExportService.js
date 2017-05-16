@@ -244,27 +244,29 @@
 		
 		dee.buildBackendRequestConf = function(exportType, mimeType){
 			var deferred = $q.defer();
-			var data = {};
-			data.documentId = execProperties.executionInstance.OBJECT_ID;
-			data.documentLabel = execProperties.executionInstance.OBJECT_LABEL;
-			data.outputType = mimeType;
-						
-			var config={"responseType": "arraybuffer"};
 			
 			var requestUrl = sbiModule_config.host;
-			requestUrl += '/knowagecockpitengine/api/1.0/pages/export/excel?documentId='+data.documentId+'&documentLabel='+data.documentLabel+'&outputType='+exportType;
+			requestUrl += execProperties.documentUrl;
+			requestUrl += '&outputType=' + encodeURIComponent(exportType);
+			
+			if(exportType.toLowerCase() == 'pdf'){
+				var width = 1600;
+				var height = 1200;
+				var waitTime = 60;
+				var zoom = 1.00;
+				var orientation = 'landscape'; // portrait vs landscape
+
+				requestUrl += '&pdfWidth=' + encodeURIComponent(width);
+				requestUrl += '&pdfHeight=' + encodeURIComponent(height);
+				requestUrl += '&pdfWaitTime=' + encodeURIComponent(waitTime);
+				requestUrl += '&pdfZoom=' + encodeURIComponent(zoom);
+				requestUrl += '&pdfOrientation=' + encodeURIComponent(orientation);
+			}
 			
 			var requestConf = {
-					method: 'POST',
+					method: 'GET',
 					url: requestUrl,
 					responseType: 'arraybuffer',
-					headers: {},
-					transformRequest: function(obj) {
-						var str = [];
-						for(var p in obj)
-							str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-						return str.join("&");
-					}
 			};
 			
 			if(exportType.toLowerCase() != 'xlsx') {
