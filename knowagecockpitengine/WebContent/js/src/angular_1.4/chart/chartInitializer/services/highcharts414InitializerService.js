@@ -410,12 +410,26 @@ angular.module('chartInitializer')
 					newDataSerie.add(pointOptions);
 					    
 				} else {
-					pointOptions.y = parseFloat(data[j][seriesNamesColumnBind[this.chart.series[i].name]]);
-					pointOptions.name=data[j][column];
-					if(this.chart.options.chart.type!= "pie"){
-						pointOptions.drilldown = drill;
-					}			    
+					if(this.chart.options.xAxis[0].type!="datetime"){
+						pointOptions.y = parseFloat(data[j][seriesNamesColumnBind[this.chart.series[i].name]]);
+						pointOptions.name=data[j][column];
+						if(this.chart.options.chart.type!= "pie"){
+							pointOptions.drilldown = drill;
+						}			
+					}
+					else{
+						var date = data[j][column].split("/");
+						var day = date[0];
+						var month = date[1]-1;
+						var year = date[2];
+						pointOptions = [];
+						pointOptions.push(Date.UTC(year, month, day));
+
+						pointOptions.push(parseFloat(data[j][seriesNamesColumnBind[this.chart.series[i].name]]));
+					}
 					newDataSerie.push(pointOptions);
+					if(Object.prototype.toString.call(pointOptions) === '[object Array]')
+					pointOptions = [];
 				}
 			}
 			newData.push(newDataSerie);
