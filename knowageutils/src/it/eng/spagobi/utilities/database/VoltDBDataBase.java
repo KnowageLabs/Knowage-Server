@@ -50,7 +50,7 @@ public class VoltDBDataBase extends AbstractDataBase {
 		} else if (javaTypeName.contains("java.lang.Long")) {
 			toReturn = " BIGINT ";
 		} else if (javaTypeName.contains("java.lang.BigDecimal") || javaTypeName.contains("java.math.BigDecimal")) {
-			toReturn = " DECIMAL ";
+			toReturn = " DOUBLE ";
 		} else if (javaTypeName.contains("java.lang.Double")) {
 			toReturn = " DOUBLE ";
 		} else if (javaTypeName.contains("java.lang.Float")) {
