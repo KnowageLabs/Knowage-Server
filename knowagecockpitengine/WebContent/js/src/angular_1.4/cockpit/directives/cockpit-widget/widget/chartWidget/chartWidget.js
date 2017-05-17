@@ -615,8 +615,8 @@ function setAggregationsOnChartEngine(wconf){
 				var obj = {};
 				obj['name'] = chartSeries[i].column;
 				obj['aggregationSelected'] = chartSeries[i].groupingFunction ? chartSeries[i].groupingFunction : 'SUM';
-				obj['alias'] = obj.name + '_' + obj.aggregationSelected;
-				obj['aliasToShow'] = obj.name;
+				obj['alias'] = chartSeries[i].name + '_' + obj.aggregationSelected;
+				obj['aliasToShow'] = obj['alias'];
 				obj['fieldType'] = "MEASURE";
 				aggregations.push(obj);					
 			}
