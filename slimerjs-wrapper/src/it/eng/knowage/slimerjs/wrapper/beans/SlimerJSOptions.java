@@ -11,9 +11,9 @@ import java.util.stream.Collectors;
 import org.apache.commons.exec.CommandLine;
 
 /**
- * PhantomJS options passed to the binary before any scripts or arguments
+ * SlimerJS options passed to the binary before any scripts or arguments
  * <p>
- * See <a href="http://phantomjs.org/api/command-line.html">here</a>
+ * See <a href="https://docs.slimerjs.org/0.9/configuration.html">here</a>
  */
 public class SlimerJSOptions {
 	public static SlimerJSOptions DEFAULT = new SlimerJSOptions(false, false, null, null, null, null, null, null, null, null, null, null, null, null, null,

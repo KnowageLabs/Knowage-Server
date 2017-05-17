@@ -17,6 +17,8 @@ var width = system.args[ 1 ],
   jsInterval = +system.args[ 17 ],
   renderId = system.args[ 18 ],
   sheets = +system.args[ 19 ];
+  uniqueToken = system.args[ 20 ];
+  hmacSign = system.args[ 21 ];
 
 
 // this function writes the arguments to stdout
@@ -87,7 +89,12 @@ var renderIfDone = function renderIfDone(page) {
 
 applySettingOnPage(page, renderId) {	
 	page.renderId = renderId;
-	page.viewportSize = { width: viewportWidth, height: viewportHeight };	
+	page.viewportSize = { width: viewportWidth, height: viewportHeight };
+	
+	page.customHeaders = {
+			"HMAC_Token": uniqueToken,
+			"HMAC_Signature": hmacSign
+	};
 	// when finishing loading the resources
 	// start the timer for js execution to complete
 	page.onLoadFinished = renderIfDone;
@@ -95,7 +102,11 @@ applySettingOnPage(page, renderId) {
 
 var urls = new Map();
 for(int i=0; i<sheets; i++) {
-	urlMap.set(renderId+"_"+i, sourceUrl+"&sheet="+i);
+	var currentUrl = sourceUrl;
+	if(i>0) {
+		currentUrl = currentUrl + "&sheet=" + i;
+	}
+	urlMap.set(renderId+"_"+i, currentUrl);
 }
 
 var queue = [];

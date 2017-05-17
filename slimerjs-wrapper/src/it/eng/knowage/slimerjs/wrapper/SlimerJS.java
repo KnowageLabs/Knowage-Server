@@ -1,6 +1,7 @@
 package it.eng.knowage.slimerjs.wrapper;
 
 import static it.eng.knowage.slimerjs.wrapper.CommandLineArgument.wrapCommandLineArgumentName;
+import it.eng.knowage.slimerjs.wrapper.beans.CustomHeaders;
 import it.eng.knowage.slimerjs.wrapper.beans.OperatingSystem;
 import it.eng.knowage.slimerjs.wrapper.beans.RenderOptions;
 import it.eng.knowage.slimerjs.wrapper.beans.SlimerJSExecutionResponse;
@@ -40,7 +41,7 @@ public class SlimerJS {
 	 * @param url
 	 *            to render
 	 * @param sheets
-	 *            to loop over
+	 *            number of sheets to loop over
 	 * @param options
 	 *            for rendering
 	 * @return same as SlimerJS#render
@@ -51,7 +52,26 @@ public class SlimerJS {
 	 */
 	public static List<DeleteOnCloseFileInputStream> render(final URL url, final Integer sheets, final RenderOptions options) throws IOException,
 			RenderException {
-		return render(options.getOptions(), url, sheets, options.getDimensions(), options.getRenderFormat(), options.getJsWait(), options.getJsInterval());
+		return render(options.getOptions(), url, sheets, options.getDimensions(), options.getRenderFormat(), options.getCustomHeaders(), options.getJsWait(),
+				options.getJsInterval());
+	}
+
+	/**
+	 * Another way to call SlimerJS#render using the RenderOptions to specify all the common options
+	 *
+	 * @param url
+	 *            to render
+	 * @param options
+	 *            for rendering
+	 * @return same as SlimerJS#render
+	 * @throws IOException
+	 *             if anything goes wrong executing the program
+	 * @throws RenderException
+	 *             if the render script fails for any reason
+	 */
+	public static List<DeleteOnCloseFileInputStream> render(final URL url, final RenderOptions options) throws IOException, RenderException {
+		return render(options.getOptions(), url, 1, options.getDimensions(), options.getRenderFormat(), options.getCustomHeaders(), options.getJsWait(),
+				options.getJsInterval());
 	}
 
 	/**
@@ -67,6 +87,8 @@ public class SlimerJS {
 	 *            dimensions of the viewport
 	 * @param renderFormat
 	 *            the format to render
+	 * @param customHeaders
+	 *            the headers to be sent
 	 * @param jsWait
 	 *            the maximum amount of time to wait for JS to finish execution in milliseconds
 	 * @param jsInterval
@@ -78,9 +100,10 @@ public class SlimerJS {
 	 *             if the render script fails for any reason
 	 */
 	public static List<DeleteOnCloseFileInputStream> render(final SlimerJSOptions options, final URL url, final Integer sheets,
-			final ViewportDimensions dimensions, final RenderFormat renderFormat, final Long jsWait, final Long jsInterval) throws IOException, RenderException {
+			final ViewportDimensions dimensions, final RenderFormat renderFormat, final CustomHeaders customHeaders, final Long jsWait, final Long jsInterval)
+			throws IOException, RenderException {
 		if (url == null || sheets == null || renderFormat == null || dimensions == null || jsWait == null || jsInterval == null) {
-			throw new NullPointerException("All parameters are required");
+			throw new NullPointerException("All parameters but headers are required");
 		}
 
 		if (jsWait < 0 || jsInterval < 0 || (jsWait > 0 && jsInterval > jsWait) || (jsInterval == 0 && jsWait > 0)) {
@@ -146,6 +169,34 @@ public class SlimerJS {
 		}
 
 		throw new RenderException(error);
+	}
+
+	/**
+	 * Render the html in the input stream with the following properties using a script included with the wrapper
+	 *
+	 * @param options
+	 *            any slimerjs options to pass to the script
+	 * @param url
+	 *            to render
+	 * @param dimensions
+	 *            dimensions of the viewport
+	 * @param renderFormat
+	 *            the format to render
+	 * @param customHeaders
+	 *            the headers to be sent
+	 * @param jsWait
+	 *            the maximum amount of time to wait for JS to finish execution in milliseconds
+	 * @param jsInterval
+	 *            the interval
+	 * @return the streams of the rendered outputs
+	 * @throws IOException
+	 *             if any file operations fail
+	 * @throws RenderException
+	 *             if the render script fails for any reason
+	 */
+	public static List<DeleteOnCloseFileInputStream> render(final SlimerJSOptions options, final URL url, final ViewportDimensions dimensions,
+			final RenderFormat renderFormat, final CustomHeaders customHeaders, final Long jsWait, final Long jsInterval) throws IOException, RenderException {
+		return render(options, url, 1, dimensions, renderFormat, customHeaders, jsWait, jsInterval);
 	}
 
 	public static SlimerJSExecutionResponse exec(InputStream script, CommandLineArgument... arguments) throws IOException {

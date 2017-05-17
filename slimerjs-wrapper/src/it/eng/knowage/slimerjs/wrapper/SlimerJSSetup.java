@@ -33,7 +33,7 @@ class SlimerJSSetup {
 			initializeShutDownHook();
 			return unzipSlimerJSbin(SlimerJSConstants.TEMP_DIR, resourcePath);
 		} else {
-			throw new IllegalStateException("Instantiation mechanism was unable to determine platform type for PhantomJS extraction.");
+			throw new IllegalStateException("Instantiation mechanism was unable to determine platform type for SlimerJS extraction.");
 		}
 	}
 
@@ -135,7 +135,7 @@ class SlimerJSSetup {
 	 *
 	 * @param resourceName
 	 *            the name of the zip resource in the resources directory
-	 * @return the name of the appropriate zipped phantomjs
+	 * @return the name of the appropriate zipped slimerjs
 	 */
 	private static String getZipPath(final String resourceName) {
 		final OperatingSystem.OS os = OperatingSystem.get();
