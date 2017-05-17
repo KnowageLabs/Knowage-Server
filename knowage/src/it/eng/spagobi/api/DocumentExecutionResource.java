@@ -451,6 +451,10 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 		RequestContainer aRequestContainer = RequestContainerAccess.getRequestContainer(req);
 		JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
+		// decode requestVal parameters
+		JSONObject requestValParams = requestVal.getJSONObject("parameters");
+		if (requestValParams != null && requestValParams.length() > 0)
+			requestVal.put("parameters", decodeRequestParameters(requestValParams));
 		String label = requestVal.getString("label");
 		String role = requestVal.getString("role");
 		JSONObject jsonCrossParameters = requestVal.getJSONObject("parameters");
@@ -701,6 +705,41 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 		logger.debug("OUT");
 		return Response.ok(resultAsMap).build();
+	}
+
+	private JSONObject decodeRequestParameters(JSONObject requestValParams) throws JSONException, IOException {
+		JSONObject toReturn = new JSONObject();
+
+		Iterator keys = requestValParams.keys();
+		while (keys.hasNext()) {
+			String key = (String) keys.next();
+			Object valueObj = requestValParams.get(key);
+			if (valueObj instanceof String) {
+				String value = String.valueOf(valueObj);
+				// if (!value.equals("%7B%3B%7B") && !value.equalsIgnoreCase("%")) {
+				if (!value.equals("") && !value.equalsIgnoreCase("%")) {
+					toReturn.put(key, URLDecoder.decode(value, "UTF-8"));
+				} else {
+					toReturn.put(key, value); // uses the original value for list and %
+				}
+			}
+			if (valueObj instanceof JSONArray) {
+				JSONArray valuesLst = (JSONArray) valueObj;
+				JSONArray ValuesLstDecoded = new JSONArray();
+				for (int v = 0; v < valuesLst.length(); v++) {
+					String value = (String) valuesLst.get(v);
+					if (!value.equals("") && !value.equalsIgnoreCase("%")) {
+						ValuesLstDecoded.put(URLDecoder.decode(value, "UTF-8"));
+					} else {
+						ValuesLstDecoded.put(value);
+						URLDecoder.decode(value, "UTF-8"); // uses the original value for list and %
+					}
+				}
+				toReturn.put(key, ValuesLstDecoded);
+			}
+		}
+
+		return toReturn;
 	}
 
 	private void checkIfValuesAreAdmissible(Object values, ArrayList<HashMap<String, Object>> admissibleValues) {
