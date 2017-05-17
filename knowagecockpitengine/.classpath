@@ -20,5 +20,4 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/knowageutilsjson"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/qbecore"/>
 	<classpathentry kind="output" path="WebContent/WEB-INF/classes"/>
-	 <classpathentry kind="lib" path="WebContent/WEB-INF/lib/jsqlparser-1.0.jar"/>
 </classpath>

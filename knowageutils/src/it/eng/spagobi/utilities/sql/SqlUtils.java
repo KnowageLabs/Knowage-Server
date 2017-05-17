@@ -18,9 +18,6 @@
 package it.eng.spagobi.utilities.sql;
 
 import it.eng.spagobi.utilities.assertion.Assert;
-import net.sf.jsqlparser.JSQLParserException;
-import net.sf.jsqlparser.parser.CCJSqlParserUtil;
-import net.sf.jsqlparser.statement.select.Select;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,14 +49,9 @@ public class SqlUtils {
 	static protected Logger logger = Logger.getLogger(SqlUtils.class);
 
 	public static boolean isSelectStatement(String query) {
-		try {
-			Select select = (Select) CCJSqlParserUtil.parse(query);
-			logger.info("SQL is a SELECT statement.");
-			return true;
-		} catch (JSQLParserException e) {
-			logger.error("SQL is NOT a SELECT statement.");
+		if (query == null)
 			return false;
-		}
+		return query.toUpperCase().trim().startsWith("SELECT");
 	}
 
 	public static String getSelectClause(String query) {

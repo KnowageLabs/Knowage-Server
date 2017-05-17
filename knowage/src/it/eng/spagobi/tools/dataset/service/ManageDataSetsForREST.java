@@ -86,6 +86,8 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 import it.eng.spagobi.utilities.sql.SqlUtils;
 import net.sf.jsqlparser.JSQLParserException;
+import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+import net.sf.jsqlparser.statement.select.Select;
 
 import java.io.File;
 import java.io.IOException;
@@ -735,7 +737,15 @@ public class ManageDataSetsForREST {
 						} else {
 							String checkSqlValidation =  SingletonConfig.getInstance().getConfigValue("DATA_SET_SQL_VALIDATION");
 							if (("true").equals(checkSqlValidation)){
-								boolean isSelect = SqlUtils.isSelectStatement(query);
+								boolean isSelect = false;
+								try {
+									Select select = (Select) CCJSqlParserUtil.parse(query);
+									logger.info("SQL is a SELECT statement.");
+									isSelect =  true;
+								} catch (JSQLParserException e) {
+									logger.error("SQL is NOT a SELECT statement.");
+									isSelect =  false;
+								}
 								if(isSelect){
 									dataSet = JDBCDatasetFactory.getJDBCDataSet(dataSource);
 								} else {
