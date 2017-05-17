@@ -18,8 +18,10 @@
 package it.eng.knowage.engine.cockpit.api.export.excel;
 
 import it.eng.spago.error.EMFAbstractError;
+import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.ByteArrayOutputStream;
@@ -133,9 +135,9 @@ public class ExcelExporter {
 					String widgetType = widget.getString("type");
 					if ("table".equals(widgetType)) {
 						JSONObject datasetObj = widget.getJSONObject("dataset");
-						int dsId = datasetObj.getInt("dsId");
-						JSONObject dataset = getDataset(dsId, configuration);
-						String datasetName = dataset.getString("name");
+						int datasetId = datasetObj.getInt("dsId");
+						IDataSet iDataset = DAOFactory.getDataSetDAO().loadDataSetById(datasetId);
+						String datasetLabel = iDataset.getLabel();
 
 						Map<String, Object> map = new java.util.HashMap<String, Object>();
 
@@ -150,7 +152,7 @@ public class ExcelExporter {
 							map.put("summaryRow", summaryRow);
 						}
 
-						if (getRealtimeFromTableWidget(dsId, configuration)) {
+						if (getRealtimeFromTableWidget(datasetId, configuration)) {
 							map.put("realtime", true);
 						}
 
@@ -171,7 +173,7 @@ public class ExcelExporter {
 						try {
 							logger.debug("map = " + map.toString());
 							logger.debug("selections = " + selections.toString());
-							JSONObject datastore = client.getDataStore(map, datasetName, userUniqueIdentifier, selections.toString());
+							JSONObject datastore = client.getDataStore(map, datasetLabel, userUniqueIdentifier, selections.toString());
 							logger.debug("datastore = " + datastore.toString());
 							csv = getCsvSheet(datastore, widget);
 						} catch (Exception e) {
@@ -183,6 +185,8 @@ public class ExcelExporter {
 				}
 			}
 		} catch (JSONException e) {
+			logger.error("Unable to load template", e);
+		} catch (EMFUserError e) {
 			logger.error("Unable to load template", e);
 		}
 

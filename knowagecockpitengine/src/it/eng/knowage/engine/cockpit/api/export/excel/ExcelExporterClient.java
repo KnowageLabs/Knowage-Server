@@ -37,10 +37,10 @@ public class ExcelExporterClient extends SimpleRestClient {
 
 	static protected Logger logger = Logger.getLogger(ExcelExporterClient.class);
 
-	public JSONObject getDataStore(Map<String, Object> parameters, String datasetName, String userId, String selections) throws Exception {
+	public JSONObject getDataStore(Map<String, Object> parameters, String datasetLabel, String userId, String selections) throws Exception {
 		logger.debug("IN");
 
-		ClientResponse resp = executePostService(parameters, String.format(serviceUrl, datasetName), userId, MediaType.APPLICATION_JSON_TYPE, selections);
+		ClientResponse resp = executePostService(parameters, String.format(serviceUrl, datasetLabel), userId, MediaType.APPLICATION_JSON_TYPE, selections);
 		String resultString = (String) resp.getEntity(String.class);
 		JSONObject result = new JSONObject(resultString);
 
