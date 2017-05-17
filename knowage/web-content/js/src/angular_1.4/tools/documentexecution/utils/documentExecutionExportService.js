@@ -2,13 +2,15 @@
 	var documentExecutionModule = angular.module('documentExecutionModule');
 	
 	documentExecutionModule.service('docExecute_exportService', function(sbiModule_translate,sbiModule_config,
-			execProperties,sbiModule_user,sbiModule_restServices,$http,sbiModule_dateServices, documentExecuteServices, sbiModule_download, $q, $rootScope, sbiModule_messaging,multipartForm,$sce) {
+			execProperties,sbiModule_user,sbiModule_restServices,$http,sbiModule_dateServices, documentExecuteServices, sbiModule_download, $q, $rootScope, sbiModule_messaging,multipartForm,$sce,$mdPanel) {
 		
 		var dee = this;
+		
 		dee.exporting = false;
 		dee.isExporting = function(){
 			return dee.exporting;
 		}
+				
 		dee.getExportationUrl = function(format,paramsExportType,actionPath){
 			// https://production.eng.it/jira/browse/KNOWAGE-1443
 			// actionPath has no '/' at the beginning
@@ -134,24 +136,81 @@
 		dee.exportCockpitTo = function(exportType, mimeType){
 			dee.exporting = true;
 			
-			dee.buildBackendRequestConf(exportType, mimeType).then(function(requestConf){
-				$http(requestConf)
-				.then(function successCallback(response) {
-					sbiModule_download.getBlob(
-							response.data,
-							execProperties.executionInstance.OBJECT_LABEL,
-							mimeType,
-							exportType);
+			dee.getBackendRequestParams(exportType, mimeType).then(function(parameters){
+				dee.buildBackendRequestConf(exportType, mimeType, parameters).then(function(requestConf){
+					$http(requestConf)
+					.then(function successCallback(response) {
+						sbiModule_download.getBlob(
+								response.data,
+								execProperties.executionInstance.OBJECT_LABEL,
+								mimeType,
+								exportType);
+						dee.exporting = false;
+					}, function errorCallback(response) {
+						dee.exporting = false;
+						sbiModule_messaging.showErrorMessage(response.errors[0].message, 'Error');
+					});			
+				},function(e){
 					dee.exporting = false;
-				}, function errorCallback(response) {
-					dee.exporting = false;
-					sbiModule_messaging.showErrorMessage(response.errors[0].message, 'Error');
-				});			
+					sbiModule_messaging.showErrorMessage(e, 'Error');
+				});
 			},function(e){
-				console.error(e);
+				dee.exporting = false;
 				sbiModule_messaging.showErrorMessage(e, 'Error');
 			});
-		};	
+		};
+		
+		dee.getBackendRequestParams = function(exportType, mimeType){
+			var deferred = $q.defer();
+			var eleToAtt=document.body;
+			if(exportType.toLowerCase() == 'pdf'){
+				var config = {
+					attachTo: eleToAtt,
+					locals :{deferred:deferred},
+					controller: function($scope,mdPanelRef,sbiModule_translate,deferred,$mdDialog){
+						$scope.translate = sbiModule_translate;
+						
+						$scope.parameters = {
+							pdfWidth: 1920,
+							pdfHeight: 1080,
+							pdfWaitTime: 60,
+							pdfZoom: 100, // scale it while saving
+							pdfPageOrientation: 'landscape'
+						}
+
+						$scope.closeDialog=function(){
+							mdPanelRef.close();
+							$scope.$destroy();
+							deferred.reject();
+						}
+						
+						$scope.saveDataset=function(){
+							var parameters = {};
+							angular.copy($scope.parameters, parameters);
+							parameters.pdfZoom = parameters.pdfZoom / 100;
+							deferred.resolve(parameters);
+							mdPanelRef.close();
+							$scope.$destroy();
+						}
+					},
+					disableParentScroll: true,
+					templateUrl: sbiModule_config.contextName + '/js/src/angular_1.4/tools/documentexecution/templates/popupPdfExportParametersDialogTemplate.html',
+					position: $mdPanel.newPanelPosition().absolute().center(),
+					trapFocus: true,
+//					zIndex: 150,
+					fullscreen :false,
+					clickOutsideToClose: true,
+					escapeToClose: false,
+					focusOnOpen: false,
+					onRemoving :function(){}
+				};
+				$mdPanel.open(config);
+			}else{
+				deferred.resolve({});
+			}
+			
+			return deferred.promise;
+		};
 		
 		dee.buildRequestConf = function(exportType, mimeType){
 			var deferred = $q.defer();
@@ -242,25 +301,20 @@
 			return deferred.promise;
 		};
 		
-		dee.buildBackendRequestConf = function(exportType, mimeType){
+		dee.buildBackendRequestConf = function(exportType, mimeType, parameters){
 			var deferred = $q.defer();
+			
+			var eleToAtt=document.body;
+			
 			
 			var requestUrl = sbiModule_config.host;
 			requestUrl += execProperties.documentUrl;
 			requestUrl += '&outputType=' + encodeURIComponent(exportType);
 			
-			if(exportType.toLowerCase() == 'pdf'){
-				var width = 1600;
-				var height = 1200;
-				var waitTime = 60;
-				var zoom = 1.00;
-				var orientation = 'landscape'; // portrait vs landscape
-
-				requestUrl += '&pdfWidth=' + encodeURIComponent(width);
-				requestUrl += '&pdfHeight=' + encodeURIComponent(height);
-				requestUrl += '&pdfWaitTime=' + encodeURIComponent(waitTime);
-				requestUrl += '&pdfZoom=' + encodeURIComponent(zoom);
-				requestUrl += '&pdfOrientation=' + encodeURIComponent(orientation);
+			for (var parameter in parameters) {
+			    if (parameters.hasOwnProperty(parameter)) {
+			    	requestUrl += '&' + parameter + '=' + encodeURIComponent(parameters[parameter]);
+			    }
 			}
 			
 			var requestConf = {
