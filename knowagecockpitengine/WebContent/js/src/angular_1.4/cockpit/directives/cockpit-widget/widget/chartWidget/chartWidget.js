@@ -444,16 +444,17 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 	    
 		if(event.point){
 			//for highcharts
+			var date = new Date(event.point.x);
+			var char =  "/" ;
+			var theyear=date.getFullYear()
+			var themonth=date.getMonth()+1
+			var theday=date.getDate()
+			var date_format = theday+char+themonth+char+theyear;
+			
 			if(chartType === 'SCATTER'){
 				
 				var columnValue  = {};
 				if($scope.ngModel.content.chartTemplate.CHART.dateTime){
-					var date = new Date(event.point.x);
-					var char =  "/" ;
-					var theyear=date.getFullYear()
-					var themonth=date.getMonth()+1
-					var theday=date.getDate()
-					var date_format = theday+char+themonth+char+theyear;
 					columnValue = date_format;
 				}else {
 					columnValue = event.point.category.name;
@@ -461,12 +462,6 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 			}else{
 				var columnValue  = {};
 				if($scope.ngModel.content.chartTemplate.CHART.dateTime){
-					var date = new Date(event.point.x);
-					var char = "/";
-					var theyear=date.getFullYear()
-					var themonth=date.getMonth()+1
-					var theday=date.getDate()
-					var date_format = theday+char+themonth+char+theyear;
 					columnValue = date_format;
 				}else {
 					columnValue = event.point.name;
@@ -522,6 +517,12 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 	}
 	
 	function createCrossParameters(event){
+		var date = new Date(event.point.x);
+		var char =  "/" ;
+		var theyear=date.getFullYear()
+		var themonth=date.getMonth()+1
+		var theday=date.getDate()
+		var date_format = theday+char+themonth+char+theyear;
        if( $scope.ngModel.content.chartTemplate.CHART.type==="HEATMAP"){
     	   var parameters = {
     				"SERIE_NAME": event.point.series.name,
@@ -581,7 +582,7 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
     	   var parameters = {
     				"SERIE_NAME": event.point.series.name,
     				"SERIE_VALUE":event.point.y,
-    				"CATEGORY_VALUE":event.point.category.name,
+    				"CATEGORY_VALUE": $scope.ngModel.content.chartTemplate.CHART.dateTime ? date_format : event.point.category.name,
     				"CATEGORY_NAME": $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY.name
     			};
     	   
@@ -590,7 +591,7 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 		var parameters = {
 			"SERIE_NAME": event.point.series.name,
 			"SERIE_VALUE":event.point.y,
-			"CATEGORY_VALUE":event.point.name,
+			"CATEGORY_VALUE": $scope.ngModel.content.chartTemplate.CHART.dateTime ? date_format : event.point.name,
 			"CATEGORY_NAME": $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY.name
 		};
        

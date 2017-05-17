@@ -717,10 +717,10 @@ function renderParallelChart(data,panel,handleCockpitSelection,chartEngineSettin
 			
 		};	
 		
-		var category=data.chart.tooltip;
+		var category=data.chart.group;
 		params.categoryName=category;
 		params.categoryValue=d[category];
-		var groupCategory=data.chart.group;
+		var groupCategory=data.chart.tooltip;
 		params.groupingCategoryName=groupCategory;
 		params.groupingCategoryValue=d[groupCategory];
 	   
