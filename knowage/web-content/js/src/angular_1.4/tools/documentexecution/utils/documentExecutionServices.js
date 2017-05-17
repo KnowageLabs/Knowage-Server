@@ -1303,7 +1303,7 @@
 									if(execProperties.parametersData.documentParameters[z].urlName==data.idParam){
 
 										// empty current value
-										thisContext.emptyParameter(execProperties.parametersData.documentParameters[z]); aaa
+										thisContext.emptyParameter(execProperties.parametersData.documentParameters[z]); 
 										
 										if(execProperties.parametersData.documentParameters[z].defaultValues &&
 												execProperties.parametersData.documentParameters[z].defaultValues.length>0){
