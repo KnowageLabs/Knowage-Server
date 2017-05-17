@@ -172,13 +172,19 @@ angular.module('chartInitializer')
 	
 	
 	this.handleCrossNavigationTo =function(e) {
+		var date = new Date(e.point.x);
+		var char =  "-" ;
+		var theyear=date.getFullYear()
+		var themonth=date.getMonth()+1
+		var theday=date.getDate()
+		var date_format = theday+char+themonth+char+theyear;
 		var t = chartConfConf;
 		console.log(e.point);
 		if (!e.seriesOptions) {
 			var chart = this;
 			//chart.showLoading('Loading...');
 			var categoryName = null;
-			var categoryValue = e.point.name;
+			var categoryValue = t.xAxis.type == "datetime" ? date_format : e.point.name;
 
 			if (e.point.hasOwnProperty('category')) {
 				if(isNaN(e.point.category)){
@@ -192,7 +198,7 @@ angular.module('chartInitializer')
 			
 			//for scatter
 			if(!categoryValue && e.point.category &&e.point.category.name){
-				categoryValue = e.point.category.name;
+				categoryValue = t.xAxis.type == "datetime" ? date_format : e.point.category.name;
 			}
 			
 	
