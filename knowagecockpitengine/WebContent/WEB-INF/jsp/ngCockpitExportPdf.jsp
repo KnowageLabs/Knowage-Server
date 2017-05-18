@@ -25,10 +25,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@ page trimDirectiveWhitespaces="true" %>
 <%@ page contentType="applicaton/octet-stream" %>
 <%
-Map<String, String[]> parameterMap = request.getParameterMap();
+int documentId = Integer.valueOf(request.getParameter("document"));
 String requestURL = (String) request.getAttribute("requestURL");
+String userId =  (String) request.getAttribute("user_id");
 
-PdfExporter pdfExporter = new PdfExporter(requestURL, parameterMap);
+PdfExporter pdfExporter = new PdfExporter(documentId, requestURL, userId);
 byte[] data = pdfExporter.getBinaryData();
 
 response.setHeader("Content-length", Integer.toString(data.length));

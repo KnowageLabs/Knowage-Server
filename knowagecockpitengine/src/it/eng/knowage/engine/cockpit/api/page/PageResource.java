@@ -122,7 +122,8 @@ public class PageResource extends AbstractCockpitEngineResource {
 					dispatchUrl = "/WEB-INF/jsp/ngCockpitExportExcel.jsp";
 					response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 				} else if ("pdf".equals(outputType)) {
-					request.setAttribute("requestURL", request.getRequestURL().toString());
+					String requestURL = getCompleteRequestUrl(request);
+					request.setAttribute("requestURL", requestURL);
 					dispatchUrl = "/WEB-INF/jsp/ngCockpitExportPdf.jsp";
 					response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 				} else {
@@ -153,6 +154,21 @@ public class PageResource extends AbstractCockpitEngineResource {
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+
+	private String getCompleteRequestUrl(HttpServletRequest request) {
+		StringBuilder sb = new StringBuilder(request.getRequestURL().toString());
+		String sep = "?";
+		Map<String, String[]> parameterMap = request.getParameterMap();
+		for (String parameter : parameterMap.keySet()) {
+			String[] values = parameterMap.get(parameter);
+			if (values != null && values.length > 0) {
+				sb.append(sep);
+				sb.append(values[0]);
+				sep = "&";
+			}
+		}
+		return sb.toString();
 	}
 
 	@GET

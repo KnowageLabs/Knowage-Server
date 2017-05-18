@@ -22,14 +22,6 @@ import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.axis.encoding.Base64;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.NameValuePair;
-import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,61 +36,22 @@ public class PdfExporter {
 
 	private static final Logger logger = Logger.getLogger(PdfExporter.class);
 
+	private int documentId;
 	private String requestUrl;
-	private Map<String, String[]> parameterMap;
+	private String userId;
 
-	public PdfExporter(String requestUrl, Map<String, String[]> parameterMap) {
+	public PdfExporter(int documentId, String requestUrl, String userId) {
+		this.documentId = documentId;
 		this.requestUrl = requestUrl;
-		this.parameterMap = parameterMap;
+		this.userId = userId;
 	}
 
 	public byte[] getBinaryData() {
 		int sheetCount = getSheetCount();
-		List<byte[]> images = new ArrayList<byte[]>(sheetCount);
-
-		for (int sheet = 0; sheet < sheetCount; sheet++) {
-			byte[] image = getImage(sheet);
-		}
-
-		return "This is not a PDF file!".getBytes();
-	}
-
-	private byte[] getImage(int sheet) {
-		try {
-			GetMethod getMethod = new GetMethod(requestUrl);
-			List<NameValuePair> nameValuePairs = getNameValuePairs(sheet);
-			getMethod.setQueryString(nameValuePairs.toArray(new NameValuePair[0]));
-
-			String userId = parameterMap.get("user_id")[0];
-			String encodedUserId = Base64.encode(userId.getBytes("UTF-8"));
-			getMethod.addRequestHeader("Authorization", "Direct " + encodedUserId);
-
-			HttpClient client = new HttpClient();
-			int statusCode = client.executeMethod(getMethod);
-			byte[] response = getMethod.getResponseBody();
-			getMethod.releaseConnection();
-
-			return response;
-		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Unable to get image for sheet [" + sheet + "]", e);
-		}
-	}
-
-	private List<NameValuePair> getNameValuePairs(int sheet) {
-		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-		for (String parameter : parameterMap.keySet()) {
-			if (!"outputType".equals(parameter)) {
-				String value = parameterMap.get(parameter)[0];
-				nameValuePairs.add(new NameValuePair(parameter, value));
-			}
-		}
-		nameValuePairs.add(new NameValuePair("export", "true"));
-		nameValuePairs.add(new NameValuePair("sheet", String.valueOf(sheet)));
-		return nameValuePairs;
+		return "This is not a PDF file!".getBytes(); // FIXME
 	}
 
 	private int getSheetCount() {
-		int documentId = Integer.parseInt(parameterMap.get("document")[0]);
 		try {
 			ObjTemplate objTemplate = DAOFactory.getObjTemplateDAO().getBIObjectActiveTemplate(documentId);
 			if (objTemplate == null) {
