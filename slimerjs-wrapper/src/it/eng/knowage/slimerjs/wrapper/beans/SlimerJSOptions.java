@@ -1,12 +1,12 @@
 package it.eng.knowage.slimerjs.wrapper.beans;
 
 import it.eng.knowage.slimerjs.wrapper.CommandLineArgument;
+import it.eng.spagobi.utilities.StringUtils;
 
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.commons.exec.CommandLine;
 
@@ -526,7 +526,7 @@ public class SlimerJSOptions {
 			}
 		}
 
-		return !args.isEmpty() ? args.stream().collect(Collectors.joining(" ")) : "";
+		return !args.isEmpty() ? StringUtils.join(args, " ") : "";
 	}
 
 }
