@@ -49,7 +49,8 @@ angular.module("cockpitModule").factory("cockpitModule_properties",function(){
 		HAVE_SELECTIONS_OR_FILTERS:false,
 		STARTING_SELECTIONS:[],
 		STARTING_FILTERS:[],
-		
+		CURRENT_SHEET: <%=initialSheet%>,
+		EXPORT_MODE: <%=exportMode%>
 	}
 });
 
