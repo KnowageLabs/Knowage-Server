@@ -26,6 +26,8 @@ class SlimerJSConstants {
 
 	static final String SOURCEPATH_TEMPLATENAME = "sourcePath", RENDERPATH_TEMPLATENAME = "renderPath-";
 
+	static final String CUSTOMHEADERS_TEMPLATENAME = "customeHeaders";
+
 	static final String JSWAIT_TEMPLATENAME = "jsWait", JSINTERVAL_TEMPLATENAME = "jsInterval";
 
 	static final String SHUTDOWN_HOOK_THREAD_NAME = "SlimerJSSetupShutDownHook";

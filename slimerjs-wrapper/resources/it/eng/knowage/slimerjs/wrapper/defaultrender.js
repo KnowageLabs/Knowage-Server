@@ -1,25 +1,4 @@
-var width = system.args[ 1 ],
-  height = system.args[ 2 ],
-  viewportWidth = system.args[ 3 ],
-  viewportHeight = system.args[ 4 ],
-  marginTop = system.args[ 5 ],
-  marginRight = system.args[ 6 ],
-  marginBottom = system.args[ 7 ],
-  marginLeft = system.args[ 8 ],
-  headerHeight = system.args[ 9 ],
-  headerFunctionFile = system.args[ 10 ],
-  footerHeight = system.args[ 11 ],
-  footerFunctionFile = system.args[ 12 ],
-  operatingSystem = system.args[ 13 ],
-  sourceUrl = system.args[ 14 ],
-  targetPath = system.args[ 15 ],
-  jsWait = +system.args[ 16 ],
-  jsInterval = +system.args[ 17 ],
-  renderId = system.args[ 18 ],
-  sheets = +system.args[ 19 ];
-  uniqueToken = system.args[ 20 ];
-  hmacSign = system.args[ 21 ];
-
+var system = require('system');
 
 // this function writes the arguments to stdout
 var log = function () {
@@ -31,18 +10,40 @@ var err = function () {
   Array.prototype.slice.call(arguments).map(system.stderr.writeLine);
 };
 
-// this function checks to see if javascript is finished executing on the page
-var done = function (page) {
-  return page.evaluate(function () {
-    var PageRendered = window.PageRendered;
-    return (typeof PageRendered === 'undefined') ||
-      (typeof PageRendered === 'boolean' && PageRendered === true) ||
-      (typeof PageRendered === 'function' && PageRendered());
-  });
-};
+var renderId = system.args[ 1 ];
+log("renderId = " + renderId);
+
+var baseUrl = system.args[ 2 ];
+log("baseUrl = " + baseUrl);
+
+var	customHeaders = system.args[ 3 ];
+log("customHeaders = " + customHeaders);
+customHeaders = JSON.parse(system.args[ 3 ]);
+
+var	sheets = +system.args[ 4 ];
+log("sheets = " + sheets);
+
+var	viewportWidth = system.args[ 5 ];
+log("viewportWidth = " + viewportWidth);
+
+var	viewportHeight = system.args[ 6 ];
+log("viewportHeight = " + viewportHeight);
+
+var	operatingSystem = system.args[ 7 ];
+log("operatingSystem = " + operatingSystem);
+
+var	targetPath = system.args[ 8 ];
+log("targetPath = " + targetPath);
+
+var	jsWait = +system.args[ 9 ];
+log("jsWait = " + jsWait);
+
+var	jsInterval = +system.args[ 10 ];
+log("jsInterval = " + jsInterval);
 
 // this sets a zoom on the page because of the dpi differences between windows and unix
 var setZoom = function (page) {
+	log("[SETZOOM] IN");
   if (operatingSystem !== "WINDOWS") {
     try {
       log('Setting zoom on HTML to 0.75');
@@ -51,80 +52,60 @@ var setZoom = function (page) {
       });
     } catch (error) {
       err('Failed to set zoom on HTML file: ', error);
-      slimer.exit(2);
+      slimer.exit(1);
     }
   }
 };
 
 // this function renders the page
 var renderPage = function (page) {
+	log("[RENDERPAGE] IN");
   setZoom(page);
 
   // render the page
   try {
-    log('Rendering PNG to target folder: ' + targetFolder);
-    page.render(targetFolder"/"+page.renderId+".png");
+    log('Rendering PNG to target folder: ' + targetPath);
+    var targetFile = targetPath + "_" + page.sheet + ".png";
+    log("Rendering PNG as target file: " + targetFile);
+    page.render(targetFile);
   } catch (error) {
     err('Failed to render PNG: ' + error);
     slimer.exit(3);
   }
 
-  slimer.exit(0);
+  slimer.exit(0); // OK!
 };
 
-var waited = 0;
-var renderIfDone = function renderIfDone(page) {
-  if (done(page)) {
-    renderPage(page);
-  } else {
-    if (waited > jsWait) {
-      err('Timed out on JavaScript execution');
-      slimer.exit(6);
-    }
-    log('Waiting an additional ' + jsInterval + 'ms');
-    waited += jsInterval;
-    setTimeout(renderIfDone, jsInterval);
-  }
-};
-
-applySettingOnPage(page, renderId) {	
-	page.renderId = renderId;
+var applySettingOnPage = function applySettingOnPage(page, sheet) {
+	log("[APPLYSETTINGONPAGE] IN");
+	page.sheet = sheet;
 	page.viewportSize = { width: viewportWidth, height: viewportHeight };
-	
-	page.customHeaders = {
-			"HMAC_Token": uniqueToken,
-			"HMAC_Signature": hmacSign
-	};
-	// when finishing loading the resources
-	// start the timer for js execution to complete
-	page.onLoadFinished = renderIfDone;
+	page.settings.userName = 'biadmin';
+	page.settings.password = 'biadmin';
+	page.customHeaders = customHeaders;
 }
 
 var urls = new Map();
-for(int i=0; i<sheets; i++) {
-	var currentUrl = sourceUrl;
-	if(i>0) {
+
+for(var i=0; i<sheets; i++) {
+	log("Looping over sheets, if any");
+	var currentUrl = decodeURIComponent(baseUrl);
+	if(i > 0) {
 		currentUrl = currentUrl + "&sheet=" + i;
 	}
-	urlMap.set(renderId+"_"+i, currentUrl);
+	log("URL to be processed = " + currentUrl);
+	urls.set(i, currentUrl);
 }
 
 var queue = [];
-urls.forEach(function(renderId, url) {
+urls.forEach(function(url, sheet) {
     var p = new Promise(function(resolve, reject) {
         var page = require('webpage').create();
-        applySettingOnPage(page, renderId);
-        page.open(url)
-            .then(function(status) {
-                if (status == "success") {
-                    var title = page.title;
-                    log("Page title of " + url + " : " + title);
-                    renderIfDone(page);
-                } else {
-                    log("Sorry, the page is not loaded for " + url);
-                    reject(new Error("Some problem occurred with " + url));
-                }
-            });
+        applySettingOnPage(page, sheet);
+        log("Processing URL " + url + " during rendering with id " + renderId);
+        page.open(url, function() {
+        	setTimeout(renderPage, jsInterval, page);
+        });
     });
     queue.push(p);
 }, urls);

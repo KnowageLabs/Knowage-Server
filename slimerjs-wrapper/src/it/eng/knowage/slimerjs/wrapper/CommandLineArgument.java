@@ -39,7 +39,7 @@ public class CommandLineArgument {
 	}
 
 	public void apply(CommandLine cmdLine, Map<String, Object> argMap) {
-		cmdLine.addArgument(template);
+		cmdLine.addArgument(template, false);
 		if (keyVals != null) {
 			for (String k : keyVals.keySet()) {
 				Object v = keyVals.get(k);

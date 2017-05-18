@@ -12,6 +12,7 @@ import it.eng.knowage.slimerjs.wrapper.enums.RenderFormat;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -120,13 +121,15 @@ public class SlimerJS {
 		// the output filename template
 		Path renderPath = SlimerJSConstants.TEMP_RENDER_DIR.resolve(String.format(SlimerJSConstants.TARGET_PREFIX + "%s", renderId));
 
-		final SlimerJSExecutionResponse slimerJSExecutionResponse = exec(renderScript, options, new CommandLineArgument(url.toString()),
-				new CommandLineArgument(sheets.toString()), new CommandLineArgument(dimensions.getWidth()), new CommandLineArgument(dimensions.getHeight()),
-				new CommandLineArgument(OperatingSystem.get().name()),
-				new CommandLineArgument(wrapCommandLineArgumentName(SlimerJSConstants.RENDERPATH_TEMPLATENAME), SlimerJSConstants.RENDERPATH_TEMPLATENAME,
-						renderPath.toFile()), new CommandLineArgument(wrapCommandLineArgumentName(SlimerJSConstants.JSWAIT_TEMPLATENAME),
-						SlimerJSConstants.JSWAIT_TEMPLATENAME, jsWait), new CommandLineArgument(
-						wrapCommandLineArgumentName(SlimerJSConstants.JSINTERVAL_TEMPLATENAME), SlimerJSConstants.JSINTERVAL_TEMPLATENAME, jsInterval));
+		final SlimerJSExecutionResponse slimerJSExecutionResponse = exec(renderScript, options, new CommandLineArgument(renderId), new CommandLineArgument(
+				URLEncoder.encode(url.toString(), "UTF-8")), new CommandLineArgument(wrapCommandLineArgumentName(SlimerJSConstants.CUSTOMHEADERS_TEMPLATENAME),
+				SlimerJSConstants.CUSTOMHEADERS_TEMPLATENAME, customHeaders), new CommandLineArgument(sheets.toString()),
+				new CommandLineArgument(dimensions.getWidth()), new CommandLineArgument(dimensions.getHeight()), new CommandLineArgument(OperatingSystem.get()
+						.name()), new CommandLineArgument(wrapCommandLineArgumentName(SlimerJSConstants.RENDERPATH_TEMPLATENAME),
+						SlimerJSConstants.RENDERPATH_TEMPLATENAME, renderPath.toFile()), new CommandLineArgument(
+						wrapCommandLineArgumentName(SlimerJSConstants.JSWAIT_TEMPLATENAME), SlimerJSConstants.JSWAIT_TEMPLATENAME, jsWait),
+				new CommandLineArgument(wrapCommandLineArgumentName(SlimerJSConstants.JSINTERVAL_TEMPLATENAME), SlimerJSConstants.JSINTERVAL_TEMPLATENAME,
+						jsInterval));
 
 		final int renderExitCode = slimerJSExecutionResponse.getExitCode();
 
@@ -144,21 +147,12 @@ public class SlimerJS {
 
 		switch (renderExitCode) {
 		case 1:
-			error = "Failed to read source HTML file from input stream";
-			break;
-		case 2:
 			error = "Failed to set zoom on document body";
 			break;
-		case 3:
+		case 2:
 			error = "Failed to render PDF to output";
 			break;
-		case 4:
-			error = "Failed to read header function";
-			break;
-		case 5:
-			error = "Failed to read footer function";
-			break;
-		case 6:
+		case 3:
 			error = "JS execution did not finish within the wait time";
 			break;
 		default:

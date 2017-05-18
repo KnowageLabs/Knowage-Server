@@ -5,7 +5,8 @@ import it.eng.knowage.slimerjs.wrapper.enums.RenderFormat;
 public class RenderOptions {
 	public static final RenderOptions EMPTY = new RenderOptions(null, null, null, null, null, null, null, null, null, null);
 	public static final RenderOptions DEFAULT = EMPTY.withDimensions(ViewportDimensions.VIEW_1600_1200).withRenderFormat(RenderFormat.PNG)
-			.withJavaScriptExecutionDetails(1000L, 100L).withSlimerJSOptions(SlimerJSOptions.DEFAULT.withDiskCache(true));
+			.withJavaScriptExecutionDetails(1000L, 100L).withSlimerJSOptions(SlimerJSOptions.DEFAULT.withDiskCache(true))
+			.withCustomHeaders(CustomHeaders.EMPTY);
 
 	private final SlimerJSOptions options;
 	private final PaperSize paperSize;
