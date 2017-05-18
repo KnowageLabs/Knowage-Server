@@ -684,6 +684,8 @@ public class DocumentUrlManager {
 							values.add(anObject.toString());
 						}
 					}
+				} else if (o.toString().startsWith("{;{}")) {
+					// old multivalue parameters case (for back compatibily with documetn composition engine
 				} else {
 					// trim value at beginning and end of the string
 					String valToInsert = o.toString();
