@@ -30,7 +30,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -142,37 +145,42 @@ public class ExcelExporter {
 						Map<String, Object> map = new java.util.HashMap<String, Object>();
 
 						JSONObject aggregations = getAggregationsFromTableWidget(widget, configuration);
+						logger.debug("aggregations = " + aggregations);
 						map.put("aggregations", aggregations);
 
 						JSONObject parameters = getParametersFromTableWidget(widget, configuration);
+						logger.debug("parameters = " + parameters);
 						map.put("parameters", parameters);
 
 						JSONObject summaryRow = getSummaryRowFromTableWidget(widget);
 						if (summaryRow != null) {
+							logger.debug("summaryRow = " + summaryRow);
 							map.put("summaryRow", summaryRow);
 						}
 
 						if (getRealtimeFromTableWidget(datasetId, configuration)) {
+							logger.debug("realtime = true");
 							map.put("realtime", true);
 						}
 
 						int limit = getLimitFromTableWidget(widget);
 						if (limit > 0) {
+							logger.debug("limit = " + limit);
 							map.put("limit", limit);
 						}
 
 						JSONObject likeSelections = getLikeSelectionsFromTableWidget(widget, configuration);
 						if (likeSelections != null) {
+							logger.debug("likeSelections = " + likeSelections);
 							map.put("likeSelections", likeSelections);
 						}
 
 						JSONObject selections = getSelectionsFromTableWidget(widget, configuration);
+						logger.debug("selections = " + selections);
 
 						ExcelExporterClient client = new ExcelExporterClient();
 						String csv;
 						try {
-							logger.debug("map = " + map.toString());
-							logger.debug("selections = " + selections.toString());
 							JSONObject datastore = client.getDataStore(map, datasetLabel, userUniqueIdentifier, selections.toString());
 							logger.debug("datastore = " + datastore.toString());
 							csv = getCsvSheet(datastore, widget);
@@ -307,10 +315,23 @@ public class ExcelExporter {
 		while (keys.hasNext()) {
 			String parameter = keys.next();
 			String value = parameters.getString(parameter);
-			String regex = "\\$P\\{" + parameter + "\\}";
-			if (value.matches(regex)) {
-				value = value.replaceAll(regex, parameterMap.get(parameter)[0]);
-				parameters.put(parameter, value);
+			String parameterRegex = "\\$P\\{" + parameter + "\\}";
+			if (value.matches(parameterRegex)) {
+				String[] parameterArray = parameterMap.get(parameter);
+				if (parameterArray != null && parameterArray.length > 0) {
+					String parameterValue = parameterArray[0];
+					String multiValueRegex = "\\{;\\{(.*)\\}(.*)\\}";
+					Pattern pattern = Pattern.compile(multiValueRegex);
+					Matcher matcher = pattern.matcher(parameterValue);
+					if (matcher.matches()) {
+						String[] split = matcher.group(1).split(";");
+						parameterValue = "'" + StringUtils.join(split, "','") + "'";
+					}
+					value = value.replaceAll(parameterRegex, parameterValue);
+					parameters.put(parameter, value);
+				} else {
+					parameters.put(parameter, "");
+				}
 			}
 		}
 
