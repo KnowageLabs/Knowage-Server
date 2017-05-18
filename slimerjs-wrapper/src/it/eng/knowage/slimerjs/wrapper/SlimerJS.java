@@ -50,8 +50,7 @@ public class SlimerJS {
 	 * @throws RenderException
 	 *             if the render script fails for any reason
 	 */
-	public static List<DeleteOnCloseFileInputStream> render(final URL url, final Integer sheets, final RenderOptions options) throws IOException,
-			RenderException {
+	public static List<InputStream> render(final URL url, final Integer sheets, final RenderOptions options) throws IOException, RenderException {
 		return render(options.getOptions(), url, sheets, options.getDimensions(), options.getRenderFormat(), options.getCustomHeaders(), options.getJsWait(),
 				options.getJsInterval());
 	}
@@ -69,7 +68,7 @@ public class SlimerJS {
 	 * @throws RenderException
 	 *             if the render script fails for any reason
 	 */
-	public static List<DeleteOnCloseFileInputStream> render(final URL url, final RenderOptions options) throws IOException, RenderException {
+	public static List<InputStream> render(final URL url, final RenderOptions options) throws IOException, RenderException {
 		return render(options.getOptions(), url, 1, options.getDimensions(), options.getRenderFormat(), options.getCustomHeaders(), options.getJsWait(),
 				options.getJsInterval());
 	}
@@ -99,9 +98,8 @@ public class SlimerJS {
 	 * @throws RenderException
 	 *             if the render script fails for any reason
 	 */
-	public static List<DeleteOnCloseFileInputStream> render(final SlimerJSOptions options, final URL url, final Integer sheets,
-			final ViewportDimensions dimensions, final RenderFormat renderFormat, final CustomHeaders customHeaders, final Long jsWait, final Long jsInterval)
-			throws IOException, RenderException {
+	public static List<InputStream> render(final SlimerJSOptions options, final URL url, final Integer sheets, final ViewportDimensions dimensions,
+			final RenderFormat renderFormat, final CustomHeaders customHeaders, final Long jsWait, final Long jsInterval) throws IOException, RenderException {
 		if (url == null || sheets == null || renderFormat == null || dimensions == null || jsWait == null || jsInterval == null) {
 			throw new NullPointerException("All parameters but headers are required");
 		}
@@ -133,7 +131,7 @@ public class SlimerJS {
 		final int renderExitCode = slimerJSExecutionResponse.getExitCode();
 
 		if (renderExitCode == 0) {
-			List<DeleteOnCloseFileInputStream> fileStreams = new ArrayList<>(sheets);
+			List<InputStream> fileStreams = new ArrayList<>(sheets);
 			for (int sheetNumber = 0; sheetNumber < sheets; sheetNumber++) {
 				renderPath = SlimerJSConstants.TEMP_RENDER_DIR.resolve(String.format(SlimerJSConstants.TARGET_PREFIX + "%s_%s.%s", renderId, sheetNumber,
 						renderFormat.name().toLowerCase()));
@@ -194,8 +192,8 @@ public class SlimerJS {
 	 * @throws RenderException
 	 *             if the render script fails for any reason
 	 */
-	public static List<DeleteOnCloseFileInputStream> render(final SlimerJSOptions options, final URL url, final ViewportDimensions dimensions,
-			final RenderFormat renderFormat, final CustomHeaders customHeaders, final Long jsWait, final Long jsInterval) throws IOException, RenderException {
+	public static List<InputStream> render(final SlimerJSOptions options, final URL url, final ViewportDimensions dimensions, final RenderFormat renderFormat,
+			final CustomHeaders customHeaders, final Long jsWait, final Long jsInterval) throws IOException, RenderException {
 		return render(options, url, 1, dimensions, renderFormat, customHeaders, jsWait, jsInterval);
 	}
 
