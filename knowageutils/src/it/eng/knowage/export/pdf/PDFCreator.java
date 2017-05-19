@@ -125,7 +125,7 @@ public abstract class PDFCreator {
 	public static void addInformation(Path input, ExportDetails details) throws IOException {
 		try (PDDocument doc = PDDocument.load(input.toFile())) {
 			if (details.getPageNumbering() != null) {
-				writePageNumbering(doc, PDType1Font.HELVETICA_BOLD, 15.0f, details.getPageNumbering());
+				writePageNumbering(doc, PDType1Font.HELVETICA_BOLD, 16.0f, details.getPageNumbering());
 			}
 			if (details.getFrontpageDetails() != null) {
 				writeFrontpageDetails(doc, PDType1Font.HELVETICA_BOLD, 18.0f, details.getFrontpageDetails());
@@ -170,9 +170,10 @@ public abstract class PDFCreator {
 	}
 
 	private static void writePageNumbering(PDDocument doc, PDFont font, float fontSize, PageNumbering pageNumbering) throws IOException {
+		int totalPages = doc.getNumberOfPages();
 		int numberOfPages = pageNumbering.isLastIncluded() ? doc.getNumberOfPages() : doc.getNumberOfPages() - 1;
 		for (int pageIndex = pageNumbering.isFirstIncluded() ? 0 : 1; pageIndex < numberOfPages; pageIndex++) {
-			String footer = "Page " + (pageIndex + 1) + " of " + numberOfPages;
+			String footer = "Page " + (pageIndex + 1) + " of " + totalPages;
 			PDPage page = doc.getPage(pageIndex);
 			PDRectangle pageSize = page.getMediaBox();
 			float stringWidth = font.getStringWidth(footer) * fontSize / 1000f;
