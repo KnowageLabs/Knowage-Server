@@ -712,7 +712,9 @@
 				align: 'high',
 				#end
 			#end
-			 
+			 #if ($chartType == 'radar' )
+				align: 'high',
+				#end
 			style:{
 	        	#foreach($styleName in $xAxis.TITLE.style.keySet())
 		        	#set ($axisTitleStyle = $xAxis.TITLE.style[$styleName])
@@ -732,7 +734,9 @@
 		 
 		labels:{
 		#if($xAxis.step)
+			#if($xAxis.step!="")
 			step: $xAxis.step,
+			#end
 		#end
 		#if( $xAxis.style != '' )
         	style:{
