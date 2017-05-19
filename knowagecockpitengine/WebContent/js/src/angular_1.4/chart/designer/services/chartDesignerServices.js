@@ -385,6 +385,7 @@ angular.module('ChartDesignerService', [])
 					               "alias":"X",
 					               "type":"Category",
 					               "position":"",
+					               "step" : "",
 					               "style":{
 					            	   "rotate":"",
 					            	   "align":"",
@@ -1353,6 +1354,7 @@ angular.module('ChartDesignerService', [])
 						"alias": "X",
 						"type": "Category",
 						"position": "",
+						"step" : "",
 						"style":{
 			            	   "rotate":"",
 			            	   "align":"",

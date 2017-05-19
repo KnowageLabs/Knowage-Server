@@ -51,6 +51,12 @@
 	</md-select> </md-input-container>		
 
 
+<md-input-container class="md-block" ng-if="selectedChartType =='bar' || selectedChartType =='line' || selectedChartType =='scatter' ">
+		<label>{{translate.load('sbi.chartengine.axisstep')}}</label>
+		<input name="Xaxisstep" type="number" ng-min="0" ng-model="axisForDisplay.step"/> 
+	</md-input-container>	
+
+
 </div>
 
 

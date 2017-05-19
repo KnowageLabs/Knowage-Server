@@ -731,6 +731,9 @@
 		
 		 
 		labels:{
+		#if($xAxis.step)
+			step: $xAxis.step,
+		#end
 		#if( $xAxis.style != '' )
         	style:{
 	        	#foreach($styleName in $xAxis.style.keySet())
