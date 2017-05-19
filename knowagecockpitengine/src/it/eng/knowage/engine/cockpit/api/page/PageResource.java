@@ -20,10 +20,14 @@ package it.eng.knowage.engine.cockpit.api.page;
 import it.eng.knowage.engine.cockpit.CockpitEngine;
 import it.eng.knowage.engine.cockpit.CockpitEngineInstance;
 import it.eng.knowage.engine.cockpit.api.AbstractCockpitEngineResource;
+import it.eng.knowage.slimerjs.wrapper.beans.CustomHeaders;
+import it.eng.knowage.slimerjs.wrapper.beans.RenderOptions;
+import it.eng.knowage.slimerjs.wrapper.beans.ViewportDimensions;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -39,11 +43,14 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.axis.encoding.Base64;
 import org.apache.log4j.Logger;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import edu.emory.mathcs.backport.java.util.Arrays;
 
 /**
  * @authors Andrea Gioia (andrea.gioia@eng.it)
@@ -122,8 +129,12 @@ public class PageResource extends AbstractCockpitEngineResource {
 					dispatchUrl = "/WEB-INF/jsp/ngCockpitExportExcel.jsp";
 					response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 				} else if ("pdf".equals(outputType)) {
-					String requestURL = getCompleteRequestUrl(request);
+					String requestURL = getRequestUrlForPdfExport(request);
 					request.setAttribute("requestURL", requestURL);
+
+					RenderOptions renderOptions = getRenderOptionsForPdfExporter(request);
+					request.setAttribute("renderOptions", renderOptions);
+
 					dispatchUrl = "/WEB-INF/jsp/ngCockpitExportPdf.jsp";
 					response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 				} else {
@@ -156,7 +167,26 @@ public class PageResource extends AbstractCockpitEngineResource {
 		}
 	}
 
-	private String getCompleteRequestUrl(HttpServletRequest request) {
+	private RenderOptions getRenderOptionsForPdfExporter(HttpServletRequest request) throws UnsupportedEncodingException {
+		String userId = (String) getUserProfile().getUserUniqueIdentifier();
+		String encodedUserId = Base64.encode(userId.getBytes("UTF-8"));
+		Map<String, String> headers = new HashMap<String, String>(1);
+		headers.put("Authorization", "Direct " + encodedUserId);
+		CustomHeaders customHeaders = new CustomHeaders(headers);
+
+		int pdfWidth = Integer.valueOf(request.getParameter("pdfWidth"));
+		int pdfHeight = Integer.valueOf(request.getParameter("pdfHeight"));
+		ViewportDimensions dimensions = new ViewportDimensions(pdfWidth, pdfHeight);
+
+		long pdfWaitTime = 1000 * Long.valueOf(request.getParameter("pdfWaitTime"));
+
+		RenderOptions renderOptions = RenderOptions.DEFAULT.withCustomHeaders(customHeaders).withDimensions(dimensions)
+				.withJavaScriptExecutionDetails(pdfWaitTime, 5000L);
+		return renderOptions;
+	}
+
+	private String getRequestUrlForPdfExport(HttpServletRequest request) {
+		Arrays.asList(new String[] { "outputType", "pdfWidth", "pdfHeight", "pdfWaitTime", "pdfZoom", "pdfPageOrientation" });
 		StringBuilder sb = new StringBuilder(request.getRequestURL().toString());
 		String sep = "?";
 		Map<String, String[]> parameterMap = request.getParameterMap();
@@ -164,10 +194,13 @@ public class PageResource extends AbstractCockpitEngineResource {
 			String[] values = parameterMap.get(parameter);
 			if (values != null && values.length > 0) {
 				sb.append(sep);
+				sb.append(parameter);
+				sb.append("=");
 				sb.append(values[0]);
 				sep = "&";
 			}
 		}
+		sb.append("&export=true");
 		return sb.toString();
 	}
 

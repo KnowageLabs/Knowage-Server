@@ -44,11 +44,18 @@
 				</md-slider-container>
 			</div>
 			
-			<div>
-				<md-radio-group layout="row" ng-model="parameters.pdfPageOrientation">
-					<md-radio-button value="landscape">{{translate.load('sbi.execution.executionpage.toolbar.export.pdf.landscape')}}</md-radio-button>
-					<md-radio-button value="portrait">{{translate.load('sbi.execution.executionpage.toolbar.export.pdf.portrait')}}</md-radio-button>
-				</md-radio-group>
+<!-- 		<md-radio-group layout="row" ng-model="parameters.pdfPageOrientation">
+				<md-radio-button value="landscape">{{translate.load('sbi.execution.executionpage.toolbar.export.pdf.landscape')}}</md-radio-button>
+				<md-radio-button value="portrait">{{translate.load('sbi.execution.executionpage.toolbar.export.pdf.portrait')}}</md-radio-button>
+			</md-radio-group> -->
+			
+			<div layout="row">
+				<md-checkbox ng-model="parameters.pdfFrontPage" aria-label="Front page">
+					{{translate.load('sbi.execution.executionpage.toolbar.export.pdf.frontpage')}}
+				</md-checkbox>
+				<md-checkbox ng-model="parameters.pdfBackPage" aria-label="Back page">
+					{{translate.load('sbi.execution.executionpage.toolbar.export.pdf.backpage')}}
+				</md-checkbox>
 			</div>
 			
 		</md-content>

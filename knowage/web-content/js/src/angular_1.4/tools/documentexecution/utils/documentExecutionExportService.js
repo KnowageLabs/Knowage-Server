@@ -175,7 +175,9 @@
 							pdfHeight: 1080,
 							pdfWaitTime: 60,
 							pdfZoom: 100, // scale it while saving
-							pdfPageOrientation: 'landscape'
+							pdfPageOrientation: 'landscape',
+							pdfFrontPage: true,
+							pdfBackPage: true
 						}
 
 						$scope.closeDialog=function(){

@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%-- ------------------------------------------------------------------------%>
 <%-- JAVA IMPORTS                                                          --%>
 <%-- ------------------------------------------------------------------------%>
-<%@ page import="java.util.Map" %>
+<%@ page import="it.eng.knowage.slimerjs.wrapper.beans.RenderOptions" %>
 <%@ page import="it.eng.knowage.engine.cockpit.api.export.pdf.PdfExporter"%>
 
 <%@ page trimDirectiveWhitespaces="true" %>
@@ -27,9 +27,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%
 int documentId = Integer.valueOf(request.getParameter("document"));
 String requestURL = (String) request.getAttribute("requestURL");
-String userId =  (String) request.getAttribute("user_id");
+RenderOptions renderOptions = (RenderOptions) request.getAttribute("renderOptions");
+String pdfPageOrientation = request.getParameter("pdfPageOrientation")
+boolean pdfFrontPage = Boolean.valueOf(request.getParameter("pdfFrontPage"));
+boolean pdfBackPage = Boolean.valueOf(request.getParameter("pdfBackPage"));
 
-PdfExporter pdfExporter = new PdfExporter(documentId, requestURL, userId);
+PdfExporter pdfExporter = new PdfExporter(documentId, requestURL, renderOptions, pdfPageOrientation, pdfFrontPage, pdfBackPage);
 byte[] data = pdfExporter.getBinaryData();
 
 response.setHeader("Content-length", Integer.toString(data.length));

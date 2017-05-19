@@ -17,6 +17,7 @@
  */
 package it.eng.knowage.engine.cockpit.api.export.pdf;
 
+import it.eng.knowage.slimerjs.wrapper.beans.RenderOptions;
 import it.eng.spago.error.EMFAbstractError;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -38,16 +39,23 @@ public class PdfExporter {
 
 	private int documentId;
 	private String requestUrl;
-	private String userId;
+	private RenderOptions renderOptions;
+	String pageOrientation;
+	boolean pdfFrontPage;
+	boolean pdfBackPage;
 
-	public PdfExporter(int documentId, String requestUrl, String userId) {
+	public PdfExporter(int documentId, String requestUrl, RenderOptions renderOptions, String pageOrientation, boolean pdfFrontPage, boolean pdfBackPage) {
 		this.documentId = documentId;
 		this.requestUrl = requestUrl;
-		this.userId = userId;
+		this.renderOptions = renderOptions;
+		this.pageOrientation = pageOrientation;
+		this.pdfFrontPage = pdfFrontPage;
+		this.pdfBackPage = pdfBackPage;
 	}
 
 	public byte[] getBinaryData() {
 		int sheetCount = getSheetCount();
+
 		return "This is not a PDF file!".getBytes(); // FIXME
 	}
 
