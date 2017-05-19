@@ -223,13 +223,13 @@
 	    #end
 	    
 	    ## NOTE (TOOLTIP PROBLEM)
-	    events: {
+	    #*events: {
         load: function() {
           chart = this;
           this.myTooltip = new Highcharts.Tooltip(this, this.options.tooltip);
           //this.tooltip.label.element.remove();
         }
-      }
+      }*#
     },
     
     #*
@@ -994,9 +994,6 @@
         	opposite: true,
         	#end
         	
-        	stackLabels: {
-        		enabled: true
-        	},
         },
         #end
         ## FINE Serie add
@@ -1590,7 +1587,7 @@
 	              
 	              setTimeout(function() {
 	                myTooltip.refresh(chart.series[0].points[i])
-	              }, 1000)
+	              }, 0)
 	              
 	              // Hides the 
 	              setTimeout(function() {
@@ -1648,45 +1645,16 @@
         series: {
             cursor: 'pointer',
             point: {
-            	events: {
-	          
-	            mouseOver: function(e) {
-	            
-	              var i = this.x;
-	              
-	              points = [];
-	              
-	              Highcharts.each(this.series.chart.series, function(s) {
-	                Highcharts.each(s.data, function(p) {
-	                  if (p.x === i) {
-	                    points.push(p)
-	                  }
-	                })
-	              });
-	              
-	              myTooltip = chart.myTooltip;
-	              
-	              setTimeout(function() {
-	                myTooltip.refresh(chart.series[0].points[i])
-	              }, 1000)
-	              
-	              // Hides the 
-	              setTimeout(function() {
-	                myTooltip.hide()
-	              }, 1000)
-	
-	            },
-	              #if($chart.isCockpitEngine=="false" && !$enableDrilldown)
-					
+            
+               #if($chart.isCockpitEngine=="false" && !$enableDrilldown)
+					events:{
 						click: scope.chartInitializer.handleCrossNavigationTo,
-				
+					}
 		         #elseif($chart.outcomingEventsEnabled == 'true')
-		              	
-		                	click: handleCockpitSelection,
-		            
+		              	events:{
+		                	click: handleCockpitSelection
+		            	}
 		         #end
-	          }
-             
             },
             
             #* 
