@@ -73,6 +73,7 @@ var renderPage = function (page) {
     slimer.exit(3);
   }
 
+  log("Exit from SlimerJS")
   slimer.exit(0); // OK!
 };
 

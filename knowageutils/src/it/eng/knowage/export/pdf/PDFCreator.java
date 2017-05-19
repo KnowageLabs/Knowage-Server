@@ -18,6 +18,10 @@
 
 package it.eng.knowage.export.pdf;
 
+import it.eng.spagobi.commons.utilities.StringUtilities;
+
+import java.awt.Color;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -25,6 +29,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -35,9 +40,13 @@ import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.PDPageContentStream.AppendMode;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.apache.pdfbox.util.Matrix;
 
 /**
  * @authors Alessandro Portosa (alessandro.portosa@eng.it)
@@ -49,6 +58,8 @@ public abstract class PDFCreator {
 	private static Logger logger = Logger.getLogger(PDFCreator.class);
 
 	private final static String TEMP_SUFFIX = ".temp.pdf";
+	private final static String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+	private final static SimpleDateFormat DEFAULT_DATE_FORMATTER = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
 
 	public static void createPDF(List<InputStream> inputImages, Path output) throws IOException {
 		PDDocument document = new PDDocument();
@@ -98,4 +109,114 @@ public abstract class PDFCreator {
 		logger.debug("Documents merged");
 	}
 
+	/**
+	 * create the second sample document from the PDF file format specification.
+	 *
+	 * @param file
+	 *            The file to write the PDF to.
+	 * @param message
+	 *            The message to write in the file.
+	 * @param outfile
+	 *            The resulting PDF.
+	 *
+	 * @throws IOException
+	 *             If there is an error writing the data.
+	 */
+	public static void addInformation(Path input, ExportDetails details) throws IOException {
+		try (PDDocument doc = PDDocument.load(input.toFile())) {
+			if (details.getPageNumbering() != null) {
+				writePageNumbering(doc, PDType1Font.HELVETICA_BOLD, 15.0f, details.getPageNumbering());
+			}
+			if (details.getFrontpageDetails() != null) {
+				writeFrontpageDetails(doc, PDType1Font.HELVETICA_BOLD, 18.0f, details.getFrontpageDetails());
+			}
+			doc.save(input.toFile());
+		}
+	}
+
+	private static void drawRect(PDPageContentStream contentStream, Color color, Rectangle rect, boolean fill) throws IOException {
+		contentStream.addRect(rect.x, rect.y, rect.width, rect.height);
+		if (fill) {
+			contentStream.setNonStrokingColor(color);
+			contentStream.fill();
+		} else {
+			contentStream.setStrokingColor(color);
+			contentStream.stroke();
+		}
+	}
+
+	private static void writeText(PDPageContentStream contentStream, Color color, PDFont font, float fontSize, boolean rotate, float x, float y, String... text)
+			throws IOException {
+		contentStream.beginText();
+		// set font and font size
+		contentStream.setFont(font, fontSize);
+		// set text color
+		contentStream.setNonStrokingColor(color.getRed(), color.getGreen(), color.getBlue());
+		if (rotate) {
+			// rotate the text according to the page rotation
+			contentStream.setTextMatrix(Matrix.getRotateInstance(Math.PI / 2, x, y));
+		} else {
+			contentStream.setTextMatrix(Matrix.getTranslateInstance(x, y));
+		}
+		if (text.length > 1) {
+			contentStream.setLeading(25f);
+
+		}
+		for (String line : text) {
+			contentStream.showText(line);
+			contentStream.newLine();
+		}
+		contentStream.endText();
+	}
+
+	private static void writePageNumbering(PDDocument doc, PDFont font, float fontSize, PageNumbering pageNumbering) throws IOException {
+		int numberOfPages = pageNumbering.isLastIncluded() ? doc.getNumberOfPages() : doc.getNumberOfPages() - 1;
+		for (int pageIndex = pageNumbering.isFirstIncluded() ? 0 : 1; pageIndex < numberOfPages; pageIndex++) {
+			String footer = "Page " + (pageIndex + 1) + " of " + numberOfPages;
+			PDPage page = doc.getPage(pageIndex);
+			PDRectangle pageSize = page.getMediaBox();
+			float stringWidth = font.getStringWidth(footer) * fontSize / 1000f;
+			float stringHeight = font.getFontDescriptor().getFontBoundingBox().getHeight() * fontSize / 1000f;
+
+			int rotation = page.getRotation();
+			boolean rotate = rotation == 90 || rotation == 270;
+			float pageWidth = rotate ? pageSize.getHeight() : pageSize.getWidth();
+			float pageHeight = rotate ? pageSize.getWidth() : pageSize.getHeight();
+			float startX = rotate ? pageHeight / 2f : (pageWidth - stringWidth - stringHeight) / 2f;
+			float startY = rotate ? (pageWidth - stringWidth) : stringHeight;
+
+			// append the content to the existing stream
+			try (PDPageContentStream contentStream = new PDPageContentStream(doc, page, AppendMode.APPEND, true, true)) {
+
+				// draw rectangle
+				contentStream.setNonStrokingColor(255, 255, 255); // gray background
+				// Draw a white filled rectangle
+				drawRect(contentStream, Color.WHITE, new java.awt.Rectangle((int) startX, (int) startY - 3, (int) stringWidth + 2, (int) stringHeight), true);
+				writeText(contentStream, new Color(4, 44, 86), font, fontSize, rotate, startX, startY, footer);
+			}
+		}
+	}
+
+	private static void writeFrontpageDetails(PDDocument doc, PDFont font, float fontSize, FrontpageDetails details) throws IOException {
+		String name = "Name: " + details.getName();
+		String description = "Description: " + details.getDescription();
+		String date = "Date: " + DEFAULT_DATE_FORMATTER.format(details.getDate());
+		PDPage page = doc.getPage(0);
+		PDRectangle pageSize = page.getMediaBox();
+		float stringWidth = font.getStringWidth(StringUtilities.findLongest(name, description, date)) * fontSize / 1000f;
+		float stringHeight = font.getFontDescriptor().getFontBoundingBox().getHeight() * fontSize / 1000f;
+
+		int rotation = page.getRotation();
+		boolean rotate = rotation == 90 || rotation == 270;
+		float pageWidth = rotate ? pageSize.getHeight() : pageSize.getWidth();
+		float pageHeight = rotate ? pageSize.getWidth() : pageSize.getHeight();
+		float startX = rotate ? pageHeight / 3f : (pageWidth - stringWidth - stringHeight) / 3f;
+		float startY = rotate ? (pageWidth - stringWidth) / 1f : pageWidth / 0.9f;
+
+		// append the content to the existing stream
+		try (PDPageContentStream contentStream = new PDPageContentStream(doc, page, AppendMode.APPEND, true, true)) {
+			// draw rectangle
+			writeText(contentStream, new Color(4, 44, 86), font, fontSize, rotate, startX, startY, name, description, date);
+		}
+	}
 }

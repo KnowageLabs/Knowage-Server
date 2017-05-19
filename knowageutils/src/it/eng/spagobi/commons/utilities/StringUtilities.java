@@ -36,7 +36,10 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
@@ -925,6 +928,15 @@ public class StringUtilities {
 			}
 		}
 		return toReturn;
+	}
+
+	public static String findLongest(String... text) {
+		return Collections.max(Arrays.asList(text), new Comparator<String>() {
+			@Override
+			public int compare(String o1, String o2) {
+				return o1.length() - o2.length();
+			}
+		});
 	}
 
 }

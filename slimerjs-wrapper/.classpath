@@ -5,13 +5,13 @@
 	<classpathentry kind="src" path="resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry kind="lib" path="lib/commons-exec-1.3.jar"/>
-	<classpathentry kind="lib" path="lib/pdfbox-2.0.5.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.16.jar"/>
 	<classpathentry kind="lib" path="lib/commons-codec-1.5.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-annotations-2.0.2.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-core-2.0.2.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-databind-2.0.2.jar"/>
 	<classpathentry kind="lib" path="lib/commons-lang3-3.4.jar"/>
+	<classpathentry kind="lib" path="lib/pdfbox-app-2.0.4.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/knowageutils"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/knowageutilsjson"/>
 	<classpathentry kind="output" path="bin"/>
