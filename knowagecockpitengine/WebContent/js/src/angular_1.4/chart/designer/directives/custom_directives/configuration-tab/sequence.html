@@ -23,11 +23,11 @@
 		 /> </md-input-container>
 
 	<md-input-container class="md-block colorInputContainer" >
-	<label  ng-class="{'kn-inputError':configurationForm.sequenceForm.sequence_percFontColor.$invalid}">{{translate.load("sbi.chartengine.configuration.sunburst.toolbar.percentageColor")}}</label>
+	<label >{{translate.load("sbi.chartengine.configuration.sunburst.toolbar.percentageColor")}}</label>
 	 <color-picker
-		options="colorPickerOptionsCockpit"
+		options="colorRequiredPickerOptionsCockpit"
 		ng-model="chartTemplate.TOOLBAR.style.percFontColor" name="sequence_percFontColor"
-		ng-required="chartTemplate.type.toLowerCase()=='sunburst'"></color-picker> </md-input-container>
+		></color-picker> </md-input-container>
 		
 	<md-input-container class="md-block" >
 	 <label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontfamily")}}</label>
