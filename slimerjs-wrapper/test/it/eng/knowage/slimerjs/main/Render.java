@@ -66,7 +66,7 @@ public class Render {
 		String encodedUserId = Base64.encodeBase64String(userId.getBytes("UTF-8"));
 		authenticationHeaders.put("Authorization", "Direct " + encodedUserId);
 		List<InputStream> images = SlimerJS.render(url, 2, RenderOptions.DEFAULT.withCustomHeaders(new CustomHeaders(authenticationHeaders))
-				.withJavaScriptExecutionDetails(20000L, 20000L));
+				.withJavaScriptExecutionDetails(5000L, 15000L));
 		// List<InputStream> images = SlimerJS.render(urlQA, 1, RenderOptions.DEFAULT);
 		PDFCreator.createPDF(images, output, front, back);
 		ExportDetails details = new ExportDetails(new FrontpageDetails("Cool dashboard", "The most cool dashboard on earth", new Date()), PageNumbering.DEFAULT);

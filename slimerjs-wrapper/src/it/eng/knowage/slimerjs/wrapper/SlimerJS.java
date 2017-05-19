@@ -105,7 +105,7 @@ public class SlimerJS {
 			throw new NullPointerException("All parameters but headers are required");
 		}
 
-		if (jsWait < 0 || jsInterval < 0 || (jsWait > 0 && jsInterval > jsWait) || (jsInterval == 0 && jsWait > 0)) {
+		if (jsWait < 0 || jsInterval < 0) {
 			throw new IllegalArgumentException("Invalid jsWait or jsInterval values provided");
 		}
 

@@ -57,6 +57,11 @@ var setZoom = function (page) {
   }
 };
 
+var exit = function(code) {
+	log("Exit from SlimerJS with code: " + code)
+	slimer.exit(code);
+}
+
 // this function renders the page
 var renderPage = function (page) {
 	log("[RENDERPAGE] IN");
@@ -73,8 +78,7 @@ var renderPage = function (page) {
     slimer.exit(3);
   }
 
-  log("Exit from SlimerJS")
-  slimer.exit(0); // OK!
+  setTimeout(exit, jsWait, 0);
 };
 
 var applySettingOnPage = function applySettingOnPage(page, sheet) {
