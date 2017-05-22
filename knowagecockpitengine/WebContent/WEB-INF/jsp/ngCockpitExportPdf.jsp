@@ -26,13 +26,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@ page contentType="applicaton/octet-stream" %>
 <%
 int documentId = Integer.valueOf(request.getParameter("document"));
+String userId = request.getParameter("user_id");
 String requestURL = (String) request.getAttribute("requestURL");
 RenderOptions renderOptions = (RenderOptions) request.getAttribute("renderOptions");
-String pdfPageOrientation = request.getParameter("pdfPageOrientation")
+String pdfPageOrientation = request.getParameter("pdfPageOrientation");
 boolean pdfFrontPage = Boolean.valueOf(request.getParameter("pdfFrontPage"));
 boolean pdfBackPage = Boolean.valueOf(request.getParameter("pdfBackPage"));
 
-PdfExporter pdfExporter = new PdfExporter(documentId, requestURL, renderOptions, pdfPageOrientation, pdfFrontPage, pdfBackPage);
+PdfExporter pdfExporter = new PdfExporter(documentId, userId, requestURL, renderOptions, pdfPageOrientation, pdfFrontPage, pdfBackPage);
 byte[] data = pdfExporter.getBinaryData();
 
 response.setHeader("Content-length", Integer.toString(data.length));

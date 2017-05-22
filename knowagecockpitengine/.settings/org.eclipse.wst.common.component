@@ -15,6 +15,9 @@
 		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/qbecore/qbecore">
 			<dependency-type>uses</dependency-type>
 		</dependent-module>
+        <dependent-module archiveName="slimerjs-wrapper.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/slimerjs-wrapper/slimerjs-wrapper">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
 		<property name="java-output-path"/>
 		<property name="context-root" value="knowagecockpitengine"/>
 	</wb-module>
