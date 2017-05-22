@@ -8,6 +8,7 @@ import it.eng.knowage.slimerjs.wrapper.beans.SlimerJSExecutionResponse;
 import it.eng.knowage.slimerjs.wrapper.beans.SlimerJSOptions;
 import it.eng.knowage.slimerjs.wrapper.beans.ViewportDimensions;
 import it.eng.knowage.slimerjs.wrapper.enums.RenderFormat;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,8 +53,8 @@ public class SlimerJS {
 	 *             if the render script fails for any reason
 	 */
 	public static List<InputStream> render(final URL url, final Integer sheets, final RenderOptions options) throws IOException, RenderException {
-		return render(options.getOptions(), url, sheets, options.getDimensions(), options.getRenderFormat(), options.getCustomHeaders(), options.getJsWait(),
-				options.getJsInterval());
+		return render(options.getOptions(), url, sheets, options.getDimensions(), options.getRenderFormat(), options.getCustomHeaders(),
+				options.getJsRenderingWait(), options.getJsExitingWait());
 	}
 
 	/**
@@ -70,8 +71,8 @@ public class SlimerJS {
 	 *             if the render script fails for any reason
 	 */
 	public static List<InputStream> render(final URL url, final RenderOptions options) throws IOException, RenderException {
-		return render(options.getOptions(), url, 1, options.getDimensions(), options.getRenderFormat(), options.getCustomHeaders(), options.getJsWait(),
-				options.getJsInterval());
+		return render(options.getOptions(), url, 1, options.getDimensions(), options.getRenderFormat(), options.getCustomHeaders(),
+				options.getJsRenderingWait(), options.getJsExitingWait());
 	}
 
 	/**
@@ -89,10 +90,10 @@ public class SlimerJS {
 	 *            the format to render
 	 * @param customHeaders
 	 *            the headers to be sent
-	 * @param jsWait
-	 *            the maximum amount of time to wait for JS to finish execution in milliseconds
-	 * @param jsInterval
-	 *            the interval
+	 * @param jsRenderingWait
+	 *            the amount of time to wait for JS before start to render, in milliseconds
+	 * @param jsExitingWait
+	 *            the amount of time to wait for SlimerJS before exit, in milliseconds
 	 * @return the streams of the rendered outputs
 	 * @throws IOException
 	 *             if any file operations fail
@@ -100,13 +101,14 @@ public class SlimerJS {
 	 *             if the render script fails for any reason
 	 */
 	public static List<InputStream> render(final SlimerJSOptions options, final URL url, final Integer sheets, final ViewportDimensions dimensions,
-			final RenderFormat renderFormat, final CustomHeaders customHeaders, final Long jsWait, final Long jsInterval) throws IOException, RenderException {
-		if (url == null || sheets == null || renderFormat == null || dimensions == null || jsWait == null || jsInterval == null) {
+			final RenderFormat renderFormat, final CustomHeaders customHeaders, final Long jsRenderingWait, final Long jsExitingWait) throws IOException,
+			RenderException {
+		if (url == null || sheets == null || renderFormat == null || dimensions == null || jsRenderingWait == null || jsExitingWait == null) {
 			throw new NullPointerException("All parameters but headers are required");
 		}
 
-		if (jsWait < 0 || jsInterval < 0) {
-			throw new IllegalArgumentException("Invalid jsWait or jsInterval values provided");
+		if (jsRenderingWait < 0 || jsExitingWait < 0) {
+			throw new IllegalArgumentException("Invalid jsRenderingWait or jsExitingWait values provided");
 		}
 
 		// The render script
@@ -127,9 +129,9 @@ public class SlimerJS {
 				new CommandLineArgument(dimensions.getWidth()), new CommandLineArgument(dimensions.getHeight()), new CommandLineArgument(OperatingSystem.get()
 						.name()), new CommandLineArgument(wrapCommandLineArgumentName(SlimerJSConstants.RENDERPATH_TEMPLATENAME),
 						SlimerJSConstants.RENDERPATH_TEMPLATENAME, renderPath.toFile()), new CommandLineArgument(
-						wrapCommandLineArgumentName(SlimerJSConstants.JSWAIT_TEMPLATENAME), SlimerJSConstants.JSWAIT_TEMPLATENAME, jsWait),
-				new CommandLineArgument(wrapCommandLineArgumentName(SlimerJSConstants.JSINTERVAL_TEMPLATENAME), SlimerJSConstants.JSINTERVAL_TEMPLATENAME,
-						jsInterval));
+						wrapCommandLineArgumentName(SlimerJSConstants.JS_RENDERING_WAIT_TEMPLATENAME), SlimerJSConstants.JS_RENDERING_WAIT_TEMPLATENAME,
+						jsRenderingWait), new CommandLineArgument(wrapCommandLineArgumentName(SlimerJSConstants.JS_EXITING_WAIT_TEMPLATENAME),
+						SlimerJSConstants.JS_EXITING_WAIT_TEMPLATENAME, jsExitingWait), new CommandLineArgument(SpagoBIUtilities.getHmacKey()));
 
 		final int renderExitCode = slimerJSExecutionResponse.getExitCode();
 
@@ -153,7 +155,7 @@ public class SlimerJS {
 			error = "Failed to render PDF to output";
 			break;
 		case 3:
-			error = "JS execution did not finish within the wait time";
+			error = "JS execution did not finish correctly";
 			break;
 		default:
 			error = "Render script failed for an unknown reason.";
@@ -176,10 +178,10 @@ public class SlimerJS {
 	 *            the format to render
 	 * @param customHeaders
 	 *            the headers to be sent
-	 * @param jsWait
-	 *            the maximum amount of time to wait for JS to finish execution in milliseconds
-	 * @param jsInterval
-	 *            the interval
+	 * @param jsRenderingWait
+	 *            the amount of time to wait for JS before start to render, in milliseconds
+	 * @param jsExitingWait
+	 *            the amount of time to wait for SlimerJS before exit, in milliseconds
 	 * @return the streams of the rendered outputs
 	 * @throws IOException
 	 *             if any file operations fail
@@ -187,8 +189,8 @@ public class SlimerJS {
 	 *             if the render script fails for any reason
 	 */
 	public static List<InputStream> render(final SlimerJSOptions options, final URL url, final ViewportDimensions dimensions, final RenderFormat renderFormat,
-			final CustomHeaders customHeaders, final Long jsWait, final Long jsInterval) throws IOException, RenderException {
-		return render(options, url, 1, dimensions, renderFormat, customHeaders, jsWait, jsInterval);
+			final CustomHeaders customHeaders, final Long jsRenderingWait, final Long jsExitingWait) throws IOException, RenderException {
+		return render(options, url, 1, dimensions, renderFormat, customHeaders, jsRenderingWait, jsExitingWait);
 	}
 
 	public static SlimerJSExecutionResponse exec(InputStream script, CommandLineArgument... arguments) throws IOException {

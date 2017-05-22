@@ -18,14 +18,19 @@
 
 package it.eng.knowage.export.pdf;
 
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.constants.ConfigurationConstants;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -35,6 +40,7 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -57,11 +63,14 @@ public abstract class PDFCreator {
 
 	private static Logger logger = Logger.getLogger(PDFCreator.class);
 
+	public final static String DEFAULT_FRONT_PAGE_RESOURCE_PATH = "resources/it/eng/knowage/slimerjs/wrapper/Export_Front.pdf";
+	public final static String DEFAULT_BACK_PAGE_RESOURCE_PATH = "resources/it/eng/knowage/slimerjs/wrapper/Export_Back.pdf";
+
 	private final static String TEMP_SUFFIX = ".temp.pdf";
 	private final static String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 	private final static SimpleDateFormat DEFAULT_DATE_FORMATTER = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
 
-	public static void createPDF(List<InputStream> inputImages, Path output) throws IOException {
+	private static void createPDF(List<InputStream> inputImages, Path output) throws IOException {
 		PDDocument document = new PDDocument();
 		try {
 			for (InputStream is : inputImages) {
@@ -83,41 +92,52 @@ public abstract class PDFCreator {
 		}
 	}
 
-	public static void createPDF(List<InputStream> inputImages, Path output, Path front, Path back) throws IOException {
+	public static void createPDF(List<InputStream> inputImages, Path output, boolean frontAndBack) throws IOException {
+		if (frontAndBack) {
+			createPDF(inputImages, output, getFrontpage(), getBackpage());
+		} else {
+			createPDF(inputImages, output);
+		}
+	}
+
+	private static void createPDF(List<InputStream> inputImages, Path output, InputStream front, InputStream back) throws IOException {
 		String path = output.toString();
 		Path tempOutput = Paths.get(FilenameUtils.removeExtension(path) + TEMP_SUFFIX);
 		createPDF(inputImages, tempOutput);
-		mergePDF(output, front, tempOutput, back);
+		mergePDF(new FileOutputStream(output.toFile()), front, new FileInputStream(tempOutput.toFile()), back);
 		Files.deleteIfExists(tempOutput);
 	}
 
-	public static void mergePDF(Path output, Path... contents) throws IOException {
+	private static void mergePDF(OutputStream output, InputStream... contents) throws IOException {
+		try {
+			// Instantiating PDFMergerUtility class
+			PDFMergerUtility merger = new PDFMergerUtility();
 
-		// Instantiating PDFMergerUtility class
-		PDFMergerUtility merger = new PDFMergerUtility();
+			// Setting the destination file
+			merger.setDestinationStream(output);
 
-		// Setting the destination file
-		merger.setDestinationStream(new FileOutputStream(output.toFile()));
-
-		for (int i = 0; i < contents.length; i++) {
-			// adding the source files
-			merger.addSource(contents[i].toFile());
+			for (int i = 0; i < contents.length; i++) {
+				// adding the source files
+				merger.addSource(contents[i]);
+			}
+			// Merging the documents
+			merger.mergeDocuments(null);
+			logger.debug("Documents merged");
+		} finally {
+			IOUtils.closeQuietly(output);
+			for (int i = 0; i < contents.length; i++) {
+				IOUtils.closeQuietly(contents[i]);
+			}
 		}
-		// Merging the documents
-		merger.mergeDocuments(null);
-
-		logger.debug("Documents merged");
 	}
 
 	/**
 	 * create the second sample document from the PDF file format specification.
 	 *
-	 * @param file
-	 *            The file to write the PDF to.
-	 * @param message
-	 *            The message to write in the file.
-	 * @param outfile
-	 *            The resulting PDF.
+	 * @param input
+	 *            The PDF path to add the information to.
+	 * @param details
+	 *            The details to be added.
 	 *
 	 * @throws IOException
 	 *             If there is an error writing the data.
@@ -219,5 +239,17 @@ public abstract class PDFCreator {
 			// draw rectangle
 			writeText(contentStream, new Color(4, 44, 86), font, fontSize, rotate, startX, startY, name, description, date);
 		}
+	}
+
+	private static InputStream getFrontpage() throws FileNotFoundException {
+		String path = SingletonConfig.getInstance().getConfigValue(ConfigurationConstants.DOCUMENT_EXPORTING_PDF_FRONT_PAGE);
+		return path.isEmpty() ? Thread.currentThread().getContextClassLoader().getResourceAsStream(PDFCreator.DEFAULT_FRONT_PAGE_RESOURCE_PATH)
+				: new FileInputStream(path);
+	}
+
+	private static InputStream getBackpage() throws FileNotFoundException {
+		String path = SingletonConfig.getInstance().getConfigValue(ConfigurationConstants.DOCUMENT_EXPORTING_PDF_BACK_PAGE);
+		return path.isEmpty() ? Thread.currentThread().getContextClassLoader().getResourceAsStream(PDFCreator.DEFAULT_BACK_PAGE_RESOURCE_PATH)
+				: new FileInputStream(path);
 	}
 }

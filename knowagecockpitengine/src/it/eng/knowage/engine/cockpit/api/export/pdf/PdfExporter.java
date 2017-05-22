@@ -21,17 +21,17 @@ import it.eng.knowage.export.pdf.ExportDetails;
 import it.eng.knowage.export.pdf.FrontpageDetails;
 import it.eng.knowage.export.pdf.PDFCreator;
 import it.eng.knowage.export.pdf.PageNumbering;
+import it.eng.knowage.slimerjs.wrapper.DeleteOnCloseFileInputStream;
 import it.eng.knowage.slimerjs.wrapper.SlimerJS;
-import it.eng.knowage.slimerjs.wrapper.beans.CustomHeaders;
 import it.eng.knowage.slimerjs.wrapper.beans.RenderOptions;
 import it.eng.spago.error.EMFAbstractError;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.InputStream;
 import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
@@ -41,6 +41,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -75,26 +76,26 @@ public class PdfExporter {
 	}
 
 	public byte[] getBinaryData() throws Exception {
-		Path front = Paths.get("D:\\Knowage\\Workspace\\Trunk\\slimerjs-wrapper\\resources\\it\\eng\\knowage\\slimerjs\\wrapper\\Export_Front.pdf");
-		Path back = Paths.get("D:\\Knowage\\Workspace\\Trunk\\slimerjs-wrapper\\resources\\it\\eng\\knowage\\slimerjs\\wrapper\\Export_Back.pdf");
 		Path output = Paths.get("C:\\temp\\" + UUID.randomUUID().toString() + ".pdf");
 
-		int sheetCount = getSheetCount();
+		BIObject document = DAOFactory.getBIObjectDAO().loadBIObjectById(documentId);
+		int sheetCount = getSheetCount(document);
 		URL url = new URL(requestUrl);
 		Map<String, String> authenticationHeaders = new HashMap<String, String>(1);
 		String encodedUserId = Base64.encodeBase64String(userId.getBytes("UTF-8"));
 		authenticationHeaders.put("Authorization", "Direct " + encodedUserId);
-		List<InputStream> images = SlimerJS.render(url, sheetCount, RenderOptions.DEFAULT.withCustomHeaders(new CustomHeaders(authenticationHeaders))
-				.withJavaScriptExecutionDetails(5000L, 15000L));
-		PDFCreator.createPDF(images, output, front, back);
-		ExportDetails details = new ExportDetails(new FrontpageDetails("Cool dashboard", "The most cool dashboard on earth", new Date()), PageNumbering.DEFAULT);
+		List<InputStream> images = SlimerJS.render(url, sheetCount, renderOptions);
+		PDFCreator.createPDF(images, output, true);
+		ExportDetails details = new ExportDetails(getFrontpageDetails(document), PageNumbering.DEFAULT);
 		PDFCreator.addInformation(output, details);
-		return Files.readAllBytes(output);
+		try (InputStream is = new DeleteOnCloseFileInputStream(output.toFile())) {
+			return IOUtils.toByteArray(is);
+		}
 	}
 
-	private int getSheetCount() {
+	private int getSheetCount(BIObject document) {
 		try {
-			ObjTemplate objTemplate = DAOFactory.getObjTemplateDAO().getBIObjectActiveTemplate(documentId);
+			ObjTemplate objTemplate = document.getActiveTemplate();
 			if (objTemplate == null) {
 				throw new SpagoBIRuntimeException("Unable to get template for document with id [" + documentId + "]");
 			}
@@ -109,5 +110,15 @@ public class PdfExporter {
 		} catch (JSONException e) {
 			throw new SpagoBIRuntimeException("Invalid template for document with id [" + documentId + "]", e);
 		}
+	}
+
+	private FrontpageDetails getFrontpageDetails(BIObject document) {
+		String name = document.getName();
+		String description = document.getDescription();
+		if (name == null || description == null) {
+			throw new SpagoBIRuntimeException("Unable to get name [" + name + "] or description [" + description + "] for document with id [" + documentId
+					+ "]");
+		}
+		return new FrontpageDetails(name, description, new Date());
 	}
 }

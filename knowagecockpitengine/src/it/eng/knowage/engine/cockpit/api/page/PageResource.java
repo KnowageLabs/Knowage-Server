@@ -188,10 +188,10 @@ public class PageResource extends AbstractCockpitEngineResource {
 		int pdfHeight = Integer.valueOf(request.getParameter(PDF_HEIGHT));
 		ViewportDimensions dimensions = new ViewportDimensions(pdfWidth, pdfHeight);
 
-		long pdfWaitTime = 1000 * Long.valueOf(request.getParameter(PDF_WAIT_TIME));
+		long pdfRenderingWaitTime = 1000 * Long.valueOf(request.getParameter(PDF_WAIT_TIME));
 
 		RenderOptions renderOptions = RenderOptions.DEFAULT.withCustomHeaders(customHeaders).withDimensions(dimensions)
-				.withJavaScriptExecutionDetails(pdfWaitTime, 5000L);
+				.withJavaScriptExecutionDetails(pdfRenderingWaitTime, 5000L);
 		return renderOptions;
 	}
 

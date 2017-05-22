@@ -28,7 +28,7 @@ class SlimerJSConstants {
 
 	static final String CUSTOMHEADERS_TEMPLATENAME = "customeHeaders";
 
-	static final String JSWAIT_TEMPLATENAME = "jsWait", JSINTERVAL_TEMPLATENAME = "jsInterval";
+	static final String JS_RENDERING_WAIT_TEMPLATENAME = "jsRenderingWait", JS_EXITING_WAIT_TEMPLATENAME = "jsExitingWait";
 
 	static final String SHUTDOWN_HOOK_THREAD_NAME = "SlimerJSSetupShutDownHook";
 }

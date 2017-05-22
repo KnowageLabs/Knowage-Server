@@ -67,7 +67,7 @@ public class Render {
 		List<InputStream> images = SlimerJS.render(url, 2, RenderOptions.DEFAULT.withCustomHeaders(new CustomHeaders(authenticationHeaders))
 				.withJavaScriptExecutionDetails(5000L, 15000L));
 		// List<InputStream> images = SlimerJS.render(urlQA, 1, RenderOptions.DEFAULT);
-		PDFCreator.createPDF(images, output, front, back);
+		PDFCreator.createPDF(images, output, true);
 		ExportDetails details = new ExportDetails(new FrontpageDetails("Cool dashboard", "The most cool dashboard on earth", new Date()), PageNumbering.DEFAULT);
 		PDFCreator.addInformation(output, details);
 		// Files.deleteIfExists(output);
