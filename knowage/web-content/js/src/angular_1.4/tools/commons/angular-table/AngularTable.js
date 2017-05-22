@@ -632,10 +632,15 @@ function TableControllerFunction($scope, $timeout) {
     		var queueTable = angular.element($scope.tableItem[0].querySelector(' #queueTableContent'))[0];
     			$scope.queueTable=queueTable;
     	}
+    	
+    	if($scope.tableHeader==undefined || $scope.tableHeader.$$NG_REMOVED==true){
+    		var tableHeader = angular.element($scope.tableItem[0].querySelector('.principalTable thead'))[0];
+    			$scope.tableHeader = tableHeader;
+    	}
     		 
-    	var tableContainerHeight = $scope.tableContainer == undefined ? 36 : $scope.tableContainer.offsetHeight;
+    	var tableContainerHeight = $scope.tableContainer == undefined ? 33 : $scope.tableContainer.offsetHeight - $scope.tableHeader.offsetHeight;
         var headButtonHeight = $scope.headButton == undefined ? 0 : $scope.headButton.offsetHeight;
-        var listItemTemplBoxHeight = $scope.listItemTemplBox == undefined ? 36 : $scope.listItemTemplBox.offsetHeight;
+        var listItemTemplBoxHeight = $scope.listItemTemplBox == undefined ? 33 : $scope.listItemTemplBox.offsetHeight;
         var heightQueueTable = $scope.queueTable.offsetHeight>0? $scope.queueTable.offsetHeight:0;;
         
         var scrollHeight=($scope.tableContainer.scrollWidth>$scope.tableContainer.offsetWidth) ? 20:0;
