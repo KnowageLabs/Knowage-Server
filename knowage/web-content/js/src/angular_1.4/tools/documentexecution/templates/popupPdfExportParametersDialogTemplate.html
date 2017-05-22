@@ -14,7 +14,7 @@
 				{{translate.load('sbi.execution.executionpage.toolbar.export.pdf.parameters')}}
 			</div>
 		</md-toolbar>
-		<md-content layout-padding layout-align="space-around center" layout="column">
+		<md-content flex layout-padding layout-align="space-around center" layout="column">
 			
 			<div layout="row">
 				<md-input-container>
@@ -33,7 +33,7 @@
 				</md-input-container>
 			</div>
 			
-			<div layout="row">
+<!-- 		<div layout="row">
 				<md-input-container flex=30>
 					<label>{{translate.load('sbi.execution.executionpage.toolbar.export.pdf.zoom')}} (%)</label>
 					<input min="1" max="100" type="number" ng-model="parameters.pdfZoom" aria-label="zoom">
@@ -42,7 +42,7 @@
 					<md-slider min="1" max="100" ng-model="parameters.pdfZoom" aria-label="zoom">
 					</md-slider>				
 				</md-slider-container>
-			</div>
+			</div> -->
 			
 <!-- 		<md-radio-group layout="row" ng-model="parameters.pdfPageOrientation">
 				<md-radio-button value="landscape">{{translate.load('sbi.execution.executionpage.toolbar.export.pdf.landscape')}}</md-radio-button>

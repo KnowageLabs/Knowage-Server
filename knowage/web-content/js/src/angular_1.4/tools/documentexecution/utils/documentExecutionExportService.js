@@ -171,10 +171,10 @@
 						$scope.translate = sbiModule_translate;
 						
 						$scope.parameters = {
-							pdfWidth: 1920,
-							pdfHeight: 1080,
+							pdfWidth: 1600,
+							pdfHeight: 1200,
 							pdfWaitTime: 60,
-							pdfZoom: 100, // scale it while saving
+							pdfZoom: 75, // scale it to [0; 1] interval while saving
 							pdfPageOrientation: 'landscape',
 							pdfFrontPage: true,
 							pdfBackPage: true
