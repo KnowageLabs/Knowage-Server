@@ -146,9 +146,21 @@ Sbi.registry.RegistryEditorGridPanel = function(config) {
         }
 		, bbar: this.pagingTBar
 		, meta: null
-		,listeners: {headerdblclick : function( grid, columnIndex, e ){
-			this.showExpandPointer(grid, columnIndex);
-		}
+		,listeners: {
+			
+			headerdblclick : function( grid, columnIndex, e ){
+				this.showExpandPointer(grid, columnIndex);
+			},
+			
+			// on cell click case is popup
+			cellclick : function(grid, rowIndex, columnIndex, e) {    
+				var  field = this.meta.fields[columnIndex];
+				if(field.editor.type == 'POPUP'){   
+					this.openPopupEditor(grid, rowIndex, columnIndex);
+				   
+				}
+			}		
+			
 		}
 		, cls: 'grid-row-span'
 	});
@@ -205,6 +217,46 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 	},
 	showExpandPointer: function(grid, columnIndex){
 		grid.getColumnModel().setColumnWidth( columnIndex, this.columnsMaxSize, false ) 
+	}
+	,
+	openPopupEditor: function(grid, rowIndex, columnIndex){
+		var record = grid.getStore().getAt(rowIndex);  // Get the Record    
+		var fieldName = grid.getColumnModel().getDataIndex(columnIndex); // Get field name    
+		var data = record.get(fieldName);
+	   
+	   var form = new Ext.form.TextArea({
+		   id: 'description',
+		   name: 'description',
+		   allowBlank: true, 
+		   autoCreate: {tag: 'textarea ', autocomplete: 'off'},
+		   anchor: '95%',
+		   value : data,
+		   //fieldLabel: LN('sbi.generic.descr') 
+	   });
+	   
+       this.textAreaEditWindow = new Ext.Window({
+        title: 'Set '+fieldName,
+        width: 500,
+        height: 500,
+        layout: 'fit',
+        plain: true,
+        bodyStyle: 'padding:5px;',
+        buttonAlign: 'center',
+        modal: true,
+        closeAction:'hide',
+        items: form,
+        buttons: [{
+        	text: 'Update',
+        	scope:this,
+        	handler:function() {
+        		var currVal = form.getValue();
+        		record.set(fieldName, currVal);
+        		this.textAreaEditWindow.close();
+        	}
+        }]
+        });
+
+       this.textAreaEditWindow.show();
 	}
 	,
 	load:  function(requestParameters) {
@@ -994,6 +1046,8 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 				}
 			} else if (editorConfig.editor == "PICKER") { 
 				toReturn = this.createFieldDate(editorConfig);
+			} else if (editorConfig.editor == "POPUP") { 
+				toReturn = this.createFieldPopup(editorConfig);
 			} else {
 				toReturn = new Ext.form.TextField();
 				toReturn.selectOnFocus = true;
@@ -1010,10 +1064,12 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 				editable : true
 				, visible : true
 		};
+		
 		for (var i = 0; i < columnsConf.length; i++) {
 			if (columnsConf[i].field == field) {
-				toReturn = Ext.apply(toReturn, columnsConf[i]);
-				break;
+					toReturn = Ext.apply(toReturn, columnsConf[i]);
+					break;
+
 			}
 		}
 		return toReturn;
@@ -1318,6 +1374,13 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 		return combo;
 	}	
 	
+	
+	, createFieldPopup: function( fieldConfig ) {
+		var winF = {};
+		winF.type = 'POPUP';
+		return winF;
+
+	}	
 	, createFieldDate: function( fieldConfig ) {
 
 		var dtPicker = new Ext.form.DateField({name: fieldConfig.field
