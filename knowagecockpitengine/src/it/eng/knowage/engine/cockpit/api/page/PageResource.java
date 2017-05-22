@@ -30,6 +30,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -59,6 +60,15 @@ import edu.emory.mathcs.backport.java.util.Arrays;
 
 @Path("/1.0/pages")
 public class PageResource extends AbstractCockpitEngineResource {
+
+	private static final String OUTPUT_TYPE = "outputType";
+	private static final String PDF_PAGE_ORIENTATION = "pdfPageOrientation";
+	private static final String PDF_ZOOM = "pdfZoom";
+	private static final String PDF_WIDTH = "pdfWidth";
+	private static final String PDF_HEIGHT = "pdfHeight";
+	private static final String PDF_WAIT_TIME = "pdfWaitTime";
+	static private final List<String> PDF_PARAMETERS = Arrays.asList(new String[] { OUTPUT_TYPE, PDF_WIDTH, PDF_HEIGHT, PDF_WAIT_TIME, PDF_ZOOM,
+			PDF_PAGE_ORIENTATION });
 
 	static private Map<String, JSONObject> pages;
 	static private Map<String, String> urls;
@@ -123,7 +133,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 			response.setCharacterEncoding("UTF-8");
 
 			if ("execute".equals(pageName)) {
-				String outputType = request.getParameter("outputType");
+				String outputType = request.getParameter(OUTPUT_TYPE);
 				if ("xls".equals(outputType) || "xlsx".equals(outputType)) {
 					request.setAttribute("template", getIOManager().getTemplateAsString());
 					dispatchUrl = "/WEB-INF/jsp/ngCockpitExportExcel.jsp";
@@ -174,11 +184,11 @@ public class PageResource extends AbstractCockpitEngineResource {
 		headers.put("Authorization", "Direct " + encodedUserId);
 		CustomHeaders customHeaders = new CustomHeaders(headers);
 
-		int pdfWidth = Integer.valueOf(request.getParameter("pdfWidth"));
-		int pdfHeight = Integer.valueOf(request.getParameter("pdfHeight"));
+		int pdfWidth = Integer.valueOf(request.getParameter(PDF_WIDTH));
+		int pdfHeight = Integer.valueOf(request.getParameter(PDF_HEIGHT));
 		ViewportDimensions dimensions = new ViewportDimensions(pdfWidth, pdfHeight);
 
-		long pdfWaitTime = 1000 * Long.valueOf(request.getParameter("pdfWaitTime"));
+		long pdfWaitTime = 1000 * Long.valueOf(request.getParameter(PDF_WAIT_TIME));
 
 		RenderOptions renderOptions = RenderOptions.DEFAULT.withCustomHeaders(customHeaders).withDimensions(dimensions)
 				.withJavaScriptExecutionDetails(pdfWaitTime, 5000L);
@@ -186,18 +196,19 @@ public class PageResource extends AbstractCockpitEngineResource {
 	}
 
 	private String getRequestUrlForPdfExport(HttpServletRequest request) {
-		Arrays.asList(new String[] { "outputType", "pdfWidth", "pdfHeight", "pdfWaitTime", "pdfZoom", "pdfPageOrientation" });
 		StringBuilder sb = new StringBuilder(request.getRequestURL().toString());
 		String sep = "?";
 		Map<String, String[]> parameterMap = request.getParameterMap();
 		for (String parameter : parameterMap.keySet()) {
-			String[] values = parameterMap.get(parameter);
-			if (values != null && values.length > 0) {
-				sb.append(sep);
-				sb.append(parameter);
-				sb.append("=");
-				sb.append(values[0]);
-				sep = "&";
+			if (!PDF_PARAMETERS.contains(parameter)) {
+				String[] values = parameterMap.get(parameter);
+				if (values != null && values.length > 0) {
+					sb.append(sep);
+					sb.append(parameter);
+					sb.append("=");
+					sb.append(values[0]);
+					sep = "&";
+				}
 			}
 		}
 		sb.append("&export=true");
