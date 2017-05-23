@@ -102,6 +102,10 @@
 		<ant dir="../knowageservermanager/ant" />
 	</target>
 	
+	<target name="create.slimerjs.wrapper.jar" depends="create.knowage.utils.jar">
+		<ant dir="../slimerjs-wrapper/ant" />
+	</target>
+	
 	<!--
 	<target name="create.knowage.oauth.security.jar" depends="create.knowage.utils.jar,create.knowage.dao.jar">
 		<ant dir="../SpagoBIOAuth2SecurityProvider/ant" />
@@ -152,7 +156,7 @@
 		<unzip src="../../../knowagegeoreportengine/dist/knowagegeoreportengine.war" dest="${tomcat.home}/webapps/knowagegeoreportengine" />
 	</target>
 
-	<target name="create.knowagecockpitengine.war" depends="create.knowage.utils.jar,create.knowage.dao.jar,create.qbe.core.jar">
+	<target name="create.knowagecockpitengine.war" depends="create.knowage.utils.jar,create.knowage.dao.jar,create.qbe.core.jar,create.slimerjs.wrapper.jar">
 		<ant dir="../knowagecockpitengine/ant" />
 	</target>
 
