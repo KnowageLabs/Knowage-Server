@@ -26,6 +26,8 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.sql.Clob;
+import java.sql.Connection;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -143,6 +145,7 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		return toReturn;
 	}
 
+	@Override
 	public Integer insertRecord(JSONObject aRecord, RegistryConfiguration registryConf, boolean autoLoadPK, String tableForPkMax, String columnForPkMax) {
 
 		EntityTransaction entityTransaction = null;
@@ -266,6 +269,7 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		return toReturn;
 	}
 
+	@Override
 	public void updateRecord(JSONObject aRecord, RegistryConfiguration registryConf) {
 
 		EntityTransaction entityTransaction = null;
@@ -354,6 +358,7 @@ public class JPAPersistenceManager implements IPersistenceManager {
 
 	}
 
+	@Override
 	public void deleteRecord(JSONObject aRecord, RegistryConfiguration registryConf) {
 
 		EntityTransaction entityTransaction = null;
@@ -625,6 +630,15 @@ public class JPAPersistenceManager implements IPersistenceManager {
 
 		} else if (Boolean.class.isAssignableFrom(clazz)) {
 			toReturn = Boolean.parseBoolean(value);
+		} else if (Clob.class.isAssignableFrom(clazz)) {
+			try {
+				Connection connection = dataSource.getToolsDataSource().getConnection();
+				toReturn = connection.createClob();
+				((Clob) toReturn).setString(1, value);
+			} catch (Exception e) {
+				logger.error("Error in creating clob object", e);
+				toReturn = null;
+			}
 		} else {
 			toReturn = value;
 		}
