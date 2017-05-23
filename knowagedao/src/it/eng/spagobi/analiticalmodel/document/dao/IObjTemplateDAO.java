@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -71,6 +71,19 @@ public interface IObjTemplateDAO extends ISpagoBIDao {
 	public List getBIObjectTemplateList(Integer biobjId) throws EMFInternalError;
 
 	/**
+	 * Gets the bI object template list.
+	 *
+	 * @param biobjLabel
+	 *            the biobj label
+	 *
+	 * @return the bI object template list
+	 *
+	 * @throws EMFInternalError
+	 *             the EMF internal error
+	 */
+	//public List getBIObjectTemplateListByDocLabel(String biobjLabel) throws EMFInternalError;
+
+	/**
 	 * Load bi object template.
 	 *
 	 * @param tempId
@@ -121,5 +134,18 @@ public interface IObjTemplateDAO extends ISpagoBIDao {
 	 *             the EMF internal error
 	 */
 	public void insertBIObjectTemplate(ObjTemplate objTemplate, BIObject biObject) throws EMFUserError, EMFInternalError;
+
+	/**
+	 * Change activity of doc's template.
+	 *
+	 * @param biObjId
+	 *            biobj id
+	 * @param tempId
+	 *            temp id
+	 *
+	 * @throws EMFInternalError
+	 *             the EMF internal error
+	 */
+	public void setPreviousTemplateActive(Integer biObjId, Integer tempId) throws EMFInternalError;
 
 }

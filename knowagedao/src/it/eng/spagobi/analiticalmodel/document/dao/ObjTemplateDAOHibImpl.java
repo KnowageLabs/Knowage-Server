@@ -202,6 +202,40 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 		return templates;
 	}
 
+	/*@Override
+	public List getBIObjectTemplateListByDocLabel(String biobjLabel) throws EMFInternalError {
+		List templates = new ArrayList();
+		Session aSession = null;
+		Transaction tx = null;
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			// String hql =
+			// "from SbiObjTemplates sot where sot.sbiObject.biobjId="+biobjId+" order by sot.prog desc";
+			String hql = "from SbiObjTemplates sot where sot.sbiObject.label=? order by sot.prog desc";
+
+			Query query = aSession.createQuery(hql);
+			query.setString(0, biobjLabel);
+			List result = query.list();
+			Iterator it = result.iterator();
+			while (it.hasNext()) {
+				templates.add(toObjTemplate((SbiObjTemplates) it.next()));
+			}
+			tx.commit();
+		} catch (HibernateException he) {
+			logException(he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFInternalError(EMFErrorSeverity.ERROR, "100");
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+		return templates;
+	}*/
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ObjTemplate> getAllTemplateWithoutActive(String data) throws EMFInternalError, ParseException {
@@ -494,6 +528,48 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 			}
 			logger.debug("OUT");
 		}
+	}
+
+	@Override
+	public void setPreviousTemplateActive(Integer biObjId, Integer tempId) throws EMFInternalError {
+		List<ObjTemplate> templates = new ArrayList<>();
+		Session aSession = null;
+		Transaction tx = null;
+
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+			String hql;
+			Query query;
+
+			hql = "from SbiObjTemplates sot where sot.active=0 and sot.sbiObject.biobjId=? order by sot.creationDate desc ";
+			query = aSession.createQuery(hql);
+			query.setInteger(0, biObjId);
+
+			List<SbiObjTemplates> result = query.list();
+			Iterator<SbiObjTemplates> it = result.iterator();
+			while (it.hasNext()) {
+				templates.add(toObjTemplate(it.next()));
+			}
+
+			String hqlUpdate = "update SbiObjTemplates sot set sot.active = true where sot.creationDate = '" + templates.get(0).getCreationDate()
+					+ "'  and sot.sbiObject.biobjId=?";
+			query = aSession.createQuery(hqlUpdate);
+			query.setInteger(0, biObjId);
+			query.executeUpdate();
+			tx.commit();
+		} catch (HibernateException he) {
+			logException(he);
+			if (tx != null)
+				tx.rollback();
+			throw new EMFInternalError(EMFErrorSeverity.ERROR, "100");
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+
 	}
 
 }
