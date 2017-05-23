@@ -148,11 +148,11 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			for (IDataSet dataset : dataSets) {
 
 				JSONObject obj = new JSONObject();
-				if (DataSetUtilities.isExecutableByUser(dataset, getUserProfile()))
-
+				if (DataSetUtilities.isExecutableByUser(dataset, getUserProfile())) {
 					obj.put("label", dataset.getLabel());
 					obj.put("id", dataset.getId());
 					toReturn.put(obj);
+				}
 			}
 
 			return toReturn.toString();
@@ -221,7 +221,8 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	@Path("/pagopt/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getDataSetsPaginationOption(@QueryParam("typeDoc") String typeDoc, @QueryParam("callback") String callback,
-			@QueryParam("offset") Integer offsetInput, @QueryParam("fetchSize") Integer fetchSizeInput, @QueryParam("filters") JSONObject filters,  @QueryParam("ordering") JSONObject ordering) {
+			@QueryParam("offset") Integer offsetInput, @QueryParam("fetchSize") Integer fetchSizeInput, @QueryParam("filters") JSONObject filters,
+			@QueryParam("ordering") JSONObject ordering) {
 
 		logger.debug("IN");
 
@@ -289,11 +290,10 @@ public class DataSetResource extends AbstractSpagoBIResource {
 					}
 				}
 				/**
-				 * alberto ghedin
-				 * next line is commented because the dao that return the datasets will return just datset owned by user or of same category
+				 * alberto ghedin next line is commented because the dao that return the datasets will return just datset owned by user or of same category
 				 */
-				//if (DataSetUtilities.isExecutableByUser(dataset, getUserProfile()))
-					toBeReturned.add(dataset);
+				// if (DataSetUtilities.isExecutableByUser(dataset, getUserProfile()))
+				toBeReturned.add(dataset);
 			}
 
 			return serializeDataSets(toBeReturned, typeDoc);
@@ -694,7 +694,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 				throw new SpagoBIRuntimeException("SPAGOBI.API.DATASET.MAX_ROWS_NUMBER value cannot be a non-positive integer");
 			}
 
-			if (offset < 0 || fetchSize <= 0) {
+			if (offset < 0 || fetchSize < 0) {
 				logger.debug("Offset or fetch size are not valid. Setting them to [0] and [" + maxResults + "] by default.");
 				offset = 0;
 				fetchSize = maxResults;
@@ -1519,7 +1519,8 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		return labelsJSON.toString();
 	}
 
-	protected List<IDataSet> getListOfGenericDatasets(IDataSetDAO dsDao, Integer start, Integer limit, JSONObject filters, JSONObject ordering) throws JSONException, EMFUserError {
+	protected List<IDataSet> getListOfGenericDatasets(IDataSetDAO dsDao, Integer start, Integer limit, JSONObject filters, JSONObject ordering)
+			throws JSONException, EMFUserError {
 
 		if (start == null) {
 			start = DataSetConstants.START_DEFAULT;
@@ -1555,9 +1556,10 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		}
 		String hsql = " from SbiDataSet h where h.active = true ";
 		// Ad Admin can see other users' datasets
-		/*if (!isAdmin) { filter is applyed in the dao because need also to take care about categories
-			hsql = hsql + " and h.owner = '" + getUserProfile().getUserUniqueIdentifier().toString() + "'";
-		}*/
+		/*
+		 * if (!isAdmin) { filter is applyed in the dao because need also to take care about categories hsql = hsql + " and h.owner = '" +
+		 * getUserProfile().getUserUniqueIdentifier().toString() + "'"; }
+		 */
 		if (filtersJSON != null) {
 			String valuefilter = (String) filtersJSON.get(SpagoBIConstants.VALUE_FILTER);
 			String typeFilter = (String) filtersJSON.get(SpagoBIConstants.TYPE_FILTER);
@@ -1569,9 +1571,9 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			}
 		}
 
-		if(ordering!=null){
+		if (ordering != null) {
 			boolean reverseOrdering = ordering.optBoolean("reverseOrdering");
-			if(reverseOrdering) {
+			if (reverseOrdering) {
 				hsql += "order by h.name desc";
 			} else {
 				hsql += "order by h.name asc";
