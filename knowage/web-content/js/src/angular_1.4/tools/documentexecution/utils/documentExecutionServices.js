@@ -821,7 +821,7 @@
 								//parameter.parameterValue= new Date(params[parameter.urlName]);
 								//set parameter date server
 								parameter.parameterValue= sbiModule_dateServices.getDateFromFormat(params[parameter.urlName], sbiModule_config.serverDateFormat);
-								 
+
 							}else if(parameter.type=='DATE_RANGE'){
 								var dateRange = params[parameter.urlName];
 								var dateRangeArr = dateRange.split('_');
@@ -958,7 +958,7 @@
 									if(execProperties.parametersData.documentParameters != undefined){
 										for(var i=0; i<execProperties.parametersData.documentParameters.length; i++){
 											var param = execProperties.parametersData.documentParameters[i];
-											if(param.parameterValue && param.parameterValue.length>0){
+											if(param.parameterValue){
 												{
 													param.defaultValue = angular.copy(param.parameterValue);
 													
