@@ -451,7 +451,7 @@ public class MenuResource extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("getParent/{id}")
-	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONALITIES_MANAGEMENT })
+	@UserConstraint(functionalities = { SpagoBIConstants.MENU_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON + charset)
 	public Response getParent(@PathParam("id") Integer id) {
 

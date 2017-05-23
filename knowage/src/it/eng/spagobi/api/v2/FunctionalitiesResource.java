@@ -74,6 +74,7 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("/")
+	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONALITIES_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response getFolders(@DefaultValue("false") @QueryParam("includeDocs") Boolean recoverBIObjects, @QueryParam("perm") String permissionOnFolder,
 			@QueryParam("dateFilter") String dateFilter) {

@@ -22,10 +22,13 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.ConfigurationConstants;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.associativity.IAssociativityManager;
@@ -110,6 +113,7 @@ import com.mongodb.util.JSON;
  *
  */
 @Path("/2.0/datasets")
+@ManageAuthorization
 public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 
 	static protected Logger logger = Logger.getLogger(DataSetResource.class);
@@ -223,6 +227,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 
 	@POST
 	@Path("/")
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response addDataSet(String body) {
 		SbiDataSet sbiDataset = (SbiDataSet) JsonConverter.jsonToValidObject(body, SbiDataSet.class);
 
@@ -257,6 +262,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 
 	@PUT
 	@Path("/{label}")
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response modifyDataSet(@PathParam("label") String label, String body) {
 		IDataSet dataset = null;
 

@@ -33,6 +33,7 @@ import it.eng.spagobi.commons.utilities.JSONTemplateUtilities;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.json.Xml;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -84,6 +85,7 @@ import edu.emory.mathcs.backport.java.util.Arrays;
  *
  */
 @Path("/1.0/documents")
+@ManageAuthorization
 public class DocumentResource extends AbstractSpagoBIResource {
 	static protected Logger logger = Logger.getLogger(DocumentResource.class);
 

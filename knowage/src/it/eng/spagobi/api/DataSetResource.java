@@ -32,6 +32,8 @@ import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.sdk.datasets.bo.SDKDataSetParameter;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -101,6 +103,7 @@ import com.jamonapi.MonitorFactory;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 @Path("/1.0/datasets")
+@ManageAuthorization
 public class DataSetResource extends AbstractSpagoBIResource {
 
 	static protected Logger logger = Logger.getLogger(DataSetResource.class);
@@ -305,6 +308,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/{label}")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String getDataSet(@PathParam("label") String label) {
 		logger.debug("IN");
 		try {
@@ -480,6 +484,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	@POST
 	@Path("/{label}/content")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response execute(@PathParam("label") String label, String body) {
 		SDKDataSetParameter[] parameters = null;
 		if (body != null && !body.equals("")) {
@@ -491,6 +496,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 
 	@DELETE
 	@Path("/{label}")
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response deleteDataset(@PathParam("label") String label) {
 		IDataSetDAO datasetDao = null;
 		try {
