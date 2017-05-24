@@ -17,20 +17,10 @@
  */
 package it.eng.knowage.engines.svgviewer.api.page;
 
-import it.eng.knowage.engines.svgviewer.SvgViewerEngine;
-import it.eng.knowage.engines.svgviewer.SvgViewerEngineInstance;
-import it.eng.knowage.engines.svgviewer.api.AbstractSvgViewerEngineResource;
-import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.utilities.engines.EngineConstants;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -38,13 +28,20 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
-import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
+
+import it.eng.knowage.engines.svgviewer.SvgViewerEngine;
+import it.eng.knowage.engines.svgviewer.SvgViewerEngineInstance;
+import it.eng.knowage.engines.svgviewer.api.AbstractSvgViewerEngineResource;
+import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 
 @Path("/1.0/pages")
 @ManageAuthorization
@@ -127,8 +124,8 @@ public class PageResource extends AbstractSvgViewerEngineResource {
 			}
 
 			// To deploy into JBOSSEAP64 is needed a StandardWrapper, instead of RestEasy Wrapper
-			HttpServletRequest request = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
-			HttpServletResponse response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
+			/*HttpServletRequest request = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
+			HttpServletResponse response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);*/
 
 			request.getRequestDispatcher(dispatchUrl).forward(request, response);
 		} catch (Exception e) {
