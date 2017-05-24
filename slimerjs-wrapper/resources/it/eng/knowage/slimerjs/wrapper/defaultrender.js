@@ -380,7 +380,7 @@ log("baseUrl = " + baseUrl);
 
 var	customHeaders = system.args[ 3 ];
 log("customHeaders = " + customHeaders);
-customHeaders = JSON.parse(system.args[ 3 ]);
+customHeaders = JSON.parse(customHeaders.replace(/\\"/g,"\""));
 
 var	sheets = +system.args[ 4 ];
 log("sheets = " + sheets);

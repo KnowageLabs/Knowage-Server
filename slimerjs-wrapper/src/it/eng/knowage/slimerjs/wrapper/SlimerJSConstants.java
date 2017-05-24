@@ -12,6 +12,8 @@ class SlimerJSConstants {
 	static final String SLIMER_BINARIES_RESOURCEPATH = "it/eng/knowage/slimerjs/wrapper/slimerjs-0.9.6-%s", SLIMER_BINARIES_PACKAGENAME = "slimerjs-0.9.6-%s",
 			SLIMER_BINARIES_BIN = "slimerjs%s", SLIMER_BINARIES_WINDOWS = "win32", SLIMER_BINARIES_MAC = "macosx", SLIMER_BINARIES_UNIX = "linux-x86_64";
 
+	static final String XULRUNNER_BINARIES_BIN = "xulrunner", XULRUNNER_DIR = "xulrunner";
+
 	private static final String JVM_UUID = UUID.randomUUID().toString();
 
 	static final Path TEMP_DIR = Paths.get(System.getProperty("java.io.tmpdir", "/tmp")).resolve("java-slimerjs");

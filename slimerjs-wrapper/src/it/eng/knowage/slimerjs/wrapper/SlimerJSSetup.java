@@ -65,6 +65,29 @@ class SlimerJSSetup {
 	}
 
 	/**
+	 * Get the name of the bin we expect in the unzipped file
+	 *
+	 * @return the name of the bin in the unzipped file
+	 */
+	private static String getXulRunnerBinName() {
+		OperatingSystem.OS os = OperatingSystem.get();
+		if (os == null) {
+			return null;
+		}
+
+		String ext = "";
+		if (OperatingSystem.OS.WINDOWS.equals(os)) {
+			ext = ".exe";
+		}
+
+		return String.format(SlimerJSConstants.XULRUNNER_BINARIES_BIN, ext);
+	}
+
+	private static String getXulRunnerDirName() {
+		return SlimerJSConstants.XULRUNNER_DIR;
+	}
+
+	/**
 	 * Unzips the zipped resource to the destination
 	 *
 	 * @param destination
@@ -76,6 +99,9 @@ class SlimerJSSetup {
 		final Path absoluteResource = Paths.get(destination.toString().concat(
 				File.separator.concat(getZipPath(SlimerJSConstants.SLIMER_BINARIES_PACKAGENAME).replace(SlimerJSConstants.ZIP_EXTENSION, "")
 						.concat(File.separator).concat(getSlimerJSBinName()))));
+		final Path xulRunnerResource = Paths.get(destination.toString().concat(
+				File.separator.concat(getZipPath(SlimerJSConstants.SLIMER_BINARIES_PACKAGENAME).replace(SlimerJSConstants.ZIP_EXTENSION, "")
+						.concat(File.separator).concat(getXulRunnerDirName()).concat(File.separator).concat(getXulRunnerBinName()))));
 
 		logger.info("Verifying existence of SlimerJS executable at: " + absoluteResource.toString());
 
@@ -113,12 +139,19 @@ class SlimerJSSetup {
 				ZipUtils.unzip(fileStream, destination.toFile());
 
 				binary = absoluteResource.toFile();
-
 				if (!binary.canExecute()) {
 					if (!binary.setExecutable(true)) {
 						throw new IllegalStateException("SlimerJSSetup failed to make SlimerJS binary executable");
 					}
 				}
+
+				File xulrunner = xulRunnerResource.toFile();
+				if (!xulrunner.canExecute()) {
+					if (!xulrunner.setExecutable(true)) {
+						throw new IllegalStateException("SlimerJSSetup failed to make XulRunner binary executable");
+					}
+				}
+
 			} catch (IOException e) {
 				throw new IllegalStateException("Failed to read zip file from resources", e);
 			}

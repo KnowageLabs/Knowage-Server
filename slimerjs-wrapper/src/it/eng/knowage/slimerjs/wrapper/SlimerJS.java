@@ -230,9 +230,9 @@ public class SlimerJS {
 		Files.copy(script, scriptPath);
 
 		// start building the slimerjs binary call
-		final CommandLine cmd = new CommandLine(SlimerJSSetup.getSlimerJsBinary());
-		final Map<String, Object> args = new HashMap<>();
-		cmd.setSubstitutionMap(args);
+		final CommandLine cmd = getCommandLine();
+
+		final Map<String, Object> args = getArgs(cmd);
 
 		// add options to the slimerjs call
 		if (options != null) {
@@ -273,6 +273,31 @@ public class SlimerJS {
 		logger.info("Execution Completed");
 
 		return new SlimerJSExecutionResponse(code, stdOutLogger.getMessageContents(), stdErrLogger.getMessageContents());
+	}
+
+	private static CommandLine getCommandLine() {
+		final CommandLine cmd;
+
+		if (OperatingSystem.get().equals(OperatingSystem.OS.UNIX)) {
+			cmd = new CommandLine("xvfb-run");
+		} else {
+			cmd = new CommandLine(SlimerJSSetup.getSlimerJsBinary());
+		}
+
+		return cmd;
+	}
+
+	private static Map<String, Object> getArgs(CommandLine cmd) {
+		final Map<String, Object> args = new HashMap<>();
+		cmd.setSubstitutionMap(args);
+
+		if (OperatingSystem.get().equals(OperatingSystem.OS.UNIX)) {
+			cmd.addArgument("-a");
+			args.put("_slimerjs_binary", SlimerJSSetup.getSlimerJsBinary().getAbsolutePath());
+			cmd.addArgument("${_slimerjs_binary}");
+		}
+
+		return args;
 	}
 
 	/**
