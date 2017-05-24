@@ -782,7 +782,7 @@ function CockpitTableControllerFunction($scope, $timeout,$mdDialog) {
     $timeout(function () {
         if ($scope.noPagination != true) {
         	if($scope.fixedItemPerPage!=true){
-                $scope.changeWordItemPP();
+                // $scope.changeWordItemPP();
         	}else{
         		 $scope.pageChangedFunction({
                      searchValue: "",
@@ -800,7 +800,7 @@ function CockpitTableControllerFunction($scope, $timeout,$mdDialog) {
     $scope.$watch(function(){
          return $scope.enableChangeDetector ?  {items:($scope.ngModel==undefined ? 0 : $scope.ngModel.length),height:($scope.tableItem[0] == undefined ? null : $scope.tableItem[0].offsetHeight),ngModel:$scope.ngModel} : {items:($scope.ngModel==undefined ? 0 : $scope.ngModel.length),height:($scope.tableItem[0] == undefined ? null : $scope.tableItem[0].offsetHeight)};
     }, function(newValue,oldValue){
-    	if ($scope.noPagination != true &&( newValue.items != 0 ||  newValue.height != 0) && $scope.fixedItemPerPage!=true) {
+    	if ($scope.noPagination != true && newValue.items != 0 && newValue.height != 0 && $scope.fixedItemPerPage!=true) {
 	    	if(newValue!=oldValue){
 	    		$timeout(function(){
 	    			$scope.changeWordItemPP();

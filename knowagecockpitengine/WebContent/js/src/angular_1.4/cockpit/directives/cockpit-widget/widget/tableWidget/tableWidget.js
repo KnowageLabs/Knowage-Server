@@ -890,7 +890,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			mdPanelRef.close();
 			mdPanelRef.destroy();
 			var options = {page:0, itemPerPage:0, columnOrdering:undefined,reverseOrdering:undefined };
-			scopeFather.refreshWidget(options);
+			//scopeFather.refreshWidget(options);
 			$scope.$destroy();
 			if($scope.model.content.columnSelectedOfDataset == undefined || $scope.model.content.columnSelectedOfDataset.length==0){
 				$scope.showAction($scope.translate.load('sbi.cockpit.table.nocolumns'));
