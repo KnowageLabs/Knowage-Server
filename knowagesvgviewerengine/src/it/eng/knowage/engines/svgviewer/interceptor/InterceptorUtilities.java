@@ -20,11 +20,14 @@ package it.eng.knowage.engines.svgviewer.interceptor;
 
 import it.eng.spagobi.commons.utilities.ChannelUtilities;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 
-import org.hibernate.mapping.Map;
 import org.jboss.resteasy.spi.HttpRequest;
 
 public class InterceptorUtilities {
