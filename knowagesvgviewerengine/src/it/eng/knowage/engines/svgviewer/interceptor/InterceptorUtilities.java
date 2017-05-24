@@ -18,20 +18,49 @@
 
 package it.eng.knowage.engines.svgviewer.interceptor;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import it.eng.spagobi.commons.utilities.ChannelUtilities;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.UriInfo;
+
+import org.hibernate.mapping.Map;
+import org.jboss.resteasy.spi.HttpRequest;
 
 public class InterceptorUtilities {
 
+	/**
+	 * Get the url of the services. It removes the path parameters from the url
+	 *
+	 * @param req
+	 * @return the url of the service
+	 */
+	public static String getServiceUrl(HttpRequest req) {
+		String serviceUrl = req.getPreprocessedPath();
+		UriInfo uri = req.getUri();
+		// Remove the path parameters
+		int pathParametersLength = uri.getPathParameters().size();
+		for (int i = 0; i < pathParametersLength; i++) {
+			int slahPosition = serviceUrl.lastIndexOf("/");
+			serviceUrl = serviceUrl.substring(0, slahPosition);
+		}
+		return serviceUrl;
+	}
 
-
+	/**
+	 * Get the url of the services. It removes the path parameters from the url
+	 *
+	 * @param req
+	 * @return the url of the service
+	 */
+	public static HashMap<String, String> getPathParameters(HttpRequest req) {
+		UriInfo uri = req.getUri();
+		return fromMultivaluedMapToHashMap(uri.getPathParameters());
+	}
 
 	/**
 	 * Trasforms a MultivaluedMap in a HashMap
-	 * 
+	 *
 	 * @param multiMap
 	 * @return
 	 */
@@ -53,7 +82,7 @@ public class InterceptorUtilities {
 
 	/**
 	 * Get the content of a map of object and for every value apply the toString. If the value is an array it iterate in all the entries
-	 * 
+	 *
 	 * @param stringMap
 	 * @param genericMap
 	 */
@@ -87,7 +116,29 @@ public class InterceptorUtilities {
 		}
 	}
 
+	public static HashMap getRequestParameters(HttpRequest request, HttpServletRequest servletRequest) {
+		HashMap<String, String> parameters = new HashMap<String, String>();
+		HashMap<String, String> pathParameters = InterceptorUtilities.getPathParameters(request);
+		String strContentType = servletRequest.getContentType();
+		if (strContentType != null && strContentType.equals("application/x-www-form-urlencoded")) {
+			HashMap<String, String> formParameters = InterceptorUtilities.fromMultivaluedMapToHashMap(request.getDecodedFormParameters());
+			parameters.putAll(formParameters);
+		}
 
+		Map requestParameters = servletRequest.getParameterMap();
+		parameters.putAll(pathParameters);
 
+		InterceptorUtilities.addGenericMap(parameters, requestParameters);
+		return parameters;
+	}
 
+	public static String createUrlPrefix(HttpRequest request, HttpServletRequest servletRequest) {
+		String contextName = ChannelUtilities.getSpagoBIContextName(servletRequest);
+		String addr = servletRequest.getServerName();
+		Integer port = servletRequest.getServerPort();
+		String proto = servletRequest.getScheme();
+		String url = proto + "://" + addr + ":" + port + "" + contextName;
+		return url;
+
+	}
 }

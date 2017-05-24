@@ -19,10 +19,10 @@ package it.eng.knowage.engines.svgviewer.interceptor;
 
 import it.eng.spagobi.services.rest.ExternalEngineSecurityServerInterceptor;
 
-import javax.annotation.Priority;
-import javax.ws.rs.Priorities;
 import javax.ws.rs.ext.Provider;
 
+import org.jboss.resteasy.annotations.interception.Precedence;
+import org.jboss.resteasy.annotations.interception.ServerInterceptor;
 
 /**
  * The org.jboss.resteasy.spi.interception.PreProcessInterceptor runs after a JAX-RS resource method is found to invoke on, but before the actual invocation
@@ -32,7 +32,8 @@ import javax.ws.rs.ext.Provider;
  *
  */
 @Provider
-@Priority(Priorities.AUTHENTICATION)
+@ServerInterceptor
+@Precedence("SECURITY")
 public class SecurityServerInterceptor extends ExternalEngineSecurityServerInterceptor {
 
 }
