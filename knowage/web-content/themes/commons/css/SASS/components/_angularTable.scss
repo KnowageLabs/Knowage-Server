@@ -148,6 +148,16 @@ angular-table, cockpit-angular-table{
 	//padding: 0 $standardPadding;
 	}
 	
+	.angularTableSelectAll {
+		md-checkbox {
+			._md-container {
+				margin-left: 0 !important;
+			}
+			._md-icon {
+				margin-left: 0 !important;
+			}
+		}
+	}
 	 
 	
 	table thead th div md-icon{
