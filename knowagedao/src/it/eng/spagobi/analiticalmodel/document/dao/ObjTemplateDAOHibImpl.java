@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,24 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.analiticalmodel.document.dao;
+
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
+import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjTemplates;
+import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.metadata.SbiBinContents;
+import it.eng.spagobi.engines.drivers.IEngineDriver;
+import it.eng.spagobi.tools.dataset.dao.IBIObjDataSetDAO;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -31,26 +44,13 @@ import org.hibernate.Transaction;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
-import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjTemplates;
-import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.metadata.SbiBinContents;
-import it.eng.spagobi.engines.drivers.IEngineDriver;
-import it.eng.spagobi.tools.dataset.dao.IBIObjDataSetDAO;
-
 public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjTemplateDAO {
 
 	static private Logger logger = Logger.getLogger(ObjTemplateDAOHibImpl.class);
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO#loadBIObjectTemplate(java.lang.Integer)
 	 */
 	@Override
@@ -80,7 +80,7 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO#getBIObjectActiveTemplate(java.lang.Integer)
 	 */
 	@Override
@@ -92,10 +92,11 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			// String hql = "from SbiObjTemplates sot where sot.active=true and sot.sbiObject.biobjId="+biobjId;
-			String hql = "from SbiObjTemplates sot where sot.active=true and sot.sbiObject.biobjId=?";
+			String hql = "from SbiObjTemplates sot where sot.active=true and sot.sbiObject.biobjId=? and sot.commonInfo.organization = ?";
 
 			Query query = aSession.createQuery(hql);
 			query.setInteger(0, biobjId.intValue());
+			query.setString(1, getTenant());
 			SbiObjTemplates hibObjTemp = (SbiObjTemplates) query.uniqueResult();
 			if (hibObjTemp == null) {
 				objTemp = null;
@@ -119,7 +120,7 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO#getBIObjectActiveTemplate(java.lang.Integer)
 	 */
 	@Override
@@ -166,7 +167,7 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO#getBIObjectTemplateList(java.lang.Integer)
 	 */
 	@Override
@@ -202,39 +203,17 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 		return templates;
 	}
 
-	/*@Override
-	public List getBIObjectTemplateListByDocLabel(String biobjLabel) throws EMFInternalError {
-		List templates = new ArrayList();
-		Session aSession = null;
-		Transaction tx = null;
-		try {
-			aSession = getSession();
-			tx = aSession.beginTransaction();
-			// String hql =
-			// "from SbiObjTemplates sot where sot.sbiObject.biobjId="+biobjId+" order by sot.prog desc";
-			String hql = "from SbiObjTemplates sot where sot.sbiObject.label=? order by sot.prog desc";
-
-			Query query = aSession.createQuery(hql);
-			query.setString(0, biobjLabel);
-			List result = query.list();
-			Iterator it = result.iterator();
-			while (it.hasNext()) {
-				templates.add(toObjTemplate((SbiObjTemplates) it.next()));
-			}
-			tx.commit();
-		} catch (HibernateException he) {
-			logException(he);
-			if (tx != null)
-				tx.rollback();
-			throw new EMFInternalError(EMFErrorSeverity.ERROR, "100");
-		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
-		}
-		return templates;
-	}*/
+	/*
+	 * @Override public List getBIObjectTemplateListByDocLabel(String biobjLabel) throws EMFInternalError { List templates = new ArrayList(); Session aSession =
+	 * null; Transaction tx = null; try { aSession = getSession(); tx = aSession.beginTransaction(); // String hql = //
+	 * "from SbiObjTemplates sot where sot.sbiObject.biobjId="+biobjId+" order by sot.prog desc"; String hql =
+	 * "from SbiObjTemplates sot where sot.sbiObject.label=? order by sot.prog desc";
+	 * 
+	 * Query query = aSession.createQuery(hql); query.setString(0, biobjLabel); List result = query.list(); Iterator it = result.iterator(); while
+	 * (it.hasNext()) { templates.add(toObjTemplate((SbiObjTemplates) it.next())); } tx.commit(); } catch (HibernateException he) { logException(he); if (tx !=
+	 * null) tx.rollback(); throw new EMFInternalError(EMFErrorSeverity.ERROR, "100"); } finally { if (aSession != null) { if (aSession.isOpen())
+	 * aSession.close(); } } return templates; }
+	 */
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -314,7 +293,7 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO#getNextProgForTemplate(java.lang.Integer)
 	 */
 	@Override
@@ -380,7 +359,7 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO#deleteBIObjectTemplate(java.lang.Integer)
 	 */
 	@Override
