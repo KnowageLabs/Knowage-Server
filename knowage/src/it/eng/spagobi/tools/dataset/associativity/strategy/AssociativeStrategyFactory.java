@@ -22,11 +22,11 @@ public class AssociativeStrategyFactory {
 		case INNER_STRATEGY:
 			return new InnerAssociativityManager(config, userProfile);
 		case OUTER_STRATEGY:
-			return getOuterStrategy(config, userProfile);
+			return new OuterAssociativityManager(config, userProfile);
 		default:
 			logger.info("Impossible to find a strategy named [" + config.getStrategy() + "].");
-			logger.info("Getting " + INNER_STRATEGY + " strategy as default.");
-			return new InnerAssociativityManager(config, userProfile);
+			logger.info("Getting " + OUTER_STRATEGY + " strategy as default.");
+			return new OuterAssociativityManager(config, userProfile);
 		}
 	}
 
@@ -34,21 +34,8 @@ public class AssociativeStrategyFactory {
 		String strategy = config.getStrategy();
 		logger.debug("Verifying strategy [" + strategy + "]");
 		if (strategy == null || strategy.isEmpty()) {
-			config.setStrategy(INNER_STRATEGY);
-		} else if (strategy.equals(OUTER_STRATEGY)) {
-			try {
-				Class.forName("it.eng.knowage.tools.dataset.associativity.strategy.OuterAssociativityManager");
-			} catch (ClassNotFoundException e) {
-				logger.info("Outer associativity not available.");
-				config.setStrategy(INNER_STRATEGY);
-			}
+			logger.debug("Strategy not set. Setting it to " + OUTER_STRATEGY + " as default.");
+			config.setStrategy(OUTER_STRATEGY);
 		}
 	}
-
-	@SuppressWarnings("unchecked")
-	private static IAssociativityManager getOuterStrategy(Config config, UserProfile userProfile) throws Exception {
-		Class cls = Class.forName("it.eng.knowage.tools.dataset.associativity.strategy.OuterAssociativityManager");
-		return (IAssociativityManager) cls.getConstructor(Config.class, UserProfile.class).newInstance(config, userProfile);
-	}
-
 }

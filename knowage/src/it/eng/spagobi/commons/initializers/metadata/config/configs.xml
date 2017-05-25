@@ -472,7 +472,7 @@
 	
 	<CONFIG label="SPAGOBI.DATASET.ASSOCIATIVE_LOGIC.STRATEGY" name="Strategy to perform the dataset associative logic"
 		description="Strategy to perform the dataset associative logic" isActive="true"
-		valueCheck="INNER" valueType="STRING" category="GENERIC_CONFIGURATION" />	
+		valueCheck="OUTER" valueType="STRING" category="GENERIC_CONFIGURATION" />	
 
 	<CONFIG label="SPAGOBI.DOCUMENTS.MAX_PREVIEW_IMAGE_SIZE" name="Max preview image size"
 		description="Max dimension for a document's preview image" isActive="true"
