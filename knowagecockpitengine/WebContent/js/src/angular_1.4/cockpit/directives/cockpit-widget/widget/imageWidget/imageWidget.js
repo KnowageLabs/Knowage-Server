@@ -64,16 +64,18 @@ function cockpitImageWidgetControllerFunction($scope,cockpitModule_widgetConfigu
 	};
 	
 	$scope.refresh=function(element,width,height){
+
 		if($scope.ngModel.style == undefined){
-			$scope.ngModel.style = {};
+		return;
 		}
+
 		if((typeof($scope.ngModel.style.heightPerc)!= 'undefined' && typeof($scope.ngModel.style.widthPerc)!= 'undefined')&&($scope.ngModel.style.heightPerc!="" && $scope.ngModel.style.widthPerc!="")){
 			$scope.ngModel.style['background-size'] = $scope.ngModel.style.widthPerc+' '+$scope.ngModel.style.heightPerc;
 		}else{
 			$scope.ngModel.style['background-size'] = 'contain';
 		}
 		$scope.ngModel.style['background-position'] = $scope.ngModel.style.hAlign+' '+$scope.ngModel.style.vAlign;
-		//$scope.ngModel.style['background-image'] = "url(\'"+$scope.getUrl()+"\')";
+		$scope.ngModel.style['background-image'] = "url(\'"+$scope.getUrl()+"\')";
 
 		$scope.safeApply();
 
