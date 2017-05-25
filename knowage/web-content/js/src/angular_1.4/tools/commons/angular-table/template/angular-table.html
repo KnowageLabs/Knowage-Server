@@ -72,15 +72,23 @@
 <script type="text/ng-template" id="headThTemplate.html">
 <th scope="col" ng-repeat="val in tableColumns" width="{{val.size}}" ng-class="val.customClass">
 
-	<div id="headDiv{{$index}}"  ng-hide="hideTableHead==true" ng-if="val.name !='--MULTISELECT--' && val.name!='--ROW_DETAIL--'" ng-click="orderBy(val)"  ng-class="{ 'black': val.name==column_ordering}" layout="row" layout-align="start center">
-		
-		<md-icon  ng-class="{ 'hidden': val.name!=column_ordering.name ,'fa fa-arrow-down' : (val.name==column_ordering.name && reverse_col_ord) ,'fa fa-arrow-up' : (val.name==column_ordering.name && !reverse_col_ord)}"></md-icon>
-		<span flex>{{val.label}}
-			<md-tooltip ng-if="column.hideTooltip!=true" md-delay="1000" md-direction="bottom"  >{{val.label}}</md-tooltip>
-		</span>
-	</div>
+<div  ng-if="val.name =='--MULTISELECT--'" class = 'angularTableSelectAll' >
+   <md-checkbox 
+       ng-checked="multiSelectVal"
+       ng-click="selectAll()"  
+       aria-label="selected item checked">  
+    </md-checkbox>
+</div>
 
-	<md-checkbox  ng-checked="multiSelectVal" ng-if="val.name=='--MULTISELECT--'"  ng-click="selectAll()" aria-label="selected item checked"> </md-checkbox>
+    <div id="headDiv{{$index}}"  ng-hide="hideTableHead==true" ng-if="val.name !='--MULTISELECT--' && val.name!='--ROW_DETAIL--'" ng-click="orderBy(val)"  ng-class="{ 'black': val.name==column_ordering}" layout="row" layout-align="start center">
+        
+        <md-icon  ng-class="{ 'hidden': val.name!=column_ordering.name ,'fa fa-arrow-down' : (val.name==column_ordering.name && reverse_col_ord) ,'fa fa-arrow-up' : (val.name==column_ordering.name && !reverse_col_ord)}"></md-icon>
+        <span ng-if="val.name!='--MULTISELECT--'"  flex>
+                {{val.label}}
+        
+            <md-tooltip ng-if="column.hideTooltip!=true" md-delay="1000" md-direction="bottom"  >{{val.label}}</md-tooltip> 
+        </span>
+    </div>
 
 </th>
 </script>

@@ -982,8 +982,14 @@ function TableBodyControllerFunction($scope) {
 
 function TableHeaderControllerFunction($scope, $timeout) {
     $scope.multiSelectVal = false;
+    $scope.selectedAllPageNumbers = {};
+
     $scope.selectAll = function () {
         $scope.multiSelectVal = !$scope.multiSelectVal;
+        // keep track if in current page has been sleected all value
+        $scope.selectedAllPageNumbers[$scope.pagination.currentPageNumber] =  $scope.multiSelectVal;
+        
+        
 //        var template = angular.element(document.querySelector("angular-table." + $scope.id + "ItemBox"));
         var table = angular.element($scope.tableItem[0].querySelector("table.principalTable"));
         var tbody = angular.element(table[0].querySelector("tbody"));
@@ -1069,7 +1075,21 @@ function TableFooterControllerFunction($scope, $timeout) {
 		if(changeFromInput!=undefined){
 			return $scope.setCurrentPageFromInput(changeFromInput,paginationItem,directivePageChangeFunction);
 		}else{
-			 $scope.pageChangedFunction({
+			
+			// when changing page set to blank the select all unless it was previously checked
+			
+			if($scope.selectedAllPageNumbers[currentPageNumber] != undefined &&
+					$scope.selectedAllPageNumbers[currentPageNumber]==true){
+				$scope.multiSelectVal = true;
+			}
+			else{
+				$scope.multiSelectVal = false;	
+			}
+			
+			$scope.selectedAllPageNumbers[$scope.pagination.currentPageNumber]
+			
+			
+			$scope.pageChangedFunction({
                  searchValue: searchValue,
                  itemsPerPage: itemsPerPage,
                  currentPageNumber:currentPageNumber,
