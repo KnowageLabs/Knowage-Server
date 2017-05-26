@@ -131,7 +131,6 @@ function createChart() {
     
     //creating the output with the correct decimal precision and separator
 	function numberFormat (value, dec, sep) {
-		if (isNaN(value) || value == null) return value;
 		
 		value = parseFloat(value).toFixed(dec);
 		var parts 		= value.split('.'), 
@@ -165,7 +164,8 @@ function createChart() {
 		            		label.className = "graphLabel";
 		            		span.className 	= "graphSpan";
 		            		color.className = "graphColor";
-		            		span.innerHTML 	= formatString(perc[k],response.CUSTOMIZE_SETTINGS.OPTIONS.LEGEND.LABELS.format)+"%";
+		            		debugger;
+		            		span.innerHTML 	= formatString(perc[k],config.CHART.OPTIONS.LEGEND.LABELS.format)+"%";
 		            		color.style.backgroundColor = backgrounds[k];
 		            		label.appendChild(span);
 		            		label.appendChild(color);
