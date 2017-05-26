@@ -1,5 +1,4 @@
 window.onload = function() {
-	
     createChart();
 }
 
@@ -12,10 +11,10 @@ function doClickOnSvg(id){
 function createChart() {
 	var svg = document.getElementById("svgContainer");
 	var serviceResponse = {},
-		labels	=[],
-		columns =[],
-		percCol =[],
-		backgrounds = [];
+		labels			= [],
+		columns 		= [],
+		percCol 		= [],
+		backgrounds 	= [];
 
     function serviceGetData() {
         var jqxhr = $.ajax({
@@ -64,8 +63,6 @@ function createChart() {
             				perc.push(response.data.rows[k][percCol[j]]);
             			}
             		}
-                //var data = [response.data.rows[k]['column_3'],response.data.rows[k]['column_4'],response.data.rows[k]['column_5']];
-            	//var perc = [response.data.rows[k]['column_7'],response.data.rows[k]['column_8'],response.data.rows[k]['column_9']]
                 initializeChart(response.CUSTOMIZE_SETTINGS,data,response.data.rows[k]['column_1'],perc);
             }
             }
@@ -80,8 +77,8 @@ function createChart() {
     	for(k in serviceResponse.rows){
     		if(svg.contentDocument.getElementById(serviceResponse.rows[k]['column_1'])){
     			var centroide 	= svg.contentDocument.getElementById(serviceResponse.rows[k]['column_1']),
-            	position 	= centroide.getBoundingClientRect(),
-            	canvas 		= document.getElementById(serviceResponse.rows[k]['column_1']);
+            		position 	= centroide.getBoundingClientRect(),
+            		canvas 		= document.getElementById(serviceResponse.rows[k]['column_1']);
     			
 	            canvas.parentElement.style.top 		= position.top;
 	            canvas.parentElement.style.left 	= position.left;
@@ -109,9 +106,41 @@ function createChart() {
     	}
     }
     
-   
-
-
+    //getting the output format for the percentage from the template xml
+    //available formats are ### - ###,## - ###,##
+    function formatString(value,format){
+	    var output = value,
+	    	precision = 2;  //default 
+	    if (format){
+	    	switch (format) {
+	        case "###":
+	            output = numberFormat(value, 0, ','); 
+	        break;
+	        case "###,##":
+	            output = numberFormat(value, precision, ','); 
+	        break;
+	        case "###.##":
+	            output = numberFormat(value, precision, '.');
+	            break;
+	        default:                    
+	            break;
+	        }
+	    } 
+	    return output;
+    }
+    
+    //creating the output with the correct decimal precision and separator
+	function numberFormat (value, dec, sep) {
+		if (isNaN(value) || value == null) return value;
+		
+		value = parseFloat(value).toFixed(dec);
+		var parts 		= value.split('.'), 
+			fnums 		= parts[0],
+			decimals 	= parts[1] ? (sep || '.') + parts[1] : '';
+			
+		return fnums + decimals;
+    }
+    	
     function initializeChart(config,data,chartId,perc) {
     	//checking if the id is in the svg, otherwise will not render the chart
     	if(svg.contentDocument.getElementById(chartId)){
@@ -136,7 +165,7 @@ function createChart() {
 		            		label.className = "graphLabel";
 		            		span.className 	= "graphSpan";
 		            		color.className = "graphColor";
-		            		span.innerHTML 	= parseFloat(perc[k])+"%";
+		            		span.innerHTML 	= formatString(perc[k],response.CUSTOMIZE_SETTINGS.OPTIONS.LEGEND.LABELS.format)+"%";
 		            		color.style.backgroundColor = backgrounds[k];
 		            		label.appendChild(span);
 		            		label.appendChild(color);
@@ -148,10 +177,10 @@ function createChart() {
 	            	canvas.setAttribute("class","emptyPie");
 	            }
 	            
-	            canvas.parentElement.style.top = position.top;
-	            canvas.parentElement.style.left = position.left;
-	            canvas.parentElement.style.width = position.width;
-	            canvas.parentElement.style.height = position.height;
+	            canvas.parentElement.style.top 		= position.top;
+	            canvas.parentElement.style.left 	= position.left;
+	            canvas.parentElement.style.width 	= position.width;
+	            canvas.parentElement.style.height 	= position.height;
 	            document.getElementById("dynamic-svg").appendChild(div);
 	            
 	        };
@@ -159,7 +188,7 @@ function createChart() {
         
 	        var ctx = document.getElementById(chartId).getContext("2d");
 	
-	        //DESCRITTORE GRAFICO A TORTA
+	        //PIE CHART CHART.JS DESCRIPTOR
 	        if(data.length>0){
 	        	var myChart = new Chart(ctx, {
 	                type: config.CHART.type,
