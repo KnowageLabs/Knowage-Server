@@ -296,6 +296,7 @@
 					parameter.parameterDescription = angular.copy(parameter.defaultValueDescription);					
 				
 					// This is done for popup special case, TODO, remove this code and keep equals behaviour among parameters types
+					if(Array.isArray(parameter.parameterValue)){
 					for(var j = 0; j < parameter.parameterValue.length; j++) {
 						var val = parameter.parameterValue[j];
 						// if there is not desciption val => descr
@@ -308,6 +309,7 @@
 								parameter.parameterDescription[val]=val;
 							}
 						}
+					}
 					}
 //						
 				
@@ -1491,22 +1493,29 @@
 									}
 									
 									//if mandatory and is unique default value
-									if(response.data.result.root.length==1 &&
-											execProperties.parametersData.documentParameters[z].mandatory && 
-											(execProperties.parametersData.documentParameters[z].selectionType=='LIST' ||
-													execProperties.parametersData.documentParameters[z].selectionType=='COMBOBOX')){
+									// this should be done only if parameterValue is not already set!
+									if(execProperties.parametersData.documentParameters[z].parameterValue == undefined ||
+											execProperties.parametersData.documentParameters[z].parameterValue.length == 0	){
+
+										if(response.data.result.root.length==1 &&
+												execProperties.parametersData.documentParameters[z].mandatory && 
+												(execProperties.parametersData.documentParameters[z].selectionType=='LIST' ||
+														execProperties.parametersData.documentParameters[z].selectionType=='COMBOBOX')){
 											console.log('setting default value ', response.data.result.root[0].value);
 											execProperties.parametersData.documentParameters[z].parameterValue = execProperties.parametersData.documentParameters[z].multivalue ?
 													[response.data.result.root[0].value]	: response.data.result.root[0].value;
 										}else{
 											//don't back from viewpoint and default value 
 											if(execProperties.initResetFunctionLovDependency.status){
-											execProperties.parametersData.documentParameters[z].parameterValue = execProperties.parametersData.documentParameters[z].multivalue ?
-													[]	: '';
+												execProperties.parametersData.documentParameters[z].parameterValue = execProperties.parametersData.documentParameters[z].multivalue ?
+														[]	: '';
 											}
 										}
-																		
-									execProperties.parametersData.documentParameters[z].lovNotDefine=false;
+
+										execProperties.parametersData.documentParameters[z].lovNotDefine=false;
+									}
+									
+								
 								}
 															
 						   }
