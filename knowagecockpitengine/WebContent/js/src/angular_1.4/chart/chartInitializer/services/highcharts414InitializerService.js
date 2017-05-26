@@ -438,19 +438,20 @@ angular.module('chartInitializer')
 		
 		
 		if(this.chart.options.chart.type == "pie"){
-			for (var i = 0; i<this.chart.series.length; i++){
-				for (var j = 0; j<this.chart.series[i].data.length; j++){
+			for (var i = 0; i<newData.length; i++){
+				for (var j = 0; j<newData[i].length; j++){
 						
-					if(this.chart.series[i].data[j].y==0){
+					if(newData[i][j].y==0){
 						counter ++
 					}
 				}
-				if (counter==this.chart.series[i].data.length){
-					this.chart.series[i].setData([]);
+				if (counter==newData[i].length){
+					newData[i]=[];
 					counter = 0;
 				}
 			}
 		}
+		
 		
 		for (var i = 0; i < counterSeries; i++) {
 			this.chart.series[i].update({data:newData[i]},false);
