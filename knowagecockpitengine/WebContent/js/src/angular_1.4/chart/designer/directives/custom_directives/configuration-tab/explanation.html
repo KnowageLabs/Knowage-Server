@@ -8,11 +8,11 @@
 	</md-select> </md-input-container>
 
 	<md-input-container class="md-block colorInputContainer" ng-show="selectedChartType != 'parallel'">
-	<label>{{translate.load("sbi.chartengine.configuration.sunburst.tip.fontColor")}}</label>
+	<label ng-class="{'kn-inputError':configurationForm.explanationForm.explanation_fontColor.$invalid}">{{translate.load("sbi.chartengine.configuration.sunburst.tip.fontColorRequired")}}</label>
 	 <color-picker
-		options="colorRequiredPickerOptionsCockpit"
+		options="colorPickerOptionsCockpit"
 		ng-model="chartTemplate.TIP.style.color" name="explanation_fontColor"
-		></color-picker> </md-input-container>
+		ng-required="chartTemplate.type.toLowerCase()=='sunburst'"></color-picker> </md-input-container>
 
 	<md-input-container class="md-block" > 
 	<label>{{translate.load("sbi.chartengine.designer.tab.configuration.fontsize")}}</label>

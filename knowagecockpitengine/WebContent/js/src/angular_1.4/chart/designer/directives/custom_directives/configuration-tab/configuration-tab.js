@@ -48,12 +48,7 @@ function configurationTabControllerFunction(sbiModule_translate,$scope,sbiModule
 			pos:"bottom right",
 			format:"hex"		 
 	 }
- $scope.colorRequiredPickerOptionsCockpit = {
-			swatch:true, 
-			alpha:false,
-			pos:"bottom right",
-			format:"hex"		 
-	 }
+ 
  
  $scope.colors = [];
  $scope.presetColors = Object.keys($mdColorPalette);

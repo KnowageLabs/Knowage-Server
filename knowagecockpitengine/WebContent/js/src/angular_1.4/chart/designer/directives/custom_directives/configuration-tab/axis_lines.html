@@ -1,11 +1,11 @@
 <div ng-form name="axis_linesForm" layout="row" layout-wrap>
 
 	<md-input-container class="md-block colorInputContainer" flex="100">
-	<label >{{translate.load("sbi.chartengine.configuration.parallel.axesLines.axisColor")}}</label>
+	<label ng-class="{'kn-inputError':configurationForm.axis_linesForm.axis_color.$invalid}">{{translate.load("sbi.chartengine.configuration.parallel.axesLines.axisColor")}}</label>
 	 <color-picker 
-		options="colorRequiredPickerOptionsCockpit"
+		options="colorPickerOptionsCockpit"
 		ng-model="chartTemplate.AXES_LIST.style.axisColor" name ="axis_color"
-		></color-picker> 
+		ng-required="chartTemplate.type.toLowerCase()=='parallel'"></color-picker> 
 		
 		</md-input-container>
 
@@ -16,7 +16,7 @@
 		ng-model="chartTemplate.AXES_LIST.style.axisColNamePadd" min="0" /> </md-input-container>
 
 	<md-input-container class="md-block colorInputContainer" flex="100">
-	<label>{{translate.load("sbi.chartengine.configuration.parallel.axesLines.brushColor")}}</label>
+	<label>{{translate.load("sbi.chartengine.configuration.parallel.axesLines.brushColorRequired")}}</label>
 	 <color-picker
 		options="colorPickerOptionsCockpit"
 		ng-model="chartTemplate.AXES_LIST.style.brushColor" name ="brush_color"></color-picker> </md-input-container>

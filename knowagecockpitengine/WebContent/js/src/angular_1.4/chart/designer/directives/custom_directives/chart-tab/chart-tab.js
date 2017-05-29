@@ -41,63 +41,53 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 		
 		$scope.libInUse=$scope.chartLibNamesConfig[$scope.selectedChartType];
 		$scope.minMaxCategories = {};
-		$scope.minMaxSeries = {};
+		$scope.minMaxSeries = {};		
 		switch(newValue){
 		
 		case 'parallel':
 			$scope.minMaxCategories.min = 1;
 			$scope.minMaxSeries.min = 2;
-			$scope.colorRequiredPickerOptionsCockpit.required = true;
 			break;
 		case 'sunburst':
 			$scope.minMaxCategories.min = 2;
 			$scope.minMaxSeries.min = 1;
-			$scope.colorRequiredPickerOptionsCockpit.required = true;
 			break;
 		case 'scatter':
 			$scope.minMaxCategories.min = 1;
 			$scope.minMaxCategories.max = 1;
 			$scope.minMaxSeries.min = 1;
-			$scope.colorRequiredPickerOptionsCockpit.required = false;
 			break;
 		case 'treemap':
 			$scope.minMaxCategories.min = 2;
 			$scope.minMaxSeries.min = 1;
 			$scope.minMaxSeries.max = 1;
-			$scope.colorRequiredPickerOptionsCockpit.required = false;
 			break;
 		case 'wordcloud':
 			$scope.minMaxCategories.min = 1;
 			$scope.minMaxSeries.min = 1;
 			$scope.minMaxSeries.max = 1;
-			$scope.colorRequiredPickerOptionsCockpit.required = false;
 			break;
 		case 'gauge':
 			$scope.minMaxSeries.min = 1;
-			$scope.colorRequiredPickerOptionsCockpit.required = false;
 			break;
 		case 'line':
 			$scope.minMaxCategories.min = 1;
 			$scope.minMaxSeries.min = 1;
-			$scope.colorRequiredPickerOptionsCockpit.required = false;
 			break;
 		case 'heatmap':
 			$scope.minMaxCategories.min = 2;
 			$scope.minMaxCategories.max = 2;
 			$scope.minMaxSeries.min = 1;
 			$scope.minMaxSeries.max = 1;
-			$scope.colorRequiredPickerOptionsCockpit.required = false;
 			break;
 		case 'radar':
 			$scope.minMaxCategories.min = 1;
 			$scope.minMaxCategories.max = 1;
 			$scope.minMaxSeries.min = 1;
-			$scope.colorRequiredPickerOptionsCockpit.required = false;
 			break;
 		case 'bar':
 			$scope.minMaxCategories.min = 1;
 			$scope.minMaxSeries.min = 1;
-			$scope.colorRequiredPickerOptionsCockpit.required = false;
 			break;
 		case 'pie':
 			if($scope.chartLibNamesConfig.pie=="chartJs") {
@@ -106,8 +96,7 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 				$scope.minMaxSeries.max = 1; 
 			} else {
 				$scope.minMaxCategories.min = 1;
-				$scope.minMaxSeries.min = 1; 
-				$scope.colorRequiredPickerOptionsCockpit.required = false;
+				$scope.minMaxSeries.min = 1;
 			}
 			break;
 		case 'chord':
@@ -115,7 +104,6 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 			$scope.minMaxCategories.max = 2;
 			$scope.minMaxSeries.min = 1;
 			$scope.minMaxSeries.max = 1;
-			$scope.colorRequiredPickerOptionsCockpit.required = false;
 			break;	
 		default:
 			break;
