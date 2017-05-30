@@ -709,6 +709,8 @@ public class DocumentUrlManager {
 							descrs.add(anObject.toString());
 						}
 					}
+				} else if (oDescr instanceof Integer) {
+					descrs.add(oDescr);
 				} else {
 					// should be in thew form of ;
 					StringTokenizer stk = new StringTokenizer((String) oDescr, ";");
