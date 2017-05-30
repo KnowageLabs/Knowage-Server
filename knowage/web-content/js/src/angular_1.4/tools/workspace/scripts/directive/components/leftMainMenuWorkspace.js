@@ -49,7 +49,7 @@ function leftMenuController($scope, sbiModule_translate, sbiModule_user){
 	$scope.showMyWorkspace = (sbiModule_user.functionalities.indexOf("SeeMyWorkspace")>-1)? true:false;
 	$scope.showAnalysis= (sbiModule_user.functionalities.indexOf("CreateDocument")>-1)? true:false;
     $scope.showOrganizer= (sbiModule_user.functionalities.indexOf("SaveIntoFolderFunctionality")>-1)? true:false;
-    $scope.showScheduler=(sbiModule_user.functionalities.indexOf("SeeSnapshotsFunctionality")>-1)? true:false;
+    $scope.showScheduler=false;
     
     
     $scope.isUserAdmin= isAdmin;
