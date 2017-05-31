@@ -52,6 +52,7 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.quartz.JobDetail;
+import org.quartz.ObjectAlreadyExistsException;
 import org.quartz.Scheduler;
 import org.quartz.impl.StdSchedulerFactory;
 
@@ -496,6 +497,10 @@ public class QuarzSchedulerDAOImpl extends AbstractHibernateDAO implements ISche
 				scheduler.scheduleJob(quartzTrigger);
 				overwrite = false;
 			}
+
+		} catch (ObjectAlreadyExistsException oaee) {
+			logger.error("Trigger already existing");
+			throw new SpagoBIDAOException("Trigger already existing[" + spagobiTrigger.getName() + "]", oaee);
 
 		} catch (DAOException t) {
 			throw t;
