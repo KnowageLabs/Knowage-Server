@@ -12,7 +12,7 @@ var currentScriptPath = scripts[scripts.length - 1].src;
 //script.src = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1) + 'utils/daff.js';
 //document.getElementsByTagName('head')[0].appendChild(script);
 
-angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagination', 'ng-context-menu', 'ui.tree'])
+angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagination'])
         .directive('angularTable',
                 function ($compile) {
                     return {
@@ -634,7 +634,7 @@ function TableControllerFunction($scope, $timeout) {
     	}
     	
     	if($scope.tableHeader==undefined || $scope.tableHeader.$$NG_REMOVED==true){
-    		var tableHeader = angular.element($scope.tableItem[0].querySelector('.principalTable thead'))[0];
+    		var tableHeader = angular.element($scope.tableItem[0].querySelector('.angularTableHeader'))[0];
     			$scope.tableHeader = tableHeader;
     	}
     		 
@@ -728,17 +728,9 @@ function TableControllerFunction($scope, $timeout) {
 		lastTheadVal=width;
 	    $timeout(function(){
 	    	if(angular.equals(lastTheadVal,width)){
-	//    		var width=$scope.getPrincipalTableHeadWidth();
 	    		var tableContentBox=angular.element($scope.tableItem[0].querySelector('#angularTableContentBox'));
 	    		var fakeDiv = angular.element($scope.tableItem[0].querySelectorAll('.faketable th>div'));
 	    		var principalThDiv = angular.element($scope.tableItem[0].querySelectorAll('.principalTable th>div'));
-	    		for(var i=0;i<principalThDiv.length;i++){
-	//        	console.log(principalThDiv[i])
-	    			angular.element(fakeDiv[i]).css("width",angular.element(principalThDiv[i])[0].offsetWidth+"px");
-	    		}
-	    		if(tableContentBox[0] && tableContentBox[0].offsetWidth!=width){
-	    			tableContentBox.css("width",width+"px");
-	    		}
 	    	}
 	    },0)
 	    

@@ -1,5 +1,4 @@
-<!-- v1.0.2 -->
-<!-- <div id="angularTableTemplate" class="{{id}}ItemBox layout-fill layout-column" style="position:absolute;"> -->
+<!-- v1.10.0 -->
 
 <angular-table-actions layout="row" layout-align="end center">
 	<md-input-container flex  md-no-float class="tableSearchBar" ng-init="showSearch=true;"  >
@@ -9,13 +8,7 @@
 	</md-input-container>
 </angular-table-actions>
 <div flex layout="column" id="angularFullTableContentBox">
-	 <!--  table class="fakeTable">
-	 	<thead>
-	 		<tr ng-include="'headThTemplate.html'">
-	 		</tr>
-	 	</thead>
-	 </table-->
-	 
+	 <div class="angularTableHeader"></div>
 	<div flex  id="angularTableContentBox"  >
 		<table class="principalTable" >
 			<thead></thead>
@@ -55,7 +48,6 @@
     <li ng-repeat="pageNumber in pages track by $index" ng-class="{ active : pagination.current == pageNumber, disabled : pageNumber == '...' }" >
         <a ng-if="pageNumber!=pagination.current" href="" ng-click="setCurrent(pageNumber);tmpVar.tmpCurrPage=pageNumber">{{ pageNumber }}</a>
       	<input style="width:100%;text-align:center" ng-init="tmpVar.tmpCurrPage=pagination.current" ng-if="pageNumber==pagination.current"  ng-model="tmpVar.tmpCurrPage" ng-change="tmpVar.tmpCurrPage=onPageChange({changeFromInput:tmpVar.tmpCurrPage,paginationItem:pagination,directivePageChangeFunction:setCurrent});" type="text" placeholder="page" >
-   
  </li>
 
     <li ng-if="directionLinks" ng-class="{ disabled : pagination.current == pagination.last }" >
@@ -72,7 +64,9 @@
 <script type="text/ng-template" id="headThTemplate.html">
 <th scope="col" ng-repeat="val in tableColumns" width="{{val.size}}" ng-class="val.customClass">
 
-<div  ng-if="val.name =='--MULTISELECT--'" class = 'angularTableSelectAll' >
+<div  ng-if="val.name =='--MULTISELECT--'" class = 'angularTableSelectAll th-inner' >
+
+		<md-tooltip md-direction="top">Select/Deselect All</md-tooltip>
    <md-checkbox 
        ng-checked="multiSelectVal"
        ng-click="selectAll()"  
@@ -80,7 +74,7 @@
     </md-checkbox>
 </div>
 
-    <div id="headDiv{{$index}}"  ng-hide="hideTableHead==true" ng-if="val.name !='--MULTISELECT--' && val.name!='--ROW_DETAIL--'" ng-click="orderBy(val)"  ng-class="{ 'black': val.name==column_ordering}" layout="row" layout-align="start center">
+    <div id="headDiv{{$index}}"  ng-hide="hideTableHead==true" ng-if="val.name !='--MULTISELECT--' && val.name!='--ROW_DETAIL--'" ng-click="orderBy(val)"  ng-class="{ 'black': val.name==column_ordering}" layout="row" layout-align="start center" class="th-inner" >
         
         <md-icon  ng-class="{ 'hidden': val.name!=column_ordering.name ,'fa fa-arrow-down' : (val.name==column_ordering.name && reverse_col_ord) ,'fa fa-arrow-up' : (val.name==column_ordering.name && !reverse_col_ord)}"></md-icon>
         <span ng-if="val.name!='--MULTISELECT--'"  flex>
@@ -89,7 +83,6 @@
             <md-tooltip ng-if="column.hideTooltip!=true" md-delay="1000" md-direction="bottom"  >{{val.label}}</md-tooltip> 
         </span>
     </div>
-
 </th>
 </script>
 
@@ -162,13 +155,4 @@
 	
 </script>
 
-<!-- </div> -->
-
-
-<!-- 	<td ng-repeat="column in tableColumns"  ng-style="getDynamicValue(column.style,row,column,$parent.$index)"> -->
-<!-- 		<span ng-class="getChangedValueStyle(row,column.name)" ng-if="column.name!='--MULTISELECT--' && column.name!='--SPEEDMENU--' && column.name!='--DRAG_AND_DROP--' && column.name!='--ROW_DETAIL--'"  dynamichtml="getColumnValue(row,column.name,column.transformer)"   ng-show="!allowEdit || (allowEdit && !row.editing) || (allowEdit && row.editing && !column.editable)"> -->
-<!-- 			<md-tooltip ng-if="column.hideTooltip!=true" md-delay="1000" md-direction="bottom">{{getColumnValue(row,column.name,column.transformer)}}</md-tooltip> -->
-<!-- 		</span> -->
-		
-<!-- 	</td> -->
 

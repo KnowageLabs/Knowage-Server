@@ -1,3 +1,51 @@
+angular-table {
+	thead {
+		md-checkbox.md-knowage-theme {
+			._md-icon {
+				background-color: $lightTextColor;
+			}
+			&.md-checked {
+				border-color: $lightTextColor;
+				._md-icon {
+					background-color: $secondaryColor;
+				}
+			}
+		}
+	}
+		//fixed table header
+	#angularFullTableContentBox {
+		position: relative;
+		padding-top: $toolbarHeight;
+		.angularTableHeader {
+			background-color: $baseColor;
+			height: $toolbarHeight;
+			position: absolute;
+			top: 0;
+			right: 0;
+			left: 0;
+		}
+		tr {
+			th:first-child {
+				.th-inner {
+					margin-left: 5px;
+				}
+			}
+			th {
+				.th-inner {
+					position: absolute;
+					color: $lightTextColor;
+					top: 0;
+					line-height: $toolbarHeight;
+					padding-left: 5px;
+					margin-left: -5px;
+					md-icon {
+						color: $lightTextColor;
+					}
+				}
+			}
+		}
+	}
+}
 angular-table, cockpit-angular-table{
 	.infoBar {
 		font-size: $baseFontSize;
@@ -490,6 +538,7 @@ angular-table, cockpit-angular-table{
 	.hiddenColumn {
 		display:none;
 	}
+
 }
 
 
@@ -511,5 +560,7 @@ angular-table, cockpit-angular-table{
 	  	border-collapse: separate;
 	  }
 	}
-  
+  angular-table table > thead > tr > th > div, .kn-cockpit cockpit-static-pivot-table-widget table > thead > tr > th > div, cockpit-angular-table table > thead > tr > th > div {
+  	overflow: visible;
+  }
 }
