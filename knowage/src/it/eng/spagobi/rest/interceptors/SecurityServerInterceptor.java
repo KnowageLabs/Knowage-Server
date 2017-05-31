@@ -108,7 +108,7 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 
 					SpagoBIUserProfile spagoBIUserProfile = supplier.checkAuthentication(user, password);
 					if (spagoBIUserProfile != null) {
-						profile = (UserProfile) UserUtilities.getUserProfile(user);
+						profile = (UserProfile) UserUtilities.getUserProfile(spagoBIUserProfile.getUniqueIdentifier());
 					}
 				}
 			} else {
