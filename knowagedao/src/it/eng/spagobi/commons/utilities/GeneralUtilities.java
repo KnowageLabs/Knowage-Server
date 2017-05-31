@@ -47,6 +47,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -67,7 +69,8 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	private static transient Logger logger = Logger.getLogger(GeneralUtilities.class);
 
 	private static final String PREVIEW_FILE_STORAGE_DIRECTORY = "preview" + File.separatorChar + "images";
-
+	static DecimalFormat decFormat = new DecimalFormat();
+	static DecimalFormatSymbols decSymbols = decFormat.getDecimalFormatSymbols();
 	public static final int MAX_DEFAULT_TEMPLATE_SIZE = 5242880;
 	public static final int MAX_DEFAULT_FILE_DATASET_SIZE = 10485760; // 10 mega byte
 	private static String SPAGOBI_HOST = null;
@@ -612,6 +615,22 @@ public class GeneralUtilities extends SpagoBIUtilities {
 
 		logger.debug("OUT");
 		return format;
+	}
+
+	public static char getDecimalSeparator() {
+		logger.debug("IN");
+		char decimals = decSymbols.getDecimalSeparator();
+
+		logger.debug("OUT");
+		return decimals;
+	}
+
+	public static char getGroupingSeparator() {
+		logger.debug("IN");
+		char thousands = decSymbols.getGroupingSeparator();
+
+		logger.debug("OUT");
+		return thousands;
 	}
 
 	public static int getTemplateMaxSize() {
