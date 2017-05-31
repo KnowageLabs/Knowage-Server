@@ -889,8 +889,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			angular.copy($scope.model,originalModel);
 			mdPanelRef.close();
 			mdPanelRef.destroy();
-			var options = {page:0, itemPerPage:0, columnOrdering:undefined,reverseOrdering:undefined };
-			//scopeFather.refreshWidget(options);
+			var options = {page:0, itemPerPage:$scope.model.content.maxRowsNumber-1, columnOrdering:undefined, reverseOrdering:undefined};
+			scopeFather.refreshWidget(options);
 			$scope.$destroy();
 			if($scope.model.content.columnSelectedOfDataset == undefined || $scope.model.content.columnSelectedOfDataset.length==0){
 				$scope.showAction($scope.translate.load('sbi.cockpit.table.nocolumns'));
