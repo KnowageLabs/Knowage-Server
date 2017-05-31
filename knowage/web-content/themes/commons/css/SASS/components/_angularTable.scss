@@ -363,13 +363,13 @@ angular-table, cockpit-angular-table{
 	min-height: 22px !important;
 	}
 	
-	  .dropdown_menu_list md-list-item p {
+  	.dropdown_menu_list md-list-item p {
 		line-height: 20px;
 		margin: 3px;
 		color: black;
 	}
 	
-	  .dropdown_menu_list md-list.bottomBorder md-list-item button {
+  	.dropdown_menu_list md-list.bottomBorder md-list-item button {
 		border-bottom: 1px solid rgb(176, 190, 197);
 		padding: 0;
 		margin-left: 8px;
@@ -377,13 +377,16 @@ angular-table, cockpit-angular-table{
 		border-radius: 0;
 	}
 	
-	  md-checkbox {
-	margin-bottom: 0px;
+  	md-checkbox.md-knowage-theme {
+		margin-bottom: 0;
+		._md-label {
+			margin-left:0;
+		}
 	}
 	
 	
-	  .tableDragBar {
-	padding: 0 !important;
+  	.tableDragBar {
+		padding: 0 !important;
 	    text-align: center;
 	    color: grey;
 	}

@@ -1,6 +1,10 @@
-#doc {
+#doc, #iframeDoc {
   width: calc(100% - 40px);
   margin-left: 40px;
+}
+#doc #iframeDoc {
+  width: 100%;
+  margin-left: 0;
 }
 
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
