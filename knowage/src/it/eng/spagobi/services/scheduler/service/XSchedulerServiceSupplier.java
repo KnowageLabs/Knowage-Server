@@ -234,7 +234,7 @@ public class XSchedulerServiceSupplier implements ISchedulerServiceSupplier {
 				JSONArray ja = new JSONArray();
 
 				if (e.getCause() instanceof ObjectAlreadyExistsException) {
-					ja.put("Trigger already existing with name: " + trigger.getName());
+					ja.put("sbi.scheduler.schedulation.error.alreadyPresent");
 				} else {
 					ja.put("ERR SCK01");
 				}
