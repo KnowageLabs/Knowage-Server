@@ -52,6 +52,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	
 	$scope.dataSetListColumns = [
 	    {"label":$scope.translate.load("sbi.generic.name"),"name":"name"},
+	    {"label":$scope.translate.load("sbi.generic.label"),"name":"label"},
 	    {"label":$scope.translate.load("sbi.generic.type"), "name":"dsTypeCd", "size":"70px"},
 	    {"label":$scope.translate.load("sbi.ds.numDocs"), "name":"usedByNDocs", "size":"60px"}
     ];
