@@ -66,17 +66,18 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 						
 		<script>
-		
+		debugger;
 			/* Parameters needed for the WebServiceManagerFactory. */
 			var sbiExecutionId = <%=request.getParameter("SBI_EXECUTION_ID")!=null? "'"+request.getParameter("SBI_EXECUTION_ID")+"'" : "null"%>;
 			var userId = '<%=userId%>'; <%-- e.g. biadmin --%>
 			var hostName = '<%=request.getServerName()%>'; <%-- e.g. localhost --%>
 			var serverPort = '<%=request.getServerPort()%>'; <%-- e.g. 8080 --%>
+		
 			var protocol = window.location.protocol; <%-- e.g. http: --%>
 			var driverParams = '<%=driverParams%>'; <%-- e.g. object that hold values for IS_TECHNICAL_USER, MODALITY, SBI_ENVIRONMENT, user_id, etc. --%>
 			var currentDocumentName = '<%=docName%>'; <%-- name of the document --%>
 			var currentDocumentLabel = '<%=docLabel%>'; <%-- label of the document --%>
-			
+		
 			// Global variable that serves as an indicator if the chart type of the rendered document is ChartJS. (danristo)			
 			var isLibChartJs = '<%=isLibChartJS%>';
 			//global variable that indicates that table accessable for screen reader should be visible or not
