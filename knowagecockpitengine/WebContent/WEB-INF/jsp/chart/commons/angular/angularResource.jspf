@@ -215,7 +215,7 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		docIsVisible - if the user set the document as visible 
 		...
 	*/
-	docLabel = request.getParameter(EngineConstants.DOCUMENT_LABEL);
+	docLabel = request.getParameter(EngineConstants.DOC_LABEL);
 	docId = request.getParameter(EngineConstants.DOCUMENT_ID);
 	docVersion = (engineInstance.getDocumentVersion()==null) ? "" : engineInstance.getDocumentVersion().toString();
 	docAuthor = (engineInstance.getDocumentAuthor()==null) ? "" : engineInstance.getDocumentAuthor().toString();
