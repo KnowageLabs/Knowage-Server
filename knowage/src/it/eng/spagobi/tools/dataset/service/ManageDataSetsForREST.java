@@ -85,9 +85,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 import it.eng.spagobi.utilities.sql.SqlUtils;
-import net.sf.jsqlparser.JSQLParserException;
-import net.sf.jsqlparser.parser.CCJSqlParserUtil;
-import net.sf.jsqlparser.statement.select.Select;
 
 import java.io.File;
 import java.io.IOException;
@@ -739,17 +736,22 @@ public class ManageDataSetsForREST {
 							if (("true").equals(checkSqlValidation)){
 								boolean isSelect = false;
 								try {
-									Select select = (Select) CCJSqlParserUtil.parse(query);
-									logger.info("SQL is a SELECT statement.");
-									isSelect =  true;
-								} catch (JSQLParserException e) {
+									if(SqlUtils.isSelectStatement(query)) {
+										logger.info("SQL is a SELECT statement.");
+										if(query.toLowerCase().contains(" update ") || query.toLowerCase().contains(" delete ") || query.toLowerCase().contains(" insert ")){
+											isSelect =  false;
+										} else {
+											isSelect =  true;
+										}										
+									}									
+								} catch (Exception e) {
 									logger.error("SQL is NOT a SELECT statement.");
 									isSelect =  false;
 								}
 								if(isSelect){
 									dataSet = JDBCDatasetFactory.getJDBCDataSet(dataSource);
 								} else {
-									logger.error("SQL is NOT a SELECT statement.");
+									logger.error("SQL is NOT a SELECT statement, or contains keywords like INSERT, UPDATE, DELETE.");
 									throw new SpagoBIServiceException("Manage Dataset", "Provided SQL is NOT a SELECT statement");
 								}
 								
