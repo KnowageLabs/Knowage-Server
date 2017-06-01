@@ -77,9 +77,11 @@ Sbi.sdk.apply(Sbi.sdk.cors, {
 				 * (in such a case errors will be inside the Json object in the response body) */
 				if (obj.errors !== undefined){
 					callbackError(obj);
+				} else {
+					config.callbackOk(obj);
 				}
 
-				config.callbackOk(obj);
+
 			}
 			else {
 				callbackError(obj, xhr.status, xhr.statusText);
