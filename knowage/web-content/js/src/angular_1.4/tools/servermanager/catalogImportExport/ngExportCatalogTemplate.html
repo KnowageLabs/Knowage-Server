@@ -1,0 +1,41 @@
+<!-- Knowage, Open Source Business Intelligence suite
+Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+
+Knowage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+Knowage is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details. 
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>. -->
+
+<div id='expcatalog'>	
+	<div ng-show="true" layout-padding layout-gt-sm="row"
+		layout-align-gt-sm="start center" layout-sm="column">
+		<h4>{{translate.load("sbi.impexpcatalog.filtercatalog")}}:</h4>
+		<md-datepicker ng-model="filterDate" md-placeholder="Enter date"></md-datepicker>
+		<md-button class="md-icon-button" ng-click="filterCatalog(typeCatalog)">
+	 		<md-icon md-font-icon="fa fa-filter" aria-label="Filter"></md-icon>
+		 </md-button>
+		 <!-- <md-button class="md-icon-button" ng-click=loadAllDataset()>  -->
+		 <md-button class="md-icon-button" ng-click=removeFilter(typeCatalog)>
+	 		<md-icon md-font-icon="fa fa-times" aria-label="Remove Filter"></md-icon>
+		 </md-button>
+	</div>
+	
+	<!-- <div flex layout ng-show="true"  ng-init="toggle(typeCatalog,listType)">  -->
+	<div flex layout ng-show="true">
+		<angular-table id='cataloglist' ng-model=catalogData
+			columns='[{"label":"Label","name":"label"},{"label":"Name","name":"name"}]'
+			columnsSearch='["label"]' show-search-bar=true
+			highlights-selected-item=true multi-select=true
+			selected-item=catalogSelected no-pagination=true
+			scope-functions=tableFunction> 
+		</angular-table>
+	</div> 
+</div>

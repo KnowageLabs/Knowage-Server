@@ -41,6 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/catalogImportExport/importExportCatalogController.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/documentImportExport/importExportDocumentsController.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/catalogImportExport/importCatalogStep0Controller.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/catalogImportExport/ngExportCatalog.js">"></script>
 
 	
 	
@@ -60,48 +61,61 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</div>
 		</md-toolbar>
 		<md-content layout="column" layout-wrap flex class="mainContainer">
-			<md-tabs md-select="ImportExport" layout-fill class="absolute">
+			 <md-tabs md-select="ImportExport" layout-fill class="absolute">  
 				<md-tab label="Export" md-on-select="setTab('Export')" md-active="isSelectedTab('Export')"> 
 			
 					<md-tab-body layout-fill>
-					<md-card>
-						<md-card-content  layout="column" >
+					 <md-card>
+						<md-card-content  layout="column" >  
+					
 							<div layout="row" >
 								<md-input-container flex class="md-block">
 									<label>{{translate.load("sbi.impexpusers.nameexport")}}</label>
 									<input type="text" ng-model="nameExport" requiredmaxlength="100" ng-maxlength="100" md-maxlength="100" /> 
 								</md-input-container>
 							
-								 <md-button	ng-show="!wait" ng-click="prepare($event)"	aria-label="download Dataset" class="md-fab md-mini">
+								 <md-button	ng-show="!wait" ng-click="prepare($event)"	aria-label="download catalogs" class="md-fab md-mini">
 									<md-icon md-font-icon="fa fa-download"> </md-icon>
 								 </md-button>
-							
-							
 							</div>
-							<md-checkbox ng-checked="exists('Dataset',listType)" ng-click="toggle('Dataset',listType)" ng-init="toggle('Dataset',listType)"">{{translate.load("sbi.importexportcatalog.radiodataset");}}</md-checkbox>
-							<div ng-show="showDataset" layout-padding layout-gt-sm="row"
-								layout-align-gt-sm="start center" layout-sm="column">
-								<h4>{{translate.load("sbi.impexpcatalog.filtercatalog")}}:</h4>
-								<md-datepicker ng-model="filterDate" md-placeholder="Enter date"></md-datepicker>
-								<md-button class="md-icon-button" ng-click="filterDataset()">
-							 		<md-icon md-font-icon="fa fa-filter" aria-label="Filter"></md-icon>
-								 </md-button>
-								 <md-button class="md-icon-button" ng-click=loadAllDataset()>
-							 		<md-icon md-font-icon="fa fa-times" aria-label="Remove Filter"></md-icon>
-								 </md-button>
+							<div>
+								<!-- ORIG: <md-checkbox ng-checked="exists('Dataset',listType)" ng-click="toggle('Dataset',listType)" ng-init="toggle('Dataset',listType)"">{{translate.load("sbi.importexportcatalog.radiodataset");}}</md-checkbox>  -->
+								 <md-tabs md-dynamic-height >
+								      <md-tab id="Dataset"  md-on-select="showDataset=true" >
+								        <md-tab-label>{{translate.load("sbi.importexportcatalog.radiodataset");}}</md-tab-label>
+								        <md-tab-body >
+								         	<export-catalog ng-if="showDataset" type-catalog="Dataset" catalog-data="catalogDataset" catalog-selected="catalogSelected"></export-catalog>
+								        </md-tab-body>
+								      </md-tab>
+								       <md-tab id="BusinessModel"  md-on-select="showBM=true" >
+								        <md-tab-label>{{translate.load("sbi.importexportcatalog.radiobusinessmodel");}}</md-tab-label>
+								        <md-tab-body>
+								         	<export-catalog ng-if="showBM" type-catalog="BusinessModel" catalog-data="catalogBM" catalog-selected="catalogSelected"></export-catalog>
+								        </md-tab-body>
+								      </md-tab>
+								       <md-tab id="MondrianSchema" md-on-select="showSchema=true">
+								        <md-tab-label>{{translate.load("sbi.importexportcatalog.radiomondrianschema");}}</md-tab-label>
+								        <md-tab-body>
+								         	<export-catalog  ng-if="showSchema" type-catalog="MondrianSchema" catalog-data="catalogSchema" catalog-selected="catalogSelected"></export-catalog>
+								        </md-tab-body>
+								      </md-tab>
+								       <md-tab id="SVG" md-on-select="showSVG=true">
+								        <md-tab-label>{{translate.load("sbi.importexportcatalog.radiosvg");}}</md-tab-label>
+								        <md-tab-body>
+								         	<export-catalog ng-if="showSVG" type-catalog="SVG" catalog-data="catalogSVG" catalog-selected="catalogSelected"></export-catalog>
+								        </md-tab-body>
+								      </md-tab>
+								       <md-tab id="Layer" md-on-select="showLayer=true">
+								        <md-tab-label>{{translate.load("sbi.importexportcatalog.radiolayer");}}</md-tab-label>
+								        <md-tab-body>
+								         	<export-catalog ng-if="showLayer" type-catalog="Layer" catalog-data="catalogLayer" catalog-selected="catalogSelected"></export-catalog>
+								        </md-tab-body>
+								      </md-tab>
+								</md-tabs>
 							</div>
-							<div flex layout ng-show="showDataset">
-								<angular-table id='datasetlist' ng-model=dataset
-									columns='[{"label":"Label","name":"label"},{"label":"Name","name":"name"}]'
-									columnsSearch='["label"]' show-search-bar=true
-									highlights-selected-item=true multi-select=true
-									selected-item=datasetSelected no-pagination=true
-									scope-functions=tableFunction> 
-								</angular-table>
-							</div>
-
 						</md-card-content> 
-						</md-card>
+						</md-card> 
+			
 					</md-tab-body> 
 				</md-tab> 
 				<md-tab label="Import" md-on-select="setTab('Import')" id="importTab" md-active="isSelectedTab('Import')">
@@ -110,11 +124,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					
 					<md-card >
 					<bread-crumb ng-model=stepItem item-name='name' selected-index='selectedStep' control='stepControl'></bread-crumb>
-<!-- 					<md-toolbar  class="secondaryToolbar miniheadimportexport"> -->
-<!-- 						<div class="md-toolbar-tools"> -->
-<!-- 							<h2 class="md-flex" >{{translate.load("sbi.importusers.import")}}</h2> -->
-<!-- 						</div> -->
-<!-- 					</md-toolbar> -->
 					<md-card-content ng-cloak layout-wrap  ng-cloak ng-switch="selectedStep">
 					
 					<!-- Upload file -->
@@ -136,18 +145,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					</div>
 				
 					<div layout="column">
-						<md-checkbox ng-show="exportedDataset.length>0"
-							ng-init="toggle('DatasetImported',listTypeImported)"
-							ng-checked="exists('DatasetImported',listTypeImported)"
-							ng-click="toggle('DatasetImported',listTypeImported)">{{translate.load("sbi.importexportcatalog.radiodataset");}}</md-checkbox>
-						<h4 ng-show="showDatasetImported">{{translate.load("sbi.importexportcatalog.messagesfederated");}}</h4>
-						<angular-table flex  ng-show="showDatasetImported" id='datasetlistImported' ng-model=exportedDataset
-							columns='[{"label":"Label","name":"label","size":"20px"},{"label":"Name","name":"name","size":"20px"},{"label":"Type","name":"type","size":"20px"}]'
-							columnsSearch='["label"]' show-search-bar=true
+						<!-- catalog section -->
+						<h4 ng-show="showDatasetImported">{{translate.load("sbi.importexportcatalog.messagesfederated");}}</h4>												
+						<angular-table flex  ng-show="showCatalogImported" id='cataloglistImported' ng-model=exportedCatalog
+							columns='[{"label":"Type Catalog","name":"typeCatalog","size":"20px"},{"label":"Name","name":"name","size":"20px"},{"label":"Type","name":"type","size":"20px"}]'
+							columnsSearch='["name"]' show-search-bar=true
 							highlights-selected-item=true multi-select=true
-							selected-item=datasetSelected no-pagination=true
+							selected-item=catalogSelected no-pagination=true
 							scope-functions=tableFunction> 
 						</angular-table>
+						 
 						 
 					</div>
 					

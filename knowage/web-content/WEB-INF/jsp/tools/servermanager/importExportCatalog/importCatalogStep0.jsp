@@ -23,12 +23,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <div layout="row" layout-align="end center">
 	<md-button ng-click="save($event)" class="md-raised" ng-disabled="checkDatasourceAssociated()">{{translate.load('sbi.impexpglossary.startimport');}}</md-button> 
 </div>
-<md-whiteframe  layout="row" layout-wrap class="sourceTargetToolbar md-whiteframe-1dp" >
+<md-whiteframe ng-if="showDatasource"  layout="row" layout-wrap class="sourceTargetToolbar md-whiteframe-1dp" >
 		<p flex="50">{{translate.load('sbi.hierarchies.source');}}</p>
 		<p flex="50">{{translate.load('sbi.modelinstances.target');}}</p>
-	</md-whiteframe >
-	<md-content flex layout="column"  >
-	<md-subheader class="md-primary">{{translate.load('sbi.impexp.exportedDS');}}</md-subheader>
+</md-whiteframe >
+<md-content flex layout="column"  >
+<md-subheader ng-if="showDatasource"  class="md-primary">{{translate.load('sbi.impexp.exportedDS');}}</md-subheader>
+<md-subheader ng-if="!showDatasource"  class="md-primary">{{translate.load('sbi.impexp.noExportedDS');}}</md-subheader>
 	
 <md-list class="centerText" ng-cloak >
 	<md-list-item ng-repeat="expDatasources in IEDConf.datasources.exportedDatasources" class="secondary-button-padding">
@@ -41,8 +42,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
    		<span>{{expDatasources.urlConnection}}</span>
    		<span>{{expDatasources.jndi}}</span>
 	</div>
+
    		<p ng-if="IEDConf.datasources.associatedDatasources[expDatasources.dsId].fixed==true">{{IEDConf.datasources.associatedDatasources[expDatasources.dsId].label}}</p>
-   		<md-input-container ng-if="IEDConf.datasources.associatedDatasources[expDatasources.dsId].fixed!=true"  flex="50">
+   		<md-input-container ng-if="IEDConf.datasources.associatedDatasources[expDatasources.dsId].fixed!=true"  flex="50">  
 	        <label>Datasources</label>
 	        <md-select ng-model="IEDConf.datasources.associatedDatasources[expDatasources.dsId]">
 	        <md-option ng-value="{dsId:''}"></md-option>

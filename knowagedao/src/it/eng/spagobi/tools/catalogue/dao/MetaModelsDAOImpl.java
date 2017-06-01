@@ -310,6 +310,50 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 	}
 
 	@Override
+	public List<SbiMetaModel> loadAllSbiMetaModels() {
+		logger.debug("IN");
+
+		List<SbiMetaModel> toReturn = new ArrayList<SbiMetaModel>();
+		Session session = null;
+		Transaction transaction = null;
+
+		try {
+
+			try {
+				session = getSession();
+				Assert.assertNotNull(session, "session cannot be null");
+				transaction = session.beginTransaction();
+				Assert.assertNotNull(transaction, "transaction cannot be null");
+			} catch (Exception e) {
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", e);
+			}
+
+			Query query = session.createQuery(" from SbiMetaModel");
+			List list = query.list();
+			Iterator it = list.iterator();
+			while (it.hasNext()) {
+				toReturn.add((SbiMetaModel) it.next());
+			}
+			logger.debug("Models loaded");
+
+			transaction.rollback();
+		} catch (Exception e) {
+			logException(e);
+			if (transaction != null && transaction.isActive()) {
+				transaction.rollback();
+			}
+			throw new SpagoBIDAOException("An unexpected error occured while loading models' list", e);
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+		}
+
+		LogMF.debug(logger, "OUT: returning [{0}]", toReturn);
+		return toReturn;
+	}
+
+	@Override
 	public void modifyMetaModel(MetaModel model) {
 		LogMF.debug(logger, "IN: model = [{0}]", model);
 
@@ -477,7 +521,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 
 	}
 
-	private MetaModel toModel(SbiMetaModel hibModel) {
+	public MetaModel toModel(SbiMetaModel hibModel) {
 		logger.debug("IN");
 		MetaModel toReturn = null;
 		if (hibModel != null) {
@@ -918,7 +962,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 		return toReturn;
 	}
 
-	private Content toContent(SbiMetaModelContent hibContent, boolean loadByteContent) {
+	public Content toContent(SbiMetaModelContent hibContent, boolean loadByteContent) {
 		logger.debug("IN");
 		Content toReturn = null;
 		if (hibContent != null) {
