@@ -336,7 +336,7 @@ if(executionRoleNames.size() > 0) {
                                     in one ng-if directive - this includes all criteria from all different options under the "Shortcuts" labels.
                                     @author Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
                                 -->
-                                <div ng-if="!(executedFrom=='WORKSPACE_ORGANIZER'||isAdmin||isSuperAdmin) || isAbleToExecuteAction || urlViewPointService.showOlapMenu">
+                                <div ng-if="!(executedFrom=='WORKSPACE_ORGANIZER'||isAdmin||isSuperAdmin) || urlViewPointService.showOlapMenu || showScheduled">
                                     
                                     <span class="divider">{{translate.load("sbi.execution.executionpage.toolbar.shortcuts")}}</span>
                                     
@@ -366,7 +366,7 @@ if(executionRoleNames.size() > 0) {
                                         Provided an ng-if criteria for this menu option for the executed document (whether it should be available).
                                         @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
                                     -->
-                                    <md-menu-item class="md-indent" ng-if="isAbleToExecuteAction">
+                                    <md-menu-item class="md-indent" ng-if="showScheduled">
                                         <md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.showscheduled')}}"
                                                 class="toolbar-button-custom" ng-click="urlViewPointService.getSchedulers()">
                                             {{translate.load('sbi.execution.executionpage.toolbar.showscheduled')}}
