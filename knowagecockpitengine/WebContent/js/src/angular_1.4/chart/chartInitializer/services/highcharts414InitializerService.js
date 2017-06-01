@@ -198,7 +198,7 @@ angular.module('chartInitializer')
 			
 			//for scatter
 			if(!categoryValue && e.point.category &&e.point.category.name){
-				categoryValue = t.xAxis.type == "datetime" ? date_format : e.point.category.name;
+				categoryValue = t.xAxis && t.xAxis.type == "datetime" ? date_format : e.point.category.name;
 			}
 			
 	
@@ -226,7 +226,7 @@ angular.module('chartInitializer')
          			GROUPING_VALUE:groupingCategoryValue,
          			stringParameters:null
 				}; 
-				parent.execExternalCrossNavigation(navData,JSON.parse(driverParams))
+				parent.execExternalCrossNavigation(navData,JSON.parse(driverParams), null, currentDocumentLabel )
 			}
 		
 		}
