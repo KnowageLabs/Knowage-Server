@@ -122,11 +122,3 @@ Ext.onReady(function () {
 	<a href="#" class="logoKnowage"><img src="<%=urlBuilder.getResourceLinkByTheme(request, "/css/menuBar/logo_knowage.png", currTheme)%>"/></a>
 </div>
 </div>
-
-<script>
-$(document).ready(function() {
-     $(function() { $('#divContainer').draggable({containment: 'window'}); });
-     
-});
-
-</script>
