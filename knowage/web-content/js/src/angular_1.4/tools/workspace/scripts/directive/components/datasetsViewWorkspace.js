@@ -207,7 +207,14 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		
 		sbiModule_restServices.promiseGet("2.0/datasets/enterprise", "")
 		.then(function(response) {
-			angular.copy(response.data.root,$scope.enterpriseDatasets);
+			var enterpriseDatasetsWithParams = [];
+			angular.copy(response.data.root,enterpriseDatasetsWithParams);
+			for (var i = 0; i < enterpriseDatasetsWithParams.length; i++) {
+				if(enterpriseDatasetsWithParams[i].pars.length==0){
+					$scope.enterpriseDatasets.push(enterpriseDatasetsWithParams[i]);
+				}
+			}
+			//angular.copy(response.data.root,$scope.enterpriseDatasets);
 			$scope.markNotDerived($scope.enterpriseDatasets);
 			angular.copy($scope.enterpriseDatasets,$scope.enterpriseDatasetsInitial);
 			console.info("[LOAD END]: Loading of Enterprised datasets is finished.");
@@ -237,7 +244,14 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		
 		sbiModule_restServices.promiseGet("2.0/datasets/shared", "")
 		.then(function(response) {
-			angular.copy(response.data.root,$scope.sharedDatasets);
+			//angular.copy(response.data.root,$scope.sharedDatasets);
+			var sharedDatasetsWithParams = [];
+			angular.copy(response.data.root,sharedDatasetsWithParams);
+			for (var i = 0; i < sharedDatasetsWithParams.length; i++) {
+				if(sharedDatasetsWithParams[i].pars.length==0){
+					$scope.sharedDatasets.push(sharedDatasetsWithParams[i]);
+				}
+			}
 			$scope.markNotDerived($scope.sharedDatasets);
 		    angular.copy($scope.sharedDatasets,$scope.sharedDatasetsInitial);
 			console.info("[LOAD END]: Loading of Shared datasets is finished.");
