@@ -184,7 +184,7 @@ angular.module('chartInitializer')
 			var chart = this;
 			//chart.showLoading('Loading...');
 			var categoryName = null;
-			var categoryValue = t.xAxis.type == "datetime" ? date_format : e.point.name;
+			var categoryValue = t.xAxis && t.xAxis.type == "datetime" ? date_format : e.point.name;
 
 			if (e.point.hasOwnProperty('category')) {
 				if(isNaN(e.point.category)){
