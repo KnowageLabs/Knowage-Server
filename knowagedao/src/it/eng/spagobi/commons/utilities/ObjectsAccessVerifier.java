@@ -858,6 +858,13 @@ public class ObjectsAccessVerifier {
 			monitor.stop();
 			throw new EMFInternalError(EMFErrorSeverity.ERROR, "User profile in input is null!!");
 		}
+
+		// if user is ADMIN can always see documents
+		boolean isUserAdmin = UserUtilities.isAdministrator(profile);
+		logger.debug("is user admin? " + isUserAdmin);
+		if (isUserAdmin)
+			return true;
+
 		String state = obj.getStateCode();
 		if ("SUSP".equalsIgnoreCase(state)) {
 			if (!profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
