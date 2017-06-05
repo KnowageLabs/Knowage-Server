@@ -4,7 +4,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 
-class SlimerJSConstants {
+public class SlimerJSConstants {
 	static final String DEFAULT_RENDER_SCRIPT = "defaultrender.js";
 
 	static final String ZIP_EXTENSION = ".zip";
@@ -18,8 +18,9 @@ class SlimerJSConstants {
 
 	static final Path TEMP_DIR = Paths.get(System.getProperty("java.io.tmpdir", "/tmp")).resolve("java-slimerjs");
 
-	static final Path TEMP_SCRIPT_DIR = TEMP_DIR.resolve("scripts-" + JVM_UUID), TEMP_SOURCE_DIR = TEMP_DIR.resolve("source-" + JVM_UUID),
-			TEMP_RENDER_DIR = TEMP_DIR.resolve("output-" + JVM_UUID);
+	static final Path TEMP_SCRIPT_DIR = TEMP_DIR.resolve("scripts-" + JVM_UUID), TEMP_SOURCE_DIR = TEMP_DIR.resolve("source-" + JVM_UUID);
+
+	public static final Path TEMP_RENDER_DIR = TEMP_DIR.resolve("output-" + JVM_UUID);
 
 	static final String HEADER_PREFIX = "header-", FOOTER_PREFIX = "footer-", TARGET_PREFIX = "target-", SCRIPT_PREFIX = "script-", SCRIPT_EXTENSION = ".js",
 			SOURCE_PREFIX = "source-";

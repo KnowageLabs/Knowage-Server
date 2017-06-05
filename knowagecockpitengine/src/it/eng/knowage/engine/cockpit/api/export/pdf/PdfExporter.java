@@ -23,6 +23,7 @@ import it.eng.knowage.export.pdf.PDFCreator;
 import it.eng.knowage.export.pdf.PageNumbering;
 import it.eng.knowage.slimerjs.wrapper.DeleteOnCloseFileInputStream;
 import it.eng.knowage.slimerjs.wrapper.SlimerJS;
+import it.eng.knowage.slimerjs.wrapper.SlimerJSConstants;
 import it.eng.knowage.slimerjs.wrapper.beans.RenderOptions;
 import it.eng.spago.error.EMFAbstractError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
@@ -76,7 +77,7 @@ public class PdfExporter {
 	}
 
 	public byte[] getBinaryData() throws Exception {
-		Path output = Paths.get("C:\\temp\\" + UUID.randomUUID().toString() + ".pdf");
+		Path output = Paths.get(SlimerJSConstants.TEMP_RENDER_DIR.toString(), UUID.randomUUID().toString() + ".pdf");
 
 		BIObject document = DAOFactory.getBIObjectDAO().loadBIObjectById(documentId);
 		int sheetCount = getSheetCount(document);
