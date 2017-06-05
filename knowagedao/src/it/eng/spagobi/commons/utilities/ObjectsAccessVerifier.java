@@ -47,7 +47,7 @@ import com.jamonapi.MonitorFactory;
 
 /**
  * Contains some methods to control user exec/dev/test rights.
- *
+ * 
  * @author sulis
  */
 public class ObjectsAccessVerifier {
@@ -56,14 +56,13 @@ public class ObjectsAccessVerifier {
 
 	/**
 	 * Controls if the current user can develop the object relative to the input folder id.
-	 *
+	 * 
 	 * @param state
 	 *            state of the object
 	 * @param folderId
 	 *            The id of the folder containing te object
 	 * @param profile
 	 *            user profile
-	 *
 	 * @return A boolean control value
 	 */
 	public static boolean canDev(String state, Integer folderId, IEngUserProfile profile) {
@@ -75,14 +74,13 @@ public class ObjectsAccessVerifier {
 
 	/**
 	 * Controls if current user can exec the object relative to the input folder id.
-	 *
+	 * 
 	 * @param state
 	 *            state of the object
 	 * @param folderId
 	 *            The id of the folder containing te object
 	 * @param profile
 	 *            user profile
-	 *
 	 * @return A boolean control value
 	 */
 	public static boolean canExec(String state, Integer folderId, IEngUserProfile profile) {
@@ -109,7 +107,7 @@ public class ObjectsAccessVerifier {
 
 	/**
 	 * Metodo che verifica se nell'elenco delle funzionalità ne esiste almeno una con diritto di esecuzione
-	 *
+	 * 
 	 * @param state
 	 * @param profile
 	 * @return
@@ -140,7 +138,7 @@ public class ObjectsAccessVerifier {
 
 	/**
 	 * Metodo che verifica se nell'elenco delle funzionalità ne esiste almeno una con diritto di esecuzione
-	 *
+	 * 
 	 * @param state
 	 * @param profile
 	 * @return
@@ -174,7 +172,7 @@ public class ObjectsAccessVerifier {
 
 	/**
 	 * Metodo che verifica se nell'elenco delle funzionalità ne esiste almeno una con diritto di esecuzione
-	 *
+	 * 
 	 * @param state
 	 * @param profile
 	 * @return
@@ -208,7 +206,7 @@ public class ObjectsAccessVerifier {
 
 	/**
 	 * Metodo che verifica il numero di istanze visibili del documento
-	 *
+	 * 
 	 * @param state
 	 * @param userProfile
 	 * @return
@@ -290,14 +288,13 @@ public class ObjectsAccessVerifier {
 
 	/**
 	 * Control if current user can test the object relative to the folder id.
-	 *
+	 * 
 	 * @param state
 	 *            state of the object
 	 * @param folderId
 	 *            The id of the folder containing the object
 	 * @param profile
 	 *            user profile
-	 *
 	 * @return A boolean control value
 	 */
 	public static boolean canTest(String state, Integer folderId, IEngUserProfile profile) {
@@ -311,12 +308,11 @@ public class ObjectsAccessVerifier {
 
 	/**
 	 * Control if the user can develop the document specified by the input id
-	 *
+	 * 
 	 * @param documentId
 	 *            The id of the document
 	 * @param profile
 	 *            The user profile
-	 *
 	 * @return A boolean control value
 	 */
 	public static boolean canDevBIObject(Integer biObjectID, IEngUserProfile profile) {
@@ -344,12 +340,11 @@ public class ObjectsAccessVerifier {
 
 	/**
 	 * Control if the user can develop the input document
-	 *
+	 * 
 	 * @param documentId
 	 *            The id of the document
 	 * @param profile
 	 *            The user profile
-	 *
 	 * @return A boolean control value
 	 */
 	public static boolean canDevBIObject(BIObject obj, IEngUserProfile profile) {
@@ -394,12 +389,11 @@ public class ObjectsAccessVerifier {
 
 	/**
 	 * Control if the current user can develop new object into the functionality identified by its id.
-	 *
+	 * 
 	 * @param folderId
 	 *            The id of the lowFunctionality
 	 * @param profile
 	 *            user profile
-	 *
 	 * @return A boolean control value
 	 */
 	public static boolean canDev(Integer folderId, IEngUserProfile profile) {
@@ -408,12 +402,11 @@ public class ObjectsAccessVerifier {
 
 	/**
 	 * Control if the current user can develop new object into the functionality identified by its id.
-	 *
+	 * 
 	 * @param folder
 	 *            The lowFunctionality
 	 * @param profile
 	 *            user profile
-	 *
 	 * @return A boolean control value
 	 */
 	public static boolean canDev(LowFunctionality folder, IEngUserProfile profile) {
@@ -422,12 +415,11 @@ public class ObjectsAccessVerifier {
 
 	/**
 	 * Control if the current user can test new object into the functionality.
-	 *
+	 * 
 	 * @param folder
 	 *            The lowFunctionality
 	 * @param profile
 	 *            user profile
-	 *
 	 * @return A boolean control value
 	 */
 	public static boolean canTest(LowFunctionality folder, IEngUserProfile profile) {
@@ -437,12 +429,11 @@ public class ObjectsAccessVerifier {
 
 	/**
 	 * Control if the current user can test new object into the functionality identified by its id.
-	 *
+	 * 
 	 * @param folderId
 	 *            The id of the lowFunctionality
 	 * @param profile
 	 *            user profile
-	 *
 	 * @return A boolean control value
 	 */
 	public static boolean canTest(Integer folderId, IEngUserProfile profile) {
@@ -464,12 +455,11 @@ public class ObjectsAccessVerifier {
 
 	/**
 	 * Control if the current user can execute objects into the input functionality.
-	 *
+	 * 
 	 * @param folder
 	 *            The lowFunctionality
 	 * @param profile
 	 *            user profile
-	 *
 	 * @return A boolean control value
 	 */
 	public static boolean canExec(LowFunctionality folder, IEngUserProfile profile) {
@@ -478,12 +468,11 @@ public class ObjectsAccessVerifier {
 
 	/**
 	 * Control if the current user can execute new object into the functionality identified by its id.
-	 *
+	 * 
 	 * @param folderId
 	 *            The id of the lowFunctionality
 	 * @param profile
 	 *            user profile
-	 *
 	 * @return A boolean control value
 	 */
 	public static boolean canExec(Integer folderId, IEngUserProfile profile) {
@@ -505,12 +494,11 @@ public class ObjectsAccessVerifier {
 
 	/**
 	 * Control if the current user can create objects into the input functionality.
-	 *
+	 * 
 	 * @param folder
 	 *            The lowFunctionality
 	 * @param profile
 	 *            user profile
-	 *
 	 * @return A boolean control value
 	 */
 	public static boolean canCreate(LowFunctionality folder, IEngUserProfile profile) {
@@ -519,7 +507,7 @@ public class ObjectsAccessVerifier {
 
 	/**
 	 * Private method called by the corrispondent public method canExec. Executes roles functionalities control .
-	 *
+	 * 
 	 * @param folder
 	 *            The lowFunctionality
 	 * @param profile
@@ -571,7 +559,7 @@ public class ObjectsAccessVerifier {
 
 	/**
 	 * Private method called by the corrispondent public method canTest. Executes roles functionalities control .
-	 *
+	 * 
 	 * @param folderId
 	 *            The id of the lowFunctionality
 	 * @param profile
@@ -616,7 +604,7 @@ public class ObjectsAccessVerifier {
 
 	/**
 	 * Private method called by the corrispondent public method canDev. Executes roles functionalities control .
-	 *
+	 * 
 	 * @param folderId
 	 *            The id of the lowFunctionality
 	 * @param profile
@@ -659,7 +647,7 @@ public class ObjectsAccessVerifier {
 
 	/**
 	 * Private method called by the corrispondent public method canTest. Executes roles functionalities control .
-	 *
+	 * 
 	 * @param folderId
 	 *            The id of the lowFunctionality
 	 * @param profile
@@ -709,7 +697,7 @@ public class ObjectsAccessVerifier {
 
 	/**
 	 * Private method called by the corrispondent public method isAbleToSave. Executes roles functionalities control .
-	 *
+	 * 
 	 * @param folderId
 	 *            The id of the lowFunctionality
 	 * @param profile
@@ -780,7 +768,7 @@ public class ObjectsAccessVerifier {
 
 	/**
 	 * Private method called by the corrispondent public method canDev. Executes roles functionalities control .
-	 *
+	 * 
 	 * @param folderId
 	 *            The id of the lowFunctionality
 	 * @param profile
@@ -847,14 +835,12 @@ public class ObjectsAccessVerifier {
 	 * Controls if the current user can see the document: - if the document is in DEV state the user must have the development permission in a folder containing
 	 * it; - if the document is in TEST state the user must have the test permission in a folder containing it; - if the document is in REL state the user must
 	 * have the execution permission in a folder containing it.
-	 *
+	 * 
 	 * @param obj
 	 *            The BIObject
 	 * @param profile
 	 *            user profile
-	 *
 	 * @return A boolean control value
-	 *
 	 * @throws EMFInternalError
 	 *             the EMF internal error
 	 */
@@ -883,11 +869,10 @@ public class ObjectsAccessVerifier {
 			}
 		}
 
-
 		List foldersId = obj.getFunctionalities();
 		if (foldersId == null || foldersId.size() == 0) {
 			monitor.stop();
-			logger.error( "BIObject does not belong to any functionality!!"+"["+obj.getLabel()+"]");
+			logger.error("BIObject does not belong to any functionality!!" + "[" + obj.getLabel() + "]");
 			return false;
 		}
 		Iterator foldersIdIt = foldersId.iterator();
@@ -930,14 +915,12 @@ public class ObjectsAccessVerifier {
 	 * Controls if the user can see the LowFunctionality. The root LowFunctionality is visible by everybody. The administrator can see all LowFunctionalities.
 	 * Other users can see the LowFunctionality only if they have at least one of the following permission: - they can develop on that folder; - they can test
 	 * on that folder; - they can execute on that folder.
-	 *
+	 * 
 	 * @param lowFunctionality
 	 *            The LowFunctionality
 	 * @param profile
 	 *            user profile
-	 *
 	 * @return true if the user can see the specified lowFunctionality, false otherwise
-	 *
 	 * @throws EMFInternalError
 	 *             the EMF internal error
 	 */
@@ -969,7 +952,7 @@ public class ObjectsAccessVerifier {
 
 	/**
 	 * Checks if the document in input has profiled visibility constraints. If it is the case, checks if the user in input has suitable profile attributes.
-	 *
+	 * 
 	 * @param obj
 	 * @param profile
 	 * @return true if document profiled visibility constraints are satisfied by the user
@@ -1042,7 +1025,7 @@ public class ObjectsAccessVerifier {
 
 	/**
 	 * returns the list of correct roles of the input profile for the execution of the document with the specified input
-	 *
+	 * 
 	 * @param objectId
 	 *            the document id
 	 * @param profile
@@ -1077,7 +1060,7 @@ public class ObjectsAccessVerifier {
 	/**
 	 * Retrieves the correct permission on folder that the user must have in order to execute the document: eg: document state = REL --> permission to EXECUTION
 	 * document state = DEV --> permission to DEVELOPMENT document state = TEST --> permission to TEST
-	 *
+	 * 
 	 * @param documentState
 	 *            The document state
 	 * @return the permission required to execute the document
@@ -1097,7 +1080,7 @@ public class ObjectsAccessVerifier {
 
 	/**
 	 * Returns true if the user in input is able to delete the input object in the specified position (folder)
-	 *
+	 * 
 	 * @param biobjectId
 	 *            The id of the document to be deleted
 	 * @param profile
@@ -1147,7 +1130,7 @@ public class ObjectsAccessVerifier {
 
 	/**
 	 * Returns true if the user in input is able to delete the input object everywhere
-	 *
+	 * 
 	 * @param biobjectId
 	 *            The id of the document to be deleted
 	 * @param profile
@@ -1198,10 +1181,8 @@ public class ObjectsAccessVerifier {
 	}
 
 	/**
-	 * Returns true if the user in input is able to clone the input object everywhere
-	 *
-	 * It consider the same conditions of the delete operation
-	 *
+	 * Returns true if the user in input is able to clone the input object everywhere It consider the same conditions of the delete operation
+	 * 
 	 * @param biobjectId
 	 *            The id of the document to be cloned
 	 * @param profile
@@ -1214,10 +1195,9 @@ public class ObjectsAccessVerifier {
 	}
 
 	/**
-	 * Returns true if the user in input is able to clone the input object in the specified position (folder)
-	 *
-	 * It consider the same conditions of the delete operation
-	 *
+	 * Returns true if the user in input is able to clone the input object in the specified position (folder) It consider the same conditions of the delete
+	 * operation
+	 * 
 	 * @param biobjectId
 	 *            The id of the document to be cloned
 	 * @param profile
@@ -1234,7 +1214,7 @@ public class ObjectsAccessVerifier {
 	/**
 	 * Check if the user can execute the required document. It checks the state of the document and its position on folders, and look for user permissions. It
 	 * also checks if behavioural model is set properly (i.e. the user has valid roles for execution).
-	 *
+	 * 
 	 * @param obj
 	 *            The document to be executed
 	 * @param profile
