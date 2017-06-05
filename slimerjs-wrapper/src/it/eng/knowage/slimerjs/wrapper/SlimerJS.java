@@ -112,7 +112,8 @@ public class SlimerJS {
 		}
 
 		// The render script
-		final InputStream renderScript = SlimerJS.class.getResourceAsStream(SlimerJSConstants.DEFAULT_RENDER_SCRIPT);
+		final InputStream renderScript = SlimerJS.class.getClassLoader().getResourceAsStream(
+				SlimerJSConstants.SLIMER_BINARIES_RESOURCEPATH.concat("/".concat(SlimerJSConstants.DEFAULT_RENDER_SCRIPT)));
 
 		// create the parent directories
 		Files.createDirectories(SlimerJSConstants.TEMP_SOURCE_DIR);

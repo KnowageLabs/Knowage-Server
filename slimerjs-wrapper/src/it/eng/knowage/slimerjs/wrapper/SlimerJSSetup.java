@@ -24,7 +24,7 @@ class SlimerJSSetup {
 
 	// get a reference to the executable binary and store it in SLIMER_JS_BINARY
 	private static File initializeBinaries() throws IllegalStateException {
-		final String resourcePath = getZipPath(SlimerJSConstants.SLIMER_BINARIES_RESOURCEPATH);
+		final String resourcePath = getZipPath(SlimerJSConstants.SLIMER_BINARIES_RESOURCEPATH.concat("/".concat(SlimerJSConstants.SLIMER_BINARIES_PACKAGENAME)));
 
 		logger.info("Initializing SlimerJS with resource path: " + resourcePath);
 
@@ -127,17 +127,21 @@ class SlimerJSSetup {
 			}
 			File binary = null;
 
+			logger.info("Getting resource: " + resourceName);
 			try (InputStream fileStream = SlimerJSSetup.class.getClassLoader().getResourceAsStream(resourceName)) {
 
 				logger.info("Unzipping SlimerJS to resource path: " + destination);
+				Files.createDirectories(destination);
 
 				String slimerJSbin = getSlimerJSBinName();
 				if (slimerJSbin == null) {
 					throw new IllegalStateException("Unable to get SlimerJS bin name.");
 				}
 
+				logger.info("Unzipping file stream: " + fileStream);
 				ZipUtils.unzip(fileStream, destination.toFile());
 
+				logger.info("Checking file executability: " + absoluteResource);
 				binary = absoluteResource.toFile();
 				if (!binary.canExecute()) {
 					if (!binary.setExecutable(true)) {
@@ -145,6 +149,7 @@ class SlimerJSSetup {
 					}
 				}
 
+				logger.info("Checking file executability: " + xulRunnerResource);
 				File xulrunner = xulRunnerResource.toFile();
 				if (!xulrunner.canExecute()) {
 					if (!xulrunner.setExecutable(true)) {
