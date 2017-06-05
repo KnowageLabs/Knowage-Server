@@ -517,12 +517,14 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 	}
 	
 	function createCrossParameters(event){
-		var date = new Date(event.point.x);
-		var char =  "/" ;
-		var theyear=date.getFullYear()
-		var themonth=date.getMonth()+1
-		var theday=date.getDate()
-		var date_format = theday+char+themonth+char+theyear;
+		if($scope.ngModel.content.chartTemplate.CHART.dateTime){
+			var date = new Date(event.point.x);
+			var char =  "/" ;
+			var theyear=date.getFullYear()
+			var themonth=date.getMonth()+1
+			var theday=date.getDate()
+			var date_format = theday+char+themonth+char+theyear;
+		}
        if( $scope.ngModel.content.chartTemplate.CHART.type==="HEATMAP"){
     	   var parameters = {
     				"SERIE_NAME": event.point.series.name,
