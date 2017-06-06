@@ -204,6 +204,8 @@
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ViewMyFolderAdmin" description="ViewMyFolderAdmin"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="DomainWrite" description="DomainWrite" />
 	<USER_FUNCTIONALITY productType="KnowagePM" name="AlertManagement" description="AlertManagement" />
+	<USER_FUNCTIONALITY productType="KnowagePM" name="ContextBrokerAction" description="ContextBrokerAction" />
+	
 	
 	<!-- Authorizations for KnowageLI -->
 	<USER_FUNCTIONALITY productType="KnowageLI" name="AnalyticalWidget" description="AnalyticalWidget" />
