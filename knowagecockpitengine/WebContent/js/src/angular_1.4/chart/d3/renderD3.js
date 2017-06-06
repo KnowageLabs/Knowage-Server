@@ -79,7 +79,6 @@ function removePixelsFromFontSize(fontSize)
  */
 function positionTheTooltip(chartHeight,chartWidth,ttText)
 {
-	debugger;
 	var windowHeight = window.innerHeight;
 	var windowWidth = window.innerWidth;
 	

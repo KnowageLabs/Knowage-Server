@@ -280,7 +280,7 @@ function renderChordChart(jsonData,panel,handleCockpitSelection,locale,handleCro
 //				};
 				var selectParams={};
 				category= jsonData.categories[1].value;
-				selectParams[category]=paramethers.categoryValue;
+				selectParams[category]=paramethers.CATEGORY_VALUE;
 				
 				handleCockpitSelection(selectParams);
 				}

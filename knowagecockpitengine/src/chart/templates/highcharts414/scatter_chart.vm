@@ -529,7 +529,9 @@
 		#end 
 		labels:{
 		#if($xAxis.step)
+			#if($xAxis.step!="")
 			step: $xAxis.step,
+			#end
 		#end
 				 #if( $xAxis.style != '' ) 
         		        		

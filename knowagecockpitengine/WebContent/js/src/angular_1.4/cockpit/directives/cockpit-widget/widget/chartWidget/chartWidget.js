@@ -525,17 +525,17 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 			var theday=date.getDate()
 			var date_format = theday+char+themonth+char+theyear;
 		}
-       if( $scope.ngModel.content.chartTemplate.CHART.type==="HEATMAP"){
-    	   var parameters = {
+		if( $scope.ngModel.content.chartTemplate.CHART.type==="HEATMAP"){
+			var parameters = {
     				"SERIE_NAME": event.point.series.name,
     				"SERIE_VALUE":event.point.y,
     				"CATEGORY_VALUE":event.point.name,
     				"CATEGORY_NAME": event.point.category,
     				"GROUPING_NAME": event.point.group.name,
     				"GROUPING_VALUE": event.point.group.value
-    			};
-    			
-    			return parameters;
+    		};
+    		
+    		return parameters;
 			
        }
        
@@ -546,9 +546,9 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
     				"CATEGORY_NAME": event.selectParam_cross.categoryName,
     				"GROUPING_NAME": event.selectParam_cross.groupingCategoryName,
     				"GROUPING_VALUE": event.selectParam_cross.groupingCategoryValue
-    			};
-    			
-    			return parameters;
+    		};
+    		
+    		return parameters;
 			
        }
        if( $scope.ngModel.content.chartTemplate.CHART.type==="TREEMAP"){
@@ -557,9 +557,9 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
     				"SERIE_VALUE":event.point.value,
     				"CATEGORY_VALUE":event.point.name,
     				"CATEGORY_NAME": $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY[0].name
-    			};
+    		};
     			
-    			return parameters;
+    		return parameters;
        }
        if( $scope.ngModel.content.chartTemplate.CHART.type==="WORDCLOUD"){
     	   var parameters = {
@@ -567,7 +567,7 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
     				"SERIE_VALUE":event.selectParam_cross.serieValue,
     				"CATEGORY_VALUE":event.selectParam_cross.categoryValue,
     				"CATEGORY_NAME": event.selectParam_cross.categoryName,
-    			};
+    		};
     	   
     	   if(event.selectParam_cross.categoryId){
     		   parameters["CATEGORY_ID"]= event.selectParam_cross.categoryId;
@@ -575,22 +575,36 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
     		   parameters["CATEGORY_ID"]= event.selectParam_cross.categoryValue;
     	   }
     			
-    			return parameters;
-       }else if( $scope.ngModel.content.chartTemplate.CHART.type==="SUNBURST"){
+    	   return parameters;
+       }
+       
+       else if( $scope.ngModel.content.chartTemplate.CHART.type==="SUNBURST"){
         	   var parameters = event.selectParam_cross;
         			
-        			return parameters;
-           }else        if($scope.ngModel.content.chartTemplate.CHART.type==="SCATTER"){
+        		return parameters;
+       }
+       
+       else if($scope.ngModel.content.chartTemplate.CHART.type==="SCATTER"){
     	   var parameters = {
     				"SERIE_NAME": event.point.series.name,
     				"SERIE_VALUE":event.point.y,
     				"CATEGORY_VALUE": $scope.ngModel.content.chartTemplate.CHART.dateTime ? date_format : event.point.category.name,
     				"CATEGORY_NAME": $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY.name
+    		};
+    	   
+    	   	return parameters;
+       } 
+       else if($scope.ngModel.content.chartTemplate.CHART.type==="CHORD"){
+    	   var parameters = {
+    				"SERIE_NAME": event.SERIE_NAME,
+    				"SERIE_VALUE":event.SERIE_VALUE,
+    				"CATEGORY_VALUE":  event.CATEGORY_VALUE,
+    				"CATEGORY_NAME": event.CATEGORY_NAME,
     			};
     	   
     	   return parameters;
        }
-		var parameters = {
+       var parameters = {
 			"SERIE_NAME": event.point.series.name,
 			"SERIE_VALUE":event.point.y,
 			"CATEGORY_VALUE": $scope.ngModel.content.chartTemplate.CHART.dateTime ? date_format : event.point.name,
