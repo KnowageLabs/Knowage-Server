@@ -92,14 +92,12 @@ public class PythonDatasetsExecutor {
 								+ "EXECUTION FAILED\n" + "See log file for other details\n");
 					}
 
-					if (ds.getSubstituteLabel() != null && ds.getSubstituteLabel() != "") // functionsCatalog executeWithNewData
-					{
-						codeToExec = ds.getSubstituteLabel() + " = pandas.read_" + "csv('" + csvToEval + "', " + ds.getOptions() + ")\n";
-					} else // dataminingEngine e functionsCatalog executeDemo
-					{
-						codeToExec = ds.getSpagobiLabel() + " = pandas.read_" + "csv('" + csvToEval + "', " + ds.getOptions() + ")\n";
-					}
+					String leftOperand = (ds.getSubstituteLabel() != null && !ds.getSubstituteLabel().isEmpty()) ? ds.getSubstituteLabel() : ds
+							.getSpagobiLabel();
+					String rightOperand = ds.getOptions() != null ? "pandas.read_" + "csv('" + csvToEval + "', " + ds.getOptions() + ")\n" : "pandas.read_"
+							+ "csv('" + csvToEval + "')\n";
 
+					codeToExec = leftOperand + " = " + rightOperand;
 					resPythonExecution = PyLib.execScript(codeToExec);
 
 					if (resPythonExecution < 0) {
