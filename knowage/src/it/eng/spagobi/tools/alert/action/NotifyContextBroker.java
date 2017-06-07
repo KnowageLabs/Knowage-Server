@@ -19,9 +19,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class ContextBroker extends AbstractAlertAction {
+public class NotifyContextBroker extends AbstractAlertAction {
 
-	private static Logger logger = Logger.getLogger(ContextBroker.class);
+	private static Logger logger = Logger.getLogger(NotifyContextBroker.class);
 
 	@Override
 	public void executeAction(String jsonOptions, Map<String, String> externalParameters) throws AlertActionException {
