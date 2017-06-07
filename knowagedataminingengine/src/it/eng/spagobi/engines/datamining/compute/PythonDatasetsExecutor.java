@@ -85,22 +85,19 @@ public class PythonDatasetsExecutor {
 					// String csvToEval = DataMiningUtils.getFileFromSpagoBIDataset(paramsFilled, ds, profile);
 					String csvToEval = DataMiningUtils.getSpagoBIDatasetFile(paramsFilled, ds, profile);
 
-					File file = new File(csvToEval);
-					String csvPath = file.getParent();
-					codeToExec = "import os\n" + "import pandas\n" + "import csv\n" + "os.chdir(r'" + csvPath + "')\n";
+					codeToExec = "import os\n" + "import pandas\n" + "import csv\n";
 					resPythonExecution = PyLib.execScript(codeToExec);
 					if (resPythonExecution < 0) {
 						throw new SpagoBIRuntimeException("Python engine error \n" + "Technical details:\n" + "PythonDatasetExecutor.java:\n" + codeToExec
 								+ "EXECUTION FAILED\n" + "See log file for other details\n");
 					}
-					String datasetFileName = ds.getFileName();
 
 					if (ds.getSubstituteLabel() != null && ds.getSubstituteLabel() != "") // functionsCatalog executeWithNewData
 					{
-						codeToExec = ds.getSubstituteLabel() + " = pandas.read_" + "csv('" + datasetFileName + "', " + ds.getOptions() + ")\n";
+						codeToExec = ds.getSubstituteLabel() + " = pandas.read_" + "csv('" + csvToEval + "', " + ds.getOptions() + ")\n";
 					} else // dataminingEngine e functionsCatalog executeDemo
 					{
-						codeToExec = ds.getSpagobiLabel() + " = pandas.read_" + "csv('" + datasetFileName + "', " + ds.getOptions() + ")\n";
+						codeToExec = ds.getSpagobiLabel() + " = pandas.read_" + "csv('" + csvToEval + "', " + ds.getOptions() + ")\n";
 					}
 
 					resPythonExecution = PyLib.execScript(codeToExec);
