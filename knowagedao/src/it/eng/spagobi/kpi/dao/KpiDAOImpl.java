@@ -1198,6 +1198,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	}
 
 	private Domain from(SbiDomains sbiType) {
+		logger.debug("IN");
 		Domain type = new Domain();
 		type.setDomainCode(sbiType.getDomainCd());
 		type.setDomainName(sbiType.getDomainNm());
@@ -1205,6 +1206,8 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		type.setValueDescription(sbiType.getValueDs());
 		type.setValueName(sbiType.getValueNm());
 		type.setValueId(sbiType.getValueId());
+		logger.debug(type);
+		logger.debug("OUT");
 		return type;
 	}
 
@@ -1213,6 +1216,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	}
 
 	private <T extends Kpi> T from(T kpi, SbiKpiKpi sbi, SbiKpiThreshold sbiKpiThreshold, boolean full) {
+		logger.debug("IN");
 		kpi.setId(sbi.getSbiKpiKpiId().getId());
 		kpi.setVersion(sbi.getSbiKpiKpiId().getVersion());
 		kpi.setName(sbi.getName());
@@ -1222,6 +1226,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		kpi.setAuthor(sbi.getCommonInfo().getUserIn());
 		kpi.setDateCreation(sbi.getCommonInfo().getTimeIn());
 		if (full) {
+			logger.debug("Full KPI...");
 			kpi.setCardinality(sbi.getCardinality());
 			kpi.setDefinition(sbi.getDefinition());
 			kpi.setPlaceholder(sbi.getPlaceholder());
@@ -1229,6 +1234,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				kpi.setThreshold(from(sbiKpiThreshold, full));
 			}
 		}
+		logger.debug("OUT");
 		return kpi;
 	}
 
@@ -1955,6 +1961,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	}
 
 	private void calculateKpiStatus(KpiExecution kpi, Map<String, String> attributesValues) {
+		logger.debug("IN");
 		attributesValues = attributesValues != null ? attributesValues : new HashMap<String, String>();
 		List<KpiValue> values = findKpiValues(kpi.getId(), null, null, null, attributesValues);
 		if (values != null && !values.isEmpty()) {
@@ -1973,6 +1980,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			}
 			kpi.setColor(color);
 		}
+		logger.debug("OUT");
 	}
 
 	private KpiScheduler from(SbiKpiExecution sbi, boolean full) throws EMFUserError {
@@ -2288,6 +2296,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	@Override
 	public List<KpiExecution> listKpiWithResult() {
+		logger.debug("IN");
 		List<SbiKpiKpi> lst = list(new ICriterion<SbiKpiKpi>() {
 			@Override
 			public Criteria evaluate(Session session) {
@@ -2295,13 +2304,17 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			}
 		});
 		List<KpiExecution> kpis = new ArrayList<>();
+		logger.debug("Found " + lst.size() + " KPIs to loop over");
 		for (SbiKpiKpi sbi : lst) {
+			logger.debug("Handling KPI with name " + sbi.getName());
 			KpiExecution kpi = new KpiExecution();
+			logger.debug("Loading threshold with ID " + sbi.getThresholdId());
 			SbiKpiThreshold threshold = load(SbiKpiThreshold.class, sbi.getThresholdId());
 			from(kpi, sbi, threshold, true);
 			calculateKpiStatus(kpi);
 			kpis.add(kpi);
 		}
+		logger.debug("OUT");
 		return kpis;
 	}
 
@@ -2335,10 +2348,12 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		return findKpiValues(kpiId, kpiVersion, computedAfter, true, computedBefore, true, attributesValues);
 	}
 
-	// TODO: test and debug
+	// TODO: test and debug...
+	// ?!?!? are you serious !?!???
 	@Override
 	public List<KpiValue> findKpiValues(final Integer kpiId, Integer kpiVersion, final Date computedAfter, final Boolean includeComputedAfter,
 			final Date computedBefore, final Boolean includeComputedBefore, Map<String, String> attributesValues) {
+		logger.debug("IN");
 		// Ensure attributesValues keys to be case-insensitive
 		TreeMap<String, String> cioAttributesValues = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
 		cioAttributesValues.putAll(attributesValues);
@@ -2483,7 +2498,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			kpiValue.setManualNote(sbiKpiValue.getManualNote());
 			kpiValues.add(kpiValue);
 		}
-
+		logger.debug("OUT");
 		return kpiValues;
 	}
 

@@ -1238,8 +1238,10 @@ public class KpiService {
 	}
 
 	private static IKpiDAO getKpiDAO(HttpServletRequest req) throws EMFUserError {
+		logger.debug("IN");
 		IKpiDAO dao = DAOFactory.getKpiDAO();
 		setProfile(req, dao);
+		logger.debug("OUT");
 		return dao;
 	}
 
