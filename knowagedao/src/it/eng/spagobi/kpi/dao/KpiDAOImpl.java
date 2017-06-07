@@ -1963,7 +1963,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	private void calculateKpiStatus(KpiExecution kpi, Map<String, String> attributesValues) {
 		logger.debug("IN");
 		attributesValues = attributesValues != null ? attributesValues : new HashMap<String, String>();
-		List<KpiValue> values = findKpiValues(kpi.getId(), null, null, null, attributesValues);
+		List<KpiValue> values = findKpiValues(kpi.getId(), kpi.getVersion(), null, null, attributesValues);
 		if (values != null && !values.isEmpty()) {
 			KpiValue kpiValue = values.get(values.size() - 1);
 			double value = kpiValue.getManualValue() != null ? kpiValue.getManualValue().doubleValue() : kpiValue.getComputedValue();

@@ -35,6 +35,7 @@ public class KpiEngineDataUtil {
 	public static transient Logger logger = Logger.getLogger(KpiEngineDataUtil.class);
 
 	public static JSONArray loadJsonData(JSONObject jsonTemplate, Map<String, String> attributesValues) throws JSONException, EMFUserError {
+		logger.debug("IN");
 
 		JSONArray result = new JSONArray();
 		JSONObject jo = jsonTemplate;
@@ -85,7 +86,7 @@ public class KpiEngineDataUtil {
 			}
 		}
 
+		logger.debug("OUT");
 		return result;
 	}
-
 }
