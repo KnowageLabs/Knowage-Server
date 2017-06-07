@@ -2359,10 +2359,12 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		cioAttributesValues.putAll(attributesValues);
 		attributesValues = cioAttributesValues;
 
-		// Retrieve the KPI
+		logger.debug("Retrieve the KPI with ID " + kpiId);
 		Kpi kpi;
 		if (kpiVersion == null) {
+			logger.debug("KPI version is null");
 			Integer tempId = findlastKpiFromKpiValue(kpiId);
+			logger.debug("Obtained KPI version is [" + tempId + "]");
 			if (tempId != null) {
 				kpiVersion = tempId;
 			} else {
@@ -2370,12 +2372,14 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			}
 
 		}
+		logger.debug("Loading KPI with ID " + kpiId + " and version " + kpiVersion);
 		kpi = loadKpi(kpiId, kpiVersion);
 
 		// Find the main measure rule and attributes
 		Integer mainMeasureRuleId = null;
 		Integer mainMeasureRuleVersion = null;
 		TreeSet<String> mainMeasureAttributes = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
+		logger.debug("Calculating main measure rule id, rule version and attributes");
 		try {
 			JSONObject cardinality = new JSONObject(kpi.getCardinality());
 			JSONArray measureList = cardinality.getJSONArray("measureList");
@@ -2390,6 +2394,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 					}
 				}
 				if (attributes.size() > mainMeasureAttributes.size() || mainMeasureRuleId == null) {
+					logger.debug("Setting main measure rule id, rule version and attributes with new values");
 					mainMeasureRuleId = unparsedMeasure.getInt("ruleId");
 					mainMeasureRuleVersion = unparsedMeasure.getInt("ruleVersion");
 					mainMeasureAttributes = attributes;
@@ -2399,9 +2404,17 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			throw new SpagoBIDAOException(e);
 		}
 
+		logger.debug("Main measure rule id: " + mainMeasureRuleId);
+		logger.debug("Main measure rule version: " + mainMeasureRuleVersion);
+		logger.debug("Main measure attributes: " + mainMeasureAttributes);
+
 		// Find temporal attributes
+		logger.debug("Loading rule with id " + mainMeasureRuleId + " and version " + mainMeasureRuleVersion);
 		Rule rule = loadRule(mainMeasureRuleId, mainMeasureRuleVersion);
+		logger.debug("Rule loaded");
+
 		Map<String, String> attributesTemporalTypes = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
+		logger.debug("Looping over each rule output");
 		for (RuleOutput ruleOutput : rule.getRuleOutputs()) {
 			if ("TEMPORAL_ATTRIBUTE".equals(ruleOutput.getType().getValueCd())) {
 				String attributeName = ruleOutput.getAlias();
@@ -2410,7 +2423,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			}
 		}
 
-		// Build logical key and find temporal attributes values
+		logger.debug("Build logical key and find temporal attributes values");
 		StringBuffer logicalKeyTmp = new StringBuffer();
 		final Map<String, String> temporalValues = new HashMap<String, String>();
 		for (String attributeName : mainMeasureAttributes) {
@@ -2432,10 +2445,12 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				logicalKeyTmp.append(",");
 			logicalKeyTmp.append(attributeName.toUpperCase()).append("=").append(attributeValue.trim());
 		}
+		logger.debug("[DONE] Build logical key and find temporal attributes values:");
+
 		final String logicalKey = logicalKeyTmp.toString();
 
 		final Integer kpiVersionFinal = kpiVersion;
-		// Execute query
+		logger.debug("Executing query to get list of KPI values");
 		List<SbiKpiValue> sbiKpiValues = list(new ICriterion<SbiKpiValue>() {
 			@Override
 			public Criteria evaluate(Session session) {
@@ -2476,8 +2491,10 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				return criteria;
 			}
 		});
+		logger.debug("[DONE] Executing query to get list of KPI values");
+		logger.debug("Found " + sbiKpiValues.size() + "values");
 
-		// Convert data
+		logger.debug("Converting from SbiKpiValue to KpiValue");
 		List<KpiValue> kpiValues = new ArrayList<>();
 		for (SbiKpiValue sbiKpiValue : sbiKpiValues) {
 			KpiValue kpiValue = new KpiValue();
