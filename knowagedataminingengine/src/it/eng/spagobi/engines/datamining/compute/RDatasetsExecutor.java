@@ -99,7 +99,8 @@ public class RDatasetsExecutor {
 						// use it!
 						logger.debug("dataset " + ds.getName() + " already loaded in user workspace!");
 					}
-				} else if (ds.getType().equalsIgnoreCase(DataMiningConstants.DATASET) || ds.getType().equalsIgnoreCase(DataMiningConstants.SPAGOBI_DS)) {
+				} else if (ds.getType().equalsIgnoreCase(DataMiningConstants.DATASET_TYPE_DATASET)
+						|| ds.getType().equalsIgnoreCase(DataMiningConstants.DATASET_TYPE_SPAGOBI_DS)) {
 					logger.debug("Dataset");
 					// dataset content could change independently from
 
@@ -111,7 +112,7 @@ public class RDatasetsExecutor {
 						stringToEval = ds.getSubstituteLabel() + "<-read.csv(\"" + csvToEval + "\",header = TRUE, sep = \",\");";
 					} else // dataminingEngine e functionsCatalog executeDemo
 					{
-						stringToEval = ds.getSpagobiLabel() + "<-read.csv(\"" + csvToEval + "\",header = TRUE, sep = \",\");";
+						stringToEval = ds.getName() + "<-read.csv(\"" + csvToEval + "\",header = TRUE, sep = \",\");";
 					}
 
 					REXP resultRead = re.parseAndEval(stringToEval);

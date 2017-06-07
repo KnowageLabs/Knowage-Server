@@ -24,6 +24,8 @@ public class DataMiningConstants {
 	public static final String CSV_FILE_FORMAT = ".csv";
 	public static final String CSV_SEPARATOR = ",";
 	public static final String DATASET_TYPE_FILE = "file";
+	public static final String DATASET_TYPE_DATASET = "Dataset";
+	public static final String DATASET_TYPE_SPAGOBI_DS = "spagobi_ds";
 
 	public static final String DATA_MINING_TEMP_FOR_SCRIPT = "temp/";
 

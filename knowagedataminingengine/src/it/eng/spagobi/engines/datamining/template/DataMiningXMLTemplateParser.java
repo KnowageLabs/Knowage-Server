@@ -18,6 +18,7 @@
 package it.eng.spagobi.engines.datamining.template;
 
 import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
 import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
 import it.eng.spagobi.engines.datamining.model.DataMiningDataset;
 import it.eng.spagobi.engines.datamining.model.DataMiningScript;
@@ -70,9 +71,6 @@ public class DataMiningXMLTemplateParser implements IDataMiningTemplateParser {
 	public static String DATASET_ATTRIBUTE_LABEL = "label";
 	public static String DATASET_ATTRIBUTE_DEFAULT = "default";
 	public static String DATASET_ATTRIBUTE_CANUPLOAD = "canUpload";
-
-	public static final String DATASET_TYPE_FILE = "file";
-	public static final String DATASET_TYPE_SPAGOBI_DS = "Dataset";
 
 	public static String OUTPUT_ATTRIBUTE_TYPE = "type";
 	public static String OUTPUT_ATTRIBUTE_NAME = "name";
@@ -183,7 +181,7 @@ public class DataMiningXMLTemplateParser implements IDataMiningTemplateParser {
 						String datasetType = (String) datasetSB.getAttribute(DATASET_ATTRIBUTE_TYPE);
 						if (datasetType != null) {
 							ftds.setType(datasetType);
-							if (datasetType.equalsIgnoreCase(DATASET_TYPE_FILE)) {
+							if (datasetType.equalsIgnoreCase(DataMiningConstants.DATASET_TYPE_FILE)) {
 								String datasetReadType = (String) datasetSB.getAttribute(DATASET_ATTRIBUTE_READTYPE);
 								if (datasetReadType != null) {
 									ftds.setReadType(datasetReadType);
@@ -203,10 +201,14 @@ public class DataMiningXMLTemplateParser implements IDataMiningTemplateParser {
 								} else {
 									ftds.setCanUpload(false);
 								}
-							} else if (datasetType.equalsIgnoreCase(DATASET_TYPE_SPAGOBI_DS) || datasetType.equalsIgnoreCase("spagobi_ds")) {
+							} else if (datasetType.equalsIgnoreCase(DataMiningConstants.DATASET_TYPE_SPAGOBI_DS)) {
 								String dsLabel = (String) datasetSB.getAttribute(DATASET_ATTRIBUTE_SPAGOBILABEL);
 								if (dsLabel != null) {
 									ftds.setSpagobiLabel(dsLabel);
+								} else {
+									String message = "Missing attribute [" + DATASET_ATTRIBUTE_SPAGOBILABEL + "] for dataset with lable [" + label + "]";
+									logger.error(message);
+									throw new IllegalArgumentException(message);
 								}
 							}
 						}

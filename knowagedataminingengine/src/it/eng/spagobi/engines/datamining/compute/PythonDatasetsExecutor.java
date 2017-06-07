@@ -77,7 +77,8 @@ public class PythonDatasetsExecutor {
 								+ "EXECUTION FAILED\n" + "See log file for other details\n");
 					}
 
-				} else if (ds.getType().equalsIgnoreCase(DataMiningConstants.DATASET) || ds.getType().equalsIgnoreCase(DataMiningConstants.SPAGOBI_DS)) {
+				} else if (ds.getType().equalsIgnoreCase(DataMiningConstants.DATASET_TYPE_DATASET)
+						|| ds.getType().equalsIgnoreCase(DataMiningConstants.DATASET_TYPE_SPAGOBI_DS)) {
 					logger.debug("Dataset");
 					// dataset content could change independently from
 					// the engine, so it must be recalculated every time

@@ -250,20 +250,22 @@ public class RScriptExecutor {
 			re.parseAndEval("installed_packages = rownames(installed.packages())");
 			REXP rHome = re.parseAndEval("try(libdir<-paste(R.home(),\"library\", sep=\"/\"))");
 			if (!rHome.inherits("try-error") && !rHome.isNull()) {
-				if (libraryNames != null) {
+				if (libraryNames != null && !libraryNames.isEmpty()) {
 					setRProxy();
 					String[] libs = libraryNames.split(",");
 					for (int i = 0; i < libs.length; i++) {
 						String lib = libs[i].trim();
-						// check if the library is present in the workspace, if not try to install tha package
-						REXP libIsPresent = re.parseAndEval("\"" + lib + "\" %in% installed_packages");
-						if (libIsPresent.isNull() || libIsPresent.asString().equalsIgnoreCase("false")) {
-							// re.parseAndEval("try(install.packages(\"" + lib + "\",destdir=libdir))");
-							logger.error("Libray '" + lib + "' is not present. Please, install the library in R before");
-						}
-						REXP rLibrary = re.parseAndEval("library(" + lib + ",lib.loc=libdir)");
-						if (rLibrary.inherits("try-error")) {
-							logger.error("Impossible to load library: " + lib);
+						if (!lib.isEmpty()) {
+							// check if the library is present in the workspace, if not try to install that package
+							REXP libIsPresent = re.parseAndEval("\"" + lib + "\" %in% installed_packages");
+							if (libIsPresent.isNull() || libIsPresent.asString().equalsIgnoreCase("false")) {
+								// re.parseAndEval("try(install.packages(\"" + lib + "\",destdir=libdir))");
+								logger.error("Libray '" + lib + "' is not present. Please, install the library in R before");
+							}
+							REXP rLibrary = re.parseAndEval("library(" + lib + ",lib.loc=libdir)");
+							if (rLibrary.inherits("try-error")) {
+								logger.error("Impossible to load library: " + lib);
+							}
 						}
 					}
 				}
