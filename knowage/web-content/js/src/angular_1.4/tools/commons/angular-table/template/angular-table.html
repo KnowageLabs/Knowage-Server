@@ -7,9 +7,9 @@
 		<md-icon ng-show="showSearch" md-font-icon="fa fa-times" ng-click="showSearch=false;searchVal='';searchItem(searchVal);" class="closeSearchBar"></md-icon> 
 	</md-input-container>
 </angular-table-actions>
-<div flex layout="column" id="angularFullTableContentBox">
-	 <div class="angularTableHeader"></div>
-	<div flex  id="angularTableContentBox"  >
+<div flex layout="column" id="angularFullTableContentBox" ng-class="{'relativeHeader':relativeHeader}">
+	 <div class="angularTableHeader" ng-if="!relativeHeader"></div>
+	<div flex  id="angularTableContentBox" >
 		<table class="principalTable" >
 			<thead></thead>
 			<tbody></tbody>

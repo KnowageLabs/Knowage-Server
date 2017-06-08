@@ -13,7 +13,7 @@ angular-table {
 		}
 	}
 	//fixed table header
-	#angularFullTableContentBox {
+	#angularFullTableContentBox:not(.relativeHeader){
 		position: relative;
 		padding-top: $toolbarHeight;
 		.angularTableHeader {
@@ -137,7 +137,7 @@ angular-table, cockpit-angular-table{
 	}
 	
 	&[full-width] #angularTableContentBox{ 
-		  overflow-x: hidden;
+		  overflow-x: auto;
 	}
 	
 	&[full-width]  table{

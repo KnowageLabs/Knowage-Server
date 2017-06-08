@@ -4,16 +4,16 @@
 	}
 
 	angular-table {
-		#angularFullTableContentBox {
+		#angularFullTableContentBox:not(.relativeHeader) {
 			.angularTableHeader {
-				background-color: $baseColor;
+				background-color: $baseColor !important;
 			}
 			tr {
 				th {
 					.th-inner {
-						color: $lightTextColor;
+						color: $lightTextColor !important;
 						md-icon {
-							color: $lightTextColor;
+							color: $lightTextColor !important;
 						}
 					}
 				}
