@@ -42,7 +42,6 @@ angular.module('kpi_color_indicator', ['ngMaterial','sbiModule'])
 				
 				
 				scope.newPerspective = {
-					//'id':firstFreeIndex,
 					'name':'New Perspective',
 					'status':'GRAY',
 					'criterion':{
@@ -63,7 +62,7 @@ angular.module('kpi_color_indicator', ['ngMaterial','sbiModule'])
 
 			};
 			
-			scope.addTarget=function(pIndex){ 
+			scope.addTarget=function(perspective){ 
 				
 				scope.newTarget = {
 	                "name": "new target",
@@ -82,14 +81,7 @@ angular.module('kpi_color_indicator', ['ngMaterial','sbiModule'])
 	                "kpis": []
 	               };
 
-				
-				for(i=0;i<scope.perspectives.length;i++){
-					if(scope.perspectives[i].id==pIndex){
-						debugger;
-						scope.perspectives[i].targets.push(scope.newTarget);
-						return;
-					}
-				}
+				perspective.targets.push(scope.newTarget);
 			}
 			
 			scope.parseDate = function(date){
