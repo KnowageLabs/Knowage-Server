@@ -75,7 +75,7 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			var protocol = window.location.protocol; <%-- e.g. http: --%>
 			var driverParams = '<%=driverParams%>'; <%-- e.g. object that hold values for IS_TECHNICAL_USER, MODALITY, SBI_ENVIRONMENT, user_id, etc. --%>
 			var currentDocumentName = '<%=docName%>'; <%-- name of the document --%>
-			var currentDocumentLabel = '<%=docLabel%>'; <%-- label of the document --%>
+			var currentDocumentLabel = '<%=docLabelComositeDoc%>'; <%-- label of the document --%>
 			
 			// Global variable that serves as an indicator if the chart type of the rendered document is ChartJS. (danristo)			
 			var isLibChartJs = '<%=isLibChartJS%>';

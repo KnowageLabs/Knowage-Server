@@ -179,7 +179,6 @@ angular.module('chartInitializer')
 		var theday=date.getDate()
 		var date_format = theday+char+themonth+char+theyear;
 		var t = chartConfConf;
-		console.log(e.point);
 		if (!e.seriesOptions) {
 			var chart = this;
 			//chart.showLoading('Loading...');
