@@ -4,7 +4,7 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 	$mdThemingProvider.setDefaultTheme('knowage');
 }])
 .service('$crossNavigationHelper',
-		function($crossNavigationSteps,sbiModule_restServices,sbiModule_config,$mdDialog,sbiModule_translate,sbiModule_dateServices,$filter){ 
+		function($crossNavigationSteps,sbiModule_restServices,sbiModule_config,$mdDialog,sbiModule_translate,sbiModule_dateServices,$filter,sbiModule_logger){ 
 		var cns=this;
 		var selectedRole={};
 		this.crossNavigationSteps=$crossNavigationSteps;
@@ -21,14 +21,16 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 				var navObj=response.data;
 				var targetUrl="";
 				if(navObj.length==0){
-					$mdDialog.show(
+					
+					sbiModule_logger.log("No cross navigation defined for the object");
+					/*$mdDialog.show(
 							  $mdDialog
 							    .alert({
 							        title: 'Attention',
 							        textContent: 'The document doesn\'t have cross navigations defined!',
 							        ok: 'Close'
 							      })
-							);
+							);*/
 					return;
 				}
 				
