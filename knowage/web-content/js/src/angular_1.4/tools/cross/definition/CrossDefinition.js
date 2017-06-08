@@ -203,7 +203,9 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 			ctr.treeOptions = {
 				beforeDrop: function(event) {
 					if(ctr.selectedItem >= 0){
-						ctr.detail.toPars[ctr.selectedItem].links = [event.source.cloneModel];
+						if(ctr.selectedItem != ""){
+							ctr.detail.toPars[ctr.selectedItem].links = [event.source.cloneModel];	
+						}
 					}
 					return false;
 				},
@@ -244,6 +246,21 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 				}
 			};
 		
+//			ctr.deletFixedValue = function(par){
+//				var found = false;
+//				var indexToDelete = undefined;
+//				for(var i=0;i<ctr.detail.fromPars.length && !found;i++){
+//					var forPar = ctr.detail.fromPars[i];
+//					if(forPar.name == par.name){
+//						indexToDelete = i;
+//						found = true;
+//					}
+//				}
+//				if(indexToDelete != undefined){
+//					ctr.detail.fromPars.splice(indexToDelete,1);					
+//				}
+//			}
+			
 			ctr.getTypeLabel = function(type){
 				if(type==0){
 					return s.translate.load('sbi.crossnavigation.output');
