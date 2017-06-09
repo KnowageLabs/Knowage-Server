@@ -21,8 +21,18 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class MissingLOVDependencyException extends SpagoBIRuntimeException {
 
+	String dependsFrom = null;
+
 	public MissingLOVDependencyException(String message) {
 		super(message);
+	}
+
+	public String getDependsFrom() {
+		return dependsFrom;
+	}
+
+	public void setDependsFrom(String dependsFrom) {
+		this.dependsFrom = dependsFrom;
 	}
 
 }
