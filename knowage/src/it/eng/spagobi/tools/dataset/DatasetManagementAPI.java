@@ -400,7 +400,7 @@ public class DatasetManagementAPI {
 			} else {
 				boolean isJDBCDataSet = isJDBCDataSet(dataSet);
 				boolean isBigDataDialect = SqlUtils.isBigDataDialect(dataSet.getDataSource() != null ? dataSet.getDataSource().getHibDialectName() : "");
-				if (isRealtime && isJDBCDataSet && !isBigDataDialect) {
+				if (isRealtime && isJDBCDataSet && !isBigDataDialect && !dataSet.hasDataStoreTransformer()) {
 					logger.debug("Querying realtime/JDBC dataset");
 					dataStore = queryJDBCDataset(groups, filters, havings, projections, summaryRowProjections, dataSet, offset, fetchSize, maxRowCount);
 					dataStore.setCacheDate(new Date());
