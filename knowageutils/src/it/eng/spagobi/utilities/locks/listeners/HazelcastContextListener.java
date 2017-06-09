@@ -17,11 +17,10 @@ public class HazelcastContextListener implements ServletContextListener {
 
 	static private Logger logger = Logger.getLogger(HazelcastContextListener.class);
 
-	private static final long DEFAULT_HAZELCAST_LEASETIME = 240;
-
 	/**
 	 * insert into distributed map info for license
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void contextInitialized(ServletContextEvent servletContextEvent) {
 		logger.debug("IN");

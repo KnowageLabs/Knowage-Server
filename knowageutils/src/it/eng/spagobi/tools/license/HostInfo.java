@@ -1,8 +1,9 @@
 package it.eng.spagobi.tools.license;
 
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 
 import org.apache.log4j.Logger;
 
@@ -15,59 +16,25 @@ public class HostInfo implements DataSerializable {
 
 	static private Logger logger = Logger.getLogger(HostInfo.class);
 
-	private int actualProcessors = 0;
-	private static String hardwareFingerprint;
+	private int availableProcessors;
+	private String hardwareFingerprint;
 	private String hardwareId;
 
-	static {
-		hardwareFingerprint = HardwareID.getHardwareIDFromHostName() + HardwareID.getHardwareIDFromVolumeSerialNumber()
-				+ Runtime.getRuntime().availableProcessors();
-	}
-
 	public HostInfo() {
-		logger.debug("IN");
 		try {
-			actualProcessors = Runtime.getRuntime().availableProcessors();
-		} catch (NumberFormatException e) {
-			logger.error("Could not retrieve nunmber of processors ", e);
-		}
+			availableProcessors = Runtime.getRuntime().availableProcessors();
 
-		hardwareFingerprint = HardwareID.getHardwareIDFromHostName() + HardwareID.getHardwareIDFromVolumeSerialNumber()
-				+ Runtime.getRuntime().availableProcessors();
+			hardwareFingerprint = HardwareID.getHardwareIDFromHostName() + HardwareID.getHardwareIDFromVolumeSerialNumber()
+					+ Runtime.getRuntime().availableProcessors();
 
-		hardwareId = getHardwareID();
-		logger.debug("OUT");
-	}
-
-	public static void setHardwareFingerprint(String hardwareFingerprint) {
-		HostInfo.hardwareFingerprint = hardwareFingerprint;
-	}
-
-	public void setHardwareId(String hardwareId) {
-		this.hardwareId = hardwareId;
-	}
-
-	public static String getHardwareID() {
-		logger.debug("IN");
-		String hardwareID = "";
-		logger.debug("Converting to binary contents");
-		try {
-			MessageDigest digest = MessageDigest.getInstance("SHA-256");
-			byte[] hash = digest.digest(hardwareFingerprint.getBytes(StandardCharsets.UTF_8));
-			hardwareID = javax.xml.bind.DatatypeConverter.printHexBinary(hash);
+			hardwareId = StringUtilities.sha256(hardwareFingerprint);
 		} catch (Exception e) {
-			// do nothing
+			throw new SpagoBIRuntimeException("Error while generating host info", e);
 		}
-		logger.debug("OUT");
-		return hardwareID;
 	}
 
-	public int getActualProcessors() {
-		return actualProcessors;
-	}
-
-	public void setActualProcessors(int actualProcessors) {
-		this.actualProcessors = actualProcessors;
+	public int getAvailableProcessors() {
+		return availableProcessors;
 	}
 
 	public String getHardwareFingerprint() {
@@ -80,7 +47,7 @@ public class HostInfo implements DataSerializable {
 
 	@Override
 	public void writeData(ObjectDataOutput out) throws IOException {
-		out.writeInt(actualProcessors);
+		out.writeInt(availableProcessors);
 		out.writeUTF(hardwareFingerprint);
 		out.writeUTF(hardwareId);
 
@@ -88,9 +55,21 @@ public class HostInfo implements DataSerializable {
 
 	@Override
 	public void readData(ObjectDataInput in) throws IOException {
-		actualProcessors = in.readInt();
+		availableProcessors = in.readInt();
 		hardwareFingerprint = in.readUTF();
 		hardwareId = in.readUTF();
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("HostInfo [availableProcessors=");
+		builder.append(availableProcessors);
+		builder.append(", hardwareFingerprint=");
+		builder.append(hardwareFingerprint);
+		builder.append(", hardwareId=");
+		builder.append(hardwareId);
+		builder.append("]");
+		return builder.toString();
+	}
 }
