@@ -144,3 +144,8 @@ update SBI_ENGINES set MAIN_URL='/knowagecockpitengine/api/1.0/chart/pages/execu
 -- 20.03.2017 Marco Cortella
 -- added TYPE column for SBI_CROSS_NAVIGATION
 ALTER TABLE SBI_CROSS_NAVIGATION ADD COLUMN TYPE INT NOT NULL;
+
+-- 09.06.2017 Alessandro Portosa
+-- changed package for Alert actions
+UPDATE SBI_ALERT_ACTION SET CLASS_NAME='it.eng.knowage.enterprise.tools.alert.action.ExecuteETLDocument' WHERE NAME = 'Execute ETL Document';
+UPDATE SBI_ALERT_ACTION SET CLASS_NAME='it.eng.knowage.enterprise.tools.alert.action.SendMail' WHERE NAME = 'Send mail';

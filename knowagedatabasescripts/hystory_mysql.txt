@@ -3986,3 +3986,7 @@ UPDATE `knowage`.`sbi_engines` SET `MAIN_URL`='/knowagecockpitengine/api/1.0/cha
 	ALTER TABLE SBI_CROSS_NAVIGATION
 	ADD COLUMN TYPE INT(10) NOT NULL AFTER NAME;
 
+-- 09.06.2017 Alessandro Portosa
+-- changed package for Alert actions
+UPDATE SBI_ALERT_ACTION SET CLASS_NAME='it.eng.knowage.enterprise.tools.alert.action.ExecuteETLDocument' WHERE NAME = 'Execute ETL Document';
+UPDATE SBI_ALERT_ACTION SET CLASS_NAME='it.eng.knowage.enterprise.tools.alert.action.SendMail' WHERE NAME = 'Send mail';
