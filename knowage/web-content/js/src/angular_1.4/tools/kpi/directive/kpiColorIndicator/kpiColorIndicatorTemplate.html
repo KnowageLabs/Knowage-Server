@@ -55,10 +55,10 @@
 						<i class="fa" flex ng-class="getClass(kpi.status,true)"></i>
 					</div>
 				</div>
-				<md-button class="md-icon-button" ng-click="openTarget(p.id,t.id)" ng-if="definition">
+				<md-button class="md-icon-button" ng-click="openTarget(p,t)" ng-if="definition">
 			        <md-icon md-font-icon="fa fa-list"></md-icon>
 			      </md-button>
-			      <md-button class="md-icon-button" ng-click="deleteTarget(p.id,t.id)" ng-if="definition">
+			      <md-button class="md-icon-button" ng-click="deleteTarget(p,t)" ng-if="definition">
 			        <md-icon md-font-icon="fa fa-trash"></md-icon>
 			      </md-button>
 				

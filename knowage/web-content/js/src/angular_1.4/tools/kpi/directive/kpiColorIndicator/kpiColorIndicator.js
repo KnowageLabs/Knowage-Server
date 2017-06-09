@@ -10,10 +10,24 @@ angular.module('kpi_color_indicator', ['ngMaterial','sbiModule'])
 			definition:"="
 		},
 		link: function(scope, element, attrs, ctrl, transclude) {
+			scope.criterion;
 			scope.translate=sbiModule_translate;
 			scope.cp = 0;
 			scope.ct = 0;
 			
+			scope.getDefaultCriterion = function(criterion){
+				criterion = criterion?criterion:"MAJORITY"
+				if(!scope.defaultCriterion){
+					for(var dc in scope.criterion){
+						if(scope.criterion[dc].valueCd == criterion){
+							scope.defaultCriterion = scope.criterion[dc];
+							return scope.defaultCriterion;
+						}
+					}
+				}else{
+					return scope.defaultCriterion;
+				}
+			}
 								
 			scope.kpiList = [];
 			scope.getClass=function(color,isIcon){
@@ -44,16 +58,7 @@ angular.module('kpi_color_indicator', ['ngMaterial','sbiModule'])
 				scope.newPerspective = {
 					'name':'New Perspective',
 					'status':'GRAY',
-					'criterion':{
-			            "valueId": 214,
-			            "valueCd": "MAJORITY",
-			            "valueName": "sbidomains.nm.majoritycrit",
-			            "valueDescription": "it.eng.spagobi.kpi.statusCriterion.Majority",
-			            "domainCode": "KPI_SCORECARD_CRITE",
-			            "domainName": "KPI SCORECARD CRITERIA",
-			            "translatedValueName": "Policy \"Majority\"",
-			            "translatedValueDescription": "it.eng.spagobi.kpi.statusCriterion.Majority"
-			          },
+					'criterion':scope.getDefaultCriterion(),
 					'options':{"criterionPriority":[]},
 					'targets':[],
 					'groupedKpis':[]
@@ -66,22 +71,14 @@ angular.module('kpi_color_indicator', ['ngMaterial','sbiModule'])
 				
 				scope.newTarget = {
 	                "name": "new target",
-	                'criterion':{
-			            "valueId": 214,
-			            "valueCd": "MAJORITY",
-			            "valueName": "sbidomains.nm.majoritycrit",
-			            "valueDescription": "it.eng.spagobi.kpi.statusCriterion.Majority",
-			            "domainCode": "KPI_SCORECARD_CRITE",
-			            "domainName": "KPI SCORECARD CRITERIA",
-			            "translatedValueName": "Policy \"Majority\"",
-			            "translatedValueDescription": "it.eng.spagobi.kpi.statusCriterion.Majority"
-			          },
+	                'criterion':scope.getDefaultCriterion(),
 	                "options": {"criterionPriority":[]},
 	                "status": "GRAY",
 	                "kpis": []
 	               };
 
 				perspective.targets.push(scope.newTarget);
+				debugger;
 			}
 			
 			scope.parseDate = function(date){
@@ -95,13 +92,14 @@ angular.module('kpi_color_indicator', ['ngMaterial','sbiModule'])
 				return result;
 			};
 			
-			scope.openTarget=function(pId,tId){
+			scope.openTarget=function(p,t){
 				for(i=0;i<scope.perspectives.length;i++){
-					if(scope.perspectives[i].id==pId){
+					if(scope.perspectives[i].$$hashKey==p.$$hashKey){
 						for(j=0;j<scope.perspectives[i].targets.length;j++){
-							if(scope.perspectives[i].targets[j].id==tId){
+							if(scope.perspectives[i].targets[j].$$hashKey==t.$$hashKey){
 								scope.ct= j;
 							}
+						
 						}
 						scope.cp= i;
 					}
@@ -110,11 +108,11 @@ angular.module('kpi_color_indicator', ['ngMaterial','sbiModule'])
 				$mdSidenav('right').toggle();
 			}
 			
-			scope.deleteTarget=function(pId,tId){
+			scope.deleteTarget=function(p,t){
 				for(i=0;i<scope.perspectives.length;i++){
-					if(scope.perspectives[i].id==pId){
+					if(scope.perspectives[i].$$hashKey==p.$$hashKey){
 						for(j=0;j<scope.perspectives[i].targets.length;j++){
-							if(scope.perspectives[i].targets[j].id==tId){
+							if(scope.perspectives[i].targets[j].$$hashKey==t.$$hashKey){
 								scope.perspectives[i].targets.splice(j,1);
 							}
 						}
@@ -170,24 +168,18 @@ angular.module('kpi_color_indicator', ['ngMaterial','sbiModule'])
 						}else{
 							tempCount[tempStatus.indexOf(data[i].status)]++
 						}
-						//if(data[i].category == null){
-						//	data[i].category = {"translatedValueName" : " "};
-						//}
 						
 					}
 					for(var k=0;k<tempStatus.length;k++){
 						scope.perspectives[scope.cp].targets[scope.ct].groupedKpis.push({"status":tempStatus[k],"count":tempCount[k]});
 					}
 				angular.copy(data,scope.perspectives[scope.cp].targets[scope.ct].kpis);
-				
-				//$timeout(function(){
-				//		scope.updateCriterionPriority();
-				//},0);
 				});
 				
 			};
 			scope.removeKpiFromTarget = function(cp,ct,i){
 				scope.perspectives[cp].targets[ct].kpis.splice(i,1);
+				// deleting the kpi from the kpi status aggregation
 				for(k=0;k<scope.perspectives[cp].targets[ct].groupedKpis.length;k++){
 					if(scope.perspectives[cp].targets[ct].groupedKpis[k].status == scope.perspectives[cp].targets[ct].kpis[i].status){
 						if(scope.perspectives[cp].targets[ct].groupedKpis[k].count==1){scope.perspectives[cp].targets[ct].groupedKpis[k].splice(i,1);}
