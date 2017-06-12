@@ -342,17 +342,19 @@ public class KpiService {
 	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
 	public Response listAvailableAlias(@QueryParam("ruleId") Integer ruleId, @QueryParam("ruleVersion") Integer ruleVersion, @Context HttpServletRequest req)
 			throws EMFUserError, JSONException {
-		logger.debug("listAvailableAlias IN");
+		logger.debug("IN");
 		Response out;
 		IKpiDAO dao = getKpiDAO(req);
+		logger.debug("Getting available aliases");
 		List<Alias> aliases = dao.listAliasNotInMeasure(ruleId, ruleVersion);
+		logger.debug("Getting unavailable aliases");
 		List<Alias> unavaliases = dao.listAliasInMeasure(ruleId, ruleVersion);
 
 		JSONObject resp = new JSONObject();
 		resp.put("available", JSON.parse(JsonConverter.objectToJson(aliases, aliases.getClass())));
 		resp.put("notAvailable", JSON.parse(JsonConverter.objectToJson(unavaliases, unavaliases.getClass())));
 		out = Response.ok(resp.toString()).build();
-		logger.debug("listAvailableAlias OUT");
+		logger.debug("OUT");
 		return out;
 	}
 
