@@ -9,18 +9,18 @@
 	</container-descriptor>
 	
 	
-	<resource-description>  
+	<!-- resource-description>  
 		<res-ref-name>resource_path</res-ref-name>  
 		<jndi-name>java:/comp/env/resource_path</jndi-name>  
 	</resource-description>  
 	<resource-description>  
 		<res-ref-name>spagobi_resource_path</res-ref-name>  
 		<jndi-name>java:/comp/env/resource_path</jndi-name>  
-	</resource-description>   	
+	</resource-description> 	
 	<resource-description>  
 		<res-ref-name>service_url</res-ref-name>  
 		<jndi-name>java:/comp/env/service_url</jndi-name>  
-	</resource-description>  
+	</resource-description-->  
 	<resource-description>  
 		<res-ref-name>hmacKey</res-ref-name>  
 		<jndi-name>java:/comp/env/hmacKey</jndi-name>  
