@@ -17,6 +17,20 @@
  */
 package it.eng.spagobi.mapcatalogue.dao;
 
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.ICriterion;
+import it.eng.spagobi.commons.metadata.SbiExtRoles;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
+import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayers;
+import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayersRoles;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
@@ -52,20 +66,6 @@ import org.hibernate.criterion.Restrictions;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.ICriterion;
-import it.eng.spagobi.commons.metadata.SbiExtRoles;
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.commons.utilities.UserUtilities;
-import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
-import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayers;
-import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayersRoles;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbiGeoLayersDAO {
 
@@ -840,15 +840,29 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 
 	@Override
 	public List<SbiGeoLayersRoles> getListRolesById(Integer id) {
-		Session tmpSession = getSession();
+		Session tmpSession = null;
 		List<SbiGeoLayersRoles> roles = new ArrayList<>();
+		try {
+			tmpSession = getSession();
 
-		String hql = " from SbiGeoLayersRoles WHERE layer.layerId =? ";
-		Query q = tmpSession.createQuery(hql);
-		q.setInteger(0, id);
-		roles = q.list();
-		if (roles.size() == 0) {
-			return null;
+			String hql = " from SbiGeoLayersRoles WHERE layer.layerId =? ";
+			Query q = tmpSession.createQuery(hql);
+			q.setInteger(0, id);
+			roles = q.list();
+			if (roles.size() == 0) {
+				return null;
+			}
+
+		} catch (HibernateException he) {
+			logException(he);
+
+		} finally {
+
+			if (tmpSession != null) {
+				if (tmpSession.isOpen())
+					tmpSession.close();
+
+			}
 		}
 		return roles;
 	}
