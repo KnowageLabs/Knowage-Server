@@ -59,6 +59,7 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.JSError;
 import it.eng.spagobi.utilities.StringUtils;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
@@ -109,6 +110,7 @@ import com.mongodb.util.JSON;
 @ManageAuthorization
 public class KpiService {
 	private static final String NEW_KPI_KPI_PLACEHOLDER_NOT_VALID_JSON = "newKpi.kpi.placeholder.notValidJson";
+	private static final String NEW_KPI_RULE_NAME_EMPTY = "newKpi.ruleNameEmpty";
 	private static final String NEW_KPI_RULE_NAME_NOT_AVAILABLE = "newKpi.ruleNameNotAvailable";
 	private static final String NEW_KPI_THRESHOLD_MANDATORY = "newKpi.threshold.mandatory";
 	private static final String NEW_KPI_THRESHOLD_VALUES_MANDATORY = "newKpi.threshold.values.mandatory";
@@ -618,6 +620,10 @@ public class KpiService {
 			Integer id = rule.getId();
 			Integer version = rule.getVersion();
 			JSError jsError = new JSError();
+
+			if (rule.getName() == null || rule.getName().isEmpty()) {
+				jsError.addErrorKey(NEW_KPI_RULE_NAME_EMPTY, rule.getName());
+			}
 			// Rule name must be unique
 			Integer otherId = dao.getRuleIdByName(rule.getName());
 			if (otherId != null && (id == null || !id.equals(otherId))) {
@@ -643,19 +649,11 @@ public class KpiService {
 				version = newRule.getVersion();
 			}
 			return Response.ok(new JSONObject().put("id", id).put("version", version).toString()).build();
-		} catch (IOException e) {
-			logger.error("saveRule  ");
-			throw new SpagoBIServiceException(req.getPathInfo() + " Error while reading input object ", e);
-		} catch (SpagoBIException e) {
-			logger.error("saveRule  ");
-			throw new SpagoBIServiceException(req.getPathInfo(), e);
-		} catch (JSONException e) {
-			logger.error("saveRule  ");
-			logger.error("Error while composing error message", e);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException(e);
+		} finally {
+			logger.debug("saveRule OUT");
 		}
-		out = Response.ok().build();
-		logger.debug("saveRule OUT");
-		return out;
 	}
 
 	@GET
