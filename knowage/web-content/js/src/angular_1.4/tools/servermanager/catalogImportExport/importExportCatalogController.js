@@ -25,6 +25,48 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
 
 $mdThemingProvider.setDefaultTheme('knowage');
 }]);
+
+app.factory("importExportDocumentModule_importConf", function() {
+	 var current_data = {}; 
+	 var default_values = {
+		fileImport : {},
+		importPersonalFolder : true,
+		typeSaveUser : 'Missing',
+		checkboxs:{
+				exportSubObj : false,
+				exportSnapshots : false,
+				exportPersonalFolder: false
+		},
+		roles : {
+			currentRoles : [],
+			exportedRoles : [],
+			selectedRoles : [],
+			associatedRoles:[],
+			exportedUser:[],
+			exportingUser : [],
+			selectedUser : [],
+		},
+		engines : {
+			currentEngines : [],
+			exportedEngines : [],
+			associatedEngines : {}
+		},
+		datasources : {
+			currentDatasources : [],
+			exportedDatasources : [],
+			associatedDatasources : {}
+		},
+		exportedCatalog : [],
+		showCatalogImported : false,
+		resetData: function() {  
+	    	 current_data = angular.copy(default_values,current_data); 
+	    } 
+	};
+	 
+	default_values.resetData();
+	return current_data;
+});
+
 app.controller('Controller', [ "sbiModule_download", "sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast","sbiModule_messaging",
                                "importExportDocumentModule_importConf", funzione ]);
 
@@ -62,7 +104,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 	} ];
 	$scope.selectedStep = 0;
 	$scope.stepControl;
-	$scope.IEDConf = importExportDocumentModule_importConf;
+	$scope.IEDConf = importExportDocumentModule_importConf;	
 
 	$scope.finishImport = function() {
 		if (importExportDocumentModule_importConf.hasOwnProperty("resetData")) {
@@ -158,18 +200,17 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 	//import utilities
 	$scope.upload = function(ev){
 		$scope.exportedCatalog =[];
-		if($scope.importFile.fileName == "" || $scope.importFile.fileName == undefined){
-			//$scope.showAction(sbiModule_translate.load("sbi.impexpusers.missinguploadfile"));
+		if($scope.IEDConf.fileImport.fileName == "" || $scope.IEDConf.fileImport.fileName == undefined){
 			sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.impexpusers.missinguploadfile"),"");
 		}else{
 			var fd = new FormData();
-			fd.append('exportedArchive', $scope.importFile.file);
+			fd.append('exportedArchive', $scope.IEDConf.fileImport.file);
 			sbiModule_restServices.promisePost("1.0/serverManager/importExport/catalog", 'import', fd, {transformRequest: angular.identity,headers: {'Content-Type': undefined}})
 			.then(function(response, status, headers, config) {
 				$scope.catalogSelected = [];
 				$scope.exportedCatalog = response.data.exportedCatalog;
-				//opendataset
-				$scope.showCatalogImported = true;
+				//open 
+				$scope.IEDConf.showCatalogImported = true;
 
 			}, function(response, status, headers, config) {
 				sbiModule_restServices.errorHandler(response.data,"");
@@ -180,10 +221,8 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 	$scope.save = function(ev){
 		if($scope.typeSaveMenu == ""){
 			//if not selected a mode
-			//$scope.showAction(sbiModule_translate.load("sbi.importexportcatalog.selectmode"));
 			sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.importexportcatalog.selectmode"),"");
 		}else if($scope.catalogSelected.length==0){
-			//$scope.showAction(sbiModule_translate.load("sbi.importexportcatalog.selectds"));
 			sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.importexportcatalog.selectds"),"");
 		}else{
 			var config={
@@ -193,11 +232,9 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 			}
 			sbiModule_restServices.promisePost("1.0/serverManager/importExport/catalog","importCatalog",config)
 			.then(function(response, status, headers, config) {
-					//$scope.showAction(sbiModule_translate.load("sbi.importusers.importuserok"));
 				sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.importusers.importuserok"),"");
 			},function(response, status, headers, config) {
 				sbiModule_restServices.errorHandler(response.data,"");
-				//$scope.showAction("Error");
 			})
 
 		}
@@ -229,7 +266,36 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 				}
 			},function(response, status, headers, config) {
 				sbiModule_restServices.errorHandler(response.data,"");
-				//$scope.showAction("Error");
+			})
+		}
+	}
+	
+	$scope.associatedrole= function(ev){
+		if($scope.typeSaveMenu == ""){
+			//if not selected a mode
+			sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.importexportcatalog.selectmode"),"");
+		}else if($scope.catalogSelected.length==0){
+			sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.impexp.selectcatalog"),"");
+		}else{
+			var config={
+					"ds": $scope.catalogSelected,
+					"type":$scope.typeSaveMenu
+			}
+			sbiModule_restServices.promisePost("1.0/serverManager/importExport/catalog","associateRoles",config)
+			.then(function(response, status, headers, config) {
+				if(response.data.STATUS=="OK"){
+					importExportDocumentModule_importConf.roles.currentRoles=response.data.currentRoles;
+					importExportDocumentModule_importConf.roles.exportedRoles=response.data.exportedRoles;
+					importExportDocumentModule_importConf.roles.associatedRoles=response.data.associatedRoles;
+					$scope.stepControl.insertBread({name: $scope.translate.load('sbi.impexp.exportedRole')})
+//					if (importExportDocumentModule_importConf.roles.exportedRoles.length > 0){
+//						$scope.stepControl.insertBread({name: $scope.translate.load('sbi.impexp.exportedRole')});
+//					}else{
+//						$scope.stepControl.insertBread("(No Roles)");
+//					}
+				}
+			},function(response, status, headers, config) {
+				sbiModule_restServices.errorHandler(response.data,"");
 			})
 		}
 	}

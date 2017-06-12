@@ -41,6 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/catalogImportExport/importExportCatalogController.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/documentImportExport/importExportDocumentsController.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/catalogImportExport/importCatalogStep0Controller.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/catalogImportExport/importCatalogStep1Controller.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/catalogImportExport/ngExportCatalog.js">"></script>
 
 	
@@ -120,53 +121,56 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				</md-tab> 
 				<md-tab label="Import" md-on-select="setTab('Import')" id="importTab" md-active="isSelectedTab('Import')">
 					<md-tab-body layout-fill >
-					
-					
 					<md-card >
 					<bread-crumb ng-model=stepItem item-name='name' selected-index='selectedStep' control='stepControl'></bread-crumb>
 					<md-card-content ng-cloak layout-wrap  ng-cloak ng-switch="selectedStep">
-					
-					<!-- Upload file -->
-					<div class="importSteps" flex  ng-switch-when="0">
-					<div layout="row" layout-wrap >
-						<file-upload flex id="AssociationFileUploadImport" ng-model="importFile" file-max-size="<%=importFileMaxSizeMB%>" ></file-upload>
-						<md-button ng-click="upload($event)" aria-label="upload Menu"
-								class="md-fab md-mini"  > <md-icon
-								md-font-icon="fa fa-upload"  >
-					</div>
-					<div layout="row" layout-wrap >
-						<md-radio-group layout="row" ng-model="typeSaveMenu">
-						      <md-radio-button value="Override" ng-click="setTypeSaveMenu('Override')">{{translate.load("sbi.importusers.override");}}</md-radio-button>
-						      <md-radio-button value="Missing" ng-click="setTypeSaveMenu('Missing')">{{translate.load("sbi.importusers.addmissing");}} </md-radio-button>
-						    </md-radio-group>
 						
-						<span flex></span>
-							<md-button class="md-raised" ng-click="associateddatasource($event)" aria-label="upload Menu" >{{translate.load("sbi.importusers.startimport");}}</md-button>
-					</div>
-				
-					<div layout="column">
-						<!-- catalog section -->
-						<h4 ng-show="showDatasetImported">{{translate.load("sbi.importexportcatalog.messagesfederated");}}</h4>												
-						<angular-table flex  ng-show="showCatalogImported" id='cataloglistImported' ng-model=exportedCatalog
-							columns='[{"label":"Type Catalog","name":"typeCatalog","size":"20px"},{"label":"Name","name":"name","size":"20px"},{"label":"Type","name":"type","size":"20px"}]'
-							columnsSearch='["name"]' show-search-bar=true
-							highlights-selected-item=true multi-select=true
-							selected-item=catalogSelected no-pagination=true
-							scope-functions=tableFunction> 
-						</angular-table>
-						 
-						 
-					</div>
+						<!-- Upload file -->
+						<div class="importSteps" flex  ng-switch-when="0">
+						<div layout="row" layout-wrap >
+							<file-upload flex id="AssociationFileUploadImport" ng-model="IEDConf.fileImport" file-max-size="<%=importFileMaxSizeMB%>" ></file-upload>
+							<md-button ng-click="upload($event)" aria-label="upload Menu"
+									class="md-fab md-mini"  > <md-icon
+									md-font-icon="fa fa-upload"  >
+						</div>
+						<div layout="row" layout-wrap >
+							<md-radio-group layout="row" ng-model="typeSaveMenu">
+							      <md-radio-button value="Override" ng-click="setTypeSaveMenu('Override')">{{translate.load("sbi.importusers.override");}}</md-radio-button>
+							      <md-radio-button value="Missing" ng-click="setTypeSaveMenu('Missing')">{{translate.load("sbi.importusers.addmissing");}} </md-radio-button>
+							    </md-radio-group>
+							
+							<span flex></span>							
+							<!-- <md-button class="md-raised" ng-click="associatedrole($event)" aria-label="upload Menu" >{{translate.load("sbi.importusers.startimport");}}</md-button>  -->
+							<md-button class="md-raised" ng-click="associatedrole($event)" aria-label="upload Menu" >{{translate.load('sbi.generic.next');}}</md-button>
+						</div>
 					
-					</div>
-					
-					<!-- Datasource -->
-					<div class="importSteps" flex ng-controller="importCatalogControllerStep0" ng-switch-when="1">
-						<%@include file="importCatalogStep0.jsp"%>
-					</div>
-					
-					
-					
+						<div layout="column">
+							<!-- catalog section -->
+							<h4 ng-show="showDatasetImported">{{translate.load("sbi.importexportcatalog.messagesfederated");}}</h4>												
+							<angular-table flex  ng-show="IEDConf.showCatalogImported" id='cataloglistImported' ng-model=exportedCatalog
+								columns='[{"label":"Type Catalog","name":"typeCatalog","size":"20px"},{"label":"Name","name":"name","size":"20px"},{"label":"Type","name":"type","size":"20px"}]'
+								columnsSearch='["name"]' show-search-bar=true
+								highlights-selected-item=true multi-select=true
+								selected-item=catalogSelected no-pagination=true
+								scope-functions=tableFunction> 
+							</angular-table>
+							 
+							 
+						</div>
+						
+						</div>
+						
+						
+						<!-- Roles -->
+						<div class="importSteps" flex ng-controller="importCatalogControllerStep0" ng-switch-when="1">
+							<%@include file="importCatalogStep0.jsp"%>
+						</div>
+						
+						<!-- Datasource -->
+						<div class="importSteps" flex ng-controller="importCatalogControllerStep1" ng-switch-when="2">
+							<%@include file="importCatalogStep1.jsp"%>
+						</div>
+
 					</md-card-content>
 					</md-card>
 					</md-tab-body>
