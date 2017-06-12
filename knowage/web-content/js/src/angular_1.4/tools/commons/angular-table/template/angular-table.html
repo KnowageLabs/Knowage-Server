@@ -62,11 +62,11 @@
 </script>
 
 <script type="text/ng-template" id="headThTemplate.html">
-<th scope="col" ng-repeat="val in tableColumns" width="{{val.size}}" ng-class="val.customClass">
-
-<div  ng-if="val.name =='--MULTISELECT--'" class = 'angularTableSelectAll th-inner' >
+<th scope="col" ng-repeat="val in tableColumns" width="{{val.size}}" class="{{val.customClass}}" ng-class="{'checkboxSpace':val.name =='--MULTISELECT--'}">
+<div ng-if="val.name =='--MULTISELECT--'" class = 'angularTableSelectAll th-inner' >
 
 		<md-tooltip md-direction="top">Select/Deselect All</md-tooltip>
+	
    <md-checkbox 
        ng-checked="multiSelectVal"
        ng-click="selectAll()"  

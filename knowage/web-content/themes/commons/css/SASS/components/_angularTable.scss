@@ -178,6 +178,7 @@ angular-table, cockpit-angular-table{
 	
 	.angularTableSelectAll {
 		md-checkbox {
+			top: 5px;
 			._md-container {
 				margin-left: 0 !important;
 			}
@@ -507,6 +508,15 @@ angular-table, cockpit-angular-table{
 	}
 	.hiddenColumn {
 		display:none;
+	}
+	.angularTableSelectAll {
+		overflow: visible;
+		&:before {
+			content:'Select All';
+			position: absolute;
+			top: -10px;
+			font-size: $smallFontSize;
+		}
 	}
 
 }
