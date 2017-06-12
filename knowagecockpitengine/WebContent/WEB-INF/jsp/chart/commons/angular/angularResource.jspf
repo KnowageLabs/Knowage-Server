@@ -217,7 +217,7 @@ author: Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		...
 	*/
 	docLabel = request.getParameter(EngineConstants.DOCUMENT_LABEL);
-	docLabelComositeDoc = request.getParameter(EngineConstants.DOCUMENT_LABEL);
+	docLabelComositeDoc = request.getParameter(EngineConstants.DOC_LABEL);
 	docId = request.getParameter(EngineConstants.DOCUMENT_ID);
 	docVersion = (engineInstance.getDocumentVersion()==null) ? "" : engineInstance.getDocumentVersion().toString();
 	docAuthor = (engineInstance.getDocumentAuthor()==null) ? "" : engineInstance.getDocumentAuthor().toString();
