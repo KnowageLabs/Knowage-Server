@@ -174,7 +174,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	</md-card>
 		      
 	<md-card>
-				    <md-content layout-padding>
 					<md-toolbar class="secondaryToolbar">
 				      <div class="md-toolbar-tools">
 				        <h2>
@@ -183,14 +182,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				   		<span flex></span>
 				   		
 				        <md-button class="md-icon-button" aria-label="Info" ng-click="openInfoFromLOV()">
-				          <md-icon md-font-icon="fa fa-info-circle" class="fa fa-2x"></md-icon>
+				          <md-icon md-font-icon="fa fa-info-circle" class="fa"></md-icon>
 				        </md-button>
 				        <md-button class="md-icon-button" aria-label="Profiles" ng-click="openAttributesFromLOV()">
-				          <md-icon md-font-icon="fa fa-users" class="fa fa-2x"></md-icon>
+				          <md-icon md-font-icon="fa fa-users" class="fa"></md-icon>
 				        </md-button>
 				   		
 				      </div>
 				    </md-toolbar>
+				    <md-card-content>
 			<div ng-show="selectedLov.itypeCd == lovItemEnum.SCRIPT">    
 				    <div layout="row" layout-wrap>
       				<div flex=100>
@@ -267,7 +267,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						     </md-input-container>
 						</div>
 					</div>
-					<md-button class="md-raised md-primary" ng-click="addNewFixLOV()">{{translate.load("sbi.generic.save");}}</md-button>
+					<div layout="row">
+						<span flex></span><md-button class="md-flat" ng-click="addNewFixLOV()">{{translate.load("sbi.generic.save");}}</md-button>
+					</div>
+					
 					
 				   <div>
 				   
@@ -334,7 +337,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				   
 		</div>
 					    
-		 	</md-content>
+		 	</md-card-content>
 		 	</md-card>
 		
 		</form>

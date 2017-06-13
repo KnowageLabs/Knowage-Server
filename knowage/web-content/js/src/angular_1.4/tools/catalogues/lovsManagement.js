@@ -224,8 +224,8 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	$scope.lovsManagementSpeedMenu= [
                          {
                             label:sbiModule_translate.load("sbi.generic.delete"),
-                            icon:'fa fa-trash-o fa-lg',
-                            color:'#153E7E',
+                            icon:'fa fa-trash-o',
+                            color:'#a3a5a6',
                             action:function(item,event){
                                 
                             	$scope.confirmDelete(item,event);
@@ -236,8 +236,8 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	$scope.treeSpeedMenu= [
 	                                 {
 	                                    label:sbiModule_translate.load("sbi.generic.delete"),
-	                                    icon:'fa fa-trash-o fa-lg',
-	                                    color:'#153E7E',
+	                                    icon:'fa fa-trash-o',
+	                                    color:'#a3a5a6',
 	                                    action:function(item,event){
 	                                        
 	                                    	deleteTreeLevel(item);
@@ -248,8 +248,8 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	$scope.fixLovSpeedMenu= [
 	                                 {
 	                                    label:sbiModule_translate.load("sbi.generic.delete"),
-	                                    icon:'fa fa-trash-o fa-lg',
-	                                    color:'#153E7E',
+	                                    icon:'fa fa-trash-o',
+	                                    color:'#a3a5a6',
 	                                    action:function(item,event){
 	                                        
 	                                    	$scope.confirmDelete(item,event);
@@ -257,8 +257,8 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	                                 },
 	                                 {
 		                                    label:sbiModule_translate.load("sbi.behavioural.lov.fixlov.up"),
-		                                    icon:'fa fa-arrow-up fa-lg',
-		                                    color:'#153E7E',
+		                                    icon:'fa fa-arrow-up',
+		                                    color:'#a3a5a6',
 		                                    action:function(item,event){
 		                                        
 		                                    	$scope.moveFixLovUp(item,event);
@@ -271,8 +271,8 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 		                             },
 		                             {
 		                                    label:sbiModule_translate.load("sbi.behavioural.lov.fixlov.down"),
-		                                    icon:'fa fa-arrow-down fa-lg',
-		                                    color:'#153E7E',
+		                                    icon:'fa fa-arrow-down',
+		                                    color:'#a3a5a6',
 		                                    action:function(item,event){
 		                                        
 		                                    	$scope.moveFixLovDown(item,event);
