@@ -468,6 +468,11 @@ angular-table, cockpit-angular-table{
 		min-height: 50px;
 	    line-height: 50px;
 	    background-color: white;
+	    md-checkbox {
+	    	._md-label {
+	    		margin-left: 30px;
+	    	}
+	    }
 	}
 	.principalTable>thead>tr>th>div{
 		@extend .noSelect;
