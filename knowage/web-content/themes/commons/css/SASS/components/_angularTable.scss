@@ -1,4 +1,17 @@
 angular-table {
+	&.alternatedRows {
+		table>tbody>tr {
+			&:nth-child(even) {
+				background-color: darken($pageBackground,5%);
+				&:hover{
+	    			background-color: lighten($tableSelectedElementColor,5%);
+	    		}
+	    		&.selectedRowItem {
+				    background-color: $tableSelectedElementColor;
+				 }
+			}
+		}
+	}
 	thead {
 		md-checkbox.md-knowage-theme {
 			._md-icon {
@@ -102,6 +115,10 @@ angular-table, cockpit-angular-table{
 	    color: $baseColor;
 	    font-weight: 600;
 	  }
+
+	 table>tbody>tr {
+	 	background-color: $pageBackground;
+	 }
 	
 	table>tbody>tr.selectedRowItem {
 	    background-color: $tableSelectedElementColor;
@@ -109,7 +126,7 @@ angular-table, cockpit-angular-table{
 	
 	table>tbody>tr:hover{
 	    cursor: pointer;
-	    background-color: #EEEEEE;
+	    background-color: lighten($tableSelectedElementColor,5%);
 	}
 	
 	table thead th div {
@@ -515,6 +532,7 @@ angular-table, cockpit-angular-table{
 			content:'Select All';
 			position: absolute;
 			top: -10px;
+			left: -5px;
 			font-size: $smallFontSize;
 		}
 	}
