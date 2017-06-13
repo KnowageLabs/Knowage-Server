@@ -217,6 +217,70 @@ angular.module('kpi_color_indicator', ['ngMaterial','sbiModule'])
 				}
 			}
 			
+			scope.showKpis = function(pId,tId,definition){
+				if(!definition){
+				
+					$mdDialog.show({
+						controller: kpiListControllerKPI,
+						templateUrl: '/knowagekpiengine/js/angular_1.x/kpi-scorecard/template/kpiColorIndicator/kpiShowKpi.tpl.html',
+						clickOutsideToClose:true,
+						preserveScope:true,
+						locals: {
+							perspectives: scope.perspectives,
+							pId : pId,
+							tId: tId
+							
+							}
+					})
+					.then(function(data) {
+						
+					});
+									
+									
+								
+					}
+				}
+				
+				var kpiListControllerKPI= function(scope,pId,tId,perspectives){
+				scope.translate=sbiModule_translate;
+				scope.getClass=function(color,isIcon){
+					
+					switch(color) {
+					    case "RED":
+					        return isIcon ? 'fa-arrow-down' : 'redKpi'
+					        break;
+					    case "YELLOW":
+					    	  return isIcon ? 'fa-minus' : 'yellowKpi'
+					        break;
+					    case "GREEN":
+					    	  return isIcon ? 'fa-arrow-up' : 'greenKpi'
+					    	break;
+					    default:
+					    	  return isIcon ? 'fa-minus' : 'greyKpi'
+					    	break;
+					   
+					}
+				}	 
+				
+				
+				
+				for(i=0;i<perspectives.length;i++){
+					if(perspectives[i].id==pId){
+						scope.cp = i;
+						for(j=0;j<perspectives[i].targets.length;j++){
+							if(perspectives[i].targets[j].id==tId){
+								scope.ct = j;
+								scope.target = {};
+								scope.target = perspectives[scope.cp].targets[scope.ct];
+							}
+						}
+					}
+				}
+				scope.close=function(){
+					$mdDialog.cancel();
+				}
+			} 
+							
 			
 			scope.deletePerspective = function(pId){
 				var confirm = $mdDialog.confirm()
