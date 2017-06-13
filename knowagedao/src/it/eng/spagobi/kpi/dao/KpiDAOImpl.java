@@ -2584,17 +2584,12 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 					q.setMaxResults(number);
 				}
 				ArrayList<SbiKpiValueExecLog> kpiValue = (ArrayList<SbiKpiValueExecLog>) q.list();
-				ArrayList<KpiValueExecLog> kpiExeclog = new ArrayList<>();
+				ArrayList<KpiValueExecLog> kpiExeclog = new ArrayList<>(kpiValue.size());
 				for (SbiKpiValueExecLog s : kpiValue) {
 					KpiValueExecLog execLog = s.toKpiValueExecLog();
 					kpiExeclog.add(execLog);
 				}
-
-				if (kpiExeclog.size() != 0) {
-					return kpiExeclog;
-				} else {
-					return null;
-				}
+				return kpiExeclog;
 			}
 		});
 
