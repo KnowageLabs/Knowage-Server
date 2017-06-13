@@ -81,8 +81,9 @@ public class DataMiningUtils {
 		try {
 			dataSetDao = DAOFactory.getDataSetDAO();
 			dataSetDao.setUserProfile(profile);
-			IDataSet spagobiDataset = dataSetDao.loadDataSetByLabel(ds.getSpagobiLabel());
-			logger.debug("Got spagobi dataset");
+			String datasetLabel = ds.getType().equals(DataMiningConstants.DATASET_TYPE_SPAGOBI_DS) ? ds.getSpagobiLabel() : ds.getLabel();
+			IDataSet spagobiDataset = dataSetDao.loadDataSetByLabel(datasetLabel);
+			logger.debug("Got dataset");
 			spagobiDataset.setParamsMap(params);
 			spagobiDataset.loadData();
 			DataStore dataStore = (DataStore) spagobiDataset.getDataStore();
@@ -94,7 +95,7 @@ public class DataMiningUtils {
 				csvdir.mkdir();
 			}
 
-			filePath += "/" + ds.getSpagobiLabel() + DataMiningConstants.CSV_FILE_FORMAT;
+			filePath += "/" + datasetLabel + DataMiningConstants.CSV_FILE_FORMAT;
 			File csvFile = new File(filePath);
 			csvFile.createNewFile();
 			logger.debug("Created Csv file");
@@ -137,9 +138,9 @@ public class DataMiningUtils {
 			/*
 			 * filePath = getUserResourcesPath(profile) + DataMiningConstants.DATA_MINING_TEMP_PATH_SUFFIX + ds.getName();
 			 * logger.debug("Got user resource path");
-			 * 
+			 *
 			 * File csvdir = new File(filePath); if (!csvdir.exists()) { csvdir.mkdir(); }
-			 * 
+			 *
 			 * filePath += "/" + ds.getSpagobiLabel() + DataMiningConstants.CSV_FILE_FORMAT;
 			 */
 			// ---replaced
