@@ -36,7 +36,7 @@ function scorecardDefinitionControllerFunction($scope,$mdDialog, sbiModule_trans
 	    .content(sbiModule_translate.load("sbi.layer.delete.progress.message.delete"))
 	    .ariaLabel('cancel perspective') 
 	    .ok(sbiModule_translate.load("sbi.general.yes"))
-	    .cancel(sbiModule_translate.load("sbi.general.no"));
+	    .cancel(sbiModule_translate.load("sbi.general.No"));
 	      $mdDialog.show(confirm).then(function() {
 	    	  $scope.currentScorecard.perspectives.splice($index,1);
 	      });
