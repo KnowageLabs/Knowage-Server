@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
+<jardesc>
+    <jar path="it.eng.spagobi.meta.queryengine/libs/qbecore/spagobi-qbecore-4.1.0.jar"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/QbeCore/scripts/updateLibInOdaPlugin.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+    <selectedProjects/>
+    <manifest generateManifest="true" manifestLocation="" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
+        <sealing sealJar="false">
+            <packagesToSeal/>
+            <packagesToUnSeal/>
+        </sealing>
+    </manifest>
+    <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+        <javaElement handleIdentifier="=QbeCore/src\/serialization"/>
+        <javaElement handleIdentifier="=QbeCore/src\/jpa"/>
+        <file path="/QbeCore/.project"/>
+        <file path="/QbeCore/COPYING"/>
+        <folder path="/QbeCore/src"/>
+        <javaElement handleIdentifier="=QbeCore/src\/runtime"/>
+        <file path="/QbeCore/.checkstyle"/>
+        <javaElement handleIdentifier="=QbeCore/src\/hibernate"/>
+        <javaElement handleIdentifier="=QbeCore/src\/test"/>
+        <file path="/QbeCore/.classpath"/>
+        <folder path="/QbeCore/docs"/>
+    </selectedElements>
+</jardesc>
