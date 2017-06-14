@@ -523,10 +523,19 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					angular.forEach(filterVals, function(item){
 						this.push("('" + item + "')");
 					}, values);
+					
 					if(!dataToSend[dataset.label]){
 						dataToSend[dataset.label] = {};
 					}
-					dataToSend[dataset.label][colName] = values;
+					if(!dataToSend[dataset.label][colName]){
+						dataToSend[dataset.label][colName] = values;
+					}else{
+						dataToSend[dataset.label][colName] = dataToSend[dataset.label][colName].filter(function(elem) { // intersect arrays
+						    return values.indexOf(elem) !== -1;
+						}).filter(function (elem, i, c) { // extra step to remove duplicates
+					        return c.indexOf(elem) === i;
+					    });
+					}
 				}
 			}	
 		}
