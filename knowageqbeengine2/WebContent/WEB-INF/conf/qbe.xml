@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QBE>
+
+    <!--
+    DATASOURCE_CACHE configuration: use true in production environment, false in development, or in case the business model varies very often.
+    When cache is enabled, the engine does not capture modifications on the business model definition, therefore you cannot
+    deploy from SpagoBI Studio and see live changes; when cache is disables instead, you can see live changes on the business model definition
+    when using SpagoBI Studio and deploying the model into the server.
+    -->
+    <DATASOURCE_CACHE enabled="false" />
+
+	<!--
+	QUERY-VALIDATION configuration is applied when saving a query as a subobject:
+	 - if enabled=true, query is validated before saving
+	 - if isBlocking=true (and enabled=true), incorrect queries cannot be saved
+	-->
+	<QUERY-VALIDATION enabled="true" isBlocking="false" />
+	
+	<!-- 
+	Timeout (in ms) for external services invocation: 
+	this should be minor to Ajax request timeout (see includeExtJS.jspf, Ext.Ajax.timeout parameter) 
+	since service invocation is performed into a synchronous action invoked by an Ajax call
+	-->
+	<EXTERNAL_SERVICES timeout="10000" />
+	
+	<QBE-ENABLE-SCRIPT enablescript="true" calculateFieldPosition="BEFORE_COLUMNS" /> 
+	
+	<QBE-CHECK-SPACE-BEFORE-CREATEVIEW 
+		check="false" 
+		checkerClass="it.eng.qbe.utility.SimpleSpaceChecker" 
+		failIfSpaceLess="25"/>
+	
+	
+	<!-- QBE-SQL-RESULT-LIMIT value="none" isBlocking="false"/ -->
+	<!-- QBE-SQL-RESULT-LIMIT value="10000" isBlocking="true"/ -->
+	<QBE-SQL-RESULT-LIMIT value="10000" isBlocking="false"/>
+	
+	<QBE-TIMEOUT-FOR-QUERY-EXECUTION value="900000" />
+	
+	<!-- limit of the cross tab cells number -->
+	<QBE-CROSSTAB-CELLS-LIMIT value="2000" isBlocking="true"/> 
+	<QBE-CROSSTAB-CALCULATEDFIELDS-DECIMAL value="1"/> 
+	
+	<!-- TEMPORARY_TABLE mechanism is always enabled -->
+	<!-- tablespace can be specified when using Oracle or DB2 -->
+	<QBE_TEMPORARY_TABLE prefix="TMPSBIQBE_" suffix="" tablespace="" />
+
+	<QBE-DATE-FORMAT it="yyyy-MM-dd" es="yyyy-MM-dd" fr="yyyy-MM-dd" en="yyyy-MM-dd" database="yyyy-MM-dd" extJsFormat="d/m/Y" />
+	
+		
+	<TEMPLATE-BUILDER>
+		
+		<!--  
+		<BASE-TEMPLATE>...</BASE-TEMPLATE>
+		-->
+		
+		<PARAMETERS>
+		
+			<PARAMETER name="bandWidth" value="530"/>
+			<PARAMETER name="columnHeaderHeight" value="40"/>
+			
+			<PARAMETER name="pixelPerChar" value="9"/>
+			<PARAMETER name="pixelPerRow" value="16"/>	
+			
+			<PARAMETER name="maxLinesPerRow" value="4"/>				
+			
+			<PARAMETER name="columnHeaderFont" value="Helvetica-Bold"/>
+			<PARAMETER name="columnHeaderFontSize" value="12"/>
+   		    <PARAMETER name="columnHeaderFontBold" value="true"/>			
+			<PARAMETER name="columnHeaderFontItalic" value="false"/>						
+			<PARAMETER name="columnHeaderForegroundColor" value="#074B88"/>
+			<PARAMETER name="columnHeaderBackgroundColor" value="#E4ECF2"/>
+			
+			<PARAMETER name="rowFont" value="Times-Roman"/>
+			<PARAMETER name="rowFontSize" value="10"/>
+			
+			<PARAMETER name="evenRowsForegroundColor" value="#000000"/>
+			<PARAMETER name="evenRowsBackgroundColor" value="#EEEEEE"/>
+			
+			<PARAMETER name="oddRowsForegroundColor" value="#000000"/>
+			<PARAMETER name="oddRowsBackgroundColor" value="#FFFFFF"/>
+		</PARAMETERS>
+	</TEMPLATE-BUILDER>
+	
+	<GRAPH-PATH removeSubPaths="false" pathsOrder="ASC" defaultCoverImpl="it.eng.qbe.statement.graph.cover.ShortestPathsCoverGraph"  pathsFiltersImpl="it.eng.qbe.statement.graph.filter.CubeFilter"/>
+	<EXPORT-CSV-SEPARATOR>
+		<SEPARATOR default="true" value="|"/>
+		<SEPARATOR default="false" value="\t"/>
+	</EXPORT-CSV-SEPARATOR>
+</QBE>
