@@ -64,7 +64,7 @@
 			<fileset dir="${web.dir}/WEB-INF/lib" includes="**/qbe.core*.jar" />
 		</delete>
 		<!-- copies the newly created jar file -->
-		<copy file="${qbe.core.dir}/dist/qbe.core-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
+		<copy file="${qbe.core.dir}/dist/qbe.core2-${project.version}.jar" todir="${web.dir}/WEB-INF/lib" overwrite="true" />
 	</target>
 
 	<!--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
