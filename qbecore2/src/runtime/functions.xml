@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+
+<INLINE_FUNCTIONS>
+	<FUNCTION group="Date Functions" name="GG_between_dates" desc="The difference in days" nParams="2">
+		<MySQLInnoDBDialect code=" DATEDIFF(concat(year($2),'-',month($2),'-',day($2)),concat(year($1),'-',month($1),'-',day($1))) " />				
+		<OracleDialect code=" (CASE WHEN ( $1 is NULL OR $2 is NULL) THEN 0 ELSE ROUND($2 - $1,0) END) " />
+		<HSQLDialect code=" DATEDIFF('dd', $1, $2) " /> 
+		<SQLServerDialect code=" datediff(d, $2, $1) " />
+		<PostgreSQLDialect code=" date_part('day', $2 - $1) " />
+		<!--<IngresDialect code=" ... " /> -->
+	</FUNCTION>
+	<FUNCTION group="Date Functions" name="MM_between_dates" desc="The difference in months" nParams="2">
+		<MySQLInnoDBDialect code="  (year($2)- year($1))*12 + (month($2)-month($1)) " />			
+		<OracleDialect code="  ROUND(MONTHS_BETWEEN($2,$1), 0) " />
+		<HSQLDialect code=" DATEDIFF('mm', $1, $2) " />
+		<SQLServerDialect code=" datediff(mm, $2, $1) " /> 
+		<PostgreSQLDialect code="  ((EXTRACT ('year' FROM ($2)) - EXTRACT ('year' FROM ($1)))*12) + (EXTRACT ('month' FROM ($2)) - EXTRACT ('month' FROM ($1))) " />
+		<!--<IngresDialect code=" ... " />	-->
+	</FUNCTION>
+	<FUNCTION group="Date Functions" name="AA_between_dates" desc="The difference in years" nParams="2">
+		<MySQLInnoDBDialect code=" YEAR($2) - YEAR($1) " /> 	
+		<OracleDialect code=" ROUND(MONTHS_BETWEEN($2, $1)/12, 0) " />
+		<HSQLDialect code=" DATEDIFF('yy', $1, $2) " />
+		<SQLServerDialect code=" datediff(yy, $2, $1) " />
+		<PostgreSQLDialect code=" (EXTRACT ('year' FROM ($2)) - EXTRACT ('year' FROM ($1))) " />
+		<!--<IngresDialect code=" ... " /> -->
+	</FUNCTION>
+	<FUNCTION group="Date Functions" name="GG_up_today" desc="The difference in days" nParams="1">
+		<MySQLInnoDBDialect code=" DATEDIFF(concat(year(sysdate()),'-',month(sysdate()),'-',day(sysdate())),concat(year($1),'-',month($1),'-',day($1))) " /> 	
+		<OracleDialect code="  CASE WHEN ( $1 is NULL) THEN 0 ELSE (ROUND(SYSDATE - $1,0)) END " />
+		<HSQLDialect code=" DATEDIFF('dd', $1, SYSDATE) " />
+		<SQLServerDialect code=" datediff(d, GETDATE() , $1) " />
+		<PostgreSQLDialect code=" date_part('day', current_date - $1) " />
+		<!--<IngresDialect code=" ... " /> -->
+	</FUNCTION>
+	<FUNCTION group="Date Functions" name="MM_up_today" desc="The difference in days" nParams="1">
+		<MySQLInnoDBDialect code=" (year(sysdate())- year($1))*12 + (month(sysdate())-month($1))  " />  
+		<OracleDialect code=" ROUND(MONTHS_BETWEEN(SYSDATE,$1), 0) " />
+		<HSQLDialect code=" DATEDIFF('mm',  $1, SYSDATE) " />
+		<SQLServerDialect code=" datediff(d, GETDATE() , $1) " />
+		<PostgreSQLDialect code="  ((EXTRACT ('year' FROM (current_date)) - EXTRACT ('year' FROM ($1)))*12) + (EXTRACT ('month' FROM (current_date)) - EXTRACT ('month' FROM ($1))) " />
+		<!--<IngresDialect code=" ... " /> -->
+	</FUNCTION>
+	<FUNCTION group="Date Functions" name="AA_up_today" desc="The difference in days" nParams="1">
+		<MySQLInnoDBDialect code=" YEAR(sysdate()) - YEAR($1) " />
+		<OracleDialect code=" ROUND(MONTHS_BETWEEN(sysdate, $1)/12, 0) " />
+		<HSQLDialect code=" DATEDIFF('yy, $1, SYSDATE) " />
+		<SQLServerDialect code=" datediff(d, GETDATE() , $1) " />
+		<PostgreSQLDialect code=" (EXTRACT ('year' FROM (current_date)) - EXTRACT ('year' FROM ($1))) " />
+		<!--<IngresDialect code=" ... " /> -->
+	</FUNCTION>
+</INLINE_FUNCTIONS>
+ 
