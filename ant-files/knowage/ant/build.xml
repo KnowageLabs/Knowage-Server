@@ -93,7 +93,13 @@
 	<target name="create.qbe.core.jar" depends="create.knowage.utils.jar">
 		<ant dir="../qbecore/ant" />
 	</target>
-
+	
+	<!--qbe.core2 START-->
+	<target name="create.qbe.core2.jar" depends="create.knowage.utils.jar">
+		<ant dir="../qbecore2/ant" />
+	</target>
+	<!--qbe.core2 END-->
+	
 	<target name="create.knowage.dao.jar" depends="create.knowage.utils.jar,create.qbe.core.jar">
 		<ant dir="../knowagedao/ant" />
 	</target>
@@ -196,20 +202,48 @@
 	<target name="create.knowageqbeengine.war" depends="create.knowage.utils.jar">
 		<ant dir="../knowageqbeengine/ant" />
 	</target>
+	
+	<!--knowageqbeengine2 START-->
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!--   WAR CREATION FOR DEMO ALL IN ONE : CALLS DEFAULT makeDist                    -->
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<target name="create.knowageqbeengine2.war" depends="create.knowage.utils.jar">
+		<ant dir="../knowageqbeengine2/ant" />
+	</target>
+	<!--knowageqbeengine2 END-->
+	
 	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 	<!--   WAR CREATION FOR SINGLE PACKAGES                                             -->
 	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 	<target name="create-bin.knowageqbeengine.war" depends="create.knowage.utils.jar">
 		<ant dir="../knowageqbeengine/ant" target="create-bin.war"/>
 	</target>
-
+	
+	<!--knowageqbeengine2 START-->
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<!--   WAR CREATION FOR SINGLE PACKAGES                                             -->
+	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+	<target name="create-bin.knowageqbeengine2.war" depends="create.knowage.utils.jar">
+		<ant dir="../knowageqbeengine2/ant" target="create-bin.war"/>
+	</target>
+	<!--knowageqbeengine2 END-->
+	
 	<target name="deploy.knowageqbeengine.war" depends="create.knowage.utils.jar,create.qbe.core.jar,create.knowageqbeengine.war">
 		<delete dir="${tomcat.home}/work/Catalina/localhost/knowageqbeengine" />
 		<delete dir="${tomcat.home}/webapps/knowageqbeengine" />
 		<mkdir dir="${tomcat.home}/webapps/knowageqbeengine" />
 		<unzip src="../../../knowageqbeengine/dist/knowageqbeengine.war" dest="${tomcat.home}/webapps/knowageqbeengine" />
 	</target>
-
+	
+	<!--knowageqbeengine2 START-->
+	<target name="deploy.knowageqbeengine2.war" depends="create.knowage.utils.jar,create.qbe.core2.jar,create.knowageqbeengine2.war">
+		<delete dir="${tomcat.home}/work/Catalina/localhost/knowageqbeengine2" />
+		<delete dir="${tomcat.home}/webapps/knowageqbeengine2" />
+		<mkdir dir="${tomcat.home}/webapps/knowageqbeengine2" />
+		<unzip src="../../../knowageqbeengine2/dist/knowageqbeengine2.war" dest="${tomcat.home}/webapps/knowageqbeengine2" />
+	</target>
+	<!--knowageqbeengine2 END-->
+	
 	<target name="create.knowagetalendengine.war" depends="create.knowage.utils.jar">
 		<ant dir="../knowagetalendengine/ant" />
 	</target>
@@ -350,6 +384,11 @@
 
 		<antcall target="create.knowage.utils.jar" />
 		<antcall target="create.qbe.core.jar" />
+		
+		<!--qbe.core2 START-->
+		<antcall target="create.qbe.core2.jar" />
+		<!--qbe.core2 END-->
+		
 		<antcall target="create.knowage.dao.jar" />
 		<!--
 		<antcall target="create.knowage.oauth.security.jar" />
@@ -415,7 +454,13 @@
 		<antcall target="create.knowageqbeengine.war" />
 		<copy file="../../../knowageqbeengine/dist/knowageqbeengine.war" 
         todir="../../../dist" overwrite="true" />
-	
+		
+		<!--knowageqbeengine2 START-->
+		<antcall target="create.knowageqbeengine2.war" />
+		<copy file="../../../knowageqbeengine2/dist/knowageqbeengine2.war" 
+        todir="../../../dist" overwrite="true" />
+		<!--knowageqbeengine2 END-->
+		
 		<antcall target="create.knowageaccessibilityengine.war" />
 		<copy file="../../../knowageaccessibilityengine/dist/knowageaccessibilityengine.war" 
         todir="../../../dist" overwrite="true" />
@@ -445,6 +490,9 @@
 
 		<antcall target="create.knowage.utils.jar" />
 		<antcall target="create.qbe.core.jar" />
+		<!--qbe.core2 START-->
+		<antcall target="create.qbe.core2.jar" />
+		<!--qbe.core2 END-->
 		<antcall target="create.knowage.dao.jar" />
 		<!--
 		<antcall target="create.knowage.oauth.security.jar" />
@@ -459,7 +507,14 @@
 		<antcall target="create-bin.knowageqbeengine.war" />
 		<copy file="../../../knowageqbeengine/dist/knowageqbeengine.war" 
 	        todir="../../../dist" overwrite="true" />
+			
+		<!--knowageqbeengine2 START-->	
+		<antcall target="create-bin.knowageqbeengine2.war" />
+		<copy file="../../../knowageqbeengine2/dist/knowageqbeengine2.war" 
+	        todir="../../../dist" overwrite="true" />
+		<!--knowageqbeengine2 END-->	
 	</target>
+	
 
 
 	<target name="deploy.all" >
@@ -471,6 +526,9 @@
 		<antcall target="deploy.knowagejasperreportengine.war" />
 		<!-- antcall target="deploy.SpagoBIJPivotEngine.war" / -->
 		<antcall target="deploy.knowageqbeengine.war" />
+		<!--knowageqbeengine2 START-->
+		<antcall target="deploy.knowageqbeengine2.war" />
+		<!--knowageqbeengine2 END-->
 		<antcall target="deploy.knowagetalendengine.war" />
 		<antcall target="deploy.knowagedataminingengine.war" />
 		<antcall target="deploy.knowageaccessibilityengine.war" />
@@ -505,9 +563,17 @@
 
 	<target name="clean-bin.all" >
 		<delete file="../../../dist/knowage.war"/>
+		
 		<delete file="../../../dist/knowageqbeengine.war"/>
 		<delete dir="../../../knowageqbeengine/ant-build"/>
 		<delete dir="../../../knowageqbeengine/dist"/>
+		
+		<!--knowageqbeengine2 START-->
+		<delete file="../../../dist/knowageqbeengine2.war"/>
+		<delete dir="../../../knowageqbeengine2/ant-build"/>
+		<delete dir="../../../knowageqbeengine2/dist"/>
+		<!--knowageqbeengine2 END-->
+		
 		<delete dir="../../../knowage/ant-build"/>
 		<delete dir="../../../knowage/dist"/>
 	</target>
@@ -547,6 +613,12 @@
 		-->
 		<delete dir="../../../knowageqbeengine/ant-build"/>
 		<delete dir="../../../knowageqbeengine/dist"/>
+		
+		<!--knowageqbeengine2 START-->
+		<delete dir="../../../knowageqbeengine2/ant-build"/>
+		<delete dir="../../../knowageqbeengine2/dist"/>
+		<!--knowageqbeengine2 END-->
+		
 		<delete dir="../../../knowagetalendengine/ant-build"/>
 		<delete dir="../../../knowagetalendengine/dist"/>
 		<delete dir="../../../knowage/ant-build"/>
@@ -646,6 +718,25 @@
 			<fileset dir="${tomcat.home}/webapps/knowageqbeengine/html">
 			</fileset>
 		</copy>
+		
+		<!--knowageqbeengine2 START-->
+		<copy todir="${apache.dir}/knowageqbeengine2/js" >
+			<fileset dir="${tomcat.home}/webapps/knowageqbeengine2/js">
+			</fileset>
+		</copy>
+		<copy todir="${apache.dir}/knowageqbeengine2/css" >
+			<fileset dir="${tomcat.home}/webapps/knowageqbeengine2/css">
+			</fileset>
+		</copy>
+		<copy todir="${apache.dir}/knowageqbeengine2/img" >
+			<fileset dir="${tomcat.home}/webapps/knowageqbeengine2/img">
+			</fileset>
+		</copy>
+		<copy todir="${apache.dir}/knowageqbeengine2/html" >
+			<fileset dir="${tomcat.home}/webapps/knowageqbeengine2/html">
+			</fileset>
+		</copy>
+		<!--knowageqbeengine2 END-->
 	</target>
 
 
@@ -665,6 +756,9 @@
 
 		<ant dir="../knowage/ant" target="javadoc"/>
 		<ant dir="../knowageqbeengine/ant" target="javadoc"/>
+		<!--knowageqbeengine2 START-->
+		<ant dir="../knowageqbeengine2/ant" target="javadoc"/>
+		<!--knowageqbeengine2 END-->
 		<ant dir="../knowagetalendengine/ant" target="javadoc"/>
 		<ant dir="../knowagedao/ant" target="javadoc"/>
 		<ant dir="../knowageutils/ant" target="javadoc"/>
@@ -710,6 +804,9 @@
 			<ant dir="../SpagoBIJPivotEngine/ant" target="package"/>
 		-->
 		<ant dir="../knowageqbeengine/ant" target="package"/>
+		<!--knowageqbeengine2 START-->
+		<ant dir="../knowageqbeengine2/ant" target="package"/>
+		<!--knowageqbeengine2 END-->
 		<ant dir="../knowagetalendengine/ant" target="package"/>
 		<ant dir="../knowagedataminingengine/ant" target="package"/>
 		<!--
