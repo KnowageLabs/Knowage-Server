@@ -157,7 +157,22 @@
 	<!--   ATTIVITA' SPECIFICHE PER COMPRESSIONE CODICE JS                              -->
 	<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
-	
+	<target name="production" depends="create-production">
+		
+	</target>
+
+	<target name="delete-debug">
+		
+	</target>
+
+	<target name="create-debug" depends="delete-debug">
+
+	</target>
+
+	<target name="create-production" depends="create-debug">
+		
+	</target>
+
 
 	<target name="development">
 
