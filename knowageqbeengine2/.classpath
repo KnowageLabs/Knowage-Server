@@ -13,7 +13,6 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/jdbccore"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/knowageutils"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/knowageutilsjson"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/qbecore2"/>

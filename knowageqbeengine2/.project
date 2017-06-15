@@ -6,7 +6,7 @@
 		<project>jdbccore</project>
 		<project>knowageutils</project>
 		<project>knowageutilsjson</project>
-		<project>qbecore</project>
+		<project>qbecore2</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
