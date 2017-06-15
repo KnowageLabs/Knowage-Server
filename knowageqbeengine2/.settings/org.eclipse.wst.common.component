@@ -11,6 +11,9 @@
         <dependent-module archiveName="knowageutilsjson.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/knowageutilsjson/knowageutilsjson">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="qbecore2.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/qbecore2/qbecore2">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="context-root" value="knowageqbeengine2"/>
         <property name="java-output-path" value="/knowageqbeengine2/build/classes"/>
     </wb-module>
