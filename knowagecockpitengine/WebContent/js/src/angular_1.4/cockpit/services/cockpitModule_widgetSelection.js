@@ -434,8 +434,9 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 	this.addValueToSelection = function(key, value, dsLabel,originalKey){
 		for(var i=0;i<cockpitModule_template.configuration.aggregations.length ; i++){
 			if(cockpitModule_template.configuration.aggregations[i].datasets.indexOf(dsLabel)!=-1){
-				cockpitModule_template.configuration.aggregations[i].selection[key] = value;
-				cockpitModule_template.configuration.aggregations[i].originalSelection[originalKey] = value;
+				var copyOfValue = angular.copy(value);
+				cockpitModule_template.configuration.aggregations[i].selection[key] = copyOfValue;
+				cockpitModule_template.configuration.aggregations[i].originalSelection[originalKey] = copyOfValue;
 			}
 		}
 
