@@ -124,8 +124,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									columnsSearch='["name"]' show-search-bar=true
 									highlights-selected-item=true multi-select=true
 									selected-item=catalogSelected no-pagination=true
-									<!-- items-per-page="10"
-					   				fixed-item-per-page="true"  -->
 									scope-functions=tableFunction> 
 								</angular-table>														
 							</div>

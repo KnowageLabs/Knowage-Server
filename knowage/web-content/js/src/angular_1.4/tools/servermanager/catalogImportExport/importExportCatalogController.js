@@ -114,8 +114,10 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 
 	$scope.stopImport = function(text, title) {
 		var titleFin = title || "";
-		var confirm = $mdDialog.confirm().title(titleFin).content(text)
-				.ariaLabel('error import').ok('OK')
+		
+		var confirm = $mdDialog.alert().title(titleFin).textContent(text)
+				.ariaLabel('error import').ok('OK');
+		
 		$mdDialog.show(confirm).then(
 				function() {
 					$scope.stepControl.resetBreadCrumb();
@@ -209,7 +211,8 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 			fd.append('exportedArchive', $scope.IEDConf.fileImport.file);
 			sbiModule_restServices.promisePost("1.0/serverManager/importExport/catalog", 'import', fd, {transformRequest: angular.identity,headers: {'Content-Type': undefined}})
 			.then(function(response, status, headers, config) {
-				$scope.catalogSelected = [];
+//				$scope.catalogSelected = [];
+				$scope.catalogSelected = angular.copy(response.data.exportedCatalog, $scope.catalogSelected);  //for default all elements are checked
 				$scope.exportedCatalog = response.data.exportedCatalog;
 				//open 
 				$scope.IEDConf.showCatalogImported = true;
