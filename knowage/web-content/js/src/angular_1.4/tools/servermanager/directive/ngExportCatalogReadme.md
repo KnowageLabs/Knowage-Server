@@ -11,7 +11,7 @@ angular.js
 Import the directive, there is no need to inject in controller.
 
 ##Settings
-> _xxx
+> 
 
 
 
@@ -19,11 +19,20 @@ Import the directive, there is no need to inject in controller.
 > type-catalog
 
 This variable sets the type of the catalog managed. At the moment are available 'Dataset', 'BusinessModel',
-'MondrianSchema','VG','Layer'
+'MondrianSchema','SVG','Layer', 'AnalyticalDrivers'
+
+> path-catalog
+
+This variable sets the final path to define the url for calling REST services. 
+Example with "catalog" value the url will be: /1.0/serverManager/importExport/catalog.
 
 > catalog-data
 
+This variable sets the content of the list
+
 > catalog-selected
+
+This variable will contains all the selected elements of the list
 
 ## Authors
 

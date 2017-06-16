@@ -1,12 +1,12 @@
 angular.module('impExpModule').controller(
-		'importCatalogControllerStep0',
+		'importAnalyticalDriversControllerStep0',
 		[ 'sbiModule_download', 'sbiModule_device', "$scope", "$mdDialog",
 				"$timeout", "sbiModule_logger", "sbiModule_translate",
 				"sbiModule_restServices", "sbiModule_config",
 				"importExportDocumentModule_importConf", "$mdToast","sbiModule_messaging",
-				importCatalogStep0FuncController ]);
+				importAnalyticalDriversStep0FuncController ]);
 
-function importCatalogStep0FuncController(sbiModule_download, sbiModule_device,
+function importAnalyticalDriversStep0FuncController(sbiModule_download, sbiModule_device,
 		$scope, $mdDialog, $timeout, sbiModule_logger, sbiModule_translate,
 		sbiModule_restServices, sbiModule_config,
 		importExportDocumentModule_importConf, $mdToast,sbiModule_messaging)
@@ -14,11 +14,6 @@ function importCatalogStep0FuncController(sbiModule_download, sbiModule_device,
 	
 	//ROLES
 	$scope.showRoles = $scope.IEDConf.roles.exportedRoles.length>0;
-	
-//	if (!$scope.showRoles){
-//		$scope.associateddatasource();	
-//		$scope.selectedStep++;
-//	}
 	
 	$scope.associateddatasource = function(ev){
 		if($scope.typeSaveMenu == ""){

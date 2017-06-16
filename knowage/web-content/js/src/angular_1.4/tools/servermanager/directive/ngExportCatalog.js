@@ -16,18 +16,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 (function() {	
 	
-	angular.module('impExpDataset').directive('exportCatalog', ['sbiModule_config','sbiModule_translate','sbiModule_download','importExportDocumentModule_importConf','sbiModule_restServices',
+	angular.module('impExpModule').directive('exportCatalog', ['sbiModule_config','sbiModule_translate','sbiModule_download','importExportDocumentModule_importConf','sbiModule_restServices',
 	function(sbiModule_config, sbiModule_translate, sbiModule_download, importExportDocumentModule_importConf,sbiModule_restServices){
 
 		return {
 			restrict: 'E',
 			scope: {
 				typeCatalog : "@",
+				pathCatalog : "@",
 				catalogData : "=",
 				catalogSelected: "="
 		  	},
 			templateUrl: sbiModule_config.contextName 
-				+ '/js/src/angular_1.4/tools/servermanager/catalogImportExport/ngExportCatalogTemplate.html',
+				+ '/js/src/angular_1.4/tools/servermanager/directive/ngExportCatalogTemplate.html',
 				link: link
 		};
 		
@@ -44,6 +45,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 			scope.showSVG=false;
 			scope.showLayer=false;
 			scope.showCatalogImported=false;
+			scope.showAnalyticalDrivers=false;
 			scope.listType=[];
 			scope.listTypeImported=[];
 			scope.listDestType=[];
@@ -65,7 +67,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 				if (!item)  item = scope.typeCatalog;
 				var serviceName = 'get' + scope.typeCatalog.toLowerCase();
 				if(scope.filterDate!=undefined){
-					sbiModule_restServices.promiseGet("1.0/serverManager/importExport/catalog", serviceName,"dateFilter="+scope.filterDate).then(
+					sbiModule_restServices.promiseGet("1.0/serverManager/importExport/" + scope.pathCatalog, serviceName,"dateFilter="+scope.filterDate).then(
 							function(response, status, headers, config) {
 								scope.catalogData = scope.decorateData(response.data, item);
 							},function(response, status, headers, config) {
@@ -87,7 +89,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 				if (!item)  item = scope.typeCatalog;
 				scope.wait = true;
 				var serviceName = 'get' + item.toLowerCase();
-				sbiModule_restServices.promiseGet("1.0/serverManager/importExport/catalog", serviceName).then(
+				sbiModule_restServices.promiseGet("1.0/serverManager/importExport/" + scope.pathCatalog, serviceName).then(
 						function(response, status, headers, config) {
 							scope.catalogData = scope.decorateData(response.data, item);							
 							scope.wait=false;
@@ -146,6 +148,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 			scope.checkCategory= function(item){			
 				var loadData = false;
+				//how to generalize??
 				switch(item){
 				case 'Dataset':
 					if(!scope.showDataset){
@@ -198,6 +201,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 						scope.showCatalogImported=true;
 					}else if(scope.showCatalogImported){
 						scope.showCatalogImported=false;
+					}
+					break;
+				case 'AnalyticalDrivers':
+					loadData = false;
+					if(!scope.showAnalyticalDrivers){
+						scope.showAnalyticalDrivers=true;
+						loadData = true;
+					}else if(scope.showAnalyticalDrivers){
+						scope.showAnalyticalDrivers=false;
+						loadData = false;
 					}
 					break;
 				}

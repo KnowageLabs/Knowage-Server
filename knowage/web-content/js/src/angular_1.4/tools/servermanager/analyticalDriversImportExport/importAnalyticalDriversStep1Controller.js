@@ -1,21 +1,17 @@
 angular.module('impExpModule').controller(
-		'importCatalogControllerStep1',
+		'importAnalyticalDriversControllerStep1',
 		[ 'sbiModule_download', 'sbiModule_device', "$scope", "$mdDialog",
 				"$timeout", "sbiModule_logger", "sbiModule_translate",
 				"sbiModule_restServices", "sbiModule_config",
 				"importExportDocumentModule_importConf", "$mdToast","sbiModule_messaging",
-				importCatalogStep1FuncController ]);
+				importAnalyticalDriversStep1FuncController ]);
 
-function importCatalogStep1FuncController(sbiModule_download, sbiModule_device,
+function importAnalyticalDriversStep1FuncController(sbiModule_download, sbiModule_device,
 		$scope, $mdDialog, $timeout, sbiModule_logger, sbiModule_translate,
 		sbiModule_restServices, sbiModule_config,
 		importExportDocumentModule_importConf, $mdToast,sbiModule_messaging)
 {
 	$scope.showDatasource = $scope.IEDConf.datasources.exportedDatasources.length>0;
-	
-//	if (!$scope.showDatasource){
-//		$scope.save();	
-//	}
 	
 	$scope.save = function(ev) {
 		if($scope.typeSaveMenu == ""){
@@ -25,7 +21,7 @@ function importCatalogStep1FuncController(sbiModule_download, sbiModule_device,
 			sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.importexportcatalog.selectds"),"");
 		}else{
 			var config={
-					"ds": $scope.catalogSelected,
+					"drivers": $scope.catalogSelected,
 					"type":$scope.typeSaveMenu,
 					"associateRoles" : $scope.IEDConf.roles.associatedRoles,
 					"exportedRoles" : $scope.IEDConf.roles.exportedRoles,
@@ -33,7 +29,7 @@ function importCatalogStep1FuncController(sbiModule_download, sbiModule_device,
 					"exportedDatasources" : $scope.IEDConf.datasources.exportedDatasources
 
 			}
-			sbiModule_restServices.promisePost("1.0/serverManager/importExport/catalog","importCatalog",config)
+			sbiModule_restServices.promisePost("1.0/serverManager/importExport/analyticaldrivers","importDrivers",config)
 			.then(function(response, status, headers, config) {
 				var resp = response.data;
 				if (resp.STATUS == "OK")

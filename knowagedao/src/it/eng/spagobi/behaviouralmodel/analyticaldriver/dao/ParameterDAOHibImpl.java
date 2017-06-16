@@ -283,6 +283,51 @@ public class ParameterDAOHibImpl extends AbstractHibernateDAO implements IParame
 		return realResult;
 	}
 
+	/**
+	 * Load all sbiparameters.
+	 *
+	 * @return the list
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 *
+	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO#loadAllSbiParameters()
+	 */
+	@Override
+	public List loadAllSbiParameters() throws EMFUserError {
+		Session aSession = null;
+		Transaction tx = null;
+		List realResult = new ArrayList();
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			Query hibQuery = aSession.createQuery(" from SbiParameters");
+			List hibList = hibQuery.list();
+
+			Iterator it = hibList.iterator();
+
+			while (it.hasNext()) {
+				realResult.add(it.next());
+			}
+			tx.commit();
+		} catch (HibernateException he) {
+			logException(he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+		return realResult;
+	}
+
 	@Override
 	public List<Parameter> loadParametersByLovId(Integer lovId) throws EMFUserError {
 		Session aSession = null;
@@ -578,4 +623,5 @@ public class ParameterDAOHibImpl extends AbstractHibernateDAO implements IParame
 
 		return aParameter;
 	}
+
 }

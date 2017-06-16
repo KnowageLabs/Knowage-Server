@@ -57,7 +57,7 @@ app.factory("importExportDocumentModule_importConf", function() {
 			associatedDatasources : {}
 		},
 		exportedCatalog : [],
-		showCatalogImported : false,
+		showDriversImported : false,
 		resetData: function() {  
 	    	 current_data = angular.copy(default_values,current_data); 
 	    } 
@@ -72,17 +72,8 @@ app.controller('Controller', [ "sbiModule_download", "sbiModule_translate","sbiM
 
 function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices, $scope, $mdDialog, $mdToast,sbiModule_messaging,importExportDocumentModule_importConf) {
 	$scope.translate = sbiModule_translate;
-	$scope.showDataset=true;
-	$scope.showBM=false;
-	$scope.showSchema=false;
-	$scope.showSVG=false;
-	$scope.showLayer=false;
-	$scope.catalogData=[];
-	$scope.catalogDataset=[];
-	$scope.catalogBM=[];
-	$scope.catalogSchema=[];
-	$scope.catalogSVG=[];
-	$scope.catalogLayer=[];
+	$scope.showDrivers=true;
+	$scope.catalogDrivers=[];
 	
 	$scope.catalogSelected=[];
 
@@ -140,22 +131,17 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 			sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.impexpusers.missingnamefile"),"");
 			$scope.wait = false;
 		}else{
-			var datasetList = $scope.getCatalogForCategory($scope.catalogSelected, 'Dataset');
-			var BMList = $scope.getCatalogForCategory($scope.catalogSelected, 'BusinessModel');
-			var schemaList = $scope.getCatalogForCategory($scope.catalogSelected, 'MondrianSchema');
-			var SVGtList = $scope.getCatalogForCategory($scope.catalogSelected, 'SVG');
-			var layerList = $scope.getCatalogForCategory($scope.catalogSelected, 'Layer');
+			var driversList = $scope.getCatalogForCategory($scope.catalogSelected, 'AnalyticalDrivers');			
 			//module download zip			
-			var config={"DATASET_LIST":datasetList ,
-						"BM_LIST": BMList,
-						"SCHEMA_LIST": schemaList,
-						"SVG_LIST": SVGtList,
-						"LAYER_LIST": layerList,
-						"EXPORT_FILE_NAME":$scope.nameExport,
-						"EXPORT_SUB_OBJ":false,
-						"EXPORT_SNAPSHOT":false};
+//			var config={"DRIVERS_LIST":driversList ,					
+//						"EXPORT_FILE_NAME":$scope.nameExport,
+//						"EXPORT_SUB_OBJ":false,
+//						"EXPORT_SNAPSHOT":false};
+//			
+			var config={"DRIVERS_LIST":driversList ,					
+					    "EXPORT_FILE_NAME":$scope.nameExport};
 
-			sbiModule_restServices.promisePost("1.0/serverManager/importExport/catalog", 'export',config).then(
+			sbiModule_restServices.promisePost("1.0/serverManager/importExport/analyticaldrivers", 'export',config).then(
 					function(response, status, headers, config) {
 						if(response.data.hasOwnProperty("STATUS") && response.data.STATUS=="OK"){
 							$scope.downloadFile();
@@ -189,7 +175,6 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 		sbiModule_restServices.promisePost("1.0/serverManager/importExport/wizard","downloadExportFile",data,config)
 		.then(function(response, status, headers, config) {
 				$scope.download.getBlob(response.data,$scope.nameExport,'application/zip','zip');
-				//$scope.showAction(sbiModule_translate.load("sbi.importusers.downloadOK"));
 				sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.importusers.downloadOK"),"");
 				$scope.wait=false;
 		},function(response, status, headers, config) {
@@ -207,12 +192,12 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 		}else{
 			var fd = new FormData();
 			fd.append('exportedArchive', $scope.IEDConf.fileImport.file);
-			sbiModule_restServices.promisePost("1.0/serverManager/importExport/catalog", 'import', fd, {transformRequest: angular.identity,headers: {'Content-Type': undefined}})
+			sbiModule_restServices.promisePost("1.0/serverManager/importExport/analyticaldrivers", 'import', fd, {transformRequest: angular.identity,headers: {'Content-Type': undefined}})
 			.then(function(response, status, headers, config) {
 				$scope.catalogSelected = [];
 				$scope.exportedCatalog = response.data.exportedCatalog;
 				//open 
-				$scope.IEDConf.showCatalogImported = true;
+				$scope.IEDConf.showDriversImported = true;
 
 			}, function(response, status, headers, config) {
 				sbiModule_restServices.errorHandler(response.data,"");
@@ -232,7 +217,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 					"type":$scope.typeSaveMenu
 
 			}
-			sbiModule_restServices.promisePost("1.0/serverManager/importExport/catalog","importCatalog",config)
+			sbiModule_restServices.promisePost("1.0/serverManager/importExport/analyticaldrivers","importAnalyticalDrivers",config)
 			.then(function(response, status, headers, config) {
 				sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.importusers.importuserok"),"");
 			},function(response, status, headers, config) {
@@ -252,7 +237,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 			//if not selected a mode
 			sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.importexportcatalog.selectmode"),"");
 		}else if($scope.catalogSelected.length==0){
-			sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.impexp.selectcatalog"),"");
+			sbiModule_messaging.showInfoMessage(sbiModule_translate.load("sbi.impexp.selectad"),"");
 		}else{
 			var config={
 //					"ds": $scope.catalogSelected,
@@ -265,11 +250,6 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 					importExportDocumentModule_importConf.roles.exportedRoles=response.data.exportedRoles;
 					importExportDocumentModule_importConf.roles.associatedRoles=response.data.associatedRoles;
 					$scope.stepControl.insertBread({name: $scope.translate.load('sbi.impexp.exportedRole')})
-//					if (importExportDocumentModule_importConf.roles.exportedRoles.length > 0){
-//						$scope.stepControl.insertBread({name: $scope.translate.load('sbi.impexp.exportedRole')});
-//					}else{
-//						$scope.stepControl.insertBread("(No Roles)");
-//					}
 				}
 			},function(response, status, headers, config) {
 				sbiModule_restServices.errorHandler(response.data,"");

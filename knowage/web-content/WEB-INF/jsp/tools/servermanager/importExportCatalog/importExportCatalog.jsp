@@ -29,20 +29,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html ng-app="impExpDataset">
+<html ng-app="impExpModule">
 
 <head>
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 <link rel="stylesheet" type="text/css"
 	href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css">
-<!-- non c'entra	<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/glossary/commons/LayerTree.js"></script> -->
 <!-- controller -->
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/catalogImportExport/importExportCatalogController.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/documentImportExport/importExportDocumentsController.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/catalogImportExport/importCatalogStep0Controller.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/catalogImportExport/importCatalogStep1Controller.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/catalogImportExport/ngExportCatalog.js">"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.4/tools/servermanager/directive/ngExportCatalog.js">"></script>
 
 	
 	
@@ -80,36 +79,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								 </md-button>
 							</div>
 							<div>
-								<!-- ORIG: <md-checkbox ng-checked="exists('Dataset',listType)" ng-click="toggle('Dataset',listType)" ng-init="toggle('Dataset',listType)"">{{translate.load("sbi.importexportcatalog.radiodataset");}}</md-checkbox>  -->
 								 <md-tabs md-dynamic-height >
 								      <md-tab id="Dataset"  md-on-select="showDataset=true" >
 								        <md-tab-label>{{translate.load("sbi.importexportcatalog.radiodataset");}}</md-tab-label>
 								        <md-tab-body >
-								         	<export-catalog ng-if="showDataset" type-catalog="Dataset" catalog-data="catalogDataset" catalog-selected="catalogSelected"></export-catalog>
+								         	<export-catalog ng-if="showDataset" type-catalog="Dataset" path-catalog="catalog" catalog-data="catalogDataset" catalog-selected="catalogSelected"></export-catalog>
 								        </md-tab-body>
 								      </md-tab>
 								       <md-tab id="BusinessModel"  md-on-select="showBM=true" >
 								        <md-tab-label>{{translate.load("sbi.importexportcatalog.radiobusinessmodel");}}</md-tab-label>
 								        <md-tab-body>
-								         	<export-catalog ng-if="showBM" type-catalog="BusinessModel" catalog-data="catalogBM" catalog-selected="catalogSelected"></export-catalog>
+								         	<export-catalog ng-if="showBM" type-catalog="BusinessModel"  path-catalog="catalog" catalog-data="catalogBM" catalog-selected="catalogSelected"></export-catalog>
 								        </md-tab-body>
 								      </md-tab>
 								       <md-tab id="MondrianSchema" md-on-select="showSchema=true">
 								        <md-tab-label>{{translate.load("sbi.importexportcatalog.radiomondrianschema");}}</md-tab-label>
 								        <md-tab-body>
-								         	<export-catalog  ng-if="showSchema" type-catalog="MondrianSchema" catalog-data="catalogSchema" catalog-selected="catalogSelected"></export-catalog>
+								         	<export-catalog  ng-if="showSchema" type-catalog="MondrianSchema"  path-catalog="catalog" catalog-data="catalogSchema" catalog-selected="catalogSelected"></export-catalog>
 								        </md-tab-body>
 								      </md-tab>
 								       <md-tab id="SVG" md-on-select="showSVG=true">
 								        <md-tab-label>{{translate.load("sbi.importexportcatalog.radiosvg");}}</md-tab-label>
 								        <md-tab-body>
-								         	<export-catalog ng-if="showSVG" type-catalog="SVG" catalog-data="catalogSVG" catalog-selected="catalogSelected"></export-catalog>
+								         	<export-catalog ng-if="showSVG" type-catalog="SVG"  path-catalog="catalog" catalog-data="catalogSVG" catalog-selected="catalogSelected"></export-catalog>
 								        </md-tab-body>
 								      </md-tab>
 								       <md-tab id="Layer" md-on-select="showLayer=true">
 								        <md-tab-label>{{translate.load("sbi.importexportcatalog.radiolayer");}}</md-tab-label>
 								        <md-tab-body>
-								         	<export-catalog ng-if="showLayer" type-catalog="Layer" catalog-data="catalogLayer" catalog-selected="catalogSelected"></export-catalog>
+								         	<export-catalog ng-if="showLayer" type-catalog="Layer"  path-catalog="catalog" catalog-data="catalogLayer" catalog-selected="catalogSelected"></export-catalog>
 								        </md-tab-body>
 								      </md-tab>
 								</md-tabs>
@@ -140,7 +138,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							    </md-radio-group>
 							
 							<span flex></span>							
-							<!-- <md-button class="md-raised" ng-click="associatedrole($event)" aria-label="upload Menu" >{{translate.load("sbi.importusers.startimport");}}</md-button>  -->
 							<md-button class="md-raised" ng-click="associatedrole($event)" aria-label="upload Menu" >{{translate.load('sbi.generic.next');}}</md-button>
 						</div>
 					
@@ -151,11 +148,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								columns='[{"label":"Type Catalog","name":"typeCatalog","size":"20px"},{"label":"Name","name":"name","size":"20px"},{"label":"Type","name":"type","size":"20px"}]'
 								columnsSearch='["name"]' show-search-bar=true
 								highlights-selected-item=true multi-select=true
-								selected-item=catalogSelected no-pagination=true
-								scope-functions=tableFunction> 
-							</angular-table>
-							 
-							 
+								selected-item=catalogSelected true
+								 no-pagination=true
+								scope-functions=tableFunction>  
+							</angular-table> 		 
 						</div>
 						
 						</div>
