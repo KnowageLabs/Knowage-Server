@@ -100,12 +100,22 @@ public class PdfExporter {
 			if (objTemplate == null) {
 				throw new SpagoBIRuntimeException("Unable to get template for document with id [" + documentId + "]");
 			}
+			int numOfPages = 0;
+			switch (document.getEngineLabel()) {
+			case "knowagechartengine":
+				numOfPages = 1;
+				return numOfPages;
+			case "knowagecockpitengine":
+				String templateString = new String(objTemplate.getContent());
+				JSONObject template = new JSONObject(templateString);
+				JSONArray sheets = template.getJSONArray("sheets");
+				numOfPages = sheets.length();
+				return numOfPages;
 
-			String templateString = new String(objTemplate.getContent());
-			JSONObject template = new JSONObject(templateString);
-			JSONArray sheets = template.getJSONArray("sheets");
+			default:
+				return numOfPages;
+			}
 
-			return sheets.length();
 		} catch (EMFAbstractError e) {
 			throw new SpagoBIRuntimeException("Unable to get template for document with id [" + documentId + "]");
 		} catch (JSONException e) {
