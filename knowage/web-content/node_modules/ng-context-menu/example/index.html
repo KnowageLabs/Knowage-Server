@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>ngContextMenu</title>
+
+    <!-- Dependencies! -->
+    <script type="text/javascript" src="js/vendor/angular/angular.js"></script>
+    <script type="text/javascript" src="js/vendor/ng-context-menu/ng-context-menu.js"></script>
+
+    <!-- Application! -->
+    <script type="text/javascript" src="js/Application.js"></script>
+
+    <!-- Beautification! -->
+    <link rel="stylesheet" type="text/css" href="css/Default.css" />
+
+</head>
+<body ng-app="menuApp" ng-controller="MessagesController">
+
+    <ul class="messages" ng-repeat="message in messages">
+
+        <li class="message" data-context-menu="context-menus/message.html" ng-model="message">
+            {{message.subject}}
+        </li>
+
+    </ul>
+
+</body>
+</html>

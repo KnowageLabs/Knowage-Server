@@ -1,0 +1,22 @@
+language: node_js
+
+node_js:
+  - '0.10'
+  - '0.11'
+
+before_script:
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start
+
+script:
+  - npm install
+  - bower install
+  - grunt test
+
+deploy:
+  provider: heroku
+  api_key:
+    secure: cp83ruF2jTRStzOCdQO4lVeCa/g55OpJd7+0snWUImRln78n15eB4ZRgfsf0Sv3meEkKjbQ6IUYKHI4DYxvitlyerubxSkZjMC8H2AkvC+HO5Xv/FYbtKrF9hXBGVoS8Qro0z8OMX6R17mF5d9UoLvp9elj8tUKXdV+2GQUPn5U=
+  app: ng-context-menu
+  on:
+    repo: Wildhoney/ngContextMenu

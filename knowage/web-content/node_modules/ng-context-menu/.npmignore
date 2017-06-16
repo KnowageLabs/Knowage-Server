@@ -1,0 +1,6 @@
+/.idea
+/node_modules
+/example/js/vendor/*
+!/example/js/vendor/.gitkeep
+/dist/custom/*
+!/dist/custom/.gitkeep
