@@ -15,23 +15,14 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
+<%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
+<%
+	String spagoBiContext = request.getParameter(SpagoBIConstants.SBI_HOST)+request.getParameter(SpagoBIConstants.SBI_CONTEXT);
+%>
 
-<%@ page language="java"  contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>     
-<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
-<%-- ---------------------------------------------------------------------- --%>
-<%-- HTML	 																--%>
-<%-- ---------------------------------------------------------------------- --%>
 
-<html ng-app>
-	
-	<head>
-	
-	
-	</head>
-	
-	<body >
-	
-    HELLO FROM	QBE {{2+3}}
-	</body>
+<!-- angular reference-->
+<!-- START-DEBUG -->
+<script type="text/javascript" src="<%=spagoBiContext%>/node_modules/angular/angular.js"></script> 
+<!-- END-DEBUG -->
 
-</html>
