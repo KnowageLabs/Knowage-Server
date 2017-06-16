@@ -65,9 +65,30 @@
 			return urlService + url;
 		};
 				
-		dee.exportDocumentChart = function(exportType){
-			var frame = window.frames["documentFrame"];
-			frame.exportChart(exportType);
+		dee.exportDocumentChart = function(exportType,mimeType){
+			dee.exporting = true;
+			dee.getBackendRequestParams(exportType, mimeType).then(function(parameters){
+				dee.buildBackendRequestConf(exportType, mimeType, parameters).then(function(requestConf){
+					$http(requestConf)
+					.then(function successCallback(response) {
+						sbiModule_download.getBlob(
+								response.data,
+								execProperties.executionInstance.OBJECT_LABEL,
+								mimeType,
+								exportType);
+						dee.exporting = false;
+					}, function errorCallback(response) {
+						dee.exporting = false;
+						sbiModule_messaging.showErrorMessage(response.errors[0].message, 'Error');
+					});			
+				},function(e){
+					dee.exporting = false;
+					sbiModule_messaging.showErrorMessage(e, 'Error');
+				});
+			},function(e){
+				dee.exporting = false;
+				sbiModule_messaging.showErrorMessage(e, 'Error');
+			});
 		};	
 
 		dee.exportGeoTo = function (format, contentUrl) {	
@@ -482,7 +503,9 @@
 			
 			switch (engine) {
 			case "CHART":
-				expObj.func = function(){dee.exportDocumentChart(type)};
+				expObj.func = function(){
+					dee.exportDocumentChart(type)
+				};
 				break;
 			case "DOCUMENT_COMPOSITE":
 				switch (type) {
