@@ -4,11 +4,13 @@ import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
 import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
 import it.eng.spagobi.tools.dataset.graph.associativity.AssociativeDatasetContainer;
 import it.eng.spagobi.tools.dataset.graph.associativity.Config;
+import it.eng.spagobi.tools.dataset.graph.associativity.Selection;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -85,7 +87,7 @@ public class AssociativeLogicUtils {
 	}
 
 	public static Config buildConfig(String strategy, Pseudograph<String, LabeledEdge<String>> graph, Map<String, Map<String, String>> datasetToAssociations,
-			Map<String, String> selections, Set<String> realtimeDatasets, Map<String, Map<String, String>> datasetParameters, Set<String> documents) {
+			List<Selection> selections, Set<String> realtimeDatasets, Map<String, Map<String, String>> datasetParameters, Set<String> documents) {
 		Config config = new Config();
 		config.setStrategy(strategy);
 		config.setGraph(graph);

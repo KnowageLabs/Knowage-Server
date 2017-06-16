@@ -4,6 +4,7 @@ import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -14,7 +15,7 @@ public class Config {
 	private String strategy;
 	private Pseudograph<String, LabeledEdge<String>> graph;
 	private Map<String, Map<String, String>> datasetToAssociations;
-	private Map<String, String> selections;
+	private List<Selection> selections;
 	private Set<String> realtimeDatasets;
 	private Map<String, Map<String, String>> datasetParameters;
 	private Set<String> documents;
@@ -49,11 +50,11 @@ public class Config {
 		this.datasetToAssociations = datasetToAssociations;
 	}
 
-	public Map<String, String> getSelections() {
+	public List<Selection> getSelections() {
 		return selections;
 	}
 
-	public void setSelections(Map<String, String> selections) {
+	public void setSelections(List<Selection> selections) {
 		this.selections = selections;
 	}
 

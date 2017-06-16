@@ -49,7 +49,6 @@ public class AssociativeDatasetContainer {
 	protected final IDataSet dataSet;
 	protected final String tableName;
 	protected final IDataSource dataSource;
-	protected final String selection;
 	protected Map<String, String> parameters;
 	protected final Set<String> filters = new HashSet<>();
 	protected final Set<EdgeGroup> groups = new HashSet<>();
@@ -60,11 +59,10 @@ public class AssociativeDatasetContainer {
 
 	private final int SQL_IN_CLAUSE_LIMIT = 999;
 
-	public AssociativeDatasetContainer(IDataSet dataSet, String tableName, IDataSource dataSource, String selection, Map<String, String> parameters) {
+	public AssociativeDatasetContainer(IDataSet dataSet, String tableName, IDataSource dataSource, Map<String, String> parameters) {
 		this.dataSet = dataSet;
 		this.tableName = tableName;
 		this.dataSource = dataSource;
-		this.selection = selection;
 		this.parameters = parameters;
 		this.isSqlServerDialect = dataSource.getHibDialectName().contains("sqlserver");
 	}
@@ -79,10 +77,6 @@ public class AssociativeDatasetContainer {
 
 	public IDataSource getDataSource() {
 		return dataSource;
-	}
-
-	public String getSelection() {
-		return selection;
 	}
 
 	public Set<String> getFilters() {
