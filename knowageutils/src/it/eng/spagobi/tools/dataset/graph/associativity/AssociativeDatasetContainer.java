@@ -56,6 +56,7 @@ public class AssociativeDatasetContainer {
 
 	protected boolean realtime = false;
 	private boolean resolved = false;
+	private boolean isSqlServerDialect;
 
 	private final int SQL_IN_CLAUSE_LIMIT = 999;
 
@@ -65,6 +66,7 @@ public class AssociativeDatasetContainer {
 		this.dataSource = dataSource;
 		this.selection = selection;
 		this.parameters = parameters;
+		this.isSqlServerDialect = dataSource.getHibDialectName().contains("sqlserver");
 	}
 
 	public IDataSet getDataSet() {
@@ -198,6 +200,14 @@ public class AssociativeDatasetContainer {
 	}
 
 	public String buildFilter(String columnNames, Set<String> filterValues) {
+		if (isSqlServerDialect) {
+			return buildAndOrFilter(columnNames, filterValues);
+		} else {
+			return buildInFilter(columnNames, filterValues);
+		}
+	}
+
+	public String buildInFilter(String columnNames, Set<String> filterValues) {
 		String inClauseColumns;
 		String inClauseValues;
 		if (filterValues.size() > SQL_IN_CLAUSE_LIMIT) {
@@ -208,5 +218,36 @@ public class AssociativeDatasetContainer {
 			inClauseValues = StringUtils.join(filterValues, ",");
 		}
 		return "(" + inClauseColumns + ") IN (" + inClauseValues + ")";
+	}
+
+	public String buildAndOrFilter(String columnNames, Set<String> filterValues) {
+		StringBuilder sb = new StringBuilder();
+		String or = "";
+		String[] distinctColumns = columnNames.split(",");
+
+		for (String andOrValues : filterValues) {
+			String and = "";
+			String[] distinctValues = andOrValues.substring(1, andOrValues.length() - 1).split(",");
+
+			sb.append(or);
+			sb.append("(");
+
+			for (int i = 0; i < distinctValues.length; i++) {
+				String column = distinctColumns[i];
+				String value = distinctValues[i];
+
+				sb.append(and);
+				sb.append(column);
+				sb.append("=");
+				sb.append(value);
+
+				and = " AND ";
+			}
+
+			sb.append(")");
+
+			or = " OR ";
+		}
+		return sb.toString();
 	}
 }

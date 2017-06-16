@@ -375,6 +375,7 @@ public class DatasetManagementAPI {
 			List<GroupCriteria> groups, List<FilterCriteria> filters, List<FilterCriteria> filtersForMetaModel, List<FilterCriteria> havings,
 			List<FilterCriteria> havingsForMetaModel, List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections) {
 
+		String message = "An unexpected error occured while executing method";
 		try {
 			logger.debug("Loading dataset with label [" + label + "]");
 			IDataSet dataSet = getDataSetDAO().loadDataSetByLabel(label);
@@ -429,7 +430,7 @@ public class DatasetManagementAPI {
 						}
 						dataStore = cache.get(dataSet, groups, filters, havings, projections, summaryRowProjections, offset, fetchSize, maxRowCount);
 						if (dataStore == null) {
-							throw new CacheException("An unexpected error occured while executing method");
+							throw new CacheException(message);
 						}
 						adjustMetadata((DataStore) dataStore, dataSet, null);
 						dataSet.decode(dataStore);
@@ -451,7 +452,8 @@ public class DatasetManagementAPI {
 			return dataStore;
 
 		} catch (Throwable t) {
-			throw new RuntimeException("An unexpected error occured while executing method", t);
+			logger.error(message, t);
+			throw new RuntimeException(message, t);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -1858,8 +1860,10 @@ public class DatasetManagementAPI {
 	private void setWhereConditions(IDataSource dataSource, List<FilterCriteria> filters, SelectBuilder sqlBuilder) {
 		if (filters != null) {
 			boolean isHsqlDialect = false;
+			boolean isSqlServerDialect = false;
 			if (dataSource != null) {
 				isHsqlDialect = dataSource.getHibDialectName().contains("hsql");
+				isSqlServerDialect = dataSource.getHibDialectName().contains("sqlserver");
 			}
 
 			for (FilterCriteria filter : filters) {
@@ -1868,7 +1872,7 @@ public class DatasetManagementAPI {
 				String leftOperand = null;
 				String[] columns = filter.getLeftOperand().getOperandValueAsString().split(",");
 				if ("IN".equalsIgnoreCase(operator)) {
-					leftOperand = isHsqlDialect ? "(" : "(1,";
+					leftOperand = (isHsqlDialect || isSqlServerDialect) ? "(" : "(1,";
 					String separator = "";
 					for (String value : columns) {
 						leftOperand += separator + AbstractJDBCDataset.encapsulateColumnName(value, dataSource);
@@ -1889,7 +1893,7 @@ public class DatasetManagementAPI {
 				StringBuilder rightOperandSB = new StringBuilder();
 				if (filter.getRightOperand().isCostant()) {
 					if (filter.getRightOperand().isMultivalue()) {
-						if (!isHsqlDialect) {
+						if (!isHsqlDialect && !isSqlServerDialect) {
 							rightOperandSB.append("(");
 						}
 						String separator = "";
@@ -1904,9 +1908,9 @@ public class DatasetManagementAPI {
 									if (i >= columns.length) { // starting from 2nd tuple of values
 										rightOperandSB.append(",");
 									}
-									rightOperandSB.append(isHsqlDialect ? "(" : "(1");
+									rightOperandSB.append(isHsqlDialect || isSqlServerDialect ? "(" : "(1");
 								}
-								if (i % columns.length != 0 || !isHsqlDialect) {
+								if (i % columns.length != 0 || (!isHsqlDialect && !isSqlServerDialect)) {
 									rightOperandSB.append(",");
 								}
 								rightOperandSB.append(value);
@@ -1921,7 +1925,7 @@ public class DatasetManagementAPI {
 							}
 							separator = ",";
 						}
-						if (!isHsqlDialect) {
+						if (!isHsqlDialect && !isSqlServerDialect) {
 							rightOperandSB.append(")");
 						}
 					} else {

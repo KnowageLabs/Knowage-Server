@@ -40,6 +40,8 @@ import it.eng.spagobi.tools.dataset.cache.FilterCriteria;
 import it.eng.spagobi.tools.dataset.cache.Operand;
 import it.eng.spagobi.tools.dataset.cache.ProjectionCriteria;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
+import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
+import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
 import it.eng.spagobi.tools.dataset.common.association.Association;
 import it.eng.spagobi.tools.dataset.common.association.Association.Field;
 import it.eng.spagobi.tools.dataset.common.association.AssociationGroup;
@@ -300,7 +302,8 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 	@Path("/listDataset")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getDocumentSearchAndPaginate(@Context HttpServletRequest req, @QueryParam("Page") String pageStr,
-			@QueryParam("ItemPerPage") String itemPerPageStr, @QueryParam("label") String search, @QueryParam("seeTechnical") Boolean seeTechnical) throws EMFUserError {
+			@QueryParam("ItemPerPage") String itemPerPageStr, @QueryParam("label") String search, @QueryParam("seeTechnical") Boolean seeTechnical)
+			throws EMFUserError {
 
 		ISbiDataSetDAO dao = DAOFactory.getSbiDataSetDAO();
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
@@ -465,7 +468,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 
 							IDataSet dataset = getDataSetDAO().loadDataSetByLabel(datasetLabel);
 							IDataSource dataSource;
-							String filter = "";
+							StringBuilder filterSB = new StringBuilder();
 
 							if (dataset.isPersisted() && !dataset.isPersistedHDFS()) {
 								dataSource = dataset.getDataSourceForWriting();
@@ -475,12 +478,17 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 								dataSource = dataset.getDataSource();
 							} else if (realtimeDatasets.contains(datasetLabel)) {
 								dataSource = null;
-								filter = DataStore.DEFAULT_TABLE_NAME + ".";
+								filterSB.append(DataStore.DEFAULT_TABLE_NAME);
+								filterSB.append(".");
 							} else {
 								dataSource = cacheDataSource;
 							}
-							filter += AbstractJDBCDataset.encapsulateColumnName(column, dataSource) + " IN (" + values + ")";
-							filtersMap.put(datasetLabel, filter);
+							filterSB.append(AbstractJDBCDataset.encapsulateColumnName(column, dataSource));
+							filterSB.append(" IN (");
+							filterSB.append(values);
+							filterSB.append(")");
+
+							filtersMap.put(datasetLabel, filterSB.toString());
 
 							if (!selectionsMap.containsKey(datasetLabel)) {
 								selectionsMap.put(datasetLabel, new HashMap<String, Set<String>>());
@@ -591,8 +599,11 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 
 					List<String> dateColumnNamesList = getDateColumnNamesList(dataSet);
 
+					boolean isCacheSqlServerDialect = ((SQLDBCache) SpagoBICacheManager.getCache()).getDataSource().getHibDialectName().contains("sqlserver");
+
 					if (isRealtime && !(DatasetManagementAPI.isJDBCDataSet(dataSet) && !SqlUtils.isBigDataDialect(dataSet.getDataSource().getHibDialectName()))
 							&& !dataSet.isFlatDataset() && !(dataSet.isPersisted() && !dataSet.isPersistedHDFS())) {
+
 						for (int i = 0; i < columnsList.size(); i++) {
 							columnsList.set(i, DEFAULT_TABLE_NAME_DOT + AbstractJDBCDataset.encapsulateColumnName(columnsList.get(i), null));
 						}
@@ -622,6 +633,50 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 								if (j % columnsList.size() == columnsList.size() - 1) { // last item of tuple of values
 									valuesSB.append(closingBracket);
 								}
+							}
+						}
+						Operand rightOperand = new Operand(valuesSB.toString());
+
+						FilterCriteria filterCriteria = new FilterCriteria(leftOperand, "=", rightOperand);
+						filterCriterias.add(filterCriteria);
+
+					} else if (isCacheSqlServerDialect) {
+
+						for (int i = 0; i < columnsList.size(); i++) {
+							columnsList.set(i, AbstractJDBCDataset.encapsulateColumnName(columnsList.get(i), null));
+						}
+
+						String openingBracket = columnsList.size() > 1 ? "(" : "";
+						String closingBracket = columnsList.size() > 1 ? ")" : "";
+
+						Operand leftOperand = new Operand(openingBracket + columnsList.get(0));
+
+						StringBuilder valuesSB = new StringBuilder();
+
+						List<String> distinctValues = new ArrayList<String>();
+						for (int i = 0; i < values.length(); i++) {
+							String value = values.getString(i);
+							distinctValues.addAll(Arrays.asList(getDistinctValues(value)));
+						}
+
+						for (int i = 0; i < distinctValues.size(); i++) {
+							String value = distinctValues.get(i);
+							String column = columnsList.get(i % columnsList.size());
+							if (i % columnsList.size() == 0) { // 1st item of tuple of values
+								if (i >= columnsList.size()) { // starting from 2nd tuple of values
+									valuesSB.append(" OR ");
+									valuesSB.append(openingBracket);
+								}
+							} else {
+								valuesSB.append(" AND "); // starting from 2nd item of tuple of values
+							}
+							if (i > 0) {
+								valuesSB.append(column);
+								valuesSB.append("=");
+							}
+							valuesSB.append(getProperValueString(value, column, dateColumnNamesList, null));
+							if (i % columnsList.size() == columnsList.size() - 1) { // last item of tuple of values
+								valuesSB.append(closingBracket);
 							}
 						}
 						Operand rightOperand = new Operand(valuesSB.toString());
@@ -796,7 +851,11 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		if (dateColumnNamesList.contains(column)) {
 			return getConvertedDate(value, dataSource);
 		} else {
-			return "'" + value + "'";
+			if (value.startsWith("'") && value.endsWith("'")) {
+				return value;
+			} else {
+				return "'" + value + "'";
+			}
 		}
 	}
 

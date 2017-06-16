@@ -509,8 +509,10 @@ public class SQLDBCache implements ICache {
 						Map<String, String> columnNameWithColonToAliasName = new HashMap<String, String>();
 
 						boolean isHsqlDialect = false;
+						boolean isSqlServerDialect = false;
 						if (dataSource != null) {
 							isHsqlDialect = dataSource.getHibDialectName().contains("hsql");
+							isSqlServerDialect = dataSource.getHibDialectName().contains("sqlserver");
 						}
 
 						// Columns to SELECT
@@ -667,7 +669,7 @@ public class SQLDBCache implements ICache {
 								String leftOperand = null;
 								String[] columns = filter.getLeftOperand().getOperandValueAsString().split(",");
 								if (operator.equalsIgnoreCase("IN")) {
-									leftOperand = isHsqlDialect ? "(" : "(1,";
+									leftOperand = (isHsqlDialect || isSqlServerDialect) ? "(" : "(1,";
 									String separator = "";
 									for (String value : columns) {
 										leftOperand += separator + AbstractJDBCDataset.encapsulateColumnName(value, dataSource);
@@ -692,7 +694,7 @@ public class SQLDBCache implements ICache {
 								StringBuilder rightOperandSB = new StringBuilder();
 								if (filter.getRightOperand().isCostant()) {
 									if (filter.getRightOperand().isMultivalue()) {
-										if (!isHsqlDialect) {
+										if (!isHsqlDialect && !isSqlServerDialect) {
 											rightOperandSB.append("(");
 										}
 										String separator = "";
@@ -707,9 +709,9 @@ public class SQLDBCache implements ICache {
 													if (i >= columns.length) { // starting from 2nd tuple of values
 														rightOperandSB.append(",");
 													}
-													rightOperandSB.append(isHsqlDialect ? "(" : "(1");
+													rightOperandSB.append(isHsqlDialect || isSqlServerDialect ? "(" : "(1");
 												}
-												if (i % columns.length != 0 || !isHsqlDialect) {
+												if (i % columns.length != 0 || (!isHsqlDialect && !isSqlServerDialect)) {
 													rightOperandSB.append(",");
 												}
 												rightOperandSB.append(value);
@@ -724,7 +726,7 @@ public class SQLDBCache implements ICache {
 											}
 											separator = ",";
 										}
-										if (!isHsqlDialect) {
+										if (!isHsqlDialect && !isSqlServerDialect) {
 											rightOperandSB.append(")");
 										}
 									} else {
