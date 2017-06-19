@@ -9,6 +9,7 @@
 	      </div>
 	</md-toolbar>
 	<md-dialog-content>
+		<form name="attributeFormUseMOde">
 		 <md-card>
 		 	<md-content layout-padding>
 			 	<div layout="row" layout-wrap>
@@ -18,7 +19,7 @@
 											<input name="lbl" ng-model="selectedParUse.label" ng-required="selectedTab == 1"
 											maxlength="20" ng-change="setDirty()">
 										
-												<div  ng-messages="attributeForm.lbl.$error" ng-show="selectedParUse.label== null">
+												<div  ng-messages="attributeFormUseMOde.lbl.$error" ng-show="selectedParUse.label== null">
 													<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 												</div>
 										
@@ -32,7 +33,7 @@
 										<input name="name" ng-model="selectedParUse.name"  ng-required = "selectedTab == 1"
 									    maxlength="40" ng-change="setDirty()">
 									    
-									    <div  ng-messages="attributeForm.name.$error" ng-show="selectedParUse.name== null">
+									    <div  ng-messages="attributeFormUseMOde.name.$error" ng-show="selectedParUse.name== null">
 							        <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 							      </div>
 									        
@@ -78,7 +79,7 @@
 				        ng-repeat="l in listDate | filter:searchLovText" value="{{l.id}}">{{l.label}}-{{l.name}}-{{l.description}}
 				        </md-option>
 				       </md-select>
-				       <div  ng-messages="attributeForm.dropdown.$error" ng-show="selectedParUse.idLov== -1">
+				       <div  ng-messages="attributeFormUseMOde.dropdown.$error" ng-show="selectedParUse.idLov== null">
 				        <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 				      </div>   
 				        </md-input-container>
@@ -94,7 +95,7 @@
 							        ng-model="selectedParUse.selectionType"> <md-option 
 							        ng-repeat="l in listSelType track by $index" value="{{l.VALUE_CD}}">{{l.VALUE_NM}}</md-option>
 						       </md-select>
-						       <div  ng-messages="attributeForm.dropdown.$error" ng-show="selectedParUse.selectionType== null">
+						       <div  ng-messages="attributeFormUseMOde.dropdown.$error" ng-show="selectedParUse.selectionType== null">
 						        	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 						      </div>   
 					        </md-input-container>
@@ -124,7 +125,7 @@
 								        <md-option 
 								        ng-repeat="l in layersList | filter:searchLayerText" value="{{l.name}}">{{l.label}}-{{l.name}}-{{l.type}}</md-option>
 							       </md-select>
-							       <div  ng-messages="attributeForm.dropdown.$error" ng-show="selectedParUse.selectedLayer== null">
+							       <div  ng-messages="attributeFormUseMOde.dropdown.$error" ng-show="selectedParUse.selectedLayer== null">
 							       		<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 							      </div>   
 					        </md-input-container>
@@ -169,7 +170,7 @@
 						       <label>{{translate.load("sbi.analytical.drivers.usemode.lov")}}</label>
 						       <md-select  aria-label="dropdown"
 						       name ="dropdown" 
-						        ng-required = "defaultrg == 'lov'"
+						        ng-required = "selectedParUse.defaultrg== 'lov'"
 						        ng-model="selectedParUse.idLovForDefault"
 						        md-on-close="clearLovSearch()"
 						        >
@@ -186,7 +187,7 @@
 						       	 <md-option 
 						        ng-repeat="l in listDate  | filter:searchLovText" value="{{l.id}}">{{l.label}}-{{l.name}}-{{l.description}}</md-option>
 						       </md-select>
-						       <div  ng-messages="attributeForm.dropdown.$error" ng-show="selectedParUse.idLovForDefault == -1">
+						       <div  ng-messages="attributeFormUseMOde.dropdown.$error" ng-show="selectedParUse.idLovForDefault == null">
 						        <div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 						      </div>   
 					       </md-input-container>
@@ -200,11 +201,11 @@
 						       <label>{{translate.load("sbi.generic.select")}}</label>
 						       <md-select  aria-label="dropdown"
 						       	name ="dropdown" 
-						        ng-required = "defaultrg == 'pickup'"
+						        ng-required = "selectedParUse.defaultrg == 'pickup'"
 						        ng-model="selectedParUse.defaultFormula"> <md-option 
 						        ng-repeat="f in defaultFormula track by $index" value="{{f.f_value}}">{{f.name}} </md-option>
 						       </md-select>
-						       <div  ng-messages="attributeForm.dropdown.$error" ng-show="selectedParUse.defaultFormula == null">
+						       <div  ng-messages="attributeFormUseMOde.dropdown.$error" ng-show="selectedParUse.defaultFormula == null">
 						       		<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
 						       </div>   
 					        </md-input-container>
@@ -285,14 +286,14 @@
 			    </div>	
 			</md-content>
 		 </md-card>	 
-					 
+			</form>		 
 	</md-dialog-content>	
 	<md-dialog-actions layout="row" style="margin-top:25px;">
 		<md-button class="md-raised" ng-click="closeDialogFromAD()">
 		{{translate.load("sbi.generic.cancel");}}
 		</md-button>
 	
-		<md-button class="md-raised" ng-click="save()">
+		<md-button class="md-raised" ng-click="save()" ng-disabled="!(attributeFormUseMOde.$valid && associatedRoles.length>0)">
 			{{translate.load("sbi.generic.save");}}
 		</md-button>
 	</md-dialog-actions>

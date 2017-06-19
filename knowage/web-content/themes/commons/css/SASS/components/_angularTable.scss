@@ -1,4 +1,73 @@
+angular-table {
+	&.alternatedRows {
+		table>tbody>tr {
+			&:nth-child(even) {
+				background-color: darken($pageBackground,5%);
+				&:hover{
+	    			background-color: lighten($tableSelectedElementColor,5%);
+	    		}
+	    		&.selectedRowItem {
+				    background-color: $tableSelectedElementColor;
+				 }
+			}
+		}
+	}
+	thead {
+		md-checkbox.md-knowage-theme {
+			._md-icon {
+				background-color: $lightTextColor;
+			}
+			&.md-checked {
+				border-color: $lightTextColor;
+				._md-icon {
+					background-color: $secondaryColor;
+				}
+			}
+		}
+	}
+	//fixed table header
+	#angularFullTableContentBox:not(.relativeHeader){
+		position: relative;
+		padding-top: $toolbarHeight;
+		.angularTableHeader {
+			background-color: $lightTextColor;
+			height: $toolbarHeight;
+			position: absolute;
+			top: 0;
+			right: 0;
+			left: 0;
+		}
+		tr {
+			th:first-child {
+				.th-inner {
+					margin-left: 5px;
+				}
+			}
+			th {
+				.th-inner {
+					position: absolute;
+					color: $baseColor;
+					top: 0;
+					line-height: $toolbarHeight;
+					padding-left: 5px;
+					margin-left: -5px;
+					md-icon {
+						color: $baseColor;
+						width: 1.3rem;
+						text-align: center;
+						margin-left: -5px;
+					}
+				}
+			}
+		}
+	}
+}
+
 angular-table, cockpit-angular-table{
+	padding: 0;
+    overflow: auto;
+    overflow-y: hidden;
+    min-height:200px;
 	.infoBar {
 		font-size: $baseFontSize;
 		background-color: lighten($secondaryColor,20%);
@@ -34,14 +103,6 @@ angular-table, cockpit-angular-table{
 	table>thead {
 	    background: white;
 	  }
-	
-	&{
-	    padding: 0 5px;
-	    overflow: auto;
-	    overflow-y: hidden;
-	    min-height:200px;
-	  }
-	
 	angular-table-actions {
 	    margin-top: $standardPadding;
 	    margin-bottom: $standardPadding;
@@ -54,12 +115,10 @@ angular-table, cockpit-angular-table{
 	    color: $baseColor;
 	    font-weight: 600;
 	  }
-	
-	/*
-	&[multi-select] table>thead>tr>th:nth-child(2), &:not(multi-select) table>thead>tr>th:nth-child(1), &[multi-select] table>tbody>tr>td:nth-child(2), &:not(multi-select) table>tbody>tr>td:nth-child(1) {
-	    padding: 5px !important
-	  }
-	*/
+
+	 table>tbody>tr {
+	 	background-color: $pageBackground;
+	 }
 	
 	table>tbody>tr.selectedRowItem {
 	    background-color: $tableSelectedElementColor;
@@ -67,16 +126,12 @@ angular-table, cockpit-angular-table{
 	
 	table>tbody>tr:hover{
 	    cursor: pointer;
-	    background-color: #EEEEEE;
+	    background-color: lighten($tableSelectedElementColor,5%);
 	}
 	
 	table thead th div {
 	    align-items: center;
-	    /*height: 40px;
-	    line-height: 40px;*/
 	  }
-	  
-	  /*style giovannilucaulivo@eng.it */
 	
 	*:focus {
 		outline: none;
@@ -93,16 +148,13 @@ angular-table, cockpit-angular-table{
 		overflow-y: auto;
 	}
 	
-	/* Tabella con molte colonne */
-	
 	&[full-width] #angularFullTableContentBox{ 
 		width: 100%;
 	    overflow: auto;
 	}
 	
-		
 	&[full-width] #angularTableContentBox{ 
-		  overflow-x: hidden;
+		  overflow-x: auto;
 	}
 	
 	&[full-width]  table{
@@ -118,18 +170,13 @@ angular-table, cockpit-angular-table{
 			border-collapse: collapse;
 			width: 100% !important;
 		}
-	}
-	
-	/* Fine Tabella con molte colonne */
-	
+	}	
 	
 	table {
 		width: 100%;
 		table-layout: fixed; 
 		border-spacing: 0;
 	}
-	
-	
 	
 	&[multi-select] table>thead>tr>th:nth-child(n+3):nth-last-child(n+2),
 	&[multi-select] table>tbody>tr>td:nth-child(n+3):nth-last-child(n+2),
@@ -144,12 +191,21 @@ angular-table, cockpit-angular-table{
 	}
 	
 	table>thead>tr>th:last-child,
-	table>tbody>tr>td:last-child{
-	//padding: 0 $standardPadding;
+	table>tbody>tr>td:last-child{}
+	
+	.angularTableSelectAll {
+		md-checkbox {
+			top: 5px;
+			._md-container {
+				margin-left: 0 !important;
+			}
+			._md-icon {
+				margin-left: 0 !important;
+				top: 6px;
+			}
+		}
 	}
-	
 	 
-	
 	table thead th div md-icon{
 	margin-top: 9px;
 	    width: 7px;
@@ -188,9 +244,7 @@ angular-table, cockpit-angular-table{
 		background-color: #C0C9D0!important;
 	    }
 	     
-	    table>tbody>tr>td button.actionButton md-icon{	
-	        /*line-height: 25px!important; ANGULAR MATERIAL NEW VERSION DEBUG */
-	    }
+	    table>tbody>tr>td button.actionButton md-icon{}
 	
 	@-moz-document url-prefix() {
 		table>tbody>tr>td{
@@ -245,15 +299,12 @@ angular-table, cockpit-angular-table{
 	.principalTable tr td:first-child>span {
 	    margin-left: $standardPadding;
 	}
-	.principalTable tr td:first-child > md-checkbox {
-	    /*margin-left: $standardPadding;*/
-	}
+	.principalTable tr td:first-child > md-checkbox {}
 	
 	
 	.principalTable tr td button.md-icon-button {
 	    md-icon {
 	        position: relative;
-	        /*left: -$tabPadding/2;*/
 	    }
 	}
 	/* pagination */
@@ -346,19 +397,17 @@ angular-table, cockpit-angular-table{
 		display: block;
 	}
 	
-	  .dropdown_menu_list md-list-item,   .dropdown_menu_list md-list-item button,
-		  .dropdown_menu_list md-list-item .md-list-item-inner {
-	/* 	min-height: 15px !important; */
-	min-height: 22px !important;
+	.dropdown_menu_list md-list-item, .dropdown_menu_list md-list-item button, .dropdown_menu_list md-list-item .md-list-item-inner {
+		min-height: 22px !important;
 	}
 	
-	  .dropdown_menu_list md-list-item p {
+  	.dropdown_menu_list md-list-item p {
 		line-height: 20px;
 		margin: 3px;
 		color: black;
 	}
 	
-	  .dropdown_menu_list md-list.bottomBorder md-list-item button {
+  	.dropdown_menu_list md-list.bottomBorder md-list-item button {
 		border-bottom: 1px solid rgb(176, 190, 197);
 		padding: 0;
 		margin-left: 8px;
@@ -366,13 +415,15 @@ angular-table, cockpit-angular-table{
 		border-radius: 0;
 	}
 	
-	  md-checkbox {
-	margin-bottom: 0px;
+  	md-checkbox.md-knowage-theme {
+		margin-bottom: 0;
+		._md-label {
+			margin-left:0;
+		}
 	}
 	
-	
-	  .tableDragBar {
-	padding: 0 !important;
+  	.tableDragBar {
+		padding: 0 !important;
 	    text-align: center;
 	    color: grey;
 	}
@@ -417,9 +468,13 @@ angular-table, cockpit-angular-table{
 		min-height: 50px;
 	    line-height: 50px;
 	    background-color: white;
+	    md-checkbox {
+	    	._md-label {
+	    		margin-left: 30px;
+	    	}
+	    }
 	}
 	.principalTable>thead>tr>th>div{
-		//height: 0px!important;
 		@extend .noSelect;
 		cursor: pointer;
 		height: $angularTableTRHeight;
@@ -473,6 +528,20 @@ angular-table, cockpit-angular-table{
 			text-overflow: clip !important;
 		}
 	}
+	.hiddenColumn {
+		display:none;
+	}
+	.angularTableSelectAll {
+		overflow: visible;
+		&:before {
+			content:'Select All';
+			position: absolute;
+			top: -10px;
+			left: -5px;
+			font-size: $smallFontSize;
+		}
+	}
+
 }
 
 /* IE11 fix */
@@ -493,5 +562,7 @@ angular-table, cockpit-angular-table{
 	  	border-collapse: separate;
 	  }
 	}
-  
+  angular-table table > thead > tr > th > div, .kn-cockpit cockpit-static-pivot-table-widget table > thead > tr > th > div, cockpit-angular-table table > thead > tr > th > div {
+  	overflow: visible;
+  }
 }

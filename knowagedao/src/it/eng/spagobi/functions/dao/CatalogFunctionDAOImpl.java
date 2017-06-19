@@ -119,6 +119,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 			String alias = inputFile.getAlias();
 			byte[] content = inputFile.getContent();
 			file = new SbiFunctionInputFile(new SbiFunctionInputFileId(sbiCatalogFunction.getFunctionId(), fileName), sbiCatalogFunction, content, alias);
+			updateSbiCommonInfo4Insert(file);
 			inputFileSet.add(file);
 		}
 
@@ -133,9 +134,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 		IEngUserProfile profile = getUserProfile();
 
 		for (String datasetLabel : inputDatasets) {
-
 			// Create and Insert Dataset
-
 			IDataSetDAO dataSetDAO = null;
 			try {
 				dataSetDAO = DAOFactory.getDataSetDAO();
@@ -150,6 +149,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 			IDataSet iDataSet = dataSetDAO.loadDataSetByLabel(datasetLabel);
 			int dsId = iDataSet.getId();
 			dataset = new SbiFunctionInputDataset(new SbiFunctionInputDatasetId(sbiCatalogFunction.getFunctionId(), dsId));
+			updateSbiCommonInfo4Insert(dataset);
 			inputDatasetSet.add(dataset);
 		}
 
@@ -165,6 +165,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 		for (String varName : inputVariables.keySet()) {
 			String value = inputVariables.get(varName);
 			var = new SbiFunctionInputVariable(new SbiFunctionInputVariableId(sbiCatalogFunction.getFunctionId(), varName), sbiCatalogFunction, value);
+			updateSbiCommonInfo4Insert(var);
 			inputVarSet.add(var);
 		}
 
@@ -183,6 +184,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 				domain = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("FUNCTION_OUTPUT", outType);
 				Integer outTypeSbiDomainId = domain.getValueId();
 				var = new SbiFunctionOutput(new SbiFunctionOutputId(sbiCatalogFunction.getFunctionId(), varLabel), sbiCatalogFunction, outTypeSbiDomainId);
+				updateSbiCommonInfo4Insert(var);
 				outputVariablesSet.add(var);
 			} catch (EMFUserError e) {
 				throw new SpagoBIDAOException("An error occured while getting domain by code [FUNCTION_OUTPUT] and value [" + outType + "]", e);
@@ -282,6 +284,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 			boolean delete = true;
 			if (updatedFunctionContainsDatasets(updatedCatalogFunction.getInputDatasets(), di.getId().getDsId())) {
 				delete = false;
+				updateSbiCommonInfo4Update(di);
 				IDataSet datasetHib = DAOFactory.getDataSetDAO().loadDataSetById(di.getId().getDsId());
 				updatedCatalogFunction.getInputDatasets().remove(datasetHib.getLabel());
 			}
@@ -302,7 +305,9 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 		Set<SbiFunctionInputDataset> hibDatasetSet = hibCatFunction.getSbiFunctionInputDatasets();
 		for (String dsLabel : updatedCatalogFunction.getInputDatasets()) {
 			IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetByLabel(dsLabel);
-			hibDatasetSet.add(new SbiFunctionInputDataset(new SbiFunctionInputDatasetId(hibCatFunction.getFunctionId(), dataset.getId())));
+			SbiFunctionInputDataset inputDataset = new SbiFunctionInputDataset(new SbiFunctionInputDatasetId(hibCatFunction.getFunctionId(), dataset.getId()));
+			updateSbiCommonInfo4Insert(inputDataset);
+			hibDatasetSet.add(inputDataset);
 		}
 
 	}
@@ -316,6 +321,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 			boolean delete = true;
 			if (updatedFunctionContainsFile(updatedCatalogFunction.getInputFiles(), fi.getId().getFileName())) {
 				delete = false;
+				updateSbiCommonInfo4Update(fi);
 				fi.setContent(getBytesFromFileName(fi.getId().getFileName(), updatedCatalogFunction.getInputFiles()));
 				removeFileWithName(fi.getId().getFileName(), updatedCatalogFunction.getInputFiles());
 			}
@@ -335,8 +341,10 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 		Set<SbiFunctionInputFile> hibFilesSet = hibCatFunction.getSbiFunctionInputFiles();
 		for (CatalogFunctionInputFile file : updatedCatalogFunction.getInputFiles()) {
 			byte[] fileContent = file.getContent();
-			hibFilesSet.add(new SbiFunctionInputFile(new SbiFunctionInputFileId(hibCatFunction.getFunctionId(), file.getFileName()), hibCatFunction,
-					fileContent, file.getAlias()));
+			SbiFunctionInputFile inputFile = new SbiFunctionInputFile(new SbiFunctionInputFileId(hibCatFunction.getFunctionId(), file.getFileName()),
+					hibCatFunction, fileContent, file.getAlias());
+			updateSbiCommonInfo4Insert(inputFile);
+			hibFilesSet.add(inputFile);
 		}
 
 	}
@@ -350,6 +358,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 			boolean delete = true;
 			if (updatedCatalogFunction.getInputVariables().keySet().contains(vi.getId().getVarName())) {
 				delete = false;
+				updateSbiCommonInfo4Update(vi);
 				vi.setVarValue(updatedCatalogFunction.getInputVariables().get(vi.getId().getVarName()));
 				updatedCatalogFunction.getInputVariables().remove(vi.getId().getVarName());
 			}
@@ -369,7 +378,10 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 		Set<SbiFunctionInputVariable> hibVarsSet = hibCatFunction.getSbiFunctionInputVariables();
 		for (String varName : updatedCatalogFunction.getInputVariables().keySet()) {
 			String varValue = updatedCatalogFunction.getInputVariables().get(varName);
-			hibVarsSet.add(new SbiFunctionInputVariable(new SbiFunctionInputVariableId(hibCatFunction.getFunctionId(), varName), hibCatFunction, varValue));
+			SbiFunctionInputVariable var = new SbiFunctionInputVariable(new SbiFunctionInputVariableId(hibCatFunction.getFunctionId(), varName),
+					hibCatFunction, varValue);
+			updateSbiCommonInfo4Insert(var);
+			hibVarsSet.add(var);
 		}
 
 	}
@@ -383,7 +395,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 			boolean delete = true;
 			if (updatedCatalogFunction.getOutputs().keySet().contains(oi.getId().getLabel())) {
 				delete = false;
-
+				updateSbiCommonInfo4Update(oi);
 				Domain domain = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("FUNCTION_OUTPUT",
 						updatedCatalogFunction.getOutputs().get(oi.getId().getLabel()));
 				Integer outTypeSbiDomainId = domain.getValueId();
@@ -410,8 +422,10 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 			// String outType = updatedCatalogFunction.getOutputs().get(outLabel);
 			Domain domain = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("FUNCTION_OUTPUT", updatedCatalogFunction.getOutputs().get(outLabel));
 			Integer outTypeSbiDomainId = domain.getValueId();
-
-			hibOutSet.add(new SbiFunctionOutput(new SbiFunctionOutputId(hibCatFunction.getFunctionId(), outLabel), hibCatFunction, outTypeSbiDomainId));
+			SbiFunctionOutput functionOutput = new SbiFunctionOutput(new SbiFunctionOutputId(hibCatFunction.getFunctionId(), outLabel), hibCatFunction,
+					outTypeSbiDomainId);
+			updateSbiCommonInfo4Insert(functionOutput);
+			hibOutSet.add(functionOutput);
 		}
 
 	}

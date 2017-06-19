@@ -423,7 +423,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 					aSession.disableFilter("tenantFilter");
 					Query listQuery = aSession.createQuery("from SbiDataSet h where h.active = ? and h.configuration like :previousDataSource");
 					listQuery.setBoolean(0, true);
-					listQuery.setParameter("previousDataSource", "%dataSource%:%"+previousDataSourceLabel+"\"%");
+					listQuery.setParameter("previousDataSource", "%dataSource%:%" + previousDataSourceLabel + "\"%");
 					List dsList = listQuery.list();
 
 					// iterate the dataset, (only the active ones)
@@ -663,8 +663,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 	}
 
 	/**
-	 * From the hibernate DataSource at input, gives the corrispondent
-	 * <code>DataSource</code> object.
+	 * From the hibernate DataSource at input, gives the corrispondent <code>DataSource</code> object.
 	 *
 	 * @param hibDataSource
 	 *            The hybernate data source

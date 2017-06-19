@@ -320,7 +320,7 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 
 			String allDocumentLabels = "";
 			boolean firstTime = true;
-
+			int sequence = 0;
 			for (int documentIndex = 0; documentIndex < documentLabels.length; documentIndex++) {
 				documentInstanceName = documentLabels[documentIndex];
 				documentLabel = documentInstanceName.substring(0, documentInstanceName.lastIndexOf("__"));
@@ -515,9 +515,9 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 						String contentType = executionProxy.getReturnedContentType();
 
 						String fileExtension = null;
-						if ("application/vnd.ms-excel".equals(contentType)) {
+						if (contentType.contains("application/vnd.ms-excel")) {
 							fileExtension = "xls";
-						} else if ("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet".equals(contentType)) {
+						} else if (contentType.contains("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")) {
 							fileExtension = "xlsx";
 						} else {
 							fileExtension = MimeUtils.getFileExtension(contentType);
@@ -537,6 +537,7 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 						dispatchContext.setTotalNumberOfDocumentsToDispatch(documentLabels.length);
 						dispatchContext.setIndexNumberOfDocumentToDispatch(documentIndex);
 						dispatchContext.setSchedulationStartDate(startSchedule);
+						dispatchContext.setSequence(sequence);
 
 						// unique mail is calculated one for all
 						dispatchContext.setGlobalUniqueMail(uniqueMailForAll);
@@ -557,6 +558,7 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 						if (globalDocumentDispatcher == null) {
 							documentDispatcher.dispose();
 						}
+						sequence++;
 
 					} else {
 						logger.warn("The document with label " + documentInstanceName + " cannot be executed directly, "

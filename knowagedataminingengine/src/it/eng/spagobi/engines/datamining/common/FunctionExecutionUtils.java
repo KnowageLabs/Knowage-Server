@@ -64,8 +64,8 @@ public class FunctionExecutionUtils {
 				d.setSpagobiLabel(iDataset.getLabel());
 				d.setCanUpload(true);
 				d.setName(iDataset.getName());
-				d.setType("Dataset"); // or DataMiningConstants.DATASET_OUTPUT or DataMiningConstants.SPAGOBI_DS_OUTPUT, the dataminingEngine differences
-										// spagoBI datasets from file datasets created when executing a document
+				d.setType(DataMiningConstants.DATASET_TYPE_DATASET); // the dataminingEngine differences spagoBI datasets from file datasets created when
+																		// executing a document
 				JSONObject confObj = new JSONObject(iDataset.getConfiguration());
 
 				if (confObj.has("fileName")) {

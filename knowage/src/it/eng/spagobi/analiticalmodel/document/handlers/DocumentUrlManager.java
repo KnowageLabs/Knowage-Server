@@ -684,6 +684,8 @@ public class DocumentUrlManager {
 							values.add(anObject.toString());
 						}
 					}
+				} else if (o.toString().startsWith("{;{}")) {
+					// old multivalue parameters case (for back compatibily with documetn composition engine
 				} else {
 					// trim value at beginning and end of the string
 					String valToInsert = o.toString();
@@ -707,6 +709,8 @@ public class DocumentUrlManager {
 							descrs.add(anObject.toString());
 						}
 					}
+				} else if (oDescr instanceof Integer) {
+					descrs.add(oDescr);
 				} else {
 					// should be in thew form of ;
 					StringTokenizer stk = new StringTokenizer((String) oDescr, ";");

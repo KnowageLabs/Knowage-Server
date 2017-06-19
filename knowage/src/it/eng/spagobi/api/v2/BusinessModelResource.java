@@ -176,7 +176,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 				businessModelList = businessModelsDAO.loadMetaModelByCategories(categories);
 				for (MetaModel bm : businessModelList) {
 					Content content = businessModelsDAO.loadActiveMetaModelContentById(bm.getId());
-					if (content != null) {
+					if (content != null && content.getFileName().endsWith("jar")) {
 						businessModelsWithDatamart.add(bm);
 					}
 				}
@@ -393,7 +393,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 				bm = new MetaModel();
 				return bm;
 			}
-			if(businessModelsDAO.loadMetaModelByName(bm.getName())!=null){
+			if (businessModelsDAO.loadMetaModelByName(bm.getName()) != null) {
 				throw new SpagoBIDAOMetaModelNameExistingException("Error while trying to add new business model with existing name");
 			}
 			businessModelsDAO.insertMetaModel(bm);
@@ -403,10 +403,10 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 				businessModelsDAO.lockMetaModel(insertedBM.getId(), (String) getUserProfile().getUserId());
 			}
 			return insertedBM;
-		} catch(SpagoBIDAOMetaModelNameExistingException e){
+		} catch (SpagoBIDAOMetaModelNameExistingException e) {
 			logger.error("Error while trying to add new business model with existing name", e);
 			throw new SpagoBIRestServiceException("A model with same name already exists", buildLocaleFromSession(), e);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			logger.error("An error occurred while inserting new business model in database", e);
 			throw new SpagoBIRestServiceException("An error occurred while inserting new business model in database", buildLocaleFromSession(), e);
 

@@ -17,6 +17,16 @@
  */
 package it.eng.spagobi.commons.dao;
 
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.metadata.SbiCommonInfo;
+import it.eng.spagobi.commons.metadata.SbiHibernateModel;
+import it.eng.spagobi.commons.utilities.HibernateSessionManager;
+import it.eng.spagobi.tenant.Tenant;
+import it.eng.spagobi.tenant.TenantManager;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -27,16 +37,6 @@ import org.hibernate.Criteria;
 import org.hibernate.Filter;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.metadata.SbiCommonInfo;
-import it.eng.spagobi.commons.metadata.SbiHibernateModel;
-import it.eng.spagobi.commons.utilities.HibernateSessionManager;
-import it.eng.spagobi.tenant.Tenant;
-import it.eng.spagobi.tenant.TenantManager;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * Abstract class that al DAO will have to extend.
@@ -283,7 +283,7 @@ public class AbstractHibernateDAO {
 		Session session = null;
 		T toReturn = null;
 
-		LogMF.debug(logger, "IN: id = [{0}]", id);
+		logger.debug("IN: id = [" + id + "]");
 
 		try {
 			if (id == null) {
@@ -480,15 +480,18 @@ public class AbstractHibernateDAO {
 	}
 
 	private <T extends SbiHibernateModel> List<T> internalList(Class<T> clazz, ICriterion<T> criterion) {
+		logger.debug("IN");
 		List<T> ret = null;
 		Session session = null;
 		try {
 			try {
+				logger.debug("Getting session");
 				session = getSession();
 				Assert.assertNotNull(session, "session cannot be null");
 			} catch (Throwable t) {
 				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 			}
+			logger.debug("Getting list");
 			ret = internalList(clazz, criterion, session);
 		} catch (Throwable t) {
 			throw new SpagoBIDAOException("An unexpected error occured while fetching objects of type [" + clazz + "] ", t);

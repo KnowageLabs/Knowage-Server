@@ -609,7 +609,7 @@ public class MetaService extends AbstractSpagoBIResource {
 
 		JSONObject jsonData = new JSONObject();
 		try {
-			jsonData.put("schema", schemaName);
+			jsonData.put("schemaName", schemaName);
 			jsonData.put("catalogName", catalogName);
 
 		} catch (JSONException e) {

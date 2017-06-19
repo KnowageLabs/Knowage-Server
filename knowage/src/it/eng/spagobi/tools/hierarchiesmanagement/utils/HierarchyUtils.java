@@ -659,11 +659,12 @@ public class HierarchyUtils {
 		String hierTypeCol = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_TP, dataSource);
 		String dimFilterFieldCol = AbstractJDBCDataset.encapsulateColumnName(dimFilterField, dataSource);
 		String selectFilterCol = AbstractJDBCDataset.encapsulateColumnName(hierFilterField, dataSource);
-		// where
+		// where are equal almost the begin date between the dimension and the hierarchy (or both begin and date)
 		StringBuffer query = new StringBuffer("SELECT " + selectClause + " FROM " + dimensionName + " D, " + hierTableName + " H");
 		query.append(" WHERE  D." + dimFilterFieldCol + " = H." + selectFilterCol);
-		query.append(" AND D." + beginDtColumn + " = H." + beginDtColumn);
-		query.append(" AND D." + endDtColumn + " = H." + endDtColumn);
+		query.append(" AND (( D." + beginDtColumn + " = H." + beginDtColumn);
+		query.append(" AND D." + endDtColumn + " = H." + endDtColumn + ") OR ");
+		query.append(" (D." + beginDtColumn + " = H." + beginDtColumn + " ))");
 		query.append(" AND H." + hierNameCol + " = '" + filterHierarchy + "' AND " + hierTypeCol + " = '" + filterHierType + "'");
 
 		//

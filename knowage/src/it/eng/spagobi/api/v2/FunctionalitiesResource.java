@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.api.v2;
 
+import it.eng.qbe.serializer.SerializationException;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
@@ -73,6 +74,7 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("/")
+	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONALITIES_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response getFolders(@DefaultValue("false") @QueryParam("includeDocs") Boolean recoverBIObjects, @QueryParam("perm") String permissionOnFolder,
 			@QueryParam("dateFilter") String dateFilter) {
@@ -149,7 +151,7 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 		}
 	}
 
-	private JSONArray makeShortCreatRolesOfFolder(LowFunctionality lowFunctionality) {
+	private JSONArray makeShortCreatRolesOfFolder(LowFunctionality lowFunctionality) throws SerializationException {
 		Role[] arrayCreat = lowFunctionality.getCreateRoles();
 		JSONArray filteredListArray = new JSONArray();
 		for (int i = 0; i < arrayCreat.length; i++) {
@@ -159,15 +161,14 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 				aRoleJson.put("id", aRole.getId());
 				aRoleJson.put("name", aRole.getName());
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new SerializationException("An error occurred while serializing role: " + aRole.getName(), e);
 			}
 			filteredListArray.put(aRoleJson);
 		}
 		return filteredListArray;
 	}
 
-	private JSONArray makeShortExecRolesOfFolder(LowFunctionality lowFunctionality) {
+	private JSONArray makeShortExecRolesOfFolder(LowFunctionality lowFunctionality) throws SerializationException {
 		Role[] arrayExec = lowFunctionality.getExecRoles();
 		JSONArray filteredListArray = new JSONArray();
 		for (int i = 0; i < arrayExec.length; i++) {
@@ -177,15 +178,14 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 				aRoleJson.put("id", aRole.getId());
 				aRoleJson.put("name", aRole.getName());
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new SerializationException("An error occurred while serializing role: " + aRole.getName(), e);
 			}
 			filteredListArray.put(aRoleJson);
 		}
 		return filteredListArray;
 	}
 
-	private JSONArray makeShortTestRolesOfFolder(LowFunctionality lowFunctionality) {
+	private JSONArray makeShortTestRolesOfFolder(LowFunctionality lowFunctionality) throws SerializationException {
 		Role[] arrayTest = lowFunctionality.getTestRoles();
 		JSONArray filteredListArray = new JSONArray();
 		for (int i = 0; i < arrayTest.length; i++) {
@@ -195,15 +195,14 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 				aRoleJson.put("id", aRole.getId());
 				aRoleJson.put("name", aRole.getName());
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new SerializationException("An error occurred while serializing role: " + aRole.getName(), e);
 			}
 			filteredListArray.put(aRoleJson);
 		}
 		return filteredListArray;
 	}
 
-	private JSONArray makeShortDevRolesOfFolder(LowFunctionality lowFunctionality) {
+	private JSONArray makeShortDevRolesOfFolder(LowFunctionality lowFunctionality) throws SerializationException {
 		Role[] arrayDev = lowFunctionality.getDevRoles();
 		JSONArray filteredListArray = new JSONArray();
 		for (int i = 0; i < arrayDev.length; i++) {
@@ -213,8 +212,7 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 				aRoleJson.put("id", aRole.getId());
 				aRoleJson.put("name", aRole.getName());
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new SerializationException("An error occurred while serializing role: " + aRole.getName(), e);
 			}
 			filteredListArray.put(aRoleJson);
 		}
@@ -387,7 +385,6 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 			lowFunctionality = objDao.insertLowFunctionality(lowFunctionality, getUserProfile());
 			return Response.ok(lowFunctionality).build();
 		} catch (Exception e) {
-			e.printStackTrace();
 			String errorString = "sbi.folder.save.error";
 			logger.error(errorString, e);
 			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
@@ -471,7 +468,6 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 			return Response.ok().build();
 
 		} catch (Exception e) {
-			e.printStackTrace();
 			String errorString = "sbi.folder.modify.error";
 			logger.error(errorString, e);
 			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
@@ -740,7 +736,6 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 			logger.error(errorString, eMFUserError);
 			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), eMFUserError);
 		} catch (Exception e) {
-			e.printStackTrace();
 			String errorString = "sbi.folder.delete.error";
 			logger.error(errorString, e);
 			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);

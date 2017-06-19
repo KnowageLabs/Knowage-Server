@@ -56,7 +56,7 @@
 			},
 
 			buildStringParameters : function (documentParameters) {
-				console.log('buildStringParameters ' , documentParameters);
+				//console.log('buildStringParameters ' , documentParameters);
 				
 				var jsonDatum =  {};
 				if(documentParameters.length > 0) {
@@ -285,39 +285,72 @@
 				}
 			},
 			
+			
+			
 			resetParameter: function(parameter) {
-				if(parameter.valueSelection.toLowerCase() == 'lov') {
-					if(parameter.selectionType.toLowerCase() == 'tree') {
-						if(parameter.multivalue) {
-							parameter.parameterValue = [];
-							documentExecuteServicesObj.resetParameterInnerLovData(parameter.children);
-						} else {
-							parameter.parameterValue = '';
-						}
-					}else if(parameter.selectionType.toLowerCase() == 'lookup'){
-						if(parameter.multivalue) {
-							parameter.parameterValue = [];
-						} else {
-							parameter.parameterValue = '';
+				
+				// if there were a default value reset to it
+				if(parameter.defaultValue != undefined && parameter.defaultValue != '' && parameter.defaultValue!= '[]'){
+					 
+					parameter.parameterValue = angular.copy(parameter.defaultValue);
+					parameter.parameterDescription = angular.copy(parameter.defaultValueDescription);					
+				
+					// This is done for popup special case, TODO, remove this code and keep equals behaviour among parameters types
+					if(Array.isArray(parameter.parameterValue)){
+					for(var j = 0; j < parameter.parameterValue.length; j++) {
+						var val = parameter.parameterValue[j];
+						// if there is not desciption val => descr
+						if(!parameter.parameterDescription[val]){
+							// check
+							if(parameter.parameterDescription[j]!= undefined){
+								parameter.parameterDescription[val]=parameter.parameterDescription[j];
+							}
+							else{
+								parameter.parameterDescription[val]=val;
+							}
 						}
 					}
-					else {
-						if(parameter.multivalue) {
-							parameter.parameterValue = [];
-//							for(var j = 0; j < parameter.defaultValues.length; j++) {
+					}
+//						
+				
+				
+				
+				}
+				else{ 
+					// else reset to blank
+					if(parameter.valueSelection.toLowerCase() == 'lov') {
+						if(parameter.selectionType.toLowerCase() == 'tree') {
+							if(parameter.multivalue) {
+								parameter.parameterValue = [];
+								documentExecuteServicesObj.resetParameterInnerLovData(parameter.children);
+							} else {
+								parameter.parameterValue = '';
+							}
+						}else if(parameter.selectionType.toLowerCase() == 'lookup'){
+							if(parameter.multivalue) {
+								parameter.parameterValue = [];
+							} else {
+								parameter.parameterValue = '';
+							}
+						}
+						else {
+							if(parameter.multivalue) {
+								parameter.parameterValue = [];
+//								for(var j = 0; j < parameter.defaultValues.length; j++) {
 //								var defaultValue = parameter.defaultValues[j];
 //								defaultValue.isSelected = false;
-//							}
-						} else {
-							parameter.parameterValue = '';
+//								}
+							} else {
+								parameter.parameterValue = '';
+							}
 						}
+					} else {
+						parameter.parameterValue = '';
+						if(parameter.type=='DATE_RANGE' && parameter.datarange){
+							parameter.datarange.opt='';
+						}
+
 					}
-				} else {
-					parameter.parameterValue = '';
-					if(parameter.type=='DATE_RANGE' && parameter.datarange){
-						parameter.datarange.opt='';
-					}
-					
 				}
 			},
 						
@@ -790,7 +823,7 @@
 								//parameter.parameterValue= new Date(params[parameter.urlName]);
 								//set parameter date server
 								parameter.parameterValue= sbiModule_dateServices.getDateFromFormat(params[parameter.urlName], sbiModule_config.serverDateFormat);
-								 
+
 							}else if(parameter.type=='DATE_RANGE'){
 								var dateRange = params[parameter.urlName];
 								var dateRangeArr = dateRange.split('_');
@@ -902,7 +935,7 @@
 
 									//build documentParameters
 									angular.copy(response.data.filterStatus, execProperties.parametersData.documentParameters);
-
+									
 									//correlation
 									buildCorrelation(execProperties.parametersData.documentParameters);
 
@@ -921,6 +954,26 @@
 									} else {
 										serviceScope.frameLoaded = true; // this hides loading mask
 										docExecute_paramRolePanelService.toggleParametersPanel(true);
+									}
+									
+									// keep track of start value for reset!
+									if(execProperties.parametersData.documentParameters != undefined){
+										for(var i=0; i<execProperties.parametersData.documentParameters.length; i++){
+											var param = execProperties.parametersData.documentParameters[i];
+											if(param.parameterValue){
+												{
+													param.defaultValue = angular.copy(param.parameterValue);
+													
+													if(param.parameterDescription == undefined){
+														param.defaultValueDescription = angular.copy(param.parameterValue);														
+													}
+													else{
+														param.defaultValueDescription = angular.copy(param.parameterDescription);
+														
+													}
+												}
+											}
+										}
 									}
 									
 								} else {
@@ -1021,7 +1074,11 @@
 					//serviceScope.fillParametersPanel(fillObj);
 				}
 			}
-			if(hasDefVal){serviceScope.fillParametersPanel(fillObj);}
+			if(hasDefVal){
+				serviceScope.fillParametersPanel(fillObj);
+
+				
+			}
 		};
 		
 		serviceScope.createNewViewpoint = function() {
@@ -1182,7 +1239,48 @@
 			//console.log('observableDataDependenciesArray ' , serviceScope.observableDataDependenciesArray);
 		};
 		
+		
+		this.emptyParameter = function(parameter) {
+			if(parameter.valueSelection.toLowerCase() == 'lov') {
+				if(parameter.selectionType.toLowerCase() == 'tree') {
+					if(parameter.multivalue) {
+						parameter.parameterValue = [];
+						documentExecuteServicesObj.resetParameterInnerLovData(parameter.children);
+					} else {
+						parameter.parameterValue = '';
+					}
+				}else if(parameter.selectionType.toLowerCase() == 'lookup'){
+					if(parameter.multivalue) {
+						parameter.parameterValue = [];
+					} else {
+						parameter.parameterValue = '';
+					}
+				}
+				else {
+					if(parameter.multivalue) {
+						parameter.parameterValue = [];
+//						for(var j = 0; j < parameter.defaultValues.length; j++) {
+//							var defaultValue = parameter.defaultValues[j];
+//							defaultValue.isSelected = false;
+//						}
+					} else {
+						parameter.parameterValue = '';
+					}
+				}
+			} else {
+				parameter.parameterValue = '';
+				if(parameter.type=='DATE_RANGE' && parameter.datarange){
+					parameter.datarange.opt='';
+				}
+				
+			}
+		},
+		
+		
+		
+		
 		this.dataDependenciesCorrelationWatch = function(value){
+			var thisContext = this;
 			//console.log('modify dependency : ' , value);
 			//console.log('element key '+ value.urlName , serviceScope.dataDependenciesMap[value.urlName]);
 			if(serviceScope.dataDependenciesMap[value.urlName]){
@@ -1205,6 +1303,10 @@
 								//set to disabled all default value parameter 
 								for(var z=0; z<execProperties.parametersData.documentParameters.length;z++){
 									if(execProperties.parametersData.documentParameters[z].urlName==data.idParam){
+
+										// empty current value
+										thisContext.emptyParameter(execProperties.parametersData.documentParameters[z]); 
+										
 										if(execProperties.parametersData.documentParameters[z].defaultValues &&
 												execProperties.parametersData.documentParameters[z].defaultValues.length>0){
 											for(var y=0;y<execProperties.parametersData.documentParameters[z].defaultValues.length;y++){
@@ -1215,6 +1317,9 @@
 										break;
 									}
 								}
+								
+								
+								
 								//Set to enabled the correct default value 
 								if(data.result.root && data.result.root.length>0){
 									for(var p=0; p<data.result.root.length;p++){   
@@ -1388,22 +1493,29 @@
 									}
 									
 									//if mandatory and is unique default value
-									if(response.data.result.root.length==1 &&
-											execProperties.parametersData.documentParameters[z].mandatory && 
-											(execProperties.parametersData.documentParameters[z].selectionType=='LIST' ||
-													execProperties.parametersData.documentParameters[z].selectionType=='COMBOBOX')){
+									// this should be done only if parameterValue is not already set!
+									if(execProperties.parametersData.documentParameters[z].parameterValue == undefined ||
+											execProperties.parametersData.documentParameters[z].parameterValue.length == 0	){
+
+										if(response.data.result.root.length==1 &&
+												execProperties.parametersData.documentParameters[z].mandatory && 
+												(execProperties.parametersData.documentParameters[z].selectionType=='LIST' ||
+														execProperties.parametersData.documentParameters[z].selectionType=='COMBOBOX')){
 											console.log('setting default value ', response.data.result.root[0].value);
 											execProperties.parametersData.documentParameters[z].parameterValue = execProperties.parametersData.documentParameters[z].multivalue ?
 													[response.data.result.root[0].value]	: response.data.result.root[0].value;
 										}else{
 											//don't back from viewpoint and default value 
 											if(execProperties.initResetFunctionLovDependency.status){
-											execProperties.parametersData.documentParameters[z].parameterValue = execProperties.parametersData.documentParameters[z].multivalue ?
-													[]	: '';
+												execProperties.parametersData.documentParameters[z].parameterValue = execProperties.parametersData.documentParameters[z].multivalue ?
+														[]	: '';
 											}
 										}
-																		
-									execProperties.parametersData.documentParameters[z].lovNotDefine=false;
+
+										execProperties.parametersData.documentParameters[z].lovNotDefine=false;
+									}
+									
+								
 								}
 															
 						   }

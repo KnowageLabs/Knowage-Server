@@ -192,7 +192,7 @@ author:
 	var protocol = window.location.protocol;
 	var driverParams = '<%=driverParams%>';
 	var currentDocumentName = '<%=docName%>';
-	var currentDocumentLabel = '<%=docLabel%>';
+	var currentDocumentLabel = '<%=docLabelComositeDoc%>';
 </script>
 
 <% if (template != null && !template.equals("") && !template.matches("^\\{\\s*\\}$")) {%>

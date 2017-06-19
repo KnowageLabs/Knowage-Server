@@ -477,7 +477,7 @@ public class PersistedTableManager implements IPersistedManager {
 			if (getDialect().contains(DIALECT_ORACLE) || getDialect().contains(DIALECT_ORACLE9i10g)) {
 				toReturn = " NUMBER ";
 			} else if (getDialect().contains(DIALECT_MYSQL)) {
-				toReturn = " FLOAT ";
+				toReturn = " DOUBLE ";
 			}
 		} else if (type.contains("java.lang.Double")) {
 			toReturn = " DOUBLE ";

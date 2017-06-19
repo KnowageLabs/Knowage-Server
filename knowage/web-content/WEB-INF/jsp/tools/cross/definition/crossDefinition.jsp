@@ -57,6 +57,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <%@include file="/WEB-INF/jsp/commons/infusion/infusionTemplate.html"%> 
 <%} %>
 <script type="text/ng-template" id="nodes_renderer1.html">
+<!--<i class="fa fa-times-circle" ng-show="par.type==2" ng-click="ctrl.deleteFixedValue(par))"></i>-->
 <md-toolbar class="ternaryToolbar tree-node tree-node-content crossnavigation-parameter " ui-tree-handle layout="row">
     <div>
 		<span class="fa fa-bars"></span>

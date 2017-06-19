@@ -107,6 +107,8 @@ angular.module('ChartDesignerService', [])
 	
 	this.getFontFamilyOptions = function(){
 		var data = [
+			{name:"Inherit",value:"inherit"},
+			{name:"Roboto",value:"Roboto"},
            	{name:"Arial",value:"Arial"},
            	{name:"Times New Roman",value:"Times New Roman"},
            	{name:"Tahoma",value:"Tahoma"},
@@ -236,7 +238,8 @@ angular.module('ChartDesignerService', [])
 			return data;
 			break;
 		case 'pie':
-			var options =[{name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.palette"),value:"palette"}]
+			var options =[{name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.palette"),value:"palette"},
+			    {name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.advancedSerieBar"),value:"advancedSerieConfBar"}]
 			Array.prototype.push.apply(data, legend);
 			Array.prototype.push.apply(data, options);
 			return data;
@@ -382,6 +385,7 @@ angular.module('ChartDesignerService', [])
 					               "alias":"X",
 					               "type":"Category",
 					               "position":"",
+					               "step" : "",
 					               "style":{
 					            	   "rotate":"",
 					            	   "align":"",
@@ -419,7 +423,7 @@ angular.module('ChartDesignerService', [])
 		                	  "fontWeight":"",
 		                	  "fontSize":""
 		                  },
-					      "styleName":"",
+		                  "styleName": "default",
 					      "SUBTITLE":{  
 					    	  "style":{
 			                	  "align":"",
@@ -476,7 +480,9 @@ angular.module('ChartDesignerService', [])
 			              "depth":  0,
 			              "viewDistance":  0,
 			              "show3D" : false,
-			              "groupCategories" : false
+			              "groupCategories" : false,
+			              "dateTime":false,
+			              "dateFormat":"day"
 					   }
 					}
 		return barLine.CHART;
@@ -607,7 +613,7 @@ angular.module('ChartDesignerService', [])
 						"fontWeight":"",
 						"backgroundColor":"#FFFFFF"
 					},
-					"styleName": "",
+					"styleName": "default",
 					"width": 100,
 					"widthDimType": "percentage",
 					"SUBTITLE": {
@@ -799,7 +805,7 @@ angular.module('ChartDesignerService', [])
               	  "fontWeight":"",
               	  "fontSize":""
                 },
-				"styleName": "",
+				"styleName": "default",
 				"width": 100,
 				"widthDimType": "percentage",
 				"SUBTITLE": {
@@ -1003,7 +1009,7 @@ angular.module('ChartDesignerService', [])
               	  "fontWeight":"",
               	  "fontSize":""
                 },
-				"styleName": "",
+				"styleName": "default",
 				"width": 100,
 				"widthDimType": "percentage",
 				"EMPTYMESSAGE":{  
@@ -1247,7 +1253,7 @@ angular.module('ChartDesignerService', [])
 				"widthDimType": "percentage",
 				"borderVisible": false,
 				"seriesStacking": false,
-				"styleName": ""
+				"styleName": "default"
 			};
 		return radarTemp;
 	}
@@ -1348,6 +1354,7 @@ angular.module('ChartDesignerService', [])
 						"alias": "X",
 						"type": "Category",
 						"position": "",
+						"step" : "",
 						"style":{
 			            	   "rotate":"",
 			            	   "align":"",
@@ -1366,9 +1373,9 @@ angular.module('ChartDesignerService', [])
 				                	  "fontSize":""
 				                  }
 				               },
-						"startOnTick": false,
-						"endOnTick": false,
-						"showLastLabel": false
+						"startOnTick": true,
+						"endOnTick": true,
+						"showLastLabel": true
 					}]
 				},
 				"COLORPALETTE": {
@@ -1378,6 +1385,8 @@ angular.module('ChartDesignerService', [])
 				"height": 100,
 				"heightDimType": "percentage",
 				"isCockpitEngine": "",
+				"dateTime":false,
+				"dateFormat":"day",
 				"orientation": "",
 				"seriesStacking": false,
 				"style":{
@@ -1386,7 +1395,7 @@ angular.module('ChartDesignerService', [])
               	  "fontWeight":"",
               	  "fontSize":""
                 },
-				"styleName": "",
+				"styleName": "default",
 				"width": 100,
 				"widthDimType": "percentage",
 				"zoomType": "",
@@ -1560,7 +1569,7 @@ angular.module('ChartDesignerService', [])
               	  "fontWeight":"",
               	  "fontSize":""
                 },
-				"styleName": "",
+				"styleName": "default",
 				"width": 100,
 				"LEGEND": {
 					"layout": "",
@@ -1816,7 +1825,7 @@ angular.module('ChartDesignerService', [])
 				"heightDimType": "percentage",
 				"widthDimType": "percentage",
 				"seriesStacking": false,
-				"styleName": ""
+				"styleName": "default"
 			};
 
 		return treeMapTemp;
@@ -1959,7 +1968,7 @@ angular.module('ChartDesignerService', [])
               	  "fontWeight":"",
               	  "fontSize":""
                 },
-				"styleName": "",
+				"styleName": "default",
 				"width": 100,
 				"widthDimType": "percentage",
 				"wordLayout": "horizontal",
@@ -2030,7 +2039,7 @@ angular.module('ChartDesignerService', [])
 					"fontWeight": "",
 					"backgroundColor": "#FFFFFF"
 				},
-				"styleName": "",
+				"styleName": "default",
 				"type": "CHORD",
 				"width": 100,
 				"heightDimType": "percentage",
@@ -2243,6 +2252,24 @@ angular.module('ChartDesignerService', [])
 		
 	}
 	
+	this.getListOfDateFormats = function() {
+		
+		var listDateFormats = 
+		[
+		 	{name: translate.load('sbi.chartengine.structure.categoryStyleConfig.year'), value:'year'},
+	        {name: translate.load('sbi.chartengine.structure.categoryStyleConfig.month'), value:'month'}, 
+	        {name: translate.load('sbi.chartengine.structure.categoryStyleConfig.week'), value:'week'}, 
+	        {name: translate.load('sbi.chartengine.structure.categoryStyleConfig.day'), value:'day'}, 
+	        {name: translate.load('sbi.chartengine.structure.categoryStyleConfig.hour'), value:'hour'}, 
+	        {name: translate.load('sbi.chartengine.structure.categoryStyleConfig.minute'), value:'minute'}, 
+	        {name: translate.load('sbi.chartengine.structure.categoryStyleConfig.second'), value:'second'}, 
+	        {name: translate.load('sbi.chartengine.structure.categoryStyleConfig.millisecond'), value:'millisecond'}
+		];
+		
+		return listDateFormats;
+		
+	}
+	
 	this.getScaleFactorsFixed = function() {
 		
 		var scaleFactorsFixed = 
@@ -2300,6 +2327,9 @@ angular.module('ChartDesignerService', [])
 			case "categoriesOrdering": templatesURLs = sbiModule_config.contextName + 
 			"/js/src/angular_1.4/chart/designer/directives/custom_directives/structure-tab/ordering_column.html"; break;
 			
+			case "categoriesDateTime": templatesURLs = sbiModule_config.contextName + 
+			"/js/src/angular_1.4/chart/designer/directives/custom_directives/structure-tab/categories_DateTime.html"; break;
+			
 			case "additionalParameters": templatesURLs = sbiModule_config.contextName + 
 			"/js/src/angular_1.4/chart/designer/directives/custom_directives/structure-tab/additional_parameters.html"; break;
 			
@@ -2337,6 +2367,7 @@ angular.module('ChartDesignerService', [])
 			case "categoriesAxisDetails": detailsNameToReturn = translate.load("sbi.chartengine.designer.structureTab.axis.configuration.toolbar.title"); break;
 			case "categoriesAxisTitleDetails": detailsNameToReturn = translate.load("sbi.chartengine.designer.structureTab.axis.title.toolbar.title"); break;
 			case "categoriesOrdering": detailsNameToReturn = translate.load("sbi.chartengine.structure.categoryStyleConfig.title"); break;
+			case "categoriesDateTime": detailsNameToReturn = translate.load("sbi.chartengine.structure.categoryStyleConfig.categoriesDateTime"); break;
 			default : detailsNameToReturn = translate.load("Gauge axis additional options"); break;
 		}
 		

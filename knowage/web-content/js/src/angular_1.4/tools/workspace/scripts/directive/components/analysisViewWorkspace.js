@@ -40,6 +40,24 @@ angular
 		      controller: analysisController
 		  };	  
 	})
+	.service('multipartForm',['$http',function($http){
+	
+	this.post = function(uploadUrl,data){
+		
+		var formData = new FormData();
+		
+		for(var key in data){
+			
+			
+				formData.append(key,data[key]);
+			}
+
+		return $http.post(uploadUrl,formData,{
+			transformRequest:angular.identity,
+			headers:{'Content-Type': undefined}
+		})
+	}
+	}])
 	.filter("asDate", function () {
 		
 	    return function (input) {
@@ -49,11 +67,13 @@ angular
 	});
 
 function analysisController($scope, sbiModule_restServices, sbiModule_translate, sbiModule_config, sbiModule_user, 
-			$mdDialog, $mdSidenav, $documentViewer, $qbeViewer, toastr) {
+			$mdDialog, $mdSidenav, $documentViewer, $qbeViewer, toastr, $httpParamSerializer, multipartForm) {
 	
 	$scope.cockpitAnalysisDocsInitial = [];	
 	$scope.activeTabAnalysis = null;	
 	$scope.translate = sbiModule_translate;
+	$scope.selectedItems = [];
+	$scope.previewFile = {};
 	
 	$scope.loadAllMyAnalysisDocuments = function() {
 		
@@ -299,6 +319,22 @@ function analysisController($scope, sbiModule_restServices, sbiModule_translate,
 			$scope.openEditDialog(document.label,"");
 		}
 	}
+		
+	$scope.uploadPreviewFile = function (selectedDocument) {
+		$mdDialog.show({
+			  scope:$scope,
+			  preserveScope: true,
+		      controller: UploadPreviewFileController,
+		      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/workspace/templates/analysisUploadPreviewFile.html',  
+		      clickOutsideToClose: false,
+		      escapeToClose :true,
+		      //fullscreen: true,
+		      locals:{
+		    	 // previewDatasetModel:$scope.previewDatasetModel,
+		         // previewDatasetColumns:$scope.previewDatasetColumns 
+		      }
+		    });
+	}
 	
 	
 	$scope.openEditDialog=function(doclabel,dsLabel){
@@ -331,6 +367,137 @@ function analysisController($scope, sbiModule_restServices, sbiModule_translate,
 	 		}
 	 	} 
  	];
+	
+	$scope.getFolders = function() {
+		sbiModule_restServices.promiseGet("2.0/functionalities", "?perm=CREATION").then(
+				function(response) { 
+					for(var i=0; i<response.data.length; i++){
+						response.data[i].expanded=true;	 
+							
+					}
+					$scope.folders = angular.copy(response.data); 	
+					
+					$mdDialog.show({
+						  scope:$scope,
+						  preserveScope: true,
+					      controller: ShareDocumentrController,
+					      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.4/tools/workspace/templates/folderTreeTemplateAnalysis.html',  
+					      clickOutsideToClose:false,
+					      escapeToClose :false,
+					      locals:{
+					    	 doc:document
+					      }
+					    });
+				},
+				function(response) {
+					sbiModule_messaging.showErrorMessage(sbiModule_translate.load(response.data.errors[0].message), 'Error');
+				});
+	};
+	
+	$scope.shareDocument=function(document){
+		$scope.docForSharing = document.id;
+		if(document.functionalities.length>1){
+			var json = {docId:$scope.docForSharing, isShare:false, functs:[]};
+			
+			sbiModule_restServices
+			.promisePost("documents","share?"+$httpParamSerializer(json))
+			.then(
+					function(response) {
+						
+						$mdDialog.cancel();
+						$scope.loadAllMyAnalysisDocuments();
+						if(json.isShare==true) {
+							toastr.success(sbiModule_translate.load('sbi.browser.document.share.success'),
+									sbiModule_translate.load('sbi.generic.success'), $scope.toasterConfig);
+						} else {
+							toastr.success(sbiModule_translate.load('sbi.browser.document.unshare.success'),
+									sbiModule_translate.load('sbi.generic.success'), $scope.toasterConfig);
+						}
+						
+						
+					},
+					
+					function(response) {
+					
+						toastr.error(response.data, sbiModule_translate.load('sbi.browser.document.clone.error'), $scope.toasterConfig);
+						
+					}
+				);
+		} else {
+			$scope.getFolders();
+		}
+		
+		
+	}
+	
+	function UploadPreviewFileController($scope,$mdDialog) {
+		$scope.closePreviewFileUploadDialog = function () {
+			$mdDialog.cancel();
+			$scope.previewFile = {};
+		}
+		
+		$scope.uploadFile = function () {
+			console.log($scope.previewFile)
+			console.log($scope.selectedDocument)
+			
+			multipartForm.post("2.0/analysis/"+$scope.selectedDocument.id,$scope.previewFile)
+			.then(function(response) {
+				console.log("[POST]: SUCCESS!");
+				$scope.loadAllMyAnalysisDocuments();
+				$mdDialog.cancel();
+				$scope.previewFile = {};
+		        toastr.success(sbiModule_translate.load("sbi.workspace.analysis.upload.preview.file.success")+" "+response.data.fileName, 
+		        		sbiModule_translate.load('sbi.generic.success'), $scope.toasterConfig);
+				
+			}, function(response) {	
+				toastr.error(sbiModule_translate.load(response.data.errors[0].message), 
+						sbiModule_translate.load('sbi.generic.error'), $scope.toasterConfig);
+				
+			});
+		}
+	}
+	
+	function  ShareDocumentrController($scope,$mdDialog,doc){
+		
+		$scope.closeDocumentTree = function () {
+			$mdDialog.cancel();
+		}
+		
+		$scope.shareDoc = function () {
+			if($scope.selectedItems.length==0){
+				toastr.info(sbiModule_translate.load('sbi.workspace.share.no.document.selected'),
+						sbiModule_translate.load('sbi.federationdefinition.info'), $scope.toasterConfig);
+			} else {
+				$scope.foldersToShare = [];
+				for (var item in $scope.selectedItems) {
+					$scope.foldersToShare.push($scope.selectedItems[item].id);
+				}
+				
+				var json = {docId:$scope.docForSharing, isShare:true, functs: $scope.foldersToShare};
+				
+				sbiModule_restServices
+				.promisePost("documents","share?"+$httpParamSerializer(json))
+				.then(
+						function(response) {
+							
+							$mdDialog.cancel();
+							$scope.loadAllMyAnalysisDocuments();
+							toastr.success(sbiModule_translate.load('sbi.browser.document.share.success'),
+									sbiModule_translate.load('sbi.generic.success'), $scope.toasterConfig);
+							
+						},
+						
+						function(response) {
+						
+							toastr.error(response.data, sbiModule_translate.load('sbi.browser.document.clone.error'), $scope.toasterConfig);
+							
+						}
+					);
+			}
+			
+		}
+		
+	}
 
 	function CreateNewAnalysisController($scope,$mdDialog){
 		$scope.iframeUrl = datasetParameters.cockpitServiceUrl + '&SBI_ENVIRONMENT=WORKSPACE&IS_TECHNICAL_USER=' + sbiModule_user.isTechnicalUser + "&documentMode=EDIT";

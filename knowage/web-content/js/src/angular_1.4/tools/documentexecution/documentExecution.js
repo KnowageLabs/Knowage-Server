@@ -96,6 +96,7 @@
 		$scope.isSuperAdmin = isSuperAdmin;
 		$scope.isAbleToExecuteAction = isAbleToExecuteAction;
 		$scope.addToWorkspaceEnabled = (sbiModule_user.functionalities.indexOf("SaveIntoFolderFunctionality")>-1)? true:false;
+		$scope.showScheduled = (sbiModule_user.functionalities.indexOf("SchedulerManagement")>-1)? true:false;
 		
 		//navigation default parameters
 		$scope.navigatorEnabled 	= false;
@@ -245,13 +246,25 @@
 		$scope.$watch( function() {
 			return $scope.dependenciesService.observableDataDependenciesArray;
 		},
+		// new value and old Value are the whole parameters
 		function(newValue, oldValue) {
 			if (!angular.equals(newValue, oldValue)) {
 				for(var i=0; i<newValue.length; i++){
+					
+					var oldValPar = oldValue[i];
+					var newValPar = newValue[i];
+					
 					//only new value different old value
-					if(oldValue[i] && (!angular.equals(newValue[i], oldValue[i])) ){
-						docExecute_dependencyService.dataDependenciesCorrelationWatch(newValue[i]);		
+					if(oldValPar && (!angular.equals(newValPar, oldValPar)) ){
+						
+						var oldParValue = oldValPar.parameterValue; 
+						var newParValue = newValPar.parameterValue; 
+						
+						if(oldParValue && (!angular.equals(newParValue, oldParValue)) ){
+							docExecute_dependencyService.dataDependenciesCorrelationWatch(newValPar);
+						}
 						break;
+						
 					}
 
 				}

@@ -46,6 +46,7 @@ public class HiveQLDataSet extends AbstractQbeDataSet {
     
 	
 	public HiveQLDataSet(HiveQLStatement statement) {
+		
 		super(statement);
 	}
 	

@@ -44,11 +44,11 @@ public class RealtimeAssociativeDatasetContainer extends AssociativeDatasetConta
 
 	private final IDataStore dataStore;
 
-	public RealtimeAssociativeDatasetContainer(IDataSet dataSet, IDataStore dataStore, String selection, Map<String, String> parameters) {
+	public RealtimeAssociativeDatasetContainer(IDataSet dataSet, IDataStore dataStore, Map<String, String> parameters) {
 		/*
 		 * Set dataStore to null. By giving a null to AbstractJDBCDataset.encapsulateColumnName it returns an empty string, which is what we want to achieve
 		 */
-		super(dataSet, DataStore.DEFAULT_SCHEMA_NAME + "." + DataStore.DEFAULT_TABLE_NAME, null, selection, parameters);
+		super(dataSet, DataStore.DEFAULT_SCHEMA_NAME + "." + DataStore.DEFAULT_TABLE_NAME, null, parameters);
 		this.dataStore = dataStore;
 		realtime = true;
 	}

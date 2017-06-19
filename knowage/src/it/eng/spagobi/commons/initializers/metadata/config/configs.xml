@@ -401,6 +401,9 @@
 	<CONFIG label="DATA_SET_NULL_VALUE" name="DATA_SET_NULL_VALUE"
 		description="Default value to replace null dataset values" isActive="true"
 		valueCheck="%" valueType="STRING" category="MAIL" />
+	<CONFIG label="DATA_SET_SQL_VALIDATION" name="DATA_SET_SQL_VALIDATION"
+		description="Enable the validation of SQL statement" isActive="true"
+		valueCheck="true" valueType="STRING" category="SECURITY" />
 	<CONFIG label="JNDI_THREAD_MANAGER" name="JNDI_THREAD_MANAGER"
 		description="Jndi to build work manager" isActive="true"
 		valueCheck="java:/comp/env/wm/SpagoWorkManager" valueType="STRING"
@@ -508,6 +511,9 @@
 	
 	<CONFIG label="SPAGOBI.DATASET.ASSOCIATIONS.AUTODETECT.SAMPLES" name="SPAGOBI.DATASET.ASSOCIATIONS.AUTODETECT.SAMPLES" description="Number of samples (or records) that are loaded while calculating the set of values for each attribute. Please set a negative value to unlimit the samples." isActive="true" valueCheck="10000" valueType="NUM" category="GENERIC_CONFIGURATION"/>
 	<CONFIG label="SPAGOBI.UPLOAD.MAX_FILE_SIZE_MB" name="SPAGOBI.UPLOAD.MAX_FILE_SIZE_MB" description="Max file size in MB" isActive="true" valueCheck="-1" valueType="NUM" category="GENERIC_CONFIGURATION"/>
+	
+	<CONFIG label="DOCUMENT.EXPORTING.PDF.FRONT_PAGE" name="Front page for document exporting as PDF" description="Absolute path to the PDF front page to be used by the PDF Export. It MUST be a PDF with a single page inside it. Leave it blank to user the Knowage default one." isActive="true" valueCheck="" valueType="STRING" category="GENERIC_CONFIGURATION" />
+	<CONFIG label="DOCUMENT.EXPORTING.PDF.BACK_PAGE" name="Back page for document exporting as PDF" description="Absolute path to the PDF back page to be used by the PDF Export. It MUST be a PDF with a single page inside it. Leave it blank to user the Knowage default one." isActive="true" valueCheck="" valueType="STRING" category="GENERIC_CONFIGURATION" />
 	
 </CONFIGS>
 

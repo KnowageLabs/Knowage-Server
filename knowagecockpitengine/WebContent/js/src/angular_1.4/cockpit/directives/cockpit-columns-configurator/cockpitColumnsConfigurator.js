@@ -19,6 +19,7 @@
 
 	function cockpitColumnsConfiguratorControllerFunction($scope,$mdDialog,cockpitModule_datasetServices,$mdToast,cockpitModule_widgetConfigurator,sbiModule_restServices,sbiModule_translate,sbiModule_config,$mdSidenav,$q,cockpitModule_generalOptions){
 		$scope.translate=sbiModule_translate;
+		$scope.cockpitModule_generalOptions=cockpitModule_generalOptions;
 		$scope.availableDatasets=cockpitModule_datasetServices.getAvaiableDatasets();
 
 		if(!$scope.model.content.modalselectioncolumn){
@@ -363,8 +364,10 @@
 
 
 
-function controllerCockpitColumnsConfigurator($scope,sbiModule_translate,$mdDialog,model,getMetadata,cockpitModule_datasetServices){
+function controllerCockpitColumnsConfigurator($scope,sbiModule_translate,$mdDialog,model,getMetadata,cockpitModule_datasetServices,cockpitModule_generalOptions){
 	$scope.translate=sbiModule_translate;
+
+	$scope.cockpitModule_generalOptions=cockpitModule_generalOptions;
 	$scope.model = model;
 	$scope.columnSelected = [];
 	$scope.localDataset = {};
@@ -415,8 +418,9 @@ function controllerCockpitColumnsConfigurator($scope,sbiModule_translate,$mdDial
 	}
 }
 
-function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,model,selectedColumn,cockpitModule_datasetServices,$mdToast){
+function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,model,selectedColumn,cockpitModule_datasetServices,$mdToast,cockpitModule_generalOptions ){
 	$scope.translate=sbiModule_translate;
+	$scope.cockpitModule_generalOptions=cockpitModule_generalOptions;
 	$scope.selectedColumn = angular.copy(selectedColumn);
 	$scope.fontWeight = ['normal','bold','bolder','lighter','number','initial','inherit'];
 	$scope.textAlign = ['left','right','center'];

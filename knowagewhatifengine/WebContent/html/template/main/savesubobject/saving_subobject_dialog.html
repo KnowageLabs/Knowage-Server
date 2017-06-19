@@ -18,7 +18,7 @@
 		
 		<div>
 			<md-input-container class="md-block">
- 				<label>Descrition</label>
+ 				<label>{{translate.load("sbi.olap.generic.description");}}</label>
   				<input type="text" ng-model="subObject.description">
 			</md-input-container>
 		</div>
@@ -34,10 +34,10 @@
 		 </div>
 		<md-dialog-actions layout="row">
 			<md-button ng-click="cancelSavingSubObject()" class="md-raised">
-				Cancel
+				{{translate.load("sbi.common.cancel");}}
 			</md-button>
 			<md-button ng-disabled = "!subObject.isValid()" ng-click="saveSubObject()" class="md-raised">
-				Save
+				{{translate.load("sbi.common.ok");}}
 			</md-button>
 		</md-dialog-actions>
 	</md-dialog-content>

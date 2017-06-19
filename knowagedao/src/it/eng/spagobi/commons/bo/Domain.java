@@ -190,4 +190,23 @@ public class Domain implements Serializable {
 	public String getTranslatedValueDescription() {
 		return getTranslatedValueDescription(null);
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Domain [valueId=");
+		builder.append(valueId);
+		builder.append(", valueCd=");
+		builder.append(valueCd);
+		builder.append(", valueName=");
+		builder.append(valueName);
+		builder.append(", valueDescription=");
+		builder.append(valueDescription);
+		builder.append(", domainCode=");
+		builder.append(domainCode);
+		builder.append(", domainName=");
+		builder.append(domainName);
+		builder.append("]");
+		return builder.toString();
+	}
 }

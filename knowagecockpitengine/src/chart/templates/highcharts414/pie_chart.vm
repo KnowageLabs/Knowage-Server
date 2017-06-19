@@ -72,14 +72,25 @@
   	   	#else 
 	  	   	widthDimType: 'pixels',
         #end
-
-    	#if($chart.dimension=='3D')
-    	options3d: {
-                enabled: true,
-                alpha: 45,
-                beta: 0
-            },
+  	 	
+    	##  @author: radmila.selakovic@mht.net
+		##  adding options for 3D
+		#if($chart.show3D)
+			options3d: {
+				enabled: $chart.show3D,
+				alpha:  $chart.alpha,
+				beta:  $chart.beta,
+	               
+			},
     	#end
+    	#if(!$chart.show3D)
+			options3d: {
+				enabled: false,
+				alpha:  0,
+				beta:  0,
+			},
+    	#end
+    	
     	
         borderColor: '$chart.style.backgroundColor',
         style:{
@@ -412,7 +423,12 @@
     
     plotOptions: {
         pie: {
-            
+            #if($chart.show3D)
+				depth: $chart.depth,
+			#end
+    		#if(!$chart.show3D)
+				depth:  0,
+		   	#end
             allowPointSelect: true,
             cursor: 'pointer',
             
@@ -685,7 +701,7 @@
 				#end
 
 
-	    	    #set($relatedSerieColName = "$relatedSerie.column"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction#{else}'SUM')#end")
+	    	    #set($relatedSerieColName = "$relatedSerie.name"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction#{else}'SUM')#end")
 	    	    #set($serieColumnsMapped = $dataColumnsMapper.get($relatedSerieColName)) ## "Vendite_AVG" -> "column_5" ## "Ricavi_SUM" -> "column_6"
 				#set ($zeroValues =0)
 				#foreach($row in $rows)

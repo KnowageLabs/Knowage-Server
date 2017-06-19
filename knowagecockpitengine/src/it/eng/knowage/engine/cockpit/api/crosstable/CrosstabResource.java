@@ -161,8 +161,12 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 
 			JSONArray jsonData = request.getJSONArray("jsonData");
 
-			if (jsonData.length() == 0)
-				return "";
+			if (jsonData.length() == 0) {
+				JSONObject ret = new JSONObject();
+				ret.put("htmlTable", "");
+				return ret.toString();
+				// return "";
+			}
 
 			JSONObject crosstabDefinitionJo = request.getJSONObject("crosstabDefinition");
 			JSONObject crosstabDefinitionConfigJo = crosstabDefinitionJo.optJSONObject(CrosstabSerializationConstants.CONFIG);

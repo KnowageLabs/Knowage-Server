@@ -38,6 +38,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
@@ -56,9 +57,9 @@ public class WorkspaceSchedulerResource extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("/{scheduler}")
-	@UserConstraint(functionalities = { SpagoBIConstants.SCHEDULER_MANAGEMENT })
+	@UserConstraint(functionalities = { SpagoBIConstants.SEE_SNAPSHOTS_FUNCTIONALITY})
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getSchedulations(@PathParam("scheduler") String name) throws IOException, EMFUserError, EMFInternalError, JSONException {
+	public String getSchedulations(@PathParam("scheduler") String name, @QueryParam("collate") boolean collate) throws IOException, EMFUserError, EMFInternalError, JSONException {
 		logger.debug("IN");
 		JSONArray toreturn = new JSONArray();
 
@@ -67,7 +68,7 @@ public class WorkspaceSchedulerResource extends AbstractSpagoBIResource {
 		List<Snapshot> snapshotList = null;
 		try {
 			snapDao = DAOFactory.getSnapshotDAO();
-			list = snapDao.getSnapshotsBySchedulation(name);
+			list = snapDao.getSnapshotsBySchedulation(name, collate);
 		} catch (EMFUserError e) {
 			throw new SpagoBIRestServiceException("Error with getting snapshpots", buildLocaleFromSession(), e);
 

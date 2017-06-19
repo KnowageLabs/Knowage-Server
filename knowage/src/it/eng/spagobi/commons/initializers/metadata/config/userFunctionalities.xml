@@ -186,6 +186,7 @@
 	<USER_FUNCTIONALITY productType="KnowagePM" name="FunctionalitiesManagement" description="FunctionalitiesManagement"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ImagesManagement" description="ImagesManagement" />
 	<USER_FUNCTIONALITY productType="KnowagePM" name="KpiManagement" description="KpiManagement" />
+	<USER_FUNCTIONALITY productType="KnowagePM" name="KpiSchedulation" description="KpiSchedulation" />
 	<USER_FUNCTIONALITY productType="KnowagePM" name="LovsManagement" description="LovsManagement"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="LovsView" description="LovsView"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ManageCrossNavigation" description="ManageCrossNavigation" />
@@ -203,6 +204,8 @@
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ViewMyFolderAdmin" description="ViewMyFolderAdmin"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="DomainWrite" description="DomainWrite" />
 	<USER_FUNCTIONALITY productType="KnowagePM" name="AlertManagement" description="AlertManagement" />
+	<USER_FUNCTIONALITY productType="KnowagePM" name="NotifyContextBrokerAction" description="NotifyContextBrokerAction" />
+	
 	
 	<!-- Authorizations for KnowageLI -->
 	<USER_FUNCTIONALITY productType="KnowageLI" name="AnalyticalWidget" description="AnalyticalWidget" />

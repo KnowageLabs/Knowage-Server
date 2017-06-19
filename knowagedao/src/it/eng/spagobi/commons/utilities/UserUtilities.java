@@ -173,20 +173,29 @@ public class UserUtilities {
 			getUserProfileMonitor.stop();
 			return cachedUserProfile;
 		} else {
-			if (userId == null)
+			if (userId == null) {
 				return null;
-			ISecurityServiceSupplier supplier = createISecurityServiceSupplier();
+			}
 
 			try {
-				SpagoBIUserProfile user = supplier.createUserProfile(userId);
-				if (user == null)
-					return null;
-				checkTenant(user);
-				user.setFunctions(readFunctionality(user));
+				UserProfile profile;
+				if (UserProfile.isSchedulerUser(userId)) {
+					profile = UserProfile.createSchedulerUserProfile(userId);
+				} else {
+					ISecurityServiceSupplier supplier = createISecurityServiceSupplier();
+					SpagoBIUserProfile user = supplier.createUserProfile(userId);
+					if (user == null) {
+						return null;
+					}
 
-				UserProfile profile = new UserProfile(user);
-				// putting locale language and country on user attributes:
+					checkTenant(user);
+					user.setFunctions(readFunctionality(user));
+
+					profile = new UserProfile(user);
+				}
+
 				if (profile != null) {
+					// putting locale language and country on user attributes
 					Locale defaultLocale = GeneralUtilities.getDefaultLocale();
 					profile.addAttributes(SpagoBIConstants.LANGUAGE, defaultLocale.getLanguage());
 					profile.addAttributes(SpagoBIConstants.COUNTRY, defaultLocale.getCountry());
@@ -1062,7 +1071,7 @@ public class UserUtilities {
 			Collection<String> roles = ((UserProfile) profile).getRolesForUse();
 			for (String role : roles) {
 				Role r = roleDAO.loadByName(role);
-				if(r.getRoleMetaModelCategories()!=null){
+				if (r.getRoleMetaModelCategories() != null) {
 					categories.addAll(r.getRoleMetaModelCategories());
 				}
 

@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,15 +11,15 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.tools.catalogue.dao;
 
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.SpagoBIDAOObjectNotExistingException;
 import it.eng.spagobi.commons.dao.SpagoBIDAOException;
+import it.eng.spagobi.commons.dao.SpagoBIDAOObjectNotExistingException;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.tools.catalogue.bo.Artifact;
 import it.eng.spagobi.tools.catalogue.bo.Content;
@@ -166,6 +166,55 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 			Iterator it = list.iterator();
 			while (it.hasNext()) {
 				toReturn.add(toArtifact((SbiArtifact) it.next(), session));
+			}
+			logger.debug("Artifacts loaded");
+
+			transaction.rollback();
+		} catch (Throwable t) {
+			logException(t);
+			if (transaction != null && transaction.isActive()) {
+				transaction.rollback();
+			}
+			throw new SpagoBIDAOException("An unexpected error occured while loading artifacts' list", t);
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+		}
+
+		LogMF.debug(logger, "OUT: returning [{0}]", toReturn);
+		return toReturn;
+	}
+
+	@Override
+	public List<SbiArtifact> loadAllSbiArtifacts(String type) {
+		LogMF.debug(logger, "IN: type = [{0}]", type);
+
+		List<SbiArtifact> toReturn = new ArrayList<SbiArtifact>();
+		Session session = null;
+		Transaction transaction = null;
+
+		try {
+
+			if (type == null) {
+				throw new IllegalArgumentException("Input parameter [type] cannot be null");
+			}
+
+			try {
+				session = getSession();
+				Assert.assertNotNull(session, "session cannot be null");
+				transaction = session.beginTransaction();
+				Assert.assertNotNull(transaction, "transaction cannot be null");
+			} catch (Throwable t) {
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
+			}
+
+			Query query = session.createQuery(" from SbiArtifact a where a.type = ?");
+			query.setString(0, type);
+			List list = query.list();
+			Iterator it = list.iterator();
+			while (it.hasNext()) {
+				toReturn.add((SbiArtifact) it.next());
 			}
 			logger.debug("Artifacts loaded");
 
@@ -706,9 +755,7 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 	}
 
 	/**
-	 * Locks model designed by Artifact id, returns the userId that locks the
-	 * model (that could be different from current user if it was already
-	 * blocked)
+	 * Locks model designed by Artifact id, returns the userId that locks the model (that could be different from current user if it was already blocked)
 	 */
 	@Override
 	public String lockArtifact(Integer artifactId, String userId) {
@@ -773,9 +820,8 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 	}
 
 	/**
-	 * Unlock model designed by Artifact id, returns user currently locking the
-	 * model, that will be null if method has success, but could be from a
-	 * different user is fails
+	 * Unlock model designed by Artifact id, returns user currently locking the model, that will be null if method has success, but could be from a different
+	 * user is fails
 	 */
 	@Override
 	public String unlockArtifact(Integer artifactId, String userId) {
@@ -851,8 +897,7 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 	}
 
 	/**
-	 * Return a String representing the artifact status can be: unlocked
-	 * locked_by_you locked_by_other
+	 * Return a String representing the artifact status can be: unlocked locked_by_you locked_by_other
 	 */
 	public String getArtifactStatus(Integer artifactId, String userId) {
 		logger.debug("IN");

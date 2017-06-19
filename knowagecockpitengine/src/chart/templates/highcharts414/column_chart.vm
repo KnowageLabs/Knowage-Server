@@ -1,16 +1,16 @@
 #set($dataFields = $data.metaData.fields) ## columns of data table
 #set($dataColumnsMapper = {}) 
-
 #foreach ($dataField in $dataFields) ## conversion column name to internal column name
 	#if($dataField.class.name == 'java.util.LinkedHashMap')
 		#set($workAroundNoPrint = $dataColumnsMapper.put($dataField.header , $dataField.name))
 	#end
 #end
-
 #set($rows = $data.rows) ## data in table rows
-
+#if($chart.groupCategories =='true' && $chart.isCockpitEngine == 'false')
+#set($categorieColumns = $chart.VALUES.CATEGORY.get(0))
+#else
 #set($categorieColumns = $chart.VALUES.CATEGORY) ## metadata related to categories
-
+#end
 #if($categorieColumns.name=="")
 #set($categorieColumns.name = $categorieColumns.column)
 #end
@@ -683,6 +683,13 @@
 	 	#set ($xAxis = $xAxisList[$xAxisKey])
 	
 	{
+	
+		#if($chart.dateTime=="true")
+			type: 'datetime',
+			 
+		#else 
+			type: 'category',
+		#end
 	 	title: {
 	 	    #if($xAxis.TITLE.text != '')
 			text: "$xAxis.TITLE.text",
@@ -705,7 +712,9 @@
 				align: 'high',
 				#end
 			#end
-			 
+			 #if ($chartType == 'radar' )
+				align: 'high',
+				#end
 			style:{
 	        	#foreach($styleName in $xAxis.TITLE.style.keySet())
 		        	#set ($axisTitleStyle = $xAxis.TITLE.style[$styleName])
@@ -724,6 +733,11 @@
 		
 		 
 		labels:{
+		#if($xAxis.step)
+			#if($xAxis.step!="")
+			step: $xAxis.step,
+			#end
+		#end
 		#if( $xAxis.style != '' )
         	style:{
 	        	#foreach($styleName in $xAxis.style.keySet())
@@ -764,13 +778,34 @@
         			rotation: $rotation,
     			#end
         	#end
+        	#if($chart.dateFormat=="year")
+				#set($dateFormat = "%Y")
+			#elseif($chart.dateFormat=="month")
+				#set($dateFormat = "%B %Y")
+			#elseif($chart.dateFormat=="week")
+				#set($dateFormat = "Week from %A, %b %e, %Y")
+			#elseif($chart.dateFormat=="day")
+				#set($dateFormat = "%A, %b %e, %Y")
+			#elseif($chart.dateFormat=="hour")
+				#set($dateFormat = "%A, %b %e, %H")
+			#elseif($chart.dateFormat=="minute")
+				#set($dateFormat = "%A, %b %e, %H:%M")
+			#elseif($chart.dateFormat=="second")
+				#set($dateFormat = "%A, %b %e, %H:%M:%S")
+			#else
+				#set($dateFormat = "%A, %b %e, %H:%M:%S.%L")
+			#end 
+			#if($chart.dateTime=="true")
+            formatter: function() {
+                return '' + Highcharts.dateFormat('$dateFormat', this.value);
+            },  
+            #end
+        	
 		},
 
 		#if($xAxis.position == 'top')
 		 	opposite: true,
 		#end
-		 
-		type: 'category',
 		
 		#*			
 			Place the points of chart onto the axes (lines), instead of inside the slices for RADAR.
@@ -783,7 +818,7 @@
 		
 		## author: rselakov, radmila.selakovic@mht.net
 		## Calling the method for reconfiguring the original data about the ordering column and its category values
-		#set($map = $datasettransformer.prepareDataForGroupingForBar($rows))
+		#set($map = $datasettransformer.prepareDataForGroupingForBar($rows,$isCockpitEngine))
 		
 		#if($chart.groupCategories && $chart.groupCategories =='true')
             categories: [
@@ -966,9 +1001,6 @@
         	opposite: true,
         	#end
         	
-        	stackLabels: {
-        		enabled: true
-        	},
         },
         #end
         ## FINE Serie add
@@ -1046,18 +1078,15 @@
 	    	},
 	    	
 	    	data: [
-	    		#set($relatedSerieColName = "$relatedSerie.column"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction#{else}SUM#end")
+	    		#set($relatedSerieColName = "$relatedSerie.name"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction#{else}SUM#end")
 	    	    #set($serieColumnsMapped = $dataColumnsMapper.get($relatedSerieColName)) ## "Vendite_AVG" -> "column_5" ## "Ricavi_SUM" -> "column_6"
 				
-				#set ($index = $relatedSerieColName.indexOf('_SUM'))
-				#set ($end = $relatedSerieColName.substring(0,$index))
-				
 				#foreach($row in $rows)
-			   
 					#set ($serieValue = $row.get($serieColumnsMapped))
 					#set ($serieCategoryName =  $row.get($categorieColumnsMapped))
 					#set( $serieCategoryName = $serieCategoryName.replace("\", "\\") )
 					#set( $serieCategoryName = $serieCategoryName.replace("""", "\""") )
+					#if($chart.dateTime!="true")
 					
 					{
 						##drilldown: $enableDrilldown,
@@ -1078,6 +1107,22 @@
 						name: "$serieCategoryName",
 						
 					},
+					#else
+						#if($chart.isCockpitEngine=="true")
+						#set($date = $serieCategoryName.split("/"))
+						#set($day = $date.get(0))
+						#set($month = $Integer.parseInt($date.get(1)))
+						#set($month = $month - 1 )
+						#set($year= $date.get(2))
+						#else
+						#set($date = $serieCategoryName.split("-"))
+						#set($day = $date.get(2))
+						#set($month = $Integer.parseInt($date.get(1)))
+						#set($month =$month - 1 )
+						#set($year= $date.get(0))
+						#end
+						[Date.UTC($year, $month, $day), $serieValue],
+					#end  
 				#end
 	    	],
 	    	#set($relatedSerieShowValue = $relatedSerie.showValue)
@@ -1429,7 +1474,13 @@
         		element on it. HTML tag <strong> is removed.
         		@modifiedBy: danristo (danilo.ristovski@mht.net)
         	*/ 	
-            result += '<span>' + this.key + '</span><br/>' + this.series.name + ': ' + prefix + thisValue + postfix + '</div>';
+        	
+            #if($chart.dateTime=="true")
+             result += '<span>' + Highcharts.dateFormat('$dateFormat', this.key) + '</span><br/>' + this.series.name + ': ' + prefix + thisValue + postfix + '</div>';
+            #else
+             result += '<span>' + this.key + '</span><br/>' + this.series.name + ': ' + prefix + thisValue + postfix + '</div>';
+           
+            #end
             return result;
         }
     },

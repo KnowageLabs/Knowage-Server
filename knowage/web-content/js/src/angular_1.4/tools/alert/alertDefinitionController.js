@@ -15,7 +15,7 @@ app.factory("alertDefinition_listeners",function(){
 });
 
 app.controller('alertDefinitionController', ['$scope', alertDefinitionControllerFunction ]);
-app.controller('alertDefinitionDetailController', ['$scope','$angularListDetail','sbiModule_translate', 'sbiModule_restServices','$mdDialog','$q','$mdToast','$timeout','sbiModule_config','alertDefinition_actions','alertDefinition_listeners','$cronFrequency','$mdToast',alertDefinitionDetailControllerFunction ]);
+app.controller('alertDefinitionDetailController', ['$scope','$angularListDetail','sbiModule_translate', 'sbiModule_messaging', 'sbiModule_restServices','$mdDialog','$q','$mdToast','$timeout','sbiModule_config','alertDefinition_actions','alertDefinition_listeners','$cronFrequency','$mdToast',alertDefinitionDetailControllerFunction ]);
 app.controller('alertDefinitionListController', ['$scope','$angularListDetail','sbiModule_translate','sbiModule_restServices','$mdToast','$mdDialog','$timeout','sbiModule_messaging',alertDefinitionListControllerFunction ]);
 
 function alertDefinitionControllerFunction($scope){
@@ -159,7 +159,7 @@ function alertDefinitionListControllerFunction($scope,$angularListDetail,sbiModu
 	
 }
 
-function alertDefinitionDetailControllerFunction($scope,$angularListDetail,sbiModule_translate,sbiModule_restServices,$mdDialog,$q,$mdToast,$timeout,sbiModule_config,alertDefinition_actions,alertDefinition_listeners,$cronFrequency,$mdToast){
+function alertDefinitionDetailControllerFunction($scope,$angularListDetail,sbiModule_translate,sbiModule_messaging,sbiModule_restServices,$mdDialog,$q,$mdToast,$timeout,sbiModule_config,alertDefinition_actions,alertDefinition_listeners,$cronFrequency,$mdToast){
 	$scope.translate=sbiModule_translate;  
 	$scope.isValidListener={status:false};
 	$scope.isValidListenerCrono={status:false};
@@ -172,6 +172,15 @@ function alertDefinitionDetailControllerFunction($scope,$angularListDetail,sbiMo
 	$scope.saveAlertFunction=function(){ 
 		var itemToSave={};
 		angular.copy($scope.alert,itemToSave); 
+		
+		// if cron is not defined means user did not click, than take default value
+		if(!itemToSave.frequency.cron){
+			itemToSave.frequency.cron = {};
+			itemToSave.frequency.cron.type = "minute";
+			itemToSave.frequency.cron.parameter = {};
+			itemToSave.frequency.cron.parameter.numRepetition = "1";
+		}
+		
 		$cronFrequency.parseForBackend(itemToSave.frequency);
 		
 		for(var i=0;i<itemToSave.jsonOptions.actions.length;i++){

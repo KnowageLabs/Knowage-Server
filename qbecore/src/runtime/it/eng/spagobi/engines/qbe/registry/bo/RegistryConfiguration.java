@@ -23,9 +23,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 /**
- * 
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
- * 
  */
 public class RegistryConfiguration {
 
@@ -223,6 +221,8 @@ public class RegistryConfiguration {
 		public static final String EDITOR_TYPE_COMBO = "COMBO";
 
 		public static final String EDITOR_TYPE_PICKER = "PICKER";
+
+		public static final String EDITOR_TYPE_POPUP = "POPUP";
 
 		private String field = null;
 

@@ -40,6 +40,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.quartz.ObjectAlreadyExistsException;
 
 public class XSchedulerServiceSupplier implements ISchedulerServiceSupplier {
 
@@ -215,9 +216,10 @@ public class XSchedulerServiceSupplier implements ISchedulerServiceSupplier {
 	public String scheduleJob(String xmlRequest) {
 		// StringBuffer servreponse = new StringBuffer();
 		JSONObject resp = new JSONObject();
+		Trigger trigger = null;
 		try {
 			Deserializer deserializer = DeserializerFactory.getDeserializer("application/xml");
-			Trigger trigger = (Trigger) deserializer.deserialize(xmlRequest, Trigger.class);
+			trigger = (Trigger) deserializer.deserialize(xmlRequest, Trigger.class);
 
 			schedulerDAO.saveTrigger(trigger);
 
@@ -230,7 +232,12 @@ public class XSchedulerServiceSupplier implements ISchedulerServiceSupplier {
 			try {
 				resp.put("Status", "NON OK");
 				JSONArray ja = new JSONArray();
-				ja.put("ERR SCK01");
+
+				if (e.getCause() instanceof ObjectAlreadyExistsException) {
+					ja.put("sbi.scheduler.schedulation.error.alreadyPresent");
+				} else {
+					ja.put("ERR SCK01");
+				}
 				resp.put("Errors", ja);
 			} catch (JSONException e1) {
 				// TODO Auto-generated catch block

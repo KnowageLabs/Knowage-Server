@@ -178,7 +178,7 @@ angular.module("cockpitModule").service("cockpitModule_documentServices",functio
 				}
 			}
 			if(actualDoc == null){
-				this.push(sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.removedDocument")
+				this.push(sbiModule_translate.load("sbi.cockpit.load.documentsInformation.removedDocument")
 						.replace("{0}", "<b>" + item.DOCUMENT_ID + "</b>"));
 			}else{
 				var addedParams=[];

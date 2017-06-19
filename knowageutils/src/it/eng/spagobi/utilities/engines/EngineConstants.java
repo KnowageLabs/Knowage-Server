@@ -25,6 +25,7 @@ public class EngineConstants {
 	public static final String AUDIT_ID = "SPAGOBI_AUDIT_ID";
 	public static final String DOCUMENT_ID = "document";
 	public static final String DOCUMENT_LABEL = "label";
+	public static final String DOC_LABEL = "DOCUMENT_LABEL";
 
 	public static final String NEW_COCKPIT = "NEW_COCKPIT";
 	public static final String ENGINE_INSTANCE = "ENGINE_INSTANCE";
@@ -91,5 +92,7 @@ public class EngineConstants {
 	public static final String PERSISTER_PROXY = "PERSISTER_PROXY";
 
 	public static final String DOCUMENT_OUTPUT_PARAMETERS = "DOCUMENT_OUTPUT_PARAMETERS";
+
+	public static final String OUTPUT_TYPE = "outputType";
 
 }

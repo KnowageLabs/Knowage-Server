@@ -32,6 +32,7 @@ import it.eng.spagobi.utilities.objects.Couple;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -418,7 +419,7 @@ public class JavaClassDetail extends DependenciesPostProcessingLov implements IL
 
 	@Override
 	public Set<String> getParameterNames() throws Exception {
-		return null;
+		return new HashSet<String>();
 	}
 
 }

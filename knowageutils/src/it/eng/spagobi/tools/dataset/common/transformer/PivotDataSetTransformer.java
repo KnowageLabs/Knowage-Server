@@ -79,7 +79,7 @@ public class PivotDataSetTransformer extends AbstractDataStoreTransformer {
 
 		dataStoreMeta = dataStore.getMetaData();
 		dataStoreMeta.deleteFieldMetaDataAt(pivotFieldIndex);
-		dataStoreMeta.deleteFieldMetaDataAt(valueFieldIndex - 1);
+		dataStoreMeta.deleteFieldMetaDataAt(valueFieldIndex);
 
 		for (int i = 0; i < pivotedFieldNames.size(); i++) {
 			IFieldMetaData fieldMeta;
@@ -164,7 +164,7 @@ public class PivotDataSetTransformer extends AbstractDataStoreTransformer {
 				selectedGroupValue = groupField.getValue();
 				if (newRecord != null) {
 					newRecord.getFields().remove(pivotFieldIndex);
-					newRecord.getFields().remove(valueFieldIndex - 1);
+					newRecord.getFields().remove(valueFieldIndex);
 					newRecords.add(newRecord);
 				}
 				newRecord = record;
@@ -181,7 +181,7 @@ public class PivotDataSetTransformer extends AbstractDataStoreTransformer {
 		}
 		if (newRecord != null) {
 			newRecord.getFields().remove(pivotFieldIndex);
-			newRecord.getFields().remove(valueFieldIndex - 1);
+			newRecord.getFields().remove(valueFieldIndex);
 			newRecords.add(newRecord);
 
 			((DataStore) dataStore).setRecords(newRecords);

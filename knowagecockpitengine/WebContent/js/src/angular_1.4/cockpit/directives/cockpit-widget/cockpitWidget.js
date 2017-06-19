@@ -497,19 +497,83 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 			
 			// check if all associated data
 			var dsLabel=$scope.getDataset().label;
-			
-			var originalColumnName;
-	        for(var i=0; i<$scope.ngModel.content.columnSelectedOfDataset.length; i++){
-	        	if($scope.ngModel.content.columnSelectedOfDataset[i].aliasToShow && $scope.ngModel.content.columnSelectedOfDataset[i].aliasToShow.toUpperCase() === columnName.toUpperCase()){
-	        		originalColumnName = $scope.ngModel.content.columnSelectedOfDataset[i].alias;
-					break;
-	        	}
-	        }
-			if(originalColumnName==undefined){
-				for(var i=0; i<$scope.ngModel.content.columnSelectedOfDataset.length; i++){
-					if($scope.ngModel.content.columnSelectedOfDataset[i].alias && $scope.ngModel.content.columnSelectedOfDataset[i].alias.toUpperCase() === columnName.toUpperCase()){
-						originalColumnName = columnName;
-						break;
+			var originalColumnName;			
+			if (!Array.isArray(columnName)){
+				//original management with simple value as parameters (not array, not multiselection)
+				originalColumnName = "";
+				if ($scope.ngModel.content.columnSelectedOfDataset){
+			        for(var i=0; i<$scope.ngModel.content.columnSelectedOfDataset.length; i++){
+			        	if($scope.ngModel.content.columnSelectedOfDataset[i].aliasToShow && $scope.ngModel.content.columnSelectedOfDataset[i].aliasToShow.toUpperCase() === columnName.toUpperCase()){
+			        		originalColumnName = $scope.ngModel.content.columnSelectedOfDataset[i].alias;
+							break;
+			        	}
+			        }
+				
+					if(originalColumnName==undefined || originalColumnName==""){
+						for(var i=0; i<$scope.ngModel.content.columnSelectedOfDataset.length; i++){
+							if($scope.ngModel.content.columnSelectedOfDataset[i].alias && $scope.ngModel.content.columnSelectedOfDataset[i].alias.toUpperCase() === columnName.toUpperCase()){
+								originalColumnName = columnName;
+								break;
+							}
+						}
+					}
+				}
+					
+				if ($scope.ngModel.content.crosstabDefinition){
+					//check on pivot table structure: rows and columns definition
+					if (originalColumnName == undefined || originalColumnName == ""){
+						for(var i=0; i<$scope.ngModel.content.crosstabDefinition.columns.length; i++){
+							if($scope.ngModel.content.crosstabDefinition.columns[i].alias && $scope.ngModel.content.crosstabDefinition.columns[i].alias.toUpperCase() === columnName.toUpperCase()){
+									originalColumnName = $scope.ngModel.content.crosstabDefinition.columns[i].id;
+								break;
+							}
+						}
+					}
+					if (originalColumnName == undefined || originalColumnName == ""){
+						for(var i=0; i<$scope.ngModel.content.crosstabDefinition.rows.length; i++){
+							if($scope.ngModel.content.crosstabDefinition.rows[i].alias && $scope.ngModel.content.crosstabDefinition.rows[i].alias.toUpperCase() === columnName.toUpperCase()){
+								originalColumnName = $scope.ngModel.content.crosstabDefinition.rows[i].id;
+								break;
+							}
+						}
+					}
+				}
+				
+			  //at last sets the input columnName like the original name
+				if (originalColumnName == undefined || originalColumnName == ""){
+					originalColumnName = columnName;
+				}
+				
+			}else{
+				//multiple selection: only from pivot table widget (by measure selection)
+				originalColumnName = [];
+				if ($scope.ngModel.content.crosstabDefinition){
+					//check on pivot table structure: rows and columns definition
+					for (var k=0; k < columnName.length; k++){
+						var singleColumnName = columnName[k];		
+						var foundInColumns = false;
+						var foundInRows = false;
+						for(var i=0; i<$scope.ngModel.content.crosstabDefinition.columns.length; i++){
+							if($scope.ngModel.content.crosstabDefinition.columns[i].alias && $scope.ngModel.content.crosstabDefinition.columns[i].alias.toUpperCase() === singleColumnName.toUpperCase()){
+								originalColumnName.push($scope.ngModel.content.crosstabDefinition.columns[i].id);
+								foundInColumns = true;
+								break;
+							}
+						}						
+						if (!foundInColumns){
+							for(var i=0; i<$scope.ngModel.content.crosstabDefinition.rows.length; i++){
+								if($scope.ngModel.content.crosstabDefinition.rows[i].alias && $scope.ngModel.content.crosstabDefinition.rows[i].alias.toUpperCase() === singleColumnName.toUpperCase()){
+									originalColumnName.push($scope.ngModel.content.crosstabDefinition.rows[i].id);
+									foundInRows = true;
+									break;
+								}
+							}
+						}
+					}
+					
+//					//at last sets the input columnName like the original name
+					if (!foundInColumns && !foundInRows){
+						originalColumnName.push(singleColumnName);
 					}
 				}
 			}
@@ -532,16 +596,24 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 					if(!cockpitModule_template.configuration.filters.hasOwnProperty(dsLabel)){
 						cockpitModule_template.configuration.filters[dsLabel]={};
 					}
-					// 02/02/17 - davverna
-					// if columnvalue is an array, usually from a bulk selection, I use a copy to avoid the direct object binding. 
-					// With the double click there is not the same issue because the binding is on a primitive value (string).
-					if(Object.prototype.toString.call( columnValue ) === '[object Array]'){
-						cockpitModule_template.configuration.filters[dsLabel][originalColumnName]=[];
-						angular.copy(columnValue,cockpitModule_template.configuration.filters[dsLabel][originalColumnName]);
+					if (Array.isArray(originalColumnName)){
+						for (var o=0; o < originalColumnName.length; o++){
+							var singleOriginalColumnValue = originalColumnName[o];
+							cockpitModule_template.configuration.filters[dsLabel][singleOriginalColumnValue]=columnValue[o];
+							cockpitModule_template.configuration.aliases.push({'dataset':dsLabel,'column':singleOriginalColumnValue,'alias':columnName[o]});
+						}
 					}else{
-						cockpitModule_template.configuration.filters[dsLabel][originalColumnName]=columnValue;
+							// 02/02/17 - davverna
+							// if columnvalue is an array, usually from a bulk selection, I use a copy to avoid the direct object binding. 
+							// With the double click there is not the same issue because the binding is on a primitive value (string).						
+							if(Object.prototype.toString.call( columnValue ) === '[object Array]'){
+								cockpitModule_template.configuration.filters[dsLabel][originalColumnName]=[];
+								angular.copy(columnValue,cockpitModule_template.configuration.filters[dsLabel][originalColumnName]);
+							}else{
+								cockpitModule_template.configuration.filters[dsLabel][originalColumnName]=columnValue;
+							}
+							cockpitModule_template.configuration.aliases.push({'dataset':dsLabel,'column':originalColumnName,'alias':columnName});
 					}
-					cockpitModule_template.configuration.aliases.push({'dataset':dsLabel,'column':originalColumnName,'alias':columnName});
 					cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS=true;
 					if(!skipRefresh){
 						cockpitModule_widgetSelection.refreshAllWidgetWhithSameDataset(dsLabel);
@@ -549,6 +621,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 					
 				}
 			}
+			
 		}
 	}
 	

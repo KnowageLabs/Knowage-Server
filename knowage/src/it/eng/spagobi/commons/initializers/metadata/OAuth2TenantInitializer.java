@@ -19,34 +19,31 @@ package it.eng.spagobi.commons.initializers.metadata;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.metadata.SbiTenant;
+import it.eng.spagobi.security.OAuth2.OAuth2Client;
+import it.eng.spagobi.security.OAuth2.OAuth2Config;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.Authenticator;
-import java.net.PasswordAuthentication;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import java.util.Properties;
 
-import javax.net.ssl.HttpsURLConnection;
-
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 public class OAuth2TenantInitializer extends SpagoBIInitializer {
 	static private Logger logger = Logger.getLogger(OAuth2TenantInitializer.class);
-	String applicationName;
+	private static Properties config;
+
+	public OAuth2TenantInitializer() {
+		config = OAuth2Config.getInstance().getConfig();
+	}
 
 	// It retrieves organizations associated with fi-ware application. If they are not inside the database, it stores them in it
 	@Override
@@ -61,10 +58,12 @@ public class OAuth2TenantInitializer extends SpagoBIInitializer {
 			for (String aConfiguredTenant : configuredTenants) {
 				if (exists(aConfiguredTenant, existingTenants)) {
 					LogMF.debug(logger, "Tenant {0} already exists", aConfiguredTenant);
+					break;
 				} else {
 					LogMF.info(logger, "Tenant {0} does not exist. It will be inserted", aConfiguredTenant);
 					writeTenant(aConfiguredTenant, hibernateSession);
 					LogMF.debug(logger, "Tenant {0} was inserted", aConfiguredTenant);
+					break;
 				}
 			}
 		} catch (Throwable t) {
@@ -95,155 +94,85 @@ public class OAuth2TenantInitializer extends SpagoBIInitializer {
 
 	private List<String> getTenants() {
 		logger.debug("IN");
-
-		String token = loadConfigs();
 		List<String> tenants = new ArrayList<String>();
 
-		HttpsURLConnection connection = null;
-		InputStream is = null;
-		BufferedReader reader = null;
 		try {
-			URL url = new URL("https://account.lab.fiware.org/applications/" + applicationName + "/actors?auth_token=" + token);
-			connection = (HttpsURLConnection) url.openConnection();
-			connection.setRequestMethod("GET");
+			OAuth2Client oauth2Client = new OAuth2Client();
 
-			connection.setConnectTimeout(10000);
-			connection.setReadTimeout(10000);
+			Properties config = OAuth2Config.getInstance().getConfig();
 
-			is = connection.getInputStream();
-			reader = new BufferedReader(new InputStreamReader(is));
-			StringBuilder stringBuilder = new StringBuilder();
-			String line;
-			while ((line = reader.readLine()) != null) {
-				stringBuilder.append(line);
+			// Retrieve the admin's token for REST services authentication
+			String token = oauth2Client.getAdminToken();
+
+			HttpClient httpClient = oauth2Client.getHttpClient();
+
+			// Get roles of the application (specified in the
+			// oauth2.config.properties)
+			String url = config.getProperty("REST_BASE_URL") + "users/" + config.getProperty("ADMIN_ID") + "/projects";
+			GetMethod httpget = new GetMethod(url);
+			httpget.addRequestHeader("X-Auth-Token", token);
+
+			int statusCode = httpClient.executeMethod(httpget);
+			byte[] response = httpget.getResponseBody();
+			if (statusCode != HttpStatus.SC_OK) {
+				logger.error("Error while getting organizations from OAuth2 provider: server returned statusCode = " + statusCode);
+				LogMF.error(logger, "Server response is:\n{0}", new Object[] { new String(response) });
+				throw new SpagoBIRuntimeException("Error while getting organizations from OAuth2 provider: server returned statusCode = " + statusCode);
 			}
 
-			JSONObject jsonObject = new JSONObject(stringBuilder.toString());
-			JSONArray actorList = jsonObject.getJSONArray("actors");
+			String responseStr = new String(response);
+			LogMF.debug(logger, "Server response is:\n{0}", responseStr);
+			JSONObject jsonObject = new JSONObject(responseStr);
+			JSONArray organizationsList = jsonObject.getJSONArray("projects");
 
-			JSONObject obj;
-			for (int i = 0; i < actorList.length(); i++) {
-				obj = actorList.getJSONObject(i);
-				if (obj.getString("actor_type").equals("Group")) {
-					tenants.add(obj.getString("name"));
+			for (int i = 0; i < organizationsList.length(); i++) {
+				if (!organizationsList.getJSONObject(i).has("is_default")) {
+					String organizationId = organizationsList.getJSONObject(i).getString("id");
+					String organizationName = getTenantName(organizationId);
+
+					tenants.add(organizationName);
+
 				}
 			}
 
 			return tenants;
-		} catch (JSONException e) {
-			logger.error(e.getMessage(), e);
-			throw new SpagoBIRuntimeException("Error while trying to read JSon array containing the list of tenants", e);
-		} catch (IOException e) {
-			logger.error(e.getMessage(), e);
-			throw new SpagoBIRuntimeException("Error while trying to obtain tenants' informations from fi-ware", e);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error while trying to obtain tenants' informations from OAuth2 provider", e);
 		} finally {
 			logger.debug("OUT");
-
-			if (connection != null) {
-				connection.disconnect();
-			}
-			try {
-				if (reader != null) {
-					reader.close();
-				}
-				if (is != null) {
-					is.close();
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		}
 	}
 
-	private String loadConfigs() {
-		logger.debug("IN");
-
-		ResourceBundle resourceBundle = null;
-		String configFile = "it.eng.spagobi.security.OAuth2.configs";
-
-		HttpsURLConnection connection = null;
-		InputStream is = null;
-		BufferedReader reader = null;
+	private String getTenantName(String organizationId) {
 		try {
-			resourceBundle = ResourceBundle.getBundle(configFile);
+			OAuth2Client oauth2Client = new OAuth2Client();
 
-			applicationName = resourceBundle.getString("APPLICATION_NAME");
-			String adminEmail = resourceBundle.getString("ADMIN_EMAIL");
-			String adminPassword = resourceBundle.getString("ADMIN_PASSWORD");
+			String token = oauth2Client.getAdminToken();
 
-			final String proxyUrl = resourceBundle.getString("PROXY_URL");
-			final String proxyPort = resourceBundle.getString("PROXY_PORT");
-			final String proxyUser = resourceBundle.getString("PROXY_USER");
-			final String proxyPassword = resourceBundle.getString("PROXY_PASSWORD");
+			HttpClient httpClient = oauth2Client.getHttpClient();
+			String url = config.getProperty("REST_BASE_URL") + config.getProperty("ORGANIZATION_INFO_PATH") + organizationId;
+			GetMethod httpget = new GetMethod(url);
+			httpget.addRequestHeader("X-Auth-Token", token);
 
-			if (!proxyUrl.equals("")) {
-				System.setProperty("https.proxyHost", proxyUrl);
-				System.setProperty("https.proxyPort", proxyPort);
-
-				if (!proxyUser.equals("")) {
-					Authenticator authenticator = new Authenticator() {
-
-						@Override
-						public PasswordAuthentication getPasswordAuthentication() {
-							return (new PasswordAuthentication(proxyUser, proxyPassword.toCharArray()));
-						}
-					};
-					Authenticator.setDefault(authenticator);
-				}
+			int statusCode = httpClient.executeMethod(httpget);
+			byte[] response = httpget.getResponseBody();
+			if (statusCode != HttpStatus.SC_OK) {
+				logger.error("Error while getting the name of organization with id [" + organizationId + "]: server returned statusCode = " + statusCode);
+				LogMF.error(logger, "Server response is:\n{0}", new Object[] { new String(response) });
+				throw new SpagoBIRuntimeException("Error while getting the name of organization with id [" + organizationId
+						+ "]: server returned statusCode = " + statusCode);
 			}
 
-			URL url = new URL("https://account.lab.fiware.org/api/v1/tokens.json");
+			String responseStr = new String(response);
+			LogMF.debug(logger, "Server response is:\n{0}", responseStr);
+			JSONObject jsonObject = new JSONObject(responseStr);
 
-			// HttpsURLConnection
-			connection = (HttpsURLConnection) url.openConnection();
-			connection.setRequestMethod("POST");
-
-			connection.setDoOutput(true);
-			connection.setConnectTimeout(10000);
-			connection.setReadTimeout(10000);
-
-			OutputStreamWriter out = new OutputStreamWriter(connection.getOutputStream());
-			String body = "email=" + adminEmail + "&password=" + adminPassword;
-			out.write(body);
-			out.close();
-
-			is = connection.getInputStream();
-			reader = new BufferedReader(new InputStreamReader(is));
-			StringBuilder stringBuilder = new StringBuilder();
-			String line;
-			while ((line = reader.readLine()) != null) {
-				stringBuilder.append(line);
-			}
-
-			JSONObject jsonObject = new JSONObject(stringBuilder.toString());
-			return jsonObject.getString("token");
-		} catch (JSONException e) {
-			logger.error(e.getMessage(), e);
-			throw new SpagoBIRuntimeException("Error while trying to read JSon object containing access token", e);
-		} catch (MissingResourceException e) {
-			logger.error(e.getMessage(), e);
-			throw new SpagoBIRuntimeException("Impossible to find the specified resource inside the configurations file [" + configFile + "]", e);
-		} catch (IOException e) {
-			logger.error(e.getMessage(), e);
-			throw new SpagoBIRuntimeException("Error while trying to contact fi-ware", e);
+			return jsonObject.getJSONObject("project").getString("name");
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error while trying to obtain tenant' name from IdM REST API", e);
 		} finally {
 			logger.debug("OUT");
-
-			if (connection != null) {
-				connection.disconnect();
-			}
-			try {
-				if (reader != null) {
-					reader.close();
-				}
-				if (is != null) {
-					is.close();
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		}
 	}
+
 }

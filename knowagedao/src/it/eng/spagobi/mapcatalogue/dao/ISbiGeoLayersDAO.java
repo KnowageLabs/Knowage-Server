@@ -42,6 +42,8 @@ public interface ISbiGeoLayersDAO extends ISpagoBIDao {
 
 	public List<SbiExtRoles> listRolesFromId(final Object[] arr) throws EMFUserError;
 
+	// public List<SbiGeoLayersRoles> listRolesFromLayer(final Integer id) throws EMFUserError;
+
 	public Integer insertLayer(GeoLayer aLayer) throws EMFUserError, JSONException, UnsupportedEncodingException, IOException;
 
 	public ArrayList<String> getProperties(int layerId);

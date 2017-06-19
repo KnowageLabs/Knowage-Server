@@ -40,6 +40,10 @@
 		mainUrl="/knowageqbeengine/servlet/AdapterHTTP" driverNm="it.eng.spagobi.engines.drivers.qbe.QbeDriver"
 		engineTypeCd="EXT" classNm="" biobjTypeCd="DATAMART" useDataSet="false"
 		useDataSource="true" encrypt="0" />
+	<ENGINE label="knowageqbeengine2" name="Qbe Engine2" descr="Qbe Engine2"
+		mainUrl="/knowageqbeengine2/servlet/AdapterHTTP" driverNm="it.eng.spagobi.engines.drivers.qbe.QbeDriver"
+		engineTypeCd="EXT" classNm="" biobjTypeCd="DATAMART" useDataSet="false"
+		useDataSource="true" encrypt="0" />
 	<ENGINE label="knowagetalendengine" name="Talend Engine" descr="Talend Engine"
 		mainUrl="/knowagetalendengine/JobRunService" driverNm="it.eng.spagobi.engines.drivers.talend.TalendDriver"
 		engineTypeCd="EXT" classNm="" biobjTypeCd="ETL" useDataSet="false"

@@ -50,7 +50,7 @@ public class MySQLDataBase extends AbstractDataBase {
 		} else if (javaTypeName.contains("java.lang.Long")) {
 			toReturn = " BIGINT ";
 		} else if (javaTypeName.contains("java.lang.BigDecimal") || javaTypeName.contains("java.math.BigDecimal")) {
-			toReturn = " DECIMAL ";
+			toReturn = " DOUBLE ";
 		} else if (javaTypeName.contains("java.lang.Double")) {
 			toReturn = " DOUBLE ";
 		} else if (javaTypeName.contains("java.lang.Float")) {
@@ -77,7 +77,7 @@ public class MySQLDataBase extends AbstractDataBase {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.utilities.database.IDataBase#getAliasDelimiter()
 	 */
 	@Override
@@ -87,7 +87,7 @@ public class MySQLDataBase extends AbstractDataBase {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.utilities.database.AbstractDataBase#getUsedMemorySizeQuery(java.lang.String, java.lang.String)
 	 */
 	@Override

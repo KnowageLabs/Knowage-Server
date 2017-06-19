@@ -280,7 +280,7 @@ function renderChordChart(jsonData,panel,handleCockpitSelection,locale,handleCro
 //				};
 				var selectParams={};
 				category= jsonData.categories[1].value;
-				selectParams[category]=paramethers.categoryValue;
+				selectParams[category]=paramethers.CATEGORY_VALUE;
 				
 				handleCockpitSelection(selectParams);
 				}
@@ -1057,7 +1057,7 @@ function renderChordChart(jsonData,panel,handleCockpitSelection,locale,handleCro
 			   	.attr("text-anchor", function(d) { return d.angle > Math.PI ? "end" : null; })
 			  	.attr("transform", function(d) {
 					return "rotate(" + (d.angle * 180 / Math.PI - 90) + ")"
-					+ "translate(" + (innerRadius + 60) + ")"
+					+ "translate(" + (innerRadius + (outerRadius - innerRadius) + 60) + ")"
 					+ (d.angle > Math.PI ? "rotate(180)" : "");
 			  	})
 			  	.attr("fill", literalLabelsFontCustom.color)

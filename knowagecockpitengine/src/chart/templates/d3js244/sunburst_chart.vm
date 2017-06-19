@@ -20,8 +20,7 @@
 
 #set($columnCounter = 0)
 		
-#foreach($value in $category)
-$datasettransformer.print($value)	
+#foreach($value in $category)	
 	#set($columnsNeeded[$columnCounter] = $value.name)
 	#set($columnCounter = $columnCounter + 1)
 #end

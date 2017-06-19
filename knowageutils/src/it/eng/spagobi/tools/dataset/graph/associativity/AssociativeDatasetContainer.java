@@ -49,22 +49,22 @@ public class AssociativeDatasetContainer {
 	protected final IDataSet dataSet;
 	protected final String tableName;
 	protected final IDataSource dataSource;
-	protected final String selection;
 	protected Map<String, String> parameters;
 	protected final Set<String> filters = new HashSet<>();
 	protected final Set<EdgeGroup> groups = new HashSet<>();
 
 	protected boolean realtime = false;
 	private boolean resolved = false;
+	private boolean isSqlServerDialect;
 
 	private final int SQL_IN_CLAUSE_LIMIT = 999;
 
-	public AssociativeDatasetContainer(IDataSet dataSet, String tableName, IDataSource dataSource, String selection, Map<String, String> parameters) {
+	public AssociativeDatasetContainer(IDataSet dataSet, String tableName, IDataSource dataSource, Map<String, String> parameters) {
 		this.dataSet = dataSet;
 		this.tableName = tableName;
 		this.dataSource = dataSource;
-		this.selection = selection;
 		this.parameters = parameters;
+		this.isSqlServerDialect = dataSource.getHibDialectName().contains("sqlserver");
 	}
 
 	public IDataSet getDataSet() {
@@ -77,10 +77,6 @@ public class AssociativeDatasetContainer {
 
 	public IDataSource getDataSource() {
 		return dataSource;
-	}
-
-	public String getSelection() {
-		return selection;
 	}
 
 	public Set<String> getFilters() {
@@ -198,6 +194,14 @@ public class AssociativeDatasetContainer {
 	}
 
 	public String buildFilter(String columnNames, Set<String> filterValues) {
+		if (isSqlServerDialect) {
+			return buildAndOrFilter(columnNames, filterValues);
+		} else {
+			return buildInFilter(columnNames, filterValues);
+		}
+	}
+
+	public String buildInFilter(String columnNames, Set<String> filterValues) {
 		String inClauseColumns;
 		String inClauseValues;
 		if (filterValues.size() > SQL_IN_CLAUSE_LIMIT) {
@@ -208,5 +212,36 @@ public class AssociativeDatasetContainer {
 			inClauseValues = StringUtils.join(filterValues, ",");
 		}
 		return "(" + inClauseColumns + ") IN (" + inClauseValues + ")";
+	}
+
+	public String buildAndOrFilter(String columnNames, Set<String> filterValues) {
+		StringBuilder sb = new StringBuilder();
+		String or = "";
+		String[] distinctColumns = columnNames.split(",");
+
+		for (String andOrValues : filterValues) {
+			String and = "";
+			String[] distinctValues = andOrValues.substring(1, andOrValues.length() - 1).split(",");
+
+			sb.append(or);
+			sb.append("(");
+
+			for (int i = 0; i < distinctValues.length; i++) {
+				String column = distinctColumns[i];
+				String value = distinctValues[i];
+
+				sb.append(and);
+				sb.append(column);
+				sb.append("=");
+				sb.append(value);
+
+				and = " AND ";
+			}
+
+			sb.append(")");
+
+			or = " OR ";
+		}
+		return sb.toString();
 	}
 }

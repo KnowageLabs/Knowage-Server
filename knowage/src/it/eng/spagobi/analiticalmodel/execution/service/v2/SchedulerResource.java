@@ -17,28 +17,19 @@
  */
 package it.eng.spagobi.analiticalmodel.execution.service.v2;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.hotlink.constants.HotLinkConstants;
-import it.eng.spagobi.monitoring.dao.AuditManager;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.util.List;
 
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
 
 @Path("/2.0/workspace/scheduler")
 @ManageAuthorization
@@ -52,7 +43,7 @@ public class SchedulerResource extends AbstractSpagoBIResource {
 
 		logger.debug("IN");
 		Integer objId = null;
-		
+
 		try {
 			IBIObjectDAO biObjectDao;
 			BIObject document;
@@ -63,7 +54,7 @@ public class SchedulerResource extends AbstractSpagoBIResource {
 			logger.error("Error loading the document ID for a schedulation in workspace", e);
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", e);
 		}
-		
+
 		return objId;
 	}
 }

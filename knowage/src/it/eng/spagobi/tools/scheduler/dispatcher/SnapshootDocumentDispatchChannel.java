@@ -115,7 +115,7 @@ public class SnapshootDocumentDispatchChannel implements IDocumentDispatchChanne
 				}
 			}
 
-			snapDao.saveSnapshot(executionOutput, document.getId(), snapName, snapDesc, dispatchContext.getContentType(),dispatchContext.getSchedulationStartDate(),dispatchContext.getJobExecutionContext().getTrigger().getJobName(), dispatchContext.getJobExecutionContext().getTrigger().getName());
+			snapDao.saveSnapshot(executionOutput, document.getId(), snapName, snapDesc, dispatchContext.getContentType(),dispatchContext.getSchedulationStartDate(),dispatchContext.getJobExecutionContext().getTrigger().getJobName(), dispatchContext.getJobExecutionContext().getTrigger().getName(), dispatchContext.getSequence());
 
 		} catch (Exception e) {
 			logger.error("Error while saving schedule result as new snapshot", e);

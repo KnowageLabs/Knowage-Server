@@ -64,7 +64,11 @@ function cockpitImageWidgetControllerFunction($scope,cockpitModule_widgetConfigu
 	};
 	
 	$scope.refresh=function(element,width,height){
-		
+
+		if($scope.ngModel.style == undefined){
+		return;
+		}
+
 		if((typeof($scope.ngModel.style.heightPerc)!= 'undefined' && typeof($scope.ngModel.style.widthPerc)!= 'undefined')&&($scope.ngModel.style.heightPerc!="" && $scope.ngModel.style.widthPerc!="")){
 			$scope.ngModel.style['background-size'] = $scope.ngModel.style.widthPerc+' '+$scope.ngModel.style.heightPerc;
 		}else{

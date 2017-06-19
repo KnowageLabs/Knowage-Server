@@ -48,7 +48,7 @@ public class HSQLDataBase extends AbstractDataBase {
 		} else if (javaTypeName.contains("java.lang.Long")) {
 			toReturn = " NUMERIC ";
 		} else if (javaTypeName.contains("java.lang.BigDecimal") || javaTypeName.contains("java.math.BigDecimal")) {
-			toReturn = " NUMERIC ";
+			toReturn = " DOUBLE ";
 		} else if (javaTypeName.contains("java.lang.Double")) {
 			toReturn = " DOUBLE ";
 		} else if (javaTypeName.contains("java.lang.Float")) {

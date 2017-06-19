@@ -198,11 +198,34 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					.replace("{0}", "" + removedAssociations));
 		}
 		
+		angular.forEach(cockpitModule_template.sheets,function(sheet){
+			angular.forEach(sheet.widgets,function(widget){
+				if(widget.dataset && widget.dataset.dsId){
+					var actualDs=ds.getDatasetById(widget.dataset.dsId);
+					angular.forEach(widget.content.columnSelectedOfDataset,function(widgetColumn){
+						var isWidgetColumnMatching = false;
+						for(var i = 0; i < actualDs.metadata.fieldsMeta.length; i++){
+							if(actualDs.metadata.fieldsMeta[i].name == widgetColumn.name){
+								isWidgetColumnMatching = true;
+								break;
+							}
+						}
+						if(!isWidgetColumnMatching){
+							this.push(sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.unabletoloadcolumnforwidget")
+									.replace("{0}", "<b>" + actualDs.name + "." + widgetColumn.alias + "</b>")
+									.replace("{1}", "<b>" + widget.content.name + "</b>"));
+						}
+					}, changed);
+				}
+			});
+		});
+		
 		if(changed.length>0){
 			changed.push(sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.checkconfigandsave"));
 			sbiModule_messaging.showErrorMessage(changed.join("<br>"), sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.title"));
 		}
 	}
+	
 	this.getDatasetList=function(){
 		return angular.copy(ds.datasetList);
 	}
@@ -500,10 +523,19 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					angular.forEach(filterVals, function(item){
 						this.push("('" + item + "')");
 					}, values);
+					
 					if(!dataToSend[dataset.label]){
 						dataToSend[dataset.label] = {};
 					}
-					dataToSend[dataset.label][colName] = values;
+					if(!dataToSend[dataset.label][colName]){
+						dataToSend[dataset.label][colName] = values;
+					}else{
+						dataToSend[dataset.label][colName] = dataToSend[dataset.label][colName].filter(function(elem) { // intersect arrays
+						    return values.indexOf(elem) !== -1;
+						}).filter(function (elem, i, c) { // extra step to remove duplicates
+					        return c.indexOf(elem) === i;
+					    });
+					}
 				}
 			}	
 		}
@@ -535,6 +567,8 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			});
 		}
 		
+		params += "&widgetName=" + encodeURIComponent(ngModel.content.name);
+		
 		sbiModule_restServices.restToRootProject();
 		sbiModule_restServices.promisePost("2.0/datasets",encodeURIComponent(dataset.label)+"/data"+params,dataToSendWithoutParams)
 		.then(function(response){
@@ -543,7 +577,17 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			}
 			deferred.resolve(response.data);
 		},function(response){
-			sbiModule_restServices.errorHandler(response.data,"");
+			var regex = /(.*)2.0\/datasets\/(.*)\/data(.*)widgetName=(.*)/g;
+			var array = regex.exec(response.config.url);
+			var datasetLabel = array[2];
+			var widgetName = decodeURIComponent(array[4]);
+			var title = sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.widget")
+					.replace("{0}", "<b>" + widgetName + "</b>");
+			var text = sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.unabletoloaddatafromdataset")
+					.replace("{0}", "<b>" + datasetLabel + "</b>")
+			text += "<br>";
+			text += sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.checkdatasetandwidgetconfig");
+			sbiModule_restServices.errorHandler(text, title);
 			deferred.reject('Error');
 		})
 

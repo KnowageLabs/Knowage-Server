@@ -81,9 +81,9 @@ function federationDefinitionFunction
 	$scope.federateddataset = {};
 	
 	//lists that will be filled after the sbiModule_restServices.get call
-	ctr.list = {};
+	ctr.list = [];
 	ctr.listaNew = [];
-	ctr.listAllO = {};
+	ctr.listAllO = [];
 	ctr.listAll = [];
 
 	//used to check if ctr.list and ctr.listALLO are loaded
@@ -111,7 +111,11 @@ function federationDefinitionFunction
 		
 		sbiModule_restServices.promiseGet("2.0/datasets", "listNotDerivedDataset")
 			.then(function(response) {
-				ctr.list = response.data;
+				for (var i = 0; i < response.data.length; i++) {
+					if(response.data[i].pars.length==0){
+						ctr.list.push(response.data[i]);
+					}
+				}
 				angular.forEach(ctr.list, function(dataset){
 					if(!dataset.metadata){
 						dataset.metadata = {};
@@ -154,7 +158,11 @@ function federationDefinitionFunction
 		
 		sbiModule_restServices.promiseGet("2.0/datasets", "listNotDerivedDataset")
 		.then(function(response) {
-			ctr.listAllO = response.data;
+			for (var i = 0; i < response.data.length; i++) {
+				if(response.data[i].pars.length==0){
+					ctr.listAllO.push(response.data[i]);
+				}
+			}
 			angular.forEach(ctr.listAllO, function(dataset){
 				if(!dataset.metadata){
 					dataset.metadata = {};

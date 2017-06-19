@@ -16,6 +16,7 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
 import it.eng.spagobi.behaviouralmodel.lov.bo.DependenciesPostProcessingLov;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.LovResultHandler;
+import it.eng.spagobi.behaviouralmodel.lov.exceptions.MissingLOVDependencyException;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.JSONStoreFeedTransformer;
@@ -238,6 +239,10 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 					LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
 					rows = lovResultHandler.getRows();
 
+				} catch (MissingLOVDependencyException mldaE) {
+					String localizedMessage = getLocalizedMessage("sbi.api.documentExecParameters.dependencyNotFill", req);
+					String msg = localizedMessage + ": " + mldaE.getDependsFrom();
+					throw new SpagoBIServiceException(SERVICE_NAME, msg);
 				} catch (Exception e) {
 					throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to get parameter's values", e);
 				}

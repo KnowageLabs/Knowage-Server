@@ -170,6 +170,10 @@
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="KpiManagement" roleType="MODEL_ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="KpiSchedulation" roleType="ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
+		userFunctionality="KpiSchedulation" roleType="MODEL_ADMIN" />
+	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="ObjMetadataManagement" roleType="ADMIN" />
 	<ROLE_TYPE_USER_FUNCTIONALITY
 		userFunctionality="ProfileManagement" roleType="ADMIN" />
@@ -371,5 +375,6 @@
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="DataSourceBigData" roleType="MODEL_ADMIN" />	
 	
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="AlertManagement" roleType="ADMIN" />
+    <ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="NotifyContextBrokerAction" roleType="ADMIN" />
 	
 </ROLE_TYPE_USER_FUNCTIONALITIES>

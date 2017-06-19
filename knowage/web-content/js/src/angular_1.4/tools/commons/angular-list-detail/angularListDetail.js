@@ -66,7 +66,7 @@ var aldApp=angular.module('angular-list-detail', [ 'ngMaterial' ,'sbiModule'])
 		'	</md-button>'+
 		'	</div>'+
 		' </md-toolbar>'+
-		'<md-content class="kn-list-content" layout-margin  flex>'+
+		'<md-content class="kn-list-content" flex>'+
 		'</md-content>'+
 		'</div>',
 		replace:true,
@@ -135,11 +135,12 @@ var aldApp=angular.module('angular-list-detail', [ 'ngMaterial' ,'sbiModule'])
 //		'		<md-button aria-label="back"  ng-if="ALD_controller.fullScreen==true" ng-click="ALD_controller.currentView.value=\'list\'" >  <md-icon md-font-icon="fa fa-arrow-left"></md-icon></md-button>'+
 		'		<h2 flex>{{AWD_detailController.title}}</h2>'+
 		'<span class="extraButtonContainer"></span>'+
+		'		<md-button aria-label="save" ng-disabled="AWD_detailController.disablePreviewButton" ng-if="previewFuncName!=undefined && AWD_detailController.showSaveButton!=false" ng-click="previewFuncName()">{{translate.load("sbi.ds.test")}}</md-button>'+
 		'		<md-button aria-label="save" ng-disabled="AWD_detailController.disableSaveButton" ng-if="saveFuncName!=undefined && AWD_detailController.showSaveButton!=false" ng-click="saveFuncName()">{{translate.load("sbi.generic.update")}}</md-button>'+
 		'		<md-button aria-label="cancel" ng-disabled="AWD_detailController.disableCancelButton" ng-if="cancelFuncName!=undefined && AWD_detailController.showCancelButton!=false" ng-click="cancelFuncName()">{{translate.load("sbi.federationdefinition.template.button.close")}}</md-button>'+
 		'</div>'+
 		' </md-toolbar>'+
-		'<md-content class="kn-detail-content"  layout-margin flex ng-show="ALD_controller.showDetail!=false">'+
+		'<md-content class="kn-detail-content" flex ng-show="ALD_controller.showDetail!=false">'+
 		'</md-content>'+
 		'</div>',
 		replace:true,
@@ -167,6 +168,9 @@ var aldApp=angular.module('angular-list-detail', [ 'ngMaterial' ,'sbiModule'])
 			scope.saveFuncName=scope.$eval(attrs.saveFunction);
 			ctrl.disableSaveButton=scope.$eval(attrs.disableSaveButton);
 			ctrl.showSaveButton=scope.$eval(attrs.showSaveButton);
+			
+			scope.previewFuncName=scope.$eval(attrs.previewFunction);
+			ctrl.disablePreviewButton=scope.$eval(attrs.disablePreviewButton);
 			
 			scope.cancelFuncName=scope.$eval(attrs.cancelFunction);
 			ctrl.disableCancelButton=scope.$eval(attrs.disableCancelButton);

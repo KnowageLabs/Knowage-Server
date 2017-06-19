@@ -32,6 +32,8 @@ import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.sdk.datasets.bo.SDKDataSetParameter;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -101,6 +103,7 @@ import com.jamonapi.MonitorFactory;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 @Path("/1.0/datasets")
+@ManageAuthorization
 public class DataSetResource extends AbstractSpagoBIResource {
 
 	static protected Logger logger = Logger.getLogger(DataSetResource.class);
@@ -129,7 +132,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			logger.debug("OUT");
 		}
 	}
-	
+
 	@GET
 	@Path("/datasetsforlov")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
@@ -143,13 +146,13 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			JSONArray toReturn = new JSONArray();
 
 			for (IDataSet dataset : dataSets) {
-				
+
 				JSONObject obj = new JSONObject();
-				if (DataSetUtilities.isExecutableByUser(dataset, getUserProfile()))
-					
+				if (DataSetUtilities.isExecutableByUser(dataset, getUserProfile())) {
 					obj.put("label", dataset.getLabel());
 					obj.put("id", dataset.getId());
 					toReturn.put(obj);
+				}
 			}
 
 			return toReturn.toString();
@@ -182,7 +185,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			logger.debug("OUT");
 		}
 	}
-	
+
 	/**
 	 * Returns the number of datasets for a particular search. This number is later used for server side pagination when searching.
 	 *
@@ -193,9 +196,9 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Number getNumberOfDataSetsSearch(@PathParam("searchValue") String searchValue) {
 		logger.debug("IN");
-		
+
 		try {
-			
+
 			IDataSetDAO dsDao = DAOFactory.getDataSetDAO();
 			dsDao.setUserProfile(getUserProfile());
 			Number numOfDataSets = dsDao.countDatasetsSearch(searchValue);
@@ -218,7 +221,8 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	@Path("/pagopt/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getDataSetsPaginationOption(@QueryParam("typeDoc") String typeDoc, @QueryParam("callback") String callback,
-			@QueryParam("offset") Integer offsetInput, @QueryParam("fetchSize") Integer fetchSizeInput, @QueryParam("filters") JSONObject filters,  @QueryParam("ordering") JSONObject ordering) {
+			@QueryParam("offset") Integer offsetInput, @QueryParam("fetchSize") Integer fetchSizeInput, @QueryParam("filters") JSONObject filters,
+			@QueryParam("ordering") JSONObject ordering) {
 
 		logger.debug("IN");
 
@@ -286,11 +290,10 @@ public class DataSetResource extends AbstractSpagoBIResource {
 					}
 				}
 				/**
-				 * alberto ghedin
-				 * next line is commented because the dao that return the datasets will return just datset owned by user or of same category
+				 * alberto ghedin next line is commented because the dao that return the datasets will return just datset owned by user or of same category
 				 */
-				//if (DataSetUtilities.isExecutableByUser(dataset, getUserProfile()))
-					toBeReturned.add(dataset);
+				// if (DataSetUtilities.isExecutableByUser(dataset, getUserProfile()))
+				toBeReturned.add(dataset);
 			}
 
 			return serializeDataSets(toBeReturned, typeDoc);
@@ -305,6 +308,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/{label}")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String getDataSet(@PathParam("label") String label) {
 		logger.debug("IN");
 		try {
@@ -480,6 +484,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	@POST
 	@Path("/{label}/content")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response execute(@PathParam("label") String label, String body) {
 		SDKDataSetParameter[] parameters = null;
 		if (body != null && !body.equals("")) {
@@ -491,6 +496,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 
 	@DELETE
 	@Path("/{label}")
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response deleteDataset(@PathParam("label") String label) {
 		IDataSetDAO datasetDao = null;
 		try {
@@ -688,7 +694,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 				throw new SpagoBIRuntimeException("SPAGOBI.API.DATASET.MAX_ROWS_NUMBER value cannot be a non-positive integer");
 			}
 
-			if (offset < 0 || fetchSize <= 0) {
+			if (offset < 0 || fetchSize < 0) {
 				logger.debug("Offset or fetch size are not valid. Setting them to [0] and [" + maxResults + "] by default.");
 				offset = 0;
 				fetchSize = maxResults;
@@ -1513,7 +1519,8 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		return labelsJSON.toString();
 	}
 
-	protected List<IDataSet> getListOfGenericDatasets(IDataSetDAO dsDao, Integer start, Integer limit, JSONObject filters, JSONObject ordering) throws JSONException, EMFUserError {
+	protected List<IDataSet> getListOfGenericDatasets(IDataSetDAO dsDao, Integer start, Integer limit, JSONObject filters, JSONObject ordering)
+			throws JSONException, EMFUserError {
 
 		if (start == null) {
 			start = DataSetConstants.START_DEFAULT;
@@ -1523,7 +1530,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			limit = DataSetConstants.LIMIT_DEFAULT;
 		}
 		JSONObject filtersJSON = null;
-				
+
 		List<IDataSet> items = null;
 		if (true) {
 			filtersJSON = filters;
@@ -1549,9 +1556,10 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		}
 		String hsql = " from SbiDataSet h where h.active = true ";
 		// Ad Admin can see other users' datasets
-		if (!isAdmin) {
-			hsql = hsql + " and h.owner = '" + getUserProfile().getUserUniqueIdentifier().toString() + "'";
-		}
+		/*
+		 * if (!isAdmin) { filter is applyed in the dao because need also to take care about categories hsql = hsql + " and h.owner = '" +
+		 * getUserProfile().getUserUniqueIdentifier().toString() + "'"; }
+		 */
 		if (filtersJSON != null) {
 			String valuefilter = (String) filtersJSON.get(SpagoBIConstants.VALUE_FILTER);
 			String typeFilter = (String) filtersJSON.get(SpagoBIConstants.TYPE_FILTER);
@@ -1562,10 +1570,10 @@ public class DataSetResource extends AbstractSpagoBIResource {
 				hsql += " and h." + columnFilter + " like '%" + valuefilter + "%'";
 			}
 		}
-		
-		if(ordering!=null){
+
+		if (ordering != null) {
 			boolean reverseOrdering = ordering.optBoolean("reverseOrdering");
-			if(reverseOrdering) {
+			if (reverseOrdering) {
 				hsql += "order by h.name desc";
 			} else {
 				hsql += "order by h.name asc";

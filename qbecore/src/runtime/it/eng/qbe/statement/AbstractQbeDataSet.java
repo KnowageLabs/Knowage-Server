@@ -49,11 +49,15 @@ import it.eng.spagobi.utilities.database.temporarytable.TemporaryTableManager;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.groovy.GroovySandbox;
 
+import java.io.InputStream;
+import java.sql.Clob;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 import javax.script.ScriptEngineManager;
 
@@ -201,9 +205,27 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 				Boolean calculated = (Boolean) fieldMeta.getProperty("calculated");
 				if (calculated.booleanValue() == false) {
 					Assert.assertTrue(j < row.length, "Impossible to read field [" + fieldMeta.getName() + "] from resultset");
-					record.appendField(new Field(row[j]));
-					if (row[j] != null)
-						fieldMeta.setType(row[j].getClass());
+
+					if (row[j] instanceof java.sql.Clob) {
+						Clob clob = (Clob) row[j];
+						InputStream in;
+						try {
+							in = clob.getAsciiStream();
+						} catch (SQLException e) {
+							logger.error("Error in reading clob");
+							throw new RuntimeException(e);
+						}
+						Scanner s = new Scanner(in).useDelimiter("\\A");
+						String clobAsString = s.hasNext() ? s.next() : "";
+						record.appendField(new Field(clobAsString));
+						if (row[j] != null)
+							fieldMeta.setType(row[j].getClass());
+					} else {
+
+						record.appendField(new Field(row[j]));
+						if (row[j] != null)
+							fieldMeta.setType(row[j].getClass());
+					}
 					j++;
 				} else {
 					DataSetVariable variable = (DataSetVariable) fieldMeta.getProperty("variable");

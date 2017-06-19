@@ -158,7 +158,17 @@ function dinamicListController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_r
 					+'</md-input-container>';
 				obj["isSuffix"] = (kpiItem.isSuffix != undefined && kpiItem.isSuffix != '') ? kpiItem.isSuffix : false;	
 				obj["isSuffixHTML"] = 
-					'<div layout-align="center center" layout="row">'
+					'<md-input-container class="md-block">'
+					+'<label>Prefix/Suffix</label>'
+					+'<md-select ng-model="row.isSuffix">'
+					+'<md-option value="false">Prefix</md-option>'
+					+'<md-option value="true">Suffix</md-option>'
+					+'</md-select>'
+					+'</md-input-container>';
+					
+					
+					
+					var oldstuff = '<div layout-align="center center" layout="row">'
 						+ '<md-checkbox aria-label="Switch" ng-init="row.isSuffix=' + obj["isSuffix"] + '" ng-model="row.isSuffix">' 
 						+ '</md-checkbox>'
 						+ '<span ng-show="row.isSuffix==false">' + sbiModule_translate.load('sbi.kpiedit.prefix') + '</span>'

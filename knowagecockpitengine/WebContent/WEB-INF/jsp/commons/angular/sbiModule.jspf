@@ -16,6 +16,8 @@ sbiM.factory('sbiModule_config',function(){
     	host: '<%= GeneralUtilities.getSpagoBiHost() %>',
     	curr_country: '<%= curr_country %>',
     	curr_language: '<%= curr_language%>',
+    	thous: '<%= GeneralUtilities.getGroupingSeparator()%>',
+    	dec: '<%= GeneralUtilities.getDecimalSeparator()%>',
     	<%-- 		loginUrl: '<%= GeneralUtilities.getSpagoBiContext() %>', // login url, used when session is expired --%>
     	<%--     	currTheme: '<%= currTheme %>', --%>
 		<%-- 	supportedLocales: <%= GeneralUtilities.getSupportedLocalesAsJSONArray().toString() %>, --%>
@@ -538,17 +540,19 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, 
 				    	}
 				    },
 				    disableParentScroll: true,
-				    template: '<md-card>'+
-				    	 		'<md-card-title style="   min-width: 300px; max-height: 400px;max-width: 600px; overflow: auto;">'+
-			          			'	<md-card-title-text>'+
-			            		'		<span class="md-headline">{{title}}</span>'+
-			            		'		<span class="md-subhead"  ng-bind-html="text"> </span>'+
-			          			'	</md-card-title-text>'+
-			          			'</md-card-title>'+
-			          			'<md-card-actions layout="row" layout-align="end center">'+
-			                   	 '<md-button ng-click="closeDialog()">{{ok}}</md-button>'+
-			                  '</md-card-actions>'+
-			          		'</md-card>',
+				    template:	'<md-card>'+
+				    	 		'	<md-card-title style="min-width: 300px; max-height: 400px;max-width: 600px; overflow: auto;">'+
+			          			'		<md-card-title-text>'+
+			            		'			<span class="md-headline" ng-bind-html="title"></span>'+
+			          			'		</md-card-title-text>'+
+			          			'	</md-card-title>'+
+								'	<md-card-content>'+
+								'		<span ng-bind-html="text"></span>'+
+								'	</md-card-content>'+
+			          			'	<md-card-actions layout="row" layout-align="end center">'+
+								'		<md-button ng-click="closeDialog()">{{ok}}</md-button>'+
+								'	</md-card-actions>'+
+								'</md-card>',
 				    hasBackdrop: true,
 				    position: $mdPanel.newPanelPosition().absolute().center(),
 				    trapFocus: true,

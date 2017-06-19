@@ -154,17 +154,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		          	</md-button>
 		          	
 	      		</div> 
-	      		
-	      		<!-- PREVIEW BUTTON -->
-	      		<md-button aria-label="Preview dataset" ng-click="checkIfDataSetHasParameters()" class="datasetSpecific" 
-	      				ng-show="selectedDataSet" style="float:right; margin-top:2px">
-	              	{{translate.load('sbi.ds.test')}}
-	            </md-button>
 		      
 			</extra-button>
 	       
 	       <!-- DATASET DETAIL PANEL -->
-	       <detail 	save-function="saveDataset" cancel-function="closeDatasetDetails" 
+	       <detail 	preview-function="checkIfDataSetHasParameters" save-function="saveDataset" cancel-function="closeDatasetDetails" 
 	       			show-save-button="showSaveAndCancelButtons" show-cancel-button="showSaveAndCancelButtons" 
 	       			disable-save-button="!datasetForm.$valid" 
 	       			extra-functions='[

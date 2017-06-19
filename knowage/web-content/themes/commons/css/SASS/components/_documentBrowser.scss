@@ -2,7 +2,23 @@
 	.actionButton {
 		padding-left:3px;
 	}
+
 	angular-table {
+		#angularFullTableContentBox:not(.relativeHeader) {
+			.angularTableHeader {
+				background-color: $baseColor !important;
+			}
+			tr {
+				th {
+					.th-inner {
+						color: $lightTextColor !important;
+						md-icon {
+							color: $lightTextColor !important;
+						}
+					}
+				}
+			}
+		}
 		md-icon {
 			height: 14px;
 			width: 14px;

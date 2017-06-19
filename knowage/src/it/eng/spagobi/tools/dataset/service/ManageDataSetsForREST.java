@@ -29,6 +29,7 @@ import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
@@ -83,6 +84,7 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.json.JSONUtils;
+import it.eng.spagobi.utilities.sql.SqlUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -730,7 +732,33 @@ public class ManageDataSetsForREST {
 						if (dataSource.getHibDialectClass().toLowerCase().contains("mongo")) {
 							dataSet = new MongoDataSet();
 						} else {
-							dataSet = JDBCDatasetFactory.getJDBCDataSet(dataSource);
+							String checkSqlValidation =  SingletonConfig.getInstance().getConfigValue("DATA_SET_SQL_VALIDATION");
+							if (("true").equals(checkSqlValidation)){
+								boolean isSelect = false;
+								try {
+									if(SqlUtils.isSelectStatement(query)) {
+										logger.info("SQL is a SELECT statement.");
+										if(query.toLowerCase().contains(" update ") || query.toLowerCase().contains(" delete ") || query.toLowerCase().contains(" insert ")){
+											isSelect =  false;
+										} else {
+											isSelect =  true;
+										}										
+									}									
+								} catch (Exception e) {
+									logger.error("SQL is NOT a SELECT statement.");
+									isSelect =  false;
+								}
+								if(isSelect){
+									dataSet = JDBCDatasetFactory.getJDBCDataSet(dataSource);
+								} else {
+									logger.error("SQL is NOT a SELECT statement, or contains keywords like INSERT, UPDATE, DELETE.");
+									throw new SpagoBIServiceException("Manage Dataset", "Provided SQL is NOT a SELECT statement");
+								}
+								
+							} else {
+								dataSet = JDBCDatasetFactory.getJDBCDataSet(dataSource);
+							}
+							
 						}
 
 						((ConfigurableDataSet) dataSet).setDataSource(dataSource);
@@ -1612,7 +1640,7 @@ public class ManageDataSetsForREST {
 					dataStore = dataSet.test(start, limit, GeneralUtilities.getDatasetMaxResults());
 				}
 				if (dataStore == null) {
-					throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to read resultset");
+					throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to read resultset - the headers of the file must not be empty in order to be possible to parse the content of the file");
 				}
 			} catch (Throwable t) {
 				Throwable rootException = t;

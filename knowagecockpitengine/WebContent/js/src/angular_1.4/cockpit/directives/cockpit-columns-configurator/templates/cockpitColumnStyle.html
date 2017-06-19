@@ -20,10 +20,13 @@
 					<!-- only for simple table ng-enabled="!selectedColumn.widgetType" -->
 					<md-input-container  class="md-block" class="small counter" flex>
 						<label>{{translate.load('sbi.cockpit.table.maxChars')}}</label>
-						<input  ng-disabled="selectedColumn.widgetType!=undefined" class="input_class" type="text" ng-model="selectedColumn.style.maxChars"> 
-					</md-input-container>				  
-					<md-switch  ng-disabled="selectedColumn.widgetType!=undefined"  ng-model="selectedColumn.style.hideonMobile" aria-label="Hide Mobile" flex>
-					 {{translate.load('sbi.cockpit.table.hide')}}
+						<input ng-disabled="selectedColumn.widgetType!=undefined" class="input_class" type="text" ng-model="selectedColumn.style.maxChars"> 
+					</md-input-container>
+					<md-switch ng-disabled="selectedColumn.widgetType!=undefined"  ng-model="selectedColumn.style.hiddenColumn" aria-label="Hidden Column" flex>
+						{{translate.load('sbi.cockpit.table.hiddencolumn')}}
+					</md-switch>
+					<md-switch ng-disabled="selectedColumn.widgetType!=undefined || selectedColumn.style.hiddenColumn" ng-model="selectedColumn.style.hideonMobile" aria-label="Hide Mobile" flex>
+						{{translate.load('sbi.cockpit.table.hide')}}
 					</md-switch>
 				 </div>
 				 
@@ -186,10 +189,12 @@
 					</md-input-container>
 				</div>
 				<div flex>
-		       		<md-input-container flex class="md-block"> 
-							<label>{{translate.load('sbi.cockpit.table.fontsize')}}</label>
-							<input class="input_class" ng-model=selectedColumn.style.fontSize type="number"/>
-					</md-input-container>
+					<md-input-container class="md-block" flex>
+				<label>{{translate.load("sbi.cockpit.table.fontsize")}}</label>
+				<md-select ng-model="selectedColumn.style.fontSize">
+					<md-option ng-repeat="fs in cockpitModule_generalOptions.fontSizeDimension" ng-value="fs.value">{{fs.label}}</md-option>
+				</md-select>
+			</md-input-container>
 				</div>
 			    <div flex>
 		       		<md-input-container flex class="md-block"> 

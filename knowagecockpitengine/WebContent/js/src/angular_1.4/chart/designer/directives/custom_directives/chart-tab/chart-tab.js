@@ -41,7 +41,7 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 		
 		$scope.libInUse=$scope.chartLibNamesConfig[$scope.selectedChartType];
 		$scope.minMaxCategories = {};
-		$scope.minMaxSeries = {};
+		$scope.minMaxSeries = {};		
 		switch(newValue){
 		
 		case 'parallel':
@@ -96,7 +96,7 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 				$scope.minMaxSeries.max = 1; 
 			} else {
 				$scope.minMaxCategories.min = 1;
-				$scope.minMaxSeries.min = 1; 
+				$scope.minMaxSeries.min = 1;
 			}
 			break;
 		case 'chord':
@@ -108,7 +108,25 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 		default:
 			break;
 		}
+	});
+	
+	$scope.$watch('chartTemplate.dateTime',function(newValue,oldValue){
+		
+		$scope.minMaxCategories = {};
+		$scope.minMaxSeries = {};
+		switch(newValue){
+	
+		case true:
+			$scope.minMaxCategories.max = 1; 
+			break;
+		default:
+
+			$scope.minMaxCategories.min = 1;
+			$scope.minMaxSeries.min = 1;
+			break;
+		}
 	})
+	
 	var setConfigurationButtons = function(type) {
 		
 		switch (type) {
@@ -275,7 +293,7 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 	var getDefaultStyleForEmpty = function() {
 		$scope.styleTemplate = "";
 		var type = $scope.chartTemplate.type.toLowerCase();
-		if($scope.chartTemplate.styleName==""){
+		if($scope.chartTemplate.styleName=="default"){
 			for (var i = 0; i < $scope.chartStyles.length; i++) {
 				if($scope.chartStyles[i].CHARTSTYLE.isDefault){
 					$scope.styleTemplate = $scope.chartStyles[i].CHARTSTYLE.TEMPLATE;
@@ -301,7 +319,7 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 	}
 	
 	$scope.filterStyles = function(item) {
-		return item.CHARTSTYLE.name != 'sfnas'
+		return item.CHARTSTYLE.name != 'default' || $scope.chartStyles.length==1
 	}
 	
 	$scope.changeStyle = function(style) {
@@ -455,6 +473,8 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 			serie = $scope.chartTemplate.VALUES.SERIE;
 			angular.copy(StructureTabService.getBaseTemplate(), $scope.chartTemplate);
 			$scope.chartTemplate.type="PIE";
+			$scope.chartTemplate.alpha = chartEngineSettings.tree_D_Options.alpha;
+			$scope.chartTemplate.beta = chartEngineSettings.tree_D_Options.beta;
 			$scope.chartTemplate.isCockpitEngine = $scope.isCockpitEng;
 			$scope.chartTemplate.VALUES.SERIE = serie;
 			ifNeededTrimDownCategoriesToSizeNeededByChartType();

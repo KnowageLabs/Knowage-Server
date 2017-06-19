@@ -33,6 +33,7 @@ import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
 import it.eng.spagobi.tools.dataset.graph.associativity.AssociativeDatasetContainer;
 import it.eng.spagobi.tools.dataset.graph.associativity.Config;
 import it.eng.spagobi.tools.dataset.graph.associativity.RealtimeAssociativeDatasetContainer;
+import it.eng.spagobi.tools.dataset.graph.associativity.Selection;
 import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicResult;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.cache.CacheItem;
@@ -67,7 +68,7 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 	protected Pseudograph<String, LabeledEdge<String>> graph;
 	protected Map<String, AssociativeDatasetContainer> associativeDatasetContainers = new HashMap<>();
 	protected Set<String> documents;
-	protected List<String> selectionsOrder;
+	protected List<Selection> selections;
 
 	protected AssociativeLogicResult result = new AssociativeLogicResult();
 
@@ -90,11 +91,9 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 		initProcess();
 
 		// (2) user click on widget -> selection!
-		for (String datasetSelected : selectionsOrder) {
-			AssociativeDatasetContainer container = associativeDatasetContainers.get(datasetSelected);
-			if (!documents.contains(datasetSelected) && container.getSelection() != null) {
-				String filterSelected = container.getSelection();
-				calculateDatasets(datasetSelected, null, filterSelected);
+		for (Selection selection : selections) {
+			if (!documents.contains(selection.getDataset())) {
+				calculateDatasets(selection.getDataset(), null, selection.getFilter());
 			}
 		}
 		return result;
@@ -134,8 +133,7 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 
 	private void initDatasets(Config config) throws EMFUserError, SpagoBIException {
 		datasetToAssociations = config.getDatasetToAssociations();
-		selectionsOrder = new ArrayList<>(config.getSelections().size());
-		selectionsOrder.addAll(config.getSelections().keySet());
+		selections = config.getSelections();
 
 		IDataSetDAO dataSetDao = DAOFactory.getDataSetDAO();
 		if (userProfile != null) {
@@ -153,26 +151,22 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 					AssociativeDatasetContainer container;
 
 					if (dataSet.isPersisted() && !dataSet.isPersistedHDFS()) {
-						container = new AssociativeDatasetContainer(dataSet, dataSet.getPersistTableName(), dataSet.getDataSourceForWriting(), config
-								.getSelections().get(v1), parametersValues);
+						container = new AssociativeDatasetContainer(dataSet, dataSet.getPersistTableName(), dataSet.getDataSourceForWriting(), parametersValues);
 					} else if (dataSet.isFlatDataset()) {
-						container = new AssociativeDatasetContainer(dataSet, dataSet.getFlatTableName(), dataSet.getDataSource(), config.getSelections()
-								.get(v1), parametersValues);
+						container = new AssociativeDatasetContainer(dataSet, dataSet.getFlatTableName(), dataSet.getDataSource(), parametersValues);
 					} else if (config.getRealtimeDatasets().contains(v1) && DatasetManagementAPI.isJDBCDataSet(dataSet)
 							&& !SqlUtils.isBigDataDialect(dataSet.getDataSource().getHibDialectName())) {
 						QuerableBehaviour querableBehaviour = (QuerableBehaviour) dataSet.getBehaviour(QuerableBehaviour.class.getName());
 						String tableName = "(" + querableBehaviour.getStatement() + ") T";
-						container = new AssociativeDatasetContainer(dataSet, tableName, dataSet.getDataSource(), config.getSelections().get(v1),
-								parametersValues);
+						container = new AssociativeDatasetContainer(dataSet, tableName, dataSet.getDataSource(), parametersValues);
 					} else if (config.getRealtimeDatasets().contains(v1)) {
 						dataSet.loadData();
-						container = new RealtimeAssociativeDatasetContainer(dataSet, dataSet.getDataStore(), config.getSelections().get(v1), parametersValues);
+						container = new RealtimeAssociativeDatasetContainer(dataSet, dataSet.getDataStore(), parametersValues);
 					} else {
 						String signature = dataSet.getSignature();
 						CacheItem cacheItem = cache.getMetadata().getCacheItem(signature);
 						if (cacheItem != null) {
-							container = new AssociativeDatasetContainer(dataSet, cacheItem.getTable(), cacheDataSource, config.getSelections().get(v1),
-									parametersValues);
+							container = new AssociativeDatasetContainer(dataSet, cacheItem.getTable(), cacheDataSource, parametersValues);
 						} else {
 							throw new SpagoBIException("Unable to find dataset [" + v1 + "] in cache");
 						}

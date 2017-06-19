@@ -12,7 +12,7 @@ var currentScriptPath = scripts[scripts.length - 1].src;
 //script.src = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1) + 'utils/daff.js';
 //document.getElementsByTagName('head')[0].appendChild(script);
 
-angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagination', 'ng-context-menu', 'ui.tree'])
+angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagination'])
         .directive('angularTable',
                 function ($compile) {
                     return {
@@ -57,7 +57,8 @@ angular.module('angular_table', ['ngMaterial', 'angularUtils.directives.dirPagin
                             fixedItemPerPage:"=?",
                             itemsPerPage:"=?",
                             showExpanderRowCondition:"&?",
-                            disableAutoLoadOnInit:"@?"
+                            disableAutoLoadOnInit:"@?",
+                            relativeHeader:"=?" 
                         },
                         compile: function (tElement, tAttrs, transclude) {
                         	
@@ -632,10 +633,15 @@ function TableControllerFunction($scope, $timeout) {
     		var queueTable = angular.element($scope.tableItem[0].querySelector(' #queueTableContent'))[0];
     			$scope.queueTable=queueTable;
     	}
+    	
+    	if($scope.tableHeader==undefined || $scope.tableHeader.$$NG_REMOVED==true){
+    		var tableHeader = angular.element($scope.tableItem[0].querySelector('.angularTableHeader'))[0];
+    			$scope.tableHeader = tableHeader;
+    	}
     		 
-    	var tableContainerHeight = $scope.tableContainer == undefined ? 36 : $scope.tableContainer.offsetHeight;
+    	var tableContainerHeight = $scope.tableContainer == undefined ? 33 : $scope.tableContainer.offsetHeight - $scope.tableHeader.offsetHeight;
         var headButtonHeight = $scope.headButton == undefined ? 0 : $scope.headButton.offsetHeight;
-        var listItemTemplBoxHeight = $scope.listItemTemplBox == undefined ? 36 : $scope.listItemTemplBox.offsetHeight;
+        var listItemTemplBoxHeight = $scope.listItemTemplBox == undefined ? 33 : $scope.listItemTemplBox.offsetHeight;
         var heightQueueTable = $scope.queueTable.offsetHeight>0? $scope.queueTable.offsetHeight:0;;
         
         var scrollHeight=($scope.tableContainer.scrollWidth>$scope.tableContainer.offsetWidth) ? 20:0;
@@ -723,17 +729,9 @@ function TableControllerFunction($scope, $timeout) {
 		lastTheadVal=width;
 	    $timeout(function(){
 	    	if(angular.equals(lastTheadVal,width)){
-	//    		var width=$scope.getPrincipalTableHeadWidth();
 	    		var tableContentBox=angular.element($scope.tableItem[0].querySelector('#angularTableContentBox'));
 	    		var fakeDiv = angular.element($scope.tableItem[0].querySelectorAll('.faketable th>div'));
 	    		var principalThDiv = angular.element($scope.tableItem[0].querySelectorAll('.principalTable th>div'));
-	    		for(var i=0;i<principalThDiv.length;i++){
-	//        	console.log(principalThDiv[i])
-	    			angular.element(fakeDiv[i]).css("width",angular.element(principalThDiv[i])[0].offsetWidth+"px");
-	    		}
-	    		if(tableContentBox[0] && tableContentBox[0].offsetWidth!=width){
-	    			tableContentBox.css("width",width+"px");
-	    		}
 	    	}
 	    },0)
 	    
@@ -977,8 +975,14 @@ function TableBodyControllerFunction($scope) {
 
 function TableHeaderControllerFunction($scope, $timeout) {
     $scope.multiSelectVal = false;
+    $scope.selectedAllPageNumbers = {};
+
     $scope.selectAll = function () {
         $scope.multiSelectVal = !$scope.multiSelectVal;
+        // keep track if in current page has been sleected all value
+        $scope.selectedAllPageNumbers[$scope.pagination.currentPageNumber] =  $scope.multiSelectVal;
+        
+        
 //        var template = angular.element(document.querySelector("angular-table." + $scope.id + "ItemBox"));
         var table = angular.element($scope.tableItem[0].querySelector("table.principalTable"));
         var tbody = angular.element(table[0].querySelector("tbody"));
@@ -1064,7 +1068,21 @@ function TableFooterControllerFunction($scope, $timeout) {
 		if(changeFromInput!=undefined){
 			return $scope.setCurrentPageFromInput(changeFromInput,paginationItem,directivePageChangeFunction);
 		}else{
-			 $scope.pageChangedFunction({
+			
+			// when changing page set to blank the select all unless it was previously checked
+			
+			if($scope.selectedAllPageNumbers[currentPageNumber] != undefined &&
+					$scope.selectedAllPageNumbers[currentPageNumber]==true){
+				$scope.multiSelectVal = true;
+			}
+			else{
+				$scope.multiSelectVal = false;	
+			}
+			
+			$scope.selectedAllPageNumbers[$scope.pagination.currentPageNumber]
+			
+			
+			$scope.pageChangedFunction({
                  searchValue: searchValue,
                  itemsPerPage: itemsPerPage,
                  currentPageNumber:currentPageNumber,

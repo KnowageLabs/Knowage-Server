@@ -36,6 +36,7 @@ import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
 import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
 import it.eng.spagobi.tools.dataset.graph.associativity.Config;
+import it.eng.spagobi.tools.dataset.graph.associativity.Selection;
 import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicUtils;
 import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.locks.DistributedLockFactory;
@@ -159,8 +160,8 @@ public class AssociativeLogicManagerTest {
 		datasetToAssociations.put(STORE, associationToColumns);
 		datasetToAssociations.put(SALES, associationToColumns);
 
-		Map<String, String> selections = new HashMap<String, String>();
-		selections.put(STORE, "store_type = 'Small Grocery'");
+		List<Selection> selections = new ArrayList<Selection>();
+		selections.add(new Selection(STORE, "store_type = 'Small Grocery'"));
 
 		// TODO: Manage real time here!
 		Set<String> realtimeDatasets = new HashSet<String>();
@@ -219,8 +220,8 @@ public class AssociativeLogicManagerTest {
 		datasetToAssociations.put(PRODUCT, associationToColumnProduct);
 		datasetToAssociations.put(SALES, associationToColumnSales);
 
-		Map<String, String> selections = new HashMap<String, String>();
-		selections.put(PRODUCT, "brand_name= 'Queen'");
+		List<Selection> selections = new ArrayList<Selection>();
+		selections.add(new Selection(PRODUCT, "brand_name= 'Queen'"));
 
 		// TODO: Manage real time here!
 		Set<String> realtimeDatasets = new HashSet<String>();
@@ -286,8 +287,8 @@ public class AssociativeLogicManagerTest {
 		datasetToAssociations.put(STORE, associationToColumnStore);
 		datasetToAssociations.put(CUSTOMER, associationToColumnCustomer);
 
-		Map<String, String> selections = new HashMap<String, String>();
-		selections.put(CUSTOMER, "gender = 'F'");
+		List<Selection> selections = new ArrayList<Selection>();
+		selections.add(new Selection(CUSTOMER, "gender = 'F'"));
 
 		// TODO: Manage real time here!
 		Set<String> realtimeDatasets = new HashSet<String>();
@@ -383,8 +384,8 @@ public class AssociativeLogicManagerTest {
 		datasetToAssociations.put(Z, associationToColumnZ);
 		datasetToAssociations.put(K, associationToColumnK);
 
-		Map<String, String> selections = new HashMap<String, String>();
-		selections.put(Z, "country = 'USA'");
+		List<Selection> selections = new ArrayList<Selection>();
+		selections.add(new Selection(Z, "country = 'USA'"));
 
 		// TODO: Manage real time here!
 		Set<String> realtimeDatasets = new HashSet<String>();

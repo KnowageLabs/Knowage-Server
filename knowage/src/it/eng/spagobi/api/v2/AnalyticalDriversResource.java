@@ -505,7 +505,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 
 	/**
 	 * Controls if the name of the ParameterUse is already in use.
-	 * 
+	 *
 	 * @param paruse
 	 *            The paruse to check
 	 * @param operation

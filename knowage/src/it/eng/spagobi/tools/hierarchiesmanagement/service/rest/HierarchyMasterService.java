@@ -104,9 +104,11 @@ public class HierarchyMasterService {
 			String hierarchyDescriptionColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_DS, dataSource);
 			String bkpColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.BKP_COLUMN, dataSource);
 			String columns = hierarchyNameColumn + "," + typeColumn + "," + hierarchyDescriptionColumn + " ";
-
-			IDataStore dataStore = dataSource.executeStatement("SELECT DISTINCT(" + hierarchyCodeColumn + ")," + columns + " FROM " + tableName + " WHERE "
-					+ typeColumn + "=\'MASTER\' AND (" + bkpColumn + "= 0 OR " + bkpColumn + " IS NULL) ORDER BY " + hierarchyCodeColumn, null, null);
+			String queryText = "SELECT DISTINCT(" + hierarchyCodeColumn + ")," + columns + " FROM " + tableName + " WHERE " + typeColumn + "=\'MASTER\' AND ("
+					+ bkpColumn + "= 0 OR " + bkpColumn + " IS NULL) ORDER BY " + hierarchyCodeColumn;
+			// IDataStore dataStore = dataSource.executeStatement("SELECT DISTINCT(" + hierarchyCodeColumn + ")," + columns + " FROM " + tableName + " WHERE "
+			// + typeColumn + "=\'MASTER\' AND (" + bkpColumn + "= 0 OR " + bkpColumn + " IS NULL) ORDER BY " + hierarchyCodeColumn, null, null);
+			IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
 
 			for (Iterator iterator = dataStore.iterator(); iterator.hasNext();) {
 				IRecord record = (IRecord) iterator.next();

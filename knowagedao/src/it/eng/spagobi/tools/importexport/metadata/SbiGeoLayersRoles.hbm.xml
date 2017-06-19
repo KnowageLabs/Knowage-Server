@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping> 
+   <class name="it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayersRoles" table="SBI_ROLES_LAYERS">
+	<!--	<composite-id name="id" class="it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayersRolesId">			
+			<many-to-one name="layer" class="it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayers" >
+				<column name="ID_LAYER" />
+			</many-to-one>
+			<many-to-one name="role" class="it.eng.spagobi.commons.metadata.SbiExtRoles" >
+				<column name="ID_ROLE" />
+			</many-to-one>
+		</composite-id> -->
+	
+		<composite-id name="id"
+			class="it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayersRolesId">
+			<key-property name="layer" type="int">
+				<column name="ID_LAYER" />
+			</key-property>
+			<key-property name="role" type="int">
+				<column name="ID_ROLE" />
+			</key-property>
+		</composite-id>
+
+
+		<many-to-one name="layer"
+			class="it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayers" update="false" insert="false" >
+			<column name="ID_LAYER" />
+		</many-to-one>
+		<many-to-one name="role"
+			class="it.eng.spagobi.commons.metadata.SbiExtRoles" update="false" insert="false" >
+			<column name="ID_ROLE"/>
+		</many-to-one>
+		
+	</class>
+</hibernate-mapping>

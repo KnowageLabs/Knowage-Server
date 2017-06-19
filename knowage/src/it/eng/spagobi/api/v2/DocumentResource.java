@@ -24,6 +24,7 @@ import static it.eng.spagobi.tools.glossary.util.Util.getNumberOrNull;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -44,6 +45,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.log4j.Logger;
 import org.apache.lucene.document.Document;
@@ -68,6 +70,7 @@ import it.eng.spagobi.analiticalmodel.document.AnalyticalModelDocumentManagement
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.OutputParameter;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
+import it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO;
 import it.eng.spagobi.analiticalmodel.document.dao.IOutputParameterDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
@@ -88,6 +91,7 @@ import it.eng.spagobi.commons.bo.CriteriaParameter.Match;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
@@ -99,6 +103,7 @@ import it.eng.spagobi.sdk.documents.bo.SDKExecutedDocumentContent;
 import it.eng.spagobi.sdk.documents.impl.DocumentsServiceImpl;
 import it.eng.spagobi.sdk.exceptions.NonExecutableDocumentException;
 import it.eng.spagobi.sdk.utilities.SDKObjectsConverter;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.utilities.JSError;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
@@ -110,6 +115,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  *
  */
 @Path("/2.0/documents")
+@ManageAuthorization
 public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 	static protected Logger logger = Logger.getLogger(DocumentResource.class);
 
@@ -280,6 +286,7 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 			throw new SpagoBIRuntimeException(
 					"[" + parameter.getBiObjectID() + "] is not the id of document with label [" + label + "]. The correct id is [" + document.getId() + "]");
 		}
+
 
 		try {
 			parameterDAO.insertBIObjectParameter(parameter);
@@ -858,5 +865,118 @@ public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+
+	@GET
+	@Path("/{label}/preview")
+	public Response getPreviewFile(@PathParam("label") String label) {
+		logger.debug("IN");
+		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
+		BIObject document = documentManager.getDocument(label);
+
+		ResponseBuilder rb;
+
+		if (document == null) {
+			logger.error("Document with label [" + label + "] doesn't exist");
+			rb = Response.status(Status.NOT_FOUND);
+			return rb.build();
+		}
+
+		try {
+
+			if (ObjectsAccessVerifier.canSee(document, getUserProfile())) {
+
+				// String toBeReturned = JsonConverter.objectToJson(document,
+				// BIObject.class);
+				// return Response.ok(toBeReturned).build();
+
+				String previewFileName = document.getPreviewFile();
+
+				if (previewFileName == null || previewFileName.equalsIgnoreCase("")) {
+					logger.debug("No preview file associated to document " + document.getLabel());
+					// rb = Response.ok();
+					rb = Response.status(Status.NOT_FOUND);
+					return rb.build();
+				}
+
+				File previewDirectory = GeneralUtilities.getPreviewFilesStorageDirectoryPath();
+
+				String previewFilePath = previewDirectory.getAbsolutePath() + File.separator + previewFileName;
+
+				File previewFile = new File(previewFilePath);
+				if (!previewFile.exists()) {
+					logger.error("Preview file " + previewFileName + " does not exist");
+					rb = Response.status(Status.NOT_FOUND);
+					return rb.build();
+					// throw new SpagoBIRuntimeException("Preview file " +
+					// previewFileName + " does not exist");
+				}
+
+				// to prevent attacks check file parent is really the expected
+				// one
+				String parentPath = previewFile.getParentFile().getAbsolutePath();
+				String directoryPath = previewDirectory.getAbsolutePath();
+				if (!parentPath.equals(directoryPath)) {
+					logger.error("Path Traversal Attack security check failed: file parent path: " + parentPath + " is different" + " from directory path: "
+							+ directoryPath);
+					throw new SpagoBIRuntimeException("Path Traversal Attack security check failed");
+				}
+
+				byte[] previewBytes = Files.readAllBytes(previewFile.toPath());
+
+				try {
+					rb = Response.ok(previewBytes);
+				} catch (Exception e) {
+					logger.error("Error while getting preview file", e);
+					throw new SpagoBIRuntimeException("Error while getting preview file", e);
+				}
+
+				rb.header("Content-Disposition", "attachment; filename=" + previewFileName);
+				return rb.build();
+
+			} else {
+				logger.error("User [" + getUserProfile().getUserName() + "] has no rights to see document with label [" + label + "]");
+				// throw new SpagoBIRuntimeException("User [" +
+				// getUserProfile().getUserName() +
+				// "] has no rights to see document with label [" + label +
+				// "]");
+				rb = Response.status(Status.UNAUTHORIZED);
+				return rb.build();
+			}
+		} catch (SpagoBIRuntimeException e) {
+			throw e;
+		} catch (Exception e) {
+			logger.error("Error while converting document in Json", e);
+			throw new SpagoBIRuntimeException("Error while converting document in Json", e);
+		}
+
+	}
+
+	@DELETE
+	@Path("/{label}/template/{id}")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public Response deleteTemplate(@PathParam("label") String label, @PathParam("id") Integer tempId) {
+		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
+		BIObject document = documentManager.getDocument(label);
+		if (document == null)
+			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
+
+		if (!ObjectsAccessVerifier.canDevBIObject(document, getUserProfile()))
+			throw new SpagoBIRuntimeException("User [" + getUserProfile().getUserName() + "] has no rights to manage the template of document with label ["
+					+ label + "]");
+
+		IObjTemplateDAO templateDAO = null;
+		try {
+			templateDAO = DAOFactory.getObjTemplateDAO();
+			if (document.getActiveTemplate().getId().equals(tempId)) {
+				templateDAO.setPreviousTemplateActive(document.getId(), tempId);
+			}
+			templateDAO.deleteBIObjectTemplate(tempId);
+
+		} catch (Exception e) {
+			logger.error("Error with deleting template with id: " + tempId, e);
+			throw new SpagoBIRestServiceException("Error with deleting template with id: " + tempId, buildLocaleFromSession(), e);
+		}
+		return Response.ok().build();
 	}
 }

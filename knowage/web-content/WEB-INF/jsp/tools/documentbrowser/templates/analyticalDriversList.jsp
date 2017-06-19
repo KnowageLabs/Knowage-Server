@@ -93,7 +93,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  <md-card-content flex layout="column" class="noPadding">
   <md-toolbar >
       <div class="md-toolbar-tools">
-      {{translate.load("sbi.analytical.drivers.list");}}
+      {{translate.load("sbi.analytical.drivers.title");}}
       </div>
   </md-toolbar>
   <md-content flex layout="column" >

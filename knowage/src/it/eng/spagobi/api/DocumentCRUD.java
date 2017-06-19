@@ -47,6 +47,7 @@ import it.eng.spagobi.utilities.json.JSONUtils;
 
 import java.security.Security;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -68,6 +69,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -316,7 +318,7 @@ public class DocumentCRUD extends AbstractSpagoBIResource {
 	@POST
 	@Path("/share")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String shareDocument(@Context HttpServletRequest req) {
+	public String shareDocument(@Context HttpServletRequest req, @QueryParam("functs") Integer[] functs) {
 
 		logger.debug("IN");
 		String ids = req.getParameter(OBJECT_ID);
@@ -338,22 +340,9 @@ public class DocumentCRUD extends AbstractSpagoBIResource {
 			List lstFuncts = new ArrayList();
 
 			if ("true".equalsIgnoreCase(isShare)) {
-				// share
-				JSONArray functs = (req.getParameter(OBJECT_FUNCTS) == null) ? new JSONArray() : ObjectUtils.toJSONArray(req.getParameter(OBJECT_FUNCTS));
-				String communityFCode = req.getParameter(COMMUNITY);
-				if (communityFCode != null && !"".equals(communityFCode)) {
-					try {
-						// add community folder to functionalities community
-						// folder
-						LowFunctionality commF = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByCode(communityFCode, false);
-						Integer commFId = commF.getId();
-						functs.put(commFId);
-					} catch (Exception e) {
-						logger.error("Error sharing the document.. Impossible to parse the community ", e);
-						throw new SpagoBIRuntimeException("Error sharing the document.. Impossible to parse the community", e);
-					}
-				}
-				lstFuncts = JSONUtils.asList(functs);
+				
+				JSONArray mJSONArray = new JSONArray(Arrays.asList(functs));
+				lstFuncts = JSONUtils.asList(mJSONArray);
 			}
 			// add personal folder for default
 			LowFunctionality userFunc = null;

@@ -280,7 +280,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			};
 
 		$scope.canSeeColumnByMobile = function(obj){
-			if($scope.isMobile.any()!=null && obj!=undefined && obj.hideonMobile == true){
+			if(obj!=undefined && (obj.hiddenColumn == true || ($scope.isMobile.any()!=null && obj.hideonMobile == true))){
 				return false;
 			}
 			return true;
@@ -858,8 +858,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	function tableWidgetEditControllerFunction($scope,finishEdit,sbiModule_translate,$mdDialog,originalModel,mdPanelRef,getMetadata,scopeFather,$mdToast){
 		$scope.translate=sbiModule_translate;
-		$scope.fontFamily = ['Inherit','Roboto','Times New Roman','Georgia', 'Serif'];
-		$scope.fontWeight = ['normal','bold','bolder','lighter','number','initial','inherit'];
+		$scope.fontFamily = ["Inherit","Roboto","Arial","Times New Roman","Tahoma","Verdana","Impact","Calibri","Cambria","Georgia","Gungsuh"],
+		$scope.fontWeight = ['normal','bold','bolder','lighter','initial','inherit'];
 		$scope.textAlign = ['left','right','center'];
 		$scope.getMetadata = getMetadata;
 		$scope.model = {};
@@ -889,7 +889,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			angular.copy($scope.model,originalModel);
 			mdPanelRef.close();
 			mdPanelRef.destroy();
-			var options = {page:0, itemPerPage:$scope.model.content.maxRowsNumber-1, columnOrdering:undefined,reverseOrdering:undefined };
+			var options = {page:0, itemPerPage:$scope.model.content.maxRowsNumber-1, columnOrdering:undefined, reverseOrdering:undefined};
 			scopeFather.refreshWidget(options);
 			$scope.$destroy();
 			if($scope.model.content.columnSelectedOfDataset == undefined || $scope.model.content.columnSelectedOfDataset.length==0){

@@ -9,7 +9,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 <head>
     <meta name="generator" content="HTML Tidy for Windows (vers 1 June 2005), see www.w3.org" />
-    <title>KnowAge Login</title>
+    <title>Knowage Login</title>
     <style>
       body {
 	       padding: 0;

@@ -23,14 +23,17 @@ import it.eng.spagobi.analiticalmodel.document.bo.Snapshot;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.analiticalmodel.document.metadata.SbiSnapshots;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.SpagoBIDAOException;
 import it.eng.spagobi.commons.metadata.SbiBinContents;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -155,7 +158,8 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 			String contentType,
 			long schedulationStart,
 			String schedulerName,
-			String schedulationName) throws EMFUserError {
+			String schedulationName,
+			int sequence) throws EMFUserError {
 		Session aSession = null;
 		Transaction tx = null;
 		try {
@@ -179,6 +183,7 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 			hibSnap.setSchedulation(schedulationName);
 			hibSnap.setScheduler(schedulerName);
 			hibSnap.setSchedulationStartLong(schedulationStart);
+			hibSnap.setSequence(sequence);
 
 			updateSbiCommonInfo4Insert(hibSnap);
 			aSession.save(hibSnap);
@@ -206,6 +211,11 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 		snap.setId(hibSnap.getSnapId());
 		snap.setName(hibSnap.getName());
 		snap.setContentType(hibSnap.getContentType());
+		snap.setSchedulation(hibSnap.getSchedulation());
+		snap.setSequence(hibSnap.getSequence());
+		snap.setSchedulationStartDate(hibSnap.getSchedulationStartDate());
+		snap.setScheduler(hibSnap.getScheduler());
+		snap.setSchedulationStartDate(hibSnap.getSchedulationStartDate());
 		return snap;
 	}
 
@@ -241,6 +251,27 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 
 
 
+	public String loadSnapshotSchedulation(Integer idSnap) throws EMFUserError {
+
+		Session aSession = null;
+
+		try {
+			aSession = getSession();
+
+			SbiSnapshots hibSnap = (SbiSnapshots)aSession.load(SbiSnapshots.class, idSnap);
+			return hibSnap.getScheduler();
+
+		} catch (HibernateException he) {
+			logException(he);
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (aSession!=null){
+				if (aSession.isOpen()) aSession.close();
+			}
+		}
+
+	}
 
 	@Override
 	public Snapshot getLastSnapshot(Integer idBIObj) throws EMFUserError {
@@ -278,14 +309,43 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 	}
 
 
-	@Override
-	public Map<String, Map<Integer,List<Snapshot>>> getSnapshotsBySchedulation(String schedulationName)  throws EMFUserError {
+	public List<Snapshot> getLastSnapshotsBySchedulation(String schedulationName, boolean collate)  throws EMFUserError {
+		 Map<String, Map<Integer,List<Snapshot>>> all =  getSnapshotsBySchedulation(schedulationName, collate);
+		 List<Snapshot> last = null;
+		 Date lastDate = null;
+
+		 Iterator<String> iter1 = all.keySet().iterator();
+		 while (iter1.hasNext()) {
+			String aKey = iter1.next();
+			Map<Integer,List<Snapshot>> aMap = all.get(aKey);
+			Iterator<Integer> iter2 = aMap.keySet().iterator();
+			while (iter2.hasNext()) {
+				Integer aInteger = iter2.next();
+				List<Snapshot> snapshots =  aMap.get(aInteger);
+				if(snapshots.size()>0){
+					Date creationDate = snapshots.get(0).getDateCreation();
+					if(lastDate==null || creationDate.compareTo(lastDate)>0){
+						lastDate = creationDate;
+						last = snapshots;
+					}
+				}
+			}
+		}
+
+		 return last;
+	}
+
+	public Map<String, Map<Integer,List<Snapshot>>> getSnapshotsBySchedulation(String schedulationName, boolean collate)  throws EMFUserError {
 		Map<String, Map<Integer,List<Snapshot>>> snaps = new HashMap<String, Map<Integer,List<Snapshot>>>() ;
+		List<List<Snapshot>> documentLIstLIst = new ArrayList<List<Snapshot>>();// supporting list that is the copy of the lists in snaps. it is used to fascicolate
+
 		Session aSession = null;
+
+
 		try {
 			aSession = getSession();
 
-			String hql = "from SbiSnapshots ss where ss.scheduler = ?" ;
+			String hql = "from SbiSnapshots ss where ss.scheduler = ? order by ss.sbiObject.biobjId" ;
 
 			Query query = aSession.createQuery(hql);
 			query.setString(0, schedulationName);
@@ -299,6 +359,7 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 				//with same schedulation name
 				SbiSnapshots hibSnap = (SbiSnapshots)iterHibSnaps.next();
 				Snapshot snap = toSnapshot(hibSnap);
+
 				String schedulation =  hibSnap.getSchedulation();
 
 				Map<Integer,List<Snapshot>> snapForSchedulation = snaps.get(schedulation);
@@ -312,11 +373,18 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 				if(snapForSchedulationAndTime==null){
 					snapForSchedulationAndTime = new ArrayList<Snapshot>();
 					snapForSchedulation.put(schedulationTime, snapForSchedulationAndTime);
+					documentLIstLIst.add(snapForSchedulationAndTime);
 				}
 
 				snapForSchedulationAndTime.add(snap);
-
 			}
+
+
+			if(collate){
+				collateSnapshot(documentLIstLIst);
+			}
+
+
 
 		} catch (HibernateException he) {
 			logException(he);
@@ -327,6 +395,66 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 			}
 		}
 		return snaps;
+	}
+
+	/**
+	 * Collate snapshots. Suppose we have doc1,doc2 with a parameter that can have 3 values (a,b,c)
+	 * schedulation iterate over this 3 values. The normla result will be
+	 * doc1a
+	 * doc1b
+	 * doc1c
+	 * doc2a
+	 * doc2b
+	 * doc2c
+	 * This method transforms the result in thsi way:
+	 * doc1a
+	 * doc2a
+	 * doc1b
+	 * doc2b
+	 * doc1c
+	 * doc2c
+	 * @param documentLIstLIst
+	 */
+	private void collateSnapshot(List<List<Snapshot>> documentLIstLIst){
+		for (Iterator iterator = documentLIstLIst.iterator(); iterator.hasNext();) {
+			List<Snapshot> aLits = (List<Snapshot>) iterator.next();
+			Map<Integer, List<Snapshot>> documetSnapMap = new TreeMap<Integer, List<Snapshot>>();
+			for (Iterator iterator2 = aLits.iterator(); iterator2.hasNext();) {
+				Snapshot snapshot = (Snapshot) iterator2.next();
+				List<Snapshot> listOfDOc = documetSnapMap.get(snapshot.getBiobjId());
+				if(listOfDOc==null){
+					listOfDOc = new ArrayList<Snapshot>();
+					documetSnapMap.put(snapshot.getBiobjId(), listOfDOc);
+				}
+				listOfDOc.add(snapshot);
+			}
+
+			List<Snapshot> sortedList = new ArrayList<Snapshot>();
+
+			Collection<List<Snapshot>> documentsSnap = documetSnapMap.values();
+			int documentListSize =-1;
+			for (Iterator iterator2 = documentsSnap.iterator(); iterator2.hasNext();) {
+				List<Snapshot> list = (List<Snapshot>) iterator2.next();
+				if(documentListSize>=0 && list.size()!=documentListSize){
+					//logger.error("Can not merge using FASCICOLA if the number of snapshot of each document is not the same");
+					throw new SpagoBIDAOException("snap.size.error");
+				}
+				if(documentListSize<0){
+					documentListSize = list.size();
+				}
+
+			}
+			int index=0;
+			while(index<documentListSize){
+				for (Iterator iterator2 = documentsSnap.iterator(); iterator2.hasNext();) {
+					List<Snapshot> list = (List<Snapshot>) iterator2.next();
+					sortedList.add(list.get(index));
+				}
+				index++;
+			}
+			aLits.clear();
+			aLits.addAll(sortedList);
+		}
 	}
 
 

@@ -93,7 +93,29 @@
 	        	<PARAMETER type="RELATIVE" value="TENANT_ID" scope="USER" />
 	        	<PARAMETER type="TRUE_VALUE" value="true" scope="" />        	
 	        	<PARAMETER type="RELATIVE" value="user_id" scope="SESSION" />
-	        	<PARAMETER type="RELATIVE" value="is_admin" scope="SESSION" />    
+	        	<PARAMETER type="RELATIVE" value="is_admin" scope="SESSION" />
+	        	<PARAMETER type="RELATIVE" value="cat0" scope="SESSION" />
+	        	<PARAMETER type="RELATIVE" value="cat1" scope="SESSION" />
+	        	<PARAMETER type="RELATIVE" value="cat2" scope="SESSION" />
+	        	<PARAMETER type="RELATIVE" value="cat3" scope="SESSION" />
+	        	<PARAMETER type="RELATIVE" value="cat4" scope="SESSION" />
+	        	<PARAMETER type="RELATIVE" value="cat5" scope="SESSION" />
+	        	<PARAMETER type="RELATIVE" value="cat7" scope="SESSION" />
+	        	<PARAMETER type="RELATIVE" value="cat6" scope="SESSION" />
+	        	<PARAMETER type="RELATIVE" value="cat8" scope="SESSION" />
+	        	<PARAMETER type="RELATIVE" value="cat9" scope="SESSION" />
+	        	<PARAMETER type="RELATIVE" value="cat10" scope="SESSION" />
+	        	<PARAMETER type="RELATIVE" value="cat11" scope="SESSION" />
+	        	<PARAMETER type="RELATIVE" value="cat12" scope="SESSION" />
+	        	<PARAMETER type="RELATIVE" value="cat13" scope="SESSION" />
+	        	<PARAMETER type="RELATIVE" value="cat14" scope="SESSION" />
+	        	<PARAMETER type="RELATIVE" value="cat15" scope="SESSION" />
+	        	<PARAMETER type="RELATIVE" value="cat16" scope="SESSION" />
+	        	<PARAMETER type="RELATIVE" value="cat17" scope="SESSION" />
+	        	<PARAMETER type="RELATIVE" value="cat18" scope="SESSION" />
+	        	<PARAMETER type="RELATIVE" value="cat19" scope="SESSION" />
+
+	        	    
 	        	<!-- @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net) -->
 	        	<!-- <PARAMETER type="TRUE_VALUE" value="true" scope="" />  -->	        	
 	        	<ORDER_BY  scope="SERVICE_REQUEST" type="RELATIVE" value="FIELD_ORDER"/>

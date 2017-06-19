@@ -91,10 +91,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<div flex=100>
 					<md-input-container class="md-block"> <label>{{translate.load("sbi.folders.description")}}</label>
 					<input data-ng-model="selectedFolder.description" 
-						name="description"   ng-maxlength="100" ng-change="setDirty()">
-					<div ng-messages="attributeForm.password.$error"
-						ng-show="selectedFolder.description== null"> 
-					</div>
+						name="description" ng-maxlength="100" ng-change="setDirty()">
 					</md-input-container>
 				</div>
 	

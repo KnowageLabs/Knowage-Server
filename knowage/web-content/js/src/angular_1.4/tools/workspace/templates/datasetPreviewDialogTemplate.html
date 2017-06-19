@@ -8,16 +8,6 @@
       	<i class="fa fa-database"></i>
     	&nbsp;&nbsp;
        	<h2>{{translate.load('sbi.browser.document.dataset')}}:{{selectedDataSet.name}}</h2> 
-       	 <span flex></span> <h2>{{translate.load('Sbi.browser.mexport.MassiveExportWizardParametersPage.parameters')}}: &nbsp;</h2> 
-       	<div ng-repeat="par in selectedDataSet.pars">
-	       	<div ng-if="par.value!=''">
-	       	{{par.name}}-{{par.value}};       	
-	       	</div>
-	       	<div ng-if="par.value==''">
-	       	{{par.name}}-{{par.defaultValue}};       
-	       	</div>
-       	&nbsp;
-       	</div>
        <span flex></span>
        <md-button id="close-preview" class="md-icon-button" ng-click="closeDatasetPreviewDialog()">
          <md-icon class="fa fa-times-circle-o fa-2x"></md-icon>
@@ -39,76 +29,20 @@
    </div>
    </md-toolbar>
    <br>
-	<md-content style="overflow-y:hidden">
+	<md-content style="overflow-y:hidden;">
 	
-	<div layout-fill ng-if=paginationDisabled>
+	<div layout-fill >
 		<angular-table
-		style="position:absolute;"
 					id='previewDatasetTable'
 		            ng-model="previewDatasetModel"
 					columns="previewDatasetColumns" 
 					no-pagination=true
 					show-search-bar=false
-					full-width>
+					full-width=true
+					relative-header=true>
 		</angular-table>	
 	 </div>
 	 
-	 <div layout-fill ng-if=!paginationDisabled>
-		<angular-table
-		style="position:absolute;"
-					flex
-					id='previewDatasetTable'
-		            ng-model="previewDatasetModel"
-					columns="previewDatasetColumns" 
-					no-pagination=false
-					show-search-bar=false
-					full-width>
-		</angular-table>	
-	</div>
 	
 </md-content>
 </md-dialog>
-<!-- 
-<md-dialog class="fullscreen-dialog" >
-
-		<md-toolbar>
- 
-	     <div class="md-toolbar-tools layout-align-center-center layout-row">
-	      	
-	      	<i class="fa fa-database"></i>
-	    	&nbsp;&nbsp;
-	       	<h2>{{translate.load('sbi.browser.document.dataset')}}:{{selectedDataSet.name}}</h2> 
-	       	
-	       	 <span flex></span> <h2>{{translate.load('Sbi.browser.mexport.MassiveExportWizardParametersPage.parameters')}}: &nbsp;</h2> 
-	       	<div ng-repeat="par in selectedDataSet.pars">
-		       	<div ng-if="par.value!=''">
-		       	{{par.name}}-{{par.value}};       	
-		       	</div>
-		       	<div ng-if="par.value==''">
-		       	{{par.name}}-{{par.defaultValue}};       
-		       	</div>
-	       	&nbsp;
-	       	</div>
-	       <span flex></span>
-	       <md-button id="close-preview" class="md-icon-button" ng-click="closeDatasetPreviewDialog()">
-	         <md-icon class="fa fa-times-circle-o fa-2x"></md-icon>
-	       </md-button>
-	     </div>   
-	   </md-toolbar>
-	
-	
-	<angular-table
-	    	flex
-	 	id='previewDatasetTable' 
-	 	ng-model="previewDatasetModel"
-		columns=previewDatasetColumns
-		show-search-bar=false 
-		highlights-selected-item=true
-		current-page-number=datasetTableLastPage
-		total-item-count=numOfDSPreview
-		page-changed-function="changePreviewPage(itemsPerPage, currentPageNumber)"
-		full-width
-		 >
-	</angular-table> 
-</md-dialog>
- -->

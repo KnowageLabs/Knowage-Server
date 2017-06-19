@@ -20,6 +20,8 @@ package it.eng.spagobi.tools.catalogue.dao;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.tools.catalogue.bo.Content;
 import it.eng.spagobi.tools.catalogue.bo.MetaModel;
+import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel;
+import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModelContent;
 
 import java.util.List;
 
@@ -68,5 +70,11 @@ public interface IMetaModelsDAO extends ISpagoBIDao {
 	public String unlockMetaModel(Integer metaModelId, String userId);
 
 	public Content lastFileModelMeta(Integer modelId);
+
+	public List<SbiMetaModel> loadAllSbiMetaModels();
+
+	public MetaModel toModel(SbiMetaModel hibModel);
+
+	public Content toContent(SbiMetaModelContent hibContent, boolean loadByteContent);
 
 }

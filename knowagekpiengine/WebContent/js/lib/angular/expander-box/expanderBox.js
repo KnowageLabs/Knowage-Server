@@ -2,22 +2,22 @@
  * @authors Giovanni Luca Ulivo (GiovanniLuca.Ulivo@eng.it)
  * 
  */
-var scripts = document.getElementsByTagName("script")
-var currentScriptPath = scripts[scripts.length-1].src;
 
 angular.module('expander-box', [ 'ngMaterial'])
 .directive('expanderBox',function() {
 	return {
 		transclude : true,
-		template:"<md-toolbar ng-click=\"toggle($event)\">" +
-		"<span class=\"md-toolbar-tools\">" +
-		"<span id=\"customToolbarContent\"></span>"+
-		"{{title}}" +
-		"</span>" +
-		"<span id=\"customToolbarActionContent\"></span>"+
-		"<md-button style=\"position:absolute;right:5px;top:0px;\" class=\"md-icon-button\" aria-label=\"More\"><md-icon class=\"fa fa-chevron-{{expanded?'up':'down'}}\"></md-icon></md-button>"+
-		"</md-toolbar><md-content class=\"animate-accordion\" layout-padding  ng-show=\"expanded\"><div ng-transclude style='padding: 0;'></div></md-content> " 
-		,
+		template: '<md-toolbar ng-click="toggle($event)">'+
+						'<div class="md-toolbar-tools"><h2>{{title}}</h2><span flex></span>'+
+							'<md-button class="md-icon-button" aria-label="More">'+
+								'<md-icon class="fa fa-chevron-{{expanded?\'up\':\'down\'}}"></md-icon>'+
+							'</md-button>'+
+						'</div>'+
+					'</md-toolbar>'+
+					'<md-content class="animate-accordion" layout-padding  ng-show="expanded">'+
+						'<div ng-transclude></div>'+
+					'</md-content>',
+							
 		controller : boxExpanderControllerFunction,
 		scope : {
 			id : "@",

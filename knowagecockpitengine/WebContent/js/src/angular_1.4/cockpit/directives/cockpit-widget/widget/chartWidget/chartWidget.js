@@ -444,10 +444,28 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 	    
 		if(event.point){
 			//for highcharts
+			var date = new Date(event.point.x);
+			var char =  "/" ;
+			var theyear=date.getFullYear()
+			var themonth=date.getMonth()+1
+			var theday=date.getDate()
+			var date_format = theday+char+themonth+char+theyear;
+			
 			if(chartType === 'SCATTER'){
-				var columnValue = event.point.category.name;
+				
+				var columnValue  = {};
+				if($scope.ngModel.content.chartTemplate.CHART.dateTime){
+					columnValue = date_format;
+				}else {
+					columnValue = event.point.category.name;
+				}
 			}else{
-				var columnValue = event.point.name;
+				var columnValue  = {};
+				if($scope.ngModel.content.chartTemplate.CHART.dateTime){
+					columnValue = date_format;
+				}else {
+					columnValue = event.point.name;
+				}
 			}
 			
 			
@@ -499,17 +517,25 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 	}
 	
 	function createCrossParameters(event){
-       if( $scope.ngModel.content.chartTemplate.CHART.type==="HEATMAP"){
-    	   var parameters = {
+		if($scope.ngModel.content.chartTemplate.CHART.dateTime){
+			var date = new Date(event.point.x);
+			var char =  "/" ;
+			var theyear=date.getFullYear()
+			var themonth=date.getMonth()+1
+			var theday=date.getDate()
+			var date_format = theday+char+themonth+char+theyear;
+		}
+		if( $scope.ngModel.content.chartTemplate.CHART.type==="HEATMAP"){
+			var parameters = {
     				"SERIE_NAME": event.point.series.name,
     				"SERIE_VALUE":event.point.y,
     				"CATEGORY_VALUE":event.point.name,
     				"CATEGORY_NAME": event.point.category,
     				"GROUPING_NAME": event.point.group.name,
     				"GROUPING_VALUE": event.point.group.value
-    			};
-    			
-    			return parameters;
+    		};
+    		
+    		return parameters;
 			
        }
        
@@ -520,9 +546,9 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
     				"CATEGORY_NAME": event.selectParam_cross.categoryName,
     				"GROUPING_NAME": event.selectParam_cross.groupingCategoryName,
     				"GROUPING_VALUE": event.selectParam_cross.groupingCategoryValue
-    			};
-    			
-    			return parameters;
+    		};
+    		
+    		return parameters;
 			
        }
        if( $scope.ngModel.content.chartTemplate.CHART.type==="TREEMAP"){
@@ -531,9 +557,9 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
     				"SERIE_VALUE":event.point.value,
     				"CATEGORY_VALUE":event.point.name,
     				"CATEGORY_NAME": $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY[0].name
-    			};
+    		};
     			
-    			return parameters;
+    		return parameters;
        }
        if( $scope.ngModel.content.chartTemplate.CHART.type==="WORDCLOUD"){
     	   var parameters = {
@@ -541,7 +567,7 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
     				"SERIE_VALUE":event.selectParam_cross.serieValue,
     				"CATEGORY_VALUE":event.selectParam_cross.categoryValue,
     				"CATEGORY_NAME": event.selectParam_cross.categoryName,
-    			};
+    		};
     	   
     	   if(event.selectParam_cross.categoryId){
     		   parameters["CATEGORY_ID"]= event.selectParam_cross.categoryId;
@@ -549,25 +575,39 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
     		   parameters["CATEGORY_ID"]= event.selectParam_cross.categoryValue;
     	   }
     			
-    			return parameters;
-       }else if( $scope.ngModel.content.chartTemplate.CHART.type==="SUNBURST"){
+    	   return parameters;
+       }
+       
+       else if( $scope.ngModel.content.chartTemplate.CHART.type==="SUNBURST"){
         	   var parameters = event.selectParam_cross;
         			
-        			return parameters;
-           }else        if($scope.ngModel.content.chartTemplate.CHART.type==="SCATTER"){
+        		return parameters;
+       }
+       
+       else if($scope.ngModel.content.chartTemplate.CHART.type==="SCATTER"){
     	   var parameters = {
     				"SERIE_NAME": event.point.series.name,
     				"SERIE_VALUE":event.point.y,
-    				"CATEGORY_VALUE":event.point.category.name,
+    				"CATEGORY_VALUE": $scope.ngModel.content.chartTemplate.CHART.dateTime ? date_format : event.point.category.name,
     				"CATEGORY_NAME": $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY.name
+    		};
+    	   
+    	   	return parameters;
+       } 
+       else if($scope.ngModel.content.chartTemplate.CHART.type==="CHORD"){
+    	   var parameters = {
+    				"SERIE_NAME": event.SERIE_NAME,
+    				"SERIE_VALUE":event.SERIE_VALUE,
+    				"CATEGORY_VALUE":  event.CATEGORY_VALUE,
+    				"CATEGORY_NAME": event.CATEGORY_NAME,
     			};
     	   
     	   return parameters;
        }
-		var parameters = {
+       var parameters = {
 			"SERIE_NAME": event.point.series.name,
 			"SERIE_VALUE":event.point.y,
-			"CATEGORY_VALUE":event.point.name,
+			"CATEGORY_VALUE": $scope.ngModel.content.chartTemplate.CHART.dateTime ? date_format : event.point.name,
 			"CATEGORY_NAME": $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY.name
 		};
        
@@ -592,8 +632,8 @@ function setAggregationsOnChartEngine(wconf){
 				var obj = {};
 				obj['name'] = chartSeries[i].column;
 				obj['aggregationSelected'] = chartSeries[i].groupingFunction ? chartSeries[i].groupingFunction : 'SUM';
-				obj['alias'] = obj.name + '_' + obj.aggregationSelected;
-				obj['aliasToShow'] = obj.name;
+				obj['alias'] = chartSeries[i].name + '_' + obj.aggregationSelected;
+				obj['aliasToShow'] = obj['alias'];
 				obj['fieldType'] = "MEASURE";
 				aggregations.push(obj);					
 			}
@@ -624,6 +664,22 @@ function setAggregationsOnChartEngine(wconf){
 				obj['fieldType'] = "ATTRIBUTE";
 				
 				aggregations.push(obj);
+				if( chartTemplate.CHART.groupCategories && chartCategory.groupby!=""){
+					var subs = "";
+					if (chartCategory.groupby.indexOf(',') == -1) { 
+						subs = chartCategory.groupby 
+					}
+					
+					else {
+						subs = angular.copy(chartCategory.groupby.substring(0, chartCategory.groupby.indexOf(',')));
+					}
+					var groupby = {};
+					groupby['name'] = subs;
+					groupby['alias'] = subs;
+					groupby['aliasToShow'] = subs;
+					groupby['fieldType'] = "ATTRIBUTE";
+					aggregations.push(groupby);
+				}
 			};
 			
 		}

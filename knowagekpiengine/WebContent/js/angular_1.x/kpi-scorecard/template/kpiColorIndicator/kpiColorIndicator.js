@@ -243,7 +243,7 @@ angular.module('kpi_color_indicator', ['ngMaterial','sbiModule'])
 			    .content(sbiModule_translate.load("sbi.layer.delete.progress.message.delete"))
 			    .ariaLabel('cancel perspective') 
 			    .ok(sbiModule_translate.load("sbi.general.yes"))
-			    .cancel(sbiModule_translate.load("sbi.general.no"));
+			    .cancel(sbiModule_translate.load("sbi.general.No"));
 			      $mdDialog.show(confirm).then(function() {
 			    	  for(i=0;i<scope.perspectives.length;i++){
 							if(scope.perspectives[i].id==pId){

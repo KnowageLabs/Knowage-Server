@@ -17,6 +17,9 @@
  */
 package it.eng.spagobi.engine.chart.api.page;
 
+import it.eng.knowage.slimerjs.wrapper.beans.CustomHeaders;
+import it.eng.knowage.slimerjs.wrapper.beans.RenderOptions;
+import it.eng.knowage.slimerjs.wrapper.beans.ViewportDimensions;
 import it.eng.spagobi.commons.utilities.JSONTemplateUtilities;
 import it.eng.spagobi.engine.chart.ChartEngine;
 import it.eng.spagobi.engine.chart.ChartEngineInstance;
@@ -28,8 +31,10 @@ import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -43,11 +48,14 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.axis.encoding.Base64;
 import org.apache.log4j.Logger;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import edu.emory.mathcs.backport.java.util.Arrays;
 
 /**
  * @authors
@@ -56,6 +64,15 @@ import org.json.JSONObject;
 
 @Path("/1.0/chart/pages")
 public class PageResource extends AbstractChartEngineResource {
+
+	private static final String OUTPUT_TYPE = "outputType";
+	private static final String PDF_PAGE_ORIENTATION = "pdfPageOrientation";
+	private static final String PDF_ZOOM = "pdfZoom";
+	private static final String PDF_WIDTH = "pdfWidth";
+	private static final String PDF_HEIGHT = "pdfHeight";
+	private static final String PDF_WAIT_TIME = "pdfWaitTime";
+	static private final List<String> PDF_PARAMETERS = Arrays.asList(new String[] { OUTPUT_TYPE, PDF_WIDTH, PDF_HEIGHT, PDF_WAIT_TIME, PDF_ZOOM,
+			PDF_PAGE_ORIENTATION });
 
 	static private Map<String, JSONObject> pages;
 	static private Map<String, String> urls;
@@ -133,17 +150,35 @@ public class PageResource extends AbstractChartEngineResource {
 			switch (pageName) {
 
 			case "execute":
-				engineInstance = ChartEngine.createInstance(savedTemplate, getIOManager().getEnv());
+				String outputType = request.getParameter(OUTPUT_TYPE);
+				if ("xls".equals(outputType) || "xlsx".equals(outputType)) {
+					request.setAttribute("template", getIOManager().getTemplateAsString());
+					dispatchUrl = "/WEB-INF/jsp/ngCockpitExportExcel.jsp";
+					response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+				} else if ("PDF".equals(outputType)) {
+					String requestURL = getRequestUrlForPdfExport(request);
+					request.setAttribute("requestURL", requestURL);
 
-				/*
-				 * The use of the above commented snippet had led to https://production.eng.it/jira/browse/KNOWAGE-678 and
-				 * https://production.eng.it/jira/browse/KNOWAGE-552. The chart engine is stateful, thus the http session is not the place to store and retrive
-				 * the engine instance, otherwise concurrency issues are raised.
-				 *
-				 * @author: Alessandro Portosa (alessandro.portosa@eng.it)
-				 */
-				// getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
-				getExecutionSession().setAttributeInSession(EngineConstants.ENGINE_INSTANCE, engineInstance);
+					RenderOptions renderOptions = getRenderOptionsForPdfExporter(request);
+					request.setAttribute("renderOptions", renderOptions);
+
+					dispatchUrl = "/WEB-INF/jsp/ngCockpitExportPdf.jsp";
+					response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+				}  else {
+					engineInstance = ChartEngine.createInstance(savedTemplate, getIOManager().getEnv());
+
+					/*
+					 * The use of the above commented snippet had led to https://production.eng.it/jira/browse/KNOWAGE-678 and
+					 * https://production.eng.it/jira/browse/KNOWAGE-552. The chart engine is stateful, thus the http session is not the place to store and retrive
+					 * the engine instance, otherwise concurrency issues are raised.
+					 *
+					 * @author: Alessandro Portosa (alessandro.portosa@eng.it)
+					 */
+					// getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
+					getExecutionSession().setAttributeInSession(EngineConstants.ENGINE_INSTANCE, engineInstance);
+					
+				}
+
 				break;
 
 			case "edit":
@@ -194,6 +229,44 @@ public class PageResource extends AbstractChartEngineResource {
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+
+	private RenderOptions getRenderOptionsForPdfExporter(HttpServletRequest request) throws UnsupportedEncodingException {
+		String userId = (String) getUserProfile().getUserUniqueIdentifier();
+		String encodedUserId = Base64.encode(userId.getBytes("UTF-8"));
+		Map<String, String> headers = new HashMap<String, String>(1);
+		headers.put("Authorization", "Direct " + encodedUserId);
+		CustomHeaders customHeaders = new CustomHeaders(headers);
+
+		int pdfWidth = Integer.valueOf(request.getParameter(PDF_WIDTH));
+		int pdfHeight = Integer.valueOf(request.getParameter(PDF_HEIGHT));
+		ViewportDimensions dimensions = new ViewportDimensions(pdfWidth, pdfHeight);
+
+		long pdfRenderingWaitTime = 1000 * Long.valueOf(request.getParameter(PDF_WAIT_TIME));
+
+		RenderOptions renderOptions = RenderOptions.DEFAULT.withCustomHeaders(customHeaders).withDimensions(dimensions)
+				.withJavaScriptExecutionDetails(pdfRenderingWaitTime, 5000L);
+		return renderOptions;
+	}
+
+	private String getRequestUrlForPdfExport(HttpServletRequest request) {
+		StringBuilder sb = new StringBuilder(request.getRequestURL().toString());
+		String sep = "?";
+		Map<String, String[]> parameterMap = request.getParameterMap();
+		for (String parameter : parameterMap.keySet()) {
+			if (!PDF_PARAMETERS.contains(parameter)) {
+				String[] values = parameterMap.get(parameter);
+				if (values != null && values.length > 0) {
+					sb.append(sep);
+					sb.append(parameter);
+					sb.append("=");
+					sb.append(values[0]);
+					sep = "&";
+				}
+			}
+		}
+		sb.append("&export=true");
+		return sb.toString();
 	}
 
 	@SuppressWarnings("unchecked")

@@ -31,9 +31,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 /**
- * 
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
- * 
  */
 public class RegistryConfigurationXMLParser {
 
@@ -85,6 +83,7 @@ public class RegistryConfigurationXMLParser {
 	public static final String EDITOR_TYPE_TEXT = "TEXT";
 	public static final String EDITOR_TYPE_COMBO = "COMBO";
 	public static final String EDITOR_TYPE_PICKER = "PICKER";
+	public static final String EDITOR_TYPE_POPUP = "POPUP";
 
 	public RegistryConfiguration parse(SourceBean registryConf) {
 		logger.debug("IN");
@@ -232,6 +231,8 @@ public class RegistryConfigurationXMLParser {
 					editorType = Column.EDITOR_TYPE_COMBO;
 				else if (EDITOR_TYPE_PICKER.equalsIgnoreCase((String) aColumn.getAttribute(ATTRIBUTE_EDITOR)))
 					editorType = Column.EDITOR_TYPE_PICKER;
+				else if (EDITOR_TYPE_POPUP.equalsIgnoreCase((String) aColumn.getAttribute(ATTRIBUTE_EDITOR)))
+					editorType = Column.EDITOR_TYPE_POPUP;
 
 				String dependences = (String) aColumn.getAttribute(ATTRIBUTE_COLUMN_DEPENDENCES);
 

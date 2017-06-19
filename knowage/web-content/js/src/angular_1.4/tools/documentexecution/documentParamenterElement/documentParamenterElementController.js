@@ -34,12 +34,15 @@
 	
 	var documentParamenterElementCtrl = function(
 			$scope, sbiModule_config, sbiModule_restServices, sbiModule_translate, 
-			execProperties, documentExecuteServices, $mdDialog, $mdMedia,execProperties,$filter,sbiModule_dateServices, sbiModule_user) {
+			execProperties, documentExecuteServices, $mdDialog, $mdMedia,execProperties,$filter,sbiModule_dateServices, sbiModule_user,
+			sbiModule_messaging) {
 		
 		$scope.parameter.showMapDriver = sbiModule_user.functionalities.indexOf("MapDriverManagement")>-1;
 		$scope.execProperties = execProperties;
 		$scope.documentExecuteServices = documentExecuteServices;
 		$scope.sbiModule_translate = sbiModule_translate;
+		$scope.sbiModule_messaging = sbiModule_messaging;
+		
 		
 		$scope.getTreeParameterValue = function(innerNode) {
 			if (typeof innerNode === 'undefined'){
@@ -345,12 +348,13 @@
 					parameter: parameter,
 					toggleCheckboxParameter: $scope.toggleCheckboxParameter,
 					checkboxParameterExists: $scope.checkboxParameterExists,
-					sbiModule_translate: $scope.sbiModule_translate
+					sbiModule_translate: $scope.sbiModule_translate,
+					sbiModule_messaging: $scope.sbiModule_messaging
 				},
 				
 				controllerAs: "paramDialogCtrl",
 				
-				controller : function($mdDialog, parameter, toggleCheckboxParameter, checkboxParameterExists,sbiModule_translate) {
+				controller : function($mdDialog, parameter, toggleCheckboxParameter, checkboxParameterExists,sbiModule_translate,sbiModule_messaging) {
 					var paramDialogCtrl = this;
 					
 					paramDialogCtrl.toggleCheckboxParameter = toggleCheckboxParameter;
@@ -499,12 +503,15 @@
 						sbiModule_restServices.post(
 								"1.0/documentExeParameters",
 								"getParameters", objPost)
-						   .success(function(data, status, headers, config) {  
-							   if(data.status=="OK"){
-								   paramDialogCtrl.tableData = data.result.root;
-								   paramDialogCtrl.selectedTableItems = paramDialogCtrl.initSelectedTableItems();
-							   }
-						   });
+								.success(function(data, status, headers, config) {
+									if(data.errors && data.errors[0]){
+										sbiModule_messaging.showWarningMessage(data.errors[0].message, 'Warning');
+									}
+									else if(data.status=="OK"){
+										paramDialogCtrl.tableData = data.result.root;
+										paramDialogCtrl.selectedTableItems = paramDialogCtrl.initSelectedTableItems();
+									}
+								});
 						   
 						paramDialogCtrl.initSelectedTableItems = function() {
 							var isMultivalue = paramDialogCtrl.tempParameter.multivalue;
@@ -594,8 +601,9 @@
 					
 				clickOutsideToClose: false,
 				
-				controller : function($scope, $mdDialog, sbiModule_translate) {
+				controller : function($scope, $mdDialog, sbiModule_translate, sbiModule_messaging) {
 					$scope.sbiModule_translate = sbiModule_translate;
+					$scope.sbiModule_messaging = sbiModule_messaging;
 					
 					$scope.parameter = parameter;
 					$scope.selectedFeatures = [];

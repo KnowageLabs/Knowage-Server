@@ -6,11 +6,6 @@
 var scripts = document.getElementsByTagName("script");
 var currentScriptPathCockpitTable = scripts[scripts.length - 1].src;
 
-////load daff.js
-//var script = document.createElement('script');
-//script.type = 'text/javascript';
-//script.src = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1) + 'utils/daff.js';
-//document.getElementsByTagName('head')[0].appendChild(script);
 
 angular.module('cockpit_angular_table', ['ngMaterial', 'angularUtils.directives.dirPagination', 'ng-context-menu', 'ui.tree'])
         .directive('cockpitAngularTable',
@@ -124,16 +119,7 @@ angular.module('cockpit_angular_table', ['ngMaterial', 'angularUtils.directives.
                                     scope.initializeColumns = function (noCompile) {
                                         //create the column of the table. If attrs.column is present load only this column, else load all the columns
                                         scope.tableColumns = [];
- 
-                                        /*davverna - removed --MULTISELECT-- field from cockpit
-                                         if ((attrs.multiSelect && (attrs.multiSelect == true || attrs.multiSelect == "true")) || scope.multiSelect == true){
-                                            scope.tableColumns.push({label: "--MULTISELECT--", name: "--MULTISELECT--", size: "30px"});
-                                            thead.attr('multi-select', true);
-                                            tbody.attr('multi-select', true);
-                                            if (!scope.selectedItem) {
-                                                scope.selectedItem = [];
-                                            }
-                                        }*/
+
 
                                         if (scope.DandDEnabled) {
                                             scope.tableColumns.push({label: "", name: "--DRAG_AND_DROP--", size: "1px"});
@@ -319,6 +305,7 @@ angular.module('cockpit_angular_table', ['ngMaterial', 'angularUtils.directives.
                             
                             //check for pagination
                             if(angular.equals(tAttrs.paginationType,"none")){
+                            	debugger;
                             	var repeatAttr=tr.attr("dir-paginate").replace("| itemsPerPage:itemsPerPage","");
                             	tr.attr("ng-repeat",repeatAttr);
                                 tr.removeAttr("dir-paginate");
@@ -754,10 +741,15 @@ function CockpitTableControllerFunction($scope, $timeout,$mdDialog) {
     		var tableFooter = angular.element($scope.tableItem[0].querySelector('cockpit-angular-table-footer'))[0];
     		$scope.tableFooter = tableFooter;
     	}
+    	
+    	if($scope.tableHeader==undefined || $scope.tableHeader.$$NG_REMOVED==true){
+    		var tableHeader = angular.element($scope.tableItem[0].querySelector('.principalTable thead'))[0];
+    			$scope.tableHeader = tableHeader;
+    	}
     		 
-    	var tableContainerHeight = $scope.tableContainer == undefined ? 36 : $scope.tableContainer.offsetHeight;
+    	var tableContainerHeight = $scope.tableContainer == undefined ? 33 : $scope.tableContainer.offsetHeight;
         var headButtonHeight = $scope.headButton == undefined ? 0 : $scope.headButton.offsetHeight;
-        var listItemTemplBoxHeight = $scope.listItemTemplBox == undefined ? 36 : $scope.listItemTemplBox.offsetHeight;
+        var listItemTemplBoxHeight = $scope.listItemTemplBox == undefined ? 33 : $scope.listItemTemplBox.offsetHeight;
         var queueTableHeight = $scope.queueTable.offsetHeight>0? $scope.queueTable.offsetHeight : 0;
         var scrollHeight=($scope.tableContainer.scrollWidth>$scope.tableContainer.offsetWidth) ? 20 : 0;
         var tableFooterHeight = $scope.tableFooter == undefined ? 0 : $scope.tableFooter.offsetHeight;
@@ -790,7 +782,7 @@ function CockpitTableControllerFunction($scope, $timeout,$mdDialog) {
     $timeout(function () {
         if ($scope.noPagination != true) {
         	if($scope.fixedItemPerPage!=true){
-                $scope.changeWordItemPP();
+                // $scope.changeWordItemPP();
         	}else{
         		 $scope.pageChangedFunction({
                      searchValue: "",
@@ -808,7 +800,7 @@ function CockpitTableControllerFunction($scope, $timeout,$mdDialog) {
     $scope.$watch(function(){
          return $scope.enableChangeDetector ?  {items:($scope.ngModel==undefined ? 0 : $scope.ngModel.length),height:($scope.tableItem[0] == undefined ? null : $scope.tableItem[0].offsetHeight),ngModel:$scope.ngModel} : {items:($scope.ngModel==undefined ? 0 : $scope.ngModel.length),height:($scope.tableItem[0] == undefined ? null : $scope.tableItem[0].offsetHeight)};
     }, function(newValue,oldValue){
-    	if ($scope.noPagination != true &&( newValue.items != 0 ||  newValue.height != 0) && $scope.fixedItemPerPage!=true) {
+    	if ($scope.noPagination != true && newValue.items != 0 && newValue.height != 0 && $scope.fixedItemPerPage!=true) {
 	    	if(newValue!=oldValue){
 	    		$timeout(function(){
 	    			$scope.changeWordItemPP();

@@ -302,6 +302,9 @@
 			
 			<ITEM title="#menu.ImpExpCatalog" functionality="ImpExpCatalog"
 				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportCatalog/importExportCatalog.jsp" /> 
+
+			<ITEM title="#menu.ImpExpAnalyticalDrivers" functionality="ImpExpAnalyticalDrivers"
+				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportAnalyticalDrivers/importExportAnalyticalDrivers.jsp" /> 
 				
 			<ITEM title="#menu.ImpExpGlossary" functionality="ImpExpGlossary"
 				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportGlossary/importExportGlossaryTemplate.jsp" /> 

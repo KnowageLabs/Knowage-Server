@@ -385,6 +385,7 @@ public class ParameterUseDAOHibImpl extends AbstractHibernateDAO implements IPar
 				tmpCheck = (SbiChecks) aSession.load(SbiChecks.class, ((Check) newChecks.get(i)).getCheckId());
 				hibParUseCkId.setSbiChecks(tmpCheck);
 				hibParUseCk = new SbiParuseCk(hibParUseCkId);
+				updateSbiCommonInfo4Insert(hibParUseCk);
 				aSession.save(hibParUseCk);
 				parUseCkToSave.add(hibParUseCk);
 			}

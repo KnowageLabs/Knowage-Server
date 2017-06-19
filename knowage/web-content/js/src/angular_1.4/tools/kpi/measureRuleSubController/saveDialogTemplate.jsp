@@ -7,7 +7,7 @@
 	      <md-button ng-click="cancel()">
 	      {{translate.load("sbi.general.cancel")}}
 	      </md-button>
-	      <md-button ng-click="save()"  >
+	      <md-button ng-click="save()" ng-disabled="currentRule.name.length==0">
 	     {{translate.load("sbi.generic.update")}}
 	      </md-button>
        </div>

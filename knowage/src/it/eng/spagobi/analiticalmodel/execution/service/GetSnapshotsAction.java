@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -38,16 +38,17 @@ import org.json.JSONObject;
  * @author Zerbetto Davide
  */
 public class GetSnapshotsAction extends AbstractSpagoBIAction {
-	
+
 	public static final String SERVICE_NAME = "GET_SNAPSHOTS_ACTION";
-	
+
 	// logger component
 	private static Logger logger = Logger.getLogger(GetSnapshotsAction.class);
-	
+
+	@Override
 	public void doService() {
 		logger.debug("IN");
 		ExecutionInstance executionInstance;
-		
+
 		try {
 			// retrieving execution instance from session, no need to check if user is able to execute the required document
 			executionInstance = getContext().getExecutionInstance( ExecutionInstance.class.getName() );
@@ -59,7 +60,7 @@ public class GetSnapshotsAction extends AbstractSpagoBIAction {
 				logger.error("Error while recovering snapshots list for document with id = " + biobjectId, e);
 				throw new SpagoBIServiceException(SERVICE_NAME, "Cannot load scheduled executions", e);
 			}
-			
+
 			try {
 				JSONArray snapshotsListJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize( snapshotsList ,null);
 				JSONObject results = new JSONObject();

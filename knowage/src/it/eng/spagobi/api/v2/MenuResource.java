@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.api.v2;
 
+import it.eng.qbe.serializer.SerializationException;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -165,8 +166,7 @@ public class MenuResource extends AbstractSpagoBIResource {
 					file.put("id", i + 1);
 					file.put("name", filesHtmls[i]);
 				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					throw new SerializationException("An error occurred while serializing html file: " + filesHtmls[i], e);
 				}
 				njo.put(file);
 			}
@@ -325,10 +325,9 @@ public class MenuResource extends AbstractSpagoBIResource {
 
 			menu.setViewIcons(paramsObj.getBoolean("viewIcons"));
 
-			menu = 	objDao.insertMenu(menu);
+			menu = objDao.insertMenu(menu);
 			return Response.ok(menu).build();
 		} catch (Exception e) {
-			e.printStackTrace();
 			String errorString = "sbi.menu.save.error";
 			logger.error(errorString, e);
 			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
@@ -418,7 +417,6 @@ public class MenuResource extends AbstractSpagoBIResource {
 			return Response.ok().build();
 
 		} catch (Exception e) {
-			e.printStackTrace();
 			String errorString = "sbi.menu.modify.error";
 			logger.error(errorString, e);
 			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
@@ -445,7 +443,6 @@ public class MenuResource extends AbstractSpagoBIResource {
 			iMenuDao.eraseMenu(menu);
 			return Response.ok().build();
 		} catch (Exception e) {
-			e.printStackTrace();
 			String errorString = "sbi.menu.delete.error";
 			logger.error(errorString, e);
 			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
@@ -454,7 +451,7 @@ public class MenuResource extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("getParent/{id}")
-	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONALITIES_MANAGEMENT })
+	@UserConstraint(functionalities = { SpagoBIConstants.MENU_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON + charset)
 	public Response getParent(@PathParam("id") Integer id) {
 

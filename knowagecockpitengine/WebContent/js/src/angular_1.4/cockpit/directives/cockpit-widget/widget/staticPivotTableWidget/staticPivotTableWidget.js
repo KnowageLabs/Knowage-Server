@@ -45,6 +45,27 @@ angular.module('cockpitModule')
                 };
 		   	}
 	   }
+}).run(function() { 
+	//adds methods for IE11
+	if (!String.prototype.startsWith) {
+	    String.prototype.startsWith = function(searchString, position){
+	      position = position || 0;
+	      return this.substr(position, searchString.length) === searchString;
+	  };
+	}
+	
+	if (!String.prototype.endsWith) {
+		  String.prototype.endsWith = function(searchString, position) {
+		      var subjectString = this.toString();
+		      if (typeof position !== 'number' || !isFinite(position) || Math.floor(position) !== position || position > subjectString.length) {
+		        position = subjectString.length;
+		      }
+		      position -= searchString.length;
+		      var lastIndex = subjectString.lastIndexOf(searchString, position);
+		      return lastIndex !== -1 && lastIndex === position;
+		  };
+		}
+
 });
 
 function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_widgetConfigurator,$q,$mdPanel,sbiModule_restServices,$compile,cockpitModule_generalOptions,$mdDialog,sbiModule_device){
@@ -173,10 +194,43 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 				)
 	}
 	
-	$scope.clickFunction=function(columnName,columnValue){
-		 
+	
+	$scope.selectRow=function(columnName,columnValue){
 		$scope.doSelection(columnName,columnValue);
 	};
+
+	$scope.selectMeasure=function(rowHeaders, rowsValues, columnsHeaders, columnValues){
+		var lstHeaders = []; //list of all headers (columns and rows)
+		var lstValues = []; //list of all values (columns and rows)
+		if (rowHeaders != ""){
+			//adds all selection references about the row side
+			var rowsHeads = rowHeaders.split("_S_");
+			var rowsVals = rowsValues.split("_S_");
+			for (var c=0; c < rowsHeads.length; c++){
+				if (rowsHeads[c] == "") continue;
+				var columnName = rowsHeads[c];
+				var columnValue = rowsVals[c];
+				lstHeaders.push(columnName);
+				lstValues.push(columnValue);
+			}
+		}
+		
+		if (columnsHeaders != ""){
+			//adds all selection references about the column side
+			var columnHeads = columnsHeaders.split("_S_");
+			var columnVals = columnValues.split("_S_");
+			for (var c=0; c < columnHeads.length; c++){
+				if (columnHeads[c] == "") continue;
+				var columnName = columnHeads[c];
+				var columnValue = columnVals[c];
+				lstHeaders.push(columnName);
+				lstValues.push(columnValue);
+			}			
+		}
+		$scope.doSelection(lstHeaders,lstValues); //call selection method passing all headers and values (unique time)
+		
+	};
+
 	
 	$scope.enableAlternate = function(){
 		$scope.colorPickerProperty['disabled'] = $scope.ngModel.content.style.showAlternateRows;
@@ -337,15 +391,17 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 	
 	//border cell style
 	$scope.applyBorderStyle = function(dataColumnList){
-		if($scope.ngModel.content.style.measuresRow["border-width"]!= ""){
-			angular.element(dataColumnList).css("border-width",$scope.ngModel.content.style.measuresRow["border-width"])
+		if ($scope.ngModel.content.style.showGrid){
+			if($scope.ngModel.content.style.measuresRow["border-width"]!= ""){
+				angular.element(dataColumnList).css("border-width",$scope.ngModel.content.style.measuresRow["border-width"])
+			}
+			if ($scope.ngModel.content.style.measuresRow["border-color"]!= ""){
+				angular.element(dataColumnList).css("border-color",$scope.ngModel.content.style.measuresRow["border-color"])
+			}
+			if ($scope.ngModel.content.style.measuresRow["border-style"]!= ""){
+				angular.element(dataColumnList).css("border-style",$scope.ngModel.content.style.measuresRow["border-style"])
+			}
 		}
-		if ($scope.ngModel.content.style.measuresRow["border-color"]!= ""){
-			angular.element(dataColumnList).css("border-color",$scope.ngModel.content.style.measuresRow["border-color"])
-		}
-		if ($scope.ngModel.content.style.measuresRow["border-style"]!= ""){
-			angular.element(dataColumnList).css("border-style",$scope.ngModel.content.style.measuresRow["border-style"])
-		}	
 	}
 	
 	$scope.editWidget=function(index){

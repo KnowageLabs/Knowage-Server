@@ -757,20 +757,27 @@ public class DataSetTransformer {
 	 *
 	*/
 
-	public LinkedHashMap<String, ArrayList<String>> prepareDataForGroupingForBar(List<Object> dataRows) throws JSONException {
-
-		LinkedHashMap<String,ArrayList<String>> map = new LinkedHashMap<String, ArrayList<String>>();
-
+	public LinkedHashMap<String, ArrayList<String>> prepareDataForGroupingForBar(List<Object> dataRows, String isCockpitEngine) throws JSONException {
+		boolean isCockpit = Boolean.parseBoolean(isCockpitEngine);
+		LinkedHashMap<String, ArrayList<String>> map = new LinkedHashMap<String, ArrayList<String>>();
+		String primCat;
+		String secCat;
+		if (isCockpit) {
+			primCat = "column_1";
+			secCat = "column_2";
+		} else {
+			primCat = "column_2";
+			secCat = "column_3";
+		}
 		for (Object singleObject : dataRows) {
-			if (!map.containsKey(((Map)singleObject).get("column_1"))) {
-				ArrayList<String> newListOfOrderColumnItems =  new ArrayList<String>();
-				newListOfOrderColumnItems.add((String)((Map)singleObject).get("column_2"));
-				map.put((String) ((Map)singleObject).get("column_1"),newListOfOrderColumnItems);
-			}
-			else {
-				ArrayList oldArrayList = map.get(((Map)singleObject).get("column_1"));
-				oldArrayList.add(((Map)singleObject).get("column_2"));
-				map.put((String) ((Map)singleObject).get("column_1"),oldArrayList);
+			if (!map.containsKey(((Map) singleObject).get(primCat))) {
+				ArrayList<String> newListOfOrderColumnItems = new ArrayList<String>();
+				newListOfOrderColumnItems.add((String) ((Map) singleObject).get(secCat));
+				map.put((String) ((Map) singleObject).get(primCat), newListOfOrderColumnItems);
+			} else {
+				ArrayList oldArrayList = map.get(((Map) singleObject).get(primCat));
+				oldArrayList.add(((Map) singleObject).get(secCat));
+				map.put((String) ((Map) singleObject).get(primCat), oldArrayList);
 			}
 		}
 

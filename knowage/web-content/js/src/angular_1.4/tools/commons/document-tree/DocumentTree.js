@@ -20,6 +20,7 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree'])
 			, selectedItem : "=?" //optional to get the selected  item value
 			, showFiles : '=?' //boolean value
 			, multiSelect : "=?" //boolean value
+			, multiSelectLeafes : "=?" //boolean value
 			, textSearch : "=?" //text to search
 			, fieldsSearch : '=?' //array of the fields on which apply the filter
 			, orderBy : '=?' //field on which order the array
@@ -98,8 +99,9 @@ angular.module('document_tree', [ 'ngMaterial', 'ui.tree'])
 			    	scope.initializeFolders = function (folders, parent){
 				    	if(folders){
 				    		for (var i = 0 ; i < folders.length; i ++ ){
+				    			
 								folders[i].checked = folders[i].checked === undefined ? false : folders[i].checked;
-								folders[i].expanded = folders[i].expanded === undefined ? false : folders[i].expanded;
+								folders[i].expanded = folders[i].expanded === undefined ? false : (scope.multiSelectLeafes ? false : folders[i].expanded);
 								folders[i].type = folders[i].type === undefined ? "folder" : folders[i].type;
 								folders[i].visible = folders[i].visible === undefined ? true : folders[i].visible;
 								folders[i].$parent = parent; 
@@ -170,7 +172,7 @@ function DocumentTreeControllerFunction($scope,$timeout,$mdDialog){
 				$scope.selectedItem.splice(idx, 1);
 			}
 		
-			if (element.type == "folder"){
+			if (element.type == "folder" && !$scope.multiSelectLeafes){
 				for (var i =0 ; i < element[$scope.subfoldersId].length; i++){
 					$scope.toogleSelected(element[$scope.subfoldersId][i],element);
 				}

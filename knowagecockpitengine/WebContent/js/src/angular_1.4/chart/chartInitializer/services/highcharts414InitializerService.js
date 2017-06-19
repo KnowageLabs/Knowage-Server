@@ -172,13 +172,18 @@ angular.module('chartInitializer')
 	
 	
 	this.handleCrossNavigationTo =function(e) {
+		var date = new Date(e.point.x);
+		var char =  "-" ;
+		var theyear=date.getFullYear()
+		var themonth=date.getMonth()+1
+		var theday=date.getDate()
+		var date_format = theday+char+themonth+char+theyear;
 		var t = chartConfConf;
-		console.log(e.point);
 		if (!e.seriesOptions) {
 			var chart = this;
 			//chart.showLoading('Loading...');
 			var categoryName = null;
-			var categoryValue = e.point.name;
+			var categoryValue = t.xAxis && t.xAxis.type == "datetime" ? date_format : e.point.name;
 
 			if (e.point.hasOwnProperty('category')) {
 				if(isNaN(e.point.category)){
@@ -192,7 +197,7 @@ angular.module('chartInitializer')
 			
 			//for scatter
 			if(!categoryValue && e.point.category &&e.point.category.name){
-				categoryValue = e.point.category.name;
+				categoryValue = t.xAxis && t.xAxis.type == "datetime" ? date_format : e.point.category.name;
 			}
 			
 	
@@ -220,7 +225,7 @@ angular.module('chartInitializer')
          			GROUPING_VALUE:groupingCategoryValue,
          			stringParameters:null
 				}; 
-				parent.execExternalCrossNavigation(navData,JSON.parse(driverParams))
+				parent.execExternalCrossNavigation(navData,JSON.parse(driverParams), null, currentDocumentLabel )
 			}
 		
 		}
@@ -404,12 +409,26 @@ angular.module('chartInitializer')
 					newDataSerie.add(pointOptions);
 					    
 				} else {
-					pointOptions.y = parseFloat(data[j][seriesNamesColumnBind[this.chart.series[i].name]]);
-					pointOptions.name=data[j][column];
-					if(this.chart.options.chart.type!= "pie"){
-						pointOptions.drilldown = drill;
-					}			    
+					if(this.chart.options.xAxis[0].type!="datetime"){
+						pointOptions.y = parseFloat(data[j][seriesNamesColumnBind[this.chart.series[i].name]]);
+						pointOptions.name=data[j][column];
+						if(this.chart.options.chart.type!= "pie"){
+							pointOptions.drilldown = drill;
+						}			
+					}
+					else{
+						var date = data[j][column].split("/");
+						var day = date[0];
+						var month = date[1]-1;
+						var year = date[2];
+						pointOptions = [];
+						pointOptions.push(Date.UTC(year, month, day));
+
+						pointOptions.push(parseFloat(data[j][seriesNamesColumnBind[this.chart.series[i].name]]));
+					}
 					newDataSerie.push(pointOptions);
+					if(Object.prototype.toString.call(pointOptions) === '[object Array]')
+					pointOptions = [];
 				}
 			}
 			newData.push(newDataSerie);
@@ -418,19 +437,20 @@ angular.module('chartInitializer')
 		
 		
 		if(this.chart.options.chart.type == "pie"){
-			for (var i = 0; i<this.chart.series.length; i++){
-				for (var j = 0; j<this.chart.series[i].data.length; j++){
+			for (var i = 0; i<newData.length; i++){
+				for (var j = 0; j<newData[i].length; j++){
 						
-					if(this.chart.series[i].data[j].y==0){
+					if(newData[i][j].y==0){
 						counter ++
 					}
 				}
-				if (counter==this.chart.series[i].data.length){
-					this.chart.series[i].setData([]);
+				if (counter==newData[i].length){
+					newData[i]=[];
 					counter = 0;
 				}
 			}
 		}
+		
 		
 		for (var i = 0; i < counterSeries; i++) {
 			this.chart.series[i].update({data:newData[i]},false);

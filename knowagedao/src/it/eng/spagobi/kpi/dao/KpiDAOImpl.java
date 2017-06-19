@@ -1198,6 +1198,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	}
 
 	private Domain from(SbiDomains sbiType) {
+		logger.debug("IN");
 		Domain type = new Domain();
 		type.setDomainCode(sbiType.getDomainCd());
 		type.setDomainName(sbiType.getDomainNm());
@@ -1205,6 +1206,8 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		type.setValueDescription(sbiType.getValueDs());
 		type.setValueName(sbiType.getValueNm());
 		type.setValueId(sbiType.getValueId());
+		logger.debug(type);
+		logger.debug("OUT");
 		return type;
 	}
 
@@ -1213,6 +1216,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	}
 
 	private <T extends Kpi> T from(T kpi, SbiKpiKpi sbi, SbiKpiThreshold sbiKpiThreshold, boolean full) {
+		logger.debug("IN");
 		kpi.setId(sbi.getSbiKpiKpiId().getId());
 		kpi.setVersion(sbi.getSbiKpiKpiId().getVersion());
 		kpi.setName(sbi.getName());
@@ -1222,6 +1226,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		kpi.setAuthor(sbi.getCommonInfo().getUserIn());
 		kpi.setDateCreation(sbi.getCommonInfo().getTimeIn());
 		if (full) {
+			logger.debug("Full KPI...");
 			kpi.setCardinality(sbi.getCardinality());
 			kpi.setDefinition(sbi.getDefinition());
 			kpi.setPlaceholder(sbi.getPlaceholder());
@@ -1229,6 +1234,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				kpi.setThreshold(from(sbiKpiThreshold, full));
 			}
 		}
+		logger.debug("OUT");
 		return kpi;
 	}
 
@@ -1955,8 +1961,9 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 	}
 
 	private void calculateKpiStatus(KpiExecution kpi, Map<String, String> attributesValues) {
+		logger.debug("IN");
 		attributesValues = attributesValues != null ? attributesValues : new HashMap<String, String>();
-		List<KpiValue> values = findKpiValues(kpi.getId(), null, null, null, attributesValues);
+		List<KpiValue> values = findKpiValues(kpi.getId(), kpi.getVersion(), null, null, attributesValues);
 		if (values != null && !values.isEmpty()) {
 			KpiValue kpiValue = values.get(values.size() - 1);
 			double value = kpiValue.getManualValue() != null ? kpiValue.getManualValue().doubleValue() : kpiValue.getComputedValue();
@@ -1973,6 +1980,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			}
 			kpi.setColor(color);
 		}
+		logger.debug("OUT");
 	}
 
 	private KpiScheduler from(SbiKpiExecution sbi, boolean full) throws EMFUserError {
@@ -2288,6 +2296,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	@Override
 	public List<KpiExecution> listKpiWithResult() {
+		logger.debug("IN");
 		List<SbiKpiKpi> lst = list(new ICriterion<SbiKpiKpi>() {
 			@Override
 			public Criteria evaluate(Session session) {
@@ -2295,13 +2304,17 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			}
 		});
 		List<KpiExecution> kpis = new ArrayList<>();
+		logger.debug("Found " + lst.size() + " KPIs to loop over");
 		for (SbiKpiKpi sbi : lst) {
+			logger.debug("Handling KPI with name " + sbi.getName());
 			KpiExecution kpi = new KpiExecution();
+			logger.debug("Loading threshold with ID " + sbi.getThresholdId());
 			SbiKpiThreshold threshold = load(SbiKpiThreshold.class, sbi.getThresholdId());
 			from(kpi, sbi, threshold, true);
 			calculateKpiStatus(kpi);
 			kpis.add(kpi);
 		}
+		logger.debug("OUT");
 		return kpis;
 	}
 
@@ -2335,19 +2348,23 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		return findKpiValues(kpiId, kpiVersion, computedAfter, true, computedBefore, true, attributesValues);
 	}
 
-	// TODO: test and debug
+	// TODO: test and debug...
+	// ?!?!? are you serious !?!???
 	@Override
 	public List<KpiValue> findKpiValues(final Integer kpiId, Integer kpiVersion, final Date computedAfter, final Boolean includeComputedAfter,
 			final Date computedBefore, final Boolean includeComputedBefore, Map<String, String> attributesValues) {
+		logger.debug("IN");
 		// Ensure attributesValues keys to be case-insensitive
 		TreeMap<String, String> cioAttributesValues = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
 		cioAttributesValues.putAll(attributesValues);
 		attributesValues = cioAttributesValues;
 
-		// Retrieve the KPI
+		logger.debug("Retrieve the KPI with ID " + kpiId);
 		Kpi kpi;
 		if (kpiVersion == null) {
+			logger.debug("KPI version is null");
 			Integer tempId = findlastKpiFromKpiValue(kpiId);
+			logger.debug("Obtained KPI version is [" + tempId + "]");
 			if (tempId != null) {
 				kpiVersion = tempId;
 			} else {
@@ -2355,12 +2372,14 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			}
 
 		}
+		logger.debug("Loading KPI with ID " + kpiId + " and version " + kpiVersion);
 		kpi = loadKpi(kpiId, kpiVersion);
 
 		// Find the main measure rule and attributes
 		Integer mainMeasureRuleId = null;
 		Integer mainMeasureRuleVersion = null;
 		TreeSet<String> mainMeasureAttributes = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
+		logger.debug("Calculating main measure rule id, rule version and attributes");
 		try {
 			JSONObject cardinality = new JSONObject(kpi.getCardinality());
 			JSONArray measureList = cardinality.getJSONArray("measureList");
@@ -2375,6 +2394,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 					}
 				}
 				if (attributes.size() > mainMeasureAttributes.size() || mainMeasureRuleId == null) {
+					logger.debug("Setting main measure rule id, rule version and attributes with new values");
 					mainMeasureRuleId = unparsedMeasure.getInt("ruleId");
 					mainMeasureRuleVersion = unparsedMeasure.getInt("ruleVersion");
 					mainMeasureAttributes = attributes;
@@ -2384,9 +2404,17 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			throw new SpagoBIDAOException(e);
 		}
 
+		logger.debug("Main measure rule id: " + mainMeasureRuleId);
+		logger.debug("Main measure rule version: " + mainMeasureRuleVersion);
+		logger.debug("Main measure attributes: " + mainMeasureAttributes);
+
 		// Find temporal attributes
+		logger.debug("Loading rule with id " + mainMeasureRuleId + " and version " + mainMeasureRuleVersion);
 		Rule rule = loadRule(mainMeasureRuleId, mainMeasureRuleVersion);
+		logger.debug("Rule loaded");
+
 		Map<String, String> attributesTemporalTypes = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
+		logger.debug("Looping over each rule output");
 		for (RuleOutput ruleOutput : rule.getRuleOutputs()) {
 			if ("TEMPORAL_ATTRIBUTE".equals(ruleOutput.getType().getValueCd())) {
 				String attributeName = ruleOutput.getAlias();
@@ -2395,7 +2423,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			}
 		}
 
-		// Build logical key and find temporal attributes values
+		logger.debug("Build logical key and find temporal attributes values");
 		StringBuffer logicalKeyTmp = new StringBuffer();
 		final Map<String, String> temporalValues = new HashMap<String, String>();
 		for (String attributeName : mainMeasureAttributes) {
@@ -2417,10 +2445,12 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				logicalKeyTmp.append(",");
 			logicalKeyTmp.append(attributeName.toUpperCase()).append("=").append(attributeValue.trim());
 		}
+		logger.debug("[DONE] Build logical key and find temporal attributes values:");
+
 		final String logicalKey = logicalKeyTmp.toString();
 
 		final Integer kpiVersionFinal = kpiVersion;
-		// Execute query
+		logger.debug("Executing query to get list of KPI values");
 		List<SbiKpiValue> sbiKpiValues = list(new ICriterion<SbiKpiValue>() {
 			@Override
 			public Criteria evaluate(Session session) {
@@ -2461,8 +2491,10 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				return criteria;
 			}
 		});
+		logger.debug("[DONE] Executing query to get list of KPI values");
+		logger.debug("Found " + sbiKpiValues.size() + "values");
 
-		// Convert data
+		logger.debug("Converting from SbiKpiValue to KpiValue");
 		List<KpiValue> kpiValues = new ArrayList<>();
 		for (SbiKpiValue sbiKpiValue : sbiKpiValues) {
 			KpiValue kpiValue = new KpiValue();
@@ -2483,7 +2515,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			kpiValue.setManualNote(sbiKpiValue.getManualNote());
 			kpiValues.add(kpiValue);
 		}
-
+		logger.debug("OUT");
 		return kpiValues;
 	}
 
@@ -2552,17 +2584,12 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 					q.setMaxResults(number);
 				}
 				ArrayList<SbiKpiValueExecLog> kpiValue = (ArrayList<SbiKpiValueExecLog>) q.list();
-				ArrayList<KpiValueExecLog> kpiExeclog = new ArrayList<>();
+				ArrayList<KpiValueExecLog> kpiExeclog = new ArrayList<>(kpiValue.size());
 				for (SbiKpiValueExecLog s : kpiValue) {
 					KpiValueExecLog execLog = s.toKpiValueExecLog();
 					kpiExeclog.add(execLog);
 				}
-
-				if (kpiExeclog.size() != 0) {
-					return kpiExeclog;
-				} else {
-					return null;
-				}
+				return kpiExeclog;
 			}
 		});
 

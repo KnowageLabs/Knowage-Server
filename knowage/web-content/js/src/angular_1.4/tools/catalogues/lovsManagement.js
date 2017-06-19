@@ -55,6 +55,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	$scope.showMe = false;
 	$scope.dirtyForm = false; // flag to check for modification
 	$scope.enableTest = false;
+	$scope.previewClicked = false;
 	$scope.translate = sbiModule_translate;
 	$scope.user = sbiModule_user;
 	$scope.listOfLovs = [];
@@ -223,8 +224,8 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	$scope.lovsManagementSpeedMenu= [
                          {
                             label:sbiModule_translate.load("sbi.generic.delete"),
-                            icon:'fa fa-trash-o fa-lg',
-                            color:'#153E7E',
+                            icon:'fa fa-trash-o',
+                            color:'#a3a5a6',
                             action:function(item,event){
                                 
                             	$scope.confirmDelete(item,event);
@@ -235,8 +236,8 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	$scope.treeSpeedMenu= [
 	                                 {
 	                                    label:sbiModule_translate.load("sbi.generic.delete"),
-	                                    icon:'fa fa-trash-o fa-lg',
-	                                    color:'#153E7E',
+	                                    icon:'fa fa-trash-o',
+	                                    color:'#a3a5a6',
 	                                    action:function(item,event){
 	                                        
 	                                    	deleteTreeLevel(item);
@@ -247,8 +248,8 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	$scope.fixLovSpeedMenu= [
 	                                 {
 	                                    label:sbiModule_translate.load("sbi.generic.delete"),
-	                                    icon:'fa fa-trash-o fa-lg',
-	                                    color:'#153E7E',
+	                                    icon:'fa fa-trash-o',
+	                                    color:'#a3a5a6',
 	                                    action:function(item,event){
 	                                        
 	                                    	$scope.confirmDelete(item,event);
@@ -256,8 +257,8 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	                                 },
 	                                 {
 		                                    label:sbiModule_translate.load("sbi.behavioural.lov.fixlov.up"),
-		                                    icon:'fa fa-arrow-up fa-lg',
-		                                    color:'#153E7E',
+		                                    icon:'fa fa-arrow-up',
+		                                    color:'#a3a5a6',
 		                                    action:function(item,event){
 		                                        
 		                                    	$scope.moveFixLovUp(item,event);
@@ -270,8 +271,8 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 		                             },
 		                             {
 		                                    label:sbiModule_translate.load("sbi.behavioural.lov.fixlov.down"),
-		                                    icon:'fa fa-arrow-down fa-lg',
-		                                    color:'#153E7E',
+		                                    icon:'fa fa-arrow-down',
+		                                    color:'#a3a5a6',
 		                                    action:function(item,event){
 		                                        
 		                                    	$scope.moveFixLovDown(item,event);
@@ -492,6 +493,22 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 		$mdDialog.cancel();
 		console.log(sbiModule_device.browser.name);
 	}
+	
+	$scope.$watch('attributeForm.$invalid',function(newValue,oldValue){
+		
+		
+		switch(newValue){
+	
+		case false:
+			if($scope.previewClicked)
+			$scope.enableTest = true;
+			break
+		default:
+			$scope.enableTest = false;
+			break
+		}
+	})
+	
 	/**
 	 * When clicking on Save button in the header of the right panel, 
 	 * this function will be called and the functionality for saving
@@ -1279,7 +1296,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 		
 		$scope.previewLov = function(dependencies) {
 			
-			
+			$scope.perviewClicked = true;
 			var toSend ={};
 			var selectedLovForPreview = angular.copy($scope.selectedLov);
 			var x2js = new X2JS(); 
@@ -1322,7 +1339,11 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 								});
 								
 								
-								$scope.enableTest = true;
+								if(!$scope.attributeForm.$invalid){
+									$scope.enableTest = true;
+								} else {
+									$scope.enableTest = false;
+								}
 								
 							}	
 							
@@ -1432,7 +1453,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 			 if($scope.selectedLov.id != undefined){
 				 console.log("we have existing one")
 				 $scope.formatedVisibleValues = $scope.treeListTypeModel['VISIBLE-COLUMNS'].split(",");
-				 $scope.formatedInvisibleValues = $scope.treeListTypeModel['INVISIBLE-COLUMNS'].split(",");
+				 $scope.formatedInvisibleValues = [];
 				 if(!$scope.treeListTypeModel.LOVTYPE  || $scope.treeListTypeModel.LOVTYPE == 'simple'){
 					 $scope.formatedValues = $scope.treeListTypeModel['VALUE-COLUMN'].split(",");
 					 $scope.formatedDescriptionValues = $scope.treeListTypeModel['DESCRIPTION-COLUMN'].split(",");
@@ -1461,6 +1482,15 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 			 }
 		 }
 		 $scope.testLovModel = $scope.tableModelForTest;
+		 var newformatedVisibleValues = [];
+		 for (var i = 0; i < $scope.formatedVisibleValues.length; i++) {
+			for (var j = 0; j < $scope.testLovModel.length; j++) {
+				if ($scope.formatedVisibleValues[i]==$scope.testLovModel[j].name) {
+					newformatedVisibleValues.push($scope.testLovModel[j].name)
+				}
+			}
+		}
+		 $scope.formatedVisibleValues =  newformatedVisibleValues;
 	 		 
 	 }
 };

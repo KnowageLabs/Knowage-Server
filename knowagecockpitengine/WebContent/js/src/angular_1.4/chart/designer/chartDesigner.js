@@ -242,8 +242,8 @@ function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config, sbiM
 	}
 	
 	$scope.clearStyleTag = function(style) {
-		if(style == "sfnas"){
-			return "";
+		if(style == "default"){
+			return "default";
 		}else{
 			return style;
 		}

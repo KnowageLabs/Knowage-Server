@@ -617,7 +617,7 @@ public class CopyOfExecuteBIDocumentJob implements Job {
 				}
 			}
 
-			snapDao.saveSnapshot(response, biobj.getId(), snapName, snapDesc, null,sInfo.getSchedulationStartDate(),sInfo.getJobExecutionContext().getTrigger().getJobName(), sInfo.getJobExecutionContext().getTrigger().getName());
+			snapDao.saveSnapshot(response, biobj.getId(), snapName, snapDesc, null,sInfo.getSchedulationStartDate(),sInfo.getJobExecutionContext().getTrigger().getJobName(), sInfo.getJobExecutionContext().getTrigger().getName(), sInfo.getSequence());
 		} catch (Exception e) {
 			logger.error("Error while saving schedule result as new snapshot", e);
 		}finally{

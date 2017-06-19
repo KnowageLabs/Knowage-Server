@@ -71,7 +71,7 @@
 	}
     
     .workspace_image_dataset{
-	    background-image: url('../../sbi_default/img/dataset/img-dataset-1.jpg')!important;
+	    background-image: url('../../sbi_default/img/dataset/dataset.png')!important;
 	}
 	
 	.workspace_image_federation{
@@ -536,6 +536,16 @@
 	 .workspaceDatasetDescription {
 	 	overflow:auto;
 	 	auto-scroll:true;
+	 }
+	 
+	 .analysisUploadPreviewFilePadding {
+	 	padding-left:20px;
+	 	padding-right:20px;
+	 }
+
+	 .workspaceTopRight {
+	 	height: $toolbarHeight;
+	 	line-height: $toolbarHeight;
 	 }
 
 	 md-list-item button.md-button {

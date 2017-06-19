@@ -26,6 +26,7 @@
 				 					select-document-action="selectDocument(doc)"
 				 					clone-document-action="cloneAnalysisDocument(doc)"
 				 					delete-document-action="deleteAnalysisDocument(doc)" 
+				 					share-document-action="shareDocument(doc)" 
 				 					edit-document-action="editGeoDocument(doc)">
 				</workspace-document-view>	
 			
@@ -69,6 +70,18 @@
 				<md-button title="{{translate.load('sbi.workspace.dataset.detail.close')}}" aria-label="Close Analysis Details" class="md-icon-button" ng-click="hideRightSidePanel()">
 						<md-icon md-font-icon="fa fa-times" ></md-icon>
 				</md-button>
+				
+				<md-button 	title="{{translate.load('sbi.browser.document.share.win.title')}}" aria-label="Share Document" 
+							class="md-icon-button" ng-click="shareDocument(selectedDocument)">
+						<md-icon md-font-icon="fa fa-share-alt"></md-icon>
+				</md-button>
+				
+				<md-button 	title="{{translate.load('sbi.workspace.analysis.upload.preview.file')}}" aria-label="Upload Preview File" 
+							class="md-icon-button" ng-click="uploadPreviewFile(selectedDocument)">
+						<md-icon md-font-icon="fa fa-upload"></md-icon>
+				</md-button>
+            	
+        	</md-button>
 				
 			</div>
 			

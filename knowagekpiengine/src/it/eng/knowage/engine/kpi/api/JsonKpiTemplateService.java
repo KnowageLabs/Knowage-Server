@@ -22,10 +22,13 @@ import it.eng.knowage.engine.util.KpiEngineDataUtil;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.kpi.bo.Kpi;
 import it.eng.spagobi.kpi.bo.KpiValue;
+import it.eng.spagobi.kpi.dao.IKpiDAO;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
@@ -44,6 +47,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,6 +55,9 @@ import org.json.JSONObject;
 @Path("/1.0/jsonKpiTemplate")
 @ManageAuthorization
 public class JsonKpiTemplateService extends AbstractFullKpiEngineResource {
+
+	private static Logger logger = Logger.getLogger(JsonKpiTemplateService.class);
+
 	private TreeMap parameterMap = new TreeMap<>();
 
 	public TreeMap getParameterMap() {
@@ -63,14 +70,20 @@ public class JsonKpiTemplateService extends AbstractFullKpiEngineResource {
 
 	@POST
 	@Path("/readKpiTemplate")
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public String getJSONKpiTemplate(@Context HttpServletRequest req, @Context HttpServletResponse servletResponse) {
+		logger.debug("IN");
 
 		JSONObject toReturn;
 		try {
-			KpiEngineInstance engineInstance = getEngineInstance();
+			IKpiDAO kpiDAO = DAOFactory.getKpiDAO();
+			kpiDAO.setUserProfile(getUserProfile());
 
-			@SuppressWarnings("unchecked")
+			logger.debug("Getting the engine instance");
+			KpiEngineInstance engineInstance = getEngineInstance();
+			Assert.assertNotNull(engineInstance, "The engine instance is null. Impossible to continue with the current request.");
+
+			logger.debug("Getting the analytical drivers from the engine instance");
 			Map<String, String> analyticalDrivers = engineInstance.getAnalyticalDrivers();
 			Set<String> keySet = analyticalDrivers.keySet();
 			for (String parName : keySet) {
@@ -78,24 +91,32 @@ public class JsonKpiTemplateService extends AbstractFullKpiEngineResource {
 				parameterMap.put(parName, parValue);
 			}
 
+			logger.debug("Getting profile attributes from UserProfile...");
 			Map profileAttributes = UserProfileUtils.getProfileAttributes((UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE));
 			JSONObject jsonTemplate = RestUtilities.readBodyAsJSONObject(req);
+			Assert.assertNotNull(jsonTemplate, "Templace cannot be null.");
 
+			logger.debug(jsonTemplate.toString(3));
 			Calendar startDate = Calendar.getInstance();
 
 			// Loading Scorecard or Target
+			logger.debug("Getting attributes values");
 			Map<String, String> attributesValues = buildAttributeValuesMap(jsonTemplate, startDate);
+			logger.debug(attributesValues);
 
 			JSONArray resultArray = KpiEngineDataUtil.loadJsonData(jsonTemplate, attributesValues);
 			if (resultArray == null) {
+				logger.debug("The resulting array is [null]. Returning [null] then.");
 				return null;
 			}
 			JSONArray array = new JSONArray();
 			if (jsonTemplate.getJSONObject("chart").getString("type").equals("kpi")) {
 				for (int i = 0; i < resultArray.length(); i++) {
 					JSONObject objTemp = resultArray.getJSONObject(i).getJSONObject("kpi");
-					List<KpiValue> kpiValues = DAOFactory.getKpiDAO().findKpiValues(objTemp.getInt("id"), null, startDate.getTime(), new Date(),
-							attributesValues);
+					int kpiId = objTemp.getInt("id");
+					logger.debug("Loading KPI with ID " + kpiId);
+					Kpi kpi = kpiDAO.loadLastActiveKpi(kpiId);
+					List<KpiValue> kpiValues = kpiDAO.findKpiValues(kpiId, kpi.getVersion(), startDate.getTime(), new Date(), attributesValues);
 					String kpiValueJson = JsonConverter.objectToJson(kpiValues, kpiValues.getClass());
 					array.put(new JSONArray(kpiValueJson));
 				}
@@ -105,9 +126,10 @@ public class JsonKpiTemplateService extends AbstractFullKpiEngineResource {
 			toReturn.put("loadKpiValue", array);
 			toReturn.put("info", resultArray);
 			return toReturn.toString();
-
 		} catch (JSONException | IOException | EMFUserError ex) {
 			throw new SpagoBIRuntimeException("Error while read KPI template", ex);
+		} finally {
+			logger.debug("OUT");
 		}
 	}
 

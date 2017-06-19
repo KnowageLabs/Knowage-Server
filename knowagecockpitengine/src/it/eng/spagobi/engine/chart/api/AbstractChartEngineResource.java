@@ -22,6 +22,7 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.engine.chart.ChartEngineInstance;
 import it.eng.spagobi.engine.chart.ChartEngineRuntimeException;
+import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.EngineStartServletIOManager;
 import it.eng.spagobi.utilities.engines.rest.AbstractRestService;
@@ -96,6 +97,10 @@ public class AbstractChartEngineResource extends AbstractRestService {
 	public HttpServletRequest getServletRequest() {
 		// TODO Auto-generated method stub
 		return request;
+	}
+	
+	public UserProfile getUserProfile() {
+		return UserProfileManager.getProfile();
 	}
 
 }

@@ -25,6 +25,7 @@ import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.paginator.basic.ListIFace;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.services.DelegatedHibernateConnectionListService;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
@@ -33,6 +34,8 @@ import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 
 import java.sql.Connection;
+import java.util.Iterator;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -80,6 +83,19 @@ public class SelectDatasetLookupModule extends AbstractBasicListModule {
 				aSessionContainer.setAttribute("is_admin" ,1);
 			}else{
 				aSessionContainer.setAttribute("is_admin" ,0);
+			}
+
+			Set<Domain> dd = UserUtilities.getDataSetCategoriesByUser(profile);
+			Iterator<Domain> domIter = null;
+			if(dd!=null){
+				domIter = dd.iterator();
+			}
+			for(int i=0; i<20; i++){
+				int cat = 0;
+				if(domIter!=null && domIter.hasNext()){
+					cat = domIter.next().getValueId();
+				}
+				aSessionContainer.setAttribute("cat"+i ,cat);
 			}
 
 			return DelegatedHibernateConnectionListService.getList(this, request, response);

@@ -22,10 +22,13 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.ConfigurationConstants;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.associativity.IAssociativityManager;
@@ -37,6 +40,8 @@ import it.eng.spagobi.tools.dataset.cache.FilterCriteria;
 import it.eng.spagobi.tools.dataset.cache.Operand;
 import it.eng.spagobi.tools.dataset.cache.ProjectionCriteria;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
+import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
+import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
 import it.eng.spagobi.tools.dataset.common.association.Association;
 import it.eng.spagobi.tools.dataset.common.association.Association.Field;
 import it.eng.spagobi.tools.dataset.common.association.AssociationGroup;
@@ -53,6 +58,7 @@ import it.eng.spagobi.tools.dataset.dao.ISbiDataSetDAO;
 import it.eng.spagobi.tools.dataset.graph.AssociationAnalyzer;
 import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
 import it.eng.spagobi.tools.dataset.graph.associativity.Config;
+import it.eng.spagobi.tools.dataset.graph.associativity.Selection;
 import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicResult;
 import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicUtils;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
@@ -64,6 +70,7 @@ import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.utilities.StringUtils;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.assertion.UnreachableCodeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -110,6 +117,7 @@ import com.mongodb.util.JSON;
  *
  */
 @Path("/2.0/datasets")
+@ManageAuthorization
 public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 
 	static protected Logger logger = Logger.getLogger(DataSetResource.class);
@@ -223,6 +231,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 
 	@POST
 	@Path("/")
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response addDataSet(String body) {
 		SbiDataSet sbiDataset = (SbiDataSet) JsonConverter.jsonToValidObject(body, SbiDataSet.class);
 
@@ -236,7 +245,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 			if (dataset.isPersisted()) {
 				IPersistedManager ptm = null;
 				if (dataset.isPersistedHDFS()) {
-					ptm = new PersistedHDFSManager();
+					ptm = new PersistedHDFSManager(getUserProfile());
 				} else {
 					ptm = new PersistedTableManager(getUserProfile());
 				}
@@ -257,6 +266,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 
 	@PUT
 	@Path("/{label}")
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response modifyDataSet(@PathParam("label") String label, String body) {
 		IDataSet dataset = null;
 
@@ -294,7 +304,8 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 	@Path("/listDataset")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getDocumentSearchAndPaginate(@Context HttpServletRequest req, @QueryParam("Page") String pageStr,
-			@QueryParam("ItemPerPage") String itemPerPageStr, @QueryParam("label") String search, @QueryParam("seeTechnical") Boolean seeTechnical) throws EMFUserError {
+			@QueryParam("ItemPerPage") String itemPerPageStr, @QueryParam("label") String search, @QueryParam("seeTechnical") Boolean seeTechnical)
+			throws EMFUserError {
 
 		ISbiDataSetDAO dao = DAOFactory.getSbiDataSetDAO();
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
@@ -342,6 +353,8 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 			if (selectionsString == null || selectionsString.isEmpty()) {
 				throw new SpagoBIServiceParameterException(this.request.getPathInfo(), "Query parameter [selections] cannot be null or empty");
 			}
+			// TODO ENABLE THIS WHEN CHANGING THE SELECTIONS AS JSON ARRAY!!!
+			// JSONArray selectionsArray = new JSONArray(selectionsString);
 			JSONObject selectionsObject = new JSONObject(selectionsString);
 
 			// parse association group
@@ -435,63 +448,82 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 			IDataSource cacheDataSource = SpagoBICacheConfiguration.getInstance().getCacheDataSource();
 
 			// get datasets from selections
-			Map<String, String> filtersMap = new HashMap<String, String>();
+			List<Selection> filters = new ArrayList<Selection>();
 			Map<String, Map<String, Set<String>>> selectionsMap = new HashMap<String, Map<String, Set<String>>>();
+			// TODO ENABLE THIS WHEN CHANGING THE SELECTIONS AS JSON ARRAY!!!
+			// for (int i = 0; i < selectionsArray.length(); i++) {
+			// JSONObject selectionObject = selectionsArray.getJSONObject(i);
+			// String datasetLabel = selectionObject.getString("dataset");
+			// String column = selectionObject.getString("column");
+			// column = SqlUtils.unQuote(column);
+
 			Iterator<String> it = selectionsObject.keys();
 			while (it.hasNext()) {
 				String datasetDotColumn = it.next();
-				if (datasetDotColumn.indexOf(".") >= 0) {
-					String[] tmpDatasetAndColumn = datasetDotColumn.split("\\.");
-					if (tmpDatasetAndColumn.length == 2) {
-						String datasetLabel = tmpDatasetAndColumn[0];
-						String column = tmpDatasetAndColumn[1];
-						column = SqlUtils.unQuote(column);
+				Assert.assertTrue(datasetDotColumn.indexOf(".") >= 0, "Data not compliant with format <DATASET_LABEL>.<COLUMN> [" + datasetDotColumn + "]");
+				String[] tmpDatasetAndColumn = datasetDotColumn.split("\\.");
+				Assert.assertTrue(tmpDatasetAndColumn.length == 2, "Impossible to get both dataset label and column");
 
-						if (datasetLabel != null && !datasetLabel.isEmpty() && column != null && !column.isEmpty()) {
-							String values = null;
-							Object object = selectionsObject.getJSONArray(datasetDotColumn).get(0);
-							if (object instanceof JSONArray) {
-								values = object.toString();
-								values = values.substring(1, values.length() - 1).replace("\"", "'");
-							} else {
-								values = "'" + object.toString() + "'";
-							}
+				String datasetLabel = tmpDatasetAndColumn[0];
+				String column = tmpDatasetAndColumn[1];
+				column = SqlUtils.unQuote(column);
 
-							IDataSet dataset = getDataSetDAO().loadDataSetByLabel(datasetLabel);
-							IDataSource dataSource;
-							String filter = "";
+				Assert.assertNotNull(datasetLabel, "A dataset label in selections is null");
+				Assert.assertTrue(!datasetLabel.isEmpty(), "A dataset label in selections is empty");
+				Assert.assertNotNull(column, "A column for dataset " + datasetLabel + "  in selections is null");
+				Assert.assertTrue(!column.isEmpty(), "A column for dataset " + datasetLabel + " in selections is empty");
 
-							if (dataset.isPersisted() && !dataset.isPersistedHDFS()) {
-								dataSource = dataset.getDataSourceForWriting();
-							} else if (dataset.isFlatDataset()
-									|| (realtimeDatasets.contains(datasetLabel) && DatasetManagementAPI.isJDBCDataSet(dataset) && !SqlUtils
-											.isBigDataDialect(dataset.getDataSource().getHibDialectName()))) {
-								dataSource = dataset.getDataSource();
-							} else if (realtimeDatasets.contains(datasetLabel)) {
-								dataSource = null;
-								filter = DataStore.DEFAULT_TABLE_NAME + ".";
-							} else {
-								dataSource = cacheDataSource;
-							}
-							filter += AbstractJDBCDataset.encapsulateColumnName(column, dataSource) + " IN (" + values + ")";
-							filtersMap.put(datasetLabel, filter);
-
-							if (!selectionsMap.containsKey(datasetLabel)) {
-								selectionsMap.put(datasetLabel, new HashMap<String, Set<String>>());
-							}
-							Map<String, Set<String>> selection = selectionsMap.get(datasetLabel);
-							if (!selection.containsKey(column)) {
-								selection.put(column, new HashSet<String>());
-							}
-							selection.get(column).add("(" + values + ")");
-						}
-					}
+				String values = null;
+				// TODO ENABLE THIS WHEN CHANGING THE SELECTIONS AS JSON ARRAY!!!
+				// Getting it as object because it can be a single value (else case) or a JSONArray
+				// inside another JSON array (if case)
+				// Object object = selectionObject.getJSONArray("values").get(0);
+				Object object = selectionsObject.getJSONArray(datasetDotColumn).get(0);
+				if (object instanceof JSONArray) {
+					values = object.toString();
+					values = values.substring(1, values.length() - 1).replace("\"", "'");
+				} else {
+					values = "'" + object.toString() + "'";
 				}
+
+				IDataSet dataset = getDataSetDAO().loadDataSetByLabel(datasetLabel);
+				IDataSource dataSource;
+				StringBuilder filterSB = new StringBuilder();
+				if (dataset.isPersisted() && !dataset.isPersistedHDFS()) {
+					dataSource = dataset.getDataSourceForWriting();
+				} else if (dataset.isFlatDataset()
+						|| (realtimeDatasets.contains(datasetLabel) && DatasetManagementAPI.isJDBCDataSet(dataset) && !SqlUtils.isBigDataDialect(dataset
+								.getDataSource().getHibDialectName()))) {
+					dataSource = dataset.getDataSource();
+				} else if (realtimeDatasets.contains(datasetLabel)) {
+					dataSource = null;
+					filterSB.append(DataStore.DEFAULT_TABLE_NAME);
+					filterSB.append(".");
+				} else {
+					dataSource = cacheDataSource;
+				}
+				filterSB.append(AbstractJDBCDataset.encapsulateColumnName(column, dataSource));
+				filterSB.append(" IN (");
+				filterSB.append(values);
+				filterSB.append(")");
+
+				filters.add(new Selection(datasetLabel, filterSB.toString()));
+
+				if (!selectionsMap.containsKey(datasetLabel)) {
+					selectionsMap.put(datasetLabel, new HashMap<String, Set<String>>());
+				}
+				Map<String, Set<String>> selection = selectionsMap.get(datasetLabel);
+				if (!selection.containsKey(column)) {
+					selection.put(column, new HashSet<String>());
+				}
+				selection.get(column).add("(" + values + ")");
 			}
 
+			logger.debug("Filter list: " + filters);
+
 			String strategy = SingletonConfig.getInstance().getConfigValue(ConfigurationConstants.SPAGOBI_DATASET_ASSOCIATIVE_LOGIC_STRATEGY);
-			Config config = AssociativeLogicUtils.buildConfig(strategy, graph, datasetToAssociationToColumnMap, filtersMap, realtimeDatasets,
-					datasetParameters, documents);
+			Config config = AssociativeLogicUtils.buildConfig(strategy, graph, datasetToAssociationToColumnMap, filters, realtimeDatasets, datasetParameters,
+					documents);
 
 			IAssociativityManager manager = AssociativeStrategyFactory.createStrategyInstance(config, getUserProfile());
 			AssociativeLogicResult result = manager.process();
@@ -585,6 +617,8 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 
 					List<String> dateColumnNamesList = getDateColumnNamesList(dataSet);
 
+					boolean isCacheSqlServerDialect = ((SQLDBCache) SpagoBICacheManager.getCache()).getDataSource().getHibDialectName().contains("sqlserver");
+
 					if (isRealtime && !(DatasetManagementAPI.isJDBCDataSet(dataSet) && !SqlUtils.isBigDataDialect(dataSet.getDataSource().getHibDialectName()))
 							&& !dataSet.isFlatDataset() && !(dataSet.isPersisted() && !dataSet.isPersistedHDFS())) {
 						for (int i = 0; i < columnsList.size(); i++) {
@@ -616,6 +650,49 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 								if (j % columnsList.size() == columnsList.size() - 1) { // last item of tuple of values
 									valuesSB.append(closingBracket);
 								}
+							}
+						}
+						Operand rightOperand = new Operand(valuesSB.toString());
+
+						FilterCriteria filterCriteria = new FilterCriteria(leftOperand, "=", rightOperand);
+						filterCriterias.add(filterCriteria);
+					} else if (isCacheSqlServerDialect) {
+
+						for (int i = 0; i < columnsList.size(); i++) {
+							columnsList.set(i, AbstractJDBCDataset.encapsulateColumnName(columnsList.get(i), null));
+						}
+
+						String openingBracket = columnsList.size() > 1 ? "(" : "";
+						String closingBracket = columnsList.size() > 1 ? ")" : "";
+
+						Operand leftOperand = new Operand(openingBracket + columnsList.get(0));
+
+						StringBuilder valuesSB = new StringBuilder();
+
+						List<String> distinctValues = new ArrayList<String>();
+						for (int i = 0; i < values.length(); i++) {
+							String value = values.getString(i);
+							distinctValues.addAll(Arrays.asList(getDistinctValues(value)));
+						}
+
+						for (int i = 0; i < distinctValues.size(); i++) {
+							String value = distinctValues.get(i);
+							String column = columnsList.get(i % columnsList.size());
+							if (i % columnsList.size() == 0) { // 1st item of tuple of values
+								if (i >= columnsList.size()) { // starting from 2nd tuple of values
+									valuesSB.append(" OR ");
+									valuesSB.append(openingBracket);
+								}
+							} else {
+								valuesSB.append(" AND "); // starting from 2nd item of tuple of values
+							}
+							if (i > 0) {
+								valuesSB.append(column);
+								valuesSB.append("=");
+							}
+							valuesSB.append(getProperValueString(value, column, dateColumnNamesList, null));
+							if (i % columnsList.size() == columnsList.size() - 1) { // last item of tuple of values
+								valuesSB.append(closingBracket);
 							}
 						}
 						Operand rightOperand = new Operand(valuesSB.toString());
@@ -790,7 +867,11 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		if (dateColumnNamesList.contains(column)) {
 			return getConvertedDate(value, dataSource);
 		} else {
-			return "'" + value + "'";
+			if (value.startsWith("'") && value.endsWith("'")) {
+				return value;
+			} else {
+				return "'" + value + "'";
+			}
 		}
 	}
 

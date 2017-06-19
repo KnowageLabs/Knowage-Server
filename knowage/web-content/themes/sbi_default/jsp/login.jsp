@@ -232,17 +232,19 @@
 		<div>
 		<div class="row">
 			 <div class="col-sm-4">
-				<button data-toggle="tooltip" data-placement="bottom" aria-label="Business User (biuser/biuser)" title="Business User (biuser/biuser)" type="button" class="btn btn-default" onclick="setUser('biuser','biuser'); login.submit()" >
+				<button data-toggle="tooltip" data-placement="bottom" aria-label="Business User (demo_user/demo_user)" title="Business User (demo_user/demo_user)" type="button" class="btn btn-default" onclick="setUser('demo_user','demo_user'); login.submit()" >
 				<span class="glyphicon glyphicon-briefcase" aria-hidden="true"></span>
 				</button>
 			 </div>
 			 <div class="col-sm-4">
+			 	<!-- 
 				<button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" aria-label="Showcase User (bidemo/bidemo)" title="Showcase User (bidemo/bidemo)" onclick="setUser('bidemo','bidemo'); login.submit()">
 				<span class="glyphicon glyphicon-user" aria-hidden="true"></span>
 				</button>
+				-->
 			 </div>
 			 <div class="col-sm-4">
-				<button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" aria-label="Administrator (biadmin/biadmin)" title="Administrator (biadmin/biadmin)" onclick="setUser('biadmin','biadmin'); login.submit()">
+				<button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" aria-label="Administrator (demo_admin/demo_admin)" title="Administrator (demo_admin/demo_admin)" onclick="setUser('demo_admin','demo_admin'); login.submit()">
 				<span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
 				</button>
 			 </div>

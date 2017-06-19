@@ -35,6 +35,7 @@ public class SbiSnapshots  extends SbiHibernateModel {
     private String schedulation;
     private String scheduler;
     private Integer schedulationStartDate;
+    private Integer sequence;
 
 	public String getContentType() {
 		return contentType;
@@ -178,6 +179,14 @@ public class SbiSnapshots  extends SbiHibernateModel {
 
 	public void setSchedulationStartDate(Integer schedulationStartDate) {
 		this.schedulationStartDate = schedulationStartDate;
+	}
+
+	public Integer getSequence() {
+		return sequence;
+	}
+
+	public void setSequence(Integer sequence) {
+		this.sequence = sequence;
 	}
 
 

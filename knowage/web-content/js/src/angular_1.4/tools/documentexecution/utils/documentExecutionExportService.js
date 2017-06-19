@@ -2,13 +2,15 @@
 	var documentExecutionModule = angular.module('documentExecutionModule');
 	
 	documentExecutionModule.service('docExecute_exportService', function(sbiModule_translate,sbiModule_config,
-			execProperties,sbiModule_user,sbiModule_restServices,$http,sbiModule_dateServices, documentExecuteServices, sbiModule_download, $q, $rootScope, sbiModule_messaging,multipartForm,$sce) {
+			execProperties,sbiModule_user,sbiModule_restServices,$http,sbiModule_dateServices, documentExecuteServices, sbiModule_download, $q, $rootScope, sbiModule_messaging,multipartForm,$sce,$mdPanel) {
 		
 		var dee = this;
+		
 		dee.exporting = false;
 		dee.isExporting = function(){
 			return dee.exporting;
 		}
+				
 		dee.getExportationUrl = function(format,paramsExportType,actionPath){
 			// https://production.eng.it/jira/browse/KNOWAGE-1443
 			// actionPath has no '/' at the beginning
@@ -63,9 +65,30 @@
 			return urlService + url;
 		};
 				
-		dee.exportDocumentChart = function(exportType){
-			var frame = window.frames["documentFrame"];
-			frame.exportChart(exportType);
+		dee.exportDocumentChart = function(exportType,mimeType){
+			dee.exporting = true;
+			dee.getBackendRequestParams(exportType, mimeType).then(function(parameters){
+				dee.buildBackendRequestConf(exportType, mimeType, parameters).then(function(requestConf){
+					$http(requestConf)
+					.then(function successCallback(response) {
+						sbiModule_download.getBlob(
+								response.data,
+								execProperties.executionInstance.OBJECT_LABEL,
+								mimeType,
+								exportType);
+						dee.exporting = false;
+					}, function errorCallback(response) {
+						dee.exporting = false;
+						sbiModule_messaging.showErrorMessage(response.errors[0].message, 'Error');
+					});			
+				},function(e){
+					dee.exporting = false;
+					sbiModule_messaging.showErrorMessage(e, 'Error');
+				});
+			},function(e){
+				dee.exporting = false;
+				sbiModule_messaging.showErrorMessage(e, 'Error');
+			});
 		};	
 
 		dee.exportGeoTo = function (format, contentUrl) {	
@@ -134,24 +157,83 @@
 		dee.exportCockpitTo = function(exportType, mimeType){
 			dee.exporting = true;
 			
-			dee.buildRequestConf(exportType, mimeType).then(function(requestConf){
-				$http(requestConf)
-				.then(function successCallback(response) {
-					sbiModule_download.getBlob(
-							response.data,
-							execProperties.executionInstance.OBJECT_LABEL,
-							mimeType,
-							exportType);
+			dee.getBackendRequestParams(exportType, mimeType).then(function(parameters){
+				dee.buildBackendRequestConf(exportType, mimeType, parameters).then(function(requestConf){
+					$http(requestConf)
+					.then(function successCallback(response) {
+						sbiModule_download.getBlob(
+								response.data,
+								execProperties.executionInstance.OBJECT_LABEL,
+								mimeType,
+								exportType);
+						dee.exporting = false;
+					}, function errorCallback(response) {
+						dee.exporting = false;
+						sbiModule_messaging.showErrorMessage(response.errors[0].message, 'Error');
+					});			
+				},function(e){
 					dee.exporting = false;
-				}, function errorCallback(response) {
-					dee.exporting = false;
-					sbiModule_messaging.showErrorMessage(response.errors[0].message, 'Error');
-				});			
+					sbiModule_messaging.showErrorMessage(e, 'Error');
+				});
 			},function(e){
-				console.error(e);
+				dee.exporting = false;
 				sbiModule_messaging.showErrorMessage(e, 'Error');
 			});
-		};	
+		};
+		
+		dee.getBackendRequestParams = function(exportType, mimeType){
+			var deferred = $q.defer();
+			var eleToAtt=document.body;
+			if(exportType.toLowerCase() == 'pdf'){
+				var config = {
+					attachTo: eleToAtt,
+					locals :{deferred:deferred},
+					controller: function($scope,mdPanelRef,sbiModule_translate,deferred,$mdDialog){
+						$scope.translate = sbiModule_translate;
+						
+						$scope.parameters = {
+							pdfWidth: 1600,
+							pdfHeight: 1200,
+							pdfWaitTime: 60,
+							pdfZoom: 75, // scale it to [0; 1] interval while saving
+							pdfPageOrientation: 'landscape',
+							pdfFrontPage: true,
+							pdfBackPage: true
+						}
+
+						$scope.closeDialog=function(){
+							mdPanelRef.close();
+							$scope.$destroy();
+							deferred.reject();
+						}
+						
+						$scope.saveDataset=function(){
+							var parameters = {};
+							angular.copy($scope.parameters, parameters);
+							parameters.pdfZoom = parameters.pdfZoom / 100;
+							deferred.resolve(parameters);
+							mdPanelRef.close();
+							$scope.$destroy();
+						}
+					},
+					disableParentScroll: true,
+					templateUrl: sbiModule_config.contextName + '/js/src/angular_1.4/tools/documentexecution/templates/popupPdfExportParametersDialogTemplate.html',
+					position: $mdPanel.newPanelPosition().absolute().center(),
+					trapFocus: true,
+//					zIndex: 150,
+					fullscreen :false,
+					clickOutsideToClose: true,
+					escapeToClose: false,
+					focusOnOpen: false,
+					onRemoving :function(){}
+				};
+				$mdPanel.open(config);
+			}else{
+				deferred.resolve({});
+			}
+			
+			return deferred.promise;
+		};
 		
 		dee.buildRequestConf = function(exportType, mimeType){
 			var deferred = $q.defer();
@@ -214,6 +296,54 @@
 							str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
 						return str.join("&");
 					}
+			};
+			
+			if(exportType.toLowerCase() != 'xlsx') {
+				requestConf.transformResponse = function (data) {
+					var blob;
+					if (data) {
+						blob = new Blob([data], {
+							type: mimeType
+						});
+					}
+					return blob;
+				};
+			}
+			if(exportType.toLowerCase() == 'xls' || exportType.toLowerCase() == 'xlsx') {
+				dee.getCockpitCsvData(documentFrame).then(function(csvData){
+					if(csvData != null) {
+						data.csvData = csvData;
+					}
+					deferred.resolve(requestConf);
+				},function(e){
+					deferred.reject(e);
+				});
+			}else{
+				deferred.resolve(requestConf);
+			}
+			return deferred.promise;
+		};
+		
+		dee.buildBackendRequestConf = function(exportType, mimeType, parameters){
+			var deferred = $q.defer();
+			
+			var eleToAtt=document.body;
+			
+			
+			var requestUrl = sbiModule_config.host;
+			requestUrl += execProperties.documentUrl;
+			requestUrl += '&outputType=' + encodeURIComponent(exportType);
+			
+			for (var parameter in parameters) {
+			    if (parameters.hasOwnProperty(parameter)) {
+			    	requestUrl += '&' + parameter + '=' + encodeURIComponent(parameters[parameter]);
+			    }
+			}
+			
+			var requestConf = {
+					method: 'GET',
+					url: requestUrl,
+					responseType: 'arraybuffer',
 			};
 			
 			if(exportType.toLowerCase() != 'xlsx') {
@@ -373,7 +503,9 @@
 			
 			switch (engine) {
 			case "CHART":
-				expObj.func = function(){dee.exportDocumentChart(type)};
+				expObj.func = function(){
+					dee.exportDocumentChart(type)
+				};
 				break;
 			case "DOCUMENT_COMPOSITE":
 				switch (type) {

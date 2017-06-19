@@ -31,29 +31,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/angular_1.x/kpi-dinamic-list/KpiDinamicList.js"></script>
-
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/angular_1.x/controllerBuildTemplate/kpiEditController.js"></script>
-<link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/sbi_default/css/commons/css/customStyle.css"> 
-<link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/themes/sbi_default/css/designerKpi/designerCss.css">
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/angular_1.x/style/kpiStyleController.js"></script>
-<link rel="stylesheet" type="text/css"	href="${pageContext.request.contextPath}/js/angular_1.x/kpi-dinamic-list/css/kpiWidgetStyle.css">
 
 </head>
-<body ng-controller="templateBuildController">
-<md-toolbar  class="miniheadimportexport" layout="row">
-	<div class="md-toolbar-tools" flex>
-		<h2 class="md-flex" >{{translate.load("sbi.kpidocumentdesigner")}}</h2>
-	</div>
+<body ng-controller="templateBuildController" class="kn-kpi-definition">
+<md-toolbar>
+	<div class="md-toolbar-tools">
+		<h2>{{translate.load("sbi.kpidocumentdesigner")}}</h2>
+
 	<span flex></span>
-	<md-button class="md-primary" ng-click="saveTemplate()">{{translate.load("sbi.general.save")}}</md-button>
-	<md-button class="md-primary" ng-click="closeTemplate()">{{translate.load("sbi.general.close")}}</md-button>
+	<md-button ng-click="saveTemplate()">{{translate.load("sbi.general.save")}}</md-button>
+	<md-button ng-click="closeTemplate()">{{translate.load("sbi.general.close")}}</md-button>
+	</div>
 </md-toolbar>
 <md-whiteframe class="md-whiteframe-2dp relative" layout-fill layout-margin flex  >
 	<md-radio-group layout="row" ng-model="typeChart">
 	     		<md-radio-button  value='kpi' >{{translate.load("sbi.kpi.kpi")}}</md-radio-button>
 	     		<md-radio-button ng-if="showScorecards" value='scorecard'>{{translate.load("sbi.kpi.scorecard")}} </md-radio-button>
    	</md-radio-group>
-   	<md-toolbar  class="miniheadimportexport" layout="row" ng-if="typeChart=='kpi'">
+   	<md-toolbar  layout="row" ng-if="typeChart=='kpi'">
 	<div class="md-toolbar-tools" flex>
 		<h2 class="md-flex" >{{translate.load("sbi.kpi.type")}}</h2>
 	</div>
@@ -63,73 +60,64 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	     		<md-radio-button  value='widget'>{{translate.load("sbi.kpi.widget")}} </md-radio-button>
    	</md-radio-group>
 
-	<expander-box id="Info" color="white" ng-if="typeChart=='scorecard'" expanded="true" title="translate.load('sbi.kpiedit.listscorecard')">
-	<md-whiteframe class="md-whiteframe-4dp layout-padding " layout layout-margin style ="height: 40%;" > 
-
- 		<angular-table flex style ="height: 40%;"
-		id='dinamicListTable' ng-model="scorecardSelected"
-		columns='[{"label":"Name","name":"name"},{"label":"Creation Date","name":"creationDate"}]'
-		columns-search='["name"]' show-search-bar=true
-		scope-functions=tableFunction  speed-menu-option=measureMenuOption 
-		>
-		<queue-table>
-			<div layout="row"> 
-				<span flex></span>
-				<md-button ng-click="scopeFunctions.loadListScorecard()">{{scopeFunctions.translate.load('sbi.kpi.addscoreass')}}</md-button>
-			</div>
-		</queue-table> 
-		</angular-table>	
-   </md-whiteframe>       
+	<expander-box id="scorecard" color="white" ng-if="typeChart=='scorecard'" expanded="true" title="translate.load('sbi.kpiedit.listscorecard')">
+		<md-card>
+			<md-card-content>
+				<angular-table flex style="height:40%;"
+				id='dinamicListTable' ng-model="scorecardSelected"
+				columns='[{"label":"Name","name":"name"},{"label":"Creation Date","name":"creationDate"}]'
+				columns-search='["name"]' show-search-bar=true
+				scope-functions=tableFunction  speed-menu-option=measureMenuOption 
+				>
+				<queue-table>
+					<div layout="row"> 
+						<span flex></span>
+						<md-button ng-click="scopeFunctions.loadListScorecard()">{{scopeFunctions.translate.load('sbi.kpi.addscoreass')}}</md-button>
+					</div>
+				</queue-table> 
+				</angular-table>
+			</md-card-content>
+		</md-card>    
 	</expander-box>
-	<expander-box id="Info" color="white" ng-show="typeChart=='kpi'" expanded="true" title="translate.load('sbi.kpiedit.kpilist')">
+	<expander-box id="list" color="white" ng-show="typeChart=='kpi'" expanded="true" title="translate.load('sbi.kpiedit.kpilist')">
 		<dinamic-list ng-model="selectedKpis" type-chart="typeDocument" multi-select=true selected-item ="addKpis"></dinamic-list>  
 	</expander-box>
-	<expander-box id="Info" color="white" expanded="false" title="translate.load('sbi.kpiedit.options')" ng-if="typeChart=='kpi'">
-		 <md-whiteframe class="md-whiteframe-4dp layout-padding " layout="column" layout layout-fill layout-margin  >
-		 
-		 <div layout="row">
-		 	<span flex = 15><h4>{{translate.load("sbi.kpidocumentdesigner.showvalue")}}:</h4></span>
-		  	  <md-checkbox ng-model="options.showvalue" aria-label="show value">
-          </md-checkbox>
-
-		 </div>
-		<div layout="row">
-		 	<span flex = 15><h4>{{translate.load("sbi.kpidocumentdesigner.showtarget")}}:</h4></span>
-   		 	<md-radio-group layout="row" ng-model="options.showtarget">
-	    	<md-checkbox ng-model="options.showtarget" aria-label="show target">
-   		</div>
-   		<div layout="row">
-		 	<span flex = 15><h4>{{translate.load("sbi.kpidocumentdesigner.showpercentage")}}:</h4></span>
-   			 
-	     		<md-checkbox ng-model="options.showtargetpercentage" aria-label="show percentage">
-   			 </div>
-   			 <div layout="row">
-		 	<span flex = 15><h4>{{translate.load("sbi.kpidocumentdesigner.showgauge")}}:</h4></span>
-   			 <md-radio-group layout="row" ng-model="options.showlineargauge">
-	     		<md-checkbox ng-model="options.showlineargauge" aria-label="show linear gauge">
-   			 </div>
-   			 <div layout="row">
-		 	<span flex = 15><h4>{{translate.load("sbi.kpidocumentdesigner.showthreshold")}}:</h4></span>
-   			
-	     		<md-checkbox ng-model="options.showthreshold" aria-label="show threshold">
-   			 </div>
-   			 
-   			<span layout="row">
-			<md-input-container class="small counter" flex=15 > <label>{{translate.load("sbi.kpidocumentdesigner.precision")}}</label>
-					<input class="input_class"ng-model="options.history.size"
-						 type="number" min="0"> 
-			</md-input-container>
-			</span>
-			<span layout="row">
-				<h4 flex=15>{{translate.load("sbi.kpidocumentdesigner.units")}}</h4>
-				<md-select aria-label="aria-label" flex=30 ng-model="options.history.units">
-					<md-option ng-repeat="unit in units" value="{{unit}}">{{unit}}</md-option>
-				</md-select>
-			</span>
-		 </md-whiteframe>
+	<expander-box id="kpi" color="white" expanded="false" title="translate.load('sbi.kpiedit.options')" ng-if="typeChart=='kpi'">
+		<md-card>
+			<md-card-content>
+				<div layout="row" layout-wrap flex>
+					<div flex="50">
+						<md-checkbox ng-model="options.showvalue" aria-label="show value">{{translate.load("sbi.kpidocumentdesigner.showvalue")}}</md-checkbox>
+					</div>
+					<div flex="50">
+						<md-checkbox ng-model="options.showtarget" aria-label="show target">{{translate.load("sbi.kpidocumentdesigner.showtarget")}}</md-checkbox>
+					</div>
+					<div flex="50">
+						<md-checkbox ng-model="options.showtargetpercentage" aria-label="show percentage">{{translate.load("sbi.kpidocumentdesigner.showpercentage")}}</md-checkbox>
+					</div>
+					<div flex="50">
+						<md-checkbox ng-model="options.showlineargauge" aria-label="show linear gauge">{{translate.load("sbi.kpidocumentdesigner.showgauge")}}</md-checkbox>
+					</div>
+					<div flex="50">
+						<md-checkbox ng-model="options.showthreshold" aria-label="show threshold">{{translate.load("sbi.kpidocumentdesigner.showthreshold")}}</md-checkbox>
+					</div>
+				</div>
+				<div layout="row">
+					<md-input-container flex-sm="50" flex-gt-sm="25" > 
+						<label>{{translate.load("sbi.kpidocumentdesigner.precision")}}</label>
+						<input ng-model="options.history.size" type="number" min="0"> 
+					</md-input-container>
+					<md-input-container flex-sm="50" flex-gt-sm="25" > 
+						<label>{{translate.load("sbi.kpidocumentdesigner.units")}}</label>
+						<md-select ng-model="options.history.units">
+							<md-option ng-repeat="unit in units" value="{{unit}}">{{unit}}</md-option>
+						</md-select>
+					</md-input-container>
+				</div>
+			<md-card-content>
+		</md-card>
 	</expander-box>
-	<expander-box id="Info" color="white"  title="translate.load('sbi.kpiedit.style')">
-		<!-- direttiva style -->
+	<expander-box id="style" color="white"  title="translate.load('sbi.kpiedit.style')">
 		<kpi-style ng-model="style"></kpi-style>
 	</expander-box>
 </md-whiteframe>

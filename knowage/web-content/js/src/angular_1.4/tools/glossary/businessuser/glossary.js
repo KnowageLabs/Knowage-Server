@@ -1515,8 +1515,6 @@ function funzione(sbiModule_translate, sbiModule_restServices, $q, $scope, $mdDi
 				function(data, status, headers, config) {
 					if (data.hasOwnProperty("errors")) {
 						showErrorToast(data.errors[0].message, sbiModule_translate.load("sbi.glossary.load.error"));
-							3000);
-
 					} else {
 						ctr.glossary = data;
 					}
