@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			host: '<%= request.getServerName()%>',
 		    port: '<%= request.getServerPort()%>',
 			contextName: '/<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?request.getContextPath().substring(1): request.getContextPath()%>',
-			externalBasePath:"<%=request.getParameter(SpagoBIConstants.SBI_CONTEXT)%>"
+	    	externalBasePath:"<%=request.getParameter(SpagoBIConstants.SBI_CONTEXT)%>"		
 		};
 	});
 	
@@ -213,13 +213,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			burl = sbiModule_config.protocol+"://"+sbiModule_config.host+":"+sbiModule_config.port+burl;
 			return burl ;
 		};	
-		
-		this.getCompleteExternalBaseUrl = function(endP_path) {		
-			var burl= alteredContextPath==null? sbiModule_config.externalBasePath +'/restful-services/'+ endP_path  : alteredContextPath+ "/restful-services/" + endP_path 
-			alteredContextPath=null;
-			burl = sbiModule_config.protocol+"://"+sbiModule_config.host+":"+sbiModule_config.port+burl;
-			return burl ;
-		};
 		
 		this.get = function(endP_path, req_Path, item, conf) {
 			(item == undefined || item==null) ? 

@@ -16,13 +16,25 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
+
 <%
 	String spagoBiContext = request.getParameter(SpagoBIConstants.SBI_HOST)+request.getParameter(SpagoBIConstants.SBI_CONTEXT);
 %>
 
 
 <!-- angular reference-->
+
 <!-- START-DEBUG -->
 <script type="text/javascript" src="<%=spagoBiContext%>/node_modules/angular/angular.js"></script> 
 <!-- END-DEBUG -->
 
+
+<script type="text/javascript" src="<%=spagoBiContext%>/node_modules/angular-animate/angular-animate.min.js"></script>
+<script type="text/javascript" src="<%=spagoBiContext%>/node_modules/angular-aria/angular-aria.min.js"></script>
+<script type="text/javascript" src="<%=spagoBiContext%>/node_modules/angular-sanitize/angular-sanitize.min.js"></script>
+<script type="text/javascript" src="<%=spagoBiContext%>/node_modules/angular-cookies/angular-cookies.min.js"></script>
+<script type="text/javascript" src="<%=spagoBiContext%>/node_modules/angular-messages/angular-messages.min.js"></script>
+<script type="text/javascript" src="<%=spagoBiContext%>/node_modules/angular-material/angular-material.min.js"></script>
+<link rel="stylesheet" href="<%=spagoBiContext%>/node_modules/angular-material/angular-material.min.css">
+
+<%@include file="/WEB-INF/jsp/commons/angular/sbiModule.jspf"%>

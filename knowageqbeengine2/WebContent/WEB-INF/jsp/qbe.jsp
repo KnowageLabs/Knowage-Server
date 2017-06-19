@@ -18,11 +18,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <%@ page language="java"  contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>     
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
+<%@include file="/WEB-INF/jsp/commons/qbeImport.jsp"%>
 <%-- ---------------------------------------------------------------------- --%>
 <%-- HTML	 																--%>
 <%-- ---------------------------------------------------------------------- --%>
 
-<html ng-app>
+<html ng-app="qbeManager">
 	
 	<head>
 	
@@ -31,7 +32,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	
 	<body >
 	
-    HELLO FROM	QBE {{2+3}}
+    <qbe-expander-list></qbe-expander-list>
+    <qbe-custom-table></qbe-custom-table>
+    <qbe-filter></qbe-filter>
+    <qbe-advanced-visulalization></qbe-advanced-visualization>
+    
 	</body>
 
 </html>
