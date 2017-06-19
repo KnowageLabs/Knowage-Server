@@ -720,22 +720,11 @@
 		</copy>
 		
 		<!--knowageqbeengine2 START-->
-		<copy todir="${apache.dir}/knowageqbeengine2/js" >
-			<fileset dir="${tomcat.home}/webapps/knowageqbeengine2/js">
+		<copy todir="${apache.dir}/knowageqbeengine2/qbe" >
+			<fileset dir="${tomcat.home}/webapps/knowageqbeengine2/qbe">
 			</fileset>
 		</copy>
-		<copy todir="${apache.dir}/knowageqbeengine2/css" >
-			<fileset dir="${tomcat.home}/webapps/knowageqbeengine2/css">
-			</fileset>
-		</copy>
-		<copy todir="${apache.dir}/knowageqbeengine2/img" >
-			<fileset dir="${tomcat.home}/webapps/knowageqbeengine2/img">
-			</fileset>
-		</copy>
-		<copy todir="${apache.dir}/knowageqbeengine2/html" >
-			<fileset dir="${tomcat.home}/webapps/knowageqbeengine2/html">
-			</fileset>
-		</copy>
+		
 		<!--knowageqbeengine2 END-->
 	</target>
 
