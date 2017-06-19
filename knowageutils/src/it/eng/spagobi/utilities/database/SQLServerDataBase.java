@@ -55,12 +55,12 @@ public class SQLServerDataBase extends AbstractDataBase {
 			toReturn = " NUMERIC ";
 		} else if (javaTypeName.contains("java.lang.Boolean")) {
 			toReturn = " BIT ";
-		} else if (javaTypeName.contains("java.sql.Time")) {
-			toReturn = " TIME ";
 		} else if (javaTypeName.contains("java.sql.Date")) {
 			toReturn = " DATETIME ";
 		} else if (javaTypeName.toLowerCase().contains("timestamp")) {
 			toReturn = " DATETIME ";
+		} else if (javaTypeName.contains("java.sql.Time")) {
+			toReturn = " TIME ";
 		} else if (javaTypeName.contains("[B") || javaTypeName.contains("BLOB")) {
 			toReturn = " VARBINARY(MAX) ";
 		} else if (javaTypeName.contains("[C") || javaTypeName.contains("CLOB")) {
@@ -74,7 +74,7 @@ public class SQLServerDataBase extends AbstractDataBase {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.utilities.database.IDataBase#getAliasDelimiter()
 	 */
 	@Override
@@ -84,7 +84,7 @@ public class SQLServerDataBase extends AbstractDataBase {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.utilities.database.AbstractDataBase#getUsedMemorySizeQuery(java.lang.String, java.lang.String) Returning null the used memory size
 	 * wil be calculated by the abstract call using an heuristic not dependent by the database.
 	 */
