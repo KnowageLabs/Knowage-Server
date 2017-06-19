@@ -266,7 +266,6 @@ author:
 
 		kpiViewerModule.factory('documentData', function() {
 			var documentTemplate = JSON.parse('<%=template%>');
-			<%-- var kpiValue = JSON.parse('<%=kpiValue%>'); --%>
 			
 			var obj = {
 				template : documentTemplate,
@@ -289,7 +288,7 @@ author:
 		src="${pageContext.request.contextPath}/js/angular_1.x/kpi-scorecard/template/kpiSemaphoreIndicator/kpiSemaphoreIndicator.js">
 	</script>
 	<script type="text/javascript"
-		src="${pageContext.request.contextPath}/js/angular_1.x/kpi-scorecard/template/kpiColorIndicator/kpiColorIndicator.js">
+		src="<%= GeneralUtilities.getSpagoBiContext() %>/js/src/angular_1.4/tools/kpi/directive/kpiColorIndicator/kpiColorIndicator.js">
 	</script>
 	<script type="text/javascript"
 		src="${pageContext.request.contextPath}/js/angular_1.x/kpi-scorecard/kpiScorecardDirective.js"></script>

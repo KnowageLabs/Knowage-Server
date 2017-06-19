@@ -1,5 +1,8 @@
 .kn-kpiExecution {
 	background-color: $detailBackground;
+	.singleKpiColorValue {
+		padding: 0;
+	}
 	.kpiColorValue, .singleKpiColorValue{
 		.kpiColorBox {
 			margin: 0 4px;

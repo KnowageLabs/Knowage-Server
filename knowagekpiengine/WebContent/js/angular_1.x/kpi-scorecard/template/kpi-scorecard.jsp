@@ -1,55 +1,6 @@
 
 <div layout-padding class="kn-scorecard-visualization" ng-cloak>
-<kpi-color-indicator perspectives="scorecardTarget.scorecard.perspectives" definition="false" ></kpi-color-indicator>
-	<!--  expander-box id="Info" color="white" expanded="true" toolbar-class="ternaryToolbar" title="perspective.name" locals="localsScope" layout-margin layout="column" 
-	class="md-whiteframe-2dp scorecardPrespectiveCard" ng-repeat="perspective in scorecardTarget.scorecard.perspectives" >
-	<custom-toolbar layout="row">
-		<kpi-semaphore-indicator flex indicator-color="perspective.status"></kpi-semaphore-indicator>
-	</custom-toolbar>
-	<custom-toolbar-action layout="row">
-		<md-button style="position:absolute;right:75px;top:0px;"  aria-label="KPI list Perspective" class="md-icon-button" layout-padding ng-click="localsScope.listKPer(perspective.id,$event)">
-		<md-icon md-menu-origin md-font-icon="fa fa-search"></md-icon></md-button>
-		<md-button style="position:absolute;right:40px;top:0px;"  aria-label="Criterion Perspective" class="md-icon-button" layout-padding ng-click="localsScope.critPers(perspective.id,$event)">
-		<md-icon md-font-icon="fa fa-info-circle"></md-icon></md-button>
-	</custom-toolbar-action>
-	<md-whiteframe class="md-whiteframe-2dp scorecardPrespectiveCard" layout-margin layout="column">
-
-		<md-content layout-padding layout="column">
-		<div layout="row">
-		 <b	layout-padding class="lh30">{{translate.load('sbi.kpi.kpi')}}</b> 
-		 <kpi-semaphore-indicator flex ng-repeat="groupedKpi in perspective.groupedKpis"
-			indicator-color="groupedKpi.status" indicator-value="groupedKpi.count"></kpi-semaphore-indicator>
-		</div>
-		<div layout="row" layout-wrap>
-			<md-whiteframe class="md-whiteframe-2dp scorecardPrespectiveCard"
-				layout-margin layout-wrap layout="column" ng-repeat="goal in perspective.targets">
-				<md-toolbar class="ternaryToolbar">
-					<div class="md-toolbar-tools" layout-fill layout="column">
-					<kpi-semaphore-indicator indicator-color="goal.status">
-						</kpi-semaphore-indicator>
-						<label>{{goal.name}}</label> 
-						<span flex></span>
-						   <md-button style="position:absolute;right:28px;top:0px;" aria-label="KPI List" class="md-icon-button" ng-click="localsScope.listKGoal(goal.id, perspective.id, $event)">
-				       		 <md-icon md-menu-origin md-font-icon="fa fa-search"></md-icon>
-				     	   </md-button>
-				     	   	<md-button style="position:absolute;right:8px;top:0px;"  aria-label="Criterion Goal" class="md-icon-button" layout-padding ng-click="localsScope.critGoal(goal.id,perspective.id, $event)">
-							<md-icon md-font-icon="fa fa-info-circle"></md-icon></md-button>
-					</div>
-				</md-toolbar> 
-				<div>
-				<md-content layout-padding layout="row"> 
-					<b	layout-padding class="lh30">{{translate.load('sbi.kpi.kpi')}}</b> 
-					<kpi-semaphore-indicator flex	ng-repeat="groupedKpi in goal.groupedKpis"
-						indicator-color="groupedKpi.status"	indicator-value="groupedKpi.count">
-					</kpi-semaphore-indicator> 
-				</md-content>
-				</div>
-			</md-whiteframe> 
-		</div>
-		</md-content> 
-	</md-whiteframe>
-</expander-box-->
-
+	<kpi-color-indicator perspectives="scorecardTarget.scorecard.perspectives" definition="false" ></kpi-color-indicator>
 </div>
 
 

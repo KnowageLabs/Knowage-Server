@@ -74,8 +74,8 @@
 	<md-sidenav class="md-sidenav-right md-whiteframe-4dp" md-component-id="right">
 
       <md-toolbar class="md-theme-light" layout="row" layout-align="start center" style="padding-left:10px;">
-      <input-rename item="perspectives[cp].targets[ct]"></input-rename>
-      <span>{{perspectives[cp].targets[ct].name}}</span>
+      <input-rename item="perspectives[cp].targets[ct]" ng-if="definition"></input-rename>
+      <span ng-if="!definition">{{perspectives[cp].targets[ct].name}}</span>
         <div flex></div>
         <md-button class="md-fab md-mini noPadding" aria-label="add Target" ng-click=addKpiToTarget()>
             <md-icon md-font-icon="fa fa-plus"></md-icon>

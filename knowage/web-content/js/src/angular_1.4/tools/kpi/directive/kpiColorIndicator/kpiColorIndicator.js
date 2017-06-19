@@ -1,7 +1,29 @@
+/* Knowage, Open Source Business Intelligence suite
+Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+
+Knowage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Knowage is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>. */
+
+(function() {
+
+var scripts = document.getElementsByTagName("script");
+var currentScriptPath = scripts[scripts.length - 1].src;
+currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
+
 angular.module('kpi_color_indicator', ['ngMaterial','sbiModule'])
-.directive('kpiColorIndicator', ['$timeout','$mdDialog','sbiModule_translate','sbiModule_restServices','sbiModule_config','$filter','$mdSidenav', function($timeout,$mdDialog,sbiModule_translate,sbiModule_restServices,sbiModule_config,$filter,$mdSidenav){
+.directive('kpiColorIndicator', ['$timeout','$mdDialog','sbiModule_translate','sbiModule_restServices','sbiModule_config','$filter','$mdSidenav','$mdToast', function($timeout,$mdDialog,sbiModule_translate,sbiModule_restServices,sbiModule_config,$filter,$mdSidenav,$mdToast){
 	return {
-		templateUrl: '/knowage/js/src/angular_1.4/tools/kpi/directive/kpiColorIndicator/kpiColorIndicatorTemplate.html',
+		templateUrl: currentScriptPath+'/kpiColorIndicatorTemplate.html',
 		restrict: 'E',
 		replace:true,
 		scope: {
@@ -10,6 +32,7 @@ angular.module('kpi_color_indicator', ['ngMaterial','sbiModule'])
 			definition:"="
 		},
 		link: function(scope, element, attrs, ctrl, transclude) {
+			debugger;
 			scope.criterion;
 			scope.translate=sbiModule_translate;
 			scope.cp = 0;
@@ -135,7 +158,6 @@ angular.module('kpi_color_indicator', ['ngMaterial','sbiModule'])
 						scope.kpiList.push(obj);
 					}
 				},function(response){
-					sbiModule_restServices.errorhandler(response.data,"");
 				});
 			};
 			scope.getListKPI();
@@ -149,7 +171,7 @@ angular.module('kpi_color_indicator', ['ngMaterial','sbiModule'])
 				angular.copy(scope.perspectives[scope.cp].targets[scope.ct].kpis,tmpTargetKpis); 
 				$mdDialog.show({
 					controller: DialogControllerKPI,
-					templateUrl: '/knowage/js/src/angular_1.4/tools/kpi/directive/kpiColorIndicator/kpiAddTemplate.html',
+					templateUrl: currentScriptPath+'/kpiAddTemplate.html',
 					clickOutsideToClose:false,
 					preserveScope:true,
 					locals: {
@@ -222,7 +244,7 @@ angular.module('kpi_color_indicator', ['ngMaterial','sbiModule'])
 				
 					$mdDialog.show({
 						controller: kpiListControllerKPI,
-						templateUrl: '/knowagekpiengine/js/angular_1.x/kpi-scorecard/template/kpiColorIndicator/kpiShowKpi.tpl.html',
+						templateUrl: currentScriptPath+'/kpiShowKpi.tpl.html',
 						clickOutsideToClose:true,
 						preserveScope:true,
 						locals: {
@@ -321,3 +343,4 @@ angular.module('kpi_color_indicator', ['ngMaterial','sbiModule'])
 		}
 	}
 }]);
+})();

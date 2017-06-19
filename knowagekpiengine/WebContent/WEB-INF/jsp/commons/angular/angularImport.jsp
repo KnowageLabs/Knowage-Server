@@ -7,10 +7,6 @@
 <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
 <meta name="viewport" content="width=device-width">
 
-<%--
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
---%>
-
 
 <link rel="stylesheet" href="${pageContext.request.contextPath}/fonts/font-awesome-4.4.0/css/font-awesome.min.css">
 
@@ -41,7 +37,7 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-tree/angular-ui-tree.js"></script>
 	
 <!-- angular table -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-table/AngularTable.js"></script>
+<script type="text/javascript" src="<%= GeneralUtilities.getSpagoBiContext() %>/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js"></script>
 
 <!-- colorpicker -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/color-picker/tinycolor-min.js"></script>
@@ -51,8 +47,6 @@
 <link rel="stylesheet" href="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/angular/color-picker/angularjs-color-picker.min.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/color-picker/mdColorPickerPersonalStyle.css">
 
-<%-- <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/color-picker/mdColorPicker.js"></script> --%>
-<%-- <link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/color-picker/mdColorPicker.min.css"> --%>
 
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/module/sbiModule.js"></script>
