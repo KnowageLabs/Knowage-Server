@@ -1,8 +1,8 @@
-angular.module('cockpitModule').controller("datasetManagerController",["$scope","sbiModule_translate","$mdPanel","cockpitModule_datasetServices","cockpitModule_widgetSelection","$mdDialog","cockpitModule_template","cockpitModule_analyticalDrivers","$timeout","sbiModule_user",datasetManagerController]);
+angular.module('cockpitModule').controller("datasetManagerController",["$scope","sbiModule_translate","$mdPanel","cockpitModule_datasetServices","cockpitModule_widgetSelection","$mdDialog","cockpitModule_template","cockpitModule_analyticalDrivers","cockpitModule_analyticalDriversUrls","$timeout","sbiModule_user",datasetManagerController]);
 angular.module('cockpitModule').controller("documentManagerController",["$scope","sbiModule_translate","$mdPanel","cockpitModule_documentServices","cockpitModule_widgetSelection","$mdDialog","cockpitModule_analyticalDrivers","$timeout",documentManagerController]);
 angular.module('cockpitModule').controller("associationGroupController",["$scope","sbiModule_translate","cockpitModule_realtimeServices", associationGroupController]);
 
-function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitModule_datasetServices,cockpitModule_widgetSelection,$mdDialog,cockpitModule_template,cockpitModule_analyticalDrivers,$timeout,sbiModule_user){
+function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitModule_datasetServices,cockpitModule_widgetSelection,$mdDialog,cockpitModule_template,cockpitModule_analyticalDrivers,cockpitModule_analyticalDriversUrls,$timeout,sbiModule_user){
 	$scope.displayDatasetCard=false;
 	$timeout(function(){$scope.displayDatasetCard=true;},0);
 	
@@ -150,44 +150,48 @@ function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitMod
 		 cockpitModule_datasetServices.addDataset("cockpitDataConfig",$scope.tmpAvaiableDataset,true);
 	 }
 	
-	 $scope.selectParameterFromPanel=function(par,classItem){
-		 var position = $mdPanel.newPanelPosition()
-	      .relativeTo('.'+classItem)
-	      .addPanelPosition($mdPanel.xPosition.ALIGN_START, $mdPanel.yPosition.ALIGN_BOTTOMS);
+	$scope.selectParameterFromPanel=function(par,classItem){
+		var position = $mdPanel.newPanelPosition()
+	    .relativeTo('.'+classItem)
+	    .addPanelPosition($mdPanel.xPosition.ALIGN_START, $mdPanel.yPosition.ALIGN_BOTTOMS);
  
-		 var config = {
-				    attachTo: angular.element(document.getElementById("cockpitDataConfig")) ,
-				    controller: function($scope,parameter,cockpitModule_analyticalDrivers,mdPanelRef){
-				    	var parameters = {};
-				    	var suffix = "_description";
-				    	for (var property in cockpitModule_analyticalDrivers) {
-				    	    if (cockpitModule_analyticalDrivers.hasOwnProperty(property) && property.endsWith(suffix)) {
-				    	    	parameters[property.substring(0,property.length - suffix.length)] = cockpitModule_analyticalDrivers[property];
-				    	    }
-				    	}
-				    	$scope.cockpitModule_analyticalDrivers = parameters;
-				    	
-				    	$scope.addParameter=function(par){
-				    		parameter.value="$P{"+par+"}"
-				    		mdPanelRef.close();
-							$scope.$destroy();
-				    	}
-				    	
-				    },
-				    template:
-				    	'<md-content style="max-height: 300px;overflow-y: auto;"><md-list><md-list-item ng-repeat="(key,val) in cockpitModule_analyticalDrivers" ng-click="addParameter(key)">{{key}}</md-list-item></md-list></md-content>',
-				    position: position,
-				    locals: {parameter:par },
-				    clickOutsideToClose: true,
-				    escapeToClose: true,
-				    focusOnOpen: false,
-				    panelClass: 'sheetMenuPanel',
-				    zIndex: 150
-				  };
+		var config = {
+			attachTo: angular.element(document.getElementById("cockpitDataConfig")) ,
+			controller: function($scope,parameter,cockpitModule_analyticalDrivers,cockpitModule_analyticalDriversUrls,mdPanelRef){
+				var parameters = {};
+				for(var property in cockpitModule_analyticalDriversUrls) {
+					if(cockpitModule_analyticalDriversUrls.hasOwnProperty(property)) {
+						if(cockpitModule_analyticalDriversUrls[property].url){
+							var url = cockpitModule_analyticalDriversUrls[property].url;
+							var value = null;
+							if(cockpitModule_analyticalDrivers.hasOwnProperty(url)){
+								value = cockpitModule_analyticalDrivers[url];
+							}
+							parameters[url] = value;
+						}
+					}
+				}
+				$scope.cockpitModule_analyticalDrivers = parameters;
+				
+				$scope.addParameter=function(par){
+					parameter.value="$P{"+par+"}"
+					mdPanelRef.close();
+					$scope.$destroy();
+				}
+				
+			},
+			template:'<md-content style="max-height: 300px;overflow-y: auto;"><md-list><md-list-item ng-repeat="(key,val) in cockpitModule_analyticalDrivers" ng-click="addParameter(key)">{{key}}</md-list-item></md-list></md-content>',
+			position: position,
+			locals: {parameter: par},
+			clickOutsideToClose: true,
+			escapeToClose: true,
+			focusOnOpen: false,
+			panelClass: 'sheetMenuPanel',
+			zIndex: 150
+		};
 
-				  $mdPanel.open(config);
-	 }
-	
+		$mdPanel.open(config);
+	}	
 }
 
 function documentManagerController($scope,sbiModule_translate,$mdPanel,cockpitModule_documentServices,cockpitModule_widgetSelection,$mdDialog,cockpitModule_analyticalDrivers,$timeout ){
