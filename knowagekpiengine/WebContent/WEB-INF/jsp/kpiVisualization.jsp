@@ -55,14 +55,7 @@ author:
 	
 	JSONObject templateObj = engineInstance.getTemplate();
 	JSONObject chartObj = templateObj.getJSONObject("chart");
-	//JSONObject optionsObj = chartObj.getJSONObject("options");
 	String type = (String)chartObj.get("type");
-	// String model = (String)chartObj.get("model");
-	
-	// Boolean showlineargauge = new Boolean((String)optionsObj.get("showlineargauge"));
-	// if(env.get("KPI_VALUE")!=null){
-	// 	kpiValue = env.get("KPI_VALUE").toString();
-	// }
 	
 	if(env.get("EXECUTE_COCKPIT") != null){
 		isCockpit = true;

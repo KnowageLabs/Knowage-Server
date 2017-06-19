@@ -14,7 +14,7 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 	$scope.addKpis = [];
 	$scope.typeDocument = 'widget';
 	$scope.style = {};
-	$scope.options = {"showvalue": true, "showtarget":true, "showtargetpercentage":false,"showlineargauge":true, "showthreshold":true,"vieweas":"Speedometer"};
+	$scope.options = {"showvalue": true, "showtarget":true, "showtargetpercentage":false, "showthreshold":true,"vieweas":"Speedometer"};
 	$scope.options.history = {"units": 'month',"size": 1};
 	$scope.units = ['day', 'week', 'month', 'quarter', 'year'];
 	$scope.typeOfWiew = [{'label':'speedometer','value':'Speedometer'},{'label':'kpicard','value':'Kpi Card'}];
@@ -273,11 +273,6 @@ function templateBuildControllerFunction($scope,sbiModule_translate,$mdDialog, s
 		}
 		
 		if(template.chart.options!=undefined){
-			if(template.chart.options.showlineargauge=="true"){
-				$scope.options.showlineargauge=true;
-			}else{
-				$scope.options.showlineargauge=false;
-			}
 			if(template.chart.options.showtarget=="true"){
 				$scope.options.showtarget=true;
 			}else{

@@ -10,6 +10,21 @@
 		this.placeholderName = placeholderName;
 
 		var self = this; // for internal d3 functions
+		
+		this.getValueFromFontSize = function (fontSize) {
+			var sizeSuffix = fontSize.indexOf("px");
+			if(sizeSuffix !== -1) {
+				return fontSize.substr(0, sizeSuffix);
+			} else {
+				sizeSuffix = fontSize.indexOf("em");
+				if(sizeSuffix !== -1) {
+					return fontSize.substr(0, sizeSuffix);
+				} else {
+					// NO SUFFIX FOUND
+					return fontSize;
+				}
+			}
+		}
 
 		this.configure = function (configuration) {
 			this.config = configuration;
@@ -31,6 +46,8 @@
 			
 			this.config.showValue = configuration.showValue != undefined ? configuration.showValue : true;
 			this.config.showTarget = configuration.showTarget != undefined ? configuration.showTarget : true;
+			this.config.showTargetPercentage = configuration.showTargetPercentage != undefined ? configuration.showTargetPercentage : true;
+			
 			this.config.valuePrecision = configuration.valuePrecision != undefined ? configuration.valuePrecision : 0;
 			this.config.fontConf = configuration.fontConf != undefined && configuration.fontConf != null ? 
 					configuration.fontConf : {
@@ -86,7 +103,9 @@
 			}
 
 			if (undefined != this.config.label) {
-				var fontSize = Math.round(this.config.size * this.config.fontConf.size / 9);
+				// THE FOLLOWING SHOULD NORMALIZED AND ADAPT THE FONT SIZE ACCORDINGLY WITH THE KPI DIMENSION
+				// var fontSize = Math.round(this.config.size * this.getValueFromFontSize(this.config.fontConf.size) / 9);
+				var fontSize = Math.round(this.getValueFromFontSize(this.config.fontConf.size));
 
 				// label
 				this.body.append("svg:text")
@@ -102,7 +121,9 @@
 					.style("stroke-width", "0px");
 			}
 
-			var fontSize = Math.round(this.config.size * this.config.fontConf.size / 16);
+			// THE FOLLOWING SHOULD NORMALIZED AND ADAPT THE FONT SIZE ACCORDINGLY WITH THE KPI DIMENSION
+			// var fontSize = Math.round(this.config.size * this.getValueFromFontSize(this.config.fontConf.size) / 16);
+			var fontSize = Math.round(this.getValueFromFontSize(this.config.fontConf.size));
 			var majorDelta = this.config.range / (this.config.majorTicks - 1);
 			for (var major = this.config.min; major <= this.config.max; major += majorDelta) {
 				var minorDelta = majorDelta / this.config.minorTicks;
@@ -199,8 +220,9 @@
 				.style("stroke", "rgb(59, 103, 140)")
 				.style("opacity", 1);
 
-			// shown value
-			var fontSize = Math.round(this.config.size * this.config.fontConf.size / 10);
+			// THE FOLLOWING SHOULD NORMALIZED AND ADAPT THE FONT SIZE ACCORDINGLY WITH THE KPI DIMENSION
+			// var fontSize = Math.round(this.config.size * this.getValueFromFontSize(this.config.fontConf.size) / 10);
+			var fontSize = Math.round(this.getValueFromFontSize(this.config.fontConf.size));
 			
 			pointerContainer.selectAll("text")
 				.data([midValue])
@@ -367,7 +389,8 @@
 					+ '<div id="{{containerFrameId}}" svg-style="height:{{size}}px; width:{{size}}px;"></div>' 
 					
 					+ '<div layout="row" layout-align="center center" class="kpiValue"'
-					+ 		' ng-if="showTargetPercentage && targetValue && targetValue != 0">'
+					+ 		' ng-if="showTargetPercentage && targetValue && targetValue != 0"'
+					+ '>'
 						+ '<span>{{getTargetPercentage()}}</span>&nbsp;'
 						+ '<h3 ng-show="isVisible()">{{translate.load("sbi.kpi.widget.percentage.oftarget")}}</h3>'
 					+ '</div>'
@@ -388,6 +411,7 @@
 				showValue: '=?',
 				showTargetPercentage: '=?',
 				showThresholds: '=?',
+				showTarget :  '=?', 
 				valuePrecision: '=?',
 				fontConf: '=?',
 			},
@@ -432,7 +456,7 @@
 		}
 		$scope.createGauge = function(
 				frameId, label, size, min, max, valuePrefixSuffix, labelIsSuffix, thresholdStops, 
-				showValue, showTarget, showThresholds, valuePrecision, fontConf) {
+				showValue, showTarget, showTargetPercentage, showThresholds, valuePrecision, fontConf) {
 			
 			var initialConfig = {
 				size : undefined != size ? size: 100,
@@ -448,6 +472,8 @@
 						showTarget : true,
 				showThresholds : undefined != showThresholds && null != showThresholds ? 
 						showThresholds : true,
+				showTargetPercentage : undefined != showTargetPercentage && null != showTargetPercentage ? 
+						showTarget : true,
 				stops: undefined != thresholdStops && thresholdStops != null ? thresholdStops : [],
 				valuePrecision : undefined != valuePrecision && null != valuePrecision? 
 						valuePrecision : 0,
@@ -518,6 +544,7 @@
 				$scope.thresholdStops,
 				$scope.showValue,
 				$scope.showTarget,
+				$scope.showTargetPercentage,
 				$scope.showThresholds,
 				$scope.valuePrecision,
 				$scope.fontConf);

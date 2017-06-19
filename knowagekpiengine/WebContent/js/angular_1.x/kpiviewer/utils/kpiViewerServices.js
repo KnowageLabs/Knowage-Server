@@ -29,10 +29,10 @@
 				conf.valueSeries = [];
 				conf.targetValue = kpiValue.targetValue;
 				conf.thresholdStops = [];
-				conf.showValue = templateOptions.showvalue;
-				conf.showTarget = templateOptions.showtarget;
-				conf.showTargetPercentage = templateOptions.showtargetpercentage;
-				conf.showThreshold = templateOptions.showthreshold;
+				conf.showValue = (templateOptions.showvalue == 'true');
+				conf.showTarget = (templateOptions.showtarget == 'true');
+				conf.showTargetPercentage = (templateOptions.showtargetpercentage == 'true');
+				conf.showThreshold = (templateOptions.showthreshold == 'true');
 				conf.fontConf = templateStyle.font;
 				conf.precision = templateOptions.history && templateOptions.history.size ?
 						templateOptions.history.size : null;

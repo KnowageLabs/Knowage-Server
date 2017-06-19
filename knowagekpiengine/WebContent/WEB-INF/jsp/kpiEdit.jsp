@@ -96,9 +96,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						<md-checkbox ng-model="options.showtargetpercentage" aria-label="show percentage">{{translate.load("sbi.kpidocumentdesigner.showpercentage")}}</md-checkbox>
 					</div>
 					<div flex="50">
-						<md-checkbox ng-model="options.showlineargauge" aria-label="show linear gauge">{{translate.load("sbi.kpidocumentdesigner.showgauge")}}</md-checkbox>
-					</div>
-					<div flex="50">
 						<md-checkbox ng-model="options.showthreshold" aria-label="show threshold">{{translate.load("sbi.kpidocumentdesigner.showthreshold")}}</md-checkbox>
 					</div>
 				</div>
