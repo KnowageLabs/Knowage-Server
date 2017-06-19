@@ -260,7 +260,11 @@
 						var oldParValue = oldValPar.parameterValue; 
 						var newParValue = newValPar.parameterValue; 
 						
-						if(oldParValue && (!angular.equals(newParValue, oldParValue)) ){
+						
+						
+						if(oldParValue == undefined ||
+								(oldParValue && (!angular.equals(newParValue, oldParValue))) 
+								){
 							docExecute_dependencyService.dataDependenciesCorrelationWatch(newValPar);
 						}
 						break;
