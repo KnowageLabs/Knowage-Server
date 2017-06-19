@@ -32,10 +32,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	
 	<body >
 	
-    <qbe-expander-list></qbe-expander-list>
-    <qbe-custom-table></qbe-custom-table>
-    <qbe-filter></qbe-filter>
-    <qbe-advanced-visulalization></qbe-advanced-visualization>
+	<angular-list-detail>
+	 	<list>
+			<qbe-expander-list flex></qbe-expander-list>
+		</list>
+		
+		<detail>
+			 <qbe-custom-table></qbe-custom-table>
+		    <qbe-filter></qbe-filter>
+		    <qbe-advanced-visulalization></qbe-advanced-visualization>
+		</detail>
+	</angular-list-detail>
+    
+   
     
 	</body>
 
