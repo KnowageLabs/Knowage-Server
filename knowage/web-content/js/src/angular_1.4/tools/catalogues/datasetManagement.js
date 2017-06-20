@@ -1517,7 +1517,7 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 		
 		var object = {};
 	
-		for(item in array){
+		for(var item in array){
 		     var element = object[array[item].column];
 		     if(!element){
 		    	 element = {};
