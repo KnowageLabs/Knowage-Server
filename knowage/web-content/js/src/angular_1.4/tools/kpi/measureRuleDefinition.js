@@ -290,12 +290,20 @@ function measureDetailControllerFunction($scope,sbiModule_translate ,$mdDialog ,
 	$scope.checkValiditymeasureRule=function(){
 		var deferred = $q.defer();
 		if($scope.detailProperty.queryChanged==true){
-			$scope.loadMetadata().then(
+			var confirm = $mdDialog.confirm()
+			.title($scope.translate.load("sbi.kpi.rule.presave.metadata.changed.title"))
+			.textContent($scope.translate.load("sbi.kpi.rule.presave.metadata.changed.text"))
+			.ariaLabel('Continue with saving') 
+			.ok($scope.translate.load("sbi.general.yes"))
+			.cancel($scope.translate.load("sbi.general.No"));
+			$mdDialog.show(confirm).then(function() {
+				$scope.loadMetadata().then(
 					function(){
 						$scope.preSaveControl(deferred);
 					},function(){
 						deferred.reject()
-					});
+					});   
+			});
 		}else{
 			$scope.preSaveControl(deferred);
 		}
