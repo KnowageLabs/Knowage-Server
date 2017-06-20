@@ -1,0 +1,71 @@
+    .expanderList {
+        h3 {
+            &.opened {
+                box-shadow: 0px 3px 3px 0px #ccc;
+                border-bottom: none;
+            }
+            border-bottom: 1px solid #ccc;
+            margin: 0;
+            margin-bottom: 4px;
+            padding: 4px;
+            font-size: 1rem;
+            .chip {
+                background-color: #ccc;
+                display: flex;
+                padding: 0px 16px;
+                border-radius: 50px;
+                font-size: .8rem;
+                font-weight: normal;
+                line-height: 19px;
+            }
+        }
+        .expandableEntities,
+        .expandableSubqueries {
+            h4 {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: flex-start;
+                height: 1rem;
+                line-height: 1rem;
+                margin: 0;
+                padding: 4px 8px 4px 8px;
+                font-size: .8rem;
+                font-family: 'Roboto';
+                border-bottom: 1px solid #ccc;
+                outline: none;
+                cursor: pointer;
+                .colorSquare {
+                    height: .8rem;
+                    width: .8rem;
+                    display: block;
+                }
+                span {
+                    margin-left: 5px;
+                }
+                &.expanded {}
+            }
+            ul {
+                background-color: #e2e2e2;
+                margin: 0;
+                list-style: none;
+                padding-left: 0;
+                li {
+                    padding: 4px 20px;
+                    font-size: .8rem;
+                    border-bottom: 1px solid #ccc;
+                    line-height: 1rem;
+                    cursor: move;
+                    &:hover {
+                        background-color: darken(#e2e2e2, 10%);
+                    }
+                    i {
+                        line-height: 1rem;
+                    }
+                    span {
+                        padding-left: 5px;
+                    }
+                }
+            }
+        }
+    }
