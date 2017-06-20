@@ -71,8 +71,8 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	private static final String PREVIEW_FILE_STORAGE_DIRECTORY = "preview" + File.separatorChar + "images";
 	static DecimalFormat decFormat = new DecimalFormat();
 	static DecimalFormatSymbols decSymbols = decFormat.getDecimalFormatSymbols();
-	public static final int MAX_DEFAULT_TEMPLATE_SIZE = 5242880;
-	public static final int MAX_DEFAULT_FILE_DATASET_SIZE = 10485760; // 10 mega byte
+	public static final int MAX_DEFAULT_FILE_5M_SIZE = 5242880;
+	public static final int MAX_DEFAULT_FILE_10M_SIZE = 10485760; // 10 mega byte
 	private static String SPAGOBI_HOST = null;
 
 	// private static String SPAGOBI_DOMAIN = null;
@@ -635,7 +635,7 @@ public class GeneralUtilities extends SpagoBIUtilities {
 
 	public static int getTemplateMaxSize() {
 		logger.debug("IN");
-		int toReturn = MAX_DEFAULT_TEMPLATE_SIZE;
+		int toReturn = MAX_DEFAULT_FILE_5M_SIZE;
 		try {
 			SingletonConfig serverConfig = SingletonConfig.getInstance();
 			String maxSizeStr = serverConfig.getConfigValue("SPAGOBI.TEMPLATE_MAX_SIZE");
@@ -648,8 +648,8 @@ public class GeneralUtilities extends SpagoBIUtilities {
 			}
 		} catch (Exception e) {
 			logger.error("Error while retrieving max template size", e);
-			logger.debug("Considering default value " + MAX_DEFAULT_TEMPLATE_SIZE);
-			toReturn = MAX_DEFAULT_TEMPLATE_SIZE;
+			logger.debug("Considering default value " + MAX_DEFAULT_FILE_5M_SIZE);
+			toReturn = MAX_DEFAULT_FILE_5M_SIZE;
 		}
 		logger.debug("OUT: max size = " + toReturn);
 		return toReturn;
@@ -657,7 +657,7 @@ public class GeneralUtilities extends SpagoBIUtilities {
 
 	public static int getDataSetFileMaxSize() {
 		logger.debug("IN");
-		int toReturn = MAX_DEFAULT_FILE_DATASET_SIZE;
+		int toReturn = MAX_DEFAULT_FILE_10M_SIZE;
 		try {
 			SingletonConfig serverConfig = SingletonConfig.getInstance();
 			String maxSizeStr = serverConfig.getConfigValue("SPAGOBI.DATASET_FILE_MAX_SIZE");
@@ -670,8 +670,30 @@ public class GeneralUtilities extends SpagoBIUtilities {
 			}
 		} catch (Exception e) {
 			logger.error("Error while retrieving max dataset file size", e);
-			logger.debug("Considering default value " + MAX_DEFAULT_FILE_DATASET_SIZE);
-			toReturn = MAX_DEFAULT_FILE_DATASET_SIZE;
+			logger.debug("Considering default value " + MAX_DEFAULT_FILE_10M_SIZE);
+			toReturn = MAX_DEFAULT_FILE_10M_SIZE;
+		}
+		logger.debug("OUT: max size = " + toReturn);
+		return toReturn;
+	}
+
+	public static int getGisLayerFileMaxSize() {
+		logger.debug("IN");
+		int toReturn = (2 * MAX_DEFAULT_FILE_10M_SIZE);
+		try {
+			SingletonConfig serverConfig = SingletonConfig.getInstance();
+			String maxSizeStr = serverConfig.getConfigValue("GIS_LAYER_FILE_MAX_SIZE");
+			if (maxSizeStr != null) {
+				logger.debug("Configuration found for max layer gis file size: " + maxSizeStr);
+				Integer maxSizeInt = new Integer(maxSizeStr);
+				toReturn = maxSizeInt.intValue();
+			} else {
+				logger.debug("No configuration found for max layer gis file size");
+			}
+		} catch (Exception e) {
+			logger.error("Error while retrieving max dataset file size", e);
+			logger.debug("Considering default value " + (2 * MAX_DEFAULT_FILE_10M_SIZE));
+			toReturn = (2 * MAX_DEFAULT_FILE_10M_SIZE); // 20M
 		}
 		logger.debug("OUT: max size = " + toReturn);
 		return toReturn;

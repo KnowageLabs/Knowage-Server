@@ -42,7 +42,7 @@ sbiM.factory('sbiModule_config',function(){
 		sessionParametersStoreName: '<%= SpagoBIConstants.SESSION_PARAMETERS_STORE_NAME %>',
         sessionParametersStateKey: '<%= SpagoBIConstants.SESSION_PARAMETER_STATE_OBJECT_KEY %>',
         isStatePersistenceEnabled: <%= SingletonConfig.getInstance().getConfigValue("SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled")  %>,
-        
+        layerFileMaxSize: '<%= GeneralUtilities.getGisLayerFileMaxSize() %>',
                 
         
 		<%-- <%if(parametersStatePersistenceEnabled != null) {%> --%>

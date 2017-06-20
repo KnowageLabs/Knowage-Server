@@ -20,7 +20,7 @@ var EmptyLayer = {
 
 
 
-app.controller('Controller', [ "sbiModule_download", "sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast","sbiModule_messaging","sbiModule_user", funzione ]);
+app.controller('Controller', [ "sbiModule_download", "sbiModule_translate","sbiModule_restServices", "$scope","$mdDialog","$mdToast","sbiModule_messaging","sbiModule_user","sbiModule_config", funzione ]);
 
 
 
@@ -43,7 +43,7 @@ app.directive("fileread", [function () {
 	}
 }]);
 
-function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices, $scope, $mdDialog, $mdToast,sbiModule_messaging,sbiModule_user) {
+function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices, $scope, $mdDialog, $mdToast,sbiModule_messaging,sbiModule_user,sbiModule_config) {
 	//variables
 	$scope.showFilters = sbiModule_user.functionalities.indexOf("SpatialFilter")>-1; 
 	$scope.showme=false;
@@ -62,7 +62,8 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 	$scope.forms = {};
 	$scope.selectedTab = 0;
 	$scope.typeWFS='geojson';
-	$scope.fileMaxSize=20;
+//	$scope.fileMaxSize=20;
+	$scope.fileMaxSize=sbiModule_config.layerFileMaxSize;
 	 
 	$scope.tableFunction={
 
