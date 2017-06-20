@@ -1581,8 +1581,12 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				d.add(Restrictions.conjunction()
 						.add(Restrictions.disjunction().add(Restrictions.le("startValidity", endDate)).add(Restrictions.isNull("startValidity")))
 						.add(Restrictions.disjunction().add(Restrictions.ge("endValidity", endDate)).add(Restrictions.isNull("endValidity"))));
-				c.createAlias("sbiKpiTargetValues", "_targetValues").add(d).createAlias("_targetValues.sbiKpiKpi", "_kpi").add(kpiJunction)
-						.add(Restrictions.ne("targetId", targetId));
+				if (targetId != null) {
+					c.createAlias("sbiKpiTargetValues", "_targetValues").add(d).createAlias("_targetValues.sbiKpiKpi", "_kpi").add(kpiJunction)
+							.add(Restrictions.ne("targetId", targetId));
+				} else {
+					c.createAlias("sbiKpiTargetValues", "_targetValues").add(d).createAlias("_targetValues.sbiKpiKpi", "_kpi").add(kpiJunction);
+				}
 				List<SbiKpiTarget> lst = c.list();
 				List<Target> targetList = new ArrayList<>();
 				for (SbiKpiTarget sbiKpiTarget : lst) {
