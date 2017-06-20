@@ -20,44 +20,64 @@
 	var currentScriptPath = scripts[scripts.length - 1].src;
 	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
 
-angular.module('qbe_expander_list', ['ngMaterial'])
-.directive('qbeExpanderList', function() {
-	return {
-		templateUrl: currentScriptPath + 'expander-list.html',
-		controller: qbeExpanderListControllerFunction,
-		priority: 10,
-		scope: {
-			ngModel:"=",
-			showGridView:"=?",
-			showAddToOrganizer:"=?",
-			selectedRow:"=?",
-			tableSpeedMenuOption:"=?",
-			selectedDocument:"=?",
-			selectDocumentAction:"&",
-			deleteDocumentAction:"&",
-			executeDocumentAction:"&",
-			cloneDocumentAction:"&",
-			addToOrganizerAction:"&",
-			addToFavoritesAction:"&",
-			editDocumentAction:"&",
-			shareDocumentAction:"&",
-			orderingDocumentCards:"=?",
-			cloneEnabled:"=?",
-			deleteEnabled:"=?"	
-		},
-		link: function (scope, elem, attrs) { 
+angular.module('qbe_expander_list', ['ngDraggable'])
+.directive('qbeExpanderList', function($sce) {
+        return {
+            restrict: 'E',
+            scope: {
+                ngModel: '=',
+                colors: '=?',
+                dragAction: '&?',
+                entitiesActions: '=?',
+                fieldsActions: '=?'
+            },
+            templateUrl: currentScriptPath + 'expander-list.html',
+            replace: true,
+            link: function link(scope, element, attrs) {
+                scope.usedColorIndex = 0;
+                scope.dragEnabled = scope.dragAction ? true : false;
 
-		}
-	}
-});
+                //optional colorizing function to create the colored squares on the view. If no colors are given the blocks disappear.
+                scope.colorize = function() {
+                    for (var k in scope.ngModel) {
+                        if (scope.ngModel.hasOwnProperty(k)) {
+                            for (var j in scope.ngModel[k]) {
+                                var color = { "background-color": scope.colors[scope.usedColorIndex] };
+                                scope.usedColorIndex++;
+                                scope.ngModel[k][j].color = color;
+                            }
+                        }
+                    }
+                }
 
-function qbeExpanderListControllerFunction($scope,sbiModule_translate, sbiModule_config){
-	
-	$scope.sbiModule_config = sbiModule_config;
-	$scope.translate = sbiModule_translate;
-	
-	$scope.clickDocument=function(item){		
-		 $scope.selectDocumentAction({doc: item});
-	}
-}
+                //function to expand or contract the entities. Uses angular hashkey so avoid using the $index in the view
+                scope.toggleExpander = function(row) {
+                    for (var k in scope.ngModel) {
+                        if (scope.ngModel.hasOwnProperty(k)) {
+                            for (var j in scope.ngModel[k]) {
+                                if (scope.ngModel[k][j].$$hashKey == row.$$hashKey) {
+                                    scope.ngModel[k][j].expanded = scope.ngModel[k][j].expanded ? false : true;
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                //drag function to export data from the list to the detail
+                scope.dragLi = function(data, ev) {
+                    if (scope.dragAction) {
+                        ev.event.preventDefault();
+                        scope.dragAction({ "data": data });
+                    }
+                }
+
+                if (scope.colors) {
+                    scope.colorize();
+                }
+
+            }
+        };
+    });
+
 })();

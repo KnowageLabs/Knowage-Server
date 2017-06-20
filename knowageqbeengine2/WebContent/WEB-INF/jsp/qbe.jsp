@@ -30,11 +30,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	
 	</head>
 	
-	<body >
+	<body ng-controller="qbeController" class="kn-qbe">
 	
 	<angular-list-detail>
 	 	<list>
-			<qbe-expander-list flex></qbe-expander-list>
+		<qbe-expander-list flex drag-action="droppedFunction(data)" ng-model="model" entities-actions="entitiesFunctions" fields-actions="fieldsFunctions" colors="colors">
+        </qbe-expander-list>
 		</list>
 		
 		<detail>
