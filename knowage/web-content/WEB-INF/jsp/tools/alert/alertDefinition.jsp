@@ -109,7 +109,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   			<div flex="50"> 
 		     <md-input-container class="md-block" >
 		    	 <label>{{translate.load('sbi.alert.event.before.trigger')}}</label>
-		  		   	<input ng-model="alert.eventBeforeTriggerAction"  type="number" step="1" min="0"/>
+		  		   	<input ng-model="alert.eventBeforeTriggerAction"  type="number" step="1" min="0" ng-pattern="/^\d+$/"/>
 		     </md-input-container>
 		     </div>
 	  		 <div flex="50">
