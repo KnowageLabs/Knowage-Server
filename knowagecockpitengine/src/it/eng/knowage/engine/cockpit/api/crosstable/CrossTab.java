@@ -2582,8 +2582,9 @@ public class CrossTab {
 				// only one category case: put directly the value in the list to order
 				toReturn.add(valuesCopy.get(key));
 				values.remove(key);
-			} else
-				break;
+			}
+			// else
+			// break; //it must continue because the input list coudn't be sorted on previous categories
 		}
 
 		return toReturn;

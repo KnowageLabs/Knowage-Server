@@ -549,14 +549,13 @@ public class CrossTabHTMLSerializer {
 		// System.out.println("** RowCord[" + m + "]: " + tmp);
 		// }
 		// // FINE TEST
-
+		int nPartialSum = 0;
 		for (int i = 0; i < data.length; i++) {
 			SourceBean aRow = new SourceBean(ROW_TAG);
 
 			if (crossTab.isMeasureOnRow() && measureHeaders.size() > 0) {
 				aRow.setAttribute(measureHeaders.get(i % measureHeaderSize));
 			}
-
 			String[] values = data[i];
 			int pos;
 			for (int j = 0; j < values.length; j++) {
@@ -666,10 +665,12 @@ public class CrossTabHTMLSerializer {
 								rowHeaders += crossTab.PATH_SEPARATOR + rowsDef.get(r);
 							}
 							if (!crossTab.isMeasureOnRow()) {
-								int posRow = i;
-								rowCord = (crossTab.getRowsSpecification().get(posRow) != null) ? crossTab.getRowsSpecification().get(posRow) : null;
+								int posRow = i - nPartialSum;
+								if (posRow < crossTab.getRowsSpecification().size())
+									rowCord = (crossTab.getRowsSpecification().get(posRow) != null) ? crossTab.getRowsSpecification().get(posRow) : null;
 							} else {
-								int posRow = (measuresInfo.size() == 1) ? i : i / measuresInfo.size();
+								// int posRow = (measuresInfo.size() == 1) ? i : i / measuresInfo.size();
+								int posRow = (measuresInfo.size() == 1) ? (i - nPartialSum) : (i - nPartialSum) / measuresInfo.size();
 								rowCord = (crossTab.getRowsSpecification().get(posRow) != null) ? crossTab.getRowsSpecification().get(posRow) : null;
 							}
 						}
@@ -732,7 +733,10 @@ public class CrossTabHTMLSerializer {
 
 						aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "selectMeasure('" + rowHeaders + "','" + rowCord + "','" + columnsHeaders + "','" + columnCord
 								+ "')");
+					} else if (cellTypeValue.equalsIgnoreCase("partialsum") && j == 0) {
+						nPartialSum++; // update contator of subtotals (1 for row)
 					}
+
 				} catch (NumberFormatException e) {
 					logger.debug("Text " + text + " is not recognized as a number");
 					// aColumn.setAttribute(CLASS_ATTRIBUTE, NA_CLASS + "NoStandardStyle");
