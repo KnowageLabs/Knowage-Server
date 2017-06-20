@@ -116,10 +116,6 @@ angular-table, cockpit-angular-table{
 	    font-weight: 600;
 	  }
 
-	 table>tbody>tr {
-	 	background-color: $pageBackground;
-	 }
-	
 	table>tbody>tr.selectedRowItem {
 	    background-color: $tableSelectedElementColor;
 	 }
