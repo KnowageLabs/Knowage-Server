@@ -35,7 +35,8 @@
     "angular-cookies": "1.4.5",
     "angular-material": "1.1.4",
     "angular-messages": "1.5.1",
-    "angular-sanitize": "1.5.1"
+    "angular-sanitize": "1.5.1",
+    "ngdraggable": "^0.1.10"
   },
   "author": "knowage labs <knowage@eng.it>",
   "license": "AGPL-3.0",
