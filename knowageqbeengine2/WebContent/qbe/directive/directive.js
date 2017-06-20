@@ -17,4 +17,4 @@
  */
 
 angular
-	.module('directive', ['qbe_custom_table', 'qbe_expander_list', 'qbe_filter', 'qbe_advanced_visulalization']);
+	.module('directive', ['qbe_custom_table', 'qbe_expander_list', 'qbe_filter', 'qbe_advanced_visualization']);

@@ -23,7 +23,7 @@
 angular.module('qbe_filter', ['ngMaterial'])
 .directive('qbeFilter', function() {
 	return {
-		templateUrl:  '/knowageqbeengine2/qbe/directive/filter/filter.html',
+		templateUrl:  currentScriptPath +'filter.html',
 		controller: qbeFilterControllerFunction,
 		priority: 10,
 		scope: {

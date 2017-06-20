@@ -23,7 +23,7 @@
 angular.module('qbe_expander_list', ['ngMaterial'])
 .directive('qbeExpanderList', function() {
 	return {
-		templateUrl:  '/knowageqbeengine2/qbe/directive/expander-list/expander-list.html',
+		templateUrl: currentScriptPath + 'expander-list.html',
 		controller: qbeExpanderListControllerFunction,
 		priority: 10,
 		scope: {

@@ -20,10 +20,10 @@
 	var currentScriptPath = scripts[scripts.length - 1].src;
 	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
 
-angular.module('qbe_advanced_visulalization', ['ngMaterial'])
+angular.module('qbe_advanced_visualization', ['ngMaterial'])
 .directive('qbeAdvancedVisualization', function() {
 	return {
-		templateUrl:  '/knowageqbeengine2/qbe/directive/advanced-visualization/advanced-visualization.html',
+		templateUrl:  currentScriptPath +'advanced-visualization.html',
 		controller:advancedVisualizationControllerFunction,
 		priority: 10,
 		scope: {

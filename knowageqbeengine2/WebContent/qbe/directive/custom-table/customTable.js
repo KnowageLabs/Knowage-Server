@@ -23,7 +23,7 @@
 angular.module('qbe_custom_table', ['ngMaterial'])
 .directive('qbeCustomTable', function() {
 	return {
-		templateUrl: '/knowageqbeengine2/qbe/directive/custom-table/custom-table.html',
+		templateUrl: currentScriptPath +'custom-table.html',
 		controller: customTableControllerFunction,
 		priority: 10,
 		scope: {
