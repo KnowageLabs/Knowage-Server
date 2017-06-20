@@ -10,22 +10,22 @@ IEngUserProfile profile = (IEngUserProfile)session.getAttribute(IEngUserProfile.
 
 <md-toolbar class="header secondaryToolbar" ng-hide="isParameterPanelDisabled()" 
 		ng-if="!(execProperties.isFromDocumentWidget)">
-	<div layout="row" layout-align="{{sidenavCenter}}">	
-		<md-button title="Reset" aria-label="Reset Parameter" class="toolbar-button-custom" 
+	<div layout="row" layout-align="space-around center">	
+		<md-button title="Reset" aria-label="Reset Parameter" class="md-icon-button" 
 				ng-click="clearListParametersForm();">
-			<i class="fa fa-eraser" style="color:white"></i>
+			<md-icon md-font-icon="fa fa-eraser"></md-icon>
 		</md-button>	
 		<% 
 		if(UserUtilities.haveRoleAndAuthorization(profile, null, new String[]{SpagoBIConstants.SEE_VIEWPOINTS_FUNCTIONALITY}) || 
 						UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ADMIN_ROLE_TYPE, new String[0])){
 		%>					
-		<md-button title="Open Saved" aria-label="Open Saved Parameters" class="toolbar-button-custom" 
+		<md-button title="Open Saved" aria-label="Open Saved Parameters" class="md-icon-button" 
 				ng-click="urlViewPointService.getViewpoints();">
-			<i class="fa fa-pencil" style="color:white"></i>
+				<md-icon md-font-icon="fa fa-pencil"></md-icon>
 		</md-button>	
-		<md-button title="Save" aria-label="Save Parameters" class="toolbar-button-custom" 
+		<md-button title="Save" aria-label="Save Parameters" class="md-icon-button"
 				ng-click="urlViewPointService.createNewViewpoint();">
-			<i class="fa fa-floppy-o" style="color:white"></i>
+				<md-icon md-font-icon="fa fa-floppy-o"></md-icon>
 		</md-button>
 	  	<%} %>
 	</div>
