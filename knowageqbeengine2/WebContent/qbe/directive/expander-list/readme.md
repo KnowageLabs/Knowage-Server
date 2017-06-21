@@ -1,9 +1,9 @@
 # ExpanderList
 Directive used to create a customizable expander list with 3 levels.
 ```
-- Main level
--- Expandable Secondary level
---- Leaf third level
+|-- Main level
+|   |-- Expandable Secondary level
+|       |-- Leaf third level
 ```
 ## Dependencies
 ```
@@ -28,6 +28,7 @@ Use the directive inserting the following tag:
     fields-actions="fieldsFunctions" >
 </expander-list>
 ```
+The container of the expander cannot have the css property _overflow: hidden;_ or _overflow: auto;_. In this case the elements will not be draggable.
 
 ## Settings
 > ng-model : \<object\>
@@ -51,7 +52,11 @@ Each key declared will be the first level menu of the view.
     'subqueries': [{...}]
  }
 ```
-for the iconCls use fonticons classnames.
+- _id_ is the identifier for the element.
+- _text_ is the label that will be shown for the element.
+- _iconCls_ is the class that will represent the icon for that element. Use any fonticons classname.
+- _children_ is the array containing the children, which will have the same structure.
+
 ***
 > colors : \[array\] 
 
@@ -83,7 +88,7 @@ If no object is given the item will not have any icon button.
 
 This attribute is optional. Has the same behaviour of entities-actions but renders icon buttons at the right side of a 3rd level item.
 
-###Customization
+### Customization
 
 It's possible to change the behaviour of the directive changing the class ".expanderList" inside _qbeEngine.scss.
 All the icons are updateable from the model, except for the chevron expanding or collapsing icons.
@@ -92,7 +97,7 @@ All the icons are updateable from the model, except for the chevron expanding or
 
 * **Davide Vernassa** - *Knowage* - [Redjaw](https://github.com/Redjaw)
 
-##License
+## License
 
 Knowage, Open Source Business Intelligence suite
 Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
