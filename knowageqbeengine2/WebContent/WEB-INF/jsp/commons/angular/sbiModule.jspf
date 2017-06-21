@@ -25,7 +25,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			host: '<%= request.getServerName()%>',
 		    port: '<%= request.getServerPort()%>',
 			contextName: '/<%= request.getContextPath().startsWith("/")||request.getContextPath().startsWith("\\")?request.getContextPath().substring(1): request.getContextPath()%>',
-	    	externalBasePath:"<%=request.getParameter(SpagoBIConstants.SBI_CONTEXT)%>"		
+	    	externalBasePath:"<%=request.getParameter(SpagoBIConstants.SBI_CONTEXT)%>",
+	    	sbiExecutionID:'<%=request.getParameter(SpagoBIConstants.SBI_EXECUTION_ID)%>',
+	    	
 		};
 	});
 	

@@ -16,7 +16,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 
 <script type="text/javascript"
-	src="<%=request.getContextPath()%>/js/lib/messageResource/messageResource.min.js"></script>
+	src="<%=spagoBiContext%>/js/lib/messageResource/messageResource.min.js"></script>
 	
 
 <script type="text/javascript">
@@ -39,7 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	
 	//Initialization of the messageResource object
 	messageResource.init({
-  		filePath : "../js/src/messages"
+  		filePath : "../qbe/messages"
   		, defaultLocale : 'en_US'
   		, ajaxFunction : getSynch
 	});
