@@ -30,7 +30,12 @@ angular
 
 
 
-function qbeFunction($scope) { 
+function qbeFunction($scope) {
+	
+	$scope.onDropComplete=function(data,evt){
+       alert("drop success, data:", data);
+    }
+	
 	$scope.colors = ['#F44336', '#673AB7', '#03A9F4', '#4CAF50', '#FFEB3B', '#3F51B5', '#8BC34A', '#009688', '#F44336'];
 
     $scope.droppedFunction = function(data) {
