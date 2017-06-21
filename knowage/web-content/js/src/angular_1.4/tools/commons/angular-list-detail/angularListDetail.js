@@ -58,7 +58,7 @@ var aldApp=angular.module('angular-list-detail', [ 'ngMaterial' ,'sbiModule'])
 		function($compile) {
 	return {
 		template:'<div ng-hide="ALD_controller.fullScreen==true && ALD_controller.currentView.value!=\'list\'" class="md-container kn-list" layout="column" ng-class="(ALD_controller.fullScreen==true && ALD_controller.currentView.value==\'list\') ? \'flex\' : \'flex-40\'">'+
-		'<md-toolbar>'+
+		'<md-toolbar ng-if="!hideToolbar">'+
 		'	<div class="md-toolbar-tools">'+
 		'	 <h2 flex>{{AWD_listController.title}}</h2>'+
 		'	<md-button  ng-disabled="AWD_listController.disableNewButton" aria-label="new" ng-if="newFuncName!=undefined && AWD_listController.showNewButton!=false" ng-click="newFuncName();" class="md-fab md-fab-top-right ">'+
@@ -99,6 +99,8 @@ var aldApp=angular.module('angular-list-detail', [ 'ngMaterial' ,'sbiModule'])
 
 			ctrl.title=attrs.label;
 			
+			scope.hideToolbar=scope.$eval(attrs.hideToolbar);
+			
 			scope.newFuncName=scope.$eval(attrs.newFunction);
 			ctrl.disableNewButton=scope.$eval(attrs.disableNewButton);
 			ctrl.showNewButton=scope.$eval(attrs.showNewButton);
@@ -130,7 +132,7 @@ var aldApp=angular.module('angular-list-detail', [ 'ngMaterial' ,'sbiModule'])
 		function($compile) {
 	return {
 		template:'<div ng-hide="ALD_controller.fullScreen==true && ALD_controller.currentView.value!=\'detail\'"  flex class="md-container kn-detail" layout="column">'+
-		' <md-toolbar>'+
+		' <md-toolbar ng-if="!hideToolbar">'+
 		'	<div class="md-toolbar-tools">'+
 //		'		<md-button aria-label="back"  ng-if="ALD_controller.fullScreen==true" ng-click="ALD_controller.currentView.value=\'list\'" >  <md-icon md-font-icon="fa fa-arrow-left"></md-icon></md-button>'+
 		'		<h2 flex>{{AWD_detailController.title}}</h2>'+
@@ -164,6 +166,8 @@ var aldApp=angular.module('angular-list-detail', [ 'ngMaterial' ,'sbiModule'])
 					}
 				} 
 				angular.element(element.children()[1]).addClass(layoutClass)
+				
+			scope.hideToolbar=scope.$eval(attrs.hideToolbar);
 				 
 			scope.saveFuncName=scope.$eval(attrs.saveFunction);
 			ctrl.disableSaveButton=scope.$eval(attrs.disableSaveButton);
