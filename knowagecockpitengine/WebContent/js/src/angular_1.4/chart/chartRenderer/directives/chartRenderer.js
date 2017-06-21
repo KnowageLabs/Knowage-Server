@@ -157,6 +157,13 @@ angular.module('chartRendererModule')
 				
 			})
 			
+			scope.$on('selections',function(event,data){
+				
+				
+				scope.loadChart(scope.chartTemplate,scope.datasetLabel,data);
+				
+			})
+			
 			scope.$on('resize',function(event,data){
 				
 				
