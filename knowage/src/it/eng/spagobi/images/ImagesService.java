@@ -35,7 +35,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.sql.Blob;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -95,7 +94,7 @@ public class ImagesService {
 				JSONObject o = new JSONObject();
 				o.put("name", imageDB.getName());
 				o.put("imgId", imageDB.getImageId());
-				o.put("size", imageDB.getContent().length());
+				o.put("size", imageDB.getContent().length);
 				o.put("lastmod", lastMod);
 				o.put("urlPreview", url + "&preview=true");
 				o.put("url", url);
@@ -121,13 +120,13 @@ public class ImagesService {
 			String preview = req.getParameter("preview");
 			SbiImages imageDB = dao.loadImage(id);
 			String contentType = "";
-			Blob content;
+			byte[] content;
 			if (preview != null) {
 				content = imageDB.getContentIco();
 			} else {
 				content = imageDB.getContent();
 			}
-			flushFileToResponse(resp, contentType, content.getBytes(1, (int) content.length()));
+			flushFileToResponse(resp, contentType, content);
 		} catch (Throwable t) {
 			logger.error("An unexpected error occured while executing service \"getImage\"", t);
 			throw new SpagoBIServiceException(req.getPathInfo(), "An unexpected error occured while executing service \"getImage\"", t);

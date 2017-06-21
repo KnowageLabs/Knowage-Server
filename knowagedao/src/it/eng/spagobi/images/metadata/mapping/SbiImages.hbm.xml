@@ -15,12 +15,11 @@
 		<property name="name" type="string">
 			<column name="NAME" length="100" not-null="true" />
 		</property>
-		<property name="content" type="blob">
-			<column name="CONTENT" not-null="true" />
-		</property>
-		
-		<property name="contentIco" type="blob">
-			<column name="CONTENT_ICO" not-null="true" />
+		<property name="content" type="binary">
+			<column name="CONTENT" not-null="true" sql-type="longvarbinary" />
+		</property>	
+		<property name="contentIco" type="binary">
+			<column name="CONTENT_ICO" not-null="true" sql-type="longvarbinary" />
 		</property>
 		
 		<component name="commonInfo" insert="true" update="true"

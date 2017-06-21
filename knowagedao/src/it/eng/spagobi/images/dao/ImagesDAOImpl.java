@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -28,7 +28,6 @@ import it.eng.spagobi.images.metadata.SbiImages;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.sql.Blob;
 import java.util.List;
 import java.util.Map;
 
@@ -79,12 +78,12 @@ public class ImagesDAOImpl extends AbstractHibernateDAO implements IImagesDAO {
 		return executeOnTransaction(new IExecuteOnTransaction<Integer>() {
 			@Override
 			public Integer execute(Session session) {
-				Blob b = session.getLobHelper().createBlob(data);
+				byte[] b = data;
 				ByteArrayOutputStream contentIcoBytes = new ByteArrayOutputStream();
-				Blob contentIco = null;
+				byte[] contentIco = null;
 				try {
 					ImageUtil.resize(filename, new ByteArrayInputStream(data), contentIcoBytes, 80, 80);
-					contentIco = session.getLobHelper().createBlob(contentIcoBytes.toByteArray());
+					contentIco = contentIcoBytes.toByteArray();
 					contentIcoBytes.close();
 				} catch (IOException e) {
 					throw new SpagoBIDAOException("Error while resizing image for preview field", e);
