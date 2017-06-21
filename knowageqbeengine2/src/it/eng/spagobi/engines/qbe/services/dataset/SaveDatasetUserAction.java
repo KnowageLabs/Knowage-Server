@@ -314,16 +314,6 @@ public class SaveDatasetUserAction extends SetCatalogueAction {
 		return newDataset;
 	}
 
-	private int saveFlatDataset(IDataSet dataset) {
-		IDataSetTableDescriptor descriptor = persistCurrentDataset(dataset);
-
-		IDataSet newDataset = createNewFlatDataSet(dataset, descriptor);
-		IDataSet datasetSaved = saveNewDataset(newDataset);
-
-		int datasetId = datasetSaved.getId();
-		return datasetId;
-	}
-
 	private void validateLabel() {
 		String label = getAttributeAsString(LABEL);
 		DataSetServiceProxy proxy = (DataSetServiceProxy) getEnv().get(EngineConstants.ENV_DATASET_PROXY);
@@ -347,65 +337,6 @@ public class SaveDatasetUserAction extends SetCatalogueAction {
 		}
 	}
 
-	private IDataSet createNewFlatDataSet(IDataSet dataset, IDataSetTableDescriptor descriptor) {
-		logger.debug("IN");
-
-		UserProfile profile = (UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
-		String owner = profile.getUserId().toString();
-
-		FlatDataSet flatFataSet = new FlatDataSet();
-
-		flatFataSet.setLabel(getAttributeAsString(LABEL));
-		flatFataSet.setName(getAttributeAsString(NAME));
-		flatFataSet.setDescription(getAttributeAsString(DESCRIPTION));
-
-		flatFataSet.setCategoryCd(dataset.getCategoryCd());
-		flatFataSet.setCategoryId(dataset.getCategoryId());
-		// saves owner of the dataset
-		flatFataSet.setOwner(owner);
-		// saves scope which is always "USER"
-		flatFataSet.setScopeCd(SpagoBIConstants.DS_SCOPE_USER);
-
-		JSONObject jsonConfig = new JSONObject();
-		try {
-			jsonConfig.put(FlatDataSet.FLAT_TABLE_NAME, descriptor.getTableName());
-			jsonConfig.put(FlatDataSet.DATA_SOURCE, descriptor.getDataSource().getLabel());
-		} catch (JSONException e) {
-			throw new SpagoBIRuntimeException("Error while creating dataset's JSON config", e);
-		}
-
-		flatFataSet.setTableName(descriptor.getTableName());
-		flatFataSet.setDataSource(descriptor.getDataSource());
-		flatFataSet.setConfiguration(jsonConfig.toString());
-
-		String metadata = getMetadataAsString(dataset, descriptor);
-		logger.debug("Dataset's metadata: [" + metadata + "]");
-		flatFataSet.setDsMetadata(metadata);
-
-		logger.debug("OUT");
-		return flatFataSet;
-	}
-
-	private String getMetadataAsString(IDataSet dataset, IDataSetTableDescriptor descriptor) {
-		IMetaData metadata = getDataSetMetadata(dataset);
-		MetaData newMetadata;
-		try {
-			newMetadata = (MetaData) ((MetaData) metadata).clone();
-		} catch (CloneNotSupportedException e) {
-			throw new SpagoBIRuntimeException("Error while cloning dataset's metadata", e);
-		}
-
-		for (int i = 0; i < metadata.getFieldCount(); i++) {
-			IFieldMetaData fieldMetadata = metadata.getFieldMeta(i);
-			IFieldMetaData newFieldMetadata = newMetadata.getFieldMeta(i);
-			String columnName = descriptor.getColumnName(fieldMetadata.getName());
-			newFieldMetadata.setName(columnName);
-		}
-
-		DatasetMetadataParser parser = new DatasetMetadataParser();
-		String toReturn = parser.metadataToXML(newMetadata);
-		return toReturn;
-	}
 
 	private String getMetadataAsString(IDataSet dataset) {
 		IMetaData metadata = getDataSetMetadata(dataset);
@@ -437,26 +368,6 @@ public class SaveDatasetUserAction extends SetCatalogueAction {
 		return saved;
 	}
 
-	private IDataSetTableDescriptor persistCurrentDataset(IDataSet dataset) {
-		// gets the name of the table that will contain data
-		IDataSetTableDescriptor descriptor = null;
-		HttpSession session = this.getHttpSession();
-		synchronized (session) { // we synchronize this block in order to avoid concurrent requests
-			String flatTableName = getFlatTableName();
-			logger.debug("Flat table name : [" + flatTableName + "]");
-			IDataSource dataSource = getEngineInstance().getDataSourceForWriting();
-			logger.debug("Persisting working dataset ...");
-			descriptor = dataset.persist(flatTableName, dataSource);
-			logger.debug("Working dataset persisted");
-		}
-		return descriptor;
-	}
 
-	private String getFlatTableName() {
-		logger.debug("IN");
-		String persistTableName = FLAT_TABLE_NAME_PREFIX + StringUtilities.getRandomString(FLAT_TABLE_NAME_LENGHT - FLAT_TABLE_NAME_PREFIX.length());
-		logger.debug("OUT : returning [" + persistTableName + "]");
-		return persistTableName;
-	}
 
 }

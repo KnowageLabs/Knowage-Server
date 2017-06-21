@@ -57,18 +57,21 @@ public class QbeDataSourceManager {
 		return instance;
 	}
 	
-	public IDataSource getDataSource(List<String> dataMartNames, Map<String, Object> dataSourceProperties, boolean useCache) {
+	public IDataSource getDataSource(Map<String, Object> dataSourceProperties, boolean useCache) {
 		if(dataSourceProperties!=null && dataSourceProperties.get(EngineConstants.ENV_DATASETS)!=null){
 			return getDataSourceFromDataSet(dataSourceProperties, useCache);
 		}else{
-			return getORMDataSource(dataMartNames, dataSourceProperties, useCache);
+			return getORMDataSource(dataSourceProperties, useCache);
 		}
 	}
 		
 		
 	
-	private IDataSource getORMDataSource(List<String> dataMartNames, Map<String, Object> dataSourceProperties, boolean useCache) {		
+	private IDataSource getORMDataSource( Map<String, Object> dataSourceProperties, boolean useCache) {		
 		IDataSource dataSource;
+		List<String> dataMartNames= new ArrayList<>();
+		
+		dataMartNames.add((String)dataSourceProperties.get(EngineConstants.MODEL_NAME));		
 		
 		CompositeDataSourceConfiguration compositeConfiguration = new CompositeDataSourceConfiguration();
 		Iterator<String> it = dataSourceProperties.keySet().iterator();

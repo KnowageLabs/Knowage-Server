@@ -17,14 +17,17 @@
 */
 package it.eng.spagobi.engines.qbe.services.initializers;
 
+import java.io.File;
+import java.util.Locale;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.qbe.QbeEngine;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
-import it.eng.spagobi.engines.qbe.template.QbeTemplateParseException;
-import it.eng.spagobi.engines.qbe.template.QbeXMLTemplateParser;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.AbstractEngineStartAction;
@@ -32,12 +35,6 @@ import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
-import java.io.File;
-import java.util.Locale;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
 
 
 /**
@@ -88,13 +85,10 @@ public class BuildQbeDatasetStartAction extends AbstractEngineStartAction {
 			String datamartName = this.getAttributeAsString(DATAMART_NAME);
 			logger.debug("Datamart's name: " + datamartName);
 			
-			//checkIfDatamartExists(datamartName);
-			
-			SourceBean template = buildTemplate(datamartName);
 			
 			logger.debug("Creating engine instance ...");
 			try {
-				qbeEngineInstance = QbeEngine.createInstance( template, env );
+				qbeEngineInstance = QbeEngine.createInstance( env );
 			} catch(Throwable t) {
 				SpagoBIEngineStartupException serviceException;
 				String msg = "Impossible to create engine instance for datamart [" + datamartName + "].";
@@ -106,11 +100,6 @@ public class BuildQbeDatasetStartAction extends AbstractEngineStartAction {
 				msg += "\nThe root cause of the error is: " + str;
 				serviceException = new SpagoBIEngineStartupException(ENGINE_NAME, msg, t);
 				
-				if(rootException instanceof QbeTemplateParseException) {
-					QbeTemplateParseException e = (QbeTemplateParseException)rootException;
-					serviceException.setDescription( e.getDescription());
-					serviceException.setHints( e.getHints() );
-				} 
 				
 				throw serviceException;
 			}
@@ -186,13 +175,7 @@ public class BuildQbeDatasetStartAction extends AbstractEngineStartAction {
     	}
 	}
 
-	private SourceBean buildTemplate(String datamartName) throws SourceBeanException {
-		SourceBean template = new SourceBean(QbeXMLTemplateParser.TAG_ROOT_NORMAL);
-		SourceBean datamart = new SourceBean(QbeXMLTemplateParser.TAG_DATAMART);
-		datamart.setAttribute(QbeXMLTemplateParser.PROP_DATAMART_NAME, datamartName);
-		template.setAttribute(datamart);
-		return template;
-    }
+
 	
 	@Override
 	public String getDocumentId() {

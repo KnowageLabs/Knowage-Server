@@ -45,7 +45,7 @@ public class QbeEngine {
     	}
 	}
 
-	public static QbeEngineInstance createInstance(Object template, Map env) throws QbeEngineException {
+	public static QbeEngineInstance createInstance(Map env) throws QbeEngineException {
 		QbeEngineInstance qbeEngineInstance = null;
 		
 		initDeserializers();
@@ -62,7 +62,7 @@ public class QbeEngine {
 		String databaseDateFormatPattern = (String)ConfigSingleton.getInstance().getAttribute("QBE.QBE-DATE-FORMAT.database");
 		env.put(EngineConstants.ENV_DB_DATE_FORMAT, databaseDateFormatPattern);
 		
-		qbeEngineInstance = new QbeEngineInstance(template, env);
+		qbeEngineInstance = new QbeEngineInstance(env);
 		logger.debug("OUT");
 		return qbeEngineInstance;
 	}

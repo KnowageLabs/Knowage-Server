@@ -17,26 +17,18 @@
  */
 package it.eng.spagobi.engines.qbe.services.initializers;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.engines.qbe.QbeEngine;
-import it.eng.spagobi.engines.qbe.QbeEngineAnalysisState;
-import it.eng.spagobi.engines.qbe.QbeEngineInstance;
-import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
-import it.eng.spagobi.engines.qbe.registry.serializer.RegistryConfigurationJSONSerializer;
-import it.eng.spagobi.engines.qbe.template.QbeTemplateParseException;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.engines.AbstractEngineStartAction;
-import it.eng.spagobi.utilities.engines.EngineConstants;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 import java.util.Locale;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.json.JSONObject;
+
+import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.engines.qbe.QbeEngine;
+import it.eng.spagobi.engines.qbe.QbeEngineInstance;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.engines.AbstractEngineStartAction;
+import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
 
 /**
  * The Class QbeEngineStartAction.
@@ -47,6 +39,10 @@ public class QbeEngineStartAction extends AbstractEngineStartAction {
 
 	// INPUT PARAMETERS
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8592939637002043947L;
 	// OUTPUT PARAMETERS
 	public static final String LANGUAGE = "LANGUAGE";
 	public static final String COUNTRY = "COUNTRY";
@@ -66,7 +62,6 @@ public class QbeEngineStartAction extends AbstractEngineStartAction {
 	@Override
 	public void service(SourceBean serviceRequest, SourceBean serviceResponse) {
 		QbeEngineInstance qbeEngineInstance = null;
-		QbeEngineAnalysisState analysisState;
 		Locale locale;
 
 		logger.debug("IN");
@@ -76,11 +71,8 @@ public class QbeEngineStartAction extends AbstractEngineStartAction {
 			super.service(serviceRequest, serviceResponse);
 
 			// if(true) throw new SpagoBIEngineStartupException(getEngineName(), "Test exception");
-			SourceBean templateBean = getTemplateAsSourceBean();
 			logger.debug("User Id: " + getUserId());
 			logger.debug("Audit Id: " + getAuditId());
-			logger.debug("Document Id: " + getDocumentId());
-			logger.debug("Template: " + templateBean);
 
 			if (getAuditServiceProxy() != null) {
 				logger.debug("Audit enabled: [TRUE]");
@@ -90,10 +82,12 @@ public class QbeEngineStartAction extends AbstractEngineStartAction {
 			}
 
 			// Add the datyaset
-			Map env = addDatasetsToEnv();
+			Map env = getEnvWithProperties();
 			logger.debug("Creating engine instance ...");
+
+			
 			try {
-				qbeEngineInstance = QbeEngine.createInstance(templateBean, env);
+				qbeEngineInstance = QbeEngine.createInstance(env);
 			} catch (Throwable t) {
 				SpagoBIEngineStartupException serviceException;
 				String msg = "Impossible to create engine instance for document [" + getDocumentId() + "].";
@@ -105,56 +99,10 @@ public class QbeEngineStartAction extends AbstractEngineStartAction {
 				msg += "\nThe root cause of the error is: " + str;
 				serviceException = new SpagoBIEngineStartupException(ENGINE_NAME, msg, t);
 
-				if (rootException instanceof QbeTemplateParseException) {
-					QbeTemplateParseException e = (QbeTemplateParseException) rootException;
-					serviceException.setDescription(e.getDescription());
-					serviceException.setHints(e.getHints());
-				}
-
 				throw serviceException;
 			}
 			logger.debug("Engine instance succesfully created");
 
-			// CHECKS WHETHER IF IT IS A QBE DOCUMENT OR REGISTRY, BY LOOKING AT THE TEMPLATE
-			RegistryConfiguration registryConf = qbeEngineInstance.getRegistryConfiguration();
-			if (registryConf != null) {
-				if (!getUserProfile().isAbleToExecuteAction(SpagoBIConstants.REGISTRY_DATA_ENTRY)) {
-					throw new SpagoBIRuntimeException("It is not allowed to use the Registry document.");
-				}
-				logger.debug("Registry document");
-				getServiceResponse().setAttribute("DOCTYPE", "REGISTRY");
-				Assert.assertNotNull(registryConf, "Registry configuration not found, check document's template");
-				RegistryConfigurationJSONSerializer serializer = new RegistryConfigurationJSONSerializer();
-				JSONObject registryConfJSON = serializer.serialize(registryConf);
-				setAttribute(REGISTRY_CONFIGURATION, registryConfJSON);
-
-			} else {
-				logger.debug("Qbe document");
-				getServiceResponse().setAttribute("DOCTYPE", "QBE");
-			}
-
-			qbeEngineInstance.setAnalysisMetadata(getAnalysisMetadata());
-			if (getAnalysisStateRowData() != null) {
-				logger.debug("Loading subobject [" + qbeEngineInstance.getAnalysisMetadata().getName() + "] ...");
-				try {
-					analysisState = new QbeEngineAnalysisState(qbeEngineInstance.getDataSource());
-					analysisState.load(getAnalysisStateRowData());
-					qbeEngineInstance.setAnalysisState(analysisState);
-				} catch (Throwable t) {
-					SpagoBIEngineStartupException serviceException;
-					String msg = "Impossible load subobject [" + qbeEngineInstance.getAnalysisMetadata().getName() + "].";
-					Throwable rootException = t;
-					while (rootException.getCause() != null) {
-						rootException = rootException.getCause();
-					}
-					String str = rootException.getMessage() != null ? rootException.getMessage() : rootException.getClass().getName();
-					msg += "\nThe root cause of the error is: " + str;
-					serviceException = new SpagoBIEngineStartupException(ENGINE_NAME, msg, t);
-
-					throw serviceException;
-				}
-				logger.debug("Subobject [" + qbeEngineInstance.getAnalysisMetadata().getName() + "] succesfully loaded");
-			}
 
 			locale = (Locale) qbeEngineInstance.getEnv().get(EngineConstants.ENV_LOCALE);
 
@@ -200,25 +148,27 @@ public class QbeEngineStartAction extends AbstractEngineStartAction {
 		return false;
 	}
 
-	public Map addDatasetsToEnv() {
-		Map env = getEnv();
-		return env;
+	public Map getEnvWithProperties() {
+		return  getEnv();
 	}
 
-	@Override
-	public Map getEnv() {
-
-		IDataSource dataSource = this.getDataSource();
-		Map env = super.getEnv();
-
-		if (dataSource == null || dataSource.checkIsReadOnly()) {
-			logger.debug("Getting datasource for writing, since the datasource is not defined or it is read-only");
-			IDataSource datasourceForWriting = this.getDataSourceForWriting();
-			env.put(EngineConstants.DATASOURCE_FOR_WRITING, datasourceForWriting);
-		} else {
-			env.put(EngineConstants.DATASOURCE_FOR_WRITING, dataSource);
-		}
-
-		return env;
+	//neet to return a value in order to use the get env of the parent class
+	public String getDocumentId() {
+		return "";
 	}
+	
+	/**
+	 * Gets the datasource of the cache
+	 * 
+	 * @return
+	 */
+	protected IDataSource getCacheDataSource() {
+		logger.debug("Loading the cache datasource");
+		String datasourceLabel = (String) getSpagoBIRequestContainer().get(EngineConstants.ENV_DATASOURCE_FOR_CACHE);
+		logger.debug("The datasource for cahce is " + datasourceLabel);
+		IDataSource dataSource = getDataSourceServiceProxy().getDataSourceByLabel(datasourceLabel);
+		logger.debug("cache datasource loaded");
+		return dataSource;
+	}
+
 }

@@ -111,18 +111,7 @@ public class QbeEngineFromFederationStartAction extends QbeEngineStartAction {
 		return datasource;
 	}
 
-	@Override
-	public String getDocumentId() {
-		// there is no document at the time
-		return null;
-	}
 
-	// no template in this use case
-	@Override
-	public SourceBean getTemplateAsSourceBean() {
-		SourceBean templateSB = null;
-		return templateSB;
-	}
 
 	public IDataSet getDataSet(String datasetLabel) {
 		logger.debug("IN");
@@ -132,7 +121,7 @@ public class QbeEngineFromFederationStartAction extends QbeEngineStartAction {
 	}
 
 	@Override
-	public Map addDatasetsToEnv() {
+	public Map getEnvWithProperties() {
 		String federatedDatasetId = this.getAttributeAsString(FEDERATED_DATASET);
 		if (federatedDatasetId == null || federatedDatasetId.length() == 0 || federatedDatasetId.equalsIgnoreCase("null")) {
 			logger.debug("Not Found a federated dataset on the request");
@@ -294,48 +283,8 @@ public class QbeEngineFromFederationStartAction extends QbeEngineStartAction {
 		return env;
 	}
 
-	/**
-	 * Gets the datasource of the cache
-	 * 
-	 * @return
-	 */
-	private IDataSource getCacheDataSource() {
-		logger.debug("Loading the cache datasource");
-		String datasourceLabel = (String) getSpagoBIRequestContainer().get(EngineConstants.ENV_DATASOURCE_FOR_CACHE);
-		logger.debug("The datasource for cahce is " + datasourceLabel);
-		IDataSource dataSource = getDataSourceServiceProxy().getDataSourceByLabel(datasourceLabel);
-		logger.debug("cache datasource loaded");
-		return dataSource;
-	}
 
-	/**
-	 * This method solves the following issue: SQLDataSet defines the SQL statement directly considering the names' of the wrapped dataset fields, but, in case
-	 * of QbeDataSet, the fields' names are "it.eng.spagobi......Entity.fieldName" and not the name of the persistence table!!! We modify the dataset's metadata
-	 * in order to fix this.
-	 * 
-	 * @param dataset
-	 *            The persisted Qbe dataset
-	 * @param descriptor
-	 *            The persistence table descriptor
-	 */
-	// TODO move this logic inside the SQLDataSet: when building the
-	// SQL statement, the SQLDataSet should get the columns' names
-	// from the IDataSetTableDescriptor. Replace
-	// IDataSet.getPersistTableName with
-	// IDataSet.getPersistTableDescriptor in order to permit the
-	// IDataSetTableDescriptor to go with its dataset.
-	// TODO merge with it.eng.spagobi.engines.worksheet.services.initializers.WorksheetEngineStartAction.adjustMetadataForQbeDataset
-	// private void adjustMetadataForQbeDataset(IDataSet dataset, IDataSetTableDescriptor descriptor) {
-	// IMetaData metadata = dataset.getMetadata();
-	// int columns = metadata.getFieldCount();
-	// for (int i = 0; i < columns; i++) {
-	// IFieldMetaData fieldMetadata = metadata.getFieldMeta(i);
-	// String newName = descriptor.getColumnName(fieldMetadata.getName());
-	// fieldMetadata.setName(newName);
-	// fieldMetadata.setProperty("uniqueName", newName);
-	// }
-	// dataset.setMetadata(metadata);
-	// }
+
 
 	@Override
 	protected boolean tolerateMissingDatasource() {

@@ -17,37 +17,6 @@
  */
 package it.eng.spagobi.engines.qbe.services.core;
 
-import it.eng.qbe.datasource.transaction.ITransaction;
-import it.eng.qbe.query.ISelectField;
-import it.eng.qbe.query.SimpleSelectField;
-import it.eng.qbe.statement.IStatement;
-import it.eng.qbe.statement.QbeDatasetFactory;
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.engines.qbe.QbeEngineConfig;
-import it.eng.spagobi.engines.qbe.exporter.QbeCSVExporter;
-import it.eng.spagobi.engines.qbe.exporter.QbeXLSExporter;
-import it.eng.spagobi.engines.qbe.exporter.QbeXLSXExporter;
-import it.eng.spagobi.engines.qbe.query.Field;
-import it.eng.spagobi.engines.qbe.query.ReportRunner;
-import it.eng.spagobi.engines.qbe.query.SQLFieldsReader;
-import it.eng.spagobi.engines.qbe.query.TemplateBuilder;
-import it.eng.spagobi.engines.qbe.services.formviewer.ExecuteDetailQueryAction;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
-import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.engines.EngineConstants;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
-import it.eng.spagobi.utilities.mime.MimeUtils;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -62,6 +31,31 @@ import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Workbook;
+
+import it.eng.qbe.datasource.transaction.ITransaction;
+import it.eng.qbe.query.ISelectField;
+import it.eng.qbe.query.SimpleSelectField;
+import it.eng.qbe.statement.IStatement;
+import it.eng.qbe.statement.QbeDatasetFactory;
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.configuration.ConfigSingleton;
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.engines.qbe.QbeEngineConfig;
+import it.eng.spagobi.engines.qbe.exporter.QbeCSVExporter;
+import it.eng.spagobi.engines.qbe.exporter.QbeXLSExporter;
+import it.eng.spagobi.engines.qbe.query.Field;
+import it.eng.spagobi.engines.qbe.query.ReportRunner;
+import it.eng.spagobi.engines.qbe.query.SQLFieldsReader;
+import it.eng.spagobi.engines.qbe.query.TemplateBuilder;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
+import it.eng.spagobi.utilities.mime.MimeUtils;
 
 
 
@@ -121,8 +115,6 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 			fileExtension = MimeUtils.getFileExtension( mimeType );
 			writeBackResponseInline = RESPONSE_TYPE_INLINE.equalsIgnoreCase(responseType);
 			
-			isFormEngineInstance = getEngineInstance().getTemplate().getProperty("formJSONTemplate") != null;
-			if (!isFormEngineInstance) {
 				// case of standard QBE
 				
 				Assert.assertNotNull(getEngineInstance().getActiveQuery(), "Query object cannot be null in oder to execute " + this.getActionName() + " service");
@@ -144,12 +136,7 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 				sqlQuery = statement.getSqlQueryString();
 				Assert.assertNotNull(sqlQuery, "The SQL query is needed while exporting results.");
 				
-			} else {
-				// case of FormEngine
-				
-				sqlQuery = this.getAttributeFromSessionAsString(ExecuteDetailQueryAction.LAST_DETAIL_QUERY);
-				Assert.assertNotNull(sqlQuery, "The detail query was not found, maybe you have not execute the detail query yet.");
-			}
+			
 			logger.debug("Executable SQL query: [" + sqlQuery + "]");
 			
 			logger.debug("Exctracting fields ...");
@@ -359,8 +346,6 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 	private IDataStore getDataStore(IStatement statement, String sqlQuery) throws EMFInternalError {
 		IDataStore dataStore = null;
 		
-		boolean isFormEngineInstance = getEngineInstance().getTemplate().getProperty("formJSONTemplate") != null;
-		if (!isFormEngineInstance) {
 			// case of standard QBE
 			
 			IDataSet dataSet = null;
@@ -386,20 +371,7 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 			dataSet.loadData(start, limit, (maxSize == null? -1: maxSize.intValue()));
 			
 			dataStore = dataSet.getDataStore();
-		
-		} else {
-			// case of FormEngine
-			
-			JDBCDataSet dataset = new JDBCDataSet();
-			IDataSource datasource = (IDataSource) this.getEnv().get( EngineConstants.ENV_DATASOURCE );
-			dataset.setDataSource(datasource);
-			dataset.setUserProfileAttributes(UserProfileUtils.getProfileAttributes( (UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE)));
-			dataset.setQuery(sqlQuery);
-			logger.debug("Executing query ...");
-			dataset.loadData();
-			dataStore = dataset.getDataStore();
-		}
-		
+	
 		return dataStore;
 	}
 
