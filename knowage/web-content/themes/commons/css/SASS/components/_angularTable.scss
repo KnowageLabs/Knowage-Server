@@ -530,7 +530,7 @@ angular-table, cockpit-angular-table{
 	.angularTableSelectAll {
 		overflow: visible;
 		&:before {
-			content:'Seleziona tutti';
+			content:'Select All';
 			position: absolute;
 			top: -10px;
 			left: -5px;
