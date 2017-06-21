@@ -1,20 +1,40 @@
-var app = angular.module('functionsCatalogControllerModule', [ 'ngMaterial',
-		'angular_list', 'angular_table', 'sbiModule', 'angular_2_col',
-		'file_upload_base64', 'angular-list-detail', 'ngSanitize', 'ui.codemirror',
-		'ngWYSIWYG', 'ngSanitize' ]);
+var app = angular.module('functionsCatalogControllerModule', 
+		[ 'ngMaterial',
+		'angular_list', 
+		'angular_table', 
+		'sbiModule', 
+		'angular_2_col',
+		'file_upload_base64', 
+		'angular-list-detail', 
+		'ui.codemirror',
+		'ngWYSIWYG', 
+		'ngSanitize' ]);
+
 app.config([ '$mdThemingProvider', function($mdThemingProvider) {
 	$mdThemingProvider.theme('knowage')
 	$mdThemingProvider.setDefaultTheme('knowage');
 } ]);
+
 app.filter("htmlSafe", [ '$sce', function($sce) {
 	return function(htmlCode) {
 		return $sce.trustAsHtml(htmlCode);
 	};
 } ]);
-app.controller('functionsCatalogController', [ "sbiModule_config",
-		"sbiModule_translate", "sbiModule_restServices", "$scope", "$mdDialog",
-		"$mdToast", "$log", "sbiModule_download", "sbiModule_messaging",
-		"$sce", "$compile","$angularListDetail", functionsCatalogFunction ]);
+
+app.controller('functionsCatalogController', 
+		[ "sbiModule_config",
+		"sbiModule_translate", 
+		"sbiModule_restServices", 
+		"$scope", 
+		"$mdDialog",
+		"$mdToast", 
+		"$log", 
+		"sbiModule_download", 
+		"sbiModule_messaging",
+		"$sce", 
+		"$compile",
+		"$angularListDetail", 
+		functionsCatalogFunction ]);
 
 function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		sbiModule_restServices, $scope, $mdDialog, $mdToast, $log,
@@ -148,9 +168,6 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 	}
 	
 	
-
-	
-	 
 	$scope.showTabDialog = function(result, isDemoExecution) {
 		$mdDialog.show({
 			controller : functionCatalogResultsController,
@@ -240,8 +257,6 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		}
 	}
 	
-	
-	// --
 
 	$scope.obtainCatalogFunctionsRESTcall = function() {
 		sbiModule_restServices.get("1.0/functions-catalog", "").success(
@@ -714,7 +729,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		console.log("typeObject: ", typeObject);
 		$scope.functionsToDisplay = [];
 		$angularListDetail.goToList();
-		$scope.selectedType=typeObject;
+		$scope.selectedType=typeObject.valueCd;
 		if (type != "All") {
 			sbiModule_restServices.get("1.0/functions-catalog", type).success(
 					function(data) {
@@ -983,14 +998,7 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 			body.push(filesIn);
 				
 			logger.info("body: ", body);
-			
-			
-//			for (var key in body[2].items) {
-//				  if (body[2].items.hasOwnProperty(key)) {
-//					  delete body[2].items[key].file;
-//				  }
-//			}
-			
+
 			sbiModule_restServices.post("1.0/functions-catalog/execute/new",
 					$scope.functionId, body)
 					.success(function(executionResult) {

@@ -148,9 +148,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<list label="Functions"  new-function="<%=addFunction%>" layout-column> 
 		
 			<md-content layout="column" >
-				<div layout-gt-xs="row" layout="column">
+				<div layout-gt-xs="row" layout="column" class="functionsCardContainer">
 				
-					<md-card  class="functionsCard"  ng-repeat="functionType in functionTypesList" ng-click="functionsList=filterByType(functionType)" ng-style="{'background-image':functionType.valueDescription}" flex>
+					<md-card  class="functionsCard"  ng-class="{'active':selectedType == functionType.valueCd}" ng-repeat="functionType in functionTypesList" ng-click="functionsList=filterByType(functionType)" ng-style="{'background-image':functionType.valueDescription}" flex>
 						<md-card-content>
 		          				<span class="md-headline ng-binding" flex="">{{functionType.valueCd}}</span>
                                 <span class="md-subhead ng-binding smallGrey" flex="">{{functionType.domainName}}</span>
@@ -158,7 +158,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					
 		      		</md-card>
 		      		
-					<md-card  class="functionsCard image_all" ng-click="functionsList=filterByType({valueCd:'All'})" flex> 
+					<md-card  class="functionsCard image_all" ng-class="{'active':selectedType == 'All'}" ng-click="functionsList=filterByType({valueCd:'All'})" flex> 
 						<md-card-content>
 		            			<span class="md-headline ng-binding" flex="">{{translate.load("sbi.functionscatalog.all")}}</span>
 		            			<span class="md-subhead ng-binding smallGrey" flex="">{{translate.load("sbi.functionscatalog.allmessage")}}</span>
@@ -166,7 +166,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		      		</md-card>
 				</div>	
-					<div class="md-block" layout="row" layout-align="center center" >
+					<div class="md-block functionsChipsContainer" layout="row" layout-align="center center" >
 						<md-chips ng-model="searchKeywords" readonly=true class="functionsChips"> 
 							<md-chip-template ng-click="chipFilter($chip)" >
 							{{$chip}}
