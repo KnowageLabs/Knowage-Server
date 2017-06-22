@@ -1,141 +1,53 @@
 /*
 * Knowage, Open Source Business Intelligence suite
 * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
-* 
+*
 * Knowage is free software: you can redistribute it and/or modify
 * it under the terms of the GNU Affero General Public License as published by
 * the Free Software Foundation, either version 3 of the License, or
 * (at your option) any later version.
-* 
+*
 * Knowage is distributed in the hope that it will be useful,
 * but WITHOUT ANY WARRANTY; without even the implied warranty of
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 * GNU Affero General Public License for more details.
-* 
+*
 * You should have received a copy of the GNU Affero General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 package it.eng.spagobi.engines.qbe.services.initializers;
 
-import java.io.File;
-import java.util.Locale;
-import java.util.Map;
-
 import org.apache.log4j.Logger;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.engines.qbe.QbeEngine;
-import it.eng.spagobi.engines.qbe.QbeEngineConfig;
-import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.engines.AbstractEngineStartAction;
-import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 
 /**
  * The Class BuildQbeDatasetStartAction.
- * 
+ *
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
  */
-public class BuildQbeDatasetStartAction extends AbstractEngineStartAction {	
-	
-	// INPUT PARAMETERS
-	public static final String DATAMART_NAME = "DATAMART_NAME";
+public class BuildQbeDatasetStartAction extends QbeEngineStartAction {
+
+	private static final long serialVersionUID = 8517069222119935320L;
+
 	public static final String DATASOURCE_LABEL = "DATASOURCE_LABEL";
-	
-	
-	// OUTPUT PARAMETERS
-	public static final String LANGUAGE = "LANGUAGE";
-	public static final String COUNTRY = "COUNTRY";
-	public static final String DATAMARTS_NAMES = "DATAMARTS_NAMES";
-	
-	// SESSION PARAMETRES	
-	public static final String ENGINE_INSTANCE = EngineConstants.ENGINE_INSTANCE;
-	
-	
-	
+
 	/** Logger component. */
     private static transient Logger logger = Logger.getLogger(BuildQbeDatasetStartAction.class);
-    
+
     public static final String ENGINE_NAME = "SpagoBIQbeEngine";
-		
-    public void service(SourceBean serviceRequest, SourceBean serviceResponse) {
-    	QbeEngineInstance qbeEngineInstance = null;
-    	Locale locale;
-    	Map env;
-    	
-    	
+
+    @Override
+	public void service(SourceBean serviceRequest, SourceBean serviceResponse) {
     	logger.debug("IN");
-       
-    	try {
-    		setEngineName(ENGINE_NAME);
-			super.service(serviceRequest, serviceResponse);
-			
-			logger.debug("User Id: " + getUserId());
-			checkUser();
-			
-			env = getEnv();
-
-			
-			String datamartName = this.getAttributeAsString(DATAMART_NAME);
-			logger.debug("Datamart's name: " + datamartName);
-			
-			
-			logger.debug("Creating engine instance ...");
-			try {
-				qbeEngineInstance = QbeEngine.createInstance( env );
-			} catch(Throwable t) {
-				SpagoBIEngineStartupException serviceException;
-				String msg = "Impossible to create engine instance for datamart [" + datamartName + "].";
-				Throwable rootException = t;
-				while(rootException.getCause() != null) {
-					rootException = rootException.getCause();
-				}
-				String str = rootException.getMessage()!=null? rootException.getMessage(): rootException.getClass().getName();
-				msg += "\nThe root cause of the error is: " + str;
-				serviceException = new SpagoBIEngineStartupException(ENGINE_NAME, msg, t);
-				
-				
-				throw serviceException;
-			}
-			logger.debug("Engine instance succesfully created");
-			
-			setAttributeInSession( ENGINE_INSTANCE, qbeEngineInstance);		
-			setAttribute(ENGINE_INSTANCE, qbeEngineInstance);
-			
-			locale = (Locale) env.get(EngineConstants.ENV_LOCALE);
-			setAttribute(LANGUAGE, locale.getLanguage());
-			setAttribute(COUNTRY, locale.getCountry());
-			
-		} catch (Throwable e) {
-			SpagoBIEngineStartupException serviceException = null;
-			
-			if(e instanceof SpagoBIEngineStartupException) {
-				serviceException = (SpagoBIEngineStartupException)e;
-			} else {
-				Throwable rootException = e;
-				while(rootException.getCause() != null) {
-					rootException = rootException.getCause();
-				}
-				String str = rootException.getMessage()!=null? rootException.getMessage(): rootException.getClass().getName();
-				String message = "An unpredicted error occurred while executing " + getEngineName() + " service."
-								 + "\nThe root cause of the error is: " + str;
-				
-				serviceException = new SpagoBIEngineStartupException(getEngineName(), message, e);
-			}
-			
-			throw serviceException;
-			
-			//throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException(getActionName(), qbeEngineInstance, e);
-		} finally {
-			logger.debug("OUT");
-		}		
-
+    	checkUser();
+    	super.service(serviceRequest, serviceResponse);
 	}
 
 	/**
@@ -146,10 +58,10 @@ public class BuildQbeDatasetStartAction extends AbstractEngineStartAction {
     	try {
     		UserProfile profile = this.getUserProfile();
     		if (!profile.isAbleToExecuteAction("DatasetManagement")) {
-    			throw new SecurityException("User [" + 
-    					"unique identifier: " + profile.getUserUniqueIdentifier() + 
-    					"user id : " + profile.getUserId() + 
-    					"name: " + profile.getUserName() + 
+    			throw new SecurityException("User [" +
+    					"unique identifier: " + profile.getUserUniqueIdentifier() +
+    					"user id : " + profile.getUserId() +
+    					"name: " + profile.getUserName() +
     					"] cannot build dataset!!");
     		}
     	} catch (Throwable t) {
@@ -159,43 +71,20 @@ public class BuildQbeDatasetStartAction extends AbstractEngineStartAction {
     	}
 	}
 
-	private void checkIfDatamartExists(String datamartName) {
-    	logger.debug("IN: datamartName = " + datamartName);
-    	try {
-    		boolean datamartExists = false;
-    		File datamartsDir = QbeEngineConfig.getInstance().getQbeDataMartDir();
-    		File datamartDir = new File(datamartsDir, datamartName);
-    		datamartExists = datamartDir.exists() && datamartDir.isDirectory();
-    		if (!datamartExists) {
-    			
-    			throw new SpagoBIRuntimeException("Datamart " + datamartName + " not found!");
-    		}
-    	} finally {
-    		logger.debug("OUT");
-    	}
-	}
-
-
-	
-	@Override
-	public String getDocumentId() {
-		return null;
-	}
-	
 	@Override
     public IDataSource getDataSource() {
     	String schema = null;
         String attrname = null;
-    
+
         String datasourceLabel = this.getAttributeAsString(DATASOURCE_LABEL);
-        
-        IDataSource dataSource = getDataSourceServiceProxy().getDataSourceByLabel( datasourceLabel );  	
+
+        IDataSource dataSource = getDataSourceServiceProxy().getDataSourceByLabel( datasourceLabel );
         if (dataSource.checkIsMultiSchema()){
             logger.debug("Datasource [" + dataSource.getLabel() + "] is defined on multi schema");
-            try {            
+            try {
                 logger.debug("Retriving target schema for datasource [" + dataSource.getLabel() + "]");
                 attrname = dataSource.getSchemaAttribute();
-                logger.debug("Datasource's schema attribute name is equals to [" + attrname + "]");                                 
+                logger.debug("Datasource's schema attribute name is equals to [" + attrname + "]");
                 Assert.assertNotNull(attrname, "Datasource's schema attribute name cannot be null in order to retrive the target schema");
                 schema = (String)getUserProfile().getUserAttribute(attrname);
                 Assert.assertNotNull(schema, "Impossible to retrive the value of attribute [" + attrname + "] form user profile");
@@ -204,8 +93,8 @@ public class BuildQbeDatasetStartAction extends AbstractEngineStartAction {
             } catch (Throwable t) {
                 throw new SpagoBIEngineRuntimeException("Impossible to retrive target schema for datasource [" + dataSource.getLabel() + "]", t);
             }
-            logger.debug("Target schema for datasource  [" + dataSource.getLabel() + "] retrieved succesfully"); 
-        }            
+            logger.debug("Target schema for datasource  [" + dataSource.getLabel() + "] retrieved succesfully");
+        }
 
 		return dataSource;
     }
