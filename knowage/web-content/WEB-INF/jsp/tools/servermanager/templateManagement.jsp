@@ -56,7 +56,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<div ng-controller="Controller " layout="column">
 		<md-toolbar>
 		<div class="md-toolbar-tools">
-			<i class="fa fa-file fa-2x"></i>
 			<h2 class="md-flex">{{translate.load("sbi.templatemanagemenent");}}</h2>
 		</div>
 		</md-toolbar>
@@ -83,23 +82,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<h2 class="md-flex">{{translate.load("sbi.templatemanagemenent.documentselection");}}</h2>
 		</div>
 		</md-toolbar>
-		<div layout-wrap ng-show="documents.length!=0">
-			<p>{{translate.load("sbi.templatemanagemenent.secondmessage");}}</p>
-			<md-button class="md-raised" ng-click="deleteTemplate($event)"
-				aria-label="delete Templates">{{translate.load("sbi.federationdefinition.delete");}}</md-button>
-
-
-		</div>
-		<div id="lista"  ng-show="documents.length!=0">
-			<!--
-			<document-tree ng-model="tree" id="impExpTree" create-tree="true"
-				selected-item="docChecked" multi-select="true" show-files="true">
-			</document-tree>
-			-->
-			<component-tree ng-model="tree" id="impExpTree" create-tree="true"
-				selected-item="docChecked" multi-select="true" show-files="true">
-			</component-tree>
-		</div>
+		<md-content layout-padding>
+			<div layout-wrap ng-show="documents.length!=0">
+				<p>{{translate.load("sbi.templatemanagemenent.secondmessage");}}</p>
+				<md-button class="md-raised" ng-click="deleteTemplate($event)"
+					aria-label="delete Templates">{{translate.load("sbi.federationdefinition.delete");}}</md-button>
+	
+	
+			</div>
+			<div id="lista"  ng-show="documents.length!=0">
+				<!--
+				<document-tree ng-model="tree" id="impExpTree" create-tree="true"
+					selected-item="docChecked" multi-select="true" show-files="true">
+				</document-tree>
+				-->
+				<component-tree ng-model="tree" id="impExpTree" create-tree="true"
+					selected-item="docChecked" multi-select="true" show-files="true">
+				</component-tree>
+			</div>
+		</md-content>
 	</div>
 	</md-card>
 	</md-content>
