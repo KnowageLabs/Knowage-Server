@@ -22,20 +22,16 @@
 
 angular.module('qbe_custom_table', ['ngDraggable'])
 .directive('qbeCustomTable', function() {
-	return {
-		templateUrl: currentScriptPath +'custom-table.html',
-		controller: customTableControllerFunction,
-		priority: 10,
-		scope: {
-			ngModel:"="	
-		},
-		link: function (scope, elem, attrs) { 
-
-		}
-	}
+    return {
+        restrict: 'E',
+        scope: {
+            ngModel: '='
+        },
+        templateUrl: currentScriptPath + 'custom-table.html',
+        replace: true,
+        link: function link(scope, element, attrs) {
+           
+        }
+    };
 });
-
-function customTableControllerFunction($scope){
-
-}
 })();

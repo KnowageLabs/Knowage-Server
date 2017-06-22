@@ -31,22 +31,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	</head>
 	
 	<body ng-controller="qbeController" class="kn-qbe">
-	
-	<angular-list-detail>
-	 	<list>
-		<qbe-expander-list flex drag-action="droppedFunction(data)" ng-model="model" entities-actions="entitiesFunctions" fields-actions="fieldsFunctions" colors="colors">
-        </qbe-expander-list>
-		</list>
-		
-		<detail>
-			 <qbe-custom-table></qbe-custom-table>
-		    <qbe-filter></qbe-filter>
-		    <qbe-advanced-visulalization></qbe-advanced-visualization>
-		</detail>
-	</angular-list-detail>
-    
-   
-    
+	<div layout="row">
+		<div flex=30 layout-fill>
+			<qbe-expander-list flex drag-action="droppedFunction(data)" ng-model="model" entities-actions="entitiesFunctions" fields-actions="fieldsFunctions" colors="colors">
+        	</qbe-expander-list>
+		</div>
+		<div flex style="background-color:yellow" layout-fill class="vertical-devider">
+			<qbe-custom-table ng-drop="true" ng-drop-success="onDropComplete($data,$event)" ng-model="queryModel"></qbe-custom-table>
+		</div>
+	</div>
 	</body>
 
 </html>

@@ -1,3 +1,20 @@
-<div ng-drop="true" ng-drop-success="onDropComplete($data,$event)" >
-  Drop area
+<div flex style="background-color:#4099FF;" layout="row"
+layout-fill>
+   	<div ng-repeat="n in ngModel" flex=15>
+   	<div class="angularTableHeader" style="background-color:#a9c3db" ng-style="{'border-top':n.color}">{{n.name}}
+   		<span flex></span>
+   		<md-menu ng-click="openMenu">
+   			<md-button>g</md-button>
+   			<md-menu-content>
+   				 	<md-menu-item>
+   				 		<md-button>hh</md-button>
+   				 	</md-menu-item>
+   				 	<md-menu-item></md-menu-item>
+   				 	<md-menu-item></md-menu-item>
+   			</md-menu-content>
+   		</md-menu>
+   	</div>
+   	<div style="background-color:white">{{n.data}}</div>
+   	<div ng-repeat="f in n.filters" style="background-color:#a9c3db">{{f}}</div>
+   </div>
 </div>

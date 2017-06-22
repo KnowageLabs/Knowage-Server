@@ -33,14 +33,25 @@ angular
 function qbeFunction($scope) {
 	
 	$scope.onDropComplete=function(data,evt){
-       alert("drop success, data:", data);
+	   var queryObject = {
+	    	"id":data.id,
+	    	"name":data.text,
+	    	"data":"no data",
+	    	"order":"",
+	    	"filters": ["less than 6"]
+	    }
+
+		$scope.queryModel.push(queryObject);      
     }
 	
 	$scope.colors = ['#F44336', '#673AB7', '#03A9F4', '#4CAF50', '#FFEB3B', '#3F51B5', '#8BC34A', '#009688', '#F44336'];
 
     $scope.droppedFunction = function(data) {
-        console.log(data);
+        console.log(data)
     };
+    
+    $scope.queryModel = [];
+    
 
     $scope.entitiesFunctions = [{
         "label": "add calculated field",
@@ -64,9 +75,10 @@ function qbeFunction($scope) {
         }
     }];
 
-    $scope.ammacool = function(id) {
-        alert(id);
-    }
+    $scope.openMenu = function($mdMenu, ev) {
+        originatorEv = ev;
+        $mdMenu.open(ev);
+      };
 
     $scope.model = {
         'entities': [{

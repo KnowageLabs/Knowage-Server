@@ -1,7 +1,4 @@
 .kn-qbe {
-    .kn-list-content {
-        overflow: visible;
-    }
     .expanderList {
         h3 {
             &.opened {
@@ -88,5 +85,8 @@
                 }
             }
         }
+    }
+    .vertical-devider {
+    	border-left: 1px solid #3b678c
     }
 }
