@@ -56,7 +56,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 			sbiModule_restServices.get("2.0/documents", 'withData',"data="+$scope.data_format).success(
 					function(data, status, headers, config) {
 						if (data.hasOwnProperty("errors")) {
-							console.log("layer non Ottenuti");
+							console.log("NO DATA");
 							$scope.flagSelect=false;
 						} else {
 							
@@ -66,7 +66,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 
 					}).error(function(data, status, headers, config) {
 						$scope.flagSelect=false;
-						console.log("layer non Ottenuti " + status);
+						console.log("NO DATA " + status);
 					})
 					//$scope.parseDate();
 			
@@ -137,7 +137,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 		
 			 $scope.confirm =  $mdDialog.confirm()
 			          .title(sbiModule_translate.load("sbi.templatemanagemenent.alertdatedelete"))
-			          .ariaLabel('Lucky day')
+			          .ariaLabel('delete')
 			          .targetEvent(ev)
 			          .ok('Ok')
 			          .cancel('Cancel');
@@ -152,7 +152,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 					sbiModule_restServices.post("template",'deleteTemplate',request).success(
 							function(data, status, headers, config) {
 								if (data.hasOwnProperty("errors")) {
-									console.log("layer non Ottenuti");
+									console.log("NO DOCUMENTS");
 									$scope.showActionOK(sbiModule_translate.load("sbi.templatemanagemenent.templatedeletederror"));
 
 								} else {
@@ -161,7 +161,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 								}
 
 							}).error(function(data, status, headers, config) {
-								console.log("layer non Ottenuti " + status);
+								console.log("NO DOCUMENTS" + status);
 								$scope.showActionOK(sbiModule_translate.load("sbi.templatemanagemenent.templatedeletederror"));
 							})
 			    }, function() {
