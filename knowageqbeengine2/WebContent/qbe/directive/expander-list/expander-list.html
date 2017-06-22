@@ -6,7 +6,7 @@
         </h3>
         <div class="expandableEntities" ng-repeat="entity in value">
             <h4 ng-click="toggleExpander(entity)" ng-class="{'expanded':entity.expanded}" ng-drag="dragEnabled" ng-drag-data="entity" ng-drag-success="dragLi($data,$event)">
-                <div ng-if="colors" class="colorSquare" ng-style="entity.color"></div>
+                <div ng-if="colors" class="colorSquare" ng-style="{'background-color':entity.color}"></div>
                 <i ng-class="entity.iconCls"></i>
                 <span>{{entity.text}}</span>
                 <span flex></span>
