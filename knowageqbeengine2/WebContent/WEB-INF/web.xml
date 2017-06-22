@@ -25,8 +25,18 @@
             <param-value>UTF-8</param-value>
         </init-param>
     </filter>
+
+	<context-param>
+	    <param-name>resteasy.scan</param-name>
+    	<param-value>true</param-value>
+  	</context-param>
+ 
+ 	<context-param>
+    	<param-name>resteasy.servlet.mapping.prefix</param-name>
+    	<param-value>/restful-services</param-value>
+  	</context-param>
 	
-	   <filter-mapping>
+	<filter-mapping>
             <filter-name>EncodingFilter</filter-name>
             <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
     </filter-mapping>
@@ -147,7 +157,11 @@
 	<!--  ============================================================================ -->
 	<!--  START LISTENERS								 							   -->
 	<!--  ============================================================================ -->
-
+	<listener>
+		<listener-class>
+            org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap
+		</listener-class>
+	</listener>
 	<!--  ============================================================================ -->
 	<!--  END LISTENERS								 								   -->
 	<!--  ============================================================================ -->
@@ -172,7 +186,14 @@
 		<servlet-name>AdapterHTTP</servlet-name>
 		<servlet-class>it.eng.spago.dispatching.httpchannel.AdapterHTTP</servlet-class>
 	</servlet>
-    
+    <servlet>
+    	<servlet-name>Resteasy</servlet-name>
+    	<servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
+  	</servlet>
+  	<servlet-mapping>
+   		<servlet-name>Resteasy</servlet-name>
+    	<url-pattern>/restful-services/*</url-pattern>
+  	</servlet-mapping>
     <servlet>
 		<servlet-name>EngineTestServlet</servlet-name>
 		<servlet-class>
