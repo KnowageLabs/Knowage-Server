@@ -92,11 +92,12 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 			// String hql = "from SbiObjTemplates sot where sot.active=true and sot.sbiObject.biobjId="+biobjId;
-			String hql = "from SbiObjTemplates sot where sot.active=true and sot.sbiObject.biobjId=? and sot.commonInfo.organization = ?";
+			String hql = "from SbiObjTemplates sot where sot.active=? and sot.sbiObject.biobjId=? and sot.commonInfo.organization = ?";
 
 			Query query = aSession.createQuery(hql);
-			query.setInteger(0, biobjId.intValue());
-			query.setString(1, getTenant());
+			query.setBoolean(0, true);
+			query.setInteger(1, biobjId.intValue());
+			query.setString(2, getTenant());
 			SbiObjTemplates hibObjTemp = (SbiObjTemplates) query.uniqueResult();
 			if (hibObjTemp == null) {
 				objTemp = null;
@@ -336,10 +337,9 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 
 	/**
 	 * To obj template.
-	 *
+	 * 
 	 * @param hibObjTemp
 	 *            the hib obj temp
-	 *
 	 * @return the obj template
 	 */
 	public ObjTemplate toObjTemplate(SbiObjTemplates hibObjTemp) {
