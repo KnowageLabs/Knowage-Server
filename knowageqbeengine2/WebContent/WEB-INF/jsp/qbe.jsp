@@ -31,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	</head>
 	
 	<body ng-controller="qbeController" class="kn-qbe">
+	<rest-loading></rest-loading>
 	<div layout="row">
 		<div flex=30 layout-fill>
 			<qbe-expander-list flex drag-action="droppedFunction(data)" ng-model="model" entities-actions="entitiesFunctions" fields-actions="fieldsFunctions" colors="colors">

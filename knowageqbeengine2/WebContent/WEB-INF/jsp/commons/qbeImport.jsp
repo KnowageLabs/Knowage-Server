@@ -21,9 +21,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="${pageContext.request.contextPath}/qbe/controller/controller.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/qbe/config/config.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/qbe/directive/directive.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/qbe/services/services.js"></script>
 
 <!-- DIRECTIVES -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/qbe/directive/advanced-visualization/advancedVisualization.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/qbe/directive/custom-table/customTable.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/qbe/directive/expander-list/expanderList.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/qbe/directive/filter/filter.js"></script>
+
+<!-- SERVICES -->
+<script type="text/javascript" src="${pageContext.request.contextPath}/qbe/services/entities/entities.js"></script>
