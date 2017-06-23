@@ -38,10 +38,6 @@ angular.module('qbe_expander_list', ['ngDraggable'])
                 scope.usedColorIndex = 0;
                 scope.dragEnabled = scope.dragAction ? true : false;
 
-                scope.test = function(name, test) {
-                    console.log(name, test);
-                }
-
                 //optional colorizing function to create the colored squares on the view. If no colors are given the blocks disappear.
                 scope.colorize = function() {
                     for (var k in scope.ngModel) {
