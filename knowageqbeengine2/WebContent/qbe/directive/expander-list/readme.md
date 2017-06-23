@@ -23,6 +23,7 @@ Use the directive inserting the following tag:
 <expander-list 
     ng-model="model"
     colors="colors"
+    font-icons="iconLibrary"
     drop-function="droppedFunction(data)"  
     entities-actions="entitiesFunctions" 
     fields-actions="fieldsFunctions" >
@@ -41,12 +42,12 @@ Each key declared will be the first level menu of the view.
  {'entities': [{
     "id": "entity1",
     "text": "entity1",
-    "iconCls": "fa fa-cube",
+    "iconCls": "cube",
     "children": [
         { 
             "id": "field1", 
             "text": "field1", 
-            "iconCls": "fa fa-list-alt"
+            "iconCls": "measure"
         }  
     ]},
     'subqueries': [{...}]
@@ -54,7 +55,7 @@ Each key declared will be the first level menu of the view.
 ```
 - _id_ is the identifier for the element.
 - _text_ is the label that will be shown for the element.
-- _iconCls_ is the class that will represent the icon for that element. Use any fonticons classname.
+- _iconCls_ is the class that will represent the icon for that element. Use any fonticons classname you have declared inside the css.
 - _children_ is the array containing the children, which will have the same structure.
 
 ***
@@ -62,6 +63,12 @@ Each key declared will be the first level menu of the view.
 
 This attribute is optional and contains an array of hexadecimal colors to use as palette for the level 2 elements.
 If no attribute is given the colored square will not be visible.
+***
+> font-icons: "string"
+
+This attribute is optional if you want to use icons.
+To use a specific font-icons library insert the library css identifier (ie for FontAwesome is "fa").
+The single icon classes must be identified somewhere in che css if different from the defaults for that library (ie FontAwesome fa-list or his classname if remapped)
 ***
 > drop-function : function(data)
 

@@ -23,14 +23,29 @@
 
 .accessibleTable {
 	border-collapse: collapse;
+	width: 100%;
+	min-width: 700px;
 	thead {
-		th {
-			color: $baseColor;
+		tr{
+			height: 2rem;
+			th {
+				text-transform: uppercase;
+				font-size: 1rem;
+				color: $baseColor;
+			}
 		}
 	}
 	tbody {
-		td {
-			color: $darkTextColor;
+		tr{
+			height: 2rem;
+			&:nth-child(odd) {
+				background-color: lighten($ternaryColor,10%);
+			}
+			td {
+				text-align: center;
+				font-size: .8rem;
+				color: $darkTextColor;
+			}
 		}
 	}
 }

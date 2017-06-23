@@ -7,7 +7,7 @@
         <div class="expandableEntities" ng-repeat="entity in value">
             <h4 ng-click="toggleExpander(entity)" ng-class="{'expanded':entity.expanded}" ng-drag="dragEnabled" ng-drag-data="entity" ng-drag-success="dragLi($data,$event)">
                 <div ng-if="colors" class="colorSquare" ng-style="{'background-color':entity.color}"></div>
-                <i ng-class="entity.iconCls"></i>
+                <i ng-class="[fontIcons, entity.iconCls]"></i>
                 <span>{{entity.text}}</span>
                 <span flex></span>
                 <md-button class="md-icon-button" ng-repeat="entAction in entitiesActions" ng-click="$event.stopPropagation();entAction.action(entity,$event)">
@@ -16,8 +16,8 @@
                 <i class="fa" ng-class="{'fa-chevron-up':entity.expanded, 'fa-chevron-down':!entity.expanded}"></i>
             </h4>
             <ul ng-show="entity.expanded">
-                <li ng-repeat="field in entity.children" ng-drag="dragEnabled" ng-drag-data="field" ng-drag-success="dragLi($data,$event)" layout="row">
-                    <i ng-class="field.iconCls"></i>
+                <li ng-repeat="field in entity.children" ng-drag="dragEnabled" ng-drag-data="field" ng-drag-success="test('drop',$data)" layout="row" ng-click="test('click',field)">
+                    <i ng-class="[fontIcons, field.iconCls]"></i>
                     <span>{{field.text}}</span>
                     <span flex></span>
                     <md-button class="md-icon-button" ng-repeat="fieldAction in fieldsActions" ng-click="$event.stopPropagation();fieldAction.action(field,$event)">

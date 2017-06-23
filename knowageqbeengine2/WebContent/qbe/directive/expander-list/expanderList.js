@@ -21,12 +21,13 @@
 	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
 
 angular.module('qbe_expander_list', ['ngDraggable'])
-.directive('qbeExpanderList', function($sce) {
+.directive('expanderList', function($sce) {
         return {
             restrict: 'E',
             scope: {
                 ngModel: '=',
                 colors: '=?',
+                fontIcons: '@?',
                 dragAction: '&?',
                 entitiesActions: '=?',
                 fieldsActions: '=?'
@@ -36,6 +37,10 @@ angular.module('qbe_expander_list', ['ngDraggable'])
             link: function link(scope, element, attrs) {
                 scope.usedColorIndex = 0;
                 scope.dragEnabled = scope.dragAction ? true : false;
+
+                scope.test = function(name, test) {
+                    console.log(name, test);
+                }
 
                 //optional colorizing function to create the colored squares on the view. If no colors are given the blocks disappear.
                 scope.colorize = function() {
@@ -83,6 +88,6 @@ angular.module('qbe_expander_list', ['ngDraggable'])
 
             }
         };
-    });
+    })
 
 })();

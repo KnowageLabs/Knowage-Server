@@ -85,6 +85,18 @@
                 }
             }
         }
+        //fontAwesome icons remapping
+        .fa {
+            &.cube:before {
+                content: "\f1b2"
+            }
+            &.generic:before {
+                content: "\f022"
+            }
+            &.measure:before {
+                content: "\f02b"
+            }
+        }
     }
     .vertical-devider {
     	border-left: 1px solid #3b678c
