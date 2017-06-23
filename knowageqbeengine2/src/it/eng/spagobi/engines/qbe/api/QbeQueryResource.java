@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -142,7 +141,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 				// + sqlQuery);
 			}
 			gridDataFeed = serializeDataStore(dataStore);
-			return Response.ok(gridDataFeed).build();
+			return Response.ok(gridDataFeed.toString()).build();
 		} catch (Throwable t) {
 			errorHitsMonitor = MonitorFactory.start("QbeEngine.errorHits");
 			errorHitsMonitor.stop();
