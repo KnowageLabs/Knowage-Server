@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.utilities.sql;
 
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.util.ArrayList;
@@ -220,5 +221,13 @@ public class SqlUtils {
 			}
 		}
 		return false;
+	}
+
+	public static boolean hasSqlServerDialect(IDataSource dataSource) {
+		if (dataSource != null) {
+			return dataSource.getHibDialectName().contains("sqlserver");
+		} else {
+			return false;
+		}
 	}
 }

@@ -1,5 +1,6 @@
 package it.eng.spagobi.tools.dataset.graph.associativity.utils;
 
+import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
 import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
 import it.eng.spagobi.tools.dataset.graph.associativity.AssociativeDatasetContainer;
@@ -8,7 +9,9 @@ import it.eng.spagobi.tools.dataset.graph.associativity.Selection;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +43,7 @@ public class AssociativeLogicUtils {
 					tuple += ",";
 				}
 				Object item = rs.getObject(i);
-				tuple += stringDelimiter + (item == null ? null : item.toString()) + stringDelimiter;
+				tuple += stringDelimiter + (item == null ? null : getProperValueString(item)) + stringDelimiter;
 			}
 			tuple += ")";
 			tuples.add(tuple);
@@ -48,24 +51,33 @@ public class AssociativeLogicUtils {
 		return tuples;
 	}
 
-	public static Set<String> getTupleOfValues(DataSet rs) {
+	public static Set<String> getTupleOfValues(DataSet ds) {
 		String tuple;
 		String stringDelimiter = "'";
 		Set<String> tuples = new HashSet<String>();
-		while (rs.next()) {
+		while (ds.next()) {
 			tuple = "(";
-			for (int i = 0; i < rs.getSelectItems().length; i++) {
-				Row row = rs.getRow();
+			for (int i = 0; i < ds.getSelectItems().length; i++) {
+				Row row = ds.getRow();
 				if (i > 0) {
 					tuple += ",";
 				}
 				Object item = row.getValue(i);
-				tuple += stringDelimiter + (item == null ? null : item.toString()) + stringDelimiter;
+				tuple += stringDelimiter + (item == null ? null : getProperValueString(item)) + stringDelimiter;
 			}
 			tuple += ")";
 			tuples.add(tuple);
 		}
 		return tuples;
+	}
+
+	private static String getProperValueString(Object item) {
+		if (Date.class.isAssignableFrom(item.getClass())) {
+			SimpleDateFormat formatter = new SimpleDateFormat(JSONDataWriter.CACHE_DATE_TIME_FORMAT);
+			return formatter.format(item);
+		} else {
+			return item.toString();
+		}
 	}
 
 	public static EdgeGroup getOrCreate(Set<EdgeGroup> groups, EdgeGroup newGroup) {

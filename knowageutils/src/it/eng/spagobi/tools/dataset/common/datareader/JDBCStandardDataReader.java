@@ -158,7 +158,7 @@ public class JDBCStandardDataReader extends AbstractDataReader {
 			}
 
 		} catch (Throwable t) {
-			logger.error("An unexpected error occured while resding resultset", t);
+			logger.error("An unexpected error occured while reading resultset", t);
 		} finally {
 			logger.debug("OUT");
 		}

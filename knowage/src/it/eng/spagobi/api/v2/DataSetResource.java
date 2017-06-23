@@ -40,8 +40,6 @@ import it.eng.spagobi.tools.dataset.cache.FilterCriteria;
 import it.eng.spagobi.tools.dataset.cache.Operand;
 import it.eng.spagobi.tools.dataset.cache.ProjectionCriteria;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
-import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
-import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
 import it.eng.spagobi.tools.dataset.common.association.Association;
 import it.eng.spagobi.tools.dataset.common.association.Association.Field;
 import it.eng.spagobi.tools.dataset.common.association.AssociationGroup;
@@ -80,7 +78,8 @@ import it.eng.spagobi.utilities.sql.SqlUtils;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -124,10 +123,11 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 
 	static final private String DEFAULT_TABLE_NAME_DOT = DataStore.DEFAULT_TABLE_NAME + ".";
 
-	private static final String DATE_TIME_FORMAT_MYSQL = JSONDataWriter.DATE_TIME_FORMAT.replace("yyyy", "%Y").replace("MM", "%m").replace("dd", "%d")
+	private static final String DATE_TIME_FORMAT_MYSQL = JSONDataWriter.CACHE_DATE_TIME_FORMAT.replace("yyyy", "%Y").replace("MM", "%m").replace("dd", "%d")
 			.replace("HH", "%H").replace("mm", "%i").replace("ss", "%s");
-	private static final String DATE_TIME_FORMAT_SQL_STANDARD = JSONDataWriter.DATE_TIME_FORMAT.replace("yyyy", "YYYY").replace("MM", "MM").replace("dd", "DD")
-			.replace("HH", "HH24").replace("mm", "MI").replace("ss", "SS");
+	private static final String DATE_TIME_FORMAT_SQL_STANDARD = JSONDataWriter.CACHE_DATE_TIME_FORMAT.replace("yyyy", "YYYY").replace("MM", "MM")
+			.replace("dd", "DD").replace("HH", "HH24").replace("mm", "MI").replace("ss", "SS");
+	private static final String DATE_TIME_FORMAT_SQLSERVER = "yyyyMMdd HH:mm:ss";
 
 	@Override
 	public String getDataSets(String typeDoc, String callback) {
@@ -465,49 +465,54 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 				Assert.assertTrue(tmpDatasetAndColumn.length == 2, "Impossible to get both dataset label and column");
 
 				String datasetLabel = tmpDatasetAndColumn[0];
-				String column = tmpDatasetAndColumn[1];
-				column = SqlUtils.unQuote(column);
+				String column = SqlUtils.unQuote(tmpDatasetAndColumn[1]);
 
 				Assert.assertNotNull(datasetLabel, "A dataset label in selections is null");
 				Assert.assertTrue(!datasetLabel.isEmpty(), "A dataset label in selections is empty");
 				Assert.assertNotNull(column, "A column for dataset " + datasetLabel + "  in selections is null");
 				Assert.assertTrue(!column.isEmpty(), "A column for dataset " + datasetLabel + " in selections is empty");
 
+				IDataSet dataset = getDataSetDAO().loadDataSetByLabel(datasetLabel);
+				boolean isRealtime = realtimeDatasets.contains(datasetLabel);
+				IDataSource dataSource = getDataSource(dataset, isRealtime);
+				boolean isDateColumn = isDateColumn(column, dataset);
+
 				String values = null;
+				String valuesForQuery = null;
 				// TODO ENABLE THIS WHEN CHANGING THE SELECTIONS AS JSON ARRAY!!!
 				// Getting it as object because it can be a single value (else case) or a JSONArray
 				// inside another JSON array (if case)
 				// Object object = selectionObject.getJSONArray("values").get(0);
 				Object object = selectionsObject.getJSONArray(datasetDotColumn).get(0);
 				if (object instanceof JSONArray) {
-					values = object.toString();
-					values = values.substring(1, values.length() - 1).replace("\"", "'");
+					if (isDateColumn) {
+						JSONArray jsonArray = (JSONArray) object;
+						List<String> valueList = new ArrayList<String>();
+						List<String> valueForQueryList = new ArrayList<String>();
+						for (int i = 0; i < jsonArray.length(); i++) {
+							String value = convertDateString(jsonArray.getString(i), JSONDataWriter.DATE_TIME_FORMAT, JSONDataWriter.CACHE_DATE_TIME_FORMAT);
+							valueForQueryList.add(getDateForQuery(value, dataSource));
+							valueList.add("'" + value + "'");
+						}
+						values = StringUtils.join(valueList, ",");
+						valuesForQuery = StringUtils.join(valueForQueryList, ",");
+					} else {
+						values = object.toString();
+						values = values.substring(1, values.length() - 1).replace("\"", "'");
+						valuesForQuery = values;
+					}
 				} else {
-					values = "'" + object.toString() + "'";
+					if (isDateColumn) {
+						values = convertDateString(object.toString(), JSONDataWriter.DATE_TIME_FORMAT, JSONDataWriter.CACHE_DATE_TIME_FORMAT);
+						valuesForQuery = getDateForQuery(values, dataSource);
+						values = "'" + values + "'";
+					} else {
+						values = "'" + object.toString() + "'";
+						valuesForQuery = values;
+					}
 				}
 
-				IDataSet dataset = getDataSetDAO().loadDataSetByLabel(datasetLabel);
-				IDataSource dataSource;
-				StringBuilder filterSB = new StringBuilder();
-				if (dataset.isPersisted() && !dataset.isPersistedHDFS()) {
-					dataSource = dataset.getDataSourceForWriting();
-				} else if (dataset.isFlatDataset()
-						|| (realtimeDatasets.contains(datasetLabel) && DatasetManagementAPI.isJDBCDataSet(dataset) && !SqlUtils.isBigDataDialect(dataset
-								.getDataSource().getHibDialectName()))) {
-					dataSource = dataset.getDataSource();
-				} else if (realtimeDatasets.contains(datasetLabel)) {
-					dataSource = null;
-					filterSB.append(DataStore.DEFAULT_TABLE_NAME);
-					filterSB.append(".");
-				} else {
-					dataSource = cacheDataSource;
-				}
-				filterSB.append(AbstractJDBCDataset.encapsulateColumnName(column, dataSource));
-				filterSB.append(" IN (");
-				filterSB.append(values);
-				filterSB.append(")");
-
-				filters.add(new Selection(datasetLabel, filterSB.toString()));
+				filters.add(new Selection(datasetLabel, getFilter(dataset, isRealtime, column, valuesForQuery)));
 
 				if (!selectionsMap.containsKey(datasetLabel)) {
 					selectionsMap.put(datasetLabel, new HashMap<String, Set<String>>());
@@ -549,13 +554,84 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		}
 	}
 
-	private void fixAssociationGroup(AssociationGroup associationGroup) {
-		IDataSetDAO dataSetDAO;
-		try {
-			dataSetDAO = DAOFactory.getDataSetDAO();
-		} catch (EMFUserError e) {
-			throw new SpagoBIRuntimeException("Unable to load DataSet DAO", e);
+	private String getFilter(IDataSet dataset, boolean isRealtime, String column, String values) {
+		IDataSource dataSource = getDataSource(dataset, isRealtime);
+		String tablePrefix = getTablePrefix(dataset, isRealtime);
+		DatasetEvaluationStrategy strategy = getDatasetEvaluationStrategy(dataset, isRealtime);
+
+		if (DatasetEvaluationStrategy.REALTIME.equals(strategy) || SqlUtils.hasSqlServerDialect(dataSource)) {
+			return getOrFilterString(column, values, dataSource, tablePrefix);
+		} else {
+			return getInFilterString(column, values, dataSource, tablePrefix);
 		}
+	}
+
+	private String getOrFilterString(String column, String values, IDataSource dataSource, String tablePrefix) {
+		String encapsulateColumnName = tablePrefix + AbstractJDBCDataset.encapsulateColumnName(column, dataSource);
+		String[] singleValues = values.split(",");
+		StringBuilder sb = new StringBuilder();
+
+		for (int i = 0; i < singleValues.length; i++) {
+			if (i > 0) {
+				sb.append(" OR ");
+			}
+			sb.append(encapsulateColumnName);
+			sb.append("=");
+			sb.append(singleValues[i]);
+		}
+
+		return sb.toString();
+	}
+
+	private String getInFilterString(String column, String values, IDataSource dataSource, String tablePrefix) {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(tablePrefix);
+		sb.append(AbstractJDBCDataset.encapsulateColumnName(column, dataSource));
+		sb.append(" IN (");
+		sb.append(values);
+		sb.append(")");
+
+		return sb.toString();
+	}
+
+	private String getTablePrefix(IDataSet dataset, boolean isRealtime) {
+		DatasetEvaluationStrategy datasetEvaluationStrategy = getDatasetEvaluationStrategy(dataset, isRealtime);
+		if (datasetEvaluationStrategy == DatasetEvaluationStrategy.REALTIME) {
+			return DEFAULT_TABLE_NAME_DOT;
+		} else {
+			return "";
+		}
+	}
+
+	private enum DatasetEvaluationStrategy {
+		PERSISTED, FLAT, JDBC, REALTIME, CACHED
+	}
+
+	private DatasetEvaluationStrategy getDatasetEvaluationStrategy(IDataSet dataSet, boolean isRealtime) {
+		DatasetEvaluationStrategy result;
+
+		if (dataSet.isPersisted() && !dataSet.isPersistedHDFS()) {
+			result = DatasetEvaluationStrategy.PERSISTED;
+		} else if (dataSet.isFlatDataset()) {
+			result = DatasetEvaluationStrategy.FLAT;
+		} else {
+			boolean isJDBCDataSet = DatasetManagementAPI.isJDBCDataSet(dataSet);
+			boolean isBigDataDialect = SqlUtils.isBigDataDialect(dataSet.getDataSource() != null ? dataSet.getDataSource().getHibDialectName() : "");
+			if (isRealtime && isJDBCDataSet && !isBigDataDialect && !dataSet.hasDataStoreTransformer()) {
+				result = DatasetEvaluationStrategy.JDBC;
+			} else if (isRealtime) {
+				result = DatasetEvaluationStrategy.REALTIME;
+			} else {
+				result = DatasetEvaluationStrategy.CACHED;
+			}
+		}
+
+		return result;
+	}
+
+	private void fixAssociationGroup(AssociationGroup associationGroup) {
+		IDataSetDAO dataSetDAO = getDataSetDAO();
 
 		Map<String, IMetaData> dataSetLabelToMedaData = new HashMap<String, IMetaData>();
 		for (Association association : associationGroup.getAssociations()) {
@@ -615,12 +691,16 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 						}
 					}
 
-					List<String> dateColumnNamesList = getDateColumnNamesList(dataSet);
+					IDataSource dataSource = getDataSource(dataSet, isRealtime);
 
-					boolean isCacheSqlServerDialect = ((SQLDBCache) SpagoBICacheManager.getCache()).getDataSource().getHibDialectName().contains("sqlserver");
+					boolean isJDBCDataSet = DatasetManagementAPI.isJDBCDataSet(dataSet);
+					boolean isBigDataDialect = SqlUtils.isBigDataDialect(dataSet.getDataSource() != null ? dataSet.getDataSource().getHibDialectName() : "");
+					boolean isSqlServerDialect = dataSource.getHibDialectName().contains("sqlserver");
 
-					if (isRealtime && !(DatasetManagementAPI.isJDBCDataSet(dataSet) && !SqlUtils.isBigDataDialect(dataSet.getDataSource().getHibDialectName()))
-							&& !dataSet.isFlatDataset() && !(dataSet.isPersisted() && !dataSet.isPersistedHDFS())) {
+					List<String> dateColumnNamesList = getDateColumnNamesList(dataSet, dataSource);
+
+					DatasetEvaluationStrategy strategy = getDatasetEvaluationStrategy(dataSet, isRealtime);
+					if (strategy == DatasetEvaluationStrategy.REALTIME) {
 						for (int i = 0; i < columnsList.size(); i++) {
 							columnsList.set(i, DEFAULT_TABLE_NAME_DOT + AbstractJDBCDataset.encapsulateColumnName(columnsList.get(i), null));
 						}
@@ -646,7 +726,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 									valuesSB.append(","); // starting from 2nd item of tuple of values
 								}
 								String column = columnsList.get(j % columnsList.size());
-								valuesSB.append(getProperValueString(valuesArray[j], column, dateColumnNamesList, null));
+								valuesSB.append(getValueForQuery(valuesArray[j], dateColumnNamesList.contains(column), dataSource));
 								if (j % columnsList.size() == columnsList.size() - 1) { // last item of tuple of values
 									valuesSB.append(closingBracket);
 								}
@@ -656,10 +736,9 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 
 						FilterCriteria filterCriteria = new FilterCriteria(leftOperand, "=", rightOperand);
 						filterCriterias.add(filterCriteria);
-					} else if (isCacheSqlServerDialect) {
-
+					} else if (isSqlServerDialect) {
 						for (int i = 0; i < columnsList.size(); i++) {
-							columnsList.set(i, AbstractJDBCDataset.encapsulateColumnName(columnsList.get(i), null));
+							columnsList.set(i, AbstractJDBCDataset.encapsulateColumnName(columnsList.get(i), dataSource));
 						}
 
 						String openingBracket = columnsList.size() > 1 ? "(" : "";
@@ -690,7 +769,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 								valuesSB.append(column);
 								valuesSB.append("=");
 							}
-							valuesSB.append(getProperValueString(value, column, dateColumnNamesList, null));
+							valuesSB.append(getValueForQuery(value, dateColumnNamesList.contains(column), dataSource));
 							if (i % columnsList.size() == columnsList.size() - 1) { // last item of tuple of values
 								valuesSB.append(closingBracket);
 							}
@@ -700,8 +779,6 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 						FilterCriteria filterCriteria = new FilterCriteria(leftOperand, "=", rightOperand);
 						filterCriterias.add(filterCriteria);
 					} else {
-						IDataSource dataSource = dataSet.getDataSource();
-
 						Operand leftOperand = new Operand(StringUtils.join(columnsList, ","));
 
 						List<String> valuesList = new ArrayList<String>();
@@ -709,7 +786,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 							String[] valuesArray = getDistinctValues(values.getString(i));
 							for (int j = 0; j < valuesArray.length; j++) {
 								String column = columnsList.get(j % columnsList.size());
-								valuesList.add(getProperValueString(valuesArray[j], column, dateColumnNamesList, dataSource));
+								valuesList.add(getValueForQuery(valuesArray[j], dateColumnNamesList.contains(column), dataSource));
 							}
 						}
 						Operand rightOperand = new Operand(valuesList);
@@ -731,15 +808,25 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		return filterCriterias;
 	}
 
-	private List<String> getDateColumnNamesList(IDataSet dataSet) {
+	private List<String> getDateColumnNamesList(IDataSet dataSet, IDataSource dataSource) {
 		List<String> dateColumnNamesList = new ArrayList<String>();
 		for (int i = 0; i < dataSet.getMetadata().getFieldCount(); i++) {
 			IFieldMetaData fieldMeta = dataSet.getMetadata().getFieldMeta(i);
-			if (Date.class.isAssignableFrom(fieldMeta.getType()) || Timestamp.class.isAssignableFrom(fieldMeta.getType())) {
-				dateColumnNamesList.add(fieldMeta.getName());
+			if (Date.class.isAssignableFrom(fieldMeta.getType())) {
+				dateColumnNamesList.add(AbstractJDBCDataset.encapsulateColumnName(fieldMeta.getName(), dataSource));
 			}
 		}
 		return dateColumnNamesList;
+	}
+
+	private boolean isDateColumn(String columnName, IDataSet dataSet) {
+		for (int i = 0; i < dataSet.getMetadata().getFieldCount(); i++) {
+			IFieldMetaData fieldMeta = dataSet.getMetadata().getFieldMeta(i);
+			if (fieldMeta.getName().equals(columnName) && Date.class.isAssignableFrom(fieldMeta.getType())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
@@ -833,20 +920,22 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 	}
 
 	private IDataSource getDataSource(IDataSet dataSet, boolean isRealTime) {
+		DatasetEvaluationStrategy strategy = getDatasetEvaluationStrategy(dataSet, isRealTime);
 		IDataSource dataSource = null;
-		if (dataSet.isPersisted() && !dataSet.isPersistedHDFS()) {
+
+		if (strategy == DatasetEvaluationStrategy.PERSISTED) {
 			dataSource = dataSet.getDataSourceForWriting();
-		} else if (dataSet.isFlatDataset()
-				|| (isRealTime && DatasetManagementAPI.isJDBCDataSet(dataSet) && !SqlUtils.isBigDataDialect(dataSet.getDataSource().getHibDialectName()))) {
+		} else if (strategy == DatasetEvaluationStrategy.FLAT || strategy == DatasetEvaluationStrategy.JDBC) {
 			try {
 				dataSource = dataSet.getDataSource();
 			} catch (UnreachableCodeException e) {
 			}
-		} else if (isRealTime) {
+		} else if (strategy == DatasetEvaluationStrategy.REALTIME) {
 			dataSource = null;
 		} else {
 			dataSource = SpagoBICacheConfiguration.getInstance().getCacheDataSource();
 		}
+
 		return dataSource;
 	}
 
@@ -863,9 +952,9 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		return arrayList.toArray(new String[0]);
 	}
 
-	private String getProperValueString(String value, String column, List<String> dateColumnNamesList, IDataSource dataSource) {
-		if (dateColumnNamesList.contains(column)) {
-			return getConvertedDate(value, dataSource);
+	private String getValueForQuery(String value, boolean isDate, IDataSource dataSource) {
+		if (isDate) {
+			return getDateForQuery(value, dataSource);
 		} else {
 			if (value.startsWith("'") && value.endsWith("'")) {
 				return value;
@@ -875,26 +964,39 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		}
 	}
 
-	private String getConvertedDate(String dateToConvert, IDataSource dataSource) {
-		String convertedDate = dateToConvert;
+	private String getDateForQuery(String dateStringToConvert, IDataSource dataSource) {
+		String properDateString = dateStringToConvert;
 
-		if (dataSource != null) {
+		if (dataSource != null && dateStringToConvert != null) {
 			String actualDialect = dataSource.getHibDialectClass();
 
 			if (SqlUtils.DIALECT_MYSQL.equalsIgnoreCase(actualDialect)) {
-				convertedDate = "STR_TO_DATE('" + dateToConvert + "','" + DATE_TIME_FORMAT_MYSQL + "')";
+				properDateString = "STR_TO_DATE('" + dateStringToConvert + "', '" + DATE_TIME_FORMAT_MYSQL + "')";
 			} else if (SqlUtils.DIALECT_POSTGRES.equalsIgnoreCase(actualDialect) || SqlUtils.DIALECT_ORACLE.equalsIgnoreCase(actualDialect)
 					|| SqlUtils.DIALECT_ORACLE9i10g.equalsIgnoreCase(actualDialect) || SqlUtils.DIALECT_HSQL.equalsIgnoreCase(actualDialect)
 					|| SqlUtils.DIALECT_TERADATA.equalsIgnoreCase(actualDialect)) {
-				convertedDate = "TO_DATE('" + dateToConvert + "','" + DATE_TIME_FORMAT_SQL_STANDARD + "')";
+				properDateString = "TO_DATE('" + dateStringToConvert + "','" + DATE_TIME_FORMAT_SQL_STANDARD + "')";
 			} else if (SqlUtils.DIALECT_SQLSERVER.equalsIgnoreCase(actualDialect)) {
-				convertedDate = "CONVERT(DATETIME, '" + dateToConvert + "')";
+				properDateString = "'" + convertDateString(dateStringToConvert, JSONDataWriter.CACHE_DATE_TIME_FORMAT, DATE_TIME_FORMAT_SQLSERVER) + "'";
 			} else if (SqlUtils.DIALECT_INGRES.equalsIgnoreCase(actualDialect)) {
-				convertedDate = "DATE('" + dateToConvert + "')";
+				properDateString = "DATE('" + dateStringToConvert + "')";
 			}
 		}
 
-		return convertedDate;
+		return properDateString;
+	}
+
+	private String convertDateString(String dateString, String srcFormatString, String dstFormatString) {
+		try {
+			SimpleDateFormat srcFormat = new SimpleDateFormat(srcFormatString);
+			Date date = srcFormat.parse(dateString);
+			SimpleDateFormat dstFormat = new SimpleDateFormat(dstFormatString);
+			return dstFormat.format(date);
+		} catch (ParseException e) {
+			String message = "Unable to parse date [" + dateString + "] with format [" + srcFormatString + "]";
+			logger.error(message, e);
+			throw new SpagoBIRuntimeException(message, e);
+		}
 	}
 
 	private String fixColumnAliasesAndNames(String columns, Map<String, String> columnAliasToName) {

@@ -23,6 +23,7 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
 import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicUtils;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.sql.SqlUtils;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -55,7 +56,6 @@ public class AssociativeDatasetContainer {
 
 	protected boolean realtime = false;
 	private boolean resolved = false;
-	private boolean isSqlServerDialect;
 
 	private final int SQL_IN_CLAUSE_LIMIT = 999;
 
@@ -64,7 +64,6 @@ public class AssociativeDatasetContainer {
 		this.tableName = tableName;
 		this.dataSource = dataSource;
 		this.parameters = parameters;
-		this.isSqlServerDialect = dataSource.getHibDialectName().contains("sqlserver");
 	}
 
 	public IDataSet getDataSet() {
@@ -194,7 +193,7 @@ public class AssociativeDatasetContainer {
 	}
 
 	public String buildFilter(String columnNames, Set<String> filterValues) {
-		if (isSqlServerDialect) {
+		if (SqlUtils.hasSqlServerDialect(dataSource)) {
 			return buildAndOrFilter(columnNames, filterValues);
 		} else {
 			return buildInFilter(columnNames, filterValues);

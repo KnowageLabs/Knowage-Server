@@ -727,7 +727,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 				JSONObject selectionsObject = new JSONObject(selections);
 				// in same case object is empty '{}'
 				if (selectionsObject.names() != null) {
-					filterCriteria = getFilterCriteria(label, selectionsObject, false, columnAliasToName);
+					filterCriteria = getFilterCriteria(label, selectionsObject, isRealtime, columnAliasToName);
 					filterCriteriaForMetaModel = getFilterCriteria(label, selectionsObject, true, columnAliasToName);
 				}
 			}
@@ -737,8 +737,8 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			if (likeSelections != null && !likeSelections.equals("")) {
 				JSONObject likeSelectionsObject = new JSONObject(likeSelections);
 				if (likeSelectionsObject.names() != null) {
-					filterCriteria.addAll(getLikeFilterCriteria(label, likeSelectionsObject, false, columnAliasToName, projectionCriteria, true));
-					havingCriteria.addAll(getLikeFilterCriteria(label, likeSelectionsObject, false, columnAliasToName, projectionCriteria, false));
+					filterCriteria.addAll(getLikeFilterCriteria(label, likeSelectionsObject, isRealtime, columnAliasToName, projectionCriteria, true));
+					havingCriteria.addAll(getLikeFilterCriteria(label, likeSelectionsObject, isRealtime, columnAliasToName, projectionCriteria, false));
 
 					filterCriteriaForMetaModel.addAll(getLikeFilterCriteria(label, likeSelectionsObject, true, columnAliasToName, projectionCriteria, true));
 					havingCriteriaForMetaModel.addAll(getLikeFilterCriteria(label, likeSelectionsObject, true, columnAliasToName, projectionCriteria, false));
