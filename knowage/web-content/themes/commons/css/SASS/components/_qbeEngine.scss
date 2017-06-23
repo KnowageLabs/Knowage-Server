@@ -97,6 +97,63 @@
                 content: "\f02b"
             }
         }
+
+        //qbecustom icons remapping
+
+        .qbe:before{
+          font-family: "qbe-custom" !important;
+          font-style: normal !important;
+          font-weight: normal !important;
+          font-variant: normal !important;
+          text-transform: none !important;
+          speak: none;
+          line-height: 1;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+        }
+
+        .measure:before {
+          content: "\62";
+        }
+        .attribute:before {
+          content: "\63";
+        }
+        .calculation:before {
+          content: "\61";
+        }
+        .relation:before {
+          content: "\64";
+        }
+        .time_dimension:before {
+          content: "\65";
+        }
+        .geographic_dimension:before {
+          content: "\67";
+        }
+        .default_hierarchy:before {
+          content: "\68";
+        }
+        .segment_attribute_text:before {
+          content: "\69";
+        }
+        .cube:before {
+          content: "\6a";
+        }
+        .database:before {
+          content: "\6b";
+        }
+        .generic:before {
+          content: "\6d";
+        }
+        .view:before {
+          content: "\6e";
+        }
+        .temporal_dimension:before {
+          content: "\66";
+        }
+        .dimensions:before {
+          content: "\6f";
+        }
     }
     .vertical-devider {
     	border-left: 1px solid #3b678c

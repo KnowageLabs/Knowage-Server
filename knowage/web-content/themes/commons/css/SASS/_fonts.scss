@@ -107,3 +107,15 @@
     font-weight: 300;
     font-style: italic;
 }
+
+@font-face {
+    font-family: "qbe-custom";
+    src:url("../../sbi_default/fonts/qbe-custom/qbe-custom.eot");
+    src:url("../../sbi_default/fonts/qbe-custom/qbe-custom.eot?#iefix") format("embedded-opentype"),
+    url("../../sbi_default/fonts/qbe-custom/qbe-custom.woff") format("woff"),
+    url("../../sbi_default/fonts/qbe-custom/qbe-custom.ttf") format("truetype"),
+    url("../../sbi_default/fonts/qbe-custom/qbe-custom.svg#qbe-custom") format("svg");
+    font-weight: normal;
+    font-style: normal;
+
+}
