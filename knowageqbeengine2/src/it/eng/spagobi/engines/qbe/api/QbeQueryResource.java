@@ -34,6 +34,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -81,9 +82,9 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 
 	@POST
 	@Path("/executeQuery")
-	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response execute(@FormParam("start") String startS, @FormParam("limit") String limitS, @FormParam("id") String id,
-			@FormParam("promptableFilters") String promptableFilters, @javax.ws.rs.core.Context HttpServletRequest req) {
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response execute(@QueryParam("start") String startS, @QueryParam("limit") String limitS, @QueryParam("id") String id,
+			@QueryParam("promptableFilters") String promptableFilters, @javax.ws.rs.core.Context HttpServletRequest req) {
 		Integer limit = null;
 		Integer start = null;
 		Integer maxSize = null;
@@ -117,7 +118,10 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			if (limitS != null && !limitS.equals("")) {
 				limit = Integer.parseInt(limitS);
 			}
-
+			if (getEngineInstance().getActiveQuery() == null || !getEngineInstance().getActiveQuery().getId().equals(query.getId())) {
+				logger.debug("Query with id [" + query.getId() + "] is not the current active query. A new statment will be generated");
+				getEngineInstance().setActiveQuery(query);
+			}
 			updatePromptableFiltersValue(query, promptableFilters);
 			Map<String, Map<String, String>> inlineFilteredSelectFields = query.getInlineFilteredSelectFields();
 			boolean thereAreInlineTemporalFilters = inlineFilteredSelectFields != null && inlineFilteredSelectFields.size() > 0;
