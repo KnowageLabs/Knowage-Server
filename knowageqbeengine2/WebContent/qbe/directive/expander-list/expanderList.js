@@ -21,7 +21,7 @@
 	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
 
 angular.module('qbe_expander_list', ['ngDraggable'])
-.directive('expanderList', function($sce) {
+.directive('qbeExpanderList', function($sce) {
         return {
             restrict: 'E',
             scope: {
