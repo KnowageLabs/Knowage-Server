@@ -1663,6 +1663,9 @@
 		            	}
 		         #end
             },
+            dataLabels: {
+                   allowOverlap:true
+            },
             
             #* 
             	From Highcharts API: When a series contains a data array that is longer than this, 
