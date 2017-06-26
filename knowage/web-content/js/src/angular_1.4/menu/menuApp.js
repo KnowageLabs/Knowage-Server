@@ -34,14 +34,21 @@ myApp.controller('menuCtrl', ['$scope','$mdDialog',
     }]);
 
 
-myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule_restServices', 'sbiModule_messaging'
-                              			, function($http,$mdDialog,sbiModule_config,
-                              					sbiModule_restServices, sbiModule_messaging) {
+myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule_restServices', 'sbiModule_messaging','sbiModule_translate'
+  				, function(
+  						$http,
+  						$mdDialog,
+  						sbiModule_config,
+  						sbiModule_restServices, 
+  						sbiModule_messaging,
+  						sbiModule_translate
+  						) {
     return {
         restrict: 'E',
         templateUrl: Sbi.config.contextName+"/js/src/angular_1.4/menu/templates/menuBar.html",
         replace: true,
         link: function ($scope, elem, attrs) {
+        	$scope.translate = sbiModule_translate;
         	$http.get(Sbi.config.contextName+'/restful-services/1.0/menu/enduser',{
         	    params: { 
         	    		curr_country: Sbi.config.curr_country, 
@@ -217,20 +224,18 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
        	         ,controller: AccessibilityDialogController
        	      });
        	       
-       	      function AccessibilityDialogController(scope, $mdDialog, $window) {
-       	    	scope.enableUIO= enableUIO;
-       	    	scope.enableRobobraille= enableRobobraille;
-       	    	scope.enableVoice= enableVoice;
-       	    	scope.enableGraphSonification= enableGraphSonification;
+       	      function AccessibilityDialogController(scope, $mdDialog, $window,sbiModule_translate) {
+       	    	scope.translate = sbiModule_translate;
+       	    	scope.enableAccessibility = enableUIO;
        	    	
        	        scope.saveAccessibilityPreferences = function(){
        	        	var preferencesObj={
        	        		id:null,
-       	        		user:null,
-       	        		enableUio:scope.enableUIO,
-       	        		enableRobobraille: scope.enableRobobraille,
-       	        		enableVoice: scope.enableVoice,
-       	        		enableGraphSonification:scope.enableGraphSonification,
+       	        		user:null, 
+       	        		enableUio:scope.enableAccessibility,
+       	        		enableRobobraille:scope.enableAccessibility,
+       	        		enableVoice: scope.enableAccessibility,
+       	        		enableGraphSonification:scope.enableAccessibility,
        	        		preferences:null
        	        	};
        				sbiModule_restServices.promisePost('2.0/preferences','',preferencesObj)
@@ -238,10 +243,10 @@ myApp.directive('menuAside', ['$http','$mdDialog','sbiModule_config', 'sbiModule
        			         console.log(response);
        			      sbiModule_messaging.showSuccessMessage("preferences saved successfully", 'Success');
        			        enableUIO=scope.enableUIO;
-             	        enableRobobraille= scope.enableRobobraille;
-             	    	enableVoice= scope.enableVoice;
+             	        enableRobobraille= scope.enableUIO;
+             	    	enableVoice= scope.enableUIO;
+             	    	enableGraphSonification= scope.enableUIO;
              	    	$mdDialog.hide();
-             	    	enableGraphSonification= scope.enableGraphSonification;
              	    	
              	    	$window.location.reload();
              	    	sbiModule_messaging.showSuccessMessage("Preferences saved successfully", 'Successs');

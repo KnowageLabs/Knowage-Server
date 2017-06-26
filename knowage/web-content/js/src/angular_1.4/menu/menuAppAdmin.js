@@ -436,20 +436,18 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
        	         ,controller: AccessibilityDialogController
        	      });
        	       
-       	      function AccessibilityDialogController(scope, $mdDialog, $window) {
-       	    	scope.enableUIO= enableUIO;
-       	    	scope.enableRobobraille= enableRobobraille;
-       	    	scope.enableVoice= enableVoice;
-       	    	scope.enableGraphSonification= enableGraphSonification;
+       	      function AccessibilityDialogController(scope, $mdDialog, $window,sbiModule_translate) {
+       	    	  scope.translate = sbiModule_translate;
+       	    	scope.enableAccessibility = enableUIO;
        	    	
        	        scope.saveAccessibilityPreferences = function(){
        	        	var preferencesObj={
        	        		id:null,
        	        		user:null,
-       	        		enableUio:scope.enableUIO,
-       	        		enableRobobraille: scope.enableRobobraille,
-       	        		enableVoice: scope.enableVoice,
-       	        		enableGraphSonification:scope.enableGraphSonification,
+       	        		enableUio:scope.enableAccessibility,
+       	        		enableRobobraille: scope.enableAccessibility,
+       	        		enableVoice: scope.enableAccessibility,
+       	        		enableGraphSonification:scope.enableAccessibility,
        	        		preferences:null
        	        	};
        				sbiModule_restServices.promisePost('2.0/preferences','',preferencesObj)
