@@ -36,6 +36,7 @@
 <%@page import="it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter"%>
 <%@page import="it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter"%>
 <%@page import="it.eng.spagobi.engine.chart.util.ChartEngineUtil"%>
+<%@page import="it.eng.spagobi.commons.bo.AccessibilityPreferences" %>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA CODE 																--%>
@@ -63,6 +64,12 @@
 	String defaultRole="";
 	List userRoles = new ArrayList();
 	
+	AccessibilityPreferences ap = null;
+	Boolean isUIOEnabled = false;
+	Boolean isRobobrailleEnabled = false;
+	Boolean isVoiceEnable = false;
+	Boolean isGraphSonificationEnabled = false;
+	
 	Integer docId = engineInstance.getDocumentId();
 	String docLabel = (engineInstance.getDocumentLabel()==null)?"":engineInstance.getDocumentLabel().toString();
 	String docName = (engineInstance.getDocumentName()==null)?"":engineInstance.getDocumentName().toString();
@@ -76,6 +83,15 @@
 		userName=(String)((UserProfile)profile).getUserName();
 		userRoles = (ArrayList)profile.getRoles();
 		defaultRole = ((UserProfile)profile).getDefaultRole();
+		ap =  UserUtilities.readAccessibilityPreferencesByUser(profile);
+	    
+	    if(ap != null){
+	    	 isUIOEnabled = ap.isEnableUio();
+	    	 isRobobrailleEnabled = ap.isEnableRobobraille();
+	    	 isVoiceEnable = ap.isEnableVoice();
+	    	 isGraphSonificationEnabled = ap.isEnableGraphSonification(); 	
+	    }
+		
 	}
 	
 	Map analyticalDrivers  = engineInstance.getAnalyticalDrivers();
