@@ -10,15 +10,20 @@ import com.wealdtech.hawk.HawkCredentials.Algorithm;
 import com.wealdtech.hawk.HawkCredentials.Builder;
 
 import it.eng.spagobi.commons.robobraillerconverter.jobmanager.JobManager;
+import it.eng.spagobi.commons.robobraillerconverter.restclient.conf.ConfigInstance;
+import it.eng.spagobi.commons.robobraillerconverter.restclient.conf.RobobrailleConfiguration;
 
 public abstract class AbstractRoboBrailleController  implements JobManager {
 	protected HttpClient httpClient;
 	protected HawkClient hawkClient;
 	protected ClientExecutor executor;
+	private RobobrailleConfiguration robobrailleConfiguration;
 	
 	public AbstractRoboBrailleController() {
+		robobrailleConfiguration  = ConfigInstance.getRobobrailleConfiguration();
 		setHawkClient();
 		setHttpClient();
+		
 	}
 	
 	
@@ -28,16 +33,18 @@ public abstract class AbstractRoboBrailleController  implements JobManager {
 		
 		httpClient = new HttpClient();
 		
-		httpClient.getHostConfiguration().setHost("2.109.50.18", 5150, "http");
+		httpClient.getHostConfiguration().setHost(	robobrailleConfiguration.getHost(), 
+																			robobrailleConfiguration.getPort(), 
+																			robobrailleConfiguration.getProtocol());
 		executor = new ApacheHttpClientExecutor(httpClient);
 		}
 
 	private void setHawkClient() {
 		Builder builder = new HawkCredentials.Builder();
 	
-		builder.keyId("9d3a2c9d-9714-e711-88c6-1c6f65d84158");
-		builder.key("f4b9be89-f819-45f9-8a50-10d21445ff22");
-		builder.algorithm(Algorithm.SHA256);
+		builder.keyId(robobrailleConfiguration.getId());
+		builder.key(robobrailleConfiguration.getKey());
+		builder.algorithm(Algorithm.parse(robobrailleConfiguration.getAlgorithm()));
 	
 		HawkCredentials hawkCredentials = builder.build();
 	
