@@ -72,7 +72,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	});
 	
 
-	function cockpitTableWidgetControllerFunction($scope,cockpitModule_widgetConfigurator,$mdDialog,$timeout,$mdPanel,$q,cockpitModule_datasetServices, $mdToast, sbiModule_translate,sbiModule_restServices,cockpitModule_widgetServices,cockpitModule_widgetSelection){
+	function cockpitTableWidgetControllerFunction($scope,cockpitModule_widgetConfigurator,$mdDialog,$timeout,$mdPanel,$q,cockpitModule_datasetServices, $mdToast, sbiModule_translate,sbiModule_restServices,cockpitModule_widgetServices,cockpitModule_widgetSelection,accessibillty_preferences){
+		$scope.accessibillty_preferences = accessibillty_preferences;
+		$scope.accessibilityModeEnabled = $scope.accessibillty_preferences.accessibilityModeEnabled;
 		$scope.selectedTab = {'tab' : 0};
 		$scope.widgetIsInit=false;
 		$scope.totalCount = 0;

@@ -54,6 +54,18 @@ angular.module("cockpitModule").factory("cockpitModule_properties",function(){
 	}
 });
 
+angular.module("cockpitModule").factory("accessibillty_preferences",function(){
+	return {
+		accessibilityModeEnabled:<%= isUIOEnabled %>,
+		isUIOEnabled:<%= isUIOEnabled %>,
+		isRobobrailleEnabled:<%= isRobobrailleEnabled %>,
+		isVoiceEnable:<%= isVoiceEnable %>,
+		isGraphSonificationEnabled:<%= isGraphSonificationEnabled %>
+		
+		
+	}
+});
+
 
 
 
