@@ -231,8 +231,9 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 							  $scope.somethingChanged = true;
 						  }else if(event=='openCross'){
 							  $scope.somethingChanged = true;
-						  }
-						  else if(event=='save'){
+						  }else if(event=='openFilters'){
+							  $scope.somethingChanged = true;
+						  }else if(event=='save'){
 							  if(!checkChartSettings()){
 								  	if($scope.localModel.chartTemplate.type.toUpperCase()=="SCATTER"){
 										showAction($scope.translate.load('sbi.cockpit.select.no.aggregation.for.all.series'));
@@ -350,17 +351,20 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 		    				  }
 			    		  }
 			    	  }
+			    	  
 			    	  $scope.cancelConfiguration=function(){
 			    		  mdPanelRef.close();
 			    		  $scope.$destroy();
 			    		  finishEdit.reject();
 			    	  }
+			    	  
 			    	  var showChartConfiguration=function(){
 				    	  var widgetData = angular.extend({"datasetLabel":$scope.localModel.datasetLabel||''},$scope.localModel);
 				    	  var execPar = buildParametersForExecution.edit(widgetData);
 				    	  angular.element(document.getElementById("chartConfigurationIframe")).scope()
 				  		  .updateContent(execPar.formAction, execPar.formParameters, 'init');
 			    	  }
+			    	  
 			    	  var showAction = function(text) {
 			  			var toast = $mdToast.simple()
 			  			.content(text)
@@ -379,15 +383,18 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 			    		  $scope.confSpinner=false;
 			    		  safeApply();
 			    	  }
+			    	  
 			    	  $scope.finishLoadingIframe=function(){
 			    		  $scope.hideWidgetSpinner();
 			    		  safeApply();
 			    	  }
+			    	  
 			    	  var safeApply=function(){
 		    			  if ($scope.$root.$$phase != '$apply' && $scope.$root.$$phase !='$digest') {
 		    				  $scope.$apply();
 		    			  }
 		    		  }
+			    	  
 			    	  $scope.handleEvent('init');
 			      },
 				disableParentScroll: true,
@@ -405,7 +412,7 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 		return finishEdit.promise;
 	}
 
-		$scope.reloadWidgetsByChartEvent = function(item){
+	$scope.reloadWidgetsByChartEvent = function(item){
 		var event= item.select != undefined ? item.select : item;
 		var crossParameters= createCrossParameters(item);
 		var chartType = $scope.ngModel.content.chartTemplate.CHART.type;
@@ -614,8 +621,8 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 		return parameters;
 	}
 };
-function setAggregationsOnChartEngine(wconf){
-	
+
+function setAggregationsOnChartEngine(wconf){	
 	var aggregations = [];
 	if(!wconf.chartTemplate.hasOwnProperty("CHART")){
 		wconf.chartTemplate = {"CHART":wconf.chartTemplate};
