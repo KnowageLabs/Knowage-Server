@@ -581,13 +581,16 @@ public class DocumentParameters {
 
 	private DefaultValuesList buildDefaultValueList() {
 		SimpleDateFormat serverDateFormat = new SimpleDateFormat(SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"));
+		String valueDate = this.getDefaultValues().get(0).getValue().toString();
+		String[] date = valueDate.split("#");
+		if (date.length < 2) {
+			throw new SpagoBIServiceException(SERVICE_NAME, "Illegal format for Value List Date Type [" + valueDate + "+], unable to find symbol [#]");
+		}
+		SimpleDateFormat format = new SimpleDateFormat(date[1]);
+		DefaultValuesList valueList = new DefaultValuesList();
+		DefaultValue valueDef = new DefaultValue();
 
 		if (this.getParType() != null && this.getParType().equals("DATE")) {
-			String valueDate = this.getDefaultValues().get(0).getValue().toString();
-			String[] date = valueDate.split("#");
-			SimpleDateFormat format = new SimpleDateFormat(date[1]);
-			DefaultValuesList valueList = new DefaultValuesList();
-			DefaultValue valueDef = new DefaultValue();
 			try {
 				Date d = format.parse(date[0]);
 				String dateServerFormat = serverDateFormat.format(d);
@@ -596,17 +599,11 @@ public class DocumentParameters {
 				valueList.add(valueDef);
 				return valueList;
 			} catch (ParseException e) {
-				logger.error("Error while building defalt Value List Date Type ", e);
+				logger.error("Error while building default Value List Date Type", e);
 				return null;
 			}
 		} else if (this.getParType() != null && this.getParType().equals("DATE_RANGE")) {
-			String valueDate = this.getDefaultValues().get(0).getValue().toString();
-			String[] date = valueDate.split("#");
-			SimpleDateFormat format = new SimpleDateFormat(date[1]);
-			DefaultValuesList valueList = new DefaultValuesList();
-			DefaultValue valueDef = new DefaultValue();
 			try {
-
 				String dateRange = date[0];
 				String[] dateRangeArr = dateRange.split("_");
 				String range = dateRangeArr[dateRangeArr.length - 1];
@@ -618,15 +615,12 @@ public class DocumentParameters {
 				valueList.add(valueDef);
 				return valueList;
 			} catch (ParseException e) {
-				logger.error("Error while building defalt Value List Date Type ", e);
+				logger.error("Error while building default Value List Date Type", e);
 				return null;
 			}
-		}
-
-		else {
+		} else {
 			return this.getDefaultValues();
 		}
-
 	}
 
 	private List executeLOV() {
