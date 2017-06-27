@@ -3,6 +3,7 @@ package it.eng.spagobi.commons.robobraillerconverter;
 import java.io.File;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.jboss.resteasy.client.ClientResponse;
 
 import it.eng.spagobi.commons.ADconverter.AccessibleDocumentConverter;
@@ -10,12 +11,13 @@ import it.eng.spagobi.commons.ADconverter.ConversionType;
 import it.eng.spagobi.commons.robobraillerconverter.jobmanager.Job;
 import it.eng.spagobi.commons.robobraillerconverter.jobmanager.JobManager;
 import it.eng.spagobi.commons.robobraillerconverter.jobmanager.JobState;
+import it.eng.spagobi.commons.robobraillerconverter.restclient.AbstractRoboBrailleController;
 import it.eng.spagobi.commons.robobraillerconverter.restclient.RoboBrailleControllerFactory;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class RoboBrailleConverter implements AccessibleDocumentConverter {
 	JobManager jobManager = null;
-	
+	static protected Logger logger = Logger.getLogger(RoboBrailleConverter.class);
 	public RoboBrailleConverter(ConversionType conversionType) {
 		
 		RoboBrailleControllerFactory rcFactory = new RoboBrailleControllerFactory();
@@ -33,17 +35,18 @@ public class RoboBrailleConverter implements AccessibleDocumentConverter {
 				counter++;
 				
 				jobManager.setJobStatus(job);
-				if(counter>15){
+				if(counter>100){
 					job.setJobState(JobState.ERROR);
 				}
 				Thread.sleep(2000);
 			} catch (InterruptedException e) {
+				logger.error("Thread interupted",e);
 				throw new SpagoBIRuntimeException("Thread interupted",e);
 			}
 		}
 		
 		if(job.getJobState() == JobState.ERROR){
-			
+			logger.error("Job State is ERROR");
 			throw new SpagoBIRuntimeException("Error in coverting");
 			
 		}
