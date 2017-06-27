@@ -37,6 +37,8 @@ public class RoboBrailleConverter implements AccessibleDocumentConverter {
 				jobManager.setJobStatus(job);
 				if(counter>100){
 					job.setJobState(JobState.ERROR);
+					logger.error("Timeout");
+					throw new SpagoBIRuntimeException("Timeout");
 				}
 				Thread.sleep(2000);
 			} catch (InterruptedException e) {
