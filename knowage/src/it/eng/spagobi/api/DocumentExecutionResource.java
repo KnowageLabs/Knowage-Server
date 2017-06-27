@@ -1181,6 +1181,9 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			String valueDate = sessionParameterValue;
 
 			String[] date = valueDate.split("#");
+			if (date.length < 2) {
+				throw new SpagoBIRuntimeException("Illegal format for Value List Date Type [" + valueDate + "+], unable to find symbol [#]");
+			}
 			SimpleDateFormat format = new SimpleDateFormat(date[1]);
 			DefaultValue valueDef = new DefaultValue();
 			try {
@@ -1191,7 +1194,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				valueList.add(valueDef);
 				return valueList;
 			} catch (ParseException e) {
-				logger.error("Error while building defalt Value List Date Type ", e);
+				logger.error("Error while building default Value List Date Type ", e);
 				return null;
 			}
 		} else if (objParameter.getParameter().getType().equals("DATE_RANGE")) {
@@ -1213,7 +1216,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				valueList.add(valueDef);
 				return valueList;
 			} catch (ParseException e) {
-				logger.error("Error while building defalt Value List Date Type ", e);
+				logger.error("Error while building default Value List Date Type ", e);
 				return null;
 			}
 		}
