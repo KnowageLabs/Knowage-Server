@@ -1,8 +1,10 @@
 package it.eng.spagobi.commons.robobraillerconverter.restclient;
 
+import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpState;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.log4j.Logger;
 import org.jboss.resteasy.client.ClientExecutor;
 import org.jboss.resteasy.client.core.executors.ApacheHttpClientExecutor;
@@ -36,21 +38,28 @@ public abstract class AbstractRoboBrailleController implements JobManager {
 
 		String proxyHost = System.getProperty("http.robobrailleProxyHost");
 		String proxyPort = System.getProperty("http.robobrailleProxyPort");
-		int proxyPortInt = CKANUtils.portAsInteger(proxyPort);
+		int proxyPortInt = Integer.parseInt(proxyPort);
 		String proxyUsername = System.getProperty("http.proxyUsername");
 		String proxyPassword = System.getProperty("http.proxyPassword");
 
 		httpClient = new HttpClient();
-		httpClient.setTimeout(10000);
-		if (proxyHost != null && proxyPortInt > 0 && proxyUsername != null && proxyUsername != "") {
-			httpClient.getHostConfiguration().setProxy(proxyHost, proxyPortInt);
-			HttpState state = new HttpState();
-			state.setProxyCredentials(null, null, new UsernamePasswordCredentials(proxyUsername, proxyPassword));
-			httpClient.setState(state);
+		
+		if (proxyHost != null && proxyPortInt > 0) {
+			if(proxyUsername != null && proxyPassword != null){
+				logger.debug("Setting proxy with authentication");
+				httpClient.getHostConfiguration().setProxy(proxyHost, proxyPortInt);
+				AuthScope authscope  = new AuthScope(proxyHost, proxyPortInt);
+				Credentials credentials = new UsernamePasswordCredentials(proxyUsername,proxyPassword); 
+				httpClient.getState().setProxyCredentials(authscope, credentials);
+				logger.debug("Proxy with authentication set");
+			} else {
+				logger.debug("Setting proxy without authentication");
+				httpClient.getHostConfiguration().setProxy(proxyHost, proxyPortInt);
+				logger.debug("Proxy without authentication set");
+			}
+			
 		} else {
-			logger.debug("Setting proxy without authentication");
-			httpClient.getHostConfiguration().setProxy(proxyHost, proxyPortInt);
-			logger.debug("Proxy without authentication set");
+			logger.debug("No proxy configuration found");
 		}
 
 		httpClient.getHostConfiguration().setHost(robobrailleConfiguration.getHost(), robobrailleConfiguration.getPort(),
@@ -69,6 +78,30 @@ public abstract class AbstractRoboBrailleController implements JobManager {
 
 		hawkClient = new HawkClient.Builder().credentials(hawkCredentials).build();
 
+	}
+	
+	private void setProxy(){
+		String proxyHost = System.getProperty("http.robobrailleProxyHost");
+		String proxyPort = System.getProperty("http.robobrailleProxyPort");
+		int proxyPortInt = Integer.parseInt(proxyPort);
+		String proxyUsername = System.getProperty("http.proxyUsername");
+		String proxyPassword = System.getProperty("http.proxyPassword");
+		AuthScope authscope = null;
+		httpClient = new HttpClient();
+		
+		if (proxyHost != null && proxyPortInt > 0 && proxyUsername != null && !proxyUsername.isEmpty()) {
+			
+			logger.debug("Setting proxy with authentication");
+			httpClient.getHostConfiguration().setProxy(proxyHost, proxyPortInt);
+			authscope  = new AuthScope(proxyHost, proxyPortInt);
+			Credentials credentials = new UsernamePasswordCredentials(proxyUsername,proxyPassword); 
+			httpClient.getState().setProxyCredentials(authscope, credentials);
+			logger.debug("Proxy with authentication set");
+		} else {
+			logger.debug("Setting proxy without authentication");
+			httpClient.getHostConfiguration().setProxy(proxyHost, proxyPortInt);
+			logger.debug("Proxy without authentication set");
+		}
 	}
 
 }
