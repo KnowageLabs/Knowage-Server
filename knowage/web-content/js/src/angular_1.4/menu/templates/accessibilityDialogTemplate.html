@@ -12,11 +12,11 @@
 		</div>
 	</md-dialog-content>
 	<md-dialog-actions layout="row">
+		<md-button ng-click="closeDialog()" class="md-primary">
+			{{translate.load('sbi.accessibility.settings.close')}}
+  	    </md-button>
  		<md-button ng-click="saveAccessibilityPreferences()" class="md-primary">
 			{{translate.load('sbi.accessibility.settings.save')}}
    	   	</md-button>
-	  	<md-button ng-click="closeDialog()" class="md-primary">
-			{{translate.load('sbi.accessibility.settings.close')}}
-  	    </md-button>
 	</md-dialog-actions>
 </md-dialog>                                         
