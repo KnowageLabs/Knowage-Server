@@ -1,6 +1,5 @@
 package it.eng.spagobi.commons.robobraillerconverter.restclient.conf;
 
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
@@ -12,6 +11,7 @@ public class RobobrailleConfiguration {
 	private String id;
 	private String key;
 	private String algorithm;
+	
 	public String getHost() {
 		return host;
 	}
