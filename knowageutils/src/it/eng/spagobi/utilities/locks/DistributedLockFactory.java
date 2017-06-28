@@ -18,10 +18,16 @@
 
 package it.eng.spagobi.utilities.locks;
 
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.locks.constants.HazelcastConstant;
+
+import java.io.FileNotFoundException;
+
 import org.apache.log4j.Logger;
 
 import com.hazelcast.config.ClasspathXmlConfig;
 import com.hazelcast.config.Config;
+import com.hazelcast.config.FileSystemXmlConfig;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
@@ -58,8 +64,19 @@ public class DistributedLockFactory {
 	}
 
 	private static Config getDefaultConfig() {
-		if (defaultConfig == null) {
-			defaultConfig = new ClasspathXmlConfig("hazelcast.xml");
+		try {
+			if (defaultConfig == null) {
+				String configFilename = System.getProperty(HazelcastConstant.HAZELCAST_CONFIG);
+				if (configFilename != null) {
+					logger.debug("Creating Hazelcast instance from system property config [" + configFilename + "]");
+					defaultConfig = new FileSystemXmlConfig(configFilename);
+				} else {
+					logger.debug("Creating Hazelcast instance from classpath config [" + configFilename + "]");
+					defaultConfig = new ClasspathXmlConfig("hazelcast.xml");
+				}
+			}
+		} catch (FileNotFoundException ex) {
+			throw new SpagoBIRuntimeException("Impossible to load system property config for Hazelcast", ex);
 		}
 		return defaultConfig;
 	}
