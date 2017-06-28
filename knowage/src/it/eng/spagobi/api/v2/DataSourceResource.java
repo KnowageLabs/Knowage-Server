@@ -22,6 +22,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.services.serialization.JsonConverter;
@@ -38,7 +39,10 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -69,7 +73,7 @@ import com.mongodb.MongoClient;
 @Path("/2.0/datasources")
 @ManageAuthorization
 public class DataSourceResource extends AbstractSpagoBIResource {
-	
+
 	public static final String SERVICE_NAME = "2.0/datasources/";
 
 	static protected Logger logger = Logger.getLogger(DataSourceResource.class);
@@ -208,8 +212,46 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 
 		logger.debug("IN");
 
-		try {
+		// if the ds is associated with any BIEngine or BIObjects, creates an error
+		Map<String, List<String>> objNames = DAOFactory.getDataSourceDAO().returnEntitiesAssociated(dsId);
 
+		if (objNames.size() > 0) {
+			logger.warn("datasource is in use, build message");
+
+			String[] dependsBy = new String[] { "sbi.datasource.usedby.biobject", "sbi.datasource.usedby.metamodel", "sbi.datasource.usedby.dataset",
+					"sbi.datasource.usedby.lov" };
+
+			String message = "";
+			MessageBuilder msgBuild = new MessageBuilder();
+			Locale locale = buildLocaleFromSession();
+
+			for (int j = 0; j < dependsBy.length; j++) {
+				String key = dependsBy[j];
+				String translatedKey = msgBuild.getMessage(key, locale);
+				if (objNames.get(key) != null) {
+					int i = 0;
+					for (Iterator iterator = objNames.get(key).iterator(); iterator.hasNext();) {
+						String objName = (String) iterator.next();
+						if (i == 0) {
+							message += translatedKey + " ( " + objName;
+						} else {
+							message += ", " + objName;
+						}
+						if(i == objNames.get(key).size()-1){
+							message += ") ";
+						}
+						i++;
+					}
+					
+					
+					message += "\n";
+				}
+			}
+
+			throw new SpagoBIRestServiceException(msgBuild.getMessage("sbi.datasource.usedby", locale) + message, locale, new Exception());
+		}
+
+		try {
 			DataSource dataSource = new DataSource();
 			dataSource.setDsId(dsId);
 			dataSourceDAO = DAOFactory.getDataSourceDAO();
@@ -363,7 +405,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	public String testDataSource(@Valid DataSource dataSource) throws Exception {
 
 		logger.debug("IN");
-		
+
 		String url = dataSource.getUrlConnection();
 		String user = dataSource.getUser();
 		String pwd = dataSource.getPwd();
@@ -379,7 +421,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 
 		if (jndi != null && jndi.length() > 0) {
 			String jndiName = schema == null ? jndi : jndi + schema;
-			
+
 			try {
 				logger.debug("Lookup JNDI name:" + jndiName);
 				Context ctx = new InitialContext();
@@ -387,15 +429,15 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 				connection = ds.getConnection();
 			} catch (AuthenticationException e) {
 				logger.error("Error while attempting to reacquire the authentication information on provided JNDI name", e);
-			    throw new SpagoBIServiceException(SERVICE_NAME, e);
+				throw new SpagoBIServiceException(SERVICE_NAME, e);
 			} catch (NamingException e) {
 				logger.error("Error with provided JNDI name. Can't find the database with that name.", e);
 				throw new SpagoBIServiceException(SERVICE_NAME, e);
 			} catch (Exception e) {
 				logger.error("Error with provided JNDI name.", e);
-				throw new SpagoBIServiceException(SERVICE_NAME, e);	
+				throw new SpagoBIServiceException(SERVICE_NAME, e);
 			}
-			
+
 		} else {
 
 			if (driver.toLowerCase().contains("mongo")) {
