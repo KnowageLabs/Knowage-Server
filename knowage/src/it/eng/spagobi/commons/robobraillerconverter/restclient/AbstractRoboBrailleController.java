@@ -39,8 +39,8 @@ public abstract class AbstractRoboBrailleController implements JobManager {
 		String proxyHost = System.getProperty("http.robobrailleProxyHost");
 		String proxyPort = System.getProperty("http.robobrailleProxyPort");
 		int proxyPortInt = Integer.parseInt(proxyPort);
-		String proxyUsername = System.getProperty("http.proxyUsername");
-		String proxyPassword = System.getProperty("http.proxyPassword");
+		String proxyUsername = System.getProperty("http.robobrailleProxyUsername");
+		String proxyPassword = System.getProperty("http.robobrailleProxyPassword");
 
 		httpClient = new HttpClient();
 		
