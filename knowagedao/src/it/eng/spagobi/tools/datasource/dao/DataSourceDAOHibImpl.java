@@ -19,6 +19,7 @@ package it.eng.spagobi.tools.datasource.dao;
 
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.analiticalmodel.document.metadata.SbiObjects;
 import it.eng.spagobi.behaviouralmodel.lov.metadata.SbiLov;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
@@ -30,6 +31,7 @@ import it.eng.spagobi.commons.metadata.SbiOrganizationDatasourceId;
 import it.eng.spagobi.commons.metadata.SbiTenant;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.json.Xml;
+import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.datasource.bo.DataSource;
@@ -39,8 +41,10 @@ import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
@@ -65,15 +69,12 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 	/**
 	 * Load data source by id.
-	 *
+	 * 
 	 * @param dsID
 	 *            the ds id
-	 *
 	 * @return the data source
-	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 *
 	 * @see it.eng.spagobi.tools.datasource.dao.IDataSourceDAO#loadDataSourceByID(java.lang.Integer)
 	 */
 	@Override
@@ -111,15 +112,12 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 	/**
 	 * Load data source by label.
-	 *
+	 * 
 	 * @param label
 	 *            the label
-	 *
 	 * @return the data source
-	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 *
 	 * @see it.eng.spagobi.tools.datasource.dao.IDataSourceDAO#loadDataSourceByLabel(string)
 	 */
 	@Override
@@ -208,12 +206,10 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 	/**
 	 * Load all data sources.
-	 *
+	 * 
 	 * @return the list
-	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 *
 	 * @see it.eng.spagobi.tools.datasource.dao.IDataSourceDAO#loadAllDataSources()
 	 */
 	@Override
@@ -298,12 +294,10 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 	/**
 	 * Load dialect by id.
-	 *
+	 * 
 	 * @param dialectId
 	 *            the dialect id
-	 *
 	 * @return the dialect
-	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
 	 */
@@ -332,13 +326,11 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 	/**
 	 * Modify data source.
-	 *
+	 * 
 	 * @param aDataSource
 	 *            the a data source
-	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 *
 	 * @see it.eng.spagobi.tools.datasource.dao.IDataSourceDAO#modifyDataSource(it.eng.spagobi.tools.datasource.bo.DataSource)
 	 */
 	@Override
@@ -533,13 +525,11 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 	/**
 	 * Insert data source.
-	 *
+	 * 
 	 * @param aDataSource
 	 *            the a data source
-	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 *
 	 * @see it.eng.spagobi.tools.datasource.dao.IDataSourceDAO#insertDataSource(it.eng.spagobi.tools.datasource.bo.DataSource)
 	 */
 	@Override
@@ -624,13 +614,11 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 	/**
 	 * Erase data source.
-	 *
+	 * 
 	 * @param aDataSource
 	 *            the a data source
-	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 *
 	 * @see it.eng.spagobi.tools.datasource.dao.IDataSourceDAO#eraseDataSource(it.eng.spagobi.tools.datasource.bo.DataSource)
 	 */
 	@Override
@@ -664,10 +652,9 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 	/**
 	 * From the hibernate DataSource at input, gives the corrispondent <code>DataSource</code> object.
-	 *
+	 * 
 	 * @param hibDataSource
 	 *            The hybernate data source
-	 *
 	 * @return The corrispondent <code>DataSource</code> object
 	 */
 	public static DataSourceModel toDataSource(SbiDataSource hibDataSource) {
@@ -696,15 +683,12 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 	/**
 	 * Checks for bi obj associated.
-	 *
+	 * 
 	 * @param dsId
 	 *            the ds id
-	 *
 	 * @return true, if checks for bi obj associated
-	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 *
 	 * @see it.eng.spagobi.tools.datasource.dao.IDataSourceDAO#hasBIObjAssociated(java.lang.String)
 	 */
 	@Override
@@ -746,6 +730,190 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 		}
 		logger.debug("OUT");
 		return bool;
+
+	}
+
+	/**
+	 * Checks for entities associated. Objects, Models, datasets and lovs
+	 */
+
+	@Override
+	public Map<String, List<String>> returnEntitiesAssociated(Integer dsId) throws EMFUserError {
+		logger.debug("IN");
+		// map to return
+		Map<String, List<String>> mapToReturn = new HashMap<String, List<String>>();
+
+		List<String> objectNamesAssociatedWithDS = new ArrayList<>();
+		logger.debug("Check for BIObject associated to datasource");
+
+		Session aSession = null;
+		Transaction tx = null;
+
+		try {
+
+			try {
+				// check if there are objects using datasource
+				aSession = getSession();
+				tx = aSession.beginTransaction();
+				logger.debug("Check for Objects associated to datasource");
+				String hql = " from SbiObjects s where s.dataSource.dsId = ?";
+				Query aQuery = aSession.createQuery(hql);
+				aQuery.setInteger(0, dsId.intValue());
+				List biObjectsAssocitedWithDs = aQuery.list();
+				for (Iterator iterator = biObjectsAssocitedWithDs.iterator(); iterator.hasNext();) {
+					SbiObjects sbiObj = (SbiObjects) iterator.next();
+					objectNamesAssociatedWithDS.add(sbiObj.getName() != null ? sbiObj.getName() : sbiObj.getLabel());
+				}
+				tx.commit();
+			} catch (HibernateException he) {
+				logger.error("Error while getting the objects associated with the data source with id " + dsId, he);
+				if (tx != null)
+					tx.rollback();
+				throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+			}
+
+			if (objectNamesAssociatedWithDS.size() > 0) {
+				mapToReturn.put("sbi.datasource.usedby.biobject", objectNamesAssociatedWithDS);
+				logger.debug("there are objects using datasource, return them");
+			}
+
+			logger.debug("Check for Meta Model associated to datasource");
+			List<String> metaModelNamesAssociatedWithDS = new ArrayList<>();
+			try {
+				aSession = getSession();
+				tx = aSession.beginTransaction();
+				String hql = " from SbiMetaModel s where s.dataSource.dsId = ?";
+				Query aQuery = aSession.createQuery(hql);
+				aQuery.setInteger(0, dsId.intValue());
+				List metaModelsAssocitedWithDs = aQuery.list();
+				for (Iterator iterator = metaModelsAssocitedWithDs.iterator(); iterator.hasNext();) {
+					SbiMetaModel sbiMetaModel = (SbiMetaModel) iterator.next();
+					metaModelNamesAssociatedWithDS.add(sbiMetaModel.getName());
+				}
+				tx.commit();
+			} catch (HibernateException he) {
+				logger.error("Error while getting the meta models associated with the data source with id " + dsId, he);
+				if (tx != null)
+					tx.rollback();
+				throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+			}
+			if (metaModelNamesAssociatedWithDS.size() > 0) {
+				mapToReturn.put("sbi.datasource.usedby.metamodel", metaModelNamesAssociatedWithDS);
+				logger.debug("there are meta models using datasource, return them");
+			}
+
+			logger.debug("Check for DataSet associated to datasource");
+			String dataSourceLabel = null;
+
+			List<String> dataSetNamesAssociatedWithDS = new ArrayList<>();
+
+			try {
+				aSession = getSession();
+				tx = aSession.beginTransaction();
+
+				SbiDataSource dSource = (SbiDataSource) aSession.load(SbiDataSource.class, dsId);
+				dataSourceLabel = dSource.getLabel();
+
+				String hql = " from SbiDataSet s where s.active = ? AND s.type IN " + " ('" + DataSetConstants.DS_QUERY + "','" + DataSetConstants.DS_QBE
+						+ "')";
+				Query aQuery = aSession.createQuery(hql);
+				aQuery.setBoolean(0, true);
+
+				List dataSetAssocitedWithDs = aQuery.list();
+				for (Iterator iterator = dataSetAssocitedWithDs.iterator(); iterator.hasNext();) {
+					SbiDataSet sbiDataSet = (SbiDataSet) iterator.next();
+					String configuration = sbiDataSet.getConfiguration();
+					JSONObject configurationJSON = new JSONObject(configuration);
+					String ds = configurationJSON.optString("dataSource");
+					if (ds == null || ds.equals(""))
+						ds = configurationJSON.optString("qbeDataSource");
+					if (ds != null && ds.equals(dataSourceLabel)) {
+						dataSetNamesAssociatedWithDS.add(sbiDataSet.getName() != null ? sbiDataSet.getName() : sbiDataSet.getLabel());
+					}
+				}
+				tx.commit();
+			} catch (JSONException he) {
+				logger.error("Error while converting dataset configuration to JSON: dataset id = " + dsId, he);
+				if (tx != null)
+					tx.rollback();
+				throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+			} catch (HibernateException he) {
+				logger.error("Error while getting the objects associated with the data source with id " + dsId, he);
+				if (tx != null)
+					tx.rollback();
+				throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+			}
+
+			if (dataSetNamesAssociatedWithDS.size() > 0) {
+				mapToReturn.put("sbi.datasource.usedby.dataset", dataSetNamesAssociatedWithDS);
+				logger.debug("there are datasets using datasource, return them");
+			}
+
+			List<String> lovNamesAssociatedWithDS = new ArrayList<>();
+			logger.debug("Check for Lov associated to datasource");
+
+			try {
+				aSession = getSession();
+				tx = aSession.beginTransaction();
+
+				String hql = " from SbiLov s where inputTypeCd = ?";
+				Query aQuery = aSession.createQuery(hql);
+				aQuery.setString(0, "QUERY");
+
+				List lovAssocitedWithDs = aQuery.list();
+				SbiLov sbiLov = null;
+				for (Iterator iterator = lovAssocitedWithDs.iterator(); iterator.hasNext();) {
+					sbiLov = (SbiLov) iterator.next();
+					String lovProvider = sbiLov.getLovProvider();
+					lovProvider = escapeXML(lovProvider, true);
+
+					try {
+						String statementString = Xml.xml2json(lovProvider);
+						JSONObject queryObject = new JSONObject(statementString);
+						String queryString = queryObject.getString("QUERY");
+						JSONObject connectionObject = new JSONObject(queryString);
+						String conne = connectionObject.getString("CONNECTION");
+
+						if (conne.equals(dataSourceLabel)) {
+							lovNamesAssociatedWithDS.add(sbiLov.getName() != null ? sbiLov.getName() : sbiLov.getLabel());
+						}
+
+						if (lovNamesAssociatedWithDS.size() > 0) {
+							mapToReturn.put("sbi.datasource.usedby.lov", lovNamesAssociatedWithDS);
+							logger.debug("there are lovs using datasource, return them");
+						}
+
+					} catch (TransformerFactoryConfigurationError e) {
+						logger.error("Problem with configuration of Transformer Factories during xml2json", e);
+						throw new SpagoBIDAOException(e);
+					} catch (TransformerException e) {
+						logger.error("Error during xml to json transformation of provider from lov with id: " + sbiLov.getLovId(), e);
+						throw new SpagoBIDAOException(e);
+					} catch (JSONException e) {
+						logger.error("Error occured during json object creation from json string", e);
+						throw new SpagoBIDAOException(e);
+					}
+				}
+
+			} catch (HibernateException he) {
+				logger.error("Error while getting the entities associated with the data source with id " + dsId, he);
+				if (tx != null)
+					tx.rollback();
+				throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+			}
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+
+		logger.debug("OUT");
+
+		return mapToReturn;
 
 	}
 

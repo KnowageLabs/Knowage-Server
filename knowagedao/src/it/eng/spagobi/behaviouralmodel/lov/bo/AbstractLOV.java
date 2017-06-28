@@ -87,7 +87,10 @@ public abstract class AbstractLOV implements ILovDetail {
 							parameters.put(objParam.getParameter().getLabel(), parameterValue);
 						} else {
 							logger.error("The parameter with name [" + objParam.getParameter().getLabel() + "] is null");
-							throw new MissingLOVDependencyException("Impossible to retrieve all the parameters value for the LOV.");
+							MissingLOVDependencyException mlda = new MissingLOVDependencyException(
+									"Impossible to retrieve all the parameters value for the LOV.");
+							mlda.setDependsFrom(objParam.getParameter().getLabel());
+							throw mlda;
 						}
 					}
 				}
