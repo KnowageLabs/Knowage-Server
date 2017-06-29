@@ -57,7 +57,7 @@
           
         </md-content>
       </md-tab>
-      <md-tab label='accessibility'>
+      <md-tab label='{{translate.load("gisengine.rigthMapMenu.analysisType.accessibilityRanges")}}'>
         <md-content>
         <md-chips class="smallChips" ng-model="template.accessibilityConf.ranges" readonly="false" md-removable="true">
 	      <md-chip-template>
