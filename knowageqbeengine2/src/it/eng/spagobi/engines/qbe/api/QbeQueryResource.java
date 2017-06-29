@@ -407,7 +407,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		QueryGraph queryGraph = null;
 		try {
 
-			queryGraph = this.getQueryGraphFromRequest(query, modelEntities, ambiguousFieldsPaths);
+			queryGraph = getQueryGraphFromRequest(query, modelEntities, ambiguousFieldsPaths);
 
 			if (queryGraph != null) {
 				// check if the graph selected by the user is still valid
@@ -794,7 +794,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			// if (dataset instanceof HQLDataSet || dataset instanceof
 			// JPQLDataSet) {
 			// dataset defined on a model --> save it as a Qbe dataset
-			datasetId = this.saveQbeDataset(dataset, label, name, description, scopeId, scopeCd, categoryId, categoryCd, isPersisted, isScheduled,
+			datasetId = saveQbeDataset(dataset, label, name, description, scopeId, scopeCd, categoryId, categoryCd, isPersisted, isScheduled,
 					persistTable, startDateField, endDateField, schedulingCronLine, meta, qbeJSONQuery);
 			// } else {
 			// // dataset defined on another dataset --> save it as a flat
