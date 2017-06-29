@@ -23,7 +23,6 @@ geoM.service('geoModule_ranges',function(){
 	var tempData;
 
 	self.getRangeableColumns = function(data, rangesNames){
-		debugger;
 		tempData = data;
 		for(var k in data.metaData.fields){
 			if(data.metaData.fields[k] && data.metaData.fields[k].role == "MEASURE"){
