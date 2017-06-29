@@ -1,5 +1,7 @@
 package it.eng.spagobi.engines.qbe.api;
 
+import it.eng.qbe.dataset.FederatedDataSet;
+import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.qbe.model.accessmodality.IModelAccessModality;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
@@ -33,13 +35,20 @@ import it.eng.qbe.statement.graph.serializer.RelationJSONSerializer;
 import it.eng.qbe.statement.hibernate.HQLDataSet;
 import it.eng.qbe.statement.jpa.JPQLDataSet;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.services.common.SsoServiceInterface;
+import it.eng.spagobi.services.proxy.DataSetServiceProxy;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
+import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
@@ -47,6 +56,7 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.json.JSONUtils;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import java.util.ArrayList;
@@ -59,7 +69,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -90,39 +99,20 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 	public static transient Logger auditlogger = Logger.getLogger("audit.query");
 	protected boolean handleTimeFilter = true;
 
-	@SuppressWarnings("unchecked")
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	public String proba() throws Exception {
-
-		String message;
-		JSONObject json = new JSONObject();
-		Query query = deserializeQuery(json);
-		json.put("test1", "value1");
-		JSONObject jsonObj = new JSONObject();
-
-		jsonObj.put("id", 0);
-		jsonObj.put("name", "testName");
-		json.put("test2", jsonObj);
-
-		message = json.toString();
-
-		return message;
-	}
-
 	@POST
 	@Path("/setQueryCatalog")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response setQueryCatalog(@QueryParam("currentQueryId") String currentQueryId, @QueryParam("ambiguousFieldsPaths") String ambiguousFieldsPaths,
-			@QueryParam("ambiguousRoles") String ambiguousRoles, @javax.ws.rs.core.Context HttpServletRequest req) {
+	public Response setQueryCatalog(@QueryParam("currentQueryId") String currentQueryId, @javax.ws.rs.core.Context HttpServletRequest req,
+			JSONObject jsonEncodedRequest) {
 
 		Monitor totalTimeMonitor = null;
 		Monitor errorHitsMonitor = null;
 
-		JSONArray jsonEncodedCatalogue = null;
+		JSONObject jsonEncodedReq = null;
 		JSONArray catalogue;
 		JSONObject queryJSON;
 		Query query;
+		JSONArray queries;
 		QueryGraph oldQueryGraph = null;
 		String roleSelectionFromTheSavedQuery = null;
 		boolean isDierctlyExecutable = false;
@@ -153,24 +143,38 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 					logger.debug("The previous oldQueryGraph is " + oldQueryGraph);
 				}
 			}
+			if (req != null) {
+				jsonEncodedReq = RestUtilities.readBodyAsJSONObject(req);
+			} else {
+				jsonEncodedReq = jsonEncodedRequest;
+			}
+			catalogue = jsonEncodedReq.getJSONArray("catalogue");
+			if (catalogue == null) {
+				catalogue = jsonEncodedReq.getJSONArray("qbeJSONQuery");
+				JSONObject jo = new JSONObject(catalogue);
+				jo = jo.getJSONObject("catalogue");
+				queries = jo.getJSONArray("queries");
+			} else {
+				queries = new JSONArray(catalogue.toString());
+			}
+			String ambiguousFieldsPaths = jsonEncodedReq.getString("ambiguousFieldsPaths");
+			String ambiguousRoles = jsonEncodedReq.getString("ambiguousRoles");
 
-			// get the cataologue from the request
-			jsonEncodedCatalogue = RestUtilities.readBodyAsJSONArray(req);
-
-			logger.debug("catalogue" + " = [" + jsonEncodedCatalogue + "]");
+			logger.debug("catalogue" + " = [" + catalogue + "]");
 
 			try {
 
-				for (int i = 0; i < jsonEncodedCatalogue.length(); i++) {
-					queryJSON = jsonEncodedCatalogue.getJSONObject(i);
+				for (int i = 0; i < queries.length(); i++) {
+					queryJSON = queries.getJSONObject(i);
 					query = deserializeQuery(queryJSON);
 					getEngineInstance().getQueryCatalogue().addQuery(query);
 					getEngineInstance().resetActiveQuery();
-				}
 
+				}
 			} catch (SerializationException e) {
 				String message = "Impossible to deserialize query";
 				throw new SpagoBIEngineServiceException("DESERIALIZATING QUERY", message, e);
+
 			}
 
 			query = getCurrentQuery(currentQueryId);
@@ -559,7 +563,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 				limit = Integer.parseInt(limitS);
 			}
 
-			query = getQuery(id);
+			query = getCurrentQuery(id);
 			if (getEngineInstance().getActiveQuery() == null || !getEngineInstance().getActiveQuery().getId().equals(query.getId())) {
 				logger.debug("Query with id [" + query.getId() + "] is not the current active query. A new statment will be generated");
 				getEngineInstance().setActiveQuery(query);
@@ -607,11 +611,6 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		JSONDataWriter dataSetWriter = new JSONDataWriter();
 		JSONObject gridDataFeed = (JSONObject) dataSetWriter.write(dataStore);
 		return gridDataFeed;
-	}
-
-	public Query getQuery(String id) {
-		Query query = getEngineInstance().getQueryCatalogue().getQuery(id);
-		return query;
 	}
 
 	public static void updatePromptableFiltersValue(Query query, String promptableFilters) throws JSONException {
@@ -769,4 +768,249 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 
 	}
 
+	@POST
+	@Path("/saveDataSet")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response saveDataSet(@QueryParam("currentQueryId") String currentQueryId, @javax.ws.rs.core.Context HttpServletRequest req,
+			@javax.ws.rs.core.Context HttpServletRequest req1, @QueryParam("label") String label, @QueryParam("name") String name,
+			@QueryParam("description") String description, @QueryParam("isPersisted") String isPersisted, @QueryParam("isScheduled") String isScheduled,
+			@QueryParam("persistTable") String persistTable, @QueryParam("startDateField") String startDateField,
+			@QueryParam("endDateField") String endDateField, @QueryParam("scopeId") String scopeId, @QueryParam("scopeCd") String scopeCd,
+			@QueryParam("categoryId") String categoryId, @QueryParam("categoryCd") String categoryCd, @QueryParam("qbeDataSource") String qbeDataSource,
+			@QueryParam("sourceDatasetLabel") String sourceDatasetLabel, @QueryParam("isFlatDataset") String isFlatDataset) {
+		Monitor totalTimeMonitor = null;
+		Monitor errorHitsMonitor = null;
+		try {
+			handleTimeFilter = false;
+
+			JSONObject jsonEncodedRequest = RestUtilities.readBodyAsJSONObject(req);
+			setQueryCatalog(currentQueryId, null, jsonEncodedRequest);
+			String schedulingCronLine = jsonEncodedRequest.getString("schedulingCronLine");
+			String meta = jsonEncodedRequest.getString("meta");
+			String qbeJSONQuery = jsonEncodedRequest.getString("qbeJSONQuery");
+			validateLabel(label);
+			IDataSet dataset = getEngineInstance().getActiveQueryAsDataSet();
+			int datasetId = -1;
+			// if (dataset instanceof HQLDataSet || dataset instanceof
+			// JPQLDataSet) {
+			// dataset defined on a model --> save it as a Qbe dataset
+			datasetId = this.saveQbeDataset(dataset, label, name, description, scopeId, scopeCd, categoryId, categoryCd, isPersisted, isScheduled,
+					persistTable, startDateField, endDateField, schedulingCronLine, meta, qbeJSONQuery);
+			// } else {
+			// // dataset defined on another dataset --> save it as a flat
+			// dataset
+			// datasetId = this.saveFlatDataset(dataset);
+			// }
+			JSONObject obj = new JSONObject();
+			obj.put("success", "true");
+			obj.put("id", String.valueOf(datasetId));
+			return Response.ok(obj.toString()).build();
+
+		} catch (Throwable t) {
+			errorHitsMonitor = MonitorFactory.start("QbeEngine.errorHits");
+			errorHitsMonitor.stop();
+			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("error while saving dataset", getEngineInstance(), t);
+		} finally {
+			if (totalTimeMonitor != null)
+				totalTimeMonitor.stop();
+			logger.debug("OUT");
+		}
+	}
+
+	private void validateLabel(String label) {
+		DataSetServiceProxy proxy = (DataSetServiceProxy) getEnv().get(EngineConstants.ENV_DATASET_PROXY);
+		IDataSet dataset = proxy.getDataSetByLabel(label);
+		if (dataset != null) {
+			throw new SpagoBIRuntimeException("Label already in use");
+		}
+	}
+
+	private int saveQbeDataset(IDataSet dataset, String label, String name, String description, String scopeId, String scopeCd, String categoryId,
+			String categoryCd, String isPersisted, String isScheduled, String persistTable, String startDateField, String endDateField,
+			String schedulingCronLine, String meta, String qbeJSONQuery) {
+
+		QbeDataSet newDataset = createNewQbeDataset(dataset, label, name, description, scopeId, scopeCd, categoryId, categoryCd, isPersisted, isScheduled,
+				persistTable, startDateField, endDateField, schedulingCronLine, meta, qbeJSONQuery);
+
+		IDataSet datasetSaved = saveNewDataset(newDataset);
+
+		int datasetId = datasetSaved.getId();
+		return datasetId;
+	}
+
+	private QbeDataSet createNewQbeDataset(IDataSet dataset, String label, String name, String description, String scopeIdParam, String scopeCdParam,
+			String categoryIdParam, String categoryCdParam, String isPersistedParam, String isScheduledParam, String persistTable, String startDateField,
+			String endDateField, String schedulingCronLine, String meta, String qbeJSONQuery) {
+		AbstractQbeDataSet qbeDataset = (AbstractQbeDataSet) dataset;
+
+		QbeDataSet newDataset;
+
+		UserProfile profile = (UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
+
+		// if its a federated dataset we've to add the dependent datasets
+		if (getEnv().get(EngineConstants.ENV_FEDERATION) != null) {
+
+			FederationDefinition federation = (FederationDefinition) getEnv().get(EngineConstants.ENV_FEDERATION);
+			// Object relations = (getEnv().get(EngineConstants.ENV_RELATIONS));
+			// if (relations != null) {
+			// federation.setRelationships(relations.toString());
+			// } else {
+			// logger.debug("No relation defined " + relations);
+			// }
+			//
+			// federation.setLabel((getEnv().get(EngineConstants.ENV_FEDERATED_ID).toString()));
+			// federation.setFederation_id(new Integer((String)
+			// (getEnv().get(EngineConstants.ENV_FEDERATED_ID))));
+
+			newDataset = new FederatedDataSet(federation, (String) profile.getUserId());
+			// ((FederatedDataSet)
+			// newDataset).setDependentDataSets(federation.getSourceDatasets());
+			newDataset.setDataSourceForWriting((IDataSource) getEnv().get(EngineConstants.ENV_DATASOURCE));
+			newDataset.setDataSourceForReading((IDataSource) getEnv().get(EngineConstants.ENV_DATASOURCE));
+		} else {
+			newDataset = new QbeDataSet();
+		}
+
+		newDataset.setLabel(label);
+		newDataset.setName(name);
+		newDataset.setDescription(description);
+
+		String scopeCd = null;
+		Integer scopeId = null;
+		String categoryCd = null;
+		Integer categoryId = null;
+
+		if (scopeIdParam != null) {
+			scopeCd = scopeCdParam;
+			scopeId = Integer.parseInt(scopeIdParam);
+		} else {
+			scopeCd = SpagoBIConstants.DS_SCOPE_USER;
+		}
+
+		if (categoryIdParam != null) {
+			categoryCd = categoryCdParam;
+			categoryId = Integer.parseInt(categoryIdParam);
+		} else {
+			categoryCd = dataset.getCategoryCd();
+			categoryId = dataset.getCategoryId();
+		}
+		if (categoryId == null
+				&& (scopeCd.equalsIgnoreCase(SpagoBIConstants.DS_SCOPE_TECHNICAL) || scopeCd.equalsIgnoreCase(SpagoBIConstants.DS_SCOPE_ENTERPRISE))) {
+			throw new SpagoBIRuntimeException("Dataset Enterprise or Technical must have a category");
+
+		}
+		newDataset.setScopeCd(scopeCd);
+		newDataset.setScopeId(scopeId);
+		newDataset.setCategoryCd(categoryCd);
+		newDataset.setCategoryId(categoryId);
+
+		String owner = profile.getUserId().toString();
+		// saves owner of the dataset
+		newDataset.setOwner(owner);
+
+		String metadata = getMetadataAsString(dataset);
+		logger.debug("Dataset's metadata: [" + metadata + "]");
+		newDataset.setDsMetadata(metadata);
+
+		newDataset.setDataSource(qbeDataset.getDataSource());
+
+		String datamart = qbeDataset.getStatement().getDataSource().getConfiguration().getModelName();
+		String datasource = qbeDataset.getDataSource().getLabel();
+		JSONObject jsonConfig = new JSONObject();
+		try {
+			jsonConfig.put(QbeDataSet.QBE_DATA_SOURCE, datasource);
+			jsonConfig.put(QbeDataSet.QBE_DATAMARTS, datamart);
+			jsonConfig.put(QbeDataSet.QBE_JSON_QUERY, qbeJSONQuery);
+			jsonConfig.put(FederatedDataSet.QBE_DATASET_CACHE_MAP, getEnv().get(EngineConstants.ENV_DATASET_CACHE_MAP));
+		} catch (JSONException e) {
+			throw new SpagoBIRuntimeException("Error while creating dataset's JSON config", e);
+		}
+
+		newDataset.setConfiguration(jsonConfig.toString());
+
+		// get Persist and scheduling informations
+		boolean isPersisted = Boolean.parseBoolean(isPersistedParam);
+		newDataset.setPersisted(isPersisted);
+		boolean isScheduled = Boolean.parseBoolean(isScheduledParam);
+		newDataset.setScheduled(isScheduled);
+		if (persistTable != null) {
+			newDataset.setPersistTableName(persistTable);
+		}
+		if (startDateField != null) {
+			newDataset.setStartDateField(startDateField);
+		}
+		if (endDateField != null) {
+			newDataset.setEndDateField(endDateField);
+		}
+		if (schedulingCronLine != null) {
+			newDataset.setSchedulingCronLine(schedulingCronLine);
+		}
+
+		try {
+
+			JSONArray metadataArray = JSONUtils.toJSONArray(meta);
+
+			IMetaData metaData = dataset.getMetadata();
+			for (int i = 0; i < metaData.getFieldCount(); i++) {
+				IFieldMetaData ifmd = metaData.getFieldMeta(i);
+				for (int j = 0; j < metadataArray.length(); j++) {
+
+					String fieldAlias = ifmd.getAlias() != null ? ifmd.getAlias() : "";
+					// remove dataset source
+					String fieldName = ifmd.getName().substring(ifmd.getName().indexOf(':') + 1);
+
+					if (fieldAlias.equals((metadataArray.getJSONObject(j)).getString("name"))
+							|| fieldName.equals((metadataArray.getJSONObject(j)).getString("name"))) {
+						if ("MEASURE".equals((metadataArray.getJSONObject(j)).getString("fieldType"))) {
+							ifmd.setFieldType(IFieldMetaData.FieldType.MEASURE);
+						} else {
+							ifmd.setFieldType(IFieldMetaData.FieldType.ATTRIBUTE);
+						}
+						break;
+					}
+				}
+			}
+
+			DatasetMetadataParser dsp = new DatasetMetadataParser();
+			String dsMetadata = dsp.metadataToXML(metaData);
+
+			newDataset.setDsMetadata(dsMetadata);
+
+		} catch (Exception e) {
+			logger.error("Error in calculating metadata");
+			throw new SpagoBIRuntimeException("Error in calculating metadata", e);
+		}
+
+		return newDataset;
+	}
+
+	private String getMetadataAsString(IDataSet dataset) {
+		IMetaData metadata = getDataSetMetadata(dataset);
+		DatasetMetadataParser parser = new DatasetMetadataParser();
+		String toReturn = parser.metadataToXML(metadata);
+		return toReturn;
+	}
+
+	private IMetaData getDataSetMetadata(IDataSet dataset) {
+		IMetaData metaData = null;
+		Integer start = new Integer(0);
+		Integer limit = new Integer(10);
+		Integer maxSize = QbeEngineConfig.getInstance().getResultLimit();
+		try {
+			dataset.loadData(start, limit, maxSize);
+			IDataStore dataStore = dataset.getDataStore();
+			metaData = dataStore.getMetaData();
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error while executing dataset", e);
+		}
+		return metaData;
+	}
+
+	private IDataSet saveNewDataset(IDataSet newDataset) {
+		DataSetServiceProxy proxy = (DataSetServiceProxy) getEnv().get(EngineConstants.ENV_DATASET_PROXY);
+		logger.debug("Saving new dataset ...");
+		IDataSet saved = proxy.saveDataSet(newDataset);
+		logger.debug("Dataset saved without errors");
+		return saved;
+	}
 }
