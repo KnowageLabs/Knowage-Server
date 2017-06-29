@@ -2,9 +2,15 @@
     <rest-loading></rest-loading>
 	<div flex="" id='map'>
 		<div id="popup" class="ol-popup">
-			 <md-button class="md-icon-button md-primary ol-popup-closer" aria-label="close" ng-click="closePopup()">
-        		<md-icon md-font-icon="fa fa-times"></md-icon>
-      		</md-button>
+		<md-toolbar layout-row>
+		 	<div class="md-toolbar-tools">
+				<h2>Region details</h2>
+				<span flex></span>
+				<md-button class="md-icon-button" aria-label="close" ng-click="closePopup()">
+        			<md-icon md-font-icon="fa fa-times"></md-icon>
+      			</md-button>
+   			</div>
+		</md-toolbar>
 			<div id="popup-content" class="ol-popup-content"></div>
 		</div>
 		<div layout="row" 	style="bottom: 0; right: 0; position: absolute;">

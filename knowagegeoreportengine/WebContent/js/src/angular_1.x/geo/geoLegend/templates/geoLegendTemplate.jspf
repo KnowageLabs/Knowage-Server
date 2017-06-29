@@ -1,9 +1,9 @@
 <md-whiteframe class="md-whiteframe-3dp legendBox"   layout layout-align="center center" ng-if="showLegend" >
 
     <div layout="column" layout-wrap ng-if="template.analysisType=='choropleth'"> 
-	    <div layout="row" layout-wrap ng-repeat="items in thematizer.legendItem.choroplet" >
-	    	<div class="colorbox" ng-style="getColor(items)"></div>
-	    	<span>{{items.from}}-{{items.to}} ({{items.item}})</span>
+	    <div layout="row" layout-wrap ng-repeat="items in thematizer.legendItem.choroplet" class="legendLine">
+	    	<div class="legendColorbox" ng-style="getColor(items)"></div>
+	    	<span class="legendTextLine">{{items.from}}-{{items.to}} ({{items.item}})</span>
 	    </div>
 			
 	 </div>

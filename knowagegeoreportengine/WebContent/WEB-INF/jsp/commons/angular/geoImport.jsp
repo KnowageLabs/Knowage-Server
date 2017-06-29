@@ -35,9 +35,11 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/geo/geoSave/geoSaveController.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/geo/geoDataset/geoDatasetController.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/geo/geoTemplateBuild/geoEditController.js"></script> 
+
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/geo/geoRanges/geoRanges.js"></script> 
  
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/jspdf/jspdf.min.js"></script>
 <!--  <script src="http://mrrio.github.io/jsPDF/dist/jspdf.min.js"></script> -->
 <!-- <script src="http://api.tiles.mapbox.com/mapbox.js/plugins/turf/v2.0.0/turf.min.js"></script>	 -->
-<link rel="stylesheet" href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css" type="text/css">
-<link rel="stylesheet" href="${pageContext.request.contextPath}/css/angularGeoReport.css" type="text/css">
+<link rel="stylesheet" href="<%= GeneralUtilities.getSpagoBiContext() %>/themes/commons/css/customStyle.css" type="text/css">
+<!--  link rel="stylesheet" href="${pageContext.request.contextPath}/css/angularGeoReport.css" type="text/css"-->

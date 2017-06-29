@@ -1,8 +1,8 @@
-<md-content>
+
 <expander-box id="legend" expanded='true'  title='translate.load("gisengine.info.message.legend.config")'> 
 	<md-tabs md-dynamic-height="" >
       <md-tab label='{{translate.load("gisengine.rigthMapMenu.analysisType.choropleth")}}'>
-        <md-content class="md-padding">
+        <md-content>
           <md-input-container class="md-block">
 			   <label>{{translate.load("gisengine.info.message.legend.config.method")}}</label>
 			    <md-select ng-model="template.analysisConf.choropleth.method">
@@ -31,12 +31,10 @@
 				  <color-picker  color-picker-swatch="true" color-picker-format="'rgb'" ng-model="template.analysisConf.choropleth.toColor"></color-picker>
 		    </md-input-container>
  
-<!-- 			<div md-color-picker value="template.analysisConf.choropleth.fromColor"  label='{{translate.load("gisengine.info.message.legend.config.fromColor")}}' open-on-input="true" style="width: 100%;" ></div> -->
-<!-- 			<div md-color-picker value="template.analysisConf.choropleth.toColor"  label='{{translate.load("gisengine.info.message.legend.config.toColor")}}' open-on-input="true" style="width: 100%;"></div> -->
-        </md-content>
+		</md-content>
       </md-tab>
       <md-tab label='{{translate.load("gisengine.rigthMapMenu.analysisType.proportionalSymbol")}}'>
-        <md-content class="md-padding">
+        <md-content>
          <md-input-container class="md-block colorInputContainer">
 				<label>{{translate.load("gisengine.info.message.legend.config.color")}}</label>
 				  <color-picker  color-picker-swatch="true" color-picker-format="'rgb'" ng-model="template.analysisConf.proportionalSymbol.color"></color-picker>
@@ -49,18 +47,31 @@
 		</md-content>
       </md-tab>
       <md-tab label='{{translate.load("gisengine.rigthMapMenu.analysisType.chart")}}'>
-        <md-content class="md-padding">
+        <md-content>
           
          <md-input-container ng-repeat="ind in indicators" class="md-block colorInputContainer" ng-init="template.analysisConf.chart['indicator_'+($index+1)] = template.analysisConf.chart['indicator_'+($index+1)] || 'green'">
 				<label>{{translate.load("gisengine.info.message.legend.config.color")}}</label>
 				  <color-picker  color-picker-swatch="true" color-picker-format="'rgb'" ng-model="template.analysisConf.chart['indicator_'+($index+1)]"></color-picker>
 		    </md-input-container>
 		    
-<!--           <div md-color-picker ng-repeat="ind in indicators"  ng-init="template.analysisConf.chart['indicator_'+($index+1)] = template.analysisConf.chart['indicator_'+($index+1)] || 'green'" value="template.analysisConf.chart['indicator_'+($index+1)]"  label='{{translate.load("gisengine.info.message.legend.config.color")}} {{$index}}' open-on-input="true" style="width: 100%;" ></div> -->
-          
           
         </md-content>
       </md-tab>
+      <md-tab label='accessibility'>
+        <md-content>
+        <md-chips class="smallChips" ng-model="template.accessibilityConf.ranges" readonly="false" md-removable="true">
+	      <md-chip-template>
+	        <span>
+	          <strong>[{{template.accessibilityConf.ranges.indexOf($chip)}}] {{$chip}}</strong>
+	        </span>
+	      </md-chip-template>
+	      <md-button md-chip-remove class="md-icon-button">
+	        <md-icon md-font-icon="fa fa-times-circle"></md-icon>
+	      </md-button>
+	      <input type="text" placeholder="Add range name">
+	    </md-chips>
+        </md-content>
+       </md-tab>
     </md-tabs>
 			
 		
@@ -68,5 +79,4 @@
 </expander-box>
 
 
-</md-content>
 

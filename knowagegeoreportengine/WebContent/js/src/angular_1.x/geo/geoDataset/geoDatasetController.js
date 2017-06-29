@@ -35,15 +35,20 @@ angular.module('geoModule')
 	}
 })
 
-function geoDatasetControllerFunction($scope,geoModule_template,sbiModule_restServices,sbiModule_config,$mdDialog,sbiModule_translate, geoSharedSettings,geoModule_dataset){
+function geoDatasetControllerFunction($scope,geoModule_template,sbiModule_restServices,sbiModule_config,$mdDialog,sbiModule_translate, geoSharedSettings,geoModule_dataset,geoModule_ranges){
 	$scope.translate= sbiModule_translate;
 	$scope.datasetRows=[];
 	$scope.datasetColumns=[];
+	if(!geoModule_template.accessibilityConf){
+		geoModule_template.accessibilityConf = {"ranges" : ['very low','low','regular','high','very high']};
+	}
 	
 	$scope.showDataset=function(){
-		
+		$scope.rangesNames = geoModule_template.accessibilityConf.ranges;		
 		$scope.getDatasetColumns(geoModule_dataset.metaData.fields);
-		$scope.datasetRows=geoModule_dataset.rows;
+		$scope.geomoduleData=[];
+		angular.copy(geoModule_dataset,$scope.geomoduleData);
+		$scope.datasetRows=geoModule_ranges.getRangeableColumns($scope.geomoduleData,$scope.rangesNames);
 		
 		$mdDialog.show({
 			  scope:$scope,
@@ -53,72 +58,23 @@ function geoDatasetControllerFunction($scope,geoModule_template,sbiModule_restSe
 		      clickOutsideToClose:false,
 		      escapeToClose :false,
 		    });
-		
-		
-		
-		
      }
 	
 	 $scope.getDatasetColumns=function(fields){
 	        
-	    	for(i=1;i<fields.length;i++){
-	    	 var column={};
-	    	 column.label=fields[i].header;
-	    	 column.name=fields[i].name;
-	    	 
-	    	 $scope.datasetColumns.push(column);
-	    	}
-	    	
-	    }
-	
-	 $scope.loadDatasetRows= function(){
-		 var datasetLabel= sbiModule_config.docDatasetLabel;
-		 var geoSettings= geoSharedSettings.getSettings();
-			params={};
-	    	params.start =0;
-	    	params.limit = geoSettings.maxPreviewDatasetNumber;
-	    	params.page = 0;
-	    	params.dataSetParameters=null;
-	    	params.sort=null;
-	    	params.valueFilter=null;
-	    	params.columnsFilter=null;
-	    	params.columnsFilterDescription=null;
-	    	params.typeValueFilter=null;
-	    	params.typeFilter=null;
-	    	    	
-	    	config={};
-	    	config.params=params;
-		 sbiModule_restServices
-			.alterContextPath(sbiModule_config.externalBasePath);
-      	sbiModule_restServices.promiseGet("restful-services/selfservicedataset/values",datasetLabel,"", config)
-			.then(
-					function(response) {
-						console.log(response.data);
-						$scope.getDatasetColumns(response.data.metaData.fields);
-						$scope.datasetRows=response.data.rows;
-						
-						$mdDialog.show({
-							  scope:$scope,
-							  preserveScope: true,
-						      controller: DatasetPreviewController,
-						      templateUrl: sbiModule_config.contextName+'/js/src/angular_1.x/geo/geoDataset/templates/datasetPreviewTemplate.html',  
-						      clickOutsideToClose:false,
-						      escapeToClose :false,
-						    });
-						
-					},
-					function(response) {
-						sbiModule_messaging.showErrorMessage(response.data,SbiModule_translate.load('gisengine.dataset.preview.error'));
-						
-					});
-	 }
-	   
-	 
+    	for(i=1;i<fields.length;i++){
+    	 var column={};
+    	 column.label=fields[i].header;
+    	 column.name=fields[i].name;
+    	 
+    	 $scope.datasetColumns.push(column);
+    	}
+    	
+    }
 	
 	function DatasetPreviewController ($scope){
 		
 		$scope.closeDatasetPreviewDialog=function(){
-			$scope.datasetRows=[];
 			$scope.datasetColumns=[];
 			$mdDialog.cancel();
 		}
