@@ -209,7 +209,7 @@
     <param-name>resteasy.servlet.mapping.prefix</param-name>
     <param-value>/api</param-value>
   </context-param>
-
+  <!-- START TOMCAT RES -->
   <resource-ref>
     <res-ref-name>wm/SpagoWorkManager</res-ref-name>
     <res-type>commonj.work.WorkManager</res-type>
