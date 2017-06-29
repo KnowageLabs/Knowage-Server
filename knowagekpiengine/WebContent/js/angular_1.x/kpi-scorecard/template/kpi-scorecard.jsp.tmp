@@ -1,7 +1,7 @@
 <md-content layout="column" class=" md-whiteframe-3dp" flex   >
 <div layout="column" layout-padding layout-wrap > 
 	<expander-box id="Info" color="white" 
-	toolbar-class="ternaryToolbar" title="perspective.name"
+	toolbar-class="ternaryToolbar" expander-title="perspective.name"
 	layout-margin layout="column" 
 	class="md-whiteframe-2dp scorecardPrespectiveCard" 
 	ng-repeat="perspective in scorecardTarget.scorecard.perspectives" 

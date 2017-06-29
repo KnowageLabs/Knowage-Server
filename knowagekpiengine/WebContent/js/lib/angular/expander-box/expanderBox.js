@@ -8,7 +8,7 @@ angular.module('expander-box', [ 'ngMaterial'])
 	return {
 		transclude : true,
 		template: '<md-toolbar ng-click="toggle($event)">'+
-						'<div class="md-toolbar-tools"><h2>{{title}}</h2><span flex></span>'+
+						'<div class="md-toolbar-tools"><h2>{{expanderTitle}}</h2><span flex></span>'+
 							'<md-button class="md-icon-button" aria-label="More">'+
 								'<md-icon class="fa fa-chevron-{{expanded?\'up\':\'down\'}}"></md-icon>'+
 							'</md-button>'+
@@ -24,7 +24,7 @@ angular.module('expander-box', [ 'ngMaterial'])
 			color:"@?",
 			backgroundColor:"@?",
 			toolbarClass:"@?",
-			title:"=",
+			expanderTitle:"=",
 			locals:"=?",
 			expanded:"=?"
 

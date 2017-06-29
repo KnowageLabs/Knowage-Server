@@ -60,7 +60,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	     		<md-radio-button  value='widget'>{{translate.load("sbi.kpi.widget")}} </md-radio-button>
    	</md-radio-group>
 
-	<expander-box id="scorecard" color="white" ng-if="typeChart=='scorecard'" expanded="true" title="translate.load('sbi.kpiedit.listscorecard')">
+	<expander-box id="scorecard" color="white" ng-if="typeChart=='scorecard'" expanded="true" expander-title="translate.load('sbi.kpiedit.listscorecard')">
 		<md-card>
 			<md-card-content>
 				<angular-table flex style="height:40%;"
@@ -79,10 +79,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			</md-card-content>
 		</md-card>    
 	</expander-box>
-	<expander-box id="list" color="white" ng-show="typeChart=='kpi'" expanded="true" title="translate.load('sbi.kpiedit.kpilist')">
+	<expander-box id="list" color="white" ng-show="typeChart=='kpi'" expanded="true" expander-title="translate.load('sbi.kpiedit.kpilist')">
 		<dinamic-list ng-model="selectedKpis" type-chart="typeDocument" multi-select=true selected-item ="addKpis"></dinamic-list>  
 	</expander-box>
-	<expander-box id="kpi" color="white" expanded="false" title="translate.load('sbi.kpiedit.options')" ng-if="typeChart=='kpi'">
+	<expander-box id="kpi" color="white" expanded="false" expander-title="translate.load('sbi.kpiedit.options')" ng-if="typeChart=='kpi'">
 		<md-card>
 			<md-card-content>
 				<div layout="row" layout-wrap flex>
@@ -114,7 +114,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<md-card-content>
 		</md-card>
 	</expander-box>
-	<expander-box id="style" color="white"  title="translate.load('sbi.kpiedit.style')">
+	<expander-box id="style" color="white"  expander-title="translate.load('sbi.kpiedit.style')">
 		<kpi-style ng-model="style"></kpi-style>
 	</expander-box>
 </md-whiteframe>
