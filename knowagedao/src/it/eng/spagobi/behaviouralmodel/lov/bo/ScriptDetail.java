@@ -45,8 +45,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.log4j.Logger;
 
 /**
- * Defines the <code>ScriptDetail</code> objects. This object is used to store
- * Script Wizard detail information.
+ * Defines the <code>ScriptDetail</code> objects. This object is used to store Script Wizard detail information.
  */
 public class ScriptDetail extends DependenciesPostProcessingLov implements ILovDetail {
 
@@ -195,8 +194,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 	}
 
 	/**
-	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getLovResult(IEngUserProfile
-	 *      profile, List<ObjParuse> dependencies, ExecutionInstance
+	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getLovResult(IEngUserProfile profile, List<ObjParuse> dependencies, ExecutionInstance
 	 *      executionInstance) throws Exception;
 	 */
 	@Override
@@ -314,19 +312,17 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 			}
 
 		} catch (Exception e) {
-			SpagoBITracer.warning(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "checkSintax",
-					"the result of the lov is not formatted " + "with the right structure so it will be wrapped inside an xml envelope");
+			SpagoBITracer.warning(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "checkSintax", "the result of the lov is not formatted "
+					+ "with the right structure so it will be wrapped inside an xml envelope");
 			toconvert = true;
 		}
 		return toconvert;
 	}
 
 	public String convertSpecialChars(String script) {
-
-
 		script = StringEscapeUtils.unescapeHtml4(script);
+		script = StringEscapeUtils.unescapeXml(script);
 		return script;
-
 	}
 
 	/**
@@ -418,8 +414,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 	/**
 	 * Checks if the lov requires one or more profile attributes.
 	 *
-	 * @return true if the lov require one or more profile attributes, false
-	 *         otherwise
+	 * @return true if the lov require one or more profile attributes, false otherwise
 	 *
 	 * @throws Exception
 	 *             the exception
@@ -438,8 +433,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 	}
 
 	/**
-	 * In case the result of the string is not structured as expected wrap the
-	 * result into the right xml envelope
+	 * In case the result of the string is not structured as expected wrap the result into the right xml envelope
 	 *
 	 * @param result
 	 *            the result of the script
@@ -477,9 +471,8 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 	}
 
 	/**
-	 * Splits an XML string by using some <code>SourceBean</code> object methods
-	 * in order to obtain the source <code>ScriptDetail</code> objects whom XML
-	 * has been built.
+	 * Splits an XML string by using some <code>SourceBean</code> object methods in order to obtain the source <code>ScriptDetail</code> objects whom XML has
+	 * been built.
 	 *
 	 * @param dataDefinition
 	 *            The XML input String
@@ -496,9 +489,8 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 	/*
 	 * (non-Javadoc)
-	 *
-	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#
-	 * getDescriptionColumnName()
+	 * 
+	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail# getDescriptionColumnName()
 	 */
 	@Override
 	public String getDescriptionColumnName() {
@@ -507,9 +499,8 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 	/*
 	 * (non-Javadoc)
-	 *
-	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#
-	 * setDescriptionColumnName(java.lang.String)
+	 * 
+	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail# setDescriptionColumnName(java.lang.String)
 	 */
 	@Override
 	public void setDescriptionColumnName(String descriptionColumnName) {
@@ -518,10 +509,8 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 	/*
 	 * (non-Javadoc)
-	 *
-	 * @see
-	 * it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getInvisibleColumnNames
-	 * ()
+	 * 
+	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getInvisibleColumnNames ()
 	 */
 	@Override
 	public List getInvisibleColumnNames() {
@@ -530,10 +519,8 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 	/*
 	 * (non-Javadoc)
-	 *
-	 * @see
-	 * it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setInvisibleColumnNames
-	 * (java.util.List)
+	 * 
+	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setInvisibleColumnNames (java.util.List)
 	 */
 	@Override
 	public void setInvisibleColumnNames(List invisibleColumnNames) {
@@ -542,9 +529,8 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 	/*
 	 * (non-Javadoc)
-	 *
-	 * @see
-	 * it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getValueColumnName()
+	 * 
+	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getValueColumnName()
 	 */
 	@Override
 	public String getValueColumnName() {
@@ -553,10 +539,8 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 	/*
 	 * (non-Javadoc)
-	 *
-	 * @see
-	 * it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setValueColumnName(java
-	 * .lang.String)
+	 * 
+	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setValueColumnName(java .lang.String)
 	 */
 	@Override
 	public void setValueColumnName(String valueColumnName) {
@@ -565,9 +549,8 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 	/*
 	 * (non-Javadoc)
-	 *
-	 * @see
-	 * it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getVisibleColumnNames()
+	 * 
+	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#getVisibleColumnNames()
 	 */
 	@Override
 	public List getVisibleColumnNames() {
@@ -576,10 +559,8 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 	/*
 	 * (non-Javadoc)
-	 *
-	 * @see
-	 * it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setVisibleColumnNames(
-	 * java.util.List)
+	 * 
+	 * @see it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail#setVisibleColumnNames( java.util.List)
 	 */
 	@Override
 	public void setVisibleColumnNames(List visibleColumnNames) {
