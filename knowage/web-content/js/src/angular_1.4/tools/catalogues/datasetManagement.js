@@ -2117,13 +2117,13 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					restDirectlyJSONAttributes: "",
 					restFetchSize: "",
 					restHttpMethod: "",
-					restJsonPathAttributes: "",
+					restJsonPathAttributes: "[]",
 					restJsonPathItems: "",
 					restMaxResults: "",
 					restNGSI: "",
 					restOffset: "",
 					restRequestBody: "",
-					restRequestHeaders: ""
+					restRequestHeaders: "{}"
 					
 			}
 			
