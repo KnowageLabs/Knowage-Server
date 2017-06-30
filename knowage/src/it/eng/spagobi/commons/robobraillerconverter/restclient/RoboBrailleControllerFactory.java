@@ -15,6 +15,8 @@ public class RoboBrailleControllerFactory {
 
 	public RoboBrailleControllerFactory(){
 		conversionImpelementations.put(ConversionType.HTMLPDF, HtmlPdfRoboBrailleController.class);
+		conversionImpelementations.put(ConversionType.TXTMP3, AudioRoboBrailleController.class);
+		conversionImpelementations.put(ConversionType.HTMLTXT, HtmlTxtRobobrailleController.class);
 	}
 	
 	

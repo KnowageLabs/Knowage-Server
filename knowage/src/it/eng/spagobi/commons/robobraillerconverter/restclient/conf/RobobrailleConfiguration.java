@@ -1,15 +1,16 @@
 package it.eng.spagobi.commons.robobraillerconverter.restclient.conf;
 
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement
+@XmlRootElement(name="robobraille-configuration")
 public class RobobrailleConfiguration {
 	
 	private String host;
 	private int port;
 	private String protocol;
-	private String id;
-	private String key;
+	private String hawkId;
+	private String hawkKey;
 	private String algorithm;
 	
 	public String getHost() {
@@ -33,17 +34,19 @@ public class RobobrailleConfiguration {
 	public void setProtocol(String protocol) {
 		this.protocol = protocol;
 	}
-	public String getId() {
-		return id;
+	 @XmlElement(name="hawk-id")
+	public String getHawkId() {
+		return hawkId;
 	}
-	public void setId(String id) {
-		this.id = id;
+	public void setHawkId(String id) {
+		this.hawkId = id;
 	}
-	public String getKey() {
-		return key;
+	@XmlElement(name="hawk-key")
+	public String getHawkKey() {
+		return hawkKey;
 	}
-	public void setKey(String key) {
-		this.key = key;
+	public void setHawkKey(String key) {
+		this.hawkKey = key;
 	}
 	public String getAlgorithm() {
 		return algorithm;

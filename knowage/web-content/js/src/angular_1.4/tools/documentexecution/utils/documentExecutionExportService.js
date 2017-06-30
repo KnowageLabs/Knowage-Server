@@ -134,6 +134,7 @@
 			
 			var formData = {};
 			formData.file = finalHtml;
+			formData.fileName = "table.html";
 			formData.size = "4";
 			
 			
@@ -152,6 +153,70 @@
 					}).error(function(data, status, headers, config) {
 								console.log("[UPLOAD]: FAIL!"+status);
 							});
+		}
+		
+		dee.exportCockpitTablesToAMP3 = function($sce){
+			var accessibleTables = document.getElementById("documentFrame").contentWindow.document.getElementsByTagName("accessible-angular-table");
+			var finalHtml="";
+			var jobId;
+			
+			for(var i=0;i<accessibleTables.length;i++){
+				finalHtml += accessibleTables[i].innerHTML;
+			}
+			
+			var formData = {};
+			formData.file = finalHtml;
+			formData.fileName = "table.html";
+			
+			var handleErrors = function(data, status, headers, config){
+				sbiModule_restServices.errorHandler("Error while trying to convert file","Error")
+				console.log("[UPLOAD]: FAIL!"+status);
+				}
+			
+				var handleDownloadSuccess = function(data, status, headers, config){
+					if(data.hasOwnProperty("errors")){
+						handleErrors(data, status, headers, config);
+					}else{
+						sbiModule_download.getLink("/restful-services/2.0/exportAccessibleDocument/TXTMP3/getResult/"+data);
+					}	
+				}
+				
+				var handleTxtSuccess = function(data, status, headers, config){
+					if(data.hasOwnProperty("errors")){
+						handleErrors(data, status, headers, config);
+					}else{
+						
+						sbiModule_restServices.promiseGet("2.0/exportAccessibleDocument/HTMLTXT/getResult/"+data,"",null).
+						then(function(data, status, headers, config){handleSuccess(data, status, headers, config)}),
+						(function(data, status, headers, config){handleErrors(txtfile, status, headers, config)});
+						
+					}	
+				}
+				
+				var handleSuccess = function(data, status, headers, config){
+					
+					if(data.hasOwnProperty("errors")){
+						handleErrors(data, status, headers, config);
+					}else{
+						var formData = {};
+						formData.file = data.data;
+						formData.fileName = "table.txt";
+						formData.audiolanguage = sbiModule_config.curr_language+sbiModule_config.curr_country;
+						formData.speedoptions = "-8";
+						formData.formatoptions = "1";
+						multipartForm.post("2.0/exportAccessibleDocument/TXTMP3/startconversion",formData).
+						success(function(data, status, headers, config){handleDownloadSuccess(data, status, headers, config)}).
+						error(function(data, status, headers, config){handleErrors(data, status, headers, config)});
+						
+					}	
+				}
+			
+			multipartForm.post("2.0/exportAccessibleDocument/HTMLTXT/startconversion",formData).
+			success(function(data, status, headers, config){handleTxtSuccess(data, status, headers, config)}).
+			error(function(data, status, headers, config){handleErrors(data, status, headers, config)});
+			
+				
+				
 		}
 			
 		dee.exportCockpitTo = function(exportType, mimeType){
@@ -520,6 +585,9 @@
 					break;
 				case "APDF":
 					expObj.func = function(){dee.exportCockpitTablesToAPDF()};
+					break;
+				case "AMP3":
+					expObj.func = function(){dee.exportCockpitTablesToAMP3()};
 					break;
 					
 				default:

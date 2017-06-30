@@ -259,7 +259,9 @@ angular.module('documentExecutionModule').service('multipartForm',['$http',funct
 		
 		var formData = new FormData();
 		
-		formData.append("file",data.file);
+		for(var key in data){
+				formData.append(key,data[key]);
+			}
 
 		return	$http.post(uploadUrl,formData,{
 				transformRequest:angular.identity,

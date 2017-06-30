@@ -17,6 +17,8 @@ public class AccessibleDocumentConverterFactory {
 
 	public AccessibleDocumentConverterFactory(){
 		conversionImpelementations.put(ConversionType.HTMLPDF, RoboBrailleConverter.class);
+		conversionImpelementations.put(ConversionType.TXTMP3, RoboBrailleConverter.class);
+		conversionImpelementations.put(ConversionType.HTMLTXT, RoboBrailleConverter.class);
 	}
 	
 	

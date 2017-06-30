@@ -6,5 +6,5 @@ public enum ConversionType {
 	
 	
 	 
-	HTMLPDF,PDFHTML
+	HTMLPDF,PDFHTML,TXTMP3,HTMLTXT
 }
