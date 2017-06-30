@@ -1,20 +1,82 @@
-<div flex style="background-color:#4099FF;" layout="row"
-layout-fill>
-   	<div ng-repeat="n in ngModel" flex=15>
-   	<div class="angularTableHeader" style="background-color:#a9c3db" ng-style="{'border-top':n.color}">{{n.name}}
+<div layout="row" layout-fill>
+   	<div ng-repeat="n in ngModel" flex=20>
+   		<md-toolbar layout="row" ng-style="{'border-top':n.color}">{{n.name}}
    		<span flex></span>
-   		<md-menu ng-click="openMenu">
-   			<md-button>g</md-button>
-   			<md-menu-content>
-   				 	<md-menu-item>
-   				 		<md-button>hh</md-button>
-   				 	</md-menu-item>
-   				 	<md-menu-item></md-menu-item>
-   				 	<md-menu-item></md-menu-item>
-   			</md-menu-content>
-   		</md-menu>
-   	</div>
-   	<div style="background-color:white">{{n.data}}</div>
+   		<md-menu>			      
+      	<md-button 	aria-label="query settings menu" class="md-icon-button" ng-click="openMenu($mdOpenMenu, $event)">
+        	<md-icon md-menu-origin class="fa fa-cog"></md-icon>
+      	</md-button>
+      	<md-menu-content>
+	      
+       		<md-menu-item>
+          		<md-checkbox ng-model="data.cb1" aria-label="Checkbox 1">
+            hide field
+          </md-checkbox>
+       		</md-menu-item>
+       		<md-menu-item>
+         			<md-checkbox ng-model="data.cb2" aria-label="Checkbox 1">
+           use as attribute
+          </md-checkbox>
+       		</md-menu-item>
+       		<md-menu-item>
+         			<md-button ng-click="showStructureDetails('categoriesAxisDetails',categoriesAxis.alias)">
+						<md-icon class="fa fa-sliders" style="display:inline"></md-icon>
+            		<span>ranges</span>
+          		</md-button>
+       		</md-menu-item>
+       		<md-menu-item>
+       		  
+         			<md-menu>			      
+      	<md-button 	aria-label="query settings menu" class="md-icon-button" ng-click="openMenu($mdOpenMenu, $event)">
+        	<md-icon class="fa fa-calculator" style="display:inline"></md-icon>
+            		<span>agreggation function</span>
+      	</md-button>
+      	<md-menu-content>
+	      
+       		<md-menu-item>
+          		<md-button ng-click="showStructureDetails('categoriesAxisDetails',categoriesAxis.alias)">
+						<md-icon class="fa fa-minus" style="display:inline"></md-icon>
+            		<span>SUM</span>
+            		</md-button>
+            		
+       		</md-menu-item>
+       		<md-menu-item>
+       			<md-button ng-click="showStructureDetails('categoriesAxisDetails',categoriesAxis.alias)">
+						<md-icon class="fa fa-minus" style="display:inline"></md-icon>
+            		<span>MIN</span></md-button>
+       		</md-menu-item>
+       		<md-menu-item>
+       			<md-button ng-click="showStructureDetails('categoriesAxisDetails',categoriesAxis.alias)">
+						<md-icon class="fa fa-minus" style="display:inline"></md-icon>
+            		<span>MAX</span>
+            		</md-button>
+       		</md-menu-item>          		
+            		
+       		</md-menu-content>
+       		</md-menu>
+       		</md-menu-item>
+       		<md-menu-item>
+       		  
+         			<md-button ng-click="showStructureDetails('categoriesAxisDetails',categoriesAxis.alias)">
+						<md-icon class="fa fa-angle-left" style="display:inline"></md-icon>
+            		<span>move left</span>
+          		</md-button>
+       		</md-menu-item>
+       		<md-menu-item>
+         			<md-button ng-click="showStructureDetails('categoriesAxisDetails',categoriesAxis.alias)">
+						<md-icon class="fa fa-angle-right" style="display:inline"></md-icon>
+            		<span>move right</span>
+          		</md-button>
+       		</md-menu-item>
+        			        
+	      </md-menu-content>
+	      
+    	</md-menu>
+    	</md-toolbar>
+   	
+   
+   	<div ng-repeat="r in n.data track by $index" style="background-color:#white" >{{r}}</div>
    	<div ng-repeat="f in n.filters" style="background-color:#a9c3db">{{f}}</div>
    </div>
 </div>
+

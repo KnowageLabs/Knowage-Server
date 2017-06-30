@@ -24,6 +24,7 @@ angular.module('qbe_custom_table', ['ngDraggable'])
 .directive('qbeCustomTable', function() {
     return {
         restrict: 'E',
+        controller: qbeCustomTable,
         scope: {
             ngModel: '='
         },
@@ -34,4 +35,13 @@ angular.module('qbe_custom_table', ['ngDraggable'])
         }
     };
 });
+function qbeCustomTable($scope, $mdDialog, sbiModule_translate){
+	$scope.openMenu = function($mdOpenMenu, ev) {
+	      originatorEv = ev;
+	      $mdOpenMenu(ev);
+  };
+  $scope.aggFunctionList = ["SUM","BLA","BLA"];
+  $scope.aggFunction = "";
+  $scope.translate = sbiModule_translate;
+}
 })();

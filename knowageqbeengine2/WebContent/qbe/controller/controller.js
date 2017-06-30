@@ -16,21 +16,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * Dependencies for the Workspace main controller:
- * 		- document_viewer: Directive that provides possibility to execute a document in separate
- * 		iframe (window) that has a button for closing the executed document. When user do that,
- * 		the iframe closes and we are having the initial page (the one from which we wished to
- * 		execute the document).
- */
 angular
 	.module('qbe.controller', ['configuration','directive','services'])
 	.controller('qbeController', 
-		["$scope","entity_service","sbiModule_inputParams",qbeFunction]);
+		["$scope","entity_service","sbiModule_inputParams","sbiModule_config", "sbiModule_restServices", "sbiModule_messaging", qbeFunction]);
 
 
 
-function qbeFunction($scope,entity_service,sbiModule_inputParams) {
+function qbeFunction($scope,entity_service,sbiModule_inputParams,sbiModule_config,sbiModule_restServices,sbiModule_messaging ) {
 	
 	var entityService = entity_service;
 	var inputParamService = sbiModule_inputParams;
@@ -39,17 +32,29 @@ function qbeFunction($scope,entity_service,sbiModule_inputParams) {
 		 $scope.model = response.data;
 	});
 	
-	$scope.onDropComplete=function(data,evt){
-	   var queryObject = {
-	    	"id":data.id,
-	    	"name":data.text,
-	    	"data":"no data",
-	    	"order":"",
-	    	"filters": ["less than 6"]
-	    }
-
-		$scope.queryModel.push(queryObject);      
+	$scope.onDropComplete=function(field,evt){
+		$scope.addField(field);
+		$scope.previewData(field); 
     }
+	
+	$scope.addField = function (field) {
+		
+		var newField  = {  
+			   "id":field.id,
+			   "alias":field.attributes.field,
+			   "type":"datamartField",
+			   "entity":field.attributes.entity,
+			   "field":field.attributes.field,
+			   "funct":"",
+			   "group":false,
+			   "order":"",
+			   "include":true,
+			   "visible":true,
+			   "longDescription":field.attributes.longDescription
+			}
+		
+		$scope.query.fields.push(newField);
+	}
 	
 	$scope.colors = ['#F44336', '#673AB7', '#03A9F4', '#4CAF50', '#FFEB3B', '#3F51B5', '#8BC34A', '#009688', '#F44336'];
 
@@ -81,10 +86,48 @@ function qbeFunction($scope,entity_service,sbiModule_inputParams) {
             $scope.ammacool(item, event);
         }
     }];
+    
+    $scope.executeQuery = function (data) {
+    	q="?SBI_EXECUTION_ID="+sbiModule_config.sbiExecutionID+"&start=0&limit=25&id=q1&promptableFilters=null"
+    	
+    	 sbiModule_restServices.promisePost('qbequery/executeQuery'+q,"")
+     	.then(function(response) {
+     		console.log("[POST]: SUCCESS!");
+     		
+     		var queryObject = {
+     		    	"id":data.id,
+     		    	"name":data.text,
+     		    	"data":[],
+     		    	"order":"",
+     		    	"filters": ["less than 6"]
+     		    }
+     		
+     		for (var i = 0; i < response.data.rows.length; i++) {
+     			queryObject.data.push(response.data.rows[i].column_1)
+			}
+     		$scope.queryModel.push(queryObject); 
+     	}, function(response) {
+     	});
+    }
+    
+    
+    $scope.previewData = function (data) {
+        q="?SBI_EXECUTION_ID="+sbiModule_config.sbiExecutionID+"&ambiguousRoles=null&ambiguousFieldsPaths=null&currentQueryId="+$scope.query.id;
+        
+        sbiModule_restServices.promisePost('qbequery/setQueryCatalog'+q,"", [$scope.query])
+    	.then(function(response) {
+    		console.log("[POST]: SUCCESS!");
+    		$scope.executeQuery(data);
+    	}, function(response) {
+    	});
+    }
+    
+    $scope.query = {"id":"q1","name":"query-q1","description":"query-q1","fields":[],"distinct":false,"filters":[],"calendar":{},"expression":{},"isNestedExpression":false,"havings":[],"graph":[],"relationsRoles":[],"subqueries":[]};
+    
     $scope.openMenu = function($mdMenu, ev) {
         originatorEv = ev;
         $mdMenu.open(ev);
-      };
+    };
 
 	
 }
