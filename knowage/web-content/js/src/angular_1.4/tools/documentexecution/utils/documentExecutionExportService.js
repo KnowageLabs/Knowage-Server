@@ -528,8 +528,12 @@
 
 			switch (type) {
 			case "PDF":
+			
 			case "APDF":	
 				iconClass += "pdf";
+				break;
+			case "AMP3":
+				iconClass +="audio";
 				break;
 			case "XLS":
 			case "XLSX":
