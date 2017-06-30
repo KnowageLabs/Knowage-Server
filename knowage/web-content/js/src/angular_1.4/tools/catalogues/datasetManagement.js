@@ -2117,13 +2117,13 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 					restDirectlyJSONAttributes: "",
 					restFetchSize: "",
 					restHttpMethod: "",
-					restJsonPathAttributes: "[]",
+					restJsonPathAttributes: "",
 					restJsonPathItems: "",
 					restMaxResults: "",
 					restNGSI: "",
 					restOffset: "",
 					restRequestBody: "",
-					restRequestHeaders: "{}"
+					restRequestHeaders: ""
 					
 			}
 			
@@ -2794,7 +2794,27 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 	$scope.continueToRestExecutionOfPreview = function() {
 		
 		$scope.disableBack = true;
-	
+		
+		if ($scope.selectedDataSet.dsTypeCd.toLowerCase()=="rest") {			
+			
+			//----------------------
+			// REQUEST HEADERS
+			//----------------------
+			var restRequestHeadersTemp = {};
+			
+			for (i=0; i<$scope.restRequestHeaders.length; i++) {
+				restRequestHeadersTemp[$scope.restRequestHeaders[i]["name"]] = $scope.restRequestHeaders[i]["value"];			
+			}
+			
+			$scope.selectedDataSet.restRequestHeaders = angular.copy(JSON.stringify(restRequestHeadersTemp));	
+			
+			//----------------------
+			// JSON PATH ATTRIBUTES
+			//----------------------
+			var restJsonPathAttributesTemp = {};						
+			$scope.selectedDataSet.restJsonPathAttributes = angular.copy(JSON.stringify($scope.restJsonPathAttributes));
+			
+		}
 		sbiModule_restServices.promisePost('1.0/datasets','preview', angular.toJson($scope.selectedDataSet))
 			.then(
 				function(response) {
