@@ -44,8 +44,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		execTest1 = function() {
 		    var url = Sbi.sdk.api.getDocumentUrl({
-				documentLabel: 'documentLabel'
-			   , documentName: 'document name'
+				documentLabel: 'TESTA_SDK'
 				, executionRole: '/spagobi/user'
 				, parameters: {par: 'test', par2: 'test2'}
 				, displayToolbar: true
@@ -72,8 +71,7 @@ specific execution (i.e. document + execution role + parameters)
 <PRE>
 example1Function = function() {
 	var url = Sbi.sdk.api.getDocumentUrl({
-        documentLabel: 'documentLabel'
-        , documentName: 'document name'
+        documentLabel: 'TESTA_SDK'
 		, executionRole: '/spagobi/user'
 		, parameters: {par: 'test', par2: 'test2'}
 		, displayToolbar: false

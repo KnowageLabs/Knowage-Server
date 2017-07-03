@@ -31,8 +31,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		background-color: gray;
 	}
 	</style>
-	<script type="text/javascript" src="js/sbisdk-all-production.js"></script>
-	<!--  script type="text/javascript" src="http://localhost:8080/knowage/js/src/sdk/sbisdk-all-production.js"></script -->
+<!-- <script type="text/javascript" src="js/sbisdk-all-production.js"></script> -->
+    <script type="text/javascript" src="/knowagesdk/js/commons.js"></script>
+       <script type="text/javascript" src="/knowagesdk/js/ajax.js"></script>
+       <script type="text/javascript" src="/knowagesdk/js/jsonp.js"></script>
+       <script type="text/javascript" src="/knowagesdk/js/cors.js"></script>
+       <script type="text/javascript" src="/knowagesdk/js/services.js"></script>      
+       <script type="text/javascript" src="/knowagesdk/js/api_jsonp.js"></script>
+       <script type="text/javascript" src="/knowagesdk/js/api_cors.js"></script>
+       <script type="text/javascript" src="/knowagesdk/js/api.js"></script>
 
 	<script type="text/javascript">
 
@@ -44,8 +51,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    });
 		
  		execTest7 = function() {
-		    Sbi.sdk.api.executeDataSet({
-		    	datasetLabel: 'DS_DEMO_EXTCHART'
+		
+ 			Sbi.sdk.api.executeDataSet({
+		    	datasetLabel: 'DS'
 		    	, parameters: {
 		    		par_year: 2011,
 		    		par_family: 'Food'
@@ -92,7 +100,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <PRE>
 execTest7 = function() {
     Sbi.sdk.api.executeDataSet({
-    	datasetLabel: 'DS_DEMO_EXTCHART'
+    	datasetLabel: 'DS'
     	, parameters: {
     		par_year: 2011,
     		par_family: 'Food'

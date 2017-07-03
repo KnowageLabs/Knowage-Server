@@ -22,9 +22,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-	<script type="text/javascript" src="js/sbisdk-all-production.js"></script>
-	<!--  script type="text/javascript" src="http://localhost:8080/knowage/js/src/sdk/sbisdk-all-production.js"></script -->
-
+<script type="text/javascript" src="/knowagesdk/js/commons.js"></script>
+       <script type="text/javascript" src="/knowagesdk/js/ajax.js"></script>
+       <script type="text/javascript" src="/knowagesdk/js/jsonp.js"></script>
+       <script type="text/javascript" src="/knowagesdk/js/cors.js"></script>
+       <script type="text/javascript" src="/knowagesdk/js/services.js"></script>      
+       <script type="text/javascript" src="/knowagesdk/js/api_jsonp.js"></script>
+       <script type="text/javascript" src="/knowagesdk/js/api_cors.js"></script>
+       <script type="text/javascript" src="/knowagesdk/js/api.js"></script>
+       
+       
 	<script type="text/javascript">
 
 		Sbi.sdk.services.setBaseUrl({
@@ -36,7 +43,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
  		execTest9 = function() {
  			Sbi.sdk.api.injectQbe({
-				datasetLabel: 'DS_DEMO_51_COCKPIT'
+				datasetLabel: 'TESTA_SDK'
  				, target: 'qbe'
 				, height: '600px'
 				, width: '1100px'
@@ -62,7 +69,7 @@ pointing to the url of qbe start action. In this example the specified target di
 <PRE>
 execTest9 = function() {
 	Sbi.sdk.api.injectQbe({
-		datasetLabel: 'DS_DEMO_51_COCKPIT'
+		datasetLabel: 'TESTA_SDK'
 		, target: 'qbe'
 		, height: '600px'
 		, width: '1100px'

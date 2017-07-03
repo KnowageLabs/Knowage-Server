@@ -31,7 +31,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		background-color: gray;
 	}
 	</style>
-	<script type="text/javascript" src="/knowagesdk/js/sbisdk-all-production.js"></script>
+	<!--  <script type="text/javascript" src="/knowagesdk/js/sbisdk-all-production.js"></script>-->
+	<script type="text/javascript" src="/knowagesdk/js/commons.js"></script>
+       <script type="text/javascript" src="/knowagesdk/js/ajax.js"></script>
+       <script type="text/javascript" src="/knowagesdk/js/jsonp.js"></script>
+       <script type="text/javascript" src="/knowagesdk/js/cors.js"></script>
+       <script type="text/javascript" src="/knowagesdk/js/services.js"></script>      
+       <script type="text/javascript" src="/knowagesdk/js/api_jsonp.js"></script>
+       <script type="text/javascript" src="/knowagesdk/js/api_cors.js"></script>
+       <script type="text/javascript" src="/knowagesdk/js/api.js"></script>       
+	
 	
 
 	<script type="text/javascript">
