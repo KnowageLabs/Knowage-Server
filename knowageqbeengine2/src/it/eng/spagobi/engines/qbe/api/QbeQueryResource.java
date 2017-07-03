@@ -34,6 +34,7 @@ import it.eng.qbe.statement.graph.serializer.ModelObjectInternationalizedSeriali
 import it.eng.qbe.statement.graph.serializer.RelationJSONSerializer;
 import it.eng.qbe.statement.hibernate.HQLDataSet;
 import it.eng.qbe.statement.jpa.JPQLDataSet;
+import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.StringUtilities;
@@ -41,11 +42,13 @@ import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.proxy.DataSetServiceProxy;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -788,14 +791,15 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			String schedulingCronLine = jsonEncodedRequest.getString("schedulingCronLine");
 			String meta = jsonEncodedRequest.getString("meta");
 			String qbeJSONQuery = jsonEncodedRequest.getString("qbeJSONQuery");
+			String pars = getDataSetParametersAsString(jsonEncodedRequest);
 			validateLabel(label);
 			IDataSet dataset = getEngineInstance().getActiveQueryAsDataSet();
 			int datasetId = -1;
 			// if (dataset instanceof HQLDataSet || dataset instanceof
 			// JPQLDataSet) {
 			// dataset defined on a model --> save it as a Qbe dataset
-			datasetId = saveQbeDataset(dataset, label, name, description, scopeId, scopeCd, categoryId, categoryCd, isPersisted, isScheduled,
-					persistTable, startDateField, endDateField, schedulingCronLine, meta, qbeJSONQuery);
+			datasetId = saveQbeDataset(dataset, label, name, description, scopeId, scopeCd, categoryId, categoryCd, isPersisted, isScheduled, persistTable,
+					startDateField, endDateField, schedulingCronLine, meta, qbeJSONQuery, pars);
 			// } else {
 			// // dataset defined on another dataset --> save it as a flat
 			// dataset
@@ -827,10 +831,10 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 
 	private int saveQbeDataset(IDataSet dataset, String label, String name, String description, String scopeId, String scopeCd, String categoryId,
 			String categoryCd, String isPersisted, String isScheduled, String persistTable, String startDateField, String endDateField,
-			String schedulingCronLine, String meta, String qbeJSONQuery) {
+			String schedulingCronLine, String meta, String qbeJSONQuery, String pars) {
 
 		QbeDataSet newDataset = createNewQbeDataset(dataset, label, name, description, scopeId, scopeCd, categoryId, categoryCd, isPersisted, isScheduled,
-				persistTable, startDateField, endDateField, schedulingCronLine, meta, qbeJSONQuery);
+				persistTable, startDateField, endDateField, schedulingCronLine, meta, qbeJSONQuery, pars);
 
 		IDataSet datasetSaved = saveNewDataset(newDataset);
 
@@ -840,7 +844,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 
 	private QbeDataSet createNewQbeDataset(IDataSet dataset, String label, String name, String description, String scopeIdParam, String scopeCdParam,
 			String categoryIdParam, String categoryCdParam, String isPersistedParam, String isScheduledParam, String persistTable, String startDateField,
-			String endDateField, String schedulingCronLine, String meta, String qbeJSONQuery) {
+			String endDateField, String schedulingCronLine, String meta, String qbeJSONQuery, String pars) {
 		AbstractQbeDataSet qbeDataset = (AbstractQbeDataSet) dataset;
 
 		QbeDataSet newDataset;
@@ -874,7 +878,9 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		newDataset.setLabel(label);
 		newDataset.setName(name);
 		newDataset.setDescription(description);
-
+		if (pars != null) {
+			newDataset.setParameters(pars);
+		}
 		String scopeCd = null;
 		Integer scopeId = null;
 		String categoryCd = null;
@@ -1012,5 +1018,43 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		IDataSet saved = proxy.saveDataSet(newDataset);
 		logger.debug("Dataset saved without errors");
 		return saved;
+	}
+
+	private String getDataSetParametersAsString(JSONObject json) {
+		String parametersString = null;
+
+		try {
+			JSONArray parsListJSON = json.optJSONArray(DataSetConstants.PARS);
+			if (parsListJSON == null) {
+				return null;
+			}
+
+			SourceBean sb = new SourceBean("PARAMETERSLIST");
+			SourceBean sb1 = new SourceBean("ROWS");
+
+			for (int i = 0; i < parsListJSON.length(); i++) {
+				JSONObject obj = (JSONObject) parsListJSON.get(i);
+				String name = obj.optString("name");
+				String type = obj.optString("type");
+				String multiValue = obj.optString("multiValue");
+				String defaultValue = obj.optString("defaultValue");
+
+				SourceBean b = new SourceBean("ROW");
+				b.setAttribute("NAME", name);
+				b.setAttribute("TYPE", type);
+				b.setAttribute("MULTIVALUE", multiValue);
+				b.setAttribute(DataSetParametersList.DEFAULT_VALUE_XML, defaultValue);
+				sb1.setAttribute(b);
+			}
+			sb.setAttribute(sb1);
+			parametersString = sb.toXML(false);
+		} catch (Throwable t) {
+			if (t instanceof SpagoBIServiceException) {
+				throw (SpagoBIServiceException) t;
+			}
+			throw new SpagoBIServiceException("ManageDatasets", "An unexpected error occured while deserializing dataset parameters", t);
+
+		}
+		return parametersString;
 	}
 }
