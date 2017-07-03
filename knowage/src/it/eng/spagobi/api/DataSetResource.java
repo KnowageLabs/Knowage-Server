@@ -34,7 +34,6 @@ import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.sdk.datasets.bo.SDKDataSetParameter;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
-import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
@@ -481,18 +480,43 @@ public class DataSetResource extends AbstractSpagoBIResource {
 
 	}
 
-	@POST
+	@GET
 	@Path("/{label}/content")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response execute(@PathParam("label") String label, String body) {
 		SDKDataSetParameter[] parameters = null;
-		if (body != null && !body.equals("")) {
-			parameters = (SDKDataSetParameter[]) JsonConverter.jsonToValidObject(body, SDKDataSetParameter[].class);
-		}
 
+		if (request.getParameterMap() != null && request.getParameterMap().size() > 0) {
+
+			parameters = new SDKDataSetParameter[request.getParameterMap().size()];
+
+			int i = 0;
+			for (Iterator iterator = request.getParameterMap().keySet().iterator(); iterator.hasNext();) {
+				String key = (String) iterator.next();
+				String[] values = request.getParameterMap().get(key);
+				SDKDataSetParameter sdkDataSetParameter = new SDKDataSetParameter();
+				sdkDataSetParameter.setName(key);
+				sdkDataSetParameter.setValues(values);
+				parameters[i] = sdkDataSetParameter;
+				i++;
+			}
+		}
 		return Response.ok(executeDataSet(label, parameters)).build();
 	}
+
+	// @POST
+	// @Path("/{label}/content")
+	// @Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	// @UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	// public Response execute(@PathParam("label") String label, String body) {
+	// SDKDataSetParameter[] parameters = null;
+	// if (body != null && !body.equals("")) {
+	// parameters = (SDKDataSetParameter[]) JsonConverter.jsonToValidObject(body, SDKDataSetParameter[].class);
+	// }
+	//
+	// return Response.ok(executeDataSet(label, parameters)).build();
+	// }
 
 	@DELETE
 	@Path("/{label}")
