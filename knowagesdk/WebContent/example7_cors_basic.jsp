@@ -44,7 +44,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
  		execTest7 = function() {
 		    Sbi.sdk.cors.api.executeDataSet({
-		    	datasetLabel: 'DS_DEMO_EXTCHART'
+		    	datasetLabel: 'DS'
 		    	, parameters: {
 		    		par_year: 1998,
 		    		par_family: 'Food'
@@ -93,7 +93,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <PRE>
 execTest7 = function() {
     Sbi.sdk.cors.api.executeDataSet({
-    	datasetLabel: 'DS_DEMO_EXTCHART'
+    	datasetLabel: 'DS'
     	, parameters: {
     		par_year: 1998,
     		par_family: 'Food'

@@ -146,7 +146,7 @@ Password: <input type="password" id="password" name="password" size="30" value="
 	<dd>  Use <i>injectDocument</i> function to inject into an existing div an html string that contains the definition of an iframe 
 	pointing to the execution service. <br>The html string is generated internally using <i>getDocumentHtml</i> function. In this example 
 	differently from the previous the new execution module, fully based on ajax technology, is invoked.
-	<p>
+	<p>-->
  <dt> <a target="_blank" href="example5.jsp">Example 5 : injectDocument into non-existing div</a>
 	<dd>  Use <i>injectDocument</i> function to inject into a div an html string that contains the definition of an iframe 
 	pointing to the execution service. <br>In this example the specified target div does not exist so it is created on the fly by the function.
@@ -155,7 +155,7 @@ Password: <input type="password" id="password" name="password" size="30" value="
 	<dd>  Use <i>getDataSetList</i> function to retrieve the list of all datasets.
 	<p>
 	<dt> <a target="_blank" href="example7_cors.jsp">Example 7 : executeDataSet using CORS</a>
-	<dd>  Use <i>executeDataSet</i> function to get the content of a specific dataset. -->
+	<dd>  Use <i>executeDataSet</i> function to get the content of a specific dataset.
 </dl>
 </div>
 <!-- 
