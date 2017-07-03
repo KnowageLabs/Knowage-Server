@@ -78,7 +78,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 
 	private static final String ID_NAME = "id";
 
-	private static final String ORION_JSON_PATH_ITEMS = "$.contextResponses[*].contextElement";
+	private static final String ORION_JSON_PATH_ITEMS = "$";
 
 	static private Logger logger = Logger.getLogger(JSONPathDataReader.class);
 
@@ -145,6 +145,16 @@ public class JSONPathDataReader extends AbstractDataReader {
 		}
 	}
 
+	private static org.json.JSONArray isJSONArray(String responseBody) {
+		try {
+			org.json.JSONArray res = JSONUtils.toJSONArray(responseBody);
+			return res;
+		} catch (Exception e) {
+			logger.debug("Error parsing input String as JSONObject", e);
+			return null;
+		}
+	}
+
 	@Override
 	public synchronized IDataStore read(Object data) {
 		Helper.checkNotNull(data, "data");
@@ -153,8 +163,13 @@ public class JSONPathDataReader extends AbstractDataReader {
 		}
 
 		String d = (String) data;
-		JSONObject jsonData = isJSON(d);
-		Assert.assertTrue(jsonData != null, String.format("Data must be a valid JSON: %s", d));
+		if (ngsi) {
+			org.json.JSONArray jsonData = isJSONArray(d);
+			Assert.assertTrue(jsonData != null, String.format("Data must be a valid JSON Array: %s", d));
+		} else {
+			JSONObject jsonData = isJSON(d);
+			Assert.assertTrue(jsonData != null, String.format("Data must be a valid JSON: %s", d));
+		}
 
 		try {
 			DataStore dataStore = new DataStore();
@@ -454,18 +469,14 @@ public class JSONPathDataReader extends AbstractDataReader {
 
 		Map<String, Object> element = (Map<String, Object>) parsedData.get(0);
 		res.add(new JSONPathAttribute("id", "$.id", "string")); // id of element
-		List<Object> attributes = (List<Object>) element.get("attributes");
-		Assert.assertTrue(attributes != null, "attributes!=null");
-		if (attributes.isEmpty()) {
-			return res;
-		}
-
-		for (Object attr : attributes) {
-			Map<String, Object> attrMap = (Map<String, Object>) attr;
-			String name = (String) attrMap.get("name");
-			String jsonPathValue = "$.attributes[?(@.name==" + name + ")].value";
-			String jsonPathType = "$.attributes[?(@.name==" + name + ")].type";
-			res.add(new JSONPathAttribute(name, jsonPathValue, jsonPathType));
+		res.add(new JSONPathAttribute("type", "$.type", "string")); // type of element
+		for (Map.Entry<String, Object> entry : element.entrySet()) {
+			String name = entry.getKey();
+			if (!name.equalsIgnoreCase("id") && !name.equalsIgnoreCase("type")) {
+				String jsonPathValue = "$." + name + ".value";
+				String jsonPathType = "$." + name + ".type";
+				res.add(new JSONPathAttribute(name, jsonPathValue, jsonPathType));
+			}
 		}
 
 		return res;
