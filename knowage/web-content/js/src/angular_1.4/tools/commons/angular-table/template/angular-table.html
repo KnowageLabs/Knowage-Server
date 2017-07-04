@@ -90,7 +90,7 @@
 
 <tr scope="row" ui-tree-node dir-paginate="row in ngModel |  filterBySpecificColumns:columnsSearch:searchFastVal| customOrdering:internal_column_ordering:internal_reverse_col_ord:tableColumns:initialSorting:initialSortingAsc | itemsPerPage:itemsPerPage track by $index" 
 	pagination-id='id+"PaginationTable"' total-items='totalItemCount' current-page='pagination.currentPageNumber'
-	ng-class="{'selectedRowItem': (highlightsSelectedItem==true && isSelected(row) ), row.customRowClass}"  class="animate-repeat-tablerow"
+	ng-class="{'selectedRowItem': (highlightsSelectedItem==true && isSelected(row) ), 'hiddenRow':row.hideRow}"  class="animate-repeat-tablerow"
  	ng-if="isVisibleRowFunction(row)">
 	<td  ng-repeat="column in tableColumns" ng-switch="column.static==true? '--STATIC--' : column.name" ng-click="clickItem(row,column.name,getColumnValue(row,column.name),$event,$parent.$index)" ng-dblclick="startEdit(row,column,getColumnValue(row,column.name),$event)" context-menu  data-target='{{id}}TableContextMenu-{{$parent.$index}}-{{$index}}' class="{{column.customRecordsClass}} " 
 		ng-class="{ 'highlight': highlight, 'expanded' : expanded,'tableDragBar':column.name=='--DRAG_AND_DROP--'}" ng-style="column.style==undefined ? '' :  getDynamicValue(column.style,row,column,$parent.$index)" >
