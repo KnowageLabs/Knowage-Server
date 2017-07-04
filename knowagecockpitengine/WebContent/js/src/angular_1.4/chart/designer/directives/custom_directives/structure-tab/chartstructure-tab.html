@@ -7,7 +7,7 @@
 			<input ng-show='true' ng-repeat = "seriesContainer in seriesContainers"  name="seriesNumber" min=1 max={{2+1}} type="number" ng-model="seriesContainer.series.length" >
 		 -->
 		
-		 <input ng-show='false' name="categoriesNumber"  type="number"  ng-model="categories.length" min={{minMaxCategories.min}} max={{minMaxCategories.max}} > 
+		 <input  ng-if="selectedChartType.toUpperCase() != 'GAUGE'" ng-show='false' name="categoriesNumber"  type="number"  ng-model="categories.length" min={{minMaxCategories.min}} max={{minMaxCategories.max}} > 
 		 <input ng-show='false' ng-repeat = "seriesContainer in seriesContainers"  name={{seriesContainer.name}} min={{minMaxSeries.min}} max={{minMaxSeries.max}} type="number" ng-model="seriesContainer.series.length" >
 		<div layout="column" flex=35 style="padding:0 8 0 0">  
 		
