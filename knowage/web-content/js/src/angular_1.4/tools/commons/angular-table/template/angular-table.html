@@ -133,7 +133,7 @@
       		</md-button>
      		<md-menu-content width="4" >
         		<md-menu-item ng-repeat="menuItem in speedMenuOption" ng-if="getDynamicValue(menuItem.visible,row,column)!=false"> 
-          			<md-button ng-click="$event.stopPropagation();menuItem.action(row,$event);" action-background-color={{menuItem.backgroundColor}}>
+          			<md-button ng-click="$event.stopPropagation();menuItem.action(row,$event);" action-background-color={{menuItem.backgroundColor}} ng-class="menuItem.buttonClass">
 		   				<md-icon  ng-if="menuItem.icon!=undefined" action-color="{{getDynamicValue(menuItem.color,row,column)}}" ng-class="getDynamicValue(menuItem.icon,row,column)" md-menu-align-target></md-icon>
 		    			<span ng-if="menuItem.label!=undefined">{{getDynamicValue(menuItem.label,row,column)}}</span> 
           			</md-button>
