@@ -203,9 +203,9 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 			ctr.treeOptions = {
 				beforeDrop: function(event) {
 					if(ctr.selectedItem >= 0){
-						if(ctr.selectedItem != ""){
+						//if(ctr.selectedItem != ""){
 							ctr.detail.toPars[ctr.selectedItem].links = [event.source.cloneModel];	
-						}
+						//}
 					}
 					return false;
 				},
