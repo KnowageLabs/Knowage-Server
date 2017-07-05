@@ -105,15 +105,29 @@ function qbeFunction($scope,$rootScope,entity_service,sbiModule_inputParams,sbiM
     $scope.ammacool = function (item, event) {
     	console.log(item)
     }
-    
+
+    $scope.previewData = function (data) {
+    	$scope.executeQuery (data)
+    }
+
+    $scope.query = {"id":"q1","name":"query-q1","description":"query-q1","fields":[],"distinct":false,"filters":[],"calendar":{},"expression":{},"isNestedExpression":false,"havings":[],"graph":[],"relationsRoles":[],"subqueries":[]};
+
+    $scope.catalogue = [$scope.query];
+
+    $scope.bodySend = {
+    		"catalogue":$scope.catalogue,
+    		"qbeJSONQuery":$scope.qbeJSONQuery,
+        	"pars": $scope.pars,
+        	"schedulingCronLine":"0 * * * * ?"
+    };
     $scope.executeQuery = function (data) {
-    	q="?SBI_EXECUTION_ID="+sbiModule_config.sbiExecutionID+"&start=0&limit=25&id=q1&promptableFilters=null"
-    	
-    	 sbiModule_restServices.promisePost('qbequery/executeQuery'+q,"")
+    	q="?SBI_EXECUTION_ID="+sbiModule_config.sbiExecutionID+"&currentQueryId="+$scope.query.id+"&start=0&limit=25"
+
+    	 sbiModule_restServices.promisePost('qbequery/executeQuery',q,$scope.bodySend)
      	.then(function(response) {
      		console.log("[POST]: SUCCESS!");
      		$scope.queryModel = [];
-     		
+
      		for (var i = 0; i < $scope.query.fields.length; i++) {
      			var key = "column_"+(i+1);
      			var queryObject = {
@@ -130,28 +144,14 @@ function qbeFunction($scope,$rootScope,entity_service,sbiModule_inputParams,sbiM
 				}
      			$scope.queryModel.push(queryObject); 
 			}
-     		
+
      	}, function(response) {
      	});
     }
-        
-    $scope.previewData = function (data) {
-        q="?SBI_EXECUTION_ID="+sbiModule_config.sbiExecutionID+"&ambiguousRoles=null&ambiguousFieldsPaths=null&currentQueryId="+$scope.query.id;
-        
-        sbiModule_restServices.promisePost('qbequery/setQueryCatalog'+q,"", [$scope.query])
-    	.then(function(response) {
-    		console.log("[POST]: SUCCESS!");
-    		$scope.executeQuery(data);
-    	}, function(response) {
-    	});
-    }
-    
-    $scope.query = {"id":"q1","name":"query-q1","description":"query-q1","fields":[],"distinct":false,"filters":[],"calendar":{},"expression":{},"isNestedExpression":false,"havings":[],"graph":[],"relationsRoles":[],"subqueries":[]};
     
     $scope.openMenu = function($mdMenu, ev) {
         originatorEv = ev;
         $mdMenu.open(ev);
     };
 
-	
 }
