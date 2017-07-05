@@ -4,7 +4,7 @@
    		<md-toolbar layout="row" ng-style="{'border-top':n.color}">{{n.name}}
    		<span flex></span>
    		<md-menu>			      
-      	<md-button 	aria-label="query settings menu" class="md-icon-button" ng-click="openMenu($mdOpenMenu, $event)">
+      	<md-button 	aria-label="query settings menu" class="md-icon-button" ng-click="openMenu($mdMenu.open, $event)">
         	<md-icon md-menu-origin class="fa fa-cog"></md-icon>
       	</md-button>
       	<md-menu-content>
@@ -98,7 +98,12 @@
    	
    
    	<div ng-repeat="r in n.data track by $index" style="background-color:#white" >{{r}}</div>
-   	<div ng-repeat="f in n.filters" style="background-color:#a9c3db">{{f}}</div>
+   	<div ng-repeat="f in n.filters" style="background-color:#a9c3db">{{f}}
+   		<md-button 	aria-label="filters"  ng-click="openFilters()">
+        	<md-icon md-menu-origin class="fa fa-filter"></md-icon>
+      	</md-button>
+   	
+   	</div>
    </div>
    </div>
 </div>
