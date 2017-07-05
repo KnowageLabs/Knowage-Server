@@ -1,6 +1,6 @@
 angular.module('cockpitModule').controller("datasetManagerController",["$scope","sbiModule_translate","$mdPanel","cockpitModule_datasetServices","cockpitModule_widgetSelection","$mdDialog","cockpitModule_template","cockpitModule_analyticalDrivers","cockpitModule_analyticalDriversUrls","$timeout","sbiModule_user",datasetManagerController]);
 angular.module('cockpitModule').controller("documentManagerController",["$scope","sbiModule_translate","$mdPanel","cockpitModule_documentServices","cockpitModule_widgetSelection","$mdDialog","cockpitModule_analyticalDrivers","$timeout",documentManagerController]);
-angular.module('cockpitModule').controller("associationGroupController",["$scope","sbiModule_translate","cockpitModule_realtimeServices", associationGroupController]);
+angular.module('cockpitModule').controller("associationGroupController",["$scope","sbiModule_translate","cockpitModule_nearRealtimeServices", associationGroupController]);
 
 function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitModule_datasetServices,cockpitModule_widgetSelection,$mdDialog,cockpitModule_template,cockpitModule_analyticalDrivers,cockpitModule_analyticalDriversUrls,$timeout,sbiModule_user){
 	$scope.displayDatasetCard=false;
@@ -309,13 +309,13 @@ function documentManagerController($scope,sbiModule_translate,$mdPanel,cockpitMo
 	 }
 }
 
-function associationGroupController($scope,sbiModule_translate,cockpitModule_realtimeServices){
-	$scope.realtimeServices=cockpitModule_realtimeServices;
+function associationGroupController($scope,sbiModule_translate,cockpitModule_nearRealtimeServices){
+	$scope.nearRealtimeServices=cockpitModule_nearRealtimeServices;
 	$scope.rtData=[];
-	$scope.$on("refreshFrequencyRTData",function(){
+	$scope.$on("refreshFrequencyNearRTData",function(){
 		angular.copy([],$scope.rtData);
 		angular.forEach($scope.tmpAggregations,function(aggreg){
-			this.push(cockpitModule_realtimeServices.getRealTimeDatasetFromList(aggreg.datasets,$scope.tmpAvaiableDataset));
+			this.push(cockpitModule_nearRealtimeServices.getNearRealTimeDatasetFromList(aggreg.datasets,$scope.tmpAvaiableDataset));
 		},$scope.rtData)
 		
 	})
@@ -529,8 +529,8 @@ function cockpitDataConfigurationController($scope,$rootScope,sbiModule_translat
 		    			 return {"withAssoc": array, "withoutAssoc" : arrayWithoutAssociation};
 		    		 }
 		    	 
-		    	$scope.refreshFrequencyRTData=function(){
-		    		$scope.$broadcast("refreshFrequencyRTData")
+		    	$scope.refreshFrequencyNearRTData=function(){
+		    		$scope.$broadcast("refreshFrequencyNearRTData")
 		    	}
 };
 

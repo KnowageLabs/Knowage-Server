@@ -345,7 +345,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 	@Path("/loadAssociativeSelections")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getAssociativeSelections(@QueryParam("associationGroup") String associationGroupString, @QueryParam("selections") String selectionsString,
-			@QueryParam("datasets") String datasetsString, @QueryParam("realtime") String realtimeDatasetsString) {
+			@QueryParam("datasets") String datasetsString, @QueryParam("nearRealtime") String nearRealtimeDatasetsString) {
 		logger.debug("IN");
 
 		try {
@@ -428,12 +428,12 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 				}
 			}
 
-			// parse realtime datasets
-			Set<String> realtimeDatasets = new HashSet<String>();
-			if (realtimeDatasetsString != null && !realtimeDatasetsString.isEmpty()) {
-				JSONArray jsonArray = new JSONArray(realtimeDatasetsString);
+			// parse near realtime datasets
+			Set<String> nearRealtimeDatasets = new HashSet<String>();
+			if (nearRealtimeDatasetsString != null && !nearRealtimeDatasetsString.isEmpty()) {
+				JSONArray jsonArray = new JSONArray(nearRealtimeDatasetsString);
 				for (int i = 0; i < jsonArray.length(); i++) {
-					realtimeDatasets.add(jsonArray.getString(i));
+					nearRealtimeDatasets.add(jsonArray.getString(i));
 				}
 			}
 
@@ -473,8 +473,8 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 				Assert.assertTrue(!column.isEmpty(), "A column for dataset " + datasetLabel + " in selections is empty");
 
 				IDataSet dataset = getDataSetDAO().loadDataSetByLabel(datasetLabel);
-				boolean isRealtime = realtimeDatasets.contains(datasetLabel);
-				IDataSource dataSource = getDataSource(dataset, isRealtime);
+				boolean isNearRealtime = nearRealtimeDatasets.contains(datasetLabel);
+				IDataSource dataSource = getDataSource(dataset, isNearRealtime);
 				boolean isDateColumn = isDateColumn(column, dataset);
 
 				String values = null;
@@ -512,7 +512,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 					}
 				}
 
-				filters.add(new Selection(datasetLabel, getFilter(dataset, isRealtime, column, valuesForQuery)));
+				filters.add(new Selection(datasetLabel, getFilter(dataset, isNearRealtime, column, valuesForQuery)));
 
 				if (!selectionsMap.containsKey(datasetLabel)) {
 					selectionsMap.put(datasetLabel, new HashMap<String, Set<String>>());
@@ -527,8 +527,8 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 			logger.debug("Filter list: " + filters);
 
 			String strategy = SingletonConfig.getInstance().getConfigValue(ConfigurationConstants.SPAGOBI_DATASET_ASSOCIATIVE_LOGIC_STRATEGY);
-			Config config = AssociativeLogicUtils.buildConfig(strategy, graph, datasetToAssociationToColumnMap, filters, realtimeDatasets, datasetParameters,
-					documents);
+			Config config = AssociativeLogicUtils.buildConfig(strategy, graph, datasetToAssociationToColumnMap, filters, nearRealtimeDatasets,
+					datasetParameters, documents);
 
 			IAssociativityManager manager = AssociativeStrategyFactory.createStrategyInstance(config, getUserProfile());
 			AssociativeLogicResult result = manager.process();
@@ -554,12 +554,12 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		}
 	}
 
-	private String getFilter(IDataSet dataset, boolean isRealtime, String column, String values) {
-		IDataSource dataSource = getDataSource(dataset, isRealtime);
-		String tablePrefix = getTablePrefix(dataset, isRealtime);
-		DatasetEvaluationStrategy strategy = getDatasetEvaluationStrategy(dataset, isRealtime);
+	private String getFilter(IDataSet dataset, boolean isNearRealtime, String column, String values) {
+		IDataSource dataSource = getDataSource(dataset, isNearRealtime);
+		String tablePrefix = getTablePrefix(dataset, isNearRealtime);
+		DatasetEvaluationStrategy strategy = getDatasetEvaluationStrategy(dataset, isNearRealtime);
 
-		if (DatasetEvaluationStrategy.REALTIME.equals(strategy) || SqlUtils.hasSqlServerDialect(dataSource)) {
+		if (DatasetEvaluationStrategy.NEAR_REALTIME.equals(strategy) || SqlUtils.hasSqlServerDialect(dataSource)) {
 			return getOrFilterString(column, values, dataSource, tablePrefix);
 		} else {
 			return getInFilterString(column, values, dataSource, tablePrefix);
@@ -595,9 +595,9 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		return sb.toString();
 	}
 
-	private String getTablePrefix(IDataSet dataset, boolean isRealtime) {
-		DatasetEvaluationStrategy datasetEvaluationStrategy = getDatasetEvaluationStrategy(dataset, isRealtime);
-		if (datasetEvaluationStrategy == DatasetEvaluationStrategy.REALTIME) {
+	private String getTablePrefix(IDataSet dataset, boolean isNearRealtime) {
+		DatasetEvaluationStrategy datasetEvaluationStrategy = getDatasetEvaluationStrategy(dataset, isNearRealtime);
+		if (datasetEvaluationStrategy == DatasetEvaluationStrategy.NEAR_REALTIME) {
 			return DEFAULT_TABLE_NAME_DOT;
 		} else {
 			return "";
@@ -605,10 +605,10 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 	}
 
 	private enum DatasetEvaluationStrategy {
-		PERSISTED, FLAT, JDBC, REALTIME, CACHED
+		PERSISTED, FLAT, JDBC, NEAR_REALTIME, CACHED
 	}
 
-	private DatasetEvaluationStrategy getDatasetEvaluationStrategy(IDataSet dataSet, boolean isRealtime) {
+	private DatasetEvaluationStrategy getDatasetEvaluationStrategy(IDataSet dataSet, boolean isNearRealtime) {
 		DatasetEvaluationStrategy result;
 
 		if (dataSet.isPersisted() && !dataSet.isPersistedHDFS()) {
@@ -618,10 +618,10 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		} else {
 			boolean isJDBCDataSet = DatasetManagementAPI.isJDBCDataSet(dataSet);
 			boolean isBigDataDialect = SqlUtils.isBigDataDialect(dataSet.getDataSource() != null ? dataSet.getDataSource().getHibDialectName() : "");
-			if (isRealtime && isJDBCDataSet && !isBigDataDialect && !dataSet.hasDataStoreTransformer()) {
+			if (isNearRealtime && isJDBCDataSet && !isBigDataDialect && !dataSet.hasDataStoreTransformer()) {
 				result = DatasetEvaluationStrategy.JDBC;
-			} else if (isRealtime) {
-				result = DatasetEvaluationStrategy.REALTIME;
+			} else if (isNearRealtime) {
+				result = DatasetEvaluationStrategy.NEAR_REALTIME;
 			} else {
 				result = DatasetEvaluationStrategy.CACHED;
 			}
@@ -665,7 +665,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 	}
 
 	@Override
-	protected List<FilterCriteria> getFilterCriteria(String datasetLabel, JSONObject selectionsObject, boolean isRealtime,
+	protected List<FilterCriteria> getFilterCriteria(String datasetLabel, JSONObject selectionsObject, boolean isNearRealtime,
 			Map<String, String> columnAliasToColumnName) throws JSONException {
 		List<FilterCriteria> filterCriterias = new ArrayList<FilterCriteria>();
 
@@ -691,7 +691,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 						}
 					}
 
-					IDataSource dataSource = getDataSource(dataSet, isRealtime);
+					IDataSource dataSource = getDataSource(dataSet, isNearRealtime);
 
 					boolean isJDBCDataSet = DatasetManagementAPI.isJDBCDataSet(dataSet);
 					boolean isBigDataDialect = SqlUtils.isBigDataDialect(dataSet.getDataSource() != null ? dataSet.getDataSource().getHibDialectName() : "");
@@ -699,8 +699,8 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 
 					List<String> dateColumnNamesList = getDateColumnNamesList(dataSet, dataSource);
 
-					DatasetEvaluationStrategy strategy = getDatasetEvaluationStrategy(dataSet, isRealtime);
-					if (strategy == DatasetEvaluationStrategy.REALTIME) {
+					DatasetEvaluationStrategy strategy = getDatasetEvaluationStrategy(dataSet, isNearRealtime);
+					if (strategy == DatasetEvaluationStrategy.NEAR_REALTIME) {
 						for (int i = 0; i < columnsList.size(); i++) {
 							columnsList.set(i, DEFAULT_TABLE_NAME_DOT + AbstractJDBCDataset.encapsulateColumnName(columnsList.get(i), null));
 						}
@@ -830,7 +830,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 	}
 
 	@Override
-	protected List<FilterCriteria> getLikeFilterCriteria(String datasetLabel, JSONObject likeSelectionsObject, boolean isRealtime,
+	protected List<FilterCriteria> getLikeFilterCriteria(String datasetLabel, JSONObject likeSelectionsObject, boolean isNearRealtime,
 			Map<String, String> columnAliasToColumnName, List<ProjectionCriteria> projectionCriteria, boolean getAttributes) throws JSONException {
 		List<FilterCriteria> likeFilterCriteria = new ArrayList<FilterCriteria>();
 
@@ -849,7 +849,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 					String columnNames = fixColumnAliasesAndNames(columns, columnAliasToColumnName);
 					columnsList.addAll(Arrays.asList(columnNames.split("\\s*,\\s*"))); // trim spaces while splitting
 
-					List<String> attributesOrMeasures = getAttributesOrMeasures(columnsList, dataSet, projectionCriteria, isRealtime, getAttributes);
+					List<String> attributesOrMeasures = getAttributesOrMeasures(columnsList, dataSet, projectionCriteria, isNearRealtime, getAttributes);
 					if (!attributesOrMeasures.isEmpty()) {
 						Operand leftOperand = null;
 						StringBuilder rightOperandSB = new StringBuilder();
@@ -886,14 +886,14 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		return likeFilterCriteria;
 	}
 
-	private List<String> getAttributesOrMeasures(List<String> columnNames, IDataSet dataSet, List<ProjectionCriteria> projectionCriteria, boolean isRealtime,
-			boolean getAttributes) {
+	private List<String> getAttributesOrMeasures(List<String> columnNames, IDataSet dataSet, List<ProjectionCriteria> projectionCriteria,
+			boolean isNearRealtime, boolean getAttributes) {
 		List<String> attributesOrMeasures = new ArrayList<String>();
 
-		String defaultTableNameDot = isRealtime ? DEFAULT_TABLE_NAME_DOT : "";
+		String defaultTableNameDot = isNearRealtime ? DEFAULT_TABLE_NAME_DOT : "";
 		String datasetLabel = dataSet.getLabel();
 
-		IDataSource dataSource = getDataSource(dataSet, isRealtime);
+		IDataSource dataSource = getDataSource(dataSet, isNearRealtime);
 
 		for (String columnName : columnNames) {
 			for (ProjectionCriteria projection : projectionCriteria) {
@@ -919,8 +919,8 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		return attributesOrMeasures;
 	}
 
-	private IDataSource getDataSource(IDataSet dataSet, boolean isRealTime) {
-		DatasetEvaluationStrategy strategy = getDatasetEvaluationStrategy(dataSet, isRealTime);
+	private IDataSource getDataSource(IDataSet dataSet, boolean isNearRealTime) {
+		DatasetEvaluationStrategy strategy = getDatasetEvaluationStrategy(dataSet, isNearRealTime);
 		IDataSource dataSource = null;
 
 		if (strategy == DatasetEvaluationStrategy.PERSISTED) {
@@ -930,7 +930,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 				dataSource = dataSet.getDataSource();
 			} catch (UnreachableCodeException e) {
 			}
-		} else if (strategy == DatasetEvaluationStrategy.REALTIME) {
+		} else if (strategy == DatasetEvaluationStrategy.NEAR_REALTIME) {
 			dataSource = null;
 		} else {
 			dataSource = SpagoBICacheConfiguration.getInstance().getCacheDataSource();
@@ -1022,10 +1022,10 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 	public String getDataStorePost(@PathParam("label") String label, @QueryParam("parameters") String parameters, String selections,
 			@QueryParam("likeSelections") String likeSelections, @DefaultValue("-1") @QueryParam("limit") int maxRowCount,
 			@QueryParam("aggregations") String aggregations, @QueryParam("summaryRow") String summaryRow, @QueryParam("offset") int offset,
-			@QueryParam("size") int fetchSize, @QueryParam("realtime") boolean isRealtime) {
+			@QueryParam("size") int fetchSize, @QueryParam("nearRealtime") boolean isNearRealtime) {
 		logger.debug("IN");
 		try {
-			return getDataStore(label, parameters, selections, likeSelections, maxRowCount, aggregations, summaryRow, offset, fetchSize, isRealtime);
+			return getDataStore(label, parameters, selections, likeSelections, maxRowCount, aggregations, summaryRow, offset, fetchSize, isNearRealtime);
 		} catch (Exception e) {
 			throw new SpagoBIRestServiceException(buildLocaleFromSession(), e);
 		} finally {
@@ -1043,7 +1043,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 			for (int i = 0; i < requestBodyJSONArray.length(); i++) {
 				JSONObject info = requestBodyJSONArray.getJSONObject(i);
 				getDataStore(info.getString("datasetLabel"), info.getString("parameters"), null, null, -1, info.getString("aggregation"), null, 0, 1,
-						info.optBoolean("realtime"));
+						info.optBoolean("nearRealtime"));
 
 			}
 			return Response.ok().build();

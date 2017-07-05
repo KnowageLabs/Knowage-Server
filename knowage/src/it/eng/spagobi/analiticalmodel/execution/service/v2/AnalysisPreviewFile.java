@@ -17,74 +17,39 @@
  */
 package it.eng.spagobi.analiticalmodel.execution.service.v2;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.validation.EMFValidationError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.api.DataSetPutResource;
-import it.eng.spagobi.api.v2.UploadDatasetFileResource;
-import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.hotlink.constants.HotLinkConstants;
-import it.eng.spagobi.monitoring.dao.AuditManager;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.tools.catalogue.bo.Content;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
-import it.eng.spagobi.tools.dataset.service.ManageDataSetsForREST;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.file.FileUtils;
-import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URLEncoder;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
-import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
-import org.jboss.resteasy.plugins.providers.multipart.InputPart;
-import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 @Path("/2.0/analysis")
 @ManageAuthorization
 public class AnalysisPreviewFile extends AbstractSpagoBIResource {
-	
+
 	static protected Logger logger = Logger.getLogger(AnalysisPreviewFile.class);
 
 	private static final String DATASET_FILE_MAX_SIZE = "DATASET_FILE_MAX_SIZE";
@@ -112,13 +77,13 @@ public class AnalysisPreviewFile extends AbstractSpagoBIResource {
 			logger.debug("Saving file...");
 			saveFile(uploaded, file);
 			logger.debug("File saved");
-			
+
 			// start uploading document with preview file name
 			BIObject biObject = DAOFactory.getBIObjectDAO().loadBIObjectById((documentId));
-            biObject.setPreviewFile(file.getName());
-            DAOFactory.getBIObjectDAO().modifyBIObject(biObject);
-            // end uploading document with preview file name
-            
+			biObject.setPreviewFile(file.getName());
+			DAOFactory.getBIObjectDAO().modifyBIObject(biObject);
+			// end uploading document with preview file name
+
 			Map<String, String> jsonMap = new HashMap<>();
 			jsonMap.put("fileName", file.getName());
 			jsonMap.put("fileType", extension);
@@ -231,71 +196,60 @@ public class AnalysisPreviewFile extends AbstractSpagoBIResource {
 		return "PREVIEW_FILE_UPLOAD";
 	}
 
-	/*@POST
-	@Path("/{id}")
-	@Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON })
-	public Response persistDataSets(@MultipartForm MultipartFormDataInput input, @PathParam("id") int documentId) {
-		
-		Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
-		List<InputPart> fileNamePart = uploadForm.get("fileName");
-		List<InputPart> fileParts = uploadForm.get("file");
-			
-		try {
-			String previewFile = fileNamePart.get(0).getBodyAsString();
-            BIObject biObject = DAOFactory.getBIObjectDAO().loadBIObjectById((documentId));
-            biObject.setPreviewFile(previewFile);
-            DAOFactory.getBIObjectDAO().modifyBIObject(biObject);
-            return Response.status(200).build();
-		} catch (Exception e) {
-			throw new SpagoBIRestServiceException(getLocale(), e);
-		}
-		
-		
-	}*/
+	/*
+	 * @POST
+	 * 
+	 * @Path("/{id}")
+	 * 
+	 * @Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON }) public Response persistDataSets(@MultipartForm MultipartFormDataInput input,
+	 * @PathParam("id") int documentId) {
+	 * 
+	 * Map<String, List<InputPart>> uploadForm = input.getFormDataMap(); List<InputPart> fileNamePart = uploadForm.get("fileName"); List<InputPart> fileParts =
+	 * uploadForm.get("file");
+	 * 
+	 * try { String previewFile = fileNamePart.get(0).getBodyAsString(); BIObject biObject = DAOFactory.getBIObjectDAO().loadBIObjectById((documentId));
+	 * biObject.setPreviewFile(previewFile); DAOFactory.getBIObjectDAO().modifyBIObject(biObject); return Response.status(200).build(); } catch (Exception e) {
+	 * throw new SpagoBIRestServiceException(getLocale(), e); }
+	 * 
+	 * 
+	 * }
+	 */
 
-/*
-		@POST
-		@Path("/{ID}/versions")
-		@Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON })
-		public Response uploadFile(@MultipartForm MultipartFormDataInput input, @PathParam("ID") int artifactId) {
-
-			Content content = new Content();
-			byte[] bytes = null;
-
-			artifactDAO = DAOFactory.getArtifactsDAO();
-
-			Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
-
-			List<InputPart> fileNamePart = uploadForm.get("fileName");
-			List<InputPart> fileParts = uploadForm.get("file");
-
-			if (fileNamePart != null && fileParts != null) {
-				try {
-
-					content.setFileName(fileNamePart.get(0).getBodyAsString());
-
-					// convert the uploaded file to input stream
-					InputStream inputStream = fileParts.get(0).getBody(InputStream.class, null);
-
-					bytes = IOUtils.toByteArray(inputStream);
-
-					content.setContent(bytes);
-					content.setCreationDate(new Date());
-					content.setCreationUser(getUserProfile().getUserName().toString());
-
-					artifactDAO.insertArtifactContent(artifactId, content);
-					String encodedContentId = URLEncoder.encode("" + content.getId(), "UTF-8");
-					// System.out.println(new URI(uri.getAbsolutePath() + encodedContentId));
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-
-			} else {
-				return Response.status(Status.BAD_REQUEST).build();
-
-			}
-
-			return Response.status(200).build();
-
-		}*/
+	/*
+	 * @POST
+	 * 
+	 * @Path("/{ID}/versions")
+	 * 
+	 * @Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON }) public Response uploadFile(@MultipartForm MultipartFormDataInput input,
+	 * @PathParam("ID") int artifactId) {
+	 * 
+	 * Content content = new Content(); byte[] bytes = null;
+	 * 
+	 * artifactDAO = DAOFactory.getArtifactsDAO();
+	 * 
+	 * Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
+	 * 
+	 * List<InputPart> fileNamePart = uploadForm.get("fileName"); List<InputPart> fileParts = uploadForm.get("file");
+	 * 
+	 * if (fileNamePart != null && fileParts != null) { try {
+	 * 
+	 * content.setFileName(fileNamePart.get(0).getBodyAsString());
+	 * 
+	 * // convert the uploaded file to input stream InputStream inputStream = fileParts.get(0).getBody(InputStream.class, null);
+	 * 
+	 * bytes = IOUtils.toByteArray(inputStream);
+	 * 
+	 * content.setContent(bytes); content.setCreationDate(new Date()); content.setCreationUser(getUserProfile().getUserName().toString());
+	 * 
+	 * artifactDAO.insertArtifactContent(artifactId, content); String encodedContentId = URLEncoder.encode("" + content.getId(), "UTF-8"); //
+	 * System.out.println(new URI(uri.getAbsolutePath() + encodedContentId)); } catch (IOException e) { e.printStackTrace(); }
+	 * 
+	 * } else { return Response.status(Status.BAD_REQUEST).build();
+	 * 
+	 * }
+	 * 
+	 * return Response.status(200).build();
+	 * 
+	 * }
+	 */
 }

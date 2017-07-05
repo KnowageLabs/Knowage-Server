@@ -42,9 +42,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
-import net.minidev.json.JSONArray;
-
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.jayway.jsonpath.JsonPath;
@@ -164,7 +164,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 
 		String d = (String) data;
 		if (ngsi) {
-			org.json.JSONArray jsonData = isJSONArray(d);
+			JSONArray jsonData = isJSONArray(d);
 			Assert.assertTrue(jsonData != null, String.format("Data must be a valid JSON Array: %s", d));
 		} else {
 			JSONObject jsonData = isJSON(d);
@@ -188,7 +188,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 		}
 	}
 
-	private void addData(String data, DataStore dataStore, MetaData dataStoreMeta, List<Object> parsedData) throws ParseException {
+	private void addData(String data, DataStore dataStore, MetaData dataStoreMeta, List<Object> parsedData) throws ParseException, JSONException {
 
 		boolean checkMaxResults = false;
 		if ((maxResults > 0)) {
@@ -345,7 +345,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 		return value;
 	}
 
-	private static String getJSONPathValue(Object o, String jsonPathValue) {
+	private static String getJSONPathValue(Object o, String jsonPathValue) throws JSONException {
 		// can be an array with a single value, a single object or also null (not found)
 		Object res = null;
 		try {
@@ -360,10 +360,10 @@ public class JSONPathDataReader extends AbstractDataReader {
 
 		if (res instanceof JSONArray) {
 			JSONArray array = (JSONArray) res;
-			if (array.size() > 1) {
+			if (array.length() > 1) {
 				throw new IllegalArgumentException(String.format("There is no unique value: %s", array.toString()));
 			}
-			if (array.isEmpty()) {
+			if (array.length() == 0) {
 				return null;
 			}
 

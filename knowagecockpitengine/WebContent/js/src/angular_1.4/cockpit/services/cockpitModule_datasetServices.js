@@ -11,7 +11,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		sbiModule_restServices.promiseGet("2.0/datasets","listDataset?seeTechnical=TRUE")
 		.then(function(response){
 			angular.copy(response.data.item,ds.datasetList);
-			ds.initRealTimeValues();
+			ds.initNearRealTimeValues();
 			ds.checkForDSChange();
 			cockpitModule_widgetSelection.getAssociations(cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS,undefined,def);
 //			def.resolve();
@@ -22,7 +22,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		return def.promise;
 	};
 	
-	this.initRealTimeValues=function(){
+	this.initNearRealTimeValues=function(){
 		for(var i=0; i < ds.datasetList.length; i++){
 			var dataset = ds.datasetList[i];
 			if(dataset.useCache == undefined){
@@ -489,7 +489,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		}
 
 		if(dataset.useCache==false){
-			params+="&realtime=true";
+			params+="&nearRealtime=true";
 		}
 		
 		var dataToSend=cockpitModule_widgetSelection.getCurrentSelections(dataset.label);
@@ -755,7 +755,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				params.aggregation = cockpitModule_widgetSelection.getAggregation(undefined,dataset,undefined, undefined);
 				params.parameters = ds.getDatasetParameters(dataset.id.dsId);
 				if(dataset.useCache==false){
-					params.realtime = true;
+					params.nearRealtime = true;
 				}
 				this.push(params);
 			}

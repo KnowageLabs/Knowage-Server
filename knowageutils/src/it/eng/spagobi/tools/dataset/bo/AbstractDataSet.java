@@ -709,11 +709,11 @@ public abstract class AbstractDataSet implements IDataSet {
 	public IDataSetTableDescriptor persist(String tableName, IDataSource dataSource) {
 		try {
 			if (isPersistedHDFS()) {
-				PersistedTableManager persister = new PersistedTableManager();
-				persister.persistDataSet(this, dataSource, tableName);
-			} else {
 				PersistedHDFSManager persister = new PersistedHDFSManager();
 				persister.persistDataSet(this, tableName);
+			} else {
+				PersistedTableManager persister = new PersistedTableManager();
+				persister.persistDataSet(this, dataSource, tableName);
 			}
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Error while persisting dataset", e);
@@ -959,6 +959,11 @@ public abstract class AbstractDataSet implements IDataSet {
 
 	@Override
 	public boolean isIterable() {
+		return false;
+	}
+
+	@Override
+	public boolean isRealtime() {
 		return false;
 	}
 }

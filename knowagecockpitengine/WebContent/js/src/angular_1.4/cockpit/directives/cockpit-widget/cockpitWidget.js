@@ -258,7 +258,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 			
 			$scope.refreshWidget();
 			break;
-		case "UPDATE_FROM_REALTIME":
+		case "UPDATE_FROM_NEAR_REALTIME":
 			var ds=$scope.getDataset();
 			if(ds!=undefined && config.dsList.indexOf(ds.label)!=-1 && sbiModule_user.isAbleTo("NearRealTimeCockpit")){
 				/*
@@ -267,6 +267,13 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 				 * removing load spinner in case of updating charts
 				 */
 				$scope.refreshWidget();
+			}
+			break;
+		case "UPDATE_FROM_REALTIME":
+			var ds=$scope.getDataset();
+			if(ds!=undefined && config.dsList.indexOf(ds.label)!=-1 && (ds.label == config.dsLabel)){
+				var option = ($scope.getOptions == undefined) ? {} :  $scope.getOptions();
+				cockpitModule_widgetServices.refreshWidget($scope.subCockpitWidget, $scope.ngModel, 'refresh', option, config.data);
 			}
 			break;
 		case "PARAMETER_CHANGE":

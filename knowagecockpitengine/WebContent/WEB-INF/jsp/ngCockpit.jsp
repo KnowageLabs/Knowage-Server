@@ -28,12 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@include file="/WEB-INF/jsp/commons/angular/cockpitImport.jsp"%>
 <%@include file="/WEB-INF/jsp/chart/execution/chartRenderImport.jsp"%>
 
-
-
 <script type="text/javascript">
-
-
-
 
 angular.module("cockpitModule").factory("cockpitModule_properties",function(){
 	return {
@@ -65,11 +60,6 @@ angular.module("cockpitModule").factory("accessibillty_preferences",function(){
 		
 	}
 });
-
-
-
-
-
 
 angular.module("cockpitModule").factory("cockpitModule_template",function(sbiModule_translate,cockpitModule_properties){
 	var template = <%=  template%>
@@ -106,7 +96,6 @@ angular.module("cockpitModule").factory("cockpitModule_template",function(sbiMod
 	if(template.configuration.filters==undefined){
 		template.configuration.filters={};
 	}
-
 	
 	function filterForInitialSelection(obj){
 		if(!cockpitModule_properties.EDIT_MODE){
@@ -128,8 +117,7 @@ angular.module("cockpitModule").factory("cockpitModule_template",function(sbiMod
 			}
 		}
 		return false;
-	}
-		
+	}	
 	
 	template.getSelections=function(){
 		
@@ -153,7 +141,6 @@ angular.module("cockpitModule").factory("cockpitModule_template",function(sbiMod
 			}
 		}
 		
-		
 		angular.copy(template.configuration.aggregations, tmpSelection);
 		if(tmpSelection.length >0){
 			for(var i=0;i<tmpSelection.length;i++){
@@ -173,11 +160,8 @@ angular.module("cockpitModule").factory("cockpitModule_template",function(sbiMod
 			}
 		}
 			debugger;
-		return template.selections;
-			
-	
+		return template.selections;	
 	}
-	
 	
 	console.log("template:"+template);
 	// back compatibility with old document parameters
@@ -196,8 +180,6 @@ angular.module("cockpitModule").factory("cockpitModule_template",function(sbiMod
 	return template;
 });
 
-
-
 angular.module("cockpitModule").factory("cockpitModule_analyticalDrivers",function(){
 	var ad = <%=  analyticalDriversParams%>
 	return ad;
@@ -208,8 +190,7 @@ angular.module("cockpitModule").factory("cockpitModule_analyticalDriversUrls",fu
 	return ad;
 });
 
-//dragan
-	var chartLibNamesConfig = <%=ChartEngineUtil.getChartLibNamesConfig()%>;
+var chartLibNamesConfig = <%=ChartEngineUtil.getChartLibNamesConfig()%>;
 
 </script>
 <%-- <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/themes/commons/css/customStyle.css"> --%>

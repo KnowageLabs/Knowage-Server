@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -25,6 +25,7 @@ import it.eng.spagobi.tools.dataset.notifier.NotifierManager;
 import it.eng.spagobi.tools.dataset.notifier.NotifierManagerFactory;
 import it.eng.spagobi.tools.dataset.notifier.NotifierServlet;
 import it.eng.spagobi.tools.dataset.notifier.UserLabelId;
+import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.Helper;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.rest.RestUtilities;
@@ -37,6 +38,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,7 +49,7 @@ public class OrionContextSubscriber {
 
 	private static final String SUBSCRIPTION_DURATION = "P1M";
 
-	private static final String SUBSCRIBE_CONTEXT_PATH = "/v1/subscribeContext";
+	private static final String SUBSCRIBE_CONTEXT_PATH = "/v2/subscriptions";
 
 	private final RESTDataProxy proxy;
 	private final JSONPathDataReader dataReader;
@@ -60,7 +64,7 @@ public class OrionContextSubscriber {
 	public OrionContextSubscriber(RESTDataSet dataSet, String spagoBInotifyAddress) {
 		Helper.checkNotNull(dataSet, "dataSet");
 
-		user = dataSet.getUserId();
+		user = (String) (dataSet.getUserId() != null ? dataSet.getUserId() : UserProfileManager.getProfile().getUserId());
 		if (user == null || user.isEmpty()) {
 			throw new NGSISubscribingException("No user associated with dataset");
 		}
@@ -69,8 +73,8 @@ public class OrionContextSubscriber {
 		if (user == null || user.isEmpty()) {
 			throw new NGSISubscribingException("No label associated with dataset");
 		}
-		
-		authToken=dataSet.getOAuth2Token();
+
+		authToken = dataSet.getOAuth2Token();
 
 		this.proxy = dataSet.getDataProxy();
 		this.dataReader = dataSet.getDataReader();
@@ -83,7 +87,7 @@ public class OrionContextSubscriber {
 
 	/**
 	 * Called from {@link RESTDataSet}
-	 * 
+	 *
 	 * @param dataSet
 	 * @param user
 	 * @param label
@@ -148,7 +152,7 @@ public class OrionContextSubscriber {
 	 *   }
 	 * }
 	 * </pre>
-	 * 
+	 *
 	 * @param respBody
 	 * @return
 	 * @throws JSONException
@@ -169,14 +173,13 @@ public class OrionContextSubscriber {
 		// same as data proxy
 		Map<String, String> res = proxy.getRequestHeaders();
 		if (OAuth2Utils.isOAuth2()) {
-			if (authToken!=null) {
+			if (authToken != null) {
 				res.putAll(OAuth2Utils.getOAuth2Headers(authToken));
 			}
 		}
+		res.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
 		return res;
 	}
-
-	
 
 	/**
 	 * <pre>
@@ -201,7 +204,7 @@ public class OrionContextSubscriber {
 	 *     "throttling": "PT5S"
 	 * }
 	 * </pre>
-	 * 
+	 *
 	 * @return
 	 * @throws JSONException
 	 */

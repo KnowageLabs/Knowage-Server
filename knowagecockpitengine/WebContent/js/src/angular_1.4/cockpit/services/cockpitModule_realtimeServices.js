@@ -1,64 +1,131 @@
-angular.module("cockpitModule").service("cockpitModule_realtimeServices",function(cockpitModule_template,$interval,$rootScope,cockpitModule_templateServices){
+/** 
+ * This service links datasets CometD notifications from server to frontend.
+ * It permits to subscribe to server notifications and then update data models.
+ *
+ */
+angular.module("cockpitModule").service("cockpitModule_realtimeServices",function($rootScope, sbiModule_user, sbiModule_util, sbiModule_restServices, sbiModule_config, cockpitModule_template, cometd){
 	var rt=this;
 	
-	this.isRealTime=function(dsLabel,tmpList){
-		var dsList=tmpList==undefined? cockpitModule_template.configuration.datasets:tmpList;
-		for(var i=0;i<dsList.length;i++){
-			if(angular.equals(dsList[i].dsLabel,dsLabel) || angular.equals(dsList[i].label,dsLabel)){
-				return !dsList[i].useCache 
-			}
-		}
-	}
-	this.getDatasetFrequency=function(dsLabel){
+	this.broadcast = function(message, dsLabel){
+		var event = "UPDATE_FROM_REALTIME";
+		var data=JSON.parse(message.data);
+		console.log("Received the following message: ");
+		console.log(data);
+		console.log("Broadcasting a WIDGET_EVENT named " + event + " for dataset " + dsLabel)
+		$rootScope.$broadcast("WIDGET_EVENT", event, {dsLabel:dsLabel, data:data});
+	};
+	
+	this.init = function(){
+		console.log("Initializing realtime datasets subscriptions");
+		sbiModule_restServices.restToRootProject();
 		for(var i=0;i<cockpitModule_template.configuration.datasets.length;i++){
-			if(angular.equals(cockpitModule_template.configuration.datasets[i].dsLabel,dsLabel)){
-				return cockpitModule_template.configuration.datasets[i].frequency; 
-			}
-		}
-	}
+			var label = cockpitModule_template.configuration.datasets[i].dsLabel;
+			console.log("Getting metadata for dataset " + label);
+			sbiModule_restServices.promiseGet('1.0/datasets',label).then(function(response){
+				var ds = response.data[0];
+				console.log(ds);
+				if(ds.isRealtime){
+					console.log("Dataset " + label + " is realtime");
+					var cometdConfig = {
+						host: sbiModule_config.host,
+						//contextPath: sbiModule_config.contextName,
+						contextPath: sbiModule_config.externalBasePath,
+						userId:sbiModule_user.userId,
+						//listenerId:sbiModule_util.uuid(),
+						listenerId:'1',
+						dsLabel:ds.label
+						};
+					console.log("Subscribe dataset " + label + " with the following config:");
+					console.log(cometdConfig);
+					rt.subscribe(cometdConfig);
+				}
+			}, function(response){
+				console.log("Error while loading dataset");
+			});  
+		}	
+	};
 	
-	this.getRealTimeDatasetFromList=function(dsList,tmpList){
-		var rtList=[];
-		angular.forEach(dsList,function(ds){
-			if(rt.isRealTime(ds,tmpList)){
-				this.push(ds);
-			}
-		},rtList)
-		return rtList
-	}
-	
-	this.init=function(){
-		
-		angular.forEach(cockpitModule_template.configuration.aggregations,function(aggr){
-			if(rt.getRealTimeDatasetFromList(aggr.datasets).length>0){
-				var freq = aggr.frequency;
-				if(freq == undefined){
-					freq = 60;
-				}
-				
-				if(freq>0){
-					$interval(function(){
-						$rootScope.$broadcast("WIDGET_EVENT","UPDATE_FROM_REALTIME",{dsList:aggr.datasets});
-					},freq*1000)
-				}
-			}
-		})
-		
-		angular.forEach(cockpitModule_templateServices.getDatasetUsetByWidgetNotAssociated(),function(dsLab){
-			if(rt.isRealTime(dsLab)){
-				var freq = rt.getDatasetFrequency(dsLab);
-				if(freq == undefined){
-					freq = 60;
-				}
-				
-				if(freq>0){
-					$interval(function(){
-						$rootScope.$broadcast("WIDGET_EVENT","UPDATE_FROM_REALTIME",{dsList:[dsLab]});
-					},freq*1000)
-				}
-			}
-			
-		});
-		
+	/**
+	 * It permits to subscribe to server notifications
+	 *  @example
+	 *  var cometdConfig = {
+	 *    contextPath: pageContextPath,  
+	 *    listenerId:"1",
+	 *    dsLabel:s.dsLabel,
+	 *  };
+	 *  cockpitModule_realtimeServices.subscribe(cometdConfig);
+	 *
+	 * @method cockpitModule_realtimeServices.subscribe
+	 * @param {Object} config - the configuration
+	 * @param {String} config.host - the host of engine
+	 * @param {String} config.contextPath - the context path of engine
+	 * @param {String} config.userId - the unique id of the user
+	 * @param {String} config.listenerId - the unique id of listener
+	 * @param {String} config.dsLabel - the label of dataset
+	 */
+	this.subscribe = function (config) {
+	    var channel='/'+config.userId+'/dataset/'+config.dsLabel+'/'+config.listenerId;
+	    console.log("User channel is " + channel);
+
+	    // Function that manages the connection status with the Bayeux server
+	    var _connected = false;
+	    function _metaConnect(message) {
+	        if (cometd.isDisconnected()) {
+	            _connected = false;
+	            if (config.connectionClosed!=null) {
+	                config.connectionClosed();
+	            }
+	            return;
+	        }
+
+	        var wasConnected = _connected;
+	        _connected = message.successful === true;
+	        if (!wasConnected && _connected) {
+	            if (config.connectionEstablished!=null) {
+	                config.connectionEstablished();
+	            }
+	        } else if (wasConnected && !_connected) {
+	            if (config.connectionBroken!=null) {
+	                config.connectionBroken();
+	            }
+	        }   
+	    }
+
+	    // Function invoked when first contacting the server and
+	    // when the server has lost the state of this client
+	    function _metaHandshake(handshake) {
+	        if (handshake.successful === true) {
+	            cometd.batch(function() {
+
+	                cometd.subscribe(channel, function(message) {
+	                    var callback=config.messageReceived || broadcast;
+	                    callback(message,config.dsLabel);
+	                });
+	            });
+	        }
+	    }
+
+	     // Disconnect when the page unloads
+	     //$(window).unload(function() {
+	     //   cometd.disconnect(true);
+	     //});
+
+	    var cometURL = config.host + config.contextPath + "/cometd";
+	    cometd.configure({
+	        url: cometURL,
+	        logLevel: 'debug'
+	    });
+	    
+	    console.log("Comet config is set as follow:");
+	    console.log(cometd.configure);
+
+	    cometd.addListener('/meta/handshake', _metaHandshake);
+	    cometd.addListener('/meta/connect', _metaConnect);
+
+	    cometd.handshake({
+	        ext: {
+	            'userChannel':channel
+	        }
+	    });
 	};
 })

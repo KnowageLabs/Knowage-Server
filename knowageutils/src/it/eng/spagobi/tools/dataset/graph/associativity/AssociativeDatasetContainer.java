@@ -54,7 +54,7 @@ public class AssociativeDatasetContainer {
 	protected final Set<String> filters = new HashSet<>();
 	protected final Set<EdgeGroup> groups = new HashSet<>();
 
-	protected boolean realtime = false;
+	protected boolean nearRealtime = false;
 	private boolean resolved = false;
 
 	private final int SQL_IN_CLAUSE_LIMIT = 999;
@@ -116,8 +116,8 @@ public class AssociativeDatasetContainer {
 		return unresolvedGroups;
 	}
 
-	public boolean isRealtime() {
-		return realtime;
+	public boolean isNearRealtime() {
+		return nearRealtime;
 	}
 
 	public boolean isResolved() {

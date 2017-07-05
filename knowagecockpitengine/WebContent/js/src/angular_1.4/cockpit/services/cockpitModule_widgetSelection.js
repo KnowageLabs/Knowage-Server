@@ -1,4 +1,4 @@
-angular.module("cockpitModule").service("cockpitModule_widgetSelection",function(sbiModule_translate,sbiModule_restServices,cockpitModule_template,$q,$mdPanel,$rootScope,cockpitModule_properties,cockpitModule_widgetSelectionUtils,cockpitModule_templateServices,cockpitModule_realtimeServices,sbiModule_messaging,cockpitModule_utilstServices){
+angular.module("cockpitModule").service("cockpitModule_widgetSelection",function(sbiModule_translate,sbiModule_restServices,cockpitModule_template,$q,$mdPanel,$rootScope,cockpitModule_properties,cockpitModule_widgetSelectionUtils,cockpitModule_templateServices,cockpitModule_nearRealtimeServices,sbiModule_messaging,cockpitModule_utilstServices){
 	var ws=this;
 
 	this.getSelectionLoadAssociative = function(){
@@ -232,7 +232,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 			if(newItem.frequency==undefined){
 				var minFreq={value:-1};
 				angular.forEach(newItem.datasets,function(ds){
-					var dsF=ws.getRealTimeFrequency(ds,dsList)
+					var dsF=ws.getNearRealTimeFrequency(ds,dsList)
 					if(this.value==-1){
 						if(dsF>-1){
 							this.value=dsF;
@@ -265,7 +265,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 		return true;
 	}
 	
-	this.getRealTimeFrequency=function(dsLabel,dsList){
+	this.getNearRealTimeFrequency=function(dsLabel,dsList){
 		for(var i=0;i<dsList.length;i++){
 			//dsList can be the dataset of template or the dataset of cockpitModule_datasetServices.getAvaiableDatasets()
 			if(angular.equals(dsList[i].dsLabel,dsLabel) || angular.equals(dsList[i].label,dsLabel)){
@@ -535,11 +535,11 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 			var datasets = encodeURIComponent(JSON.stringify(ws.getParameterFromDataset(ass.datasets)))
 			.replace(/'/g,"%27")
 			.replace(/"/g,"%22");
-			var realTimeDs=encodeURIComponent(JSON.stringify(cockpitModule_realtimeServices.getRealTimeDatasetFromList(ass.datasets)))
+			var nearRealTimeDs=encodeURIComponent(JSON.stringify(cockpitModule_nearRealtimeServices.getNearRealTimeDatasetFromList(ass.datasets)))
 			.replace(/'/g,"%27")
 			.replace(/"/g,"%22");
 			
-			var param = "?associationGroup="+associationsEncoded+"&selections="+selection+"&datasets="+datasets+"&realtime="+realTimeDs;
+			var param = "?associationGroup="+associationsEncoded+"&selections="+selection+"&datasets="+datasets+"&nearRealtime="+nearRealTimeDs;
 			
 			sbiModule_restServices.restToRootProject();
 			sbiModule_restServices.promiseGet("2.0/datasets","loadAssociativeSelections"+param)

@@ -156,4 +156,3 @@
 %>
 
 <%@include file="/WEB-INF/jsp/commons/includeMessageResource.jspf"%>
-<%@include file="/WEB-INF/jsp/commons/includeCometd.jspf"%>

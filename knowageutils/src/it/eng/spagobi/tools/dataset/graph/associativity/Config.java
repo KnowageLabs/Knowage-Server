@@ -16,12 +16,12 @@ public class Config {
 	private Pseudograph<String, LabeledEdge<String>> graph;
 	private Map<String, Map<String, String>> datasetToAssociations;
 	private List<Selection> selections;
-	private Set<String> realtimeDatasets;
+	private Set<String> nearRealtimeDatasets;
 	private Map<String, Map<String, String>> datasetParameters;
 	private Set<String> documents;
 
 	public Config() {
-		realtimeDatasets = new HashSet<>(0);
+		nearRealtimeDatasets = new HashSet<>(0);
 		datasetParameters = new HashMap<>(0);
 		documents = new HashSet<>(0);
 	}
@@ -58,12 +58,12 @@ public class Config {
 		this.selections = selections;
 	}
 
-	public Set<String> getRealtimeDatasets() {
-		return realtimeDatasets;
+	public Set<String> getNearRealtimeDatasets() {
+		return nearRealtimeDatasets;
 	}
 
-	public void setRealtimeDatasets(Set<String> realtimeDatasets) {
-		this.realtimeDatasets = realtimeDatasets;
+	public void setNearRealtimeDatasets(Set<String> nearRealtimeDatasets) {
+		this.nearRealtimeDatasets = nearRealtimeDatasets;
 	}
 
 	public Map<String, Map<String, String>> getDatasetParameters() {

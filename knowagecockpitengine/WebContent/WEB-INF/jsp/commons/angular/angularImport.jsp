@@ -101,6 +101,8 @@ END-PRODUCTION -->
 <link rel="stylesheet" 	href="<%=spagoBiContext%>/js/lib/angular/angular-json-tree/json-tree.css">
 <script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/angular-json-tree/json-tree.js"></script>
 
+<%@include file="/WEB-INF/jsp/commons/includeCometd.jspf"%>
+
 <%@include file="/WEB-INF/jsp/commons/angular/sbiModule.jspf"%>
 
 	

@@ -156,36 +156,39 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 		}, 400);
 	};
 
-	this.refreshWidget=function(element,config,nature,options){
+	this.refreshWidget = function(element, config, nature, options, data){
 		
 		var width = angular.element(element)[0].parentElement.offsetWidth;
 		var height = angular.element(element)[0].parentElement.offsetHeight;
-		
-		if(nature == "fullExpand"){
-			$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:null,nature:nature});
-		}else{
-			var dsRecords = this.loadDatasetRecords(config,options.page, options.itemPerPage,options.columnOrdering, options.reverseOrdering);
-			if(dsRecords == null){
-				$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:undefined,nature:nature});
+		if(data == undefined) {
+			if(nature == "fullExpand"){
+				$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:null,nature:nature});
 			}else{
-				/*
-					author: rselakov, Radmila Selakovic,
-					radmila.selakovic@mht.net
-					checking type of widget because of removing load spinner
-					in case of updating charts
-				*/
-				if (options.type && options.type!="chart"){
-					$rootScope.$broadcast("WIDGET_EVENT"+config.id,"WIDGET_SPINNER",{show:true});
+				var dsRecords = this.loadDatasetRecords(config,options.page, options.itemPerPage,options.columnOrdering, options.reverseOrdering);
+				if(dsRecords == null){
+					$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:undefined,nature:nature});
+				}else{
+					/*
+						author: rselakov, Radmila Selakovic,
+						radmila.selakovic@mht.net
+						checking type of widget because of removing load spinner
+						in case of updating charts
+					*/
+					if (options.type && options.type!="chart"){
+						$rootScope.$broadcast("WIDGET_EVENT"+config.id,"WIDGET_SPINNER",{show:true});
+					}
+					
+					dsRecords.then(function(data){
+						$rootScope.$broadcast("WIDGET_EVENT"+config.id,"WIDGET_SPINNER",{show:false});
+						$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:data,nature:nature});
+					}, function(){
+						$rootScope.$broadcast("WIDGET_EVENT"+config.id,"WIDGET_SPINNER",{show:false});
+						console.log("Error retry data");
+					});
 				}
-				
-				dsRecords.then(function(data){
-					$rootScope.$broadcast("WIDGET_EVENT"+config.id,"WIDGET_SPINNER",{show:false});
-					$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:data,nature:nature});
-				}, function(){
-					$rootScope.$broadcast("WIDGET_EVENT"+config.id,"WIDGET_SPINNER",{show:false});
-					console.log("Error retry data");
-				});
-			}
+			} 
+		}else {
+			$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:data,nature:nature});
 		}
 	};
 

@@ -99,13 +99,13 @@ public class AssociativeLogicUtils {
 	}
 
 	public static Config buildConfig(String strategy, Pseudograph<String, LabeledEdge<String>> graph, Map<String, Map<String, String>> datasetToAssociations,
-			List<Selection> selections, Set<String> realtimeDatasets, Map<String, Map<String, String>> datasetParameters, Set<String> documents) {
+			List<Selection> selections, Set<String> nearRealtimeDatasets, Map<String, Map<String, String>> datasetParameters, Set<String> documents) {
 		Config config = new Config();
 		config.setStrategy(strategy);
 		config.setGraph(graph);
 		config.setDatasetToAssociations(datasetToAssociations);
 		config.setSelections(selections);
-		config.setRealtimeDatasets(realtimeDatasets);
+		config.setNearRealtimeDatasets(nearRealtimeDatasets);
 		config.setDatasetParameters(datasetParameters);
 		return config;
 	}

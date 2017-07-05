@@ -371,7 +371,7 @@ public class DatasetManagementAPI {
 		logger.debug("OUT");
 	}
 
-	public IDataStore getDataStore(String label, int offset, int fetchSize, int maxRowCount, boolean isRealtime, Map<String, String> parametersValues,
+	public IDataStore getDataStore(String label, int offset, int fetchSize, int maxRowCount, boolean isNearRealtime, Map<String, String> parametersValues,
 			List<GroupCriteria> groups, List<FilterCriteria> filters, List<FilterCriteria> filtersForMetaModel, List<FilterCriteria> havings,
 			List<FilterCriteria> havingsForMetaModel, List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections) {
 
@@ -401,13 +401,13 @@ public class DatasetManagementAPI {
 			} else {
 				boolean isJDBCDataSet = isJDBCDataSet(dataSet);
 				boolean isBigDataDialect = SqlUtils.isBigDataDialect(dataSet.getDataSource() != null ? dataSet.getDataSource().getHibDialectName() : "");
-				if (isRealtime && isJDBCDataSet && !isBigDataDialect && !dataSet.hasDataStoreTransformer()) {
-					logger.debug("Querying realtime/JDBC dataset");
+				if (isNearRealtime && isJDBCDataSet && !isBigDataDialect && !dataSet.hasDataStoreTransformer()) {
+					logger.debug("Querying near realtime/JDBC dataset");
 					dataStore = queryJDBCDataset(groups, filters, havings, projections, summaryRowProjections, dataSet, offset, fetchSize, maxRowCount);
 					dataStore.setCacheDate(new Date());
-				} else if (isRealtime) {
-					logger.debug("Querying realtime dataset");
-					dataStore = queryRealtimeDataset(groups, filtersForMetaModel, havingsForMetaModel, projections, summaryRowProjections, dataSet, offset,
+				} else if (isNearRealtime) {
+					logger.debug("Querying near realtime dataset");
+					dataStore = queryNearRealtimeDataset(groups, filtersForMetaModel, havingsForMetaModel, projections, summaryRowProjections, dataSet, offset,
 							fetchSize, maxRowCount);
 					dataStore.setCacheDate(new Date());
 				} else {
@@ -1320,7 +1320,7 @@ public class DatasetManagementAPI {
 				maxRowCount);
 	}
 
-	private IDataStore queryRealtimeDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<FilterCriteria> havings,
+	private IDataStore queryNearRealtimeDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<FilterCriteria> havings,
 			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, int offset, int fetchSize, int maxRowCount) {
 		dataSet.loadData();
 		IDataStore dataStore = dataSet.getDataStore();
@@ -1352,7 +1352,7 @@ public class DatasetManagementAPI {
 			dataStore.setCacheDate(new Date());
 		} else {
 			throw new SpagoBIRuntimeException("Impossible to return data: the dataStore is [null], or it returns more than [" + METAMODEL_LIMIT
-					+ "] rows: it cannot be processed as realtime dataset.");
+					+ "] rows: it cannot be processed as near realtime dataset.");
 		}
 
 		return dataStore;
@@ -1585,16 +1585,16 @@ public class DatasetManagementAPI {
 
 	public String getQueryText(IDataSource dataSource, String tableName, List<GroupCriteria> groups, List<FilterCriteria> filters,
 			List<FilterCriteria> havings, List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet,
-			boolean isRealtime, List<String> outputOrderColumns) {
-		return getQueryText(new SelectBuilder(), dataSource, tableName, groups, filters, havings, projections, summaryRowProjections, dataSet, isRealtime,
+			boolean isNearRealtime, List<String> outputOrderColumns) {
+		return getQueryText(new SelectBuilder(), dataSource, tableName, groups, filters, havings, projections, summaryRowProjections, dataSet, isNearRealtime,
 				outputOrderColumns);
 	}
 
 	public String getQueryText(SelectBuilder sqlBuilder, IDataSource dataSource, String tableName, List<GroupCriteria> groups, List<FilterCriteria> filters,
 			List<FilterCriteria> havings, List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet,
-			boolean isRealtime, List<String> outputOrderColumns) {
+			boolean isNearRealtime, List<String> outputOrderColumns) {
 
-		if (tableName == null || tableName.isEmpty() || (!isRealtime && dataSource == null)) {
+		if (tableName == null || tableName.isEmpty() || (!isNearRealtime && dataSource == null)) {
 			throw new IllegalArgumentException("Found one or more arguments invalid. Tablename [" + tableName + "] and/or dataSource [" + dataSource
 					+ "] are null or empty.");
 		}
@@ -1605,13 +1605,13 @@ public class DatasetManagementAPI {
 
 		List<String> orderColumns = new ArrayList<String>();
 		String queryText = null;
-		if (summaryRowProjections == null || summaryRowProjections.size() == 0 || !isRealtime) {
-			sqlBuilder.setWhereOrEnabled(isRealtime);
+		if (summaryRowProjections == null || summaryRowProjections.size() == 0 || !isNearRealtime) {
+			sqlBuilder.setWhereOrEnabled(isNearRealtime);
 			sqlBuilder.from(tableName);
 
 			Map<String, String> columnNameWithColonToAliasName = new HashMap<String, String>();
 
-			setColumnsToSelect(dataSource, projections, sqlBuilder, orderColumns, isRealtime, dataSet);
+			setColumnsToSelect(dataSource, projections, sqlBuilder, orderColumns, isNearRealtime, dataSet);
 			setWhereConditions(dataSource, filters, sqlBuilder);
 			setGroupbyConditions(dataSource, groups, sqlBuilder, dataSet);
 			setHavingConditions(dataSource, havings, sqlBuilder);
@@ -1645,7 +1645,7 @@ public class DatasetManagementAPI {
 				}
 			}
 			sb.append(" FROM ");
-			if (isRealtime) {
+			if (isNearRealtime) {
 				sb.append(tableName);
 			} else {
 				sb.append("(");
@@ -1666,7 +1666,7 @@ public class DatasetManagementAPI {
 	}
 
 	private void setColumnsToSelect(IDataSource dataSource, List<ProjectionCriteria> projections, SelectBuilder sqlBuilder, List<String> orderColumns,
-			boolean isRealtime, IDataSet dataSet) {
+			boolean isNearRealtime, IDataSet dataSet) {
 
 		boolean isHsqlDialect = false;
 		if (dataSource != null) {
@@ -1702,7 +1702,7 @@ public class DatasetManagementAPI {
 
 				if (isCalculatedColumn) {
 					// this is a calculated field!
-					if (isRealtime) {
+					if (isNearRealtime) {
 						if (aggregationFunction == null) {
 							throw new SpagoBIRuntimeException("Projection [" + columnName + "] requires an aggregation function");
 						}
@@ -1794,7 +1794,7 @@ public class DatasetManagementAPI {
 				if (!isCalculatedColumn) {
 					notCalculatedColumns.add(columnName);
 				}
-				if (!isCalculatedColumn || !isRealtime) {
+				if (!isCalculatedColumn || !isNearRealtime) {
 					if (hasAlias) {
 						columnName += " AS " + aliasName;
 					}
@@ -1825,7 +1825,7 @@ public class DatasetManagementAPI {
 				}
 			}
 
-			if (isRealtime && orderColumns.isEmpty() && !keepCategoryForOrdering.isEmpty()) {
+			if (isNearRealtime && orderColumns.isEmpty() && !keepCategoryForOrdering.isEmpty()) {
 				orderColumns.add(keepCategoryForOrdering);
 			}
 

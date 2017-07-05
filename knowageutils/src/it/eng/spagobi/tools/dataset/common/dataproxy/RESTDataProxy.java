@@ -99,7 +99,7 @@ public class RESTDataProxy extends AbstractDataProxy {
 		}
 
 		// add NGSI headers if they are not present
-		String[][] ngsiHeaders = new String[][] { { "Accept", "application/json" }, { "Content-Type", "application/json" } };
+		String[][] ngsiHeaders = new String[][] { { "Accept", "application/json" } };
 		for (String[] header : ngsiHeaders) {
 			if (!requestHeaders.containsKey(header[0])) {
 				requestHeaders.put(header[0], header[1]);

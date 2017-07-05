@@ -710,6 +710,11 @@ public class DataStoreListenerOperatorTest extends TestCase {
 			return false;
 		}
 
+		@Override
+		public boolean isRealtime() {
+			return false;
+		}
+
 	}
 
 }

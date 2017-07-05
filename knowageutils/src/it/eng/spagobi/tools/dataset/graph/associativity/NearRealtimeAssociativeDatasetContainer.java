@@ -38,19 +38,19 @@ import org.apache.log4j.Logger;
  *
  */
 
-public class RealtimeAssociativeDatasetContainer extends AssociativeDatasetContainer {
+public class NearRealtimeAssociativeDatasetContainer extends AssociativeDatasetContainer {
 
-	static protected Logger logger = Logger.getLogger(RealtimeAssociativeDatasetContainer.class);
+	static protected Logger logger = Logger.getLogger(NearRealtimeAssociativeDatasetContainer.class);
 
 	private final IDataStore dataStore;
 
-	public RealtimeAssociativeDatasetContainer(IDataSet dataSet, IDataStore dataStore, Map<String, String> parameters) {
+	public NearRealtimeAssociativeDatasetContainer(IDataSet dataSet, IDataStore dataStore, Map<String, String> parameters) {
 		/*
 		 * Set dataStore to null. By giving a null to AbstractJDBCDataset.encapsulateColumnName it returns an empty string, which is what we want to achieve
 		 */
 		super(dataSet, DataStore.DEFAULT_SCHEMA_NAME + "." + DataStore.DEFAULT_TABLE_NAME, null, parameters);
 		this.dataStore = dataStore;
-		realtime = true;
+		nearRealtime = true;
 	}
 
 	public IDataStore getDataStore() {

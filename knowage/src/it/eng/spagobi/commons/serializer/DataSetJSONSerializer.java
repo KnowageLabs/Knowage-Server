@@ -127,6 +127,8 @@ public class DataSetJSONSerializer implements Serializer {
 	public static final String CKAN_ID = "ckanId";
 	public static final String FEDERATION_ID = "federationId";
 
+	public static final String IS_REALTIME = "isRealtime";
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public Object serialize(Object o, Locale locale) throws SerializationException {
@@ -393,6 +395,7 @@ public class DataSetJSONSerializer implements Serializer {
 			result.put(START_DATE, ds.getStartDateField());
 			result.put(END_DATE, ds.getEndDateField());
 			result.put(SCHEDULING_CRON_LINE, ds.getSchedulingCronLine());
+			result.put(IS_REALTIME, ds.isRealtime());
 			result.put(OWNER, ds.getOwner());
 			result.put(DATE_IN, ds.getDateIn());
 			result.put(SCOPE_CD, ds.getScopeCd());

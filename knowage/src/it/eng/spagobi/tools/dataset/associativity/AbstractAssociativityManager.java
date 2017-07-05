@@ -32,7 +32,7 @@ import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
 import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
 import it.eng.spagobi.tools.dataset.graph.associativity.AssociativeDatasetContainer;
 import it.eng.spagobi.tools.dataset.graph.associativity.Config;
-import it.eng.spagobi.tools.dataset.graph.associativity.RealtimeAssociativeDatasetContainer;
+import it.eng.spagobi.tools.dataset.graph.associativity.NearRealtimeAssociativeDatasetContainer;
 import it.eng.spagobi.tools.dataset.graph.associativity.Selection;
 import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicResult;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -154,14 +154,14 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 						container = new AssociativeDatasetContainer(dataSet, dataSet.getPersistTableName(), dataSet.getDataSourceForWriting(), parametersValues);
 					} else if (dataSet.isFlatDataset()) {
 						container = new AssociativeDatasetContainer(dataSet, dataSet.getFlatTableName(), dataSet.getDataSource(), parametersValues);
-					} else if (config.getRealtimeDatasets().contains(v1) && DatasetManagementAPI.isJDBCDataSet(dataSet)
+					} else if (config.getNearRealtimeDatasets().contains(v1) && DatasetManagementAPI.isJDBCDataSet(dataSet)
 							&& !SqlUtils.isBigDataDialect(dataSet.getDataSource().getHibDialectName())) {
 						QuerableBehaviour querableBehaviour = (QuerableBehaviour) dataSet.getBehaviour(QuerableBehaviour.class.getName());
 						String tableName = "(" + querableBehaviour.getStatement() + ") T";
 						container = new AssociativeDatasetContainer(dataSet, tableName, dataSet.getDataSource(), parametersValues);
-					} else if (config.getRealtimeDatasets().contains(v1)) {
+					} else if (config.getNearRealtimeDatasets().contains(v1)) {
 						dataSet.loadData();
-						container = new RealtimeAssociativeDatasetContainer(dataSet, dataSet.getDataStore(), parametersValues);
+						container = new NearRealtimeAssociativeDatasetContainer(dataSet, dataSet.getDataStore(), parametersValues);
 					} else {
 						String signature = dataSet.getSignature();
 						CacheItem cacheItem = cache.getMetadata().getCacheItem(signature);

@@ -50,7 +50,7 @@ import org.json.JSONObject;
 
 public class RESTDataSet extends ConfigurableDataSet {
 
-	private static final Logger log = Logger.getLogger(RESTDataSet.class);
+	private static final Logger logger = Logger.getLogger(RESTDataSet.class);
 
 	public static final String DATASET_TYPE = "SbiRESTDataSet";
 
@@ -112,12 +112,13 @@ public class RESTDataSet extends ConfigurableDataSet {
 
 		// after the first datastore initialization
 		if (isNgsi() && NotifierServlet.isNotifiable()) {
-			log.info(String.format("Subscribe NGSI dataset with label %s to orion notifications.", getLabel()));
+			logger.info(String.format("Subscribe NGSI dataset with label %s to orion notifications.", getLabel()));
 			subscribeNGSI();
 		}
 	}
 
 	private void notifyListeners() {
+		logger.debug("IN");
 		DataSetListenerManager manager = DataSetListenerManagerFactory.getManager();
 		String uuid = getUserId();
 		if (uuid == null) {
@@ -128,10 +129,12 @@ public class RESTDataSet extends ConfigurableDataSet {
 		String label = getLabel();
 		if (label == null) {
 			// temporary dataset
+			logger.debug("Label is null, returning null");
 			return;
 		}
 		manager.addCometListenerIfInitializedAndAbsent(uuid, label, "1");
 		manager.changedDataSet(uuid, label, this);
+		logger.debug("OUT");
 	}
 
 	private void subscribeNGSI() {
@@ -140,7 +143,7 @@ public class RESTDataSet extends ConfigurableDataSet {
 			subscriber.subscribeNGSI();
 			notifiable = true;
 		} catch (Exception e) {
-			log.error("Errror in Orion subscription", e);
+			logger.error("Errror in Orion subscription", e);
 			notifiable = false;
 		}
 	}
@@ -381,6 +384,11 @@ public class RESTDataSet extends ConfigurableDataSet {
 
 		String uuid = (String) up.getUserId();
 		return uuid;
+	}
+
+	@Override
+	public boolean isRealtime() {
+		return isNgsi();
 	}
 
 }

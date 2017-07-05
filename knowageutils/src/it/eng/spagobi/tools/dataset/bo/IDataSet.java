@@ -280,4 +280,6 @@ public interface IDataSet extends Iterable<IRecord> {
 
 	public boolean isIterable();
 
+	public boolean isRealtime();
+
 }

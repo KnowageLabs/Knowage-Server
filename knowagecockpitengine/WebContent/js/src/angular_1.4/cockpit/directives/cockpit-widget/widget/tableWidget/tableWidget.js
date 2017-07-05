@@ -80,7 +80,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.totalCount = 0;
 		$scope.translate = sbiModule_translate;
 		$scope.summaryRow = {};
-		$scope.datasetRecods = {};
+		$scope.datasetRecords = {};
 		if($scope.ngModel.multiselectable==undefined){
 			$scope.ngModel.multiselectable=false;
 		}
@@ -112,7 +112,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var ind = $scope.indexInList(column.label, $scope.ngModel.content.columnSelectedOfDataset);
 			var gridStyle = {};
 			//style summary row - returning the column style, if there are summary styles defined they override the default
-			if($scope.ngModel.style.showSummary == true && index == $scope.datasetRecods.rows.length-1){
+			if($scope.ngModel.style.showSummary == true && index == $scope.datasetRecords.rows.length-1){
 				var summaryStyle  = angular.merge({},$scope.ngModel.content.columnSelectedOfDataset[ind].style, $scope.ngModel.style.summary);
 				return summaryStyle;
 			}
@@ -312,7 +312,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.datasetRecords = {};
 			$scope.columnToshowinIndex = [];
 			$scope.tableFunction.widgetStyle=$scope.ngModel.style;
-			$scope.datasetRecods = datasetRecords;
+			$scope.datasetRecords = datasetRecords;
 			var calculateScaleValue=function(minVal, maxVal, val)
 			{
 				if(maxVal!=minVal)

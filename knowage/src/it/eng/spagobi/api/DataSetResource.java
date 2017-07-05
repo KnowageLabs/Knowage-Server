@@ -63,11 +63,14 @@ import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
 import it.eng.spagobi.tools.scheduler.bo.Trigger;
 import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceParameterException;
 import it.eng.spagobi.utilities.json.JSONUtils;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -708,7 +711,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	public String getDataStore(@PathParam("label") String label, @QueryParam("parameters") String parameters, @QueryParam("selections") String selections,
 			@QueryParam("likeSelections") String likeSelections, @DefaultValue("-1") @QueryParam("limit") int maxRowCount,
 			@QueryParam("aggregations") String aggregations, @QueryParam("summaryRow") String summaryRow, @QueryParam("offset") int offset,
-			@QueryParam("size") int fetchSize, @QueryParam("realtime") boolean isRealtime) {
+			@QueryParam("size") int fetchSize, @QueryParam("nearRealtime") boolean isNearRealtime) {
 		logger.debug("IN");
 
 		try {
@@ -751,7 +754,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 				JSONObject selectionsObject = new JSONObject(selections);
 				// in same case object is empty '{}'
 				if (selectionsObject.names() != null) {
-					filterCriteria = getFilterCriteria(label, selectionsObject, isRealtime, columnAliasToName);
+					filterCriteria = getFilterCriteria(label, selectionsObject, isNearRealtime, columnAliasToName);
 					filterCriteriaForMetaModel = getFilterCriteria(label, selectionsObject, true, columnAliasToName);
 				}
 			}
@@ -761,8 +764,8 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			if (likeSelections != null && !likeSelections.equals("")) {
 				JSONObject likeSelectionsObject = new JSONObject(likeSelections);
 				if (likeSelectionsObject.names() != null) {
-					filterCriteria.addAll(getLikeFilterCriteria(label, likeSelectionsObject, isRealtime, columnAliasToName, projectionCriteria, true));
-					havingCriteria.addAll(getLikeFilterCriteria(label, likeSelectionsObject, isRealtime, columnAliasToName, projectionCriteria, false));
+					filterCriteria.addAll(getLikeFilterCriteria(label, likeSelectionsObject, isNearRealtime, columnAliasToName, projectionCriteria, true));
+					havingCriteria.addAll(getLikeFilterCriteria(label, likeSelectionsObject, isNearRealtime, columnAliasToName, projectionCriteria, false));
 
 					filterCriteriaForMetaModel.addAll(getLikeFilterCriteria(label, likeSelectionsObject, true, columnAliasToName, projectionCriteria, true));
 					havingCriteriaForMetaModel.addAll(getLikeFilterCriteria(label, likeSelectionsObject, true, columnAliasToName, projectionCriteria, false));
@@ -776,7 +779,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 				summaryRowProjectionCriteria = getProjectionCriteria(label, new JSONArray(), summaryRowMeasuresObject);
 			}
 
-			IDataStore dataStore = getDatasetManagementAPI().getDataStore(label, offset, fetchSize, maxRowCount, isRealtime,
+			IDataStore dataStore = getDatasetManagementAPI().getDataStore(label, offset, fetchSize, maxRowCount, isNearRealtime,
 					DataSetUtilities.getParametersMap(parameters), groupCriteria, filterCriteria, filterCriteriaForMetaModel, havingCriteria,
 					havingCriteriaForMetaModel, projectionCriteria, summaryRowProjectionCriteria);
 
@@ -952,7 +955,8 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		return groupCriterias;
 	}
 
-	protected List<FilterCriteria> getFilterCriteria(String dataset, JSONObject selectionsObject, boolean isRealtime, Map<String, String> columnAliasToName)
+	@Deprecated
+	protected List<FilterCriteria> getFilterCriteria(String dataset, JSONObject selectionsObject, boolean isNearRealtime, Map<String, String> columnAliasToName)
 			throws JSONException {
 		List<FilterCriteria> filterCriterias = new ArrayList<FilterCriteria>();
 
@@ -978,7 +982,8 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		return filterCriterias;
 	}
 
-	protected List<FilterCriteria> getLikeFilterCriteria(String datasetLabel, JSONObject likeSelectionsObject, boolean isRealtime,
+	@Deprecated
+	protected List<FilterCriteria> getLikeFilterCriteria(String datasetLabel, JSONObject likeSelectionsObject, boolean isNearRealtime,
 			Map<String, String> columnAliasToName, List<ProjectionCriteria> projectionCriteria, boolean getAttributes) throws JSONException {
 		List<FilterCriteria> likeFilterCriterias = new ArrayList<FilterCriteria>();
 		return likeFilterCriterias;
@@ -1145,6 +1150,33 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+
+	@POST
+	@Path("/")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String persistDataSets(@Context HttpServletRequest req) throws IOException, JSONException {
+		IDataSetDAO dsDao;
+		try {
+			dsDao = DAOFactory.getDataSetDAO();
+			dsDao.setUserProfile(getUserProfile());
+		} catch (Exception e) {
+			throw new SpagoBIRestServiceException(getLocale(), e);
+		}
+		JSONObject json = RestUtilities.readBodyAsJSONObject(req);
+		ManageDataSetsForREST mdsfr = new ManageDataSetsForREST();
+		String toReturnString = mdsfr.insertDataset(json.toString(), dsDao, null, getUserProfile(), req);
+		return toReturnString;
+	}
+
+	@POST
+	@Path("/preview")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public String previewDataSet(@Context HttpServletRequest req) throws IOException, JSONException {
+		JSONObject json = RestUtilities.readBodyAsJSONObject(req);
+		ManageDataSetsForREST mdsfr = new ManageDataSetsForREST();
+		String toReturnString = mdsfr.previewDataset(json.toString(), getUserProfile());
+		return toReturnString;
 	}
 
 	// ===================================================================

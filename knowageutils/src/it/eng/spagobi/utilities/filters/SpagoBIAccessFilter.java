@@ -44,6 +44,8 @@ import org.apache.log4j.Logger;
 
 public class SpagoBIAccessFilter implements Filter {
 
+	public static final String USER_ID_ATTRIBUTE_NAME = "userId";
+
 	public final String AUDIT_ID_PARAM_NAME = "SPAGOBI_AUDIT_ID";
 	public final String DOCUMENT_ID_PARAM_NAME = "document";
 
@@ -164,9 +166,9 @@ public class SpagoBIAccessFilter implements Filter {
 							profile = proxy.getUserProfile();
 							if (profile != null) {
 								ioManager.setInSession(IEngUserProfile.ENG_USER_PROFILE, profile);
-								ioManager.setInSession("userId", profile.getUserUniqueIdentifier());
+								ioManager.setInSession(USER_ID_ATTRIBUTE_NAME, profile.getUserUniqueIdentifier());
 								ioManager.contextManager.set(IEngUserProfile.ENG_USER_PROFILE, profile);
-								ioManager.contextManager.set("userId", profile.getUserUniqueIdentifier());
+								ioManager.contextManager.set(USER_ID_ATTRIBUTE_NAME, profile.getUserUniqueIdentifier());
 							} else {
 								logger.error("ERROR WHILE GETTING USER PROFILE!!!!!!!!!!!");
 							}
