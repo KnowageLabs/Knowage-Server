@@ -1,5 +1,6 @@
 <div layout="row" layout-fill>
-   	<div ng-repeat="n in ngModel" flex=20>
+   	<div ng-repeat="n in ngModel | orderBy: 'order'" flex=20>
+   		<div ng-if="!n.hidden">
    		<md-toolbar layout="row" ng-style="{'border-top':n.color}">{{n.name}}
    		<span flex></span>
    		<md-menu>			      
@@ -9,7 +10,7 @@
       	<md-menu-content>
 	      
        		<md-menu-item>
-          		<md-checkbox ng-model="data.cb1" aria-label="Checkbox 1">
+          		<md-checkbox ng-model="n.hidden" aria-label="hide column">
             hide field
           </md-checkbox>
        		</md-menu-item>
@@ -27,43 +28,64 @@
        		<md-menu-item>
        		  
          			<md-menu>			      
-      	<md-button 	aria-label="query settings menu" class="md-icon-button" ng-click="openMenu($mdOpenMenu, $event)">
-        	<md-icon class="fa fa-calculator" style="display:inline"></md-icon>
-            		<span>agreggation function</span>
+      	<md-button ng-click="openMenu($mdOpenMenu, $event)">
+            		<span>FUNCTION</span>
       	</md-button>
       	<md-menu-content>
 	      
+	      	<md-menu-item>
+          		<md-button ng-click="applyFuntion('none',n.id,n.entity)">
+            		<span>none</span>
+            		</md-button>
+       		</md-menu-item>
+       		
        		<md-menu-item>
-          		<md-button ng-click="showStructureDetails('categoriesAxisDetails',categoriesAxis.alias)">
-						<md-icon class="fa fa-minus" style="display:inline"></md-icon>
+          		<md-button ng-click="applyFuntion('sum',n.id,n.entity)">
             		<span>SUM</span>
             		</md-button>
-            		
        		</md-menu-item>
+       		
        		<md-menu-item>
-       			<md-button ng-click="showStructureDetails('categoriesAxisDetails',categoriesAxis.alias)">
-						<md-icon class="fa fa-minus" style="display:inline"></md-icon>
+       			<md-button ng-click="applyFuntion('min',n.id,n.entity)">
             		<span>MIN</span></md-button>
        		</md-menu-item>
+       		
        		<md-menu-item>
-       			<md-button ng-click="showStructureDetails('categoriesAxisDetails',categoriesAxis.alias)">
-						<md-icon class="fa fa-minus" style="display:inline"></md-icon>
+       			<md-button ng-click="applyFuntion('max',n.id,n.entity)">
             		<span>MAX</span>
-            		</md-button>
-       		</md-menu-item>          		
+            	</md-button>
+       		</md-menu-item>    
+       		
+       		<md-menu-item>
+          		<md-button ng-click="applyFuntion('avg',n.id,n.entity)">
+            		<span>avg</span>
+            	</md-button>
+       		</md-menu-item>
+       		
+       		<md-menu-item>
+          		<md-button ng-click="applyFuntion('count',n.id,n.entity)">
+            		<span>count</span>
+            	</md-button>
+       		</md-menu-item>
+       		
+       		<md-menu-item>
+          		<md-button ng-click="applyFuntion('count_distinct',n.id,n.entity)">
+            		<span>dist</span>
+            	</md-button>
+       		</md-menu-item>      		
             		
        		</md-menu-content>
        		</md-menu>
        		</md-menu-item>
        		<md-menu-item>
        		  
-         			<md-button ng-click="showStructureDetails('categoriesAxisDetails',categoriesAxis.alias)">
+         			<md-button ng-click="moveLeft(n.order, n)">
 						<md-icon class="fa fa-angle-left" style="display:inline"></md-icon>
             		<span>move left</span>
           		</md-button>
        		</md-menu-item>
        		<md-menu-item>
-         			<md-button ng-click="showStructureDetails('categoriesAxisDetails',categoriesAxis.alias)">
+         			<md-button ng-click="moveRight(n.order, n)">
 						<md-icon class="fa fa-angle-right" style="display:inline"></md-icon>
             		<span>move right</span>
           		</md-button>
@@ -77,6 +99,7 @@
    
    	<div ng-repeat="r in n.data track by $index" style="background-color:#white" >{{r}}</div>
    	<div ng-repeat="f in n.filters" style="background-color:#a9c3db">{{f}}</div>
+   </div>
    </div>
 </div>
 

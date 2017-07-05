@@ -19,11 +19,11 @@
 angular
 	.module('qbe.controller', ['configuration','directive','services'])
 	.controller('qbeController', 
-		["$scope","entity_service","sbiModule_inputParams","sbiModule_config", "sbiModule_restServices", "sbiModule_messaging", qbeFunction]);
+		["$scope","$rootScope","entity_service","sbiModule_inputParams","sbiModule_config", "sbiModule_restServices", "sbiModule_messaging", qbeFunction]);
 
 
 
-function qbeFunction($scope,entity_service,sbiModule_inputParams,sbiModule_config,sbiModule_restServices,sbiModule_messaging ) {
+function qbeFunction($scope,$rootScope,entity_service,sbiModule_inputParams,sbiModule_config,sbiModule_restServices,sbiModule_messaging ) {
 	
 	var entityService = entity_service;
 	var inputParamService = sbiModule_inputParams;
@@ -36,6 +36,24 @@ function qbeFunction($scope,entity_service,sbiModule_inputParams,sbiModule_confi
 		$scope.addField(field);
 		$scope.previewData(field); 
     }
+	
+	$rootScope.$on('applyFunction', function (event, data) {
+		  console.log(data); // 'Data to send'
+		  var indexOfEntity = findWithAttr($scope.model.entities,'qtip', data.entity);
+		  var indexOfFieldInEntity = findWithAttr($scope.model.entities[indexOfEntity].children,'id', data.fieldId);
+		  var indexOfFieldInQuery = findWithAttr($scope.query.fields,'id', data.fieldId);
+		  $scope.query.fields[indexOfFieldInQuery].funct = data.funct.toUpperCase();
+		  $scope.previewData($scope.model.entities[indexOfEntity].children[indexOfFieldInEntity]);		  
+		});
+	
+	var findWithAttr = function(array, attr, value) {
+	    for(var i = 0; i < array.length; i += 1) {
+	        if(array[i][attr] === value) {
+	            return i;
+	        }
+	    }
+	    return -1;
+	}
 	
 	$scope.addField = function (field) {
 		
@@ -61,9 +79,6 @@ function qbeFunction($scope,entity_service,sbiModule_inputParams,sbiModule_confi
     $scope.droppedFunction = function(data) {
         console.log(data)
     };
-    
-    $scope.queryModel = [];
-    
 
     $scope.entitiesFunctions = [{
         "label": "add calculated field",
@@ -87,30 +102,39 @@ function qbeFunction($scope,entity_service,sbiModule_inputParams,sbiModule_confi
         }
     }];
     
+    $scope.ammacool = function (item, event) {
+    	console.log(item)
+    }
+    
     $scope.executeQuery = function (data) {
     	q="?SBI_EXECUTION_ID="+sbiModule_config.sbiExecutionID+"&start=0&limit=25&id=q1&promptableFilters=null"
     	
     	 sbiModule_restServices.promisePost('qbequery/executeQuery'+q,"")
      	.then(function(response) {
      		console.log("[POST]: SUCCESS!");
+     		$scope.queryModel = [];
      		
-     		var queryObject = {
-     		    	"id":data.id,
-     		    	"name":data.text,
-     		    	"data":[],
-     		    	"order":"",
-     		    	"filters": ["less than 6"]
-     		    }
-     		
-     		for (var i = 0; i < response.data.rows.length; i++) {
-     			queryObject.data.push(response.data.rows[i].column_1)
+     		for (var i = 0; i < $scope.query.fields.length; i++) {
+     			var key = "column_"+(i+1);
+     			var queryObject = {
+         		    	"id":$scope.query.fields[i].id,
+         		    	"name":$scope.query.fields[i].field,
+         		    	"entity":$scope.query.fields[i].entity,
+         		    	"data":[],
+         		    	"hidden":false,
+         		    	"order":i+1,
+         		    	"filters": ["no filters"]
+         		    }
+     			for (var j = 0; j < response.data.rows.length; j++) {
+     				queryObject.data.push(response.data.rows[j][key]);
+				}
+     			$scope.queryModel.push(queryObject); 
 			}
-     		$scope.queryModel.push(queryObject); 
+     		
      	}, function(response) {
      	});
     }
-    
-    
+        
     $scope.previewData = function (data) {
         q="?SBI_EXECUTION_ID="+sbiModule_config.sbiExecutionID+"&ambiguousRoles=null&ambiguousFieldsPaths=null&currentQueryId="+$scope.query.id;
         

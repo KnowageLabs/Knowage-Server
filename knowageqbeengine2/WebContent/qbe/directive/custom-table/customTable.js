@@ -35,7 +35,7 @@ angular.module('qbe_custom_table', ['ngDraggable'])
         }
     };
 });
-function qbeCustomTable($scope, $mdDialog, sbiModule_translate){
+function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate){
 	$scope.openMenu = function($mdOpenMenu, ev) {
 	      originatorEv = ev;
 	      $mdOpenMenu(ev);
@@ -43,5 +43,36 @@ function qbeCustomTable($scope, $mdDialog, sbiModule_translate){
   $scope.aggFunctionList = ["SUM","BLA","BLA"];
   $scope.aggFunction = "";
   $scope.translate = sbiModule_translate;
+  
+  $scope.moveRight = function (currentOrder, column) {
+	  
+	  var newOrder = currentOrder+1;
+	  var index = $scope.ngModel.indexOf(column);
+	  var indexOfNext = index+1;
+	  
+	  $scope.ngModel[index] = $scope.ngModel[indexOfNext];
+	  $scope.ngModel[index].order = currentOrder;
+	  
+	  $scope.ngModel[indexOfNext]= column;
+	  $scope.ngModel[indexOfNext].order = newOrder;
+  }
+  
+$scope.moveLeft = function (currentOrder, column) {
+	  
+	  var newOrder = currentOrder-1;
+	  var index = $scope.ngModel.indexOf(column);
+	  var indexOfBefore = index-1;
+	  
+	  $scope.ngModel[index] = $scope.ngModel[indexOfBefore];
+	  $scope.ngModel[index].order = currentOrder;
+	  
+	  $scope.ngModel[indexOfBefore]= column;
+	  $scope.ngModel[indexOfBefore].order = newOrder;
+  }
+
+$scope.applyFuntion = function (funct,id, entity) {
+	
+	$rootScope.$emit('applyFunction', {"funct":funct,"fieldId":id,"entity":entity});
+}
 }
 })();
