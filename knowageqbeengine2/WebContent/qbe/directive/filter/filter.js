@@ -27,23 +27,6 @@ angular.module('qbe_filter', ['ngMaterial'])
 		controller: qbeFilterControllerFunction,
 		priority: 10,
 		scope: {
-			ngModel:"=",
-			showGridView:"=?",
-			showAddToOrganizer:"=?",
-			selectedRow:"=?",
-			tableSpeedMenuOption:"=?",
-			selectedDocument:"=?",
-			selectDocumentAction:"&",
-			deleteDocumentAction:"&",
-			executeDocumentAction:"&",
-			cloneDocumentAction:"&",
-			addToOrganizerAction:"&",
-			addToFavoritesAction:"&",
-			editDocumentAction:"&",
-			shareDocumentAction:"&",
-			orderingDocumentCards:"=?",
-			cloneEnabled:"=?",
-			deleteEnabled:"=?"	
 		},
 		link: function (scope, elem, attrs) { 
 	
@@ -52,12 +35,6 @@ angular.module('qbe_filter', ['ngMaterial'])
 });
 
 function qbeFilterControllerFunction($scope,sbiModule_translate, sbiModule_config){
-	
-	$scope.sbiModule_config = sbiModule_config;
-	$scope.translate = sbiModule_translate;
-	
-	$scope.clickDocument=function(item){		
-		 $scope.selectDocumentAction({doc: item});
-	}
+
 }
 })();
