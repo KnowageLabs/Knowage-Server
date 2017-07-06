@@ -1,0 +1,94 @@
+<!--
+Knowage, Open Source Business Intelligence suite
+Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+ 
+Knowage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Knowage is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+ 
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<%--
+author:...
+--%>
+
+
+<%@page import= "java.util.Enumeration" %>
+<%@ page language="java"
+            contentType="text/html; charset=UTF-8"
+            pageEncoding="UTF-8" %>      
+
+
+<%-- ---------------------------------------------------------------------- --%>
+<%-- JAVA IMPORTS                                                           --%>
+<%-- ---------------------------------------------------------------------- --%>
+<%@page import= "it.eng.spago.configuration.*" %>
+<%@page import= "it.eng.spago.base.*"%>
+<%@page import= "it.eng.spagobi.utilities.engines.EngineConstants" %>
+<%@page import= "it.eng.spagobi.commons.constants.SpagoBIConstants" %>
+<%@page import= "java.util.Locale"%>
+<%@page import= "it.eng.spagobi.services.common.EnginConf" %>
+<%@page import= "it.eng.spagobi.utilities.engines.rest.ExecutionSession" %>
+<%@page import="it.eng.spago.security.IEngUserProfile" %>
+<%@page import="java.util.List"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
+
+
+
+
+<%-- ---------------------------------------------------------------------- --%>
+<%-- JAVA CODE                                                              --%>
+<%-- ---------------------------------------------------------------------- --%>
+
+<%
+      
+       //UserProfile profile;
+       Locale locale =null;
+       String isFromCross;
+       String spagobiServerHost = null;
+       String spagobiContext = null;
+       String documentLabel = null;
+       String documentId = null;
+       String engine = null;
+       String sbiExecutionID = null;   
+      
+       ExecutionSession es = new ExecutionSession(request, request.getSession());
+       
+       
+      
+
+   	//load user profile 
+   	IEngUserProfile userProfile  = (UserProfile) request.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+   	String userUniqueIdentifier="";
+   	String userId="";
+   	String userName="";
+   	String defaultRole="";
+   	List userRoles = new ArrayList();
+   	
+   	//if (userProfile!=null) userId=(String)userProfile.getUserUniqueIdentifier();
+   	if (userProfile!=null){
+   		userId=(String)((UserProfile)userProfile).getUserId();
+   		userUniqueIdentifier=(String)userProfile.getUserUniqueIdentifier();
+   		userName=(String)((UserProfile)userProfile).getUserName();
+   		userRoles = (ArrayList)userProfile.getRoles();
+   		defaultRole = ((UserProfile)userProfile).getDefaultRole();		
+   		
+   	}
+
+	   
+	   sbiExecutionID = request.getParameter("SBI_EXECUTION_ID" );
+	   
+	   if(request.getParameter("ENGINE") != null){
+		
+		  engine = request.getParameter("ENGINE");
+		}
+%>
+<%@include file="/WEB-INF/jsp/commons/angular/includeMessageResource.jspf"%>
