@@ -1,0 +1,21 @@
+<div class="rLinearGauge" ng-class="theme">
+    <div class="values">
+        <div class="value" style="left:0%">{{min}}</div>
+        <div class="value centrals" ng-if="!$last" ng-repeat="threshold in thresholds" ng-style="{'left':normalize(threshold.to)}">{{threshold.to}}</div>
+        <div class="value" style="right:0%">{{max}}</div>
+    </div>
+    <div class="thresholds">
+        <div class="threshold" ng-repeat="threshold in thresholds" ng-style="{'background-color':threshold.color,'width':normalizeRange(threshold)}"></div>
+    </div>
+    <div class="ticks">
+        <div class="tick" style="left:0%"></div>
+        <div class="minors">
+            <div class="tick minor" ng-repeat="tick in getMinorTicks(totalTicks) track by $index" ng-style="{'left':getTickOffset($index)}"></div>
+        </div>
+        <div class="tick" style="left:100%"></div>
+    </div>
+    <div class="pointer" ng-style="{'left':normalize(ngModel)}" title="{{ngModel}}">
+    </div>
+    <div class="target" ng-if="target" ng-style="{'left':normalize(target)}" title="{{target}}">
+    </div>
+</div>

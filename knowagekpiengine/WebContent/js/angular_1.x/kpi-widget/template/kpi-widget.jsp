@@ -32,7 +32,9 @@
 			</h3>
 		</div>
 		
-		<kpi-linear-gauge style="overflow-x : hidden;"
+		<r-linear-gauge thresholds="thresholdStops" ng-model="value" tick-number="20" target="targetValue"></r-linear-gauge>
+		
+		<!--  kpi-linear-gauge style="overflow-x : hidden;"
 			gauge-id="widgetId"
 			label="label"
 			size="gaugeSize"
@@ -45,7 +47,7 @@
 			value-precision="precision"
 			font-conf="fontConf"
 			target-value="targetValue"
-		></kpi-linear-gauge>
+		></kpi-linear-gauge*/-->
 		
 		<nvd3 data="data" options="options" ></nvd3>
 	</div>

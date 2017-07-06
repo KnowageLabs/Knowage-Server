@@ -47,6 +47,8 @@
 <link rel="stylesheet" href="<%= GeneralUtilities.getSpagoBiContext() %>/js/lib/angular/color-picker/angularjs-color-picker.min.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/color-picker/mdColorPickerPersonalStyle.css">
 
+<!--  r-linear-gauge  -->
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/angular_1.x/gaugeNgDirective/rLinearGauge/rLinearGauge.js"></script>
 
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/module/sbiModule.js"></script>

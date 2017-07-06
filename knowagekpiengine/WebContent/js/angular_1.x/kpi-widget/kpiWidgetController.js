@@ -5,7 +5,7 @@
 	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
 
 
-	angular.module('kpi-widget', ['ngMaterial','sbiModule'])
+	angular.module('kpi-widget', ['ngMaterial','sbiModule','r_linear_gauge'])
 	.directive('kpiWidget', function() {
 		return {
 			templateUrl: currentScriptPath + 'template/kpi-widget.jsp',
@@ -21,7 +21,6 @@
 				thresholdStops:'=',
 				precision:'=?',
 				valueSeries: '=',
-
 				widgetId:'=',
 				label:'=',
 				fontConf:'=',
@@ -33,6 +32,8 @@
 	});
 
 	function kpiWidgetController($scope,$mdDialog,$q,$mdToast,$timeout,sbiModule_restServices,sbiModule_translate,sbiModule_config,$interval){
+		$scope.thresholdStops;
+		debugger;
 		$scope.translate = sbiModule_translate;
 		$scope.data = [{
 			"values" : []
