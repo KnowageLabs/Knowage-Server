@@ -1,7 +1,8 @@
-<div layout="row" layout-fill>
-   	<div ng-repeat="n in ngModel | orderBy: 'order'" flex=20>
-   		<div ng-if="!n.hidden">
-   		<md-toolbar layout="row" ng-style="{'border-top':n.color}">{{n.name}}
+<div layout="row" layout-fill layout-padding>
+   	<div ng-repeat="n in ngModel | orderBy: 'order'" flex=20 ng-if="!n.hidden">
+   		<md-toolbar class="secondaryToolbar">
+   		<div class="md-toolbar-tools">
+   			{{n.name}}
    		<span flex></span>
    		<md-menu>			      
       	<md-button 	aria-label="query settings menu" class="md-icon-button" ng-click="openMenu($mdMenu.open, $event)">
@@ -10,7 +11,7 @@
       	<md-menu-content>
 	      
        		<md-menu-item>
-          		<md-checkbox ng-model="n.hidden" aria-label="hide column">
+          		<md-checkbox ng-model="n.hidden" class="menuCheckbox" aria-label="hide column">
             hide field
           </md-checkbox>
        		</md-menu-item>
@@ -94,17 +95,12 @@
 	      </md-menu-content>
 	      
     	</md-menu>
+   		</div>   		
     	</md-toolbar>
    	
    
    	<div ng-repeat="r in n.data track by $index" style="background-color:#white" >{{r}}</div>
-   	<div ng-repeat="f in n.filters" style="background-color:#a9c3db">{{f}}
-   		<md-button 	aria-label="filters"  ng-click="openFilters()">
-        	<md-icon md-menu-origin class="fa fa-filter"></md-icon>
-      	</md-button>
-   	
-   	</div>
-   </div>
+   	<div ng-repeat="f in n.filters" style="background-color:#a9c3db">{{f}}</div>
    </div>
 </div>
 

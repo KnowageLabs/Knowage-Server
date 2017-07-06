@@ -18,3 +18,7 @@
 
 angular	
 	.module('qbeManager', ['qbe.controller'])
+	.config(['$mdThemingProvider', function($mdThemingProvider) {
+		$mdThemingProvider.theme('knowage');
+		$mdThemingProvider.setDefaultTheme('knowage');
+	}]);

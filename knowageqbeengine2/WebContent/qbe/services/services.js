@@ -25,4 +25,4 @@
  */
 
 angular
-	.module('services', ['entities']);
+	.module('services', ['entities','queries']);

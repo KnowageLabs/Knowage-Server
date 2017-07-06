@@ -38,7 +38,6 @@ function qbeFunction($scope,$rootScope,entity_service,sbiModule_inputParams,sbiM
     }
 	
 	$rootScope.$on('applyFunction', function (event, data) {
-		  console.log(data); // 'Data to send'
 		  var indexOfEntity = findWithAttr($scope.model.entities,'qtip', data.entity);
 		  var indexOfFieldInEntity = findWithAttr($scope.model.entities[indexOfEntity].children,'id', data.fieldId);
 		  var indexOfFieldInQuery = findWithAttr($scope.query.fields,'id', data.fieldId);
