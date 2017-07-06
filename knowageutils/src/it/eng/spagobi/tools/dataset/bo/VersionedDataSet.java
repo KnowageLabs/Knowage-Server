@@ -661,17 +661,21 @@ public class VersionedDataSet implements IDataSet {
 	public boolean isIterable() {
 		return wrappedDataset.isIterable();
 	}
-	
+
 	@Override
-	  public boolean equals(Object v) {
-	        boolean retVal = false;
+	public boolean isRealtime() {
+		return wrappedDataset.isRealtime();
+	}
 
-	        if (v instanceof VersionedDataSet){
-	        	VersionedDataSet ptr = (VersionedDataSet) v;
-	            retVal = ptr.getId() == this.getId();
-	        }
+	@Override
+	public boolean equals(Object v) {
+		boolean retVal = false;
 
-	     return retVal;
-	  }
+		if (v instanceof VersionedDataSet) {
+			VersionedDataSet ptr = (VersionedDataSet) v;
+			retVal = ptr.getId() == this.getId();
+		}
 
+		return retVal;
+	}
 }
