@@ -24,20 +24,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%-- ---------------------------------------------------------------------- --%>
 
 <html ng-app="qbeManager">
-	
-	<head>
-	
-	
-	</head>
-	
-	<body ng-controller="qbeController" class="kn-qbe">
+
+	<body ng-controller="qbeController" class="kn-qbe md-knowage-theme">
 	<rest-loading></rest-loading>
 	<div layout="row">
 		<div flex=30 layout-fill>
 			<qbe-expander-list flex drag-action="droppedFunction(data)" ng-model="model" font-icons="fa" entities-actions="entitiesFunctions" fields-actions="fieldsFunctions" colors="colors">
         	</qbe-expander-list>
 		</div>
-		<div flex style="background-color:yellow" layout-fill class="vertical-devider">
+		<div flex layout-fill class="vertical-devider">
 			<qbe-custom-table ng-drop="true" ng-drop-success="onDropComplete($data,$event)" ng-model="queryModel"></qbe-custom-table>
 		</div>
 	</div>

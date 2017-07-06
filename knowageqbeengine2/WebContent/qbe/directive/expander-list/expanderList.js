@@ -78,9 +78,12 @@ angular.module('qbe_expander_list', ['ngDraggable'])
                     }
                 }
 
-                if (scope.colors) {
-                    scope.colorize();
-                }
+                
+                scope.$watch("ngModel", function(newValue, oldValue) {
+                    if (scope.colors && scope.ngModel) {
+                        scope.colorize();
+                    }
+                });
 
             }
         };

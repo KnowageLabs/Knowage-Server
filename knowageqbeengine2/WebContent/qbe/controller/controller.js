@@ -27,6 +27,7 @@ function qbeFunction($scope,$rootScope,entity_service,sbiModule_inputParams,sbiM
 	
 	var entityService = entity_service;
 	var inputParamService = sbiModule_inputParams;
+	$scope.queryModel = [];
 	
 	entityService.getEntitiyTree(inputParamService.modelName).then(function(response){
 		 $scope.model = response.data;
@@ -125,7 +126,6 @@ function qbeFunction($scope,$rootScope,entity_service,sbiModule_inputParams,sbiM
     	 sbiModule_restServices.promisePost('qbequery/executeQuery',q,$scope.bodySend)
      	.then(function(response) {
      		console.log("[POST]: SUCCESS!");
-     		$scope.queryModel = [];
 
      		for (var i = 0; i < $scope.query.fields.length; i++) {
      			var key = "column_"+(i+1);
@@ -133,6 +133,7 @@ function qbeFunction($scope,$rootScope,entity_service,sbiModule_inputParams,sbiM
          		    	"id":$scope.query.fields[i].id,
          		    	"name":$scope.query.fields[i].field,
          		    	"entity":$scope.query.fields[i].entity,
+         		    	"color":data.color,
          		    	"data":[],
          		    	"hidden":false,
          		    	"order":i+1,
@@ -141,7 +142,13 @@ function qbeFunction($scope,$rootScope,entity_service,sbiModule_inputParams,sbiM
      			for (var j = 0; j < response.data.rows.length; j++) {
      				queryObject.data.push(response.data.rows[j][key]);
 				}
-     			$scope.queryModel.push(queryObject); 
+     			var index = findWithAttr($scope.queryModel,'id', queryObject.id);
+     			if(index!=-1){
+     				$scope.queryModel.data = queryObject.data;
+     			} else {
+     				$scope.queryModel.push(queryObject); 
+     			}
+     			
 			}
 
      	}, function(response) {

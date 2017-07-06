@@ -1,7 +1,8 @@
 <div layout="row" layout-fill layout-padding>
-   	<div ng-repeat="n in ngModel | orderBy: 'order'" flex=20 ng-if="!n.hidden">
-   		<md-toolbar class="secondaryToolbar">
-   		<div class="md-toolbar-tools">
+   	<div ng-repeat="n in ngModel | orderBy: 'order'" flex ng-if="!n.hidden">
+   		<md-toolbar>
+   		<div class="md-toolbar-tools" ng-style="{'background-color' : n.color}">
+   		<md-icon class="fa fa-sort"></md-icon>
    			{{n.name}}
    		<span flex></span>
    		<md-menu>			      
@@ -95,12 +96,13 @@
 	      </md-menu-content>
 	      
     	</md-menu>
+   		<md-icon class="fa fa-times"></md-icon>
    		</div>   		
     	</md-toolbar>
    	
    
-   	<div ng-repeat="r in n.data track by $index" style="background-color:#white" >{{r}}</div>
-   	<div ng-repeat="f in n.filters" style="background-color:#a9c3db">{{f}}</div>
+   	<div ng-repeat="r in n.data track by $index" style="background-color:#white">{{r}}</div>
+   	<div ng-repeat="f in n.filters" style="background-color:#C6E2FF">{{f}}</div>
    </div>
 </div>
 

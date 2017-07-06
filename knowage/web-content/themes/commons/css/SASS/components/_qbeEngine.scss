@@ -156,6 +156,9 @@
         }
     }
     .vertical-devider {
-    	border-left: 1px solid #3b678c
+    	border-left: 1px solid $baseColor;
+    }
+    .menuCheckbox {
+    	left: 16px;
     }
 }
