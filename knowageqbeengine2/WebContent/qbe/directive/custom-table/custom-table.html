@@ -1,5 +1,5 @@
 <div layout="row" layout-fill layout-padding>
-   	<div ng-repeat="n in ngModel | orderBy: 'order'" flex ng-if="!n.hidden">
+   	<div ng-repeat="n in ngModel | orderBy: 'order' track by $index" flex ng-if="!n.hidden">
    		<md-toolbar>
    		<div class="md-toolbar-tools" ng-style="{'background-color' : n.color}">
    		<md-icon class="fa fa-sort"></md-icon>
@@ -102,7 +102,7 @@
    	
    
    	<div ng-repeat="r in n.data track by $index" style="background-color:#white">{{r}}</div>
-   	<div ng-repeat="f in n.filters" style="background-color:#C6E2FF">{{f}}</div>
+   	<div ng-repeat="f in n.filters track by $index" style="background-color:#C6E2FF">{{f}}</div>
    </div>
 </div>
 

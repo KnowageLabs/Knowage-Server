@@ -19,23 +19,31 @@
 angular
 	.module('qbe.controller', ['configuration','directive','services'])
 	.controller('qbeController', 
-		["$scope","$rootScope","entity_service","sbiModule_inputParams","sbiModule_config", "sbiModule_restServices", "sbiModule_messaging", qbeFunction]);
+		["$scope","$rootScope","entity_service","query_service","sbiModule_inputParams","sbiModule_config", "sbiModule_restServices", "sbiModule_messaging", qbeFunction]);
 
 
 
-function qbeFunction($scope,$rootScope,entity_service,sbiModule_inputParams,sbiModule_config,sbiModule_restServices,sbiModule_messaging ) {
+function qbeFunction($scope,$rootScope,entity_service,query_service,sbiModule_inputParams,sbiModule_config,sbiModule_restServices,sbiModule_messaging ) {
 	
 	var entityService = entity_service;
 	var inputParamService = sbiModule_inputParams;
 	$scope.queryModel = [];
+	$scope.pars = [];
 	
 	entityService.getEntitiyTree(inputParamService.modelName).then(function(response){
 		 $scope.model = response.data;
 	});
 	
+	$scope.executeQuery = function (field, query, bodySend, queryModel) {
+		query_service.executeQuery(field, query, bodySend, queryModel).then(function(response){
+			$scope.queryModel = response;
+			
+		});
+	}
+	
 	$scope.onDropComplete=function(field,evt){
 		$scope.addField(field);
-		$scope.previewData(field); 
+		$scope.executeQuery(field, $scope.query, $scope.bodySend, $scope.queryModel); 
     }
 	
 	$rootScope.$on('applyFunction', function (event, data) {
@@ -43,7 +51,7 @@ function qbeFunction($scope,$rootScope,entity_service,sbiModule_inputParams,sbiM
 		  var indexOfFieldInEntity = findWithAttr($scope.model.entities[indexOfEntity].children,'id', data.fieldId);
 		  var indexOfFieldInQuery = findWithAttr($scope.query.fields,'id', data.fieldId);
 		  $scope.query.fields[indexOfFieldInQuery].funct = data.funct.toUpperCase();
-		  $scope.previewData($scope.model.entities[indexOfEntity].children[indexOfFieldInEntity]);		  
+		  $scope.executeQuery($scope.model.entities[indexOfEntity].children[indexOfFieldInEntity], $scope.query, $scope.bodySend, $scope.queryModel); 
 		});
 	
 	var findWithAttr = function(array, attr, value) {
@@ -105,56 +113,18 @@ function qbeFunction($scope,$rootScope,entity_service,sbiModule_inputParams,sbiM
     $scope.ammacool = function (item, event) {
     	console.log(item)
     }
-
-    $scope.previewData = function (data) {
-    	$scope.executeQuery (data)
-    }
-
+    
     $scope.query = {"id":"q1","name":"query-q1","description":"query-q1","fields":[],"distinct":false,"filters":[],"calendar":{},"expression":{},"isNestedExpression":false,"havings":[],"graph":[],"relationsRoles":[],"subqueries":[]};
 
     $scope.catalogue = [$scope.query];
 
     $scope.bodySend = {
     		"catalogue":$scope.catalogue,
-    		"qbeJSONQuery":$scope.qbeJSONQuery,
-        	"pars": $scope.pars,
+    		"qbeJSONQuery":{},
+        	"pars": [],
         	"schedulingCronLine":"0 * * * * ?"
     };
-    $scope.executeQuery = function (data) {
-    	q="?SBI_EXECUTION_ID="+sbiModule_config.sbiExecutionID+"&currentQueryId="+$scope.query.id+"&start=0&limit=25"
-
-    	 sbiModule_restServices.promisePost('qbequery/executeQuery',q,$scope.bodySend)
-     	.then(function(response) {
-     		console.log("[POST]: SUCCESS!");
-
-     		for (var i = 0; i < $scope.query.fields.length; i++) {
-     			var key = "column_"+(i+1);
-     			var queryObject = {
-         		    	"id":$scope.query.fields[i].id,
-         		    	"name":$scope.query.fields[i].field,
-         		    	"entity":$scope.query.fields[i].entity,
-         		    	"color":data.color,
-         		    	"data":[],
-         		    	"hidden":false,
-         		    	"order":i+1,
-         		    	"filters": ["no filters"]
-         		    }
-     			for (var j = 0; j < response.data.rows.length; j++) {
-     				queryObject.data.push(response.data.rows[j][key]);
-				}
-     			var index = findWithAttr($scope.queryModel,'id', queryObject.id);
-     			if(index!=-1){
-     				$scope.queryModel.data = queryObject.data;
-     			} else {
-     				$scope.queryModel.push(queryObject); 
-     			}
-     			
-			}
-
-     	}, function(response) {
-     	});
-    }
-    
+        
     $scope.openMenu = function($mdMenu, ev) {
         originatorEv = ev;
         $mdMenu.open(ev);
