@@ -182,7 +182,7 @@ a:hover{
 	}
 	</script>
 	<link rel="shortcut icon" href="<%=urlBuilder.getResourceLink(request, "img/favicon.ico")%>" />
-    <title>SpagoBI</title>
+    <title>Knowage</title>
     <style>
       body {
 	       padding: 0;
