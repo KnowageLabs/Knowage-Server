@@ -1,15 +1,19 @@
-<div layout="row" layout-fill layout-padding>
-   	<div ng-repeat="n in ngModel | orderBy: 'order' track by $index" flex ng-if="!n.hidden">
+<div layout="row" class="qbeCustomTable">
+   	<div ng-repeat="n in ngModel | orderBy: 'order' track by $index" ng-if="!n.hidden" class="qbeCustomColumn" layout-column>
+   		<div class="qbeCustomTopColor" ng-style="{'background-color' : n.color}"><md-tooltip md-direction="top">{{n.entity}}</md-tooltip></div>
    		<md-toolbar>
-   		<div class="md-toolbar-tools" ng-style="{'background-color' : n.color}">
+   		<div class="md-toolbar-tools secondaryToolbar" >
    		<md-icon class="fa fa-sort"></md-icon>
-   			{{n.name}}
+   			<h2>{{n.name}}
+   			<md-tooltip md-direction="top">{{n.name}}</md-tooltip>
+   			</h2> 
    		<span flex></span>
    		<md-menu>			      
       	<md-button 	aria-label="query settings menu" class="md-icon-button" ng-click="openMenu($mdMenu.open, $event)">
+      		<md-tooltip md-direction="top">column settings</md-tooltip>
         	<md-icon md-menu-origin class="fa fa-cog"></md-icon>
       	</md-button>
-      	<md-menu-content>
+      	<md-menu-content class="qbeMenuContent">
 	      
        		<md-menu-item>
           		<md-checkbox ng-model="n.hidden" class="menuCheckbox" aria-label="hide column">
@@ -29,11 +33,12 @@
        		</md-menu-item>
        		<md-menu-item>
        		  
-         			<md-menu>			      
-      	<md-button ng-click="openMenu($mdOpenMenu, $event)">
+         			<md-menu>		
+         			<md-button ng-mouseenter="openMenu($mdOpenMenu, $event)">
+						<md-icon class="fa fa-calculator" style="display:inline"></md-icon>
             		<span>FUNCTION</span>
-      	</md-button>
-      	<md-menu-content>
+          		</md-button>	      
+      	<md-menu-content class="qbeMenuContent">
 	      
 	      	<md-menu-item>
           		<md-button ng-click="applyFuntion('none',n.id,n.entity)">
@@ -96,13 +101,18 @@
 	      </md-menu-content>
 	      
     	</md-menu>
-   		<md-icon class="fa fa-times" ng-click="removeColumn(n)"></md-icon>
+    	<md-button 	aria-label="query settings menu" class="md-icon-button" ng-click="removeColumn(n)">
+    		<md-tooltip md-direction="top">delete column</md-tooltip>
+        	<md-icon md-menu-origin class="fa fa-times"></md-icon>
+      	</md-button>
    		</div>   		
     	</md-toolbar>
    	
    
-   	<div ng-repeat="r in n.data track by $index" style="background-color:#white">{{r}}</div>
-   	<div ng-repeat="f in n.filters track by $index" style="background-color:#C6E2FF">{{f}}</div>
+   	<div ng-repeat="r in n.data track by $index" class="qbeCustomRow">{{r}}</div>
+   	<div ng-repeat="f in n.filters track by $index" class="qbeCustomFooter">{{f}}</div>
    </div>
+   
+   <div></div>
 </div>
 

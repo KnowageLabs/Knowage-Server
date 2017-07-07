@@ -158,7 +158,81 @@
     .vertical-devider {
     	border-left: 1px solid $baseColor;
     }
-    .menuCheckbox {
-    	left: 16px;
+    .qbeMenuContent {
+        max-height: 400px;
+        md-checkbox > div.md-container {
+            left: 16px;
+        }
+        ._md-nested-menu {
+            padding: 0;
+            margin: 0;
+            button {
+                padding: 0 16px;
+                margin: 0;
+                height: 48px;
+                span {
+                    padding-left: 16px;
+                }
+                &:hover {
+                    color: $baseColor;
+                    background-color: rgba($baseColor,0.3);
+                }
+                
+            }
+        }
+    }
+    .qbeCustomTable {
+        padding: 4px; 
+        min-height: 500px;
+        min-width: 100%;
+        overflow: auto;
+        .qbeCustomColumn {
+            border-right: 1px solid $ternaryColor;
+            max-width: 200px;
+            &:first-child {
+                border-left: 1px solid $ternaryColor;  
+            }
+            .qbeCustomTopColor {
+                height: 4px;
+                display: block;
+                width: 100%;
+            }
+            .md-toolbar-tools {
+                padding: 0 8px;
+                h2 {
+                    line-height: 2rem;
+                    max-width: 110px;
+                    display: block;
+                    overflow: hidden;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                }
+                button.md-icon-button {
+                    margin: 0;
+                }
+            } 
+            .qbeCustomRow {
+                font-size: $baseFontSize;
+                padding: 0 4px;
+                width: calc(100% - 8px);
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                display: block;
+                &:nth-child(even) {
+                    background-color: $contentBackground;
+                }
+                &:nth-child(odd) {
+                    background-color: $lightTextColor;
+                }
+            }
+            .qbeCustomFooter {
+                background-color: $secondaryColor;
+                height: 24px;
+            }
+            md-icon {
+                line-height: 24px;
+            }
+        }
     }
 }
