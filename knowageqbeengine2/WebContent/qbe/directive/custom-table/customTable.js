@@ -57,6 +57,10 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate){
 	  $scope.ngModel[indexOfNext].order = newOrder;
   }
   
+  $scope.removeColumn = function (field) {
+	  $rootScope.$emit('removeColumn', {"id":field.id,"entity":field.entity});
+  }
+  
 $scope.moveLeft = function (currentOrder, column) {
 	  
 	  var newOrder = currentOrder-1;

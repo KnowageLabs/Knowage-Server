@@ -54,6 +54,15 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,sbiModule_in
 		  $scope.executeQuery($scope.model.entities[indexOfEntity].children[indexOfFieldInEntity], $scope.query, $scope.bodySend, $scope.queryModel); 
 		});
 	
+	$rootScope.$on('removeColumn', function (event, data) {
+		  var indexOfFieldInQuery = findWithAttr($scope.query.fields,'id', data.id);
+		  var indexOfFieldInModel = findWithAttr($scope.queryModel,'id', data.id);
+		  if (indexOfFieldInQuery > -1 && indexOfFieldInModel > -1) {
+			  $scope.query.fields.splice(indexOfFieldInQuery, 1);
+			  $scope.queryModel.splice(indexOfFieldInModel, 1);
+			}
+		});
+	
 	var findWithAttr = function(array, attr, value) {
 	    for(var i = 0; i < array.length; i += 1) {
 	        if(array[i][attr] === value) {
