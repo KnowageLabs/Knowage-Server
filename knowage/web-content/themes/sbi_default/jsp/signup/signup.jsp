@@ -277,9 +277,12 @@ a:hover{
 				<table border="0" align="center" style="border-collapse:separate; background: none repeat scroll 0 0; border-radius: 5px 5px 5px 5px;  box-shadow: 0px 0px 10px #888;  -webkit-box-shadow:  0px 0px 10px #888;  -moz-box-shadow:  0px 0px 10px #888; color: #009DC3; display: block; font-size: 14px; line-height: 18px; padding: 20px;">
 				   <tr>
 						<td></td>
-						<td><img
-							src='${pageContext.request.contextPath}/themes/sbi_default/img/wapp/spagobi40logo.png'
-							width='180px' height='51px' style="margin: 20px 0px"/>
+						<td>
+					    <img id="profile-img" class="logoHeader" 
+                              src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/wapp/logo.png", currTheme)%>' />
+                        <!--  <img
+                            src='${pageContext.request.contextPath}/themes/sbi_default/img/wapp/spagobi40logo.png'
+                            width='180px' height='51px' style="margin: 20px 0px"/>-->
 						</td>
 						<td width='50px'></td>
 						<td></td>
