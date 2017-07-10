@@ -142,6 +142,7 @@ function exportFuncController($http,sbiModule_download,sbiModule_device,$scope, 
 	
 	$scope.removeFilter = function(){
 		$scope.filterDate = undefined;
+		$scope.selected=[];
 		$scope.restServices.get("2.0", "folders","includeDocs=true")
 		.success(function(data){
 			//if not errors in response, copy the data
