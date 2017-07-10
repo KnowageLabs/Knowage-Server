@@ -22,9 +22,9 @@ import java.sql.Types;
 /**
  * @see http://download.oracle.com/javase/1.4.2/docs/api/java/sql/Types.html
  * @see http://download.oracle.com/javase/1.3/docs/guide/jdbc/getstart/mapping.html
- * 
+ *
  * @author Andrea Gioia (andrea.gioia@eng.it)
- * 
+ *
  */
 public class JDBCTypeMapper {
 	public static Class getJavaType(short jdbcType) {
@@ -84,6 +84,8 @@ public class JDBCTypeMapper {
 		case Types.VARBINARY:
 			return java.lang.Byte[].class;
 		case Types.VARCHAR:
+			return java.lang.String.class;
+		case Types.NVARCHAR:
 			return java.lang.String.class;
 		default:
 			return null;
@@ -148,6 +150,8 @@ public class JDBCTypeMapper {
 			return "VARBINARY";
 		case Types.VARCHAR:
 			return "VARCHAR";
+		case Types.NVARCHAR:
+			return "NVARCHAR";
 		default:
 			return null;
 		}
@@ -265,6 +269,8 @@ public class JDBCTypeMapper {
 		else if ("VARBINARY".equals(modelType))
 			return java.lang.Byte.class;// tolto []
 		else if ("VARCHAR".equals(modelType))
+			return java.lang.String.class;
+		else if ("NVARCHAR".equals(modelType))
 			return java.lang.String.class;
 		else if ("GEOMETRY".equals(modelType))
 			return com.vividsolutions.jts.geom.Geometry.class;
