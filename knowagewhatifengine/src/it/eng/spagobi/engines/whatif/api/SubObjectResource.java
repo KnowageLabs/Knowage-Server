@@ -39,7 +39,7 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 
 @Path("/1.0/subobject")
 @ManageAuthorization
-@GZIP
+
 public class SubObjectResource extends AbstractWhatIfEngineService {
 
 	public static transient Logger logger = Logger.getLogger(AnalysisResource.class);

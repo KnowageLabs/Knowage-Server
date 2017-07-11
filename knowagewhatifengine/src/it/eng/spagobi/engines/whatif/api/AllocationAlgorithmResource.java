@@ -39,7 +39,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeExcept
 
 @Path("/1.0/allocationalgorithm")
 @ManageAuthorization
-@GZIP
+
 public class AllocationAlgorithmResource extends AbstractWhatIfEngineService {
 
 	public static transient Logger logger = Logger.getLogger(AllocationAlgorithmResource.class);
@@ -53,6 +53,7 @@ public class AllocationAlgorithmResource extends AbstractWhatIfEngineService {
 	 */
 	@GET
 	@Produces("text/html; charset=UTF-8")
+	@GZIP
 	public String getAvailabeAllocationAlgorithms() {
 		logger.debug("IN");
 
@@ -83,6 +84,7 @@ public class AllocationAlgorithmResource extends AbstractWhatIfEngineService {
 	@POST
 	@Path("/{algorithmClassName}")
 	@Produces("text/html; charset=UTF-8")
+	@GZIP
 	public String setUsedAlgorithm(@PathParam("algorithmClassName") String algorithmClassName) {
 		logger.debug("IN");
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();

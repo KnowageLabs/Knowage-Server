@@ -43,7 +43,7 @@ import it.eng.spagobi.writeback4j.sql.AnalysisExporter;
 
 @Path("/1.0/analysis")
 @ManageAuthorization
-@GZIP
+
 public class AnalysisResource extends AbstractWhatIfEngineService {
 
 	public static transient Logger logger = Logger.getLogger(AnalysisResource.class);

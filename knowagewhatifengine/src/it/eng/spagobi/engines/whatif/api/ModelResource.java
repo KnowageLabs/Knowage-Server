@@ -102,7 +102,7 @@ import it.eng.spagobi.writeback4j.mondrian.CacheManager;
 
 @Path("/1.0/model")
 @ManageAuthorization
-@GZIP
+
 public class ModelResource extends AbstractWhatIfEngineService {
 
 	public static transient Logger logger = Logger.getLogger(ModelResource.class);
@@ -140,6 +140,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	@POST
 	@Path("/")
 	@Produces("text/html; charset=UTF-8")
+	@GZIP
 	public String setMdx() throws OlapException {
 		logger.debug("IN");
 		String table = "";
@@ -179,6 +180,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	@POST
 	@Path("/setValue/{ordinal}")
 	@Produces("text/html; charset=UTF-8")
+	@GZIP
 	public String setValue(@PathParam("ordinal") int ordinal) {
 		logger.debug("IN : ordinal = [" + ordinal + "]");
 		logOperation("Set value");
@@ -238,6 +240,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	@POST
 	@Path("/persistTransformations")
 	@Produces("text/html; charset=UTF-8")
+	@GZIP
 	public String persistTransformations() {
 		logger.debug("IN");
 		logOperation("Save");
@@ -308,6 +311,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	@POST
 	@Path("/saveAs")
 	@Produces("text/html; charset=UTF-8")
+	@GZIP
 	public String increaseVersion() {
 		logger.debug("IN");
 		logOperation("Save As");
@@ -355,6 +359,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	@POST
 	@Path("/undo")
 	@Produces("text/html; charset=UTF-8")
+	@GZIP
 	public String undo() {
 		logger.debug("IN");
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();

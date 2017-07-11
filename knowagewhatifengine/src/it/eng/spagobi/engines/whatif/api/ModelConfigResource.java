@@ -38,7 +38,7 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 
 @Path("/1.0/modelconfig")
 @ManageAuthorization
-@GZIP
+
 public class ModelConfigResource extends AbstractWhatIfEngineService {
 
 	public static transient Logger logger = Logger.getLogger(ModelConfigResource.class);
@@ -50,6 +50,7 @@ public class ModelConfigResource extends AbstractWhatIfEngineService {
 	 */
 	@POST
 	@Produces("text/html; charset=UTF-8")
+	@GZIP
 	public String setModelConfig() {
 		logger.debug("IN");
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();

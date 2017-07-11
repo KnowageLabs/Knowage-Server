@@ -57,7 +57,7 @@ import it.eng.spagobi.writeback4j.mondrian.MondrianSchemaRetriver;
  */
 @Path("/1.0/designer")
 @ManageAuthorization
-@GZIP
+
 public class DesignerResource extends AbstractWhatIfEngineService {
 
 	public static transient Logger logger = Logger.getLogger(DesignerResource.class);

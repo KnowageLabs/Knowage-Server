@@ -62,7 +62,7 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 
 @Path("/1.0/hierarchy")
 @ManageAuthorization
-@GZIP
+
 public class HierarchyResource extends AbstractWhatIfEngineService {
 
 	private static final String NODE_PARM = "node";
@@ -117,6 +117,7 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 	@POST
 	@Path("/filtertree")
 	@Produces("text/html; charset=UTF-8")
+	@GZIP
 	public String getMemberValue(@javax.ws.rs.core.Context HttpServletRequest req) {
 		Hierarchy hierarchy = null;
 
@@ -345,6 +346,7 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 	@GET
 	@Path("/{hierarchy}/filtertree2/{axis}")
 	@Produces("text/html; charset=UTF-8")
+	@GZIP
 	public String getMemberValue2(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("hierarchy") String hierarchyUniqueName,
 			@PathParam("axis") int axis) {
 		Hierarchy hierarchy = null;

@@ -41,7 +41,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeExcept
 
 @Path("/1.0/version")
 @ManageAuthorization
-@GZIP
+
 public class VersionResource extends AbstractWhatIfEngineService {
 
 	public static transient Logger logger = Logger.getLogger(VersionResource.class);

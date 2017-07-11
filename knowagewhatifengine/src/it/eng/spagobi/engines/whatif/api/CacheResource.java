@@ -35,13 +35,14 @@ import it.eng.spagobi.writeback4j.mondrian.CacheManager;
 
 @Path("1.0/cache")
 @ManageAuthorization
-@GZIP
+
 public class CacheResource extends AbstractWhatIfEngineService {
 
 	public static transient Logger logger = Logger.getLogger(CacheResource.class);
 
 	@POST
 	@Produces("text/html; charset=UTF-8")
+	@GZIP
 	public String flushCache(@Context HttpServletRequest request) {
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		OlapDataSource olapDataSource = ei.getOlapDataSource();

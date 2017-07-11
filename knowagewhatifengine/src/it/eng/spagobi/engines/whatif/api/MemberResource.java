@@ -69,7 +69,7 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 
 @Path("/1.0/member")
 @ManageAuthorization
-@GZIP
+
 public class MemberResource extends AbstractWhatIfEngineService {
 
 	private SpagoBIPivotModel model;
@@ -85,6 +85,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 	@POST
 	@Path("/drilldown/{axis}/{position}/{member}")
 	@Produces("text/html; charset=UTF-8")
+	@GZIP
 	public String drillDown(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos, @PathParam("position") int positionPos,
 			@PathParam("member") int memberPos) throws JSONException, IOException {
 		SimpleDateFormat format = new SimpleDateFormat("hh:mm:ss");
@@ -150,6 +151,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 	@Path("/drillup")
 	// {axis}/{position}/{memberPosition}/{positionUniqueName}/{memberUniqueName}
 	@Produces("text/html; charset=UTF-8")
+	@GZIP
 	public String drillUp(@javax.ws.rs.core.Context HttpServletRequest req) {
 		init();
 		model.removeSubset();
@@ -245,6 +247,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 	@POST
 	@Path("/drilltrough/levels")
 	@Produces("text/html; charset=UTF-8")
+	@GZIP
 	public String getallLevels(@javax.ws.rs.core.Context HttpServletRequest req) throws OlapException {
 
 		JSONArray array = new JSONArray();
@@ -343,6 +346,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 	@POST
 	@Path("/properties")
 	@Produces("text/html; charset=UTF-8")
+	@GZIP
 	public String getProperties(@javax.ws.rs.core.Context HttpServletRequest req) throws OlapException, JSONException {
 
 		String name = null;
@@ -376,6 +380,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 	@POST
 	@Path("/drilltrough")
 	@Produces("text/html; charset=UTF-8")
+	@GZIP
 	public String drillt(@javax.ws.rs.core.Context HttpServletRequest req) throws OlapException {
 		JSONArray array = null;
 		ResultSet set;
@@ -407,6 +412,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 	@POST
 	@Path("/drilltrough/full")
 	@Produces("text/html; charset=UTF-8")
+	@GZIP
 	public String drillfull(@javax.ws.rs.core.Context HttpServletRequest req) throws OlapException {
 		JSONArray array = null;
 		ResultSet set = null;

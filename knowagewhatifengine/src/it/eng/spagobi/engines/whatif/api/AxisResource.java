@@ -44,7 +44,7 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 
 @Path("/1.0/axis")
 @ManageAuthorization
-@GZIP
+
 public class AxisResource extends AbstractWhatIfEngineService {
 
 	public static transient Logger logger = Logger.getLogger(AxisResource.class);
@@ -68,6 +68,7 @@ public class AxisResource extends AbstractWhatIfEngineService {
 	@POST
 	@Path("/swap")
 	@Produces("text/html; charset=UTF-8")
+	@GZIP
 	public String swapAxis() {
 		logger.debug("IN");
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
@@ -105,6 +106,7 @@ public class AxisResource extends AbstractWhatIfEngineService {
 	@POST
 	@Path("/moveDimensionToOtherAxis")
 	@Produces("text/html; charset=UTF-8")
+	@GZIP
 	public String placeHierarchyOnAxis(@javax.ws.rs.core.Context HttpServletRequest req) {
 
 		int fromAxisPos = 0;
@@ -155,6 +157,7 @@ public class AxisResource extends AbstractWhatIfEngineService {
 	@POST
 	@Path("/moveHierarchy")
 	@Produces("text/html; charset=UTF-8")
+	@GZIP
 	public String moveHierarchies(@javax.ws.rs.core.Context HttpServletRequest req) {
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
@@ -202,6 +205,7 @@ public class AxisResource extends AbstractWhatIfEngineService {
 	@POST
 	@Path("/updateHierarchyOnDimension")
 	@Produces("text/html; charset=UTF-8")
+	@GZIP
 	public String updateHierarchyOnDimension(@javax.ws.rs.core.Context HttpServletRequest req) {
 		int axisPos = -2;
 		String newHierarchyUniqueName = null;
@@ -243,6 +247,7 @@ public class AxisResource extends AbstractWhatIfEngineService {
 	@POST
 	@Path("/{axis}/placeMembersOnAxis")
 	@Produces("text/html; charset=UTF-8")
+	@GZIP
 	public String placeMembersOnAxis(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos) {
 
 		List<Member> members = getMembersFromBody();
