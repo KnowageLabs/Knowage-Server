@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.tools.dataset.notifier.fiware;
 
+import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.dataset.bo.RESTDataSet;
 import it.eng.spagobi.tools.dataset.common.dataproxy.RESTDataProxy;
 import it.eng.spagobi.tools.dataset.common.datareader.JSONPathDataReader;
@@ -25,7 +26,12 @@ import it.eng.spagobi.tools.dataset.notifier.NotifierManager;
 import it.eng.spagobi.tools.dataset.notifier.NotifierManagerFactory;
 import it.eng.spagobi.tools.dataset.notifier.NotifierServlet;
 import it.eng.spagobi.tools.dataset.notifier.UserLabelId;
-import it.eng.spagobi.user.UserProfileManager;
+import it.eng.spagobi.tools.dataset.notifier.fiware.ngsi.v2.Condition;
+import it.eng.spagobi.tools.dataset.notifier.fiware.ngsi.v2.Entity;
+import it.eng.spagobi.tools.dataset.notifier.fiware.ngsi.v2.Http;
+import it.eng.spagobi.tools.dataset.notifier.fiware.ngsi.v2.Notification;
+import it.eng.spagobi.tools.dataset.notifier.fiware.ngsi.v2.Subject;
+import it.eng.spagobi.tools.dataset.notifier.fiware.ngsi.v2.Subscription;
 import it.eng.spagobi.utilities.Helper;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.rest.RestUtilities;
@@ -41,13 +47,21 @@ import java.util.Map;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
-import org.json.JSONArray;
+import org.apache.commons.httpclient.Header;
+import org.apache.commons.httpclient.NameValuePair;
+import org.joda.time.DurationFieldType;
+import org.joda.time.MutableDateTime;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 public class OrionContextSubscriber {
 
-	private static final String SUBSCRIPTION_DURATION = "P1M";
+	/*
+	 * the last char indicates the time unit (hour -> H, day -> D, month -> M, year -> Y) 1M -> one month 33D -> 33 days
+	 */
+	private static final int SUBSCRIPTION_DURATION = 1;
+	private static DurationFieldType DURATION_TYPE = DurationFieldType.months();
+
+	private static final int THROTTLING = 5;
 
 	private static final String SUBSCRIBE_CONTEXT_PATH = "/v2/subscriptions";
 
@@ -64,7 +78,7 @@ public class OrionContextSubscriber {
 	public OrionContextSubscriber(RESTDataSet dataSet, String spagoBInotifyAddress) {
 		Helper.checkNotNull(dataSet, "dataSet");
 
-		user = (String) (dataSet.getUserId() != null ? dataSet.getUserId() : UserProfileManager.getProfile().getUserId());
+		user = dataSet.getUserId();
 		if (user == null || user.isEmpty()) {
 			throw new NGSISubscribingException("No user associated with dataset");
 		}
@@ -124,12 +138,11 @@ public class OrionContextSubscriber {
 			address += SUBSCRIBE_CONTEXT_PATH;
 			Map<String, String> requestHeaders = getSubscriptionRequestHeaders();
 			Response resp = RestUtilities.makeRequest(HttpMethod.Post, address, requestHeaders, requestBody);
-			if (resp.getStatusCode() != 200) {
+			if (resp.getStatusCode() != 201) {
 				// not ok
-				throw new NGSISubscribingException("Status code of subscribing request is not 200: " + resp.getStatusCode());
+				throw new NGSISubscribingException("Status code of subscribing request is not 201: " + resp.getStatusCode());
 			}
-			String respBody = resp.getResponseBody();
-			String subscriptionId = getSubscriptionId(respBody);
+			String subscriptionId = getSubscriptionId(resp);
 			return subscriptionId;
 		} catch (Exception e) {
 			throw new NGSISubscribingException("Error while subscribing to Orion Context Broker", e);
@@ -157,16 +170,16 @@ public class OrionContextSubscriber {
 	 * @return
 	 * @throws JSONException
 	 */
-	private static String getSubscriptionId(String respBody) throws JSONException {
-		JSONObject json = new JSONObject(respBody);
-		if (!json.has("subscribeResponse")) {
-			throw new NGSISubscribingException("No subscribeResponse in response");
+	private static String getSubscriptionId(Response response) throws JSONException {
+		Header[] headers = response.getHeaders();
+		Assert.assertTrue((headers != null && headers.length > 0), "No headers in response");
+		for (Header header : headers) {
+			if (header.getName().equals("Location")) {
+				String location = header.getValue();
+				return location.substring(location.lastIndexOf('/') + 1);
+			}
 		}
-		JSONObject subResp = json.getJSONObject("subscribeResponse");
-		if (!subResp.has("subscriptionId")) {
-			throw new NGSISubscribingException("No subscriptionId in response");
-		}
-		return subResp.getString("subscriptionId");
+		throw new NGSISubscribingException("No Location header, thus no subscriptionId in response");
 	}
 
 	private Map<String, String> getSubscriptionRequestHeaders() throws MalformedURLException {
@@ -184,58 +197,85 @@ public class OrionContextSubscriber {
 	/**
 	 * <pre>
 	 * {
+	 *   "description": "A subscription to get info about Room1",
+	 *   "subject": {
 	 *     "entities": [
-	 *         {
-	 *             "type": "Meter",
-	 *             "isPattern": "true",
-	 *             "id": ".*"
-	 *         }
+	 *       {
+	 *         "id": "Room1",
+	 *         "type": "Room"
+	 *       }
 	 *     ],
-	 *     "reference": "http://192.168.93.1:9000/notify",
-	 *     "duration": "P1M",
-	 *     "notifyConditions": [
-	 *         {
-	 *             "type": "ONCHANGE",
-	 *             "condValues": [
-	 *                 "atTime"
-	 *             ]
-	 *         }
-	 *     ],
-	 *     "throttling": "PT5S"
+	 *     "condition": {
+	 *       "attrs": [
+	 *         "pressure"
+	 *       ]
+	 *     }
+	 *   },
+	 *   "notification": {
+	 *     "http": {
+	 *       "url": "http://localhost:1028/accumulate"
+	 *     },
+	 *     "attrs": [
+	 *       "temperature"
+	 *     ]
+	 *   },
+	 *   "expires": "2040-01-01T14:00:00.00Z", // OPTIONAL
+	 *   "throttling": 5
 	 * }
 	 * </pre>
 	 *
 	 * @return
 	 * @throws JSONException
+	 * @throws MalformedURLException
 	 */
-	protected String getSubscriptionRequestBody() throws JSONException {
-		/**
-		 * <pre>
-		 *  "entities": [
-		 *         {
-		 *             "type": "Meter",
-		 *             "isPattern": "true",
-		 *             "id": ".*"
-		 *         }
-		 *     ],
-		 * </pre>
-		 */
-		String proxyBody = proxy.getRequestBody();
-		// use similar request body of data proxy
-		JSONObject res = new JSONObject(proxyBody);
-		Assert.assertTrue(res.has("entities"), "request body has no entities key");
-		res.put("reference", spagoBInotifyAddress);
-		res.put("duration", SUBSCRIPTION_DURATION);
-		JSONObject condition = new JSONObject();
-		condition.put("type", "ONCHANGE");
-		List<String> attributes = new ArrayList<String>();
-		List<JSONPathAttribute> attrs = dataReader.getJsonPathAttributes();
-		for (JSONPathAttribute attr : attrs) {
-			attributes.add(attr.getName());
-		}
-		condition.put("condValues", attributes);
-		res.put("notifyConditions", new JSONArray(new JSONObject[] { condition }));
-		return res.toString();
-	}
+	protected String getSubscriptionRequestBody() throws JSONException, MalformedURLException {
 
+		List<String> attrs = new ArrayList<String>();
+		for (JSONPathAttribute attr : dataReader.getJsonPathAttributes()) {
+			attrs.add(attr.getName());
+		}
+
+		Subscription subscription = new Subscription();
+		subscription.setDescription("A subscription Knowage app. Requested by the user [ " + user + " ] for the dataset [ " + label);
+
+		Subject subject = new Subject();
+		Entity entity = new Entity();
+		List<NameValuePair> params = RestUtilities.getAddressPairs(proxy.getAddress());
+		for (NameValuePair param : params) {
+			if (param.getName().equals("id")) {
+				entity.setId(param.getValue());
+			} else if (param.getName().equals("type")) {
+				entity.setType(param.getValue());
+			} else if (param.getName().equals("idPattern")) {
+				entity.setIdPattern(param.getValue());
+			}
+		}
+
+		if (!((entity.getId() != null) ^ (entity.getIdPattern() != null))) {
+			throw new NGSISubscribingException("One and only one param between id and idPattern can be submitted.");
+		}
+
+		List<Entity> entities = new ArrayList<>();
+		entities.add(entity);
+		subject.setEntities(entities);
+		Condition condition = new Condition();
+		condition.setAttrs(attrs);
+		subject.setCondition(condition);
+		subscription.setSubject(subject);
+
+		Notification notification = new Notification();
+		Http http = new Http();
+		http.setUrl(new URL(spagoBInotifyAddress));
+		notification.setHttp(http);
+		notification.setAttrs(attrs);
+		subscription.setNotification(notification);
+
+		MutableDateTime dateTime = MutableDateTime.now();
+		dateTime.add(DURATION_TYPE, SUBSCRIPTION_DURATION);
+		subscription.setExpires(dateTime.toDate());
+
+		subscription.setThrottling(THROTTLING);
+
+		return JsonConverter.objectToJson(subscription, Subscription.class);
+	}
 }

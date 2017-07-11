@@ -6,13 +6,17 @@
 angular.module("cockpitModule").service("cockpitModule_realtimeServices",function($rootScope, sbiModule_user, sbiModule_util, sbiModule_restServices, sbiModule_config, cockpitModule_template, cometd){
 	var rt=this;
 	
-	this.broadcast = function(message, dsLabel){
+	var broadcast = function(message, dsLabel){
 		var event = "UPDATE_FROM_REALTIME";
 		var data=JSON.parse(message.data);
 		console.log("Received the following message: ");
-		console.log(data);
-		console.log("Broadcasting a WIDGET_EVENT named " + event + " for dataset " + dsLabel)
-		$rootScope.$broadcast("WIDGET_EVENT", event, {dsLabel:dsLabel, data:data});
+		console.log("Number of deleted rows: " + data.deleted);
+		console.log("Number of added rows: " + data.added);
+		console.log("Number of updated rows: " + data.updated);
+		if(data.isChanged) {
+			console.log("Broadcasting a WIDGET_EVENT named " + event + " for dataset " + dsLabel)
+			$rootScope.$broadcast("WIDGET_EVENT", event, {dsLabel:dsLabel, data:data.dataStore});
+		}
 	};
 	
 	this.init = function(){
@@ -116,8 +120,8 @@ angular.module("cockpitModule").service("cockpitModule_realtimeServices",functio
 	        logLevel: 'debug'
 	    });
 	    
-	    console.log("Comet config is set as follow:");
-	    console.log(cometd.configure);
+	    console.log("Comet config is set with the URL:");
+	    console.log(cometURL);
 
 	    cometd.addListener('/meta/handshake', _metaHandshake);
 	    cometd.addListener('/meta/connect', _metaConnect);

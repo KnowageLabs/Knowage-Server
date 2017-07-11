@@ -31,6 +31,7 @@ import it.eng.spagobi.tools.dataset.notifier.fiware.OAuth2Utils;
 import it.eng.spagobi.tools.dataset.notifier.fiware.OrionContextSubscriber;
 import it.eng.spagobi.tools.dataset.utils.ParametersResolver;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.Helper;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.ConfigurationException;
@@ -377,7 +378,7 @@ public class RESTDataSet extends ConfigurableDataSet {
 	}
 
 	public String getUserId() {
-		UserProfile up = getUserProfile();
+		UserProfile up = getUserProfile() != null ? getUserProfile() : UserProfileManager.getProfile();
 		if (up == null) {
 			return null;
 		}

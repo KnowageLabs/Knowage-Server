@@ -43,6 +43,7 @@ import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethodBase;
@@ -224,10 +225,12 @@ public class RestUtilities {
 	public static class Response {
 		private final String responseBody;
 		private final int statusCode;
+		private final Header[] headers;
 
-		public Response(String responseBody, int statusCode) {
+		public Response(String responseBody, int statusCode, Header[] headers) {
 			this.responseBody = responseBody;
 			this.statusCode = statusCode;
+			this.headers = headers;
 		}
 
 		public String getResponseBody() {
@@ -236,6 +239,10 @@ public class RestUtilities {
 
 		public int getStatusCode() {
 			return statusCode;
+		}
+
+		public Header[] getHeaders() {
+			return headers;
 		}
 
 	}
@@ -287,8 +294,9 @@ public class RestUtilities {
 			HttpClient client = new HttpClient();
 			setHttpClientProxy(client, address);
 			int statusCode = client.executeMethod(method);
+			Header[] headers = method.getResponseHeaders();
 			String res = method.getResponseBodyAsString();
-			return new Response(res, statusCode);
+			return new Response(res, statusCode, headers);
 		} finally {
 			method.releaseConnection();
 		}
@@ -332,7 +340,7 @@ public class RestUtilities {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected static List<NameValuePair> getAddressPairs(String address) {
+	public static List<NameValuePair> getAddressPairs(String address) {
 		try {
 			String query = URIUtil.getQuery(address);
 			List<NameValuePair> params = new ParameterParser().parse(query, '&');

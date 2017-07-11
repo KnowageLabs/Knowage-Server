@@ -271,7 +271,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 			break;
 		case "UPDATE_FROM_REALTIME":
 			var ds=$scope.getDataset();
-			if(ds!=undefined && config.dsList.indexOf(ds.label)!=-1 && (ds.label == config.dsLabel)){
+			if( (ds != undefined) && (ds.label == config.dsLabel) ){
 				var option = ($scope.getOptions == undefined) ? {} :  $scope.getOptions();
 				cockpitModule_widgetServices.refreshWidget($scope.subCockpitWidget, $scope.ngModel, 'refresh', option, config.data);
 			}
