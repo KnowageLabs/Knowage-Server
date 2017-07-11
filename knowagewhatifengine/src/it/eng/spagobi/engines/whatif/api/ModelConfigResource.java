@@ -17,6 +17,16 @@
  */
 package it.eng.spagobi.engines.whatif.api;
 
+import java.io.IOException;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+
+import org.apache.log4j.Logger;
+import org.jboss.resteasy.annotations.GZIP;
+
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
 import it.eng.spagobi.engines.whatif.model.ModelConfig;
@@ -26,17 +36,9 @@ import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
-import java.io.IOException;
-
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-
-import org.apache.log4j.Logger;
-
 @Path("/1.0/modelconfig")
 @ManageAuthorization
+@GZIP
 public class ModelConfigResource extends AbstractWhatIfEngineService {
 
 	public static transient Logger logger = Logger.getLogger(ModelConfigResource.class);
@@ -82,6 +84,8 @@ public class ModelConfigResource extends AbstractWhatIfEngineService {
 			config.setSortingPositionUniqueName(modelconfig.getSortingPositionUniqueName());
 			config.setSortMode(modelconfig.getSortMode());
 			config.setTopBottomCount(modelconfig.getTopBottomCount());
+			config.setPageSize(modelconfig.getPageSize());
+
 
 		} catch (SerializationException e) {
 			logger.error(e.getMessage());

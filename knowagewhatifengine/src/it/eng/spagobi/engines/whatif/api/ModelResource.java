@@ -53,6 +53,7 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.jboss.resteasy.annotations.GZIP;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.olap4j.Cell;
@@ -101,6 +102,7 @@ import it.eng.spagobi.writeback4j.mondrian.CacheManager;
 
 @Path("/1.0/model")
 @ManageAuthorization
+@GZIP
 public class ModelResource extends AbstractWhatIfEngineService {
 
 	public static transient Logger logger = Logger.getLogger(ModelResource.class);

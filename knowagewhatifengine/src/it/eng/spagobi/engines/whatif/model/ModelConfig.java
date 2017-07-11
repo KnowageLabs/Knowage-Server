@@ -60,6 +60,18 @@ public class ModelConfig implements Serializable {
 	private int columnSet;
 	private int columnCount;
 
+	private int pageSize;
+
+
+
+	public int getPageSize() {
+		return pageSize;
+	}
+
+	public void setPageSize(int pageSize) {
+		this.pageSize = pageSize;
+	}
+
 	public int getStartRow() {
 		return startRow;
 	}

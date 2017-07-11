@@ -33,6 +33,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
+import org.jboss.resteasy.annotations.GZIP;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -56,6 +57,7 @@ import it.eng.spagobi.writeback4j.mondrian.MondrianSchemaRetriver;
  */
 @Path("/1.0/designer")
 @ManageAuthorization
+@GZIP
 public class DesignerResource extends AbstractWhatIfEngineService {
 
 	public static transient Logger logger = Logger.getLogger(DesignerResource.class);
@@ -84,7 +86,7 @@ public class DesignerResource extends AbstractWhatIfEngineService {
 		}
 		return "";
 	}
-	
+
 	@GET
 	@Path("/cubes/{id}")
 	@Produces(MediaType.APPLICATION_JSON)

@@ -32,6 +32,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
+import org.jboss.resteasy.annotations.GZIP;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -68,6 +69,7 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 
 @Path("/1.0/member")
 @ManageAuthorization
+@GZIP
 public class MemberResource extends AbstractWhatIfEngineService {
 
 	private SpagoBIPivotModel model;

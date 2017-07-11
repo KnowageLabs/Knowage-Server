@@ -31,6 +31,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import org.apache.log4j.Logger;
+import org.jboss.resteasy.annotations.GZIP;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -61,6 +62,7 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 
 @Path("/1.0/hierarchy")
 @ManageAuthorization
+@GZIP
 public class HierarchyResource extends AbstractWhatIfEngineService {
 
 	private static final String NODE_PARM = "node";

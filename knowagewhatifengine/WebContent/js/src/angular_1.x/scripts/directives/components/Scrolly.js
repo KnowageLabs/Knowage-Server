@@ -343,15 +343,14 @@ angular.module('scrolly_directive',[])
 	            		   scope.modelConfig.startRow = startRow;
 	            		   scope.showLoadingMask = false;
 	           	    	
-	            		   	if(scope.tableSubsets!=null&&
-	            		   		scope.tableSubsets[scope.modelConfig.startRow]!=undefined&&
-	            		   		scope.tableSubsets[scope.modelConfig.startRow]!=null){
+	            		   	if(scope.buffer!=null&&
+	            		   		scope.buffer[scope.modelConfig.startRow]!=undefined&&
+	            		   		scope.buffer[scope.modelConfig.startRow]!=null){
 	            		   		
 	            		   		
-	            		   		scope.table = $sce.trustAsHtml(scope.tableSubsets[scope.modelConfig.startRow]);
+	            		   		scope.table = $sce.trustAsHtml(scope.buffer[scope.modelConfig.startRow]);
 	            		   		
 	            		   	}else{
-	            		   		
 	            		   		scope.sendModelConfig(scope.modelConfig);
 	            		   	}
 	           	    
@@ -365,7 +364,10 @@ angular.module('scrolly_directive',[])
 	           	    
 	                	}
 	   
-	    
+	                	if(scope.modelConfig.rowCount>scope.max+1 && scope.max<scope.modelConfig.startRow+2*scope.modelConfig.pageSize &&
+	                			scope.modelConfig.startRow+2*scope.modelConfig.pageSize<scope.modelConfig.rowCount){
+            		   		scope.sendModelConfig(scope.modelConfig, true);
+	                	}
 	                }
 	                
 	                startRow = null;

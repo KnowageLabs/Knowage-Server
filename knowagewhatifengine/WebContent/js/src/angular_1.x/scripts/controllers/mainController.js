@@ -146,8 +146,23 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 	$scope.member;
 	$scope.selecetedMultiHierUN;
 	$scope.selectedVersion = null;
+	
+	$scope.buffer = null;
+	$scope.max =0;
 
 	$scope.handleResponse = function(response) {
+		$scope.buffer = {};
+		
+		$scope.tableSubsets=response.data.tables;
+		for(var x in $scope.tableSubsets){
+			$scope.buffer[x]=$scope.tableSubsets[x];
+			var intx = parseInt(x);
+			if(intx>$scope.max){
+				$scope.max = intx;
+			}
+		}
+		
+		
 		$scope.tableSubsets=null;
 		source = response.data;
 		$scope.modelConfig = source.modelConfig;
@@ -205,23 +220,34 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 		}
 	}
 	
-	$scope.sendModelConfig = function(modelConfig) {
+	$scope.sendModelConfig = function(modelConfig,noloading) {
 		console.log("Sending model config" + " "+ modelConfig);
 		$scope.tableSubsets.length = 0;
 		var sentStartRow = $scope.modelConfig.startRow;
 		if ($scope.ready) {
 			$scope.ready = false;
-			sbiModule_restServices.promisePost("1.0/modelconfig?SBI_EXECUTION_ID=" + JSsbiExecutionID, "",
+			sbiModule_restServices.promisePost("1.0/modelconfig?SBI_EXECUTION_ID=" + JSsbiExecutionID+"&NOLOADING="+noloading, "",
 					modelConfig).then(
 					
 					function(response) {
 						
 						$scope.table = $sce.trustAsHtml(response.data.table);
 						
+						if(!$scope.buffer){
+							$scope.buffer ={};
+						}
 						
+						$scope.tableSubsets=response.data.tables;
+						for(var x in $scope.tableSubsets){
+							$scope.buffer[x]=$scope.tableSubsets[x];
+							var intx = parseInt(x);
+							if(intx>$scope.max){
+								$scope.max = intx;
+							}
+						}
 						
 						$scope.modelConfig = response.data.modelConfig;
-						$scope.tableSubsets=response.data.tables;
+						
 						
 						$scope.ready = true;
 						$scope.isScrolling = false;

@@ -26,6 +26,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import org.apache.log4j.Logger;
+import org.jboss.resteasy.annotations.GZIP;
 import org.json.JSONObject;
 import org.olap4j.Axis;
 import org.olap4j.metadata.Hierarchy;
@@ -43,6 +44,7 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 
 @Path("/1.0/axis")
 @ManageAuthorization
+@GZIP
 public class AxisResource extends AbstractWhatIfEngineService {
 
 	public static transient Logger logger = Logger.getLogger(AxisResource.class);

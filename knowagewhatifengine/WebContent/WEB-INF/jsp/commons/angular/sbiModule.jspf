@@ -135,13 +135,20 @@ sbiM.directive('restLoading',   ['$http',function ($http)
 
 sbiM.factory('http_load_interseptor',function($rootScope,$q){
 	
-	var noLoadingUrls = ["/knowagewhatifengine/restful-services/1.0/analysis/"];
+	var noLoadingUrls = ["/restful-services/1.0/analysis/","/restful-services/1.0/modelconfig/noloading"];
 	
 	var isNoLoadingUrl = function(url,noLoadingUrls){
-  		for(var i=0;i<noLoadingUrls.length;i++){
-  			return (url.indexOf(noLoadingUrls[i]))!==-1;
-
+		//debugger;
+  		if((url.indexOf( "NOLOADING=true"  ))!==-1){
+  			return true;
   		}
+		
+  		for(var i=0;i<noLoadingUrls.length;i++){
+  			if((url.indexOf(noLoadingUrls[i]))!==-1){
+  				return true;
+  			}
+  		}
+  		return false;
   	}
 	
 	return {

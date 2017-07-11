@@ -17,25 +17,9 @@
  */
 package it.eng.spagobi.engines.whatif.model;
 
-import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
-import it.eng.spagobi.engines.whatif.calculatedmember.MDXFormula;
-import it.eng.spagobi.engines.whatif.calculatedmember.MDXFormulaHandler;
-import it.eng.spagobi.engines.whatif.calculatedmember.MDXFormulas;
-import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
-import it.eng.spagobi.engines.whatif.dimension.SbiDimension;
-import it.eng.spagobi.engines.whatif.hierarchy.SbiHierarchy;
-import it.eng.spagobi.engines.whatif.version.VersionManager;
-import it.eng.spagobi.pivot4j.ui.WhatIfHTMLRenderer;
-import it.eng.spagobi.pivot4j.ui.html.WhatIfHTMLRendereCallback;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 import java.io.IOException;
 import java.io.StringWriter;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,6 +56,20 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
+
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
+import it.eng.spagobi.engines.whatif.calculatedmember.MDXFormula;
+import it.eng.spagobi.engines.whatif.calculatedmember.MDXFormulaHandler;
+import it.eng.spagobi.engines.whatif.calculatedmember.MDXFormulas;
+import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
+import it.eng.spagobi.engines.whatif.dimension.SbiDimension;
+import it.eng.spagobi.engines.whatif.hierarchy.SbiHierarchy;
+import it.eng.spagobi.engines.whatif.version.VersionManager;
+import it.eng.spagobi.pivot4j.ui.WhatIfHTMLRenderer;
+import it.eng.spagobi.pivot4j.ui.html.WhatIfHTMLRendereCallback;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRendering> {
 
@@ -231,46 +229,59 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 		// List<String> tables = new ArrayList<String>();
 		Map<Integer, String> tables = new HashMap<Integer, String>();
 
-		SimpleDateFormat format = new SimpleDateFormat("hh:mm:ss.SSS");
-		
+//		SimpleDateFormat format = new SimpleDateFormat("hh:mm:ss.SSS");
+
 		int axisLength = model.getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal()).getPositionCount();
-		
+
 		// System.out.println(time);
 		int pages = Math.round(PAGES_COUNT / 2);
-		
+
 		//used for translation from cellset of subset mdx to cellset of plain mdx
 		callback.addProperty(COLUMN_OFFSET, modelConfig.getStartColumn());
 		callback.addProperty(AXIS_LENGTH, axisLength);
-		
-		
-		for (int i = -pages; i < pages; i++) {
+
+
+		int min = modelConfig.getStartRow()-pages;
+		int max = modelConfig.getStartRow() +3*pages;
+		modelConfig.setPageSize(pages);
+
+
+		if(pages==0){
+			pages =1;
+		}
+		if(max==0){
+			min =0;
+			max = pages;
+		}
+		if(min<0){
+			min=0;
+		}
+		for (int i = min; i <= max; i++) {
 
 			writer.getBuffer().setLength(0);
 			model.removeSubset();
-			model.setSubset(modelConfig.getStartRow() + i, modelConfig.getStartColumn(), modelConfig.getRowsSet(), modelConfig.getColumnSet());
-			
+			model.setSubset(i, modelConfig.getStartColumn(), modelConfig.getRowsSet(), modelConfig.getColumnSet());
+
 			//used for translation from cellset of subset mdx to cellset of plain mdx
 			callback.addProperty(ROW_OFFSET, modelConfig.getStartRow() + i);
 			callback.addProperty(SUBSET_AXIS_LENGTH, model.getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal()).getPositionCount());
-			
 
 			if (!(model.getCellSet().getAxes().get(Axis.ROWS.axisOrdinal()).getPositionCount() < 1)) {
-				
 
-				
 				renderer.render(model, callback);
-				
+
 				try {
 					writer.flush();
 					writer.close();
 					table = writer.getBuffer().toString();
-					tables.put(modelConfig.getStartRow() + i, table);
+					tables.put( i, table);
 
 				} catch (IOException e) {
 					logger.error("Error serializing the table", e);
 					throw new SpagoBIEngineRuntimeException("Error serializing the table", e);
 				}
 			}
+
 		}
 
 		CellSet cellSet = value.getCellSet();
@@ -293,7 +304,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 
 			serializeAxis(ROWS, jgen, axis, Axis.ROWS, connection, modelConfig);
 			serializeAxis(COLUMNS, jgen, axis, Axis.COLUMNS, connection, modelConfig);
-			List<Hierarchy> hierarchy = value.getCube().getHierarchies();
+//			List<Hierarchy> hierarchy = value.getCube().getHierarchies();
 			// serializeFilters(FILTERS, jgen, hierarchy, (PivotModelImpl)
 			// value);
 			serializeDimensions(jgen, otherHDimensions, FILTERS_AXIS_POS, FILTERS, true, (PivotModelImpl) value, connection, modelConfig);
@@ -421,17 +432,17 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 		}
 
 		jgen.writeEndArray();
-		String name = MDXFormula.class.getDeclaredFields()[0].getName();
+//		String name = MDXFormula.class.getDeclaredFields()[0].getName();
 		// System.out.println(name);
 	}
 
-	private void serializeTables(String field, JsonGenerator jgen, Map<Integer, String> tables) throws JsonGenerationException, IOException {
+/*	private void serializeTables(String field, JsonGenerator jgen, Map<Integer, String> tables) throws JsonGenerationException, IOException {
 		jgen.writeArrayFieldStart(field);
 
 		jgen.writeObject(tables);
 
 		jgen.writeEndArray();
-	}
+	}*/
 
 	/*
 	 * private void serializeFilters(String field, JsonGenerator jgen,

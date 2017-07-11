@@ -17,6 +17,19 @@
  */
 package it.eng.spagobi.engines.whatif.common;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Context;
+
+import org.apache.log4j.Logger;
+import org.olap4j.metadata.Member;
+import org.pivot4j.PivotModel;
+import org.pivot4j.sort.SortCriteria;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.member.SbiMember;
 import it.eng.spagobi.engines.whatif.model.ModelConfig;
@@ -30,19 +43,6 @@ import it.eng.spagobi.utilities.engines.rest.AbstractEngineRestService;
 import it.eng.spagobi.utilities.engines.rest.ExecutionSession;
 import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Context;
-
-import org.apache.log4j.Logger;
-import org.olap4j.metadata.Member;
-import org.pivot4j.PivotModel;
-import org.pivot4j.sort.SortCriteria;
-
-import com.fasterxml.jackson.core.type.TypeReference;
 
 public class AbstractWhatIfEngineService extends AbstractEngineRestService {
 
@@ -68,7 +68,7 @@ public class AbstractWhatIfEngineService extends AbstractEngineRestService {
 		try {
 			SpagoBIPivotModel sbiModel = (SpagoBIPivotModel) model;
 
-			ModelConfig modelConfig = getWhatIfEngineInstance().getModelConfig();
+			//ModelConfig modelConfig = getWhatIfEngineInstance().getModelConfig();
 			// adds the calculated fields before rendering the model
 
 			sbiModel.applyCal();
