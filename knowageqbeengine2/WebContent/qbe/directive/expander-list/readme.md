@@ -56,7 +56,13 @@ Each key declared will be the first level menu of the view.
 - _id_ is the identifier for the element.
 - _text_ is the label that will be shown for the element.
 - _iconCls_ is the class that will represent the icon for that element. Use any fonticons classname you have declared inside the css.
-- _children_ is the array containing the children, which will have the same structure.
+- _children_ is the array containing the children, which will have the same structure. This name can be different if specified in the "children-name" attribute
+
+***
+> children-name: "string"
+
+This attribute is optional and contains the name of the object property in ngModel to identify the children element.
+The default value is "children".
 
 ***
 > colors : \[array\] 

@@ -16,7 +16,7 @@
                 <i class="fa" ng-class="{'fa-chevron-up':entity.expanded, 'fa-chevron-down':!entity.expanded}"></i>
             </h4>
             <ul ng-show="entity.expanded">
-                <li ng-repeat="field in entity.children" ng-drag="dragEnabled" ng-drag-data="field" ng-drag-success="dragLi($data,$event)" layout="row"">
+                <li ng-repeat="field in entity[childrenName]" ng-drag="dragEnabled" ng-drag-data="field" ng-drag-success="dragLi($data,$event)" layout="row"">
                     <i ng-class="[fontIcons, field.iconCls]"></i>
                     <span>{{field.text}}</span>
                     <span flex></span>

@@ -26,6 +26,7 @@ angular.module('qbe_expander_list', ['ngDraggable'])
             restrict: 'E',
             scope: {
                 ngModel: '=',
+                childrenName: '@?',
                 colors: '=?',
                 fontIcons: '@?',
                 dragAction: '&?',
@@ -37,6 +38,7 @@ angular.module('qbe_expander_list', ['ngDraggable'])
             link: function link(scope, element, attrs) {
                 scope.usedColorIndex = 0;
                 scope.dragEnabled = scope.dragAction ? true : false;
+                scope.childrenName = (scope.childrenName == undefined) ? "children" : scope.childrenName;
 
                 //optional colorizing function to create the colored squares on the view. If no colors are given the blocks disappear.
                 scope.colorize = function() {
@@ -78,7 +80,7 @@ angular.module('qbe_expander_list', ['ngDraggable'])
                     }
                 }
 
-                
+
                 scope.$watch("ngModel", function(newValue, oldValue) {
                     if (scope.colors && scope.ngModel) {
                         scope.colorize();
