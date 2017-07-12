@@ -18,6 +18,7 @@
 package it.eng.spagobi.security.init;
 
 import it.eng.spago.base.SourceBean;
+import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.bo.Domain;
@@ -55,14 +56,13 @@ import org.hibernate.Session;
 
 public class InternalSecurityInitializer extends SpagoBIInitializer {
 
-	public InternalSecurityInitializer() {
-		targetComponentName = "InternalSecurity";
-		configurationFileName = "../conf/config/internal_profiling.xml";
-	}
-
-	private SourceBean _config = null;
+	private static String INTERNAL_SECURITY_CONFIG_TAG_NAME = "INTERNAL_PROFILING_INITIALIZER";
 
 	static private Logger logger = Logger.getLogger(InternalSecurityInitializer.class);
+
+	public InternalSecurityInitializer() {
+		targetComponentName = "InternalSecurity";
+	}
 
 	@Override
 	public void init(SourceBean config, Session hibernateSession) {
@@ -71,10 +71,9 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 
 		try {
 			config = getConfiguration();
-			_config = config;
 
-			if (_config == null) {
-				logger.warn("Security initialization aborted because the input parameter [config] is null");
+			if (config == null) {
+				logger.error("Security initialization aborted because the input parameter [config] is null");
 				return;
 			}
 
@@ -86,7 +85,7 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 			ISbiUserDAO userDAO = DAOFactory.getSbiUserDAO();
 
 			// finally default users associations
-			List<SourceBean> defaultsUsers = _config.getAttributeAsList("DEFAULT_USERS.USER");
+			List<SourceBean> defaultsUsers = config.getAttributeAsList("DEFAULT_USERS.USER");
 			for (SourceBean defaultUser : defaultsUsers) {
 
 				String userId = (String) defaultUser.getAttribute("userId");
@@ -155,7 +154,15 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 			throw new SpagoBIRuntimeException("An unexpected error occurred during users' initialization", t);
 		}
 		logger.debug("OUT");
+	}
 
+	@Override
+	protected SourceBean getConfiguration() throws Exception {
+		SourceBean config = (SourceBean) ConfigSingleton.getInstance().getAttribute(INTERNAL_SECURITY_CONFIG_TAG_NAME);
+		if (config == null) {
+			throw new Exception("Internal security configuration not found!!!");
+		}
+		return config;
 	}
 
 	private Integer findRoleId(List<Role> rolesList, String name, String organization) {
@@ -237,7 +244,7 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 		try {
 			Assert.assertNotNull(config, "Input parameter [config] cannot be null");
 
-			List<SourceBean> defaultsUsersSB = _config.getAttributeAsList("DEFAULT_USERS.USER");
+			List<SourceBean> defaultsUsersSB = config.getAttributeAsList("DEFAULT_USERS.USER");
 			logger.debug("Succesfully read from configuration [" + defaultsUsersSB.size() + "] defualt user(s)");
 
 			for (SourceBean defaultUserSB : defaultsUsersSB) {
