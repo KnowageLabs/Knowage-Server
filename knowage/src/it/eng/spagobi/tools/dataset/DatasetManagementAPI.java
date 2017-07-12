@@ -405,16 +405,12 @@ public class DatasetManagementAPI {
 					logger.debug("Querying near realtime/JDBC dataset");
 					dataStore = queryJDBCDataset(groups, filters, havings, projections, summaryRowProjections, dataSet, offset, fetchSize, maxRowCount);
 					dataStore.setCacheDate(new Date());
-				} else if (isNearRealtime) {
+				} else if (isNearRealtime || dataSet.isRealtime()) {
 					logger.debug("Querying near realtime dataset");
 					dataStore = queryNearRealtimeDataset(groups, filtersForMetaModel, havingsForMetaModel, projections, summaryRowProjections, dataSet, offset,
 							fetchSize, maxRowCount);
 					dataStore.setCacheDate(new Date());
-				} else if (dataSet.isRealtime()) {
-					logger.debug("If is real time, just return the datastore. Ordering, filtering and grouping will be performed on the frontend side");
-					dataSet.loadData();
-					dataStore = dataSet.getDataStore();
-					dataStore.setCacheDate(new Date());
+
 				} else {
 					logger.debug("Querying dataset in cache");
 					SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
