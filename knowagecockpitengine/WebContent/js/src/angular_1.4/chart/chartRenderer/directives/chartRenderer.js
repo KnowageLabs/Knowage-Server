@@ -74,9 +74,6 @@ angular.module('chartRendererModule')
 				
 				
 				scope.loadChart = function(chartTemplate,datesetLabel,jsonData){
-					
-					
-					
 						if(scope.widgetData){
 							jsonChartTemplate.readChartTemplateForCockpit(chartTemplate,false,datesetLabel,jsonData)
 							.then(function(data){
@@ -96,43 +93,25 @@ angular.module('chartRendererModule')
 								
 							});
 						}
-						
-						
-					
-					
-					
-
-				
 				}
 				
-				scope.updateChart = function(widgetData,data){
-					
-					var updateWidgetData = angular.copy(widgetData);
-					
-					updateWidgetData.jsonData = data;
-					
+				scope.updateChart = function(widgetData,data){			
+					var updateWidgetData = angular.copy(widgetData);			
+					updateWidgetData.jsonData = data;		
 					scope.chartInitializer.updateData(updateWidgetData);
 					
 				}
 			
 			
 			
-			scope.$on('refresh',function(event,data){
-				
+			scope.$on('refresh',function(event,data){		
 				if(scope.updateble){
-					
-					if(scope.chartInitializer.updateData){
-						
-						scope.updateChart(scope.widgetData,data);
-						
-					}else{
-						
+					if(scope.chartInitializer != undefined && scope.chartInitializer.updateData){			
+						scope.updateChart(scope.widgetData,data);			
+					}else{			
 						scope.loadChart(scope.chartTemplate,scope.datasetLabel,data);
 					}
 				}
-				
-				
-				
 			})
 			
 			scope.$on('init',function(event,data){

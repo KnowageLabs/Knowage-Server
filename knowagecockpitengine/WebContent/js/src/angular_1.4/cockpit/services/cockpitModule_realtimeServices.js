@@ -6,7 +6,7 @@
 angular.module("cockpitModule").service("cockpitModule_realtimeServices",function($rootScope, sbiModule_user, sbiModule_util, sbiModule_restServices, sbiModule_config, cockpitModule_template, cometd){
 	var rt=this;
 	
-	var broadcast = function(message, dsLabel){
+	broadcast = function(message, dsLabel){
 		var event = "UPDATE_FROM_REALTIME";
 		var data=JSON.parse(message.data);
 		console.log("Received the following message: ");
