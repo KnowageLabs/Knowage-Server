@@ -59,20 +59,14 @@ angular.module('chartRendererModule')
 				scope.chartConf;
 				scope.chartTemplate;
 				scope.chartInitializer;
-			
-				
-				
-				
+
 				scope.renderChart = function(chartConf){
-					if(scope.chartConf){
-						
+					if(scope.chartConf){			
 						scope.chartInitializer.initChartLibrary(element[0],	'drillup', sbiModule_config.dec, sbiModule_config.thous);
-						scope.chartInitializer.renderChart(scope.chartConf,element[0],handleCockpitSelection);
-						
+						scope.chartInitializer.renderChart(scope.chartConf,element[0],handleCockpitSelection);		
 					}
 				}
-				
-				
+					
 				scope.loadChart = function(chartTemplate,datesetLabel,jsonData){
 						if(scope.widgetData){
 							jsonChartTemplate.readChartTemplateForCockpit(chartTemplate,false,datesetLabel,jsonData)
@@ -101,9 +95,7 @@ angular.module('chartRendererModule')
 					scope.chartInitializer.updateData(updateWidgetData);
 					
 				}
-			
-			
-			
+
 			scope.$on('refresh',function(event,data){		
 				if(scope.updateble){
 					if(scope.chartInitializer != undefined && scope.chartInitializer.updateData){			

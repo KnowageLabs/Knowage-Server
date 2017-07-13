@@ -36,6 +36,7 @@ import it.eng.spagobi.tools.dataset.graph.associativity.NearRealtimeAssociativeD
 import it.eng.spagobi.tools.dataset.graph.associativity.Selection;
 import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicResult;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.cache.CacheItem;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.sql.SqlUtils;
@@ -67,7 +68,7 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 	protected Map<String, Map<String, String>> datasetToAssociations;
 	protected Pseudograph<String, LabeledEdge<String>> graph;
 	protected Map<String, AssociativeDatasetContainer> associativeDatasetContainers = new HashMap<>();
-	protected Set<String> documents;
+	protected Set<String> documentsAndExcludedDatasets;
 	protected List<Selection> selections;
 
 	protected AssociativeLogicResult result = new AssociativeLogicResult();
@@ -92,7 +93,7 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 
 		// (2) user click on widget -> selection!
 		for (Selection selection : selections) {
-			if (!documents.contains(selection.getDataset())) {
+			if (!documentsAndExcludedDatasets.contains(selection.getDataset())) {
 				calculateDatasets(selection.getDataset(), null, selection.getFilter());
 			}
 		}
@@ -128,7 +129,7 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 	}
 
 	private void initDocuments(Config config) {
-		this.documents = config.getDocuments();
+		this.documentsAndExcludedDatasets = config.getDocuments();
 	}
 
 	private void initDatasets(Config config) throws EMFUserError, SpagoBIException {
@@ -141,10 +142,14 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 		}
 
 		for (String v1 : graph.vertexSet()) {
-			if (!documents.contains(v1)) {
+			if (!documentsAndExcludedDatasets.contains(v1)) {
 				// the vertex is the dataset label
 				IDataSet dataSet = dataSetDao.loadDataSetByLabel(v1);
-				if (dataSet != null) {
+				Assert.assertNotNull(dataSet, "Unable to get metadata for dataset [" + v1 + "]");
+
+				if (dataSet.isRealtime()) {
+					documentsAndExcludedDatasets.add(v1);
+				} else {
 					Map<String, String> parametersValues = config.getDatasetParameters().get(v1);
 					dataSet.setParamsMap(parametersValues);
 
@@ -172,8 +177,6 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 						}
 					}
 					associativeDatasetContainers.put(v1, container);
-				} else {
-					throw new SpagoBIException("Unable to get metadata for dataset [" + v1 + "]");
 				}
 			}
 		}

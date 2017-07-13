@@ -56,7 +56,7 @@ public class InnerAssociativityManager extends AbstractAssociativityManager {
 							EdgeGroup group = new EdgeGroup(edges);
 							result.getDatasetToEdgeGroup().get(v1).add(group);
 
-							if (!documents.contains(v1)) {
+							if (!documentsAndExcludedDatasets.contains(v1)) {
 								String tableName = associativeDatasetContainers.get(v1).getTableName();
 								String columnNames = getColumnNames(group.getOrderedEdgeNames(), v1);
 								if (!columnNames.isEmpty()) {
@@ -107,7 +107,7 @@ public class InnerAssociativityManager extends AbstractAssociativityManager {
 						result.getEdgeGroupValues().put(group, intersection);
 
 						for (String datasetInvolved : result.getEdgeGroupToDataset().get(group)) {
-							if (!documents.contains(datasetInvolved) && !datasetInvolved.equals(dataset)) {
+							if (!documentsAndExcludedDatasets.contains(datasetInvolved) && !datasetInvolved.equals(dataset)) {
 								columnNames = getColumnNames(group.getOrderedEdgeNames(), datasetInvolved);
 								if (columnNames.length() > 0) {
 									String whereClauses = associativeDatasetContainers.get(dataset).buildFilter(columnNames, intersection);

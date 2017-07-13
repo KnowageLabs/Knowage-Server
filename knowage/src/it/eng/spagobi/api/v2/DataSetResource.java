@@ -1021,8 +1021,8 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getDataStorePost(@PathParam("label") String label, @QueryParam("parameters") String parameters, String selections,
 			@QueryParam("likeSelections") String likeSelections, @DefaultValue("-1") @QueryParam("limit") int maxRowCount,
-			@QueryParam("aggregations") String aggregations, @QueryParam("summaryRow") String summaryRow, @QueryParam("offset") int offset,
-			@QueryParam("size") int fetchSize, @QueryParam("nearRealtime") boolean isNearRealtime) {
+			@QueryParam("aggregations") String aggregations, @QueryParam("summaryRow") String summaryRow, @DefaultValue("-1") @QueryParam("offset") int offset,
+			@DefaultValue("-1") @QueryParam("size") int fetchSize, @QueryParam("nearRealtime") boolean isNearRealtime) {
 		logger.debug("IN");
 		try {
 			return getDataStore(label, parameters, selections, likeSelections, maxRowCount, aggregations, summaryRow, offset, fetchSize, isNearRealtime);

@@ -126,7 +126,9 @@ function cockpitToolbarControllerFunction($scope,cockpitModule_widgetServices,co
 		    				  sizeY:6,
 		    				  content:{name:"new Widget"},
 		    				  type:type,
-		    				  isNew : true
+		    				  isNew : true,
+		    				  updateble : true,
+		    				  cliccable : true
 		    		  }
 		    		  if(cockpitModule_widgetConfigurator[type].initialDimension !=undefined){
 		    			  if(cockpitModule_widgetConfigurator[type].initialDimension.width != undefined){
