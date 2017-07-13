@@ -29,10 +29,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.ProxySelector;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -321,14 +323,16 @@ public class RestUtilities {
 
 		try {
 			// check if it's a direct uri for proxy
-			List<Proxy> proxies = ProxySelector.getDefault().select(new URI(address));
+			URL url = new URL(address);
+			URI uri = new URI(url.getProtocol(), url.getHost(), url.getPath(), url.getQuery(), null);
+			List<Proxy> proxies = ProxySelector.getDefault().select(uri);
 			if (proxies.size() == 0) {
 				return;
 			}
 			if (proxies.size() == 1 && proxies.get(0).type().equals(Proxy.Type.DIRECT)) {
 				return;
 			}
-		} catch (URISyntaxException e) {
+		} catch (URISyntaxException | MalformedURLException e) {
 			throw new SpagoBIRuntimeException("Error while proxy selection", e);
 		}
 
