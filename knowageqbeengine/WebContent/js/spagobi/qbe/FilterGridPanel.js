@@ -847,6 +847,7 @@ Ext.extend(Sbi.qbe.FilterGridPanel, Ext.Panel, {
 				  	text: 'Debug',
 				    tooltip: 'Remove before release',
 				    iconCls:'option',
+				    hidden: true,
 				    listeners: {
 				      	'click': {
 							fn: function() {
@@ -1256,9 +1257,9 @@ Ext.extend(Sbi.qbe.FilterGridPanel, Ext.Panel, {
 	}
 	
 	, showTemporalBtn: function(){
-		for(var iii=0;iii<this.toolbar.items.items;iii++){
+		for(var iii=0;iii<this.toolbar.items.items.length;iii++){
 			if(this.toolbar.items.items[iii] && this.toolbar.items.items[iii].id=='addTemporal'){
-				this.toolbar.items.items[item].show();
+				this.toolbar.items.items[iii].show();
 			}
 		}
 	}
