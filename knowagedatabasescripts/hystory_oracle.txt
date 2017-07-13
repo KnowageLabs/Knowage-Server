@@ -275,3 +275,8 @@ UPDATE SBI_CROSS_NAVIGATION SET TYPE=0;
 -- changed package for Alert actions
 UPDATE SBI_ALERT_ACTION SET CLASS_NAME='it.eng.knowage.enterprise.tools.alert.action.ExecuteETLDocument' WHERE NAME = 'Execute ETL Document';
 UPDATE SBI_ALERT_ACTION SET CLASS_NAME='it.eng.knowage.enterprise.tools.alert.action.SendMail' WHERE NAME = 'Send mail';
+
+-- 13.07.2017 Francesco Lucchi
+-- fix definition length, limiting varchars to 4000 (Oracle upper bound)
+ALTER TABLE SBI_KPI_KPI CHANGE COLUMN DEFINITION DEFINITION VARCHAR(4000) NOT NULL;
+ALTER TABLE SBI_KPI_RULE CHANGE COLUMN DEFINITION DEFINITION VARCHAR(4000) NOT NULL;
