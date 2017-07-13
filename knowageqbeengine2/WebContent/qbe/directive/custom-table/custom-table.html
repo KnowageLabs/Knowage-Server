@@ -1,117 +1,134 @@
-<div layout="row" class="qbeCustomTable">
-   	<div ng-repeat="n in ngModel | orderBy: 'order' track by $index" ng-if="!n.hidden" class="qbeCustomColumn" layout-column>
-   		<div class="qbeCustomTopColor" ng-style="{'background-color' : n.color}"><md-tooltip md-direction="top">{{n.entity}}</md-tooltip></div>
-   		<md-toolbar>
-   		<div class="md-toolbar-tools secondaryToolbar" >
-   		<md-icon class="fa fa-sort"></md-icon>
-   			<h2>{{n.name}}
-   			<md-tooltip md-direction="top">{{n.name}}</md-tooltip>
-   			</h2> 
-   		<span flex></span>
-   		<md-menu>			      
-      	<md-button 	aria-label="query settings menu" class="md-icon-button" ng-click="openMenu($mdMenu.open, $event)">
-      		<md-tooltip md-direction="top">column settings</md-tooltip>
-        	<md-icon md-menu-origin class="fa fa-cog"></md-icon>
-      	</md-button>
-      	<md-menu-content class="qbeMenuContent">
-	      
-       		<md-menu-item>
-          		<md-checkbox ng-model="n.hidden" class="menuCheckbox" aria-label="hide column">
-            hide field
-          </md-checkbox>
-       		</md-menu-item>
-       		<md-menu-item>
-         			<md-checkbox ng-model="data.cb2" aria-label="Checkbox 1">
-           use as attribute
-          </md-checkbox>
-       		</md-menu-item>
-       		<md-menu-item>
-         			<md-button ng-click="showStructureDetails('categoriesAxisDetails',categoriesAxis.alias)">
-						<md-icon class="fa fa-sliders" style="display:inline"></md-icon>
-            		<span>ranges</span>
-          		</md-button>
-       		</md-menu-item>
-       		<md-menu-item>
-       		  
-         			<md-menu>		
-         			<md-button ng-mouseenter="openMenu($mdOpenMenu, $event)">
-						<md-icon class="fa fa-calculator" style="display:inline"></md-icon>
-            		<span>FUNCTION</span>
-          		</md-button>	      
-      	<md-menu-content class="qbeMenuContent">
-	      
-	      	<md-menu-item>
-          		<md-button ng-click="applyFuntion('none',n.id,n.entity)">
-            		<span>none</span>
-            		</md-button>
-       		</md-menu-item>
-       		
-       		<md-menu-item>
-          		<md-button ng-click="applyFuntion('sum',n.id,n.entity)">
-            		<span>SUM</span>
-            		</md-button>
-       		</md-menu-item>
-       		
-       		<md-menu-item>
-       			<md-button ng-click="applyFuntion('min',n.id,n.entity)">
-            		<span>MIN</span></md-button>
-       		</md-menu-item>
-       		
-       		<md-menu-item>
-       			<md-button ng-click="applyFuntion('max',n.id,n.entity)">
-            		<span>MAX</span>
-            	</md-button>
-       		</md-menu-item>    
-       		
-       		<md-menu-item>
-          		<md-button ng-click="applyFuntion('avg',n.id,n.entity)">
-            		<span>avg</span>
-            	</md-button>
-       		</md-menu-item>
-       		
-       		<md-menu-item>
-          		<md-button ng-click="applyFuntion('count',n.id,n.entity)">
-            		<span>count</span>
-            	</md-button>
-       		</md-menu-item>
-       		
-       		<md-menu-item>
-          		<md-button ng-click="applyFuntion('count_distinct',n.id,n.entity)">
-            		<span>dist</span>
-            	</md-button>
-       		</md-menu-item>      		
-            		
-       		</md-menu-content>
-       		</md-menu>
-       		</md-menu-item>
-       		<md-menu-item>
-       		  
-         			<md-button ng-click="moveLeft(n.order, n)">
-						<md-icon class="fa fa-angle-left" style="display:inline"></md-icon>
-            		<span>move left</span>
-          		</md-button>
-       		</md-menu-item>
-       		<md-menu-item>
-         			<md-button ng-click="moveRight(n.order, n)">
-						<md-icon class="fa fa-angle-right" style="display:inline"></md-icon>
-            		<span>move right</span>
-          		</md-button>
-       		</md-menu-item>
-        			        
-	      </md-menu-content>
-	      
-    	</md-menu>
-    	<md-button 	aria-label="query settings menu" class="md-icon-button" ng-click="removeColumn(n)">
-    		<md-tooltip md-direction="top">delete column</md-tooltip>
-        	<md-icon md-menu-origin class="fa fa-times"></md-icon>
-      	</md-button>
-   		</div>   		
-    	</md-toolbar>
+<div layout="column" class="qbeCustomTable">
+	<md-toolbar>
+   		<div class="md-toolbar-tools secondaryToolbar">
+   			Field selection
+   			<span flex></span>
+   			<md-icon class="fa fa-filter" ng-click="showVisualization('filters')"></md-icon>
+			 <md-icon class="fa fa-cogs" ng-click="showVisualization('advanced')"></md-icon>
+			 <md-icon class="fa fa-eye" ng-click="showHiddenColumns()"></md-icon>
+   			<md-switch ng-model="data.cb1" aria-label="Switch 1">
+			    smart data
+			 </md-switch>			 
+   		</div>
+   	</md-toolbar>
+   	<qbe-advanced-visualization ng-if="selectedVisualization=='advanced'"></qbe-advanced-visualization>
+   	<qbe-filter-visualization ng-if="selectedVisualization=='filters'"></qbe-filter-visualization>
+	<div layout="row" ng-if="selectedVisualization=='previewData'">
+		<div ng-repeat="n in ngModel | orderBy: 'order' track by $index" ng-if="!n.hidden" class="qbeCustomColumn" layout-column>
+	   		<div class="qbeCustomTopColor" ng-style="{'background-color' : n.color}"><md-tooltip md-direction="top">{{n.entity}}</md-tooltip></div>
+	   		<md-toolbar>
+	   		<div class="md-toolbar-tools secondaryToolbar" >
+	   		<md-icon class="fa fa-sort" ng-click="toggleOrder(n.data, orderAsc)"></md-icon>
+	   			<h2>{{n.name}}
+	   			<md-tooltip md-direction="top">{{n.name}}</md-tooltip>
+	   			</h2> 
+	   		<span flex></span>
+	   		<md-menu>			      
+	      	<md-button 	aria-label="query settings menu" class="md-icon-button" ng-click="openMenu($mdMenu.open, $event)">
+	      		<md-tooltip md-direction="top">column settings</md-tooltip>
+	        	<md-icon md-menu-origin class="fa fa-cog"></md-icon>
+	      	</md-button>
+	      	<md-menu-content class="qbeMenuContent">
+		      
+	       		<md-menu-item>
+	          		<md-checkbox ng-model="n.hidden" class="menuCheckbox" aria-label="hide column">
+	            hide field
+	          </md-checkbox>
+	       		</md-menu-item>
+	       		<md-menu-item>
+	          		<md-checkbox ng-model="n.group" ng-click="group(n.id,n.entity, n.group)" class="menuCheckbox" aria-label="hide column">
+	            group
+	          </md-checkbox>
+	       		</md-menu-item>
+	       		<md-menu-item>
+	         			<md-button ng-click="showStructureDetails('categoriesAxisDetails',categoriesAxis.alias)">
+							<md-icon class="fa fa-sliders" style="display:inline"></md-icon>
+	            		<span>ranges</span>
+	          		</md-button>
+	       		</md-menu-item>
+	       		<md-menu-item>
+	       		  
+	         			<md-menu>		
+	         			<md-button ng-mouseenter="openMenu($mdOpenMenu, $event)">
+							<md-icon class="fa fa-calculator" style="display:inline"></md-icon>
+	            		<span>FUNCTION</span>
+	          		</md-button>	      
+	      	<md-menu-content class="qbeMenuContent">
+		      
+		      	<md-menu-item>
+	          		<md-button ng-click="applyFuntion('none',n.id,n.entity)">
+	            		<span>none</span>
+	            		</md-button>
+	       		</md-menu-item>
+	       		
+	       		<md-menu-item>
+	          		<md-button ng-click="applyFuntion('sum',n.id,n.entity)">
+	            		<span>SUM</span>
+	            		</md-button>
+	       		</md-menu-item>
+	       		
+	       		<md-menu-item>
+	       			<md-button ng-click="applyFuntion('min',n.id,n.entity)">
+	            		<span>MIN</span></md-button>
+	       		</md-menu-item>
+	       		
+	       		<md-menu-item>
+	       			<md-button ng-click="applyFuntion('max',n.id,n.entity)">
+	            		<span>MAX</span>
+	            	</md-button>
+	       		</md-menu-item>    
+	       		
+	       		<md-menu-item>
+	          		<md-button ng-click="applyFuntion('avg',n.id,n.entity)">
+	            		<span>avg</span>
+	            	</md-button>
+	       		</md-menu-item>
+	       		
+	       		<md-menu-item>
+	          		<md-button ng-click="applyFuntion('count',n.id,n.entity)">
+	            		<span>count</span>
+	            	</md-button>
+	       		</md-menu-item>
+	       		
+	       		<md-menu-item>
+	          		<md-button ng-click="applyFuntion('count_distinct',n.id,n.entity)">
+	            		<span>dist</span>
+	            	</md-button>
+	       		</md-menu-item>      		
+	            		
+	       		</md-menu-content>
+	       		</md-menu>
+	       		</md-menu-item>
+	       		<md-menu-item>
+	       		  
+	         			<md-button ng-click="moveLeft(n.order, n)">
+							<md-icon class="fa fa-angle-left" style="display:inline"></md-icon>
+	            		<span>move left</span>
+	          		</md-button>
+	       		</md-menu-item>
+	       		<md-menu-item>
+	         			<md-button ng-click="moveRight(n.order, n)">
+							<md-icon class="fa fa-angle-right" style="display:inline"></md-icon>
+	            		<span>move right</span>
+	          		</md-button>
+	       		</md-menu-item>
+	        			        
+		      </md-menu-content>
+		      
+	    	</md-menu>
+	    	<md-button 	aria-label="query settings menu" class="md-icon-button" ng-click="removeColumn(n)">
+	    		<md-tooltip md-direction="top">delete column</md-tooltip>
+	        	<md-icon md-menu-origin class="fa fa-times"></md-icon>
+	      	</md-button>
+	   		</div>   		
+	    	</md-toolbar>
+	   	
+	   
+	   	<div ng-repeat="r in n.data | orderedById:idIndex track by r.id" class="qbeCustomRow">{{r.value}}{{r.id}}</div>
+	   	<div ng-repeat="f in n.filters track by $index" class="qbeCustomFooter">{{f}}</div>
+	   </div>	
+	</div>
    	
-   
-   	<div ng-repeat="r in n.data track by $index" class="qbeCustomRow">{{r}}</div>
-   	<div ng-repeat="f in n.filters track by $index" class="qbeCustomFooter">{{f}}</div>
-   </div>
    
    <div></div>
 </div>

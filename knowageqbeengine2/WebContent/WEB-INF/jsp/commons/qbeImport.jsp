@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <!-- DIRECTIVES -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/qbe/directive/advanced-visualization/advancedVisualization.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/qbe/directive/filter-visualization/filterVisualization.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/qbe/directive/custom-table/customTable.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/qbe/directive/expander-list/expanderList.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/qbe/directive/filter/filter.js"></script>

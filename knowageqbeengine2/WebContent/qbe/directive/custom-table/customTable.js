@@ -34,49 +34,114 @@ angular.module('qbe_custom_table', ['ngDraggable'])
            
         }
     };
+})
+.filter("orderedById",function(){
+    return function(input,idIndex) {
+        var ordered = [];
+		for (var key in idIndex) {
+			for(var obj in input){
+				if(idIndex[key]==input[obj].id){
+					ordered.push(input[obj]);
+				}
+			}
+			
+		}
+        return ordered;
+    };
 });
 function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate){
-	$scope.openMenu = function($mdOpenMenu, ev) {
-	      originatorEv = ev;
-	      $mdOpenMenu(ev);
-  };
-  $scope.aggFunctionList = ["SUM","BLA","BLA"];
-  $scope.aggFunction = "";
-  $scope.translate = sbiModule_translate;
-  
-  $scope.moveRight = function (currentOrder, column) {
-	  
-	  var newOrder = currentOrder+1;
-	  var index = $scope.ngModel.indexOf(column);
-	  var indexOfNext = index+1;
-	  
-	  $scope.ngModel[index] = $scope.ngModel[indexOfNext];
-	  $scope.ngModel[index].order = currentOrder;
-	  
-	  $scope.ngModel[indexOfNext]= column;
-	  $scope.ngModel[indexOfNext].order = newOrder;
-  }
-  
-  $scope.removeColumn = function (field) {
-	  $rootScope.$emit('removeColumn', {"id":field.id,"entity":field.entity});
-  }
-  
-$scope.moveLeft = function (currentOrder, column) {
-	  
-	  var newOrder = currentOrder-1;
-	  var index = $scope.ngModel.indexOf(column);
-	  var indexOfBefore = index-1;
-	  
-	  $scope.ngModel[index] = $scope.ngModel[indexOfBefore];
-	  $scope.ngModel[index].order = currentOrder;
-	  
-	  $scope.ngModel[indexOfBefore]= column;
-	  $scope.ngModel[indexOfBefore].order = newOrder;
-  }
-
-$scope.applyFuntion = function (funct,id, entity) {
 	
-	$rootScope.$emit('applyFunction', {"funct":funct,"fieldId":id,"entity":entity});
-}
+	$scope.translate = sbiModule_translate;
+	
+	$scope.selectedVisualization = 'previewData';
+	
+	$scope.orderAsc = true;
+
+	$scope.openMenu = function($mdOpenMenu, ev) {
+		originatorEv = ev;
+		$mdOpenMenu(ev);
+	};
+	$scope.aggFunctionList = [ "SUM", "BLA", "BLA" ];
+	$scope.aggFunction = "";
+	$scope.translate = sbiModule_translate;
+
+	$scope.moveRight = function(currentOrder, column) {
+
+		var newOrder = currentOrder + 1;
+		var index = $scope.ngModel.indexOf(column);
+		var indexOfNext = index + 1;
+
+		$scope.ngModel[index] = $scope.ngModel[indexOfNext];
+		$scope.ngModel[index].order = currentOrder;
+
+		$scope.ngModel[indexOfNext] = column;
+		$scope.ngModel[indexOfNext].order = newOrder;
+	};
+
+	$scope.moveLeft = function(currentOrder, column) {
+
+		var newOrder = currentOrder - 1;
+		var index = $scope.ngModel.indexOf(column);
+		var indexOfBefore = index - 1;
+
+		$scope.ngModel[index] = $scope.ngModel[indexOfBefore];
+		$scope.ngModel[index].order = currentOrder;
+
+		$scope.ngModel[indexOfBefore] = column;
+		$scope.ngModel[indexOfBefore].order = newOrder;
+	};
+
+	$scope.applyFuntion = function(funct, id, entity) {
+		$rootScope.$emit('applyFunction', {
+			"funct" : funct,
+			"fieldId" : id,
+			"entity" : entity
+		});
+	};
+	
+	$scope.group = function(id, entity, group) {
+		$rootScope.$emit('group', {
+			"fieldId" : id,
+			"entity" : entity,
+			"group" : !group
+		});
+	};
+	
+	$scope.removeColumn = function(field) {
+		$rootScope.$emit('removeColumn', {
+			"id" : field.id,
+			"entity" : field.entity
+		});
+	};
+	
+	//$scope.reverseOrder = false;
+	
+	$scope.toggleOrder = function (data, reverse) {
+		var ordered = [];
+		if($scope.orderAsc) {
+			ordered = data.sort(function(a,b) {return (a.value > b.value) ? 1 : ((b.value > a.value) ? -1 : 0);} );
+			$scope.orderAsc = !$scope.orderAsc;
+		} else {			
+			ordered = data.sort(function(a,b) {return (a.value < b.value) ? 1 : ((b.value < a.value) ? -1 : 0);} );
+			$scope.orderAsc = !$scope.orderAsc;
+		}		
+		$scope.idIndex = [];
+		for(var itemIndex in ordered) {
+			$scope.idIndex.push(ordered[itemIndex].id);
+		}
+		//$scope.reverseOrder=!$scope.reverseOrder;
+	}
+	
+	$scope.showVisualization = function (visualization) {
+		$scope.selectedVisualization = visualization;
+	}
+	
+	$scope.showHiddenColumns = function () {
+		for ( var field in $scope.ngModel) {
+			$scope.ngModel[field].hidden = false;
+		}
+	}
+	
+	$scope.idIndex = Array.apply(null, {length: 25}).map(Number.call, Number);
 }
 })();

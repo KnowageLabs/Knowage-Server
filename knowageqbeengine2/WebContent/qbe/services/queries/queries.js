@@ -22,11 +22,16 @@ queries.service('query_service',function(sbiModule_restServices,sbiModule_config
          		    	"color":field.color,
          		    	"data":[],
          		    	"hidden":false,
+         		    	"group":query.fields[i].group,
          		    	"order":i+1,
          		    	"filters": ["no filters"]
          		    }
      			for (var j = 0; j < response.data.rows.length; j++) {
-     				queryObject.data.push(response.data.rows[j][key]);
+     				var row = {
+     						"value":response.data.rows[j][key],
+     						"id":response.data.rows[j].id
+     				}
+     				queryObject.data.push(row);
 				}
      			var index = findWithAttr(queryModel,'id', queryObject.id);
      			if(index!=-1){

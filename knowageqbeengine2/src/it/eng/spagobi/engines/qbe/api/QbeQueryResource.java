@@ -74,7 +74,7 @@ import com.jamonapi.MonitorFactory;
 @Path("/qbequery")
 @ManageAuthorization
 public class QbeQueryResource extends AbstractQbeEngineResource {
-
+	
 	public static transient Logger logger = Logger.getLogger(QbeQueryResource.class);
 	public static transient Logger auditlogger = Logger.getLogger("audit.query");
 	protected boolean handleTimeFilter = true;

@@ -44,24 +44,35 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,sbiModule_in
 	$scope.onDropComplete=function(field,evt){
 		$scope.addField(field);
 		$scope.executeQuery(field, $scope.query, $scope.bodySend, $scope.queryModel); 
-    }
+    };
 	
 	$rootScope.$on('applyFunction', function (event, data) {
-		  var indexOfEntity = findWithAttr($scope.model.entities,'qtip', data.entity);
-		  var indexOfFieldInEntity = findWithAttr($scope.model.entities[indexOfEntity].children,'id', data.fieldId);
-		  var indexOfFieldInQuery = findWithAttr($scope.query.fields,'id', data.fieldId);
-		  $scope.query.fields[indexOfFieldInQuery].funct = data.funct.toUpperCase();
-		  $scope.executeQuery($scope.model.entities[indexOfEntity].children[indexOfFieldInEntity], $scope.query, $scope.bodySend, $scope.queryModel); 
-		});
+	  var indexOfEntity = findWithAttr($scope.model.entities,'qtip', data.entity);
+	  var indexOfFieldInEntity = findWithAttr($scope.model.entities[indexOfEntity].children,'id', data.fieldId);
+	  var indexOfFieldInQuery = findWithAttr($scope.query.fields,'id', data.fieldId);
+	  $scope.query.fields[indexOfFieldInQuery].funct = data.funct.toUpperCase();
+	  $scope.query.fields[indexOfFieldInQuery].group = false;
+	  $scope.executeQuery($scope.model.entities[indexOfEntity].children[indexOfFieldInEntity], $scope.query, $scope.bodySend, $scope.queryModel); 
+	});
 	
 	$rootScope.$on('removeColumn', function (event, data) {
-		  var indexOfFieldInQuery = findWithAttr($scope.query.fields,'id', data.id);
-		  var indexOfFieldInModel = findWithAttr($scope.queryModel,'id', data.id);
-		  if (indexOfFieldInQuery > -1 && indexOfFieldInModel > -1) {
-			  $scope.query.fields.splice(indexOfFieldInQuery, 1);
-			  $scope.queryModel.splice(indexOfFieldInModel, 1);
-			}
-		});
+	  var indexOfFieldInQuery = findWithAttr($scope.query.fields,'id', data.id);
+	  var indexOfFieldInModel = findWithAttr($scope.queryModel,'id', data.id);
+	  if (indexOfFieldInQuery > -1 && indexOfFieldInModel > -1) {
+		  $scope.query.fields.splice(indexOfFieldInQuery, 1);
+		  $scope.queryModel.splice(indexOfFieldInModel, 1);
+		}
+	});
+	
+	$rootScope.$on('group', function (event, data) {
+	  var indexOfEntity = findWithAttr($scope.model.entities,'qtip', data.entity);
+	  var indexOfFieldInEntity = findWithAttr($scope.model.entities[indexOfEntity].children,'id', data.fieldId);
+	  var indexOfFieldInQuery = findWithAttr($scope.query.fields,'id', data.fieldId);
+	  console.log(data)
+	  $scope.query.fields[indexOfFieldInQuery].group = data.group;
+	  $scope.query.fields[indexOfFieldInQuery].funct = "";
+	  $scope.executeQuery($scope.model.entities[indexOfEntity].children[indexOfFieldInEntity], $scope.query, $scope.bodySend, $scope.queryModel); 
+	});
 	
 	var findWithAttr = function(array, attr, value) {
 	    for(var i = 0; i < array.length; i += 1) {
