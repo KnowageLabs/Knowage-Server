@@ -251,19 +251,19 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 
 	@Override
 	public Rule importRule(final Rule rule, boolean overwriteMode, Session session) {
-		boolean newVersion = overwriteMode && rule.getId() != null && rule.getVersion() != null;
-		return insertRule(rule, newVersion, true, session);
+		return insertRule(rule, overwriteMode, true, session);
 	}
 
 	private Rule insertRule(final Rule rule, final boolean newVersion) {
 		return insertRule(rule, newVersion, false, null);
 	}
 
-	private Rule insertRule(final Rule rule, final boolean newVersion, final boolean importMode, Session session) {
+	private Rule insertRule(final Rule rule, final boolean overwriteMode, final boolean importMode, Session session) {
 		return executeOnTransaction(new IExecuteOnTransaction<Rule>() {
 			@Override
 			public Rule execute(Session session) throws SpagoBIException {
-				ruleValidationForInsert(session, rule, importMode);
+				boolean newVersion = overwriteMode && rule.getId() != null && rule.getVersion() != null;
+				ruleValidationForInsert(session, rule, overwriteMode, importMode);
 
 				SbiKpiRule sbiRule = new SbiKpiRule();
 				Set<SbiKpiKpi> relatedKpis = new HashSet<>();
@@ -1344,7 +1344,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		errorMap.get(errorKey).add(alias);
 	}
 
-	private void ruleValidationForInsert(Session session, Rule rule, boolean importMode) throws SpagoBIException {
+	private void ruleValidationForInsert(Session session, Rule rule, final boolean overwriteMode, boolean importMode) throws SpagoBIException {
 		checkRule(rule);
 		boolean hasMeasure = false;
 		Map<String, List<String>> invalidAlias = new HashMap<>();
@@ -1364,7 +1364,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		if (!hasMeasure) {
 			throw new SpagoBIDAOException(message.getMessage(NEW_KPI_RULE_MEASURES_MANDATORY));
 		}
-		if (!invalidAlias.isEmpty()) {
+		if (!overwriteMode && !invalidAlias.isEmpty()) {
 			Entry<String, List<String>> firstError = invalidAlias.entrySet().iterator().next();
 			throw new SpagoBIDAOException(MessageFormat.format(message.getMessage(firstError.getKey()), firstError.getValue()));
 		}
