@@ -413,6 +413,11 @@
 		 */
 		this.getParameterStorageKey =  function(parDetail) {
 			var parameterStorageKey = parDetail.driverLabel + '_' + parDetail.driverUseLabel;
+			// if it is of tyype manual input add also url name as key
+			if(parDetail.valueSelection == 'man_in'){
+				parameterStorageKey += '_' + parDetail.urlName;  
+			}
+			
 			return parameterStorageKey;
 		}
 		

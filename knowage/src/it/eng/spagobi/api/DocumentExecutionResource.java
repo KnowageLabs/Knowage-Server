@@ -814,7 +814,12 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				throw new SpagoBIRuntimeException(e);
 			}
 
-			JSONObject sessionValue = sessionParametersMap.get(parameter.getParameter().getLabel() + "_" + parameterUse.getLabel());
+			String key = parameter.getParameter().getLabel() + "_" + parameterUse.getLabel();
+			if (parameter.getParameter().getModalityValue().getITypeCd().equals("MAN_IN")) {
+				key += "_" + parameter.getParameterUrlName();
+			}
+
+			JSONObject sessionValue = sessionParametersMap.get(key);
 			if (sessionValue != null && sessionValue.optString("value") != null) {
 
 				DefaultValuesList defValueList = buildParameterSessionValueList(sessionValue.optString("value"), sessionValue.optString("description"),
@@ -1060,7 +1065,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 	/**
 	 * Produces a json with a bynary content of a metadata file and its name
-	 *
+	 * 
 	 * @param id
 	 *            of document
 	 * @param id
