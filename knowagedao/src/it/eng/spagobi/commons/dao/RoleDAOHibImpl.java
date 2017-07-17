@@ -1318,7 +1318,6 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 		return categories;
 	}
 
-
 	/**
 	 * Get the Dataset Categories associated to a role
 	 *
@@ -1331,12 +1330,12 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 		List<RoleMetaModelCategory> categories = new ArrayList<RoleMetaModelCategory>();
 		try {
 			aSession = getSession();
-			SbiExtRoles  sbiExtRole = loadByNameInSession(roleName, aSession);
+			SbiExtRoles sbiExtRole = loadByNameInSession(roleName, aSession);
 			Integer extRoleId = sbiExtRole.getExtRoleId();
 			Set<SbiDomains> sbiDomains = sbiExtRole.getSbiDataSetCategories();
 
 			// For each category associated to the role
-			if(sbiDomains!=null){
+			if (sbiDomains != null) {
 				for (SbiDomains sbiDomain : sbiDomains) {
 					RoleMetaModelCategory category = new RoleMetaModelCategory();
 					category.setCategoryId(sbiDomain.getValueId());
@@ -1359,8 +1358,6 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 		}
 		return categories;
 	}
-
-
 
 	/**
 	 * Get the Meta Model Categories associated to a role

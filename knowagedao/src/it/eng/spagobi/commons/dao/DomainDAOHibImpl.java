@@ -412,6 +412,53 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 		return toReturn;
 	}
 
+	/**
+	 * Load domain by id.
+	 *
+	 * @param id
+	 *            the id
+	 *
+	 * @return the domain
+	 *
+	 * @throws EMFUserError
+	 *             the EMF user error
+	 *
+	 * @see it.eng.spagobi.commons.dao.IDomainDAO#loadSbiDomainById(java.lang.Integer)
+	 */
+	@Override
+	public SbiDomains loadSbiDomainById(Integer id) throws EMFUserError {
+
+		SbiDomains toReturn = null;
+		Session aSession = null;
+		Transaction tx = null;
+
+		try {
+			aSession = getSession();
+			tx = aSession.beginTransaction();
+
+			SbiDomains hibDomain = (SbiDomains) aSession.load(SbiDomains.class, id);
+
+			toReturn = hibDomain;
+			tx.commit();
+
+		} catch (HibernateException he) {
+			logException(he);
+
+			if (tx != null)
+				tx.rollback();
+
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+			}
+		}
+
+		return toReturn;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 

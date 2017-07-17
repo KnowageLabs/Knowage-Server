@@ -17,14 +17,14 @@
  */
 package it.eng.spagobi.commons.dao;
 
-import java.util.List;
-
-import org.hibernate.Session;
-
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
+import java.util.List;
+
+import org.hibernate.Session;
 
 /**
  * Defines the interfaces for all methods needed to operate with a domain.
@@ -74,6 +74,19 @@ public interface IDomainDAO extends ISpagoBIDao {
 	 *             if an Exception occurs
 	 */
 	public Domain loadDomainById(Integer id) throws EMFUserError;
+
+	/**
+	 * Returns the domain identified by the input parameter <code>id</code>, storing it in a <code>Domain</code> object.
+	 *
+	 * @param id
+	 *            The identifier domain id
+	 *
+	 * @return The <code>SbiDomains</code> object storing the domain
+	 *
+	 * @throws EMFUserError
+	 *             if an Exception occurs
+	 */
+	public SbiDomains loadSbiDomainById(Integer id) throws EMFUserError;
 
 	/**
 	 * Returns the domain identified by the two input parameters <code>codeDomain</code> and <code>codeValue</code>, storing it in a <code>Domain</code> object.
@@ -139,7 +152,7 @@ public interface IDomainDAO extends ISpagoBIDao {
 
 	/**
 	 * Save a domain using an optional session and return an id
-	 * 
+	 *
 	 * @param d
 	 * @param session
 	 * @return
