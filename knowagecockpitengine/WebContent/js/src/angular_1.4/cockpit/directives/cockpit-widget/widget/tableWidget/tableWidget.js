@@ -707,7 +707,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								var style = $scope.ngModel.content.columnSelectedOfDataset[key].style;
 								//var style = $scope.ngModel.content.columnSelectedOfDataset[k-1].style;
 								//var prefixedField=$scope.ngModel.content.columnSelectedOfDataset[k-1].name;//ADDED
-								obj[values.metaData.fields[k].header] = values.rows[i][indexList[j]];
+								var aliasToShow = $scope.ngModel.content.columnSelectedOfDataset[key].aliasToShow
+								obj[aliasToShow] = values.rows[i][indexList[j]];
 
 								
 								if(style!=undefined && style.precision != undefined){
