@@ -1082,4 +1082,26 @@ public class UserUtilities {
 		}
 	}
 
+	public static ArrayList<Role> getAdministratorRoles(IEngUserProfile profile) {
+		Assert.assertNotNull(profile, "Object in input is null");
+
+		ArrayList<Role> listRoles = new ArrayList<Role>();
+
+		logger.debug("IN.user unique id = [" + profile.getUserUniqueIdentifier() + "]");
+		try {
+			IRoleDAO roleDAO = DAOFactory.getRoleDAO();
+			Collection<String> roles = ((UserProfile) profile).getRolesForUse();
+			for (String role : roles) {
+				Role r = roleDAO.loadByName(role);
+				String roleCode = r.getRoleTypeCD();
+				if (roleCode.equalsIgnoreCase(SpagoBIConstants.ADMIN_ROLE_TYPE) || roleCode.equalsIgnoreCase(SpagoBIConstants.ROLE_TYPE_MODEL_ADMIN)) {
+					listRoles.add(r);
+				}
+			}
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Error while getting user's information", e);
+		}
+		return listRoles;
+	}
+
 }
