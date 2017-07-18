@@ -867,6 +867,27 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 		return roles;
 	}
 
+	@Override
+	public List<SbiGeoLayersRoles> getListRolesById(Integer id, Session session) {
+
+		List<SbiGeoLayersRoles> roles = new ArrayList<>();
+		try {
+
+			String hql = " from SbiGeoLayersRoles WHERE layer.layerId =? ";
+			Query q = session.createQuery(hql);
+			q.setInteger(0, id);
+			roles = q.list();
+			if (roles.size() == 0) {
+				return null;
+			}
+
+		} catch (HibernateException he) {
+			logException(he);
+
+		}
+		return roles;
+	}
+
 	/**
 	 * Load all layers.
 	 *
@@ -905,7 +926,8 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				hibLayer = (SbiGeoLayers) it.next();
 				if (hibLayer != null) {
 					final GeoLayer bilayer = hibLayer.toGeoLayer();
-					List<SbiGeoLayersRoles> roles = getListRolesById(hibLayer.getLayerId());
+					// List<SbiGeoLayersRoles> roles = getListRolesById(hibLayer.getLayerId());
+					List<SbiGeoLayersRoles> roles = getListRolesById(hibLayer.getLayerId(), tmpSession);
 					if (!userIsAbilited(roles, profile)) {
 						continue;
 					}

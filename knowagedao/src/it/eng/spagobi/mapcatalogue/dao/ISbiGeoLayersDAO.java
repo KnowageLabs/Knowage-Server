@@ -29,6 +29,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.Session;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -65,4 +66,6 @@ public interface ISbiGeoLayersDAO extends ISpagoBIDao {
 	public JSONObject getContentforDownload(int layerId, String typeWFS);
 
 	public List<SbiGeoLayersRoles> getListRolesById(Integer id);
+
+	public List<SbiGeoLayersRoles> getListRolesById(Integer id, Session session);
 }
