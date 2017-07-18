@@ -113,12 +113,10 @@ function qbeFilter($scope, filters_service ,sbiModule_translate, sbiModule_confi
 	$scope.fillInput = function (filter, type, value){
 		switch (value) {
 		case "subquery":
-			filter.rightOperandDescription = type.name;
+			setRight(filter, type, value);
 			break;
 		case "field":
 			setRight(filter, type, value);
-
-
 			break;
 		default:
 
@@ -126,8 +124,6 @@ function qbeFilter($scope, filters_service ,sbiModule_translate, sbiModule_confi
 		}
 	}
 	var setRight = function (filter, type, value){
-
-
 		if(value=='field'){
 			filter.rightOperandValue=[];
 			filter.rightOperandValue.push(type.id) ;
@@ -136,10 +132,12 @@ function qbeFilter($scope, filters_service ,sbiModule_translate, sbiModule_confi
 			filter.rightOperandLongDescription=$scope.targetAF.text+" "+": "+type.text;
 			filter.rightOperandAlias=type.text;
 		} else if(value=='subquery'){
+			filter.rightOperandValue.push(type.id);
+			filter.rightOperandDescription=type.text;
+			filter.rightOperandLongDescription="Subquery "+type.text;
 			filter.rightOperandType="Subquery";
 		} else {
 			filter.rightOperandType="Static Content";
-
 		}
 
 	};
@@ -165,22 +163,16 @@ function qbeFilter($scope, filters_service ,sbiModule_translate, sbiModule_confi
 			$scope.disableCombo = true;
 			break;
 		default:
-
 			break;
 		}
 	}
 	$scope.showTable = false;
 	$scope.listOfValues = [];
 	var openTableWithValues = function (){
-
 		$scope.showTable = true;
 		filters_service.getFieldsValue($scope.left).then(function(response){
 			$scope.listOfValues = response.data.rows;
 		});
-
-		console.log($scope.value)
-
-
 	}
 
 	$scope.$watch('value',function(newValue){
@@ -188,11 +180,9 @@ function qbeFilter($scope, filters_service ,sbiModule_translate, sbiModule_confi
 		for (var i = 0; i < newValue.length; i++) {
 			$scope.forInput += newValue[i].column_1;
 			if(i+1!=newValue.length) 	$scope.forInput += " ---- "
-
 		}
 		if($scope.filter) {
 			$scope.filter.rightOperandDescription = angular.copy($scope.forInput);
-
 			$scope.filter.rightOperandValue=[];
 			$scope.filter.rightOperandValue.push($scope.filter.rightOperandDescription );
 			$scope.filter.rightOperandType="Static Content";
@@ -209,6 +199,7 @@ function qbeFilter($scope, filters_service ,sbiModule_translate, sbiModule_confi
 		filter.leftOperandLongDescription = $scope.ngModel.field.field.entity+ " : "+value.text;
 		filter.leftOperandAlias = value.text;
 	}
+
 	$scope.selectChanged = function (entity){
 		$scope.targetOption = "anotherField";
 		$scope.targetAF = entity;
@@ -217,22 +208,89 @@ function qbeFilter($scope, filters_service ,sbiModule_translate, sbiModule_confi
 			if($scope.targetAF.children[i].iconCls!="relation") {
 				$scope.entitiesChildren.push($scope.targetAF.children[i])
 			}
-
 		}
-
 	}
 
+	$scope.subqueries = [{
+		"id": "q3",
+		"text": "query-q3",
+		"description": "query-q3",
+		"fields": [{
+			"id": "it.eng.spagobi.meta.Customer:compId.country",
+			"alias": "Country",
+			"type": "datamartField",
+			"entity": "Customer",
+			"text": "Country",
+			"funct": "",
+			"group": true,
+			"order": "",
+			"include": true,
+			"visible": true,
+			"longDescription": "Customer : Country"
+		}],
+		"distinct": false,
+		"filters": [],
+		"calendar": {
+
+		},
+		"expression": {
+			"type": "NODE_CONST",
+			"value": "$F{Filter1}",
+			"childNodes": []
+		},
+		"isNestedExpression": false,
+		"havings": [],
+		"graph": [],
+		"relationsRoles": [],
+		"subqueries": []
+	},
+	{
+		"id": "q5",
+		"text": "query-q5",
+		"description": "query-q5",
+		"fields": [{
+			"id": "it.eng.spagobi.meta.Customer:compId.country",
+			"alias": "Country",
+			"type": "datamartField",
+			"entity": "Customer",
+			"text": "Country",
+			"funct": "",
+			"group": true,
+			"order": "",
+			"include": true,
+			"visible": true,
+			"longDescription": "Customer : Country"
+		}],
+		"distinct": false,
+		"filters": [],
+		"calendar": {
+
+		},
+		"expression": {
+			"type": "NODE_CONST",
+			"value": "$F{Filter1}",
+			"childNodes": []
+		},
+		"isNestedExpression": false,
+		"havings": [],
+		"graph": [],
+		"relationsRoles": [],
+		"subqueries": []
+	}];
+
+	$scope.edit = function (filter){
+		filter.rightOperandValue=[];
+		filter.rightOperandValue.push(filter.rightOperandDescription );
+		filter.rightOperandType="Static Content";
+	}
 	$scope.saveFilters=function(){
 		$scope.ngModel.field.field.filters = [];
 		$scope.ngModel.field.field.filters = $scope.filters;
 		$scope.ngModel.mdPanelRef.close();
-
-
 	}
 
 	$scope.closeFilters=function(){
 		$scope.ngModel.mdPanelRef.close();
-
 	}
 
 }

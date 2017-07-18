@@ -34,7 +34,7 @@
           </md-option>
         </md-select></td>
         <td md-cell>
-        	<input name="target" ng-model="filter.rightOperandDescription" ng-maxlength="100" ng-click="edit()" >
+        	<input name="target" ng-model="filter.rightOperandDescription" ng-maxlength="100" ng-change="edit(filter)" >
         	
         	<md-menu ng-if="targetOption=='anotherEntity'" >
 				<md-button 	aria-label="Open menu for setting target type" class="md-icon-button" 
@@ -77,7 +77,7 @@
 				<md-menu-content width="subqueries.length"  >
 					<md-menu-item ng-repeat="s in subqueries">
 				      	<md-button  ng-click="fillInput(filter,s, 'subquery')">
-				       		<span>{{s.name}}</span>
+				       		<span>{{s.text}}</span>
 				    	</md-button>
 					</md-menu-item>
 				</md-menu-content>
