@@ -1609,7 +1609,9 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		}
 		if (full) {
 			for (SbiKpiTargetValue sbiValue : sbiKpiTarget.getSbiKpiTargetValues()) {
-				target.getValues().add(from(sbiValue));
+				if (sbiValue.getSbiKpiKpi() != null && sbiValue.getSbiKpiTarget() != null) {
+					target.getValues().add(from(sbiValue));
+				}
 			}
 		}
 		return target;
@@ -1678,8 +1680,8 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				for (TargetValue targetValue : target.getValues()) {
 					SbiKpiTargetValue sbiValue = from(targetValue, sbiTarget, session);
 					sbiTarget.getSbiKpiTargetValues().add(sbiValue);
-					session.save(sbiValue);
 				}
+				session.save(sbiTarget);
 				return id;
 			}
 		}, session);
@@ -1703,23 +1705,26 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				Iterator<SbiKpiTargetValue> targetIterator = sbiTarget.getSbiKpiTargetValues().iterator();
 				while (targetIterator.hasNext()) {
 					SbiKpiTargetValue sbiValue = targetIterator.next();
-					SbiKpiKpiId sbiKpiKpiId = sbiValue.getSbiKpiKpi().getSbiKpiKpiId();
-					boolean found = false;
-					for (TargetValue targetValue : target.getValues()) {
-						if (sbiKpiKpiId.getId().equals(targetValue.getKpiId()) && sbiKpiKpiId.getVersion().equals(targetValue.getKpiVersion())) {
-							found = true;
+					SbiKpiKpi sbiKpiKpi = sbiValue.getSbiKpiKpi();
+					if (sbiKpiKpi != null && sbiValue.getSbiKpiTarget() != null) {
+						SbiKpiKpiId sbiKpiKpiId = sbiKpiKpi.getSbiKpiKpiId();
+						boolean found = false;
+						for (TargetValue targetValue : target.getValues()) {
+							if (sbiKpiKpiId.getId().equals(targetValue.getKpiId()) && sbiKpiKpiId.getVersion().equals(targetValue.getKpiVersion())) {
+								found = true;
+							}
 						}
-					}
-					if (!found) {
-						targetIterator.remove();
+						if (!found) {
+							targetIterator.remove();
+						}
 					}
 				}
 				// Adding new values
 				for (TargetValue targetValue : target.getValues()) {
 					SbiKpiTargetValue sbiValue = from(targetValue, sbiTarget, session);
 					sbiTarget.getSbiKpiTargetValues().add(sbiValue);
-					session.save(sbiValue);
 				}
+				session.save(sbiTarget);
 				return Boolean.TRUE;
 			}
 
@@ -1749,13 +1754,12 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		}
 		if (sbiValue == null) {
 			sbiValue = new SbiKpiTargetValue();
-			sbiValue.getSbiKpiTargetValueId().setKpiId(kpiId);
-			sbiValue.getSbiKpiTargetValueId().setKpiVersion(kpiVersion);
-			sbiValue.getSbiKpiTargetValueId().setTargetId(targetId);
-			updateSbiCommonInfo4Insert(sbiValue);
-		} else {
-			updateSbiCommonInfo4Update(sbiValue);
+			SbiKpiTargetValueId sbiKpiTargetValueId = sbiValue.getSbiKpiTargetValueId();
+			sbiKpiTargetValueId.setKpiId(kpiId);
+			sbiKpiTargetValueId.setKpiVersion(kpiVersion);
+			sbiKpiTargetValueId.setTargetId(targetId);
 		}
+		updateSbiCommonInfo4Insert(sbiValue);
 		sbiValue.setValue(targetValue.getValue());
 		return sbiValue;
 	}
