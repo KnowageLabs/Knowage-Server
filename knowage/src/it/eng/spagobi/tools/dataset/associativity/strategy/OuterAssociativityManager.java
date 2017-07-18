@@ -18,6 +18,10 @@
 
 package it.eng.spagobi.tools.dataset.associativity.strategy;
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.tools.dataset.associativity.AbstractAssociativityManager;
 import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
@@ -25,12 +29,9 @@ import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
 import it.eng.spagobi.tools.dataset.graph.associativity.AssociativeDatasetContainer;
 import it.eng.spagobi.tools.dataset.graph.associativity.Config;
 import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicUtils;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
 
 /**
  * @author Alessandro Portosa (alessandro.portosa@eng.it)
@@ -55,17 +56,20 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 						if (!edges.isEmpty()) {
 							EdgeGroup group = AssociativeLogicUtils.getOrCreate(result.getEdgeGroupValues().keySet(), new EdgeGroup(edges));
 							result.getDatasetToEdgeGroup().get(v1).add(group);
-							container.addGroup(group);
 
-							if (!result.getEdgeGroupValues().containsKey(group)) {
-								result.getEdgeGroupValues().put(group, new HashSet<String>());
-							}
+							if (!documentsAndExcludedDatasets.contains(v1)) {
+								container.addGroup(group);
 
-							if (!result.getEdgeGroupToDataset().containsKey(group)) {
-								result.getEdgeGroupToDataset().put(group, new HashSet<String>());
-								result.getEdgeGroupToDataset().get(group).add(v1);
-							} else {
-								result.getEdgeGroupToDataset().get(group).add(v1);
+								if (!result.getEdgeGroupValues().containsKey(group)) {
+									result.getEdgeGroupValues().put(group, new HashSet<String>());
+								}
+
+								if (!result.getEdgeGroupToDataset().containsKey(group)) {
+									result.getEdgeGroupToDataset().put(group, new HashSet<String>());
+									result.getEdgeGroupToDataset().get(group).add(v1);
+								} else {
+									result.getEdgeGroupToDataset().get(group).add(v1);
+								}
 							}
 						}
 					}
@@ -78,6 +82,7 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 
 	@Override
 	protected void calculateDatasets(String dataset, EdgeGroup fromEdgeGroup, String filter) throws Exception {
+		Assert.assertTrue(!documentsAndExcludedDatasets.contains(dataset), "Dataset [" + dataset + "] cannot be processed.");
 
 		// clean containers and groups -> set to unresolved
 		AssociativeLogicUtils.unresolveDatasetContainers(associativeDatasetContainers.values());
@@ -114,8 +119,10 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 			Set<String> children = result.getEdgeGroupToDataset().get(group);
 			// children.remove(dataset);
 			for (String child : children) {
-				AssociativeDatasetContainer childContainer = associativeDatasetContainers.get(child);
-				childContainer.addFilter(getColumnNames(group.getOrderedEdgeNames(), child), distinctValues);
+				if (!documentsAndExcludedDatasets.contains(child)) {
+					AssociativeDatasetContainer childContainer = associativeDatasetContainers.get(child);
+					childContainer.addFilter(getColumnNames(group.getOrderedEdgeNames(), child), distinctValues);
+				}
 			}
 			totalChildren.addAll(children);
 
@@ -183,14 +190,18 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 	private Set<EdgeGroup> getUnresolvedGroups(Set<String> totalChildren) {
 		Set<EdgeGroup> groups = new HashSet<>();
 		for (String child : totalChildren) {
-			groups.addAll(associativeDatasetContainers.get(child).getUnresolvedGroups());
+			if (!documentsAndExcludedDatasets.contains(child)) {
+				groups.addAll(associativeDatasetContainers.get(child).getUnresolvedGroups());
+			}
 		}
 		return groups;
 	}
 
 	private void resolveDatasets(Set<String> datasets) {
 		for (String dataset : datasets) {
-			resolve(dataset);
+			if (!documentsAndExcludedDatasets.contains(dataset)) {
+				resolve(dataset);
+			}
 		}
 	}
 

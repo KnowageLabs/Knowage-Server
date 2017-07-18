@@ -18,6 +18,42 @@
 package it.eng.spagobi.api.v2;
 
 import static it.eng.spagobi.tools.glossary.util.Util.getNumberOrNull;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import org.apache.log4j.Logger;
+import org.jgrapht.graph.Pseudograph;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.mongodb.util.JSON;
+
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.SingletonConfig;
@@ -76,41 +112,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceParameterException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 import it.eng.spagobi.utilities.sql.SqlUtils;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import org.apache.log4j.Logger;
-import org.jgrapht.graph.Pseudograph;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.mongodb.util.JSON;
-
 /**
  * @author Alessandro Daniele (alessandro.daniele@eng.it)
  *
@@ -142,7 +143,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		}
 
 		List<SbiDataSet> dataSets = dsDAO.loadSbiDataSets();
-		List<SbiDataSet> toBeReturned = new ArrayList<SbiDataSet>();
+		List<SbiDataSet> toBeReturned = new ArrayList<>();
 
 		for (SbiDataSet dataset : dataSets) {
 			IDataSet iDataSet = DataSetFactory.toDataSet(dataset);
@@ -349,6 +350,9 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		logger.debug("IN");
 
 		try {
+			IDataSetDAO dataSetDAO = getDataSetDAO();
+			dataSetDAO.setUserProfile(getUserProfile());
+
 			// parse selections
 			if (selectionsString == null || selectionsString.isEmpty()) {
 				throw new SpagoBIServiceParameterException(this.request.getPathInfo(), "Query parameter [selections] cannot be null or empty");
@@ -369,7 +373,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 			fixAssociationGroup(associationGroup);
 
 			// parse documents
-			Set<String> documents = new HashSet<String>();
+			Set<String> documents = new HashSet<>();
 			JSONArray associations = associationGroupObject.optJSONArray("associations");
 			if (associations != null) {
 				for (int associationIndex = 0; associationIndex < associations.length(); associationIndex++) {
@@ -397,8 +401,10 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 					for (int fieldIndex = fields.length() - 1; fieldIndex >= 0; fieldIndex--) {
 						JSONObject field = fields.getJSONObject(fieldIndex);
 						String column = field.getString("column");
+						String store = field.getString("store");
 						String type = field.optString("type");
-						if ("document".equalsIgnoreCase(type) || column.startsWith("$P{") && column.endsWith("}")) {
+						if (("document".equalsIgnoreCase(type)) || (column.startsWith("$P{") && column.endsWith("}"))
+								|| dataSetDAO.loadDataSetByLabel(store).isRealtime()) {
 							fields.remove(fieldIndex);
 						}
 					}
@@ -408,14 +414,14 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 			fixAssociationGroup(associationGroupWithoutParams);
 
 			// parse dataset parameters
-			Map<String, Map<String, String>> datasetParameters = new HashMap<String, Map<String, String>>();
+			Map<String, Map<String, String>> datasetParameters = new HashMap<>();
 			if (datasetsString != null && !datasetsString.isEmpty()) {
 				JSONObject datasetsObject = new JSONObject(datasetsString);
 				Iterator<String> datasetsIterator = datasetsObject.keys();
 				while (datasetsIterator.hasNext()) {
 					String datasetLabel = datasetsIterator.next();
 
-					Map<String, String> parameters = new HashMap<String, String>();
+					Map<String, String> parameters = new HashMap<>();
 					datasetParameters.put(datasetLabel, parameters);
 
 					JSONObject datasetObject = datasetsObject.getJSONObject(datasetLabel);
@@ -429,7 +435,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 			}
 
 			// parse near realtime datasets
-			Set<String> nearRealtimeDatasets = new HashSet<String>();
+			Set<String> nearRealtimeDatasets = new HashSet<>();
 			if (nearRealtimeDatasetsString != null && !nearRealtimeDatasetsString.isEmpty()) {
 				JSONArray jsonArray = new JSONArray(nearRealtimeDatasetsString);
 				for (int i = 0; i < jsonArray.length(); i++) {
@@ -448,8 +454,8 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 			IDataSource cacheDataSource = SpagoBICacheConfiguration.getInstance().getCacheDataSource();
 
 			// get datasets from selections
-			List<Selection> filters = new ArrayList<Selection>();
-			Map<String, Map<String, Set<String>>> selectionsMap = new HashMap<String, Map<String, Set<String>>>();
+			List<Selection> filters = new ArrayList<>();
+			Map<String, Map<String, Set<String>>> selectionsMap = new HashMap<>();
 			// TODO ENABLE THIS WHEN CHANGING THE SELECTIONS AS JSON ARRAY!!!
 			// for (int i = 0; i < selectionsArray.length(); i++) {
 			// JSONObject selectionObject = selectionsArray.getJSONObject(i);
@@ -487,8 +493,8 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 				if (object instanceof JSONArray) {
 					if (isDateColumn) {
 						JSONArray jsonArray = (JSONArray) object;
-						List<String> valueList = new ArrayList<String>();
-						List<String> valueForQueryList = new ArrayList<String>();
+						List<String> valueList = new ArrayList<>();
+						List<String> valueForQueryList = new ArrayList<>();
 						for (int i = 0; i < jsonArray.length(); i++) {
 							String value = convertDateString(jsonArray.getString(i), JSONDataWriter.DATE_TIME_FORMAT, JSONDataWriter.CACHE_DATE_TIME_FORMAT);
 							valueForQueryList.add(getDateForQuery(value, dataSource));
@@ -633,7 +639,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 	private void fixAssociationGroup(AssociationGroup associationGroup) {
 		IDataSetDAO dataSetDAO = getDataSetDAO();
 
-		Map<String, IMetaData> dataSetLabelToMedaData = new HashMap<String, IMetaData>();
+		Map<String, IMetaData> dataSetLabelToMedaData = new HashMap<>();
 		for (Association association : associationGroup.getAssociations()) {
 			if (association.getDescription().contains(".")) {
 				for (Field field : association.getFields()) {
@@ -667,7 +673,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 	@Override
 	protected List<FilterCriteria> getFilterCriteria(String datasetLabel, JSONObject selectionsObject, boolean isNearRealtime,
 			Map<String, String> columnAliasToColumnName) throws JSONException {
-		List<FilterCriteria> filterCriterias = new ArrayList<FilterCriteria>();
+		List<FilterCriteria> filterCriterias = new ArrayList<>();
 
 		if (selectionsObject.has(datasetLabel)) {
 			IDataSet dataSet = getDataSetDAO().loadDataSetByLabel(datasetLabel);
@@ -680,7 +686,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 				JSONArray values = datasetSelectionObject.getJSONArray(columns);
 
 				if (values.length() > 0) {
-					List<String> columnsList = new ArrayList<String>();
+					List<String> columnsList = new ArrayList<>();
 					String columnNames = fixColumnAliasesAndNames(columns, columnAliasToColumnName);
 					columnsList.addAll(Arrays.asList(columnNames.split("\\s*,\\s*"))); // trim spaces while splitting
 
@@ -748,7 +754,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 
 						StringBuilder valuesSB = new StringBuilder();
 
-						List<String> distinctValues = new ArrayList<String>();
+						List<String> distinctValues = new ArrayList<>();
 						for (int i = 0; i < values.length(); i++) {
 							String value = values.getString(i);
 							distinctValues.addAll(Arrays.asList(getDistinctValues(value)));
@@ -781,7 +787,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 					} else {
 						Operand leftOperand = new Operand(StringUtils.join(columnsList, ","));
 
-						List<String> valuesList = new ArrayList<String>();
+						List<String> valuesList = new ArrayList<>();
 						for (int i = 0; i < values.length(); i++) {
 							String[] valuesArray = getDistinctValues(values.getString(i));
 							for (int j = 0; j < valuesArray.length; j++) {
@@ -809,7 +815,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 	}
 
 	private List<String> getDateColumnNamesList(IDataSet dataSet, IDataSource dataSource) {
-		List<String> dateColumnNamesList = new ArrayList<String>();
+		List<String> dateColumnNamesList = new ArrayList<>();
 		for (int i = 0; i < dataSet.getMetadata().getFieldCount(); i++) {
 			IFieldMetaData fieldMeta = dataSet.getMetadata().getFieldMeta(i);
 			if (Date.class.isAssignableFrom(fieldMeta.getType())) {
@@ -832,7 +838,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 	@Override
 	protected List<FilterCriteria> getLikeFilterCriteria(String datasetLabel, JSONObject likeSelectionsObject, boolean isNearRealtime,
 			Map<String, String> columnAliasToColumnName, List<ProjectionCriteria> projectionCriteria, boolean getAttributes) throws JSONException {
-		List<FilterCriteria> likeFilterCriteria = new ArrayList<FilterCriteria>();
+		List<FilterCriteria> likeFilterCriteria = new ArrayList<>();
 
 		if (likeSelectionsObject.has(datasetLabel)) {
 			IDataSet dataSet = getDataSetDAO().loadDataSetByLabel(datasetLabel);
@@ -845,7 +851,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 				String value = datasetSelectionObject.getString(columns);
 
 				if (value != null && !value.isEmpty()) {
-					List<String> columnsList = new ArrayList<String>();
+					List<String> columnsList = new ArrayList<>();
 					String columnNames = fixColumnAliasesAndNames(columns, columnAliasToColumnName);
 					columnsList.addAll(Arrays.asList(columnNames.split("\\s*,\\s*"))); // trim spaces while splitting
 
@@ -888,7 +894,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 
 	private List<String> getAttributesOrMeasures(List<String> columnNames, IDataSet dataSet, List<ProjectionCriteria> projectionCriteria,
 			boolean isNearRealtime, boolean getAttributes) {
-		List<String> attributesOrMeasures = new ArrayList<String>();
+		List<String> attributesOrMeasures = new ArrayList<>();
 
 		String defaultTableNameDot = isNearRealtime ? DEFAULT_TABLE_NAME_DOT : "";
 		String datasetLabel = dataSet.getLabel();
@@ -940,7 +946,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 	}
 
 	private String[] getDistinctValues(String values) {
-		ArrayList<String> arrayList = new ArrayList<String>();
+		ArrayList<String> arrayList = new ArrayList<>();
 		// get values between "'"
 		int start = values.indexOf("'");
 		while (start > -1) {

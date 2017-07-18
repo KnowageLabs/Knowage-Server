@@ -1,12 +1,5 @@
 package it.eng.spagobi.tools.dataset.graph.associativity.utils;
 
-import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
-import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
-import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
-import it.eng.spagobi.tools.dataset.graph.associativity.AssociativeDatasetContainer;
-import it.eng.spagobi.tools.dataset.graph.associativity.Config;
-import it.eng.spagobi.tools.dataset.graph.associativity.Selection;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -22,10 +15,17 @@ import org.apache.metamodel.data.DataSet;
 import org.apache.metamodel.data.Row;
 import org.jgrapht.graph.Pseudograph;
 
+import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
+import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
+import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
+import it.eng.spagobi.tools.dataset.graph.associativity.AssociativeDatasetContainer;
+import it.eng.spagobi.tools.dataset.graph.associativity.Config;
+import it.eng.spagobi.tools.dataset.graph.associativity.Selection;
+
 public class AssociativeLogicUtils {
 
 	public static String getUnlimitedInClauseValues(Set<String> values) {
-		Set<String> newValues = new HashSet<String>();
+		Set<String> newValues = new HashSet<>();
 		for (String value : values) {
 			newValues.add(value.replaceFirst("\\(", "(1,"));
 		}
@@ -35,7 +35,7 @@ public class AssociativeLogicUtils {
 	public static Set<String> getTupleOfValues(ResultSet rs) throws SQLException {
 		String tuple;
 		String stringDelimiter = "'";
-		Set<String> tuples = new HashSet<String>();
+		Set<String> tuples = new HashSet<>();
 		while (rs.next()) {
 			tuple = "(";
 			for (int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {
@@ -54,7 +54,7 @@ public class AssociativeLogicUtils {
 	public static Set<String> getTupleOfValues(DataSet ds) {
 		String tuple;
 		String stringDelimiter = "'";
-		Set<String> tuples = new HashSet<String>();
+		Set<String> tuples = new HashSet<>();
 		while (ds.next()) {
 			tuple = "(";
 			for (int i = 0; i < ds.getSelectItems().length; i++) {
@@ -107,6 +107,7 @@ public class AssociativeLogicUtils {
 		config.setSelections(selections);
 		config.setNearRealtimeDatasets(nearRealtimeDatasets);
 		config.setDatasetParameters(datasetParameters);
+		config.setDocuments(documents);
 		return config;
 	}
 }
