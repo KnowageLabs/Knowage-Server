@@ -19,11 +19,11 @@
 angular
 	.module('qbe.controller', ['configuration','directive','services'])
 	.controller('qbeController', 
-		["$scope","$rootScope","entity_service","query_service","sbiModule_inputParams","sbiModule_config", "sbiModule_restServices", "sbiModule_messaging", qbeFunction]);
+		["$scope","$rootScope","entity_service","query_service","filters_service","sbiModule_inputParams","sbiModule_config", "sbiModule_restServices", "sbiModule_messaging", "$mdPanel","$q",qbeFunction]);
 
 
 
-function qbeFunction($scope,$rootScope,entity_service,query_service,sbiModule_inputParams,sbiModule_config,sbiModule_restServices,sbiModule_messaging ) {
+function qbeFunction($scope,$rootScope,entity_service,query_service,filters_service,sbiModule_inputParams,sbiModule_config,sbiModule_restServices,sbiModule_messaging ,$mdPanel,$q){
 	
 	var entityService = entity_service;
 	var inputParamService = sbiModule_inputParams;
@@ -144,7 +144,34 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,sbiModule_in
         	"pars": [],
         	"schedulingCronLine":"0 * * * * ?"
     };
-        
+    	
+    $scope.$on('openFilters',function(event,field){
+		$scope.openFilters(field,$scope.model);
+	})
+	
+	$scope.openFilters = function(field, tree) {
+		var finishEdit=$q.defer();
+		var config = {
+				attachTo:  angular.element(document.body),
+				templateUrl: sbiModule_config.contextName +'/qbe/templates/filterTemplate.html',
+				position: $mdPanel.newPanelPosition().absolute().center(),
+				fullscreen :true,
+				controller: function($scope,field,mdPanelRef){
+					$scope.model ={ "field": field, "tree": tree,"mdPanelRef":mdPanelRef};
+
+
+				},
+				locals: {field: field, tree: tree},
+				hasBackdrop: true,
+				clickOutsideToClose: true,
+				escapeToClose: true,
+				focusOnOpen: true,
+				preserveScope: true,
+		};
+		$mdPanel.open(config);
+		return finishEdit.promise;
+	};
+
     $scope.openMenu = function($mdMenu, ev) {
         originatorEv = ev;
         $mdMenu.open(ev);

@@ -122,14 +122,16 @@
 	      	</md-button>
 	   		</div>   		
 	    	</md-toolbar>
-	   	
-	   
-	   	<div ng-repeat="r in n.data | orderedById:idIndex track by r.id" class="qbeCustomRow">{{r.value}}</div>
-	   	<div ng-repeat="f in n.filters track by $index" class="qbeCustomFooter">{{f}}</div>
-	   </div>	
-	</div>
    	
    
-   <div></div>
+   <div ng-repeat="r in n.data | orderedById:idIndex track by r.id" class="qbeCustomRow">{{r.value}}</div>
+	   	<div  class="qbeCustomFooter"><label ng-if="n.filters.length==0">No filters</label>
+        	<label ng-if="n.filters.length>0">Check filters</label>
+   		<md-button 	aria-label="filters"  ng-click="openFilters(n)">
+        	<md-icon md-menu-origin class="fa fa-filter"></md-icon>
+      	</md-button>
+      	</div>
+   </div>
+  
 </div>
 

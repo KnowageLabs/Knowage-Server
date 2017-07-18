@@ -40,7 +40,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="<%=spagoBiContext%>/node_modules/ngdraggable/ngDraggable.js"></script>
 
 <!-- angular list detail template -->
-<script type="text/javascript" src="<%=spagoBiContext%>/js/src/angular_1.4/tools/commons/angular-list-detail/angularListDetail.js")"></script> 
+<script type="text/javascript" src="<%=spagoBiContext%>/js/src/angular_1.4/tools/commons/angular-list-detail/angularListDetail.js"></script> 
+
+<!-- Angular table -->
+<script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/pagination/dirPagination.js"></script> 
+<script type="text/javascript" src="<%=spagoBiContext%>/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js"></script> 
+
+<script type="text/javascript" src="<%=spagoBiContext%>/js/src/angular_1.4/tools/commons/angular-table/utils/daff.js"></script> 
+
 
 <!-- main css -->
 <link rel="stylesheet" type="text/css" href="<%=spagoBiContext%>/themes/commons/css/customStyle.css">

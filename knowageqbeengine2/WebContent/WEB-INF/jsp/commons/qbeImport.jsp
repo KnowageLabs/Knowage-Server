@@ -33,3 +33,4 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <!-- SERVICES -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/qbe/services/entities/entities.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/qbe/services/queries/queries.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/qbe/services/filters/filters.js"></script>

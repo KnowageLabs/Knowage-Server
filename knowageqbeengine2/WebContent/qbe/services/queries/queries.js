@@ -24,7 +24,7 @@ queries.service('query_service',function(sbiModule_restServices,sbiModule_config
          		    	"hidden":false,
          		    	"group":query.fields[i].group,
          		    	"order":i+1,
-         		    	"filters": ["no filters"]
+         		    	"filters": []
          		    }
      			for (var j = 0; j < response.data.rows.length; j++) {
      				var row = {
