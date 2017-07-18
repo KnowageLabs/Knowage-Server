@@ -717,7 +717,7 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 
 	/**
 	 * Remove not valid association between authorizations and roles after changing product types related to a tenant
-	 * 
+	 *
 	 * @param aTenant
 	 * @param aSession
 	 */
@@ -755,18 +755,28 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 		for (SbiOrganizationProductType existingProductType : existingProductTypeAssociated) {
 			oldProductTypesIds.add(existingProductType.getSbiProductType().getProductTypeId());
 		}
-		String oldHql = "select f.id from SbiAuthorizations f where f.productType.productTypeId IN (:PRODUCT_TYPES)";
-		Query oldHqlQueryAut = aSession.createQuery(oldHql);
-		oldHqlQueryAut.setParameterList("PRODUCT_TYPES", oldProductTypesIds);
-		List<Integer> oldAuthorizations = oldHqlQueryAut.list();
+
+		List<Integer> oldAuthorizations;
+		if (oldProductTypesIds.size() > 0) {
+			String oldHql = "select f.id from SbiAuthorizations f where f.productType.productTypeId IN (:PRODUCT_TYPES)";
+			Query oldHqlQueryAut = aSession.createQuery(oldHql);
+			oldHqlQueryAut.setParameterList("PRODUCT_TYPES", oldProductTypesIds);
+			oldAuthorizations = oldHqlQueryAut.list();
+		} else {
+			oldAuthorizations = new ArrayList<Integer>(0);
+		}
 
 		// search current associations roles-authorizations of current (old) product types
-		oldHql = "select autrole from SbiAuthorizationsRoles autrole where autrole.commonInfo.organization = :TENANT and autrole.id.authorizationId IN (:AUTHORIZATIONS)";
-		Query oldHqlQueryAutRole = aSession.createQuery(oldHql);
-		oldHqlQueryAutRole.setString("TENANT", aTenant.getName());
-		oldHqlQueryAutRole.setParameterList("AUTHORIZATIONS", oldAuthorizations);
-		List<SbiAuthorizationsRoles> oldAssociations = new ArrayList<SbiAuthorizationsRoles>();
-		oldAssociations = oldHqlQueryAutRole.list();
+		List<SbiAuthorizationsRoles> oldAssociations;
+		if (oldAuthorizations.size() > 0) {
+			String oldHql = "select autrole from SbiAuthorizationsRoles autrole where autrole.commonInfo.organization = :TENANT and autrole.id.authorizationId IN (:AUTHORIZATIONS)";
+			Query oldHqlQueryAutRole = aSession.createQuery(oldHql);
+			oldHqlQueryAutRole.setString("TENANT", aTenant.getName());
+			oldHqlQueryAutRole.setParameterList("AUTHORIZATIONS", oldAuthorizations);
+			oldAssociations = oldHqlQueryAutRole.list();
+		} else {
+			oldAssociations = new ArrayList<SbiAuthorizationsRoles>(0);
+		}
 
 		// save the old authorizations names and associated roles to be applied again with new products (if not already set)
 		Map<String, Set<SbiExtRoles>> oldAuthMap = new HashMap<String, Set<SbiExtRoles>>();
@@ -803,7 +813,7 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 
 	/**
 	 * Restore authorizations valid for specific roles after changing the product types associated with specific tenant
-	 * 
+	 *
 	 * @param aSession
 	 * @param oldAuthMap
 	 *            a map that contains authorizations names as keys and roles as values
