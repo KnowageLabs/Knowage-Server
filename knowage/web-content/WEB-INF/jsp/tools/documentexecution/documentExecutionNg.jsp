@@ -525,21 +525,26 @@ if(executionRoleNames.size() > 0) {
                 cockpitEditingService.documentMode = 'VIEW';
                 
                 cockpitEditingService.startCockpitEditing = function() {
-                    cockpitEditingService.documentMode = 'EDIT';
-                    //cockpitEditingService.synchronize(this.controller, this.executionInstance);
+                	cockpitEditingService.documentMode = 'EDIT';
+                	var newUrl = cockpitEditingService.changeDocumentExecutionUrlParameter('documentMode', cockpitEditingService.documentMode);
                     
-                    var newUrl = cockpitEditingService.changeDocumentExecutionUrlParameter('documentMode', cockpitEditingService.documentMode);
-                    //cockpitEditingService.controller.getFrame().setSrc(newUrl);
-                    execProperties.documentUrl = newUrl;
+                    if(newUrl != undefined && newUrl.length > 0){
+                    	execProperties.documentUrl = newUrl;
+                	}else{
+                		cockpitEditingService.documentMode = 'VIEW';
+                		var confirm = $mdDialog.alert()
+								.title(sbiModule_translate.load('sbi.execution.executionpage.toolbar.editmode'))
+								.content(sbiModule_translate.load('sbi.execution.executionpage.toolbar.editmode.documentnotexecuted'))
+								.ariaLabel('Document not executed')
+								.ok(sbiModule_translate.load("sbi.general.continue"));
+						$mdDialog.show(confirm);
+                	}
                 };
                 
                 cockpitEditingService.stopCockpitEditing = function() {
                 	var action = function() {
 						cockpitEditingService.documentMode = 'VIEW';
-						//cockpitEditingService.synchronize(this.controller, this.executionInstance);
-						
 						var newUrl = cockpitEditingService.changeDocumentExecutionUrlParameter('documentMode', cockpitEditingService.documentMode);
-						//cockpitEditingService.controller.getFrame().setSrc(newUrl);
 						execProperties.documentUrl = newUrl;
 					};
 					
@@ -550,7 +555,6 @@ if(executionRoleNames.size() > 0) {
 								.ariaLabel('Leave edit mode')
 								.ok(sbiModule_translate.load("sbi.general.continue"))
 								.cancel(sbiModule_translate.load("sbi.general.cancel"));
-	
 						$mdDialog.show(confirm).then(function(){action.call()});
 					}else{
 						action.call();
@@ -559,27 +563,28 @@ if(executionRoleNames.size() > 0) {
                 
                 cockpitEditingService.changeDocumentExecutionUrlParameter = function(parameterName, parameterValue) {
                     var docurl = execProperties.documentUrl;
+                    if(docurl.length == 0){
+                    	return "";
+                    }
+                    
                     var startIndex = docurl.indexOf('?') + 1;
                     var endIndex = docurl.length;
                     var baseUrl = docurl.substring(0, startIndex);
-                    var docUrlPar = docurl.substring(startIndex, endIndex);
                     
+                    var docUrlPar = docurl.substring(startIndex, endIndex);                    
                     docUrlPar = docUrlPar.replace(/\+/g, " ");
                     
                     var parameterNameLastIndexOf = docUrlPar.lastIndexOf(parameterName);
-                    
-                    
+                                        
                     if(parameterNameLastIndexOf == -1) {
                         docUrlPar = docUrlPar.replace(/&$/g, "");
                         docUrlPar += ("&" + parameterName + "=" + parameterValue);
-                        
                     } else {
                         var initialUrlPar = docUrlPar.substring(0, parameterNameLastIndexOf);
                         var middleUrlPar = docUrlPar.substring(parameterNameLastIndexOf);
-                        
                         var ampersandCharIndexOf = middleUrlPar.indexOf('&') != -1 ? middleUrlPar.indexOf('&') : middleUrlPar.length;
                         var lastUrlPar = middleUrlPar.substring(ampersandCharIndexOf);
-                        
+                                                
                         middleUrlPar = (parameterName + "=" + parameterValue);
                         
                         docUrlPar = initialUrlPar + middleUrlPar + lastUrlPar;
