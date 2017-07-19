@@ -37,7 +37,9 @@ geoM.service('geoModule_ranges',function(){
 		var numbers = [];
 		var ranges = [];
 		for(var j in rows){
-			numbers.push(parseFloat(rows[j][columnIndex]));
+			if(!isNaN(parseFloat(rows[j][columnIndex]))){
+				numbers.push(parseFloat(rows[j][columnIndex]));
+			}
 			if(j==rows.length-1){
 				var max = Math.max.apply(Math,numbers);
 				var min = Math.min.apply(Math,numbers);
@@ -49,7 +51,6 @@ geoM.service('geoModule_ranges',function(){
 						self.assignRanges(columnIndex,ranges,rangesNames);
 					}
 				}
-				console.log("RANGES",ranges);
 			}
 		}
 	}
@@ -61,6 +62,8 @@ geoM.service('geoModule_ranges',function(){
 					tempData.rows[y][columnIndex] = rangesNames[k];
 				}if(ranges.length-1 == k && parseFloat(tempData.rows[y][columnIndex])>=ranges[k].max){
 					tempData.rows[y][columnIndex] = rangesNames[ranges.length-1];
+				}if(!tempData.rows[y][columnIndex]){
+					tempData.rows[y][columnIndex] = "missing data";
 				}
 			}
 		}
