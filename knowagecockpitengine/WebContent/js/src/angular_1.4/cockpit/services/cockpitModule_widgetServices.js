@@ -136,7 +136,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 		try{
 			var width = angular.element(element)[0].parentElement.offsetWidth;
 			var height = angular.element(element)[0].parentElement.offsetHeight;
-				if(config.dataset!=undefined && cockpitModule_widgetSelection.haveSelection() && cockpitModule_properties.all_widget_initialized!=true){
+				if(config.dataset!=undefined && config.dataset.dsId!=undefined  && cockpitModule_widgetSelection.haveSelection() && cockpitModule_properties.all_widget_initialized!=true){
 					cockpitModule_datasetServices.loadDatasetRecordsById(config.dataset.dsId,options.page,options.itemPerPage,options.columnOrdering, options.reverseOrdering, config)
 					.then(function(){
 					$rootScope.$broadcast("WIDGET_INITIALIZED");
