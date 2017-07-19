@@ -21,10 +21,10 @@ angular.module("cockpitModule").service("cockpitModule_realtimeServices",functio
 	
 	this.init = function(){
 		console.log("Initializing realtime datasets subscriptions");
-		sbiModule_restServices.restToRootProject();
 		for(var i=0;i<cockpitModule_template.configuration.datasets.length;i++){
 			var label = cockpitModule_template.configuration.datasets[i].dsLabel;
 			console.log("Getting metadata for dataset " + label);
+			sbiModule_restServices.restToRootProject();
 			sbiModule_restServices.promiseGet('1.0/datasets',label).then(function(response){
 				var ds = response.data[0];
 				console.log(ds);
