@@ -98,7 +98,6 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 		return loadDataSets(null, null, null, null, null, null, null, true);
 	}
 
-
 	@Override
 	public SbiDataSet loadSbiDataSetByIdAndOrganiz(Integer id, String organiz) {
 		Session session;
@@ -123,7 +122,14 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 	}
 
 	@Override
-	public List<SbiDataSet> loadPaginatedSearchSbiDataSet(String search, Integer page, Integer item_per_page, IEngUserProfile finalUserProfile, Boolean seeTechnical) {
+	public List<SbiDataSet> loadPaginatedSearchSbiDataSet(String search, Integer page, Integer item_per_page, IEngUserProfile finalUserProfile,
+			Boolean seeTechnical) {
+		return loadPaginatedSearchSbiDataSet(search, page, item_per_page, finalUserProfile, seeTechnical, null);
+	}
+
+	@Override
+	public List<SbiDataSet> loadPaginatedSearchSbiDataSet(String search, Integer page, Integer item_per_page, IEngUserProfile finalUserProfile,
+			Boolean seeTechnical, Integer[] ids) {
 		Session session;
 		List<SbiDataSet> list = null;
 
@@ -139,6 +145,10 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 
 			c.add(Restrictions.like("label", search == null ? "" : search, MatchMode.ANYWHERE).ignoreCase());
 			c.add(Restrictions.eq("active", true));
+
+			if (ids != null && ids.length > 0) {
+				c.add(Restrictions.in("id.dsId", ids));
+			}
 
 			if (finalUserProfile != null) {
 
@@ -180,19 +190,14 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 
 						andCategories.add(orScope);
 
-						if(seeTechnical!=null && seeTechnical){
+						if (seeTechnical != null && seeTechnical) {
 							Disjunction orTechnical = Restrictions.disjunction();
 							orTechnical.add(andCategories);
 							orTechnical.add(Restrictions.eq("scope", scopeTechnicalDomain));
 							or.add(orTechnical);
-						}else{
+						} else {
 							or.add(andCategories);
 						}
-
-
-
-
-
 
 					}
 				} else {
@@ -304,6 +309,11 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 
 	@Override
 	public Integer countSbiDataSet(String search) throws EMFUserError {
+		return countSbiDataSet(search, null);
+	}
+
+	@Override
+	public Integer countSbiDataSet(String search, Integer[] ids) throws EMFUserError {
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
@@ -313,7 +323,7 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			String hql = "select count(*) from SbiDataSet where active=true and label like '%" + search + "%'";
+			String hql = "select count(*) from SbiDataSet where active=true and label like '%" + search + "%'" + getIdsWhereClause(ids);
 			Query hqlQuery = aSession.createQuery(hql);
 			Long temp = (Long) hqlQuery.uniqueResult();
 			resultNumber = new Integer(temp.intValue());
@@ -332,6 +342,22 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 			}
 		}
 		return resultNumber;
+	}
+
+	private String getIdsWhereClause(Integer[] ids) {
+		String result = "";
+		if (ids != null && ids.length > 0) {
+			StringBuilder sb = new StringBuilder();
+			for (Integer id : ids) {
+				sb.append(",");
+				sb.append(id);
+			}
+			sb.deleteCharAt(0);
+			sb.insert(0, " and id.dsId in (");
+			sb.append(")");
+			result = sb.toString();
+		}
+		return result;
 	}
 
 }

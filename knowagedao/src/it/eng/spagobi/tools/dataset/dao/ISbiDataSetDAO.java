@@ -33,9 +33,15 @@ public interface ISbiDataSetDAO extends ISpagoBIDao {
 	public List<SbiDataSet> loadDataSets(String owner, Boolean includeOwned, Boolean includePublic, String scope, String type, String category,
 			String implementation, Boolean showDerivedDatasets);
 
-	public List<SbiDataSet> loadPaginatedSearchSbiDataSet(String search, Integer page, Integer item_per_page, IEngUserProfile finalUserProfile, Boolean seeTechnical);
+	public List<SbiDataSet> loadPaginatedSearchSbiDataSet(String search, Integer page, Integer item_per_page, IEngUserProfile finalUserProfile,
+			Boolean seeTechnical);
+
+	public List<SbiDataSet> loadPaginatedSearchSbiDataSet(String search, Integer page, Integer item_per_page, IEngUserProfile finalUserProfile,
+			Boolean seeTechnical, Integer[] ids);
 
 	public Integer countSbiDataSet(String search) throws EMFUserError;
+
+	public Integer countSbiDataSet(String search, Integer[] ids) throws EMFUserError;
 
 	public SbiDataSet loadSbiDataSetByIdAndOrganiz(Integer id, String organiz);
 

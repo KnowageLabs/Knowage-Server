@@ -44,7 +44,7 @@ function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,coc
 
 	
 	$scope.datasetLoaded=false;
-	cockpitModule_datasetServices.loadDatasetList().then(function(){
+	cockpitModule_datasetServices.loadDatasetsFromTemplate().then(function(){
 		$scope.datasetLoaded=true;
 		var dsNotInCache = cockpitModule_templateServices.getDatasetAssociatedNotUsedByWidget();
 		if(dsNotInCache.length>0){
@@ -52,7 +52,6 @@ function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,coc
 			.then(function(){
 				$rootScope.$broadcast("WIDGET_INITIALIZED");
 			});
-			
 			//WIDGET_INITIALIZED at the end
 		}else{
 			$rootScope.$broadcast("WIDGET_INITIALIZED");
@@ -60,8 +59,6 @@ function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,coc
 	},function(){
 		console.error("error when load dataset list")
 	});
-	
-	cockpitModule_documentServices.loadDocumentList(undefined, undefined, undefined, undefined, undefined, false, undefined, true);
 
 	if(cockpitModule_properties.DOCUMENT_LABEL != undefined && cockpitModule_properties.DOCUMENT_LABEL != ''){
 	cockpitModule_crossServices.loadCrossNavigationByDocument(cockpitModule_properties.DOCUMENT_LABEL).then(

@@ -3,28 +3,77 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		
 	this.datasetList=[];
 	this.infoColumns = [];
-
-
-	this.loadDatasetList=function(){
+	
+	this.loadDatasetsFromTemplate=function(){
 		var def=$q.defer();
+		
+		var dsIds = [];
+		angular.forEach(cockpitModule_template.configuration.datasets, function(item){
+			this.push(item.dsId);
+		}, dsIds);
+		
 		sbiModule_restServices.restToRootProject();
-		sbiModule_restServices.promiseGet("2.0/datasets","listDataset?seeTechnical=TRUE")
+		sbiModule_restServices.promiseGet("2.0/datasets","listDataset?seeTechnical=TRUE&ids=" + dsIds.join())
 		.then(function(response){
-			angular.copy(response.data.item,ds.datasetList);
-			ds.initNearRealTimeValues();
+			angular.forEach(response.data.item, function(item){
+				this.push(item);
+			}, ds.datasetList);
+			ds.initNearRealTimeValues(ds.datasetList);
 			ds.checkForDSChange();
 			cockpitModule_widgetSelection.getAssociations(cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS,undefined,def);
-//			def.resolve();
+			def.resolve();
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,"");
 			def.reject();
-		})
+		});
 		return def.promise;
 	};
 	
-	this.initNearRealTimeValues=function(){
-		for(var i=0; i < ds.datasetList.length; i++){
-			var dataset = ds.datasetList[i];
+	this.isDatasetListLoaded = false;
+	
+	this.loadDatasetList=function(){
+		var def=$q.defer();
+		if(!ds.isDatasetListLoaded){
+			sbiModule_restServices.restToRootProject();
+			sbiModule_restServices.promiseGet("2.0/datasets","listDataset?seeTechnical=TRUE")
+			.then(function(response){
+				var allDatasets = response.data.item;
+	
+				var newDatasets = [];
+				angular.forEach(allDatasets,function(item){
+					var found = false;
+					var itemId = item.id;
+					for(var i=0; i<ds.datasetList.length; i++){
+						var currId = ds.datasetList[i].id;
+						if(itemId.dsId == currId.dsId
+								&& itemId.versionNum == currId.versionNum
+								&& itemId.organization == currId.organization){
+							found = true;
+							break;
+						}
+					}
+					if(!found){
+						this.push(item);
+					}
+				}, newDatasets);
+				
+				ds.initNearRealTimeValues(newDatasets);
+				ds.datasetList = ds.datasetList.concat(newDatasets);
+				ds.isDatasetListLoaded = true;
+				def.resolve();
+			},function(response){
+				sbiModule_restServices.errorHandler(response.data,"");
+				def.reject();
+			});
+		}else{
+			def.resolve();
+		}
+		return def.promise;
+	};
+	
+	this.initNearRealTimeValues=function(datasets){
+		for(var i=0; i < datasets.length; i++){
+			var dataset = datasets[i];
 			if(dataset.useCache == undefined){
 				dataset.useCache = true;
 			}
@@ -634,31 +683,44 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				attachTo: eleToAtt,
 				locals :{currentAvaiableDataset:container,multiple:multiple,deferred:deferred},
 				controller: function($scope,mdPanelRef,sbiModule_translate,cockpitModule_datasetServices,currentAvaiableDataset,multiple,deferred,$mdDialog){
+					
 					$scope.tmpCurrentAvaiableDataset;
 					if(multiple){
 						tmpCurrentAvaiableDataset=[];
 					}else{
 						tmpCurrentAvaiableDataset={};
 					}
+					
 					$scope.multiple=multiple;
+					
 					$scope.cockpitDatasetColumn=[{label:"Label",name:"label"},{label:"Name",name:"name" } ];
-					$scope.datasetList=cockpitModule_datasetServices.getDatasetList();
-					//TODO rimuovere i dataset già presenti
-					$scope.datasetList=cockpitModule_datasetServices.getDatasetList();
-					//remove avaiable dataset
-					for(var i=0;i<currentAvaiableDataset.length;i++){
-						for(var j=0;j<$scope.datasetList.length;j++){
-							if(angular.equals(currentAvaiableDataset[i].id.dsId,$scope.datasetList[j].id.dsId)){
-								$scope.datasetList.splice(j,1);
-								break;
+					
+					$scope.isDatasetListLoaded = false;
+					
+					cockpitModule_datasetServices.loadDatasetList().then(function(response){
+						var datasetList = cockpitModule_datasetServices.getDatasetList();
+						//remove available dataset
+						for(var i=0;i<currentAvaiableDataset.length;i++){
+							for(var j=0; j<datasetList.length; j++){
+								if(angular.equals(currentAvaiableDataset[i].id.dsId, datasetList[j].id.dsId)){
+									datasetList.splice(j,1);
+									break;
+								}
 							}
 						}
-					}
+						$scope.datasetList = datasetList;
+						$scope.isDatasetListLoaded = true;
+					},function(response){
+						sbiModule_restServices.errorHandler(response.data,"");
+						def.reject();
+					});
+					
 					$scope.closeDialog=function(){
 						mdPanelRef.close();
 						$scope.$destroy();
 						deferred.reject();
 					}
+					
 					$scope.saveDataset=function(){
 						if(multiple){
 							for(var i=0;i<$scope.tmpCurrentAvaiableDataset.length;i++){
@@ -744,10 +806,10 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		return deferred.promise;
 	}
 	
-	this.addDatasetInCache = function(listDataset){
+	this.addDatasetInCache = function(datasets){
 		var def=$q.defer();
 		var dataToSend = [];
-		angular.forEach(listDataset, function(item){
+		angular.forEach(datasets, function(item){
 			var dataset = ds.getAvaiableDatasetByLabel(item);
 			if(dataset!=undefined){
 				var params ={};
@@ -763,7 +825,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		sbiModule_restServices.restToRootProject();
 		sbiModule_restServices.promisePost("2.0/datasets","addDatasetInCache",dataToSend)
 		.then(function(response){
-			angular.forEach(listDataset, function(item){
+			angular.forEach(datasets, function(item){
 				this.push(item);
 			},cockpitModule_properties.DS_IN_CACHE);
 			

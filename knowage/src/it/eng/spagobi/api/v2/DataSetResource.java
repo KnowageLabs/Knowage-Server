@@ -305,8 +305,8 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 	@Path("/listDataset")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getDocumentSearchAndPaginate(@Context HttpServletRequest req, @QueryParam("Page") String pageStr,
-			@QueryParam("ItemPerPage") String itemPerPageStr, @QueryParam("label") String search, @QueryParam("seeTechnical") Boolean seeTechnical)
-			throws EMFUserError {
+			@QueryParam("ItemPerPage") String itemPerPageStr, @QueryParam("label") String search, @QueryParam("seeTechnical") Boolean seeTechnical,
+			@QueryParam("ids") String ids) throws EMFUserError {
 
 		ISbiDataSetDAO dao = DAOFactory.getSbiDataSetDAO();
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
@@ -317,12 +317,21 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		Integer item_per_page = getNumberOrNull(itemPerPageStr);
 		search = search != null ? search : "";
 
+		Integer[] idArray = null;
+		if (ids != null && !ids.isEmpty()) {
+			String[] split = ids.split(",");
+			idArray = new Integer[split.length];
+			for (int i = 0; i < split.length; i++) {
+				idArray[i] = Integer.parseInt(split[i]);
+			}
+		}
+
 		try {
 			List<SbiDataSet> dataset = null;
 			if (UserUtilities.isAdministrator(getUserProfile())) {
-				dataset = dao.loadPaginatedSearchSbiDataSet(search, page, item_per_page, null, null);
+				dataset = dao.loadPaginatedSearchSbiDataSet(search, page, item_per_page, null, null, idArray);
 			} else {
-				dataset = dao.loadPaginatedSearchSbiDataSet(search, page, item_per_page, getUserProfile(), seeTechnical);
+				dataset = dao.loadPaginatedSearchSbiDataSet(search, page, item_per_page, getUserProfile(), seeTechnical, idArray);
 			}
 
 			JSONObject jo = new JSONObject();
@@ -331,7 +340,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 				ja.put(JSON.parse(JsonConverter.objectToJson(ds, SbiDataSet.class)));
 			}
 			jo.put("item", ja);
-			jo.put("itemCount", dao.countSbiDataSet(search));
+			jo.put("itemCount", dao.countSbiDataSet(search, idArray));
 
 			return jo.toString();
 		} catch (Exception e) {
