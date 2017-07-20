@@ -70,6 +70,9 @@ import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
 import it.eng.spagobi.tools.objmetadata.dao.IObjMetacontentDAO;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -1890,13 +1893,30 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			Query hibQuery = aSession.createQuery("select distinct t.sbiObject from SbiObjTemplates t  where t.active = 0 and t.creationDate < ?");
-			hibQuery.setString(0, data);
-			List hibList = hibQuery.list();
-			Iterator it = hibList.iterator();
-			while (it.hasNext()) {
-				realResult.add(toBIObject((SbiObjects) it.next(), aSession));
+			DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+			Date selectedDate;
+			try {
+				selectedDate = df.parse(data);
+			} catch (ParseException e) {
+				logger.error("error in parsing date " + data);
+				throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 			}
+
+			Criteria criteria = aSession.createCriteria(SbiObjTemplates.class).add(Restrictions.le("creationDate", selectedDate))
+					.add(Restrictions.eq("active", Boolean.FALSE)).setProjection(Property.forName("sbiObject"));
+			List hibList = criteria.list();
+
+			Iterator it = hibList.iterator();
+			ArrayList<String> labelsInserted = new ArrayList<String>();
+			while (it.hasNext()) {
+				SbiObjects obj = (SbiObjects) it.next();
+				String label = obj.getLabel();
+				if (!labelsInserted.contains(label)) {
+					realResult.add(toBIObject(obj, aSession));
+				}
+				labelsInserted.add(label);
+			}
+
 			tx.commit();
 		} catch (HibernateException he) {
 			logger.error(he);

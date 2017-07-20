@@ -122,6 +122,15 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 		
 	}
 	
+	$scope.removeFilter = function(){
+		if($scope.dateSelected.data){
+			$scope.dateSelected.data= '';
+		}else{
+			$scope.data_format = null;
+		}
+		
+	}
+	
 	
 	$scope.deleteTemplate=function(ev){
 		if(!$scope.data_format){
