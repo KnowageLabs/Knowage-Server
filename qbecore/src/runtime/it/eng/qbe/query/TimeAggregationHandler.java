@@ -405,7 +405,7 @@ public class TimeAggregationHandler {
 				return f.getName();
 			}
 		}
-
+		logger.error("Impossible to find time_id on Temporal Dimension" );
 		throw new SpagoBIRuntimeException("Impossible to find time_id on Temporal Dimension");
 	}
 
@@ -417,7 +417,7 @@ public class TimeAggregationHandler {
 				return f.getName();
 			}
 		}
-
+		logger.error("Impossible to find a date field on Temporal Dimension" );
 		throw new SpagoBIRuntimeException("Impossible to find a date field on Temporal Dimension");
 	}
 
