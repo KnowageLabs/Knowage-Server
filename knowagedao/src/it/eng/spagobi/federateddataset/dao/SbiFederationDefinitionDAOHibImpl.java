@@ -58,8 +58,7 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 	}
 
 	/**
-	 * Saves the FederationDefinition. If already exist one with same label
-	 * thrown an exception
+	 * Saves the FederationDefinition. If already exist one with same label thrown an exception
 	 *
 	 * @param dataset
 	 */
@@ -100,13 +99,6 @@ public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO impl
 
 		if (dataset == null) {
 			throw new IllegalArgumentException("Input parameter [dataset] cannot be null");
-		}
-
-		try {
-			Assert.assertNotNull(transaction, "transaction cannot be null");
-
-		} catch (Throwable t) {
-			throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 		}
 
 		if (!duplicated) {

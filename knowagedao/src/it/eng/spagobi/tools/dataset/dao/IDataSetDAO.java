@@ -79,6 +79,8 @@ public interface IDataSetDAO extends ISpagoBIDao {
 	// ========================================================================================
 	public Integer insertDataSet(IDataSet dataSet);
 
+	public Integer insertDataSet(IDataSet dataSet, Session optionalSession);
+
 	// ========================================================================================
 	// ???
 	// ========================================================================================
@@ -100,7 +102,7 @@ public interface IDataSetDAO extends ISpagoBIDao {
 	public Integer countBIObjAssociated(Integer dsId);
 
 	public Integer countDatasets();
-	
+
 	public Integer countDatasetsSearch(String search);
 
 	public boolean hasBIObjAssociated(String dsId);
@@ -112,6 +114,8 @@ public interface IDataSetDAO extends ISpagoBIDao {
 	// ========================================================================================
 
 	public void modifyDataSet(IDataSet dataSet);
+
+	public void modifyDataSet(IDataSet dataSet, Session optionalSession);
 
 	public IDataSet restoreOlderDataSetVersion(Integer dsId, Integer dsVersion);
 
