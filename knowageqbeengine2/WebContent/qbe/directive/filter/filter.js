@@ -36,7 +36,7 @@ angular.module('qbe_filter', ['ngMaterial','angular_table' ])
 	}
 });
 
-function qbeFilter($scope, filters_service ,sbiModule_translate, sbiModule_config,$mdPanel){
+function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiModule_config,$mdPanel){
 
 	$scope.filters=angular.copy($scope.ngModel.field.field.filters);
 	$scope.field=$scope.ngModel.field.field;
@@ -286,12 +286,53 @@ function qbeFilter($scope, filters_service ,sbiModule_translate, sbiModule_confi
 	$scope.saveFilters=function(){
 		$scope.ngModel.field.field.filters = [];
 		$scope.ngModel.field.field.filters = $scope.filters;
+		$scope.ngModel.field.field.expression = generateExpressions ($scope.filters);
+		$scope.applyFuntion($scope.filters, $scope.ngModel.field.field.expression)
 		$scope.ngModel.mdPanelRef.close();
 	}
 
+	$scope.applyFuntion = function(filters, expression) {
+		console.log($scope)
+		$rootScope.$emit('applyFunction', {
+			"fieldId" : $scope.ngModel.field.field.id,
+			"entity" : $scope.ngModel.field.field.entity,
+			"filters" : filters,
+			"expression" : expression,
+
+		});
+	};
 	$scope.closeFilters=function(){
 		$scope.ngModel.mdPanelRef.close();
 	}
+	var generateExpressions = function (filters){
+		var expression = {};
+		var childNodes = [];
+		if(filters.length==1){
+			expression =
+			{
+				"type": "NODE_CONST",
+				"value": "$F{" + filters[0].filterId+"}",
+				"childNodes": []
+			}
+		} else if (filters.length>=1){
+			for (var i = 0; i < filters.length; i++) {
+				var node = {
+					"type": "NODE_CONST",
+					"value": "$F{" + filters[i].filterId+"}",
+					"childNodes": []
+				}
+				childNodes.push(node)
+			}
+			expression =
+			{
+				"type": "NODE_OP",
+				"value": "AND",
+				"childNodes": childNodes
+			}
+		}
+		return expression;
+
+	};
 
 }
 })();

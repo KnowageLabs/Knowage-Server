@@ -90,7 +90,13 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 	  var indexOfEntity = findWithAttr($scope.model.entities,'qtip', data.entity);
 	  var indexOfFieldInEntity = findWithAttr($scope.model.entities[indexOfEntity].children,'id', data.fieldId);
 	  var indexOfFieldInQuery = findWithAttr($scope.query.fields,'id', data.fieldId);
-	  $scope.query.fields[indexOfFieldInQuery].funct = data.funct.toUpperCase();
+	  if(data.funct!= undefined && data.funct !=null && data.funct!="") {
+		  $scope.query.fields[indexOfFieldInQuery].funct = data.funct.toUpperCase();
+	  }
+	  if(data.filters!= undefined && data.filters != null ) {
+		  $scope.query.filters = data.filters;
+
+		  $scope.query.expression = data.expression;	  }
 	  $scope.query.fields[indexOfFieldInQuery].group = false;
 	  $scope.executeQuery($scope.model.entities[indexOfEntity].children[indexOfFieldInEntity], $scope.query, $scope.bodySend, $scope.queryModel); 
 	});

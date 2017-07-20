@@ -22,26 +22,25 @@ filters.service('filters_service',function(sbiModule_action){
 		return response;
 	};
 	this.getOperators = [
-		                			  {name:"none",value:"NONE"},
-		                			  {name:"equals to",value:"EQUALS TO"},
-		                			  {name:"not equals to",value:"NOT EQUALS TO"},
-		                			  {name:"greater then",value:"GREATER THAN"},
-		                			  {name:"equals or greater then",value:"EQUALS OR GREATER THAN"},
-		                			  {name:"LESS THAN".toLowerCase(),value:"LESS THAN"},
-		                			  {name:"EQUALS OR LESS THAN",value:"EQUALS OR LESS THAN"},
-		                			  {name:"STARTS WITH",value:"STARTS WITH"},
-		                			  {name:"NOT STARTS WITH",value:"NOT STARTS WITH"},
-		                			  {name:"ENDS WITH",value:"ENDS WITH"},
-		                			  {name:"NOT ENDS WITH",value:"NOT ENDS WITH"},
-		                			  {name:"CONTAINS",value:"CONTAINS"},
-		                			  {name:"NOT CONTAINS",value:"NOT CONTAINS"},
-		                			  {name:"BETWEEN",value:"BETWEEN"},
-		                			  {name:"NOT BETWEEN",value:"NOT BETWEEN"},
-		                			  {name:"IN",value:"IN"},
-		                			  {name:"NOT IN",value:"NOT IN"},
-		                			  {name:"IS NULL",value:"IS NULL"},
-		                			  {name:"not null",value:"NOT NULL"},
-		                	]
+		         {name:"none",value:"NONE"},
+		         {name:"equals to",value:"EQUALS TO"},
+		         {name:"not equals to",value:"NOT EQUALS TO"},
+		         {name:"greater then",value:"GREATER THAN"},
+		         {name:"equals or greater then",value:"EQUALS OR GREATER THAN"},
+		         {name:"LESS THAN".toLowerCase(),value:"LESS THAN"},
+		         {name:"EQUALS OR LESS THAN",value:"EQUALS OR LESS THAN"},
+		         {name:"STARTS WITH",value:"STARTS WITH"},
+		         {name:"NOT STARTS WITH",value:"NOT STARTS WITH"},
+		         {name:"ENDS WITH",value:"ENDS WITH"},
+		         {name:"NOT ENDS WITH",value:"NOT ENDS WITH"},
+		         {name:"CONTAINS",value:"CONTAINS"},
+		         {name:"NOT CONTAINS",value:"NOT CONTAINS"},
+		         {name:"BETWEEN",value:"BETWEEN"},
+		         {name:"NOT BETWEEN",value:"NOT BETWEEN"},
+		         {name:"IN",value:"IN"},
+		         {name:"NOT IN",value:"NOT IN"},
+		         {name:"IS NULL",value:"IS NULL"},
+		         {name:"not null",value:"NOT NULL"}]
 
 });
 
