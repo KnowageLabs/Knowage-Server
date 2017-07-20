@@ -465,6 +465,8 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		Monitor errorHitsMonitor = null;
 		JSONArray queries = null;
 		JSONObject queryJSON = null;
+		JSONArray subqueriesJSON = null;
+		JSONObject subqueryJSON = null;
 		logger.debug("IN");
 
 		try {
@@ -489,6 +491,14 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 					queryJSON = queries.getJSONObject(i);
 					if (queryJSON.get("id").equals(id)) {
 						query = deserializeQuery(queryJSON);
+					} else {
+						subqueriesJSON = queryJSON.getJSONArray("subqueries");
+						for (int j = 0; j < subqueriesJSON.length(); j++) {
+							subqueryJSON = subqueriesJSON.getJSONObject(j);
+							if (subqueryJSON.get("id").equals(id)) {
+								query = deserializeQuery(subqueryJSON);
+							}
+						}
 					}
 				}
 			} catch (SerializationException e) {
