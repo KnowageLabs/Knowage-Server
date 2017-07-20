@@ -1,17 +1,19 @@
 <div layout="column" class="qbeCustomTable">
-	<md-toolbar>
-   		<div class="md-toolbar-tools secondaryToolbar">
-   			Field selection
-   			<span flex></span>
-   			<md-icon class="fa fa-filter" ng-click="showVisualization('filters')"></md-icon>
-			 <md-icon class="fa fa-cogs" ng-click="showVisualization('advanced')"></md-icon>
-			 <md-icon class="fa fa-eye" ng-click="showHiddenColumns()"></md-icon>
-   			<md-switch ng-model="data.cb1" aria-label="Switch 1">
-			    smart data
-			 </md-switch>			 
-   		</div>
-   	</md-toolbar>
-   	<qbe-advanced-visualization ng-if="selectedVisualization=='advanced'"></qbe-advanced-visualization>
+	<div style="padding-bottom:5px">
+		<md-toolbar>
+	   		<div class="md-toolbar-tools secondaryToolbar">
+	   			Field selection
+	   			<span flex></span>
+	   			<md-icon class="fa fa-filter" ng-click="showVisualization('filters')"></md-icon>
+				 <md-icon class="fa fa-cogs" ng-click="showVisualization('advanced')"></md-icon>
+				 <md-icon class="fa fa-eye" ng-click="showHiddenColumns()"></md-icon>
+	   			<md-switch ng-model="data.cb1" aria-label="Switch 1">
+				    smart data
+				 </md-switch>			 
+	   		</div>
+	   	</md-toolbar>
+   	</div>
+   	<qbe-advanced-visualization ng-if="selectedVisualization=='advanced'" ng-model="expression"></qbe-advanced-visualization>
    	<qbe-filter-visualization ng-if="selectedVisualization=='filters'"></qbe-filter-visualization>
 	<div layout="row" ng-if="selectedVisualization=='previewData'">
 		<div ng-repeat="n in ngModel | orderBy: 'order' track by $index" ng-if="!n.hidden" class="qbeCustomColumn" layout-column>
@@ -122,16 +124,13 @@
 	      	</md-button>
 	   		</div>   		
 	    	</md-toolbar>
-   	
-   
-   <div ng-repeat="r in n.data | orderedById:idIndex track by r.id" class="qbeCustomRow">{{r.value}}</div>
-	   	<div  class="qbeCustomFooter"><label ng-if="n.filters.length==0">No filters</label>
-        	<label ng-if="n.filters.length>0">Check filters</label>
-   		<md-button 	aria-label="filters"  ng-click="openFilters(n)">
-        	<md-icon md-menu-origin class="fa fa-filter"></md-icon>
-      	</md-button>
+	   	
+	   
+   		<div ng-repeat="r in n.data | orderedById:idIndex track by r.id" class="qbeCustomRow">{{r.value}}</div>
+	   	<div  class="qbeCustomFooter"><label ng-if="n.filters.length==0" style="font-size:.8rem; padding: 0 4px;  font-weight: bold;">No filters</label>
+        	<label ng-if="n.filters.length>0" style="font-size:.8rem; padding: 0 4px;  font-weight: bold;">Check filters</label>
+   			<md-icon class="fa fa-filter" ng-click="openFilters(n)" style="float:right"></md-icon>      	
       	</div>
    </div>
-  
 </div>
 

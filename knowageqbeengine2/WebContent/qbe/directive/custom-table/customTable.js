@@ -26,12 +26,12 @@ angular.module('qbe_custom_table', ['ngDraggable'])
         restrict: 'E',
         controller: qbeCustomTable,
         scope: {
-            ngModel: '='
+            ngModel: '=',
+            expression: '='
         },
         templateUrl: currentScriptPath + 'custom-table.html',
         replace: true,
         link: function link(scope, element, attrs) {
-           
         }
     };
 })

@@ -27,23 +27,7 @@ angular.module('qbe_advanced_visualization', ['ngMaterial'])
 		controller:advancedVisualizationControllerFunction,
 		priority: 10,
 		scope: {
-			ngModel:"=",
-			showGridView:"=?",
-			showAddToOrganizer:"=?",
-			selectedRow:"=?",
-			tableSpeedMenuOption:"=?",
-			selectedDocument:"=?",
-			selectDocumentAction:"&",
-			deleteDocumentAction:"&",
-			executeDocumentAction:"&",
-			cloneDocumentAction:"&",
-			addToOrganizerAction:"&",
-			addToFavoritesAction:"&",
-			editDocumentAction:"&",
-			shareDocumentAction:"&",
-			orderingDocumentCards:"=?",
-			cloneEnabled:"=?",
-			deleteEnabled:"=?"	
+			ngModel:"="
 		},
 		link: function (scope, elem, attrs) { 
 
@@ -51,13 +35,42 @@ angular.module('qbe_advanced_visualization', ['ngMaterial'])
 	}
 });
 
-function advancedVisualizationControllerFunction($scope,sbiModule_translate, sbiModule_config){
+function advancedVisualizationControllerFunction($scope,sbiModule_translate, sbiModule_config, $mdDialog){
 	
+	$scope.openMenu = function($mdOpenMenu, ev) {
+		originatorEv = ev;
+		$mdOpenMenu(ev);
+	};
+	
+	$scope.linkFunction = function (booleanConnector,id) {
+		for ( var index in $scope.ngModel.childNodes) {
+			if($scope.ngModel.childNodes[index].id==id){
+				$scope.ngModel.childNodes[index].booleanConnector = booleanConnector;
+			}
+		}
+	}
+		
 	$scope.sbiModule_config = sbiModule_config;
 	$scope.translate = sbiModule_translate;
 	
 	$scope.clickDocument=function(item){		
 		 $scope.selectDocumentAction({doc: item});
+	}
+	
+	$scope.removeFilter = function () {
+		for ( var index in $scope.ngModel.childNodes) {
+			if($scope.ngModel.childNodes[index].selected==true){
+				$scope.ngModel.childNodes.splice(index,1);
+			}
+		}
+	}
+	
+	$scope.groupFilters = function () {
+		for ( var index in $scope.ngModel.childNodes) {
+			if($scope.ngModel.childNodes[index].selected==true){
+				$scope.ngModel.childNodes[index].backgroundColor="#D3D3D3";
+			}
+		}
 	}
 }
 })();

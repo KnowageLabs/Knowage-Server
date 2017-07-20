@@ -29,6 +29,46 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 	var inputParamService = sbiModule_inputParams;
 	$scope.queryModel = [];
 	$scope.pars = [];
+/*	$scope.expression = {  
+	         "type":"NODE_CONST",
+	         "value":"$F{Filter1}",
+	         "color":"#F44336",
+	         "condition": "age < 4",
+	         "childNodes":[]
+	}*/
+	
+	$scope.expression = {  
+	         "type":"NODE_OP",
+	         "value":"AND",
+	         "childNodes":[  
+	        	 {  
+	                 "type":"NODE_CONST",
+	                 "id": "1",
+	                 "value":"$F{Filter1}",
+	                 "condition": "age < 4",
+	                 "selected":false,
+	                 "grouped":false,
+	                 "color":"#FFEB3B",
+	                 "booleanConnector":"AND",
+	                 "childNodes":[  
+
+	                 ]
+	              },
+	              {  
+	                 "type":"NODE_CONST",
+	                 "id": "2",
+	                 "value":"$F{Filter2}",
+	                 "condition": "age > 1",
+	                 "selected":false,
+	                 "grouped":false,
+	                 "color":"#8BC34A",
+	                 "booleanConnector":"AND",
+	                 "childNodes":[  
+
+	                 ]
+	              }
+	         ]
+	      };
 	
 	entityService.getEntitiyTree(inputParamService.modelName).then(function(response){
 		 $scope.model = response.data;

@@ -1,3 +1,86 @@
-<div style="background-color:red">
-ddd
+<div layout="column" flex class="qbeAdvancedVisualization">
+  <md-whiteframe class="md-whiteframe-4dp" flex=70 style="padding-left:10px; padding-right:10px" layout="column">
+  		<p></p>
+	  	<md-toolbar class="secondaryToolbar">
+	   		<div class="md-toolbar-tools">
+	   			<md-button ng-click="removeFilter()">Remove filter</md-button>
+	   			<md-button ng-click="groupFilters()">Group filters</md-button> 
+	   		</div>
+	   	</md-toolbar>
+	   	<md-content layout="row" style="padding-top:10px; padding-left:10px;" flex>
+	   		<div ng-if="ngModel.childNodes.length==0" layout="row">
+	   			<div class="filterContainer">
+	   				<div class="qbeCustomTopColor" ng-style="{'background-color' : ngModel.color}"></div>
+		   			<md-toolbar>
+		   				<div class="md-toolbar-tools">
+		   					{{ngModel.condition}}
+		   						<span flex></span>
+			          			<md-checkbox ng-model="n.hidden" class="menuCheckbox" aria-label="hide column">
+					            
+					          </md-checkbox>
+				   		</div>
+		   			</md-toolbar>
+	   			</div>
+	   			<div>
+	   				<md-menu>			      
+		      	<md-button 	aria-label="query settings menu" class="md-icon-button" ng-click="openMenu($mdMenu.open, $event)">
+		      		<md-tooltip md-direction="top">column settings</md-tooltip>
+		        	<md-icon md-menu-origin class="fa fa-link"></md-icon>
+		      	</md-button>
+		      	<md-menu-content class="qbeMenuContent">
+			      
+		       		<md-menu-item ng-click="linkFuntion('AND')"><span>AND</span></md-menu-item>
+		       		<md-menu-item ng-click="linkFuntion('OR')"><span>OR</span></md-menu-item>
+		       		</md-menu-content>
+	       		</md-menu>
+	   			</div>
+	   		</div>
+	   		<div ng-if="ngModel.childNodes.length>0" layout="row">
+	   			<div ng-repeat="filter in ngModel.childNodes" layout="row" ng-style="{'background-color' : filter.backgroundColor}">
+	   			
+	   				<div class="filterContainer">
+		   				<div class="qbeCustomTopColor" ng-style="{'background-color' : filter.color}"></div>
+			   			<md-toolbar>
+			   				<div class="md-toolbar-tools">
+			   					{{filter.condition}}
+			   						<span flex></span>
+				          			<md-checkbox ng-model="filter.selected" class="menuCheckbox" aria-label="hide column">
+						            
+						          </md-checkbox>
+					   		</div>
+			   			</md-toolbar>
+		   			</div>
+		   			<div ng-if="filter.id!=ngModel.childNodes.length" layout="column">
+	   				<md-menu>			      
+			      	<md-button 	aria-label="query settings menu" class="md-icon-button" ng-click="openMenu($mdMenu.open, $event)">
+			      		<md-tooltip md-direction="top">column settings</md-tooltip>
+			        	<md-icon md-menu-origin class="fa fa-link"></md-icon>
+			      	</md-button>
+			      	<md-menu-content class="qbeMenuContent">
+				      
+			       		<md-menu-item ng-click="linkFunction('AND', filter.id)"><span>AND</span></md-menu-item>
+			       		<md-menu-item ng-click="linkFunction('OR',filter.id)"><span>OR</span></md-menu-item>
+			       		</md-menu-content>
+	       		</md-menu>
+	       		<div style="color:red; text-align-last:center; font-size:.8rem;">
+	       			{{filter.booleanConnector}}
+	       		</div>
+	   			</div>
+		   			
+	   			</div>
+	   		</div>
+	   	</md-content>
+  </md-whiteframe>
+  <md-whiteframe class="md-whiteframe-4dp" flex=10  layout="row" layout-align="center center">  
+  		<div ng-repeat="filter in ngModel.childNodes" >
+  			<div layout="row" style="color:green; text-align-last:center; padding-top: 30px; font-size:.8rem; font-weight:bold; font-size:0.8rem;">
+  				<div>
+  					{{filter.value}} &nbsp;
+  				</div>
+  				<div ng-if="filter.id!=ngModel.childNodes.length">
+  					{{filter.booleanConnector}} &nbsp;
+  				</div>
+  			</div>
+  		</div>
+  </md-whiteframe>
 </div>
