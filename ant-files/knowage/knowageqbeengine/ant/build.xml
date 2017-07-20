@@ -160,20 +160,20 @@
 	<target name="production" depends="create-production">
 		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/includeSbiQbeJS.jspf">
 			<replacetoken><![CDATA[<!-- START-PRODUCTION]]></replacetoken>
-			<replacevalue><![CDATA[<!-- START-PRODUCTION -->]]></replacevalue>
+			<replacevalue><![CDATA[<!-- START-PRODUCTION]]></replacevalue>
 		</replace>
 		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/includeSbiQbeJS.jspf">
 			<replacetoken><![CDATA[END-PRODUCTION -->]]></replacetoken>
-			<replacevalue><![CDATA[<!-- END-PRODUCTION -->]]></replacevalue>
+			<replacevalue><![CDATA[<END-PRODUCTION -->]]></replacevalue>
 		</replace>
 
 		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/includeSbiQbeJS.jspf">
 			<replacetoken><![CDATA[<!-- START-DEBUG -->]]></replacetoken>
-			<replacevalue><![CDATA[<!-- START-DEBUG]]></replacevalue>
+			<replacevalue><![CDATA[<!-- START-DEBUG -->]]></replacevalue>
 		</replace>
 		<replace file="${build}/${webapp_name}/WEB-INF/jsp/commons/includeSbiQbeJS.jspf">
 			<replacetoken><![CDATA[<!-- END-DEBUG -->]]></replacetoken>
-			<replacevalue><![CDATA[END-DEBUG -->]]></replacevalue>
+			<replacevalue><![CDATA[<!-- END-DEBUG -->]]></replacevalue>
 		</replace>
 	</target>
 
