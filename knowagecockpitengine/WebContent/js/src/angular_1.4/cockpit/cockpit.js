@@ -56,21 +56,21 @@ function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,coc
 		}else{
 			$rootScope.$broadcast("WIDGET_INITIALIZED");
 		}
+		
+		if(!cockpitModule_properties.EDIT_MODE){
+			cockpitModule_nearRealtimeServices.init();
+			cockpitModule_realtimeServices.init();
+		}
 	},function(){
 		console.error("error when load dataset list")
 	});
 
 	if(cockpitModule_properties.DOCUMENT_LABEL != undefined && cockpitModule_properties.DOCUMENT_LABEL != ''){
-	cockpitModule_crossServices.loadCrossNavigationByDocument(cockpitModule_properties.DOCUMENT_LABEL).then(
+		cockpitModule_crossServices.loadCrossNavigationByDocument(cockpitModule_properties.DOCUMENT_LABEL).then(
 			function(){},
 			function(){
 				console.error("error when load cross list")
 			});
-}
-	
-	if(!cockpitModule_properties.EDIT_MODE){
-		cockpitModule_nearRealtimeServices.init();
-		cockpitModule_realtimeServices.init();
 	}
 	
 	$scope.exportCsv=function(deferred){

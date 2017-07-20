@@ -3,7 +3,7 @@
  * It permits to subscribe to server notifications and then update data models.
  *
  */
-angular.module("cockpitModule").service("cockpitModule_realtimeServices",function($rootScope, sbiModule_user, sbiModule_util, sbiModule_restServices, sbiModule_config, cockpitModule_template, cometd){
+angular.module("cockpitModule").service("cockpitModule_realtimeServices",function($rootScope, sbiModule_user, sbiModule_util, sbiModule_restServices, sbiModule_config, cockpitModule_template, cockpitModule_datasetServices, cometd){
 	var rt=this;
 	
 	broadcast = function(message, dsLabel){
@@ -24,28 +24,24 @@ angular.module("cockpitModule").service("cockpitModule_realtimeServices",functio
 		for(var i=0;i<cockpitModule_template.configuration.datasets.length;i++){
 			var label = cockpitModule_template.configuration.datasets[i].dsLabel;
 			console.log("Getting metadata for dataset " + label);
-			sbiModule_restServices.restToRootProject();
-			sbiModule_restServices.promiseGet('1.0/datasets',label).then(function(response){
-				var ds = response.data[0];
-				console.log(ds);
-				if(ds.isRealtime){
-					console.log("Dataset " + label + " is realtime");
-					var cometdConfig = {
-						host: sbiModule_config.host,
-						//contextPath: sbiModule_config.contextName,
-						contextPath: sbiModule_config.externalBasePath,
-						userId:sbiModule_user.userId,
-						//listenerId:sbiModule_util.uuid(),
-						listenerId:'1',
-						dsLabel:ds.label
-						};
-					console.log("Subscribe dataset " + label + " with the following config:");
-					console.log(cometdConfig);
-					rt.subscribe(cometdConfig);
-				}
-			}, function(response){
-				console.log("Error while loading dataset");
-			});  
+			
+			var ds = cockpitModule_datasetServices.getDatasetByLabel(label);
+			console.log(ds);
+			if(ds.isRealtime){
+				console.log("Dataset " + label + " is realtime");
+				var cometdConfig = {
+					host: sbiModule_config.host,
+					//contextPath: sbiModule_config.contextName,
+					contextPath: sbiModule_config.externalBasePath,
+					userId:sbiModule_user.userId,
+					//listenerId:sbiModule_util.uuid(),
+					listenerId:'1',
+					dsLabel:ds.label
+					};
+				console.log("Subscribe dataset " + label + " with the following config:");
+				console.log(cometdConfig);
+				rt.subscribe(cometdConfig);
+			}  
 		}	
 	};
 	

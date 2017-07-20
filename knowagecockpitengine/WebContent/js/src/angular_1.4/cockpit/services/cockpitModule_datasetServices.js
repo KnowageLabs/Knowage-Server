@@ -4,28 +4,54 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 	this.datasetList=[];
 	this.infoColumns = [];
 	
+	this.isDatasetFromTemplateLoaded = false;
+	
 	this.loadDatasetsFromTemplate=function(){
 		var def=$q.defer();
-		
-		var dsIds = [];
-		angular.forEach(cockpitModule_template.configuration.datasets, function(item){
-			this.push(item.dsId);
-		}, dsIds);
-		
-		sbiModule_restServices.restToRootProject();
-		sbiModule_restServices.promiseGet("2.0/datasets","listDataset?seeTechnical=TRUE&ids=" + dsIds.join())
-		.then(function(response){
-			angular.forEach(response.data.item, function(item){
-				this.push(item);
-			}, ds.datasetList);
-			ds.initNearRealTimeValues(ds.datasetList);
-			ds.checkForDSChange();
-			cockpitModule_widgetSelection.getAssociations(cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS,undefined,def);
+		if(!ds.isDatasetFromTemplateLoaded){
+			var dsIds = [];
+			angular.forEach(cockpitModule_template.configuration.datasets, function(item){
+				this.push(item.dsId);
+			}, dsIds);
+			
+			sbiModule_restServices.restToRootProject();
+			sbiModule_restServices.promiseGet("2.0/datasets","listDataset?seeTechnical=TRUE&ids=" + dsIds.join())
+			.then(function(response){
+				angular.forEach(response.data.item, function(item){
+					this.push(item);
+				}, ds.datasetList);
+				
+				sbiModule_restServices.restToRootProject();
+				sbiModule_restServices.promiseGet("1.0/datasets","?ids=" + dsIds.join())
+				.then(function(response){
+					angular.forEach(ds.datasetList, function(dsv2){
+						for(var i=0; i<response.data.root.length; i++){
+							var dsv1=response.data.root[i];
+							if(dsv2.id.dsId == dsv1.id){
+								dsv2.isRealtime = dsv1.isRealtime;
+								break;
+							}
+						}
+					});
+					
+					ds.initNearRealTimeValues(ds.datasetList);
+					ds.checkForDSChange();
+					cockpitModule_widgetSelection.getAssociations(cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS,undefined,def);
+					
+					ds.isDatasetFromTemplateLoaded = true;
+					def.resolve();
+				},function(response){
+					sbiModule_restServices.errorHandler(response.data,"");
+					def.reject();
+				});
+				
+			},function(response){
+				sbiModule_restServices.errorHandler(response.data,"");
+				def.reject();
+			});
+		}else{
 			def.resolve();
-		},function(response){
-			sbiModule_restServices.errorHandler(response.data,"");
-			def.reject();
-		});
+		}
 		return def.promise;
 	};
 	
@@ -59,8 +85,28 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				
 				ds.initNearRealTimeValues(newDatasets);
 				ds.datasetList = ds.datasetList.concat(newDatasets);
-				ds.isDatasetListLoaded = true;
-				def.resolve();
+				
+				sbiModule_restServices.restToRootProject();
+				sbiModule_restServices.promiseGet("1.0/datasets","")
+				.then(function(response){
+					angular.forEach(ds.datasetList, function(dsv2){
+						if(dsv2.isRealtime == undefined){
+							for(var i=0; i<response.data.root.length; i++){
+								var dsv1=response.data.root[i];
+								if(dsv2.id.dsId == dsv1.id){
+									dsv2.isRealtime = dsv1.isRealtime;
+									break;
+								}
+							}
+						}
+					});
+					
+					ds.isDatasetListLoaded = true;
+					def.resolve();
+				},function(response){
+					sbiModule_restServices.errorHandler(response.data,"");
+					def.reject();
+				});
 			},function(response){
 				sbiModule_restServices.errorHandler(response.data,"");
 				def.reject();

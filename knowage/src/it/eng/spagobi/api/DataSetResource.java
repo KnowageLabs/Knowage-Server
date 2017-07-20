@@ -73,6 +73,7 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -113,7 +114,7 @@ public class DataSetResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String getDataSets(@QueryParam("typeDoc") String typeDoc, @QueryParam("callback") String callback) {
+	public String getDataSets(@QueryParam("typeDoc") String typeDoc, @QueryParam("callback") String callback, @QueryParam("ids") String ids) {
 		logger.debug("IN");
 
 		try {
@@ -122,8 +123,14 @@ public class DataSetResource extends AbstractSpagoBIResource {
 			List<IDataSet> dataSets = getDatasetManagementAPI().getDataSets();
 			List<IDataSet> toBeReturned = new ArrayList<IDataSet>();
 
+			List<Integer> idList = null;
+			Integer[] idArray = getIdsAsIntegers(ids);
+			if (idArray != null) {
+				idList = Arrays.asList(idArray);
+			}
+
 			for (IDataSet dataset : dataSets) {
-				if (DataSetUtilities.isExecutableByUser(dataset, getUserProfile()))
+				if (DataSetUtilities.isExecutableByUser(dataset, getUserProfile()) && (idList == null || idList.contains(dataset.getId())))
 					toBeReturned.add(dataset);
 			}
 
@@ -799,6 +806,18 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+
+	protected Integer[] getIdsAsIntegers(String ids) {
+		Integer[] idArray = null;
+		if (ids != null && !ids.isEmpty()) {
+			String[] split = ids.split(",");
+			idArray = new Integer[split.length];
+			for (int i = 0; i < split.length; i++) {
+				idArray[i] = Integer.parseInt(split[i]);
+			}
+		}
+		return idArray;
 	}
 
 	protected void loadColumnAliasToName(JSONArray jsonArray, Map<String, String> columnAliasToName) throws JSONException {
