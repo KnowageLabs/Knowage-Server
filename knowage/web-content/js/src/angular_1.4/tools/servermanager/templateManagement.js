@@ -35,6 +35,8 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 	
 	
 	$scope.loadDocuments = function(){
+		$scope.isLoading=true;
+
 		if($scope.data_format){
 			//get the date selected
 			sbiModule_restServices.get("2.0", "folders","includeDocs=true").success(function(data){
@@ -55,6 +57,9 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 			
 			sbiModule_restServices.get("2.0/documents", 'withData',"data="+$scope.data_format).success(
 					function(data, status, headers, config) {
+
+						$scope.isLoading=false;
+
 						if (data.hasOwnProperty("errors")) {
 							console.log("NO DATA");
 							$scope.flagSelect=false;
@@ -65,6 +70,7 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 						}
 
 					}).error(function(data, status, headers, config) {
+						$scope.isLoading=false;
 						$scope.flagSelect=false;
 						console.log("NO DATA " + status);
 					})

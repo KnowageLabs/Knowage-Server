@@ -73,8 +73,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		</div>
 		<div flex>
 			<md-datepicker ng-model="dateSelected.data" name="Select Data"
-				ng-change="parseDate()" md-placeholder={{translate.load("sbi.templatemanagemenent.selectdata");}} ></md-datepicker>
-
+				md-placeholder={{translate.load("sbi.templatemanagemenent.selectdata");}} ></md-datepicker>
+			<md-button class="md-icon-button" ng-click="parseDate()">
+            <md-icon md-font-icon="fa fa-filter" aria-label="Filter"></md-icon>
+            </md-button>
+      <!--       <md-button class="md-icon-button" ng-click="removeFilter()">
+           <md-icon md-font-icon="fa fa-times" aria-label="Remove Filter"></md-icon>
+            </md-button> -->
+		
 		</div>
 		</md-content> 
 		<md-toolbar class="cardHeader secondaryToolbar"  ng-show="documents.length!=0">
@@ -101,6 +107,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				</component-tree>
 			</div>
 		</md-content>
+		<md-progress-circular md-mode="indeterminate" ng-show="isLoading">
+		</md-progress-circular>
 	</div>
 	</md-card>
 	</md-content>
