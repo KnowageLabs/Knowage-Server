@@ -54,7 +54,8 @@ angular.module('cockpit_angular_table', ['ngMaterial', 'angularUtils.directives.
                             tableStyle:"=?",
                             showExpanderRowCondition:"&?",
                             disableAutoLoadOnInit:"@?",
-                            settings:"=?"
+                            settings:"=?",
+                            isDatasetRealtime:"=?"
                         },
                         compile: function (tElement, tAttrs, transclude) {
                         	
@@ -1096,7 +1097,7 @@ function CockpitTableBodyControllerFunction($scope) {
     }
 }
 
-function CockpitTableHeaderControllerFunction($scope, $timeout) {
+function CockpitTableHeaderControllerFunction($scope, $timeout,$filter) {
     $scope.multiSelectVal = false;
 
     $scope.orderBy = function (column) {
@@ -1105,12 +1106,21 @@ function CockpitTableHeaderControllerFunction($scope, $timeout) {
     		return
     	}
     	
+    	
         if ($scope.column_ordering!=undefined && $scope.column_ordering.name == column.name) {
             $scope.reverse_col_ord = !$scope.reverse_col_ord;
         } else {
             $scope.column_ordering = column;
             $scope.reverse_col_ord = false;
         }
+        // check if the dataset is realtime
+        if ($scope.isDatasetRealtime && $scope.isDatasetRealtime == true){
+        	//sort only client side without calling backend
+            $scope.ngModel= $filter('orderBy')($scope.ngModel,  $scope.column_ordering.name, $scope.reverse_col_ord)
+            return
+        }
+    	
+
 
         if ($scope.localSearch) {
             $scope.internal_column_ordering = $scope.column_ordering;

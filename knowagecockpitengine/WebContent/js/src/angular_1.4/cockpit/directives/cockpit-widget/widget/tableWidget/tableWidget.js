@@ -72,9 +72,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	});
 	
 
-	function cockpitTableWidgetControllerFunction($scope,cockpitModule_widgetConfigurator,$mdDialog,$timeout,$mdPanel,$q,cockpitModule_datasetServices, $mdToast, sbiModule_translate,sbiModule_restServices,cockpitModule_widgetServices,cockpitModule_widgetSelection,accessibillty_preferences){
+	function cockpitTableWidgetControllerFunction($scope,cockpitModule_widgetConfigurator,$mdDialog,$timeout,$mdPanel,$q,cockpitModule_datasetServices, $mdToast, sbiModule_translate,sbiModule_restServices,cockpitModule_widgetServices,cockpitModule_widgetSelection,accessibillty_preferences,$filter,cockpitModule_datasetServices){
 		$scope.accessibillty_preferences = accessibillty_preferences;
 		$scope.accessibilityModeEnabled = $scope.accessibillty_preferences.accessibilityModeEnabled;
+		if ($scope.ngModel && $scope.ngModel.dataset && $scope.ngModel.dataset.dsId){
+			$scope.isDatasetRealtime = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId).isRealtime;
+		}
+		
+		
 		$scope.selectedTab = {'tab' : 0};
 		$scope.widgetIsInit=false;
 		$scope.totalCount = 0;
@@ -746,6 +751,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //					}
 				}
 			}
+			var dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId)
+			
+			//check if dataset is realtime
+			if (dataset.isRealtime === true){
+				//*** CLIENT SIDE SORTING ***
+				//sort data using sorting column (if specified)
+				if ($scope.ngModel.sortingColumn){
+					var columns = $scope.ngModel.content.columnSelectedOfDataset;
+					var sortingField = $scope.ngModel.sortingColumn;
+					//search for the corresponding aliasToShow of the sortingColumn
+					for (i = 0; i < columns.length; i++){
+						if (columns[i].name === $scope.ngModel.sortingColumn){
+							sortingField = columns[i].aliasToShow;
+							break;
+						}
+					}
+					var reverse = false;
+					if ($scope.ngModel.sortingOrder === 'DESC'){
+						reverse = true;
+					}
+					table = $filter('orderBy')(table, sortingField, reverse)
+				}				
+			}
+
 			return table;
 		}
 
