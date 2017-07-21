@@ -184,7 +184,9 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 		if($scope.filter) {
 			$scope.filter.rightOperandDescription = angular.copy($scope.forInput);
 			$scope.filter.rightOperandValue=[];
-			$scope.filter.rightOperandValue.push($scope.filter.rightOperandDescription );
+			for (var i = 0; i < newValue.length; i++) {
+				$scope.filter.rightOperandValue.push(newValue[i].column_1)
+			}
 			$scope.filter.rightOperandType="Static Content";
 			$scope.filter.rightOperandLongDescription=$scope.filter.rightOperandDescription;
 		}
