@@ -107,7 +107,7 @@ it.eng.spagobi.engines.qbe.temporalfilterwizard = function() {
 			    			var filter;
 			    			if (timeStore.getAt(rowIndex).get('type') == 'temporal'){
 			    				filter = {
-			    						leftOperandValue: 'it.eng.spagobi.meta.Time_by_day:the_date',
+			    						leftOperandValue: 'it.eng.knowage.meta.Time_by_day:the_date',
 			    						leftOperandDescription: 'Time by day : The date',
 			    						leftOperandType: Sbi.constants.qbe.OPERAND_TYPE_SIMPLE_FIELD,
 			    						operator : 'BETWEEN',
@@ -121,7 +121,7 @@ it.eng.spagobi.engines.qbe.temporalfilterwizard = function() {
 			    				var f = span.from;
 			    				var t = span.to;
 			    				filter = {
-			    						leftOperandValue: 'it.eng.spagobi.meta.Time_by_minute:ID',
+			    						leftOperandValue: 'it.eng.knowage.meta.Time_by_minute:ID',
 			    						leftOperandDescription: 'Time by minute : ID',
 			    						leftOperandType: Sbi.constants.qbe.OPERAND_TYPE_SIMPLE_FIELD,
 			    						operator : 'BETWEEN',
