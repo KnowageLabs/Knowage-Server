@@ -266,7 +266,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				ruleValidationForInsert(session, rule, overwriteMode, importMode);
 
 				SbiKpiRule sbiRule = new SbiKpiRule();
-				Set<SbiKpiKpi> relatedKpis = new HashSet<>();
+				// Set<SbiKpiKpi> relatedKpis = new HashSet<>();
 				if (newVersion) {
 					SbiKpiRule oldRule = (SbiKpiRule) session.load(SbiKpiRule.class, new SbiKpiRuleId(rule.getId(), rule.getVersion()));
 					sbiRule.getSbiKpiRuleId().setId(rule.getId());
@@ -274,13 +274,13 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 						oldRule.setActive(null);
 					}
 					// gathering related Kpis
-					for (SbiKpiRuleOutput sbiKpiRuleOutput : oldRule.getSbiKpiRuleOutputs()) {
-						for (SbiKpiKpi sbiKpiKpi : sbiKpiRuleOutput.getSbiKpiKpis()) {
-							if (Character.valueOf('T').equals(sbiKpiKpi.getActive())) {
-								relatedKpis.add(sbiKpiKpi);
-							}
-						}
-					}
+					// for (SbiKpiRuleOutput sbiKpiRuleOutput : oldRule.getSbiKpiRuleOutputs()) {
+					// for (SbiKpiKpi sbiKpiKpi : sbiKpiRuleOutput.getSbiKpiKpis()) {
+					// if (Character.valueOf('T').equals(sbiKpiKpi.getActive())) {
+					// relatedKpis.add(sbiKpiKpi);
+					// }
+					// }
+					// }
 				}
 				sbiRule.setActive('T');
 				sbiRule.setName(rule.getName());
@@ -323,20 +323,20 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				rule.setVersion(sbiKpiRuleId.getVersion());
 
 				// handling related Kpis
-				if (newVersion) {
-					for (SbiKpiKpi sbiKpiKpi : relatedKpis) {
-						if (isKpiVersioned(sbiKpiKpi.getSbiKpiKpiId().getId())) {
-							insertNewVersionKpi(session,
-									from(sbiKpiKpi, (SbiKpiThreshold) session.load(SbiKpiThreshold.class, sbiKpiKpi.getThresholdId()), true));
-						} else {
-							try {
-								refreshKpiRuleOutputRel(session, sbiKpiKpi);
-							} catch (JSONException e) {
-								throw new SpagoBIDAOException(e);
-							}
-						}
-					}
-				}
+				// if (newVersion) {
+				// for (SbiKpiKpi sbiKpiKpi : relatedKpis) {
+				// if (isKpiVersioned(sbiKpiKpi.getSbiKpiKpiId().getId())) {
+				// insertNewVersionKpi(session,
+				// from(sbiKpiKpi, (SbiKpiThreshold) session.load(SbiKpiThreshold.class, sbiKpiKpi.getThresholdId()), true));
+				// } else {
+				// try {
+				// refreshKpiRuleOutputRel(session, sbiKpiKpi);
+				// } catch (JSONException e) {
+				// throw new SpagoBIDAOException(e);
+				// }
+				// }
+				// }
+				// }
 				return rule;
 			}
 		}, session);
