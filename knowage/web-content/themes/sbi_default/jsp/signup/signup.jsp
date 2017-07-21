@@ -24,6 +24,31 @@
 <%@ include file="/WEB-INF/jsp/commons/portlet_base410.jsp"%>  
 
 <%
+String redirectUrl ="";
+String active = SingletonConfig.getInstance().getConfigValue("SPAGOBI_SSO.ACTIVE");
+String strUsePublicUser = SingletonConfig.getInstance().getConfigValue(SpagoBIConstants.USE_PUBLIC_USER);
+Boolean usePublicUser = (strUsePublicUser == null)?false:Boolean.valueOf(strUsePublicUser);
+
+if (active == null || active.equalsIgnoreCase("false")) {
+    String context = request.getContextPath();
+    if (usePublicUser){
+        context += "/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE";
+        redirectUrl = context;
+    }else{
+        redirectUrl = context;
+    }
+}
+else if (active != null && active.equalsIgnoreCase("true")) {
+
+    String urlLogout =  SingletonConfig.getInstance().getConfigValue("SPAGOBI_SSO.SECURITY_LOGOUT_URL");
+//    if(backUrlB==true){
+//        redirectUrl = backUrl; 
+//    }
+    redirectUrl = urlLogout;
+
+} 
+
+
 	String defaultOrganization = msgBuilder.getMessage("profileattr.company",request); 
 	String defaultName = msgBuilder.getMessage("profileattr.firstname",request);
 	String defaultSurname = msgBuilder.getMessage("profileattr.lastname",request);
@@ -100,45 +125,45 @@ this.services["create"]= Sbi.config.serviceRegistry.getRestServiceUrl({
 });
 
     var form             = document.myForm;
-	var nome             = document.getElementById("nome").value;
-	var cognome          = document.getElementById("cognome").value;
+	var name             = document.getElementById("name").value;
+	var surname          = document.getElementById("surname").value;
 	var username         = document.getElementById("username").value;
 	var password         = document.getElementById("password").value;
-	var confermaPassword = document.getElementById("confermaPassword").value;
+	var confirmPassword = document.getElementById("confirmPassword").value;
 	var email            = document.getElementById("email").value;
-	var sesso            = document.getElementById("sesso").value;
-	var dataNascita      = document.getElementById("dataNascita").value;
-	var indirizzo        = document.getElementById("indirizzo").value;
-	var azienda          = document.getElementById("azienda").value;
-	var biografia        = document.getElementById("biografia").value;
-	var lingua           = document.getElementById("lingua").value;
+	var sex            = document.getElementById("sex").value;
+	var birthDate      = document.getElementById("birthDate").value;
+	var address        = document.getElementById("address").value;
+	var enterprise          = document.getElementById("enterprise").value;
+	var biography        = document.getElementById("biography").value;
+	var language           = document.getElementById("language").value;
 	var captcha          = document.getElementById("captcha").value;
-	var check            = document.getElementById("termini");
-	var termini = 'false';
-    if( check.checked ) termini = 'true';
+	var check            = document.getElementById("terms");
+	var terms = 'false';
+    if( check.checked ) terms = 'true';
     
 	var params = new Object();
 	params.locale	= '<%=localeSignup%>';
-	params.nome     = nome;
-	params.cognome  = cognome;
+	params.name     = name;
+	params.surname  = surname;
 	params.username = username;
 	params.password = password;
-	params.confermaPassword 
-	                = confermaPassword;
+	params.confirmPassword 
+	                = confirmPassword;
 	params.email    = email;
-	params.sesso    = sesso;
-	params.dataNascita = dataNascita;
-	params.indirizzo   = indirizzo;
-	params.azienda     = azienda;
-	params.biografia   = biografia;
-	params.termini     = termini;
-	params.lingua      = lingua;
+	params.sex    = sex;
+	params.birthDate = birthDate;
+	params.address   = address;
+	params.enterprise     = enterprise;
+	params.biography   = biography;
+	params.terms     = terms;
+	params.language      = language;
 	params.captcha     = captcha;
 		
 	//params.modify      = true;
 
 	var goOn = false;
-	if (document.getElementById("aziendaIsChanged").value == "true"){
+	if (document.getElementById("enterpriseIsChanged").value == "true"){
 		Ext.MessageBox.confirm(
 				  "Warning",
 				  "<%=msgBuilder.getMessage("signup.msg.confirmCreateComm", request)%>",
@@ -165,14 +190,20 @@ function execCreation(params){
 		method: "POST",
 		params: params,			
 		success : function(response, options) {	
-			
+	
 		    if(response != undefined  && response.responseText != undefined ) {
 				if( response.responseText != null && response.responseText != undefined ){
 			    var jsonData = Ext.decode( response.responseText );
 			    if( jsonData.message != undefined && jsonData.message != null && jsonData.message == 'validation-error' ){
 			      Sbi.exception.ExceptionHandler.handleFailure(response);
 			    }else{
-			      Sbi.exception.ExceptionHandler.showInfoMessage(registrationSuccessMsg, 'OK', {});
+			    	 function redirect()
+	                  {
+	                      window.location = "<%=redirectUrl%>"
+	                  }
+			    	
+			    	Sbi.exception.ExceptionHandler.showInfoMessageWithCallback(registrationSuccessMsg, 'OK', {fn: redirect});
+			      
 			    }		
 			  }		
 			}
@@ -278,11 +309,11 @@ a:hover{
 				   <tr>
 						<td></td>
 						<td>
-					    <img id="profile-img" class="logoHeader" 
-                              src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/wapp/logo.png", currTheme)%>' />
-                        <!--  <img
-                            src='${pageContext.request.contextPath}/themes/sbi_default/img/wapp/spagobi40logo.png'
-                            width='180px' height='51px' style="margin: 20px 0px"/>-->
+						<img id="profile-img" class="logoHeader" 
+						      src='<%=urlBuilder.getResourceLinkByTheme(request, "/img/wapp/logo.png", currTheme)%>' />
+						<!--  <img
+							src='${pageContext.request.contextPath}/themes/sbi_default/img/wapp/spagobi40logo.png'
+							width='180px' height='51px' style="margin: 20px 0px"/>-->
 						</td>
 						<td width='50px'></td>
 						<td></td>
@@ -300,11 +331,11 @@ a:hover{
 
 								</tr>
 								<tr>
-									<td><input id="nome" name="nome" type="text" size="25"
+									<td><input id="name" name="name" type="text" size="25"
 										class="login"></td>
 									<td></td>
 
-									<td><input id="cognome" name="cognome" type="text"
+									<td><input id="surname" name="surname" type="text"
 										size="25" class="login"></td>
 
 								</tr>
@@ -341,7 +372,7 @@ a:hover{
 									</td>
 									<td></td>
 
-									<td><input id="confermaPassword" name="confermaPassword"
+									<td><input id="confirmPassword" name="confirmPassword"
 										type="password" size="25" class="login">
 									</td>
 
@@ -374,7 +405,7 @@ a:hover{
 							    </tr>
 								<tr>
 									<td colspan="3" height="30px"><input type="checkbox"
-										name="termini" id="termini" class="login" />
+										name="terms" id="terms" class="login" />
 									</td>
 								</tr>
 								<tr><td colspan="3"><a href="#" onclick="javascript:nascondi();"><div id="nascondi" style="font-weight:bold"><%=msgBuilder.getMessage("signup.form.showOptional",request) %></div></a></td></tr>
@@ -390,12 +421,12 @@ a:hover{
 								</tr>
 
 								<tr>
-									<td><input id="indirizzo" name="indirizzo" type="text"
+									<td><input id="address" name="address" type="text"
 										size="25" class="login" />
 									</td>
 									<td></td>
 
-									<td><select class="login" name="lingua" id="lingua"
+									<td><select class="login" name="language" id="language"
 										style="width: 214px">
 											<option value=""></option>
 											<option value="it_IT"><%=defaultItalian%></option>
@@ -415,16 +446,16 @@ a:hover{
 								</tr>
 
 								<tr>
-									<td><select class="login" name="sesso" id="sesso"
+									<td><select class="login" name="sex" id="sex"
 										style="width: 214px">
 											<option value=""></option>
-											<option value="Uomo"><%=defaultMan %></option>
-											<option value="Donna"><%=defaultWoman %></option>
+											<option value="M"><%=defaultMan %></option>
+											<option value="F"><%=defaultWoman %></option>
 									</select>
 									</td>
 									<td></td>
 
-									<td><input id="dataNascita" name="dataNascita" type="text"
+									<td><input id="birthDate" name="birthDate" type="text"
 										size="25" class="login" />
 									</td>
 
@@ -438,15 +469,15 @@ a:hover{
 									<td>
 										<!-- <input id="azienda" name="azienda" type="text" size="25" class="login"/> --> 
 										<div class="login" style="position:relative;width:200px;height:25px;border:0;padding:0;margin:0;">
-											<select style="position:absolute;top:0px;left:0px;width:214px; height:25px;line-height:20px;margin:0;padding:0;" onchange="document.getElementById('azienda').value=this.options[this.selectedIndex].text;">											
+											<select style="position:absolute;top:0px;left:0px;width:214px; height:25px;line-height:20px;margin:0;padding:0;" onchange="document.getElementById('enterprise').value=this.options[this.selectedIndex].text;">											
 												<option></option>	
 												<%for(int i=0; i<comunities.size(); i++){
 													SbiCommunity objComm = (SbiCommunity)comunities.get(i); %>
 													<option value="<%=objComm.getName()%>"><%=objComm.getName() %></option>	
 												<%} %>																															
 											</select>											
-											<input type="text" name="azienda" placeholder="" id="azienda" style="position:absolute;top:1px;left:2px;width:183px;height:23px;border:0px;" onfocus="this.select()" onKeyPress="document.getElementById('aziendaIsChanged').value=true">											
-											<input type="hidden" name="aziendaIsChanged" id="aziendaIsChanged"> 									
+											<input type="text" name="enterprise" placeholder="" id="enterprise" style="position:absolute;top:1px;left:2px;width:183px;height:23px;border:0px;" onfocus="this.select()" onKeyPress="document.getElementById('enterpriseIsChanged').value=true">											
+											<input type="hidden" name="enterpriseIsChanged" id="enterpriseIsChanged"> 									
 										</div>
 									<td></td>
 									<td></td>
@@ -459,8 +490,8 @@ a:hover{
 								</tr>
 								<tr>
 									<td colspan="3"><textarea style="width: 500px"
-											class="login" rows="5" cols="35" name="biografia"
-											id="biografia"></textarea>
+											class="login" rows="5" cols="35" name="biography"
+											id="biography"></textarea>
 									</td>
 
 								</tr>
@@ -484,7 +515,7 @@ a:hover{
 									    </a>                              
 									  </td> -->
 									    <div class="submit">
-			                                <input type="text" value="<%=msgBuilder.getMessage("signup",request)%>" onclick="javascript:register();" />
+			                                <input type="button" value="<%=msgBuilder.getMessage("signup",request)%>" onclick="javascript:register();" />
 			                                <p class="footerMsg"><%=msgBuilder.getMessage("yesAccount",request)%> <a href="${pageContext.request.contextPath}/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE">Login</a></p>                                
 			                            </div>
 									  </tr>

@@ -158,6 +158,21 @@ Sbi.exception.ExceptionHandler = function(){
        		},config||{}));
         },
         
+        showInfoMessageWithCallback : function(errMessage, title, config) {
+        	var m = errMessage || LN('sbi.generic.info');
+        	var t = title || LN('sbi.generic.info');
+        	
+        	Ext.MessageBox.show(Ext.apply({
+           		title: t
+           		, msg: m
+           		, buttons: Ext.MessageBox.OK     
+           		, icon: Ext.MessageBox.INFO
+           		, modal: false
+           		, fn: config.fn
+       		},config||{}));
+        },
+        
+        
         redirectToLoginUrl: function() {
         	var sessionExpiredSpagoBIJSFound = false;
         	try {

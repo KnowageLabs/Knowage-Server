@@ -454,7 +454,7 @@
 		valueType="STRING" category="GENERIC_CONFIGURATION" />
 
 	<CONFIG label="SPAGOBI.SECURITY.DEFAULT_ROLE_ON_SIGNUP" name="Default user role name"
-		description="Default user role on signup" isActive="true" valueCheck="/spagobi/user"
+		description="Default user role on signup" isActive="true" valueCheck="user"
 		valueType="STRING" category="SECURITY" />
 	<CONFIG label="SPAGOBI.SECURITY.ACTIVE_SIGNUP_FUNCTIONALITY"
 		name="SPAGOBI.SECURITY.ACTIVE_SIGNUP_FUNCTIONALITY" description="Enables the signup functionality for the final user"

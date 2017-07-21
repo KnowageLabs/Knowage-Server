@@ -51,6 +51,8 @@
 			.getRequestContainer();
 	//SessionContainer sessionContainer = requestContainer.getSessionContainer();
 
+	String activationMsg = request.getParameter("activationMsg");
+	
 	SingletonConfig serverConfig = SingletonConfig.getInstance();
 	String strActiveSignup = serverConfig
 			.getConfigValue("SPAGOBI.SECURITY.ACTIVE_SIGNUP_FUNCTIONALITY");
@@ -224,7 +226,18 @@
         		%>				
                 <input type="text" id="userID" name="userID" class="form-control" placeholder="<%=msgBuilder.getMessage("username")%>" required autofocus>
                 <input type="password" id="password" name="password" class="form-control" placeholder="<%=msgBuilder.getMessage("password")%>" required>
-				<% if (activeSignup){ %>
+				
+				<%
+				if(activationMsg != null){
+					%>
+					<%=msgBuilder.getMessage(activationMsg)%>
+					<%
+				}
+				%>
+				
+				
+				<% 
+				if (activeSignup){ %>
                 <button class="btn btn-lg btn-primary btn-block btn-signup" onclick="signup();" ><%=msgBuilder.getMessage("signup")%></button>
 				<%} %> 
                 <button class="btn btn-lg btn-primary btn-block btn-signin" type="submit"><%=msgBuilder.getMessage("login")%></button>

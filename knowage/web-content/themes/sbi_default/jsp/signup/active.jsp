@@ -31,7 +31,7 @@ urlBuilder = UrlBuilderFactory.getUrlBuilder(sbiMode);
 
 String strLocale = request.getParameter("locale"); 	
 Locale locale=new Locale(strLocale.substring(0,strLocale.indexOf("_")), strLocale.substring(strLocale.indexOf("_")+1), "");
-
+String accountId = request.getParameter("accountId"); 
 	
 IMessageBuilder msgBuilder = MessageBuilderFactory
 		.getMessageBuilder();
@@ -90,6 +90,9 @@ IMessageBuilder msgBuilder = MessageBuilderFactory
 	  failure: Sbi.exception.ExceptionHandler.handleFailure
     });
   }
+  
+  active('<%= request.getParameter("accountId") %>');
+  
 </script>
 <script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext/sbi/service/ServiceRegistry.js'></script>
 <script type="text/javascript" src='${pageContext.request.contextPath}/js/src/ext/sbi/exception/ExceptionHandler.js'></script>
@@ -197,131 +200,5 @@ a:hover{
     href='${pageContext.request.contextPath}/css/spagobi_shared.css' 
     type='text/css' />
     
-  <form id="formId" name="login" action="${pageContext.request.contextPath}/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE" method="POST" onsubmit="return escapeUserName()">
-    
-    <div id="content" style="height:100%">
-      <div style="padding: 80px ">
-        <table border="0" align="center" style="border-collapse:separate; background: none repeat scroll 0 0; border-radius: 5px 5px 5px 5px;  box-shadow: 0px 0px 10px #888;  -webkit-box-shadow:  0px 0px 10px #888;  -moz-box-shadow:  0px 0px 10px #888; color: #009DC3; display: block; font-size: 14px; line-height: 18px; padding: 20px;">        
-					<tr>
-						<td></td>
-						<td><img
-							src='${pageContext.request.contextPath}/themes/sbi_default/img/wapp/spagobi40logo.png'
-							width='180px' height='51px' style="margin: 20px 0px"/>
-						</td>
-						<td width='50px'></td>
-						<td></td>
-					</tr>
-					<tr>
-						<td width="120px">&nbsp;</td>
-						<td width="350px">
-
-							<table border="0">
-								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left"><%=msgBuilder.getMessage("username")%>:
-									</td>
-									
-
-								</tr>
-								<tr>
-									<td><input id="userID" name="userID" type="text" 
-										class="login">
-									</td>
-									
-
-								</tr>
-								<tr class='header-row-portlet-section'>
-									<td class='login-label' width="90px" align="left"><%=msgBuilder.getMessage("password")%>:
-									</td>
-									
-
-								</tr>
-
-								<tr>
-									<td width="100%"><input id="password" name="password" type="password"
-										class="login"></td>
-									
-
-								</tr>
-								<tr>
-									<td  height="30px">&nbsp;</td>
-								</tr>
-								<tr>
-									<td>
-									<table border="0" width="100%">
-										<tr> 
-											<td>
-												<a href="#"	onclick="signup();">
-												<img src='${pageContext.request.contextPath}/themes/geobi/img/wapp/signup.png'
-												width='100px' height='37px' />
-												</a>
-											</td>
-											<td width="100%" align="right">
-												<input type="image" align="right" src="${pageContext.request.contextPath}/themes/sbi_default/img/wapp/login40.png"
-										             title='login' alt='login'/>
-											</td>
-											
-										</tr>
-									</table>
-									</td>
-								</tr>
-								<tr>
-									<td colspan=3 height="30px">&nbsp;</td>
-								</tr>
-                          </table>
-						</td>
-						<td width='100px'></td>
-						<td style="padding-top: 20px"><img
-							src="${pageContext.request.contextPath}/themes/sbi_default/img/wapp/background_login.png"
-							width="416px" height="287px" />
-						</td>
-					</tr>
-					<tr>
-						<td></td>
-						<td class='header-title-column-portlet-section-nogrey'>
-							<div class="header-row-portlet-section"
-								style="line-height: 130%; margin-top: 10px; font-size: 9pt;">
-
-								<table style="width: 85% !important">
-									<tr>
-										<td align="center"><a href="#"
-											onclick="setUser('biuser','biuser'); login.submit()"><img
-												src="${pageContext.request.contextPath}/themes/sbi_default/img/wapp/biuser_icon.png"
-												width='68px' height='47px' />
-										</a></td>
-										<td align="center"><a href="#"
-											onclick="setUser('bidemo','bidemo'); login.submit()"><img
-												src="${pageContext.request.contextPath}/themes/sbi_default/img/wapp/bidemo_icon.png"
-												width='75px' height='47px' />
-										</a></td>
-										<td align="center"><a href="#"
-											onclick="setUser('biadmin','biadmin'); login.submit()"><img
-												src="${pageContext.request.contextPath}/themes/sbi_default/img/wapp/biadmin_icon.png"
-												width='69px' height='47px' />
-										</a></td>
-									</tr>
-									<tr>
-										<td align="center"><a href="#"
-											onclick="setUser('biuser','biuser'); login.submit()"><b>biuser/biuser</b>
-										</a></td>
-										<td align="center"><a href="#"
-											onclick="setUser('bidemo','bidemo'); login.submit()"><b>bidemo/bidemo</b>
-										</a></td>
-										<td align="center"><a href="#"
-											onclick="setUser('biadmin','biadmin'); login.submit()"><b>biadmin/biadmin</b>
-										</a></td>
-										
-									</tr>
-								</table>
-
-							</div></td>
-						<td></td>
-						<td></td>
-					</tr>
-					
-
-				</table>
-		</div>
-      </div>
-    </form>
   </body>
 </html>
