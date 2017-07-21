@@ -114,6 +114,9 @@ angular-table, cockpit-angular-table{
 	    font-size: $tableFontSize;
 	    color: $baseColor;
 	    font-weight: 600;
+	    span {
+	    	font-size: $headerFontSize;
+	    }
 	  }
 
 	table>tbody>tr.selectedRowItem {
@@ -129,9 +132,9 @@ angular-table, cockpit-angular-table{
 	    align-items: center;
 	  }
 	
-	*:focus {
-		outline: none;
-	}
+	//*:focus {
+	//	outline: none;
+	//}
 	
 	.hidden{
 	display:none!important;}
@@ -538,6 +541,26 @@ angular-table, cockpit-angular-table{
 		}
 	}
 
+}
+
+.accessibleModeOn {
+	angular-table {
+		#angularFullTableContentBox {
+			padding-top:0;
+			.angularTableHeader {
+				display:none;
+			}
+			#angularTableContentBox {
+				th {
+					height: 2rem;
+					padding-left: 10px;
+				}
+			}
+		}
+	}
+	.md-button.md-knowage-theme.md-fab:not([disabled]) {
+		background-color: transparent !Important;
+	}
 }
 
 /* IE11 fix */

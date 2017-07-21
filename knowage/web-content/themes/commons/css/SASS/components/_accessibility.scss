@@ -100,3 +100,10 @@
 	}
 }
 
+.accessibleModeOn{
+  *:focus {
+    outline-width: 5px;
+    outline-offset: 10px;
+    outline-style: solid;
+  }
+}

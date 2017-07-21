@@ -420,7 +420,6 @@ md-toast.md-knowage-theme.kn-toast-error {
   -webkit-flex: 1 auto;
           flex: 1;
    width:100%;
-   margin:0px !important;
 }
 
 .flex2 {
@@ -793,6 +792,7 @@ md-tab-item {
   left: -30px !important;
 }
 
+
 /* IE11 fix */
 
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
@@ -810,3 +810,4 @@ md-tab-item {
   }
   
 }
+
