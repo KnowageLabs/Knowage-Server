@@ -81,6 +81,8 @@ public class SpagoBIConstants {
 	public static final String DISTRIBUTED_MAP_FOR_ASSOCIATION = "ASSOCIATION";
 	public static final String DISTRIBUTED_MAP_INSTANCE_NAME = "KNOWAGE";
 	public static final String DISTRIBUTED_MAP_FOR_LICENSE = "LICENSE";
+	public static final String DISTRIBUTED_MAP_FOR_SIGNUP = "SIGNUP";
+
 	public static final String LICENSE_PATH_SUFFIX = "lic";
 
 	public static final String MODALITY = "MODALITY";
