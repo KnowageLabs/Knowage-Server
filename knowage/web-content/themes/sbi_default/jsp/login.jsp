@@ -229,9 +229,16 @@
 				
 				<%
 				if(activationMsg != null){
-					%>
-					<%=msgBuilder.getMessage(activationMsg)%>
-					<%
+					String style = null;
+					if(activationMsg.contains("KO")){
+						style ="'color:red;font-size:12pt;'";
+					}
+					else{
+						  style ="'font-size:12pt;'";
+					}
+	             %>
+	             <br/><div style=<%=style%> ><%=msgBuilder.getMessage(activationMsg)%></div><br/>
+                <%                      
 				}
 				%>
 				

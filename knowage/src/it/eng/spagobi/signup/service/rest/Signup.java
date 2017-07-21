@@ -280,7 +280,7 @@ public class Signup {
 		// verify request authenticity
 		if (uuid == null) {
 			logger.error("missing uuid key, request not valid, user cannot be activated");
-			return "signup.msg.invalidRequest";
+			return "signup.msg.invalidRequestKO";
 		}
 
 		Object obj = mapLocks.get(accountId);
@@ -291,11 +291,11 @@ public class Signup {
 
 			if (!UUIDinMap.equals(uuid)) {
 				logger.error("Request seems not be valid, uuid check failed");
-				return "signup.msg.invalidRequest";
+				return "signup.msg.invalidRequestKO";
 			}
 		} catch (Exception e) {
 			logger.error("Could not verify uuid or timeout passed, user cannot be activated");
-			return "signup.msg.invalidRequest";
+			return "signup.msg.invalidRequestKO";
 		}
 
 		logger.debug("request is valid ");
@@ -331,12 +331,12 @@ public class Signup {
 				} catch (EMFUserError emferr) {
 				}
 				if (user == null) {
-					returnMsg = "signup.msg.unknownUser";
+					returnMsg = "signup.msg.unknownUserKO";
 				} else if (!user.getFlgPwdBlocked()) {
-					returnMsg = "signup.msg.userActive";
+					returnMsg = "signup.msg.userActiveKO";
 					mapLocks.remove(accountId);
 				} else if (System.currentTimeMillis() > user.getCommonInfo().getTimeIn().getTime() + Long.parseLong(expired_time) * 24 * 60 * 60 * 1000) {
-					returnMsg = "signup.msg.userActivationExpired";
+					returnMsg = "signup.msg.userActivationExpiredKO";
 					mapLocks.remove(accountId);
 				} else {
 					user.setFlgPwdBlocked(false);
@@ -561,7 +561,7 @@ public class Signup {
 			sb.append("</HTML>");
 			String mailTxt = sb.toString();
 
-			// put on hazelcast map uuid 
+			// put on hazelcast map uuid
 			IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME,
 					SpagoBIConstants.DISTRIBUTED_MAP_FOR_SIGNUP);
 
