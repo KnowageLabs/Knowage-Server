@@ -65,6 +65,7 @@ public class TimeAggregationHandler {
 		if (temporalDimension != null) {
 			HierarchicalDimensionField hierarchicalDimensionByEntity = temporalDimension.getHierarchicalDimensionByEntity(temporalDimension.getType());
 			if (hierarchicalDimensionByEntity == null) {
+				logger.error("Temporal dimension hierarchy is [null]");
 				throw new SpagoBIRuntimeException("Temporal dimension hierarchy is [null]");
 			}
 			Hierarchy defaultHierarchy = hierarchicalDimensionByEntity.getDefaultHierarchy();
@@ -588,6 +589,8 @@ public class TimeAggregationHandler {
 							String currentPeriodValue = "K_UNDEFINED";
 							if ((currentPeriod != null)) {
 								currentPeriodValue = currentPeriod.getPeriod() + "";
+							}else {
+								logger.error("There is NO value on current period... set period on filter or extends temporal dimension data");
 							}
 							currentPeriodValuesByType.put(levelColumn, currentPeriodValue);
 
@@ -627,6 +630,8 @@ public class TimeAggregationHandler {
 				String currentPeriodValue = "K_UNDEFINED";
 				if ((currentPeriod != null)) {
 					currentPeriodValue = currentPeriod.getPeriod() + "";
+				}else {
+					logger.error("There is NO value on current period... set period on filter or extends temporal dimension data");
 				}
 				
 				String[] currentPeriodValues = new String[] {  currentPeriodValue };
@@ -740,17 +745,20 @@ public class TimeAggregationHandler {
 	}
 
 	private void addSumFunctionToAllMeasureInSelect(List<ISelectField> selectFields) {
+		logger.debug("IN");
 		for (ISelectField sfield : selectFields) {
 			if (sfield.isSimpleField()) {
 				SimpleSelectField ssField = (SimpleSelectField) sfield;
 
 				if (ssField.getFunction() == null && "MEASURE".equals(ssField.getNature())
-						|| ssField.getTemporalOperand() != null && ssField.getTemporalOperand().length() > 0) {
+						&& ssField.getTemporalOperand() != null && ssField.getTemporalOperand().length() > 0) {
+					 logger.debug("SET SUM as aggregation functon");
 					ssField.setFunction(AggregationFunctions.get(AggregationFunctions.SUM));
 				}
 
 			}
 		}
+		logger.debug("OUT");
 	}
 
 	private Set<String> addMissingGroupByToTheQuery(Query query, List<ISelectField> selectFields,
