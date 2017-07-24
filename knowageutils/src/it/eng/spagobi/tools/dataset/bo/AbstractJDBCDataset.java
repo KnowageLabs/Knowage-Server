@@ -99,10 +99,11 @@ public abstract class AbstractJDBCDataset extends ConfigurableDataSet {
 	@Override
 	public void setUserProfileAttributes(Map userProfile) {
 		this.userProfileParameters = userProfile;
-		if (getDataSource().checkIsMultiSchema()) {
+		IDataSource dataSource = getDataSource();
+		if (dataSource != null && dataSource.checkIsMultiSchema()) {
 			String schema = null;
 			try {
-				schema = (String) userProfile.get(getDataSource().getSchemaAttribute());
+				schema = (String) userProfile.get(dataSource.getSchemaAttribute());
 				((JDBCDataProxy) dataProxy).setSchema(schema);
 				logger.debug("Set UP Schema=" + schema);
 			} catch (Throwable t) {
