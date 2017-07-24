@@ -279,12 +279,12 @@ function userImportFuncController(sbiModule_download,sbiModule_device,$scope, $m
 	
 	$scope.stopImport=function(text,title){
 		var titleFin=title || "";
-		 var confirm = $mdDialog.confirm()
-		.title(titleFin)
-		.content(text)
-		.ariaLabel('error import') 
-		.ok('OK') 
-		$mdDialog.show(confirm).then(function() {
+		var alert = $mdDialog.alert()
+				.title(titleFin)
+				.content(text)
+				.ariaLabel('error import') 
+				.ok('OK');
+		$mdDialog.show(alert).then(function() {
 			$scope.stepControl.resetBreadCrumb();
 			$scope.stepControl.insertBread({name: sbiModule_translate.load('SBISet.impexp.exportedRoles','component_impexp_messages')});
 			$scope.finishImport();

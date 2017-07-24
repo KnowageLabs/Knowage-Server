@@ -297,17 +297,19 @@ function alertImportFuncController(sbiModule_download, sbiModule_device, $scope,
 
 	$scope.stopImport = function(text, title) {
 		var titleFin = title || "";
-		var confirm = $mdDialog.confirm().title(titleFin).content(text)
-				.ariaLabel('error import').ok('OK')
-		$mdDialog.show(confirm).then(
-				function() {
-					$scope.stepControl.resetBreadCrumb();
-					$scope.stepControl.insertBread({
-						name : sbiModule_translate.load(
-								'SBISet.impexp.exportedKpis',
-								'component_impexp_messages')
-					});
-					$scope.finishImport();
-				});
+		var alert = $mdDialog.alert()
+				.title(titleFin)
+				.content(text)
+				.ariaLabel('error import')
+				.ok('OK');
+		$mdDialog.show(alert).then(function() {
+			$scope.stepControl.resetBreadCrumb();
+			$scope.stepControl.insertBread({
+				name : sbiModule_translate.load(
+						'SBISet.impexp.exportedKpis',
+						'component_impexp_messages')
+			});
+			$scope.finishImport();
+		});
 	}
 }

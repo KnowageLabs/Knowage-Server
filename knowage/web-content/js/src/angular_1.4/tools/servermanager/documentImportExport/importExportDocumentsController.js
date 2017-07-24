@@ -81,13 +81,12 @@ function importFuncController(sbiModule_download,sbiModule_device,$scope, $mdDia
 	
 
 	$scope.stopImport=function(text){
-		 var confirm = $mdDialog.confirm()
-		.title('')
-		.content(text)
-		.ariaLabel('error import') 
-		.ok('OK') 
-		.cancel('Cancel')
-		$mdDialog.show(confirm).then(function() {
+		 var alert = $mdDialog.alert()
+				.title('')
+				.content(text)
+				.ariaLabel('error import') 
+				.ok('OK');
+		$mdDialog.show(alert).then(function() {
 			$scope.stepControl.resetBreadCrumb();
 			$scope.stepControl.insertBread({name: sbiModule_translate.load('SBISet.impexp.exportedRoles','component_impexp_messages')});
 			$scope.finishImport();

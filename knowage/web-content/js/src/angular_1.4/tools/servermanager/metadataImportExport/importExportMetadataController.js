@@ -274,9 +274,12 @@ function metadataImportFuncController(sbiModule_download, sbiModule_device, $sco
 
 	$scope.stopImport = function(text, title) {
 		var titleFin = title || "";
-		var confirm = $mdDialog.confirm().title(titleFin).content(text)
-				.ariaLabel('error import').ok('OK')
-		$mdDialog.show(confirm).then(
+		var alert = $mdDialog.alert()
+				.title(titleFin)
+				.content(text)
+				.ariaLabel('error import')
+				.ok('OK');
+		$mdDialog.show(alert).then(
 				function() {
 					$scope.stepControl.resetBreadCrumb();
 					$scope.stepControl.insertBread({

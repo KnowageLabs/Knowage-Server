@@ -109,19 +109,20 @@ function funzione(sbiModule_download,sbiModule_translate,sbiModule_restServices,
 //				.ariaLabel('error import').ok('OK').cancel(
 //						sbiModule_translate.load("sbi.general.cancel"));
 //		
-		var confirm = $mdDialog.alert().title(titleFin).textContent(text)
-		.ariaLabel('error import').ok('OK');
-		
-		$mdDialog.show(confirm).then(
-				function() {
-					$scope.stepControl.resetBreadCrumb();
-					$scope.stepControl.insertBread({
-						name : sbiModule_translate.load(
-								'sbi.impexp.catalog.upload',
-								'component_impexp_messages')
-					});
-					$scope.finishImport();
-				});
+		var alert = $mdDialog.alert()
+				.title(titleFin)
+				.textContent(text)
+				.ariaLabel('error import')
+				.ok('OK');
+		$mdDialog.show(alert).then(function() {
+			$scope.stepControl.resetBreadCrumb();
+			$scope.stepControl.insertBread({
+				name : sbiModule_translate.load(
+						'sbi.impexp.catalog.upload',
+						'component_impexp_messages')
+			});
+			$scope.finishImport();
+		});
 	}
 	
 	
