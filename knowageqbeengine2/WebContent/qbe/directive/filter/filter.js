@@ -49,22 +49,21 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 	var i = 1;
 	$scope.targetAF = {};
 	$scope.addNewFilter= function (){
-		console.log($scope.filters);
 		$scope.showTable = false;
 		$scope.targetOption = "default";
 		var object = {
 				"filterId": "Filter"+i,
 				"filterDescripion": "Filter"+i,
 				"promptable": false,
-				"leftOperandValue": "",
-				"leftOperandDescription": "",
-				"leftOperandLongDescription": "",
+				"leftOperandValue": $scope.ngModel.field.field.id,
+				"leftOperandDescription": $scope.ngModel.field.field.entity+ " : " + $scope.ngModel.field.field.name,
+				"leftOperandLongDescription": $scope.ngModel.field.field.entity+ " : " + $scope.ngModel.field.field.name,
 				"leftOperandType": "Field Content",
 				"leftOperandDefaultValue": null,
 				"leftOperandLastValue": null,
-				"leftOperandAlias": "",
+				"leftOperandAlias": $scope.ngModel.field.field.name,
 				"leftOperandDataType": "",
-				"operator": "",
+				"operator": "EQUALS TO",
 				"rightOperandValue": [],
 				"rightOperandDescription": "",
 				"rightOperandLongDescription": "",
@@ -73,7 +72,7 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 				"rightOperandLastValue": [],
 				"rightOperandAlias": null,
 				"rightOperandDataType": "",
-				"booleanConnector": "",
+				"booleanConnector": "AND",
 				"deleteButton": false
 			}
 
@@ -106,8 +105,7 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 		}
 	}
 
-
-	console.log($scope.entitiesField)
+	$scope.getBooleanConnectors = filters_service.getBooleanConnectors;
 	$scope.getConditionOptions = filters_service.getOperators;
 	$scope.disableCombo = true;
 	$scope.fillInput = function (filter, type, value){
@@ -170,7 +168,7 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 	$scope.listOfValues = [];
 	var openTableWithValues = function (){
 		$scope.showTable = true;
-		filters_service.getFieldsValue($scope.left).then(function(response){
+		filters_service.getFieldsValue($scope.ngModel.field.field.id).then(function(response){
 			$scope.listOfValues = response.data.rows;
 		});
 	}

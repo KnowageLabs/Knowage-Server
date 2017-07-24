@@ -22,12 +22,11 @@ filters.service('filters_service',function(sbiModule_action){
 		return response;
 	};
 	this.getOperators = [
-		         {name:"none",value:"NONE"},
 		         {name:"equals to",value:"EQUALS TO"},
 		         {name:"not equals to",value:"NOT EQUALS TO"},
 		         {name:"greater then",value:"GREATER THAN"},
 		         {name:"equals or greater then",value:"EQUALS OR GREATER THAN"},
-		         {name:"less than".toLowerCase(),value:"LESS THAN"},
+		         {name:"less than",value:"LESS THAN"},
 		         {name:"equals or less than",value:"EQUALS OR LESS THAN"},
 		         {name:"starts with",value:"STARTS WITH"},
 		         {name:"not starts with",value:"NOT STARTS WITH"},
@@ -40,7 +39,11 @@ filters.service('filters_service',function(sbiModule_action){
 		         {name:"in",value:"IN"},
 		         {name:"not in",value:"NOT IN"},
 		         {name:"is null",value:"IS NULL"},
-		         {name:"not null",value:"NOT NULL"}]
+		         {name:"not null",value:"NOT NULL"}];
+
+	this.getBooleanConnectors= [
+	    		         {name:"AND",value:"AND"},
+	    		         {name:"OR",value:"OR"}];
 
 });
 

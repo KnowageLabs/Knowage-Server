@@ -18,25 +18,21 @@
         <th md-column ><span>Field</span></th>
         <th md-column ><span>Condition</span></th>
         <th md-column >Target</th>
+        <th md-column >Connector</th>
         <th md-column ></th>
         <th md-column ></th>
       </tr>
     </thead>
-    
-    
-    
     <tbody md-body>
       <tr md-row md-select="filter" md-select-id="name" md-auto-select ng-repeat="filter in filters">
-        <td md-cell><md-select ng-model="filter.leftOperandDescription" >
-          <md-option ng-repeat="f in entitiesField" value="{{f.id}}" ng-click="setLeftValue(f,filter)">
-            {{field.entity}} : {{f.text}}
-          </md-option>
-        </md-select></td>
+        <td md-cell>
+        	<input name="left" ng-model="filter.leftOperandDescription" ng-maxlength="100" ng-readonly="true" >
+        </td>
         <td md-cell> <md-select ng-model="filter.operator">
-          <md-option ng-repeat="operator in getConditionOptions" value="{{operator.value}}">
-            {{operator.name}}
-          </md-option>
-        </md-select></td>
+			<md-option ng-repeat="operator in getConditionOptions" value="{{operator.value}}" >
+            	{{operator.name}}
+			</md-option></md-select>
+        </td>
         <td md-cell>
         	<input name="target" ng-model="filter.rightOperandDescription" ng-maxlength="100" ng-change="edit(filter)" >
         	
@@ -86,8 +82,11 @@
 					</md-menu-item>
 				</md-menu-content>
 			</md-menu>
-        
-        
+   		</td>
+        <td md-cell><md-select ng-model="filter.booleanConnector" >
+        	<md-option ng-repeat="c in getBooleanConnectors" value="{{c.value}}"  >
+            	{{c.name}}
+			</md-option></md-select>
         </td>
         <td md-cell><md-menu>
 						<md-button 	aria-label="Open menu for setting target type" class="md-icon-button" 
