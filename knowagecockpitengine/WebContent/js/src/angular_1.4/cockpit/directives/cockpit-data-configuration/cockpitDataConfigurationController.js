@@ -127,15 +127,15 @@ function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitMod
         	label:"Name",
         	name:"name",
         	static:true
-        }];
+        },
+		{
+			label:"Use Cache",
+			name:"usacache",
+			template:"<md-checkbox ng-init='row.useCache=row.useCache==undefined? true : row.useCache' ng-model='row.useCache' aria-label='usaCache'></md-checkbox>",
+			static:true
+		}];
 	 if($scope.showNearRealTimeCockpit){
-		 $scope.cockpitDatasetTableColumns.push(
-			{
-				label:"Use Cache",
-				name:"usacache",
-				template:"<md-checkbox ng-init='row.useCache=row.useCache==undefined? true : row.useCache' ng-model='row.useCache' aria-label='usaCache'></md-checkbox>",
-				static:true
-			},
+		$scope.cockpitDatasetTableColumns.push(
 			{
 				label:"Frequency (seconds)",
 				name:"freq",
