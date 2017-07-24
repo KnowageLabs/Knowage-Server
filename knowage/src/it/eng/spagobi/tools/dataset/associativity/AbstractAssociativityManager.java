@@ -18,6 +18,19 @@
 
 package it.eng.spagobi.tools.dataset.associativity;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.naming.NamingException;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.jgrapht.graph.Pseudograph;
+
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -40,19 +53,6 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.cache.CacheItem;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.sql.SqlUtils;
-
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.naming.NamingException;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.jgrapht.graph.Pseudograph;
 
 /**
  * @author Alessandro Portosa (alessandro.portosa@eng.it)
@@ -102,7 +102,7 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 
 	protected String getColumnNames(String associationNamesString, String datasetName) {
 		String[] associationNames = associationNamesString.split(",");
-		List<String> columnNames = new ArrayList<String>();
+		List<String> columnNames = new ArrayList<>();
 		for (String associationName : associationNames) {
 			Map<String, String> associationToColumns = datasetToAssociations.get(datasetName);
 			if (associationToColumns != null) {
@@ -155,8 +155,9 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 
 					AssociativeDatasetContainer container;
 
-					if (dataSet.isPersisted() && !dataSet.isPersistedHDFS()) {
-						container = new AssociativeDatasetContainer(dataSet, dataSet.getPersistTableName(), dataSet.getDataSourceForWriting(), parametersValues);
+					if (dataSet.isPersisted()) {
+						container = new AssociativeDatasetContainer(dataSet, dataSet.getPersistTableName(), dataSet.getDataSourceForWriting(),
+								parametersValues);
 					} else if (dataSet.isFlatDataset()) {
 						container = new AssociativeDatasetContainer(dataSet, dataSet.getFlatTableName(), dataSet.getDataSource(), parametersValues);
 					} else if (config.getNearRealtimeDatasets().contains(v1) && DatasetManagementAPI.isJDBCDataSet(dataSet)
@@ -170,11 +171,15 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 					} else {
 						String signature = dataSet.getSignature();
 						CacheItem cacheItem = cache.getMetadata().getCacheItem(signature);
-						if (cacheItem != null) {
-							container = new AssociativeDatasetContainer(dataSet, cacheItem.getTable(), cacheDataSource, parametersValues);
-						} else {
-							throw new SpagoBIException("Unable to find dataset [" + v1 + "] in cache");
+						if (cacheItem == null) {
+							logger.debug("Unable to find dataset [" + v1 + "] in cache. This can be due to changes on dataset parameters");
+							cache.put(dataSet);
+							cacheItem = cache.getMetadata().getCacheItem(signature);
+							if (cacheItem == null) {
+								throw new SpagoBIException("Unable to find dataset [" + v1 + "] in cache.");
+							}
 						}
+						container = new AssociativeDatasetContainer(dataSet, cacheItem.getTable(), cacheDataSource, parametersValues);
 					}
 					associativeDatasetContainers.put(v1, container);
 				}
