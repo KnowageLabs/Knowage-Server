@@ -17,30 +17,6 @@
  */
 package it.eng.spagobi.tools.dataset.service;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanAttribute;
-import it.eng.spago.base.SourceBeanException;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.bo.Config;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOConfig;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.FileUtilities;
-import it.eng.spagobi.engines.config.bo.Engine;
-import it.eng.spagobi.hdfs.HdfsUtilities;
-import it.eng.spagobi.hdfs.Hdfs;
-import it.eng.spagobi.tools.dataset.bo.FileDataSet;
-import it.eng.spagobi.tools.dataset.bo.HdfsDataSet;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
-import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
-import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.SpagoBIAccessUtils;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -63,6 +39,27 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.base.SourceBeanAttribute;
+import it.eng.spago.base.SourceBeanException;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.Config;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOConfig;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.FileUtilities;
+import it.eng.spagobi.engines.config.bo.Engine;
+import it.eng.spagobi.tools.dataset.bo.FileDataSet;
+import it.eng.spagobi.tools.dataset.bo.HdfsDataSet;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
+import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.SpagoBIAccessUtils;
+import it.eng.spagobi.utilities.assertion.Assert;
 
 /*
  DB UPDATES TO DO to apply patch
@@ -480,24 +477,11 @@ public class FileServiceDataSetCRUD {
 
 	void copyDataFileToResources(File tempDataFile, FileDataSet dataSet) {
 		logger.debug("IN");
-
 		// put csv file inside resources
 		String resourcePath = dataSet.getResourcePath();
-
-		if (dataSet.isPersistedHDFS() && dataSet instanceof HdfsDataSet) {
-			String sep = HdfsUtilities.getHdfsSperator();
-			String fileResPath = resourcePath + sep + "dataset" + sep + "files" + sep;
-			Hdfs hdfs = ((HdfsDataSet) dataSet).getHdfs();
-			boolean result = hdfs.copyFromLocalFile(tempDataFile.getPath(), fileResPath);
-			if (result) {
-				logger.error("Impossible to copy dataset from \"" + tempDataFile.getPath() + "\" to \"" + fileResPath.toString() + "\"");
-				throw new SpagoBIRuntimeException("Impossible to copy dataset from \"" + tempDataFile.getPath() + "\" to \"" + fileResPath.toString() + "\"");
-			}
-		} else {
-			String fileResPath = resourcePath + "/dataset/files/";
-			File destFile = new File(fileResPath);
-			FileUtilities.copyFile(tempDataFile, destFile, true, false);
-		}
+		String fileResPath = resourcePath + "/dataset/files/";
+		File destFile = new File(fileResPath);
+		FileUtilities.copyFile(tempDataFile, destFile, true, false);
 		logger.debug("OUT");
 
 	}

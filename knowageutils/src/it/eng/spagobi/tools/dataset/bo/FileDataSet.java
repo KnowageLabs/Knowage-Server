@@ -17,6 +17,9 @@
  */
 package it.eng.spagobi.tools.dataset.bo;
 
+import org.apache.log4j.Logger;
+import org.json.JSONObject;
+
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
@@ -29,9 +32,6 @@ import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.json.JSONUtils;
-
-import org.apache.log4j.Logger;
-import org.json.JSONObject;
 
 /**
  * @authors Angelo Bernabei angelo.bernabei@eng.it Giulio Gavardi giulio.gavardi@eng.it Andrea Gioia andrea.gioia@eng.it Davide Zerbetto davide.zerbetto@eng.it
@@ -56,18 +56,11 @@ public class FileDataSet extends ConfigurableDataSet {
 	 * Instantiates a new empty file data set.
 	 */
 	public FileDataSet() {
-		super();
 	}
 
 	public FileDataSet(SpagoBiDataSet dataSetConfig) {
-		super(dataSetConfig);
-		if (dataSetConfig.isPersistedHDFS()) {
-			return;
-		}
 		logger.debug("IN");
 		try {
-			// JSONObject jsonConf =
-			// ObjectUtils.toJSONObject(dataSetConfig.getConfiguration());
 			String config = JSONUtils.escapeJsonString(dataSetConfig.getConfiguration());
 			JSONObject jsonConf = ObjectUtils.toJSONObject(config);
 			String fileName = (jsonConf.get(FILE_NAME) != null) ? jsonConf.get(FILE_NAME).toString() : "";
@@ -85,17 +78,13 @@ public class FileDataSet extends ConfigurableDataSet {
 		} catch (Exception e) {
 			logger.error("Error while defining dataset configuration.  Error: " + e.getMessage());
 		}
-		// setFileName( dataSetConfig.getFileName() );
-
 		logger.debug("OUT");
 	}
 
 	@Override
 	public SpagoBiDataSet toSpagoBiDataSet() {
 		SpagoBiDataSet sbd;
-
 		sbd = super.toSpagoBiDataSet();
-
 		sbd.setType(DS_TYPE);
 		return sbd;
 	}
@@ -121,18 +110,11 @@ public class FileDataSet extends ConfigurableDataSet {
 
 		if ("CSV".equalsIgnoreCase(fileType)) {
 			logger.info("File format: [CSV]");
-			// setDataReader( new CsvDataReader() );
 			setDataReader(new FileDatasetCsvDataReader(jsonConf));
 		} else if ("XLS".equalsIgnoreCase(fileType)) {
 			logger.info("File format: [XLS Office 2003]");
 			setDataReader(new FileDatasetXlsDataReader(jsonConf));
-		}
-		// else if ("xml".equalsIgnoreCase( fileExtension ) || "txt".equalsIgnoreCase( fileExtension )) {
-		// logger.info("File format: [XML]");
-		// setDataReader( new XmlDataReader() );
-		// }
-
-		else {
+		} else {
 			throw new IllegalArgumentException("[" + fileExtension + "] is not a supported file type");
 		}
 	}

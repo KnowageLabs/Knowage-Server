@@ -121,6 +121,7 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 		
 		$scope.dataset.type = "File";
 		$scope.dataset.persist = false;
+		$scope.dataset.exportToHdfs = false;
 		$scope.dataset.tablePrefix = datasetParameters.TABLE_NAME_PREFIX+sbiModule_user.userId+"_";
 		$scope.dataset.tableName = "";
 		
@@ -542,6 +543,19 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 				if (!response.data.errors) {
 				
 					console.info("[SUCCESS]: The Step 4 form is submitted successfully. The file dataset is saved");
+					
+					if($scope.dataset.exportToHdfs) {
+						sbiModule_restServices.promisePost('1.0/hdfs',response.data.id)
+						.then(
+								function(responseHDFS) {
+									sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.ds.hdfs.request.work"), 'Success!');	
+								}, 
+								
+								function(responseHDFS) {
+									sbiModule_messaging.showErrorMessage(responseHDFS.data.errors[0].message, 'Error');
+								}
+							);
+					}
 					
 					/**
 					 * If some dataset is removed from the filtered set of datasets, clear the search input, since all datasets are refreshed.

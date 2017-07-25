@@ -396,8 +396,18 @@
 			                  			</label> 
 				                  		
 				                  		<md-input-container class="small counter workspacePersistCheckboxContainer">
-				                     		<md-checkbox 	aria-label="Checkbox 2" 
+				                     		<md-checkbox 	aria-label="Checkbox Persist" 
 					                     					ng-model="dataset.persist" ng-checked="" class="workspaceCheckbox">
+											</md-checkbox>
+				                  		</md-input-container>
+				                  		
+				                  		<label class="workspaceLabelForCheckBox">
+				                  			{{translate.load("sbi.ds.hdfs")}}:
+			                  			</label> 
+				                  		
+				                  		<md-input-container class="small counter workspacePersistCheckboxContainer">
+				                     		<md-checkbox 	aria-label="Checkbox HDFS" 
+					                     					ng-model="dataset.exportToHdfs" ng-checked="" class="workspaceCheckbox">
 											</md-checkbox>
 				                  		</md-input-container>
 				                  		

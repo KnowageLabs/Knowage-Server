@@ -1,8 +1,5 @@
 package it.eng.spagobi.hdfs;
 
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -18,6 +15,9 @@ import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hdfs.HdfsConfiguration;
 import org.apache.log4j.Logger;
+
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class Hdfs {
 	private static final Logger logger = Logger.getLogger(Hdfs.class);
@@ -63,18 +63,20 @@ public class Hdfs {
 		String hdfsConfigFolderPath = SpagoBIUtilities.getResourcePath() + File.separator + "hdfs" + File.separator + label + File.separator;
 		logger.debug("Init HDFS configuration. Search config files in: " + hdfsConfigFolderPath);
 		File file = new File(hdfsConfigFolderPath);
-		String[] names = file.list();
 		int nFiles = 0;
-		for (String singleConfigFilePath : names) {
-			if (singleConfigFilePath.endsWith(".xml")) {
-				conf.addResource(new Path(hdfsConfigFolderPath + singleConfigFilePath));
-				nFiles++;
-				logger.debug("Add \"" + singleConfigFilePath + "\" configuration file");
-			} else if (singleConfigFilePath.endsWith(".properties")) {
-				String propertyFilePath = hdfsConfigFolderPath + File.separator + singleConfigFilePath;
-				// add the properties contained in property file, if it contains at least one property count it has valid file;
-				if (addPropertyFileToConfiguration(propertyFilePath, conf) == true) {
+		if (file.exists() && file.isDirectory()) {
+			String[] names = file.list();
+			for (String singleConfigFilePath : names) {
+				if (singleConfigFilePath.endsWith(".xml")) {
+					conf.addResource(new Path(hdfsConfigFolderPath + singleConfigFilePath));
 					nFiles++;
+					logger.debug("Add \"" + singleConfigFilePath + "\" configuration file");
+				} else if (singleConfigFilePath.endsWith(".properties")) {
+					String propertyFilePath = hdfsConfigFolderPath + File.separator + singleConfigFilePath;
+					// add the properties contained in property file, if it contains at least one property count it has valid file;
+					if (addPropertyFileToConfiguration(propertyFilePath, conf) == true) {
+						nFiles++;
+					}
 				}
 			}
 		}

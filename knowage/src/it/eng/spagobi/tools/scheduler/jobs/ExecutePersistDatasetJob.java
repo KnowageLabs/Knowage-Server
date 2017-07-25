@@ -17,6 +17,14 @@
  */
 package it.eng.spagobi.tools.scheduler.jobs;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.quartz.Job;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -32,14 +40,6 @@ import it.eng.spagobi.tools.dataset.persist.IPersistedManager;
 import it.eng.spagobi.tools.dataset.persist.PersistedHDFSManager;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 
 public class ExecutePersistDatasetJob extends AbstractSpagoBIJob implements Job {
 
@@ -78,13 +78,17 @@ public class ExecutePersistDatasetJob extends AbstractSpagoBIJob implements Job 
 			IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetByLabel(jobName);
 			checkQbeDataset(((VersionedDataSet) dataset).getWrappedDataset());
 			checkFileDataset(((VersionedDataSet) dataset).getWrappedDataset());
-			IPersistedManager ptm = null;
-			if (dataset.isPersistedHDFS()) {
-				ptm = new PersistedHDFSManager();
-			} else {
+
+			IPersistedManager ptm;
+			if (dataset.isPersisted()) {
 				ptm = new PersistedTableManager(userProfile);
+				ptm.persistDataSet(dataset);
 			}
-			ptm.persistDataSet(dataset);
+
+			if (dataset.isPersistedHDFS()) {
+				ptm = new PersistedHDFSManager(userProfile);
+				ptm.persistDataSet(dataset);
+			}
 			logger.debug("Persistence ended succesfully!");
 		} catch (Exception e) {
 			logger.error("Error while executiong job ", e);

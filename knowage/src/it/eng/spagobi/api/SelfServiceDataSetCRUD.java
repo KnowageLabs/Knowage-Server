@@ -17,77 +17,6 @@
  */
 package it.eng.spagobi.api;
 
-import it.eng.qbe.dataset.QbeDataSet;
-import it.eng.spago.base.SourceBeanException;
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.bo.Config;
-import it.eng.spagobi.commons.bo.Domain;
-import it.eng.spagobi.commons.bo.Role;
-import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOConfig;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IConfigDAO;
-import it.eng.spagobi.commons.dao.IDomainDAO;
-import it.eng.spagobi.commons.dao.IRoleDAO;
-import it.eng.spagobi.commons.serializer.DataSetJSONSerializer;
-import it.eng.spagobi.commons.serializer.SerializationException;
-import it.eng.spagobi.commons.serializer.SerializerFactory;
-import it.eng.spagobi.commons.utilities.AuditLogUtilities;
-import it.eng.spagobi.commons.utilities.GeneralUtilities;
-import it.eng.spagobi.commons.utilities.UserUtilities;
-import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
-import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
-import it.eng.spagobi.engines.config.bo.Engine;
-import it.eng.spagobi.hdfs.Hdfs;
-import it.eng.spagobi.hdfs.HdfsUtilities;
-import it.eng.spagobi.metamodel.MetaModelWrapper;
-import it.eng.spagobi.metamodel.SiblingsFileWrapper;
-import it.eng.spagobi.rest.annotations.ToValidate;
-import it.eng.spagobi.services.exceptions.ExceptionUtilities;
-import it.eng.spagobi.tools.dataset.bo.CkanDataSet;
-import it.eng.spagobi.tools.dataset.bo.FileDataSet;
-import it.eng.spagobi.tools.dataset.bo.HdfsDataSet;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
-import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
-import it.eng.spagobi.tools.dataset.common.dataproxy.CkanDataProxy;
-import it.eng.spagobi.tools.dataset.common.dataproxy.FileDataProxy;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IField;
-import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
-import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
-import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
-import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
-import it.eng.spagobi.tools.dataset.measurecatalogue.MeasureCatalogue;
-import it.eng.spagobi.tools.dataset.measurecatalogue.MeasureCatalogueSingleton;
-import it.eng.spagobi.tools.dataset.normalization.GeoSpatialDimensionDatasetNormalizer;
-import it.eng.spagobi.tools.dataset.persist.IPersistedManager;
-import it.eng.spagobi.tools.dataset.persist.PersistedHDFSManager;
-import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
-import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
-import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
-import it.eng.spagobi.tools.dataset.validation.ErrorField;
-import it.eng.spagobi.tools.dataset.validation.HierarchyLevel;
-import it.eng.spagobi.tools.dataset.validation.ValidationErrors;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.tools.notification.AbstractEvent;
-import it.eng.spagobi.tools.notification.DatasetNotificationEvent;
-import it.eng.spagobi.tools.notification.DatasetNotificationManager;
-import it.eng.spagobi.tools.notification.EventConstants;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import it.eng.spagobi.utilities.json.JSONUtils;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -115,6 +44,72 @@ import org.json.JSONObject;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import it.eng.qbe.dataset.QbeDataSet;
+import it.eng.spago.base.SourceBeanException;
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
+import it.eng.spagobi.commons.bo.Config;
+import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOConfig;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IConfigDAO;
+import it.eng.spagobi.commons.dao.IDomainDAO;
+import it.eng.spagobi.commons.dao.IRoleDAO;
+import it.eng.spagobi.commons.serializer.DataSetJSONSerializer;
+import it.eng.spagobi.commons.serializer.SerializationException;
+import it.eng.spagobi.commons.serializer.SerializerFactory;
+import it.eng.spagobi.commons.utilities.AuditLogUtilities;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
+import it.eng.spagobi.engines.config.bo.Engine;
+import it.eng.spagobi.metamodel.MetaModelWrapper;
+import it.eng.spagobi.metamodel.SiblingsFileWrapper;
+import it.eng.spagobi.rest.annotations.ToValidate;
+import it.eng.spagobi.services.exceptions.ExceptionUtilities;
+import it.eng.spagobi.tools.dataset.bo.CkanDataSet;
+import it.eng.spagobi.tools.dataset.bo.FileDataSet;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
+import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
+import it.eng.spagobi.tools.dataset.common.dataproxy.CkanDataProxy;
+import it.eng.spagobi.tools.dataset.common.dataproxy.FileDataProxy;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IField;
+import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
+import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
+import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.tools.dataset.measurecatalogue.MeasureCatalogue;
+import it.eng.spagobi.tools.dataset.measurecatalogue.MeasureCatalogueSingleton;
+import it.eng.spagobi.tools.dataset.normalization.GeoSpatialDimensionDatasetNormalizer;
+import it.eng.spagobi.tools.dataset.persist.IPersistedManager;
+import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
+import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
+import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
+import it.eng.spagobi.tools.dataset.validation.ErrorField;
+import it.eng.spagobi.tools.dataset.validation.HierarchyLevel;
+import it.eng.spagobi.tools.dataset.validation.ValidationErrors;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.tools.notification.AbstractEvent;
+import it.eng.spagobi.tools.notification.DatasetNotificationEvent;
+import it.eng.spagobi.tools.notification.DatasetNotificationManager;
+import it.eng.spagobi.tools.notification.EventConstants;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.json.JSONUtils;
+
 /**
  * @authors Antonella Giachino (antonella.giachino@eng.it) Monica Franceschini (monica.franceschini@eng.it)
  */
@@ -127,7 +122,6 @@ public class SelfServiceDataSetCRUD {
 	static private String canNotFillResponseError = "error.mesage.description.generic.can.not.responce";
 	static private String saveDuplicatedDSError = "error.mesage.description.data.set.saving.duplicated";
 	static private String parsingDSError = "error.mesage.description.data.set.parsing.error";
-	static private String STORE_TO_HDFS = SpagoBIConstants.CONFIG_STORE_TO_HDFS;
 
 	static private String previewRowsConfigLabel = "SPAGOBI.DATASET.PREVIEW_ROWS";
 
@@ -135,7 +129,7 @@ public class SelfServiceDataSetCRUD {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getAllDataSet(@Context HttpServletRequest req) {
 		IDataSetDAO dataSetDao = null;
-		List<IDataSet> dataSets = new ArrayList<IDataSet>();
+		List<IDataSet> dataSets = new ArrayList<>();
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		String typeDocWizard = (req.getParameter("typeDoc") != null && !"null".equals(req.getParameter("typeDoc"))) ? req.getParameter("typeDoc") : null;
 		JSONObject JSONReturn = new JSONObject();
@@ -277,7 +271,6 @@ public class SelfServiceDataSetCRUD {
 			Assert.assertNotNull(id, deleteNullIdDataSetError);
 			IDataSetDAO dsDAO = DAOFactory.getDataSetDAO();
 			dsDAO.setUserProfile(profile);
-			// dsDAO.setUserID(profile.getUserUniqueIdentifier().toString());
 			dsDAO.setUserID(((UserProfile) profile).getUserId().toString());
 			IDataSet ds = dsDAO.loadDataSetById(new Integer(id));
 
@@ -336,17 +329,7 @@ public class SelfServiceDataSetCRUD {
 			VersionedDataSet versionedDataset = (VersionedDataSet) dataset;
 			IDataSet wrappedDataset = versionedDataset.getWrappedDataset();
 
-			if (wrappedDataset instanceof HdfsDataSet) {
-				String sep = HdfsUtilities.getHdfsSperator();
-				HdfsDataSet hdfsDataset = (HdfsDataSet) wrappedDataset;
-				String resourcePath = hdfsDataset.getResourcePath();
-				String fileName = hdfsDataset.getFileName();
-				String filePath = resourcePath + sep + "dataset" + sep + "files" + sep;
-				boolean isDeleted = hdfsDataset.deleteFile(filePath + fileName);
-				if (isDeleted) {
-					logger.debug("Dataset File " + fileName + " has been deleted");
-				}
-			} else if (wrappedDataset instanceof FileDataSet) {
+			if (wrappedDataset instanceof FileDataSet) {
 				FileDataSet fileDataset = (FileDataSet) wrappedDataset;
 				String resourcePath = fileDataset.getResourcePath();
 				String fileName = fileDataset.getFileName();
@@ -377,6 +360,7 @@ public class SelfServiceDataSetCRUD {
 			String label = request.getParameter("label");
 			String meta = request.getParameter(DataSetConstants.METADATA);
 			// attributes for persisting dataset
+			String exportToHdfs = request.getParameter("exportToHdfs");
 			String persist = request.getParameter("persist");
 			String persistTablePrefix = request.getParameter("tablePrefix");
 			String persistTableName = request.getParameter("tableName");
@@ -399,14 +383,14 @@ public class SelfServiceDataSetCRUD {
 				dsNew = normalizedDataset;
 			}
 
-			Integer newId = -1;
+			Integer toReturnId = dsNew.getId();
 			if (dsNew.getId() == -1) {
 				// if a ds with the same label not exists on db ok else error
 				if (DAOFactory.getDataSetDAO().loadDataSetByLabel(dsNew.getLabel()) != null) {
 					updateAudit(request, profile, "DATA_SET.ADD", logParam, "KO");
 					throw new SpagoBIRuntimeException(saveDuplicatedDSError);
 				}
-				newId = dao.insertDataSet(dsNew);
+				toReturnId = dao.insertDataSet(dsNew);
 				updateAudit(request, profile, "DATA_SET.ADD", logParam, "OK");
 			} else {
 				// update ds
@@ -435,27 +419,19 @@ public class SelfServiceDataSetCRUD {
 					dataset.setPersistTableName(name);
 				}
 
-				// checkQbeDataset(((VersionedDataSet)
-				// dataset).getWrappedDataset());
 				checkFileDataset(((VersionedDataSet) dataset).getWrappedDataset());
-				IPersistedManager ptm = null;
-				if (dataset.isPersistedHDFS()) {
-					ptm = new PersistedHDFSManager();
-				} else {
-					ptm = new PersistedTableManager(profile);
-				}
+				IPersistedManager ptm = new PersistedTableManager(profile);
 				ptm.persistDataSet(dataset);
 				logger.debug("Persistence ended succesfully!");
 			}
 
 			/**
-			 * Provide a valid JSON with the information of the saved dataset's ID (negative value, namely -1, means we are updating an already existing
-			 * dataset, otherwise we are saving a new dataset.
+			 * Provide a valid JSON with the information of the saved dataset's ID
 			 *
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			JSONObject jo = new JSONObject();
-			jo.put("id", newId);
+			jo.put("id", toReturnId);
 
 			return jo.toString();
 
@@ -607,7 +583,7 @@ public class SelfServiceDataSetCRUD {
 			IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();
 
 			DatasetNotificationManager dsNotificationManager = new DatasetNotificationManager(msgBuilder);
-			List<AbstractEvent> datasetEvents = new ArrayList<AbstractEvent>();
+			List<AbstractEvent> datasetEvents = new ArrayList<>();
 
 			// File change check
 			boolean newFileUploaded = false;
@@ -1136,11 +1112,11 @@ public class SelfServiceDataSetCRUD {
 		}
 	}
 
-	private Map<String, HierarchyLevel> getHierarchiesColumnsToCheck(String datasetMetadata) throws JsonMappingException, JsonParseException, JSONException,
-			IOException {
+	private Map<String, HierarchyLevel> getHierarchiesColumnsToCheck(String datasetMetadata)
+			throws JsonMappingException, JsonParseException, JSONException, IOException {
 		JSONObject metadataObject = null;
 
-		Map<String, HierarchyLevel> hierarchiesColumnsToCheck = new HashMap<String, HierarchyLevel>();
+		Map<String, HierarchyLevel> hierarchiesColumnsToCheck = new HashMap<>();
 
 		if ((!datasetMetadata.equals("")) && (!datasetMetadata.equals("[]"))) {
 			metadataObject = JSONUtils.toJSONObject(datasetMetadata);
@@ -1236,8 +1212,8 @@ public class SelfServiceDataSetCRUD {
 		return dataSetsJSON;
 	}
 
-	private IDataSet recoverDataSetDetails(HttpServletRequest request, IDataSet dataSet, boolean savingDataset) throws EMFUserError, SourceBeanException,
-			IOException {
+	private IDataSet recoverDataSetDetails(HttpServletRequest request, IDataSet dataSet, boolean savingDataset)
+			throws EMFUserError, SourceBeanException, IOException {
 		return recoverDataSetDetails(request, dataSet, savingDataset, false, -1);
 	}
 
@@ -1249,7 +1225,7 @@ public class SelfServiceDataSetCRUD {
 		if (idStr != null && !idStr.equals("")) {
 			id = new Integer(idStr);
 		}
-		// TODO create HDFS FILE DATASET e fare qua la scrittura
+
 		String type = request.getParameter("type");
 		String label = request.getParameter("label");
 		String description = request.getParameter("description");
@@ -1380,17 +1356,8 @@ public class SelfServiceDataSetCRUD {
 	}
 
 	private IDataSet getFileDataSet(HttpServletRequest request, boolean savingDataset) {
-		boolean storeToHDFS = Boolean.valueOf(SingletonConfig.getInstance().getConfigValue(STORE_TO_HDFS)).booleanValue();
-
-		FileDataSet toReturn = null;
-		if (storeToHDFS) {
-			toReturn = new HdfsDataSet();
-			toReturn.setPersistedHDFS(storeToHDFS);
-			toReturn.setResourcePath(((HdfsDataSet) toReturn).getHdfsResourcePath());
-		} else {
-			toReturn = new FileDataSet();
-			toReturn.setResourcePath(DAOConfig.getResourcePath());
-		}
+		FileDataSet toReturn = new FileDataSet();
+		toReturn.setResourcePath(DAOConfig.getResourcePath());
 
 		JSONObject jsonDsConfig = this.getFileDataSetConfig(request, savingDataset);
 		toReturn.setConfiguration(jsonDsConfig.toString());
@@ -1412,11 +1379,7 @@ public class SelfServiceDataSetCRUD {
 			// creating a new dataset, the file uploaded has to be renamed and
 			// moved
 			toReturn.setUseTempFile(true);
-			if (storeToHDFS && savingDataset) {
-				String resourcePath = toReturn.getResourcePath();
-				renameAndMoveDatasetFileToHDFS(fileName, label, resourcePath, fileType, ((HdfsDataSet) toReturn).getHdfs());
-				toReturn.setUseTempFile(false);
-			} else if (savingDataset) {
+			if (savingDataset) {
 				// rename and move the file
 				String resourcePath = toReturn.getResourcePath();
 				renameAndMoveDatasetFile(fileName, label, resourcePath, fileType);
@@ -1430,11 +1393,7 @@ public class SelfServiceDataSetCRUD {
 				toReturn.setUseTempFile(true);
 
 				// saving the existing dataset with a new file associated
-				if (storeToHDFS && savingDataset) {
-					String resourcePath = toReturn.getResourcePath();
-					renameAndMoveDatasetFileToHDFS(fileName, label, resourcePath, fileType, ((HdfsDataSet) toReturn).getHdfs());
-					toReturn.setUseTempFile(false);
-				} else if (savingDataset) {
+				if (savingDataset) {
 					// rename and move the file
 					String resourcePath = toReturn.getResourcePath();
 					renameAndMoveDatasetFile(fileName, label, resourcePath, fileType);
@@ -1518,24 +1477,6 @@ public class SelfServiceDataSetCRUD {
 				logger.debug("Cannot move dataset File");
 				throw new SpagoBIRuntimeException("Cannot move dataset File", e);
 			}
-		}
-	}
-
-	// This method rename a file and move it from resources\dataset\files\temp
-	// to resources\dataset\files
-	private void renameAndMoveDatasetFileToHDFS(String originalFileName, String newFileName, String resourcePath, String fileType, Hdfs hdfs) {
-		String sep = HdfsUtilities.getHdfsSperator();
-		String filePath = resourcePath + sep + "dataset" + sep + "files" + sep + "temp" + sep + originalFileName;
-		String fileNewPath = resourcePath + sep + "dataset" + sep + "files" + sep;
-
-		if (hdfs.exists(filePath)) {
-			/*
-			 * This method copies the contents of the specified source file to the specified destination file. The directory holding the destination file is
-			 * created if it does not exist. If the destination file exists, then this method will overwrite it.
-			 */
-			String newDatasetPath = fileNewPath + newFileName + "." + fileType.toLowerCase();
-			hdfs.mkdirsParent(newDatasetPath);
-			hdfs.copy(filePath, newDatasetPath, false);
 		}
 	}
 
@@ -1953,17 +1894,14 @@ public class SelfServiceDataSetCRUD {
 	// }
 
 	private void checkFileDataset(IDataSet dataSet) {
-		if (dataSet instanceof HdfsDataSet) {
-			((HdfsDataSet) dataSet).setPersistedHDFS(true);
-			((HdfsDataSet) dataSet).setResourcePath(((HdfsDataSet) dataSet).getHdfsResourcePath());
-		} else if (dataSet instanceof FileDataSet) {
+		if (dataSet instanceof FileDataSet) {
 			((FileDataSet) dataSet).setResourcePath(DAOConfig.getResourcePath());
 		}
 	}
 
 	protected List<Integer> getCategories(IEngUserProfile profile) {
 
-		List<Integer> categories = new ArrayList<Integer>();
+		List<Integer> categories = new ArrayList<>();
 		try {
 			// NO CATEGORY IN THE DOMAINS
 			IDomainDAO domaindao = DAOFactory.getDomainDAO();
@@ -2005,7 +1943,7 @@ public class SelfServiceDataSetCRUD {
 	}
 
 	private List<IDataSet> getFilteredDatasets(List<IDataSet> unfilteredDataSets, List<Integer> categories) {
-		List<IDataSet> dataSets = new ArrayList<IDataSet>();
+		List<IDataSet> dataSets = new ArrayList<>();
 		if (categories != null && categories.size() != 0) {
 			for (IDataSet ds : unfilteredDataSets) {
 				if (ds.getCategoryId() == null || categories.contains(ds.getCategoryId())) {

@@ -17,19 +17,26 @@
  */
 package it.eng.spagobi.tools.dataset.normalization;
 
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import java.io.File;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.commons.io.FilenameUtils;
+import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import it.eng.spagobi.container.ObjectUtils;
-import it.eng.spagobi.hdfs.Hdfs;
 import it.eng.spagobi.meta.model.olap.Level;
 import it.eng.spagobi.metamodel.HierarchyWrapper;
 import it.eng.spagobi.metamodel.MetaModelWrapper;
 import it.eng.spagobi.metamodel.SiblingsFileWrapper;
-import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
-import it.eng.spagobi.tools.dataset.bo.HdfsDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.dataproxy.FileDataProxy;
-import it.eng.spagobi.tools.dataset.common.dataproxy.HdfsFileDataProxy;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
@@ -42,18 +49,6 @@ import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 import it.eng.spagobi.tools.dataset.validation.HierarchyLevel;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.json.JSONUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Logger;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
@@ -161,36 +156,7 @@ public class GeoSpatialDimensionDatasetNormalizer implements IDatasetNormalizer 
 	// add values from the levelName column to the corresponding sibling column values inside the file
 	public void modifyFileDataset(IDataSet dataset, IDataStore datastore, HierarchyWrapper hierarchy, String levelName, String siblingColumnName,
 			String columnNameOnDataset) throws IOException {
-		if (dataset.isPersistedHDFS() || dataset instanceof HdfsDataSet) {
-			HdfsDataSet hdfsDataSet = (HdfsDataSet) dataset;
-			HdfsFileDataProxy hdfsDataProxy = hdfsDataSet.getDataProxy();
-			String filePath = hdfsDataProxy.getCompleteFilePath();
-			Hdfs hdfs = hdfsDataProxy.getHdfs();
-			if (hdfs != null) {
-				// move file from HDFS to local file system to allow modification
-				String destPath = SpagoBIUtilities.getResourcePath() + File.separator + TenantManager.getTenant().getName() + File.separator
-						+ hdfsDataProxy.getFileName();
-				hdfs.moveToLocalFile(filePath, destPath);
-
-				// modify the file
-				File datasetFile = new File(destPath);
-				if (datasetFile.exists()) {
-					String fileExtension = FilenameUtils.getExtension(filePath);
-					if (fileExtension.equalsIgnoreCase("XLS")) {
-						// Modifying an Excel file
-						logger.debug("Normalizing dataset file [XLS]: " + filePath);
-						modifyXLSFile(dataset, datasetFile, hierarchy, levelName, siblingColumnName, columnNameOnDataset);
-
-					} else if (fileExtension.equalsIgnoreCase("CSV")) {
-						// Modifying a CSV file
-						logger.debug("Normalizing dataset file [CSV]: " + filePath);
-						modifyCSVFile(dataset, datasetFile, hierarchy, levelName, siblingColumnName, columnNameOnDataset);
-					}
-				}
-				// move from locale file system to HDFS after modification
-				hdfs.moveFromLocalFile(destPath, filePath);
-			}
-		} else if (dataset instanceof FileDataSet) {
+		if (dataset instanceof FileDataSet) {
 			FileDataSet fileDataSet = (FileDataSet) dataset;
 			FileDataProxy fileDataProxy = fileDataSet.getDataProxy();
 			String filePath = fileDataProxy.getCompleteFilePath();

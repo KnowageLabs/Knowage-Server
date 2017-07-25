@@ -17,6 +17,27 @@
  */
 package it.eng.spagobi.tools.dataset.service;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.naming.NamingException;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.log4j.LogMF;
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import commonj.work.WorkException;
 import it.eng.qbe.dataset.FederatedDataSet;
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.base.SourceBean;
@@ -79,7 +100,6 @@ import it.eng.spagobi.tools.dataset.exceptions.DatasetInUseException;
 import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
 import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 import it.eng.spagobi.tools.dataset.persist.IPersistedManager;
-import it.eng.spagobi.tools.dataset.persist.PersistedHDFSManager;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
@@ -94,28 +114,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
 import it.eng.spagobi.utilities.service.JSONSuccess;
-
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.naming.NamingException;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.log4j.LogMF;
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import commonj.work.WorkException;
 
 @SuppressWarnings("serial")
 public class ManageDatasets extends AbstractSpagoBIAction {
@@ -373,8 +371,6 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			IDataSetDAO iDatasetDao = DAOFactory.getDataSetDAO();
 			iDatasetDao.setUserProfile(profile);
 			IDataSet dataset = iDatasetDao.loadDataSetByLabel(ds.getLabel());
-			// checkQbeDataset(((VersionedDataSet)
-			// dataset).getWrappedDataset());
 			checkFileDataset(((VersionedDataSet) dataset).getWrappedDataset());
 
 			if (getRequestContainer() != null) {
@@ -384,19 +380,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 					throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.dsCannotPersist");
 				}
 			}
-			IPersistedManager ptm = null;
-			if (dataset.isPersistedHDFS()) {
-				ptm = new PersistedHDFSManager(profile);
-			} else {
-				ptm = new PersistedTableManager(profile);
-			}
-
-			// if (getRequestContainer() != null) {
+			IPersistedManager ptm = new PersistedTableManager(profile);
 			ptm.persistDataSet(dataset);
-			// } else {
-			// // TODO add persist case
-			//
-			// }
 
 			logger.debug("Persistence ended succesfully!");
 			if (ds.isScheduled()) {
@@ -423,11 +408,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 						throw new SpagoBIServiceException(SERVICE_NAME, "Job " + ds.getLabel() + " not deleted by the web service");
 					}
 				}
-				try {
-					AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHED_TRIGGER.DELETE", logParam, "OK");
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHED_TRIGGER.DELETE", logParam, "OK");
 			}
 		}
 		logger.debug("OUT");
@@ -435,97 +416,69 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 
 	public void modifyPersistenceAndScheduling(IDataSet ds, HashMap<String, String> logParam) throws Exception {
 		logger.debug("IN");
-		try {
-			IDataSetDAO iDatasetDao = DAOFactory.getDataSetDAO();
-			iDatasetDao.setUserProfile(profile);
-			IDataSet previousDataset = iDatasetDao.loadDataSetById(ds.getId());
-			if (previousDataset.isPersisted() && !ds.isPersisted()) {
-				logger.error("The dataset [" + previousDataset.getLabel() + "] has to be unpersisted");
-				if (!previousDataset.isPersistedHDFS()) {
-					PersistedTableManager ptm = new PersistedTableManager(profile);
-					ptm.dropTableIfExists(previousDataset.getDataSourceForWriting(), previousDataset.getTableNameForReading());
-				}
+		IDataSetDAO iDatasetDao = DAOFactory.getDataSetDAO();
+		iDatasetDao.setUserProfile(profile);
+		IDataSet previousDataset = iDatasetDao.loadDataSetById(ds.getId());
+		if (previousDataset.isPersisted() && !ds.isPersisted()) {
+			logger.error("The dataset [" + previousDataset.getLabel() + "] has to be unpersisted");
+			PersistedTableManager ptm = new PersistedTableManager(profile);
+			ptm.dropTableIfExists(previousDataset.getDataSourceForWriting(), previousDataset.getTableNameForReading());
 
-				ISchedulerDAO schedulerDAO = DAOFactory.getSchedulerDAO();
-				List<Trigger> triggers = schedulerDAO.loadTriggers(JOB_GROUP, previousDataset.getLabel());
+			ISchedulerDAO schedulerDAO = DAOFactory.getSchedulerDAO();
+			List<Trigger> triggers = schedulerDAO.loadTriggers(JOB_GROUP, previousDataset.getLabel());
 
-				if (triggers != null && !triggers.isEmpty() && !ds.isScheduled()) {
-					logger.error("The dataset [" + previousDataset.getLabel() + "] has to be unscheduled");
+			if (triggers != null && !triggers.isEmpty() && !ds.isScheduled()) {
+				logger.error("The dataset [" + previousDataset.getLabel() + "] has to be unscheduled");
 
-					ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
-					String servoutStr = schedulerService.deleteJob(previousDataset.getLabel(), JOB_GROUP);
-					SourceBean execOutSB = SchedulerUtilities.getSBFromWebServiceResponse(servoutStr);
-					if (execOutSB != null) {
-						String outcome = (String) execOutSB.getAttribute("outcome");
-						if (outcome.equalsIgnoreCase("fault")) {
-							try {
-								AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHED_JOB.DELETE", logParam, "KO");
-							} catch (Exception e) {
-								logger.error(e);
-							}
-							throw new SpagoBIServiceException(SERVICE_NAME, "Job " + previousDataset.getLabel() + " not deleted by the web service");
+				ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
+				String servoutStr = schedulerService.deleteJob(previousDataset.getLabel(), JOB_GROUP);
+				SourceBean execOutSB = SchedulerUtilities.getSBFromWebServiceResponse(servoutStr);
+				if (execOutSB != null) {
+					String outcome = (String) execOutSB.getAttribute("outcome");
+					if (outcome.equalsIgnoreCase("fault")) {
+						try {
+							AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHED_JOB.DELETE", logParam, "KO");
+						} catch (Exception e) {
+							logger.error(e);
 						}
-					}
-					try {
-						AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHED_TRIGGER.DELETE", logParam, "OK");
-					} catch (Exception e) {
-						e.printStackTrace();
+						throw new SpagoBIServiceException(SERVICE_NAME, "Job " + previousDataset.getLabel() + " not deleted by the web service");
 					}
 				}
-			} else if (ds.isPersistedHDFS() && !previousDataset.isPersistedHDFS()) {
-				if (previousDataset instanceof FileDataSet) {
-					//
-				}
-			} else if (previousDataset.isPersistedHDFS() && !ds.isPersistedHDFS()) {
-				if (previousDataset instanceof HdfsDataSet) {
-
-				}
+				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHED_TRIGGER.DELETE", logParam, "OK");
 			}
-		} catch (Exception e) {
-
 		}
 		logger.debug("OUT");
 	}
 
 	public void deletePersistenceAndScheduling(IDataSet ds, HashMap<String, String> logParam) throws Exception {
 		logger.debug("IN");
-		try {
-			if (ds.isPersisted()) {
-				logger.error("The dataset [" + ds.getLabel() + "] has to be unpersisted");
-				if (!ds.isPersistedHDFS()) {
-					PersistedTableManager ptm = new PersistedTableManager(profile);
-					ptm.dropTableIfExists(ds.getDataSourceForWriting(), ds.getTableNameForReading());
-				}
+		if (ds.isPersisted()) {
+			logger.error("The dataset [" + ds.getLabel() + "] has to be unpersisted");
+			PersistedTableManager ptm = new PersistedTableManager(profile);
+			ptm.dropTableIfExists(ds.getDataSourceForWriting(), ds.getTableNameForReading());
 
-				ISchedulerDAO schedulerDAO = DAOFactory.getSchedulerDAO();
-				List<Trigger> triggers = schedulerDAO.loadTriggers(JOB_GROUP, ds.getLabel());
+			ISchedulerDAO schedulerDAO = DAOFactory.getSchedulerDAO();
+			List<Trigger> triggers = schedulerDAO.loadTriggers(JOB_GROUP, ds.getLabel());
 
-				if (triggers != null && !triggers.isEmpty()) {
-					logger.error("The dataset [" + ds.getLabel() + "] has to be unscheduled");
+			if (triggers != null && !triggers.isEmpty()) {
+				logger.error("The dataset [" + ds.getLabel() + "] has to be unscheduled");
 
-					ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
-					String servoutStr = schedulerService.deleteJob(ds.getLabel(), JOB_GROUP);
-					SourceBean execOutSB = SchedulerUtilities.getSBFromWebServiceResponse(servoutStr);
-					if (execOutSB != null) {
-						String outcome = (String) execOutSB.getAttribute("outcome");
-						if (outcome.equalsIgnoreCase("fault")) {
-							try {
-								AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHED_JOB.DELETE", logParam, "KO");
-							} catch (Exception e) {
-								logger.error(e);
-							}
-							throw new SpagoBIServiceException(SERVICE_NAME, "Job " + ds.getLabel() + " not deleted by the web service");
+				ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
+				String servoutStr = schedulerService.deleteJob(ds.getLabel(), JOB_GROUP);
+				SourceBean execOutSB = SchedulerUtilities.getSBFromWebServiceResponse(servoutStr);
+				if (execOutSB != null) {
+					String outcome = (String) execOutSB.getAttribute("outcome");
+					if (outcome.equalsIgnoreCase("fault")) {
+						try {
+							AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHED_JOB.DELETE", logParam, "KO");
+						} catch (Exception e) {
+							logger.error(e);
 						}
-					}
-					try {
-						AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHED_TRIGGER.DELETE", logParam, "OK");
-					} catch (Exception e) {
-						e.printStackTrace();
+						throw new SpagoBIServiceException(SERVICE_NAME, "Job " + ds.getLabel() + " not deleted by the web service");
 					}
 				}
+				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHED_TRIGGER.DELETE", logParam, "OK");
 			}
-		} catch (Exception e) {
-
 		}
 		logger.debug("OUT");
 	}
@@ -809,7 +762,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 					String trasfTypeCd = getAttributeAsString(DataSetConstants.TRASFORMER_TYPE_CD);
 
 					List<Domain> domainsCat = (List<Domain>) getSessionContainer().getAttribute("catTypesList");
-					HashMap<String, Integer> domainIds = new HashMap<String, Integer>();
+					HashMap<String, Integer> domainIds = new HashMap<>();
 					if (domainsCat != null) {
 						for (int i = 0; i < domainsCat.size(); i++) {
 							domainIds.put(domainsCat.get(i).getValueCd(), domainsCat.get(i).getValueId());
@@ -822,7 +775,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 					}
 
 					List<Domain> domainsScope = (List<Domain>) getSessionContainer().getAttribute("scopeCdList");
-					HashMap<String, Integer> domainScopeIds = new HashMap<String, Integer>();
+					HashMap<String, Integer> domainScopeIds = new HashMap<>();
 					if (domainsScope != null) {
 						for (int i = 0; i < domainsScope.size(); i++) {
 							domainScopeIds.put(domainsScope.get(i).getValueCd(), domainsScope.get(i).getValueId());
@@ -895,12 +848,12 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 								}
 
 								// check if there are metadata field with same columns or aliases
-								List<String> aliases = new ArrayList<String>();
+								List<String> aliases = new ArrayList<>();
 								for (int i = 0; i < currentMetadata.getFieldCount(); i++) {
 									String alias = currentMetadata.getFieldAlias(i);
 									if (aliases.contains(alias)) {
-										logger.error("Cannot save dataset cause preview revealed that two columns with name " + alias
-												+ " exist; change aliases");
+										logger.error(
+												"Cannot save dataset cause preview revealed that two columns with name " + alias + " exist; change aliases");
 										throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.test.error.duplication");
 									}
 									aliases.add(alias);
@@ -929,8 +882,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 										}
 										// check if dataset is used by document
 										// by querying SBI_OBJ_DATA_SET table
-										List<FederationDefinition> federationsAssociated = DAOFactory.getFedetatedDatasetDAO().loadFederationsUsingDataset(
-												previousIdInteger);
+										List<FederationDefinition> federationsAssociated = DAOFactory.getFedetatedDatasetDAO()
+												.loadFederationsUsingDataset(previousIdInteger);
 
 										// if (!objectsUsing.isEmpty() ||
 										// !federationsAssociated.isEmpty()) {
@@ -1054,25 +1007,25 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 
 	/*
 	 * private GuiDataSetDetail constructDataSetDetail(String dsType){ GuiDataSetDetail dsActiveDetail = instantiateCorrectDsDetail(dsType);
-	 * 
+	 *
 	 * if(dsActiveDetail!=null){ dsActiveDetail.setDsType(dsType);
-	 * 
+	 *
 	 * String catTypeCd = getAttributeAsString(DataSetConstants.CATEGORY_TYPE_VN);
-	 * 
+	 *
 	 * String meta = getAttributeAsString(DataSetConstants.METADATA); String trasfTypeCd = getAttributeAsString(DataSetConstants.TRASFORMER_TYPE_CD);
-	 * 
+	 *
 	 * List<Domain> domainsCat = (List<Domain>)getSessionContainer().getAttribute("catTypesList"); HashMap<String, Integer> domainIds = new HashMap<String,
 	 * Integer> (); if(domainsCat != null){ for(int i=0; i< domainsCat.size(); i++){ domainIds.put(domainsCat.get(i).getValueName(),
 	 * domainsCat.get(i).getValueId()); } } Integer catTypeID = domainIds.get(catTypeCd); if(catTypeID!=null){ dsActiveDetail.setCategoryValueName(catTypeCd);
 	 * dsActiveDetail.setCategoryId(catTypeID); }
-	 * 
+	 *
 	 * if(meta != null && !meta.equals("")){ dsActiveDetail.setDsMetadata(meta); }
-	 * 
-	 * 
+	 *
+	 *
 	 * String pars = getDataSetParametersAsString(); if(pars != null) { dsActiveDetail.setParameters(pars); }
-	 * 
+	 *
 	 * if(trasfTypeCd!=null && !trasfTypeCd.equals("")){ dsActiveDetail = setTransformer(dsActiveDetail, trasfTypeCd); }
-	 * 
+	 *
 	 * Boolean isPersisted = getAttributeAsBoolean(DataSetConstants.IS_PERSISTED); if(isPersisted != null){
 	 * dsActiveDetail.setPersisted(isPersisted.booleanValue()); } if (isPersisted){ String dataSourcePersist =
 	 * getAttributeAsString(DataSetConstants.DATA_SOURCE_PERSIST); if(dataSourcePersist != null && !dataSourcePersist.equals("")){
@@ -1086,18 +1039,18 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 	 * setTransformer(ds, trasfTypeCd); } String recalculateMetadata = this.getAttributeAsString(DataSetConstants.RECALCULATE_METADATA); String dsMetadata =
 	 * null; if (recalculateMetadata == null || recalculateMetadata.trim().equals("yes")) { // recalculate metadata logger .debug(
 	 * "Recalculating dataset's metadata: executing the dataset..."); HashMap parametersMap = new HashMap(); parametersMap = getDataSetParametersAsMap();
-	 * 
+	 *
 	 * IEngUserProfile profile = getUserProfile(); dsMetadata = getDatasetTestMetadata(ds, parametersMap, profile, meta); LogMF.debug(logger,
 	 * "Dataset executed, metadata are [{0}]", dsMetadata); } else { // load existing metadata logger.debug("Loading existing dataset..."); String id =
 	 * getAttributeAsString(DataSetConstants.ID); if (id != null && !id.equals("") && !id.equals("0")) { IDataSet existingDataSet =
 	 * DAOFactory.getDataSetDAO().loadActiveIDataSetByID(new Integer(id)); dsMetadata = existingDataSet.getDsMetadata(); LogMF.debug(logger,
 	 * "Reloaded metadata : [{0}]", dsMetadata); } else { throw new SpagoBIServiceException(SERVICE_NAME, "Missing dataset id, cannot retrieve its metadata"); }
-	 * 
+	 *
 	 * } dsActiveDetail.setDsMetadata(dsMetadata); } } else { logger.error("DataSet type is not existent"); throw new SpagoBIServiceException(SERVICE_NAME,
 	 * "sbi.ds.dsTypeError"); } } catch (Exception e) { logger.error("Error while getting dataset metadataa", e); } } return dsActiveDetail; }
-	 * 
+	 *
 	 * private GuiDataSetDetail instantiateCorrectDsDetail(String dsType){ GuiDataSetDetail dsActiveDetail = null;
-	 * 
+	 *
 	 * if(dsType.equalsIgnoreCase(DataSetConstants.DS_FILE)){ dsActiveDetail = new FileDataSetDetail(); String fileName =
 	 * getAttributeAsString(DataSetConstants.FILE_NAME); if(fileName!=null && !fileName.equals("")){ ((FileDataSetDetail)dsActiveDetail).setFileName(fileName);
 	 * } }else if(dsType.equalsIgnoreCase(DataSetConstants.DS_JCLASS)){ dsActiveDetail = new JClassDataSetDetail(); String jclassName =
@@ -1106,16 +1059,16 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 	 * QueryDataSetDetail(); String dataSourceLabel = getAttributeAsString(DataSetConstants.DATA_SOURCE); String query =
 	 * getAttributeAsString(DataSetConstants.QUERY); String queryScript = getAttributeAsString(DataSetConstants.QUERY_SCRIPT); String queryScriptLanguage =
 	 * getAttributeAsString(DataSetConstants.QUERY_SCRIPT_LANGUAGE);
-	 * 
-	 * 
+	 *
+	 *
 	 * if( StringUtilities.isNotEmpty(dataSourceLabel) ){ ((QueryDataSetDetail)dsActiveDetail).setDataSourceLabel(dataSourceLabel); }
-	 * 
+	 *
 	 * if( StringUtilities.isNotEmpty(query) ){ ((QueryDataSetDetail)dsActiveDetail).setQuery(query); }
-	 * 
+	 *
 	 * if( StringUtilities.isNotEmpty(queryScript) ){ ((QueryDataSetDetail)dsActiveDetail).setQueryScript(queryScript); }
-	 * 
+	 *
 	 * if( StringUtilities.isNotEmpty(queryScriptLanguage) ){ ((QueryDataSetDetail )dsActiveDetail).setQueryScriptLanguage(queryScriptLanguage); }
-	 * 
+	 *
 	 * }else if(dsType.equalsIgnoreCase(DataSetConstants.DS_QBE)){ dsActiveDetail = new QbeDataSetDetail(); String sqlQuery =
 	 * getAttributeAsString(DataSetConstants.QBE_SQL_QUERY); String jsonQuery = getAttributeAsString(DataSetConstants.QBE_JSON_QUERY); String dataSourceLabel =
 	 * getAttributeAsString(DataSetConstants.QBE_DATA_SOURCE); String datamarts = getAttributeAsString(DataSetConstants.QBE_DATAMARTS); ((QbeDataSetDetail)
@@ -1139,11 +1092,11 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 	 * if(domainsTrasf != null){ for(int i=0; i< domainsTrasf.size(); i++){ domainTrasfIds.put(domainsTrasf.get(i).getValueCd(),
 	 * domainsTrasf.get(i).getValueId()); } } Integer transformerId = domainTrasfIds.get(trasfTypeCd); dsActiveDetail.setTransformerId(transformerId);
 	 * dsActiveDetail.setTransformerCd(trasfTypeCd);
-	 * 
+	 *
 	 * String pivotColName = getAttributeAsString(DataSetConstants.PIVOT_COL_NAME); String pivotColValue =
 	 * getAttributeAsString(DataSetConstants.PIVOT_COL_VALUE); String pivotRowName = getAttributeAsString(DataSetConstants.PIVOT_ROW_NAME); Boolean
 	 * pivotIsNumRows = getAttributeAsBoolean(DataSetConstants.PIVOT_IS_NUM_ROWS);
-	 * 
+	 *
 	 * if(pivotColName != null && !pivotColName.equals("")){ dsActiveDetail.setPivotColumnName(pivotColName); } if(pivotColValue != null &&
 	 * !pivotColValue.equals("")){ dsActiveDetail.setPivotColumnValue(pivotColValue); } if(pivotRowName != null && !pivotRowName.equals("")){
 	 * dsActiveDetail.setPivotRowName(pivotRowName); } if(pivotIsNumRows != null){ dsActiveDetail.setNumRows(pivotIsNumRows); } return dsActiveDetail; }
@@ -1163,7 +1116,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		if (StringUtilities.isNotEmpty(transformerTypeCode)) {
 			dataSet = setTransformer(dataSet, transformerTypeCode);
 		}
-		HashMap<String, String> parametersMap = new HashMap<String, String>();
+		HashMap<String, String> parametersMap = new HashMap<>();
 		if (parsJSON != null) {
 			parametersMap = getDataSetParametersAsMap(false);
 		}
@@ -1773,7 +1726,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 
 	private IDataSet setTransformer(IDataSet ds, String trasfTypeCd) {
 		List<Domain> domainsTrasf = (List<Domain>) getSessionContainer().getAttribute("trasfTypesList");
-		HashMap<String, Integer> domainTrasfIds = new HashMap<String, Integer>();
+		HashMap<String, Integer> domainTrasfIds = new HashMap<>();
 		if (domainsTrasf != null) {
 			for (int i = 0; i < domainsTrasf.size(); i++) {
 				domainTrasfIds.put(domainsTrasf.get(i).getValueCd(), domainsTrasf.get(i).getValueId());
@@ -1865,7 +1818,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		HashMap<String, String> parametersMap = null;
 
 		try {
-			parametersMap = new HashMap<String, String>();
+			parametersMap = new HashMap<>();
 
 			JSONArray parsListJSON = getAttributeAsJSONArray(DataSetConstants.PARS);
 			if (parsListJSON == null) {
@@ -2156,7 +2109,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		try {
 			IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(dsId);
 			if (dataset.getParameters() != null) {
-				HashMap<String, String> parametersMap = new HashMap<String, String>();
+				HashMap<String, String> parametersMap = new HashMap<>();
 				parametersMap = getDataSetParametersAsMap(false);
 				dataSetJSON = getDatasetTestResultList(dataset, parametersMap, profile);
 			}
@@ -2199,8 +2152,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 	private boolean isRemovingMetadataFields(IMetaData previousMetadata, IMetaData currentMetadata) {
 		logger.debug("IN");
 
-		ArrayList<String> previousFieldsName = new ArrayList<String>();
-		ArrayList<String> currentFieldsName = new ArrayList<String>();
+		ArrayList<String> previousFieldsName = new ArrayList<>();
+		ArrayList<String> currentFieldsName = new ArrayList<>();
 
 		for (int i = 0; i < previousMetadata.getFieldCount(); i++) {
 			String field = previousMetadata.getFieldAlias(i);

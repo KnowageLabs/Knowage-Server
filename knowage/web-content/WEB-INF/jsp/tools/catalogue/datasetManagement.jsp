@@ -1308,6 +1308,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							
 						</md-content>
 						
+						<!-- OLD ADVANCED TAB (Persist HDFS) -->
+						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable">
+							<md-card layout-padding style="margin-top:0">
+								<div flex=100 style="display:flex;">
+									<div flex=50 layout="row" layout-align="start center">
+				                  		<label>
+				                  			{{translate.load('sbi.ds.hdfs')}}: 
+			                  			</label> 
+
+				                  		<md-input-container class="small counter" style="padding-left:8px;">
+				                     		<md-checkbox 	aria-label="HDFS Persisted" 
+					                     					ng-model="selectedDataSet.isPersistedHDFS" ng-checked="" 
+					                     					ng-change="setFormDirty()">
+											</md-checkbox>
+				                  		</md-input-container>
+									</div>
+								</div>				
+							</md-card>						
+						</md-content>
+						
 						<!-- OLD ADVANCED TAB (Persist) -->
 						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable">
 							
@@ -1334,27 +1354,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								</div>
 								
 								<div ng-show="selectedDataSet.isPersisted">
-								
-									<div flex=100 style="display:flex;">
-								
-										<div layout-align="start center">
-							           	
-					                  		<label>
-					                  			{{translate.load('sbi.ds.hdfs')}}: 
-				                  			</label> 
-					                  		
-					                  		
-					                  		<md-input-container class="small counter" style="padding-left:8px;">
-					                     		<md-checkbox 	aria-label="HDFS Persisted" 
-						                     					ng-model="selectedDataSet.isPersistedHDFS" ng-checked="" 
-						                     					ng-change="setFormDirty()">
-												</md-checkbox>
-					                  		</md-input-container>
-					                  		
-										</div>
-										
-									</div>
-									
 									<div flex=100>
 										<md-input-container class="md-block">
 									    	<label>{{translate.load("sbi.ds.persistTableName")}}</label>
@@ -1372,7 +1371,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						</md-content>
 						
 						<!-- OLD ADVANCED TAB (Scheduling) -->
-						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" style="margin:0 8 0 8" ng-if="showDatasetScheduler && selectedDataSet.isPersisted">
+						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" style="margin:0 8 0 8" ng-if="showDatasetScheduler && (selectedDataSet.isPersisted || selectedDataSet.isPersistedHDFS)">
 							
 							<md-toolbar class="secondaryToolbar" layout-padding>
 						     	

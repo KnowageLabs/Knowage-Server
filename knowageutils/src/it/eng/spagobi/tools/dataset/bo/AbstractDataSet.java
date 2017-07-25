@@ -17,6 +17,14 @@
  */
 package it.eng.spagobi.tools.dataset.bo;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
@@ -31,7 +39,6 @@ import it.eng.spagobi.tools.dataset.common.transformer.PivotDataSetTransformer;
 import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
 import it.eng.spagobi.tools.dataset.persist.DataSetTableDescriptor;
 import it.eng.spagobi.tools.dataset.persist.IDataSetTableDescriptor;
-import it.eng.spagobi.tools.dataset.persist.PersistedHDFSManager;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
@@ -43,14 +50,6 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.sql.SQLStatementConditionalOperators;
 import it.eng.spagobi.utilities.sql.SQLStatementConditionalOperators.IConditionalOperator;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
 
 /**
  * @authors Angelo Bernabei (angelo.bernabei@eng.it) Andrea Gioia (andrea.gioia@eng.it)
@@ -708,13 +707,8 @@ public abstract class AbstractDataSet implements IDataSet {
 	@Override
 	public IDataSetTableDescriptor persist(String tableName, IDataSource dataSource) {
 		try {
-			if (isPersistedHDFS()) {
-				PersistedHDFSManager persister = new PersistedHDFSManager();
-				persister.persistDataSet(this, tableName);
-			} else {
-				PersistedTableManager persister = new PersistedTableManager();
-				persister.persistDataSet(this, dataSource, tableName);
-			}
+			PersistedTableManager persister = new PersistedTableManager();
+			persister.persistDataSet(this, dataSource, tableName);
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Error while persisting dataset", e);
 		}
@@ -729,7 +723,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	}
 
 	public List<String> getFieldsList() {
-		List<String> toReturn = new ArrayList<String>();
+		List<String> toReturn = new ArrayList<>();
 		IMetaData metadata = this.getMetadata();
 		int count = metadata.getFieldCount();
 		for (int i = 0; i < count; i++) {
@@ -768,7 +762,8 @@ public abstract class AbstractDataSet implements IDataSet {
 		try {
 			String tableName = this.getTableNameForReading();
 			IDataSource dataSource = this.getDataSourceForReading();
-			StringBuffer buffer = new StringBuffer("Select DISTINCT " + AbstractJDBCDataset.encapsulateColumnName(fieldName, dataSource) + " FROM " + tableName);
+			StringBuffer buffer = new StringBuffer(
+					"Select DISTINCT " + AbstractJDBCDataset.encapsulateColumnName(fieldName, dataSource) + " FROM " + tableName);
 			IDataSetTableDescriptor tableDescriptor = new DataSetTableDescriptor(this);
 			manageFilterOnDomainValues(buffer, fieldName, tableDescriptor, filter);
 			String sqlStatement = buffer.toString();
@@ -812,8 +807,8 @@ public abstract class AbstractDataSet implements IDataSet {
 			}
 			IDataSource dataSource = tableDescriptor.getDataSource();
 			String filterColumnName = tableDescriptor.getColumnName(fieldName);
-			StringBuffer buffer = new StringBuffer("Select DISTINCT " + AbstractJDBCDataset.encapsulateColumnName(filterColumnName, dataSource) + " FROM "
-					+ tableName);
+			StringBuffer buffer = new StringBuffer(
+					"Select DISTINCT " + AbstractJDBCDataset.encapsulateColumnName(filterColumnName, dataSource) + " FROM " + tableName);
 			manageFilterOnDomainValues(buffer, fieldName, tableDescriptor, filter);
 			String sqlStatement = buffer.toString();
 			toReturn = TemporaryTableManager.queryTemporaryTable(sqlStatement, dataSource, start, limit);

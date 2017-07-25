@@ -248,15 +248,16 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		try {
 			DAOFactory.getDataSetDAO().insertDataSet(dataset);
 
-			if (dataset.isPersisted()) {
-				IPersistedManager ptm = null;
-				if (dataset.isPersistedHDFS()) {
-					ptm = new PersistedHDFSManager(getUserProfile());
-				} else {
-					ptm = new PersistedTableManager(getUserProfile());
-				}
+			if (dataset.isPersistedHDFS()) {
+				IPersistedManager ptm = new PersistedHDFSManager(getUserProfile());
 				ptm.persistDataSet(dataset);
 			}
+
+			if (dataset.isPersisted()) {
+				IPersistedManager ptm = new PersistedTableManager(getUserProfile());
+				ptm.persistDataSet(dataset);
+			}
+
 		} catch (Exception e) {
 			logger.error("Error while creating the dataset: " + e.getMessage(), e);
 			throw new SpagoBIRuntimeException("Error while creating the dataset: " + e.getMessage(), e);
@@ -624,7 +625,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 	private DatasetEvaluationStrategy getDatasetEvaluationStrategy(IDataSet dataSet, boolean isNearRealtime) {
 		DatasetEvaluationStrategy result;
 
-		if (dataSet.isPersisted() && !dataSet.isPersistedHDFS()) {
+		if (dataSet.isPersisted()) {
 			result = DatasetEvaluationStrategy.PERSISTED;
 		} else if (dataSet.isFlatDataset()) {
 			result = DatasetEvaluationStrategy.FLAT;

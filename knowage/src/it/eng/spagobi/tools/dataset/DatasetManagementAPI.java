@@ -17,6 +17,40 @@
  */
 package it.eng.spagobi.tools.dataset;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.zip.InflaterInputStream;
+
+import javax.naming.NamingException;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.LogMF;
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.io.UnsafeInput;
+
+import commonj.work.Work;
+import commonj.work.WorkException;
+import commonj.work.WorkItem;
 import gnu.trove.set.hash.TLongHashSet;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFUserError;
@@ -81,40 +115,6 @@ import it.eng.spagobi.utilities.groovy.GroovySandbox;
 import it.eng.spagobi.utilities.sql.SqlUtils;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
 import it.eng.spagobi.utilities.trove.TLongHashSetSerializer;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.zip.InflaterInputStream;
-
-import javax.naming.NamingException;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.LogMF;
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.io.UnsafeInput;
-import commonj.work.Work;
-import commonj.work.WorkException;
-import commonj.work.WorkItem;
 
 /**
  * DataLayer facade class. It manage the access to SpagoBI's datasets. It is built on top of the dao. It manages all complex operations that involve more than a
@@ -250,7 +250,7 @@ public class DatasetManagementAPI {
 				throw new RuntimeException("Impossible to retrive metadata of dataset [" + metadata + "]");
 			}
 
-			List<IFieldMetaData> fieldsMetaData = new ArrayList<IFieldMetaData>();
+			List<IFieldMetaData> fieldsMetaData = new ArrayList<>();
 			int fieldCount = metadata.getFieldCount();
 			for (int i = 0; i < fieldCount; i++) {
 				IFieldMetaData fieldMetaData = metadata.getFieldMeta(i);
@@ -268,7 +268,7 @@ public class DatasetManagementAPI {
 	public List<JSONObject> getDataSetParameters(String label) {
 		logger.debug("IN");
 		try {
-			List<JSONObject> parametersList = new ArrayList<JSONObject>();
+			List<JSONObject> parametersList = new ArrayList<>();
 			IDataSet dataSet = getDataSetDAO().loadDataSetByLabel(label);
 
 			if (dataSet == null) {
@@ -390,7 +390,7 @@ public class DatasetManagementAPI {
 
 			IDataStore dataStore = null;
 
-			if (dataSet.isPersisted() && !dataSet.isPersistedHDFS()) {
+			if (dataSet.isPersisted()) {
 				logger.debug("Querying persisted dataset");
 				dataStore = queryPersistedDataset(groups, filters, havings, projections, summaryRowProjections, dataSet, offset, fetchSize, maxRowCount);
 				dataStore.setCacheDate(getPersistedDate(dataSet));
@@ -512,7 +512,7 @@ public class DatasetManagementAPI {
 
 	private List<IDataStore> storeDataSetsInCache(List<IDataSet> joinedDataSets, Map<String, String> parametersValues, boolean wait) {
 
-		List<IDataStore> dataStores = new ArrayList<IDataStore>();
+		List<IDataStore> dataStores = new ArrayList<>();
 
 		try {
 			SQLDBCache cache = (SQLDBCache) SpagoBICacheManager.getCache();
@@ -526,7 +526,7 @@ public class DatasetManagementAPI {
 			}
 			commonj.work.WorkManager workManager = spagoBIWorkManager.getInnerInstance();
 
-			List<Work> workItemList = new ArrayList<Work>();
+			List<Work> workItemList = new ArrayList<>();
 			for (IDataSet dataSet : joinedDataSets) {
 				// first we set parameters because they change the signature
 				dataSet.setParamsMap(parametersValues);
@@ -583,7 +583,7 @@ public class DatasetManagementAPI {
 			}
 			commonj.work.WorkManager workManager = spagoBIWorkManager.getInnerInstance();
 
-			List<Work> workItemList = new ArrayList<Work>();
+			List<Work> workItemList = new ArrayList<>();
 			Work cacheWriteWork = new SQLDBCacheWriteWork(cache, dataStore, dataSet, userProfile);
 			workItemList.add(cacheWriteWork);
 
@@ -631,7 +631,7 @@ public class DatasetManagementAPI {
 			}
 
 			List<ProjectionCriteria> projectionCriteria = this.getProjectionCriteria(label, crosstabDefinition);
-			List<FilterCriteria> filterCriteria = new ArrayList<FilterCriteria>(); // empty
+			List<FilterCriteria> filterCriteria = new ArrayList<>(); // empty
 			// in
 			// this
 			// case
@@ -734,7 +734,7 @@ public class DatasetManagementAPI {
 	}
 
 	private List<IDataSet> filterDatasetsByUser(List<IDataSet> dataSets, Set<Domain> categories) {
-		List<IDataSet> validDataSets = new LinkedList<IDataSet>();
+		List<IDataSet> validDataSets = new LinkedList<>();
 		for (IDataSet ds : dataSets) {
 			Integer idCategory = ds.getCategoryId();
 			if (idCategory != null) {
@@ -879,7 +879,7 @@ public class DatasetManagementAPI {
 	@Deprecated
 	private List<ProjectionCriteria> getProjectionCriteria(String dataset, CrosstabDefinition crosstabDefinition) {
 		logger.debug("IN");
-		List<ProjectionCriteria> projectionCriterias = new ArrayList<ProjectionCriteria>();
+		List<ProjectionCriteria> projectionCriterias = new ArrayList<>();
 
 		List<CrosstabDefinition.Row> rows = crosstabDefinition.getRows();
 		List<CrosstabDefinition.Column> colums = crosstabDefinition.getColumns();
@@ -942,7 +942,7 @@ public class DatasetManagementAPI {
 	@Deprecated
 	private List<GroupCriteria> getGroupCriteria(String dataset, CrosstabDefinition crosstabDefinition) {
 		logger.debug("IN");
-		List<GroupCriteria> groupCriterias = new ArrayList<GroupCriteria>();
+		List<GroupCriteria> groupCriterias = new ArrayList<>();
 
 		List<CrosstabDefinition.Row> rows = crosstabDefinition.getRows();
 		List<CrosstabDefinition.Column> colums = crosstabDefinition.getColumns();
@@ -1054,11 +1054,11 @@ public class DatasetManagementAPI {
 			Long maxSingleCount = 0L;
 
 			// all arrays with fields of a single association
-			ArrayList<JSONArray> assFieldsJSONArray = new ArrayList<JSONArray>();
+			ArrayList<JSONArray> assFieldsJSONArray = new ArrayList<>();
 			// mapping datasetLabel to table involved
-			Map<String, String> datasetsLabelsMap = new HashMap<String, String>();
+			Map<String, String> datasetsLabelsMap = new HashMap<>();
 			// maps each table to the synonim used in the join clause
-			Map<String, String> tableSynonimMap = new HashMap<String, String>();
+			Map<String, String> tableSynonimMap = new HashMap<>();
 
 			logger.debug("cycle on associations");
 			for (int j = 0; j < arrayAss.length(); j++) {
@@ -1322,12 +1322,13 @@ public class DatasetManagementAPI {
 	}
 
 	private IDataStore queryNearRealtimeDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<FilterCriteria> havings,
-			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, int offset, int fetchSize, int maxRowCount) {
+			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, int offset, int fetchSize,
+			int maxRowCount) {
 		dataSet.loadData();
 		IDataStore dataStore = dataSet.getDataStore();
 		if (dataStore != null && dataStore.getRecordsCount() < METAMODEL_LIMIT) {
 			String tableName = DataStore.DEFAULT_SCHEMA_NAME + "." + DataStore.DEFAULT_TABLE_NAME;
-			List<String> orderColumns = new ArrayList<String>();
+			List<String> orderColumns = new ArrayList<>();
 
 			String originalQuery = getQueryText(null, tableName, groups, filters, havings, projections, null, dataSet, true, orderColumns);
 			boolean hasSortingOnCalculatedColumns = checkSortingOnCalculatedColumns(orderColumns);
@@ -1363,9 +1364,9 @@ public class DatasetManagementAPI {
 		if (projections != null) {
 			IMetaData storeMetaData = pagedDataStore.getMetaData();
 
-			Set<String> notCalculatedColumns = new HashSet<String>();
-			Map<String, String> basicColumnMap = new HashMap<String, String>(); // aggregated basic column name -> basic column name
-			Map<String, Integer> fieldIndexMap = new HashMap<String, Integer>(); // basic column name -> field index
+			Set<String> notCalculatedColumns = new HashSet<>();
+			Map<String, String> basicColumnMap = new HashMap<>(); // aggregated basic column name -> basic column name
+			Map<String, Integer> fieldIndexMap = new HashMap<>(); // basic column name -> field index
 
 			for (ProjectionCriteria projection : projections) {
 				String columnName = projection.getColumnName();
@@ -1393,7 +1394,7 @@ public class DatasetManagementAPI {
 
 							// get basic values
 							boolean isNullValuePresent = false;
-							Map<String, Object> basicValues = new HashMap<String, Object>();
+							Map<String, Object> basicValues = new HashMap<>();
 							for (String basicColumnName : fieldIndexMap.keySet()) {
 								int fieldIndex = fieldIndexMap.get(basicColumnName);
 								IField field = record.getFieldAt(fieldIndex);
@@ -1529,7 +1530,7 @@ public class DatasetManagementAPI {
 	public void appendSummaryRowToPagedDataStore(List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections,
 			IDataStore pagedDataStore, IDataStore summaryRowDataStore) {
 		// calc a map for summaryRowProjections -> projections
-		Map<Integer, Integer> projectionToSummaryRowProjection = new HashMap<Integer, Integer>();
+		Map<Integer, Integer> projectionToSummaryRowProjection = new HashMap<>();
 		for (int i = 0; i < summaryRowProjections.size(); i++) {
 			ProjectionCriteria summaryRowProjection = summaryRowProjections.get(i);
 			for (int j = 0; j < projections.size(); j++) {
@@ -1584,9 +1585,9 @@ public class DatasetManagementAPI {
 		return pagedDataStore;
 	}
 
-	public String getQueryText(IDataSource dataSource, String tableName, List<GroupCriteria> groups, List<FilterCriteria> filters,
-			List<FilterCriteria> havings, List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet,
-			boolean isNearRealtime, List<String> outputOrderColumns) {
+	public String getQueryText(IDataSource dataSource, String tableName, List<GroupCriteria> groups, List<FilterCriteria> filters, List<FilterCriteria> havings,
+			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, boolean isNearRealtime,
+			List<String> outputOrderColumns) {
 		return getQueryText(new SelectBuilder(), dataSource, tableName, groups, filters, havings, projections, summaryRowProjections, dataSet, isNearRealtime,
 				outputOrderColumns);
 	}
@@ -1596,21 +1597,21 @@ public class DatasetManagementAPI {
 			boolean isNearRealtime, List<String> outputOrderColumns) {
 
 		if (tableName == null || tableName.isEmpty() || (!isNearRealtime && dataSource == null)) {
-			throw new IllegalArgumentException("Found one or more arguments invalid. Tablename [" + tableName + "] and/or dataSource [" + dataSource
-					+ "] are null or empty.");
+			throw new IllegalArgumentException(
+					"Found one or more arguments invalid. Tablename [" + tableName + "] and/or dataSource [" + dataSource + "] are null or empty.");
 		}
 
 		String label = dataSet.getLabel();
 		logger.debug("Build query for persisted dataset [" + label + "] with table name [" + tableName + "]");
 		logger.debug("Loading data from [" + label + "] to gather its metadata...");
 
-		List<String> orderColumns = new ArrayList<String>();
+		List<String> orderColumns = new ArrayList<>();
 		String queryText = null;
 		if (summaryRowProjections == null || summaryRowProjections.size() == 0 || !isNearRealtime) {
 			sqlBuilder.setWhereOrEnabled(isNearRealtime);
 			sqlBuilder.from(tableName);
 
-			Map<String, String> columnNameWithColonToAliasName = new HashMap<String, String>();
+			Map<String, String> columnNameWithColonToAliasName = new HashMap<>();
 
 			setColumnsToSelect(dataSource, projections, sqlBuilder, orderColumns, isNearRealtime, dataSet);
 			setWhereConditions(dataSource, filters, sqlBuilder);
@@ -1678,15 +1679,15 @@ public class DatasetManagementAPI {
 			throw new SpagoBIRuntimeException("Unable to manage ORDER BY clauses");
 		}
 
-		ArrayList<String> arrayCategoriesForOrdering = new ArrayList<String>();
+		ArrayList<String> arrayCategoriesForOrdering = new ArrayList<>();
 		String keepCategoryForOrdering = "";
 		boolean columnAndCategoryAreTheSame = false;
 		boolean isOrderColumnPresent = false;
 		boolean isAggregationPresent = false;
 
 		if (projections != null) {
-			Set<String> notCalculatedColumns = new HashSet<String>();
-			Set<String> aggregatedBasicColumns = new HashSet<String>();
+			Set<String> notCalculatedColumns = new HashSet<>();
+			Set<String> aggregatedBasicColumns = new HashSet<>();
 
 			for (ProjectionCriteria projection : projections) {
 				String columnName = projection.getColumnName();
@@ -1846,7 +1847,7 @@ public class DatasetManagementAPI {
 			throw new SpagoBIRuntimeException("An unexpected error occured while parsing [" + columnName + "]");
 		}
 
-		Set<String> columnNames = new HashSet<String>();
+		Set<String> columnNames = new HashSet<>();
 		int endIndex = -2;
 		int beginIndex = -1;
 		while ((beginIndex = columnName.indexOf(AbstractDataBase.STANDARD_ALIAS_DELIMITER, endIndex)) > -1) {
@@ -1948,7 +1949,7 @@ public class DatasetManagementAPI {
 
 	private void setGroupbyConditions(IDataSource dataSource, List<GroupCriteria> groups, SelectBuilder sqlBuilder, IDataSet dataSet) {
 		if (groups != null) {
-			List<String> groupColumnNames = new ArrayList<String>();
+			List<String> groupColumnNames = new ArrayList<>();
 
 			for (GroupCriteria group : groups) {
 				String columnName = group.getColumnName();
@@ -2003,7 +2004,7 @@ public class DatasetManagementAPI {
 
 	protected List<Integer> getCategories(IEngUserProfile profile) {
 
-		List<Integer> categories = new ArrayList<Integer>();
+		List<Integer> categories = new ArrayList<>();
 		try {
 			// NO CATEGORY IN THE DOMAINS
 			IDomainDAO domaindao = DAOFactory.getDomainDAO();
@@ -2044,7 +2045,7 @@ public class DatasetManagementAPI {
 	}
 
 	private List<IDataSet> getFilteredDatasets(List<IDataSet> unfilteredDataSets, List<Integer> categories) {
-		List<IDataSet> dataSets = new ArrayList<IDataSet>();
+		List<IDataSet> dataSets = new ArrayList<>();
 		if (categories != null && categories.size() != 0) {
 			for (IDataSet ds : unfilteredDataSets) {
 				if (ds.getCategoryId() == null || categories.contains(ds.getCategoryId())) {
@@ -2075,10 +2076,10 @@ public class DatasetManagementAPI {
 	}
 
 	@SuppressWarnings("unchecked")
-	public Map<String, TLongHashSet> readDomainValues(IDataSet dataSet, Map<String, String> parametersValues, boolean wait) throws NamingException,
-			WorkException, InterruptedException {
+	public Map<String, TLongHashSet> readDomainValues(IDataSet dataSet, Map<String, String> parametersValues, boolean wait)
+			throws NamingException, WorkException, InterruptedException {
 		logger.debug("IN");
-		Map<String, TLongHashSet> toReturn = new HashMap<String, TLongHashSet>(0);
+		Map<String, TLongHashSet> toReturn = new HashMap<>(0);
 		setDataSetParameters(dataSet, parametersValues);
 		String signature = dataSet.getSignature();
 		logger.debug("Looking for domain values for dataSet with signature [" + signature + "]...");
@@ -2093,8 +2094,8 @@ public class DatasetManagementAPI {
 			String filepath = path + File.separatorChar + hashSignature + DataSetConstants.DOMAIN_VALUES_EXTENSION;
 			File file = new File(filepath);
 			if (!file.exists()) {
-				logger.debug("Impossible to find a binary file named [" + hashSignature + DataSetConstants.DOMAIN_VALUES_EXTENSION + "] located at [" + path
-						+ "]");
+				logger.debug(
+						"Impossible to find a binary file named [" + hashSignature + DataSetConstants.DOMAIN_VALUES_EXTENSION + "] located at [" + path + "]");
 				calculateDomainValues(dataSet, wait);
 			}
 			if (wait) {
@@ -2126,7 +2127,7 @@ public class DatasetManagementAPI {
 				+ userProfile.getUserId() + "].");
 		WorkItem workItem = workManager.schedule(domainValuesWork);
 		if (wait) {
-			List<WorkItem> workItems = new ArrayList<WorkItem>(1);
+			List<WorkItem> workItems = new ArrayList<>(1);
 			workItems.add(workItem);
 			long workTimeout = Long.parseLong(SingletonConfig.getInstance().getConfigValue("SPAGOBI.WORKMANAGER.SQLDBCACHE.TIMEOUT"));
 			workManager.waitForAll(workItems, workTimeout);

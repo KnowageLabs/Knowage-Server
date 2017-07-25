@@ -2318,7 +2318,6 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			}
 			// New DS (POST)
 			else {
-//				console.log("novi 3: ",$scope.datasetsListTemp[i]);
 				indexOfExistingDSInAT = $scope.datasetsListTemp.length-1;
 			}			
 			
@@ -2333,6 +2332,20 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 				.then(
 						function(response) {
 							sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
+							
+							if($scope.selectedDataSet.isPersistedHDFS) {
+								sbiModule_restServices.promisePost('1.0/hdfs',response.data.id)
+								.then(
+										function(responseHDFS) {
+											sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.ds.hdfs.request.work"), 'Success!');	
+										}, 
+										
+										function(responseHDFS) {
+											sbiModule_messaging.showErrorMessage(responseHDFS.data.errors[0].message, 'Error');
+										}
+									);
+							}
+							
 							if( $scope.showDatasetScheduler){
 								if($scope.selectedDataSet.isScheduled) {
 									sbiModule_restServices.promisePost('scheduler/persistence/dataset/id',response.data.id, angular.toJson($scope.selectedDataSet))
