@@ -421,7 +421,7 @@ public class DatasetManagementAPI {
 
 					if (cachedResultSet == null) {
 						logger.debug("Dataset not in cache");
-						if (isJDBCDataSet && isInlineViewSupported && !dataSet.hasDataStoreTransformer()) {
+						if (isJDBCDataSet && !SqlUtils.isBigDataDialect(dataSet.getDataSource().getHibDialectName()) && !dataSet.hasDataStoreTransformer()) {
 							logger.debug("Copying JDBC dataset in cache using its iterator");
 							cache.put(dataSet);
 						} else {
