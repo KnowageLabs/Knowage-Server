@@ -400,8 +400,9 @@ public class DatasetManagementAPI {
 				dataStore.setCacheDate(new Date());
 			} else {
 				boolean isJDBCDataSet = isJDBCDataSet(dataSet);
-				boolean isBigDataDialect = SqlUtils.isBigDataDialect(dataSet.getDataSource() != null ? dataSet.getDataSource().getHibDialectName() : "");
-				if (isNearRealtime && isJDBCDataSet && !isBigDataDialect && !dataSet.hasDataStoreTransformer()) {
+				boolean isInlineViewSupported = SqlUtils
+						.isInlineViewSupported(dataSet.getDataSource() != null ? dataSet.getDataSource().getHibDialectName() : "");
+				if (isNearRealtime && isJDBCDataSet && isInlineViewSupported && !dataSet.hasDataStoreTransformer()) {
 					logger.debug("Querying near realtime/JDBC dataset");
 					dataStore = queryJDBCDataset(groups, filters, havings, projections, summaryRowProjections, dataSet, offset, fetchSize, maxRowCount);
 					dataStore.setCacheDate(new Date());
@@ -421,7 +422,7 @@ public class DatasetManagementAPI {
 
 					if (cachedResultSet == null) {
 						logger.debug("Dataset not in cache");
-						if (isJDBCDataSet && !isBigDataDialect && !dataSet.hasDataStoreTransformer()) {
+						if (isJDBCDataSet && isInlineViewSupported && !dataSet.hasDataStoreTransformer()) {
 							logger.debug("Copying JDBC dataset in cache using its iterator");
 							cache.put(dataSet);
 						} else {
@@ -1861,11 +1862,9 @@ public class DatasetManagementAPI {
 
 	private void setWhereConditions(IDataSource dataSource, List<FilterCriteria> filters, SelectBuilder sqlBuilder) {
 		if (filters != null) {
-			boolean isHsqlDialect = false;
-			boolean isSqlServerDialect = false;
+			boolean requireSimpleInClause = false;
 			if (dataSource != null) {
-				isHsqlDialect = dataSource.getHibDialectName().contains("hsql");
-				isSqlServerDialect = dataSource.getHibDialectName().contains("sqlserver");
+				requireSimpleInClause = SqlUtils.requireSimpleInClause(dataSource);
 			}
 
 			for (FilterCriteria filter : filters) {
@@ -1874,7 +1873,7 @@ public class DatasetManagementAPI {
 				String leftOperand = null;
 				String[] columns = filter.getLeftOperand().getOperandValueAsString().split(",");
 				if ("IN".equalsIgnoreCase(operator)) {
-					leftOperand = (isHsqlDialect || isSqlServerDialect) ? "(" : "(1,";
+					leftOperand = (requireSimpleInClause) ? "(" : "(1,";
 					String separator = "";
 					for (String value : columns) {
 						leftOperand += separator + AbstractJDBCDataset.encapsulateColumnName(value, dataSource);
@@ -1895,7 +1894,7 @@ public class DatasetManagementAPI {
 				StringBuilder rightOperandSB = new StringBuilder();
 				if (filter.getRightOperand().isCostant()) {
 					if (filter.getRightOperand().isMultivalue()) {
-						if (!isHsqlDialect && !isSqlServerDialect) {
+						if (!requireSimpleInClause) {
 							rightOperandSB.append("(");
 						}
 						String separator = "";
@@ -1910,9 +1909,9 @@ public class DatasetManagementAPI {
 									if (i >= columns.length) { // starting from 2nd tuple of values
 										rightOperandSB.append(",");
 									}
-									rightOperandSB.append(isHsqlDialect || isSqlServerDialect ? "(" : "(1");
+									rightOperandSB.append(requireSimpleInClause ? "(" : "(1");
 								}
-								if (i % columns.length != 0 || (!isHsqlDialect && !isSqlServerDialect)) {
+								if (i % columns.length != 0 || (!requireSimpleInClause)) {
 									rightOperandSB.append(",");
 								}
 								rightOperandSB.append(value);
@@ -1927,7 +1926,7 @@ public class DatasetManagementAPI {
 							}
 							separator = ",";
 						}
-						if (!isHsqlDialect && !isSqlServerDialect) {
+						if (!requireSimpleInClause) {
 							rightOperandSB.append(")");
 						}
 					} else {

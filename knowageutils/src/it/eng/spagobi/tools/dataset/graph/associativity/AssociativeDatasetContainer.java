@@ -18,13 +18,6 @@
 
 package it.eng.spagobi.tools.dataset.graph.associativity;
 
-import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
-import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicUtils;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.sql.SqlUtils;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -37,6 +30,13 @@ import javax.naming.NamingException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+
+import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
+import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicUtils;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.sql.SqlUtils;
 
 /**
  * @author Alessandro Portosa (alessandro.portosa@eng.it)
@@ -195,22 +195,28 @@ public class AssociativeDatasetContainer {
 	public String buildFilter(String columnNames, Set<String> filterValues) {
 		if (SqlUtils.hasSqlServerDialect(dataSource)) {
 			return buildAndOrFilter(columnNames, filterValues);
+		} else if (SqlUtils.requireSimpleInClause(dataSource)) {
+			return buildSimpleInFilter(columnNames, filterValues);
 		} else {
 			return buildInFilter(columnNames, filterValues);
 		}
 	}
 
 	public String buildInFilter(String columnNames, Set<String> filterValues) {
-		String inClauseColumns;
-		String inClauseValues;
-		if (filterValues.size() > SQL_IN_CLAUSE_LIMIT) {
-			inClauseColumns = "1," + columnNames;
-			inClauseValues = AssociativeLogicUtils.getUnlimitedInClauseValues(filterValues);
-		} else {
-			inClauseColumns = columnNames;
-			inClauseValues = StringUtils.join(filterValues, ",");
-		}
+		String filter = (filterValues.size() > SQL_IN_CLAUSE_LIMIT) ? buildComplexInFilter(columnNames, filterValues)
+				: buildSimpleInFilter(columnNames, filterValues);
+		return filter;
+	}
+
+	private String buildComplexInFilter(String columnNames, Set<String> filterValues) {
+		String inClauseColumns = "1," + columnNames;
+		String inClauseValues = AssociativeLogicUtils.getUnlimitedInClauseValues(filterValues);
 		return "(" + inClauseColumns + ") IN (" + inClauseValues + ")";
+	}
+
+	private String buildSimpleInFilter(String columnNames, Set<String> filterValues) {
+		String inClauseValues = StringUtils.join(filterValues, ",");
+		return "(" + columnNames + ") IN (" + inClauseValues + ")";
 	}
 
 	public String buildAndOrFilter(String columnNames, Set<String> filterValues) {
