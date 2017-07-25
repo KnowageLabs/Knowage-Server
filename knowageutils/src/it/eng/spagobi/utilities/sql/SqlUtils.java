@@ -231,12 +231,20 @@ public class SqlUtils {
 				return true;
 			}
 		}
-		return isBigDataDialect(dialect);
+		return !isBigDataDialect(dialect);
 	}
 
 	public static boolean hasSqlServerDialect(IDataSource dataSource) {
 		if (dataSource != null) {
 			return dataSource.getHibDialectName().contains("sqlserver");
+		} else {
+			return false;
+		}
+	}
+
+	public static boolean hasImpalaDialect(IDataSource dataSource) {
+		if (dataSource != null) {
+			return dataSource.getHibDialectName().contains("impala");
 		} else {
 			return false;
 		}

@@ -1893,9 +1893,7 @@ public class DatasetManagementAPI {
 				StringBuilder rightOperandSB = new StringBuilder();
 				if (filter.getRightOperand().isCostant()) {
 					if (filter.getRightOperand().isMultivalue()) {
-						if (!requireSimpleInClause) {
-							rightOperandSB.append("(");
-						}
+						rightOperandSB.append("(");
 						String separator = "";
 						List<String> values = filter.getRightOperand().getOperandValueAsList();
 						for (int i = 0; i < values.size(); i++) {
@@ -1925,9 +1923,7 @@ public class DatasetManagementAPI {
 							}
 							separator = ",";
 						}
-						if (!requireSimpleInClause) {
-							rightOperandSB.append(")");
-						}
+						rightOperandSB.append(")");
 					} else {
 						rightOperandSB.append(filter.getRightOperand().getOperandValueAsString());
 					}
@@ -1936,10 +1932,11 @@ public class DatasetManagementAPI {
 				}
 
 				String rightOperandString = rightOperandSB.toString();
-				if (sqlBuilder.isWhereOrEnabled() && !rightOperandString.contains(" AND ")) {
-					sqlBuilder.where(leftOperand + " " + operator + " " + rightOperandString);
-				} else {
+				if (sqlBuilder.isWhereOrEnabled() && rightOperandString.contains(" AND ")) {
 					sqlBuilder.where("(" + leftOperand + " " + operator + " " + rightOperandString + ")");
+
+				} else {
+					sqlBuilder.where(leftOperand + " " + operator + " " + rightOperandString);
 				}
 			}
 		}

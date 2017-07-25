@@ -193,10 +193,8 @@ public class AssociativeDatasetContainer {
 	}
 
 	public String buildFilter(String columnNames, Set<String> filterValues) {
-		if (SqlUtils.hasSqlServerDialect(dataSource)) {
+		if (SqlUtils.hasSqlServerDialect(dataSource) || SqlUtils.hasImpalaDialect(dataSource)) {
 			return buildAndOrFilter(columnNames, filterValues);
-		} else if (SqlUtils.requireSimpleInClause(dataSource)) {
-			return buildSimpleInFilter(columnNames, filterValues);
 		} else {
 			return buildInFilter(columnNames, filterValues);
 		}

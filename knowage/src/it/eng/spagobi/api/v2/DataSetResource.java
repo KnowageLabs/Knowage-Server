@@ -709,6 +709,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 					IDataSource dataSource = getDataSource(dataSet, isNearRealtime);
 
 					boolean isSqlServerDialect = dataSource.getHibDialectName().contains("sqlserver");
+					boolean isImpalaDialect = dataSource.getHibDialectName().contains("impala");
 
 					List<String> dateColumnNamesList = getDateColumnNamesList(dataSet, dataSource);
 
@@ -749,7 +750,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 
 						FilterCriteria filterCriteria = new FilterCriteria(leftOperand, "=", rightOperand);
 						filterCriterias.add(filterCriteria);
-					} else if (isSqlServerDialect) {
+					} else if (isSqlServerDialect || isImpalaDialect) {
 						for (int i = 0; i < columnsList.size(); i++) {
 							columnsList.set(i, AbstractJDBCDataset.encapsulateColumnName(columnsList.get(i), dataSource));
 						}
