@@ -2064,13 +2064,8 @@ public class DatasetManagementAPI {
 	}
 
 	public static boolean isJDBCDataSet(IDataSet dataSet) {
-		if (dataSet instanceof AbstractJDBCDataset) {
-			return true;
-		} else if (dataSet instanceof VersionedDataSet && ((VersionedDataSet) dataSet).getWrappedDataset() instanceof AbstractJDBCDataset) {
-			return true;
-		} else {
-			return false;
-		}
+		dataSet = (dataSet instanceof VersionedDataSet) ? ((VersionedDataSet) dataSet).getWrappedDataset() : dataSet;
+		return (dataSet instanceof AbstractJDBCDataset);
 	}
 
 	@SuppressWarnings("unchecked")
