@@ -71,7 +71,6 @@ import it.eng.spagobi.tools.dataset.association.DistinctValuesCalculateWork;
 import it.eng.spagobi.tools.dataset.association.DistinctValuesClearWork;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.cache.CacheException;
 import it.eng.spagobi.tools.dataset.cache.FilterCriteria;
@@ -2065,9 +2064,9 @@ public class DatasetManagementAPI {
 	}
 
 	public static boolean isJDBCDataSet(IDataSet dataSet) {
-		if (dataSet instanceof JDBCDataSet) {
+		if (dataSet instanceof AbstractJDBCDataset) {
 			return true;
-		} else if (dataSet instanceof VersionedDataSet && ((VersionedDataSet) dataSet).getWrappedDataset() instanceof JDBCDataSet) {
+		} else if (dataSet instanceof VersionedDataSet && ((VersionedDataSet) dataSet).getWrappedDataset() instanceof AbstractJDBCDataset) {
 			return true;
 		} else {
 			return false;
