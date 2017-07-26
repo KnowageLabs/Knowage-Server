@@ -71,6 +71,7 @@ import it.eng.spagobi.tools.dataset.association.DistinctValuesCalculateWork;
 import it.eng.spagobi.tools.dataset.association.DistinctValuesClearWork;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.cache.CacheException;
 import it.eng.spagobi.tools.dataset.cache.FilterCriteria;
@@ -399,9 +400,8 @@ public class DatasetManagementAPI {
 				dataStore.setCacheDate(new Date());
 			} else {
 				boolean isJDBCDataSet = isJDBCDataSet(dataSet);
-				boolean isInlineViewSupported = SqlUtils
-						.isInlineViewSupported(dataSet.getDataSource() != null ? dataSet.getDataSource().getHibDialectName() : "");
-				if (isNearRealtime && isJDBCDataSet && isInlineViewSupported && !dataSet.hasDataStoreTransformer()) {
+				boolean isBigDataDialect = SqlUtils.isBigDataDialect(dataSet.getDataSource() != null ? dataSet.getDataSource().getHibDialectName() : "");
+				if (isNearRealtime && isJDBCDataSet && !isBigDataDialect && !dataSet.hasDataStoreTransformer()) {
 					logger.debug("Querying near realtime/JDBC dataset");
 					dataStore = queryJDBCDataset(groups, filters, havings, projections, summaryRowProjections, dataSet, offset, fetchSize, maxRowCount);
 					dataStore.setCacheDate(new Date());
@@ -421,7 +421,7 @@ public class DatasetManagementAPI {
 
 					if (cachedResultSet == null) {
 						logger.debug("Dataset not in cache");
-						if (isJDBCDataSet && !SqlUtils.isBigDataDialect(dataSet.getDataSource().getHibDialectName()) && !dataSet.hasDataStoreTransformer()) {
+						if (isJDBCDataSet && !isBigDataDialect && !dataSet.hasDataStoreTransformer()) {
 							logger.debug("Copying JDBC dataset in cache using its iterator");
 							cache.put(dataSet);
 						} else {
@@ -1861,9 +1861,11 @@ public class DatasetManagementAPI {
 
 	private void setWhereConditions(IDataSource dataSource, List<FilterCriteria> filters, SelectBuilder sqlBuilder) {
 		if (filters != null) {
-			boolean requireSimpleInClause = false;
+			boolean isHsqlDialect = false;
+			boolean isSqlServerDialect = false;
 			if (dataSource != null) {
-				requireSimpleInClause = SqlUtils.requireSimpleInClause(dataSource);
+				isHsqlDialect = dataSource.getHibDialectName().contains("hsql");
+				isSqlServerDialect = dataSource.getHibDialectName().contains("sqlserver");
 			}
 
 			for (FilterCriteria filter : filters) {
@@ -1872,7 +1874,7 @@ public class DatasetManagementAPI {
 				String leftOperand = null;
 				String[] columns = filter.getLeftOperand().getOperandValueAsString().split(",");
 				if ("IN".equalsIgnoreCase(operator)) {
-					leftOperand = (requireSimpleInClause) ? "(" : "(1,";
+					leftOperand = (isHsqlDialect || isSqlServerDialect) ? "(" : "(1,";
 					String separator = "";
 					for (String value : columns) {
 						leftOperand += separator + AbstractJDBCDataset.encapsulateColumnName(value, dataSource);
@@ -1893,7 +1895,9 @@ public class DatasetManagementAPI {
 				StringBuilder rightOperandSB = new StringBuilder();
 				if (filter.getRightOperand().isCostant()) {
 					if (filter.getRightOperand().isMultivalue()) {
-						rightOperandSB.append("(");
+						if (!isHsqlDialect && !isSqlServerDialect) {
+							rightOperandSB.append("(");
+						}
 						String separator = "";
 						List<String> values = filter.getRightOperand().getOperandValueAsList();
 						for (int i = 0; i < values.size(); i++) {
@@ -1906,9 +1910,9 @@ public class DatasetManagementAPI {
 									if (i >= columns.length) { // starting from 2nd tuple of values
 										rightOperandSB.append(",");
 									}
-									rightOperandSB.append(requireSimpleInClause ? "(" : "(1");
+									rightOperandSB.append(isHsqlDialect || isSqlServerDialect ? "(" : "(1");
 								}
-								if (i % columns.length != 0 || (!requireSimpleInClause)) {
+								if (i % columns.length != 0 || (!isHsqlDialect && !isSqlServerDialect)) {
 									rightOperandSB.append(",");
 								}
 								rightOperandSB.append(value);
@@ -1923,7 +1927,9 @@ public class DatasetManagementAPI {
 							}
 							separator = ",";
 						}
-						rightOperandSB.append(")");
+						if (!isHsqlDialect && !isSqlServerDialect) {
+							rightOperandSB.append(")");
+						}
 					} else {
 						rightOperandSB.append(filter.getRightOperand().getOperandValueAsString());
 					}
@@ -1932,11 +1938,10 @@ public class DatasetManagementAPI {
 				}
 
 				String rightOperandString = rightOperandSB.toString();
-				if (sqlBuilder.isWhereOrEnabled() && rightOperandString.contains(" AND ")) {
-					sqlBuilder.where("(" + leftOperand + " " + operator + " " + rightOperandString + ")");
-
-				} else {
+				if (sqlBuilder.isWhereOrEnabled() && !rightOperandString.contains(" AND ")) {
 					sqlBuilder.where(leftOperand + " " + operator + " " + rightOperandString);
+				} else {
+					sqlBuilder.where("(" + leftOperand + " " + operator + " " + rightOperandString + ")");
 				}
 			}
 		}
@@ -2061,8 +2066,13 @@ public class DatasetManagementAPI {
 	}
 
 	public static boolean isJDBCDataSet(IDataSet dataSet) {
-		dataSet = (dataSet instanceof VersionedDataSet) ? ((VersionedDataSet) dataSet).getWrappedDataset() : dataSet;
-		return (dataSet instanceof AbstractJDBCDataset);
+		if (dataSet instanceof JDBCDataSet) {
+			return true;
+		} else if (dataSet instanceof VersionedDataSet && ((VersionedDataSet) dataSet).getWrappedDataset() instanceof JDBCDataSet) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	@SuppressWarnings("unchecked")

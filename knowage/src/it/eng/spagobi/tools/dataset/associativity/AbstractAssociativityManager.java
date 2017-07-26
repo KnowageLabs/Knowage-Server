@@ -161,7 +161,7 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 					} else if (dataSet.isFlatDataset()) {
 						container = new AssociativeDatasetContainer(dataSet, dataSet.getFlatTableName(), dataSet.getDataSource(), parametersValues);
 					} else if (config.getNearRealtimeDatasets().contains(v1) && DatasetManagementAPI.isJDBCDataSet(dataSet)
-							&& SqlUtils.isInlineViewSupported(dataSet.getDataSource().getHibDialectName())) {
+							&& !SqlUtils.isBigDataDialect(dataSet.getDataSource().getHibDialectName())) {
 						QuerableBehaviour querableBehaviour = (QuerableBehaviour) dataSet.getBehaviour(QuerableBehaviour.class.getName());
 						String tableName = "(" + querableBehaviour.getStatement() + ") T";
 						container = new AssociativeDatasetContainer(dataSet, tableName, dataSet.getDataSource(), parametersValues);
@@ -172,12 +172,11 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 						String signature = dataSet.getSignature();
 						CacheItem cacheItem = cache.getMetadata().getCacheItem(signature);
 						if (cacheItem == null) {
-							logger.debug("Unable to find dataset [" + v1 + "] with signature [" + signature
-									+ "] in cache. This can be due to changes on dataset parameters");
+							logger.debug("Unable to find dataset [" + v1 + "] in cache. This can be due to changes on dataset parameters");
 							cache.put(dataSet);
 							cacheItem = cache.getMetadata().getCacheItem(signature);
 							if (cacheItem == null) {
-								throw new SpagoBIException("Unable to find dataset [" + v1 + "] with signature [" + signature + "] in cache.");
+								throw new SpagoBIException("Unable to find dataset [" + v1 + "] in cache.");
 							}
 						}
 						container = new AssociativeDatasetContainer(dataSet, cacheItem.getTable(), cacheDataSource, parametersValues);
