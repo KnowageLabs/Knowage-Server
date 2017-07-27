@@ -738,10 +738,15 @@ public class DataStore implements IDataStore {
 		int resultCount = (int) getRecordsCount();
 		dataStoreMetaData.setProperty("resultNumber", resultCount);
 
-		boolean isPaginationValid = offset > -1 && fetchSize > -1;
+		logger.debug("offset is equal to [" + offset + "]");
+		logger.debug("fetchSize is equal to [" + fetchSize + "]");
+		logger.debug("resultCount is equal to [" + resultCount + "]");
+
+		boolean isPaginationValid = offset > -1 && fetchSize > 0;
 		int startIndex = isPaginationValid ? offset : 0;
 		int endIndex = isPaginationValid ? Math.min(offset + fetchSize, resultCount) : resultCount;
 
+		logger.debug("Returning records within index interval [" + startIndex + "; " + endIndex + "]");
 		for (int i = startIndex; i < endIndex; i++) {
 			Record record = (Record) getRecordAt(i);
 			try {
