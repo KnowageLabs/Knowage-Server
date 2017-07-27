@@ -1,0 +1,51 @@
+<table ng-class="" class="cockpitTable" ng-style="settings.style.table" ng-cloak>
+    <thead>
+        <tr ng-style="settings.style.header">
+            <th scope="col" ng-repeat="column in columns track by $index" ng-style="settings.style.th" ng-click="sort(column,$event)" ng-class="{'hiddenIcon':column.name != orderCol, 'unsortable':!column.sortable}">
+                <span ng-class="{'active':column.name == orderCol}">{{column.label}}</span>
+                <span class="sortingIcon" ng-class="{'inverse':sortingCol}"><i class="fa fa-arrow-down"></i></span>
+            </th>
+        </tr>
+    </thead>
+    <thead ng-if="loading" class="loadingBar">
+        <tr>
+            <th colspan="1000">
+                <md-progress-linear md-mode="indeterminate"></md-progress-linear>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="row in model | orderBy : orderCol : sortingCol | limitTo : settings.pagination.itemsNumber : (settings.page-1)*settings.pagination.itemsNumber" ng-style="settings.style.tr" class="en-row">
+            <td ng-repeat="column in columns" ng-click="selectCell($event,row,column)">
+
+                <md-tooltip ng-if="!column.hideTooltip" md-direction="top" md-delay="500">{{row[column.name]}}</md-tooltip>
+				<div class="cellContainer">
+					<span ng-if="column.icon && column.icon.position=='before'">
+	                    <md-icon ng-class="getDynamicIcon(column,row[column.name]).iconClass" ng-style="{color:getDynamicIcon(column,row[column.name]).iconColor}"></md-icon>
+	                </span>
+	                    
+	                <span ng-if="!column.text.hidden" ng-class="{'truncated':column.truncated}" ng-style="{'width':column.style.width}"><span ng-if="column.text.prefix">{{column.text.prefix}}</span> {{row[column.name]}} <span ng-if="column.text.suffix">{{column.text.suffix}}</span></span>
+	                    
+	                <div class="barChart" ng-if="column.barchart" flex>
+	                    <div class="progressTrack" ng-style="{'height':column.barchart.style['height']}">
+	                        <div class="progressFill" ng-style="{'height':column.barchart.style['height'],'line-height':column.barchart.style['height'],'width':getBarChartFill(row[column.name],column.barchart.maxValue),'background-color':column.barchart.style['background-color'], 'color':column.barchart.style['color']}">
+	                            <span ng-style="{'font-size':column.barchart.style['font-size'],'color':column.barchart.style['color'], 'line-height':column.barchart.style['height']}" ng-class="{'truncated':column.truncated}">{{row[column.name]}}</span>
+	                        </div>
+	                    </div>
+	                </div>
+	                
+	                <span ng-if="column.icon && column.icon.position=='after'">
+	                    <md-icon ng-class="getDynamicIcon(column,row[column.name]).iconClass" ng-style="{color:getDynamicIcon(column,row[column.name]).iconColor}"></md-icon>
+	                </span>
+                </div>
+
+            </td>
+        </tr>
+    </tbody>
+    <tfoot>
+
+    </tfoot>
+
+</table>
+<ng-summary></ng-summary>
+<cockpit-table-pagination ng-if="settings.pagination && model" model="model" page="page" settings="settings"></cockpit-table-pagination>

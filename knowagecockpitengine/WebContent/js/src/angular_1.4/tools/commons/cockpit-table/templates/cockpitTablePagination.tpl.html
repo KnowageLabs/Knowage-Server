@@ -1,0 +1,16 @@
+<nav aria-label="Page navigation" class="enTablePagination">
+    <div class="page-select">
+        <label>Page: </label>
+        <md-select ng-model="settings.page" ng-change="goToPage()">
+            <md-option ng-repeat="pages in getTotalPages() track by $index" value="{{$index+1}}">{{$index+1}}</md-option>
+        </md-select>
+    </div>
+    <div class="label page-position">{{min()}} - {{max()}} of {{model.length}}</div>
+    <md-button class="md-icon-button" aria-label="Previous" ng-click="previous()" ng-disabled="!hasPrevious()">
+        <i class="fa fa-angle-left"></i>
+    </md-button>
+
+    <md-button class="md-icon-button" aria-label="Next" ng-click="next()" ng-disabled="!hasNext()">
+        <i class="fa fa-angle-right"></i>
+    </md-button>
+</nav>
