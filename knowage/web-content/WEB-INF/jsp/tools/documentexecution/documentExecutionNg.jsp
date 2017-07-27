@@ -220,7 +220,7 @@ if(executionRoleNames.size() > 0) {
         
                     
         <% if(engineName.equalsIgnoreCase( SpagoBIConstants.COCKPIT_ENGINE_NAME)
-                            && userId.equals(obj.getCreationUser())) {%>
+                            && (isAdmin || userId.equals(obj.getCreationUser()))) {%>
                     <md-button ng-if="cockpitEditing.documentMode == 'EDIT'" class="md-icon-button" ng-click="::cockpitEditing.stopCockpitEditing()"
                             aria-label="{{::translate.load('sbi.execution.executionpage.toolbar.viewcockpitdoc')}}"
                             title="{{::translate.load('sbi.execution.executionpage.toolbar.viewcockpitdoc')}}">
@@ -517,14 +517,14 @@ if(executionRoleNames.size() > 0) {
                     function($mdToast, execProperties, sbiModule_restServices, sbiModule_config, $filter, $mdDialog, sbiModule_translate) {
     <% 
     if(engineName.equalsIgnoreCase( SpagoBIConstants.COCKPIT_ENGINE_NAME)
-        && userId.equals(obj.getCreationUser())) { 
-    %>
-                
+        && (isAdmin || userId.equals(obj.getCreationUser()))) { 
+    %>          
                 var cockpitEditingService = this;
                 
                 cockpitEditingService.documentMode = 'VIEW';
                 
                 cockpitEditingService.startCockpitEditing = function() {
+
                 	cockpitEditingService.documentMode = 'EDIT';
                 	var newUrl = cockpitEditingService.changeDocumentExecutionUrlParameter('documentMode', cockpitEditingService.documentMode);
                     
