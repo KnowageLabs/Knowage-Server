@@ -1,3 +1,9 @@
+@mixin transition($duration) {
+    -webkit-transition-duration: $duration;
+    -moz-transition-duration: $duration;
+    -o-transition-duration: $duration;
+    transition-duration: $duration;
+}
 .kn-cockpit {
     margin: 0;
     padding: 0;
@@ -58,21 +64,158 @@
 	}
 
 	cockpit-table-widget {
-		table>thead {
-			background-color: transparent;
-		}
-		table>tbody>tr:hover{
-		    background-color: inherit;
-		}
-		table {
-			tbody {
-				td {
-					&:hover {
-						transition:0.2s linear background-color;
-						background-color: lighten($secondaryColor,10%);
-					}
-				}
-			}
+		
+
+		cockpit-table {
+		    font-size: 12px;
+		    display: block;
+		    table.cockpitTable {
+		        .loadingBar {
+		            tr {
+		                height: 0px;
+		                th {
+		                    padding: 0;
+		                    md-progress-linear {
+		                        .md-container {
+		                            top: 0;
+		                        }
+		                    }
+		                }
+		            }
+		        }
+		        border-collapse: collapse;
+		        tr {
+		            border-bottom: 1px solid #ddd;
+		            height: 32px;
+		            th {
+		                @extend .noSelect;
+		                cursor: pointer;
+		                text-align: left;
+		                background-color: #fafafa;
+		                color: rgba(0, 0, 0, .54);
+		                font-size: 12px;
+		                font-weight: 700;
+		                white-space: nowrap;
+		                .active {
+		                    color: rgba(0, 0, 0, .74);
+		                    font-weight: bold;
+		                }
+		                &.hiddenIcon {
+		                    .sortingIcon {
+		                        opacity: 0;
+		                    }
+		                    &:hover {
+		                        .sortingIcon {
+		                            opacity: .5;
+		                        }
+		                    }
+		                }
+		                &.unsortable {
+		                    cursor: default;
+		                    .sortingIcon {
+		                        display: none;
+		                    }
+		                }
+		                .sortingIcon {
+		                    display: inline-block;
+		                    //@include transition(0.8s);
+		                    &.inverse {
+		                        -ms-transform: rotate(180deg);
+		                        -webkit-transform: rotate(180deg);
+		                        transform: rotate(180deg);
+		                    }
+		                }
+		            }
+		            td {
+		            	span {
+		            		font-size: .8rem;
+		            	}
+		                
+		            }
+		        }
+		        tbody {
+		            tr {
+		                border-top: 1px rgba(0, 0, 0, .12) solid;
+		                &.en-row {
+		                    &:not([disabled]) {
+		                        &:hover {
+		                            background-color: #eee!important;
+		                        }
+		                    }
+		                }
+		            }
+		        }
+		    }
+		    .selection {
+		        width: 20px;
+		        padding: 0 0 0 16px;
+		        md-checkbox {
+		            margin-bottom: 0;
+		        }
+		    }
+		    .enTablePagination {
+		        height: 40px;
+		        display: flex;
+		        flex-direction: row;
+		        justify-content: flex-end;
+		        align-items: center;
+		        .page-select {
+		            display: flex;
+		            align-items: center;
+		            flex-direction: row;
+		            margin-right: 16px;
+		            md-select {
+		                margin: 0;
+		            }
+		            label {
+		                margin-right: 10px;
+		            }
+		        }
+		    }
+		    .dynamic {
+		        display: flex;
+		        flex-direction: row;
+		        align-items: center;
+		        justify-content: space-around;
+		        .barChart {
+		            .progressTrack {
+		                position: relative;
+		                width: 100%;
+		                height: 20px;
+		                background: #ebebeb;
+		                .progressFill {
+		                    position: relative;
+		                    background: #2196F3;
+		                    height: 20px;
+		                    width: 50%;
+		                    max-width: 100%;
+		                    color: #fff;
+		                    text-align: center;
+		                    font-size: 12px;
+		                    line-height: 20px;
+		                }
+		            }
+		        }
+		    }
+		    .noSelect {
+		        outline: none;
+		        -webkit-touch-callout: none;
+		        -webkit-user-select: none;
+		        -khtml-user-select: none;
+		        -moz-user-select: none;
+		        -ms-user-select: none;
+		        user-select: none;
+		    }
+		    .truncated {
+		        display: block;
+		        overflow: hidden;
+		        white-space: nowrap;
+		        text-overflow: ellipsis;
+		    }
+		    md-icon.fa {
+		        text-align: center;
+		        line-height: 24px;
+		    }
 		}
 		
 	}
@@ -1238,5 +1381,5 @@
 		height: $toolbarHeight;
 	}
 
-
+	
 }
