@@ -143,6 +143,32 @@
 		                        }
 		                    }
 		                }
+		                td {
+		                	.cellContainer {
+		                		display: flex;
+		                		flex-direction: row;
+		                		align-items: center;
+		                		.barChart {
+						            .progressTrack {
+						                position: relative;
+						                width: 100%;
+						                height: 20px;
+						                background: #ebebeb;
+						                .progressFill {
+						                    position: relative;
+						                    background: #2196F3;
+						                    height: 20px;
+						                    width: 50%;
+						                    max-width: 100%;
+						                    color: #fff;
+						                    text-align: center;
+						                    font-size: 12px;
+						                    line-height: 20px;
+						                }
+						            }
+						        }
+		                	}
+		                }
 		            }
 		        }
 		    }
@@ -169,31 +195,6 @@
 		            }
 		            label {
 		                margin-right: 10px;
-		            }
-		        }
-		    }
-		    .dynamic {
-		        display: flex;
-		        flex-direction: row;
-		        align-items: center;
-		        justify-content: space-around;
-		        .barChart {
-		            .progressTrack {
-		                position: relative;
-		                width: 100%;
-		                height: 20px;
-		                background: #ebebeb;
-		                .progressFill {
-		                    position: relative;
-		                    background: #2196F3;
-		                    height: 20px;
-		                    width: 50%;
-		                    max-width: 100%;
-		                    color: #fff;
-		                    text-align: center;
-		                    font-size: 12px;
-		                    line-height: 20px;
-		                }
 		            }
 		        }
 		    }
