@@ -57,10 +57,11 @@
                     //sorting function
                     scope.sort = function(col, e) {
                         if (col.sortable) {
-                            if (scope.orderCol == "'"+col.name+"'") {
+                            if (scope.orderCol == col.name) {
                                 scope.sortingCol = scope.sortingCol ? false : true;
                             }
-                            scope.orderCol = "'"+col.name+"'";
+                            scope.orderCol = col.name;
+                            scope.orderColFilter = "'"+col.name+"'";
                         }
                     }
 

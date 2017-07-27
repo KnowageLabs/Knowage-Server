@@ -15,7 +15,7 @@
         </tr>
     </thead>
     <tbody>
-        <tr ng-repeat="row in model | orderBy : orderCol : sortingCol | limitTo : settings.pagination.itemsNumber : (settings.page-1)*settings.pagination.itemsNumber" ng-style="settings.style.tr" class="en-row">
+        <tr ng-repeat="row in model | orderBy : orderColFilter : sortingCol | limitTo : settings.pagination.itemsNumber : (settings.page-1)*settings.pagination.itemsNumber" ng-style="settings.style.tr" class="en-row">
             <td ng-repeat="column in columns" ng-click="selectCell($event,row,column)">
 
                 <md-tooltip ng-if="!column.hideTooltip" md-direction="top" md-delay="500">{{row[column.name]}}</md-tooltip>
