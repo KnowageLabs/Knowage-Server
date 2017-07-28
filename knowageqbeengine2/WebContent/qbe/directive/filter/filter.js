@@ -52,15 +52,33 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 	}
 
 	$scope.params=false;
-	var i = 1;
 	$scope.targetAF = {};
+	var checkForIndex = function(){
+		var niz = [];
+		if($scope.filters.length==0){
+			return 1;
+		} else {
 
+			for (var m = 0; m < $scope.filters.length; m++) {
+				var num = $scope.filters[m].filterId.substring(6);
+				niz.push(parseInt(num));
+			}
+			function sortNumber(a,b) {
+			    return a - b;
+			}
+
+		    niz.sort(sortNumber);
+		    return niz[niz.length-1]+1;
+		}
+	}
 	$scope.addNewFilter= function (){
+		$scope.filterIndex = checkForIndex();
 		$scope.showTable = false;
 		$scope.targetOption = "default";
 		var object = {
-				"filterId": "Filter"+i,
-				"filterDescripion": "Filter"+i,
+				"filterId": "Filter"+$scope.filterIndex,
+				"filterDescripion": "Filter"+$scope.filterIndex,
+				"filterInd": $scope.filterIndex,
 				"promptable": false,
 				"leftOperandValue": $scope.ngModel.field.field.id,
 				"leftOperandDescription": $scope.ngModel.field.field.entity+ " : " + $scope.ngModel.field.field.name,
@@ -101,7 +119,6 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 				}
 			}
 		}
-		i=i+1;
 	}
 
 	$scope.deleteFilter = function (filter){
