@@ -1,17 +1,17 @@
 /**
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * Knowage is distributed in the hope that it will be useful, 
+ * Knowage is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -38,16 +38,23 @@ angular.module('qbe_filter', ['ngMaterial','angular_table' ])
 
 function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiModule_config,$mdPanel){
 
-	$scope.filters=angular.copy($scope.ngModel.field.field.filters);
+	$scope.filters=angular.copy($scope.ngModel.queryFilters);
 	$scope.field=$scope.ngModel.field.field;
 	$scope.tree=$scope.ngModel.tree.entities;
+	$scope.pars=angular.copy($scope.ngModel.pars);
 	$scope.targetOption="default";
 	$scope.openMenu = function($mdOpenMenu, ev) {
 	      originatorEv = ev;
 	      $mdOpenMenu(ev);
 	};
+	$scope.fieldFilter = function (item) {
+		if(item.leftOperandValue==$scope.field.id) return item
+	}
+
+	$scope.params=false;
 	var i = 1;
 	$scope.targetAF = {};
+
 	$scope.addNewFilter= function (){
 		$scope.showTable = false;
 		$scope.targetOption = "default";
@@ -75,8 +82,25 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 				"booleanConnector": "AND",
 				"deleteButton": false
 			}
+		if($scope.filters.length ==0){
+			$scope.filters.push(object);
+		} else {
+			for (var j = 0; j <  $scope.filters.length; j++) {
+				if($scope.filters[j+1]){
+					if($scope.filters[j].leftOperandValue==$scope.filters[j+1].leftOperandValue){
 
-		$scope.filters.push(object);
+					} else {
+						if($scope.filters[j].leftOperandValue==object.leftOperandValue){
+							$scope.filters.splice(j+1,0,object);
+							break;
+						}
+					}
+				} else {
+					$scope.filters.push(object);
+					break;
+				}
+			}
+		}
 		i=i+1;
 	}
 
@@ -116,6 +140,9 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 		case "field":
 			setRight(filter, type, value);
 			break;
+		case "parameter":
+			setRight(filter, type, value);
+			break;
 		default:
 
 			break;
@@ -134,6 +161,11 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 			filter.rightOperandDescription=type.text;
 			filter.rightOperandLongDescription="Subquery "+type.text;
 			filter.rightOperandType="Subquery";
+		} else if(value=='parameter'){
+			filter.hasParam = type.name
+			filter.rightOperandDescription=type.name;
+			filter.rightOperandLongDescription="Parameter "+type.name;
+			filter.rightOperandType="Parameter";
 		} else {
 			filter.rightOperandType="Static Content";
 		}
@@ -158,7 +190,7 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 			break;
 		case "parameter":
 			$scope.targetOption = option;
-			$scope.disableCombo = true;
+			$scope.disableCombo = false;
 			break;
 		default:
 			break;
@@ -211,93 +243,38 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 		}
 	}
 
-	$scope.subqueries = [{
-		"id": "q3",
-		"text": "query-q3",
-		"description": "query-q3",
-		"fields": [{
-			"id": "it.eng.spagobi.meta.Customer:compId.country",
-			"alias": "Country",
-			"type": "datamartField",
-			"entity": "Customer",
-			"text": "Country",
-			"funct": "",
-			"group": true,
-			"order": "",
-			"include": true,
-			"visible": true,
-			"longDescription": "Customer : Country"
-		}],
-		"distinct": false,
-		"filters": [],
-		"calendar": {
-
-		},
-		"expression": {
-			"type": "NODE_CONST",
-			"value": "$F{Filter1}",
-			"childNodes": []
-		},
-		"isNestedExpression": false,
-		"havings": [],
-		"graph": [],
-		"relationsRoles": [],
-		"subqueries": []
-	},
-	{
-		"id": "q5",
-		"text": "query-q5",
-		"description": "query-q5",
-		"fields": [{
-			"id": "it.eng.spagobi.meta.Customer:compId.country",
-			"alias": "Country",
-			"type": "datamartField",
-			"entity": "Customer",
-			"text": "Country",
-			"funct": "",
-			"group": true,
-			"order": "",
-			"include": true,
-			"visible": true,
-			"longDescription": "Customer : Country"
-		}],
-		"distinct": false,
-		"filters": [],
-		"calendar": {
-
-		},
-		"expression": {
-			"type": "NODE_CONST",
-			"value": "$F{Filter1}",
-			"childNodes": []
-		},
-		"isNestedExpression": false,
-		"havings": [],
-		"graph": [],
-		"relationsRoles": [],
-		"subqueries": []
-	}];
-
 	$scope.edit = function (filter){
 		filter.rightOperandValue=[];
 		filter.rightOperandValue.push(filter.rightOperandDescription );
 		filter.rightOperandType="Static Content";
 	}
 	$scope.saveFilters=function(){
-		$scope.ngModel.field.field.filters = [];
-		$scope.ngModel.field.field.filters = $scope.filters;
-		$scope.ngModel.field.field.expression = generateExpressions ($scope.filters);
-		$scope.applyFuntion($scope.filters, $scope.ngModel.field.field.expression)
-		$scope.ngModel.mdPanelRef.close();
+		var countParam = 0;
+		for (var i = 0; i < $scope.filters.length; i++) {
+			if($scope.filters[i].rightOperandType=="Parameter"){
+				countParam++;
+			}
+		}
+
+		if($scope.pars.length>0 && countParam>0){
+			$scope.params=true;
+		} else {
+			$scope.ngModel.queryFilters = [];
+			$scope.ngModel.queryFilters = $scope.filters;
+			//$scope.ngModel.field.field.expression = generateExpressions ($scope.filters);
+			$scope.applyFuntion($scope.filters, $scope.pars/*, $scope.ngModel.field.field.expression*/)
+			$scope.ngModel.mdPanelRef.close();
+		}
 	}
 
-	$scope.applyFuntion = function(filters, expression) {
+	$scope.applyFuntion = function(filters/*, expression*/, pars) {
 		console.log($scope)
-		$rootScope.$emit('applyFunction', {
+		$rootScope.$broadcast('applyFunction', {
 			"fieldId" : $scope.ngModel.field.field.id,
 			"entity" : $scope.ngModel.field.field.entity,
-			"filters" : filters,
-			"expression" : expression,
+
+	"filters" : filters,		/*"expression" : expression,*/
+			"pars" : pars,
 
 		});
 	};
@@ -333,6 +310,46 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 		return expression;
 
 	};
+	$scope.parametersPreviewColumns = [
+
+	                                   {
+	                                   	"label":"NAME",
+	                                   	"name":"name",
+	                                   	hideTooltip:true,
+	                                   	transformer: function() {
+	                                   		return '<md-input-container class="md-block" style="margin:0"><input ng-model="row.name"></md-input-container>';
+	                                   	}
+	                               	},
+
+	                               	{
+	                            		"label":"VALUE",
+	                            		"name":"defaultValue",
+	                            		hideTooltip:true,
+
+	                                   	transformer: function() {
+	                                   		return '<md-input-container class="md-block" style="margin:0"><input placeholder="If not set, parameter will have default value." ng-model="row.value"></md-input-container>';
+	                                   	}
+	                            	}
+
+	                               ];
+	$scope.applyValueOfParameterAndContinuePreviewExecution = function (){
+		$scope.ngModel.queryFilters = [];
+		for (var i = 0; i < $scope.filters.length; i++) {
+			if($scope.filters[i].rightOperandType=="Parameter"){
+				for (var j = 0; j < $scope.pars.length; j++) {
+					if($scope.filters[i].hasParam==$scope.pars[j].name){
+						$scope.filters[i].rightOperandValue.push($scope.pars[j].value);
+						$scope.filters[i].rightOperandLongDescription="Parameter "+$scope.pars[j].value;
+					}
+				}
+			}
+		}
+		$scope.ngModel.queryFilters  = $scope.filters;
+	//	$scope.ngModel.field.field.expression = generateExpressions ($scope.filters);
+		$scope.applyFuntion($scope.filters/*, $scope.ngModel.field.field.expression*/, $scope.pars)
+		$scope.ngModel.mdPanelRef.close();
+
+	}
 
 }
 })();

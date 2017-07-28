@@ -1,0 +1,42 @@
+<md-content style="padding: 0 8 8 8" flex class="ToolbarBox miniToolbar noBorder mozTable">
+	<md-toolbar class="secondaryToolbar" layout-padding>
+		<div class="md-toolbar-tools">
+			<h2><span>Params</span></h2>
+			<span flex></span>
+			<md-button class="md-icon-button" aria-label="Add new dataset parameter" ng-click="parametersAddItem(); setFormDirty()" 
+					title="Tooltip">
+				<md-icon md-font-icon="fa fa-plus-circle" ></md-icon>
+			</md-button>
+									
+			<md-button class="md-icon-button" aria-label="Clear all parameters" 
+					ng-click="deleteAllParameters();" title="Clear all parameters">
+				<md-icon md-font-icon="fa fa-eraser" ></md-icon>
+			</md-button>
+		</div>
+	</md-toolbar>						         
+											
+	<md-card layout-padding style="height:300px; margin:0px">
+																				      						
+		<angular-table
+			id="datasetParametersTable"
+			flex
+			style="height:100%;padding:8px"
+			ng-model="parameterItems"
+			columns='parametersColumns'
+			scope-functions=paramScopeFunctions
+			no-pagination=true
+			
+			current-page-number=parametersTableLastPage >
+		</angular-table>
+		
+						   									
+	</md-card>
+	<md-card-actions layout="row" layout-align="end center">
+		<md-button ng-click="closeParams()" >
+	    cancel
+		</md-button>
+		<md-button ng-click="saveParams()"  >
+		save
+		</md-button>
+	</md-card-actions>
+</md-content>

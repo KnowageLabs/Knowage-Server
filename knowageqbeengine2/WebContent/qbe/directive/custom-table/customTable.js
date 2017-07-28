@@ -140,6 +140,10 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate){
 		$rootScope.$broadcast('openFilters', {"field":field});
 	}
 	
+	$scope.openDialogForParams = function (model){
+		$rootScope.$broadcast('openDialogForParams');
+	}
+
 	$scope.showHiddenColumns = function () {
 		for ( var field in $scope.ngModel) {
 			$scope.ngModel[field].hidden = false;
