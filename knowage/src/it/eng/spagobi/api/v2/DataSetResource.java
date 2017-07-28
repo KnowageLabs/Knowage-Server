@@ -18,6 +18,42 @@
 package it.eng.spagobi.api.v2;
 
 import static it.eng.spagobi.tools.glossary.util.Util.getNumberOrNull;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import org.apache.log4j.Logger;
+import org.jgrapht.graph.Pseudograph;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.mongodb.util.JSON;
+
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.SingletonConfig;
@@ -75,41 +111,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceParameterException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 import it.eng.spagobi.utilities.sql.SqlUtils;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import org.apache.log4j.Logger;
-import org.jgrapht.graph.Pseudograph;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.mongodb.util.JSON;
 
 /**
  * @author Alessandro Daniele (alessandro.daniele@eng.it)
@@ -365,8 +366,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 			if (selectionsString == null || selectionsString.isEmpty()) {
 				throw new SpagoBIServiceParameterException(this.request.getPathInfo(), "Query parameter [selections] cannot be null or empty");
 			}
-			// TODO ENABLE THIS WHEN CHANGING THE SELECTIONS AS JSON ARRAY!!!
-			// JSONArray selectionsArray = new JSONArray(selectionsString);
+
 			JSONObject selectionsObject = new JSONObject(selectionsString);
 
 			// parse association group
@@ -464,12 +464,6 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 			// get datasets from selections
 			List<Selection> filters = new ArrayList<>();
 			Map<String, Map<String, Set<String>>> selectionsMap = new HashMap<>();
-			// TODO ENABLE THIS WHEN CHANGING THE SELECTIONS AS JSON ARRAY!!!
-			// for (int i = 0; i < selectionsArray.length(); i++) {
-			// JSONObject selectionObject = selectionsArray.getJSONObject(i);
-			// String datasetLabel = selectionObject.getString("dataset");
-			// String column = selectionObject.getString("column");
-			// column = SqlUtils.unQuote(column);
 
 			Iterator<String> it = selectionsObject.keys();
 			while (it.hasNext()) {
@@ -493,10 +487,6 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 
 				String values = null;
 				String valuesForQuery = null;
-				// TODO ENABLE THIS WHEN CHANGING THE SELECTIONS AS JSON ARRAY!!!
-				// Getting it as object because it can be a single value (else case) or a JSONArray
-				// inside another JSON array (if case)
-				// Object object = selectionObject.getJSONArray("values").get(0);
 				Object object = selectionsObject.getJSONArray(datasetDotColumn).get(0);
 				if (object instanceof JSONArray) {
 					if (isDateColumn) {
@@ -559,10 +549,9 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 			String stringFeed = JsonConverter.objectToJson(selections, Map.class);
 			return stringFeed;
 		} catch (Exception e) {
-			e.printStackTrace();
 			String errorMessage = "An error occurred while getting associative selections";
 			logger.error(errorMessage, e);
-			throw new SpagoBIRestServiceException(errorMessage, buildLocaleFromSession(), e); // FIXME
+			throw new SpagoBIRestServiceException(errorMessage, buildLocaleFromSession(), e);
 		} finally {
 			logger.debug("OUT");
 		}
