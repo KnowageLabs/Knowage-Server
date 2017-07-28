@@ -17,6 +17,45 @@
  */
 package it.eng.spagobi.kpi;
 
+import java.io.IOException;
+import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.quartz.JobExecutionException;
+
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.util.JSON;
+
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
@@ -58,49 +97,11 @@ import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.JSError;
 import it.eng.spagobi.utilities.StringUtils;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
-
-import java.io.IOException;
-import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.quartz.JobExecutionException;
-
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongodb.util.JSON;
 
 /**
  * @authors Salvatore Lupo (Salvatore.Lupo@eng.it)
@@ -428,7 +429,7 @@ public class KpiService {
 		logger.debug("findKpiValuesTest IN");
 		Response out;
 		IKpiDAO kpiDao = DAOFactory.getKpiDAO();
-		Map<String, String> attributesValues = new HashMap<String, String>();
+		Map<String, String> attributesValues = new HashMap<>();
 		attributesValues.put("STORE_CITY", "Los Angeles");
 		attributesValues.put("STORE_TYPE", "Supermarket");
 		attributesValues.put("OPENED_MONTH", "5");
@@ -449,6 +450,7 @@ public class KpiService {
 		try {
 			String obj = RestUtilities.readBodyAsJSONObject(req).toString();
 			Rule rule = (Rule) JsonConverter.jsonToObject(obj, Rule.class);
+			Map<Kpi, List<String>> kpimap = null;
 
 			// Checking if query executes
 			executeQuery(rule.getDataSourceId(), rule.getDefinition(), 1, rule.getPlaceholders(), getProfile(req));
@@ -463,7 +465,9 @@ public class KpiService {
 				}
 			}
 			if (rule.getId() != null) {
-				checkConflictsWithKpi(jsError, rule, req);
+				Assert.assertNotNull(rule.getVersion(), "Impossible to continue without the rule version");
+				kpimap = kpiDao.listKpisLinkedToRule(rule.getId(), rule.getVersion(), true);
+				checkConflictsWithKpi(jsError, rule, kpimap, kpiDao);
 			}
 			if (jsError.hasErrors() || jsError.hasWarnings()) {
 				out = Response.ok(jsError.toString()).build();
@@ -509,8 +513,6 @@ public class KpiService {
 					}
 				}
 			}
-			// System.out.println(resp.toString());
-			// executeQuery(rule.getDataSourceId(), query, 1, rule.getPlaceholders(), getProfile(req));
 
 			logger.debug("preSaveRule OUT");
 			return out;
@@ -520,8 +522,8 @@ public class KpiService {
 		}
 	}
 
-	private boolean checkValuesFormatForTemporalAttributes(HttpServletRequest req, Rule rule, String query, RuleOutput ruleOut) throws EMFUserError,
-			EMFInternalError, JSONException {
+	private boolean checkValuesFormatForTemporalAttributes(HttpServletRequest req, Rule rule, String query, RuleOutput ruleOut)
+			throws EMFUserError, EMFInternalError, JSONException {
 		boolean isValid = true;
 		String distinctQuery = "SELECT DISTINCT " + ruleOut.getAlias() + " FROM ( " + query + ") a_l_i_a_s";
 		JSONObject distinctResult = executeQuery(rule.getDataSourceId(), distinctQuery, 0, rule.getPlaceholders(), getProfile(req));
@@ -580,8 +582,8 @@ public class KpiService {
 		return isValid;
 	}
 
-	private boolean checkValuesNumberForTemporalAttributes(HttpServletRequest req, Rule rule, String query, RuleOutput ruleOut) throws JSONException,
-			EMFUserError, EMFInternalError {
+	private boolean checkValuesNumberForTemporalAttributes(HttpServletRequest req, Rule rule, String query, RuleOutput ruleOut)
+			throws JSONException, EMFUserError, EMFInternalError {
 		String countQuery = "SELECT count(distinct " + ruleOut.getAlias() + ") as totRows  FROM ( " + query + ") a_l_i_a_s";
 		JSONObject countResult = executeQuery(rule.getDataSourceId(), countQuery, 0, rule.getPlaceholders(), getProfile(req));
 		Integer maxSize = 0;
@@ -613,12 +615,13 @@ public class KpiService {
 	public Response saveRule(@Context HttpServletRequest req) throws EMFUserError {
 		logger.debug("saveRule IN");
 		Response out;
-		IKpiDAO dao = getKpiDAO(req);
 		try {
+			IKpiDAO dao = getKpiDAO(req);
 			String requestVal = RestUtilities.readBodyAsJSONObject(req).toString();
 			Rule rule = (Rule) JsonConverter.jsonToObject(requestVal, Rule.class);
 			Integer id = rule.getId();
 			Integer version = rule.getVersion();
+			Map<Kpi, List<String>> kpimap = null;
 			JSError jsError = new JSError();
 
 			if (rule.getName() == null || rule.getName().isEmpty()) {
@@ -629,8 +632,10 @@ public class KpiService {
 			if (otherId != null && (id == null || !id.equals(otherId))) {
 				jsError.addErrorKey(NEW_KPI_RULE_NAME_NOT_AVAILABLE, rule.getName());
 			}
-			if (rule.getId() != null) {
-				checkConflictsWithKpi(jsError, rule, req);
+			if (id != null) {
+				Assert.assertNotNull(rule.getVersion(), "Impossible to continue without the rule version");
+				kpimap = dao.listKpisLinkedToRule(rule.getId(), rule.getVersion(), true);
+				checkConflictsWithKpi(jsError, rule, kpimap, dao);
 			}
 			if (jsError.hasErrors()) {
 				out = Response.ok(jsError.toString()).build();
@@ -647,6 +652,10 @@ public class KpiService {
 				Rule newRule = dao.insertNewVersionRule(rule);
 				id = newRule.getId();
 				version = newRule.getVersion();
+				for (Kpi kpi : kpimap.keySet()) {
+					Kpi fullKpi = dao.loadKpi(kpi.getId(), kpi.getVersion());
+					dao.updateKpi(fullKpi);
+				}
 			}
 			return Response.ok(new JSONObject().put("id", id).put("version", version).toString()).build();
 		} catch (Exception e) {
@@ -934,13 +943,11 @@ public class KpiService {
 	 * *** Private methods ***
 	 */
 
-	private void checkConflictsWithKpi(JSError jsError, Rule rule, HttpServletRequest req) throws EMFUserError {
+	private void checkConflictsWithKpi(JSError jsError, Rule rule, Map<Kpi, List<String>> kpimap, IKpiDAO kpiDao) throws EMFUserError {
 		if (rule.getId() != null && rule.getVersion() != null) {
 
 			// Checking if any removed measure is linked to a kpi (if so we cannot save this rule)
 			Collection<String> measureAndKpi = new HashSet<>();
-			IKpiDAO kpiDao = getKpiDAO(req);
-			Map<Kpi, List<String>> kpimap = kpiDao.listKpisLinkedToRule(rule.getId(), rule.getVersion(), true);
 			Set<String> usedMeasureList = new HashSet<>();
 			for (List<String> m : kpimap.values()) {
 				usedMeasureList.addAll(m);

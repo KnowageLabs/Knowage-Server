@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,12 +11,13 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.json;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
@@ -40,7 +41,9 @@ import com.fasterxml.jackson.databind.node.TextNode;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
-public class JSONObject extends AbstractJSONObject {
+public class JSONObject extends AbstractJSONObject implements Serializable {
+
+	private static final long serialVersionUID = -6237508419256769078L;
 
 	private ObjectNode rootNode;
 
@@ -55,7 +58,7 @@ public class JSONObject extends AbstractJSONObject {
 
 		/**
 		 * There is only intended to be a single instance of the NULL object, so the clone method returns itself.
-		 * 
+		 *
 		 * @return NULL.
 		 */
 		@Override
@@ -65,7 +68,7 @@ public class JSONObject extends AbstractJSONObject {
 
 		/**
 		 * A Null object is equal to the null value and to itself.
-		 * 
+		 *
 		 * @param object
 		 *            An object to test for nullness.
 		 * @return true if the object parameter is the JSONObject.NULL object or null.
@@ -77,7 +80,7 @@ public class JSONObject extends AbstractJSONObject {
 
 		/**
 		 * Get the "null" string value.
-		 * 
+		 *
 		 * @return The string "null".
 		 */
 		@Override
@@ -209,7 +212,7 @@ public class JSONObject extends AbstractJSONObject {
 	 *
 	 * If only one value is accumulated that is not a JSONArray, then the result will be the same as using put. But if multiple values are accumulated, then the
 	 * result will be like append.
-	 * 
+	 *
 	 * @param key
 	 *            A key string.
 	 * @param value
@@ -274,7 +277,7 @@ public class JSONObject extends AbstractJSONObject {
 	/**
 	 * Append values to the array under a key. If the key does not exist in the JSONObject, then the key is put in the JSONObject with its value being a
 	 * JSONArray containing the value parameter. If the key was already associated with a JSONArray, then the value parameter is appended to it.
-	 * 
+	 *
 	 * @param key
 	 *            A key string.
 	 * @param value
@@ -297,7 +300,7 @@ public class JSONObject extends AbstractJSONObject {
 
 	/**
 	 * Determine if the value associated with the key is null or if there is no value.
-	 * 
+	 *
 	 * @param key
 	 *            A key string.
 	 * @return true if there is no value associated with the key or if the value is the JSONObject.NULL object.
@@ -347,7 +350,7 @@ public class JSONObject extends AbstractJSONObject {
 
 	/**
 	 * Determine if the JSONObject contains a specific key.
-	 * 
+	 *
 	 * @param key
 	 *            A key string.
 	 * @return true if the key exists in the JSONObject.
@@ -358,7 +361,7 @@ public class JSONObject extends AbstractJSONObject {
 
 	/**
 	 * Get an optional value associated with a key.
-	 * 
+	 *
 	 * @param key
 	 *            A key string.
 	 * @return An object which is the value, or null if there is no value.
@@ -425,7 +428,7 @@ public class JSONObject extends AbstractJSONObject {
 
 	/**
 	 * Put a key/value pair in the JSONObject, where the value will be a JSONArray which is produced from a Collection.
-	 * 
+	 *
 	 * @param key
 	 *            A key string.
 	 * @param value
@@ -488,7 +491,7 @@ public class JSONObject extends AbstractJSONObject {
 
 	/**
 	 * Put a key/value pair in the JSONObject, where the value will be a JSONObject which is produced from a Map.
-	 * 
+	 *
 	 * @param key
 	 *            A key string.
 	 * @param value
@@ -503,7 +506,7 @@ public class JSONObject extends AbstractJSONObject {
 
 	/**
 	 * Put a key/value pair in the JSONObject. If the value is null, then the key will be removed from the JSONObject if it is present.
-	 * 
+	 *
 	 * @param key
 	 *            A key string.
 	 * @param value
@@ -555,7 +558,7 @@ public class JSONObject extends AbstractJSONObject {
 
 	/**
 	 * Put a key/value pair in the JSONObject, but only if the key and the value are both non-null, and only if there is not already a member with that name.
-	 * 
+	 *
 	 * @param key
 	 * @param value
 	 * @return his.
@@ -574,7 +577,7 @@ public class JSONObject extends AbstractJSONObject {
 
 	/**
 	 * Put a key/value pair in the JSONObject, but only if the key and the value are both non-null.
-	 * 
+	 *
 	 * @param key
 	 *            A key string.
 	 * @param value
@@ -593,7 +596,7 @@ public class JSONObject extends AbstractJSONObject {
 
 	/**
 	 * Remove a name and its value, if present.
-	 * 
+	 *
 	 * @param key
 	 *            The name to be removed.
 	 * @return The value that was associated with the name, or null if there was no value.
@@ -606,7 +609,7 @@ public class JSONObject extends AbstractJSONObject {
 	 * Make a prettyprinted JSON text of this JSONObject.
 	 * <p>
 	 * Warning: This method assumes that the data structure is acyclical.
-	 * 
+	 *
 	 * @param indentFactor
 	 *            The number of spaces to add to each level of indentation.
 	 * @return a printable, displayable, portable, transmittable representation of the object, beginning with <code>{</code>&nbsp;<small>(left brace)</small>
