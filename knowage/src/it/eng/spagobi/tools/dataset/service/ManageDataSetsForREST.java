@@ -660,7 +660,7 @@ public class ManageDataSetsForREST {
 				if (("true").equals(checkSqlValidation)) {
 					boolean isSelect = false;
 					try {
-						if (SqlUtils.isSelectStatement(query)) {
+						if (SqlUtils.isSelectSOrWithStatement(query)) {
 							logger.info("SQL is a SELECT statement.");
 							if (query.toLowerCase().contains(" update ") || query.toLowerCase().contains(" delete ")
 									|| query.toLowerCase().contains(" insert ")) {
