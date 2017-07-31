@@ -29,6 +29,9 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 	var inputParamService = sbiModule_inputParams;
 	$scope.queryModel = [];
 	$scope.pars = [];
+	$scope.editQueryObj = new Query("");
+	$scope.entityModel;
+	$scope.subqueriesModel = {};
 /*	$scope.expression = {
 	         "type":"NODE_CONST",
 	         "value":"$F{Filter1}",
@@ -36,6 +39,11 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 	         "condition": "age < 4",
 	         "childNodes":[]
 	}*/
+	
+	$scope.$watch('editQueryObj',function(newValue,oldValue){
+		$scope.queryModel.length = 0;
+    	$scope.executeQuery($scope.editQueryObj, $scope.bodySend, $scope.queryModel); 
+	},true)
 	
 	$scope.expression = {
 	         "type":"NODE_OP",
@@ -71,21 +79,25 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 	      };
 
 	entityService.getEntitiyTree(inputParamService.modelName).then(function(response){
-		 $scope.model = response.data;
+		 $scope.entityModel = response.data;
+		
 	});
-
-	$scope.executeQuery = function (field, query, bodySend, queryModel) {
-		query_service.executeQuery(field, query, bodySend, queryModel).then(function(response){
-			$scope.queryModel = response;
-
-		});
+	
+	$scope.executeQuery = function ( query, bodySend, queryModel) {
+		if(query.fields.length>0){
+			query_service.executeQuery( query, bodySend, queryModel);
+		}else{
+			
+			queryModel.length = 0;
+		}
+		
 	}
-
+	
 	$scope.onDropComplete=function(field,evt){
 		$scope.addField(field);
-		$scope.executeQuery(field, $scope.query, $scope.bodySend, $scope.queryModel);
+		
     };
-
+	
 	$rootScope.$on('applyFunction', function (event, data) {
 		var indexOfEntity = findWithAttr($scope.model.entities,'qtip', data.entity);
 		var indexOfFieldInEntity = findWithAttr($scope.model.entities[indexOfEntity].children,'id', data.fieldId);
@@ -102,34 +114,36 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 		$scope.query.fields[indexOfFieldInQuery].group = false;
 		$scope.executeQuery($scope.model.entities[indexOfEntity].children[indexOfFieldInEntity], $scope.query, $scope.bodySend, $scope.queryModel);
 	});
-
-
+	
 	$rootScope.$on('applyFunctionForParams', function (event, data) {
 		if(data.pars!= undefined && data.pars!= null ) {
 			$scope.pars = data.pars;
 
 		}
 	});
-
+	
+	
+	
 	$rootScope.$on('removeColumn', function (event, data) {
-	  var indexOfFieldInQuery = findWithAttr($scope.query.fields,'id', data.id);
+	  var indexOfFieldInQuery = findWithAttr($scope.editQueryObj.fields,'id', data.id);
 	  var indexOfFieldInModel = findWithAttr($scope.queryModel,'id', data.id);
 	  if (indexOfFieldInQuery > -1 && indexOfFieldInModel > -1) {
-		  $scope.query.fields.splice(indexOfFieldInQuery, 1);
+		  $scope.editQueryObj.fields.splice(indexOfFieldInQuery, 1);
 		  $scope.queryModel.splice(indexOfFieldInModel, 1);
 		}
 	});
-
+	
 	$rootScope.$on('group', function (event, data) {
-	  var indexOfEntity = findWithAttr($scope.model.entities,'qtip', data.entity);
-	  var indexOfFieldInEntity = findWithAttr($scope.model.entities[indexOfEntity].children,'id', data.fieldId);
-	  var indexOfFieldInQuery = findWithAttr($scope.query.fields,'id', data.fieldId);
+	
+	  var indexOfEntity = findWithAttr($scope.entityModel.entities,'qtip', data.entity);
+	  var indexOfFieldInEntity = findWithAttr($scope.entityModel.entities[indexOfEntity].children,'id', data.fieldId);
+	  var indexOfFieldInQuery = findWithAttr($scope.editQueryObj.fields,'id', data.fieldId);
 	  console.log(data)
-	  $scope.query.fields[indexOfFieldInQuery].group = data.group;
-	  $scope.query.fields[indexOfFieldInQuery].funct = "";
-	  $scope.executeQuery($scope.model.entities[indexOfEntity].children[indexOfFieldInEntity], $scope.query, $scope.bodySend, $scope.queryModel);
+	  $scope.editQueryObj.fields[indexOfFieldInQuery].group = data.group;
+	  $scope.editQueryObj.fields[indexOfFieldInQuery].funct = "";
+	  $scope.executeQuery($scope.entityModel.entities[indexOfEntity].children[indexOfFieldInEntity], $scope.editQueryObj, $scope.bodySend, $scope.queryModel); 
 	});
-
+	
 	var findWithAttr = function(array, attr, value) {
 	    for(var i = 0; i < array.length; i += 1) {
 	        if(array[i][attr] === value) {
@@ -138,26 +152,27 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 	    }
 	    return -1;
 	}
-
+	
 	$scope.addField = function (field) {
-
-		var newField  = {
+		
+		var newField  = {  
 			   "id":field.id,
 			   "alias":field.attributes.field,
 			   "type":"datamartField",
 			   "entity":field.attributes.entity,
 			   "field":field.attributes.field,
 			   "funct":"",
+			   "color":field.color,
 			   "group":false,
 			   "order":"",
 			   "include":true,
 			   "visible":true,
 			   "longDescription":field.attributes.longDescription
 			}
-
-		$scope.query.fields.push(newField);
+		
+		$scope.editQueryObj.fields.push(newField);
 	}
-
+	
 	$scope.colors = ['#F44336', '#673AB7', '#03A9F4', '#4CAF50', '#FFEB3B', '#3F51B5', '#8BC34A', '#009688', '#F44336'];
 
     $scope.droppedFunction = function(data) {
@@ -171,6 +186,29 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
             $scope.ammacool(item, event);
         }
     }];
+    
+    
+    
+    $scope.queryFunctions = [{
+        "label": "start subquery",
+        "icon": " fa fa-pencil-square-o",
+        "action": function(item, event) {
+        	$scope.editQueryObj = item;
+        }  
+    },
+    {
+        "label": "remove subquery",
+        "icon": "fa fa-trash",
+        "action": function(item, $event) {
+        	var index = $scope.subqueriesModel.subqueries.indexOf(item);
+        	  $scope.subqueriesModel.subqueries.splice(index, 1); 
+        	  $scope.stopEditingSubqueries();
+        }  
+    }
+    
+    ];
+    
+    
 
     $scope.fieldsFunctions = [{
         "label": "ranges",
@@ -190,9 +228,13 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
     	console.log(item)
     }
 
-    $scope.query = {"id":"q1","name":"query-q1","description":"query-q1","fields":[],"distinct":false,"filters":[],"calendar":{},"expression":{},"isNestedExpression":false,"havings":[],"graph":[],"relationsRoles":[],"subqueries":[]};
+    $scope.query = new Query(1);
 
     $scope.catalogue = [$scope.query];
+
+    $scope.editQueryObj = $scope.query;
+    $scope.subqueriesModel.subqueries = $scope.query.subqueries;
+    
 
     $scope.bodySend = {
     		"catalogue":$scope.catalogue,
@@ -207,7 +249,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 	$scope.$on('openDialogForParams',function(event){
 		$scope.openDialogForParams($scope.pars);
 	})
-
+	
 	$scope.openDialogForParams = function(pars){
     	var finishEdit=$q.defer();
 		var config = {
@@ -230,9 +272,9 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 		$mdPanel.open(config);
 		return finishEdit.promise;
     }
-
-
-	$scope.openFilters = function(field, tree, pars, queryFilters) {
+	
+	
+	$scope.openFilters = function(field, tree) {
 		var finishEdit=$q.defer();
 		var config = {
 				attachTo:  angular.element(document.body),
@@ -240,7 +282,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 				position: $mdPanel.newPanelPosition().absolute().center(),
 				fullscreen :true,
 				controller: function($scope,field,mdPanelRef){
-					$scope.model ={ "field": field, "tree": tree, "pars": pars,"mdPanelRef":mdPanelRef, "queryFilters":queryFilters};
+					$scope.entityModel ={ "field": field, "tree": tree, "pars": pars,"mdPanelRef":mdPanelRef, "queryFilters":queryFilters};
 
 
 				},
@@ -259,5 +301,25 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
         originatorEv = ev;
         $mdMenu.open(ev);
     };
+    
+    $scope.createQueryName = function(){
+    	var lastcount = 0;
+    	var lastIndex = $scope.subqueriesModel.subqueries.length-1;
+    	if(lastIndex!=-1){
+    		var lastQueryId = $scope.subqueriesModel.subqueries[lastIndex].id;
+    		lastcount = parseInt(lastQueryId.substr(1));
+    	}else{
+    		lastcount = 1;
+    	}
 
+    	return lastcount +1;
+    }   
+    $scope.createSubquery = function(){
+    	var subquery = new Query($scope.createQueryName());
+    	$scope.query.subqueries.push(subquery);
+    	$scope.editQueryObj = subquery;
+    }
+    $scope.stopEditingSubqueries = function(){
+    	$scope.editQueryObj = $scope.query;
+    }
 }
