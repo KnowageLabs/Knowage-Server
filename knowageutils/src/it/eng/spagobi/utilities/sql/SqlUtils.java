@@ -49,10 +49,12 @@ public class SqlUtils {
 
 	static protected Logger logger = Logger.getLogger(SqlUtils.class);
 
-	public static boolean isSelectStatement(String query) {
+	public static boolean isSelectSOrWithStatement(String query) {
+		boolean isSelectOrWith = false;
 		if (query == null)
 			return false;
-		return query.toUpperCase().trim().startsWith("SELECT");
+		isSelectOrWith = query.toUpperCase().trim().startsWith("SELECT") || query.toUpperCase().trim().startsWith("WITH");
+		return isSelectOrWith;
 	}
 
 	public static String getSelectClause(String query) {
@@ -61,7 +63,7 @@ public class SqlUtils {
 		selectClause = null;
 
 		Assert.assertNotNull(query, "...");
-		Assert.assertTrue(isSelectStatement(query), "...");
+		Assert.assertTrue(isSelectSOrWithStatement(query), "...");
 
 		int indexOFSelect = query.toUpperCase().indexOf("SELECT");
 		int indexOFFrom = query.toUpperCase().indexOf("FROM");
@@ -88,7 +90,7 @@ public class SqlUtils {
 		String selectClause;
 
 		Assert.assertNotNull(query, "...");
-		Assert.assertTrue(isSelectStatement(query), "...");
+		Assert.assertTrue(isSelectSOrWithStatement(query), "...");
 
 		selectFields = new ArrayList();
 		selectClause = getSelectClause(query);
