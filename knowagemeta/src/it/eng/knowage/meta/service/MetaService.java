@@ -625,7 +625,11 @@ public class MetaService extends AbstractSpagoBIResource {
 	public Response buildModel(@PathParam("modelid") Integer modelid, @Context HttpServletRequest req) {
 		IMetaModelsDAO dao = DAOFactory.getMetaModelsDAO();
 		dao.setUserProfile((IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE));
+		logger.debug("Loading metamodel...");
+
 		MetaModel metaModel = dao.loadMetaModelById(modelid);
+		logger.debug("Loading Model entity of metamodel...");
+
 		Model model = getModelWeb(metaModel.getName(), req);
 		// meta model version (content)
 		String modelName = req.getParameter("model");
@@ -634,14 +638,18 @@ public class MetaService extends AbstractSpagoBIResource {
 		String isForRegistry = req.getParameter("registry");
 		String includeSourcesValue = req.getParameter("includeSources");
 
+		logger.debug("Loading Business Model entity of metamodel...");
 		BusinessModel businessModel = model.getBusinessModels().get(0);
 
+		logger.debug("setting model name [" + modelName + "]");
 		// set specified model name
 		setModelName(businessModel, modelName);
 
+		logger.debug("setting schema name [" + schemaName + "]");
 		// set specified schema name for generation
 		setSchemaName(businessModel, schemaName);
 
+		logger.debug("setting catalog name [" + catalogName + "]");
 		// set specified catalog name for generation
 		setCatalogName(businessModel, catalogName);
 
@@ -649,20 +657,26 @@ public class MetaService extends AbstractSpagoBIResource {
 		// include sources or not with the generated datamart
 		boolean includeSources = Boolean.parseBoolean(includeSourcesValue);
 
+		logger.debug("Getting Jar Generator...");
+
 		JpaMappingJarGenerator jpaMappingJarGenerator = new JpaMappingJarGenerator();
 
-		logger.debug(req.getServletContext().getRealPath(File.separator));
+		logger.debug("Base Library directory: " + req.getServletContext().getRealPath(File.separator));
 
 		String libDir = req.getServletContext().getRealPath("") + File.separator + "WEB-INF" + File.separator + "lib" + File.separator;
+		logger.debug("Library directory: " + libDir);
 
 		String filename = metaModel.getName() + ".jar";
+		logger.debug("Jar file name that will be generated: " + filename);
 		jpaMappingJarGenerator.setJarFileName(filename);
 		ByteArrayOutputStream errorLog = new ByteArrayOutputStream();
+		logger.debug("Setting error log");
 		jpaMappingJarGenerator.setErrorLog(new PrintWriter(errorLog));
 		Content content = dao.lastFileModelMeta(modelid);
 		JSError errors = new JSError();
 		try {
 			java.nio.file.Path outDir = Files.createTempDirectory("model_");
+			logger.debug("Output directory: " + outDir);
 
 			try {
 				jpaMappingJarGenerator.generate(businessModel, outDir.toString(), isUpdatable, includeSources, new File(libDir), content.getFileModel());
@@ -670,12 +684,14 @@ public class MetaService extends AbstractSpagoBIResource {
 				logger.error(e);
 				errors.addErrorKey("metaWeb.generation.generic.error");
 			}
-
+			logger.debug("Setting generic info on content");
 			dao.setUserProfile((IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE));
 			content.setCreationDate(new Date());
 			content.setCreationUser(getUserProfile().getUserName().toString());
 			if (!errors.hasErrors()) {
+				logger.debug("Datamart compilation of model classes is OK");
 				String tmpDirJarFile = outDir + File.separator + model.getBusinessModels().get(0).getName() + File.separator + "dist";
+				logger.debug("Temporary directory jar file: " + tmpDirJarFile);
 				InputStream inputStream = new FileInputStream(tmpDirJarFile + File.separator + filename);
 				byte[] bytes = IOUtils.toByteArray(inputStream);
 
@@ -684,6 +700,7 @@ public class MetaService extends AbstractSpagoBIResource {
 
 				dao.modifyMetaModelContent(modelid, content, content.getId());
 			} else if (errorLog.size() > 0) {
+				logger.debug("Datamart generation has errors");
 				content.setContent(errorLog.toByteArray());
 				content.setFileName(metaModel.getName() + ".log");
 				dao.modifyMetaModelContent(modelid, content, content.getId());
@@ -691,13 +708,13 @@ public class MetaService extends AbstractSpagoBIResource {
 			}
 
 		} catch (IOException e) {
-			logger.error(e);
+			logger.error("Error during metamodel generation - IOException: " + e);
 			errors.addErrorKey("metaWeb.generation.io.error", e.getMessage());
 		} catch (AssertionError e) {
-			logger.error(e);
+			logger.error("Error during metamodel generation - AssertionError: " + e);
 			errors.addError(e.getMessage());
 		} catch (Throwable t) {
-			logger.error(t);
+			logger.error("Error during metamodel generation : " + t);
 			errors.addErrorKey("common.generic.error");
 		}
 		return Response.ok(errors.toString()).build();
