@@ -64,6 +64,7 @@ function impExpFuncController($scope,   sbiModule_translate ,$mdToast) {
 function importFuncController(sbiModule_download,sbiModule_device,$scope, $mdDialog, $timeout, sbiModule_logger, sbiModule_translate, sbiModule_restServices,sbiModule_config,$mdToast,importExportDocumentModule_importConf) {
 	$scope.stepItem=[{name: $scope.translate.load('sbi.ds.file.upload.button')}];
 	$scope.selectedStep=0;
+	$scope.download = sbiModule_download;
 	$scope.stepControl;
 	$scope.IEDConf=importExportDocumentModule_importConf;
 	
@@ -91,6 +92,67 @@ function importFuncController(sbiModule_download,sbiModule_device,$scope, $mdDia
 			$scope.stepControl.insertBread({name: sbiModule_translate.load('SBISet.impexp.exportedRoles','component_impexp_messages')});
 			$scope.finishImport();
 		} ); 
+	}
+	
+	$scope.stopImportWithDownloadAss=function(text, folderAss, fileAss){
+		var folder = folderAss;
+		var file = fileAss;
+		
+		var confirm = $mdDialog.confirm()
+		.title('')
+		.content(text)
+		.ariaLabel('error import')
+		.ok(sbiModule_translate.load("sbi.general.yes"))
+		.cancel(sbiModule_translate.load("sbi.general.No"));
+
+		$mdDialog.show(confirm).then(function() {
+			// choose to download association xml	
+			var data={"FILE_NAME":file, "FOLDER_NAME":folder};
+			var config={"responseType": "arraybuffer"};
+	
+			sbiModule_restServices.promisePost("1.0/serverManager/importExport/document","downloadAssociationsFile",data,config)
+			.then(function(response) {
+				if (response.data.hasOwnProperty("errors")) {
+				sbiModule_restServices.errorHandler(response.data.errors[0].message,"sbi.generic.toastr.title.error");
+		
+				$scope.stepControl.resetBreadCrumb();
+				$scope.stepControl.insertBread({name: sbiModule_translate.load('SBISet.impexp.exportedRoles','component_impexp_messages')});
+				$scope.finishImport();
+			}else {
+				// download association file
+				$scope.download.getBlob(response.data,file,'text/xml','xml');
+
+				$scope.stepControl.resetBreadCrumb();
+				$scope.stepControl.insertBread({name: sbiModule_translate.load('SBISet.impexp.exportedRoles','component_impexp_messages')});
+				$scope.finishImport();
+			
+			}	
+	}, function(response) {
+		sbiModule_restServices.errorHandler(response.data.errors[0].message,"sbi.generic.toastr.title.error");
+	});
+	
+	
+	
+
+},
+	function() {
+	$scope.stepControl.resetBreadCrumb();
+		$scope.stepControl.insertBread({name: sbiModule_translate.load('SBISet.impexp.exportedRoles','component_impexp_messages')});
+		$scope.finishImport();
+});  
+		
+		
+		
+//		var alert = $mdDialog.alert()
+//				.title('')
+//				.content(text)
+//				.ariaLabel('error import') 
+//				.ok('OK');
+//		$mdDialog.show(alert).then(function() {
+//			$scope.stepControl.resetBreadCrumb();
+//			$scope.stepControl.insertBread({name: sbiModule_translate.load('SBISet.impexp.exportedRoles','component_impexp_messages')});
+//			$scope.finishImport();
+//		} ); 
 	}
 	
 

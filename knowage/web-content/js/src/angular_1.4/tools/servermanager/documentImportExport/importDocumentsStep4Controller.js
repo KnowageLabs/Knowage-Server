@@ -29,7 +29,7 @@ function importStep4FuncController($scope,importExportDocumentModule_importConf,
 				importExportDocumentModule_importConf.folderName=data.folderName;
 //				$scope.stepControl.resetBreadCrumb();
 //				$scope.stepControl.insertBread({name:$scope.translate.load('sbi.ds.file.upload.button')})
-				$scope.stopImport($scope.translate.load("sbi.importusers.importuserok"));	
+				$scope.stopImportWithDownloadAss($scope.translate.load("sbi.importusers.importuserokdownloadass"),data.folderName, data.associationsName);	
 			if($scope.finishImport){
 				$scope.finishImport();
 			}
