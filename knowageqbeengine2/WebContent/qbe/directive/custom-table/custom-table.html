@@ -17,7 +17,7 @@
    	<qbe-advanced-visualization ng-if="selectedVisualization=='advanced'" ng-model="expression"></qbe-advanced-visualization>
    	<qbe-filter-visualization ng-if="selectedVisualization=='filters'"></qbe-filter-visualization>
 	<div layout="row" ng-if="selectedVisualization=='previewData'">
-		<div ng-repeat="n in ngModel | orderBy: 'order' track by $index" ng-if="!n.hidden" class="qbeCustomColumn" layout-column>
+		<div ng-repeat="n in ngModel | orderBy: 'order' track by $index" ng-if="n.visible" class="qbeCustomColumn" layout-column>
 	   		<div class="qbeCustomTopColor" ng-style="{'background-color' : n.color}"><md-tooltip md-direction="top">{{n.entity}}</md-tooltip></div>
 	   		<md-toolbar>
 	   		<div class="md-toolbar-tools secondaryToolbar" >
@@ -34,8 +34,8 @@
 	      	<md-menu-content class="qbeMenuContent">
 		      
 	       		<md-menu-item>
-	          		<md-checkbox ng-model="n.hidden" class="menuCheckbox" aria-label="hide column">
-	            hide field
+	          		<md-checkbox ng-model="n.visible" class="menuCheckbox" aria-label="show column">
+	            show field
 	          </md-checkbox>
 	       		</md-menu-item>
 	       		<md-menu-item>

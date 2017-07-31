@@ -1,4 +1,6 @@
 
+
+
 var entities = angular.module('entities',['sbiModule']);
 
 entities.service('entity_service',function(sbiModule_action){

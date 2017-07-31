@@ -54,7 +54,7 @@ public class GetTreeAction extends AbstractQbeEngineAction {
 
 	// INPUT PARAMETERS
 	public static final String QUERY_ID = "parentQueryId";
-	public static final String DATAMART_NAME = "datamartName";
+	public static final String DATAMART_NAME = "DATAMART_NAME";
 	
 	public static final String ENTITIES = "entities";
 
@@ -118,7 +118,7 @@ public class GetTreeAction extends AbstractQbeEngineAction {
 				
 			} else {
 			 nodes = new JSONArray();
-				Iterator<String> it = ((JPADataSource)getDataSource()).getModelStructure(userProfile).getModelNames().iterator();
+				Iterator<String> it = getDataSource().getModelStructure(userProfile).getModelNames().iterator();
 				while (it.hasNext()) {
 					String modelName = it.next();
 					JSONArray temp = qbeBuilder.getQbeTree(getDataSource(), getLocale(), modelName, userProfile);
