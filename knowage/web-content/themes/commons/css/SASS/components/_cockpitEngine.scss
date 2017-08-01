@@ -178,6 +178,12 @@
 		        tfoot {
 		        	tr {
 		        		border-bottom: none;
+		        		&.summary {
+		        			border-bottom: 1px solid #ddd;
+		        			td {
+		        				font-size: $baseFontSize;
+		        			}
+		        		}
 		        	}
 		        	.cockpitTablePagination {
 				        height: 36px;
