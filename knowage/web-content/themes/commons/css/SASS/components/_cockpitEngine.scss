@@ -65,11 +65,15 @@
 
 	cockpit-table-widget {
 		
+		
 
 		cockpit-table {
 		    font-size: 12px;
 		    display: block;
+		    overflow-y: auto;
+		    position: relative;
 		    table.cockpitTable {
+		    	width: 100%;
 		        .loadingBar {
 		            tr {
 		                height: 0px;
@@ -171,6 +175,32 @@
 		                }
 		            }
 		        }
+		        tfoot {
+		        	tr {
+		        		border-bottom: none;
+		        	}
+		        	.cockpitTablePagination {
+				        height: 36px;
+				        font-size: $baseFontSize;
+				        display: flex;
+				        flex-direction: row;
+				        justify-content: flex-end;
+				        align-items: center;
+				        .page-select {
+				            display: flex;
+				            align-items: center;
+				            flex-direction: row;
+				            margin-right: 16px;
+				            md-select {
+				                margin: 0;
+				            }
+				            label {
+				                margin-right: 10px;
+				            }
+				        }
+				    }
+
+		        }
 		    }
 		    .selection {
 		        width: 20px;
@@ -179,25 +209,7 @@
 		            margin-bottom: 0;
 		        }
 		    }
-		    .enTablePagination {
-		        height: 40px;
-		        display: flex;
-		        flex-direction: row;
-		        justify-content: flex-end;
-		        align-items: center;
-		        .page-select {
-		            display: flex;
-		            align-items: center;
-		            flex-direction: row;
-		            margin-right: 16px;
-		            md-select {
-		                margin: 0;
-		            }
-		            label {
-		                margin-right: 10px;
-		            }
-		        }
-		    }
+		    
 		    .noSelect {
 		        outline: none;
 		        -webkit-touch-callout: none;
