@@ -369,7 +369,7 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 	}
 	$scope.checkPropertiesFromSelectedMenu = function(menuItem) {
 
-		if (menuItem.externalApplicationUrl != null) {
+		if (menuItem.externalApplicationUrl != null && menuItem.externalApplicationUrl != "") {
 			for (i = 0; i < $scope.allTypes.length; i++) {
 				if ($scope.allTypes[i].name.toLowerCase() === "app") {
 					$scope.selectedMenuItem.typeId = $scope.allTypes[i].id;
