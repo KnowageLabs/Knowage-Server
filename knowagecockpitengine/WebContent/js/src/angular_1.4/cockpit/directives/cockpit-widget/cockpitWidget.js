@@ -122,7 +122,7 @@ angular.module('cockpitModule')
 		 
 	}
 })
-.directive('cockpitWidget',function(cockpitModule_widgetConfigurator,cockpitModule_widgetServices,$compile,cockpitModule_widgetSelection,$rootScope){
+.directive('cockpitWidget',function(cockpitModule_widgetConfigurator,cockpitModule_widgetServices,$compile,cockpitModule_widgetSelection,$rootScope,cockpitModule_datasetServices){
 	   return{
 		   templateUrl: baseScriptPath+ '/directives/cockpit-widget/templates/cockpitWidget.html',
 		   controller: cockpitWidgetControllerFunction,
@@ -140,8 +140,18 @@ angular.module('cockpitModule')
                     	// init the widget
                     	element.ready(function () {
                     		var objType=cockpitModule_widgetConfigurator[scope.ngModel.type.toLowerCase()];
+                    		var dataset; 
+                    		if (scope.ngModel.dataset){
+                        		dataset = cockpitModule_datasetServices.getDatasetById(scope.ngModel.dataset.dsId)
+                    		}
+
                     		scope.updateble=objType.updateble==undefined? true : objType.updateble;
-                    		scope.cliccable=objType.cliccable==undefined? true : objType.cliccable;
+                    		//if the dataset is realtime disable the cliccable icon in the toolbar
+                    		if (dataset != null && dataset.isRealtime){
+                        		scope.cliccable= false;
+                    		} else {
+                        		scope.cliccable=objType.cliccable==undefined? true : objType.cliccable;
+                    		}
                     		if(objType!=undefined){
                     			var directive = document.createElement("cockpit-"+scope.ngModel.type.toLowerCase()+"-widget" );
                     			var content=element[0].querySelector("md-card-content");
@@ -216,6 +226,16 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 			$scope.widgetActionButtonsVisible=false;
 		}
 	}
+	//disable cliccable for real time dataset
+	if ($scope.ngModel.dataset){
+		var widgetDataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId)
+		if (widgetDataset.isRealtime){
+			$scope.ngModel.cliccable = false;
+		}
+	}
+
+
+
 	
 	// davverna - initializing search object to give all the columns to the user searchbar
 	if($scope.ngModel.type.toLowerCase() == "table" && (!$scope.ngModel.search || $scope.ngModel.search.columns == [])){

@@ -89,6 +89,48 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		if($scope.ngModel.multiselectable==undefined){
 			$scope.ngModel.multiselectable=false;
 		}
+		var scope = $scope;
+		
+		$scope.realtimeSelections = cockpitModule_widgetServices.realtimeSelections;
+		//set a watcher on a variable that can contains the associative selections for realtime dataset
+		var realtimeSelectionsWatcher = $scope.$watchCollection('realtimeSelections',function(newValue,oldValue,scope){
+			if (scope.ngModel && scope.ngModel.dataset && scope.ngModel.dataset.dsId){
+				var widgetDatasetId = scope.ngModel.dataset.dsId;
+				var widgetDataset = cockpitModule_datasetServices.getDatasetById(widgetDatasetId)
+
+				for (var i=0; i< newValue.length; i++){
+					//search if there are selection on the widget's dataset
+					if (newValue[i].datasetId == widgetDatasetId){
+						var selections = newValue[i].selections;
+						//get filter on our dataset
+						if (selections[widgetDataset.label]){
+							var selectionsOfDataset = selections[widgetDataset.label];
+							for (var columnName in selectionsOfDataset) {
+								  if (selectionsOfDataset.hasOwnProperty(columnName)) {
+									  var selectionsValues = selectionsOfDataset[columnName]
+									  for (var z=0 ; z < selectionsValues.length ; z++){
+										  var filterValue = selectionsValues[z]
+										  // clean the value from the parenthesis ( )
+										  filterValue = filterValue.replace(/[()]/g, ''); 
+										  // clean the value from the parenthesis ''
+										  filterValue = filterValue.replace(/['']/g, ''); 
+										  var filterValues = []
+										  filterValues.push(filterValue);
+
+										  //TODO: apply the filter function
+										  var columnObject = scope.getColumnObjectFromName(scope.ngModel.content.columnSelectedOfDataset,columnName);
+										  //use the aliasToShow to match the filtercolumn name
+										  var filterColumnname = columnObject.aliasToShow;
+										  var columnType = columnObject.fieldType;
+										  scope.itemList = scope.filterRows(scope.itemList,filterColumnname,filterValues,columnType);
+									  }
+								  }
+								}
+						}
+					}
+				}
+			}
+		})
 		
 		
 		if($scope.ngModel.style==undefined){
@@ -755,6 +797,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			
 			//check if dataset is realtime
 			if (dataset.isRealtime === true){
+				//disable cliccable 
+				$scope.ngModel.cliccable = false;
+				
+				//*** CLIENT SIDE FILTERING ***
+				if ($scope.ngModel.filters){
+					var filters = $scope.ngModel.filters;
+					for (var i=0; i < filters.length ; i++){
+						//check if a filter is specified 
+						if (filters[i].filterVals.length > 0 ){
+							
+							var columnObject = $scope.getColumnObjectFromName($scope.ngModel.content.columnSelectedOfDataset,filters[i].colName);
+							//use the aliasToShow to match the filtercolumn name
+							var filterColumnname = columnObject.aliasToShow;
+							var filterValues =  filters[i].filterVals;
+							var columnType = columnObject.fieldType;
+							table = $scope.filterRows(table,filterColumnname,filterValues,columnType);
+
+						}
+					}
+				}
+				
 				//*** CLIENT SIDE SORTING ***
 				//sort data using sorting column (if specified)
 				if ($scope.ngModel.sortingColumn){
@@ -776,6 +839,48 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 
 			return table;
+		}
+		
+		/**
+		 * Returns the column object that satisfy the original name (not aliasToShow) passed as argument
+		 */
+		$scope.getColumnObjectFromName = function(columnSelectedOfDataset, originalName){
+			for (i = 0; i < columnSelectedOfDataset.length; i++){
+				if (columnSelectedOfDataset[i].name === originalName){
+					return columnSelectedOfDataset[i];
+				}
+			}
+		}
+		
+		/**
+		 * Return only the objects matching the filter
+		 * table: original array of objects
+		 * columnName: specific object property name
+		 * values: array of admissible values
+		 * columnType: type (Measure/Attribute) of the column
+		 */
+		$scope.filterRows = function (table, columnName, values, columnType ){
+			var toReturn = [];
+			for (var i=0; i < table.length ; i++){
+				if (table[i][columnName]){
+					for (var y=0; y < values.length ; y++){
+						//handle Attribute as String and Measure as number
+						if (columnType == 'ATTRIBUTE'){
+							if (table[i][columnName] == values[y]){
+								toReturn.push(table[i]);
+							}
+						} else if (columnType == 'MEASURE'){
+							var columnValue = Number(table[i][columnName]);
+							var filterValue = Number(values[y]);
+							if (columnValue == filterValue){
+								toReturn.push(table[i]);
+							}
+						}
+						
+					}
+				}
+			}
+			return toReturn;
 		}
 
 		$scope.presentInTable = function(table, obj){
