@@ -181,7 +181,7 @@ angular.module('cockpitModule')
 	}
 });
 
-function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelection,cockpitModule_datasetServices,cockpitModule_widgetConfigurator,$q,$mdPanel,sbiModule_restServices,$httpParamSerializerJQLike,sbiModule_config,buildParametersForExecution,$mdToast,sbiModule_messaging,sbiModule_translate){
+function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelection,cockpitModule_datasetServices,cockpitModule_widgetConfigurator,$q,$mdPanel,sbiModule_restServices,$httpParamSerializerJQLike,sbiModule_config,buildParametersForExecution,$mdToast,sbiModule_messaging,sbiModule_translate,$filter){
 	$scope.property={style:{}};
 	$scope.selectedTab = {'tab' : 0};
 	if($scope.ngModel.cross==undefined){
@@ -194,14 +194,139 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 	$scope.chartLibNamesConfig = chartLibNamesConfig;
 	
 	$scope.refresh=function(element,width,height,data,nature){
-		
-				
+		//apply filters for realtime dataset
+		$scope.realtimeDataManagement(data);
 		$scope.$broadcast(nature,data);
 
-		
-		
-		
 	};
+	
+	$scope.realtimeDataManagement = function(data){
+		if ($scope.ngModel.dataset){
+			var dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId);
+			if (dataset.isRealtime == true){
+				//*** CLIENT SIDE FILTERING ***
+				if ($scope.ngModel.content && $scope.ngModel.content.filters){
+					var filters = $scope.ngModel.content.filters;
+					for (var i=0; i < filters.length ; i++){
+						//check if a filter is specified 
+						if (filters[i].filterVals.length > 0 ){
+							
+							var columnObject = $scope.getColumnObjectFromName($scope.ngModel.content.columnSelectedOfDataset,filters[i].colName);
+							//var filterColumnname = columnObject.alias;
+							var filterValues =  filters[i].filterVals;
+							var columnType = columnObject.fieldType;
+							data.rows = $scope.filterRows(data,columnObject,filterValues,columnType);
+
+						}
+					}
+				}
+				//*** CLIENT SIDE SORTING ***
+				if ($scope.ngModel.content && $scope.ngModel.content.chartTemplate && $scope.ngModel.content.chartTemplate.CHART && $scope.ngModel.content.chartTemplate.CHART.VALUES && $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY && $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY.orderColumn){
+					$scope.sortRows(data);
+				}
+			}
+		}
+		
+	}
+	/**
+	 * Client side rows sorting or realtime dataset
+	 */
+	$scope.sortRows = function (data){
+		var columns = $scope.ngModel.content.columnSelectedOfDataset;
+		var sortingField = $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY.orderColumn;
+		if (sortingField.length > 0 ){
+			//search for the corresponding alias of the sortingColumn
+			for (i = 0; i < columns.length; i++){
+				if (columns[i].name === $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY.orderColumn){
+					sortingField = columns[i].alias;
+					break;
+				}
+			}
+			var reverse = false;
+			if ($scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY.orderType === 'desc'){
+				reverse = true;
+			}
+			
+			//search dataindex corresponding to the sortingField
+			var dataIndex;
+			if (data.metaData.fields){
+				var fields = data.metaData.fields;
+				for (var i=0; i< fields.length ; i++){
+					//use alias or original name to catch correct field
+					if (fields[i].header && (fields[i].header == sortingField ) ){
+						//get corresponding dataIndex
+						dataIndex = fields[i].dataIndex;
+						break;
+					}
+				}
+			}
+			
+			if (dataIndex) {
+				data.rows = $filter('orderBy')(data.rows, dataIndex, reverse);
+			}
+		}
+	}
+	
+	/**
+	 * Returns the column object that satisfy the original name (not aliasToShow) passed as argument
+	 */
+	$scope.getColumnObjectFromName = function(columnSelectedOfDataset, originalName){
+		for (i = 0; i < columnSelectedOfDataset.length; i++){
+			if (columnSelectedOfDataset[i].name === originalName){
+				return columnSelectedOfDataset[i];
+			}
+		}
+	}
+	
+	/**
+	 * Return only the objects matching the filter
+	 * data: object with data and metadata
+	 * columnObject: specific object of a column
+	 * values: array of admissible values
+	 * columnType: type (Measure/Attribute) of the column
+	 */
+	$scope.filterRows = function (data, columnObject, values, columnType ){
+		var toReturn = [];
+		var dataIndex;
+		//search dataIndex
+		if (data.metaData.fields){
+			var fields = data.metaData.fields;
+			for (var i=0; i< fields.length ; i++){
+				//use alias or original name to catch correct field (because after a realtime update the header use the original name)
+				if (fields[i].header && (fields[i].header == columnObject.alias || fields[i].header == columnObject.name) ){
+					//get corresponding dataIndex
+					dataIndex = fields[i].dataIndex;
+					break;
+				}
+			}
+		}
+		var rows = data.rows;
+		
+		if (dataIndex != null){
+			for (var i=0; i < rows.length ; i++){
+				if (rows[i][dataIndex]){
+					for (var y=0; y < values.length ; y++){
+						//handle Attribute as String and Measure as number
+						if (columnType == 'ATTRIBUTE'){
+							if (rows[i][dataIndex] == values[y]){
+								toReturn.push(rows[i]);
+							}
+						} else if (columnType == 'MEASURE'){
+							var columnValue = Number(rows[i][dataIndex]);
+							var filterValue = Number(values[y]);
+							if (columnValue == filterValue){
+								toReturn.push(rows[i]);
+							}
+						}
+						
+					}
+				}
+			}
+		}
+		
+
+		return toReturn;
+	}
 	
 	$scope.editWidget=function(index){
 		var finishEdit=$q.defer();

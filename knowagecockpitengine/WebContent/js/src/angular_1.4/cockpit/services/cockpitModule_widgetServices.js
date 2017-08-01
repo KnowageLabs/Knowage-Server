@@ -98,6 +98,17 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 						filters[i].filterVals = [];
 					}
 				}
+				//for charts
+				if (ngModelCopy.content){
+					var filters = ngModelCopy.content.filters
+					if (filters){
+						for (var i=0; i < filters.length; i++){
+							//erase the content of the array
+							filters[i].filterVals = [];
+						}
+					}
+				}
+
 
 				return cockpitModule_datasetServices.loadDatasetRecordsById(ngModel.dataset.dsId,page,itemPerPage,columnOrdering, reverseOrdering, ngModelCopy);
 			}
