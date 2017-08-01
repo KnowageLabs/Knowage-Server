@@ -92,10 +92,13 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 				var ngModelCopy = {};
 				angular.copy(ngModel, ngModelCopy);
 				var filters = ngModelCopy.filters
-				for (var i=0; i < filters.length; i++){
-					//erase the content of the array
-					filters[i].filterVals = [];
+				if (filters){
+					for (var i=0; i < filters.length; i++){
+						//erase the content of the array
+						filters[i].filterVals = [];
+					}
 				}
+
 				return cockpitModule_datasetServices.loadDatasetRecordsById(ngModel.dataset.dsId,page,itemPerPage,columnOrdering, reverseOrdering, ngModelCopy);
 			}
 			return cockpitModule_datasetServices.loadDatasetRecordsById(ngModel.dataset.dsId,page,itemPerPage,columnOrdering, reverseOrdering, ngModel);
