@@ -39,9 +39,9 @@ import com.google.common.io.Files;
 
 /**
  * This class is used by Knowage Meta to compile generated java class and to create JAR file.
- * 
+ *
  * @authors Angelo Bernabei (angelo.bernabei@eng.it) Andrea Gioia (andrea.gioia@eng.it)
- * 
+ *
  */
 public class Compiler {
 
@@ -60,7 +60,7 @@ public class Compiler {
 
 	/**
 	 * Costructor
-	 * 
+	 *
 	 * @param srcDir
 	 *            Source directory
 	 * @param binDir
@@ -91,35 +91,50 @@ public class Compiler {
 
 	/**
 	 * Compile all the generated java classes
-	 * 
+	 *
 	 * @return boolean : true if the compiler has worked well.
 	 * @throws IOException
 	 */
 	public boolean compile() {
+		logger.debug("Starting compile of java classes");
 		boolean result = false;
 
 		// File[] files1 = ... ; // input for first compilation task
 		// File[] files2 = ... ; // input for second compilation task
 
 		List<File> files = new ArrayList<>();
+		logger.debug("Traversing files");
 		for (File f : Files.fileTreeTraverser().preOrderTraversal(this.srcDir).toList()) {
 			if (f.isFile() && f.getName().endsWith("java")) {
+				logger.debug("File to compile added to the list: " + f.getName());
 				files.add(f);
 			}
 		}
+		logger.debug("Initialize diagnostic collector");
 		DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<JavaFileObject>();
+		logger.debug("Searching java system compiler");
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+		logger.debug("Java system compiler is: " + compiler);
+		if (compiler == null) {
+			logger.error("Cannot find Java System compiler during compilation of jpa classes, check if JDK is correctly installed.");
+		}
 		StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, null, null);
 
+		logger.debug("Get compilation units");
 		Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjectsFromFiles(files);
+		logger.debug("Execute java compiler task");
 		result = compiler.getTask(null, fileManager, diagnostics, null, null, compilationUnits).call();
+		logger.debug("Result of executed task is: " + result);
 
 		// Iterable<? extends JavaFileObject> compilationUnits2 =
 		// fileManager.getJavaFileObjects(files2);
 		// compiler.getTask(null, fileManager, null, null, null, compilationUnits2).call();
 
+		logger.debug("Checking diagnostic errors");
+
 		if (!diagnostics.getDiagnostics().isEmpty()) {
 			for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
+				logger.debug("Found diagnostic error on " + diagnostic.getSource().toUri() + "- line " + diagnostic.getLineNumber());
 				log.append(MessageFormat.format("Error on line {0} in {1}\n", diagnostic.getLineNumber(), diagnostic.getSource().toUri()));
 				try {
 					diagnostic.getSource().getCharContent(true);
