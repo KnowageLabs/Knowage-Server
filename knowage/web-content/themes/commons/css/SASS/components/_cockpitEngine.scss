@@ -95,13 +95,14 @@
 		                @extend .noSelect;
 		                cursor: pointer;
 		                text-align: left;
-		                background-color: #fafafa;
-		                color: rgba(0, 0, 0, .54);
+		                background-color: $contentBackground;
+		                color: $darkTextColor;
+		                opacity: .7;
 		                font-size: 12px;
 		                font-weight: 700;
 		                white-space: nowrap;
-		                .active {
-		                    color: rgba(0, 0, 0, .74);
+		                &.active {
+		                    opacity: 1;
 		                    font-weight: bold;
 		                }
 		                &.hiddenIcon {
