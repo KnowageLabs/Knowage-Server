@@ -712,9 +712,9 @@ $scope.setAndLoadCN = function(num) {
 		   } 
 		  } 
 		   
-		   if(OlapTemplateService.getMdxQueryClickables()!=undefined){
-			   clickableArray = OlapTemplateService.getMdxQueryClickables();
-		   }
+//		   if(OlapTemplateService.getMdxQueryClickables()!=undefined){
+//			   clickableArray = OlapTemplateService.getMdxQueryClickables();
+//		   }
 		   clickableArray.push($scope.crossNavfromMemberObj);
 		   
 		  }else if (type == 'cell') {
