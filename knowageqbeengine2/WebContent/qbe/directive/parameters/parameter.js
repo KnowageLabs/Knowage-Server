@@ -116,17 +116,10 @@ function qbeParameters($scope,$rootScope ,sbiModule_translate, sbiModule_config,
 			datasetParameterTypes: $scope.datasetParameterTypes
 		};
 	$scope.saveParams = function(){
-		$scope.ngModel.pars = [];
-		$scope.ngModel.pars = $scope.parameterItems;
-
-		$scope.applyFuntion($scope.parameterItems)
+		$scope.ngModel.pars.length=0;
+		Array.prototype.push.apply($scope.ngModel.pars, $scope.parameterItems);
 		$scope.ngModel.mdPanelRef.close();
 	}
-	$scope.applyFuntion = function(pars) {
-		$rootScope.$broadcast('applyFunctionForParams', {
-			"pars" : pars,
-		});
-	};
 	$scope.closeParams=function(){
 		$scope.ngModel.mdPanelRef.close();
 	}

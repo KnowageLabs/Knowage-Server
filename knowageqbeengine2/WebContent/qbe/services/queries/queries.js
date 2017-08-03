@@ -10,6 +10,7 @@ queries.service('query_service',function(sbiModule_restServices,sbiModule_config
 		
 		sbiModule_restServices.promisePost('qbequery/executeQuery',q,bodySend)
      	.then(function(response) {
+     		queryModel.length = 0;
      		console.log("[POST]: SUCCESS!");
 
      		for (var i = 0; i < query.fields.length; i++) {

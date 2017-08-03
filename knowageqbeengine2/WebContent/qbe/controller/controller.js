@@ -41,42 +41,17 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 	}*/
 	
 	$scope.$watch('editQueryObj',function(newValue,oldValue){
-		$scope.queryModel.length = 0;
-    	$scope.executeQuery($scope.editQueryObj, $scope.bodySend, $scope.queryModel); 
+		if($scope.editQueryObj.filters.length>0){
+			$scope.editQueryObj.expression =$scope.expression;
+		}
+		$scope.executeQuery($scope.editQueryObj, $scope.bodySend, $scope.queryModel);
 	},true)
 	
 	$scope.expression = {
-	         "type":"NODE_OP",
-	         "value":"AND",
-	         "childNodes":[
-	        	 {
-	                 "type":"NODE_CONST",
-	                 "id": "1",
-	                 "value":"$F{Filter1}",
-	                 "condition": "age < 4",
-	                 "selected":false,
-	                 "grouped":false,
-	                 "color":"#FFEB3B",
-	                 "booleanConnector":"AND",
-	                 "childNodes":[
-
-	                 ]
-	              },
-	              {
-	                 "type":"NODE_CONST",
-	                 "id": "2",
-	                 "value":"$F{Filter2}",
-	                 "condition": "age > 1",
-	                 "selected":false,
-	                 "grouped":false,
-	                 "color":"#8BC34A",
-	                 "booleanConnector":"AND",
-	                 "childNodes":[
-
-	                 ]
-	              }
-	         ]
-	      };
+			"type": "NODE_CONST",
+			"value": "$F{Filter1}",
+			"childNodes": []
+	};
 
 	entityService.getEntitiyTree(inputParamService.modelName).then(function(response){
 		 $scope.entityModel = response.data;
@@ -99,8 +74,8 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
     };
 	
 	$rootScope.$on('applyFunction', function (event, data) {
-		var indexOfEntity = findWithAttr($scope.model.entities,'qtip', data.entity);
-		var indexOfFieldInEntity = findWithAttr($scope.model.entities[indexOfEntity].children,'id', data.fieldId);
+		var indexOfEntity = findWithAttr($scope.entityModel.entities,'qtip', data.entity);
+		var indexOfFieldInEntity = findWithAttr($scope.entityModel.entities[indexOfEntity].children,'id', data.fieldId);
 		var indexOfFieldInQuery = findWithAttr($scope.query.fields,'id', data.fieldId);
 		if(data.funct!= undefined && data.funct !=null && data.funct!="") {
 			$scope.query.fields[indexOfFieldInQuery].funct = data.funct.toUpperCase();
@@ -112,7 +87,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 			$scope.bodySend.pars = data.pars;
 		}
 		$scope.query.fields[indexOfFieldInQuery].group = false;
-		$scope.executeQuery($scope.model.entities[indexOfEntity].children[indexOfFieldInEntity], $scope.query, $scope.bodySend, $scope.queryModel);
+		$scope.executeQuery($scope.entityModel.entities[indexOfEntity].children[indexOfFieldInEntity], $scope.query, $scope.bodySend, $scope.queryModel);
 	});
 	
 	$rootScope.$on('applyFunctionForParams', function (event, data) {
@@ -141,7 +116,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 	  console.log(data)
 	  $scope.editQueryObj.fields[indexOfFieldInQuery].group = data.group;
 	  $scope.editQueryObj.fields[indexOfFieldInQuery].funct = "";
-	  $scope.executeQuery($scope.entityModel.entities[indexOfEntity].children[indexOfFieldInEntity], $scope.editQueryObj, $scope.bodySend, $scope.queryModel); 
+	  $scope.executeQuery( $scope.editQueryObj, $scope.bodySend, $scope.queryModel);
 	});
 	
 	var findWithAttr = function(array, attr, value) {
@@ -201,7 +176,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
         "icon": "fa fa-trash",
         "action": function(item, $event) {
         	var index = $scope.subqueriesModel.subqueries.indexOf(item);
-        	  $scope.subqueriesModel.subqueries.splice(index, 1); 
+        	  $scope.subqueriesModel.subqueries.splice(index, 1);
         	  $scope.stopEditingSubqueries();
         }  
     }
@@ -244,7 +219,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
     };
 
     $scope.$on('openFilters',function(event,field){
-		$scope.openFilters(field,$scope.model,$scope.pars, $scope.query.filters);
+		$scope.openFilters(field,$scope.entityModel,$scope.pars, $scope.editQueryObj.filters,$scope.editQueryObj.subqueries);
 	})
 	$scope.$on('openDialogForParams',function(event){
 		$scope.openDialogForParams($scope.pars);
@@ -274,7 +249,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
     }
 	
 	
-	$scope.openFilters = function(field, tree) {
+	$scope.openFilters = function(field, tree, pars, queryFilters, subqueries) {
 		var finishEdit=$q.defer();
 		var config = {
 				attachTo:  angular.element(document.body),
@@ -282,11 +257,11 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 				position: $mdPanel.newPanelPosition().absolute().center(),
 				fullscreen :true,
 				controller: function($scope,field,mdPanelRef){
-					$scope.entityModel ={ "field": field, "tree": tree, "pars": pars,"mdPanelRef":mdPanelRef, "queryFilters":queryFilters};
+					$scope.model ={ "field": field, "tree": tree, "pars": pars,"mdPanelRef":mdPanelRef, "queryFilters":queryFilters, "subqueries":subqueries};
 
 
 				},
-				locals: {field: field, tree: tree, pars: pars, queryFilters:queryFilters},
+				locals: {field: field, tree: tree, pars: pars, queryFilters:queryFilters, subqueries: subqueries},
 				hasBackdrop: true,
 				clickOutsideToClose: true,
 				escapeToClose: true,

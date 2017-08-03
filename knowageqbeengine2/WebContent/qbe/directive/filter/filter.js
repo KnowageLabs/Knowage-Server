@@ -42,6 +42,7 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 	$scope.field=$scope.ngModel.field.field;
 	$scope.tree=$scope.ngModel.tree.entities;
 	$scope.pars=angular.copy($scope.ngModel.pars);
+	$scope.subqueries = $scope.ngModel.subqueries;
 	$scope.targetOption="default";
 	$scope.openMenu = function($mdOpenMenu, ev) {
 	      originatorEv = ev;
@@ -54,23 +55,24 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 	$scope.params=false;
 	$scope.targetAF = {};
 	var checkForIndex = function(){
-		var niz = [];
+		var arrayOfIndex = [];
 		if($scope.filters.length==0){
 			return 1;
 		} else {
 
 			for (var m = 0; m < $scope.filters.length; m++) {
 				var num = $scope.filters[m].filterId.substring(6);
-				niz.push(parseInt(num));
+				arrayOfIndex.push(parseInt(num));
 			}
 			function sortNumber(a,b) {
 			    return a - b;
 			}
 
-		    niz.sort(sortNumber);
-		    return niz[niz.length-1]+1;
+		    arrayOfIndex.sort(sortNumber);
+		    return arrayOfIndex[arrayOfIndex.length-1]+1;
 		}
 	}
+
 	$scope.addNewFilter= function (){
 		$scope.filterIndex = checkForIndex();
 		$scope.showTable = false;
@@ -175,13 +177,15 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 			filter.rightOperandAlias=type.text;
 		} else if(value=='subquery'){
 			filter.rightOperandValue.push(type.id);
-			filter.rightOperandDescription=type.text;
-			filter.rightOperandLongDescription="Subquery "+type.text;
+			filter.rightOperandDescription=type.name;
+			filter.rightOperandLongDescription="Subquery "+type.name;
 			filter.rightOperandType="Subquery";
 		} else if(value=='parameter'){
 			filter.hasParam = type.name
+			filter.rightOperandValue.length = 0;
+			filter.rightOperandValue.push(type.name)
 			filter.rightOperandDescription=type.name;
-			filter.rightOperandLongDescription="Parameter "+type.name;
+			filter.rightOperandLongDescription="Parameter "+ type.name;
 			filter.rightOperandType="Parameter";
 		} else {
 			filter.rightOperandType="Static Content";
@@ -276,21 +280,20 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 		if($scope.pars.length>0 && countParam>0){
 			$scope.params=true;
 		} else {
-			$scope.ngModel.queryFilters = [];
-			$scope.ngModel.queryFilters = $scope.filters;
+			$scope.ngModel.queryFilters.length = 0;
+			Array.prototype.push.apply($scope.ngModel.queryFilters, $scope.filters);
 			//$scope.ngModel.field.field.expression = generateExpressions ($scope.filters);
-			$scope.applyFuntion($scope.filters, $scope.pars/*, $scope.ngModel.field.field.expression*/)
 			$scope.ngModel.mdPanelRef.close();
 		}
 	}
 
-	$scope.applyFuntion = function(filters/*, expression*/, pars) {
+	$scope.applyFuntion = function(filters/*, expression*/, pars, sub) {
 		console.log($scope)
 		$rootScope.$broadcast('applyFunction', {
 			"fieldId" : $scope.ngModel.field.field.id,
 			"entity" : $scope.ngModel.field.field.entity,
-
-	"filters" : filters,		/*"expression" : expression,*/
+			"subqueries" : sub,
+			"filters" : filters,		/*"expression" : expression,*/
 			"pars" : pars,
 
 		});
@@ -348,9 +351,9 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 	                                   	}
 	                            	}
 
-	                               ];
+	                               ];5
 	$scope.applyValueOfParameterAndContinuePreviewExecution = function (){
-		$scope.ngModel.queryFilters = [];
+		$scope.ngModel.queryFilters.length = 0;
 		for (var i = 0; i < $scope.filters.length; i++) {
 			if($scope.filters[i].rightOperandType=="Parameter"){
 				for (var j = 0; j < $scope.pars.length; j++) {
@@ -361,9 +364,9 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 				}
 			}
 		}
-		$scope.ngModel.queryFilters  = $scope.filters;
-	//	$scope.ngModel.field.field.expression = generateExpressions ($scope.filters);
-		$scope.applyFuntion($scope.filters/*, $scope.ngModel.field.field.expression*/, $scope.pars)
+
+		$scope.ngModel.pars = $scope.pars;
+		Array.prototype.push.apply($scope.ngModel.queryFilters, $scope.filters);
 		$scope.ngModel.mdPanelRef.close();
 
 	}
