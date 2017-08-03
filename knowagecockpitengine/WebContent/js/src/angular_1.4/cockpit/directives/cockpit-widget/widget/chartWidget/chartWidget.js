@@ -181,9 +181,14 @@ angular.module('cockpitModule')
 	}
 });
 
-function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelection,cockpitModule_datasetServices,cockpitModule_widgetConfigurator,$q,$mdPanel,sbiModule_restServices,$httpParamSerializerJQLike,sbiModule_config,buildParametersForExecution,$mdToast,sbiModule_messaging,sbiModule_translate,$filter){
+function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelection,cockpitModule_datasetServices,cockpitModule_widgetConfigurator,$q,$mdPanel,sbiModule_restServices,$httpParamSerializerJQLike,sbiModule_config,buildParametersForExecution,$mdToast,sbiModule_messaging,sbiModule_translate,$filter,cockpitModule_widgetServices){
 	$scope.property={style:{}};
 	$scope.selectedTab = {'tab' : 0};
+	//variable that contains last data of realtime dataset
+	$scope.realTimeDatasetData;
+	//variable that contains last data of realtime dataset not filtered
+	$scope.realTimeDatasetDataNotFiltered;
+
 	if($scope.ngModel.cross==undefined){
 		$scope.ngModel.cross={};
 	};
@@ -194,16 +199,86 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 	$scope.chartLibNamesConfig = chartLibNamesConfig;
 	
 	$scope.refresh=function(element,width,height,data,nature){
+		var dataToPass = data;
 		//apply filters for realtime dataset
-		$scope.realtimeDataManagement(data);
-		$scope.$broadcast(nature,data);
+		if (nature == 'init' || nature == 'refresh'){
+			dataToPass = $scope.realtimeDataManagement(data, nature);
+			$scope.realTimeDatasetDataNotFiltered = angular.copy(data);
+		} else {
+			dataToPass = $scope.realtimeDataManagement($scope.realTimeDatasetData, nature);
+		}
+		$scope.$broadcast(nature,dataToPass);
 
 	};
 	
-	$scope.realtimeDataManagement = function(data){
+	$scope.realtimeSelections = cockpitModule_widgetServices.realtimeSelections;
+	//set a watcher on a variable that can contains the associative selections for realtime dataset
+	var realtimeSelectionsWatcher = $scope.$watchCollection('realtimeSelections',function(newValue,oldValue,scope){
+		if (newValue.length == 0){
+			//the selections are empty
+			scope.$broadcast('selections',$scope.realTimeDatasetDataNotFiltered);
+		} else if (scope.ngModel && scope.ngModel.dataset && scope.ngModel.dataset.dsId){
+			var widgetDatasetId = scope.ngModel.dataset.dsId;
+			var widgetDataset = cockpitModule_datasetServices.getDatasetById(widgetDatasetId)
+
+			for (var i=0; i< newValue.length; i++){
+				//search if there are selection on the widget's dataset
+				if (newValue[i].datasetId == widgetDatasetId){
+					var selections = newValue[i].selections;
+					//get filter on our dataset
+					if (selections[widgetDataset.label]){
+						var selectionsOfDataset = selections[widgetDataset.label];
+						for (var columnName in selectionsOfDataset) {
+							  if (selectionsOfDataset.hasOwnProperty(columnName)) {
+								  var selectionsValues = selectionsOfDataset[columnName]
+								  for (var z=0 ; z < selectionsValues.length ; z++){
+									  var filterValue = selectionsValues[z]
+									  // clean the value from the parenthesis ( )
+									  filterValue = filterValue.replace(/[()]/g, ''); 
+									  // clean the value from the parenthesis ''
+									  filterValue = filterValue.replace(/['']/g, ''); 
+									  var filterValues = []
+									  filterValues.push(filterValue);
+
+									  //apply the filter function
+									  var columnObject = scope.getColumnObjectFromName(scope.ngModel.content.columnSelectedOfDataset,columnName);
+									  //use the aliasToShow to match the filtercolumn name
+									  var filterColumnname = columnObject.alias;
+									  var columnType = columnObject.fieldType;
+									  scope.realTimeDatasetData.rows = scope.filterRows(scope.realTimeDatasetData,columnObject,filterValues,columnType);
+									  scope.realTimeDatasetData.results = scope.realTimeDatasetData.rows.length;
+									  
+									  //TODO: adapt the metadata to be sent to the feedback
+									  //(after a realtime update the metadata is not in the format used by the chart backend)
+									  var metadataFields = scope.realTimeDatasetData.metaData.fields;
+									  for (var x=0; x < metadataFields.length; x++){
+										  if (metadataFields[x].header){
+											  var colObj = scope.getColumnObjectFromName(scope.ngModel.content.columnSelectedOfDataset,metadataFields[x].header);
+											  //set the header to use the alias (ex: temperature_SUM instead of just temperature)
+											  if (colObj){
+												  metadataFields[x].header = colObj.alias
+											  }
+										  }
+									  }
+									  
+									  //send broadcast for selections
+									  scope.$broadcast('selections',scope.realTimeDatasetData);
+								  }
+							  }
+							}
+					}
+				}
+			}
+		}
+	});
+	
+	$scope.realtimeDataManagement = function(data, nature){
 		if ($scope.ngModel.dataset){
 			var dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId);
 			if (dataset.isRealtime == true){
+				//create a deep copy of the data, otherwise filtering on data will be spread to all the widgets
+				$scope.realTimeDatasetData = angular.copy(data);
+				
 				//*** CLIENT SIDE FILTERING ***
 				if ($scope.ngModel.content && $scope.ngModel.content.filters){
 					var filters = $scope.ngModel.content.filters;
@@ -215,17 +290,24 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 							//var filterColumnname = columnObject.alias;
 							var filterValues =  filters[i].filterVals;
 							var columnType = columnObject.fieldType;
-							data.rows = $scope.filterRows(data,columnObject,filterValues,columnType);
+							$scope.realTimeDatasetData.rows = $scope.filterRows($scope.realTimeDatasetData,columnObject,filterValues,columnType);
 
 						}
 					}
 				}
 				//*** CLIENT SIDE SORTING ***
 				if ($scope.ngModel.content && $scope.ngModel.content.chartTemplate && $scope.ngModel.content.chartTemplate.CHART && $scope.ngModel.content.chartTemplate.CHART.VALUES && $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY && $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY.orderColumn){
-					$scope.sortRows(data);
+					$scope.sortRows($scope.realTimeDatasetData);
 				}
+				
+				return $scope.realTimeDatasetData;
 			}
 		}
+		return data;
+		
+		//save a copy of the data filtered
+		//$scope.realTimeDatasetData = data;
+
 		
 	}
 	/**
@@ -289,7 +371,7 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 		var toReturn = [];
 		var dataIndex;
 		//search dataIndex
-		if (data.metaData.fields){
+		if (data.metaData && data.metaData.fields){
 			var fields = data.metaData.fields;
 			for (var i=0; i< fields.length ; i++){
 				//use alias or original name to catch correct field (because after a realtime update the header use the original name)
