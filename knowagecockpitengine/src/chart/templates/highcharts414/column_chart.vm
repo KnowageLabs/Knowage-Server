@@ -1664,7 +1664,8 @@
 		         #end
             },
             dataLabels: {
-                   allowOverlap:true
+					allowOverlap: true,
+					y:-10
             },
             
             #* 
