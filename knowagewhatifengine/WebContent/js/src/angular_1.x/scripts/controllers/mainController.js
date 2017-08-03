@@ -222,7 +222,10 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 	
 	$scope.sendModelConfig = function(modelConfig,noloading) {
 		console.log("Sending model config" + " "+ modelConfig);
-		$scope.tableSubsets.length = 0;
+		if($scope.tableSubsets){
+			$scope.tableSubsets.length = 0;
+		}
+		
 		var sentStartRow = $scope.modelConfig.startRow;
 		if ($scope.ready) {
 			$scope.ready = false;
@@ -270,7 +273,8 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 					"1.0",
 					'/member/start/1/' + start + '?SBI_EXECUTION_ID='
 							+ JSsbiExecutionID).then(function(response) {
-				$scope.table = $sce.trustAsHtml(response.data.table);
+			
+				angular.copy($sce.trustAsHtml(response.data.table),scope.table);
 				$scope.ready = true;
 				$scope.handleResponse(response);
 			}, function(response) {

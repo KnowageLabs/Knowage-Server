@@ -370,6 +370,10 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 				$scope.openButtonWizard();
 				sendModelConfig = false;
 				break;	
+			case "BUTTON_PAGINATION_WIZARD":
+				$scope.openButtonPaginationWizard();
+				sendModelConfig = false;
+				break;	
 			default:
 				console.log("something else clicked");
 		}

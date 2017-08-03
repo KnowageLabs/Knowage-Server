@@ -107,6 +107,7 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 	public static String TAG_CNC_VALUE = "value";
 
 	public static final String STAD_ALONE_DS_LABEL = "STAD_ALONE_DS_LABEL";
+	public static String TAG_PAGINATION = "pagination";
 
 	/** Logger component. */
 	public static transient Logger logger = Logger.getLogger(WhatIfXMLTemplateParser.class);
@@ -183,6 +184,9 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 
 			// init stand alone configuration
 			initStandAlone(template, toReturn);
+			
+			// init stand alone configuration
+			initPagination(template, toReturn);
 
 			List<WhatIfTemplate.Parameter> parameters = new ArrayList<WhatIfTemplate.Parameter>();
 			List parametersSB = mdxSB.getAttributeAsList(TAG_PARAMETER);
@@ -213,6 +217,17 @@ public class WhatIfXMLTemplateParser implements IWhatIfTemplateParser {
 		}
 
 		return toReturn;
+	}
+
+	private static void initPagination(SourceBean template, WhatIfTemplate toReturn) {
+		logger.debug("IN. loading the configuration for a stand alone execution");
+		boolean paginationSB = false;
+		SourceBean attribute =(SourceBean) template.getAttribute(TAG_PAGINATION);
+		if(attribute!=null){
+			paginationSB = Boolean.parseBoolean(attribute.getCharacters()) ;
+		}
+		
+		toReturn.setPagination(paginationSB);
 	}
 
 	private static List<TargetClickable> initTargetsClickable(SourceBean mdxSB) {

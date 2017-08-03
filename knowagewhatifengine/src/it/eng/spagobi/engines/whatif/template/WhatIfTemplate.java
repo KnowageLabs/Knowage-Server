@@ -39,6 +39,7 @@ public class WhatIfTemplate {
 	private final HashMap<String, Object> properties;
 	private SbiScenario scenario;
 	private SbiAliases aliases;
+	private boolean pagination;
 	private List<Parameter> parameters;
 	private List<String> profilingUserAttributes;
 	private List<String> toolbarVisibleButtons;
@@ -204,6 +205,14 @@ public class WhatIfTemplate {
 
 	public void setToolbarClickedButtons(List<String> toolbarClickedButtons) {
 		this.toolbarClickedButtons = toolbarClickedButtons;
+	}
+	
+	public boolean isPagination() {
+		return pagination;
+	}
+
+	public void setPagination(boolean pagination) {
+		this.pagination = pagination;
 	}
 
 }

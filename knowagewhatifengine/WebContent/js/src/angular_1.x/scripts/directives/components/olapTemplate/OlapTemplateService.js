@@ -160,6 +160,75 @@ angular.module('olap_template')
 				
 			}
 			
+			/**************************************************************************/
+			this.getPaginationTag = function(){
+				if(this.getOlapTag()){	
+					return this.getOlapTag().pagination;
+				}else{
+					console.log("Olap object is undefined!!!");
+				}
+				
+			}
+			
+			/*
+			 * Getter for pagination
+			 * @return pagination	type string
+			 */
+			
+			this.getPagination = function(){
+				if(this.getOlapTag()){
+					if(this.getPaginationTag()){
+						return this.getPaginationTag().XML_TAG_TEXT_CONTENT;
+					}
+					
+				}else{
+					console.log("Olap object is undefined!!!");
+				}
+			}
+			
+			/*
+			 * Setter for pagination tag
+			 * @param pagination 	type boolean
+			 * return boolean 
+			 * true if setting is successful
+			 * 
+			 */
+			this.setPaginationTag = function(pagination){
+				if(this.getOlapTag()){
+					 if(!this.getPaginationTag()){
+						 this.getOlapTag().pagination = {};
+					 }
+					 if(pagination!=undefined){
+						 this.getPaginationTag().XML_TAG_TEXT_CONTENT = pagination;
+						 this.setJsonTemplateTag();
+						 return true;
+					 }else{
+						 console.log("pagination is empty!!!");
+						 this.deletePaginationTag();
+						 return false;
+					 }
+					 
+					 
+				}else{
+					console.log("Olap object is undefined!!!");
+				}
+				
+				return false;
+				
+			}
+			
+			/*
+			 * Deleting Pagination tag
+			 */
+			this.deletePaginationTag = function(){
+				if(this.getOlapTag()){
+					 delete this.getOlapTag().pagination;
+				}else{
+					console.log("Olap object is undefined!!!");
+				}
+			}
+			/**************************************************************************/
+			
 			/*
 			 * Getter for mdxQueryTag object
 			 * @return mdxQueryTag object

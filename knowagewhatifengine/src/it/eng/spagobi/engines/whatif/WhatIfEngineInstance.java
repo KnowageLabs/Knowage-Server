@@ -72,8 +72,10 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 	private IDataSource dataSourceForWriting;
 	private String algorithmInUse = null;// the allocation algorithm used
 	private boolean whatif = false; // are in what if context?
-
+	
 	// to spread the edited value
+
+	
 
 	protected WhatIfEngineInstance(Object template, boolean whatif, Map env) {
 		this(WhatIfTemplateParser.getInstance() != null ? WhatIfTemplateParser.getInstance().parse(template) : null, whatif, env);
@@ -273,6 +275,7 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 		modelConfig.setToolbarMenuButtons(template.getToolbarMenuButtons());
 		modelConfig.setToolbarVisibleButtons(template.getToolbarVisibleButtons());
 		modelConfig.setToolbarClickedButtons(template.getToolbarClickedButtons());
+		modelConfig.setPagination(template.isPagination());
 
 		WriteBackEditConfig writeBackConfig = modelConfig.getWriteBackConf();
 		if (writeBackConfig != null) {
@@ -294,6 +297,8 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 		}
 
 		standalone = template.isStandAlone();
+		
+		
 
 		logger.debug("OUT");
 	}
@@ -525,5 +530,7 @@ public class WhatIfEngineInstance extends ExtendedAbstractEngineInstance impleme
 	public void setAlgorithmInUse(String algorithmInUse) {
 		this.algorithmInUse = algorithmInUse;
 	}
+	
+	
 
 }

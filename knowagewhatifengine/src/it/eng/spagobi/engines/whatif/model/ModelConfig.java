@@ -61,8 +61,18 @@ public class ModelConfig implements Serializable {
 	private int columnCount;
 
 	private int pageSize;
+	
+	private boolean pagination;
 
 
+
+	public boolean isPagination() {
+		return pagination;
+	}
+	
+	public void setPagination(boolean isPagination){
+		this.pagination = isPagination;
+	}
 
 	public int getPageSize() {
 		return pageSize;
@@ -431,12 +441,14 @@ public class ModelConfig implements Serializable {
 		this.topBottomCount = source.topBottomCount;
 		this.status = source.status;
 		this.locker = source.locker;
-
+		this.pagination = source.pagination;
 		this.toolbarVisibleButtons = source.toolbarVisibleButtons;
 		this.toolbarMenuButtons = source.toolbarMenuButtons;
 		this.toolbarClickedButtons = source.toolbarClickedButtons;
 
 		this.dimensionHierarchyMap = source.dimensionHierarchyMap;
 	}
+
+	
 
 }

@@ -103,6 +103,8 @@ function olapDesignerToolbarController($scope, $timeout, $window, $mdDialog, $ht
 	
 	$scope.showInfoo= false;
 	
+	$scope.pagination = false;
+	
 	var counter = 0;
 	
 	angular.element(document).ready(function () {
@@ -534,6 +536,27 @@ $scope.setAndLoadCN = function(num) {
 				clickOutsideToClose : false,
 				hasBackdrop : false
 			});
+	 }
+	 
+	 $scope.openButtonPaginationWizard = function(){
+		 
+		 $scope.pagination = OlapTemplateService.getPagination();
+		 
+		 $mdDialog
+			.show({
+				scope : $scope,
+				preserveScope : true,
+				parent : angular.element(document.body),
+				controllerAs : 'olapDesignerCtrl',
+				templateUrl : sbiModule_config.contextName + '/html/template/right/edit/pagination_wizard.html',
+				clickOutsideToClose : false,
+				hasBackdrop : false
+			});
+	 }
+	 $scope.savePagination = function(){
+		 OlapTemplateService.setPaginationTag( $scope.pagination);
+		 sbiModule_messaging.showSuccessMessage(sbiModule_translate.load('sbi.olap.designer.buttonAdd'), 'Success');
+		 $scope.closeDialogOlapDesigner();
 	 }
 	 
 	 /**

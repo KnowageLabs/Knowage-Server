@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-angular.module('scrolly_directive',[])
+angular.module('scrolly_directive',['ngSanitize'])
 	.directive('scrolly',['$window','$interval','$sce', function ($window,$interval,$sce) {
 	    return {
 	        restrict: 'A',
@@ -346,9 +346,11 @@ angular.module('scrolly_directive',[])
 	            		   	if(scope.buffer!=null&&
 	            		   		scope.buffer[scope.modelConfig.startRow]!=undefined&&
 	            		   		scope.buffer[scope.modelConfig.startRow]!=null){
+	            		   		var obj ={};
+	            		   		obj.text = 2;
+	            		   		angular.copy($sce.trustAsHtml(scope.buffer[scope.modelConfig.startRow]),scope.table);
 	            		   		
 	            		   		
-	            		   		scope.table = $sce.trustAsHtml(scope.buffer[scope.modelConfig.startRow]);
 	            		   		
 	            		   	}else{
 	            		   		scope.sendModelConfig(scope.modelConfig);
