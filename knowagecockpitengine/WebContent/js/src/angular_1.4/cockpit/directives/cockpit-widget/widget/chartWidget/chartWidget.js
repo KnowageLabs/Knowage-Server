@@ -357,7 +357,7 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 	
 	}
 	/**
-	 * Client side rows sorting or realtime dataset
+	 * Client side rows sorting of realtime dataset
 	 */
 	$scope.sortRows = function (data){
 		var columns = $scope.ngModel.content.columnSelectedOfDataset;
