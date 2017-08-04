@@ -2,7 +2,7 @@
 	<div id="leftaxis" class='knowage-blue dimension-left-toolbar' layout="column" ng-drop="true" ng-drop-success="dropLeft($data,$event)">
 		
 		<div class="left-axis-shift">
-			<md-button style="right:10px" class="md-icon-button" aria-label="Favorite" ng-click="dimensionShift('up')" ng-show="leftSliderNeeded">
+			<md-button style="right:10px" class="md-icon-button" aria-label="Favorite" ng-click="dimensionShift('down')" ng-show="leftSliderNeeded">
 				<md-icon class="icon-color-white" md-font-icon="fa fa-arrow-circle-o-up fa-2x" ></md-icon>
 			</md-button>
 		</div>	
@@ -43,7 +43,7 @@
 			<md-button style="right:10px;"
 					   class="md-icon-button" 
 					   aria-label="Favorite" 
-					   ng-click="dimensionShift('down')" 
+					   ng-click="dimensionShift('up')" 
 					   ng-show="leftSliderNeeded">
 				<md-icon class="icon-color-white" md-font-icon="fa fa-arrow-circle-o-down fa-2x"></md-icon>
 			</md-button>
@@ -56,8 +56,11 @@
 	
 	 		<div   ng-style="{'height':modelConfig.rowCount*100+tableHeight-120,'width':modelConfig.columnCount*100+tableWeight-150}" ></div>	<!-- background-color: #3b678c; -->
 	 	</md-content>
+	 	<md-content flex ng-if = "!modelConfig.pagination">
 	 		<div ng-bind-html="table" compile-template class="table-alignment" >
 	 		
 	 		</div>
+	 	</md-content>
+	 		<div ng-if = "modelConfig.pagination" ng-bind-html="table" compile-template class="table-alignment" >
 	</div>	
 </div>

@@ -247,7 +247,7 @@ angular.module('scrolly_directive',['ngSanitize'])
 	        	
 	        	
 	        	scope.clearTableCellSelection = function(tableCells){
-	        		if(tableCells){
+	        		if(tableCells&&scope.selectedCell){
 	        			for (var i = 0; i < tableCells.length; i++) {
 							if(tableCells[i].id!==scope.selectedCell.id){
 								tableCells[i].className = 'pivot-table th';

@@ -56,6 +56,16 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		
 	});
 	
+	$scope.$watch(function(){
+		if(document.getElementById("leftaxis")){
+			var size = document.getElementById("leftaxis").offsetHeight;
+		}
+		return size;
+		},function(){
+			$scope.axisSizeSetup();
+			checkShift();
+	})
+	
 	// for designer parameters binding
 	$scope.adParams=[];
 	$scope.profileAttributes=[];
@@ -620,7 +630,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		var leftLength = $scope.rows.length;
 		var topLength = $scope.columns.length;
 		var fromAxis;
-		
+		$scope.axisSizeSetup();
 		if(data !=null){
 			fromAxis = data.axis;
 			
@@ -741,7 +751,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			 checkLock(status);
 			if($scope.modelConfig.whatIfScenario)
 				$scope.getVersions();
-			axisSizeSetup();
+			$scope.axisSizeSetup();
 			
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.sendMDX.error'), 'Error');
@@ -782,14 +792,15 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 
 	//Dynamic setting for number of visible elements in filter/row/column axis without scroll buttons
 	//depends on size of actual html elements
-	axisSizeSetup = function(){
+	$scope.axisSizeSetup = function(){
 		var taw = document.getElementById("topaxis").offsetWidth - 66;
 		var lah = document.getElementById("leftaxis").offsetHeight - 66;
 		var faw = document.getElementById("filterpanel").offsetWidth - 80;
 		$scope.maxCols = Math.round(taw/200);
 		$scope.maxRows = Math.round(lah/175);
 		$scope.numVisibleFilters = Math.round(faw/200);
-
+		console.log("maxRows");
+		console.log($scope.maxRows);
 	};
 	
 	$scope.loadAnalyticalDrivers= function(){
