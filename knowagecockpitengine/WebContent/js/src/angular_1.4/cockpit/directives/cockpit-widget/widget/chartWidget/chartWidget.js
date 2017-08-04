@@ -186,7 +186,7 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 	$scope.selectedTab = {'tab' : 0};
 	//variable that contains last data of realtime dataset
 	$scope.realTimeDatasetData;
-	//variable that contains last data of realtime dataset not filtered
+	//variable that contains last data of realtime dataset not filtered by selections
 	$scope.realTimeDatasetDataNotFiltered;
 
 	if($scope.ngModel.cross==undefined){
@@ -199,21 +199,46 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 	$scope.chartLibNamesConfig = chartLibNamesConfig;
 	
 	$scope.refresh=function(element,width,height,data,nature){
-		var dataToPass = data;
-		//apply filters for realtime dataset
-		if (nature == 'init' || nature == 'refresh'){
-			dataToPass = $scope.realtimeDataManagement(data, nature);
-			$scope.realTimeDatasetDataNotFiltered = angular.copy(data);
-		} else {
-			dataToPass = $scope.realtimeDataManagement($scope.realTimeDatasetData, nature);
-		}
-		$scope.$broadcast(nature,dataToPass);
+		if ($scope.ngModel.dataset){
+			var dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId);
+			if (dataset.isRealtime == true){
+				//Refresh for Realtime datasets
+				var dataToPass = data;
+				//apply filters for realtime dataset
+				if (nature == 'init' || nature == 'refresh'){
+					dataToPass = $scope.realtimeDataManagement(data, nature);
+					$scope.realTimeDatasetDataNotFiltered = angular.copy(data);
+					if ($scope.realtimeSelections && $scope.realtimeSelections.length > 0){
+						$scope.applyRealtimeSelections($scope.realtimeSelections,$scope)
+					}
+				} else {
+					dataToPass = $scope.realtimeDataManagement($scope.realTimeDatasetData, nature);
+				}
+				$scope.$broadcast(nature,dataToPass);
+
+			} else {
+				//Refresh for Not realtime datasets
+				$scope.$broadcast(nature,data);
+			}
+		}	
 
 	};
 	
 	$scope.realtimeSelections = cockpitModule_widgetServices.realtimeSelections;
-	//set a watcher on a variable that can contains the associative selections for realtime dataset
+	/**
+	 * Set a watcher on a variable that can contains the associative selections for realtime dataset
+	 */
 	var realtimeSelectionsWatcher = $scope.$watchCollection('realtimeSelections',function(newValue,oldValue,scope){
+		if (scope.ngModel.dataset){
+			var dataset = cockpitModule_datasetServices.getDatasetById(scope.ngModel.dataset.dsId);
+			if (dataset.isRealtime == true){
+				scope.applyRealtimeSelections(newValue,scope);
+			}
+		}	
+	});
+	
+	//Check if there are associative selections and apply that to the data
+	$scope.applyRealtimeSelections = function(newValue,scope){
 		if (newValue.length == 0){
 			//the selections are empty
 			if ($scope.realTimeDatasetDataNotFiltered) {
@@ -222,15 +247,7 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 				//adapt metadata
 				if (originalData){
 					var metadataFields = originalData.metaData.fields;
-					for (var x=0; x < metadataFields.length; x++){
-						if (metadataFields[x].header){
-							var colObj = scope.getColumnObjectFromName(scope.ngModel.content.columnSelectedOfDataset,metadataFields[x].header);
-							//set the header to use the alias (ex: temperature_SUM instead of just temperature)
-							if (colObj){
-								metadataFields[x].header = colObj.alias
-							}
-						}
-					}				
+					scope.adaptMetadata(metadataFields);			
 				}
 
 				scope.$broadcast('selections',originalData);
@@ -261,26 +278,17 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 
 									  //apply the filter function
 									  var columnObject = scope.getColumnObjectFromName(scope.ngModel.content.columnSelectedOfDataset,columnName);
-									  //use the aliasToShow to match the filtercolumn name
+									  //use the alias to match the filtercolumn name
 									  var filterColumnname = columnObject.alias;
 									  var columnType = columnObject.fieldType;
 									  scope.realTimeDatasetData.rows = scope.filterRows(scope.realTimeDatasetData,columnObject,filterValues,columnType);
 									  scope.realTimeDatasetData.results = scope.realTimeDatasetData.rows.length;
 									  
-									  //TODO: adapt the metadata to be sent to the feedback - CREATE SEPARATE FUNCTION FOR THAT
-									  //(after a realtime update the metadata is not in the format used by the chart backend)
+									  // adapt the metadata to be sent to the backend
 									  var metadataFields = scope.realTimeDatasetData.metaData.fields;
-									  for (var x=0; x < metadataFields.length; x++){
-										  if (metadataFields[x].header){
-											  var colObj = scope.getColumnObjectFromName(scope.ngModel.content.columnSelectedOfDataset,metadataFields[x].header);
-											  //set the header to use the alias (ex: temperature_SUM instead of just temperature)
-											  if (colObj){
-												  metadataFields[x].header = colObj.alias
-											  }
-										  }
-									  }
+									  scope.adaptMetadata(metadataFields);
 									  
-									  //send broadcast for selections
+									  //send broadcast for selections with data filtered by selections
 									  scope.$broadcast('selections',scope.realTimeDatasetData);
 								  }
 							  }
@@ -288,12 +296,35 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 					}
 				}
 			}
-		}
-	});
+		}		
+	}
 	
+	/**
+	 * Change the header name of the metadata's fields to use the format used by the chart backend 
+	 * this is necessary because after a realtime update the data has the original header name from the dataset
+	 * meanwhile while loading data from backend of chart the header have the name+grouping faction
+	 * (Ex: TEMPERATURE_SUM instead of TEMPERATURE)
+	 * 
+	 */
+	$scope.adaptMetadata = function (metadataFields){
+		for (var x=0; x < metadataFields.length; x++){
+			  if (metadataFields[x].header){
+				  var colObj = $scope.getColumnObjectFromName($scope.ngModel.content.columnSelectedOfDataset,metadataFields[x].header);
+				  //set the header to use the alias (ex: temperature_SUM instead of just temperature)
+				  if (colObj){
+					  metadataFields[x].header = colObj.alias
+				  }
+			  }
+		  }
+	}
+	
+	/**
+	 * Filter or order data from realtime dataset
+	 */
 	$scope.realtimeDataManagement = function(data, nature){
 		if ($scope.ngModel.dataset){
 			var dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId);
+			//Do something only if the dataset is realtime, otherwise just pass the data
 			if (dataset.isRealtime == true){
 				//create a deep copy of the data, otherwise filtering on data will be spread to all the widgets
 				$scope.realTimeDatasetData = angular.copy(data);
@@ -323,11 +354,7 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 			}
 		}
 		return data;
-		
-		//save a copy of the data filtered
-		//$scope.realTimeDatasetData = data;
-
-		
+	
 	}
 	/**
 	 * Client side rows sorting or realtime dataset

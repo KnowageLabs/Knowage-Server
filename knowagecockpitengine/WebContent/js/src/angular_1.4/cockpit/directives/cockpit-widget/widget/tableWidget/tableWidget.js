@@ -117,7 +117,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 										  var filterValues = []
 										  filterValues.push(filterValue);
 
-										  //TODO: apply the filter function
+										  //Filtering of the rows
 										  var columnObject = scope.getColumnObjectFromName(scope.ngModel.content.columnSelectedOfDataset,columnName);
 										  //use the aliasToShow to match the filtercolumn name
 										  var filterColumnname = columnObject.aliasToShow;
