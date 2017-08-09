@@ -57,7 +57,9 @@
 	<USER_FUNCTIONALITY productType="KnowageBD" name="AnalyticalWidget" description="AnalyticalWidget" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="MetaModelLifecycleManagement" description="MetaModelLifecycleManagement" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="DomainWrite" description="DomainWrite" />
-	<USER_FUNCTIONALITY productType="KnowageBD" name="MapCatalogueManagement" description="MapCatalogueManagement" />
+	<!--  tolto perchè non ha il motore SVG
+ 	<USER_FUNCTIONALITY productType="KnowageBD" name="MapCatalogueManagement" description="MapCatalogueManagement" />
+	-->
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ManageCrossNavigation" description="ManageCrossNavigation" />	
     <USER_FUNCTIONALITY productType="KnowageBD" name="ExecuteCrossNavigation" description="ExecuteCrossNavigation" />  	
 	
@@ -154,7 +156,9 @@
 	<USER_FUNCTIONALITY productType="KnowageER" name="HotLinkManagement" description="HotLinkManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="ProfileManagement" description="ProfileManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="UserSaveDocumentFunctionality" description="UserSaveDocumentFunctionality"/>
+	<!--  removed...
 	<USER_FUNCTIONALITY productType="KnowageER" name="MetaModelsCatalogueManagement" description="MetaModelsCatalogueManagement"/>
+	-->
 	<USER_FUNCTIONALITY productType="KnowageER" name="ImagesManagement" description="ImagesManagement" />	
 	<USER_FUNCTIONALITY productType="KnowageER" name="CreateChartFunctionality" description="CreateChartFunctionality" />
 	<USER_FUNCTIONALITY productType="KnowageER" name="ManageCrossNavigation" description="ManageCrossNavigation" />

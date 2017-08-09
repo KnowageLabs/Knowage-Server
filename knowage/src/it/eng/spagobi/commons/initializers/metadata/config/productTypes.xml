@@ -14,6 +14,7 @@
 		<ENGINE label="knowagenetworkengine" />
 	</PRODUCT_TYPE>
 	<PRODUCT_TYPE label="KnowageSI" active="true">
+		<ENGINE label="knowageofficeengine" />	
 		<ENGINE label="knowagebirtreporteng" />
 		<ENGINE label="knowageqbeengine" />
 		<ENGINE label="knowagetalendengine" />
