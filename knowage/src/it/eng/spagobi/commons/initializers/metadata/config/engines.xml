@@ -27,10 +27,6 @@
 		driverNm="it.eng.spagobi.engines.drivers.birt.BirtReportDriver"
 		engineTypeCd="EXT" classNm="" biobjTypeCd="REPORT" useDataSet="false"
 		useDataSource="true" encrypt="0" />
-	<ENGINE label="knowagejpivotengine" name="JPivot Engine" descr="JPivot Mondrian Engine"
-		mainUrl="/knowagejpivotengine/JPivotServlet" driverNm="it.eng.spagobi.engines.drivers.jpivot.JPivotDriver"
-		engineTypeCd="EXT" classNm="" biobjTypeCd="OLAP" useDataSet="false"
-		useDataSource="true" encrypt="0" />
 	<ENGINE label="knowagejasperreporte" name="Jasper Report Engine"
 		descr="Jasper Report Engine" mainUrl="/knowagejasperreportengine/JasperReportServlet"
 		driverNm="it.eng.spagobi.engines.drivers.jasperreport.JasperReportDriver"
@@ -56,13 +52,7 @@
 	<ENGINE label="knowageprocessengine" name="Process Engine" descr="Process Engine"
 		mainUrl="/knowagecommonjengine/servlet/AdapterHTTP" driverNm="it.eng.spagobi.engines.drivers.commonj.CommonjDriver"
 		engineTypeCd="EXT" classNm="" biobjTypeCd="ETL" useDataSet="false"
-		useDataSource="false" encrypt="0" />
-		
-	<!-- ENGINE label="knowagesmartfilteren" name="Smart Filter Engine"
-		descr=" Smart Filter Engine" mainUrl="/knowageqbeengine/servlet/AdapterHTTP"
-		driverNm="it.eng.spagobi.engines.drivers.smartfilter.SmartFilterDriver"
-		engineTypeCd="EXT" classNm="" biobjTypeCd="SMART_FILTER" useDataSet="true"
-		useDataSource="true" encrypt="0" / -->
+		useDataSource="false" encrypt="0" />		
 	<ENGINE label="knowagegisengine" name="Gis Engine" descr="Gis Engine"
 		mainUrl="/knowagegeoreportengine/api/1.0/pages/execute" driverNm="it.eng.spagobi.engines.drivers.gis.GisDriver"
 		engineTypeCd="EXT" classNm="" biobjTypeCd="MAP" useDataSet="true"
@@ -71,34 +61,10 @@
 		mainUrl="/knowagesvgviewerengine/api/1.0/pages/execute" driverNm="it.eng.spagobi.engines.drivers.svgviewer.SvgViewerDriver"
 		engineTypeCd="EXT" classNm="" biobjTypeCd="MAP" useDataSet="false"
 		useDataSource="false" encrypt="0" />
-	<ENGINE label="knowageconsoleengine" name="Console Engine" descr="Console Engine"
-		mainUrl="/knowageconsoleengine/servlet/AdapterHTTP" driverNm="it.eng.spagobi.engines.drivers.console.ConsoleDriver"
-		engineTypeCd="EXT" classNm="" biobjTypeCd="CONSOLE" useDataSet="true"
-		useDataSource="true" encrypt="0" />
 	<ENGINE label="knowagechartengine" name="Chart Engine" descr="Chart Engine"
 		mainUrl="/knowagecockpitengine/api/1.0/chart/pages/execute" driverNm="it.eng.spagobi.engines.drivers.chart.ChartDriver"
 		engineTypeCd="EXT" classNm="" biobjTypeCd="CHART" useDataSet="true"
 		useDataSource="false" encrypt="0" />
-	<!-- start mobile engines 
-	<ENGINE label="knowagetablemobileen" name="Mobile Report Engine"
-		descr="Report engine for mobile devices"
-		mainUrl="/knowagemobileengine/servlet/AdapterHTTP?ACTION_NAME=MOBILE_ENGINE_START_ACTION"
-		driverNm="it.eng.spagobi.engines.drivers.mobile.report.MobileReportDriver"
-		engineTypeCd="EXT" classNm="" biobjTypeCd="MOBILE_REPORT" useDataSet="true"
-		useDataSource="true" encrypt="0" />
-	<ENGINE label="knowagechartmobileen" name="Mobile Chart Engine"
-		descr="Chart engine for mobile devices"
-		mainUrl="/knowagemobileengine/servlet/AdapterHTTP?ACTION_NAME=MOBILE_ENGINE_START_ACTION"
-		driverNm="it.eng.spagobi.engines.drivers.mobile.chart.MobileChartDriver"
-		engineTypeCd="EXT" classNm="" biobjTypeCd="MOBILE_CHART" useDataSet="true"
-		useDataSource="true" encrypt="0" />
-	<ENGINE label="knowagecockpitmobile" name="Mobile Cockpit Engine"
-		descr="Cockpit engine for mobile devices"
-		mainUrl="/knowagemobileengine/servlet/AdapterHTTP?ACTION_NAME=MOBILE_ENGINE_START_ACTION"
-		driverNm="it.eng.spagobi.engines.drivers.mobile.cockpit.MobileCockpitDriver"
-		engineTypeCd="EXT" classNm="" biobjTypeCd="MOBILE_COCKPIT" useDataSet="false"
-		useDataSource="false" encrypt="0" />
- end mobile engines -->
 	<ENGINE label="knowagenetworkengine" name="Network Analysis Engine"
 		descr="Network Analysis Engine" mainUrl="/knowagenetworkengine/servlet/AdapterHTTP"
 		driverNm="it.eng.spagobi.engines.drivers.network.NetworkDriver"
