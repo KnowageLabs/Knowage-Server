@@ -46,8 +46,8 @@ public class BuildQbeDatasetStartAction extends QbeEngineStartAction {
     @Override
 	public void service(SourceBean serviceRequest, SourceBean serviceResponse) {
     	logger.debug("IN");
-    	checkUser();
     	super.service(serviceRequest, serviceResponse);
+    	checkUser();
 	}
 
 	/**

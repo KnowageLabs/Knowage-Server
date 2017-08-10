@@ -36,7 +36,6 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.utilities.engines.AbstractEngineInstance;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.IEngineAnalysisState;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
@@ -83,8 +82,10 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 
 		dataSourceProperties.put("datasource", dataSrc);
 		dataSourceProperties.put(EngineConstants.MODEL_NAME, env.get(EngineConstants.MODEL_NAME));
-		
-		
+		if( env.get(EngineConstants.MODEL_NAME)==null){
+			dataSourceProperties.put(EngineConstants.MODEL_NAME, env.get("DATAMART_NAME"));
+		}
+
 		dataSource = QbeDataSourceManager.getInstance().getDataSource(dataSourceProperties, QbeEngineConfig.getInstance().isDataSourceCacheEnabled());
 
 		validate();
@@ -223,7 +224,7 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 	@Override
 	public void setAnalysisState(IEngineAnalysisState analysisState) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }
