@@ -243,13 +243,13 @@ public abstract class PDFCreator {
 
 	private static InputStream getFrontpage() throws FileNotFoundException {
 		String path = SingletonConfig.getInstance().getConfigValue(ConfigurationConstants.DOCUMENT_EXPORTING_PDF_FRONT_PAGE);
-		return path.isEmpty() ? Thread.currentThread().getContextClassLoader().getResourceAsStream(PDFCreator.DEFAULT_FRONT_PAGE_RESOURCE_PATH)
-				: new FileInputStream(path);
+		return (path == null || path.isEmpty()) ? Thread.currentThread().getContextClassLoader()
+				.getResourceAsStream(PDFCreator.DEFAULT_FRONT_PAGE_RESOURCE_PATH) : new FileInputStream(path);
 	}
 
 	private static InputStream getBackpage() throws FileNotFoundException {
 		String path = SingletonConfig.getInstance().getConfigValue(ConfigurationConstants.DOCUMENT_EXPORTING_PDF_BACK_PAGE);
-		return path.isEmpty() ? Thread.currentThread().getContextClassLoader().getResourceAsStream(PDFCreator.DEFAULT_BACK_PAGE_RESOURCE_PATH)
-				: new FileInputStream(path);
+		return (path == null || path.isEmpty()) ? Thread.currentThread().getContextClassLoader()
+				.getResourceAsStream(PDFCreator.DEFAULT_BACK_PAGE_RESOURCE_PATH) : new FileInputStream(path);
 	}
 }
