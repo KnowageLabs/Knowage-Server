@@ -41,6 +41,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 	}*/
 	
 	$scope.$watch('editQueryObj',function(newValue,oldValue){
+		$scope.filters = $scope.editQueryObj.filters;
 		if($scope.editQueryObj.filters.length>0){
 			$scope.editQueryObj.expression =$scope.expression;
 		}

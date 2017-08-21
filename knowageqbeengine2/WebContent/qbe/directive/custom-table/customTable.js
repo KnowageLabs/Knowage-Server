@@ -27,7 +27,8 @@ angular.module('qbe_custom_table', ['ngDraggable'])
         controller: qbeCustomTable,
         scope: {
             ngModel: '=',
-            expression: '='
+            expression: '=',
+            filters: '='
         },
         templateUrl: currentScriptPath + 'custom-table.html',
         replace: true,
@@ -139,7 +140,19 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate){
 	$scope.openFilters = function (field){
 		$rootScope.$broadcast('openFilters', {"field":field});
 	}
-	
+	$scope.checkDescription = function (field){
+		var desc = "";
+
+		for (var i = 0; i < $scope.filters.length; i++) {
+			if($scope.filters[i].leftOperandDescription == field.entity+" : "+field.name){
+
+				desc =desc.concat($scope.filters[i].leftOperandAlias + " "
+				+$scope.filters[i].operator + " " +$scope.filters[i].rightOperandDescription + "\n") ;
+			}
+		}
+		return desc;
+
+	}
 	$scope.openDialogForParams = function (model){
 		$rootScope.$broadcast('openDialogForParams');
 	}

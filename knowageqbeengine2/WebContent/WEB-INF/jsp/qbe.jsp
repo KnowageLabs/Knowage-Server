@@ -63,7 +63,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         	</qbe-expander-list>
 		</div>
 		<div flex layout-fill class="vertical-devider">
-			<qbe-custom-table ng-drop="true" ng-drop-success="onDropComplete($data,$event)" ng-model="queryModel" expression="expression"></qbe-custom-table>
+			<qbe-custom-table ng-drop="true" ng-drop-success="onDropComplete($data,$event)" ng-model="queryModel" expression="expression" filters="filters"></qbe-custom-table>
 		</div>
 	</div>
 	</body>

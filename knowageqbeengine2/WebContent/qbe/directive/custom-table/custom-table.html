@@ -129,9 +129,8 @@
 	   
    		<div ng-repeat="r in n.data | orderedById:idIndex track by r.id" class="qbeCustomRow">{{r.value}}</div>
 	   	<div  class="qbeCustomFooter">
-	   		<label ng-if="n.filters.length==0" style="font-size:.8rem; padding: 0 4px;  font-weight: bold;">No filters</label>
-        	<label ng-if="n.filters.length>0" style="font-size:.8rem; padding: 0 4px;  font-weight: bold;">Check filters</label>
-   			<md-icon class="fa fa-filter" ng-click="openFilters(n)" style="float:right"></md-icon>      	
+	   		<label style="font-size:.8rem; padding: 0 4px;  font-weight: bold;">{{checkDescription(n)}}</label>
+        	<md-icon class="fa fa-filter" ng-click="openFilters(n)" style="float:right"></md-icon>      	
       	</div>
    </div>  
 </div>
