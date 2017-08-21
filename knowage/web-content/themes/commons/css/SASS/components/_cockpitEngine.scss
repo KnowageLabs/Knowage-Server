@@ -68,6 +68,14 @@
 		
 
 		cockpit-table {
+			.showFullContentIcon {
+			    font-size: .8rem;
+			    outline: none;
+			    padding: 4px;
+			    cursor: pointer;
+			    position: absolute;
+			    right: 0;
+			}
 		    font-size: 12px;
 		    display: block;
 		    overflow-y: auto;
@@ -144,13 +152,14 @@
 		                &.en-row {
 		                    &:not([disabled]) {
 		                        &:hover {
-		                            background-color: #eee!important;
+		                            background-color: #eee !important;
 		                        }
 		                    }
 		                }
 		                td {
 		                	.cellContainer {
 		                		display: flex;
+		                		position: relative;
 		                		flex-direction: row;
 		                		align-items: center;
 		                		.barChart {
@@ -165,7 +174,7 @@
 						                    height: 20px;
 						                    width: 50%;
 						                    max-width: 100%;
-						                    color: #fff;
+						                    color: $darkTextColor;
 						                    text-align: center;
 						                    font-size: 12px;
 						                    line-height: 20px;
@@ -1353,6 +1362,9 @@
 
 	.textEllipsis {
 		overflow: hidden;
+		width: calc(100% - 32px);
+		position: absolute;
+		white-space: nowrap;
 		text-overflow: ellipsis;
 	}
 	
