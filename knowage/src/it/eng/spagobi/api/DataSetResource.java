@@ -45,6 +45,7 @@ import it.eng.spagobi.tools.dataset.cache.ProjectionCriteria;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCache;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datawriter.IDataWriter;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
@@ -790,12 +791,8 @@ public class DataSetResource extends AbstractSpagoBIResource {
 					DataSetUtilities.getParametersMap(parameters), groupCriteria, filterCriteria, filterCriteriaForMetaModel, havingCriteria,
 					havingCriteriaForMetaModel, projectionCriteria, summaryRowProjectionCriteria);
 
-			Map<String, Object> properties = new HashMap<String, Object>();
-			JSONArray fieldOptions = new JSONArray("[{id: 1, options: {measureScaleFactor: 0.5}}]");
-			properties.put(JSONDataWriter.PROPERTY_FIELD_OPTION, fieldOptions);
-			JSONDataWriter dataSetWriter = new JSONDataWriter(properties);
-			dataSetWriter.setLocale(buildLocaleFromSession());
-			JSONObject gridDataFeed = (JSONObject) dataSetWriter.write(dataStore);
+			IDataWriter dataWriter = getDataSetWriter();
+			JSONObject gridDataFeed = (JSONObject) dataWriter.write(dataStore);
 
 			String stringFeed = gridDataFeed.toString();
 			return stringFeed;
@@ -806,6 +803,19 @@ public class DataSetResource extends AbstractSpagoBIResource {
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+
+	protected IDataWriter getDataSetWriter() throws JSONException {
+		JSONDataWriter dataWriter = new JSONDataWriter(getDataSetWriterProperties());
+		dataWriter.setLocale(buildLocaleFromSession());
+		return dataWriter;
+	}
+
+	protected Map<String, Object> getDataSetWriterProperties() throws JSONException {
+		Map<String, Object> properties = new HashMap<String, Object>();
+		JSONArray fieldOptions = new JSONArray("[{id: 1, options: {measureScaleFactor: 0.5}}]");
+		properties.put(JSONDataWriter.PROPERTY_FIELD_OPTION, fieldOptions);
+		return properties;
 	}
 
 	protected Integer[] getIdsAsIntegers(String ids) {

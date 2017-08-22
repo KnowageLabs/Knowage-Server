@@ -63,10 +63,10 @@ public class JSONDataWriter implements IDataWriter {
 	private Locale locale;
 	private boolean useIdProperty;
 
-	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat(DATE_FORMAT);
-	private static final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat(DATE_TIME_FORMAT);
-	private static final SimpleDateFormat CACHE_TIMESTAMP_FORMATTER = new SimpleDateFormat(CACHE_DATE_TIME_FORMAT);
-	private static final SimpleDateFormat CACHE_TIMEONLY_FORMATTER = new SimpleDateFormat(TIME_FORMAT);
+	public static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat(DATE_FORMAT);
+	public static final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat(DATE_TIME_FORMAT);
+	public static final SimpleDateFormat CACHE_TIMESTAMP_FORMATTER = new SimpleDateFormat(CACHE_DATE_TIME_FORMAT);
+	public static final SimpleDateFormat CACHE_TIMEONLY_FORMATTER = new SimpleDateFormat(TIME_FORMAT);
 
 	// public static final String WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_OPTIONS = "options";
 	// public static final String WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR = "measureScaleFactor";
@@ -197,26 +197,31 @@ public class JSONDataWriter implements IDataWriter {
 				field.setValue(null);
 				continue;
 			}
-			String fieldValue = "";
-			if (field.getValue() != null) {
-				if (Timestamp.class.isAssignableFrom(fieldMetaData.getType()) && field.getValue() != "") {
-					fieldValue = TIMESTAMP_FORMATTER.format(field.getValue());
-				} else if (Date.class.isAssignableFrom(fieldMetaData.getType()) && field.getValue() != "") {
-					fieldValue = DATE_FORMATTER.format(field.getValue());
-				} else {
-					fieldValue = field.getValue().toString();
-				}
-			}
-			String fieldName;
 
-			if (adjust) {
-				fieldName = fieldMetaData.getName();
-			} else {
-				fieldName = getFieldName(fieldMetaData, i);
-			}
+			String fieldName = adjust ? fieldMetaData.getName() : getFieldName(fieldMetaData, i);
+
+			Object fieldValue = getFieldValue(field, fieldMetaData);
+
 			recordJSON.put(fieldName, fieldValue);
 		}
 		return recordJSON;
+	}
+
+	protected Object getFieldValue(IField field, IFieldMetaData fieldMetaData) {
+		String result = "";
+
+		Object value = field.getValue();
+		if (value != null) {
+			if (Timestamp.class.isAssignableFrom(fieldMetaData.getType())) {
+				result = TIMESTAMP_FORMATTER.format(value);
+			} else if (Date.class.isAssignableFrom(fieldMetaData.getType())) {
+				result = DATE_FORMATTER.format(value);
+			} else {
+				result = value.toString();
+			}
+		}
+
+		return result;
 	}
 
 	public Object writeDataAndMeta(IDataStore dataStore) throws RuntimeException {
@@ -283,8 +288,9 @@ public class JSONDataWriter implements IDataWriter {
 					}
 
 					String fieldHeader = this.getFieldHeader(fieldMetaData);
-					if ("sbicache_row_id".equalsIgnoreCase(fieldHeader))
+					if ("sbicache_row_id".equalsIgnoreCase(fieldHeader)) {
 						continue;
+					}
 
 					int fieldPosition = dataStore.getMetaData().getFieldIndex(fieldMetaData);
 					if (recordSize < 0 || fieldPosition < recordSize) {
@@ -293,23 +299,10 @@ public class JSONDataWriter implements IDataWriter {
 						field = new Field("");
 					}
 
-					String fieldValue = "";
-					if (field.getValue() != null) {
-						if (Timestamp.class.isAssignableFrom(fieldMetaData.getType()) && field.getValue() != "") {
-							fieldValue = TIMESTAMP_FORMATTER.format(field.getValue());
-						} else if (Date.class.isAssignableFrom(fieldMetaData.getType()) && field.getValue() != "") {
-							fieldValue = DATE_FORMATTER.format(field.getValue());
-						} else {
-							fieldValue = field.getValue().toString();
-						}
-					}
-					String fieldName;
+					String fieldName = adjust ? fieldMetaData.getName() : getFieldName(fieldMetaData, j++);
 
-					if (adjust) {
-						fieldName = fieldMetaData.getName();
-					} else {
-						fieldName = getFieldName(fieldMetaData, j++);
-					}
+					Object fieldValue = getFieldValue(field, fieldMetaData);
+
 					recordJSON.put(fieldName, fieldValue);
 				}
 

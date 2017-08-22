@@ -18,6 +18,64 @@
 package it.eng.spagobi.api.v2;
 
 import static it.eng.spagobi.tools.glossary.util.Util.getNumberOrNull;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.constants.ConfigurationConstants;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.serializer.SerializationException;
+import it.eng.spagobi.commons.serializer.SerializerFactory;
+import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.services.serialization.JsonConverter;
+import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
+import it.eng.spagobi.tools.dataset.associativity.IAssociativityManager;
+import it.eng.spagobi.tools.dataset.associativity.strategy.AssociativeStrategyFactory;
+import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
+import it.eng.spagobi.tools.dataset.cache.FilterCriteria;
+import it.eng.spagobi.tools.dataset.cache.Operand;
+import it.eng.spagobi.tools.dataset.cache.ProjectionCriteria;
+import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
+import it.eng.spagobi.tools.dataset.common.association.Association;
+import it.eng.spagobi.tools.dataset.common.association.Association.Field;
+import it.eng.spagobi.tools.dataset.common.association.AssociationGroup;
+import it.eng.spagobi.tools.dataset.common.association.AssociationGroupJSONSerializer;
+import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
+import it.eng.spagobi.tools.dataset.common.datawriter.CockpitJSONDataWriter;
+import it.eng.spagobi.tools.dataset.common.datawriter.IDataWriter;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
+import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
+import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
+import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.tools.dataset.dao.ISbiDataSetDAO;
+import it.eng.spagobi.tools.dataset.graph.AssociationAnalyzer;
+import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
+import it.eng.spagobi.tools.dataset.graph.associativity.Config;
+import it.eng.spagobi.tools.dataset.graph.associativity.Selection;
+import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicResult;
+import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicUtils;
+import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
+import it.eng.spagobi.tools.dataset.metadata.SbiDataSetId;
+import it.eng.spagobi.tools.dataset.persist.IPersistedManager;
+import it.eng.spagobi.tools.dataset.persist.PersistedHDFSManager;
+import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
+import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
+import it.eng.spagobi.utilities.StringUtils;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.assertion.UnreachableCodeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceParameterException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
+import it.eng.spagobi.utilities.sql.SqlUtils;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -54,64 +112,6 @@ import org.json.JSONObject;
 
 import com.mongodb.util.JSON;
 
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.constants.ConfigurationConstants;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.serializer.SerializationException;
-import it.eng.spagobi.commons.serializer.SerializerFactory;
-import it.eng.spagobi.commons.utilities.UserUtilities;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.services.rest.annotations.UserConstraint;
-import it.eng.spagobi.services.serialization.JsonConverter;
-import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
-import it.eng.spagobi.tools.dataset.associativity.IAssociativityManager;
-import it.eng.spagobi.tools.dataset.associativity.strategy.AssociativeStrategyFactory;
-import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
-import it.eng.spagobi.tools.dataset.cache.FilterCriteria;
-import it.eng.spagobi.tools.dataset.cache.Operand;
-import it.eng.spagobi.tools.dataset.cache.ProjectionCriteria;
-import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
-import it.eng.spagobi.tools.dataset.common.association.Association;
-import it.eng.spagobi.tools.dataset.common.association.Association.Field;
-import it.eng.spagobi.tools.dataset.common.association.AssociationGroup;
-import it.eng.spagobi.tools.dataset.common.association.AssociationGroupJSONSerializer;
-import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
-import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
-import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
-import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
-import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
-import it.eng.spagobi.tools.dataset.dao.ISbiDataSetDAO;
-import it.eng.spagobi.tools.dataset.graph.AssociationAnalyzer;
-import it.eng.spagobi.tools.dataset.graph.LabeledEdge;
-import it.eng.spagobi.tools.dataset.graph.associativity.Config;
-import it.eng.spagobi.tools.dataset.graph.associativity.Selection;
-import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicResult;
-import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicUtils;
-import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
-import it.eng.spagobi.tools.dataset.metadata.SbiDataSetId;
-import it.eng.spagobi.tools.dataset.persist.IPersistedManager;
-import it.eng.spagobi.tools.dataset.persist.PersistedHDFSManager;
-import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
-import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
-import it.eng.spagobi.utilities.StringUtils;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.assertion.UnreachableCodeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceParameterException;
-import it.eng.spagobi.utilities.rest.RestUtilities;
-import it.eng.spagobi.utilities.sql.SqlUtils;
-
 /**
  * @author Alessandro Daniele (alessandro.daniele@eng.it)
  *
@@ -124,9 +124,9 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 
 	static final private String DEFAULT_TABLE_NAME_DOT = DataStore.DEFAULT_TABLE_NAME + ".";
 
-	private static final String DATE_TIME_FORMAT_MYSQL = JSONDataWriter.CACHE_DATE_TIME_FORMAT.replace("yyyy", "%Y").replace("MM", "%m").replace("dd", "%d")
-			.replace("HH", "%H").replace("mm", "%i").replace("ss", "%s");
-	private static final String DATE_TIME_FORMAT_SQL_STANDARD = JSONDataWriter.CACHE_DATE_TIME_FORMAT.replace("yyyy", "YYYY").replace("MM", "MM")
+	private static final String DATE_TIME_FORMAT_MYSQL = CockpitJSONDataWriter.CACHE_DATE_TIME_FORMAT.replace("yyyy", "%Y").replace("MM", "%m")
+			.replace("dd", "%d").replace("HH", "%H").replace("mm", "%i").replace("ss", "%s");
+	private static final String DATE_TIME_FORMAT_SQL_STANDARD = CockpitJSONDataWriter.CACHE_DATE_TIME_FORMAT.replace("yyyy", "YYYY").replace("MM", "MM")
 			.replace("dd", "DD").replace("HH", "HH24").replace("mm", "MI").replace("ss", "SS");
 	private static final String DATE_TIME_FORMAT_SQLSERVER = "yyyyMMdd HH:mm:ss";
 
@@ -494,7 +494,8 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 						List<String> valueList = new ArrayList<>();
 						List<String> valueForQueryList = new ArrayList<>();
 						for (int i = 0; i < jsonArray.length(); i++) {
-							String value = convertDateString(jsonArray.getString(i), JSONDataWriter.DATE_TIME_FORMAT, JSONDataWriter.CACHE_DATE_TIME_FORMAT);
+							String value = convertDateString(jsonArray.getString(i), CockpitJSONDataWriter.DATE_TIME_FORMAT,
+									CockpitJSONDataWriter.CACHE_DATE_TIME_FORMAT);
 							valueForQueryList.add(getDateForQuery(value, dataSource));
 							valueList.add("'" + value + "'");
 						}
@@ -507,7 +508,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 					}
 				} else {
 					if (isDateColumn) {
-						values = convertDateString(object.toString(), JSONDataWriter.DATE_TIME_FORMAT, JSONDataWriter.CACHE_DATE_TIME_FORMAT);
+						values = convertDateString(object.toString(), CockpitJSONDataWriter.DATE_TIME_FORMAT, CockpitJSONDataWriter.CACHE_DATE_TIME_FORMAT);
 						valuesForQuery = getDateForQuery(values, dataSource);
 						values = "'" + values + "'";
 					} else {
@@ -697,8 +698,9 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 					IDataSource dataSource = getDataSource(dataSet, isNearRealtime);
 
 					boolean isJDBCDataSet = DatasetManagementAPI.isJDBCDataSet(dataSet);
-					boolean isBigDataDialect = SqlUtils.isBigDataDialect(dataSet.getDataSource() != null ? dataSet.getDataSource().getHibDialectName() : "");
-					boolean isSqlServerDialect = dataSource.getHibDialectName().contains("sqlserver");
+					String dialect = dataSource != null ? dataSource.getHibDialectName() : "";
+					boolean isBigDataDialect = SqlUtils.isBigDataDialect(dialect);
+					boolean isSqlServerDialect = dialect.contains("sqlserver");
 
 					List<String> dateColumnNamesList = getDateColumnNamesList(dataSet, dataSource);
 
@@ -980,7 +982,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 					|| SqlUtils.DIALECT_TERADATA.equalsIgnoreCase(actualDialect)) {
 				properDateString = "TO_DATE('" + dateStringToConvert + "','" + DATE_TIME_FORMAT_SQL_STANDARD + "')";
 			} else if (SqlUtils.DIALECT_SQLSERVER.equalsIgnoreCase(actualDialect)) {
-				properDateString = "'" + convertDateString(dateStringToConvert, JSONDataWriter.CACHE_DATE_TIME_FORMAT, DATE_TIME_FORMAT_SQLSERVER) + "'";
+				properDateString = "'" + convertDateString(dateStringToConvert, CockpitJSONDataWriter.CACHE_DATE_TIME_FORMAT, DATE_TIME_FORMAT_SQLSERVER) + "'";
 			} else if (SqlUtils.DIALECT_INGRES.equalsIgnoreCase(actualDialect)) {
 				properDateString = "DATE('" + dateStringToConvert + "')";
 			}
@@ -1047,7 +1049,6 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 				JSONObject info = requestBodyJSONArray.getJSONObject(i);
 				getDataStore(info.getString("datasetLabel"), info.getString("parameters"), null, null, -1, info.getString("aggregation"), null, 0, 1,
 						info.optBoolean("nearRealtime"));
-
 			}
 			return Response.ok().build();
 		} catch (Exception e) {
@@ -1055,5 +1056,12 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+
+	@Override
+	protected IDataWriter getDataSetWriter() throws JSONException {
+		CockpitJSONDataWriter dataWriter = new CockpitJSONDataWriter(getDataSetWriterProperties());
+		dataWriter.setLocale(buildLocaleFromSession());
+		return dataWriter;
 	}
 }
