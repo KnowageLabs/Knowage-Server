@@ -916,17 +916,17 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
   
     function parseCkanRepository(){
     	var ckanUrls= datasetParameters.CKAN_URLS;
-    	var ckanUrlsSplitted= ckanUrls.split("|");
-    	
     	var repos=[];
-    	
-    	for(i=0;i<ckanUrlsSplitted.length-1;i+=2){
-    		repo={};
-    		repo.url=ckanUrlsSplitted[i];
-    		repo.name=ckanUrlsSplitted[i+1];
-    		repos.push(repo);
+    	if(ckanUrls){
+	    	var ckanUrlsSplitted= ckanUrls.split("|");
+	    	
+	    	for(i=0;i<ckanUrlsSplitted.length-1;i+=2){
+	    		repo={};
+	    		repo.url=ckanUrlsSplitted[i];
+	    		repo.name=ckanUrlsSplitted[i+1];
+	    		repos.push(repo);
+	    	}
     	}
-    	
     	return repos;
     }
     //CKAN 
