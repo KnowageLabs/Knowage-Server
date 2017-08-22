@@ -98,8 +98,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<md-button ng-click="newDocument();" tabindex="1"> <md-icon
 				md-font-icon="fa fa-plus" md-menu-align-target></md-icon>
 			{{translate.load("sbi.generic.document.add.traditional")}} </md-button> </md-menu-item> <%
-		 	if (UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ADMIN_ROLE_TYPE, new String[0])
-		 				|| UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ROLE_TYPE_DEV, new String[0])) {
+		 	if (UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ADMIN_ROLE_TYPE, new String[] {SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY})
+		 				|| UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ROLE_TYPE_DEV, new String[] {SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY})) {
 		 %> <md-menu-item> <md-button
 				ng-click="newDocument('cockpit');"> <md-icon
 				md-font-icon="fa fa-plus" md-menu-align-target></md-icon>

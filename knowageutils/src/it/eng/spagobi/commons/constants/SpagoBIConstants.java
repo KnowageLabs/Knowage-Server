@@ -422,6 +422,7 @@ public class SpagoBIConstants {
 	public static final String CREATE_SOCIAL_ANALYSIS = "CreateSocialAnalysis";
 	public static final String VIEW_SOCIAL_ANALYSIS = "ViewSocialAnalysis";
 	public static final String HIERARCHIES_MANAGEMENT = "HierarchiesManagement";
+	public static final String CREATE_COCKPIT_FUNCTIONALITY = "CreateCockpitFunctionality";
 	public static final String CKAN_FUNCTIONALITY = "CkanIntegrationFunctionality";
 	public static final String IMAGES_MANAGEMENT = "ImagesManagement";
 	public static final String GLOSSARY = "Glossary";
@@ -571,7 +572,7 @@ public class SpagoBIConstants {
 	public static final String DATE_RANGE_OPTION_QUANTITY_PREFIX = "dateRangeOptionQuantity_";
 	public static final String DATE_RANGE_OPTION_TYPE_PREFIX = "dateRangeOptionType_";
 	public static final Set<String> DATE_RANGE_VALID_TYPES = Collections
-			.unmodifiableSet(new HashSet<String>(Arrays.asList("years", "months", "days", "weeks")));
+			.unmodifiableSet(new HashSet<>(Arrays.asList("years", "months", "days", "weeks")));
 	public static final String DATE_RANGE_TYPE_JSON = "type";
 	public static final String DATE_RANGE_QUANTITY_JSON = "quantity";
 	public static final String DATE_RANGE_TYPE = "DATE_RANGE";
