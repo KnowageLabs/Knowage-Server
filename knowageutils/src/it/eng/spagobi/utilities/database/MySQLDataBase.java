@@ -17,9 +17,9 @@
  */
 package it.eng.spagobi.utilities.database;
 
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-
 import org.apache.log4j.Logger;
+
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -29,7 +29,9 @@ public class MySQLDataBase extends AbstractDataBase {
 
 	private static transient Logger logger = Logger.getLogger(MySQLDataBase.class);
 
-	private static int MAX_VARCHAR_VALUE = 65535;
+	private static int MAX_CHARSET_RATIO = 4; // utf8mb4
+	private static int MAX_VARCHAR_BYTE_VALUE = 65535;
+	private static int MAX_VARCHAR_VALUE = MAX_VARCHAR_BYTE_VALUE / MAX_CHARSET_RATIO;
 
 	public MySQLDataBase(IDataSource dataSource) {
 		super(dataSource);
