@@ -23,56 +23,74 @@
 
 angular
 	.module('qbe_viewer', [ 'ngMaterial' ,'sbiModule'])
-	.service('$qbeViewer', function($mdDialog,sbiModule_config,sbiModule_restServices,$log) { 
+	.service('$qbeViewer', function($mdDialog,sbiModule_config,sbiModule_restServices,sbiModule_messaging,$log) { 
 	 		
 		this.openQbeInterfaceFromModel = function($scope,url) {
-				
-			$mdDialog
-				.show
-				(	
-					{   
-						scope:$scope,
-						preserveScope: true,
-						controller: openQbeInterfaceController,
-//						templateUrl: '/knowage/js/src/angular_1.4/tools/workspace/scripts/services/qbeViewerTemplate.html',
-						templateUrl: sbiModule_config.contextName + '/js/src/angular_1.4/tools/workspace/scripts/services/qbeViewerTemplate.html',
-						fullscreen: true,
-						locals:{url:url}				
-					}
-				) 
-				.then(function() {
-					
-				});
+			
+			if(datasetParameters.error){
+				sbiModule_messaging.showErrorMessage(datasetParameters.error, 'Error');
+			}else{
+			
+				$mdDialog
+					.show
+					(	
+						{   
+							scope:$scope,
+							preserveScope: true,
+							controller: openQbeInterfaceController,
+	//						templateUrl: '/knowage/js/src/angular_1.4/tools/workspace/scripts/services/qbeViewerTemplate.html',
+							templateUrl: sbiModule_config.contextName + '/js/src/angular_1.4/tools/workspace/scripts/services/qbeViewerTemplate.html',
+							fullscreen: true,
+							locals:{url:url}				
+						}
+					) 
+					.then(function() {
+						
+					});
+			}
 		
 		};
 		
 		this.openQbeInterfaceDSet = function($scope, editDSet, url) {
 			
-			$scope.editQbeDset = editDSet;
-			if( $scope.selectedDataSet){
-				globalQbeJson = $scope.selectedDataSet.qbeJSONQuery;
+			
+			if(datasetParameters.error){
+				sbiModule_messaging.showErrorMessage(datasetParameters.error, 'Error');
+			}else{
+				
+
+				
+				
+				$scope.editQbeDset = editDSet;
+				if( $scope.selectedDataSet){
+					globalQbeJson = $scope.selectedDataSet.qbeJSONQuery;
+				}
+				
+				
+				$mdDialog
+					.show
+					(	
+						{   
+							scope:$scope,
+							preserveScope: true,
+							controller: openQbeInterfaceController,
+							templateUrl: sbiModule_config.contextName + '/js/src/angular_1.4/tools/workspace/scripts/services/qbeViewerTemplate.html',
+							fullscreen: true,
+							locals:{url:url}				
+						}
+					) 
+					.then(function() {
+						
+					});
+				
 			}
 			
-			
-			$mdDialog
-				.show
-				(	
-					{   
-						scope:$scope,
-						preserveScope: true,
-						controller: openQbeInterfaceController,
-						templateUrl: sbiModule_config.contextName + '/js/src/angular_1.4/tools/workspace/scripts/services/qbeViewerTemplate.html',
-						fullscreen: true,
-						locals:{url:url}				
-					}
-				) 
-				.then(function() {
-					
-				});
 		
 		};
 		
 		function openQbeInterfaceController($scope,url,$timeout) {
+
+			
 
 			$scope.documentViewerUrl = url;
 			

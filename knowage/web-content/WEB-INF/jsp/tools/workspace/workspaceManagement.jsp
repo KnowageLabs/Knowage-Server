@@ -31,8 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   boolean isAdmin = UserUtilities.isAdministrator(userProfile);
   boolean isTechnicalUser =  UserUtilities.isTechnicalUser(userProfile);
   boolean isDeveloper =  UserUtilities.hasDeveloperRole(userProfile);
-  
- 
+   
 %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -66,7 +65,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <%@include file="/WEB-INF/jsp/commons/infusion/infusionTemplate.html"%>
       
      <%} %>	
-		<% if (parameters.containsKey("error")==false) {%>	
+
 		
 			<!-- 
 				The progress circular animation will be shown until all the data for the Workspace is collected. 
@@ -125,13 +124,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				
 			</md-content>
 			
-		<% }
-		else {			
-		%>    
-		
-			<script  language="javascript" type="text/javascript">alert(datasetParameters.error);</script>
-			
-		<% } %>
+
 		
 	</body>
 	
