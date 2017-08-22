@@ -64,13 +64,29 @@
 	}
 
 	cockpit-table-widget {
-		
-		
+		.highlight {
+			background-color: $secondaryColor !important;
+		}
+		.infoBar {
+			font-size: $baseFontSize;
+			background-color: lighten($secondaryColor,20%);
+			min-height: 25px;
+			max-height: 25px;
+			border-top: 1px solid $baseColor;
+			border-bottom: 1px solid $baseColor;
+			text-align: center;
+			button {
+				min-height: 25px;
+				line-height: 25px;
+				font-size: $smallFontSize;
+			}
 
+		}
+		
 		cockpit-table {
+			outline: none;
 			.showFullContentIcon {
 			    font-size: .8rem;
-			    outline: none;
 			    padding: 4px;
 			    cursor: pointer;
 			    position: absolute;
@@ -376,7 +392,7 @@
 					padding: 0;
 					border: 0;
 					.sizer{
-						height: calc( 100% - 34px);
+						height: calc( 100% - 20px);
 						.resizer{
 							display:none;
 						}
