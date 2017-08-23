@@ -18,26 +18,24 @@
 
 package it.eng.spagobi.utilities.engines.rest;
 
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.utilities.engines.EngineConstants;
-import it.eng.spagobi.utilities.engines.IEngineInstance;
-
 import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.jboss.resteasy.annotations.GZIP;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.engines.IEngineInstance;
 
 /**
  * The Class AbstractRestService.
  *
  * @author Alberto Ghedin (alberto.ghedin@eng.it)
  */
-@GZIP
 public abstract class AbstractRestService {
 
 	public ExecutionSession es;
