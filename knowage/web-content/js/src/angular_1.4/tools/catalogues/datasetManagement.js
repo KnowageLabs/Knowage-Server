@@ -1870,8 +1870,12 @@ function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_transl
 			$scope.selectedDataSet.restNGSI = JSON.parse($scope.selectedDataSet.restNGSI);
 			
 			// Cast the REST directly JSON attributes (transform from the String)
-			$scope.selectedDataSet.restDirectlyJSONAttributes = JSON.parse($scope.selectedDataSet.restDirectlyJSONAttributes);
-			
+			if($scope.selectedDataSet.restDirectlyJSONAttributes!=""){
+				$scope.selectedDataSet.restDirectlyJSONAttributes = JSON.parse($scope.selectedDataSet.restDirectlyJSONAttributes);
+			} else {
+				$scope.selectedDataSet.restDirectlyJSONAttributes = $scope.selectedDataSet.restDirectlyJSONAttributes;
+				
+			}
 			// REST REQUEST HEADERS
 			var restRequestHeadersTemp = [];
 			//var counter = 0;
