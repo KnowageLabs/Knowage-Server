@@ -177,6 +177,13 @@
 		                    }
 		                }
 		                td {
+		                	.textEllipsis {
+								overflow: hidden;
+								width: calc(100% - 20px);
+								position: absolute;
+								white-space: nowrap;
+								text-overflow: ellipsis;
+							}
 		                	.cellContainer {
 		                		display: flex;
 		                		position: relative;
@@ -1381,14 +1388,6 @@
 		    line-height: 14px;
 		    color: $smallTextColor;
 	    }
-	}
-
-	.textEllipsis {
-		overflow: hidden;
-		width: calc(100% - 32px);
-		position: absolute;
-		white-space: nowrap;
-		text-overflow: ellipsis;
 	}
 	
 	.datasetParameterDetail {
