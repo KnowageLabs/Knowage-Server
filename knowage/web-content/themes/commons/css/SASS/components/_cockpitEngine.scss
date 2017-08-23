@@ -82,7 +82,9 @@
 			}
 
 		}
-		
+		.cockpitTableContainer {
+			flex: 1 0 auto;
+		}
 		cockpit-table {
 			outline: none;
 			.showFullContentIcon {
@@ -93,7 +95,9 @@
 			    right: 0;
 			}
 		    font-size: 12px;
-		    display: block;
+	        display: flex;
+		    flex-direction: column;
+		    height: 100%;
 		    overflow-y: auto;
 		    position: relative;
 		    table.cockpitTable {
@@ -211,27 +215,30 @@
 		        			}
 		        		}
 		        	}
-		        	.cockpitTablePagination {
-				        height: 36px;
-				        font-size: $baseFontSize;
-				        display: flex;
-				        flex-direction: row;
-				        justify-content: flex-end;
-				        align-items: center;
-				        .page-select {
-				            display: flex;
-				            align-items: center;
-				            flex-direction: row;
-				            margin-right: 16px;
-				            md-select {
-				                margin: 0;
-				            }
-				            label {
-				                margin-right: 10px;
-				            }
-				        }
-				    }
-
+		        }
+		    }
+		    .cockpitTablePagination {
+		        height: 36px;
+		        min-height: 36px;
+		        background-color:white;
+		        position: relative;
+		        top: -3px;
+		        font-size: $baseFontSize;
+		        display: flex;
+		        flex-direction: row;
+		        justify-content: flex-end;
+		        align-items: center;
+		        .page-select {
+		            display: flex;
+		            align-items: center;
+		            flex-direction: row;
+		            margin-right: 16px;
+		            md-select {
+		                margin: 0;
+		            }
+		            label {
+		                margin-right: 10px;
+		            }
 		        }
 		    }
 		    .selection {
