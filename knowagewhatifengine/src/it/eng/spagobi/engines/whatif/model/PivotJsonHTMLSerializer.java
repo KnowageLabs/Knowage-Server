@@ -56,6 +56,8 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
@@ -99,6 +101,9 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 
 	@Override
 	public void serialize(PivotObjectForRendering pivotobject, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
+
+		Monitor totalTime = MonitorFactory.start("WhatIfEngine/it.eng.spagobi.engines.whatif.model.PivotJsonHTMLSerializer.serialize.increaseVersion.totalTime");
+
 
 		PivotModel value = pivotobject.getModel();
 		ModelConfig modelConfig = pivotobject.getConfig();
@@ -210,15 +215,15 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 			}
 
 		}
-		
+
 		jgen.writeStartObject();
-		
+
 		if(modelConfig.isPagination()){
 			doPagination(false, modelConfig, model, callback, writer, renderer, jgen, table);
 		}else{
 			int axisLength = model.getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal()).getPositionCount();
-			
-			
+
+
 			writer.getBuffer().setLength(0);
 			model.removeSubset();
 			//model.setSubset(0, modelConfig.getStartColumn(), modelConfig.getRowsSet(), modelConfig.getColumnSet());
@@ -226,17 +231,18 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 			callback.addProperty(AXIS_LENGTH, axisLength);
 			callback.addProperty(ROW_OFFSET, 0);
 			callback.addProperty(SUBSET_AXIS_LENGTH,axisLength );
+			Monitor renderTime = MonitorFactory.start("WhatIfEngine/it.eng.spagobi.engines.whatif.model.PivotJsonHTMLSerializer.serialize.increaseVersion.renderTime");
 			renderer.render(model, callback);
 			writer.flush();
 			writer.close();
 			table = writer.getBuffer().toString();
 			jgen.writeStringField(TABLE, table);
-			
+			renderTime.stop();
 		}
-		
+
 
 		/*******************************************************/
-		
+
 		// model.setSubset(modelConfig.getStartRow() + 1,
 		// modelConfig.getStartColumn(), modelConfig.getRowsSet(),
 		// modelConfig.getColumnSet());
@@ -265,7 +271,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 
 			otherHDimensions.removeAll(axisDimensions);
 
-			
+
 			// serializeTables("tables", jgen, tables);
 
 			serializeAxis(ROWS, jgen, axis, Axis.ROWS, connection, modelConfig);
@@ -294,7 +300,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 			logger.error("Error serializing the pivot table", e);
 			throw new SpagoBIRuntimeException("Error serializing the pivot table", e);
 		}
-
+		totalTime.stop();
 		logger.debug("OUT");
 
 	}
@@ -453,11 +459,11 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 		formattedQuery = fromatter.format(queryString);
 		return StringUtilities.fromStringToHTML(formattedQuery);
 	}
-	
+
 	private void doPagination(boolean condition, ModelConfig modelConfig, SpagoBIPivotModel model, WhatIfHTMLRendereCallback callback, StringWriter writer, WhatIfHTMLRenderer renderer, JsonGenerator jgen, String table){
 		modelConfig.setRowCount(model.getCellSet().getAxes().get(Axis.ROWS.axisOrdinal()).getPositionCount());
 		modelConfig.setColumnCount(model.getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal()).getPositionCount());
-		
+
 		Map<Integer, String> tables = new HashMap<Integer, String>();
 
 //		SimpleDateFormat format = new SimpleDateFormat("hh:mm:ss.SSS");
@@ -514,12 +520,12 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 			}
 
 		}
-		
+
 		try {
-			
+
 			jgen.writeStringField(TABLE, tables.get(modelConfig.getStartRow()));
 			jgen.writeObjectField("tables", tables);
-			
+
 		} catch (JsonGenerationException e) {
 			logger.error("Error serializing the table", e);
 			throw new SpagoBIEngineRuntimeException("Error serializing the table", e);
@@ -527,7 +533,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 			logger.error("Error serializing the table", e);
 			throw new SpagoBIEngineRuntimeException("Error serializing the table", e);
 		}
-		
+
 	}
 
 }

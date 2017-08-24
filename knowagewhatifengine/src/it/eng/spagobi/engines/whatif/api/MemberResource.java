@@ -20,9 +20,7 @@ package it.eng.spagobi.engines.whatif.api;
 
 import java.io.IOException;
 import java.sql.ResultSet;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -56,7 +54,9 @@ import org.pivot4j.transform.DrillThrough;
 import org.pivot4j.ui.collector.NonInternalPropertyCollector;
 import org.pivot4j.ui.command.DrillDownCommand;
 
-import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
 import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
@@ -72,15 +72,9 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 
 public class MemberResource extends AbstractWhatIfEngineService {
 
-	private SpagoBIPivotModel model;
-	private ModelConfig modelConfig;
+
 	private static String factCountUniqueName = "[Measures].[Fact Count]";
 
-	private void init() {
-		WhatIfEngineInstance ei = getWhatIfEngineInstance();
-		model = (SpagoBIPivotModel) ei.getPivotModel();
-		modelConfig = getWhatIfEngineInstance().getModelConfig();
-	}
 
 	@POST
 	@Path("/drilldown/{axis}/{position}/{member}")
@@ -88,16 +82,21 @@ public class MemberResource extends AbstractWhatIfEngineService {
 	@GZIP
 	public String drillDown(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos, @PathParam("position") int positionPos,
 			@PathParam("member") int memberPos) throws JSONException, IOException {
-		SimpleDateFormat format = new SimpleDateFormat("hh:mm:ss");
-		String time = "Drilldown start " + format.format(new Date());
-		// System.out.println(time);
-		init();
+
+		Monitor totalTime = MonitorFactory.start("WhatIfEngine/it.eng.spagobi.engines.whatif.api.MemberResource.serialize.drillDown.totalTime");
+
+		Monitor readbodyTime = MonitorFactory.start("WhatIfEngine/it.eng.spagobi.engines.whatif.api.MemberResource.serialize.drillDown.readBody");
+		WhatIfEngineInstance ei = getWhatIfEngineInstance();
+		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
+		ModelConfig modelConfig = getWhatIfEngineInstance().getModelConfig();
+
 		model.removeSubset();
 		JSONObject jo = RestUtilities.readBodyAsJSONObject(req);
+		readbodyTime.stop();
 
-		// System.out.println(model.getCurrentMdx());
+		Monitor getDrillInfoTime = MonitorFactory.start("WhatIfEngine/it.eng.spagobi.engines.whatif.api.MemberResource.serialize.drillDown.getdrillinfo");
 		// The ROWS axis
-		CellSetAxis rowsOrColumns = getAxis(axisPos);
+		CellSetAxis rowsOrColumns = getAxis(axisPos, model);
 
 		// Member positions of the ROWS axis.
 		List<Position> positions = rowsOrColumns.getPositions();
@@ -115,7 +114,9 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		}
 
 		String drillType = modelConfig.getDrillType();
+		getDrillInfoTime.stop();
 
+		Monitor doDrillTime = MonitorFactory.start("WhatIfEngine/it.eng.spagobi.engines.whatif.api.MemberResource.serialize.drillDown.dodrill");
 		if (drillType == null || drillType.equals(DrillDownCommand.MODE_POSITION)) {
 			DrillExpandPosition transform = model.getTransform(DrillExpandPosition.class);
 			if (transform.canExpand(p, m2)) {
@@ -136,14 +137,13 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		}
 		// modelConfig.setRowCount(model.getCellSet().getAxes().get(Axis.ROWS.axisOrdinal()).getPositionCount());
 		// modelConfig.setColumnCount(model.getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal()).getPositionCount());
+		doDrillTime.stop();
 
-		time = "Drilldown end " + format.format(new Date());
-		// System.out.println(time);
-		// System.out.println();
-		// System.out.println();
-
+		Monitor renderTime = MonitorFactory.start("WhatIfEngine/it.eng.spagobi.engines.whatif.api.MemberResource.serialize.drillDown.render");
 		String table = renderModel(model);
+		renderTime.stop();
 
+		totalTime.stop();
 		return table;
 	}
 
@@ -153,20 +153,20 @@ public class MemberResource extends AbstractWhatIfEngineService {
 	@Produces("text/html; charset=UTF-8")
 	@GZIP
 	public String drillUp(@javax.ws.rs.core.Context HttpServletRequest req) {
-		init();
+		WhatIfEngineInstance ei = getWhatIfEngineInstance();
+		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
+		ModelConfig modelConfig = getWhatIfEngineInstance().getModelConfig();
 		model.removeSubset();
 		JSONObject jo;
 		int axis = 0;
-		int position = 0;
-		int memberPosition = 0;
+
 		String positionUniqueName = null;
 		String memberUniqueName = null;
 
 		try {
 			jo = RestUtilities.readBodyAsJSONObject(req);
 			axis = jo.getInt("axis");
-			position = jo.getInt("position");
-			memberPosition = jo.getInt("memberPosition");
+
 			positionUniqueName = jo.getString("positionUniqueName");
 			memberUniqueName = jo.getString("memberUniqueName");
 
@@ -176,15 +176,12 @@ public class MemberResource extends AbstractWhatIfEngineService {
 			logger.error("Error serializing JSON", e);
 		}
 
-		SimpleDateFormat format = new SimpleDateFormat("hh:mm:ss");
-		String time = "Drillup start " + format.format(new Date());
-		// System.out.println(time);
-		List<Member> m = null;
+
 		Member m2 = null;
 		Hierarchy hierarchy = null;
 
 		// The ROWS axis
-		CellSetAxis rowsOrColumns = getAxis(axis);
+		CellSetAxis rowsOrColumns = getAxis(axis, model);
 
 		// Member positions of the ROWS axis.
 		List<Position> positions = rowsOrColumns.getPositions();
@@ -237,10 +234,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 			}
 		}
 
-		time = "Drillup end " + format.format(new Date());
-		// System.out.println(time);
-		// System.out.println();
-		// System.out.println();
+
 		return renderModel(model);
 	}
 
@@ -396,7 +390,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
 		CellSet cellSet = model.getCellSet();
-		int max_rows = WhatIfEngineConfig.getInstance().getDrillTroughMaxRows();
+
 		try {
 			Cell cell = cellSet.getCell(ordinal);
 			DrillThrough transform = model.getTransform(DrillThrough.class);
@@ -469,14 +463,11 @@ public class MemberResource extends AbstractWhatIfEngineService {
 	@POST
 	@Path("/sort")
 	public String sort(@javax.ws.rs.core.Context HttpServletRequest req) {
-		init();
-		ModelConfig modelConfig = this.getModelConfig();
+		WhatIfEngineInstance ei = getWhatIfEngineInstance();
+		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
+		ModelConfig modelConfig = getWhatIfEngineInstance().getModelConfig();
 		JSONObject jo;
-		int axisToSort = 0;
-		int axis = 0;
-		String positionUniqueName = null;
-		String sortMode = null;
-		int topBottomCount = 0;
+
 		model.setSorting(true);
 		try {
 			jo = RestUtilities.readBodyAsJSONObject(req);
@@ -503,11 +494,13 @@ public class MemberResource extends AbstractWhatIfEngineService {
 	@GET
 	@Path("/sort/disable")
 	public String sorten() {
-		init();
+		WhatIfEngineInstance ei = getWhatIfEngineInstance();
+		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
+		ModelConfig modelConfig = getWhatIfEngineInstance().getModelConfig();
 
 		model.removeSubset();
 
-		ModelConfig modelConfig = getWhatIfEngineInstance().getModelConfig();
+
 		getWhatIfEngineInstance().getModelConfig().setSortingEnabled(!modelConfig.getSortingEnabled());
 		if (!modelConfig.getSortingEnabled()) {
 			model.setSortCriteria(null);
@@ -522,7 +515,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		return renderModel(model);
 	}
 
-	private CellSetAxis getAxis(int axisPos) {
+	private CellSetAxis getAxis(int axisPos, SpagoBIPivotModel model) {
 
 		CellSet cellSet = model.getCellSet();
 

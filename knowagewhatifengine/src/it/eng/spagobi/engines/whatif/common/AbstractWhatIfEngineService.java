@@ -29,6 +29,8 @@ import org.pivot4j.PivotModel;
 import org.pivot4j.sort.SortCriteria;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.member.SbiMember;
@@ -66,21 +68,28 @@ public class AbstractWhatIfEngineService extends AbstractEngineRestService {
 		String serializedModel = null;
 
 		try {
+			Monitor totalTime = MonitorFactory.start("WhatIfEngine/it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService.renderModel.total");
 			SpagoBIPivotModel sbiModel = (SpagoBIPivotModel) model;
-
+			Monitor applycalcTime = MonitorFactory.start("WhatIfEngine/it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService.renderModel.applyCalc");
 			//ModelConfig modelConfig = getWhatIfEngineInstance().getModelConfig();
 			// adds the calculated fields before rendering the model
 
 			sbiModel.applyCal();
+			applycalcTime.stop();
 
+			Monitor serializeTime = MonitorFactory.start("WhatIfEngine/it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService.renderModel.serialize");
 			serializedModel = serialize(new PivotObjectForRendering(getWhatIfEngineInstance().getOlapConnection(), sbiModel, getWhatIfEngineInstance()
 					.getModelConfig()));
+			serializeTime.stop();
+
+			Monitor postTime = MonitorFactory.start("WhatIfEngine/it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService.renderModel.postActivities");
 			SortCriteria sortCriteria = model.getSortCriteria();
 
 			// restore the query without calculated fields
 			sbiModel.restoreQuery();
 			model.setSortCriteria(sortCriteria);
-
+			postTime.stop();
+			totalTime.stop();
 		} catch (SerializationException e) {
 			logger.error("Error serializing the pivot", e);
 			throw new SpagoBIEngineRuntimeException("Error serializing the pivot", e);

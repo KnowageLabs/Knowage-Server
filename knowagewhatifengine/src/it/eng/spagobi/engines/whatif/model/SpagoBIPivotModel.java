@@ -18,19 +18,6 @@
 
 package it.eng.spagobi.engines.whatif.model;
 
-import it.eng.spagobi.engines.whatif.calculatedmember.CalculatedMember;
-import it.eng.spagobi.engines.whatif.calculatedmember.CalculatedMemberManager;
-import it.eng.spagobi.engines.whatif.crossnavigation.SpagoBICrossNavigationConfig;
-import it.eng.spagobi.engines.whatif.crossnavigation.TargetClickable;
-import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
-import it.eng.spagobi.engines.whatif.exception.WhatIfPersistingTransformationException;
-import it.eng.spagobi.engines.whatif.model.transform.CellTransformation;
-import it.eng.spagobi.engines.whatif.model.transform.CellTransformationsAnalyzer;
-import it.eng.spagobi.engines.whatif.model.transform.CellTransformationsStack;
-import it.eng.spagobi.engines.whatif.model.transform.algorithm.IAllocationAlgorithm;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
-
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -61,6 +48,22 @@ import org.pivot4j.sort.SortMode;
 import org.pivot4j.transform.ChangeSlicer;
 import org.pivot4j.transform.SwapAxes;
 import org.pivot4j.util.OlapUtils;
+
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
+import it.eng.spagobi.engines.whatif.calculatedmember.CalculatedMember;
+import it.eng.spagobi.engines.whatif.calculatedmember.CalculatedMemberManager;
+import it.eng.spagobi.engines.whatif.crossnavigation.SpagoBICrossNavigationConfig;
+import it.eng.spagobi.engines.whatif.crossnavigation.TargetClickable;
+import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
+import it.eng.spagobi.engines.whatif.exception.WhatIfPersistingTransformationException;
+import it.eng.spagobi.engines.whatif.model.transform.CellTransformation;
+import it.eng.spagobi.engines.whatif.model.transform.CellTransformationsAnalyzer;
+import it.eng.spagobi.engines.whatif.model.transform.CellTransformationsStack;
+import it.eng.spagobi.engines.whatif.model.transform.algorithm.IAllocationAlgorithm;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
 
 public class SpagoBIPivotModel extends PivotModelImpl {
 
@@ -162,11 +165,27 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 	}
 
 	public void applyCal() {
+		Monitor totalTime = MonitorFactory.start("WhatIfEngine/it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel.total");
+
+		Monitor getQuery = MonitorFactory.start("WhatIfEngine/it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel.getQuery");
 		queryWithOutCC = getCurrentMdx();
+		getQuery.stop();
+
 		try {
+			Monitor injectCalculatedFieldsIntoMdxQueryTime = MonitorFactory.start("WhatIfEngine/it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel.injectCalculatedFieldsIntoMdxQueryTime");
 			String queryString = CalculatedMemberManager.injectCalculatedFieldsIntoMdxQuery(this);
+			injectCalculatedFieldsIntoMdxQueryTime.stop();
+
+			Monitor setMdxTime = MonitorFactory.start("WhatIfEngine/it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel.setMdxTime");
 			setMdx(queryString);
+			setMdxTime.stop();
+			Monitor getCellSetTime = MonitorFactory.start("WhatIfEngine/it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel.getCellSetTime");
 			this.getCellSet();
+
+			getCellSetTime.stop();
+
+//			System.out.println("rows "+ cs.getAxes().get(0).getPositions().size());
+//			System.out.println("columns "+cs.getAxes().get(1).getPositions().size());
 
 		} catch (Exception e) {
 
@@ -175,6 +194,7 @@ public class SpagoBIPivotModel extends PivotModelImpl {
 
 			throw new SpagoBIEngineRuntimeException("Error calculating the field", e);
 		}
+		totalTime.stop();
 	}
 
 	/**
