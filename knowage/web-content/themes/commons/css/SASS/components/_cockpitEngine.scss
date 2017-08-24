@@ -117,7 +117,7 @@
 			    font-size: .8rem;
 			    padding: 4px;
 			    cursor: pointer;
-			    position: absolute;
+			    position: relative;
 			    right: 0;
 			}
 		    font-size: 12px;
@@ -215,6 +215,10 @@
 		                		position: relative;
 		                		flex-direction: row;
 		                		align-items: center;
+		                		span {
+		                			position: relative;
+		                			width: auto;
+		                		}
 		                		.barChart {
 						            .progressTrack {
 						                position: relative;
