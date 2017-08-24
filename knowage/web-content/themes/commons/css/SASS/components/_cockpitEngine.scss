@@ -1455,5 +1455,44 @@
 		height: $toolbarHeight;
 	}
 
+	.selectionWidget {
+		width: 100%;
+		table {
+			border-collapse: collapse;
+			width: 100%;
+			thead {
+				tr {
+					background-color: $secondaryColor;
+					th{
+						color: $lightTextColor;
+						font-size: $headerFontSize;
+						font-weight: regular;
+						md-icon {
+							color: $lightTextColor;
+						}
+
+					}
+				}
+			}
+			tbody {
+				tr {
+					border-bottom: 1px solid #ccc;
+					height: 32px;
+					td {
+						overflow: hidden;
+						text-overflow: ellipsis;
+						font-size: $smallFontSize;
+						white-space: nowrap;
+						max-width: 0;
+						text-align: center;
+						md-icon {
+							font-size: $baseFontSize;
+						}
+					}
+				}
+			}
+		}
+	}
+
 	
 }
