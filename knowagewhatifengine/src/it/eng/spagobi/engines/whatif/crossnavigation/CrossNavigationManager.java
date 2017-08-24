@@ -18,8 +18,10 @@
 
 package it.eng.spagobi.engines.whatif.crossnavigation;
 
+import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
@@ -169,7 +171,7 @@ public class CrossNavigationManager {
 
 	}
 
-/*
+
 	public static String buildClickableUrl(Member member, List<TargetClickable> targetsClickable) {
 		logger.debug("IN");
 		Level level = member.getLevel();
@@ -211,5 +213,5 @@ public class CrossNavigationManager {
 		}
 		return url;
 	}
-*/
+
 }
