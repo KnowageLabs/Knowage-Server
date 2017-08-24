@@ -990,14 +990,10 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					
 					angular.copy(rows, $scope.cockpitAutodetectFilteredRows);
 				}
-				
+
 				var datasetNames = {};
 				angular.forEach(datasets,function(item){
-					var params = {};
-					angular.forEach(item.parameters,function(parameter){
-						this[parameter.name] = (parameter.value ? parameter.value : parameter.defaultValue);
-					},params);
-					this[item.label] = params;
+					this[item.label] = ds.getDatasetParameters(item.id.dsId);
 				},datasetNames);
 				
 				var payload = JSON.stringify(datasetNames);
