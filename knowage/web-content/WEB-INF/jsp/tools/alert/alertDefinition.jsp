@@ -61,6 +61,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <body >
 
+		<!-- 
+			The progress circular animation will be shown whenever the REST calls are in progress (before the getting of the response).
+			@commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net) 
+		-->					
+		<div loading ng-show="showEl" style="position:fixed; z-index:500; height:100%; width:100%; background-color:black; opacity:0.5;">
+		 	<md-progress-circular md-mode="indeterminate" md-diameter="75%" style="position:fixed; top:calc(50% - 37.5px); left:calc(50% - 37.5px);"></md-progress-circular>		 
+		</div>
+
 <angular-list-detail ng-controller="alertDefinitionController"  full-screen="true">
 		
 		<list label="translate.load('sbi.alert.list')" ng-controller="alertDefinitionListController" new-function="newAlertFunction" layout-column>
