@@ -1,4 +1,4 @@
-SpagoBI and NGSI
+Knowage and NGSI
 =======================================
 
 Introduction
@@ -11,22 +11,22 @@ NGSI is a protocol developed by OMA to manage Context Information. It provides o
 * Manage the Context Information about Context Entities, for example the lifetime and quality of information.
 * Access (query, subscribe/notify) to the available Context Information about Context Entities.
 
-The FI-WARE version of the OMA NGSI interface is a RESTful API via HTTP. Its purpose is to exchange context information. The three main interaction types are
+The FIWARE version of the OMA NGSI interface is a RESTful API via HTTP. Its purpose is to exchange context information. The three main interaction types are
 
 * one-time queries for context information
 * subscriptions for context information updates (and the corresponding notifications)
 
 Mission
 -------
-SpagoBI extends its set of data sources by providing native and out-of-the-box NGSI integration. 
-SpagoBI permits to create REST dataset of type NGSI that show current information data and collects notifications of context updates in order to modify the data underneath the SpagoBI documents, using it.
+Knowage extends its set of data sources by providing native and out-of-the-box NGSI integration. 
+Knowage permits to create REST dataset of type NGSI that show current information data and collects notifications of context updates in order to modify the data underneath the SpagoBI documents, using it.
 
 Integration 
 ============
 
-Dataset mapping between SpagoBI and NGSI
+Dataset mapping between Knowage and NGSI
 ----------------------------------------
-The term *dataset* in SpagoBI indicates a unique data resource. It can be anything: a CSV file, a SQL query against a DB, a Java class, and so on. In NGSI environment a standard SpagoBI *dataset* is a collection of Context Entities with their attributes. These Context Entities are retrieved from the NGSI Provider (currently the [Orion Context Broker OCB](https://github.com/telefonicaid/fiware-orion)) through a REST call. The answer of this call represents the Context Entities in JSON format. 
+The term *dataset* in Knowage indicates a unique data resource. It can be anything: a CSV file, a SQL query against a DB, a Java class, and so on. In NGSI environment a standard SpagoBI *dataset* is a collection of Context Entities with their attributes. These Context Entities are retrieved from the NGSI Provider (currently the [Orion Context Broker OCB](https://github.com/telefonicaid/fiware-orion)) through a REST call. The answer of this call represents the Context Entities in JSON format. 
 
 The following examples are based on a demo. The `Meter` Context Element represents a power sensor: it saves the upstream and downstream active power in an instant of a prosumer (a producer/consumer of electricity).
 So, for example a REST call query takes this body:
@@ -122,7 +122,7 @@ It retrieves all entities of type `Meter`. The response will be something like:
 	      }
 	    }
 	  ]
-	}
+	}
 
 In this example we have two Context Elements with the following attributes:
 
@@ -132,14 +132,14 @@ In this example we have two Context Elements with the following attributes:
 * unitOfMeasurement
 * upstreamActivePower
 
-The related SpagoBI dataset will contain these entities with the related attributes mapped with the types defined in the response.
+The related Knowage dataset will contain these entities with the related attributes mapped with the types defined in the response.
 
-How to use SpagoBI with NGSI
+How to use Knowage with NGSI
 ============================
 
 DataSet creation
 ----------------
-Defining a REST NGSI DataSet in SpagoBI is like to define any other type of DataSet. We need to create a REST DataSet and then make it NGSI enable.
+Defining a REST NGSI DataSet in Knowage is like to define any other type of DataSet. We need to create a REST DataSet and then make it NGSI enable.
 At the homepage of application, click on DataSet:
 
 ![](media/0_DataSet_Button.png)
@@ -163,7 +163,7 @@ So you need to define (see also below to simplify these fields):
 * the JSON Paths to retrieve the attributes (see below): where the attributes of each Context Element are stored
 * offset and fetch size params
 
-The fields for items and attributes are written in [JSON Path Notation](https://github.com/jayway/JsonPath), which is similaro to XML XPath notation. As you can see from the image the Context Elements are searched under the array of Context Responses (as described before in the JSON Response example). The attributes' definitions are related to JSON of each Context Element found through items field.
+The fields for items and attributes are written in [JSON Path Notation](https://github.com/jayway/JsonPath), which is similar to XML XPath notation. As you can see from the image the Context Elements are searched under the array of Context Responses (as described before in the JSON Response example). The attributes' definitions are related to JSON of each Context Element found through items field.
 
 **NGSI checkbox** is specific for NGSI REST calls: it permits to subcribe to Context Element notifications from Orion Context Broker and to omit some of the REST fields (since the JSON format from NGSI specifications is fixed). So considering the previous example, it's possible to **not** define:
 
@@ -180,188 +180,24 @@ If you click on preview button you can see the current data retrieved from OCB d
 
 At the end of DataSet definition lick on Save button in the upper-right cornet to save the DataSet.
 
-Document Definition
+Document definition
 -------------------
-A *Document* in SpagoBI environment permits to use the DataSet previous created to make reports, statistics, visualization of data etc.. In the following example we create a Document of type *Console* because is strictly related to Rest NGSI DataSet. With this type of Document you can see the notifications of Context Elements changes from OCB in real time.
+A *Document* in Knowage environment permits to use the DataSet previous created to make reports, statistics, visualization of data etc.. In the following example we create a Document of type *Cockpit* because is strictly related to REST NGSI DataSet. With this type of Document you can see the notifications of Context Elements changes from OCB in real time.
 So, start to create a Document clicking on folder icon at homepage:
 
-![](media/5.1_Document_Creation.png)
-
-Fill all fields like any other document but select the Console type/Console Engine:
-
-![](media/5.2_Console_Document_Creation.png)
-
-Upload the Console template of your Document. In our example we use this template:
-
-	{
-		//the datasets necessary for our document
-		datasets : [
-			{
-				id : 'RestMetersValues',
-				label : 'RestMetersValues',
-				//not strictly necessary, make a refresh of data every 1000 seconds, in case of some errors from OCB
-				refreshTime : 1000,
-				//update the document using notifications from OCB
-				notifyFromServer:true
-			},
-			{
-				id : 'Rest1',
-				label : 'Rest1',
-				//not strictly necessary, make a refresh of data every 1000 seconds, in case of some errors from OCB
-				refreshTime : 1000,
-				//update the document using notifications from OCB
-				notifyFromServer:true
-			}
-		]
-	
-		,summaryPanel : {
-			// layout properties
-			collassable : true,
-			collapsed : false,
-			hidden : false,
-			height : 200,
-			layoutManagerConfig: {
-		        layout:'column',
-		        columnNumber: 2,
-		        columnWidths: [0.5,0.5] 
-			},
-	
-			charts : [ 
-				{
-					//first speedometer
-			     	dataset: 'RestMetersValues',
-			     	width: 180,
-			     	height: 160,
-			     	widgetConfig: {
-			             type: 'chart.sbi.speedometer'
-			             , title:'Upstream Power Meter 3'
-			             , minValue: 0
-			             , maxValue: 10
-			             , lowValue: 2
-			             , highValue: 4
-			             , field: 'upstreamActivePower'
-			             , styles: {                       
-		                         plot: {
-		                       widthScale: 2.0
-		                       , heightScale: 3.0
-		                       , valign: 'bottom'
-		                       , halign: 'left'
-		                   }
-		                       
-		                }
-		            }
-		        },{
-		        	//Second speedometer
-			     	dataset: 'RestMetersValues'
-			        , width: 180
-			        , height: 160
-			        , widgetConfig: {
-			             type: 'chart.sbi.speedometer'
-			             , title:'Downstream Power Meter 3'
-			             , minValue: 0
-			             , maxValue: 5
-			             , lowValue: 2
-			             , highValue: 4
-			             , field: 'downstreamActivePower'
-			             , styles: {                       
-								 plot: {
-								widthScale: 2.0
-								, heightScale: 3.0
-								, valign: 'bottom'
-								, halign: 'left'
-							}    
-			            }
-			        }
-				} 
-			]
-		}
-	
-			//--------------------------------------------------------------------------------
-			// DETAIL PANEL
-			// -------------------------------------------------------------------------------
-			,
-			detailPanel : {
-				pages : [
-	
-				//--------------------------------------------------------------------------------
-			// Page 1
-			// -------------------------------------------------------------------------------
-			{
-				title : 'Console'
-				
-				// -- Navigation bar -------------------------------------------------------------
-	
-				,
-				table : {
-					dataset : 'Rest1',
-					columnId : 'id', //the column ID of the single row
-					showColumnId : true,
-					
-					 columnConfig: {
-						 'id': {
-	                          width: 120
-	                        , header: 'Id'
-	                      },
-	                      'downstreamActivePower': {
-	                          width: 120
-	                        , header: 'Downstream Active Power'
-	                      },
-	                      'atTime': {
-	                          width: 120
-	                        , header: 'Time'
-	                      },
-	                      'upstreamActivePower': {
-	                          width: 120
-	                        , header: 'Upstream Active Power'
-	                      }
-	                  },
-					filterBar : {
-						type : 'custom',
-						defaults : {
-							operator : 'EQUALS_TO',
-							operand : 'DISTINCT'
-						}
-	
-						,
-						filters : [ {
-							text : 'Id',
-							column : 'id',
-							operator : 'EQUALS_TO',
-							operand : 'DISTINCT'
-						} ]
-	
-						,
-						actions : [ {
-							name : 'refresh',
-							tooltip : 'Refresh console data',
-							hidden : false,
-							config : {}
-						}]
-					},
-					inlineCharts : [],
-					inlineActions : []
-				}  	
-			} ]
-		}
-	}; 
-
-The main difference from an usual Console Template is the `notifyFromServer:true`: it permits to refresh the Document when a new notification arrives from OCB.
-
-Save the document clicking on Save button. Now return to the main Document page (where you clicked the Creation Document button) and select the created Document:
-
-![](media/6_Select_Document.png)
+TODO
 
 Now you can see the data retrieved from OCB:
 
 ![](media/7_Console_Document.png)
 
-Now we modify a Context Element (Cocoa Rest Client is an application to make REST calls ). The change is immediately reflected on Console Document: the speedometers goes up/down and the related line in table becomes yellow with the new value:
+Now we modify a Context Element (please use your preferred application to make REST calls). The change is immediately reflected on Cockpit Document: the bar chart goes up/down and the related values in table changes accordingly:
 
 ![](media/8_Console_Document_Changes.png)
 
 ### Chart Engine
 
-In addition to Console Engine it's also possible to add notifications capabilities to a Chart Engine Document. The document parameter for this functionality is the following (similar to Console Engine) :
+In addition to Cockpit Engine it's also possible to add notifications capabilities to a Chart Engine Document. In order to do so, you need to directly change the XML template associated with the document. A snippet for this functionality is the following:
 
 ```xml
 	<EXTCHART animate="true" height="500" shadow="true" width="600">
@@ -371,24 +207,9 @@ In addition to Console Engine it's also possible to add notifications capabiliti
 	...
 ``` 
 
-### Demo
-
-You can see the entire video of DataSet creation and Document usage (gif animated):
-
-![](media/Screencast_DataSet_Console_Document.gif)
-
-New Scheduled KPI dispatching option
+KPI Alert notification to context broker
 -------------------
-User can now choose to dispatch the result of a scheduled KPI to context broker.
-By accessing scheduling details page, user can enable context broker dispatch option and fill context broker url and context broker type texts (look at screenshot).
-![](media/9_ContextBrokerDispatching.png)
-When scheduled KPI is executed results will be sent to context broker. 
-Each entity sent is identified by KPI label.
-Context broker type is sent as type field, in order to be able to group entities in families.
-
-KPI Alarm notification to context broker
--------------------
-By defining a context broker url in KPI Alarm detail page, when an alarm event is thrown it will be sent also to context broker. (Look at screenshot) 
+By defining a context broker URL in the Alert detail page, when an alert event is thrown it will be sent also to context broker. (Look at screenshot) 
 The context broker type is sent as a type field in order to be able to group entities in families, while each entity is identified by alarm label. 
 
 ![](media/10_AlarmDetail.png)
