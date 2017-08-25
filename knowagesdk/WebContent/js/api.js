@@ -208,52 +208,9 @@ Sbi.sdk.apply(Sbi.sdk.api, {
 		return Sbi.sdk.services.getServiceUrl('adHocReporting', params);
 	}
 
-	, getWorksheetUrl: function( config ) {
-		config.type = 'WORKSHEET';
-		return this.getAdHocReportingUrl(config);
-	}
 
-	/**
-	 * It returns the HTML code of an iFrame containing worksheet visualization.
-	 * config is an object that must contain datasetLabel and iframe, an object containing the style, height and width of the iframe where the worksheet and qbe will be rendered (height and width can also be put outside the iframe object).
-	 *
-	 * @method Sbi.sdk.api.getWorksheetHtml
-	 * @param {Object} config - the configuration
-	 * @param {String} config.target - the target
-	 * @param {String} config.documentLabel - the document label,  must contain at least one between documentId and documentLabel
-	 * @param {String} [config.height] - the height of iframe, can be put inside iframe object
-	 * @param {String} [config.width] - the width of iframe, can be put inside iframe object
-	 * @param {Object} config.iframe - the style object of iframe
-	 * @param {String} [config.iframe.height] - the height of iframe, can be put outside
-	 * @param {String} [config.iframe.width] - the width of iframe
-	 * @param {String} [config.iframe.style] - the style of iframe
-	 */
-	, getWorksheetHtml: function( config ) {
 
-		var serviceUrl = this.getWorksheetUrl( config );
-		return this.getIFrameHtml(serviceUrl, config);
-	}
 
-	/**
-	 * It calls {@link Sbi.sdk.api.getWorksheetHtml} and inject the generated iFrame inside a specified tag. If the target tag is not specified in config variable, it chooses the <body> tag as default
-	 * config is an object that must contain datasetLabel and iframe, an object containing the style, height and width of the iframe where the worksheet and qbe will be rendered (height and width can also be put outside the iframe object).
-	 *
-	 * @method Sbi.sdk.api.injectWorksheet
-	 * @param {Object} config - the configuration
-	 * @param {String} [config.target="<body>"] - the target
-	 * @param {String} config.documentLabel - the document label,  must contain at least one between documentId and documentLabel
-	 * @param {String} [config.height] - the height of iframe, can be put inside iframe object
-	 * @param {String} [config.width] - the width of iframe, can be put inside iframe object
-	 * @param {Object} config.iframe - the style object of iframe
-	 * @param {String} [config.iframe.height] - the height of iframe, can be put outside
-	 * @param {String} [config.iframe.width] - the width of iframe
-	 * @param {String} [config.iframe.style] - the style of iframe
-	 */
-	, injectWorksheet: function( config ) {
-
-		var serviceUrl = this.getWorksheetUrl( config );
-		return this.injectIFrame(serviceUrl, config);
-	}
 
 	, getQbeUrl: function( config ) {
 		config.type = 'QBE';
