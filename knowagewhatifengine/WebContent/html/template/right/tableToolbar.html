@@ -26,9 +26,9 @@
 		
 		{{translate.load("sbi.olap.toolbar.drill_on_data.button.drill_through.label")}}
 </md-button>
-<div class="menu-text" ng-show="olapGridNeeded">{{translate.load("sbi.olap.toolbar.olap_functions.title")}}</div>
+<div class="menu-text" ng-show="olapGridNeeded || modelConfig.crossNavigation">{{translate.load("sbi.olap.toolbar.olap_functions.title")}}</div>
 <md-grid-list
-        md-cols="3" md-row-height="50px" ng-show="olapGridNeeded">
+        md-cols="3" md-row-height="50px" ng-show="olapGridNeeded || modelConfig.crossNavigation">
     <md-grid-tile ng-repeat="obtn in olapToolbarButtons">
     	<md-button class="right-toolbar-menu {{obtn.img}}" ng-click="btnFunctions(obtn.img)">
     		<md-tooltip md-direction="bottom">

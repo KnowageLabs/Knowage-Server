@@ -203,7 +203,7 @@ public class CrossNavigationManager {
 				url = MessageFormat.format(documentParametersUnformatted, args);
 				logger.debug("Composing cross nav url. Parameters formatted = "+url);
 
-				url = "javascript:parent.execExternalCrossNavigation({"+(url)+"});";
+				url = "parent.execExternalCrossNavigation({"+(url)+"});";
 
 
 				return url;

@@ -452,12 +452,14 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 						if (member != null) {
 							String url = CrossNavigationManager.buildClickableUrl(member, targetsClickable);
 							if (url != null) {
-								attributes.remove("onClick");
+								attributes.put("onClick", url);
 								attributes.remove("src");
-								attributes.put("href", url);
+								attributes.put("href", "#");
+
 								startElement("a", attributes);
 								writeContent(label);
 								endElement("a");
+
 							} else {
 								writeContent(label);
 							}
