@@ -692,14 +692,17 @@
 		#end
 	 	title: {
 	 	    #if($xAxis.TITLE.text != '')
-			text: "$xAxis.TITLE.text",
-			customTitle: true,
+				text: "$xAxis.TITLE.text",
+				customTitle: true,
 			#elseif($categorieColumns.name != '')
-			text: "$categorieColumns.name",
-			customTitle: false,
-			#else
-			text: "$categorieColumns.column",
-			customTitle: false,
+				text: "$categorieColumns.name",
+				customTitle: false,
+			#end
+			#if($chart.hideAxisTitleCategory)
+				#if($chart.hideAxisTitleCategory=="true")
+					text: "",
+					customTitle: false,
+				#end
 			#end
 			##y:-150, 
 			#set ($xTitleAlign = $xAxis.TITLE.style.align)
@@ -869,8 +872,14 @@
         			text: "$yAxis.TITLE.text",
         			custom: true,
         		#else
-                	text: "",
-               	 	custom: false,
+        			text: "",
+					customTitle: false,
+        		#end
+        		#if($chart.hideAxisTitleSerie)
+					#if($chart.hideAxisTitleSerie=="true")
+						text: "",
+						customTitle: false,
+					#end
                 #end
         		##x:50,
         		#*
