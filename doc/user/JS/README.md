@@ -68,8 +68,6 @@ This documentation is generated from Javascript sources using [jsdoc to markdown
         * [.api](#Sbi.sdk.api) : <code>object</code>
             * [.getDocumentHtml(config)](#Sbi.sdk.api.getDocumentHtml)
             * [.injectDocument(config)](#Sbi.sdk.api.injectDocument)
-            * [.getWorksheetHtml(config)](#Sbi.sdk.api.getWorksheetHtml)
-            * [.injectWorksheet(config)](#Sbi.sdk.api.injectWorksheet)
             * [.getQbeHtml(config)](#Sbi.sdk.api.getQbeHtml)
             * [.injectQbe(config)](#Sbi.sdk.api.injectQbe)
             * [.getDataSetList(config)](#Sbi.sdk.api.getDataSetList)
@@ -87,8 +85,6 @@ This documentation is generated from Javascript sources using [jsdoc to markdown
     * [.api](#Sbi.sdk.api) : <code>object</code>
         * [.getDocumentHtml(config)](#Sbi.sdk.api.getDocumentHtml)
         * [.injectDocument(config)](#Sbi.sdk.api.injectDocument)
-        * [.getWorksheetHtml(config)](#Sbi.sdk.api.getWorksheetHtml)
-        * [.injectWorksheet(config)](#Sbi.sdk.api.injectWorksheet)
         * [.getQbeHtml(config)](#Sbi.sdk.api.getQbeHtml)
         * [.injectQbe(config)](#Sbi.sdk.api.injectQbe)
         * [.getDataSetList(config)](#Sbi.sdk.api.getDataSetList)
@@ -100,15 +96,19 @@ This documentation is generated from Javascript sources using [jsdoc to markdown
 
 <a name="Sbi.sdk.api"></a>
 #### sdk.api : <code>object</code>
-Note that Sbi.sdk.api definition is defined in both api.js and api_jsonp.js.In api_jsonp.js there are functions that uses jsonp to avoid the same-origin policy.The same functions were also developed with CORS and they are defined in api_cors.js.jsonp is deprecated, it is highly recommended to use CORS instead of it.NB: CORS functions are inside Sbi.sdk.cors.api namespace and have same names as jsonp counterpart.
+Note that Sbi.sdk.api definition is defined in both api.js and api_jsonp.js.
+In api_jsonp.js there are functions that uses jsonp to avoid the same-origin policy.
+The same functions were also developed with CORS and they are defined in api_cors.js.
+
+jsonp is deprecated, it is highly recommended to use CORS instead of it.
+
+NB: CORS functions are inside Sbi.sdk.cors.api namespace and have same names as jsonp counterpart.
 
 **Kind**: static namespace of <code>[sdk](#Sbi.sdk)</code>  
 
 * [.api](#Sbi.sdk.api) : <code>object</code>
     * [.getDocumentHtml(config)](#Sbi.sdk.api.getDocumentHtml)
     * [.injectDocument(config)](#Sbi.sdk.api.injectDocument)
-    * [.getWorksheetHtml(config)](#Sbi.sdk.api.getWorksheetHtml)
-    * [.injectWorksheet(config)](#Sbi.sdk.api.injectWorksheet)
     * [.getQbeHtml(config)](#Sbi.sdk.api.getQbeHtml)
     * [.injectQbe(config)](#Sbi.sdk.api.injectQbe)
     * [.getDataSetList(config)](#Sbi.sdk.api.getDataSetList)
@@ -116,7 +116,8 @@ Note that Sbi.sdk.api definition is defined in both api.js and api_jsonp.js.In 
 
 <a name="Sbi.sdk.api.getDocumentHtml"></a>
 ##### api.getDocumentHtml(config)
-It returns the HTML code of an iFrame containing document visualization. In particular config is an object that must contain at least one between documentId and documentLabel.It can also have (optional) parameters (an object containing values of document parameters), executionRole, displayToolbar and iframe, an object containing the style, height and width of the iframe where the document will be rendered (height and width can also be put outside the iframe object).
+It returns the HTML code of an iFrame containing document visualization. In particular config is an object that must contain at least one between documentId and documentLabel.
+It can also have (optional) parameters (an object containing values of document parameters), executionRole, displayToolbar and iframe, an object containing the style, height and width of the iframe where the document will be rendered (height and width can also be put outside the iframe object).
 
 **Kind**: static method of <code>[api](#Sbi.sdk.api)</code>  
 
@@ -136,11 +137,23 @@ It returns the HTML code of an iFrame containing document visualization. In part
 
 **Example**  
 ```js
-var html = Sbi.sdk.api.getDocumentHtml({		documentLabel: 'RPT_WAREHOUSE_PROF'		, executionRole: '/spagobi/user'		, parameters: {warehouse_id: 19}		, displayToolbar: false		, displaySliders: false		, iframe: {    		height: '500px'    		, width: '100%'			, style: 'border: 0px;'		}	});
+var html = Sbi.sdk.api.getDocumentHtml({
+		documentLabel: 'RPT_WAREHOUSE_PROF'
+		, executionRole: '/spagobi/user'
+		, parameters: {warehouse_id: 19}
+		, displayToolbar: false
+		, displaySliders: false
+		, iframe: {
+    		height: '500px'
+    		, width: '100%'
+			, style: 'border: 0px;'
+		}
+	});
 ```
 <a name="Sbi.sdk.api.injectDocument"></a>
 ##### api.injectDocument(config)
-It calls [getDocumentHtml](#Sbi.sdk.api.getDocumentHtml) and inject the generated iFrame inside a specified tag. If the target tag is not specified in config variable, it chooses the <body> tag as default.It can also have (optional) parameters (an object containing values of document parameters), executionRole, displayToolbar and iframe, an object containing the style, height and width of the iframe where the document will be rendered (height and width can also be put outside the iframe object).
+It calls [getDocumentHtml](#Sbi.sdk.api.getDocumentHtml) and inject the generated iFrame inside a specified tag. If the target tag is not specified in config variable, it chooses the <body> tag as default.
+It can also have (optional) parameters (an object containing values of document parameters), executionRole, displayToolbar and iframe, an object containing the style, height and width of the iframe where the document will be rendered (height and width can also be put outside the iframe object).
 
 **Kind**: static method of <code>[api](#Sbi.sdk.api)</code>  
 **See**: [getDocumentHtml](#Sbi.sdk.api.getDocumentHtml)  
@@ -159,49 +172,11 @@ It calls [getDocumentHtml](#Sbi.sdk.api.getDocumentHtml) and inject the generate
 | [config.iframe.width] | <code>String</code> | the width of iframe |
 | [config.iframe.style] | <code>String</code> | the style of iframe |
 
-**Example**  
-```js
-execTest8 = function() {	Sbi.sdk.api.injectWorksheet({		datasetLabel: 'DS_DEMO_51_COCKPIT'		, target: 'worksheet'		, height: '600px'		, width: '1100px'		, iframe: {			style: 'border: 0px;'		}	});};
-```
-<a name="Sbi.sdk.api.getWorksheetHtml"></a>
-##### api.getWorksheetHtml(config)
-It returns the HTML code of an iFrame containing worksheet visualization.config is an object that must contain datasetLabel and iframe, an object containing the style, height and width of the iframe where the worksheet and qbe will be rendered (height and width can also be put outside the iframe object).
-
-**Kind**: static method of <code>[api](#Sbi.sdk.api)</code>  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| config | <code>Object</code> | the configuration |
-| config.target | <code>String</code> | the target |
-| config.documentLabel | <code>String</code> | the document label,  must contain at least one between documentId and documentLabel |
-| [config.height] | <code>String</code> | the height of iframe, can be put inside iframe object |
-| [config.width] | <code>String</code> | the width of iframe, can be put inside iframe object |
-| config.iframe | <code>Object</code> | the style object of iframe |
-| [config.iframe.height] | <code>String</code> | the height of iframe, can be put outside |
-| [config.iframe.width] | <code>String</code> | the width of iframe |
-| [config.iframe.style] | <code>String</code> | the style of iframe |
-
-<a name="Sbi.sdk.api.injectWorksheet"></a>
-##### api.injectWorksheet(config)
-It calls [getWorksheetHtml](#Sbi.sdk.api.getWorksheetHtml) and inject the generated iFrame inside a specified tag. If the target tag is not specified in config variable, it chooses the <body> tag as defaultconfig is an object that must contain datasetLabel and iframe, an object containing the style, height and width of the iframe where the worksheet and qbe will be rendered (height and width can also be put outside the iframe object).
-
-**Kind**: static method of <code>[api](#Sbi.sdk.api)</code>  
-
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| config | <code>Object</code> |  | the configuration |
-| [config.target] | <code>String</code> | <code>&quot;&lt;body&gt;&quot;</code> | the target |
-| config.documentLabel | <code>String</code> |  | the document label,  must contain at least one between documentId and documentLabel |
-| [config.height] | <code>String</code> |  | the height of iframe, can be put inside iframe object |
-| [config.width] | <code>String</code> |  | the width of iframe, can be put inside iframe object |
-| config.iframe | <code>Object</code> |  | the style object of iframe |
-| [config.iframe.height] | <code>String</code> |  | the height of iframe, can be put outside |
-| [config.iframe.width] | <code>String</code> |  | the width of iframe |
-| [config.iframe.style] | <code>String</code> |  | the style of iframe |
 
 <a name="Sbi.sdk.api.getQbeHtml"></a>
 ##### api.getQbeHtml(config)
-It returns the HTML code of an iFrame containing qbe visualization.config is an object that must contain datasetLabel and iframe, an object containing the style, height and width of the iframe where the worksheet and qbe will be rendered (height and width can also be put outside the iframe object).
+It returns the HTML code of an iFrame containing qbe visualization.
+config is an object that must contain datasetLabel and iframe, an object containing the style, height and width of the iframe where the qbe will be rendered (height and width can also be put outside the iframe object).
 
 **Kind**: static method of <code>[api](#Sbi.sdk.api)</code>  
 
@@ -219,7 +194,8 @@ It returns the HTML code of an iFrame containing qbe visualization.config is an
 
 <a name="Sbi.sdk.api.injectQbe"></a>
 ##### api.injectQbe(config)
-It calls [getQbeHtml](#Sbi.sdk.api.getQbeHtml) and inject the generated iFrame inside a specified tag. If the target tag is not specified in config variable, it chooses the <body> tag as default.config is an object that must contain datasetLabel and iframe, an object containing the style, height and width of the iframe where the worksheet and qbe will be rendered (height and width can also be put outside the iframe object).
+It calls [getQbeHtml](#Sbi.sdk.api.getQbeHtml) and inject the generated iFrame inside a specified tag. If the target tag is not specified in config variable, it chooses the <body> tag as default.
+config is an object that must contain datasetLabel and iframe, an object containing the style, height and width of the iframe where the  qbe will be rendered (height and width can also be put outside the iframe object).
 
 **Kind**: static method of <code>[api](#Sbi.sdk.api)</code>  
 
@@ -237,7 +213,17 @@ It calls [getQbeHtml](#Sbi.sdk.api.getQbeHtml) and inject the generated iFrame i
 
 **Example**  
 ```js
-execTest9 = function() {		Sbi.sdk.api.injectQbe({			datasetLabel: 'DS_DEMO_51_COCKPIT'			, target: 'qbe'			, height: '600px'			, width: '1100px'			, iframe: {			style: 'border: 0px;'		  }		});	};
+execTest9 = function() {
+		Sbi.sdk.api.injectQbe({
+			datasetLabel: 'DS_DEMO_51_COCKPIT'
+			, target: 'qbe'
+			, height: '600px'
+			, width: '1100px'
+			, iframe: {
+			style: 'border: 0px;'
+		  }
+		});
+	};
 ```
 <a name="Sbi.sdk.api.getDataSetList"></a>
 ##### api.getDataSetList(config)
@@ -253,7 +239,20 @@ It returns the list of datasets
 **Example**  
 
 ```js
-execTest6 = function() {	    Sbi.sdk.api.getDataSetList({	    	callback: function( json, args, success ) {	    		if (success){	    			var str = "";	    				    			for (var key in json){		    			str += "<tr><td>" + json[key].label + "</td><td>" + json[key].name + "</td><td>" + json[key].description + "</td></tr>";	    			}	    				    			document.getElementById('datasets').innerHTML = str;	    		}			}});	};
+execTest6 = function() {
+	    Sbi.sdk.api.getDataSetList({
+	    	callback: function( json, args, success ) {
+	    		if (success){
+	    			var str = "";
+	    			
+	    			for (var key in json){
+		    			str += "<tr><td>" + json[key].label + "</td><td>" + json[key].name + "</td><td>" + json[key].description + "</td></tr>";
+	    			}
+	    			
+	    			document.getElementById('datasets').innerHTML = str;
+	    		}
+			}});
+	};
 ```
 <a name="Sbi.sdk.api.executeDataSet"></a>
 ##### api.executeDataSet(config)
@@ -271,7 +270,40 @@ It executes a dataset
 **Example**  
 
 ```js
-execTest7 = function() {   Sbi.sdk.api.executeDataSet({   	datasetLabel: 'DS_DEMO_EXTCHART'   	, parameters: {   		par_year: 2011,   		par_family: 'Food'   	}   	, callback: function( json, args, success ) {   		if (success){   			var str = "<th>Id</th>";   			   			var fields = json.metaData.fields;   			for(var fieldIndex in fields) {   				if (fields[fieldIndex].hasOwnProperty('header'))   					str += '<th>' + fields[fieldIndex]['header'] + '</th>';   			}   			   			str += '<tbody>';   			   			var rows = json.rows;   			for (var rowIndex in rows){   				str += '<tr>';   				for (var colIndex in rows[rowIndex]) {   					str += '<td>' + rows[rowIndex][colIndex] + '</td>';   				}   				str += '</tr>';   			}   			   			str += '</tbody>';   			   			document.getElementById('results').innerHTML = str;   		}		}});};
+execTest7 = function() {
+   Sbi.sdk.api.executeDataSet({
+   	datasetLabel: 'DS_DEMO_EXTCHART'
+   	, parameters: {
+   		par_year: 2011,
+   		par_family: 'Food'
+   	}
+   	, callback: function( json, args, success ) {
+   		if (success){
+   			var str = "<th>Id</th>";
+   			
+   			var fields = json.metaData.fields;
+   			for(var fieldIndex in fields) {
+   				if (fields[fieldIndex].hasOwnProperty('header'))
+   					str += '<th>' + fields[fieldIndex]['header'] + '</th>';
+   			}
+   			
+   			str += '<tbody>';
+   			
+   			var rows = json.rows;
+   			for (var rowIndex in rows){
+   				str += '<tr>';
+   				for (var colIndex in rows[rowIndex]) {
+   					str += '<td>' + rows[rowIndex][colIndex] + '</td>';
+   				}
+   				str += '</tr>';
+   			}
+   			
+   			str += '</tbody>';
+   			
+   			document.getElementById('results').innerHTML = str;
+   		}
+		}});
+};
 ```
 <a name="Sbi.sdk.cors"></a>
 #### sdk.cors : <code>object</code>
@@ -284,7 +316,12 @@ execTest7 = function() {   Sbi.sdk.api.executeDataSet({   	datasetLabel: 'DS_D
 
 <a name="Sbi.sdk.cors.api"></a>
 ##### cors.api : <code>object</code>
-There are three main advantages on using CORS over jsonp:<ul> <li>all the methods are available while in jsonp only GET request can be done;</li> <li>if an error occurs it is possible to manage it with CORS, while in jsonp it is only possible to set a timeout;</li> <li>jsonp has security problems (see later for an example).</li></ul>
+There are three main advantages on using CORS over jsonp:
+<ul>
+ <li>all the methods are available while in jsonp only GET request can be done;</li>
+ <li>if an error occurs it is possible to manage it with CORS, while in jsonp it is only possible to set a timeout;</li>
+ <li>jsonp has security problems (see later for an example).</li>
+</ul>
 
 **Kind**: static namespace of <code>[cors](#Sbi.sdk.cors)</code>  
 **See**: [api](#Sbi.sdk.api)  
@@ -308,7 +345,19 @@ It returns the list of datasets. This time config contains two callback function
 **Example** 
  
 ```js
-execTest6 = function() {   Sbi.sdk.cors.api.getDataSetList({   	callbackOk: function(obj) {   		str = '';   		   		for (var key in obj){   			str += "<tr><td>" + obj[key].label + "</td><td>" + obj[key].name + "</td><td>" + obj[key].description + "</td></tr>"; 			} 			 			document.getElementById('datasets').innerHTML = str;		}   });	};
+execTest6 = function() {
+   Sbi.sdk.cors.api.getDataSetList({
+   	callbackOk: function(obj) {
+   		str = '';
+   		
+   		for (var key in obj){
+   			str += "<tr><td>" + obj[key].label + "</td><td>" + obj[key].name + "</td><td>" + obj[key].description + "</td></tr>";
+ 			}
+ 			
+ 			document.getElementById('datasets').innerHTML = str;
+		}
+   });
+	};
 ```
 <a name="Sbi.sdk.cors.api.executeDataSet"></a>
 ###### api.executeDataSet(config)
@@ -327,7 +376,38 @@ It executes a dataset. This time config contains two callback functions: callbac
 **Example**  
 
 ```js
-execTest7 = function() {   Sbi.sdk.cors.api.executeDataSet({   	datasetLabel: 'DS_DEMO_EXTCHART'   	, parameters: {   		par_year: 1998,   		par_family: 'Food'   	}   	, callbackOk: function(obj) {   		var str = "<th>Id</th>";   		 			var fields = obj.metaData.fields; 			for(var fieldIndex in fields) { 				if (fields[fieldIndex].hasOwnProperty('header')) 					str += '<th>' + fields[fieldIndex]['header'] + '</th>'; 			} 			 			str += '<tbody>'; 			 			var rows = obj.rows; 			for (var rowIndex in rows){ 				str += '<tr>'; 				for (var colIndex in rows[rowIndex]) { 					str += '<td>' + rows[rowIndex][colIndex] + '</td>'; 				} 				str += '</tr>'; 			} 			 			str += '</tbody>'; 			 			document.getElementById('results').innerHTML = str;		}});};
+execTest7 = function() {
+   Sbi.sdk.cors.api.executeDataSet({
+   	datasetLabel: 'DS_DEMO_EXTCHART'
+   	, parameters: {
+   		par_year: 1998,
+   		par_family: 'Food'
+   	}
+   	, callbackOk: function(obj) {
+   		var str = "<th>Id</th>";
+   		
+ 			var fields = obj.metaData.fields;
+ 			for(var fieldIndex in fields) {
+ 				if (fields[fieldIndex].hasOwnProperty('header'))
+ 					str += '<th>' + fields[fieldIndex]['header'] + '</th>';
+ 			}
+ 			
+ 			str += '<tbody>';
+ 			
+ 			var rows = obj.rows;
+ 			for (var rowIndex in rows){
+ 				str += '<tr>';
+ 				for (var colIndex in rows[rowIndex]) {
+ 					str += '<td>' + rows[rowIndex][colIndex] + '</td>';
+ 				}
+ 				str += '</tr>';
+ 			}
+ 			
+ 			str += '</tbody>';
+ 			
+ 			document.getElementById('results').innerHTML = str;
+		}});
+};
 ```
 <a name="ResponseCallback"></a>
 ## ResponseCallback : <code>function</code>
