@@ -1,4 +1,4 @@
-SpagoBI and CKAN: self-service opendata
+Knowage and CKAN: self-service opendata
 =======================================
 
 Introduction
@@ -12,21 +12,21 @@ CKAN is the world’s leading open-source data portal platform. It is a powerful
 Mission
 -------
 
-SpagoBI extends its set of data sources by providing native and out-of-the-box CKAN integration. By using such open data management system, SpagoBI grant access to the huge amount of dataset published in the World Wide Web (e.g. datahub.io, data.gov, data.lab.fiware.org, dati.gov.it, and more). SpagoBI allows now to search and handle opendata in a self-service manner, letting the users to integrate own dataset with external ones directly inside our suite. As instance, enterprise dataset can finally join opendata, bringing up the overall data value!
+Knowage extends its set of data sources by providing native and out-of-the-box CKAN integration. By using such open data management system, Knowage grant access to the huge amount of dataset published in the World Wide Web (e.g. datahub.io, data.gov, data.lab.fiware.org, dati.gov.it, and more). SpagoBI allows now to search and handle opendata in a self-service manner, letting the users to integrate own dataset with external ones directly inside our suite. As instance, enterprise dataset can finally join opendata, bringing up the overall data value!
 
 Integration 
 ============
 
-Dataset mapping between SpagoBI and CKAN
+Dataset mapping between Knowage and CKAN
 ----------------------------------------
 
-The term *“dataset”* has two different meaning in SpagoBI and CKAN:
+The term *“dataset”* has two different meaning in Knowage and CKAN:
 
 -   The former uses *dataset* to indicate a unique data resource. It can be anything: a CSV file, a SQL query against a DB, a Java class, and so on;
 
 -   The latter indicates *dataset* as a set of resources, where the only the resource contains the data. A dataset basically acts as a container, or a data package, where details (such as visilibility, or scope) are inherit by its resources.
 
-Because of this difference, there is no direct mapping between SpagoBI and CKAN datasets. Therefore, the current approach is to consider a CKAN resource as a SpagoBI dataset. It still keep a reference to the parent, but it is now self-contained and its handling is indipendent from the package (aka CKAN dataset). The dataset listing and searching functions in SpagoBI reflect this mapping, directly showing the CKAN resources as importable SpagoBI dataset.
+Because of this difference, there is no direct mapping between Knowage and CKAN datasets. Therefore, the current approach is to consider a CKAN resource as a Knowage dataset. It still keep a reference to the parent, but it is now self-contained and its handling is indipendent from the package (aka CKAN dataset). The dataset listing and searching functions in SpagoBI reflect this mapping, directly showing the CKAN resources as importable SpagoBI dataset.
 
 CKAN dataset categories
 -----------------------
@@ -61,7 +61,7 @@ The current release of SpagoBI makes use of the first method, since it allows to
 Limits and future developments
 ------------------------------
 
-The dataset data parsing and validation processes rely on the SpagoBI file dataset management system, where CSV and XLS file formats are supported. This means that only CKAN resources with such formats are taken into account by SpagoBI, filtering the datasets availability by their format. With the future support for other formats (e.g. XML), SpagoBI will automatically increase the availability of CKAN resources, enhancing the overall CKAN integration.
+The dataset data parsing and validation processes rely on the Knowage file dataset management system, where CSV and XLS file formats are supported. This means that only CKAN resources with such formats are taken into account by Knowage, filtering the datasets availability by their format. With the future support for other formats (e.g. XML), Knowage will automatically increase the availability of CKAN resources, enhancing the overall CKAN integration.
 
 How to use SpagoBI with CKAN
 ============================
@@ -69,7 +69,7 @@ How to use SpagoBI with CKAN
 Configuration
 -------------
 
-SpagoBI fully integrate CKAN API, where only the following parameters are needed:
+Knowage fully integrate CKAN API, where only the following parameters are needed:
 
 -   URL of the target CKAN instance;
 
@@ -77,14 +77,14 @@ SpagoBI fully integrate CKAN API, where only the following parameters are needed
 
 -   REST API Key.
 
-As stated in *“Limits and future developments”*, SpagoBI currently relies on the FIWARE Identity Manager. This choice ties the current release with the FIWARE Data Lab, avoiding FIWARE users to specify the second and third parameter considering that they are obtained through the OAuth2 authentication process.
+As stated in *“Limits and future developments”*, Knowage currently relies on the FIWARE Identity Manager. This choice ties the current release with the FIWARE Data Lab, avoiding FIWARE users to specify the second and third parameter considering that they are obtained through the OAuth2 authentication process.
 
-The file containing the URL parameter is ***ckan.config.properties***, deployed inside the library ***SpagoBIUtils.jar***. To change the target CKAN instance, it is necessary to extract the contents of the already mentioned library, modifying the parameter ***ckan.url*** with the preferred one. Once the modification is done and saved, the JAR library has to be created and deployed inside each SpagoBI engine in order to share the new CKAN configuration.
+The file containing the URL parameter is ***ckan.config.properties***, deployed inside the library ***knowageutils.jar***. To change the target CKAN instance, it is necessary to extract the contents of the already mentioned library, modifying the parameter ***ckan.url*** with the preferred one. Once the modification is done and saved, the JAR library has to be created and deployed inside each Knowage engine in order to share the new CKAN configuration.
 
 Explore the target CKAN repository
 ----------------------------------
 
-To start using CKAN dataset inside SpagoBI suite, click on **My Data** section.
+To start using CKAN dataset inside Knowage suite, open the menu and click on **Workspace**. Then expand the **Data** section and click on **Datasets**.
 
 ![](./media/image1.png)
 
@@ -93,7 +93,7 @@ The first tab (My Data Set) shows any dataset that belong to the user, plus any 
 ![](./media/image2.png)
 -----------------------
 
-Once the tab is selected, SpagoBI starts to interact with CKAN to obtain the first trunk of 200 CKAN datasets (exploding them into multiple CKAN resources). It usually takes between five and ten seconds, depending on the connection and network traffic situation.
+Byclicking on the tab and after the repository is selected, Knowage starts to interact with CKAN to obtain the first trunk of 200 CKAN datasets (exploding them into multiple CKAN resources). It usually takes between five and ten seconds, depending on the connection and network traffic situation.
 
 ![](./media/image3.png)
 
@@ -101,7 +101,7 @@ The below image shows a list of CKAN resources mapped as CKAN datasets. These ar
 
 ![](./media/image4.png)
 
-To have access to the other trunks of CKAN datasets, it is possible on the button **More Dataset**, placed at the bottom page. It will dinamically reload the current following trunk of datasets, if available.
+To have access to the other trunks of CKAN datasets, it is possible on the button **More Data sets**, placed at the top page. It will dinamically reload the current following trunk of datasets, if available.
 
 ![](./media/image5.png)
 -----------------------
@@ -110,11 +110,11 @@ By moving the cursor over a dataset, a list of actions will appear.
 
 ![](./media/image6.png)
 
-Clicking on the **Info** button, a set of information from the original CKAN resource will be shown by SpagoBI.
+Clicking on the **Info** button, a set of information from the original CKAN resource will be shown by Knowage.
 
 ![](./media/image7.png)
 
-SpagoBI also enable searching CKAN-side, allowing user to directly access to a known dataset or to obtain a list of dataset starting from a specific keyword. As instance, in the following image the user searched for any CKAN resource/dataset containing the keyword *inventory*.
+Knowage also enable searching CKAN-side, allowing user to directly access to a known dataset or to obtain a list of dataset starting from a specific keyword. As instance, in the following image the user searched for any CKAN resource/dataset containing the keyword *inventory*.
 
 ![](./media/image8.png)
 
@@ -135,12 +135,12 @@ The seconda step of the importing wizard is important to set how your final data
 
 ![](./media/image10.png)
 
-Now the dataset is imported, and it will appear in the **My DataSet** tab, ready to be use through SpagoBI inquiring and analytics tools.
+Now the dataset is imported, and it will appear in the **My Data Set** tab, ready to be use through Knowage inquiring and analytics tools.
 
 Inquiring the data via Query by Example
 ---------------------------------------
 
-SpagoBI offers a tool to inquire data: it is called Query by Example (QbE). It allows user to easily explore data. Click on the **Magnifier** icon to start working with the QbE.
+Knowage offers a tool to inquire data: it is called Query by Example (QbE). It allows user to easily explore data. Click on the **Magnifier** icon to start working with the QbE.
 
 ![](./media/image6.png)
 
@@ -152,14 +152,14 @@ In the below image two fields have been selected and grouping functions applied.
 
 ![](./media/image12.png)
 
-Lastly, the results are shown as a table. It is now possible to save the this new QbE as a new SpagoBI dataset (click on the **Save** icon in the top-right position).
+Lastly, the results are shown as a table. It is now possible to save the this new QbE as a new Knowage dataset (click on the **Save** icon in the top-right position).
 
 ![](./media/image13.png)
 
 Analyze data through charts and tables
 --------------------------------------
 
-SpagoBI also offer tools to analyze data by using different types of charts (pie, bar, line) and tables (flat, pivot). Click on the **Worksheet** button to start analyze data.
+Knowage also offer tools to analyze data by using different types of charts (pie, bar, line) and tables (flat, pivot). Click on the **Worksheet** button to start analyze data.
 
 ![](./media/image6.png)
 
