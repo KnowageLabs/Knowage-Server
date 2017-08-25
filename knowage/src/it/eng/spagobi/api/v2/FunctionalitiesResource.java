@@ -377,7 +377,7 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 			lowFunctionality.setTestRoles(testRolesArrayList.toArray(testRolesArray));
 			lowFunctionality.setExecRoles(execRolesArrayList.toArray(execRolesArray));
 			lowFunctionality.setDevRoles(devRolesArrayList.toArray(devRolesArray));
-			lowFunctionality.setDescription(paramsObj.getString("code"));
+			lowFunctionality.setDescription(paramsObj.getString("description"));
 			lowFunctionality.setName(paramsObj.getString("name"));
 			lowFunctionality.setPath(paramsObj.getString("path"));
 			lowFunctionality.setParentId(paramsObj.getInt("parentId"));
@@ -455,7 +455,7 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 			lowFunctionality.setTestRoles(testRolesArrayList.toArray(testRolesArray));
 			lowFunctionality.setExecRoles(execRolesArrayList.toArray(execRolesArray));
 			lowFunctionality.setDevRoles(devRolesArrayList.toArray(devRolesArray));
-			lowFunctionality.setDescription(paramsObj.getString("code"));
+			lowFunctionality.setDescription(paramsObj.getString("description"));
 			lowFunctionality.setName(paramsObj.getString("name"));
 			lowFunctionality.setPath(paramsObj.getString("path"));
 			lowFunctionality.setParentId(paramsObj.getInt("parentId"));
