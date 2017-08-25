@@ -1,3 +1,3 @@
 # Introduction
 
-Welcome to the SpagoBI NGSI User & Programmer's Manual
+Welcome to the Knowage NGSI User & Programmer's Manual
