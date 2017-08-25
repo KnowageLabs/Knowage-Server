@@ -376,16 +376,3 @@ Then, for each tenant, enable required engines (in the "Engines" tab) and dataso
 ![](media/SpagoBI_tenant_detail_engines.png "SpagoBI_tenant_detail_engines.png")
 
 Pay attention to the fact that, if a new tenant is added (in FIWARE IdM as organization), SpagoBI Server doesn't recognize it automatically unless you restart it. If you don't want to do that you have to add the new tenant manually.
-
-
-Sanity check procedures
------------------------
-
-Read the related manual [here](sanity.md).
-
-Diagnosis Procedures
------------------------
-
-Read the related manual [here](diagnosis.md).
-
-
