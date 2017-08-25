@@ -5,7 +5,7 @@ The suite is composed of several modules, each one conceived for a specific anal
 
 The sub-products of the suite are:
 * BD (big data), to analyse data stored on big data clusters or NoSQL databases
-  * SI (smart intelligence), the usual business intelligence on structured data, but more oriented to self-service capabilities and agile prototyping
+* SI (smart intelligence), the usual business intelligence on structured data, but more oriented to self-service capabilities and agile prototyping
 * ER (enterprise reporting), to produce and distribute static reports
 * LI (location intelligence), to relate business data with spatial or geographical information
 * PM (performance management), to manage KPIs and organize scorecards
