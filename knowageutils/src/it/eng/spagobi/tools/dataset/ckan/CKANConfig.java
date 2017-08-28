@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,49 +11,51 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.tools.dataset.ckan;
 
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
+
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
 public class CKANConfig {
 
-	static final String CONFIG_FILE_PATH = "ckan.config.properties";
-	static final String URL_FILE_PATH = "ckan.url.properties";
+	private static Logger logger = Logger.getLogger(CKANConfig.class);
+
+	public static final String CKAN_CONFIG_PROPERTY = "ckan.config";
+	private static final String CKAN_CONFIG_FILE = "ckan.config.properties";
 	private static CKANConfig instance = null;
-	private static Properties configs = null;
-	private static Properties urls = null;
+	private static Properties config = null;
 
 	private CKANConfig() {
-		configs = loadConfigs();
-		urls = loadUrls();
+		config = loadConfig();
 	}
 
-	private static Properties loadConfigs() {
-		InputStream source = CKANConfig.class.getResourceAsStream("/" + CONFIG_FILE_PATH);
-		Properties p = new Properties();
+	private static Properties loadConfig() {
+		Properties p = null;
 		try {
-			p.load(source);
-		} catch (IOException e) {
-			throw new SpagoBIRuntimeException("Cannot load configuration from " + CONFIG_FILE_PATH + " file", e);
-		}
-		return p;
-	}
+			InputStream source = null;
+			String configFilename = System.getProperty(CKAN_CONFIG_PROPERTY);
+			if (configFilename != null) {
+				logger.debug("Loading CKAN configuration from system property config [" + configFilename + "]");
+				source = new FileInputStream(configFilename);
+			} else {
+				logger.debug("Loading CKAN configuration from classpath config [" + CKAN_CONFIG_FILE + "]");
+				source = CKANConfig.class.getResourceAsStream("/" + CKAN_CONFIG_FILE);
+			}
 
-	private static Properties loadUrls() {
-		InputStream source = CKANConfig.class.getResourceAsStream("/" + URL_FILE_PATH);
-		Properties p = new Properties();
-		try {
+			p = new Properties();
 			p.load(source);
 		} catch (IOException e) {
-			throw new SpagoBIRuntimeException("Cannot load URLs from " + URL_FILE_PATH + " file", e);
+			throw new SpagoBIRuntimeException("Cannot load CKAN configuration", e);
 		}
 		return p;
 	}
@@ -66,10 +68,6 @@ public class CKANConfig {
 	}
 
 	public Properties getConfig() {
-		return configs;
-	}
-
-	public Properties getUrl() {
-		return urls;
+		return config;
 	}
 }
