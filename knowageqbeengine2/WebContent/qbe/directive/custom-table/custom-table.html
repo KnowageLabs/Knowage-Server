@@ -2,10 +2,13 @@
 	<div style="padding-bottom:5px">
 		<md-toolbar>
 	   		<div class="md-toolbar-tools secondaryToolbar">
-	   			Field selection
+	   			
+	   			<ng-transclude>
+	   			</ng-transclude>
+	   			
 	   			<span flex></span>
 	   			<md-icon class="fa fa-product-hunt" ng-click="openDialogForParams(ngModel)"></md-icon>
-	   			<md-icon class="fa fa-filter" ng-click="showVisualization('filters')"></md-icon>
+	   			<md-icon class="fa fa-filter" ng-c
 				 <md-icon class="fa fa-cogs" ng-click="showVisualization('advanced')"></md-icon>
 				 <md-icon class="fa fa-eye" ng-click="showHiddenColumns()"></md-icon>
 	   			<md-switch ng-model="data.cb1" aria-label="Switch 1">

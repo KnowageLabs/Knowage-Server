@@ -32,6 +32,7 @@ angular.module('qbe_custom_table', ['ngDraggable'])
         },
         templateUrl: currentScriptPath + 'custom-table.html',
         replace: true,
+        transclude:true,
         link: function link(scope, element, attrs) {
         }
     };

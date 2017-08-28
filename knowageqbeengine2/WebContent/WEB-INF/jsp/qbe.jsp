@@ -50,20 +50,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			>
 				<md-button class="md-icon-button"  
 				ng-click="createSubquery()"
-				ng-if="editQueryObj === query"
+				
 				>
                     <md-icon md-font-icon="fa fa-plus-circle"></md-icon>
                 </md-button>
                 
-                <md-button class="md-icon-button"  
-                ng-click="stopEditingSubqueries()"
-                ng-if="editQueryObj !== query">
-                    <md-icon md-font-icon="fa fa-square"></md-icon>
-                </md-button>
+                
         	</qbe-expander-list>
 		</div>
 		<div flex layout-fill class="vertical-devider">
-			<qbe-custom-table ng-drop="true" ng-drop-success="onDropComplete($data,$event)" ng-model="queryModel" expression="expression" filters="filters"></qbe-custom-table>
+			<qbe-custom-table ng-drop="true" ng-drop-success="onDropComplete($data,$event)" ng-model="queryModel" expression="expression" filters="filters">
+				<div >
+					<md-button  ng-click="stopEditingSubqueries()">
+                    	{{query.name}}
+                	</md-button>
+                	<md-icon ng-if="editQueryObj !== query" md-font-icon="fa fa-chevron-right"></md-icon>
+                	<md-button ng-if="editQueryObj !== query">
+                    	 {{editQueryObj.name}} 
+                	</md-button>
+				</div>
+				
+			</qbe-custom-table>
 		</div>
 	</div>
 	</body>

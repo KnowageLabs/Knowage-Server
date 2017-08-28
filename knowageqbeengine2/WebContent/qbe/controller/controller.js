@@ -205,6 +205,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
     }
 
     $scope.query = new Query(1);
+    $scope.query.name = "Main query";
 
     $scope.catalogue = [$scope.query];
 
