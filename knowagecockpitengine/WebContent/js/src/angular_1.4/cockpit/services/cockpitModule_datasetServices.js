@@ -6,6 +6,16 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 	
 	this.isDatasetFromTemplateLoaded = false;
 	
+	this.isDatasetRealtime = function(id){
+		if (ds.datasetList && ds.datasetList.length > 0 ){
+			for ( var i=0; i<ds.datasetList.length ; i++){
+				if(ds.datasetList[i].id.dsId == id){
+					return ds.datasetList[i].isRealtime;
+				}
+			}
+		}
+	}
+	
 	this.loadDatasetsFromTemplate=function(){
 		var def=$q.defer();
 		if(!ds.isDatasetFromTemplateLoaded){

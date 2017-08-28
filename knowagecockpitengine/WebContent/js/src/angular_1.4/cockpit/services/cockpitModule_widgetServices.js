@@ -57,7 +57,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 		} 
 	});
 
-	
+	this.realtimeSelections = [];
 	
 	addWidgetFunctionality=function(type,config){
 		cockpitModule_widgetConfigurator[type]=config;
@@ -86,6 +86,32 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 	};
 	this.loadDatasetRecords = function(ngModel, page, itemPerPage,columnOrdering, reverseOrdering){
 		if(ngModel.dataset!=undefined && ngModel.dataset.dsId!=undefined){
+			var isDatasetRealtime = cockpitModule_datasetServices.isDatasetRealtime(ngModel.dataset.dsId)
+			if (isDatasetRealtime) {
+				//if it's a realtime dataset don't use backend filter on it
+				var ngModelCopy = {};
+				angular.copy(ngModel, ngModelCopy);
+				var filters = ngModelCopy.filters
+				if (filters){
+					for (var i=0; i < filters.length; i++){
+						//erase the content of the array
+						filters[i].filterVals = [];
+					}
+				}
+
+				//for charts
+				if (ngModelCopy.content){
+					var filters = ngModelCopy.content.filters
+					if (filters){
+						for (var i=0; i < filters.length; i++){
+							//erase the content of the array
+							filters[i].filterVals = [];
+						}
+					}
+				}
+
+				return cockpitModule_datasetServices.loadDatasetRecordsById(ngModel.dataset.dsId,page,itemPerPage,columnOrdering, reverseOrdering, ngModelCopy);
+			}
 			return cockpitModule_datasetServices.loadDatasetRecordsById(ngModel.dataset.dsId,page,itemPerPage,columnOrdering, reverseOrdering, ngModel);
 		}
 		return null ;
@@ -164,6 +190,24 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 			if(nature == "fullExpand"){
 				$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:null,nature:nature});
 			}else{
+				if (config && config.dataset && config.dataset.dsId){
+					var dataset = cockpitModule_datasetServices.getDatasetById(config.dataset.dsId);
+					var isDatasetRealtime = dataset.isRealtime;
+					//for realtime dataset the associative selections are managed client side
+					if (isDatasetRealtime && nature == 'selections'){
+						var selections = cockpitModule_widgetSelection.getCurrentSelections(dataset.label);
+
+						if (Object.keys(selections).length === 0 && selections.constructor === Object){
+							//cleaned selections
+							this.realtimeSelections.length = 0;
+						} else {
+							//save dataset and selections inside this array (that can be watched outside)
+							this.realtimeSelections.push({'datasetId':config.dataset.dsId, 'selections':selections});
+						}
+						return;
+					}
+				}
+				
 				var dsRecords = this.loadDatasetRecords(config,options.page, options.itemPerPage,options.columnOrdering, options.reverseOrdering);
 				if(dsRecords == null){
 					$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:undefined,nature:nature});
