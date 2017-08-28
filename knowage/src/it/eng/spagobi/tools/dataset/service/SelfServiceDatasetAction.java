@@ -18,6 +18,15 @@
 
 package it.eng.spagobi.tools.dataset.service;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
+
+import org.apache.log4j.LogMF;
+import org.apache.log4j.Logger;
+
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
@@ -43,15 +52,6 @@ import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-
-import org.apache.log4j.LogMF;
-import org.apache.log4j.Logger;
 
 public class SelfServiceDatasetAction {
 
@@ -497,7 +497,7 @@ public class SelfServiceDatasetAction {
 	}
 
 	protected Map<String, String> buildServiceBaseParametersMap(Locale locale, UserProfile userProfile) {
-		HashMap<String, String> parametersMap = new HashMap<String, String>();
+		HashMap<String, String> parametersMap = new HashMap<>();
 
 		parametersMap.put("NEW_SESSION", "TRUE");
 
@@ -589,7 +589,7 @@ public class SelfServiceDatasetAction {
 			if (!isAbleTo(SpagoBIConstants.CKAN_FUNCTIONALITY, funcs)) {
 				return "";
 			} else {
-				Properties ckanUrls = CKANConfig.getInstance().getUrl();
+				Properties ckanUrls = CKANConfig.getInstance().getConfig();
 				StringBuilder sb = new StringBuilder();
 				sb.append("");
 				for (Object objKey : ckanUrls.keySet()) {

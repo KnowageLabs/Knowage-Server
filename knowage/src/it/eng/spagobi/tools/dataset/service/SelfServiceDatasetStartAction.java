@@ -17,6 +17,17 @@
  */
 package it.eng.spagobi.tools.dataset.service;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.log4j.LogMF;
+import org.apache.log4j.Logger;
+
 import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
@@ -43,17 +54,6 @@ import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.log4j.LogMF;
-import org.apache.log4j.Logger;
 
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
@@ -116,8 +116,8 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 			String cockpitEditActionUrl = buildCockpitEditServiceUrl(executionId);
 			String isFromMyData = (getAttributeAsString("MYDATA") == null) ? "FALSE" : getAttributeAsString("MYDATA");
 			String isFromMyAnalysis = (getAttributeAsString("MYANALYSIS") == null) ? "FALSE" : getAttributeAsString("MYANALYSIS");
-			String isFromDocBrowser = (getAttributeAsString("SBI_ENVIRONMENT") == null) ? "FALSE" : (getAttributeAsString("SBI_ENVIRONMENT")
-					.equals("DOCBROWSER")) ? "TRUE" : "FALSE";
+			String isFromDocBrowser = (getAttributeAsString("SBI_ENVIRONMENT") == null) ? "FALSE"
+					: (getAttributeAsString("SBI_ENVIRONMENT").equals("DOCBROWSER")) ? "TRUE" : "FALSE";
 			String typeDoc = getAttributeAsString("TYPE_DOC");
 			String userCanPersist = userCanPersist();
 			String tableNamePrefix = getTableNamePrefix();
@@ -434,7 +434,7 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 	}
 
 	protected Map<String, String> buildServiceBaseParametersMap() {
-		HashMap<String, String> parametersMap = new HashMap<String, String>();
+		HashMap<String, String> parametersMap = new HashMap<>();
 
 		parametersMap.put("NEW_SESSION", "TRUE");
 
@@ -526,7 +526,7 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 			if (!isAbleTo(SpagoBIConstants.CKAN_FUNCTIONALITY, funcs)) {
 				return "";
 			} else {
-				Properties ckanUrls = CKANConfig.getInstance().getUrl();
+				Properties ckanUrls = CKANConfig.getInstance().getConfig();
 				StringBuilder sb = new StringBuilder();
 				sb.append("");
 				for (Object objKey : ckanUrls.keySet()) {
