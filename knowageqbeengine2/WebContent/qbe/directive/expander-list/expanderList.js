@@ -83,6 +83,22 @@ angular.module('qbe_expander_list', ['ngDraggable'])
                     }
                 }
 
+                scope.checkDescription = function (field){
+            		var desc = "";
+            		for (var i = 0; i < scope.$parent.filters.length; i++) {
+            			if(scope.$parent.filters[i].leftOperandDescription == field.attributes.entity+" : "+field.text){
+            				desc =desc.concat(scope.$parent.filters[i].leftOperandAlias + " "
+            				+scope.$parent.filters[i].operator + " " +scope.$parent.filters[i].rightOperandDescription + "\n") ;
+            			}
+            		}
+            		if(desc==""){
+            			return "No filters"
+            		} else {
+
+            			return desc;
+
+            		}
+                }
 
                 scope.$watch("ngModel", function(newValue, oldValue) {
                     if (scope.colors && scope.ngModel) {

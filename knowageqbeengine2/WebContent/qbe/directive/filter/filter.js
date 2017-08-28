@@ -102,25 +102,7 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 				"booleanConnector": "AND",
 				"deleteButton": false
 			}
-		if($scope.filters.length ==0){
-			$scope.filters.push(object);
-		} else {
-			for (var j = 0; j <  $scope.filters.length; j++) {
-				if($scope.filters[j+1]){
-					if($scope.filters[j].leftOperandValue==$scope.filters[j+1].leftOperandValue){
-
-					} else {
-						if($scope.filters[j].leftOperandValue==object.leftOperandValue){
-							$scope.filters.splice(j+1,0,object);
-							break;
-						}
-					}
-				} else {
-					$scope.filters.push(object);
-					break;
-				}
-			}
-		}
+		$scope.filters.push(object);
 	}
 
 	$scope.deleteFilter = function (filter){
@@ -172,8 +154,8 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 			filter.rightOperandValue=[];
 			filter.rightOperandValue.push(type.id) ;
 			filter.rightOperandType="Field Content";
-			filter.rightOperandDescription=$scope.targetAF.text+" "+": "+type.text;
-			filter.rightOperandLongDescription=$scope.targetAF.text+" "+": "+type.text;
+			filter.rightOperandDescription=type.attributes.entity+" "+": "+type.text;
+			filter.rightOperandLongDescription=type.attributes.entity+" "+": "+type.text;
 			filter.rightOperandAlias=type.text;
 		} else if(value=='subquery'){
 			filter.rightOperandValue.push(type.id);
@@ -181,12 +163,13 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 			filter.rightOperandLongDescription="Subquery "+type.name;
 			filter.rightOperandType="Subquery";
 		} else if(value=='parameter'){
-			filter.hasParam = type.name
+			filter.hasParam = true;
+			filter.paramName = type.name;
 			filter.rightOperandValue.length = 0;
-			filter.rightOperandValue.push(type.name)
-			filter.rightOperandDescription=type.name;
-			filter.rightOperandLongDescription="Parameter "+ type.name;
-			filter.rightOperandType="Parameter";
+			filter.rightOperandValue.push("$P{"+type.name+"}")
+			filter.rightOperandDescription="$P{"+type.name+"}";
+			filter.rightOperandLongDescription="Static Content "+ "$P{"+type.name+"}";
+			filter.rightOperandType="Static Content";
 		} else {
 			filter.rightOperandType="Static Content";
 		}
@@ -254,7 +237,7 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 	}
 
 	$scope.selectChanged = function (entity){
-		$scope.targetOption = "anotherField";
+
 		$scope.targetAF = entity;
 		$scope.entitiesChildren=[];
 		for (var i = 0; i < $scope.targetAF.children.length; i++) {
@@ -272,7 +255,7 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 	$scope.saveFilters=function(){
 		var countParam = 0;
 		for (var i = 0; i < $scope.filters.length; i++) {
-			if($scope.filters[i].rightOperandType=="Parameter"){
+			if($scope.filters[i].hasParam){
 				countParam++;
 			}
 		}
@@ -354,18 +337,8 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 	                               ];5
 	$scope.applyValueOfParameterAndContinuePreviewExecution = function (){
 		$scope.ngModel.queryFilters.length = 0;
-		for (var i = 0; i < $scope.filters.length; i++) {
-			if($scope.filters[i].rightOperandType=="Parameter"){
-				for (var j = 0; j < $scope.pars.length; j++) {
-					if($scope.filters[i].hasParam==$scope.pars[j].name){
-						$scope.filters[i].rightOperandValue.push($scope.pars[j].value);
-						$scope.filters[i].rightOperandLongDescription="Parameter "+$scope.pars[j].value;
-					}
-				}
-			}
-		}
-
-		$scope.ngModel.pars = $scope.pars;
+		$scope.ngModel.pars.length = 0;
+		Array.prototype.push.apply($scope.ngModel.pars, $scope.pars);
 		Array.prototype.push.apply($scope.ngModel.queryFilters, $scope.filters);
 		$scope.ngModel.mdPanelRef.close();
 

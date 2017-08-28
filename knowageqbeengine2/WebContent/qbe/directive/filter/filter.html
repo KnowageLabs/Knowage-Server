@@ -18,7 +18,7 @@
 		        <th md-column ><span>Field</span></th>
 		        <th md-column ><span>Condition</span></th>
 		        <th md-column >Target</th>
-		        <th md-column >Connector</th>
+		      <!-- <th md-column >Connector</th>  -->  
 		        <th md-column ></th>
 		        <th md-column ></th>
 		      </tr>
@@ -45,27 +45,22 @@
 							      	
 						<md-menu-content width="tree.length"  >
 							<md-menu-item ng-repeat="entity in tree">
-						      	<md-button ng-click="selectChanged(entity)">
-						       		<span>{{entity.text}}</span>
-						    	</md-button>
+								<md-menu>
+						      		<md-button ng-mouseenter="openMenu($mdOpenMenu, $event);selectChanged(entity)">
+						       			<span>{{entity.text}}</span>
+						    		</md-button>
+						    		<md-menu-content width="entitiesChildren.length"  >
+						    			<md-menu-item ng-repeat="r in entitiesChildren">
+						    					<md-button  ng-click="fillInput(filter, r, 'field')">
+						       						<span>{{r.text}}</span>
+						    					</md-button>
+						    			</md-menu-item>
+									</md-menu-content>
+								</md-menu>
 							</md-menu-item>
 						</md-menu-content>
 					</md-menu>	
-					<md-menu ng-if="targetOption=='anotherField'" >
-						<md-button 	aria-label="Open menu for setting target type" class="md-icon-button" 
-							ng-click="openMenu($mdMenu.open, $event);" ng-disabled="disableCombo"
-							style="margin-left:2; margin-right:2;">
-						    <md-icon md-menu-origin class="fa fa-angle-down" style="display:inline"></md-icon>
-						</md-button>
-							      	
-						<md-menu-content width="entitiesChildren.length"  >
-							<md-menu-item ng-repeat="r in entitiesChildren">
-						      	<md-button  ng-click="fillInput(filter, r, 'field')">
-						       		<span>{{r.text}}</span>
-						    	</md-button>
-							</md-menu-item>
-						</md-menu-content>
-					</md-menu>
+					
 					
 					<md-menu ng-if="targetOption=='subquery'" >
 						<md-button 	aria-label="Open menu for setting target type" class="md-icon-button" 
@@ -98,11 +93,11 @@
 						</md-menu-content>
 					</md-menu>
 		   		</td>
-		        <td md-cell><md-select ng-model="filter.booleanConnector" >
+		         <!-- <td md-cell><md-select ng-model="filter.booleanConnector" >
 		        	<md-option ng-repeat="c in getBooleanConnectors" value="{{c.value}}"  >
 		            	{{c.name}}
 					</md-option></md-select>
-		        </td>
+		        </td>-->
 		        <td md-cell><md-menu>
 								<md-button 	aria-label="Open menu for setting target type" class="md-icon-button" 
 									ng-click="openMenu($mdMenu.open, $event);"

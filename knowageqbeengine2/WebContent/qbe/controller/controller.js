@@ -196,7 +196,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
         "label": "filters",
         "icon": "fa fa-filter",
         "action": function(item, event) {
-            $scope.ammacool(item, event);
+        	$scope.openFilters(item,$scope.entityModel,$scope.pars, $scope.editQueryObj.filters,$scope.editQueryObj.subqueries);
         }
     }];
 
@@ -223,6 +223,13 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
     $scope.$on('openFilters',function(event,field){
 		$scope.openFilters(field,$scope.entityModel,$scope.pars, $scope.editQueryObj.filters,$scope.editQueryObj.subqueries);
 	})
+	$scope.$on('distinctSelected',function(){
+    	 $scope.editQueryObj.distinct =  !$scope.editQueryObj.distinct;
+    })
+    $scope.$on('isChecked',function(){
+    	 return $scope.editQueryObj.distinct;
+    })
+	
 	$scope.$on('openDialogForParams',function(event){
 		$scope.openDialogForParams($scope.pars);
 	})
@@ -252,6 +259,19 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 	
 	
 	$scope.openFilters = function(field, tree, pars, queryFilters, subqueries) {
+		if(field.hasOwnProperty('attributes')){
+			field_copy = angular.copy(field);
+			field={};
+			field.field = {}
+			field.field.id = field_copy.id;
+			field.field.name = field_copy.text;
+			field.field.entity = field_copy.attributes.entity;
+			field.field.color = field_copy.color;
+			field.field.visible= true;
+			field.field.group= false;
+			field.field.order= 1;
+			field.field.filters= [];
+		}
 		var finishEdit=$q.defer();
 		var config = {
 				attachTo:  angular.element(document.body),

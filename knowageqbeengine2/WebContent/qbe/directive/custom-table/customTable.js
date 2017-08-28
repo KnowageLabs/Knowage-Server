@@ -158,6 +158,12 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate){
 		$rootScope.$broadcast('openDialogForParams');
 	}
 
+	$scope.distinctSelected = function (){
+		$rootScope.$broadcast('distinctSelected');
+	}
+	$scope.isChecked = function (){
+		return $scope.$parent.isChecked;
+	}
 	$scope.showHiddenColumns = function () {
 		for ( var field in $scope.ngModel) {
 			$scope.ngModel[field].hidden = false;
