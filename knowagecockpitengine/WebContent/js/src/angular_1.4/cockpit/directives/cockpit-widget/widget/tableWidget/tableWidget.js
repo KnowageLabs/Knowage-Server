@@ -430,11 +430,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		
 		$scope.getRows = function(values){
+			var dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId);
 			var table = [];
 			if (values != undefined){
 				var headerMap = {};
 				for(var k=0; k<values.metaData.fields.length; k++){
 					var field = values.metaData.fields[k];
+					if(dataset.isRealtime === true){
+						for(var n in $scope.ngModel.content.columnSelectedOfDataset){
+							if($scope.ngModel.content.columnSelectedOfDataset[n].name == field.header){
+								field.header = $scope.ngModel.content.columnSelectedOfDataset[n].aliasToShow;
+								break;
+							}
+						}
+					}
 					if(field.dataIndex){
 						headerMap[field.dataIndex] = field.header;
 					}
