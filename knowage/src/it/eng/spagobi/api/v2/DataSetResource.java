@@ -502,8 +502,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 						values = StringUtils.join(valueList, ",");
 						valuesForQuery = StringUtils.join(valueForQueryList, ",");
 					} else {
-						values = object.toString();
-						values = values.substring(1, values.length() - 1).replace("\"", "'");
+						values = ("\"" + ((JSONArray) object).join("\",\"") + "\"").replace("\"\"", "'").replace("\"", "'");
 						valuesForQuery = values;
 					}
 				} else {
