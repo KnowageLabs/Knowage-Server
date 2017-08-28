@@ -49,7 +49,7 @@ angular.module("cockpitModule").factory("cockpitModule_properties",function(){
 	}
 });
 
-angular.module("cockpitModule").factory("accessibillty_preferences",function(){
+angular.module("cockpitModule").factory("accessibility_preferences",function(){
 	return {
 		accessibilityModeEnabled:<%= isUIOEnabled %>,
 		isUIOEnabled:<%= isUIOEnabled %>,
@@ -159,7 +159,6 @@ angular.module("cockpitModule").factory("cockpitModule_template",function(sbiMod
 				}
 			}
 		}
-			debugger;
 		return template.selections;	
 	}
 	

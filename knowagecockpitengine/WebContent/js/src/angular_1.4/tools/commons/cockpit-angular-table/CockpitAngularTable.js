@@ -306,7 +306,6 @@ angular.module('cockpit_angular_table', ['ngMaterial', 'angularUtils.directives.
                             
                             //check for pagination
                             if(angular.equals(tAttrs.paginationType,"none")){
-                            	debugger;
                             	var repeatAttr=tr.attr("dir-paginate").replace("| itemsPerPage:itemsPerPage","");
                             	tr.attr("ng-repeat",repeatAttr);
                                 tr.removeAttr("dir-paginate");

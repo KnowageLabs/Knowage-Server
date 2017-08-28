@@ -1,11 +1,11 @@
-<nav aria-label="Page navigation" class="enTablePagination">
+<nav aria-label="Page navigation" class="cockpitTablePagination">
     <div class="page-select">
-        <label>Page: </label>
+        <label>{{::translate.load('sbi.cockpit.widgets.table.pagination.page')}}</label>
         <md-select ng-model="settings.page" ng-change="goToPage()">
             <md-option ng-repeat="pages in getTotalPages() track by $index" value="{{$index+1}}">{{$index+1}}</md-option>
         </md-select>
     </div>
-    <div class="label page-position">{{min()}} - {{max()}} of {{model.length}}</div>
+    <div class="label page-position">{{min()}} - {{max()}} {{::translate.load('sbi.cockpit.widgets.table.pagination.of')}} {{settings.rowsCount}}</div>
     <md-button class="md-icon-button" aria-label="Previous" ng-click="previous()" ng-disabled="!hasPrevious()">
         <i class="fa fa-angle-left"></i>
     </md-button>

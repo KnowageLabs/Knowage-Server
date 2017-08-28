@@ -22,7 +22,7 @@ baseScriptPath =baseScriptPath .substring(0, baseScriptPath .lastIndexOf('/'));
 
 (function() {
 	
-var cockpitApp= angular.module("cockpitModule",['ngMaterial','cometd','sbiModule','gridster','file_upload','ngWYSIWYG','angular_table','cockpit_angular_table','color.picker','dndLists','chartRendererModule','accessible_angular_table']);
+var cockpitApp= angular.module("cockpitModule",['ngMaterial','cometd','sbiModule','gridster','file_upload','ngWYSIWYG','angular_table','cockpit_angular_table','color.picker','dndLists','chartRendererModule','accessible_angular_table','cockpitTable']);
 cockpitApp.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.theme('knowage')
     $mdThemingProvider.setDefaultTheme('knowage');
@@ -34,8 +34,8 @@ cockpitApp.config(['$mdThemingProvider', function($mdThemingProvider) {
  
 
 
-cockpitApp.controller("cockpitMasterController",['$scope','cockpitModule_widgetServices','cockpitModule_template','cockpitModule_datasetServices','cockpitModule_documentServices','cockpitModule_crossServices','cockpitModule_nearRealtimeServices','cockpitModule_realtimeServices','cockpitModule_properties','cockpitModule_templateServices','$rootScope','$q','sbiModule_device','accessibillty_preferences',cockpitMasterControllerFunction]);
-function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,cockpitModule_template,cockpitModule_datasetServices,cockpitModule_documentServices,cockpitModule_crossServices,cockpitModule_nearRealtimeServices,cockpitModule_realtimeServices,cockpitModule_properties,cockpitModule_templateServices,$rootScope,$q,sbiModule_device,accessibillty_preferences){
+cockpitApp.controller("cockpitMasterController",['$scope','cockpitModule_widgetServices','cockpitModule_template','cockpitModule_datasetServices','cockpitModule_documentServices','cockpitModule_crossServices','cockpitModule_nearRealtimeServices','cockpitModule_realtimeServices','cockpitModule_properties','cockpitModule_templateServices','$rootScope','$q','sbiModule_device','accessibility_preferences',cockpitMasterControllerFunction]);
+function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,cockpitModule_template,cockpitModule_datasetServices,cockpitModule_documentServices,cockpitModule_crossServices,cockpitModule_nearRealtimeServices,cockpitModule_realtimeServices,cockpitModule_properties,cockpitModule_templateServices,$rootScope,$q,sbiModule_device,accessibility_preferences){
 	$scope.cockpitModule_widgetServices=cockpitModule_widgetServices;
 	$scope.imageBackgroundUrl=cockpitModule_template.configuration.style.imageBackgroundUrl;
 	$scope.cockpitModule_template=cockpitModule_template;

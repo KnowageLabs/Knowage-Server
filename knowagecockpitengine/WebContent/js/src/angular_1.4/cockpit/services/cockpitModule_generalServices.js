@@ -64,8 +64,21 @@ angular.module("cockpitModule").service("cockpitModule_generalServices",function
 				if(sheet.widgets){
 					angular.forEach(sheet.widgets,function(widget){
 						if(widget.type == "table"){
-							if(widget.content){
-								widget.content.currentPageNumber = 0;
+							if(widget.settings){
+								delete widget.settings.backendTotalRows;
+								delete widget.settings.page;
+								delete widget.settings.rowsCount;
+								
+								if(widget.settings.summary){
+									delete widget.settings.summary.forceDisabled;
+									delete widget.settings.summary.row;
+								}
+								
+								if(widget.settings){
+									if(widget.style.tr){
+										delete widget.style.tr["background-color"];
+									}
+								}
 							}
 							widget.search = undefined;
 						}

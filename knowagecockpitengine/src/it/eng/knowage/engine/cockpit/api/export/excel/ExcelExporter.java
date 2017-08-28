@@ -236,8 +236,10 @@ public class ExcelExporter {
 		for (int i = 0; i < rows.length(); i++) {
 			JSONObject row = rows.getJSONObject(i);
 			for (String column : columnMap) {
-				String value = row.getString(column);
-				sb.append(value);
+				String value = row.optString(column);
+				if (value != null) {
+					sb.append(value);
+				}
 				sb.append(CSV_DELIMITER);
 			}
 			sb.append(CSV_LINE_FEED);
@@ -255,8 +257,14 @@ public class ExcelExporter {
 		JSONArray categories = new JSONArray();
 		aggregations.put("categories", categories);
 
-		String sortingColumn = widget.optString("sortingColumn");
-		String sortingOrder = widget.optString("sortingOrder");
+		String sortingColumn = null;
+		String sortingOrder = null;
+		JSONObject settings = widget.optJSONObject("content");
+		if (settings != null) {
+			sortingColumn = settings.optString("sortingColumn");
+			sortingOrder = settings.optString("sortingOrder");
+		}
+
 		boolean isSortingDefined = sortingColumn != null && !sortingColumn.isEmpty() && sortingOrder != null && !sortingOrder.isEmpty();
 		boolean isSortingUsed = false;
 
@@ -339,9 +347,10 @@ public class ExcelExporter {
 	}
 
 	private JSONObject getSummaryRowFromTableWidget(JSONObject widget) throws JSONException {
-		JSONObject style = widget.optJSONObject("style");
-		if (style != null) {
-			if (style.optBoolean("showSummary")) {
+		JSONObject settings = widget.optJSONObject("settings");
+		if (settings != null) {
+			JSONObject summary = settings.optJSONObject("summary");
+			if (summary.optBoolean("enabled")) {
 				JSONObject summaryRow = new JSONObject();
 
 				JSONArray measures = new JSONArray();

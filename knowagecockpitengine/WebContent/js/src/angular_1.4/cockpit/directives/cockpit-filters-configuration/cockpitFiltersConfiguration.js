@@ -129,6 +129,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								for(var j=0;j<$scope.ngModelShared.filters.length;j++){        //filters
 									if($scope.ngModelShared.filters[j].colName==obj.name){
 										filterFound=true;
+										break;
 									}
 								}
 							}
@@ -144,15 +145,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						{       
 							filterFound=false;
 							var f = $scope.ngModelShared.filters[k];
-							for(var l=0;l<$scope.localDSforFilters.metadata.fieldsMeta.length;l++)  //columns
-							{
-								if($scope.localDSforFilters.metadata.fieldsMeta[l].name==f.colName)
-								{
+							for(var l=0;l<$scope.localDSforFilters.metadata.fieldsMeta.length;l++){  //columns
+								if($scope.localDSforFilters.metadata.fieldsMeta[l].name==f.colName){
 									filterFound=true;
+									break;
 								}
 							}
-							if(!filterFound) //if filter is not in columns
-							{
+							if(!filterFound){ //if filter is not in columns
 								$scope.ngModelShared.filters.splice(k,1); //remove filter from filter list
 							}	
 						}

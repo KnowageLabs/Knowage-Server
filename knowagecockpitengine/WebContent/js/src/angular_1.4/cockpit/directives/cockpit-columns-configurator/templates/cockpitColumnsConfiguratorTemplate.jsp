@@ -1,19 +1,26 @@
 <md-content layout-fill>
-    <md-card >	
+    <md-card>
      	<md-card-content layout="row" layout-align="space-around center">
      		<dataset-selector flex ng-model=model.dataset.dsId on-change="resetValue(dsId);"></dataset-selector>  	
 		   	<md-input-container flex class="md-block"> 
-				<md-switch ng-model="model.content.fixedRow" aria-label="Fixed Rows" layout-align="center center">
+				<md-switch ng-model="model.settings.pagination.enabled" aria-label="Fixed rows per page" layout-align="center center">
 					 {{translate.load('sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.fixedrowsperpage')}}
 				</md-switch>
 		     </md-input-container>
 			<md-input-container flex class="md-block"> 
 				<label>{{translate.load('sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.maxrowsnumber')}}</label>
-					<input class="input_class" ng-model="model.content.maxRowsNumber" type="number" ng-disabled="!model.content.fixedRow">
+					<input class="input_class" ng-model="model.settings.pagination.itemsNumber" type="number" ng-disabled="!model.settings.pagination.enabled">
 			</md-input-container>
+			<md-input-container flex class="md-block"> 
+				<md-switch ng-model="model.settings.pagination.frontEnd" aria-label="Frontend pagination" layout-align="center center"
+						ng-disabled="!model.settings.pagination.enabled">
+					 {{translate.load('sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.frontendpagination')}}
+				</md-switch>
+		     </md-input-container>
 		</md-card-content>
 	</md-card>
-	<md-card >	
+	
+	<md-card>
 		<md-card-title>
               <md-card-title-text layout="row">
               		
@@ -28,7 +35,7 @@
         <div layout="row" layout-margin ng-show="!showCircularcolumns.value">
 	        <md-input-container flex="40" class="md-block" ng-show="model.content.columnSelectedOfDataset.length>0">
       			<label>{{translate.load("sbi.cockpit.widgets.table.modalselectioncolumn");}}</label>
-         		<md-select md-option-empty ng-model="model.content.modalselectioncolumn">
+         		<md-select md-option-empty ng-model="model.settings.modalSelectionColumn">
          			<md-option md-option-empty ng-value=""></md-option>
           			<md-option ng-repeat="modalcolumn in model.content.columnSelectedOfDataset" ng-value="modalcolumn.aliasToShow">
                			{{modalcolumn.aliasToShow}}
@@ -37,7 +44,7 @@
 		    </md-input-container>
 		    <md-input-container flex="40" class="md-block">
        			<label>{{translate.load("sbi.cockpit.widgets.table.sorting.column");}}</label>
-          		<md-select ng-model="model.sortingColumn" multiple="false">
+          		<md-select ng-model="model.settings.sortingColumn" multiple="false">
           			<md-option></md-option>
            			<md-option ng-repeat="sortingColumn in local.metadata.fieldsMeta track by $index" ng-value="sortingColumn.alias">
                 			{{sortingColumn.alias}}
@@ -46,7 +53,7 @@
 		    </md-input-container>
 		    <md-input-container flex="20" class="md-block">
        			<label>{{translate.load("sbi.cockpit.widgets.table.sorting.order");}}</label>
-          		<md-select ng-model="model.sortingOrder" ng-disabled="!model.sortingColumn || model.sortingColumn==''">
+          		<md-select ng-model="model.settings.sortingOrder" ng-disabled="!model.settings.sortingColumn || model.settings.sortingColumn==''">
            			<md-option value="ASC">{{translate.load("sbi.cockpit.widgets.table.sorting.asc");}}</md-option>
           			<md-option value="DESC">{{translate.load("sbi.cockpit.widgets.table.sorting.desc");}}</md-option>
        			</md-select>

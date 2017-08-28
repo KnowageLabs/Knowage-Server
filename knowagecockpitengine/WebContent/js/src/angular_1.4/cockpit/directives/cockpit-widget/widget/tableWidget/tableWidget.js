@@ -16,11 +16,6 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * @authors Giovanni Luca Ulivo (GiovanniLuca.Ulivo@eng.it)
- * v0.0.1
- * 
- */
 (function() {
 	angular.module('cockpitModule')
 	.directive('cockpitTableWidget',function(cockpitModule_widgetServices,$mdDialog){
@@ -39,185 +34,187 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						element.ready(function () {
 							scope.initWidget();
 						});
-
-
-
 					}
 				};
 			}
 		}
 	})
-	.directive('mdProgressLinearCustom', function() {
-		return {
-			restrict: 'E',
-			scope: {
-				color: '@',
-				value: '@'
-				
-			},
-			template: '<div class="md-container" style="background-color:grey">' +
-		      '<div class="md-dashed"></div>' +
-		     // '<div class="md-bar md-bar1" ng-style="linearStyle"></div>' +
-		      '<div class="md-bar md-bar1" ng-style="linearStyle"></div>'+
-		      '</div>',
-			link: function(scope) {
-				scope.perc=scope.value+'%';
-				scope.bgColor=scope.color;
-				if(scope.perc>100){ scope.perc=100;}
-				else if(scope.perc<0){ scope.perc=0;}
-				scope.linearStyle={ 'background-color': scope.bgColor , 'width': scope.perc, 'height':'5px'};
-				
-			}
-		}
-	});
-	
 
-	function cockpitTableWidgetControllerFunction($scope,cockpitModule_widgetConfigurator,$mdDialog,$timeout,$mdPanel,$q,cockpitModule_datasetServices, $mdToast, sbiModule_translate,sbiModule_restServices,cockpitModule_widgetServices,cockpitModule_widgetSelection,accessibillty_preferences,$filter,cockpitModule_datasetServices){
-		$scope.accessibillty_preferences = accessibillty_preferences;
-		$scope.accessibilityModeEnabled = $scope.accessibillty_preferences.accessibilityModeEnabled;
+	function cockpitTableWidgetControllerFunction($scope,cockpitModule_widgetConfigurator,$mdDialog,$timeout,$mdPanel,$q,cockpitModule_datasetServices, $mdToast, sbiModule_translate,sbiModule_restServices,cockpitModule_widgetServices,cockpitModule_widgetSelection,accessibility_preferences,$filter,cockpitModule_datasetServices){
+		$scope.accessibilityModeEnabled = accessibility_preferences.accessibilityModeEnabled;
 		if ($scope.ngModel && $scope.ngModel.dataset && $scope.ngModel.dataset.dsId){
 			$scope.isDatasetRealtime = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId).isRealtime;
 		}
-		
 		
 		$scope.selectedTab = {'tab' : 0};
 		$scope.widgetIsInit=false;
 		$scope.totalCount = 0;
 		$scope.translate = sbiModule_translate;
-		$scope.summaryRow = {};
 		$scope.datasetRecords = {};
-		if($scope.ngModel.multiselectable==undefined){
-			$scope.ngModel.multiselectable=false;
+		
+		if(!$scope.ngModel.settings){
+			$scope.ngModel.settings = {};
 		}
-		var scope = $scope;
 		
-		$scope.realtimeSelections = cockpitModule_widgetServices.realtimeSelections;
-		//set a watcher on a variable that can contains the associative selections for realtime dataset
-		var realtimeSelectionsWatcher = $scope.$watchCollection('realtimeSelections',function(newValue,oldValue,scope){
-			if (scope.ngModel && scope.ngModel.dataset && scope.ngModel.dataset.dsId){
-				var widgetDatasetId = scope.ngModel.dataset.dsId;
-				var widgetDataset = cockpitModule_datasetServices.getDatasetById(widgetDatasetId)
-
-				for (var i=0; i< newValue.length; i++){
-					//search if there are selection on the widget's dataset
-					if (newValue[i].datasetId == widgetDatasetId){
-						var selections = newValue[i].selections;
-						//get filter on our dataset
-						if (selections[widgetDataset.label]){
-							var selectionsOfDataset = selections[widgetDataset.label];
-							for (var columnName in selectionsOfDataset) {
-								  if (selectionsOfDataset.hasOwnProperty(columnName)) {
-									  var selectionsValues = selectionsOfDataset[columnName]
-									  for (var z=0 ; z < selectionsValues.length ; z++){
-										  var filterValue = selectionsValues[z]
-										  // clean the value from the parenthesis ( )
-										  filterValue = filterValue.replace(/[()]/g, ''); 
-										  // clean the value from the parenthesis ''
-										  filterValue = filterValue.replace(/['']/g, ''); 
-										  var filterValues = []
-										  filterValues.push(filterValue);
-
-										  //Filtering of the rows
-										  var columnObject = scope.getColumnObjectFromName(scope.ngModel.content.columnSelectedOfDataset,columnName);
-										  //use the aliasToShow to match the filtercolumn name
-										  var filterColumnname = columnObject.aliasToShow;
-										  var columnType = columnObject.fieldType;
-										  scope.itemList = scope.filterRows(scope.itemList,filterColumnname,filterValues,columnType);
-									  }
-								  }
-								}
-						}
-					}
-				}
-			}
-		})
+		if(!$scope.ngModel.settings.backendTotalRows){
+			$scope.ngModel.settings.backendTotalRows = 0;
+		}
 		
+		if(!$scope.ngModel.settings.alternateRows){
+			$scope.ngModel.settings.alternateRows = {'enabled' : false};
+		}
 		
-		if($scope.ngModel.style==undefined){
+		if(!$scope.ngModel.settings.showGrid){
+			$scope.ngModel.settings.showGrid = false;
+		}
+		
+		$scope.ngModel.settings.page = 1;
+		$scope.ngModel.settings.rowsCount = 0;
+		
+		if(!$scope.ngModel.settings.pagination){
+			$scope.ngModel.settings.pagination = {
+					'enabled': true,
+					'itemsNumber': 10,
+					'frontEnd': false
+			};
+		}
+		
+		if($scope.ngModel.settings.multiselectable==undefined){
+			$scope.ngModel.settings.multiselectable=false;
+		}
+		
+		if(!$scope.ngModel.settings.summary){
+			$scope.ngModel.settings.summary={
+					'enabled': false,
+					'forceDisabled': false,
+					'style': {}
+			};
+		}
+		
+		if(!$scope.ngModel.style){
 			$scope.ngModel.style={};
-		};
-		
-		if($scope.ngModel.cross==undefined){
+		}
+				
+		if(!$scope.ngModel.cross){
 			$scope.ngModel.cross={};
-		};
+		}
 		
 		$scope.getKeyByValue = function( obj,value ) {
 		    for( var prop in obj ) {
 		        if( obj.hasOwnProperty( prop ) ) {
-		             if( obj[ prop ] === value )
+		             if( obj[ prop ] === value ){
 		                 return prop;
+		             }
 		        }
 		    }
 		}
 		
-		
-		$scope.tableFunction={
-				widgetStyle:$scope.ngModel.style,			
-		}
-
-		$scope.getGridStyle=function(row,column,index){
-			var ind = $scope.indexInList(column.label, $scope.ngModel.content.columnSelectedOfDataset);
-			var gridStyle = {};
-			//style summary row - returning the column style, if there are summary styles defined they override the default
-			if($scope.ngModel.style.showSummary == true && index == $scope.datasetRecords.rows.length-1){
-				var summaryStyle  = angular.merge({},$scope.ngModel.content.columnSelectedOfDataset[ind].style, $scope.ngModel.style.summary);
-				return summaryStyle;
-			}
-			if($scope.ngModel.style.grid !=undefined && $scope.ngModel.style.showGrid){
-				gridStyle = angular.extend(gridStyle,$scope.ngModel.style.grid);
-			}
-			if($scope.ngModel.style.showAlternateRows){
-				if((index % 2 == 0) && $scope.ngModel.style.alternateRows.evenRowsColor!=undefined ){
-					gridStyle["background"] = $scope.ngModel.style.alternateRows.evenRowsColor;
-				}
-				if((Math.abs(index % 2) == 1) && $scope.ngModel.style.alternateRows.oddRowsColor!=undefined ){
-					gridStyle["background"] = $scope.ngModel.style.alternateRows.oddRowsColor;
-				}
-			}
-			if(ind!=-1 && $scope.ngModel.content.columnSelectedOfDataset[ind].style != undefined){
-				gridStyle = angular.extend({},gridStyle,$scope.ngModel.content.columnSelectedOfDataset[ind].style);
-			}
-			//davverna - overriding this function behaviour, index -99 returns a single item instead of all the style object
-			if(index==-99 && $scope.ngModel.content.columnSelectedOfDataset[ind].style != undefined && $scope.ngModel.content.columnSelectedOfDataset[ind].style.maxChars != undefined){
-				parentGridStyle = angular.extend({},gridStyle,$scope.ngModel.content.columnSelectedOfDataset[ind].style);
-				gridStyle = parentGridStyle.maxChars;
-			}
-			//davverna - if the max chars value setting for the column is not set the default is false
-			if(index==-99 && ($scope.ngModel.content.columnSelectedOfDataset[ind].style == undefined || $scope.ngModel.content.columnSelectedOfDataset[ind].style.maxChars == undefined)){
-				gridStyle = false;
-			}
-			return gridStyle;
+		$scope.tableFunction = {
+				widgetStyle: $scope.ngModel.style
 		}
 		
-		$scope.selectRow=function(row,column,listId,index,evt,columnName){
-			for(var i=0;i<$scope.ngModel.content.columnSelectedOfDataset.length;i++){
-				if($scope.ngModel.content.modalselectioncolumn!=undefined)
-				{
-					if($scope.ngModel.content.columnSelectedOfDataset[i].aliasToShow==$scope.ngModel.content.modalselectioncolumn)
-					{
-						if(Object.prototype.toString.call( row ) === '[object Array]'){
-							var newValue=row[0][$scope.ngModel.content.modalselectioncolumn];
-						}else{
-							var newValue=row[$scope.ngModel.content.modalselectioncolumn];
+		//checking the model version. If is a previous version I create the newer settings.
+		$scope.retroCompatibilityCheckToVersion1 = function() {
+			if($scope.ngModel.version == undefined){
+				var columns = $scope.ngModel.content.columnSelectedOfDataset;
+				for(var k in columns){
+					if(!columns[k].style) columns[k].style = {};
+					if(!columns[k].text) columns[k].text = {"enabled":true};
+					$scope.moveProperty(columns[k], "style.size","style.width");
+					$scope.moveProperty(columns[k], "style.textAlign","style.td['justify-content']");
+					if(columns[k].style.scopefunc && columns[k].scopefunc.condition){
+						columns[k].ranges = [];
+						for(var j in columns[k].scopefunc.condition){
+							var range = {
+									"operator" 	: columns[k].scopefunc.condition[j].condition,
+									"value"		: columns[k].scopefunc.condition[j].value,
+									"icon"		: columns[k].scopefunc.condition[j].icon,
+									"iconColor"	: columns[k].scopefunc.condition[j].color
+							};
+							columns[k].ranges.push(range);
+							
 						}
+					}
+					if(columns[k].visType=='Chart'|| columns[k].visType=='Chart & Text' || columns[k].visType== 'Text & Chart'){
+						columns[k].barchart = {
+								"minValue": columns[k].minValue,
+								"maxValue": columns[k].maxValue,
+								"style": {
+									"background-color": columns[k].chartColor
+								}
+						}
+					}
+				}
+				
+				$scope.deleteProperty($scope.ngModel, "content.currentPageNumber");
+				$scope.deleteProperty($scope.ngModel, "style.disableShowSummary");
+			
+				$scope.moveProperty($scope.ngModel, "style.alternateRows", "settings.alternateRows");
+				$scope.moveProperty($scope.ngModel, "style.showAlternateRows", "settings.alternateRows.enabled");
+				$scope.moveProperty($scope.ngModel, "style.autoRowsHeight", "settings.autoRowsHeight");
+				$scope.moveProperty($scope.ngModel, "content.modalselectioncolumn", "settings.modalSelectionColumn");
+				$scope.moveProperty($scope.ngModel, "multiselectable", "settings.multiselectable");
+				$scope.moveProperty($scope.ngModel, "content.fixedRow", "settings.pagination.enabled");
+				$scope.moveProperty($scope.ngModel, "content.maxRowsNumber", "settings.pagination.itemsNumber");
+				$scope.moveProperty($scope.ngModel, "style.showGrid", "settings.showGrid");
+				$scope.moveProperty($scope.ngModel, "sortingColumn", "settings.sortingColumn");
+				$scope.moveProperty($scope.ngModel, "sortingOrder", "settings.sortingOrder");
+				$scope.moveProperty($scope.ngModel, "style.showSummary", "settings.summary.enabled");
+				$scope.moveProperty($scope.ngModel, "style.rowsHeight", "style.tr.height");
+				
+				$scope.moveProperty($scope.ngModel, "style.grid", "style.td");
+				$scope.moveProperty($scope.ngModel, "style.headerStyle.fontfamily", "style.th.font-family");
+				$scope.moveProperty($scope.ngModel, "style.headerStyle.fontsize", "style.th.font-size");
+				$scope.moveProperty($scope.ngModel, "style.headerStyle.fontweight", "style.th.font-weight");
+				$scope.moveProperty($scope.ngModel, "style.headerStyle.color", "style.th.color");
+				$scope.moveProperty($scope.ngModel, "style.headerStyle.background", "style.th.background-color");
+				$scope.moveProperty($scope.ngModel, "style.headerStyle.textalign", "style.th.text-align");
+				$scope.deleteProperty($scope.ngModel, "style.headerStyle");
+				$scope.moveProperty($scope.ngModel, "style.summary.background", "style.summary.background-color");
+
+				
+				$scope.ngModel.version = 1;
+			}
+		}
+		
+		$scope.retroCompatibilityCheckToVersion1();
+		
+		$scope.selectRow=function(row,column,evt){
+			var newValue = undefined;
+			
+			for(var i=0;i<$scope.ngModel.content.columnSelectedOfDataset.length;i++){
+				if($scope.ngModel.settings.modalSelectionColumn!=undefined)	{
+					if($scope.ngModel.content.columnSelectedOfDataset[i].aliasToShow==$scope.ngModel.settings.modalSelectionColumn)	{
+						if(Object.prototype.toString.call( row ) === '[object Array]'){
+							newValue = [];
+							for(var k in row){
+								newValue.push(row[k][$scope.ngModel.settings.modalSelectionColumn]);
+							}
+						}else{
+							newValue=row[$scope.ngModel.settings.modalSelectionColumn];
+						}
+						break;
 					}
 				}	
 				
-				if(angular.equals($scope.ngModel.content.columnSelectedOfDataset[i].aliasToShow,columnName)){
-					if( (!$scope.ngModel.cross.cross && $scope.ngModel.content.columnSelectedOfDataset[i].fieldType=="MEASURE")
+				if(angular.equals($scope.ngModel.content.columnSelectedOfDataset[i].aliasToShow,column.aliasToShow)){
+					if($scope.ngModel.content.columnSelectedOfDataset[i].fieldType=="MEASURE"
 							|| $scope.ngModel.content.columnSelectedOfDataset[i].isCalculated){
 						return;
-					}	
+					}
+					break;
 				}
 			}
-			
-
-			$scope.doSelection(columnName,column,$scope.ngModel.content.modalselectioncolumn,newValue,row);
-
-			
+			if(Object.prototype.toString.call( row ) === '[object Array]'){
+				var valuesArray = [];
+				for(var k in row){
+					valuesArray.push(row[k][column.aliasToShow]);
+				}
+				$scope.doSelection(column.aliasToShow, valuesArray, $scope.ngModel.settings.modalSelectionColumn, newValue, row);
+			}else{
+				$scope.doSelection(column.aliasToShow, row[column.aliasToShow], $scope.ngModel.settings.modalSelectionColumn, newValue, row);
+			}
 		}
-		
-		
 		
 		$scope.calculatedRow = function(row,column,alias){
 
@@ -260,8 +257,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				return;
 			}
 			if($scope.ngModel
-					&& $scope.ngModel.content
-					&& $scope.ngModel.content.currentPageNumber + 1 == currentPageNumber
+					&& $scope.ngModel.settings.page == currentPageNumber
 					&& $scope.datasetRecords
 					&& $scope.datasetRecords.rows
 					&& $scope.datasetRecords.rows.length == itemsPerPage
@@ -284,12 +280,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						numberOfElement = angular.copy($scope.ngModel.content.maxRowsNumber)
 					}
 					
-					if($scope.ngModel.style.showSummary == true){
+					if($scope.ngModel.settings.summary.enabled){
 						numberOfElement--;
 					}
 					
 					currentPageNumber--;
-					$scope.ngModel.content.currentPageNumber = currentPageNumber;
+					$scope.ngModel.settings.page = currentPageNumber;
 					
 					$scope.columnOrdering = columnOrdering;
 					$scope.reverseOrdering = reverseOrdering;
@@ -308,25 +304,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		};
 		
 		$scope.isMobile = {
-			    Android: function() {
-			        return navigator.userAgent.match(/Android/i);
-			    },
-			    BlackBerry: function() {
-			        return navigator.userAgent.match(/BlackBerry/i);
-			    },
-			    iOS: function() {
-			        return navigator.userAgent.match(/iPhone|iPad|iPod/i);
-			    },
-			    Opera: function() {
-			        return navigator.userAgent.match(/Opera Mini/i);
-			    },
-			    Windows: function() {
-			        return navigator.userAgent.match(/IEMobile/i);
-			    },
-			    any: function() {
-			        return ($scope.isMobile.Android() || $scope.isMobile.BlackBerry() || $scope.isMobile.iOS() || $scope.isMobile.Opera() || $scope.isMobile.Windows());
-			    }
-			};
+		    Android: function() {
+		        return navigator.userAgent.match(/Android/i);
+		    },
+		    BlackBerry: function() {
+		        return navigator.userAgent.match(/BlackBerry/i);
+		    },
+		    iOS: function() {
+		        return navigator.userAgent.match(/iPhone|iPad|iPod/i);
+		    },
+		    Opera: function() {
+		        return navigator.userAgent.match(/Opera Mini/i);
+		    },
+		    Windows: function() {
+		        return navigator.userAgent.match(/IEMobile/i);
+		    },
+		    any: function() {
+		        return ($scope.isMobile.Android() || $scope.isMobile.BlackBerry() || $scope.isMobile.iOS() || $scope.isMobile.Opera() || $scope.isMobile.Windows());
+		    }
+		};
 
 		$scope.canSeeColumnByMobile = function(obj){
 			if(obj!=undefined && (obj.hiddenColumn == true || ($scope.isMobile.any()!=null && obj.hideonMobile == true))){
@@ -334,7 +330,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 			return true;
 		}
-		
 		
 		
 		$scope.freeValueFromPrefixAndSuffix=function(value,currentColumn){
@@ -352,13 +347,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		
 		$scope.refresh=function(element,width,height, datasetRecords,nature){
-			if(nature == 'gridster-resized' || nature == 'fullExpand'){
+			if(nature == 'gridster-resized' || nature == 'fullExpand' || nature == 'resize'){
 				return;
 			}
 			$scope.columnsToShow = [];
-			$scope.datasetRecords = {};
 			$scope.columnToshowinIndex = [];
-			$scope.tableFunction.widgetStyle=$scope.ngModel.style;
+			$scope.tableFunction.widgetStyle = $scope.ngModel.style;
 			$scope.datasetRecords = datasetRecords;
 			var calculateScaleValue=function(minVal, maxVal, val)
 			{
@@ -384,503 +378,43 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				return b;
 			}
 
+			$scope.itemList = $scope.getRows($scope.datasetRecords);
 			
-			
-			
-			
-			
-			if($scope.ngModel.content.columnSelectedOfDataset!=undefined){
-				$scope.datasetRecords  =datasetRecords;
-				for(var i=0;i<$scope.ngModel.content.columnSelectedOfDataset.length;i++)
-				{
-					var obj = {};
-					
-					obj.label= $scope.ngModel.content.columnSelectedOfDataset[i]['aliasToShow'];
-					obj.name = $scope.ngModel.content.columnSelectedOfDataset[i]['aliasToShow'];
-					if(typeof($scope.ngModel.content.columnSelectedOfDataset[i].style) != "undefined" && $scope.ngModel.content.columnSelectedOfDataset[i].style['size']){
-						obj.size = $scope.ngModel.content.columnSelectedOfDataset[i].style['size'];
-					}
-					
-
-					
-					if(angular.equals($scope.ngModel.content.columnSelectedOfDataset[i].fieldType,"MEASURE")){						
-						this.test=i;
-						obj.transformer=function(value,currentRow,columnName)
-						{
-								obj;
-								var currentColumn;
-								for(var j=0;j<$scope.ngModel.content.columnSelectedOfDataset.length;j++)
-								{
-									var column = $scope.ngModel.content.columnSelectedOfDataset[j];
-									if(column.name==columnName || column.alias==columnName || column.aliasToShow==columnName)
-									{						
-										currentColumn=angular.copy(column);
-										break;
-									}	
-								}	
-								
-								var prefix="";
-								var suffix="";
-								var formattedValue=$scope.formatValue(value, currentColumn);
-								var horiz_align=$scope.getCellAlignment(currentColumn)?$scope.getCellAlignment(currentColumn):"center";
-			
-								
-								var valueWithoutPrefixAndSuffix=$scope.freeValueFromPrefixAndSuffix(value,currentColumn);		
-								if(!currentColumn.hasOwnProperty("visType") || currentColumn.visType=='Text')
-								{										
-									return "<span>"+formattedValue+"</span>"	
-								}else{
-								
-								var htm="<div layout='row' layout-align='" + horiz_align + " center'>"; //default
-
-								//find the highest index with != none condition 
-								if(currentColumn.hasOwnProperty('colorThresholdOptions'))
-								{
-									for(var i=0; i<currentColumn.colorThresholdOptions.condition.length;i++) // display only the first alert found (condition respected)
-									{	
-										if(currentColumn.colorThresholdOptions.condition[i]!="none")
-										{
-											
-											if(currentColumn.colorThresholdOptions.condition[i]=="<" && value<currentColumn.colorThresholdOptions.conditionValue[i])
-											{
-												htm="<div layout='row' style='background-color:"+currentColumn.colorThresholdOptions.color[i] +"' layout-align='" + horiz_align + " center'>";
-												break;
-											}
-											else if(currentColumn.colorThresholdOptions.condition[i]==">" && value>currentColumn.colorThresholdOptions.conditionValue[i])
-											{
-												htm="<div layout='row' style='background-color:"+currentColumn.colorThresholdOptions.color[i] +"' layout-align='" + horiz_align + " center'>";
-												break;
-											}
-											else if(currentColumn.colorThresholdOptions.condition[i]=="=" && value==currentColumn.colorThresholdOptions.conditionValue[i])
-											{
-												htm="<div layout='row' style='background-color:"+currentColumn.colorThresholdOptions.color[i] +"' layout-align='" + horiz_align + " center'>";
-												break;
-											}
-											else if(currentColumn.colorThresholdOptions.condition[i]==">=" && value>=currentColumn.colorThresholdOptions.conditionValue[i])
-											{
-												htm="<div layout='row' style='background-color:"+currentColumn.colorThresholdOptions.color[i] +"' layout-align='" + horiz_align + " center'>";
-												break;
-											}
-											else if(currentColumn.colorThresholdOptions.condition[i]=="<=" && value<=currentColumn.colorThresholdOptions.conditionValue[i])
-											{
-												htm="<div layout='row' style='background-color:"+currentColumn.colorThresholdOptions.color[i] +"' layout-align='" + horiz_align + " center'>";
-												break;
-											}
-											else if(currentColumn.colorThresholdOptions.condition[i]=="!=" && value!=currentColumn.colorThresholdOptions.conditionValue[i])
-											{
-												htm="<div layout='row' style='background-color:"+currentColumn.colorThresholdOptions.color[i] +"' layout-align='" + horiz_align + " center'>";
-												break;
-											}
-											
-											
-											
-										}	
-
-									}						
-								}	
-								
-								if(!currentColumn.hasOwnProperty("visType") || currentColumn.visType=='Icon only')
-								{										
-									htm=htm+"<div>&nbsp;</div>"	;
-								}	
-								
-												
-								
-								
-								if(currentColumn.hasOwnProperty("minValue") && currentColumn.hasOwnProperty("maxValue")) // 	MinValue and MaxValue are present only if you have to display a chart
-								{	
-	
-									var minValue=currentColumn.minValue;
-									var maxValue=currentColumn.maxValue;
-									
-									barValue=calculateScaleValue(minValue,maxValue,valueWithoutPrefixAndSuffix);
-									
-									if(currentColumn.visType=='Chart')
-									{	
-
-
-										htm=htm+" <div>&nbsp;</div><md-progress-linear-custom flex  style='padding:0 8px 0 8px; width:"+currentColumn.chartLength +"px' value="+barValue+" color=\""+  currentColumn.chartColor +"\"> </md-progress-linear-custom>"
-									}	
-									else if(currentColumn.visType=='Text & Chart')
-									{
-
-
-
-											htm=htm+"<div class='inlineChartText' flex>"+formattedValue+"</div> &nbsp;  <md-progress-linear-custom flex  style='padding-right:8px;width:"+currentColumn.chartLength +"px' value="+barValue+" color=\""+  currentColumn.chartColor +"\"> </md-progress-linear-custom>"
-
-	
-									}	 
-									else if(currentColumn.visType=='Chart & Text')
-									{
-
-											htm=htm+"<md-progress-linear-custom flex  style='padding-left:8px;width:"+currentColumn.chartLength +"px' value="+barValue+" color=\""+  currentColumn.chartColor +"\"> </md-progress-linear-custom> &nbsp; <div class='inlineChartText' flex>"+formattedValue+"</div>"
-											
-
-									}							
-
-								}
-								if(currentColumn.scopeFunc && currentColumn.scopeFunc.condition){
-									var alreadyPutIcon=false;
-									for(var i=0; i<currentColumn.scopeFunc.condition.length;i++) // display only the first alert found (condition respected)
-									{
-										var lastIter=false;
-										if(i==currentColumn.scopeFunc.condition.length-1){lastIter=true;}
-										
-										var colInfo=currentColumn.scopeFunc.condition[i];
-										if(colInfo.condition!="none")
-										{
-											if(colInfo.condition=='<')
-											{	
-												if(!alreadyPutIcon)
-												{	
-													if(parseFloat(value)<colInfo.value)
-													{	
-														htm=htm+"&nbsp; <md-icon  style='color:"+ currentColumn.scopeFunc.condition[i].iconColor +"'  md-font-icon='"+currentColumn.scopeFunc.condition[i].icon+"'> </md-icon>";
-														alreadyPutIcon=true;
-													}
-													else if(lastIter)
-													{
-														htm=htm+"&nbsp; <md-icon md-font-icon='fa fa-fw'></md-icon>"; //blank icon
-													}	
-												}	
-											}
-											else if(colInfo.condition=='>')
-											{	
-												if(!alreadyPutIcon)
-												{	
-
-													if(parseFloat(value)>colInfo.value)
-													{	
-														htm=htm+"&nbsp; <md-icon  style='color:"+ currentColumn.scopeFunc.condition[i].iconColor +"'  md-font-icon='"+currentColumn.scopeFunc.condition[i].icon+"'> </md-icon>";
-														alreadyPutIcon=true;
-
-													}
-													else if(lastIter)
-													{
-														htm=htm+"&nbsp; <md-icon md-font-icon='fa fa-fw'></md-icon>";
-													}	
-												}	
-											}
-											else if(colInfo.condition=='=')
-											{
-												if(!alreadyPutIcon)
-												{	
-
-													if(parseFloat(value)==colInfo.value)
-													{	
-														htm=htm+"&nbsp; <md-icon  style='color:"+ currentColumn.scopeFunc.condition[i].iconColor +"'  md-font-icon='"+currentColumn.scopeFunc.condition[i].icon+"'> </md-icon>";
-														alreadyPutIcon=true;
-
-													}
-													else if(lastIter)
-													{
-														//htm=htm+"&nbsp; <div style='height:\"24px\"; width:\"24px\";'> </div>";
-														htm=htm+"&nbsp; <md-icon md-font-icon='fa fa-fw'></md-icon>";
-													}	
-												}	
-											}
-											else if(colInfo.condition=='>=')
-											{	
-												if(!alreadyPutIcon)
-												{	
-
-													if(parseFloat(value)>=colInfo.value)
-													{	
-														htm=htm+"&nbsp; <md-icon  style='color:"+ currentColumn.scopeFunc.condition[i].iconColor +"'  md-font-icon='"+currentColumn.scopeFunc.condition[i].icon+"'> </md-icon>";
-														alreadyPutIcon=true;
-
-													}
-													else if(lastIter)
-													{
-														htm=htm+"&nbsp; <md-icon md-font-icon='fa fa-fw'></md-icon>";
-													}	
-												}	
-											}
-											else if(colInfo.condition=='<=')
-											{	
-												if(!alreadyPutIcon)
-												{	
-
-													if(parseFloat(value)<=colInfo.value)
-													{	
-														htm=htm+"&nbsp; <md-icon  style='color:"+ currentColumn.scopeFunc.condition[i].iconColor +"'  md-font-icon='"+currentColumn.scopeFunc.condition[i].icon+"'> </md-icon>";
-														alreadyPutIcon=true;
-
-													}
-													else if(lastIter)
-													{
-														htm=htm+"&nbsp; <md-icon md-font-icon='fa fa-fw'></md-icon>";
-													}	
-												}	
-											}
-											else if(colInfo.condition=='!=')
-											{
-												if(!alreadyPutIcon)
-												{	
-
-													if(parseFloat(value)!=colInfo.value)
-													{	
-														htm=htm+"&nbsp; <md-icon  style='color:"+ currentColumn.scopeFunc.condition[i].iconColor +"'  md-font-icon='"+currentColumn.scopeFunc.condition[i].icon+"'> </md-icon>";
-														alreadyPutIcon=true;
-
-													}
-													else if(lastIter)
-													{
-														//htm=htm+"&nbsp; <div style='height:\"24px\"; width:\"24px\";'> </div>";
-														htm=htm+"&nbsp; <md-icon md-font-icon='fa fa-fw'></md-icon>";
-													}	
-												}	
-											}
-	
-												 
-	
-											//break;
-										}
-									}	
-								}	
-								
-								return htm+"</div>";									
-								}
-						}
-					}else{
-						obj.static=true;
-					}
-					
-					if($scope.ngModel.content.columnSelectedOfDataset[i].isCalculated){
-						obj.customRecordsClass="noClickCursor";
-					}
-					obj.style = $scope.getGridStyle;
-					if($scope.canSeeColumnByMobile($scope.ngModel.content.columnSelectedOfDataset[i].style)){
-						$scope.columnsToShow.push(obj);
-					}
-					if($scope.datasetRecords != undefined){
-						for(var j=1;j<$scope.datasetRecords.metaData.fields.length;j++){
-							var header = $scope.datasetRecords.metaData.fields[j].header;
-							if(header == $scope.ngModel.content.columnSelectedOfDataset[i]['aliasToShow']
-									|| header == $scope.ngModel.content.columnSelectedOfDataset[i]['alias']){
-								$scope.columnToshowinIndex.push($scope.datasetRecords.metaData.fields[j].dataIndex);
-								break;
-							}
-						}
-					}
-
-				}
-				$scope.itemList=$scope.getRows($scope.columnToshowinIndex,$scope.datasetRecords);
-				$scope.tableColumns=$scope.columnsToShow;
-				for(var i=0;i<$scope.tableColumns.length;i++)
-				{
-					$scope.tableColumns[i].hideTooltip=false;
-				}
-				
-				if(datasetRecords !=undefined){
-					$scope.totalCount = datasetRecords.results;
-				}
-
+			if($scope.datasetRecords){
+				$scope.ngModel.settings.backendTotalRows = $scope.datasetRecords.results;
 			}
 		}
-		
-		$scope.formatValue = function (value, column){			
-		
-			var output = value;
-			var precision = 2;  //for default has 2 decimals 
-			if (column.style && column.style.precision >= 0) precision =  column.style.precision;
-			if (column.style && column.style.format){
-		    	switch (column.style.format) {
-		    	case "#.###":
-		    		output = $scope.numberFormat(value, 0, ',', '.'); 
-		    	break;            	
-		    	case "#,###":
-		    		output = $scope.numberFormat(value, 0, '.', ',');
-		    	break;
-		    	case "#.###,##":
-		    		output = $scope.numberFormat(value, precision, ',', '.'); 
-		    	break;
-		    	case "#,###.##":
-		    		output = $scope.numberFormat(value, precision, '.', ',');
-		    		break;
-		    	default:		    		
-		    		break;
-		    	} 
-			}
-		
-	    	return output;
-		}
-		
-		$scope.numberFormat = function (value, dec, dsep, tsep) {
-    		
-  		  if (isNaN(value) || value == null) return value;
-  		 
-  		  value = parseFloat(value).toFixed(~~dec);
-  		  tsep = typeof tsep == 'string' ? tsep : ',';
 
-  		  var parts = value.split('.'), fnums = parts[0],
-  		    decimals = parts[1] ? (dsep || '.') + parts[1] : '';
-
-  		    
-  		  return fnums.replace(/(\d)(?=(?:\d{3})+$)/g, '$1' + tsep) + decimals;
-		}
-
-		//returns the horizontal cell alignment
-		$scope.getCellAlignment = function (column){
-			var align = "";
-			if (column.style && column.style.textAlign){
-				switch (column.style.textAlign)
-	            {
-	               case 'left': align="start";
-	               break;
-	            
-	               case 'right': align="end";
-	               break;
-	            
-	               case 'center': align="center";
-	               break;						           
-	            
-	               default:  align="start";
-	            }
-			}
-			
-			return align;
-		}
 		
-		$scope.getRows = function(indexList, values){
+		$scope.getRows = function(values){
 			var table = [];
-			if($scope.columnToshowinIndex.length >0 && values != undefined){
-				for(var i=0;i<values.rows.length;i++){
+			if (values != undefined){
+				var headerMap = {};
+				for(var k=0; k<values.metaData.fields.length; k++){
+					var field = values.metaData.fields[k];
+					if(field.dataIndex){
+						headerMap[field.dataIndex] = field.header;
+					}
+				}
+				
+				for(var j in values.rows){
 					var obj = {};
-					for(var j=0;j<indexList.length;j++){
-						for(var k=1;k<values.metaData.fields.length;k++){
-							if(indexList[j] == values.metaData.fields[k].dataIndex ){
-								var key=$scope.getKeyByValue(indexList,indexList[j]);
-								var style = $scope.ngModel.content.columnSelectedOfDataset[key].style;
-								//var style = $scope.ngModel.content.columnSelectedOfDataset[k-1].style;
-								//var prefixedField=$scope.ngModel.content.columnSelectedOfDataset[k-1].name;//ADDED
-								var aliasToShow = $scope.ngModel.content.columnSelectedOfDataset[key].aliasToShow
-								obj[aliasToShow] = values.rows[i][indexList[j]];
-
-								
-								if(style!=undefined && style.precision != undefined){
-									
-									// define eclosure
-									Math.round = (function() {
-										var originalRound = Math.round;
-										return function(number, precision) {
-											precision = Math.abs(parseInt(precision)) || 0;
-											var multiplier = Math.pow(10, precision);
-											return (originalRound(number * multiplier) / multiplier);
-										};
-									})();
-
-									var header = obj[values.metaData.fields[k].header];
-									var float = parseFloat(header);
-									var toDo = Math.round(float, style.precision); 
-									obj[values.metaData.fields[k].header] = toDo;
-								}
-								if(style!=undefined && style.prefix !=undefined){
-									obj[values.metaData.fields[k].header] = style.prefix + ' ' + obj[values.metaData.fields[k].header];
-								}
-								if(style!=undefined && style.suffix !=undefined){
-									obj[values.metaData.fields[k].header] = obj[values.metaData.fields[k].header] + ' ' + style.suffix;
-								}
-							}
+					for(var i in values.rows[j]){
+						var header = headerMap[i];
+						if(header){
+							obj[header] = values.rows[j][i];
 						}
 					}
-//					if($scope.ngModel.style.showSummary == true && i == values.rows.length-1){
-//						//the last is summary row
-//						$scope.summaryRow  = angular.copy(obj)
-//					}else{
-						table.push(obj);
-
-//					}
-				}
-			}
-			var dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId)
-			
-			//check if dataset is realtime
-			if (dataset.isRealtime === true){
-				//disable cliccable 
-				$scope.ngModel.cliccable = false;
-				
-				//*** CLIENT SIDE FILTERING ***
-				if ($scope.ngModel.filters){
-					var filters = $scope.ngModel.filters;
-					for (var i=0; i < filters.length ; i++){
-						//check if a filter is specified 
-						if (filters[i].filterVals.length > 0 ){
-							
-							var columnObject = $scope.getColumnObjectFromName($scope.ngModel.content.columnSelectedOfDataset,filters[i].colName);
-							//use the aliasToShow to match the filtercolumn name
-							var filterColumnname = columnObject.aliasToShow;
-							var filterValues =  filters[i].filterVals;
-							var columnType = columnObject.fieldType;
-							table = $scope.filterRows(table,filterColumnname,filterValues,columnType);
-
-						}
-					}
+					table.push(obj);
 				}
 				
-				//*** CLIENT SIDE SORTING ***
-				//sort data using sorting column (if specified)
-				if ($scope.ngModel.sortingColumn){
-					var columns = $scope.ngModel.content.columnSelectedOfDataset;
-					var sortingField = $scope.ngModel.sortingColumn;
-					//search for the corresponding aliasToShow of the sortingColumn
-					for (i = 0; i < columns.length; i++){
-						if (columns[i].name === $scope.ngModel.sortingColumn){
-							sortingField = columns[i].aliasToShow;
-							break;
-						}
-					}
-					var reverse = false;
-					if ($scope.ngModel.sortingOrder === 'DESC'){
-						reverse = true;
-					}
-					table = $filter('orderBy')(table, sortingField, reverse)
-				}				
+				if($scope.ngModel.settings.summary.enabled){
+					var lastIndex = values.rows.length-1;
+					$scope.ngModel.settings.summary.row = table[lastIndex];
+					table.splice(lastIndex,1);
+				}
 			}
-
 			return table;
-		}
-		
-		/**
-		 * Returns the column object that satisfy the original name (not aliasToShow) passed as argument
-		 */
-		$scope.getColumnObjectFromName = function(columnSelectedOfDataset, originalName){
-			for (i = 0; i < columnSelectedOfDataset.length; i++){
-				if (columnSelectedOfDataset[i].name === originalName){
-					return columnSelectedOfDataset[i];
-				}
-			}
-		}
-		
-		/**
-		 * Return only the objects matching the filter
-		 * table: original array of objects
-		 * columnName: specific object property name
-		 * values: array of admissible values
-		 * columnType: type (Measure/Attribute) of the column
-		 */
-		$scope.filterRows = function (table, columnName, values, columnType ){
-			var toReturn = [];
-			for (var i=0; i < table.length ; i++){
-				if (table[i][columnName]){
-					for (var y=0; y < values.length ; y++){
-						//handle Attribute as String and Measure as number
-						if (columnType == 'ATTRIBUTE'){
-							if (table[i][columnName] == values[y]){
-								toReturn.push(table[i]);
-							}
-						} else if (columnType == 'MEASURE'){
-							var columnValue = Number(table[i][columnName]);
-							var filterValue = Number(values[y]);
-							if (columnValue == filterValue){
-								toReturn.push(table[i]);
-							}
-						}
-						
-					}
-				}
-			}
-			return toReturn;
 		}
 
 		$scope.presentInTable = function(table, obj){
@@ -893,7 +427,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return false;
 		}
 		$scope.tableColumns=$scope.ngModel.content.columnSelectedOfDataset;
-		$scope.itemList=[]
+		$scope.itemList=[];
 
 		$scope.showAction = function(text) {
 			var toast = $mdToast.simple()
@@ -910,7 +444,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 				}
 			});
-		} 
+		}
+		
 		$scope.init=function(element,width,height){
 			$scope.refreshWidget();
 			$timeout(function(){
@@ -918,23 +453,52 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			},500);
 			
 		}
+		
+		$scope.getColumns =function(newValues){
+			var columns = newValues ? newValues : $scope.ngModel.content.columnSelectedOfDataset;
+			for(var k in columns){
+				if(columns[k].visType == "Text" || !columns[k].visType) {
+					delete columns[k].barchart;
+					if(!columns[k].text || !columns[k].text.enabled){
+						columns[k].text = {"enabled":true};
+					}
+				}else if(columns[k].visType == "Chart") {
+					if(!columns[k].barchart.enabled) columns[k].barchart.enabled=true;
+					columns[k].barchart.maxValue = columns[k].barchart.maxValue ? columns[k].barchart.maxValue : 100;
+					delete columns[k].text;
+				}else if(columns[k].visType == "Text & Chart") {
+					if(!columns[k].barchart || !columns[k].barchart.enabled) columns[k].barchart = {'enabled':true};
+					columns[k].barchart.maxValue = columns[k].barchart.maxValue ? columns[k].barchart.maxValue : 100;
+					if(!columns[k].text || !columns[k].text.enabled) columns[k].text = {"enabled":true};
+				}
+			}
+		}
+		
+		$scope.$watchCollection('ngModel.content.columnSelectedOfDataset',function(newValue,oldValue){
+			$scope.getColumns(newValue);
+		})
+		
 		$scope.getOptions =function(){
 			var obj = {};
-//			if($scope.ngModel.content.fixedRow == true && $scope.ngModel.content.maxRowsNumber != undefined){
 				
-				obj["page"] = $scope.ngModel.content.currentPageNumber ? $scope.ngModel.content.currentPageNumber : 0;
-				obj["itemPerPage"] = $scope.ngModel.content.maxRowsNumber;
-				if($scope.ngModel.style.showSummary == true){
-					obj["itemPerPage"]--;
-				}
-				if($scope.columnOrdering){
-					obj["columnOrdering"] = $scope.columnOrdering;
-				}
-				if($scope.reverseOrdering){
-					obj["reverseOrdering"] = $scope.reverseOrdering;
-				}
-				obj["type"] = $scope.ngModel.type;
-//			}
+			if(!$scope.ngModel.settings.pagination.enabled || $scope.ngModel.settings.pagination.frontEnd){
+				obj["page"] = -1;
+				obj["itemPerPage"] = -1;
+			}else{
+				obj["page"] = $scope.ngModel.settings.page ? $scope.ngModel.settings.page - 1 : 0;
+				obj["itemPerPage"] = $scope.ngModel.settings.pagination ? $scope.ngModel.settings.pagination.itemsNumber : -1;
+			}
+
+			if($scope.columnOrdering){
+				obj["columnOrdering"] = $scope.columnOrdering;
+			}
+			
+			if($scope.reverseOrdering){
+				obj["reverseOrdering"] = $scope.reverseOrdering;
+			}
+
+			obj["type"] = $scope.ngModel.type;
+
 			return obj;
 			
 		}
@@ -983,7 +547,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					focusOnOpen: true,
 					preserveScope: true,
 					autoWrap:false,
-					locals: {finishEdit:finishEdit,originalModel:$scope.ngModel, getMetadata : $scope.getMetadata,scopeFather : $scope},
+					locals: {finishEdit: finishEdit, originalModel: $scope.ngModel, getMetadata: $scope.getMetadata, scopeFather: $scope},
 					
 			};
 
@@ -991,21 +555,54 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			
 			return finishEdit.promise;
 		}
+		
+		$scope.$watch('ngModel.settings.pagination.frontEnd', function(newValue, oldValue) {
+			if(newValue != undefined){
+				if(newValue){ // deregistering backend watchers
+					if($scope.watchPagingForBackend){
+						$scope.watchPagingForBackend();
+					}
+					
+					if($scope.watchSortingForBackend){
+						$scope.watchSortingForBackend();
+					}					
+				}else{ // registering backend watchers
+					$scope.watchPagingForBackend = $scope.$watch('ngModel.settings.pagination.enabled + "," + ngModel.settings.pagination.itemsNumber + "," + ngModel.settings.page', function(newValue, oldValue) {
+						if(newValue != undefined && newValue != oldValue){
+							$scope.refreshWidget();
+						}
+					});
+					
+					$scope.watchSortingForBackend = $scope.$watch('ngModel.settings.sortingColumn + "," + ngModel.settings.sortingOrder', function(newValue, oldValue) {
+						if(newValue != undefined && newValue != oldValue && newValue.indexOf(",") > 0 && newValue.indexOf(",") < newValue.length - 1){
+							$scope.refreshWidget();
+						}
+					});
+				}
+			}
+		});
 	};
 
 	function tableWidgetEditControllerFunction($scope,finishEdit,sbiModule_translate,$mdDialog,originalModel,mdPanelRef,getMetadata,scopeFather,$mdToast){
 		$scope.translate=sbiModule_translate;
+		
 		$scope.fontFamily = ["Inherit","Roboto","Arial","Times New Roman","Tahoma","Verdana","Impact","Calibri","Cambria","Georgia","Gungsuh"],
+		
 		$scope.fontWeight = ['normal','bold','bolder','lighter','initial','inherit'];
+		
 		$scope.textAlign = ['left','right','center'];
+		
 		$scope.getMetadata = getMetadata;
+		
 		$scope.model = {};
 		angular.copy(originalModel,$scope.model);
-		console.log("originalModel:", originalModel);
 		
 		$scope.colorPickerProperty={format:'rgb', placeholder:sbiModule_translate.load('sbi.cockpit.color.select')};
-		$scope.colorPickerPropertyEvenOddRows = {placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb',disabled:!$scope.model.style.showAlternateRows};
-		$scope.colorPickerPropertyGrid = {placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb',disabled:!$scope.model.style.showGrid};
+		
+		$scope.colorPickerPropertyEvenOddRows = {placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb',disabled:!$scope.model.settings.alternateRows.enabled};
+		
+		$scope.colorPickerPropertyGrid = {placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb',disabled:!$scope.model.settings.showGrid};
+		
 		$scope.saveConfiguration=function(){
 			if($scope.model.dataset == undefined || $scope.model.dataset.dsId == undefined ){
 				$scope.showAction($scope.translate.load('sbi.cockpit.table.missingdataset'));
@@ -1026,20 +623,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			angular.copy($scope.model,originalModel);
 			mdPanelRef.close();
 			mdPanelRef.destroy();
-			var options = {page:0, itemPerPage:$scope.model.content.maxRowsNumber-1, columnOrdering:undefined, reverseOrdering:undefined};
-			scopeFather.refreshWidget(options);
+
+			if(!scopeFather.ngModel.isNew){
+				scopeFather.refreshWidget();
+			}
 			$scope.$destroy();
 			if($scope.model.content.columnSelectedOfDataset == undefined || $scope.model.content.columnSelectedOfDataset.length==0){
 				$scope.showAction($scope.translate.load('sbi.cockpit.table.nocolumns'));
 			}
 			finishEdit.resolve();
 		}
+		
 		$scope.enableAlternate = function(){
-			$scope.colorPickerPropertyEvenOddRows['disabled'] = $scope.model.style.showAlternateRows;
+			$scope.colorPickerPropertyEvenOddRows['disabled'] = $scope.model.settings.alternateRows.enabled;
 		}
-		$scope.enableGrid =  function(){
-			$scope.colorPickerPropertyGrid['disabled'] = $scope.model.style.showGrid;
+		
+		$scope.enableGrid = function(){
+			if($scope.model.settings.showGrid){
+				delete $scope.model.style.td['border-color'];
+				delete $scope.model.style.td['border-width'];
+				delete $scope.model.style.td['border-style'];
+			}
+			$scope.colorPickerPropertyGrid['disabled'] = $scope.model.settings.showGrid;
+			
 		}
+		
 		$scope.checkAggregation = function(){
 			var measures =0;
 			var noneAggr =0;
@@ -1059,6 +667,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 			return true;
 		}
+		
 		$scope.checkAliases = function(){
 			var columns = $scope.model.content.columnSelectedOfDataset;
 			for(var i = 0; i < columns.length - 1; i++){
@@ -1070,42 +679,39 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 			return true;
 		}
+		
 		$scope.showAction = function(text) {
 			var toast = $mdToast.simple()
-			.content(text)
-			.action('OK')
-			.highlightAction(false)
-			.hideDelay(3000)
-			.position('top')
+					.content(text)
+					.action('OK')
+					.highlightAction(false)
+					.hideDelay(3000)
+					.position('top')
 
 			$mdToast.show(toast).then(function(response) {
-
 				if ( response == 'ok' ) {
-
-
 				}
 			});
 		}
+		
 		$scope.cancelConfiguration=function(){
 			mdPanelRef.close();
 			mdPanelRef.destroy();
 			$scope.$destroy();
 			finishEdit.reject();
-		
 		}
 
 		$scope.canSeeGrid = function(){
 			if($scope.model!=undefined){
-				return $scope.model.style.showGrid;
+				return $scope.model.settings.showGrid;
 			}else{
 				return false;
 			}
 		}
 
 		$scope.canSeeSummary = function(){
-
-			if($scope.model!=undefined){
-				return $scope.model.style.showSummary;
+			if($scope.model && $scope.model.settings && $scope.model.settings.summary){
+				return $scope.model.settings.summary.enabled;
 			}else{
 				return false;
 			}
@@ -1121,13 +727,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					}
 				}
 			}
-			$scope.model.style.disableShowSummary = disableShowSummary;
+			$scope.model.settings.summary.forceDisabled = disableShowSummary;
 			if(disableShowSummary){
-				$scope.model.style.showSummary = false;
+				$scope.model.settings.summary.enabled = false;
 			}
 		});
 	}
-//	this function register the widget in the cockpitModule_widgetConfigurator factory
+	
+	// this function register the widget in the cockpitModule_widgetConfigurator factory
 	addWidgetFunctionality("table",{'initialDimension':{'width':20, 'height':20},'updateble':true,'cliccable':true});
 
 })();

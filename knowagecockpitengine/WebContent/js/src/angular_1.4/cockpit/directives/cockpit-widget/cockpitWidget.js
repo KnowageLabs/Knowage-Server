@@ -122,7 +122,7 @@ angular.module('cockpitModule')
 		 
 	}
 })
-.directive('cockpitWidget',function(cockpitModule_widgetConfigurator,cockpitModule_widgetServices,$compile,cockpitModule_widgetSelection,$rootScope,cockpitModule_datasetServices){
+.directive('cockpitWidget',function(cockpitModule_widgetConfigurator,cockpitModule_widgetServices,$compile,cockpitModule_widgetSelection,$rootScope){
 	   return{
 		   templateUrl: baseScriptPath+ '/directives/cockpit-widget/templates/cockpitWidget.html',
 		   controller: cockpitWidgetControllerFunction,
@@ -140,18 +140,8 @@ angular.module('cockpitModule')
                     	// init the widget
                     	element.ready(function () {
                     		var objType=cockpitModule_widgetConfigurator[scope.ngModel.type.toLowerCase()];
-                    		var dataset; 
-                    		if (scope.ngModel.dataset){
-                        		dataset = cockpitModule_datasetServices.getDatasetById(scope.ngModel.dataset.dsId)
-                    		}
-
                     		scope.updateble=objType.updateble==undefined? true : objType.updateble;
-                    		//if the dataset is realtime disable the cliccable icon in the toolbar
-                    		if (dataset != null && dataset.isRealtime){
-                        		scope.cliccable= false;
-                    		} else {
-                        		scope.cliccable=objType.cliccable==undefined? true : objType.cliccable;
-                    		}
+                    		scope.cliccable=objType.cliccable==undefined? true : objType.cliccable;
                     		if(objType!=undefined){
                     			var directive = document.createElement("cockpit-"+scope.ngModel.type.toLowerCase()+"-widget" );
                     			var content=element[0].querySelector("md-card-content");
@@ -170,23 +160,22 @@ angular.module('cockpitModule')
                     	scope.initializeWidgetProperty=function(directive){
                     		
                     		scope.initWidget=function(){
-                    			var initOnFinish = scope.ngModel.isNew == true ? true : false;
-                    			scope.ngModel.isNew = undefined;
+                    			var initOnFinish = scope.ngModel.isNew == true;
                     			if(initOnFinish){
                     				scope.doEditWidget(initOnFinish).then(function(){
-                    					var options =scope.getOptions == undefined? {} :  scope.getOptions();
+                    					scope.ngModel.isNew = undefined;
+                    					var options = scope.getOptions == undefined? {} :  scope.getOptions();
                     					cockpitModule_widgetServices.initWidget(angular.element(directive),scope.ngModel,options);
                     				},function(){
                     					scope.deleteWidget(true);
-                    				})
+                    				});
                     			}else{
-                    				var options =scope.getOptions == undefined? {} :  scope.getOptions();
+                    				scope.ngModel.isNew = undefined;
+                    				var options = scope.getOptions == undefined? {} :  scope.getOptions();
                 					cockpitModule_widgetServices.initWidget(angular.element(directive),scope.ngModel,options);
                     			}
-                    				
-                    			
-                    				
                     		};
+                    		
                     		scope.refreshWidget=function(options,nature){
                     			var finOptions=options==undefined? (scope.getOptions == undefined? {} :  scope.getOptions()) : options;
                     			cockpitModule_widgetServices.refreshWidget(angular.element(directive),scope.ngModel,nature==undefined? 'refresh' : nature, finOptions);
@@ -226,16 +215,6 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 			$scope.widgetActionButtonsVisible=false;
 		}
 	}
-	//disable cliccable for real time dataset
-	if ($scope.ngModel.dataset){
-		var widgetDataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId)
-		if (widgetDataset.isRealtime){
-			$scope.ngModel.cliccable = false;
-		}
-	}
-
-
-
 	
 	// davverna - initializing search object to give all the columns to the user searchbar
 	if($scope.ngModel.type.toLowerCase() == "table" && (!$scope.ngModel.search || $scope.ngModel.search.columns == [])){
@@ -326,7 +305,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 			$scope.scopeInit(config.element,config.width,config.height, config.data,config.nature,config.associativeSelection);
 			break;
 		case "RESIZE" :
-			$scope.refreshWidget(undefined, 'resize');
+			//$scope.refreshWidget(undefined, 'resize');
 			break; 
 		case "WIDGET_SPINNER" :
 			if(config.show){
@@ -786,9 +765,9 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 	
 	
 	$scope.expandWidget=function(){
-		if($scope.ngModel.type == "table"){
-			$scope.$root.$broadcast("WIDGET_EVENT"+$scope.ngModel.id,"WIDGET_SPINNER",{show:true});
-		}
+//		if($scope.ngModel.type == "table"){
+//			$scope.$root.$broadcast("WIDGET_EVENT"+$scope.ngModel.id,"WIDGET_SPINNER",{show:true});
+//		}
 		
 		if(angular.element($scope.cockpitWidgetItem[0].firstElementChild).hasClass("fullScreenWidget")){
 			cockpitModule_widgetServices.setFullPageWidget(false);
@@ -819,6 +798,64 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 		
 		$scope.refreshWidget(undefined,'fullExpand');
 	};
+	
+	$scope.getProperties = function(propertyPath) {
+		propertyPath = propertyPath.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties
+		propertyPath = propertyPath.replace(/^\./, '');           // strip a leading dot
+	    return propertyPath.split('.');
+	}
+	
+	$scope.getPropertyValue = function(obj, propertyPath) {
+	    var properties = $scope.getProperties(propertyPath);
+	    for (var i = 0; i < properties.length; ++i) {
+	        var property = properties[i];
+	        if (property in obj) {
+	        	obj = obj[property];
+	        }else{
+	        	return;
+	        }
+	    }
+	    return obj;
+	}
+	
+	$scope.setPropertyValue = function(obj, propertyPath, value) {
+		var properties = $scope.getProperties(propertyPath);
+		var lastIndex = properties.length - 1;
+		var lastProperty = properties[lastIndex];
+	    for (var i = 0; i < properties.length - 1; ++i) {
+	        var property = properties[i];
+	        if (property in obj == false) {
+	        	obj[property] = {};
+	        }
+	        obj = obj[property];
+	    }
+	    obj[lastProperty] = value;
+	}
+	
+	$scope.deleteProperty = function(obj, propertyPath) {
+		var properties = $scope.getProperties(propertyPath);
+		var lastIndex = properties.length - 1;
+		var lastProperty = properties[lastIndex];
+		if(lastIndex > 0){
+			properties.splice(lastIndex,1);
+			obj = $scope.getPropertyValue(obj, properties.join("."));
+		}
+		if(obj){
+			delete obj[lastProperty];
+			return true;
+		}
+		return false;
+	}
+	
+	$scope.moveProperty = function(obj, srcPath, dstPath){
+		var value = $scope.getPropertyValue(obj, srcPath);
+		if(value != undefined){
+			$scope.deleteProperty(obj, srcPath);
+			$scope.setPropertyValue(obj, dstPath, value);
+			return true;
+		}
+		return false;
+	}
 };
 
 })();

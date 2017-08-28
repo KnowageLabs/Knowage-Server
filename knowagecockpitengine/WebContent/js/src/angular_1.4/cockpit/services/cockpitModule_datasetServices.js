@@ -6,16 +6,6 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 	
 	this.isDatasetFromTemplateLoaded = false;
 	
-	this.isDatasetRealtime = function(id){
-		if (ds.datasetList && ds.datasetList.length > 0 ){
-			for ( var i=0; i<ds.datasetList.length ; i++){
-				if(ds.datasetList[i].id.dsId == id){
-					return ds.datasetList[i].isRealtime;
-				}
-			}
-		}
-	}
-	
 	this.loadDatasetsFromTemplate=function(){
 		var def=$q.defer();
 		if(!ds.isDatasetFromTemplateLoaded){
@@ -506,7 +496,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		var aggregation = cockpitModule_widgetSelection.getAggregation(ngModel,dataset,columnOrdering, reverseOrdering);
 		
 		// apply sorting column & order
-		if(ngModel.sortingColumn && ngModel.sortingColumn!=""){
+		if(ngModel.settings && ngModel.settings.sortingColumn && ngModel.settings.sortingColumn!=""){
 			var isSortingAlreadyDefined = false;
 			
 			// check if a sorting order is alredy defined on categories
@@ -535,8 +525,8 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				// apply sorting order on categories
 				for(var i=0; i<aggregation.categories.length; i++){
 					var category = aggregation.categories[i];
-					if(category.columnName == ngModel.sortingColumn && category.orderType == ""){
-						category.orderType = ngModel.sortingOrder;
+					if(category.columnName == ngModel.settings.sortingColumn && category.orderType == ""){
+						category.orderType = ngModel.settings.sortingOrder;
 						isSortingApplied = true;
 						break;
 					}
@@ -546,8 +536,8 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				if(!isSortingApplied){
 					for(var i=0; i<aggregation.measures.length; i++){
 						var measure = aggregation.measures[i];
-						if(measure.columnName == ngModel.sortingColumn && measure.orderType == ""){
-							measure.orderType = ngModel.sortingOrder;
+						if(measure.columnName == ngModel.settings.sortingColumn && measure.orderType == ""){
+							measure.orderType = ngModel.settings.sortingOrder;
 							isSortingApplied = true;
 							break;
 						}
@@ -557,10 +547,10 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				// add a new category if necessary
 				if(!isSortingApplied){
 					var newCategory = {
-							alias : ngModel.sortingColumn,
-							columnName : ngModel.sortingColumn,
-							id : ngModel.sortingColumn,
-							orderType : ngModel.sortingOrder
+							alias : ngModel.settings.sortingColumn,
+							columnName : ngModel.settings.sortingColumn,
+							id : ngModel.settings.sortingColumn,
+							orderType : ngModel.settings.sortingOrder
 					}
 					aggregation.categories.push(newCategory);
 				}
@@ -582,15 +572,18 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		.replace(/'/g,"%27")
 		.replace(/"/g,"%22");
 		params =  "?aggregations=" +aggr+"&parameters="+par;
-		if(page !=undefined && itemPerPage !=undefined){
-			params=params+"&offset="+(page*itemPerPage)+"&size="+itemPerPage;
+		
+		if(page!=undefined && page>-1 && itemPerPage!=undefined && itemPerPage>-1){
+			params = params + "&offset=" + (page * itemPerPage) + "&size=" + itemPerPage;
+		}else{
+			params = params + "&offset=-1&size=-1";
 		}
 
-		if(ngModel.style !=undefined && ngModel.style.showSummary ==true){
-			var summaryrow = encodeURIComponent(JSON.stringify(ds.getSummaryRow(ngModel)))
+		if(ngModel.settings && ngModel.settings.summary.enabled){
+			var summaryRow = encodeURIComponent(JSON.stringify(ds.getSummaryRow(ngModel)))
 				.replace(/'/g,"%27")
 				.replace(/"/g,"%22");
-			params =  params+"&summaryRow=" +summaryrow;
+			params =  params+"&summaryRow=" +summaryRow;
 		}
 
 		if(dataset.useCache==false){
@@ -704,7 +697,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		var measures = [];
 		var columns = ngModel.content.columnSelectedOfDataset;
 		
-		if(columns != undefined){
+		if(columns){
 			//create aggregation
 			for(var i=0;i<columns.length;i++){
 				var col = columns[i];
@@ -990,10 +983,14 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					
 					angular.copy(rows, $scope.cockpitAutodetectFilteredRows);
 				}
-
+				
 				var datasetNames = {};
 				angular.forEach(datasets,function(item){
-					this[item.label] = ds.getDatasetParameters(item.id.dsId);
+					var params = {};
+					angular.forEach(item.parameters,function(parameter){
+						this[parameter.name] = (parameter.value ? parameter.value : parameter.defaultValue);
+					},params);
+					this[item.label] = params;
 				},datasetNames);
 				
 				var payload = JSON.stringify(datasetNames);

@@ -10,7 +10,6 @@
 					pre: function preLink(scope, element, attrs, ctrl, transclud) {
 					},
 					post: function postLink(scope, element, attrs, ctrl, transclud) {
-
 					}
 				};
 			}
@@ -22,28 +21,35 @@
 		$scope.cockpitModule_generalOptions=cockpitModule_generalOptions;
 		$scope.availableDatasets=cockpitModule_datasetServices.getAvaiableDatasets();
 
-		if(!$scope.model.content.modalselectioncolumn){
-			$scope.model.content.modalselectioncolumn="";
+		if(!$scope.model.settings.modalSelectionColumn){
+			$scope.model.settings.modalSelectionColumn="";
 		}
 		
-		if(!$scope.model.sortingColumn){
-			$scope.model.sortingColumn = undefined;
-		}
-		if(!$scope.model.sortingOrder){
-			$scope.model.sortingOrder = "ASC";
+		if(!$scope.model.settings.sortingColumn){
+			$scope.model.settings.sortingColumn = undefined;
 		}
 		
-		$scope.selectedColumn;
+		if(!$scope.model.settings.sortingOrder){
+			$scope.model.settings.sortingOrder = "ASC";
+		}
+		
+		$scope.selectedColumn = undefined;
+		
 		$scope.lastId = -1;
-		if($scope.model.dataset == undefined){
-			$scope.model.dataset = {};
-		}
+
 		if($scope.model.dataset && $scope.model.dataset.dsId){
 			$scope.local = cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId);
 		}
+		
 		$scope.showCircularcolumns = {value :false};
+		
 		$scope.resetValue = function(dsId){
-			$scope.lastId = $scope.model.dataset.dsId;
+			if($scope.model.dataset && $scope.model.dataset.dsId){
+				$scope.lastId = $scope.model.dataset.dsId;
+			}else{
+				$scope.model.dataset = {};
+			}
+			
 			if($scope.lastId==-1 || $scope.lastId!=dsId){
 				$scope.showCircularcolumns = {value : true};
 				$scope.safeApply();
@@ -66,7 +72,7 @@
 				}else{
 					$scope.model.content.columnSelectedOfDataset = [];
 				}
-				$scope.model.sortingColumn = undefined;
+				$scope.model.settings.sortingColumn = undefined;
 			}	
 		}
 
@@ -78,49 +84,47 @@
 		$scope.colorPickerProperty={format:'rgb'}
 
 
-		$scope.actionsOfCockpitColumns = [
-		                                  {
-		                                	  icon:'fa fa-calculator' ,   
-		                                	  action : function(item,event) {
-		                                		  $scope.addNewCalculatedField(item);
-		                                	  },
-		                                	  visible : function(row,column) {
-		                                		  if(row.isCalculated){
-		                                			  return true;
-		                                		  }
-		                                		  return false;
-		                                	  }
-		                                  } ,
-		                                  {
-		                                	  icon:'fa fa-sliders' ,   
-		                                	  action : function(item,event) {
-		                                		  $scope.addSummaryInfo(item);
-		                                	  },
-		                                	  visible : function(row,column) {
-		                                		  if(row.fieldType == "MEASURE"){
-		                                			  return true;
-		                                		  }
-		                                		  return false;
-		                                	  }
-		                                  } ,
-		                                  {
-		                                	  icon:'fa fa-trash' ,   
-		                                	  action : function(item,event) {	
-//		                                		  var confirm = $mdDialog.confirm();
-
-//		                                		  confirm.title("Are you sure..?")
-//		                                		  confirm.content("This item will be removed")
-//		                                		  confirm.ariaLabel('delete column')
-//		                                		  confirm.ok("YES")
-//		                                		  confirm.cancel("NO");
-//		                                		  $mdDialog.show(confirm).then(function() {
-		                                		  var index=$scope.model.content.columnSelectedOfDataset.indexOf(item);
-		                                		  $scope.model.content.columnSelectedOfDataset.splice(index,1);
-//		                                		  }, function() {
-//		                                		  });
-		                                	  }
-		                                  } 
-		                                  ];
+		$scope.actionsOfCockpitColumns = [{
+	    	  icon:'fa fa-calculator' ,   
+	    	  action : function(item,event) {
+	    		  $scope.addNewCalculatedField(item);
+	    	  },
+	    	  visible : function(row,column) {
+	    		  if(row.isCalculated){
+	    			  return true;
+	    		  }
+	    		  return false;
+	    	  }
+	      } ,
+	      {
+	    	  icon:'fa fa-sliders' ,   
+	    	  action : function(item,event) {
+	    		  $scope.addSummaryInfo(item);
+	    	  },
+	    	  visible : function(row,column) {
+	    		  if(row.fieldType == "MEASURE"){
+	    			  return true;
+	    		  }
+	    		  return false;
+	    	  }
+	      } ,
+	      {
+	    	  icon:'fa fa-trash' ,   
+	    	  action : function(item,event) {	
+	//		                                		  var confirm = $mdDialog.confirm();
+	
+	//		                                		  confirm.title("Are you sure..?")
+	//		                                		  confirm.content("This item will be removed")
+	//		                                		  confirm.ariaLabel('delete column')
+	//		                                		  confirm.ok("YES")
+	//		                                		  confirm.cancel("NO");
+	//		                                		  $mdDialog.show(confirm).then(function() {
+	    		  var index=$scope.model.content.columnSelectedOfDataset.indexOf(item);
+	    		  $scope.model.content.columnSelectedOfDataset.splice(index,1);
+	//		                                		  }, function() {
+	//		                                		  });
+	    	  }
+	      }];
 		$scope.metadataTableColumns=[
 		                             {
 		                            	 label:"  ",
@@ -194,7 +198,7 @@
 		                            	 "name":" ",
 		                            	 transformer:function(row,column,index){
 
-		                            		 var temp = '<md-button class="md-icon-button" style="background:{{row.style.background}}" ng-click="scopeFunctions.draw(row,column,index)">'
+		                            		 var temp = '<md-button class="md-icon-button" style="background:{{row.style[\'background-color\']}}" ng-click="scopeFunctions.draw(row,column,index)">'
 		                            			 +'<md-icon style="color:{{row.style.color}}" md-font-icon="fa fa-paint-brush" aria-label="Paintbruh"></md-icon>'
 		                            			 +'</md-button>'
 
@@ -206,66 +210,61 @@
 		                             ];
 
 
-		$scope.functionsCockpitColumn={ 
-				translate:sbiModule_translate,
-				moveUp: function(evt,index){
-					$scope.model.content.columnSelectedOfDataset.splice(index-1, 0, $scope.model.content.columnSelectedOfDataset.splice(index, 1)[0]);
-
-				},
-				moveDown: function(evt,index){
-					$scope.model.content.columnSelectedOfDataset.splice(index+1, 0, $scope.model.content.columnSelectedOfDataset.splice(index, 1)[0]);
-
-				},
-				canSee : function(row){				
-					return angular.equals(row.fieldType, "MEASURE");
-				},
-				typeList: [{"code":"java.lang.String", "name":"String"},{"code":"java.lang.Integer", "name":"Number"},{"code":"java.math.BigDecimal", "name":"Number"}],
-				getColor :function(){
-					return $scope.selectedColumn.style !=undefined ? $scope.selectedColumn.style.color : "";
-				},
-				getBackground: function(){
-					return $scope.selectedColumn.style !=undefined ?  $scope.selectedColumn.style.background : "";
-				},
-				draw: function(row,column,index) {
-					$scope.selectedColumn = row;
-					//  $mdSidenav("columnStyleTab").toggle();
-					$mdDialog.show({
-						templateUrl:  baseScriptPath+ '/directives/cockpit-columns-configurator/templates/cockpitColumnStyle.html',
-						parent : angular.element(document.body),
-						clickOutsideToClose:true,
-						escapeToClose :true,
-						preserveScope: true,
-						autoWrap:false,
-						fullscreen: true,
-						locals:{model:$scope.model, selectedColumn : $scope.selectedColumn},
-						controller: cockpitStyleColumnFunction
-
-					}).then(function(answer) { 			
-						console.log("Selected column:", $scope.selectedColumn);
-
-					}, function() {
-						console.log("Selected column:", $scope.selectedColumn);
-					});
-
-				},
-				AggregationFunctions: cockpitModule_generalOptions.aggregationFunctions,
-				fieldTypeChanged: function(){
-					var disableShowSummary = true;
-					for(var i=0; i<$scope.model.content.columnSelectedOfDataset.length; i++){
-						if($scope.model.content.columnSelectedOfDataset[i].fieldType == "MEASURE"){
-							disableShowSummary = false;
-							break;
-						}
-					}
-					$scope.model.style.disableShowSummary = disableShowSummary;
-					if(disableShowSummary){
-						$scope.model.style.showSummary = false;
+		$scope.functionsCockpitColumn = {
+			translate:sbiModule_translate,
+			moveUp: function(evt,index){
+				$scope.model.content.columnSelectedOfDataset.splice(index-1, 0, $scope.model.content.columnSelectedOfDataset.splice(index, 1)[0]);
+			},
+			moveDown: function(evt,index){
+				$scope.model.content.columnSelectedOfDataset.splice(index+1, 0, $scope.model.content.columnSelectedOfDataset.splice(index, 1)[0]);
+			},
+			canSee : function(row){				
+				return angular.equals(row.fieldType, "MEASURE");
+			},
+			typeList: [{"code":"java.lang.String", "name":"String"},{"code":"java.lang.Integer", "name":"Number"},{"code":"java.math.BigDecimal", "name":"Number"}],
+			getColor :function(){
+				return $scope.selectedColumn.style !=undefined ? $scope.selectedColumn.style.color : "";
+			},
+			getBackground: function(){
+				return $scope.selectedColumn.style !=undefined ?  $scope.selectedColumn.style.background : "";
+			},
+			draw: function(row,column,index) {
+				$scope.selectedColumn = row;
+				//  $mdSidenav("columnStyleTab").toggle();
+				$mdDialog.show({
+					templateUrl:  baseScriptPath+ '/directives/cockpit-columns-configurator/templates/cockpitColumnStyle.html',
+					parent : angular.element(document.body),
+					clickOutsideToClose:true,
+					escapeToClose :true,
+					preserveScope: true,
+					autoWrap:false,
+					fullscreen: true,
+					locals:{model:$scope.model, selectedColumn : $scope.selectedColumn},
+					controller: cockpitStyleColumnFunction
+				}).then(function(answer) { 			
+					console.log("Selected column:", $scope.selectedColumn);
+				}, function() {
+					console.log("Selected column:", $scope.selectedColumn);
+				});
+			},
+			AggregationFunctions: cockpitModule_generalOptions.aggregationFunctions,
+			fieldTypeChanged: function(){
+				var disableShowSummary = true;
+				for(var i=0; i<$scope.model.content.columnSelectedOfDataset.length; i++){
+					if($scope.model.content.columnSelectedOfDataset[i].fieldType == "MEASURE"){
+						disableShowSummary = false;
+						break;
 					}
 				}
+				$scope.model.settings.summary.forceDisabled = disableShowSummary;
+				if(disableShowSummary){
+					$scope.model.settings.summary.enabled = false;
+				}
+			}
 		}
 
 		$scope.openListColumn = function(){
-			if($scope.model.dataset==undefined || $scope.model.dataset.dsId == undefined){
+			if($scope.model.dataset == undefined || $scope.model.dataset.dsId == undefined){
 				$scope.showAction($scope.translate.load("sbi.cockpit.table.missingdataset"));	
 			}else{
 				$mdDialog.show({
@@ -371,7 +370,7 @@ function controllerCockpitColumnsConfigurator($scope,sbiModule_translate,$mdDial
 	$scope.model = model;
 	$scope.columnSelected = [];
 	$scope.localDataset = {};
-	if($scope.model.dataset!=undefined && $scope.model.dataset.dsId != undefined){
+	if($scope.model.dataset && $scope.model.dataset.dsId){
 		angular.copy(cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId), $scope.localDataset);
 	} else{
 		$scope.model.dataset= {};
@@ -423,10 +422,12 @@ function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,model,s
 	$scope.cockpitModule_generalOptions=cockpitModule_generalOptions;
 	$scope.selectedColumn = angular.copy(selectedColumn);
 	$scope.fontWeight = ['normal','bold','bolder','lighter','number','initial','inherit'];
-	$scope.textAlign = ['left','right','center'];
+	$scope.textAlign = ['flex-start','flex-end','center'];
 	$scope.formatPattern = ['#.###','#,###','#.###,##','#,###.##'];
 	$scope.colorPickerProperty={placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb'}
-	$scope.visTypes=['Chart','Text','Chart & Text', 'Text & Chart','Icon only'];
+	$scope.visTypes=['Chart','Text','Text & Chart','Icon only'];
+	$scope.icons=["fa fa-warning","fa fa-bell","fa fa-bolt","fa fa-commenting","fa fa-asterisk","fa fa-ban", "fa fa-check","fa fa-clock-o","fa fa-close","fa fa-exclamation-circle","fa fa-flag","fa fa-star"];
+	
 	
 	if(!$scope.selectedColumn.hasOwnProperty('colorThresholdOptions'))
 	{	
@@ -439,28 +440,25 @@ function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,model,s
 	}	
 	
 	
-	if($scope.selectedColumn.visType==undefined)
-	{
-		$scope.selectedColumn.visType="Text";
-	}	
-	if($scope.selectedColumn.minValue==undefined||$scope.selectedColumn.minValue===''||$scope.selectedColumn.maxValue==undefined||$scope.selectedColumn.maxValue==='')
-	{
-		$scope.selectedColumn.minValue=0;
-		$scope.selectedColumn.maxValue=100;
-	}	
-	if($scope.selectedColumn.chartColor==undefined||$scope.selectedColumn.chartColor==='')
-	{	
-		$scope.selectedColumn.chartColor="rgb(19, 30, 137)";
-	}
-	if($scope.selectedColumn.chartLength==undefined||$scope.selectedColumn.chartLength==='')
-	{
-		$scope.selectedColumn.chartLength=200;
-	}
+	$scope.$watch("selectedColumn.visType",function(newValue, oldValue){
+		if($scope.selectedColumn.visType==undefined){
+			$scope.selectedColumn.visType="Text";
+		}else if($scope.selectedColumn.visType=="Chart"){
+			if(!$scope.selectedColumn.barchart) $scope.selectedColumn.barchart=={"enabled":true};
+			if($scope.selectedColumn.text) $scope.selectedColumn.text.enabled=false;
+		}else if($scope.selectedColumn.visType=="Text"){
+			delete $scope.selectedColumn.barchart;
+			if($scope.selectedColumn.text) $scope.selectedColumn.text.enabled=true;
+		}else if($scope.selectedColumn.visType=='Icon only'){
+			$scope.selectedColumn.text.enabled=false;
+		}
+		
+	})
+	
 
                         
-	$scope.conditions=['none','>','<','=','>=','<=','!='];
-	if($scope.selectedColumn.scopeFunc==undefined)
-	{	
+	$scope.conditions=['>','<','==','>=','<=','!='];
+	if($scope.selectedColumn.scopeFunc==undefined){
 		$scope.selectedColumn.scopeFunc={conditions:$scope.conditions, condition:[{condition:'none'},{condition:'none'},{condition:'none'},{condition:'none'}]};  
 	}
 	//------------------------- Threshold icon table -----------------------------	
@@ -497,7 +495,19 @@ function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,model,s
 	
 	//----------------------------------------------------------------------------
 	
+	$scope.addRange = function(){
+		if(!$scope.selectedColumn.ranges) $scope.selectedColumn.ranges = [];
+		$scope.selectedColumn.ranges.push({});
+	}
 	
+	$scope.deleteRange = function(hashkey){
+		for(var i in $scope.selectedColumn.ranges){
+			if($scope.selectedColumn.ranges[i].$$hashKey == hashkey){
+				$scope.selectedColumn.ranges.splice(i,1);
+				break;
+			}
+		}
+	}
 	
 
 	$scope.cleanStyleColumn = function(){
@@ -516,29 +526,29 @@ function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,model,s
 	
 	$scope.checkIfDisable = function(){
 		
-		if($scope.selectedColumn.selectThreshold==true)
-		{	
-			if($scope.selectedColumn.threshold==undefined||$scope.selectedColumn.threshold=="")
-			{
-				return true;
-			}				
-		}	
+//		if($scope.selectedColumn.selectThreshold==true)
+//		{	
+//			if($scope.selectedColumn.threshold==undefined||$scope.selectedColumn.threshold=="")
+//			{
+//				return true;
+//			}				
+//		}	
 		
-		if($scope.selectedColumn.maxValue==undefined || $scope.selectedColumn.minValue==undefined || $scope.selectedColumn.maxValue==="" || $scope.selectedColumn.minValue==="")
-		{
-			return true;
-		}
-		
-		for(var i=0;i<$scope.selectedColumn.scopeFunc.condition.length;i++)
-		{
-			if($scope.selectedColumn.scopeFunc.condition[i].condition!=undefined && $scope.selectedColumn.scopeFunc.condition[i].condition!="none")
-			{
-				if($scope.selectedColumn.scopeFunc.condition[i].value==="" || $scope.selectedColumn.scopeFunc.condition[i].value==undefined)
-				{
-					return true;
-				}	
-			}	
-		}
+//		if($scope.selectedColumn.maxValue==undefined || $scope.selectedColumn.minValue==undefined || $scope.selectedColumn.maxValue==="" || $scope.selectedColumn.minValue==="")
+//		{
+//			return true;
+//		}
+//		
+//		for(var i=0;i<$scope.selectedColumn.scopeFunc.condition.length;i++)
+//		{
+//			if($scope.selectedColumn.scopeFunc.condition[i].condition!=undefined && $scope.selectedColumn.scopeFunc.condition[i].condition!="none")
+//			{
+//				if($scope.selectedColumn.scopeFunc.condition[i].value==="" || $scope.selectedColumn.scopeFunc.condition[i].value==undefined)
+//				{
+//					return true;
+//				}	
+//			}	
+//		}
 		return false;
 	}
 }
@@ -567,8 +577,7 @@ function controllerCockpitCalculatedFieldController($scope,sbiModule_translate,$
 	$scope.formula = "";
 	$scope.formulaElement = [];
 
-	if($scope.model.dataset!=undefined && $scope.model.dataset.dsId != undefined){
-		//load all measures
+	if($scope.model.dataset.dsId != undefined){
 		angular.copy(cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId), $scope.localDataset); 
 	} 
 
