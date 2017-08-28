@@ -111,10 +111,12 @@ function cockpitSheetControllerFunction($scope,cockpitModule_template,cockpitMod
 		}
 		
 		self.cloneSheet = function(ev) {
-			cockpitModule_template.sheets.push({
-				index:cockpitModule_template.sheets.length,
-				label:sbiModule_translate.load("sbi.cockpit.new.sheet"),
-				widgets:sheet.widgets});
+			var newSheet = {
+				index: cockpitModule_template.sheets.length,
+				label: sbiModule_translate.load("sbi.cockpit.new.sheet"),
+				widgets: angular.copy(sheet.widgets)
+			};
+			cockpitModule_template.sheets.push(newSheet);
 		}
 		
 		self.deleteSheet=function(){
