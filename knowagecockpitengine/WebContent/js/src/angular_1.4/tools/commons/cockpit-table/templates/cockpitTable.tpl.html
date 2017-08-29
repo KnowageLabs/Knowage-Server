@@ -10,7 +10,7 @@
 <table ng-class="" class="cockpitTable" ng-style="settings.style.table" ng-cloak fixed-header>
     <thead>
         <tr ng-style="settings.style.header">
-            <th scope="col" ng-repeat="column in columns track by $index" ng-style="getThStyle(styledata.th,column)" ng-click="sort(column,$event)" ng-class="{'hiddenIcon':column.name != settings.sortingColumn,'active':column.name == settings.sortingColumn}">
+            <th scope="col" ng-repeat="column in columns track by $index" ng-style="getThStyle(styledata.th,column)" ng-click="sort(column,$event)" ng-class="{'hiddenIcon':column.aliasToShow != settings.sortingColumn,'active':column.aliasToShow == settings.sortingColumn}">
                 <span class="thText">{{column.aliasToShow}}
                 	<md-tooltip ng-if="!column.hideTooltip" md-direction="top" md-delay="500">{{column.aliasToShow}}</md-tooltip>
                 </span>

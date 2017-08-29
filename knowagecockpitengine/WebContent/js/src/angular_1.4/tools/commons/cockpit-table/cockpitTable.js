@@ -154,13 +154,13 @@
 
                     //sorting function
                     scope.sort = function(col, e) {
-                        if (scope.settings.sortingColumn && scope.settings.sortingColumn == col.name) {
+                        if (scope.settings.sortingColumn && scope.settings.sortingColumn == col.aliasToShow) {
                         	scope.settings.sortingOrder = scope.settings.sortingOrder.toUpperCase() == 'DESC' ? 'ASC' : 'DESC';
                         }else{
                         	scope.settings.sortingOrder = 'ASC';
                         }
                         
-                        scope.settings.sortingColumn = col.name;
+                        scope.settings.sortingColumn = col.aliasToShow;
                     }
 
                     //barchart fill percentage

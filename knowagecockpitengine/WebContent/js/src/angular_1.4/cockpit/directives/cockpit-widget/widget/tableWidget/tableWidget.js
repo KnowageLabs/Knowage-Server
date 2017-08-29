@@ -583,13 +583,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				obj["itemPerPage"] = $scope.ngModel.settings.pagination ? $scope.ngModel.settings.pagination.itemsNumber : -1;
 			}
 
-			if($scope.columnOrdering){
-				obj["columnOrdering"] = $scope.columnOrdering;
-			}
-			
-			if($scope.reverseOrdering){
-				obj["reverseOrdering"] = $scope.reverseOrdering;
-			}
+			obj["columnOrdering"] = { name: $scope.ngModel.settings.sortingColumn };
+			obj["reverseOrdering"] = ($scope.ngModel.settings.sortingOrder == 'ASC');
 
 			obj["type"] = $scope.ngModel.type;
 
