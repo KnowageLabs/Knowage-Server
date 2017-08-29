@@ -64,6 +64,7 @@ public class HQLDataSet extends AbstractQbeDataSet {
 				this.updateParameters(query, params);
 			}
 
+			statement.setParameters(params);
 			// execute query
 			hibernateQuery = session.createQuery( statement.getQueryString() );
 

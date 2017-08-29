@@ -72,6 +72,7 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 		if (params != null && !params.isEmpty()) {
 			this.updateParameters(query, params);
 		}
+		filteredStatement.setParameters(params);
 		String statementStr = filteredStatement.getQueryString();
 
 		try {
