@@ -265,52 +265,53 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 		} else {
 			$scope.ngModel.queryFilters.length = 0;
 			Array.prototype.push.apply($scope.ngModel.queryFilters, $scope.filters);
+			 generateExpressions ($scope.filters, $scope.ngModel.expression );
+			
 			//$scope.ngModel.field.field.expression = generateExpressions ($scope.filters);
 			$scope.ngModel.mdPanelRef.close();
 		}
 	}
-
-	$scope.applyFuntion = function(filters/*, expression*/, pars, sub) {
-		console.log($scope)
-		$rootScope.$broadcast('applyFunction', {
-			"fieldId" : $scope.ngModel.field.field.id,
-			"entity" : $scope.ngModel.field.field.entity,
-			"subqueries" : sub,
-			"filters" : filters,		/*"expression" : expression,*/
-			"pars" : pars,
-
-		});
-	};
+	
 	$scope.closeFilters=function(){
 		$scope.ngModel.mdPanelRef.close();
 	}
-	var generateExpressions = function (filters){
-		var expression = {};
-		var childNodes = [];
-		if(filters.length==1){
-			expression =
-			{
-				"type": "NODE_CONST",
-				"value": "$F{" + filters[0].filterId+"}",
-				"childNodes": []
-			}
-		} else if (filters.length>=1){
-			for (var i = 0; i < filters.length; i++) {
-				var node = {
-					"type": "NODE_CONST",
-					"value": "$F{" + filters[i].filterId+"}",
-					"childNodes": []
-				}
-				childNodes.push(node)
-			}
-			expression =
-			{
-				"type": "NODE_OP",
-				"value": "AND",
-				"childNodes": childNodes
-			}
+
+	var generateExpressions = function (filters, expression){
+		var nodeConstArray = [];
+		for (var i = 0; i < filters.length; i++) {
+			var nodeConstObj = {};
+			nodeConstObj.value = '$F{' + filters[i].filterId + '}';
+			nodeConstObj.type = "NODE_CONST";
+			nodeConstObj.childNodes = [];
+			nodeConstArray.push(nodeConstObj);
+			
 		}
-		return expression;
+		if (filters.length==1){
+			angular.copy(nodeConstArray[0],expression);
+		} else if (filters.length>1) {
+			var nop = {};
+			nop.value = "";
+			nop.type = "NODE_OP";
+			nop.childNodes = [];
+			var nopForInsert = {};
+			for (var i = filters.length-1; i >= 0 ; i--) {
+				if (i-1==-1 || filters[i].booleanConnector!=filters[i-1].booleanConnector) {
+					nop.value = filters[i].booleanConnector;
+					nop.childNodes.push(nodeConstArray[i]);
+					if(nopForInsert.value){
+						nop.childNodes.push(nopForInsert);
+					}					
+					nopForInsert = angular.copy(nop);
+					nop.value = "";
+					nop.type = "NODE_OP";
+					nop.childNodes = [];
+				} else {
+					nop.childNodes.push(nodeConstArray[i]);
+				}
+				console.log(filters[i].booleanConnector)
+			}
+			angular.copy(nopForInsert,expression);
+		}
 
 	};
 	$scope.parametersPreviewColumns = [
@@ -333,15 +334,17 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 	                                   		return '<md-input-container class="md-block" style="margin:0"><input placeholder="If not set, parameter will have default value." ng-model="row.value"></md-input-container>';
 	                                   	}
 	                            	}
-
-	                               ];5
+	                               ];
+	                               
 	$scope.applyValueOfParameterAndContinuePreviewExecution = function (){
 		$scope.ngModel.queryFilters.length = 0;
+		$scope.ngModel.expression = {};
 		$scope.ngModel.pars.length = 0;
 		Array.prototype.push.apply($scope.ngModel.pars, $scope.pars);
 		Array.prototype.push.apply($scope.ngModel.queryFilters, $scope.filters);
+		$scope.expression = generateExpressions ($scope.filters, $scope.ngModel.expression);
+		$scope.ngModel.expression = $scope.expression;
 		$scope.ngModel.mdPanelRef.close();
-
 	}
 
 }

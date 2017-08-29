@@ -3,6 +3,12 @@ var queries = angular.module('queries',['sbiModule']);
 
 queries.service('query_service',function(sbiModule_restServices,sbiModule_config, $q){
 	
+	this.smartView = true;
+	
+	this.setSmartView = function (value) {
+		this.smartView = value;
+	}
+	
 	this.executeQuery = function(query, bodySend, queryModel){
 		
 	

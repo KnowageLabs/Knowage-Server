@@ -51,7 +51,14 @@ angular.module('qbe_custom_table', ['ngDraggable'])
         return ordered;
     };
 });
-function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate){
+function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, query_service){
+	
+	$scope.smartPreview = true;
+	
+	$scope.$watch('smartPreview',function(newValue,oldValue){
+		query_service.setSmartView(newValue);
+		$rootScope.$emit('smartView', newValue);
+	},true)
 	
 	$scope.translate = sbiModule_translate;
 	
@@ -63,8 +70,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate){
 		originatorEv = ev;
 		$mdOpenMenu(ev);
 	};
-	$scope.aggFunctionList = [ "SUM", "BLA", "BLA" ];
-	$scope.aggFunction = "";
+	$scope.aggFunctions = [ "none", "sum", "min", "max", "avg", "count", "count_distinct" ];
 	$scope.translate = sbiModule_translate;
 
 	$scope.moveRight = function(currentOrder, column) {
@@ -72,12 +78,15 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate){
 		var newOrder = currentOrder + 1;
 		var index = $scope.ngModel.indexOf(column);
 		var indexOfNext = index + 1;
+		
+		if(index!=undefined && indexOfNext!=-1 && newOrder <= $scope.ngModel.length){
+			$scope.ngModel[index] = $scope.ngModel[indexOfNext];
+			$scope.ngModel[index].order = currentOrder;
 
-		$scope.ngModel[index] = $scope.ngModel[indexOfNext];
-		$scope.ngModel[index].order = currentOrder;
-
-		$scope.ngModel[indexOfNext] = column;
-		$scope.ngModel[indexOfNext].order = newOrder;
+			$scope.ngModel[indexOfNext] = column;
+			$scope.ngModel[indexOfNext].order = newOrder;
+		}
+		
 	};
 
 	$scope.moveLeft = function(currentOrder, column) {
@@ -85,12 +94,16 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate){
 		var newOrder = currentOrder - 1;
 		var index = $scope.ngModel.indexOf(column);
 		var indexOfBefore = index - 1;
+		
+		if(index!=undefined && indexOfBefore!=undefined && indexOfBefore!=-1){
+			
+			$scope.ngModel[index] = $scope.ngModel[indexOfBefore];
+			$scope.ngModel[index].order = currentOrder;
+			
+			$scope.ngModel[indexOfBefore] = column;
+			$scope.ngModel[indexOfBefore].order = newOrder;
+		}
 
-		$scope.ngModel[index] = $scope.ngModel[indexOfBefore];
-		$scope.ngModel[index].order = currentOrder;
-
-		$scope.ngModel[indexOfBefore] = column;
-		$scope.ngModel[indexOfBefore].order = newOrder;
 	};
 
 	$scope.applyFuntion = function(funct, id, entity) {
@@ -116,8 +129,6 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate){
 		});
 	};
 	
-	//$scope.reverseOrder = false;
-	
 	$scope.toggleOrder = function (data, reverse) {
 		var ordered = [];
 		if($scope.orderAsc) {
@@ -131,11 +142,14 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate){
 		for(var itemIndex in ordered) {
 			$scope.idIndex.push(ordered[itemIndex].id);
 		}
-		//$scope.reverseOrder=!$scope.reverseOrder;
 	}
 	
 	$scope.showVisualization = function (visualization) {
 		$scope.selectedVisualization = visualization;
+	}
+	
+	$scope.executeRequest = function () {
+		console.log("execute");
 	}
 	
 	$scope.openFilters = function (field){
@@ -171,5 +185,107 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate){
 	}
 	
 	$scope.idIndex = Array.apply(null, {length: 25}).map(Number.call, Number);
+	
+    
+	$scope.basicViewColumns = [
+								{
+	                            	"label":"Entity",
+	                            	"name":"entity"
+	                        	},
+	                        	{
+	                        		"label":"Field",
+	                            	"name":"name"
+	                        	},
+	                        	{
+	                        		"label":"Group",
+	                            	"name":"group",
+	                    			hideTooltip:true,
+	                            	transformer: function() {
+	                            		return '<md-checkbox ng-checked="scopeFunctions.isGrouped(row)" ng-click="scopeFunctions.group(row)" aria-label="Checkbox"></md-checkbox>';
+	                            	}
+	                        	},
+	                        	{
+	                        		"label":"Function",
+	                            	"name":"function",
+	                            	hideTooltip:true,
+	                            	transformer: function() {
+	                            		return '<md-select ng-model=row.function class="noMargin" ><md-option ng-repeat="col in scopeFunctions.aggregationFunctions" ng-click="scopeFunctions.applyFunction(col, row)" value="{{col}}">{{col}}</md-option></md-select>';
+	                            	}
+	                        	},
+	                        	{
+	                        		"label":"Filters",
+	                            	"name":"filters",
+	                    			hideTooltip:true,
+	                            	transformer: function() {
+	                            		return '<md-icon class="fa fa-filter" ng-click="scopeFunctions.openFilters(row)"></md-icon>';
+	                            	}
+	                        	},
+	                        	{
+	                        		"label":"Move up",
+	                            	"name":"function",
+	                    			hideTooltip:true,
+	                            	transformer: function() {
+	                            		return '<md-icon class="fa fa-angle-up" ng-click="scopeFunctions.moveUp(row)"></md-icon> ';
+	                            	}
+	                        	},
+	                        	{
+	                        		"label":"Move down",
+	                            	"name":"function",
+	                    			hideTooltip:true,
+	                            	transformer: function() {
+	                            		return '<md-icon class="fa fa-angle-down" ng-click="scopeFunctions.moveDown(row)"></md-icon>';
+	                            	}
+	                        	},
+	                        	{
+	                        		"label":"Show field",
+	                            	"name":"visible",
+	                    			hideTooltip:true,
+	                            	transformer: function() {
+	                            		return '<md-checkbox ng-model="row.visible"  aria-label="Checkbox"></md-checkbox>';
+	                            	}
+	                        	},
+	                        	{
+	                        		"label":"Delete",
+	                            	"name":"function",
+	                    			hideTooltip:true,
+	                            	transformer: function() {
+	                            		return '<md-icon class="fa fa-remove" ng-click="scopeFunctions.deleteField(row)"></md-icon>';
+	                            	}
+	                        	}
+	]
+	
+	$scope.basicViewScopeFunctions = {
+		aggregationFunctions: $scope.aggFunctions,
+		deleteField : function (row) {
+			$scope.removeColumn(row);
+		},
+		moveUp : function (row) {
+			$scope.moveLeft(row.order, row);
+			
+		},
+		moveDown : function (row) {
+			$scope.moveRight(row.order, row);
+			
+		},
+		openFilters : function (row) {
+			$scope.openFilters(row);
+		},
+		group : function (row) { 
+			$scope.group(row.id, row.entity, row.group);
+			
+		},
+		applyFunction : function (col, row) { 
+			$scope.applyFuntion(col, row.id, row.entity);
+			
+		},
+		isGrouped : function (row){
+			for (var i = 0; i < $scope.ngModel.length; i++) {
+				if($scope.ngModel[i].id==row.id && $scope.ngModel[i].group==true){
+					return true;
+				}
+			}
+		}
+	};
+
 }
 })();
