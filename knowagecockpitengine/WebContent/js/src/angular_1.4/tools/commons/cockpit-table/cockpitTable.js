@@ -30,7 +30,8 @@
                     model:		"=",
                     settings:	"=?",
                     styledata:	"=?",
-                    clickFunction: "&?"
+                    clickFunction: "&?",
+                    filters: "=?"
                 },
                 templateUrl: currentScriptPath+'/templates/cockpitTable.tpl.html',
                 link: function(scope, elem, attr) {
@@ -41,6 +42,7 @@
                     scope.bulkSelection = false; 	//initializing bulk selection
                     scope.selectedCells = []; 		//initializing selected cells array, used for bulk selection
                     scope.selectedRows = [];		//initializing selected rows array, used for bulk selection
+
                     
                     scope.getSortingColumnFilter = function(){
                     	if(scope.settings.pagination.frontEnd && scope.settings.sortingColumn){
@@ -332,5 +334,23 @@
                 }
             }
         };
-    }]);
+    }])
+    .filter('colFilter', function() {
+    	  return function(input, filters, isRealtime) {
+    		if (!isRealtime){
+    			return input
+    		} else {
+        		var out = [];
+        		for (var i in input){
+        			for( var k in filters){
+        				if (filters[k].filterVals.indexOf(input[i][filters[k].colName]) > -1){
+        					out.push(input[i]);
+        					break;
+        				}
+        			}
+        		}
+        	    return out;
+    		}  
+    	  };
+    	})
 }());

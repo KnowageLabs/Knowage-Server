@@ -99,6 +99,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.ngModel.settings = {};
 		}
 		
+		if ($scope.ngModel.dataset ){
+			$scope.ngModel.settings.realTimeDataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId).isRealtime;
+		}
+		
 		if(!$scope.ngModel.settings.backendTotalRows){
 			$scope.ngModel.settings.backendTotalRows = 0;
 		}
@@ -397,6 +401,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.columnToshowinIndex = [];
 			$scope.tableFunction.widgetStyle = $scope.ngModel.style;
 			$scope.datasetRecords = datasetRecords;
+
+			
 			var calculateScaleValue=function(minVal, maxVal, val)
 			{
 				if(maxVal!=minVal)

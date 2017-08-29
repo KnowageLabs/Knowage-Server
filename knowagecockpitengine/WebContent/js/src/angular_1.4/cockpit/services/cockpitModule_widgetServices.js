@@ -91,13 +91,13 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 				//if it's a realtime dataset don't use backend filter on it
 				var ngModelCopy = {};
 				angular.copy(ngModel, ngModelCopy);
-				var filters = ngModelCopy.filters
-				if (filters){
-					for (var i=0; i < filters.length; i++){
-						//erase the content of the array
-						filters[i].filterVals = [];
-					}
-				}
+//				var filters = ngModelCopy.filters
+//				if (filters){
+//					for (var i=0; i < filters.length; i++){
+//						//erase the content of the array
+//						filters[i].filterVals = [];
+//					}
+//				}
 
 				//for charts
 				if (ngModelCopy.content){
