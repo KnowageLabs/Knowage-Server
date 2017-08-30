@@ -453,8 +453,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var filters = $scope.reformatFilters();
 			for(var f in filters){
 				for(var d = dataset.length - 1; d >= 0; d--){
-					if (filters[f].values.indexOf(dataset[d][f])==-1){
-						dataset.splice(d,1);
+					//if the column is an attribute check in filter
+					if (filters[f].type == 'ATTRIBUTE'){
+						if (filters[f].values.indexOf(dataset[d][f])==-1){
+							dataset.splice(d,1);
+						}
+					if the column is a measure cast it to number and check in filter
+					} else if (filters[f].type == 'MEASURE'){
+						var columnValue = Number(dataset[d][f]);
+						var filterValue = filters[f].values.map(function (x) { 
+						    return Number(x); 
+						});
+						if (filterValue.indexOf(columnValue)==-1){
+							dataset.splice(d,1);
+						}
 					}
 				}
 			}
