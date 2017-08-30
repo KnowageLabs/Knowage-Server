@@ -1607,7 +1607,6 @@ public class DatasetManagementAPI {
 		List<String> orderColumns = new ArrayList<>();
 		String queryText = null;
 		if (summaryRowProjections == null || summaryRowProjections.size() == 0 || !isNearRealtime) {
-			sqlBuilder.setWhereOrEnabled(isNearRealtime);
 			sqlBuilder.from(tableName);
 
 			setColumnsToSelect(dataSource, projections, sqlBuilder, orderColumns, isNearRealtime, dataSet);
@@ -1938,11 +1937,7 @@ public class DatasetManagementAPI {
 				}
 
 				String rightOperandString = rightOperandSB.toString();
-				if (sqlBuilder.isWhereOrEnabled() && !rightOperandString.contains(" AND ")) {
-					sqlBuilder.where(leftOperand + " " + operator + " " + rightOperandString);
-				} else {
-					sqlBuilder.where("(" + leftOperand + " " + operator + " " + rightOperandString + ")");
-				}
+				sqlBuilder.where("(" + leftOperand + " " + operator + " " + rightOperandString + ")");
 			}
 		}
 	}

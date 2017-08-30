@@ -714,26 +714,30 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 						StringBuilder valuesSB = new StringBuilder();
 						String openingBracket = columnsList.size() > 1 ? "(" : "";
 						String closingBracket = columnsList.size() > 1 ? ")" : "";
+
+						List<String> distinctValues = new ArrayList<>();
 						for (int i = 0; i < values.length(); i++) {
-							String[] valuesArray = getDistinctValues(values.getString(i));
-							for (int j = 0; j < valuesArray.length; j++) {
-								if (j % columnsList.size() == 0) { // 1st item of tuple of values
-									if (j >= columnsList.size()) { // starting from 2nd tuple of values
-										valuesSB.append(" OR ");
-										valuesSB.append(openingBracket);
-										valuesSB.append(joinedColumns);
-										valuesSB.append(closingBracket);
-										valuesSB.append(" = ");
-									}
+							String value = values.getString(i);
+							distinctValues.addAll(Arrays.asList(getDistinctValues(value)));
+						}
+						for (int i = 0; i < distinctValues.size(); i++) {
+							String value = distinctValues.get(i);
+							String column = columnsList.get(i % columnsList.size());
+							if (i % columnsList.size() == 0) { // 1st item of tuple of values
+								if (i >= columnsList.size()) { // starting from 2nd tuple of values
+									valuesSB.append(" OR ");
 									valuesSB.append(openingBracket);
-								} else {
-									valuesSB.append(","); // starting from 2nd item of tuple of values
 								}
-								String column = columnsList.get(j % columnsList.size());
-								valuesSB.append(getValueForQuery(valuesArray[j], dateColumnNamesList.contains(column), dataSource));
-								if (j % columnsList.size() == columnsList.size() - 1) { // last item of tuple of values
-									valuesSB.append(closingBracket);
-								}
+							} else {
+								valuesSB.append(" AND "); // starting from 2nd item of tuple of values
+							}
+							if (i > 0) {
+								valuesSB.append(column);
+								valuesSB.append("=");
+							}
+							valuesSB.append(getValueForQuery(value, dateColumnNamesList.contains(column), dataSource));
+							if (i % columnsList.size() == columnsList.size() - 1) { // last item of tuple of values
+								valuesSB.append(closingBracket);
 							}
 						}
 						Operand rightOperand = new Operand(valuesSB.toString());
