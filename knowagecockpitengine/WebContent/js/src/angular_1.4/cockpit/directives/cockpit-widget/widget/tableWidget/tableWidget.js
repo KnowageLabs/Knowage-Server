@@ -453,20 +453,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var filters = $scope.reformatFilters();
 			for(var f in filters){
 				for(var d = dataset.length - 1; d >= 0; d--){
-					//if the column is an attribute check in filter
-					if (filters[f].type == 'ATTRIBUTE'){
-						if (filters[f].values.indexOf(dataset[d][f])==-1){
-							dataset.splice(d,1);
-						}
-					//if the column is a measure cast it to number and check in filter
-					} else if (filters[f].type == 'MEASURE'){
-						var columnValue = Number(dataset[d][f]);
-						var filterValue = filters[f].values.map(function (x) { 
-						    return Number(x); 
-						});
-						if (filterValue.indexOf(columnValue)==-1){
-							dataset.splice(d,1);
-						}
+					if (filters[f].values.indexOf(dataset[d][f])==-1){
+						dataset.splice(d,1);
 					}
 				}
 			}
@@ -532,37 +520,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 		}
 		
-		/**
-		 * Return only the objects matching the filter
-		 * table: original array of objects
-		 * columnName: specific object property name
-		 * values: array of admissible values
-		 * columnType: type (Measure/Attribute) of the column
-		 */
-		$scope.filterRows = function (table, columnName, values, columnType ){
-			var toReturn = [];
-			for (var i=0; i < table.length ; i++){
-				if (table[i][columnName]){
-					for (var y=0; y < values.length ; y++){
-						//handle Attribute as String and Measure as number
-						if (columnType == 'ATTRIBUTE'){
-							if (table[i][columnName] == values[y]){
-								toReturn.push(table[i]);
-							}
-						} else if (columnType == 'MEASURE'){
-							var columnValue = Number(table[i][columnName]);
-							var filterValue = Number(values[y]);
-							if (columnValue == filterValue){
-								toReturn.push(table[i]);
-							}
-						}
-						
-					}
-				}
-			}
-			return toReturn;
-		}
-
 		$scope.presentInTable = function(table, obj){
 			for(var i=0;i<table.length;i++){
 				var objT = table[i];
