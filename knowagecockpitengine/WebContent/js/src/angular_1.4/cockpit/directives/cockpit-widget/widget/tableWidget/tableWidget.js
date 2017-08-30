@@ -428,10 +428,50 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 
 			$scope.itemList = $scope.getRows($scope.datasetRecords);
-			
+
 			if($scope.datasetRecords){
 				$scope.ngModel.settings.backendTotalRows = $scope.datasetRecords.results;
 			}
+		}
+		
+		// reformatting the filter object to have an easier access on it
+		$scope.reformatFilters = function(){
+			var filters = {};
+			for(var f in $scope.ngModel.filters){
+				if($scope.ngModel.filters[f].filterVals.length > 0){
+					var columnObject = $scope.getColumnObjectFromName($scope.ngModel.content.columnSelectedOfDataset,$scope.ngModel.filters[f].colName);
+					var aliasToShow = columnObject.aliasToShow;
+					filters[aliasToShow] = {"type":columnObject.fieldType, "values":$scope.ngModel.filters[f].filterVals};
+				}
+			}
+			return filters;
+		};
+		
+		// filtering the table for realtime dataset
+		$scope.filterDataset = function(dataset){
+			var filtered = [];
+			//using the reformatted filters
+			var filters = $scope.reformatFilters();
+			for(var f in filters){
+				for(var d in dataset){
+					//if the column is an attribute check in filter
+					if (filters[f].type == 'ATTRIBUTE'){
+						if (filters[f].values.indexOf(dataset[d][f])>-1 && filtered.indexOf(dataset[d])==-1){
+							filtered.push(dataset[d]);
+						}
+					//if the column is a measure cast it to number and check in filter
+					} else if (filters[f].type == 'MEASURE'){
+						var columnValue = Number(dataset[d][f]);
+						var filterValue = filters[f].values.map(function (x) { 
+						    return Number(x); 
+						});
+						if (filterValue.indexOf(columnValue)>-1){
+							filtered.push(table[i]);
+						}
+					}
+				}
+			}
+			return filtered;
 		}
 
 		
@@ -442,6 +482,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				var headerMap = {};
 				for(var k=0; k<values.metaData.fields.length; k++){
 					var field = values.metaData.fields[k];
+					
+					//changing the column naming to aliasToShow in case of realtime dataset
 					if(dataset.isRealtime === true){
 						for(var n in $scope.ngModel.content.columnSelectedOfDataset){
 							if($scope.ngModel.content.columnSelectedOfDataset[n].name == field.header){
@@ -470,6 +512,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					var lastIndex = values.rows.length-1;
 					$scope.ngModel.settings.summary.row = table[lastIndex];
 					table.splice(lastIndex,1);
+				}
+				
+				// realtime dataset filtering
+				if(dataset.isRealtime === true){
+					table = $scope.filterDataset(table);
 				}
 			}
 			return table;
