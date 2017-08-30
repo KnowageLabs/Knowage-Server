@@ -124,135 +124,158 @@
 	        display: flex;
 		    flex-direction: column;
 		    height: 100%;
-		    overflow-y: auto;
+		    //overflow-y: auto;
 		    position: relative;
-		    table.cockpitTable {
+		    .cockpitTableContainer {
 		    	width: 100%;
-		        .loadingBar {
-		            tr {
-		                height: 0px;
-		                th {
-		                    padding: 0;
-		                    md-progress-linear {
-		                        .md-container {
-		                            top: 0;
-		                        }
-		                    }
-		                }
-		            }
-		        }
-		        border-collapse: collapse;
-		        tr {
-		            border-bottom: 1px solid #ddd;
-		            height: 32px;
-		            th {
-		                @extend .noSelect;
-		                cursor: pointer;
-		                text-align: left;
-		                background-color: $contentBackground;
-		                color: $darkTextColor;
-		                opacity: .7;
-		                font-size: 12px;
-		                font-weight: 700;
-		                white-space: nowrap;
-		                &.active {
-		                    opacity: 1;
-		                    font-weight: bold;
-		                }
-		                &.hiddenIcon {
-		                    .sortingIcon {
-		                        opacity: 0;
-		                    }
-		                    &:hover {
-		                        .sortingIcon {
-		                            opacity: .5;
-		                        }
-		                    }
-		                }
-		                &.unsortable {
-		                    cursor: default;
-		                    .sortingIcon {
-		                        display: none;
-		                    }
-		                }
-		                .sortingIcon {
-		                    display: inline-block;
-		                    //@include transition(0.8s);
-		                    &.inverse {
-		                        -ms-transform: rotate(180deg);
-		                        -webkit-transform: rotate(180deg);
-		                        transform: rotate(180deg);
-		                    }
-		                }
-		            }
-		            td {
-		            	span {
-		            		font-size: .8rem;
-		            	}
-		                
-		            }
-		        }
-		        tbody {
-		            tr {
-		                border-top: 1px rgba(0, 0, 0, .12) solid;
-		                &.en-row {
-		                    &:not([disabled]) {
-		                        &:hover {
-		                            background-color: #eee !important;
-		                        }
-		                    }
-		                }
-		                td {
-		                	.textEllipsis {
-								overflow: hidden;
-								width: calc(100% - 20px);
-								position: absolute;
-								white-space: nowrap;
-								text-overflow: ellipsis;
-							}
-		                	.cellContainer {
-		                		display: flex;
-		                		position: relative;
-		                		flex-direction: row;
-		                		align-items: center;
-		                		span {
-		                			position: relative;
-		                			width: auto;
-		                		}
-		                		.barChart {
-						            .progressTrack {
-						                position: relative;
-						                width: 100%;
-						                height: 20px;
-						                background: #ebebeb;
-						                .progressFill {
-						                    position: relative;
-						                    background: #2196F3;
-						                    height: 20px;
-						                    width: 50%;
-						                    max-width: 100%;
-						                    color: $darkTextColor;
-						                    text-align: center;
-						                    font-size: 12px;
-						                    line-height: 20px;
-						                }
-						            }
-						        }
-		                	}
-		                }
-		            }
-		        }
-		        tfoot {
-		        	tr {
-		        		border-bottom: none;
-		        		&.summary {
-		        			border-bottom: 1px solid #ddd;
-		        			td {
-		        				font-size: $baseFontSize;
-		        			}
-		        		}
-		        	}
-		        }
+		    	overflow-y: auto;
+		    	&::-webkit-scrollbar-track{
+					-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+					border-radius: 10px;
+					background-color: #F5F5F5;
+				}
+
+				&::-webkit-scrollbar{
+					width: 6px;
+					height: 6px;
+					background-color: #F5F5F5;
+				}
+
+				&::-webkit-scrollbar-thumb{
+					border-radius: 10px;
+					-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+					background-color: lighten($baseColor,15%);
+				}
+		    	table.cockpitTable {
+			    	width: 100%;
+			        .loadingBar {
+			            tr {
+			                height: 0px;
+			                th {
+			                    padding: 0;
+			                    md-progress-linear {
+			                        .md-container {
+			                            top: 0;
+			                        }
+			                    }
+			                }
+			            }
+			        }
+			        border-collapse: collapse;
+			        tr {
+			            border-bottom: 1px solid #ddd;
+			            height: 32px;
+			            th {
+			                @extend .noSelect;
+			                cursor: pointer;
+			                text-align: left;
+			                background-color: $contentBackground;
+			                color: $darkTextColor;
+			                opacity: .7;
+			                font-size: 12px;
+			                font-weight: 700;
+			                white-space: nowrap;
+			                overflow: hidden;
+			                text-overflow: ellipsis;
+			                &.active {
+			                    opacity: 1;
+			                    font-weight: bold;
+			                }
+			                &.hiddenIcon {
+			                    .sortingIcon {
+			                        opacity: 0;
+			                    }
+			                    &:hover {
+			                        .sortingIcon {
+			                            opacity: .5;
+			                        }
+			                    }
+			                }
+			                &.unsortable {
+			                    cursor: default;
+			                    .sortingIcon {
+			                        display: none;
+			                    }
+			                }
+			                .sortingIcon {
+			                    display: inline-block;
+			                    //@include transition(0.8s);
+			                    &.inverse {
+			                        -ms-transform: rotate(180deg);
+			                        -webkit-transform: rotate(180deg);
+			                        transform: rotate(180deg);
+			                    }
+			                }
+			            }
+			            td {
+			            	span {
+			            		font-size: .8rem;
+			            	}
+			                
+			            }
+			        }
+			        tbody {
+			            tr {
+			                border-top: 1px rgba(0, 0, 0, .12) solid;
+			                &.en-row {
+			                    &:not([disabled]) {
+			                        &:hover {
+			                            background-color: #eee !important;
+			                        }
+			                    }
+			                }
+			                td {
+			                	.textEllipsis {
+									overflow: hidden;
+									width: calc(100% - 20px);
+									position: absolute;
+									white-space: nowrap;
+									text-overflow: ellipsis;
+								}
+			                	.cellContainer {
+			                		display: flex;
+			                		position: relative;
+			                		flex-direction: row;
+			                		align-items: center;
+			                		span {
+			                			position: relative;
+			                			width: auto;
+			                		}
+			                		.barChart {
+							            .progressTrack {
+							                position: relative;
+							                width: 100%;
+							                height: 20px;
+							                background: #ebebeb;
+							                .progressFill {
+							                    position: relative;
+							                    background: #2196F3;
+							                    height: 20px;
+							                    width: 50%;
+							                    max-width: 100%;
+							                    color: $darkTextColor;
+							                    text-align: center;
+							                    font-size: 12px;
+							                    line-height: 20px;
+							                }
+							            }
+							        }
+			                	}
+			                }
+			            }
+			        }
+			        tfoot {
+			        	tr {
+			        		border-bottom: none;
+			        		&.summary {
+			        			border-bottom: 1px solid #ddd;
+			        			td {
+			        				font-size: $baseFontSize;
+			        			}
+			        		}
+			        	}
+			        }
+			    }
 		    }
 		    
 		    .selection {
@@ -282,23 +305,6 @@
 		        text-align: center;
 		        line-height: 24px;
 		    }
-		    &::-webkit-scrollbar-track{
-				-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-				border-radius: 10px;
-				background-color: #F5F5F5;
-			}
-
-			&::-webkit-scrollbar{
-				width: 6px;
-				height: 6px;
-				background-color: #F5F5F5;
-			}
-
-			&::-webkit-scrollbar-thumb{
-				border-radius: 10px;
-				-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-				background-color: lighten($baseColor,15%);
-			}
 		}
 		
 	}
