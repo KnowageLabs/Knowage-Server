@@ -19,7 +19,7 @@ package it.eng.spagobi.tools.dataset.listener;
 
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
-import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
+import it.eng.spagobi.tools.dataset.common.datawriter.CockpitJSONDataWriter;
 
 import java.util.List;
 
@@ -34,7 +34,7 @@ import org.json.JSONObject;
 
 public class CometService extends AbstractService {
 
-	private final static JSONDataWriter writer = new JSONDataWriter();
+	private final static CockpitJSONDataWriter writer = new CockpitJSONDataWriter();
 
 	private final String channelName;
 

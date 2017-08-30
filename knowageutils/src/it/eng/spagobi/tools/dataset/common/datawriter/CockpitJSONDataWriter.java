@@ -11,6 +11,9 @@ import java.util.Map;
 
 public class CockpitJSONDataWriter extends JSONDataWriter {
 
+	public CockpitJSONDataWriter() {
+	}
+
 	public CockpitJSONDataWriter(Map<String, Object> properties) {
 		super(properties);
 	}
