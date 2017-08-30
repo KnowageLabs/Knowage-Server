@@ -30,8 +30,7 @@
                     model:		"=",
                     settings:	"=?",
                     styledata:	"=?",
-                    clickFunction: "&?",
-                    filters: "=?"
+                    clickFunction: "&?"
                 },
                 templateUrl: currentScriptPath+'/templates/cockpitTable.tpl.html',
                 link: function(scope, elem, attr) {
@@ -43,7 +42,7 @@
                     scope.selectedCells = []; 		//initializing selected cells array, used for bulk selection
                     scope.selectedRows = [];		//initializing selected rows array, used for bulk selection
 
-                    
+                    //returning the column name for the sorting
                     scope.getSortingColumnFilter = function(){
                     	if(scope.settings.pagination.frontEnd && scope.settings.sortingColumn){
                     		return "'" + scope.settings.sortingColumn + "'";
@@ -51,6 +50,7 @@
                 		return "";
                     }
                     
+                    //returning if the order is ASC or DESC
                     scope.getSortingOrderAsBoolean = function(){
                     	if(scope.settings.pagination.frontEnd && scope.settings.sortingOrder){
                     		return scope.settings.sortingOrder.toUpperCase() == 'DESC';
@@ -76,12 +76,14 @@
                     	return style;
                     }
                     
+                    //returning the style of the header cell
                     scope.getThStyle = function(thStyle,column){
                     	var style = thStyle?thStyle:{};
                     	if(column.style && column.style.width) style['max-width'] = column.style.width;
                     	return style;
                     }
                     
+                    //returning the style of the cell
                     scope.getCellStyle = function(column,value){
                     	var style= {};
                     	if(!scope.settings.showGrid) style['border-width'] = 0;
@@ -140,9 +142,16 @@
                 		
                 	//check if the element is selected to highlight the element
                 	scope.isCellSelected = function(row,column){
-                		return (column.aliasToShow == scope.bulkSelection.aliasToShow && scope.selectedCells.indexOf(row[scope.bulkSelection.aliasToShow])!=-1)?true:false;
+                		if(scope.bulkSelection){
+                			if(scope.settings.modalSelectionColumn){
+                    			return (scope.settings.modalSelectionColumn == column.name && scope.selectedCells.indexOf(row[scope.bulkSelection.aliasToShow])!=-1)?true:false;
+                    		}else{
+                    			return (column.aliasToShow == scope.bulkSelection.aliasToShow && scope.selectedCells.indexOf(row[scope.bulkSelection.aliasToShow])!=-1)?true:false;
+                    		}
+                		}
                 	}
                     
+                	//function passed to parent on click
                     scope.clickItem = function (event,row,column) {
                     	event.preventDefault();
                     	scope.bulkSelection = false;
@@ -217,6 +226,7 @@
             	    	return output;
             		}
             		
+                    //formatting function with the given parameters
             		scope.numberFormat = function (value, dec, dsep, tsep) {
                 		
               		  if (isNaN(value) || value == null) return value;
@@ -231,6 +241,7 @@
               		  return fnums.replace(/(\d)(?=(?:\d{3})+$)/g, '$1' + tsep) + decimals;
             		}
             		
+            		//popup to show cell content on click when the cell is not wide enough
             		scope.showFullContent = function (e,value){
             			e.stopPropagation();
             			$mdDialog.show(
