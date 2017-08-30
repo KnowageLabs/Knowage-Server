@@ -514,7 +514,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 				
 				// realtime dataset filtering
-				table = $scope.filterDataset(table);
 				if(dataset.isRealtime === true){
 					table = $scope.filterDataset(table);
 				}
