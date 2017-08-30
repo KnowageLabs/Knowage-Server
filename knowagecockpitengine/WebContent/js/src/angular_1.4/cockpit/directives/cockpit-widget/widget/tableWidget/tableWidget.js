@@ -458,7 +458,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						if (filters[f].values.indexOf(dataset[d][f])==-1){
 							dataset.splice(d,1);
 						}
-					if the column is a measure cast it to number and check in filter
+					//if the column is a measure cast it to number and check in filter
 					} else if (filters[f].type == 'MEASURE'){
 						var columnValue = Number(dataset[d][f]);
 						var filterValue = filters[f].values.map(function (x) { 
