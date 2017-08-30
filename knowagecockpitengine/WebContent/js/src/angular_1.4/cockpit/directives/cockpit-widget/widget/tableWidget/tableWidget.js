@@ -452,6 +452,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var filtered = [];
 			//using the reformatted filters
 			var filters = $scope.reformatFilters();
+			if (angular.equals({},filters)) {
+				return dataset;
+			}
 			for(var f in filters){
 				for(var d in dataset){
 					//if the column is an attribute check in filter
@@ -466,7 +469,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						    return Number(x); 
 						});
 						if (filterValue.indexOf(columnValue)>-1){
-							filtered.push(table[i]);
+							filtered.push(dataset[d]);
 						}
 					}
 				}

@@ -335,33 +335,5 @@
             }
         };
     }])
-    .filter('colFilter', function() {
-    	return function(input, filters, isRealtime) {
-    		if (!isRealtime){
-    			return input;
-    		} else {
-    			var allFiltersEmpty = true;
-    			for(var k in filters){
-    				if(filters[k].filterVals.length > 0){
-    					allFiltersEmpty = false;
-    					break;
-    				}
-    			}
-    			if(allFiltersEmpty){
-    				return input;
-    			}
-    			
-        		var out = [];
-        		for (var i in input){
-        			for(var k in filters){
-        				if (filters[k].filterVals.indexOf(input[i][filters[k].colName]) > -1){
-        					out.push(input[i]);
-        					break;
-        				}
-        			}
-        		}
-        	    return out;
-    		}  
-    	};
-    })
+
 }());
