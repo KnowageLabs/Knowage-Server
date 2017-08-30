@@ -452,7 +452,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			//using the reformatted filters
 			var filters = $scope.reformatFilters();
 			for(var f in filters){
-				for(var d in dataset){
+				for(var d = dataset.length - 1; d >= 0; d--){
 					//if the column is an attribute check in filter
 					if (filters[f].type == 'ATTRIBUTE'){
 						if (filters[f].values.indexOf(dataset[d][f])==-1){
