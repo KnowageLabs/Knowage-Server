@@ -2,6 +2,9 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 	var ds=this;
 		
 	this.datasetList=[];
+	this.datasetMapById={};
+	this.datasetMapByLabel={};
+	
 	this.infoColumns = [];
 	
 	this.isDatasetFromTemplateLoaded = false;
@@ -17,9 +20,12 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			sbiModule_restServices.restToRootProject();
 			sbiModule_restServices.promiseGet("2.0/datasets","listDataset?seeTechnical=TRUE&ids=" + dsIds.join())
 			.then(function(response){
-				angular.forEach(response.data.item, function(item){
-					this.push(item);
-				}, ds.datasetList);
+				for(var i in response.data.item){
+					var dataset = response.data.item[i];
+					ds.datasetList.push(dataset);
+					ds.datasetMapById[dataset.id.dsId] = dataset;
+					ds.datasetMapByLabel[dataset.label] = dataset;
+				}
 				
 				sbiModule_restServices.restToRootProject();
 				sbiModule_restServices.promiseGet("1.0/datasets","?ids=" + dsIds.join())
@@ -84,7 +90,13 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				}, newDatasets);
 				
 				ds.initNearRealTimeValues(newDatasets);
-				ds.datasetList = ds.datasetList.concat(newDatasets);
+				
+				for(var i in newDatasets){
+					var dataset = newDatasets[i];
+					ds.datasetList.push(dataset);
+					ds.datasetMapById[dataset.id.dsId] = dataset;
+					ds.datasetMapByLabel[dataset.label] = dataset;
+				}
 				
 				sbiModule_restServices.restToRootProject();
 				sbiModule_restServices.promiseGet("1.0/datasets","")
@@ -327,23 +339,12 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 	//return a COPY of dataset with specific id or null
 	this.getDatasetById=function(dsId){
-		for(var i=0;i<ds.datasetList.length;i++){
-			if(angular.equals(ds.datasetList[i].id.dsId,dsId)){
-				var tmpDS={};
-				angular.copy(ds.datasetList[i],tmpDS);
-				return tmpDS;
-			}
-		}
+		return angular.copy(ds.datasetMapById[dsId]);
 	}
+	
 	//return a COPY of dataset with specific label or null
 	this.getDatasetByLabel=function(dsLabel){
-		for(var i=0;i<ds.datasetList.length;i++){
-			if(angular.equals(ds.datasetList[i].label,dsLabel)){
-				var tmpDS={};
-				angular.copy(ds.datasetList[i],tmpDS);
-				return tmpDS;
-			}
-		}
+		return angular.copy(ds.datasetMapByLabel[dsLabel]);
 	}
 
 
@@ -358,6 +359,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			}
 		}
 	}
+	
 	//return a COPY of avaiable dataset with specific label or null
 	this.getAvaiableDatasetByLabel=function(dsLabel){
 		var dsAvList=ds.getAvaiableDatasets();
@@ -369,6 +371,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			}
 		}
 	}
+	
 	this.getLabelDatasetsUsed = function(){
 		var string = "";
 		for(var i=0;i<cockpitModule_template.sheets.length;i++){

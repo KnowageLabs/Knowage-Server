@@ -88,22 +88,12 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 	this.loadDatasetRecords = function(ngModel, page, itemPerPage,columnOrdering, reverseOrdering){
 		if(ngModel.dataset!=undefined && ngModel.dataset.dsId!=undefined){
 			var dataset = cockpitModule_datasetServices.getDatasetById(ngModel.dataset.dsId);
-			if (dataset.isRealtime) {
-				//if it's a realtime dataset don't use backend filter on it
+			
+			//if it's a realtime dataset don't use backend filter on charts
+			if (dataset.isRealtime && ngModel.content && ngModel.content.filters) {
 				var ngModelCopy = {};
-				angular.copy(ngModel, ngModelCopy);
-
-				//for charts
-				if (ngModelCopy.content){
-					var filters = ngModelCopy.content.filters;
-					if (filters){
-						for (var i=0; i < filters.length; i++){
-							//erase the content of the array
-							filters[i].filterVals = [];
-						}
-					}
-				}
-
+				angular.copy(ngModel, ngModelCopy);				
+				ngModelCopy.content.filters = [];
 				return cockpitModule_datasetServices.loadDatasetRecordsById(ngModel.dataset.dsId,page,itemPerPage,columnOrdering, reverseOrdering, ngModelCopy);
 			}
 			return cockpitModule_datasetServices.loadDatasetRecordsById(ngModel.dataset.dsId,page,itemPerPage,columnOrdering, reverseOrdering, ngModel);
