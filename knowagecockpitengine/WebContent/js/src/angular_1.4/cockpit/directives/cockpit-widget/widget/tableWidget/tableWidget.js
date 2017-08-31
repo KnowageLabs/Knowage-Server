@@ -40,7 +40,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 	})
 
-	function cockpitTableWidgetControllerFunction($scope,cockpitModule_widgetConfigurator,$mdDialog,$timeout,$mdPanel,$q,cockpitModule_datasetServices, $mdToast, sbiModule_translate,sbiModule_restServices,cockpitModule_widgetServices,cockpitModule_widgetSelection,accessibility_preferences,$filter,cockpitModule_datasetServices){
+	function cockpitTableWidgetControllerFunction(
+			$scope,
+			$mdDialog,
+			$mdToast,
+			$timeout,
+			$mdPanel,
+			$q,
+			$filter,
+			sbiModule_translate,
+			sbiModule_restServices,
+			cockpitModule_datasetServices,
+			cockpitModule_widgetConfigurator,
+			cockpitModule_widgetServices,
+			cockpitModule_widgetSelection,
+			accessibility_preferences){
 		$scope.accessibilityModeEnabled = accessibility_preferences.accessibilityModeEnabled;
 		if ($scope.ngModel && $scope.ngModel.dataset && $scope.ngModel.dataset.dsId){
 			$scope.isDatasetRealtime = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId).isRealtime;
@@ -64,32 +78,50 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				for (var i=0; i< newValue.length; i++){
 					//search if there are selection on the widget's dataset
 					if (newValue[i].datasetId == widgetDatasetId){
-						var selections = newValue[i].selections;
-						//get filter on our dataset
-						if (selections[widgetDataset.label]){
-							var selectionsOfDataset = selections[widgetDataset.label];
-							for (var columnName in selectionsOfDataset) {
-								if (selectionsOfDataset.hasOwnProperty(columnName)) {
-									var selectionsValues = selectionsOfDataset[columnName]
-									for (var z=0 ; z < selectionsValues.length ; z++){
-										var filterValue = selectionsValues[z]
-										// clean the value from the parenthesis ( )
-										filterValue = filterValue.replace(/[()]/g, ''); 
-										// clean the value from the parenthesis ''
-										filterValue = filterValue.replace(/['']/g, ''); 
-										var filterValues = []
-										filterValues.push(filterValue);
-
-										//Filtering of the rows
-										var columnObject = scope.getColumnObjectFromName(scope.ngModel.content.columnSelectedOfDataset,columnName);
-										//use the aliasToShow to match the filtercolumn name
-										var filterColumnname = columnObject.aliasToShow;
-										var columnType = columnObject.fieldType;
-										scope.itemList = scope.filterRows(scope.itemList,filterColumnname,filterValues,columnType);
-									}
-								}
+						var selection = newValue[i].selections;
+						var formattedSelection = {};
+						var datasetSelection = selections[widgetDataset.label];
+						for(var s in datasetSelection){
+							var columnObject = scope.getColumnObjectFromName(scope.ngModel.content.columnSelectedOfDataset,s);
+							formattedSelection[columnObject.aliasToShow] = {
+									"values":[],
+									"type": columnObject.fieldType
+							};
+							for(var k in datasetSelection[s]){
+								// clean the value from the parenthesis ( )
+								datasetSelection[s][k] = datasetSelection[s][k].replace(/[()]/g, ''); 
+								datasetSelection[s][k] = datasetSelection[s][k].replace(/['']/g, ''); 
+								formattedSelection[columnObject.aliasToShow][values].push(datasetSelection[s][k]);
 							}
 						}
+						scope.itemList = scope.filterDataset(scope.itemList,formattedSelection);
+						
+						
+						//get filter on our dataset
+//						if (selections[widgetDataset.label]){
+//							var selectionsOfDataset = selections[widgetDataset.label];
+//							for (var columnName in selectionsOfDataset) {
+//								if (selectionsOfDataset.hasOwnProperty(columnName)) {
+//									var selectionsValues = selectionsOfDataset[columnName]
+//									for (var z=0 ; z < selectionsValues.length ; z++){
+//										var filterValue = selectionsValues[z]
+//										// clean the value from the parenthesis ( )
+//										filterValue = filterValue.replace(/[()]/g, ''); 
+//										// clean the value from the parenthesis ''
+//										filterValue = filterValue.replace(/['']/g, ''); 
+//										var filterValues = []
+//										filterValues.push(filterValue);
+//
+//										//Filtering of the rows
+//										var columnObject = scope.getColumnObjectFromName(scope.ngModel.content.columnSelectedOfDataset,columnName);
+//										//use the aliasToShow to match the filtercolumn name
+//										var filterColumnname = columnObject.aliasToShow;
+//										var columnType = columnObject.fieldType;
+//										scope.itemList = scope.filterRows(scope.itemList,filterColumnname,filterValues,columnType);
+//									}
+//								}
+//							}
+//						}
 					}
 				}
 			}
@@ -448,9 +480,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		};
 		
 		// filtering the table for realtime dataset
-		$scope.filterDataset = function(dataset){
+		$scope.filterDataset = function(dataset,selection){
 			//using the reformatted filters
-			var filters = $scope.reformatFilters();
+			var filters = selection ? selection : $scope.reformatFilters();
 			for(var f in filters){
 				for(var d = dataset.length - 1; d >= 0; d--){
 					//if the column is an attribute check in filter
