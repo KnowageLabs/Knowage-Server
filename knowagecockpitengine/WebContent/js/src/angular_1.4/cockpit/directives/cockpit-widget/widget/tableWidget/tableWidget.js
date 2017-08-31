@@ -72,11 +72,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		//set a watcher on a variable that can contains the associative selections for realtime dataset
 		var realtimeSelectionsWatcher = $scope.$watchCollection('realTimeSelections',function(newValue,oldValue,scope){
 			if(newValue != oldValue && newValue.length > 0){
-				if (!scope.savedRows){
-					scope.savedRows = [];
-					angular.copy(scope.itemList,scope.savedRows);
-				} 
-
 				scope.itemList = scope.filterDataset(scope.itemList,scope.reformatSelections(newValue));
 			}else{
 				scope.itemList = scope.savedRows;
@@ -534,11 +529,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				// realtime dataset filtering
 				if(dataset.isRealtime === true){
 					table = $scope.filterDataset(table);
+					$scope.savedRows = [];
+					angular.copy(table,$scope.savedRows);
+
 					if ($scope.realTimeSelections.length > 0 ) {
-						table = $scope.filterDataset(scope.itemList,scope.reformatSelections($scope.realTimeSelections));
+						table = $scope.filterDataset(table,scope.reformatSelections($scope.realTimeSelections));
 					}
 
-					
+
 				}
 			}
 			return table;
