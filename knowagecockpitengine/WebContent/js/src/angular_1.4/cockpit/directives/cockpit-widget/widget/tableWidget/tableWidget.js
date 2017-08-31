@@ -68,42 +68,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		var scope = $scope;
 
-		$scope.realtimeSelections = cockpitModule_widgetServices.realtimeSelections;
+		$scope.realTimeSelections = cockpitModule_widgetServices.realtimeSelections;
 		//set a watcher on a variable that can contains the associative selections for realtime dataset
-		var realtimeSelectionsWatcher = $scope.$watchCollection('realtimeSelections',function(newValue,oldValue,scope){
+		var realtimeSelectionsWatcher = $scope.$watchCollection('realTimeSelections',function(newValue,oldValue,scope){
 			if(newValue != oldValue && newValue.length > 0){
 				if (!scope.savedRows){
 					scope.savedRows = [];
 					angular.copy(scope.itemList,scope.savedRows);
 				} 
-				if (scope.ngModel && scope.ngModel.dataset && scope.ngModel.dataset.dsId){
-					var widgetDatasetId = scope.ngModel.dataset.dsId;
-					var widgetDataset = cockpitModule_datasetServices.getDatasetById(widgetDatasetId)
-	
-					for (var i=0; i< newValue.length; i++){
-						//search if there are selection on the widget's dataset
-						if (newValue[i].datasetId == widgetDatasetId){
-							var selections = newValue[i].selections;
-							var formattedSelection = {};
-							var datasetSelection = selections[widgetDataset.label];
-							for(var s in datasetSelection){
-								var columnObject = scope.getColumnObjectFromName(scope.ngModel.content.columnSelectedOfDataset,s);
-								formattedSelection[columnObject.aliasToShow] = {
-										"values":[],
-										"type": columnObject.fieldType
-								};
-								for(var k in datasetSelection[s]){
-									// clean the value from the parenthesis ( )
-									datasetSelection[s][k] = datasetSelection[s][k].replace(/[()]/g, ''); 
-									datasetSelection[s][k] = datasetSelection[s][k].replace(/['']/g, ''); 
-									formattedSelection[columnObject.aliasToShow].values.push(datasetSelection[s][k]);
-								}
-							}
-							scope.itemList = scope.filterDataset(scope.itemList,formattedSelection);
-	
-						}
-					}
-				}
+
+				scope.itemList = scope.filterDataset(scope.itemList,scope.reformatSelections(newValue));
 			}else{
 				scope.itemList = scope.savedRows;
 			}
@@ -487,6 +461,36 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return dataset;
 		}
 
+		$scope.reformatSelections = function(realTimeSelections){
+			if ($scope.ngModel && $scope.ngModel.dataset && $scope.ngModel.dataset.dsId){
+				var widgetDatasetId = $scope.ngModel.dataset.dsId;
+				var widgetDataset = cockpitModule_datasetServices.getDatasetById(widgetDatasetId)
+
+				for (var i=0; i< realTimeSelections.length; i++){
+					//search if there are selection on the widget's dataset
+					if (realTimeSelections[i].datasetId == widgetDatasetId){
+						var selections = realTimeSelections[i].selections;
+						var formattedSelection = {};
+						var datasetSelection = selections[widgetDataset.label];
+						for(var s in datasetSelection){
+							var columnObject = scope.getColumnObjectFromName(scope.ngModel.content.columnSelectedOfDataset,s);
+							formattedSelection[columnObject.aliasToShow] = {
+									"values":[],
+									"type": columnObject.fieldType
+							};
+							for(var k in datasetSelection[s]){
+								// clean the value from the parenthesis ( )
+								datasetSelection[s][k] = datasetSelection[s][k].replace(/[()]/g, ''); 
+								datasetSelection[s][k] = datasetSelection[s][k].replace(/['']/g, ''); 
+								formattedSelection[columnObject.aliasToShow].values.push(datasetSelection[s][k]);
+							}
+						}
+
+					}
+				}
+				return formattedSelection;
+			}			
+		}
 		
 		$scope.getRows = function(values){
 			var dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId);
@@ -530,6 +534,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				// realtime dataset filtering
 				if(dataset.isRealtime === true){
 					table = $scope.filterDataset(table);
+					if ($scope.realTimeSelections.length > 0 ) {
+						table = $scope.filterDataset(scope.itemList,scope.reformatSelections($scope.realTimeSelections));
+					}
+
+					
 				}
 			}
 			return table;
