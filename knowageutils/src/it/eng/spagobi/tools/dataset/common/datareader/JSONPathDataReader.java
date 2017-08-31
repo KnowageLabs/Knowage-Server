@@ -31,6 +31,7 @@ import it.eng.spagobi.utilities.Helper;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -495,10 +496,18 @@ public class JSONPathDataReader extends AbstractDataReader {
 		Class<?> fieldType = fmd.getType();
 		if (fieldType.equals(String.class)) {
 			return value;
+		} else if (fieldType.equals(Byte.class)) {
+			return Byte.valueOf(value);
+		} else if (fieldType.equals(Short.class)) {
+			return Short.valueOf(value);
+		} else if (fieldType.equals(Integer.class)) {
+			return Integer.valueOf(value);
 		} else if (fieldType.equals(BigInteger.class)) {
-			return Long.parseLong(value);
+			return new BigInteger(value.toString());
 		} else if (fieldType.equals(Double.class)) {
 			return Double.parseDouble(value);
+		} else if (fieldType.equals(BigDecimal.class)) {
+			return new BigDecimal(value.toString());
 		} else if (fieldType.equals(Date.class)) {
 			String dateFormat = (String) fmd.getProperty(DATE_FORMAT_FIELD_METADATA_PROPERTY);
 			Assert.assertNotNull(dateFormat != null, "dateFormat != null");
@@ -570,8 +579,18 @@ public class JSONPathDataReader extends AbstractDataReader {
 
 		if (jsonPathType.equalsIgnoreCase("string")) {
 			return String.class;
-		} else if (jsonPathType.equalsIgnoreCase("int") || jsonPathType.equalsIgnoreCase("long") || jsonPathType.equalsIgnoreCase("bigint")) {
+		} else if (jsonPathType.equalsIgnoreCase("byte")) {
+			return Byte.class;
+		} else if (jsonPathType.equalsIgnoreCase("short")) {
+			return Short.class;
+		} else if (jsonPathType.toLowerCase().startsWith("int")) {
+			return Integer.class;
+		} else if (jsonPathType.equalsIgnoreCase("long")) {
 			return Long.class;
+		} else if (jsonPathType.toLowerCase().startsWith("bigint")) {
+			return BigInteger.class;
+		} else if (jsonPathType.toLowerCase().startsWith("bigdec")) {
+			return BigDecimal.class;
 		} else if (jsonPathType.equalsIgnoreCase("float") || jsonPathType.equalsIgnoreCase("double")) {
 			return Double.class;
 		} else if (jsonPathType.toLowerCase().startsWith("date")) {
