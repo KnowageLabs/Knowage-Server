@@ -724,6 +724,42 @@ public class DataSetTransformer {
 
 	}
 
+	public LinkedHashMap<String, ArrayList<JSONObject>> prepareDataForGrouping(List<Object> dataRows, String isCockpitEngine) throws JSONException {
+		boolean isCockpit = Boolean.parseBoolean(isCockpitEngine);
+		LinkedHashMap<String, ArrayList<JSONObject>> map = new LinkedHashMap<String, ArrayList<JSONObject>>();
+		String primCat;
+		String secCat;
+		if (isCockpit) {
+			primCat = "column_1";
+			secCat = "column_2";
+		} else {
+			primCat = "column_2";
+			secCat = "column_3";
+		}
+		for (Object singleObject : dataRows) {
+			if (!map.containsKey(((Map) singleObject).get(secCat))) {
+				ArrayList<JSONObject> newListOfOrderColumnItems = new ArrayList<JSONObject>();
+				JSONObject jo = new JSONObject();
+				jo.put("y", ((Map) singleObject).get("column_3"));
+				jo.put("name", ((Map) singleObject).get(primCat));
+
+				newListOfOrderColumnItems.add(jo);
+				map.put((String) ((Map) singleObject).get(secCat), newListOfOrderColumnItems);
+			} else {
+				ArrayList oldArrayList = map.get(((Map) singleObject).get(secCat));
+
+				JSONObject jo = new JSONObject();
+				jo.put("y", ((Map) singleObject).get("column_3"));
+				jo.put("name", ((Map) singleObject).get(primCat));
+				oldArrayList.add(jo);
+				map.put((String) ((Map) singleObject).get(secCat), oldArrayList);
+			}
+		}
+
+		return map;
+
+	}
+
 	/**
 	 * Method that serves for preparing the data that JS code will use for rendering the SCATTER chart
 	 *

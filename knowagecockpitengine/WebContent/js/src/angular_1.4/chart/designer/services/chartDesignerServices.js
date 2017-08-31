@@ -481,6 +481,7 @@ angular.module('ChartDesignerService', [])
 			              "viewDistance":  0,
 			              "show3D" : false,
 			              "groupCategories" : false,
+			              "groupSeries" : false,
 			              "dateTime":false,
 			              "dateFormat":"day"
 					   }

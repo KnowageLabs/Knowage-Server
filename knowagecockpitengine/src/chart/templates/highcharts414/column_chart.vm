@@ -820,10 +820,9 @@
 		#end
 		
 		## author: rselakov, radmila.selakovic@mht.net
-		## Calling the method for reconfiguring the original data about the ordering column and its category values
-		#set($map = $datasettransformer.prepareDataForGroupingForBar($rows,$isCockpitEngine))
-		
+		## Calling the method for reconfiguring the original data about the ordering column and its category values		
 		#if($chart.groupCategories && $chart.groupCategories =='true')
+		#set($map = $datasettransformer.prepareDataForGroupingForBar($rows,$chart.isCockpitEngine))
             categories: [
             	#foreach($element in $map.entrySet())
             		{ 
@@ -835,6 +834,16 @@
 						]
 					},
 				#end
+            ]
+		#end
+		#if($chart.groupSeries && $chart.groupSeries =='true')
+		#set($map = $datasettransformer.prepareDataForGrouping($rows,$chart.isCockpitEngine))
+            categories: [
+				 #foreach($valueKey in $map.keySet())
+				#foreach($el in  $map.get($valueKey))	
+					'$el.name',
+				#end		
+			#end
             ]
 		#end
 		
@@ -1039,7 +1048,7 @@
     	#end
     #end
 	series: [
-	
+	#if($chart.groupSeries !='true')
 	#foreach($valueKey in $seriesMap.keySet())
 	    #set($relatedSerie = $seriesMap.get($valueKey))
 	    	
@@ -1091,10 +1100,11 @@
 	    	    #set($serieColumnsMapped = $dataColumnsMapper.get($relatedSerieColName)) ## "Vendite_AVG" -> "column_5" ## "Ricavi_SUM" -> "column_6"
 				
 				#foreach($row in $rows)
-					#set ($serieValue = $row.get($serieColumnsMapped))
-					#set ($serieCategoryName =  $row.get($categorieColumnsMapped))
-					#set( $serieCategoryName = $serieCategoryName.replace("\", "\\") )
-					#set( $serieCategoryName = $serieCategoryName.replace("""", "\""") )
+					#if( $row.get($serieColumnsMapped))
+						#set ($serieValue = $row.get($serieColumnsMapped))
+						#set ($serieCategoryName =  $row.get($categorieColumnsMapped))
+						#set( $serieCategoryName = $serieCategoryName.replace("\", "\\") )
+						#set( $serieCategoryName = $serieCategoryName.replace("""", "\""") )
 					#if($chart.dateTime!="true")
 					
 					{
@@ -1132,6 +1142,7 @@
 						#end
 						[Date.UTC($year, $month, $day), $serieValue],
 					#end  
+					#end
 				#end
 	    	],
 	    	#set($relatedSerieShowValue = $relatedSerie.showValue)
@@ -1284,6 +1295,21 @@
     		yAxis: $yAxisPositions[$referencedAxis]
     	#end
 	    }, 
+	#end
+	#end
+	#if($chart.groupSeries && $chart.groupSeries =='true')	
+		#foreach($valueKey in $map.keySet())
+		{
+			name: '$valueKey',
+			data: [
+				#foreach($el in  $map.get($valueKey))	
+				{
+					y: $el.y,
+					name: '$el.name'},
+				#end	
+			]
+		},
+	#end
 	#end
     ],
     
@@ -1673,8 +1699,8 @@
 		         #end
             },
             dataLabels: {
-					allowOverlap: true,
-					y:-10
+                   allowOverlap: true,
+                   y:-10
             },
             
             #* 
@@ -1692,7 +1718,7 @@
             	
             	@author: danristo (danilo.ristovski@mht.net)
             *#
-            turboThreshold: 5000
+            turboThreshold: 0
         }
        
     }

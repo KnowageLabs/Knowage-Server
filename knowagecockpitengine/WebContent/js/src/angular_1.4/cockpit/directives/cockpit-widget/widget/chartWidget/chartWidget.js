@@ -927,7 +927,8 @@ function setAggregationsOnChartEngine(wconf){
 				obj['fieldType'] = "ATTRIBUTE";
 				
 				aggregations.push(obj);
-				if( chartTemplate.CHART.groupCategories && chartCategory.groupby!=""){
+				
+				if( (chartTemplate.CHART.groupCategories || chartTemplate.CHART.groupSeries) && chartCategory.groupby!=""){
 					var subs = "";
 					if (chartCategory.groupby.indexOf(',') == -1) { 
 						subs = chartCategory.groupby 
