@@ -78,7 +78,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				for (var i=0; i< newValue.length; i++){
 					//search if there are selection on the widget's dataset
 					if (newValue[i].datasetId == widgetDatasetId){
-						var selection = newValue[i].selections;
+						var selections = newValue[i].selections;
 						var formattedSelection = {};
 						var datasetSelection = selections[widgetDataset.label];
 						for(var s in datasetSelection){
@@ -91,37 +91,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 								// clean the value from the parenthesis ( )
 								datasetSelection[s][k] = datasetSelection[s][k].replace(/[()]/g, ''); 
 								datasetSelection[s][k] = datasetSelection[s][k].replace(/['']/g, ''); 
-								formattedSelection[columnObject.aliasToShow][values].push(datasetSelection[s][k]);
+								formattedSelection[columnObject.aliasToShow].values.push(datasetSelection[s][k]);
 							}
 						}
 						scope.itemList = scope.filterDataset(scope.itemList,formattedSelection);
-						
-						
-						//get filter on our dataset
-//						if (selections[widgetDataset.label]){
-//							var selectionsOfDataset = selections[widgetDataset.label];
-//							for (var columnName in selectionsOfDataset) {
-//								if (selectionsOfDataset.hasOwnProperty(columnName)) {
-//									var selectionsValues = selectionsOfDataset[columnName]
-//									for (var z=0 ; z < selectionsValues.length ; z++){
-//										var filterValue = selectionsValues[z]
-//										// clean the value from the parenthesis ( )
-//										filterValue = filterValue.replace(/[()]/g, ''); 
-//										// clean the value from the parenthesis ''
-//										filterValue = filterValue.replace(/['']/g, ''); 
-//										var filterValues = []
-//										filterValues.push(filterValue);
-//
-//										//Filtering of the rows
-//										var columnObject = scope.getColumnObjectFromName(scope.ngModel.content.columnSelectedOfDataset,columnName);
-//										//use the aliasToShow to match the filtercolumn name
-//										var filterColumnname = columnObject.aliasToShow;
-//										var columnType = columnObject.fieldType;
-//										scope.itemList = scope.filterRows(scope.itemList,filterColumnname,filterValues,columnType);
-//									}
-//								}
-//							}
-//						}
+
 					}
 				}
 			}
