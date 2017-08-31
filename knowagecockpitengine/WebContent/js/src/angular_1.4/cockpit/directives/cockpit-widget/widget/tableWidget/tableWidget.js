@@ -55,6 +55,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			cockpitModule_widgetServices,
 			cockpitModule_widgetSelection,
 			accessibility_preferences){
+		
 		$scope.accessibilityModeEnabled = accessibility_preferences.accessibilityModeEnabled;
 		if ($scope.ngModel && $scope.ngModel.dataset && $scope.ngModel.dataset.dsId){
 			$scope.isDatasetRealtime = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId).isRealtime;
@@ -424,7 +425,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				if($scope.ngModel.filters[f].filterVals.length > 0){
 					var columnObject = $scope.getColumnObjectFromName($scope.ngModel.content.columnSelectedOfDataset,$scope.ngModel.filters[f].colName);
 					var aliasToShow = columnObject.aliasToShow;
-					filters[aliasToShow] = {"type":columnObject.fieldType, "values":$scope.ngModel.filters[f].filterVals};
+					filters[aliasToShow] = {
+						"type":columnObject.fieldType, 
+						"values":$scope.ngModel.filters[f].filterVals
+					};
 				}
 			}
 			return filters;
@@ -456,6 +460,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return dataset;
 		}
 
+		//reformatting the selections to have the same model of the filters
 		$scope.reformatSelections = function(realTimeSelections){
 			if ($scope.ngModel && $scope.ngModel.dataset && $scope.ngModel.dataset.dsId){
 				var widgetDatasetId = $scope.ngModel.dataset.dsId;
@@ -487,6 +492,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}			
 		}
 		
+		//function to get the rows of the table. Is used on every refresh
 		$scope.getRows = function(values){
 			var dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId);
 			var table = [];
@@ -520,6 +526,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					table.push(obj);
 				}
 				
+				// deleting last row to move the summary row outsise in its footer container.
 				if($scope.ngModel.settings.summary.enabled){
 					var lastIndex = values.rows.length-1;
 					$scope.ngModel.settings.summary.row = table[lastIndex];
@@ -535,8 +542,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					if ($scope.realTimeSelections.length > 0 ) {
 						table = $scope.filterDataset(table,scope.reformatSelections($scope.realTimeSelections));
 					}
-
-
 				}
 			}
 			return table;
