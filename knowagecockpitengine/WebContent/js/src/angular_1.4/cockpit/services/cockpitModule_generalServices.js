@@ -81,6 +81,9 @@ angular.module("cockpitModule").service("cockpitModule_generalServices",function
 								}
 							}
 							widget.search = undefined;
+							if(widget.dataset){
+								widget.dataset.isRealtime = undefined;
+							}
 						}
 					});
 				}

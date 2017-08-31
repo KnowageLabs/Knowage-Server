@@ -84,24 +84,18 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 	this.addWidget=function(sheetIndex,item){
 		cockpitModule_template.sheets[sheetIndex].widgets.push(item)
 	};
+	
 	this.loadDatasetRecords = function(ngModel, page, itemPerPage,columnOrdering, reverseOrdering){
 		if(ngModel.dataset!=undefined && ngModel.dataset.dsId!=undefined){
-			var isDatasetRealtime = cockpitModule_datasetServices.isDatasetRealtime(ngModel.dataset.dsId)
-			if (isDatasetRealtime) {
+			var dataset = cockpitModule_datasetServices.getDatasetById(ngModel.dataset.dsId);
+			if (dataset.isRealtime) {
 				//if it's a realtime dataset don't use backend filter on it
 				var ngModelCopy = {};
 				angular.copy(ngModel, ngModelCopy);
-//				var filters = ngModelCopy.filters
-//				if (filters){
-//					for (var i=0; i < filters.length; i++){
-//						//erase the content of the array
-//						filters[i].filterVals = [];
-//					}
-//				}
 
 				//for charts
 				if (ngModelCopy.content){
-					var filters = ngModelCopy.content.filters
+					var filters = ngModelCopy.content.filters;
 					if (filters){
 						for (var i=0; i < filters.length; i++){
 							//erase the content of the array
@@ -192,9 +186,8 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 			}else{
 				if (config && config.dataset && config.dataset.dsId){
 					var dataset = cockpitModule_datasetServices.getDatasetById(config.dataset.dsId);
-					var isDatasetRealtime = dataset.isRealtime;
 					//for realtime dataset the associative selections are managed client side
-					if (isDatasetRealtime && nature == 'selections'){
+					if (dataset.isRealtime && nature == 'selections'){
 						var selections = cockpitModule_widgetSelection.getCurrentSelections(dataset.label);
 
 						if (Object.keys(selections).length === 0 && selections.constructor === Object){

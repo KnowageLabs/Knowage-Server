@@ -73,6 +73,7 @@
 					$scope.model.content.columnSelectedOfDataset = [];
 				}
 				$scope.model.settings.sortingColumn = undefined;
+				$scope.model.settings.pagination.frontEnd = ($scope.local && $scope.local.isRealtime);
 			}	
 		}
 

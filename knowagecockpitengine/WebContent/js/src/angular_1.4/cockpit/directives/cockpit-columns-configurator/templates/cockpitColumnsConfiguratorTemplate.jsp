@@ -13,7 +13,7 @@
 			</md-input-container>
 			<md-input-container flex class="md-block"> 
 				<md-switch ng-model="model.settings.pagination.frontEnd" aria-label="Frontend pagination" layout-align="center center"
-						ng-disabled="!model.settings.pagination.enabled">
+						ng-disabled="!model.settings.pagination.enabled || (local && local.isRealtime)">
 					 {{translate.load('sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.frontendpagination')}}
 				</md-switch>
 		     </md-input-container>

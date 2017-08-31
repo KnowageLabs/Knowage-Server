@@ -58,7 +58,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		$scope.accessibilityModeEnabled = accessibility_preferences.accessibilityModeEnabled;
 		if ($scope.ngModel && $scope.ngModel.dataset && $scope.ngModel.dataset.dsId){
-			$scope.isDatasetRealtime = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId).isRealtime;
+			$scope.ngModel.dataset.isRealtime = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId).isRealtime;
 		}
 		
 		$scope.selectedTab = {'tab' : 0};
@@ -83,10 +83,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.ngModel.settings = {};
 		}
 		
-		if ($scope.ngModel.dataset ){
-			$scope.ngModel.settings.realTimeDataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId).isRealtime;
-		}
-		
 		if(!$scope.ngModel.settings.backendTotalRows){
 			$scope.ngModel.settings.backendTotalRows = 0;
 		}
@@ -104,10 +100,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 		if(!$scope.ngModel.settings.pagination){
 			$scope.ngModel.settings.pagination = {
-					'enabled': true,
-					'itemsNumber': 10,
-					'frontEnd': false
+				'enabled': true,
+				'itemsNumber': 10,
+				'frontEnd': false
 			};
+		}
+		
+		if($scope.ngModel && $scope.ngModel.dataset && $scope.ngModel.dataset.isRealtime){
+			$scope.ngModel.settings.pagination.frontEnd = true;
 		}
 		
 		if($scope.ngModel.settings.multiselectable==undefined){
