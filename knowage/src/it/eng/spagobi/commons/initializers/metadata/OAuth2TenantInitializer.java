@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,19 +11,14 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.commons.initializers.metadata;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.commons.metadata.SbiTenant;
-import it.eng.spagobi.security.OAuth2.OAuth2Client;
-import it.eng.spagobi.security.OAuth2.OAuth2Config;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -36,6 +31,19 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.commons.metadata.SbiCommonInfo;
+import it.eng.spagobi.commons.metadata.SbiOrganizationDatasource;
+import it.eng.spagobi.commons.metadata.SbiOrganizationDatasourceId;
+import it.eng.spagobi.commons.metadata.SbiOrganizationProductType;
+import it.eng.spagobi.commons.metadata.SbiOrganizationProductTypeId;
+import it.eng.spagobi.commons.metadata.SbiProductType;
+import it.eng.spagobi.commons.metadata.SbiTenant;
+import it.eng.spagobi.security.OAuth2.OAuth2Client;
+import it.eng.spagobi.security.OAuth2.OAuth2Config;
+import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class OAuth2TenantInitializer extends SpagoBIInitializer {
 	static private Logger logger = Logger.getLogger(OAuth2TenantInitializer.class);
@@ -58,10 +66,13 @@ public class OAuth2TenantInitializer extends SpagoBIInitializer {
 			for (String aConfiguredTenant : configuredTenants) {
 				if (exists(aConfiguredTenant, existingTenants)) {
 					LogMF.debug(logger, "Tenant {0} already exists", aConfiguredTenant);
+					writeTenantWriteDefaultDatasource(aConfiguredTenant, hibernateSession);
 					break;
 				} else {
 					LogMF.info(logger, "Tenant {0} does not exist. It will be inserted", aConfiguredTenant);
 					writeTenant(aConfiguredTenant, hibernateSession);
+					writeTenantProductTypes(aConfiguredTenant, hibernateSession);
+					writeTenantWriteDefaultDatasource(aConfiguredTenant, hibernateSession);
 					LogMF.debug(logger, "Tenant {0} was inserted", aConfiguredTenant);
 					break;
 				}
@@ -92,9 +103,68 @@ public class OAuth2TenantInitializer extends SpagoBIInitializer {
 		logger.debug("OUT");
 	}
 
+	private void writeTenantProductTypes(String tenantName, Session hibernateSession) throws Exception {
+		// create association tenant to product type
+		SbiTenant aTenant = findTenant(hibernateSession, tenantName);
+		for (SbiProductType aProductType : getProductTypes(hibernateSession)) {
+			if (aProductType != null) {
+				SbiOrganizationProductType association = new SbiOrganizationProductType();
+				association.setSbiProductType(aProductType);
+				association.setSbiOrganizations(aTenant);
+				SbiCommonInfo commonInfo = new SbiCommonInfo();
+				commonInfo.setUserIn("server");
+				commonInfo.setTimeIn(new Date());
+				commonInfo.setOrganization(tenantName);
+
+				association.setCommonInfo(commonInfo);
+
+				SbiOrganizationProductTypeId id = new SbiOrganizationProductTypeId();
+				id.setProductTypeId(aProductType.getProductTypeId());
+				id.setOrganizationId(aTenant.getId());
+				association.setId(id);
+
+				hibernateSession.save(association);
+			}
+		}
+	}
+
+	private void writeTenantWriteDefaultDatasource(String tenantName, Session hibernateSession) throws Exception {
+		// create association tenant to write-default datasource
+		SbiTenant aTenant = findTenant(hibernateSession, tenantName);
+		SbiDataSource dataSource = getWriteDefaultDatasource(hibernateSession);
+		if (dataSource != null) {
+			SbiOrganizationDatasource association = new SbiOrganizationDatasource();
+			association.setSbiDataSource(dataSource);
+			association.setSbiOrganizations(aTenant);
+			SbiCommonInfo commonInfo = new SbiCommonInfo();
+			commonInfo.setUserIn("server");
+			commonInfo.setTimeIn(new Date());
+			commonInfo.setOrganization(tenantName);
+
+			association.setCommonInfo(commonInfo);
+
+			SbiOrganizationDatasourceId id = new SbiOrganizationDatasourceId();
+			id.setDatasourceId(dataSource.getDsId());
+			id.setOrganizationId(aTenant.getId());
+			association.setId(id);
+
+			hibernateSession.save(association);
+		}
+	}
+
+	protected SbiDataSource getWriteDefaultDatasource(Session aSession) {
+		logger.debug("IN");
+		String hql = "from SbiDataSource e where e.writeDefault = :writeDefault";
+		Query hqlQuery = aSession.createQuery(hql);
+		hqlQuery.setParameter("writeDefault", true);
+		SbiDataSource dataSource = (SbiDataSource) hqlQuery.uniqueResult();
+		logger.debug("OUT");
+		return dataSource;
+	}
+
 	private List<String> getTenants() {
 		logger.debug("IN");
-		List<String> tenants = new ArrayList<String>();
+		List<String> tenants = new ArrayList<>();
 
 		try {
 			OAuth2Client oauth2Client = new OAuth2Client();
@@ -159,8 +229,8 @@ public class OAuth2TenantInitializer extends SpagoBIInitializer {
 			if (statusCode != HttpStatus.SC_OK) {
 				logger.error("Error while getting the name of organization with id [" + organizationId + "]: server returned statusCode = " + statusCode);
 				LogMF.error(logger, "Server response is:\n{0}", new Object[] { new String(response) });
-				throw new SpagoBIRuntimeException("Error while getting the name of organization with id [" + organizationId
-						+ "]: server returned statusCode = " + statusCode);
+				throw new SpagoBIRuntimeException(
+						"Error while getting the name of organization with id [" + organizationId + "]: server returned statusCode = " + statusCode);
 			}
 
 			String responseStr = new String(response);
