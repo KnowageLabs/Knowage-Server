@@ -17,32 +17,6 @@
  */
 package it.eng.spagobi.engines.datamining.compute;
 
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.bo.Config;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOConfig;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IConfigDAO;
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
-import it.eng.spagobi.engines.datamining.bo.DataMiningResult;
-import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
-import it.eng.spagobi.engines.datamining.model.Output;
-import it.eng.spagobi.engines.datamining.model.Variable;
-import it.eng.spagobi.hdfs.Hdfs;
-import it.eng.spagobi.hdfs.HdfsUtilities;
-import it.eng.spagobi.tools.dataset.bo.FileDataSet;
-import it.eng.spagobi.tools.dataset.bo.HdfsDataSet;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
-import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
-import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 import java.io.File;
 import java.util.List;
 import java.util.Random;
@@ -55,11 +29,31 @@ import org.jpy.PyModule;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.dao.DAOConfig;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IConfigDAO;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
+import it.eng.spagobi.engines.datamining.bo.DataMiningResult;
+import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
+import it.eng.spagobi.engines.datamining.model.Output;
+import it.eng.spagobi.engines.datamining.model.Variable;
+import it.eng.spagobi.tools.dataset.bo.FileDataSet;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
+import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
 public class PythonOutputExecutor {
 	static private Logger logger = Logger.getLogger(PythonOutputExecutor.class);
 
 	private static final String OUTPUT_PLOT_EXTENSION = "png";
-	private static String STORE_TO_HDFS = SpagoBIConstants.CONFIG_STORE_TO_HDFS;
 
 	DataMiningEngineInstance dataminingInstance;
 	IEngUserProfile profile;
@@ -292,8 +286,8 @@ public class PythonOutputExecutor {
 
 			logger.debug("Evaluated result");
 		} else if ((out.getOutputType().equalsIgnoreCase(DataMiningConstants.DATASET) || out.getOutputType().equalsIgnoreCase(DataMiningConstants.SPAGOBI_DS)
-				|| out.getOutputType().equalsIgnoreCase("SpagoBI Dataset") || out.getOutputType().equalsIgnoreCase("Dataset"))
-				&& outVal != null && out.getOutputName() != null) {
+				|| out.getOutputType().equalsIgnoreCase("SpagoBI Dataset") || out.getOutputType().equalsIgnoreCase("Dataset")) && outVal != null
+				&& out.getOutputName() != null) {
 			logger.debug("Dataset output");
 			String pythonResult = null;
 			CreateDatasetResult creationResult = null;
@@ -446,15 +440,8 @@ public class PythonOutputExecutor {
 		CreateDatasetResult createDatasetResult = new CreateDatasetResult();
 		String spagoBiDatasetname = userId + "_" + documentLabel + "_" + out.getOuputLabel();
 		IConfigDAO configsDAO = DAOFactory.getSbiConfigDAO();
-		Config conf = configsDAO.loadConfigParametersByLabel(STORE_TO_HDFS);
-		boolean storeToHDFS = Boolean.valueOf(conf.getValueCheck()).booleanValue();
-		FileDataSet dataSet;
-		if (storeToHDFS) {
-			dataSet = new HdfsDataSet();
-			dataSet.setPersistedHDFS(true);
-		} else {
-			dataSet = new FileDataSet();
-		}
+		FileDataSet dataSet = new FileDataSet();
+
 		String path = getDatasetsDirectoryPath(); // E.G. C:\Users\piovani\apache-tomcat-7.0.67-Trunk\resources\DEFAULT_TENANT\dataset\files
 		String resPath = DAOConfig.getResourcePath(); // E.G. C:\Users\piovani\apache-tomcat-7.0.67-Trunk\resources\DEFAULT_TENANT\
 		dataSet.setResourcePath(resPath);
@@ -525,9 +512,6 @@ public class PythonOutputExecutor {
 
 		logger.debug("check if dataset with label " + spagoBiDatasetname + " is already present");
 
-		if (storeToHDFS) {
-			moveToHdfs((HdfsDataSet) dataSet);
-		}
 		// check label is already present; insert or modify dependently
 		IDataSet iDataSet = dataSetDAO.loadDataSetByLabel(spagoBiDatasetname);
 
@@ -554,15 +538,8 @@ public class PythonOutputExecutor {
 		CreateDatasetResult creationResult = new CreateDatasetResult();
 
 		IConfigDAO configsDAO = DAOFactory.getSbiConfigDAO();
-		Config conf = configsDAO.loadConfigParametersByLabel(STORE_TO_HDFS);
-		boolean storeToHDFS = Boolean.valueOf(conf.getValueCheck()).booleanValue();
-		FileDataSet dataSet;
-		if (storeToHDFS) {
-			dataSet = new HdfsDataSet();
-			dataSet.setPersistedHDFS(true);
-		} else {
-			dataSet = new FileDataSet();
-		}
+
+		FileDataSet dataSet = new FileDataSet();
 
 		String path = getDatasetsDirectoryPath();
 		String resPath = DAOConfig.getResourcePath();
@@ -634,9 +611,6 @@ public class PythonOutputExecutor {
 
 		logger.debug("check if dataset with label " + spagoBiDatasetname + " is already present");
 
-		if (storeToHDFS) {
-			moveToHdfs((HdfsDataSet) dataSet);
-		}
 		// check label is already present; insert or modify dependently
 		IDataSet iDataSet = dataSetDAO.loadDataSetByLabel(spagoBiDatasetname);
 
@@ -671,14 +645,4 @@ public class PythonOutputExecutor {
 
 		return datasetDirPath.replace("\\", "/");
 	}
-
-	public static void moveToHdfs(HdfsDataSet dataSet) {
-		Hdfs hdfs = dataSet.getHdfs();
-		String sep = HdfsUtilities.getHdfsSperator();
-		String resourcePath = hdfs.getWorkingDirectory();
-		String dstPath = resourcePath + sep + "dataset" + sep + "files" + sep + dataSet.getFileName();
-		hdfs.moveFromLocalFile(getDatasetsDirectoryPath() + File.separator + dataSet.getFileName(), dstPath);
-		dataSet.setResourcePath(resourcePath);
-	}
-
 }
