@@ -17,6 +17,21 @@
  */
 package it.eng.spagobi.sdk.utilities;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.activation.DataHandler;
+
+import org.apache.axis.attachments.ManagedMemoryDataSource;
+import org.apache.log4j.Logger;
+import org.json.JSONObject;
+
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
@@ -26,9 +41,7 @@ import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.behaviouralmodel.check.bo.Check;
-import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Domain;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IBinContentDAO;
@@ -60,7 +73,6 @@ import it.eng.spagobi.tools.dataset.bo.CustomDataSet;
 import it.eng.spagobi.tools.dataset.bo.DataSetParameterItem;
 import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
-import it.eng.spagobi.tools.dataset.bo.HdfsDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.JavaClassDataSet;
@@ -72,21 +84,6 @@ import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.DataSourceDAOHibImpl;
 import it.eng.spagobi.utilities.json.JSONUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.activation.DataHandler;
-
-import org.apache.axis.attachments.ManagedMemoryDataSource;
-import org.apache.log4j.Logger;
-import org.json.JSONObject;
 
 public class SDKObjectsConverter {
 
@@ -407,29 +404,29 @@ public class SDKObjectsConverter {
 
 			/*
 			 * // file dataset toReturn.setFileName(spagoBiDataSet.getFileName());
-			 * 
+			 *
 			 * // jdbc dataset toReturn.setJdbcQuery(spagoBiDataSet.getQuery()); toReturn.setJdbcQueryScript(spagoBiDataSet.getQueryScript());
 			 * toReturn.setJdbcQueryScriptLanguage(spagoBiDataSet.getQueryScriptLanguage()); if (spagoBiDataSet.getDataSource() != null) {
 			 * toReturn.setJdbcDataSourceId(spagoBiDataSet.getDataSource().getId()); }
-			 * 
+			 *
 			 * // web service dataset toReturn.setWebServiceAddress(spagoBiDataSet.getAdress()); toReturn.setWebServiceOperation(spagoBiDataSet.getOperation());
-			 * 
+			 *
 			 * // script dataset toReturn.setScriptText(spagoBiDataSet.getScript()); toReturn.setScriptLanguage(spagoBiDataSet.getLanguageScript());
-			 * 
+			 *
 			 * // java dataset toReturn.setJavaClassName(spagoBiDataSet.getJavaClassName());
-			 * 
+			 *
 			 * toReturn.setJsonQuery(spagoBiDataSet.getJsonQuery()); toReturn.setDatamarts(spagoBiDataSet.getDatamarts());
 			 * toReturn.setCustomData(spagoBiDataSet.getCustomData());
 			 */
 			/*
 			 * String type = null;
-			 * 
+			 *
 			 * if ( ScriptDataSet.DS_TYPE.equals( spagoBiDataSet.getType() ) ) { type = "SCRIPT"; } else if ( JDBCDataSet.DS_TYPE.equals(
 			 * spagoBiDataSet.getType() ) ) { type = "JDBC_QUERY"; } else if ( JavaClassDataSet.DS_TYPE.equals( spagoBiDataSet.getType() ) ) { type =
 			 * "JAVA_CLASS"; } else if ( WebServiceDataSet.DS_TYPE.equals( spagoBiDataSet.getType() ) ) { type = "WEB_SERVICE"; } else if (
 			 * FileDataSet.DS_TYPE.equals( spagoBiDataSet.getType() ) ) { type = "FILE"; } else { logger.error("Dataset type [" + spagoBiDataSet.getType() +
 			 * "] unknown."); type = "UNKNOWN"; }
-			 * 
+			 *
 			 * toReturn.setType(type);
 			 */
 			toReturn.setType(spagoBiDataSet.getType());
@@ -544,15 +541,8 @@ public class SDKObjectsConverter {
 
 			// defines correct dataset detail
 			if (dataset.getType().equalsIgnoreCase(DataSetConstants.DS_FILE)) {
-				boolean storeToHDFS = Boolean.valueOf(SingletonConfig.getInstance().getConfigValue(SpagoBIConstants.CONFIG_STORE_TO_HDFS)).booleanValue();
-				if (storeToHDFS) {
-					ds = new HdfsDataSet();
-					ds.setPersistedHDFS(true);
-					((HdfsDataSet) ds).setResourcePath(((HdfsDataSet) ds).getResourcePath());
-				} else {
-					ds = new FileDataSet();
-					((FileDataSet) ds).setResourcePath(DAOConfig.getResourcePath());
-				}
+				ds = new FileDataSet();
+				((FileDataSet) ds).setResourcePath(DAOConfig.getResourcePath());
 				String fileName = jsonConf.getString(DataSetConstants.FILE_NAME);
 				if (fileName != null && !fileName.equals("")) {
 					((FileDataSet) ds).setFileName(fileName);

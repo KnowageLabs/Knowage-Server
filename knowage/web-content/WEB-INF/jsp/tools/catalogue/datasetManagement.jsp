@@ -1309,7 +1309,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						</md-content>
 						
 						<!-- OLD ADVANCED TAB (Persist HDFS) -->
-						<md-content flex class="ToolbarBox miniToolbar noBorder mozTable">
+						<md-content ng-show="showExportHDFS" flex class="ToolbarBox miniToolbar noBorder mozTable">
 							<md-card layout-padding style="margin-top:0">
 								<div flex=100 style="display:flex;">
 									<div flex=50 layout="row" layout-align="start center">

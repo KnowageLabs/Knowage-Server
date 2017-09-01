@@ -138,7 +138,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									<!-- TYPE -->
 										<md-radio-group   ng-model="jdbcOrJndi.type" ng-change="clearType()"> Type:
 					      					<md-radio-button value="JDBC" ng-disabled="readOnly">JDBC</md-radio-button>
-					      					<md-radio-button value="JNDI" ng-disabled="!isSuperAdminFunction() || readOnly">JNDI</md-radio-button>
+					      					<md-radio-button value="JNDI" ng-disabled="readOnly">JNDI</md-radio-button>
 					    				</md-radio-group>
 									</div>
 									<!-- JDBC -->

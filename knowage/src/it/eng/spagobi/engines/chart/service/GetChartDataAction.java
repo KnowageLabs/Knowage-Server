@@ -17,13 +17,25 @@
  */
 package it.eng.spagobi.engines.chart.service;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOConfig;
@@ -37,7 +49,6 @@ import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
 import it.eng.spagobi.tools.dataset.bo.CustomDataSet;
 import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
-import it.eng.spagobi.tools.dataset.bo.HdfsDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
@@ -57,19 +68,6 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
 import it.eng.spagobi.utilities.service.JSONSuccess;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class GetChartDataAction extends AbstractSpagoBIAction {
 
@@ -449,14 +447,7 @@ public class GetChartDataAction extends AbstractSpagoBIAction {
 
 		IDataSet ds = null;
 		if (dsType.equalsIgnoreCase(DataSetConstants.DS_FILE)) {
-			boolean storeToHDFS = Boolean.valueOf(SingletonConfig.getInstance().getConfigValue(SpagoBIConstants.CONFIG_STORE_TO_HDFS)).booleanValue();
-			if (storeToHDFS) {
-				ds = new HdfsDataSet();
-				ds.setPersisted(true);
-				((HdfsDataSet) ds).setResourcePath(((HdfsDataSet) ds).getResourcePath());
-			} else {
-				ds = new FileDataSet();
-			}
+			ds = new FileDataSet();
 			String fileName = getAttributeAsString(DataSetConstants.FILE_NAME);
 			((FileDataSet) ds).setFileName(fileName);
 		}
@@ -521,7 +512,7 @@ public class GetChartDataAction extends AbstractSpagoBIAction {
 
 	private IDataSet setTransformer(IDataSet ds, String trasfTypeCd) {
 		List<Domain> domainsTrasf = (List<Domain>) getSessionContainer().getAttribute("trasfTypesList");
-		HashMap<String, Integer> domainTrasfIds = new HashMap<String, Integer>();
+		HashMap<String, Integer> domainTrasfIds = new HashMap<>();
 		if (domainsTrasf != null) {
 			for (int i = 0; i < domainsTrasf.size(); i++) {
 				domainTrasfIds.put(domainsTrasf.get(i).getValueCd(), domainsTrasf.get(i).getValueId());
@@ -733,15 +724,8 @@ public class GetChartDataAction extends AbstractSpagoBIAction {
 		JSONObject jsonDsConfig = new JSONObject();
 
 		if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_FILE)) {
-			boolean storeToHDFS = Boolean.valueOf(SingletonConfig.getInstance().getConfigValue(SpagoBIConstants.CONFIG_STORE_TO_HDFS)).booleanValue();
-			if (storeToHDFS) {
-				dataSet = new HdfsDataSet();
-				dataSet.setPersisted(true);
-				((HdfsDataSet) dataSet).setResourcePath(((HdfsDataSet) dataSet).getResourcePath());
-			} else {
-				dataSet = new FileDataSet();
-				((FileDataSet) dataSet).setResourcePath(DAOConfig.getResourcePath());
-			}
+			dataSet = new FileDataSet();
+			((FileDataSet) dataSet).setResourcePath(DAOConfig.getResourcePath());
 			String fileName = getAttributeAsString(DataSetConstants.FILE_NAME);
 			jsonDsConfig.put(DataSetConstants.FILE_NAME, fileName);
 			((FileDataSet) dataSet).setFileName(fileName);

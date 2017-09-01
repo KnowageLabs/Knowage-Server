@@ -32,7 +32,6 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
-import it.eng.spagobi.tools.dataset.bo.HdfsDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
@@ -110,10 +109,7 @@ public class ExecutePersistDatasetJob extends AbstractSpagoBIJob implements Job 
 	}
 
 	private void checkFileDataset(IDataSet dataSet) {
-		if (dataSet instanceof HdfsDataSet) {
-			((HdfsDataSet) dataSet).setPersistedHDFS(true);
-			((HdfsDataSet) dataSet).setResourcePath(((HdfsDataSet) dataSet).getHdfsResourcePath());
-		} else if (dataSet instanceof FileDataSet) {
+		if (dataSet instanceof FileDataSet) {
 			((FileDataSet) dataSet).setResourcePath(DAOConfig.getResourcePath());
 		}
 	}

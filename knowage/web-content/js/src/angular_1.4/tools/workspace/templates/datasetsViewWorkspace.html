@@ -64,7 +64,7 @@
 				 	 	</md-tab-body>
 				 	</md-tab>  
 				 	
-				 	<md-tab label="{{translate.load('sbi.workspace.dataset.ckan')}}" flex ng-click="switchDatasetsTab('ckanDataSet')">
+				 	<md-tab ng-if="showCkanIntegration" label="{{translate.load('sbi.workspace.dataset.ckan')}}" flex ng-click="switchDatasetsTab('ckanDataSet')">
 				 	 	
 				 	 	<md-tab-body>
 				 	 	

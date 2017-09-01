@@ -1,10 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <USER_FUNCTIONALITIES>
-
-<!--
-	<USER_FUNCTIONALITY productType="KnowageBD" name="UserDefinedPropertyManagement" description="UserDefinedPropertyManagement" />
-
--->
 	<!-- Knowage BD Functionalities -->
 	<USER_FUNCTIONALITY productType="KnowageBD" name="SelfServiceDatasetManagement" description="SelfServiceDatasetManagement" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="SelfServiceMetaModelManagement" description="SelfServiceMetaModelManagement" />
@@ -57,9 +52,6 @@
 	<USER_FUNCTIONALITY productType="KnowageBD" name="AnalyticalWidget" description="AnalyticalWidget" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="MetaModelLifecycleManagement" description="MetaModelLifecycleManagement" />
 	<USER_FUNCTIONALITY productType="KnowageBD" name="DomainWrite" description="DomainWrite" />
-	<!--  tolto perchè non ha il motore SVG
- 	<USER_FUNCTIONALITY productType="KnowageBD" name="MapCatalogueManagement" description="MapCatalogueManagement" />
-	-->
 	<USER_FUNCTIONALITY productType="KnowageBD" name="ManageCrossNavigation" description="ManageCrossNavigation" />	
     <USER_FUNCTIONALITY productType="KnowageBD" name="ExecuteCrossNavigation" description="ExecuteCrossNavigation" />  	
 	
@@ -119,7 +111,6 @@
 	<USER_FUNCTIONALITY productType="KnowageSI" name="AnalyticalWidget" description="AnalyticalWidget" />
 	<USER_FUNCTIONALITY productType="KnowageSI" name="DomainWrite" description="DomainWrite" />
 	
-	
 	<!-- Authorizations for KnowageER -->
 	<USER_FUNCTIONALITY productType="KnowageER" name="ReadEnginesManagement" description="ReadEnginesManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="FunctionalitiesManagement" description="FunctionalitiesManagement"/>
@@ -156,9 +147,6 @@
 	<USER_FUNCTIONALITY productType="KnowageER" name="HotLinkManagement" description="HotLinkManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="ProfileManagement" description="ProfileManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageER" name="UserSaveDocumentFunctionality" description="UserSaveDocumentFunctionality"/>
-	<!--  removed...
-	<USER_FUNCTIONALITY productType="KnowageER" name="MetaModelsCatalogueManagement" description="MetaModelsCatalogueManagement"/>
-	-->
 	<USER_FUNCTIONALITY productType="KnowageER" name="ImagesManagement" description="ImagesManagement" />	
 	<USER_FUNCTIONALITY productType="KnowageER" name="CreateChartFunctionality" description="CreateChartFunctionality" />
 	<USER_FUNCTIONALITY productType="KnowageER" name="ManageCrossNavigation" description="ManageCrossNavigation" />
@@ -166,14 +154,12 @@
 	<USER_FUNCTIONALITY productType="KnowageER" name="SharedDevelopment" description="SharedDevelopment" />
 	<USER_FUNCTIONALITY productType="KnowageER" name="DomainWrite" description="DomainWrite" />
 	
-	
 	<!-- Authorizations for KnowagePM -->
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ConstraintManagement" description="ConstraintManagement"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ConstraintView" description="ConstraintView"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="CreateChartFunctionality" description="CreateChartFunctionality" />
 	<USER_FUNCTIONALITY productType="KnowagePM" name="DataSourceManagement" description="DataSourceManagement"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="DataSourceRead" description="DataSourceRead"/>
-	<USER_FUNCTIONALITY productType="KnowagePM" name="DataSourceBigData" description="DataSourceBigData" />
 	<USER_FUNCTIONALITY productType="KnowagePM" name="DatasetManagement" description="DatasetManagement"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="DocumentAdminManagement" description="DocumentAdminManagement"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="DocumentAdministration" description="DocumentAdministration"/>
@@ -196,7 +182,6 @@
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ManageCrossNavigation" description="ManageCrossNavigation" />
     <USER_FUNCTIONALITY productType="KnowagePM" name="ExecuteCrossNavigation" description="ExecuteCrossNavigation" />	
 	<USER_FUNCTIONALITY productType="KnowagePM" name="MenuManagement" description="MenuManagement"/>
-	<USER_FUNCTIONALITY productType="KnowagePM" name="MetaModelsCatalogueManagement" description="MetaModelsCatalogueManagement"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ModifyRefresh" description="ModifyRefresh"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ParameterManagement" description="ParameterManagement"/>
 	<USER_FUNCTIONALITY productType="KnowagePM" name="ParameterView" description="ParameterView"/>
@@ -209,7 +194,6 @@
 	<USER_FUNCTIONALITY productType="KnowagePM" name="DomainWrite" description="DomainWrite" />
 	<USER_FUNCTIONALITY productType="KnowagePM" name="AlertManagement" description="AlertManagement" />
 	<USER_FUNCTIONALITY productType="KnowagePM" name="NotifyContextBrokerAction" description="NotifyContextBrokerAction" />
-	
 	
 	<!-- Authorizations for KnowageLI -->
 	<USER_FUNCTIONALITY productType="KnowageLI" name="AnalyticalWidget" description="AnalyticalWidget" />
@@ -257,12 +241,10 @@
 	<USER_FUNCTIONALITY productType="KnowageLI" name="SelfServiceDatasetManagement" description="SelfServiceDatasetManagement" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="SelfServiceMetaModelManagement" description="SelfServiceMetaModelManagement" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="SyncronizeRolesManagement" description="SyncronizeRolesManagement" />
-	<!-- <USER_FUNCTIONALITY productType="KnowageLI" name="UserDefinedPropertyManagement" description="UserDefinedPropertyManagement" /> -->
 	<USER_FUNCTIONALITY productType="KnowageLI" name="UserSaveDocumentFunctionality" description="UserSaveDocumentFunctionality" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="ViewMyFolderAdmin" description="ViewMyFolderAdmin" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="WorklistManagement" description="WorklistManagement" />
 	<USER_FUNCTIONALITY productType="KnowageLI" name="WorkspaceManagement" description="WorkspaceManagement"/>
-	
 		
 	<!-- Authorizations for KnowagePA -->
 	<USER_FUNCTIONALITY productType="KnowagePA" name="ArtifactCatalogueManagement" description="ArtifactCatalogueManagement" />

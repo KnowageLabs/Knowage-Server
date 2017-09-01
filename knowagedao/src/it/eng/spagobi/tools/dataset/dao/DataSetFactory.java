@@ -17,6 +17,17 @@
  */
 package it.eng.spagobi.tools.dataset.dao;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+import org.json.JSONObject;
+
 import it.eng.qbe.dataset.FederatedDataSet;
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.security.IEngUserProfile;
@@ -36,7 +47,6 @@ import it.eng.spagobi.tools.dataset.bo.ConfigurableDataSet;
 import it.eng.spagobi.tools.dataset.bo.CustomDataSet;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.FlatDataSet;
-import it.eng.spagobi.tools.dataset.bo.HdfsDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCHBaseDataSet;
@@ -60,17 +70,6 @@ import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 import it.eng.spagobi.utilities.sql.SqlUtils;
-
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.log4j.Logger;
-import org.json.JSONObject;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -198,7 +197,7 @@ public class DataSetFactory {
 
 	public static Set<IDataSet> toDataSet(Set<SbiDataSet> sbiDataSet, IEngUserProfile userProfile) {
 
-		Set<IDataSet> toReturn = new HashSet<IDataSet>();
+		Set<IDataSet> toReturn = new HashSet<>();
 
 		for (Iterator iterator = sbiDataSet.iterator(); iterator.hasNext();) {
 			SbiDataSet sbiDataSet3 = (SbiDataSet) iterator.next();
@@ -210,7 +209,7 @@ public class DataSetFactory {
 
 	public static Set<IDataSet> toDataSet(List<SbiDataSet> sbiDataSet, IEngUserProfile userProfile) {
 
-		Set<IDataSet> toReturn = new HashSet<IDataSet>();
+		Set<IDataSet> toReturn = new HashSet<>();
 
 		for (Iterator iterator = sbiDataSet.iterator(); iterator.hasNext();) {
 			SbiDataSet sbiDataSet3 = (SbiDataSet) iterator.next();
@@ -229,19 +228,11 @@ public class DataSetFactory {
 		try {
 			String type = sbiDataSet.getType();
 			if (type.equalsIgnoreCase(DataSetConstants.DS_FILE)) {
-				FileDataSet fds;
-
-				if (sbiDataSet.isPersistedHDFS()) {
-					ds = new HdfsDataSet();
-					fds = (HdfsDataSet) ds;
-				} else {
-					ds = new FileDataSet();
-					fds = (FileDataSet) ds;
-				}
+				FileDataSet fds = new FileDataSet();
 
 				String resourcePath = jsonConf.optString("resourcePath");
 				if (StringUtilities.isEmpty(resourcePath)) {
-					resourcePath = sbiDataSet.isPersistedHDFS() ? ((HdfsDataSet) ds).getHdfsResourcePath() : DAOConfig.getResourcePath();
+					resourcePath = DAOConfig.getResourcePath();
 					jsonConf.put("resourcePath", resourcePath);
 				}
 				fds.setResourcePath(resourcePath);
@@ -475,8 +466,8 @@ public class DataSetFactory {
 				ds.setOrganization(sbiDataSet.getId().getOrganization());
 
 				if (ds.getPivotColumnName() != null && ds.getPivotColumnValue() != null && ds.getPivotRowName() != null) {
-					ds.setDataStoreTransformer(new PivotDataSetTransformer(ds.getPivotColumnName(), ds.getPivotColumnValue(), ds.getPivotRowName(), ds
-							.isNumRows()));
+					ds.setDataStoreTransformer(
+							new PivotDataSetTransformer(ds.getPivotColumnName(), ds.getPivotColumnValue(), ds.getPivotRowName(), ds.isNumRows()));
 				}
 				ds.setPersisted(sbiDataSet.isPersisted());
 				ds.setPersistedHDFS(sbiDataSet.isPersistedHDFS());
@@ -535,14 +526,7 @@ public class DataSetFactory {
 		JSONObject jsonConf = ObjectUtils.toJSONObject(config);
 		try {
 			if (sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_FILE)) {
-				FileDataSet fds;
-				if (sbiDataSet.isPersistedHDFS()) {
-					ds = new HdfsDataSet();
-					fds = (HdfsDataSet) ds;
-				} else {
-					ds = new FileDataSet();
-					fds = (FileDataSet) ds;
-				}
+				FileDataSet fds = new FileDataSet();
 
 				String resourcePath = jsonConf.optString("resourcePath");
 				if (StringUtilities.isEmpty(resourcePath)) {
@@ -747,8 +731,8 @@ public class DataSetFactory {
 				ds.setOrganization(sbiDataSet.getOrganization());
 
 				if (ds.getPivotColumnName() != null && ds.getPivotColumnValue() != null && ds.getPivotRowName() != null) {
-					ds.setDataStoreTransformer(new PivotDataSetTransformer(ds.getPivotColumnName(), ds.getPivotColumnValue(), ds.getPivotRowName(), ds
-							.isNumRows()));
+					ds.setDataStoreTransformer(
+							new PivotDataSetTransformer(ds.getPivotColumnName(), ds.getPivotColumnValue(), ds.getPivotRowName(), ds.isNumRows()));
 				}
 				ds.setPersisted(sbiDataSet.isPersisted());
 				ds.setPersistedHDFS(sbiDataSet.isPersistedHDFS());
@@ -808,14 +792,7 @@ public class DataSetFactory {
 		JSONObject jsonConf = ObjectUtils.toJSONObject(config);
 		try {
 			if (sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_FILE)) {
-				FileDataSet fds;
-				if (sbiDataSet.isPersistedHDFS()) {
-					ds = new HdfsDataSet();
-					fds = (HdfsDataSet) ds;
-				} else {
-					ds = new FileDataSet();
-					fds = (FileDataSet) ds;
-				}
+				FileDataSet fds = new FileDataSet();
 
 				String resourcePath = jsonConf.optString("resourcePath");
 				if (StringUtilities.isEmpty(resourcePath)) {
@@ -1081,8 +1058,8 @@ public class DataSetFactory {
 				ds.setOrganization(sbiDataSet.getId().getOrganization());
 
 				if (ds.getPivotColumnName() != null && ds.getPivotColumnValue() != null && ds.getPivotRowName() != null) {
-					ds.setDataStoreTransformer(new PivotDataSetTransformer(ds.getPivotColumnName(), ds.getPivotColumnValue(), ds.getPivotRowName(), ds
-							.isNumRows()));
+					ds.setDataStoreTransformer(
+							new PivotDataSetTransformer(ds.getPivotColumnName(), ds.getPivotColumnValue(), ds.getPivotRowName(), ds.isNumRows()));
 				}
 				ds.setPersisted(sbiDataSet.isPersisted());
 				ds.setPersistedHDFS(sbiDataSet.isPersistedHDFS());

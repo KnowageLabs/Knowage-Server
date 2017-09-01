@@ -563,7 +563,6 @@ public class SpagoBIConstants {
 	public static final String FUNCTIONS_CATALOG_USAGE = "FunctionsCatalogUsage";
 
 	public static final String TEMPORAL_DIMENSION = "TemporalDimension";
-	public static final String CONFIG_STORE_TO_HDFS = "SPAGOBI.GENERIC_CONFIGURATION.DATASET_FILE_HDFS";
 
 	public static final String IS_FOR_EXPORT = "IS_FOR_EXPORT";
 	public static final String COCKPIT_SELECTIONS = "COCKPIT_SELECTIONS";
@@ -571,8 +570,7 @@ public class SpagoBIConstants {
 	// Date Range
 	public static final String DATE_RANGE_OPTION_QUANTITY_PREFIX = "dateRangeOptionQuantity_";
 	public static final String DATE_RANGE_OPTION_TYPE_PREFIX = "dateRangeOptionType_";
-	public static final Set<String> DATE_RANGE_VALID_TYPES = Collections
-			.unmodifiableSet(new HashSet<>(Arrays.asList("years", "months", "days", "weeks")));
+	public static final Set<String> DATE_RANGE_VALID_TYPES = Collections.unmodifiableSet(new HashSet<>(Arrays.asList("years", "months", "days", "weeks")));
 	public static final String DATE_RANGE_TYPE_JSON = "type";
 	public static final String DATE_RANGE_QUANTITY_JSON = "quantity";
 	public static final String DATE_RANGE_TYPE = "DATE_RANGE";

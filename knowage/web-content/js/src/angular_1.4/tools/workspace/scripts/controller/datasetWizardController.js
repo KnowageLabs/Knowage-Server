@@ -21,6 +21,8 @@ function DatasetCreateController($scope, $mdDialog, sbiModule_restServices, sbiM
 
 	var translate = sbiModule_translate;
 	
+	$scope.showExportHDFS = sbiModule_user.functionalities.indexOf("DataSourceBigData")>-1;
+	
 	$scope.fileObj={};
 	$scope.datasetWizardView=1;
 	$scope.datasetCategories = [];

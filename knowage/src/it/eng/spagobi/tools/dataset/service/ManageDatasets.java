@@ -64,8 +64,6 @@ import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.container.ObjectUtils;
-import it.eng.spagobi.hdfs.Hdfs;
-import it.eng.spagobi.hdfs.HdfsUtilities;
 import it.eng.spagobi.services.scheduler.service.ISchedulerServiceSupplier;
 import it.eng.spagobi.services.scheduler.service.SchedulerServiceSupplierFactory;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
@@ -75,7 +73,6 @@ import it.eng.spagobi.tools.dataset.bo.CustomDataSet;
 import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.FlatDataSet;
-import it.eng.spagobi.tools.dataset.bo.HdfsDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
@@ -1191,7 +1188,6 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		JSONObject jsonDsConfig = new JSONObject();
 
 		if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_FILE)) {
-			boolean storeToHDFS = Boolean.valueOf(getAttributeAsString(DataSetConstants.IS_PERSISTED_HDFS)).booleanValue();
 
 			String dsId = getAttributeAsString(DataSetConstants.DS_ID);
 			String dsLabel = getAttributeAsString(DataSetConstants.LABEL);
@@ -1216,14 +1212,9 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			jsonDsConfig.put(DataSetConstants.XSL_FILE_LIMIT_ROWS, limitRows);
 			jsonDsConfig.put(DataSetConstants.XSL_FILE_SHEET_NUMBER, xslSheetNumber);
 
-			if (storeToHDFS) {
-				dataSet = new HdfsDataSet();
-				dataSet.setPersistedHDFS(true);
-				((HdfsDataSet) dataSet).setResourcePath(((HdfsDataSet) dataSet).getHdfsResourcePath());
-			} else {
-				dataSet = new FileDataSet();
-				((FileDataSet) dataSet).setResourcePath(DAOConfig.getResourcePath());
-			}
+			dataSet = new FileDataSet();
+			((FileDataSet) dataSet).setResourcePath(DAOConfig.getResourcePath());
+
 			String fileName = getAttributeAsString(DataSetConstants.FILE_NAME);
 			File pathFile = new File(fileName);
 			fileName = pathFile.getName();
@@ -1243,15 +1234,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				// creating a new dataset, the file uploaded has to be renamed
 				// and moved
 				((FileDataSet) dataSet).setUseTempFile(true);
-				if (storeToHDFS && savingDataset) {
-					// take the resourcePath from local fileSystem in order to
-					// move it to HDFS
-					String resourcePath = ((HdfsDataSet) dataSet).getHdfsResourcePath();
-					if (dsLabel != null) {
-						renameAndMoveDatasetFileToHDFS(fileName, dsLabel, resourcePath, fileType, ((HdfsDataSet) dataSet).getHdfs());
-						((FileDataSet) dataSet).setUseTempFile(false);
-					}
-				} else if (savingDataset) {
+
+				if (savingDataset) {
 					// rename and move the file
 					String resourcePath = ((FileDataSet) dataSet).getResourcePath();
 					if (dsLabel != null) {
@@ -1268,75 +1252,28 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				// changed
 
 				JSONObject configuration;
-				try {
-					Integer id_ds = getAttributeAsInteger(DataSetConstants.DS_ID);
-					configuration = new JSONObject(DAOFactory.getDataSetDAO().loadDataSetById(id_ds).getConfiguration());
-					String realName = configuration.getString("fileName");
-					if (dsLabel != null && !realName.equals(dsLabel)) {
+				Integer id_ds = getAttributeAsInteger(DataSetConstants.DS_ID);
+				configuration = new JSONObject(DAOFactory.getDataSetDAO().loadDataSetById(id_ds).getConfiguration());
+				String realName = configuration.getString("fileName");
+				if (dsLabel != null && !realName.equals(dsLabel)) {
 
-						if (storeToHDFS) {
-							Hdfs hdfs = ((HdfsDataSet) dataSet).getHdfs();
-							String hdfsResourcePath = ((HdfsDataSet) dataSet).getResourcePath();
-							if (hdfsResourcePath == null || hdfsResourcePath.length() == 0) {
-								hdfsResourcePath = ((HdfsDataSet) dataSet).getHdfsResourcePath();
-							}
-							String sep = HdfsUtilities.getHdfsSperator();
-							String dest = hdfsResourcePath + sep + "dataset" + sep + "files" + sep + dsLabel + "."
-									+ configuration.getString("fileType").toLowerCase();
-							String source = hdfsResourcePath + sep + "dataset" + sep + "files" + sep + realName;
-							try {
-								if (hdfs.exists(source)) {
-									if (!source.equals(dest)) {
-										hdfs.copy(source, dest, false);
-									}
-								} else {
-									// first time the upload file is done in
-									// local, get the file from local and store
-									// in hdfs
-									File sourceLocalFile = new File(SpagoBIUtilities.getResourcePath() + File.separatorChar + "dataset" + File.separatorChar
-											+ "files" + File.separatorChar + realName);
-									if (sourceLocalFile.exists()) {
-										hdfs.copyFromLocalFile(sourceLocalFile.getCanonicalPath(), dest);
-									}
-								}
-							} catch (IOException | NullPointerException e) {
-								logger.error("Impossible to move the file from HDFS path\"" + source + "\" to path: \"" + dest + "\"");
-							}
-						} else {
-							File dest = new File(SpagoBIUtilities.getResourcePath() + File.separatorChar + "dataset" + File.separatorChar + "files"
-									+ File.separatorChar + dsLabel + "." + configuration.getString("fileType").toLowerCase());
-							File source = new File(SpagoBIUtilities.getResourcePath() + File.separatorChar + "dataset" + File.separatorChar + "files"
-									+ File.separatorChar + realName);
+					File dest = new File(SpagoBIUtilities.getResourcePath() + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar
+							+ dsLabel + "." + configuration.getString("fileType").toLowerCase());
+					File source = new File(
+							SpagoBIUtilities.getResourcePath() + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar + realName);
 
-							if (!source.getCanonicalPath().equals(dest.getCanonicalPath())) {
-								logger.debug("Source and destination are not the same. Copying from source to dest");
-								FileUtils.copyFile(source, dest);
-								FileUtils.forceDeleteOnExit(source);
-							}
-						}
+					if (!source.getCanonicalPath().equals(dest.getCanonicalPath())) {
+						logger.debug("Source and destination are not the same. Copying from source to dest");
+						FileUtils.copyFile(source, dest);
+						FileUtils.forceDeleteOnExit(source);
 					}
-
-				} catch (EMFUserError e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (JSONException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				}
 
 				if (newFileUploaded) {
 					// modifying an existing dataset with a new file uploaded
 					((FileDataSet) dataSet).setUseTempFile(true);
 
-					// saving the existing dataset with a new file associated
-					if (storeToHDFS && savingDataset) {
-						String resourcePath = ((HdfsDataSet) dataSet).getHdfsResourcePath();
-						renameAndMoveDatasetFileToHDFS(fileName, dsLabel, resourcePath, fileType, ((HdfsDataSet) dataSet).getHdfs());
-						((HdfsDataSet) dataSet).setUseTempFile(false);
-					} else if (savingDataset) {
+					if (savingDataset) {
 						// rename and move the file
 						String resourcePath = ((FileDataSet) dataSet).getResourcePath();
 						if (dsLabel != null) {
@@ -1640,24 +1577,6 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 
 	// This method rename a file and move it from resources\dataset\files\temp
 	// to resources\dataset\files
-	private void renameAndMoveDatasetFileToHDFS(String originalFileName, String newFileName, String resourcePath, String fileType, Hdfs hdfs) {
-		String sep = HdfsUtilities.getHdfsSperator();
-		String filePath = resourcePath + sep + "dataset" + sep + "files" + sep + "temp" + sep + originalFileName;
-		String fileNewPath = resourcePath + sep + "dataset" + sep + "files" + sep;
-
-		if (hdfs.exists(filePath)) {
-			/*
-			 * This method copies the contents of the specified source file to the specified destination file. The directory holding the destination file is
-			 * created if it does not exist. If the destination file exists, then this method will overwrite it.
-			 */
-			String newDatasetPath = fileNewPath + newFileName + "." + fileType.toLowerCase();
-			hdfs.mkdirsParent(newDatasetPath);
-			hdfs.copy(filePath, newDatasetPath, false);
-		}
-	}
-
-	// This method rename a file and move it from resources\dataset\files\temp
-	// to resources\dataset\files
 	private void renameAndMoveDatasetFile(String originalFileName, String newFileName, String resourcePath, String fileType) {
 		String filePath = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar + "temp" + File.separatorChar;
 		String fileNewPath = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar;
@@ -1687,17 +1606,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			VersionedDataSet versionedDataset = (VersionedDataSet) dataset;
 			IDataSet wrappedDataset = versionedDataset.getWrappedDataset();
 
-			if (wrappedDataset instanceof HdfsDataSet) {
-				HdfsDataSet hdfsDataset = (HdfsDataSet) wrappedDataset;
-				String resourcePath = hdfsDataset.getResourcePath();
-				String fileName = hdfsDataset.getFileName();
-				String sep = HdfsUtilities.getHdfsSperator();
-				String filePath = resourcePath + sep + "dataset" + sep + "files" + sep;
-				boolean isDeleted = hdfsDataset.deleteFile(filePath);
-				if (isDeleted) {
-					logger.debug("Dataset File " + fileName + " has been deleted");
-				}
-			} else if (wrappedDataset instanceof FileDataSet) {
+			if (wrappedDataset instanceof FileDataSet) {
 				FileDataSet fileDataset = (FileDataSet) wrappedDataset;
 				String resourcePath = fileDataset.getResourcePath();
 				String fileName = fileDataset.getFileName();
@@ -2079,24 +1988,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		return dataSetJSON;
 	}
 
-	// private void checkQbeDataset(IDataSet dataSet) {
-	// if (dataSet instanceof QbeDataSet) {
-	// SpagoBICoreDatamartRetriever retriever = new
-	// SpagoBICoreDatamartRetriever();
-	// Map parameters = dataSet.getParamsMap();
-	// if (parameters == null) {
-	// parameters = new HashMap();
-	// dataSet.setParamsMap(parameters);
-	// }
-	// dataSet.getParamsMap().put(SpagoBIConstants.DATAMART_RETRIEVER,
-	// retriever);
-	// }
-	// }
-
 	private void checkFileDataset(IDataSet dataSet) {
-		if (dataSet instanceof HdfsDataSet) {
-			((HdfsDataSet) dataSet).setResourcePath(((HdfsDataSet) dataSet).getHdfsResourcePath());
-		} else if (dataSet instanceof FileDataSet) {
+		if (dataSet instanceof FileDataSet) {
 			((FileDataSet) dataSet).setResourcePath(DAOConfig.getResourcePath());
 		}
 	}

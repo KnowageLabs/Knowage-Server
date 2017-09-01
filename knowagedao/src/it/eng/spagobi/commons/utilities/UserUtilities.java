@@ -17,6 +17,26 @@
  */
 package it.eng.spagobi.commons.utilities;
 
+import java.lang.reflect.Method;
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+
+import javax.portlet.PortletRequest;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.log4j.Logger;
+
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.error.EMFInternalError;
@@ -50,26 +70,6 @@ import it.eng.spagobi.utilities.cache.CacheInterface;
 import it.eng.spagobi.utilities.cache.UserProfileCache;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
-import java.lang.reflect.Method;
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-
-import javax.portlet.PortletRequest;
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.log4j.Logger;
-
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
 
 public class UserUtilities {
 
@@ -345,7 +345,7 @@ public class UserUtilities {
 	public static boolean haveRoleAndAuthorization(IEngUserProfile profile, String Role, String[] authorization) {
 		Assert.assertNotNull(profile, "Object in input is null");
 		logger.debug("IN.user unique id = [" + profile.getUserUniqueIdentifier() + "]");
-		ArrayList<String> auth = new ArrayList<String>(Arrays.asList(authorization));
+		ArrayList<String> auth = new ArrayList<>(Arrays.asList(authorization));
 		try {
 			if (((UserProfile) profile).getIsSuperadmin()) {
 				return true;
@@ -538,7 +538,7 @@ public class UserUtilities {
 
 	public static String[] readFunctionality(SpagoBIUserProfile user) {
 		logger.debug("IN");
-		List<String> functionalities = new ArrayList<String>();
+		List<String> functionalities = new ArrayList<>();
 		List<String> roleFunct = readFunctionalityByRole(user);
 		List<String> userFunct = readFunctionalityByUser(user);
 		List<String> licenseFunct = readFunctionalityByLicense(user);
@@ -556,17 +556,15 @@ public class UserUtilities {
 		if (isSuperAdm != null && isSuperAdm) {
 			return getSuperadminFunctionalities();
 		} else {
-			return new ArrayList<String>();
+			return new ArrayList<>();
 		}
 	}
 
 	private static List<String> getSuperadminFunctionalities() {
-		List<String> superadminFunctionalities = new ArrayList<String>();
+		List<String> superadminFunctionalities = new ArrayList<>();
 
-		superadminFunctionalities.add(SpagoBIConstants.CACHE_MANAGEMENT);
 		superadminFunctionalities.add(SpagoBIConstants.DATASOURCE_MANAGEMENT);
 		superadminFunctionalities.add(SpagoBIConstants.DATASOURCE_READ);
-		// superadminFunctionalities.add(SpagoBIConstants.READ_ENGINES_MANAGEMENT);
 		superadminFunctionalities.add(SpagoBIConstants.CONFIG_MANAGEMENT);
 		superadminFunctionalities.add(SpagoBIConstants.DOMAIN_MANAGEMENT);
 		superadminFunctionalities.add(SpagoBIConstants.LICENSE_MANAGEMENT);
@@ -584,7 +582,7 @@ public class UserUtilities {
 			String[] functionalities = dao.readUserFunctionality(roles);
 			logger.debug("Functionalities retrieved: " + functionalities == null ? "" : functionalities.toString());
 
-			List<String> roleFunctionalities = new ArrayList<String>();
+			List<String> roleFunctionalities = new ArrayList<>();
 			Role virtualRole = getVirtualRole(roles, organization);
 
 			if (virtualRole.isAbleToSaveSubobjects()) {
@@ -718,7 +716,7 @@ public class UserUtilities {
 
 	public static List<String> readFunctionalityByLicense(SpagoBIUserProfile user) {
 		logger.debug("IN");
-		List<String> licenseFunctionalities = new ArrayList<String>();
+		List<String> licenseFunctionalities = new ArrayList<>();
 		try {
 			Class<?> licenseManager = Class.forName("it.eng.knowage.tools.servermanager.utils.LicenseManager");
 			Method readFunctionalitiesMethod = licenseManager.getMethod("readFunctionalityByLicense", SpagoBIUserProfile.class);
@@ -922,8 +920,8 @@ public class UserUtilities {
 				throw new SpagoBIRuntimeException("No tenants found on database");
 			}
 			if (tenants.size() > 1) {
-				throw new SpagoBIRuntimeException("Tenants are more than one, cannot associate input user profile [" + profile.getUserId()
-						+ "] to a single tenant!!!");
+				throw new SpagoBIRuntimeException(
+						"Tenants are more than one, cannot associate input user profile [" + profile.getUserId() + "] to a single tenant!!!");
 			}
 			SbiTenant tenant = tenants.get(0);
 			logger.warn("Associating user profile [" + profile.getUserId() + "] to tenant [" + tenant.getName() + "]");
@@ -1008,7 +1006,7 @@ public class UserUtilities {
 
 	public static Set<Domain> getDataSetCategoriesByUser(IEngUserProfile profile) {
 		IRoleDAO rolesDao = null;
-		Set<Domain> categories = new HashSet<Domain>();
+		Set<Domain> categories = new HashSet<>();
 		try {
 			List<String> roleNames = (List<String>) profile.getRoles();
 			if (!roleNames.isEmpty()) {
@@ -1065,7 +1063,7 @@ public class UserUtilities {
 	public static List<RoleMetaModelCategory> getUserCategories(IEngUserProfile profile) {
 		Assert.assertNotNull(profile, "Object in input is null");
 		logger.debug("IN.user unique id = [" + profile.getUserUniqueIdentifier() + "]");
-		List<RoleMetaModelCategory> categories = new ArrayList<RoleMetaModelCategory>();
+		List<RoleMetaModelCategory> categories = new ArrayList<>();
 		try {
 			IRoleDAO roleDAO = DAOFactory.getRoleDAO();
 			Collection<String> roles = ((UserProfile) profile).getRolesForUse();
@@ -1085,7 +1083,7 @@ public class UserUtilities {
 	public static ArrayList<Role> getAdministratorRoles(IEngUserProfile profile) {
 		Assert.assertNotNull(profile, "Object in input is null");
 
-		ArrayList<Role> listRoles = new ArrayList<Role>();
+		ArrayList<Role> listRoles = new ArrayList<>();
 
 		logger.debug("IN.user unique id = [" + profile.getUserUniqueIdentifier() + "]");
 		try {
@@ -1107,7 +1105,7 @@ public class UserUtilities {
 	public static ArrayList<String> getAdministratorRolesNames(IEngUserProfile profile) {
 		Assert.assertNotNull(profile, "Object in input is null");
 
-		ArrayList<String> listRoles = new ArrayList<String>();
+		ArrayList<String> listRoles = new ArrayList<>();
 
 		logger.debug("IN.user unique id = [" + profile.getUserUniqueIdentifier() + "]");
 		try {

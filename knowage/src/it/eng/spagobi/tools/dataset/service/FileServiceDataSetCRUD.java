@@ -52,7 +52,6 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.FileUtilities;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
-import it.eng.spagobi.tools.dataset.bo.HdfsDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
@@ -413,13 +412,7 @@ public class FileServiceDataSetCRUD {
 	FileDataSet readMetadataAndSaveDataset(JSONObject jsonObject) throws JSONException, EMFUserError {
 		logger.debug("IN");
 
-		FileDataSet dataSet;
-		if (jsonObject.has(DataSetConstants.IS_PERSISTED_HDFS) && jsonObject.getBoolean(DataSetConstants.IS_PERSISTED_HDFS)) {
-			dataSet = new HdfsDataSet();
-			dataSet.setPersisted(true);
-		} else {
-			dataSet = new FileDataSet();
-		}
+		FileDataSet dataSet = new FileDataSet();
 
 		dataSet.setResourcePath(DAOConfig.getResourcePath());
 

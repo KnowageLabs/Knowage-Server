@@ -43,6 +43,8 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 	
 	$scope.translate = sbiModule_translate;
 	
+	$scope.showCkanIntegration = sbiModule_user.functionalities.indexOf("CkanIntegrationFunctionality")>-1;
+	
 	$scope.selectedDataset = undefined;
 	//$scope.lastDocumentSelected = null;
 	$scope.showDatasettInfo = false;

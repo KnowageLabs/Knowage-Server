@@ -44,7 +44,8 @@ datasetModule
 
 function datasetFunction($scope, $log, $http, sbiModule_config, sbiModule_translate, sbiModule_restServices, sbiModule_messaging, sbiModule_user, $mdDialog, multipartForm, $timeout, $qbeViewer){
 	
-	 $scope.showDatasetScheduler = sbiModule_user.functionalities.indexOf("SchedulingDatasetManagement")>-1;
+	$scope.showDatasetScheduler = sbiModule_user.functionalities.indexOf("SchedulingDatasetManagement")>-1;
+	$scope.showExportHDFS = sbiModule_user.functionalities.indexOf("DataSourceBigData")>-1;
 	
 	$scope.translate = sbiModule_translate;
 	$scope.codeMirror = null;

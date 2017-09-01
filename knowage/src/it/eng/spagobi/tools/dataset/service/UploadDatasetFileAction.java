@@ -17,24 +17,6 @@
  */
 package it.eng.spagobi.tools.dataset.service;
 
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
-import it.eng.spagobi.commons.utilities.GeneralUtilities;
-import it.eng.spagobi.commons.utilities.SpagoBIServiceExceptionHandler;
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.hdfs.Hdfs;
-import it.eng.spagobi.hdfs.HdfsUtilities;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import it.eng.spagobi.utilities.service.IServiceResponse;
-import it.eng.spagobi.utilities.service.JSONResponse;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -50,6 +32,19 @@ import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.commons.utilities.SpagoBIServiceExceptionHandler;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.service.IServiceResponse;
+import it.eng.spagobi.utilities.service.JSONResponse;
 
 /**
  *
@@ -106,11 +101,6 @@ public class UploadDatasetFileAction extends AbstractSpagoBIAction {
 			saveFile(uploaded, file);
 			logger.debug("File saved");
 
-			boolean storeToHDFS = Boolean.valueOf(SingletonConfig.getInstance().getConfigValue(SpagoBIConstants.CONFIG_STORE_TO_HDFS)).booleanValue();
-			if (storeToHDFS) {
-				moveFileToHdfs(file);
-			}
-
 			replayToClient(null);
 
 		} catch (Throwable t) {
@@ -121,26 +111,6 @@ public class UploadDatasetFileAction extends AbstractSpagoBIAction {
 			logger.debug("OUT");
 		}
 
-	}
-
-	private void moveFileToHdfs(File file) {
-		Hdfs hdfs = new Hdfs();
-		hdfs.init();
-		String dst = getCompleteFilePath(hdfs, file.getName());
-		try {
-			hdfs.moveFromLocalFile(file.getAbsolutePath(), dst);
-		} catch (Exception f) {
-			logger.error("Impossibile to move file to HDFS");
-			throw new SpagoBIEngineRuntimeException("Impossibile to move file to HDFS" + f);
-		}
-	}
-
-	public String getCompleteFilePath(Hdfs hdfs, String fileName) {
-		String hdfsPath = hdfs.getWorkingDirectory().toString();
-		String sep = HdfsUtilities.getHdfsSperator();
-		String filePath = hdfsPath;
-		filePath += sep + "dataset" + sep + "files" + sep + "temp" + sep + fileName;
-		return filePath;
 	}
 
 	/*
@@ -440,8 +410,8 @@ public class UploadDatasetFileAction extends AbstractSpagoBIAction {
 
 					if (uploaded.getSize() > datasetFileMaxSize) {
 
-						throw new SpagoBIServiceException(getActionName(), "The uploaded file exceeds the maximum size assigned to the user, that is "
-								+ datasetFileMaxSize + " bytes");
+						throw new SpagoBIServiceException(getActionName(),
+								"The uploaded file exceeds the maximum size assigned to the user, that is " + datasetFileMaxSize + " bytes");
 					}
 				} else {
 

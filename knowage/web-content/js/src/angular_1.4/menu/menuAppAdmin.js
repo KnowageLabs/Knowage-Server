@@ -175,7 +175,6 @@ myApp.directive('menuAside', ['$window','$http','$mdDialog','$mdToast', 'sbiModu
 				$scope.hostsData=[];			
 				
 	        	$http.get(Sbi.config.contextName+'/restful-services/1.0/license?onlyValid=true').success(function(data){
-				//$http.get(Sbi.config.contextName+'/restful-services/1.0/FunctionsCatalog').success(function(data){
 	        		if (data.errors){
 						$scope.messaging.showErrorMessage(data.errors[0].message,$scope.translate.load('sbi.generic.error'));
 						return;

@@ -17,22 +17,6 @@
  */
 package it.eng.spagobi.api.v2;
 
-import it.eng.qbe.serializer.SerializationException;
-import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.bo.Role;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IRoleDAO;
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.services.rest.annotations.UserConstraint;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.rest.RestUtilities;
-import it.eng.spagobi.wapp.bo.Menu;
-import it.eng.spagobi.wapp.dao.IMenuDAO;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +38,22 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.qbe.serializer.SerializationException;
+import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IRoleDAO;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
+import it.eng.spagobi.wapp.bo.Menu;
+import it.eng.spagobi.wapp.dao.IMenuDAO;
+
 /**
  * @author Radmila Selakovic (rselakov, radmila.selakovic@mht.net
  */
@@ -63,8 +63,7 @@ public class MenuResource extends AbstractSpagoBIResource {
 	private final String charset = "; charset=UTF-8";
 
 	/**
-	 * Getting list of all menus. Arrays of Roles that belong to one menu are
-	 * implemented to be like: One Role only with id and name
+	 * Getting list of all menus. Arrays of Roles that belong to one menu are implemented to be like: One Role only with id and name
 	 *
 	 * @author Radmila Selakovic (rselakov, radmila.selakovic@mht.net
 	 */
@@ -85,22 +84,8 @@ public class MenuResource extends AbstractSpagoBIResource {
 			List<Menu> allMenus = new ArrayList<>();
 
 			List<Menu> child = new ArrayList<>();
-			List<Menu> allMenus_new = new ArrayList<Menu>();
+			List<Menu> allMenus_new = new ArrayList<>();
 			allMenus = dao.loadAllMenues();
-			/*
-			 * ArrayList<String> roleUser = (ArrayList<String>)
-			 * profile.getRoles(); ArrayList<Role> roles = new
-			 * ArrayList<Role>(); for (String role : roleUser) { Role r =
-			 * DAOFactory.getRoleDAO().loadByName(role); roles.add(r); } Role[]
-			 * arrRole = null; for (Menu menu : allMenus) { arrRole =
-			 * menu.getRoles(); if (menu.getParentId() == null) { for (Role role
-			 * : arrRole) { child = dao.getChildrenMenu(menu.getMenuId(),
-			 * role.getId()); } menu.setLstChildren(child);
-			 * 
-			 * allMenus_new.add(menu); }
-			 * 
-			 * }
-			 */
 
 			return Response.ok(allMenus).build();
 		} catch (Exception e) {
@@ -128,7 +113,7 @@ public class MenuResource extends AbstractSpagoBIResource {
 			File dir = new File(resourcePath);
 			String[] files = null;
 			String[] filesHtmls = null;
-			ArrayList<String> filesHtmlsArrayList = new ArrayList<String>();
+			ArrayList<String> filesHtmlsArrayList = new ArrayList<>();
 			int count = 0;
 			if (!dir.isDirectory()) {
 				FileUtils.forceMkdir(new File(resourcePath));
@@ -275,7 +260,7 @@ public class MenuResource extends AbstractSpagoBIResource {
 			menu.setDescr(paramsObj.getString("descr"));
 			objDao.setUserProfile(getUserProfile());
 
-			ArrayList<Role> rolesArrayList = new ArrayList<Role>();
+			ArrayList<Role> rolesArrayList = new ArrayList<>();
 			if (paramsObj.getJSONArray("roles") != null) {
 				JSONArray roles = paramsObj.getJSONArray("roles");
 				Role[] rolesArray = new Role[roles.length()];
@@ -355,7 +340,7 @@ public class MenuResource extends AbstractSpagoBIResource {
 			roleDao = DAOFactory.getRoleDAO();
 
 			objDao = DAOFactory.getMenuDAO();
-			ArrayList<Role> rolesArrayList = new ArrayList<Role>();
+			ArrayList<Role> rolesArrayList = new ArrayList<>();
 
 			Role[] rolesArray = new Role[roles.length()];
 			for (int i = 0; i < roles.length(); i++) {

@@ -26,10 +26,12 @@ import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
 
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.hdfs.work.HDFSWriteWork;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -48,6 +50,7 @@ public class HDFSResource extends AbstractSpagoBIResource {
 
 	@POST
 	@Path("/{id}")
+	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_BIG_DATA })
 	public Response writeDataSet(@PathParam("id") Integer id, String body) {
 		String requestUUID;
 
