@@ -147,7 +147,7 @@ angular.module('cockpitModule')
 
                     		scope.updateble=objType.updateble==undefined? true : objType.updateble;
                     		//if the dataset is realtime disable the cliccable icon in the toolbar
-                    		if (dataset != null && dataset.isRealtime){
+                    		if (dataset && dataset != null && dataset.isRealtime){
                         		scope.cliccable= false;
                     		} else {
                         		scope.cliccable=objType.cliccable==undefined? true : objType.cliccable;
@@ -229,7 +229,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 	//disable cliccable for real time dataset
 	if ($scope.ngModel.dataset){
 		var widgetDataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId)
-		if (widgetDataset.isRealtime){
+		if (widgetDataset && widgetDataset.isRealtime){
 			$scope.ngModel.cliccable = false;
 		}
 	}
