@@ -125,7 +125,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							
 							    <md-radio-group ng-model="selectedDriver.type" layout="row">
 							    
-							      <md-radio-button ng-repeat="l in listType track by $index" value="{{l.VALUE_CD}}"> {{l.VALUE_NM}} </md-radio-button>
+							      <md-radio-button ng-repeat="l in listType  | filter: {VALUE_CD:'!DATE_RANGE'}" value="{{l.VALUE_CD}}" > {{l.VALUE_NM}} </md-radio-button>
 
     							</md-radio-group>
 						    

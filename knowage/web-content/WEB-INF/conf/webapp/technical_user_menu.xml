@@ -289,9 +289,10 @@
 				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportUsers/importExportUsers.jsp" /> 
 	  		<ITEM title="#menu.ImpExpKpis" functionality="ImpExpKpis"
 				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportKpis/importExportKpis.jsp" /> 
+	  		<!-- 
 	  		<ITEM title="#menu.ImpExpMetadata" functionality="ImpExpMetadata"
 				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportMetadata/importExportMetadata.jsp" /> 
-			
+			-->
 			<ITEM title="#menu.ImpExpCatalog" functionality="ImpExpCatalog"
 				url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/servermanager/importExportCatalog/importExportCatalog.jsp" /> 
 
@@ -310,10 +311,12 @@
 			<ITEM title="#menu.InstallConf" functionality="InstallConfig"
 				url="${SPAGOBI_CONTEXT}/restful-services/2.0/installconfig"
 				iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/tools/datasource/datasource16.png" />
+			<!--  
 	        <ITEM   title="#menu.ETLMetadata"
 	                functionality="EtlMetadataManagement"
 	                url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=/WEB-INF/jsp/tools/catalogue/etlMetadataExtraction.jsp?LIGHT_NAVIGATOR_RESET_INSERT=TRUE"
 	                iconUrl="${SPAGOBI_CONTEXT}/themes/${THEME}/img/metamodels16.png" />
+	        -->        
             <ITEM   title="#menu.license"
                     functionality="LicenseManagement"
                     url="showLicenseDialog" 
