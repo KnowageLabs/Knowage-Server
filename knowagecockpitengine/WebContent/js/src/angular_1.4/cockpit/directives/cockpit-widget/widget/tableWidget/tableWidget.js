@@ -184,13 +184,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				
 				$scope.deleteProperty($scope.ngModel, "content.currentPageNumber");
 				$scope.deleteProperty($scope.ngModel, "style.disableShowSummary");
-			
+				
+				if($scope.getPropertyValue($scope.ngModel, "content.fixedRow") != undefined){
+					$scope.deleteProperty($scope.ngModel, "content.fixedRow");
+					$scope.setPropertyValue($scope.ngModel, "settings.pagination.enabled", true);
+				}
+				
 				$scope.moveProperty($scope.ngModel, "style.alternateRows", "settings.alternateRows");
 				$scope.moveProperty($scope.ngModel, "style.showAlternateRows", "settings.alternateRows.enabled");
 				$scope.moveProperty($scope.ngModel, "style.autoRowsHeight", "settings.autoRowsHeight");
 				$scope.moveProperty($scope.ngModel, "content.modalselectioncolumn", "settings.modalSelectionColumn");
 				$scope.moveProperty($scope.ngModel, "multiselectable", "settings.multiselectable");
-				$scope.moveProperty($scope.ngModel, "content.fixedRow", "settings.pagination.enabled");
 				$scope.moveProperty($scope.ngModel, "content.maxRowsNumber", "settings.pagination.itemsNumber");
 				$scope.moveProperty($scope.ngModel, "style.showGrid", "settings.showGrid");
 				$scope.moveProperty($scope.ngModel, "sortingColumn", "settings.sortingColumn");
