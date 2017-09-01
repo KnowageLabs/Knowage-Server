@@ -131,7 +131,7 @@ function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitMod
 		{
 			label:"Use Cache",
 			name:"usacache",
-			template:"<md-checkbox ng-init='row.useCache=row.useCache==undefined? true : row.useCache' ng-model='row.useCache' aria-label='usaCache'></md-checkbox>",
+			template:"<md-checkbox ng-show='!row.isRealtime' ng-model='row.useCache' aria-label='usaCache'></md-checkbox>",
 			static:true
 		}];
 	 if($scope.showNearRealTimeCockpit){
@@ -140,8 +140,8 @@ function datasetManagerController($scope,sbiModule_translate,$mdPanel,cockpitMod
 				label:"Frequency (seconds)",
 				name:"freq",
 				static:true,
-				template:"<md-input-container style='margin:0' ng-show='row.useCache!=true' md-no-float class='md-block'>"+
-						"<input type='number' ng-init='row.frequency=row.frequency==undefined? 0 : row.frequency' min='0' ng-model='row.frequency' placeholder='Frequency'>"+
+				template:"<md-input-container style='margin:0' ng-show='!row.useCache && !row.isRealtime' md-no-float class='md-block'>"+
+						"<input type='number' min='0' ng-model='row.frequency' placeholder='Frequency'>"+
 						"</md-input-container>"
 			});
 	 }
