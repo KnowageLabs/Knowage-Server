@@ -181,7 +181,22 @@ angular.module('cockpitModule')
 	}
 });
 
-function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelection,cockpitModule_datasetServices,cockpitModule_widgetConfigurator,$q,$mdPanel,sbiModule_restServices,$httpParamSerializerJQLike,sbiModule_config,buildParametersForExecution,$mdToast,sbiModule_messaging,sbiModule_translate,$filter,cockpitModule_widgetServices){
+function cockpitChartWidgetControllerFunction(
+		$scope,cockpitModule_widgetSelection,
+		cockpitModule_datasetServices,
+		cockpitModule_widgetConfigurator,
+		$q,
+		$mdPanel,
+		sbiModule_restServices,
+		$httpParamSerializerJQLike,
+		sbiModule_config,
+		buildParametersForExecution,
+		$mdToast,
+		sbiModule_messaging,
+		sbiModule_translate,
+		$filter,
+		cockpitModule_widgetServices,
+		cockpitModule_properties){
 	$scope.property={style:{}};
 	$scope.selectedTab = {'tab' : 0};
 	//variable that contains last data of realtime dataset
@@ -232,6 +247,9 @@ function cockpitChartWidgetControllerFunction($scope,cockpitModule_widgetSelecti
 		if (scope.ngModel.dataset){
 			var dataset = cockpitModule_datasetServices.getDatasetById(scope.ngModel.dataset.dsId);
 			if (dataset.isRealtime == true){
+				if(cockpitModule_properties.DS_IN_CACHE.indexOf(dataset.label)==-1 ){
+	                cockpitModule_properties.DS_IN_CACHE.push(dataset.label);
+	            }
 				scope.applyRealtimeSelections(newValue,scope);
 			}
 		}	
