@@ -235,25 +235,25 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		List<IDataSet> results = new ArrayList<IDataSet>();
 
 		List<IDataSet> owened = loadDataSetsOwnedByUser(user, false);
-		//results.addAll(owened);
+		// results.addAll(owened);
 		for (IDataSet iDataSet : owened) {
-			if(!results.contains(iDataSet)){
+			if (!results.contains(iDataSet)) {
 				results.add(iDataSet);
 			}
 		}
 
 		List<IDataSet> shared = loadDatasetsSharedWithUser(user, false);
-		//results.addAll(shared);
+		// results.addAll(shared);
 		for (IDataSet iDataSet : shared) {
-			if(!results.contains(iDataSet)){
+			if (!results.contains(iDataSet)) {
 				results.add(iDataSet);
 			}
 		}
 
 		List<IDataSet> enterprise = loadEnterpriseDataSets(user);
-		//results.addAll(enterprise);
+		// results.addAll(enterprise);
 		for (IDataSet iDataSet : enterprise) {
-			if(!results.contains(iDataSet)){
+			if (!results.contains(iDataSet)) {
 				results.add(iDataSet);
 			}
 		}
@@ -439,7 +439,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 	/**
 	 * Insert data set.
-	 * 
+	 *
 	 * @param dataSet
 	 *            the a data set
 	 * @see it.eng.spagobi.tools.dataset.dao.IDataSetDAO#insertDataSet(it.eng.spagobi.tools.dataset.bo.AbstractDataSet)
@@ -732,7 +732,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			int orderByPos = hsql.indexOf("order by");
 			String orderBy = "";
-			if(orderByPos>0){
+			if (orderByPos > 0) {
 				orderBy = hsql.substring(orderByPos);
 				hsql = hsql.substring(0, orderByPos);
 			}
@@ -755,9 +755,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 			}
 
-			//if not admin filter by category and owner
+			// if not admin filter by category and owner
 			List idsCat = null;
-			if(!isAdmin){
+			if (!isAdmin) {
 				List<Domain> devCategories = new LinkedList<Domain>();
 				fillDevCategories(devCategories);
 
@@ -1624,7 +1624,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 	/**
 	 * Returns the Higher Version Number of a selected DS
-	 * 
+	 *
 	 * @param dsId
 	 *            the a data set ID
 	 * @throws EMFUserError
@@ -1664,7 +1664,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 	/**
 	 * Delete data set whose ID is equal to <code>datasetId</code> if it is not referenced by some analytical documents.
-	 * 
+	 *
 	 * @param datasetId
 	 *            the ID of the dataset to delete. Cannot be null.
 	 * @throws SpagoBIDAOException
@@ -1801,7 +1801,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 	/**
 	 * Delete data set whose ID is equal to <code>datasetId</code> ALSO if is referenced by some analytical documents.
-	 * 
+	 *
 	 * @param datasetId
 	 *            the ID of the dataset to delete. Cannot be null.
 	 */
@@ -1860,7 +1860,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 	/**
 	 * Restore an Older Version of the dataset
-	 * 
+	 *
 	 * @param dsId
 	 *            the a data set ID
 	 * @param dsVersion
@@ -1918,7 +1918,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 	/**
 	 * Delete the dataset version whose id is equal to <code>datasetVersionId</code> if and only if it is inactive.
-	 * 
+	 *
 	 * @param datasetVersionId
 	 *            the id of the version of the dataset to delete. Cannot be null.
 	 * @return true if the version whose id is equal to <code>datasetVersionId</code> is deleted from database. false otherwise (the version does not exist or
@@ -1981,7 +1981,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 	/**
 	 * Delete all inactive versions of dataset whose id is equal to <code>datasetId</code>
-	 * 
+	 *
 	 * @param datasetId
 	 *            the id of the of the dataset whose incative version must be deleted
 	 * @return true if the incative versions of dataset whose id is equal to <code>datasetId</code> have been succesfully deleted from database. false otherwise
@@ -2061,7 +2061,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 	/**
 	 * copy a dataset
-	 * 
+	 *
 	 * @param hibDataSet
 	 * @return
 	 */
@@ -2074,39 +2074,39 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 		/*
 		 * SbiDataSet hibNew = null;
-		 * 
+		 *
 		 * if(hibDataSet instanceof SbiFileDataSet){ hibNew = new SbiFileDataSet();
 		 * ((SbiFileDataSet)hibNew).setFileName(((SbiFileDataSet)hibDataSet).getFileName()); }
-		 * 
+		 *
 		 * if(hibDataSet instanceof SbiQueryDataSet){ hibNew = new SbiQueryDataSet();
 		 * ((SbiQueryDataSet)hibNew).setQuery(((SbiQueryDataSet)hibDataSet).getQuery());
 		 * ((SbiQueryDataSet)hibNew).setQueryScript(((SbiQueryDataSet)hibDataSet).getQueryScript());
 		 * ((SbiQueryDataSet)hibNew).setQueryScriptLanguage(((SbiQueryDataSet)hibDataSet).getQueryScriptLanguage()); }
-		 * 
+		 *
 		 * if(hibDataSet instanceof SbiWSDataSet){ hibNew = new SbiWSDataSet(); ((SbiWSDataSet)hibNew ).setAdress(((SbiWSDataSet)hibDataSet).getAdress());
 		 * ((SbiWSDataSet)hibNew ).setOperation(((SbiWSDataSet)hibDataSet).getOperation()); }
-		 * 
+		 *
 		 * if(hibDataSet instanceof SbiScriptDataSet){ hibNew =new SbiScriptDataSet(); ((SbiScriptDataSet) hibNew
 		 * ).setScript(((SbiScriptDataSet)hibDataSet).getScript()); ((SbiScriptDataSet) hibNew
 		 * ).setLanguageScript(((SbiScriptDataSet)hibDataSet).getLanguageScript());
-		 * 
+		 *
 		 * }
-		 * 
+		 *
 		 * if(hibDataSet instanceof SbiJClassDataSet){ hibNew =new SbiJClassDataSet(); ((SbiJClassDataSet) hibNew
 		 * ).setJavaClassName(((SbiJClassDataSet)hibDataSet).getJavaClassName()); }
-		 * 
+		 *
 		 * if(hibDataSet instanceof SbiCustomDataSet){ hibNew =new SbiCustomDataSet(); ((SbiCustomDataSet) hibNew
 		 * ).setCustomData(((SbiCustomDataSet)hibDataSet).getCustomData()); ((SbiCustomDataSet) hibNew
 		 * ).setJavaClassName(((SbiCustomDataSet)hibDataSet).getJavaClassName()); }
-		 * 
+		 *
 		 * if(hibDataSet instanceof SbiQbeDataSet){ hibNew =new SbiQbeDataSet(); ((SbiQbeDataSet) hibNew
 		 * ).setSqlQuery(((SbiQbeDataSet)hibDataSet).getSqlQuery()); ((SbiQbeDataSet) hibNew ).setJsonQuery(((SbiQbeDataSet)hibDataSet).getJsonQuery());
 		 * ((SbiQbeDataSet) hibNew ).setDataSource(((SbiQbeDataSet)hibDataSet).getDataSource()); ((SbiQbeDataSet) hibNew
 		 * ).setDatamarts(((SbiQbeDataSet)hibDataSet).getDatamarts());
-		 * 
-		 * 
+		 *
+		 *
 		 * }
-		 * 
+		 *
 		 * hibNew.setCategory(hibDataSet.getCategory()); hibNew.setDsMetadata(hibDataSet.getDsMetadata()); hibNew.setMetaVersion(hibDataSet.getMetaVersion());
 		 * hibNew.setParameters(hibDataSet.getParameters()); hibNew.setPivotColumnName(hibDataSet.getPivotColumnName());
 		 * hibNew.setPivotColumnValue(hibDataSet.getPivotColumnValue()); hibNew.setPivotRowName(hibDataSet.getPivotRowName());
@@ -2217,7 +2217,10 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		results = new ArrayList<IDataSet>();
 		for (SbiDataSet sbiDataSet : sbiDataSetList) {
 			if (sbiDataSet != null) {
-				results.add(DataSetFactory.toDataSet(sbiDataSet, this.getUserProfile()));
+				IDataSet dataSet = DataSetFactory.toDataSet(sbiDataSet, this.getUserProfile());
+				if (dataSet != null) {
+					results.add(dataSet);
+				}
 			}
 		}
 
