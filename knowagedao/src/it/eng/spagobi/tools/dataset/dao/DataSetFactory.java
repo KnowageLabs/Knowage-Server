@@ -527,7 +527,8 @@ public class DataSetFactory {
 		JSONObject jsonConf = ObjectUtils.toJSONObject(config);
 		try {
 			if (sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_FILE)) {
-				FileDataSet fds = new FileDataSet();
+				ds = new FileDataSet();
+				FileDataSet fds = (FileDataSet) ds;
 
 				String resourcePath = jsonConf.optString("resourcePath");
 				if (StringUtilities.isEmpty(resourcePath)) {
@@ -793,7 +794,8 @@ public class DataSetFactory {
 		JSONObject jsonConf = ObjectUtils.toJSONObject(config);
 		try {
 			if (sbiDataSet.getType().equalsIgnoreCase(DataSetConstants.DS_FILE)) {
-				FileDataSet fds = new FileDataSet();
+				ds = new FileDataSet();
+				FileDataSet fds = (FileDataSet) ds;
 
 				String resourcePath = jsonConf.optString("resourcePath");
 				if (StringUtilities.isEmpty(resourcePath)) {
