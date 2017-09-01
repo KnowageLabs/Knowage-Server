@@ -102,7 +102,10 @@ angular.module("cockpitModule").service("cockpitModule_generalServices",function
 					cockpitModule_properties.DOCUMENT_ID=response.data.id;
 				},
 				function(response){
-					sbiModule_restServices.errorHandler(response.data,"Error*")
+					sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.generic.error"));
+					if(response.config && response.config.data && response.config.data.action == "DOC_SAVE"){
+						cockpitModule_properties.DOCUMENT_NAME = "";
+					}
 				})
 	
 	
