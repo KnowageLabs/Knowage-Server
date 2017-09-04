@@ -262,7 +262,7 @@
 						
 						
 						
-						if(oldParValue == undefined ||
+						if(oldParValue == undefined || oldParValue == "" ||
 								(oldParValue && (!angular.equals(newParValue, oldParValue))) 
 								){
 							docExecute_dependencyService.dataDependenciesCorrelationWatch(newValPar);
