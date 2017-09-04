@@ -93,7 +93,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 		
 		if(!$scope.ngModel.settings.alternateRows){
-			$scope.ngModel.settings.alternateRows = {'enabled' : false};
+			$scope.ngModel.settings.alternateRows = {
+				'enabled' : false,
+				'evenRowsColor':'',
+				'oddRowsColor': ''
+			};
 		}
 		
 		if(!$scope.ngModel.settings.showGrid){
@@ -242,7 +246,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							|| $scope.ngModel.content.columnSelectedOfDataset[i].isCalculated){
 						return;
 					}
-					break;
+					//break;
 				}
 			}
 
