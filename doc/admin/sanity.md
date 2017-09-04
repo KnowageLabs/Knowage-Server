@@ -11,14 +11,14 @@ is fixed.
 
 ## End to End Testing
 
-*   Start SpagoBI on default port (8080)
-*   Open SpagoBI on your browser at url
+*   Start Knowage on default port (8080)
+*   Open Knowage on your browser at url
 
-> [http://localhost:8080/SpagoBI](http://localhost:8080/SpagoBI)
+> [http://localhost:8080/knowage](http://localhost:8080/knowage)
 
 *   Check that you see the login page:
 
-![](media/SpagoBI_Login.png)
+![](media/Knowage_Login.png)
 
 
 
@@ -37,13 +37,13 @@ root        15  1.3 18.4 2034464 745708 ?      Sl   08:55   2:34 /usr/bin/java -
 
 ## Network Interfaces Up and Open
 
-SpagoBI uses Servlet Application Container (Tomcat), 8080 is the default port.
+Knowage uses Servlet Application Container (Tomcat), 8080 is the default port.
 
 [Top](#top)
 
 ## Databases
 
-SpagoBI uses a JDBC connection therefore it can uses every Database with a JDBC driver. The All In One version contains a [HSQL DB](http://hsqldb.org), inside a folder. It runs when SpagoBI runs. Other versions (not All I One) of SpagoBI run normally with an external database, usually a MySQL database. To check if a MySQL instance is running with SpagoBI database run these commands:
+Knowage uses a JDBC connection therefore it can uses every Database with a JDBC driver. The All In One version contains a [HSQL DB](http://hsqldb.org), inside a folder. It runs when Knowage runs. Other versions run normally with an external database, (e.g MySQL DB). To check if a MySQL instance is running with Knowage database run these commands:
 
 Run mysql client:
 
@@ -51,16 +51,16 @@ Run mysql client:
 $ mysql -u root -p 
 ```
 
-Show the tables of spagobi database:
+Show the tables of knowage database:
 
 ```
-mysql> use spagobi; show tables;
+mysql> use knowage; show tables;
 +----------------------------------+
-| Tables_in_spagobi                |
+| Tables_in_knowage                |
 +----------------------------------+
-| JBPM_ACTION                      |
-| JBPM_BYTEARRAY                   |
-| JBPM_BYTEBLOCK                   |
+| SBI_ALERT                        |
+| SBI_ALERT_ACTION                 |
+| SBI_ALERT_LISTENER               |
 ...
 ```
 
