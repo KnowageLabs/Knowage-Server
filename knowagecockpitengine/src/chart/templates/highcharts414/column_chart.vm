@@ -839,11 +839,13 @@
 		#if($chart.groupSeries && $chart.groupSeries =='true')
 		#set($map = $datasettransformer.prepareDataForGrouping($rows,$chart.isCockpitEngine))
             categories: [
-				 #foreach($valueKey in $map.keySet())
-				#foreach($el in  $map.get($valueKey))	
-					'$el.name',
-				#end		
-			#end
+            	 #foreach($valueKey in $map.keySet())
+				 #if($valueKey!="null")
+					#foreach($el in  $map.get($valueKey))
+						'$el.name',
+					#end
+				#end
+				#end
             ]
 		#end
 		
@@ -1299,6 +1301,7 @@
 	#end
 	#if($chart.groupSeries && $chart.groupSeries =='true')	
 		#foreach($valueKey in $map.keySet())
+		#if($valueKey!="null")
 		{
 			name: '$valueKey',
 			data: [
@@ -1309,6 +1312,7 @@
 				#end	
 			]
 		},
+		#end
 	#end
 	#end
     ],
