@@ -296,7 +296,8 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 		}
 		if(!requestParameters.start || requestParameters.start == null) requestParameters.start = 0;
 		if(!requestParameters.limit || requestParameters.limit == null) requestParameters.limit = this.pageSize;
-
+		
+		this.store.removeAll(true);
 		this.store.load({params: requestParameters});
 	}
   	
