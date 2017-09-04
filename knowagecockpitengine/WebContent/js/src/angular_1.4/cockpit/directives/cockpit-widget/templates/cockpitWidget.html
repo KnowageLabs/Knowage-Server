@@ -78,11 +78,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			
 			<!-- FULL PAGE EXPANSION BUTTON -->
 			<md-button class="md-icon-button "  aria-label="expand button" ng-click="expandWidget();$event.stopPropagation();" >
+				<md-tooltip direction="bottom">{{translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.expandall")}}</md-tooltip>
 				<md-icon md-font-icon="fa" ng-class="{'fa-compress':widExp ,' fa-expand':!widExp }"></md-icon>
 			</md-button>
 			
 			<!-- SEARCH BUTTON for table widget only -->
 			<md-button class="md-icon-button " aria-label="search button" ng-if="ngModel.type == 'table'" ng-click="openSearchBar();$event.stopPropagation();">
+				<md-tooltip direction="bottom">{{translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.search")}}</md-tooltip>
 				<span class="fa-stack">
 				  <i class="fa fa-search fa-stack-1x"></i>
 				  <i ng-if="activeSearch" class="fa fa-check fa-stack-2x fa-positive"></i>
@@ -96,6 +98,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			
 			<!-- DELETE BUTTON -->
 			<md-button class="md-icon-button " aria-label="delete button" ng-if="cockpitModule_properties.EDIT_MODE" ng-click="deleteWidget();$event.stopPropagation();">
+				<md-tooltip direction="bottom">{{translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.edit")}}</md-tooltip>
 				<md-icon md-font-icon="fa fa-trash"></md-icon>
 			</md-button>
 			

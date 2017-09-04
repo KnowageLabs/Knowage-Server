@@ -222,28 +222,28 @@ if(executionRoleNames.size() > 0) {
         <% if(engineName.equalsIgnoreCase( SpagoBIConstants.COCKPIT_ENGINE_NAME)
                             && (isAdmin || userId.equals(obj.getCreationUser()))) {%>
                     <md-button ng-if="cockpitEditing.documentMode == 'EDIT'" class="md-icon-button" ng-click="::cockpitEditing.stopCockpitEditing()"
-                            aria-label="{{::translate.load('sbi.execution.executionpage.toolbar.viewcockpitdoc')}}"
-                            title="{{::translate.load('sbi.execution.executionpage.toolbar.viewcockpitdoc')}}">
-                         <md-icon md-font-icon="fa fa-times-circle"></md-icon>
+                            aria-label="{{::translate.load('sbi.execution.executionpage.toolbar.viewcockpitdoc')}}">
+                            <md-tooltip direction="bottom">{{::translate.load('sbi.execution.executionpage.toolbar.viewcockpitdoc')}}</md-tooltip>
+                         <md-icon md-font-icon="fa fa-eye"></md-icon>
                     </md-button>
                     <md-button ng-if="cockpitEditing.documentMode != 'EDIT'" class="md-icon-button" ng-click="::cockpitEditing.startCockpitEditing()"
-                            aria-label="{{::translate.load('sbi.execution.executionpage.toolbar.editcockpitdoc')}}"
-                            title="{{::translate.load('sbi.execution.executionpage.toolbar.editcockpitdoc')}}">
+                            aria-label="{{::translate.load('sbi.execution.executionpage.toolbar.editcockpitdoc')}}">
+                            <md-tooltip direction="bottom">{{::translate.load('sbi.execution.executionpage.toolbar.editcockpitdoc')}}</md-tooltip>
                          <md-icon md-font-icon="fa fa-pencil-square-o"></md-icon>
                     </md-button>
         <%} %>
-                    <md-button class="md-icon-button" ng-if="navigatorEnabled" ng-click="toggleNavigator($event)"
-                            title="Navigator">
+                    <md-button class="md-icon-button" ng-if="navigatorEnabled" ng-click="toggleNavigator($event)">
+                         <md-tooltip direction="bottom">Navigator</md-tooltip>
                          <md-icon md-font-icon="fa fa-compass"></md-icon>
                     </md-button>
                     
-                    <md-button class="md-icon-button"  ng-if="checkHelpOnline()"  aria-label="{{::translate.load('sbi.generic.helpOnLine')}}" ng-click="openHelpOnLine()"
-                            title="{{::translate.load('sbi.generic.helpOnLine')}}">
+                    <md-button class="md-icon-button"  ng-if="checkHelpOnline()"  aria-label="{{::translate.load('sbi.generic.helpOnLine')}}" ng-click="openHelpOnLine()">
+                         <md-tooltip direction="bottom">{{::translate.load('sbi.generic.helpOnLine')}}</md-tooltip>
                          <md-icon md-font-icon="fa fa-book"></md-icon>
                     </md-button>
                     
-                    <md-button class="md-icon-button" aria-label="{{::translate.load('sbi.scheduler.parameters')}}" ng-click="executeParameter()" 
-                            title="{{::translate.load('sbi.scheduler.refresh')}}">
+                    <md-button class="md-icon-button" aria-label="{{::translate.load('sbi.scheduler.parameters')}}" ng-click="executeParameter()" >
+                         <md-tooltip direction="bottom">{{::translate.load('sbi.scheduler.refresh')}}</md-tooltip>   
                          <md-icon md-font-icon="fa fa-refresh"></md-icon>
                     </md-button>
                     
@@ -253,8 +253,8 @@ if(executionRoleNames.size() > 0) {
                     else{
                     %>
                     <md-button class="md-icon-button" aria-label="{{::translate.load('sbi.scheduler.parameters')}}" ng-click="paramRolePanelService.toggleParametersPanel()"
-                            title="{{::translate.load('sbi.scheduler.parameters')}}" ng-if="!isParameterRolePanelDisabled.status">
-                        
+                             ng-if="!isParameterRolePanelDisabled.status">
+                        <md-tooltip direction="bottom">{{::translate.load('sbi.scheduler.parameters')}}</md-tooltip>
                         <md-icon md-font-icon="fa fa-filter"></md-icon> 
                     </md-button>
                     <%} %>
@@ -262,6 +262,7 @@ if(executionRoleNames.size() > 0) {
                     <md-menu-bar id="menu">
                         <md-menu>
                             <md-button id="menuButton" class="md-icon-button" aria-label="Menu" ng-click="$mdOpenMenu(); closeMdMenu();" >
+                            	<md-tooltip direction="bottom">Menu</md-tooltip>
                                 <md-icon md-font-icon="fa  fa-ellipsis-v"></md-icon>
                             </md-button>
                             <md-menu-content>
@@ -394,6 +395,7 @@ if(executionRoleNames.size() > 0) {
                     </md-menu-bar>
                 
                     <md-button class="md-icon-button" title="close" aria-label="Clear"  ng-if="isCloseDocumentButtonVisible()" ng-click="closeDocument()">
+                    	<md-tooltip direction="bottom">{{::translate.load('sbi.general.close')}}</md-tooltip>
                         <md-icon md-font-icon="fa fa-times"></md-icon>
                     </md-button>
                 </div>
