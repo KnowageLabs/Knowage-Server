@@ -36,7 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<!-- Folders button -->
 			<md-button class="md-icon-button" title="Folders" aria-label="Folders"
 				hide-gt-sm ng-hide="showSearchView" ng-click="toggleFolders()">
-			<md-icon md-font-icon="fa fa-bars"></md-icon> </md-button>
+			<md-icon md-font-icon="fa fa-ellipsis-v"></md-icon> </md-button>
 		
 			<!-- Title -->
 			<h1 ng-hide="showSearchView">{{translate.load("sbi.browser.title")}}</h1>
