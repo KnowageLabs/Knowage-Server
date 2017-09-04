@@ -53,7 +53,7 @@ public class GetTreeAction extends AbstractQbeEngineAction {
 
 	// INPUT PARAMETERS
 	public static final String QUERY_ID = "parentQueryId";
-	public static final String DATAMART_NAME = "DATAMART_NAME";
+	public static final String DATAMART_NAME = "datamartName";
 
 	public static final String ENTITIES = "entities";
 
