@@ -172,11 +172,14 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, quer
 		$rootScope.$broadcast('openDialogForParams');
 	}
 
+	$scope.$watch('ngModel',function(newValue,oldValue){
+		if(newValue[0]){
+			$scope.isChecked = newValue[0].distinct;
+		}
+	},true);
+
 	$scope.distinctSelected = function (){
 		$rootScope.$broadcast('distinctSelected');
-	}
-	$scope.isChecked = function (){
-		return $scope.$parent.isChecked;
 	}
 	$scope.showHiddenColumns = function () {
 		for ( var field in $scope.ngModel) {
