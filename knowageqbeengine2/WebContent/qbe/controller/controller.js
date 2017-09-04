@@ -70,6 +70,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
          		    	"color":query.fields[i].color,
          		    	"data":[],
          		    	"visible":query.fields[i].visible,
+         		    	"distinct":$scope.editQueryObj.distinct,
          		    	"group":query.fields[i].group,
          		    	"order":i+1,
          		    	"filters": []
@@ -164,7 +165,8 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 			   "order":"",
 			   "include":true,
 			   "visible":true,
-			   "longDescription":field.attributes.longDescription
+			   "longDescription":field.attributes.longDescription,
+			   "distinct":$scope.editQueryObj.distinct,
 			}
 		
 		$scope.editQueryObj.fields.push(newField);
@@ -246,9 +248,6 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 	})
 	$scope.$on('distinctSelected',function(){
     	 $scope.editQueryObj.distinct =  !$scope.editQueryObj.distinct;
-    })
-    $scope.$on('isChecked',function(){
-    	 return $scope.editQueryObj.distinct;
     })
 	
 	$scope.$on('openDialogForParams',function(event){

@@ -28,6 +28,7 @@ queries.service('query_service',function(sbiModule_restServices,sbiModule_config
          		    	"color":query.fields[i].color,
          		    	"data":[],
          		    	"visible":query.fields[i].visible,
+         		    	"distinct":query.distinct,
          		    	"group":query.fields[i].group,
          		    	"order":i+1,
          		    	"filters": []
