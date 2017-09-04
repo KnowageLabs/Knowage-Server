@@ -51,9 +51,15 @@ angular.module('qbe_custom_table', ['ngDraggable'])
         return ordered;
     };
 });
-function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, query_service){
+function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiModule_config, $mdPanel, query_service, $q){
 	
 	$scope.smartPreview = true;
+	
+	$scope.completeResult = false;
+	
+	$scope.completeResultsColumns = [];
+	
+	$scope.previewModel = [];
 	
 	$scope.$watch('smartPreview',function(newValue,oldValue){
 		query_service.setSmartView(newValue);
@@ -149,15 +155,47 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, quer
 	}
 	
 	$scope.executeRequest = function () {
-		console.log("execute");
+		$rootScope.$emit('executeQuery', true);
 	}
 	
+	$scope.$on('queryExecuted', function (event, data) {
+		$scope.completeResult = true;
+		angular.copy(data.columns, $scope.completeResultsColumns);
+		angular.copy(data.data, $scope.previewModel);
+		$scope.openPreviewTemplate(true, $scope.completeResultsColumns, $scope.previewModel, data.results);
+	});
+	
+	$scope.openPreviewTemplate = function (completeResult,completeResultsColumns,previewModel,totalNumberOfItems){
+		
+		var finishEdit=$q.defer();		
+		var config = {
+				attachTo:  angular.element(document.body),
+				templateUrl: sbiModule_config.contextName +'/qbe/templates/datasetPreviewDialogTemplate.html',
+				position: $mdPanel.newPanelPosition().absolute().center(),
+				fullscreen :true,
+				controller: function($scope,mdPanelRef){
+					$scope.model ={ "completeresult": completeResult, "completeResultsColumns": completeResultsColumns, "previewModel": previewModel, "totalNumberOfItems": totalNumberOfItems, "mdPanelRef":mdPanelRef};
+					 $scope.changeDatasetPage=function(itemsPerPage,currentPageNumber){
+					    	console.log(itemsPerPage+"sss"+currentPageNumber+"ggg"+totalNumberOfItems);							
+						}
+				},
+				locals: {completeresult: completeResult, completeResultsColumns: completeResultsColumns, previewModel: previewModel, totalNumberOfItems: totalNumberOfItems},
+				hasBackdrop: true,
+				clickOutsideToClose: true,
+				escapeToClose: true,
+				focusOnOpen: true,
+				preserveScope: true,
+		};
+		$mdPanel.open(config);
+		return finishEdit.promise;
+		
+	}	
 	$scope.openFilters = function (field){
 		$rootScope.$broadcast('openFilters', {"field":field});
 	}
 	$scope.checkDescription = function (field){
 		var desc = "";
-
+		
 		for (var i = 0; i < $scope.filters.length; i++) {
 			if($scope.filters[i].leftOperandDescription == field.entity+" : "+field.name){
 
@@ -181,6 +219,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, quer
 	$scope.distinctSelected = function (){
 		$rootScope.$broadcast('distinctSelected');
 	}
+
 	$scope.showHiddenColumns = function () {
 		for ( var field in $scope.ngModel) {
 			$scope.ngModel[field].hidden = false;

@@ -65,11 +65,41 @@ function advancedVisualizationControllerFunction($scope,sbiModule_translate, sbi
 		}
 	}
 	
+	$scope.filterColumnsAV = [
+		{
+        	"label":"Name",
+        	"name":"filterId"
+    	},
+    	{
+        	"label":"Description",
+        	"name":"description"
+    	},
+    	{
+    		"label":"Function",
+        	"name":"function",
+        	hideTooltip:true,
+        	transformer: function() {
+        		return '<md-select ng-model=row.booleanConnector class="noMargin" ><md-option ng-repeat="connector in scopeFunctions.logicalOperators" ng-click="scopeFunctions.setBooleanConnector(connector, row)" value="{{connector}}">{{connector}}</md-option></md-select>';
+        	}
+    	}
+    ]
+	
+	
 	$scope.groupFilters = function () {
 		for ( var index in $scope.ngModel.childNodes) {
 			if($scope.ngModel.childNodes[index].selected==true){
 				$scope.ngModel.childNodes[index].backgroundColor="#D3D3D3";
+				$scope.ngModel.childNodes[index].grouped=true;
 			}
+		}
+	}
+	
+	$scope.logicalOperators = ["AND", "OR"];
+	
+	$scope.advancedVisualizationScopeFunctions = {
+		logicalOperators: $scope.logicalOperators,
+		setBooleanConnector: function (connector, row) {
+			row.booleanConnector = connector;
 		}
 	}
 }

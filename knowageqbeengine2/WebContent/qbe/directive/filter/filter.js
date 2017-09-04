@@ -111,6 +111,7 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 			if($scope.filters[i].filterId==filter.filterId) {
 
 				$scope.filters.splice(i, 1);
+				generateExpressions ($scope.filters, $scope.ngModel.expression );
 			}
 
 		}
@@ -277,40 +278,46 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 	}
 
 	var generateExpressions = function (filters, expression){
-		var nodeConstArray = [];
-		for (var i = 0; i < filters.length; i++) {
-			var nodeConstObj = {};
-			nodeConstObj.value = '$F{' + filters[i].filterId + '}';
-			nodeConstObj.type = "NODE_CONST";
-			nodeConstObj.childNodes = [];
-			nodeConstArray.push(nodeConstObj);
-			
-		}
-		if (filters.length==1){
-			angular.copy(nodeConstArray[0],expression);
-		} else if (filters.length>1) {
-			var nop = {};
-			nop.value = "";
-			nop.type = "NODE_OP";
-			nop.childNodes = [];
-			var nopForInsert = {};
-			for (var i = filters.length-1; i >= 0 ; i--) {
-				if (i-1==-1 || filters[i].booleanConnector!=filters[i-1].booleanConnector) {
-					nop.value = filters[i].booleanConnector;
-					nop.childNodes.push(nodeConstArray[i]);
-					if(nopForInsert.value){
-						nop.childNodes.push(nopForInsert);
-					}					
-					nopForInsert = angular.copy(nop);
-					nop.value = "";
-					nop.type = "NODE_OP";
-					nop.childNodes = [];
-				} else {
-					nop.childNodes.push(nodeConstArray[i]);
-				}
-				console.log(filters[i].booleanConnector)
+		
+	 // if filters are empty set expression to empty object
+		if(filters.length==0){
+			angular.copy({},expression);
+		} else {
+			var nodeConstArray = [];
+			for (var i = 0; i < filters.length; i++) {
+				var nodeConstObj = {};
+				nodeConstObj.value = '$F{' + filters[i].filterId + '}';
+				nodeConstObj.type = "NODE_CONST";
+				nodeConstObj.childNodes = [];
+				nodeConstArray.push(nodeConstObj);
+				
 			}
-			angular.copy(nopForInsert,expression);
+			if (filters.length==1){
+				angular.copy(nodeConstArray[0],expression);
+			} else if (filters.length>1) {
+				var nop = {};
+				nop.value = "";
+				nop.type = "NODE_OP";
+				nop.childNodes = [];
+				var nopForInsert = {};
+				for (var i = filters.length-1; i >= 0 ; i--) {
+					if (i-1==-1 || filters[i].booleanConnector!=filters[i-1].booleanConnector) {
+						nop.value = filters[i].booleanConnector;
+						nop.childNodes.push(nodeConstArray[i]);
+						if(nopForInsert.value){
+							nop.childNodes.push(nopForInsert);
+						}					
+						nopForInsert = angular.copy(nop);
+						nop.value = "";
+						nop.type = "NODE_OP";
+						nop.childNodes = [];
+					} else {
+						nop.childNodes.push(nodeConstArray[i]);
+					}
+					console.log(filters[i].booleanConnector)
+				}
+				angular.copy(nopForInsert,expression);
+			}
 		}
 
 	};

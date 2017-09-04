@@ -36,26 +36,23 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 	$scope.$watch('editQueryObj',function(newValue,oldValue){
 		$scope.filters = $scope.editQueryObj.filters;
 		if(query_service.smartView){
-			$scope.executeQuery($scope.editQueryObj, $scope.bodySend, $scope.queryModel);
+			$scope.executeQuery($scope.editQueryObj, $scope.bodySend, $scope.queryModel, false);
 		} else {
 			$scope.addToQueryModelWithoutExecutingQuery($scope.editQueryObj, $scope.queryModel);
 		}
 	},true)
-	
-
 
 	entityService.getEntitiyTree(inputParamService.modelName).then(function(response){
 		 $scope.entityModel = response.data;
 		
 	});
 	
-	$scope.executeQuery = function ( query, bodySend, queryModel) {
+	$scope.executeQuery = function ( query, bodySend, queryModel, isCompleteResult) {
 		if(query.fields.length>0){
-			query_service.executeQuery( query, bodySend, queryModel);
+			query_service.executeQuery( query, bodySend, queryModel, isCompleteResult);
 		}else{			
 			queryModel.length = 0;
 		}
-		
 	}
 	
 	$scope.addToQueryModelWithoutExecutingQuery = function (query, queryModel) {
@@ -120,6 +117,10 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 		}
 	});
 	
+	$rootScope.$on('executeQuery', function (data) {
+		$scope.executeQuery($scope.editQueryObj, $scope.bodySend, $scope.queryModel, true);
+	});
+	
 	$rootScope.$on('removeColumn', function (event, data) {
 	  var indexOfFieldInQuery = findWithAttr($scope.editQueryObj.fields,'id', data.id);
 	  var indexOfFieldInModel = findWithAttr($scope.queryModel,'id', data.id);
@@ -137,7 +138,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 	  $scope.editQueryObj.fields[indexOfFieldInQuery].group = data.group;
 	  $scope.editQueryObj.fields[indexOfFieldInQuery].funct = "";
 	  if(query_service.smartView){
-		  $scope.executeQuery( $scope.editQueryObj, $scope.bodySend, $scope.queryModel); 
+		  $scope.executeQuery( $scope.editQueryObj, $scope.bodySend, $scope.queryModel, false); 
 	  }
 	  
 	});

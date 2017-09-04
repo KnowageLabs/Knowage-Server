@@ -1,7 +1,7 @@
 
 var queries = angular.module('queries',['sbiModule']);
 
-queries.service('query_service',function(sbiModule_restServices,sbiModule_config, $q){
+queries.service('query_service',function(sbiModule_restServices,sbiModule_config, $q, $rootScope){
 	
 	this.smartView = true;
 	
@@ -9,10 +9,10 @@ queries.service('query_service',function(sbiModule_restServices,sbiModule_config
 		this.smartView = value;
 	}
 	
-	this.executeQuery = function(query, bodySend, queryModel){
+	this.executeQuery = function(query, bodySend, queryModel, isCompleteResult){
 		
 	
-		var q="?SBI_EXECUTION_ID="+sbiModule_config.sbiExecutionID+"&currentQueryId="+query.id+"&start=0&limit=25";
+		var q="?SBI_EXECUTION_ID="+sbiModule_config.sbiExecutionID+"&currentQueryId="+query.id+"&start=0&limit=30";
 		
 		sbiModule_restServices.promisePost('qbequery/executeQuery',q,bodySend)
      	.then(function(response) {
@@ -43,8 +43,13 @@ queries.service('query_service',function(sbiModule_restServices,sbiModule_config
 
      				queryModel.push(queryObject); 
 			}
-     		
-     		
+     		if(isCompleteResult){
+     			var columns = [];
+     			var data = [];
+     			angular.copy(response.data.rows,data);
+     			createColumnsForPreview(columns, response.data.metaData.fields);
+     			$rootScope.$broadcast('queryExecuted', {"columns":columns, "data":data, "results":response.data.results});
+     		}     		
 
      	}, function(response) {
      		//deferred.reject(response);
@@ -52,6 +57,17 @@ queries.service('query_service',function(sbiModule_restServices,sbiModule_config
 		
 	
 	}
+	
+	var createColumnsForPreview=function(columns, fields){
+    	for(i=1;i<fields.length;i++){
+    	 var column={};
+    	 column.label=fields[i].header;
+    	 column.name=fields[i].name;
+    	 columns.push(column);
+    	}
+    	
+    	
+    }
 	
 	var findWithAttr = function(array, attr, value) {
 	    for(var i = 0; i < array.length; i += 1) {
