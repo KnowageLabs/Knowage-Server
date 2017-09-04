@@ -285,6 +285,8 @@ Ext.extend(Sbi.registry.RegistryEditorGridPanel, Ext.grid.EditorGridPanel, {
 		if(this.pageSize != undefined){
 			requestParameters.limit = this.pageSize;
 		}
+		// remove previous content otherwise does not throw Load event in presence of filters
+		this.store.removeAll(true);
 		this.store.load({params: requestParameters});
 	}
 	,
