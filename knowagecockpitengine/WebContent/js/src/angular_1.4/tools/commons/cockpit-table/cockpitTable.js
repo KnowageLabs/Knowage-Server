@@ -120,8 +120,8 @@
 							scope.bulkSelection = column;
 						}
 						
-						//check if the selected element exists in the selectedCells array, if not remove it. 
-						if(scope.selectedCells.indexOf(row[column.aliasToShow])==-1){
+						//check if the selected element exists in the selectedCells array, remove it in case. 
+						if((scope.selectedCells.indexOf(row[column.aliasToShow])==-1 && !scope.settings.modalSelectionColumn) || (scope.settings.modalSelectionColumn && scope.selectedRows.indexOf(row)==-1)){
 							scope.selectedCells.push(row[column.aliasToShow]);
 							scope.selectedRows.push(row);
 							
@@ -144,7 +144,7 @@
                 	scope.isCellSelected = function(row,column){
                 		if(scope.bulkSelection){
                 			if(scope.settings.modalSelectionColumn){
-                    			return (scope.settings.modalSelectionColumn == column.name && scope.selectedCells.indexOf(row[scope.bulkSelection.aliasToShow])!=-1)?true:false;
+                    			return (scope.settings.modalSelectionColumn == column.name && scope.selectedRows.indexOf(row)!=-1)?true:false;
                     		}else{
                     			return (column.aliasToShow == scope.bulkSelection.aliasToShow && scope.selectedCells.indexOf(row[scope.bulkSelection.aliasToShow])!=-1)?true:false;
                     		}
