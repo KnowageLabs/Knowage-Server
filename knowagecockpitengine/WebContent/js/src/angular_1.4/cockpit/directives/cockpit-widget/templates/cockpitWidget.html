@@ -78,13 +78,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			
 			<!-- FULL PAGE EXPANSION BUTTON -->
 			<md-button class="md-icon-button "  aria-label="expand button" ng-click="expandWidget();$event.stopPropagation();" >
-				<md-tooltip direction="bottom">{{translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.expandall")}}</md-tooltip>
+				<md-tooltip direction="top">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.expandall")}}</md-tooltip>
 				<md-icon md-font-icon="fa" ng-class="{'fa-compress':widExp ,' fa-expand':!widExp }"></md-icon>
 			</md-button>
 			
 			<!-- SEARCH BUTTON for table widget only -->
 			<md-button class="md-icon-button " aria-label="search button" ng-if="ngModel.type == 'table'" ng-click="openSearchBar();$event.stopPropagation();">
-				<md-tooltip direction="bottom">{{translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.search")}}</md-tooltip>
+				<md-tooltip direction="top">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.search")}}</md-tooltip>
 				<span class="fa-stack">
 				  <i class="fa fa-search fa-stack-1x"></i>
 				  <i ng-if="activeSearch" class="fa fa-check fa-stack-2x fa-positive"></i>
@@ -93,19 +93,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			
 			<!-- EDIT BUTTON -->
 			<md-button class="md-icon-button " aria-label="edit button" ng-if="cockpitModule_properties.EDIT_MODE" ng-click="doEditWidget();$event.stopPropagation();">
+				<md-tooltip direction="top">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.edit")}}</md-tooltip>
 				<md-icon md-font-icon="fa fa-pencil-square-o"></md-icon>
 			</md-button>
 			
 			<!-- DELETE BUTTON -->
 			<md-button class="md-icon-button " aria-label="delete button" ng-if="cockpitModule_properties.EDIT_MODE" ng-click="deleteWidget();$event.stopPropagation();">
-				<md-tooltip direction="bottom">{{translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.edit")}}</md-tooltip>
+				<md-tooltip direction="top">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.delete")}}</md-tooltip>
 				<md-icon md-font-icon="fa fa-trash"></md-icon>
 			</md-button>
 			
 			<!-- SELECTABLE BUTTON -->
 			<md-button class="md-icon-button " aria-label="unselectable button" ng-if="cliccable==true && cockpitModule_properties.EDIT_MODE" ng-click="ngModel.cliccable=!ngModel.cliccable;$event.stopPropagation();" ng-init="ngModel.cliccable=ngModel.cliccable==undefined? true : ngModel.cliccable">
 				<md-tooltip md-direction="top" md-delay="1000">
-		          {{translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.outcomingeventsenabled.description")}}
+		          {{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.outcomingeventsenabled.description")}}
 		        </md-tooltip>
 				<span class="fa-stack">
 				  <i class="fa fa-hand-o-up fa-stack-1x"></i>
@@ -116,7 +117,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<!-- UPDATEABLE BUTTON -->
 			 <md-button  class="md-icon-button " aria-label="updateable button" ng-if="updateble==true  && cockpitModule_properties.EDIT_MODE" ng-click="ngModel.updateble=!ngModel.updateble;$event.stopPropagation();" ng-init="ngModel.updateble=ngModel.updateble==undefined? true : ngModel.updateble">
 				<md-tooltip md-direction="top" md-delay="1000">
-		          {{translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.incomingeventsenabled.description")}}
+		          {{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.incomingeventsenabled.description")}}
 		        </md-tooltip>
 				<span class="fa-stack">
 				  <i class="fa fa-refresh fa-stack-1x"></i>
