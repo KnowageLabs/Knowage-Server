@@ -100,6 +100,7 @@ The below image shows a list of CKAN resources mapped as CKAN datasets. These ar
 ![](./media/image3.png)
 
 To have access to the other trunks of CKAN datasets, it is possible on the button **More Data sets**, placed at the top page. It will dinamically reload the current following trunk of datasets, if available.
+
 -----------------------
 
 Each dataset supplies a list of actions.
