@@ -9,10 +9,16 @@ queries.service('query_service',function(sbiModule_restServices,sbiModule_config
 		this.smartView = value;
 	}
 	
-	this.executeQuery = function(query, bodySend, queryModel, isCompleteResult){
+	this.executeQuery = function(query, bodySend, queryModel, isCompleteResult, start, itemsPerPage){
 		
+		if(start==undefined){
+			start = 0;
+		}
+		if(itemsPerPage==undefined){
+			itemsPerPage = 25;
+		}
 	
-		var q="?SBI_EXECUTION_ID="+sbiModule_config.sbiExecutionID+"&currentQueryId="+query.id+"&start=0&limit=30";
+		var q="?SBI_EXECUTION_ID="+sbiModule_config.sbiExecutionID+"&currentQueryId="+query.id+"&start="+start+"&limit="+itemsPerPage;
 		
 		sbiModule_restServices.promisePost('qbequery/executeQuery',q,bodySend)
      	.then(function(response) {
