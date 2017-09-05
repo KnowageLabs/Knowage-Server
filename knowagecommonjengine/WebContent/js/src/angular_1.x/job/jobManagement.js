@@ -48,6 +48,11 @@ function jobManagementFunction($scope,sbiModule_translate, $http, $interval, $fi
 		
 		var url = $scope.config.contextName+'/servlet/AdapterHTTP?ACTION_NAME=START_WORK';
 
+		var driversPars=decodeURIComponent(jobManagementCtrl.parameters);
+		if(driversPars && driversPars!=''){
+			url +='&'+driversPars;
+		}
+		
 		$http.get(url, {
 			params: {
 				DOCUMENT_ID: jobManagementCtrl.documentId,
