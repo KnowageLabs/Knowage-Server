@@ -11,7 +11,7 @@ NGSI is a protocol developed by OMA to manage Context Information. It provides o
 * Manage the Context Information about Context Entities, for example the lifetime and quality of information.
 * Access (query, subscribe/notify) to the available Context Information about Context Entities.
 
-The FIWARE version of the OMA NGSI interface is a RESTful API via HTTP. Its purpose is to exchange context information. The three main interaction types are
+The FIWARE version of the OMA NGSI interface is a RESTful API via HTTP. Its purpose is to exchange context information. The two main interaction types are
 
 * one-time queries for context information
 * subscriptions for context information updates (and the corresponding notifications)
@@ -19,110 +19,82 @@ The FIWARE version of the OMA NGSI interface is a RESTful API via HTTP. Its purp
 Mission
 -------
 Knowage extends its set of data sources by providing native and out-of-the-box NGSI integration. 
-Knowage permits to create REST dataset of type NGSI that show current information data and collects notifications of context updates in order to modify the data underneath the SpagoBI documents, using it.
+Knowage permits to create REST dataset of type NGSIv2 that show current information data and collects notifications of context updates in order to modify the data underneath the SpagoBI documents, using it.
 
 Integration 
 ============
 
 Dataset mapping between Knowage and NGSI
 ----------------------------------------
-The term *dataset* in Knowage indicates a unique data resource. It can be anything: a CSV file, a SQL query against a DB, a Java class, and so on. In NGSI environment a standard SpagoBI *dataset* is a collection of Context Entities with their attributes. These Context Entities are retrieved from the NGSI Provider (currently the [Orion Context Broker OCB](https://github.com/telefonicaid/fiware-orion)) through a REST call. The answer of this call represents the Context Entities in JSON format. 
+The term *dataset* in Knowage indicates a unique data resource. It can be anything: a CSV file, a SQL query against a DB, a Java class, and so on. In NGSI environment a standard Knowage *dataset* is a collection of Context Entities with their attributes. These Context Entities are retrieved from the NGSIv2 Provider (currently the [Orion Context Broker OCB](https://github.com/telefonicaid/fiware-orion)) through a REST call. The answer of this call represents the Context Entities in JSON format. 
 
 The following examples are based on a demo. The `Meter` Context Element represents a power sensor: it saves the upstream and downstream active power in an instant of a prosumer (a producer/consumer of electricity).
-So, for example a REST call query takes this body:
+So, for example a GET REST call query is:
 
-	{
-	    "entities": [
-	        {
-	            "isPattern": "true",
-	            "id": ".*",
-	            "type":"Meter"
-	        }
-	    ]
-	}
+	/v2/entities?type=Meter
 	
 It retrieves all entities of type `Meter`. The response will be something like:
 
-	{
-	  "contextResponses": [
-	    {
-	      "contextElement": {
-	        "id": "pros6_Meter",
-	        "type": "Meter",
-	        "isPattern": "false",
-	        "attributes": [
-	          {
-	            "name": "atTime",
-	            "type": "timestamp",
-	            "value": "2015-07-21T14:49:46.968+0200"
-	          },
-	          {
-	            "name": "downstreamActivePower",
-	            "type": "double",
-	            "value": "3.8"
-	          },
-	          {
-	            "name": "prosumerId",
-	            "type": "string",
-	            "value": "pros3"
-	          },
-	          {
-	            "name": "unitOfMeasurement",
-	            "type": "string",
-	            "value": "kW"
-	          },
-	          {
-	            "name": "upstreamActivePower",
-	            "type": "double",
-	            "value": "3.97"
-	          }
-	        ]
-	      },
-	      "statusCode": {
-	        "reasonPhrase": "OK",
-	        "code": "200"
-	      }
-	    },
-	    {
-	      "contextElement": {
-	        "id": "pros5_Meter",
-	        "type": "Meter",
-	        "isPattern": "false",
-	        "attributes": [
-	          {
-	            "name": "atTime",
-	            "type": "timestamp",
-	            "value": "2015-08-09T20:29:45.698+0200"
-	          },
-	          {
-	            "name": "downstreamActivePower",
-	            "type": "double",
-	            "value": "1.8"
-	          },
-	          {
-	            "name": "prosumerId",
-	            "type": "string",
-	            "value": "pros5"
-	          },
-	          {
-	            "name": "unitOfMeasurement",
-	            "type": "string",
-	            "value": "kW"
-	          },
-	          {
-	            "name": "upstreamActivePower",
-	            "type": "double",
-	            "value": "0"
-	          }
-	        ]
-	      },
-	      "statusCode": {
-	        "reasonPhrase": "OK",
-	        "code": "200"
-	      }
-	    }
-	  ]
-	}
+	[
+		{
+			id: "pros1_Meter",
+			type: "Meter",
+			atTime: {
+				type: "timestamp",
+				value: "2015-11-28T19:14:54.001+0100",
+				metadata: { }
+			},
+			downstreamActivePower: {
+				type: "double",
+				value: "2.06",
+				metadata: { }
+			},
+			prosumerId: {
+				type: "string",
+				value: "pros1",
+				metadata: { }
+			},
+			unitOfMeasurement: {
+				type: "string",
+				value: "kW",
+				metadata: { }
+			},
+			upstreamActivePower: {
+				type: "double",
+				value: 99,
+				metadata: { }
+			}
+		},
+		{
+			id: "pros2_Meter",
+			type: "Meter",
+			atTime: {
+				type: "timestamp",
+				value: "2015-11-28T19:14:54.001+0100",
+				metadata: { }
+			},
+			downstreamActivePower: {
+				type: "double",
+				value: "3.06",
+				metadata: { }
+			},
+			prosumerId: {
+				type: "string",
+				value: "pros2",
+				metadata: { }
+			},
+			unitOfMeasurement: {
+				type: "string",
+				value: "kW",
+				metadata: { }
+			},
+			upstreamActivePower: {
+				type: "double",
+				value: "2.13",
+				metadata: { }
+			}
+		}
+	]
 
 In this example we have two Context Elements with the following attributes:
 
