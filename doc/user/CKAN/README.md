@@ -146,36 +146,10 @@ Knowage offers a tool to inquire data: it is called Query by Example (QbE). It a
 
 From this point, the user can start to build query interacting with the GUI.
 
-![](./media/image11.png)
-
 In the below image two fields have been selected and grouping functions applied. To see the result, the user can click on the **Preview** button (in the top-right position).
 
-![](./media/image12.png)
+![](./media/image11.png)
 
 Lastly, the results are shown as a table. It is now possible to save the this new QbE as a new Knowage dataset (click on the **Save** icon in the top-right position).
 
-![](./media/image13.png)
-
-Analyze data through charts and tables
---------------------------------------
-
-Knowage also offer tools to analyze data by using different types of charts (pie, bar, line) and tables (flat, pivot). Click on the **Worksheet** button to start analyze data.
-
-![](./media/image6.png)
-
-As instance, the user can start to build a bar chart by simply drag&drop such chart into the working area.
-
-![](./media/image14.png)
-
-Then, options, parameters and filter for that specific chart will appear, as shown below. Click on the **Preview** to show the result.
-
-![](./media/image15.png)
-
-The following figure shows the final result.
-
-![](./media/image16.png)
-
-Combining enterprise dataset with opendata
-------------------------------------------
-
-![](./media/image17.png)
+![](./media/image12.png)
