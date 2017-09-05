@@ -18,13 +18,6 @@
 
 package it.eng.spagobi.tools.dataset.graph.associativity;
 
-import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
-import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicUtils;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.sql.SqlUtils;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -37,6 +30,13 @@ import javax.naming.NamingException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+
+import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.graph.EdgeGroup;
+import it.eng.spagobi.tools.dataset.graph.associativity.utils.AssociativeLogicUtils;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.sql.SqlUtils;
 
 /**
  * @author Alessandro Portosa (alessandro.portosa@eng.it)
@@ -183,8 +183,10 @@ public class AssociativeDatasetContainer {
 		sb.append(columnNames);
 		sb.append(" FROM ");
 		sb.append(tableName);
-		sb.append(" WHERE ");
-		sb.append(StringUtils.join(filters, " AND "));
+		if (!filters.isEmpty()) {
+			sb.append(" WHERE ");
+			sb.append(StringUtils.join(filters, " AND "));
+		}
 		return sb.toString();
 	}
 

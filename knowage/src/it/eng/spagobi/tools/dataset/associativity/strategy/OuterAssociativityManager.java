@@ -121,7 +121,10 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 			for (String child : children) {
 				if (!documentsAndExcludedDatasets.contains(child)) {
 					AssociativeDatasetContainer childContainer = associativeDatasetContainers.get(child);
-					childContainer.addFilter(getColumnNames(group.getOrderedEdgeNames(), child), distinctValues);
+					String columns = getColumnNames(group.getOrderedEdgeNames(), child);
+					if (!columns.isEmpty()) {
+						childContainer.addFilter(columns, distinctValues);
+					}
 				}
 			}
 			totalChildren.addAll(children);
@@ -151,16 +154,14 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 
 						// i. calcolo i valori distinct del gruppo associativo
 						String columnNames = getColumnNames(group.getOrderedEdgeNames(), childDataset);
-						if (columnNames.length() <= 0) {
-							throw new SpagoBIException("Impossible to obtain column names for association " + group);
+						if (!columnNames.isEmpty()) {
+							String query = container.buildQuery(columnNames);
+							Set<String> distinctValues = container.getTupleOfValues(query);
+
+							// ii. aggiungo tali valori tra quelli ammissibili per quel gruppo associativo
+							group.addValues(distinctValues);
+							result.getEdgeGroupValues().get(group).addAll(distinctValues);
 						}
-
-						String query = container.buildQuery(columnNames);
-						Set<String> distinctValues = container.getTupleOfValues(query);
-
-						// ii. aggiungo tali valori tra quelli ammissibili per quel gruppo associativo
-						group.addValues(distinctValues);
-						result.getEdgeGroupValues().get(group).addAll(distinctValues);
 
 						// iii. Rimuovo tale gruppo associativo tra quelli da filtrare per il dataset. Tale gruppo associativo è di fatto un’associazione in
 						// uscita
@@ -172,10 +173,9 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 					if (!container.isResolved()) {
 
 						String columnNames = getColumnNames(group.getOrderedEdgeNames(), childDataset);
-						if (columnNames.length() <= 0) {
-							throw new SpagoBIException("Impossible to obtain column names for association " + group);
+						if (!columnNames.isEmpty()) {
+							container.addFilter(columnNames, group.getValues());
 						}
-						container.addFilter(columnNames, group.getValues());
 						totalChildren.add(childDataset);
 					}
 				}
