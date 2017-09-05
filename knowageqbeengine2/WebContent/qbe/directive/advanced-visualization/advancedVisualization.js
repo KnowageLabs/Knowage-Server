@@ -35,7 +35,7 @@ angular.module('qbe_advanced_visualization', ['ngMaterial'])
 	}
 });
 
-function advancedVisualizationControllerFunction($scope,sbiModule_translate, sbiModule_config, $mdDialog){
+function advancedVisualizationControllerFunction($scope,sbiModule_translate, sbiModule_config, filters_service, $mdDialog){
 	
 	$scope.openMenu = function($mdOpenMenu, ev) {
 		originatorEv = ev;
@@ -72,7 +72,10 @@ function advancedVisualizationControllerFunction($scope,sbiModule_translate, sbi
     	},
     	{
         	"label":"Description",
-        	"name":"description"
+        	"name":"description",
+        	transformer: function() {
+        		return '{{scopeFunctions.checkDescription(row)}}';
+        	}
     	},
     	{
     		"label":"Function",
@@ -94,12 +97,15 @@ function advancedVisualizationControllerFunction($scope,sbiModule_translate, sbi
 		}
 	}
 	
-	$scope.logicalOperators = ["AND", "OR"];
+	$scope.logicalOperators = filters_service.getBooleanConnectors;
 	
 	$scope.advancedVisualizationScopeFunctions = {
 		logicalOperators: $scope.logicalOperators,
 		setBooleanConnector: function (connector, row) {
 			row.booleanConnector = connector;
+		},
+		checkDescription: function (row){
+			return row.leftOperandDescription + " " + row.operator + " " +row.rightOperandDescription ;
 		}
 	}
 }
