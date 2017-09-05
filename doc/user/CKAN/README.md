@@ -63,7 +63,7 @@ Limits and future developments
 
 The dataset data parsing and validation processes rely on the Knowage file dataset management system, where CSV and XLS file formats are supported. This means that only CKAN resources with such formats are taken into account by Knowage, filtering the datasets availability by their format. With the future support for other formats (e.g. XML), Knowage will automatically increase the availability of CKAN resources, enhancing the overall CKAN integration.
 
-How to use SpagoBI with CKAN
+How to use Knowage with CKAN
 ============================
 
 Configuration
@@ -79,7 +79,7 @@ Knowage fully integrate CKAN API, where only the following parameters are needed
 
 As stated in *“Limits and future developments”*, Knowage currently relies on the FIWARE Identity Manager. This choice ties the current release with the FIWARE Data Lab, avoiding FIWARE users to specify the second and third parameter considering that they are obtained through the OAuth2 authentication process.
 
-The file containing the URL parameter is ***ckan.config.properties***, deployed inside the library ***knowageutils.jar***. To change the target CKAN instance, it is necessary to extract the contents of the already mentioned library, modifying the parameter ***ckan.url*** with the preferred one. Once the modification is done and saved, the JAR library has to be created and deployed inside each Knowage engine in order to share the new CKAN configuration.
+The file containing the URL parameter is ***ckan.config.properties***, deployed inside the library ***knowageutils.jar***. To change the target CKAN instance, it is necessary to extract the contents of such library, modifying the parameter ***ckan.url*** with the preferred one. Once the modification is done and saved, the JAR library has to be created and deployed inside each Knowage engine in order to share the new CKAN configuration.
 
 Explore the target CKAN repository
 ----------------------------------
@@ -93,7 +93,7 @@ The first tab (My Data Set) shows any dataset that belong to the user, plus any 
 ![](./media/image2.png)
 -----------------------
 
-Byclicking on the tab and after the repository is selected, Knowage starts to interact with CKAN to obtain the first trunk of 200 CKAN datasets (exploding them into multiple CKAN resources). It usually takes between five and ten seconds, depending on the connection and network traffic situation.
+By clicking on the tab and after the repository is selected, Knowage starts to interact with CKAN to obtain the first trunk of 200 CKAN datasets (exploding them into multiple CKAN resources). It usually takes between five and ten seconds, depending on the connection and network traffic situation.
 
 ![](./media/image3.png)
 
