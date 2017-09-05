@@ -139,7 +139,7 @@ It can also have (optional) parameters (an object containing values of document 
 ```js
 var html = Sbi.sdk.api.getDocumentHtml({
 		documentLabel: 'RPT_WAREHOUSE_PROF'
-		, executionRole: '/spagobi/user'
+		, executionRole: '/knowage/user'
 		, parameters: {warehouse_id: 19}
 		, displayToolbar: false
 		, displaySliders: false
