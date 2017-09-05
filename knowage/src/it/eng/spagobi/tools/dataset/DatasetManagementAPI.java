@@ -136,6 +136,7 @@ public class DatasetManagementAPI {
 	public static final String ROW = "ROW";
 	public static final String NAME = "NAME";
 	public static final String TYPE = "TYPE";
+	public static final String MULTIVALUE = "MULTIVALUE";
 
 	private static final int METAMODEL_LIMIT = 5000;
 
@@ -288,6 +289,7 @@ public class DatasetManagementAPI {
 					SourceBean sbRow = (SourceBean) iterator.next();
 					String namePar = sbRow.getAttribute(NAME) != null ? sbRow.getAttribute(NAME).toString() : null;
 					String typePar = sbRow.getAttribute(TYPE) != null ? sbRow.getAttribute(TYPE).toString() : null;
+					boolean multiValue = sbRow.getAttribute(MULTIVALUE) != null ? Boolean.valueOf(sbRow.getAttribute(MULTIVALUE).toString()) : false;
 
 					if (typePar != null && typePar.startsWith("class")) {
 						typePar = typePar.substring(6);
@@ -300,6 +302,7 @@ public class DatasetManagementAPI {
 					paramMetaDataJSON.put("typeObj", "Dataset");
 					paramMetaDataJSON.put("namePar", namePar);
 					paramMetaDataJSON.put("typePar", typePar);
+					paramMetaDataJSON.put("multiValuePar", multiValue);
 					parametersList.add(paramMetaDataJSON);
 				}
 			} catch (Throwable t) {
@@ -380,6 +383,7 @@ public class DatasetManagementAPI {
 			logger.debug("Loading dataset with label [" + label + "]");
 			IDataSet dataSet = getDataSetDAO().loadDataSetByLabel(label);
 			Assert.assertNotNull(dataSet, "Impossible to load dataset with label [" + label + "]");
+
 			setDataSetParameters(dataSet, parametersValues);
 
 			// force resolution of parameters
@@ -2051,12 +2055,40 @@ public class DatasetManagementAPI {
 		return dataSets;
 	}
 
-	private void setDataSetParameters(IDataSet dataSet, Map<String, String> parametersValues) {
-		dataSet.setParamsMap(parametersValues);
+	private void setDataSetParameters(IDataSet dataSet, Map<String, String> paramValues) {
 		List<JSONObject> parameters = getDataSetParameters(dataSet.getLabel());
-		if (parameters.size() > parametersValues.size()) {
-			String parameterNotValorizedStr = getParametersNotValorized(parameters, parametersValues);
+		if (parameters.size() > paramValues.size()) {
+			String parameterNotValorizedStr = getParametersNotValorized(parameters, paramValues);
 			throw new ParametersNotValorizedException("The following parameters have no value [" + parameterNotValorizedStr + "]");
+		}
+
+		if (paramValues.size() > 0) {
+			for (String paramName : paramValues.keySet()) {
+				for (int i = 0; i < parameters.size(); i++) {
+					JSONObject parameter = parameters.get(i);
+					if (paramName.equals(parameter.optString("namePar"))) {
+						String[] values = paramValues.get(paramName).split(",");
+						boolean isMultiValue = parameter.optBoolean("multiValuePar");
+						int length = isMultiValue ? values.length : 1;
+
+						String typePar = parameter.optString("typePar");
+						String delim = "string".equalsIgnoreCase(typePar) ? "'" : "";
+
+						String[] newValues = new String[length];
+						for (int j = 0; j < length; j++) {
+							String value = values[j].trim();
+							if (!value.startsWith(delim) && !value.endsWith(delim)) {
+								newValues[j] = delim + value + delim;
+							} else {
+								newValues[j] = value;
+							}
+						}
+						paramValues.put(paramName, StringUtils.join(newValues, ","));
+						break;
+					}
+				}
+			}
+			dataSet.setParamsMap(paramValues);
 		}
 	}
 

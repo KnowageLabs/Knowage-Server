@@ -35,6 +35,14 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 							var dsv1=response.data.root[i];
 							if(dsv2.id.dsId == dsv1.id){
 								dsv2.isRealtime = dsv1.isRealtime;
+								for(var i2 in dsv2.parameters){
+									for(var i1 in dsv1.pars){
+										if(dsv2.parameters[i2].name == dsv1.pars[i1].name){
+											dsv2.parameters[i2].multiValue = dsv1.pars[i1].multiValue;
+											break;
+										}
+									}
+								}
 								break;
 							}
 						}
@@ -107,6 +115,14 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 								var dsv1=response.data.root[i];
 								if(dsv2.id.dsId == dsv1.id){
 									dsv2.isRealtime = dsv1.isRealtime;
+									for(var i2 in dsv2.parameters){
+										for(var i1 in dsv1.pars){
+											if(dsv2.parameters[i2].name == dsv1.pars[i1].name){
+												dsv2.parameters[i2].multiValue = dsv1.pars[i1].multiValue;
+												break;
+											}
+										}
+									}
 									break;
 								}
 							}
@@ -565,6 +581,30 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		.replace(/"/g,"%22");
 
 		var parameters = ds.getDatasetParameters(dsId);
+		var parameterErrors = [];
+		for (var parameter in parameters) {
+			if (parameters.hasOwnProperty(parameter)){
+				for(var i in dataset.parameters){
+					if(dataset.parameters[i].name==parameter){
+						var valueCount = parameters[parameter].split(",").length;
+						if(!dataset.parameters[i].multiValue && valueCount > 1){
+							var parameterError = sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.unabletoapplyvaluestosinglevalueparameter")
+									.replace("{0}", "<b>" + valueCount + "</b>")
+									.replace("{1}", "<b>" + dataset.name + ".$P{" + parameter + "}</b>")
+							parameterErrors.push(parameterError);
+						}
+						break;
+					}
+				}
+			}
+		}
+		if(parameterErrors.length > 0){
+			var title = sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.widget")
+					.replace("{0}", "<b>" + ngModel.content.name + "</b>");
+			sbiModule_messaging.showErrorMessage(parameterErrors.join("<br>"), title);
+			return;
+		}
+		
 		var parametersString = JSON.stringify(parameters);
 		for (var parameter in parameters) {
 			if (parameters.hasOwnProperty(parameter) && (parameters[parameter] == null || parameters[parameter] == undefined)) {

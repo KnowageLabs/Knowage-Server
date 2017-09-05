@@ -176,10 +176,13 @@ public class DataSetJSONSerializer implements Serializer {
 						String name = (String) row.getAttribute("NAME");
 						String type = (String) row.getAttribute("TYPE");
 						String defaultValue = (String) row.getAttribute(DataSetParametersList.DEFAULT_VALUE_XML);
+						boolean multiValue = "true".equalsIgnoreCase((String) row.getAttribute("MULTIVALUE"));
+
 						JSONObject jsonPar = new JSONObject();
 						jsonPar.put("name", name);
 						jsonPar.put("type", type);
 						jsonPar.put(ManageDatasets.DEFAULT_VALUE_PARAM, defaultValue);
+						jsonPar.put("multiValue", multiValue);
 						parsListJSON.put(jsonPar);
 					}
 				}
