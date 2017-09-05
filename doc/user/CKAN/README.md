@@ -95,11 +95,9 @@ The first tab (My Data Set) shows any dataset that belong to the user, plus any 
 
 By clicking on the tab and after the repository is selected, Knowage starts to interact with CKAN to obtain the first trunk of 200 CKAN datasets (exploding them into multiple CKAN resources). It usually takes between five and ten seconds, depending on the connection and network traffic situation.
 
-![](./media/image3.png)
-
 The below image shows a list of CKAN resources mapped as CKAN datasets. These are not usable yet, but can start to handle them as we will show in the following. The dataset are shown with its name and description (see the red arrows). Other information (e.g. visibility, last modification date) are available with a specific **Info** action.
 
-![](./media/image4.png)
+![](./media/image3.png)
 
 To have access to the other trunks of CKAN datasets, it is possible on the button **More Data sets**, placed at the top page. It will dinamically reload the current following trunk of datasets, if available.
 
