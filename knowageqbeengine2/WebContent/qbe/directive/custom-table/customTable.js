@@ -61,6 +61,12 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	
 	$scope.previewModel = [];
 	
+	$scope.start = 0;
+	
+	$scope.itemsPerPage = 25;
+	
+	$scope.firstExecution = true;
+	
 	$scope.$watch('smartPreview',function(newValue,oldValue){
 		query_service.setSmartView(newValue);
 		$rootScope.$emit('smartView', newValue);
@@ -155,14 +161,25 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	}
 	
 	$scope.executeRequest = function () {
-		$rootScope.$emit('executeQuery', true);
+		$rootScope.$broadcast('executeQuery', {"start":$scope.start, "itemsPerPage":$scope.itemsPerPage});
 	}
 	
 	$scope.$on('queryExecuted', function (event, data) {
 		$scope.completeResult = true;
 		angular.copy(data.columns, $scope.completeResultsColumns);
 		angular.copy(data.data, $scope.previewModel);
-		$scope.openPreviewTemplate(true, $scope.completeResultsColumns, $scope.previewModel, data.results);
+		if($scope.firstExecution){
+			$scope.openPreviewTemplate(true, $scope.completeResultsColumns, $scope.previewModel, data.results);
+			$scope.firstExecution = false;
+		}
+	});
+	
+	$scope.$on('start', function (event, data) {
+		var start = 0;
+		if(data.currentPageNumber>1){
+			start = (data.currentPageNumber - 1) * data.itemsPerPage;
+		}
+		$rootScope.$broadcast('executeQuery', {"start":start, "itemsPerPage":data.itemsPerPage});
 	});
 	
 	$scope.openPreviewTemplate = function (completeResult,completeResultsColumns,previewModel,totalNumberOfItems){
@@ -175,9 +192,9 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 				fullscreen :true,
 				controller: function($scope,mdPanelRef){
 					$scope.model ={ "completeresult": completeResult, "completeResultsColumns": completeResultsColumns, "previewModel": previewModel, "totalNumberOfItems": totalNumberOfItems, "mdPanelRef":mdPanelRef};
-					 $scope.changeDatasetPage=function(itemsPerPage,currentPageNumber){
-					    	console.log(itemsPerPage+"sss"+currentPageNumber+"ggg"+totalNumberOfItems);							
-						}
+					$scope.changeDatasetPage=function(itemsPerPage,currentPageNumber){
+						$rootScope.$broadcast('start',{"itemsPerPage":itemsPerPage, "currentPageNumber":currentPageNumber});
+					}
 				},
 				locals: {completeresult: completeResult, completeResultsColumns: completeResultsColumns, previewModel: previewModel, totalNumberOfItems: totalNumberOfItems},
 				hasBackdrop: true,

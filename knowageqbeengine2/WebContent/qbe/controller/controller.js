@@ -47,9 +47,9 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 		
 	});
 	
-	$scope.executeQuery = function ( query, bodySend, queryModel, isCompleteResult) {
+	$scope.executeQuery = function ( query, bodySend, queryModel, isCompleteResult, start, itemsPerPage) {
 		if(query.fields.length>0){
-			query_service.executeQuery( query, bodySend, queryModel, isCompleteResult);
+			query_service.executeQuery( query, bodySend, queryModel, isCompleteResult, start, itemsPerPage);
 		}else{			
 			queryModel.length = 0;
 		}
@@ -117,8 +117,8 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 		}
 	});
 	
-	$rootScope.$on('executeQuery', function (data) {
-		$scope.executeQuery($scope.editQueryObj, $scope.bodySend, $scope.queryModel, true);
+	$scope.$on('executeQuery', function (event, data) {
+		$scope.executeQuery($scope.editQueryObj, $scope.bodySend, $scope.queryModel, true, data.start, data.itemsPerPage);
 	});
 	
 	$rootScope.$on('removeColumn', function (event, data) {
