@@ -124,9 +124,7 @@ If you want to use a dataset not used yet, any action on will start the metadata
 
 ![](./media/image6.png)
 
-If the dataset is correctly downloaded, the below message will appear, plus a set of mandatory parameters to set the parser configuration.
-
-![](./media/image9.png)
+If the dataset is correctly downloaded a successfull message will appear, plus a set of mandatory parameters to set the parser configuration.
 
 The seconda step of the importing wizard is important to set how your final dataset will appear. Be careful to choose the appropriate data type (String, Integer, Double) and field type (Measure, Attribute). After that, click on next to see the validation results and confirm to finalize dataset import.
 
@@ -141,12 +139,12 @@ Knowage offers a tool to inquire data: it is called Query by Example (QbE). It a
 
 ![](./media/image6.png)
 
-From this point, the user can start to build query interacting with the GUI.
-
-In the below image two fields have been selected and grouping functions applied. To see the result, the user can click on the **Preview** button (in the top-right position).
+From this point, the user can start to build query interacting with the GUI (e.g in the below image three fields have been selected).
 
 ![](./media/image11.png)
 
-Lastly, the results are shown as a table. It is now possible to save the this new QbE as a new Knowage dataset (click on the **Save** icon in the top-right position).
+To see the result in advance, the user can click use the **Smart Data** button (in the top-right position). The results are shown as a table.
 
 ![](./media/image12.png)
+
+Lastly, it is now possible to save the this new QbE as a new Knowage dataset (click on the **Save** icon in the top-right position).
