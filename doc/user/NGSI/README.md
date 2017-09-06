@@ -156,17 +156,17 @@ A *Document* in Knowage environment permits to use the DataSet previous created 
 ### Cockpit Engine
 
 In the following example we create a Document of type *Cockpit* because is strictly related to REST NGSIv2 DataSet. With this type of Document you can see the notifications of Context Elements changes from OCB in real time.
-So, start to create a Document clicking on folder icon at homepage:
+So, start to build a Cockpit by creating a new document in the Workspace:
 
-TODO
+![](media/6_Cockpit_Document.png)
 
 Now you can see the data retrieved from OCB:
 
-![](media/7_Console_Document.png)
+![](media/7_Cockpit_Document.png)
 
 Now we modify a Context Element (please use your preferred application to make REST calls). The change is immediately reflected on Cockpit Document: the bar chart goes up/down and the related values in table changes accordingly:
 
-![](media/8_Console_Document_Changes.png)
+![](media/8_Cockpit_Document.png)
 
 ### Chart Engine
 
