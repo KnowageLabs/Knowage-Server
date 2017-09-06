@@ -30,6 +30,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 	$scope.queryModel = [];
 	$scope.pars = [];
 	$scope.editQueryObj = new Query("");
+	$scope.advancedFilters = [];
 	$scope.entityModel;
 	$scope.subqueriesModel = {};
 	
@@ -220,7 +221,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
         "label": "filters",
         "icon": "fa fa-filter",
         "action": function(item, event) {
-        	$scope.openFilters(item,$scope.entityModel,$scope.pars, $scope.editQueryObj.filters,$scope.editQueryObj.subqueries, $scope.editQueryObj.expression);
+        	$scope.openFilters(item,$scope.entityModel,$scope.pars, $scope.editQueryObj.filters,$scope.editQueryObj.subqueries, $scope.editQueryObj.expression, $scope.advancedFilters);
         }
     }];
 
@@ -245,7 +246,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
     };
 
     $scope.$on('openFilters',function(event,field){
-		$scope.openFilters(field,$scope.entityModel,$scope.pars, $scope.editQueryObj.filters,$scope.editQueryObj.subqueries, $scope.editQueryObj.expression);
+		$scope.openFilters(field,$scope.entityModel,$scope.pars, $scope.editQueryObj.filters,$scope.editQueryObj.subqueries, $scope.editQueryObj.expression, $scope.advancedFilters);
 	})
 	$scope.$on('distinctSelected',function(){
     	 $scope.editQueryObj.distinct =  !$scope.editQueryObj.distinct;
@@ -277,9 +278,34 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 		$mdPanel.open(config);
 		return finishEdit.promise;
     }
+    
+    $scope.$on('openFiltersAdvanced',function(event,field){
+		$scope.showVisualization($scope.editQueryObj.filters, $scope.advancedFilters);
+	})
+    
+    $scope.showVisualization = function (filters, advancedFilters) {
+		var finishEdit=$q.defer();		
+		var config = {
+				attachTo:  angular.element(document.body),
+				templateUrl: sbiModule_config.contextName +'/qbe/templates/filterVisualizationTemplate.html',
+				position: $mdPanel.newPanelPosition().absolute().center(),
+				fullscreen :true,
+				controller: function($scope,mdPanelRef){
+					$scope.model = {"filters":filters,"advancedFilters":advancedFilters,"mdPanelRef":mdPanelRef};
+				},
+				locals: {filters:filters,advancedFilters:advancedFilters},
+				hasBackdrop: true,
+				clickOutsideToClose: true,
+				escapeToClose: true,
+				focusOnOpen: true,
+				preserveScope: true,
+		};
+		$mdPanel.open(config);
+		return finishEdit.promise;
+	}
 	
 	
-	$scope.openFilters = function(field, tree, pars, queryFilters, subqueries, expression) {
+	$scope.openFilters = function(field, tree, pars, queryFilters, subqueries, expression, advancedFilters) {
 		if(field.hasOwnProperty('attributes')){
 			field_copy = angular.copy(field);
 			field={};
@@ -300,11 +326,9 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 				position: $mdPanel.newPanelPosition().absolute().center(),
 				fullscreen :true,
 				controller: function($scope,field,mdPanelRef){
-					$scope.model ={ "field": field, "tree": tree, "pars": pars,"mdPanelRef":mdPanelRef, "queryFilters":queryFilters, "subqueries":subqueries, "expression":expression};
-
-
+					$scope.model ={ "field": field, "tree": tree, "pars": pars,"mdPanelRef":mdPanelRef, "queryFilters":queryFilters, "subqueries":subqueries, "expression":expression, "advancedFilters":advancedFilters};
 				},
-				locals: {field: field, tree: tree, pars: pars, queryFilters:queryFilters, subqueries: subqueries, expression : expression},
+				locals: {field: field, tree: tree, pars: pars, queryFilters:queryFilters, subqueries: subqueries, expression : expression, advancedFilters : advancedFilters},
 				hasBackdrop: true,
 				clickOutsideToClose: true,
 				escapeToClose: true,

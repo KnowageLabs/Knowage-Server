@@ -57,6 +57,10 @@ function advancedVisualizationControllerFunction($scope,sbiModule_translate, sbi
 		 $scope.selectDocumentAction({doc: item});
 	}
 	
+	$scope.closeFiltersAdvanced = function () {
+		$scope.ngModel.mdPanelRef.close();
+	}
+	
 	$scope.removeFilter = function () {
 		for ( var index in $scope.ngModel.childNodes) {
 			if($scope.ngModel.childNodes[index].selected==true){
@@ -64,6 +68,8 @@ function advancedVisualizationControllerFunction($scope,sbiModule_translate, sbi
 			}
 		}
 	}
+	
+	
 	
 	$scope.filterColumnsAV = [
 		{
@@ -79,7 +85,7 @@ function advancedVisualizationControllerFunction($scope,sbiModule_translate, sbi
     	},
     	{
     		"label":"Function",
-        	"name":"function",
+        	"name":"booleanConnector",
         	hideTooltip:true,
         	transformer: function() {
         		return '<md-select ng-model=row.booleanConnector class="noMargin" ><md-option ng-repeat="connector in scopeFunctions.logicalOperators" ng-click="scopeFunctions.setBooleanConnector(connector, row)" value="{{connector}}">{{connector}}</md-option></md-select>';
@@ -87,8 +93,67 @@ function advancedVisualizationControllerFunction($scope,sbiModule_translate, sbi
     	}
     ]
 	
+	$scope.speedMenu =  [ {
+		label :  "Move filter up",
+		icon : 'fa fa-arrow-up',
+		color : '#153E7E',
+		action : function(item) {
+			$scope.moveFilter(item,'up');
+		},
+		visible : function (item){
+			return $scope.showMoveUp(item);
+		}
+	},{
+
+		label :  "Move filter down",
+		icon : 'fa fa-arrow-down',
+		color : '#153E7E',
+		action : function(item) {
+			$scope.moveFilter(item,'down');
+		},
+		visible : function (item){
+			return $scope.showMoveDown(item);
+		}
+	}
+	 ];
+	
+	$scope.showMoveUp = function (item){
+		if($scope.ngModel.filters[0].filterId == item.filterId){
+			return false;
+		}
+	}
+	
+	$scope.showMoveDown = function (item){
+		if($scope.ngModel.filters[$scope.ngModel.filters.length-1].filterId == item.filterId){
+			return false;
+		}
+	}
+	
+	$scope.moveFilter = function (item, direction) {
+
+		var oldIndex = findWithAttr($scope.ngModel.filters, 'filterId', item.filterId);
+		var newIndex = direction == 'up' ? oldIndex-1 : oldIndex+1;
+		
+		var filterToSwitch = {};
+		angular.copy($scope.ngModel.filters[newIndex], filterToSwitch);
+		
+		$scope.ngModel.filters[newIndex] = item;
+		$scope.ngModel.filters[oldIndex] = filterToSwitch;
+		
+	};
+	
+	var findWithAttr = function(array, attr, value) {
+	    for(var i = 0; i < array.length; i += 1) {
+	        if(array[i][attr] === value) {
+	            return i;
+	        }
+	    }
+	    return -1;
+	}
+	
 	
 	$scope.groupFilters = function () {
+		console.log("sssssss")
 		for ( var index in $scope.ngModel.childNodes) {
 			if($scope.ngModel.childNodes[index].selected==true){
 				$scope.ngModel.childNodes[index].backgroundColor="#D3D3D3";
@@ -96,7 +161,13 @@ function advancedVisualizationControllerFunction($scope,sbiModule_translate, sbi
 			}
 		}
 	}
-	
+	$scope.arrayForGroup = [];
+	$scope.addToArray = function (filter) {
+		
+		console.log("sssssss")
+		$scope.arrayForGroup.push(filter);
+		
+	}
 	$scope.logicalOperators = filters_service.getBooleanConnectors;
 	
 	$scope.advancedVisualizationScopeFunctions = {

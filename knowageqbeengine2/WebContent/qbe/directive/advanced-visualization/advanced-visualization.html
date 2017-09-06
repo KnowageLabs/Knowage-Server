@@ -1,18 +1,61 @@
-<div layout="row" flex class="qbeAdvancedVisualization">
-	<div flex=30>
-		<angular-table
-			 ng-model="ngModel"
-			columns='filterColumnsAV'
-			scope-functions=advancedVisualizationScopeFunctions
-			 >
-		 </angular-table>
-	</div>
-	<div flex>ss</div>
-	<!--  <md-whiteframe class="md-whiteframe-4dp" flex=15 style="background-color:blue">
-	 </md-whiteframe>
-	 <md-whiteframe class="md-whiteframe-4dp" flex style="background-color:red">
-	 </md-whiteframe> -->
-</div>
+<md-content  style="padding: 8 8 8 8" flex class="ToolbarBox miniToolbar noBorder mozTable">
+	<md-toolbar class="secondaryToolbar" layout-padding>
+		<div class="md-toolbar-tools">
+	   		<h2><span>Advanced filter visualization</span></h2>
+			<span flex></span>									 
+	   	</div>
+	</md-toolbar>
+	<md-card layout-padding style="height:700px; margin:0px">
+		<div layout="row" flex class="qbeAdvancedVisualization">
+			<div flex=30>
+				<angular-table
+					style="height:700px; margin:0px"
+					 ng-model="ngModel.filters"
+					columns='filterColumnsAV'
+					scope-functions=advancedVisualizationScopeFunctions
+					speed-menu-option="speedMenu"
+					 >
+				 </angular-table>
+			</div>
+			<div flex layout="column">
+				<md-card flex layout="row">
+					<div  layout="row">
+						<div ng-repeat="f in ngModel.advancedFilters" flex=10 layout="row">
+							<md-card class="md-toolbar-tools">
+								{{f.name}}
+		   						<span flex></span>
+			          			<md-checkbox ng-model="f.grouped" class="menuCheckbox"></md-checkbox>	
+							</md-card>
+							<div>
+				   				<md-select ng-model="f.connector">
+									<md-option ng-repeat="operator in logicalOperators" value="{{operator}}">
+						            	{{operator}}
+									</md-option>
+								</md-select>
+				   			</div>   					
+			   			</div>
+					</div>
+				</md-card>
+				<md-card-actions layout="row" layout-align="end center">
+				      <md-button class="md-raised" ng-click="groupFilters()"  md-autofocus>
+			       		Group
+			      </md-button>
+				</md-card-actions>
+			</div> 
+		</div>
+	</md-card>
+	 <md-card-actions layout="row" layout-align="end center">
+	      <md-button ng-click="closeFiltersAdvanced()" >
+	      cancel
+	      </md-button>
+	      <md-button ng-click="saveFiltersAdvanced()"  >
+			save
+	      </md-button>
+	</md-card-actions>
+</md-content>
+
+
+
 <!-- <div layout="column" flex class="qbeAdvancedVisualization">
   <md-whiteframe class="md-whiteframe-4dp" flex=70 style="padding-left:10px; padding-right:10px" layout="column">
   		<p></p>

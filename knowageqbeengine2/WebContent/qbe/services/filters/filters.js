@@ -41,9 +41,7 @@ filters.service('filters_service',function(sbiModule_action){
 		         {name:"is null",value:"IS NULL"},
 		         {name:"not null",value:"NOT NULL"}];
 
-	this.getBooleanConnectors= [
-	    		         {name:"AND",value:"AND"},
-	    		         {name:"OR",value:"OR"}];
+	this.getBooleanConnectors= ["AND","OR"];
 
 });
 

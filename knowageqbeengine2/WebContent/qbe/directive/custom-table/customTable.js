@@ -156,8 +156,8 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		}
 	}
 	
-	$scope.showVisualization = function (visualization) {
-		$scope.selectedVisualization = visualization;
+	$scope.openFiltersAdvanced = function (){
+		$rootScope.$broadcast('openFiltersAdvanced', true);
 	}
 	
 	$scope.executeRequest = function () {
