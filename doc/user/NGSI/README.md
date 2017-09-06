@@ -160,7 +160,7 @@ So, start to build a Cockpit by creating a new document in the Workspace:
 
 ![](media/6_Cockpit_Document.png)
 
-Now you can see the data retrieved from OCB:
+Create widgets selecting the previously created datasets and save the document. Execute it and you will now see the data retrieved from OCB:
 
 ![](media/7_Cockpit_Document.png)
 
