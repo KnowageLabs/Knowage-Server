@@ -96,7 +96,7 @@ It retrieves all entities of type `Meter`. The response will be something like:
 		}
 	]
 
-In this example we have two Context Elements with the following attributes:
+In the above example we have two Context Elements with the following attributes:
 
 * atTime
 * downstreamActivePower
@@ -106,45 +106,35 @@ In this example we have two Context Elements with the following attributes:
 
 The related Knowage dataset will contain these entities with the related attributes mapped with the types defined in the response.
 
-How to use Knowage with NGSI
+How to use Knowage with NGSIv2
 ============================
 
 DataSet creation
 ----------------
-Defining a REST NGSI DataSet in Knowage is like to define any other type of DataSet. We need to create a REST DataSet and then make it NGSI enable.
+Defining a REST NGSIv2 DataSet in Knowage is like to define any other type of DataSet. We need to create a REST DataSet and then make it NGSI enable.
 At the homepage of application, click on DataSet:
 
 ![](media/0_DataSet_Button.png)
 
-then create a DataSet clicking on Add and fill all main fields (name, label, etc.):
+then create a DataSet clicking on the '+' icon and fill all main fields (name, label, etc.):
 
 ![](media/0.1_Add_DataSet.png)
 
-Now click on Type tab, select REST type and fill all fields related to a generic REST DataSet plus clicking on NGSI checkbox:
+Now click on Type tab, select REST type and fill all the mandatory fields plus click on NGSI checkbox:
 
 ![](media/1_DataSet_Rest_Generic.png)
 
-So you need to define (see also below to simplify these fields):
+![](media/4_DataSet_NGSI_Automatic.png)
+
+In particular, you must define at least:
 
 * the Orion Query Context URL
-* the request headers for an JSON call
-* the Orion Query as the Request body
 * the HTTP Method
-* the JSON Path to retrieve the items (see below): so where the items are stored in JSON (Context Elements)
-* check NGSI checkbox
-* the JSON Paths to retrieve the attributes (see below): where the attributes of each Context Element are stored
-* offset and fetch size params
+* check NGSIv2 checkbox
 
-The fields for items and attributes are written in [JSON Path Notation](https://github.com/jayway/JsonPath), which is similar to XML XPath notation. As you can see from the image the Context Elements are searched under the array of Context Responses (as described before in the JSON Response example). The attributes' definitions are related to JSON of each Context Element found through items field.
+The fields for items and attributes are written in [JSON Path Notation](https://github.com/jayway/JsonPath), which is similar to XML XPath notation, which are usually used to obtain data from a generic REST dataset where the data structure is different from case to case.
 
-**NGSI checkbox** is specific for NGSI REST calls: it permits to subcribe to Context Element notifications from Orion Context Broker and to omit some of the REST fields (since the JSON format from NGSI specifications is fixed). So considering the previous example, it's possible to **not** define:
-
-* the request headers
-* the items
-* the attributes: all attributes are fetched
-* the offset and fetch size params
-
-![](media/4_DataSet_NGSI_Automatic.png)
+**NGSIv2 checkbox** is specific for NGSIv2 REST calls: it permits to subcribe to Context Element notifications from Orion Context Broker and to omit some of the REST fields (since the JSON format from NGSI specifications is fixed).
 
 If you click on preview button you can see the current data retrieved from OCB defined:
 
@@ -154,7 +144,11 @@ At the end of DataSet definition lick on Save button in the upper-right cornet t
 
 Document definition
 -------------------
-A *Document* in Knowage environment permits to use the DataSet previous created to make reports, statistics, visualization of data etc.. In the following example we create a Document of type *Cockpit* because is strictly related to REST NGSI DataSet. With this type of Document you can see the notifications of Context Elements changes from OCB in real time.
+A *Document* in Knowage environment permits to use the DataSet previous created to make reports, statistics, visualization of data etc.. 
+
+### Cockpit Engine
+
+In the following example we create a Document of type *Cockpit* because is strictly related to REST NGSIv2 DataSet. With this type of Document you can see the notifications of Context Elements changes from OCB in real time.
 So, start to create a Document clicking on folder icon at homepage:
 
 TODO
