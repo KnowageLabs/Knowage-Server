@@ -17,9 +17,6 @@
  */
 package it.eng.spagobi.utilities.sql;
 
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.assertion.Assert;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -29,6 +26,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
+
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.assertion.Assert;
 
 /**
  * @author Andrea Gioia
@@ -45,7 +45,8 @@ public class SqlUtils {
 	public static final String DIALECT_SQLSERVER = "org.hibernate.dialect.SQLServerDialect";
 	public static final String DIALECT_INGRES = "org.hibernate.dialect.IngresDialect";
 
-	private static Set<String> hiveLikeDatabases = new HashSet<String>(Arrays.asList("cassandra", "hive", "neo4j", "drill", "spark", "phoenix", "impala", "h2"));
+	private static Set<String> hiveLikeDatabases = new HashSet<>(
+			Arrays.asList("voltdb", "hbase", "hive", "orient", "cassandra", "hive", "neo4j", "drill", "spark", "phoenix", "impala", "h2"));
 
 	static protected Logger logger = Logger.getLogger(SqlUtils.class);
 
