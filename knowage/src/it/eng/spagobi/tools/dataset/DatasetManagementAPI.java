@@ -17,40 +17,6 @@
  */
 package it.eng.spagobi.tools.dataset;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.zip.InflaterInputStream;
-
-import javax.naming.NamingException;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.LogMF;
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.io.UnsafeInput;
-
-import commonj.work.Work;
-import commonj.work.WorkException;
-import commonj.work.WorkItem;
 import gnu.trove.set.hash.TLongHashSet;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFUserError;
@@ -76,7 +42,6 @@ import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.cache.CacheException;
 import it.eng.spagobi.tools.dataset.cache.FilterCriteria;
 import it.eng.spagobi.tools.dataset.cache.GroupCriteria;
-import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.InLineViewBuilder;
 import it.eng.spagobi.tools.dataset.cache.ProjectionCriteria;
 import it.eng.spagobi.tools.dataset.cache.SelectBuilder;
@@ -115,6 +80,40 @@ import it.eng.spagobi.utilities.groovy.GroovySandbox;
 import it.eng.spagobi.utilities.sql.SqlUtils;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
 import it.eng.spagobi.utilities.trove.TLongHashSetSerializer;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.zip.InflaterInputStream;
+
+import javax.naming.NamingException;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.LogMF;
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.io.UnsafeInput;
+import commonj.work.Work;
+import commonj.work.WorkException;
+import commonj.work.WorkItem;
 
 /**
  * DataLayer facade class. It manage the access to SpagoBI's datasets. It is built on top of the dao. It manages all complex operations that involve more than a
@@ -345,33 +344,6 @@ public class DatasetManagementAPI {
 		}
 		logger.debug("OUT");
 		return tableName;
-	}
-
-	/**
-	 * insert into data store last cache date if present
-	 *
-	 * @param cache
-	 * @param dataStore
-	 * @param dataSet
-	 */
-	private void addLastCacheDate(ICache cache, IDataStore dataStore, IDataSet dataSet) {
-		logger.debug("IN");
-		// In case of using cache add last date
-		String signature = dataSet.getSignature();
-		if (cache.getMetadata() != null) {
-			CacheItem item = cache.getMetadata().getCacheItem(signature);
-			if (item != null) {
-				Date lastDate = item.getCreationDate();
-				if (lastDate != null) {
-					logger.debug("Last cache date is " + lastDate);
-					dataStore.setCacheDate(lastDate);
-				} else {
-					logger.debug("last cache date not present");
-				}
-
-			}
-		}
-		logger.debug("OUT");
 	}
 
 	public IDataStore getDataStore(String label, int offset, int fetchSize, int maxRowCount, boolean isNearRealtime, Map<String, String> parametersValues,
@@ -1326,8 +1298,7 @@ public class DatasetManagementAPI {
 	}
 
 	private IDataStore queryNearRealtimeDataset(List<GroupCriteria> groups, List<FilterCriteria> filters, List<FilterCriteria> havings,
-			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, int offset, int fetchSize,
-			int maxRowCount) {
+			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, int offset, int fetchSize, int maxRowCount) {
 		dataSet.loadData();
 		IDataStore dataStore = dataSet.getDataStore();
 		if (dataStore != null && dataStore.getRecordsCount() < METAMODEL_LIMIT) {
@@ -1589,9 +1560,9 @@ public class DatasetManagementAPI {
 		return pagedDataStore;
 	}
 
-	public String getQueryText(IDataSource dataSource, String tableName, List<GroupCriteria> groups, List<FilterCriteria> filters, List<FilterCriteria> havings,
-			List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet, boolean isNearRealtime,
-			List<String> outputOrderColumns) {
+	public String getQueryText(IDataSource dataSource, String tableName, List<GroupCriteria> groups, List<FilterCriteria> filters,
+			List<FilterCriteria> havings, List<ProjectionCriteria> projections, List<ProjectionCriteria> summaryRowProjections, IDataSet dataSet,
+			boolean isNearRealtime, List<String> outputOrderColumns) {
 		return getQueryText(new SelectBuilder(), dataSource, tableName, groups, filters, havings, projections, summaryRowProjections, dataSet, isNearRealtime,
 				outputOrderColumns);
 	}
@@ -1601,8 +1572,8 @@ public class DatasetManagementAPI {
 			boolean isNearRealtime, List<String> outputOrderColumns) {
 
 		if (tableName == null || tableName.isEmpty() || (!isNearRealtime && dataSource == null)) {
-			throw new IllegalArgumentException(
-					"Found one or more arguments invalid. Tablename [" + tableName + "] and/or dataSource [" + dataSource + "] are null or empty.");
+			throw new IllegalArgumentException("Found one or more arguments invalid. Tablename [" + tableName + "] and/or dataSource [" + dataSource
+					+ "] are null or empty.");
 		}
 
 		String label = dataSet.getLabel();
@@ -2106,8 +2077,8 @@ public class DatasetManagementAPI {
 	}
 
 	@SuppressWarnings("unchecked")
-	public Map<String, TLongHashSet> readDomainValues(IDataSet dataSet, Map<String, String> parametersValues, boolean wait)
-			throws NamingException, WorkException, InterruptedException {
+	public Map<String, TLongHashSet> readDomainValues(IDataSet dataSet, Map<String, String> parametersValues, boolean wait) throws NamingException,
+			WorkException, InterruptedException {
 		logger.debug("IN");
 		Map<String, TLongHashSet> toReturn = new HashMap<>(0);
 		setDataSetParameters(dataSet, parametersValues);
@@ -2124,8 +2095,8 @@ public class DatasetManagementAPI {
 			String filepath = path + File.separatorChar + hashSignature + DataSetConstants.DOMAIN_VALUES_EXTENSION;
 			File file = new File(filepath);
 			if (!file.exists()) {
-				logger.debug(
-						"Impossible to find a binary file named [" + hashSignature + DataSetConstants.DOMAIN_VALUES_EXTENSION + "] located at [" + path + "]");
+				logger.debug("Impossible to find a binary file named [" + hashSignature + DataSetConstants.DOMAIN_VALUES_EXTENSION + "] located at [" + path
+						+ "]");
 				calculateDomainValues(dataSet, wait);
 			}
 			if (wait) {
