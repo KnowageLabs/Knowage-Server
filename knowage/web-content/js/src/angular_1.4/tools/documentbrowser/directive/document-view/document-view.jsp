@@ -24,7 +24,7 @@
 					
 					<!-- Document Grid View -->
 					<div layout="row"  layout-wrap ng-hide="showGridView!=true " >
-					<div  ng-repeat="document in ngModel| orderBy:orderingDocumentCards" flex-xl=20 flex-lg=25 flex=33 flex-sm=50 flex-xs=100>
+					<div  class="documentCardContainer" ng-repeat="document in ngModel| orderBy:orderingDocumentCards" flex-xl=25 flex=33 flex-sm=50 flex-xs=100>
 			        <md-card class="documentCard" ng-class="{'md-whiteframe-15dp' : selectedDocument==document }">
 				        <md-card-title>
 					          <md-card-title-text>

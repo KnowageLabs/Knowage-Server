@@ -79,43 +79,51 @@
 		word-wrap: break-word;
 	}
 	
-	.documentCard {
-		//width: 250px;
-		width: auto;
-		background-color: $baseColor;
-		md-icon {
-			color: $cardActionIconsColor;
+	.documentCardContainer {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-around;
+		padding: 8px;
+		.documentCard {
+			width: 100%;
+			max-width: 350px;
+			margin-top: 0;
+			background-color: $baseColor;
+			md-icon {
+				color: $cardActionIconsColor;
+			}
+			.preview-icon {
+				height: 112px;
+			}
 		}
-		.preview-icon {
-			height: 112px;
+		
+		.documentCard md-card-title {
+		    color: #FAFAFA;
+		    padding: 12px;
+	    	text-transform: uppercase;
 		}
-	}
-	
-	.documentCard md-card-title {
-	    color: #FAFAFA;
-	    padding: 12px;
-    	text-transform: uppercase;
-	}
 
-	.documentCard md-card-title p{
-	    margin: 0;
-	    padding: 0;
+		.documentCard md-card-title p{
+		    margin: 0;
+		    padding: 0;
+		}
+		
+		.documentCard md-card-actions {
+	    	background-color: rgba(white,0.5);
+	    	margin: 0;
+		}
+		
+		.documentCard div.md-card-image {
+			max-height: 100px;
+		    width: 100%;
+		    height: 100px;
+		    background-size: contain;
+		    background-position: top center;
+		    background-repeat: no-repeat;
+		    margin: 6px 0;
+		}
 	}
 	
-	.documentCard md-card-actions {
-    	background-color: rgba(white,0.5);
-    	margin: 0;
-	}
-	
-	.documentCard div.md-card-image {
-		max-height: 100px;
-	    width: 100%;
-	    height: 100px;
-	    background-size: contain;
-	    background-position: top center;
-	    background-repeat: no-repeat;
-	    margin: 6px 0;
-	}
 	
 	
 	md-tabs.documentNavigationToolbar>md-tabs-wrapper md-tabs-canvas,
