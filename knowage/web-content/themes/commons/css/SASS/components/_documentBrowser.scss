@@ -80,7 +80,8 @@
 	}
 	
 	.documentCard {
-		width: 250px;
+		//width: 250px;
+		width: auto;
 		background-color: $baseColor;
 		md-icon {
 			color: $cardActionIconsColor;

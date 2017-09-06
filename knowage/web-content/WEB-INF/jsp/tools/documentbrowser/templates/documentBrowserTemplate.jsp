@@ -126,7 +126,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					control='breadCrumbControl' move-to-callback=moveBreadCrumbToFolder(item,index)>
 				</bread-crumb>
 		
-				<md-whiteframe flex layout="column" class="md-whiteframe-5dp" layout-margin>
+				<md-content flex layout="column" class="md-whiteframe-5dp" layout-margin>
 					<div layout="row" ng-show='showDocumentGridView' class="documentGridViewInput">
 						<md-input-container class="md-block" flex> <label>{{translate.load("sbi.ds.orderComboLabel")}}</label>
 							<md-select ng-model="selectedOrder"	ng-model-option="trackBy:'$value.id'"> 
@@ -151,7 +151,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					delete-document-action="deleteDocument(doc)"
 					execute-document-action="executeDocument(doc)"
 					ordering-document-cards=selectedOrder> </document-view> 
-				</md-whiteframe>
+				</md-content>
 			</md-content>
 		</md-content> 
 	

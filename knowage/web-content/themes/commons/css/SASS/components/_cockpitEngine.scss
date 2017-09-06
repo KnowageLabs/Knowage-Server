@@ -78,6 +78,10 @@
 			position: absolute;
 			width: 100%;
 			z-index: 9999;
+			opacity: .7;
+			&:hover {
+				opacity: 1;
+			}
 			button {
 				min-height: 25px;
 				line-height: 25px;

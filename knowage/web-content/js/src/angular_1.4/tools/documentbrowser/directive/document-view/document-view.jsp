@@ -6,7 +6,7 @@
 	IEngUserProfile profile = (IEngUserProfile)session.getAttribute(IEngUserProfile.ENG_USER_PROFILE);;
 		
 	%>	
- <md-content layout="column">	
+ <div layout="column">	
  				 	<angular-table flex  ng-hide="showGridView==true || ngModel.length==0 "
 							id='documentListTable' ng-model=ngModel
 							columns='[{"label":"Type","name":"typeCode"},{"label":"Name","name":"name"},{"label":"Author","name":"creationUser"},{"label":"Label","name":"label"}]'
@@ -24,15 +24,17 @@
 					
 					<!-- Document Grid View -->
 					<div layout="row"  layout-wrap ng-hide="showGridView!=true " >
-					<md-card class="documentCard" ng-repeat="document in ngModel| orderBy:orderingDocumentCards" ng-class="{'md-whiteframe-15dp' : selectedDocument==document }">
-			        <md-card-title>
-				          <md-card-title-text>
-				            <p class=" ellipsis">{{document.name}}</p>
-				             <md-tooltip md-delay="1500">
-				              {{document.name}}
-				            </md-tooltip>
-				          </md-card-title-text>
-				    </md-card-title>
+					<div  ng-repeat="document in ngModel| orderBy:orderingDocumentCards" flex-xl=20 flex-lg=25 flex=33 flex-sm=50 flex-xs=100>
+			        <md-card class="documentCard" ng-class="{'md-whiteframe-15dp' : selectedDocument==document }">
+				        <md-card-title>
+					          <md-card-title-text>
+					            <p class=" ellipsis">{{document.name}}</p>
+					             <md-tooltip md-delay="1500">
+					              {{document.name}}
+					            </md-tooltip>
+					          </md-card-title-text>
+					    </md-card-title>
+				    
 			        
 			       
 			        <div class="md-card-image document_browser_image_{{document.typeCode}}"   ng-click="clickDocument(document);" 
@@ -76,6 +78,6 @@
 			       	 %>	
 			        </md-card-actions>
 			      </md-card>
-	 
+	 </div>
 					</div> 
-</md-content>
+</div>
