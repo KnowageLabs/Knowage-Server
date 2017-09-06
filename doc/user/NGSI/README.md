@@ -180,10 +180,13 @@ In addition to Cockpit Engine it's also possible to add notifications capabiliti
 	...
 ``` 
 
-KPI Alert notification to context broker
+KPI Alert notification from Knowage to context broker
 -------------------
-By defining a context broker URL in the Alert detail page, when an alert event is thrown it will be sent also to context broker. (Look at screenshot) 
-The context broker type is sent as a type field in order to be able to group entities in families, while each entity is identified by alarm label. 
+By defining a context broker URL in the Alert detail page, when an alert event is thrown it will be sent also to context broker.
+The context broker type is sent as a entity type field in order to be able to group entities in families, while each entity is identified by the KPI label.
 
 ![](media/10_AlarmDetail.png)
 
+![](media/11_AlarmDetail.png)
+
+Further information about the Knowage alert functionality can be found in the Knowage Community Edition documentation available from the FIWARE Catalogue.
