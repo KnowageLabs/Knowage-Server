@@ -1,6 +1,6 @@
 # User & Programmer's Manual
  
- SpagoBI: User & Programmer's Manual
+ Knowage: User & Programmer's Manual
  
 ## Table of Contents
 
