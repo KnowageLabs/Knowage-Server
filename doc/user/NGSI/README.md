@@ -136,6 +136,13 @@ The fields for items and attributes are written in [JSON Path Notation](https://
 
 **NGSIv2 checkbox** is specific for NGSIv2 REST calls: it permits to subcribe to Context Element notifications from Orion Context Broker and to omit some of the REST fields (since the JSON format from NGSI specifications is fixed).
 
+**IMPORTANT NOTE:** if you want to exploit the Context Broker publish/subscribe paradigm and enable analyses to be automatically updated, you must provide an URL with one the following query parameters:
+
+* id
+* idPattern
+
+The former will subscribe to a specific entity based on the provided id, while the latter will subscribe to any entity which id match the idPattern provided. Futher information about those aspects can be found in the Context Broker docs.
+
 If you click on preview button you can see the current data retrieved from OCB defined:
 
 ![](media/5_NGSI_Automatic_Preview.png)
