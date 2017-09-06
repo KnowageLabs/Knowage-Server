@@ -416,7 +416,6 @@ public class DatasetManagementAPI {
 						dataStore.setCacheDate(new Date());
 					} else {
 						dataStore = cachedResultSet;
-						addLastCacheDate(cache, dataStore, dataSet);
 						/*
 						 * since the datastore, at this point, is a JDBC datastore, it does not contain information about measures/attributes, fields' name and
 						 * alias... therefore we adjust its metadata
