@@ -1,28 +1,33 @@
 Introduction
 ============
 
-This Installation and Administration Guide covers SpagoBI Server version 5.2.1 (associated with FIWARE release 5). Any feedback on this document is highly welcomed, including bugs, typos or things you think should be included but are not. Please create issues on our [SpagoBI tracker](http://spagobi.eng.it/jira/secure/Dashboard.jspa) also for this purpose.
+This Installation and Administration Guide covers Knowage Server version 6.1. Any feedback on this document is highly welcome, including bugs, typos or things you think should be included but are not. Please create issues on our [Knowage tracker](https://www.knowage-suite.com/jira/) also for this purpose.
 
 Installation
 ============
 
-This page contains the basic Installation and Administration Guide for the SpagoBI Server, the reference implementation of the Data Visualization Generic Enabler, based on the [SpagoBI](http://www.spagobi.org) Open Source project. Its [online documentation](http://wiki.spagobi.org/xwiki/bin/view/Main/) is continuously updated and improved, and provides the most appropriate source to get the most up-to-date information on installation and administration. Other community tools are available, such as a [forum](http://spagobi.eng.it/jforum/forums/list.page) and a [tracker](http://spagobi.eng.it/jira/secure/Dashboard.jspa).
+This page contains the basic Installation and Administration Guide for the Knowage Server, the reference implementation of the Data Visualization Generic Enabler, based on the [Knowage](http://www.knowage-suite.com) Open Source project. Its [Community Edition Manual](http://download.forge.ow2.org/knowage/Knowage_6.x_CE_Manual.pdf) is continuously updated and improved, and provides the most appropriate source to get the most up-to-date information on installation and administration. Other community tools are available, such as a [Q&A](https://www.knowage-suite.com/qa/) and a [tracker](https://www.knowage-suite.com/jira/).
 
-In this page we'll provide you some basic information, but we'll focus on the integration between SpagoBI Server and other GEs, in particular with the IdM - KeyRock, Data Lab - CKAN and the Orion Context Broker.
+In this page we'll provide you some basic information, but we'll focus on the integration between Knowage Server and other GEs, in particular with the IdM - KeyRock, Data Lab - CKAN and the Orion Context Broker.
 
 Released package description
 ----------------------------
 
-SpagoBI Server is actually a collection of web applications (core application "SpagoBI" plus external engines "SpagoBI\*\*\*Engine"). The released files linked in the catalogue contain [Apache Tomcat](http://tomcat.apache.org/) 7 with all SpagoBI web applications.
+Knowage Server is actually a collection of web applications (core application "knowage" plus external engines "knowage\*\*\*engine"). The released files linked in the catalogue contain [Apache Tomcat](http://tomcat.apache.org/) 7 with all Knowage web applications.
 
 Requirements
 ------------
 
 -   JDK 1.7;
--   a relational Database for storing SpagoBI Metadata (MySQL, Oracle, Postgres, Ingres or HSQLDB);
+-   a relational Database for storing Knowage Metadata (MySQL, Oracle, Postgres, Ingres or HSQLDB);
 -   R (http://cran.r-project.org/) needed only for advanced data-mining and social analysis.
 
-Data to be analyzed with SpagoBI can be stored both on SQL datasources and noSQL datasources.
+Data to be analyzed with Knowage can be stored both on SQL datasources and NoSQL datasources.
+
+Installation from installer
+----------------------------------
+You can install Knowage from the released installer. Please check the related documentation  
+[here](http://download.forge.ow2.org/knowage/Knowage-CE-Installer-GettingStarted.pdf).
 
 Installation from released package
 ----------------------------------
