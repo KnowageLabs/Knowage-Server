@@ -372,12 +372,4 @@ In this case, the application administrator can add roles to that user (the user
 
 The application administrator can always change roles of the users (the ones who belong to "DEFAULT" tenant) within the IdM. Organization owners can always change roles of members (and these members will belong to a tenant with the same name of the organization).
 
-Finally, each tenant has to be configured in Knowage: its members cannot use any engine or any datasource if not specified. To permit a tenant's users to use engines and datasources, login as the super administrator (the creator of the FIWARE Lab application) and enter "Tenants management":
-
-![](media/SpagoBI_enter_Tenants_management.png "SpagoBI_enter_Tenants_management.png")
-
-Then, for each tenant, enable required engines (in the "Engines" tab) and datasources (in the "Data Source" tab):
-
-![](media/SpagoBI_tenant_detail_engines.png "SpagoBI_tenant_detail_engines.png")
-
-Pay attention to the fact that, if a new tenant is added (in FIWARE IdM as organization), Knowage Server doesn't recognize it automatically unless you restart it. If you don't want to do that you have to add the new tenant manually.
+Pay attention to the fact that, if a new tenant is added (in FIWARE IdM as organization), Knowage Server doesn't recognize it automatically unless you restart it.
