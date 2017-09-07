@@ -17,20 +17,6 @@
  */
 package it.eng.knowage.engine.cockpit.api.export.pdf;
 
-import it.eng.knowage.export.pdf.ExportDetails;
-import it.eng.knowage.export.pdf.FrontpageDetails;
-import it.eng.knowage.export.pdf.PDFCreator;
-import it.eng.knowage.export.pdf.PageNumbering;
-import it.eng.knowage.slimerjs.wrapper.DeleteOnCloseFileInputStream;
-import it.eng.knowage.slimerjs.wrapper.SlimerJS;
-import it.eng.knowage.slimerjs.wrapper.SlimerJSConstants;
-import it.eng.knowage.slimerjs.wrapper.beans.RenderOptions;
-import it.eng.spago.error.EMFAbstractError;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Path;
@@ -47,6 +33,20 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import it.eng.knowage.export.pdf.ExportDetails;
+import it.eng.knowage.export.pdf.FrontpageDetails;
+import it.eng.knowage.export.pdf.PDFCreator;
+import it.eng.knowage.export.pdf.PageNumbering;
+import it.eng.knowage.slimerjs.wrapper.DeleteOnCloseFileInputStream;
+import it.eng.knowage.slimerjs.wrapper.SlimerJS;
+import it.eng.knowage.slimerjs.wrapper.SlimerJSConstants;
+import it.eng.knowage.slimerjs.wrapper.beans.RenderOptions;
+import it.eng.spago.error.EMFAbstractError;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @authors Francesco Lucchi (francesco.lucchi@eng.it)
@@ -82,12 +82,14 @@ public class PdfExporter {
 		BIObject document = DAOFactory.getBIObjectDAO().loadBIObjectById(documentId);
 		int sheetCount = getSheetCount(document);
 		URL url = new URL(requestUrl);
-		Map<String, String> authenticationHeaders = new HashMap<String, String>(1);
+		Map<String, String> authenticationHeaders = new HashMap<>(1);
 		String encodedUserId = Base64.encodeBase64String(userId.getBytes("UTF-8"));
 		authenticationHeaders.put("Authorization", "Direct " + encodedUserId);
 		List<InputStream> images = SlimerJS.render(url, sheetCount, renderOptions);
-		PDFCreator.createPDF(images, output, true);
-		ExportDetails details = new ExportDetails(getFrontpageDetails(document), PageNumbering.DEFAULT);
+		PDFCreator.createPDF(images, output, pdfFrontPage, pdfBackPage);
+
+		PageNumbering pageNumbering = new PageNumbering(!pdfFrontPage, true, !pdfBackPage);
+		ExportDetails details = new ExportDetails(getFrontpageDetails(pdfFrontPage, document), pageNumbering);
 		PDFCreator.addInformation(output, details);
 		try (InputStream is = new DeleteOnCloseFileInputStream(output.toFile())) {
 			return IOUtils.toByteArray(is);
@@ -123,13 +125,18 @@ public class PdfExporter {
 		}
 	}
 
-	private FrontpageDetails getFrontpageDetails(BIObject document) {
-		String name = document.getName();
-		String description = document.getDescription();
-		if (name == null || description == null) {
-			throw new SpagoBIRuntimeException("Unable to get name [" + name + "] or description [" + description + "] for document with id [" + documentId
-					+ "]");
+	private FrontpageDetails getFrontpageDetails(boolean includeFrontPage, BIObject document) {
+		FrontpageDetails toReturn = null;
+
+		if (includeFrontPage) {
+			String name = document.getName();
+			String description = document.getDescription();
+			if (name == null || description == null) {
+				throw new SpagoBIRuntimeException(
+						"Unable to get name [" + name + "] or description [" + description + "] for document with id [" + documentId + "]");
+			}
+			toReturn = new FrontpageDetails(name, description, new Date());
 		}
-		return new FrontpageDetails(name, description, new Date());
+		return toReturn;
 	}
 }

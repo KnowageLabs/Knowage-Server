@@ -18,10 +18,6 @@
 
 package it.eng.knowage.export.pdf;
 
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.constants.ConfigurationConstants;
-import it.eng.spagobi.commons.utilities.StringUtilities;
-
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -53,6 +49,10 @@ import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.util.Matrix;
+
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.constants.ConfigurationConstants;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 
 /**
  * @authors Alessandro Portosa (alessandro.portosa@eng.it)
@@ -92,11 +92,19 @@ public abstract class PDFCreator {
 		}
 	}
 
-	public static void createPDF(List<InputStream> inputImages, Path output, boolean frontAndBack) throws IOException {
-		if (frontAndBack) {
+	public static void createPDF(List<InputStream> inputImages, Path output, boolean front, boolean back) throws IOException {
+		if (front && back) {
 			createPDF(inputImages, output, getFrontpage(), getBackpage());
 		} else {
-			createPDF(inputImages, output);
+			if (front) {
+				createPDF(inputImages, output, getFrontpage(), null);
+			} else {
+				if (back) {
+					createPDF(inputImages, output, null, getBackpage());
+				} else {
+					createPDF(inputImages, output);
+				}
+			}
 		}
 	}
 
@@ -118,7 +126,9 @@ public abstract class PDFCreator {
 
 			for (int i = 0; i < contents.length; i++) {
 				// adding the source files
-				merger.addSource(contents[i]);
+				if (contents[i] != null) {
+					merger.addSource(contents[i]);
+				}
 			}
 			// Merging the documents
 			merger.mergeDocuments(null);
@@ -243,13 +253,14 @@ public abstract class PDFCreator {
 
 	private static InputStream getFrontpage() throws FileNotFoundException {
 		String path = SingletonConfig.getInstance().getConfigValue(ConfigurationConstants.DOCUMENT_EXPORTING_PDF_FRONT_PAGE);
-		return (path == null || path.isEmpty()) ? Thread.currentThread().getContextClassLoader()
-				.getResourceAsStream(PDFCreator.DEFAULT_FRONT_PAGE_RESOURCE_PATH) : new FileInputStream(path);
+		return (path == null || path.isEmpty())
+				? Thread.currentThread().getContextClassLoader().getResourceAsStream(PDFCreator.DEFAULT_FRONT_PAGE_RESOURCE_PATH)
+				: new FileInputStream(path);
 	}
 
 	private static InputStream getBackpage() throws FileNotFoundException {
 		String path = SingletonConfig.getInstance().getConfigValue(ConfigurationConstants.DOCUMENT_EXPORTING_PDF_BACK_PAGE);
-		return (path == null || path.isEmpty()) ? Thread.currentThread().getContextClassLoader()
-				.getResourceAsStream(PDFCreator.DEFAULT_BACK_PAGE_RESOURCE_PATH) : new FileInputStream(path);
+		return (path == null || path.isEmpty()) ? Thread.currentThread().getContextClassLoader().getResourceAsStream(PDFCreator.DEFAULT_BACK_PAGE_RESOURCE_PATH)
+				: new FileInputStream(path);
 	}
 }

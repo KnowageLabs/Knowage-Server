@@ -25,8 +25,10 @@ package it.eng.knowage.export.pdf;
 
 public class PageNumbering {
 
-	public static final PageNumbering DEFAULT = new PageNumbering(false, true, false);
-	public static final PageNumbering ALL = DEFAULT.includeFirst().includeLast();
+	public static final PageNumbering EXCLUDE_FIRST_AND_LAST = new PageNumbering(false, true, false);
+	public static final PageNumbering ALL = EXCLUDE_FIRST_AND_LAST.includeFirst().includeLast();
+	public static final PageNumbering INCLUDE_FIRST = EXCLUDE_FIRST_AND_LAST.includeFirst();
+	public static final PageNumbering INCLUDE_LAST = EXCLUDE_FIRST_AND_LAST.includeLast();
 
 	private final boolean firstIncluded;
 	private final boolean othersIncluded;
