@@ -150,25 +150,23 @@ FIWARE account and application creation
 
 In order to create new application in the IdM you have to open your browser first and connect to [FIWARE Lab](https://account.lab.fiware.org/). If you don't have an account click on “Sign up” under the “Sign in” form in the left: this account will be used as Knowage super administrator.
 
-![](media/SpagoBI_new_FIWARE_Lab_account.jpg "SpagoBI_new_FIWARE_Lab_account.jpg")
+![](media/Knowage_new_FIWARE_Lab_account.jpg "Knowage_new_FIWARE_Lab_account.jpg")
 
 Now let's define an organization within the IdM; for this purpose, we'll create it with another user that is "Knowage User":
 
-![](media/SpagoBI_new_organization.png "SpagoBI_new_organization.png")
+![](media/Knowage_new_organization.png "Knowage_new_organization.png")
 
 Once an organization is created, the owner can always switch between User account and Organization account. He only has to click over his name in the top right corner, put mouse over “Switch session” and select the account he wants to manage:
 
-![](media/SpagoBI_switch_user_organization.png "SpagoBI_switch_user_organization.png")
+![](media/Knowage_switch_user_organization.png "Knowage_switch_user_organization.png")
 
 Using the Organization account, he can manage the organization: more precisely, he can add new members and assign roles to them. We will talk more about roles later on.
 
 Next step consists on creating the application with your administrator account. In order to do so, click on “My Applications” on the left menu and press the "Register" button. A 3-steps wizard will be diplayed: in the first step you have to put application's information, such as name, description, URL and callback URL. Last one is part of OAuth2 standard and it is the URL where a user has to be redirected (by the IdM) after he gives the application his permission to access some of his information.
 
-![](media/SpagoBI_application_creation_step_1.png "SpagoBI_application_creation_step_1.png")
+![](media/Knowage_application_creation_step_1.png "Knowage_application_creation_step_1.png")
 
 In second step you can insert the logo of your application.
-
-![](media/SpagoBI_application_creation_step_2.png "SpagoBI_application_creation_step_2.png")
 
 Third step requires to manage roles. There are already two predefined roles, Provider and Purchaser, but you can add your custom roles. Once Knowage is properly configured, roles will be imported automatically in its metadata (roles are the basis for the visibility rules over document and data in Knowage, therefore they are actually copied in Knowage metadata database). In Knowage there are 4 different kind of roles:
 
@@ -180,35 +178,39 @@ Third step requires to manage roles. There are already two predefined roles, Pro
 
 Knowage recognizes the type of role applying a regular expression (we will see it later): by default, role "admin" is considered as an admin role, and "user" as normal role for final users.
 
-![](media/SpagoBI_application_creation_step_3.png "SpagoBI_application_creation_step_3.png")
+![](media/Knowage_application_creation_step_3.png "Knowage_application_creation_step_3.png")
 
 After the third step, the application is created! Next picture shows the application's home page:
 
-![](media/SpagoBI_application_created.png "SpagoBI_application_created.png")
+![](media/Knowage_application_created.png "Knowage_application_created.png")
 
 You can see application details and the list of authorized users and groups (at the bottom). Now you need to get the OAuth2 credentials: enter the details of the application and click on "OAuth2 Credentials": you can see the Client ID and the Client Secret. These informations are part of the OAuth2 standard and they will be used by Knowage in order to communicate with the IdM.
 
-![](media/SpagoBI_application_oauth2_credentials.png "SpagoBI_application_oauth2_credentials.png")
+![](media/Knowage_application_oauth2_credentials.png "Knowage_application_oauth2_credentials.png")
 
 In order to manage users associated with the application, go back to the application page, in the “Authorized” box. For each user you can add or remove roles by selecting the ones provided by the drop-down menu:
 
-![](media/SpagoBI_IdM_user_roles.png "SpagoBI_IdM_user_roles.png")
+![](media/Knowage_IdM_user_roles.png "Knowage_IdM_user_roles.png")
 
 The available roles are “Provider”, “Purchaser” (these will be ignored by Knowage) and all the custom roles defined during application registration. You can assign more than one role to one user. If no roles are assigned to an user, he will enter Knowage with a default role that can be set within Knowage by the administrator. See next chapter for more details.
 
 Inside the “Authorized” box you can also add users to the application by clicking on the “Add” button on the right.
 
-![](media/SpagoBI_IdM_add_user_to_application.png "SpagoBI_IdM_add_user_to_application.png")
+![](media/Knowage_IdM_add_user_to_application.png "KnowageI_IdM_add_user_to_application.png")
+
+![](media/Knowage_IdM_add_user_to_application.png "KnowageI_IdM_add_user_to_application_2.png")
 
 Users added in the application directly (i.e. not within an organization) will belong to the default tenant in Knowage, which name is "DEFAULT".
 
 It's possible to add organizations in the application in the exact same way as we did for users. Those organizations will be considered as separated tenants in Knowage. As we've seen before, an organization's administrator can assign roles to members within the IdM: this will be reflected in Knowage where corresponding tenant's members will have those roles. In order to use organizations properly, they must have “Provider” or “Purchaser” role in the application, otherwise the administrator would not be able to give application's roles to organization's members.
 
-![](media/SpagoBI_IdM_add_organization_to_application.png "SpagoBI_IdM_add_organization_to_application.png")
+![](media/Knowage_IdM_add_organization_to_application.png "Knowage_IdM_add_organization_to_application.png")
+
+![](media/Knowage_IdM_add_organization_to_application.png "Knowage_IdM_add_organization_to_application_2.png")
 
 In other words, if an organization is added as Provider or Purchaser, its owner can give applications roles to whoever he wants. As said before, if you are an organization owner and you switch to the Organization account, you can manage roles of organization's members. The way you do that is very similar as how the application roles are assigned within the application's page: for each organization member there is a drop-down menu with the available roles: this list is comprehensive of roles of all applications for whom the organization is authorized.
 
-![](media/SpagoBI_IdM_user_roles_within_organization.png "SpagoBI_IdM_user_roles_within_organization.png")
+![](media/Knowage_IdM_user_roles_within_organization.png "Knowage_IdM_user_roles_within_organization.png")
 
 The above image shows how, for an organization owner, it is possible to give Application custom roles (in this case, the two roles defined before: _admin_ and _user_) to a member of the organization.
 
