@@ -26,8 +26,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.File;
 import java.io.InputStream;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 import org.apache.log4j.Logger;
 import org.xml.sax.InputSource;
@@ -108,28 +106,7 @@ public class EnginConf {
 		logger.debug("IN");
 		SourceBean sb = (SourceBean) config.getAttribute("RESOURCE_PATH_JNDI_NAME");
 		String path = sb.getCharacters();
-		logger.debug("path =["+path+"]");
-		
-		if(path!=null && path.length()>0){
-			resourcePath = SpagoBIUtilities.readJndiResource(path);
-		}
-		logger.debug("resource path after jndi = "+resourcePath);
-		if(resourcePath==null || resourcePath.length()==0 ){
-			
-			
-			//search the resource folder from system variable (can be argument -D..... on lunching configuration of server)
-			//this approach is good when you work with a cluster architecture
-			sb = (SourceBean) config.getAttribute("RESOURCE_PATH_SYSTEMVAR_NAME");
-			String systemPathVar = sb.getCharacters();
-
-			if(systemPathVar!=null){
-				resourcePath = System.getProperty(systemPathVar);
-			}
-			logger.debug("RESOURCE_PATH_SYSTEMVAR_NAME  = "+resourcePath);
-
-			
-		}
-		logger.debug("resource path finale = "+resourcePath);
+		resourcePath = SpagoBIUtilities.readJndiResource(path);
 		logger.debug("OUT");
 	}
 
@@ -168,46 +145,16 @@ public class EnginConf {
 		logger.debug("IN");
 		SourceBean sb = (SourceBean) config.getAttribute("SPAGOBI_SERVER_URL");
 		String server = sb.getCharacters();
-		
-		sb = (SourceBean) config.getAttribute("SPAGOBI_SERVER_URL_PORT_CONTEXT");
-		String urlJndi = sb.getCharacters();
-		logger.debug("urlJndi  = "+urlJndi);
-		if(urlJndi==null || urlJndi.length()==0){
-			if (server != null && server.length() > 0) {
-				spagoBiServerUrl = server;
-			} else {
-				sb = (SourceBean) config.getAttribute("SPAGOBI_SERVER_URL_JNDI_NAME");
-				server = sb.getCharacters();
-				spagoBiServerUrl = SpagoBIUtilities.readJndiResource(server);
-			}
-		}else{
-			logger.debug("SPAGOBI_SERVER_URL_PORT_CONTEXT = ["+urlJndi+"]");
-			String varPortContext = System.getProperty(urlJndi);
-			logger.debug("SPAGOBI_SERVER_URL_PORT_CONTEXT system prop= ["+varPortContext+"]");
-			if (varPortContext== null || varPortContext.length()==0){
-				varPortContext = urlJndi;
-			}
-			spagoBiServerUrl = "http://"+getLocalIPAddressAsString()+":"+varPortContext;
-			logger.debug("spagoBiServerUrl ="+spagoBiServerUrl);
+		if (server != null && server.length() > 0) {
+			spagoBiServerUrl = server;
+		} else {
+			sb = (SourceBean) config.getAttribute("SPAGOBI_SERVER_URL_JNDI_NAME");
+			server = sb.getCharacters();
+			spagoBiServerUrl = SpagoBIUtilities.readJndiResource(server);
 		}
 
 		logger.debug("OUT");
 
-	}
-	
-	
-	public static String getLocalIPAddressAsString() {
-		logger.debug("IN");
-		String ipAddrStr = "";
-		try {
-			InetAddress addr = InetAddress.getLocalHost();
-			ipAddrStr = addr.getHostName();
-
-		} catch (UnknownHostException e) {
-			logger.error("UnknownHostException:", e);
-		}
-		logger.debug("OUT:" + ipAddrStr);
-		return ipAddrStr;
 	}
 
 	/*
