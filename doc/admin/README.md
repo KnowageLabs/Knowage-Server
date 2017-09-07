@@ -223,11 +223,11 @@ In order to authenticate in Knowage using FIWARE Lab accounts, Knowage has to be
 
 First of all, start Knowage normally: as explained before, the default tenant is created and some default users are created. Then enter with the default super administrator user, that is biadmin/biadmin; then, enter "Configuration management" as in picture below:
 
-![](media/SpagoBI_enter_Configuration_management.png "SpagoBI_enter_Configuration_management.png")
+![](media/Knowage_enter_Configuration_management.png "Knowage_enter_Configuration_management.png")
 
 You will see the main Knowage Server configuration table. Each row correspond to one parameter, its value is stored in the VALUE\_CHECK column.
 
-![](media/SpagoBI_Configuration_management.png "SpagoBI_Configuration_management.png")
+![](media/Knowage_Configuration_management.png "Knowage_Configuration_management.png")
 
 Change the following settings (change their VALUE\_CHECK property):
 
