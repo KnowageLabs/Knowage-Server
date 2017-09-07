@@ -25,7 +25,25 @@
 		<filter-class>it.eng.spagobi.commons.filters.SpagoBICoreCheckSessionFilter</filter-class>
 	</filter>
 
-
+<!-- 
+    <servlet>
+      <servlet-name>jersey-serlvet</servlet-name>
+      <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+        <init-param>
+             <param-name>jersey.config.server.provider.packages</param-name>
+             <param-value>it.eng;org.apache.clerezza</param-value>
+        </init-param>
+        <init-param>
+             <param-name>jersey.config.server.provider.scanning.recursive</param-name>
+             <param-value>true</param-value>
+        </init-param>
+    </servlet>
+    
+    <servlet-mapping>
+          <servlet-name>jersey-serlvet</servlet-name>
+          <url-pattern>/restful-services/*</url-pattern>
+    </servlet-mapping>
+-->
 
 	<!-- START-CAS 
 	<filter>
@@ -125,7 +143,6 @@
 			<param-name>USERNAME_IN_SESSION</param-name>
 			<param-value>hmac_user_name</param-value>
 		</init-param>
-		<description>todo</description>
 	</filter>
 	<filter-mapping>
 		<filter-name>HmacLoginFilter</filter-name>
@@ -154,7 +171,6 @@
 	<filter>
 		<filter-name>HMACFilter</filter-name>
 		<filter-class>it.eng.spagobi.security.hmacfilter.HMACFilter</filter-class>
-		<description>HMAC Filter for authentication. HMAC key is configured in  server.xml and available to all engines thanks to main context.xml</description>
 	</filter>
 	<filter-mapping>
 		<filter-name>HMACFilter</filter-name>
@@ -190,49 +206,13 @@
   </servlet>  
 END-LIFERAY -->
 
+<!-- 
 	<listener>
 		<listener-class>
             org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap
 		</listener-class>
 	</listener>
-	
-	<!-- Notifications and CometD servlets-->
-	<servlet>
-		<servlet-name>NotifierServlet</servlet-name>
-		<servlet-class>it.eng.spagobi.tools.dataset.notifier.NotifierServlet</servlet-class>
-		 
-		<init-param>
-			<param-name>notifyUrl</param-name>
-			<param-value>http://192.168.29.53:8080/knowage/datasetNotifier</param-value>
-		</init-param>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
-	<servlet>
-      <servlet-name>cometDInitializer</servlet-name>
-      <servlet-class>it.eng.spagobi.tools.dataset.listener.CometDInitializer</servlet-class>
-      <load-on-startup>2</load-on-startup>
-    </servlet>
-  	<servlet>
-      <servlet-name>cometd</servlet-name>
-      <servlet-class>org.cometd.server.CometDServlet</servlet-class>
-      <init-param>
-        <param-name>ws.cometdURLMapping</param-name>
-        <param-value>/cometd/*</param-value>
-      </init-param>
-      <load-on-startup>1</load-on-startup>
-      <async-supported>true</async-supported>
-    </servlet>
-    
-    <servlet-mapping>
-      <servlet-name>cometd</servlet-name>
-      <url-pattern>/cometd/*</url-pattern>
-    </servlet-mapping>
-  	
-  	<servlet-mapping>
-		<servlet-name>NotifierServlet</servlet-name>
-		<url-pattern>/datasetNotifier</url-pattern>
-	</servlet-mapping>
-	<!-- Notifications and CometD servlets end-->
+-->
 
 	<!-- servlet for change pwd management -->
 	<servlet>
@@ -330,11 +310,13 @@ EXO -->
 	</servlet>
 	<!-- end axis servlet -->
 
+<!-- 
 	<servlet>
 		<servlet-name>Resteasy</servlet-name>
 		<servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
 	</servlet>
-
+-->
+	
 	<servlet>
 		<servlet-name>StickyCaptcha</servlet-name>
 		<servlet-class>nl.captcha.servlet.SimpleCaptchaServlet</servlet-class>
@@ -393,6 +375,7 @@ END-LIFERAY -->
 	</servlet-mapping>
 	<!-- end axis servlet -->
 
+	<!-- 
 	<servlet-mapping>
 		<servlet-name>Resteasy</servlet-name>
 		<url-pattern>/restful-services/*</url-pattern>
@@ -402,14 +385,14 @@ END-LIFERAY -->
 		<servlet-name>StickyCaptcha</servlet-name>
 		<url-pattern>/stickyImg</url-pattern>
 	</servlet-mapping>
-
-
+	-->
+	
 	<context-param>
 		<param-name>resteasy.scan</param-name>
 		<param-value>true</param-value>    
 	</context-param>
-
-
+	
+	
 	<context-param>
 		<param-name>resteasy.servlet.mapping.prefix</param-name>
 		<param-value>/restful-services</param-value>
@@ -427,7 +410,7 @@ END-LIFERAY -->
 		<welcome-file>index.htm</welcome-file>
 		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
-	<!--
+	<!-- 
 	  <error-page>
 	  	<exception-type>java.lang.Throwable</exception-type>
 	  	<location>/WEB-INF/jsp/commons/genericError.jsp</location>
@@ -442,33 +425,41 @@ END-LIFERAY -->
 	  	<error-code>500</error-code>
 	  	<location>/WEB-INF/jsp/commons/genericError.jsp</location>
 	  </error-page>
-	 
- 	<env-entry>
-		<env-entry-name>resource_path</env-entry-name>
-		<env-entry-type>java.lang.String</env-entry-type>
-		<env-entry-value>C:/SpagoBI/resources</env-entry-value>
+	-->
+  	<env-entry> 
+		<env-entry-name>resource_path</env-entry-name> 
+		<env-entry-type>java.lang.String</env-entry-type> 
+		<env-entry-value>C:\logx\knowage</env-entry-value>
 	</env-entry>
 	<env-entry>
-		<env-entry-name>host_url</env-entry-name>
+		<env-entry-name>service_url</env-entry-name>
 		<env-entry-type>java.lang.String</env-entry-type>
-		<env-entry-value>http://localhost</env-entry-value>
+		<env-entry-value>http://localhost:7001/knowage</env-entry-value>
+	</env-entry>
+	<env-entry>
+		<env-entry-name>hmacKey</env-entry-name>
+		<env-entry-type>java.lang.String</env-entry-type>
+		<env-entry-value>abc123</env-entry-value>
 	</env-entry>
 	<env-entry>
 		<env-entry-name>sso_class</env-entry-name>
 		<env-entry-type>java.lang.String</env-entry-type>
-		<env-entry-value>it.eng.spagobi.services.common.TamSsoService</env-entry-value>
+		<env-entry-value>it.eng.spagobi.services.common.FakeSsoService</env-entry-value>
+	</env-entry>
+	<env-entry>
+		<env-entry-name>host_url</env-entry-name>
+		<env-entry-type>java.lang.String</env-entry-type>
+		<env-entry-value>http://localhost:7001</env-entry-value>
 	</env-entry>	
-	  -->
 
-	<!-- START TOMCAT RES -->
-	<resource-ref id="ResourceRef_1233743772692">
+
+	<resource-ref id="knowageds_core">
 		<description>
 		</description>
-		<res-ref-name>jdbc/knowage</res-ref-name>
+		<res-ref-name>knowageds</res-ref-name>
 		<res-type>javax.sql.DataSource</res-type>
 		<res-auth>Container</res-auth>
 		<res-sharing-scope>Shareable</res-sharing-scope>
 	</resource-ref>
-	<!-- END TOMCAT RES -->
 
 </web-app>

@@ -17,33 +17,6 @@
  */
 package it.eng.spagobi.api;
 
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
-import it.eng.spagobi.commons.bo.Domain;
-import it.eng.spagobi.commons.bo.Role;
-import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IDomainDAO;
-import it.eng.spagobi.commons.dao.IRoleDAO;
-import it.eng.spagobi.commons.serializer.SerializerFactory;
-import it.eng.spagobi.container.ObjectUtils;
-import it.eng.spagobi.engines.config.bo.Engine;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.ckan.CKANClient;
-import it.eng.spagobi.tools.dataset.ckan.Connection;
-import it.eng.spagobi.tools.dataset.ckan.exception.CKANException;
-import it.eng.spagobi.tools.dataset.ckan.resource.impl.Resource;
-import it.eng.spagobi.tools.dataset.ckan.utils.CKANUtils;
-import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
-import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
-import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import it.eng.spagobi.utilities.json.JSONUtils;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -61,6 +34,34 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
+import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IDomainDAO;
+import it.eng.spagobi.commons.dao.IRoleDAO;
+import it.eng.spagobi.commons.serializer.SerializerFactory;
+import it.eng.spagobi.container.ObjectUtils;
+import it.eng.spagobi.engines.config.bo.Engine;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.ckan.CKANClient;
+import it.eng.spagobi.tools.dataset.ckan.Connection;
+import it.eng.spagobi.tools.dataset.ckan.exception.CKANException;
+import it.eng.spagobi.tools.dataset.ckan.resource.impl.Resource;
+import it.eng.spagobi.tools.dataset.ckan.utils.CKANUtils;
+import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
+import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
+import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.json.JSONUtils;
+
 /**
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
  * @deprecated Use specific services exposed by DataSetResource
@@ -73,6 +74,7 @@ public class GetCertificatedDatasets {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String getAllDataSet(@Context HttpServletRequest request) {
 		IDataSetDAO dataSetDao = null;
 		List<IDataSet> dataSets;
@@ -97,8 +99,8 @@ public class GetCertificatedDatasets {
 			String ckanFilter = request.getParameter("ckanFilter");
 			String ckanOffset = request.getParameter("ckanOffset");
 			String ckanRepository = request.getParameter("ckanRepository");
-			String typeDocWizard = (request.getParameter("typeDoc") != null && !"null".equals(request.getParameter("typeDoc"))) ? request
-					.getParameter("typeDoc") : null;
+			String typeDocWizard = (request.getParameter("typeDoc") != null && !"null".equals(request.getParameter("typeDoc")))
+					? request.getParameter("typeDoc") : null;
 
 			if (isTech != null && isTech.equals("true")) {
 				// if is technical dataset == ENTERPRISE --> get all ADMIN/DEV public datasets
@@ -238,6 +240,7 @@ public class GetCertificatedDatasets {
 	@GET
 	@Path("/getflatdataset")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV })
 	public String getFlatDataSet(@Context HttpServletRequest req) {
 		IDataSetDAO dataSetDao = null;
 		List<IDataSet> dataSets;

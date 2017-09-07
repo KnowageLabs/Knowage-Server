@@ -336,7 +336,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 	
 	if (showMapDriver){
 		$scope.getLayers = function(){ // service that gets list of layers @GET
-			sbiModule_restServices.promiseGet("2.0/analyticalDrivers/layers/", "")
+			sbiModule_restServices.promiseGet("2.0/analyticalDrivers", "layers")
 			.then(function(response) {
 				$scope.layersList = response.data;
 				console.log($scope.layersList);
@@ -358,7 +358,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
     }
 	
 	$scope.getChecks = function () { // service that gets list of checks @GET
-		sbiModule_restServices.promiseGet("2.0/analyticalDrivers/checks/", "")
+		sbiModule_restServices.promiseGet("2.0/analyticalDrivers", "checks")
 		.then(function(response) {
 			$scope.checksList = response.data;
 		}, function(response) {
@@ -393,7 +393,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 	}
 	
 	$scope.getLovDates = function(){ // service that gets list of lovs @GET
-		sbiModule_restServices.promiseGet("2.0", "lovs")
+		sbiModule_restServices.promiseGet("2.0", "lovs/get/all")
 		.then(function(response) {
 			$scope.listDate = response.data;
 			console.log($scope.listDate);

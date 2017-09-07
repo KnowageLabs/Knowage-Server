@@ -17,26 +17,26 @@
  */
 package it.eng.knowage.engines.svgviewer.interceptor;
 
+import java.io.IOException;
+
+import javax.annotation.Priority;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Priorities;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.container.ContainerResponseContext;
+import javax.ws.rs.container.ContainerResponseFilter;
+import javax.ws.rs.container.PreMatching;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.ext.Provider;
+
+import org.apache.log4j.Logger;
+
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.user.UserProfileManager;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.ext.Provider;
-
-import org.apache.log4j.Logger;
-import org.jboss.resteasy.annotations.interception.Precedence;
-import org.jboss.resteasy.annotations.interception.ServerInterceptor;
-import org.jboss.resteasy.core.ResourceMethod;
-import org.jboss.resteasy.core.ServerResponse;
-import org.jboss.resteasy.spi.Failure;
-import org.jboss.resteasy.spi.HttpRequest;
-import org.jboss.resteasy.spi.interception.PostProcessInterceptor;
-import org.jboss.resteasy.spi.interception.PreProcessInterceptor;
 
 /**
  * The org.jboss.resteasy.spi.interception.PreProcessInterceptor runs after a JAX-RS resource method is found to invoke on, but before the actual invocation
@@ -46,9 +46,9 @@ import org.jboss.resteasy.spi.interception.PreProcessInterceptor;
  *
  */
 @Provider
-@ServerInterceptor
-@Precedence("ENCODER")
-public class TenantRestProcessInterceptor implements PreProcessInterceptor, PostProcessInterceptor {
+@PreMatching
+@Priority(Priorities.ENTITY_CODER)
+public class TenantRestProcessInterceptor implements ContainerRequestFilter, ContainerResponseFilter {
 
 	private static Logger logger = Logger.getLogger(TenantRestProcessInterceptor.class);
 
@@ -58,10 +58,10 @@ public class TenantRestProcessInterceptor implements PreProcessInterceptor, Post
 	/**
 	 * Pre-processes all the REST requests. Get the UserProfile from the session and sets the tenant information into the Thread
 	 */
-	public ServerResponse preProcess(HttpRequest request, ResourceMethod resourceMethod) throws Failure, WebApplicationException {
+	@Override
+	public void filter(ContainerRequestContext requestContext) throws IOException {
 		logger.debug("IN");
 		UserProfile profile = (UserProfile) servletRequest.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-
 		if (profile == null)
 			profile = UserProfileManager.getProfile();
 		if (profile != null) {
@@ -73,15 +73,14 @@ public class TenantRestProcessInterceptor implements PreProcessInterceptor, Post
 			Tenant tenant = new Tenant(tenantId);
 			TenantManager.setTenant(tenant);
 		}
-
 		logger.debug("OUT");
-		return null;
 	}
 
 	/**
 	 * Post-processes all the REST requests. Remove tenant's information from thread
 	 */
-	public void postProcess(ServerResponse response) {
+	@Override
+	public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
 		logger.debug("IN");
 		TenantManager.unset();
 		logger.debug("OUT");

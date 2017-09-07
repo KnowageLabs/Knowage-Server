@@ -129,15 +129,15 @@ public class RolesResource extends AbstractSpagoBIResource {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON + charset)
 	@Path("/idsByNames")
-	public Response getRolesIdsByName(@QueryParam("name") String[] roleNames) {
+	public Response getRolesIdsByName(@QueryParam("name") List<String> roleNames) {
 		IRoleDAO rolesDao = null;
 		List roles = new ArrayList<>();
 		try {
-			for (int i = 0; i < roleNames.length; i++) {
+			for (int i = 0; i < roleNames.size(); i++) {
 				Role role = new Role();
 				rolesDao = DAOFactory.getRoleDAO();
 				rolesDao.setUserProfile(getUserProfile());
-				role = rolesDao.loadByName(roleNames[i]);
+				role = rolesDao.loadByName(roleNames.get(i));
 				roles.add(role.getId());
 			}
 

@@ -293,7 +293,6 @@ public class ParameterDAOHibImpl extends AbstractHibernateDAO implements IParame
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO#loadAllSbiParameters()
 	 */
-	@Override
 	public List loadAllSbiParameters() throws EMFUserError {
 		Session aSession = null;
 		Transaction tx = null;

@@ -18,7 +18,7 @@ function KPIControllerFunction($scope,sbiModule_translate,$mdDialog, sbiModule_r
 		},function(response){
 		});
 
-		sbiModule_restServices.promiseGet("2.0/lovs","")
+		sbiModule_restServices.promiseGet("2.0/lovs/get/all","")
 		.then(function(response){ 
 			angular.copy(response.data,$scope.lov);
 		},function(response){

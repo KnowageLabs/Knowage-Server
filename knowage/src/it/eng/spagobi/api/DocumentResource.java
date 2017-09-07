@@ -70,10 +70,10 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
+import org.apache.clerezza.jaxrs.utils.form.FormFile;
+import org.apache.clerezza.jaxrs.utils.form.MultiPartBody;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
-import org.jboss.resteasy.plugins.providers.multipart.InputPart;
-import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -89,9 +89,9 @@ import edu.emory.mathcs.backport.java.util.Arrays;
 public class DocumentResource extends AbstractSpagoBIResource {
 	static protected Logger logger = Logger.getLogger(DocumentResource.class);
 
-	@GET
+/*	@GET
 	@Path("/")
-	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@Produces(MediaType.APPLICATION_JSON )
 	public Response getDocuments(@QueryParam("inputType") String inputType) {
 		logger.debug("IN");
 		IBIObjectDAO documentsDao = null;
@@ -126,7 +126,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 			logger.debug("OUT");
 		}
 	}
-
+*/
 	@POST
 	@Path("/")
 	@Consumes("application/json")
@@ -170,7 +170,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("/{label}")
-	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@Produces(MediaType.APPLICATION_JSON )
 	public Response getDocumentDetails(@PathParam("label") String label) {
 
 		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
@@ -199,7 +199,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 
 	@PUT
 	@Path("/{label}")
-	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@Produces(MediaType.APPLICATION_JSON )
 	public Response updateDocument(@PathParam("label") String label, String body) {
 		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
 		BIObject oldDocument = documentManager.getDocument(label);
@@ -303,8 +303,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 	// The file has to be put in a field called "file"
 	@POST
 	@Path("/{label}/template")
-	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	public Response addDocumentTemplate(@PathParam("label") String label, MultipartFormDataInput input) {
+	public Response addDocumentTemplate(@PathParam("label") String label, MultiPartBody input) {
 		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
 		BIObject document = documentManager.getDocument(label);
 		if (document == null)
@@ -313,25 +312,20 @@ public class DocumentResource extends AbstractSpagoBIResource {
 		if (!ObjectsAccessVerifier.canDevBIObject(document, getUserProfile()))
 			throw new SpagoBIRuntimeException("User [" + getUserProfile().getUserName() + "] has no rights to manage the template of document with label ["
 					+ label + "]");
-
-		Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
-		List<InputPart> inputParts = uploadForm.get("file");
-
-		if (inputParts == null)
+		
+		final FormFile file = input.getFormFileParameterValues("file")[0];
+		
+		if (file == null)
 			return Response.status(Response.Status.BAD_REQUEST).build();
 
-		for (InputPart inputPart : inputParts) {
+
 			try {
-				MultivaluedMap<String, String> header = inputPart.getHeaders();
 
-				// convert the uploaded file to inputstream
-				InputStream inputStream = inputPart.getBody(InputStream.class, null);
-
-				byte[] content = IOUtils.toByteArray(inputStream);
+				byte[] content = file.getContent();
 
 				ObjTemplate template = new ObjTemplate();
 				template.setContent(content);
-				template.setName(getFileName(header));
+				template.setName(file.getFileName());
 
 				documentManager.saveDocument(document, template);
 
@@ -342,14 +336,13 @@ public class DocumentResource extends AbstractSpagoBIResource {
 				logger.error("Error while getting the template", e);
 				throw new SpagoBIRuntimeException("Error while getting the template", e);
 			}
-		}
 
-		throw new SpagoBIRuntimeException("Template file not found inside the request");
+
 	}
 
 	@GET
 	@Path("/{label}/meta")
-	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@Produces(MediaType.APPLICATION_JSON )
 	public String getDocumentMeta(@PathParam("label") String label) {
 		// TODO
 		return null;
@@ -357,7 +350,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("/{label}/parameters")
-	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@Produces(MediaType.APPLICATION_JSON )
 	public String getDocumentParameters(@PathParam("label") String label) {
 		logger.debug("IN");
 		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
@@ -376,7 +369,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("/{label}/analyticalDrivers")
-	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@Produces(MediaType.APPLICATION_JSON )
 	public Response getDocumentAD(@PathParam("label") String label) {
 		logger.debug("IN");
 
@@ -398,7 +391,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("/{label}/lovs")
-	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@Produces(MediaType.APPLICATION_JSON )
 	public Response getDocumentLovs(@PathParam("label") String label) {
 		logger.debug("IN");
 
@@ -477,12 +470,15 @@ public class DocumentResource extends AbstractSpagoBIResource {
 	@POST
 	@Path("/saveChartTemplate")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String saveTemplate(@QueryParam("jsonTemplate") String jsonTemplate, @QueryParam("docLabel") String docLabel,
-			@Context HttpServletResponse servletResponse) {
+	public String saveTemplatePrivate(	@Context HttpServletRequest req) {
 		String xml = null;
+		String docLabel = "";
 		try {
-			JSONObject json = new JSONObject(jsonTemplate);
-
+			
+			JSONObject requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
+			
+			JSONObject json = new JSONObject(requestBodyJSON.getString("jsonTemplate"));
+			docLabel = requestBodyJSON.getString("docLabel");
 			xml = JSONTemplateUtilities.convertJsonToXML(json);
 
 		} catch (Exception e) {

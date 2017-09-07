@@ -21,12 +21,11 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
+import org.apache.clerezza.jaxrs.utils.form.FormFile;
+import org.apache.clerezza.jaxrs.utils.form.MultiPartBody;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
-import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
-import org.jboss.resteasy.plugins.providers.multipart.InputPart;
-import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
-import org.jboss.resteasy.util.GenericType;
+
 
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.ADconverter.AccessibleDocumentConverter;
@@ -44,7 +43,7 @@ public class AccessibleDocumentExportResource extends AbstractSpagoBIResource {
 	
 	@GET
 	@Path("/{conversionType}/getResult/{jobId}")
-	@Produces({ MediaType.APPLICATION_OCTET_STREAM })
+	@Produces({ "aplication/pdf" })
 	public Response getResult(@PathParam("jobId")String jobId,@PathParam("conversionType") String conversionType){
 		
 		ConversionType convesionType;
@@ -67,21 +66,28 @@ public class AccessibleDocumentExportResource extends AbstractSpagoBIResource {
 	}
 	@POST
 	@Path("/{conversionType}/startconversion")
-	@Consumes({ MediaType.MULTIPART_FORM_DATA})
 	@Produces({ MediaType.TEXT_PLAIN })
-	public Response startConversion(@MultipartForm MultipartFormDataInput multipartFormDataInput, @PathParam("conversionType") String conversionType) {
+	public Response startConversion(MultiPartBody input, @PathParam("conversionType") String conversionType) {
 		
 		byte[] file =null;
+		String fileName = null;
+		String size = null;
 		ConversionType convesionType = null;
 		Map<String,String> params = new HashMap<>();
 		
-		
-		file = getFileBytes(multipartFormDataInput);
-		params = getParams(multipartFormDataInput);
+			
 		try {
 		convesionType = ConversionType.valueOf(conversionType);
 		
+		final FormFile fileO = input.getFormFileParameterValues("file")[0];
+		
+		file = fileO.getContent();
+		fileName = "table.html";//getFileName(multipartFormDataInput.getFormDataMap().get("file").get(0).getHeaders());
+		size = "4";
 
+		params.put("filename", fileName);
+		params.put("size", size);
+		
 		AccessibleDocumentConverterFactory ADCFactory = new AccessibleDocumentConverterFactory();
 		AccessibleDocumentConverter dc = ADCFactory.getAccessibleDocumentConverter(convesionType);
 		
@@ -91,57 +97,27 @@ public class AccessibleDocumentExportResource extends AbstractSpagoBIResource {
 		} 
 		catch (Exception e) {
 			logger.error("error in service",e);
-			throw new SpagoBIEngineServiceException(SERVICENAME, "ERROR",e);
+			throw new SpagoBIEngineServiceException(SERVICENAME, "ERROR");
 		}
 	}
-	
-	
 
-	private byte[] getFileBytes( MultipartFormDataInput multipartFormDataInput){
+
+	
+	private String getFileName(MultivaluedMap<String, String> headers) {
 		
-		byte[] file = null;
-		Set<Entry<String, List<InputPart>>>    multiPartParams = multipartFormDataInput.getFormDataMap().entrySet();
-		
-		for (Iterator<Map.Entry<String, List<InputPart>>> iterator = multiPartParams.iterator(); iterator.hasNext();) {
-			 Map.Entry<String, List<InputPart>> part =  iterator.next();
-			if(part.getKey().equals("file")){
-				try {
-				file =	multipartFormDataInput.getFormDataPart(part.getKey(), new GenericType<byte[]>(){});
-				return file;
-				} catch (IOException e) {
-					logger.error("error getting a file from multipart form",e);
-					throw new SpagoBIEngineServiceException(SERVICENAME, "error getting a file from multipart form",e);
-				}
+		String[] contentDisposition = headers.getFirst("Content-Disposition").split(";");
+
+		for (String filename : contentDisposition) {
+			if ((filename.trim().startsWith("filename"))) {
+
+				String[] name = filename.split("=");
+
+				String finalFileName = name[1].trim().replaceAll("\"", "");
+				return finalFileName;
 			}
-		
 		}
-		logger.error("paramter with name file is mandatory");
-		throw new SpagoBIEngineServiceException(SERVICENAME, "paramter with name file is mandatory");
+		return null;
 	}
-	
-	private Map<String,String> getParams(MultipartFormDataInput multipartFormDataInput){
-		
-		Map<String,String> params = new HashMap<String, String>();
-		Set<Entry<String, List<InputPart>>>    multiPartParams = multipartFormDataInput.getFormDataMap().entrySet();
-		
-		for (Iterator<Map.Entry<String, List<InputPart>>> iterator = multiPartParams.iterator(); iterator.hasNext();) {
-			 Map.Entry<String, List<InputPart>> part =  iterator.next();
-			 if(!part.getKey().equals("file")){
-				try {
-					params.put(part.getKey(), multipartFormDataInput.getFormDataPart(part.getKey(), new GenericType<String>(){}));
-					
-				} catch (IOException e) {
-					logger.error("error getting a param "+part.getKey()+" from multipart form",e);
-					throw new SpagoBIEngineServiceException(SERVICENAME, "error getting a  "+part.getKey()+" from multipart form",e);
-				}
-			 }
-		}
-		
-		return params;
-	}
-	
-	
-	
 	
 	
 }

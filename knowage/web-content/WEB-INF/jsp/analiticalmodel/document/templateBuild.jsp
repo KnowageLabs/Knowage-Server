@@ -95,20 +95,20 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 	urlToCall.append("&"+SpagoBIConstants.SBI_COUNTRY+"="+locale.getCountry());
 
 %>
-
+<!-- WEBLOGIC CONFS START 
 	<html ng-app>
 		<body style="overflow: hidden">
 			<iframe flex class=" noBorder" width="100%" height="100%" ng-src="<%= StringEscapeUtils.escapeJavaScript(GeneralUtilities.getUrl(urlToCall.toString(), engineurl.getParameters())) %>" name="angularIframe"></iframe>
 		</body>
 	</html>
+-->
 
-
-	<!-- WEBLOGIC CONFS START 
+	
 	<html ng-app>
 		<body style="overflow: hidden">
 			<iframe flex class=" noBorder" width="100%" height="100%" ng-src="<%= (GeneralUtilities.getUrl(host+urlToCall.toString(), engineurl.getParameters())) %>" name="angularIframe"></iframe>
 		</body>
 	</html>
-	-->
+	
 	 
 

@@ -18,44 +18,9 @@
 package it.eng.spagobi.api.v2;
 
 import static it.eng.spagobi.tools.glossary.util.Util.getNumberOrNull;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import org.apache.log4j.Logger;
-import org.jgrapht.graph.Pseudograph;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.mongodb.util.JSON;
-
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.api.common.DataSetResourceAbstractResource;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.ConfigurationConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -113,13 +78,50 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceParameterException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 import it.eng.spagobi.utilities.sql.SqlUtils;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import org.apache.log4j.Logger;
+import org.jgrapht.graph.Pseudograph;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.mongodb.util.JSON;
+
 /**
  * @author Alessandro Daniele (alessandro.daniele@eng.it)
  *
  */
 @Path("/2.0/datasets")
+
 @ManageAuthorization
-public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
+public class DataSetResource extends DataSetResourceAbstractResource {
+
 
 	static protected Logger logger = Logger.getLogger(DataSetResource.class);
 
@@ -131,8 +133,11 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 			.replace("dd", "DD").replace("HH", "HH24").replace("mm", "MI").replace("ss", "SS");
 	private static final String DATE_TIME_FORMAT_SQLSERVER = "yyyyMMdd HH:mm:ss";
 
-	@Override
-	public String getDataSets(String typeDoc, String callback, String ids) {
+
+	@GET
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	public String getDataSets(@QueryParam("typeDoc") String typeDoc, @QueryParam("callback") String callback) {
 		logger.debug("IN");
 
 		ISbiDataSetDAO dsDAO;
@@ -144,17 +149,11 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		}
 
 		List<SbiDataSet> dataSets = dsDAO.loadSbiDataSets();
-		List<SbiDataSet> toBeReturned = new ArrayList<>();
-
-		List<Integer> idList = null;
-		Integer[] idArray = getIdsAsIntegers(ids);
-		if (idArray != null) {
-			idList = Arrays.asList(idArray);
-		}
+		List<SbiDataSet> toBeReturned = new ArrayList<SbiDataSet>();
 
 		for (SbiDataSet dataset : dataSets) {
 			IDataSet iDataSet = DataSetFactory.toDataSet(dataset);
-			if (DataSetUtilities.isExecutableByUser(iDataSet, getUserProfile()) && (idList == null || idList.contains(iDataSet.getId())))
+			if (DataSetUtilities.isExecutableByUser(iDataSet, getUserProfile()))
 				toBeReturned.add(dataset);
 		}
 
@@ -170,7 +169,8 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 
 	@GET
 	@Path("/listNotDerivedDataset")
-	public String getNotDerivedDataSets(String typeDoc, String callback) {
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	public String getNotDerivedDataSets(@QueryParam("typeDoc") String typeDoc, @QueryParam("callback") String callback) {
 		logger.debug("IN");
 
 		IDataSetDAO dsDAO = getDataSetDAO();
@@ -218,7 +218,6 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		return dataSourceDAO;
 	}
 
-	@Override
 	public String getDataSet(String label) {
 
 		ISbiDataSetDAO dsDAO;
@@ -238,7 +237,6 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 	}
 
 	@POST
-	@Path("/")
 	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response addDataSet(String body) {
 		SbiDataSet sbiDataset = (SbiDataSet) JsonConverter.jsonToValidObject(body, SbiDataSet.class);
@@ -312,9 +310,11 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 	@GET
 	@Path("/listDataset")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String getDocumentSearchAndPaginate(@Context HttpServletRequest req, @QueryParam("Page") String pageStr,
 			@QueryParam("ItemPerPage") String itemPerPageStr, @QueryParam("label") String search, @QueryParam("seeTechnical") Boolean seeTechnical,
 			@QueryParam("ids") String ids) throws EMFUserError {
+
 
 		ISbiDataSetDAO dao = DAOFactory.getSbiDataSetDAO();
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
@@ -355,6 +355,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 	@GET
 	@Path("/loadAssociativeSelections")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String getAssociativeSelections(@QueryParam("associationGroup") String associationGroupString, @QueryParam("selections") String selectionsString,
 			@QueryParam("datasets") String datasetsString, @QueryParam("nearRealtime") String nearRealtimeDatasetsString) {
 		logger.debug("IN");
@@ -486,6 +487,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 				IDataSource dataSource = getDataSource(dataset, isNearRealtime);
 				boolean isDateColumn = isDateColumn(column, dataset);
 
+
 				String values = null;
 				String valuesForQuery = null;
 				Object object = selectionsObject.getJSONArray(datasetDotColumn).get(0);
@@ -530,6 +532,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 			}
 
 			logger.debug("Filter list: " + filters);
+
 
 			String strategy = SingletonConfig.getInstance().getConfigValue(ConfigurationConstants.SPAGOBI_DATASET_ASSOCIATIVE_LOGIC_STRATEGY);
 			Config config = AssociativeLogicUtils.buildConfig(strategy, graph, datasetToAssociationToColumnMap, filters, nearRealtimeDatasets,
@@ -1028,6 +1031,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 	@POST
 	@Path("/{label}/data")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String getDataStorePost(@PathParam("label") String label, @QueryParam("parameters") String parameters, String selections,
 			@QueryParam("likeSelections") String likeSelections, @DefaultValue("-1") @QueryParam("limit") int maxRowCount,
 			@QueryParam("aggregations") String aggregations, @QueryParam("summaryRow") String summaryRow, @DefaultValue("-1") @QueryParam("offset") int offset,
@@ -1045,6 +1049,7 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 	@POST
 	@Path("/addDatasetInCache")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response addDatasetInCache(@Context HttpServletRequest req) {
 		logger.debug("IN");
 		try {
@@ -1062,7 +1067,6 @@ public class DataSetResource extends it.eng.spagobi.api.DataSetResource {
 		}
 	}
 
-	@Override
 	protected IDataWriter getDataSetWriter() throws JSONException {
 		CockpitJSONDataWriter dataWriter = new CockpitJSONDataWriter(getDataSetWriterProperties());
 		dataWriter.setLocale(buildLocaleFromSession());

@@ -17,30 +17,6 @@
  */
 package it.eng.spagobi.tools.hierarchiesmanagement.service.rest;
 
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.services.rest.annotations.UserConstraint;
-import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IField;
-import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
-import it.eng.spagobi.tools.hierarchiesmanagement.Hierarchies;
-import it.eng.spagobi.tools.hierarchiesmanagement.HierarchiesSingleton;
-import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Dimension;
-import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Field;
-import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Hierarchy;
-import it.eng.spagobi.tools.hierarchiesmanagement.utils.FillConfiguration;
-import it.eng.spagobi.tools.hierarchiesmanagement.utils.HierarchyConstants;
-import it.eng.spagobi.tools.hierarchiesmanagement.utils.HierarchyUtils;
-import it.eng.spagobi.utilities.Helper;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import it.eng.spagobi.utilities.rest.RestUtilities;
-
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -69,6 +45,30 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IField;
+import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
+import it.eng.spagobi.tools.hierarchiesmanagement.Hierarchies;
+import it.eng.spagobi.tools.hierarchiesmanagement.HierarchiesSingleton;
+import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Dimension;
+import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Field;
+import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Hierarchy;
+import it.eng.spagobi.tools.hierarchiesmanagement.utils.FillConfiguration;
+import it.eng.spagobi.tools.hierarchiesmanagement.utils.HierarchyConstants;
+import it.eng.spagobi.tools.hierarchiesmanagement.utils.HierarchyUtils;
+import it.eng.spagobi.utilities.Helper;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
+
 /*
  * This class contains all REST services used for specific MASTER hierarchy types
  */
@@ -82,6 +82,7 @@ public class HierarchyMasterService {
 	@GET
 	@Path("/getHierarchiesMaster")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { SpagoBIConstants.HIERARCHIES_MANAGEMENT })
 	public String getHierarchiesMaster(@QueryParam("dimension") String dimension) {
 		JSONArray hierarchiesJSONArray = new JSONArray();
 		logger.debug("START");
@@ -375,8 +376,8 @@ public class HierarchyMasterService {
 			}
 			if (posID == -1) {
 				logger.error("Impossible synchronize the hierarchy.");
-				throw new SpagoBIServiceException("Error", "Impossible synchronize the hierarchy. Column " + prefix + HierarchyConstants.DIM_FILTER_FIELD
-						+ " not found into the resultset. ");
+				throw new SpagoBIServiceException("Error",
+						"Impossible synchronize the hierarchy. Column " + prefix + HierarchyConstants.DIM_FILTER_FIELD + " not found into the resultset. ");
 			}
 
 			Iterator iterFromHier = dsDimensionsFromHier.iterator();
@@ -793,11 +794,11 @@ public class HierarchyMasterService {
 
 				// Filling logic: if the user has enabled the filling option, null values in a level are replaced by values from the previous level
 
-				cdValue = ((cdTmpField.getValue()) != null) ? cdTmpField.getValue() : fillConfiguration.fillHandler(levelsMap,
-						HierarchyConstants.CD_VALUE_POSITION);
+				cdValue = ((cdTmpField.getValue()) != null) ? cdTmpField.getValue()
+						: fillConfiguration.fillHandler(levelsMap, HierarchyConstants.CD_VALUE_POSITION);
 
-				nmValue = ((nmTmpField.getValue()) != null) ? nmTmpField.getValue() : fillConfiguration.fillHandler(levelsMap,
-						HierarchyConstants.NM_VALUE_POSITION);
+				nmValue = ((nmTmpField.getValue()) != null) ? nmTmpField.getValue()
+						: fillConfiguration.fillHandler(levelsMap, HierarchyConstants.NM_VALUE_POSITION);
 			}
 			concatNmValues += (nmValue == null) ? "" : nmValue;
 
@@ -917,10 +918,10 @@ public class HierarchyMasterService {
 				String cdColumn = AbstractJDBCDataset.encapsulateColumnName((String) hierConfig.get(HierarchyConstants.TREE_NODE_CD) + lvlIndex, dataSource);
 				String nmColumn = AbstractJDBCDataset.encapsulateColumnName((String) hierConfig.get(HierarchyConstants.TREE_NODE_NM) + lvlIndex, dataSource);
 
-				Object cdValue = ((recursiveValuesList.get(i)) != null) ? recursiveValuesList.get(i) : fillConfiguration.fillHandler(levelsMap,
-						HierarchyConstants.CD_VALUE_POSITION);
-				Object nmValue = ((recursiveValuesList.get(i + 1)) != null) ? recursiveValuesList.get(i + 1) : fillConfiguration.fillHandler(levelsMap,
-						HierarchyConstants.NM_VALUE_POSITION);
+				Object cdValue = ((recursiveValuesList.get(i)) != null) ? recursiveValuesList.get(i)
+						: fillConfiguration.fillHandler(levelsMap, HierarchyConstants.CD_VALUE_POSITION);
+				Object nmValue = ((recursiveValuesList.get(i + 1)) != null) ? recursiveValuesList.get(i + 1)
+						: fillConfiguration.fillHandler(levelsMap, HierarchyConstants.NM_VALUE_POSITION);
 
 				logger.debug("In the level [" + lvlIndex + "] user has specified the code [" + cdValue + "] and the name [" + nmValue + "]");
 				concatNmValues += (nmValue == null) ? "" : nmValue;
@@ -1064,7 +1065,8 @@ public class HierarchyMasterService {
 
 	}
 
-	private void manageHierTypeSection(IDataSource dataSource, Map<Integer, Object> fieldsMap, StringBuffer columnsClause, StringBuffer valuesClause, String sep) {
+	private void manageHierTypeSection(IDataSource dataSource, Map<Integer, Object> fieldsMap, StringBuffer columnsClause, StringBuffer valuesClause,
+			String sep) {
 		String hierTypeColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_TP, dataSource);
 
 		logger.debug("Hierarchy tipe is [" + HierarchyConstants.HIER_TP_MASTER + "]");

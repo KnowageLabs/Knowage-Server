@@ -20,6 +20,55 @@ package it.eng.spagobi.api.v2;
 import static it.eng.spagobi.tools.glossary.util.Util.fromDocumentLight;
 import static it.eng.spagobi.tools.glossary.util.Util.fromObjectParameterListLight;
 import static it.eng.spagobi.tools.glossary.util.Util.getNumberOrNull;
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.dbaccess.sql.DataRow;
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.document.AnalyticalModelDocumentManagementAPI;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.bo.OutputParameter;
+import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
+import it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO;
+import it.eng.spagobi.analiticalmodel.document.dao.IOutputParameterDAO;
+import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.ParameterDAOHibImpl;
+import it.eng.spagobi.behaviouralmodel.lov.bo.FixedListDetail;
+import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
+import it.eng.spagobi.behaviouralmodel.lov.bo.JavaClassDetail;
+import it.eng.spagobi.behaviouralmodel.lov.bo.LovDetailFactory;
+import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
+import it.eng.spagobi.behaviouralmodel.lov.bo.QueryDetail;
+import it.eng.spagobi.behaviouralmodel.lov.bo.ScriptDetail;
+import it.eng.spagobi.commons.bo.CriteriaParameter;
+import it.eng.spagobi.commons.bo.CriteriaParameter.Match;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.commons.utilities.indexing.IndexingConstants;
+import it.eng.spagobi.commons.utilities.indexing.LuceneSearcher;
+import it.eng.spagobi.sdk.documents.bo.SDKDocument;
+import it.eng.spagobi.sdk.documents.bo.SDKDocumentParameter;
+import it.eng.spagobi.sdk.documents.bo.SDKExecutedDocumentContent;
+import it.eng.spagobi.sdk.documents.impl.DocumentsServiceImpl;
+import it.eng.spagobi.sdk.exceptions.NonExecutableDocumentException;
+import it.eng.spagobi.sdk.utilities.SDKObjectsConverter;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.services.serialization.JsonConverter;
+import it.eng.spagobi.utilities.JSError;
+import it.eng.spagobi.utilities.exceptions.SpagoBIException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -61,65 +110,16 @@ import org.json.JSONObject;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.dbaccess.sql.DataRow;
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.analiticalmodel.document.AnalyticalModelDocumentManagementAPI;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.bo.OutputParameter;
-import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
-import it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO;
-import it.eng.spagobi.analiticalmodel.document.dao.IOutputParameterDAO;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.ParameterDAOHibImpl;
-import it.eng.spagobi.behaviouralmodel.lov.bo.FixedListDetail;
-import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
-import it.eng.spagobi.behaviouralmodel.lov.bo.JavaClassDetail;
-import it.eng.spagobi.behaviouralmodel.lov.bo.LovDetailFactory;
-import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
-import it.eng.spagobi.behaviouralmodel.lov.bo.QueryDetail;
-import it.eng.spagobi.behaviouralmodel.lov.bo.ScriptDetail;
-import it.eng.spagobi.commons.bo.CriteriaParameter;
-import it.eng.spagobi.commons.bo.CriteriaParameter.Match;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.GeneralUtilities;
-import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.commons.utilities.UserUtilities;
-import it.eng.spagobi.commons.utilities.indexing.IndexingConstants;
-import it.eng.spagobi.commons.utilities.indexing.LuceneSearcher;
-import it.eng.spagobi.sdk.documents.bo.SDKDocument;
-import it.eng.spagobi.sdk.documents.bo.SDKDocumentParameter;
-import it.eng.spagobi.sdk.documents.bo.SDKExecutedDocumentContent;
-import it.eng.spagobi.sdk.documents.impl.DocumentsServiceImpl;
-import it.eng.spagobi.sdk.exceptions.NonExecutableDocumentException;
-import it.eng.spagobi.sdk.utilities.SDKObjectsConverter;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.services.serialization.JsonConverter;
-import it.eng.spagobi.utilities.JSError;
-import it.eng.spagobi.utilities.exceptions.SpagoBIException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 /**
  * @author Alessandro Daniele (alessandro.daniele@eng.it)
  *
  */
 @Path("/2.0/documents")
 @ManageAuthorization
-public class DocumentResource extends it.eng.spagobi.api.DocumentResource {
+public class DocumentResource extends AbstractSpagoBIResource {
 	static protected Logger logger = Logger.getLogger(DocumentResource.class);
 
-	@Override
+
 	public String getDocumentParameters(String label) {
 
 		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());

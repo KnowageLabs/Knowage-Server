@@ -17,71 +17,65 @@
  */
 package it.eng.spagobi.services.rest;
 
+import java.io.IOException;
+import java.lang.reflect.Method;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.container.ContainerResponseContext;
+import javax.ws.rs.container.ContainerResponseFilter;
+import javax.ws.rs.container.ResourceInfo;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+
+import org.apache.log4j.Logger;
+
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.security.ExternalServiceController;
 import it.eng.spagobi.services.common.SsoServiceFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
 import it.eng.spagobi.services.rest.annotations.CheckFunctionalitiesParser;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.services.rest.annotations.PublicService;
 import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Context;
-
-import org.apache.log4j.Logger;
-import org.jboss.resteasy.core.Headers;
-import org.jboss.resteasy.core.ResourceMethod;
-import org.jboss.resteasy.core.ServerResponse;
-import org.jboss.resteasy.spi.Failure;
-import org.jboss.resteasy.spi.HttpRequest;
-
 /**
- * The org.jboss.resteasy.spi.interception.PreProcessInterceptor runs after a JAX-RS resource method is found to invoke on, but before the actual invocation
- * happens
  *
  * Similar to SpagoBIAccessFilter but designed for REST services
  *
  */
-public abstract class AbstractSecurityServerInterceptor {
+public abstract class AbstractSecurityServerInterceptor implements ContainerRequestFilter, ContainerResponseFilter {
 
 	static private Logger logger = Logger.getLogger(AbstractSecurityServerInterceptor.class);
 
 	@Context
-	private HttpServletRequest servletRequest;
+	private ResourceInfo resourceInfo;
+
+	@Context
+	protected HttpServletRequest servletRequest;
 
 	/**
 	 * Preprocess all the REST requests.
 	 *
 	 * Get the UserProfile from the session and checks if has the grants to execute the service
 	 */
-	public ServerResponse preProcess(HttpRequest request, ResourceMethod resourceMethod) throws Failure, WebApplicationException {
-
-		ServerResponse response;
+	@Override
+	public void filter(ContainerRequestContext requestContext) throws IOException {
 
 		logger.trace("IN");
 
-		response = null;
 		try {
-			String serviceUrl = InterceptorUtilities.getServiceUrl(request);
-			serviceUrl = serviceUrl.replaceAll("/1.0/", "/");
-			serviceUrl = serviceUrl.replaceAll("/2.0/", "/");
 
-			String methodName = resourceMethod.getMethod().getName();
-
+			Method method = resourceInfo.getResourceMethod();
 			logger.info("Receiving request from: " + servletRequest.getRemoteAddr());
-			logger.info("Attempt to invoke method [" + methodName + "] on class [" + resourceMethod.getResourceClass().getName() + "]");
+			logger.info("Attempt to invoke method [" + method.getName() + "] on class [" + resourceInfo.getResourceClass() + "]");
 
-			// Check for Services that can be invoked externally without user login in SpagoBI
-			ExternalServiceController externalServiceController = ExternalServiceController.getInstance();
-			boolean isExternalService = externalServiceController.isExternalService(serviceUrl);
-			if (isExternalService == true) {
-				// TODO check if here we need to create and put in session a profile for the guest user
-				return null; // we return null to continue with the service execution
+			if (method.isAnnotationPresent(PublicService.class)) {
+				logger.debug("Invoked service is public");
+				return;
 			}
 
 			UserProfile profile = null;
@@ -97,48 +91,31 @@ public abstract class AbstractSecurityServerInterceptor {
 			}
 
 			if (profile == null) {
-				return notAuthenticated();
+				notAuthenticated(requestContext);
+				return;
 			}
 			// Profile is not null
 			UserProfileManager.setProfile(profile);
 
-			boolean authorized = false;
+			// look for @UserConstraint annotation
+			CheckFunctionalitiesParser checkFunctionalitiesParser = new CheckFunctionalitiesParser();
 
-			// If the resource class is annotated with @ManageAuthorization authorizations are specified using the @UserConstraint annotation
-			if (resourceMethod.getMethod().getDeclaringClass().isAnnotationPresent(ManageAuthorization.class)) {
-				// Functionalities annotation parser
-				CheckFunctionalitiesParser checkFunctionalitiesParser = new CheckFunctionalitiesParser();
-
-				// If the security annotation is not present on the method, this method is public
-				boolean isPublicService = checkFunctionalitiesParser.isPublicService(resourceMethod.getMethod());
-
-				if (isPublicService)
-					authorized = true;
-				else {
-					authorized = checkFunctionalitiesParser.checkFunctionalitiesByAnnotation(resourceMethod.getMethod(), profile);
-				}
-			} else { // Old method for authorization (without annotation)
-				try {
-					authorized = profile.isAbleToExecuteService(serviceUrl);
-				} catch (Throwable e) {
-					logger.debug("Error checking if the user [" + profile.getUserName() + "] has the rights to call the service [" + serviceUrl + "]", e);
-					throw new SpagoBIRuntimeException("Error checking if the user [" + profile.getUserName() + "] has the rights to call the service ["
-							+ serviceUrl + "]", e);
-				}
-			}
+			// the user is authorized for the service if it does not have a user constraint or in case the user satisfies the constraints
+			boolean authorized = !checkFunctionalitiesParser.hasUserConstraints(method)
+					|| checkFunctionalitiesParser.checkFunctionalitiesByAnnotation(method, profile);
 
 			if (!authorized) {
 				try {
-					return new ServerResponse(ExceptionUtilities.serializeException("not-enabled-to-call-service", null), 400, new Headers<Object>());
+					requestContext.abortWith(Response.status(400).entity(ExceptionUtilities.serializeException("not-enabled-to-call-service", null)).build());
 				} catch (Exception e) {
-					throw new SpagoBIRuntimeException("Error checking if the user [" + profile.getUserName() + "] has the rights to call the service ["
-							+ serviceUrl + "]", e);
+					throw new SpagoBIRuntimeException("Error checking if the user [" + profile.getUserName() + "] has the rights to invoke method ["
+							+ method.getName() + "] on class [" + resourceInfo.getResourceClass() + "]", e);
 				}
 			} else {
-				logger.debug("The user [" + profile.getUserName() + "] is enabled to execute the service [" + serviceUrl + "]");
+				logger.debug("The user [" + profile.getUserName() + "] is enabled to invoke method [" + method.getName() + "] on class ["
+						+ resourceInfo.getResourceClass() + "]");
 			}
 
-			return response;
 		} catch (SpagoBIRuntimeException e) {
 			throw e;
 		} catch (Exception e) {
@@ -149,10 +126,11 @@ public abstract class AbstractSecurityServerInterceptor {
 	/**
 	 * It defines the behaviour of the interceptor when the user is not authenticated. It has to be returned a response with status code 401. If Basic
 	 * Authentication is used it should be send back also a the "WWW-Authenticate" header as required by Basic Authentication standard.
-	 * */
-	protected abstract ServerResponse notAuthenticated();
+	 */
+	protected abstract void notAuthenticated(ContainerRequestContext requestContext);
 
-	public void postProcess(ServerResponse response) {
+	@Override
+	public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
 		logger.debug("IN");
 		UserProfileManager.unset();
 		logger.debug("OUT");
@@ -168,7 +146,7 @@ public abstract class AbstractSecurityServerInterceptor {
 		IEngUserProfile engProfile = null;
 		String userId = null;
 
-		if(isBackEndService()){
+		if (isBackEndService()) {
 			return null;
 		}
 		try {

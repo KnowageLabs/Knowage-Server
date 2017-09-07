@@ -17,6 +17,32 @@
  */
 package it.eng.spagobi.api.v2;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.validation.Valid;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
+
+import org.apache.clerezza.jaxrs.utils.form.FormFile;
+import org.apache.clerezza.jaxrs.utils.form.MultiPartBody;
+import org.apache.log4j.Logger;
+
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
@@ -37,37 +63,6 @@ import it.eng.spagobi.utilities.JSError;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.validation.Valid;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
-import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
-import org.jboss.resteasy.plugins.providers.multipart.InputPart;
-import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
-
 @Path("/2.0/businessmodels")
 @ManageAuthorization
 public class BusinessModelResource extends AbstractSpagoBIResource {
@@ -81,8 +76,6 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 
 	private static final String LOG_SUFFIX = ".log";
 
-	IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
-
 	static protected Logger logger = Logger.getLogger(BusinessModelResource.class);
 
 	/**
@@ -95,6 +88,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 		logger.debug("IN");
 
 		List<MetaModel> businessModelList = null;
+		IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
 		businessModelsDAO.setUserProfile(getUserProfile());
 
 		try {
@@ -165,6 +159,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 
 		List<MetaModel> businessModelList = null;
 		List<MetaModel> businessModelsWithDatamart = new ArrayList<MetaModel>();
+		IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
 		businessModelsDAO.setUserProfile(getUserProfile());
 
 		try {
@@ -203,6 +198,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
 		List<Content> versions = null;
 		List<Content> versionsToShow = new ArrayList<Content>();
+		IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
 		businessModelsDAO.setUserProfile(getUserProfile());
 
 		try {
@@ -249,6 +245,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 		logger.debug("IN");
 
 		MetaModel businessModel;
+		IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
 		businessModelsDAO.setUserProfile(getUserProfile());
 
 		try {
@@ -275,6 +272,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 		logger.debug("IN");
 		Content content = null;
 
+		IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
 		businessModelsDAO.setUserProfile(getUserProfile());
 
 		try {
@@ -297,42 +295,24 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 	@POST
 	@Path("/{bmId}/versions")
 	@UserConstraint(functionalities = { SpagoBIConstants.META_MODELS_CATALOGUE_MANAGEMENT })
-	@Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON })
-	public Response uploadFile(@MultipartForm MultipartFormDataInput input, @PathParam("bmId") int bmId) {
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	public Response uploadFile(MultiPartBody body, @PathParam("bmId") int bmId) {
 
 		Content content = new Content();
 		byte[] bytes = null;
 
-		businessModelsDAO.setUserProfile(getUserProfile());
+		IMetaModelsDAO dao = DAOFactory.getMetaModelsDAO();
+		dao.setUserProfile(getUserProfile());
 
-		Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
-		for (String key : uploadForm.keySet()) {
-			List<InputPart> inputParts = uploadForm.get(key);
-			for (InputPart inputPart : inputParts) {
-				try {
-					MultivaluedMap<String, String> header = inputPart.getHeaders();
-					if (getFileName(header) != null) {
-						content.setFileName(getFileName(header));
+		final FormFile file = body.getFormFileParameterValues("file")[0];
 
-						// convert the uploaded file to input stream
-						InputStream inputStream = inputPart.getBody(InputStream.class, null);
+		content.setFileName(file.getFileName());
+		bytes = file.getContent();
+		content.setContent(bytes);
+		content.setCreationDate(new Date());
+		content.setCreationUser(getUserProfile().getUserName().toString());
 
-						bytes = IOUtils.toByteArray(inputStream);
-						content.setContent(bytes);
-						content.setCreationDate(new Date());
-						content.setCreationUser(getUserProfile().getUserName().toString());
-
-						businessModelsDAO.insertMetaModelContent(bmId, content);
-
-					}
-
-				} catch (IOException e) {
-					throw new SpagoBIRuntimeException("Impossible to upload business model file", e);
-				}
-
-			}
-
-		}
+		dao.insertMetaModelContent(bmId, content);
 
 		return Response.status(200).build();
 
@@ -346,6 +326,8 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 	public Response downloadFile(@PathParam("vId") Integer vId, @PathParam("filetype") FILETYPE filetype) {
 		logger.debug("IN");
 		ResponseBuilder response = Response.ok();
+
+		IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
 		businessModelsDAO.setUserProfile(getUserProfile());
 		Content content = businessModelsDAO.loadMetaModelContentById(vId);
 		String filename = content.getFileName();
@@ -385,6 +367,8 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 	public MetaModel insertNewBusinessModel(@Valid MetaModel body) {
 		logger.debug("IN");
 		MetaModel bm = body;
+
+		IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
 		businessModelsDAO.setUserProfile(getUserProfile());
 
 		try {
@@ -426,6 +410,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 		logger.debug("IN");
 
 		MetaModel bm = body;
+		IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
 		boolean isLockedInDB = businessModelsDAO.loadMetaModelById(bmId).getModelLocked();
 		businessModelsDAO.setUserProfile(getUserProfile());
 		try {
@@ -455,6 +440,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 	public Content updateActiveVersion(@PathParam("bmId") Integer bmId, @PathParam("vId") Integer vId) {
 		logger.debug("IN");
 
+		IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
 		businessModelsDAO.setUserProfile(getUserProfile());
 
 		try {
@@ -463,8 +449,8 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 			return businessModelsDAO.loadActiveMetaModelContentById(bmId);
 		} catch (Exception e) {
 			logger.error("An error occurred while updating active version of business model with id:" + bmId, e);
-			throw new SpagoBIRestServiceException("An error occurred while updating active version of business model with id:" + bmId,
-					buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("An error occurred while updating active version of business model with id:" + bmId, buildLocaleFromSession(),
+					e);
 
 		} finally {
 			logger.debug("OUT");
@@ -479,6 +465,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 	public Response deleteBusinessModel(@PathParam("bmId") Integer bmId) {
 		logger.debug("IN");
 
+		IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
 		businessModelsDAO.setUserProfile(getUserProfile());
 
 		try {
@@ -499,13 +486,14 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 	 **/
 	@DELETE
 	@Path("/deletemany")
-	public Response deleteBusinessModels(@QueryParam("id") int[] ids) {
+	public Response deleteBusinessModels(@QueryParam("id") List<Integer> ids) {
 
+		IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
 		businessModelsDAO.setUserProfile(getUserProfile());
 
 		try {
-			for (int i = 0; i < ids.length; i++) {
-				businessModelsDAO.eraseMetaModel(ids[i]);
+			for (int i = 0; i < ids.size(); i++) {
+				businessModelsDAO.eraseMetaModel(ids.get(i));
 			}
 
 			return Response.ok().build();
@@ -525,6 +513,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 	@Path("{bmId}/versions/{vId}")
 	public Response deleteBusinessModelVersion(@PathParam("bmId") Integer bmId, @PathParam("vId") Integer vId) {
 
+		IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
 		businessModelsDAO.setUserProfile(getUserProfile());
 
 		try {
@@ -545,13 +534,14 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 	 **/
 	@DELETE
 	@Path("{bmId}/deleteManyVersions")
-	public Response deleteBusinessModelVersions(@PathParam("bmId") Integer bmId, @QueryParam("id") int[] ids) {
+	public Response deleteBusinessModelVersions(@PathParam("bmId") Integer bmId, @QueryParam("id") List<Integer> ids) {
 
+		IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
 		businessModelsDAO.setUserProfile(getUserProfile());
 
 		try {
-			for (int i = 0; i < ids.length; i++) {
-				businessModelsDAO.eraseMetaModelContent(ids[i]);
+			for (int i = 0; i < ids.size(); i++) {
+				businessModelsDAO.eraseMetaModelContent(ids.get(i));
 			}
 
 			return Response.ok().build();

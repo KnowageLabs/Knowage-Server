@@ -17,24 +17,6 @@
  */
 package it.eng.spagobi.api;
 
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.GeneralUtilities;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
-import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
-import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
-import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import it.eng.spagobi.utilities.themes.ThemesManager;
-import it.eng.spagobi.wapp.services.ChangeTheme;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -55,8 +37,24 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
+import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
+import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
+import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.themes.ThemesManager;
+import it.eng.spagobi.wapp.services.ChangeTheme;
+
 @Path("/selfservicedataset")
-@ManageAuthorization
 public class SelfServiceDataSetPreviewResource extends AbstractSpagoBIResource {
 
 	private static final String DATASET_VALUE_SUCCESS_REQUEST_DISPATCHER_URL = "datasetview.jsp";
@@ -99,8 +97,8 @@ public class SelfServiceDataSetPreviewResource extends AbstractSpagoBIResource {
 		logger.debug("Loading the dataset");
 		if (label == null || label.length() == 0) {
 			logger.error("No dataset found with label ");
-			throw new SpagoBIRestServiceException("sbi.tools.dataset.preview.no.visible.dataset", buildLocaleFromSession(), "No dataset found with label "
-					+ label);
+			throw new SpagoBIRestServiceException("sbi.tools.dataset.preview.no.visible.dataset", buildLocaleFromSession(),
+					"No dataset found with label " + label);
 		}
 		logger.debug("Dataset loaded");
 
@@ -123,8 +121,8 @@ public class SelfServiceDataSetPreviewResource extends AbstractSpagoBIResource {
 
 			if (ds == null) {
 				logger.error("No dataset found with label " + label);
-				throw new SpagoBIRestServiceException("sbi.tools.dataset.preview.no.visible.dataset", buildLocaleFromSession(), "No dataset found with label "
-						+ label);
+				throw new SpagoBIRestServiceException("sbi.tools.dataset.preview.no.visible.dataset", buildLocaleFromSession(),
+						"No dataset found with label " + label);
 			}
 
 			logger.debug("Checking if the user can see the dataset");
@@ -140,8 +138,8 @@ public class SelfServiceDataSetPreviewResource extends AbstractSpagoBIResource {
 
 			if (!isDatasetVisible) {
 				logger.error("The dataset with label " + label + " is not visible to the user");
-				throw new SpagoBIRestServiceException("sbi.tools.dataset.preview.no.visible.dataset", buildLocaleFromSession(), "The dataset with label "
-						+ label + " is not visible to the user");
+				throw new SpagoBIRestServiceException("sbi.tools.dataset.preview.no.visible.dataset", buildLocaleFromSession(),
+						"The dataset with label " + label + " is not visible to the user");
 
 			}
 

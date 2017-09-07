@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,23 +11,22 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.security;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
+
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.configuration.ConfigSingleton;
 
 /**
  * @author Bernabei Angelo
@@ -40,7 +39,6 @@ public class AuthorizationsBusinessMapper {
 	private HashMap _mapActions = null;
 	private HashMap _mapPages = null;
 	private HashMap _mapPagesModules = null;
-	private HashMap _mapRestServices = null;
 
 	/**
 	 * Instantiates a new authorizations business mapper.
@@ -98,33 +96,12 @@ public class AuthorizationsBusinessMapper {
 				}
 			}
 		}
-		initRestServicesMap(config);
 		// logger.debug("OUT");
-	}
-
-	public void initRestServicesMap(ConfigSingleton config) {
-		_mapRestServices = new HashMap();
-		List actions = config.getAttributeAsList("BUSINESS_MAP.MAP_REST_SERVICES");
-		Iterator it = actions.iterator();
-		while (it.hasNext()) {
-			SourceBean mapActions = (SourceBean) it.next();
-			List actionsList = mapActions.getAttributeAsList("MAP_REST_SERVICE");
-			Iterator actionListIt = actionsList.iterator();
-			while (actionListIt.hasNext()) {
-				SourceBean mapAction = (SourceBean) actionListIt.next();
-				String serviceName = (String) mapAction.getAttribute("serviceUrl");
-				String businessProcessName = (String) mapAction.getAttribute("businessProcess");
-				String serviceRegEx = "SERVICE\\[" + serviceName + "\\]";
-				// logger.debug("PUT:actStr"+actStr);
-				_mapRestServices.put(serviceRegEx.toUpperCase(), businessProcessName);
-			}
-		}
-
 	}
 
 	/**
 	 * Gets the single instance of AuthorizationsBusinessMapper.
-	 * 
+	 *
 	 * @return single instance of AuthorizationsBusinessMapper
 	 */
 	public static AuthorizationsBusinessMapper getInstance() {
@@ -144,10 +121,10 @@ public class AuthorizationsBusinessMapper {
 
 	/**
 	 * Map action to business process.
-	 * 
+	 *
 	 * @param actionName
 	 *            the action name
-	 * 
+	 *
 	 * @return the string
 	 */
 	public List<String> mapActionToBusinessProcess(String actionName) {
@@ -162,40 +139,13 @@ public class AuthorizationsBusinessMapper {
 	}
 
 	/**
-	 * Map service to business process.
-	 * 
-	 * @param serviceUrl
-	 *            the action name
-	 * 
-	 * @return the string
-	 */
-	public String mapServiceToBusinessProcess(String serviceUrl) {
-		// logger.debug("IN. actionName="+actionName);
-		String service = "SERVICE[" + serviceUrl.toUpperCase() + "]";
-		String businessProcessName = null;
-		Set<String> services = _mapRestServices.keySet();
-		for (String serviceRegEx : services) {
-			if (Pattern.matches(serviceRegEx, service)) {
-				businessProcessName = (String) _mapRestServices.get(serviceRegEx);
-				break;
-			}
-		}
-
-		if (businessProcessName == null) {
-			logger.warn("mapping per service [" + serviceUrl + "] not found");
-		}
-		// logger.debug("OUT,businessProcessName="+businessProcessName);
-		return businessProcessName;
-	}
-
-	/**
 	 * Map page module to business process.
-	 * 
+	 *
 	 * @param pageName
 	 *            the page name
 	 * @param moduleName
 	 *            the module name
-	 * 
+	 *
 	 * @return the string
 	 */
 	public String mapPageModuleToBusinessProcess(String pageName, String moduleName) {

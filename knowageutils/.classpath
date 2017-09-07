@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="lib" path="lib/spago-core-2.2.0.jar"/>
 	<classpathentry kind="lib" path="lib/spago-web-2.2.0.jar"/>
 	<classpathentry kind="lib" path="lib/foo-commonj.jar"/>
@@ -143,16 +142,20 @@
 	<classpathentry kind="lib" path="lib/hadoop-hdfs-2.6.0-cdh5.4.3.jar"/>
 	<classpathentry kind="lib" path="lib/jetty-util-6.1.25.jar"/>
 	<classpathentry kind="lib" path="lib/xercesImpl-2.6.2.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/Apache Tomcat v7.0"/>
 	<classpathentry kind="lib" path="lib/MetaModel-core-4.5.4.jar"/>
 	<classpathentry kind="lib" path="lib/MetaModel-full-4.5.4.jar"/>
 	<classpathentry kind="lib" path="lib/MetaModel-pojo-4.5.4.jar"/>
 	<classpathentry kind="lib" path="lib/groovy-all-2.1.6.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
+	<classpathentry kind="lib" path="lib/l4j-4.6.1.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/Apache Tomcat v7.0">
+		<attributes>
+			<attribute name="owner.project.facets" value="#system#;jst.utility"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre1.8.0_112">
 		<attributes>
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/l4j-4.6.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

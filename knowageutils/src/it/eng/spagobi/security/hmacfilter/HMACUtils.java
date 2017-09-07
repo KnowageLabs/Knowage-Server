@@ -68,7 +68,7 @@ public class HMACUtils {
 		logger.debug("Params string is: [" + paramsString + "]");
 		String queryPath = getQueryPath(req);
 		logger.debug("Query path: [" + queryPath + "]");
-		String body = RestUtilities.readBodyXSSUnsafe(req);
+		String body = "";// RestUtilities.readBodyXSSUnsafe(req);
 		logger.debug("Body: [" + body + "]");
 		checkHMAC(body, queryPath, paramsString, headers, uniqueToken, signatureClient, tokenValidator, key);
 	}

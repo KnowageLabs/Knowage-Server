@@ -428,6 +428,7 @@ public class SpagoBIConstants {
 	public static final String GLOSSARY = "Glossary";
 	public static final String TIMESPAN = "Timespan";
 	public static final String CREATE_DATASETS_AS_FINAL_USER = "CreateDatasetsAsFinalUser";
+	public static final String USER_SAVE_DOCUMENT_FUNCTIONALITY = "UserSaveDocumentFunctionality";
 
 	public static final String DOCUMENT_MOVE_DOWN_STATE = "DocumentMoveDownState";
 	public static final String DOCUMENT_MOVE_UP_STATE = "DocumentMoveUpState";
@@ -545,6 +546,9 @@ public class SpagoBIConstants {
 	public static final String IMP_EXP_SCHEDULER = "ImpExpScheduler";
 
 	public static final String META_MODELS_CATALOGUE_MANAGEMENT = "MetaModelsCatalogueManagement";
+
+	public static final String MEASURES_CATALOGUE_MANAGEMENT = "MeasuresCatalogueManagement";
+
 	// Cockpit
 	public static final String MANAGE_STATIC_WIDGET = "StaticWidget";
 	public static final String MANAGE_ANALYTICAL_WIDGET = "AnalyticalWidget";

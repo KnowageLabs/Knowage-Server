@@ -28,16 +28,21 @@ import it.eng.spagobi.utilities.Helper;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedHashMap;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.client.Invocation.Builder;
 
 import org.apache.axis.encoding.Base64;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpState;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.log4j.Logger;
-import org.jboss.resteasy.client.ClientRequest;
-import org.jboss.resteasy.client.ClientResponse;
-import org.jboss.resteasy.client.core.executors.ApacheHttpClientExecutor;
 
 /**
  *
@@ -89,7 +94,7 @@ public class SimpleRestClient {
 	 * @throws Exception
 	 */
 	@SuppressWarnings("rawtypes")
-	protected ClientResponse executeGetService(Map<String, Object> parameters, String serviceUrl, String userId) throws Exception {
+	protected Response executeGetService(Map<String, Object> parameters, String serviceUrl, String userId) throws Exception {
 		return executeService(parameters, serviceUrl, userId, RequestTypeEnum.GET, null, null);
 	}
 
@@ -107,16 +112,20 @@ public class SimpleRestClient {
 	 * @throws Exception
 	 */
 	@SuppressWarnings("rawtypes")
-	protected ClientResponse executePostService(Map<String, Object> parameters, String serviceUrl, String userId, MediaType mediaType, Object data)
+	protected Response executePostService(Map<String, Object> parameters, String serviceUrl, String userId, String mediaType, Object data)
 			throws Exception {
 		return executeService(parameters, serviceUrl, userId, RequestTypeEnum.POST, mediaType, data);
 	}
 
 	@SuppressWarnings({ "rawtypes" })
-	private ClientResponse executeService(Map<String, Object> parameters, String serviceUrl, String userId, RequestTypeEnum type, MediaType mediaType,
+	private Response executeService(Map<String, Object> parameters, String serviceUrl, String userId, RequestTypeEnum type, String mediaType,
 			Object data) throws Exception {
 		logger.debug("IN");
 
+		
+		MultivaluedMap<String, Object> myHeaders =	  new MultivaluedHashMap<String, Object>();
+
+		
 		if (!serviceUrl.contains("http") && addServerUrl) {
 			logger.debug("Adding the server URL");
 			String serverUrl = EnginConf.getInstance().getSpagoBiServerUrl();
@@ -127,35 +136,33 @@ public class SimpleRestClient {
 			logger.debug("Call service URL " + serviceUrl);
 		}
 
-		HttpClient httpClient = getHttpClient(useProxy);
-		ApacheHttpClientExecutor httpExecutor = httpClient == null ? new ApacheHttpClientExecutor() : new ApacheHttpClientExecutor(httpClient);
-		ClientRequest request = new ClientRequest(serviceUrl, httpExecutor);
+		
+		Client client = ClientBuilder.newClient();
+		WebTarget target = client.target(serviceUrl);
+		Builder request = target.request(mediaType);
+
 
 		logger.debug("adding headers");
 
-		addAuthorizations(request, userId);
+		addAuthorizations(request, userId,myHeaders);
 
-		if (mediaType != null && data != null) {
-			logger.debug("adding body");
-			request.body(mediaType, data);
-		}
-
+	
 		if (parameters != null) {
 			Iterator<String> iter = parameters.keySet().iterator();
 			while (iter.hasNext()) {
 				String param = iter.next();
-				request.queryParameter(param, parameters.get(param));
+				target = target.queryParam(param, parameters.get(param));
 				logger.debug("Adding parameter " + param);
 			}
 		}
 
 		logger.debug("Call service");
-		ClientResponse response = null;
+		Response response = null;
 
 		// provide authentication exactly before of call
-		authenticationProvider.provideAuthentication(request);
+		authenticationProvider.provideAuthentication(request, target, myHeaders, data);
 		if (type.equals(RequestTypeEnum.POST))
-			response = request.post();
+			response = request.post(Entity.json(data.toString()));
 		else
 			response = request.get();
 
@@ -165,17 +172,17 @@ public class SimpleRestClient {
 
 		logger.debug("Rest query status " + response.getStatus());
 		// logger.debug("Rest query status info "+response.getStatusInfo());
-		logger.debug("Rest query status getReasonPhrase " + response.getResponseStatus().getReasonPhrase());
+		logger.debug("Rest query status getReasonPhrase " + response.getStatusInfo().getReasonPhrase());
 		logger.debug("OUT");
 		return response;
 	}
 
-	private void addAuthorizations(ClientRequest request, String userId) throws Exception {
+	private void addAuthorizations(Builder request, String userId, MultivaluedMap<String, Object> myHeaders ) throws Exception {
 		logger.debug("Adding auth for user " + userId);
 
 		String encodedBytes = Base64.encode(userId.getBytes("UTF-8"));
 		request.header("Authorization", "Direct " + encodedBytes);
-
+		myHeaders.add("Authorization", "Direct " + encodedBytes);
 	}
 
 

@@ -17,23 +17,19 @@
  */
 package it.eng.spagobi.services.rest;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+
+import org.apache.axis.encoding.Base64;
+import org.apache.log4j.Logger;
+
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.services.proxy.SecurityServiceProxy;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
-import java.lang.reflect.Method;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Context;
-
-import org.apache.axis.encoding.Base64;
-import org.apache.log4j.Logger;
-import org.jboss.resteasy.core.Headers;
-import org.jboss.resteasy.core.ServerResponse;
-import org.jboss.resteasy.spi.interception.AcceptedByMethod;
-import org.jboss.resteasy.spi.interception.PreProcessInterceptor;
 
 /**
  * The org.jboss.resteasy.spi.interception.PreProcessInterceptor runs after a JAX-RS resource method is found to invoke on, but before the actual invocation
@@ -42,7 +38,7 @@ import org.jboss.resteasy.spi.interception.PreProcessInterceptor;
  * Similar to SpagoBIAccessFilter but designed for REST services
  *
  */
-public class ExternalEngineSecurityServerInterceptor extends AbstractSecurityServerInterceptor implements PreProcessInterceptor, AcceptedByMethod {
+public class ExternalEngineSecurityServerInterceptor extends AbstractSecurityServerInterceptor {
 
 	static private Logger logger = Logger.getLogger(ExternalEngineSecurityServerInterceptor.class);
 
@@ -50,8 +46,8 @@ public class ExternalEngineSecurityServerInterceptor extends AbstractSecuritySer
 	private HttpServletRequest servletRequest;
 
 	@Override
-	protected ServerResponse notAuthenticated() {
-		return new ServerResponse("", 401, new Headers<Object>());
+	protected void notAuthenticated(ContainerRequestContext requestContext) {
+		requestContext.abortWith(Response.status(401).build());
 	}
 
 	@Override
@@ -133,12 +129,6 @@ public class ExternalEngineSecurityServerInterceptor extends AbstractSecuritySer
 			logger.error("Error while creating user profile with user id = [" + userId + "]", e);
 			throw new SpagoBIRuntimeException("Error while creating user profile with user id = [" + userId + "]", e);
 		}
-	}
-
-	@Override
-	public boolean accept(Class arg0, Method arg1) {
-		// TODO Auto-generated method stub
-		return true;
 	}
 
 	@Override

@@ -15,32 +15,24 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.spagobi.services.exceptions;
+package it.eng.spagobi.services.rest.annotations;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+/**
+ * This annotation must be used as a flag for public services, i.e. for services that do not require authentication. In case the service is NOT annotated, it
+ * means that the user must be authenticated in some way.
+ *
+ * @see it.eng.spagobi.services.rest.AbstractSecurityServerInterceptor#filter(javax.ws.rs.container.ContainerRequestContext)
+ *
+ * @author Davide Zerbetto (davide.zerbetto@eng.it)
+ */
 
-public class ExceptionUtilities {
-
-	public static String serializeException(String message, String localizedMessage) {
-
-		try {
-			JSONArray ja = new JSONArray();
-			JSONObject jo = new JSONObject();
-			JSONObject je = new JSONObject();
-			if (message != null) {
-				jo.put("message", message);
-			}
-			if (localizedMessage != null) {
-				jo.put("localizedMessage", localizedMessage);
-			}
-			ja.put(jo);
-			je.put("errors", ja);
-			return je.toString();
-		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Error serializing message", e);
-		}
-	}
+@Retention(RetentionPolicy.RUNTIME)
+// can use in method only.
+@Target(ElementType.METHOD)
+public @interface PublicService {
 }

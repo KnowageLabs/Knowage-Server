@@ -17,23 +17,8 @@
  */
 package it.eng.spagobi.images;
 
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.images.dao.IImagesDAO;
-import it.eng.spagobi.images.dao.IImagesDAO.Direction;
-import it.eng.spagobi.images.dao.IImagesDAO.OrderBy;
-import it.eng.spagobi.images.metadata.SbiImages;
-import it.eng.spagobi.tools.glossary.util.Util;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
 import java.util.HashMap;
@@ -52,10 +37,10 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 
-import org.apache.commons.io.IOUtils;
+import org.apache.clerezza.jaxrs.utils.form.FormFile;
+import org.apache.clerezza.jaxrs.utils.form.MultiPartBody;
+
 import org.apache.log4j.Logger;
-import org.jboss.resteasy.plugins.providers.multipart.InputPart;
-import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -63,6 +48,21 @@ import org.json.JSONObject;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.images.dao.IImagesDAO;
+import it.eng.spagobi.images.dao.IImagesDAO.Direction;
+import it.eng.spagobi.images.dao.IImagesDAO.OrderBy;
+import it.eng.spagobi.images.metadata.SbiImages;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.tools.glossary.util.Util;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 @Path("/1.0/images")
 public class ImagesService {
@@ -78,6 +78,7 @@ public class ImagesService {
 	@GET
 	@Path("/listImages")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.IMAGES_MANAGEMENT })
 	public String listImages(@Context HttpServletRequest req) {
 		try {
 			IImagesDAO dao = DAOFactory.getImagesDAO();
@@ -111,6 +112,7 @@ public class ImagesService {
 	@GET
 	@Path("/getImage")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.IMAGES_MANAGEMENT })
 	public void getImage(@Context HttpServletRequest req, @Context HttpServletResponse resp) {
 		try {
 			IImagesDAO dao = DAOFactory.getImagesDAO();
@@ -137,23 +139,26 @@ public class ImagesService {
 	@Path("/addImage")
 	@Consumes("multipart/form-data")
 	@Produces(MediaType.TEXT_PLAIN)
-	public String addImage(MultipartFormDataInput input, @Context HttpServletRequest req) {
+	@UserConstraint(functionalities = { SpagoBIConstants.IMAGES_MANAGEMENT })
+	public String addImage(MultiPartBody input, @Context HttpServletRequest req) {
 		boolean success = true;
 		String msg = "sbi.cockpit.widgets.image.imageWidgetDesigner.uploadOK";
 		String fileName = "";
 		try {
-			Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
+			
 			IImagesDAO dao = DAOFactory.getImagesDAO();
 			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			dao.setUserProfile(profile);
 
-			List<InputPart> inputParts = uploadForm.get("uploadedImage");
-			for (InputPart inputPart : inputParts) {
-				MultivaluedMap<String, String> header = inputPart.getHeaders();
-				fileName = getFileName(header);
-				try {
-					InputStream inputStream = inputPart.getBody(InputStream.class, null);
-					byte[] data = IOUtils.toByteArray(inputStream);
+			final FormFile file = input.getFormFileParameterValues("uploadedImage")[0];
+
+			if (file != null) {
+
+
+				fileName = file.getFileName();
+
+					
+					byte[] data = file.getContent();
 					if (data.length > getParamValue(IMAGE_GALLERY_MAX_IMAGE_SIZE, defaultMaxImageSize) * 1024) {
 						msg = "sbi.cockpit.widgets.image.imageWidgetDesigner.tooBigImage";
 						success = false;
@@ -181,10 +186,7 @@ public class ImagesService {
 							success = false;
 						}
 					}
-				} catch (IOException e) {
-					msg = "sbi.cockpit.widgets.image.imageWidgetDesigner.uploadKO";
-					success = false;
-				}
+
 
 			}
 		} catch (Throwable t) {
@@ -306,6 +308,7 @@ public class ImagesService {
 	@GET
 	@Path("/deleteImage")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.IMAGES_MANAGEMENT })
 	public String deleteImage(@Context HttpServletRequest req) {
 		logger.debug("IN");
 		String msg = "sbi.cockpit.widgets.image.imageWidgetDesigner.deleteOK";

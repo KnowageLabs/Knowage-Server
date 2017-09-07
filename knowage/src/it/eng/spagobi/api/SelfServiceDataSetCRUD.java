@@ -72,8 +72,8 @@ import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.metamodel.MetaModelWrapper;
 import it.eng.spagobi.metamodel.SiblingsFileWrapper;
-import it.eng.spagobi.rest.annotations.ToValidate;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.tools.dataset.bo.CkanDataSet;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -127,6 +127,7 @@ public class SelfServiceDataSetCRUD {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String getAllDataSet(@Context HttpServletRequest req) {
 		IDataSetDAO dataSetDao = null;
 		List<IDataSet> dataSets = new ArrayList<>();
@@ -262,6 +263,7 @@ public class SelfServiceDataSetCRUD {
 	@POST
 	@Path("/delete")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String deleteDataSet(@Context HttpServletRequest req) {
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		HashMap<String, String> logParam = new HashMap();
@@ -349,8 +351,8 @@ public class SelfServiceDataSetCRUD {
 
 	@POST
 	@Path("/save")
-	@ToValidate(typeName = "dataset")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String saveDataSet(@Context HttpServletRequest request) {
 		IEngUserProfile profile = (IEngUserProfile) request.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		try {
@@ -464,6 +466,7 @@ public class SelfServiceDataSetCRUD {
 	@POST
 	@Path("/share")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String shareDataSet(@Context HttpServletRequest req) {
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		try {
@@ -830,6 +833,7 @@ public class SelfServiceDataSetCRUD {
 	@POST
 	@Path("/testDataSet")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String testDataSet(@Context HttpServletRequest req) {
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		try {
@@ -891,6 +895,7 @@ public class SelfServiceDataSetCRUD {
 	@POST
 	@Path("/getDataStore")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String getDataStore(@Context HttpServletRequest req) {
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		Integer start = new Integer(0);

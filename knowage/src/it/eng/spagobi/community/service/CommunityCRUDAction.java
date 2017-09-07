@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,23 +11,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.community.service;
-
-import it.eng.spago.base.SourceBeanException;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.community.bo.CommunityManager;
-import it.eng.spagobi.community.dao.ISbiCommunityDAO;
-import it.eng.spagobi.community.mapping.SbiCommunity;
-import it.eng.spagobi.services.exceptions.ExceptionUtilities;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import java.io.IOException;
 import java.util.List;
@@ -48,6 +36,18 @@ import org.json.JSONObject;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import it.eng.spago.base.SourceBeanException;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.community.bo.CommunityManager;
+import it.eng.spagobi.community.dao.ISbiCommunityDAO;
+import it.eng.spagobi.community.mapping.SbiCommunity;
+import it.eng.spagobi.services.exceptions.ExceptionUtilities;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 
 @Path("/communityCRUD")
 public class CommunityCRUDAction {
@@ -60,6 +60,7 @@ public class CommunityCRUDAction {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.MENU_MANAGEMENT })
 	public String getAllCommunities(@Context HttpServletRequest req) {
 		ISbiCommunityDAO commDao = null;
 
@@ -68,24 +69,25 @@ public class CommunityCRUDAction {
 		String communitiesJSONStr = "";
 		try {
 			commDao = DAOFactory.getCommunityDAO();
-			
+
 			communities = commDao.loadAllSbiCommunities();
-			if(communities != null){
-				ObjectMapper mapper = new ObjectMapper();    
+			if (communities != null) {
+				ObjectMapper mapper = new ObjectMapper();
 				String innerList = mapper.writeValueAsString(communities);
-				communitiesJSONStr ="{root:"+innerList+"}";
+				communitiesJSONStr = "{root:" + innerList + "}";
 			}
 
 		} catch (Throwable t) {
-			throw new SpagoBIServiceException(
-					"An unexpected error occured while instatiating the dao", t);
+			throw new SpagoBIServiceException("An unexpected error occured while instatiating the dao", t);
 		}
 
 		return communitiesJSONStr;
 
 	}
+
 	@DELETE
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { SpagoBIConstants.MENU_MANAGEMENT })
 	public String deleteCommunity(@Context HttpServletRequest req) {
 		ISbiCommunityDAO commDao = null;
 
@@ -94,58 +96,56 @@ public class CommunityCRUDAction {
 			JSONObject requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
 			String id = (String) requestBodyJSON.opt("communityId");
 			commDao = DAOFactory.getCommunityDAO();
-			if(id != null && !id.equals("")){
+			if (id != null && !id.equals("")) {
 				commDao.deleteCommunityById(Integer.valueOf(id));
 			}
-			
 
 		} catch (Throwable t) {
-			throw new SpagoBIServiceException(
-					"An unexpected error occured while instatiating the dao", t);
+			throw new SpagoBIServiceException("An unexpected error occured while instatiating the dao", t);
 		}
 
 		return communitiesJSONStr;
 
 	}
-	
+
 	@POST
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { SpagoBIConstants.MENU_MANAGEMENT })
 	public String saveCommunity(@Context HttpServletRequest req) {
 
 		ISbiCommunityDAO commDao = null;
-		String id =null;
+		String id = null;
 		try {
 			commDao = DAOFactory.getCommunityDAO();
 			JSONObject requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
 
 			SbiCommunity community = recoverCommunityDetails(requestBodyJSON);
-			
-			if(community.getCommunityId() != null){
-				//update
+
+			if (community.getCommunityId() != null) {
+				// update
 				commDao.updateSbiComunity(community);
-				id= community.getCommunityId()+"";
-			}else{
-				//insert
+				id = community.getCommunityId() + "";
+			} else {
+				// insert
 
 				CommunityManager cm = new CommunityManager();
 
 				Integer idInt = cm.saveCommunity(community, community.getName(), community.getOwner(), req);
-				if(idInt != null){
-					id = idInt+"";
+				if (idInt != null) {
+					id = idInt + "";
 				}
 			}
 
-			return ("{communityId:"+id+" }");
+			return ("{communityId:" + id + " }");
 		} catch (SpagoBIRuntimeException ex) {
 			logger.error("Cannot fill response container", ex);
 
 			logger.debug(ex.getMessage());
 			try {
-				return ( ExceptionUtilities.serializeException(ex.getMessage(),null));
+				return (ExceptionUtilities.serializeException(ex.getMessage(), null));
 			} catch (Exception e) {
 				logger.debug("Cannot fill response container.");
-				throw new SpagoBIRuntimeException(
-						"Cannot fill response container", e);
+				throw new SpagoBIRuntimeException("Cannot fill response container", e);
 			}
 		} catch (Exception ex) {
 			logger.error("Cannot fill response container", ex);
@@ -153,19 +153,19 @@ public class CommunityCRUDAction {
 		}
 		return id;
 	}
-	
-	private SbiCommunity recoverCommunityDetails (JSONObject requestBodyJSON) throws EMFUserError, SourceBeanException, IOException  {
-		SbiCommunity com  = new SbiCommunity();
-		Integer id=null;
-		String idStr = (String)requestBodyJSON.opt("communityId");
-		if(idStr!=null && !idStr.equals("")){
+
+	private SbiCommunity recoverCommunityDetails(JSONObject requestBodyJSON) throws EMFUserError, SourceBeanException, IOException {
+		SbiCommunity com = new SbiCommunity();
+		Integer id = null;
+		String idStr = (String) requestBodyJSON.opt("communityId");
+		if (idStr != null && !idStr.equals("")) {
 			id = Integer.valueOf(idStr);
 		}
-		String name = (String)requestBodyJSON.opt("name");	
-		String description = (String)requestBodyJSON.opt("description");	
-		String owner = (String)requestBodyJSON.opt("owner");
-		String functCode = (String)requestBodyJSON.opt("functCode");
-		
+		String name = (String) requestBodyJSON.opt("name");
+		String description = (String) requestBodyJSON.opt("description");
+		String owner = (String) requestBodyJSON.opt("owner");
+		String functCode = (String) requestBodyJSON.opt("functCode");
+
 		com.setCommunityId(id);
 		com.setName(name);
 		com.setDescription(description);

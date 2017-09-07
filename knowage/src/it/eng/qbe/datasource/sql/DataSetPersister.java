@@ -17,7 +17,7 @@
  */
 package it.eng.qbe.datasource.sql;
 
-import it.eng.spagobi.api.v2.DataSetResource;
+import it.eng.spagobi.api.DataSetResource;
 
 import org.json.JSONObject;
 

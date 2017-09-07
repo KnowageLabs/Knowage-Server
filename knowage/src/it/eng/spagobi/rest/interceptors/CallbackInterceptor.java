@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,49 +11,52 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.rest.interceptors;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerResponseContext;
+import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.ext.Provider;
 
 import org.apache.log4j.Logger;
-import org.jboss.resteasy.annotations.interception.ServerInterceptor;
-import org.jboss.resteasy.core.ServerResponse;
-import org.jboss.resteasy.spi.interception.PostProcessInterceptor;
 
 /**
- * 
+ *
  *
 
  *
  */
 @Provider
-@ServerInterceptor
-public class CallbackInterceptor implements PostProcessInterceptor {
+public class CallbackInterceptor implements ContainerResponseFilter {
 
 	private static Logger logger = Logger.getLogger(CallbackInterceptor.class);
 
 	@Context
-	private HttpServletRequest servletRequest;
+	private HttpServletResponse httpResponse;
 
-	/**
-	 * Post-processes all the REST requests. Remove tenant's information from thread
-	 */
+
+	@Context
+	private HttpServletRequest httpRequest;
+
 	@Override
-	public void postProcess(ServerResponse response) {
+	public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
 		logger.debug("IN");
 
-		if (servletRequest.getParameter("callback") != null && !servletRequest.getParameter("callback").equals("")) {
-			String callback = servletRequest.getParameter("callback");
+		if (httpRequest.getParameter("callback") != null && !httpRequest.getParameter("callback").equals("")) {
+			String callback = httpRequest.getParameter("callback");
 			logger.debug("Add callback to entity response: " + callback);
-			String entity = response.getEntity().toString();
-			String entityModified = callback + "(" + entity + ");";
-			response.setEntity(entityModified);
+//			String entity = httpResponse.getEntity().toString();
+//			String entityModified = callback + "(" + entity + ");";
+//			httpResponse.setEntity(entityModified);
 		}
 		;
 		logger.debug("OUT");

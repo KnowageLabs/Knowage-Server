@@ -17,11 +17,6 @@
  */
 package it.eng.spagobi.commons.domains;
 
-import it.eng.spagobi.commons.bo.Domain;
-import it.eng.spagobi.commons.utilities.UserUtilities;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -32,18 +27,24 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
+
 /**
  * Provide a subset of functionalities of the DomainCRUD. This replication of the code is useful to give more than one SpagoBI functionality to the same
  * physical functionality
  */
 @Path("/domainsforfinaluser")
-@ManageAuthorization
 public class DomainCRUDForFinalUser extends DomainCRUD {
 
 	@Override
 	@GET
 	@Path("/listValueDescriptionByType")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String getListDomainsByType(@Context HttpServletRequest req) {
 		return super.getListDomainsByType(req);
 	}

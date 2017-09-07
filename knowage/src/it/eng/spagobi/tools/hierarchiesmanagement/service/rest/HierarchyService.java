@@ -17,31 +17,6 @@
  */
 package it.eng.spagobi.tools.hierarchiesmanagement.service.rest;
 
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.container.ObjectUtils;
-import it.eng.spagobi.services.rest.annotations.UserConstraint;
-import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IField;
-import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
-import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
-import it.eng.spagobi.tools.hierarchiesmanagement.Hierarchies;
-import it.eng.spagobi.tools.hierarchiesmanagement.HierarchiesSingleton;
-import it.eng.spagobi.tools.hierarchiesmanagement.HierarchyTreeNode;
-import it.eng.spagobi.tools.hierarchiesmanagement.HierarchyTreeNodeData;
-import it.eng.spagobi.tools.hierarchiesmanagement.TreeString;
-import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Field;
-import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Hierarchy;
-import it.eng.spagobi.tools.hierarchiesmanagement.utils.HierarchyConstants;
-import it.eng.spagobi.tools.hierarchiesmanagement.utils.HierarchyUtils;
-import it.eng.spagobi.utilities.Helper;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import it.eng.spagobi.utilities.rest.RestUtilities;
-
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.Date;
@@ -70,6 +45,31 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.container.ObjectUtils;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IField;
+import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
+import it.eng.spagobi.tools.hierarchiesmanagement.Hierarchies;
+import it.eng.spagobi.tools.hierarchiesmanagement.HierarchiesSingleton;
+import it.eng.spagobi.tools.hierarchiesmanagement.HierarchyTreeNode;
+import it.eng.spagobi.tools.hierarchiesmanagement.HierarchyTreeNodeData;
+import it.eng.spagobi.tools.hierarchiesmanagement.TreeString;
+import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Field;
+import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Hierarchy;
+import it.eng.spagobi.tools.hierarchiesmanagement.utils.HierarchyConstants;
+import it.eng.spagobi.tools.hierarchiesmanagement.utils.HierarchyUtils;
+import it.eng.spagobi.utilities.Helper;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
+
 /*
  * This class contains all REST services used by all hierarchy types (master and technical)
  */
@@ -83,6 +83,7 @@ public class HierarchyService {
 	@GET
 	@Path("/getHierarchyTree")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { SpagoBIConstants.HIERARCHIES_MANAGEMENT })
 	public String getHierarchyTree(@QueryParam("dimension") String dimension, @QueryParam("filterType") String hierarchyType,
 			@QueryParam("filterHierarchy") String hierarchyName, @QueryParam("validityDate") String hierarchyDate,
 			@QueryParam("filterDimension") String filterDimension, @QueryParam("filterDate") String filterDate, @QueryParam("optionDate") String optionDate,
@@ -933,7 +934,8 @@ public class HierarchyService {
 	 * @param paramsMap
 	 * @param relationsMTJSONObject
 	 */
-	private void propagateNewLeaves(Connection connection, IDataSource dataSource, HashMap paramsMap, JSONArray relationsMTJSONObject, Hierarchy hierarchyFields) {
+	private void propagateNewLeaves(Connection connection, IDataSource dataSource, HashMap paramsMap, JSONArray relationsMTJSONObject,
+			Hierarchy hierarchyFields) {
 		logger.debug("START");
 
 		try {
@@ -1014,8 +1016,8 @@ public class HierarchyService {
 			level = (strLevel != null) ? Integer.parseInt(strLevel) : 0;
 			if (level == 0 && !isRoot) {
 				logger.error("Property LEVEL non found for node element with code: [" + node.getNodeCode() + "] - name: [" + node.getNodeName() + "]");
-				throw new SpagoBIServiceException("persistService", "Property LEVEL non found for node element with code " + node.getNodeCode() + " and name "
-						+ node.getNodeName());
+				throw new SpagoBIServiceException("persistService",
+						"Property LEVEL non found for node element with code " + node.getNodeCode() + " and name " + node.getNodeName());
 			}
 			// get other node's attributes (not mandatory ie sign)
 			Iterator iter = node.getAttributes().keySet().iterator();
@@ -1054,8 +1056,8 @@ public class HierarchyService {
 					values.put(paramsMap.get(HierarchyConstants.TREE_NODE_NM), node.getNodeName());
 				} else if (!isRoot) {
 					logger.error("Property LEVEL non found for leaf element with code " + node.getNodeCode() + " and name " + node.getNodeName());
-					throw new SpagoBIServiceException("persistService", "Property LEVEL non found for leaf element with code " + node.getNodeCode()
-							+ " and name " + node.getNodeName());
+					throw new SpagoBIServiceException("persistService",
+							"Property LEVEL non found for leaf element with code " + node.getNodeCode() + " and name " + node.getNodeName());
 				}
 				toReturn.setString(HierarchyUtils.getPosField(lstFields, hierarchyPrefix + HierarchyConstants.SUFFIX_NM_LEAF), node.getNodeName());
 				values.put(hierarchyPrefix + HierarchyConstants.SUFFIX_NM_LEAF, node.getNodeName());
@@ -1195,8 +1197,8 @@ public class HierarchyService {
 				}
 				logger.error(errMsg, t);
 			}
-			throw new SpagoBIServiceException("An unexpected error occured while persisting hierarchy structure: ", t.getMessage() + " - " + t.getCause()
-					+ " - " + errMsg);
+			throw new SpagoBIServiceException("An unexpected error occured while persisting hierarchy structure: ",
+					t.getMessage() + " - " + t.getCause() + " - " + errMsg);
 		}
 
 		return toReturn;
@@ -1217,10 +1219,10 @@ public class HierarchyService {
 			values = new HashMap<String, Object>();
 
 		// get level : is null if the node is the root
-		Integer level = (node.getAttributes().get(HierarchyConstants.LEVEL) != null) ? Integer.valueOf((String) node.getAttributes().get(
-				HierarchyConstants.LEVEL)) : null;
-		Integer maxDepth = (node.getAttributes().get(HierarchyConstants.MAX_DEPTH) != null) ? Integer.valueOf((String) node.getAttributes().get(
-				HierarchyConstants.MAX_DEPTH)) : null;
+		Integer level = (node.getAttributes().get(HierarchyConstants.LEVEL) != null)
+				? Integer.valueOf((String) node.getAttributes().get(HierarchyConstants.LEVEL)) : null;
+		Integer maxDepth = (node.getAttributes().get(HierarchyConstants.MAX_DEPTH) != null)
+				? Integer.valueOf((String) node.getAttributes().get(HierarchyConstants.MAX_DEPTH)) : null;
 
 		boolean isLeaf = (level != null && maxDepth != null && level.compareTo(maxDepth) == 0) ? true : false;
 
@@ -1351,8 +1353,8 @@ public class HierarchyService {
 
 			String nodeLeafId = !node.isNull(HierarchyConstants.LEAF_ID) ? node.getString(HierarchyConstants.LEAF_ID) : "";
 			if (nodeLeafId.equals("")) {
-				nodeLeafId = (mapAttrs.get(hierarchyPrefix + "_" + HierarchyConstants.LEAF_ID) != null) ? (String) mapAttrs.get(hierarchyPrefix + "_"
-						+ HierarchyConstants.LEAF_ID) : "";
+				nodeLeafId = (mapAttrs.get(hierarchyPrefix + "_" + HierarchyConstants.LEAF_ID) != null)
+						? (String) mapAttrs.get(hierarchyPrefix + "_" + HierarchyConstants.LEAF_ID) : "";
 			}
 			if (nodeLeafId.equals("") && !node.isNull(hierarchyPrefix + "_" + HierarchyConstants.FIELD_ID)) {
 				nodeLeafId = node.getString(hierarchyPrefix + "_" + HierarchyConstants.FIELD_ID); // dimension id (ie: ACCOUNT_ID)

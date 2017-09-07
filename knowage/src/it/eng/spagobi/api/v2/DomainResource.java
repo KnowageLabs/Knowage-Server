@@ -265,7 +265,7 @@ public class DomainResource extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("/listByCode/{code}")
-	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@Produces(MediaType.APPLICATION_JSON )
 	public List<Domain> getDomainsByCode(@PathParam("code") String code) {
 		logger.debug("IN");
 		IDomainDAO domainsDao = null;
@@ -287,7 +287,7 @@ public class DomainResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/rolesCategories")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public List<Domain> getCategoriesOfRoles(@QueryParam("id") int[] ids) {
+	public List<Domain> getCategoriesOfRoles(@QueryParam("id") List<Integer> ids) {
 		logger.debug("IN");
 		IDomainDAO domainsDao = null;
 		List allRolesCategories = new ArrayList<>();
@@ -296,8 +296,8 @@ public class DomainResource extends AbstractSpagoBIResource {
 		try {
 			domainsDao = DAOFactory.getDomainDAO();
 			domainsDao.setUserProfile(getUserProfile());
-			for (int i = 0; i < ids.length; i++) {
-				List tempL = domainsDao.loadListMetaModelDomainsByRole(ids[i]);
+			for (int i = 0; i < ids.size(); i++) {
+				List tempL = domainsDao.loadListMetaModelDomainsByRole(ids.get(i));
 				for (int j = 0; j < tempL.size(); j++) {
 					if (!allRolesCategories.contains(tempL.get(j))) {
 						allRolesCategories.add(tempL.get(j));

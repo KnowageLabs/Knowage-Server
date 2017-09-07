@@ -18,17 +18,6 @@
 
 package it.eng.spagobi.rest.interceptors;
 
-import it.eng.spago.navigation.LightNavigationManager;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.utilities.AuditLogUtilities;
-import it.eng.spagobi.commons.utilities.ChannelUtilities;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-
-import java.net.URI;
-import java.util.HashMap;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Context;
@@ -37,12 +26,11 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import org.apache.log4j.Logger;
-import org.jboss.resteasy.spi.HttpRequest;
-import org.jboss.resteasy.spi.HttpResponse;
-import org.jboss.resteasy.spi.LoggableFailure;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 /**
  *
@@ -62,10 +50,6 @@ public class RestExceptionMapper implements ExceptionMapper<RuntimeException> {
 	static private Logger logger = Logger.getLogger(RestExceptionMapper.class);
 
 	@Context
-	private HttpRequest request;
-	@Context
-	private HttpResponse httpresponse;
-	@Context
 	private HttpServletRequest servletRequest;
 	@Context
 	private HttpServletResponse servletResponse;
@@ -77,14 +61,7 @@ public class RestExceptionMapper implements ExceptionMapper<RuntimeException> {
 
 		logger.trace("IN");
 
-		if (t instanceof LoggableFailure) {
-			// missing authentication --> go to login page
-			logger.debug("Missing authentication");
-			String url = createUrl(request, servletRequest);
-			return Response.status(302).location(URI.create(url)).build();
-		} else {
-			response = toResponseFromGenericException(t);
-		}
+		response = toResponseFromGenericException(t);
 
 		logger.trace("OUT");
 
@@ -93,7 +70,6 @@ public class RestExceptionMapper implements ExceptionMapper<RuntimeException> {
 
 	private Response toResponseFromGenericException(RuntimeException t) {
 		JSONObject serializedMessages = serializeException(t);
-		updateAudit(serializedMessages.toString());
 		logger.error("Catched service error: ", t);
 		Response response = Response.status(200).entity(serializedMessages.toString()).build();
 		return response;
@@ -141,54 +117,6 @@ public class RestExceptionMapper implements ExceptionMapper<RuntimeException> {
 		}
 
 		return serializedMessages;
-	}
-
-	// private Response toResponseFromGenericException(Throwable e) {
-	// String exceptionMessage = "Service Exception";
-	// exceptionMessage =
-	// ExceptionUtilities.serializeException(e.getMessage(),null);
-	// updateAudit(exceptionMessage);
-	// logger.error("Application Error", e);
-	// Response response =
-	// Response.status(500).entity(exceptionMessage).build();
-	// return response;
-	// }
-
-	private void updateAudit(String exceptionMesage) {
-		try {
-			UserProfile profile = (UserProfile) servletRequest.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-
-			String serviceUrl = InterceptorUtilities.getServiceUrl(request);
-			String actionCode = "[Service:" + serviceUrl + "]";
-
-			HashMap<String, String> parameters = InterceptorUtilities.getRequestParameters(request, servletRequest);
-			parameters.put("Exception", exceptionMesage);
-
-			AuditLogUtilities.updateAudit(servletRequest, profile, actionCode, parameters, "ERR");
-		} catch (Exception e2) {
-			String serviceUrl = InterceptorUtilities.getServiceUrl(request);
-			logger.error("Error in the service " + serviceUrl);
-		}
-	}
-
-	private String createUrl(HttpRequest request, HttpServletRequest servletRequest) {
-		String contextName = ChannelUtilities.getSpagoBIContextName(servletRequest);
-
-		String addr = servletRequest.getServerName();
-		Integer port = servletRequest.getServerPort();
-		String protocol = servletRequest.getScheme();
-
-		String backUrl = request.getUri().getRequestUri().getPath();
-
-		String community = servletRequest.getParameter("community");
-		String owner = servletRequest.getParameter("owner");
-		String userToAccept = servletRequest.getParameter("userToAccept");
-
-		String url = protocol + "://" + addr + ":" + port + "" + contextName + "/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE&"
-				+ SpagoBIConstants.BACK_URL + "=" + backUrl + "&community=" + community + "&owner=" + owner + "&userToAccept=" + userToAccept + "&"
-				+ LightNavigationManager.LIGHT_NAVIGATOR_DISABLED + "=TRUE";
-		return url;
-
 	}
 
 }

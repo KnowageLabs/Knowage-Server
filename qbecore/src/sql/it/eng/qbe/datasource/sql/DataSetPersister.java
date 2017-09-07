@@ -27,8 +27,9 @@ import it.eng.spagobi.utilities.engines.rest.SimpleRestClient;
 
 import java.util.Map;
 
+import javax.ws.rs.core.Response;
+
 import org.apache.log4j.Logger;
-import org.jboss.resteasy.client.ClientResponse;
 import org.json.JSONObject;
 
 /**
@@ -56,9 +57,9 @@ public class DataSetPersister extends SimpleRestClient{
 		parameters.put("labelsAndKeys", datasetLabels);
 
 		logger.debug("Call persist service in post");
-		ClientResponse resp = executePostService(parameters, serviceUrl, userId, null, null);
+		Response resp = executePostService(parameters, serviceUrl, userId, null, null);
 		
-		String respString = (String)resp.getEntity(String.class);
+		String respString = (String)resp.getEntity();
 		
 		JSONObject ja = new JSONObject(respString);
 		

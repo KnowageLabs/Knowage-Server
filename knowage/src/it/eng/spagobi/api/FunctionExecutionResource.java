@@ -122,7 +122,7 @@ public class FunctionExecutionResource extends AbstractSpagoBIResource {
 	 * 
 	 * @Path("/url")
 	 * 
-	 * @Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8") public Response getDocumentExecutionURL(@Context HttpServletRequest req) throws IOException,
+	 * @Produces(MediaType.APPLICATION_JSON ) public Response getDocumentExecutionURL(@Context HttpServletRequest req) throws IOException,
 	 * JSONException {
 	 * 
 	 * logger.debug("IN"); JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req); // String label = requestVal.getString("label"); String role =
@@ -200,7 +200,7 @@ public class FunctionExecutionResource extends AbstractSpagoBIResource {
 	 */
 	@POST
 	@Path("/filters")
-	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@Produces(MediaType.APPLICATION_JSON )
 	public Response getDocumentExecutionFilters(@Context HttpServletRequest req) throws DocumentExecutionException, EMFUserError, IOException, JSONException {
 
 		logger.debug("IN");
@@ -349,7 +349,7 @@ public class FunctionExecutionResource extends AbstractSpagoBIResource {
 
 	@POST
 	@Path("/parametervalues")
-	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@Produces(MediaType.APPLICATION_JSON )
 	// public Response getParameterValues(@QueryParam("label") String label, @QueryParam("role") String role, @QueryParam("biparameterId") String biparameterId,
 	// @QueryParam("mode") String mode, @QueryParam("treeLovNode") String treeLovNode,
 	// // @QueryParam("treeLovNode") Integer treeLovNodeLevel,
@@ -428,7 +428,7 @@ public class FunctionExecutionResource extends AbstractSpagoBIResource {
 	 */
 	@GET
 	@Path("/filterlist")
-	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@Produces(MediaType.APPLICATION_JSON )
 	public Response getDocumentExecutionFilterList(@QueryParam("label") String label, @QueryParam("role") String role,
 			@QueryParam("parameters") String jsonParameters, @QueryParam("urlName") String urlName, @Context HttpServletRequest req) {
 		logger.debug("IN");

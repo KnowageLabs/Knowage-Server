@@ -33,6 +33,7 @@ import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
+
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -50,7 +51,6 @@ import javax.naming.AuthenticationException;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -70,8 +70,21 @@ import org.json.JSONObject;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
 
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.services.serialization.JsonConverter;
+import it.eng.spagobi.tools.datasource.bo.DataSource;
+import it.eng.spagobi.tools.datasource.bo.DataSourceModel;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+
 @Path("/2.0/datasources")
-@ManageAuthorization
 public class DataSourceResource extends AbstractSpagoBIResource {
 
 	public static final String SERVICE_NAME = "2.0/datasources/";
@@ -84,6 +97,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 
 	@SuppressWarnings("unchecked")
 	@GET
+	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_READ })
 	public List<DataSource> getAllDataSources() {
@@ -142,12 +156,13 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
-	public String postDataSource(@Valid DataSource dataSource) {
+	public String postDataSource(DataSource dataSource) {
 
 		logger.debug("IN");
 
 		try {
-
+			logger.debug(dataSource.toString());
+			logger.debug(dataSource);
 			dataSourceDAO = DAOFactory.getDataSourceDAO();
 			dataSourceDAO.setUserProfile(getUserProfile());
 			dataSourceDAO.insertDataSource(dataSource, getUserProfile().getOrganization());
@@ -275,7 +290,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	@DELETE
 	@Path("/")
 	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
-	public List<DataSource> deleteMultiple(@QueryParam("id") int[] ids) {
+	public List<DataSource> deleteMultiple(@QueryParam("id") List<Integer> ids) {
 
 		logger.debug("IN");
 
@@ -284,9 +299,9 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 			dataSourceDAO = DAOFactory.getDataSourceDAO();
 			dataSourceDAO.setUserProfile(getUserProfile());
 
-			for (int i = 0; i < ids.length; i++) {
+			for (int i = 0; i < ids.size(); i++) {
 				DataSource ds = new DataSource();
-				ds.setDsId(ids[i]);
+				ds.setDsId(ids.get(i));
 				dataSourceDAO.eraseDataSource(ds);
 			}
 
@@ -402,7 +417,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	@Path("/test")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
-	public String testDataSource(@Valid DataSource dataSource) throws Exception {
+	public String testDataSource(DataSource dataSource) throws Exception {
 
 		logger.debug("IN");
 

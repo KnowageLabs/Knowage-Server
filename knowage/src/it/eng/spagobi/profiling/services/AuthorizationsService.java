@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,18 +11,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.profiling.services;
-
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IRoleDAO;
-import it.eng.spagobi.commons.dao.ITenantsDAO;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.util.HashSet;
 import java.util.List;
@@ -39,6 +32,15 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IRoleDAO;
+import it.eng.spagobi.commons.dao.ITenantsDAO;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+
 @Path("/authorizations")
 public class AuthorizationsService {
 
@@ -46,6 +48,7 @@ public class AuthorizationsService {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT })
 	public String getAuthorizations(@Context HttpServletRequest req) {
 		JSONObject documentJSON = new JSONObject();
 

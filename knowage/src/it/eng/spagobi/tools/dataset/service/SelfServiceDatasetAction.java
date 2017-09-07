@@ -97,7 +97,7 @@ public class SelfServiceDatasetAction {
 	// "GEOREPORT_ENGINE_START_EDIT_ACTION";
 
 	// logger component
-	private static Logger logger = Logger.getLogger(SelfServiceDatasetStartAction.class);
+	private static Logger logger = Logger.getLogger(SelfServiceDatasetAction.class);
 
 	public Map<String, String> getParameters(UserProfile profile, Locale locale) {
 		logger.debug("IN");
@@ -150,7 +150,7 @@ public class SelfServiceDatasetAction {
 
 		} catch (CacheException ex) {
 			try {
-				logger.error(ex);
+				logger.error("CacheException catched:", ex);
 				Map<String, String> errorMap = new HashMap<>();
 
 				// EMFErrorHandler errorHandler = getErrorHandler();

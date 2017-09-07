@@ -4,9 +4,4 @@
 	</MAP_ACTIONS>
 	<MAP_PAGE_MODULES>
 	</MAP_PAGE_MODULES>
-	
-    <MAP_REST_SERVICES>
-    	<MAP_REST_SERVICE serviceUrl="/timespan.*" businessProcess="Timespan" />
-    </MAP_REST_SERVICES>
-    
 </BUSINESS_MAP>

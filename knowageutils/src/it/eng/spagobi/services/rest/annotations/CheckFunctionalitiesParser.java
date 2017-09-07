@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,18 +11,18 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.services.rest.annotations;
 
-import it.eng.spagobi.commons.bo.UserProfile;
-
 import java.lang.reflect.Method;
 import java.util.Collection;
 
 import org.apache.log4j.Logger;
+
+import it.eng.spagobi.commons.bo.UserProfile;
 
 /**
  * @author Giorgio Federici (giorgio.federici@eng.it)
@@ -31,16 +31,16 @@ public class CheckFunctionalitiesParser {
 
 	static private Logger logger = Logger.getLogger(CheckFunctionalitiesParser.class);
 
-	public boolean isPublicService(Method method) throws Exception {
+	public boolean hasUserConstraints(Method method) throws Exception {
 
-		logger.debug("Method isPublicService: Start");
+		logger.debug("Method hasUserConstraints: Start");
 
 		if (method.isAnnotationPresent(UserConstraint.class)) {
-			logger.debug("Method isPublicService: The service is not public");
-			return false;
-		} else {
-			logger.debug("Method isPublicService: The service is public");
+			logger.debug("Method hasUserConstraints: The service has user constraints");
 			return true;
+		} else {
+			logger.debug("Method hasUserConstraints: The service has no user constraints");
+			return false;
 		}
 	}
 

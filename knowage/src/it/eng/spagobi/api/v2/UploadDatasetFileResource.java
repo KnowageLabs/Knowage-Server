@@ -18,18 +18,6 @@
 
 package it.eng.spagobi.api.v2;
 
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.GeneralUtilities;
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-
 import java.io.File;
 import java.io.OutputStream;
 import java.util.HashMap;
@@ -52,8 +40,18 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+
 @Path("/selfservicedataset")
-@ManageAuthorization
 public class UploadDatasetFileResource extends AbstractSpagoBIResource {
 	private static transient Logger logger = Logger.getLogger(UploadDatasetFileResource.class);
 
@@ -372,8 +370,8 @@ public class UploadDatasetFileResource extends AbstractSpagoBIResource {
 
 					if (uploaded.getSize() > datasetFileMaxSize) {
 
-						throw new SpagoBIServiceException(getActionName(), "The uploaded file exceeds the maximum size assigned to the user, that is "
-								+ datasetFileMaxSize + " bytes");
+						throw new SpagoBIServiceException(getActionName(),
+								"The uploaded file exceeds the maximum size assigned to the user, that is " + datasetFileMaxSize + " bytes");
 					}
 				} else {
 

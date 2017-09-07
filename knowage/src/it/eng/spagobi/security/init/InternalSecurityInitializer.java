@@ -62,6 +62,7 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 
 	public InternalSecurityInitializer() {
 		targetComponentName = "InternalSecurity";
+		configurationFileName = "it/eng/spagobi/commons/initializers/metadata/config/internal_profiling.xml";
 	}
 
 	@Override

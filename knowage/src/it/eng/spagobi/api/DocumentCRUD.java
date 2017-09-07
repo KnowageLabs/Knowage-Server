@@ -315,7 +315,7 @@ public class DocumentCRUD extends AbstractSpagoBIResource {
 	 * @param req
 	 * @return
 	 */
-	@POST
+/*	@POST
 	@Path("/share")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String shareDocument(@Context HttpServletRequest req, @QueryParam("functs") Integer[] functs) {
@@ -366,7 +366,7 @@ public class DocumentCRUD extends AbstractSpagoBIResource {
 		}
 		logger.debug("OUT");
 		return "{}";
-	}
+	}*/
 
 	/**
 	 * Creates a json array with children document informations

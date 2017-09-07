@@ -23,6 +23,24 @@
     <filter-class>it.eng.spagobi.utilities.filters.SpagoBIAccessFilter</filter-class>
   </filter>
   
+      <!-- servlet>
+      <servlet-name>jersey-serlvet</servlet-name>
+      <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+        <init-param>
+             <param-name>jersey.config.server.provider.packages</param-name>
+             <param-value>it.eng;org.apache.clerezza</param-value>
+        </init-param>
+        <init-param>
+             <param-name>jersey.config.server.provider.scanning.recursive</param-name>
+             <param-value>true</param-value>
+        </init-param>
+    </servlet>
+    
+    <servlet-mapping>
+          <servlet-name>jersey-serlvet</servlet-name>
+          <url-pattern>/api/*</url-pattern>
+    </servlet-mapping-->
+  
 <!-- START-CAS 
   <filter>
     <filter-name>CAS Authentication Filter</filter-name>
@@ -109,9 +127,9 @@
     <filter-name>SpagoBIAccessFilter</filter-name>
     <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
   </filter-mapping>
-  <listener>
+  <!-- listener>
     <listener-class>org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap</listener-class>
-  </listener>
+  </listener-->
   <servlet>
 		<servlet-name>EngineTestServlet</servlet-name>
 		<servlet-class>
@@ -137,14 +155,14 @@
     </init-param>
   </servlet>
   <!-- END ProxyTicketReceptor -->
-  <servlet>
+  <!--servlet>
     <servlet-name>Resteasy</servlet-name>
     <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
   </servlet>
-  <servlet-mapping>
+  < servlet-mapping>
     <servlet-name>Resteasy</servlet-name>
     <url-pattern>/api/*</url-pattern>
-  </servlet-mapping>
+  </servlet-mapping-->
   <servlet-mapping>
 		<servlet-name>EngineTestServlet</servlet-name>
 		<url-pattern>/Test</url-pattern>
@@ -153,5 +171,5 @@
   <welcome-file-list>
     <welcome-file>/html/index.html</welcome-file>
   </welcome-file-list>
- 
+  
 </web-app>

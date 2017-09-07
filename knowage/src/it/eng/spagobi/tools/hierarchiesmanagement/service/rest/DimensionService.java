@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,26 +11,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.tools.hierarchiesmanagement.service.rest;
-
-import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.services.rest.annotations.UserConstraint;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.tools.hierarchiesmanagement.Hierarchies;
-import it.eng.spagobi.tools.hierarchiesmanagement.HierarchiesSingleton;
-import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Dimension;
-import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Field;
-import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Filter;
-import it.eng.spagobi.tools.hierarchiesmanagement.utils.HierarchyConstants;
-import it.eng.spagobi.tools.hierarchiesmanagement.utils.HierarchyUtils;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,6 +34,21 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.tools.hierarchiesmanagement.Hierarchies;
+import it.eng.spagobi.tools.hierarchiesmanagement.HierarchiesSingleton;
+import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Dimension;
+import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Field;
+import it.eng.spagobi.tools.hierarchiesmanagement.metadata.Filter;
+import it.eng.spagobi.tools.hierarchiesmanagement.utils.HierarchyConstants;
+import it.eng.spagobi.tools.hierarchiesmanagement.utils.HierarchyUtils;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+
 @Path("/dimensions")
 public class DimensionService {
 
@@ -58,6 +58,7 @@ public class DimensionService {
 	@GET
 	@Path("/getDimensions")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { SpagoBIConstants.HIERARCHIES_MANAGEMENT })
 	public String getDimensions(@Context HttpServletRequest req) {
 
 		Hierarchies hierarchies = HierarchiesSingleton.getInstance();

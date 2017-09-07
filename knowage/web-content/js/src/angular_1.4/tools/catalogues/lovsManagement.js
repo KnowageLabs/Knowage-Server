@@ -540,7 +540,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 				
 			}else{
 			
-			sbiModule_restServices.promisePost("2.0/lovs","",$scope.selectedLov)
+			sbiModule_restServices.promisePost("2.0/lovs/save","",$scope.selectedLov)
 			.then(function(response) {
 				$scope.listOfLovs = [];
 				$timeout(function(){								
@@ -840,7 +840,7 @@ function lovsManagementFunction(sbiModule_translate, sbiModule_restServices, $sc
 	 * @author: danristo (danilo.ristovski@mht.net)
 	 */
 		$scope.getAllLovs = function(){ // service that gets list of drivers @GET
-			sbiModule_restServices.promiseGet("2.0", "lovs")
+			sbiModule_restServices.promiseGet("2.0", "lovs/get/all")
 			.then(function(response) {
 				console.log(response);
 				$scope.listOfLovs = response.data;

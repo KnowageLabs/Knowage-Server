@@ -28,7 +28,7 @@ app.controller('BMLController', ['$scope', function($scope) {
 	$scope.tables =[
 	                
 	                {	name:'Lovs',
-	                	dataPath:'2.0/lovs',
+	                	dataPath:'2.0/lovs/get/all',
 	                	selectedEvent:'lov',
 	                	broadcasts: [{event:'refresh',handler:function(event,data){event.currentScope.refresh()}},
 	                	             {event:'adriver',handler:function(event,data){event.currentScope.getData('2.0/analyticalDrivers/'+data.id+'/lovs')}},

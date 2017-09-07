@@ -17,6 +17,26 @@
  */
 package it.eng.spagobi.api.v2;
 
+import java.net.URI;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
@@ -38,27 +58,6 @@ import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
-import java.net.URI;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-
-import javax.validation.Valid;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Path("/2.0/analyticalDrivers")
 @ManageAuthorization
@@ -222,10 +221,17 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 	@Path("/")
 	@UserConstraint(functionalities = { SpagoBIConstants.PARAMETER_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response insertDriver(@Valid Parameter body) {
+	public Response insertDriver( String body) {
 
 		IParameterDAO driversDao = null;
-		Parameter driver = body;
+		Parameter driver = null;
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			driver = mapper.readValue(body, Parameter.class);
+		} catch (Exception e1) {
+			logger.error(e1);
+			throw new SpagoBIRestServiceException("Error while inserting resource", buildLocaleFromSession(), e1);
+		}
 		driver.setModality(driver.getType() + "," + driver.getTypeId().toString());
 		if (driver.getId() != null) {
 			logger.error("Error paramters. New check should not have ID value");
@@ -251,11 +257,17 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 	@Path("/modes")
 	@UserConstraint(functionalities = { SpagoBIConstants.PARAMETER_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response insertUseMode(@Valid ParameterUse body) {
-
-		IParameterUseDAO useModesDao = null;
-		ParameterUse useMode = body;
+	public Response insertUseMode( String  body) {
 		ObjectMapper mapper = new ObjectMapper();
+		ParameterUse useMode = null;
+		try {
+			useMode = mapper.readValue(body, ParameterUse.class);
+		} catch (Exception e1) {
+			logger.error(e1);
+			throw new SpagoBIRestServiceException("Error while inserting resource", buildLocaleFromSession(), e1);
+		}
+		IParameterUseDAO useModesDao = null;
+		
 		List<LinkedHashMap> roles = useMode.getAssociatedRoles();
 		List<LinkedHashMap> checks = useMode.getAssociatedChecks();
 		if (useMode.getUseID() != null) {
@@ -295,10 +307,17 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 	@Path("/{id}")
 	@UserConstraint(functionalities = { SpagoBIConstants.PARAMETER_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response updateDriver(@PathParam("id") Integer id, @Valid Parameter body) {
+	public Response updateDriver(@PathParam("id") Integer id, String body) {
 
 		IParameterDAO driversDao = null;
-		Parameter driver = body;
+		Parameter driver = null;
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			driver = mapper.readValue(body, Parameter.class);
+		} catch (Exception e1) {
+			logger.error(e1);
+			throw new SpagoBIRestServiceException("Error while inserting resource", buildLocaleFromSession(), e1);
+		}
 		driver.setModality(driver.getType() + "," + driver.getTypeId().toString());
 		if (driver.getId() == null) {
 			logger.error("The check with ID " + id + " doesn't exist");
@@ -321,11 +340,17 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 	@Path("/modes/{id}")
 	@UserConstraint(functionalities = { SpagoBIConstants.PARAMETER_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response updateUseMode(@PathParam("id") Integer id, @Valid ParameterUse body) {
+	public Response updateUseMode(@PathParam("id") Integer id, String body) {
 
 		IParameterUseDAO useModesDao = null;
-		ParameterUse useMode = body;
+		ParameterUse useMode = null;
 		ObjectMapper mapper = new ObjectMapper();
+		try {
+			useMode = mapper.readValue(body, ParameterUse.class);
+		} catch (Exception e1) {
+			logger.error(e1);
+			throw new SpagoBIRestServiceException("Error while inserting resource", buildLocaleFromSession(), e1);
+		}
 		List<LinkedHashMap> roles = useMode.getAssociatedRoles();
 		List<LinkedHashMap> checks = useMode.getAssociatedChecks();
 		if (useMode.getUseID() == null) {

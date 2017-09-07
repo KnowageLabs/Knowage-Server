@@ -161,15 +161,15 @@ public class ProfileAttributeResource extends AbstractSpagoBIResource {
 	@DELETE
 	@Path("/")
 	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT })
-	public Response deleteMultiple(@QueryParam("id") int[] ids) {
+	public Response deleteMultiple(@QueryParam("id") List<Integer> ids) {
 		ISbiAttributeDAO objDao = null;
 
 		try {
 			objDao = DAOFactory.getSbiAttributeDAO();
 			objDao.setUserProfile(getUserProfile());
 
-			for (int i = 0; i < ids.length; i++) {
-				objDao.deleteSbiAttributeById(ids[i]);
+			for (int i = 0; i < ids.size(); i++) {
+				objDao.deleteSbiAttributeById(ids.get(i));
 			}
 
 			return Response.ok().build();

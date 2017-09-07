@@ -24,16 +24,23 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.client.Invocation.Builder;
+import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Request;
 
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.jboss.resteasy.client.ClientRequest;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Provide client HMAC authentication for {@link HMACFilter}.
@@ -79,6 +86,31 @@ public class HMACFilterAuthenticationProvider {
 		req.header(HMACUtils.HMAC_TOKEN_HEADER, token);
 		req.header(HMACUtils.HMAC_SIGNATURE_HEADER, signature);
 	}
+	
+	/**
+	 * For REST Easy {@link ClientRequest}
+	 *
+	 * @param req
+	 * @throws HMACSecurityException
+	 */
+	public void provideAuthentication(Builder request, WebTarget target,  MultivaluedMap<String, Object> myHeaders, Object data) throws HMACSecurityException {
+		Helper.checkNotNull(request, "req");
+
+		String token = validator.generateToken();
+		Assert.assertNotNull(token, "token");
+		String signature;
+		try {
+			signature = getSignature(request, target, data, myHeaders, token);
+		} catch (Exception e) {
+			throw new HMACSecurityException("Problems while signing the request", e);
+		}
+
+		request.header(HMACUtils.HMAC_TOKEN_HEADER, token);
+		request.header(HMACUtils.HMAC_SIGNATURE_HEADER, signature);
+		myHeaders.add(HMACUtils.HMAC_TOKEN_HEADER, token);
+		myHeaders.add(HMACUtils.HMAC_SIGNATURE_HEADER, signature);
+		
+	}
 
 	/**
 	 *
@@ -104,6 +136,18 @@ public class HMACFilterAuthenticationProvider {
 		String res = HMACUtils.sign(getBody(req), getQueryPath(req), getParamsString(req), getHeaders(req), token, key);
 		return res;
 	}
+	
+	private String getSignature(Builder request, WebTarget target, Object data, MultivaluedMap<String, Object> myHeaders, String token) throws IOException, Exception {
+		ObjectMapper mo = new ObjectMapper();
+		String body = "";
+		
+		
+
+		String res = HMACUtils.sign(body, getQueryPath(target), "", getHeaders(myHeaders), token, key);
+		return res;
+	}
+
+
 
 	private String getSignature(HttpMethodBase method, String body, String token) throws IOException, Exception {
 		String res = HMACUtils.sign(body, getQueryPath(method), getParamsString(method), getHeaders(method), token, key);
@@ -115,6 +159,23 @@ public class HMACFilterAuthenticationProvider {
 		StringBuilder res = new StringBuilder();
 		for (String name : HMACUtils.HEADERS_SIGNED) {
 			List<String> values = headers.get(name); // only 1 value admitted
+			if (values == null) {
+				// header not present
+				continue;
+			}
+			Assert.assertTrue(values.size() == 1, "only one value admitted for each header");
+			res.append(name);
+			res.append(values.get(0));
+		}
+		return res.toString();
+	}
+	
+	
+	private static String getHeaders(MultivaluedMap<String, Object> headers) {
+
+		StringBuilder res = new StringBuilder();
+		for (String name : HMACUtils.HEADERS_SIGNED) {
+			List<Object> values = headers.get(name); // only 1 value admitted
 			if (values == null) {
 				// header not present
 				continue;
@@ -152,11 +213,17 @@ public class HMACFilterAuthenticationProvider {
 		URL url = new URL(uri);
 		return url.getQuery();
 	}
+	
 
 	private static String getQueryPath(ClientRequest req) throws Exception {
 		String uri = req.getUri();
 		URL url = new URL(uri);
 		return url.getPath();
+	}
+	
+	private static String getQueryPath(WebTarget target) throws Exception {
+		URI uri = target.getUri();
+		return uri.getPath();
 	}
 
 	private static String getHeaders(HttpMethodBase method) {

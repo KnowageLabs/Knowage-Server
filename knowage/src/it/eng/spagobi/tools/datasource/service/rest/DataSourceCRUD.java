@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,35 +11,12 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package it.eng.spagobi.tools.datasource.service.rest;
-
-import it.eng.spago.base.SourceBeanException;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.bo.Domain;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IDomainDAO;
-import it.eng.spagobi.commons.serializer.SerializationException;
-import it.eng.spagobi.commons.serializer.SerializerFactory;
-import it.eng.spagobi.commons.utilities.AuditLogUtilities;
-import it.eng.spagobi.services.exceptions.ExceptionUtilities;
-import it.eng.spagobi.tenant.TenantManager;
-import it.eng.spagobi.tools.dataset.cache.ICache;
-import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
-import it.eng.spagobi.tools.datasource.bo.DataSource;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -59,6 +36,31 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.spago.base.SourceBeanException;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IDomainDAO;
+import it.eng.spagobi.commons.serializer.SerializationException;
+import it.eng.spagobi.commons.serializer.SerializerFactory;
+import it.eng.spagobi.commons.utilities.AuditLogUtilities;
+import it.eng.spagobi.services.exceptions.ExceptionUtilities;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.tenant.TenantManager;
+import it.eng.spagobi.tools.dataset.cache.ICache;
+import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
+import it.eng.spagobi.tools.datasource.bo.DataSource;
+import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
+
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
  *
@@ -74,6 +76,7 @@ public class DataSourceCRUD extends AbstractSpagoBIResource {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
 	public String getAllDataSources(@Context HttpServletRequest req) {
 		IDataSourceDAO dataSourceDao = null;
 		IDomainDAO domaindao = null;
@@ -107,6 +110,7 @@ public class DataSourceCRUD extends AbstractSpagoBIResource {
 
 	@DELETE
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
 	public String deleteDataSource(@Context HttpServletRequest req) {
 		IEngUserProfile profile = getUserProfile();
 		HashMap<String, String> logParam = new HashMap();
@@ -158,6 +162,7 @@ public class DataSourceCRUD extends AbstractSpagoBIResource {
 
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
 	public String saveDataSource(@Context HttpServletRequest req) {
 		UserProfile profile = (UserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 
@@ -293,31 +298,26 @@ public class DataSourceCRUD extends AbstractSpagoBIResource {
 
 		/*
 		 * Object dialect = requestBodyJSON.opt("DIALECT_ID");
-		 * 
-		 * Integer dialectId; if (dialect != null && dialect instanceof String)
-		 * { dialectId = new Integer((String) dialect); } else { dialectId =
-		 * (Integer) dialect; }
+		 *
+		 * Integer dialectId; if (dialect != null && dialect instanceof String) { dialectId = new Integer((String) dialect); } else { dialectId = (Integer)
+		 * dialect; }
 		 */
 
 		/*
 		 * Object ms = requestBodyJSON.opt("MULTISCHEMA");
 		 *
-		 * Boolean multiSchema; if (ms != null && ms instanceof String) {
-		 * multiSchema = new Boolean((String) ms); } else { multiSchema =
-		 * (Boolean) ms; }
+		 * Boolean multiSchema; if (ms != null && ms instanceof String) { multiSchema = new Boolean((String) ms); } else { multiSchema = (Boolean) ms; }
 		 */
 
 		/*
 		 * Object ro = requestBodyJSON.opt("READ_ONLY");
 		 *
-		 * Boolean readOnly; if (ro != null && ro instanceof String) { readOnly
-		 * = new Boolean((String) ro); } else { readOnly = (Boolean) ro; }
+		 * Boolean readOnly; if (ro != null && ro instanceof String) { readOnly = new Boolean((String) ro); } else { readOnly = (Boolean) ro; }
 		 */
 
 		/*
-		 * Object wd = requestBodyJSON.opt("WRITE_DEFAULT"); Boolean
-		 * writeDefault; if (wd != null && ms instanceof String) { writeDefault
-		 * = new Boolean((String) wd); } else { writeDefault = (Boolean) wd; }
+		 * Object wd = requestBodyJSON.opt("WRITE_DEFAULT"); Boolean writeDefault; if (wd != null && ms instanceof String) { writeDefault = new Boolean((String)
+		 * wd); } else { writeDefault = (Boolean) wd; }
 		 */
 
 		Boolean isMultiSchema = false;

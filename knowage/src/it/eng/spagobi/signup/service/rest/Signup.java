@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -38,10 +38,9 @@ import it.eng.spagobi.profiling.bean.SbiUserAttributes;
 import it.eng.spagobi.profiling.bean.SbiUserAttributesId;
 import it.eng.spagobi.profiling.dao.ISbiAttributeDAO;
 import it.eng.spagobi.profiling.dao.ISbiUserDAO;
-import it.eng.spagobi.rest.annotations.ToValidate;
 import it.eng.spagobi.rest.publishers.PublisherService;
 import it.eng.spagobi.security.Password;
-import it.eng.spagobi.tools.dataset.validation.FieldsValidatorFactory;
+import it.eng.spagobi.services.rest.annotations.PublicService;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.locks.DistributedLockFactory;
 import it.eng.spagobi.utilities.themes.ThemesManager;
@@ -213,10 +212,10 @@ public class Signup {
 		}
 	}
 
+
 	@POST
 	@Path("/update")
 	@Produces(MediaType.APPLICATION_JSON)
-	@ToValidate(typeName = FieldsValidatorFactory.SIGNUP)
 	public String update(@Context HttpServletRequest req) {
 
 		String name = GeneralUtilities.trim(req.getParameter("name"));
@@ -305,57 +304,68 @@ public class Signup {
 
 	@GET
 	@Path("/prepareActive")
-	public void prepareActiveActive(@Context HttpServletRequest req) {
+	@PublicService
+	public void prepareActive(@Context HttpServletRequest req) {
+
+		try {
+			String theme_name = (String) req.getAttribute(ChangeTheme.THEME_NAME);
+			logger.debug("theme selected: " + theme_name);
+
+			String currTheme = (String) req.getAttribute("currTheme");
+			if (currTheme == null)
+				currTheme = ThemesManager.getDefaultTheme();
+			logger.debug("currTheme: " + currTheme);
+
+			String url = "/themes/" + currTheme + "/jsp/signup/active.jsp";
+			logger.debug("url for active: " + url);
+			req.setAttribute("currTheme", currTheme);
+			req.getRequestDispatcher(url).forward(req, servletResponse);
+		} catch (ServletException e) {
+			logger.error("Error dispatching request");
+		} catch (IOException e) {
+			logger.error("Error writing content");
+		}
+	}
+
+	@POST
+	@Path("/active")
+	@PublicService
+	public String active(@Context HttpServletRequest req) {
 
 		IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();
-
-		String accountId = req.getParameter("accountId");
-		String uuid = req.getParameter("uuid");
-
+		String id = req.getParameter("accountId");
 		String strLocale = GeneralUtilities.trim(req.getParameter("locale"));
 		Locale locale = new Locale(strLocale.substring(0, strLocale.indexOf("_")), strLocale.substring(strLocale.indexOf("_") + 1));
 		String expired_time = SingletonConfig.getInstance().getConfigValue("MAIL.SIGNUP.expired_time");
 
-		IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME, SpagoBIConstants.DISTRIBUTED_MAP_FOR_SIGNUP);
-
-		String returnMsg = validateRequest(accountId, uuid, mapLocks);
-
 		try {
-
-			if (returnMsg == null) {
-				// request is valid
-				ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
-				SbiUser user = null;
-				try {
-					user = userDao.loadSbiUserById(Integer.parseInt(accountId));
-				} catch (EMFUserError emferr) {
-				}
-				if (user == null) {
-					returnMsg = "signup.msg.unknownUserKO";
-				} else if (!user.getFlgPwdBlocked()) {
-					returnMsg = "signup.msg.userActiveKO";
-					mapLocks.remove(accountId);
-				} else if (System.currentTimeMillis() > user.getCommonInfo().getTimeIn().getTime() + Long.parseLong(expired_time) * 24 * 60 * 60 * 1000) {
-					returnMsg = "signup.msg.userActivationExpiredKO";
-					mapLocks.remove(accountId);
-				} else {
-					user.setFlgPwdBlocked(false);
-					userDao.updateSbiUser(user, null);
-					returnMsg = "signup.msg.userActivationOK";
-					mapLocks.remove(accountId);
-
-				}
+			ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
+			SbiUser user = null;
+			try {
+				user = userDao.loadSbiUserById(Integer.parseInt(id));
+			} catch (EMFUserError emferr) {
+			}
+			if (user == null) {
+				return new JSONObject("{message: '" + msgBuilder.getMessage("signup.msg.unknownUser", "messages", locale) + "'}").toString();
 
 			}
-			String url = GeneralUtilities.getSpagoBiHost() + GeneralUtilities.getSpagoBiContext();
-			String adapUrlStr = GeneralUtilities.getSpagoAdapterHttpUrl();
 
-			url = url + adapUrlStr + "?PAGE=LoginPage&NEW_SESSION=TRUE&activationMsg=" + returnMsg;
-			servletResponse.sendRedirect(url);
+			if (!user.getFlgPwdBlocked())
+				return new JSONObject("{message: '" + msgBuilder.getMessage("signup.msg.userActive", "messages", locale) + "'}").toString();
+
+			long now = System.currentTimeMillis();
+			if (now > user.getCommonInfo().getTimeIn().getTime() + Long.parseLong(expired_time) * 24 * 60 * 60 * 1000)
+				return new JSONObject("{message: '" + msgBuilder.getMessage("signup.msg.userActivationExpired", "messages", locale) + "'}").toString();
+
+			user.setFlgPwdBlocked(false);
+			userDao.updateSbiUser(user, null);
+
+			return new JSONObject("{message: '" + msgBuilder.getMessage("signup.msg.userActivationOK", "messages", locale) + "'}").toString();
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException("An unexpected error occured while executing the subscribe action", t);
 		}
 	}
+
 
 	// @GET
 	// @Path("/prepareActive")
@@ -422,8 +432,9 @@ public class Signup {
 	@POST
 	@Path("/create")
 	@Produces(MediaType.APPLICATION_JSON)
-	@ToValidate(typeName = FieldsValidatorFactory.SIGNUP)
+	@PublicService
 	public String create(@Context HttpServletRequest req) {
+
 
 		// String strLocale = GeneralUtilities.trim(req.getParameter("locale"));
 		// Locale locale = new Locale(strLocale.substring(0, strLocale.indexOf("_")), strLocale.substring(strLocale.indexOf("_")+1));
@@ -589,6 +600,7 @@ public class Signup {
 
 	@POST
 	@Path("/prepare")
+	@PublicService
 	public void prepare(@Context HttpServletRequest req) {
 		String theme_name = (String) req.getAttribute(ChangeTheme.THEME_NAME);
 		logger.debug("theme selected: " + theme_name);

@@ -97,7 +97,7 @@ public class LovResource extends AbstractSpagoBIResource {
 
 	@SuppressWarnings("unchecked")
 	@GET
-	@Path("/")
+	@Path("/get/all")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.LOVS_MANAGEMENT })
 	public List<ModalitiesValue> getAllListOfValues() {
@@ -350,7 +350,7 @@ public class LovResource extends AbstractSpagoBIResource {
 	}
 
 	@POST
-	@Path("/")
+	@Path("/save")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { SpagoBIConstants.LOVS_MANAGEMENT })
 	public Response post(@javax.ws.rs.core.Context HttpServletRequest req) {

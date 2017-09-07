@@ -4,9 +4,5 @@
 	</MAP_ACTIONS>
 	<MAP_PAGE_MODULES>
 	</MAP_PAGE_MODULES>
-	
-    <MAP_REST_SERVICES>
-    	<MAP_REST_SERVICE serviceUrl="/federateddataset.*" businessProcess="publicFunctionality" />
-    </MAP_REST_SERVICES>
     
 </BUSINESS_MAP>

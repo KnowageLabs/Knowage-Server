@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,13 +11,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.services.rest;
-
-import it.eng.spagobi.commons.utilities.ChannelUtilities;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -29,34 +27,18 @@ import javax.ws.rs.core.UriInfo;
 
 import org.jboss.resteasy.spi.HttpRequest;
 
+import it.eng.spagobi.commons.utilities.ChannelUtilities;
+
 /**
- * 
+ *
  * @author Alberto Ghedin (alberto.ghedin@eng.it)
- * 
+ *
  */
 public class InterceptorUtilities {
 
 	/**
 	 * Get the url of the services. It removes the path parameters from the url
-	 * 
-	 * @param req
-	 * @return the url of the service
-	 */
-	public static String getServiceUrl(HttpRequest req) {
-		String serviceUrl = req.getPreprocessedPath();
-		UriInfo uri = req.getUri();
-		// Remove the path parameters
-		int pathParametersLength = uri.getPathParameters().size();
-		for (int i = 0; i < pathParametersLength; i++) {
-			int slahPosition = serviceUrl.lastIndexOf("/");
-			serviceUrl = serviceUrl.substring(0, slahPosition);
-		}
-		return serviceUrl;
-	}
-
-	/**
-	 * Get the url of the services. It removes the path parameters from the url
-	 * 
+	 *
 	 * @param req
 	 * @return the url of the service
 	 */
@@ -67,7 +49,7 @@ public class InterceptorUtilities {
 
 	/**
 	 * Trasforms a MultivaluedMap in a HashMap
-	 * 
+	 *
 	 * @param multiMap
 	 * @return
 	 */
@@ -88,9 +70,8 @@ public class InterceptorUtilities {
 	}
 
 	/**
-	 * Get the content of a map of object and for every value apply the
-	 * toString. If the value is an array it iterate in all the entries
-	 * 
+	 * Get the content of a map of object and for every value apply the toString. If the value is an array it iterate in all the entries
+	 *
 	 * @param stringMap
 	 * @param genericMap
 	 */

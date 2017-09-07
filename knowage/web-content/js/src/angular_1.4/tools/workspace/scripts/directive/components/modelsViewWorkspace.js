@@ -66,7 +66,7 @@ function modelsController($scope, sbiModule_restServices, sbiModule_translate, $
 	}
 		
 	$scope.getFederatedDatasets = function() {
-		sbiModule_restServices.promiseGet("1.0/datasets/federated", "")
+		sbiModule_restServices.promiseGet("1.0/datasets", "federated")
 		.then(function(response) {
 			var allDatasets = response.data.root;
 			for (var i = 0; i < allDatasets.length; i++) {
@@ -85,7 +85,7 @@ function modelsController($scope, sbiModule_restServices, sbiModule_translate, $
 	$scope.getFederatedDatasets();
 	
 	$scope.loadFederations = function(){
-		sbiModule_restServices.promiseGet("federateddataset", "")
+		sbiModule_restServices.promiseGet("federateddataset")
 		.then(function(response) {
 			angular.copy(response.data,$scope.federationDefinitions);
 			angular.copy($scope.federationDefinitions,$scope.federationDefinitionsInitial);
@@ -124,7 +124,7 @@ function modelsController($scope, sbiModule_restServices, sbiModule_translate, $
         
     $scope.loadBusinessModelsCategories= function(roleIds){
     	
-    	sbiModule_restServices.promiseGet("2.0/domains/rolesCategories/", queryParamRolesIds(roleIds))
+    	sbiModule_restServices.promiseGet("2.0/domains", "rolesCategories", queryParamRolesIds(roleIds))
 		.then(function(response) {
 			$scope.handleBusinessModels(response.data);
 		},function(response){
@@ -153,7 +153,7 @@ function modelsController($scope, sbiModule_restServices, sbiModule_translate, $
 	};
     
     $scope.loadBusinessModels= function(){
-    	sbiModule_restServices.promiseGet("2.0/roles/idsByNames", queryParamRolesNames())
+    	sbiModule_restServices.promiseGet("2.0/roles", "idsByNames", queryParamRolesNames())
 		.then(function(response) {
 			$scope.loadBusinessModelsCategories(response.data);
 		},function(response){

@@ -17,6 +17,22 @@
  */
 package it.eng.spagobi.api.v2;
 
+import it.eng.qbe.serializer.SerializationException;
+import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IRoleDAO;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.rest.RestUtilities;
+import it.eng.spagobi.wapp.bo.Menu;
+import it.eng.spagobi.wapp.dao.IMenuDAO;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;

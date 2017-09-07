@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,14 +11,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.tools.datasource.service.rest;
-
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -38,6 +35,11 @@ import org.json.JSONObject;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
 
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.utilities.rest.RestUtilities;
+
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
  *
@@ -50,6 +52,7 @@ public class TestConnection {
 	@POST
 	@Path("/test")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
 	public String testDataSource(@javax.ws.rs.core.Context HttpServletRequest req) throws Exception {
 
 		logger.debug("IN");
@@ -125,6 +128,7 @@ public class TestConnection {
 	@POST
 	@Path("/2.0/test")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
 	public String testDataSourceNew(@javax.ws.rs.core.Context HttpServletRequest req) throws Exception {
 
 		logger.debug("IN");

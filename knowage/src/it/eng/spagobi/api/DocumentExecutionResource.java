@@ -94,11 +94,10 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
+import org.apache.clerezza.jaxrs.utils.form.FormFile;
+import org.apache.clerezza.jaxrs.utils.form.MultiPartBody;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
-import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
-import org.jboss.resteasy.plugins.providers.multipart.InputPart;
-import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -1016,33 +1015,24 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	@Path("/uploadfilemetadata")
 	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_METADATA_MANAGEMENT })
 	@Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON })
-	public Response uploadFile(@MultipartForm MultipartFormDataInput input) {
+	public Response uploadFile(MultiPartBody input) {
 
 		byte[] bytes = null;
 
-		Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
-		for (String key : uploadForm.keySet()) {
-
-			List<InputPart> inputParts = uploadForm.get(key);
-
-			for (InputPart inputPart : inputParts) {
-
 				try {
 
-					MultivaluedMap<String, String> header = inputPart.getHeaders();
-					if (getFileName(header) != null) {
-
-						// convert the uploaded file to input stream
-						InputStream inputStream = inputPart.getBody(InputStream.class, null);
-
-						bytes = IOUtils.toByteArray(inputStream);
+					if (input != null) {
 
 						String saveDirectoryPath = SpagoBIUtilities.getResourcePath() + "/" + METADATA_DIR + "/" + getUserProfile().getUserName().toString();
+						final FormFile file = input.getFormFileParameterValues("file")[0];
+						bytes = file.getContent();
+
+						
 						File saveDirectory = new File(saveDirectoryPath);
 						if (!(saveDirectory.exists() && saveDirectory.isDirectory())) {
 							saveDirectory.mkdirs();
 						}
-						String tempFile = saveDirectoryPath + "/" + getFileName(header);
+						String tempFile = saveDirectoryPath + "/" + file.getFileName();
 						File tempFileToSave = new File(tempFile);
 						tempFileToSave.createNewFile();
 						DataOutputStream os = new DataOutputStream(new FileOutputStream(tempFileToSave));
@@ -1055,9 +1045,6 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					throw new SpagoBIRuntimeException("Error inserting new file metadataContent ", e);
 				}
 
-			}
-
-		}
 
 		return Response.status(200).build();
 

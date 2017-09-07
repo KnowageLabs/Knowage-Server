@@ -53,8 +53,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.log4j.Logger;
-import org.jboss.resteasy.plugins.providers.multipart.InputPart;
-import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -67,7 +65,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 @ManageAuthorization
 @Path("/layers")
 public class LayerCRUD {
-
+/*
 	static private Logger logger = Logger.getLogger(LayerCRUD.class);
 	public static final String LAYER_ID = "id";
 	public static final String LAYER_LABEL = "label";
@@ -612,5 +610,5 @@ public class LayerCRUD {
 
 		logger.debug("Layers serialized");
 		return "{\"root\":" + s + "}";
-	}
+	}*/
 }

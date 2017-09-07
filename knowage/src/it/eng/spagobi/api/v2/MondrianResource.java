@@ -17,21 +17,9 @@
  */
 package it.eng.spagobi.api.v2;
 
-import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.tools.catalogue.bo.Artifact;
-import it.eng.spagobi.tools.catalogue.bo.Content;
-import it.eng.spagobi.tools.catalogue.dao.IArtifactsDAO;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
@@ -49,10 +37,16 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
-import org.apache.commons.io.IOUtils;
-import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
-import org.jboss.resteasy.plugins.providers.multipart.InputPart;
-import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
+import org.apache.clerezza.jaxrs.utils.form.FormFile;
+import org.apache.clerezza.jaxrs.utils.form.MultiPartBody;
+
+import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.tools.catalogue.bo.Artifact;
+import it.eng.spagobi.tools.catalogue.bo.Content;
+import it.eng.spagobi.tools.catalogue.dao.IArtifactsDAO;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 @Path("2.0/mondrianSchemasResource")
 @ManageAuthorization
@@ -211,39 +205,24 @@ public class MondrianResource extends AbstractSpagoBIResource {
 	// TODO insert correct Functionalities
 	@POST
 	@Path("/{ID}/versions")
-	@Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON })
-	public Response uploadFile(@MultipartForm MultipartFormDataInput input, @PathParam("ID") int artifactId) {
+	public Response uploadFile(MultiPartBody input, @PathParam("ID") int artifactId) {
 
 		Content content = new Content();
 		byte[] bytes = null;
 
 		artifactDAO = DAOFactory.getArtifactsDAO();
 
-		Map<String, List<InputPart>> uploadForm = input.getFormDataMap();
+		final FormFile file = input.getFormFileParameterValues("file")[0];
 
-		List<InputPart> fileNamePart = uploadForm.get("fileName");
-		List<InputPart> fileParts = uploadForm.get("file");
+		if (file != null) {
 
-		if (fileNamePart != null && fileParts != null) {
-			try {
+			bytes = file.getContent();
+			content.setFileName(file.getFileName());
+			content.setContent(bytes);
+			content.setCreationDate(new Date());
+			content.setCreationUser(getUserProfile().getUserName().toString());
 
-				content.setFileName(fileNamePart.get(0).getBodyAsString());
-
-				// convert the uploaded file to input stream
-				InputStream inputStream = fileParts.get(0).getBody(InputStream.class, null);
-
-				bytes = IOUtils.toByteArray(inputStream);
-
-				content.setContent(bytes);
-				content.setCreationDate(new Date());
-				content.setCreationUser(getUserProfile().getUserName().toString());
-
-				artifactDAO.insertArtifactContent(artifactId, content);
-				String encodedContentId = URLEncoder.encode("" + content.getId(), "UTF-8");
-				// System.out.println(new URI(uri.getAbsolutePath() + encodedContentId));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			artifactDAO.insertArtifactContent(artifactId, content);
 
 		} else {
 			return Response.status(Status.BAD_REQUEST).build();

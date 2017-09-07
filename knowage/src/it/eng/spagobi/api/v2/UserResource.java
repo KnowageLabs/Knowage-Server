@@ -38,8 +38,11 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
@@ -123,11 +126,18 @@ public class UserResource extends AbstractSpagoBIResource {
 	@Path("/")
 	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT, SpagoBIConstants.FINAL_USERS_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response insertUser(@Valid UserBO body) {
-
+	public Response insertUser(String body) {
+		UserBO user = null;
 		ISbiUserDAO usersDao = null;
+		
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			user = mapper.readValue(body, UserBO.class);
+		} catch (Exception e1) {
+			logger.error(e1);
+			throw new SpagoBIRestServiceException("Error while inserting resource", buildLocaleFromSession(), e1);
+		}
 
-		UserBO user = body;
 		SbiUser sbiUser = new SbiUser();
 		sbiUser.setUserId(user.getUserId());
 		sbiUser.setFullName(user.getFullName());
@@ -185,10 +195,19 @@ public class UserResource extends AbstractSpagoBIResource {
 	@Path("/{id}")
 	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT, SpagoBIConstants.FINAL_USERS_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response updateUser(@PathParam("id") Integer id, @Valid UserBO body) {
+	public Response updateUser(@PathParam("id") Integer id, String body) {
 
+		UserBO user = null;
 		ISbiUserDAO usersDao = null;
-		UserBO user = body;
+		
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			user = mapper.readValue(body, UserBO.class);
+		} catch (Exception e1) {
+			logger.error(e1);
+			throw new SpagoBIRestServiceException("Error while inserting resource", buildLocaleFromSession(), e1);
+		}
+		
 		SbiUser sbiUser = new SbiUser();
 		sbiUser.setId(id);
 		sbiUser.setUserId(user.getUserId());

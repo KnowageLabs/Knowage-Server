@@ -17,16 +17,6 @@
  */
 package it.eng.spagobi.api;
 
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.GeneralUtilities;
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.ckan.CKANClient;
-import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -50,6 +40,18 @@ import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.ckan.CKANClient;
+import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+
 @Path("/ckan-management")
 public class CkanHelper {
 
@@ -62,6 +64,7 @@ public class CkanHelper {
 	@GET
 	@Path("/download")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { SpagoBIConstants.CKAN_FUNCTIONALITY })
 	public String DownloadCkanDataset(@Context HttpServletRequest request) throws JSONException {
 
 		logger.debug("IN");
@@ -229,8 +232,8 @@ public class CkanHelper {
 
 		// first check that the user profile isn't null
 		if (userProfile == null) {
-			throw new SpagoBIServiceException("REST service /ckan-management/download", "Impossible to check [ " + DATASET_FILE_MAX_SIZE
-					+ "] attribute without a valide user profile");
+			throw new SpagoBIServiceException("REST service /ckan-management/download",
+					"Impossible to check [ " + DATASET_FILE_MAX_SIZE + "] attribute without a valide user profile");
 		}
 
 		try {
@@ -276,8 +279,8 @@ public class CkanHelper {
 	private void checkDatasetFileMaxSizeSystem(long fileSize) {
 		int maxSize = GeneralUtilities.getDataSetFileMaxSize();
 		if (fileSize > maxSize) {
-			throw new SpagoBIServiceException("REST service /ckan-management/download", "The uploaded file exceeds the maximum size, that is " + maxSize
-					+ " bytes");
+			throw new SpagoBIServiceException("REST service /ckan-management/download",
+					"The uploaded file exceeds the maximum size, that is " + maxSize + " bytes");
 		}
 	}
 }

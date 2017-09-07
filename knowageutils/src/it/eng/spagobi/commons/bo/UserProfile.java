@@ -17,15 +17,6 @@
  */
 package it.eng.spagobi.commons.bo;
 
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.security.AuthorizationsBusinessMapper;
-import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
-import it.eng.spagobi.tenant.Tenant;
-import it.eng.spagobi.tenant.TenantManager;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -37,6 +28,15 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.security.AuthorizationsBusinessMapper;
+import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
+import it.eng.spagobi.tenant.Tenant;
+import it.eng.spagobi.tenant.TenantManager;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * This class contain the information about the user
@@ -333,31 +333,7 @@ public class UserProfile implements IEngUserProfile {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see it.eng.spago.security.IEngUserProfile#isAbleToExecuteAction(java.lang.String)
-	 */
-	public boolean isAbleToExecuteService(String serviceUrl) throws EMFInternalError {
-		if (isSchedulerUser((String) getUserUniqueIdentifier())) {
-			return true;
-		}
 
-		// first check if the actionName is a functionality...
-		if (this.functionalities.contains(serviceUrl)) {
-			return true;
-		}
-		String functionality = AuthorizationsBusinessMapper.getInstance().mapServiceToBusinessProcess(serviceUrl);
-
-		if (functionality != null) {
-			if (functionality.equals(PUBLIC_FUNCTIONALITY)) {
-				return true;
-			}
-			return this.functionalities.contains(functionality);
-		} else
-			return false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see it.eng.spago.security.IEngUserProfile#isAbleToExecuteModuleInPage(java.lang.String, java.lang.String)
 	 */
 	@Override
