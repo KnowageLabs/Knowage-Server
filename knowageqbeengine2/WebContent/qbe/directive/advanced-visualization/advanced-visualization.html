@@ -18,22 +18,9 @@
 				 </angular-table>
 			</div>
 			<div flex layout="column">
-				<md-card flex layout="row">
+				<md-card flex layout="row" ng-drop="true">
 					<div  layout="row">
-						<div ng-repeat="f in ngModel.advancedFilters" flex=10 layout="row">
-							<md-card class="md-toolbar-tools">
-								{{f.name}}
-		   						<span flex></span>
-			          			<md-checkbox ng-model="f.grouped" class="menuCheckbox"></md-checkbox>	
-							</md-card>
-							<div>
-				   				<md-select ng-model="f.connector">
-									<md-option ng-repeat="operator in logicalOperators" value="{{operator}}">
-						            	{{operator}}
-									</md-option>
-								</md-select>
-				   			</div>   					
-			   			</div>
+						<group ng-model="advancedFilters"></group>
 					</div>
 				</md-card>
 				<md-card-actions layout="row" layout-align="end center">

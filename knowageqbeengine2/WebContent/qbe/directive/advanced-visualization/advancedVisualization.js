@@ -20,7 +20,7 @@
 	var currentScriptPath = scripts[scripts.length - 1].src;
 	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
 
-angular.module('qbe_advanced_visualization', ['ngMaterial'])
+angular.module('qbe_advanced_visualization', ['ngDraggable'])
 .directive('qbeAdvancedVisualization', function() {
 	return {
 		templateUrl:  currentScriptPath +'advanced-visualization.html',
@@ -36,6 +36,8 @@ angular.module('qbe_advanced_visualization', ['ngMaterial'])
 });
 
 function advancedVisualizationControllerFunction($scope,sbiModule_translate, sbiModule_config, filters_service, $mdDialog){
+
+	$scope.advancedFilters = angular.copy($scope.ngModel.advancedFilters);
 	
 	$scope.openMenu = function($mdOpenMenu, ev) {
 		originatorEv = ev;
@@ -153,18 +155,25 @@ function advancedVisualizationControllerFunction($scope,sbiModule_translate, sbi
 	
 	
 	$scope.groupFilters = function () {
-		console.log("sssssss")
-		for ( var index in $scope.ngModel.childNodes) {
-			if($scope.ngModel.childNodes[index].selected==true){
-				$scope.ngModel.childNodes[index].backgroundColor="#D3D3D3";
-				$scope.ngModel.childNodes[index].grouped=true;
+		for (var i = 0; i < $scope.advancedFilters.length; i++) {
+			for (var j = 0; j < $scope.arrayForGroup.length; j++) {
+				if($scope.advancedFilters[i].name==$scope.arrayForGroup[j].name) {
+
+					$scope.advancedFilters.splice(i, 1);
+
+				}
+
 			}
+
 		}
+		$scope.advancedFilters.push(angular.copy($scope.arrayForGroup))
+		$scope.arrayForGroup.length=0;
+		console.log($scope.advancedFilters)
 	}
+
 	$scope.arrayForGroup = [];
 	$scope.addToArray = function (filter) {
 		
-		console.log("sssssss")
 		$scope.arrayForGroup.push(filter);
 		
 	}
@@ -179,5 +188,6 @@ function advancedVisualizationControllerFunction($scope,sbiModule_translate, sbi
 			return row.leftOperandDescription + " " + row.operator + " " +row.rightOperandDescription ;
 		}
 	}
+	$scope.radaf = [{"conn":4, "sss":"das"}, {"conn":3, "sss":"das"}, [{"conn":656, "sss":55},{"conn":654666, "sss":"das"},{"conn":"fsdfs", "sss":"das"},[{"conn":11, "sss":55},{"conn":22, "sss":"das"},{"conn":"22", "sss":"das"}]]];
 }
 })();

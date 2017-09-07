@@ -92,12 +92,12 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 				"leftOperandAlias": $scope.ngModel.field.field.name,
 				"leftOperandDataType": "",
 				"operator": "EQUALS TO",
-				"rightOperandValue": [],
+				"rightOperandValue": [""],
 				"rightOperandDescription": "",
 				"rightOperandLongDescription": "",
 				"rightOperandType": "",
-				"rightOperandDefaultValue": [],
-				"rightOperandLastValue": [],
+				"rightOperandDefaultValue": [""],
+				"rightOperandLastValue": [""],
 				"rightOperandAlias": null,
 				"rightOperandDataType": "",
 				"booleanConnector": "AND",
@@ -153,7 +153,7 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 	}
 	var setRight = function (filter, type, value){
 		if(value=='field'){
-			filter.rightOperandValue=[];
+			filter.rightOperandValue=[""];
 			filter.rightOperandValue.push(type.id) ;
 			filter.rightOperandType="Field Content";
 			filter.rightOperandDescription=type.attributes.entity+" "+": "+type.text;
@@ -189,14 +189,17 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 		case "anotherEntity":
 			$scope.targetOption = option;
 			$scope.disableCombo = false;
+			$scope.showTable = false;
 			break;
 		case "subquery":
 			$scope.targetOption = option;
 			$scope.disableCombo = false;
+			$scope.showTable = false;
 			break;
 		case "parameter":
 			$scope.targetOption = option;
 			$scope.disableCombo = false;
+			$scope.showTable = false;
 			break;
 		default:
 			break;
@@ -219,7 +222,7 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 		}
 		if($scope.filter) {
 			$scope.filter.rightOperandDescription = angular.copy($scope.forInput);
-			$scope.filter.rightOperandValue=[];
+			$scope.filter.rightOperandValue=[""];
 			for (var i = 0; i < newValue.length; i++) {
 				$scope.filter.rightOperandValue.push(newValue[i].column_1)
 			}
@@ -250,7 +253,7 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 	}
 
 	$scope.edit = function (filter){
-		filter.rightOperandValue=[];
+		filter.rightOperandValue=[""];
 		filter.rightOperandValue.push(filter.rightOperandDescription );
 		filter.rightOperandType="Static Content";
 	}
@@ -287,7 +290,6 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 			var advancedFilter = {
 					name: filters[i].filterId,
 					connector: filters[i].booleanConnector,
-					value: []
 			};
 			advancedFilters.push(advancedFilter);
 		}
