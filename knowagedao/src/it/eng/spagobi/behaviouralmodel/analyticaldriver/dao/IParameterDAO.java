@@ -86,6 +86,17 @@ public interface IParameterDAO extends ISpagoBIDao{
 	public List loadAllParameters() throws EMFUserError;
 
 	/**
+	 * Loads all detail information for all parameters. For each of them, detail information is stored into a <code>SbiParameter</code> hibernate object. After
+	 * that, all parameters are stored into a <code>List</code>, which is returned.
+	 *
+	 * @return A list containing all hibernate parameters objects
+	 *
+	 * @throws EMFUserError
+	 *             If an Exception occurred
+	 */
+	public List loadAllSbiParameters() throws EMFUserError;
+	
+	/**
 	 * Implements the query to modify a parameter. All information needed is stored
 	 * into the input <code>Parameter</code> object.
 	 * 
