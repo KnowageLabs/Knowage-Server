@@ -56,7 +56,7 @@ Then you have to configure some environment variables defined in KNOWAGE\_SERVER
 ``` xml
     <Environment name="resource_path" type="java.lang.String" value="${catalina.base}/resources"/>
     <Environment name="sso_class" type="java.lang.String" value="it.eng.spagobi.services.common.FakeSsoService"/>
-    <Environment name="service_url" type="java.lang.String" value="http://localhost:8080/Knowage"/>   
+    <Environment name="service_url" type="java.lang.String" value="http://localhost:8080/knowage"/>   
     <Environment name="host_url" type="java.lang.String" value="http://localhost:8080"/>
 ```
 
