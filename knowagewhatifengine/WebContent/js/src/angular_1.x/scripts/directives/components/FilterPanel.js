@@ -739,7 +739,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 
 	
 	$scope.sendMdxQuery = function(mdx) {
-		var encoded = encodeURI("1.0/model/?SBI_EXECUTION_ID="+JSsbiExecutionID)
+		var encoded = encodeURI("1.0/model?SBI_EXECUTION_ID="+JSsbiExecutionID)
 		sbiModule_restServices.promisePost(encoded,"",mdx)
 		.then(function(response) {
 			$scope.handleResponse(response);

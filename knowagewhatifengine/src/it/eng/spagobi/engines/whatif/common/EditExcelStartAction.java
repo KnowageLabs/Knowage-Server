@@ -17,6 +17,29 @@
  */
 package it.eng.spagobi.engines.whatif.common;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.olap4j.OlapDataSource;
+import org.pivot4j.PivotModel;
+
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.whatif.WhatIfEngine;
 import it.eng.spagobi.engines.whatif.WhatIfEngineAnalysisState;
@@ -31,7 +54,6 @@ import it.eng.spagobi.engines.whatif.model.transform.algorithm.IAllocationAlgori
 import it.eng.spagobi.engines.whatif.parser.Lexer;
 import it.eng.spagobi.engines.whatif.parser.parser;
 import it.eng.spagobi.engines.whatif.template.WhatIfTemplateParseException;
-import it.eng.spagobi.utilities.ParametersDecoder;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
@@ -40,39 +62,16 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeExcept
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.jboss.resteasy.spi.ResteasyProviderFactory;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.olap4j.OlapDataSource;
-import org.pivot4j.PivotModel;
-
 @Path("/olap/startwhatif")
-public class EditExcelStartAction extends WhatIfEngineStartAction {
+public class EditExcelStartAction extends WhatIfEngineAbstractStartAction {
 
 	// INPUT PARAMETERS
 	public static final String LANGUAGE = "SBI_LANGUAGE";
 	public static final String COUNTRY = "SBI_COUNTRY";
 	private String userId = null;
 	private String tenant = null;
+	@Context HttpServletRequest request;
+	@Context HttpServletResponse response;
 
 	// OUTPUT PARAMETERS
 
@@ -260,7 +259,7 @@ public class EditExcelStartAction extends WhatIfEngineStartAction {
 
 	@Override
 	public HttpServletRequest getServletRequest() {
-		return ResteasyProviderFactory.getContextData(HttpServletRequest.class);
+		return request;
 	}
 
 	@Override

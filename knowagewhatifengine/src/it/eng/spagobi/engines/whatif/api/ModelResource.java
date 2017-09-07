@@ -377,6 +377,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	 *
 	 * @return the mdx active statement
 	 */
+	@Path("/")
 	@GET
 	public String getMdx() {
 		logger.debug("IN");

@@ -67,7 +67,6 @@
 	<classpathentry kind="lib" path="lib/poi-ooxml-3.9.jar"/>
 	<classpathentry kind="lib" path="lib/poi-ooxml-schemas-3.9.jar"/>
 	<classpathentry kind="lib" path="lib/resources-codemirror-0.6.3.jar"/>
-	<classpathentry kind="lib" path="lib/resteasy-jaxrs-2.3.5.Final.jar"/>
 	<classpathentry kind="lib" path="lib/scannotation-1.0.3.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-api-1.6.1.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-log4j12-1.6.1.jar"/>
@@ -95,10 +94,16 @@
 			<attribute name="owner.project.facets" value="jst.utility"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre1.8.0_73">
-		<attributes>
-			<attribute name="owner.project.facets" value="java"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/javax.annotation-api-1.2.jar"/>
+	<classpathentry kind="lib" path="lib/javax.ws.rs-api-2.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/jboss-logging-3.3.0.Final.jar"/>
+	<classpathentry kind="lib" path="lib/jsr311-api-1.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/resteasy-client-3.1.2.Final.jar"/>
+	<classpathentry kind="lib" path="lib/resteasy-jaxb-provider-3.1.2.Final.jar"/>
+	<classpathentry kind="lib" path="lib/resteasy-jaxrs-3.1.2.Final.jar"/>
+	<classpathentry kind="lib" path="lib/resteasy-jaxrs-services-3.1.2.Final.jar"/>
+	<classpathentry kind="lib" path="lib/resteasy-multipart-provider-3.1.2.Final.jar"/>
+	<classpathentry kind="lib" path="lib/resteasy-servlet-initializer-3.1.2.Final.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

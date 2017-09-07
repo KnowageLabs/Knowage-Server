@@ -29,7 +29,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 
 import org.apache.log4j.Logger;
-import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -43,13 +42,12 @@ public class PageResource extends AbstractRestService {
 
 	static private Map<String, JSONObject> pages;
 	static private Map<String, String> urls;
+	@Context HttpServletRequest request;
+	@Context HttpServletResponse response;
 
 	static private Logger logger = Logger.getLogger(PageResource.class);
 
-	@Context
-	protected HttpServletRequest request;
-	@Context
-	protected HttpServletResponse response;
+
 
 	/**
 	 * TODO Tutte le pagine dell'engine
@@ -79,8 +77,8 @@ public class PageResource extends AbstractRestService {
 		try {
 			// To deploy into JBOSSEAP64 is needed a StandardWrapper, instead of
 			// RestEasy Wrapper
-			HttpServletRequest request = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
-			HttpServletResponse response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
+//			HttpServletRequest request = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
+//			HttpServletResponse response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
 
 			request.getRequestDispatcher(dispatchUrl).forward(request, response);
 		} catch (Exception e) {

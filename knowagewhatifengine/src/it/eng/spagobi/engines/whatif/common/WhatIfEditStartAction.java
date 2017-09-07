@@ -22,10 +22,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
-import org.jboss.resteasy.spi.ResteasyProviderFactory;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -39,7 +39,7 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
 
 @Path("/olap/startwhatif")
 @ManageAuthorization
-public class WhatIfEditStartAction extends WhatIfEngineStartAction {
+public class WhatIfEditStartAction extends WhatIfEngineAbstractStartAction {
 
 	public static transient Logger logger = Logger.getLogger(WhatIfEditStartAction.class);
 	private static final String SUCCESS_REQUEST_DISPATCHER_URL_NEW = "/WEB-INF/jsp/edit.jsp";
@@ -47,6 +47,8 @@ public class WhatIfEditStartAction extends WhatIfEngineStartAction {
 	private static final String FAILURE_REQUEST_DISPATCHER_URL = "/WEB-INF/jsp/errors/startupError.jsp";
 	private String url = "";
 	private boolean whatif;
+	@Context HttpServletRequest request;
+	@Context HttpServletResponse response;
 
 	@GET
 	@Path("/edit")
@@ -54,8 +56,6 @@ public class WhatIfEditStartAction extends WhatIfEngineStartAction {
 	public void startAction() {
 		logger.debug("IN");
 
-		HttpServletRequest request = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
-		HttpServletResponse response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
 
 		try {
 			logger.debug("User Id: " + getUserId());

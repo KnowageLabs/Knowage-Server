@@ -17,6 +17,18 @@
  */
 package it.eng.spagobi.engines.whatif.api;
 
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
+import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
+import it.eng.spagobi.engines.whatif.schema.MondrianSchemaManager;
+import it.eng.spagobi.engines.whatif.template.WhatIfTemplate;
+import it.eng.spagobi.services.proxy.ArtifactServiceProxy;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
+import it.eng.spagobi.writeback4j.mondrian.MondrianDriver;
+import it.eng.spagobi.writeback4j.mondrian.MondrianSchemaRetriver;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,26 +42,13 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
-import org.jboss.resteasy.annotations.GZIP;
-import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
-import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
-import it.eng.spagobi.engines.whatif.schema.MondrianSchemaManager;
-import it.eng.spagobi.engines.whatif.template.WhatIfTemplate;
-import it.eng.spagobi.services.proxy.ArtifactServiceProxy;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.utilities.engines.EngineConstants;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
-import it.eng.spagobi.writeback4j.mondrian.MondrianDriver;
-import it.eng.spagobi.writeback4j.mondrian.MondrianSchemaRetriver;
 
 /**
  * @author spetrovic
@@ -64,6 +63,8 @@ public class DesignerResource extends AbstractWhatIfEngineService {
 	private MondrianSchemaRetriver retriver = null;
 	private String reference;
 	private static final String SUCCESS_REQUEST_DISPATCHER_URL = "/WEB-INF/jsp/whatIf2.jsp";
+	@Context HttpServletRequest request;
+	@Context HttpServletResponse response;
 
 	@GET
 	@Path("/allcubes/{id}")
@@ -162,8 +163,8 @@ public class DesignerResource extends AbstractWhatIfEngineService {
 	@Produces("text/html")
 	public void redirect() throws SpagoBIEngineException, ServletException, IOException {
 		logger.debug("IN");
-		HttpServletRequest request = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
-		HttpServletResponse response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
+//		HttpServletRequest request = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
+//		HttpServletResponse response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
 		request.getRequestDispatcher(SUCCESS_REQUEST_DISPATCHER_URL).forward(request, response);
 	}
 

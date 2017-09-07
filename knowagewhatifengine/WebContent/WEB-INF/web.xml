@@ -104,14 +104,14 @@
   </filter-mapping>
  END-CAS -->
  
- <filter>
+ <!-- filter>
     <filter-name>CleanupFilter</filter-name>
     <filter-class>it.eng.spagobi.engines.whatif.ResteasyCleanupFilter</filter-class>
 </filter>
 <filter-mapping>
     <filter-name>CleanupFilter</filter-name>
     <url-pattern>/*</url-pattern>
-</filter-mapping> 
+</filter-mapping -->
   
   <filter-mapping>
     <filter-name>EncodingFilter</filter-name>
@@ -126,11 +126,11 @@
     <url-pattern>/restful-services/*</url-pattern>
   </filter-mapping>
   
-  <listener>
+  <!--listener>
     <listener-class>
             org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap
         </listener-class>
-  </listener>
+  </listener-->
   
   <servlet>
     <servlet-name>ConfigServlet</servlet-name>
@@ -154,7 +154,7 @@
 		</servlet-class>
   </servlet>
   
-  <servlet>
+  <!--servlet>
     <servlet-name>Resteasy</servlet-name>
     <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
     	<init-param>
@@ -192,7 +192,7 @@
  <servlet-mapping>
     <servlet-name>Resteasy</servlet-name>
     <url-pattern>/restful-services/*</url-pattern>
-  </servlet-mapping>
+  </servlet-mapping-->
   
   <servlet-mapping>
     <servlet-name>AdapterHTTP</servlet-name>
@@ -208,12 +208,7 @@
     <servlet-name>EngineTestServlet</servlet-name>
     <url-pattern>/servlet/AdapterHTTPTest</url-pattern>
   </servlet-mapping>
-  
- 
-  
-  
-  
-  
+    
   <session-config>
     <session-timeout>30</session-timeout>
   </session-config>
@@ -246,7 +241,6 @@
     <param-name>resteasy.scan</param-name>
     <param-value>true</param-value>
   </context-param>
-  
-  
+ 
   
 </web-app>
