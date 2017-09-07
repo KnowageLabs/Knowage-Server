@@ -1,0 +1,6 @@
+
+
+<sole ng-if="!isArray(ngModel)"  ng-model="ngModel"></sole>
+<md-card  ng-drop="true" ng-drop-success="onDropSuccess($data,$event)">
+	<group ng-if='isArray(ngModel)' ng-repeat="row in ngModel" ng-drag="true" ng-drag-data="row" ng-drag-success="sssss($data,$event)" ng-model="row"> </group>
+</md-card>
