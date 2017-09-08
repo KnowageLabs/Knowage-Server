@@ -167,11 +167,6 @@
 		<url-pattern>/DataMiningServletBackEnd</url-pattern>
 	</filter-mapping>
 	
-	<listener>
-		<listener-class>
-            org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap
-		</listener-class>
-	</listener>
 	<servlet>
 		<servlet-name>ConfigServlet</servlet-name>
 		<servlet-class>it.eng.spago.configuration.ConfigServlet</servlet-class>
@@ -191,10 +186,7 @@
 			it.eng.spagobi.utilities.engines.EngineTestServlet
 		</servlet-class>
 	</servlet>
-	<servlet>
-		<servlet-name>Resteasy</servlet-name>
-		<servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
-	</servlet>
+
 	<servlet>
 		<servlet-name>ExternalResourceServlet</servlet-name>
 		<servlet-class>it.eng.spagobi.engines.datamining.servlet.ExternalResourceServlet</servlet-class>
@@ -214,10 +206,6 @@
 	<servlet-mapping>
 		<servlet-name>EngineTestServlet</servlet-name>
 		<url-pattern>/servlet/AdapterHTTPTest</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>Resteasy</servlet-name>
-		<url-pattern>/restful-services/*</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>ExternalResourceServlet</servlet-name>
