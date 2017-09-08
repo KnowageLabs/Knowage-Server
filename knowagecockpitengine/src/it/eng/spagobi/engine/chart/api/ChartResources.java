@@ -34,21 +34,20 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.hazelcast.com.eclipsesource.json.JsonObject;
-
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 @Path("1.0/chart/template")
-@ManageAuthorization
 public class ChartResources {
 
 	static private Logger logger = Logger.getLogger(ChartResources.class);
-	
+
 	@POST
 	@Path("/save")
 	@Produces(MediaType.APPLICATION_XML)
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY })
 	public String saveTemplate(@FormParam("jsonTemplate") String jsonTemplate, @FormParam("docLabel") String docLabel, @FormParam("userId") String userId,
 			@Context HttpServletResponse servletResponse) {
 		JSONObject newTemplate;
@@ -66,42 +65,40 @@ public class ChartResources {
 			throw new SpagoBIServiceException("Error while saving template", e);
 		}
 	}
-	
-	private static JSONObject parseTemplate (JSONObject jsonObj) throws JSONException {
-		
-	
+
+	private static JSONObject parseTemplate(JSONObject jsonObj) throws JSONException {
+
 		Iterator keys = jsonObj.keys();
-		 while (keys.hasNext()) {
-	            String key= (String) keys.next();
-	            Object keyValue = jsonObj.get(key);
-	            if(key.equalsIgnoreCase("style")){
-	            	JSONObject styleObject = (JSONObject) keyValue;
-	            	Iterator styleKeys = styleObject.keys();
-	            	String newStyle = "";
-	            	while (styleKeys.hasNext()) {
-	            		String styleKey= (String) styleKeys.next();
-	     	            String styleValue = (String) styleObject.optString(styleKey);
-	     	           newStyle = newStyle+ styleKey+":"+styleValue+";";
-					}
-	            	jsonObj.put("style", newStyle);
-	            }
-	            
-	            if(keyValue instanceof JSONArray){
-	            	 
-	            	 JSONArray array = (JSONArray)keyValue;
-	            	 for (int i = 0; i < array.length(); i++) {
-	            		 JSONObject obj = array.getJSONObject(i);
-	            		 parseTemplate(obj);
-					}
-	            	 
-	             }
-	            if(keyValue instanceof JSONObject){
-	            	parseTemplate((JSONObject)keyValue);
-	            }
-	    }
-		
+		while (keys.hasNext()) {
+			String key = (String) keys.next();
+			Object keyValue = jsonObj.get(key);
+			if (key.equalsIgnoreCase("style")) {
+				JSONObject styleObject = (JSONObject) keyValue;
+				Iterator styleKeys = styleObject.keys();
+				String newStyle = "";
+				while (styleKeys.hasNext()) {
+					String styleKey = (String) styleKeys.next();
+					String styleValue = styleObject.optString(styleKey);
+					newStyle = newStyle + styleKey + ":" + styleValue + ";";
+				}
+				jsonObj.put("style", newStyle);
+			}
+
+			if (keyValue instanceof JSONArray) {
+
+				JSONArray array = (JSONArray) keyValue;
+				for (int i = 0; i < array.length(); i++) {
+					JSONObject obj = array.getJSONObject(i);
+					parseTemplate(obj);
+				}
+
+			}
+			if (keyValue instanceof JSONObject) {
+				parseTemplate((JSONObject) keyValue);
+			}
+		}
+
 		return jsonObj;
 	}
-	
-	
+
 }

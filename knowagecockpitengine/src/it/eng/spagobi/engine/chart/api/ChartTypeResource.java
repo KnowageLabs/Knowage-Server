@@ -17,9 +17,6 @@
  */
 package it.eng.spagobi.engine.chart.api;
 
-import it.eng.spagobi.engine.chart.ChartEngineConfig;
-import it.eng.spagobi.engine.chart.model.conf.ChartConfig;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,13 +27,19 @@ import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.engine.chart.ChartEngineConfig;
+import it.eng.spagobi.engine.chart.model.conf.ChartConfig;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
+
 @Path("1.0/chart/pages/types")
 public class ChartTypeResource {
 
 	static private Logger logger = Logger.getLogger(ChartTypeResource.class);
 
 	@GET
-	public JSONObject getChartTypes() {
+	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY })
+	public String getChartTypes() {
 
 		Map<String, ChartConfig> chartLibConf = ChartEngineConfig.getChartLibConf();
 		Object chartTypes = chartLibConf.keySet().toArray();
@@ -57,7 +60,7 @@ public class ChartTypeResource {
 
 		}
 
-		return jo;
+		return jo.toString();
 	}
 
 }

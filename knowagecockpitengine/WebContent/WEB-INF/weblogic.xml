@@ -4,9 +4,7 @@
 		<prefer-application-packages>
 			<package-name>org.hibernate.*</package-name>
 <package-name>org.sl4j.*</package-name>
-<package-name>org.jboss.*</package-name>
 			<package-name>javax.validation.*</package-name>
-<package-name>javax.ws.*</package-name>
 			<package-name>javax.validation.spi.*</package-name>
 		</prefer-application-packages>
 	</container-descriptor>

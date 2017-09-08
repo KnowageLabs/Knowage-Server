@@ -17,14 +17,6 @@
  */
 package it.eng.knowage.engine.cockpit.api.association;
 
-import it.eng.knowage.engine.cockpit.api.AbstractCockpitEngineResource;
-import it.eng.spagobi.tools.dataset.common.association.Association;
-import it.eng.spagobi.tools.dataset.common.association.AssociationGroup;
-import it.eng.spagobi.tools.dataset.common.association.AssociationGroupJSONSerializer;
-import it.eng.spagobi.tools.dataset.common.association.AssociationJSONSerializer;
-import it.eng.spagobi.tools.dataset.common.association.AssociationManager;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -38,6 +30,16 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import it.eng.knowage.engine.cockpit.api.AbstractCockpitEngineResource;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.tools.dataset.common.association.Association;
+import it.eng.spagobi.tools.dataset.common.association.AssociationGroup;
+import it.eng.spagobi.tools.dataset.common.association.AssociationGroupJSONSerializer;
+import it.eng.spagobi.tools.dataset.common.association.AssociationJSONSerializer;
+import it.eng.spagobi.tools.dataset.common.association.AssociationManager;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
@@ -50,6 +52,7 @@ public class AssociationResource extends AbstractCockpitEngineResource {
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY })
 	public String getAssociations() {
 
 		logger.debug("IN");
@@ -68,6 +71,7 @@ public class AssociationResource extends AbstractCockpitEngineResource {
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY })
 	public String setAssociations(String jsonData) {
 
 		logger.debug("IN");

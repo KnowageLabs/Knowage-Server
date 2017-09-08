@@ -22,9 +22,9 @@ import it.eng.spagobi.utilities.engines.rest.SimpleRestClient;
 import java.util.Map;
 
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
-import org.jboss.resteasy.client.ClientResponse;
 import org.json.JSONObject;
 
 /**
@@ -40,8 +40,8 @@ public class ExcelExporterClient extends SimpleRestClient {
 	public JSONObject getDataStore(Map<String, Object> parameters, String datasetLabel, String userId, String selections) throws Exception {
 		logger.debug("IN");
 
-		ClientResponse resp = executePostService(parameters, String.format(serviceUrl, datasetLabel), userId, MediaType.APPLICATION_JSON_TYPE, selections);
-		String resultString = (String) resp.getEntity(String.class);
+		Response resp = executePostService(parameters, String.format(serviceUrl, datasetLabel), userId, MediaType.APPLICATION_JSON, selections);
+		String resultString = (String) resp.getEntity();
 		JSONObject result = new JSONObject(resultString);
 
 		logger.debug("OUT");

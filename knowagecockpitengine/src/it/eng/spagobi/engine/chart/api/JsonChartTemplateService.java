@@ -19,19 +19,6 @@ package it.eng.spagobi.engine.chart.api;
 
 import static it.eng.spagobi.engine.chart.util.ChartEngineUtil.ve;
 
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.engine.chart.ChartEngine;
-import it.eng.spagobi.engine.chart.ChartEngineInstance;
-import it.eng.spagobi.engine.chart.util.ChartEngineDataUtil;
-import it.eng.spagobi.engine.chart.util.ChartEngineUtil;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
-import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
-import it.eng.spagobi.utilities.engines.EngineConstants;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,6 +38,21 @@ import org.apache.velocity.VelocityContext;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.engine.chart.ChartEngine;
+import it.eng.spagobi.engine.chart.ChartEngineInstance;
+import it.eng.spagobi.engine.chart.util.ChartEngineDataUtil;
+import it.eng.spagobi.engine.chart.util.ChartEngineUtil;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
+import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 @Path("/1.0/chart/jsonChartTemplate")
 public class JsonChartTemplateService extends AbstractChartEngineResource {
@@ -76,6 +78,7 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@SuppressWarnings("rawtypes")
+	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY })
 	public String getJSONChartTemplate(@FormParam("jsonTemplate") String jsonTemplate, @FormParam("exportWebApp") String exportWebApp,
 			@FormParam("datasetLabel") String datasetLabel, @FormParam("driverParams") String driverParams, @FormParam("jsonData") String jsonData,
 			@Context HttpServletResponse servletResponse) {
@@ -117,21 +120,21 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 					"An unexpected error occured while executing service: JsonChartTemplateService.getJSONChartTemplate", t);
 		}
 	}
-	
+
 	@POST
 	@Path("/readChartTemplateForCockpit")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@SuppressWarnings("rawtypes")
+	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY })
 	public String getJSONChartTemplateForCockpit(@FormParam("jsonTemplate") String jsonTemplate, @FormParam("exportWebApp") String exportWebApp,
-			@FormParam("datasetLabel") String datasetLabel, @FormParam("jsonData") String jsonData,
-			@Context HttpServletResponse servletResponse) {
-		
-		IDataSet dataSet =null;
+			@FormParam("datasetLabel") String datasetLabel, @FormParam("jsonData") String jsonData, @Context HttpServletResponse servletResponse) {
+
+		IDataSet dataSet = null;
 		Map analyticalDrivers = new HashMap<>();
-		Map profileAttributes =  new HashMap<>();
+		Map profileAttributes = new HashMap<>();
 		try {
-		
+
 			if (dataSet == null && datasetLabel != null) {
 				IDataSetDAO dataSetDao = DAOFactory.getDataSetDAO();
 				dataSet = dataSetDao.loadDataSetByLabel(datasetLabel);
@@ -140,16 +143,15 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 			 * https://production.eng.it/jira/browse/KNOWAGE-581 if the dataset is null and we have datasetlabel valorized, probabily we are calling this REST
 			 * service from the cockpit. So, we need to get the dataset from his label
 			 */
-			
+
 			if (StringUtilities.isEmpty(jsonData)) {
-				jsonData = ChartEngineDataUtil.loadJsonData(jsonTemplate, dataSet, analyticalDrivers,profileAttributes, null);
+				jsonData = ChartEngineDataUtil.loadJsonData(jsonTemplate, dataSet, analyticalDrivers, profileAttributes, null);
 			}
-			VelocityContext velocityContext = ChartEngineUtil.loadVelocityContext(jsonTemplate, jsonData, Boolean.parseBoolean(exportWebApp),
-					null, getIOManager().getUserProfile());
+			VelocityContext velocityContext = ChartEngineUtil.loadVelocityContext(jsonTemplate, jsonData, Boolean.parseBoolean(exportWebApp), null,
+					getIOManager().getUserProfile());
 			String chartType = ChartEngineUtil.extractChartType(jsonTemplate, velocityContext);
 			Template velocityTemplate = ve.getTemplate(ChartEngineUtil.getVelocityModelPath(chartType));
 			String jsonChartTemplate = ChartEngineUtil.applyTemplate(velocityTemplate, velocityContext);
-		
 
 			// @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			return jsonChartTemplate.trim();
@@ -180,14 +182,15 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@SuppressWarnings("rawtypes")
+	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY })
 	public String drilldownHighchart(@FormParam("breadcrumb") String breadcrumb) {
 		try {
 			IDataSet dataSet = getEngineInstance().getDataSet();
 			Map analyticalDrivers = getEngineInstance().getAnalyticalDrivers();
 			Map profileAttributes = UserProfileUtils.getProfileAttributes((UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE));
 			String jsonTemplate = getEngineInstance().getTemplate().toString();
-			return ChartEngineDataUtil.drilldown(jsonTemplate, breadcrumb, dataSet, analyticalDrivers, profileAttributes, getLocale(), getEngineInstance()
-					.getDocumentLabel(), getEngineInstance().getUserProfile());
+			return ChartEngineDataUtil.drilldown(jsonTemplate, breadcrumb, dataSet, analyticalDrivers, profileAttributes, getLocale(),
+					getEngineInstance().getDocumentLabel(), getEngineInstance().getUserProfile());
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(),
 					"An unexpected error occured while executing service: JsonChartTemplateService.drilldownHighchart", t);
@@ -197,16 +200,18 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 	@GET
 	@Path("/fieldsMetadata")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY })
 	public String getDatasetMetadata() {
 		IDataSet dataSet = getEngineInstance().getDataSet();
 		return ChartEngineDataUtil.loadMetaData(dataSet);
 	}
-	
+
 	@GET
 	@Path("/fieldsMetadataforCockpit/{datasetId}")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY })
 	public String getDatasetMetadataForCockpit(@PathParam("datasetId") String datasetId) {
-		IDataSet dataSet =null;
+		IDataSet dataSet = null;
 		if (dataSet == null && datasetId != null) {
 			IDataSetDAO dataSetDao;
 			try {

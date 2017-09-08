@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,15 +11,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.engine.chart.api.engine;
-
-import it.eng.spagobi.engine.chart.ChartEngine;
-import it.eng.spagobi.engine.chart.api.AbstractChartEngineResource;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -29,6 +25,12 @@ import javax.ws.rs.core.MediaType;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.engine.chart.ChartEngine;
+import it.eng.spagobi.engine.chart.api.AbstractChartEngineResource;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+
 @Path("/1.0/chart/engine")
 public class EngineResource extends AbstractChartEngineResource {
 
@@ -37,6 +39,7 @@ public class EngineResource extends AbstractChartEngineResource {
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY })
 	public String getEngine() {
 
 		logger.debug("IN");
@@ -48,13 +51,14 @@ public class EngineResource extends AbstractChartEngineResource {
 			logger.debug("OUT");
 		}
 	}
-	
+
 	@GET
 	@Path("/ping")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY })
 	public String ping() {
 		return "ok";
-		
+
 	}
 
 	// =======================================================================

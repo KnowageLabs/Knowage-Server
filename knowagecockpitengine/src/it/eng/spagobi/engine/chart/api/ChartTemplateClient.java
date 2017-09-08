@@ -29,8 +29,11 @@ import it.eng.spagobi.utilities.engines.rest.SimpleRestClient;
 
 import java.util.Map;
 
+import javax.activation.MimeType;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
 import org.apache.log4j.Logger;
-import org.jboss.resteasy.client.ClientResponse;
 import org.json.JSONObject;
 
 public class ChartTemplateClient extends SimpleRestClient{
@@ -49,15 +52,15 @@ public class ChartTemplateClient extends SimpleRestClient{
 		logger.debug("IN");
 
 		Map<String, Object> parameters = new java.util.HashMap<String, Object> ();
-
-		parameters.put("jsonTemplate", jsonTemplate);
-		parameters.put("docLabel", docLabel);
+		JSONObject jo = new JSONObject();
+		jo.put("jsonTemplate", jsonTemplate.toString());
+		jo.put("docLabel", docLabel);
 
 		logger.debug("Call persist service in post");
-		ClientResponse resp = executePostService(parameters, serviceUrl, userId, null, null);
+		Response resp = executePostService(parameters, serviceUrl, userId, MediaType.APPLICATION_JSON, jo);
 		
 		
-		String respString = (String)resp.getEntity(String.class);
+		String respString = resp.readEntity(String.class);
 		JSONObject newTemplate = new JSONObject(Xml.xml2json(respString));		
 		logger.debug("OUT");
 		

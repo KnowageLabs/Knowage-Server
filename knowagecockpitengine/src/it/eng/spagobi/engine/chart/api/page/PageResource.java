@@ -50,12 +50,24 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.axis.encoding.Base64;
 import org.apache.log4j.Logger;
-import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
+
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.utilities.JSONTemplateUtilities;
+import it.eng.spagobi.engine.chart.ChartEngine;
+import it.eng.spagobi.engine.chart.ChartEngineInstance;
+import it.eng.spagobi.engine.chart.api.AbstractChartEngineResource;
+import it.eng.spagobi.engine.chart.api.StyleResource;
+import it.eng.spagobi.engine.chart.util.ChartEngineUtil;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @authors
@@ -79,10 +91,15 @@ public class PageResource extends AbstractChartEngineResource {
 
 	static private Logger logger = Logger.getLogger(PageResource.class);
 
+	@Context
+	protected HttpServletRequest request;
+	@Context
+	protected HttpServletResponse response;
+
 	/**
 	 * TODO Tutte le pagine dell'engine
 	 *
-	 * */
+	 */
 	static {
 		pages = new HashMap<String, JSONObject>();
 		urls = new HashMap<String, String>();
@@ -100,8 +117,8 @@ public class PageResource extends AbstractChartEngineResource {
 			urls.put("test", "/WEB-INF/jsp/test4.jsp");
 			pages.put("edit_cockpit", new JSONObject("{name: 'edit_cockpit', description: 'the chart edit page from cockpit', parameters: []}"));
 			urls.put("edit_cockpit", "/WEB-INF/jsp/chart/designer/chartDesigner.jsp");
-			pages.put("execute_cockpit", new JSONObject(
-					"{name: 'execute_cockpit', description: 'the chart execution page from cockpit', parameters: ['template']}"));
+			pages.put("execute_cockpit",
+					new JSONObject("{name: 'execute_cockpit', description: 'the chart execution page from cockpit', parameters: ['template']}"));
 
 			/* The old (ExtJS) chart execution page (chart.jsp file) is commented, whilst the new one (AngularJS) is used. (danristo) */
 			// urls.put("execute_cockpit", "/WEB-INF/jsp/chart.jsp");
@@ -115,10 +132,11 @@ public class PageResource extends AbstractChartEngineResource {
 	/**
 	 * TODO COMMENTARE
 	 *
-	 * */
+	 */
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY })
 	public String getDataSets() {
 		try {
 			JSONArray resultsJSON = new JSONArray();
@@ -140,6 +158,7 @@ public class PageResource extends AbstractChartEngineResource {
 	@GET
 	@Path("/{pagename}")
 	@Produces("text/html")
+	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY })
 	public void openPage(@PathParam("pagename") String pageName) {
 		ChartEngineInstance engineInstance;
 		String dispatchUrl = urls.get(pageName);
@@ -220,8 +239,8 @@ public class PageResource extends AbstractChartEngineResource {
 			}
 
 			// To deploy into JBOSSEAP64 is needed a StandardWrapper, instead of RestEasy Wrapper
-			HttpServletRequest request = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
-			HttpServletResponse response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
+			// HttpServletRequest request = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
+			// HttpServletResponse response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
 
 			request.getRequestDispatcher(dispatchUrl).forward(request, response);
 		} catch (Exception e) {
@@ -273,6 +292,7 @@ public class PageResource extends AbstractChartEngineResource {
 	@POST
 	@Path("/{pagename}")
 	@Produces("text/html")
+	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY })
 	public void openPageFromCockpit(@PathParam("pagename") String pageName, @FormParam("widgetData") String widgetData) {
 		ChartEngineInstance engineInstance;
 		String dispatchUrl = urls.get(pageName);
@@ -368,7 +388,7 @@ public class PageResource extends AbstractChartEngineResource {
 				 * The use of the above commented snippet had led to https://production.eng.it/jira/browse/KNOWAGE-678 and
 				 * https://production.eng.it/jira/browse/KNOWAGE-552. The chart engine is stateful, thus the http session is not the place to store and retrive
 				 * the engine instance, otherwise concurrency issues are raised.
-				 * 
+				 *
 				 * @author: Alessandro Portosa (alessandro.portosa@eng.it)
 				 */
 				// getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
@@ -386,7 +406,7 @@ public class PageResource extends AbstractChartEngineResource {
 				 * The use of the above commented snippet had led to https://production.eng.it/jira/browse/KNOWAGE-678 and
 				 * https://production.eng.it/jira/browse/KNOWAGE-552. The chart engine is stateful, thus the http session is not the place to store and retrive
 				 * the engine instance, otherwise concurrency issues are raised.
-				 * 
+				 *
 				 * @author: Alessandro Portosa (alessandro.portosa@eng.it)
 				 */
 				// getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
@@ -409,10 +429,6 @@ public class PageResource extends AbstractChartEngineResource {
 				dispatchUrl = "/WEB-INF/jsp/error.jsp";
 				break;
 			}
-
-			// To deploy into JBOSSEAP64 is needed a StandardWrapper, instead of RestEasy Wrapper
-			HttpServletRequest request = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
-			HttpServletResponse response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
 
 			/**
 			 * Setting the encoding type to the response object, so the Cockpit engine when calling the rendering of the chart (chart.jsp) can display the real

@@ -19,6 +19,25 @@
 		</filter-class>
   </filter>
   
+     <!--servlet>
+      <servlet-name>jersey-serlvet</servlet-name>
+      <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+        <init-param>
+             <param-name>jersey.config.server.provider.packages</param-name>
+             <param-value>it.eng</param-value>
+        </init-param>
+        <init-param>
+             <param-name>jersey.config.server.provider.scanning.recursive</param-name>
+             <param-value>true</param-value>
+        </init-param>
+    </servlet>
+    
+    <servlet-mapping>
+          <servlet-name>jersey-serlvet</servlet-name>
+          <url-pattern>/api/*</url-pattern>
+    </servlet-mapping-->
+   
+  
 <!-- START-CAS 
 <filter>
   <filter-name>CAS Authentication Filter</filter-name>
@@ -108,11 +127,6 @@
     <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
   </filter-mapping>
   
-  <listener>
-    <listener-class>
-            org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap
-        </listener-class>
-  </listener>
   <servlet>
 	<servlet-name>EngineTestServlet</servlet-name>
 	<servlet-class>
@@ -139,10 +153,7 @@
     </init-param>
   </servlet>
   <!-- END ProxyTicketReceptor -->
-  <servlet>
-    <servlet-name>Resteasy</servlet-name>
-    <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
-  </servlet>
+
   <servlet-mapping>
 		<servlet-name>EngineTestServlet</servlet-name>
 		<url-pattern>/Test</url-pattern>
@@ -153,10 +164,7 @@
     <url-pattern>/proxyReceptor</url-pattern>
   </servlet-mapping>
   <!-- END ProxyTicketReceptor -->
-  <servlet-mapping>
-    <servlet-name>Resteasy</servlet-name>
-    <url-pattern>/api/*</url-pattern>
-  </servlet-mapping>
+  
   <context-param>
     <param-name>resteasy.scan</param-name>
     <param-value>true</param-value>
@@ -176,6 +184,7 @@
   <welcome-file-list>
     <welcome-file>/html/index.html</welcome-file>
   </welcome-file-list>
+
   	<!-- WEBLOGIC CONFS START 
   	
   	  	<resource-ref id="ResourceRef_1233743772692">
@@ -213,4 +222,5 @@
 		<env-entry-value>http://localhost:7001</env-entry-value>
 	</env-entry>
 	 WEBLOGIC CONFS END -->	
-</web-app>
+
+ </web-app>

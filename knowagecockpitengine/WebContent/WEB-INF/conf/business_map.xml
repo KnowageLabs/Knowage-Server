@@ -3,11 +3,5 @@
 	<MAP_ACTIONS>
 	</MAP_ACTIONS>
 	<MAP_PAGE_MODULES>
-	</MAP_PAGE_MODULES>
-	
-    <MAP_REST_SERVICES>
-        <MAP_REST_SERVICE serviceUrl="/test" businessProcess="CreateCockpitFunctionality" />     
-    	<MAP_REST_SERVICE serviceUrl="/datasets" businessProcess="CreateCockpitFunctionality" />
-    </MAP_REST_SERVICES>
-    
+	</MAP_PAGE_MODULES>   
 </BUSINESS_MAP>
