@@ -109,9 +109,6 @@
     <filter-name>SpagoBIAccessFilter</filter-name>
     <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
   </filter-mapping>
-  <listener>
-    <listener-class>org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap</listener-class>
-  </listener>
   <servlet>
 		<servlet-name>EngineTestServlet</servlet-name>
 		<servlet-class>
@@ -137,14 +134,6 @@
     </init-param>
   </servlet>
   <!-- END ProxyTicketReceptor -->
-  <servlet>
-    <servlet-name>Resteasy</servlet-name>
-    <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>Resteasy</servlet-name>
-    <url-pattern>/restful-services/*</url-pattern>
-  </servlet-mapping>
   <servlet-mapping>
 		<servlet-name>EngineTestServlet</servlet-name>
 		<url-pattern>/Test</url-pattern>
