@@ -18,6 +18,17 @@
 
 package it.eng.spagobi.engines.qbe.federation;
 
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import it.eng.qbe.datasource.sql.DataSetPersister;
 import it.eng.spagobi.services.proxy.DataSetServiceProxy;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -25,25 +36,14 @@ import it.eng.spagobi.tools.dataset.federation.FederationDefinition;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.engines.rest.SimpleRestClient;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
-import javax.ws.rs.core.MediaType;
-
-import org.apache.log4j.Logger;
-import org.jboss.resteasy.client.ClientResponse;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-public class FederationClient extends SimpleRestClient{
+public class FederationClient extends SimpleRestClient {
 
 	private String getServiceUrl = "/restful-services/federateddataset/federation";
 	private String addServiceUrl = "/restful-services/federateddataset/insertNoDup";
 	public static final String DATASET_ID = "id";
 	public static final String VERSION_NUM = "versionNum";
 
-	public FederationClient(){
+	public FederationClient() {
 
 	}
 
@@ -55,18 +55,17 @@ public class FederationClient extends SimpleRestClient{
 
 		FederationDefinition toReturn = new FederationDefinition();
 
-		Map<String, Object> parameters = new java.util.HashMap<String, Object> ();
+		Map<String, Object> parameters = new java.util.HashMap<String, Object>();
 
 		parameters.put("federationId", federationID);
 
 		logger.debug("Call persist service in post");
-		ClientResponse<String> resp = executePostService(parameters, getServiceUrl, userId, null, null);
+		Response resp = executePostService(parameters, getServiceUrl, userId, null, null);
 
-
-		String respString = resp.getEntity(String.class);
-		if(respString!=null){
-			logger.debug("String returned by federation service "+respString);
-		}else{
+		String respString = (String) resp.getEntity();
+		if (respString != null) {
+			logger.debug("String returned by federation service " + respString);
+		} else {
 			logger.debug("String returned by federation service is empty");
 		}
 
@@ -81,7 +80,7 @@ public class FederationClient extends SimpleRestClient{
 		JSONArray datasetsArray = jo.optJSONArray("sourceDataset");
 		Set<IDataSet> datasest = new java.util.HashSet<IDataSet>();
 
-		if(datasetsArray!=null){
+		if (datasetsArray != null) {
 			for (int i = 0; i < datasetsArray.length(); i++) {
 				String label = datasetsArray.getJSONObject(i).getString("label");
 				IDataSet dataset = proxy.getDataSetByLabel(label);
@@ -90,33 +89,26 @@ public class FederationClient extends SimpleRestClient{
 		}
 		toReturn.setSourceDatasets(datasest);
 
-
-
 		logger.debug("OUT");
 
 		return toReturn;
 	}
 
-
-
 	public FederationDefinition addFederation(FederationDefinition federation, String userId) throws Exception {
 		logger.debug("IN");
 
-		Map<String, Object> parameters = new java.util.HashMap<String, Object> ();
+		Map<String, Object> parameters = new java.util.HashMap<String, Object>();
 
 		logger.debug("Call persist service in post");
-		ClientResponse<String> resp = executePostService(parameters, addServiceUrl, userId, MediaType.TEXT_HTML_TYPE, serialize(federation).toString());
-		//ClientResponse<String> resp = executePostService(parameters, addServiceUrl, null,null);
+		Response resp = executePostService(parameters, addServiceUrl, userId, MediaType.TEXT_HTML, serialize(federation).toString());
+		// ClientResponse<String> resp = executePostService(parameters, addServiceUrl, null,null);
 
-		String respString = resp.getEntity(String.class);
-
+		String respString = (String) resp.getEntity();
 
 		federation.setFederation_id(new Integer(respString));
 
-
 		return federation;
 	}
-
 
 	public static JSONObject serialize(FederationDefinition fd) {
 		JSONObject result = null;
@@ -140,16 +132,14 @@ public class FederationClient extends SimpleRestClient{
 				ja.put(jo);
 			}
 
-
 			result.put("sourcesDataset", ja);
 
-		}catch (Exception e){
+		} catch (Exception e) {
 			logger.error("Error creating a new federation linked to datase. Serialization error", e);
 			throw new SpagoBIEngineRuntimeException("Error creating a new federation linked to datase. Serialization error", e);
 		}
 
 		return result;
 	}
-
 
 }
