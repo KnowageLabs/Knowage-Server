@@ -614,6 +614,32 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		var par = encodeURIComponent(parametersString)
 		.replace(/'/g,"%27")
 		.replace(/"/g,"%22");
+		
+		
+		
+		// if cross navigation referes to a non present column (and widget is a table ) avoid sending aggregation because all columns are needed
+		if(ngModel.type === 'table'){
+			// if cross navigation is defined
+			if (ngModel.cross != null && ngModel.cross.cross != null && ngModel.cross.cross.column){
+				var crossCol = ngModel.cross.cross.column;
+				var found = false;
+				// if column passed is not among visible ones
+				if(aggregation.categories != null){
+					for(var i=0;i<aggregation.categories.length && !found;i++){
+						var id = aggregation.categories[i].id;
+						if(id === crossCol){
+							found = true;
+						}
+					}
+					// get all data 
+					if(found==false){
+						aggr = '';					
+					}
+				}
+			}
+		}
+
+		
 		params =  "?aggregations=" +aggr+"&parameters="+par;
 		
 		if(page!=undefined && page>-1 && itemPerPage!=undefined && itemPerPage>-1){
