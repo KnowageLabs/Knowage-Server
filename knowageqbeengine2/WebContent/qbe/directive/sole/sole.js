@@ -20,7 +20,7 @@
 	var currentScriptPath = scripts[scripts.length - 1].src;
 	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
 
-angular.module('sole', ['ngMaterial', 'ngDraggable'])
+angular.module('sole', [])
 .directive('sole', function() {
 	return {
 		restrict:'E',

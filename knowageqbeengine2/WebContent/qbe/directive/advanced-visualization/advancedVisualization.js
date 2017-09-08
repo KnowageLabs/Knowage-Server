@@ -20,7 +20,7 @@
 	var currentScriptPath = scripts[scripts.length - 1].src;
 	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
 
-angular.module('qbe_advanced_visualization', ['ngDraggable'])
+angular.module('qbe_advanced_visualization', [])
 .directive('qbeAdvancedVisualization', function() {
 	return {
 		templateUrl:  currentScriptPath +'advanced-visualization.html',
@@ -38,6 +38,8 @@ angular.module('qbe_advanced_visualization', ['ngDraggable'])
 function advancedVisualizationControllerFunction($scope,sbiModule_translate, sbiModule_config, filters_service, $mdDialog){
 
 	$scope.advancedFilters = angular.copy($scope.ngModel.advancedFilters);
+	
+	$scope.filtersGroup = [];
 	
 	$scope.openMenu = function($mdOpenMenu, ev) {
 		originatorEv = ev;
@@ -169,6 +171,57 @@ function advancedVisualizationControllerFunction($scope,sbiModule_translate, sbi
 		$scope.advancedFilters.push(angular.copy($scope.arrayForGroup))
 		$scope.arrayForGroup.length=0;
 		console.log($scope.advancedFilters)
+	}
+	
+	$scope.$on('groupFilters', function (event, data) {
+		console.log(data);
+		console.log($scope.advancedFilters);
+		
+		$scope.indexes = [];
+		//event.stopPropagation();
+	 // drop single filter on single filter
+		if(data.droppedField.hasOwnProperty("connector") && data.draggedField.hasOwnProperty("connector")){
+			$scope.filtersGroup.push(data.droppedField);
+			$scope.filtersGroup.push(data.draggedField);
+		}
+	 // drop single filter on group 
+		else if (!data.droppedField.hasOwnProperty("connector") && data.draggedField.hasOwnProperty("connector")){
+			data.droppedField.push(data.draggedField);
+		}
+	 // drop group on group
+		else if (!data.droppedField.hasOwnProperty("connector") && !data.draggedField.hasOwnProperty("connector")){
+			data.droppedField.push(data.draggedField);
+		}
+	 // drop group on field
+		else if (data.droppedField.hasOwnProperty("connector") && !data.draggedField.hasOwnProperty("connector")){
+			data.droppedField.push(data.draggedField);
+		}
+		
+		$scope.spliceSelectedFiltersFromParent($scope.advancedFilters, $scope.filtersGroup);
+		
+		
+		for (var i = $scope.indexes.length-1; i >= 0; i--) {
+			$scope.advancedFilters.splice($scope.indexes[i], 1);
+		}
+		
+		$scope.advancedFilters.push(angular.copy($scope.filtersGroup))
+		$scope.filtersGroup.length=0;
+		$scope.indexes.length=0;
+	});
+	
+	$scope.spliceSelectedFiltersFromParent = function(parent, group, parentIndex){
+		for (var i = 0; i <parent.length; i++) {
+			if(parent[i].hasOwnProperty("connector")){
+				for (var j = 0; j < group.length; j++) {
+					if(parent[i].name==group[j].name) {
+						$scope.indexes.push(i);
+					}
+				}
+			} else {
+				$scope.spliceSelectedFiltersFromParent(parent[i], group);
+			}
+			
+		}
 	}
 
 	$scope.arrayForGroup = [];

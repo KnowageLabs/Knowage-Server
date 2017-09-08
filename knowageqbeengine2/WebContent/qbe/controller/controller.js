@@ -81,6 +81,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 	}
 	
 	$scope.onDropComplete=function(field,evt){
+		if(field.connector) return;
 		$scope.addField(field);
 		
     };

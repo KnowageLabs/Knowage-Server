@@ -20,29 +20,40 @@
 	var currentScriptPath = scripts[scripts.length - 1].src;
 	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
 
-angular.module('group', ['ngMaterial', 'ngDraggable'])
+angular.module('group', ['ngDraggable'])
 .directive('group', function() {
 	return {
 		restrict:'E',
 		templateUrl:  currentScriptPath +'group.html',
 		controller:advancedGroupControllerFunction,
 		scope: {
-			ngModel:"="
+			ngModel:"=",
+			advancedFilters:"="
 		}
 	}
 });
 
 function advancedGroupControllerFunction($scope,sbiModule_translate, sbiModule_config){
+	
 	$scope.isArray = function (model){
 		return !model.hasOwnProperty("connector");
 	}
-
-	$scope.onDropSuccess=function(field,evt){
-		console.log(field);
+	
+	$scope.onDropCompleteFilter=function(draggedField,evt, droppedField){
+		if(!draggedField.dragged){
+			draggedField.dragged = true;
+			$scope.groupFilters(droppedField, draggedField);
+		} else {
+			draggedField.dragged = false;
+		}
     };
-    $scope.sssss=function(field,evt){
-		console.log(field);
-    };
+    
+    
+	$scope.groupFilters = function (droppedField, draggedField) {
+		
+		$scope.$emit('groupFilters', {"draggedField":draggedField, "droppedField":droppedField});
+		
+	}
 
 }
 })();

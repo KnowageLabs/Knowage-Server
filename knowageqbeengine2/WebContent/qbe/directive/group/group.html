@@ -1,6 +1,10 @@
 
+<div  ng-model="ngModel" ng-drop="true"  ng-drop-success="onDropCompleteFilter($data,$event, ngModel)" >
+	<div  ng-drag="true" ng-drag-data="ngModel">
+		<sole ng-if="!isArray(ngModel)" ng-model="ngModel"></sole>
+	</div>
+</div>
 
-<sole ng-if="!isArray(ngModel)"  ng-model="ngModel"></sole>
-<md-card  ng-drop="true" ng-drop-success="onDropSuccess($data,$event)">
-	<group ng-if='isArray(ngModel)' ng-repeat="row in ngModel" ng-drag="true" ng-drag-data="row" ng-drag-success="sssss($data,$event)" ng-model="row"> </group>
+<md-card style="background-color:#D3D3D3">
+	<group ng-if='isArray(ngModel)' ng-repeat="row in ngModel" ng-drag="true" ng-drag-data="row" ng-model="row"> </group>
 </md-card>
