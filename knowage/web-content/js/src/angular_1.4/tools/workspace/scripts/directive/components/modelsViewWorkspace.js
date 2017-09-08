@@ -85,7 +85,7 @@ function modelsController($scope, sbiModule_restServices, sbiModule_translate, $
 	$scope.getFederatedDatasets();
 	
 	$scope.loadFederations = function(){
-		sbiModule_restServices.promiseGet("federateddataset")
+		sbiModule_restServices.promiseGet("federateddataset", "")
 		.then(function(response) {
 			angular.copy(response.data,$scope.federationDefinitions);
 			angular.copy($scope.federationDefinitions,$scope.federationDefinitionsInitial);
