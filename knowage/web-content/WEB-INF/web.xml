@@ -425,7 +425,7 @@ END-LIFERAY -->
 	  	<error-code>500</error-code>
 	  	<location>/WEB-INF/jsp/commons/genericError.jsp</location>
 	  </error-page>
-	-->
+	
   	<env-entry> 
 		<env-entry-name>resource_path</env-entry-name> 
 		<env-entry-type>java.lang.String</env-entry-type> 
@@ -451,7 +451,7 @@ END-LIFERAY -->
 		<env-entry-type>java.lang.String</env-entry-type>
 		<env-entry-value>http://localhost:7001</env-entry-value>
 	</env-entry>	
-
+-->
 
 	<resource-ref id="knowageds_core">
 		<description>
