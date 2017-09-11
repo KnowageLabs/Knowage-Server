@@ -84,7 +84,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public List<MetaModel> getBusinessModels() {
+	public List<MetaModel> getBusinessModels(@QueryParam("fileExtension") String fileExtension) {
 		logger.debug("IN");
 
 		List<MetaModel> businessModelList = null;
@@ -92,21 +92,40 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 		businessModelsDAO.setUserProfile(getUserProfile());
 
 		try {
-
-			businessModelList = businessModelsDAO.loadAllMetaModels();
+			if (getUserProfile().getFunctionalities().contains(SpagoBIConstants.META_MODELS_CATALOGUE_MANAGEMENT)) {
+				businessModelList = businessModelsDAO.loadAllMetaModels();
+			} else {
+				IRoleDAO roleDao = DAOFactory.getRoleDAO();
+				roleDao.setUserProfile(getUserProfile());
+				List<Integer> categories = roleDao.getMetaModelCategoriesForRoles(getUserProfile().getRoles());
+				logger.debug("Found the following categories [" + categories + "].");
+				if (categories != null && !categories.isEmpty()) {
+					businessModelList = businessModelsDAO.loadMetaModelByCategories(categories);
+				}
+			}
+			
+			List<MetaModel> filteredBusinessModels = new ArrayList<MetaModel>();
+			if (fileExtension != null) {
+				for (MetaModel bm : businessModelList) {
+					Content content = businessModelsDAO.loadActiveMetaModelContentById(bm.getId());
+					if (content != null && content.getFileName().endsWith(fileExtension)) {
+						filteredBusinessModels.add(bm);
+					}
+				}
+			}
 
 			return businessModelList;
 
 		} catch (Exception e) {
-			logger.error("An error occurred while getting all business models from databse!", e);
-			throw new SpagoBIRestServiceException("An error occurred while getting all business models from databse!", buildLocaleFromSession(), e);
+			logger.error("An error occurred while getting all business models from database!", e);
+			throw new SpagoBIRestServiceException("An error occurred while getting all business models from database!", buildLocaleFromSession(), e);
 
 		} finally {
 			logger.debug("OUT");
 		}
 
 	}
-
+	
 	@GET
 	@Path("/bmCategories")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
@@ -146,46 +165,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 
 	}
 
-	/**
-	 * Get business models that have datamart
-	 *
-	 */
 
-	@GET
-	@Path("bmforfinaluser")
-	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public List<MetaModel> getBusinessModelsWithVersions() {
-		logger.debug("IN");
-
-		List<MetaModel> businessModelList = null;
-		List<MetaModel> businessModelsWithDatamart = new ArrayList<MetaModel>();
-		IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
-		businessModelsDAO.setUserProfile(getUserProfile());
-
-		try {
-			IRoleDAO roleDao = DAOFactory.getRoleDAO();
-			roleDao.setUserProfile(getUserProfile());
-			List<Integer> categories = roleDao.getMetaModelCategoriesForRoles(getUserProfile().getRoles());
-			logger.debug("Found the following categories [" + categories + "].");
-			if (categories != null && !categories.isEmpty()) {
-				businessModelList = businessModelsDAO.loadMetaModelByCategories(categories);
-				for (MetaModel bm : businessModelList) {
-					Content content = businessModelsDAO.loadActiveMetaModelContentById(bm.getId());
-					if (content != null && content.getFileName().endsWith("jar")) {
-						businessModelsWithDatamart.add(bm);
-					}
-				}
-			}
-		} catch (Exception e) {
-			logger.error("An error occurred while getting all business models from databse!", e);
-			throw new SpagoBIRestServiceException("An error occurred while getting all business models from databse!", buildLocaleFromSession(), e);
-
-		} finally {
-			logger.debug("OUT");
-		}
-
-		return businessModelsWithDatamart;
-	}
 
 	/**
 	 * Get all versions of business model with specified id
