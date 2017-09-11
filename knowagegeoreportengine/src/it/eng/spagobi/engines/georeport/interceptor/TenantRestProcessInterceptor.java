@@ -39,8 +39,7 @@ import javax.ws.rs.ext.Provider;
 import org.apache.log4j.Logger;
 
 /**
- * The org.jboss.resteasy.spi.interception.PreProcessInterceptor runs after a JAX-RS resource method is found to invoke on, but before the actual invocation
- * happens
+ * JAX-RS provider for tenant's management within a JAX-RS request.
  *
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
  *

@@ -25,9 +25,7 @@ import javax.ws.rs.ext.Provider;
 
 
 /**
- * The org.jboss.resteasy.spi.interception.PreProcessInterceptor runs after a JAX-RS resource method is found to invoke on, but before the actual invocation
- * happens
- *
+ * JAX-RS provider for security.
  * Similar to SpagoBIAccessFilter but designed for REST services
  *
  */

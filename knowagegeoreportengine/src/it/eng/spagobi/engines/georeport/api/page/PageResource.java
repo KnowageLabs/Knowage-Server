@@ -34,10 +34,10 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
-import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,6 +46,12 @@ import org.json.JSONObject;
 @ManageAuthorization
 public class PageResource extends AbstractChartEngineResource {
 
+	@Context
+	private HttpServletRequest request;
+
+	@Context
+	private HttpServletResponse response;
+	
 	static private Map<String, JSONObject> pages;
 	static private Map<String, String> urls;
 
@@ -129,12 +135,8 @@ public class PageResource extends AbstractChartEngineResource {
 				break;
 			}
 
-			// To deploy into JBOSSEAP64 is needed a StandardWrapper, instead of
-			// RestEasy Wrapper
-			HttpServletRequest request = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
-			HttpServletResponse response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
-
 			request.getRequestDispatcher(dispatchUrl).forward(request, response);
+
 		} catch (Exception e) {
 			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(), e);
 		} finally {
