@@ -6,8 +6,8 @@ This is the official repository of Knowage. Knowage is the professional open sou
  
 # Supported tags and respective Dockerfile links
 
-* ```latest```, ```fiware``` : [Dockerfile](https://github.com/KnowageLabs/Knowage-Server/master/docker/knowage/Dockerfile)
-* ```5.1-all-in-one```, ```stable``` : [Dockerfile](https://github.com/SKnowageLabs/Knowage-Server/master/docker/6.1-all-in-one/Dockerfile)
+* ```latest``` : [Dockerfile](https://github.com/KnowageLabs/Knowage-Server/master/docker/latest/Dockerfile)
+* ```6.1-all-in-one```, ```stable``` : [Dockerfile](https://github.com/SKnowageLabs/Knowage-Server/master/docker/6.1-all-in-one/Dockerfile)
 
 # Run Knowage All In One
 
