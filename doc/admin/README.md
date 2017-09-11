@@ -360,7 +360,11 @@ This url is used by OCB to send notifications to Knowage.
 Using FIWARE IdM and Knowage
 ----------------------------
 
-At this point, if you invoke Knowage by your browser, you are redirected into FIWARE IdM instance. Once logged in, FIWARE IdM will ask you to authorize the application:
+At this point, if you invoke Knowage by your browser, you are redirected into FIWARE IdM instance.
+
+![](media/SpagoBI_application_IdM_authorization.png "Knowage_application_IdM_authentication.png")
+
+Once logged in, FIWARE IdM will ask you to authorize the application:
 
 ![](media/SpagoBI_application_IdM_authorization.png "Knowage_application_IdM_authorization.png")
 
