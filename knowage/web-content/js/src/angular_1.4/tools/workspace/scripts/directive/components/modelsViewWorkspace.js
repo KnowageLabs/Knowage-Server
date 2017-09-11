@@ -100,7 +100,7 @@ function modelsController($scope, sbiModule_restServices, sbiModule_translate, $
 	
 	//TODO move business models to separate controller
     $scope.handleBusinessModels= function(categoriesForUser){
-    	sbiModule_restServices.promiseGet("2.0/businessmodels", "bmforfinaluser")
+    	sbiModule_restServices.promiseGet("2.0/businessmodels", "", "fileExtension=jar")
 		.then(function(response) {
 			angular.copy(response.data,$scope.businessModels);
 			// S.Lupo - businessModels must be filtered by categories backend side
