@@ -410,7 +410,7 @@ END-LIFERAY -->
 		<welcome-file>index.htm</welcome-file>
 		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
-	<!-- 
+	
 	  <error-page>
 	  	<exception-type>java.lang.Throwable</exception-type>
 	  	<location>/WEB-INF/jsp/commons/genericError.jsp</location>
@@ -425,7 +425,8 @@ END-LIFERAY -->
 	  	<error-code>500</error-code>
 	  	<location>/WEB-INF/jsp/commons/genericError.jsp</location>
 	  </error-page>
-	
+	  
+	<!-- 
   	<env-entry> 
 		<env-entry-name>resource_path</env-entry-name> 
 		<env-entry-type>java.lang.String</env-entry-type> 
