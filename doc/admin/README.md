@@ -277,7 +277,9 @@ and the corresponding filter mapping
 <!-- END OAUTH 2 -->
 ```
 
-Then edit KNOWAGE\_SERVER\_HOME/webapps/knowage/WEB-INF/classes/oauth2.config.properties and set:
+The file containing the OAuth2 parameters is configs.properties, deployed inside the library knowageutils.jar. To change those parameters, it is necessary to extract the contents of such library and modify them. Once the modification is done and saved, the JAR library has to be created and deployed inside each Knowage engine in order to share the new OAuth2 configuration.
+
+As instance, for the Knowage Core Engine, edit KNOWAGE\_SERVER\_HOME/webapps/knowage/WEB-INF/lib/knowageutils.jar/it/eng/spagobi/security/OAuth2/configs.properties and set:
 
 -   CLIENT\_ID and SECRET has to be copied from FIWARE Lab application detail page inside "Oauth2 Credentials" section
 -   AUTHORIZE\_URL contains the URL used to retrieve the access code as specified in OAuth2 standard (when using FIWARE Lab instance use <https://account.lab.fiware.org/oauth2/authorize>)
@@ -360,15 +362,13 @@ Using FIWARE IdM and Knowage
 
 At this point, if you invoke Knowage by your browser, you are redirected into FIWARE IdM instance. Once logged in, FIWARE IdM will ask you to authorize the application:
 
-![](media/SpagoBI_application_IdM_authorization.png "SpagoBI_application_IdM_authorization.png")
+![](media/SpagoBI_application_IdM_authorization.png "Knowage_application_IdM_authorization.png")
 
 Of course you have to authorize the application, and you will sent back to Knowage. As already explained, if the user has no roles defined by the IdM, he will enter Knowage with a default role specified in Knowage configurations.
 
-![](media/SpagoBI_home_non_privileged_user.png "SpagoBI_home_non_privileged_user.png")
-
 In this case, the application administrator can add roles to that user (the user has to logout and login again in order to benefit of it). If the user has already been added with some roles for the application, he will automatically inherit those roles in Knowage.
 
-![](media/SpagoBI_home_privileged_user.png "SpagoBI_home_privileged_user.png")
+![](media/SpagoBI_home_privileged_user.png "Knowage_home_privileged_user.png")
 
 The application administrator can always change roles of the users (the ones who belong to "DEFAULT" tenant) within the IdM. Organization owners can always change roles of members (and these members will belong to a tenant with the same name of the organization).
 
