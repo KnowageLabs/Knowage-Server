@@ -238,12 +238,5 @@
 		<error-code>500</error-code>
 		<location>/html/error.html</location>
 	</error-page>
-	<context-param>
-		<param-name>resteasy.scan</param-name>
-		<param-value>true</param-value>
-	</context-param>
-	<context-param>
-		<param-name>resteasy.servlet.mapping.prefix</param-name>
-		<param-value>/restful-services</param-value>
-	</context-param>
+
 </web-app>

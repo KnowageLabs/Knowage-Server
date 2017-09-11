@@ -17,6 +17,18 @@
  */
 package it.eng.knowage.engine.kpi.api.page;
 
+import it.eng.knowage.engine.kpi.KpiEngine;
+import it.eng.knowage.engine.kpi.KpiEngineInstance;
+import it.eng.knowage.engine.kpi.KpiEngineRuntimeException;
+import it.eng.knowage.engine.kpi.api.AbstractFullKpiEngineResource;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.engines.EngineStartServletIOManager;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -31,22 +43,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
-import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import it.eng.knowage.engine.kpi.KpiEngine;
-import it.eng.knowage.engine.kpi.KpiEngineInstance;
-import it.eng.knowage.engine.kpi.KpiEngineRuntimeException;
-import it.eng.knowage.engine.kpi.api.AbstractFullKpiEngineResource;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.utilities.UserUtilities;
-import it.eng.spagobi.utilities.engines.EngineConstants;
-import it.eng.spagobi.utilities.engines.EngineStartServletIOManager;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @authors
@@ -170,8 +169,8 @@ public class PageResource extends AbstractFullKpiEngineResource {
 			}
 
 			// To deploy into JBOSSEAP64 is needed a StandardWrapper, instead of RestEasy Wrapper
-			HttpServletRequest request = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
-			HttpServletResponse response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
+//			HttpServletRequest request = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
+//			HttpServletResponse response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
 
 			request.getRequestDispatcher(dispatchUrl).forward(request, response);
 		} catch (Exception e) {

@@ -2,14 +2,6 @@
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:web="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd http://xmlns.jcp.org/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="SpagoBIGeoReportEngine" version="2.4">
   <description>SpagoBI - SpagoBIGeoReportEngine</description>
   <display-name>knowagesvgviewerengine</display-name>
-  <context-param>
-    <param-name>resteasy.scan</param-name>
-    <param-value>true</param-value>
-  </context-param>
-  <context-param>
-    <param-name>resteasy.servlet.mapping.prefix</param-name>
-    <param-value>/api</param-value>
-  </context-param>
   <filter>
     <filter-name>EncodingFilter</filter-name>
     <filter-class>it.eng.spagobi.utilities.filters.EncodingFilter</filter-class>
@@ -127,9 +119,6 @@
     <filter-name>SpagoBIAccessFilter</filter-name>
     <url-pattern>/servlet/AdapterHTTP/*</url-pattern>
   </filter-mapping>
-  <!-- listener>
-    <listener-class>org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap</listener-class>
-  </listener-->
   <servlet>
 		<servlet-name>EngineTestServlet</servlet-name>
 		<servlet-class>
@@ -155,14 +144,6 @@
     </init-param>
   </servlet>
   <!-- END ProxyTicketReceptor -->
-  <!--servlet>
-    <servlet-name>Resteasy</servlet-name>
-    <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
-  </servlet>
-  < servlet-mapping>
-    <servlet-name>Resteasy</servlet-name>
-    <url-pattern>/api/*</url-pattern>
-  </servlet-mapping-->
   <servlet-mapping>
 		<servlet-name>EngineTestServlet</servlet-name>
 		<url-pattern>/Test</url-pattern>

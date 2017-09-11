@@ -17,6 +17,13 @@
  */
 package it.eng.spagobi.engines.whatif.api;
 
+import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
+import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
+import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithmDefinition;
+import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithmSingleton;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
@@ -28,14 +35,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import org.apache.log4j.Logger;
-import org.jboss.resteasy.annotations.GZIP;
-
-import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
-import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
-import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithmDefinition;
-import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithmSingleton;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
 
 @Path("/1.0/allocationalgorithm")
 @ManageAuthorization
@@ -53,7 +52,6 @@ public class AllocationAlgorithmResource extends AbstractWhatIfEngineService {
 	 */
 	@GET
 	@Produces("text/html; charset=UTF-8")
-	@GZIP
 	public String getAvailabeAllocationAlgorithms() {
 		logger.debug("IN");
 
@@ -84,7 +82,6 @@ public class AllocationAlgorithmResource extends AbstractWhatIfEngineService {
 	@POST
 	@Path("/{algorithmClassName}")
 	@Produces("text/html; charset=UTF-8")
-	@GZIP
 	public String setUsedAlgorithm(@PathParam("algorithmClassName") String algorithmClassName) {
 		logger.debug("IN");
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();

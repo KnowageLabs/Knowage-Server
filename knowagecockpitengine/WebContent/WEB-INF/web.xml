@@ -164,15 +164,7 @@
     <url-pattern>/proxyReceptor</url-pattern>
   </servlet-mapping>
   <!-- END ProxyTicketReceptor -->
-  
-  <context-param>
-    <param-name>resteasy.scan</param-name>
-    <param-value>true</param-value>
-  </context-param>
-  <context-param>
-    <param-name>resteasy.servlet.mapping.prefix</param-name>
-    <param-value>/api</param-value>
-  </context-param>
+
   <!-- START TOMCAT RES -->
   <resource-ref>
     <res-ref-name>wm/SpagoWorkManager</res-ref-name>

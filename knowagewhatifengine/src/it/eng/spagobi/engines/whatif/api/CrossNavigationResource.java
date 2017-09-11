@@ -25,7 +25,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import org.apache.log4j.Logger;
-import org.jboss.resteasy.annotations.GZIP;
+
 import org.pivot4j.PivotModel;
 
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
@@ -52,7 +52,7 @@ public class CrossNavigationResource extends AbstractWhatIfEngineService {
 	@GET
 	@Path("/initialize")
 	@Produces("text/html; charset=UTF-8")
-	@GZIP
+	
 	public String initialize() {
 		logger.debug("IN");
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
@@ -87,7 +87,7 @@ public class CrossNavigationResource extends AbstractWhatIfEngineService {
 	@POST
 	@Path("/getCrossNavigationUrl/{ordinal}")
 	@Produces("text/html; charset=UTF-8")
-	@GZIP
+	
 	public String getCrossNavigationUrl(@PathParam("ordinal") int ordinal) {
 		logger.debug("IN");
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();

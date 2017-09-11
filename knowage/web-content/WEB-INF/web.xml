@@ -206,13 +206,6 @@
   </servlet>  
 END-LIFERAY -->
 
-<!-- 
-	<listener>
-		<listener-class>
-            org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap
-		</listener-class>
-	</listener>
--->
 
 	<!-- servlet for change pwd management -->
 	<servlet>
@@ -310,12 +303,6 @@ EXO -->
 	</servlet>
 	<!-- end axis servlet -->
 
-<!-- 
-	<servlet>
-		<servlet-name>Resteasy</servlet-name>
-		<servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
-	</servlet>
--->
 	
 	<servlet>
 		<servlet-name>StickyCaptcha</servlet-name>
@@ -375,28 +362,6 @@ END-LIFERAY -->
 	</servlet-mapping>
 	<!-- end axis servlet -->
 
-	<!-- 
-	<servlet-mapping>
-		<servlet-name>Resteasy</servlet-name>
-		<url-pattern>/restful-services/*</url-pattern>
-	</servlet-mapping>
-
-	<servlet-mapping>
-		<servlet-name>StickyCaptcha</servlet-name>
-		<url-pattern>/stickyImg</url-pattern>
-	</servlet-mapping>
-	-->
-	
-	<context-param>
-		<param-name>resteasy.scan</param-name>
-		<param-value>true</param-value>    
-	</context-param>
-	
-	
-	<context-param>
-		<param-name>resteasy.servlet.mapping.prefix</param-name>
-		<param-value>/restful-services</param-value>
-	</context-param>
 
 	<!-- END SERVLET MAPPINGS --> 
 
@@ -410,7 +375,7 @@ END-LIFERAY -->
 		<welcome-file>index.htm</welcome-file>
 		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
-	
+	<!-- 
 	  <error-page>
 	  	<exception-type>java.lang.Throwable</exception-type>
 	  	<location>/WEB-INF/jsp/commons/genericError.jsp</location>
@@ -425,8 +390,7 @@ END-LIFERAY -->
 	  	<error-code>500</error-code>
 	  	<location>/WEB-INF/jsp/commons/genericError.jsp</location>
 	  </error-page>
-	  
-	<!-- 
+	
   	<env-entry> 
 		<env-entry-name>resource_path</env-entry-name> 
 		<env-entry-type>java.lang.String</env-entry-type> 

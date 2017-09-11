@@ -25,7 +25,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
 import org.apache.log4j.Logger;
-import org.jboss.resteasy.annotations.GZIP;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 

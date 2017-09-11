@@ -30,7 +30,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
-import org.jboss.resteasy.annotations.GZIP;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -79,7 +79,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 	@POST
 	@Path("/drilldown/{axis}/{position}/{member}")
 	@Produces("text/html; charset=UTF-8")
-	@GZIP
+	
 	public String drillDown(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos, @PathParam("position") int positionPos,
 			@PathParam("member") int memberPos) throws JSONException, IOException {
 
@@ -151,7 +151,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 	@Path("/drillup")
 	// {axis}/{position}/{memberPosition}/{positionUniqueName}/{memberUniqueName}
 	@Produces("text/html; charset=UTF-8")
-	@GZIP
+	
 	public String drillUp(@javax.ws.rs.core.Context HttpServletRequest req) {
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
@@ -241,7 +241,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 	@POST
 	@Path("/drilltrough/levels")
 	@Produces("text/html; charset=UTF-8")
-	@GZIP
+	
 	public String getallLevels(@javax.ws.rs.core.Context HttpServletRequest req) throws OlapException {
 
 		JSONArray array = new JSONArray();
@@ -340,7 +340,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 	@POST
 	@Path("/properties")
 	@Produces("text/html; charset=UTF-8")
-	@GZIP
+	
 	public String getProperties(@javax.ws.rs.core.Context HttpServletRequest req) throws OlapException, JSONException {
 
 		String name = null;
@@ -374,7 +374,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 	@POST
 	@Path("/drilltrough")
 	@Produces("text/html; charset=UTF-8")
-	@GZIP
+	
 	public String drillt(@javax.ws.rs.core.Context HttpServletRequest req) throws OlapException {
 		JSONArray array = null;
 		ResultSet set;
@@ -406,7 +406,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 	@POST
 	@Path("/drilltrough/full")
 	@Produces("text/html; charset=UTF-8")
-	@GZIP
+	
 	public String drillfull(@javax.ws.rs.core.Context HttpServletRequest req) throws OlapException {
 		JSONArray array = null;
 		ResultSet set = null;

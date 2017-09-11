@@ -126,12 +126,6 @@
     <url-pattern>/restful-services/*</url-pattern>
   </filter-mapping>
   
-  <!--listener>
-    <listener-class>
-            org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap
-        </listener-class>
-  </listener-->
-  
   <servlet>
     <servlet-name>ConfigServlet</servlet-name>
     <servlet-class>it.eng.spago.configuration.ConfigServlet</servlet-class>
@@ -153,46 +147,7 @@
 			it.eng.spagobi.utilities.engines.EngineTestServlet
 		</servlet-class>
   </servlet>
-  
-  <!--servlet>
-    <servlet-name>Resteasy</servlet-name>
-    <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
-    	<init-param>
-    		
-    		<param-name>resteasy.servlet.mapping.prefix</param-name>
-    		<param-value>/restful-services/</param-value>
-    	</init-param>
-    	
-    	<init-param>
-        	<param-name>resteasy.resources</param-name>
-        	<param-value>it.eng.spagobi.engines.whatif.common.WhatIfEngineStartAction</param-value>
-    	</init-param>
-  </servlet>
-  
-  <servlet>
-    <servlet-name>Resteasy2</servlet-name>
-    <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
-    	<init-param>
-    		
-    		<param-name>resteasy.servlet.mapping.prefix</param-name>
-    		<param-value>/restful/</param-value>
-    	</init-param>
-    	
-    	<init-param>
-        	<param-name>resteasy.resources</param-name>
-        	<param-value>it.eng.spagobi.engines.whatif.common.WhatIfEngineStartAction</param-value>
-    	</init-param>
-  </servlet>
-  
-  <servlet-mapping>
-    <servlet-name>Resteasy2</servlet-name>
-    <url-pattern>/restful/*</url-pattern>
-  </servlet-mapping>
-  
- <servlet-mapping>
-    <servlet-name>Resteasy</servlet-name>
-    <url-pattern>/restful-services/*</url-pattern>
-  </servlet-mapping-->
+ 
   
   <servlet-mapping>
     <servlet-name>AdapterHTTP</servlet-name>
@@ -237,10 +192,5 @@
     <location>/html/error.html</location>
   </error-page>
   
-  <context-param>
-    <param-name>resteasy.scan</param-name>
-    <param-value>true</param-value>
-  </context-param>
- 
   
 </web-app>

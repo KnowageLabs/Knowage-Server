@@ -48,7 +48,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 
 import org.apache.log4j.Logger;
-import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.json.JSONObject;
 
 /**
@@ -90,8 +89,8 @@ public class PageResource {
 			}
 
 			// To deploy into JBOSSEAP64 is needed a StandardWrapper, instead of RestEasy Wrapper
-			HttpServletRequest request = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
-			HttpServletResponse response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
+//			HttpServletRequest request = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
+//			HttpServletResponse response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
 			ioManager.getHttpSession().setAttribute("ioManager", ioManager);
 			ioManager.getHttpSession().setAttribute("userProfile", userProfile);
 

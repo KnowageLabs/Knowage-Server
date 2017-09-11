@@ -17,17 +17,16 @@
  */
 package it.eng.spagobi.services.rest;
 
+import it.eng.spagobi.commons.utilities.ChannelUtilities;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
 
 import org.jboss.resteasy.spi.HttpRequest;
-
-import it.eng.spagobi.commons.utilities.ChannelUtilities;
 
 /**
  *
@@ -36,16 +35,7 @@ import it.eng.spagobi.commons.utilities.ChannelUtilities;
  */
 public class InterceptorUtilities {
 
-	/**
-	 * Get the url of the services. It removes the path parameters from the url
-	 *
-	 * @param req
-	 * @return the url of the service
-	 */
-	public static HashMap<String, String> getPathParameters(HttpRequest req) {
-		UriInfo uri = req.getUri();
-		return fromMultivaluedMapToHashMap(uri.getPathParameters());
-	}
+
 
 	/**
 	 * Trasforms a MultivaluedMap in a HashMap
@@ -105,21 +95,7 @@ public class InterceptorUtilities {
 		}
 	}
 
-	public static HashMap getRequestParameters(HttpRequest request, HttpServletRequest servletRequest) {
-		HashMap<String, String> parameters = new HashMap<String, String>();
-		HashMap<String, String> pathParameters = InterceptorUtilities.getPathParameters(request);
-		String strContentType = servletRequest.getContentType();
-		if (strContentType != null && strContentType.equals("application/x-www-form-urlencoded")) {
-			HashMap<String, String> formParameters = InterceptorUtilities.fromMultivaluedMapToHashMap(request.getDecodedFormParameters());
-			parameters.putAll(formParameters);
-		}
 
-		Map requestParameters = servletRequest.getParameterMap();
-		parameters.putAll(pathParameters);
-
-		InterceptorUtilities.addGenericMap(parameters, requestParameters);
-		return parameters;
-	}
 
 	public static String createUrlPrefix(HttpRequest request, HttpServletRequest servletRequest) {
 		String contextName = ChannelUtilities.getSpagoBIContextName(servletRequest);

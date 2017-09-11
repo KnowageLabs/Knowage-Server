@@ -17,6 +17,21 @@
  */
 package it.eng.spagobi.images;
 
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.images.dao.IImagesDAO;
+import it.eng.spagobi.images.dao.IImagesDAO.Direction;
+import it.eng.spagobi.images.dao.IImagesDAO.OrderBy;
+import it.eng.spagobi.images.metadata.SbiImages;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.tools.glossary.util.Util;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -39,7 +54,6 @@ import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.clerezza.jaxrs.utils.form.FormFile;
 import org.apache.clerezza.jaxrs.utils.form.MultiPartBody;
-
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -48,21 +62,6 @@ import org.json.JSONObject;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.images.dao.IImagesDAO;
-import it.eng.spagobi.images.dao.IImagesDAO.Direction;
-import it.eng.spagobi.images.dao.IImagesDAO.OrderBy;
-import it.eng.spagobi.images.metadata.SbiImages;
-import it.eng.spagobi.services.rest.annotations.UserConstraint;
-import it.eng.spagobi.tools.glossary.util.Util;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 @Path("/1.0/images")
 public class ImagesService {
@@ -145,7 +144,7 @@ public class ImagesService {
 		String msg = "sbi.cockpit.widgets.image.imageWidgetDesigner.uploadOK";
 		String fileName = "";
 		try {
-			
+
 			IImagesDAO dao = DAOFactory.getImagesDAO();
 			IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			dao.setUserProfile(profile);
@@ -157,7 +156,7 @@ public class ImagesService {
 
 				fileName = file.getFileName();
 
-					
+
 					byte[] data = file.getContent();
 					if (data.length > getParamValue(IMAGE_GALLERY_MAX_IMAGE_SIZE, defaultMaxImageSize) * 1024) {
 						msg = "sbi.cockpit.widgets.image.imageWidgetDesigner.tooBigImage";
@@ -357,7 +356,6 @@ public class ImagesService {
 	/**
 	 * header sample { Content-Type=[image/png], Content-Disposition=[form-data; name="file"; filename="filename.extension"] }
 	 **/
-	// get uploaded filename, is there a easy way in RESTEasy?
 	private String getFileName(MultivaluedMap<String, String> header) {
 
 		String[] contentDisposition = header.getFirst("Content-Disposition").split(";");

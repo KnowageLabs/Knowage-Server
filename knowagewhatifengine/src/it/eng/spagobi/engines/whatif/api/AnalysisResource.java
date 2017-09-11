@@ -30,7 +30,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.log4j.Logger;
-import org.jboss.resteasy.annotations.GZIP;
+
 import org.pivot4j.PivotModel;
 
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;

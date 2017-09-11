@@ -25,7 +25,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import org.apache.log4j.Logger;
-import org.jboss.resteasy.annotations.GZIP;
+
 import org.pivot4j.PivotModel;
 
 import com.jamonapi.Monitor;

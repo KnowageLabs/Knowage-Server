@@ -31,7 +31,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import org.apache.log4j.Logger;
-import org.jboss.resteasy.annotations.GZIP;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -117,7 +117,7 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 	@POST
 	@Path("/filtertree")
 	@Produces("text/html; charset=UTF-8")
-	@GZIP
+	
 	public String getMemberValue(@javax.ws.rs.core.Context HttpServletRequest req) {
 		Hierarchy hierarchy = null;
 
@@ -346,7 +346,7 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 	@GET
 	@Path("/{hierarchy}/filtertree2/{axis}")
 	@Produces("text/html; charset=UTF-8")
-	@GZIP
+	
 	public String getMemberValue2(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("hierarchy") String hierarchyUniqueName,
 			@PathParam("axis") int axis) {
 		Hierarchy hierarchy = null;

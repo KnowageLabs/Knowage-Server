@@ -24,7 +24,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 
 import org.apache.log4j.Logger;
-import org.jboss.resteasy.annotations.GZIP;
+
 import org.olap4j.OlapDataSource;
 import org.pivot4j.PivotModel;
 
@@ -42,7 +42,7 @@ public class CacheResource extends AbstractWhatIfEngineService {
 
 	@POST
 	@Produces("text/html; charset=UTF-8")
-	@GZIP
+	
 	public String flushCache(@Context HttpServletRequest request) {
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		OlapDataSource olapDataSource = ei.getOlapDataSource();

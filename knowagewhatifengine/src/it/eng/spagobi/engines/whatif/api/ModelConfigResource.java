@@ -25,7 +25,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
 import org.apache.log4j.Logger;
-import org.jboss.resteasy.annotations.GZIP;
+
 
 import it.eng.spagobi.engines.whatif.WhatIfEngineInstance;
 import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
@@ -50,7 +50,7 @@ public class ModelConfigResource extends AbstractWhatIfEngineService {
 	 */
 	@POST
 	@Produces("text/html; charset=UTF-8")
-	@GZIP
+	
 	public String setModelConfig() {
 		logger.debug("IN");
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
