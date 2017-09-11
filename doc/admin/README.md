@@ -336,24 +336,6 @@ with your Knowage host url, for example:
 		</init-param>
 ```
 
-In the same manner open `knowagecockpitengine/WebContent/WEB-INF/web.xml` and change:
-
-```xml
-		<init-param>
-			<param-name>notifyUrl</param-name>
-			<param-value>http://192.168.93.1:8080/knowagecockpitengine/datasetNotifier</param-value>
-		</init-param>
-```
-
-with your Knowage host url, for example:
-
-```xml
-		<init-param>
-			<param-name>notifyUrl</param-name>
-			<param-value>http://www.my-personal-spagobi.com:8080/knowagecockpitengine/datasetNotifier</param-value>
-		</init-param>
-```
-
 This url is used by OCB to send notifications to Knowage.
 
 
