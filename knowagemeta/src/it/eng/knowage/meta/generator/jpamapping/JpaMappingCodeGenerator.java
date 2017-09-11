@@ -143,7 +143,7 @@ public class JpaMappingCodeGenerator implements IGenerator {
 			templatesDirRelativePath = "/it/eng/knowage/meta/generator/templates";
 
 			// templateDir = RL.getFile(templatesDirRelativePath);
-			templateDir = new File(getClass().getResource("/it/eng/knowage/meta/generator/templates").getFile());
+			templateDir = new File(getClass().getResource("/it/eng/knowage/meta/generator/templates").toURI().getPath());
 
 			logger.debug("Template dir is equal to [{}]", templateDir);
 			Assert.assertTrue("Template dir [" + templateDir + "] does not exist", templateDir.exists());
