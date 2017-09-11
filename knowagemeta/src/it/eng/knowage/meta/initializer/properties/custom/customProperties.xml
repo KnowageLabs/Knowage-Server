@@ -115,7 +115,7 @@
       
       <type id="structural.aggtype" name="Aggregation Type"
       description="The preferred aggregation type for the give column (COUNT, SUM, AVG, MAX, MIN)"
-      category="Structural" defaultValue="SUM" />
+      category="Structural" defaultValue="COUNT" />
       
       <type id="structural.format" name="Format String"
       description="The numeric format to use if the value is numeric"
