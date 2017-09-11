@@ -59,6 +59,7 @@ public class FileDataSet extends ConfigurableDataSet {
 	}
 
 	public FileDataSet(SpagoBiDataSet dataSetConfig) {
+		super(dataSetConfig);
 		logger.debug("IN");
 		try {
 			String config = JSONUtils.escapeJsonString(dataSetConfig.getConfiguration());
