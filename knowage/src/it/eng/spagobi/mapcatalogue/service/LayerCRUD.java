@@ -35,11 +35,9 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -52,6 +50,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 
+import org.apache.clerezza.jaxrs.utils.form.FormFile;
+import org.apache.clerezza.jaxrs.utils.form.MultiPartBody;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -65,7 +65,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 @ManageAuthorization
 @Path("/layers")
 public class LayerCRUD {
-/*
+
 	static private Logger logger = Logger.getLogger(LayerCRUD.class);
 	public static final String LAYER_ID = "id";
 	public static final String LAYER_LABEL = "label";
@@ -346,46 +346,38 @@ public class LayerCRUD {
 	@Path("/addData")
 	@Consumes("multipart/form-data")
 	@Produces(MediaType.TEXT_PLAIN)
-	public String saveLayer2(MultipartFormDataInput input, @Context HttpServletRequest req) {
+	public String saveLayer2(MultiPartBody input, @Context HttpServletRequest req) {
 		JSONObject requestBodyJSON = null;
 		Integer id;
 
 		try {
 
-			Map<String, List<InputPart>> formDataMap = input.getFormDataMap();
-			List<InputPart> dataList = formDataMap.get("data");
-			for (InputPart inputPart : dataList) {
-				requestBodyJSON = new JSONObject(inputPart.getBodyAsString());
-			}
+
+			String dataJSON = input.getTextParameterValues("data")[0];
+			requestBodyJSON = new JSONObject(dataJSON);
+
+
 
 			GeoLayer aLayer = GeoLayerJSONDeserializer.deserialize(requestBodyJSON);
 			ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
 
-			// get File
-			List<InputPart> inputParts = formDataMap.get("layerFile");
-			for (InputPart inputPart : inputParts) {
+			final FormFile file = input.getFormFileParameterValues("layerFile")[0];
+			byte[] data = file.getContent();
+			aLayer.setPathFile("");
+			aLayer.setFilebody(data);
 
-				// byte[] data = inputPart.getBodyAsString().replace("data:;base64,", "").getBytes(Charset.forName("UTF-8"));
-				// data = Base64.decodeBase64(data);
-				byte[] data = inputPart.getBodyAsString().getBytes(Charset.forName("UTF-8"));
+			id = dao.insertLayer(aLayer);
 
-				// String path = layerServices.getResourcePath(data);
-				aLayer.setPathFile("");
-				aLayer.setFilebody(data);
+			logger.debug("Layer saved: layer label " + aLayer.getLabel());
 
-				id = dao.insertLayer(aLayer);
-
-				logger.debug("Layer saved: layer label " + aLayer.getLabel());
-
-				return "{\"id\":" + id + "}";
-			}
+			return "{\"id\":" + id + "}";
 
 		} catch (EMFUserError | IOException | JSONException e) {
 			logger.error("Error reading the body from the request", e);
 			throw new SpagoBIRuntimeException("Error reading the body from the request", e);
 		}
 
-		return null;
+
 	}
 
 	@POST
@@ -420,45 +412,40 @@ public class LayerCRUD {
 	@Path("/updateData")
 	@Consumes("multipart/form-data")
 	@Produces(MediaType.TEXT_PLAIN)
-	public String modifyLayerwithFile(MultipartFormDataInput input, @Context HttpServletRequest req) {
+	public String modifyLayerwithFile(MultiPartBody input, @Context HttpServletRequest req) {
 		JSONObject requestBodyJSON = null;
 
 		try {
 
-			Map<String, List<InputPart>> formDataMap = input.getFormDataMap();
-			List<InputPart> dataList = formDataMap.get("data");
-			for (InputPart inputPart : dataList) {
-				requestBodyJSON = new JSONObject(inputPart.getBodyAsString());
-			}
+
+			String dataJSON = input.getTextParameterValues("data")[0];
+			requestBodyJSON = new JSONObject(dataJSON);
+
+
 
 			GeoLayer aLayer = GeoLayerJSONDeserializer.deserialize(requestBodyJSON);
 			ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
 
-			// load File
 
-			List<InputPart> inputParts = formDataMap.get("layerFile");
-			for (InputPart inputPart : inputParts) {
+			final FormFile file = input.getFormFileParameterValues("layerFile")[0];
+			byte[] data = file.getContent();
 
-				byte[] data = inputPart.getBodyAsString().getBytes(Charset.forName("UTF-8"));
-				// data = Base64.decodeBase64(data);
+			String path = SpagoBIUtilities.getResourcePath();
+			aLayer.setPathFile(path);
+			aLayer.setFilebody(data);
 
-				String path = SpagoBIUtilities.getResourcePath();
-				aLayer.setPathFile(path);
-				aLayer.setFilebody(data);
+			dao.modifyLayer(aLayer, true);
 
-				dao.modifyLayer(aLayer, true);
+			logger.debug("Layer saved: layer label " + aLayer.getLabel());
+			return "{}";
 
-				logger.debug("Layer saved: layer label " + aLayer.getLabel());
-				return "{}";
-
-			}
 
 		} catch (EMFUserError | IOException | JSONException e) {
 			logger.error("Error reading the body from the request", e);
 			throw new SpagoBIRuntimeException("Error reading the body from the request", e);
 		}
 
-		return null;
+
 
 	}
 
@@ -610,5 +597,5 @@ public class LayerCRUD {
 
 		logger.debug("Layers serialized");
 		return "{\"root\":" + s + "}";
-	}*/
+	}
 }
