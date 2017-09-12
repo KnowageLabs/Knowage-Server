@@ -1,7 +1,7 @@
 # FIWARE Theme
 
 * [Configure theme](#configure-theme)
-* [Admin theme](#screenshots)
+* [Screenshots](#screenshots)
 
 Knowage has a specific theme for FIWARE. This section explains how to configure it and provides some example screenshots.
 
