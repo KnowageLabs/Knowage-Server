@@ -2,8 +2,8 @@
 
 ## Screenshots
 
-![](../../master/doc/admin/media/Knowage_home.png)
+![](../../doc/admin/media/Knowage_home.png)
 
-![](../../master/doc/admin/media/Knowage_menu_admin.png)
+![](../../doc/admin/media/Knowage_menu_admin.png)
 
-![](../../master/doc/admin/media/Knowage_cockpit_customer_review.png)
+![](../../doc/admin/media/Knowage_cockpit_customer_review.png)
