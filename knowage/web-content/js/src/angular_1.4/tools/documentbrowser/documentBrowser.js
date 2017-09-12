@@ -3,14 +3,15 @@ angular.module('documentBrowserModule')
 		[ '$mdMedia', '$scope', '$http', '$mdSidenav', 
 		  '$mdDialog', 'sbiModule_translate', 'sbiModule_restServices', 
 		  'sbiModule_config', 'setFocus','$timeout', '$cookies', 
-		  'sbiModule_user','$interval','$q',documentBrowserFunction]);
+		  'sbiModule_user','$interval','$q','accessibillty_preferences',documentBrowserFunction]);
 
 function documentBrowserFunction(
 		$mdMedia, $scope, $http, $mdSidenav, 
 		$mdDialog, sbiModule_translate, sbiModule_restServices, 
 		sbiModule_config, setFocus,$timeout, $cookies,
-		sbiModule_user,$interval,$q) {
+		sbiModule_user,$interval,$q,accessibillty_preferences) {
 	
+	$scope.accessibilityMode = accessibillty_preferences.accessibilityModeEnabled;
 	$scope.translate=sbiModule_translate;
 	$scope.folders = [];
 	$scope.folderDocuments = [];
@@ -278,11 +279,8 @@ function documentBrowserFunction(
 		 
 		 })
 		 .then(function(answer) {
-				$scope.status = 'You said the information was "' + answer + '".';
 				$scope.reloadAll();
-				return ;
 		}, function() {
-				$scope.status = 'You cancelled the dialog.';
 				$scope.reloadAll();
 		});
 	};
@@ -474,6 +472,7 @@ function DialogNewDocumentController($scope,$mdDialog,$mdBottomSheet,sbiModule_c
 	}
 		
 }
+
 
 //directive for Enter keypress
 angular.module('documentBrowserModule').directive('keyEnter', function () {

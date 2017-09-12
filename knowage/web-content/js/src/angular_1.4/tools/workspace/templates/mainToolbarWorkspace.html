@@ -1,5 +1,3 @@
-<div layout="row">
-	
 	<md-toolbar class="documentBrowserToolbar" ng-cloak> 
 		
 		<div class="md-toolbar-tools" layout="row">
@@ -11,8 +9,6 @@
 				<!-- Title -->
 				<h1>{{translate.load("sbi.workspace.maintoolbar.title")}}</h1>
 			</div>
-		
-			<!--  customize-view-workspace></customize-view-workspace-->
 				
 			<div class="workspaceTopRight" layout="row" layout-align="end center" flex>
 			
@@ -22,11 +18,6 @@
 				</md-button>
 				
 				<!-- Search input -->
-				<!-- 
-					By setting 'ng-model-options' attribute 'debounce' property value, we are delaying the execution of the 'ng-change' function
-					since the Angular now waits for that amount of time to pass the model's change (update the model after that time). 
-					@modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-				 -->
 			    <md-input-container class="searchInput" hide ng-if="currentDatasetsTab!='ckanDataSet'" show-gt-sm>
 					<input 	class="workspaceSearchInput" type="text" id="searchInput" ng-model="searchInput" 
 							title="{{translate.load('sbi.workspace.mainmenu.search.tooltip')}}" focus-on="searchInput" 
@@ -73,39 +64,26 @@
 					<md-icon md-font-icon="fa fa-plus"></md-icon>
 				</md-button>
 		
-				<!--
-					KNOWAGE-861: Change the icon for creation of analysis in the main toolbar.
-					Provide the Plus button for adding the new analysis document inside the Analysis perspective if the
-					active (selected) tab IS NOT "ALL" (for all available analysis documents). In other words, if the
-					currently active tab displays exclusively Cockpit or Geo map documents, we will be able to add a new
-					document of such a type (respectively to the tab which user selected).
-					@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-				-->
 			<div  ng-if="currentOptionMainMenu=='analysis'">
-		<md-menu style="padding: 0;"> <md-button
-		aria-label="Create new document" class="md-fab md-mini"
-		style="top: 0;" ng-click="$mdOpenMenu($event)"> <md-icon
-		md-menu-origin md-font-icon="fa fa-plus" class="md-primary"></md-icon>
-	   </md-button> <md-menu-content width="4"> <md-menu-item>
-	    <md-button ng-click="addNewAnalysisDocument()"> <md-icon
-		md-font-icon="fa fa-plus" md-menu-align-target></md-icon>
-		{{translate.load("sbi.generic.document.add.adhocCockpit")}}
-		</md-button> </md-menu-item>
-		<md-menu-item>
-		 <md-button
-		ng-click="addNewGeoMap()"> <md-icon
-		md-font-icon="fa fa-plus" md-menu-align-target></md-icon>
-		   {{translate.load("sbi.generic.document.add.adhocGeoReport")}}
-		 </md-button>
-		 </md-menu-item>
-		</md-menu-content> </md-menu>
+				<md-menu style="padding: 0;">
+					<md-button aria-label="Create new document" class="md-fab md-mini" style="top: 0;" ng-click="$mdOpenMenu($event)"> 
+						<md-icon md-menu-origin md-font-icon="fa fa-plus" class="md-primary"></md-icon>
+	   				</md-button> 
+	   				<md-menu-content width="4"> 
+	   					<md-menu-item>
+	    					<md-button ng-click="addNewAnalysisDocument()"> 
+	    						<md-icon md-font-icon="fa fa-plus" md-menu-align-target></md-icon>
+								{{translate.load("sbi.generic.document.add.adhocCockpit")}}
+							</md-button> 
+						</md-menu-item>
+						<md-menu-item>
+		 					<md-button ng-click="addNewGeoMap()"> 
+		 						<md-icon md-font-icon="fa fa-plus" md-menu-align-target></md-icon>
+		   						{{translate.load("sbi.generic.document.add.adhocGeoReport")}}
+		 					</md-button>
+		 				</md-menu-item>
+					</md-menu-content> 
+				</md-menu>
 			</div>		
-<!-- 				<md-button 	 ng-if="currentOptionMainMenu=='analysis'" ng-click="addNewAnalysisDocument()" ng-cloak -->
-<!-- 							class="addNewDocumentButton md-fab md-mini md-ink-ripple"  -->
-<!-- 							title="{{translate.load('sbi.workspace.mainmenu.addbutton.analysis.cockpit')}}">  -->
-<!-- 					<md-icon md-font-icon="fa fa-plus"></md-icon> -->
-<!-- 				</md-button> -->
 		
 	</md-toolbar>	
-	
-</div>

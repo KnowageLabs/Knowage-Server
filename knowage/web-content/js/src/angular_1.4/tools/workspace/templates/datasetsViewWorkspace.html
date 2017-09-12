@@ -1,9 +1,6 @@
-<md-content layout="row" flex class="workspaceBckgColorRightSide workspaceWhiteframeContainer">
+<div layout="row" flex class="workspaceDocumentsList">
 	
-	<md-whiteframe 	flex layout="column" layout-margin
-					class="md-whiteframe-5dp workspaceBckgColorRightSide workspaceWhiteframe">
-
-		<md-content layout="row" flex class="workspaceBckgColorRightSide workspaceWhiteframeContent">
+	<div flex layout="column" >
   
 			<md-content layout="row" flex layout-fill class="workspaceBckgColorRightSide">
 		  		
@@ -13,7 +10,7 @@
 				       
 				       <md-tab-body>
 				       
-					 	  <dataset-view class="kn-documentBrowser" flex style='overflow: auto;' ng-model="myDatasets"
+					 	  <dataset-view flex style='overflow: auto;' ng-model="myDatasets"
 							show-grid-view="showGridView"
 							show-qbe-enabled="true"
 							show-detail-dataset-enabled="true"
@@ -34,7 +31,7 @@
 			 		
 				 	<md-tab id="enterprise-dataset" label="{{translate.load('sbi.workspace.dataset.enterprise')}}" flex ng-click="switchDatasetsTab('enterpriseDataSet')">
 				     	<md-tab-body>
-					 	  	<dataset-view class="kn-documentBrowser" flex style='overflow: auto;' ng-model="enterpriseDatasets"
+					 	  	<dataset-view flex style='overflow: auto;' ng-model="enterpriseDatasets"
 								show-grid-view="showGridView"
 								show-qbe-enabled="true"
 								show-detail-dataset-enabled="false"
@@ -50,7 +47,7 @@
 				 	 
 				 	<md-tab label="{{translate.load('sbi.workspace.dataset.shared')}}" flex ng-click="switchDatasetsTab('sharedDataSet')">
 				      	<md-tab-body>
-					 	  	<dataset-view class="kn-documentBrowser" flex style='overflow: auto;' ng-model="sharedDatasets"
+					 	  	<dataset-view flex style='overflow: auto;' ng-model="sharedDatasets"
 								show-grid-view="showGridView"
 								show-qbe-enabled="true"
 								show-detail-dataset-enabled="false"
@@ -110,7 +107,7 @@
 				 	 	 
 				 	 	 <div flex>
 				 	 	 
-					 	 	 <ckan-view class="kn-documentBrowser" style='overflow: auto;'
+					 	 	 <ckan-view style='overflow: auto;'
 					 	 	  	ng-model="ckanDatasetsList"
 								show-grid-view="showGridView"
 								selected-ckan=selectedCkan
@@ -128,7 +125,7 @@
 				 	
 				 	<md-tab label="{{translate.load('sbi.workspace.dataset.all')}}" flex ng-click="switchDatasetsTab('allDataSet')">
 				      	<md-tab-body>
-					 	  	<dataset-view class="kn-documentBrowser" flex style='overflow: auto;' ng-model="datasets"
+					 	  	<dataset-view flex style='overflow: auto;' ng-model="datasets"
 								show-grid-view="showGridView"
 								show-qbe-enabled="true"
 								show-detail-dataset-enabled="false"
@@ -148,7 +145,7 @@
 
 		</md-content>
 	
-	</md-whiteframe>
+	</div>
 	
        <md-sidenav class="md-sidenav-right selectedDocumentSidenav md-whiteframe-4dp" md-component-id="rightDs" md-is-locked-open="$mdMedia('gt-md')"  ng-class="{'full-screen-sidenav': smallScreen}" ng-show="showDatasetDetails()">
 					<md-toolbar class="ternaryToolbar">
@@ -291,4 +288,4 @@
 				</md-sidenav>
    
  
-</md-content>
+</div>

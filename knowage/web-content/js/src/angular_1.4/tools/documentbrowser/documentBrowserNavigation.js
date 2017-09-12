@@ -26,8 +26,9 @@ app.directive('mdTabFixedLastClearTabs',
 	};
 })
 
-app.controller( 'documentBrowserNavigationController', ['$scope','sbiModule_translate','$mdDialog',documentBrowserMasterFunction]);
-function documentBrowserMasterFunction($scope,sbiModule_translate,$mdDialog){
+app.controller( 'documentBrowserNavigationController', ['$scope','sbiModule_translate','$mdDialog','accessibillty_preferences',documentBrowserMasterFunction]);
+function documentBrowserMasterFunction($scope,sbiModule_translate,$mdDialog,accessibillty_preferences){
+	$scope.accessibilityMode = accessibillty_preferences.accessibilityModeEnabled;
 	$scope.translate=sbiModule_translate;
 	$scope.runningDocuments=[];
 	$scope.documentNavigationToolbarSelectedIndex=0;

@@ -114,9 +114,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<md-content layout="row" flex>
 		<md-content layout="row" flex ng-show="!showSearchView">
 			<md-sidenav class="md-sidenav-left md-whiteframe-4dp" md-component-id="left" md-is-locked-open="$mdMedia('gt-sm')" ng-class="{'full-screen-sidenav': smallScreen}">
-			 <!-- 					<md-toolbar class=" ternaryToolbar"> -->
-	<!-- 		       			<h3 class="md-toolbar-tools">{{translate.load("sbi.browser.filtrpanel.filtergroup.opt.folders")}}</h3> -->
-	<!-- 	     			</md-toolbar> --> 
 				<md-content> 
 					<document-tree ng-model="folders" highlights-selected-item="true" create-tree="true" selected-item="selectedFolder" click-function="setSelectedFolder(item)"></document-tree>
 				</md-content>

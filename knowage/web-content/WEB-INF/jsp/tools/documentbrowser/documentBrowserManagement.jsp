@@ -43,14 +43,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	 
 </head>
 
-<body   ng-app="documentBrowserModule" id="ng-app" class="kn-documentBrowser" ng-controller="documentBrowserNavigationController">
+<body   ng-app="documentBrowserModule" id="ng-app" class="kn-documentBrowser" ng-controller="documentBrowserNavigationController" ng-class="{'accessibleModeOn':accessibilityMode}" ng-cloak>
     <div ng-show="runningDocuments.length==0">
     <%if(includeInfusion){ %> 
             <%@include file="/WEB-INF/jsp/commons/infusion/infusionTemplate.html"%>
       
      <%} %>	
      </div>
-	<md-tabs layout-fill md-autoselect class="documentNavigationToolbar secondaryToolbar" md-selected="documentNavigationToolbarSelectedIndex">
+	<md-tabs layout-fill md-autoselect class="documentNavigationToolbar secondaryToolbar" md-selected="documentNavigationToolbarSelectedIndex" >
 	<md-tab >
 	 <md-tab-label><md-icon class="documentBrowserIcon" md-font-icon="fa  fa-folder-open-o " ></md-icon></md-tab-label>
 	 <md-tab-body>
@@ -66,7 +66,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <!--             <md-icon md-font-icon="fa fa-times"></md-icon> -->
 <!--       </md-button> -->
 	 </md-tab-label>
-	 <md-tab-body> 
+	 <md-tab-body > 
 	 <iframe layout-fill class=" noBorder" ng-src="{{doc.url}}"> </iframe>
 	 
 	 </md-tab-body>
@@ -79,7 +79,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
      	</md-button> 
      	
 
-     	<md-menu md-tab-fixed-last-clear-tabs >
+     	<md-menu md-tab-fixed-last-clear-tabs>
 	      <md-button tabindex="1" aria-label="clear documents" class="documentBrowserClearButton" ng-click="$mdOpenMenu($event)" ng-disabled="runningDocuments.length==0">
 	        <md-icon md-menu-origin  md-font-icon="fa fa-times-circle-o" class="md-primary"></md-icon>
 	      </md-button>
@@ -110,6 +110,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	        </md-menu-item>
 		</md-menu-content>
 		</md-menu>
+		
+		<script>
+		angular.module("documentBrowserModule").factory("accessibillty_preferences",function(){
+			return {
+				accessibilityModeEnabled:<%= isUIOEnabled %>,
+				isUIOEnabled:<%= isUIOEnabled %>,
+				isRobobrailleEnabled:<%= isRobobrailleEnabled %>,
+				isVoiceEnable:<%= isVoiceEnable %>,
+				isGraphSonificationEnabled:<%= isGraphSonificationEnabled %>,
+				includeInfusion:<%= includeInfusion %>
+				
+			}
+		});
+		</script>
      	
 </body>
 </html>

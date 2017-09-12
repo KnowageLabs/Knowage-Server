@@ -1,3 +1,7 @@
+html{
+  height: 100%;
+}
+
 #doc, #iframeDoc {
   width: calc(100% - 40px);
   margin-left: 40px;
@@ -362,10 +366,11 @@ a.md-button.md-knowage-theme.md-primary.md-raised, .md-button.md-knowage-theme.m
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+  width: 100%;
 }
 
 .noMargin{
-	margin:0px;
+	margin:0 !important;
 }
 
 .noPadding{

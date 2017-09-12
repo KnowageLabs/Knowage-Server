@@ -24,11 +24,11 @@
 					
 					<!-- Document Grid View -->
 					<div layout="row"  layout-wrap ng-hide="showGridView!=true " >
-					<div  class="documentCardContainer" ng-repeat="document in ngModel| orderBy:orderingDocumentCards" flex-xl=25 flex=33 flex-sm=50 flex-xs=100>
+					<div  class="documentBrowserCardContainer" ng-repeat="document in ngModel| orderBy:orderingDocumentCards" flex-xl=25 flex=33 flex-sm=50 flex-xs=100>
 			        <md-card class="documentCard" ng-class="{'md-whiteframe-15dp' : selectedDocument==document }">
 				        <md-card-title>
 					          <md-card-title-text>
-					            <p class=" ellipsis">{{document.name}}</p>
+					            <p class="ellipsis">{{document.name}}</p>
 					             <md-tooltip md-delay="1500">
 					              {{document.name}}
 					            </md-tooltip>

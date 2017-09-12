@@ -1,4 +1,4 @@
-<md-content layout="row" flex class="workspaceBckgColorRightSide">
+<div layout="row" flex class="workspaceDocumentsList">
 
 	<md-content layout="column" flex>
 		
@@ -7,22 +7,16 @@
 						ng-hide="organizerSearch">
 		</bread-crumb>
 		
-		<md-content layout="row" flex class="workspaceBckgColorRightSide workspaceWhiteframeContainer">
-		
-			<md-whiteframe 	flex layout="column" layout-margin 
-							class="md-whiteframe-5dp workspaceBckgColorRightSide workspaceWhiteframe">
-		    		
-	    		<md-content layout="row" flex class="workspaceBckgColorRightSide workspaceWhiteframeContent">
+			<div flex layout="column" layout-margin>
  
-					<md-content flex layout-fill  ng-class="{'layout-row':!showGridView,'':showGridView}" class="workspaceBckgColorRightSide">
+					<md-content flex layout-fill ng-class="{'layout-row':!showGridView,'':showGridView}" class="noMargin">
 	          
 			          	<!-- 
 			          		The 'searching-organizer' directive is used as an indicator if the Organizer is being searched (needed
 			          		for handling the graphical elements in it.
 			          		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 				-->
-					 	<folder-view	class="kn-documentBrowser" flex=50
-					 					style='overflow:auto;' 
+					 	<folder-view	class="kn-documentBrowser" flex
 					 					ng-model=foldersToShow
 					 					show-grid-view=showGridView
 					 					searching-organizer=organizerSearch
@@ -32,8 +26,7 @@
 					 					delete-folder-action="deleteFolder(folder)" >
 						</folder-view>	
 						
-						<organizer-view class="kn-documentBrowser" flex=50
-					 					style='overflow:auto;'
+						<organizer-view class="kn-documentBrowser" flex
 					 					ng-model=documentsOfSelectedFolder
 					 					show-grid-view=showGridView
 					 					selected-document=selectedOrganizerDocument
@@ -47,11 +40,7 @@
 	
 					</md-content>
 					
-				</md-content>
-					
-			</md-whiteframe>
-				
-		</md-content>
+			</div>
 			
 	</md-content>
 
@@ -124,4 +113,4 @@
 		
 	</md-sidenav>
 
-</md-content>
+</div>

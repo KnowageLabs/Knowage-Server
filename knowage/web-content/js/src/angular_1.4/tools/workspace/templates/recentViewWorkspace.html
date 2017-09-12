@@ -1,9 +1,7 @@
-<md-content layout="row" flex class="workspaceBckgColorRightSide workspaceWhiteframeContainer">
+<div layout="row" flex class="workspaceDocumentsList">
 	
-	<md-whiteframe 	flex layout="column" layout-margin
-					class="md-whiteframe-5dp workspaceBckgColorRightSide workspaceWhiteframe">
+	<div flex layout="column">
 	
-		<md-content layout="row" flex class="workspaceBckgColorRightSide workspaceWhiteframeContent">
 		
 			<md-content layout="row" flex layout-fill class="workspaceBckgColorRightSide">
 			
@@ -20,9 +18,8 @@
 			
 			</md-content>
 		
-		</md-content>
 	
-	</md-whiteframe>
+	</div>
 		
 	<md-sidenav class="md-sidenav-right selectedDocumentSidenav md-whiteframe-4dp" md-component-id="rightDoc" md-is-locked-open="$mdMedia('gt-md')"  ng-class="{'full-screen-sidenav': smallScreen}" ng-show="showDocumentDetails()">
 			
@@ -93,4 +90,4 @@
 			
 	</md-sidenav>
 		
-</md-content>
+</div>

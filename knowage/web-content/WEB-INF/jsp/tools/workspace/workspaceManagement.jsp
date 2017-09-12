@@ -60,7 +60,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		
 	</head>
 	
-	<body ng-controller="workspaceController" class="workspace kn-workspace" id="workspaceWebPageBody"> 
+	<body ng-controller="workspaceController" class="kn-workspace" id="workspaceWebPageBody"> 
 	 <%if(includeInfusion){ %> 
             <%@include file="/WEB-INF/jsp/commons/infusion/infusionTemplate.html"%>
       
@@ -77,11 +77,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			
 			
 			
-			<md-content layout="column" flex layout-fill>
+			<div layout="column" flex layout-fill>
 				
 				<main-toolbar-workspace></main-toolbar-workspace>
 				
-				<md-content layout="row" flex>
+				<div layout="row" flex>
 				
 					<!-- 
 						Directive that will render the left main menu of the Workspace web page. 
@@ -120,9 +120,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							
 					</md-content>
 					
-				</md-content>
+				</div>
 				
-			</md-content>
+			</div>
 			
 
 		
