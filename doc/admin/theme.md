@@ -8,14 +8,9 @@ Knowage has a specific theme for FIWARE. This section explains how to configure 
 
 ## Configure theme
 
-To use FIWARE theme administrator must open "Configuration management" from admin menu:
+We'll refer to the folder where Knowage is deployed as KNOWAGE_SERVER_HOME.
 
-![](media/SpagoBI_admin_config_management.png)
-
-
-filter THEMES options and set them as shown in screenshot below.
-  
-![](media/SpagoBI_admin_theme_config.png)
+To use one of these themes, you can simply paste the subfolder <name_of_the_theme> (e.g. Knowage-Server/themes/FIWARE) into KNOWAGE_SERVER_HOME\webapps\knowage\themes.
 
 
 ## Screenshots
