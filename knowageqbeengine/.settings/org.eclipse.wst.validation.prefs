@@ -1,6 +1,0 @@
-#Fri Dec 15 18:22:44 CET 2006
-DELEGATES_PREFERENCE=delegateValidatorListorg.eclipse.wst.xsd.core.internal.validation.eclipse.XSDDelegatingValidator\=org.eclipse.wst.xsd.core.internal.validation.eclipse.Validator;org.eclipse.wst.wsdl.validation.internal.eclipse.WSDLDelegatingValidator\=org.eclipse.wst.wsdl.validation.internal.eclipse.Validator;
-USER_BUILD_PREFERENCE=enabledBuildValidatorListorg.eclipse.wst.wsdl.validation.internal.eclipse.WSDLDelegatingValidator;org.eclipse.jst.j2ee.internal.web.validation.UIWarValidator;org.eclipse.wst.dtd.core.internal.validation.eclipse.Validator;org.eclipse.jst.jsp.core.internal.validation.JSPELValidator;org.eclipse.wst.wsi.ui.internal.WSIMessageValidator;
-USER_MANUAL_PREFERENCE=enabledManualValidatorListorg.eclipse.wst.wsdl.validation.internal.eclipse.WSDLDelegatingValidator;org.eclipse.jst.j2ee.internal.web.validation.UIWarValidator;org.eclipse.wst.dtd.core.internal.validation.eclipse.Validator;org.eclipse.jst.jsp.core.internal.validation.JSPELValidator;org.eclipse.wst.wsi.ui.internal.WSIMessageValidator;
-USER_PREFERENCE=overrideGlobalPreferencestruedisableAllValidationfalseversion1.1.0.v200606130645
-eclipse.preferences.version=1

@@ -1,1 +1,0 @@
-Crosstab: manage post-line calculated fields: they cannot be used into crosstab till now (14-09-2010).
