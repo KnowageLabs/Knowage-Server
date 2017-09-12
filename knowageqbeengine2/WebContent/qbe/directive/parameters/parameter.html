@@ -1,4 +1,5 @@
-<md-content style="padding: 0 8 8 8" flex class="ToolbarBox miniToolbar noBorder mozTable">
+<md-card  layout-fill layout="column" class="flexCard" style="position:absolute">
+<md-card-content flex layout="column" class="noPadding">
 	<md-toolbar class="secondaryToolbar" layout-padding>
 		<div class="md-toolbar-tools">
 			<h2><span>Params</span></h2>
@@ -15,7 +16,9 @@
 		</div>
 	</md-toolbar>						         
 											
-	<md-card layout-padding style="height:300px; margin:0px">
+	<md-content flex layout="column">
+	<md-card>
+	<md-card-content layout="row" layout-padding>
 																				      						
 		<angular-table
 			id="datasetParametersTable"
@@ -29,8 +32,11 @@
 			current-page-number=parametersTableLastPage >
 		</angular-table>
 		
-						   									
+				
+	</md-card-content>		   									
 	</md-card>
+	</md-content>
+	</md-card-content>		
 	<md-card-actions layout="row" layout-align="end center">
 		<md-button ng-click="closeParams()" >
 	    cancel
@@ -39,4 +45,4 @@
 		save
 		</md-button>
 	</md-card-actions>
-</md-content>
+</md-card>

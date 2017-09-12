@@ -1,8 +1,10 @@
-<form name=datasetForm  style="height:100%; overflow-y:hidden">
-<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" >
-	<md-card layout-padding>
-		
-		<div flex=100>
+<form name=datasetForm >
+<md-card layout-fill layout="column" class="flexCard" style="position:absolute">
+<md-card-content flex layout="column" class="noPadding">
+	
+	<md-content flex layout="column">
+	<md-card>
+<div flex=100>
 			<md-input-container class="md-block">
 		    	<label>Label</label>
 				<input ng-model="savingQbeDataSet.label" ng-required="true" ng-change="setFormDirty()">
@@ -30,7 +32,7 @@
 			</md-input-container>
 		</div>
 		
-		<div flex=100>
+	<!-- 	<div flex=100>
 	       <md-input-container class="md-block" > 
 	       		<label>Scope</label>
 		       	<md-select placeholder ="{{translate.load('sbi.ds.scope')}}"
@@ -45,7 +47,7 @@
 	        </md-input-container>
 	   </div>
 	  
-	<!--   <div flex=100>
+	   <div flex=100>
 	       <md-input-container class="md-block" > 
 	       <label>Category</label>
 	       <md-select 	placeholder ="{{translate.load('sbi.generic.category')}}"
@@ -63,13 +65,16 @@
 	        </md-input-container>
 	   </div> -->
 	</md-card>
+	
+	</md-content>
+	</md-card-content>
 	 <md-card-actions layout="row" layout-align="end center">
-	      <md-button ng-click="closeQbeDataSet()" >
+	      <md-button ng-click="closeFilters()" >
 	      cancel
 	      </md-button>
-	      <md-button  ng-disabled="!datasetForm.$valid" ng-click="saveQbeDataSet()"  >
+	      <md-button ng-click="saveFilters()"  >
 			save
 	      </md-button>
 	</md-card-actions>
-</md-content>
+</md-card>
 </form>
