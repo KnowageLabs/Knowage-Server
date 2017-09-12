@@ -31,12 +31,11 @@ import java.util.Map;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.client.Invocation.Builder;
 
 import org.apache.axis.encoding.Base64;
 import org.apache.commons.httpclient.HttpClient;
@@ -122,10 +121,10 @@ public class SimpleRestClient {
 			Object data) throws Exception {
 		logger.debug("IN");
 
-		
+
 		MultivaluedMap<String, Object> myHeaders =	  new MultivaluedHashMap<String, Object>();
 
-		
+
 		if (!serviceUrl.contains("http") && addServerUrl) {
 			logger.debug("Adding the server URL");
 			String serverUrl = EnginConf.getInstance().getSpagoBiServerUrl();
@@ -136,17 +135,15 @@ public class SimpleRestClient {
 			logger.debug("Call service URL " + serviceUrl);
 		}
 
-		
 		Client client = ClientBuilder.newClient();
 		WebTarget target = client.target(serviceUrl);
 		Builder request = target.request(mediaType);
-
 
 		logger.debug("adding headers");
 
 		addAuthorizations(request, userId,myHeaders);
 
-	
+
 		if (parameters != null) {
 			Iterator<String> iter = parameters.keySet().iterator();
 			while (iter.hasNext()) {
