@@ -3,15 +3,15 @@ angular.module('documentBrowserModule')
 		[ '$mdMedia', '$scope', '$http', '$mdSidenav', 
 		  '$mdDialog', 'sbiModule_translate', 'sbiModule_restServices', 
 		  'sbiModule_config', 'setFocus','$timeout', '$cookies', 
-		  'sbiModule_user','$interval','$q','accessibillty_preferences',documentBrowserFunction]);
+		  'sbiModule_user','$interval','$q',documentBrowserFunction]);
 
 function documentBrowserFunction(
 		$mdMedia, $scope, $http, $mdSidenav, 
 		$mdDialog, sbiModule_translate, sbiModule_restServices, 
 		sbiModule_config, setFocus,$timeout, $cookies,
-		sbiModule_user,$interval,$q,accessibillty_preferences) {
+		sbiModule_user,$interval,$q) {
 	
-	$scope.accessibilityMode = accessibillty_preferences.accessibilityModeEnabled;
+	
 	$scope.translate=sbiModule_translate;
 	$scope.folders = [];
 	$scope.folderDocuments = [];
