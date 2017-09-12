@@ -27,22 +27,6 @@
 			<version>6.0.1-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
-
-		<!--
-		<dependency>
-			<groupId>it.eng.knowage</groupId>
-			<artifactId>spagobi-cwm</artifactId>
-			<version>6.0.1-SNAPSHOT</version>
-			<scope>compile</scope>
-		</dependency>
- 		
-		<dependency>
-			<groupId>it.eng.knowage</groupId>
-			<artifactId>spagobi-commons-core</artifactId>
-			<version>6.0.1-SNAPSHOT</version>
-			<scope>compile</scope>
-		</dependency>
-		-->
  
 		<dependency>
 			<groupId>org.dspace.xmlui.ehcache</groupId>
@@ -492,6 +476,14 @@
 			<artifactId>xercesImpl</artifactId>
 			<version>2.11.0</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>2.9.3</version>
+			<scope>compile</scope>
+		</dependency>
+		
 	</dependencies>
 	
 </project>
