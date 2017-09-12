@@ -194,7 +194,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		} catch (Throwable t) {
 			errorHitsMonitor = MonitorFactory.start("QbeEngine.errorHits");
 			errorHitsMonitor.stop();
-			throw new SpagoBIServiceException("execute query", "An unexpected error occured while executing service", t);
+			throw new SpagoBIServiceException(this.request.getPathInfo(), t.getMessage(), t);
 		} finally {
 			if (totalTimeMonitor != null)
 				totalTimeMonitor.stop();
@@ -437,9 +437,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 					}
 				}
 			} catch (SerializationException e) {
-				String message = "Impossible to deserialize query";
-				throw new SpagoBIEngineServiceException("DESERIALIZATING QUERY", message, e);
-
+				throw new SpagoBIEngineServiceException(this.request.getPathInfo(), e.getMessage(),e);
 			}
 			String label = jsonEncodedRequest.getString("label");
 			String schedulingCronLine = jsonEncodedRequest.getString("schedulingCronLine");
@@ -460,7 +458,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		} catch (Throwable t) {
 			errorHitsMonitor = MonitorFactory.start("QbeEngine.errorHits");
 			errorHitsMonitor.stop();
-			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("error while saving dataset", getEngineInstance(), t);
+			throw new SpagoBIServiceException(this.request.getPathInfo(), t.getMessage(), t);
 		} finally {
 			if (totalTimeMonitor != null)
 				totalTimeMonitor.stop();
