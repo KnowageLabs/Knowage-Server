@@ -12,6 +12,9 @@
 				</md-input-container>
 			</div>
 			
+			<div>
+				{{translate.load("sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.filterDescription")}}
+			</div>
 			<div layout="row" ng-repeat="filterObj in ngModelShared.filters" >
 				<md-chips flex ng-model="filterObj.filterVals" name="filters" readonly="false" md-removable="true" placeholder="{{filterObj.colName}}">
       			</md-chips>
