@@ -124,6 +124,8 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="manifest" href="${pageContext.request.contextPath}/manifest.json" />
+    
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <title>Knowage</title>
   
@@ -167,11 +169,11 @@
 	<!-- Optional theme -->
 	<!--link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css"-->
 	<LINK rel='StyleSheet' 
-    href='<%=urlBuilder.getResourceLinkByTheme(request, "css/knowageHome/style.css",currTheme)%>' 
+    href='<%=urlBuilder.getResourceLinkByTheme(request, "../commons/css/customStyle.css",currTheme)%>' 
     type='text/css' />
   </head>
 
-  <body>
+  <body class="kn-login">
   	<!-- NEW FORM -->
   		    <div class="container">
         <div class="card card-container">
@@ -252,26 +254,26 @@
 		<div>
 		<div class="row">
 			 <div class="col-sm-4">
-				<button data-toggle="tooltip" data-placement="bottom" aria-label="Business User (demo_user/demo_user)" title="Business User (demo_user/demo_user)" type="button" class="btn btn-default" onclick="setUser('demo_user','demo_user'); login.submit()" >
+				<button data-toggle="tooltip" data-placement="bottom" aria-label="Administrator (biadmin/biadmin)" title="Administrator (biadmin/biadmin)" type="button" class="btn btn-default" onclick="setUser('biadmin','biadmin'); login.submit()" >
+				<span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+				</button>
+			 </div>
+			 <div class="col-sm-4">
+				<button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" aria-label="Showcase User (bidemo/bidemo)" title="Showcase User (bidemo/bidemo)" onclick="setUser('bidemo','bidemo'); login.submit()">
 				<span class="glyphicon glyphicon-briefcase" aria-hidden="true"></span>
 				</button>
 			 </div>
 			 <div class="col-sm-4">
-			 	<!-- 
-				<button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" aria-label="Showcase User (bidemo/bidemo)" title="Showcase User (bidemo/bidemo)" onclick="setUser('bidemo','bidemo'); login.submit()">
+			 
+				<button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" aria-label="Business User (biuser/biuser)" title="Business User (biuser/biuser)" onclick="setUser('biuser','biuser'); login.submit()">
 				<span class="glyphicon glyphicon-user" aria-hidden="true"></span>
 				</button>
-				-->
+			
 			 </div>
-			 <div class="col-sm-4">
-				<button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="bottom" aria-label="Administrator (demo_admin/demo_admin)" title="Administrator (demo_admin/demo_admin)" onclick="setUser('demo_admin','demo_admin'); login.submit()">
-				<span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
-				</button>
-			 </div>
-			 <!-- Uncommet this for adding the Change Password Link -->
+			 
+			 <!-- Uncomment this for adding the Change Password Link -->
 			 <!-- <div class="col-sm-6"><a class="lightLink" href="<%=contextName %>/ChangePwdServlet?start_url=<%=startUrl%>">	<%=msgBuilder.getMessage("changePwd")%> </a></div> -->
 		</div>
-		<div class ="row" style='color: red; font-size: 11pt;'><br /><%=authFailed%></div>
 		
      </form><!-- /form -->
 	 <spagobi:error/>

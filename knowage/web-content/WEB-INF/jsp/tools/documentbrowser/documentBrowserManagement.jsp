@@ -110,20 +110,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	        </md-menu-item>
 		</md-menu-content>
 		</md-menu>
-		
-		<script>
-		angular.module("documentBrowserModule").factory("accessibillty_preferences",function(){
-			return {
-				accessibilityModeEnabled:<%= isUIOEnabled %>,
-				isUIOEnabled:<%= isUIOEnabled %>,
-				isRobobrailleEnabled:<%= isRobobrailleEnabled %>,
-				isVoiceEnable:<%= isVoiceEnable %>,
-				isGraphSonificationEnabled:<%= isGraphSonificationEnabled %>,
-				includeInfusion:<%= includeInfusion %>
-				
-			}
-		});
-		</script>
+
      	
 </body>
 </html>
