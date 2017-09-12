@@ -3,24 +3,24 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>it.eng.spagobi</groupId>
-		<artifactId>spagobi-parent</artifactId>
-		<version>5.2.0</version>
-		<relativePath>../spagobi-parent/pom.xml</relativePath>
+		<groupId>it.eng.knowage</groupId>
+		<artifactId>knowage-ce-parent</artifactId>
+		<version>6.0.1-SNAPSHOT</version>
+		<relativePath>../knowage-ce-parent/pom.xml</relativePath>
 	</parent>
 
-	<artifactId>SpagoBIOAuth2SecurityProvider</artifactId>
+	<artifactId>knowageoauth2securityprovider</artifactId>
 	<packaging>jar</packaging>
 
 	<dependencies>
 
 		<dependency>
-			<groupId>it.eng.spagobi</groupId>
-			<artifactId>SpagoBIDAO</artifactId>
-			<version>5.2.0</version>
+			<groupId>it.eng.knowage</groupId>
+			<artifactId>knowage-dao</artifactId>
+			<version>6.0.1-SNAPSHOT</version>
+			<scope>compile</scope>
 		</dependency>
-
+		
 	</dependencies>
-
 	
 </project>
