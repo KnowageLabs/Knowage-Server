@@ -725,7 +725,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 		JSONObject lang = createMenuItem("flag", "", messageBuilder.getMessage("menu.Languages", locale), false, "LANG");
 
-		JSONObject accessibility = createMenuItem("accessibility", "", "Accessibility", false, "ACCESS");
+		JSONObject accessibility = createMenuItem("accessibility", "", messageBuilder.getMessage("menu.Accessibility", locale), false, "ACCESS");
 
 		JSONObject roles = createMenuItem("assignment_ind", "", messageBuilder.getMessage("menu.RoleSelection", locale), false, "ROLE");
 
