@@ -1,25 +1,25 @@
 
 var queries = angular.module('queries',['sbiModule']);
 
-queries.service('query_service',function(sbiModule_restServices,sbiModule_config, $q, $rootScope){
-	
+queries.service('query_service',function(sbiModule_restServices,sbiModule_config, $q, $rootScope,sbiModule_messaging){
+
 	this.smartView = true;
-	
+
 	this.setSmartView = function (value) {
 		this.smartView = value;
 	}
-	
+
 	this.executeQuery = function(query, bodySend, queryModel, isCompleteResult, start, itemsPerPage){
-		
+
 		if(start==undefined){
 			start = 0;
 		}
 		if(itemsPerPage==undefined){
 			itemsPerPage = 25;
 		}
-	
+
 		var q="?SBI_EXECUTION_ID="+sbiModule_config.sbiExecutionID+"&currentQueryId="+query.id+"&start="+start+"&limit="+itemsPerPage;
-		
+
 		sbiModule_restServices.promisePost('qbequery/executeQuery',q,bodySend)
      	.then(function(response) {
      		queryModel.length = 0;
@@ -47,7 +47,7 @@ queries.service('query_service',function(sbiModule_restServices,sbiModule_config
      				queryObject.data.push(row);
 				}
 
-     				queryModel.push(queryObject); 
+     				queryModel.push(queryObject);
 			}
      		if(isCompleteResult){
      			var columns = [];
@@ -55,15 +55,24 @@ queries.service('query_service',function(sbiModule_restServices,sbiModule_config
      			angular.copy(response.data.rows,data);
      			createColumnsForPreview(columns, response.data.metaData.fields);
      			$rootScope.$broadcast('queryExecuted', {"columns":columns, "data":data, "results":response.data.results});
-     		}     		
+     		}
 
      	}, function(response) {
-     		//deferred.reject(response);
+     		var message = "";
+
+    		if (response.status==500) {
+    			message = response.data.RemoteException.message;
+    		}
+    		else {
+    			message = response.data.errors[0].message;
+    		}
+
+    		sbiModule_messaging.showErrorMessage(message, 'Error');
      	});
-		
-	
+
+
 	}
-	
+
 	var createColumnsForPreview=function(columns, fields){
     	for(i=1;i<fields.length;i++){
     	 var column={};
@@ -71,10 +80,10 @@ queries.service('query_service',function(sbiModule_restServices,sbiModule_config
     	 column.name=fields[i].name;
     	 columns.push(column);
     	}
-    	
-    	
+
+
     }
-	
+
 	var findWithAttr = function(array, attr, value) {
 	    for(var i = 0; i < array.length; i += 1) {
 	        if(array[i][attr] === value) {
@@ -83,5 +92,5 @@ queries.service('query_service',function(sbiModule_restServices,sbiModule_config
 	    }
 	    return -1;
 	}
-	
+
 });

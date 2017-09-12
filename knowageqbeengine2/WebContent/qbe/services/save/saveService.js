@@ -1,7 +1,7 @@
 
 var saveQbe = angular.module('saveservice',['sbiModule']);
 
-queries.service('save_service',function(sbiModule_restServices,sbiModule_config, $q, $rootScope){
+queries.service('save_service',function(sbiModule_restServices,sbiModule_messaging,sbiModule_config, $q, $rootScope){
 
 
 	this.getDomainTypeCategory = function(query, bodySend, queryModel, isCompleteResult, start, itemsPerPage){
@@ -28,10 +28,19 @@ queries.service('save_service',function(sbiModule_restServices,sbiModule_config,
 		var q="?SBI_EXECUTION_ID="+sbiModule_config.sbiExecutionID;
 		sbiModule_restServices.promisePost('qbequery/saveDataSet',q,body)
      	.then(function(response) {
-     		return response.data;
-
+     		sbiModule_messaging.showSuccessMessage("QBE dataset succesflly saved", 'Success!');
      	}, function(response) {
-     		//sbiModule_messaging.showErrorMessage(response.data.errors[0].message,'Error');
+     		var message = "";
+
+    		if (response.status==500) {
+    			message = response.data.RemoteException.message;
+    		}
+    		else {
+    			message = response.data.errors[0].message;
+    		}
+
+    		sbiModule_messaging.showErrorMessage(message, 'Error');
+
      	});
 	}
 

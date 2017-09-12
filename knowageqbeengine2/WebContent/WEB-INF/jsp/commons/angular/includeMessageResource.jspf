@@ -16,7 +16,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 
 <script type="text/javascript"
-	src="<%=spagoBiContext%>/js/lib/messageResource/messageResource.min.js"></script>
+	src="${pageContext.request.contextPath}/qbe/config/messageResource/messageResource.min.js"></script>
+
+	
 	
 
 <script type="text/javascript">
