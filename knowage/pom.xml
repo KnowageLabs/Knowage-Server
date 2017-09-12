@@ -11,10 +11,20 @@
 
 	<artifactId>knowage</artifactId>
 	<packaging>war</packaging>
-	<build>
-	   <finalName>knowage</finalName>
-	 </build>
 	<name>knowage</name>
+	
+	<build>
+		<finalName>knowage</finalName>
+	    <plugins>
+	        <plugin>
+	            <artifactId>maven-war-plugin</artifactId>
+	            <configuration>
+	                <attachClasses>true</attachClasses>
+	                <classesClassifier>classes</classesClassifier>
+	            </configuration>
+	        </plugin>
+	    </plugins>
+	</build>
 	
 	<dependencies>
 		
