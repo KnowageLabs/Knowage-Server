@@ -92,7 +92,7 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 				"leftOperandAlias": $scope.ngModel.field.field.name,
 				"leftOperandDataType": "",
 				"operator": "EQUALS TO",
-				"rightOperandValue": [""],
+				"rightOperandValue": [],
 				"rightOperandDescription": "",
 				"rightOperandLongDescription": "",
 				"rightOperandType": "",
@@ -153,7 +153,7 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 	}
 	var setRight = function (filter, type, value){
 		if(value=='field'){
-			filter.rightOperandValue=[""];
+			filter.rightOperandValue=[];
 			filter.rightOperandValue.push(type.id) ;
 			filter.rightOperandType="Field Content";
 			filter.rightOperandDescription=type.attributes.entity+" "+": "+type.text;
@@ -222,7 +222,7 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 		}
 		if($scope.filter) {
 			$scope.filter.rightOperandDescription = angular.copy($scope.forInput);
-			$scope.filter.rightOperandValue=[""];
+			$scope.filter.rightOperandValue=[];
 			for (var i = 0; i < newValue.length; i++) {
 				$scope.filter.rightOperandValue.push(newValue[i].column_1)
 			}
@@ -253,7 +253,7 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 	}
 
 	$scope.edit = function (filter){
-		filter.rightOperandValue=[""];
+		filter.rightOperandValue=[];
 		filter.rightOperandValue.push(filter.rightOperandDescription );
 		filter.rightOperandType="Static Content";
 	}
@@ -277,15 +277,15 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 			$scope.ngModel.mdPanelRef.close();
 		}
 	}
-	
+
 	$scope.closeFilters=function(){
 		$scope.ngModel.mdPanelRef.close();
 	}
 
 	var generateExpressions = function (filters, expression, advancedFilters){
-		
+
 		advancedFilters.length = 0;
-		
+
 		for (var i = 0; i < filters.length; i++) {
 			var advancedFilter = {
 					type:"item",
@@ -296,7 +296,7 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 			};
 			advancedFilters.push(advancedFilter);
 		}
-		
+
 	 // if filters are empty set expression to empty object
 		if(advancedFilters.length==0){
 			angular.copy({},expression);
@@ -323,7 +323,7 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 						nop.childNodes.push(nodeConstArray[i]);
 						if(nopForInsert.value){
 							nop.childNodes.push(nopForInsert);
-						}					
+						}
 						nopForInsert = angular.copy(nop);
 						nop.value = "";
 						nop.type = "NODE_OP";
@@ -358,7 +358,7 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 	                                   	}
 	                            	}
 	                               ];
-	                               
+
 	$scope.applyValueOfParameterAndContinuePreviewExecution = function (){
 		$scope.ngModel.queryFilters.length = 0;
 		$scope.ngModel.pars.length = 0;
