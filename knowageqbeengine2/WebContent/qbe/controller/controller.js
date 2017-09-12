@@ -19,16 +19,17 @@
 angular
 	.module('qbe.controller', ['configuration','directive','services'])
 	.controller('qbeController', 
-		["$scope","$rootScope","entity_service","query_service","filters_service","sbiModule_inputParams","sbiModule_config", "sbiModule_restServices", "sbiModule_messaging","$mdDialog", "$mdPanel","$q",qbeFunction]);
+		["$scope","$rootScope","entity_service","query_service","filters_service","save_service","sbiModule_inputParams","sbiModule_config", "sbiModule_restServices", "sbiModule_messaging","$mdDialog", "$mdPanel","$q",qbeFunction]);
 
 
 
-function qbeFunction($scope,$rootScope,entity_service,query_service,filters_service,sbiModule_inputParams,sbiModule_config,sbiModule_restServices,sbiModule_messaging, $mdDialog ,$mdPanel,$q){
+function qbeFunction($scope,$rootScope,entity_service,query_service,filters_service,save_service,sbiModule_inputParams,sbiModule_config,sbiModule_restServices,sbiModule_messaging, $mdDialog ,$mdPanel,$q){
 	
 	var entityService = entity_service;
 	var inputParamService = sbiModule_inputParams;
 	$scope.queryModel = [];
 	$scope.pars = [];
+	$scope.meta = [];
 	$scope.editQueryObj = new Query("");
 	$scope.advancedFilters = [];
 	$scope.entityModel;
@@ -56,6 +57,31 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 		}
 	}
 	
+	$scope.openPanelForSavingQbeDataset = function (){
+		var bodySend = angular.copy($scope.bodySend);
+		var finishEdit=$q.defer();
+		var config = {
+				attachTo:  angular.element(document.body),
+				templateUrl: sbiModule_config.contextName +'/qbe/templates/saveTemplate.html',
+				position: $mdPanel.newPanelPosition().absolute().center(),
+				fullscreen :true,
+				controller: function($scope,mdPanelRef){
+					$scope.model ={ bodySend:bodySend,"mdPanelRef":mdPanelRef};
+				},
+				locals: {bodySend: bodySend},
+				hasBackdrop: true,
+				clickOutsideToClose: true,
+				escapeToClose: true,
+				focusOnOpen: true,
+				preserveScope: true,
+		};
+		$mdPanel.open(config);
+		return finishEdit.promise;
+	}
+
+	window.qbe ={};
+	window.qbe.openPanelForSavingQbeDataset = $scope.openPanelForSavingQbeDataset;
+
 	$scope.addToQueryModelWithoutExecutingQuery = function (query, queryModel) {
 		if(query.fields.length>0){
 			queryModel.length = 0;
@@ -171,7 +197,14 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 			   "longDescription":field.attributes.longDescription,
 			   "distinct":$scope.editQueryObj.distinct,
 			}
-		
+		var meta = {
+				"displayedName":field.attributes.field,
+				"name":field.attributes.field,
+				"fieldType":field.attributes.iconCls,
+				"type":""
+
+		}
+		$scope.meta.push(meta);
 		$scope.editQueryObj.fields.push(newField);
 	}
 	
@@ -242,7 +275,8 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
     $scope.bodySend = {
     		"catalogue":$scope.catalogue,
     		"qbeJSONQuery":{},
-        	"pars":  $scope.pars,
+        	"pars": $scope.pars,
+        	"meta": $scope.meta,
         	"schedulingCronLine":"0 * * * * ?"
     };
 

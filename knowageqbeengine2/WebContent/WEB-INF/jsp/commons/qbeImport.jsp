@@ -32,6 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="${pageContext.request.contextPath}/qbe/directive/parameters/parameter.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/qbe/directive/group/group.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/qbe/directive/sole/sole.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/qbe/directive/save/save.js"></script>
 
 <!-- SERVICES -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/qbe/services/entities/entities.js"></script>
@@ -39,3 +40,4 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script type="text/javascript" src="${pageContext.request.contextPath}/qbe/services/filters/filters.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/qbe/services/filters/expression.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/qbe/services/queries/queryObject.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/qbe/services/save/saveService.js"></script>

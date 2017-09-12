@@ -288,6 +288,9 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 		
 		for (var i = 0; i < filters.length; i++) {
 			var advancedFilter = {
+					type:"item",
+					id: filters[i].filterId.substring(6),
+					columns:[[],[]],
 					name: filters[i].filterId,
 					connector: filters[i].booleanConnector,
 			};

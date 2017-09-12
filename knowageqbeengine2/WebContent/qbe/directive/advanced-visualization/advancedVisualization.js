@@ -20,7 +20,7 @@
 	var currentScriptPath = scripts[scripts.length - 1].src;
 	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
 
-angular.module('qbe_advanced_visualization', [])
+angular.module('qbe_advanced_visualization', ['dndLists'])
 .directive('qbeAdvancedVisualization', function() {
 	return {
 		templateUrl:  currentScriptPath +'advanced-visualization.html',
@@ -36,9 +36,108 @@ angular.module('qbe_advanced_visualization', [])
 });
 
 function advancedVisualizationControllerFunction($scope,sbiModule_translate, sbiModule_config, filters_service, $mdDialog){
+	$scope.advancedFilters = [{
+		"type": "group",
+		"id": 3,
+		"columns": [[{
+			"type": "item",
+			"id": "12",
+			"columns": [[],
+			[]],
+			"name": "Filter12",
+			"connector": "AND"
+		},
+		{
+			"type": "item",
+			"id": "13",
+			"columns": [[],
+			[]],
+			"name": "Filter13",
+			"connector": "AND"
+		},
+		],
+		[]],
+		connector:"AND"
+	},
+	{
+		"type": "group",
+		"id": 1,
+		"columns": [[{
+			"type": "item",
+			"id": "14",
+			"columns": [[],
+			[]],
+			"name": "Filter14",
+			"connector": "AND"
+		},
+		{
+			"type": "item",
+			"id": "15",
+			"columns": [[],
+			[]],
+			"name": "Filter15",
+			"connector": "AND"
+		},
+		],
+		[]],
+		connector:"AND"
+	},
+	{
+		"type": "item",
+		"id": "1",
+		"columns": [[],
+		[]],
+		"name": "Filter1",
+		"connector": "AND"
+	},
+	{
+		"type": "item",
+		"id": "2",
+		"columns": [[],
+		[]],
+		"name": "Filter2",
+		"connector": "AND"
+	},
+	{
+		"type": "item",
+		"id": "3",
+		"columns": [[],
+		[]],
+		"name": "Filter3",
+		"connector": "AND"
+	},
+	{
+		"type": "item",
+		"id": "4",
+		"columns": [[],
+		[]],
+		"name": "Filter4",
+		"connector": "AND"
+	}];
 
-	$scope.advancedFilters = angular.copy($scope.ngModel.advancedFilters);
-	
+	$scope.models = {
+		        selected: null,
+		        templates: [
+
+		            {type: "group", id: 1, columns: [[], []], connector:"AND"}
+		        ],
+		        dropzones:{
+		        	  "Filter visualisation": $scope.advancedFilters,
+		        	    }
+
+	  };
+	$scope.$watch('models.dropzones', function(model) {
+        $scope.modelAsJson = angular.toJson(model, true);
+    }, true);
+
+
+	$scope.saveFiltersAdvanced = function(){
+		var advanceFiltersSaved = angular.copy($scope.advancedFilters);
+
+		generateExpressions (advanceFiltersSaved);
+
+	}
+
 	$scope.filtersGroup = [];
 	
 	$scope.openMenu = function($mdOpenMenu, ev) {
@@ -72,9 +171,12 @@ function advancedVisualizationControllerFunction($scope,sbiModule_translate, sbi
 			}
 		}
 	}
-	
-	
-	
+
+	var generateExpressions = function (advanceFiltersSaved){
+
+		console.log(advanceFiltersSaved);
+	};
+
 	$scope.filterColumnsAV = [
 		{
         	"label":"Name",

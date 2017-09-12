@@ -1,0 +1,75 @@
+<form name=datasetForm  style="height:100%; overflow-y:hidden">
+<md-content flex class="ToolbarBox miniToolbar noBorder mozTable" >
+	<md-card layout-padding>
+		
+		<div flex=100>
+			<md-input-container class="md-block">
+		    	<label>Label</label>
+				<input ng-model="savingQbeDataSet.label" ng-required="true" ng-change="setFormDirty()">
+				<div  ng-messages="datasetForm.lbl.$error" ng-show="!savingQbeDataSet.label">
+  						 			<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+						 				</div>
+			</md-input-container>
+		</div>
+		
+		<div flex=100>
+			<md-input-container class="md-block">
+		    	<label>Name</label>
+				<input ng-model="savingQbeDataSet.name" ng-required="true" ng-change="setFormDirty()">
+				<div  ng-messages="datasetForm.lbl.$error" ng-show="!savingQbeDataSet.name">
+  						 			<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+						 				</div>
+			</md-input-container>
+		</div>
+		
+		<div flex=100>
+			<md-input-container class="md-block">
+		    	<label>Description</label>
+				<textarea 	ng-model="savingQbeDataSet.description" md-maxlength="150" rows="3" 
+							md-select-on-focus ng-change="setFormDirty()"></textarea>
+			</md-input-container>
+		</div>
+		
+		<div flex=100>
+	       <md-input-container class="md-block" > 
+	       		<label>Scope</label>
+		       	<md-select placeholder ="{{translate.load('sbi.ds.scope')}}"
+		        	ng-required = "true" ng-change="changeDatasetScope(); setFormDirty()"
+		        	ng-model="savingQbeDataSet.scopeCd">   
+		        	<md-option ng-repeat="l in scopeList" value="{{l.VALUE_CD}}">{{l.VALUE_CD}}
+		        	</md-option>
+		       	</md-select>  
+	       		<div  ng-messages="datasetForm.lbl.$error" ng-show="!savingQbeDataSet.scopeCd">
+    						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+   						 	</div>
+	        </md-input-container>
+	   </div>
+	  
+	<!--   <div flex=100>
+	       <md-input-container class="md-block" > 
+	       <label>Category</label>
+	       <md-select 	placeholder ="{{translate.load('sbi.generic.category')}}"
+	        			ng-required="isCategoryRequired" ng-model="savingQbeDataSet.catTypeVn"
+	        	 		ng-change="setFormDirty()">   
+	        <md-option 
+	        	ng-repeat="l in categoryList" value="{{l.VALUE_CD}}">{{l.VALUE_CD}}
+	        </md-option>
+	       </md-select>  
+	       
+	       	<div  ng-messages="datasetForm.lbl.$error" ng-show="isCategoryRequired && !savingQbeDataSet.catTypeVn">
+   						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+  						 	</div>
+	       
+	        </md-input-container>
+	   </div> -->
+	</md-card>
+	 <md-card-actions layout="row" layout-align="end center">
+	      <md-button ng-click="closeQbeDataSet()" >
+	      cancel
+	      </md-button>
+	      <md-button  ng-disabled="!datasetForm.$valid" ng-click="saveQbeDataSet()"  >
+			save
+	      </md-button>
+	</md-card-actions>
+</md-content>
+</form>

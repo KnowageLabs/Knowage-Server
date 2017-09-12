@@ -395,13 +395,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 	@POST
 	@Path("/saveDataSet")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response saveDataSet(@QueryParam("currentQueryId") String currentQueryId, @javax.ws.rs.core.Context HttpServletRequest req,
-			@javax.ws.rs.core.Context HttpServletRequest req1, @QueryParam("label") String label, @QueryParam("name") String name,
-			@QueryParam("description") String description, @QueryParam("isPersisted") String isPersisted, @QueryParam("isScheduled") String isScheduled,
-			@QueryParam("persistTable") String persistTable, @QueryParam("startDateField") String startDateField,
-			@QueryParam("endDateField") String endDateField, @QueryParam("scopeId") String scopeId, @QueryParam("scopeCd") String scopeCd,
-			@QueryParam("categoryId") String categoryId, @QueryParam("categoryCd") String categoryCd, @QueryParam("qbeDataSource") String qbeDataSource,
-			@QueryParam("sourceDatasetLabel") String sourceDatasetLabel, @QueryParam("isFlatDataset") String isFlatDataset) {
+	public Response saveDataSet(@javax.ws.rs.core.Context HttpServletRequest req) {
 		Monitor totalTimeMonitor = null;
 		Monitor errorHitsMonitor = null;
 		Query query = null;
@@ -430,13 +424,13 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 
 				for (int i = 0; i < queries.length(); i++) {
 					queryJSON = queries.getJSONObject(i);
-					if (queryJSON.get("id").equals(currentQueryId)) {
+					if (queryJSON.get("id").equals(jsonEncodedRequest.getString("currentQueryId"))) {
 						query = deserializeQuery(queryJSON);
 					} else {
 						subqueriesJSON = queryJSON.getJSONArray("subqueries");
 						for (int j = 0; j < subqueriesJSON.length(); j++) {
 							subqueryJSON = subqueriesJSON.getJSONObject(j);
-							if (subqueryJSON.get("id").equals(currentQueryId)) {
+							if (subqueryJSON.get("id").equals(jsonEncodedRequest.getString("currentQueryId"))) {
 								query = deserializeQuery(subqueryJSON);
 							}
 						}
@@ -447,6 +441,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 				throw new SpagoBIEngineServiceException("DESERIALIZATING QUERY", message, e);
 
 			}
+			String label = jsonEncodedRequest.getString("label");
 			String schedulingCronLine = jsonEncodedRequest.getString("schedulingCronLine");
 			String meta = jsonEncodedRequest.getString("meta");
 			String qbeJSONQuery = jsonEncodedRequest.getString("qbeJSONQuery");
@@ -455,8 +450,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			IDataSet dataset = getActiveQueryAsDataSet(query);
 			int datasetId = -1;
 
-			datasetId = saveQbeDataset(dataset, label, name, description, scopeId, scopeCd, categoryId, categoryCd, isPersisted, isScheduled, persistTable,
-					startDateField, endDateField, schedulingCronLine, meta, qbeJSONQuery, pars);
+			datasetId = saveQbeDataset(dataset, label, jsonEncodedRequest, schedulingCronLine, meta, qbeJSONQuery, pars);
 
 			JSONObject obj = new JSONObject();
 			obj.put("success", "true");
@@ -482,12 +476,10 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		}
 	}
 
-	private int saveQbeDataset(IDataSet dataset, String label, String name, String description, String scopeId, String scopeCd, String categoryId,
-			String categoryCd, String isPersisted, String isScheduled, String persistTable, String startDateField, String endDateField,
-			String schedulingCronLine, String meta, String qbeJSONQuery, String pars) {
+	private int saveQbeDataset(IDataSet dataset, String label, JSONObject jsonEncodedRequest, String schedulingCronLine, String meta, String qbeJSONQuery,
+			String pars) throws JSONException {
 
-		QbeDataSet newDataset = createNewQbeDataset(dataset, label, name, description, scopeId, scopeCd, categoryId, categoryCd, isPersisted, isScheduled,
-				persistTable, startDateField, endDateField, schedulingCronLine, meta, qbeJSONQuery, pars);
+		QbeDataSet newDataset = createNewQbeDataset(dataset, label, jsonEncodedRequest, schedulingCronLine, meta, qbeJSONQuery, pars);
 
 		IDataSet datasetSaved = saveNewDataset(newDataset);
 
@@ -495,9 +487,8 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		return datasetId;
 	}
 
-	private QbeDataSet createNewQbeDataset(IDataSet dataset, String label, String name, String description, String scopeIdParam, String scopeCdParam,
-			String categoryIdParam, String categoryCdParam, String isPersistedParam, String isScheduledParam, String persistTable, String startDateField,
-			String endDateField, String schedulingCronLine, String meta, String qbeJSONQuery, String pars) {
+	private QbeDataSet createNewQbeDataset(IDataSet dataset, String label, JSONObject jsonEncodedRequest, String schedulingCronLine, String meta,
+			String qbeJSONQuery, String pars) throws JSONException {
 		AbstractQbeDataSet qbeDataset = (AbstractQbeDataSet) dataset;
 
 		QbeDataSet newDataset;
@@ -528,6 +519,17 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			newDataset = new QbeDataSet();
 		}
 
+		String name = jsonEncodedRequest.getString("name");
+		String description = jsonEncodedRequest.getString("description");
+		String scopeIdParam = jsonEncodedRequest.getString("scopeId");
+		String scopeCdParam = jsonEncodedRequest.getString("scopeCd");
+		String categoryIdParam = jsonEncodedRequest.optString("categoryId");
+		String categoryCdParam = jsonEncodedRequest.optString("categoryCd");
+		String isPersistedParam = jsonEncodedRequest.getString("isPersisted");
+		String isScheduledParam = jsonEncodedRequest.getString("isScheduled");
+		String persistTable = jsonEncodedRequest.getString("persistTable");
+		String startDateField = jsonEncodedRequest.getString("startDateField");
+		String endDateField = jsonEncodedRequest.getString("endDateField");
 		newDataset.setLabel(label);
 		newDataset.setName(name);
 		newDataset.setDescription(description);
@@ -539,16 +541,16 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		String categoryCd = null;
 		Integer categoryId = null;
 
-		if (scopeIdParam != null) {
-			scopeCd = scopeCdParam;
-			scopeId = Integer.parseInt(scopeIdParam);
+		if (jsonEncodedRequest.getString("scopeId") != null) {
+			scopeCd = jsonEncodedRequest.getString("scopeCd");
+			scopeId = Integer.parseInt(jsonEncodedRequest.getString("scopeId"));
 		} else {
 			scopeCd = SpagoBIConstants.DS_SCOPE_USER;
 		}
 
-		if (categoryIdParam != null) {
-			categoryCd = categoryCdParam;
-			categoryId = Integer.parseInt(categoryIdParam);
+		if (jsonEncodedRequest.opt("categoryId") != null) {
+			categoryCd = jsonEncodedRequest.getString("categoryCd");
+			categoryId = Integer.parseInt(jsonEncodedRequest.getString("categoryId"));
 		} else {
 			categoryCd = dataset.getCategoryCd();
 			categoryId = dataset.getCategoryId();

@@ -38,6 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <!-- ngdraggable -->
 <script type="text/javascript" src="<%=spagoBiContext%>/node_modules/ngdraggable/ngDraggable.js"></script>
+<script type="text/javascript" src="<%=spagoBiContext%>/js/lib/angular/angular-drag-and-drop-lists/angular-drag-and-drop-lists.js"></script>
 
 <!-- angular list detail template -->
 <script type="text/javascript" src="<%=spagoBiContext%>/js/src/angular_1.4/tools/commons/angular-list-detail/angularListDetail.js"></script> 
