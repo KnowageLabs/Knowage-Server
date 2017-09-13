@@ -52,6 +52,8 @@ function save($scope, $rootScope,save_service, $mdDialog, sbiModule_translate, s
 
 
 		};
+	$scope.translate = sbiModule_translate;
+
 	$scope.saveQbeDataSet = function (){
 		console.log($scope.savingQbeDataSet )
 		$scope.ngModel.bodySend.qbeJSONQuery={};
@@ -89,6 +91,8 @@ function save($scope, $rootScope,save_service, $mdDialog, sbiModule_translate, s
 
 	$scope.categoryList = [];
 	$scope.scopeList = [{"VALUE_NM":"User","VALUE_DS":"Dataset scope","VALUE_ID":191,"VALUE_CD":"USER"}];
-
+	$scope.closeSaving = function (){
+		$scope.ngModel.mdPanelRef.close();
+	}
 }
 })();

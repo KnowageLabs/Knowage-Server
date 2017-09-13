@@ -2,7 +2,7 @@
 <md-card-content flex layout="column" class="noPadding">
 	<md-toolbar class="secondaryToolbar" layout-padding>
 		<div class="md-toolbar-tools">
-	   		<h2><span>Filters</span></h2>
+	   		<h2><span>{{translate.load("kn.qbe.general.filters")}}</span></h2>
 			<span flex></span>
 			<md-button class="md-icon-button" aria-label="Add new filter" ng-click="addNewFilter()" 
 					title="Tooltip">
@@ -18,9 +18,9 @@
 		  <table md-table md-row-select multiple ng-model="selected" md-progress="promise">
 		    <thead md-head >
 		      <tr md-row>
-		        <th md-column ><span>Field</span></th>
-		        <th md-column ><span>Condition</span></th>
-		        <th md-column >Target</th>
+		        <th md-column ><span>{{translate.load("kn.qbe.general.field")}}</span></th>
+		        <th md-column ><span>{{translate.load("kn.qbe.filters.condition")}}</span></th>
+		        <th md-column >{{translate.load("kn.qbe.filters.target")}}</th>
 		      <!-- <th md-column >Connector</th>  -->  
 		        <th md-column ></th>
 		        <th md-column ></th>
@@ -112,28 +112,28 @@
 									<md-menu-item >
 							        	<md-button ng-click="changeTarget('valueOfField',filter)">
 							 				<md-icon class="fa fa-pencil-square-o" style="display:inline"></md-icon>
-								       		<span>Value of the field</span>
+								       		<span>{{translate.load("kn.qbe.filters.value.of.the.field")}}</span>
 								    	</md-button>
 							        </md-menu-item>
 								        
 								    <md-menu-item >
 								    	<md-button ng-click="changeTarget('anotherEntity')" >
 								        	<md-icon class="fa fa-text-width" style="display:inline"></md-icon>
-								        	<span>Another field</span>
+								        	<span>{{translate.load("kn.qbe.filters.another.field")}}</span>
 								        </md-button>
 									</md-menu-item>	
 								        	
 								    <md-menu-item ng-if="subqueries.length>0">
 								    	<md-button ng-click="changeTarget('subquery')" >
 								        	<md-icon class="fa fa-th-large" style="display:inline"></md-icon>
-								        	<span>Subquery</span>
+								        	<span>{{translate.load("kn.qbe.filters.subquery")}}</span>
 								        </md-button>
 									</md-menu-item>	
 								        	
 								    <md-menu-item ng-if="pars.length>0">
 								    	<md-button ng-click="changeTarget('parameter')" >
 								        	<md-icon class="fa fa-th" style="display:inline"></md-icon>
-								            <span>Parameter</span>
+								            <span>{{translate.load("kn.qbe.filters.parameter")}}</span>
 										</md-button>
 						        	</md-menu-item>	
 								</md-menu-content>
@@ -165,10 +165,10 @@
 	</md-card-content>
 	 <md-card-actions layout="row" layout-align="end center">
 	      <md-button ng-click="closeFilters()" >
-	      cancel
+	      {{translate.load("kn.qbe.general.cancel")}}
 	      </md-button>
 	      <md-button ng-click="saveFilters()"  >
-			save
+			{{translate.load("kn.qbe.general.save")}}
 	      </md-button>
 	</md-card-actions>
 </md-card>
@@ -176,7 +176,7 @@
 <md-card-content flex layout="column" class="noPadding">
 	<md-toolbar class="secondaryToolbar" layout-padding>
 		<div class="md-toolbar-tools">
-	   		<h2><span>Params  </span></h2>
+	   		<h2><span>{{translate.load("kn.qbe.filters.parameters")}}</span></h2>
 			<span flex></span>									 
 	   	</div>
 	</md-toolbar>
@@ -203,10 +203,10 @@
 	</md-card-content>
 	 <md-card-actions layout="row" layout-align="end center">
 	      <md-button ng-click="applyValueOfParameterAndContinuePreviewExecution()" class="md-raised"  md-autofocus>
-       		Apply params
+       		{{translate.load("kn.qbe.filters.apply.parameters")}}
       </md-button>
-      <md-button ng-click="closeScript()" class="md-raised" style="margin-right:20px;" >
-        Close
+      <md-button ng-click="closeFilters()" class="md-raised" style="margin-right:20px;" >
+        {{translate.load("kn.qbe.general.cancel")}}
       </md-button>
 	</md-card-actions>
 </md-card>

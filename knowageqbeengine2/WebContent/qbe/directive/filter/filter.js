@@ -45,6 +45,7 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 	$scope.pars=angular.copy($scope.ngModel.pars);
 	$scope.subqueries = $scope.ngModel.subqueries;
 	$scope.targetOption="default";
+	$scope.translate = sbiModule_translate;
 	$scope.openMenu = function($mdOpenMenu, ev) {
 	      originatorEv = ev;
 	      $mdOpenMenu(ev);
@@ -340,7 +341,7 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 	$scope.parametersPreviewColumns = [
 
 	                                   {
-	                                   	"label":"NAME",
+	                                   	"label":$scope.translate.load("kn.qbe.params.name"),
 	                                   	"name":"name",
 	                                   	hideTooltip:true,
 	                                   	transformer: function() {
@@ -349,7 +350,7 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 	                               	},
 
 	                               	{
-	                            		"label":"VALUE",
+	                            		"label":$scope.translate.load("kn.qbe.params.value"),
 	                            		"name":"defaultValue",
 	                            		hideTooltip:true,
 

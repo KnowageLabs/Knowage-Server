@@ -2,10 +2,10 @@
 <md-card-content flex layout="column" class="noPadding">
 	<md-toolbar class="secondaryToolbar" layout-padding>
 		<div class="md-toolbar-tools">
-			<h2><span>Params</span></h2>
+			<h2><span>{{translate.load("kn.qbe.filters.parameters")}}</span></h2>
 			<span flex></span>
 			<md-button class="md-icon-button" aria-label="Add new dataset parameter" ng-click="parametersAddItem(); setFormDirty()" 
-					title="Tooltip">
+					title="add new parameter">
 				<md-icon md-font-icon="fa fa-plus-circle" ></md-icon>
 			</md-button>
 									
@@ -39,10 +39,10 @@
 	</md-card-content>		
 	<md-card-actions layout="row" layout-align="end center">
 		<md-button ng-click="closeParams()" >
-	    cancel
+	    {{translate.load("kn.qbe.general.cancel")}}
 		</md-button>
 		<md-button ng-click="saveParams()"  >
-		save
+		{{translate.load("kn.qbe.general.save")}}
 		</md-button>
 	</md-card-actions>
 </md-card>

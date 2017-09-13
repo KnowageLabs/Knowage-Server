@@ -7,12 +7,12 @@
 	   			</ng-transclude>
 	   			
 	   			<span flex></span>
-	   			<md-checkbox ng-show="ngModel.length>0"  ng-model="isChecked" ng-click="distinctSelected()" class="distinctCheckbox" aria-label="distinct">  Add distinct clouse</md-checkbox>
+	   			<md-checkbox ng-show="ngModel.length>0"  ng-model="isChecked" ng-click="distinctSelected()" class="distinctCheckbox" aria-label="distinct">{{translate.load("kn.qbe.custom.table.distinct")}}</md-checkbox>
 	   			<md-icon class="fa fa-product-hunt" ng-click="openDialogForParams(ngModel)"></md-icon>
-		<md-icon class="fa fa-cogs" ng-click="openFiltersAdvanced()"></md-icon>  
+		<md-icon class="fa fa-cogs" ng-click="openFiltersAdvanced()"></md-icon>
 				 <md-icon class="fa fa-eye" ng-click="showHiddenColumns()"></md-icon>
 	   			<md-switch ng-model="smartPreview" aria-label="Switch smart preview">
-				    smart data
+				     {{translate.load("kn.qbe.custom.table.smartdata")}}
 				 </md-switch>
 				 <md-icon ng-if="selectedVisualization=='previewData' && !smartPreview" class="fa fa-play" ng-click="executeRequest()" style="margin-left:10px;"></md-icon>			 
 	   		</div>
@@ -65,25 +65,25 @@
 	   		<span flex></span>
 	   		<md-menu>			      
 	      	<md-button 	aria-label="query settings menu" class="md-icon-button" ng-click="openMenu($mdMenu.open, $event)">
-	      		<md-tooltip md-direction="top">column settings</md-tooltip>
+	      		<md-tooltip md-direction="top">{{translate.load("kn.qbe.custom.table.column.settings")}}</md-tooltip>
 	        	<md-icon md-menu-origin class="fa fa-cog"></md-icon>
 	      	</md-button>
 	      	<md-menu-content class="qbeMenuContent">
 		      
 	       		<md-menu-item>
 	          		<md-checkbox ng-model="n.visible" ng-click="setVisible(n.id,n.entity, n.visible)" class="menuCheckbox" aria-label="show column">
-	            show field
+	            {{translate.load("kn.qbe.general.field")}}
 	          </md-checkbox>
 	       		</md-menu-item>
 	       		<md-menu-item>
 	          		<md-checkbox ng-model="n.group" ng-click="group(n.id,n.entity, n.group)" class="menuCheckbox" aria-label="hide column">
-	            group
+	            {{translate.load("kn.qbe.custom.table.group")}}
 	          </md-checkbox>
 	       		</md-menu-item>
 	       		<md-menu-item>
 	         			<md-button ng-click="showStructureDetails('categoriesAxisDetails',categoriesAxis.alias)">
 							<md-icon class="fa fa-sliders" style="display:inline"></md-icon>
-	            		<span>ranges</span>
+	            		<span>{{translate.load("kn.qbe.custom.table.ranges")}}</span>
 	          		</md-button>
 	       		</md-menu-item>
 	       		<md-menu-item>
@@ -91,48 +91,48 @@
 	         			<md-menu>		
 	         			<md-button ng-mouseenter="openMenu($mdOpenMenu, $event)">
 							<md-icon class="fa fa-calculator" style="display:inline"></md-icon>
-	            		<span>FUNCTION</span>
+	            		<span>{{translate.load("kn.qbe.custom.table.function")}}</span>
 	          		</md-button>	      
 	      	<md-menu-content class="qbeMenuContent">
 		      
 		      	<md-menu-item>
 	          		<md-button ng-click="applyFuntion('none',n.id,n.entity)">
-	            		<span>none</span>
+	            		<span>{{translate.load("kn.qbe.custom.table.none")}}</span>
 	            		</md-button>
 	       		</md-menu-item>
 	       		
 	       		<md-menu-item>
 	          		<md-button ng-click="applyFuntion('sum',n.id,n.entity)">
-	            		<span>SUM</span>
+	            		<span>{{translate.load("kn.qbe.custom.table.sum")}}</span>
 	            		</md-button>
 	       		</md-menu-item>
 	       		
 	       		<md-menu-item>
 	       			<md-button ng-click="applyFuntion('min',n.id,n.entity)">
-	            		<span>MIN</span></md-button>
+	            		<span>{{translate.load("kn.qbe.custom.table.min")}}</span></md-button>
 	       		</md-menu-item>
 	       		
 	       		<md-menu-item>
 	       			<md-button ng-click="applyFuntion('max',n.id,n.entity)">
-	            		<span>MAX</span>
+	            		<span>{{translate.load("kn.qbe.custom.table.max")}}</span>
 	            	</md-button>
 	       		</md-menu-item>    
 	       		
 	       		<md-menu-item>
 	          		<md-button ng-click="applyFuntion('avg',n.id,n.entity)">
-	            		<span>avg</span>
+	            		<span>{{translate.load("kn.qbe.custom.table.avg")}}</span>
 	            	</md-button>
 	       		</md-menu-item>
 	       		
 	       		<md-menu-item>
 	          		<md-button ng-click="applyFuntion('count',n.id,n.entity)">
-	            		<span>count</span>
+	            		<span>{{translate.load("kn.qbe.custom.table.count")}}</span>
 	            	</md-button>
 	       		</md-menu-item>
 	       		
 	       		<md-menu-item>
 	          		<md-button ng-click="applyFuntion('count_distinct',n.id,n.entity)">
-	            		<span>dist</span>
+	            		<span>{{translate.load("kn.qbe.custom.table.count.distinct")}}</span>
 	            	</md-button>
 	       		</md-menu-item>      		
 	            		
@@ -143,13 +143,13 @@
 	       		  
 	         			<md-button ng-click="moveLeft(n.order, n)">
 							<md-icon class="fa fa-angle-left" style="display:inline"></md-icon>
-	            		<span>move left</span>
+	            		<span>{{translate.load("kn.qbe.custom.table.move.left")}}</span>
 	          		</md-button>
 	       		</md-menu-item>
 	       		<md-menu-item>
 	         			<md-button ng-click="moveRight(n.order, n)">
 							<md-icon class="fa fa-angle-right" style="display:inline"></md-icon>
-	            		<span>move right</span>
+	            		<span>{{translate.load("kn.qbe.custom.table.move.right")}}</span>
 	          		</md-button>
 	       		</md-menu-item>
 	        			        
@@ -157,7 +157,7 @@
 		      
 	    	</md-menu>
 	    	<md-button 	aria-label="query settings menu" class="md-icon-button" ng-click="removeColumn(n)">
-	    		<md-tooltip md-direction="top">delete column</md-tooltip>
+	    		<md-tooltip md-direction="top">{{translate.load("kn.qbe.custom.table.delete.column")}}</md-tooltip>
 	        	<md-icon md-menu-origin class="fa fa-times"></md-icon>
 	      	</md-button>
 	   		</div>   		

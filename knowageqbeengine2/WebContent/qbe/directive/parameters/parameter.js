@@ -41,33 +41,33 @@ function qbeParameters($scope,$rootScope ,sbiModule_translate, sbiModule_config,
 	$scope.parameterItems = angular.copy($scope.ngModel.pars);
 	$scope.datasetParameterTypes = [
 	                                {
-	                                	name:"String",
+	                                	name:$scope.translate.load("kn.qbe.params.string"),
 	                                	value:"String"
 	                        		},
 
 	                                {
-	                        			name:"Number",
+	                        			name:$scope.translate.load("kn.qbe.params.number"),
 	                        			value:"Number"
 	                        		},
 
 	                                {
-	                        			name:"Raw",
+	                        			name:$scope.translate.load("kn.qbe.params.raw"),
 	                        			value:"Raw"
 	                        		},
 
 	                                {
-	                        			name:"Generic",
+	                        			name:$scope.translate.load("kn.qbe.params.generic"),
 	                        			value: "Generic"
 	                        		}
 
 	                            ];
 	$scope.parametersColumns = [
-/*$scope.translate.load("sbi.generic.name")
+/*$scope.translate.load("kn.qbe.params.name")
  *$scope.translate.load("sbi.generic.type")
  * $scope.translate.load("sbi.generic.defaultValue")
  * $scope.translate.load("sbi.ds.multivalue"*/
 	                            {
-	                            	"label":"NAME",
+	                            	"label":$scope.translate.load("kn.qbe.params.name"),
 	                            	"name":"name",
 	                            	hideTooltip:true,
 
@@ -77,7 +77,7 @@ function qbeParameters($scope,$rootScope ,sbiModule_translate, sbiModule_config,
 	                        	},
 
 	                        	{
-	                        		"label":"TYPE",
+	                        		"label":$scope.translate.load("kn.qbe.params.type"),
 	                        		"name":"type",
 	                        		hideTooltip:true,
 
@@ -87,7 +87,7 @@ function qbeParameters($scope,$rootScope ,sbiModule_translate, sbiModule_config,
 	                    		},
 
 	                        	{
-	                    			"label":"DEFAULT VALUE",
+	                    			"label":$scope.translate.load("kn.qbe.params.default.value"),
 	                    			"name":"defaultValue",
 	                    			hideTooltip:true,
 
@@ -97,7 +97,7 @@ function qbeParameters($scope,$rootScope ,sbiModule_translate, sbiModule_config,
 	                    		},
 
 	                    		{
-	                    			"label":"MULTIVALUE",
+	                    			"label":$scope.translate.load("kn.qbe.params.multivalue"),
 	                    			"name":"multiValue",
 	                    			hideTooltip:true,
 
@@ -129,12 +129,12 @@ function qbeParameters($scope,$rootScope ,sbiModule_translate, sbiModule_config,
 		{
 			// TODO: translate
 	    	var confirm = $mdDialog.confirm()
-		         .title("Clear all dataset parameters")
+		         .title($scope.translate.load("kn.qbe.params.clear.all.dataset.params"))
 		         .targetEvent(event)
-		         .textContent("Are you sure you want to delete all dataset parameters")
+		         .textContent($scope.translate.load("kn.qbe.params.cofirm.delete.params"))
 		         .ariaLabel("Clear all dataset parameters")
-		         .ok("yes")
-		         .cancel("no");
+		         .ok($scope.translate.load("kn.qbe.general.yes"))
+		         .cancel($scope.translate.load("kn.qbe.general.no"));
 
 			$mdDialog
 				.show(confirm)
@@ -150,10 +150,9 @@ function qbeParameters($scope,$rootScope ,sbiModule_translate, sbiModule_config,
 			.show(
 					$mdDialog.alert()
 				        .clickOutsideToClose(true)
-				        .title('Dataset has no parameters to delete')
-				        .textContent('There are not parameters to delete for the selected dataset')
+				        .title($scope.translate.load("kn.qbe.params.no.dataset.params"))
 				        .ariaLabel('Dataset has no parameters to delete')
-				        .ok('Ok')
+				        .ok($scope.translate.load("kn.qbe.general.ok"))
 			    );
 
 		}

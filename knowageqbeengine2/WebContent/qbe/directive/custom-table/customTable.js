@@ -83,7 +83,6 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		$mdOpenMenu(ev);
 	};
 	$scope.aggFunctions = [ "none", "sum", "min", "max", "avg", "count", "count_distinct" ];
-	$scope.translate = sbiModule_translate;
 
 	$scope.moveRight = function(currentOrder, column) {
 
@@ -204,7 +203,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 				templateUrl: sbiModule_config.contextName +'/qbe/templates/datasetPreviewDialogTemplate.html',
 				position: $mdPanel.newPanelPosition().absolute().center(),
 				fullscreen :true,
-				controller: function($scope,mdPanelRef){
+				controller: function($scope,mdPanelRef,sbiModule_translate){
 					$scope.model ={ "completeresult": completeResult, "completeResultsColumns": completeResultsColumns, "previewModel": previewModel, "totalNumberOfItems": totalNumberOfItems, "mdPanelRef":mdPanelRef};
 					$scope.changeDatasetPage=function(itemsPerPage,currentPageNumber){
 						$rootScope.$broadcast('start',{"itemsPerPage":itemsPerPage, "currentPageNumber":currentPageNumber});
@@ -212,6 +211,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 					$scope.closePanel = function () {
 						mdPanelRef.close();
 					}
+					$scope.translate = sbiModule_translate;
 				},
 				locals: {completeresult: completeResult, completeResultsColumns: completeResultsColumns, previewModel: previewModel, totalNumberOfItems: totalNumberOfItems},
 				hasBackdrop: true,
@@ -266,15 +266,15 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
     
 	$scope.basicViewColumns = [
 								{
-	                            	"label":"Entity",
+	                            	"label":$scope.translate.load("kn.qbe.custom.table.entity"),
 	                            	"name":"entity"
 	                        	},
 	                        	{
-	                        		"label":"Field",
+	                        		"label":$scope.translate.load("kn.qbe.general.field"),
 	                            	"name":"name"
 	                        	},
 	                        	{
-	                        		"label":"Group",
+	                        		"label":$scope.translate.load("kn.qbe.custom.table.group"),
 	                            	"name":"group",
 	                    			hideTooltip:true,
 	                            	transformer: function() {
@@ -282,7 +282,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	                            	}
 	                        	},
 	                        	{
-	                        		"label":"Function",
+	                        		"label":$scope.translate.load("kn.qbe.custom.table.function"),
 	                            	"name":"function",
 	                            	hideTooltip:true,
 	                            	transformer: function() {
@@ -290,7 +290,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	                            	}
 	                        	},
 	                        	{
-	                        		"label":"Filters",
+	                        		"label":$scope.translate.load("kn.qbe.general.filters"),
 	                            	"name":"filters",
 	                    			hideTooltip:true,
 	                            	transformer: function() {
@@ -298,7 +298,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	                            	}
 	                        	},
 	                        	{
-	                        		"label":"Move up",
+	                        		"label":$scope.translate.load("kn.qbe.custom.table.move.up"),
 	                            	"name":"function",
 	                    			hideTooltip:true,
 	                            	transformer: function() {
@@ -306,7 +306,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	                            	}
 	                        	},
 	                        	{
-	                        		"label":"Move down",
+	                        		"label":$scope.translate.load("kn.qbe.custom.table.move.down"),
 	                            	"name":"function",
 	                    			hideTooltip:true,
 	                            	transformer: function() {
@@ -314,7 +314,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	                            	}
 	                        	},
 	                        	{
-	                        		"label":"Show field",
+	                        		"label":$scope.translate.load("kn.qbe.custom.table.show.field"),
 	                            	"name":"visible",
 	                    			hideTooltip:true,
 	                            	transformer: function() {
@@ -322,7 +322,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	                            	}
 	                        	},
 	                        	{
-	                        		"label":"Delete",
+	                        		"label":$scope.translate.load("kn.qbe.custom.table.delete.field"),
 	                            	"name":"function",
 	                    			hideTooltip:true,
 	                            	transformer: function() {

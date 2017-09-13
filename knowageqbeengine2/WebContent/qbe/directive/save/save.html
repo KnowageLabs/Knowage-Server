@@ -6,27 +6,27 @@
 	<md-card>
 <div flex=100>
 			<md-input-container class="md-block">
-		    	<label>Label</label>
+		    	<label>{{translate.load("kn.qbe.save.label")}}</label>
 				<input ng-model="savingQbeDataSet.label" ng-required="true" ng-change="setFormDirty()">
 				<div  ng-messages="datasetForm.lbl.$error" ng-show="!savingQbeDataSet.label">
-  						 			<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+  						 			<div ng-message="required">{{translate.load("kn.qbe.general.reqired")}}</div>
 						 				</div>
 			</md-input-container>
 		</div>
 		
 		<div flex=100>
 			<md-input-container class="md-block">
-		    	<label>Name</label>
+		    	<label>{{translate.load("kn.qbe.save.name")}}</label>
 				<input ng-model="savingQbeDataSet.name" ng-required="true" ng-change="setFormDirty()">
 				<div  ng-messages="datasetForm.lbl.$error" ng-show="!savingQbeDataSet.name">
-  						 			<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+  						 			<div ng-message="required">{{translate.load("kn.qbe.general.reqired")}}</div>
 						 				</div>
 			</md-input-container>
 		</div>
 		
 		<div flex=100>
 			<md-input-container class="md-block">
-		    	<label>Description</label>
+		    	<label>{{translate.load("kn.qbe.save.description")}}</label>
 				<textarea 	ng-model="savingQbeDataSet.description" md-maxlength="150" rows="3" 
 							md-select-on-focus ng-change="setFormDirty()"></textarea>
 			</md-input-container>
@@ -34,7 +34,7 @@
 		
 	<!-- 	<div flex=100>
 	       <md-input-container class="md-block" > 
-	       		<label>Scope</label>
+	       		<label>{{translate.load("kn.qbe.save.scope")}}</label>
 		       	<md-select placeholder ="{{translate.load('sbi.ds.scope')}}"
 		        	ng-required = "true" ng-change="changeDatasetScope(); setFormDirty()"
 		        	ng-model="savingQbeDataSet.scopeCd">   
@@ -42,14 +42,14 @@
 		        	</md-option>
 		       	</md-select>  
 	       		<div  ng-messages="datasetForm.lbl.$error" ng-show="!savingQbeDataSet.scopeCd">
-    						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+    						 	<div ng-message="required">{{translate.load("kn.qbe.general.reqired")}}</div>
    						 	</div>
 	        </md-input-container>
 	   </div>
 	  
 	   <div flex=100>
 	       <md-input-container class="md-block" > 
-	       <label>Category</label>
+	       <label>{{translate.load("kn.qbe.save.category")}}</label>
 	       <md-select 	placeholder ="{{translate.load('sbi.generic.category')}}"
 	        			ng-required="isCategoryRequired" ng-model="savingQbeDataSet.catTypeVn"
 	        	 		ng-change="setFormDirty()">   
@@ -59,7 +59,7 @@
 	       </md-select>  
 	       
 	       	<div  ng-messages="datasetForm.lbl.$error" ng-show="isCategoryRequired && !savingQbeDataSet.catTypeVn">
-   						 	<div ng-message="required">{{translate.load("sbi.catalogues.generic.reqired");}}</div>
+   						 	<div ng-message="required">{{translate.load("kn.qbe.general.reqired")}}</div>
   						 	</div>
 	       
 	        </md-input-container>
@@ -69,11 +69,11 @@
 	</md-content>
 	</md-card-content>
 	 <md-card-actions layout="row" layout-align="end center">
-	      <md-button ng-click="closeFilters()" >
-	      cancel
+	      <md-button ng-click="closeSaving()" >
+	       {{translate.load("kn.qbe.general.cancel")}}
 	      </md-button>
-	      <md-button ng-click="saveFilters()"  >
-			save
+	      <md-button ng-click="saveFilters()"  ng-disabled=!datasetForm.$valid>
+		    {{translate.load("kn.qbe.general.save")}}
 	      </md-button>
 	</md-card-actions>
 </md-card>
