@@ -44,6 +44,27 @@
 		</dependency>
 		
 		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-jaxrs</artifactId>
+			<version>3.1.2.Final</version>
+			<scope>runtime</scope>
+        </dependency>
+
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-legacy</artifactId>
+			<version>3.1.2.Final</version>
+			<scope>runtime</scope>
+        </dependency>
+		
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-servlet-initializer</artifactId>
+			<version>3.1.2.Final</version>
+			<scope>runtime</scope>
+		</dependency>
+		
+		<dependency>
 			<groupId>org.olap4j</groupId>
 			<artifactId>olap4j</artifactId>
 			<version>1.1.0</version>
