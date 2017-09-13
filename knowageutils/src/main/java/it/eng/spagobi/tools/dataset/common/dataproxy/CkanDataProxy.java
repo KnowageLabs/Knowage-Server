@@ -22,21 +22,22 @@ package it.eng.spagobi.tools.dataset.common.dataproxy;
  */
 
 import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.tools.dataset.ckan.CKANClient;
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.rest.client.ProxyClientUtilities;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
 import java.util.Map;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.methods.GetMethod;
+import javax.ws.rs.client.Invocation.Builder;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+
 import org.apache.log4j.Logger;
 
 import sun.misc.BASE64Encoder;
@@ -106,28 +107,25 @@ public class CkanDataProxy extends AbstractDataProxy {
 
 	private InputStream getInputStreamFromURL(String fileURL, String ckanApiKey) throws IOException {
 		logger.debug("IN");
-		HttpClient httpClient = CKANClient.getHttpClient();
-		GetMethod httpget = new GetMethod(fileURL);
-		InputStream is = null;
+		WebTarget target = ProxyClientUtilities.getTarget(fileURL);
+		Builder request = target.request(MediaType.APPLICATION_OCTET_STREAM);
+		InputStream stream = null;
 		try {
-			int statusCode = -1;
 			// For FIWARE CKAN instance
 			if (ckanApiKey != null) {
-				httpget.setRequestHeader("X-Auth-Token", ckanApiKey);
+				request.header("X-Auth-Token", ckanApiKey);
 			}
 			// For ANY CKAN instance
 			// httpget.setRequestHeader("Authorization", ckanApiKey);
-			statusCode = httpClient.executeMethod(httpget);
-			if (statusCode == HttpStatus.SC_OK) {
-				is = httpget.getResponseBodyAsStream();
-			}
+			stream = request.get(InputStream.class);
+
 			logger.debug("OUT");
 		} catch (Throwable t) {
 			logger.error("Error while saving file into server: " + t);
 			throw new SpagoBIServiceException("Error while saving file into server", t);
 		}
 		// return input stream from the HTTP connection
-		return is;
+		return stream;
 	}
 
 	private byte[] createChecksum() {

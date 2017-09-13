@@ -36,6 +36,7 @@ import it.eng.spagobi.tools.dataset.ckan.result.list.impl.StringList;
 import it.eng.spagobi.tools.dataset.ckan.utils.CKANUtils;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.rest.client.ProxyClientUtilities;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -43,13 +44,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpState;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.Invocation.Builder;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Response;
+
 import org.apache.log4j.Logger;
-import org.jboss.resteasy.client.ClientRequest;
-import org.jboss.resteasy.client.ClientResponse;
-import org.jboss.resteasy.client.core.executors.ApacheHttpClientExecutor;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -66,7 +66,6 @@ public final class CKANClient {
 
 	private Connection connection = null;
 	private ObjectMapper mapper = null;
-	private ApacheHttpClientExecutor httpExecutor = null;
 	private final int DEFAULT_SEARCH_FACET_LIMIT = -1;
 	/** Unlimited **/
 	private final int DEFAULT_SEARCH_FACET_MIN_COUNT = 1;
@@ -89,7 +88,6 @@ public final class CKANClient {
 		logger.debug("Initialising CKANClient");
 		this.connection = c;
 		mapper = new ObjectMapper();
-		httpExecutor = new ApacheHttpClientExecutor(getHttpClient());
 		logger.debug("CKANClient initialised");
 	}
 
@@ -97,40 +95,6 @@ public final class CKANClient {
 	 * Initialise a new REST Client for making requests to a remote REST services.
 	 */
 
-	public static HttpClient getHttpClient() {
-
-		// Getting proxy properties set as JVM args
-		String proxyHost = System.getProperty("http.proxyHost");
-		String proxyPort = System.getProperty("http.proxyPort");
-		int proxyPortInt = CKANUtils.portAsInteger(proxyPort);
-		String proxyUsername = System.getProperty("http.proxyUsername");
-		String proxyPassword = System.getProperty("http.proxyPassword");
-
-		logger.debug("Setting REST client");
-		HttpClient httpClient = new HttpClient();
-		httpClient.setConnectionTimeout(500);
-
-		if (proxyHost != null && proxyPortInt > 0) {
-			if (proxyUsername != null && proxyPassword != null) {
-				logger.debug("Setting proxy with authentication");
-				httpClient.getHostConfiguration().setProxy(proxyHost, proxyPortInt);
-				HttpState state = new HttpState();
-				state.setProxyCredentials(null, null, new UsernamePasswordCredentials(proxyUsername, proxyPassword));
-				httpClient.setState(state);
-				logger.debug("Proxy with authentication set");
-			} else {
-				// Username and/or password not acceptable. Trying to set proxy without credentials
-				logger.debug("Setting proxy without authentication");
-				httpClient.getHostConfiguration().setProxy(proxyHost, proxyPortInt);
-				logger.debug("Proxy without authentication set");
-			}
-		} else {
-			logger.debug("No proxy configuration found");
-		}
-		logger.debug("REST client set");
-
-		return httpClient;
-	}
 
 	public Connection getConnection() {
 		return connection;
@@ -218,8 +182,8 @@ public final class CKANClient {
 	 */
 	protected String postAndReturnTheJSON(String path, String jsonParams) throws CKANException {
 		String uri = connection.getHost() + path;
-		ClientRequest request = null;
-		ClientResponse<String> response = null;
+
+		Response response = null;
 		String jsonResponse = "";
 		try {
 			URL url = new URL(uri);
@@ -229,22 +193,24 @@ public final class CKANClient {
 		}
 
 		try {
-			request = new ClientRequest(uri, httpExecutor);
+			WebTarget target = ProxyClientUtilities.getTarget(uri);
+			Builder request = target.request();
+
 			// For FIWARE CKAN instance
 			if (connection.getApiKey() != null) {
 				request.header("X-Auth-Token", connection.getApiKey());
 			}
 			// For ANY CKAN instance
 			// request.header("Authorization", connection.getApiKey());
-			request.body("application/json", jsonParams);
+
 			request.accept("application/json");
 
-			response = request.post(String.class);
+			response = request.post(Entity.json(jsonParams.toString()));
 
 			if (response.getStatus() != 200) {
 				throw new CKANException("Failed : HTTP error code : " + response.getStatus());
 			}
-			jsonResponse = response.getEntity();
+			jsonResponse = response.readEntity(String.class);
 			if (jsonResponse == null) {
 				throw new CKANException("Failed: deserialisation has not been perfomed well. jsonResponse is null");
 			}
@@ -253,10 +219,6 @@ public final class CKANClient {
 			throw ckane;
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Error while requesting [" + uri + "]", e);
-		} finally {
-			if (response != null) {
-				response.releaseConnection();
-			}
 		}
 		return jsonResponse;
 	}
