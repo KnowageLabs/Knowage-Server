@@ -134,6 +134,19 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		});
 	};
 	
+	$scope.setVisible = function (id, entity, visible) {
+		for (var i = 0; i < $scope.ngModel.length; i++) {
+			if($scope.ngModel[i].id==id){
+				$scope.ngModel[i].visible = !visible;
+			}
+		}
+		$rootScope.$broadcast('setVisible',{
+			"fieldId" : id,
+			"entity" : entity,
+			"visible" : !visible
+		});
+	}
+	
 	$scope.removeColumn = function(field) {
 		$rootScope.$emit('removeColumn', {
 			"id" : field.id,
@@ -161,6 +174,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	}
 	
 	$scope.executeRequest = function () {
+		$scope.firstExecution = true;
 		$rootScope.$broadcast('executeQuery', {"start":$scope.start, "itemsPerPage":$scope.itemsPerPage});
 	}
 	
@@ -194,6 +208,9 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 					$scope.model ={ "completeresult": completeResult, "completeResultsColumns": completeResultsColumns, "previewModel": previewModel, "totalNumberOfItems": totalNumberOfItems, "mdPanelRef":mdPanelRef};
 					$scope.changeDatasetPage=function(itemsPerPage,currentPageNumber){
 						$rootScope.$broadcast('start',{"itemsPerPage":itemsPerPage, "currentPageNumber":currentPageNumber});
+					}
+					$scope.closePanel = function () {
+						mdPanelRef.close();
 					}
 				},
 				locals: {completeresult: completeResult, completeResultsColumns: completeResultsColumns, previewModel: previewModel, totalNumberOfItems: totalNumberOfItems},
@@ -239,8 +256,9 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 
 	$scope.showHiddenColumns = function () {
 		for ( var field in $scope.ngModel) {
-			$scope.ngModel[field].hidden = false;
+			$scope.ngModel[field].visible = true;
 		}
+		$rootScope.$broadcast('showHiddenColumns', true);
 	}
 	
 	$scope.idIndex = Array.apply(null, {length: 25}).map(Number.call, Number);
@@ -300,7 +318,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	                            	"name":"visible",
 	                    			hideTooltip:true,
 	                            	transformer: function() {
-	                            		return '<md-checkbox ng-model="row.visible"  aria-label="Checkbox"></md-checkbox>';
+	                            		return '<md-checkbox ng-checked="scopeFunctions.isVisible(row)" ng-click="scopeFunctions.setVisibility(row)"  aria-label="Checkbox"></md-checkbox>';
 	                            	}
 	                        	},
 	                        	{
@@ -343,6 +361,16 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 					return true;
 				}
 			}
+		},
+		isVisible : function (row) {
+			for (var i = 0; i < $scope.ngModel.length; i++) {
+				if($scope.ngModel[i].id==row.id && $scope.ngModel[i].visible==true){
+					return true;
+				}
+			}
+		},
+		setVisibility : function (row) {
+			$scope.setVisible(row.id, row.entity, row.visible);
 		}
 	};
 

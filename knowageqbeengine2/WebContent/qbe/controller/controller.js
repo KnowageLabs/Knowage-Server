@@ -65,7 +65,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 			query_service.executeQuery( query, bodySend, queryModel, isCompleteResult, start, itemsPerPage);
 		}else{
 			queryModel.length = 0;
-		}
+		}		
 	}
 
 	$scope.openPanelForSavingQbeDataset = function (){
@@ -158,6 +158,20 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 
 	$scope.$on('executeQuery', function (event, data) {
 		$scope.executeQuery($scope.editQueryObj, $scope.bodySend, $scope.queryModel, true, data.start, data.itemsPerPage);
+	});
+	
+	$scope.$on('setVisible', function (event, data) {
+		 var indexOfEntity = findWithAttr($scope.entityModel.entities,'qtip', data.entity);
+		  var indexOfFieldInEntity = findWithAttr($scope.entityModel.entities[indexOfEntity].children,'id', data.fieldId);
+		  var indexOfFieldInQuery = findWithAttr($scope.editQueryObj.fields,'id', data.fieldId);
+		  $scope.isNotChangedFromHidingField = false;
+		  $scope.editQueryObj.fields[indexOfFieldInQuery].visible = data.visible;
+	});
+	
+	$scope.$on('showHiddenColumns', function (event, data) {
+		 for (var i = 0; i < $scope.editQueryObj.fields.length; i++) {
+			  $scope.editQueryObj.fields[i].visible = true;
+		}
 	});
 
 	$rootScope.$on('removeColumn', function (event, data) {

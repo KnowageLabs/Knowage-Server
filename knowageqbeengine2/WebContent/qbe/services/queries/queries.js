@@ -17,6 +17,8 @@ queries.service('query_service',function(sbiModule_restServices,sbiModule_config
 		if(itemsPerPage==undefined){
 			itemsPerPage = 25;
 		}
+		
+		if(itemsPerPage==0) return;
 
 		var q="?SBI_EXECUTION_ID="+sbiModule_config.sbiExecutionID+"&currentQueryId="+query.id+"&start="+start+"&limit="+itemsPerPage;
 
