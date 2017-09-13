@@ -89,6 +89,7 @@
 		<module>../knowagejasperreportengine</module>
 		<module>../spagobi.birt.oda</module>
 		<module>../knowagebirtreportengine</module>
+		<module>../slimerjs-wrapper</module>
 		<module>../knowagecockpitengine</module>
 		<module>../knowagecommonjengine</module>
 		<module>../knowagedataminingengine</module>
