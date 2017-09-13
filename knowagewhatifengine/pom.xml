@@ -37,18 +37,6 @@
 					<artifactId>cometd-java-server</artifactId>
 				</exclusion>
 				<exclusion>
-					<groupId>org.jboss.resteasy</groupId>
-					<artifactId>resteasy-jaxrs</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.jboss.resteasy</groupId>
-					<artifactId>jaxrs-api</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.jboss.resteasy</groupId>
-					<artifactId>resteasy-legacy</artifactId>
-				</exclusion>
-				<exclusion>
 					<groupId>org.apache.poi</groupId>
 					<artifactId>poi</artifactId>
 				</exclusion>
@@ -89,13 +77,6 @@
 			<version>3.6.2.Final</version>
 			<scope>compile</scope>
 		</dependency>
-		
-		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>jaxrs-api</artifactId>
-			<version>3.0.9.Final</version>
-			<scope>compile</scope>
-        </dependency>
 		
 		<dependency>
 			<groupId>org.hsqldb</groupId>

@@ -360,10 +360,18 @@
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>jaxrs-api</artifactId>
-			<version>3.0.9.Final</version>
+			<version>3.0.12.Final</version>
 			<scope>compile</scope>
         </dependency>
 		
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-client</artifactId>
+			<version>3.1.2.Final</version>
+			<scope>compile</scope>
+        </dependency>
+		
+		<!--
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-jaxrs</artifactId>
@@ -377,7 +385,7 @@
 			<version>3.1.2.Final</version>
 			<scope>compile</scope>
         </dependency>
-		
+		-->
 		
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>

@@ -76,13 +76,15 @@
 			<scope>compile</scope>
 		</dependency>
 
+		<!--
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-servlet-initializer</artifactId>
 			<version>3.1.2.Final</version>
 			<scope>runtime</scope>
 		</dependency>
-
+		-->
+		
 		<dependency>
            <groupId>wsdl4j</groupId>
            <artifactId>wsdl4j</artifactId>

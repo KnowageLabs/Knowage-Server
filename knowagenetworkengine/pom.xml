@@ -24,18 +24,6 @@
 					<groupId>org.cometd.java</groupId>
 					<artifactId>cometd-java-server</artifactId>
 				</exclusion>
-				<exclusion>
-					<groupId>org.jboss.resteasy</groupId>
-					<artifactId>resteasy-jaxrs</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.jboss.resteasy</groupId>
-					<artifactId>jaxrs-api</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.jboss.resteasy</groupId>
-					<artifactId>resteasy-legacy</artifactId>
-				</exclusion>
 			</exclusions>
 		</dependency>
 		
