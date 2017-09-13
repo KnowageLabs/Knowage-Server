@@ -310,7 +310,7 @@
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
-			<version>3.1.0</version> <!-- WebLogic uses 3.1.0, Tomcat 7 uses 3.0 -->
+			<version>3.0.1</version> <!-- WebLogic uses 3.1.0, Tomcat 7 uses 3.0 -->
 			<scope>provided</scope>
 		</dependency>
 
