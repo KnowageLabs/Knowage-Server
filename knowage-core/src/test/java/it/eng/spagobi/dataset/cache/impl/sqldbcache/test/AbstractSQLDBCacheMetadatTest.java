@@ -26,14 +26,13 @@ import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
 
-import objectexplorer.MemoryMeasurer;
-import objectexplorer.ObjectGraphMeasurer;
-import objectexplorer.ObjectGraphMeasurer.Footprint;
-
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.google.caliper.memory.ObjectGraphMeasurer;
+import com.google.caliper.memory.ObjectGraphMeasurer.Footprint;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
@@ -61,7 +60,7 @@ public abstract class AbstractSQLDBCacheMetadatTest extends AbstractCacheTest {
 			logger.debug("dataset loaded in: " + formatInterval(elapsed) + "(" + elapsed + ")");
 			Footprint footprint = ObjectGraphMeasurer.measure(dataStore);
 			logger.debug("dataset footprint: " + footprint); 
-			logger.debug("dataset bytes: " + MemoryMeasurer.measureBytes(dataStore)); 
+			//logger.debug("dataset bytes: " + MemoryMeasurer.measureBytes(dataStore)); 
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}
