@@ -173,6 +173,14 @@
 		    <scope>test</scope>
 		</dependency>
 		
+		<dependency>
+			<groupId>it.eng.knowage</groupId>
+			<artifactId>knowage-dao</artifactId>
+			<version>6.0.1-SNAPSHOT</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+		
 	</dependencies>
 	
 </project>
