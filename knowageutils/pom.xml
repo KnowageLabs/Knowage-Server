@@ -492,6 +492,27 @@
 			<scope>compile</scope>
 		</dependency>
 		
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-jaxrs</artifactId>
+			<version>2.3.5.Final</version>
+			<scope>test</scope>
+        </dependency>
+		
+		<dependency>
+		    <groupId>org.eclipse.jetty</groupId>
+		    <artifactId>jetty-server</artifactId>
+		    <version>9.2.12.v20150709</version>
+		    <scope>test</scope>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.eclipse.jetty</groupId>
+		    <artifactId>jetty-servlet</artifactId>
+		    <version>9.2.12.v20150709</version>
+		    <scope>test</scope>
+		</dependency>
+		
 	</dependencies>
 	
 </project>

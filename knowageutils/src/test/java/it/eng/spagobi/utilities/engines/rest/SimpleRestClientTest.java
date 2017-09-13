@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.jboss.resteasy.client.ClientResponse;
@@ -59,7 +60,7 @@ public class SimpleRestClientTest {
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		parameters.put("a", "b");
 		parameters.put("c", "d");
-		ClientResponse<?> resp = client.executeGetService(parameters, "http://localhost:8080/hmac", "biadmin");
+		Response resp = client.executeGetService(parameters, "http://localhost:8080/hmac", "biadmin");
 		Assert.assertEquals(200, resp.getStatus());
 		Assert.assertTrue(DummyServlet.arrived);
 	}
@@ -107,7 +108,7 @@ public class SimpleRestClientTest {
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		parameters.put("a", "b");
 		parameters.put("c", "d");
-		ClientResponse<?> resp = client.executePostService(parameters, "http://localhost:8080/hmac", "biadmin", MediaType.TEXT_PLAIN_TYPE, "etc.17");
+		Response resp = client.executePostService(parameters, "http://localhost:8080/hmac", "biadmin", MediaType.TEXT_PLAIN_TYPE.getType(), "etc.17");
 		Assert.assertEquals(200, resp.getStatus());
 		Assert.assertTrue(DummyServlet.arrived);
 	}
@@ -121,7 +122,7 @@ public class SimpleRestClientTest {
 		boolean done = false;
 
 		try {
-			client.executePostService(parameters, "http://localhost:8080/hmac", "biadmin", MediaType.TEXT_PLAIN_TYPE, "etc.17");
+			client.executePostService(parameters, "http://localhost:8080/hmac", "biadmin", MediaType.TEXT_PLAIN_TYPE.getType(), "etc.17");
 		} catch (Exception e) {
 			done = true;
 		}
