@@ -1,27 +1,29 @@
-FROM java:7
+FROM java:8
 
-ENV KNOWAGE_VERSION=Knowage-6.0.0-CE-Installer-Unix-20170710
-ENV KNOWAGE_URL=http://download.forge.ow2.org/knowage/${KNOWAGE_VERSION}.zip
+ENV KNOWAGE_VERSION=6.0.0-CE-Installer-Unix
+ENV KNOWAGE_RELEASE_DATE=20170710
+ENV KNOWAGE_URL=http://download.forge.ow2.org/knowage/Knowage-${KNOWAGE_VERSION}-${KNOWAGE_RELEASE_DATE}.zip
+
+ENV KNOWAGE_DIRECTORY /home/ubuntu/
 
 RUN apt-get update && apt-get install -y wget coreutils unzip mysql-client
 
 #download knowage and extract it
-WORKDIR /home
-RUN wget "${KNOWAGE_URL}" -O Knowage.zip && \
-	unzip Knowage.zip && \
-	mv ${KNOWAGE_VERSION}.sh Knowage.sh && \
-	rm Knowage.zip
+WORKDIR  ${KNOWAGE_DIRECTORY}
+RUN wget "${KNOWAGE_URL}" && \
+	unzip Knowage-${KNOWAGE_VERSION}-${KNOWAGE_RELEASE_DATE}.zip && \
+	rm Knowage-${KNOWAGE_VERSION}-${KNOWAGE_RELEASE_DATE}.zip
 	
-RUN chmod +x *.sh
-
-ENV KNOWAGE_DIRECTORY /home/Knowage
-WORKDIR ${KNOWAGE_DIRECTORY}/bin
-
 COPY ./entrypoint.sh ./
+COPY ./params.properties ./
 #make all scripts executable
 RUN chmod +x *.sh
 
 EXPOSE 8080
 #-d option is passed to run spagobi forever without exiting from container
 ENTRYPOINT ["./entrypoint.sh"]
+
+CMD ["./Knowage-${KNOWAGE_VERSION}-${KNOWAGE_RELEASE_DATE}.sh -q -varfile params.properties"]
+
+WORKDIR ${KNOWAGE_DIRECTORY}/Knowage-Server-CE/bin
 CMD ["./startup.sh"]
