@@ -4,12 +4,11 @@ ENV KNOWAGE_VERSION=6.0.0-CE-Installer-Unix
 ENV KNOWAGE_RELEASE_DATE=20170710
 ENV KNOWAGE_URL=http://download.forge.ow2.org/knowage/Knowage-${KNOWAGE_VERSION}-${KNOWAGE_RELEASE_DATE}.zip
 
-ENV KNOWAGE_DIRECTORY /home/ubuntu/
+ENV KNOWAGE_DIRECTORY .
 
 RUN apt-get update && apt-get install -y wget coreutils unzip mysql-client
 
 #download knowage and extract it
-WORKDIR  ${KNOWAGE_DIRECTORY}
 RUN wget "${KNOWAGE_URL}" && \
 	unzip Knowage-${KNOWAGE_VERSION}-${KNOWAGE_RELEASE_DATE}.zip && \
 	rm Knowage-${KNOWAGE_VERSION}-${KNOWAGE_RELEASE_DATE}.zip
