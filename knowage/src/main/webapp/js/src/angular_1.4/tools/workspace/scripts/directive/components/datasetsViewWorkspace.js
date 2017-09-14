@@ -127,7 +127,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		var functionsToCall = arguments[0][0];
 		var indexForNextFn = arguments[0][1];
 		
-		sbiModule_restServices.promiseGet("2.0/datasets/mydata", "")
+		sbiModule_restServices.promiseGet("1.0/datasets/mydata", "")
 		.then(function(response) {			
 			angular.copy(response.data.root,$scope.datasets);
 			$scope.markNotDerived($scope.datasets);
@@ -176,7 +176,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		var functionsToCall = arguments[0][0];
 		var indexForNextFn = arguments[0][1];
 		
-		sbiModule_restServices.promiseGet("2.0/datasets/owned", "")
+		sbiModule_restServices.promiseGet("1.0/datasets/owned", "")
 		.then(function(response) {
 			angular.copy(response.data.root,$scope.myDatasets);
 			$scope.markNotDerived($scope.myDatasets);
@@ -207,7 +207,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		var functionsToCall = arguments[0][0];
 		var indexForNextFn = arguments[0][1];
 		
-		sbiModule_restServices.promiseGet("2.0/datasets/enterprise", "")
+		sbiModule_restServices.promiseGet("1.0/datasets/enterprise", "")
 		.then(function(response) {
 			var enterpriseDatasetsWithParams = [];
 			angular.copy(response.data.root,enterpriseDatasetsWithParams);
@@ -244,7 +244,7 @@ function datasetsController($scope, sbiModule_restServices, sbiModule_translate,
 		var functionsToCall = arguments[0][0];
 		var indexForNextFn = arguments[0][1];
 		
-		sbiModule_restServices.promiseGet("2.0/datasets/shared", "")
+		sbiModule_restServices.promiseGet("1.0/datasets/shared", "")
 		.then(function(response) {
 			//angular.copy(response.data.root,$scope.sharedDatasets);
 			var sharedDatasetsWithParams = [];
