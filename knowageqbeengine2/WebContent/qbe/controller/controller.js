@@ -361,10 +361,10 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
     }
 
     $scope.$on('openFiltersAdvanced',function(event,field){
-		$scope.showVisualization($scope.editQueryObj.filters, $scope.advancedFilters);
+		$scope.showVisualization($scope.editQueryObj.filters, $scope.advancedFilters,$scope.editQueryObj.expression);
 	})
 
-    $scope.showVisualization = function (filters, advancedFilters) {
+    $scope.showVisualization = function (filters, advancedFilters, expression) {
 		var finishEdit=$q.defer();
 		var config = {
 				attachTo:  angular.element(document.body),
@@ -372,9 +372,9 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 				position: $mdPanel.newPanelPosition().absolute().center(),
 				fullscreen :true,
 				controller: function($scope,mdPanelRef){
-					$scope.model = {"filters":filters,"advancedFilters":advancedFilters,"mdPanelRef":mdPanelRef};
+					$scope.model = {"filters":filters,"advancedFilters":advancedFilters,"expression":expression,"mdPanelRef":mdPanelRef};
 				},
-				locals: {filters:filters,advancedFilters:advancedFilters},
+				locals: {filters:filters,advancedFilters:advancedFilters, expression:expression},
 				hasBackdrop: true,
 				clickOutsideToClose: true,
 				escapeToClose: true,

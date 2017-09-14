@@ -1,17 +1,17 @@
 /**
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * Knowage is distributed in the hope that it will be useful, 
+ * Knowage is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -29,7 +29,7 @@ angular.module('qbe_advanced_visualization', ['dndLists'])
 		scope: {
 			ngModel:"="
 		},
-		link: function (scope, elem, attrs) { 
+		link: function (scope, elem, attrs) {
 
 		}
 	}
@@ -119,10 +119,10 @@ function advancedVisualizationControllerFunction($scope,sbiModule_translate, sbi
 		        selected: null,
 		        templates: [
 
-		            {type: "group", id: 1, columns: [[], []], connector:"AND"}
+		            {type: "group", id: 1, columns: [[]], connector:"AND"}
 		        ],
 		        dropzones:{
-		        	  "Filter visualisation": $scope.advancedFilters,
+		        	  "Filter visualisation": $scope.ngModel.advancedFilters,
 		        	    }
 
 	  };
@@ -131,20 +131,20 @@ function advancedVisualizationControllerFunction($scope,sbiModule_translate, sbi
     }, true);
 
 
+
 	$scope.saveFiltersAdvanced = function(){
 		var advanceFiltersSaved = angular.copy($scope.advancedFilters);
-
-		generateExpressions (advanceFiltersSaved);
+//		generateAdvancedExpression (advanceFiltersSaved);
 
 	}
 
 	$scope.filtersGroup = [];
-	
+
 	$scope.openMenu = function($mdOpenMenu, ev) {
 		originatorEv = ev;
 		$mdOpenMenu(ev);
 	};
-	
+
 	$scope.linkFunction = function (booleanConnector,id) {
 		for ( var index in $scope.ngModel.childNodes) {
 			if($scope.ngModel.childNodes[index].id==id){
@@ -152,18 +152,18 @@ function advancedVisualizationControllerFunction($scope,sbiModule_translate, sbi
 			}
 		}
 	}
-		
+
 	$scope.sbiModule_config = sbiModule_config;
 	$scope.translate = sbiModule_translate;
-	
-	$scope.clickDocument=function(item){		
+
+	$scope.clickDocument=function(item){
 		 $scope.selectDocumentAction({doc: item});
 	}
-	
+
 	$scope.closeFiltersAdvanced = function () {
 		$scope.ngModel.mdPanelRef.close();
 	}
-	
+
 	$scope.removeFilter = function () {
 		for ( var index in $scope.ngModel.childNodes) {
 			if($scope.ngModel.childNodes[index].selected==true){
@@ -171,10 +171,70 @@ function advancedVisualizationControllerFunction($scope,sbiModule_translate, sbi
 			}
 		}
 	}
+	var generateAdvancedExpression = function (advancedFilters){
+		var nop = {};
+		nop.value = "";
+		nop.type = "NODE_OP";
+		nop.childNodes = [];
+		var nopForInsert = {};
+		for (var i = advancedFilters.length-1; i >= 0 ; i--) {
+			if (i-1==-1 || advancedFilters[i].connector!=advancedFilters[i-1].connector) {
 
-	var generateExpressions = function (advanceFiltersSaved){
 
-		console.log(advanceFiltersSaved);
+			} else {
+				if(advancedFilters[i].type=="group"){
+					nop.value = "PAR"
+					generateAdvancedExpression(advancedFilters[i].columns[0])
+				} else {
+
+				}
+				nop.childNodes.push(nodeConstArray[i]);
+			}
+		}
+
+	}
+	var generateExpressions = function (advancedFilters, expression){
+
+		advancedFilters.length = 0;
+	 // if filters are empty set expression to empty object
+		if(advancedFilters.length==0){
+			angular.copy({},expression);
+		} else {
+			var nodeConstArray = [];
+			for (var i = 0; i < advancedFilters.length; i++) {
+				var nodeConstObj = {};
+				nodeConstObj.value = '$F{' + advancedFilters[i].name + '}';
+				nodeConstObj.type = "NODE_CONST";
+				nodeConstObj.childNodes = [];
+				nodeConstArray.push(nodeConstObj);
+			}
+			if (advancedFilters.length==1){
+				angular.copy(nodeConstArray[0],expression);
+			} else if (advancedFilters.length>1) {
+				var nop = {};
+				nop.value = "";
+				nop.type = "NODE_OP";
+				nop.childNodes = [];
+				var nopForInsert = {};
+				for (var i = advancedFilters.length-1; i >= 0 ; i--) {
+					if (i-1==-1 || advancedFilters[i].connector!=advancedFilters[i-1].connector) {
+						nop.value = advancedFilters[i].connector;
+						nop.childNodes.push(nodeConstArray[i]);
+						if(nopForInsert.value){
+							nop.childNodes.push(nopForInsert);
+						}
+						nopForInsert = angular.copy(nop);
+						nop.value = "";
+						nop.type = "NODE_OP";
+						nop.childNodes.length = 0;
+					} else {
+						nop.childNodes.push(nodeConstArray[i]);
+					}
+				}
+				angular.copy(nopForInsert,expression);
+			}
+		}
+
 	};
 
 	$scope.filterColumnsAV = [
@@ -198,7 +258,7 @@ function advancedVisualizationControllerFunction($scope,sbiModule_translate, sbi
         	}
     	}
     ]
-	
+
 	$scope.speedMenu =  [ {
 		label :  "Move filter up",
 		icon : 'fa fa-arrow-up',
@@ -222,32 +282,32 @@ function advancedVisualizationControllerFunction($scope,sbiModule_translate, sbi
 		}
 	}
 	 ];
-	
+
 	$scope.showMoveUp = function (item){
 		if($scope.ngModel.filters[0].filterId == item.filterId){
 			return false;
 		}
 	}
-	
+
 	$scope.showMoveDown = function (item){
 		if($scope.ngModel.filters[$scope.ngModel.filters.length-1].filterId == item.filterId){
 			return false;
 		}
 	}
-	
+
 	$scope.moveFilter = function (item, direction) {
 
 		var oldIndex = findWithAttr($scope.ngModel.filters, 'filterId', item.filterId);
 		var newIndex = direction == 'up' ? oldIndex-1 : oldIndex+1;
-		
+
 		var filterToSwitch = {};
 		angular.copy($scope.ngModel.filters[newIndex], filterToSwitch);
-		
+
 		$scope.ngModel.filters[newIndex] = item;
 		$scope.ngModel.filters[oldIndex] = filterToSwitch;
-		
+
 	};
-	
+
 	var findWithAttr = function(array, attr, value) {
 	    for(var i = 0; i < array.length; i += 1) {
 	        if(array[i][attr] === value) {
@@ -256,8 +316,8 @@ function advancedVisualizationControllerFunction($scope,sbiModule_translate, sbi
 	    }
 	    return -1;
 	}
-	
-	
+
+
 	$scope.groupFilters = function () {
 		for (var i = 0; i < $scope.advancedFilters.length; i++) {
 			for (var j = 0; j < $scope.arrayForGroup.length; j++) {
@@ -274,11 +334,11 @@ function advancedVisualizationControllerFunction($scope,sbiModule_translate, sbi
 		$scope.arrayForGroup.length=0;
 		console.log($scope.advancedFilters)
 	}
-	
+
 	$scope.$on('groupFilters', function (event, data) {
 		console.log(data);
 		console.log($scope.advancedFilters);
-		
+
 		$scope.indexes = [];
 		//event.stopPropagation();
 	 // drop single filter on single filter
@@ -286,7 +346,7 @@ function advancedVisualizationControllerFunction($scope,sbiModule_translate, sbi
 			$scope.filtersGroup.push(data.droppedField);
 			$scope.filtersGroup.push(data.draggedField);
 		}
-	 // drop single filter on group 
+	 // drop single filter on group
 		else if (!data.droppedField.hasOwnProperty("connector") && data.draggedField.hasOwnProperty("connector")){
 			data.droppedField.push(data.draggedField);
 		}
@@ -298,19 +358,19 @@ function advancedVisualizationControllerFunction($scope,sbiModule_translate, sbi
 		else if (data.droppedField.hasOwnProperty("connector") && !data.draggedField.hasOwnProperty("connector")){
 			data.droppedField.push(data.draggedField);
 		}
-		
+
 		$scope.spliceSelectedFiltersFromParent($scope.advancedFilters, $scope.filtersGroup);
-		
-		
+
+
 		for (var i = $scope.indexes.length-1; i >= 0; i--) {
 			$scope.advancedFilters.splice($scope.indexes[i], 1);
 		}
-		
+
 		$scope.advancedFilters.push(angular.copy($scope.filtersGroup))
 		$scope.filtersGroup.length=0;
 		$scope.indexes.length=0;
 	});
-	
+
 	$scope.spliceSelectedFiltersFromParent = function(parent, group, parentIndex){
 		for (var i = 0; i <parent.length; i++) {
 			if(parent[i].hasOwnProperty("connector")){
@@ -322,18 +382,18 @@ function advancedVisualizationControllerFunction($scope,sbiModule_translate, sbi
 			} else {
 				$scope.spliceSelectedFiltersFromParent(parent[i], group);
 			}
-			
+
 		}
 	}
 
 	$scope.arrayForGroup = [];
 	$scope.addToArray = function (filter) {
-		
+
 		$scope.arrayForGroup.push(filter);
-		
+
 	}
 	$scope.logicalOperators = filters_service.getBooleanConnectors;
-	
+
 	$scope.advancedVisualizationScopeFunctions = {
 		logicalOperators: $scope.logicalOperators,
 		setBooleanConnector: function (connector, row) {
@@ -343,6 +403,5 @@ function advancedVisualizationControllerFunction($scope,sbiModule_translate, sbi
 			return row.leftOperandDescription + " " + row.operator + " " +row.rightOperandDescription ;
 		}
 	}
-	$scope.radaf = [{"conn":4, "sss":"das"}, {"conn":3, "sss":"das"}, [{"conn":656, "sss":55},{"conn":654666, "sss":"das"},{"conn":"fsdfs", "sss":"das"},[{"conn":11, "sss":55},{"conn":22, "sss":"das"},{"conn":"22", "sss":"das"}]]];
 }
 })();

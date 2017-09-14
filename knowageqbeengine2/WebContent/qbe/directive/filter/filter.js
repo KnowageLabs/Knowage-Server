@@ -291,7 +291,7 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 			var advancedFilter = {
 					type:"item",
 					id: filters[i].filterId.substring(6),
-					columns:[[],[]],
+					columns:[[]],
 					name: filters[i].filterId,
 					connector: filters[i].booleanConnector,
 			};
@@ -328,7 +328,7 @@ function qbeFilter($scope,$rootScope, filters_service ,sbiModule_translate, sbiM
 						nopForInsert = angular.copy(nop);
 						nop.value = "";
 						nop.type = "NODE_OP";
-						nop.childNodes = [];
+						nop.childNodes.length = 0;
 					} else {
 						nop.childNodes.push(nodeConstArray[i]);
 					}
