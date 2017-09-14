@@ -87,7 +87,7 @@ angular.module('qbe_expander_list', ['ngDraggable'])
             		var desc = "";
             		for (var i = 0; i < scope.$parent.filters.length; i++) {
             			if(scope.$parent.filters[i].leftOperandDescription == field.attributes.entity+" : "+field.text){
-            				desc =desc.concat(scope.$parent.filters[i].leftOperandAlias + " "
+            				desc =desc.concat(" "
             				+scope.$parent.filters[i].operator + " " +scope.$parent.filters[i].rightOperandDescription + "\n") ;
             			}
             		}

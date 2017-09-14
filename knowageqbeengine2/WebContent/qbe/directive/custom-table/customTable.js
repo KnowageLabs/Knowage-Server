@@ -233,7 +233,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		for (var i = 0; i < $scope.filters.length; i++) {
 			if($scope.filters[i].leftOperandDescription == field.entity+" : "+field.name){
 
-				desc =desc.concat($scope.filters[i].leftOperandAlias + " "
+				desc =desc.concat(" "
 				+$scope.filters[i].operator + " " +$scope.filters[i].rightOperandDescription + "\n") ;
 			}
 		}
