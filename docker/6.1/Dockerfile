@@ -20,7 +20,7 @@ COPY ./params.properties ./
 RUN chmod +x *.sh
 
 EXPOSE 8080
-#-d option is passed to run spagobi forever without exiting from container
+#-d option is passed to run knowage forever without exiting from container
 ENTRYPOINT ["./entrypoint.sh"]
 
 CMD ["./Knowage-${KNOWAGE_VERSION}-${KNOWAGE_RELEASE_DATE}.sh -q -varfile params.properties"]
