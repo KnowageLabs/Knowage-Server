@@ -8,13 +8,22 @@
 	   			
 	   			<span flex></span>
 	   			<md-checkbox ng-show="ngModel.length>0"  ng-model="isChecked" ng-click="distinctSelected()" class="distinctCheckbox" aria-label="distinct">{{translate.load("kn.qbe.custom.table.distinct")}}</md-checkbox>
-	   			<md-icon class="fa fa-product-hunt" ng-click="openDialogForParams(ngModel)"></md-icon>
-		<md-icon class="fa fa-cogs" ng-click="openFiltersAdvanced()"></md-icon>
-				 <md-icon class="fa fa-eye" ng-click="showHiddenColumns()"></md-icon>
+	   			<md-button class="md-icon-button" ng-click="openDialogForParams(ngModel)">
+					<md-icon md-font-icon="fa fa-product-hunt"></md-icon>
+				</md-button>
+				<md-button class="md-icon-button" ng-click="openFiltersAdvanced()">
+					<md-icon md-font-icon="fa fa-cogs"></md-icon>
+				</md-button>
+				<md-button class="md-icon-button" ng-click="showHiddenColumns()">
+					<md-icon md-font-icon="fa fa-eye"></md-icon>
+				</md-button>
 	   			<md-switch ng-model="smartPreview" aria-label="Switch smart preview">
-				     {{translate.load("kn.qbe.custom.table.smartdata")}}
+				    {{translate.load("kn.qbe.custom.table.smartdata")}}
 				 </md-switch>
-				 <md-icon ng-if="selectedVisualization=='previewData' && !smartPreview" class="fa fa-play" ng-click="executeRequest()" style="margin-left:10px;"></md-icon>			 
+				 
+				 <md-button ng-if="selectedVisualization=='previewData' && !smartPreview" class="md-icon-button"  ng-click="executeRequest()">
+					<md-icon md-font-icon="fa fa-play"></md-icon>
+				</md-button>		 
 	   		</div>
 	   	</md-toolbar>
    	</div>
@@ -22,8 +31,7 @@
    	<qbe-filter-visualization ng-if="selectedVisualization=='filters'"></qbe-filter-visualization>
    	
    	<div layout="column" ng-if="selectedVisualization=='previewData' && !smartPreview">
-   	
-   		<md-card layout-padding style="height:90%; margin:0px">								      						
+   		<md-card layout-padding style="height:90%; margin:0px">			      						
 			<angular-table
 				id="basicView"
 				flex
@@ -33,7 +41,6 @@
 				no-pagination=true>
 			</angular-table>			   									
 		</md-card>
- 
 	</div>
 	
 	<!-- <div layout="column" ng-if="selectedVisualization=='previewData' && !smartPreview && completeResult">

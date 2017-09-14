@@ -69,7 +69,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	
 	$scope.$watch('smartPreview',function(newValue,oldValue){
 		query_service.setSmartView(newValue);
-		$rootScope.$emit('smartView', newValue);
+		$rootScope.$emit('smartView', $scope.ngModel);
 	},true)
 	
 	$scope.translate = sbiModule_translate;
@@ -82,7 +82,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		originatorEv = ev;
 		$mdOpenMenu(ev);
 	};
-	$scope.aggFunctions = [ "none", "sum", "min", "max", "avg", "count", "count_distinct" ];
+	$scope.aggFunctions = [ "NONE", "SUM", "MIN", "MAX", "AVG", "COUNT", "COUNT_DISTINCT" ];
 
 	$scope.moveRight = function(currentOrder, column) {
 
@@ -174,7 +174,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	
 	$scope.executeRequest = function () {
 		$scope.firstExecution = true;
-		$rootScope.$broadcast('executeQuery', {"start":$scope.start, "itemsPerPage":$scope.itemsPerPage});
+		$rootScope.$broadcast('executeQuery', {"start":$scope.start, "itemsPerPage":$scope.itemsPerPage, "fields": $scope.ngModel});
 	}
 	
 	$scope.$on('queryExecuted', function (event, data) {
@@ -202,7 +202,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 				attachTo:  angular.element(document.body),
 				templateUrl: sbiModule_config.contextName +'/qbe/templates/datasetPreviewDialogTemplate.html',
 				position: $mdPanel.newPanelPosition().absolute().center(),
-				fullscreen :true,
+				fullscreen :false,
 				controller: function($scope,mdPanelRef,sbiModule_translate){
 					$scope.model ={ "completeresult": completeResult, "completeResultsColumns": completeResultsColumns, "previewModel": previewModel, "totalNumberOfItems": totalNumberOfItems, "mdPanelRef":mdPanelRef};
 					$scope.changeDatasetPage=function(itemsPerPage,currentPageNumber){
@@ -278,7 +278,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	                            	"name":"group",
 	                    			hideTooltip:true,
 	                            	transformer: function() {
-	                            		return '<md-checkbox ng-checked="scopeFunctions.isGrouped(row)" ng-click="scopeFunctions.group(row)" aria-label="Checkbox"></md-checkbox>';
+	                            		return '<md-checkbox ng-model=row.group aria-label="Checkbox"></md-checkbox>';
 	                            	}
 	                        	},
 	                        	{
@@ -286,7 +286,7 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 	                            	"name":"function",
 	                            	hideTooltip:true,
 	                            	transformer: function() {
-	                            		return '<md-select ng-model=row.function class="noMargin" ><md-option ng-repeat="col in scopeFunctions.aggregationFunctions" ng-click="scopeFunctions.applyFunction(col, row)" value="{{col}}">{{col}}</md-option></md-select>';
+	                            		return '<md-select ng-model=row.funct class="noMargin" ><md-option ng-repeat="col in scopeFunctions.aggregationFunctions" value="{{col}}">{{col}}</md-option></md-select>';
 	                            	}
 	                        	},
 	                        	{
@@ -346,14 +346,6 @@ function qbeCustomTable($scope, $rootScope, $mdDialog, sbiModule_translate, sbiM
 		},
 		openFilters : function (row) {
 			$scope.openFilters(row);
-		},
-		group : function (row) { 
-			$scope.group(row.id, row.entity, row.group);
-			
-		},
-		applyFunction : function (col, row) { 
-			$scope.applyFuntion(col, row.id, row.entity);
-			
 		},
 		isGrouped : function (row){
 			for (var i = 0; i < $scope.ngModel.length; i++) {

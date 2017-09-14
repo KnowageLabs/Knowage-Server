@@ -104,6 +104,7 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
          		    	"entity":query.fields[i].entity,
          		    	"color":query.fields[i].color,
          		    	"data":[],
+         		    	"funct":query.fields[i].funct,
          		    	"visible":query.fields[i].visible,
          		    	"distinct":$scope.editQueryObj.distinct,
          		    	"group":query.fields[i].group,
@@ -148,7 +149,16 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 		}
 	});
 
-	$rootScope.$on('smartView', function (data) {
+	$rootScope.$on('smartView', function (event, data) {
+		
+		if(data.length>0 && query_service.smartView){
+			for (var i = 0; i < data.length; i++) {
+				$scope.editQueryObj.fields[i].group = data[i].group;
+				$scope.editQueryObj.fields[i].funct = data[i].funct;
+				$scope.editQueryObj.fields[i].visible = data[i].visible;
+				$scope.editQueryObj.fields[i].distinct = data[i].distinct;
+			}
+		}
 		if(query_service.smartView){
 			$scope.executeQuery($scope.editQueryObj, $scope.bodySend, $scope.queryModel);
 		} else {
@@ -157,6 +167,14 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 	});
 
 	$scope.$on('executeQuery', function (event, data) {
+		if(data.fields != undefined  && !query_service.smartView && data.fields.length>0){
+			for (var i = 0; i < data.fields.length; i++) {
+				$scope.editQueryObj.fields[i].group = data.fields[i].group;
+				$scope.editQueryObj.fields[i].funct = data.fields[i].funct;
+				$scope.editQueryObj.fields[i].visible = data.fields[i].visible;
+				$scope.editQueryObj.fields[i].distinct = data.fields[i].distinct;
+			}	
+		}
 		$scope.executeQuery($scope.editQueryObj, $scope.bodySend, $scope.queryModel, true, data.start, data.itemsPerPage);
 	});
 	
@@ -206,7 +224,16 @@ function qbeFunction($scope,$rootScope,entity_service,query_service,filters_serv
 	}
 
 	$scope.addField = function (field) {
-
+		
+		if($scope.queryModel != undefined  && !query_service.smartView && $scope.queryModel.length>0){
+			for (var i = 0; i < $scope.queryModel.length; i++) {
+				$scope.editQueryObj.fields[i].group = $scope.queryModel[i].group;
+				$scope.editQueryObj.fields[i].funct = $scope.queryModel[i].funct;
+				$scope.editQueryObj.fields[i].visible = $scope.queryModel[i].visible;
+				$scope.editQueryObj.fields[i].distinct = $scope.queryModel[i].distinct;
+			}	
+		}
+		
 		var newField  = {
 			   "id":field.id,
 			   "alias":field.attributes.field,

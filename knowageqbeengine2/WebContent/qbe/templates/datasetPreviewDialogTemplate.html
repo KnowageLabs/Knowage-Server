@@ -1,6 +1,5 @@
-<md-card layout-fill layout="column" class="flexCard" style="position:absolute" >
-
-	<md-card-content flex layout="column" class="noPadding">
+<md-card>
+	<md-card-content flex layout="column" class="noPadding" style="height:500px;">
 		<md-toolbar class="secondaryToolbar" >
 			<div class="md-toolbar-tools">{{translate.load("kn.qbe.custom.table.preview")}}
 				<span flex></span>
@@ -10,18 +9,15 @@
 			</md-button>
 			</div>
 		</md-toolbar>
-		
-		<md-content flex layout="column">	
-			<angular-table
-					id="basicView"
-					layout-fill
-					ng-model="model.previewModel"
-					columns='model.completeResultsColumns'
-					page-changed-function="changeDatasetPage(itemsPerPage, currentPageNumber)"
-					total-item-count="model.totalNumberOfItems"
-					no-pagination=false>
-				</angular-table>				
-		</md-content>
+		<angular-table
+				id="basicView"
+				layout-fill
+				ng-model="model.previewModel"
+				columns='model.completeResultsColumns'
+				page-changed-function="changeDatasetPage(itemsPerPage, currentPageNumber)"
+				total-item-count="model.totalNumberOfItems"
+				no-pagination=false>
+			</angular-table>		
 	</md-card-content>
 
 </md-card>
