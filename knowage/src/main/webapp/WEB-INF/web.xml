@@ -45,7 +45,7 @@
     </servlet-mapping>
 -->
 
-	<!-- START-CAS 
+	<!-- START-CAS ${enable.cas.end}
 	<filter>
 		<filter-name>CAS Authentication Filter</filter-name>
 		<filter-class>org.jasig.cas.client.authentication.AuthenticationFilter</filter-class>
@@ -80,7 +80,7 @@
 		<filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
 		<filter-class>org.jasig.cas.client.util.HttpServletRequestWrapperFilter</filter-class>
 	</filter>
-	 END-CAS -->
+	${enable.cas.start} END-CAS -->
 
 
 	<!-- START OAUTH 2
@@ -108,7 +108,7 @@
 		<url-pattern>/restful-services/publish/*</url-pattern>		
 	</filter-mapping>
 
-	<!-- START-CAS 
+	<!-- START-CAS ${enable.cas.end}
 	<filter-mapping>
 		<filter-name>CAS Authentication Filter</filter-name>
 		<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
@@ -126,7 +126,7 @@
 		<url-pattern>/servlet/AdapterHTTP/*</url-pattern>
 		<url-pattern>/restful-services/publish/*</url-pattern>
 	</filter-mapping>  
-	 END-CAS --> 
+	 ${enable.cas.start}  END-CAS --> 
 
 	<!-- START OAUTH 2
 	<filter-mapping>
