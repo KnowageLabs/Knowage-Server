@@ -1,6 +1,10 @@
+# What is this repository?
+
+This is the official repository of Knowage Docker Image. 
+
 # What is Knowage?
 
-This is the official repository of Knowage. Knowage is the professional open source suite for modern business analytics over traditional sources and big data systems.
+Knowage is the professional open source suite for modern business analytics over traditional sources and big data systems.
 
 > [knowage-suite.com](https://www.knowage-suite.com)
  
