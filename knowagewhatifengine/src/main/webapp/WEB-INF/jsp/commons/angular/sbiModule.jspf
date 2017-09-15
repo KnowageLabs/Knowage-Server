@@ -90,7 +90,6 @@ sbiM.factory('sbiModule_user',function(){
 	user.userName = '<%= StringEscapeUtils.escapeJavaScript(userName) %>'; 
 	user.ismodeweb = true;
 	user.isSuperAdmin = '<%= userProfile != null && ((UserProfile)userProfile).getIsSuperadmin() %>';
-	user.isTechnicalUser = '<%= userProfile != null && UserUtilities.isTechnicalUser((UserProfile)userProfile)%>'
 	user.defaultRole = '<%= defaultRole != null ? StringEscapeUtils.escapeJavaScript(defaultRole)  : ""%>';
 	// 	set roles
 	user.roles =[];

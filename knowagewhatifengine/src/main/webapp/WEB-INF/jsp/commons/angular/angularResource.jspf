@@ -40,14 +40,9 @@ author:...
 <%@page import= "it.eng.spagobi.utilities.engines.rest.ExecutionSession" %>
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@page import="it.eng.spago.security.IEngUserProfile" %>
-<%@page import="it.eng.spagobi.commons.utilities.messages.IMessageBuilder"%>
-<%@page import="it.eng.spagobi.commons.utilities.messages.MessageBuilder"%>
-<%@page import="it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory"%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
-<%@page import="it.eng.spagobi.commons.utilities.UserUtilities" %>
-<%@page import="it.eng.spagobi.commons.utilities.GeneralUtilities"%>
 
 
 
