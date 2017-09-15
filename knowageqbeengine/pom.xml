@@ -9,7 +9,7 @@
 		<relativePath>../knowage-ce-parent/pom.xml</relativePath>
 	</parent>
 
-	<artifactId>knowageqbengine</artifactId>
+	<artifactId>knowageqbeengine</artifactId>
 	<packaging>war</packaging>
 
 	<dependencies>
@@ -97,5 +97,5 @@
 		
 	</dependencies>
 	
-	<name>knowageqbengine</name>
+	<name>knowageqbeengine</name>
 </project>
