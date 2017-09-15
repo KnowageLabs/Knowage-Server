@@ -548,6 +548,13 @@
 		</dependency>
 		
 		<dependency>
+           <groupId>xml-apis</groupId>
+           <artifactId>xml-apis</artifactId>
+           <version>1.4.01</version>
+           <scope>runtime</scope>
+       </dependency>
+		
+		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
 			<version>2.9.3</version>
