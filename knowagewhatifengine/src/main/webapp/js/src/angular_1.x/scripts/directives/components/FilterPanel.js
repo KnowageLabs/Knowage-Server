@@ -30,7 +30,69 @@ angular.module('filter_panel',['sbiModule'])
 	      },
 		controller: filterPanelController
 	}
-});
+})
+
+.directive('topaxis',function(sbiModule_config){
+	
+	function link(scope,element,attrs){
+		scope.$watch(function(){
+			return element[0].offsetWidth;
+		},function(newValue,oldValue){
+			var taw = newValue - 66;
+			scope.maxCols = Math.round(taw/200);
+			if(scope.columns){
+				scope.topSliderNeeded = scope.columns.length > scope.maxCols? true : false;
+			}
+			
+		})
+	};
+	return{
+		restrict: "A",
+		link:link
+	}
+})
+
+.directive('leftaxis',function(sbiModule_config){
+	
+	function link(scope,element,attrs){
+		scope.$watch(function(){
+			return element[0].offsetHeight;
+		},function(newValue,oldValue){
+			var lah = newValue - 66;
+			scope.maxRows = Math.round(lah/175);
+			if(scope.rows){
+				scope.leftSliderNeeded = scope.rows.length > scope.maxRows? true : false;
+			}
+			
+		})
+	};
+	return{
+		restrict: "A",
+		link:link
+	}
+})
+
+.directive('filterpanel',function(sbiModule_config){
+	
+	function link(scope,element,attrs){
+		scope.$watch(function(){
+			return element[0].offsetWidth;
+		},function(newValue,oldValue){
+			var faw = newValue - 66;
+			scope.numVisibleFilters = Math.round(faw/200);
+			if(scope.filterCardList){
+				scope.shiftNeeded = scope.filterCardList.length >  scope.numVisibleFilters ? true
+						: false;
+			}
+			
+		})
+	};
+	return{
+		restrict: "A",
+		link:link
+	}
+})
+
 
 function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce, sbiModule_messaging, sbiModule_restServices, sbiModule_translate, sbiModule_config,sbiModule_docInfo, toastr ) {
 	
@@ -56,15 +118,15 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		
 	});
 	
-	$scope.$watch(function(){
-		if(document.getElementById("leftaxis")){
-			var size = document.getElementById("leftaxis").offsetHeight;
-		}
-		return size;
-		},function(){
-			$scope.axisSizeSetup();
-			checkShift();
-	})
+//	$scope.$watch(function(){
+//		if(document.getElementById("leftaxis")){
+//			var size = document.getElementById("leftaxis").offsetHeight;
+//		}
+//		return size;
+//		},function(){
+//			//$scope.axisSizeSetup();
+//			checkShift();
+//	})
 	
 	// for designer parameters binding
 	$scope.adParams=[];
@@ -227,7 +289,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		 (encoded,"",toSend)
 			.then(function(response) {
 				$scope.handleResponse(response);
-				checkShift();
+				//checkShift();
 				if(fromAxis == 1){
 					$scope.leftStart = 0;
 				}
@@ -630,7 +692,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 		var leftLength = $scope.rows.length;
 		var topLength = $scope.columns.length;
 		var fromAxis;
-		$scope.axisSizeSetup();
+		//$scope.axisSizeSetup();
 		if(data !=null){
 			fromAxis = data.axis;
 			
@@ -728,22 +790,24 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 	};
 	
 	//setting visibility of shift buttons if needed
-	checkShift = function(){
-		$scope.shiftNeeded = $scope.filterCardList.length > $scope.numVisibleFilters ? true
-				: false;
-		
-		$scope.topSliderNeeded = $scope.columns.length > $scope.maxCols? true : false;
-		
-		$scope.leftSliderNeeded = $scope.rows.length > $scope.maxRows? true : false;
-	};
+//	checkShift = function(){
+//		
+//		
+//		$scope.shiftNeeded = $scope.filterCardList.length > $scope.numVisibleFilters ? true
+//				: false;
+//		
+//		$scope.topSliderNeeded = $scope.columns.length > $scope.maxCols? true : false;
+//		
+//		$scope.leftSliderNeeded = $scope.rows.length > $scope.maxRows? true : false;
+//	};
 
 	
 	$scope.sendMdxQuery = function(mdx) {
-		var encoded = encodeURI("1.0/model?SBI_EXECUTION_ID="+JSsbiExecutionID)
+		var encoded = encodeURI("1.0/model/?SBI_EXECUTION_ID="+JSsbiExecutionID)
 		sbiModule_restServices.promisePost(encoded,"",mdx)
 		.then(function(response) {
 			$scope.handleResponse(response);
-			checkShift();
+			//checkShift();
 			$mdDialog.hide();
 			$scope.mdxQuery = "";
 			
@@ -751,7 +815,7 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 			 checkLock(status);
 			if($scope.modelConfig.whatIfScenario)
 				$scope.getVersions();
-			$scope.axisSizeSetup();
+			//$scope.axisSizeSetup();
 			
 		}, function(response) {
 			sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.sendMDX.error'), 'Error');
@@ -792,16 +856,23 @@ function filterPanelController($scope, $timeout, $window, $mdDialog, $http, $sce
 
 	//Dynamic setting for number of visible elements in filter/row/column axis without scroll buttons
 	//depends on size of actual html elements
-	$scope.axisSizeSetup = function(){
-		var taw = document.getElementById("topaxis").offsetWidth - 66;
-		var lah = document.getElementById("leftaxis").offsetHeight - 66;
-		var faw = document.getElementById("filterpanel").offsetWidth - 80;
-		$scope.maxCols = Math.round(taw/200);
-		$scope.maxRows = Math.round(lah/175);
-		$scope.numVisibleFilters = Math.round(faw/200);
-		console.log("maxRows");
-		console.log($scope.maxRows);
-	};
+//	$scope.axisSizeSetup = function(){
+//		if(document.getElementById("topaxis")){
+//			var taw = document.getElementById("topaxis").offsetWidth - 66;
+//			$scope.maxCols = Math.round(taw/200);
+//		}
+//		
+//		if(document.getElementById("leftaxis")){
+//			var lah = document.getElementById("leftaxis").offsetWidth - 66;
+//			$scope.maxRows = Math.round(lah/175);
+//		}
+//		
+//		if(document.getElementById("filterpanel")){
+//			var faw = document.getElementById("filterpanel").offsetWidth - 80;
+//			$scope.numVisibleFilters = Math.round(faw/200);
+//		}
+//
+//	};
 	
 	$scope.loadAnalyticalDrivers= function(){
 		   console.log(sbiModule_docInfo);
