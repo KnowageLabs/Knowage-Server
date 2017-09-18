@@ -38,5 +38,7 @@ angular.module('olap.directives', [
                                    'drill_up_command_directive',
                                    'olap_designer',
                                    'olap_designer_toolbar',
-                                   'filters_parameters_list'
+                                   'filters_parameters_list',
+                                   'knScrollPagination'
+                                  
                                    ]);
