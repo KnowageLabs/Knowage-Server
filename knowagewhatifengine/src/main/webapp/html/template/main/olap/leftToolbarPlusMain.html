@@ -1,8 +1,8 @@
 <div class="central-panel" layout="row" >
-	<div id="leftaxis" class='knowage-blue dimension-left-toolbar' layout="column" ng-drop="true" ng-drop-success="dropLeft($data,$event)">
+	<div id="leftaxis" leftaxis class='knowage-blue dimension-left-toolbar' layout="column" ng-drop="true" ng-drop-success="dropLeft($data,$event)">
 		
 		<div class="left-axis-shift">
-			<md-button style="right:10px" class="md-icon-button" aria-label="Favorite" ng-click="dimensionShift('down')" ng-show="leftSliderNeeded">
+			<md-button style="right:10px" class="md-icon-button" aria-label="Favorite" ng-click="dimensionShift('down')" ng-if="leftSliderNeeded">
 				<md-icon class="icon-color-white" md-font-icon="fa fa-arrow-circle-o-up fa-2x" ></md-icon>
 			</md-button>
 		</div>	
@@ -44,23 +44,45 @@
 					   class="md-icon-button" 
 					   aria-label="Favorite" 
 					   ng-click="dimensionShift('up')" 
-					   ng-show="leftSliderNeeded">
+					   ng-if="leftSliderNeeded">
 				<md-icon class="icon-color-white" md-font-icon="fa fa-arrow-circle-o-down fa-2x"></md-icon>
 			</md-button>
 		</div>
 	</div>
 	
-	<div style="width: calc(100% - 32px);color:#3b678c" layout="column";>
-	
-		<md-content ng-if = "modelConfig.pagination" scrolly style="height:100%;width:100%" >
-	
-	 		<div   ng-style="{'height':modelConfig.rowCount*100+tableHeight-120,'width':modelConfig.columnCount*100+tableWeight-150}" ></div>	<!-- background-color: #3b678c; -->
-	 	</md-content>
-	 	<md-content flex ng-if = "!modelConfig.pagination">
-	 		<div ng-bind-html="table" compile-template class="table-alignment" >
+	<div style="width: calc(100% - 32px);color:#3b678c" layout="row";>
+		<md-content  flex layout="column" ng-bind-html="table" compile-template flex>
+			
+			
 	 		
-	 		</div>
 	 	</md-content>
-	 		<div ng-if = "modelConfig.pagination" ng-bind-html="table" compile-template class="table-alignment" >
-	</div>	
+		
+		<div ng-if = "modelConfig.pagination" layout="column" style="background-color:rgba(245,245,245,1)">
+			<div  resize height='tableHeaderHeight' width=1 ></div>
+			
+			<table-scroller 
+			
+		cell-height=30
+		cell-width=1
+		column-count=1
+		row-count='modelConfig.rowCount'
+		row-no='modelConfig.startRow'
+		layout='column'
+		flex
+		
+	></table-scroller>
+		
+		</div>
+	
+<!-- 		<md-content ng-if = "modelConfig.pagination" scrolly  > -->
+	
+<!-- 	 		<div   ng-style="{'height':modelConfig.rowCount*100+tableHeight-120,'width':modelConfig.columnCount*100+tableWeight-150}" ></div>	background-color: #3b678c; -->
+<!-- 	 	</md-content> -->
+<!-- 	 	<md-content flex ng-if = "!modelConfig.pagination"> -->
+<!-- 	 		<div ng-bind-html="table" compile-template flex " > -->
+	 		
+<!-- 	 		</div> -->
+<!-- 	 	</md-content> -->
+	 		
+	
 </div>
