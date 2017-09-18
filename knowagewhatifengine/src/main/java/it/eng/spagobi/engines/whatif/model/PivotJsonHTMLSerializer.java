@@ -102,8 +102,8 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 	@Override
 	public void serialize(PivotObjectForRendering pivotobject, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
 
-		Monitor totalTime = MonitorFactory.start("WhatIfEngine/it.eng.spagobi.engines.whatif.model.PivotJsonHTMLSerializer.serialize.increaseVersion.totalTime");
-
+		Monitor totalTime = MonitorFactory
+				.start("WhatIfEngine/it.eng.spagobi.engines.whatif.model.PivotJsonHTMLSerializer.serialize.increaseVersion.totalTime");
 
 		PivotModel value = pivotobject.getModel();
 		ModelConfig modelConfig = pivotobject.getConfig();
@@ -202,8 +202,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 		// /suppress empty rows/columns
 		Boolean suppressEmpty = modelConfig.getSuppressEmpty();
 		/*
-		 * NonEmpty transformNonEmpty = value.getTransform(NonEmpty.class);
-		 * transformNonEmpty.setNonEmpty(suppressEmpty);
+		 * NonEmpty transformNonEmpty = value.getTransform(NonEmpty.class); transformNonEmpty.setNonEmpty(suppressEmpty);
 		 */
 
 		model.setNonEmpty(suppressEmpty);
@@ -218,20 +217,20 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 
 		jgen.writeStartObject();
 
-		if(modelConfig.isPagination()){
+		if (modelConfig.isPagination()) {
 			doPagination(false, modelConfig, model, callback, writer, renderer, jgen, table);
-		}else{
+		} else {
 			int axisLength = model.getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal()).getPositionCount();
-
 
 			writer.getBuffer().setLength(0);
 			model.removeSubset();
-			//model.setSubset(0, modelConfig.getStartColumn(), modelConfig.getRowsSet(), modelConfig.getColumnSet());
+			// model.setSubset(0, modelConfig.getStartColumn(), modelConfig.getRowsSet(), modelConfig.getColumnSet());
 			callback.addProperty(COLUMN_OFFSET, 0);
 			callback.addProperty(AXIS_LENGTH, axisLength);
 			callback.addProperty(ROW_OFFSET, 0);
-			callback.addProperty(SUBSET_AXIS_LENGTH,axisLength );
-			Monitor renderTime = MonitorFactory.start("WhatIfEngine/it.eng.spagobi.engines.whatif.model.PivotJsonHTMLSerializer.serialize.increaseVersion.renderTime");
+			callback.addProperty(SUBSET_AXIS_LENGTH, axisLength);
+			Monitor renderTime = MonitorFactory
+					.start("WhatIfEngine/it.eng.spagobi.engines.whatif.model.PivotJsonHTMLSerializer.serialize.increaseVersion.renderTime");
 			renderer.render(model, callback);
 			writer.flush();
 			writer.close();
@@ -239,7 +238,6 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 			jgen.writeStringField(TABLE, table);
 			renderTime.stop();
 		}
-
 
 		/*******************************************************/
 
@@ -257,7 +255,6 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 		// model.addCalucatedMembers(true);
 		// List<String> tables = new ArrayList<String>();
 
-
 		CellSet cellSet = value.getCellSet();
 
 		List<CellSetAxis> axis = cellSet.getAxes();
@@ -271,12 +268,11 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 
 			otherHDimensions.removeAll(axisDimensions);
 
-
 			// serializeTables("tables", jgen, tables);
 
 			serializeAxis(ROWS, jgen, axis, Axis.ROWS, connection, modelConfig);
 			serializeAxis(COLUMNS, jgen, axis, Axis.COLUMNS, connection, modelConfig);
-//			List<Hierarchy> hierarchy = value.getCube().getHierarchies();
+			// List<Hierarchy> hierarchy = value.getCube().getHierarchies();
 			// serializeFilters(FILTERS, jgen, hierarchy, (PivotModelImpl)
 			// value);
 			serializeDimensions(jgen, otherHDimensions, FILTERS_AXIS_POS, FILTERS, true, (PivotModelImpl) value, connection, modelConfig);
@@ -378,8 +374,8 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 		jgen.writeEndArray();
 	}
 
-	private void serializeFunctions(String field, JsonGenerator jgen, SpagoBIPivotModel model, ModelConfig modelConfig) throws JsonProcessingException,
-			IOException, JSONException, JAXBException {
+	private void serializeFunctions(String field, JsonGenerator jgen, SpagoBIPivotModel model, ModelConfig modelConfig)
+			throws JsonProcessingException, IOException, JSONException, JAXBException {
 
 		MDXFormulaHandler.setModel(model);
 		MDXFormulaHandler.setModelConfig(modelConfig);
@@ -404,44 +400,35 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 		}
 
 		jgen.writeEndArray();
-//		String name = MDXFormula.class.getDeclaredFields()[0].getName();
+		// String name = MDXFormula.class.getDeclaredFields()[0].getName();
 		// System.out.println(name);
 	}
 
-/*	private void serializeTables(String field, JsonGenerator jgen, Map<Integer, String> tables) throws JsonGenerationException, IOException {
-		jgen.writeArrayFieldStart(field);
-
-		jgen.writeObject(tables);
-
-		jgen.writeEndArray();
-	}*/
+	/*
+	 * private void serializeTables(String field, JsonGenerator jgen, Map<Integer, String> tables) throws JsonGenerationException, IOException {
+	 * jgen.writeArrayFieldStart(field);
+	 * 
+	 * jgen.writeObject(tables);
+	 * 
+	 * jgen.writeEndArray(); }
+	 */
 
 	/*
-	 * private void serializeFilters(String field, JsonGenerator jgen,
-	 * List<Hierarchy> hierarchies, PivotModelImpl model, OlapConnection
-	 * connection, ModelConfig modelConfig) throws JSONException,
-	 * JsonGenerationException, IOException {
+	 * private void serializeFilters(String field, JsonGenerator jgen, List<Hierarchy> hierarchies, PivotModelImpl model, OlapConnection connection, ModelConfig
+	 * modelConfig) throws JSONException, JsonGenerationException, IOException {
 	 *
 	 * QueryAdapter qa = new QueryAdapter(model); qa.initialize();
 	 *
 	 * ChangeSlicer ph = new ChangeSlicerImpl(qa, connection);
 	 *
-	 * jgen.writeArrayFieldStart(field); if (hierarchies != null) { for (int i =
-	 * 0; i < hierarchies.size(); i++) { Hierarchy hierarchy =
-	 * hierarchies.get(i); Map<String, Object> hierarchyObject = new
-	 * HashMap<String, Object>(); hierarchyObject.put(NAME,
-	 * hierarchy.getName()); hierarchyObject.put(UNIQUE_NAME,
-	 * hierarchy.getUniqueName()); hierarchyObject.put(POSITION, "" + i);
-	 * hierarchyObject.put(AXIS, "" + FILTERS_AXIS_POS);
+	 * jgen.writeArrayFieldStart(field); if (hierarchies != null) { for (int i = 0; i < hierarchies.size(); i++) { Hierarchy hierarchy = hierarchies.get(i);
+	 * Map<String, Object> hierarchyObject = new HashMap<String, Object>(); hierarchyObject.put(NAME, hierarchy.getName()); hierarchyObject.put(UNIQUE_NAME,
+	 * hierarchy.getUniqueName()); hierarchyObject.put(POSITION, "" + i); hierarchyObject.put(AXIS, "" + FILTERS_AXIS_POS);
 	 *
-	 * List<Member> slicers = ph.getSlicer(hierarchy); if (slicers != null &&
-	 * slicers.size() > 0) { List<Map<String, String>> slicerMap = new
-	 * ArrayList<Map<String, String>>(); for (int j = 0; j < slicers.size();
-	 * j++) { Map<String, String> slicer = new HashMap<String, String>();
-	 * slicer.put(UNIQUE_NAME, slicers.get(j).getUniqueName()); slicer.put(NAME,
-	 * slicers.get(j).getName()); slicerMap.add(slicer); }
-	 * hierarchyObject.put(SLICERS, slicerMap); }
-	 * jgen.writeObject(hierarchyObject);
+	 * List<Member> slicers = ph.getSlicer(hierarchy); if (slicers != null && slicers.size() > 0) { List<Map<String, String>> slicerMap = new
+	 * ArrayList<Map<String, String>>(); for (int j = 0; j < slicers.size(); j++) { Map<String, String> slicer = new HashMap<String, String>();
+	 * slicer.put(UNIQUE_NAME, slicers.get(j).getUniqueName()); slicer.put(NAME, slicers.get(j).getName()); slicerMap.add(slicer); }
+	 * hierarchyObject.put(SLICERS, slicerMap); } jgen.writeObject(hierarchyObject);
 	 *
 	 * } } jgen.writeEndArray(); }
 	 */
@@ -460,46 +447,45 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 		return StringUtilities.fromStringToHTML(formattedQuery);
 	}
 
-	private void doPagination(boolean condition, ModelConfig modelConfig, SpagoBIPivotModel model, WhatIfHTMLRendereCallback callback, StringWriter writer, WhatIfHTMLRenderer renderer, JsonGenerator jgen, String table){
+	private void doPagination(boolean condition, ModelConfig modelConfig, SpagoBIPivotModel model, WhatIfHTMLRendereCallback callback, StringWriter writer,
+			WhatIfHTMLRenderer renderer, JsonGenerator jgen, String table) {
 		modelConfig.setRowCount(model.getCellSet().getAxes().get(Axis.ROWS.axisOrdinal()).getPositionCount());
 		modelConfig.setColumnCount(model.getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal()).getPositionCount());
 
 		Map<Integer, String> tables = new HashMap<Integer, String>();
 
-//		SimpleDateFormat format = new SimpleDateFormat("hh:mm:ss.SSS");
+		// SimpleDateFormat format = new SimpleDateFormat("hh:mm:ss.SSS");
 
 		int axisLength = model.getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal()).getPositionCount();
 
 		// System.out.println(time);
 		int pages = Math.round(PAGES_COUNT / 2);
 
-		//used for translation from cellset of subset mdx to cellset of plain mdx
+		// used for translation from cellset of subset mdx to cellset of plain mdx
 		callback.addProperty(COLUMN_OFFSET, modelConfig.getStartColumn());
 		callback.addProperty(AXIS_LENGTH, axisLength);
 
-
-		int min = modelConfig.getStartRow()-pages;
-		int max = modelConfig.getStartRow() +3*pages;
+		int min = modelConfig.getStartRow() - pages;
+		int max = modelConfig.getStartRow() + 3 * pages;
 		modelConfig.setPageSize(pages);
 
-
-		if(pages==0){
-			pages =1;
+		if (pages == 0) {
+			pages = 1;
 		}
-		if(max==0){
-			min =0;
+		if (max == 0) {
+			min = 0;
 			max = pages;
 		}
-		if(min<0){
-			min=0;
+		if (min < 0) {
+			min = 0;
 		}
-		for (int i = min; i <= max; i++) {
+		for (int i = min; i <= max && i < modelConfig.getRowCount(); i++) {
 
 			writer.getBuffer().setLength(0);
 			model.removeSubset();
-			model.setSubset(i, modelConfig.getStartColumn(), modelConfig.getRowsSet(), modelConfig.getColumnSet());
+			model.setSubset(i, 0, modelConfig.getRowsSet(), modelConfig.getColumnCount());
 
-			//used for translation from cellset of subset mdx to cellset of plain mdx
+			// used for translation from cellset of subset mdx to cellset of plain mdx
 			callback.addProperty(ROW_OFFSET, modelConfig.getStartRow() + i);
 			callback.addProperty(SUBSET_AXIS_LENGTH, model.getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal()).getPositionCount());
 
@@ -511,7 +497,7 @@ public class PivotJsonHTMLSerializer extends JsonSerializer<PivotObjectForRender
 					writer.flush();
 					writer.close();
 					table = writer.getBuffer().toString();
-					tables.put( i, table);
+					tables.put(i, table);
 
 				} catch (IOException e) {
 					logger.error("Error serializing the table", e);
