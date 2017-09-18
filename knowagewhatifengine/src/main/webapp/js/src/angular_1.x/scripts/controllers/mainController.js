@@ -24,12 +24,12 @@ olapMod.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.setDefaultTheme('knowage');
  }]);
 
-olapMod.controller("olapController", [ "$scope", "$timeout", "$window",
+olapMod.controller("olapController", [ "$scope", '$rootScope',"$timeout", "$window",
 		"$mdDialog", "$http", '$sce', '$mdToast', '$mdSidenav', 'sbiModule_config',
 		'sbiModule_messaging', 'sbiModule_restServices', 'sbiModule_translate','sbiModule_docInfo',
 		'olapSharedSettings' ,olapFunction ]);
 
-function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
+function olapFunction($scope, $rootScope,$timeout, $window, $mdDialog, $http, $sce,
 		$mdToast, $mdSidenav, sbiModule_config, sbiModule_messaging, sbiModule_restServices,
 		sbiModule_translate,sbiModule_docInfo, olapSharedSettings) {
 
@@ -61,12 +61,12 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 	$scope.searchSucessText="";
 	$scope.showSearchInput = false;
 
-	$scope.rows;
+	$scope.rows=[];
 	$scope.maxRows = 3;
 	$scope.topSliderNeeded;
 	$scope.topStart = 0;
 	$scope.tableSubsets ={};
-	$scope.columns;
+	$scope.columns=[];
 	$scope.maxCols = 5;
 	$scope.leftSliderNeeded;
 	$scope.leftStart = 0;
@@ -109,6 +109,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 	$scope.shiftNeeded;
 
 	$scope.modelConfig;
+	$scope.modelConfigBuffer = [];
 	$scope.filterDialogToolbarName;
 	// flag for showing olap designer specific stuff
 	$scope.olapMode = false;
@@ -151,23 +152,39 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 	$scope.max =0;
 
 	$scope.handleResponse = function(response) {
-		$scope.buffer = {};
 		
-		$scope.tableSubsets=response.data.tables;
-		for(var x in $scope.tableSubsets){
-			$scope.buffer[x]=$scope.tableSubsets[x];
-			var intx = parseInt(x);
-			if(intx>$scope.max){
-				$scope.max = intx;
+		
+		
+		
+		source = response.data;
+		
+		if($scope.modelConfig&&$scope.modelConfig.pagination){
+			$scope.tableSubsets=source.tables;
+			$scope.tableSubsets=null;
+			$scope.buffer = {};
+			
+			$scope.tableSubsets=response.data.tables;
+			for(var x in $scope.tableSubsets){
+				$scope.buffer[x]=$scope.tableSubsets[x];
+				var intx = parseInt(x);
+				if(intx>$scope.max){
+					$scope.max = intx;
+				}
 			}
+			var startRow = $scope.modelConfig.startRow;
+			if(startRow!=undefined&&!isNaN(startRow)){
+				response.data.modelConfig.startRow  = startRow;
+			}
+			$scope.table = $sce.trustAsHtml($scope.buffer[$scope.modelConfig.startRow]);
+		}else{
+			$scope.table = $sce.trustAsHtml(source.table);
 		}
 		
-		
-		$scope.tableSubsets=null;
-		source = response.data;
 		$scope.modelConfig = source.modelConfig;
-		$scope.table = $sce.trustAsHtml(source.table);
-		$scope.tableSubsets=source.tables;
+		
+		//$scope.table = {};
+		
+		//angular.copy($sce.trustAsHtml($scope.buffer[$scope.modelConfig.startRow]),$scope.table);
 		
 		$scope.columns = source.columns;
 		$scope.rows = source.rows;
@@ -220,8 +237,12 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 		}
 	}
 	
+	
+	
 	$scope.sendModelConfig = function(modelConfig,noloading) {
 		console.log("Sending model config" + " "+ modelConfig);
+		
+		
 		if($scope.tableSubsets){
 			$scope.tableSubsets.length = 0;
 		}
@@ -234,7 +255,7 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 					
 					function(response) {
 						
-						$scope.table = $sce.trustAsHtml(response.data.table);
+						
 						
 						if(!$scope.buffer){
 							$scope.buffer ={};
@@ -248,9 +269,32 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 								$scope.max = intx;
 							}
 						}
+						if($scope.modelConfig&&$scope.modelConfig.pagination){
+							var startRow = $scope.modelConfig.startRow;
+							if(startRow!=undefined&&!isNaN(startRow)){
+								response.data.modelConfig.startRow  = startRow;
+							}
+						}
 						
-						$scope.modelConfig = response.data.modelConfig;
 						
+						angular.copy(response.data.modelConfig,$scope.modelConfig)
+						if($scope.table){
+							angular.copy($sce.trustAsHtml($scope.buffer[$scope.modelConfig.startRow]),$scope.table);
+						}else{
+							$scope.table = $sce.trustAsHtml($scope.buffer[$scope.modelConfig.startRow]);
+						}
+						
+						
+						//$scope.table = $sce.trustAsHtml(response.data.table);
+//						if(!angular.equals(modelConfigTest,$scope.modelConfig)){
+//							$scope.ready = true;
+//							$scope.sendModelConfig($scope.modelConfig,true)
+//							return;
+//							
+//						}else{
+//							angular.copy(modelConfigTest,$scope.modelConfig );
+//						}
+						//$scope.modelConfigBuffer.length = 0;
 						
 						$scope.ready = true;
 						$scope.isScrolling = false;
@@ -264,7 +308,53 @@ function olapFunction($scope, $timeout, $window, $mdDialog, $http, $sce,
 		}
 			
 	}
-
+	$scope.$watch('modelConfig.startRow',function(newValue,oldValue){
+		
+		if(newValue!=undefined&&!isNaN(newValue)) {
+			
+			if($scope.buffer!=null&&
+    		   		$scope.buffer[$scope.modelConfig.startRow]!=undefined&&
+    		   		$scope.buffer[$scope.modelConfig.startRow]!=null){
+    		   		var obj ={};
+    		   		obj.text = 2;
+    		   		if($scope.table){
+						angular.copy($sce.trustAsHtml($scope.buffer[$scope.modelConfig.startRow]),$scope.table);
+					}else{
+						$scope.table = $sce.trustAsHtml($scope.buffer[$scope.modelConfig.startRow]);
+					}
+    		   	}else{
+    		   		$scope.sendModelConfig($scope.modelConfig,false);
+    		   		$rootScope.$broadcast("loader_show");
+    		   	}    
+			
+			if($scope.modelConfig.rowCount>$scope.max+1 && $scope.max<$scope.modelConfig.startRow+2*$scope.modelConfig.pageSize &&
+        			$scope.modelConfig.startRow+2*$scope.modelConfig.pageSize<$scope.modelConfig.rowCount){
+		   		$scope.sendModelConfig($scope.modelConfig, true);
+        	}
+		}
+		
+		
+	},true)	
+	
+	$scope.$watch('modelConfig.rowsSet',function(newValue,oldValue){
+		if(newValue!=undefined&&!isNaN(newValue)&&newValue!=0) {
+			
+			
+		   		$scope.sendModelConfig($scope.modelConfig, $scope.modelConfig.rowsSet===50);
+        	
+		}
+		
+		
+	},true)	
+		
+		$scope.$watch('modelConfigBuffer',function(newValue,oldValue){
+			
+				if($scope.modelConfigBuffer.length>0){
+					$scope.sendModelConfig($scope.modelConfigBuffer[0],true);
+				}
+				
+			
+	},true);
 	$scope.startFrom = function(start) {
 		if ($scope.ready) {
 			$scope.ready = false;
