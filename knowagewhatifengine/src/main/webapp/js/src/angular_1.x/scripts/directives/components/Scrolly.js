@@ -23,10 +23,8 @@ angular.module('scrolly_directive',['ngSanitize'])
 	        link: function (scope, element, attrs) {
 	        	var ready = false;
 	            var container = element[0];
-	            
-	            var startRow = null;
-	            var startColumn = null;
-	            
+	            scope.tableHeight = container.offsetHeight;
+	            scope.tableWeight = container.offsetWidth;
 	            
 	            function Table(className){
 	            	
@@ -90,11 +88,8 @@ angular.module('scrolly_directive',['ngSanitize'])
             			if(this.getHtmlTableBody()){
             				var bodyDataElements = this.getHtmlTableBody().getElementsByTagName("td");
             			}
-            			
-            			
-                    	
+
             			return bodyDataElements;
-            	
             		};
             		
             		this.getHtmlTableBodyDataColumnElements = function(columnNumber){
@@ -169,26 +164,12 @@ angular.module('scrolly_directive',['ngSanitize'])
 	            				this.rectObject.left+this.margin.left>compareRectObject.left||
 	            				this.rectObject.bottom-this.margin.bottom<compareRectObject.bottom||
 	            				this.rectObject.right-this.margin.right<compareRectObject.right
-	            			
 	            				){
 	            			return true;
 	            		}
-	            		
 	            		return false;
 	            	}
-	            	
-	            	
 	            }
-	            
-
-	            scope.tableHeight = container.offsetHeight;
-	            scope.tableWeight = container.offsetWidth;
-	            
-	            scope.scrollTo = function(posX,posY) {
-	            	container.scrollTop = posX*100;
-	            	container.scrollLeft = posY*100;
-	        	 
-	        	};
 	        	
 	        	var getInBoundsTableRowsColumsSet = function (table,bounds){
 	        		
@@ -256,11 +237,8 @@ angular.module('scrolly_directive',['ngSanitize'])
 							}
 						}
 	        		}
-	        		
 	        	}
 	        	  
-	        	
-	        	
 	        	scope.resize = function(){
 	        		
 	        		var SCROLL_WIDTH = 15;
@@ -293,19 +271,11 @@ angular.module('scrolly_directive',['ngSanitize'])
 		        			
 		        			
 		        		}
-	        			
-	        			
-	        			
+	
 	        		}
 	        		
-	        		
-	        		
-	        		
         			isReadyToResize = setNewModelConfigValues(scope.modelConfig,newRowsColumnsSet);
-	        		
 	        		sendNewTableSize(scope.modelConfig,isReadyToResize);
-	        		
-
 	        	}
 	           
 	        	scope.interval = $interval(
@@ -317,29 +287,17 @@ angular.module('scrolly_directive',['ngSanitize'])
 	        				if(scope.ready){
 	        					scope.resize();
 	        				}
-	        				
-
-	        			
 	        			},100);
 	        	
-	        	
-	        	
-	               
 	        	scope.scroll = function () {
-	        		
-	        		
-	                
-	                
-	                startRow = Math.round((container.scrollTop)/100);
-	                startColumn =  Math.round(container.scrollLeft/100);
-	                
+
+	                var startRow = Math.round((container.scrollTop)/100);
+	                var startColumn =  Math.round(container.scrollLeft/100);
 	                
 	                if(scope.modelConfig){
 	                	
 	                	if(scope.modelConfig.startRow!=startRow){
 	                		
-	                		
-	           
 	            		   scope.modelConfig.startRow = startRow;
 	            		   scope.showLoadingMask = false;
 	           	    	
@@ -349,13 +307,9 @@ angular.module('scrolly_directive',['ngSanitize'])
 	            		   		var obj ={};
 	            		   		obj.text = 2;
 	            		   		angular.copy($sce.trustAsHtml(scope.buffer[scope.modelConfig.startRow]),scope.table);
-	            		   		
-	            		   		
-	            		   		
 	            		   	}else{
 	            		   		scope.sendModelConfig(scope.modelConfig);
-	            		   	}
-	           	    
+	            		   	}           	    
 	                	}
 	                	
 	                	if(scope.modelConfig.startColumn!=startColumn){
@@ -363,7 +317,6 @@ angular.module('scrolly_directive',['ngSanitize'])
 	                		scope.modelConfig.startColumn = startColumn;
 	                		scope.showLoadingMask = false;
 	                		scope.sendModelConfig(scope.modelConfig);
-	           	    
 	                	}
 	   
 	                	if(scope.modelConfig.rowCount>scope.max+1 && scope.max<scope.modelConfig.startRow+2*scope.modelConfig.pageSize &&
@@ -375,11 +328,7 @@ angular.module('scrolly_directive',['ngSanitize'])
 	                startRow = null;
 	                startColumn =null;
 	               
-	            }
-	                
-	          
-	        	
-	        	
+	            }	
 	        }
 	    };
 	}]);
