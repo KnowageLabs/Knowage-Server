@@ -1,1 +1,0 @@
-These files are used to automatize some repetitive activities often performed during development.
