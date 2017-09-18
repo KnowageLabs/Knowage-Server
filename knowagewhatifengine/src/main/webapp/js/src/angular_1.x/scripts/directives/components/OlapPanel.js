@@ -32,7 +32,7 @@ angular
 				});
 
 var downlf;
-function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
+function olapPanelController($scope, $rootScope,$timeout, $window, $mdDialog, $http, $sce,
 		sbiModule_messaging, sbiModule_restServices, sbiModule_translate,
 		toastr, $cookies,$localStorage, sbiModule_docInfo, sbiModule_config) {
 
@@ -59,7 +59,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 			memberUniqueName : uniqueName,
 			positionUniqueName : positionUniqueName
 		});
-
+		
 		var encoded = encodeURI('/member/drilldown/' + axis + '/' + position
 				+ '/' + member + '/' + '?SBI_EXECUTION_ID=' + JSsbiExecutionID);
 		sbiModule_restServices.promisePost("1.0", encoded, data).then(
@@ -176,7 +176,7 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 	}
 
 	$scope.clearLevels = function() {
-		$scope.dtAssociatedLevels = [];
+		$scope.dtAssociatedLevels.length = 0;
 	}
 
 	$scope.enableDisableDrillThrough = function(){
@@ -185,19 +185,19 @@ function olapPanelController($scope, $timeout, $window, $mdDialog, $http, $sce,
 	}
 	
 	$scope.drillThrough = function(ordinal){
+		if(ordinal){
+			$scope.usedOrdinal = ordinal;
+		}
+		
 		
 if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
 	
 	
-	console.log(ordinal)
-	$scope.usedOrdinal = "";
-	$scope.usedOrdinal = ordinal;
-	console.log($scope.usedOrdinal)
-	
-	console.log("from table");
+
 			
 			if($scope.showWarningDT){
 				sbiModule_messaging.showWarningMessage(sbiModule_translate.load('sbi.olap.dt.warning'), 'Warning');
+				
 			}
 			
 			var toSend = {};
@@ -212,16 +212,19 @@ if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
 								function(response) {
 									$scope.dtData = [];
 									$scope.dtColumns = [];
+									
 									$scope.dtData = angular.copy(response.data);
 									for ( var key in response.data[0]) {
 
 										$scope.dtColumns.push(key);
 									}
+								
 									$scope.formateddtColumns = $scope
 											.formatColumns($scope.dtColumns);
 									$scope.getCollections();
+									
 									$scope.openDtDialog();
-
+									
 								},
 								function(response) {
 									sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.dt.error'), 'Error');
@@ -393,7 +396,7 @@ if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
 
 	$scope.switchPosition = function(data) {
 
-		$scope.moveHierarchies(data.axis, data.uniqueName,
+		$scope.moveHierarchies(data.axis, data.selectedHierarchyUniqueName,
 				data.positionInAxis + 1, 1, data);
 		if (data.axis == 0) {
 			var pom = $scope.columns[data.positionInAxis];
