@@ -1,6 +1,0 @@
-Manifest-Version: 1.0
-
-Name: knowageaccessibilityengine.war
-Implementation-Title: knowageaccessibilityengine
-Implementation-Version: 6.0.0
-
