@@ -57,11 +57,11 @@
 	  <filter-class>org.jasig.cas.client.authentication.AuthenticationFilter</filter-class>
 	  <init-param>
 	    <param-name>casServerLoginUrl</param-name>
-	    <param-value>https://spagobitest:48081/cas/login</param-value>
+	    <param-value>https://161.27.213.105:48081/cas/login</param-value>
 	  </init-param>
 	  <init-param>
 	    <param-name>serverName</param-name>
-	    <param-value>spagobitest:48081</param-value>
+	    <param-value>161.27.213.105:48081</param-value>
 	  </init-param>    
 	</filter>
 	
@@ -70,11 +70,11 @@
 	  <filter-class>org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter</filter-class>
 	  <init-param>
 	    <param-name>casServerUrlPrefix</param-name>
-	    <param-value>https://spagobitest:48081/cas</param-value>
+	    <param-value>https://161.27.213.105:48081/cas</param-value>
 	  </init-param>
 	  <init-param>
 	    <param-name>serverName</param-name>
-	    <param-value>https://spagobitest:48081</param-value>
+	    <param-value>https://161.27.213.105:48081</param-value>
 	  </init-param>
 	  <init-param>
 	    <param-name>proxyReceptorUrl</param-name>
@@ -82,7 +82,7 @@
 	  </init-param> 
 	  <init-param>
 		<param-name>proxyCallbackUrl</param-name>
-		<param-value>https://spagobitest:48081/knowageqbeengine/proxyCallback</param-value>
+		<param-value>https://161.27.213.105:48081/knowageqbeengine/proxyCallback</param-value>
 	  </init-param>  
 	</filter>
 	
