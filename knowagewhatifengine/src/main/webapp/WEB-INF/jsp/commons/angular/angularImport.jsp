@@ -59,4 +59,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/js/lib/angular/angular-list/angular-list.css">
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-list/AngularList.js"></script>	
 	
+	<!-- scroll pagination -->
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/kn-scroll-pagination/knScrollPagination.js"></script>	
+	
+	
 	<%@include file="/WEB-INF/jsp/commons/angular/sbiModule.jspf"%>
