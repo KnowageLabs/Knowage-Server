@@ -28,7 +28,7 @@
 	table-layout: fixed;
 	color: rgba(0,0,0,0.54);
 	font-size:12px;
-	padding:5px;
+/* 	padding:5px; */
 }
 
 .pivot-table thead{
@@ -87,7 +87,7 @@
  border: 2px solid #ff0080 !important;
  color: rgba(0,0,0,0.54);
  font-size:12px;
- padding:5px;
+ 
  font-family: Verdana;
  background: #f5f5f5;
  position: relative !important;
