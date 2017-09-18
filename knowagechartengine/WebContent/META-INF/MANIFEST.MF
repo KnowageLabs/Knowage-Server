@@ -1,6 +1,0 @@
-Manifest-Version: 1.0
-
-Name: KnowageChartEngine.war
-Implementation-Title: KnowageChartEngine
-Implementation-Version: 6.0.0
-
