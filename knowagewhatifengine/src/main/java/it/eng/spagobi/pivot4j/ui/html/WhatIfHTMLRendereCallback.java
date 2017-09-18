@@ -42,6 +42,7 @@ import org.pivot4j.ui.CellTypes;
 import org.pivot4j.ui.collector.NonInternalPropertyCollector;
 import org.pivot4j.ui.command.DrillDownCommand;
 import org.pivot4j.ui.command.UICommand;
+import org.pivot4j.ui.command.UICommandParameters;
 import org.pivot4j.ui.html.HtmlRenderCallback;
 import org.pivot4j.ui.table.TableRenderContext;
 import org.pivot4j.util.CssWriter;
@@ -57,11 +58,11 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 	private boolean showProperties = false;
-	private HashMap<Member, Integer> memberPositions;
+	private final HashMap<Member, Integer> memberPositions;
 	private boolean measureOnRows;
 	private Map<Integer, String> positionMeasureMap;
 	private boolean initialized = false;
-	private Map<String, Object> properties;
+	private final Map<String, Object> properties;
 
 	public WhatIfHTMLRendereCallback(Writer writer) {
 		super(writer);
@@ -80,8 +81,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 	}
 
 	/**
-	 * Translate the ordinal from the system of subsetted mdx to the system of
-	 * the plain mdx cell set
+	 * Translate the ordinal from the system of subsetted mdx to the system of the plain mdx cell set
 	 *
 	 * @param ordinal
 	 * @return
@@ -236,6 +236,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 				if (commands != null && !commands.isEmpty()) {
 					for (UICommand<?> command : commands) {
 						String cmd = command.getName();
+						UICommandParameters commandParams = command.createParameters(context);
 
 						int colIdx = context.getColumnIndex();
 						int rowIdx = context.getRowIndex();
@@ -263,17 +264,13 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 							if ((cmd.equalsIgnoreCase("collapsePosition") || cmd.equalsIgnoreCase("drillUp") || cmd.equalsIgnoreCase("collapseMember"))
 									&& !drillMode.equals(DrillDownCommand.MODE_REPLACE)) {
 								/*
-								 * attributes.put("src", "../img/minus.gif");
-								 * attributes.put("ng-click", "drillUp(" + axis
-								 * + " , " + pos + " , " + memb + ",'" +
-								 * uniqueName + "','" + positionUniqueName +
-								 * " '); $event.stopPropagation();");
-								 * startElement("img", attributes);
+								 * attributes.put("src", "../img/minus.gif"); attributes.put("ng-click", "drillUp(" + axis + " , " + pos + " , " + memb + ",'" +
+								 * uniqueName + "','" + positionUniqueName + " '); $event.stopPropagation();"); startElement("img", attributes);
 								 * endElement("img");
 								 */
 								Map<String, String> drillUpAttributes = new TreeMap<String, String>();
-								drillUpAttributes.put("axis", String.valueOf(axis));
-								drillUpAttributes.put("position", String.valueOf(pos));
+								drillUpAttributes.put("axis", String.valueOf(commandParams.getAxisOrdinal()));
+								drillUpAttributes.put("position", String.valueOf(commandParams.getMemberOrdinal()));
 								drillUpAttributes.put("memberOrdinal", String.valueOf(memb));
 								drillUpAttributes.put("uniqueName", uniqueName);
 								drillUpAttributes.put("positionUniqueName", positionUniqueName);
@@ -283,18 +280,14 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 							} else if ((cmd.equalsIgnoreCase("expandPosition") || cmd.equalsIgnoreCase("drillDown") || cmd.equalsIgnoreCase("expandMember"))) {
 
 								/*
-								 * attributes.put("src", "../img/plus.gif");
-								 * attributes.put("ng-click", "drillDown(" +
-								 * axis + " , " + pos + " , " + memb + ",'" +
-								 * uniqueName + "','" + positionUniqueName +
-								 * "' ); $event.stopPropagation();");
+								 * attributes.put("src", "../img/plus.gif"); attributes.put("ng-click", "drillDown(" + axis + " , " + pos + " , " + memb + ",'"
+								 * + uniqueName + "','" + positionUniqueName + "' ); $event.stopPropagation();");
 								 *
-								 * startElement("img", attributes);
-								 * endElement("img");
+								 * startElement("img", attributes); endElement("img");
 								 */
 								Map<String, String> drillDownAttributes = new TreeMap<String, String>();
 								drillDownAttributes.put("axis", String.valueOf(axis));
-								drillDownAttributes.put("position", String.valueOf(pos));
+								drillDownAttributes.put("position", String.valueOf(commandParams.getMemberOrdinal()));
 								drillDownAttributes.put("memberOrdinal", String.valueOf(memb));
 								drillDownAttributes.put("uniqueName", uniqueName);
 								drillDownAttributes.put("positionUniqueName", positionUniqueName);
@@ -368,8 +361,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 				}
 				int memb = 0;
 				/*
-				 * if (context.getPosition() != null) { memb = rowIdx;//
-				 * context.getPosition().getOrdinal(); }
+				 * if (context.getPosition() != null) { memb = rowIdx;// context.getPosition().getOrdinal(); }
 				 */
 				if (context.getAxis() == Axis.COLUMNS) {
 					memb = rowIdx / 2;
