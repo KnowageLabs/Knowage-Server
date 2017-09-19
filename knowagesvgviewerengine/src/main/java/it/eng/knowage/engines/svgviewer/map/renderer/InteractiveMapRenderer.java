@@ -17,31 +17,6 @@
  */
 package it.eng.knowage.engines.svgviewer.map.renderer;
 
-import it.eng.knowage.engines.svgviewer.SvgViewerEngineConstants;
-import it.eng.knowage.engines.svgviewer.SvgViewerEngineException;
-import it.eng.knowage.engines.svgviewer.SvgViewerEngineRuntimeException;
-import it.eng.knowage.engines.svgviewer.datamart.provider.IDataMartProvider;
-import it.eng.knowage.engines.svgviewer.dataset.DataMart;
-import it.eng.knowage.engines.svgviewer.dataset.HierarchyMember;
-import it.eng.knowage.engines.svgviewer.map.provider.IMapProvider;
-import it.eng.knowage.engines.svgviewer.map.renderer.configurator.InteractiveMapRendererConfigurator;
-import it.eng.knowage.engines.svgviewer.map.utils.SVGMapLoader;
-import it.eng.knowage.engines.svgviewer.map.utils.SVGMapMerger;
-import it.eng.knowage.engines.svgviewer.map.utils.SVGMapSaver;
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IField;
-import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.engines.EngineConstants;
-import it.eng.spagobi.utilities.json.JSONUtils;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -73,6 +48,31 @@ import org.w3c.dom.svg.SVGElement;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
+
+import it.eng.knowage.engines.svgviewer.SvgViewerEngineConstants;
+import it.eng.knowage.engines.svgviewer.SvgViewerEngineException;
+import it.eng.knowage.engines.svgviewer.SvgViewerEngineRuntimeException;
+import it.eng.knowage.engines.svgviewer.datamart.provider.IDataMartProvider;
+import it.eng.knowage.engines.svgviewer.dataset.DataMart;
+import it.eng.knowage.engines.svgviewer.dataset.HierarchyMember;
+import it.eng.knowage.engines.svgviewer.map.provider.IMapProvider;
+import it.eng.knowage.engines.svgviewer.map.renderer.configurator.InteractiveMapRendererConfigurator;
+import it.eng.knowage.engines.svgviewer.map.utils.SVGMapLoader;
+import it.eng.knowage.engines.svgviewer.map.utils.SVGMapMerger;
+import it.eng.knowage.engines.svgviewer.map.utils.SVGMapSaver;
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.configuration.ConfigSingleton;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IField;
+import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.json.JSONUtils;
 
 public class InteractiveMapRenderer extends AbstractMapRenderer {
 
@@ -482,8 +482,16 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 						child = (SVGElement) childNode;
 						String childId = child.getId();
 						column_id = childId;
+						IRecord record = null;
 
-						IRecord record = dataStore.getRecordByID(column_id);
+						try {
+							record = dataStore.getRecordByID(column_id);
+						} catch (NullPointerException ne) {
+							logger.error("Searcing a record with the svg key [" + column_id
+									+ "], was found a field with [null] as value. Please, check join column value into the dataset for all records!");
+							continue;
+						}
+
 						if (record == null) {
 							logger.warn("No data available for feature [" + column_id + "]");
 							continue;
@@ -870,7 +878,8 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 							targetColor = col_kpi_array[trash_kpi_array.length - 2];
 						} else {
 							for (int j = 0; j < trash_kpi_array.length - 1; j++) {
-								if (kpyValue.doubleValue() >= trash_kpi_array[j].doubleValue() && kpyValue.doubleValue() < trash_kpi_array[j + 1].doubleValue()) {
+								if (kpyValue.doubleValue() >= trash_kpi_array[j].doubleValue()
+										&& kpyValue.doubleValue() < trash_kpi_array[j + 1].doubleValue()) {
 									targetColor = col_kpi_array[j];
 									break;
 								}
@@ -1466,7 +1475,8 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	 *            the link type ('cross' or 'drill')
 	 *
 	 */
-	private void addHRefLinksCross(SVGDocument targetMap, Element featureElement, JSONArray JSONValues, JSONArray JSONCross, IDataMartProvider datamatProvider) {
+	private void addHRefLinksCross(SVGDocument targetMap, Element featureElement, JSONArray JSONValues, JSONArray JSONCross,
+			IDataMartProvider datamatProvider) {
 		logger.debug("IN");
 		Element linkCrossElement = targetMap.createElement("a");
 		linkCrossElement.setAttribute("xlink:href", "javascript:void(0)");
