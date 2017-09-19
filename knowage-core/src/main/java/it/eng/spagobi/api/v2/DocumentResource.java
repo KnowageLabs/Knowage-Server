@@ -669,6 +669,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 							&& (!isFolderFilterValid || obj.getFunctionalities().contains(functionalityId)))
 						objects.add(obj);
 				} catch (EMFInternalError e) {
+					throw new RuntimeException("Error while checking visibility of a document", e);
 				}
 
 			}
