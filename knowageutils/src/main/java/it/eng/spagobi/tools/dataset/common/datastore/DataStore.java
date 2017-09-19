@@ -17,17 +17,6 @@
  */
 package it.eng.spagobi.tools.dataset.common.datastore;
 
-import gnu.trove.set.hash.TLongHashSet;
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanException;
-import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
-import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
-import it.eng.spagobi.tools.dataset.common.query.IQuery;
-import it.eng.spagobi.utilities.NumberUtilities;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -42,8 +31,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import net.openhft.hashing.LongHashFunction;
-
 import org.apache.log4j.Logger;
 import org.apache.metamodel.DataContext;
 import org.apache.metamodel.data.DataSet;
@@ -56,6 +43,18 @@ import org.apache.metamodel.query.Query;
 import org.apache.metamodel.query.SelectItem;
 import org.apache.metamodel.schema.ColumnType;
 import org.apache.metamodel.util.SimpleTableDef;
+
+import gnu.trove.set.hash.TLongHashSet;
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.base.SourceBeanException;
+import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
+import it.eng.spagobi.tools.dataset.common.query.IQuery;
+import it.eng.spagobi.utilities.NumberUtilities;
+import net.openhft.hashing.LongHashFunction;
 
 /**
  * @authors Angelo Bernabei (angelo.bernabei@eng.it) Andrea Gioia (andrea.gioia@eng.it)
@@ -156,7 +155,7 @@ public class DataStore implements IDataStore {
 					Integer fieldIndex = (Integer) fieldIndexes.get(i);
 					Object fieldValue = fieldValues.get(i);
 					IField field = record.getFieldAt(fieldIndex.intValue());
-					if (!field.getValue().equals(fieldValue)) {
+					if (field.getValue() == null || !field.getValue().equals(fieldValue)) {
 						match = false;
 						break;
 					}
