@@ -1,14 +1,14 @@
 angular.module("cockpitModule").service("cockpitModule_datasetServices",function(sbiModule_translate,sbiModule_restServices,cockpitModule_template, $filter, $q, $mdPanel,cockpitModule_widgetSelection,cockpitModule_properties,cockpitModule_utilstServices, $rootScope,sbiModule_messaging){
 	var ds=this;
-		
+
 	this.datasetList=[];
 	this.datasetMapById={};
 	this.datasetMapByLabel={};
-	
+
 	this.infoColumns = [];
-	
+
 	this.isDatasetFromTemplateLoaded = false;
-	
+
 	this.loadDatasetsFromTemplate=function(){
 		var def=$q.defer();
 		if(!ds.isDatasetFromTemplateLoaded){
@@ -16,7 +16,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			angular.forEach(cockpitModule_template.configuration.datasets, function(item){
 				this.push(item.dsId);
 			}, dsIds);
-			
+
 			sbiModule_restServices.restToRootProject();
 			sbiModule_restServices.promiseGet("2.0/datasets","listDataset?seeTechnical=TRUE&ids=" + dsIds.join())
 			.then(function(response){
@@ -26,7 +26,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					ds.datasetMapById[dataset.id.dsId] = dataset;
 					ds.datasetMapByLabel[dataset.label] = dataset;
 				}
-				
+
 				sbiModule_restServices.restToRootProject();
 				sbiModule_restServices.promiseGet("1.0/datasets","?ids=" + dsIds.join())
 				.then(function(response){
@@ -47,18 +47,18 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 							}
 						}
 					});
-					
+
 					ds.initNearRealTimeValues(ds.datasetList);
 					ds.checkForDSChange();
 					cockpitModule_widgetSelection.getAssociations(cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS,undefined,def);
-					
+
 					ds.isDatasetFromTemplateLoaded = true;
 					def.resolve();
 				},function(response){
 					sbiModule_restServices.errorHandler(response.data,"");
 					def.reject();
 				});
-				
+
 			},function(response){
 				sbiModule_restServices.errorHandler(response.data,"");
 				def.reject();
@@ -68,9 +68,9 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		}
 		return def.promise;
 	};
-	
+
 	this.isDatasetListLoaded = false;
-	
+
 	this.loadDatasetList=function(){
 		var def=$q.defer();
 		if(!ds.isDatasetListLoaded){
@@ -78,7 +78,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			sbiModule_restServices.promiseGet("2.0/datasets","listDataset?seeTechnical=TRUE")
 			.then(function(response){
 				var allDatasets = response.data.item;
-	
+
 				var newDatasets = [];
 				angular.forEach(allDatasets,function(item){
 					var found = false;
@@ -96,16 +96,16 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 						this.push(item);
 					}
 				}, newDatasets);
-				
+
 				ds.initNearRealTimeValues(newDatasets);
-				
+
 				for(var i in newDatasets){
 					var dataset = newDatasets[i];
 					ds.datasetList.push(dataset);
 					ds.datasetMapById[dataset.id.dsId] = dataset;
 					ds.datasetMapByLabel[dataset.label] = dataset;
 				}
-				
+
 				sbiModule_restServices.restToRootProject();
 				sbiModule_restServices.promiseGet("1.0/datasets","")
 				.then(function(response){
@@ -128,7 +128,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 							}
 						}
 					});
-					
+
 					ds.isDatasetListLoaded = true;
 					def.resolve();
 				},function(response){
@@ -144,7 +144,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		}
 		return def.promise;
 	};
-	
+
 	this.initNearRealTimeValues=function(datasets){
 		for(var i=0; i < datasets.length; i++){
 			var dataset = datasets[i];
@@ -160,19 +160,19 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 	this.checkForDSChange=function(){
 		var changed=[];
 		var removedDatasetParams=[];
-		
+
 		angular.forEach(cockpitModule_template.configuration.datasets,function(item){
 			var actualDs=ds.getDatasetById(item.dsId);
 			var addedParams=[];
 			var removedParams=[];
-			
+
 			//check if label changed
 			if(!angular.equals(actualDs.label,item.dsLabel)){
 				var oldlab=angular.copy(item.dsLabel);
 				//update the label of dataset
 				this.push(sbiModule_translate.load("sbi.generic.label")+": "+item.dsLabel+" -> "+actualDs.label)
 				item.dsLabel=actualDs.label;
-				
+
 				//update the dataset label in the associations
 				for(var i=0;i<cockpitModule_template.configuration.associations.length;i++){
 					var ass=cockpitModule_template.configuration.associations[i];
@@ -186,13 +186,13 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 						}
 					}
 				}
-				
+
 				//update the dataset in the filters
 				if(cockpitModule_template.configuration.filters.hasOwnProperty(oldlab)){
 					cockpitModule_template.configuration.filters[item.dsLabel]=cockpitModule_template.configuration.filters[oldlab];
 					delete cockpitModule_template.configuration.filters[oldlab];
 				}
-				
+
 				//update the dataset label in the aggregations
 				for(var i=0;i<cockpitModule_template.configuration.aggregations.length;i++){
 					var aggr=cockpitModule_template.configuration.aggregations[i];
@@ -209,11 +209,11 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 								this.remove.push(selInd);
 							}
 						},alteration)
-						
+
 						angular.forEach(alteration.add,function(val,ind){
 							this[ind]=val;
 						},aggr.selection)
-						
+
 						angular.forEach(alteration.remove,function(val){
 							delete this[val];
 						},aggr.selection)
@@ -227,11 +227,11 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				this.push(sbiModule_translate.load("sbi.generic.name")+": "+item.name+" -> "+actualDs.name)
 				item.name=actualDs.name;
 			}
-			
+
 			//check if parameters changed
 			removedDatasetParams[item.dsLabel] = [];
 			if(actualDs.parameters!=undefined && item.parameters!=undefined){
-				
+
 				//check added params
 				for(var i=0; i<actualDs.parameters.length; i++){
 					var paramName = actualDs.parameters[i].name;
@@ -241,7 +241,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 								.replace("{0}", "<b>" + item.dsLabel + ".$P{" + paramName + "}</b>"));
 					}
 				}
-				
+
 				//check removed params
 				for (var paramName in item.parameters) {
 				    if (item.parameters.hasOwnProperty(paramName)) {
@@ -261,7 +261,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				    }
 				}
 			}
-			
+
 			//fix template parameters
 			for(var i=0; i<addedParams.length; i++){
 				var addedParam = addedParams[i];
@@ -272,12 +272,12 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				delete item.parameters[removedParam];
 			}
 		},changed)
-		
+
 		var modifiedAssociations = 0;
 		angular.forEach(cockpitModule_template.configuration.associations,function(item){
 			//fix fields & description
 			var modifiedAssociation = 0;
-			
+
 			for(var i=item.fields.length-1; i>=0; i--){
 				var field = item.fields[i];
 				var paramName = (field.column.startsWith("$P{") && field.column.endsWith("}")) ? field.column.substring(3, field.column.length - 1) : field.column;
@@ -290,16 +290,16 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					}else{
 						item.description = item.description.replace("==", "=");
 					}
-					
+
 					item.fields.splice(i, 1);
-					
+
 					modifiedAssociation = 1;
 				}
 			}
-			
+
 			modifiedAssociations += modifiedAssociation;
 		},changed)
-		
+
 		//remove degenerated associations
 		var removedAssociations = 0;
 		for(var i=cockpitModule_template.configuration.associations.length-1; i>=0; i--){
@@ -310,17 +310,17 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				modifiedAssociations--;
 			}
 		}
-		
+
 		if(modifiedAssociations > 0){
 			changed.push(sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.modifiedAssociations")
 					.replace("{0}", "" + modifiedAssociations));
 		}
-		
+
 		if(removedAssociations > 0){
 			changed.push(sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.removedAssociations")
 					.replace("{0}", "" + removedAssociations));
 		}
-		
+
 		angular.forEach(cockpitModule_template.sheets,function(sheet){
 			angular.forEach(sheet.widgets,function(widget){
 				if(widget.dataset && widget.dataset.dsId){
@@ -328,7 +328,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					angular.forEach(widget.content.columnSelectedOfDataset,function(widgetColumn){
 						var isWidgetColumnMatching = false;
 						for(var i = 0; i < actualDs.metadata.fieldsMeta.length; i++){
-							if(actualDs.metadata.fieldsMeta[i].name == widgetColumn.name){
+							if(actualDs.metadata.fieldsMeta[i].name == widgetColumn.name || widgetColumn.formula){
 								isWidgetColumnMatching = true;
 								break;
 							}
@@ -342,13 +342,13 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				}
 			});
 		});
-		
+
 		if(changed.length>0){
 			changed.push(sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.checkconfigandsave"));
 			sbiModule_messaging.showErrorMessage(changed.join("<br>"), sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.title"));
 		}
 	}
-	
+
 	this.getDatasetList=function(){
 		return angular.copy(ds.datasetList);
 	}
@@ -357,7 +357,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 	this.getDatasetById=function(dsId){
 		return angular.copy(ds.datasetMapById[dsId]);
 	}
-	
+
 	//return a COPY of dataset with specific label or null
 	this.getDatasetByLabel=function(dsLabel){
 		return angular.copy(ds.datasetMapByLabel[dsLabel]);
@@ -375,7 +375,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			}
 		}
 	}
-	
+
 	//return a COPY of avaiable dataset with specific label or null
 	this.getAvaiableDatasetByLabel=function(dsLabel){
 		var dsAvList=ds.getAvaiableDatasets();
@@ -387,7 +387,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			}
 		}
 	}
-	
+
 	this.getLabelDatasetsUsed = function(){
 		var string = "";
 		for(var i=0;i<cockpitModule_template.sheets.length;i++){
@@ -404,7 +404,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				}
 			}
 		}
-		
+
 		return string;
 	}
 
@@ -424,8 +424,8 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		return array;
 
 	}
-	
-	
+
+
 
 	//return a list of avaiable dataset with all parameters
 	this.getAvaiableDatasets=function(){
@@ -452,7 +452,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 
 	//get in input a full list of avaiable dataset and save only the attributes needed in template
 	this.setAvaiableDataset=function(adl){
-		angular.copy([],cockpitModule_template.configuration.datasets);	
+		angular.copy([],cockpitModule_template.configuration.datasets);
 		var tmpList=[];
 		for(var i=0;i<adl.length;i++){
 			ds.addAvaiableDataset(adl[i])
@@ -472,7 +472,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				tmpDS.parameters[avDataset.parameters[p].name]=avDataset.parameters[p].value;
 			}
 		}
-		
+
 		cockpitModule_template.configuration.datasets.push(tmpDS);
 	}
 
@@ -485,8 +485,8 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				},param)
 			}
 		}
-		
-		var datasetLabel=ds.getDatasetById(dsId).label;		
+
+		var datasetLabel=ds.getDatasetById(dsId).label;
 		var selections=cockpitModule_widgetSelection.getCurrentSelections(datasetLabel);
 		if(selections!=undefined && selections.hasOwnProperty(datasetLabel)){
 			for(var parName in selections[datasetLabel]){
@@ -504,7 +504,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		}
 		return param;
 	}
-	
+
 	//TODO missing maxRows
 	this.loadDatasetRecordsById = function(dsId, page, itemPerPage,columnOrdering, reverseOrdering, ngModel){
 		//after retry LabelDataset by Id call service for data
@@ -513,11 +513,11 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		var params="";
 
 		var aggregation = cockpitModule_widgetSelection.getAggregation(ngModel,dataset,columnOrdering, reverseOrdering);
-		
+
 		// apply sorting column & order
 		if(ngModel.settings && ngModel.settings.sortingColumn && ngModel.settings.sortingColumn!=""){
 			var isSortingAlreadyDefined = false;
-			
+
 			// check if a sorting order is alredy defined on categories
 			for(var i=0; i<aggregation.categories.length; i++){
 				var category = aggregation.categories[i];
@@ -526,7 +526,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					break;
 				}
 			}
-			
+
 			// check if a sorting order is alredy defined on measures
 			if(!isSortingAlreadyDefined){
 				for(var i=0; i<aggregation.measures.length; i++){
@@ -537,10 +537,10 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					}
 				}
 			}
-			
+
 			if(!isSortingAlreadyDefined){
 				var isSortingApplied = false;
-				
+
 				// apply sorting order on categories
 				for(var i=0; i<aggregation.categories.length; i++){
 					var category = aggregation.categories[i];
@@ -550,7 +550,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 						break;
 					}
 				}
-				
+
 				// apply sorting order on measures
 				if(!isSortingApplied){
 					for(var i=0; i<aggregation.measures.length; i++){
@@ -562,7 +562,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 						}
 					}
 				}
-				
+
 				// add a new category if necessary
 				if(!isSortingApplied){
 					var newCategory = {
@@ -604,7 +604,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			sbiModule_messaging.showErrorMessage(parameterErrors.join("<br>"), title);
 			return;
 		}
-		
+
 		var parametersString = JSON.stringify(parameters);
 		for (var parameter in parameters) {
 			if (parameters.hasOwnProperty(parameter) && (parameters[parameter] == null || parameters[parameter] == undefined)) {
@@ -614,9 +614,9 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		var par = encodeURIComponent(parametersString)
 		.replace(/'/g,"%27")
 		.replace(/"/g,"%22");
-		
-		
-		
+
+
+
 		// if cross navigation referes to a non present column (and widget is a table ) avoid sending aggregation because all columns are needed
 		if(ngModel.type === 'table'){
 			// if cross navigation is defined
@@ -631,17 +631,17 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 							found = true;
 						}
 					}
-					// get all data 
+					// get all data
 					if(found==false){
-						aggr = '';					
+						aggr = '';
 					}
 				}
 			}
 		}
 
-		
+
 		params =  "?aggregations=" +aggr+"&parameters="+par;
-		
+
 		if(page!=undefined && page>-1 && itemPerPage!=undefined && itemPerPage>-1){
 			params = params + "&offset=" + (page * itemPerPage) + "&size=" + itemPerPage;
 		}else{
@@ -658,12 +658,12 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		if(dataset.useCache==false){
 			params+="&nearRealtime=true";
 		}
-		
+
 		var dataToSend=cockpitModule_widgetSelection.getCurrentSelections(dataset.label);
 		if(Object.keys(dataToSend).length==0){
 			dataToSend=cockpitModule_widgetSelection.getCurrentFilters(dataset.label);
 		}
-		
+
 		var limitRows;
 		if(ngModel.limitRows){
 			limitRows = ngModel.limitRows;
@@ -673,7 +673,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		if(limitRows != undefined && limitRows.enable && limitRows.rows > 0){
 			params += "&limit=" + limitRows.rows;
 		}
-		
+
 		var filters;
 		if(ngModel.filters){
 			filters = ngModel.filters;
@@ -690,7 +690,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					angular.forEach(filterVals, function(item){
 						this.push("('" + item + "')");
 					}, values);
-					
+
 					if(!dataToSend[dataset.label]){
 						dataToSend[dataset.label] = {};
 					}
@@ -704,11 +704,11 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					    });
 					}
 				}
-			}	
+			}
 		}
-		
-		if(ngModel.search 
-				&& ngModel.search.text && ngModel.search.text!="" 
+
+		if(ngModel.search
+				&& ngModel.search.text && ngModel.search.text!=""
 				&& ngModel.search.columns && ngModel.search.columns.length>0){
 			var columns = ngModel.search.columns.join(",");
 			var searchData = {};
@@ -717,7 +717,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			likeSelections[dataset.label] = searchData;
 			params += "&likeSelections=" + encodeURIComponent(JSON.stringify(likeSelections)).replace(/'/g,"%27").replace(/"/g,"%22");
 		}
-		
+
 		var dataToSendWithoutParams = {};
 		if(dataset.useCache == true || ngModel.updateble == true){
 			angular.copy(dataToSend,dataToSendWithoutParams);
@@ -733,9 +733,9 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				});
 			});
 		}
-		
+
 		params += "&widgetName=" + encodeURIComponent(ngModel.content.name);
-		
+
 		sbiModule_restServices.restToRootProject();
 		sbiModule_restServices.promisePost("2.0/datasets",encodeURIComponent(dataset.label)+"/data"+params,dataToSendWithoutParams)
 		.then(function(response){
@@ -765,12 +765,12 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 	this.getSummaryRow = function(ngModel){
 		var measures = [];
 		var columns = ngModel.content.columnSelectedOfDataset;
-		
+
 		if(columns){
 			//create aggregation
 			for(var i=0;i<columns.length;i++){
 				var col = columns[i];
-				
+
 				if(col.fieldType!="ATTRIBUTE"){
 					var obj = {};
 					obj["id"] = col.name;
@@ -789,7 +789,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		return result;
 
 	}
-	
+
 	this.addDataset=function(attachToElementWithId,container,multiple,autoAdd){
 		var deferred = $q.defer();
 		var eleToAtt=document.body;
@@ -801,20 +801,20 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				attachTo: eleToAtt,
 				locals :{currentAvaiableDataset:container,multiple:multiple,deferred:deferred},
 				controller: function($scope,mdPanelRef,sbiModule_translate,cockpitModule_datasetServices,currentAvaiableDataset,multiple,deferred,$mdDialog){
-					
+
 					$scope.tmpCurrentAvaiableDataset;
 					if(multiple){
 						tmpCurrentAvaiableDataset=[];
 					}else{
 						tmpCurrentAvaiableDataset={};
 					}
-					
+
 					$scope.multiple=multiple;
-					
+
 					$scope.cockpitDatasetColumn=[{label:"Label",name:"label"},{label:"Name",name:"name" } ];
-					
+
 					$scope.isDatasetListLoaded = false;
-					
+
 					cockpitModule_datasetServices.loadDatasetList().then(function(response){
 						var datasetList = cockpitModule_datasetServices.getDatasetList();
 						//remove available dataset
@@ -832,13 +832,13 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 						sbiModule_restServices.errorHandler(response.data,"");
 						def.reject();
 					});
-					
+
 					$scope.closeDialog=function(){
 						mdPanelRef.close();
 						$scope.$destroy();
 						deferred.reject();
 					}
-					
+
 					$scope.saveDataset=function(){
 						if(multiple){
 							for(var i=0;i<$scope.tmpCurrentAvaiableDataset.length;i++){
@@ -848,15 +848,15 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 									currentAvaiableDataset.push($scope.tmpCurrentAvaiableDataset[i]);
 								}
 							}
-							
+
 							deferred.resolve(angular.copy($scope.tmpCurrentAvaiableDataset));
 							mdPanelRef.close();
 							$scope.$destroy();
-							
+
 						}else{
 							if($scope.tmpCurrentAvaiableDataset.parameters!=null && $scope.tmpCurrentAvaiableDataset.parameters.length>0){
 								//fill the parameter
-								 
+
 								 $mdDialog.show({
 								      controller: function($scope,sbiModule_translate,parameters){
 								    	  $scope.translate=sbiModule_translate;
@@ -867,7 +867,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 								    	  $scope.cancelConfiguration=function(){
 								    		  $mdDialog.cancel();
 								    	  }
-								      }, 
+								      },
 								      templateUrl: baseScriptPath+ '/directives/cockpit-data-configuration/templates/CockpitDataConfigurationDatasetParameterFill.html',
 								      clickOutsideToClose:false,
 								      parent: mdPanelRef._panelContainer[0].querySelector(".md-panel md-card"),
@@ -885,12 +885,12 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 										deferred.resolve(angular.copy($scope.tmpCurrentAvaiableDataset));
 										mdPanelRef.close();
 										$scope.$destroy();
-								    	
+
 								    }, function() {
 								      $scope.status = 'You cancelled the dialog.';
 								    });
-								
-								
+
+
 							}else{
 								if(autoAdd){
 									ds.addAvaiableDataset($scope.tmpCurrentAvaiableDataset)
@@ -900,10 +900,10 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 								deferred.resolve(angular.copy($scope.tmpCurrentAvaiableDataset));
 								mdPanelRef.close();
 								$scope.$destroy();
-								
+
 							}
 						}
-						
+
 					}
 				},
 				disableParentScroll: true,
@@ -923,7 +923,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		$mdPanel.open(config);
 		return deferred.promise;
 	}
-	
+
 	this.addDatasetInCache = function(datasets){
 		var def=$q.defer();
 		var dataToSend = [];
@@ -946,16 +946,16 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			angular.forEach(datasets, function(item){
 				this.push(item);
 			},cockpitModule_properties.DS_IN_CACHE);
-			
+
 			def.resolve()
 		},function(response){
 			sbiModule_restServices.errorHandler(response.data,"");
 			def.reject()
 		})
-		
+
 		return def.promise;
 	}
-	
+
 	this.autodetect=function(attachToElementWithId,tmpAvaiableDatasets,tmpAssociations){
 		var deferred = $q.defer();
 		var elemToAtt=document.body;
@@ -967,9 +967,9 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			attachTo: elemToAtt,
 			locals :{datasets:tmpAvaiableDatasets,associations:tmpAssociations,deferred:deferred},
 			controller: function($scope,mdPanelRef,sbiModule_translate,cockpitModule_datasetServices,datasets,associations,deferred,$mdDialog){
-				
+
 				$scope.translate = sbiModule_translate;
-				
+
 				// table columns
 				$scope.cockpitAutodetectColumns=[{label:sbiModule_translate.load("sbi.cockpit.association.editor.wizard.list.autodetect.similarity"),
 					name:"___similarity",
@@ -979,80 +979,80 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					var column = {label:item.label, name:item.label};
 					this.push(column);
 				},$scope.cockpitAutodetectColumns);
-				
+
 				// table search columns
 				$scope.cockpitAutodetectColumnsSearch=[];
 				angular.forEach(datasets,function(item){
 					this.push(item.label);
 				},$scope.cockpitAutodetectColumnsSearch);
-				
+
 				// table selected row
 				$scope.cockpitAutodetectSelectedRow = null;
-				
+
 				$scope.saveAutodetect=function(){
 					deferred.resolve(angular.copy($scope.cockpitAutodetectSelectedRow));
 					mdPanelRef.close();
 					$scope.$destroy();
 				}
-				
+
 				$scope.closeDialog=function(){
 					mdPanelRef.close();
 					$scope.$destroy();
 					deferred.reject();
 				}
-				
+
 				// Similarity filter management
-				
+
 				$scope.minSimilarity = 0.2;
-				
+
 				$scope.minSimilarityValues = [0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2];
 				for(var i=$scope.minSimilarityValues.length-1; i>=0; i--){
 					if($scope.minSimilarityValues[i] < $scope.minSimilarity){
 						$scope.minSimilarityValues.splice(i, 1);
 					}
 				}
-				
+
 				$scope.selectedMinSimilarityValue = $scope.minSimilarity;
-				
+
 				$scope.$watch("selectedMinSimilarityValue",function(newValue,oldValue){
 		    		  $scope.filterCockpitAutodetectRows(newValue, $scope.selectedMinLengthValue);
 				});
-				
+
 				// Length filter management
-				
+
 				$scope.minLength = 2;
-				
+
 				$scope.minLengthValues = [];
 				for(var i=$scope.minLength; i<=datasets.length; i++){
 					$scope.minLengthValues.unshift(i);
 				}
-				
+
 				$scope.selectedMinLengthValue = $scope.minLength;
-				
+
 				$scope.$watch("selectedMinLengthValue",function(newValue,oldValue){
 		    		  $scope.filterCockpitAutodetectRows($scope.selectedMinSimilarityValue, newValue);
 				});
-				
+
 				// Filtered table model
-				
+
 				$scope.cockpitAutodetectRows = [];
 				$scope.cockpitAutodetectFilteredRows = [];
 				$scope.showTable = false;
-				
+
 				$scope.filterCockpitAutodetectRows=function(minSimilarity, minLength){
 					var rows = [];
 					angular.copy($scope.cockpitAutodetectRows, rows);
-					
+
 					for(var i=rows.length-1; i>=0; i--){
 						var row = rows[i];
 						if(row["___similarity"] < minSimilarity || row["___length"] < minLength){
 							rows.splice(i, 1);
 						}
 					}
-					
+
 					angular.copy(rows, $scope.cockpitAutodetectFilteredRows);
 				}
-				
+
 				var datasetNames = {};
 				angular.forEach(datasets,function(item){
 					var params = {};
@@ -1061,7 +1061,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					},params);
 					this[item.label] = params;
 				},datasetNames);
-				
+
 				var payload = JSON.stringify(datasetNames);
 				sbiModule_restServices.restToRootProject();
 				sbiModule_restServices.promisePost("2.0/datasets","associations/autodetect?wait=true&aggregate=true&evaluateNumber=true&threshold=" + $scope.minSimilarity, payload)
@@ -1081,7 +1081,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 						}, row);
 						this.push(row);
 					},$scope.cockpitAutodetectRows);
-					
+
 					// remove rows equal to existing associations
 					for(var i=$scope.cockpitAutodetectRows.length-1; i>=0; i--){
 						var autodetectRow = $scope.cockpitAutodetectRows[i];
@@ -1099,7 +1099,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 							}
 						}
 					}
-					
+
 					angular.copy($scope.cockpitAutodetectRows, $scope.cockpitAutodetectFilteredRows);
 					$scope.showTable = true;
 				},function(response){
@@ -1124,36 +1124,36 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		$mdPanel.open(config);
 		return deferred.promise;
 	}
-	
+
 	this.substitutePlaceholderValues = function(text, datasetLabel, model){
-		
+
 		if(text != undefined){
 			var deferred = $q.defer();
 			var dataset = this.getDatasetByLabel(datasetLabel);
 			if (dataset != undefined) {
 				var columnsToshow = [];
 				var columnsToshowMeta = [];
-        		var columnsToshowIndex = [];    
+        		var columnsToshowIndex = [];
 				var localModel = model;
 	       	 	var datasetId = dataset.id.dsId;
 	       	 	model.dataset = {}
 	       	 	model.dataset.dsId = datasetId;
-        		
+
 	       	 	//get columnsSelected metadata: adds aggregation functions if required
 				for(var dsField in dataset.metadata.fieldsMeta){
 					var dsObject = dataset.metadata.fieldsMeta[dsField];
 					var header = dsObject.alias;
 					var reg = new RegExp('\\$F\\{('+dataset.label+'.'+header+')\\}','g');
             		var matches = text.match(reg);
-            		if (matches){            			
+            		if (matches){
 //            			//aggregation function management (ie: COUNT($F{xxx}) )
             			var regAgg = new RegExp('(AVG|MIN|MAX|SUM|COUNT|DISTINCT COUNT)(\\(\\$F{'+dataset.label+'.'+header+'}\\))','g');
             			var matchAgg = text.match(regAgg);
-    					if (matchAgg && dsObject.fieldType == 'MEASURE'){    						
+    					if (matchAgg && dsObject.fieldType == 'MEASURE'){
     						//get the optional function
                     		var regFunc = new RegExp('(AVG|MIN|MAX|SUM|COUNT|DISTINCT COUNT)','g');
                     		var matchFunc = matchAgg[0].match(regFunc);
-                    		if (matchFunc){ 
+                    		if (matchFunc){
 	    						dsObject.aggregationSelected = matchFunc[0];
 //	    						dsObject.funcSummary = matchFunc[0];
 	    						//set configuration for ask summary values
@@ -1163,21 +1163,21 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 //                    			dsObject.aggregationSelected = 'NONE';
 //	    						dsObject.funcSummary = 'NONE';
                     		}
-                    		
+
     					}
     					//column is required
             			columnsToshow.push(dataset.label+'.'+header);
             			columnsToshowMeta.push(dsObject);
             		}
-				}	 
+				}
 //				model.content.columnSelectedOfDataset = dataset.metadata.fieldsMeta;
 				model.content.columnSelectedOfDataset = columnsToshowMeta;
-				
-				this.loadDatasetRecordsById(datasetId, undefined, undefined, undefined, undefined, model).then(function(allDatasetRecords){         				
-	 				
+
+				this.loadDatasetRecordsById(datasetId, undefined, undefined, undefined, undefined, model).then(function(allDatasetRecords){
+
 	 				//get columnsSelected dataIndex
 	 				for (var col in columnsToshow){
-	 					var headerToSearch = columnsToshow[col].substring(columnsToshow[col].indexOf('.')+1);	         					
+	 					var headerToSearch = columnsToshow[col].substring(columnsToshow[col].indexOf('.')+1);
 	                	for (var field in allDatasetRecords.metaData.fields){
 	                		if (allDatasetRecords.metaData.fields[field] && allDatasetRecords.metaData.fields[field].header){
 	                			var header = allDatasetRecords.metaData.fields[field].header;
@@ -1196,7 +1196,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 	 					var colValue = row[colIdx];
 	 					//at first check for aggregation functions , than for simple values
 	 					var reg = new RegExp('(AVG|MIN|MAX|SUM|COUNT|DISTINCT COUNT)(\\(\\$F{'+colAlias+'}\\))','g');
-	 					var matches = text.match(reg);	 					
+	 					var matches = text.match(reg);
 	            		if (matches){
 	            			text = text.replace(reg, colValue);
 	            		}else{
@@ -1206,21 +1206,21 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		            			text = text.replace(reg, colValue);
 	            			}
 	            		}
-	 				}		
+	 				}
 	 				deferred.resolve(text);
 	 			},function(error){
 	         		deferred.reject(error);
 	 			});
 				return deferred.promise;
-				
+
 			}
-			
+
 		}
-		
+
 	}
-	
+
 })
-.run(function() { 
+.run(function() {
 	//adds methods for IE11
 	if (!String.prototype.startsWith) {
 	    String.prototype.startsWith = function(searchString, position){
@@ -1228,7 +1228,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 	      return this.substr(position, searchString.length) === searchString;
 	  };
 	}
-	
+
 	if (!String.prototype.endsWith) {
 		  String.prototype.endsWith = function(searchString, position) {
 		      var subjectString = this.toString();
