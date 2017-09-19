@@ -47,7 +47,7 @@ app.controller('BMLController', ['$scope', function($scope) {
 	               
 	                
 	                {	name:'Documents',
-	                	dataPath:'1.0/documents',
+	                	dataPath:'2.0/documents',
 	                	selectedEvent:'document',
 	                	broadcasts: [{event:'refresh',handler:function(event,data){event.currentScope.refresh()}},
 	                	             {event:'adriver',handler:function(event,data){event.currentScope.getData('2.0/analyticalDrivers/'+data.id+'/documents')}},
