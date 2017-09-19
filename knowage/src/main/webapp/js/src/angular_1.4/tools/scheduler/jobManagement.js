@@ -24,16 +24,16 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 		sbiModule_config, $scope, $mdDialog, $mdToast, $timeout, $location, $window, sbiModule_messaging) {
 	var ctrl = this;
 	sbiModule_translate.addMessageFile("component_scheduler_messages");
-	
+
 	// parameters from URL
-	
+
 	var executionFromUrl = $location.search().ex ? JSON.parse($location.search().ex) : null;
 	var startDateFromUrl = $location.search().sd ? JSON.parse($location.search().sd) : null;
 	var startTimeFromUrl = $location.search().st ? JSON.parse($location.search().st) : null;
 	var endDateFromUrl = $location.search().ed ? JSON.parse($location.search().ed) : null;
 	var endTimeFromUrl = $location.search().et ? JSON.parse($location.search().et) : null;
 	var tablePageFromUrl = $location.search().pg ? JSON.parse($location.search().pg) : null;
-	
+
 	// variables
 	ctrl.isOverviewTabActive = true;
 	ctrl.emptyJob = JSON.parse(JSON.stringify(EmptyJob));
@@ -41,24 +41,24 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 	ctrl.isRequired = true;
 	ctrl.object_temp = {};
 	ctrl.forms = {};
-	
+
 	ctrl.triggerStrategies = [
    		{value : 'fixed', label : sbiModule_translate.load("scheduler.fixedValuesStrategy", "component_scheduler_messages")},
    		{value : 'loadAtRuntime', label : sbiModule_translate.load("scheduler.loadAtRuntimeStrategy", "component_scheduler_messages")},
    		{value : 'formula', label : sbiModule_translate.load("scheduler.useFormulaStrategy", "component_scheduler_messages")}];
-	
+
 	ctrl.triggerStrategiesNoFormula = [
   		{value : 'fixed', label : sbiModule_translate.load("scheduler.fixedValuesStrategy", "component_scheduler_messages")},
    		{value : 'loadAtRuntime', label : sbiModule_translate.load("scheduler.loadAtRuntimeStrategy", "component_scheduler_messages")}];
-	
+
 	ctrl.triggerIterations = [
 		{value : "true", label : sbiModule_translate.load("scheduler.iterateOnParameterValues", "component_scheduler_messages")},
 		{value : "false", label : sbiModule_translate.load("scheduler.doNotIterateOnParameterValues", "component_scheduler_messages")}];
-	
+
 	ctrl.formulas = [];
-	
+
 	// functions
-	
+
 	ctrl.loadFormulas = function(){
 		sbiModule_restServices.get("2.0/formulas", '')
 			.success(function(data, status, headers, config) {
@@ -67,7 +67,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 					ctrl.showToastError(sbiModule_translate.load("sbi.glossary.load.error"));
 				} else {
 					ctrl.formulas = data;
-				
+
 					for(var i = 0; i < ctrl.formulas.length; i++){
 						var formulaDescription = ctrl.formulas[i].description;
 						if (formulaDescription.startsWith("#")) {
@@ -92,10 +92,10 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 					ctrl.showToastError(sbiModule_translate.load("sbi.glossary.load.error"));
 				} else {
 					ctrl.jobList = data.root;
-					
+
 					for(var jobIndex = ctrl.jobList.length - 1; jobIndex >= 0; jobIndex--){
 						var job = ctrl.jobList[jobIndex];
-						
+
 						if(job.jobGroup != "BIObjectExecutions"){
 							// discard job if group is not BIObjectExecutions
 							ctrl.jobList.splice(jobIndex, 1);
@@ -137,17 +137,17 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 			})
 	}
 	ctrl.loadJobs(executionFromUrl ? executionFromUrl.jobName : null);
-	
+
 	ctrl.addJob = function(){
 		ctrl.selectedJob = angular.copy(ctrl.emptyJob);
 		ctrl.showDetail = true;
 	}
-	
+
 	ctrl.reloadJob = function(){
 		var jobName = ctrl.selectedJob.jobName;
 		ctrl.loadJobs(jobName);
 	}
-	
+
 	ctrl.selectJobByName = function(jobName){
 		if(jobName != null && jobName != undefined && jobName != ""){
 			for(var i=0; i<ctrl.jobList.length; i++){
@@ -162,8 +162,8 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 	ctrl.loadJob = function(item){
 		ctrl.showDetail = true;
 		ctrl.object_temp = angular.copy(item);
-		
-		if(item != null){		
+
+		if(item != null){
 			//ctrl.selectedJob = angular.copy(item);
 			ctrl.selectedJob = item;
 		} else {
@@ -173,17 +173,17 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 				ctrl.selectedJob = ctrl.emptyJob;
 			}
 		}
-		
+
 		// select tab
 		if(ctrl.selectedJob.NEWJOB && ctrl.selectedJob.NEWJOB == true){
 			ctrl.selectDetailTab();
 		}
-		
+
 		// select first document
 		var firstDocumentIndex = (ctrl.selectedJob.documents.length > 0 ? 0 : -1);
 		ctrl.selectDocument(firstDocumentIndex);
 	}
-	
+
 	ctrl.closeDetail = function(){
 		ctrl.showDetail = false;
 		if(executionFromUrl){
@@ -205,7 +205,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 			ctrl.loadJobs();
 		}
 	}
-	
+
 	ctrl.saveJob = function(){
 		sbiModule_restServices.post("scheduler", "saveJob", ctrl.selectedJob)
 		.success(function(data, status, headers, config) {
@@ -225,7 +225,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 
 	ctrl.menuJob = [{
 		label : sbiModule_translate.load('sbi.generic.delete'),
-		icon:'fa fa-trash',	 
+		icon:'fa fa-trash',
 		action : function(item,event){
 			ctrl.selectedJob = item;
 			var confirm = $mdDialog.confirm()
@@ -241,7 +241,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 				);
 		}
 	}];
-	
+
 	ctrl.menuTrigger = [{
 			label: sbiModule_translate.load('sbi.scheduler.schedulation.info'),
 			icon: 'fa fa-info',
@@ -333,7 +333,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 					);
 			}
 		}];
-	
+
 	ctrl.triggerPause = function(){
 		var requestString =
 			"pauseTrigger?jobName="+ctrl.selectedJob.jobName
@@ -347,7 +347,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 			} else {
 				ctrl.selectedTrigger.triggerIsPaused = true;
 				ctrl.selectedTrigger.triggerIsPausedString = sbiModule_translate.load("sbi.general.yes");
-				$mdDialog.show( 
+				$mdDialog.show(
 					$mdDialog.alert()
 			        .parent(angular.element(document.body))
 			        .clickOutsideToClose(false)
@@ -361,7 +361,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 			sbiModule_logger.log("unable to pause schedulation " + status);
 		});
 	}
-	
+
 	ctrl.triggerResume = function(){
 		var requestString =
 			"resumeTrigger?jobName="+ctrl.selectedJob.jobName
@@ -375,7 +375,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 			} else {
 				ctrl.selectedTrigger.triggerIsPaused = false;
 				ctrl.selectedTrigger.triggerIsPausedString = sbiModule_translate.load("sbi.general.No");
-				$mdDialog.show( 
+				$mdDialog.show(
 					$mdDialog.alert()
 			        .parent(angular.element(document.body))
 			        .clickOutsideToClose(false)
@@ -389,7 +389,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 			sbiModule_logger.log("unable to resume schedulation " + status);
 		});
 	}
-	
+
 	ctrl.triggerExecute = function(){
 		var requestString =
 			"executeTrigger?jobName="+ctrl.selectedJob.jobName
@@ -401,7 +401,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 			if (data.hasOwnProperty("errors")) {
 				sbiModule_logger.log("unable to execute schedulation");
 			} else {
-				$mdDialog.show( 
+				$mdDialog.show(
 					$mdDialog.alert()
 				        .parent(angular.element(document.body))
 				        .clickOutsideToClose(false)
@@ -415,7 +415,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 			sbiModule_logger.log("unable to execute schedulation " + status);
 		});
 	}
-	
+
 	ctrl.triggerDelete = function(){
 		var requestString =
 			"deleteTrigger?jobName="+ctrl.selectedJob.jobName
@@ -434,7 +434,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 					}
 				}
 				ctrl.selectedTrigger = undefined;
-				$mdDialog.show( 
+				$mdDialog.show(
 					$mdDialog.alert()
 				        .parent(angular.element(document.body))
 				        .clickOutsideToClose(false)
@@ -463,7 +463,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 				console.log("Job deletion error " + status);
 			})
 	}
-	
+
 	ctrl.showToastOk = function(message) {
 //		var toast = $mdToast.simple()
 //			.content(message)
@@ -477,7 +477,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 //			}
 //		});
 		sbiModule_messaging.showInfoMessage(message,"");
-		
+
 	};
 
 	ctrl.showToastError = function(message) {
@@ -492,18 +492,18 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 //			if ( response == 'ok' ) {
 //			}
 //		});
-		
+
 		sbiModule_messaging.showErrorMessage(message,"");
-		
-		
+
+
 	};
-	
+
 	$scope.$watch('ctrl.selectedDocumentIndex', function(newVal, oldVal){
 		if(ctrl.selectedJob && newVal && newVal >= 0){
 			ctrl.selectDocument(newVal);
 		}
 	});
-	
+
 	ctrl.selectDocument = function(documentIndex){
 		ctrl.selectedDocumentIndex = documentIndex;
 		if(documentIndex >= 0 && documentIndex < ctrl.selectedJob.documents.length){
@@ -512,7 +512,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 			ctrl.selectedDocument = undefined;
 		}
 	}
-	
+
 	ctrl.loadSelectedDocument = function(){
 		var selectedDocumentName = ctrl.selectedJob.documents[ctrl.selectedDocumentIndex].name;
 		sbiModule_restServices.get("1.0/documents", selectedDocumentName)
@@ -530,7 +530,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 				ctrl.showToastError(sbiModule_translate.load("sbi.glossary.load.error"));
 			})
 	}
-	
+
 	ctrl.loadSelectedDocumentRolesAndParameters = function(){
 		sbiModule_restServices.get("2.0/documents", ctrl.selectedDocument.id+"/userroles")
 			.success(function(data, status, headers, config) {
@@ -560,9 +560,9 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 				ctrl.showToastError(sbiModule_translate.load("sbi.glossary.load.error"));
 			})
 	}
-	
+
 	ctrl.loadSelectedDocumentParameters = function(){
-		sbiModule_restServices.get("2.0/documents", ctrl.selectedDocument.label+"/parameters")
+		sbiModule_restServices.get("1.0/documents", ctrl.selectedDocument.label+"/parameters")
 			.success(function(data, status, headers, config) {
 				if (data.hasOwnProperty("errors")) {
 					console.log("unable to get document parameters");
@@ -588,7 +588,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 				ctrl.showToastError(sbiModule_translate.load("sbi.glossary.load.error"));
 			})
 	}
-	
+
 	ctrl.addDocument = function(){
 		$mdDialog.show({
 			scope : $scope,
@@ -596,7 +596,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 			controllerAs : 'docCtrl',
 			controller : function($mdDialog) {
 				var docCtrl = this;
-				
+
 				sbiModule_restServices.get("scheduler/folders", "?includeDocs=true")
 					.success(function(data, status, headers, config) {
 						if (data.hasOwnProperty("errors")) {
@@ -610,15 +610,15 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 						console.log("unable to load folders ", status);
 						ctrl.showToastError(sbiModule_translate.load("sbi.glossary.load.error"));
 					});
-				
+
 				docCtrl.setSelectedDocument = function(item){
 					docCtrl.selectedDocument = item;
 				}
-				
+
 				docCtrl.submit = function() {
 					$mdDialog.hide();
-					
-					sbiModule_restServices.get("2.0/documents", docCtrl.selectedDocument.label+"/parameters")
+
+					sbiModule_restServices.get("1.0/documents", docCtrl.selectedDocument.label+"/parameters")
 						.success(function(data, status, headers, config) {
 							var newDocument = {};
 							newDocument.name = docCtrl.selectedDocument.label;
@@ -645,7 +645,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 							//sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load('sbi.browser.folder.load.error'));
 						});
 				};
-				
+
 				docCtrl.cancel = function($event) {
 					$mdDialog.cancel();
 				};
@@ -654,11 +654,11 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 			templateUrl : sbiModule_config.contextName + '/js/src/angular_1.4/tools/scheduler/templates/dialog-document-selection.html'
 		});
 	}
-	
+
 	ctrl.deleteDocument = function(){
 		if(ctrl.selectedDocumentIndex >= 0){
 			ctrl.selectedJob.documents.splice(ctrl.selectedDocumentIndex, 1);
-			
+
 			if(ctrl.selectedJob.documents.length > 0){
 				if(ctrl.selectedDocumentIndex > 0){
 					ctrl.selectDocument(ctrl.selectedDocumentIndex - 1);
@@ -668,29 +668,29 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 			}
 		}
 	}
-	
+
 	ctrl.cloneDocument = function(){
 		if(ctrl.selectedDocumentIndex >= 0){
 			var document = ctrl.selectedJob.documents[ctrl.selectedDocumentIndex];
 			var newDocument = JSON.parse(JSON.stringify(document));
 			ctrl.selectedJob.documents.push(newDocument);
-			
+
 			ctrl.selectDocument(ctrl.selectedJob.documents.length - 1);
 		}
 	}
-	
+
 	ctrl.selectOverviewTab = function(){
 		ctrl.isOverviewTabActive = true;
 	}
-	
+
 	ctrl.selectDetailTab = function(){
 		ctrl.isOverviewTabActive = false;
 	}
-	
+
 	ctrl.isSelectedJobNew = function(){
 		return ctrl.selectedJob !== undefined && ctrl.selectedJob.NEWJOB === true;
 	}
-	
+
 	ctrl.getDetailTitle = function(){
 		if(ctrl.selectedJob){
 			if(ctrl.selectedJob.NEWJOB == true){
@@ -702,7 +702,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 			return "";
 		}
 	}
-	
+
 	ctrl.getParameterByName = function(parameterName){
 		if(ctrl.selectedDocumentParameters){
 			for(var i=0; i<ctrl.selectedDocumentParameters.length; i++){
@@ -713,7 +713,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 			}
 		}
 	}
-	
+
 	ctrl.loadParameterValues = function(parameter){
 		var selectedDocumentName = ctrl.selectedJob.documents[ctrl.selectedDocumentIndex].name
 		var selectedDocumentParameter = ctrl.getParameterByName(parameter.name);
@@ -745,13 +745,13 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 			}
 		}
 	}
-	
+
 	ctrl.saveParameterValues = function(parameter){
 		var parameterList = "";
 		if(parameter.selectedValues){
 			for(var i = 0; i < parameter.selectedValues.length; i++){
 				var selectedValue = parameter.selectedValues[i];
-				parameterList += selectedValue + ";"; 
+				parameterList += selectedValue + ";";
 			}
 			parameter.value = parameterList.substring(0, parameterList.length - 1);
 		}
@@ -767,11 +767,11 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 			ctrl.loadParameterValues(parameter);
 		}
 	}
-	
+
 	ctrl.addTrigger = function(){
 		ctrl.editTrigger(ctrl.selectedJob.jobName, ctrl.selectedJob.jobGroup, "", "");
 	}
-	
+
 	ctrl.showTriggerInfo = function(){
 		$mdDialog.show({
 			scope : $scope,
@@ -779,13 +779,13 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 			controllerAs : 'triggerInfoCtrl',
 			controller : function($mdDialog) {
 				var triggerInfoCtrl = this;
-				
+
 				var requestString =
 					"getTriggerInfo?jobName="+ctrl.selectedJob.jobName
 					+"&jobGroup="+ctrl.selectedJob.jobGroup
 					+"&triggerName="+ctrl.selectedTrigger.triggerName
 					+"&triggerGroup="+ctrl.selectedTrigger.triggerGroup;
-				
+
 				sbiModule_restServices.post("scheduler", requestString)
 					.success(function(data, status, headers, config) {
 						triggerInfoCtrl.triggerInfo = data;
@@ -793,7 +793,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 					.error(function(data, status, headers, config) {
 						sbiModule_logger.log("unable to load schedulation info " + status);
 					});
-				
+
 				triggerInfoCtrl.cancel = function($event) {
 					$mdDialog.cancel();
 				};
@@ -802,13 +802,13 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 			templateUrl : sbiModule_config.contextName + '/js/src/angular_1.4/tools/scheduler/templates/dialog-trigger-info.html'
 		});
 	}
-	
+
 	$scope.$watch('ctrl.selectedJob.jobMergeAllSnapshots', function(newVal, oldVal){
 		if(newVal == false){
 			ctrl.selectedJob.jobCollateSnapshots = false;
 		}
 	});
-	
+
 	ctrl.editTrigger = function(jobName, jobGroup, triggerName, triggerGroup){
 		$mdDialog.show({
 			scope : $scope,
@@ -816,7 +816,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 			controllerAs : 'activityEventCtrl',
 			controller : function($mdDialog) {
 				var activityEventCtrl = this;
-				
+
 				sbiModule_translate.addMessageFile("component_scheduler_messages");
 				$scope.translate = sbiModule_translate;
 				activityEventCtrl.SCHEDULER_TYPES = [
@@ -839,46 +839,46 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 				];
 				activityEventCtrl.MONTHS = [
 					{label: sbiModule_translate.load("scheduler.jan", "component_scheduler_messages"), value: '1'},
-					{label: sbiModule_translate.load("scheduler.feb", "component_scheduler_messages"), value: '2'}, 
-					{label: sbiModule_translate.load("scheduler.mar", "component_scheduler_messages"), value: '3'}, 
-					{label: sbiModule_translate.load("scheduler.apr", "component_scheduler_messages"), value: '4'}, 
-					{label: sbiModule_translate.load("scheduler.may", "component_scheduler_messages"), value: '5'}, 
-					{label: sbiModule_translate.load("scheduler.jun", "component_scheduler_messages"), value: '6'}, 
-					{label: sbiModule_translate.load("scheduler.jul", "component_scheduler_messages"), value: '7'}, 
-					{label: sbiModule_translate.load("scheduler.aug", "component_scheduler_messages"), value: '8'}, 
-					{label: sbiModule_translate.load("scheduler.sep", "component_scheduler_messages"), value: '9'}, 
-					{label: sbiModule_translate.load("scheduler.oct", "component_scheduler_messages"), value: '10'}, 
-					{label: sbiModule_translate.load("scheduler.nov", "component_scheduler_messages"), value: '11'}, 
+					{label: sbiModule_translate.load("scheduler.feb", "component_scheduler_messages"), value: '2'},
+					{label: sbiModule_translate.load("scheduler.mar", "component_scheduler_messages"), value: '3'},
+					{label: sbiModule_translate.load("scheduler.apr", "component_scheduler_messages"), value: '4'},
+					{label: sbiModule_translate.load("scheduler.may", "component_scheduler_messages"), value: '5'},
+					{label: sbiModule_translate.load("scheduler.jun", "component_scheduler_messages"), value: '6'},
+					{label: sbiModule_translate.load("scheduler.jul", "component_scheduler_messages"), value: '7'},
+					{label: sbiModule_translate.load("scheduler.aug", "component_scheduler_messages"), value: '8'},
+					{label: sbiModule_translate.load("scheduler.sep", "component_scheduler_messages"), value: '9'},
+					{label: sbiModule_translate.load("scheduler.oct", "component_scheduler_messages"), value: '10'},
+					{label: sbiModule_translate.load("scheduler.nov", "component_scheduler_messages"), value: '11'},
 					{label: sbiModule_translate.load("scheduler.dic", "component_scheduler_messages"), value: '12'}
 				];
 				activityEventCtrl.WEEKS = [
-					{label: sbiModule_translate.load("scheduler.sun", "component_scheduler_messages"), value: '1'}, 
-					{label: sbiModule_translate.load("scheduler.mon", "component_scheduler_messages"), value: '2'}, 
-					{label: sbiModule_translate.load("scheduler.tue", "component_scheduler_messages"), value: '3'}, 
-					{label: sbiModule_translate.load("scheduler.wed", "component_scheduler_messages"), value: '4'}, 
-					{label: sbiModule_translate.load("scheduler.thu", "component_scheduler_messages"), value: '5'}, 
-					{label: sbiModule_translate.load("scheduler.fri", "component_scheduler_messages"), value: '6'}, 
+					{label: sbiModule_translate.load("scheduler.sun", "component_scheduler_messages"), value: '1'},
+					{label: sbiModule_translate.load("scheduler.mon", "component_scheduler_messages"), value: '2'},
+					{label: sbiModule_translate.load("scheduler.tue", "component_scheduler_messages"), value: '3'},
+					{label: sbiModule_translate.load("scheduler.wed", "component_scheduler_messages"), value: '4'},
+					{label: sbiModule_translate.load("scheduler.thu", "component_scheduler_messages"), value: '5'},
+					{label: sbiModule_translate.load("scheduler.fri", "component_scheduler_messages"), value: '6'},
 					{label: sbiModule_translate.load("scheduler.sat", "component_scheduler_messages"), value: '7'}
 				];
 				activityEventCtrl.WEEKS_ORDER = [
-					{label: sbiModule_translate.load("scheduler.firstweek", "component_scheduler_messages"), value: '1'}, 
-					{label: sbiModule_translate.load("scheduler.secondweek", "component_scheduler_messages"), value: '2'}, 
-					{label: sbiModule_translate.load("scheduler.thirdweek", "component_scheduler_messages"), value: '3'}, 
-					{label: sbiModule_translate.load("scheduler.fourthweek", "component_scheduler_messages"), value: '4'}, 
-					{label: sbiModule_translate.load("scheduler.lastweek", "component_scheduler_messages"), value: '5'}, 
+					{label: sbiModule_translate.load("scheduler.firstweek", "component_scheduler_messages"), value: '1'},
+					{label: sbiModule_translate.load("scheduler.secondweek", "component_scheduler_messages"), value: '2'},
+					{label: sbiModule_translate.load("scheduler.thirdweek", "component_scheduler_messages"), value: '3'},
+					{label: sbiModule_translate.load("scheduler.fourthweek", "component_scheduler_messages"), value: '4'},
+					{label: sbiModule_translate.load("scheduler.lastweek", "component_scheduler_messages"), value: '5'},
 				];
-				
+
 				activityEventCtrl.useFolderDatasetInfo = sbiModule_translate.load("scheduler.help.useFolderDataset", "component_scheduler_messages");
 				activityEventCtrl.useFixedRecipientsInfo = sbiModule_translate.load("scheduler.help.useFixedRecipients", "component_scheduler_messages");
 				activityEventCtrl.useDatasetInfo = sbiModule_translate.load("scheduler.help.useDataset", "component_scheduler_messages");
 				activityEventCtrl.useExpressionInfo = sbiModule_translate.load("scheduler.help.useExpression", "component_scheduler_messages");
-				
+
 				activityEventCtrl.useFixedFolderFlag = false;
 				activityEventCtrl.useFolderDatasetFlag = false;
 				activityEventCtrl.useFixedRecipientsFlag = false;
 				activityEventCtrl.useDatasetFlag = false;
 				activityEventCtrl.useExpressionFlag = false;
-				
+
 				activityEventCtrl.event = {};
 				activityEventCtrl.disableName=false;
 				activityEventCtrl.event.jobName = '';
@@ -892,25 +892,25 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 				activityEventCtrl.eventSched = {};
 				activityEventCtrl.selectedDocument = [];
 				activityEventCtrl.selectedWeek = [];
-				
+
 				activityEventCtrl.initJobsValues = function(jobName, jobGroup, triggerName, triggerGroup) {
 					activityEventCtrl.event.jobName = jobName;
 					activityEventCtrl.event.jobGroup = jobGroup;
 					activityEventCtrl.event.triggerName = triggerName;
 					activityEventCtrl.event.triggerGroup = triggerGroup;
 					activityEventCtrl.jobData = null;
-					
+
 					var loadtri = triggerName != undefined
 							&& triggerName != null
 							&& triggerName.trim() != ""
 							&& triggerGroup != undefined
 							&& triggerGroup != null
 							&& triggerGroup.trim() != "";
-					
+
 					activityEventCtrl.loadDataset();
 					activityEventCtrl.loadJobData(loadtri);
 				};
-				
+
 				activityEventCtrl.loadDataset = function() {
 					sbiModule_restServices.get("2.0/datasets", "listDataset")
 						.success(function(data, status, headers, config) {
@@ -924,17 +924,17 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 							console.error(sbiModule_translate.load("sbi.glossary.load.error"))
 						});
 				};
-				
+
 				activityEventCtrl.loadJobData = function(loadTri) {
 					var parameters = 'jobName=' + activityEventCtrl.event.jobName + '&jobGroup=' + activityEventCtrl.event.jobGroup;
-					
+
 					sbiModule_restServices.get("scheduler", "getJob", parameters)
 						.success(function(data, status, headers, config) {
 							if (data.hasOwnProperty("errors")) {
 								console.error(sbiModule_translate.load("sbi.glossary.load.error"))
 							} else {
 								console.log("data", data);
-								
+
 								activityEventCtrl.jobData = data.job;
 								activityEventCtrl.lowFunc =data.functionality;
 								activityEventCtrl.loadDocuments(loadTri);
@@ -944,7 +944,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 							console.error(sbiModule_translate.load("sbi.glossary.load.error"));
 						});
 				};
-				
+
 				activityEventCtrl.loadDocuments = function(loadTri) {
 					var docs = activityEventCtrl.jobData.documents;
 					for(var i = 0; i < docs.length; i++) {
@@ -958,7 +958,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 					}
 					activityEventCtrl.createNewEvent(loadTri);
 				};
-				
+
 				activityEventCtrl.getEmptyEvent = function() {
 					var emptyEvent = {
 						jobName: activityEventCtrl.event.jobName,
@@ -969,9 +969,9 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 						documents: [],
 						chrono: {"type": "single"}
 					};
-					
+
 					activityEventCtrl.typeOperation = 'single';
-					
+
 					//load document;
 					for (var i = 0; i < activityEventCtrl.JobDocuments.length; i++) {
 						var tmp = {};
@@ -982,17 +982,17 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 						tmp.id = doc.id;
 						emptyEvent.documents.push(tmp);
 					}
-					
+
 					return emptyEvent;
 				};
-				
+
 				activityEventCtrl.loadScheduler = function() {
-					var requestString = 
+					var requestString =
 						"getTriggerInfo?jobName=" + activityEventCtrl.event.jobName
 						+"&jobGroup=" + activityEventCtrl.event.jobGroup
 						+"&triggerGroup=" + activityEventCtrl.event.triggerGroup
 						+"&triggerName=" + activityEventCtrl.event.triggerName;
-					
+
 					sbiModule_restServices.post("scheduler", requestString	)
 						.success(function(data, status, headers, config) {
 							if (data.hasOwnProperty("errors")) {
@@ -1000,29 +1000,29 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 							} else {
 								console.log("evento scaricato", data);
 								activityEventCtrl.disableName=true;
-								
+
 								var d = data;
 								activityEventCtrl.event.triggerName = d.triggerName;
-								activityEventCtrl.event.triggerDescription = 
+								activityEventCtrl.event.triggerDescription =
 									(d.triggerDescription && d.triggerDescription != null) ? d.triggerDescription : "";
 								activityEventCtrl.event.startDate = new Date(d.startDateRFC3339);
 								activityEventCtrl.event.startTime = d.startTime;
-								
+
 								if(d.endTime != undefined && d.endTime != "") {
 									activityEventCtrl.event.endTime = d.endTime;
 								} else {
 									activityEventCtrl.event.endTime = "";
 								}
-								
+
 								if(d.endDate != undefined && d.endDate != "") {
 									activityEventCtrl.event.endDate = new Date(d.endDateRFC3339);
 								}
-								
+
 								activityEventCtrl.event.chrono = d.chrono;
-								
+
 								var op = d.chrono;
 								activityEventCtrl.eventSched.repetitionKind = op.type;
-								
+
 								if(op.type == 'single') {
 									activityEventCtrl.typeOperation = op.type;
 									activityEventCtrl.shedulerType = false;
@@ -1030,7 +1030,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 									activityEventCtrl.typeOperation = op.type;
 									activityEventCtrl.shedulerType = false;
 									activityEventCtrl.eventSched.event_type = op.parameter.type;
-									
+
 									if(op.parameter.type == "dataset") {
 										activityEventCtrl.eventSched.dataset = op.parameter.dataset;
 										activityEventCtrl.eventSched.frequency = op.parameter.frequency;
@@ -1044,7 +1044,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 										activityEventCtrl.eventSched.hour_repetition_n=op.parameter.numRepetition;
 									} else if(op.type == 'day'){
 										activityEventCtrl.eventSched.day_repetition_n=op.parameter.numRepetition;
-									} else if(op.type == 'week') {	
+									} else if(op.type == 'week') {
 										activityEventCtrl.selectedWeek = op.parameter.days;
 									} else if(op.type == 'month') {
 										if(op.parameter.hasOwnProperty("months")) {
@@ -1056,7 +1056,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 											activityEventCtrl.month_week_number_repetition = op.parameter.weeks;
 											activityEventCtrl.month_week_repetition = op.parameter.days;
 										}
-										
+
 										if(op.parameter.hasOwnProperty("days")) {
 											activityEventCtrl.typeMonthWeek = false;
 											activityEventCtrl.month_week_number_repetition = op.parameter.weeks;
@@ -1067,10 +1067,10 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 										}
 									}
 								}
-								
+
 								//carico le informazioni dei documenti
 								activityEventCtrl.event.documents=d.documents;
-							
+
 								activityEventCtrl.setSelectedDocument();
 							}
 						})
@@ -1078,7 +1078,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 							console.error(sbiModule_translate.load("sbi.glossary.load.error"))
 						});
 				};
-				
+
 				activityEventCtrl.createNewEvent = function(loadTrigger) {
 					activityEventCtrl.event = activityEventCtrl.getEmptyEvent();
 					activityEventCtrl.setSelectedDocument();
@@ -1086,7 +1086,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 						activityEventCtrl.loadScheduler();
 					}
 				};
-				
+
 				activityEventCtrl.setSelectedDocument = function() {
 					activityEventCtrl.selectedDocument = (activityEventCtrl.event.documents == undefined || activityEventCtrl.event.documents.length != 0) ? activityEventCtrl.event.documents[0] : [];
 					if(!activityEventCtrl.selectedDocument.useFixedRecipients){
@@ -1104,10 +1104,10 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 						activityEventCtrl.selectedDocument.useFixedRecipients = true;
 					}
 				};
-				
+
 				activityEventCtrl.triggerEvent = function() {
 					var requestTriggerEvent = "eventName=" + activityEventCtrl.event.triggerName
-					
+
 					sbiModule_restServices.get("scheduler", "triggerEvent", requestTriggerEvent)
 						.success(function(data, status, headers, config) {
 							if (data.hasOwnProperty("errors")) {
@@ -1119,9 +1119,9 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 						.error(function(data, status, headers, config) {
 							console.error(sbiModule_translate.load("ERRORE triggerEvent"));
 						});
-					
+
 				};
-				
+
 				activityEventCtrl.saveEvent = function(isValid,saveAndReturn) {
 					if (!isValid) {
 						return false;
@@ -1154,33 +1154,33 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 							return false;
 						});
 				};
-				
+
 				activityEventCtrl.changeTypeOperation = function() {
 					var tip = activityEventCtrl.typeOperation;
 					switch(tip) {
-						case 'single': 
-							activityEventCtrl.eventSched.repetitionKind = 'single'; 
-							activityEventCtrl.shedulerType = false; 
+						case 'single':
+							activityEventCtrl.eventSched.repetitionKind = 'single';
+							activityEventCtrl.shedulerType = false;
 							break;
-						case 'scheduler': 
-							activityEventCtrl.shedulerType = true; 
+						case 'scheduler':
+							activityEventCtrl.shedulerType = true;
 							break;
-						case 'event': 
-							activityEventCtrl.eventSched.repetitionKind = 'event'; 
-							activityEventCtrl.shedulerType = false; 
+						case 'event':
+							activityEventCtrl.eventSched.repetitionKind = 'event';
+							activityEventCtrl.shedulerType = false;
 							break;
 					}
 					activityEventCtrl.changeTypeFrequency();
 				};
-				
+
 				activityEventCtrl.getActivityRepetitionKindForScheduler = function() {
-					if(activityEventCtrl.eventSched.repetitionKind == undefined 
-							|| activityEventCtrl.eventSched.repetitionKind == 'single' 
+					if(activityEventCtrl.eventSched.repetitionKind == undefined
+							|| activityEventCtrl.eventSched.repetitionKind == 'single'
 							|| activityEventCtrl.eventSched.repetitionKind == 'event' ) {
 						activityEventCtrl.eventSched.repetitionKind = 'minute';
 					}
 				};
-				
+
 				activityEventCtrl.getNitem = function(n) {
 					var r =[];
 					for(var i = 1; i <= n; i++) {
@@ -1188,13 +1188,13 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 					}
 					return r;
 				};
-				
+
 				activityEventCtrl.toggleMonthScheduler = function() {
 					activityEventCtrl.event.chrono = {
-						"type": "month", 
+						"type": "month",
 						"parameter": {}
 					};
-					 
+
 					if(activityEventCtrl.typeMonth == true) {
 						activityEventCtrl.event.chrono.parameter.numRepetition = activityEventCtrl.monthrep_n;
 					} else {
@@ -1203,25 +1203,25 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 							activityEventCtrl.event.chrono.parameter.months.push(activityEventCtrl.month_repetition[k]);
 						}
 					}
-						
+
 					if(activityEventCtrl.typeMonthWeek == true) {
 						activityEventCtrl.event.chrono.parameter.dayRepetition = activityEventCtrl.dayinmonthrep_week;
 					} else {
 						var mwnr = activityEventCtrl.month_week_number_repetition;
-						
+
 						if(mwnr == undefined) {
 							mwnr = 'first';
 						}
-						
+
 						activityEventCtrl.event.chrono.parameter.weeks = mwnr;
 						activityEventCtrl.event.chrono.parameter.days = [];
-						
+
 						for(var k in activityEventCtrl.month_week_repetition) {
 							activityEventCtrl.event.chrono.parameter.days.push(activityEventCtrl.month_week_repetition[k]);
 						}
 					}
 				};
-				
+
 				activityEventCtrl.toggleWeek = function(week) {
 					if(week != undefined) {
 						var idx = activityEventCtrl.selectedWeek.indexOf(week);
@@ -1231,27 +1231,27 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 							activityEventCtrl.selectedWeek.push(week);
 						}
 					}
-				
+
 					activityEventCtrl.event.chrono = {
-						"type": "week", 
+						"type": "week",
 						"parameter": {
 							"days": []
 						}
 					};
-					
+
 					for(var k in activityEventCtrl.selectedWeek ) {
 						activityEventCtrl.event.chrono.parameter.days.push(activityEventCtrl.selectedWeek[k]);
 					}
 				};
-				
+
 				activityEventCtrl.changeTypeFrequency = function() {
 					$timeout(function() {
 						var tip = activityEventCtrl.eventSched.repetitionKind;
-						
+
 						switch(tip) {
-							case 'event': 
+							case 'event':
 								activityEventCtrl.event.chrono = {
-									"type": "event", 
+									"type": "event",
 									"parameter": {
 										"type": activityEventCtrl.eventSched.event_type
 									}
@@ -1261,46 +1261,46 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 									activityEventCtrl.event.chrono.parameter.frequency = activityEventCtrl.eventSched.frequency;
 								}
 								break;
-							case 'single': 
+							case 'single':
 								activityEventCtrl.event.chrono = {
 									"type": "single"
-								}; 
+								};
 								break;
-							case 'minute': 
+							case 'minute':
 								activityEventCtrl.event.chrono = {
-									"type": "minute", 
+									"type": "minute",
 									"parameter": {
 										"numRepetition": activityEventCtrl.eventSched.minute_repetition_n
 									}
-								}; 
+								};
 								break;
-							case 'hour': 
+							case 'hour':
 								activityEventCtrl.event.chrono = {
-									"type": "hour", 
+									"type": "hour",
 									"parameter": {
 										"numRepetition": activityEventCtrl.eventSched.hour_repetition_n
 										}
-								}; 
+								};
 								break;
-							case 'day': 
+							case 'day':
 								activityEventCtrl.event.chrono = {
-									"type": "day", 
+									"type": "day",
 									"parameter": {
 										"numRepetition": activityEventCtrl.eventSched.day_repetition_n
 										}
 								};
 								break;
-							case 'week': 
-								activityEventCtrl.toggleWeek(); 
+							case 'week':
+								activityEventCtrl.toggleWeek();
 								break;
-							case 'month': 
+							case 'month':
 								activityEventCtrl.toggleMonthScheduler();
 								break;
 						}
 						console.log('chrono', activityEventCtrl.event.chrono);
 					}, 500);
 				};
-				
+
 				activityEventCtrl.isChecked = function (item, list, condition) {
 					if(condition) {
 						return list == undefined ? false : list.indexOf(item) > -1;
@@ -1308,7 +1308,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 						return false;
 					}
 				};
-				
+
 				activityEventCtrl.toggleDocFunct = function(doc, funct) {
 					if(funct != undefined) {
 						if(doc.funct == undefined) {
@@ -1322,19 +1322,19 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 						}
 					}
 				};
-				
+
 				activityEventCtrl.onlyNumberConvert = function(item) {
 					return item.replace(/\D/g,'');
 				};
-				
+
 				activityEventCtrl.prova = function(item) {
-					console.log("prova",item); 	
+					console.log("prova",item);
 				};
-				
+
 				activityEventCtrl.toggleEnabled = function(item,item2) {
-					console.log("toggleEnabled",item,item2); 	
+					console.log("toggleEnabled",item,item2);
 				};
-				
+
 				activityEventCtrl.sampleModel=[{name:"name1",surname:"surname1",enabled:'true',age:'<md-checkbox  ng-checked="row.enabled" ng-click="row.enabled=!row.enabled">{{row.enabled}}</md-checkbox>'},
 											   {name:"name1",surname:"surname1",enabled:'true',age:'<md-checkbox  ng-checked="row.enabled" ng-click="row.enabled=!row.enabled">{{row.enabled}}</md-checkbox>'},
 											   {name:"name1",surname:"surname1",enabled:'true',age:'<md-checkbox  ng-checked="row.enabled" ng-click="row.enabled=!row.enabled">{{row.enabled}}</md-checkbox>'},
@@ -1355,7 +1355,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 											   {name:"name18",surname:"surname18",age:"18"},
 											   {name:"name19",surname:"surname19",age:"18"},
 											 ];
-				
+
 				activityEventCtrl.MenuOpt = [
 					{
 						label : 'action1',
@@ -1370,19 +1370,19 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 						}
 					}
 				];
-				
+
 				activityEventCtrl.SpeedMenuOpt  = [
 					{
 						label : 'action1',
-						icon:'fa fa-pencil' ,  
-						backgroundColor:'red',  
-						color:'black',		
+						icon:'fa fa-pencil' ,
+						backgroundColor:'red',
+						color:'black',
 						action : function(item,event) {
 							myFunction(event,item);
 						}
-					} 
+					}
 				];
-				
+
 				activityEventCtrl.showInfoBox=function(title,text,parentId){
 					$mdDialog.show(
 						$mdDialog.alert()
@@ -1390,14 +1390,14 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 							.title(title)
 							.content(text)
 							.ariaLabel('info dialog')
-							.ok(sbiModule_translate.load("sbi.general.close")) 
+							.ok(sbiModule_translate.load("sbi.general.close"))
 					);
 				}
-				
+
 				activityEventCtrl.cancel = function($event) {
 					$mdDialog.cancel();
 				};
-				
+
 				activityEventCtrl.updateUseFixedRecipients = function() {
 					if(!activityEventCtrl.selectedDocument.useFixedRecipients
 							&& !activityEventCtrl.selectedDocument.useDataset
@@ -1408,7 +1408,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 						activityEventCtrl.selectedDocument.useExpression = false;
 					}
 				}
-				
+
 				activityEventCtrl.updateUseDataset = function() {
 					if(!activityEventCtrl.selectedDocument.useFixedRecipients
 							&& !activityEventCtrl.selectedDocument.useDataset
@@ -1419,7 +1419,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 						activityEventCtrl.selectedDocument.useExpression = false;
 					}
 				}
-				
+
 				activityEventCtrl.updateUseExpression = function() {
 					if(!activityEventCtrl.selectedDocument.useFixedRecipients
 							&& !activityEventCtrl.selectedDocument.useDataset
@@ -1430,7 +1430,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 						activityEventCtrl.selectedDocument.useDataset = false;
 					}
 				}
-				
+
 				activityEventCtrl.initJobsValues(jobName, jobGroup, triggerName, triggerGroup);
 			},
 			templateUrl : sbiModule_config.contextName + '/js/src/angular_1.4/tools/scheduler/templates/dialog-trigger.jsp'
