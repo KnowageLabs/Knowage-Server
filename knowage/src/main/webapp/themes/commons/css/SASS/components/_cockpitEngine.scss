@@ -89,9 +89,6 @@
 			}
 
 		}
-		.cockpitTableContainer {
-			flex: 1 0 auto;
-		}
 		.cockpitTablePagination {
 		        height: 36px;
 		        min-height: 36px;
@@ -151,7 +148,7 @@
 		    	width: 100%;
 		    	//overflow-y: auto;
 		    	table.cockpitTable {
-			    	width: 100%;
+			    	width: calc(100% + 0.5px);
 			        .loadingBar {
 			            tr {
 			                height: 0px;
@@ -556,10 +553,9 @@
 		}
 		&.cockpitEditMode{
 			background-size:40px 10px;
-			height: 100% !important;
+			min-height: 100% !important;
 			border: $cockpitDefaultBorder;
 			background-image:repeating-linear-gradient(0deg, #e2e2e2, #e2e2e2 1px, transparent 1px, transparent 40px), repeating-linear-gradient(-90deg, #e2e2e2, #e2e2e2 1px, transparent 1px, transparent 10px);
-			//background: url("../../sbi_default/img/grid.png") repeat 0 0 transparent;
 			.showActionButtonHandler {
 				opacity: .4 !important;
 			}
@@ -1212,6 +1208,13 @@
     		display: none;
     	}
     }
+    cockpit-table {
+	    .cockpitTableContainer {
+	    	table.cockpitTable {
+		    	width: 100%;
+		    }
+		}
+	}
 }
 
 }

@@ -553,12 +553,18 @@
 	 }
 
 	 .workspaceDocumentsList {
+	 	md-content {
+	 		@include coolScrollBars($baseColor,6px);
+	 	}
 	 	.workspaceCardContainer , .workspaceFolderCardContainer{
 			display: flex;
 			flex-direction: row;
 			justify-content: space-around;
 			padding: 8px;
 			.documentCard {
+				md-card-title-text {
+					width: 100%;
+				}
 				width: 100%;
 				max-width: 350px;
 				margin-top: 0;
