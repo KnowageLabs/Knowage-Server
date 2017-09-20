@@ -12,7 +12,7 @@ angular.module('knScrollPagination',[]);
 		app.directive('pivotTable',function(){
 			
 			var link = function(){
-				console.log("eowifajewpoifja");
+				
 			}
 
 		var controller = function($scope, $element){
@@ -150,7 +150,17 @@ angular.module('knScrollPagination',[]);
 				scope.scrollLeft = Math.round(element[0].scrollLeft);
 				scope.$apply();
 			})
+			
+			scope.$on('tableScroll',function(event,delta){
+			
+			scope.scrollTop = Math.round(element[0].scrollTop);
+			scope.scrollLeft = Math.round(element[0].scrollLeft);
+			scope.$apply();
+			
+			})
 		}
+		
+		
 		
 		return{
 			
@@ -159,6 +169,27 @@ angular.module('knScrollPagination',[]);
 			
 		}
 	});
+	
+	app.directive('tableWheelScroll',function($window,$anchorScroll,$rootScope){
+		
+		
+		function link(scope,element,attrs){
+		element.bind("DOMMouseScroll mousewheel onmousewheel",function(event){
+			
+			var event = window.event || event; // old IE support
+            var delta = Math.max(-1, Math.min(1, (event.wheelDelta || -event.detail)));
+            $rootScope.$broadcast('tableScroll',delta);
+            
+		 })
+		}
+		
+		return{
+			
+			restrict:'A',
+			link:link,
+			
+		}
+	})
 	
 	app.directive('scroller',function(){
 
@@ -188,6 +219,16 @@ angular.module('knScrollPagination',[]);
 					scope.rowNo =	Math.round(scope.scrollTop / scope.cellHeight)  ;
 					scope.columnNo =	Math.round(scope.scrollLeft / scope.cellWidth)  ;
 				},true)
+				
+				scope.$on('tableScroll',function(event,delta){
+				
+				var newRowNo = scope.rowNo - delta;
+				if(newRowNo>=0&&newRowNo<=scope.rowCount){
+					scope.rowNo = newRowNo;
+					scope.$apply();
+				}
+				
+			})
 			
 			
 		}
