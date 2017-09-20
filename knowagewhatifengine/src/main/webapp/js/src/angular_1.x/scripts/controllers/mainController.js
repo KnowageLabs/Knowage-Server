@@ -274,15 +274,22 @@ function olapFunction($scope, $rootScope,$timeout, $window, $mdDialog, $http, $s
 							if(startRow!=undefined&&!isNaN(startRow)){
 								response.data.modelConfig.startRow  = startRow;
 							}
-						}
-						
-						
-						angular.copy(response.data.modelConfig,$scope.modelConfig)
-						if($scope.table){
-							angular.copy($sce.trustAsHtml($scope.buffer[$scope.modelConfig.startRow]),$scope.table);
+							
+							angular.copy(response.data.modelConfig,$scope.modelConfig)
+							if($scope.table){
+								angular.copy($sce.trustAsHtml($scope.buffer[$scope.modelConfig.startRow]),$scope.table);
+							}else{
+								$scope.table = $sce.trustAsHtml($scope.buffer[$scope.modelConfig.startRow]);
+							}
 						}else{
-							$scope.table = $sce.trustAsHtml($scope.buffer[$scope.modelConfig.startRow]);
+							if($scope.table){
+								$scope.table = $sce.trustAsHtml(response.data.table);
+							}
+							
 						}
+						
+						
+						
 						
 						
 						//$scope.table = $sce.trustAsHtml(response.data.table);
@@ -308,6 +315,7 @@ function olapFunction($scope, $rootScope,$timeout, $window, $mdDialog, $http, $s
 		}
 			
 	}
+	
 	$scope.$watch('modelConfig.startRow',function(newValue,oldValue){
 		
 		if(newValue!=undefined&&!isNaN(newValue)) {
