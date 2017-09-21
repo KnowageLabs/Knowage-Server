@@ -60,7 +60,7 @@
 		<table cellspacing="20px">
 		  <tr>
 		    <td width="20%" valign="top">
-		      <image height="150px"  src="../img/error.gif"/>
+		      <image height="150px"  src="../../img/error.gif"/>
 		    </td>
 		    
 		    <td width="80%" valign="top">
