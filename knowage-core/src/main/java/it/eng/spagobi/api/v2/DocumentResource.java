@@ -69,6 +69,7 @@ import it.eng.spagobi.utilities.JSError;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -78,6 +79,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -120,7 +122,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 	static protected Logger logger = Logger.getLogger(DocumentResource.class);
 
 
-	public String getDocumentParameters(String label) {
+	public String getDocParameters(String label) {
 
 		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
 		BIObject document = documentManager.getDocument(label);
@@ -219,6 +221,36 @@ public class DocumentResource extends AbstractSpagoBIResource {
 			logger.error("Error while try to retrieve user roles by document id [" + id + "]", e);
 			throw new SpagoBIRuntimeException("Error while try to retrieve user roles by document id [" + id + "]", e);
 		}
+	}
+	
+	@GET
+	@Path("/{label}/parameters")
+	@Produces(MediaType.APPLICATION_JSON )
+	public String getDocumentParameters(@PathParam("label") String label) {
+		logger.debug("IN");
+		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
+		try {
+			List<JSONObject> parameters = documentManager.getDocumentParameters(label);
+			JSONArray paramsJSON = writeParameters(parameters);
+			JSONObject resultsJSON = new JSONObject();
+			resultsJSON.put("results", paramsJSON);
+			return resultsJSON.toString();
+		} catch (Throwable t) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+	
+	public JSONArray writeParameters(List<JSONObject> params) throws Exception {
+		JSONArray paramsJSON = new JSONArray();
+
+		for (Iterator iterator = params.iterator(); iterator.hasNext();) {
+			JSONObject jsonObject = (JSONObject) iterator.next();
+			paramsJSON.put(jsonObject);
+		}
+
+		return paramsJSON;
 	}
 
 	@GET
