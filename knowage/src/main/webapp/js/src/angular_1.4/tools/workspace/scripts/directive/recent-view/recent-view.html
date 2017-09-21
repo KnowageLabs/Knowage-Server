@@ -15,7 +15,7 @@
 <!-- Document Grid View -->
 <div layout="row"  layout-wrap ng-hide="showGridView!=true " >
 	<div  class="workspaceCardContainer" ng-repeat="document in ngModel| orderBy:orderingDocumentCards" flex-xl=25 flex=33 flex-sm=50 flex-xs=100>
-		<md-card class="documentCard"  ng-class="{'md-whiteframe-15dp' : selectedDocument==document }">
+		<md-card class="documentCard"  ng-class="{'md-whiteframe-15dp' : selectedDocument==document }" ng-click="clickDocument(document);">
 	        
 	        <md-card-title>
 		          <md-card-title-text>
@@ -24,11 +24,11 @@
 		          </md-card-title-text>
 		    </md-card-title>
 	    
-        <div class="md-card-image document_browser_image_{{document.documentType}}"   ng-click="clickDocument(document);"  ng-if="document.previewFile==null"></div>
+        <div class="md-card-image document_browser_image_{{document.documentType}}"  ng-if="document.previewFile==null"></div>
         
         <img align="center" class="preview-icon" ng-if="document.previewFile!=null"
 		ng-src="{{sbiModule_config.contextName}}/servlet/AdapterHTTP?ACTION_NAME=MANAGE_PREVIEW_FILE_ACTION&amp;SBI_ENVIRONMENT=DOCBROWSER&amp;
-		LIGHT_NAVIGATOR_DISABLED=TRUE&amp;operation=DOWNLOAD&amp;fileName={{document.previewFile}}">
+		LIGHT_NAVIGATOR_DISABLED=TRUE&amp;operation=DOWNLOAD&amp;fileName={{document.previewFile}}" >
         
         <md-card-actions layout="row" layout-align="space-around end">			          			          			        	 
           <md-button class="md-icon-button" aria-label="Execute" ng-click="executeDocumentAction({doc:document});">

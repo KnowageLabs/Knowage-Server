@@ -25,7 +25,7 @@
 					<!-- Document Grid View -->
 					<div layout="row"  layout-wrap ng-hide="showGridView!=true " >
 					<div  class="documentBrowserCardContainer" ng-repeat="document in ngModel| orderBy:orderingDocumentCards" flex-xl=25 flex=33 flex-sm=50 flex-xs=100>
-			        <md-card class="documentCard" ng-class="{'md-whiteframe-15dp' : selectedDocument==document }">
+			        <md-card class="documentCard" ng-class="{'md-whiteframe-15dp' : selectedDocument==document }" ng-click="clickDocument(document);">
 				        <md-card-title>
 					          <md-card-title-text>
 					            <p class="ellipsis">{{document.name}}</p>
@@ -37,8 +37,7 @@
 				    
 			        
 			       
-			        <div class="md-card-image document_browser_image_{{document.typeCode}}"   ng-click="clickDocument(document);" 
-			         ng-if="document.previewFile==null"></div>
+			        <div class="md-card-image document_browser_image_{{document.typeCode}}" ng-if="document.previewFile==null"></div>
 			        
 			        <img align="center" class="preview-icon" ng-if="document.previewFile!=null"
 					ng-src="{{sbiModule_config.contextName}}/servlet/AdapterHTTP?ACTION_NAME=MANAGE_PREVIEW_FILE_ACTION&amp;SBI_ENVIRONMENT=DOCBROWSER&amp;
