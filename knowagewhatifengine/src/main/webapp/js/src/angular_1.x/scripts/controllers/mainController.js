@@ -119,25 +119,50 @@ function olapFunction($scope, $rootScope,$timeout, $window, $mdDialog, $http, $s
 	$scope.ready = true;
 	$scope.sortingEnabled = false;
 	$scope.crossNavigationEnabled = false;
-	$scope.sortingModes = [ {
+	$scope.sortingModes = [ 
+	{
+		'label' : 'no sorting',
+		'value' : 'no sorting'
+	},
+	{
 		'label' : 'basic',
 		'value' : 'basic'
-	}, {
+	}, 
+	{
 		'label' : 'breaking',
 		'value' : 'breaking'
-	}, {
+	},
+	{
 		'label' : 'count',
 		'value' : 'count'
 	} ];
-	$scope.selectedSortingMode = 'basic';
+	$scope.selectedSortingMode = 'no sorting';
 	$scope.sortingCount = 10;
 	$scope.saveSortingSettings = function() {
 		if($scope.sortingCount<1||!$scope.sortingCount){
 			sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.olap.sortingSetting.count.error'), 'Error');
 			
 		}else{
+			
 			$mdDialog.hide();
-			$scope.sortDisable();
+			//$scope.sortDisable();
+			switch($scope.selectedSortingMode) {
+		    case 'no sorting':
+		        if($scope.modelConfig.sortingEnabled){
+		        	$scope.sortDisable();
+		        }
+		        break;
+		    case 'basic':
+		    case 'breaking':
+		    case 'count':
+		    	if($scope.modelConfig.sortingEnabled!=true){
+		        	$scope.sortDisable();
+		        }
+		       
+		        break;
+		    default:
+		        
+		}
 		}
 		
 	}
