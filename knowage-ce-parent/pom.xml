@@ -102,6 +102,7 @@
 		<module>../knowagetalendenginclientapi</module>
 		<module>../knowagetalendengine</module>
 		<module>../knowagewhatifengine</module>
+		<module>../knowagesdk</module>
 	</modules>
 
 	<build>
