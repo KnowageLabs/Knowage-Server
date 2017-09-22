@@ -17,6 +17,17 @@
  */
 package it.eng.spagobi.api.common;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.container.ObjectUtils;
@@ -35,18 +46,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIResource{
+public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIResource {
 
 	static protected Logger logger = Logger.getLogger(DataSetResourceAbstractResource.class);
 
@@ -82,10 +82,8 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 		return idArray;
 	}
 
-	public String getDataStore( String label, String parameters,  String selections,
-			 String likeSelections,  int maxRowCount,
-			String aggregations, String summaryRow,  int offset,
-			 int fetchSize,  boolean isRealtime) {
+	public String getDataStore(String label, String parameters, String selections, String likeSelections, int maxRowCount, String aggregations,
+			String summaryRow, int offset, int fetchSize, boolean isRealtime) {
 		logger.debug("IN");
 
 		try {
@@ -124,14 +122,14 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 
 			List<FilterCriteria> filterCriteria = new ArrayList<FilterCriteria>();
 			List<FilterCriteria> filterCriteriaForMetaModel = new ArrayList<FilterCriteria>();
-			if (selections != null && !selections.equals("")) {
-				JSONObject selectionsObject = new JSONObject(selections);
-				// in same case object is empty '{}'
-				if (selectionsObject.names() != null) {
-					filterCriteria = getFilterCriteria(label, selectionsObject, false, columnAliasToName);
-					filterCriteriaForMetaModel = getFilterCriteria(label, selectionsObject, true, columnAliasToName);
-				}
-			}
+			// if (selections != null && !selections.equals("")) {
+			// JSONObject selectionsObject = new JSONObject(selections);
+			// // in same case object is empty '{}'
+			// if (selectionsObject.names() != null) {
+			// filterCriteria = getFilterCriteria(label, selectionsObject, false, columnAliasToName);
+			// filterCriteriaForMetaModel = getFilterCriteria(label, selectionsObject, true, columnAliasToName);
+			// }
+			// }
 
 			List<FilterCriteria> havingCriteria = new ArrayList<FilterCriteria>();
 			List<FilterCriteria> havingCriteriaForMetaModel = new ArrayList<FilterCriteria>();
@@ -151,6 +149,22 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 				JSONObject summaryRowObject = new JSONObject(summaryRow);
 				JSONArray summaryRowMeasuresObject = summaryRowObject.getJSONArray("measures");
 				summaryRowProjectionCriteria = getProjectionCriteria(label, new JSONArray(), summaryRowMeasuresObject);
+			}
+
+			if (selections != null && !selections.equals("")) {
+				JSONObject selectionsObject = new JSONObject(selections);
+				// in same case object is empty '{}'
+				if (selectionsObject.names() != null) {
+
+					filterCriteria = getFilterCriteria(label, selectionsObject, false, columnAliasToName);
+					filterCriteriaForMetaModel = getFilterCriteria(label, selectionsObject, true, columnAliasToName);
+
+					// check if max or min filters are used and caclulate it
+					filterCriteria = getDatasetManagementAPI().calculateMinMaxFilter(label, parameters, selections, likeSelections, maxRowCount, aggregations,
+							summaryRow, offset, fetchSize, false, groupCriteria, filterCriteriaForMetaModel, summaryRowProjectionCriteria, havingCriteria,
+							havingCriteriaForMetaModel, filterCriteriaForMetaModel, projectionCriteria);
+				}
+
 			}
 
 			IDataStore dataStore = getDatasetManagementAPI().getDataStore(label, offset, fetchSize, maxRowCount, isRealtime,
@@ -328,7 +342,6 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 		return toReturn;
 	}
 
-
 	protected void loadColumnAliasToName(JSONArray jsonArray, Map<String, String> columnAliasToName) throws JSONException {
 		for (int i = 0; i < jsonArray.length(); i++) {
 			JSONObject category = jsonArray.getJSONObject(i);
@@ -339,7 +352,5 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 			}
 		}
 	}
-
-
 
 }

@@ -198,7 +198,7 @@ angular.module('cockpitModule')
 	   }
 });
 
-function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetServices,cockpitModule_properties,cockpitModule_template,cockpitModule_analyticalDrivers,cockpitModule_datasetServices,sbiModule_restServices,$q,cockpitModule_documentServices,cockpitModule_crossServices,cockpitModule_widgetSelection,$timeout,cockpitModule_gridsterOptions,sbiModule_translate,sbiModule_user){
+function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetServices,cockpitModule_properties,cockpitModule_template,cockpitModule_analyticalDrivers,cockpitModule_datasetServices,sbiModule_restServices,$q,cockpitModule_documentServices,cockpitModule_crossServices,cockpitModule_widgetSelection,$timeout,cockpitModule_gridsterOptions,sbiModule_translate,sbiModule_user,$mdDialog){
 	$scope.cockpitModule_properties=cockpitModule_properties;
 	$scope.cockpitModule_template=cockpitModule_template;
 	$scope.translate		= sbiModule_translate;
@@ -500,12 +500,49 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 					outputParameter[model.cross.cross.outputParameter] = columnValue;
 				}
 				
+				// parse static parameters if present
+				var staticParameters = [];
+				if(model.cross.cross.staticParameters){
+					var err=false;
+					try{
+						var parsedStaticPars = model.cross.cross.staticParameters.split("&");
+						for(var i=0;i<parsedStaticPars.length;i++){
+							var splittedPar=parsedStaticPars[i].split("=");
+							if(splittedPar[0]==undefined || splittedPar[1]==undefined){err=true;}
+							else{
+								var toInsert = {};
+								toInsert[splittedPar[0]] = splittedPar[1]; 
+								staticParameters.push(toInsert);
+							}
+						
+						}
+
+					}catch(e){
+						err=true
+						console.error(e);
+					}finally{
+						if(err){ 
+							 $mdDialog.show(
+								      $mdDialog.alert()
+								        .clickOutsideToClose(true)
+								        .title(sbiModule_translate.load("sbi.cockpit.cross.staticParameterErrorFormatTitle"))
+								        .content(sbiModule_translate.load("sbi.cockpit.cross.staticParameterErrorFormatMsg"))
+								        //.ariaLabel('Alert Dialog Demo')
+								        .ok(sbiModule_translate.load("sbi.general.continue"))
+								    );
+								return;
+						}
+
+						}
+					
+				}
+				
 				// if destination document is specified don't ask
 				if(model.cross.cross.crossName != undefined){
-					parent.execExternalCrossNavigation(outputParameter,{},model.cross.cross.crossName);
+					parent.execExternalCrossNavigation(outputParameter,{},model.cross.cross.crossName,null,staticParameters);
 				}
 				else{
-					parent.execExternalCrossNavigation(outputParameter,{});
+					parent.execExternalCrossNavigation(outputParameter,{},null,null,staticParameters);
 				}
 				return;
 			}

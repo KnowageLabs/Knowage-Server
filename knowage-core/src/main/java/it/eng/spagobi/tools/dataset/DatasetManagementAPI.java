@@ -43,6 +43,7 @@ import it.eng.spagobi.tools.dataset.cache.CacheException;
 import it.eng.spagobi.tools.dataset.cache.FilterCriteria;
 import it.eng.spagobi.tools.dataset.cache.GroupCriteria;
 import it.eng.spagobi.tools.dataset.cache.InLineViewBuilder;
+import it.eng.spagobi.tools.dataset.cache.Operand;
 import it.eng.spagobi.tools.dataset.cache.ProjectionCriteria;
 import it.eng.spagobi.tools.dataset.cache.SelectBuilder;
 import it.eng.spagobi.tools.dataset.cache.SpagoBICacheManager;
@@ -87,6 +88,7 @@ import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -119,9 +121,8 @@ import commonj.work.WorkItem;
  * DataLayer facade class. It manage the access to SpagoBI's datasets. It is built on top of the dao. It manages all complex operations that involve more than a
  * simple CRUD operations over the dataset. It also manages user's profilation and autorization. Other class must access dataset through this class and not
  * calling directly the DAO.
- *
+ * 
  * @author gavardi, gioia
- *
  */
 
 public class DatasetManagementAPI {
@@ -138,6 +139,10 @@ public class DatasetManagementAPI {
 	public static final String MULTIVALUE = "MULTIVALUE";
 
 	private static final int METAMODEL_LIMIT = 5000;
+
+	// Cockpit filters
+	public static final String MAX_FILTER = "MAX()";
+	public static final String MIN_FILTER = "MIN()";
 
 	static private Logger logger = Logger.getLogger(DatasetManagementAPI.class);
 
@@ -1001,7 +1006,7 @@ public class DatasetManagementAPI {
 
 	/**
 	 * The association is valid if number of records froma ssociation is less than Maximum of single datasets
-	 *
+	 * 
 	 * @param dsLabel1
 	 * @param dsLabel2
 	 * @param field1
@@ -1710,7 +1715,7 @@ public class DatasetManagementAPI {
 				} else {
 					/**
 					 * Handling of the ordering criteria set for the first category.
-					 *
+					 * 
 					 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 					 */
 					// If the order type is not defined for current item, consider it as it is of an empty value (empty string).
@@ -1779,7 +1784,7 @@ public class DatasetManagementAPI {
 				/**
 				 * Only in the case when the category name and the name of the column through which it should be ordered are not the same, append the part for
 				 * ordering that category to the end of the ORDER BY clause.
-				 *
+				 * 
 				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 				 */
 				if (!columnAndCategoryAreTheSame && !keepCategoryForOrdering.isEmpty()) {
@@ -1790,7 +1795,7 @@ public class DatasetManagementAPI {
 				 * Append ordering by categories (columns, attributes) at the end of the array of table columns through which the ordering of particular
 				 * ordering type should be performed. This is the way in which the query is constructed inside the Chart Engine, so we will keep the same
 				 * approach.
-				 *
+				 * 
 				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 				 */
 				for (int i = 0; i < arrayCategoriesForOrdering.size(); i++) {
@@ -2165,4 +2170,206 @@ public class DatasetManagementAPI {
 
 		return result;
 	}
+
+	/**
+	 * if a filter has MAX() or MIN() value convert it bay calculating the right value
+	 * 
+	 * @param label
+	 * @param parameters
+	 * @param selections
+	 * @param likeSelections
+	 * @param maxRowCount
+	 * @param aggregations
+	 * @param summaryRow
+	 * @param offset
+	 * @param fetchSize
+	 * @param isNearRealtime
+	 * @param groupCriteria
+	 * @param filterCriteriaForMetaModel
+	 * @param summaryRowProjectionCriteria
+	 * @param havingCriteria
+	 * @param havingCriteriaForMetaModel
+	 * @param filterCriteria
+	 * @param projectionCriteria
+	 * @return
+	 */
+
+	public List<FilterCriteria> calculateMinMaxFilter(String label, String parameters, String selections, String likeSelections, int maxRowCount,
+			String aggregations, String summaryRow, int offset, int fetchSize, boolean isNearRealtime, List<GroupCriteria> groupCriteria,
+			List<FilterCriteria> filterCriteriaForMetaModel, List<ProjectionCriteria> summaryRowProjectionCriteria, List<FilterCriteria> havingCriteria,
+			List<FilterCriteria> havingCriteriaForMetaModel, List<FilterCriteria> filterCriteria, List<ProjectionCriteria> projectionCriteria) {
+
+		logger.debug("IN");
+
+		// filters list with max min substituted, to be returned
+		List<FilterCriteria> toReturn = new ArrayList<FilterCriteria>();
+
+		// all other filters, use it to get max min values
+		List<FilterCriteria> noMaxMinfilterCriteria = new ArrayList<FilterCriteria>();
+
+		// indexes of max and min filters found in filtersCriteria
+		List<Integer> maxMinFilterCriteriaIndex = new ArrayList<>();
+		// map column name to filter criteria
+		Map<String, Integer> maxMinFilterCriteriaNameToIndex = new HashMap<String, Integer>();
+
+		// columns name with a min filter criteria
+		List<String> minFilterCriteriaString = new ArrayList<>();
+		// columns name with a max filter criteria
+		List<String> maxFilterCriteriaString = new ArrayList<>();
+
+		// what to put in select clause when retrieving for MAX or MIN
+		List<ProjectionCriteria> aggregationProjectionCriteria = new ArrayList<ProjectionCriteria>();
+		ArrayList<String> aggregationFields = new ArrayList<>();
+
+		/**
+		 * pass al filters criteria in order ot find MAX() or MIN() filters
+		 */
+		for (int i = 0; i < filterCriteria.size(); i++) {
+			FilterCriteria fc = filterCriteria.get(i);
+			Operand leftOperand = fc.getLeftOperand();
+			Object lov = leftOperand.getOperandValue();
+			String letOp = lov.toString();
+
+			Operand rightOperand = fc.getRightOperand();
+			Object rov = rightOperand.getOperandValue();
+			String values = rov.toString();
+
+			if (values.contains(MIN_FILTER)) {
+				logger.debug("found a MIN filter criteria at index " + i + " for coulmnn " + fc.getLeftOperand().getOperandValueAsString());
+				String columnName = fc.getLeftOperand().getOperandValueAsString();
+				maxMinFilterCriteriaIndex.add(i);
+				maxMinFilterCriteriaNameToIndex.put(letOp, i);
+				minFilterCriteriaString.add(fc.getLeftOperand().getOperandValueAsString());
+
+				ProjectionCriteria aggregatePc = new ProjectionCriteria(null, columnName, "MIN", columnName); // TODO GET DATASET
+				aggregationProjectionCriteria.add(aggregatePc);
+				aggregationFields.add(aggregatePc.getAliasName());
+
+			} else if (values.contains(MAX_FILTER)) {
+				logger.debug("found a MAX filter criteria at index " + i + " for coulmnn " + fc.getLeftOperand().getOperandValueAsString());
+				String columnName = fc.getLeftOperand().getOperandValueAsString();
+				maxMinFilterCriteriaIndex.add(i);
+				maxMinFilterCriteriaNameToIndex.put(letOp, i);
+				maxFilterCriteriaString.add(fc.getLeftOperand().getOperandValueAsString());
+
+				ProjectionCriteria aggregatePc = new ProjectionCriteria(null, columnName, "MAX", columnName);
+				aggregationProjectionCriteria.add(aggregatePc);
+				aggregationFields.add(aggregatePc.getAliasName());
+
+			} else {
+				noMaxMinfilterCriteria.add(fc);
+			}
+		}
+
+		/**
+		 * Enters here only if found MAX() or MIN() filter
+		 */
+		if (maxMinFilterCriteriaIndex.size() > 0) {
+			logger.debug("Max or min filter found");
+
+			// index projecton Criteria
+			// for each projection if it is in maxMin aggregations write specific projection
+			// for (Iterator iterator = projectionCriteria.iterator(); iterator.hasNext();) {
+			// ProjectionCriteria pc = (ProjectionCriteria) iterator.next();
+			// String columnName = pc.getColumnName();
+			//
+			// if (minFilterCriteriaString.contains(columnName)) {
+			// logger.debug(columnName + " is among MIN aggregation");
+			// ProjectionCriteria aggregatePc = new ProjectionCriteria(pc.getDataset(), columnName, "MIN", columnName);
+			// aggregationProjectionCriteria.add(aggregatePc);
+			// aggregationFields.add(aggregatePc.getAliasName());
+			// }
+			// if (maxFilterCriteriaString.contains(columnName)) {
+			// logger.debug(columnName + " is among MAX aggregation");
+			// ProjectionCriteria aggregatePc = new ProjectionCriteria(pc.getDataset(), columnName, "MAX", columnName);
+			// aggregationProjectionCriteria.add(aggregatePc);
+			// aggregationFields.add(aggregatePc.getAliasName());
+			// }
+			// }
+
+			/**
+			 * pre-calculate values to substitute in filters
+			 */
+
+			// get Values to store in filters
+			IDataStore dataStore = getDataStore(label, offset, fetchSize, maxRowCount, isNearRealtime, DataSetUtilities.getParametersMap(parameters), null,
+			// groupCriteria,
+					noMaxMinfilterCriteria, filterCriteriaForMetaModel, null, null,
+					// havingCriteria,
+					// havingCriteriaForMetaModel,
+					aggregationProjectionCriteria, summaryRowProjectionCriteria);
+
+			if (dataStore == null) {
+				logger.error("Error in getting MAX and MIN filters values");
+				throw new SpagoBIRuntimeException("Error in getting MAX and MIN filters values, avlues not returned");
+			}
+
+			logger.debug("MIN / MAX filter values calculated");
+
+			/**
+			 * get Values from datastore and substitute them in original filters
+			 */
+			// get value and substitute it in filter
+			boolean multiple = false;
+			for (int i = 0; i < aggregationFields.size(); i++) {
+				String aliasField = aggregationFields.get(i);
+
+				List values = dataStore.getFieldValues(dataStore.getMetaData().getFieldIndex(aliasField));
+				Class type = dataStore.getMetaData().getFieldType(dataStore.getMetaData().getFieldIndex(aliasField));
+
+				String valueString = null;
+				if (values == null) {
+					logger.error("Error, MIN/MAX value for field " + aliasField + " not found");
+					throw new SpagoBIRuntimeException("Error, MIN/MAX value for field " + aliasField + " not found");
+				} else if (values.size() > 1) {
+					logger.error("Error, unexpected multiple MIN/MAX value for field " + aliasField + "");
+					multiple = true;
+					// throw new SpagoBIRuntimeException("Error, unexpected multiple MIN/MAX value for field " + aliasField + "");
+				} else if (values.isEmpty()) {
+					logger.warn("no MIN/MAX value for field " + aliasField + " not found, put NULL");
+					valueString = null;
+				} else {
+					Object value = values.get(0);
+					valueString = value.toString();
+					// if it is string type add ''
+					if (type.equals(String.class)) {
+						valueString = "'" + valueString + "'";
+					} else if (type.equals(Timestamp.class) || type.equals(java.sql.Date.class)) {
+						valueString = "'" + valueString + "'";
+					}
+				}
+
+				logger.debug("Filter with name " + aliasField + " have MAX/MIN value " + valueString);
+
+				// among criteria filters find the one to substitute
+				Integer indexOfCriteriaToChange = maxMinFilterCriteriaNameToIndex.get(aliasField);
+				FilterCriteria filterCriteriaToChange = filterCriteria.get(indexOfCriteriaToChange);
+
+				Object valueToSubstitute = filterCriteriaToChange.getRightOperand().getOperandValue();
+				logger.debug("Substitute " + valueToSubstitute + " value with " + valueString);
+
+				List valueList = null;
+
+				if (multiple) {
+					logger.debug("multiple value , delete filter");
+					filterCriteria.remove(indexOfCriteriaToChange);
+				} else if (valueString != null) {
+					valueList = new ArrayList<>();
+					valueList.add(valueString);
+					filterCriteriaToChange.getRightOperand().setOperandValue(valueList);
+				} else {
+					filterCriteriaToChange.setOperator("IS");
+					filterCriteriaToChange.getRightOperand().setOperandValue(null);
+					// logger.debug("Value is null so no MIN or MAX is present so delete the filter ");
+					// filterCriteria.remove(indexOfCriteriaToChange);
+
+				}
+
+			}
+		}
+		logger.debug("Filter criteria to return " + filterCriteria);
+		logger.debug("OUT");
+		return filterCriteria;
+	}
+
 }

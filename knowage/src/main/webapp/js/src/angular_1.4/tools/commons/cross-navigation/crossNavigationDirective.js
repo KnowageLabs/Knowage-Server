@@ -14,7 +14,7 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 		};
 		
 		//chartType,documentName, documentParameters, categoryName, categoryValue, serieName, serieValue, groupingCategoryName, groupingCategoryValue, stringParameters
-		this.navigateTo=function(outputParameter,inputParameter,targetDocument,docLabel){
+		this.navigateTo=function(outputParameter,inputParameter,targetDocument,docLabel,staticParameters){
 			 
 			sbiModule_restServices.promiseGet("1.0/crossNavigation",this.crossNavigationSteps.currentDocument.label+"/loadCrossNavigationByDocument")
 			.then(function(response){
@@ -72,13 +72,13 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 			
 				
 				if(navObj.length==1){
-					execCross(navObj[0],outputParameter,inputParameter,true); 
+					execCross(navObj[0],outputParameter,inputParameter,true, staticParameters); 
 				}
 				else if(navObj.length>1){
 					if(targetDocument!=undefined){
 						for(var i=0;i<navObj.length;i++){
 							if(angular.equals(navObj[i].crossName,targetDocument)){
-								execCross(navObj[i],outputParameter,inputParameter,true); 
+								execCross(navObj[i],outputParameter,inputParameter,true,staticParameters); 
 								return;
 							}
 						}					
@@ -115,7 +115,7 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 					    	  translate:sbiModule_translate}
 					    })
 					    .then(function(doc) {
-					    	execCross(doc,outputParameter,inputParameter,true);
+					    	execCross(doc,outputParameter,inputParameter,true,staticParameters);
 					    }, function() {
 					     return;
 					    });
@@ -141,10 +141,10 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 			return false;
 		}
 		
-		function execCross(doc,outputParameter,inputParameter,externalCross){
+		function execCross(doc,outputParameter,inputParameter,externalCross, staticParameters){
 			var parameterStr="";
 			if(externalCross){
-				parameterStr=cns.responseToStringParameter(doc,outputParameter,inputParameter);
+				parameterStr=cns.responseToStringParameter(doc,outputParameter,inputParameter,staticParameters);
 			}else{
 				parameterStr=jsonToURI(outputParameter);
 			}
@@ -192,7 +192,7 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 			}
 		};
 		
-		this.responseToStringParameter=function(navObj,outputParameter,inputParameter){
+		this.responseToStringParameter=function(navObj,outputParameter,inputParameter, staticParameters){
 			var respStr={};
 			
 			//check for output parameters
@@ -236,6 +236,26 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 				}
 			}
 			
+			//check for staticParameters
+			if(staticParameters!=undefined && navObj.navigationParams!=undefined){
+				for(var parin=0;parin<staticParameters.length;parin++){
+					var staticParName = null;
+					var staticParValue = null;
+					var staticPar = staticParameters[parin];
+					for(var name in staticPar){
+						staticParName = name;
+						staticParValue = staticPar[name];
+					}
+					for(var key in navObj.navigationParams){
+						if(navObj.navigationParams[key].fixed==false && angular.equals(navObj.navigationParams[key].value.label,staticParName)){
+							respStr[key]=staticParValue;
+							
+							
+						}
+					}
+				}
+			}
+			
 			//load fixed value --- replace all
 			for(var key in navObj.navigationParams){
 				if(navObj.navigationParams[key].fixed==true){
@@ -265,6 +285,7 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 			}
 			
 		}
+
 		
 		
 		

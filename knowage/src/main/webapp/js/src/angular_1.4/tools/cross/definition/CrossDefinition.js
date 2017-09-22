@@ -216,7 +216,11 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 			
 			ctr.treeOptions2 = {
 				accept: function(sourceNodeScope, destNodesScope, destIndex){
-					if(destNodesScope.depth()==0 && !ctr.hasLink(destIndex)){
+					//alert(destNodesScope.depth());
+					if(
+							//destNodesScope.depth()==0 
+							//&& 
+							!ctr.hasLink(destIndex)){
 						ctr.selectItem(destIndex);
 					}else{
 						ctr.unselectAll();
