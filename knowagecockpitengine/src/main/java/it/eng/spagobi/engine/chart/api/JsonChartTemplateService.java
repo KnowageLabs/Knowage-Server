@@ -33,11 +33,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.log4j.Logger;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -56,6 +55,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 @Path("/1.0/chart/jsonChartTemplate")
 public class JsonChartTemplateService extends AbstractChartEngineResource {
+	static protected Logger logger = Logger.getLogger(JsonChartTemplateService.class);
 
 	/**
 	 * We are sending additional information about the web application from which we call the VM. This boolean will tell us if we are coming from the Highcharts
@@ -75,8 +75,8 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 	 */
 	@POST
 	@Path("/readChartTemplate")
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED + "; charset=UTF-8")
 	@SuppressWarnings("rawtypes")
 	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY })
 	public String getJSONChartTemplate(@FormParam("jsonTemplate") String jsonTemplate, @FormParam("exportWebApp") String exportWebApp,
@@ -108,10 +108,11 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 			VelocityContext velocityContext = ChartEngineUtil.loadVelocityContext(jsonTemplate, jsonData, Boolean.parseBoolean(exportWebApp),
 					engineInstance.getDocumentLabel(), getEngineInstance().getUserProfile());
 			String chartType = ChartEngineUtil.extractChartType(jsonTemplate, velocityContext);
-			Template velocityTemplate = ve.getTemplate(ChartEngineUtil.getVelocityModelPath(chartType));
+			Template velocityTemplate = ve.getTemplate(ChartEngineUtil.getVelocityModelPath(chartType), "UTF-8");
 			String jsonChartTemplate = ChartEngineUtil.applyTemplate(velocityTemplate, velocityContext);
 			jsonChartTemplate = ChartEngineUtil.replaceParameters(jsonChartTemplate, analyticalDrivers);
-
+			logger.debug(jsonChartTemplate);
+			logger.debug(jsonChartTemplate.trim());
 			// @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			return jsonChartTemplate.trim();
 
@@ -123,8 +124,8 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 
 	@POST
 	@Path("/readChartTemplateForCockpit")
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED + "; charset=UTF-8")
 	@SuppressWarnings("rawtypes")
 	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY })
 	public String getJSONChartTemplateForCockpit(@FormParam("jsonTemplate") String jsonTemplate, @FormParam("exportWebApp") String exportWebApp,
@@ -150,9 +151,10 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
 			VelocityContext velocityContext = ChartEngineUtil.loadVelocityContext(jsonTemplate, jsonData, Boolean.parseBoolean(exportWebApp), null,
 					getIOManager().getUserProfile());
 			String chartType = ChartEngineUtil.extractChartType(jsonTemplate, velocityContext);
-			Template velocityTemplate = ve.getTemplate(ChartEngineUtil.getVelocityModelPath(chartType));
+			Template velocityTemplate = ve.getTemplate(ChartEngineUtil.getVelocityModelPath(chartType), "UTF-8");
 			String jsonChartTemplate = ChartEngineUtil.applyTemplate(velocityTemplate, velocityContext);
-
+			logger.debug(jsonChartTemplate);
+			logger.debug(jsonChartTemplate.trim());
 			// @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			return jsonChartTemplate.trim();
 

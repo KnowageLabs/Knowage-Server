@@ -185,51 +185,168 @@ function getCrossParamsForTreemap(point,chartConf){
 
 function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCrossNavigationTo) {
 	
+	var colors = [];
+	
+	if (chartConf.colors.length == Object.keys(chartConf.data[0]).length) {
+		colors = chartConf.colors;
+	} else if (chartConf.colors.length > Object.keys(chartConf.data[0]).length) {
+		chartConf.colors.length = Object.keys(chartConf.data[0]).length;
+		colors = chartConf.colors;
+	} else {
+		colors = chartConf.colors;
+		for (var i = 0; i < Highcharts.getOptions().colors.length; i++) {
+			colors.push(Highcharts.getOptions().colors[i])
+		}
+		colors.splice(Object.keys(chartConf.data[0]).length, colors.length)
+	} 
+		
+    var colorStops=[];
+    
+    /**
+     * Provide the ending color for the color interval of the HEATMAP
+     * if there is one for that. Otherwise, skip this snippet.
+     * 
+     * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+     */   
+    if (colors.length)
+	{
+    	 /**
+    	  * Check if user specified only 1 color from the color palette. 
+    	  * @modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+    	  */
+		 if (colors.length > 1)
+		 {
+	    	for(i=0;i<colors.length;i++){
+	        	var stop=[(i+1)*(1/(colors.length)),colors[i]];
+	        	colorStops.push(stop);
+	        }	
+		 }
+		 else
+		 {
+	    	/**
+	    	 * If user specified only one color from the color palette in order to specify the
+	    	 * color interval for this chart type, then the interval of colors goes from the 
+	    	 * white color ("#FFFFFF") (the most left color on the legend of the chart) to the 
+	    	 * one specified by the user (that single one, 'colors[0]').
+	    	 * 
+	    	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
+	    	 */
+	    	var startIntervalColor = "#FFFFFF";	// White color
+	    	
+	    	colorStops.push([0,startIntervalColor]);
+	    	colorStops.push([1,colors[0]]);
+		 }
+	}
+    
+    distance = colorStops[1][0] - colorStops[0][0],
+    
+    modifiedStops = [];
+    
+    for (var i = 0; i < colorStops.length; i++) {
+    	modifiedStops.push([colorStops[i][0] - distance - 0.001, '#ffffff']);
+        modifiedStops.push(colorStops[i]);
+        modifiedStops.push([colorStops[i][0] + 0.001, colorStops[i][1]]);
+	} 
+    
 	var points = [];
 	
 	var counter=0;
 	
 	for (var dataset in chartConf.data[0]){
-		
 		level = {
 				id: "id_" + counter,
 				name: dataset,
-				color: chartConf.colors[counter]
-		
+				parentName:dataset,
 		}
 		counter++;
 		points.push(level);
-		func(chartConf.data[0][dataset],dataset, level);
-		
+		func(chartConf.data[0][dataset],dataset, level, dataset);
 	}
 	
-	function func(resultData, nameds, dataValue){
+	function func(resultData, nameds, dataValue, dataset){
 		var counter=0;
 		for (var resultRecord in resultData){
-			
 			level = {
-					
 					id: dataValue.id + "_" + counter,
 					name: resultRecord,
-					parent: dataValue.id
-					
+					parent: dataValue.id,
+					parentName:dataset,	
 			}
-			
+
 			if (resultData[resultRecord].value){
-				
 				level.value = Math.round(Number(resultData[resultRecord].value));
 				points.push(level);
 			}
 			else{
-				
 				points.push(level);
-				func(resultData[resultRecord], resultRecord, level);
-				
+				func(resultData[resultRecord], resultRecord, level, dataset);	
 			}
-			
 			counter++;
 		}
+	}
+	
+	var scale = 0;
+	var tickPositions1 = [];
+	var tickPositions = [];
+	tickPositions.push(0);
+	var scaleObject = {};
+	
+	for (var i = 0; i < points.length; i++) {
+		if(scaleObject.hasOwnProperty(points[i].parentName)){
+			scaleObject[(points[i].parentName)].push(points[i]);
+		} else {
+			scaleObject[(points[i].parentName)] = []
+			scaleObject[(points[i].parentName)].push(points[i])
+		}
+	}
+	
+
+	var sumaForMax = 0
+	for (property in scaleObject) {
+		var suma = 0
 		
+		for (var i = 0; i < scaleObject[property].length; i++) {
+			if(scaleObject[property][i].hasOwnProperty("value")){
+				suma = suma + scaleObject[property][i].value;
+			}
+		}
+		if(sumaForMax <= suma){
+			sumaForMax = suma;
+		}
+		for (var i = 0; i < scaleObject[property].length; i++) {
+			if(scaleObject[property][i].hasOwnProperty("value")){
+				scaleObject[property][i].suma = suma
+			}
+		}	
+	}
+	
+	var delitelj = sumaForMax / colors.length; 
+	tickPositions1.push(0);
+	var next = 0
+	for (var i = 0; i < colors.length; i++) {
+		
+		next = next + delitelj;
+		tickPositions1.push(next);
+	}
+
+	for (property in scaleObject) {
+		for (var i = 0; i < scaleObject[property].length; i++) {
+			if(scaleObject[property][i].hasOwnProperty("value")){
+				scaleObject[property][i].scale = scale
+			}
+		}
+		scale = scale+delitelj;
+		tickPositions.push(scale)
+	}
+	for (property in scaleObject) {
+		var colorvalue = [];
+		
+		for (var i = 0; i < scaleObject[property].length; i++) {
+			if(scaleObject[property][i].hasOwnProperty("value")){
+				colorvalue.push(scaleObject[property][i]);
+				scaleObject[property][i].colorValue = scaleObject[property][i].value + scaleObject[property][i].scale
+			}
+		} 
 	}
 	
 	var chartObject = null;
@@ -299,6 +416,15 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 	
 	return 	{
 		chart: chartObject,
+		colorAxis: {
+			min: 0 ,
+			max: colors.length * 10,
+			stops: modifiedStops,
+			tickPositions: tickPositions,
+		},
+		legend:{
+			enabled: false
+		},
 		series:
 		[
          	{
@@ -350,9 +476,18 @@ function prepareChartConfForTreemap(chartConf,handleCockpitSelection,handleCross
 				dataLabels: {
 					enabled: true
 				},
-				borderWidth: 3
+				borderWidth: 6,
+				borderColor: "#FFFFFF",
 			}],
-			data: points,
+			data: points.map(function (point) {
+                if (point.colorValue ) { 
+                    if(point.colorValue >= point.scale+ delitelj){
+                    	point.colorValue = point.scale+ delitelj  - 10
+                    }
+                }
+              
+                return point;
+            }),
 			events:{
 				click: function(event){
 //					console.log(event.point);
