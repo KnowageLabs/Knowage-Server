@@ -33,7 +33,7 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 									 label:"24px",
 									 value:'24px'
 								 }
-		                  	
+
 						 	],
 		textDecoration:		[
 								{
@@ -117,36 +117,53 @@ angular.module('cockpitModule').factory('cockpitModule_generalOptions',function(
 	           				 value:'verdana'
 	           			 }
 	           			 ],
-	           	aggregationFunctions:[
-	    		    	                               {
-	    		    	                            	   label:sbiModule_translate.load("sbi.qbe.selectgridpanel.aggfunc.name.none"),
-	    		    	                            	   value:"NONE"
-	    		    	                               },
-	    		    	                               {
-	    		    	                            	   label:sbiModule_translate.load("sbi.qbe.selectgridpanel.aggfunc.name.sum"),
-	    		    	                            	   value:"SUM"
-	    		    	                               },
-	    		    	                               {
-	    		    	                            	   label:sbiModule_translate.load("sbi.qbe.selectgridpanel.aggfunc.name.avg"),
-	    		    	                            	   value:"AVG"
-	    		    	                               },
-	    		    	                               {
-	    		    	                            	   label:sbiModule_translate.load("sbi.qbe.selectgridpanel.aggfunc.name.max"),
-	    		    	                            	   value:"MAX"
-	    		    	                               },
-	    		    	                               {
-	    		    	                            	   label:sbiModule_translate.load("sbi.qbe.selectgridpanel.aggfunc.name.min"),
-	    		    	                            	   value:"MIN"
-	    		    	                               },
-	    		    	                               {
-	    		    	                            	   label:sbiModule_translate.load("sbi.qbe.selectgridpanel.aggfunc.name.count"),
-	    		    	                            	   value:"COUNT"
-	    		    	                               },
-	    		    	                               {
-	    		    	                            	   label:sbiModule_translate.load("sbi.qbe.selectgridpanel.aggfunc.name.countdistinct"),
-	    		    	                            	   value:"COUNT_DISTINCT"
-	    		    	                               },
-   		    	                               ]
-		
+	aggregationFunctions:[
+                           {
+                        	   label:sbiModule_translate.load("sbi.qbe.selectgridpanel.aggfunc.name.none"),
+                        	   value:"NONE"
+                           },
+                           {
+                        	   label:sbiModule_translate.load("sbi.qbe.selectgridpanel.aggfunc.name.sum"),
+                        	   value:"SUM"
+                           },
+                           {
+                        	   label:sbiModule_translate.load("sbi.qbe.selectgridpanel.aggfunc.name.avg"),
+                        	   value:"AVG"
+                           },
+                           {
+                        	   label:sbiModule_translate.load("sbi.qbe.selectgridpanel.aggfunc.name.max"),
+                        	   value:"MAX"
+                           },
+                           {
+                        	   label:sbiModule_translate.load("sbi.qbe.selectgridpanel.aggfunc.name.min"),
+                        	   value:"MIN"
+                           },
+                           {
+                        	   label:sbiModule_translate.load("sbi.qbe.selectgridpanel.aggfunc.name.count"),
+                        	   value:"COUNT"
+                           },
+                           {
+                        	   label:sbiModule_translate.load("sbi.qbe.selectgridpanel.aggfunc.name.countdistinct"),
+                        	   value:"COUNT_DISTINCT"
+                           },
+                   ],
+    textAlign:	[
+					{
+						label:"",
+						value:''
+					 },
+					{
+						label:sbiModule_translate.load("sbi.cockpit.style.textAlign.left"),
+						value:'left'
+					},
+					{
+						label:sbiModule_translate.load("sbi.cockpit.style.textAlign.right"),
+						value:'right'
+					},
+					{
+						label:sbiModule_translate.load("sbi.cockpit.style.textAlign.center"),
+						value:'center'
+					}
+				]
 	}
 });
