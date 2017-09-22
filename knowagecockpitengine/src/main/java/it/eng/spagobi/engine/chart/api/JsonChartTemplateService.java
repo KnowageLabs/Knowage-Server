@@ -36,7 +36,9 @@ import javax.ws.rs.core.MediaType;
 import org.apache.log4j.Logger;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
