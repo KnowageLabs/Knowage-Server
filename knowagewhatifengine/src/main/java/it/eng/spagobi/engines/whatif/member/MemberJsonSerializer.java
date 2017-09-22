@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -26,7 +26,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import com.google.gson.JsonParseException;
+
 
 public class MemberJsonSerializer extends JsonSerializer<Member> {
 
@@ -52,7 +52,7 @@ public class MemberJsonSerializer extends JsonSerializer<Member> {
 		try {
 			jgen.writeBooleanField(LEAF, value.getChildMemberCount() == 0);
 		} catch (OlapException e) {
-			throw new JsonParseException("Error getting the childs count for the member " + value.getUniqueName(), e);
+			throw new IOException("Error getting the childs count for the member " + value.getUniqueName());
 		}
 		jgen.writeEndObject();
 	}
