@@ -601,8 +601,8 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		if(parameterErrors.length > 0){
 			var title = sbiModule_translate.load("sbi.cockpit.load.datasetsInformation.widget")
 					.replace("{0}", "<b>" + ngModel.content.name + "</b>");
-			sbiModule_messaging.showErrorMessage(parameterErrors.join("<br>"), title);
-			return;
+			sbiModule_restServices.errorHandler(parameterErrors.join("<br>"), title);
+			deferred.reject('Error');
 		}
 
 		var parametersString = JSON.stringify(parameters);
