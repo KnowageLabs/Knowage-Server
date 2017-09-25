@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,17 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.tools.dataset.common.transformer;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.apache.log4j.Logger;
 
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
@@ -26,12 +32,6 @@ import it.eng.spagobi.tools.dataset.common.datastore.Record;
 import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import org.apache.log4j.Logger;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -52,7 +52,7 @@ public class PivotDataSetTransformer extends AbstractDataStoreTransformer {
 	 * Prerequisites: the pivotDataSetTransform needs in input a datastore with the next structure: - X that identifies the row on which the values are
 	 * aggregated(ie. the month) - SER that identifies the column that will pivotted (ie. SER1, SER2, SER3, SER4,..) - VAL that identifies the column with the
 	 * real values of the series - xxx other fields that are not used in the operations of pivot
-	 * 
+	 *
 	 * ie: X SER VAL IDX .... Gennaio SER1 33 1 Gennaio SER2 12 1 Gennaio SER3 64 1 Gennaio SER4 21 1 Febbraio SER1 56 2 Febbraio SER2 35 2 Febbraio SER3 13 2
 	 * Febbraio SER4 75 2
 	 */
@@ -77,9 +77,8 @@ public class PivotDataSetTransformer extends AbstractDataStoreTransformer {
 
 		Class pivotedFieldType = dataStoreMeta.getFieldMeta(valueFieldIndex).getType();
 
-		dataStoreMeta = dataStore.getMetaData();
-		dataStoreMeta.deleteFieldMetaDataAt(pivotFieldIndex);
-		dataStoreMeta.deleteFieldMetaDataAt(valueFieldIndex);
+		dataStoreMeta.deleteFieldMetaDataAt(Math.max(pivotFieldIndex, valueFieldIndex));
+		dataStoreMeta.deleteFieldMetaDataAt(Math.min(pivotFieldIndex, valueFieldIndex));
 
 		for (int i = 0; i < pivotedFieldNames.size(); i++) {
 			IFieldMetaData fieldMeta;
