@@ -45,6 +45,7 @@ public class MDXFormulaHandler {
 	private static String TIME_DIMENSION = "TimeDimension";
 	private static SpagoBIPivotModel model;
 	private static ModelConfig modelConfig;
+	private static ClassLoader classLoader = MDXFormulaHandler.class.getClassLoader();
 
 	public static SpagoBIPivotModel getModel() {
 		return model;
@@ -69,6 +70,9 @@ public class MDXFormulaHandler {
 	private static boolean loadFile() {
 
 		xmlFile = new File(xmlPath);
+		if (!xmlFile.exists()) {
+			xmlFile = new File(classLoader.getResource(File.separatorChar + "calculated_fields_formulas" + File.separatorChar + "formulas.xml").getPath());
+		}
 
 		return xmlFile.exists();
 
@@ -161,7 +165,7 @@ public class MDXFormulaHandler {
 			Iterator it = placeHolders.entrySet().iterator();
 			while (it.hasNext()) {
 				Map.Entry pair = (Map.Entry) it.next();
-				if(body!=null){
+				if (body != null) {
 					body = body.replaceAll(pair.getKey().toString(), pair.getValue().toString());
 					formulas.getFormulas().get(i).setBody(body);
 				}
