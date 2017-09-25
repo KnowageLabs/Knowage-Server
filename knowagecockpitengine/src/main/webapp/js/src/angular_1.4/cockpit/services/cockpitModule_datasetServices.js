@@ -487,7 +487,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		}
 
 		var datasetLabel=ds.getDatasetById(dsId).label;
-		var selections=angular.copy(cockpitModule_widgetSelection.getCurrentSelections(datasetLabel));
+		var selections=cockpitModule_widgetSelection.getCurrentSelections(datasetLabel);
 		if(selections!=undefined && selections.hasOwnProperty(datasetLabel)){
 			for(var parName in selections[datasetLabel]){
 				if(parName.startsWith("$P{") && parName.endsWith("}")){
@@ -659,7 +659,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			params+="&nearRealtime=true";
 		}
 
-		var dataToSend=cockpitModule_widgetSelection.getCurrentSelections(dataset.label);
+		var dataToSend=angular.copy(cockpitModule_widgetSelection.getCurrentSelections(dataset.label));
 		if(Object.keys(dataToSend).length==0){
 			dataToSend=cockpitModule_widgetSelection.getCurrentFilters(dataset.label);
 		}
