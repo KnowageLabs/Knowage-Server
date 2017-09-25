@@ -44,7 +44,6 @@ import it.eng.spagobi.user.UserProfileManager;
  *
  */
 @Provider
-@PreMatching
 @Priority(Priorities.ENTITY_CODER)
 public class TenantRestProcessInterceptor implements ContainerRequestFilter, ContainerResponseFilter {
 

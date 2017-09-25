@@ -45,7 +45,6 @@ import org.apache.log4j.Logger;
  *
  */
 @Provider
-@PreMatching
 @Priority(Priorities.ENTITY_CODER)
 public class TenantRestProcessInterceptor implements ContainerRequestFilter, ContainerResponseFilter {
 
