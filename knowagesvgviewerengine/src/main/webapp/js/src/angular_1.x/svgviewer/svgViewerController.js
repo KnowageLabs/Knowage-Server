@@ -196,10 +196,10 @@ function SvgViewerControllerFunction($scope, sbiModule_restServices, $mdSidenav,
 		  		//At least sets the top position (linked to the top or bottom values depending from the height of the final tooltip )
 		  		if(domTooltip.offsetHeight > viewportOffset.top){
 		  			domTooltip.style.top = viewportOffset.bottom - ((viewportOffset.bottom - viewportOffset.top)/3);
-		  		}else if(document.documentElement.scrollTop + viewportOffset.top + viewportOffset.height + 250 >= window.innerHeight){
-	            	domTooltip.style.top = top - domTooltip.offsetHeight;
+		  		}else if(document.documentElement.scrollTop + viewportOffset.top + viewportOffset.height + domTooltip.offsetHeight >= window.innerHeight){
+	            	domTooltip.style.top = top - domTooltip.offsetHeight + ((viewportOffset.bottom - viewportOffset.top)/3);
 	            }else{
-	            	domTooltip.style.top = viewportOffset.bottom; //$scope.cursorY;
+	            	domTooltip.style.top = viewportOffset.bottom - ((viewportOffset.bottom - viewportOffset.top)/3);
 	            }
 		  	}
 	  	}
