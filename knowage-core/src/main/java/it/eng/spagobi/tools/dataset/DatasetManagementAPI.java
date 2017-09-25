@@ -2048,18 +2048,11 @@ public class DatasetManagementAPI {
 						boolean isMultiValue = parameter.optBoolean("multiValuePar");
 						int length = isMultiValue ? values.length : 1;
 
-						String typePar = parameter.optString("typePar");
-						String delim = "string".equalsIgnoreCase(typePar) ? "'" : "";
-
 						List<String> newValues = new ArrayList<>();
 						for (int j = 0; j < length; j++) {
 							String value = values[j].trim();
 							if (!value.isEmpty()) {
-								if (!value.startsWith(delim) && !value.endsWith(delim)) {
-									newValues.add(delim + value + delim);
-								} else {
-									newValues.add(value);
-								}
+								newValues.add(value);
 							}
 						}
 						paramValues.put(paramName, StringUtils.join(newValues, ","));
