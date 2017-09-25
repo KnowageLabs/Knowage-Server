@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%-- JAVA IMPORTS                                                           --%>
 <%-- ---------------------------------------------------------------------- --%>
 <%@page import="it.eng.spagobi.tools.dataset.service.SelfServiceDatasetAction" %>
+<%@page import="it.eng.spagobi.commons.SingletonConfig" %>
 <%@page import="java.util.Map" %>
 <%@page import="org.json.JSONObject"%>
 <%@include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>
@@ -31,6 +32,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   boolean isAdmin = UserUtilities.isAdministrator(userProfile);
   boolean isTechnicalUser =  UserUtilities.isTechnicalUser(userProfile);
   boolean isDeveloper =  UserUtilities.hasDeveloperRole(userProfile);
+  SingletonConfig serverConfig1 = SingletonConfig.getInstance();
+  String maxSizeStr = serverConfig1.getConfigValue("SPAGOBI.DATASET_FILE_MAX_SIZE");
    
 %>
 
@@ -56,6 +59,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		   var isAdmin =<%=isAdmin%>;
 		   var isTechnicalUser = <%=isTechnicalUser%>;
 		   var isDeveloper = <%=isDeveloper%>;
+		   var maxSizeStr = <%=maxSizeStr%>;
 		</script>
 		
 	</head>

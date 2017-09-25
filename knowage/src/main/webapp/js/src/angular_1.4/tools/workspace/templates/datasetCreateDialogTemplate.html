@@ -97,7 +97,7 @@
 						                  		{{translate.load("sbi.ds.wizard.selectFile")}}:
 					                  		</label>
 						                  	
-						                  	<file-upload 	flex ng-model="fileObj" id="datasetFile" 
+						                  	<file-upload 	file-max-size=maxSizeStr flex ng-model="fileObj" id="datasetFile" 
 						                  					ng-click="fileChange();checkChange();fileObjTakeBackup()" 
 							                  				title="{{translate.load('sbi.workspace.dataset.wizard.browsefile.tooltip')}}">
 				                			</file-upload>

@@ -17,16 +17,6 @@
  */
 package it.eng.spagobi.tools.dataset.common.datareader;
 
-import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.Field;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.datastore.IField;
-import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
-import it.eng.spagobi.tools.dataset.common.datastore.Record;
-import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
-import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
-import it.eng.spagobi.utilities.StringUtils;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,6 +30,16 @@ import org.supercsv.cellprocessor.ift.CellProcessor;
 import org.supercsv.io.CsvMapReader;
 import org.supercsv.io.ICsvMapReader;
 import org.supercsv.prefs.CsvPreference;
+
+import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.Field;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IField;
+import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+import it.eng.spagobi.tools.dataset.common.datastore.Record;
+import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
+import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
+import it.eng.spagobi.utilities.StringUtils;
 
 /**
  * @author Marco Cortella marco.cortella@eng.it
@@ -137,8 +137,13 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 		ICsvMapReader mapReader = null;
 
 		try {
+			CsvPreference customPreference = null;
+			if (csvDelimiter.length() > 1) {
+				customPreference = new CsvPreference.Builder(csvQuote.charAt(0), '\t', "\n").build();
+			} else {
+				customPreference = new CsvPreference.Builder(csvQuote.charAt(0), csvDelimiter.charAt(0), "\n").build();
+			}
 
-			CsvPreference customPreference = new CsvPreference.Builder(csvQuote.charAt(0), csvDelimiter.charAt(0), "\n").build();
 			// mapReader = new CsvMapReader(inputStreamReader, CsvPreference.STANDARD_PREFERENCE);
 			mapReader = new CsvMapReader(inputStreamReader, customPreference);
 			// the header columns are used as the keys to the Map
@@ -175,7 +180,8 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 			while ((contentsMap = mapReader.read(header, processors)) != null) {
 
 				if ((!paginated && (!checkMaxResults || (rowFetched < maxResults)))
-						|| ((paginated && (rowFetched >= offset) && (rowFetched - offset < fetchSize)) && (!checkMaxResults || (rowFetched - offset < maxResults)))) {
+						|| ((paginated && (rowFetched >= offset) && (rowFetched - offset < fetchSize))
+								&& (!checkMaxResults || (rowFetched - offset < maxResults)))) {
 					// Create Datastore data
 					IRecord record = new Record(dataStore);
 
