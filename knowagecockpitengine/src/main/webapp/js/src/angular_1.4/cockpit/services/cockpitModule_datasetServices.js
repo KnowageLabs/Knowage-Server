@@ -487,7 +487,7 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 		}
 
 		var datasetLabel=ds.getDatasetById(dsId).label;
-		var selections=cockpitModule_widgetSelection.getCurrentSelections(datasetLabel);
+		var selections=angular.copy(cockpitModule_widgetSelection.getCurrentSelections(datasetLabel));
 		if(selections!=undefined && selections.hasOwnProperty(datasetLabel)){
 			for(var parName in selections[datasetLabel]){
 				if(parName.startsWith("$P{") && parName.endsWith("}")){
