@@ -323,7 +323,9 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 			$scope.scopeInit(config.element,config.width,config.height, config.data,config.nature,config.associativeSelection);
 			break;
 		case "RESIZE" :
-			//$scope.refreshWidget(undefined, 'resize');
+			if($scope.ngModel.type=="chart") {
+				$scope.refreshWidget(undefined, 'resize');
+			}
 			break; 
 		case "WIDGET_SPINNER" :
 			if(config.show){
