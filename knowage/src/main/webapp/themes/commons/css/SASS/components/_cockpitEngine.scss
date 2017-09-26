@@ -148,6 +148,7 @@
 		    	width: 100%;
 		    	//overflow-y: auto;
 		    	table.cockpitTable {
+		    		table-layout: fixed;
 			    	width: calc(100% + 0.5px);
 			        .loadingBar {
 			            tr {
@@ -243,6 +244,8 @@
 			                			position: relative;
 			                			width: auto;
 			                			white-space: nowrap;
+			                			overflow: hidden;
+			                			text-overflow: ellipsis;
 			                		}
 			                		.barChart {
 							            .progressTrack {
