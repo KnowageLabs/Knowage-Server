@@ -1,5 +1,5 @@
-<nav aria-label="Page navigation" class="cockpitTablePagination">
-    <div class="page-select">
+<nav aria-label="Page navigation" class="cockpitTablePagination" ng-show="settings.pagination.enabled && settings.rowsCount > settings.pagination.itemsNumber">
+    <div class="page-select" ng-if="widgetWidth > 315">
         <label>{{::translate.load('sbi.cockpit.widgets.table.pagination.page')}}</label>
         <md-select ng-model="settings.page" ng-change="goToPage()">
             <md-option ng-repeat="pages in getTotalPages() track by $index" value="{{$index+1}}">{{$index+1}}</md-option>

@@ -29,7 +29,7 @@
 	        <tr ng-repeat="row in model | orderBy : getSortingColumnFilter() : getSortingOrderAsBoolean() | limitTo : settings.pagination.enabled?settings.pagination.itemsNumber:undefined : (settings.pagination.enabled && settings.pagination.frontEnd)?(settings.page-1)*settings.pagination.itemsNumber:0" ng-style="::getRowStyle($even)" class="en-row" >
 	            <td ng-repeat="column in columns" ng-click="selectCell($event,row,column)" ng-style="getCellStyle(column,row[column.aliasToShow])" ng-class="{'highlight': isCellSelected(row,column)}">
 	                <md-tooltip ng-if="!column.hideTooltip" md-direction="top" md-delay="500">{{formatValue(row[column.aliasToShow],column)}}</md-tooltip>
-					<div class="cellContainer" ng-style="{'justify-content':column.style.td['justify-content']}">
+					<div class="cellContainer" ng-style="{'justify-content':column.style.td['justify-content'],'max-width':column.style.width}">
 		                <span ng-if="column.text.enabled" ng-class="{'truncated':column.truncated || column.barchart.enabled,'flex-50':column.barchart.enabled,'textEllipsis':row[column.aliasToShow].length > column.style.maxChars}" ng-style="{'font-size':column.style['font-size']}">
 			                <span ng-if="column.style.prefix">{{column.style.prefix}}</span> 
 			                	{{formatValue(row[column.aliasToShow],column)}} 

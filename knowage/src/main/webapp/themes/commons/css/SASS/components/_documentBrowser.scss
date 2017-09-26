@@ -110,6 +110,9 @@
 			md-card-actions {
 		    	background-color: rgba(white,0.5);
 		    	margin: 0;
+		    	button {
+		    		overflow: visible;
+		    	}
 			}
 			div.md-card-image {
 				max-height: 100px;
@@ -350,6 +353,12 @@
 	.documentBrowserClearButton[disabled]{
 		md-icon {
 			color: transparent !important;
+		}
+	}
+
+	.mainContent {
+		&>md-content {
+			@include coolScrollBars($baseColor,6px);
 		}
 	}
 

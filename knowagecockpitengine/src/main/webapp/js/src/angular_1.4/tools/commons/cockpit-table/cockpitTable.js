@@ -49,7 +49,7 @@
                     	}
                 		return "";
                     }
-                    
+
                     //returning if the order is ASC or DESC
                     scope.getSortingOrderAsBoolean = function(){
                     	if(scope.settings.pagination.frontEnd && scope.settings.sortingOrder){
@@ -65,7 +65,7 @@
                             loadingWatcher();
                         }
                     });
-                    
+
                     //returning the style of the row, changing if alternate rows are enabled
                     scope.getRowStyle = function(even){
                     	var style = scope.styledata.tr ? scope.styledata.tr: {};
@@ -75,22 +75,22 @@
                     	}
                     	return style;
                     }
-                    
+
                     //returning the style of the header cell
                     scope.getThStyle = function(thStyle,column){
                     	var style = thStyle?thStyle:{};
                     	if(column.style && column.style.width) style['max-width'] = column.style.width;
                     	return style;
                     }
-                    
+
                     //returning the style of the cell
                     scope.getCellStyle = function(column,value){
                     	var style= {};
                     	if(!scope.settings.showGrid) style['border-width'] = 0;
                     	if(scope.styledata.td) angular.merge(style,scope.styledata.td);
                     	if(column.style) angular.merge(style,column.style);
-                    	
-                    	
+
+
                     	if(column.ranges && column.ranges.length >0){
                     		var ranges = column.ranges;
                     		for (var k in ranges) {
@@ -102,7 +102,7 @@
                     	}
                     	return style;
                     }
-                    
+
                     //function bind to the parent element. Passing mouse event, row and column data.
                     scope.selectCell = function(event, row, column) {
 						 if(!scope.settings.multiselectable || column.fieldType == "MEASURE"){
@@ -119,27 +119,27 @@
 							scope.selectedRows.splice(0,scope.selectedRows.length);
 							scope.bulkSelection = column;
 						}
-						
-						//check if the selected element exists in the selectedCells array, remove it in case. 
+
+						//check if the selected element exists in the selectedCells array, remove it in case.
 						if((scope.selectedCells.indexOf(row[column.aliasToShow])==-1 && !scope.settings.modalSelectionColumn) || (scope.settings.modalSelectionColumn && scope.selectedRows.indexOf(row)==-1)){
 							scope.selectedCells.push(row[column.aliasToShow]);
 							scope.selectedRows.push(row);
-							
+
 						}else{
 							scope.selectedCells.splice(scope.selectedCells.indexOf(row[column.aliasToShow]),1);
 							scope.selectedRows.splice(scope.selectedRows.indexOf(row),1);
 							//if there are no selection left set bulk selection to false to avoid the selection button to show
 							if(scope.selectedCells.length==0) scope.bulkSelection=false;
 						}
-						 
+
                     }
-                    
-                    //cancel all active selection and exit bulk selection mode 
+
+                    //cancel all active selection and exit bulk selection mode
                 	scope.cancelBulkSelection = function(){
                 		scope.selectedCells.splice(0,scope.selectedCells.length);
                 		scope.bulkSelection = false;
                 	}
-                		
+
                 	//check if the element is selected to highlight the element
                 	scope.isCellSelected = function(row,column){
                 		if(scope.bulkSelection){
@@ -150,7 +150,7 @@
                     		}
                 		}
                 	}
-                    
+
                 	//function passed to parent on click
                     scope.clickItem = function (event,row,column) {
                     	event.preventDefault();
@@ -170,7 +170,7 @@
                         }else{
                         	scope.settings.sortingOrder = 'ASC';
                         }
-                        
+
                         scope.settings.sortingColumn = col.aliasToShow;
                     }
 
@@ -181,7 +181,7 @@
                     	}else{
                     		return '0%';
                     	}
-                        
+
                     }
 
                     //icon ranges recognition
@@ -199,48 +199,48 @@
                         }
                         return icon;
                     };
-                    
+
                     //conditional value formatting
-                    scope.formatValue = function (value, column){			
+                    scope.formatValue = function (value, column){
             			var output = value;
-            			var precision = 2; 
+            			var precision = 2;
             			if (column.style && column.style.precision >= 0) precision =  column.style.precision;
             			if (column.style && column.style.format){
             		    	switch (column.style.format) {
             		    	case "#.###":
-            		    		output = scope.numberFormat(value, 0, ',', '.'); 
-            		    	break;            	
+            		    		output = scope.numberFormat(value, 0, ',', '.');
+            		    	break;
             		    	case "#,###":
             		    		output = scope.numberFormat(value, 0, '.', ',');
             		    	break;
             		    	case "#.###,##":
-            		    		output = scope.numberFormat(value, precision, ',', '.'); 
+            		    		output = scope.numberFormat(value, precision, ',', '.');
             		    	break;
             		    	case "#,###.##":
             		    		output = scope.numberFormat(value, precision, '.', ',');
             		    		break;
-            		    	default:		    		
+            		    	default:
             		    		break;
-            		    	} 
+            		    	}
             			}
             	    	return output;
             		}
-            		
+
                     //formatting function with the given parameters
             		scope.numberFormat = function (value, dec, dsep, tsep) {
-                		
+
               		  if (isNaN(value) || value == null) return value;
-              		 
+
               		  value = parseFloat(value).toFixed(~~dec);
               		  tsep = typeof tsep == 'string' ? tsep : ',';
 
               		  var parts = value.split('.'), fnums = parts[0],
               		    decimals = parts[1] ? (dsep || '.') + parts[1] : '';
 
-              		    
+
               		  return fnums.replace(/(\d)(?=(?:\d{3})+$)/g, '$1' + tsep) + decimals;
             		}
-            		
+
             		//popup to show cell content on click when the cell is not wide enough
             		scope.showFullContent = function (e,value){
             			e.stopPropagation();
@@ -253,7 +253,7 @@
             		        .targetEvent(e)
             		    );
             		}
-                    
+
                 }
             }
         }])
@@ -270,18 +270,19 @@
             },
             link: function(scope, elem, attr) {
             	scope.translate=sbiModule_translate;
-            	
-            	scope.settings.page = scope.settings.page != 0 ? scope.settings.page : 1; 
-            	
+            	scope.widgetWidth = elem[0].clientWidth;
+            	debugger;
+            	scope.settings.page = scope.settings.page != 0 ? scope.settings.page : 1;
+
             	scope.maxPageCount = 1;
-            	
+
             	scope.$watch('settings.pagination.frontEnd', function(newValue, oldValue) {
         			if(newValue != undefined){
         				if(newValue){
         					if(scope.watchRowsCountForBackend){
         						scope.watchRowsCountForBackend();
         					}
-        					
+
         					scope.watchRowsCountForFrontend = scope.$watch('model.length + "," + settings.pagination.itemsNumber', function(newValue, oldValue) {
         						if(newValue != undefined){
         							scope.updateTotalRows();
@@ -291,7 +292,7 @@
         					if(scope.watchRowsCountForFrontend){
         						scope.watchRowsCountForFrontend();
         					}
-        					
+
         					scope.watchRowsCountForBackend = scope.$watch('settings.backendTotalRows + "," + settings.pagination.itemsNumber', function(newValue, oldValue) {
         						if(newValue != undefined){
         							scope.updateTotalRows();
@@ -300,18 +301,18 @@
         				}
         			}
         		});
-            	
+
             	scope.updateTotalRows = function() {
             		scope.settings.rowsCount = scope.settings.pagination.frontEnd ? scope.model.length: scope.settings.backendTotalRows;
-            		
+
             		scope.maxPageCount = scope.settings.pagination.enabled ? Math.ceil(scope.settings.rowsCount/scope.settings.pagination.itemsNumber) : 1;
             		if(scope.maxPageCount < 1){
             			scope.maxPageCount = 1;
             		}
-                    
+
             		scope.settings.page = scope.settings.page > scope.maxPageCount ? scope.maxPageCount : scope.settings.page;
                 }
-                
+
                 scope.getTotalPages = function() {
                 	return new Array(Math.ceil(scope.settings.rowsCount / scope.settings.pagination.itemsNumber));
                 }

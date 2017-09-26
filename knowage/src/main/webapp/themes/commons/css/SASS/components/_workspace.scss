@@ -1,3 +1,4 @@
+$organizerHeight : 120px;
 .kn-workspace {
 
 	md-list {
@@ -16,6 +17,9 @@
 	.rightPanelDocuments {
 		height: calc(100% - 20px);
 		min-height: calc(100% - 20px);
+		md-tab-content {
+			@include coolScrollBars($baseColor,6px);
+		}
 	}
 	
 	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
@@ -34,8 +38,8 @@
 	
 	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	.md-whiteframe-5dp-rightPanelDocuments {
-		height: calc(100% - 60px);
-		min-height: calc(100% - 60px);
+		height: calc(100% - ($organizerHeight/2));
+		min-height: calc(100% - ($organizerHeight/2));
 	}
 	
 	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
@@ -43,22 +47,17 @@
 		height: calc(100% - 20px);
 		min-height: calc(100% - 20px);
 	}
-	
-	/*
-		The amount of pixels subtracted from the total height is increased, since the Organizer possess the
-		breadcrumb on the top of the right-side detail panel (documents container).
-		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-	*/
+
 	.md-whiteframe-5dp-rightPanelDocuments-organizer {
-		height: calc(100% - 120px);
-		min-height: calc(100% - 120px);
+		height: calc(100% - $organizerHeight);
+		min-height: calc(100% - $organizerHeight);
 	}
 	
 	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
 	@-moz-document url-prefix() { 
 		.md-whiteframe-5dp-rightPanelDocuments {
-			height: calc(100% - 16px);		/* empiric approach (danristo) */
-			min-height: calc(100% - 16);	/* empiric approach (danristo) */
+			height: calc(100% - 16px);		
+			min-height: calc(100% - 16px);	
 		}
 	}
 	
@@ -126,10 +125,6 @@
 	}
 	
 	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
-	// Text in tabs is Knowage red (rose)
-	/*md-tabs md-tabs-wrapper md-tabs-canvas md-pagination-wrapper md-tab-item:not([disabled]).md-active, md-tabs md-tabs-wrapper md-tabs-canvas md-pagination-wrapper md-tab-item:not([disabled]).md-active md-icon, md-tabs.md-accent md-tabs-wrapper md-tabs-canvas md-pagination-wrapper md-tab-item:not([disabled]).md-active md-icon, md-tabs.md-default-theme.md-accent md-tabs-wrapper md-tabs-canvas md-pagination-wrapper md-tab-item:not([disabled]).md-focused, md-tabs.md-default-theme.md-accent md-tabs-wrapper md-tabs-canvas md-pagination-wrapper md-tab-item:not([disabled]).md-focused md-icon {
-	  color: #C70751 !important;
-	}*/
 	
 	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	md-tab-content {
@@ -241,9 +236,6 @@
 	
 	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	.step3PreviewTableContainer {
-		/* Old values - before fixing the problem with the Angular table's size (danristo) */
-		/*height: 95%; 
-		max-height: 95%;*/
 		height: 100%; 
 		max-height: 100%;		
 	}
@@ -292,12 +284,7 @@
 	}
 	
 	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
-	@-moz-document url-prefix() { 
-		/*.step2DefDataCardContent {
-			height: 87%;
-			max-height: 87%;
-		}*/
-		
+	@-moz-document url-prefix() { 		
 		.step2And3Card {
 			height: calc(100% - 16px);
 		}
@@ -315,11 +302,6 @@
 			height: calc(100% - 16px);
 		}
 		
-		/*.step2DefDataCardContent {
-			height: calc(100% - 40px);
-			max-height: calc(100% - 40px);
-		}*/
-		
 		.step2Height {
 			height: 100%;
 		}
@@ -332,14 +314,6 @@
 	md-tab-content {
 		overflow-x: hidden;
 	}
-	
-	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
-	/*@-moz-document url-prefix() { 
-		.step2DefDataTable {
-			height: auto; 
-			min-height: auto;
-		}
-	}*/
 	
 	// @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)	
 	.uploadButton {
