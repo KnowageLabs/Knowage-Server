@@ -9,7 +9,7 @@
 		     </md-input-container>
 			<md-input-container flex class="md-block"> 
 				<label>{{translate.load('sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.maxrowsnumber')}}</label>
-					<input class="input_class" ng-model="model.settings.pagination.itemsNumber" type="number" ng-disabled="!model.settings.pagination.enabled">
+					<input class="input_class" ng-model="model.settings.pagination.itemsNumber" type="number" min="1" ng-disabled="!model.settings.pagination.enabled">
 			</md-input-container>
 			<md-input-container flex class="md-block"> 
 				<md-switch ng-model="model.settings.pagination.frontEnd" aria-label="Frontend pagination" layout-align="center center"

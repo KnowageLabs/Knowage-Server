@@ -204,6 +204,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.moveProperty($scope.ngModel, "content.modalselectioncolumn", "settings.modalSelectionColumn");
 				$scope.moveProperty($scope.ngModel, "multiselectable", "settings.multiselectable");
 				$scope.moveProperty($scope.ngModel, "content.maxRowsNumber", "settings.pagination.itemsNumber");
+				var itemsNumber = $scope.getPropertyValue($scope.ngModel, "settings.pagination.itemsNumber");
+				if(itemsNumber != undefined && itemsNumber < 1){
+					$scope.setPropertyValue($scope.ngModel, "settings.pagination.itemsNumber", 10);
+				}
 				$scope.moveProperty($scope.ngModel, "style.showGrid", "settings.showGrid");
 				$scope.moveProperty($scope.ngModel, "sortingColumn", "settings.sortingColumn");
 				$scope.moveProperty($scope.ngModel, "sortingOrder", "settings.sortingOrder");
