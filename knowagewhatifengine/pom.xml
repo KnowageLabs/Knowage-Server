@@ -44,6 +44,7 @@
 					<groupId>javax.servlet.jsp</groupId>
 					<artifactId>jsp-api</artifactId>
 				</exclusion>
+				<!-- 
 				<exclusion>
 					<groupId>org.apache.hadoop</groupId>
 					<artifactId>hadoop-hdfs</artifactId>
@@ -52,6 +53,7 @@
 					<groupId>org.apache.hadoop</groupId>
 					<artifactId>hadoop-common</artifactId>
 				</exclusion>
+				-->
 			</exclusions>
 		</dependency>
 		
