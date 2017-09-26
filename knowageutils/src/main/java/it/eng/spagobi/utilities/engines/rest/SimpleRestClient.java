@@ -17,14 +17,6 @@
  */
 package it.eng.spagobi.utilities.engines.rest;
 
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.security.hmacfilter.HMACFilterAuthenticationProvider;
-import it.eng.spagobi.security.hmacfilter.HMACUtils;
-import it.eng.spagobi.services.common.EnginConf;
-import it.eng.spagobi.tools.dataset.ckan.utils.CKANUtils;
-import it.eng.spagobi.utilities.Helper;
-
 import java.util.Iterator;
 import java.util.Map;
 
@@ -42,6 +34,14 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpState;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.log4j.Logger;
+
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.security.hmacfilter.HMACFilterAuthenticationProvider;
+import it.eng.spagobi.security.hmacfilter.HMACUtils;
+import it.eng.spagobi.services.common.EnginConf;
+import it.eng.spagobi.tools.dataset.ckan.utils.CKANUtils;
+import it.eng.spagobi.utilities.Helper;
 
 /**
  *
@@ -94,7 +94,7 @@ public class SimpleRestClient {
 	 */
 	@SuppressWarnings("rawtypes")
 	protected Response executeGetService(Map<String, Object> parameters, String serviceUrl, String userId) throws Exception {
-		return executeService(parameters, serviceUrl, userId, RequestTypeEnum.GET, null, null);
+		return executeService(parameters, null, serviceUrl, userId, RequestTypeEnum.GET, null, null);
 	}
 
 	/**
@@ -111,19 +111,22 @@ public class SimpleRestClient {
 	 * @throws Exception
 	 */
 	@SuppressWarnings("rawtypes")
-	protected Response executePostService(Map<String, Object> parameters, String serviceUrl, String userId, String mediaType, Object data)
-			throws Exception {
-		return executeService(parameters, serviceUrl, userId, RequestTypeEnum.POST, mediaType, data);
+	protected Response executePostService(Map<String, Object> parameters, String serviceUrl, String userId, String mediaType, Object data) throws Exception {
+		return executeService(parameters, null, serviceUrl, userId, RequestTypeEnum.POST, mediaType, data);
+	}
+
+	@SuppressWarnings("rawtypes")
+	protected Response executePostServiceWithFormParams(Map<String, Object> parameters, Map<String, Object> form, String serviceUrl, String userId,
+			String mediaType) throws Exception {
+		return executeService(parameters, form, serviceUrl, userId, RequestTypeEnum.POST, mediaType, null);
 	}
 
 	@SuppressWarnings({ "rawtypes" })
-	private Response executeService(Map<String, Object> parameters, String serviceUrl, String userId, RequestTypeEnum type, String mediaType,
-			Object data) throws Exception {
+	private Response executeService(Map<String, Object> parameters, Map<String, Object> form, String serviceUrl, String userId, RequestTypeEnum type,
+			String mediaType, Object data) throws Exception {
 		logger.debug("IN");
 
-
-		MultivaluedMap<String, Object> myHeaders =	  new MultivaluedHashMap<String, Object>();
-
+		MultivaluedMap<String, Object> myHeaders = new MultivaluedHashMap<String, Object>();
 
 		if (!serviceUrl.contains("http") && addServerUrl) {
 			logger.debug("Adding the server URL");
@@ -141,8 +144,7 @@ public class SimpleRestClient {
 
 		logger.debug("adding headers");
 
-		addAuthorizations(request, userId,myHeaders);
-
+		addAuthorizations(request, userId, myHeaders);
 
 		if (parameters != null) {
 			Iterator<String> iter = parameters.keySet().iterator();
@@ -159,7 +161,12 @@ public class SimpleRestClient {
 		// provide authentication exactly before of call
 		authenticationProvider.provideAuthentication(request, target, myHeaders, data);
 		if (type.equals(RequestTypeEnum.POST))
-			response = request.post(Entity.json(data.toString()));
+			if (form == null) {
+				response = request.post(Entity.json(data.toString()));
+			} else {
+				response = request.post(Entity.entity(form, mediaType));
+			}
+
 		else
 			response = request.get();
 
@@ -174,15 +181,13 @@ public class SimpleRestClient {
 		return response;
 	}
 
-	private void addAuthorizations(Builder request, String userId, MultivaluedMap<String, Object> myHeaders ) throws Exception {
+	private void addAuthorizations(Builder request, String userId, MultivaluedMap<String, Object> myHeaders) throws Exception {
 		logger.debug("Adding auth for user " + userId);
 
 		String encodedBytes = Base64.encode(userId.getBytes("UTF-8"));
 		request.header("Authorization", "Direct " + encodedBytes);
 		myHeaders.add("Authorization", "Direct " + encodedBytes);
 	}
-
-
 
 	public boolean isAddServerUrl() {
 		return addServerUrl;
