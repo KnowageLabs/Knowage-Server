@@ -5,7 +5,7 @@
 var scripts = document.getElementsByTagName("script")
 var currentScriptPathFileUpload = scripts[scripts.length-1].src;
 
-var defaultFileMaxSize = 20 * 1024 * 1024; // 10 MB
+var defaultFileMaxSize = 10 * 1024 * 1024; // 10 MB
 
 angular.module('file_upload', [ 'ngMaterial', 'sbiModule'])
 .directive('fileUpload',
