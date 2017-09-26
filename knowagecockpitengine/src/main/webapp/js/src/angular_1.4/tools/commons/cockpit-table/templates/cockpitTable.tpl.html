@@ -29,13 +29,13 @@
 	        <tr ng-repeat="row in model | orderBy : getSortingColumnFilter() : getSortingOrderAsBoolean() | limitTo : settings.pagination.enabled?settings.pagination.itemsNumber:undefined : (settings.pagination.enabled && settings.pagination.frontEnd)?(settings.page-1)*settings.pagination.itemsNumber:0" ng-style="::getRowStyle($even)" class="en-row" >
 	            <td ng-repeat="column in columns" ng-if="!column.style.hiddenColumn" ng-click="selectCell($event,row,column)" ng-style="getCellStyle(column,row[column.aliasToShow])" ng-class="{'highlight': isCellSelected(row,column)}">
 	                <md-tooltip ng-if="!column.hideTooltip" md-direction="top" md-delay="500">{{formatValue(row[column.aliasToShow],column)}}</md-tooltip>
-					<div class="cellContainer" ng-style="{'justify-content':column.style.td['justify-content'],'max-width':column.style.width}">
+					<div class="cellContainer" ng-style="::getContainerStyle(column)">
 		                <span ng-if="column.text.enabled" ng-class="{'truncated':column.truncated || column.barchart.enabled,'flex-50':column.barchart.enabled,'textEllipsis':row[column.aliasToShow].length > column.style.maxChars}" ng-style="{'font-size':column.style['font-size']}">
 			                <span ng-if="column.style.prefix">{{column.style.prefix}}</span> 
 			                	{{formatValue(row[column.aliasToShow],column)}} 
 			                <span ng-if="column.style.suffix">{{column.style.suffix}}</span>
 		                </span>
-		                <i  class="fa fa-search showFullContentIcon" ng-if="row[column.aliasToShow].length > column.style.maxChars" ng-click="showFullContent($event,row[column.aliasToShow])"></i>
+		                <i  class="fa fa-search showFullContentIcon" ng-if="column.style.maxChars!= '' and row[column.aliasToShow].length > column.style.maxChars" ng-click="showFullContent($event,row[column.aliasToShow])"></i>
 		                    
 		                <div class="barChart" ng-if="column.barchart && column.barchart != {}" flex ng-class="{'flex-50':column.text.enabled}">
 		                    <div class="progressTrack" ng-style="{'height':column.barchart.style['height']}">

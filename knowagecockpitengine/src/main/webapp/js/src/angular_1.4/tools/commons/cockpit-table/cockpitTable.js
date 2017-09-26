@@ -151,6 +151,14 @@
                 		}
                 	}
 
+                	scope.getContainerStyle = function(column){
+                		if(column.style.width){
+                			var width = column.style.width;
+                			if(width.indexOf('%') != -1) width = '100%';
+                		}
+                		return {'justify-content':column.style.td['justify-content'],'max-width':width};
+                	}
+
                 	//function passed to parent on click
                     scope.clickItem = function (event,row,column) {
                     	event.preventDefault();
