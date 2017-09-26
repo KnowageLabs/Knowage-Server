@@ -23,6 +23,7 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 						name : "Menu tree",
 						menuId : null
 					});
+				
 				},
 				function(response) {
 					sbiModule_messaging.showErrorMessage(sbiModule_translate.load(response.data.errors[0].message), 'Error');
@@ -218,6 +219,7 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 	}
 
 	$scope.createMenu = function() {
+		$scope.parent = angular.copy($scope.selectedMenu)
 		$scope.parentID = $scope.selectedMenu.menuId;
 		if ($scope.selectedMenu.menuId == null) {
 			$scope.role = $scope.roles;
@@ -240,7 +242,8 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 		$scope.selectedMenu.staticPage = null;
 		$scope.selectedMenu.parentId = $scope.parentID; 
 		$scope.showme = true;
-
+		
+		
 	}
 	$scope.columnsArray = [ 
 		{
@@ -573,6 +576,9 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 				if(item.parentId!=null  ){
 					$scope.getParent(item.parentId);
 				}
+				else {
+					$scope.parent = $scope.selectedMenu;
+				}
 				if ($scope.selectedMenu.menuId == null || item.menuId==null) {
 					$scope.showme = false;
 					$scope.dirtyForm = false;
@@ -627,7 +633,7 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 					}
 				}
 			}
-			if(map[item.parentId+""] && map[item.parentId+""].length>0 && map[item.parentId+""].max() > item.prog) {
+			if(map[item.parentId+""] && map[item.parentId+""].length>1 && map[item.parentId+""].max() > item.prog) {
 				return true;
 			}
 			else {
@@ -636,7 +642,54 @@ function MenuConfigurationFunction($scope, sbiModule_restServices,sbiModule_tran
 		}
 		
 	}
+	$scope.canBeMovedUp = function(item) {
+		//!(node.prog== 1) && node.menuId!=null
+		/*var father = {};
+		if(item.parentId== null){
+			father = item;
+		} else {
+			father = getFather(item.parentId) ;
+		}
+		if( item.menuId!=null) {
+			if(father.lstChildren.length>1){
+				if(item.prog!=1){
+					return true
+				} else return false
+			} else return false
+		} else return false;*/
+		if(item.menuId!=null){
+			if(item.prog!=1 ) {
+				return true
+			} else return false;
+		} else return false; 
+	}
 	
+	$scope.canBeChangedWithFather = function (item) {
+		if(item.roles ){
+			var father = {};
+			if(item.parentId== null){
+				father = item;
+			} else {
+				father = getFather(item.parentId) ;
+			}
+			//$scope.getParent(item.menuId);
+			if(item.roles.length==father.roles.length && item.parentId!=null){
+				return true
+			}
+			else return false
+		} 
+		else return false;
+		
+		
+	}
+	var getFather = function (parentId){
+		for (var i = 0; i < $scope.listOfMenu.length; i++) {
+			if($scope.listOfMenu[i].menuId==parentId)
+				return $scope.listOfMenu[i]
+		}
+		
+	}
+	//(node) node.parentId!=null && node.menuId!=null
 	$scope.moveUp = function (item){
 		sbiModule_restServices.promiseGet("2.0/menu/moveUp", item.menuId).then(
 				function(response) {	

@@ -127,11 +127,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<div  class="menu-container" layout="row" layout-align="end center" style="flex:1">
 
 		<div class="icon-container" ng-show="node.menuId==nodeTemp.menuId" >
-			<md-icon  ng-if="!(node.prog== 1) && node.menuId!=null" ng-click= "moveUp(node)" md-font-icon="fa fa-arrow-up">
+			<md-icon  ng-if="canBeMovedUp(node)" ng-click= "moveUp(node)" md-font-icon="fa fa-arrow-up">
 			</md-icon>   
-			<md-icon   ng-if="canBeMovedDown(node) " ng-click= "moveDown(node)" md-font-icon="fa fa-arrow-down">
+			<md-icon   ng-if="canBeMovedDown(node)" ng-click= "moveDown(node)" md-font-icon="fa fa-arrow-down">
 			</md-icon>  
-			<md-icon   ng-if="node.parentId!=null && node.menuId!=null" ng-click= "changeWithFather(node)" md-font-icon="fa fa-random" ">
+			<md-icon   ng-if="canBeChangedWithFather(node)" ng-click= "changeWithFather(node)" md-font-icon="fa fa-random" ">
 			</md-icon>
 			<md-icon ng-click="deleteMenu(node)"  ng-if="node.lstChildren.length==0  && node.menuId!=null" md-font-icon="fa fa-trash">
 			</md-icon>    
