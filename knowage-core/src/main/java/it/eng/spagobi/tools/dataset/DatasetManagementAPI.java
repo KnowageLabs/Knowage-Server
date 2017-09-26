@@ -52,6 +52,7 @@ import com.esotericsoftware.kryo.io.UnsafeInput;
 import commonj.work.Work;
 import commonj.work.WorkException;
 import commonj.work.WorkItem;
+import edu.emory.mathcs.backport.java.util.Arrays;
 import gnu.trove.set.hash.TLongHashSet;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFUserError;
@@ -2220,15 +2221,17 @@ public class DatasetManagementAPI {
 		 */
 		for (int i = 0; i < filterCriteria.size(); i++) {
 			FilterCriteria fc = filterCriteria.get(i);
+			String operator = fc.getOperator();
+
 			Operand leftOperand = fc.getLeftOperand();
 			Object lov = leftOperand.getOperandValue();
 			String letOp = lov.toString();
 
-			Operand rightOperand = fc.getRightOperand();
-			Object rov = rightOperand.getOperandValue();
-			String values = rov.toString();
+			// Operand rightOperand = fc.getRightOperand();
+			// Object rov = rightOperand.getOperandValue();
+			// String values = rov.toString();
 
-			if (values.contains(MIN_FILTER)) {
+			if (operator.equalsIgnoreCase("min")) {
 				logger.debug("found a MIN filter criteria at index " + i + " for coulmnn " + fc.getLeftOperand().getOperandValueAsString());
 				String columnName = fc.getLeftOperand().getOperandValueAsString();
 				maxMinFilterCriteriaIndex.add(i);
@@ -2240,7 +2243,7 @@ public class DatasetManagementAPI {
 				aggregationProjectionCriteria.add(aggregatePc);
 				aggregationFields.add(aggregatePc.getAliasName());
 
-			} else if (values.contains(MAX_FILTER)) {
+			} else if (operator.equalsIgnoreCase("max")) {
 				logger.debug("found a MAX filter criteria at index " + i + " for coulmnn " + fc.getLeftOperand().getOperandValueAsString());
 				String columnName = fc.getLeftOperand().getOperandValueAsString();
 				maxMinFilterCriteriaIndex.add(i);
@@ -2341,8 +2344,7 @@ public class DatasetManagementAPI {
 				Integer indexOfCriteriaToChange = maxMinFilterCriteriaNameToIndex.get(aliasField);
 				FilterCriteria filterCriteriaToChange = filterCriteria.get(indexOfCriteriaToChange);
 
-				Object valueToSubstitute = filterCriteriaToChange.getRightOperand().getOperandValue();
-				logger.debug("Substitute " + valueToSubstitute + " value with " + valueString);
+				logger.debug("Substitute previous valuewith " + valueString);
 
 				List valueList = null;
 
@@ -2353,6 +2355,7 @@ public class DatasetManagementAPI {
 					valueList = new ArrayList<>();
 					valueList.add(valueString);
 					filterCriteriaToChange.getRightOperand().setOperandValue(valueList);
+					filterCriteriaToChange.setOperator("IN");
 				} else {
 					filterCriteriaToChange.setOperator("IS");
 					filterCriteriaToChange.getRightOperand().setOperandValue(null);
@@ -2363,9 +2366,16 @@ public class DatasetManagementAPI {
 
 			}
 		}
-		logger.debug("Filter criteria to return " + filterCriteria);
 		logger.debug("OUT");
 		return filterCriteria;
+	}
+
+	public boolean isZeroOperandsOperator(String operator) throws JSONException {
+		List<String> operators = Arrays.asList(new String[] { "min", "max", "is null", "is not null" });
+		if (operator.contains(operator))
+			return true;
+		else
+			return false;
 	}
 
 }

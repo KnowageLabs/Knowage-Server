@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /**
  * @authors Giovanni Luca Ulivo (GiovanniLuca.Ulivo@eng.it)
  * v0.0.1
- * 
+ *
  */
 (function() {
 angular.module('cockpitModule')
@@ -27,7 +27,7 @@ angular.module('cockpitModule')
 /*
  * This directive acts like an Ext.form.FormPanel
  * Creates an IFrame with an URL called by posting parameters
- * 
+ *
  * */
 .directive('postIframe',function(sbiModule_restServices){
 	var i = 0;
@@ -52,14 +52,14 @@ angular.module('cockpitModule')
 	    	$scope.updateAction = function(actionUrl){
 	    		$scope.actionUrl = actionUrl + "&SBI_EXECUTION_ID=" + (new Date().getTime() + '_' + (i++));
 	    	};
-	    	
+
 	    	$scope.showWidgetSpinner=function(){
 	    		  $scope.confSpinner=true;
 	    	  }
 	    	$scope.updateParameters = function(parameters){
 	    		$scope.formParameters = parameters;
 	    	};
-	    	    	
+
 	    	var loadPageIntoIframe = function(actionUrl, parameters){
 	    		var iframe = $element.find('iframe')[0];
     			if(actionUrl){
@@ -89,23 +89,23 @@ angular.module('cockpitModule')
 	    		if(nature == 'resize' || nature == 'gridster-resized' || nature == 'fullExpand'){
 					return;
 				}
-				
+
 				// Check if service is on line
 				// When dealing with CAS, first call will force web app to do login and can give some error
-				
+
 				/*
 					author Radmila Selakovic (radmila.selakovic@mht.net)
 					Checking is it case of first rendreing or updating chart
 					If it is updating chart, method that will be called is
-					updateData that is implemented in highcharts414Initializer.jsp		
+					updateData that is implemented in highcharts414Initializer.jsp
 				 */
-				
+
 	    		var typesOfCharts= ["HEATMAP", "TREEMAP", "CHORD", "PARALLEL","SUNBURST" ,"WORDCLOUD"];
-				if(nature=="refresh" && typesOfCharts.indexOf(parameters[0].value.widgetData.chartTemplate.CHART.type) == -1){	
+				if(nature=="refresh" && typesOfCharts.indexOf(parameters[0].value.widgetData.chartTemplate.CHART.type) == -1){
 					var iframe = $element.find('iframe')[0];
 		    		var wind = iframe.contentWindow;
 		    		wind.updateData(parameters[0].value.widgetData);
-	    		} 
+	    		}
 	    		else{
 	    			$http.get(actionUrl.testUrl).then(function(){
 	    				loadPageIntoIframe(actionUrl.url, parameters);
@@ -114,8 +114,8 @@ angular.module('cockpitModule')
 	    			});
 	    		}
 			};
-	    	
-	    	
+
+
 	    }
 	};
 })
@@ -154,7 +154,7 @@ angular.module('cockpitModule')
 	}
 	var formEditAction =  formAction('edit_cockpit');
 	var formExecAction =  formAction('execute_cockpit');
-	
+
 	var ret = function(widgetData, newData, editMode){
 		var ret = {};
 		if(editMode){
@@ -208,12 +208,12 @@ function cockpitChartWidgetControllerFunction(
 	if($scope.ngModel.cross==undefined){
 		$scope.ngModel.cross={};
 	};
-	
+
 	$scope.init=function(element,width,height){
 		$scope.refreshWidget(undefined,'init');
 	};
 	$scope.chartLibNamesConfig = chartLibNamesConfig;
-	
+
 	$scope.refresh=function(element,width,height,data,nature){
 		if ($scope.ngModel.dataset){
 			var dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId);
@@ -236,10 +236,10 @@ function cockpitChartWidgetControllerFunction(
 				//Refresh for Not realtime datasets
 				$scope.$broadcast(nature,data);
 			}
-		}	
+		}
 
 	};
-	
+
 	$scope.realtimeSelections = cockpitModule_widgetServices.realtimeSelections;
 	/**
 	 * Set a watcher on a variable that can contains the associative selections for realtime dataset
@@ -253,9 +253,9 @@ function cockpitChartWidgetControllerFunction(
 	            }
 				scope.applyRealtimeSelections(newValue,scope);
 			}
-		}	
+		}
 	});
-	
+
 	//Check if there are associative selections and apply that to the data
 	$scope.applyRealtimeSelections = function(newValue,scope){
 		if (newValue.length == 0){
@@ -266,7 +266,7 @@ function cockpitChartWidgetControllerFunction(
 				//adapt metadata
 				if (originalData){
 					var metadataFields = originalData.metaData.fields;
-					scope.adaptMetadata(metadataFields);			
+					scope.adaptMetadata(metadataFields);
 				}
 
 				scope.$broadcast('selections',originalData);
@@ -289,9 +289,9 @@ function cockpitChartWidgetControllerFunction(
 								  for (var z=0 ; z < selectionsValues.length ; z++){
 									  var filterValue = selectionsValues[z]
 									  // clean the value from the parenthesis ( )
-									  filterValue = filterValue.replace(/[()]/g, ''); 
+									  filterValue = filterValue.replace(/[()]/g, '');
 									  // clean the value from the parenthesis ''
-									  filterValue = filterValue.replace(/['']/g, ''); 
+									  filterValue = filterValue.replace(/['']/g, '');
 									  var filterValues = []
 									  filterValues.push(filterValue);
 
@@ -302,11 +302,11 @@ function cockpitChartWidgetControllerFunction(
 									  var columnType = columnObject.fieldType;
 									  scope.realTimeDatasetData.rows = scope.filterRows(scope.realTimeDatasetData,columnObject,filterValues,columnType);
 									  scope.realTimeDatasetData.results = scope.realTimeDatasetData.rows.length;
-									  
+
 									  // adapt the metadata to be sent to the backend
 									  var metadataFields = scope.realTimeDatasetData.metaData.fields;
 									  scope.adaptMetadata(metadataFields);
-									  
+
 									  //send broadcast for selections with data filtered by selections
 									  scope.$broadcast('selections',scope.realTimeDatasetData);
 								  }
@@ -315,15 +315,15 @@ function cockpitChartWidgetControllerFunction(
 					}
 				}
 			}
-		}		
+		}
 	}
-	
+
 	/**
-	 * Change the header name of the metadata's fields to use the format used by the chart backend 
+	 * Change the header name of the metadata's fields to use the format used by the chart backend
 	 * this is necessary because after a realtime update the data has the original header name from the dataset
 	 * meanwhile while loading data from backend of chart the header have the name+grouping faction
 	 * (Ex: TEMPERATURE_SUM instead of TEMPERATURE)
-	 * 
+	 *
 	 */
 	$scope.adaptMetadata = function (metadataFields){
 		for (var x=0; x < metadataFields.length; x++){
@@ -336,7 +336,7 @@ function cockpitChartWidgetControllerFunction(
 			  }
 		  }
 	}
-	
+
 	/**
 	 * Filter or order data from realtime dataset
 	 */
@@ -347,14 +347,14 @@ function cockpitChartWidgetControllerFunction(
 			if (dataset.isRealtime == true){
 				//create a deep copy of the data, otherwise filtering on data will be spread to all the widgets
 				$scope.realTimeDatasetData = angular.copy(data);
-				
+
 				//*** CLIENT SIDE FILTERING ***
 				if ($scope.ngModel.content && $scope.ngModel.content.filters){
 					var filters = $scope.ngModel.content.filters;
 					for (var i=0; i < filters.length ; i++){
-						//check if a filter is specified 
+						//check if a filter is specified
 						if (filters[i].filterVals.length > 0 ){
-							
+
 							var columnObject = $scope.getColumnObjectFromName($scope.ngModel.content.columnSelectedOfDataset,filters[i].colName);
 							//var filterColumnname = columnObject.alias;
 							var filterValues =  filters[i].filterVals;
@@ -368,12 +368,12 @@ function cockpitChartWidgetControllerFunction(
 				if ($scope.ngModel.content && $scope.ngModel.content.chartTemplate && $scope.ngModel.content.chartTemplate.CHART && $scope.ngModel.content.chartTemplate.CHART.VALUES && $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY && $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY.orderColumn){
 					$scope.sortRows($scope.realTimeDatasetData);
 				}
-				
+
 				return $scope.realTimeDatasetData;
 			}
 		}
 		return data;
-	
+
 	}
 	/**
 	 * Client side rows sorting of realtime dataset
@@ -393,7 +393,7 @@ function cockpitChartWidgetControllerFunction(
 			if ($scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY.orderType === 'desc'){
 				reverse = true;
 			}
-			
+
 			//search dataindex corresponding to the sortingField
 			var dataIndex;
 			if (data.metaData.fields){
@@ -407,13 +407,13 @@ function cockpitChartWidgetControllerFunction(
 					}
 				}
 			}
-			
+
 			if (dataIndex) {
 				data.rows = $filter('orderBy')(data.rows, dataIndex, reverse);
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns the column object that satisfy the original name (not aliasToShow) passed as argument
 	 */
@@ -424,7 +424,7 @@ function cockpitChartWidgetControllerFunction(
 			}
 		}
 	}
-	
+
 	/**
 	 * Return only the objects matching the filter
 	 * data: object with data and metadata
@@ -448,10 +448,10 @@ function cockpitChartWidgetControllerFunction(
 			}
 		}
 		if (data && data.rows){
-			var rows = data.rows;			
+			var rows = data.rows;
 		}
 
-		
+
 		if (dataIndex != null){
 			for (var i=0; i < rows.length ; i++){
 				if (rows[i][dataIndex]){
@@ -468,16 +468,16 @@ function cockpitChartWidgetControllerFunction(
 								toReturn.push(rows[i]);
 							}
 						}
-						
+
 					}
 				}
 			}
 		}
-		
+
 
 		return toReturn;
 	}
-	
+
 	$scope.editWidget=function(index){
 		var finishEdit=$q.defer();
 		var config = {
@@ -489,11 +489,11 @@ function cockpitChartWidgetControllerFunction(
 					  $scope.localStyle=angular.copy(model.style);
 					  $scope.localModel = angular.copy(model.content);
 					  $scope.localModel.cross= angular.copy(model.content.cross);
-					 
+
 					  $scope.model= angular.copy(model);
- 
-					  
-					  
+
+
+
 					  $scope.handleEvent=function(event, arg1){
 						  if(event=='init'){
 							  if($scope.localModel.datasetId != undefined){
@@ -513,8 +513,8 @@ function cockpitChartWidgetControllerFunction(
 								  	if($scope.localModel.chartTemplate.type.toUpperCase()=="SCATTER"){
 										showAction($scope.translate.load('sbi.cockpit.select.no.aggregation.for.all.series'));
 									}
-									
-									
+
+
 							  }
 							  else{
 								  $scope.attachCategoriesToTemplateInIframe();
@@ -552,24 +552,75 @@ function cockpitChartWidgetControllerFunction(
 			    		  }
 			    	  }
 			    	  var checkConfiguration=function(){
-			    		  
+
 			    		  $scope.confChecked = true;
-			    		  
+
 	    				  setAggregationsOnChartEngine($scope.localModel);
 	    				  return true;
 			    	  }
-			    	  
+
+
+
+//				  		check if right number of operands have been specified depending on operator type
+				  		var checkFilters = function(){
+				  			var filters = $scope.model.content.filters;
+
+				  			if(filters == undefined) return true;
+
+				  			var oneOperandOperator = ['=','!=','like','<','>','<=','>='];
+				  			var twoOperandOperator = ['range'];
+				  			var zeroOperandOperator = ['is null','is not null','min','max'];
+
+				  			for(var i = 0; i < filters.length - 1; i++){
+				  				var filter = filters[i];
+				  				var operator = filter.filterOperator;
+				  				var values = filter.filterVals;
+
+				  				if(oneOperandOperator.indexOf(operator) > -1){
+				  					if(values.length<1){
+				  						return false;
+				  					}
+				  					else{
+				  						if(values[0] == ''){
+				  							return false;
+				  						}
+				  					}
+
+				  				}
+				  				else if(twoOperandOperator.indexOf(operator) > -1){
+				  					if(values.length<2){
+				  						return false;
+				  					}
+				  					else{
+				  						if(values[0] == '' || values[1] == ''){
+				  							return false;
+				  						}
+				  					}
+				  				}
+				  				else if(zeroOperandOperator.indexOf(operator) > -1){
+				  					if(values.length!=0){
+				  						return false;
+				  					}
+				  				}
+				  			}
+				  			return true;
+				  		}
+
+
+
+
+
 			    	  var checkChartSettings = function (){
-			    		  
+
 			    		  if(!$scope.localModel.hasOwnProperty('chartTemplate')){
-			    			  
+
 			    			  sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.data.editor.association.AssociationEditor.warning.misingChartDesigner"), sbiModule_translate.load("sbi.data.editor.association.AssociationEditor.warning"));
 			    			  return;
 			    		  }
 			    		  var f = true;
 			    		  if(document.getElementById('chartConfigurationIframe').contentWindow.hasOwnProperty('validateForm')){
 			    			  var isFormValid = document.getElementById('chartConfigurationIframe').contentWindow.validateForm();
-				    		  
+
 				    		  if(!isFormValid) {
 				    			  return false;
 				    		  }
@@ -578,40 +629,44 @@ function cockpitChartWidgetControllerFunction(
 				    	  var chartTemplateFake = $scope.localModel.chartTemplate.CHART ? $scope.localModel.chartTemplate.CHART : $scope.localModel.chartTemplate;
 	    				  if (chartTemplateFake.type == "SCATTER" && chartTemplateFake.VALUES.SERIE.length>1) {
 	    					  var allSeries = chartTemplateFake.VALUES.SERIE;
-	    						var counter = 0; 
+	    						var counter = 0;
 	    						for (var i = 0; i < allSeries.length; i++) {
 	    							if(allSeries[i].groupingFunction=="NONE"){
-	    								counter++ 
+	    								counter++
 	    							};
 	    						}
 	    						if(counter<chartTemplateFake.VALUES.SERIE.length){
 	    							f=false;
 	    						}
 	    						if (counter == 0) f = true;
-	    				  } 
+	    				  }
 	    				  return f;
-	    				  
+
 			    	  }
-			    	  
+
 			    	  $scope.attachCategoriesToTemplateInIframe = function() {
 			    		  var attach = document.getElementById('chartConfigurationIframe').contentWindow.attachCategories;
 			    		  if (typeof attach === "function") {
 			    			  document.getElementById('chartConfigurationIframe').contentWindow.attachCategories();
 			    			}
-			             
+
 			          };
-			    	  
+
 			    	  var saveConfiguration=function(){
-			    		  
+
 			    		  if($scope.localModel.datasetId == undefined){
 			    			  // Warning: Please select a dataset
 			    			  showAction($scope.translate.load('sbi.cockpit.table.missingdataset'));
-			    		  }else{
+			    		  }
+			    		  else if (checkFilters()==false ){
+			    			  showAction($scope.translate.load('sbi.cockpit.table.errorfilters'));
+			    		  }
+			    		  else {
 			    			  if(checkConfiguration()){
 			    				  if($scope.somethingChanged){
 			    					  $scope.localModel.wtype = "chart";
 			    					  $scope.localModel.designer = "Chart Engine Designer";
-			    					  
+
 			    					  angular.copy($scope.localModel, model.content);
 			    					  if(model.style==undefined){
 			    						  model.style={};
@@ -626,20 +681,21 @@ function cockpitChartWidgetControllerFunction(
 		    				  }
 			    		  }
 			    	  }
-			    	  
+
+
 			    	  $scope.cancelConfiguration=function(){
 			    		  mdPanelRef.close();
 			    		  $scope.$destroy();
 			    		  finishEdit.reject();
 			    	  }
-			    	  
+
 			    	  var showChartConfiguration=function(){
 				    	  var widgetData = angular.extend({"datasetLabel":$scope.localModel.datasetLabel||''},$scope.localModel);
 				    	  var execPar = buildParametersForExecution.edit(widgetData);
 				    	  angular.element(document.getElementById("chartConfigurationIframe")).scope()
 				  		  .updateContent(execPar.formAction, execPar.formParameters, 'init');
 			    	  }
-			    	  
+
 			    	  var showAction = function(text) {
 			  			var toast = $mdToast.simple()
 			  			.content(text)
@@ -653,23 +709,23 @@ function cockpitChartWidgetControllerFunction(
 			  				}
 			  			});
 			  		  }
-			    	  
+
 			    	  $scope.hideWidgetSpinner=function(){
 			    		  $scope.confSpinner=false;
 			    		  safeApply();
 			    	  }
-			    	  
+
 			    	  $scope.finishLoadingIframe=function(){
 			    		  $scope.hideWidgetSpinner();
 			    		  safeApply();
 			    	  }
-			    	  
+
 			    	  var safeApply=function(){
 		    			  if ($scope.$root.$$phase != '$apply' && $scope.$root.$$phase !='$digest') {
 		    				  $scope.$apply();
 		    			  }
 		    		  }
-			    	  
+
 			    	  $scope.handleEvent('init');
 			      },
 				disableParentScroll: true,
@@ -695,7 +751,7 @@ function cockpitChartWidgetControllerFunction(
 			console.log("widget is not cliccable")
 			return;
 		}
-		
+
 		// check if cross navigation was enable don this widget
 		var model = {};
 		if($scope.ngModel.cross.enable!=undefined){
@@ -703,17 +759,17 @@ function cockpitChartWidgetControllerFunction(
 		} else {
 			model = $scope.ngModel.content;
 		}
-		
-		if(model.cross != undefined  
+
+		if(model.cross != undefined
 				&& model.cross.enable === true
 				&& model.cross.column != undefined
 				&& model.cross.outputParameter != undefined
 				){
-			
+
 			var outputParameter = {};
 			outputParameter[model.cross.outputParameter] = crossParameters[model.cross.column];
-			
-			
+
+
 			// parse static parameters if present
 			var staticParameters = [];
 			if(model.cross.staticParameters){
@@ -725,17 +781,17 @@ function cockpitChartWidgetControllerFunction(
 						if(splittedPar[0]==undefined || splittedPar[1]==undefined){err=true;}
 						else{
 							var toInsert = {};
-							toInsert[splittedPar[0]] = splittedPar[1]; 
+							toInsert[splittedPar[0]] = splittedPar[1];
 							staticParameters.push(toInsert);
 						}
-					
+
 					}
 
 				}catch(e){
 					err=true
 					console.error(e);
 				}finally{
-					if(err){ 
+					if(err){
 						 $mdDialog.show(
 							      $mdDialog.alert()
 									        .clickOutsideToClose(true)
@@ -744,13 +800,13 @@ function cockpitChartWidgetControllerFunction(
 								        //.ariaLabel('Alert Dialog Demo')
 								        .ok(sbiModule_translate.load("sbi.general.continue"))
 							    );
-					return;	
+					return;
 					}
 					}
-				
+
 			}
-			
-			
+
+
 			// if destination document is specified don't ask
 			if(model.cross.crossName != undefined){
 				parent.execExternalCrossNavigation(outputParameter,{},model.cross.crossName,null,staticParameters);
@@ -761,7 +817,7 @@ function cockpitChartWidgetControllerFunction(
 				return;
 			}
 		}
-	    
+
 		if(event.point){
 			//for highcharts
 			var date = new Date(event.point.x);
@@ -770,9 +826,9 @@ function cockpitChartWidgetControllerFunction(
 			var themonth=date.getMonth()+1
 			var theday=date.getDate()
 			var date_format = theday+char+themonth+char+theyear;
-			
+
 			if(chartType === 'SCATTER'){
-				
+
 				var columnValue  = {};
 				if($scope.ngModel.content.chartTemplate.CHART.dateTime){
 					columnValue = date_format;
@@ -787,14 +843,14 @@ function cockpitChartWidgetControllerFunction(
 					columnValue = event.point.name;
 				}
 			}
-			
-			
+
+
 			var category = $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY;
 			var columnName = category.name
-	
-			
+
+
 			//var d3Types = ["WORDCLOUD", "PARALLEL", "SUNBURST"];
-			
+
 			//if(d3Types.indexOf(chartType)<0){
 			if( Array.isArray(category)){
 				columnName = category[0].name;
@@ -809,14 +865,14 @@ function cockpitChartWidgetControllerFunction(
 				columnValue = event.point.group.value;
 				$scope.doSelection(columnName,columnValue);
 			}else{
-				
+
 				$scope.doSelection(columnName,columnValue);
 			}
 		}else{
 			//for d3 charts
 			if( event["selectParam_cross"]){
 				delete event["selectParam_cross"];
-			}	
+			}
 			var count = Object.keys(event).length;
 			for (column in event){
 				if(count>1){
@@ -827,15 +883,15 @@ function cockpitChartWidgetControllerFunction(
 				count--;
 			}
 		}
-		
-		
+
+
 
 	}
-	
+
 	$scope.finishLoadingIframe=function(){
 		$scope.hideWidgetSpinner();
 	}
-	
+
 	function createCrossParameters(event){
 		if($scope.ngModel.content.chartTemplate.CHART.dateTime){
 			var date = new Date(event.point.x);
@@ -854,22 +910,22 @@ function cockpitChartWidgetControllerFunction(
     				"GROUPING_NAME": event.point.group.name,
     				"GROUPING_VALUE": event.point.group.value
     		};
-    		
+
     		return parameters;
-			
+
        }
-       
+
        if( $scope.ngModel.content.chartTemplate.CHART.type==="PARALLEL"){
     	   var parameters = {
-    				
+
     				"CATEGORY_VALUE":event.selectParam_cross.categoryValue,
     				"CATEGORY_NAME": event.selectParam_cross.categoryName,
     				"GROUPING_NAME": event.selectParam_cross.groupingCategoryName,
     				"GROUPING_VALUE": event.selectParam_cross.groupingCategoryValue
     		};
-    		
+
     		return parameters;
-			
+
        }
        if( $scope.ngModel.content.chartTemplate.CHART.type==="TREEMAP"){
     	   var parameters = {
@@ -878,7 +934,7 @@ function cockpitChartWidgetControllerFunction(
     				"CATEGORY_VALUE":event.point.name,
     				"CATEGORY_NAME": $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY[0].name
     		};
-    			
+
     		return parameters;
        }
        if( $scope.ngModel.content.chartTemplate.CHART.type==="WORDCLOUD"){
@@ -888,22 +944,22 @@ function cockpitChartWidgetControllerFunction(
     				"CATEGORY_VALUE":event.selectParam_cross.categoryValue,
     				"CATEGORY_NAME": event.selectParam_cross.categoryName,
     		};
-    	   
+
     	   if(event.selectParam_cross.categoryId){
     		   parameters["CATEGORY_ID"]= event.selectParam_cross.categoryId;
     	   }else{
     		   parameters["CATEGORY_ID"]= event.selectParam_cross.categoryValue;
     	   }
-    			
+
     	   return parameters;
        }
-       
+
        else if( $scope.ngModel.content.chartTemplate.CHART.type==="SUNBURST"){
         	   var parameters = event.selectParam_cross;
-        			
+
         		return parameters;
        }
-       
+
        else if($scope.ngModel.content.chartTemplate.CHART.type==="SCATTER"){
     	   var parameters = {
     				"SERIE_NAME": event.point.series.name,
@@ -911,9 +967,9 @@ function cockpitChartWidgetControllerFunction(
     				"CATEGORY_VALUE": $scope.ngModel.content.chartTemplate.CHART.dateTime ? date_format : event.point.category.name,
     				"CATEGORY_NAME": $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY.name
     		};
-    	   
+
     	   	return parameters;
-       } 
+       }
        else if($scope.ngModel.content.chartTemplate.CHART.type==="CHORD"){
     	   var parameters = {
     				"SERIE_NAME": event.SERIE_NAME,
@@ -921,7 +977,7 @@ function cockpitChartWidgetControllerFunction(
     				"CATEGORY_VALUE":  event.CATEGORY_VALUE,
     				"CATEGORY_NAME": event.CATEGORY_NAME,
     			};
-    	   
+
     	   return parameters;
        }
        var parameters = {
@@ -930,45 +986,45 @@ function cockpitChartWidgetControllerFunction(
 			"CATEGORY_VALUE": $scope.ngModel.content.chartTemplate.CHART.dateTime ? date_format : event.point.name,
 			"CATEGORY_NAME": $scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY.name
 		};
-       
+
 		return parameters;
 	}
 };
 
-function setAggregationsOnChartEngine(wconf){	
+function setAggregationsOnChartEngine(wconf){
 	var aggregations = [];
 	if(!wconf.chartTemplate.hasOwnProperty("CHART")){
 		wconf.chartTemplate = {"CHART":wconf.chartTemplate};
 	}
 	var chartTemplate = wconf.chartTemplate;
 	if(chartTemplate && chartTemplate.CHART && chartTemplate.CHART.VALUES) {
-		
+
 		if(chartTemplate.CHART.VALUES.SERIE) {
-		
+
 			var chartSeries = chartTemplate.CHART.VALUES.SERIE;
-			
+
 			for(var i = 0; i < chartSeries.length; i++){
-				
+
 				var obj = {};
 				obj['name'] = chartSeries[i].column;
 				obj['aggregationSelected'] = chartSeries[i].groupingFunction ? chartSeries[i].groupingFunction : 'SUM';
 				obj['alias'] = chartSeries[i].name + '_' + obj.aggregationSelected;
 				obj['aliasToShow'] = obj['alias'];
 				obj['fieldType'] = "MEASURE";
-				aggregations.push(obj);					
+				aggregations.push(obj);
 			}
-			
+
 		}
-		
+
 		if(chartTemplate.CHART.VALUES.CATEGORY){
-			
+
 			var chartCategory= chartTemplate.CHART.VALUES.CATEGORY;
 			if(chartCategory.name=="" || chartCategory.name==null || chartCategory.name==undefined){
 				chartCategory.name=chartCategory.column
 			}
 			if(Array.isArray(chartCategory)){
 				for(var i = 0; i < chartCategory.length; i++){
-					
+
 					var obj = {};
 					obj['name'] = chartCategory[i].column;
 					obj['alias'] = chartCategory[i].name;
@@ -982,15 +1038,15 @@ function setAggregationsOnChartEngine(wconf){
 				obj['alias'] = chartCategory.name;
 				obj['aliasToShow'] = chartCategory.alias;
 				obj['fieldType'] = "ATTRIBUTE";
-				
+
 				aggregations.push(obj);
-				
+
 				if( (chartTemplate.CHART.groupCategories || chartTemplate.CHART.groupSeries) && chartCategory.groupby!=""){
 					var subs = "";
-					if (chartCategory.groupby.indexOf(',') == -1) { 
-						subs = chartCategory.groupby 
+					if (chartCategory.groupby.indexOf(',') == -1) {
+						subs = chartCategory.groupby
 					}
-					
+
 					else {
 						subs = angular.copy(chartCategory.groupby.substring(0, chartCategory.groupby.indexOf(',')));
 					}
@@ -1002,7 +1058,7 @@ function setAggregationsOnChartEngine(wconf){
 					aggregations.push(groupby);
 				}
 			};
-			
+
 		}
 	}
 	wconf.columnSelectedOfDataset = aggregations;

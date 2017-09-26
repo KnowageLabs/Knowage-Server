@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /**
  * @authors Alessandro Piovani (alessandro.piovani@eng.it)
  * v0.0.1
- * 
+ *
  */
 (function() {
 
@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			   templateUrl: baseScriptPath+ '/directives/cockpit-filters-configuration/templates/cockpitFiltersConfiguration.html',
 			   controller: cockpitFiltersControllerFunction,
 			   scope: {
-				   ngModelShared: '='   
+				   ngModelShared: '='
 			   	},
 			   	compile: function (tElement, tAttrs, transclude) {
 	                return {
@@ -41,7 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			   	}
 		   }
 	});
-	
+
 	function cockpitFiltersControllerFunction($scope,cockpitModule_widgetServices,
 			cockpitModule_properties,cockpitModule_template,$mdDialog,sbiModule_translate,sbiModule_restServices,
 			cockpitModule_gridsterOptions,$mdPanel,cockpitModule_widgetConfigurator,$mdToast,
@@ -51,79 +51,102 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.cockpitModule_widgetServices=cockpitModule_widgetServices;
 		$scope.cockpitModule_datasetServices=cockpitModule_datasetServices;
 		$scope.translate=sbiModule_translate;
-		
+
 		$scope.openGeneralConfigurationDialog=function(){
 			cockpitModule_generalServices.openGeneralConfiguration();
 		}
-		
+
 		$scope.openDataConfigurationDialog=function(){
 			cockpitModule_generalServices.openDataConfiguration();
 		}
-		
+
 		$scope.fabSpeed = {
 				isOpen : false
 		}
-		
+
 		$scope.showFilters=false;
-		
+
 		$scope.localDS={};
 		$scope.columnNames=[];
-			
+
+		$scope.operatorsTypeString = ['=','like','is null','is not null'];
+		$scope.operatorsTypeNumber = ['=','<','>','<=','>=','is null','is not null','!=','min','max','range'];
+		$scope.operatorsTypeDate = ['=','is null','is not null','min','max','range'];
+
 		$scope.updateFilters=function(dsId){
 			$scope.ngModelShared.filters=[]; // format [{colName : "..."  ,  filterVals : ["filterStr1" , "filterStr2", ... ]}   ,   {colName : "..."  ,  filterVals : [...] }]
-			//$scope.selectedDsId=$scope.ngModelShared.dataset.dsId;	
-			$scope.selectedDsId=dsId;	
+			//$scope.selectedDsId=$scope.ngModelShared.dataset.dsId;
+			$scope.selectedDsId=dsId;
 			angular.copy(cockpitModule_datasetServices.getDatasetById($scope.selectedDsId), $scope.localDS);
 			for(var i=0;i<$scope.localDS.metadata.fieldsMeta.length;i++)
 			{
 				var objToInsert={};
 				objToInsert.filterVals=[];
+				//objToInsert.filterOperator="=";
+				objToInsert.filterOperator="";
+
 				objToInsert.colName=$scope.localDS.metadata.fieldsMeta[i].name;
-				
+				objToInsert.type=$scope.localDS.metadata.fieldsMeta[i].type;
+
 				$scope.ngModelShared.filters.push(objToInsert);
 			}
 		}
-		
+
+		$scope.eraseFilter=function(filterName){
+
+			var filterFound = false;
+			for(var j=0;j<$scope.ngModelShared.filters.length && !filterFound;j++){
+				if($scope.ngModelShared.filters[j].colName==filterName){
+					$scope.ngModelShared.filters[j].filterOperator = "";
+					$scope.ngModelShared.filters[j].filterVals = [];
+					filterFound=true;
+
+				}
+			}
+		}
+
+
+
 		//for chartWidget
 		$scope.$watch("ngModelShared.datasetId", function(newValue, oldValue) {
-			
+
 			if(oldValue==newValue)
-			{	
+			{
 				if(oldValue!=undefined) //not initialization phase
-				{	
+				{
 					if($scope.ngModelShared.filters==undefined)	//if filters are not defined, I create them
 					{
-						$scope.updateFilters($scope.ngModelShared.datasetId);	
+						$scope.updateFilters($scope.ngModelShared.datasetId);
 					}
 				}else{
 					//initialization phase, there is no dataset
 				}
 			}else{
-				$scope.updateFilters($scope.ngModelShared.datasetId);	
+				$scope.updateFilters($scope.ngModelShared.datasetId);
 			}
 		});
-		
+
 		//for tableWidget
 		$scope.$watch("ngModelShared.dataset.dsId", function(newValue, oldValue) {
 			var filterFound=false;
 			if(oldValue==newValue)
-			{	
+			{
 				if(oldValue!=undefined) //not initialization phase
-				{	
+				{
 					if($scope.ngModelShared.filters==undefined)	//if filters are not defined, I create them
 					{
-						$scope.updateFilters($scope.ngModelShared.dataset.dsId);	
+						$scope.updateFilters($scope.ngModelShared.dataset.dsId);
 					}
 					else
 					{
 						$scope.localDSforFilters={};
 						angular.copy(cockpitModule_datasetServices.getDatasetById($scope.ngModelShared.dataset.dsId), $scope.localDSforFilters);
-						
+
 						for(var i=0;i<$scope.localDSforFilters.metadata.fieldsMeta.length;i++)  //columns
-						{	
+						{
 							var obj = $scope.localDSforFilters.metadata.fieldsMeta[i];
-							
-							if($scope.ngModelShared.filters!=undefined){			
+
+							if($scope.ngModelShared.filters!=undefined){
 								filterFound=false;
 								var filterToAdd={};
 								for(var j=0;j<$scope.ngModelShared.filters.length;j++){        //filters
@@ -136,13 +159,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							if(!filterFound){
 								filterToAdd.colName=obj.name;
 								filterToAdd.filterVals=[];
-								$scope.ngModelShared.filters.push(filterToAdd);		
+								$scope.ngModelShared.filters.push(filterToAdd);
 							}
 						}
-						
-						
+
+
 						for(var k=0;k<$scope.ngModelShared.filters.length;k++)   //filters
-						{       
+						{
 							filterFound=false;
 							var f = $scope.ngModelShared.filters[k];
 							for(var l=0;l<$scope.localDSforFilters.metadata.fieldsMeta.length;l++){  //columns
@@ -153,17 +176,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							}
 							if(!filterFound){ //if filter is not in columns
 								$scope.ngModelShared.filters.splice(k,1); //remove filter from filter list
-							}	
+							}
 						}
-					}	
+					}
 				}else{
 					//initialization phase, there is no dataset
 				}
 			}else{
-				$scope.updateFilters($scope.ngModelShared.dataset.dsId); 	
+				$scope.updateFilters($scope.ngModelShared.dataset.dsId);
 			}
 		});
-		
+
 		if($scope.ngModelShared.limitRows == undefined){
 			$scope.ngModelShared.limitRows = {enable: false, rows: 10};
 		}

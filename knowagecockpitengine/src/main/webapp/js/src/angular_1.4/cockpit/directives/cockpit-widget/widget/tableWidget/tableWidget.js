@@ -779,6 +779,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.showAction($scope.translate.load('sbi.cockpit.table.erroraliases'));
 				return;
 			}
+			if(!$scope.checkFilters()){
+				$scope.showAction($scope.translate.load('sbi.cockpit.table.errorfilters'));
+				return;
+			}
+
 			angular.copy($scope.model,originalModel);
 			mdPanelRef.close();
 			mdPanelRef.destroy();
@@ -838,6 +843,53 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 			return true;
 		}
+
+
+
+//		check if right number of operands have been specified depending on operator type
+		$scope.checkFilters = function(){
+			var filters = $scope.model.filters;
+
+			var oneOperandOperator = ['=','!=','like','<','>','<=','>='];
+			var twoOperandOperator = ['range'];
+			var zeroOperandOperator = ['is null','is not null','min','max'];
+
+			for(var i = 0; i < filters.length - 1; i++){
+				var filter = filters[i];
+				var operator = filter.filterOperator;
+				var values = filter.filterVals;
+
+				if(oneOperandOperator.indexOf(operator) > -1){
+					if(values.length!=1){
+						return false;
+					}
+					else{
+						if(values[0] == ''){
+							return false;
+						}
+					}
+
+				}
+				else if(twoOperandOperator.indexOf(operator) > -1){
+					if(values.length!=2){
+						return false;
+					}
+					else{
+						if(values[0] == '' || values[1] == ''){
+							return false;
+						}
+					}
+				}
+				else if(zeroOperandOperator.indexOf(operator) > -1){
+					if(values.length!=0){
+						return false;
+					}
+				}
+			}
+			return true;
+		}
+
+
 
 		$scope.showAction = function(text) {
 			var toast = $mdToast.simple()

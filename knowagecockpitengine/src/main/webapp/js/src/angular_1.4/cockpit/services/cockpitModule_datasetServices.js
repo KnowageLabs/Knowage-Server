@@ -684,8 +684,25 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 			for(var i=0;i<filters.length;i++){
 				var filterElement=filters[i];
 				var colName=filterElement.colName;
+				var type=filterElement.type;
+				var filterOperator=filterElement.filterOperator;
+
+				// if type is undefined get it from metadata
+				if(type == undefined){
+					var found = false;
+					for(var j=0;i<dataset.metadata.fieldsMeta.length & !found;j++){
+						var metaElement=dataset.metadata.fieldsMeta[j];
+						if(metaElement.name == colName){
+							filterElement.type = metaElement.type;
+							found = true;
+						}
+					}
+				}
+
+
 				var filterVals=filterElement.filterVals;
-				if(filterVals.length>0){
+				if(filterOperator != ""  //filterVals.length>0
+						){
 					var values=[];
 					angular.forEach(filterVals, function(item){
 						this.push("('" + item + "')");
@@ -695,7 +712,11 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 						dataToSend[dataset.label] = {};
 					}
 					if(!dataToSend[dataset.label][colName]){
-						dataToSend[dataset.label][colName] = values;
+						dataToSend[dataset.label][colName] =
+							{
+								filterOperator: filterOperator,
+								filterVals: values
+							}
 					}else{
 						dataToSend[dataset.label][colName] = dataToSend[dataset.label][colName].filter(function(elem) { // intersect arrays
 						    return values.indexOf(elem) !== -1;
@@ -704,6 +725,28 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 					    });
 					}
 				}
+
+
+//				var filterVals=filterElement.filterVals;
+//				if(filterVals.length>0){
+//					var values=[];
+//					angular.forEach(filterVals, function(item){
+//						this.push("('" + item + "')");
+//					}, values);
+//
+//					if(!dataToSend[dataset.label]){
+//						dataToSend[dataset.label] = {};
+//					}
+//					if(!dataToSend[dataset.label][colName]){
+//						dataToSend[dataset.label][colName] = values;
+//					}else{
+//						dataToSend[dataset.label][colName] = dataToSend[dataset.label][colName].filter(function(elem) { // intersect arrays
+//						    return values.indexOf(elem) !== -1;
+//						}).filter(function (elem, i, c) { // extra step to remove duplicates
+//					        return c.indexOf(elem) === i;
+//					    });
+//					}
+//				}
 			}
 		}
 

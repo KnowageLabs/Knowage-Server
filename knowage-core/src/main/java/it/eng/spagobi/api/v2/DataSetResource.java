@@ -18,6 +18,42 @@
 package it.eng.spagobi.api.v2;
 
 import static it.eng.spagobi.tools.glossary.util.Util.getNumberOrNull;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import org.apache.log4j.Logger;
+import org.jgrapht.graph.Pseudograph;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.mongodb.util.JSON;
+
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.api.common.DataSetResourceAbstractResource;
@@ -78,41 +114,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceParameterException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 import it.eng.spagobi.utilities.sql.SqlUtils;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import org.apache.log4j.Logger;
-import org.jgrapht.graph.Pseudograph;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.mongodb.util.JSON;
-
 /**
  * @author Alessandro Daniele (alessandro.daniele@eng.it)
  *
@@ -121,7 +122,6 @@ import com.mongodb.util.JSON;
 
 @ManageAuthorization
 public class DataSetResource extends DataSetResourceAbstractResource {
-
 
 	static protected Logger logger = Logger.getLogger(DataSetResource.class);
 
@@ -132,7 +132,6 @@ public class DataSetResource extends DataSetResourceAbstractResource {
 	private static final String DATE_TIME_FORMAT_SQL_STANDARD = CockpitJSONDataWriter.CACHE_DATE_TIME_FORMAT.replace("yyyy", "YYYY").replace("MM", "MM")
 			.replace("dd", "DD").replace("HH", "HH24").replace("mm", "MI").replace("ss", "SS");
 	private static final String DATE_TIME_FORMAT_SQLSERVER = "yyyyMMdd HH:mm:ss";
-
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
@@ -315,7 +314,6 @@ public class DataSetResource extends DataSetResourceAbstractResource {
 			@QueryParam("ItemPerPage") String itemPerPageStr, @QueryParam("label") String search, @QueryParam("seeTechnical") Boolean seeTechnical,
 			@QueryParam("ids") String ids) throws EMFUserError {
 
-
 		ISbiDataSetDAO dao = DAOFactory.getSbiDataSetDAO();
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		// TODO check if profile is null
@@ -487,7 +485,6 @@ public class DataSetResource extends DataSetResourceAbstractResource {
 				IDataSource dataSource = getDataSource(dataset, isNearRealtime);
 				boolean isDateColumn = isDateColumn(column, dataset);
 
-
 				String values = null;
 				String valuesForQuery = null;
 				Object object = selectionsObject.getJSONArray(datasetDotColumn).get(0);
@@ -532,7 +529,6 @@ public class DataSetResource extends DataSetResourceAbstractResource {
 			}
 
 			logger.debug("Filter list: " + filters);
-
 
 			String strategy = SingletonConfig.getInstance().getConfigValue(ConfigurationConstants.SPAGOBI_DATASET_ASSOCIATIVE_LOGIC_STRATEGY);
 			Config config = AssociativeLogicUtils.buildConfig(strategy, graph, datasetToAssociationToColumnMap, filters, nearRealtimeDatasets,
@@ -684,130 +680,169 @@ public class DataSetResource extends DataSetResourceAbstractResource {
 			Iterator<String> it = datasetSelectionObject.keys();
 			while (!isAnEmptySelection && it.hasNext()) {
 				String columns = it.next();
-				JSONArray values = datasetSelectionObject.getJSONArray(columns);
 
-				if (values.length() > 0) {
-					List<String> columnsList = new ArrayList<>();
-					String columnNames = fixColumnAliasesAndNames(columns, columnAliasToColumnName);
-					columnsList.addAll(Arrays.asList(columnNames.split("\\s*,\\s*"))); // trim spaces while splitting
-
-					for (int i = 0; i < columnsList.size(); i++) {
-						String column = columnsList.get(i);
-						if (column.contains(":")) {
-							columnsList.set(i, getDatasetManagementAPI().getQbeDataSetColumn(dataSet, column));
-						}
-					}
-
-					IDataSource dataSource = getDataSource(dataSet, isNearRealtime);
-
-					boolean isJDBCDataSet = DatasetManagementAPI.isJDBCDataSet(dataSet);
-					String dialect = dataSource != null ? dataSource.getHibDialectName() : "";
-					boolean isBigDataDialect = SqlUtils.isBigDataDialect(dialect);
-					boolean isSqlServerDialect = dialect.contains("sqlserver");
-
-					List<String> dateColumnNamesList = getDateColumnNamesList(dataSet, dataSource);
-
-					DatasetEvaluationStrategy strategy = getDatasetEvaluationStrategy(dataSet, isNearRealtime);
-					if (strategy == DatasetEvaluationStrategy.NEAR_REALTIME) {
-						for (int i = 0; i < columnsList.size(); i++) {
-							columnsList.set(i, DEFAULT_TABLE_NAME_DOT + AbstractJDBCDataset.encapsulateColumnName(columnsList.get(i), null));
-						}
-						String joinedColumns = StringUtils.join(columnsList, ",");
-						Operand leftOperand = new Operand(joinedColumns);
-
-						StringBuilder valuesSB = new StringBuilder();
-						String openingBracket = columnsList.size() > 1 ? "(" : "";
-						String closingBracket = columnsList.size() > 1 ? ")" : "";
-
-						List<String> distinctValues = new ArrayList<>();
-						for (int i = 0; i < values.length(); i++) {
-							String value = values.getString(i);
-							distinctValues.addAll(Arrays.asList(getDistinctValues(value)));
-						}
-						for (int i = 0; i < distinctValues.size(); i++) {
-							String value = distinctValues.get(i);
-							String column = columnsList.get(i % columnsList.size());
-							if (i % columnsList.size() == 0) { // 1st item of tuple of values
-								if (i >= columnsList.size()) { // starting from 2nd tuple of values
-									valuesSB.append(" OR ");
-									valuesSB.append(openingBracket);
-								}
-							} else {
-								valuesSB.append(" AND "); // starting from 2nd item of tuple of values
-							}
-							if (i > 0) {
-								valuesSB.append(column);
-								valuesSB.append("=");
-							}
-							valuesSB.append(getValueForQuery(value, dateColumnNamesList.contains(column), dataSource));
-							if (i % columnsList.size() == columnsList.size() - 1) { // last item of tuple of values
-								valuesSB.append(closingBracket);
-							}
-						}
-						Operand rightOperand = new Operand(valuesSB.toString());
-
-						FilterCriteria filterCriteria = new FilterCriteria(leftOperand, "=", rightOperand);
-						filterCriterias.add(filterCriteria);
-					} else if (isSqlServerDialect) {
-						for (int i = 0; i < columnsList.size(); i++) {
-							columnsList.set(i, AbstractJDBCDataset.encapsulateColumnName(columnsList.get(i), dataSource));
-						}
-
-						String openingBracket = columnsList.size() > 1 ? "(" : "";
-						String closingBracket = columnsList.size() > 1 ? ")" : "";
-
-						Operand leftOperand = new Operand(openingBracket + columnsList.get(0));
-
-						StringBuilder valuesSB = new StringBuilder();
-
-						List<String> distinctValues = new ArrayList<>();
-						for (int i = 0; i < values.length(); i++) {
-							String value = values.getString(i);
-							distinctValues.addAll(Arrays.asList(getDistinctValues(value)));
-						}
-
-						for (int i = 0; i < distinctValues.size(); i++) {
-							String value = distinctValues.get(i);
-							String column = columnsList.get(i % columnsList.size());
-							if (i % columnsList.size() == 0) { // 1st item of tuple of values
-								if (i >= columnsList.size()) { // starting from 2nd tuple of values
-									valuesSB.append(" OR ");
-									valuesSB.append(openingBracket);
-								}
-							} else {
-								valuesSB.append(" AND "); // starting from 2nd item of tuple of values
-							}
-							if (i > 0) {
-								valuesSB.append(column);
-								valuesSB.append("=");
-							}
-							valuesSB.append(getValueForQuery(value, dateColumnNamesList.contains(column), dataSource));
-							if (i % columnsList.size() == columnsList.size() - 1) { // last item of tuple of values
-								valuesSB.append(closingBracket);
-							}
-						}
-						Operand rightOperand = new Operand(valuesSB.toString());
-
-						FilterCriteria filterCriteria = new FilterCriteria(leftOperand, "=", rightOperand);
-						filterCriterias.add(filterCriteria);
-					} else {
-						Operand leftOperand = new Operand(StringUtils.join(columnsList, ","));
-
-						List<String> valuesList = new ArrayList<>();
-						for (int i = 0; i < values.length(); i++) {
-							String[] valuesArray = getDistinctValues(values.getString(i));
-							for (int j = 0; j < valuesArray.length; j++) {
-								String column = columnsList.get(j % columnsList.size());
-								valuesList.add(getValueForQuery(valuesArray[j], dateColumnNamesList.contains(column), dataSource));
-							}
-						}
-						Operand rightOperand = new Operand(valuesList);
-
-						FilterCriteria filterCriteria = new FilterCriteria(leftOperand, "IN", rightOperand);
-						filterCriterias.add(filterCriteria);
-					}
-				} else {
+				// get Json Object, operator and values
+				JSONObject filterDef = datasetSelectionObject.getJSONObject(columns);
+				if (filterDef == null || filterDef.opt("filterOperator") == null || filterDef.opt("filterOperator").equals("")) {
 					isAnEmptySelection = true;
+				} else {
+
+					String filterOperator = filterDef.opt("filterOperator").toString();
+					JSONArray values = filterDef.getJSONArray("filterVals");
+
+					if (values.length() > 0 || getDatasetManagementAPI().isZeroOperandsOperator(filterOperator)) {
+						List<String> columnsList = new ArrayList<>();
+						String columnNames = fixColumnAliasesAndNames(columns, columnAliasToColumnName);
+						columnsList.addAll(Arrays.asList(columnNames.split("\\s*,\\s*"))); // trim spaces while splitting
+
+						for (int i = 0; i < columnsList.size(); i++) {
+							String column = columnsList.get(i);
+							if (column.contains(":")) {
+								columnsList.set(i, getDatasetManagementAPI().getQbeDataSetColumn(dataSet, column));
+							}
+						}
+
+						IDataSource dataSource = getDataSource(dataSet, isNearRealtime);
+
+						boolean isJDBCDataSet = DatasetManagementAPI.isJDBCDataSet(dataSet);
+						String dialect = dataSource != null ? dataSource.getHibDialectName() : "";
+						boolean isBigDataDialect = SqlUtils.isBigDataDialect(dialect);
+						boolean isSqlServerDialect = dialect.contains("sqlserver");
+
+						List<String> dateColumnNamesList = getDateColumnNamesList(dataSet, dataSource);
+
+						DatasetEvaluationStrategy strategy = getDatasetEvaluationStrategy(dataSet, isNearRealtime);
+						if (strategy == DatasetEvaluationStrategy.NEAR_REALTIME) {
+							for (int i = 0; i < columnsList.size(); i++) {
+								columnsList.set(i, DEFAULT_TABLE_NAME_DOT + AbstractJDBCDataset.encapsulateColumnName(columnsList.get(i), null));
+							}
+							String joinedColumns = StringUtils.join(columnsList, ",");
+							Operand leftOperand = new Operand(joinedColumns);
+
+							StringBuilder valuesSB = new StringBuilder();
+							String openingBracket = columnsList.size() > 1 ? "(" : "";
+							String closingBracket = columnsList.size() > 1 ? ")" : "";
+
+							List<String> distinctValues = new ArrayList<>();
+							for (int i = 0; i < values.length(); i++) {
+								String value = values.getString(i);
+								distinctValues.addAll(Arrays.asList(getDistinctValues(value)));
+							}
+							for (int i = 0; i < distinctValues.size(); i++) {
+								String value = distinctValues.get(i);
+								String column = columnsList.get(i % columnsList.size());
+								if (i % columnsList.size() == 0) { // 1st item of tuple of values
+									if (i >= columnsList.size()) { // starting from 2nd tuple of values
+										valuesSB.append(" OR ");
+										valuesSB.append(openingBracket);
+									}
+								} else {
+									valuesSB.append(" AND "); // starting from 2nd item of tuple of values
+								}
+								if (i > 0) {
+									valuesSB.append(column);
+									valuesSB.append("=");
+								}
+								valuesSB.append(getValueForQuery(value, dateColumnNamesList.contains(column), dataSource));
+								if (i % columnsList.size() == columnsList.size() - 1) { // last item of tuple of values
+									valuesSB.append(closingBracket);
+								}
+							}
+							Operand rightOperand = new Operand(valuesSB.toString());
+
+							FilterCriteria filterCriteria = new FilterCriteria(leftOperand, "=", rightOperand);
+							filterCriterias.add(filterCriteria);
+						} else if (isSqlServerDialect) {
+							for (int i = 0; i < columnsList.size(); i++) {
+								columnsList.set(i, AbstractJDBCDataset.encapsulateColumnName(columnsList.get(i), dataSource));
+							}
+
+							String openingBracket = columnsList.size() > 1 ? "(" : "";
+							String closingBracket = columnsList.size() > 1 ? ")" : "";
+
+							Operand leftOperand = new Operand(openingBracket + columnsList.get(0));
+
+							StringBuilder valuesSB = new StringBuilder();
+
+							List<String> distinctValues = new ArrayList<>();
+							for (int i = 0; i < values.length(); i++) {
+								String value = values.getString(i);
+								distinctValues.addAll(Arrays.asList(getDistinctValues(value)));
+							}
+
+							for (int i = 0; i < distinctValues.size(); i++) {
+								String value = distinctValues.get(i);
+								String column = columnsList.get(i % columnsList.size());
+								if (i % columnsList.size() == 0) { // 1st item of tuple of values
+									if (i >= columnsList.size()) { // starting from 2nd tuple of values
+										valuesSB.append(" OR ");
+										valuesSB.append(openingBracket);
+									}
+								} else {
+									valuesSB.append(" AND "); // starting from 2nd item of tuple of values
+								}
+								if (i > 0) {
+									valuesSB.append(column);
+									valuesSB.append("=");
+								}
+								valuesSB.append(getValueForQuery(value, dateColumnNamesList.contains(column), dataSource));
+								if (i % columnsList.size() == columnsList.size() - 1) { // last item of tuple of values
+									valuesSB.append(closingBracket);
+								}
+							}
+							Operand rightOperand = new Operand(valuesSB.toString());
+
+							FilterCriteria filterCriteria = new FilterCriteria(leftOperand, "=", rightOperand);
+							filterCriterias.add(filterCriteria);
+						} else {
+							Operand leftOperand = new Operand(StringUtils.join(columnsList, ","));
+
+							List<String> valuesList = new ArrayList<>();
+							for (int i = 0; i < values.length(); i++) {
+								String[] valuesArray = getDistinctValues(values.getString(i));
+								for (int j = 0; j < valuesArray.length; j++) {
+									String column = columnsList.get(j % columnsList.size());
+									valuesList.add(getValueForQuery(valuesArray[j], dateColumnNamesList.contains(column), dataSource));
+								}
+							}
+
+							// case for all operators
+							// =, < , >, <= , >= , like ,is null , is not null ,min ,max ,range
+							FilterCriteria filterCriteria = null;
+
+							List<String> oneOperandOperators = Arrays.asList("=", "!=", "<", ">", "<=", ">=", "like");
+							List<String> twoOperandOperators = Arrays.asList("range");
+							List<String> markupOperandOperators = Arrays.asList("max", "min");
+							List<String> zeroOperandOperators = Arrays.asList("is null", "is not null");
+
+							if (oneOperandOperators.contains(filterOperator)) {
+								String val = "";
+								if (valuesList.size() >= 1) {
+									val = valuesList.get(0);
+								}
+								Operand rightOperand = new Operand(val);
+								filterCriteria = new FilterCriteria(leftOperand, filterOperator, rightOperand);
+							} else if (twoOperandOperators.contains(filterOperator)) {
+								Operand rightOperand = new Operand(valuesList);
+								filterCriteria = new FilterCriteria(leftOperand, filterOperator, rightOperand);
+							} else if (markupOperandOperators.contains(filterOperator)) {
+								Operand rightOperand = new Operand(new ArrayList<String>());
+								filterCriteria = new FilterCriteria(leftOperand, filterOperator, rightOperand);
+							} else if (zeroOperandOperators.contains(filterOperator)) {
+								filterCriteria = new FilterCriteria(leftOperand, filterOperator, null);
+
+							}
+
+							// Operand rightOperand = new Operand(valuesList);
+							// FilterCriteria filterCriteria = new FilterCriteria(leftOperand, "IN", rightOperand);
+							if (filterCriteria != null) {
+								filterCriterias.add(filterCriteria);
+							}
+						}
+					} else {
+						isAnEmptySelection = true;
+					}
+
 				}
 			}
 

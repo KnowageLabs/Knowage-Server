@@ -17,6 +17,28 @@
  */
 package it.eng.spagobi.tools.dataset.cache.impl.sqldbcache;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.log4j.Logger;
+
+import com.hazelcast.core.IMap;
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
+import commonj.work.Work;
+import commonj.work.WorkItem;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -59,28 +81,6 @@ import it.eng.spagobi.utilities.database.temporarytable.TemporaryTableManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.locks.DistributedLockFactory;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import org.apache.log4j.Logger;
-
-import com.hazelcast.core.IMap;
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
-import commonj.work.Work;
-import commonj.work.WorkItem;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
@@ -695,57 +695,94 @@ public class SQLDBCache implements ICache {
 								}
 
 								StringBuilder rightOperandSB = new StringBuilder();
-								if (filter.getRightOperand().isCostant()) {
-									if (filter.getRightOperand().isMultivalue()) {
-										if (!isHsqlDialect && !isSqlServerDialect) {
-											rightOperandSB.append("(");
-										}
-										String separator = "";
-										List<String> values = filter.getRightOperand().getOperandValueAsList();
-										for (int i = 0; i < values.size(); i++) {
-											String value = values.get(i);
-											if ("IN".equalsIgnoreCase(operator)) {
-												if (value.startsWith("(") && value.endsWith(")")) {
-													value = value.substring(1, value.length() - 1);
+								if (filter.getRightOperand() != null) {
+									if (filter.getRightOperand().isCostant()) {
+										if (filter.getRightOperand().isMultivalue()) {
+
+											String separator = "";
+											List<String> values = filter.getRightOperand().getOperandValueAsList();
+
+											if (operator.equals("range")) {
+												operator = "BETWEEN";
+												String valueBetween = "";
+												if (values.size() >= 1) {
+													valueBetween = values.get(0);
 												}
-												if (i % columns.length == 0) {// 1st item of tuple of values
-													if (i >= columns.length) { // starting from 2nd tuple of values
-														rightOperandSB.append(",");
+												String valueAnd = "";
+												if (values.size() >= 2) {
+													valueAnd = values.get(1);
+												}
+
+												rightOperandSB.append(separator);
+
+												rightOperandSB.append(valueBetween);
+												rightOperandSB.append(separator);
+												rightOperandSB.append("AND");
+												rightOperandSB.append(separator);
+												rightOperandSB.append(valueAnd);
+												rightOperandSB.append(separator);
+											} else {
+
+												if (!isHsqlDialect && !isSqlServerDialect) {
+													rightOperandSB.append("(");
+												}
+
+												for (int i = 0; i < values.size(); i++) {
+													String value = values.get(i);
+													if ("IN".equalsIgnoreCase(operator)) {
+														if (value.startsWith("(") && value.endsWith(")")) {
+															value = value.substring(1, value.length() - 1);
+														}
+														if (i % columns.length == 0) {// 1st item of tuple of values
+															if (i >= columns.length) { // starting from 2nd tuple of values
+																rightOperandSB.append(",");
+															}
+															rightOperandSB.append(isHsqlDialect || isSqlServerDialect ? "(" : "(1");
+														}
+														if (i % columns.length != 0 || (!isHsqlDialect && !isSqlServerDialect)) {
+															rightOperandSB.append(",");
+														}
+														rightOperandSB.append(value);
+														if (i % columns.length == columns.length - 1) { // last item of tuple of values
+															rightOperandSB.append(")");
+														}
+													} else {
+														rightOperandSB.append(separator);
+														rightOperandSB.append("'");
+														rightOperandSB.append(value);
+														rightOperandSB.append("'");
 													}
-													rightOperandSB.append(isHsqlDialect || isSqlServerDialect ? "(" : "(1");
+													separator = ",";
 												}
-												if (i % columns.length != 0 || (!isHsqlDialect && !isSqlServerDialect)) {
-													rightOperandSB.append(",");
-												}
-												rightOperandSB.append(value);
-												if (i % columns.length == columns.length - 1) { // last item of tuple of values
+												if (!isHsqlDialect && !isSqlServerDialect) {
 													rightOperandSB.append(")");
 												}
-											} else {
-												rightOperandSB.append(separator);
-												rightOperandSB.append("'");
-												rightOperandSB.append(value);
-												rightOperandSB.append("'");
+
 											}
-											separator = ",";
+
+										} else {
+											rightOperandSB.append(filter.getRightOperand().getOperandValueAsString());
 										}
-										if (!isHsqlDialect && !isSqlServerDialect) {
-											rightOperandSB.append(")");
-										}
-									} else {
-										rightOperandSB.append(filter.getRightOperand().getOperandValueAsString());
+									} else { // it's a column
+										rightOperandSB.append(
+												AbstractJDBCDataset.encapsulateColumnName(filter.getRightOperand().getOperandValueAsString(), dataSource));
 									}
-								} else { // it's a column
-									rightOperandSB.append(AbstractJDBCDataset.encapsulateColumnName(filter.getRightOperand().getOperandValueAsString(),
-											dataSource));
+
+									String rightOperandString = rightOperandSB.toString();
+									if (sqlBuilder.isWhereOrEnabled() && !rightOperandString.contains(" AND ")) {
+										sqlBuilder.where(leftOperand + " " + operator + " " + rightOperandString);
+									} else {
+										sqlBuilder.where("(" + leftOperand + " " + operator + " " + rightOperandString + ")");
+									}
+
+								} else {
+									if (sqlBuilder.isWhereOrEnabled()) {
+										sqlBuilder.where(leftOperand + " " + operator);
+									} else {
+										sqlBuilder.where("(" + leftOperand + " " + operator + ")");
+									}
 								}
 
-								String rightOperandString = rightOperandSB.toString();
-								if (sqlBuilder.isWhereOrEnabled() && !rightOperandString.contains(" AND ")) {
-									sqlBuilder.where(leftOperand + " " + operator + " " + rightOperandString);
-								} else {
-									sqlBuilder.where("(" + leftOperand + " " + operator + " " + rightOperandString + ")");
-								}
 							}
 						}
 
