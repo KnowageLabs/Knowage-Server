@@ -80,6 +80,7 @@
                     scope.getThStyle = function(thStyle,column){
                     	var style = thStyle?thStyle:{};
                     	if(column.style && column.style.width) style['max-width'] = column.style.width;
+                    	if(column.style && column.style.width) style.width = column.style.width;
                     	return style;
                     }
 
@@ -152,11 +153,13 @@
                 	}
 
                 	scope.getContainerStyle = function(column){
-                		if(column.style.width){
-                			var width = column.style.width;
-                			if(width.indexOf('%') != -1) width = '100%';
-                		}
-                		return {'justify-content':column.style.td['justify-content'],'max-width':width};
+                		var style = {};
+//                		if(column.style && column.style.width){
+//                			style['width'] = column.style.width;
+//                			if(style['width'].indexOf('%') != -1 && column.barchart) style['width'] = '100%';
+//                		}
+                		if(column.style && column.style.td && column.style.td['justify-content']) style['justify-content'] = column.style.td['justify-content'];
+                		return style;
                 	}
 
                 	//function passed to parent on click
@@ -279,7 +282,6 @@
             link: function(scope, elem, attr) {
             	scope.translate=sbiModule_translate;
             	scope.widgetWidth = elem[0].clientWidth;
-            	debugger;
             	scope.settings.page = scope.settings.page != 0 ? scope.settings.page : 1;
 
             	scope.maxPageCount = 1;
