@@ -56,18 +56,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			cockpitModule_widgetSelection,
 			cockpitModule_properties,
 			accessibility_preferences){
-		
+
 		$scope.accessibilityModeEnabled = accessibility_preferences.accessibilityModeEnabled;
 		if ($scope.ngModel && $scope.ngModel.dataset && $scope.ngModel.dataset.dsId){
 			$scope.ngModel.dataset.isRealtime = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId).isRealtime;
 		}
-		
+
 		$scope.selectedTab = {'tab' : 0};
 		$scope.widgetIsInit=false;
 		$scope.totalCount = 0;
 		$scope.translate = sbiModule_translate;
 		$scope.datasetRecords = {};
-		
+
 		var scope = $scope;
 
 		$scope.realTimeSelections = cockpitModule_widgetServices.realtimeSelections;
@@ -83,15 +83,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				angular.copy(scope.savedRows, scope.itemList);
 			}
 		});
-		
+
 		if(!$scope.ngModel.settings){
 			$scope.ngModel.settings = {};
 		}
-		
+
 		if(!$scope.ngModel.settings.backendTotalRows){
 			$scope.ngModel.settings.backendTotalRows = 0;
 		}
-		
+
 		if(!$scope.ngModel.settings.alternateRows){
 			$scope.ngModel.settings.alternateRows = {
 				'enabled' : false,
@@ -99,14 +99,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				'oddRowsColor': ''
 			};
 		}
-		
+
 		if(!$scope.ngModel.settings.showGrid){
 			$scope.ngModel.settings.showGrid = false;
 		}
-		
+
 		$scope.ngModel.settings.page = 1;
 		$scope.ngModel.settings.rowsCount = 0;
-		
+
 		if(!$scope.ngModel.settings.pagination){
 			$scope.ngModel.settings.pagination = {
 				'enabled': true,
@@ -114,15 +114,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				'frontEnd': false
 			};
 		}
-		
+
 		if($scope.ngModel && $scope.ngModel.dataset && $scope.ngModel.dataset.isRealtime){
 			$scope.ngModel.settings.pagination.frontEnd = true;
 		}
-		
+
 		if($scope.ngModel.settings.multiselectable==undefined){
 			$scope.ngModel.settings.multiselectable=false;
 		}
-		
+
 		if(!$scope.ngModel.settings.summary){
 			$scope.ngModel.settings.summary={
 					'enabled': false,
@@ -130,15 +130,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					'style': {}
 			};
 		}
-		
+
 		if(!$scope.ngModel.style){
 			$scope.ngModel.style={};
 		}
-				
+
 		if(!$scope.ngModel.cross){
 			$scope.ngModel.cross={};
 		}
-		
+
 		$scope.getKeyByValue = function( obj,value ) {
 		    for( var prop in obj ) {
 		        if( obj.hasOwnProperty( prop ) ) {
@@ -148,11 +148,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		        }
 		    }
 		}
-		
+
 		$scope.tableFunction = {
 				widgetStyle: $scope.ngModel.style
 		}
-		
+
 		//checking the model version. If is a previous version I create the newer settings.
 		$scope.retroCompatibilityCheckToVersion1 = function() {
 			if($scope.ngModel.version == undefined){
@@ -161,7 +161,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					if(!columns[k].style) columns[k].style = {};
 					if(!columns[k].text) columns[k].text = {"enabled":true};
 					$scope.moveProperty(columns[k], "style.size","style.width");
-					$scope.moveProperty(columns[k], "style.textAlign","style.td['justify-content']");
+					if(columns[k].style.textAlign == "left" ) $scope.style.td['justify-content'] = "flex-start";
+					if(columns[k].style.textAlign == "center" ) $scope.style.td['justify-content'] = "center";
+					if(columns[k].style.textAlign == "right" ) $scope.style.td['justify-content'] = "flex-end";
 					if(columns[k].style.scopefunc && columns[k].scopefunc.condition){
 						columns[k].ranges = [];
 						for(var j in columns[k].scopefunc.condition){
@@ -172,7 +174,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									"iconColor"	: columns[k].scopefunc.condition[j].color
 							};
 							columns[k].ranges.push(range);
-							
+
 						}
 					}
 					if(columns[k].visType=='Chart'|| columns[k].visType=='Chart & Text' || columns[k].visType== 'Text & Chart'){
@@ -185,15 +187,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						}
 					}
 				}
-				
+
 				$scope.deleteProperty($scope.ngModel, "content.currentPageNumber");
 				$scope.deleteProperty($scope.ngModel, "style.disableShowSummary");
-				
+
 				if($scope.getPropertyValue($scope.ngModel, "content.fixedRow") != undefined){
 					$scope.deleteProperty($scope.ngModel, "content.fixedRow");
 					$scope.setPropertyValue($scope.ngModel, "settings.pagination.enabled", true);
 				}
-				
+
 				$scope.moveProperty($scope.ngModel, "style.alternateRows", "settings.alternateRows");
 				$scope.moveProperty($scope.ngModel, "style.showAlternateRows", "settings.alternateRows.enabled");
 				$scope.moveProperty($scope.ngModel, "style.autoRowsHeight", "settings.autoRowsHeight");
@@ -205,7 +207,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.moveProperty($scope.ngModel, "sortingOrder", "settings.sortingOrder");
 				$scope.moveProperty($scope.ngModel, "style.showSummary", "settings.summary.enabled");
 				$scope.moveProperty($scope.ngModel, "style.rowsHeight", "style.tr.height");
-				
+
 				$scope.moveProperty($scope.ngModel, "style.grid", "style.td");
 				$scope.moveProperty($scope.ngModel, "style.headerStyle.fontfamily", "style.th.font-family");
 				$scope.moveProperty($scope.ngModel, "style.headerStyle.fontsize", "style.th.font-size");
@@ -216,16 +218,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.deleteProperty($scope.ngModel, "style.headerStyle");
 				$scope.moveProperty($scope.ngModel, "style.summary.background", "style.summary.background-color");
 
-				
+
 				$scope.ngModel.version = 1;
 			}
 		}
-		
+
 		$scope.retroCompatibilityCheckToVersion1();
-		
+
 		$scope.selectRow=function(row,column,evt){
 			var newValue = undefined;
-			
+
 			for(var i=0;i<$scope.ngModel.content.columnSelectedOfDataset.length;i++){
 				if($scope.ngModel.settings.modalSelectionColumn!=undefined)	{
 					if($scope.ngModel.content.columnSelectedOfDataset[i].aliasToShow==$scope.ngModel.settings.modalSelectionColumn)	{
@@ -239,8 +241,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						}
 						break;
 					}
-				}	
-				
+				}
+
 				if(angular.equals($scope.ngModel.content.columnSelectedOfDataset[i].aliasToShow,column.aliasToShow)){
 					if($scope.ngModel.content.columnSelectedOfDataset[i].fieldType=="MEASURE"
 							|| $scope.ngModel.content.columnSelectedOfDataset[i].isCalculated){
@@ -260,7 +262,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.doSelection(column.aliasToShow, row[column.aliasToShow], $scope.ngModel.settings.modalSelectionColumn, newValue, row);
 			}
 		}
-		
+
 		$scope.calculatedRow = function(row,column,alias){
 
 			var index = $scope.indexInList(alias, $scope.ngModel.content.columnSelectedOfDataset);
@@ -294,7 +296,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		};
 
 		$scope.lastChangePageConf={};
-		
+
 		$scope.changeDocPage = function(searchValue, itemsPerPage, currentPageNumber, columnsSearch, columnOrdering, reverseOrdering){
 			if($scope.gridsterItem.hasClass("gridster-item-resizing")
 					|| !$scope.widgetIsInit
@@ -310,31 +312,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					&& $scope.reverseOrdering == reverseOrdering){
 				return;
 			}
-			
+
 			var time=(new Date()).getTime();
 			$scope.lastChangePageConf=time;
 			$timeout(function(){
 				if(angular.equals(time,	$scope.lastChangePageConf)){
-					
+
 					if(searchValue==undefined || searchValue.trim().lenght==0 ){
 						searchValue='';
 					}
-					
-					var numberOfElement = angular.copy(itemsPerPage);					
+
+					var numberOfElement = angular.copy(itemsPerPage);
 					if($scope.ngModel.content.maxRowsNumber != undefined){
 						numberOfElement = angular.copy($scope.ngModel.content.maxRowsNumber)
 					}
-					
+
 					if($scope.ngModel.settings.summary.enabled){
 						numberOfElement--;
 					}
-					
+
 					currentPageNumber--;
 					$scope.ngModel.settings.page = currentPageNumber;
-					
+
 					$scope.columnOrdering = columnOrdering;
 					$scope.reverseOrdering = reverseOrdering;
-					
+
 					var options = {
 						page: currentPageNumber,
 						itemPerPage: numberOfElement,
@@ -345,9 +347,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					$scope.refreshWidget(options);
 				}
 			},1000);
-			 
+
 		};
-		
+
 		$scope.isMobile = {
 		    Android: function() {
 		        return navigator.userAgent.match(/Android/i);
@@ -375,22 +377,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 			return true;
 		}
-		
-		
+
+
 		$scope.freeValueFromPrefixAndSuffix=function(value,currentColumn){
 			if(currentColumn.hasOwnProperty("style") && value!=undefined){
 				if(currentColumn.style.hasOwnProperty("suffix")){
 					value=value.replace(" "+currentColumn.style.suffix, "");
-				}	
+				}
 				if(currentColumn.style.hasOwnProperty("prefix")){
 					value=value.replace(currentColumn.style.prefix+" ", "");
-				}	
+				}
 			}
 			return parseFloat(value);
 		}
-		
-		
-		
+
+
+
 		$scope.refresh=function(element,width,height, datasetRecords,nature){
 			if(nature == 'gridster-resized' || nature == 'fullExpand' || nature == 'resize'){
 				return;
@@ -400,11 +402,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.tableFunction.widgetStyle = $scope.ngModel.style;
 			$scope.datasetRecords = datasetRecords;
 
-			
+
 			var calculateScaleValue=function(minVal, maxVal, val)
 			{
 				if(maxVal!=minVal)
-				{	
+				{
 					return ((val-minVal)/(maxVal-minVal))*100;
 				}
 				else
@@ -412,7 +414,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					return 0;
 				}
 			}
-			
+
 			$scope.rgbToHex=function(rgbColor)
 			{
 				var a = rgbColor.split("(")[1].split(")")[0];
@@ -431,7 +433,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.ngModel.settings.backendTotalRows = $scope.datasetRecords.results;
 			}
 		}
-		
+
 		// reformatting the filter object to have an easier access on it
 		$scope.reformatFilters = function(){
 			var filters = {};
@@ -440,14 +442,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					var columnObject = $scope.getColumnObjectFromName($scope.ngModel.content.columnSelectedOfDataset,$scope.ngModel.filters[f].colName);
 					var aliasToShow = columnObject.aliasToShow;
 					filters[aliasToShow] = {
-						"type":columnObject.fieldType, 
+						"type":columnObject.fieldType,
 						"values":$scope.ngModel.filters[f].filterVals
 					};
 				}
 			}
 			return filters;
 		};
-		
+
 		// filtering the table for realtime dataset
 		$scope.filterDataset = function(dataset,selection){
 			//using the reformatted filters
@@ -462,8 +464,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					//if the column is a measure cast it to number and check in filter
 					} else if (filters[f].type == 'MEASURE'){
 						var columnValue = Number(dataset[d][f]);
-						var filterValue = filters[f].values.map(function (x) { 
-						    return Number(x); 
+						var filterValue = filters[f].values.map(function (x) {
+						    return Number(x);
 						});
 						if (filterValue.indexOf(columnValue)==-1){
 							dataset.splice(d,1);
@@ -494,8 +496,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							};
 							for(var k in datasetSelection[s]){
 								// clean the value from the parenthesis ( )
-								datasetSelection[s][k] = datasetSelection[s][k].replace(/[()]/g, ''); 
-								datasetSelection[s][k] = datasetSelection[s][k].replace(/['']/g, ''); 
+								datasetSelection[s][k] = datasetSelection[s][k].replace(/[()]/g, '');
+								datasetSelection[s][k] = datasetSelection[s][k].replace(/['']/g, '');
 								formattedSelection[columnObject.aliasToShow].values.push(datasetSelection[s][k]);
 							}
 						}
@@ -503,9 +505,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					}
 				}
 				return formattedSelection;
-			}			
+			}
 		}
-		
+
 		//function to get the rows of the table. Is used on every refresh
 		$scope.getRows = function(values){
 			var dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId);
@@ -514,7 +516,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				var headerMap = {};
 				for(var k=0; k<values.metaData.fields.length; k++){
 					var field = values.metaData.fields[k];
-					
+
 					//changing the column naming to aliasToShow in case of realtime dataset
 					if(dataset.isRealtime === true){
 						for(var n in $scope.ngModel.content.columnSelectedOfDataset){
@@ -528,7 +530,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						headerMap[field.dataIndex] = field.header;
 					}
 				}
-				
+
 				for(var j in values.rows){
 					var obj = {};
 					for(var i in values.rows[j]){
@@ -539,14 +541,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					}
 					table.push(obj);
 				}
-				
+
 				// deleting last row to move the summary row outsise in its footer container.
 				if($scope.ngModel.settings.summary.enabled){
 					var lastIndex = values.rows.length-1;
 					$scope.ngModel.settings.summary.row = table[lastIndex];
 					table.splice(lastIndex,1);
 				}
-				
+
 				// realtime dataset filtering
 				if(dataset.isRealtime === true){
 					table = $scope.filterDataset(table);
@@ -561,7 +563,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 			return table;
 		}
-		
+
 		/**
 		 * Returns the column object that satisfy the original name (not aliasToShow) passed as argument
 		 */
@@ -572,7 +574,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 			}
 		}
-		
+
 		$scope.presentInTable = function(table, obj){
 			for(var i=0;i<table.length;i++){
 				var objT = table[i];
@@ -601,15 +603,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 			});
 		}
-		
+
 		$scope.init=function(element,width,height){
 			$scope.refreshWidget();
 			$timeout(function(){
 				$scope.widgetIsInit=true;
 			},500);
-			
+
 		}
-		
+
 		$scope.getColumns =function(newValues){
 			var columns = newValues ? newValues : $scope.ngModel.content.columnSelectedOfDataset;
 			for(var k in columns){
@@ -629,14 +631,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 			}
 		}
-		
+
 		$scope.$watchCollection('ngModel.content.columnSelectedOfDataset',function(newValue,oldValue){
 			$scope.getColumns(newValue);
 		})
-		
+
 		$scope.getOptions =function(){
 			var obj = {};
-				
+
 			if(!$scope.ngModel.settings.pagination.enabled || $scope.ngModel.settings.pagination.frontEnd){
 				obj["page"] = -1;
 				obj["itemPerPage"] = -1;
@@ -651,9 +653,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			obj["type"] = $scope.ngModel.type;
 
 			return obj;
-			
+
 		}
-		
+
 		$scope.exportCsv=function(obj){
 			var deferred = obj.def;
 			var csv = '';
@@ -672,7 +674,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				var numRecs = rows.length;
 				for(var recIndex = 0; recIndex < numRecs; recIndex++){
 					for(var col = 0; col < $scope.columnToshowinIndex.length; col++){
-						csv += rows[recIndex][$scope.columnToshowinIndex[col]] + ';' 
+						csv += rows[recIndex][$scope.columnToshowinIndex[col]] + ';'
 					}
 					csv += '\n';
 				}
@@ -682,7 +684,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				deferred.reject(error);
 			});
 		}
-		
+
 		$scope.editWidget=function(index){
 			var finishEdit=$q.defer();
 			var config = {
@@ -699,31 +701,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					preserveScope: true,
 					autoWrap:false,
 					locals: {finishEdit: finishEdit, originalModel: $scope.ngModel, getMetadata: $scope.getMetadata, scopeFather: $scope},
-					
+
 			};
 
 			$mdPanel.open(config);
-			
+
 			return finishEdit.promise;
 		}
-		
+
 		$scope.$watch('ngModel.settings.pagination.frontEnd', function(newValue, oldValue) {
 			if(newValue != undefined){
 				if(newValue){ // deregistering backend watchers
 					if($scope.watchPagingForBackend){
 						$scope.watchPagingForBackend();
 					}
-					
+
 					if($scope.watchSortingForBackend){
 						$scope.watchSortingForBackend();
-					}					
+					}
 				}else{ // registering backend watchers
 					$scope.watchPagingForBackend = $scope.$watch('ngModel.settings.pagination.enabled + "," + ngModel.settings.pagination.itemsNumber + "," + ngModel.settings.page', function(newValue, oldValue) {
 						if(newValue != undefined && newValue != oldValue){
 							$scope.refreshWidget();
 						}
 					});
-					
+
 					$scope.watchSortingForBackend = $scope.$watch('ngModel.settings.sortingColumn + "," + ngModel.settings.sortingOrder', function(newValue, oldValue) {
 						if(newValue != undefined && newValue != oldValue && newValue.indexOf(",") > 0 && newValue.indexOf(",") < newValue.length - 1){
 							$scope.refreshWidget();
@@ -736,24 +738,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 	function tableWidgetEditControllerFunction($scope,finishEdit,sbiModule_translate,$mdDialog,originalModel,mdPanelRef,getMetadata,scopeFather,$mdToast){
 		$scope.translate=sbiModule_translate;
-		
+
 		$scope.fontFamily = ["Inherit","Roboto","Arial","Times New Roman","Tahoma","Verdana","Impact","Calibri","Cambria","Georgia","Gungsuh"],
-		
+
 		$scope.fontWeight = ['normal','bold','bolder','lighter','initial','inherit'];
-		
+
 		$scope.textAlign = ['left','right','center'];
-		
+
 		$scope.getMetadata = getMetadata;
-		
+
 		$scope.model = {};
 		angular.copy(originalModel,$scope.model);
-		
+
 		$scope.colorPickerProperty={format:'rgb', placeholder:sbiModule_translate.load('sbi.cockpit.color.select')};
-		
+
 		$scope.colorPickerPropertyEvenOddRows = {placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb',disabled:!$scope.model.settings.alternateRows.enabled};
-		
+
 		$scope.colorPickerPropertyGrid = {placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb',disabled:!$scope.model.settings.showGrid};
-		
+
 		$scope.saveConfiguration=function(){
 			if($scope.model.dataset == undefined || $scope.model.dataset.dsId == undefined ){
 				$scope.showAction($scope.translate.load('sbi.cockpit.table.missingdataset'));
@@ -784,11 +786,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 			finishEdit.resolve();
 		}
-		
+
 		$scope.enableAlternate = function(){
 			$scope.colorPickerPropertyEvenOddRows['disabled'] = $scope.model.settings.alternateRows.enabled;
 		}
-		
+
 		$scope.enableGrid = function(){
 			if($scope.model.settings.showGrid){
 				delete $scope.model.style.td['border-color'];
@@ -796,9 +798,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				delete $scope.model.style.td['border-style'];
 			}
 			$scope.colorPickerPropertyGrid['disabled'] = $scope.model.settings.showGrid;
-			
+
 		}
-		
+
 		$scope.checkAggregation = function(){
 			var measures =0;
 			var noneAggr =0;
@@ -818,7 +820,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 			return true;
 		}
-		
+
 		$scope.checkAliases = function(){
 			var columns = $scope.model.content.columnSelectedOfDataset;
 			for(var i = 0; i < columns.length - 1; i++){
@@ -830,7 +832,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 			return true;
 		}
-		
+
 		$scope.showAction = function(text) {
 			var toast = $mdToast.simple()
 					.content(text)
@@ -844,7 +846,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				}
 			});
 		}
-		
+
 		$scope.cancelConfiguration=function(){
 			mdPanelRef.close();
 			mdPanelRef.destroy();
@@ -867,7 +869,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				return false;
 			}
 		}
-		
+
 		$scope.$watchCollection('model.content.columnSelectedOfDataset', function(newColumns, oldColumns) {
 			var disableShowSummary = true;
 			if(newColumns){
@@ -884,7 +886,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 		});
 	}
-	
+
 	// this function register the widget in the cockpitModule_widgetConfigurator factory
 	addWidgetFunctionality("table",{'initialDimension':{'width':20, 'height':20},'updateble':true,'cliccable':true});
 
