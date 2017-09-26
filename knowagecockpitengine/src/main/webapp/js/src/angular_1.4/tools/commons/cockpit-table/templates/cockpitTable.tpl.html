@@ -10,7 +10,7 @@
 	<table ng-class="" class="cockpitTable" ng-style="settings.style.table" ng-cloak fixed-header>
 	    <thead>
 	        <tr ng-style="settings.style.header">
-	            <th scope="col" ng-repeat="column in columns track by $index" ng-style="getThStyle(styledata.th,column)" ng-click="sort(column,$event)" ng-class="{'hiddenIcon':column.aliasToShow != settings.sortingColumn,'active':column.aliasToShow == settings.sortingColumn}">
+	            <th scope="col" ng-repeat="column in columns track by $index" ng-if="!column.style.hiddenColumn" ng-style="getThStyle(styledata.th,column)" ng-click="sort(column,$event)" ng-class="{'hiddenIcon':column.aliasToShow != settings.sortingColumn,'active':column.aliasToShow == settings.sortingColumn}">
 	                <span class="thText">{{column.aliasToShow}}
 	                	<md-tooltip ng-if="!column.hideTooltip" md-direction="top" md-delay="500">{{column.aliasToShow}}</md-tooltip>
 	                </span>
@@ -27,7 +27,7 @@
 	    </thead>
 	    <tbody>
 	        <tr ng-repeat="row in model | orderBy : getSortingColumnFilter() : getSortingOrderAsBoolean() | limitTo : settings.pagination.enabled?settings.pagination.itemsNumber:undefined : (settings.pagination.enabled && settings.pagination.frontEnd)?(settings.page-1)*settings.pagination.itemsNumber:0" ng-style="::getRowStyle($even)" class="en-row" >
-	            <td ng-repeat="column in columns" ng-click="selectCell($event,row,column)" ng-style="getCellStyle(column,row[column.aliasToShow])" ng-class="{'highlight': isCellSelected(row,column)}">
+	            <td ng-repeat="column in columns" ng-if="!column.style.hiddenColumn" ng-click="selectCell($event,row,column)" ng-style="getCellStyle(column,row[column.aliasToShow])" ng-class="{'highlight': isCellSelected(row,column)}">
 	                <md-tooltip ng-if="!column.hideTooltip" md-direction="top" md-delay="500">{{formatValue(row[column.aliasToShow],column)}}</md-tooltip>
 					<div class="cellContainer" ng-style="{'justify-content':column.style.td['justify-content'],'max-width':column.style.width}">
 		                <span ng-if="column.text.enabled" ng-class="{'truncated':column.truncated || column.barchart.enabled,'flex-50':column.barchart.enabled,'textEllipsis':row[column.aliasToShow].length > column.style.maxChars}" ng-style="{'font-size':column.style['font-size']}">
