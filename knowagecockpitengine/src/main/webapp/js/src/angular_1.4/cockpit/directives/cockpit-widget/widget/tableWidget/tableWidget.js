@@ -159,6 +159,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				var columns = $scope.ngModel.content.columnSelectedOfDataset;
 				for(var k in columns){
 					if(!columns[k].style) columns[k].style = {};
+					$scope.moveProperty(columns[k],"style.fontSize","style['font-size']");
+					$scope.moveProperty(columns[k],"style.fontWeight","style['font-weight']");
 					if(!columns[k].text) columns[k].text = {"enabled":true};
 					$scope.moveProperty(columns[k], "style.size","style.width");
 					if(columns[k].style.textAlign == "left" ) $scope.style.td['justify-content'] = "flex-start";
