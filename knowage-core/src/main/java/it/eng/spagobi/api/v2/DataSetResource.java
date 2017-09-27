@@ -763,50 +763,52 @@ public class DataSetResource extends DataSetResourceAbstractResource {
 						FilterCriteria filterCriteria = new FilterCriteria(leftOperand, "=", rightOperand);
 						filterCriterias.add(filterCriteria);
 
-					} else if (isSqlServerDialect) {
-						for (int i = 0; i < columnsList.size(); i++) {
-							columnsList.set(i, AbstractJDBCDataset.encapsulateColumnName(columnsList.get(i), dataSource));
-						}
-
-						String openingBracket = columnsList.size() > 1 ? "(" : "";
-						String closingBracket = columnsList.size() > 1 ? ")" : "";
-
-						Operand leftOperand = new Operand(openingBracket + columnsList.get(0));
-
-						StringBuilder valuesSB = new StringBuilder();
-
-						List<String> distinctValues = new ArrayList<>();
-						for (int i = 0; i < values.length(); i++) {
-							String value = values.getString(i);
-							distinctValues.addAll(Arrays.asList(getDistinctValues(value)));
-						}
-
-						for (int i = 0; i < distinctValues.size(); i++) {
-							String value = distinctValues.get(i);
-							String column = columnsList.get(i % columnsList.size());
-							if (i % columnsList.size() == 0) { // 1st item of tuple of values
-								if (i >= columnsList.size()) { // starting from 2nd tuple of values
-									valuesSB.append(" OR ");
-									valuesSB.append(openingBracket);
-								}
-							} else {
-								valuesSB.append(" AND "); // starting from 2nd item of tuple of values
-							}
-							if (i > 0) {
-								valuesSB.append(column);
-								valuesSB.append("=");
-							}
-							valuesSB.append(getValueForQuery(value, dateColumnNamesList.contains(column), dataSource));
-							if (i % columnsList.size() == columnsList.size() - 1) { // last item of tuple of values
-								valuesSB.append(closingBracket);
-							}
-						}
-						Operand rightOperand = new Operand(valuesSB.toString());
-
-						FilterCriteria filterCriteria = new FilterCriteria(leftOperand, "=", rightOperand);
-						filterCriterias.add(filterCriteria);
-
-					} else {
+					}
+					// else if (isSqlServerDialect) {
+					// for (int i = 0; i < columnsList.size(); i++) {
+					// columnsList.set(i, AbstractJDBCDataset.encapsulateColumnName(columnsList.get(i), dataSource));
+					// }
+					//
+					// String openingBracket = columnsList.size() > 1 ? "(" : "";
+					// String closingBracket = columnsList.size() > 1 ? ")" : "";
+					//
+					// Operand leftOperand = new Operand(openingBracket + columnsList.get(0));
+					//
+					// StringBuilder valuesSB = new StringBuilder();
+					//
+					// List<String> distinctValues = new ArrayList<>();
+					// for (int i = 0; i < values.length(); i++) {
+					// String value = values.getString(i);
+					// distinctValues.addAll(Arrays.asList(getDistinctValues(value)));
+					// }
+					//
+					// for (int i = 0; i < distinctValues.size(); i++) {
+					// String value = distinctValues.get(i);
+					// String column = columnsList.get(i % columnsList.size());
+					// if (i % columnsList.size() == 0) { // 1st item of tuple of values
+					// if (i >= columnsList.size()) { // starting from 2nd tuple of values
+					// valuesSB.append(" OR ");
+					// valuesSB.append(openingBracket);
+					// }
+					// } else {
+					// valuesSB.append(" AND "); // starting from 2nd item of tuple of values
+					// }
+					// if (i > 0) {
+					// valuesSB.append(column);
+					// valuesSB.append("=");
+					// }
+					// valuesSB.append(getValueForQuery(value, dateColumnNamesList.contains(column), dataSource));
+					// if (i % columnsList.size() == columnsList.size() - 1) { // last item of tuple of values
+					// valuesSB.append(closingBracket);
+					// }
+					// }
+					// Operand rightOperand = new Operand(valuesSB.toString());
+					//
+					// FilterCriteria filterCriteria = new FilterCriteria(leftOperand, "=", rightOperand);
+					// filterCriterias.add(filterCriteria);
+					//
+					// }
+					else {
 						Operand leftOperand = new Operand(StringUtils.join(columnsList, ","));
 
 						List<String> valuesList = new ArrayList<>();
