@@ -36,12 +36,6 @@
 		domainNm="BI Object types" valueDs="sbidomains.ds.console" />
 	<DOMAIN valueCd="CHART" valueNm="sbidomains.nm.chart" domainCd="BIOBJ_TYPE"
 		domainNm="BI Object types" valueDs="sbidomains.ds.chart" />
-	<DOMAIN valueCd="MOBILE_REPORT" valueNm="sbidomains.nm.mobile.report"
-		domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.mobile.report" />
-	<DOMAIN valueCd="MOBILE_CHART" valueNm="sbidomains.nm.mobile.chart"
-		domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.mobile.chart" />
-	<DOMAIN valueCd="MOBILE_COCKPIT" valueNm="sbidomains.nm.mobile.cockpit"
-		domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.mobile.cockpit" />
 	<DOMAIN valueCd="NETWORK" valueNm="sbidomains.nm.network"
 		domainCd="BIOBJ_TYPE" domainNm="BI Object types" valueDs="sbidomains.ds.network" />
 	<DOMAIN valueCd="BOOL" valueNm="sbidomains.nm.bool" domainCd="VALUE_TYPE"
