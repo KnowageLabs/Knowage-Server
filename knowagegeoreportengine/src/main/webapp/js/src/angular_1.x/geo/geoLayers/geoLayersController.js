@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,10 +11,10 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 /**
  * @authors Giovanni Luca Ulivo (GiovanniLuca.Ulivo@eng.it)
@@ -56,23 +56,23 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 	$scope.measureInsert=0;
 	$scope.selectMisure="kilometers";
 	$scope.geoModule_driverParameters=geoModule_driverParameters;
-	
-	$scope.visibility= geoModule_template.visibilityControls; 
-	
+
+	$scope.visibility= geoModule_template.visibilityControls;
+
 	$scope.selectModeTypeList = [
 	                             {label:sbiModule_translate.load("gisengine.rigthMapMenu.selectModeType.identify"), type:"identify"},
 	                             {label:sbiModule_translate.load("gisengine.rigthMapMenu.selectModeType.cross"), type:"cross"}
 	                             ];
 	$scope.filterTypes = [
-	                      {label: sbiModule_translate.load("gisengine.rigthMapMenu.spatialFilterType.near"), type:"near"},	
-	                      {label: sbiModule_translate.load("gisengine.rigthMapMenu.spatialFilterType.intersect"), type:"intersect"},	
+	                      {label: sbiModule_translate.load("gisengine.rigthMapMenu.spatialFilterType.near"), type:"near"},
+	                      {label: sbiModule_translate.load("gisengine.rigthMapMenu.spatialFilterType.intersect"), type:"intersect"},
 	                      {label: sbiModule_translate.load("gisengine.rigthMapMenu.spatialFilterType.inside"), type:"inside"}
 	                      ];
-	
+
 	$scope.typeOfMisure = [
 	                       {label: "m",type:"miglia"},
 	                       {label: "km",type:"kilometers"},
-	                       
+
 	                       ];
 	//inizializzo il valore dell'indicator
 	for(var i=0;i<geoModule_indicators.length;i++){
@@ -81,9 +81,9 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 			break;
 		}
 	}
-	
-	
-	
+
+
+
 	$scope.isCrossRadioButtonDisabled = function(selectModeType) {
 		var isCross = (selectModeType.toLowerCase() == "cross");
 		var isCrossNavigationInTemplate = (geoModule_template.crossNavigation == true);
@@ -92,20 +92,20 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 
 		return isCrossRadioButtonOptionDisabled;
 	};
-	
+
 	$scope.setSelectedFilterType = function(type) {
 		geo_interaction.selectedFilterType=type;
 		if(type=="near"){
-			
+
 		}else{
 			geoModule_layerServices.setInteraction();
 			if ($scope.$root.$$phase != '$apply') {
 				$scope.$apply();
 			}
 		}
-		
+
 	};
-	
+
 	$scope.saveMeasure = function(select,num,type){
 		$scope.selectMisure=select;
 		$scope.measureInsert=2*num;
@@ -117,9 +117,9 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 		geoModule_layerServices.measure=$scope.measureInsert*500;
 		geoModule_layerServices.setInteraction();
 	}
-	
 
-	
+
+
 	$scope.setDefaultDraw = function(){
 		if($scope.firstCallInteraction){
 			geoModule_layerServices.setInteraction();
@@ -127,7 +127,7 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 		}
 
 	}
-	
+
 	$scope.loadLayerFromTemplate=function(){
 		//if geoModule_template has baseLayersConf, add them to layerlist
 		if(geoModule_template.hasOwnProperty("baseLayersConf") && geoModule_template.baseLayersConf.length!=0 ){
@@ -167,7 +167,7 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 							for(var i=0;i<data.root.length;i++){
 								var tmp=data.root[i];
 								var categ=(tmp.hasOwnProperty("category") && tmp.category!=null)? tmp.category.valueNm : geoModule_constant.noCategory;
-								
+
 								if(tmp.hasOwnProperty("baseLayer") && tmp.baseLayer==true){
 									//insert category if not present
 									if(!$scope.baseLayers.hasOwnProperty(categ)){
@@ -180,7 +180,7 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 										$scope.layers[categ]={};
 									}
 									$scope.layers[categ][tmp.label]=tmp;
-									
+
 									//enable only the non base layer
 									if(geoModule_template.layersLoaded[tmp.label]==true){
 //										the layer is enabled
@@ -205,7 +205,7 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 		if(geoModule_template.hasOwnProperty('selectedBaseLayer')){
 			if($scope.baseLayers.hasOwnProperty("geoModule_constant.templateLayer") && $scope.baseLayers[geoModule_constant.templateLayer].hasOwnProperty(geoModule_template.selectedBaseLayer)){
 				//search if the selectedBaseLayer is in template layers prev loaded
-				geoModule_layerServices.alterBaseLayer($scope.baseLayers[geoModule_constant.templateLayer][geoModule_template.selectedBaseLayer]); 
+				geoModule_layerServices.alterBaseLayer($scope.baseLayers[geoModule_constant.templateLayer][geoModule_template.selectedBaseLayer]);
 				found=true;
 			}else{
 				//search in baseLayers
@@ -213,7 +213,7 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 					if(cat!=geoModule_constant.templateLayer){
 						for(lay in $scope.baseLayers[cat] ){
 							if(lay==geoModule_template.selectedBaseLayer){
-								geoModule_layerServices.alterBaseLayer($scope.baseLayers[cat][lay]); 
+								geoModule_layerServices.alterBaseLayer($scope.baseLayers[cat][lay]);
 								found=true;
 							}
 						}
@@ -230,7 +230,7 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 				console.log("selectedBaseLayer non set. Load Base layer...")
 			}
 
-			geoModule_layerServices.alterBaseLayer(baseLayer[geoModule_constant.defaultBaseLayer].OpenStreetMap); 
+			geoModule_layerServices.alterBaseLayer(baseLayer[geoModule_constant.defaultBaseLayer].OpenStreetMap);
 		}
 	};
 
@@ -244,11 +244,11 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 	$scope.showBaseLayer=function(layerConf){
 		sbiModule_logger.log("show base layer")
 		geoModule_layerServices.alterBaseLayer(layerConf)
-		
+
 	};
 
 	$scope.toggleTargetLayer=function(targObj){
-		 	
+
 		var indexTL=geoModule_template.hiddenTargetLayer.indexOf(targObj.layerName);
 		if(indexTL==-1){
 			geoModule_template.hiddenTargetLayer.push(targObj.layerName);
@@ -257,21 +257,21 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 		}
 
 		geoModule_layerServices.updateTargetLayer(targObj.layerName);
-		 
+
 	}
-	
+
 	$scope.targetLayerIsLoaded=function(targObj){
-		return geoModule_template.hiddenTargetLayer.indexOf(targObj.layerName)==-1;	
+		return geoModule_template.hiddenTargetLayer.indexOf(targObj.layerName)==-1;
 	}
 
 	$scope.updateAllTargetLayer=function(){
-		 
+
 		for(var key in $scope.geoModule_templateLayerData){
 			geoModule_layerServices.updateTargetLayer(key);
 		}
 	}
-	
-	
+
+
 	$scope.toggleLayer = function(layerConf){
 		sbiModule_logger.log("toggleLayer");
 		//reload filters
@@ -281,7 +281,7 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 			$scope.multipleFilters=geoModule_template.filtersApplied;
 
 		}
-		
+
 		if(geoModule_layerServices.filters[layerConf.layerId]){
 			//remove filters
 			//$scope.listCheckedfilter=$scope.removefromList($scope.listCheckedfilter,layerConf.layerId);
@@ -291,7 +291,7 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 			if($scope.multipleFilters[layerConf.layerId]){
 				$scope.listCheckedfilter[layerConf.layerId]=$scope.multipleFilters[layerConf.layerId];
 			}
-			
+
 		}
 		geoModule_layerServices.filters =$scope.listCheckedfilter;
 		geoModule_layerServices.toggleLayer(layerConf);
@@ -300,11 +300,11 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 		$map.renderSync();
 
 	};
-	
-	
-	
-	
-	//start code for filters 
+
+
+
+
+	//start code for filters
 	$scope.getFilter = function(selectedLayer){
 
 		$scope.layerSelected = selectedLayer;
@@ -316,14 +316,15 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 
 		}else{
 			//add filters for the selected layer
-			for(var i = 0;i<selectedLayerProperties.length;i++){
-				$scope.filters.push({
-					filter: selectedLayerProperties[i],
-					model:"",
-					id:selectedLayer.layerId
-				})
+			if (selectedLayerProperties){
+				for(var i = 0;i<selectedLayerProperties.length;i++){
+					$scope.filters.push({
+						filter: selectedLayerProperties[i],
+						model:"",
+						id:selectedLayer.layerId
+					})
+				}
 			}
-
 		}
 
 
@@ -375,7 +376,7 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 			//remove Layer from multifilters variable
 			delete $scope.multipleFilters[$scope.layerSelected.layerId];
 		}
-		
+
 		$timeout(function() {
 			$map.updateSize();
 		}, 500);
@@ -407,13 +408,13 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 			preserveScope :true,
 			scope: $scope,
 			focusOnOpen: false
-		}); 
+		});
 	};
 
-	$scope.layerFromCatalogueController=function($scope, $mdDialog,geoModule_template,sbiModule_translate,geoModule_constant,geoModule_layerServices) {	
+	$scope.layerFromCatalogueController=function($scope, $mdDialog,geoModule_template,sbiModule_translate,geoModule_constant,geoModule_layerServices) {
 		var addedLayer=[];
 		var removedLayer=[];
-		
+
 		var tmpLayerList=[];
 		var tmpBaseLayerList=[];
 		angular.copy($scope.layers, tmpLayerList);
@@ -427,9 +428,9 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 		                   {label:sbiModule_translate.load("gisengine.geoLayer.catalogue.tableColumn.layerUrl"),name:"layerURL"},
 		                   {label:sbiModule_translate.load("gisengine.geoLayer.catalogue.tableColumn.baseLayer"),name:"baseLayer",size:"100px"}
 		                   ];
-		
+
 		$scope.columnSearch=["name","type","baseLayer"];
-		
+
 		$scope.loadSelectedLayerList=function(){
 			for(cat in $scope.layers){
 				for(lay in $scope.layers[cat] ){
@@ -446,7 +447,7 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 			sbiModule_logger.log("$scope.selectedLayerList",$scope.selectedLayerList)
 		};
 
-		$scope.loadSelectedLayerList(); 
+		$scope.loadSelectedLayerList();
 
 		sbiModule_restServices.alterContextPath(sbiModule_config.externalBasePath+'restful-services/');
 		sbiModule_restServices.get("layers", '').success(
@@ -474,14 +475,14 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 				dest[key]=  source[key];
 			}
 		}
-		
+
 		$scope.updateChange=function(){
 			resetObject($scope.layers);
 			copyObject(tmpLayerList,$scope.layers);
 			resetObject($scope.baseLayers);
 			copyObject(tmpBaseLayerList,$scope.baseLayers);
-			
-			
+
+
 			for(var a=0;a<addedLayer.length;a++){
 				if(!geoModule_template.layersLoaded.hasOwnProperty(addedLayer[a].label)){
 					geoModule_template.layersLoaded[addedLayer[a].label]=false;
@@ -495,7 +496,7 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 					delete geoModule_template.layersLoaded[removedLayer[r].label];
 				}
 			}
-			
+
 			//check for base layer
 			var baseLayerFinded=false;
 			for(var cat in $scope.baseLayers){
@@ -503,18 +504,18 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 					if(angular.equals($scope.baseLayers[cat][lay],geoModule_layerServices.selectedBaseLayerOBJ)){
 						geoModule_layerServices.selectedBaseLayerOBJ=$scope.baseLayers[cat][lay];
 						baseLayerFinded=true;
-						break;		
+						break;
 					}
 				}
 			}
 			if(!baseLayerFinded){
 				geoModule_layerServices.selectedBaseLayerOBJ=$scope.baseLayers.Default.OpenStreetMap;
 			}
-			
-			
+
+
 			$mdDialog.cancel();
 		};
-		
+
 		$scope.cancel=function(){
 			$mdDialog.cancel();
 		};
@@ -561,7 +562,7 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 				}
 
 			}
-			
+
 			if(added){
 				if(removedLayer.indexOf(item)!=-1){
 				removedLayer.splice(removedLayer.indexOf(item),1);
@@ -575,7 +576,7 @@ function geoLayersControllerFunction(sbiModule_config,$map,$scope,$mdDialog,$tim
 			}
 		};
 	};
-	
+
 	//if no Dataset and template have driver parameter, set all value checked
 	if(geoModule_template.noDatasetReport){
 		for(var analFKey  in geoModule_template.analitycalFilter){
