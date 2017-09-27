@@ -20,6 +20,7 @@ package it.eng.spagobi.utilities.engines.rest;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.net.ssl.SSLContext;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -138,7 +139,8 @@ public class SimpleRestClient {
 			logger.debug("Call service URL " + serviceUrl);
 		}
 
-		Client client = ClientBuilder.newClient();
+		Client client = ClientBuilder.newBuilder().sslContext(SSLContext.getDefault()).build();
+
 		WebTarget target = client.target(serviceUrl);
 		Builder request = target.request(mediaType);
 
