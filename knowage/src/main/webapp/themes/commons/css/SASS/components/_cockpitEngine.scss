@@ -201,11 +201,11 @@
 			                }
 			                .sortingIcon {
 			                    display: inline-block;
-			                    //@include transition(0.8s);
+			                    @include transition(0.4s);
 			                    &.inverse {
-			                        -ms-transform: rotate(180deg);
-			                        -webkit-transform: rotate(180deg);
-			                        transform: rotate(180deg);
+			                        -ms-transform: rotate(-180deg);
+			                        -webkit-transform: rotate(-180deg);
+			                        transform: rotate(-180deg);
 			                    }
 			                }
 			            }
