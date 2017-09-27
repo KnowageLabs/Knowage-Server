@@ -122,27 +122,6 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 
 			List<FilterCriteria> filterCriteria = new ArrayList<FilterCriteria>();
 			List<FilterCriteria> filterCriteriaForMetaModel = new ArrayList<FilterCriteria>();
-			// if (selections != null && !selections.equals("")) {
-			// JSONObject selectionsObject = new JSONObject(selections);
-			// // in same case object is empty '{}'
-			// if (selectionsObject.names() != null) {
-			// filterCriteria = getFilterCriteria(label, selectionsObject, false, columnAliasToName);
-			// filterCriteriaForMetaModel = getFilterCriteria(label, selectionsObject, true, columnAliasToName);
-			// }
-			// }
-
-			List<FilterCriteria> havingCriteria = new ArrayList<FilterCriteria>();
-			List<FilterCriteria> havingCriteriaForMetaModel = new ArrayList<FilterCriteria>();
-			if (likeSelections != null && !likeSelections.equals("")) {
-				JSONObject likeSelectionsObject = new JSONObject(likeSelections);
-				if (likeSelectionsObject.names() != null) {
-					filterCriteria.addAll(getLikeFilterCriteria(label, likeSelectionsObject, false, columnAliasToName, projectionCriteria, true));
-					havingCriteria.addAll(getLikeFilterCriteria(label, likeSelectionsObject, false, columnAliasToName, projectionCriteria, false));
-
-					filterCriteriaForMetaModel.addAll(getLikeFilterCriteria(label, likeSelectionsObject, true, columnAliasToName, projectionCriteria, true));
-					havingCriteriaForMetaModel.addAll(getLikeFilterCriteria(label, likeSelectionsObject, true, columnAliasToName, projectionCriteria, false));
-				}
-			}
 
 			List<ProjectionCriteria> summaryRowProjectionCriteria = new ArrayList<ProjectionCriteria>();
 			if (summaryRow != null && !summaryRow.equals("")) {
@@ -159,12 +138,28 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 					filterCriteria = getFilterCriteria(label, selectionsObject, false, columnAliasToName);
 					filterCriteriaForMetaModel = getFilterCriteria(label, selectionsObject, true, columnAliasToName);
 
-					// check if max or min filters are used and caclulate it
-					filterCriteria = getDatasetManagementAPI().calculateMinMaxFilter(label, parameters, selections, likeSelections, maxRowCount, aggregations,
-							summaryRow, offset, fetchSize, false, groupCriteria, filterCriteriaForMetaModel, summaryRowProjectionCriteria, havingCriteria,
-							havingCriteriaForMetaModel, filterCriteria, projectionCriteria);
 				}
 
+			}
+
+			List<FilterCriteria> havingCriteria = new ArrayList<FilterCriteria>();
+			List<FilterCriteria> havingCriteriaForMetaModel = new ArrayList<FilterCriteria>();
+			if (likeSelections != null && !likeSelections.equals("")) {
+				JSONObject likeSelectionsObject = new JSONObject(likeSelections);
+				if (likeSelectionsObject.names() != null) {
+					filterCriteria.addAll(getLikeFilterCriteria(label, likeSelectionsObject, false, columnAliasToName, projectionCriteria, true));
+					havingCriteria.addAll(getLikeFilterCriteria(label, likeSelectionsObject, false, columnAliasToName, projectionCriteria, false));
+
+					filterCriteriaForMetaModel.addAll(getLikeFilterCriteria(label, likeSelectionsObject, true, columnAliasToName, projectionCriteria, true));
+					havingCriteriaForMetaModel.addAll(getLikeFilterCriteria(label, likeSelectionsObject, true, columnAliasToName, projectionCriteria, false));
+				}
+			}
+
+			if (selections != null && !selections.equals("")) {
+				// check if max or min filters are used and caclulate it
+				filterCriteria = getDatasetManagementAPI().calculateMinMaxFilter(label, parameters, selections, likeSelections, maxRowCount, aggregations,
+						summaryRow, offset, fetchSize, false, groupCriteria, filterCriteriaForMetaModel, summaryRowProjectionCriteria, havingCriteria,
+						havingCriteriaForMetaModel, filterCriteria, projectionCriteria);
 			}
 
 			IDataStore dataStore = getDatasetManagementAPI().getDataStore(label, offset, fetchSize, maxRowCount, isRealtime,
@@ -291,6 +286,7 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 		List<FilterCriteria> filterCriterias = new ArrayList<FilterCriteria>();
 
 		JSONObject datasetSelectionObject = selectionsObject.getJSONObject(dataset);
+
 		Iterator<String> it = datasetSelectionObject.keys();
 		while (it.hasNext()) {
 			String datasetColumn = it.next();

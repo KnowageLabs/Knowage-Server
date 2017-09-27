@@ -69,7 +69,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.localDS={};
 		$scope.columnNames=[];
 
-		$scope.operatorsTypeString = ['=','like','is null','is not null'];
+		$scope.operatorsTypeString = ['=','!=','like','is null','is not null','min','max'];
 		$scope.operatorsTypeNumber = ['=','<','>','<=','>=','is null','is not null','!=','min','max','range'];
 		$scope.operatorsTypeDate = ['=','is null','is not null','min','max','range'];
 

@@ -698,68 +698,41 @@ public class SQLDBCache implements ICache {
 								if (filter.getRightOperand() != null) {
 									if (filter.getRightOperand().isCostant()) {
 										if (filter.getRightOperand().isMultivalue()) {
-
+											if (!isHsqlDialect && !isSqlServerDialect) {
+												rightOperandSB.append("(");
+											}
 											String separator = "";
 											List<String> values = filter.getRightOperand().getOperandValueAsList();
-
-											if (operator.equals("range")) {
-												operator = "BETWEEN";
-												String valueBetween = "";
-												if (values.size() >= 1) {
-													valueBetween = values.get(0);
-												}
-												String valueAnd = "";
-												if (values.size() >= 2) {
-													valueAnd = values.get(1);
-												}
-
-												rightOperandSB.append(separator);
-
-												rightOperandSB.append(valueBetween);
-												rightOperandSB.append(separator);
-												rightOperandSB.append("AND");
-												rightOperandSB.append(separator);
-												rightOperandSB.append(valueAnd);
-												rightOperandSB.append(separator);
-											} else {
-
-												if (!isHsqlDialect && !isSqlServerDialect) {
-													rightOperandSB.append("(");
-												}
-
-												for (int i = 0; i < values.size(); i++) {
-													String value = values.get(i);
-													if ("IN".equalsIgnoreCase(operator)) {
-														if (value.startsWith("(") && value.endsWith(")")) {
-															value = value.substring(1, value.length() - 1);
-														}
-														if (i % columns.length == 0) {// 1st item of tuple of values
-															if (i >= columns.length) { // starting from 2nd tuple of values
-																rightOperandSB.append(",");
-															}
-															rightOperandSB.append(isHsqlDialect || isSqlServerDialect ? "(" : "(1");
-														}
-														if (i % columns.length != 0 || (!isHsqlDialect && !isSqlServerDialect)) {
+											for (int i = 0; i < values.size(); i++) {
+												String value = values.get(i);
+												if ("IN".equalsIgnoreCase(operator)) {
+													if (value.startsWith("(") && value.endsWith(")")) {
+														value = value.substring(1, value.length() - 1);
+													}
+													if (i % columns.length == 0) {// 1st item of tuple of values
+														if (i >= columns.length) { // starting from 2nd tuple of values
 															rightOperandSB.append(",");
 														}
-														rightOperandSB.append(value);
-														if (i % columns.length == columns.length - 1) { // last item of tuple of values
-															rightOperandSB.append(")");
-														}
-													} else {
-														rightOperandSB.append(separator);
-														rightOperandSB.append("'");
-														rightOperandSB.append(value);
-														rightOperandSB.append("'");
+														rightOperandSB.append(isHsqlDialect || isSqlServerDialect ? "(" : "(1");
 													}
-													separator = ",";
+													if (i % columns.length != 0 || (!isHsqlDialect && !isSqlServerDialect)) {
+														rightOperandSB.append(",");
+													}
+													rightOperandSB.append(value);
+													if (i % columns.length == columns.length - 1) { // last item of tuple of values
+														rightOperandSB.append(")");
+													}
+												} else {
+													rightOperandSB.append(separator);
+													rightOperandSB.append("'");
+													rightOperandSB.append(value);
+													rightOperandSB.append("'");
 												}
-												if (!isHsqlDialect && !isSqlServerDialect) {
-													rightOperandSB.append(")");
-												}
-
+												separator = ",";
 											}
-
+											if (!isHsqlDialect && !isSqlServerDialect) {
+												rightOperandSB.append(")");
+											}
 										} else {
 											rightOperandSB.append(filter.getRightOperand().getOperandValueAsString());
 										}
@@ -782,7 +755,6 @@ public class SQLDBCache implements ICache {
 										sqlBuilder.where("(" + leftOperand + " " + operator + ")");
 									}
 								}
-
 							}
 						}
 

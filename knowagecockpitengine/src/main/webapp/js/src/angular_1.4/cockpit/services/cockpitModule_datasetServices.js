@@ -718,11 +718,31 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 								filterVals: values
 							}
 					}else{
-						dataToSend[dataset.label][colName] = dataToSend[dataset.label][colName].filter(function(elem) { // intersect arrays
-						    return values.indexOf(elem) !== -1;
+//						dataToSend[dataset.label][colName] = dataToSend[dataset.label][colName].filter(
+//								function(elem) { // intersect arrays
+//									return values.indexOf(elem) !== -1;
+//						}).filter(function (elem, i, c) { // extra step to remove duplicates
+//					        return c.indexOf(elem) === i;
+//					    });
+
+						values = dataToSend[dataset.label][colName].filter(
+								function(elem) { // intersect arrays
+									return values.indexOf(elem) !== -1;
 						}).filter(function (elem, i, c) { // extra step to remove duplicates
 					        return c.indexOf(elem) === i;
 					    });
+
+						dataToSend[dataset.label][colName] =
+							{
+								filterOperator: filterOperator,
+								filterVals: values
+							}
+
+
+
+
+
+
 					}
 				}
 

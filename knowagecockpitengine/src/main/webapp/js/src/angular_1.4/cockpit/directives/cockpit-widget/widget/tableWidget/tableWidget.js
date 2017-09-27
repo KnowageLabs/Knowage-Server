@@ -779,10 +779,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.showAction($scope.translate.load('sbi.cockpit.table.erroraliases'));
 				return;
 			}
-			if(!$scope.checkFilters()){
-				$scope.showAction($scope.translate.load('sbi.cockpit.table.errorfilters'));
-				return;
-			}
+//			if(!$scope.checkFilters()){
+//				$scope.showAction($scope.translate.load('sbi.cockpit.table.errorfilters'));
+//				return;
+//			}
 
 			angular.copy($scope.model,originalModel);
 			mdPanelRef.close();

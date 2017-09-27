@@ -658,9 +658,9 @@ function cockpitChartWidgetControllerFunction(
 			    			  // Warning: Please select a dataset
 			    			  showAction($scope.translate.load('sbi.cockpit.table.missingdataset'));
 			    		  }
-			    		  else if (checkFilters()==false ){
-			    			  showAction($scope.translate.load('sbi.cockpit.table.errorfilters'));
-			    		  }
+//			    		  else if (checkFilters()==false ){
+//			    			  showAction($scope.translate.load('sbi.cockpit.table.errorfilters'));
+//			    		  }
 			    		  else {
 			    			  if(checkConfiguration()){
 			    				  if($scope.somethingChanged){
