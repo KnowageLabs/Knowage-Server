@@ -38,7 +38,7 @@ import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
 
 public class MDXFormulaHandler {
 
-	private static String xmlPath = WhatIfEngineConfig.getInstance().getEngineResourcePath() + "Olap/formulas.xml";
+	private static String xmlPath;
 	private static File xmlFile;
 	private static MDXFormulas formulas;
 	private static Map<String, String> placeHolders = new HashMap<String, String>();
@@ -69,7 +69,7 @@ public class MDXFormulaHandler {
 
 	private static boolean loadFile() {
 
-		xmlFile = new File(xmlPath);
+		xmlFile = new File(WhatIfEngineConfig.getInstance().getEngineResourcePath() + "Olap/formulas.xml");
 		if (!xmlFile.exists()) {
 			xmlFile = new File(classLoader.getResource(File.separatorChar + "calculated_fields_formulas" + File.separatorChar + "formulas.xml").getPath());
 		}

@@ -23,6 +23,7 @@ public class Argument {
 	private String expected_value;
 	private String default_value;
 	private String argument_description;
+	private String hidden;
 
 	public String getName() {
 		return name;
@@ -37,7 +38,7 @@ public class Argument {
 	}
 
 	public String getDefault_value() {
-		if(default_value==null){
+		if (default_value == null) {
 			return "";
 		}
 		return default_value.trim();
@@ -57,6 +58,14 @@ public class Argument {
 
 	public void setArgument_description(String argument_description) {
 		this.argument_description = argument_description;
+	}
+
+	public String getHidden() {
+		return hidden;
+	}
+
+	public void setHidden(String hidden) {
+		this.hidden = hidden;
 	}
 
 }
