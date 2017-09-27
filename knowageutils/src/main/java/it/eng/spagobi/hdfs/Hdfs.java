@@ -13,7 +13,6 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.hdfs.HdfsConfiguration;
 import org.apache.log4j.Logger;
 
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
@@ -39,7 +38,7 @@ public class Hdfs {
 
 	public void init() {
 		logger.debug("Initialization of HDFS \"" + label + "\"");
-		configuration = new HdfsConfiguration();
+		configuration = new Configuration();
 		int nFiles = addFilesConfigFromResource(configuration);
 		if (nFiles == 0) {
 			logger.error("No configuration files found, problems can appears in future");

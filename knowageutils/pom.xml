@@ -398,6 +398,7 @@
         </dependency>
 		-->
 		
+		<!--
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-hdfs</artifactId>
@@ -426,8 +427,9 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		-->
 		
-				<dependency>
+		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-common</artifactId>
 			<version>2.6.0</version>
