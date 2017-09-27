@@ -3,6 +3,9 @@
 	SpagoBI${pageContext.request.contextPath}/Knowage page that 
 	makes use of AngularJS  
 --%>
+<%
+	String spagoBiContext = request.getParameter(SpagoBIConstants.SBI_HOST)+request.getParameter(SpagoBIConstants.SBI_CONTEXT);
+%>
 
 <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
 	<meta name="viewport" content="width=device-width">
@@ -31,9 +34,9 @@
 	<link rel="stylesheet" 	href="${pageContext.request.contextPath}/js/lib/angular/angular-tree/angular-ui-tree.min.css">
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-tree/angular-ui-tree.js"></script>
 	
-<!-- angular table -->
-	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-table/AngularTable.js"></script>
-
+<!-- angular table 
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-table/AngularTable.js"></script>-->
+	<script type="text/javascript" src="<%=spagoBiContext%>/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js"></script>
 <!-- colorpicker -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/color-picker/tinycolor-min.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/color-picker/tinygradient.min.js"></script>
