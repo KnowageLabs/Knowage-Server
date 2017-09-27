@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <script type="text/javascript"
-	src="${pageContext.request.contextPath}/js/lib/messageResource/messageResource.min.js"></script>
+	src="${pageContext.request.contextPath}/js/lib/messageResource/messageResource.js"></script>
 
 <script type="text/javascript">
 	//Function that gets the properties file's content in an synchronous way
@@ -37,9 +37,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		callback(xmlhttp.responseText)
 	}
 	
+	
+	var isEditOlap = function(){
+		
+		
+		return ('${pageContext.request.requestURL}').endsWith("edit.jsp")?"../":"";
+	}
+	
 	//Initialization of the messageResource object
 	messageResource.init({
-  		filePath : '../../js/spagobi/messages/'
+  		filePath : isEditOlap() + '../../js/spagobi/messages/'
   		, defaultLocale : 'en_US'
   		, ajaxFunction : getSynch
 	});
