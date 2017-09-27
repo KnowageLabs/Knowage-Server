@@ -517,48 +517,7 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 				
 			}
 		}
-		var saveUseMode= function(){  // this function is called when clicking on save button
-			$scope.formatUseMode();
-			$scope.updateMainDriverWithCurrentUseMode($scope.selectedParUse);
-			if($scope.selectedParUse.hasOwnProperty("useID")){ // if item already exists do update @PUT	
-				sbiModule_restServices.promisePut("2.0/analyticalDrivers/modes",$scope.selectedParUse.useID , $scope.selectedParUse)
-				.then(function(response) {
-					$scope.useModeList=[];
-					$timeout(function(){
-						$scope.getUseModesById($scope.selectedDriver);
-					}, 1000);
-					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
-					$scope.selectedTab = 1;
-					$scope.showme=true;
-					$scope.showadMode = true;
-					$scope.dirtyForm=false;	
-					
-				}, function(response) {
-					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-					
-				});	
-				
-			}else{ // create new item in database @POST
-				sbiModule_restServices.promisePost("2.0/analyticalDrivers/modes","",angular.toJson($scope.selectedParUse))
-				.then(function(response) {
-					$scope.useModeList=[];
-					$timeout(function(){
-						
-						$scope.getUseModesById($scope.selectedDriver);
-					}, 1000);
-					sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
-					$scope.selectedParUse={};
-					$scope.selectedTab = 1;
-					$scope.showme=true;
-					$scope.showadMode = true;
-					$scope.dirtyForm=false;
-					
-				}, function(response) {
-					sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
-					
-				});	
-			}
-		}
+	
 		
 		if($scope.selectedTab==0){
 			console.log("SAVING DRIVER");
@@ -567,12 +526,57 @@ function AnalyticalDriversFunction(sbiModule_translate, sbiModule_restServices, 
 		}else {
 			console.log("SAVING USEMODE");
 			console.log($scope.selectedParUse);
-			saveUseMode();
+			//saveUseMode();
 			saveDriver('usemode');
 			$scope.selectedTab=1;
 			$scope.closeDialogFromAD();
 		}
 		
+	}
+	
+	$scope.saveUseMode= function(){  // this function is called when clicking on save button
+		$scope.formatUseMode();
+		$scope.updateMainDriverWithCurrentUseMode($scope.selectedParUse);
+		if($scope.selectedParUse.hasOwnProperty("useID")){ // if item already exists do update @PUT	
+			sbiModule_restServices.promisePut("2.0/analyticalDrivers/modes",$scope.selectedParUse.useID , $scope.selectedParUse)
+			.then(function(response) {
+				$scope.useModeList=[];
+				$timeout(function(){
+					$scope.getUseModesById($scope.selectedDriver);
+				}, 1000);
+				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.updated"), 'Success!');
+				$scope.selectedTab = 1;
+				$scope.showme=true;
+				$scope.showadMode = true;
+				$scope.dirtyForm=false;	
+				
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+				
+			});	
+			
+		}else{ // create new item in database @POST
+			sbiModule_restServices.promisePost("2.0/analyticalDrivers/modes","",angular.toJson($scope.selectedParUse))
+			.then(function(response) {
+				$scope.useModeList=[];
+				$timeout(function(){
+					
+					$scope.getUseModesById($scope.selectedDriver);
+				}, 1000);
+				sbiModule_messaging.showSuccessMessage(sbiModule_translate.load("sbi.catalogues.toast.created"), 'Success!');
+				$scope.selectedParUse={};
+				$scope.selectedTab = 1;
+				$scope.showme=true;
+				$scope.showadMode = true;
+				$scope.dirtyForm=false;
+				
+			}, function(response) {
+				sbiModule_messaging.showErrorMessage(response.data.errors[0].message, 'Error');
+				
+			});	
+		}
+		
+		$scope.closeDialogFromAD();
 	}
 	
 	$scope.updateMainDriverWithCurrentUseMode = function(useMode) {
