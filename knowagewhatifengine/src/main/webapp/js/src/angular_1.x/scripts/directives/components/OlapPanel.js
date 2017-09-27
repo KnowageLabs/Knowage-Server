@@ -210,10 +210,12 @@ if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
 						.promisePost("1.0", encoded, toSend)
 						.then(
 								function(response) {
+									
+									
 									$scope.dtData = [];
 									$scope.dtColumns = [];
 									
-									$scope.dtData = angular.copy(response.data);
+									$scope.dtData = response.data;
 									for ( var key in response.data[0]) {
 
 										$scope.dtColumns.push(key);
