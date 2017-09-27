@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -42,7 +41,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
@@ -129,7 +127,7 @@ public class UserResource extends AbstractSpagoBIResource {
 	public Response insertUser(String body) {
 		UserBO user = null;
 		ISbiUserDAO usersDao = null;
-		
+
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			user = mapper.readValue(body, UserBO.class);
@@ -199,7 +197,7 @@ public class UserResource extends AbstractSpagoBIResource {
 
 		UserBO user = null;
 		ISbiUserDAO usersDao = null;
-		
+
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			user = mapper.readValue(body, UserBO.class);
@@ -207,7 +205,7 @@ public class UserResource extends AbstractSpagoBIResource {
 			logger.error(e1);
 			throw new SpagoBIRestServiceException("Error while inserting resource", buildLocaleFromSession(), e1);
 		}
-		
+
 		SbiUser sbiUser = new SbiUser();
 		sbiUser.setId(id);
 		sbiUser.setUserId(user.getUserId());
@@ -257,8 +255,8 @@ public class UserResource extends AbstractSpagoBIResource {
 			String encodedUser = URLEncoder.encode("" + idToReturn, "UTF-8");
 			return Response.created(new URI("2.0/users/" + encodedUser)).entity(encodedUser).build();
 		} catch (Exception e) {
-			logger.error("Error while modifying resource with id: " + id, e);
-			throw new SpagoBIRestServiceException("Error while modifying resource with id: " + id, buildLocaleFromSession(), e);
+			logger.error(e.getMessage(), e);
+			throw new SpagoBIRestServiceException(e.getMessage(), buildLocaleFromSession(), e);
 		}
 	}
 
