@@ -159,8 +159,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				var columns = $scope.ngModel.content.columnSelectedOfDataset;
 				for(var k in columns){
 					if(!columns[k].style) columns[k].style = {};
-					$scope.moveProperty(columns[k],"style.fontSize","style['font-size']");
-					$scope.moveProperty(columns[k],"style.fontWeight","style['font-weight']");
+					$scope.moveProperty(columns[k],"style.fontSize","style.font-size");
+					$scope.moveProperty(columns[k],"style.fontWeight","style.font-weight");
 					if(!columns[k].text) columns[k].text = {"enabled":true};
 					$scope.moveProperty(columns[k], "style.size","style.width");
 					if(columns[k].style.textAlign == "left" ) columns[k].style.td = {'justify-content' : "flex-start"};
@@ -181,11 +181,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					}
 					if(columns[k].visType=='Chart'|| columns[k].visType=='Chart & Text' || columns[k].visType== 'Text & Chart'){
 						columns[k].barchart = {
-								"minValue": columns[k].minValue,
-								"maxValue": columns[k].maxValue,
-								"style": {
-									"background-color": columns[k].chartColor
-								}
+							"minValue": columns[k].minValue,
+							"maxValue": columns[k].maxValue,
+							"style": {
+								"background-color": columns[k].chartColor
+							}
 						}
 					}
 				}
