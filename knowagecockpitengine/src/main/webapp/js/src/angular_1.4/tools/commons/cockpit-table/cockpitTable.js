@@ -52,7 +52,6 @@
 
                     //returning if the order is ASC or DESC
                     scope.getSortingOrderAsBoolean = function(){
-                    	debugger;
                     	if(scope.settings.pagination.frontEnd && scope.settings.sortingOrder){
                     		return scope.settings.sortingOrder.toUpperCase() == 'DESC';
                     	}
