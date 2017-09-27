@@ -516,9 +516,9 @@
 	<CONFIG label="SPAGOBI.UPLOAD.MAX_FILE_SIZE_MB" name="SPAGOBI.UPLOAD.MAX_FILE_SIZE_MB" description="Max file size in MB" isActive="true" valueCheck="-1" valueType="NUM" category="GENERIC_CONFIGURATION"/>
 	
 
-	<CONFIG label="DOCUMENT.EXPORTING.PDF.FRONT_PAGE" name="Front page for document exporting as PDF" description="Absolute path to the PDF front page to be used by the PDF Export. It MUST be a PDF with a single page inside it. Leave it blank to user the Knowage default one." isActive="true" valueCheck="" valueType="STRING" category="GENERIC_CONFIGURATION" />
+	<!-- <CONFIG label="DOCUMENT.EXPORTING.PDF.FRONT_PAGE" name="Front page for document exporting as PDF" description="Absolute path to the PDF front page to be used by the PDF Export. It MUST be a PDF with a single page inside it. Leave it blank to user the Knowage default one." isActive="true" valueCheck="" valueType="STRING" category="GENERIC_CONFIGURATION" />
 	<CONFIG label="DOCUMENT.EXPORTING.PDF.BACK_PAGE" name="Back page for document exporting as PDF" description="Absolute path to the PDF back page to be used by the PDF Export. It MUST be a PDF with a single page inside it. Leave it blank to user the Knowage default one." isActive="true" valueCheck="" valueType="STRING" category="GENERIC_CONFIGURATION" />
-	
+	 -->
 
 	<CONFIG label="DOCUMENT.EXPORTING.PDF.FRONT_PAGE" name="Front page for document exporting as PDF" description="Absolute path to the PDF front page to be used by the PDF Export. It MUST be a PDF with a single page inside it. Leave it blank to user the Knowage default one." isActive="true" valueCheck="" valueType="STRING" category="GENERIC_CONFIGURATION" />
 	<CONFIG label="DOCUMENT.EXPORTING.PDF.BACK_PAGE" name="Back page for document exporting as PDF" description="Absolute path to the PDF back page to be used by the PDF Export. It MUST be a PDF with a single page inside it. Leave it blank to user the Knowage default one." isActive="true" valueCheck="" valueType="STRING" category="GENERIC_CONFIGURATION" />

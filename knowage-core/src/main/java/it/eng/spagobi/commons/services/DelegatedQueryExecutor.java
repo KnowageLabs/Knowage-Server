@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,29 +11,12 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package it.eng.spagobi.commons.services;
-
-import it.eng.spago.base.RequestContainer;
-import it.eng.spago.base.ResponseContainer;
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.dbaccess.DataConnectionManager;
-import it.eng.spago.dbaccess.SQLStatements;
-import it.eng.spago.dbaccess.Utils;
-import it.eng.spago.dbaccess.sql.DataConnection;
-import it.eng.spago.dbaccess.sql.SQLCommand;
-import it.eng.spago.dbaccess.sql.result.DataResult;
-import it.eng.spago.dbaccess.sql.result.InformationDataResult;
-import it.eng.spago.dbaccess.sql.result.ScrollableDataResult;
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.util.ContextScooping;
-import it.eng.spago.util.QueryExecutor;
-import it.eng.spago.util.StringUtils;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -48,6 +31,24 @@ import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.resolver.DialectResolver;
 import org.hibernate.dialect.resolver.StandardDialectResolver;
 
+import it.eng.spago.base.RequestContainer;
+import it.eng.spago.base.ResponseContainer;
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.dbaccess.DataConnectionManager;
+import it.eng.spago.dbaccess.SQLStatements;
+import it.eng.spago.dbaccess.Utils;
+import it.eng.spago.dbaccess.sql.DataConnection;
+import it.eng.spago.dbaccess.sql.DataField;
+import it.eng.spago.dbaccess.sql.SQLCommand;
+import it.eng.spago.dbaccess.sql.result.DataResult;
+import it.eng.spago.dbaccess.sql.result.InformationDataResult;
+import it.eng.spago.dbaccess.sql.result.ScrollableDataResult;
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spago.util.ContextScooping;
+import it.eng.spago.util.QueryExecutor;
+import it.eng.spago.util.StringUtils;
+
 public class DelegatedQueryExecutor extends QueryExecutor {
 	static private Logger logger = Logger.getLogger(DelegatedQueryExecutor.class);
 
@@ -58,7 +59,7 @@ public class DelegatedQueryExecutor extends QueryExecutor {
 
 	/**
 	 * Creates the command to execute dependent on request type.
-	 * 
+	 *
 	 * @param dataConnection
 	 *            the data connection
 	 * @param type
@@ -83,7 +84,7 @@ public class DelegatedQueryExecutor extends QueryExecutor {
 
 	/**
 	 * Opens the pool connection.
-	 * 
+	 *
 	 * @param pool
 	 *            the pool
 	 * @return the data connection
@@ -96,7 +97,7 @@ public class DelegatedQueryExecutor extends QueryExecutor {
 
 	/**
 	 * Execs the commands: SQL SELECT, INSERT, DELETE, UPDATE. The connection is gone by the connection pool.
-	 * 
+	 *
 	 * @param requestContainer
 	 *            the request container
 	 * @param responseContainer
@@ -133,7 +134,7 @@ public class DelegatedQueryExecutor extends QueryExecutor {
 
 	/**
 	 * Execs the commands: SQL SELECT, INSERT, DELETE, UPDATE. The connection is taken by parameter (for manually transactions)
-	 * 
+	 *
 	 * @param requestContainer
 	 *            the request container
 	 * @param responseContainer
@@ -215,7 +216,7 @@ public class DelegatedQueryExecutor extends QueryExecutor {
 
 	/**
 	 * Execs statement SQL with explicit parameters.
-	 * 
+	 *
 	 * @param dataConnection
 	 *            connection on database:
 	 * @param type
@@ -262,6 +263,11 @@ public class DelegatedQueryExecutor extends QueryExecutor {
 			// Create the command to execute
 			sqlCommand = createStatementSql(dataConnection, statement, type);
 			if ((inputParameters != null) && (inputParameters.size() != 0)) {
+				logger.debug("Executing stmt: " + statement + " With parameters: ");
+				for (int p = 0; p < inputParameters.size(); p++) {
+					logger.debug("Parameter#" + p + " of type [" + ((DataField) inputParameters.get(p)).getSqlType() + "] with value ["
+							+ ((DataField) inputParameters.get(p)).getObjectValue() + "]");
+				}
 				dataResult = sqlCommand.execute(inputParameters);
 			} else
 				dataResult = sqlCommand.execute();
@@ -287,7 +293,7 @@ public class DelegatedQueryExecutor extends QueryExecutor {
 
 	/**
 	 * Treatment of standard parameters
-	 * 
+	 *
 	 * @param requestContainer
 	 * @param responseContainer
 	 * @param parameter
@@ -303,7 +309,7 @@ public class DelegatedQueryExecutor extends QueryExecutor {
 
 	/**
 	 * Treatment of Filter's parameters
-	 * 
+	 *
 	 * @param requestContainer
 	 * @param responseContainer
 	 * @param parameter
@@ -321,7 +327,7 @@ public class DelegatedQueryExecutor extends QueryExecutor {
 
 	/**
 	 * General management for normal and filter parameters
-	 * 
+	 *
 	 * @param requestContainer
 	 * @param responseContainer
 	 * @param parameter
@@ -341,21 +347,35 @@ public class DelegatedQueryExecutor extends QueryExecutor {
 		String parameterValue = (String) parameter.getAttribute("VALUE");
 		String parameterScope = (String) parameter.getAttribute("SCOPE");
 
-		String inParameterValue = null;
+		Object inParameterValue = null;
 		boolean skipParameterInsertion = false;
+		DialectResolver resolver = new StandardDialectResolver();
+		DatabaseMetaData dbMetadata = null;
+
+		try {
+			Connection connection = dataConnection.getInternalConnection();
+			if (connection != null) {
+				dbMetadata = connection.getMetaData();
+			}
+		} catch (SQLException e) {
+			logger.error("Error getting database metadata");
+		}
+		// DialectResolver resolver = new StandardDialectResolver();
+		Dialect dialect = resolver.resolveDialect(dbMetadata);
+
 		// Set the TRUE value based on the database type
 		if (parameterType.equalsIgnoreCase("TRUE_VALUE")) {
-			DatabaseMetaData dbMetadata = null;
-			try {
-				Connection connection = dataConnection.getInternalConnection();
-				if (connection != null) {
-					dbMetadata = connection.getMetaData();
-				}
-			} catch (SQLException e) {
-				logger.error("Error getting database metadata");
-			}
-			DialectResolver resolver = new StandardDialectResolver();
-			Dialect dialect = resolver.resolveDialect(dbMetadata);
+			// DatabaseMetaData dbMetadata = null;
+			// try {
+			// Connection connection = dataConnection.getInternalConnection();
+			// if (connection != null) {
+			// dbMetadata = connection.getMetaData();
+			// }
+			// } catch (SQLException e) {
+			// logger.error("Error getting database metadata");
+			// }
+			// DialectResolver resolver = new StandardDialectResolver();
+			// Dialect dialect = resolver.resolveDialect(dbMetadata);
 
 			if (dialect != null) {
 
@@ -386,7 +406,7 @@ public class DelegatedQueryExecutor extends QueryExecutor {
 					throw new RuntimeException("Error in recovering both DB dialect product name database");
 				}
 			}
-			
+
 			skipParameterInsertion = true;
 			parameterUsed = true;
 
@@ -394,8 +414,13 @@ public class DelegatedQueryExecutor extends QueryExecutor {
 			inParameterValue = parameterValue;
 		else {
 			Object parameterValueObject = ContextScooping.getScopedParameter(requestContainer, responseContainer, parameterValue, parameterScope, parameter);
-			if (parameterValueObject != null)
-				inParameterValue = parameterValueObject.toString();
+			if (parameterValueObject != null) {
+				if (dialect.toString().contains("PostgreSQL")) {
+					// just for Postgres manteins the original value type
+					inParameterValue = parameterValueObject;
+				} else
+					inParameterValue = parameterValueObject.toString();
+			}
 		} // if (parameterType.equalsIgnoreCase("ABSOLUTE")) else
 
 		if (inParameterValue == null)
@@ -403,7 +428,20 @@ public class DelegatedQueryExecutor extends QueryExecutor {
 
 		if (!skipParameterInsertion) {
 			if (!isFilterParameter) { // normal parameter
-				inputParameters.add(dataConnection.createDataField("", Types.VARCHAR, inParameterValue));
+				if (dialect.toString().contains("PostgreSQL")) {
+					if (inParameterValue instanceof String)
+						inputParameters.add(dataConnection.createDataField("", Types.VARCHAR, inParameterValue));
+					else if (inParameterValue instanceof Integer)
+						inputParameters.add(dataConnection.createDataField("", Types.INTEGER, inParameterValue));
+					else if (inParameterValue instanceof Double)
+						inputParameters.add(dataConnection.createDataField("", Types.DOUBLE, inParameterValue));
+					else if (inParameterValue instanceof Float)
+						inputParameters.add(dataConnection.createDataField("", Types.FLOAT, inParameterValue));
+					else if (inParameterValue instanceof Boolean)
+						inputParameters.add(dataConnection.createDataField("", Types.BOOLEAN, inParameterValue));
+
+				} else
+					inputParameters.add(dataConnection.createDataField("", Types.VARCHAR, inParameterValue));
 				parameterUsed = true;
 			} else { // filter parameter
 
@@ -440,13 +478,13 @@ public class DelegatedQueryExecutor extends QueryExecutor {
 
 	/**
 	 * Management of option ORDER_BY
-	 * 
+	 *
 	 * @param parameter
 	 * @param statement
 	 * @param condizioneSql
 	 */
-	protected static void handleOrderByParameter(final RequestContainer requestContainer, final ResponseContainer responseContainer,
-			final SourceBean parameter, StringBuffer statement, final String condizioneSql) {
+	protected static void handleOrderByParameter(final RequestContainer requestContainer, final ResponseContainer responseContainer, final SourceBean parameter,
+			StringBuffer statement, final String condizioneSql) {
 		logger.debug("IN");
 		String parameterType = (String) parameter.getAttribute("TYPE");
 		String parameterValue = (String) parameter.getAttribute("VALUE");
