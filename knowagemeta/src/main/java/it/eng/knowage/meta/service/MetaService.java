@@ -216,7 +216,7 @@ public class MetaService extends AbstractSpagoBIResource {
 			}
 			checksResult.put("incorrectRelationships", checksArray);
 
-			return Response.ok(checksResult).build();
+			return Response.ok(checksResult.toString()).build();
 
 		} catch (IOException | JSONException e) {
 			logger.error("Error during check of relationships", e);
