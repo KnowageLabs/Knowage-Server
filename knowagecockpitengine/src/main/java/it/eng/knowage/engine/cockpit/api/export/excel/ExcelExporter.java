@@ -17,15 +17,10 @@
  */
 package it.eng.knowage.engine.cockpit.api.export.excel;
 
-import it.eng.spago.error.EMFAbstractError;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -45,6 +40,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.spago.error.EMFAbstractError;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
 /**
  * @authors Francesco Lucchi (francesco.lucchi@eng.it)
  *
@@ -57,9 +59,9 @@ public class ExcelExporter {
 
 	static private Logger logger = Logger.getLogger(ExcelExporter.class);
 
-	private String outputType;
-	private String userUniqueIdentifier;
-	private Map<String, String[]> parameterMap;
+	private final String outputType;
+	private final String userUniqueIdentifier;
+	private final Map<String, String[]> parameterMap;
 
 	public ExcelExporter(String outputType, String userUniqueIdentifier, Map<String, String[]> parameterMap) {
 		this.outputType = outputType;
@@ -146,16 +148,16 @@ public class ExcelExporter {
 
 						JSONObject aggregations = getAggregationsFromTableWidget(widget, configuration);
 						logger.debug("aggregations = " + aggregations);
-						map.put("aggregations", aggregations);
+						map.put("aggregations", URLEncoder.encode(aggregations.toString(), "UTF-8"));
 
 						JSONObject parameters = getParametersFromTableWidget(widget, configuration);
 						logger.debug("parameters = " + parameters);
-						map.put("parameters", parameters);
+						map.put("parameters", URLEncoder.encode(parameters.toString(), "UTF-8"));
 
 						JSONObject summaryRow = getSummaryRowFromTableWidget(widget);
 						if (summaryRow != null) {
 							logger.debug("summaryRow = " + summaryRow);
-							map.put("summaryRow", summaryRow);
+							map.put("summaryRow", URLEncoder.encode(summaryRow.toString(), "UTF-8"));
 						}
 
 						if (getRealtimeFromTableWidget(datasetId, configuration)) {
@@ -172,11 +174,11 @@ public class ExcelExporter {
 						JSONObject likeSelections = getLikeSelectionsFromTableWidget(widget, configuration);
 						if (likeSelections != null) {
 							logger.debug("likeSelections = " + likeSelections);
-							map.put("likeSelections", likeSelections);
+							map.put("likeSelections", URLEncoder.encode(likeSelections.toString(), "UTF-8"));
 						}
 
 						JSONObject selections = getSelectionsFromTableWidget(widget, configuration);
-						logger.debug("selections = " + selections);
+						logger.debug("selections = " + URLEncoder.encode(selections.toString(), "UTF-8"));
 
 						ExcelExporterClient client = new ExcelExporterClient();
 						String csv;
@@ -192,9 +194,7 @@ public class ExcelExporter {
 					}
 				}
 			}
-		} catch (JSONException e) {
-			logger.error("Unable to load template", e);
-		} catch (EMFUserError e) {
+		} catch (JSONException | EMFUserError | UnsupportedEncodingException e) {
 			logger.error("Unable to load template", e);
 		}
 

@@ -17,8 +17,6 @@
  */
 package it.eng.knowage.engine.cockpit.api.export.excel;
 
-import it.eng.spagobi.utilities.engines.rest.SimpleRestClient;
-
 import java.util.Map;
 
 import javax.ws.rs.core.MediaType;
@@ -27,13 +25,15 @@ import javax.ws.rs.core.Response;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
+import it.eng.spagobi.utilities.engines.rest.SimpleRestClient;
+
 /**
  * @authors Francesco Lucchi (francesco.lucchi@eng.it)
  *
  */
 
 public class ExcelExporterClient extends SimpleRestClient {
-	private String serviceUrl = "/restful-services/2.0/datasets/%s/data";
+	private final String serviceUrl = "/restful-services/2.0/datasets/%s/data";
 
 	static protected Logger logger = Logger.getLogger(ExcelExporterClient.class);
 
@@ -41,7 +41,7 @@ public class ExcelExporterClient extends SimpleRestClient {
 		logger.debug("IN");
 
 		Response resp = executePostService(parameters, String.format(serviceUrl, datasetLabel), userId, MediaType.APPLICATION_JSON, selections);
-		String resultString = (String) resp.getEntity();
+		String resultString = resp.readEntity(String.class);
 		JSONObject result = new JSONObject(resultString);
 
 		logger.debug("OUT");
