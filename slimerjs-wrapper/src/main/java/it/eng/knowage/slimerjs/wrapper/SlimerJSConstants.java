@@ -9,7 +9,7 @@ public class SlimerJSConstants {
 
 	static final String ZIP_EXTENSION = ".zip";
 
-	static final String SLIMER_BINARIES_RESOURCEPATH = "resources/it/eng/knowage/slimerjs/wrapper", SLIMER_BINARIES_PACKAGENAME = "slimerjs-0.9.6-%s",
+	static final String SLIMER_BINARIES_RESOURCEPATH = "it/eng/knowage/slimerjs/wrapper", SLIMER_BINARIES_PACKAGENAME = "slimerjs-0.9.6-%s",
 			SLIMER_BINARIES_BIN = "slimerjs%s", SLIMER_BINARIES_WINDOWS = "win32", SLIMER_BINARIES_MAC = "macosx", SLIMER_BINARIES_UNIX = "linux-x86_64";
 
 	static final String XULRUNNER_BINARIES_BIN = "xulrunner", XULRUNNER_DIR = "xulrunner";
