@@ -1,4 +1,4 @@
-<md-content class="md-padding noPadding" layout="column" layout-fill ng-cloak>
+<md-content class="filters" layout="column" layout-fill ng-cloak>
 	<md-card ng-if="ngModelShared.filters!=undefined" >
 		<md-card-content layout="column">
 			<div layout="row" layout-align="center center" ng-show="ngModelShared.type != 'static-pivot-table' || ngModelShared.limitRows.enable == true">
@@ -13,69 +13,60 @@
 			</div>
 
  			<!-- Cycle on all filters -->
-			<div layout="row" layout-align="space-between" ng-repeat="filterObj in ngModelShared.filters" >
-	
-	<!-- 			<md-chips flex ng-model="filterObj.filterVals" name="filters" readonly="false" md-removable="true" placeholder="{{filterObj.colName}}">
-      			</md-chips>    -->
-     			
-            <label>{{filterObj.colName}}</label>
+			<div layout="row" layout-align="space-between" class="filterRow" ng-repeat="filterObj in ngModelShared.filters" >     			
+            	<label flex=20>{{filterObj.colName}}</label>
 
- 			<!-- Operator on combo basing on filter type: String, Number, Date-->
-      
-      		<md-input-container  flex=33 ng-show="filterObj.type == 'java.lang.String'">
-                <label>Operator</label>
-             <md-select ng-model="filterObj.filterOperator" >
-                    <md-option ng-repeat="op in operatorsTypeString" ng-value="op">{{op}}</md-option>
-                </md-select>   
-            </md-input-container>
+	 			<!-- Operator on combo basing on filter type: String, Number, Date-->
+	      		<md-input-container  flex=40 ng-show="filterObj.type == 'java.lang.String'">
+	                <label>Operator</label>
+	             	<md-select ng-model="filterObj.filterOperator" >
+	                    <md-option ng-repeat="op in operatorsTypeString" ng-value="op">{{op}}</md-option>
+	                </md-select>   
+	            </md-input-container>
             
-           <md-input-container flex=33  ng-show="filterObj.type == 'java.lang.Integer' || filterObj.type == 'java.lang.Double' || filterObj.type == 'java.lang.Float' ||filterObj.type == 'java.math.BigDecimal'">
-                <label>Operator</label>
-                <md-select ng-model="filterObj.filterOperator" >
-                    <md-option  ng-repeat="op in operatorsTypeNumber" ng-value="op">{{op}}</md-option>
-                </md-select>    
-            </md-input-container>
+				<md-input-container flex=40  ng-show="filterObj.type == 'java.lang.Integer' || filterObj.type == 'java.lang.Double' || filterObj.type == 'java.lang.Float' ||filterObj.type == 'java.math.BigDecimal'">
+					<label>Operator</label>
+					<md-select ng-model="filterObj.filterOperator" >
+					    <md-option  ng-repeat="op in operatorsTypeNumber" ng-value="op">{{op}}</md-option>
+					</md-select>    
+				</md-input-container>
             
-           <md-input-container  flex=33 ng-show="filterObj.type == 'java.lang.Date' || filterObj.type == 'java.sql.Timestamp'">
-                <label>Operator</label>
-                <md-select ng-model="filterObj.filterOperator" >
-                    <md-option  ng-repeat="op in operatorsTypeDate" ng-value="op">{{op}}</md-option>
-                </md-select>    
-            </md-input-container>
-
+				<md-input-container  flex=40 ng-show="filterObj.type == 'java.lang.Date' || filterObj.type == 'java.sql.Timestamp'">
+				     <label>Operator</label>
+				     <md-select ng-model="filterObj.filterOperator" >
+				         <md-option  ng-repeat="op in operatorsTypeDate" ng-value="op">{{op}}</md-option>
+				     </md-select>    
+				</md-input-container>
  
- <!-- Optional 0, 1 or 2 operands basing on chosen operator -->           
- 
-            <md-input-container 
-                        flex=33 
-                        ng-show="filterObj.filterOperator == '=' 
-                        			|| filterObj.filterOperator == '!=' 
-                        			|| filterObj.filterOperator == '>' 
-                        			|| filterObj.filterOperator == '<'
-                        			|| filterObj.filterOperator == '<='
-                        			|| filterObj.filterOperator == '>='
-                        			|| filterObj.filterOperator == 'like'
-                        			"
-                        > 
-                            <label>{{translate.load("Value")}}</label>
-                            <input   maxlength="100" type="text" ng-model="filterObj.filterVals[0]"> 
-      		</md-input-container>
+ 				<!-- Optional 0, 1 or 2 operands basing on chosen operator -->           
+	            <md-input-container flex=35 ng-show="filterObj.filterOperator == '=' 
+                			|| filterObj.filterOperator == '!=' 
+                			|| filterObj.filterOperator == '>' 
+                			|| filterObj.filterOperator == '<'
+                			|| filterObj.filterOperator == '<='
+                			|| filterObj.filterOperator == '>='
+                			|| filterObj.filterOperator == 'like'
+                			"> 
+	                <label>{{translate.load("Value")}}</label>
+	                <input   maxlength="100" type="text" ng-model="filterObj.filterVals[0]"> 
+	      		</md-input-container>
       		
-
-      	     <md-input-container flex=33  
-      	     					ng-show="filterObj.filterOperator == 'range'"> 
-                            <label>{{translate.load("From")}}</label>
-                            <input maxlength="100" type="text" ng-model="filterObj.filterVals[0]"> 
-            </md-input-container>
-                         <md-input-container  flex=33  
-                         					  ng-show="filterObj.filterOperator == 'range'"> 
-                            <label>{{translate.load("To")}}</label>
-                            <input maxlength="100" type="text" ng-model="filterObj.filterVals[1]"> 
-            </md-input-container>
-            
-            <md-icon flex=33 md-font-icon="fa fa-eraser" 
-						 ng-click="eraseFilter(filterObj.colName)"></md-icon>
-      		
+				<md-input-container flex=35 ng-show="filterObj.filterOperator == 'range'"> 
+					<label>{{translate.load("From")}}</label>
+					<input maxlength="100" type="text" ng-model="filterObj.filterVals[0]"> 
+				</md-input-container>
+				
+                <md-input-container  flex=35 ng-show="filterObj.filterOperator == 'range'"> 
+	                <label>{{translate.load("To")}}</label>
+	                <input maxlength="100" type="text" ng-model="filterObj.filterVals[1]"> 
+            	</md-input-container>
+            	
+            	<div flex></div>
+            	
+            	<md-button  class="md-icon-button">
+            		<md-icon md-font-icon="fa fa-eraser" ng-click="eraseFilter(filterObj.colName)"></md-icon>
+            		<md-tooltip md-delay="1000" >Clear Filter</md-tooltip>
+            	</md-button>      		
       			
 			</div>	
 		</md-card-content>
@@ -83,11 +74,10 @@
 	
 	<md-card ng-if="ngModelShared.filters==undefined">
 		<md-card class="noWidget ng-scope _md md-knowage-theme">
-				<md-card-content layout-align="center center" class="layout-align-center-center">
-					{{translate.load("sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.specifydatasettofilter")}}
-				</md-card-content>
+			<md-card-content layout-align="center center" class="layout-align-center-center">
+				{{translate.load("sbi.cockpit.widgets.table.tabledesignerpanel.tableoptions.specifydatasettofilter")}}
+			</md-card-content>
 		</md-card>
-	
 	</md-card>
 	
 </md-content>
