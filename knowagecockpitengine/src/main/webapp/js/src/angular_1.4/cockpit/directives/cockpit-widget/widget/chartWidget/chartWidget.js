@@ -772,7 +772,7 @@ function cockpitChartWidgetControllerFunction(
 
 			// parse static parameters if present
 			var staticParameters = [];
-			if(model.cross.staticParameters){
+			if(model.cross.staticParameters && model.cross.staticParameters != ''){
 				var err=false;
 				try{
 					var parsedStaticPars = model.cross.staticParameters.split("&");

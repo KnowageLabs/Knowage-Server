@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * @authors Giovanni Luca Ulivo (GiovanniLuca.Ulivo@eng.it) v0.0.1
- * 
+ *
  */
 (function(){
 angular.module('cockpitModule')
@@ -28,7 +28,7 @@ angular.module('cockpitModule')
                 replace: true,
                 link: function (scope, ele, attrs) {
                 	$compile(ele.contents())(scope);
-                  
+
                 }
             };
         })
@@ -48,9 +48,9 @@ angular.module('cockpitModule')
  .directive('actionButtonPositionHandler', function ($compile,$timeout) {
         	return {
         		restrict: 'A',
- 
+
         		link: function (scope, ele, attrs) {
-        			
+
         			var actionButtonItem=angular.element(ele[0].querySelector("."+attrs.actionButtonClassContainer));
         			actionButtonItem.css("display", "none");
         			var showActionButton=false;
@@ -79,7 +79,7 @@ angular.module('cockpitModule')
     						}
     					},500)
         			};
-        			
+
         			var handleActionButtonVisibility=function(show){
         				if(!angular.equals(show,showActionButton)){
         					showActionButton=show;
@@ -88,8 +88,8 @@ angular.module('cockpitModule')
         					ele.css("z-index",show? "3" : "1");
         				}
         			}
-        			
-        			
+
+
         			actionButtonItem.bind('mouseover', mouseOver );
         			actionButtonItem.bind('mouseleave', mouseLeave );
         			ele.bind('mouseover', mouseOver );
@@ -100,26 +100,26 @@ angular.module('cockpitModule')
 						ele.removeClass('leftPosition');
         				ele.addClass(scope.$eval(attrs.widgetXPosition)<=1 ? 'rightPosition': 'leftPosition');
         			},1000);
-        			
-        			 
-        			
+
+
+
         			scope.$watch(function(){return scope.gridsterItem.isMoving()},function(newVal,oldVal){
         				if(newVal!=oldVal){
         					if(!newVal){
         						ele.removeClass('rightPosition');
         						ele.removeClass('leftPosition');
         						ele.addClass(scope.$eval(attrs.widgetXPosition)<=1 ? 'rightPosition': 'leftPosition')
-        					} 
+        					}
         				}
         			})
-        			
+
         		}
         	};
         })
 .filter('parameter_fill', function(cockpitModule_utilstServices) {
 	return function(data) {
 		return cockpitModule_utilstServices.getParameterValue(data);
-		 
+
 	}
 })
 .directive('cockpitWidget',function(cockpitModule_widgetConfigurator,cockpitModule_widgetServices,$compile,cockpitModule_widgetSelection,$rootScope,cockpitModule_datasetServices){
@@ -140,7 +140,7 @@ angular.module('cockpitModule')
                     	// init the widget
                     	element.ready(function () {
                     		var objType=cockpitModule_widgetConfigurator[scope.ngModel.type.toLowerCase()];
-                    		var dataset; 
+                    		var dataset;
                     		if (scope.ngModel.dataset){
                         		dataset = cockpitModule_datasetServices.getDatasetById(scope.ngModel.dataset.dsId)
                     		}
@@ -163,12 +163,12 @@ angular.module('cockpitModule')
                     		}else{
                     			console.error(scope.ngModel.type+" widget not defined");
                     		}
-                    		
+
                     		scope.refreshWidgetStyle();
                         });
-                    	
+
                     	scope.initializeWidgetProperty=function(directive){
-                    		
+
                     		scope.initWidget=function(){
                     			var initOnFinish = scope.ngModel.isNew == true;
                     			if(initOnFinish){
@@ -185,13 +185,13 @@ angular.module('cockpitModule')
                 					cockpitModule_widgetServices.initWidget(angular.element(directive),scope.ngModel,options);
                     			}
                     		};
-                    		
+
                     		scope.refreshWidget=function(options,nature){
                     			var finOptions=options==undefined? (scope.getOptions == undefined? {} :  scope.getOptions()) : options;
                     			cockpitModule_widgetServices.refreshWidget(angular.element(directive),scope.ngModel,nature==undefined? 'refresh' : nature, finOptions);
                     		};
-                    	}                    	
-                    	
+                    	}
+
                     }
                 };
 		   	}
@@ -211,21 +211,21 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 	$scope.widgetSpinner	= false;
 	$scope.widgetSearchBar 	= false; // default searchBar unactive
 	$scope.activeSearch 	= false; // default search unactive
-	$scope.actionButtonClass=[]; 
-	
+	$scope.actionButtonClass=[];
+
 	$scope.widgetActionButtonsVisible = false;
 	$scope.widExp = false;
-	
+
 	$scope.showWidgetActionButtons = function(){
 		$scope.widgetActionButtonsVisible = $scope.widgetActionButtonsVisible?false:true;
 	}
-	
+
 	$scope.closeWidgetActionButtons = function() {
 		if(!$scope.widExp){
 			$scope.widgetActionButtonsVisible=false;
 		}
 	}
-	
+
 	//disable cliccable for real time dataset
 	if ($scope.ngModel.dataset){
 		var widgetDataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId)
@@ -233,7 +233,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 			$scope.ngModel.cliccable = false;
 		}
 	}
-	
+
 	// davverna - initializing search object to give all the columns to the user searchbar
 	if($scope.ngModel.type.toLowerCase() == "table" && (!$scope.ngModel.search || $scope.ngModel.search.columns == [])){
 		$scope.ngModel.search ={"columns" : []};
@@ -244,7 +244,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 			}
 		}
 	}
-	
+
 	// davverna - method to set the actual model and search parameters to refresh the widget table
 	$scope.searchColumns = function(){
 		if($scope.ngModel.search.text != ""){
@@ -252,16 +252,16 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 			$scope.refreshWidget();
 		}
 	}
-	
+
 	// davverna - reset the actual search if active
 	$scope.resetSearch = function(){
 		$scope.ngModel.search.text = "";
 		$scope.activeSearch = false;
 		$scope.refreshWidget();
 	}
-	
-	
-	
+
+
+
 	// global WIDGET_EVENT
 	$rootScope.$on('WIDGET_EVENT',function(conf,eventType,config){
 		switch(eventType){
@@ -272,7 +272,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 			$scope.updateFromDatasetFilter(config.label);
 			break;
 		case "UPDATE_FROM_CLEAN_CACHE":
-			
+
 			$scope.refreshWidget();
 			break;
 		case "UPDATE_FROM_NEAR_REALTIME":
@@ -308,9 +308,9 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 	})
 	// specific widget event 'WIDGET_EVENT' with id of widget
 	$rootScope.$on('WIDGET_EVENT'+$scope.ngModel.id,function(config,eventType,config){
-		
+
 		switch(eventType){
-		case "REFRESH"  : 
+		case "REFRESH"  :
 			if($scope.refresh==undefined){
 				$timeout(function(){
 					$scope.refresh(config.element,config.width,config.height, config.data,config.nature,config.associativeSelection);
@@ -326,7 +326,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 			if($scope.ngModel.type=="chart") {
 				$scope.refreshWidget(undefined, 'resize');
 			}
-			break; 
+			break;
 		case "WIDGET_SPINNER" :
 			if(config.show){
 				$scope.showWidgetSpinner();
@@ -344,7 +344,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 		default: console.error("event "+eventType+" not found")
 		}
 	})
-	
+
 	$scope.scopeInit=function(element,width,height,data,nature,associativeSelection){
 		if($scope.init == undefined){
 			$timeout(function(){
@@ -354,7 +354,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 			$scope.init(element,width,height,data,nature,associativeSelection);
 		}
 	}
-	
+
 	$scope.showWidgetSpinner=function(){
 		$scope.widgetSpinner=true;
 		$scope.safeApply();
@@ -363,7 +363,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 		$scope.widgetSpinner=false;
 		$scope.safeApply();
 	}
-	
+
 	$scope.updateFromSelection = function(isInit,associativeSelection){
 		var dataset= $scope.getDataset();
 		if($scope.ngModel.updateble==false){
@@ -398,10 +398,10 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 				}
 			}
 		}
-		
-		
+
+
 	}
-	
+
 	$scope.updateFromDatasetFilter=function(label){
 		var dataset= $scope.getDataset();
 		if($scope.ngModel.updateble==false){
@@ -411,7 +411,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 			console.log("widget is not updateble")
 			return;
 		}
-		if(dataset != undefined && 
+		if(dataset != undefined &&
 			(
 				(angular.isArray(label) && label.indexOf(dataset.label)!=-1)
 				||
@@ -419,39 +419,39 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 			)
 		){
 			$scope.refreshWidget(undefined,'filters');
-			
+
 		}
 	}
-	
+
 	$scope.safeApply=function(){
 		if ($scope.$root.$$phase != '$apply' && $scope.$root.$$phase !='$digest') {
 			$scope.$apply();
 		}
 	}
-	
+
 	$scope.deleteWidget=function(nomessage){
 		cockpitModule_widgetServices.deleteWidget(cockpitModule_properties.CURRENT_SHEET,$scope.ngModel,nomessage);
 	}
-	
+
 	$scope.openSearchBar = function(){
 		$scope.widgetSearchBar == false ? $scope.widgetSearchBar = true : $scope.widgetSearchBar = false;
 	}
-	 
+
 	$scope.doSelection = function(columnName,columnValue,modalColumn,modalValue,row, skipRefresh){
 		if($scope.ngModel.cliccable==false){
 			console.log("widget is not cliccable")
 			return;
 		}
-		
+
 		// check if cross navigation was enable don this widget
 		var model = $scope.ngModel;
-		if(model.cross != undefined  && model.cross.cross != undefined 
+		if(model.cross != undefined  && model.cross.cross != undefined
 				&& model.cross.cross.enable === true
 				){
-			
+
 			// enter cross navigation mode
 			var doCross = false;
-			
+
 			var nameToCheckForCross = columnName;
 			if(columnName != undefined){
 				// check if selected column has been renamed by an alias, in that
@@ -464,12 +464,12 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 					}
 				}
 			}
-						
+
 			if(model.cross.cross.allRow == true){
 				// case all columns are enabled for cross, get value for cross
 				// column (or alias if present)
 				var crossColumnOrAlias = model.cross.cross.column;
-					
+
 				for(var colIndex in model.content.columnSelectedOfDataset){
 					var col = model.content.columnSelectedOfDataset[colIndex];
 					if(col.aliasToShow != undefined && col.name == model.cross.cross.column){
@@ -501,10 +501,10 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 				if(model.cross.cross.outputParameter){
 					outputParameter[model.cross.cross.outputParameter] = columnValue;
 				}
-				
+
 				// parse static parameters if present
 				var staticParameters = [];
-				if(model.cross.cross.staticParameters){
+				if(model.cross.cross.staticParameters && model.cross.cross.staticParameters != ""){
 					var err=false;
 					try{
 						var parsedStaticPars = model.cross.cross.staticParameters.split("&");
@@ -513,17 +513,17 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 							if(splittedPar[0]==undefined || splittedPar[1]==undefined){err=true;}
 							else{
 								var toInsert = {};
-								toInsert[splittedPar[0]] = splittedPar[1]; 
+								toInsert[splittedPar[0]] = splittedPar[1];
 								staticParameters.push(toInsert);
 							}
-						
+
 						}
 
 					}catch(e){
 						err=true
 						console.error(e);
 					}finally{
-						if(err){ 
+						if(err){
 							 $mdDialog.show(
 								      $mdDialog.alert()
 								        .clickOutsideToClose(true)
@@ -536,9 +536,9 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 						}
 
 						}
-					
+
 				}
-				
+
 				// if destination document is specified don't ask
 				if(model.cross.cross.crossName != undefined){
 					parent.execExternalCrossNavigation(outputParameter,{},model.cross.cross.crossName,null,staticParameters);
@@ -549,18 +549,18 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 				return;
 			}
 		}
-		
+
 		if($scope.getDataset() && columnName){
-	
+
 			if(modalColumn!=undefined && modalValue!=undefined)
-			{	
+			{
 				columnValue = modalValue;
 				columnName = modalColumn;
 			}
-			
+
 			// check if all associated data
 			var dsLabel=$scope.getDataset().label;
-			var originalColumnName;			
+			var originalColumnName;
 			if (!Array.isArray(columnName)){
 				//original management with simple value as parameters (not array, not multiselection)
 				originalColumnName = "";
@@ -571,7 +571,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 							break;
 			        	}
 			        }
-				
+
 					if(originalColumnName==undefined || originalColumnName==""){
 						for(var i=0; i<$scope.ngModel.content.columnSelectedOfDataset.length; i++){
 							if($scope.ngModel.content.columnSelectedOfDataset[i].alias && $scope.ngModel.content.columnSelectedOfDataset[i].alias.toUpperCase() === columnName.toUpperCase()){
@@ -581,7 +581,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 						}
 					}
 				}
-					
+
 				if ($scope.ngModel.content.crosstabDefinition){
 					//check on pivot table structure: rows and columns definition
 					if (originalColumnName == undefined || originalColumnName == ""){
@@ -601,19 +601,19 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 						}
 					}
 				}
-				
+
 			  //at last sets the input columnName like the original name
 				if (originalColumnName == undefined || originalColumnName == ""){
 					originalColumnName = columnName;
 				}
-				
+
 			}else{
 				//multiple selection: only from pivot table widget (by measure selection)
 				originalColumnName = [];
 				if ($scope.ngModel.content.crosstabDefinition){
 					//check on pivot table structure: rows and columns definition
 					for (var k=0; k < columnName.length; k++){
-						var singleColumnName = columnName[k];		
+						var singleColumnName = columnName[k];
 						var foundInColumns = false;
 						var foundInRows = false;
 						for(var i=0; i<$scope.ngModel.content.crosstabDefinition.columns.length; i++){
@@ -622,7 +622,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 								foundInColumns = true;
 								break;
 							}
-						}						
+						}
 						if (!foundInColumns){
 							for(var i=0; i<$scope.ngModel.content.crosstabDefinition.rows.length; i++){
 								if($scope.ngModel.content.crosstabDefinition.rows[i].alias && $scope.ngModel.content.crosstabDefinition.rows[i].alias.toUpperCase() === singleColumnName.toUpperCase()){
@@ -633,20 +633,20 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 							}
 						}
 					}
-					
+
 //					//at last sets the input columnName like the original name
 					if (!foundInColumns && !foundInRows){
 						originalColumnName.push(singleColumnName);
 					}
 				}
 			}
-			
+
 			var sel=cockpitModule_widgetSelection.getAssociativeSelections(columnValue,columnName,dsLabel,originalColumnName);
 			if(sel!=undefined){
 				if(!cockpitModule_template.configuration.aliases){
 					cockpitModule_template.configuration.aliases = [];
 				}
-				
+
 				if(!angular.equals("noAssoc",sel)){
 					sel.then(function(response) {
 						if(!skipRefresh){
@@ -667,8 +667,8 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 						}
 					}else{
 							// 02/02/17 - davverna
-							// if columnvalue is an array, usually from a bulk selection, I use a copy to avoid the direct object binding. 
-							// With the double click there is not the same issue because the binding is on a primitive value (string).						
+							// if columnvalue is an array, usually from a bulk selection, I use a copy to avoid the direct object binding.
+							// With the double click there is not the same issue because the binding is on a primitive value (string).
 							if(Object.prototype.toString.call( columnValue ) === '[object Array]'){
 								cockpitModule_template.configuration.filters[dsLabel][originalColumnName]=[];
 								angular.copy(columnValue,cockpitModule_template.configuration.filters[dsLabel][originalColumnName]);
@@ -681,15 +681,15 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 					if(!skipRefresh){
 						cockpitModule_widgetSelection.refreshAllWidgetWhithSameDataset(dsLabel);
 					}
-					
+
 				}
 			}
-			
+
 		}
 	}
-	
+
 	$scope.doEditWidget=function(initOnFinish){
-		
+
 		var deferred;
 		if(initOnFinish){
 			deferred=$q.defer();
@@ -706,17 +706,17 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 					deferred.reject();
 					}
 				});
-		
+
 		if(initOnFinish){
 			return deferred.promise;
 		}
 	}
 
-	
+
 	var clearRedundantStyle=function(){
 		for(var prop in $scope.ngModel.style){
 			if(cockpitModule_template.configuration.style[prop]!=undefined){
-				
+
 				if(angular.isObject($scope.ngModel.style[prop])){
 					for(var subProp in $scope.ngModel.style[prop] ){
 						if( angular.equals(cockpitModule_template.configuration.style[prop][subProp],$scope.ngModel.style[prop][subProp])){
@@ -733,13 +733,13 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 				}
 			}
 		}
-		
+
 	}
-	
+
 	$scope.getAnalyticalDrivers=function(){
 		return cockpitModule_analyticalDrivers;
 	}
-	
+
 	$scope.editWidgetName=function(){
 		if(cockpitModule_properties.EDIT_MODE){
 			$scope.editingWidgetName=true;
@@ -755,17 +755,17 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 		$scope.editingWidgetName=false;
 		$scope.tmpWidgetContent={};
 	}
-	
+
 	$scope.refreshWidgetStyle=function(){
 		angular.copy({},$scope.extendedStyle);
 		angular.copy({},$scope.borderShadowStyle);
 		angular.copy({},$scope.titleStyle);
 		//angular.copy({},$scope.headerHeight);
 		//$scope.headerHeight={};
-		
+
 		// update extended style
 		angular.copy(angular.merge({},cockpitModule_template.configuration.style,$scope.ngModel.style),$scope.extendedStyle);
-		
+
 		// update shadow style
 		if($scope.extendedStyle.borders!=undefined && $scope.extendedStyle.borders==true){
 			angular.merge($scope.borderShadowStyle,$scope.extendedStyle.border);
@@ -778,33 +778,33 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 		if($scope.extendedStyle.titles!=undefined && $scope.extendedStyle.titles==true){
 			angular.merge($scope.titleStyle,$scope.extendedStyle.title);
 		}
-		
+
 		// update widgets background color
 		if($scope.extendedStyle.backgroundColor!=undefined) {
 			var tempBackGround={'background-color': $scope.extendedStyle.backgroundColor};
 			angular.merge($scope.borderShadowStyle,tempBackGround);
 		}
-		
-		
+
+
 		// update sheets background color
 		if($scope.extendedStyle.sheetsBackgroundColor!=undefined && $scope.cockpitModule_template.style) {
-				
+
 			$scope.sheetsBackgroundColor=$scope.extendedStyle.sheetsBackgroundColor;
 			$scope.cockpitModule_template.style.background=$scope.extendedStyle.sheetsBackgroundColor;
 
 		}
-		
-		
-		
+
+
+
 		// update header height
 		if($scope.extendedStyle.headerHeight!=undefined){
 			$scope.headerHeight=$scope.extendedStyle.headerHeight;
 		}
-		
-		
-		
+
+
+
 	}
-	
+
 	$scope.getDataset = function(){
 		if($scope.ngModel.dataset!=undefined && $scope.ngModel.dataset.dsId != undefined){
 			 return cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId);
@@ -819,13 +819,13 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 			return undefined;
 		}
 	}
-	
-	
+
+
 	$scope.expandWidget=function(){
 //		if($scope.ngModel.type == "table"){
 //			$scope.$root.$broadcast("WIDGET_EVENT"+$scope.ngModel.id,"WIDGET_SPINNER",{show:true});
 //		}
-		
+
 		if(angular.element($scope.cockpitWidgetItem[0].firstElementChild).hasClass("fullScreenWidget")){
 			cockpitModule_widgetServices.setFullPageWidget(false);
 			cockpitModule_properties.WIDGET_EXPANDED[cockpitModule_properties.CURRENT_SHEET]=false;
@@ -852,16 +852,16 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 		}
 		cockpitModule_gridsterOptions.draggable.enabled=cockpitModule_properties.EDIT_MODE && cockpitModule_properties.WIDGET_EXPANDED[cockpitModule_properties.CURRENT_SHEET]!=true;
 		cockpitModule_gridsterOptions.resizable.enabled=cockpitModule_properties.EDIT_MODE && cockpitModule_properties.WIDGET_EXPANDED[cockpitModule_properties.CURRENT_SHEET]!=true;
-		
+
 		$scope.refreshWidget(undefined,'fullExpand');
 	};
-	
+
 	$scope.getProperties = function(propertyPath) {
 		propertyPath = propertyPath.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties
 		propertyPath = propertyPath.replace(/^\./, '');           // strip a leading dot
 	    return propertyPath.split('.');
 	}
-	
+
 	$scope.getPropertyValue = function(obj, propertyPath) {
 	    var properties = $scope.getProperties(propertyPath);
 	    for (var i = 0; i < properties.length; ++i) {
@@ -874,7 +874,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 	    }
 	    return obj;
 	}
-	
+
 	$scope.setPropertyValue = function(obj, propertyPath, value) {
 		var properties = $scope.getProperties(propertyPath);
 		var lastIndex = properties.length - 1;
@@ -888,7 +888,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 	    }
 	    obj[lastProperty] = value;
 	}
-	
+
 	$scope.deleteProperty = function(obj, propertyPath) {
 		var properties = $scope.getProperties(propertyPath);
 		var lastIndex = properties.length - 1;
@@ -903,7 +903,7 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 		}
 		return false;
 	}
-	
+
 	$scope.moveProperty = function(obj, srcPath, dstPath){
 		var value = $scope.getPropertyValue(obj, srcPath);
 		if(value != undefined){
