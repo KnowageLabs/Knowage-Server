@@ -20,6 +20,55 @@ package it.eng.spagobi.api;
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_OPTIONS_KEY;
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_QUANTITY_JSON;
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_TYPE_JSON;
+
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.text.Format;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
+
+import org.apache.clerezza.jaxrs.utils.form.FormFile;
+import org.apache.clerezza.jaxrs.utils.form.MultiPartBody;
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.safehaus.uuid.UUID;
+import org.safehaus.uuid.UUIDGenerator;
+
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.RequestContainerAccess;
 import it.eng.spago.base.SessionContainer;
@@ -56,56 +105,6 @@ import it.eng.spagobi.utilities.engines.AbstractEngineStartAction;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
-
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.text.Format;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.StringTokenizer;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-
-import org.apache.clerezza.jaxrs.utils.form.FormFile;
-import org.apache.clerezza.jaxrs.utils.form.MultiPartBody;
-import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
-
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
 
 @Path("/1.0/documentexecution")
 @ManageAuthorization
@@ -297,12 +296,11 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 		// REPORT BIRT - JASPER
 		// MOBILE
-		if (obj.getBiObjectTypeCode().equals(SpagoBIConstants.REPORT_TYPE_CODE)
-				&& obj.getEngine() != null
-				&& (obj.getEngine().getLabel().equals(SpagoBIConstants.BIRT_ENGINE_LABEL) || obj.getEngine().getLabel()
-						.equals(SpagoBIConstants.JASPER_ENGINE_LABEL))
-				&& (req.getHeader("User-Agent").indexOf("Mobile") != -1 || req.getHeader("User-Agent").indexOf("iPad") != -1 || req.getHeader("User-Agent")
-						.indexOf("iPhone") != -1)) {
+		if (obj.getBiObjectTypeCode().equals(SpagoBIConstants.REPORT_TYPE_CODE) && obj.getEngine() != null
+				&& (obj.getEngine().getLabel().equals(SpagoBIConstants.BIRT_ENGINE_LABEL)
+						|| obj.getEngine().getLabel().equals(SpagoBIConstants.JASPER_ENGINE_LABEL))
+				&& (req.getHeader("User-Agent").indexOf("Mobile") != -1 || req.getHeader("User-Agent").indexOf("iPad") != -1
+						|| req.getHeader("User-Agent").indexOf("iPhone") != -1)) {
 			ret = ret + "&outputType=PDF";
 		}
 		// COCKPIT
@@ -349,7 +347,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 								dateRange = dateRange.replace(range, "");
 								// CONVERT DATE FORMAT FROM DEFAULT TO Server
 								value = convertDate(objParameter.getDefaultValues().get(0).getValue().toString().split("#")[1],
-								// GeneralUtilities.getLocaleDateFormat(permanentSession)
+										// GeneralUtilities.getLocaleDateFormat(permanentSession)
 										SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"), dateRange);
 								value = value + range;
 							} else {
@@ -497,8 +495,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			parameterAsMap.put("driverLabel", objParameter.getPar().getLabel());
 			parameterAsMap.put("driverUseLabel", objParameter.getAnalyticalDriverExecModality().getLabel());
 
-			parameterAsMap
-					.put("allowInternalNodeSelection", objParameter.getPar().getModalityValue().getLovProvider().contains("<LOVTYPE>treeinner</LOVTYPE>"));
+			parameterAsMap.put("allowInternalNodeSelection",
+					objParameter.getPar().getModalityValue().getLovProvider().contains("<LOVTYPE>treeinner</LOVTYPE>"));
 
 			// get values
 			if (objParameter.getAnalyticalDocumentParameter().getParameterValues() != null) {
@@ -674,20 +672,24 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				if (lstValues.size() == 0)
 					jsonCrossParameters.remove(objParameter.getId());
 
-				String parLab = objParameter.getAnalyticalDocumentParameter() != null && objParameter.getAnalyticalDocumentParameter().getParameter() != null ? objParameter
-						.getAnalyticalDocumentParameter().getParameter().getLabel()
+				String parLab = objParameter.getAnalyticalDocumentParameter() != null && objParameter.getAnalyticalDocumentParameter().getParameter() != null
+						? objParameter.getAnalyticalDocumentParameter().getParameter().getLabel()
 						: "";
 				String useModLab = objParameter.getAnalyticalDriverExecModality() != null ? objParameter.getAnalyticalDriverExecModality().getLabel() : "";
 				String sessionKey = parLab + "_" + useModLab;
 
+				valueList = objParameter.getDefaultValues();
+
 				if (jsonCrossParameters.isNull(objParameter.getId())
-				// && !sessionParametersMap.containsKey(objParameter.getId())) {
+						// && !sessionParametersMap.containsKey(objParameter.getId())) {
 						&& !sessionParametersMap.containsKey(sessionKey)) {
-					valueList = objParameter.getDefaultValues();
 					if (valueList != null) {
 						parameterAsMap.put("parameterValue", valueList);
 					}
 				}
+
+				// in every case fill default values!
+				parameterAsMap.put("driverDefaultValue", valueList);
 			}
 
 			if (showParameterLov) {
@@ -833,8 +835,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		}
 	}
 
-	private ArrayList<HashMap<String, Object>> manageDataRange(BIObject biObject, String executionRole, String biparameterId) throws EMFUserError,
-			SerializationException, JSONException, IOException {
+	private ArrayList<HashMap<String, Object>> manageDataRange(BIObject biObject, String executionRole, String biparameterId)
+			throws EMFUserError, SerializationException, JSONException, IOException {
 
 		BIObjectParameter biObjectParameter = null;
 		List parameters = biObject.getBiObjectParameters();
@@ -1019,32 +1021,30 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 		byte[] bytes = null;
 
-				try {
+		try {
 
-					if (input != null) {
+			if (input != null) {
 
-						String saveDirectoryPath = SpagoBIUtilities.getResourcePath() + "/" + METADATA_DIR + "/" + getUserProfile().getUserName().toString();
-						final FormFile file = input.getFormFileParameterValues("file")[0];
-						bytes = file.getContent();
+				String saveDirectoryPath = SpagoBIUtilities.getResourcePath() + "/" + METADATA_DIR + "/" + getUserProfile().getUserName().toString();
+				final FormFile file = input.getFormFileParameterValues("file")[0];
+				bytes = file.getContent();
 
-						
-						File saveDirectory = new File(saveDirectoryPath);
-						if (!(saveDirectory.exists() && saveDirectory.isDirectory())) {
-							saveDirectory.mkdirs();
-						}
-						String tempFile = saveDirectoryPath + "/" + file.getFileName();
-						File tempFileToSave = new File(tempFile);
-						tempFileToSave.createNewFile();
-						DataOutputStream os = new DataOutputStream(new FileOutputStream(tempFileToSave));
-						os.write(bytes);
-						os.close();
-
-					}
-
-				} catch (IOException e) {
-					throw new SpagoBIRuntimeException("Error inserting new file metadataContent ", e);
+				File saveDirectory = new File(saveDirectoryPath);
+				if (!(saveDirectory.exists() && saveDirectory.isDirectory())) {
+					saveDirectory.mkdirs();
 				}
+				String tempFile = saveDirectoryPath + "/" + file.getFileName();
+				File tempFileToSave = new File(tempFile);
+				tempFileToSave.createNewFile();
+				DataOutputStream os = new DataOutputStream(new FileOutputStream(tempFileToSave));
+				os.write(bytes);
+				os.close();
 
+			}
+
+		} catch (IOException e) {
+			throw new SpagoBIRuntimeException("Error inserting new file metadataContent ", e);
+		}
 
 		return Response.status(200).build();
 
@@ -1052,7 +1052,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 	/**
 	 * Produces a json with a bynary content of a metadata file and its name
-	 * 
+	 *
 	 * @param id
 	 *            of document
 	 * @param id
