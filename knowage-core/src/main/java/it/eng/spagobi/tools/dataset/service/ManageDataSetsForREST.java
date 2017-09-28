@@ -22,6 +22,25 @@
 
 package it.eng.spagobi.tools.dataset.service;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.log4j.LogMF;
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import it.eng.qbe.dataset.FederatedDataSet;
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.base.SourceBean;
@@ -81,26 +100,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.json.JSONUtils;
 import it.eng.spagobi.utilities.sql.SqlUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.log4j.LogMF;
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 
 public class ManageDataSetsForREST {
 
@@ -241,8 +240,8 @@ public class ManageDataSetsForREST {
 							// this.getAttributeAsString(DataSetConstants.RECALCULATE_METADATA);
 							String recalculateMetadata = json.optString("recalculateMetadata");
 							String dsMetadata = null;
-							if ((recalculateMetadata == null || recalculateMetadata.trim().equals("yes") || recalculateMetadata.trim().equals("true"))
-									&& (!isFromSaveNoMetadata)) {
+							if ((recalculateMetadata == null || recalculateMetadata.trim().equals("yes") || recalculateMetadata.trim().equals("")
+									|| recalculateMetadata.trim().equals("true")) && (!isFromSaveNoMetadata)) {
 								// recalculate metadata
 								logger.debug("Recalculating dataset's metadata: executing the dataset...");
 								HashMap parametersMap = new HashMap();
@@ -1025,21 +1024,26 @@ public class ManageDataSetsForREST {
 			dataStore = dataSet.getDataStore();
 			// DatasetMetadataParser dsp = new DatasetMetadataParser();
 
-			JSONArray metadataArray = JSONUtils.toJSONArray(metadata);
-
+			JSONArray metadataArray = null;
 			IMetaData metaData = dataStore.getMetaData();
-			for (int i = 0; i < metaData.getFieldCount(); i++) {
-				IFieldMetaData ifmd = metaData.getFieldMeta(i);
-				for (int j = 0; j < metadataArray.length(); j++) {
-					if (ifmd.getName().equals((metadataArray.getJSONObject(j)).getString("name"))) {
-						if ("MEASURE".equals((metadataArray.getJSONObject(j)).getString("fieldType"))) {
-							ifmd.setFieldType(IFieldMetaData.FieldType.MEASURE);
-						} else {
-							ifmd.setFieldType(IFieldMetaData.FieldType.ATTRIBUTE);
+
+			try {
+				metadataArray = JSONUtils.toJSONArray(metadata);
+				for (int i = 0; i < metaData.getFieldCount(); i++) {
+					IFieldMetaData ifmd = metaData.getFieldMeta(i);
+					for (int j = 0; j < metadataArray.length(); j++) {
+						if (ifmd.getName().equals((metadataArray.getJSONObject(j)).getString("name"))) {
+							if ("MEASURE".equals((metadataArray.getJSONObject(j)).getString("fieldType"))) {
+								ifmd.setFieldType(IFieldMetaData.FieldType.MEASURE);
+							} else {
+								ifmd.setFieldType(IFieldMetaData.FieldType.ATTRIBUTE);
+							}
+							break;
 						}
-						break;
 					}
 				}
+			} catch (ClassCastException e) {
+				logger.debug("Recieving an object instead of array for metadata", e);
 			}
 
 			// dsMetadata = dsp.metadataToXML(dataStore.getMetaData());
