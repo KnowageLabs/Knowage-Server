@@ -24,18 +24,6 @@
 					<groupId>org.cometd.java</groupId>
 					<artifactId>cometd-java-server</artifactId>
 				</exclusion>
-				<exclusion>
-					<groupId>org.jboss.resteasy</groupId>
-					<artifactId>resteasy-jaxrs</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.jboss.resteasy</groupId>
-					<artifactId>jaxrs-api</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.jboss.resteasy</groupId>
-					<artifactId>resteasy-legacy</artifactId>
-				</exclusion>
 			</exclusions>
 		</dependency>
 		
@@ -51,20 +39,6 @@
 			<artifactId>javax.servlet-api</artifactId>
 			<version>3.1.0</version> <!-- WebLogic uses 3.1.0, Tomcat 7 uses 3.0 -->
 			<scope>provided</scope>
-		</dependency>
-		
-				<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>jaxrs-api</artifactId>
-			<version>3.0.9.Final</version>
-			<scope>compile</scope>
-        </dependency>
-		
-		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-jaxrs</artifactId>
-			<version>2.3.5.Final</version>
-			<scope>compile</scope>
 		</dependency>
 		
 		<dependency>
