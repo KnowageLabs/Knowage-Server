@@ -973,8 +973,18 @@
 														var valDef = param.driverDefaultValue[0];
 														var valueD = valDef.value;
 														var descriptionD = valDef.description;
-														param.defaultValue = valueD;
-														param.defaultValueDescription = descriptionD;
+														if(param.selectionType == 'LOOKUP' || param.selectionType == 'TREE'){
+															param.defaultValue = [];
+															param.defaultValue.push(valueD);
+															param.defaultValueDescription = [];
+															param.defaultValueDescription.push(descriptionD);
+														}
+														else{
+															param.defaultValue = valueD;
+															param.defaultValueDescription = descriptionD;
+														}
+
+
 													}
 												}
 												else{
