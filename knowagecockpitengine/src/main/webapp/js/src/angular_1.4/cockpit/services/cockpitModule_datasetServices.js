@@ -685,7 +685,20 @@ angular.module("cockpitModule").service("cockpitModule_datasetServices",function
 				var filterElement=filters[i];
 				var colName=filterElement.colName;
 				var type=filterElement.type;
-				var filterOperator=filterElement.filterOperator;
+
+				var filterOperator;
+				if(filterElement.filterOperator != undefined){
+					filterOperator=filterElement.filterOperator;
+				}
+				else {
+					if(filterElement.filterVals && filterElement.filterVals.length>0){
+						filterOperator = "=";
+					}
+					else{
+						filterOperator = "";
+					}
+
+				}
 
 				// if type is undefined get it from metadata
 				if(type == undefined){
