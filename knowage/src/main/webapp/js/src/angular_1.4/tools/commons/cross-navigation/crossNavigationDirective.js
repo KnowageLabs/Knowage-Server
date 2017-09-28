@@ -237,7 +237,7 @@ angular.module('cross_navigation', ['ngMaterial','bread_crumb','angular_table'])
 			}
 
 			//check for staticParameters
-			if(staticParameters!=undefined && navObj.navigationParams!=undefined){
+			if(staticParameters!=undefined && staticParameters!='' && navObj.navigationParams!=undefined){
 				for(var parin=0;parin<staticParameters.length;parin++){
 					var staticParName = null;
 					var staticParValue = null;
