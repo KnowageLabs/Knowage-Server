@@ -94,7 +94,7 @@ public class PivotDataSetTransformer extends AbstractDataStoreTransformer {
 		int valueFieldIndex;
 		int groupFieldIndex;
 
-		List newRecords = new ArrayList();
+		List<IRecord> newRecords = new ArrayList<>();
 		IRecord newRecord = null;
 		Object selectedGroupValue = null;
 
@@ -117,7 +117,6 @@ public class PivotDataSetTransformer extends AbstractDataStoreTransformer {
 				IRecord record = (IRecord) iterator.next();
 
 				IField pivotField = record.getFieldAt(pivotFieldIndex);
-				IField valueField = record.getFieldAt(valueFieldIndex);
 				IField groupField = record.getFieldAt(groupFieldIndex);
 
 				if (precGroupField == null)
@@ -162,8 +161,8 @@ public class PivotDataSetTransformer extends AbstractDataStoreTransformer {
 			if (selectedGroupValue == null || !selectedGroupValue.toString().equals(groupField.getValue().toString())) {
 				selectedGroupValue = groupField.getValue();
 				if (newRecord != null) {
-					newRecord.getFields().remove(pivotFieldIndex);
-					newRecord.getFields().remove(valueFieldIndex);
+					newRecord.getFields().remove(Math.max(pivotFieldIndex, valueFieldIndex));
+					newRecord.getFields().remove(Math.min(pivotFieldIndex, valueFieldIndex));
 					newRecords.add(newRecord);
 				}
 				newRecord = record;
@@ -179,8 +178,8 @@ public class PivotDataSetTransformer extends AbstractDataStoreTransformer {
 			newRecord.getFieldAt(pivotedFieldIndex).setValue(valueField.getValue());
 		}
 		if (newRecord != null) {
-			newRecord.getFields().remove(pivotFieldIndex);
-			newRecord.getFields().remove(valueFieldIndex);
+			newRecord.getFields().remove(Math.max(pivotFieldIndex, valueFieldIndex));
+			newRecord.getFields().remove(Math.min(pivotFieldIndex, valueFieldIndex));
 			newRecords.add(newRecord);
 
 			((DataStore) dataStore).setRecords(newRecords);
