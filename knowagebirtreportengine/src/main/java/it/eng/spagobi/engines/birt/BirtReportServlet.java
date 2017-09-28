@@ -67,6 +67,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.eclipse.birt.report.IBirtConstants;
 import org.eclipse.birt.report.engine.api.EXCELRenderOption;
@@ -75,6 +76,7 @@ import org.eclipse.birt.report.engine.api.HTMLRenderOption;
 import org.eclipse.birt.report.engine.api.HTMLServerImageHandler;
 import org.eclipse.birt.report.engine.api.IDataExtractionTask;
 import org.eclipse.birt.report.engine.api.IGetParameterDefinitionTask;
+import org.eclipse.birt.report.engine.api.IImage;
 import org.eclipse.birt.report.engine.api.IRenderOption;
 import org.eclipse.birt.report.engine.api.IReportDocument;
 import org.eclipse.birt.report.engine.api.IReportEngine;
@@ -217,7 +219,27 @@ public class BirtReportServlet extends HttpServlet {
 		}
 	}
 
+	
 	protected HTMLRenderOption prepareHtmlRenderOption(ServletContext servletContext, HttpServletRequest servletRequest) throws Exception {
+		boolean isBackEndRequest = isBackEndRequest(servletRequest);
+		if (isBackEndRequest) {
+			return prerareBackEndHtmlRenderOption();
+		} else {
+			return prepareFrontEndHtmlRenderOption(servletRequest);
+		}
+	}
+	
+	private boolean isBackEndRequest(HttpServletRequest servletRequest) {
+		logger.debug("IN");
+		String requestURL = servletRequest.getRequestURL().toString();
+		logger.debug("Request URL : " + requestURL);
+		boolean toReturn = requestURL.endsWith("BackEnd");
+		logger.debug("OUT : " + toReturn);
+		return toReturn;
+	}
+	
+	private HTMLRenderOption prepareFrontEndHtmlRenderOption(
+			HttpServletRequest servletRequest) {
 		logger.debug("IN");
 		String tmpDir = System.getProperty("java.io.tmpdir");
 		String imageDirectory = tmpDir.endsWith(File.separator) ? tmpDir + "birt" : tmpDir + File.separator + "birt";
@@ -235,9 +257,33 @@ public class BirtReportServlet extends HttpServlet {
 		this.birtReportEngine.getConfig().getEmitterConfigs().put("html", renderOption);
 		logger.debug("OUT");
 		return renderOption;
-
 	}
 
+	
+	private HTMLRenderOption prerareBackEndHtmlRenderOption() {
+		logger.debug("IN");
+		HTMLRenderOption renderOption = new HTMLRenderOption();
+		renderOption.setOutputFormat(HTMLRenderOption.HTML);
+		renderOption.setSupportedImageFormats("PNG;GIF;JPG;BMP");
+		((HTMLRenderOption) renderOption).setEmbeddable(false);
+		renderOption.setImageHandler(new HTMLServerImageHandler() {
+			@Override
+			protected String handleImage(IImage image, Object context,
+					String prefix, boolean needMap) {
+				byte[] encodedBytes = Base64.encodeBase64(image
+						.getImageData());
+				String embeddedImage = new String(encodedBytes);
+				String extension = image.getExtension().substring(1)
+						.toLowerCase(); // it starts with "."
+				return "data:image/" + extension + ";base64," + embeddedImage;
+			}
+		});
+		this.birtReportEngine.getConfig().getEmitterConfigs()
+				.put("html", renderOption);
+		logger.debug("OUT");
+		return renderOption;
+	}
+	
 	private InputStream getTemplateContent(HttpServletRequest servletRequest, ServletContext servletContext) throws IOException {
 		logger.debug("IN");
 		HttpSession session = servletRequest.getSession();
