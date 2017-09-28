@@ -14,11 +14,12 @@
 									ng-model='itemList'
 									columns='[
 									{"label":"LABEL","name":"label"},
-									{"label":"DESCRIPTION","name":"description"}
+									{"label":"NAME","name":"name"}
 									]'
 									click-function ="itemSelected(item)"
 									selected-item = "selectedItem"
 									show-search-bar=true
+									columns-search='["label","name"]'
 									highlights-selected-item=true
 									no-pagination=false
 									ng-show=true
