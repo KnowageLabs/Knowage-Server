@@ -28,22 +28,13 @@
    </div>
    </md-toolbar>
    <br>
-	<md-content>
-	
-	<div layout-fill  >
-		
-		<angular-table
-		 			style="position:absolute;"
-					id='previewLovTable'
-		            ng-model="previewLovModel"
-					columns="previewLovColumns" 
-					no-pagination=true
-					show-search-bar=false
-					full-width>
-		</angular-table>	
-			
-	 </div>
-	 
-	
-</md-content>
+	<angular-table
+	 			flex
+				id='previewLovTable'
+	            ng-model="previewLovModel"
+				columns="previewLovColumns" 
+				no-pagination=true
+				show-search-bar=false
+				full-width>
+	</angular-table>	
 </md-dialog>
