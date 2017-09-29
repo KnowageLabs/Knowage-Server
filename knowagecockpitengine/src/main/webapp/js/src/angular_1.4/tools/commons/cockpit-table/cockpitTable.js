@@ -81,7 +81,20 @@
                     	var style = thStyle?thStyle:{};
                     	if(column.style && column.style.width) style['max-width'] = column.style.width;
                     	if(column.style && column.style.width) style.width = column.style.width;
+                    	if(column.style && column.style.td && column.style.td['justify-content'] == 'flex-end') style['text-align'] = 'right';
+                    	if(column.style && column.style.td && column.style.td['justify-content'] == 'center') style['text-align'] = 'center';
+                    	if(column.style && column.style.td && column.style.td['justify-content'] == 'flex-start') style['text-align'] = 'left';
                     	return style;
+                    }
+
+                    scope.getSummaryStyle = function(column){
+                    	var summarystyle = angular.copy(scope.styledata.summary?scope.styledata.summary:{});
+                    	if(column.style && column.style.width) summarystyle['max-width'] = column.style.width;
+                    	if(column.style && column.style.width) summarystyle.width = column.style.width;
+                    	if(column.style && column.style.td && column.style.td['justify-content'] == 'flex-end') summarystyle['text-align'] = 'right';
+                    	if(column.style && column.style.td && column.style.td['justify-content'] == 'center') summarystyle['text-align'] = 'center';
+                    	if(column.style && column.style.td && column.style.td['justify-content'] == 'flex-start') summarystyle['text-align'] = 'left';
+                    	return summarystyle;
                     }
 
                     //returning the style of the cell

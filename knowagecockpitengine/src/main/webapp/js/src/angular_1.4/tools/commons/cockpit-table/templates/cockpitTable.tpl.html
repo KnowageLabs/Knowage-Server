@@ -54,7 +54,7 @@
 	    </tbody>
 	    <tfoot>
 			<tr ng-if="settings.summary.enabled" class="summary">
-	            <td ng-repeat="column in columns" ng-style="styledata.summary">
+	            <td ng-repeat="column in columns" ng-style="getSummaryStyle(column)">
 	            <md-tooltip md-direction="top" md-delay="500">{{formatValue(settings.summary.row[column.aliasToShow],column)}}</md-tooltip>
 	            {{formatValue(settings.summary.row[column.aliasToShow],column)}}</td>
 	        </tr>
