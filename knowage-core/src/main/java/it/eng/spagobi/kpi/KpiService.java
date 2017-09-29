@@ -219,10 +219,10 @@ public class KpiService {
 					}
 					result.put(kpi.getName(), jsonPlaceholdersWithValue.toString());
 				}
-				out = Response.ok(JsonConverter.objectToJson(result, result.getClass())).build();
-				logger.debug("listPlaceholderByKpi OUT");
-				return out;
 			}
+			out = Response.ok(JsonConverter.objectToJson(result, result.getClass())).build();
+			logger.debug("listPlaceholderByKpi OUT");
+			return out;
 		} catch (IOException | JSONException e) {
 			logger.error("listPlaceholderByKpi  ");
 			logger.error(req.getPathInfo(), e);

@@ -5,7 +5,7 @@ function executionLogControllerFunction($scope,sbiModule_translate, sbiModule_me
 	$scope.kpiValueExecLogList = [];
 	$scope.numberLogs = 10;
 	$scope.loadLog = function(){
-		if($scope.numberLogs>0){
+		if($scope.numberLogs>0 && $scope.selectedScheduler && $scope.selectedScheduler.id){
 			sbiModule_restServices.promiseGet("1.0/kpi",$scope.selectedScheduler.id+'/'+$scope.numberLogs+ '/logExecutionList').then(
 					function(response) {
 						angular.copy(response.data,$scope.kpiValueExecLogList)
@@ -46,13 +46,13 @@ function executionLogControllerFunction($scope,sbiModule_translate, sbiModule_me
 					})
 			}
 		}
-		
-		
+
+
 	}
 
-	$scope.$on('activeExecutionLog', function(e) { 
+	$scope.$on('activeExecutionLog', function(e) {
 			$scope.loadLog();
-		
+
 	});
 
 
