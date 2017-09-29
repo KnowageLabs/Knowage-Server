@@ -23,11 +23,11 @@ app.config(['$mdThemingProvider', function($mdThemingProvider) {
     $mdThemingProvider.setDefaultTheme('knowage');
 }]);
 
-app.controller("ChartDesignerController", ["sbiModule_translate","$scope","sbiModule_config", "sbiModule_restServices", "sbiModule_messaging", "PreviewService","sbiModule_logger", "$mdToast",ChartDesignerFunction]);
+app.controller("ChartDesignerController", ["sbiModule_translate","$scope","sbiModule_config", "sbiModule_restServices", "sbiModule_messaging", "PreviewService","sbiModule_logger", "$mdToast","sbiModule_user",ChartDesignerFunction]);
 
-function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config, sbiModule_restServices, sbiModule_messaging, PreviewService,sbiModule_logger,$mdToast) {
+function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config, sbiModule_restServices, sbiModule_messaging,PreviewService,sbiModule_logger,$mdToast,sbiModule_user) {
 	
-	
+	$scope.previewChartEnable =( sbiModule_user.functionalities.indexOf("PreviewChart")>-1)? true:false;
 	if(parent.angular.element(window.frameElement).scope().isCockpitEng){
 		$scope.isCockpitEng = parent.angular.element(window.frameElement).scope().isCockpitEng;
 	}else{
