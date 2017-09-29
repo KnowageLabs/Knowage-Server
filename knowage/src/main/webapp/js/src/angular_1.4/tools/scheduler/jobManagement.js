@@ -562,7 +562,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 	}
 
 	ctrl.loadSelectedDocumentParameters = function(){
-		sbiModule_restServices.get("1.0/documents", ctrl.selectedDocument.label+"/parameters")
+		sbiModule_restServices.get("2.0/documents", ctrl.selectedDocument.label+"/parameters")
 			.success(function(data, status, headers, config) {
 				if (data.hasOwnProperty("errors")) {
 					console.log("unable to get document parameters");
@@ -618,14 +618,14 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 				docCtrl.submit = function() {
 					$mdDialog.hide();
 
-					sbiModule_restServices.get("1.0/documents", docCtrl.selectedDocument.label+"/parameters")
+					sbiModule_restServices.get("2.0/documents", docCtrl.selectedDocument.label+"/parameters")
 						.success(function(data, status, headers, config) {
 							var newDocument = {};
 							newDocument.name = docCtrl.selectedDocument.label;
 							newDocument.parameters = [];
-							for(var i=0;i<data.length;i++){
+							for(var i=0;i<data.results.length;i++){
 								var newParam = {};
-								newParam.name = data[i].parameterUrlName;
+								newParam.name = data.results[i].url;
 								newParam.value = "";
 								newParam.type = "fixed";
 								newParam.iterative = false;
