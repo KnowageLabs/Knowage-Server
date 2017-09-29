@@ -149,6 +149,7 @@
 		<DAO name="ICatalogFunctionDAO" implementation="it.eng.spagobi.functions.dao.CatalogFunctionDAOImpl"/>
 		<DAO name="IObjFuncOrganizerDAO" implementation="it.eng.spagobi.workspace.dao.ObjFuncOrganizerHIBDAOImpl"/>
 		<DAO name="CalendarDAO" implementation="it.eng.spagobi.tools.calendar.dao.CalendarDAOImpl" />
+		<DAO name="DossierActivityDAO" implementation="it.eng.spagobi.dossier.dao.SbiDossierActivityDAOHibImpl"/>
 	</DAO-CONF>
 
 	<!-- ********************* END DAO CONFIGURATION ************************ -->

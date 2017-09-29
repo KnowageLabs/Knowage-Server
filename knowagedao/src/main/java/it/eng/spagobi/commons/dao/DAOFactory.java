@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.commons.dao;
 
+import org.apache.log4j.Logger;
+
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectRating;
@@ -37,6 +39,7 @@ import it.eng.spagobi.behaviouralmodel.check.dao.ICheckDAO;
 import it.eng.spagobi.behaviouralmodel.lov.dao.IModalitiesValueDAO;
 import it.eng.spagobi.cache.dao.ICacheDAO;
 import it.eng.spagobi.community.dao.ISbiCommunityDAO;
+import it.eng.spagobi.dossier.dao.ISbiDossierActivityDAO;
 import it.eng.spagobi.engines.config.dao.IEngineDAO;
 import it.eng.spagobi.federateddataset.dao.ISbiFederationDefinitionDAO;
 import it.eng.spagobi.functions.dao.ICatalogFunctionDAO;
@@ -92,11 +95,8 @@ import it.eng.spagobi.whatif.dao.IWhatifWorkflowDAO;
 import it.eng.spagobi.workspace.dao.IFunctionsOrganizerDAO;
 import it.eng.spagobi.workspace.dao.IObjFuncOrganizerDAO;
 
-import org.apache.log4j.Logger;
-
 /**
- * Contains all the data access object for all the BO objects defined into
- * it.eng.spagobi.bo package.
+ * Contains all the data access object for all the BO objects defined into it.eng.spagobi.bo package.
  */
 public class DAOFactory {
 
@@ -963,4 +963,9 @@ public class DAOFactory {
 	public static ISbiAccessibilityPreferencesDAO getSiAccessibilityPreferencesDAO() throws EMFUserError {
 		return (ISbiAccessibilityPreferencesDAO) createDAOInstance("SbiAccessibilityPreferencesDAO");
 	}
+
+	public static ISbiDossierActivityDAO getDossierActivityDao() {
+		return (ISbiDossierActivityDAO) createDAOInstance("DossierActivityDAO");
+	}
+
 }

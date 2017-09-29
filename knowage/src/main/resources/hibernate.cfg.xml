@@ -137,6 +137,9 @@
 		<!-- massive export -->
 		<!-- -->
 		<mapping resource="it/eng/spagobi/tools/massiveExport/metadata/mapping/SbiProgressThread.hbm.xml" />
+		        
+        <!-- dossier activity -->
+        <mapping resource="it/eng/spagobi/dossier/metadata/mapping/SbiDossierActivity.hbm.xml" />
 
 
 		<!-- tools: Meta-models catalogue -->
