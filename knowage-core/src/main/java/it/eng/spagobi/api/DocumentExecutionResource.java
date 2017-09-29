@@ -697,6 +697,22 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				parametersArrayList.add(parameterAsMap);
 			}
 		}
+		for (int z = 0; z < parametersArrayList.size(); z++) {
+
+			Map docP = parametersArrayList.get(z);
+			DefaultValuesList defvalList = (DefaultValuesList) docP.get("parameterValue");
+			if (defvalList != null && defvalList.size() == 1) {
+				DefaultValue defval = defvalList.get(0);
+				if (defval != null) {
+					Object val = defval.getValue();
+					if (val != null && val.equals("$")) {
+						docP.put("parameterValue", "");
+					}
+				}
+
+			}
+		}
+
 		if (parameters.size() > 0) {
 			resultAsMap.put("filterStatus", parametersArrayList);
 		} else {
@@ -750,10 +766,14 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			for (int k = 0; k < valuesList.size(); k++) {
 				String item = valuesList.get(k);
 				boolean found = false;
-				for (HashMap<String, Object> parHashVal : admissibleValues) {
-					if (parHashVal.containsKey("value") && parHashVal.get("value").equals(item)) {
-						found = true;
-						break;
+				if (item != null && item.equals("$")) {
+					found = true;
+				} else {
+					for (HashMap<String, Object> parHashVal : admissibleValues) {
+						if (parHashVal.containsKey("value") && parHashVal.get("value").equals(item)) {
+							found = true;
+							break;
+						}
 					}
 				}
 				if (!found) {
