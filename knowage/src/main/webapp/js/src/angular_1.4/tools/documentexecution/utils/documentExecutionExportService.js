@@ -71,11 +71,13 @@
 				dee.buildBackendRequestConf(exportType, mimeType, parameters).then(function(requestConf){
 					$http(requestConf)
 					.then(function successCallback(response) {
+						var mimeType = response.headers("Content-type");
+						var fileAndExtension = response.headers("Content-Disposition")
 						sbiModule_download.getBlob(
 								response.data,
 								execProperties.executionInstance.OBJECT_LABEL,
 								mimeType,
-								exportType);
+								exportType, mimeType,fileAndExtension);
 						dee.exporting = false;
 					}, function errorCallback(response) {
 						dee.exporting = false;
@@ -226,11 +228,13 @@
 				dee.buildBackendRequestConf(exportType, mimeType, parameters).then(function(requestConf){
 					$http(requestConf)
 					.then(function successCallback(response) {
+						var mimeType = response.headers("Content-type");
+						var fileAndExtension = response.headers("Content-Disposition")
 						sbiModule_download.getBlob(
 								response.data,
 								execProperties.executionInstance.OBJECT_LABEL,
 								mimeType,
-								exportType);
+								exportType, mimeType,fileAndExtension);
 						dee.exporting = false;
 					}, function errorCallback(response) {
 						dee.exporting = false;
@@ -586,6 +590,9 @@
 					break;
 				case "PDF":
 					expObj.func = function(){dee.exportCockpitTo('pdf','application/pdf')};
+					break;
+				case "JPG":
+					expObj.func = function(){dee.exportCockpitTo('JPG')};
 					break;
 				case "APDF":
 					expObj.func = function(){dee.exportCockpitTablesToAPDF()};

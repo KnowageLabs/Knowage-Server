@@ -33,4 +33,5 @@
 	<EXPORTER domain="XLS" engine="knowagecockpitengine" defaultValue="false" />
 	<EXPORTER domain="XLSX" engine="knowagecockpitengine" defaultValue="false" />
 	<EXPORTER domain="PDF" engine="knowagecockpitengine" defaultValue="true" />
+	<EXPORTER domain="JPG" engine="knowagecockpitengine" defaultValue="false" />	
 </EXPORTERS>

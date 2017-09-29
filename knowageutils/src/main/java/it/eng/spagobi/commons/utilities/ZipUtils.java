@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -27,6 +27,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
@@ -143,6 +144,30 @@ public class ZipUtils {
 		zos.closeEntry();
 		zos.close();
 		return baos.toByteArray();
+	}
+
+	public static byte[] zipInputStreams(List<InputStream> inputStreams, String prefix, String sufix) throws IOException {
+		ByteArrayOutputStream byteArrayToreturn = new ByteArrayOutputStream();
+		ZipOutputStream out = new ZipOutputStream(byteArrayToreturn);
+		byte[] buffer = new byte[1024];
+		try {
+			int ind = 1;
+			for (InputStream is : inputStreams) {
+				ZipEntry z = new ZipEntry((prefix + "" + ind + ".").concat(sufix));
+				ind++;
+				out.putNextEntry(z);
+				int len;
+				while ((len = is.read(buffer)) > 0) {
+					out.write(buffer, 0, len);
+				}
+				out.closeEntry();
+				is.close();
+
+			}
+			out.close();
+			return byteArrayToreturn.toByteArray();
+		} finally {
+		}
 	}
 
 	public static void unzip(File zipFile, File outFolder, boolean prependZipFileName) throws IOException {
@@ -268,7 +293,7 @@ public class ZipUtils {
 					byte[] tmp = new byte[4 * 1024];
 					FileOutputStream fos = null;
 					String opFilePath = "C:/" + zEntry.getName();
-					//System.out.println("Extracting file to " + opFilePath);
+					// System.out.println("Extracting file to " + opFilePath);
 					fos = new FileOutputStream(opFilePath);
 					int size = 0;
 					while ((size = zipIs.read(tmp)) != -1) {

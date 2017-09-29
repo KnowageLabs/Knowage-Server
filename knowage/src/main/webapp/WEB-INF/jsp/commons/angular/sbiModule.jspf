@@ -679,17 +679,18 @@ sbiM.service('sbiModule_download', function(sbiModule_config,sbiModule_logger, s
 			zip -> typeFile = 'application/zip'
 			image -> typeFile = 'image/[png | jpeg | gif |...]'
 	 */
-	this.getBlob = function(data, nameFile, typeFile, extensionFile){
+	this.getBlob = function(data, nameFile, typeFile, extensionFile, mimeType,fileAndExtension){
+		var fileAndExtension = fileAndExtension.substring(21)
 		var blob = new Blob([data],{type: typeFile}); 
 		var urlCreator = window.URL || window.webkitURL || window.mozURL || window.msURL;
 		var url = urlCreator !== undefined ? urlCreator.createObjectURL(blob) : JSON.stringify(blob);
 		
 		if (deviceBrowser == 'internet explorer'){
-			window.navigator.msSaveBlob(blob, nameFile + '.'  + extensionFile); // The user only has the option of clicking the Save button.
+			window.navigator.msSaveBlob(blob, fileAndExtension); // The user only has the option of clicking the Save button.
 		}else{
 			var link = document.createElement('a');
 			document.body.appendChild(link);
-			link.download = nameFile + '.'  + extensionFile;
+			link.download = fileAndExtension;
 			link.href = url;
 			link.target = '_blank';
 			link.click();

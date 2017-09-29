@@ -17,16 +17,6 @@
  */
 package it.eng.knowage.engine.cockpit.api.page;
 
-import it.eng.knowage.engine.cockpit.CockpitEngine;
-import it.eng.knowage.engine.cockpit.CockpitEngineInstance;
-import it.eng.knowage.engine.cockpit.api.AbstractCockpitEngineResource;
-import it.eng.knowage.slimerjs.wrapper.beans.CustomHeaders;
-import it.eng.knowage.slimerjs.wrapper.beans.RenderOptions;
-import it.eng.knowage.slimerjs.wrapper.beans.ViewportDimensions;
-import it.eng.spagobi.utilities.engines.EngineConstants;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -51,6 +41,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
+import it.eng.knowage.engine.cockpit.CockpitEngine;
+import it.eng.knowage.engine.cockpit.CockpitEngineInstance;
+import it.eng.knowage.engine.cockpit.api.AbstractCockpitEngineResource;
+import it.eng.knowage.slimerjs.wrapper.beans.CustomHeaders;
+import it.eng.knowage.slimerjs.wrapper.beans.RenderOptions;
+import it.eng.knowage.slimerjs.wrapper.beans.ViewportDimensions;
+import it.eng.knowage.slimerjs.wrapper.enums.RenderFormat;
+import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @authors Andrea Gioia (andrea.gioia@eng.it)
@@ -66,8 +66,9 @@ public class PageResource extends AbstractCockpitEngineResource {
 	private static final String PDF_WIDTH = "pdfWidth";
 	private static final String PDF_HEIGHT = "pdfHeight";
 	private static final String PDF_WAIT_TIME = "pdfWaitTime";
-	static private final List<String> PDF_PARAMETERS = Arrays.asList(new String[] { OUTPUT_TYPE, PDF_WIDTH, PDF_HEIGHT, PDF_WAIT_TIME, PDF_ZOOM,
-			PDF_PAGE_ORIENTATION });
+	static private final List<String> PDF_PARAMETERS = Arrays
+			.asList(new String[] { OUTPUT_TYPE, PDF_WIDTH, PDF_HEIGHT, PDF_WAIT_TIME, PDF_ZOOM, PDF_PAGE_ORIENTATION });
+	static private final List<String> JPG_PARAMETERS = Arrays.asList(new String[] { OUTPUT_TYPE });
 
 	static private Map<String, JSONObject> pages;
 	static private Map<String, String> urls;
@@ -118,8 +119,8 @@ public class PageResource extends AbstractCockpitEngineResource {
 
 		try {
 			// To deploy into JBOSSEAP64 is needed a StandardWrapper, instead of RestEasy Wrapper
-//			HttpServletRequest request = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
-//			HttpServletResponse response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
+			// HttpServletRequest request = ResteasyProviderFactory.getContextData(HttpServletRequest.class);
+			// HttpServletResponse response = ResteasyProviderFactory.getContextData(HttpServletResponse.class);
 
 			/**
 			 * Setting the encoding type to the response object, so the Cockpit engine when calling the rendering of the chart (chart.jsp) can display the real
@@ -145,6 +146,15 @@ public class PageResource extends AbstractCockpitEngineResource {
 					request.setAttribute("renderOptions", renderOptions);
 
 					dispatchUrl = "/WEB-INF/jsp/ngCockpitExportPdf.jsp";
+					response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+				} else if ("JPG".equals(outputType)) {
+					String requestURL = getRequestUrlForJpgExport(request);
+					request.setAttribute("requestURL", requestURL);
+
+					RenderOptions renderOptions = getRenderOptionsForJpgExporter(request);
+					request.setAttribute("renderOptions", renderOptions);
+
+					dispatchUrl = "/WEB-INF/jsp/ngCockpitExportJpg.jsp";
 					response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 				} else {
 					engineInstance = CockpitEngine.createInstance(getIOManager().getTemplateAsString(), getIOManager().getEnv());
@@ -184,6 +194,36 @@ public class PageResource extends AbstractCockpitEngineResource {
 		} finally {
 			logger.debug("OUT");
 		}
+	}
+
+	private String getRequestUrlForJpgExport(HttpServletRequest request) {
+		StringBuilder sb = new StringBuilder(request.getRequestURL().toString());
+		String sep = "?";
+		Map<String, String[]> parameterMap = request.getParameterMap();
+		for (String parameter : parameterMap.keySet()) {
+			if (!JPG_PARAMETERS.contains(parameter)) {
+				String[] values = parameterMap.get(parameter);
+				if (values != null && values.length > 0) {
+					sb.append(sep);
+					sb.append(parameter);
+					sb.append("=");
+					sb.append(values[0]);
+					sep = "&";
+				}
+			}
+		}
+		sb.append("&export=true");
+		return sb.toString();
+	}
+
+	private RenderOptions getRenderOptionsForJpgExporter(HttpServletRequest request) throws UnsupportedEncodingException {
+		String userId = (String) getUserProfile().getUserUniqueIdentifier();
+		String encodedUserId = Base64.encode(userId.getBytes("UTF-8"));
+		Map<String, String> headers = new HashMap<String, String>(1);
+		headers.put("Authorization", "Direct " + encodedUserId);
+		CustomHeaders customHeaders = new CustomHeaders(headers);
+		RenderOptions renderOptions = RenderOptions.DEFAULT.withCustomHeaders(customHeaders).withRenderFormat(RenderFormat.PNG);
+		return renderOptions;
 	}
 
 	private RenderOptions getRenderOptionsForPdfExporter(HttpServletRequest request) throws UnsupportedEncodingException {

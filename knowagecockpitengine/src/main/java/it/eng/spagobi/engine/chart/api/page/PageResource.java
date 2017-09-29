@@ -17,20 +17,6 @@
  */
 package it.eng.spagobi.engine.chart.api.page;
 
-import it.eng.knowage.slimerjs.wrapper.beans.CustomHeaders;
-import it.eng.knowage.slimerjs.wrapper.beans.RenderOptions;
-import it.eng.knowage.slimerjs.wrapper.beans.ViewportDimensions;
-import it.eng.spagobi.commons.utilities.JSONTemplateUtilities;
-import it.eng.spagobi.engine.chart.ChartEngine;
-import it.eng.spagobi.engine.chart.ChartEngineInstance;
-import it.eng.spagobi.engine.chart.api.AbstractChartEngineResource;
-import it.eng.spagobi.engine.chart.api.StyleResource;
-import it.eng.spagobi.engine.chart.util.ChartEngineUtil;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.engines.EngineConstants;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -55,7 +41,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
-
+import it.eng.knowage.slimerjs.wrapper.beans.CustomHeaders;
+import it.eng.knowage.slimerjs.wrapper.beans.RenderOptions;
+import it.eng.knowage.slimerjs.wrapper.beans.ViewportDimensions;
+import it.eng.knowage.slimerjs.wrapper.enums.RenderFormat;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.JSONTemplateUtilities;
 import it.eng.spagobi.engine.chart.ChartEngine;
@@ -83,8 +72,9 @@ public class PageResource extends AbstractChartEngineResource {
 	private static final String PDF_WIDTH = "pdfWidth";
 	private static final String PDF_HEIGHT = "pdfHeight";
 	private static final String PDF_WAIT_TIME = "pdfWaitTime";
-	static private final List<String> PDF_PARAMETERS = Arrays.asList(new String[] { OUTPUT_TYPE, PDF_WIDTH, PDF_HEIGHT, PDF_WAIT_TIME, PDF_ZOOM,
-			PDF_PAGE_ORIENTATION });
+	static private final List<String> PDF_PARAMETERS = Arrays
+			.asList(new String[] { OUTPUT_TYPE, PDF_WIDTH, PDF_HEIGHT, PDF_WAIT_TIME, PDF_ZOOM, PDF_PAGE_ORIENTATION });
+	static private final List<String> JPG_PARAMETERS = Arrays.asList(new String[] { OUTPUT_TYPE });
 
 	static private Map<String, JSONObject> pages;
 	static private Map<String, String> urls;
@@ -183,19 +173,28 @@ public class PageResource extends AbstractChartEngineResource {
 
 					dispatchUrl = "/WEB-INF/jsp/ngCockpitExportPdf.jsp";
 					response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-				}  else {
+				} else if ("JPG".equals(outputType)) {
+					String requestURL = getRequestUrlForJpgExport(request);
+					request.setAttribute("requestURL", requestURL);
+
+					RenderOptions renderOptions = getRenderOptionsForJpgExporter(request);
+					request.setAttribute("renderOptions", renderOptions);
+
+					dispatchUrl = "/WEB-INF/jsp/ngCockpitExportJpg.jsp";
+					response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+				} else {
 					engineInstance = ChartEngine.createInstance(savedTemplate, getIOManager().getEnv());
 
 					/*
 					 * The use of the above commented snippet had led to https://production.eng.it/jira/browse/KNOWAGE-678 and
-					 * https://production.eng.it/jira/browse/KNOWAGE-552. The chart engine is stateful, thus the http session is not the place to store and retrive
-					 * the engine instance, otherwise concurrency issues are raised.
+					 * https://production.eng.it/jira/browse/KNOWAGE-552. The chart engine is stateful, thus the http session is not the place to store and
+					 * retrive the engine instance, otherwise concurrency issues are raised.
 					 *
 					 * @author: Alessandro Portosa (alessandro.portosa@eng.it)
 					 */
 					// getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
 					getExecutionSession().setAttributeInSession(EngineConstants.ENGINE_INSTANCE, engineInstance);
-					
+
 				}
 
 				break;
@@ -268,12 +267,42 @@ public class PageResource extends AbstractChartEngineResource {
 		return renderOptions;
 	}
 
+	private RenderOptions getRenderOptionsForJpgExporter(HttpServletRequest request) throws UnsupportedEncodingException {
+		String userId = (String) getUserProfile().getUserUniqueIdentifier();
+		String encodedUserId = Base64.encode(userId.getBytes("UTF-8"));
+		Map<String, String> headers = new HashMap<String, String>(1);
+		headers.put("Authorization", "Direct " + encodedUserId);
+		CustomHeaders customHeaders = new CustomHeaders(headers);
+		RenderOptions renderOptions = RenderOptions.DEFAULT.withCustomHeaders(customHeaders).withRenderFormat(RenderFormat.PNG);
+		return renderOptions;
+	}
+
 	private String getRequestUrlForPdfExport(HttpServletRequest request) {
 		StringBuilder sb = new StringBuilder(request.getRequestURL().toString());
 		String sep = "?";
 		Map<String, String[]> parameterMap = request.getParameterMap();
 		for (String parameter : parameterMap.keySet()) {
 			if (!PDF_PARAMETERS.contains(parameter)) {
+				String[] values = parameterMap.get(parameter);
+				if (values != null && values.length > 0) {
+					sb.append(sep);
+					sb.append(parameter);
+					sb.append("=");
+					sb.append(values[0]);
+					sep = "&";
+				}
+			}
+		}
+		sb.append("&export=true");
+		return sb.toString();
+	}
+
+	private String getRequestUrlForJpgExport(HttpServletRequest request) {
+		StringBuilder sb = new StringBuilder(request.getRequestURL().toString());
+		String sep = "?";
+		Map<String, String[]> parameterMap = request.getParameterMap();
+		for (String parameter : parameterMap.keySet()) {
+			if (!JPG_PARAMETERS.contains(parameter)) {
 				String[] values = parameterMap.get(parameter);
 				if (values != null && values.length > 0) {
 					sb.append(sep);
