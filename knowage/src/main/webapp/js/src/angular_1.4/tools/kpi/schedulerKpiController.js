@@ -26,16 +26,16 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 	$scope.lov = [];
 	$scope.expired = false;
 	$scope.showCircular = true;
-	
+
 	$scope.selectedTab={'tab':0};
-	
+
 	$scope.engineMenuOptionList = [	{
 		label : sbiModule_translate.load('sbi.generic.clone'),
 		icon:'fa fa-files-o' ,
-		backgroundColor:'transparent',	
+		backgroundColor:'transparent',
 		action : function(item,event) {
 			sbiModule_restServices.promiseGet("1.0/kpi",item.id+"/loadSchedulerKPI")
-			.then(function(response){ 
+			.then(function(response){
 				$scope.cloneEngine(response.data);
 			},function(response){
 			});
@@ -44,12 +44,12 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 	{
 		label : sbiModule_translate.load('sbi.generic.delete'),
 		icon:'fa fa-trash' ,
-		backgroundColor:'transparent',	
+		backgroundColor:'transparent',
 		action : function(item,event) {
 			$scope.deleteMeasure(item);
 		}
 	},
-	{ 
+	{
 		label: function(row){
 			if(angular.equals(row.jobStatus.toUpperCase(),"EXPIRED")){
 				return "";
@@ -64,29 +64,29 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 				return angular.equals(row.jobStatus.toUpperCase(),"SUSPENDED") ? 'fa fa-play' : 'fa fa-pause';
 
 			}
-		}, 
+		},
 		backgroundColor:'transparent',
-		
-		action : function(item,event) { 
+
+		action : function(item,event) {
 			if(angular.equals(item.jobStatus.toUpperCase(),"EXPIRED")){
 				//nothing
 			}else{
-				var data="?jobGroup=KPI_SCHEDULER_GROUP&triggerGroup=KPI_SCHEDULER_GROUP&jobName="+item.id+"&triggerName="+item.id; 
+				var data="?jobGroup=KPI_SCHEDULER_GROUP&triggerGroup=KPI_SCHEDULER_GROUP&jobName="+item.id+"&triggerName="+item.id;
 				sbiModule_restServices.promisePost("scheduler",(angular.equals(item.jobStatus.toUpperCase(),"SUSPENDED") ? 'resumeTrigger' : 'pauseTrigger')+""+data)
-				.then(function(response){   
+				.then(function(response){
 					item.jobStatus=angular.equals(item.jobStatus.toUpperCase(),"SUSPENDED") ? 'ACTIVE' : 'SUSPENDED';
 				},function(response){
 					sbiModule_restServices.errorHandler(response.data,sbiModule_translate.load("sbi.generic.deletingItemError"))});
 				}
 		}
-	
+
 		}
 	];
 	$scope.deleteMeasure=function(item,event){
 		var confirm = $mdDialog.confirm()
 		.title($scope.translate.load("sbi.kpi.measure.delete.title"))
 		.content($scope.translate.load("sbi.kpi.measure.delete.content"))
-		.ariaLabel('delete scheduler') 
+		.ariaLabel('delete scheduler')
 		.ok($scope.translate.load("sbi.general.yes"))
 		.cancel($scope.translate.load("sbi.general.No"));
 		$mdDialog.show(confirm).then(function() {
@@ -98,12 +98,12 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 		}, function() {
 		});
 	}
-	
-	
+
+
 	$scope.clearAllData = function(){
 		$scope.kpi = [];
 		$scope.selectedWeek = [];
-		
+
 		angular.copy({"frequency":{}},$scope.selectedScheduler);
 		angular.copy([],$scope.kpi);
 		angular.copy([],$scope.kpiSelected);
@@ -113,7 +113,7 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 	$scope.loadEngineKpi = function(){
 		$scope.showCircular = true;
 		sbiModule_restServices.promiseGet("1.0/kpi","listSchedulerKPI")
-		.then(function(response){ 
+		.then(function(response){
 			$scope.showCircular = false;
 			angular.copy(response.data,$scope.engines);
 			for(var i=0;i<$scope.engines.length;i++){
@@ -139,7 +139,7 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 	$scope.getListKPI = function(){
 		var arr_name = [];
 		sbiModule_restServices.promiseGet("1.0/kpi","listKpi")
-		.then(function(response){ 
+		.then(function(response){
 			for(var i=0;i<response.data.length;i++){
 
 				var obj = {};
@@ -184,7 +184,7 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 					$scope.errorHandler(response.data,"");
 				})
 	}
-	
+
 
 	$scope.checkFilterParams = function(){
 		$scope.loadAllInformationForKpi();
@@ -209,24 +209,24 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 					break;
 				}
 			}
-		
+
 		}, function(response) {
-			
+
 		});
 	}
-	
+
 
 	$scope.addScheduler= function(cloning){
 		if (!cloning){
-			
-		angular.copy({"frequency":{"cron": {"type":"minute","parameter":{"numRepetition":"1"}}},"delta":true},$scope.selectedScheduler);
-		angular.copy([],$scope.kpi);
-		angular.copy([],$scope.kpiSelected);
-		};
+			angular.copy({"frequency":{"cron": {"type":"minute","parameter":{"numRepetition":"1"}}},"delta":true},$scope.selectedScheduler);
+			angular.copy([],$scope.kpi);
+			angular.copy([],$scope.kpiSelected);
+			$scope.expired = false;
+		}
 		$angularListDetail.goToDetail();
 	}
-	
-	
+
+
 	$scope.fixDataAfterLoad = function(kpiSched){
 		angular.copy(kpiSched,$scope.selectedScheduler);
 		if(kpiSched.frequency.cron!=null){
@@ -235,7 +235,7 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 				$scope.selectedScheduler.frequency.cron.expression = $scope.selectedScheduler.frequency.cron.expression.replace(/\'/g,"\"");
 				$scope.selectedScheduler.frequency.cron = JSON.parse($scope.selectedScheduler.frequency.cron.expression);
 			}
-			
+
 		}else{
 			$scope.selectedScheduler.frequency.cron = {"type":"minute","parameter":{"numRepetition":"1"}};
 		}
@@ -244,7 +244,7 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 		}else{
 			$scope.expired = false;
 		}
-		
+
 		angular.copy(kpiSched.kpis,$scope.selectedScheduler.kpis);
 		if($scope.selectedScheduler.kpis.category!=undefined){
 			for(var i=0;i<$scope.selectedScheduler.kpis.length;i++){
@@ -252,7 +252,7 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 			}
 		}
 	}
-	
+
 	$scope.parseDate = function(date){
 		result = "";
 		if(date == "d/m/Y"){
@@ -273,14 +273,14 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 		$scope.fixDataAfterLoad(item);
 		$scope.addScheduler(true);
 	}
-	
-	
+
+
 
 	$scope.addPlaceHolderMissing = function(){
 		var keys = Object.keys($scope.placeHolder);
 		for(var i=0;i<keys.length;i++){
 			if($scope.selectedScheduler.filters!=undefined){
-				var index = $scope.indexInList(keys[i],$scope.selectedScheduler.filters,"kpiName");	
+				var index = $scope.indexInList(keys[i],$scope.selectedScheduler.filters,"kpiName");
 				if(index !=-1){
 			}else{
 					var objType = {"valueCd":"FIXED_VALUE","valueId":355};
@@ -297,7 +297,7 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 
 						$scope.selectedScheduler.filters.push(obj);
 					}
-				}	
+				}
 				$scope.checkMissingType();
 			}else{
 				$scope.selectedScheduler["filters"]=[];
@@ -312,7 +312,7 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 					var index2 = $scope.indexInList(keys[i],$scope.kpiSelected,"name");
 					obj.kpiId = $scope.kpiSelected[index2].id;
 					obj.kpiVersion = $scope.kpiSelected[index2].version;
-					
+
 
 					$scope.selectedScheduler.filters.push(obj);
 				}
@@ -359,7 +359,7 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 		$scope.clearAllData();
 		$angularListDetail.goToList();
 	}
-	
+
 	$scope.showAction = function(text) {
 //		var toast = $mdToast.simple()
 //		.content(text)
@@ -372,9 +372,9 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 //			if ( response == 'ok' ) {
 //			}
 //		});
-		
+
 		sbiModule_messaging.showInfoMessage(text,"");
-		
+
 	}
 
 	$scope.validateScheduler = function(){
@@ -382,25 +382,25 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 			sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.kbi.scheduler.error.missing.execute.value"),"");
 			return false;
 		}
-		
-		
+
+
 		if ($scope.selectedScheduler.kpis == undefined || $scope.selectedScheduler.kpis.length == 0){
 			sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.kbi.scheduler.error.missing.kpi.list"),"");
 			return false;
 		}
-		
+
 		if($scope.isValidCronFrequency.status==false){
 			sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.kbi.scheduler.error.wrong.cron.interval"),"");
-			return false;	
+			return false;
 		}
-		
+
 		return true;
 	};
-	
+
 	$scope.saveSc=function(){
-		
+
 		if ($scope.validateScheduler() && $scope.completeDomain() && $scope.checkFiltersValue()){
-			
+
 			$scope.showSaveGUI().then(function(response){
 				{}
 			$timeout(function(){
@@ -409,26 +409,26 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 			if($scope.activeSave=="add"){
 			}else{
 			}
-	
+
 			});
 		}else{
 			if(!$scope.completeDomain() || !$scope.checkFiltersValue()){
 				$scope.showAction($scope.translate.load("sbi.schedulerkpi.missingfiltervalue"));
 			}
-			
+
 		}
 	}
-	
-	
+
+
 	$scope.completeDomain = function(){
 		if($scope.selectedScheduler.filters!=undefined){
 			for(var i=0;i<$scope.selectedScheduler.filters.length;i++){
 				var index = $scope.indexInList($scope.selectedScheduler.filters[i].type.valueCd,$scope.listType,"VALUE_CD");
-				
+
 				if(index!=-1){
 					var obj = $scope.listType[index];
 					$scope.selectedScheduler.filters[i].type.valueId = obj["VALUE_ID"]
-					
+
 				}
 			}
 			return true;
@@ -440,9 +440,9 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 			}
 			return true;
 		}
-		
+
 	}
-	
+
 	$scope.checkFiltersValue = function(){
 		if($scope.selectedScheduler.filters!=undefined){
 			for(var i=0;i<$scope.selectedScheduler.filters.length;i++){
@@ -450,13 +450,13 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 					$scope.showAction($scope.translate.load("sbi.schedulerkpi.missingfiltervalue"));
 					return false
 				}
-				
+
 			}
 			return true;
 		}
 		return true;
 	}
-	
+
 //	$scope.showAction = function(text) {
 //		var toast = $mdToast.simple()
 //		.content(text)
@@ -469,14 +469,14 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 //			if ( response == 'ok' ) {
 //			}
 //		});
-//		
+//
 //		sbiModule_messaging.showInfoMessage(text,"");
-//		
+//
 //	}
 		$scope.getNameForBar = function(){
 		return $scope.selectedScheduler.name != undefined ? $scope.selectedScheduler.name : $scope.translate.load('sbi.kpi.skeduler.new');
 	}
-	
+
 	$scope.showSaveGUI= function(){
 		var deferred = $q.defer();
 
@@ -495,11 +495,11 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 		});
 		return deferred.promise;
 	}
-	
+
 	$scope.closeExpired = function(){
 		$scope.expired = false;
 	}
-	
+
 	$scope.tableColumn=[
 	                    {label:"Name",name:"name"},
 	                    {label:"KPI",name:"kpiNames"},
@@ -507,7 +507,7 @@ function kpiTargetControllerFunction($scope,sbiModule_messaging,sbiModule_config
 	                    {label:"End Date",name:"frequency.endDate",comparatorFunction:function(a,b){return 1}},
 	                    {label:"Author",name:"author"},
 	                    {label:"Status",name:"jobStatus"}]
-	
+
 }
 
 
@@ -519,27 +519,27 @@ $scope.sbiModule_messaging = sbiModule_messaging;
 		$mdDialog.cancel();
 
 	}
-	
+
 	$scope.apply = function(){
 		$scope.saveScheduler();
 	}
-	
+
 	$scope.saveScheduler = function(){
 		$scope.saveSchedulerOnDataB();
 		$mdDialog.cancel();
 	};
-	
+
 	$scope.saveSchedulerOnDataB = function(){
-		
+
 		if ($scope.selectedScheduler.name.length > 40){
 			toast.show(toast.simple().content(sbiModule_translate.load("sbi.kbi.scheduler.error.save.name.toolong")).position('top').action('OK'));
 			return;
 			}
 		var tmpScheduler = {};
 		angular.copy($scope.selectedScheduler, tmpScheduler);
-		
+
 		cron.parseForBackend(tmpScheduler.frequency);
-		
+
 		sbiModule_restServices.promisePost("1.0/kpi","saveSchedulerKPI",tmpScheduler)
 		.then(
 		function(response) {
@@ -550,6 +550,6 @@ $scope.sbiModule_messaging = sbiModule_messaging;
 		function(response){
 			sbiModule_restServices.errorHandler(response.data,translate.load("sbi.glossary.error.save"));
 
-		});	
+		});
 	}
 }
