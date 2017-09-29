@@ -22,12 +22,13 @@ function executionLogControllerFunction($scope,sbiModule_translate, sbiModule_me
 						}
 					},function(response) {
 						sbiModule_restServices.errorHandler(response.data,"");
-					})
+					});
+		}else{
+			$scope.kpiValueExecLogList = [];
 		}
-
 	}
-	$scope.tableFunction={
 
+	$scope.tableFunction={
 			download: function(item,evt){
 				$scope.download(item);
 			}
