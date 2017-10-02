@@ -41,6 +41,11 @@
                     scope.bulkSelection = false; 	//initializing bulk selection
                     scope.selectedCells = []; 		//initializing selected cells array, used for bulk selection
                     scope.selectedRows = [];		//initializing selected rows array, used for bulk selection
+                    scope.alignMap = {
+	            		"flex-start":"left",
+	            	 	 "center":"center",
+	            	  	"flex-end":"right"
+                	};
 
                     //returning the column name for the sorting
                     scope.getSortingColumnFilter = function(){
@@ -76,14 +81,17 @@
                     	return style;
                     }
 
+                    //changing the flex align to text-align for the table cells
+
+
+                    scope.flexToAlign = function(map, key, obj){obj["text-align"] = map[key] ? map[key] :"left";}
+
                     //returning the style of the header cell
                     scope.getThStyle = function(thStyle,column){
-                    	var style = thStyle?thStyle:{};
+                    	var style = angular.copy(thStyle?thStyle:{})
                     	if(column.style && column.style.width) style['max-width'] = column.style.width;
                     	if(column.style && column.style.width) style.width = column.style.width;
-                    	if(column.style && column.style.td && column.style.td['justify-content'] == 'flex-end') style['text-align'] = 'right';
-                    	if(column.style && column.style.td && column.style.td['justify-content'] == 'center') style['text-align'] = 'center';
-                    	if(column.style && column.style.td && column.style.td['justify-content'] == 'flex-start') style['text-align'] = 'left';
+                    	if(column.style && column.style.td) scope.flexToAlign(scope.alignMap,column.style.td['justify-content'],style);
                     	return style;
                     }
 
@@ -91,9 +99,7 @@
                     	var summarystyle = angular.copy(scope.styledata.summary?scope.styledata.summary:{});
                     	if(column.style && column.style.width) summarystyle['max-width'] = column.style.width;
                     	if(column.style && column.style.width) summarystyle.width = column.style.width;
-                    	if(column.style && column.style.td && column.style.td['justify-content'] == 'flex-end') summarystyle['text-align'] = 'right';
-                    	if(column.style && column.style.td && column.style.td['justify-content'] == 'center') summarystyle['text-align'] = 'center';
-                    	if(column.style && column.style.td && column.style.td['justify-content'] == 'flex-start') summarystyle['text-align'] = 'left';
+                    	if(column.style && column.style.td) scope.flexToAlign(scope.alignMap,column.style.td['justify-content'],summarystyle);
                     	return summarystyle;
                     }
 
