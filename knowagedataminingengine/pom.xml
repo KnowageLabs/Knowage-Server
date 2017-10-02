@@ -77,9 +77,16 @@
 		</dependency>
 		
 		<dependency>
-		    <groupId>com.github.lucarosellini.rJava</groupId>
-		    <artifactId>REngine</artifactId>
-		    <version>0.9-7</version>
+			<groupId>com.github.lucarosellini.rJava</groupId>
+			<artifactId>JRIEngine</artifactId>
+			<version>0.9-7</version>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.github.lucarosellini.rJava</groupId>
+			<artifactId>JRI</artifactId>
+			<version>0.9-7</version>
 			<scope>compile</scope>
 		</dependency>
 		
