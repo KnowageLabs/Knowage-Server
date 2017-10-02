@@ -63,7 +63,6 @@ import it.eng.knowage.engines.svgviewer.map.utils.SVGMapSaver;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
@@ -1517,7 +1516,7 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 			jsonOEnv.remove("ENV_USER_PROFILE"); // clean profile info for correct url
 			jsonOEnv.remove("level");
 			strEnv = "&" + JSONUtils.getQueryString(jsonOEnv);
-			strEnv = SpagoBIUtilities.encode(strEnv.substring(0, strEnv.length() - 1));
+			// strEnv = SpagoBIUtilities.encode(strEnv.substring(0, strEnv.length() - 1)); //2017-29-30 commented because changes the parameter values
 		} catch (JSONException je) {
 			logger.error("An error occured while convert map [env] to json object: " + je);
 		}
