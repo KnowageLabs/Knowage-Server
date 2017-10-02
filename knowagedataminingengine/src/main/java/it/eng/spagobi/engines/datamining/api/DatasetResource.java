@@ -17,18 +17,6 @@
  */
 package it.eng.spagobi.engines.datamining.api;
 
-import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
-import it.eng.spagobi.engines.datamining.common.AbstractDataMiningEngineResource;
-import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
-import it.eng.spagobi.engines.datamining.compute.DataMiningRExecutor;
-import it.eng.spagobi.engines.datamining.compute.DataMiningUtils;
-import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
-import it.eng.spagobi.engines.datamining.model.DataMiningDataset;
-import it.eng.spagobi.engines.datamining.model.DataMiningScript;
-import it.eng.spagobi.engines.datamining.model.Output;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -49,6 +37,18 @@ import javax.ws.rs.core.Context;
 import org.apache.clerezza.jaxrs.utils.form.FormFile;
 import org.apache.clerezza.jaxrs.utils.form.MultiPartBody;
 import org.apache.log4j.Logger;
+
+import it.eng.spagobi.engines.datamining.DataMiningEngineInstance;
+import it.eng.spagobi.engines.datamining.common.AbstractDataMiningEngineResource;
+import it.eng.spagobi.engines.datamining.common.utils.DataMiningConstants;
+import it.eng.spagobi.engines.datamining.compute.DataMiningRExecutor;
+import it.eng.spagobi.engines.datamining.compute.DataMiningUtils;
+import it.eng.spagobi.engines.datamining.model.DataMiningCommand;
+import it.eng.spagobi.engines.datamining.model.DataMiningDataset;
+import it.eng.spagobi.engines.datamining.model.DataMiningScript;
+import it.eng.spagobi.engines.datamining.model.Output;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 @Path("/1.0/dataset")
 @ManageAuthorization
@@ -172,51 +172,48 @@ public class DatasetResource extends AbstractDataMiningEngineResource {
 		logger.debug("IN");
 		String fileName = "";
 
-		final FormFile fileO = input.getFormFileParameterValues("fieldName")[0];
+		final FormFile fileO = input.getFormFileParameterValues(fieldName)[0];
 		fileName = fileO.getFileName();
 
-		try{
-				byte[] bytes = fileO.getContent();
+		try {
+			byte[] bytes = fileO.getContent();
 
-				double megabytes = (bytes.length / (1024 * 1024));
-				if (megabytes >= 50) {
-					throw new SpagoBIEngineRuntimeException("Dataset too big: exceeded 50MB");
-				}
-
-				File dirToSaveDS = new File(DataMiningUtils.getUserResourcesPath(getUserProfile()) + fieldName);
-
-				if (!dirToSaveDS.mkdirs()) {
-					logger.debug("Creating" + dirToSaveDS.getAbsolutePath());
-				}
-
-				logger.debug("created dir");
-				//
-				File[] dsfiles = dirToSaveDS.listFiles();
-				if (dsfiles.length >= 1) {
-					for (int i = 0; i < dsfiles.length; i++) {
-						File olFile = dsfiles[i];
-						olFile.delete();
-					}
-				}
-				logger.debug("Left just une file per dataset");
-				// // constructs upload file path
-				fileName = dirToSaveDS.getPath() + "/" + Paths.get(fileName).getFileName().toString();
-
-				logger.debug("Constructs upload file path " + fileName);
-				writeFile(bytes, fileName);
-
-			} catch (IOException e) {
-				logger.error(e.getMessage());
-				throw new SpagoBIEngineRuntimeException("Error loading file dataset", e);
+			double megabytes = (bytes.length / (1024 * 1024));
+			if (megabytes >= 50) {
+				throw new SpagoBIEngineRuntimeException("Dataset too big: exceeded 50MB");
 			}
 
+			File dirToSaveDS = new File(DataMiningUtils.getUserResourcesPath(getUserProfile()) + fieldName);
+
+			if (!dirToSaveDS.mkdirs()) {
+				logger.debug("Creating" + dirToSaveDS.getAbsolutePath());
+			}
+
+			logger.debug("created dir");
+			//
+			File[] dsfiles = dirToSaveDS.listFiles();
+			if (dsfiles.length >= 1) {
+				for (int i = 0; i < dsfiles.length; i++) {
+					File olFile = dsfiles[i];
+					olFile.delete();
+				}
+			}
+			logger.debug("Left just une file per dataset");
+			// // constructs upload file path
+			fileName = dirToSaveDS.getPath() + "/" + Paths.get(fileName).getFileName().toString();
+
+			logger.debug("Constructs upload file path " + fileName);
+			writeFile(bytes, fileName);
+
+		} catch (IOException e) {
+			logger.error(e.getMessage());
+			throw new SpagoBIEngineRuntimeException("Error loading file dataset", e);
+		}
 
 		logger.debug("OUT");
 		return getJsonSuccessTrue();
 
 	}
-
-
 
 	// save to somewhere
 	private void writeFile(byte[] content, String filename) throws IOException {
