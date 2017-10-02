@@ -680,7 +680,7 @@ sbiM.service('sbiModule_download', function(sbiModule_config,sbiModule_logger, s
 			image -> typeFile = 'image/[png | jpeg | gif |...]'
 	 */
 	this.getBlob = function(data, nameFile, typeFile, extensionFile, mimeType,fileAndExtension){
-		var fileAndExtension = fileAndExtension.substring(21)
+		var fileAndExtension = fileAndExtension!=undefined ? fileAndExtension.substring(21) :  nameFile + '.'  + extensionFile;
 		var blob = new Blob([data],{type: typeFile}); 
 		var urlCreator = window.URL || window.webkitURL || window.mozURL || window.msURL;
 		var url = urlCreator !== undefined ? urlCreator.createObjectURL(blob) : JSON.stringify(blob);
