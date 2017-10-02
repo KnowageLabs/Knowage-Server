@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /**
  * @authors Giovanni Luca Ulivo (GiovanniLuca.Ulivo@eng.it)
  * v0.0.1
- * 
+ *
  */
 (function() {
 angular.module('cockpitModule').directive('cockpitStyleConfigurator',function($compile){
@@ -34,28 +34,28 @@ angular.module('cockpitModule').directive('cockpitStyleConfigurator',function($c
                     pre: function preLink(scope, element, attrs, ctrl, transclud) {
                     },
                     post: function postLink(scope, element, attrs, ctrl, transclud) {
-                    	 
+
                     	scope.ngModel = scope.$parent.$eval(attrs.ngModel);
-                    	
+
                     	if(scope.ngModel==undefined){
                     		scope.$parent.$eval(attrs.ngModel+"={}");
                     		scope.ngModel = scope.$parent.$eval(attrs.ngModel);
 //                    		scope.ngModel={};
-                    	} 
-                    	
+                    	}
+
                     	if(attrs.widget!=undefined){
                     		scope.isWidget=true;
                     		scope.initModel();
                     	}else{
                     		scope.isWidget=false;
                     	}
-                    	
+
                     	scope.borderColorOptions.disabled=!scope.ngModel.borders;
-                    
+
                     	 transclude(scope, function (clone, scope) {
                              angular.element(element[0].querySelector("md-content")).prepend(clone);
                          });
-                    
+
                     }
                 };
 		   	}
@@ -75,7 +75,7 @@ angular.module('cockpitModule').directive('cockpitStyleCustomWidgetConfigurator'
                  pre: function preLink(scope, element, attrs,ctrl, transclud) {
                  },
                  post: function postLink(scope, element, attrs,ctrl, transclud) {
-                	 
+
                 	ctrl.labelWidget = scope.$parent.$eval(attrs.label);
                 	ctrl.layoutType = attrs.layout;
                 	 if(ctrl.layoutType==undefined){
@@ -96,12 +96,12 @@ function cockpitStyleConfiguratorControllerFunction($scope,sbiModule_translate,c
 	$scope.angular=angular;
 	$scope.cockpitStyle={};
 	angular.copy(cockpitModule_template.configuration.style,$scope.cockpitStyle);
-	
+
 	$scope.initModel=function(){
 		angular.copy(angular.merge({},$scope.cockpitStyle,$scope.ngModel),$scope.ngModel)
 	}
-	
-	
+
+
 	$scope.resetBordersStyle=function(){
 		$scope.ngModel.borders=$scope.cockpitStyle.borders
 		angular.copy($scope.cockpitStyle.border,$scope.ngModel.border);
@@ -111,13 +111,13 @@ function cockpitStyleConfiguratorControllerFunction($scope,sbiModule_translate,c
 		$scope.ngModel.headerHeight=0;
 		angular.copy($scope.cockpitStyle.title,$scope.ngModel.title);
 	}
-	
+
 	$scope.colorPickerOptions = {
 			placeholder:$scope.translate.load('sbi.cockpit.color.select'),
 			format:'rgb',
-			disabled: ($scope.ngModel && $scope.ngModel.titles) ? false : true
+			disabled: ($scope.cockpitStyle && $scope.cockpitStyle.titles) ? false : true
 		}
-	
+
 	$scope.toggleTitle = function(){
 		$scope.colorPickerOptions.disabled = $scope.ngModel.titles;
 	}
@@ -125,9 +125,9 @@ function cockpitStyleConfiguratorControllerFunction($scope,sbiModule_translate,c
 		$scope.ngModel.shadows=$scope.cockpitStyle.shadows;
 		angular.copy($scope.cockpitStyle.shadow,$scope.ngModel.shadow);
 	}
-	
+
 	$scope.borderColorOptions={format:'rgb',disabled:false};
-	
+
 	$scope.toggleBorderVisibility=function(){
 		$scope.borderColorOptions.disabled=!$scope.ngModel.borders
 	}
@@ -185,7 +185,7 @@ function cockpitStyleConfiguratorControllerFunction($scope,sbiModule_translate,c
 		                    	value:'0px 8px 19px #ccc'
 		                    },
 	                    ];
- 
+
 }
 
 
