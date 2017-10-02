@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /**
  * @authors Giovanni Luca Ulivo (GiovanniLuca.Ulivo@eng.it)
  * v0.0.1
- * 
+ *
  */
 
 
@@ -28,7 +28,7 @@ var addWidgetFunctionality=function(type,config){
 	wf[type]=config;
 };
 
-//to add a widget type in the cockpitModule_widgetConfigurator , 
+//to add a widget type in the cockpitModule_widgetConfigurator ,
 //call the function addWidgetFunctionality from the js of the widget directive
 angular.module("cockpitModule").factory("cockpitModule_widgetConfigurator",function(){
 	var wc={};
@@ -41,8 +41,8 @@ angular.module("cockpitModule").factory("cockpitModule_widgetConfigurator",funct
 angular.module("cockpitModule").service("cockpitModule_widgetServices",function($rootScope,cockpitModule_widgetConfigurator,cockpitModule_template,$mdDialog,sbiModule_translate,$timeout,$q,cockpitModule_datasetServices,sbiModule_restServices,cockpitModule_properties,cockpitModule_widgetSelection,cockpitModule_templateServices){
 
 	var wi=this;
-	
-	var fullPageWidget=false;  
+
+	var fullPageWidget=false;
 	var widgetInit=0;
 	var widgetCount=cockpitModule_templateServices.getNumberOfWidgets();
 	var widIni= $rootScope.$on("WIDGET_INITIALIZED",function(){
@@ -54,11 +54,11 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 			widIni();
 			$rootScope.$broadcast('ALL_WIDGET_INITIALIZED');
 			cockpitModule_properties.all_widget_initialized=true;
-		} 
+		}
 	});
 
 	this.realtimeSelections = [];
-	
+
 	addWidgetFunctionality=function(type,config){
 		cockpitModule_widgetConfigurator[type]=config;
 	};
@@ -77,6 +77,17 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 		return ret;
 	}
 
+	this.getCokpitIndexFromProperty = function(sheetIndex){
+		var indexProperty;
+		for(sheet in cockpitModule_template.sheets){
+			if(cockpitModule_template.sheets[sheet].index == sheetIndex){
+				indexProperty = sheet;
+				break;
+			}
+		}
+		return indexProperty;
+	}
+
 	this.getWidgets=function(sheetIndex){
 		return cockpitModule_template.sheets[sheetIndex].widgets;
 	};
@@ -84,15 +95,15 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 	this.addWidget=function(sheetIndex,item){
 		cockpitModule_template.sheets[sheetIndex].widgets.push(item)
 	};
-	
+
 	this.loadDatasetRecords = function(ngModel, page, itemPerPage,columnOrdering, reverseOrdering){
 		if(ngModel.dataset!=undefined && ngModel.dataset.dsId!=undefined){
 			var dataset = cockpitModule_datasetServices.getDatasetById(ngModel.dataset.dsId);
-			
+
 			//if it's a realtime dataset don't use backend filter on charts
 			if (dataset.isRealtime && ngModel.content && ngModel.content.filters) {
 				var ngModelCopy = {};
-				angular.copy(ngModel, ngModelCopy);				
+				angular.copy(ngModel, ngModelCopy);
 				ngModelCopy.content.filters = [];
 				return cockpitModule_datasetServices.loadDatasetRecordsById(ngModel.dataset.dsId,page,itemPerPage,columnOrdering, reverseOrdering, ngModelCopy);
 			}
@@ -100,14 +111,14 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 		}
 		return null ;
 	}
-		
+
 	this.isFullPageWidget=function()
 	{return fullPageWidget;}
-	
+
 	this.setFullPageWidget=function(boolean)
 	{ fullPageWidget=boolean}
-	
-	
+
+
 	function DialogController($scope, $mdDialog) {
 	   $scope.hide = function() {
 	     $mdDialog.hide();
@@ -117,12 +128,13 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 	     $mdDialog.cancel();
 	   };
 	}
-	
-	
-	
+
+
+
 	this.deleteWidget=function(sheetIndex,widget,nomessage){
+		var indexProperty = wi.getCokpitIndexFromProperty(sheetIndex);
 		if(nomessage == true){
-			cockpitModule_template.sheets[sheetIndex].widgets.splice(cockpitModule_template.sheets[sheetIndex].widgets.indexOf(widget),1);
+			cockpitModule_template.sheets[indexProperty].widgets.splice(cockpitModule_template.sheets[indexProperty].widgets.indexOf(widget),1);
 			this.setFullPageWidget(false);
 		}else{
 			var confirm = $mdDialog.confirm()
@@ -132,8 +144,8 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 			.ok(sbiModule_translate.load("sbi.ds.wizard.confirm"))
 			.cancel(sbiModule_translate.load("sbi.ds.wizard.cancel"));
 			$mdDialog.show(confirm).then(function() {
-				cockpitModule_template.sheets[sheetIndex].widgets.splice(cockpitModule_template.sheets[sheetIndex].widgets.indexOf(widget),1);
-				
+				cockpitModule_template.sheets[indexProperty].widgets.splice(cockpitModule_template.sheets[indexProperty].widgets.indexOf(widget),1);
+
 				wi.setFullPageWidget(false);
 			});
 		}
@@ -167,7 +179,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 	};
 
 	this.refreshWidget = function(element, config, nature, options, data){
-		
+
 		var width = angular.element(element)[0].parentElement.offsetWidth;
 		var height = angular.element(element)[0].parentElement.offsetHeight;
 		if(data == undefined) {
@@ -190,7 +202,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 						return;
 					}
 				}
-				
+
 				var dsRecords = this.loadDatasetRecords(config,options.page, options.itemPerPage,options.columnOrdering, options.reverseOrdering);
 				if(dsRecords == null){
 					$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:undefined,nature:nature});
@@ -204,7 +216,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 					if (options.type && options.type!="chart"){
 						$rootScope.$broadcast("WIDGET_EVENT"+config.id,"WIDGET_SPINNER",{show:true});
 					}
-					
+
 					dsRecords.then(function(data){
 						$rootScope.$broadcast("WIDGET_EVENT"+config.id,"WIDGET_SPINNER",{show:false});
 						$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:data,nature:nature});
@@ -213,7 +225,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 						console.log("Error retry data");
 					});
 				}
-			} 
+			}
 		}else {
 			$rootScope.$broadcast("WIDGET_EVENT"+config.id,"REFRESH",{element:element,width:width,height:height,data:data,nature:nature});
 		}
@@ -227,8 +239,8 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 		});
 	}
 
-	
 
-	
+
+
 });
 
