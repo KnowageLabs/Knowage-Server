@@ -52,7 +52,7 @@ public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 
 	// private String[] libs = { "org.eclipse.persistence.core_2.1.1.v20100817-r8050.jar", "javax.persistence_2.0.1.v201006031150.jar",
 	// "hibernate-spatial-1.1.1.jar", "jts-1.13.jar", "hibernate3.6.2.jar" };
-	private String[] libs = { "javax.persistence-2.0.1.jar", "hibernate-3.6.2.jar", "jts-1.13.jar" };
+	private String[] libs = { "javax.persistence-2.0.5.jar", "hibernate-core-3.6.2.Final.jar", "jts-1.13.jar" };
 
 	private static Logger logger = LoggerFactory.getLogger(JpaMappingClassesGenerator.class);
 

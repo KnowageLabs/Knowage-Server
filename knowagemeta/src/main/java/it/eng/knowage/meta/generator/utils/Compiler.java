@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.tools.Diagnostic;
@@ -30,12 +31,16 @@ import javax.tools.DiagnosticCollector;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
+import javax.tools.StandardLocation;
 import javax.tools.ToolProvider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.io.Files;
+
+import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 /**
  * This class is used by Knowage Meta to compile generated java class and to create JAR file.
@@ -122,6 +127,14 @@ public class Compiler {
 
 		logger.debug("Get compilation units");
 		Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjectsFromFiles(files);
+		try {
+			binDir.mkdir();
+			fileManager.setLocation(StandardLocation.CLASS_OUTPUT, Arrays.asList(binDir));
+			fileManager.setLocation(StandardLocation.CLASS_PATH,libs);
+		} catch (IOException e) {
+			logger.error("Cannot set output directory / classpath for compiler ");
+		}
+
 		logger.debug("Execute java compiler task");
 		result = compiler.getTask(null, fileManager, diagnostics, null, null, compilationUnits).call();
 		logger.debug("Result of executed task is: " + result);
@@ -134,8 +147,9 @@ public class Compiler {
 
 		if (!diagnostics.getDiagnostics().isEmpty()) {
 			for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
-				logger.debug("Found diagnostic error on " + diagnostic.getSource().toUri() + "- line " + diagnostic.getLineNumber());
-				log.append(MessageFormat.format("Error on line {0} in {1}\n", diagnostic.getLineNumber(), diagnostic.getSource().toUri()));
+				logger.debug("Found diagnostic error on " + diagnostic.getSource().toUri() + "- line " + diagnostic.getLineNumber() + "- Error: "+diagnostic.getMessage(null));
+				log.append(MessageFormat.format(diagnostic.getKind().toString()+" on line {0} in {1}\n  Detail: {2} \n", diagnostic.getLineNumber(),diagnostic.getSource().toUri(),diagnostic.getMessage(null)));
+				log.append("--------------------------------------------- \n");
 				try {
 					diagnostic.getSource().getCharContent(true);
 				} catch (IOException e) {
@@ -146,9 +160,10 @@ public class Compiler {
 				// diagnostic.getSource().toUri());
 			}
 		}
+		log.flush();
 
+		/*
 		logger.trace("IN");
-
 		String command = "\"" + srcDir + "\" -classpath \"" + getClasspath() + "\" -d \"" + binDir + "\" -source 1.5";
 		logger.info("Compile command is equal to [{}]", command);
 
@@ -157,6 +172,8 @@ public class Compiler {
 		logger.info("Mapping files compiled succesfully: [{}]", result);
 
 		logger.trace("OUT");
+		*/
+	
 
 		return result;
 	}
@@ -173,6 +190,8 @@ public class Compiler {
 
 		return classPath;
 	}
+	
+
 
 	// ==========================================================================================
 	// ACCESSOR METHODS
