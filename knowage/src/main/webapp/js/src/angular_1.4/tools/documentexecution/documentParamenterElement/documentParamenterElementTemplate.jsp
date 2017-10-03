@@ -32,14 +32,12 @@
 	
 		<!-- lov LOOKUP single and multiple input -->
 		
-		<div ng-if="parameter.selectionType=='LOOKUP'">
-			<div layout="row" layout-align="start">
-				<md-button class="" id="{{::parameter.urlName}}"
-						ng-click="popupLookupParameterDialog(parameter)" aria-label="{{parameter.label}}">
-					<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >{{parameter.label}}</label>
-					<i class="fa fa-external-link"></i>
-				</md-button>
+		<div ng-if="parameter.selectionType=='LOOKUP'" class="lookupParameter">
+			<div layout="row" layout-align="start center">
+				<label ng-class="showRequiredFieldMessage(parameter) ? 'requiredField' : 'norequiredField'" >{{parameter.label}}</label> 
+				<md-icon md-font-icon="fa fa-external-link" id="{{::parameter.urlName}}" ng-click="popupLookupParameterDialog(parameter)"></md-icon>
 			</div>
+			
 			<span ng-show="(parameter.multivalue && parameter.parameterValue && parameter.parameterValue.length > 0)">				
 				<md-chips ng-model="parameter.parameterValue" readonly="true">
 					 <md-chip-template>
