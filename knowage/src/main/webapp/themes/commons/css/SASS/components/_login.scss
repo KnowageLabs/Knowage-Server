@@ -201,6 +201,21 @@
 	    color: rgb(255, 255, 255);
 	    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.43);
 	}
+	.signUpContainer {
+		md-card {
+			background-color: rgba(238, 238, 238, 0.38);
+			.headerLogoImg {
+
+			}
+			md-input-container {
+				.md-input-has-value {
+					label {
+						color: white !important;
+					}
+				}	
+			}
+		}
+	}
 }
 
 @media all and (max-width: 800px) {

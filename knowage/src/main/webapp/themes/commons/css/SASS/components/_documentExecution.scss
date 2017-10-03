@@ -159,13 +159,21 @@
 	
 	document-paramenter-element {
 		overflow: hidden;
+		align-items: center;
+		&:nth-child(even){
+			background-color: $contentBackground;
+		}
 		label {
 			font-size: $baseFontSize;
     		color: $secondaryColor;
 		}
 		md-input-container {
+			margin-bottom: 8px;
 			label {
 				font-size: $headerFontSize;
+			}
+			input {
+				font-size: $smallFontSize;
 			}
 		}
 		.datePicker {
@@ -179,6 +187,54 @@
 		}
 		button.md-icon-button.md-button {
 	    	margin: 5px 0px;
+		}
+		md-radio-button {
+			outline: none;
+			._md-container {
+				width: 14px;
+				height: 14px;
+				._md-off, ._md-on {
+					width: 14px;
+					height: 14px;
+				}
+			}
+			._md-label {
+				font-size: $smallFontSize;
+			}
+		}
+		md-checkbox {
+			margin-bottom: 0;
+			line-height: 20px;
+			._md-container {
+				width: 14px;
+				height: 14px;
+				._md-icon {
+					width: 14px;
+					height: 14px;
+					&:after {
+					    left: 3.5;
+    					top: 0;
+					}
+				}
+			}
+			._md-label {
+				font-size: $smallFontSize;
+			}
+		}
+		md-select-value {
+			font-size: $smallFontSize;
+		}
+		md-chips {
+			font-size: $smallFontSize;
+			md-chips-wrap {
+				md-chip {
+					margin-top: 0;
+					height: 24px;
+				}
+				._md-chip-input-container {
+					display: none;
+				}
+			}
 		}
 	}
 }
