@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,17 +11,17 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 var app = angular.module('dataMiningApp', ['ngMaterial', 'sbiModule']);
 
 app.controller('Controller', ['sbiModule_logger', 'sbiModule_config', 'datamining_template','sbiModule_translate','sbiModule_restServices', '$scope', '$q', '$timeout', '$mdDialog','$sce', dataMiningFunction ]);
 
 function dataMiningFunction (sbiModule_logger, sbiModule_config, datamining_template,sbiModule_translate, sbiModule_restServices, $scope, $q, $timeout,  $mdDialog,$sce) {
-	
+
 	/*****************************/
 	/** Initialization          **/
 	/*****************************/
@@ -58,25 +58,25 @@ function dataMiningFunction (sbiModule_logger, sbiModule_config, datamining_temp
 	//$scope.zoomY=100;
 	$scope.isChrome=!!window.chrome && !!window.chrome.webstore;
 
-	
-	
-	
+
+
+
 	$scope.pendingRequest = 0;
 	$scope.htmlShow="HTMLSHOW";
-	 
+
 	$scope.config.params = {
 			'SBI_EXECUTION_ID' : datamining_template.ajaxBaseParams.SBI_EXECUTION_ID ,
 			'DOC_LABEL' : datamining_template.ajaxBaseParams.DOC_LABEL
 	};
-	
 
-	
+
+
 	var restServices = sbiModule_restServices;
-	
+
 	/*****************************/
 	/** Promise Functions       **/
 	/*****************************/
-	
+
 	//GET the result of [commandName, output, variables]
 	 //if succeed, save the result in the matrix result[commandName][output.outputName] and set some values
 	 //if necessary, convert result in html (e.g. result is image base64)
@@ -110,17 +110,17 @@ function dataMiningFunction (sbiModule_logger, sbiModule_config, datamining_temp
 						 $scope.results[commandName][output.outputName].error = data.error;
 					 }
 					 $scope.pendingRequest--;
-						
+
 					 //added
 					 if($scope.results[commandName][output.outputName].zoomX==undefined)
 					 {
 						 $scope.results[commandName][output.outputName].zoomX=100;
 //						 $scope.$watch('results['+commandName+']'+'['+output.outputName+'].zoomX',function(){
-//							 
+//
 //							 $scope.results[commandName][output.outputName].backgroundImgStyle={ 'background-image' : "url(\'"+$scope.results[commandName][output.outputName].result+"\')", 'background-repeat':'no-repeat', 'background-size':""+$scope.results[commandName][output.outputName].zoomX+"% "+ $scope.results[commandName][output.outputName].zoomY+"%"};
 //
 //						 });
-					 }	 
+					 }
 					 if($scope.results[commandName][output.outputName].zoomY==undefined)
 					 {
 						 $scope.results[commandName][output.outputName].zoomY=100;
@@ -128,8 +128,8 @@ function dataMiningFunction (sbiModule_logger, sbiModule_config, datamining_temp
 //							 $scope.results[commandName][output.outputName].backgroundImgStyle={ 'background-image' : "url(\'"+$scope.results[commandName][output.outputName].result+"\')", 'background-repeat':'no-repeat', 'background-size':""+$scope.results[commandName][output.outputName].zoomX+"% "+ $scope.results[commandName][output.outputName].zoomY+"%"};
 //						 });
 
-					 }	 
-					
+					 }
+
 					 $scope.results[commandName][output.outputName].backgroundImgStyle={ 'background-image' : "url(\'"+$scope.results[commandName][output.outputName].result+"\')", 'background-repeat':'no-repeat', 'background-size':""+$scope.results[commandName][output.outputName].zoomX+"% "+ $scope.results[commandName][output.outputName].zoomY+"%"};
 
 					 //$scope.backgroundImgStyle={ 'background-image' : "url(\'"+$scope.results[commandName][output.outputName].result+"\')", 'background-repeat':'no-repeat', 'background-size':""+$scope.results[commandName][output.outputName].zoomX+"% "+ $scope.results[commandName][output.outputName].zoomY+"%"};
@@ -142,7 +142,7 @@ function dataMiningFunction (sbiModule_logger, sbiModule_config, datamining_temp
 					if (data){
 						var idxBegin = data.indexOf("<body>") + "<body>".length;
 						var idxEnd = data.indexOf("</body>");
-						error = error  + ".\n Message: " + data.substring(idxBegin,idxEnd); 
+						error = error  + ".\n Message: " + data.substring(idxBegin,idxEnd);
 					}
 					$scope.results[commandName][output.outputName].error = error;
 					$scope.log.error(error);
@@ -153,7 +153,7 @@ function dataMiningFunction (sbiModule_logger, sbiModule_config, datamining_temp
 				$scope.log.error('Promise Result error ' + error);
 				$scope.pendingRequest--;
 		 });
-		 
+
 		 return promiseResult;
 	 }
 	//GET requests for getVariables and setAutoMode
@@ -172,22 +172,22 @@ function dataMiningFunction (sbiModule_logger, sbiModule_config, datamining_temp
 				.success(function(data){
 					var tmpConfig = angular.fromJson(angular.toJson($scope.config));
 					output.variables = data;
-					//Initialize currentVal with defaultVal, used for implementing updating and reset variables 
+					//Initialize currentVal with defaultVal, used for implementing updating and reset variables
 					 for ( var i = 0 ; output.variables != null && i < output.variables.length && output.variables[i].currentVal === undefined ; i++){
 						 output.variables[i].currentVal =  output.variables[i].defaultVal;
 					 }
-					//GET for set the autoMode of the command (autoMode = 'auto' is set for server purpose) 
+					//GET for set the autoMode of the command (autoMode = 'auto' is set for server purpose)
 					var urlSetAutoMode = $scope.pathRest.output+'/'+$scope.pathRest.setAutoMode+'/'+output.outputName;
 					restServices.get($scope.pathRest.vers, urlSetAutoMode, null, tmpConfig)
 					.success(function(data){
 						var parameters = {};
 						parameters.commandName = commandName;
 						parameters.singleOutput = output;
-						
-						promiseResult.resolve(parameters);
-						
 
-						
+						promiseResult.resolve(parameters);
+
+
+
 					})
 					.error(function(data, status){
 						promiseResult.reject();
@@ -198,14 +198,14 @@ function dataMiningFunction (sbiModule_logger, sbiModule_config, datamining_temp
 					promiseResult.reject();
 					$scope.log.error('GET SINGLE OUTPUT error of ' + data + ' with status :' + status);
 				});
-			
+
 		}, function(error) {
 			promiseResult.reject();
 			$scope.log.error('Promise SingleOutput error ' + error);
 		});
 		return promiseSingleOutput ;
 	}
-	
+
 	//GET requests for dataset and preparing the server
 	//if succeed, for each output of the array creates a SingleOutputPromise [commandName, output]
 	$scope.createOutputsPromise = function (){
@@ -235,17 +235,17 @@ function dataMiningFunction (sbiModule_logger, sbiModule_config, datamining_temp
 					restServices.get($scope.pathRest.vers, urlCommand, null, tmpConfig)
 					.success(function(data){
 						for (var i = 0; i < outputs.length; i++){
-							if (outputs[i].outputMode == "auto"){
+							if (outputs[i].outputMode == "auto" || (outputs[i].outputMode == "manual" && outputs.length == 1)){
 								$scope.idx_output = i;
 								var singleOutputPromise = $scope.createSingleOutputPromise();
 								var parameters = {};
 								parameters.singleOutput = outputs[i];
 								parameters.commandName =  commandName;
 								singleOutputPromise.resolve(parameters);
-								
+
 								break;
 							}
-						
+
 						}
 					})
 					.error(function(data, status){
@@ -266,7 +266,7 @@ function dataMiningFunction (sbiModule_logger, sbiModule_config, datamining_temp
 		});
 		return promiseOutput;
 	}
-	
+
 	//Create a promise for outputs array
 	$scope.createCommandPromise = function (){
 		var promiseCommands = $q.defer();
@@ -281,10 +281,10 @@ function dataMiningFunction (sbiModule_logger, sbiModule_config, datamining_temp
 					  if(cmd.variables[i].name==key)
 					  {
 						  cmd.variables[i].currentVal =  analyticalDriverString[key];
-					  }	  	  
+					  }
 				  }
-				}	
-				
+				}
+
 //				cmd.variables[i].currentVal =  cmd.variables[i].defaultVal;
 //				var analyticalDriverString2=analyticalDriverString;
 //				for (var key in analyticalDriverString) {
@@ -298,20 +298,20 @@ function dataMiningFunction (sbiModule_logger, sbiModule_config, datamining_temp
 			parameters.commandName =  cmd.name;
 			outputsPromise.resolve(parameters);
 		}, function(error) {
-			outputsPromise.reject(); 
+			outputsPromise.reject();
 			$scope.log.error('Promise Command error ' + error);
 		});
 		return promiseCommands;
 	}
 
-	
+
 	/*****************************/
 	/** START                   **/
 	/*****************************/
 	$scope.commandPromise = $scope.createCommandPromise();
 	var tmpConfig = angular.copy($scope.config);
 	//STARTING the chain of promise, is promise is a restService command
-	// GET command -> GET datasets -> GET ouputs -> GET results   
+	// GET command -> GET datasets -> GET ouputs -> GET results
 	restServices.get($scope.pathRest.vers, $scope.pathRest.command, null, tmpConfig)
 	.success(
 			function(data) {
@@ -332,11 +332,11 @@ function dataMiningFunction (sbiModule_logger, sbiModule_config, datamining_temp
 			.error(function(data, status) {
 				$scope.commandPromise.reject();
 			});
-	
+
 	/*****************************/
 	/** Support Function        **/
 	/*****************************/
-	
+
 	//When tab is selected, if not present the command result, calculate result
 	$scope.calculateResult = function(cmd){
 		commandName = cmd.name;
@@ -344,10 +344,10 @@ function dataMiningFunction (sbiModule_logger, sbiModule_config, datamining_temp
 			 $scope.createCommandPromise().resolve(cmd);
 		}
 	};
-	
+
 	//When an output tab is selected, get the result if not already present in results
 	$scope.getOutputResultFromTabClick = function (cmd,output){
-		if ($scope.results[cmd.name] == undefined || $scope.results[cmd.name][output.outputName] == undefined){			
+		if ($scope.results[cmd.name] == undefined || $scope.results[cmd.name][output.outputName] == undefined){
 			var singleOutputPromise = $scope.createSingleOutputPromise();
 			var parameters = {};
 			parameters.commandName =  cmd.name;
@@ -360,31 +360,31 @@ function dataMiningFunction (sbiModule_logger, sbiModule_config, datamining_temp
 
 		}
 	}
-	
+
 	//If the command has files, show buttons to upload file
 	$scope.visibilityUploadButton = function (commandName){
 		var datasets = $scope.datasets[commandName];
 		var enable = false;
-		for (var i = 0 ; datasets !== undefined && i < datasets.length ; i++){			
+		for (var i = 0 ; datasets !== undefined && i < datasets.length ; i++){
 			if (datasets[i] !== undefined && datasets[i].type == 'file' && datasets[i].canUpload == true){
 				enable= true;
 			}
 		}
 		$scope.visibleUploadButton = enable;
 	};
-	
+
 	$scope.chooseFile = function (){
 		var input = angular.element(document).find('#uploadFile');
 		input.triggerHandler('click');
 	};
-	
+
 	$scope.setFileName = function (element){
 		$scope.file = element.files[0];
 		$timeout(function(){
 			$scope.fileName = element.files[0].name;
 		},0,true);
 	};
-	
+
 	$scope.uploadFile = function(cmd,dataset){
 		var commandName = cmd.name;
 		if ($scope.file !== undefined  && $scope.file.name !== undefined && $scope.file.name.length > 0){
@@ -400,7 +400,7 @@ function dataMiningFunction (sbiModule_logger, sbiModule_config, datamining_temp
 			}
 		}
 	};
-	
+
 	$scope.createPromiseUpload = function(promiseUpload, datasetName, file, conf){
 		var that = {};
 		that.datasetName = datasetName;
@@ -433,7 +433,7 @@ function dataMiningFunction (sbiModule_logger, sbiModule_config, datamining_temp
 			$scope.log.error('POST LoadDataset error of ' + data + ' with status :' + status);
 		 });
 	};
-	
+
 	//after dataset upload, rerun the script of the selected command
 	$scope.rerunScript = function (cmd){
 		 var commandPromise = $scope.createCommandPromise();
@@ -446,23 +446,23 @@ function dataMiningFunction (sbiModule_logger, sbiModule_config, datamining_temp
 		 $scope.file = undefined;
 		 $scope.fileName='';
 	};
-	
+
 	$scope.setVariable= function(cmd, output, variable, action, type){
-		
-		 //find commandName and outputName from the tabs selected 
+
+		 //find commandName and outputName from the tabs selected
 		 var commandName = cmd.name;
 		 var variables = type == 'command' ?  cmd.variables : output.variables;
 		 var tmpConfig = angular.fromJson(angular.toJson($scope.config));
-		 variable.currentVal = action == 'reset' ? variable.defaultVal : variable.currentVal; 
-		 tmpConfig.params[variable.name] = variable.currentVal; 
+		 variable.currentVal = action == 'reset' ? variable.defaultVal : variable.currentVal;
+		 tmpConfig.params[variable.name] = variable.currentVal;
 		 //path for modify command variable or output variable
-		 var path = type == 'command' ? 
-				 $scope.pathRest.command +'/'+$scope.pathRest.setVariables+'/'+commandName :  
+		 var path = type == 'command' ?
+				 $scope.pathRest.command +'/'+$scope.pathRest.setVariables+'/'+commandName :
 				 $scope.pathRest.output+'/'+$scope.pathRest.setVariables+'/'+commandName+'/'+output.outputName;
-		 
+
 		 restServices.post($scope.pathRest.vers, path, null, tmpConfig)
 		 	.success(function(data){
-		 		//if success resolve the command promise, rerun the command 
+		 		//if success resolve the command promise, rerun the command
 		 		var parameters = {};
 		 		//$scope.results[commandName]
 				parameters.commandName = commandName;
@@ -482,21 +482,21 @@ function dataMiningFunction (sbiModule_logger, sbiModule_config, datamining_temp
 				promiseResult.reject();
 				$scope.log.error('SET VARIABLE ' + variable + ' with status :' + status);
 			});
-		 
+
 	};
-	
+
 	//Create an alert dialog with a message
 	$scope.showAlert = function (title, message){
-		$mdDialog.show( 
+		$mdDialog.show(
 			$mdDialog.alert()
 		        .parent(angular.element(document.querySelector('#popupContainer')))
 		        .clickOutsideToClose(true)
 		        .title(title)
-		        .textContent(message) //FROM angular material 1.0 
+		        .textContent(message) //FROM angular material 1.0
 		        .ok('Ok')
 			);
 	};
-	
+
 	//debugger;
 	//Create a dialog containing an updating bar
 	$scope.showDialogUpdating = function (){
@@ -515,37 +515,37 @@ function dataMiningFunction (sbiModule_logger, sbiModule_config, datamining_temp
 		});
 		return dialog;
 	};
-	
+
 	$scope.toogleVariableForm = function (cmd){
 		$scope.variableForm=!$scope.variableForm;
 	};
-	
+
 	$scope.dialogController = function ($scope, $mdDialog, translate) {
 		$scope.translate = translate;
 		$scope.closeDialog = function() {
 		    $mdDialog.hide();
 		};
 	};
-	
+
 	$scope.toogleRerunButton = function(){
-		$scope.visibilityRerunButton = !$scope.visibilityRerunButton; 
+		$scope.visibilityRerunButton = !$scope.visibilityRerunButton;
 	};
-	
+
 	$scope.toogleOuputVariables = function(){
 		$scope.visibleOuputVariables = !$scope.visibleOuputVariables;
 	};
-	
+
 	$scope.toogleCommandVariables = function(){
 		$scope.visibleCommandVariables = !$scope.visibleCommandVariables ;
 	};
-	
-	
-	$scope.putSafeHtml = function(html){	
+
+
+	$scope.putSafeHtml = function(html){
 		return $sce.trustAsHtml(html);
 	};
-	
-	
-	
+
+
+
 	$scope.b64toBlob=function(b64Data, contentType, sliceSize) {
 		  contentType = contentType || '';
 		  sliceSize = sliceSize || 512;
@@ -569,22 +569,22 @@ function dataMiningFunction (sbiModule_logger, sbiModule_config, datamining_temp
 		  var blob = new Blob(byteArrays, {type: contentType});
 		  return blob;
 		}
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
+
 	$scope.downloadImage=function(imgDataBase64)
 	{
-		 
+
 		var fileName="img";
 	    var a = document.createElement("a");
 	    document.body.appendChild(a);
 	    a.style = "display: none";
-	    
+
 	    //blob = new Blob([imgDataBase64], {type: "image/png"});
 	    var blob=$scope.b64toBlob(imgDataBase64, "image/png")
 	    url = window.URL.createObjectURL(blob);
@@ -592,8 +592,8 @@ function dataMiningFunction (sbiModule_logger, sbiModule_config, datamining_temp
 	    a.download = fileName;
 	    a.click();
 	    window.URL.revokeObjectURL(url);
-	    	    
+
     }
-	
+
 }
 
