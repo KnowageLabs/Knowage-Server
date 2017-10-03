@@ -334,10 +334,6 @@ public class StringUtils {
 	}
 
 	public static String escapeForSQLColumnName(String fieldName) {
-		String toReturn = fieldName;
-		toReturn = toReturn.trim();
-		toReturn = toReturn.replaceAll("'", "");
-		toReturn = toReturn.replaceAll("\"", "");
-		return toReturn;
+		return fieldName == null ? "" : fieldName.trim().replaceAll("'", "").replaceAll("\"", "");
 	}
 }
