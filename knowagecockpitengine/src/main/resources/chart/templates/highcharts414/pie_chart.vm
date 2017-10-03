@@ -58,17 +58,17 @@
     		@author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
     	*#
      	#if($chart.heightDimType && $chart.isCockpitEngine!="true")
-       	 	heightDimType: '$chart.heightDimType',
+     	heightDimType: '$chart.heightDimType',
        	#else 
       	 	heightDimType: 'pixels',
         #end
         
         #if($chart.width != '' && $chart.isCockpitEngine!="true")
-    		width: $chart.width,
+          	width: $chart.width,
     	#end
     	
     	#if($chart.widthDimType && $chart.isCockpitEngine!="true")
-        	widthDimType: '$chart.widthDimType',
+    	 widthDimType: '$chart.widthDimType',
   	   	#else 
 	  	   	widthDimType: 'pixels',
         #end
@@ -480,6 +480,7 @@
 		            #if($chart.isCockpitEngine=="false")
 		              	events:{
 		                	click: scope.chartInitializer.handleCrossNavigationTo,
+		                	
 		                	legendItemClick: function(e) {
 				            	var series = this.series.chart.series,
 								name = this.name,
@@ -501,6 +502,7 @@
 		            #elseif($chart.outcomingEventsEnabled == 'true')
 		              	events:{
 		                	click: handleCockpitSelection,
+
 		                	legendItemClick: function(e) {
 				            	var series = this.series.chart.series,
 								name = this.name,
@@ -701,7 +703,7 @@
 				#end
 
 
-	    	    #set($relatedSerieColName = "$relatedSerie.column"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction#{else}'SUM')#end")
+	    	    #set($relatedSerieColName = "$relatedSerie.name"+"_#if($relatedSerie.groupingFunction)$relatedSerie.groupingFunction#{else}'SUM')#end")
 	    	    #set($serieColumnsMapped = $dataColumnsMapper.get($relatedSerieColName)) ## "Vendite_AVG" -> "column_5" ## "Ricavi_SUM" -> "column_6"
 				#set ($zeroValues =0)
 				#foreach($row in $rows)
