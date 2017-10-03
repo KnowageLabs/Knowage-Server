@@ -2320,11 +2320,14 @@ public class DatasetManagementAPI {
 				if (values == null) {
 					logger.error("Error, MIN/MAX value for field " + aliasField + " not found");
 					throw new SpagoBIRuntimeException("Error, MIN/MAX value for field " + aliasField + " not found");
-				} else if (values.size() > 1) {
-					logger.error("Error, unexpected multiple MIN/MAX value for field " + aliasField + "");
-					multiple = true;
-					// throw new SpagoBIRuntimeException("Error, unexpected multiple MIN/MAX value for field " + aliasField + "");
-				} else if (values.isEmpty()) {
+				}
+				// this is not an error case because in case of summary row it is normal to have a more row
+				// else if (values.size() > 1) {
+				// logger.error("Error, unexpected multiple MIN/MAX value for field " + aliasField + "");
+				// multiple = true;
+				// throw new SpagoBIRuntimeException("Error, unexpected multiple MIN/MAX value for field " + aliasField + "");
+				// }
+				else if (values.isEmpty()) {
 					logger.warn("no MIN/MAX value for field " + aliasField + " not found, put NULL");
 					valueString = null;
 				} else {

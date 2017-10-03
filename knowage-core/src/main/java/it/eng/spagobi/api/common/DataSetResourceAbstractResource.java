@@ -158,8 +158,9 @@ public abstract class DataSetResourceAbstractResource extends AbstractSpagoBIRes
 			if (selections != null && !selections.equals("")) {
 				// check if max or min filters are used and caclulate it
 				filterCriteria = getDatasetManagementAPI().calculateMinMaxFilter(label, parameters, selections, likeSelections, maxRowCount, aggregations,
-						summaryRow, offset, fetchSize, false, groupCriteria, filterCriteriaForMetaModel, summaryRowProjectionCriteria, havingCriteria,
-						havingCriteriaForMetaModel, filterCriteria, projectionCriteria);
+						summaryRow, offset, fetchSize, false, groupCriteria, filterCriteriaForMetaModel, new ArrayList<ProjectionCriteria>() // ,
+																																				// summaryRowProjectionCriteria
+						, havingCriteria, havingCriteriaForMetaModel, filterCriteria, projectionCriteria);
 			}
 
 			IDataStore dataStore = getDatasetManagementAPI().getDataStore(label, offset, fetchSize, maxRowCount, isRealtime,
