@@ -40,16 +40,14 @@
 					<i class="fa fa-external-link"></i>
 				</md-button>
 			</div>
-			<span ng-class="{'layout-padding': parameter.multivalue && parameter.parameterValue && parameter.parameterValue.length > 0}"
-					ng-show="(parameter.multivalue && parameter.parameterValue && parameter.parameterValue.length > 0)">				
+			<span ng-show="(parameter.multivalue && parameter.parameterValue && parameter.parameterValue.length > 0)">				
 				<md-chips ng-model="parameter.parameterValue" readonly="true">
 					 <md-chip-template>
 				          <strong>{{parameter.parameterDescription[$chip]}}</strong>
 			        </md-chip-template>
 				</md-chips>
 			</span>
-			<span ng-class="{'layout-padding': !parameter.multivalue && parameter.parameterValue && parameter.parameterValue != ''}"
-					ng-show="(!parameter.multivalue && parameter.parameterValue && parameter.parameterValue != '')">
+			<span ng-show="(!parameter.multivalue && parameter.parameterValue && parameter.parameterValue != '')">
 				<md-chips ng-model="parameter.parameterValue" readonly="true">
 					 <md-chip-template>
 				          <strong>{{parameter.parameterDescription[$chip]}}</strong>
