@@ -167,9 +167,10 @@ function cockpitStaticPivotTableWidgetControllerFunction($scope,cockpitModule_wi
 		sbiModule_restServices.promisePost("1.0/crosstab","update",dataToSend).then(
 				function(response){
 					$scope.subCockpitWidget.html(response.data.htmlTable);
-					$compile(angular.element($scope.subCockpitWidget).contents())($scope)
+//					$compile(angular.element($scope.subCockpitWidget).contents())($scope)
 					$scope.addPivotTableStyle();
 					$scope.hideWidgetSpinner();
+					$compile(angular.element($scope.subCockpitWidget).contents())($scope);
 				},
 				function(response){
 					sbiModule_restServices.errorHandler(response.data,"Pivot Table Error")
