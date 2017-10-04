@@ -13,9 +13,9 @@
 	 </div>
 	 
 	 <div layout="column" layout-wrap ng-if="template.analysisType=='chart'">
-		<div layout="row" layout-wrap ng-repeat="items in template.analysisConf.chart"  ng-if="template.selectedMultiIndicator[$index]!=undefined">
-	    	<div class="colorbox" ng-style="getColor(items)"></div>
-	    	<span>{{template.selectedMultiIndicator[$index].header}}</span>
+		<div layout="row" layout-wrap ng-repeat="items in template.analysisConf.chart"  class="legendLine" ng-if="template.selectedMultiIndicator[$index]!=undefined">
+	    	<div class="legendColorbox" ng-style="getColor(items)"></div>
+	    	<span class="legendTextLine">{{template.selectedMultiIndicator[$index].label}}</span>
 	    </div>
 	 </div>
 </md-whiteframe>
