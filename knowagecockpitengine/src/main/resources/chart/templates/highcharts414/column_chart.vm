@@ -1111,7 +1111,7 @@
 						#set( $serieCategoryName = $serieCategoryName.replace("\", "\\") )
 						#set( $serieCategoryName = $serieCategoryName.replace("""", "\""") )
 					#if($chart.dateTime!="true")
-					
+					#if($serieValue!="")
 					{
 						##drilldown: $enableDrilldown,
 						drilldown: $drilldownEnabledFlag,
@@ -1131,6 +1131,7 @@
 						name: "$serieCategoryName",
 						
 					},
+					#end
 					#else
 						#if($chart.isCockpitEngine=="true")
 						#set($date = $serieCategoryName.substring(0,10).split("/"))
