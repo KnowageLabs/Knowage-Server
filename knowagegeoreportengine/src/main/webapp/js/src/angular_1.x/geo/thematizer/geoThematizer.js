@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,10 +11,10 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */ 
+ */
 
 var geoM=angular.module('geoModule');
 var borderColor="#AAAAAA"
@@ -55,7 +55,7 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 		if(geoModule_template.noDatasetReport==true){
 			return;
 		}
-		
+
 		//if no indicator has been selected
 		if((geoModule_template.analysisType!="chart" && geoModule_template.selectedIndicator==undefined)||
 				(geoModule_template.analysisType=="chart" &&  (geoModule_template.selectedMultiIndicator==undefined || geoModule_template.selectedMultiIndicator.length==0))){
@@ -106,7 +106,7 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 					tmtz.legendItem.choroplet[i].itemFeatures.push(layerCol);
 					tmtz.legendItem.choroplet[i].item++;
 				}
-				
+
 				break;
 			}
 		}
@@ -150,7 +150,17 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 			}),
 			fill: new ol.style.Fill({
 				color: getChoroplethColor(dsValue,layerCol).color
-			})
+			}),
+			image: new ol.style.Circle({
+	  			radius: 5,
+	  			stroke: new ol.style.Stroke({
+					color: borderColor,
+					width: 1
+				}),
+	  			fill: new ol.style.Fill({
+	  				color: getChoroplethColor(dsValue,layerCol).color
+	  			})
+	  		})
 		})];
 
 	}
@@ -177,17 +187,26 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 			}),
 			geometry: function(feature) {
 				// return the coordinates of the first ring of the polygon
-				var coordinates = feature.getGeometry().getInteriorPoints().getCoordinates()[0];
+//				var coordinates = feature.getGeometry().getInteriorPoints().getCoordinates()[0];
+//				return new ol.geom.Point(coordinates);
+
+				var coordinates = [];
+				if (feature.getGeometry().getType() == "Point")
+//					coordinates = feature.getGeometry().getCoordinates()[0];
+					coordinates = feature.getGeometry().getCoordinates();
+				else
+					coordinates = feature.getGeometry().getInteriorPoints().getCoordinates()[0];
+
 				return new ol.geom.Point(coordinates);
 			}
 		})];
 	}
 
-	
-				
-				
+
+
+
 	this.chart =function(dsValue){
-		//calc  max and min value if they arent' present in cacheProportionalSymbolMinMax  
+		//calc  max and min value if they arent' present in cacheProportionalSymbolMinMax
 		for(var key in dsValue){
 			if(!cacheProportionalSymbolMinMax.hasOwnProperty(key)){
 				tmtz.loadIndicatorMaxMinVal(key);
@@ -202,15 +221,17 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 		var indicatorIndex=0;
 		for(var key in dsValue){
 			indicatorIndex++;
-		
+
 			valuesChart.push(Math.round(dsValue[key].value));
 			var color = tinycolor(geoModule_template.analysisConf.chart["indicator_"+indicatorIndex]);
 			maxV.push(Math.round(cacheProportionalSymbolMinMax[key].maxValue));
 			rgba = "rgba("+color.toRgb().r+","+color.toRgb().g+","+color.toRgb().b+","+color.toRgb().a+")";
 			colors.push(rgba);
 		}
-		var size_img = 20 + 6*Math.pow(2,$map.getView().getZoom()-1);
-		
+//		var size_img = 20 + 6*Math.pow(2,$map.getView().getZoom()-1);
+		var cZoom = ($map.getView().getZoom() > 5) ? $map.getView().getZoom()/2 : $map.getView().getZoom();
+		var size_img =  20 + Math.pow(2,cZoom);
+
 		var options = {
 			    //Boolean - Whether the scale should start at zero, or an order of magnitude down from the lowest value
 			    scaleBeginAtZero : true,
@@ -218,7 +239,7 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 			    //Boolean - Whether grid lines are shown across the chart
 			    scaleSteps : 10,
 		        scaleStepWidth :Math.max(maxV)/10,
-		        scaleStartValue : 0, 
+		        scaleStartValue : 0,
 			    scaleShowGridLines : false,
 			    scaleShowLabels: false,
 			    //String - Colour of the grid lines
@@ -235,7 +256,7 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 
 			    //Boolean - If there is a stroke on each bar
 			    barShowStroke : false,
-			 
+
 			    //Number - Pixel width of the bar stroke
 			    barStrokeWidth : 2,
 
@@ -246,7 +267,8 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 			    barDatasetSpacing : 1,
 
 			    //String - A legend template
-			    legendTemplate : "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].fillColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>"
+//			    legendTemplate : "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].fillColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>"
+			    legendTemplate : "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].fillColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%>-<%=datasets[i].fillColor%>\"><%}%></li><%}%></ul>"
 
 			};
 		var label =[];
@@ -266,7 +288,7 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 			        }
 			        ]
 		}
-		
+
 		var canvas = document.createElement("canvas");
 		document.body.appendChild(canvas);
 		canvas.width = size_img;
@@ -275,11 +297,11 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 		myBarChart.eachBars(function(bar, barIndex){
 			bar.fillColor = colors[barIndex];
 		});
-		
+
 		myBarChart.draw();
 		var urlImg = canvas.toDataURL();
-		
-		
+
+
 		document.body.removeChild(canvas);
 		var x=  [new ol.style.Style({
 			stroke: new ol.style.Stroke({
@@ -291,18 +313,23 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 
 		new ol.style.Style({
 			image: new ol.style.Icon ({
-				
+
 				src:urlImg
-			}),		  
+			}),
 			geometry: function(feature) {
 				// return the coordinates of the first ring of the polygon
-				var coordinates = feature.getGeometry().getInteriorPoints().getCoordinates()[0];
+				var coordinates;
+				if (feature.getGeometry().getType() == 'Point')
+					coordinates = feature.getGeometry().getCoordinates();
+				else
+					coordinates = feature.getGeometry().getInteriorPoints().getCoordinates()[0];
+
 				return new ol.geom.Point(coordinates);
 			}
 		})];
 		return x;
 				}
-	
+
 	this.loadIndicatorMaxMinVal=function(key){
 		var minV;
 		var maxV;
@@ -352,7 +379,7 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 		title.innerHTML="LayerStyle";
 		userStyle.appendChild(title);
 
-		
+
 			if(geoModule_template.analysisType=="choropleth"){
 				tmtz.WMSChoropleth(docSld,userStyle);
 			}else if(geoModule_template.analysisType=="proportionalSymbol"){
@@ -360,9 +387,9 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 			}else{
 				//TODO
 			}
-		
-		
-		
+
+
+
 
 		namedLayer.appendChild(userStyle);
 
@@ -370,22 +397,22 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 		return  oSerializer.serializeToString(sld);
 	}
 
-	
+
 	this.WMSChoropleth=function(docSld,userStyle){
 		var addedItem=[];
 		checkForDatasetValueOfIndicator();
-		
+
 		for(var i=0;i<geoModule_dataset.rows.length;i++){
 			var filtredItem=false;
 			for(var key in geoModule_template.selectedFilters){
-				if(geoModule_template.selectedFilters[key]!="-1" 
+				if(geoModule_template.selectedFilters[key]!="-1"
 					&&  geoModule_template.selectedFilters[key].length!=0
 					&& geoModule_template.selectedFilters[key].indexOf(geoModule_dataset.rows[i][key])==-1){
 					filtredItem=true;
 				}
-			} 
-			
-			
+			}
+
+
 			if(addedItem.indexOf(geoModule_dataset.rows[i][geModule_datasetJoinColumnsItem.name])==-1 && !filtredItem){
 
 				var featureTypeStyle= tmtz.OGC_featureTypeStyle(docSld);
@@ -401,28 +428,28 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 				userStyle.appendChild(featureTypeStyle);
 				addedItem.push(geoModule_dataset.rows[i][geModule_datasetJoinColumnsItem.name]);
 			}
-		}	
+		}
 	}
 
 	this.WMSproportionalSymbol=function(docSld ,userStyle ){
 		var addedItem=[];
 		for(var i=0;i<geoModule_dataset.rows.length;i++){
-			
+
 			var filtredItem=false;
 			for(var key in geoModule_template.selectedFilters){
-				if(geoModule_template.selectedFilters[key]!="-1" 
+				if(geoModule_template.selectedFilters[key]!="-1"
 					&&  geoModule_template.selectedFilters[key].length!=0
 					&& geoModule_template.selectedFilters[key].indexOf(geoModule_dataset.rows[i][key])==-1){
 					filtredItem=true;
 				}
-			} 
-			
+			}
+
 			if(addedItem.indexOf(geoModule_dataset.rows[i][geModule_datasetJoinColumnsItem.name])==-1 && !filtredItem){
 				var featureTypeStyle= tmtz.OGC_featureTypeStyle(docSld);
 				var rule= tmtz.OGC_rule(docSld);
 				var filter= tmtz.OGC_filter(docSld);
 				var propertyIsEqualTo=tmtz.OGC_propertyIsEqualTo(docSld,geoModule_template.layerJoinColumns,geoModule_dataset.rows[i][geModule_datasetJoinColumnsItem.name]);
-				 
+
 				filter.appendChild(propertyIsEqualTo)
 				rule.appendChild(filter);
 
@@ -432,7 +459,7 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 				var pointSymbolizer= tmtz.OGC_pointSymbolizer(docSld);
 
 				var graphic= tmtz.OGC_graphic(docSld,geoModule_template.analysisConf.proportionalSymbol.color,borderColor,getProportionalSymbolSize(geoModule_dataset.rows[i][geoModule_template.selectedIndicator.name]));
-				 
+
 				pointSymbolizer.appendChild(graphic);
 
 				rule.appendChild(pointSymbolizer);
@@ -442,14 +469,14 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 
 				addedItem.push(geoModule_dataset.rows[i][geModule_datasetJoinColumnsItem.name]);
 			}
-		}	
+		}
 	}
 
 	function updateChoroplethLegendGradient(numberGradient){
 		var grad = tinygradient([geoModule_template.analysisConf.choropleth.fromColor, geoModule_template.analysisConf.choropleth.toColor]);
 		var gradienti= grad.rgb(numberGradient==1?2:numberGradient); // ternary operator required to handle single line dataset
 		tmtz.legendItem.choroplet.length=0;
-		
+
 		var containWMS=false;
 	 	for(var i in geoModule_templateLayerData){
 			if(geoModule_templateLayerData[i].type == "WMS"){
@@ -457,7 +484,7 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 				break;
 			}
 		}
-		
+
 		for(var i=0;i<gradienti.length;i++){
 			var  tmpGrad={};
 			if(containWMS){
@@ -516,12 +543,12 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 				for(var i=0;i<values.length;i+=binSize){
 					if(k>=intervals){
 						tmtz.legendItem.choroplet[intervals-1].to=values[i+binSize]||values[values.length-1];
-					}else{						
+					}else{
 						tmtz.legendItem.choroplet[k].from=values[i];
 						tmtz.legendItem.choroplet[k].to=values[i+binSize]||values[values.length-1];
 						k++;
 					}
-					
+
 				}
 			}
 
@@ -532,28 +559,38 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 
 		}
 	}
-	
+
 	this.noDatasetObj={};
 	this.fillStyleNoDataset=function(label){
 		var tmpNDS={};
 		tmpNDS.layerName=label;
 		tmpNDS.getNoDatasetStyle=function(feature, resolution){
 			if( geoModule_template.hiddenTargetLayer.indexOf(tmpNDS.layerName)==-1 ){
-				
+
 				var tlProp=geoModule_templateLayerData[tmpNDS.layerName].properties;
-				//if there are specifyed analitical filter 
+				//if there are specifyed analitical filter
 				for( var key in geoModule_template.selectedAnalyticalFilter){
 //					&& feature.getProperties()[key]!=undefined
-					if(tlProp.indexOf(key)!=-1 && 
-							(	geoModule_template.selectedAnalyticalFilter[key].length==0 || 
-								(	geoModule_template.selectedAnalyticalFilter[key].length>0 
+					if(tlProp.indexOf(key)!=-1 &&
+							(	geoModule_template.selectedAnalyticalFilter[key].length==0 ||
+								(	geoModule_template.selectedAnalyticalFilter[key].length>0
 									&& geoModule_template.selectedAnalyticalFilter[key].indexOf(feature.getProperties()[key])==-1)
 								)
 							){
 						return null;
 					}
 				}
-				
+
+//				return  [new ol.style.Style({
+//					stroke: new ol.style.Stroke({
+//						color: "#3499CB",
+//						width: 1
+//					}),
+//					fill: new ol.style.Fill({
+//						color: 'rgba(158, 181, 199,0.5)'
+//					})
+//				})];
+
 				return  [new ol.style.Style({
 					stroke: new ol.style.Stroke({
 						color: "#3499CB",
@@ -561,19 +598,30 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
 					}),
 					fill: new ol.style.Fill({
 						color: 'rgba(158, 181, 199,0.5)'
-					})
+					}),
+					image: new ol.style.Circle({
+			  			radius: 5,
+			  			stroke: new ol.style.Stroke({
+							color:'#3499CB',
+							width: 1
+						})
+//			  			,fill: new ol.style.Fill({
+//			  				color: 'rgba(158, 181, 199,0.5)'
+//			  			})
+			  		})
 				})];
+
 			}else{
 				return null;
 			}
 		};
-		
+
 		tmtz.noDatasetObj[label]=tmpNDS;
 		return tmpNDS.getNoDatasetStyle;
-		
+
 	}
-	
-	  
+
+
 	this.loadCqlFilter=function(data,withDataset){
 
         var tlProp=data.properties;
@@ -585,13 +633,13 @@ geoM.service('geoModule_thematizer',function(geoModule_template,geoModule_datase
             var sortedAraayOfParametersName= new Array();
 
 
-          
+
 
             for( var key in geoModule_template.selectedAnalyticalFilter){
                 araayOfParametersName.push(key);
             }
 
-           
+
             for( var i=0 ;
 i<geoModule_template.analitycalFilter.length; i++){
                 var aanalitycalFilter = geoModule_template.analitycalFilter[i];
@@ -634,7 +682,7 @@ geoModule_template.selectedAnalyticalFilter[key].length>0  ){
         return filter.join(" AND ");
     }
 
-	
+
 	this.OGC_propertyIsEqualTo=function(docSld,name,value){
 		var propertyIsEqualTo= docSld.createElement("ogc:PropertyIsEqualTo");
 		var propertyName= docSld.createElement("ogc:PropertyName");
@@ -647,7 +695,7 @@ geoModule_template.selectedAnalyticalFilter[key].length>0  ){
 		propertyIsEqualTo.appendChild(literalParam);
 		return propertyIsEqualTo;
 	};
-	
+
 	this.OGC_filter=function(docSld){
 		return docSld.createElement("ogc:Filter")
 	}
@@ -659,7 +707,7 @@ geoModule_template.selectedAnalyticalFilter[key].length>0  ){
 	}
 	this.OGC_PolygonSymbolizer=function(docSld,fillColor,fillOpacity,strokeColor){
 		var polygonSymbolizer= docSld.createElement("PolygonSymbolizer");
-		
+
 		if(fillColor!=null){
 			var fill= docSld.createElement("Fill");
 			var fillcssParameter= docSld.createElement("CssParameter");
@@ -675,14 +723,14 @@ geoModule_template.selectedAnalyticalFilter[key].length>0  ){
 			fill.appendChild(fillopacitycssParameter);
 			polygonSymbolizer.appendChild(fill);
 		}
-		
+
 		if(strokeColor!=null){
 			var stroke= docSld.createElement("Stroke");
 			var strokecssParameter= docSld.createElement("CssParameter");
 			strokecssParameter.setAttribute("name","stroke");
 			strokecssParameter.innerHTML=strokeColor;
 			stroke.appendChild(strokecssParameter);
-	
+
 			var strokewidthcssParameter= docSld.createElement("CssParameter");
 			strokewidthcssParameter.setAttribute("name","stroke-width");
 			strokewidthcssParameter.innerHTML="1";
@@ -691,7 +739,7 @@ geoModule_template.selectedAnalyticalFilter[key].length>0  ){
 		}
 		return polygonSymbolizer;
 	}
-	
+
 	this.OGC_pointSymbolizer=function(docSld){
 		var pointSymbolizer= docSld.createElement("PointSymbolizer");
 		var geometry= docSld.createElement("Geometry");
@@ -704,7 +752,7 @@ geoModule_template.selectedAnalyticalFilter[key].length>0  ){
 		pointSymbolizer.appendChild(geometry);
 		return pointSymbolizer;
 	}
-	
+
 	this.OGC_graphic=function(docSld,fillColor,borderColor,circleSize){
 		var graphic= docSld.createElement("Graphic");
 		var mark= docSld.createElement("Mark");
@@ -738,9 +786,9 @@ geoModule_template.selectedAnalyticalFilter[key].length>0  ){
 		var size= docSld.createElement("Size");
 		size.innerHTML=circleSize;
 		graphic.appendChild(size);
-		
+
 		return graphic;
 	}
-	
-	
+
+
 });

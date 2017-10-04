@@ -151,6 +151,7 @@ geoM.service(
 							});
 
 				} else {
+					//defines a source vector with the festures of the layer
 					var vectorSource = new ol.source.Vector(
 							{
 								features : (new ol.format.GeoJSON()).readFeatures(tmpGeoModule_templateLayerData,
@@ -159,14 +160,14 @@ geoM.service(
 									featureProjection : 'EPSG:3857'
 										})
 							});
-
+					//defines  a data vector with previous source vector + style
 					var dataVector={source : vectorSource};
+
 					if(geoModule_template.noDatasetReport!=true){
 						dataVector.style =geoModule_thematizer.getStyle;
 					}else{
 						dataVector.style =geoModule_thematizer.fillStyleNoDataset(tmpGeoModule_templateLayerData.layerName);
 					}
-
 					tmpTemplateLayer = new ol.layer.Vector(dataVector);
 				}
 
@@ -175,12 +176,20 @@ geoM.service(
 					tmpTemplateLayer.setVisible(false);
 				}
 				layerServ.templateLayer[tmpGeoModule_templateLayerData.layerName]=tmpTemplateLayer;
+
+				//adds the layer to the map
 				$map.addLayer(tmpTemplateLayer);
+
+
 				if(geoModule_template.currentView.center[0]==0 && geoModule_template.currentView.center[1]==0){
+					//gets the initial position
 					 if (tmpGeoModule_templateLayerData.type == "WMS"){
 						$map.getView().setZoom(3);
 					}else{
-						$map.getView().setCenter(tmpTemplateLayer.getSource().getFeatures()[0].getGeometry().getCoordinates()[0][0][0]);
+						if (tmpTemplateLayer.getSource().getFeatures().length>0 && tmpTemplateLayer.getSource().getFeatures()[0].getGeometry().getType() == 'Point')
+							$map.getView().setCenter(tmpTemplateLayer.getSource().getFeatures()[0].getGeometry().getCoordinates());
+						else
+							$map.getView().setCenter(tmpTemplateLayer.getSource().getFeatures()[0].getGeometry().getCoordinates()[0][0][0]);
 
 						if(tmpTemplateLayer.getSource().getFeatures().length>35){
 							$map.getView().setZoom(4);
@@ -189,10 +198,11 @@ geoM.service(
 						}
 					}
 				}else{
+					//gets the initial position from the template
 					$map.getView().setCenter(geoModule_template.currentView.center);
 					$map.getView().setZoom(geoModule_template.currentView.zoom);
-
 				}
+
 
 				// $map.getView().fit(layerServ.templateLayer.getProperties().source.getExtent(),$map.getSize());
 
