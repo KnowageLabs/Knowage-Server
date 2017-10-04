@@ -513,6 +513,9 @@ function cockpitChartWidgetControllerFunction(
 								  	if($scope.localModel.chartTemplate.type.toUpperCase()=="SCATTER"){
 										showAction($scope.translate.load('sbi.cockpit.select.no.aggregation.for.all.series'));
 									}
+								  	if ($scope.localModel.chartTemplate.type.toUpperCase()=="BAR" || $scope.localModel.chartTemplate.type.toUpperCase()=="LINE" ) {
+										showAction($scope.translate.load('sbi.chartengine.validation.addserie.arearange.parLowHigh'));
+									}
 
 
 							  }
@@ -640,6 +643,26 @@ function cockpitChartWidgetControllerFunction(
 	    						}
 	    						if (counter == 0) f = true;
 	    				  }
+	    				  
+	    				  if ((chartTemplateFake.type == "BAR" || chartTemplateFake.type == "LINE") && chartTemplateFake.VALUES.SERIE.length>0) {
+	    					  var allSeries = chartTemplateFake.VALUES.SERIE;
+	    						var counterlow = 0;
+	    						var counterhigh = 0;
+	    						for (var i = 0; i < allSeries.length; i++) {
+	    							if(allSeries[i].type=="arearangelow"){
+	    								counterlow++
+	    							};
+	    						}
+	    						for (var i = 0; i < allSeries.length; i++) {
+	    							if(allSeries[i].type=="arearangehigh"){
+	    								counterhigh++
+	    							};
+	    						}
+	    						if(counterlow!=counterhigh){
+	    							f=false;
+	    						}
+	    				  }
+	    				  
 	    				  return f;
 
 			    	  }

@@ -63,6 +63,9 @@ function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config, sbiM
 			}
 			if ($scope.chartTemplate.type.toUpperCase()=="HEATMAP") {
 				showAction($scope.translate.load('sbi.chartengine.validation.addserie.heatmap.twoSerieConstraint'));
+			} 
+			if ($scope.chartTemplate.type.toUpperCase()=="BAR" || $scope.chartTemplate.type.toUpperCase()=="LINE" ) {
+				showAction($scope.translate.load('sbi.chartengine.validation.addserie.arearange.parLowHigh'));
 			}
 			
 		}
@@ -295,7 +298,24 @@ function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config, sbiM
 			if ($scope.chartTemplate.VALUES.CATEGORY.length!=2) {
 				f = false;
 			}
-		}
+		}  else if (($scope.selectedChartType.toUpperCase() == "BAR" || $scope.selectedChartType.toUpperCase() == "LINE") &&  $scope.chartTemplate.VALUES.SERIE.length>0) {
+			  var allSeries =  $scope.chartTemplate.VALUES.SERIE;
+				var counterlow = 0;
+				var counterhigh = 0;
+				for (var i = 0; i < allSeries.length; i++) {
+					if(allSeries[i].type=="arearangelow"){
+						counterlow++
+					};
+				}
+				for (var i = 0; i < allSeries.length; i++) {
+					if(allSeries[i].type=="arearangehigh"){
+						counterhigh++
+					};
+				}
+				if(counterlow!=counterhigh){
+					f=false;
+				}
+		  }
 		return f;
 	}
 	$scope.previewChart = function () {
@@ -309,6 +329,9 @@ function ChartDesignerFunction(sbiModule_translate,$scope,sbiModule_config, sbiM
 			}
 			if ($scope.chartTemplate.type.toUpperCase()=="HEATMAP") {
 				showAction($scope.translate.load('sbi.chartengine.validation.addserie.heatmap.twoCategoryConstraint'));
+			}
+			if ($scope.chartTemplate.type.toUpperCase()=="BAR" || $scope.chartTemplate.type.toUpperCase()=="LINE" ) {
+				showAction($scope.translate.load('sbi.chartengine.validation.addserie.arearange.parLowHigh'));
 			}
 			
 		}
