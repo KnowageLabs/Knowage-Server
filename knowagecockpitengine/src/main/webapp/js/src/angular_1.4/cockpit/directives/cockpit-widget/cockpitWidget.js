@@ -433,6 +433,10 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 		cockpitModule_widgetServices.deleteWidget(cockpitModule_properties.CURRENT_SHEET,$scope.ngModel,nomessage);
 	}
 
+	$scope.cloneWidget = function(){
+		cockpitModule_widgetServices.addWidget(cockpitModule_properties.CURRENT_SHEET,angular.copy($scope.ngModel));
+	}
+
 	$scope.openSearchBar = function(){
 		$scope.widgetSearchBar == false ? $scope.widgetSearchBar = true : $scope.widgetSearchBar = false;
 	}

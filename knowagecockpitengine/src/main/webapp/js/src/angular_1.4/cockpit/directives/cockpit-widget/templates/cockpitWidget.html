@@ -97,6 +97,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<md-icon md-font-icon="fa fa-pencil-square-o"></md-icon>
 			</md-button>
 			
+			<!-- CLONE BUTTON -->
+			<md-button class="md-icon-button " aria-label="clone button" ng-if="cockpitModule_properties.EDIT_MODE" ng-click="cloneWidget();$event.stopPropagation();">
+				<md-tooltip md-direction="top" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.clone")}}</md-tooltip>
+				<md-icon md-font-icon="fa fa-clone"></md-icon>
+			</md-button>
+			
 			<!-- DELETE BUTTON -->
 			<md-button class="md-icon-button " aria-label="delete button" ng-if="cockpitModule_properties.EDIT_MODE" ng-click="deleteWidget();$event.stopPropagation();">
 				<md-tooltip md-direction="top" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.delete")}}</md-tooltip>
