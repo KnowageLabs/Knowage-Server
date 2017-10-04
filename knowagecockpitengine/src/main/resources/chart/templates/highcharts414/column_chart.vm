@@ -1133,13 +1133,13 @@
 					},
 					#else
 						#if($chart.isCockpitEngine=="true")
-						#set($date = $serieCategoryName.split("/"))
+						#set($date = $serieCategoryName.substring(0,10).split("/"))
 						#set($day = $date.get(0))
 						#set($month = $Integer.parseInt($date.get(1)))
 						#set($month = $month - 1 )
 						#set($year= $date.get(2))
 						#else
-						#set($date = $serieCategoryName.split("-"))
+						#set($date = $serieCategoryName.substring(0,10).split("-"))
 						#set($day = $date.get(2))
 						#set($month = $Integer.parseInt($date.get(1)))
 						#set($month =$month - 1 )
