@@ -17,9 +17,6 @@
  */
 package it.eng.spagobi.engine.chart.api;
 
-import it.eng.spagobi.engine.chart.ChartEngineConfig;
-import it.eng.spagobi.json.Xml;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -37,12 +34,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.engine.chart.ChartEngineConfig;
 import it.eng.spagobi.json.Xml;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
-
 
 @Path("/chart/style")
 public class StyleResource {
@@ -59,7 +54,13 @@ public class StyleResource {
 		String resourcePath = ChartEngineConfig.getEngineResourcePath();
 
 		JSONArray allStyles = new JSONArray();
+		URL urlToSfnas = StyleResource.class.getResource(PATH_TO_SFNAS);
+		String path = urlToSfnas.getPath();
+		path = path.replaceAll("%20", " ");
 
+		JSONObject sfnas = convertToJson(path);
+		if (sfnas != null)
+			allStyles.put(sfnas);
 		File folder = new File(resourcePath + PATH_TO_STYLE);
 
 		if (!folder.exists()) {
@@ -78,13 +79,6 @@ public class StyleResource {
 				}
 			}
 		}
-		URL urlToSfnas = StyleResource.class.getResource(PATH_TO_SFNAS);
-		String path = urlToSfnas.getPath();
-		path = path.replaceAll("%20", " ");
-
-		JSONObject sfnas = convertToJson(path);
-		if (sfnas != null)
-			allStyles.put(sfnas);
 
 		return allStyles.toString();
 	}
