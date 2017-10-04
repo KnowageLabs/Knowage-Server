@@ -1,16 +1,16 @@
 (function() {
 	var documentExecutionModule = angular.module('documentExecutionModule');
-	
+
 	documentExecutionModule.service('docExecute_exportService', function(sbiModule_translate,sbiModule_config,
 			execProperties,sbiModule_user,sbiModule_restServices,$http,sbiModule_dateServices, documentExecuteServices, sbiModule_download, $q, $rootScope, sbiModule_messaging,multipartForm,$sce,$mdPanel) {
-		
+
 		var dee = this;
-		
+
 		dee.exporting = false;
 		dee.isExporting = function(){
 			return dee.exporting;
 		}
-				
+
 		dee.getExportationUrl = function(format,paramsExportType,actionPath){
 			// https://production.eng.it/jira/browse/KNOWAGE-1443
 			// actionPath has no '/' at the beginning
@@ -28,7 +28,7 @@
 			var sbiExeId= '&SBI_EXECUTION_ID=' + execProperties.executionInstance.SBI_EXECUTION_ID;
 			var isFromCross = '&isFromCross=false';
 			var sbiEnv = '&SBI_ENVIRONMENT=DOCBROWSER';
-			var outputType = '&outputType='+ format;				
+			var outputType = '&outputType='+ format;
 			var paramsFilter='';
 			if(execProperties.parametersData.documentParameters && execProperties.parametersData.documentParameters.length>0){
 				var paramsArr = execProperties.parametersData.documentParameters;
@@ -64,7 +64,7 @@
 			var url = encodeURIComponent(exportationUrl).replace(/'/g,"%27").replace(/"/g,"%22").replace(/%3D/g,"=").replace(/%26/g,"&");
 			return urlService + url;
 		};
-				
+
 		dee.exportDocumentChart = function(exportType,mimeType){
 			dee.exporting = true;
 			dee.getBackendRequestParams(exportType, mimeType).then(function(parameters){
@@ -82,7 +82,7 @@
 					}, function errorCallback(response) {
 						dee.exporting = false;
 						sbiModule_messaging.showErrorMessage(response.errors[0].message, 'Error');
-					});			
+					});
 				},function(e){
 					dee.exporting = false;
 					sbiModule_messaging.showErrorMessage(e, 'Error');
@@ -91,9 +91,9 @@
 				dee.exporting = false;
 				sbiModule_messaging.showErrorMessage(e, 'Error');
 			});
-		};	
+		};
 
-		dee.exportGeoTo = function (format, contentUrl) {	
+		dee.exportGeoTo = function (format, contentUrl) {
 			console.log('ENGINE LABEL : ' + execProperties.executionInstance.ENGINE_LABEL);
 			if(execProperties.executionInstance.ENGINE_LABEL=='knowagegisengine'){
 				//GIS
@@ -112,91 +112,95 @@
 //			window.open(dee.getExportationUrl(format,paramsExportType,'knowageqbeengine/servlet/AdapterHTTP') , 'name', 'resizable=1,height=750,width=1000');
 			window.open(dee.getExportationUrl(format,paramsExportType, sbiModule_config.qbeEngineContextName + '/servlet/AdapterHTTP') , 'name', 'resizable=1,height=750,width=1000');
 		};
-			
-			
+
+
 		dee.exportOlapTo= function (format, contentUrl) {
 			var frame = window.frames["documentFrame"];
 			frame.downlf(format);
 		};
-			
 
-		dee.exportReportTo = function(format, contentUrl) {	
+
+		dee.exportBirtReportTo = function(format, contentUrl) {
 //			window.open(dee.getExportationUrl(format,'', '/knowagebirtreportengine/BirtReportServlet') , 'name', 'resizable=1,height=750,width=1000');
 			window.open(dee.getExportationUrl(format,'', sbiModule_config.birtReportEngineContextName + '/BirtReportServlet') , 'name', 'resizable=1,height=750,width=1000');
 		};
-		
+		dee.exportJasperReportTo = function(format, contentUrl) {
+//			window.open(dee.getExportationUrl(format,'', '/knowagebirtreportengine/BirtReportServlet') , 'name', 'resizable=1,height=750,width=1000');
+			window.open(dee.getExportationUrl(format,'', sbiModule_config.jasperReportEngineContextName + '/JasperReportServlet') , 'name', 'resizable=1,height=750,width=1000');
+		};
+
 		dee.exportCockpitTablesToAPDF = function($sce){
 			var accessibleTables = document.getElementById("documentFrame").contentWindow.document.getElementsByTagName("accessible-angular-table");
 			var finalHtml="";
 			var jobId;
-			
+
 			for(var i=0;i<accessibleTables.length;i++){
 				finalHtml += accessibleTables[i].innerHTML;
 			}
-			
+
 			var formData = {};
 			formData.file = finalHtml;
 			formData.fileName = "table.html";
 			formData.size = "4";
-			
-			
+
+
 			multipartForm.post("2.0/exportAccessibleDocument/HTMLPDF/startconversion",formData).success(
-					
+
 					function(data,status,headers,config){
 						if(data.hasOwnProperty("errors")){
-							
+
 							console.log("[UPLOAD]: DATA HAS ERRORS PROPERTY!");
-							
+
 						}else{
-							
-											
+
+
 							sbiModule_download.getLink("/restful-services/2.0/exportAccessibleDocument/HTMLPDF/getResult/"+data)
-						}		
+						}
 					}).error(function(data, status, headers, config) {
 								console.log("[UPLOAD]: FAIL!"+status);
 							});
 		}
-		
+
 		dee.exportCockpitTablesToAMP3 = function($sce){
 			var accessibleTables = document.getElementById("documentFrame").contentWindow.document.getElementsByTagName("accessible-angular-table");
 			var finalHtml="";
 			var jobId;
-			
+
 			for(var i=0;i<accessibleTables.length;i++){
 				finalHtml += accessibleTables[i].innerHTML;
 			}
-			
+
 			var formData = {};
 			formData.file = finalHtml;
 			formData.fileName = "table.html";
-			
+
 			var handleErrors = function(data, status, headers, config){
 				sbiModule_restServices.errorHandler("Error while trying to convert file","Error")
 				console.log("[UPLOAD]: FAIL!"+status);
 				}
-			
+
 				var handleDownloadSuccess = function(data, status, headers, config){
 					if(data.hasOwnProperty("errors")){
 						handleErrors(data, status, headers, config);
 					}else{
 						sbiModule_download.getLink("/restful-services/2.0/exportAccessibleDocument/TXTMP3/getResult/"+data);
-					}	
+					}
 				}
-				
+
 				var handleTxtSuccess = function(data, status, headers, config){
 					if(data.hasOwnProperty("errors")){
 						handleErrors(data, status, headers, config);
 					}else{
-						
+
 						sbiModule_restServices.promiseGet("2.0/exportAccessibleDocument/HTMLTXT/getResult/"+data,"",null).
 						then(function(data, status, headers, config){handleSuccess(data, status, headers, config)}),
 						(function(data, status, headers, config){handleErrors(txtfile, status, headers, config)});
-						
-					}	
+
+					}
 				}
-				
+
 				var handleSuccess = function(data, status, headers, config){
-					
+
 					if(data.hasOwnProperty("errors")){
 						handleErrors(data, status, headers, config);
 					}else{
@@ -209,21 +213,21 @@
 						multipartForm.post("2.0/exportAccessibleDocument/TXTMP3/startconversion",formData).
 						success(function(data, status, headers, config){handleDownloadSuccess(data, status, headers, config)}).
 						error(function(data, status, headers, config){handleErrors(data, status, headers, config)});
-						
-					}	
+
+					}
 				}
-			
+
 			multipartForm.post("2.0/exportAccessibleDocument/HTMLTXT/startconversion",formData).
 			success(function(data, status, headers, config){handleTxtSuccess(data, status, headers, config)}).
 			error(function(data, status, headers, config){handleErrors(data, status, headers, config)});
-			
-				
-				
+
+
+
 		}
-			
+
 		dee.exportCockpitTo = function(exportType, mimeType){
 			dee.exporting = true;
-			
+
 			dee.getBackendRequestParams(exportType, mimeType).then(function(parameters){
 				dee.buildBackendRequestConf(exportType, mimeType, parameters).then(function(requestConf){
 					$http(requestConf)
@@ -239,7 +243,7 @@
 					}, function errorCallback(response) {
 						dee.exporting = false;
 						sbiModule_messaging.showErrorMessage(response.errors[0].message, 'Error');
-					});			
+					});
 				},function(e){
 					dee.exporting = false;
 					sbiModule_messaging.showErrorMessage(e, 'Error');
@@ -249,7 +253,7 @@
 				sbiModule_messaging.showErrorMessage(e, 'Error');
 			});
 		};
-		
+
 		dee.getBackendRequestParams = function(exportType, mimeType){
 			var deferred = $q.defer();
 			var eleToAtt=document.body;
@@ -259,7 +263,7 @@
 					locals :{deferred:deferred},
 					controller: function($scope,mdPanelRef,sbiModule_translate,deferred,$mdDialog){
 						$scope.translate = sbiModule_translate;
-						
+
 						$scope.parameters = {
 							pdfWidth: 1600,
 							pdfHeight: 1200,
@@ -275,7 +279,7 @@
 							$scope.$destroy();
 							deferred.reject();
 						}
-						
+
 						$scope.saveDataset=function(){
 							var parameters = {};
 							angular.copy($scope.parameters, parameters);
@@ -300,10 +304,10 @@
 			}else{
 				deferred.resolve({});
 			}
-			
+
 			return deferred.promise;
 		};
-		
+
 		dee.buildRequestConf = function(exportType, mimeType){
 			var deferred = $q.defer();
 			var data = {};
@@ -318,19 +322,19 @@
 			data.context=sbiModule_config.contextName.replace("/", ""); //sbiModule_config.contextName 'knowage'
 			data.loginUrl= sbiModule_config.contextName;
 			data.role= execProperties.selectedRole.name;
-			
+
 			// getting cockpit selections
 			var documentFrame = document.getElementById("documentFrame"); // document iframe reference
-			
+
 			var cockpitSelectionsContainer = null;
 			if(documentFrame.contentWindow && documentFrame.contentWindow.document) {
-				cockpitSelectionsContainer = 
+				cockpitSelectionsContainer =
 					documentFrame.contentWindow.document.getElementById("cockpitSelectionsContainer")
 			}
-			
+
 			if ( cockpitSelectionsContainer ) {
 				var cockpitSelections = cockpitSelectionsContainer.innerHTML;
-				
+
 				var testCockpitSelections = null;
 				try {
 					testCockpitSelections = JSON.parse(cockpitSelections);
@@ -338,20 +342,20 @@
 				catch(err) {
 					cockpitSelections = '';
 				}
-				
+
 				data.cockpitSelections = cockpitSelections;
 			}
-			
+
 			var config={"responseType": "arraybuffer"};
-			
+
 			var requestUrl = sbiModule_config.host;
-			
+
 			if(exportType.toLowerCase() == 'xlsx') {
 				requestUrl += '/highcharts-export-web/capture';
 			} else {
 				requestUrl += '/highcharts-export-web/capturepdf';
 			}
-			
+
 			var requestConf = {
 					method: 'POST',
 					url: requestUrl,
@@ -366,7 +370,7 @@
 						return str.join("&");
 					}
 			};
-			
+
 			if(exportType.toLowerCase() != 'xlsx') {
 				requestConf.transformResponse = function (data) {
 					var blob;
@@ -392,29 +396,29 @@
 			}
 			return deferred.promise;
 		};
-		
+
 		dee.buildBackendRequestConf = function(exportType, mimeType, parameters){
 			var deferred = $q.defer();
-			
+
 			var eleToAtt=document.body;
-			
-			
+
+
 			var requestUrl = sbiModule_config.host;
 			requestUrl += execProperties.documentUrl;
 			requestUrl += '&outputType=' + encodeURIComponent(exportType);
-			
+
 			for (var parameter in parameters) {
 			    if (parameters.hasOwnProperty(parameter)) {
 			    	requestUrl += '&' + parameter + '=' + encodeURIComponent(parameters[parameter]);
 			    }
 			}
-			
+
 			var requestConf = {
 					method: 'GET',
 					url: requestUrl,
 					responseType: 'arraybuffer',
 			};
-			
+
 			if(exportType.toLowerCase() != 'xlsx') {
 				requestConf.transformResponse = function (data) {
 					var blob;
@@ -440,8 +444,8 @@
 			}
 			return deferred.promise;
 		};
-		
-//		dee.exportationHandlers = {	
+
+//		dee.exportationHandlers = {
 //			'CHART': [
 //				 {'description' : sbiModule_translate.load('sbi.execution.PdfExport') , 'iconClass': 'fa fa-file-pdf-o', 'func': function(){dee.exportDocumentChart('PDF')} }
 //				 ,{'description' : sbiModule_translate.load('sbi.execution.JpgExport') , 'iconClass':'fa fa-file-image-o', 'func': function() {dee.exportDocumentChart('JPG')} }
@@ -494,13 +498,13 @@
 //			            ,{'description' : sbiModule_translate.load('sbi.execution.GraphmlExport') , 'iconClass':'fa fa-file-image-o', 'func': function() {dee.exportNetworkTo('graphml')} }
 //			            ]
 //		};
-		
 
-		
+
+
 		dee.getExporters = function(engine, type) {
 			 return $q(function(resolve, reject) {
 				var exportationHandlers = {};
-				
+
 				sbiModule_restServices.promiseGet('2.0/exporters',engine)
 				.then(function(response) {
 					console.log("[GET]: SUCCESS!");
@@ -512,28 +516,28 @@
 						var expJSON = {};
 						dee.setExporterDescription(exp.name, expJSON);
 						dee.setExporterIconClass(exp.name, expJSON);
-						dee.setExporterFunc(exp.name, exp.engine, expJSON)
+						dee.setExporterFunc(exp.name, exp.engineType, exp.engineDriver, expJSON);
 						exportersJSON.push(expJSON);
 					}
 					resolve(exportersJSON);
 				},function(e){
 					reject(e);
 				});
-		
+
 			});
 		}
-		
+
 		dee.setExporterDescription = function(type, expObj) {
 			expObj.description =  sbiModule_translate.load('sbi.execution.' + type + 'Export');
 		}
-		
+
 		dee.setExporterIconClass = function(type, expObj) {
 			var iconClass = "fa fa-file-";
 
 			switch (type) {
 			case "PDF":
-			
-			case "APDF":	
+
+			case "APDF":
 				iconClass += "pdf";
 				break;
 			case "AMP3":
@@ -565,16 +569,16 @@
 				iconClass += "text";
 				break;
 			default:
-				
+
 			}
 			iconClass += "-o";
-			
+
 			expObj.iconClass = iconClass;
 		}
-		
-		dee.setExporterFunc = function(type, engine, expObj) {
-			
-			switch (engine) {
+
+		dee.setExporterFunc = function(type, engineType, engineDriver, expObj) {
+
+			switch (engineType) {
 			case "CHART":
 				expObj.func = function(){
 					dee.exportDocumentChart(type)
@@ -600,13 +604,20 @@
 				case "AMP3":
 					expObj.func = function(){dee.exportCockpitTablesToAMP3()};
 					break;
-					
+
 				default:
-					
+
 				}
 				break;
 			case "REPORT":
-				expObj.func = function(){dee.exportReportTo(type)};			
+				expObj.func = function(){
+					if(engineDriver.includes("Jasper")){
+						dee.exportJasperReportTo(type);
+					}
+					else{
+						dee.exportBirtReportTo(type);
+					}
+				};
 				break;
 			case "OLAP":
 				expObj.func = function(){dee.exportOlapTo(type)};
@@ -625,7 +636,7 @@
 				case "XLSX":
 					expObj.func = function(){dee.exportQbeTo('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')};
 					break;
-				case "PDF":					
+				case "PDF":
 					expObj.func = function(){dee.exportQbeTo('application/pdf')};
 					break;
 				case "RTF":
@@ -641,25 +652,25 @@
 					expObj.func = function(){dee.exportQbeTo('application/json')};
 					break;
 				default:
-				
+
 				}
 				break;
 			case "NETWORK":
 				expObj.func = function(){dee.exportNetworkTo( type.toLowerCase())};
 				break;
 			default:
-				
+
 			}
 		}
-		
+
 		dee.getCockpitCsvData = function(documentFrame) {
 			var deferred=$q.defer();
-			if (documentFrame 
-				&& documentFrame.contentWindow 
+			if (documentFrame
+				&& documentFrame.contentWindow
 				&& documentFrame.contentWindow.angular){
-				
+
 				// copied and adapted from "/knowage/web-content/js/src/ext/sbi/execution/toolbar/ExportersMenu.js"
-				// S.Lupo 06/oct/2016 - modified to work with angular cockpit 
+				// S.Lupo 06/oct/2016 - modified to work with angular cockpit
 				var def=$q.defer();
 				documentFrame.contentWindow.angular.element(document).find('iframe').contents().find('body').scope().exportCsv(def)
 				.then(function(csvData){

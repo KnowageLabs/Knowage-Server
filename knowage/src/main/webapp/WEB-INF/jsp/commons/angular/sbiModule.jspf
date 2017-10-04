@@ -20,6 +20,7 @@ sbiM.factory('sbiModule_config',function(){
     	// Engines
     	qbeEngineContextName: '<%= contextNameForEngineComposition %>qbeengine',
     	birtReportEngineContextName: '<%= contextNameForEngineComposition %>birtreportengine',
+    	jasperReportEngineContextName: '<%= contextNameForEngineComposition %>jasperreportengine',    	
     	dataMiningContextName: '<%= contextNameForEngineComposition %>dataminingengine',
     	whatIfEngineContextName: '<%= contextNameForEngineComposition %>whatifengine',
     	olapEngineContextName: '<%= contextNameForEngineComposition %>olapengine',

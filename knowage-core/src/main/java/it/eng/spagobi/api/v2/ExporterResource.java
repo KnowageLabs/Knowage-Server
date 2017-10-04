@@ -17,16 +17,6 @@
  */
 package it.eng.spagobi.api.v2;
 
-import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.bo.Domain;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IDomainDAO;
-import it.eng.spagobi.engines.config.bo.Engine;
-import it.eng.spagobi.engines.config.bo.Exporters;
-import it.eng.spagobi.engines.config.dao.IEngineDAO;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +31,16 @@ import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.IDomainDAO;
+import it.eng.spagobi.engines.config.bo.Engine;
+import it.eng.spagobi.engines.config.bo.Exporters;
+import it.eng.spagobi.engines.config.dao.IEngineDAO;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
@@ -69,6 +69,7 @@ public class ExporterResource extends AbstractSpagoBIResource {
 
 			exportersLst = engineDAO.getAssociatedExporters(engine);
 			String engineType = getDomainValue(engine.getBiobjTypeId());
+			String driverName = engine.getDriverName();
 			String exporterType = null;
 
 			JSONArray exportersJSON = new JSONArray();
@@ -79,7 +80,9 @@ public class ExporterResource extends AbstractSpagoBIResource {
 				// create the json object with export configurations:
 				JSONObject jsonExporterDett = new JSONObject();
 				jsonExporterDett.put("name", exporterType);
-				jsonExporterDett.put("engine", engineType);
+				jsonExporterDett.put("engineType", engineType);
+				jsonExporterDett.put("engineDriver", driverName);
+
 				exportersJSON.put(jsonExporterDett);
 			}
 			toReturn.put("exporters", exportersJSON);
