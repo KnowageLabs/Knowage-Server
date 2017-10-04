@@ -17,10 +17,6 @@
  */
 package it.eng.spagobi.engines.birt;
 
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.services.proxy.DocumentExecuteServiceProxy;
-import it.eng.spagobi.utilities.mime.MimeUtils;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -39,15 +35,20 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.services.proxy.DocumentExecuteServiceProxy;
+import it.eng.spagobi.utilities.mime.MimeUtils;
 
 public class BirtImageServlet extends HttpServlet {
 
 	private transient Logger logger = Logger.getLogger(this.getClass());
-	private static final String CHART_LABEL="chart_label";
+	private static final String CHART_LABEL = "chart_label";
 	private HttpSession session = null;
 	String userId = null;
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see javax.servlet.http.HttpServlet#service(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
 	@Override
@@ -62,8 +63,7 @@ public class BirtImageServlet extends HttpServlet {
 		String completeImageFileName = null;
 		String mimeType = null;
 
-
-		if ( chartLabel == null ) {
+		if (chartLabel == null) {
 			String tmpDir = System.getProperty("java.io.tmpdir");
 			String imageDirectory = tmpDir.endsWith(File.separator) ? tmpDir + "birt" : tmpDir + File.separator + "birt";
 			imageTmpDir = new File(imageDirectory);
@@ -74,8 +74,8 @@ public class BirtImageServlet extends HttpServlet {
 				throw new RuntimeException("Image file name missing.");
 			}
 
-			//gets complete image file name:
-			completeImageFileName = imageDirectory +  File.separator + imageFileName;
+			// gets complete image file name:
+			completeImageFileName = imageDirectory + File.separator + imageFileName;
 
 			imageFile = new File(completeImageFileName);
 
@@ -84,6 +84,11 @@ public class BirtImageServlet extends HttpServlet {
 			if (!imageTmpDir.equals(parent)) {
 				logger.error("Trying to access the file [" + imageFile.getAbsolutePath() + "] that is not inside ${java.io.tmpdir}/birt!!!");
 				throw new SecurityException("Trying to access the file [" + imageFile.getAbsolutePath() + "] that is not inside ${java.io.tmpdir}/birt!!!");
+			}
+
+			if (!imageFile.exists()) {
+				logger.error("File " + imageFile.getPath() + " not found");
+				return;
 			}
 
 			try {
@@ -137,7 +142,20 @@ public class BirtImageServlet extends HttpServlet {
 				}
 			}
 			if (imageFile != null && imageFile.exists() && imageFile.isFile()) {
-				imageFile.delete();
+				// keep SVG needed to be displayed
+				if (!imageFile.getName().endsWith("svg")) {
+					imageFile.delete();
+				} else {
+					final File myFile = imageFile;
+
+					new java.util.Timer().schedule(new java.util.TimerTask() {
+						@Override
+						public void run() {
+							myFile.delete();
+						}
+					}, 5000);
+
+				}
 			}
 		}
 
@@ -145,7 +163,9 @@ public class BirtImageServlet extends HttpServlet {
 
 	/**
 	 * This method execute the engine chart and returns its image in byte[]
-	 * @param request the httpRequest
+	 *
+	 * @param request
+	 *            the httpRequest
 	 * @return the chart in inputstream form
 	 */
 	private InputStream executeEngineChart(Map parametersMap) {
@@ -154,25 +174,25 @@ public class BirtImageServlet extends HttpServlet {
 
 		try {
 			// chart_label : indicating the label of the chart that has to be called.
-			String[] arLabelValue=(String[])parametersMap.get(CHART_LABEL);
-			String labelValue=arLabelValue[0];
-			logger.debug("execute chart with lable "+labelValue);
+			String[] arLabelValue = (String[]) parametersMap.get(CHART_LABEL);
+			String labelValue = arLabelValue[0];
+			logger.debug("execute chart with lable " + labelValue);
 
-			HashMap chartParameters=new HashMap();
+			HashMap chartParameters = new HashMap();
 			for (Iterator iterator = parametersMap.keySet().iterator(); iterator.hasNext();) {
 				String namePar = (String) iterator.next();
-				if(!namePar.equalsIgnoreCase(CHART_LABEL)){
-					String[] value=(String[])parametersMap.get(namePar);
+				if (!namePar.equalsIgnoreCase(CHART_LABEL)) {
+					String[] value = (String[]) parametersMap.get(namePar);
 					chartParameters.put(namePar, value[0]);
 				}
 			}
 
-			DocumentExecuteServiceProxy proxy=new DocumentExecuteServiceProxy(userId,session);
+			DocumentExecuteServiceProxy proxy = new DocumentExecuteServiceProxy(userId, session);
 			logger.debug("Calling Service");
-		    byte[] image=proxy.executeChart(labelValue, chartParameters);
+			byte[] image = proxy.executeChart(labelValue, chartParameters);
 			logger.debug("Back from Service");
 
-			is=new ByteArrayInputStream(image);
+			is = new ByteArrayInputStream(image);
 
 		} catch (Exception e) {
 			logger.error("Error in chart execution", e);
