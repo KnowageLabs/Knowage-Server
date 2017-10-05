@@ -555,7 +555,7 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 						if (documentStateCode.equals("REL")) {
 							documentDispatcher.dispatch(document, executionOutput);
 						} else {
-							logger.info("Document [" + (documentIndex + 1) + "] with label [" + documentInstanceName + "] and parameters [" + descriptionSuffix
+							logger.error("Document [" + (documentIndex + 1) + "] with label [" + documentInstanceName + "] and parameters [" + descriptionSuffix
 									+ "] was not dispatched because document state is [" + documentStateCode + "]");
 						}
 						if (globalDocumentDispatcher == null) {
