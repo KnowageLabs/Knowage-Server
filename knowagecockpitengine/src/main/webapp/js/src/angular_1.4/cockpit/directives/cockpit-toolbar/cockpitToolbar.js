@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /**
  * @authors Giovanni Luca Ulivo (GiovanniLuca.Ulivo@eng.it)
  * v0.0.1
- * 
+ *
  */
 (function() {
 
@@ -43,23 +43,24 @@ angular.module('cockpitModule')
 });
 
 function cockpitToolbarControllerFunction($scope,cockpitModule_widgetServices,cockpitModule_properties,cockpitModule_template,$mdDialog,sbiModule_translate,sbiModule_restServices,cockpitModule_gridsterOptions,$mdPanel,cockpitModule_widgetConfigurator,$mdToast,cockpitModule_generalServices,cockpitModule_widgetSelection,$rootScope){
+	$scope.translate = sbiModule_translate;
 	$scope.cockpitModule_properties=cockpitModule_properties;
 	$scope.cockpitModule_template=cockpitModule_template;
 	$scope.cockpitModule_widgetServices=cockpitModule_widgetServices;
-	
+
 	$scope.openGeneralConfigurationDialog=function(){
 		cockpitModule_generalServices.openGeneralConfiguration();
 	}
-	
+
 	$scope.openDataConfigurationDialog=function(){
 		cockpitModule_generalServices.openDataConfiguration();
 	}
-	
+
 	$scope.fabSpeed = {
 			isOpen : false
 	}
-	
-	
+
+
 	$scope.saveCockpit=function(){
 		var haveSel=false;
 		for(var i=0;i<cockpitModule_template.configuration.aggregations.length;i++){
@@ -88,14 +89,14 @@ function cockpitToolbarControllerFunction($scope,cockpitModule_widgetServices,co
 				cockpitModule_generalServices.saveCockpit();
 			});
 		}else{
-			cockpitModule_generalServices.saveCockpit();  
+			cockpitModule_generalServices.saveCockpit();
 		}
 	};
-	
+
 	$scope.cleanCache = function(){
 		cockpitModule_generalServices.cleanCache();
 	}
-	
+
 	$scope.openSelections = function(){
 		$mdDialog.show({
 		      templateUrl: baseScriptPath+ '/directives/cockpit-toolbar/templates/selectionsList.html',
@@ -105,10 +106,10 @@ function cockpitToolbarControllerFunction($scope,cockpitModule_widgetServices,co
 	          preserveScope: true,
 		      fullscreen: true,
 		      controller: cockpitSelectionControllerFunction
-	
+
 		});
 	}
-	
+
 	$scope.addWidget=function(){
 		$mdDialog.show({
 		      templateUrl: baseScriptPath+ '/directives/cockpit-toolbar/templates/addWidget.html',
@@ -142,74 +143,81 @@ function cockpitToolbarControllerFunction($scope,cockpitModule_widgetServices,co
 		    		  }
 		    		  cockpitModule_template.sheets[cockpitModule_properties.CURRENT_SHEET].widgets.push(tmpWidget);
 		    		  $mdDialog.hide();
-		    		  
+
 		    	  };
-		    	  
+
 		    	  //to-do recuperare questa informazione dal backend
 		    	  $scope.widgetType=[
-		    	         		{	
+		    	         		{
 		    	        			name:"Text",
-		    	        			description: "Static or dynamic widget text. Uses a WYSIWYG editor and shortcodes to embed dynamic content.",
+		    	        			description: $scope.translate.load("sbi.cockpit.editor.newwidget.description.text"),
 		    	        			tags : ["text"],
 		    	        			img : "1.png",
+		    	        			class: "fa fa-font",
 		    	        			type : "text"
-		    	        		},{	
+		    	        		},{
 		    	        			name:"Image",
-		    	        			description: "Custom static or dynamic web/uploaded image.",
+		    	        			description: $scope.translate.load("sbi.cockpit.editor.newwidget.description.image"),
 		    	        			tags : ["image"],
 		    	        			img : "2.png",
+		    	        			class: "fa fa-picture-o",
 		    	        			type : "image"
-		    	        		},{	
+		    	        		},{
 		    	        			name:"Chart",
-		    	        			description: "Custom chart with binding to datasources data. Pie chart, bar chart and scatter chart available.",
+		    	        			description: $scope.translate.load("sbi.cockpit.editor.newwidget.description.chart"),
 		    	        			tags : ["chart"],
 		    	        			img : "4.png",
+		    	        			class: "fa fa-bar-chart",
 		    	        			type : "chart"
-		    	        		},{	
+		    	        		},{
 		    	        			name:"Table",
-		    	        			description: "Standard table with datasource binding.",
+		    	        			description: $scope.translate.load("sbi.cockpit.editor.newwidget.description.table"),
 		    	        			tags : ["table"],
 		    	        			img : "5.png",
+		    	        			class: "fa fa-table",
 		    	        			type : "table"
-		    	        		},{	
-							    	name:"Static Pivot Table",
-							    	description: "Pivot or cross table with datasource binding.",
+		    	        		},{
+							    	name:"Cross Table",
+							    	description: $scope.translate.load("sbi.cockpit.editor.newwidget.description.cross"),
 							    	tags : ["table","pivot","cross"],
 							    	img : "6.png",
+							    	class: "fa fa-table",
 							    	type : "static-pivot-table"
 							      }
-							      ,{	
+							      ,{
 							    	  name:"Document",
-							    	  description: "Custom document upload as databind or datasource.",
+							    	  description: $scope.translate.load("sbi.cockpit.editor.newwidget.description.document"),
 							    	  tags : ["document","datasource"],
 							    	  img : "7.png",
+							    	  class: "fa fa-file",
 							    	  type : "document"
-							      },{	
+							      },{
 							    	  name:"Selection",
-							    	  description: "View current selections on widgets.",
+							    	  description: $scope.translate.load("sbi.cockpit.editor.newwidget.description.selection"),
 							    	  tags : ["selection"],
+							    	  class: "fa fa-check-square-o",
 							    	  img : "8.png",
 							    	  type : "selection"
 							      }
 		    	        	];
-		    	  
+
 		    	  $scope.saveConfiguration=function(){
 		    		  $mdDialog.hide();
 		    	  }
 		    	  $scope.cancelConfiguration=function(){
 		    		  $mdDialog.cancel();
 		    	  }
-		    	  
-		    	  
+
+
 		      }
 		    })
 	};
-	
+
 	$scope.closeNewCockpit=function(){
 		cockpitModule_generalServices.closeNewCockpit();
 	}
 	$scope.isFromNewCockpit= cockpitModule_generalServices.isFromNewCockpit();
-	
+
 //	$scope.toggleEditMode=function(){
 //		cockpitModule_gridsterOptions.draggable.enabled=cockpitModule_properties.EDIT_MODE;
 //		cockpitModule_gridsterOptions.resizable.enabled=cockpitModule_properties.EDIT_MODE;
@@ -222,12 +230,12 @@ function cockpitSelectionControllerFunction($scope,cockpitModule_template,cockpi
 	$scope.selection = [];
 	$scope.translate = sbiModule_translate;
 	$scope.tmpSelection = [];
-	
-	
+
+
 	angular.copy(cockpitModule_template.configuration.aggregations,$scope.tmpSelection);
 	$scope.tmpFilters = {};
 	angular.copy(cockpitModule_template.configuration.filters,$scope.tmpFilters);
-	
+
 	$scope.filterForInitialSelection=function(obj){
 		if(!cockpitModule_properties.EDIT_MODE){
 			for(var i=0;i<cockpitModule_properties.STARTING_SELECTIONS.length;i++){
@@ -248,13 +256,13 @@ function cockpitSelectionControllerFunction($scope,cockpitModule_template,cockpi
 		}
 		return false;
 	}
-	
+
 	if($scope.tmpSelection.length >0){
 		for(var i=0;i<$scope.tmpSelection.length;i++){
 			var selection = $scope.tmpSelection[i].selection;
 			for(var key in selection){
 				var string = key.split(".");
-				
+
 				var obj = {
 						ds : string[0],
 						columnName : string[1],
@@ -267,7 +275,7 @@ function cockpitSelectionControllerFunction($scope,cockpitModule_template,cockpi
 			}
 		}
 	}
-	
+
 
 	for(var ds in $scope.tmpFilters){
 		var currentDs = cockpitModule_datasetServices.getDatasetByLabel(ds).metadata.fieldsMeta;
@@ -285,13 +293,13 @@ function cockpitSelectionControllerFunction($scope,cockpitModule_template,cockpi
 					value : $scope.tmpFilters[ds][col],
 					aggregated:false
 			}
-			 
+
 			if(!$scope.filterForInitialFilter(tmpObj)){
 				$scope.selection.push(tmpObj);
 			}
 		}
 	}
-	
+
 	$scope.columnTableSelection =[
 	                              {
 	                            	  label:"Dataset",
@@ -318,25 +326,25 @@ function cockpitSelectionControllerFunction($scope,cockpitModule_template,cockpi
 	$scope.actionsOfSelectionColumns = [
 
 	                                    {
-	                                    	icon:'fa fa-trash iconAlignFix' ,   
-	                                    	action : function(item,event) {	
+	                                    	icon:'fa fa-trash iconAlignFix' ,
+	                                    	action : function(item,event) {
 	                                    		$scope.deleteSelection(item);
-	                                    		
+
 	                                    	}
-	                                    } 
+	                                    }
 	                                    ];
-	
+
 	$scope.deleteSelection=function(item){
 		if(item.aggregated){
 			var key = item.ds + "." + item.columnName;
-			
+
 			for(var i=0;i<$scope.tmpSelection.length;i++){
 				if($scope.tmpSelection[i].datasets.indexOf(item.ds) !=-1){
 					var selection  = $scope.tmpSelection[i].selection;
 					delete selection[key];
 				}
 			}
-			
+
 			var index=$scope.selection.indexOf(item);
 			$scope.selection.splice(index,1);
 		}else{
@@ -355,11 +363,11 @@ function cockpitSelectionControllerFunction($scope,cockpitModule_template,cockpi
 			$scope.deleteSelection($scope.selection[0]);
 		}
 	}
-	
+
 	$scope.cancelConfiguration=function(){
 		$mdDialog.cancel();
 	}
-	
+
 	$scope.saveConfiguration = function(){
 		var reloadAss=false;
 		var reloadFilt=[];
@@ -381,7 +389,7 @@ function cockpitSelectionControllerFunction($scope,cockpitModule_template,cockpi
 		  if(!reloadAss && reloadFilt.length!=0){
 			  cockpitModule_widgetSelection.refreshAllWidgetWhithSameDataset(reloadFilt);
 		  }
-		  
+
 		  var hs=false;
 		  for(var i=0;i<$scope.tmpSelection.length;i++){
 				if(Object.keys($scope.tmpSelection[i].selection).length>0){
@@ -389,11 +397,11 @@ function cockpitSelectionControllerFunction($scope,cockpitModule_template,cockpi
 					break;
 				}
 			}
-		  
+
 		  if(hs==false && Object.keys($scope.tmpFilters).length==0 ){
 			  cockpitModule_properties.HAVE_SELECTIONS_OR_FILTERS=false;
 		  }
-		  
+
 		$mdDialog.cancel();
 	}
 

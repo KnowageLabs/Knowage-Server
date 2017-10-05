@@ -1237,6 +1237,45 @@
 }
 
 /* WIDGET DIALOG */
+.addNewWidget {
+	md-dialog-content {
+		height: 500px;
+		.widgetsContainer {
+			margin: 8px;
+			.widgetContainer {
+				margin-bottom: 20px;
+				height:150px;
+				.widget {
+					cursor: pointer;
+					outline: none;
+					background-color: $detailBackground;
+					-webkit-box-shadow: 0px 2px 5px 0px $shadowsColor;
+					-moz-box-shadow: 0px 2px 5px 0px $shadowsColor;
+					box-shadow: 0px 2px 5px 0px $shadowsColor;
+					height: 150px;
+					&:hover {
+						background-color: darken($detailBackground,10%);
+						i, p {
+							color: $baseColor;
+						}
+					}
+					i {
+						font-size: 2.5rem;
+						color: $smallTextColor;
+					}
+					p {
+						text-transform: uppercase;
+						font-family: 'Roboto';
+						margin: 0;
+						font-size: $defaultSize;
+						font-weight: 100;
+						color: $smallTextColor;
+					}
+				} 
+			}
+		}
+	}
+}
 
 .widgetSelection {
     background-color: transparent !important;
