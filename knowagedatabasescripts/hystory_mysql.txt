@@ -4000,3 +4000,15 @@ ALTER TABLE SBI_KPI_VALUE CHANGE COLUMN LOGICAL_KEY LOGICAL_KEY VARCHAR(4000) NO
 -- 28.09.2017 Dragan Pirkovic
 -- adding foreign key from sbi.metamodel.DATA_SOURCE_ID to sbi_data_source.DS_ID
 ALTER TABLE `sbi_meta_models` ADD CONSTRAINT `FK_META_MODELS_DS_ID` FOREIGN KEY (`DATA_SOURCE_ID`) REFERENCES `sbi_data_source` (`DS_ID`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- 05.10.2015 Alberto Ghedin removed mobile. The engine is not deleted because there can be some chart document in installation
+delete from SBI_PRODUCT_TYPE_ENGINE where ENGINE_ID in(select ENGINE_ID from SBI_ENGINES where NAME='Mobile Chart Engine');
+delete from SBI_PRODUCT_TYPE_ENGINE where ENGINE_ID in(select ENGINE_ID from SBI_ENGINES where NAME='Mobile Cockpit Engine');
+delete from SBI_PRODUCT_TYPE_ENGINE where ENGINE_ID in(select ENGINE_ID from SBI_ENGINES where NAME='Mobile Report Engine');
+update SBI_ENGINES set BIOBJ_TYPE=null where NAME='Mobile Chart Engine';
+update SBI_ENGINES set BIOBJ_TYPE=null where NAME='Mobile Cockpit Engine';
+update SBI_ENGINES set BIOBJ_TYPE=null where NAME='Mobile Report Engine';
+delete from SBI_DOMAINS where VALUE_CD='MOBILE_CHART';
+delete from SBI_DOMAINS where VALUE_CD='MOBILE_COCKPIT';
+delete from SBI_DOMAINS where VALUE_CD='MOBILE_REPORT';
+commit;

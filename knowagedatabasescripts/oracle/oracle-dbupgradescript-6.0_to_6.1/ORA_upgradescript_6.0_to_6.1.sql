@@ -7,3 +7,14 @@ alter table SBI_AUDIT add (DOC_PARAMETERS_CLOB CLOB);
 update SBI_AUDIT set DOC_PARAMETERS_CLOB = DOC_PARAMETERS;
 alter table SBI_AUDIT drop column DOC_PARAMETERS;
 alter table SBI_AUDIT rename column DOC_PARAMETERS_CLOB to DOC_PARAMETERS;
+
+delete from SBI_PRODUCT_TYPE_ENGINE where ENGINE_ID in(select ENGINE_ID from SBI_ENGINES where NAME='Mobile Chart Engine');
+delete from SBI_PRODUCT_TYPE_ENGINE where ENGINE_ID in(select ENGINE_ID from SBI_ENGINES where NAME='Mobile Cockpit Engine');
+delete from SBI_PRODUCT_TYPE_ENGINE where ENGINE_ID in(select ENGINE_ID from SBI_ENGINES where NAME='Mobile Report Engine');
+update SBI_ENGINES set BIOBJ_TYPE=null where NAME='Mobile Chart Engine';
+update SBI_ENGINES set BIOBJ_TYPE=null where NAME='Mobile Cockpit Engine';
+update SBI_ENGINES set BIOBJ_TYPE=null where NAME='Mobile Report Engine';
+delete from SBI_DOMAINS where VALUE_CD='MOBILE_CHART';
+delete from SBI_DOMAINS where VALUE_CD='MOBILE_COCKPIT';
+delete from SBI_DOMAINS where VALUE_CD='MOBILE_REPORT';
+commit;
