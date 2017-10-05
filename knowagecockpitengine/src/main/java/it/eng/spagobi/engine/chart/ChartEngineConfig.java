@@ -17,17 +17,17 @@
  */
 package it.eng.spagobi.engine.chart;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.engine.chart.model.conf.ChartConfig;
-import it.eng.spagobi.services.common.EnginConf;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+
+import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.engine.chart.model.conf.ChartConfig;
+import it.eng.spagobi.services.common.EnginConf;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @author
@@ -40,6 +40,8 @@ public class ChartEngineConfig {
 	public static final String CACHE_LIMIT_FOR_CLEAN_CONFIG = "SPAGOBI.CACHE.LIMIT_FOR_CLEAN";
 
 	private static Map<String, ChartConfig> chartLibConf = new HashMap<>();
+
+	private static String enableHighchart = "";
 
 	private static EnginConf engineConfig;
 
@@ -60,6 +62,7 @@ public class ChartEngineConfig {
 		instance = new ChartEngineConfig();
 
 		SourceBean chartLibraries = (SourceBean) getConfigSourceBean().getAttribute("chartConfiguration");
+		enableHighchart = (String)chartLibraries.getAttribute("enableHighchart");
 		if (chartLibraries != null) {
 			List<SourceBean> chartLibrariesItems = chartLibraries.getAttributeAsList("chart");
 			for (SourceBean chart : chartLibrariesItems) {
@@ -104,4 +107,10 @@ public class ChartEngineConfig {
 		}
 		return path;
 	}
+
+	public static boolean isEnableHighchart() {
+		return enableHighchart!=null && enableHighchart.equalsIgnoreCase("true");
+	}
+
+
 }

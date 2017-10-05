@@ -68,7 +68,7 @@
 				libIniPath="/chartlib/"
 				libIniName="{name}Initializer.jspf"
 	 -->
-	<chartConfiguration>
+	<chartConfiguration enableHighchart="false">
 		<!-- 
 			Not needed, not handled by the Designer.
 			@commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
