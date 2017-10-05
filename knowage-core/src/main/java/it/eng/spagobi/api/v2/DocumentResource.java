@@ -20,6 +20,48 @@ package it.eng.spagobi.api.v2;
 import static it.eng.spagobi.tools.glossary.util.Util.fromDocumentLight;
 import static it.eng.spagobi.tools.glossary.util.Util.fromObjectParameterListLight;
 import static it.eng.spagobi.tools.glossary.util.Util.getNumberOrNull;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.Response.Status;
+
+import org.apache.log4j.Logger;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.index.CorruptIndexException;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.queryParser.ParseException;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.store.FSDirectory;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.dbaccess.sql.DataRow;
 import it.eng.spago.error.EMFInternalError;
@@ -69,48 +111,6 @@ import it.eng.spagobi.utilities.JSError;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.ws.rs.core.Response.Status;
-
-import org.apache.log4j.Logger;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.index.CorruptIndexException;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.store.FSDirectory;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
 
 /**
  * @author Alessandro Daniele (alessandro.daniele@eng.it)
@@ -121,8 +121,10 @@ import com.jamonapi.MonitorFactory;
 public class DocumentResource extends AbstractSpagoBIResource {
 	static protected Logger logger = Logger.getLogger(DocumentResource.class);
 
-
-	public String getDocParameters(String label) {
+	@GET
+	@Path("/{label}/parameters")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getDocumentParameters(@PathParam("label") String label) {
 
 		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
 		BIObject document = documentManager.getDocument(label);
@@ -222,26 +224,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 			throw new SpagoBIRuntimeException("Error while try to retrieve user roles by document id [" + id + "]", e);
 		}
 	}
-	
-	@GET
-	@Path("/{label}/parameters")
-	@Produces(MediaType.APPLICATION_JSON )
-	public String getDocumentParameters(@PathParam("label") String label) {
-		logger.debug("IN");
-		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
-		try {
-			List<JSONObject> parameters = documentManager.getDocumentParameters(label);
-			JSONArray paramsJSON = writeParameters(parameters);
-			JSONObject resultsJSON = new JSONObject();
-			resultsJSON.put("results", paramsJSON);
-			return resultsJSON.toString();
-		} catch (Throwable t) {
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
-		} finally {
-			logger.debug("OUT");
-		}
-	}
-	
+
 	public JSONArray writeParameters(List<JSONObject> params) throws Exception {
 		JSONArray paramsJSON = new JSONArray();
 
@@ -318,7 +301,6 @@ public class DocumentResource extends AbstractSpagoBIResource {
 			throw new SpagoBIRuntimeException(
 					"[" + parameter.getBiObjectID() + "] is not the id of document with label [" + label + "]. The correct id is [" + document.getId() + "]");
 		}
-
 
 		try {
 			parameterDAO.insertBIObjectParameter(parameter);
@@ -513,8 +495,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 		// "ObjectsAccessVerifier.canSee" utility method
 		// (ATHENA-138/SBI-532/SBI-533)
 		/*
-		 * if (UserFilter != null) { restritions.add(new
-		 * CriteriaParameter("creationUser", UserFilter, Match.EQ)); }
+		 * if (UserFilter != null) { restritions.add(new CriteriaParameter("creationUser", UserFilter, Match.EQ)); }
 		 */
 
 		if (excludeType != null) {
@@ -995,8 +976,8 @@ public class DocumentResource extends AbstractSpagoBIResource {
 			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
 
 		if (!ObjectsAccessVerifier.canDevBIObject(document, getUserProfile()))
-			throw new SpagoBIRuntimeException("User [" + getUserProfile().getUserName() + "] has no rights to manage the template of document with label ["
-					+ label + "]");
+			throw new SpagoBIRuntimeException(
+					"User [" + getUserProfile().getUserName() + "] has no rights to manage the template of document with label [" + label + "]");
 
 		IObjTemplateDAO templateDAO = null;
 		try {

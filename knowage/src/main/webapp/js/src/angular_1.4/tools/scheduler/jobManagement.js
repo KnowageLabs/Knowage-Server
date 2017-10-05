@@ -623,9 +623,9 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 							var newDocument = {};
 							newDocument.name = docCtrl.selectedDocument.label;
 							newDocument.parameters = [];
-							for(var i=0;i<data.results.length;i++){
+							for(var i=0;i<data.length;i++){
 								var newParam = {};
-								newParam.name = data.results[i].url;
+								newParam.name = data[i].parameterUrlName;
 								newParam.value = "";
 								newParam.type = "fixed";
 								newParam.iterative = false;
