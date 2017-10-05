@@ -1246,6 +1246,7 @@
 				margin-bottom: 20px;
 				height:150px;
 				.widget {
+					transition: all linear .4s;
 					cursor: pointer;
 					outline: none;
 					background-color: $detailBackground;

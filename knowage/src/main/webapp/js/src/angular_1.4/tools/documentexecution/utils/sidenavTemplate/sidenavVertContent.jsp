@@ -11,20 +11,21 @@ IEngUserProfile profile = (IEngUserProfile)session.getAttribute(IEngUserProfile.
 <md-toolbar class="header secondaryToolbar" ng-hide="isParameterPanelDisabled()" 
 		ng-if="!(execProperties.isFromDocumentWidget)">
 	<div layout="row" layout-align="space-around center">	
-		<md-button title="Reset" aria-label="Reset Parameter" class="md-icon-button" 
-				ng-click="clearListParametersForm();">
-			<md-icon md-font-icon="fa fa-eraser"></md-icon>
+		<md-button aria-label="Reset Parameter" class="md-icon-button" ng-click="clearListParametersForm();">
+			<md-tooltip md-delay="500" >{{::translate.load("sbi.execution.parametersselection.toolbar.clear")}}</md-tooltip>
+			<md-icon md-font-icon="fa fa-history"></md-icon>
 		</md-button>	
 		<% 
 		if(UserUtilities.haveRoleAndAuthorization(profile, null, new String[]{SpagoBIConstants.SEE_VIEWPOINTS_FUNCTIONALITY}) || 
 						UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ADMIN_ROLE_TYPE, new String[0])){
 		%>					
-		<md-button title="Open Saved" aria-label="Open Saved Parameters" class="md-icon-button" 
+		<md-button aria-label="Open Saved Parameters" class="md-icon-button" 
 				ng-click="urlViewPointService.getViewpoints();">
+				<md-tooltip md-delay="500" >{{::translate.load("sbi.execution.parametersselection.toolbar.open")}}</md-tooltip>
 				<md-icon md-font-icon="fa fa-pencil"></md-icon>
 		</md-button>	
-		<md-button title="Save" aria-label="Save Parameters" class="md-icon-button"
-				ng-click="urlViewPointService.createNewViewpoint();">
+		<md-button aria-label="Save Parameters" class="md-icon-button"	ng-click="urlViewPointService.createNewViewpoint();">
+				<md-tooltip md-delay="500" >{{::translate.load("sbi.execution.parametersselection.toolbar.save")}}</md-tooltip>
 				<md-icon md-font-icon="fa fa-floppy-o"></md-icon>
 		</md-button>
 	  	<%} %>
@@ -42,27 +43,14 @@ IEngUserProfile profile = (IEngUserProfile)session.getAttribute(IEngUserProfile.
 	</md-input-container>
 </div>
 
-<md-content >
+<md-content>
 	<div ng-hide="isParameterPanelDisabled()" layout="{{filterDropping}}">
-		<document-paramenter-element parameter="parameter" ng-repeat="parameter in documentParameters" ng-show="parameter.visible"
-					layout="row" layout-align="start" />
-		
+		<document-paramenter-element parameter="parameter" ng-repeat="parameter in documentParameters" ng-show="parameter.visible" layout="row" layout-align="start" />
 	</div>
-	<!--  md-list ng-hide="isParameterPanelDisabled()" layout="{{filterDropping}}">
-		<md-list-item ng-repeat="parameter in documentParameters"
-				layout="row" aria-label="" class="md-3-line" ng-show="parameter.visible">
-
-			<document-paramenter-element parameter="parameter" 
-					layout="row" flex layout-align="start" />
-			
-		</md-list-item>
-	</md-list-->
 </md-content>
 <div flex></div>
 		
 <!-- execute button -->
-<md-button ng-cloak class="toolbar-button-custom md-raised" ng-disabled="paramRolePanelService.isExecuteParameterDisabled()"
-		title="{{::translate.load('sbi.execution.parametersselection.executionbutton.message')}}"  
-		ng-click="executeParameter()" ng-hide="isParameterPanelDisabled()">
+<md-button ng-cloak class="toolbar-button-custom md-raised" ng-disabled="paramRolePanelService.isExecuteParameterDisabled()" ng-click="executeParameter()" ng-hide="isParameterPanelDisabled()">
 	{{::translate.load("sbi.execution.parametersselection.executionbutton.message")}}
 </md-button>		
