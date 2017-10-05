@@ -1232,6 +1232,15 @@
 		    }
 		}
 	}
+	.addNewWidget {
+		md-dialog-content {
+			.widgetsContainer {
+				.widgetContainer {
+					min-width: 100px;
+				}
+			}
+		}
+	}
 }
 
 }
