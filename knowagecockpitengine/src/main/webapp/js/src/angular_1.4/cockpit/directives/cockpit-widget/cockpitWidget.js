@@ -21,6 +21,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 (function(){
+	var scripts = document.getElementsByTagName("script");
+	var currentScriptPath = scripts[scripts.length - 1].src;
+	currentScriptPath = currentScriptPath.substring(0, currentScriptPath.lastIndexOf('/') + 1);
+
 angular.module('cockpitModule')
 .directive('autoCompileWidget', function ($compile) {
             return {
@@ -199,6 +203,9 @@ angular.module('cockpitModule')
 });
 
 function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetServices,cockpitModule_properties,cockpitModule_template,cockpitModule_analyticalDrivers,cockpitModule_datasetServices,sbiModule_restServices,$q,cockpitModule_documentServices,cockpitModule_crossServices,cockpitModule_widgetSelection,$timeout,cockpitModule_gridsterOptions,sbiModule_translate,sbiModule_user,$mdDialog){
+
+
+
 	$scope.cockpitModule_properties=cockpitModule_properties;
 	$scope.cockpitModule_template=cockpitModule_template;
 	$scope.translate		= sbiModule_translate;
@@ -435,6 +442,36 @@ function cockpitWidgetControllerFunction($scope,$rootScope,cockpitModule_widgetS
 
 	$scope.cloneWidget = function(){
 		cockpitModule_widgetServices.addWidget(cockpitModule_properties.CURRENT_SHEET,angular.copy($scope.ngModel));
+	}
+
+	//dialog to choose the sheet where to move the widget
+	$scope.moveWidget = function(ev){
+		$scope.targetSheet = new Object();
+		$scope.targetSheet = cockpitModule_template.sheets[cockpitModule_widgetServices.getCokpitIndexFromProperty(cockpitModule_properties.CURRENT_SHEET)];
+		$mdDialog.show({
+			controller: function ($scope,$mdDialog,targetSheet,cockpitModule_widgetServices) {
+				$scope.targetSheet = targetSheet;
+				$scope.cockpitModule_widgetServices = cockpitModule_widgetServices;
+				$scope.move = function(){
+					$mdDialog.hide();
+				}
+				$scope.cancel = function(){
+					$mdDialog.cancel();
+				}
+			},
+			scope: $scope,
+			preserveScope:true,
+	      templateUrl: currentScriptPath+'/templates/changeSheetDialog.tpl.html',
+	      targetEvent: ev,
+	      clickOutsideToClose:true,
+	      locals: { targetSheet: $scope.targetSheet, cockpitModule_widgetServices:cockpitModule_widgetServices }
+	    })
+	    .then(function() {
+	    	if($scope.targetSheet.index!=cockpitModule_properties.CURRENT_SHEET){
+		    	cockpitModule_widgetServices.addWidget($scope.targetSheet.index,angular.copy($scope.ngModel));
+				cockpitModule_widgetServices.deleteWidget(cockpitModule_properties.CURRENT_SHEET,$scope.ngModel,true);
+	    	}
+	    });
 	}
 
 	$scope.openSearchBar = function(){
