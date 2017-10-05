@@ -17,24 +17,20 @@
  */
 package it.eng.spagobi.analiticalmodel.document.handlers;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
-import it.eng.spagobi.commons.dao.DAOFactory;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import sun.misc.BASE64Encoder;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * Manages and implements utilities and task execution for BIObject notes functionality
@@ -81,25 +77,16 @@ public class BIObjectNotesManager {
 			logger.debug("identifier produced : " + identif);
 		}
 		
-		BASE64Encoder encoder = new BASE64Encoder();
-		
-		String ecodedIdentif = "";
-		int index = 0;
-		while(index<identif.length()){
-			String tmpStr = "";
-			try{
-				tmpStr = identif.substring(index, index + 10);
-			} catch (Exception e) {
-				tmpStr = identif.substring(index, identif.length());
-			}
-			String tmpEncoded = encoder.encode(tmpStr.getBytes());
-			ecodedIdentif = ecodedIdentif + tmpEncoded;
-			index = index + 10;
+		String hash;
+		try {
+			hash = biobj!=null ? StringUtilities.sha256(identif) : "";
+		} catch (IOException e) {
+			throw new SpagoBIRuntimeException("Errore while calcuating hash", e);
 		}
 
-		logger.debug("end method execution, returning encoded identifier: " + ecodedIdentif);
+		logger.debug("end method execution, returning hash identifier: " + hash);
 		logger.debug("OUT");
-		return ecodedIdentif;
+		return hash;
 	}
 	
 	
@@ -152,24 +139,16 @@ public class BIObjectNotesManager {
 		 	}
 		}
 		logger.debug("identifier produced : " + identif);
-		BASE64Encoder encoder = new BASE64Encoder();
-		
-		String ecodedIdentif = "";
-		int index = 0;
-		while(index<identif.length()){
-			String tmpStr = "";
-			try{
-				tmpStr = identif.substring(index, index + 10);
-			} catch (Exception e) {
-				tmpStr = identif.substring(index, identif.length());
-			}
-			String tmpEncoded = encoder.encode(tmpStr.getBytes());
-			ecodedIdentif = ecodedIdentif + tmpEncoded;
-			index = index + 10;
+	
+		String hash;
+		try {
+			hash = StringUtilities.sha256(identif);
+		} catch (IOException e) {
+			throw new SpagoBIRuntimeException("Errore while calcuating hash", e);
 		}
 
-		logger.debug("end method execution, returning encoded identifier: " + ecodedIdentif);
-		return ecodedIdentif;
+		logger.debug("end method execution, returning hash identifier: " + hash);
+		logger.debug("OUT");
+		return hash;
 	}
-	
 }
