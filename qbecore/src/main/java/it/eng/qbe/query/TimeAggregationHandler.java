@@ -90,7 +90,7 @@ public class TimeAggregationHandler {
 						String temporalLevel = whereField.getLeftOperand().description;
 						temporalLevelColumn = defaultHierarchy.getLevelByType(temporalLevel);
 
-						String temporalDimensionId = getTimeId(temporalDimension);
+						String temporalDimensionId = getTemporalId(temporalDimension);
 
 						// DD: retrieve current period
 						TemporalRecord currentPeriod = getCurrentPeriod(temporalDimension, temporalDimensionId,
@@ -186,8 +186,8 @@ public class TimeAggregationHandler {
 						String timeLevel = whereField.getLeftOperand().description;
 						timeLevelColumn = defaultHierarchy.getLevelByType(timeLevel);
 
-						String timeDimensionId = "ID";
-
+						//String timeDimensionId = "ID";
+						String timeDimensionId = getHourId(timeDimension);
 						TemporalRecord currentTime = getCurrentTime(timeDimension, timeDimensionId, timeLevelColumn,
 								null, defaultHierarchy.getAncestors(timeLevelColumn));
 
@@ -272,7 +272,7 @@ public class TimeAggregationHandler {
 			Set<String> inlineFilterFieldTypes = extractInlineFilterFieldTypes(selectFields, hierarchyFullColumnMap);
 			
 			// retrieving time_id
-			String temporalDimensionId = getTimeId(temporalDimension);
+			String temporalDimensionId = getTemporalId(temporalDimension);
 
 			// adding  time_id to query
 			addTimeIdToQuery(query, temporalDimension, temporalDimensionId);
@@ -398,15 +398,16 @@ public class TimeAggregationHandler {
 		yearsInWhere.remove(relativeYear);
 	}
 
-	private String getTimeId(IModelEntity temporalDimension) {
+	private String getTemporalId(IModelEntity temporalDimension) {
 
 		List<IModelField> fields = temporalDimension.getAllFields();
 		for (IModelField f : fields) {
-			if (f.getName().equalsIgnoreCase("time_id")) {
+			if("temporal_id".equals(f.getProperty("type"))){
+			//if (f.getName().equalsIgnoreCase("time_id")) {
 				return f.getName();
 			}
 		}
-		logger.error("Impossible to find time_id on Temporal Dimension" );
+		logger.error("Impossible to find temporal_id on Temporal Dimension" );
 		throw new SpagoBIRuntimeException("Impossible to find time_id on Temporal Dimension");
 	}
 
@@ -414,12 +415,25 @@ public class TimeAggregationHandler {
 
 		List<IModelField> fields = temporalDimension.getAllFields();
 		for (IModelField f : fields) {
-			if (f.getName().equalsIgnoreCase("the_date") || f.getName().equalsIgnoreCase("time_date")) {
+			if("the_date".equals(f.getProperty("type"))){
+			//if (f.getName().equalsIgnoreCase("the_date") || f.getName().equalsIgnoreCase("time_date")) {
 				return f.getName();
 			}
 		}
 		logger.error("Impossible to find a date field on Temporal Dimension" );
 		throw new SpagoBIRuntimeException("Impossible to find a date field on Temporal Dimension");
+	}
+	
+	private String getHourId(IModelEntity timeDimension) {
+
+		List<IModelField> fields = timeDimension.getAllFields();
+		for (IModelField f : fields) {
+			if("hour_id".equals(f.getProperty("type"))){
+				return f.getName();
+			}
+		}
+		logger.error("Impossible to find hour_id on Temporal Dimension" );
+		throw new SpagoBIRuntimeException("Impossible to find hour_id on Temporal Dimension");
 	}
 
 	private void addYearsFilterForPerformances(Query query, List<ISelectField> selectFields,
@@ -1158,8 +1172,8 @@ public class TimeAggregationHandler {
 					true, true, false, null, null);
 		}
 
-		String timeDimensionIdField = "ID";
-
+		//String timeDimensionIdField = "ID";
+		String timeDimensionIdField = getHourId(timeDimension);
 		Operand left = new Operand(new String[] { timeDimension.getType() + ":" + timeDimensionIdField },
 				timeDimension.getName() + ":" + timeDimensionIdField, "Field Content", new String[] {""}, new String[] {""}, "");
 

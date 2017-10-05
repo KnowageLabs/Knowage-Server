@@ -150,6 +150,9 @@
         <value>measure</value>
         <value>attribute</value>
         <value>calendar</value>
+        <value>temporal_id</value>
+        <value>the_date</value>
+        <value>hour_id</value>
       </admissibleValuesOf>
       
       <admissibleValuesOf typeId="structural.format">

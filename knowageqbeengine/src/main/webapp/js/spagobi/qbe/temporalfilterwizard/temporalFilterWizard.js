@@ -37,13 +37,14 @@ it.eng.spagobi.engines.qbe.temporalfilterwizard = function() {
 	           'definition'
 	           ]
 	      );
-	  
+	  var t = this;
 	  var tree = qbe.queryEditorPanel.currentDataMartStructurePanel.tree.root.childNodes;
 	  var n;
 	  var hierachiesColumnTypes = "";
 	  for (n in tree){
 		  if (tree[n].attributes.iconCls && tree[n].attributes.iconCls == 'temporal_dimension'){
 			  var temporalDimension = tree[n];
+			  t.temporalDimension = temporalDimension;
 			  
 			  for(var i in temporalDimension.attributes.children) {
 				  var hierarchy = temporalDimension.attributes.children[i];
@@ -57,6 +58,9 @@ it.eng.spagobi.engines.qbe.temporalfilterwizard = function() {
 			  }
 			  
 			  break;
+		  } else if (tree[n].attributes.iconCls && tree[n].attributes.iconCls == 'time_dimension'){
+			  t.timeDimension = tree[n];
+			  
 		  }
 	  }
 	  
@@ -105,10 +109,25 @@ it.eng.spagobi.engines.qbe.temporalfilterwizard = function() {
 		    		} else {
 			    		definition.forEach(function(span, index, array) {
 			    			var filter;
+			    			
+
+			    			
+			    			
 			    			if (timeStore.getAt(rowIndex).get('type') == 'temporal'){
+				    			//search temporal field
+				    			var fields = this.temporalDimension.attributes.children
+				    			var leftOperandValue,leftOperandDescription;
+				    			for (var i=0; i<fields.length; i++){
+				    				if (fields[i].iconCls == "the_date" ){
+				    					leftOperandValue = fields[i].id;
+				    					leftOperandDescription = fields[i].attributes.longDescription;
+				    					break;
+				    				}
+				    			}
+			    				
 			    				filter = {
-			    						leftOperandValue: 'it.eng.knowage.meta.Time_by_day:the_date',
-			    						leftOperandDescription: 'Time by day : The date',
+			    						leftOperandValue: leftOperandValue,
+			    						leftOperandDescription: leftOperandDescription,
 			    						leftOperandType: Sbi.constants.qbe.OPERAND_TYPE_SIMPLE_FIELD,
 			    						operator : 'BETWEEN',
 			    						rightOperandValue : [span.from+' 00:00:00',span.to+' 00:00:00'],
@@ -120,9 +139,22 @@ it.eng.spagobi.engines.qbe.temporalfilterwizard = function() {
 			    			if (timeStore.getAt(rowIndex).get('type') == 'time'){
 			    				var f = span.from;
 			    				var t = span.to;
+			    				
+			    				//search time field
+				    			var fields = this.timeDimension.attributes.children
+				    			var leftOperandValue,leftOperandDescription;
+				    			for (var i=0; i<fields.length; i++){
+				    				if (fields[i].iconCls == "hour_id" ){
+				    					leftOperandValue = fields[i].id;
+				    					leftOperandDescription = fields[i].attributes.longDescription;
+				    					break;
+				    				}
+				    			}
+			    				
+			    				
 			    				filter = {
-			    						leftOperandValue: 'it.eng.knowage.meta.Time_by_minute:ID',
-			    						leftOperandDescription: 'Time by minute : ID',
+			    						leftOperandValue: leftOperandValue,
+			    						leftOperandDescription: leftOperandDescription,
 			    						leftOperandType: Sbi.constants.qbe.OPERAND_TYPE_SIMPLE_FIELD,
 			    						operator : 'BETWEEN',
 			    						rightOperandValue : [f.replace(':',''),t.replace(':','')],
