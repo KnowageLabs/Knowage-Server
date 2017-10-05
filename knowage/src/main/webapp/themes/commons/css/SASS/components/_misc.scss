@@ -797,6 +797,16 @@ md-tab-item {
   left: -30px !important;
 }
 
+color-picker {
+  width: 100%;
+  min-height: 30px;
+  display: block;
+  .color-picker-wrapper {
+    position: absolute;
+    width: 100%;
+  }
+}
+
 
 /* IE11 fix */
 
