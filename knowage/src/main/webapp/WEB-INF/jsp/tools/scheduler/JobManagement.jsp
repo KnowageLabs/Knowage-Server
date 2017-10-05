@@ -181,14 +181,15 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 													
 													<md-input-container class="md-block" ng-show="parameter.type == 'fixed' && parameter.values.length > 0 && !parameter.manualInput">
 														<label>{{translate.load("sbi.thresholds.values")}}</label>
-														<md-select ng-model="parameter.selectedValues" ng-disabled="!parameter.role || parameter.role == ''" md-on-close="ctrl.saveParameterValues(parameter)" multiple>
+														<md-select ng-model="parameter.selectedValues" ng-disabled="!parameter.role || parameter.role == ''" md-on-close="ctrl.saveParameterValues(parameter)" multiple
+																ng-change="ctrl.updateCondensedParams(document)">
 															<md-option ng-value="value" ng-repeat="value in parameter.values">{{value}}</md-option>
 														</md-select>
 													</md-input-container>
 													
 													<md-input-container class="md-block" ng-show="parameter.type == 'fixed' && (parameter.values.length == 0 || parameter.manualInput)">
 														<label>{{translate.load("sbi.thresholds.values")}}</label>
-														<input class="input_class" ng-model="parameter.value">
+														<input class="input_class" ng-model="parameter.value" ng-change="ctrl.updateCondensedParams(document)">
 													</md-input-container>
 													
 													<md-input-container ng-show="parameter.type == 'loadAtRuntime'">

@@ -809,6 +809,28 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 		}
 	});
 
+	ctrl.updateCondensedParams = function(document){
+		var condensedParameters = "";
+		for(var i=0;i<document.parameters.length;i++){
+			var param = document.parameters[i];
+			if(param.type=="fixed"){
+				condensedParameters += " " + param.name + " = ";
+				if(param.manualInput){
+					condensedParameters += param.value;
+				}else{
+					if(param.selectedValues.length > 0){
+						condensedParameters += param.selectedValues[0];
+					}
+					for(var j=1;j<param.selectedValues.length;j++){
+						condensedParameters += ";" + param.selectedValues[j];
+					}
+				}
+				condensedParameters += " | ";
+			}
+		}
+		document.condensedParameters = condensedParameters;
+	}
+
 	ctrl.editTrigger = function(jobName, jobGroup, triggerName, triggerGroup){
 		$mdDialog.show({
 			scope : $scope,
@@ -1436,6 +1458,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 			templateUrl : sbiModule_config.contextName + '/js/src/angular_1.4/tools/scheduler/templates/dialog-trigger.jsp'
 		});
 	}
+
 };
 
 app.config(['$mdThemingProvider', function($mdThemingProvider) {
