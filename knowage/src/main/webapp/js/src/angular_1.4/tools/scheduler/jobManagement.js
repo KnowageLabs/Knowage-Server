@@ -764,6 +764,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 			parameter.value = ctrl.selectedDocumentRoles[0].userAndRole
 		}
 		if(parameter.type == "fixed"){
+			parameter.selectedValues = [];
 			ctrl.loadParameterValues(parameter);
 		}
 	}

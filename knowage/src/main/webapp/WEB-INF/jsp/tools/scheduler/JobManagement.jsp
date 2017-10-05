@@ -160,14 +160,14 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 													<!-- <span>{{parameter.value}}</span> -->
 													<md-input-container class="md-block" ng-show="parameter.temporal">
 														<label>{{translate.load("scheduler.parameterValuesStrategyQuestion","component_scheduler_messages")}}</label>
-														<md-select aria-label="aria-label" ng-model="parameter.type" ng-change="ctrl.setDefaultValue(parameter)">
+														<md-select aria-label="aria-label" ng-model="parameter.type" ng-change="ctrl.setDefaultValue(parameter);ctrl.updateCondensedParams(document)">
 															<md-option ng-repeat="strategy in ctrl.triggerStrategies" value="{{strategy.value}}">{{strategy.label}}</md-option>
 														</md-select>
 													</md-input-container>
 													
 													<md-input-container class="md-block" ng-hide="parameter.temporal">
 														<label>{{translate.load("scheduler.parameterValuesStrategyQuestion","component_scheduler_messages")}}</label>
-														<md-select aria-label="aria-label" ng-model="parameter.type" ng-change="ctrl.setDefaultValue(parameter)">
+														<md-select aria-label="aria-label" ng-model="parameter.type" ng-change="ctrl.setDefaultValue(parameter);ctrl.updateCondensedParams(document)">
 															<md-option ng-repeat="strategy in ctrl.triggerStrategiesNoFormula" value="{{strategy.value}}">{{strategy.label}}</md-option>
 														</md-select>
 													</md-input-container>
