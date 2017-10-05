@@ -210,7 +210,7 @@ function cockpitChartWidgetControllerFunction(
 	};
 
 	$scope.init=function(element,width,height){
-		$scope.refreshWidget(undefined,'init');
+		$scope.refreshWidget({type:"chart",chartInit:true},'init');
 	};
 	$scope.chartLibNamesConfig = chartLibNamesConfig;
 
@@ -643,7 +643,7 @@ function cockpitChartWidgetControllerFunction(
 	    						}
 	    						if (counter == 0) f = true;
 	    				  }
-	    				  
+
 	    				  if ((chartTemplateFake.type == "BAR" || chartTemplateFake.type == "LINE") && chartTemplateFake.VALUES.SERIE.length>0) {
 	    					  var allSeries = chartTemplateFake.VALUES.SERIE;
 	    						var counterlow = 0;
@@ -662,7 +662,7 @@ function cockpitChartWidgetControllerFunction(
 	    							f=false;
 	    						}
 	    				  }
-	    				  
+
 	    				  return f;
 
 			    	  }
