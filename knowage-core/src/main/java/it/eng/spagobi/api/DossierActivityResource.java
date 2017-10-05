@@ -116,7 +116,9 @@ public class DossierActivityResource extends AbstractSpagoBIResource {
 
 	@POST
 	@Path("/activity")
-	public Integer createNewActivity(DossierActivity dossierActivity, @Context HttpServletRequest req) {
+	@Produces(MediaType.TEXT_HTML + "; charset=UTF-8")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public String createNewActivity(DossierActivity dossierActivity, @Context HttpServletRequest req) {
 
 		ISbiDossierActivityDAO sdaDAO;
 		Integer id = null;
@@ -134,7 +136,7 @@ public class DossierActivityResource extends AbstractSpagoBIResource {
 			logger.error("Error while creating new activity", e);
 			throw new SpagoBIRestServiceException(getLocale(), e);
 		}
-		return id;
+		return id.toString();
 	}
 
 	@POST

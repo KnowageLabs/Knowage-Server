@@ -1,20 +1,8 @@
-/*
- * Knowage, Open Source Business Intelligence suite
- * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
- * Knowage is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * Knowage is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+/* SpagoBI, the Open Source Business Intelligence suite
+
+ * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0, without the "Incompatible With Secondary Licenses" notice.
+ * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.massiveExport.dao;
 
 import it.eng.spago.error.EMFErrorSeverity;
@@ -35,7 +23,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProgressThreadDAO {
-	
+
 	public static final String PREPARED = "PREPARED";
 	public static final String STARTED = "STARTED";
 	public static final String DOWNLOAD = "DOWNLOAD";
@@ -44,6 +32,7 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 	// logger component
 	private static Logger logger = Logger.getLogger(ProgressThreadDAOImpl.class);
 
+	@Override
 	public ProgressThread loadProgressThreadById(Integer progressThreadId) throws EMFUserError {
 		logger.debug("IN");
 		ProgressThread toReturn = null;
@@ -55,36 +44,33 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			Query hibPT = aSession.createQuery("from SbiProgressThread h where h.progressThreadId = ?" );
+			Query hibPT = aSession.createQuery("from SbiProgressThread h where h.progressThreadId = ?");
 			hibPT.setInteger(0, progressThreadId);
-			SbiProgressThread sbiProgressThread =(SbiProgressThread)hibPT.uniqueResult();
-			if(sbiProgressThread!=null){
+			SbiProgressThread sbiProgressThread = (SbiProgressThread) hibPT.uniqueResult();
+			if (sbiProgressThread != null) {
 				toReturn = toProgressThread(sbiProgressThread);
-			}	
+			}
 			tx.commit();
 
 		} catch (HibernateException he) {
-			logger.error("Error while loading Progress Thread with progresThreadId", he);			
+			logger.error("Error while loading Progress Thread with progresThreadId", he);
 			if (tx != null)
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession!=null){
-				if (aSession.isOpen()) aSession.close();
-				//logger.debug("OUT");
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+				// logger.debug("OUT");
 			}
 		}
-		//logger.debug("OUT");
-		return null;
+		// logger.debug("OUT");
+		return toReturn;
 	}
 
-
-
-
-
-	public List<ProgressThread> loadActiveProgressThreadsByUserId(
-			String userId) throws EMFUserError {
-		//logger.debug("IN");
+	@Override
+	public List<ProgressThread> loadActiveProgressThreadsByUserId(String userId) throws EMFUserError {
+		// logger.debug("IN");
 		List<ProgressThread> toReturn = null;
 
 		Session aSession = null;
@@ -94,11 +80,12 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			Query hibPT = aSession.createQuery("from SbiProgressThread h where h.userId = ? AND (h.status = '"+STARTED+"' OR h.status = '"+PREPARED+"')" );
+			Query hibPT = aSession.createQuery("from SbiProgressThread h where h.userId = ? AND (h.status = '" + STARTED + "' OR h.status = '" + PREPARED
+					+ "')");
 			hibPT.setString(0, userId);
 
 			List sbiProgressThreadList = hibPT.list();
-			if(sbiProgressThreadList!=null){
+			if (sbiProgressThreadList != null) {
 				toReturn = new ArrayList<ProgressThread>();
 				for (Iterator iterator = sbiProgressThreadList.iterator(); iterator.hasNext();) {
 					SbiProgressThread sbiPT = (SbiProgressThread) iterator.next();
@@ -110,23 +97,24 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 			tx.commit();
 
 		} catch (HibernateException he) {
-			logger.error("Error while loading Progress Threads with userId"+userId + " and status STARTED or prepared", he);			
+			logger.error("Error while loading Progress Threads with userId" + userId + " and status STARTED or prepared", he);
 			if (tx != null)
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession!=null){
-				if (aSession.isOpen()) aSession.close();
-				//logger.debug("OUT");
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+				// logger.debug("OUT");
 			}
 		}
-		//logger.debug("OUT");
+		// logger.debug("OUT");
 		return toReturn;
 	}
 
-	public List<ProgressThread> loadNotClosedProgressThreadsByUserId(
-			String userId) throws EMFUserError {
-		//logger.debug("IN");
+	@Override
+	public List<ProgressThread> loadNotClosedProgressThreadsByUserId(String userId) throws EMFUserError {
+		// logger.debug("IN");
 		List<ProgressThread> toReturn = null;
 
 		Session aSession = null;
@@ -136,11 +124,11 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			Query hibPT = aSession.createQuery("from SbiProgressThread h where h.userId = ? AND h.status != 'CLOSED'" );
+			Query hibPT = aSession.createQuery("from SbiProgressThread h where h.userId = ? AND h.status != 'CLOSED'");
 			hibPT.setString(0, userId);
 
 			List sbiProgressThreadList = hibPT.list();
-			if(sbiProgressThreadList!=null){
+			if (sbiProgressThreadList != null) {
 				toReturn = new ArrayList<ProgressThread>();
 				for (Iterator iterator = sbiProgressThreadList.iterator(); iterator.hasNext();) {
 					SbiProgressThread sbiPT = (SbiProgressThread) iterator.next();
@@ -152,28 +140,24 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 			tx.commit();
 
 		} catch (HibernateException he) {
-			logger.error("Error while loading Progress Threads with userId"+userId + " and status NOT CLOSED", he);			
+			logger.error("Error while loading Progress Threads with userId" + userId + " and status NOT CLOSED", he);
 			if (tx != null)
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession!=null){
-				if (aSession.isOpen()) aSession.close();
-				//logger.debug("OUT");
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+				// logger.debug("OUT");
 			}
 		}
-		//logger.debug("OUT");
+		// logger.debug("OUT");
 		return toReturn;
 	}
 
-
-
-
-
-
-
+	@Override
 	public ProgressThread loadActiveProgressThreadByUserIdAndFuncCd(String userId, String functCd) throws EMFUserError {
-		//logger.debug("IN");
+		// logger.debug("IN");
 		ProgressThread toReturn = null;
 
 		Session aSession = null;
@@ -183,36 +167,36 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			Query hibPT = aSession.createQuery("from SbiProgressThread h where h.userId = ? AND h.functionCd = ? AND (h.status = '"+STARTED+"' OR h.status ='"+PREPARED+"') " );
+			Query hibPT = aSession.createQuery("from SbiProgressThread h where h.userId = ? AND h.functionCd = ? AND (h.status = '" + STARTED
+					+ "' OR h.status ='" + PREPARED + "') ");
 			hibPT.setString(0, userId);
 			hibPT.setString(1, functCd);
 
-			SbiProgressThread sbiProgressThread =(SbiProgressThread)hibPT.uniqueResult();
-			if(sbiProgressThread!=null){
+			SbiProgressThread sbiProgressThread = (SbiProgressThread) hibPT.uniqueResult();
+			if (sbiProgressThread != null) {
 				toReturn = toProgressThread(sbiProgressThread);
-			}	
+			}
 			tx.commit();
 
 		} catch (HibernateException he) {
-			logger.error("Error while loading Progress Thread with progresThreadId", he);			
+			logger.error("Error while loading Progress Thread with progresThreadId", he);
 			if (tx != null)
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession!=null){
-				if (aSession.isOpen()) aSession.close();
-				//logger.debug("OUT");
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+				// logger.debug("OUT");
 			}
 		}
-		//logger.debug("OUT");
+		// logger.debug("OUT");
 		return toReturn;
 	}
 
-
-
-
-	public boolean incrementProgressThread(Integer progressThreadId) throws EMFUserError{
-		//logger.debug("IN");
+	@Override
+	public boolean incrementProgressThread(Integer progressThreadId) throws EMFUserError {
+		// logger.debug("IN");
 		ProgressThread toReturn = null;
 
 		Session aSession = null;
@@ -222,34 +206,35 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			Query hibPT = aSession.createQuery("from SbiProgressThread h where h.progressThreadId = ?" );
+			Query hibPT = aSession.createQuery("from SbiProgressThread h where h.progressThreadId = ?");
 			hibPT.setInteger(0, progressThreadId);
-			SbiProgressThread sbiProgressThread =(SbiProgressThread)hibPT.uniqueResult();
+			SbiProgressThread sbiProgressThread = (SbiProgressThread) hibPT.uniqueResult();
 
 			Integer partial = sbiProgressThread.getPartial();
-			sbiProgressThread.setPartial(partial+1);
-
+			sbiProgressThread.setPartial(partial + 1);
 
 			tx.commit();
 
 		} catch (HibernateException he) {
-			logger.error("Error while loading Progress Thread with progressThreadId = "+progressThreadId, he);			
+			logger.error("Error while loading Progress Thread with progressThreadId = " + progressThreadId, he);
 			if (tx != null)
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession!=null){
-				if (aSession.isOpen()) aSession.close();
-				//logger.debug("OUT");
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+				// logger.debug("OUT");
 			}
 		}
-		//logger.debug("OUT");
+		// logger.debug("OUT");
 		return true;
 
 	}
 
+	@Override
 	public Integer insertProgressThread(ProgressThread progThread) throws EMFUserError {
-		//logger.debug("IN");
+		// logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
 		SbiProgressThread sbiPT = null;
@@ -270,27 +255,27 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 			aSession.save(sbiPT);
 			tx.commit();
 		} catch (HibernateException he) {
-			logger.error("Error while inserting the progress thread with user id " + progThread.getUserId() + " and on functionality "+progThread.getFunctionCd(), he);
+			logger.error(
+					"Error while inserting the progress thread with user id " + progThread.getUserId() + " and on functionality " + progThread.getFunctionCd(),
+					he);
 
 			if (tx != null)
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession!=null){
-				if (aSession.isOpen()) aSession.close();
-				//logger.debug("OUT");
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+				// logger.debug("OUT");
 			}
 		}
-		//logger.debug("OUT");
+		// logger.debug("OUT");
 		return sbiPT.getProgressThreadId();
 	}
 
-
-
-
-	public ProgressThread toProgressThread(SbiProgressThread sbiPT){
-		//logger.debug("IN");
+	public ProgressThread toProgressThread(SbiProgressThread sbiPT) {
+		// logger.debug("IN");
 		ProgressThread toReturn = new ProgressThread();
 
 		toReturn.setUserId(sbiPT.getUserId());
@@ -302,13 +287,13 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 
 		toReturn.setTotal(sbiPT.getTotal());
 		toReturn.setPartial(sbiPT.getPartial());
-		//logger.debug("OUT");
+		// logger.debug("OUT");
 		return toReturn;
 	}
 
-
-	public void setStartedProgressThread(Integer progressThreadId) throws EMFUserError{
-		//logger.debug("IN");
+	@Override
+	public void setStartedProgressThread(Integer progressThreadId) throws EMFUserError {
+		// logger.debug("IN");
 		ProgressThread toReturn = null;
 
 		Session aSession = null;
@@ -318,30 +303,31 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			Query hibPT = aSession.createQuery("from SbiProgressThread h where h.progressThreadId = ? " );
+			Query hibPT = aSession.createQuery("from SbiProgressThread h where h.progressThreadId = ? ");
 			hibPT.setInteger(0, progressThreadId);
-			SbiProgressThread sbiProgressThread =(SbiProgressThread)hibPT.uniqueResult();
+			SbiProgressThread sbiProgressThread = (SbiProgressThread) hibPT.uniqueResult();
 			sbiProgressThread.setStatus(STARTED);
 			tx.commit();
 
 		} catch (HibernateException he) {
-			logger.error("Error while loading Progress Thread with progressThreadId = "+progressThreadId, he);			
+			logger.error("Error while loading Progress Thread with progressThreadId = " + progressThreadId, he);
 			if (tx != null)
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession!=null){
-				if (aSession.isOpen()) aSession.close();
-				//logger.debug("OUT");
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+				// logger.debug("OUT");
 			}
 		}
-		//logger.debug("OUT");
+		// logger.debug("OUT");
 
 	}
-	
 
-	public void setDownloadProgressThread(Integer progressThreadId) throws EMFUserError{
-		//logger.debug("IN");
+	@Override
+	public void setDownloadProgressThread(Integer progressThreadId) throws EMFUserError {
+		// logger.debug("IN");
 		ProgressThread toReturn = null;
 
 		Session aSession = null;
@@ -351,29 +337,30 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			Query hibPT = aSession.createQuery("from SbiProgressThread h where h.progressThreadId = ? " );
+			Query hibPT = aSession.createQuery("from SbiProgressThread h where h.progressThreadId = ? ");
 			hibPT.setInteger(0, progressThreadId);
-			SbiProgressThread sbiProgressThread =(SbiProgressThread)hibPT.uniqueResult();
+			SbiProgressThread sbiProgressThread = (SbiProgressThread) hibPT.uniqueResult();
 			sbiProgressThread.setStatus(DOWNLOAD);
 			tx.commit();
 
 		} catch (HibernateException he) {
-			logger.error("Error while loading Progress Thread with progressThreadId = "+progressThreadId, he);			
+			logger.error("Error while loading Progress Thread with progressThreadId = " + progressThreadId, he);
 			if (tx != null)
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession!=null){
-				if (aSession.isOpen()) aSession.close();
-				//logger.debug("OUT");
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+				// logger.debug("OUT");
 			}
 		}
-		//logger.debug("OUT");
+		// logger.debug("OUT");
 
 	}
 
-	public void closeProgressThread(Integer progressThreadId) throws EMFUserError{
-		//logger.debug("IN");
+	public void closeProgressThread(Integer progressThreadId) throws EMFUserError {
+		// logger.debug("IN");
 		ProgressThread toReturn = null;
 
 		Session aSession = null;
@@ -383,33 +370,31 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			Query hibPT = aSession.createQuery("from SbiProgressThread h where h.progressThreadId = ? " );
+			Query hibPT = aSession.createQuery("from SbiProgressThread h where h.progressThreadId = ? ");
 			hibPT.setInteger(0, progressThreadId);
-			SbiProgressThread sbiProgressThread =(SbiProgressThread)hibPT.uniqueResult();
+			SbiProgressThread sbiProgressThread = (SbiProgressThread) hibPT.uniqueResult();
 			sbiProgressThread.setStatus("CLOSED");
 			tx.commit();
 
 		} catch (HibernateException he) {
-			logger.error("Error while loading Progress Thread with progressThreadId = "+progressThreadId, he);			
+			logger.error("Error while loading Progress Thread with progressThreadId = " + progressThreadId, he);
 			if (tx != null)
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession!=null){
-				if (aSession.isOpen()) aSession.close();
-				//logger.debug("OUT");
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+				// logger.debug("OUT");
 			}
 		}
-		//logger.debug("OUT");
+		// logger.debug("OUT");
 
 	}
 
-
-
-
-
-	public boolean deleteProgressThread(Integer progressThreadId) throws EMFUserError{
-		//logger.debug("IN");
+	@Override
+	public boolean deleteProgressThread(Integer progressThreadId) throws EMFUserError {
+		// logger.debug("IN");
 
 		boolean found = false;
 
@@ -420,39 +405,36 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			Query hibPT = aSession.createQuery("from SbiProgressThread h where h.progressThreadId = ? " );
+			Query hibPT = aSession.createQuery("from SbiProgressThread h where h.progressThreadId = ? ");
 			hibPT.setInteger(0, progressThreadId);
-			Object sbiProgressThreadO =hibPT.uniqueResult();
-			
-			if(sbiProgressThreadO  != null) {
-				SbiProgressThread pT = (SbiProgressThread)sbiProgressThreadO;
-				found=true;
+			Object sbiProgressThreadO = hibPT.uniqueResult();
+
+			if (sbiProgressThreadO != null) {
+				SbiProgressThread pT = (SbiProgressThread) sbiProgressThreadO;
+				found = true;
 				aSession.delete(pT);
 				tx.commit();
 			}
 
 		} catch (HibernateException he) {
-			logger.error("Error while deletering Progress Thread with progressThreadId = "+progressThreadId, he);			
+			logger.error("Error while deletering Progress Thread with progressThreadId = " + progressThreadId, he);
 			if (tx != null)
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession!=null){
-				if (aSession.isOpen()) aSession.close();
-				//logger.debug("OUT");
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+				// logger.debug("OUT");
 			}
 		}
-		//logger.debug("OUT");
+		// logger.debug("OUT");
 		return found;
 	}
 
-
-
-
-
-
-	public void setErrorProgressThread(Integer progressThreadId) throws EMFUserError{
-		//logger.debug("IN");
+	@Override
+	public void setErrorProgressThread(Integer progressThreadId) throws EMFUserError {
+		// logger.debug("IN");
 		ProgressThread toReturn = null;
 
 		Session aSession = null;
@@ -462,31 +444,26 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			Query hibPT = aSession.createQuery("from SbiProgressThread h where h.progressThreadId = ? " );
+			Query hibPT = aSession.createQuery("from SbiProgressThread h where h.progressThreadId = ? ");
 			hibPT.setInteger(0, progressThreadId);
-			SbiProgressThread sbiProgressThread =(SbiProgressThread)hibPT.uniqueResult();
+			SbiProgressThread sbiProgressThread = (SbiProgressThread) hibPT.uniqueResult();
 			sbiProgressThread.setStatus("ERROR");
 			tx.commit();
 
 		} catch (HibernateException he) {
-			logger.error("Error while loading Progress Thread with progressThreadId = "+progressThreadId, he);			
+			logger.error("Error while loading Progress Thread with progressThreadId = " + progressThreadId, he);
 			if (tx != null)
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession!=null){
-				if (aSession.isOpen()) aSession.close();
-				//logger.debug("OUT");
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+				// logger.debug("OUT");
 			}
 		}
-		//logger.debug("OUT");
+		// logger.debug("OUT");
 
 	}
 
-
-
-
 }
-
-
-

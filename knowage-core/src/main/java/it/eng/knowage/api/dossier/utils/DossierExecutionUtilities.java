@@ -13,16 +13,15 @@ import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class DossierExecutionUtilities {
-	
+
 	public static final String RESOURCE_DOSSIER_EXECUTION_FOLDER = "dossierExecution";
 
 	public static File getDossierExecutionFolder() {
-		
 
 		String resourcePath = "";
 		String jndiBean = SingletonConfig.getInstance().getConfigValue("SPAGOBI.RESOURCE_PATH_JNDI_NAME");
 		if (jndiBean != null) {
-			resourcePath = SpagoBIUtilities.readJndiResource(jndiBean);
+			resourcePath = SpagoBIUtilities.readJndiResource(jndiBean) + "/SPAGOBI";
 		}
 
 		File file = new File(resourcePath);
@@ -40,9 +39,9 @@ public class DossierExecutionUtilities {
 		if (!directory.exists()) {
 			directory.mkdir();
 		}
-		
+
 		return directory;
 
 	}
-	
+
 }

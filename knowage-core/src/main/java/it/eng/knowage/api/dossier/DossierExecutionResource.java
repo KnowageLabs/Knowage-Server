@@ -12,7 +12,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
@@ -46,9 +45,9 @@ public class DossierExecutionResource extends AbstractSpagoBIResource {
 
 	@POST
 	@Path("/executedocuments")
-	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@Produces(MediaType.TEXT_HTML + "; charset=UTF-8")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response executeDocuments(DossierTemplate dossierTemplate) {
+	public String executeDocuments(DossierTemplate dossierTemplate) {
 		logger.debug("IN");
 		Integer progressThreadId = null;
 
@@ -91,7 +90,7 @@ public class DossierExecutionResource extends AbstractSpagoBIResource {
 				}
 				JSONObject jsonObject = new JSONObject();
 				jsonObject.put("progressThreadId", progressThreadId);
-				return Response.ok(jsonObject).build();
+				return progressThreadId.toString();
 			}
 
 		} catch (SpagoBIRuntimeException e) {
@@ -107,7 +106,7 @@ public class DossierExecutionResource extends AbstractSpagoBIResource {
 		} finally {
 			logger.debug("OUT");
 		}
-		return Response.serverError().build();
+		return null;
 
 	}
 
