@@ -163,10 +163,12 @@ public class SimpleRestClient {
 		// provide authentication exactly before of call
 		authenticationProvider.provideAuthentication(request, target, myHeaders, data);
 		if (type.equals(RequestTypeEnum.POST))
-			if (form == null) {
+			if (form == null&& data != null) {
 				response = request.post(Entity.json(data.toString()));
-			} else {
+			} else if (form!=null){
 				response = request.post(Entity.entity(form, mediaType));
+			} else {
+				response = request.post(Entity.json("{x:'x'}"));//fake json object
 			}
 
 		else

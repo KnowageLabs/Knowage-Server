@@ -55,14 +55,14 @@ public class FederationClient extends SimpleRestClient {
 
 		FederationDefinition toReturn = new FederationDefinition();
 
-		Map<String, Object> parameters = new java.util.HashMap<String, Object>();
+		JSONObject parameters = new JSONObject();
 
 		parameters.put("federationId", federationID);
 
 		logger.debug("Call persist service in post");
-		Response resp = executePostService(parameters, getServiceUrl, userId, null, null);
+		Response resp = executePostService(null, getServiceUrl, userId, MediaType.TEXT_PLAIN, parameters.toString());
 
-		String respString = (String) resp.getEntity();
+		String respString = resp.readEntity(String.class);
 		if (respString != null) {
 			logger.debug("String returned by federation service " + respString);
 		} else {
