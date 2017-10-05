@@ -701,7 +701,9 @@ sbiM.service('sbiModule_download', function(sbiModule_config,sbiModule_logger, s
 	};
 			
 	this.getPlain = function(data, nameFile, typeFile, extensionFile){
-		if (deviceBrowser == 'internet explorer'){
+		this.getBlob(data, nameFile, typeFile, extensionFile);
+		
+	/*	if (deviceBrowser == 'internet explorer'){
 			this.getBlob(data, nameFile, typeFile, extensionFile);
 		}else{
 			text = JSON.stringify(data);	
@@ -710,8 +712,8 @@ sbiM.service('sbiModule_download', function(sbiModule_config,sbiModule_logger, s
 			a.download = nameFile+ '.'  + extensionFile;
 			a.href = 'data:'+typeFile+ ';charset=utf-8,' + encodeURI(text);
 			a.target = '_blank';
-			a.click();
-		}
+			a.click(); 
+		}*/
 	};
 	
 	/* download file from direct link */
