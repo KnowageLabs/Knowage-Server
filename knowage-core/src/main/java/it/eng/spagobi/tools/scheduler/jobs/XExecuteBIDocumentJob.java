@@ -17,6 +17,30 @@
  */
 package it.eng.spagobi.tools.scheduler.jobs;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.quartz.Job;
+import org.quartz.JobDataMap;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+import org.quartz.SchedulerException;
+import org.quartz.Trigger;
+import org.quartz.impl.StdSchedulerFactory;
+import org.safehaus.uuid.UUID;
+import org.safehaus.uuid.UUIDGenerator;
+
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
@@ -53,30 +77,6 @@ import it.eng.spagobi.tools.scheduler.wsEvents.dao.SbiWsEventsDao;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.mime.MimeUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.quartz.Job;
-import org.quartz.JobDataMap;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.quartz.SchedulerException;
-import org.quartz.Trigger;
-import org.quartz.impl.StdSchedulerFactory;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
 
 public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 
@@ -298,7 +298,7 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 				logger.debug("Unique mail case");
 				File folder = createTempDirectory(tempFolderName);
 				tempFolderPath = folder.getAbsolutePath();
-				logger.debug("Tempporary directory created in " + tempFolderPath);
+				logger.debug("Temporary directory created in " + tempFolderPath);
 
 				// fillDocumentLabels
 				for (int documentIndex = 0; documentIndex < documentLabels.length; documentIndex++) {
@@ -334,7 +334,7 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 				logger.info("Processing document [" + (documentIndex + 1) + "] with label [" + documentLabel + "] ...");
 
 				inputParametersQueryString = jobDataMap.getString(documentInstanceName);
-				logger.debug("Input parameters query string for documet [" + documentLabel + "] is equal to [" + inputParametersQueryString + "]");
+				logger.debug("Input parameters query string for document [" + documentLabel + "] is equal to [" + inputParametersQueryString + "]");
 
 				// load document
 				document = documentDAO.loadBIObjectByLabel(documentLabel);
@@ -351,15 +351,15 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 				executionController.refreshParameters(document, inputParametersQueryString);
 
 				String iterativeParametersString = jobDataMap.getString(documentInstanceName + "_iterative");
-				logger.debug("Iterative parameter configuration for documet [" + documentLabel + "] is equal to [" + iterativeParametersString + "]");
+				logger.debug("Iterative parameter configuration for document [" + documentLabel + "] is equal to [" + iterativeParametersString + "]");
 				setIterativeParameters(document, iterativeParametersString);
 
 				String loadAtRuntimeParametersString = jobDataMap.getString(documentInstanceName + "_loadAtRuntime");
-				logger.debug("Runtime parameter configuration for documet [" + documentLabel + "] is equal to [" + loadAtRuntimeParametersString + "]");
+				logger.debug("Runtime parameter configuration for document [" + documentLabel + "] is equal to [" + loadAtRuntimeParametersString + "]");
 				setLoadAtRuntimeParameters(document, loadAtRuntimeParametersString);
 
 				String useFormulaParametersString = jobDataMap.getString(documentInstanceName + "_useFormula");
-				logger.debug("Formuula based parameter configuration for documet [" + documentLabel + "] is equal to [" + useFormulaParametersString + "]");
+				logger.debug("Formuula based parameter configuration for document [" + documentLabel + "] is equal to [" + useFormulaParametersString + "]");
 				setUseFormulaParameters(document, useFormulaParametersString);
 
 				retrieveParametersValues(document);
@@ -554,6 +554,9 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 						// Execute dispatchers only if document is Released
 						if (documentStateCode.equals("REL")) {
 							documentDispatcher.dispatch(document, executionOutput);
+						} else {
+							logger.info("Document [" + (documentIndex + 1) + "] with label [" + documentInstanceName + "] and parameters [" + descriptionSuffix
+									+ "] was not dispatched because document state is [" + documentStateCode + "]");
 						}
 						if (globalDocumentDispatcher == null) {
 							documentDispatcher.dispose();
@@ -561,10 +564,10 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 						sequence++;
 
 					} else {
-						logger.warn("The document with label " + documentInstanceName + " cannot be executed directly, "
-								+ "maybe some prameters are not filled ");
-						throw new Exception("The document with label " + documentInstanceName + " cannot be executed directly, "
-								+ "maybe some prameters are not filled ");
+						logger.warn(
+								"The document with label " + documentInstanceName + " cannot be executed directly, " + "maybe some prameters are not filled ");
+						throw new Exception(
+								"The document with label " + documentInstanceName + " cannot be executed directly, " + "maybe some prameters are not filled ");
 					}
 				}
 
@@ -821,8 +824,9 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 		}
 
 		String descriptionSuffix = dispatchContext.getDescriptionSuffix();
-		String containedFileName = dispatchContext.getContainedFileName() != null && !dispatchContext.getContainedFileName().equals("") ? dispatchContext
-				.getContainedFileName() : document.getName();
+		String containedFileName = dispatchContext.getContainedFileName() != null && !dispatchContext.getContainedFileName().equals("")
+				? dispatchContext.getContainedFileName()
+				: document.getName();
 		String zipFileName = dispatchContext.getZipMailName() != null && !dispatchContext.getZipMailName().equals("") ? dispatchContext.getZipMailName()
 				: "Zipped_Documents";
 		zipFileName = zipFileName + "_" + dateStr;
