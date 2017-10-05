@@ -215,7 +215,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 					*/
 					if (options.type && options.type!="chart"){
 						$rootScope.$broadcast("WIDGET_EVENT"+config.id,"WIDGET_SPINNER",{show:true});
-					} else if (options.type && options.type!="chart" && chartInit==true){
+					} else if (options.type && options.type=="chart" && chartInit==true){
 						$rootScope.$broadcast("WIDGET_EVENT"+config.id,"WIDGET_SPINNER",{show:true});
 					}
 
