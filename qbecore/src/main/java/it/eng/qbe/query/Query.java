@@ -17,17 +17,6 @@
  */
 package it.eng.qbe.query;
 
-import it.eng.qbe.datasource.IDataSource;
-import it.eng.qbe.model.structure.IModelEntity;
-import it.eng.qbe.model.structure.IModelField;
-import it.eng.qbe.statement.AbstractStatement;
-import it.eng.qbe.statement.StatementCompositionException;
-import it.eng.qbe.statement.StatementTockenizer;
-import it.eng.qbe.statement.graph.bean.QueryGraph;
-import it.eng.spagobi.tools.dataset.common.query.IQuery;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -41,6 +30,17 @@ import java.util.Set;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import it.eng.qbe.datasource.IDataSource;
+import it.eng.qbe.model.structure.IModelEntity;
+import it.eng.qbe.model.structure.IModelField;
+import it.eng.qbe.statement.AbstractStatement;
+import it.eng.qbe.statement.StatementCompositionException;
+import it.eng.qbe.statement.StatementTockenizer;
+import it.eng.qbe.statement.graph.bean.QueryGraph;
+import it.eng.spagobi.tools.dataset.common.query.IQuery;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -819,7 +819,7 @@ public class Query implements IQuery {
 
 		/**
 		 * String 'orderByClause' will keep the part of the query that is required when ordering of series/categories is specified for the chart.
-		 * 
+		 *
 		 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
 		String orderByClause = "ORDER BY ";
@@ -842,7 +842,7 @@ public class Query implements IQuery {
 				 * Set the SELECT clause (part) of the final SQL query by firstly taking the ordering column, if the one is provided and if it is not the same
 				 * (of the same name) as the category for which it is set as a ordering column (attribute) (since this one (the category inside the
 				 * 'simpleField') will be appended to the SELECT clause at its very end in order to form appropriate query for this purpose).
-				 * 
+				 *
 				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 				 */
 				String orderColumn = simpleField.getOrderColumn();
@@ -893,7 +893,7 @@ public class Query implements IQuery {
 				 * Set the GROUP BY clause (part) of the final SQL query by firstly taking the ordering column, if the one is provided and if it is not the same
 				 * (of the same name) as the category for which it is set as a ordering column (attribute) (since this one (the category inside the
 				 * 'simpleField') will be appended to the GROUP BY clause at its very end in order to form appropriate query for this purpose).
-				 * 
+				 *
 				 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 				 */
 				String orderColumn = simpleField.getOrderColumn();
@@ -933,7 +933,7 @@ public class Query implements IQuery {
 
 		/**
 		 * This part is added since we need to take care of ordering of the serie and/or categories of the one is provided (specified) for them.
-		 * 
+		 *
 		 * @comment Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
 		for (ISelectField orderBy : this.getSelectFields(false)) {
@@ -944,7 +944,7 @@ public class Query implements IQuery {
 			 * Set the ORDER BY clause (part) of the final SQL query by firstly taking the ordering column, if the one is provided and if it is not the same (of
 			 * the same name) as the category for which it is set as a ordering column (attribute) (since this one (the category inside the 'simpleField') will
 			 * be appended to the ORDER BY clause at its very end in order to form appropriate query for this purpose).
-			 * 
+			 *
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 
@@ -1036,7 +1036,7 @@ public class Query implements IQuery {
 		/**
 		 * If 'keepCategoryForOrdering' is an empty string we are dealing with drilling down, so in that case we do not need nor do not have a record about the
 		 * category that is set as the first category for the chart and this one should not be put at the end of the query.
-		 * 
+		 *
 		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
 		if (!columnAndCategoryAreTheSame && !keepCategoryForOrdering.equals(""))
@@ -1045,7 +1045,7 @@ public class Query implements IQuery {
 		/**
 		 * The ORDER BY clause should firstly contain the ordering by series and afterwards the ordering by category and its potentially associated column
 		 * (attribute).
-		 * 
+		 *
 		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
 
@@ -1079,7 +1079,7 @@ public class Query implements IQuery {
 	}
 
 	private String extractColumnNameFromFieldName(String fieldName) {
-		return fieldName.contains(":") ? fieldName.split(":")[1] : fieldName;
+		return fieldName;
 	}
 
 	public void updateWhereClauseStructure() {

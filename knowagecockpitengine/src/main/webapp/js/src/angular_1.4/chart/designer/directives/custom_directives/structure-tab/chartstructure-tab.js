@@ -1,7 +1,7 @@
 /**
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -27,10 +27,10 @@ app.directive('chartstructureTab', function(sbiModule_config) {
 			restrict: 'AE',
 			replace: true,
 			templateUrl: function(){
-			      return sbiModule_config.contextName + '/js/src/angular_1.4/chart/designer/directives/custom_directives/structure-tab/chartstructure-tab.html' 
-		      },   
+			      return sbiModule_config.contextName + '/js/src/angular_1.4/chart/designer/directives/custom_directives/structure-tab/chartstructure-tab.html'
+		      },
 			controller: structureTabControllerFunction
-		}	
+		}
 	});
 
 function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_restServices, sbiModule_messaging , StructureTabService,ChartDesignerData){
@@ -42,18 +42,18 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 	$scope.categoriesContainer = [];
 	$scope.categories = [];
 	$scope.seriesContainers = [];
-	
+
 	$scope.numberOfSeriesContainers = 0;
 	$scope.maxNumberOfSeriesContainers = 4;
 	$scope.seriesContainersAliases = [];
-	
+
 	$scope.detailsForSeriesItem = {color: ""};
-	
+
 	// Indicator whether we should show the message that the maximum number of Series containers is exceeded
 	$scope.showMaxNmbSerAxesExceeded = false;
-	
+
 	// Get all metadata of the chart's dataset (all measures and attributes)
-	
+
 	var urlForMetadata="";
 	if($scope.isCockpitEng){
 		urlForMetadata = "../api/1.0/chart/jsonChartTemplate/fieldsMetadataforCockpit/"+parent.angular.element(window.frameElement).scope().datasetId;
@@ -62,48 +62,48 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 	}
 	sbiModule_restServices.promiseGet(urlForMetadata, "")
 		.then(function(response) {
-			
+
 			$scope.fieldsMetadata = response.data;
-			
+
 			var results = $scope.fieldsMetadata.results;
-			
+
 			for(var i=0; i<results.length; i++) {
-				
+
 				if (results[i].nature=="measure") {
-					$scope.allMeasures.push(results[i]);					
+					$scope.allMeasures.push(results[i]);
 				}
 				else {
 					$scope.allAttributes.push(results[i]);
 				}
-				
+
 			}
-			
+
 			$scope.checkCategories();
 			$scope.checkSeries();
 			$scope.checkAxis();
-			
-			
+
+
 		}, function(response) {
-			
+
 			var message = "";
-			
+
 			if (response.status==500) {
 				message = response.statusText;
 			}
 			else {
 				message = response.data.errors[0].message;
 			}
-			
+
 			sbiModule_messaging.showErrorMessage(message, 'Error');
-			
+
 		});
-	
+
 	/**
 	 * Show/hide the Structure Details panel.
 	 */
-	
+
 	$scope.showStructureDetails = function(detailsForOption, item) {
-		
+
 		if(detailsForOption == 'categoriesOrdering' && $scope.categories.length == 0){
 			sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.chartengine.categorypanel.mincategnumber.showcategcolumnpopup.warningmessage"), 'Warning');
 			$scope.structureDetailsShown = false;
@@ -113,25 +113,25 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 		$scope.structureTabDetailsTemplateURL = StructureTabService.getSeriesItemsConfDetailsTemplateURL(detailsForOption);
 		$scope.structurePreviewFlex = 25;
 		$scope.structureDetailsShown = true;
-		
+
 		$scope.axisForDisplay = null;
- 
+
 		for (i=0; i<$scope.chartTemplate.AXES_LIST.AXIS.length; i++) {
 			if ($scope.chartTemplate.AXES_LIST.AXIS[i].alias == item) {
 				$scope.axisForDisplay = $scope.chartTemplate.AXES_LIST.AXIS[i];
-				
+
 				return;
 			}
 		}
-		
+
 	}
-	
-	
+
+
 	$scope.hideStructureDetails = function() {
 		$scope.structurePreviewFlex = 50;
 		$scope.structureDetailsShown = false;
 	}
-	
+
 	$scope.checkAxis = function() {
 		if($scope.chartTemplate.AXES_LIST.AXIS.constructor === Object){
 			var temp = $scope.chartTemplate.AXES_LIST.AXIS;
@@ -144,9 +144,9 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 			    $scope.categoriesAxis = $scope.allAxis[i];
 			}
 		}
-		
+
 	}
-	
+
 	$scope.deletePlotband = function(index) {
 		$scope.chartTemplate.AXES_LIST.AXIS[0].PLOTBANDS.PLOT.splice(index,1);
 	}
@@ -169,22 +169,22 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 					"color": ""
 				}
 		}
-		
+
 		$scope.chartTemplate.AXES_LIST.AXIS[0].PLOTBANDS.PLOT.push(newPlot);
 	}
 	 // Called when the user clicks on the attribute in its container, so the attribute can be used as a category in the chart.
 	 $scope.moveAttributeToCategories = function(item) {
-		 
+
 			var chartType = $scope.chartTemplate.type;
-			var index = findInArray($scope.categories,'column',item.id);
-			
-			if (chartType.toUpperCase() == "PIE" || chartType.toUpperCase() == "RADAR" || 
+			var index = findInArray($scope.categories,'column',item.alias);
+
+			if (chartType.toUpperCase() == "PIE" || chartType.toUpperCase() == "RADAR" ||
 					chartType.toUpperCase() == "SCATTER" || chartType.toUpperCase() == "WORDCLOUD") {
 				if($scope.categories.length>=1){
 					sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.chartengine.designer.max.categories"), sbiModule_translate.load("sbi.data.editor.association.AssociationEditor.warning"));
 				} else {
 					if(index<0){
-						  $scope.categories.push({column:item.id,groupby:"", groupbyNames:"",name:item.alias,orderColumn:"",orderType:"",stacked:"",stackedType:""});
+						  $scope.categories.push({column:item.alias,groupby:"", groupbyNames:"",name:item.alias,orderColumn:"",orderType:"",stacked:"",stackedType:""});
 					}
 				}
 			} else if (chartType.toUpperCase() == "PARALLEL") {
@@ -192,7 +192,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 					sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.chartengine.designer.max.categories"), sbiModule_translate.load("sbi.data.editor.association.AssociationEditor.warning"));
 				} else {
 					if(index<0){
-						  $scope.categories.push({column:item.id,groupby:"", groupbyNames:"",name:item.alias,orderColumn:"",orderType:"",stacked:"",stackedType:""});
+						  $scope.categories.push({column:item.alias,groupby:"", groupbyNames:"",name:item.alias,orderColumn:"",orderType:"",stacked:"",stackedType:""});
 					  }
 				}
 			} else if(chartType.toUpperCase() == "CHORD" || chartType.toUpperCase() == "HEATMAP") {
@@ -201,24 +201,24 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 				} else {
 					if(index<0){
 						if($scope.categories.length==1){
-							$scope.categories.push({column:item.id,groupby:item.id, groupbyNames:item.id,name:item.alias,orderColumn:"",orderType:"",stacked:"",stackedType:""});
-							$scope.categories[0].groupby = item.id;
-							$scope.categories[0].groupbyNames = item.id;
+							$scope.categories.push({column:item.alias,groupby:item.alias, groupbyNames:item.alias,name:item.alias,orderColumn:"",orderType:"",stacked:"",stackedType:""});
+							$scope.categories[0].groupby = item.alias;
+							$scope.categories[0].groupbyNames = item.alias;
 						} else {
-							$scope.categories.push({column:item.id,groupby:item.id, groupbyNames:item.id,name:item.alias,orderColumn:"",orderType:"",stacked:"",stackedType:""});
+							$scope.categories.push({column:item.alias,groupby:item.alias, groupbyNames:item.alias,name:item.alias,orderColumn:"",orderType:"",stacked:"",stackedType:""});
 						}
 					 }
 				}
 			} else if(chartType.toUpperCase() == "TREEMAP" || chartType.toUpperCase() == "SUNBURST" ||
 						chartType.toUpperCase() == "BAR" || chartType.toUpperCase() == "LINE") {
 				if(index<0){
-					  $scope.categories.push({column:item.id,groupby:"", groupbyNames:"",name:item.alias,orderColumn:"",orderType:"",stacked:"",stackedType:""});
+					  $scope.categories.push({column:item.alias,groupby:"", groupbyNames:"",name:item.alias,orderColumn:"",orderType:"",stacked:"",stackedType:""});
 				  }
-			}	  
+			}
 	  }
-	 
+
 	 var checkIt =function(type,array){
-		 	
+
 		switch (type) {
 		case 'bar':
 		case 'gauge':
@@ -227,23 +227,23 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 		case 'radar':
 		case 'scatter':
 		case 'sunburst':
-	
-		return true;	
+
+		return true;
 			break;
 		case 'parallel':
 			if(array.length < 2){
-				
+
 				$scope.seriesLimit = false;
 			}else{
 				$scope.seriesLimit = true;
-			}	
+			}
 			break;
 		case 'pie':
 			if(array.length >4){
 				$scope.seriesLimit = false;
 			}else{
 				$scope.seriesLimit = true;
-			}	
+			}
 			break;
 		case 'wordcloud':
 		case 'treemap':
@@ -253,29 +253,29 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 			}else{
 				$scope.seriesLimit = true;
 			}
-			break	
+			break
 		default:
 			break;
 		}
-		
+
 		}
-	 
-	 
+
+
 	// Called when the user clicks on the measure in its container, so the measure can be used as a series item in the chart.
-	$scope.moveMeasureToSeries = function(item,seriesContainer) {	
-		
+	$scope.moveMeasureToSeries = function(item,seriesContainer) {
+
 		// If we send an information about the particular Series container (happens when there are more more than 1 container)
 		if (seriesContainer) {
-			for (i=0; i<$scope.seriesContainers.length; i++) {				
+			for (i=0; i<$scope.seriesContainers.length; i++) {
 				if ($scope.seriesContainers[i].name == seriesContainer.name) {
 					//checkIt($scope.selectedChartType,$scope.seriesContainers);
 					if ($scope.seriesContainers[i].series.indexOf(item.alias)<0) {
 						$scope.seriesContainers[i].series.push(item.alias);
-					
+
 					}else{
 						console.log("duplicate");
 					}
-				}				
+				}
 			}
 		}
 		// If we want to move measure into the only series container that we have
@@ -330,14 +330,14 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 						break;
 					case 'chord':
 						base = StructureTabService.getChordTemplate();
-						break;	
+						break;
 					default:
 						break;
 					}
-					
+
 					var temp = base.VALUES.SERIE[0];
 					temp.axis = $scope.seriesContainers[i].name;
-					temp.column = item.id;
+					temp.column = item.alias;
 					temp.name = item.alias;
 					temp.precision = Number(item.precision);
 					var checkForSameAxis = findInArray($scope.chartTemplate.VALUES.SERIE,'axis',temp.axis)
@@ -349,17 +349,17 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 					}else{
 						console.log("duplicate");
 					}
-					
+
 				}
 			}
-			
+
 		}
-	}	
-	
+	}
+
 	$scope.prepareSeriesContainersAliases = function() {
-		
+
 		// If the chart is already defined (it is NOT the new one - not yet persisted)
-		
+
 		var editingMode = "";
 		if(parent.angular.element(window.frameElement).scope().localMod){
 			editingMode = parent.angular.element(window.frameElement).scope().localMod.chartTemplate;
@@ -367,36 +367,36 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 			editingMode = $scope.chartTemplate;
 		}
 		if (editingMode!=undefined) {
-			
+
 			var chartType = $scope.selectedChartType.toLowerCase();
 			var typesWithMultipleSeriesContainersEnabled = $scope.seriesContainerAddAndRemoveIncludeTypes;
 			var allChartAxes = $scope.chartTemplate.AXES_LIST.AXIS;
-									
+
 			// If the chart type is not GAUGE (in other words); if there is only one axis (only Series container)
-			if (allChartAxes.length) {								
-				for (i=0; i<allChartAxes.length; i++) {					
+			if (allChartAxes.length) {
+				for (i=0; i<allChartAxes.length; i++) {
 					if (allChartAxes[i].type.toLowerCase()=="serie") {
 						$scope.seriesContainers.push({"name":allChartAxes[i].alias,"series":[]});
 						$scope.numberOfSeriesContainers++;
-					}					
-				}				
+					}
+				}
 			}
 			else {
 				$scope.numberOfSeriesContainers++;
 				$scope.seriesContainers.push({"name":allChartAxes.alias,"series":[]});
 			}
-			
+
 		}
 		else {
 			$scope.numberOfSeriesContainers++;
 			$scope.seriesContainers.push({"name":"Y","series":[]});
 			//console.log($scope.seriesContainers);
 		}
-		
+
 	}
-	
+
 	$scope.checkSeriesForContainers = function() {
-		
+
 		$scope.prepareSeriesContainersAliases();
 		var editingMode = "";
 		if(parent.angular.element(window.frameElement).scope().localMod){
@@ -404,45 +404,45 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 		}else{
 			editingMode = $scope.chartTemplate;
 		}
-		
-		
+
+
 		if (editingMode !=undefined) {
-			
+
 			var allSeries = $scope.chartTemplate.VALUES.SERIE;
-			
+
 			for (i=0; i<$scope.seriesContainers.length; i++) {
-						
+
 				if (allSeries.length) {
 					for (j=0; j<allSeries.length; j++) {
-						
+
 						if ($scope.seriesContainers[i].name==allSeries[j].axis) {
 							if(allSeries[j].column!=""){
 								$scope.seriesContainers[i].series.push(allSeries[j].column);
 							}
-							
+
 						}
-						
+
 					}
 				}
 				else {
 					if(allSeries.column!="" && allSeries.column!=undefined){
 						$scope.seriesContainers[i].series.push(allSeries.column);
-					}					
+					}
 				}
-				
+
 			}
-		}		
-		
+		}
+
 //		console.log($scope.seriesContainers);
-		
+
 	}
-	
+
 	// When user clicks on the button for editing the Series item configuration
 	$scope.prepareSeriesItemConfiguration = function(item,axis) {
-				
+
 		$scope.detailsForSeriesItem = null;
 		$scope.detailsForSeriesTooltip = null;
-		
+
 		var allSeries = $scope.chartTemplate.VALUES.SERIE;
 		if( allSeries.constructor === Object) {
 			$scope.detailsForSeriesItem = allSeries;
@@ -456,23 +456,23 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 					return;
 				}
 			}
-		}	
-		
-		
-	}	
+		}
+
+
+	}
 	/**
 	 * Arrange categories that are available for the chart (set inside the chart template of the already existing chart)
 	 * so that they populate their container (Category container).
 	 */
-	$scope.checkCategories = function() {		
-		
+	$scope.checkCategories = function() {
+
 		// If the chart is already defined (it is NOT the new one - not yet persisted)
 		if ($scope.chartTemplate) {
-			
+
 			$scope.categoriesExist = $scope.chartTemplate.VALUES.CATEGORY ? true : false;
-			
+
 			if ($scope.categoriesExist) {
-				
+
 				var categoryTag = $scope.chartTemplate.VALUES.CATEGORY;
 				console.log(categoryTag);
 //				console.log(categoryTag.length);
@@ -483,46 +483,46 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 							$scope.categories.push(categoryTag[i]);
 						}
 					//}
-					
+
 				}
 				// If all (if there are more than one) categories are under the single tag (column and groupby properties (attributes))
 				else {
-					
+
 					//$scope.categoriesContainer.push(categoryTag.column);
 					console.log(categoryTag)
-					
+
 					//groupby is array
 					if (categoryTag.groupby.indexOf(",") > -1) {
-						
+
 						//and groupbyNames is an array
 						if(categoryTag.groupbyNames.indexOf(",") > -1) {
-							
+
 							$scope.categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:categoryTag.orderColumn,orderType:categoryTag.orderType,stacked:"",stackedType:""});
-							
-							var groupBySplitArray = categoryTag.groupby.split(",");							
+
+							var groupBySplitArray = categoryTag.groupby.split(",");
 							for (i=0; i<groupBySplitArray.length; i++) {
-								
+
 								var obj = {column:"", groupby:"", groupbyNames:"", name:"", orderColumn:"", orderType:"", stacked:"", stackedType:""};
 								obj.column = groupBySplitArray[i];
-								var groupByNameSplitArray = categoryTag.groupbyNames.split(",");	
+								var groupByNameSplitArray = categoryTag.groupbyNames.split(",");
 								for (var j = 0; j < groupByNameSplitArray.length; j++) {
 									if(j==i){
 										obj.name = groupByNameSplitArray[j];
 									}
-								}								
+								}
 								 $scope.categories.push(obj);
 							}
-							
-							
-						} 
-						
+
+
+						}
+
 						//and groupbyNames is not an array
 						else {
-							
+
 							$scope.categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:"",orderType:"",stacked:"",stackedType:""});
-							
+
 							var gbnCounter = 0;
-							var groupBySplitArray = categoryTag.groupby.split(",");							
+							var groupBySplitArray = categoryTag.groupby.split(",");
 							for (i=0; i<groupBySplitArray.length; i++) {
 								var obj = {column:"", groupby:"", groupbyNames:"", name:"", orderColumn:"", orderType:"", stacked:"", stackedType:""};
 								//check if grpupByName is empty and case for first situation
@@ -537,31 +537,31 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 								 $scope.categories.push(obj);
 							}
 						}
-						
+
 					}
 					//groupby no comma
 					else {
-						
+
 						//categoryTag.groupby is empty
 						if(categoryTag.groupby=="" && categoryTag.column!=""){
 							$scope.categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:categoryTag.orderColumn,orderType:categoryTag.orderType,stacked:"",stackedType:""});
 						} else {
-							 							 
+
 							 if(categoryTag.name=="" && categoryTag.column!=""){
 								 $scope.categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:"",orderType:"",stacked:"",stackedType:""});
 								 } else if(categoryTag.name!="" && categoryTag.column!="") {
 									 $scope.categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:categoryTag.orderColumn,orderType:categoryTag.orderType,stacked:"",stackedType:""});
 								 }
-							 
+
 							 if(categoryTag.groupbyNames!="") {
 								 $scope.categories.push({column:categoryTag.groupby,groupby:"", groupbyNames:"",name:categoryTag.groupbyNames, orderColumn:"",orderType:"",stacked:"",stackedType:""});
 							 } else if (categoryTag.column!="") {
-								 $scope.categories.push({column:categoryTag.groupby,groupby:"", groupbyNames:"",name:categoryTag.groupbyNames, orderColumn:"",orderType:"",stacked:"",stackedType:""}); 
+								 $scope.categories.push({column:categoryTag.groupby,groupby:"", groupbyNames:"",name:categoryTag.groupbyNames, orderColumn:"",orderType:"",stacked:"",stackedType:""});
 							 }
 						}
 					}
 				}
-			}	
+			}
 		}
 		else {
 			$scope.categoriesExist = true;
@@ -570,31 +570,31 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 	 for (var i = $scope.fieldsMetadata.results.length-1; i>=0; i--) {
 		if($scope.fieldsMetadata.results[i].nature == 'attribute'){
 			for (var j = 0; j < $scope.categories.length; j++) {
-				if($scope.categories[j].column == $scope.fieldsMetadata.results[i].id){
+				if($scope.categories[j].column == $scope.fieldsMetadata.results[i].alias){
 					cflag++;
 
 				}
-				
+
 			}
-		} 
-		 
+		}
+
 	 }
 	 if($scope.categories.length>0 && cflag == 0){
 		 sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.chartengine.designer.dschange.categories"), 'Warning');
 	 }
 	}
-	
+
 	/**
 	 * Arrange series that are available for the chart (set inside the chart template of the already existing chart)
 	 * so that they populate their container(s) (Series container(s)).
 	 */
 	$scope.checkSeries = function() {
-			
+
 		$scope.checkSeriesForContainers();
-		
+
 		// If the chart is already defined (it is NOT the new one - not yet persisted)
 		if ($scope.chartTemplate) {
-			
+
 			var series = [];
 			   var chartSeries = [];
 			   // Series from chart template (from its JSON)
@@ -603,7 +603,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 			    chartSeries.push(temp);
 			    $scope.chartTemplate.VALUES.SERIE = [];
 			    $scope.chartTemplate.VALUES.SERIE.push(temp)
-			    
+
 			   }
 			   else {
 			    chartSeries= $scope.chartTemplate.VALUES.SERIE;
@@ -611,41 +611,41 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 			if(chartSeries[0].column==""){
 				$scope.chartTemplate.VALUES.SERIE = [];
 			}
-			
+
 			//chartSeries.length ? series = chartSeries : series.push(chartSeries);
 			if(chartSeries.length>0){
 				for (i=0; i<chartSeries.length; i++) {
 					if(chartSeries[i].column!="" && chartSeries[i].column!=undefined){
 						$scope.seriesContainer.push(chartSeries[i].column);
-					}				
+					}
 				}
 			}
-			
-			
+
+
 		}
 		var sflag = 0;
 		 for (var i = $scope.fieldsMetadata.results.length-1; i>=0; i--) {
 			if($scope.fieldsMetadata.results[i].nature == 'measure'){
 				for (var j = 0; j < $scope.chartTemplate.VALUES.SERIE.length; j++) {
-					if($scope.chartTemplate.VALUES.SERIE[j].column == $scope.fieldsMetadata.results[i].id){
+					if($scope.chartTemplate.VALUES.SERIE[j].column == $scope.fieldsMetadata.results[i].alias){
 						sflag++;
 
 					}
-					
+
 				}
-			} 
-			 
+			}
+
 		 }
 		 if($scope.chartTemplate.VALUES.SERIE.length> 0 && sflag == 0){
 			 sbiModule_messaging.showErrorMessage(sbiModule_translate.load("sbi.chartengine.designer.dschange.series"), 'Warning');
 		 }
-		
+
 	}
-	
+
 	/**
 	 * Operations for categories inside the Category container: move up, move down and delete item.
 	 */
-	
+
 	$scope.categoryMoveUp = function(item) {
 		var index = $scope.categories.indexOf(item);
 		var nextIndex = index-1;
@@ -653,7 +653,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 		$scope.categories[index] = $scope.categories[nextIndex];
 		$scope.categories[nextIndex] = temp;
 	}
-	
+
 	$scope.categoryMoveDown = function(item) {
 		var index = $scope.categories.indexOf(item);
 		var nextIndex = index+1;
@@ -661,15 +661,15 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 		$scope.categories[index] = $scope.categories[nextIndex];
 		$scope.categories[nextIndex] = temp;
 	}
-	
+
 	$scope.categoryRemove = function(indexOfItem) {
 		$scope.categories.splice(indexOfItem,1);
 	}
-	
+
 	$scope.categoryRemoveAll = function() {
 		$scope.categories = [];
 	}
-	
+
 	/**
 	 * Operations for series inside the Series container: move up, move down and delete item.
 	 */
@@ -681,60 +681,60 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 	    }
 	    return -1;
 	}
-	
-	
-	
-	$scope.seriesItemMoveUp = function(item,seriesContainer) {	
+
+
+
+	$scope.seriesItemMoveUp = function(item,seriesContainer) {
 		console.log("moving up");
-		
+
 		var index = findInArray($scope.chartTemplate.VALUES.SERIE,'column',item);
 		var nextIndex = index-1;
 		var temp = $scope.chartTemplate.VALUES.SERIE[index];
 		$scope.chartTemplate.VALUES.SERIE[index] = $scope.chartTemplate.VALUES.SERIE[nextIndex];
 		$scope.chartTemplate.VALUES.SERIE[nextIndex] = temp;
-		
+
 		console.log($scope.chartTemplate.VALUES.SERIE);
-		
-		
-		for (i=0; i<$scope.seriesContainers.length; i++) {		
-			if ($scope.seriesContainers[i].name == seriesContainer.name) {				
+
+
+		for (i=0; i<$scope.seriesContainers.length; i++) {
+			if ($scope.seriesContainers[i].name == seriesContainer.name) {
 				var index = $scope.seriesContainers[i].series.indexOf(item);
 				var nextIndex = index-1;
 				var temp = $scope.seriesContainers[i].series[index];
 				$scope.seriesContainers[i].series[index] = $scope.seriesContainers[i].series[nextIndex];
-				$scope.seriesContainers[i].series[nextIndex] = temp;	
+				$scope.seriesContainers[i].series[nextIndex] = temp;
 				return;
-			}			
-		}		
+			}
+		}
 	}
-	
-	
+
+
 	$scope.seriesItemMoveDown = function(item,seriesContainer) {
 		console.log("moving down");
-		
+
 		var index = findInArray($scope.chartTemplate.VALUES.SERIE,'column',item);
 		var nextIndex = index+1;
 		var temp = $scope.chartTemplate.VALUES.SERIE[index];
 		$scope.chartTemplate.VALUES.SERIE[index] = $scope.chartTemplate.VALUES.SERIE[nextIndex];
 		$scope.chartTemplate.VALUES.SERIE[nextIndex] = temp;
-				
+
 		console.log($scope.chartTemplate.VALUES.SERIE);
-		
-		for (i=0; i<$scope.seriesContainers.length; i++) {		
-			if ($scope.seriesContainers[i].name == seriesContainer.name) {				
+
+		for (i=0; i<$scope.seriesContainers.length; i++) {
+			if ($scope.seriesContainers[i].name == seriesContainer.name) {
 				var index = $scope.seriesContainers[i].series.indexOf(item);
 				var nextIndex = index+1;
 				var temp = $scope.seriesContainers[i].series[index];
 				$scope.seriesContainers[i].series[index] = $scope.seriesContainers[i].series[nextIndex];
-				$scope.seriesContainers[i].series[nextIndex] = temp;	
+				$scope.seriesContainers[i].series[nextIndex] = temp;
 				return;
-			}			
+			}
 		}
 	}
 
-	
+
 	$scope.seriesItemRemove = function(seriesItem,seriesContainerName) {
-		
+
 		if($scope.chartTemplate.VALUES.SERIE.length != undefined && $scope.chartTemplate.VALUES.SERIE.constructor == Array){
 			for (var i = 0; i < $scope.chartTemplate.VALUES.SERIE.length; i++) {
 				if($scope.chartTemplate.VALUES.SERIE[i].column == seriesItem && $scope.chartTemplate.VALUES.SERIE[i].axis == seriesContainerName){
@@ -745,66 +745,66 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 			$scope.chartTemplate.VALUES.SERIE.column = "";
 			$scope.chartTemplate.VALUES.SERIE.name = "";
 		}
-		
-		
+
+
 		console.log($scope.chartTemplate.VALUES.SERIE);
 		// Go through all Series containers in order to focus on the one from which we want to remove a series item.
 		for (i=0; i<$scope.seriesContainers.length; i++) {
-			
+
 			if ($scope.seriesContainers[i].name == seriesContainerName) {
-				
+
 				// Go through all it's series items in order to eliminate the one that is aimed to be removed.
 				for (j=0; j<$scope.seriesContainers[i].series.length; j++) {
-					
+
 					if ($scope.seriesContainers[i].series[j] == seriesItem) {
 						$scope.seriesContainers[i].series.splice(j,1);
 						return;
 					}
-					
+
 				}
-				
+
 			}
-			
+
 		}
-		
+
 	}
-	
+
 	$scope.seriesRemoveAll = function(seriesContainer) {
-		
+
 		var seriesForDeletion = angular.copy(seriesContainer);
 		// Go through all Series containers in order to focus on the one from which we want to remove a series item.
-		for (i=0; i<$scope.seriesContainers.length; i++) {			
-			if ($scope.seriesContainers[i].name == seriesContainer.name) {				
-				$scope.seriesContainers[i].series = [];	
+		for (i=0; i<$scope.seriesContainers.length; i++) {
+			if ($scope.seriesContainers[i].name == seriesContainer.name) {
+				$scope.seriesContainers[i].series = [];
 				break;
-			}			
+			}
 		}
-		
+
 		for (var i = 0; i < $scope.chartTemplate.VALUES.SERIE.length; i++) {
 			for (var j = 0; j < seriesForDeletion.series.length; j++) {
-				
+
 				if($scope.chartTemplate.VALUES.SERIE[i].name == seriesForDeletion.series[j]
 				&& $scope.chartTemplate.VALUES.SERIE[i].axis == seriesForDeletion.name
 				){
 					$scope.chartTemplate.VALUES.SERIE.splice(i,1);
 				}
-				
+
 			}
-			
+
 		}
-		
+
 	}
-	
+
 	$scope.addSeriesContainer = function() {
-		
+
 		// Number of Series containers
 		var nmbOfSerConts = $scope.seriesContainers.length;
-		
+
 		if (nmbOfSerConts < $scope.maxNumberOfSeriesContainers) {
-			
+
 			var lastSerContName = $scope.seriesContainers[nmbOfSerConts-1].name;
 			var newSerContName = "Axis_";	// The prefix of the name of the new Series container that will be added to Designer
-			
+
 			if (lastSerContName!="Y") {
 				var splitLastSerContName = lastSerContName.split("_");
 				newSerContName += (Number(splitLastSerContName[1])+1);
@@ -812,7 +812,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 			else {
 				newSerContName += "1";
 			}
-			
+
 			$scope.seriesContainers.push({name:newSerContName, series:[]});
 			var newAxis = {
 					"alias": newSerContName,
@@ -828,21 +828,21 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 		            	   "fontFamily":"",
 		            	   "fontSize":""
 		               },
-		               "MAJORGRID":{  
+		               "MAJORGRID":{
 		                  "interval":"",
 		                  "style":{
 		                	  "typeLine":"",
 		                	  "color":""
 		                  }
 		               },
-		               "MINORGRID":{  
+		               "MINORGRID":{
 		            	  "interval":"",
 		                  "style":{
 		                	  "typeLine":"",
 		                	  "color":""
 		                  }
 		               },
-		               "TITLE":{  
+		               "TITLE":{
 			                  "text":"",
 			                  "style":{
 			                	  "align":"",
@@ -853,25 +853,25 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 			                  }
 			               }
 				}
-			
-			
+
+
 			$scope.chartTemplate.AXES_LIST.AXIS.push(newAxis);
 			// If we reach the maximum number of Series containers and we still click on plus to add a new one, set the indicator that should show the info.
 			$scope.showMaxNmbSerAxesExceeded = $scope.seriesContainers.length==$scope.maxNumberOfSeriesContainers ? true : false;
-			
+
 			$scope.numberOfSeriesContainers++;
-			
+
 		}
-		
+
 	}
-	
+
 	$scope.removeSeriesContainer = function(seriesContainer) {
-		
+
 		var seriesForDeletion = angular.copy(seriesContainer);
-		
+
 		// Go through all Series containers in order to focus on the one from which we want to remove a series item.
-		for (i=0; i<$scope.seriesContainers.length; i++) {			
-			if ($scope.seriesContainers[i].name == seriesContainer.name) {				
+		for (i=0; i<$scope.seriesContainers.length; i++) {
+			if ($scope.seriesContainers[i].name == seriesContainer.name) {
 				$scope.seriesContainers.splice(i,1);
 				$scope.showMaxNmbSerAxesExceeded = false;
 				$scope.numberOfSeriesContainers--;
@@ -883,71 +883,71 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 				$scope.chartTemplate.AXES_LIST.AXIS.splice(i,1);
 			}
 		}
-		
+
 		for (var i = 0; i < $scope.chartTemplate.VALUES.SERIE.length; i++) {
 			for (var j = 0; j < seriesForDeletion.series.length; j++) {
-				
+
 				if($scope.chartTemplate.VALUES.SERIE[i].name == seriesForDeletion.series[j]
 				&& $scope.chartTemplate.VALUES.SERIE[i].axis == seriesForDeletion.name
 				){
 					$scope.chartTemplate.VALUES.SERIE.splice(i,1);
 				}
-				
+
 			}
-			
+
 		}
 	}
-	
-	// Function that enables the drop-down menu functionality 
+
+	// Function that enables the drop-down menu functionality
 	$scope.openMenu = function($mdOpenMenu, ev) {
 	      originatorEv = ev;
 	      $mdOpenMenu(ev);
     };
-    
-    
- // Function that enables the drop-down menu functionality 
+
+
+ // Function that enables the drop-down menu functionality
 	$scope.openMenuCategory = function($mdOpenMenu, ev, categoryName) {
 	      originatorEv = ev;
 	      $mdOpenMenu(ev);
     };
-    
+
     /**
      * Manage visibility (show/hide) of the options for the Series container.
      */
-    
+
     // TODO: we need also to take care if the series container is the main (for plus)/additional (for X)
-    $scope.seriesContainerAddAndRemoveIncludeTypes = ["bar","line"];   
-    
+    $scope.seriesContainerAddAndRemoveIncludeTypes = ["bar","line"];
+
     $scope.seriesContainerConfigDropDownExcludeTypes = ["pie","sunburst","treemap","wordcloud"];
-    
+
     $scope.seriesAxisTitleExcludeTypes = ["chord","parallel"];
     $scope.seriesAxisMajorMinorGirdExcludeTypes = ["chord","gauge","heatmap","parallel"];
-	
+
     /**
      * Manage visibility (show/hide) of the options for the Series container.
      */
-    
-    // TODO: Check if these chart types are the only one that for which we should exclude the Ordering column option in the categories drop-down menu 
+
+    // TODO: Check if these chart types are the only one that for which we should exclude the Ordering column option in the categories drop-down menu
     $scope.categoriesContainerConfigDropDownExcludeTypes = ["wordcloud","treemap"];
-    
-    $scope.categoriesOrderColumnExcludeTypes = ["parallel","chord"];    
-    $scope.categoriesConfigExcludeTypes = ["pie","sunburst"];    
+
+    $scope.categoriesOrderColumnExcludeTypes = ["parallel","chord"];
+    $scope.categoriesConfigExcludeTypes = ["pie","sunburst"];
     $scope.categoriesTitleConfigExcludeTypes = ["parallel","pie","sunburst","chord"];
-    
+
     $scope.seriesItemTypes = StructureTabService.getSeriesItemTypes();
     $scope.seriesItemOrderingTypes = StructureTabService.getSeriesItemOrderingTypes();
     $scope.listDateFormats = StructureTabService.getListOfDateFormats();
     $scope.scaleFactorsFixed = StructureTabService.getScaleFactorsFixed();
-        
+
     $scope.textAlignment = ChartDesignerData.getAlignTypeOptions();
     $scope.fontFamily = ChartDesignerData.getFontFamilyOptions();
     $scope.fontStyle = ChartDesignerData.getFontStyleOptions();
     $scope.fontSize = ChartDesignerData.getFontSizeOptions();
     $scope.lineTypeOptions = StructureTabService.getLineTypesOptions();
     $scope.gaugeTicksPositionOptions = StructureTabService.getGaugeTicksPosition();
-    
+
     $scope.seriesItemAggregationTypes = StructureTabService.getSeriesItemAggregationTypes();
-    
+
     /*
 	@author: Radmila Selakovic (rselakov, radmila.selakovic@mht.net)
 	function that filter list of agregation options
@@ -961,5 +961,5 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 			return item.name ;
 		}
 	}
-    
+
 }
