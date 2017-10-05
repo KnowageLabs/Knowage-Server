@@ -2178,6 +2178,27 @@
 				helpers.each(dataset.bars, callback, this, datasetIndex);
 			},this);
 		},
+		getBarsAtEventCross : function(e){
+			var barsArray = [],
+				eventPosition = helpers.getRelativePosition(e),
+				datasetIterator = function(dataset, x, datasetLabel){
+					if(dataset.bars[barIndex].datasetLabel==datasetLabel){
+						barsArray.push(dataset.bars[barIndex]);
+					}
+				},
+				barIndex;
+
+			for (var datasetIndex = 0; datasetIndex < this.datasets.length; datasetIndex++) {
+				for (barIndex = 0; barIndex < this.datasets[datasetIndex].bars.length; barIndex++) {
+					if (this.datasets[datasetIndex].bars[barIndex].inRange(eventPosition.x,eventPosition.y)){
+						helpers.each(this.datasets, datasetIterator, false, this.datasets[datasetIndex].bars[barIndex].datasetLabel);
+						return barsArray;
+					}
+				}
+			}
+
+			return barsArray;
+		},
 		getBarsAtEvent : function(e){
 			var barsArray = [],
 				eventPosition = helpers.getRelativePosition(e),
@@ -2577,6 +2598,9 @@
 				ctx : this.chart.ctx,
 				inRange : function(mouseX){
 					return (Math.pow(mouseX-this.x, 2) < Math.pow(this.radius + this.hitDetectionRadius,2));
+				},
+				inRangeXY : function(mouseX, mauseY){
+					return (Math.pow(mouseX-this.x, 2) < Math.pow(this.radius + this.hitDetectionRadius,2)) && (Math.pow(mauseY-this.y, 2) < Math.pow(this.radius + this.hitDetectionRadius,2));
 				}
 			});
 
@@ -2663,6 +2687,16 @@
 			helpers.each(this.datasets,function(dataset){
 				helpers.each(dataset.points,function(point){
 					if (point.inRange(eventPosition.x,eventPosition.y)) pointsArray.push(point);
+				});
+			},this);
+			return pointsArray;
+		},
+		getPointsAtEventCross : function(e){
+			var pointsArray = [],
+				eventPosition = helpers.getRelativePosition(e);
+			helpers.each(this.datasets,function(dataset){
+				helpers.each(dataset.points,function(point){
+					if (point.inRangeXY(eventPosition.x,eventPosition.y)) pointsArray.push(point);
 				});
 			},this);
 			return pointsArray;
@@ -3079,7 +3113,7 @@
 			helpers.each(this.segments,function(segment){
 				segment.save();
 			});
-			
+
 			this.reflow();
 			this.render();
 		},
