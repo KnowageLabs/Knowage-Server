@@ -107,7 +107,7 @@ angular.module('crossDefinition', ['angular_table','ng-context-menu','ngMaterial
 			};
 
 			function loadInputParameters(documentLabel,callbackFunction){
-				sbiModule_restServices.promiseGet('2.0/documents/'+documentLabel+'/parameters', "", null)
+				sbiModule_restServices.promiseGet('1.0/documents/'+documentLabel+'/parameters', "", null)
 				.then(function(response) {
 					var data = response.data;
 					var parameters = [];
