@@ -489,8 +489,8 @@
 
 		<dependency>
 			<groupId>com.esotericsoftware</groupId>
-			<artifactId>kryo</artifactId>
-			<version>4.0.0</version>
+			<artifactId>kryo-shaded</artifactId>
+			<version>4.0.1</version>
 			<scope>compile</scope>
 		</dependency>
 
