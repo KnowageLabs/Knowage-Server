@@ -42,28 +42,67 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 	$scope.categoriesContainer = [];
 	$scope.categories = [];
 	$scope.seriesContainers = [];
-	$scope.checkCategoriesLength = 0;
-	$scope.seriesContainerrlength = 0;
 	
 	
-	$scope.object = {};
-	$scope.object.dragan = $scope.checkCategoriesLength;
-	$scope.objectt = {};
-	$scope.objectt.dragann = $scope.seriesContainerrlength;
+	$scope.categ = {};
 	
 	$scope.$watch('categories',function(newValue,oldValue){
-		$scope.object.dragan = $scope.categories.length;
+		$scope.categ.lengthh = $scope.categories.length;
 	},true)
-	$scope.$watch('seriesContainers',function(newValue,oldValue){
-		/*if(newValue.series){
-			$scope.objectt.dragann = newValue.series.length;
-			 $scope.seriesContainerrlength = newValue.series.length;
-		}*/
-	
-		console.log(newValue);
-	},true)
+
 	
 	$scope.isInvalid = function (series) {
+		$scope.minMaxSeries = {};	
+		switch($scope.chartTemplate.type.toLowerCase()){
+		
+		case 'parallel':
+			$scope.minMaxSeries.min = 2;
+			break;
+		case 'sunburst':
+			$scope.minMaxSeries.min = 1;
+			break;
+		case 'scatter':
+			$scope.minMaxSeries.min = 1;
+			break;
+		case 'treemap':
+			$scope.minMaxSeries.min = 1;
+			$scope.minMaxSeries.max = 1;
+			break;
+		case 'wordcloud':
+			$scope.minMaxSeries.min = 1;
+			$scope.minMaxSeries.max = 1;
+			break;
+		case 'gauge':
+			$scope.minMaxSeries.min = 1;
+			break;
+		case 'line':
+			$scope.minMaxSeries.min = 1;
+			break;
+		case 'heatmap':
+			$scope.minMaxSeries.min = 1;
+			$scope.minMaxSeries.max = 1;
+			break;
+		case 'radar':
+			$scope.minMaxSeries.min = 1;
+			break;
+		case 'bar':
+			$scope.minMaxSeries.min = 1;
+			break;
+		case 'pie':
+			if($scope.chartLibNamesConfig.pie=="chartJs") {
+				$scope.minMaxSeries.min = 1;
+				$scope.minMaxSeries.max = 1; 
+			} else {
+				$scope.minMaxSeries.min = 1;
+			}
+			break;
+		case 'chord':
+			$scope.minMaxSeries.min = 1;
+			$scope.minMaxSeries.max = 1;
+			break;	
+		default:
+			break;
+		}
 		if($scope.minMaxSeries.max){
 			if(series.length>=$scope.minMaxSeries.min &&  series.length <= $scope.minMaxSeries.max){
 				return false
@@ -77,16 +116,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 		
 	}
 	
-	$scope.object = {
-		prop : function (seriesContainer){
-			if(seriesContainer.series.length!=0){
-				return seriesContainer.series.length+1;
-			} else return 0;
-/*			var x = seriesContainer.series ? -1 : 9;
-			console.log(x)
-			return x;*/
-		}
-	}
+
 	$scope.numberOfSeriesContainers = 0;
 	$scope.maxNumberOfSeriesContainers = 4;
 	$scope.seriesContainersAliases = [];
