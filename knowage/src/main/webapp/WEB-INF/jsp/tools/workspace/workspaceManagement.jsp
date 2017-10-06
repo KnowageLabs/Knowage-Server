@@ -85,7 +85,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				
 				<main-toolbar-workspace></main-toolbar-workspace>
 				
-				<div layout="row" flex>
+				<md-content layout="row" flex>
 				
 					<!-- 
 						Directive that will render the left main menu of the Workspace web page. 
@@ -124,7 +124,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							
 					</md-content>
 					
-				</div>
+				</md-content>
 				
 			</div>
 			
