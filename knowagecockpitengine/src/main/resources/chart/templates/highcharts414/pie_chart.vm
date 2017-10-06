@@ -688,7 +688,14 @@
 			                }
 			                
 						#end
-				,   
+				, 
+				
+				title: {
+		            align: 'left',
+		            format: '<b>{name}</b>',
+		            verticalAlign: 'top',
+		            y: -40
+		        },  
 				
 				data: [
 	    	    
