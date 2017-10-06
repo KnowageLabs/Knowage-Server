@@ -365,3 +365,19 @@
 		}
 	}
 }
+
+.kn-geoEdit {
+	.toolbar {
+		margin-bottom: 2px;
+	}
+	.innerExpander {
+		min-height:200px;
+		max-height:600px;
+		angular-table {
+			&.datasetLayer {
+				height:200px;
+			}
+			height:300px;
+		}
+	}
+}

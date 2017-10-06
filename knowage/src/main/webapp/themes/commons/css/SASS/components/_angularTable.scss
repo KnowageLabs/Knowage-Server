@@ -299,6 +299,19 @@ angular-table, cockpit-angular-table{
 	    margin-left: $standardPadding;
 	}
 	.principalTable tr td:first-child > md-checkbox {}
+	.principalTable tr td {
+		md-select.md-knowage-theme {
+			._md-select-value {
+				border: none;
+			}
+			&:not([disabled]):focus {
+				._md-select-value{
+					border: none;
+				}
+
+			}
+		}
+	}
 	
 	
 	.principalTable tr td button.md-icon-button {

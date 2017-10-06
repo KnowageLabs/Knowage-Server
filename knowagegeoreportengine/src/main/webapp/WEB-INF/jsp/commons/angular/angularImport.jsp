@@ -4,7 +4,7 @@
 	makes use of AngularJS  
 --%>
 <%
-	String spagoBiContext = request.getParameter(SpagoBIConstants.SBI_HOST)+request.getParameter(SpagoBIConstants.SBI_CONTEXT);
+	String knowageCoreContext = request.getParameter(SpagoBIConstants.SBI_HOST)+request.getParameter(SpagoBIConstants.SBI_CONTEXT);
 %>
 
 <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
@@ -17,9 +17,10 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular-animate.min.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular-aria.min.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular_1.4/angular-sanitize.min.js"></script>
+	
 	<!-- angular-material-->
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/angular/angular-material_0.10.0/angular-material.min.css">
-	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-material_0.10.0/angular-material.js"></script>
+	<script type="text/javascript" src="<%=knowageCoreContext%>/js/lib/angular/angular-material_1.1.0/angular-material.min.js"></script>
+	<link rel="stylesheet" href="<%=knowageCoreContext%>/js/lib/angular/angular-material_1.1.0/angular-material.min.css">
 	
 	
 	<!-- context menu -->
@@ -28,7 +29,7 @@
 	<!--pagination-->
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/pagination/dirPagination.js"></script>
 <!-- expanderBox -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/expander-box/expanderBox.js"></script>
+<script type="text/javascript" src="<%=knowageCoreContext%>/js/lib/angular/expander-box/expanderBox.js"></script>
 
 <!-- angular tree -->
 	<link rel="stylesheet" 	href="${pageContext.request.contextPath}/js/lib/angular/angular-tree/angular-ui-tree.min.css">
@@ -36,7 +37,7 @@
 	
 <!-- angular table 
 	<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/angular-table/AngularTable.js"></script>-->
-	<script type="text/javascript" src="<%=spagoBiContext%>/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js"></script>
+	<script type="text/javascript" src="<%=knowageCoreContext%>/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js"></script>
 <!-- colorpicker -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/color-picker/tinycolor-min.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/angular/color-picker/tinygradient.min.js"></script>

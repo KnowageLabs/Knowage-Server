@@ -25,7 +25,7 @@ angular.module('expander-box', [ 'ngMaterial'])
 			backgroundColor:"@?",
 			borderColor:"@?",
 			toolbarClass:"@?",
-			title:"=",
+			title:"@",
 			locals:"=?",
 			expanded:"=?",
 			layout:"@?"

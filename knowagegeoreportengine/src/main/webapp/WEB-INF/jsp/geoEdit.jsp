@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <!-- document-viewer -->
 <script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/commons/document-viewer/documentViewer.js"></script>
 
-<title>{{translate.load("gisengine.designer.title")}}</title>
+<title>{{::translate.load("gisengine.designer.title")}}</title>
 <script>
  var documentLabel='<%=docLabel%>';
  var dataset='<%=docDatasetLabel%>';
@@ -41,17 +41,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  }
 </script>
 </head>
-<body ng-controller="geoTemplateBuildController">
-<md-toolbar  class="miniheadimportexport" layout="row">
+<body ng-controller="geoTemplateBuildController" class="kn-geoEdit">
+<md-toolbar  class="toolbar" layout="row">
 	<div class="md-toolbar-tools" flex>
-		<h2 class="md-flex" >{{translate.load("gisengine.designer.title")}}</h2>
+		<h2 class="md-flex" >{{::translate.load("gisengine.designer.title")}}</h2>
+		<span flex></span>
+		<md-button  ng-click="editMap()" ng-disabled="editDisabled" >{{::translate.load("gisengine.designer.edit.map")}}</md-button>
+		<md-button  ng-click="saveTemplate()">{{::translate.load("sbi.generic.save")}}</md-button>
+	    <md-button  ng-if="!tecnicalUser" ng-click="cancelBuildTemplate()">{{::translate.load("sbi.generic.close")}}</md-button>
+	    <md-button  ng-if="tecnicalUser" ng-click="cancelBuildTemplateAdmin()">{{::translate.load("sbi.generic.close")}}</md-button>
 	</div>
-	<span flex></span>
-	<md-button class="md-primary" ng-click="editMap()" ng-disabled="editDisabled" >{{translate.load("gisengine.designer.edit.map")}}</md-button>
-
-	<md-button class="md-primary" ng-click="saveTemplate()">{{translate.load("sbi.generic.save")}}</md-button>
-    <md-button class="md-primary" ng-if="!tecnicalUser" ng-click="cancelBuildTemplate()">{{translate.load("sbi.generic.close")}}</md-button>
-    <md-button class="md-primary" ng-if="tecnicalUser" ng-click="cancelBuildTemplateAdmin()">{{translate.load("sbi.generic.close")}}</md-button>
 </md-toolbar>
 <md-whiteframe class="md-whiteframe-2dp relative" layout-fill layout-margin flex  >
 <!-- CHOSE DATA SET FOR FINAL USER -->
@@ -65,9 +64,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </md-button>      
 </div>
 <!-- SINGLE SELECT FROM LAYER CATALOG  WHEN DATASET IS CHOSEN-->
-	<expander-box id="layersList" color="white" ng-if="isDatasetChosen" expanded="true" title="translate.load('gisengine.designer.layer.select')">
-		<div flex layout-padding class="innerExpander" layout-column> 
-	 		<angular-table style="height:200px" 
+	<expander-box id="layersList" color="white" background-color="#a9c3db" ng-if="isDatasetChosen" expanded="true" title="{{::translate.load('gisengine.designer.layer.select')}}">
+		<div flex  class="innerExpander" layout-column> 
+		
+		<!-- div layout="row" layout-align="center">
+			<div class="kn-info">
+				{{translate.load(Message to show)}}
+			</div>
+		</div-->
+		
+	 		<angular-table class="datasetLayer"
 			id='table' ng-model="selectedLayer"
 			columns='[{"label":"ID","name":"layerId"},{"label":"Name","name":"name"},{"label":"Description","name":"descr"},{"label":"Type","name":"type"}]'
 			columns-search='["name"]' show-search-bar=false
@@ -77,17 +83,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<queue-table>
 					<div layout="row"> 
 						<span flex></span>
-						<md-button ng-click="scopeFunctions.loadListLayers()">{{scopeFunctions.translate.load('gisengine.designer.layer.change')}}</md-button>
+						<md-button ng-click="scopeFunctions.loadListLayers()">{{::scopeFunctions.translate.load('gisengine.designer.layer.change')}}</md-button>
 					</div>
 				</queue-table> 
 			</angular-table>	
    		</div>       
 	</expander-box>
 	<!-- MULTI SELECT LAYER  -->
-	<expander-box id="layersListMultiSelect" color="white" ng-if="!isDatasetChosen" expanded="true" title="translate.load('gisengine.designer.layer.select')">
-		<div class="innerExpander" style="min-height:300px;max-height:600px;" layout-column>  
+	<expander-box id="layersListMultiSelect" color="white" background-color="#a9c3db" ng-if="!isDatasetChosen" expanded="true" title="{{::translate.load('gisengine.designer.layer.select')}}">
+		<div class="innerExpander" layout-column>  
 
-	 		<angular-table  style="height:300px"
+	 		<angular-table 
 			id='tableLayerMultiSelect' ng-model="selectedLayer"
 			columns='[{"label":"ID","name":"layerId"},{"label":"Name","name":"name"},{"label":"Description","name":"descr"},{"label":"Type","name":"type"}]'
 			columns-search='["name"]' show-search-bar=true no-pagination="false" items-per-page="5"
@@ -96,16 +102,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<queue-table>
 					<div layout="row"> 
 						<span flex></span>
-						<md-button ng-click="scopeFunctions.loadListLayers()">{{scopeFunctions.translate.load('gisengine.designer.layer.add')}}</md-button>
+						<md-button ng-click="scopeFunctions.loadListLayers()">{{::scopeFunctions.translate.load('gisengine.designer.layer.add')}}</md-button>
 					</div>
 				</queue-table> 
 			</angular-table>	
    		</div>       
 	</expander-box>
 	<!-- CHOSING LAYER FILTERS visible if there is no dataset-->
-	<expander-box id="filterSelectBox" color="white" ng-if="!isDatasetChosen && allDriverParamteres.length" expanded="false" title="translate.load('gisengine.designer.layer.filters')">
-		<div class="innerExpander" style="min-height:300px;max-height:600px;" layout-column>  
-			<angular-table style="height:300px"
+	<expander-box id="filterSelectBox" color="white" background-color="#a9c3db" ng-if="!isDatasetChosen && allDriverParamteres.length" expanded="false" title="{{::translate.load('gisengine.designer.layer.filters')}}">
+		<div class="innerExpander" layout-column>  
+			<angular-table
 			id='tableDriver' ng-model="selectedDriverParamteres"
 			columns='[{"label":"Driver parameter","name":"label"},{"label":"URL","name":"url"}]'
 			columns-search='["name"]' show-search-bar=true
@@ -114,16 +120,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				<queue-table>
 					<div layout="row"> 
 						<span flex></span>
-						<md-button ng-click="scopeFunctions.loadFilters()">{{scopeFunctions.translate.load('gisengine.designer.layer.filters.add')}}</md-button>
+						<md-button ng-click="scopeFunctions.loadFilters()">{{::scopeFunctions.translate.load('gisengine.designer.layer.filters.add')}}</md-button>
 					</div>
 				</queue-table> 
 			</angular-table>
 		</div>      
 	</expander-box>
 	<!-- DATASET JOIN COLUMNS INTERFACE -->
-	<expander-box id="datasetJoinBox" color="white" ng-if="isDatasetChosen" expanded="false" title="translate.load('gisengine.designer.dataset.joincolumns')">
-	<div class="innerExpander" style="min-height:300px;max-height:600px;" layout-column>  
-	    <angular-table style="height:300px"
+	<expander-box id="datasetJoinBox" color="white" background-color="#a9c3db" ng-if="isDatasetChosen" expanded="false" title="{{::translate.load('gisengine.designer.dataset.joincolumns')}}">
+	<div class="innerExpander" layout-column>  
+	    <angular-table 
 		id='datasetJoinColumnsTable' ng-model="datasetJoinColumns"
 		columns='[{"label":"Dataset join column","name":"datasetColumnView","hideTooltip":true},{"label":"Layer join column","name":"layerColumnView","hideTooltip":true}]'
 		columns-search='["datasetColumn","layerColumn"]' show-search-bar=true
@@ -133,16 +139,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<queue-table>
 				<div layout="row"> 
 					<span flex></span>
-					<md-button ng-click="scopeFunctions.addJoinColumn()">{{scopeFunctions.translate.load('gisengine.designer.dataset.joincolumns.add')}}</md-button>
+					<md-button ng-click="scopeFunctions.addJoinColumn()">{{::scopeFunctions.translate.load('gisengine.designer.dataset.joincolumns.add')}}</md-button>
 				</div>
 			</queue-table> 
 		</angular-table>	
 	</div>
 	</expander-box>
 	<!-- DATASET INDICATORS -->
-	<expander-box id="datasetIndicators" color="white" ng-if="isDatasetChosen" expanded="false" title="translate.load('gisengine.designer.dataset.indicators')">
-	<div class="innerExpander" style="min-height:300px;max-height:600px;" layout-column> 
-	    <angular-table style="height:400px"  
+	<expander-box id="datasetIndicators" color="white" background-color="#a9c3db" ng-if="isDatasetChosen" expanded="false" title="{{::translate.load('gisengine.designer.dataset.indicators')}}">
+	<div class="innerExpander" layout-column> 
+	    <angular-table 
 		id='indicatorsTable' ng-model="datasetIndicators"
 		columns='[{"label":"Measure","name":"indicatorNameView","hideTooltip":true},{"label":"Label","name":"indicatorLabel","hideTooltip":true,"editable":true}]'
 		columns-search='["indicatorName","indicatorLabel"]' show-search-bar=true
@@ -152,16 +158,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<queue-table>
 				<div layout="row"> 
 					<span flex></span>
-					<md-button ng-click="scopeFunctions.addIndicator()">{{scopeFunctions.translate.load('gisengine.designer.dataset.indicators.add')}}</md-button>
+					<md-button ng-click="scopeFunctions.addIndicator()">{{::scopeFunctions.translate.load('gisengine.designer.dataset.indicators.add')}}</md-button>
 				</div>
 			</queue-table> 
 		</angular-table>	
 	</div>
 	</expander-box>
 	<!-- DATASET FILTERS  -->
-	<expander-box id="datasetFilters" color="white" ng-if="isDatasetChosen" expanded="false" title="translate.load('gisengine.designer.dataset.filters')">
-	<div class="innerExpander" style="min-height:300px;max-height:600px;" layout-column> 
-	    <angular-table style="height:300px"  
+	<expander-box id="datasetFilters" color="white" background-color="#a9c3db" ng-if="isDatasetChosen" expanded="false" title="{{::translate.load('gisengine.designer.dataset.filters')}}">
+	<div class="innerExpander" layout-column> 
+	    <angular-table 
 		id='filtersTable' ng-model="datasetFilters"
 		columns='[{"label":"Name","name":"dsFilterNameView","hideTooltip":true},{"label":"Label","name":"dsFilterLabel","hideTooltip":true,"editable":true}]'
 		columns-search='["dsFilterName","dsFilterLabel"]' show-search-bar=true
@@ -171,41 +177,41 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<queue-table>
 				<div layout="row"> 
 					<span flex></span>
-					<md-button ng-click="scopeFunctions.addDatasetFilter()">{{scopeFunctions.translate.load('gisengine.designer.dataset.dsfilters.add')}}</md-button>
+					<md-button ng-click="scopeFunctions.addDatasetFilter()">{{::scopeFunctions.translate.load('gisengine.designer.dataset.dsfilters.add')}}</md-button>
 				</div>
 			</queue-table> 
 		</angular-table>	
 	</div>
 	</expander-box>
 	<!-- GEO CONFIC VISIBILITY SETTINGS -->
-	<expander-box id="visibilitySettings" aria-label="menu configuration" color="white" expanded="false" title="translate.load('gisengine.designer.menuConfiguration')">
+	<expander-box id="visibilitySettings" background-color="#a9c3db" aria-label="menu configuration" color="white" expanded="false" title="{{::translate.load('gisengine.designer.menuConfiguration')}}">
  	<div flex layout="row" layout-wrap> 
  	      
  	      <md-checkbox ng-model="visibility.showRightConfigMenu" aria-label="show right menu" flex=40 class="md-block">
-            {{translate.load('gisengine.designer.showRigtMenu')}}
+            {{::translate.load('gisengine.designer.showRigtMenu')}}
           </md-checkbox> 
             <md-checkbox ng-model="visibility.showLegendButton" aria-label="show legend button" flex=40 class="md-block">
-            {{translate.load('gisengine.designer.showLegendButton')}}
+            {{::translate.load('gisengine.designer.showLegendButton')}}
           </md-checkbox> 
             <md-checkbox ng-model="visibility.showDistanceCalculator" aria-label="show distance calculator" flex=40 class="md-block">
-            {{translate.load('gisengine.designer.showDistanceCalculator')}}
+            {{::translate.load('gisengine.designer.showDistanceCalculator')}}
           </md-checkbox> 
           
            
           <md-checkbox ng-model="visibility.showDownloadButton" aria-label="show download button" flex=40 class="md-block">
-            {{translate.load('gisengine.designer.showDownloadButton')}}
+            {{::translate.load('gisengine.designer.showDownloadButton')}}
           </md-checkbox> 
               <md-checkbox ng-model="visibility.showSelectMode" ng-disabled="!visibility.showRightConfigMenu" aria-label="show select mode configuration" flex=40 class="md-block">
-            {{translate.load('gisengine.designer.showSelectMode')}}
+            {{::translate.load('gisengine.designer.showSelectMode')}}
           </md-checkbox> 
              <md-checkbox ng-model="visibility.showLayer" ng-disabled="!visibility.showRightConfigMenu" aria-label="show layer selection" flex=40 class="md-block">
-            {{translate.load('gisengine.designer.showLayer')}}
+            {{::translate.load('gisengine.designer.showLayer')}}
           </md-checkbox> 
              <md-checkbox ng-model="visibility.showBaseLayer" ng-disabled="!visibility.showRightConfigMenu" aria-label="show base layer selection" flex=40>
-            {{translate.load('gisengine.designer.showBaseLayer')}}
+            {{::translate.load('gisengine.designer.showBaseLayer')}}
           </md-checkbox> 
           <md-checkbox ng-model="visibility.showMapConfig" ng-disabled="!visibility.showRightConfigMenu" aria-label="show map style configuration panel" flex=40>
-            {{translate.load('gisengine.designer.showMapConfig')}}
+            {{::translate.load('gisengine.designer.showMapConfig')}}
           </md-checkbox> 
  	</div>
  	</expander-box>
