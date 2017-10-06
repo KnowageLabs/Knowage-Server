@@ -100,6 +100,7 @@
     	#if ($chartType != "radar")
     		zoomType: 'xy',
     	#end 
+    	panning: true,
     	#set($chartTypeToPrint = 'column')
     	
     	#if($chartType == 'line' || $chartType == 'radar')
@@ -1322,7 +1323,7 @@
     ],
     
     tooltip: {
-    
+    followTouchMove:false,
     	## NOTE (TOOLTIP PROBLEM): disable the tooltip in order to provide possibility to hide the tooltip after set amount of time after hover 
 		## enabled:false,
 		

@@ -57,6 +57,7 @@
 			@modifiedBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
         *#
         zoomType: 'xy',
+        panning:true,
         
         backgroundColor: '$chart.style.backgroundColor', ##outer chart background
         
@@ -963,6 +964,7 @@
     ],
     
      tooltip: {
+	    followTouchMove:false,
         useHTML: true,
         backgroundColor: null,
         borderWidth: 2,
