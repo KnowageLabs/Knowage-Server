@@ -17,7 +17,7 @@
  */
 package it.eng.spagobi.kpi.bo;
 
-public class Alias {
+public class Alias implements Comparable<Alias> {
 
 	private Integer id;
 	private String name;
@@ -95,4 +95,13 @@ public class Alias {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return "Alias [id=" + id + ", name=" + name + "]";
+	}
+
+	@Override
+	public int compareTo(Alias alias) {
+		return name.compareToIgnoreCase(alias.name);
+	}
 }

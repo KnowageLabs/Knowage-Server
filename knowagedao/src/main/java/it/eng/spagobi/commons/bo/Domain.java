@@ -33,6 +33,8 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @JsonInclude(Include.NON_NULL)
 public class Domain implements Serializable {
 
+	private static final long serialVersionUID = 3795397248242537831L;
+	
 	private Integer valueId;
 	@NotNull
 	private String valueCd = "";
@@ -189,6 +191,61 @@ public class Domain implements Serializable {
 
 	public String getTranslatedValueDescription() {
 		return getTranslatedValueDescription(null);
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((domainCode == null) ? 0 : domainCode.hashCode());
+		result = prime * result + ((domainName == null) ? 0 : domainName.hashCode());
+		result = prime * result + ((valueCd == null) ? 0 : valueCd.hashCode());
+		result = prime * result + ((valueDescription == null) ? 0 : valueDescription.hashCode());
+		result = prime * result + ((valueId == null) ? 0 : valueId.hashCode());
+		result = prime * result + ((valueName == null) ? 0 : valueName.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof Domain))
+			return false;
+		Domain other = (Domain) obj;
+		if (domainCode == null) {
+			if (other.domainCode != null)
+				return false;
+		} else if (!domainCode.equals(other.domainCode))
+			return false;
+		if (domainName == null) {
+			if (other.domainName != null)
+				return false;
+		} else if (!domainName.equals(other.domainName))
+			return false;
+		if (valueCd == null) {
+			if (other.valueCd != null)
+				return false;
+		} else if (!valueCd.equals(other.valueCd))
+			return false;
+		if (valueDescription == null) {
+			if (other.valueDescription != null)
+				return false;
+		} else if (!valueDescription.equals(other.valueDescription))
+			return false;
+		if (valueId == null) {
+			if (other.valueId != null)
+				return false;
+		} else if (!valueId.equals(other.valueId))
+			return false;
+		if (valueName == null) {
+			if (other.valueName != null)
+				return false;
+		} else if (!valueName.equals(other.valueName))
+			return false;
+		return true;
 	}
 
 	@Override

@@ -22,25 +22,16 @@ import it.eng.spagobi.commons.bo.Domain;
 import java.io.Serializable;
 import java.util.Date;
 
-public class RuleOutput implements Serializable {
+public class RuleOutput implements Serializable, Comparable<RuleOutput> {
 
 	private static final long serialVersionUID = 6239303686402587566L;
-	/**
-	 * 
-	 */
+
 	private Integer id;
 	private String alias;
 	private Integer aliasId;
 	private String rule;
 	private Integer ruleId;
 	private Integer ruleVersion;
-
-	public RuleOutput() {
-	}
-
-	public RuleOutput(Integer id) {
-		this.id = id;
-	}
 
 	/**
 	 * domainCd="KPI_MEASURE_CATEGORY"
@@ -66,6 +57,14 @@ public class RuleOutput implements Serializable {
 	/**
 	 * @return the id
 	 */
+	
+	public RuleOutput() {
+	}
+
+	public RuleOutput(Integer id) {
+		this.id = id;
+	}
+	
 	public Integer getId() {
 		return id;
 	}
@@ -230,11 +229,91 @@ public class RuleOutput implements Serializable {
 
 	@Override
 	public int hashCode() {
-		return id == null ? super.hashCode() : id.hashCode();
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((alias == null) ? 0 : alias.hashCode());
+		result = prime * result + ((aliasId == null) ? 0 : aliasId.hashCode());
+		result = prime * result + ((author == null) ? 0 : author.hashCode());
+		result = prime * result + ((category == null) ? 0 : category.hashCode());
+		result = prime * result + ((dateCreation == null) ? 0 : dateCreation.hashCode());
+		result = prime * result + ((hierarchy == null) ? 0 : hierarchy.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((rule == null) ? 0 : rule.hashCode());
+		result = prime * result + ((ruleId == null) ? 0 : ruleId.hashCode());
+		result = prime * result + ((ruleVersion == null) ? 0 : ruleVersion.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		return result;
 	}
 
 	@Override
-	public boolean equals(Object o) {
-		return o instanceof RuleOutput && id != null && id.equals(((RuleOutput) o).getId()) || super.equals(o);
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof RuleOutput))
+			return false;
+		RuleOutput other = (RuleOutput) obj;
+		if (alias == null) {
+			if (other.alias != null)
+				return false;
+		} else if (!alias.equals(other.alias))
+			return false;
+		if (aliasId == null) {
+			if (other.aliasId != null)
+				return false;
+		} else if (!aliasId.equals(other.aliasId))
+			return false;
+		if (author == null) {
+			if (other.author != null)
+				return false;
+		} else if (!author.equals(other.author))
+			return false;
+		if (category == null) {
+			if (other.category != null)
+				return false;
+		} else if (!category.equals(other.category))
+			return false;
+		if (dateCreation == null) {
+			if (other.dateCreation != null)
+				return false;
+		} else if (!dateCreation.equals(other.dateCreation))
+			return false;
+		if (hierarchy == null) {
+			if (other.hierarchy != null)
+				return false;
+		} else if (!hierarchy.equals(other.hierarchy))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (rule == null) {
+			if (other.rule != null)
+				return false;
+		} else if (!rule.equals(other.rule))
+			return false;
+		if (ruleId == null) {
+			if (other.ruleId != null)
+				return false;
+		} else if (!ruleId.equals(other.ruleId))
+			return false;
+		if (ruleVersion == null) {
+			if (other.ruleVersion != null)
+				return false;
+		} else if (!ruleVersion.equals(other.ruleVersion))
+			return false;
+		if (type == null) {
+			if (other.type != null)
+				return false;
+		} else if (!type.equals(other.type))
+			return false;
+		return true;
+	}
+
+	@Override
+	public int compareTo(RuleOutput rule) {
+		return alias.compareToIgnoreCase(rule.alias);
 	}
 }

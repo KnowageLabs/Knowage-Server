@@ -366,9 +366,15 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				// clearing removed references
 				Iterator<SbiKpiRuleOutput> iterator = sbiRule.getSbiKpiRuleOutputs().iterator();
 				while (iterator.hasNext()) {
+					boolean found = false;
 					SbiKpiRuleOutput sbiKpiRuleOutput = iterator.next();
-					// List of RuleOutput cannot be empty
-					if (rule.getRuleOutputs().indexOf(new RuleOutput(sbiKpiRuleOutput.getId())) == -1) {
+					
+					for(RuleOutput output : rule.getRuleOutputs()) {
+						if(output.getId().equals(sbiKpiRuleOutput.getId())) {
+							found = true;
+						}
+					}
+					if (!found) {
 						iterator.remove();
 					}
 				}

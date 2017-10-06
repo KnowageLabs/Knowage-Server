@@ -352,10 +352,10 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 
 	private static ConcurrentMap<String, JSONObject> metadataCache = new ConcurrentHashMap<>();
 
-	private JSONObject getTableMetadata(Connection conn) throws HibernateException, JSONException {
+	private JSONObject getTableMetadata(Connection conn) throws HibernateException, JSONException, SQLException {
 		String metadataCacheKey = null;
 		JSONObject tableContent = new JSONObject();
-
+		ResultSet rs = null;
 		try {
 			DatabaseMetaData meta = conn.getMetaData();
 			String userName = meta.getUserName();
@@ -365,8 +365,6 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 				return metadataCache.get(metadataCacheKey);
 			}
 
-			ResultSet rs = null;
-			try {
 				if (conn.getMetaData().getDatabaseProductName().toLowerCase().contains("oracle")) {
 					// String q =
 					// "SELECT TABLE_NAME, COLUMN_NAME, DATA_TYPE FROM ALL_TAB_COLUMNS WHERE OWNER = '"
@@ -380,7 +378,6 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 						}
 						tableContent.getJSONObject(rs.getString(1)).put(rs.getString(2), rs.getString(3));
 					}
-					rs.close();
 				} else {
 					final String[] TYPES = { "TABLE", "VIEW" };
 					final String tableNamePattern = "%";
@@ -406,9 +403,6 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 					conn.close();
 				}
 			}
-		} catch (SQLException sqlException) {
-			sqlException.printStackTrace();
-		}
 		metadataCache.put(metadataCacheKey, tableContent);
 		return tableContent;
 	}

@@ -379,7 +379,7 @@ public class KpiService {
 		Integer dataSourceId = null;
 		String query = null;
 		Integer maxItem = null;
-		List<Placeholder> placeholders = null;
+		Set<Placeholder> placeholders = null;
 		try {
 			JSONObject obj = RestUtilities.readBodyAsJSONObject(req);
 			Rule rule = (Rule) JsonConverter.jsonToObject(obj.getString("rule"), Rule.class);
@@ -477,7 +477,7 @@ public class KpiService {
 			// check if temporal attribute are correct
 			String query = rule.getDefinition();
 
-			List<RuleOutput> ruleOutput = rule.getRuleOutputs();
+			Set<RuleOutput> ruleOutput = rule.getRuleOutputs();
 			out = Response.ok().build();
 
 			for (RuleOutput ruleOut : ruleOutput) {
@@ -1281,7 +1281,7 @@ public class KpiService {
 		}
 	}
 
-	private JSONObject executeQuery(Integer dataSourceId, String query, Integer maxItem, List<Placeholder> placeholders, IEngUserProfile profile)
+	private JSONObject executeQuery(Integer dataSourceId, String query, Integer maxItem, Set<Placeholder> placeholders, IEngUserProfile profile)
 			throws JSONException, EMFUserError, EMFInternalError {
 
 		Map<String, String> parameterMap = new HashMap<>();

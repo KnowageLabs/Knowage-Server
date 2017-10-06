@@ -20,6 +20,8 @@ package it.eng.spagobi.kpi.bo;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class Rule implements Serializable {
 
@@ -33,8 +35,8 @@ public class Rule implements Serializable {
 	private String definition;
 	private Integer dataSourceId;
 
-	private List<RuleOutput> ruleOutputs = new ArrayList<>();
-	private List<Placeholder> placeholders = new ArrayList<>();
+	private Set<RuleOutput> ruleOutputs = new TreeSet<>();
+	private Set<Placeholder> placeholders = new TreeSet<>();
 
 	public Rule() {
 	}
@@ -107,7 +109,7 @@ public class Rule implements Serializable {
 	/**
 	 * @return the ruleOutputs
 	 */
-	public List<RuleOutput> getRuleOutputs() {
+	public Set<RuleOutput> getRuleOutputs() {
 		return ruleOutputs;
 	}
 
@@ -115,7 +117,7 @@ public class Rule implements Serializable {
 	 * @param ruleOutputs
 	 *            the ruleOutputs to set
 	 */
-	public void setRuleOutputs(List<RuleOutput> ruleOutputs) {
+	public void setRuleOutputs(Set<RuleOutput> ruleOutputs) {
 		this.ruleOutputs = ruleOutputs;
 	}
 
@@ -137,7 +139,7 @@ public class Rule implements Serializable {
 	/**
 	 * @return the placeholders
 	 */
-	public List<Placeholder> getPlaceholders() {
+	public Set<Placeholder> getPlaceholders() {
 		return placeholders;
 	}
 
@@ -145,7 +147,7 @@ public class Rule implements Serializable {
 	 * @param placeholders
 	 *            the placeholders to set
 	 */
-	public void setPlaceholders(List<Placeholder> placeholders) {
+	public void setPlaceholders(Set<Placeholder> placeholders) {
 		this.placeholders = placeholders;
 	}
 
