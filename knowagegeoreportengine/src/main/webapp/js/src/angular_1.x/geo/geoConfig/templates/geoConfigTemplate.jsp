@@ -1,5 +1,5 @@
 
-<expander-box id="legend" expanded='true'  title='translate.load("gisengine.info.message.legend.config")'> 
+<expander-box id="legend" expanded='true'  title='{{::translate.load("gisengine.info.message.legend.config")}}'> 
 	<md-tabs md-dynamic-height="" >
       <md-tab label='{{translate.load("gisengine.rigthMapMenu.analysisType.choropleth")}}'>
         <md-content>

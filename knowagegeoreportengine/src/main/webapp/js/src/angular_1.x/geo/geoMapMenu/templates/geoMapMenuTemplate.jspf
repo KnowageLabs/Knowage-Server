@@ -1,6 +1,6 @@
 <md-content>
 
-	<expander-box id="mapType"  expanded='true' title='translate.load("gisengine.info.message.mapType")'> 
+	<expander-box id="mapType"  expanded='true' title='{{::translate.load("gisengine.info.message.mapType")}}'> 
 		<md-radio-group ng-model="template.analysisType"> 
 			<md-radio-button ng-repeat="item in analysisTypeList" class="md-primary"
 					ng-value="item.type" ng-click="updateMap()"> 
@@ -11,7 +11,7 @@
 	</expander-box>
 	
 
-	<expander-box id="indicator"  expanded='true' title='translate.load("gisengine.info.message.indicator")' ng-switch on="template.analysisType=='chart'">
+	<expander-box id="indicator"  expanded='true' title='{{::translate.load("gisengine.info.message.indicator")}}' ng-switch on="template.analysisType=='chart'">
 		<md-radio-group ng-model="template.selectedIndicator" ng-switch-when="false">
 			<md-radio-button ng-repeat="ind in indicators" ng-click="updateMap()" class="md-primary" ng-value="ind">
 				{{ind.label}} 
@@ -27,7 +27,7 @@
 	</expander-box>
 
  
-	<expander-box id="selectMode"  expanded='false' title='translate.load("gisengine.info.message.filter")' >
+	<expander-box id="selectMode"  expanded='false' title='{{::translate.load("gisengine.info.message.filter")}}' >
 		<md-input-container class="md-block" ng-repeat="filter in filters"> 
 			<label>{{filter.label}}</label>
 			<md-select ng-model="template.selectedFilters[filter.name]" multiple=true md-on-close="updateMap()">
