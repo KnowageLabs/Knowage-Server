@@ -7,8 +7,8 @@
 			<input ng-show='true' ng-repeat = "seriesContainer in seriesContainers"  name="seriesNumber" min=1 max={{2+1}} type="number" ng-model="seriesContainer.series.length" >
 		 -->
 		
-		 <input  ng-if="selectedChartType.toUpperCase() != 'GAUGE'" ng-show='false' name="categoriesNumber"  type="number"  ng-model="categories.length" min={{minMaxCategories.min}} max={{minMaxCategories.max}} > 
-		 <input ng-show='false' ng-repeat = "seriesContainer in seriesContainers"  name={{seriesContainer.name}} min={{minMaxSeries.min}} max={{minMaxSeries.max}} type="number" ng-model="seriesContainer.series.length" >
+		 <input  ng-if="selectedChartType.toUpperCase() != 'GAUGE'" ng-show='false' name="categoriesNumber"  type="number"  ng-model="object.dragan" min={{minMaxCategories.min}} max={{minMaxCategories.max}} > 
+
 		<div layout="column" flex=35 style="padding:0 8 0 0">  
 		
 			<md-toolbar class="secondaryToolbar">
@@ -427,7 +427,7 @@
 					</md-toolbar>
 				
 					<!-- SERIES ITEMS -->
-					<md-list flex ng-class="structureForm.{{seriesContainer.name}}.$invalid ? 'dangerBorder' : ''">
+					<md-list flex ng-class="isInvalid(seriesContainer.series) ? 'dangerBorder' : ''">
 								
 						<!-- If the series container has at least one series item inside of it. -->		
 						<md-list-item ng-if="seriesContainer.series.length>0" ng-repeat="seriesItem in seriesContainer.series track by $index" class="noright" style="padding:0 8 0 16">
