@@ -59,7 +59,7 @@ public class UserProfile implements IEngUserProfile {
 	private Collection functionalities = null;
 	private String defaultRole = null;
 	private String organization = null;
-	private Boolean isSuperadmin = null;
+	private Boolean isSuperadmin = false;
 
 	@JsonIgnore
 	private SpagoBIUserProfile spagoBIUserProfile = null;
@@ -194,7 +194,7 @@ public class UserProfile implements IEngUserProfile {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.security.IEngUserProfile#getFunctionalities()
 	 */
 	@Override
@@ -204,7 +204,7 @@ public class UserProfile implements IEngUserProfile {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.security.IEngUserProfile#getFunctionalitiesByRole(java.lang.String)
 	 */
 	@Override
@@ -215,7 +215,7 @@ public class UserProfile implements IEngUserProfile {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.security.IEngUserProfile#getRoles()
 	 */
 	@Override
@@ -246,7 +246,7 @@ public class UserProfile implements IEngUserProfile {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.security.IEngUserProfile#getUserAttribute(java.lang.String)
 	 */
 	@Override
@@ -256,7 +256,7 @@ public class UserProfile implements IEngUserProfile {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.security.IEngUserProfile#getUserAttributeNames()
 	 */
 	@Override
@@ -266,7 +266,7 @@ public class UserProfile implements IEngUserProfile {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.security.IEngUserProfile#getUserUniqueIdentifier()
 	 */
 	@Override
@@ -276,7 +276,7 @@ public class UserProfile implements IEngUserProfile {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.security.IEngUserProfile#getUserName()
 	 */
 	public Object getUserName() {
@@ -288,7 +288,7 @@ public class UserProfile implements IEngUserProfile {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.security.IEngUserProfile#getUserId()
 	 */
 	public Object getUserId() {
@@ -300,7 +300,7 @@ public class UserProfile implements IEngUserProfile {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.security.IEngUserProfile#hasRole(java.lang.String)
 	 */
 	@Override
@@ -310,7 +310,7 @@ public class UserProfile implements IEngUserProfile {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.security.IEngUserProfile#isAbleToExecuteAction(java.lang.String)
 	 */
 	@Override
@@ -332,8 +332,8 @@ public class UserProfile implements IEngUserProfile {
 
 	/*
 	 * (non-Javadoc)
-	 * 
-
+	 *
+	 *
 	 * @see it.eng.spago.security.IEngUserProfile#isAbleToExecuteModuleInPage(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -347,7 +347,7 @@ public class UserProfile implements IEngUserProfile {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spago.security.IEngUserProfile#setApplication(java.lang.String)
 	 */
 	@Override

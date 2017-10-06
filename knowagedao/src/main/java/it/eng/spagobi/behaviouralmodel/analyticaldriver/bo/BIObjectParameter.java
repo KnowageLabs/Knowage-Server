@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,15 +11,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.behaviouralmodel.analyticaldriver.bo;
-
-import it.eng.spagobi.services.validation.Alphanumeric;
-import it.eng.spagobi.services.validation.ExtendedAlphanumeric;
-import it.eng.spagobi.services.validation.NoSpaces;
 
 import java.io.Serializable;
 import java.util.Iterator;
@@ -33,9 +29,13 @@ import org.hibernate.validator.constraints.NotEmpty;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import it.eng.spagobi.services.validation.Alphanumeric;
+import it.eng.spagobi.services.validation.ExtendedAlphanumeric;
+import it.eng.spagobi.services.validation.NoSpaces;
+
 /**
  * Defines a <code>BIObjectParameter</code> object.
- * 
+ *
  * @author Zoppello This class map the SBI_OBJ_PAR table
  */
 public class BIObjectParameter implements Serializable {
@@ -115,7 +115,7 @@ public class BIObjectParameter implements Serializable {
 
 	/**
 	 * Gets the id.
-	 * 
+	 *
 	 * @return Returns the id of the BIObjectParameter
 	 */
 	public Integer getId() {
@@ -124,7 +124,7 @@ public class BIObjectParameter implements Serializable {
 
 	/**
 	 * Sets the id.
-	 * 
+	 *
 	 * @param id
 	 *            The BIObjectParameter to set
 	 */
@@ -134,7 +134,7 @@ public class BIObjectParameter implements Serializable {
 
 	/**
 	 * Gets the bi object id.
-	 * 
+	 *
 	 * @return Returns the biObjectID.
 	 */
 	public Integer getBiObjectID() {
@@ -143,7 +143,7 @@ public class BIObjectParameter implements Serializable {
 
 	/**
 	 * Sets the bi object id.
-	 * 
+	 *
 	 * @param biObjectID
 	 *            The biObjectID to set.
 	 */
@@ -153,7 +153,7 @@ public class BIObjectParameter implements Serializable {
 
 	/**
 	 * Gets the label.
-	 * 
+	 *
 	 * @return Returns the label.
 	 */
 	public String getLabel() {
@@ -162,7 +162,7 @@ public class BIObjectParameter implements Serializable {
 
 	/**
 	 * Sets the label.
-	 * 
+	 *
 	 * @param label
 	 *            The label to set.
 	 */
@@ -172,7 +172,7 @@ public class BIObjectParameter implements Serializable {
 
 	/**
 	 * Gets the modifiable.
-	 * 
+	 *
 	 * @return Returns the modifiable.
 	 */
 	public Integer getModifiable() {
@@ -181,7 +181,7 @@ public class BIObjectParameter implements Serializable {
 
 	/**
 	 * Sets the modifiable.
-	 * 
+	 *
 	 * @param modifiable
 	 *            The modifiable to set.
 	 */
@@ -191,7 +191,7 @@ public class BIObjectParameter implements Serializable {
 
 	/**
 	 * Gets the multivalue attribute that is equal to 0 if the parameter is not multivalue, 1 otherwise .
-	 * 
+	 *
 	 * @return Returns the multivalue.
 	 */
 	@JsonIgnore
@@ -208,7 +208,7 @@ public class BIObjectParameter implements Serializable {
 
 	/**
 	 * Sets the multivalue.
-	 * 
+	 *
 	 * @param multivalue
 	 *            The multivalue to set.
 	 */
@@ -226,7 +226,7 @@ public class BIObjectParameter implements Serializable {
 
 	/**
 	 * Gets the parameter url name.
-	 * 
+	 *
 	 * @return Returns the parameterUrlName.
 	 */
 	public String getParameterUrlName() {
@@ -235,7 +235,7 @@ public class BIObjectParameter implements Serializable {
 
 	/**
 	 * Sets the parameter url name.
-	 * 
+	 *
 	 * @param parameterUrlName
 	 *            The parameterUrlName to set.
 	 */
@@ -245,7 +245,7 @@ public class BIObjectParameter implements Serializable {
 
 	/**
 	 * Gets the parameter values.
-	 * 
+	 *
 	 * @return Returns the parameterValues.
 	 */
 	public List getParameterValues() {
@@ -254,7 +254,7 @@ public class BIObjectParameter implements Serializable {
 
 	/**
 	 * Gets the parameter values as a unique String (values are separated by ";"). If the parameter has no values set, null is returned.
-	 * 
+	 *
 	 * @return Returns the parameter values as a unique String (values are separated by ";").
 	 */
 	@JsonIgnore
@@ -266,7 +266,10 @@ public class BIObjectParameter implements Serializable {
 		Iterator it = parameterValues.iterator();
 		while (it.hasNext()) {
 			String aValue = (String) it.next();
+			String delimiter = (parameter.getType().equalsIgnoreCase("STRING") && !aValue.startsWith("'") && !aValue.endsWith("'")) ? "'" : "";
+			buffer.append(delimiter);
 			buffer.append(aValue);
+			buffer.append(delimiter);
 			if (it.hasNext()) {
 				buffer.append(";");
 			}
@@ -276,7 +279,7 @@ public class BIObjectParameter implements Serializable {
 
 	/**
 	 * Sets the parameter values.
-	 * 
+	 *
 	 * @param parameterValues
 	 *            The parameterValues to set.
 	 */
@@ -286,7 +289,7 @@ public class BIObjectParameter implements Serializable {
 
 	/**
 	 * Gets the par id.
-	 * 
+	 *
 	 * @return Returns the parID.
 	 */
 	public Integer getParID() {
@@ -295,7 +298,7 @@ public class BIObjectParameter implements Serializable {
 
 	/**
 	 * Sets the par id.
-	 * 
+	 *
 	 * @param parID
 	 *            The parID to set.
 	 */
@@ -305,7 +308,7 @@ public class BIObjectParameter implements Serializable {
 
 	/**
 	 * Gets the prog.
-	 * 
+	 *
 	 * @return Returns the prog.
 	 */
 	public Integer getProg() {
@@ -314,7 +317,7 @@ public class BIObjectParameter implements Serializable {
 
 	/**
 	 * Sets the prog.
-	 * 
+	 *
 	 * @param prog
 	 *            The prog to set.
 	 */
@@ -324,7 +327,7 @@ public class BIObjectParameter implements Serializable {
 
 	/**
 	 * Gets the required.
-	 * 
+	 *
 	 * @return Returns the required.
 	 */
 	@JsonIgnore
@@ -341,7 +344,7 @@ public class BIObjectParameter implements Serializable {
 
 	/**
 	 * Sets the required.
-	 * 
+	 *
 	 * @param required
 	 *            The required to set.
 	 */
@@ -359,7 +362,7 @@ public class BIObjectParameter implements Serializable {
 
 	/**
 	 * Gets the visible.
-	 * 
+	 *
 	 * @return Returns the visible.
 	 */
 	public Integer getVisible() {
@@ -368,7 +371,7 @@ public class BIObjectParameter implements Serializable {
 
 	/**
 	 * Sets the visible.
-	 * 
+	 *
 	 * @param visible
 	 *            The visible to set.
 	 */
@@ -378,7 +381,7 @@ public class BIObjectParameter implements Serializable {
 
 	/**
 	 * Gets the parameter.
-	 * 
+	 *
 	 * @return the Parameter object
 	 */
 	public Parameter getParameter() {
@@ -387,7 +390,7 @@ public class BIObjectParameter implements Serializable {
 
 	/**
 	 * Sets the parameter.
-	 * 
+	 *
 	 * @param parameter
 	 *            The Parameter to set
 	 */
@@ -397,7 +400,7 @@ public class BIObjectParameter implements Serializable {
 
 	/**
 	 * Gets the priority.
-	 * 
+	 *
 	 * @return Returns the priority
 	 */
 	public Integer getPriority() {
@@ -406,7 +409,7 @@ public class BIObjectParameter implements Serializable {
 
 	/**
 	 * Sets the priority.
-	 * 
+	 *
 	 * @param priority
 	 *            The priority to set
 	 */
@@ -416,7 +419,7 @@ public class BIObjectParameter implements Serializable {
 
 	/**
 	 * Checks if is transient parmeters.
-	 * 
+	 *
 	 * @return true, if is transient parmeters
 	 */
 	public boolean isTransientParmeters() {
@@ -425,7 +428,7 @@ public class BIObjectParameter implements Serializable {
 
 	/**
 	 * Sets the transient parmeters.
-	 * 
+	 *
 	 * @param transientParmeters
 	 *            the new transient parmeters
 	 */
@@ -435,7 +438,7 @@ public class BIObjectParameter implements Serializable {
 
 	/**
 	 * Checks for valid values.
-	 * 
+	 *
 	 * @return true, if successful
 	 */
 	public boolean hasValidValues() {
@@ -444,7 +447,7 @@ public class BIObjectParameter implements Serializable {
 
 	/**
 	 * Sets the checks for valid values.
-	 * 
+	 *
 	 * @param hasValidValues
 	 *            the new checks for valid values
 	 */
@@ -454,7 +457,7 @@ public class BIObjectParameter implements Serializable {
 
 	/**
 	 * Gets the parameter values description.
-	 * 
+	 *
 	 * @return the parameter values description
 	 */
 	public List getParameterValuesDescription() {
@@ -463,7 +466,7 @@ public class BIObjectParameter implements Serializable {
 
 	/**
 	 * Sets the parameter values description.
-	 * 
+	 *
 	 * @param parameterValuesDescription
 	 *            the new parameter values description
 	 */

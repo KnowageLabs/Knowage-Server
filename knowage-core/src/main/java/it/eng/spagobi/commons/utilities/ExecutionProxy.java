@@ -17,6 +17,28 @@
  */
 package it.eng.spagobi.commons.utilities;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.GregorianCalendar;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Vector;
+
+import org.apache.axis.encoding.Base64;
+import org.apache.commons.httpclient.Header;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.NameValuePair;
+import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.log4j.Logger;
+import org.safehaus.uuid.UUID;
+import org.safehaus.uuid.UUIDGenerator;
+
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.ResponseContainer;
 import it.eng.spago.base.SessionContainer;
@@ -40,28 +62,6 @@ import it.eng.spagobi.engines.drivers.geo.GeoDriver;
 import it.eng.spagobi.monitoring.dao.AuditManager;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.utilities.assertion.Assert;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.GregorianCalendar;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Vector;
-
-import org.apache.axis.encoding.Base64;
-import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.NameValuePair;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.log4j.Logger;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
 
 public class ExecutionProxy {
 
@@ -259,6 +259,14 @@ public class ExecutionProxy {
 			mapPars.put(SpagoBIConstants.PASS_TICKET, pass);
 
 			// TODO merge with ExecutionInstance.addSystemParametersForExternalEngines for SBI_CONTEXT, locale parameters, etc...
+
+			// set spagobi host
+			if (!mapPars.containsKey(SpagoBIConstants.SBI_HOST)) {
+				String sbiHost = GeneralUtilities.getSpagoBiHost();
+				if (sbiHost != null) {
+					mapPars.put(SpagoBIConstants.SBI_HOST, sbiHost);
+				}
+			}
 
 			// set spagobi context
 			if (!mapPars.containsKey(SpagoBIConstants.SBI_CONTEXT)) {
