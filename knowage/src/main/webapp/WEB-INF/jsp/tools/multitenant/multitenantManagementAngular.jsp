@@ -40,6 +40,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <body ng-cloak>
 	<div ng-controller="Controller as ctrl"  layout="row" layout-wrap layout-fill>
+	
+		<div loading ng-show="showEl" style="position:fixed; z-index:500; height:100%; width:100%; background-color:black; opacity:0.5;">
+		 	<md-progress-circular md-mode="indeterminate" md-diameter="75%" style="position:fixed; top:calc(50% - 37.5px); left:calc(50% - 37.5px);"></md-progress-circular>
+		</div>			
+	
 		<angular-list-detail layout-column show-detail="showMe">
 			<list label="translate.load('sbi.multitenant')" new-function="addTenant" >				  	
 			    <angular-table flex
@@ -56,10 +61,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<detail label="property == undefined ? '' : translate.load('sbi.generic.details')" save-function="saveTenant" cancel-function="resetForm" 
 				disable-save-button="tenantForm.$invalid || productsSelected.length == 0 || datasourcesSelected.length == 0" show-save-button="showMe" show-cancel-button="showMe">
 				<form name="tenantForm" flex="90" layout="column">
-					<div  ng-show="loadinMessage" class="loading-message">
-						<md-progress-circular loading ng-show="loadinMessage" md-mode="indeterminate" md-diameter="75%" style="position:fixed;top:50%;left:50%;z-index: 500;background:rgba(255, 255, 255, 0);"></md-progress-circular>
+				<!--
+				<div  ng-show="loadinMessage" class="loading-message">
+					  	<md-progress-circular loading ng-show="loadinMessage" md-mode="indeterminate" md-diameter="75%" style="position:fixed;top:50%;left:50%;z-index: 500;background:rgba(255, 255, 255, 0);"></md-progress-circular>
 						<span class="">{{translate.load("sbi.generic.wait");}}</span>
-					</div> 
+					</div>
+					--> 
 					<md-tabs md-selected="selectedIndex.idx" ng-if="!loadinMessage" md-dynamic-height>
 						<md-tab>
 							<md-tab-label>
