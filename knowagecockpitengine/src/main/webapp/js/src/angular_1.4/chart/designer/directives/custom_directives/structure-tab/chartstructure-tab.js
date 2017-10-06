@@ -42,7 +42,51 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 	$scope.categoriesContainer = [];
 	$scope.categories = [];
 	$scope.seriesContainers = [];
-
+	$scope.checkCategoriesLength = 0;
+	$scope.seriesContainerrlength = 0;
+	
+	
+	$scope.object = {};
+	$scope.object.dragan = $scope.checkCategoriesLength;
+	$scope.objectt = {};
+	$scope.objectt.dragann = $scope.seriesContainerrlength;
+	
+	$scope.$watch('categories',function(newValue,oldValue){
+		$scope.object.dragan = $scope.categories.length;
+	},true)
+	$scope.$watch('seriesContainers',function(newValue,oldValue){
+		/*if(newValue.series){
+			$scope.objectt.dragann = newValue.series.length;
+			 $scope.seriesContainerrlength = newValue.series.length;
+		}*/
+	
+		console.log(newValue);
+	},true)
+	
+	$scope.isInvalid = function (series) {
+		if($scope.minMaxSeries.max){
+			if(series.length>=$scope.minMaxSeries.min &&  series.length <= $scope.minMaxSeries.max){
+				return false
+			}  else return true
+		}
+		else {
+			if(series.length>=$scope.minMaxSeries.min ){
+				return false
+			}  else return true	
+		}
+		
+	}
+	
+	$scope.object = {
+		prop : function (seriesContainer){
+			if(seriesContainer.series.length!=0){
+				return seriesContainer.series.length+1;
+			} else return 0;
+/*			var x = seriesContainer.series ? -1 : 9;
+			console.log(x)
+			return x;*/
+		}
+	}
 	$scope.numberOfSeriesContainers = 0;
 	$scope.maxNumberOfSeriesContainers = 4;
 	$scope.seriesContainersAliases = [];
