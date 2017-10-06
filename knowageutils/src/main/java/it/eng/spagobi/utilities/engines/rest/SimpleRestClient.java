@@ -142,11 +142,6 @@ public class SimpleRestClient {
 		Client client = ClientBuilder.newBuilder().sslContext(SSLContext.getDefault()).build();
 
 		WebTarget target = client.target(serviceUrl);
-		Builder request = target.request(mediaType);
-
-		logger.debug("adding headers");
-
-		addAuthorizations(request, userId, myHeaders);
 
 		if (parameters != null) {
 			Iterator<String> iter = parameters.keySet().iterator();
@@ -157,18 +152,23 @@ public class SimpleRestClient {
 			}
 		}
 
+		Builder request = target.request(mediaType);
+
+		logger.debug("adding headers");
+		addAuthorizations(request, userId, myHeaders);
+
 		logger.debug("Call service");
 		Response response = null;
 
 		// provide authentication exactly before of call
 		authenticationProvider.provideAuthentication(request, target, myHeaders, data);
 		if (type.equals(RequestTypeEnum.POST))
-			if (form == null&& data != null) {
+			if (form == null && data != null) {
 				response = request.post(Entity.json(data.toString()));
-			} else if (form!=null){
+			} else if (form != null) {
 				response = request.post(Entity.entity(form, mediaType));
 			} else {
-				response = request.post(Entity.json("{x:'x'}"));//fake json object
+				response = request.post(Entity.json("{x:'x'}"));// fake json object
 			}
 
 		else
