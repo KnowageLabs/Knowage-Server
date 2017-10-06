@@ -17,6 +17,20 @@
  */
 package it.eng.spagobi.tools.dataset.common.datareader;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+
+import org.apache.commons.lang.math.NumberUtils;
+import org.apache.log4j.Logger;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -26,18 +40,6 @@ import it.eng.spagobi.tools.dataset.common.datastore.Record;
 import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.utilities.StringUtils;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-
-import org.apache.log4j.Logger;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * @author Marco Cortella marco.cortella@eng.it
@@ -212,7 +214,8 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 					} else {
 						try {
 							if ((!paginated && (!checkMaxResults || (rowFetched < maxResults)))
-									|| ((paginated && (rowFetched >= offset) && (rowFetched - offset < fetchSize)) && (!checkMaxResults || (rowFetched - offset < maxResults)))) {
+									|| ((paginated && (rowFetched >= offset) && (rowFetched - offset < fetchSize))
+											&& (!checkMaxResults || (rowFetched - offset < maxResults)))) {
 								IRecord record = parseRow(dataStore, row);
 								dataStore.appendRecord(record);
 							}
@@ -307,14 +310,20 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 			// get single cell
 			HSSFCell cell = row.getCell(c);
 
-			String valueField = null;
+			Object valueField = null;
 			try {
 				valueField = parseCell(cell);
 			} catch (Throwable t) {
 				throw new RuntimeException("Impossible to parse cell [" + c + "]", t);
 			}
+			// update metadata type in order with the real value's type (default was string)
+			if (NumberUtils.isNumber((String) valueField)) {
+				((FieldMetadata) dataStore.getMetaData().getFieldMeta(c)).setType(BigDecimal.class);
+				valueField = new BigDecimal(String.valueOf(valueField));
+			}
 
 			IField field = new Field(valueField);
+
 			record.appendField(field);
 		}
 
@@ -341,7 +350,6 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 				valueField = String.valueOf(numericInt);
 			} else {
 				valueField = String.valueOf(cell.getNumericCellValue());
-
 			}
 			break;
 

@@ -21,8 +21,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.util.Map;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -192,6 +194,11 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 							field = new Field("");
 						} else {
 							field = new Field(contentsMap.get(header[i]));
+							// update metadata type in order with the real value's type (default was string)
+							if (NumberUtils.isNumber((String) field.getValue())) {
+								((FieldMetadata) dataStore.getMetaData().getFieldMeta(i)).setType(BigDecimal.class);
+								field.setValue(new BigDecimal(String.valueOf(field.getValue())));
+							}
 						}
 						record.appendField(field);
 					}
