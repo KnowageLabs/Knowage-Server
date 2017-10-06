@@ -297,6 +297,7 @@ angular-table, cockpit-angular-table{
 	
 	.principalTable tr td:first-child>span {
 	    margin-left: $standardPadding;
+	    -moz-margin-start: 0;
 	}
 	.principalTable tr td:first-child > md-checkbox {}
 	.principalTable tr td {
