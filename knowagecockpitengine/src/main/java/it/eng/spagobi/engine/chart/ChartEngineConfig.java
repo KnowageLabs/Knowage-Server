@@ -41,8 +41,6 @@ public class ChartEngineConfig {
 
 	private static Map<String, ChartConfig> chartLibConf = new HashMap<>();
 
-	private static String enableHighchart = "";
-
 	private static EnginConf engineConfig;
 
 	private static transient Logger logger = Logger.getLogger(ChartEngineConfig.class);
@@ -62,7 +60,7 @@ public class ChartEngineConfig {
 		instance = new ChartEngineConfig();
 
 		SourceBean chartLibraries = (SourceBean) getConfigSourceBean().getAttribute("chartConfiguration");
-		enableHighchart = (String)chartLibraries.getAttribute("enableHighchart");
+
 		if (chartLibraries != null) {
 			List<SourceBean> chartLibrariesItems = chartLibraries.getAttributeAsList("chart");
 			for (SourceBean chart : chartLibrariesItems) {
@@ -106,10 +104,6 @@ public class ChartEngineConfig {
 			throw new SpagoBIRuntimeException("Impossible to get the resource path for the engine");
 		}
 		return path;
-	}
-
-	public static boolean isEnableHighchart() {
-		return enableHighchart!=null && enableHighchart.equalsIgnoreCase("true");
 	}
 
 
