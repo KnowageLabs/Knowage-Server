@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <div layout-padding class="associations-container">
 	<md-radio-group ng-model="IEDConf.associations">
     	<md-radio-button value="noAssociations " class="md-primary" >{{translate.load("impexp.withoutAss","component_impexp_messages");}}</md-radio-button>
-    	<md-radio-button value="mandatoryAssociations">{{translate.load("impexp.mandatoryAss","component_impexp_messages");}}</md-radio-button>
+    	<!--  <md-radio-button value="mandatoryAssociations">{{translate.load("impexp.mandatoryAss","component_impexp_messages");}}</md-radio-button>-->
      	<md-radio-button value="defaultAssociations">{{translate.load("impexp.defaultAss","component_impexp_messages");}}</md-radio-button>
     </md-radio-group>
     <div layout-padding layout="column" layout-wrap ng-if = "IEDConf.associations != 'noAssociations' ">

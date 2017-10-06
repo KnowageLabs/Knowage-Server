@@ -37,9 +37,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<md-radio-button value="noAssociations " class="md-primary">
 			{{translate.load('impexp.withoutAss','component_impexp_messages')}}
 		</md-radio-button>
-		<md-radio-button value="mandatoryAssociations">
+	<!--  	<md-radio-button value="mandatoryAssociations">
 			{{translate.load('impexp.mandatoryAss','component_impexp_messages')}}
-		</md-radio-button>
+		</md-radio-button>-->
 		<md-radio-button value="defaultAssociations">
 			{{translate.load('impexp.defaultAss','component_impexp_messages')}}
 		</md-radio-button>
