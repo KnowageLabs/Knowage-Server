@@ -354,7 +354,7 @@
 										</div>
 									</div>
 								
-									<div layout="row" class="checkboxRow">
+									<div layout="row" class="checkboxRow" ng-if="activityEventCtrl.selectedDocument.parameters.length!=0">
 										<md-checkbox style="margin-bottom: 0px;" aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.useFolderDataset">
 											{{translate.load("scheduler.useFolderDataset", "component_scheduler_messages")}}
 										</md-checkbox>
