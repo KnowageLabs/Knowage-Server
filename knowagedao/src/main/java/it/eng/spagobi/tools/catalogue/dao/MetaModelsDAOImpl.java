@@ -17,17 +17,6 @@
  */
 package it.eng.spagobi.tools.catalogue.dao;
 
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.SpagoBIDAOException;
-import it.eng.spagobi.commons.utilities.UserUtilities;
-import it.eng.spagobi.tools.catalogue.bo.Content;
-import it.eng.spagobi.tools.catalogue.bo.MetaModel;
-import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel;
-import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModelContent;
-import it.eng.spagobi.tools.datasource.dao.DataSourceDAOHibImpl;
-import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
-import it.eng.spagobi.utilities.assertion.Assert;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -40,7 +29,17 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
-import org.hibernate.criterion.Restrictions;
+
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.SpagoBIDAOException;
+import it.eng.spagobi.commons.utilities.UserUtilities;
+import it.eng.spagobi.tools.catalogue.bo.Content;
+import it.eng.spagobi.tools.catalogue.bo.MetaModel;
+import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel;
+import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModelContent;
+import it.eng.spagobi.tools.datasource.dao.DataSourceDAOHibImpl;
+import it.eng.spagobi.tools.datasource.metadata.SbiDataSource;
+import it.eng.spagobi.utilities.assertion.Assert;
 
 public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaModelsDAO {
 
@@ -444,11 +443,17 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 			hibModel.setModelLocked(model.getModelLocked());
 
 			if (model.getDataSourceLabel() != null && !model.getDataSourceLabel().equals("")) {
-				Criterion aCriterion = Expression.eq("label", model.getDataSourceLabel());
-				Criteria criteria = session.createCriteria(SbiDataSource.class);
-				criteria.add(aCriterion);
-				criteria.add(Restrictions.eq("commonInfo.organization", getTenant()));
-				SbiDataSource datasource = (SbiDataSource) criteria.uniqueResult();
+				// Criterion aCriterion = Expression.eq("label", model.getDataSourceLabel());
+				// Criteria criteria = session.createCriteria(SbiDataSource.class);
+				// criteria.add(aCriterion);
+				// criteria.add(Restrictions.eq("commonInfo.organization", getTenant()));
+				// SbiDataSource datasource = (SbiDataSource) criteria.uniqueResult();
+				Query hibQuery = null;
+				hibQuery = session.createQuery(
+						"select ds.sbiDataSource from SbiOrganizationDatasource ds where ds.sbiOrganizations.name = :tenantName and ds.sbiDataSource.label=:dataSourceLabel");
+				hibQuery.setString("tenantName", getTenant());
+				hibQuery.setString("dataSourceLabel", model.getDataSourceLabel());
+				SbiDataSource datasource = (SbiDataSource) hibQuery.list().get(0);
 
 				hibModel.setDataSource(datasource);
 			}
@@ -521,6 +526,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 
 	}
 
+	@Override
 	public MetaModel toModel(SbiMetaModel hibModel) {
 		logger.debug("IN");
 		MetaModel toReturn = null;
@@ -962,6 +968,7 @@ public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaMode
 		return toReturn;
 	}
 
+	@Override
 	public Content toContent(SbiMetaModelContent hibContent, boolean loadByteContent) {
 		logger.debug("IN");
 		Content toReturn = null;
