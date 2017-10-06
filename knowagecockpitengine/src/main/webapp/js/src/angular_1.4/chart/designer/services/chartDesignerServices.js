@@ -2384,6 +2384,7 @@ angular.module('ChartDesignerService', [])
 		 	{name:'NONE',value:'NONE'},
 			{name:'AVG',value:'AVG'},
 			{name:'COUNT',value:'COUNT'},
+			{name:'COUNT DISTINCT',value:'COUNT_DISTINCT'},
 			{name:'MAX',value:'MAX'},
 			{name:'MIN',value:'MIN'},
 			{name:'SUM',value:'SUM'}
