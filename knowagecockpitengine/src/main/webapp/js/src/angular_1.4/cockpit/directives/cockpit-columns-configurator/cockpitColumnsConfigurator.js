@@ -24,40 +24,39 @@
 		if(!$scope.model.settings.modalSelectionColumn){
 			$scope.model.settings.modalSelectionColumn="";
 		}
-		
+
 		if(!$scope.model.settings.sortingColumn){
 			$scope.model.settings.sortingColumn = undefined;
 		}
-		
+
 		if(!$scope.model.settings.sortingOrder){
 			$scope.model.settings.sortingOrder = "ASC";
 		}
-		
+
 		$scope.selectedColumn = undefined;
-		
+
 		$scope.lastId = -1;
 
 		if($scope.model.dataset && $scope.model.dataset.dsId){
 			$scope.local = cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId);
 		}
-		
+
 		$scope.showCircularcolumns = {value :false};
-		
+
 		$scope.resetValue = function(dsId){
 			if($scope.model.dataset && $scope.model.dataset.dsId){
 				$scope.lastId = $scope.model.dataset.dsId;
 			}else{
 				$scope.model.dataset = {};
 			}
-			
+
 			if($scope.lastId==-1 || $scope.lastId!=dsId){
 				$scope.showCircularcolumns = {value : true};
 				$scope.safeApply();
 				$scope.model.dataset.dsId = dsId;
-				//simulate on change
 				$scope.local = {};
 				if($scope.model.dataset.dsId !=-1){
-					angular.copy(cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId), $scope.local); 
+					angular.copy(cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId), $scope.local);
 					$scope.model.content.columnSelectedOfDataset  = [];
 					for(var i=0;i<$scope.local.metadata.fieldsMeta.length;i++){
 						var obj = $scope.local.metadata.fieldsMeta[i];
@@ -74,7 +73,7 @@
 				}
 				$scope.model.settings.sortingColumn = undefined;
 				$scope.model.settings.pagination.frontEnd = ($scope.local && $scope.local.isRealtime);
-			}	
+			}
 		}
 
 		$scope.safeApply=function(){
@@ -86,7 +85,7 @@
 
 
 		$scope.actionsOfCockpitColumns = [{
-	    	  icon:'fa fa-calculator' ,   
+	    	  icon:'fa fa-calculator' ,
 	    	  action : function(item,event) {
 	    		  $scope.addNewCalculatedField(item);
 	    	  },
@@ -98,7 +97,7 @@
 	    	  }
 	      } ,
 	      {
-	    	  icon:'fa fa-sliders' ,   
+	    	  icon:'fa fa-sliders' ,
 	    	  action : function(item,event) {
 	    		  $scope.addSummaryInfo(item);
 	    	  },
@@ -110,20 +109,10 @@
 	    	  }
 	      } ,
 	      {
-	    	  icon:'fa fa-trash' ,   
-	    	  action : function(item,event) {	
-	//		                                		  var confirm = $mdDialog.confirm();
-	
-	//		                                		  confirm.title("Are you sure..?")
-	//		                                		  confirm.content("This item will be removed")
-	//		                                		  confirm.ariaLabel('delete column')
-	//		                                		  confirm.ok("YES")
-	//		                                		  confirm.cancel("NO");
-	//		                                		  $mdDialog.show(confirm).then(function() {
+	    	  icon:'fa fa-trash' ,
+	    	  action : function(item,event) {
 	    		  var index=$scope.model.content.columnSelectedOfDataset.indexOf(item);
 	    		  $scope.model.content.columnSelectedOfDataset.splice(index,1);
-	//		                                		  }, function() {
-	//		                                		  });
 	    	  }
 	      }];
 		$scope.metadataTableColumns=[
@@ -132,13 +121,13 @@
 		                            	 name:"move",
 		                            	 size:"100px",
 		                            	 transformer:function(item){
-		                            		 var template = "<div layout=\"row\"> " 
-		                            			 +"<md-button ng-click=\"scopeFunctions.moveUp($event,$parent.$parent.$parent.$index)\" ng-disabled=\"$parent.$parent.$parent.$parent.$parent.$index==0\" class=\"md-icon-button h20 \" aria-label=\"up\">" 
-		                            			 +"  <md-icon md-font-icon=\"fa fa-arrow-up\"></md-icon>" 
-		                            			 +" </md-button>" 
-		                            			 +" <md-button ng-click=\"scopeFunctions.moveDown($event,$parent.$parent.$parent.$index)\" ng-disabled=\"$parent.$parent.$parent.$parent.$parent.$last\" class=\"md-icon-button h20\" aria-label=\"down\">" 
-		                            			 +" <md-icon md-font-icon=\"fa fa-arrow-down\"></md-icon>" 
-		                            			 +"</md-button>" 
+		                            		 var template = "<div layout=\"row\"> "
+		                            			 +"<md-button ng-click=\"scopeFunctions.moveUp($event,$parent.$parent.$parent.$index)\" ng-disabled=\"$parent.$parent.$parent.$parent.$parent.$index==0\" class=\"md-icon-button h20 \" aria-label=\"up\">"
+		                            			 +"  <md-icon md-font-icon=\"fa fa-arrow-up\"></md-icon>"
+		                            			 +" </md-button>"
+		                            			 +" <md-button ng-click=\"scopeFunctions.moveDown($event,$parent.$parent.$parent.$index)\" ng-disabled=\"$parent.$parent.$parent.$parent.$parent.$last\" class=\"md-icon-button h20\" aria-label=\"down\">"
+		                            			 +" <md-icon md-font-icon=\"fa fa-arrow-down\"></md-icon>"
+		                            			 +"</md-button>"
 		                            			 +"</div>";
 		                            		 return template;
 		                            	 },
@@ -157,7 +146,7 @@
 		                            	 transformer:function(item){
 		                            		 var template = "<md-input-container flex class=\"md-block\"> "
 		                            			 +"<label>Text</label>"
-		                            			 +"<input class=\"input_class\" ng-model=row.aliasToShow />" 
+		                            			 +"<input class=\"input_class\" ng-model=row.aliasToShow />"
 		                            			 +"</md-input-container>";
 		                            		 return template;
 		                            	 },
@@ -170,7 +159,7 @@
 		                            	 "name":"aggregation",
 		                            	 transformer:function(a,b,c){
 		                            		 var template='<md-input-container class="md-block"> '
-		                            			 +'<md-select  ng-show="scopeFunctions.canSee(row)" ng-if="scopeFunctions.AggregationFunctions != undefined" ng-model="row.aggregationSelected" aria-label="aria-label" >'		       
+		                            			 +'<md-select  ng-show="scopeFunctions.canSee(row)" ng-if="scopeFunctions.AggregationFunctions != undefined" ng-model="row.aggregationSelected" aria-label="aria-label" >'
 		                            			 +'<md-option ng-repeat="agF in scopeFunctions.AggregationFunctions" ng-value="agF.value">'
 		                            			 +'{{agF.label}}'
 		                            			 +'</md-option>'
@@ -219,7 +208,7 @@
 			moveDown: function(evt,index){
 				$scope.model.content.columnSelectedOfDataset.splice(index+1, 0, $scope.model.content.columnSelectedOfDataset.splice(index, 1)[0]);
 			},
-			canSee : function(row){				
+			canSee : function(row){
 				return angular.equals(row.fieldType, "MEASURE");
 			},
 			typeList: [{"code":"java.lang.String", "name":"String"},{"code":"java.lang.Integer", "name":"Number"},{"code":"java.math.BigDecimal", "name":"Number"}],
@@ -231,7 +220,6 @@
 			},
 			draw: function(row,column,index) {
 				$scope.selectedColumn = row;
-				//  $mdSidenav("columnStyleTab").toggle();
 				$mdDialog.show({
 					templateUrl:  baseScriptPath+ '/directives/cockpit-columns-configurator/templates/cockpitColumnStyle.html',
 					parent : angular.element(document.body),
@@ -242,7 +230,7 @@
 					fullscreen: true,
 					locals:{model:$scope.model, selectedColumn : $scope.selectedColumn},
 					controller: cockpitStyleColumnFunction
-				}).then(function(answer) { 			
+				}).then(function(answer) {
 					console.log("Selected column:", $scope.selectedColumn);
 				}, function() {
 					console.log("Selected column:", $scope.selectedColumn);
@@ -266,11 +254,10 @@
 
 		$scope.openListColumn = function(){
 			if($scope.model.dataset == undefined || $scope.model.dataset.dsId == undefined){
-				$scope.showAction($scope.translate.load("sbi.cockpit.table.missingdataset"));	
+				$scope.showAction($scope.translate.load("sbi.cockpit.table.missingdataset"));
 			}else{
 				$mdDialog.show({
 					templateUrl:  baseScriptPath+ '/directives/cockpit-columns-configurator/templates/cockpitColumnsOfDataset.html',
-					//parent: $scope.cockpitWidgetItem,
 					parent : angular.element(document.body),
 					clickOutsideToClose:true,
 					escapeToClose :true,
@@ -290,7 +277,6 @@
 			var promise ;
 			$mdDialog.show({
 				templateUrl:  baseScriptPath+ '/directives/cockpit-columns-configurator/templates/cockpitSummaryInfo.html',
-				//parent: $scope.cockpitWidgetItem,
 				parent : angular.element(document.body),
 				clickOutsideToClose:true,
 				escapeToClose :true,
@@ -300,15 +286,15 @@
 				fullscreen: true,
 				controller: controllerCockpitSummaryInfo
 			}).then(function(answer) {
-				deferred.promise.then(function(result){	
+				deferred.promise.then(function(result){
 					console.log(result);
 					currentRow.funcSummary = result.funcSummary;
 				});
 			}, function() {
 			});
 			promise =  deferred.promise;
-			
-			
+
+
 		}
 
 		$scope.addNewCalculatedField = function(currentRow){
@@ -317,7 +303,6 @@
 			var promise ;
 			$mdDialog.show({
 				templateUrl:  baseScriptPath+ '/directives/cockpit-columns-configurator/templates/cockpitCalculatedFieldTemplate.html',
-				//parent: $scope.cockpitWidgetItem,
 				parent : angular.element(document.body),
 				clickOutsideToClose:true,
 				escapeToClose :true,
@@ -327,7 +312,7 @@
 				fullscreen: true,
 				controller: controllerCockpitCalculatedFieldController
 			}).then(function(answer) {
-				deferred.promise.then(function(result){	
+				deferred.promise.then(function(result){
 					if(currentRow != undefined){
 						currentRow.aliasToShow = result.alias;
 						currentRow.formula = result.formula;
@@ -375,7 +360,7 @@ function controllerCockpitColumnsConfigurator($scope,sbiModule_translate,$mdDial
 		angular.copy(cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId), $scope.localDataset);
 	} else{
 		$scope.model.dataset= {};
-		angular.copy([], $scope.model.dataset.metadata.fieldsMeta); 
+		angular.copy([], $scope.model.dataset.metadata.fieldsMeta);
 	}
 	$scope.saveColumnConfiguration=function(){
 		model = $scope.model;
@@ -383,9 +368,9 @@ function controllerCockpitColumnsConfigurator($scope,sbiModule_translate,$mdDial
 		if(model.content.columnSelectedOfDataset == undefined){
 			model.content.columnSelectedOfDataset = [];
 		}
-		
-		
-		for(var i=0;i<$scope.columnSelected.length;i++){			
+
+
+		for(var i=0;i<$scope.columnSelected.length;i++){
 			var obj = $scope.columnSelected[i];
 			obj.aggregationSelected = 'SUM';
 			obj["funcSummary"] = "SUM";
@@ -393,21 +378,6 @@ function controllerCockpitColumnsConfigurator($scope,sbiModule_translate,$mdDial
 			obj.label = $scope.columnSelected[i].alias;
 			obj.aliasToShow = $scope.columnSelected[i].alias;
 			model.content.columnSelectedOfDataset.push(obj);
-//			if($scope.model.filters!=undefined){			
-//				var filterFound=false;
-//				var filterToAdd={};
-//				for(var i=0;i<$scope.model.filters.length;i++){
-//					if($scope.model.filters[i].colName==obj.name){
-//						filterFound=true;
-//					}
-//				}
-//			}
-//			if(!filterFound){
-//				filterToAdd.colName=obj.name;
-//				filterToAdd.filterVals=[];
-//				$scope.model.filters.push(filterToAdd);		
-//			}
-
 		}
 
 		$mdDialog.hide();
@@ -423,24 +393,24 @@ function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,model,s
 	$scope.cockpitModule_generalOptions=cockpitModule_generalOptions;
 	$scope.selectedColumn = angular.copy(selectedColumn);
 	$scope.fontWeight = ['normal','bold','bolder','lighter','number','initial','inherit'];
-	$scope.textAlign = ['flex-start','flex-end','center'];
+	$scope.modelTextAlign = {"flex-start":sbiModule_translate.load('sbi.cockpit.style.textAlign.left'),"center":sbiModule_translate.load('sbi.cockpit.style.textAlign.center'),"flex-end":sbiModule_translate.load('sbi.cockpit.style.textAlign.right')};
 	$scope.formatPattern = ['#.###','#,###','#.###,##','#,###.##'];
 	$scope.colorPickerProperty={placeholder:sbiModule_translate.load('sbi.cockpit.color.select') ,format:'rgb'}
 	$scope.visTypes=['Chart','Text','Text & Chart','Icon only'];
 	$scope.icons=["fa fa-warning","fa fa-bell","fa fa-bolt","fa fa-commenting","fa fa-asterisk","fa fa-ban", "fa fa-check","fa fa-clock-o","fa fa-close","fa fa-exclamation-circle","fa fa-flag","fa fa-star"];
-	
-	
+
+
 	if(!$scope.selectedColumn.hasOwnProperty('colorThresholdOptions'))
-	{	
+	{
 		$scope.selectedColumn.colorThresholdOptions={};
 		$scope.selectedColumn.colorThresholdOptions.condition=[];
 		for(var i=0;i<3;i++)
 		{
 			$scope.selectedColumn.colorThresholdOptions.condition[i]="none";
 		}
-	}	
-	
-	
+	}
+
+
 	$scope.$watch("selectedColumn.visType",function(newValue, oldValue){
 		if($scope.selectedColumn.visType==undefined){
 			$scope.selectedColumn.visType="Text";
@@ -453,54 +423,54 @@ function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,model,s
 		}else if($scope.selectedColumn.visType=='Icon only'){
 			$scope.selectedColumn.text.enabled=false;
 		}
-		
-	})
-	
 
-                        
+	})
+
+
+
 	$scope.conditions=['>','<','==','>=','<=','!='];
 	if($scope.selectedColumn.scopeFunc==undefined){
-		$scope.selectedColumn.scopeFunc={conditions:$scope.conditions, condition:[{condition:'none'},{condition:'none'},{condition:'none'},{condition:'none'}]};  
+		$scope.selectedColumn.scopeFunc={conditions:$scope.conditions, condition:[{condition:'none'},{condition:'none'},{condition:'none'},{condition:'none'}]};
 	}
-	//------------------------- Threshold icon table -----------------------------	
+	//------------------------- Threshold icon table -----------------------------
 	var conditionString0="	<md-input-container class='md-block'> 	<md-select ng-model='scopeFunctions.condition[0].condition'>	<md-option ng-repeat='cond in scopeFunctions.conditions' value='{{cond}}'>{{cond}}</md-option>	</md-select> </md-input-container>"
 	var conditionString1="	<md-input-container class='md-block'> 	<md-select ng-model='scopeFunctions.condition[1].condition'>	<md-option ng-repeat='cond in scopeFunctions.conditions' value='{{cond}}'>{{cond}}</md-option>	</md-select> </md-input-container>"
 	var conditionString2="	<md-input-container class='md-block'> 	<md-select ng-model='scopeFunctions.condition[2].condition'>	<md-option ng-repeat='cond in scopeFunctions.conditions' value='{{cond}}'>{{cond}}</md-option>	</md-select> </md-input-container>"
 	var conditionString3="	<md-input-container class='md-block'> 	<md-select ng-model='scopeFunctions.condition[3].condition'>	<md-option ng-repeat='cond in scopeFunctions.conditions' value='{{cond}}'>{{cond}}</md-option>	</md-select> </md-input-container>"
 
-		
-	var valueString0="<md-input-container class='md-block' ng-if='scopeFunctions.condition[0].condition!=undefined && scopeFunctions.condition[0].condition!=\"none\"' flex>	<input class='input_class'  ng-model='scopeFunctions.condition[0].value' type='number' required> </md-input-container>";	
-	var valueString1="<md-input-container class='md-block' ng-if='scopeFunctions.condition[1].condition!=undefined && scopeFunctions.condition[1].condition!=\"none\"' flex>	<input class='input_class'  ng-model='scopeFunctions.condition[1].value' type='number' required> </md-input-container>";	
-	var valueString2="<md-input-container class='md-block' ng-if='scopeFunctions.condition[2].condition!=undefined && scopeFunctions.condition[2].condition!=\"none\"' flex>	<input class='input_class'  ng-model='scopeFunctions.condition[2].value' type='number' required> </md-input-container>";	
-	var valueString3="<md-input-container class='md-block' ng-if='scopeFunctions.condition[3].condition!=undefined && scopeFunctions.condition[3].condition!=\"none\"' flex>	<input class='input_class'  ng-model='scopeFunctions.condition[3].value' type='number' required> </md-input-container>";	
+
+	var valueString0="<md-input-container class='md-block' ng-if='scopeFunctions.condition[0].condition!=undefined && scopeFunctions.condition[0].condition!=\"none\"' flex>	<input class='input_class'  ng-model='scopeFunctions.condition[0].value' type='number' required> </md-input-container>";
+	var valueString1="<md-input-container class='md-block' ng-if='scopeFunctions.condition[1].condition!=undefined && scopeFunctions.condition[1].condition!=\"none\"' flex>	<input class='input_class'  ng-model='scopeFunctions.condition[1].value' type='number' required> </md-input-container>";
+	var valueString2="<md-input-container class='md-block' ng-if='scopeFunctions.condition[2].condition!=undefined && scopeFunctions.condition[2].condition!=\"none\"' flex>	<input class='input_class'  ng-model='scopeFunctions.condition[2].value' type='number' required> </md-input-container>";
+	var valueString3="<md-input-container class='md-block' ng-if='scopeFunctions.condition[3].condition!=undefined && scopeFunctions.condition[3].condition!=\"none\"' flex>	<input class='input_class'  ng-model='scopeFunctions.condition[3].value' type='number' required> </md-input-container>";
 
 	$scope.thresholdsList=
-		[{priority:0, icon:"<md-icon style='color:red'  md-font-icon='fa fa-exclamation-circle' ng-init='scopeFunctions.condition[0].iconColor=\"red\";	scopeFunctions.condition[0].icon=\"fa fa-exclamation-circle\"'></md-icon>",condition:conditionString0,	value:valueString0},{priority:1 , icon:"<md-icon style='color:red'	md-font-icon='fa fa-times-circle' ng-init='scopeFunctions.condition[1].iconColor=\"red\"; scopeFunctions.condition[1].icon=\"fa fa-times-circle\"'></md-icon>",condition:conditionString1, value:valueString1},	{priority:2 , icon:"<md-icon style='color:yellow'  md-font-icon='fa fa-exclamation-triangle' ng-init='scopeFunctions.condition[2].iconColor=\"yellow\"; scopeFunctions.condition[2].icon=\"fa fa-exclamation-triangle\"'></md-icon>",condition:conditionString2, value:valueString2},{priority:3 , icon:"<md-icon style='color:green'  md-font-icon='fa fa-check-circle' ng-init='scopeFunctions.condition[3].iconColor=\"green\";	scopeFunctions.condition[3].icon=\"fa fa-check-circle\"'></md-icon>",condition:conditionString3, value:valueString3}];	
+		[{priority:0, icon:"<md-icon style='color:red'  md-font-icon='fa fa-exclamation-circle' ng-init='scopeFunctions.condition[0].iconColor=\"red\";	scopeFunctions.condition[0].icon=\"fa fa-exclamation-circle\"'></md-icon>",condition:conditionString0,	value:valueString0},{priority:1 , icon:"<md-icon style='color:red'	md-font-icon='fa fa-times-circle' ng-init='scopeFunctions.condition[1].iconColor=\"red\"; scopeFunctions.condition[1].icon=\"fa fa-times-circle\"'></md-icon>",condition:conditionString1, value:valueString1},	{priority:2 , icon:"<md-icon style='color:yellow'  md-font-icon='fa fa-exclamation-triangle' ng-init='scopeFunctions.condition[2].iconColor=\"yellow\"; scopeFunctions.condition[2].icon=\"fa fa-exclamation-triangle\"'></md-icon>",condition:conditionString2, value:valueString2},{priority:3 , icon:"<md-icon style='color:green'  md-font-icon='fa fa-check-circle' ng-init='scopeFunctions.condition[3].iconColor=\"green\";	scopeFunctions.condition[3].icon=\"fa fa-check-circle\"'></md-icon>",condition:conditionString3, value:valueString3}];
 	$scope.tableColumns=[{label:"Icon",name:"icon", hideTooltip:true},{label:"Condition",name:"condition", hideTooltip:true},{label:"Value",name:"value", hideTooltip:true}];
 
 	//$scope.selectedColumn.conditions=$scope.scopeFunc.condition;
-	
+
 	//----------------------- Cell color table ------------------------------------
-	
+
 	var condString0="	<md-input-container class='md-block'> 	<md-select ng-model='scopeFunctions.condition[0].condition'>	<md-option ng-repeat='cond in scopeFunctions.conditions' value='{{cond}}'>{{cond}}</md-option>	</md-select> </md-input-container>"
 	var condString1="	<md-input-container class='md-block'> 	<md-select ng-model='scopeFunctions.condition[1].condition'>	<md-option ng-repeat='cond in scopeFunctions.conditions' value='{{cond}}'>{{cond}}</md-option>	</md-select> </md-input-container>"
 	var condString2="	<md-input-container class='md-block'> 	<md-select ng-model='scopeFunctions.condition[2].condition'>	<md-option ng-repeat='cond in scopeFunctions.conditions' value='{{cond}}'>{{cond}}</md-option>	</md-select> </md-input-container>"
 
-	var valString0="<md-input-container class='md-block' ng-if='scopeFunctions.condition[0].condition!=undefined && scopeFunctions.condition[0].condition!=\"none\"' flex>	<input class='input_class'  ng-model='scopeFunctions.condition[0].value' type='number' required> </md-input-container>";	
-	var valString1="<md-input-container class='md-block' ng-if='scopeFunctions.condition[1].condition!=undefined && scopeFunctions.condition[1].condition!=\"none\"' flex>	<input class='input_class'  ng-model='scopeFunctions.condition[1].value' type='number' required> </md-input-container>";	
-	var valString2="<md-input-container class='md-block' ng-if='scopeFunctions.condition[2].condition!=undefined && scopeFunctions.condition[2].condition!=\"none\"' flex>	<input class='input_class'  ng-model='scopeFunctions.condition[2].value' type='number' required> </md-input-container>";	
+	var valString0="<md-input-container class='md-block' ng-if='scopeFunctions.condition[0].condition!=undefined && scopeFunctions.condition[0].condition!=\"none\"' flex>	<input class='input_class'  ng-model='scopeFunctions.condition[0].value' type='number' required> </md-input-container>";
+	var valString1="<md-input-container class='md-block' ng-if='scopeFunctions.condition[1].condition!=undefined && scopeFunctions.condition[1].condition!=\"none\"' flex>	<input class='input_class'  ng-model='scopeFunctions.condition[1].value' type='number' required> </md-input-container>";
+	var valString2="<md-input-container class='md-block' ng-if='scopeFunctions.condition[2].condition!=undefined && scopeFunctions.condition[2].condition!=\"none\"' flex>	<input class='input_class'  ng-model='scopeFunctions.condition[2].value' type='number' required> </md-input-container>";
 
-			
-	$scope.cellColorThresholdsList=[{priority:0, color:"<md-input-container class=\"md-block\">  <color-picker  options=\"{format:'rgb'}\" ng-model=\"scopeFunctions.colorCondition[0].value \"></color-picker>  </md-input-container>",condition:condString0, value:valString0},{priority:1 , color:"<md-input-container class=\"md-block\"> <color-picker  options=\"{format:'rgb'}\" ng-model=\"scopeFunctions.colorCondition[1].value \"></color-picker></md-input-container>",condition:condString1, value:valString1},{priority:2 , color:"<md-input-container class=\"md-block\"> <color-picker  options=\"{format:'rgb'}\" ng-model=\"scopeFunctions.colorCondition[2].value \"></color-picker></md-input-container>",condition:condString2, value:valString2}];		
+
+	$scope.cellColorThresholdsList=[{priority:0, color:"<md-input-container class=\"md-block\">  <color-picker  options=\"{format:'rgb'}\" ng-model=\"scopeFunctions.colorCondition[0].value \"></color-picker>  </md-input-container>",condition:condString0, value:valString0},{priority:1 , color:"<md-input-container class=\"md-block\"> <color-picker  options=\"{format:'rgb'}\" ng-model=\"scopeFunctions.colorCondition[1].value \"></color-picker></md-input-container>",condition:condString1, value:valString1},{priority:2 , color:"<md-input-container class=\"md-block\"> <color-picker  options=\"{format:'rgb'}\" ng-model=\"scopeFunctions.colorCondition[2].value \"></color-picker></md-input-container>",condition:condString2, value:valString2}];
 	$scope.cellColorTableColumns=[{label:"Color",name:"color", hideTooltip:true},{label:"Condition",name:"condition", hideTooltip:true},{label:"Value",name:"value", hideTooltip:true}];
-	
+
 	//----------------------------------------------------------------------------
-	
+
 	$scope.addRange = function(){
 		if(!$scope.selectedColumn.ranges) $scope.selectedColumn.ranges = [];
 		$scope.selectedColumn.ranges.push({});
 	}
-	
+
 	$scope.deleteRange = function(hashkey){
 		for(var i in $scope.selectedColumn.ranges){
 			if($scope.selectedColumn.ranges[i].$$hashKey == hashkey){
@@ -509,12 +479,12 @@ function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,model,s
 			}
 		}
 	}
-	
+
 
 	$scope.cleanStyleColumn = function(){
 		$scope.selectedColumn.style = undefined;
 	}
-	$scope.saveColumnStyleConfiguration = function(){		
+	$scope.saveColumnStyleConfiguration = function(){
 		angular.copy($scope.selectedColumn,selectedColumn)
 
 		$mdDialog.cancel();
@@ -523,33 +493,9 @@ function cockpitStyleColumnFunction($scope,sbiModule_translate,$mdDialog,model,s
 	$scope.cancelcolumnStyleConfiguration = function(){
 		$mdDialog.cancel();
 	}
-	
-	
+
+
 	$scope.checkIfDisable = function(){
-		
-//		if($scope.selectedColumn.selectThreshold==true)
-//		{	
-//			if($scope.selectedColumn.threshold==undefined||$scope.selectedColumn.threshold=="")
-//			{
-//				return true;
-//			}				
-//		}	
-		
-//		if($scope.selectedColumn.maxValue==undefined || $scope.selectedColumn.minValue==undefined || $scope.selectedColumn.maxValue==="" || $scope.selectedColumn.minValue==="")
-//		{
-//			return true;
-//		}
-//		
-//		for(var i=0;i<$scope.selectedColumn.scopeFunc.condition.length;i++)
-//		{
-//			if($scope.selectedColumn.scopeFunc.condition[i].condition!=undefined && $scope.selectedColumn.scopeFunc.condition[i].condition!="none")
-//			{
-//				if($scope.selectedColumn.scopeFunc.condition[i].value==="" || $scope.selectedColumn.scopeFunc.condition[i].value==undefined)
-//				{
-//					return true;
-//				}	
-//			}	
-//		}
 		return false;
 	}
 }
@@ -558,9 +504,9 @@ function controllerCockpitSummaryInfo($scope,sbiModule_translate,$mdDialog,items
 	$scope.translate=sbiModule_translate;
 	$scope.model = model;
 	$scope.row  =actualItem;
-	
+
 	$scope.listType = cockpitModule_generalOptions.aggregationFunctions;
-	
+
 	$scope.saveColumnConfiguration=function(){
 
 		items.resolve($scope.row);
@@ -579,8 +525,8 @@ function controllerCockpitCalculatedFieldController($scope,sbiModule_translate,$
 	$scope.formulaElement = [];
 
 	if($scope.model.dataset.dsId != undefined){
-		angular.copy(cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId), $scope.localDataset); 
-	} 
+		angular.copy(cockpitModule_datasetServices.getDatasetById($scope.model.dataset.dsId), $scope.localDataset);
+	}
 
 	$scope.column = {};
 	$scope.measuresList = [];

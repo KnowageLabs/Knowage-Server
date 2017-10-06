@@ -220,7 +220,7 @@
 		       		<md-input-container flex class="md-block"> 
 							<label>{{translate.load('sbi.cockpit.table.alignment')}}</label>
 							<md-select aria-label="aria-label" ng-model="selectedColumn.style.td['justify-content']">
-									<md-option ng-repeat="a in textAlign" value="{{a}}">{{a}}</md-option>
+									<md-option ng-repeat="(key,value) in modelTextAlign" value="{{key}}">{{value}}</md-option>
 							</md-select>
 					</md-input-container>
 				</div> 
