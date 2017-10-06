@@ -46,18 +46,42 @@
 	geo-download {
 			z-index: 1;
 	}
-	#geoRigthMenu button#showMenu {
+	#geoRigthMenu {
+		expander-box {
+			md-toolbar {
+				margin-bottom:0;
+			}
+			md-content {
+				md-checkbox {
+					margin-bottom: 0 !important;
+				}
+			}
+			md-tabs{
+				width: 100%;
+			}
+			expander-box {
+				md-toolbar {
+					margin-top: 0;
+
+				}
+			}
+			md-radio-button {
+				outline: none;
+			}
+		}
+		button#showMenu {
 		    border-radius: 0;
-	    width: 31px;
-	    position: absolute;
-	    background-color: rgba(255, 255, 255, 0.9);
-	    margin-left: -31px;
-	    color: black;
-	    padding: 0;
-	    margin-left: -31px;
-	    margin-top: 26px;
-	    height: 33px;
-	    min-height: 20px;
+		    width: 31px;
+		    position: absolute;
+		    background-color: rgba(255, 255, 255, 0.9);
+		    margin-left: -31px;
+		    color: black;
+		    padding: 0;
+		    margin-left: -31px;
+		    margin-top: 26px;
+		    height: 33px;
+		    min-height: 20px;
+		}
 	}
 
 	.mapBodyStyle {

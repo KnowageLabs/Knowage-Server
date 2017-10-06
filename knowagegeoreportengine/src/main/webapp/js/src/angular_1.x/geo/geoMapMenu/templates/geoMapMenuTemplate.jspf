@@ -1,5 +1,3 @@
-<md-content>
-
 	<expander-box id="mapType"  expanded='true' title='{{::translate.load("gisengine.info.message.mapType")}}'> 
 		<md-radio-group ng-model="template.analysisType"> 
 			<md-radio-button ng-repeat="item in analysisTypeList" class="md-primary"
@@ -27,7 +25,7 @@
 	</expander-box>
 
  
-	<expander-box id="selectMode"  expanded='false' title='{{::translate.load("gisengine.info.message.filter")}}' >
+	<expander-box id="selectMode"  expanded='false' layout="column" title='{{::translate.load("gisengine.info.message.filter")}}' >
 		<md-input-container class="md-block" ng-repeat="filter in filters"> 
 			<label>{{filter.label}}</label>
 			<md-select ng-model="template.selectedFilters[filter.name]" multiple=true md-on-close="updateMap()">
@@ -37,7 +35,4 @@
 			</md-select>
 		</md-input-container>
 	</expander-box>
-
-	 
-</md-content>
 
