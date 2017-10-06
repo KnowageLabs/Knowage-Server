@@ -52,7 +52,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    <md-button  ng-if="tecnicalUser" ng-click="cancelBuildTemplateAdmin()">{{::translate.load("sbi.generic.close")}}</md-button>
 	</div>
 </md-toolbar>
-<md-whiteframe class="md-whiteframe-2dp relative" layout-fill layout-margin flex  >
+<md-whiteframe class="md-whiteframe-2dp relative" layout-fill flex  >
 <!-- CHOSE DATA SET FOR FINAL USER -->
 <div layout="row" flex ng-if="!tecnicalUser">
 	<label flex=20>{{datasetLabel}}</label>
