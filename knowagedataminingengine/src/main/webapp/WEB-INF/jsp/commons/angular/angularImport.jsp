@@ -21,7 +21,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	SpagoBI${pageContext.request.contextPath}/Knowage page that 
 	makes use of AngularJS  
 --%>
-
+<script>
+/*${disable.console.logging}*/
+</script>
 <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
 <meta name="viewport" content="width=device-width">
 

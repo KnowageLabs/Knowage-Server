@@ -3,6 +3,10 @@
 	SpagoBI${pageContext.request.contextPath}/Knowage page that 
 	makes use of AngularJS  
 --%>
+
+<script>
+/*${disable.console.logging}*/
+</script>
 <%
 	String knowageCoreContext = request.getParameter(SpagoBIConstants.SBI_HOST)+request.getParameter(SpagoBIConstants.SBI_CONTEXT);
 %>
