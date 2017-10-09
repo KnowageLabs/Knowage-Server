@@ -5,8 +5,8 @@
 		<!-- 
 			MEASURES AND ATTRIBUTES CONTAINERS
 			<input ng-show='true' ng-repeat = "seriesContainer in seriesContainers"  name="seriesNumber" min=1 max={{2+1}} type="number" ng-model="seriesContainer.series.length" >
-		 -->	
-		 <input  ng-if="selectedChartType.toUpperCase() != 'GAUGE'" ng-show='false' name="categoriesNumber"  type="number"  ng-model="categ.lengthh" min={{minMaxCategories.min}} max={{minMaxCategories.max}} > 
+		 -->
+		<input  ng-if="selectedChartType.toUpperCase() != 'GAUGE'" ng-show='false' name="categoriesNumber"  type="number"  ng-model="categ.lengthh" min={{minMaxCategories.min}} max={{minMaxCategories.max}} > 
 
 		<div layout="column" flex=35 style="padding:0 8 0 0">  
 		
@@ -247,7 +247,8 @@
 			  	
 			  	<!-- SERIES CONTAINER -->			  	
 				<md-card ng-cloak ng-repeat="seriesContainer in seriesContainers track by $index">
-				
+					<input ng-show='false' name="seriesNumber"  type="number"  ng-model="seriesNumber" > 
+
 					<md-toolbar>
 					
 						<div class="md-toolbar-tools">
@@ -298,7 +299,7 @@
 							<!-- Help button (Series container's empty text) -->
 							<md-menu>
 							      
-						      	<md-button 	aria-label="Help categories container" class="md-icon-button" ng-click="openMenu($mdOpenMenu, $event)"
+						      	<md-button 	aria-label="Help series container" class="md-icon-button" ng-click="openMenu($mdOpenMenu, $event)"
 						      				style="margin-left:2; margin-right:2;" ng-class="isInvalid(seriesContainer.series) ? 'dangerBorder' : ''">
 						        	<md-icon md-menu-origin class="fa fa-question-circle" style="display:inline"></md-icon>
 						      	</md-button>

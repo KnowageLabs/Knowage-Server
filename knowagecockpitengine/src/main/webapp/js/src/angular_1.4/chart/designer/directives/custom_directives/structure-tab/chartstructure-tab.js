@@ -42,76 +42,39 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 	$scope.categoriesContainer = [];
 	$scope.categories = [];
 	$scope.seriesContainers = [];
-	
+
+	$scope.seriesNumber = 0;
+	$scope.checkCategoriesLength = 0;
 	
 	$scope.categ = {};
-	
+	$scope.categ.lengthh = $scope.checkCategoriesLength;
+
 	$scope.$watch('categories',function(newValue,oldValue){
 		$scope.categ.lengthh = $scope.categories.length;
 	},true)
 
 	
 	$scope.isInvalid = function (series) {
-		$scope.minMaxSeries = {};	
-		switch($scope.chartTemplate.type.toLowerCase()){
 		
-		case 'parallel':
-			$scope.minMaxSeries.min = 2;
-			break;
-		case 'sunburst':
-			$scope.minMaxSeries.min = 1;
-			break;
-		case 'scatter':
-			$scope.minMaxSeries.min = 1;
-			break;
-		case 'treemap':
-			$scope.minMaxSeries.min = 1;
-			$scope.minMaxSeries.max = 1;
-			break;
-		case 'wordcloud':
-			$scope.minMaxSeries.min = 1;
-			$scope.minMaxSeries.max = 1;
-			break;
-		case 'gauge':
-			$scope.minMaxSeries.min = 1;
-			break;
-		case 'line':
-			$scope.minMaxSeries.min = 1;
-			break;
-		case 'heatmap':
-			$scope.minMaxSeries.min = 1;
-			$scope.minMaxSeries.max = 1;
-			break;
-		case 'radar':
-			$scope.minMaxSeries.min = 1;
-			break;
-		case 'bar':
-			$scope.minMaxSeries.min = 1;
-			break;
-		case 'pie':
-			if($scope.chartLibNamesConfig.pie=="chartJs") {
-				$scope.minMaxSeries.min = 1;
-				$scope.minMaxSeries.max = 1; 
-			} else {
-				$scope.minMaxSeries.min = 1;
-			}
-			break;
-		case 'chord':
-			$scope.minMaxSeries.min = 1;
-			$scope.minMaxSeries.max = 1;
-			break;	
-		default:
-			break;
-		}
 		if($scope.minMaxSeries.max){
 			if(series.length>=$scope.minMaxSeries.min &&  series.length <= $scope.minMaxSeries.max){
+
+				$scope.structureForm.$setValidity("seriesNumber", true);
 				return false
-			}  else return true
+			}  else {
+				$scope.structureForm.$setValidity("seriesNumber", false);
+				return true
+			}
 		}
 		else {
 			if(series.length>=$scope.minMaxSeries.min ){
+
+				$scope.structureForm.$setValidity("seriesNumber", true);
 				return false
-			}  else return true	
+			}  else{
+				$scope.structureForm.$setValidity("seriesNumber", false);
+				return true	
+			}
 		}
 		
 	}
