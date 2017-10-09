@@ -170,10 +170,11 @@
 		md-input-container {
 			margin-bottom: 8px;
 			label {
-				font-size: $headerFontSize;
+				transform: translate3d(0,6px,0) scale(1.1);
+				font-size: $mediumFontSize;
 			}
 			input {
-				font-size: $smallFontSize;
+				font-size: $mediumFontSize;
 			}
 		}
 		.datePicker {
@@ -199,7 +200,7 @@
 				}
 			}
 			._md-label {
-				font-size: $smallFontSize;
+				font-size: $mediumFontSize;
 			}
 		}
 		md-checkbox {
@@ -218,11 +219,11 @@
 				}
 			}
 			._md-label {
-				font-size: $smallFontSize;
+				font-size: $mediumFontSize;
 			}
 		}
 		md-select-value {
-			font-size: $smallFontSize;
+			font-size: $mediumFontSize;
 		}
 		.lookupParameter {
 			md-chips {

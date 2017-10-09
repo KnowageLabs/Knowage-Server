@@ -52,15 +52,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<md-toolbar style="height:{{headerHeight}}px" class="widgetToolbar">
 				<div class="md-toolbar-tools draggableToolbar" ng-class="{'dragCursor': (cockpitModule_properties.EDIT_MODE && !widExp)}" layout="row">
 					<span ng-click="editWidgetName(); "   class="md-headline editWidgetNameSpan " ng-style="titleStyle" ng-show="editingWidgetName!=true">{{ngModel.content.name | parameter_fill}}</span>
-					<md-button class="md-icon-button " aria-label="unselectable button" ng-if="cliccable==true " ng-click="ngModel.cliccable=!ngModel.cliccable;$event.stopPropagation();" ng-init="ngModel.cliccable=ngModel.cliccable==undefined? true : ngModel.cliccable">
-						<md-tooltip md-direction="top" md-delay="1000">
-		          			{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.outcomingeventsenabled.description")}}
-		       			 </md-tooltip>
-						<span class="fa-stack">
-				  			<i class="fa fa-hand-o-up fa-stack-1x"></i>
-				  			<i ng-if="ngModel.cliccable==false" class="fa fa-ban fa-stack-2x fa-negative"></i>
-						</span>
-			</md-button>
 					<div layout="row"  flex class="editWidgetNameInput" ng-show="editingWidgetName==true">
 						<md-input-container flex md-no-float class="md-block noMargin">
 				          <input ng-model="tmpWidgetContent.name" placeholder="Widget name">
@@ -75,8 +66,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				</div>
 			</md-toolbar>
 		</md-card-title>
-		<div class="showActionButtonHandler" ng-if="!widExp && !( cockpitModule_template.configuration.hideUserMenu && !cockpitModule_properties.EDIT_MODE)" >
-			<md-button class="md-icon-button "  aria-label="show menu" ng-click="showWidgetActionButtons()">
+		<div class="showActionButtonHandler" ng-if="!widExp && !( cockpitModule_template.configuration.hideUserMenu && !cockpitModule_properties.EDIT_MODE)" layout="row" layout-align="start">
+			<md-button class="md-icon-button alwaysOnTopButton" aria-label="unselectable button" ng-if="cliccable==true && ngModel.type=='chart'" ng-click="ngModel.cliccable=!ngModel.cliccable;$event.stopPropagation();" ng-init="ngModel.cliccable=ngModel.cliccable==undefined? true : ngModel.cliccable">
+				<md-tooltip md-direction="top" md-delay="1000">
+          			{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.outcomingeventsenabled.description")}}
+       			 </md-tooltip>
+				<span class="fa-stack">
+		  			<i class="fa fa-hand-o-up fa-stack-1x"></i>
+		  			<i ng-if="ngModel.cliccable==false" class="fa fa-ban fa-stack-2x fa-negative"></i>
+				</span>
+			</md-button>
+			<md-button class="md-icon-button menuOnTopButton"  aria-label="show menu" ng-click="showWidgetActionButtons()">
 				<md-icon md-font-icon="fa fa-ellipsis-v"></md-icon>
 			</md-button>
 			
