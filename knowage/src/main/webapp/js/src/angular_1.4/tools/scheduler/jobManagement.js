@@ -493,7 +493,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 //			}
 //		});
 
-		sbiModule_messaging.showErrorMessage(message,"");
+		sbiModule_messaging.showWarningMessage(message,"");
 
 
 	};
@@ -1145,17 +1145,45 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 
 				};
 
-				activityEventCtrl.saveEvent = function(isValid,saveAndReturn) {
-					if (!isValid) {
+				activityEventCtrl.saveEvent = function() {
+					var cloneData=JSON.parse(JSON.stringify(activityEventCtrl.event));
+
+					if(cloneData.startDate==undefined){
+						ctrl.showToastError(sbiModule_translate.load("scheduler.schedulation.startDate.required", "component_scheduler_messages"));
 						return false;
 					}
-					var cloneData=JSON.parse(JSON.stringify(activityEventCtrl.event));
-					if(cloneData.startDate!=undefined){
-						cloneData.startDate=(new Date(cloneData.startDate)).getTime();
+
+					cloneData.startDate=(new Date(cloneData.startDate)).getTime();
+					if(isNaN(cloneData.startDate)){
+						ctrl.showToastError(sbiModule_translate.load("scheduler.schedulation.startDate.invalid", "component_scheduler_messages"));
+						return false;
 					}
+
 					if(cloneData.endDate!=undefined){
 						cloneData.endDate=(new Date(cloneData.endDate)).getTime();
+						if(isNaN(cloneData.endDate)){
+							ctrl.showToastError(sbiModule_translate.load("scheduler.schedulation.endDate.invalid", "component_scheduler_messages"));
+							return false;
+						}
 					}
+
+					var atLeastOneAction = false;
+					for(var i in cloneData.documents){
+						var doc = cloneData.documents[i];
+						if(doc.saveassnapshot
+								|| doc.saveasfile
+								|| doc.saveasdocument
+								|| doc.sendtojavaclass
+								|| doc.sendmail){
+							atLeastOneAction = true;
+							break;
+						}
+					}
+					if(!atLeastOneAction){
+						ctrl.showToastError(sbiModule_translate.load("scheduler.schedulation.documents.atLeastAnAction", "component_scheduler_messages"));
+						return false;
+					}
+
 					sbiModule_restServices.post("scheduler", "saveTrigger", cloneData)
 						.success(function(data) {
 							if (data.hasOwnProperty("errors")) {
@@ -1167,9 +1195,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 								ctrl.showToastOk(sbiModule_translate.load("sbi.glossary.success.save"));
 								activityEventCtrl.disableName=true;
 								ctrl.reloadJob();
-								if(saveAndReturn){
-									$mdDialog.hide();
-								}
+								$mdDialog.hide();
 							}
 						})
 						.error(function(data, status, headers, config) {

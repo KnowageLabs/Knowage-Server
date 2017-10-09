@@ -10,24 +10,15 @@
 			</h2>
 		</div>
 	</md-toolbar>
-	<form layout="column" name="triggerForm" class="wordForm" novalidate
-			ng-submit="triggerForm.$valid && activityEventCtrl.saveEvent(triggerForm.$valid,true) &&
-			(activityEventCtrl.selectedDocument.saveassnapshot
-			|| activityEventCtrl.selectedDocument.saveasfile
-			|| activityEventCtrl.selectedDocument.saveasdocument
-			|| activityEventCtrl.selectedDocument.sendtojavaclass
-			|| activityEventCtrl.selectedDocument.sendmail)">
-	<md-dialog-content  layout="column" style="max-height:810px; ">
+	
+	<md-dialog-content layout="column" style="max-height:810px; ">
 	
 		<md-tabs class="mozScroll hideTabs" md-dynamic-height md-border-bottom>
 			<md-tab id="eventTabDetail" label="{{translate.load('sbi.generic.details')}}">
 				<md-content class="md-padding internalContent" layout="column" >
 					<md-input-container  class="md-block">
 						<label>{{translate.load("scheduler.schedname","component_scheduler_messages")}}</label>
-						<input ng-model="activityEventCtrl.event.triggerName" name="name" required maxlength="100" ng-maxlength="100" md-maxlength="100" ng-disabled="activityEventCtrl.disableName">
-						<div ng-messages="triggerForm.name.$error">
-							<div ng-message="required">{{translate.load("sbi.federationdefinition.required")}}</div>
-				        </div>
+						<input ng-model="activityEventCtrl.event.triggerName" name="name" maxlength="100" ng-maxlength="100" md-maxlength="100" ng-disabled="activityEventCtrl.disableName">
 					</md-input-container>
 					
 					<md-input-container  class="md-block">
@@ -38,23 +29,16 @@
 					<div layout="row" layout-align="center center">
 						<label>{{translate.load("scheduler.startdate","component_scheduler_messages")}}:</label>
 						<div layout="column">
-							<md-datepicker ng-model="activityEventCtrl.event.startDate" name="startDateField" required md-placeholder={{translate.load("scheduler.startdate","component_scheduler_messages")}}></md-datepicker>
-							<div class="validation-messages" ng-messages="triggerForm.startDateField.$error">
-								<div ng-message="valid">{{translate.load("scheduler.invalidDate","component_scheduler_messages")}}</div>
-								<div ng-message="required">{{translate.load("scheduler.requiredDate","component_scheduler_messages")}}</div>
-							</div>
+							<md-datepicker md-open-on-focus="" ng-model="activityEventCtrl.event.startDate" name="startDateField" md-placeholder={{translate.load("scheduler.startdate","component_scheduler_messages")}}></md-datepicker>
 						</div>
 						<label style="margin: 0 20px;">{{translate.load("scheduler.starttime","component_scheduler_messages")}}:</label>
-						<angular-time-picker id="myTimePicker1" required ng-model="activityEventCtrl.event.startTime"></angular-time-picker>
+						<angular-time-picker id="myTimePicker1" ng-model="activityEventCtrl.event.startTime"></angular-time-picker>
 					</div>
 
 					<div layout="row" layout-align="center center">
 						<label style="margin-right: 5px;">{{translate.load("scheduler.enddate","component_scheduler_messages")}}:</label>
 						<div layout="column">
-							<md-datepicker ng-model="activityEventCtrl.event.endDate" name="endDateField" md-placeholder={{translate.load("scheduler.enddate","component_scheduler_messages")}}></md-datepicker>
-							<div class="validation-messages" ng-messages="triggerForm.endDateField.$error">
-						 		<div ng-message="valid">{{translate.load("scheduler.invalidDate","component_scheduler_messages")}}</div>
-						 	</div>
+							<md-datepicker md-open-on-focus="" ng-model="activityEventCtrl.event.endDate" name="endDateField" md-placeholder={{translate.load("scheduler.enddate","component_scheduler_messages")}}></md-datepicker>
 						</div>
 						<label style="margin: 0 20px; margin-right: 26px;">{{translate.load("scheduler.endtime","component_scheduler_messages")}}: </label>
 						<angular-time-picker id="myTimePicker2" ng-model="activityEventCtrl.event.endTime"></angular-time-picker>
@@ -74,7 +58,7 @@
 					<div ng-if="activityEventCtrl.eventSched.repetitionKind == 'event'"	layout-padding class="borderBox" flex>
 						<md-input-container class="md-block"> 
 							<label>{{translate.load("scheduler.eventType","component_scheduler_messages")}}:</label>
-							<md-select aria-label="aria-label" ng-model="activityEventCtrl.eventSched.event_type" ng-change="activityEventCtrl.changeTypeFrequency()" required name={{translate.load("scheduler.repeatinterval","component_scheduler_messages")}}>
+							<md-select aria-label="aria-label" ng-model="activityEventCtrl.eventSched.event_type" ng-change="activityEventCtrl.changeTypeFrequency()" name={{translate.load("scheduler.repeatinterval","component_scheduler_messages")}}>
 								<md-option ng-repeat="eventType in activityEventCtrl.EVENT_TYPES" value="{{eventType.value}}"> {{eventType.label}} </md-option> 
 							</md-select> 
 						</md-input-container>
@@ -89,7 +73,7 @@
 							<md-content layout-padding > 
 								<md-input-container class="md-block">
 									<label>{{translate.load("sbi.scheduler.schedulation.events.event.type.dataset")}}</label>
-									<md-select aria-label="aria-label" ng-model="activityEventCtrl.eventSched.dataset" ng-change="activityEventCtrl.changeTypeFrequency()" required name={{translate.load("sbi.scheduler.schedulation.events.event.dataset")}}>
+									<md-select aria-label="aria-label" ng-model="activityEventCtrl.eventSched.dataset" ng-change="activityEventCtrl.changeTypeFrequency()" name={{translate.load("sbi.scheduler.schedulation.events.event.dataset")}}>
 										<md-option ng-repeat="item in activityEventCtrl.datasets" value="{{item.id.dsId}}">{{item.label}}</md-option> 
 									</md-select> 
 								</md-input-container> 
@@ -207,14 +191,6 @@
 						</md-chip-template> 
 					</md-chips>
 					
-					<span class="validation-messages" style="padding: 8px;" ng-hide="activityEventCtrl.selectedDocument.saveassnapshot
-								|| activityEventCtrl.selectedDocument.saveasfile
-								|| activityEventCtrl.selectedDocument.saveasdocument
-								|| activityEventCtrl.selectedDocument.sendtojavaclass
-								|| activityEventCtrl.selectedDocument.sendmail">
-						{{translate.load("sbi.scheduler.schedulation.error.atleastoneaction")}}
-					</span>
-				        
 					<span ng-if="!(activityEventCtrl.selectedDocument!=undefined && activityEventCtrl.selectedDocument.length!=0)">
 						{{translate.load("scheduler.jobhasnodocument", "component_scheduler_messages")}}</span>
 					
@@ -330,21 +306,22 @@
 												data-drag-delay="false" data-empty-placeholder-enabled="false">
 											
 											<script type="text/ng-template" id="lowFunctionalityTreeNodeTemplate">						
-						<div ui-tree-handle layout="row">
-							<div class="indicator-child"></div>
-							<span class="fa fa-folder-open-o" style="color: turquoise;"></span>
-							<md-checkbox md-no-ink style="margin: -3px 0 0 5px;" aria-label="Checkbox 1" 
-									ng-click="activityEventCtrl.toggleDocFunct(activityEventCtrl.selectedDocument, elementToIterate.id);"
-									ng-checked="activityEventCtrl.isChecked(elementToIterate.id, activityEventCtrl.selectedDocument.funct, true)">
-								{{elementToIterate.name}}
-							</md-checkbox>
-						</div>
-						<ol ui-tree-nodes ng-model="elementToIterate" ng-if="elementToIterate.childs">
-							<li ng-repeat="elementToIterate in elementToIterate.childs" 
-									ui-tree-node class="figlioVisibile" 
-									ng-include="'lowFunctionalityTreeNodeTemplate'"></li>
-						</ol>
-					</script>
+												<div ui-tree-handle layout="row">
+													<div class="indicator-child"></div>
+													<span class="fa fa-folder-open-o" style="color: turquoise;"></span>
+													<md-checkbox md-no-ink style="margin: -3px 0 0 5px;" aria-label="Checkbox 1" 
+															ng-click="activityEventCtrl.toggleDocFunct(activityEventCtrl.selectedDocument, elementToIterate.id);"
+															ng-checked="activityEventCtrl.isChecked(elementToIterate.id, activityEventCtrl.selectedDocument.funct, true)">
+														{{elementToIterate.name}}
+													</md-checkbox>
+												</div>
+												<ol ui-tree-nodes ng-model="elementToIterate" ng-if="elementToIterate.childs">
+													<li ng-repeat="elementToIterate in elementToIterate.childs" 
+															ui-tree-node class="figlioVisibile" 
+															ng-include="'lowFunctionalityTreeNodeTemplate'">
+													</li>
+												</ol>
+											</script>
 											
 											<ol id="olchiproot" ui-tree-nodes ng-model="activityEventCtrl.lowFunc">
 												<li ng-repeat="elementToIterate in activityEventCtrl.lowFunc" ui-tree-node 
@@ -369,7 +346,7 @@
 								
 									<md-input-container class="subCheckboxRowElement md-block" ng-if="activityEventCtrl.selectedDocument.useFolderDataset==true">
 										<label>{{translate.load("sbi.scheduler.schedulation.events.event.type.dataset")}} &nbsp;</label>
-										<md-select aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.datasetFolderLabel" required name={{translate.load("sbi.scheduler.schedulation.events.event.dataset")}}>
+										<md-select aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.datasetFolderLabel" name={{translate.load("sbi.scheduler.schedulation.events.event.dataset")}}>
 											<md-option ng-repeat="item in activityEventCtrl.datasets" value="{{item.label}}">{{item.label}}</md-option> 
 										</md-select> 
 									</md-input-container> 
@@ -377,9 +354,8 @@
 									<md-input-container class="subCheckboxRowElement md-block"
 											ng-if="activityEventCtrl.selectedDocument.useFolderDataset==true">
 										<label>{{translate.load("scheduler.folderToDriver", "component_scheduler_messages")}}</label>
-										<md-select aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.datasetFolderParameter" required 
-												name={{translate.load("sbi.scheduler.schedulation.events.event.parameter")}}>
-											<md-option ng-repeat=" par in activityEventCtrl.selectedDocument.parameters" value="{{par}}">{{par}}</md-option>
+										<md-select aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.datasetFolderParameter" name={{translate.load("sbi.scheduler.schedulation.events.event.parameter")}}>
+											<md-option ng-repeat="par in activityEventCtrl.selectedDocument.parameters" value="{{par}}">{{par}}</md-option>
 										</md-select>
 									</md-input-container> 
 								</md-content>
@@ -456,15 +432,14 @@
 							
 									<md-input-container class="subCheckboxRowElement md-block" ng-if="activityEventCtrl.selectedDocument.useDataset==true">
 										<label>{{translate.load("sbi.scheduler.schedulation.events.event.type.dataset")}}</label>
-										<md-select aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.datasetLabel" required 
-												name={{translate.load("sbi.scheduler.schedulation.events.event.dataset")}}>
+										<md-select aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.datasetLabel" name={{translate.load("sbi.scheduler.schedulation.events.event.dataset")}}>
 											<md-option ng-repeat="item in activityEventCtrl.datasets" value="{{item.label}}">{{item.label}}</md-option>
 										</md-select> 
 									</md-input-container> 
 									
 									<md-input-container class="subCheckboxRowElement md-block" ng-if="activityEventCtrl.selectedDocument.useDataset==true">
 										<label>{{translate.load("scheduler.mailToDatasetParameter", "component_scheduler_messages")}}</label> 
-										<md-select aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.datasetParameter" required name={{translate.load("sbi.scheduler.schedulation.events.event.parameter")}}>
+										<md-select aria-label="aria-label" ng-model="activityEventCtrl.selectedDocument.datasetParameter" name={{translate.load("sbi.scheduler.schedulation.events.event.parameter")}}>
 											<md-option ng-repeat=" par in activityEventCtrl.selectedDocument.parameters" value="{{par}}">{{par}}</md-option>
 										</md-select> 
 									</md-input-container>
@@ -556,32 +531,14 @@
 		
 	
 	</md-dialog-content>
+	
 	<md-dialog-actions>
-				<md-button type="reset" ng-click="activityEventCtrl.cancel()" class="md-primary">
-					{{translate.load("sbi.ds.wizard.cancel")}} 
-				</md-button>
-				<!-- 
-	 			<div ng-if="!triggerForm.$valid">
-					<md-icon md-font-icon="fa fa-info-circle" style=" color: #104D71; line-height: 20px;"></md-icon>
-					<md-tooltip>
-						<ul style="padding: 0px;" >
-			 				<li style="display: block;" ng-repeat="(key, errors) in triggerForm.$error track by $index"> 
-					 			<ul style="padding: 0px;">
-					 				<li style="display: block;" ng-repeat="e in errors">{{e.$name}} <i class="fa fa-arrow-right"></i> <span style="color: red; font-size: 12px; font-weight: 900;">{{ key }}</span>.</li>
-						 		</ul>
-						 	</li>
-						</ul>
-					</md-tooltip>
-				</div>
-				 -->
-				<md-button type="submit" class="md-primary"
-						ng-disabled="!triggerForm.$valid || !(activityEventCtrl.selectedDocument.saveassnapshot
-								|| activityEventCtrl.selectedDocument.saveasfile
-								|| activityEventCtrl.selectedDocument.saveasdocument
-								|| activityEventCtrl.selectedDocument.sendtojavaclass
-								|| activityEventCtrl.selectedDocument.sendmail)">
-					{{translate.load("scheduler.save", "component_scheduler_messages")}}
-				</md-button>
-		</md-dialog-actions>
-		</form>
+		<md-button ng-click="activityEventCtrl.cancel()">
+			{{translate.load("sbi.ds.wizard.cancel")}} 
+		</md-button>
+
+		<md-button ng-click="activityEventCtrl.saveEvent()">
+			{{translate.load("scheduler.save", "component_scheduler_messages")}}
+		</md-button>
+	</md-dialog-actions>
 </md-dialog>
