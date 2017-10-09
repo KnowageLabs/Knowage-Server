@@ -58,7 +58,6 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 		
 		if($scope.minMaxSeries.max){
 			if(series.length>=$scope.minMaxSeries.min &&  series.length <= $scope.minMaxSeries.max){
-
 				$scope.structureForm.$setValidity("seriesNumber", true);
 				return false
 			}  else {
@@ -68,7 +67,6 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 		}
 		else {
 			if(series.length>=$scope.minMaxSeries.min ){
-
 				$scope.structureForm.$setValidity("seriesNumber", true);
 				return false
 			}  else{
