@@ -811,6 +811,7 @@ color-picker {
   display: block;
   .color-picker-wrapper {
     position: absolute;
+    z-index:9999;
     width: 100%;
   }
 }
