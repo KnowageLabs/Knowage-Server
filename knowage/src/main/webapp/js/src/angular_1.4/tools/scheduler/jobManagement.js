@@ -1091,8 +1091,20 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 									}
 								}
 
-								//carico le informazioni dei documenti
-								activityEventCtrl.event.documents=d.documents;
+								// load data from documents
+								for(var i=0; i<activityEventCtrl.event.documents.length; i++){
+									var d1 = activityEventCtrl.event.documents[i];
+									delete d1.useFixedRecipients;
+									delete d1.useDataset;
+									delete d1.useExpression;
+									for(var j=0; j<d.documents.length; j++){
+										var d2 = d.documents[i];
+										d2.id = parseInt(d2.id);
+										if(d1.id == d2.id){
+											angular.merge(d1,d2);
+										}
+									}
+								}
 
 								activityEventCtrl.setSelectedDocument();
 							}
@@ -1111,14 +1123,14 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 				};
 
 				activityEventCtrl.setSelectedDocument = function() {
-					activityEventCtrl.selectedDocument = (activityEventCtrl.event.documents == undefined || activityEventCtrl.event.documents.length != 0) ? activityEventCtrl.event.documents[0] : [];
-					if(!activityEventCtrl.selectedDocument.useFixedRecipients){
+					activityEventCtrl.selectedDocument = (activityEventCtrl.event.documents != undefined && activityEventCtrl.event.documents.length > 0) ? activityEventCtrl.event.documents[0] : {};
+					if(activityEventCtrl.selectedDocument.useFixedRecipients == undefined){
 						activityEventCtrl.selectedDocument.useFixedRecipients = false;
 					}
-					if(!activityEventCtrl.selectedDocument.useDataset){
+					if(activityEventCtrl.selectedDocument.useDataset == undefined){
 						activityEventCtrl.selectedDocument.useDataset = false;
 					}
-					if(!activityEventCtrl.selectedDocument.useExpression){
+					if(activityEventCtrl.selectedDocument.useExpression == undefined){
 						activityEventCtrl.selectedDocument.useExpression = false;
 					}
 					if(!activityEventCtrl.selectedDocument.useFixedRecipients
@@ -1448,9 +1460,9 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 				};
 
 				activityEventCtrl.updateUseFixedRecipients = function() {
-					if(!activityEventCtrl.selectedDocument.useFixedRecipients
-							&& !activityEventCtrl.selectedDocument.useDataset
-							&& !activityEventCtrl.selectedDocument.useExpression){
+					if(activityEventCtrl.selectedDocument.useFixedRecipients == undefined
+							&& activityEventCtrl.selectedDocument.useDataset == undefined
+							&& activityEventCtrl.selectedDocument.useExpression == undefined){
 						activityEventCtrl.selectedDocument.useFixedRecipients = true;
 					}else{
 						activityEventCtrl.selectedDocument.useDataset = false;
@@ -1459,9 +1471,9 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 				}
 
 				activityEventCtrl.updateUseDataset = function() {
-					if(!activityEventCtrl.selectedDocument.useFixedRecipients
-							&& !activityEventCtrl.selectedDocument.useDataset
-							&& !activityEventCtrl.selectedDocument.useExpression){
+					if(activityEventCtrl.selectedDocument.useFixedRecipients == undefined
+							&& activityEventCtrl.selectedDocument.useDataset == undefined
+							&& activityEventCtrl.selectedDocument.useExpression == undefined){
 						activityEventCtrl.selectedDocument.useDataset = true;
 					}else{
 						activityEventCtrl.selectedDocument.useFixedRecipients = false;
@@ -1470,9 +1482,9 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 				}
 
 				activityEventCtrl.updateUseExpression = function() {
-					if(!activityEventCtrl.selectedDocument.useFixedRecipients
-							&& !activityEventCtrl.selectedDocument.useDataset
-							&& !activityEventCtrl.selectedDocument.useExpression){
+					if(activityEventCtrl.selectedDocument.useFixedRecipients == undefined
+							&& activityEventCtrl.selectedDocument.useDataset == undefined
+							&& activityEventCtrl.selectedDocument.useExpression == undefined){
 						activityEventCtrl.selectedDocument.useExpression = true;
 					}else{
 						activityEventCtrl.selectedDocument.useFixedRecipients = false;
