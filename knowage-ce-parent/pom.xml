@@ -180,8 +180,10 @@
 		</profile>
 		
 		<profile>
-			<id>console.log-removed</id>
+			<id>cas_console-removed</id>
 			<properties>
+				<enable.cas.start>&lt;!--</enable.cas.start>
+				<enable.cas.end>--&gt;</enable.cas.end>
 				<disable.console.logging>*/console.log = function() {}; console.warn = function() {}; console.debug = function() {}; console.info = function() {};  /*</disable.console.logging>
 			</properties>
 
@@ -199,6 +201,13 @@
 									<directory>src/main/webapp</directory>
 									<includes>
 										<include>**/angularImport.jsp</include>
+									</includes>
+								</resource>
+								<resource>
+									<filtering>true</filtering>
+									<directory>src/main/webapp</directory>
+									<includes>
+										<include>**/web.xml</include>
 									</includes>
 								</resource>
 							</webResources>
