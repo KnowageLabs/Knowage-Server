@@ -1098,7 +1098,7 @@ function mainFunction(sbiModule_download, sbiModule_translate, sbiModule_restSer
 									delete d1.useDataset;
 									delete d1.useExpression;
 									for(var j=0; j<d.documents.length; j++){
-										var d2 = d.documents[i];
+										var d2 = d.documents[j];
 										d2.id = parseInt(d2.id);
 										if(d1.id == d2.id){
 											angular.merge(d1,d2);
