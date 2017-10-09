@@ -266,10 +266,7 @@ public class BIObjectParameter implements Serializable {
 		Iterator it = parameterValues.iterator();
 		while (it.hasNext()) {
 			String aValue = (String) it.next();
-			String delimiter = (parameter.getType().equalsIgnoreCase("STRING") && !aValue.startsWith("'") && !aValue.endsWith("'")) ? "'" : "";
-			buffer.append(delimiter);
 			buffer.append(aValue);
-			buffer.append(delimiter);
 			if (it.hasNext()) {
 				buffer.append(";");
 			}
