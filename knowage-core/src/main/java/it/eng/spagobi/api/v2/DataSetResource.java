@@ -815,7 +815,22 @@ public class DataSetResource extends DataSetResourceAbstractResource {
 							String[] valuesArray = getDistinctValues(values.getString(i));
 							for (int j = 0; j < valuesArray.length; j++) {
 								String column = columnsList.get(j % columnsList.size());
-								valuesList.add(getValueForQuery(valuesArray[j], dateColumnNamesList.contains(column), dataSource));
+								String value = valuesArray[j];
+
+								// if filterOperator is IN and value contains , split values
+								if (filterOperator.equalsIgnoreCase("IN") && value.contains(",")) {
+									logger.debug("Multivalue case for IN clause, split");
+									String[] valuesSplitted = value.split(",");
+									for (int k = 0; k < valuesSplitted.length; k++) {
+										String valueSplitted = valuesSplitted[k];
+										valueSplitted = valueSplitted.trim();
+										valuesList.add(getValueForQuery(valueSplitted, dateColumnNamesList.contains(column), dataSource));
+									}
+
+								} else {
+									logger.debug("Single value case");
+									valuesList.add(getValueForQuery(value, dateColumnNamesList.contains(column), dataSource));
+								}
 							}
 						}
 
@@ -823,7 +838,7 @@ public class DataSetResource extends DataSetResourceAbstractResource {
 						// =, < , >, <= , >= , like ,is null , is not null ,min ,max ,range
 						FilterCriteria filterCriteria = null;
 
-						List<String> oneOperandOperators = Arrays.asList("=", "!=", "<", ">", "<=", ">=", "like");
+						List<String> oneOperandOperators = Arrays.asList("=", "!=", "<", ">", "<=", ">=", "like", "IN");
 						List<String> twoOperandOperators = Arrays.asList("range");
 						List<String> markupOperandOperators = Arrays.asList("max", "min");
 						List<String> zeroOperandOperators = Arrays.asList("is null", "is not null");

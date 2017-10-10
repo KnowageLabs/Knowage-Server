@@ -69,9 +69,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.localDS={};
 		$scope.columnNames=[];
 
-		$scope.operatorsTypeString = ['=','!=','like','is null','is not null','min','max'];
-		$scope.operatorsTypeNumber = ['=','<','>','<=','>=','is null','is not null','!=','min','max','range'];
-		$scope.operatorsTypeDate = ['=','is null','is not null','min','max','range'];
+		$scope.operatorsTypeString = ['=','!=','IN','like','is null','is not null','min','max'];
+		$scope.operatorsTypeNumber = ['=','<','>','<=','>=','IN','is null','is not null','!=','min','max','range'];
+		$scope.operatorsTypeDate = ['=','IN','is null','is not null','min','max','range'];
 
 		$scope.updateFilters=function(dsId){
 			$scope.ngModelShared.filters=[]; // format [{colName : "..."  ,  filterVals : ["filterStr1" , "filterStr2", ... ]}   ,   {colName : "..."  ,  filterVals : [...] }]
