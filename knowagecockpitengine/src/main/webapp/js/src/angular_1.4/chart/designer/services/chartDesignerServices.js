@@ -2257,6 +2257,8 @@ angular.module('ChartDesignerService', [])
 		
 		var listDateFormats = 
 		[
+		 	{name: translate.load('sbi.chartengine.structure.categoryStyleConfig.minus'), value:'minus'},
+		 	{name: translate.load('sbi.chartengine.structure.categoryStyleConfig.slash'), value:'slash'},
 		 	{name: translate.load('sbi.chartengine.structure.categoryStyleConfig.year'), value:'year'},
 	        {name: translate.load('sbi.chartengine.structure.categoryStyleConfig.month'), value:'month'}, 
 	        {name: translate.load('sbi.chartengine.structure.categoryStyleConfig.week'), value:'week'}, 

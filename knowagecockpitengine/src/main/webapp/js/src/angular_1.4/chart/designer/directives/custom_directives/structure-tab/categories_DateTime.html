@@ -1,15 +1,13 @@
 <div ng-form name="structure-orderingColumnForm" >
 <div layout="row"  flex=100 layout-align="start center" >
 	
-		<label>{{translate.load("sbi.chartengine.structure.categoryStyleConfig.dateTime")}}</label>
-		<md-input-container class="small counter"> <md-checkbox
+		<label>{{translate.load("sbi.chartengine.structure.categoryStyleConfig.dateTimeAndGrouping")}}</label>
+		<md-input-container class="small counter"> <md-checkbox ng-disabled="chartTemplate.groupSeries || chartTemplate.groupCategories"
 			ng-model="chartTemplate.dateTime" style="margin:0 8px" aria-label="dateTime" name="generic_dateTime" ></md-checkbox>
 		</md-input-container>
 </div>
 
 <div ng-show="chartTemplate.dateTime" layout="column" layout-padding>
-
-
 <md-input-container class="md-block">
 	 <label>{{translate.load("sbi.chartengine.structure.categoryStyleConfig.dateFormat")}}</label>
 		 <md-select ng-model="chartTemplate.dateFormat" name="categories_ordering_type"> <md-option
@@ -17,5 +15,23 @@
 	</md-select> </md-input-container>
 	
 </div>	
+<div layout="row"
+	  " flex=100 layout-align="start center" ng-if="disableHtmlElementForChartJs()">
+	
+		<label>{{translate.load("sbi.chartengine.designer.tab.configuration.groupCategories")}}</label>
+		<md-input-container class="small counter"> <md-checkbox  ng-disabled="chartTemplate.groupSeries || chartTemplate.dateTime"
+			ng-model="chartTemplate.groupCategories" style="margin:0 8px" aria-label="groupCategories" name="generic_groupCategories" ></md-checkbox>
+		</md-input-container>
+</div>
+
+<!-- <div layout="row"
+		 " flex=100 layout-align="start center" ng-if="disableHtmlElementForChartJs()">
+	
+		<label>{{translate.load("sbi.chartengine.designer.tab.configuration.groupSeries")}}</label>
+		<md-input-container class="small counter"> <md-checkbox  ng-disabled="chartTemplate.groupCategories || chartTemplate.dateTime"
+			ng-model="chartTemplate.groupSeries" style="margin:0 8px" aria-label="groupSeries" name="generic_groupSeries" ></md-checkbox>
+		</md-input-container>
+</div>  -->
+
 
 </div>	

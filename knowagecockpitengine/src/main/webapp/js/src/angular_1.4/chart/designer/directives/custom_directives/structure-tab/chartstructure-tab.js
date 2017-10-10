@@ -59,24 +59,23 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 		if($scope.minMaxSeries.max){
 			if(series.length>=$scope.minMaxSeries.min &&  series.length <= $scope.minMaxSeries.max){
 				$scope.structureForm.$setValidity("seriesNumber", true);
-				return false
+				return false;
 			}  else {
 				$scope.structureForm.$setValidity("seriesNumber", false);
-				return true
+				return true;
 			}
 		}
 		else {
 			if(series.length>=$scope.minMaxSeries.min ){
 				$scope.structureForm.$setValidity("seriesNumber", true);
-				return false
+				return false;
 			}  else{
 				$scope.structureForm.$setValidity("seriesNumber", false);
-				return true	
+				return true;
 			}
 		}
 		
 	}
-	
 
 	$scope.numberOfSeriesContainers = 0;
 	$scope.maxNumberOfSeriesContainers = 4;

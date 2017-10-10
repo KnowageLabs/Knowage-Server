@@ -795,6 +795,12 @@
 				#set($dateFormat = "%A, %b %e, %H:%M")
 			#elseif($chart.dateFormat=="second")
 				#set($dateFormat = "%A, %b %e, %H:%M:%S")
+				
+			#elseif($chart.dateFormat=="slash")
+				#set($dateFormat = "%d/%m/%Y")
+			#elseif($chart.dateFormat=="minus")
+				#set($dateFormat = "%d-%m-%Y")
+				
 			#else
 				#set($dateFormat = "%A, %b %e, %H:%M:%S.%L")
 			#end 
@@ -1727,7 +1733,7 @@
             	
             	@author: danristo (danilo.ristovski@mht.net)
             *#
-            turboThreshold: 0
+            turboThreshold: 2000
         }
        
     }

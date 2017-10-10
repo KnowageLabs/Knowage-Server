@@ -110,48 +110,31 @@ function chartTabControllerFunction($scope,$timeout,sbiModule_translate,sbiModul
 		}
 	});
 	
-	$scope.$watch('chartTemplate.dateTime',function(newValue,oldValue){
-		if($scope.chartTemplate.type.toLowerCase()=="bar"){
+	$scope.$watch('chartTemplate',function(newValue,oldValue){
+		if($scope.chartTemplate.type.toLowerCase()=="bar" || $scope.chartTemplate.type.toLowerCase()=="line"){
 			$scope.minMaxCategories = {};
 			$scope.minMaxSeries = {};
-			switch(newValue){
-		
-			case true:
-				$scope.minMaxCategories.max = 1; 
-				$scope.minMaxCategories.min = 1;
-				$scope.minMaxSeries.min = 1;
-				break;
-				
-			default:
-				$scope.minMaxCategories.min = 1;
-				$scope.minMaxSeries.min = 1;
-				break;
-			}
-		}
-		
-	})
-	
-	$scope.$watch('chartTemplate.groupCategories',function(newValue,oldValue){
-		if($scope.chartTemplate.type.toLowerCase()=="bar"){
-			$scope.minMaxCategories = {};
-			$scope.minMaxSeries = {};
-			switch(newValue){
-		
-			case true:
+			if(newValue.groupCategories){
 				$scope.minMaxCategories.max = 2; 
 				$scope.minMaxCategories.min = 2; 
 				$scope.minMaxSeries.min = 1;
-				$scope.minMaxSeries.min = 1;
-				break;
-				
-			default:
+			} else if (newValue.groupSeries){
+				$scope.minMaxCategories.max = 1; 
+				$scope.minMaxCategories.min = 1; 
+				$scope.minMaxSeries.max = 2;
+				$scope.minMaxSeries.min = 2;
+			} else if (newValue.dateTime){
+				$scope.minMaxCategories.max = 1; 
 				$scope.minMaxCategories.min = 1;
 				$scope.minMaxSeries.min = 1;
-				break;
+			}else {
+				$scope.minMaxCategories.min = 1;
+				$scope.minMaxSeries.min = 1;
 			}
 		}
 		
-	})
+	},true)
+
 	
 	var setConfigurationButtons = function(type) {
 		

@@ -729,30 +729,33 @@ public class DataSetTransformer {
 		LinkedHashMap<String, ArrayList<JSONObject>> map = new LinkedHashMap<String, ArrayList<JSONObject>>();
 		String primCat;
 		String secCat;
-		if (isCockpit) {
+		String seria;
+		if (!isCockpit) {
 			primCat = "column_1";
 			secCat = "column_2";
+			seria = "column_3";
 		} else {
 			primCat = "column_2";
 			secCat = "column_3";
+			seria = "column_1";
 		}
 		for (Object singleObject : dataRows) {
-			if (!map.containsKey(((Map) singleObject).get(secCat))) {
+			if (!map.containsKey(((Map) singleObject).get(seria))) {
 				ArrayList<JSONObject> newListOfOrderColumnItems = new ArrayList<JSONObject>();
 				JSONObject jo = new JSONObject();
-				jo.put("y", ((Map) singleObject).get("column_3"));
+				jo.put("y", ((Map) singleObject).get(secCat));
 				jo.put("name", ((Map) singleObject).get(primCat));
 
 				newListOfOrderColumnItems.add(jo);
-				map.put((String) ((Map) singleObject).get(secCat), newListOfOrderColumnItems);
+				map.put((String) ((Map) singleObject).get(seria), newListOfOrderColumnItems);
 			} else {
-				ArrayList oldArrayList = map.get(((Map) singleObject).get(secCat));
+				ArrayList oldArrayList = map.get(((Map) singleObject).get(seria));
 
 				JSONObject jo = new JSONObject();
-				jo.put("y", ((Map) singleObject).get("column_3"));
+				jo.put("y", ((Map) singleObject).get(secCat));
 				jo.put("name", ((Map) singleObject).get(primCat));
 				oldArrayList.add(jo);
-				map.put((String) ((Map) singleObject).get(secCat), oldArrayList);
+				map.put((String) ((Map) singleObject).get(seria), oldArrayList);
 			}
 		}
 
