@@ -1,8 +1,8 @@
 <md-dialog md-theme="{{::paramDialogCtrl.theme }}" style="height:95%; width:95%; max-width: 100%; max-height: 100%;" ng-cloak
 		aria-label="{{::paramDialogCtrl.ariaLabel }}" ng-class="dialog.css" layout="column">
 	<md-toolbar>
-		<div class="md-title" layout-fill>
-			<h2 class="md-title" layout-margin>
+		<div class="md-toolbar-tools">
+			<h2>
 				{{ ::paramDialogCtrl.dialogTitle }}
 			</h2>
 		</div>
@@ -10,10 +10,6 @@
 		
 	<md-dialog-content class="md-dialog-content" role="document" 
 			tabIndex="-1" layout flex>
-		<!--
-		<md-content>{{paramDialogCtrl.tempParameter|json}}</md-content>	
-		<md-content>{{paramDialogCtrl.selectedTableItems | json}}</md-content>	
-		-->
 
 		<section layout flex>
 			<angular-table id="{{paramDialogCtrl.tempParameter.urlName}}" flex
@@ -25,31 +21,6 @@
 					show-search-bar="true"
 			></angular-table>
 		</section>
-				
-		
-		<!-- lov list single input -->
-		<!--
-		<section ng-if="!paramDialogCtrl.tempParameter.multivalue">
-			<md-radio-group ng-model="paramDialogCtrl.tempParameter.parameterValue" ng-required="paramDialogCtrl.tempParameter.mandatory">
-				<md-radio-button ng-repeat="defaultParameter in paramDialogCtrl.tempParameter.defaultValues" 
-						value="{{::defaultParameter.value}}" class="md-primary">
-					{{::defaultParameter.label}}
-				</md-radio-button>
-			</md-radio-group>
-		</section>
-		
-		<!-- lov list multiple input -->
-		<!--
-		<section ng-if="paramDialogCtrl.tempParameter.multivalue">
-			<div ng-repeat="defaultParameter in paramDialogCtrl.tempParameter.defaultValues">
-				<md-checkbox class="md-primary" value="{{::defaultParameter.value}}" 
-						ng-checked="checkboxParameterExists(defaultParameter.value, paramDialogCtrl.tempParameter)" 
-						ng-click="toggleCheckboxParameter(defaultParameter.value, paramDialogCtrl.tempParameter)" >
-					{{::defaultParameter.label}}
-				</md-checkbox>
-			</div>
-		</section>	
-		-->
 	</md-dialog-content>
 	
 	
