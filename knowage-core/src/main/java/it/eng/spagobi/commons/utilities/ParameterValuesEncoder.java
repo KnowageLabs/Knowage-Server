@@ -145,56 +145,56 @@ public class ParameterValuesEncoder {
 	 */
 	public String encode(BIObjectParameter biobjPar) {
 		logger.debug("IN");
-		if (biobjPar.getParameterValues() == null) {
+
+		List parameterValues = biobjPar.getParameterValues();
+		if (parameterValues == null) {
 			logger.debug("biobjPar.getParameterValues() == null");
 			return null;
 		}
 
+		if (parameterValues.size() == 0) {
+			return "";
+		}
+
 		Parameter parameter = biobjPar.getParameter();
-		if (parameter != null) {
-
-			String type = parameter.getType();
-			ModalitiesValue modValue = parameter.getModalityValue();
-			if (modValue != null) {
-
-				boolean multivalue = biobjPar.isMultivalue();
-
-				String typeCode = biobjPar.getParameter().getModalityValue().getITypeCd();
-				logger.debug("typeCode=" + typeCode);
-				if (typeCode.equalsIgnoreCase(SpagoBIConstants.INPUT_TYPE_MAN_IN_CODE)) {
-					return (String) biobjPar.getParameterValues().get(0);
-				} else {
-					return encodeMultivaluesParam(biobjPar.getParameterValues(), type);
-				}
-			} else {
-				List values = biobjPar.getParameterValues();
-				if (values != null && values.size() > 0) {
-					return encodeMultivaluesParam(biobjPar.getParameterValues(), type);
-				} else {
-					return "";
-				}
-			}
-		} else {
+		if (parameter == null) {
 			Integer parId = biobjPar.getParID();
-			String type = null;
 			if (parId == null) {
-				logger.warn("Parameter object nor parameter id are set into BiObjectPrameter with label = " + biobjPar.getLabel() + " of document with id = "
+				logger.warn("Parameter object nor parameter id are set into BIObjectParameter with label = " + biobjPar.getLabel() + " of document with id = "
 						+ biobjPar.getBiObjectID());
 			} else {
 				try {
-					Parameter aParameter = DAOFactory.getParameterDAO().loadForDetailByParameterID(parId);
-					type = aParameter.getType();
+					parameter = DAOFactory.getParameterDAO().loadForDetailByParameterID(parId);
 				} catch (EMFUserError e) {
-					logger.warn("Error loading parameter with id = " + biobjPar.getParID());
+					logger.warn("Error loading parameter with id = " + parId);
 				}
 			}
-			List values = biobjPar.getParameterValues();
-			if (values != null && values.size() > 0) {
-				return encodeMultivaluesParam(biobjPar.getParameterValues(), type);
-			} else
-				return "";
 		}
 
+		if (parameter == null) {
+			logger.error("Unable to load parameter from BIObjectParameter with label = " + biobjPar.getLabel() + " of document with id = "
+					+ +biobjPar.getBiObjectID());
+			return null;
+		}
+
+		String type = parameter.getType();
+		boolean multivalue = biobjPar.isMultivalue();
+
+		ModalitiesValue modValue = parameter.getModalityValue();
+		if (modValue != null) {
+			String typeCode = modValue.getITypeCd();
+			logger.debug("typeCode=" + typeCode);
+
+			if (SpagoBIConstants.INPUT_TYPE_MAN_IN_CODE.equalsIgnoreCase(typeCode)) {
+				multivalue = false;
+			}
+		}
+
+		if (!multivalue) {
+			return (String) parameterValues.get(0);
+		} else {
+			return encodeMultivaluesParam(parameterValues, type);
+		}
 	}
 
 	/**
